@@ -65,7 +65,7 @@
   my_model.nodes= ... % add data here
   my_model.elems= ... % add data here
   my_model.jacobian= "my_jac_calc_function";
-  jj= jacobian( my_model, ...
+  jj= calc_jacobian( my_model, ...
                 conductivites); % calls my_jac_calc_function
 </pre>
     <H3>Objects</H3>
@@ -73,15 +73,21 @@
       <p><li><b>
         data
       </b><br>
+      A data object represents one set of measurement data. It is a
+      collection of all measurements for each stimulation pattern.
+      While not simultaneous, we conceptually represent this as
+      representing the conductivity distribution at an instant.
+      It is invisaged that data converter software be written to
+      load from the various hardware systems into this format.
       <ul>
         <b>Properties</b>:
         <li><tt>data.name
         </tt> &nbsp; &nbsp;
         <i>string</i>
-        name of data (or '')
+        name of data (or empty string)
         <li><tt>data.meas
         </tt> &nbsp; &nbsp;
-        <i>vector</i> (n_meas &times; 1)
+        <i>vector</i> (Num_meas &times; 1)
         actual measured data, ordered as measurements for each
         stimulation pattern
         <li><tt>data.time
@@ -96,15 +102,11 @@
         <li><tt>data.meas_config
         </tt> &nbsp; &nbsp;
         <i>EIDORS3D configuration structure</i>
+        <b>meas_config</b>
         common to all measurements with
         the same configuration
-        <br>&minus; number of electrodes and position
-        <br>&minus; current and measurment configuration 
-        <br>&minus; subject
-        <br>&minus; time
-        <br>&minus; comments
-        <br>&minus; units for data (volts, etc.)
         <p><b>Methods</b>:
+        None
       </ul>
 
       <p><li><b>
@@ -116,11 +118,52 @@
       hardware)
       <ul>
         <b>Properties</b>:
-        <li><tt>data.name
+        <li><tt>meas_config.name
         </tt> &nbsp; &nbsp;
         <i>string</i>
-        name of data (or '')
+        name of measurement configuration (or empty string)
+
+        <li><tt>meas_config.units
+        </tt> &nbsp; &nbsp;
+        <i>string</i>
+        measurement units (ie. volts)
+
+        <li><tt>meas_config.subject
+        </tt> &nbsp; &nbsp;
+        <i>string</i>
+        description of subject (or empty string)
+
+        <li><tt>meas_config.electrodes
+        </tt> &nbsp; &nbsp;
+        <i>vector</i> (Num_elec &times; 1)
+        vector of descripions of electrodes, where each electrode has
+
+        <ul>
+            <li><tt>electrode(index).position
+            </tt> &nbsp; &nbsp;
+            <i>vector</i> (x,y,z) position of centre of electrode
+            in units of <i>mm</i>
+
+            <li><tt>electrode(index).diameter
+            </tt> &nbsp; &nbsp;
+            <i>scalar</i> diameter of electrode in <i>mm</i>
+
+            <li><tt>electrode(index).diameter
+            </tt> &nbsp; &nbsp;
+            <i>scalar</i> diameter of electrode in <i>mm</i>
+
+            <li><tt>electrode(index).z_contact
+            </tt> &nbsp; &nbsp;
+            contact impedance (in &Omega;) may be complex
+        </ul>
+
+        <li><tt>meas_config.stimulation
+        </tt> &nbsp; &nbsp;
+        <i>vector</i> (Num_stim &times; 1)
+        stimulation patterns <b>stim_model</b>
+
         <p><b>Methods</b>:
+        None
       </ul>
 
       <p><li><b>
@@ -151,7 +194,7 @@
            of electrode models (<b>elec_model</b>)
         <li><tt>fwd_model.stimulation
         </tt> &nbsp; &nbsp;
-        Vector <i>(Stim_pat &times;1)</i> of stimulation
+        Vector <i>(Num_Stim &times;1)</i> of stimulation
         patterns (<b>stim_model</b>) (current in EIT)
         <li><tt>fwd_model.dimention
         </tt> &nbsp; &nbsp;
@@ -207,6 +250,7 @@
         nodes to which this electrode is attached
 
         <p><b>Methods</b>:
+        None
       </ul>
 
       <p><li><b>
@@ -236,6 +280,7 @@ model of a stimulation pattern and accociated measurements
         This is a sparse matrix of the contribution of
         each electrode to the measurement.
         <p><b>Methods</b>:
+        None
       </ul>
 
       <p><li><b>
@@ -299,6 +344,7 @@ model of a stimulation pattern and accociated measurements
         pointer to inv_model
 
         <p><b>Methods</b>:
+        None
       </ul>
       <i>Questions</i>:
       <br>&minus;
@@ -374,7 +420,7 @@ now it is (using the <tt>eidors_obj</tt> function):
    </ol>
 </td></tr></table>
 <small>
-    Last Modified: $Date: 2004-07-22 21:57:36 $ by $Author: aadler $
+    Last Modified: $Date: 2004-07-22 22:32:46 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
