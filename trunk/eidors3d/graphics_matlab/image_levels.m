@@ -1,8 +1,8 @@
-function image_levels(img, levels )
-% IMAGE_LEVELS(fig_handle, img ) show slices at levels of an image
-% fig_handle = handle to a figure
-% img = EIDORS3D image struct
+function image_levels(img, levels, clim )
+% IMAGE_LEVELS(img, levels, clim  ) show slices at levels of an image
+% img    = EIDORS3D image struct
 % levels = array of vertical levels
+% clim   = colourmap limit (or default if not specified)
 
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);
@@ -12,13 +12,26 @@ img = img.elem_data;
 
 fc= [];
 
+set_clim= set_colors( img );
+if nargin < 3 
+    clim= set_clim;
+end
+
 for idx= 1:length(levels);
     subplot(2,3,idx);
     lev= levels(idx);
     [fc] = slicer_plot_n(lev,img,vtx,simp);
     view(2);
     grid;
+    caxis([-clim,clim]);
     colorbar;
     axis('off');
     title(sprintf('z=%4.2f',lev));
 end
+
+function colour_lim = set_colors( sol );
+
+  s= hot(64); s=s(2:60,:);
+  s= [flipud(fliplr(s));0,0,0;s]*.8 + .2;
+  colormap(s);
+  colour_lim= max(abs(sol));
