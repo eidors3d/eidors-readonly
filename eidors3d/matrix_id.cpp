@@ -3,11 +3,12 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: matrix_id.cpp,v 1.1 2005-02-23 02:38:21 aadler Exp $
+ *   $Id: matrix_id.cpp,v 1.2 2005-02-23 02:48:49 aadler Exp $
  */
 
-#include "mex.h"
+#include <stdio.h>
 #include <string.h>
+#include "mex.h"
 /*
  * defines for SHA1.c code
  */
@@ -59,7 +60,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
     return;
   }
     
-  printf("string %s --\n", fname);
   hash_context c;
   hash_initial( &c);
   FILE * fid = fopen( fname, "rb");
