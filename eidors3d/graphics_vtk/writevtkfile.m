@@ -13,7 +13,7 @@ function writevtkfile(filename,vtx,tet,val)
 %
 % 'filename' = name of the vtk file, the ".vtk" extension will be addedd automatically 
 % vtx = matrix of the verticies, as in EIDORS 3D
-% tet = matrix of the tatrahydra, as simp in EIDORS3D
+% tet = matrix of the tetrahydra, as simp in EIDORS3D
 % val = vector holding the data values
 % 
 % Depending wether the field is piecewise linear or piecewise constant and if it it scalar or vector, val can assume different valid sizes:
@@ -37,7 +37,7 @@ end % if FID
 frewind(fid);
 
 fprintf(fid,'# vtk DataFile Version 3.0\n');
-fprintf(fid,'%s Exported from MATLAB\n',date);
+fprintf(fid,'%s Exported from EIDORS3D\n',date);
 fprintf(fid,'ASCII\n');
 
 fprintf(fid,'\n');
@@ -95,8 +95,8 @@ switch size(val,1)
                 
             otherwise
                 
-                fprintf('The number of columns in the val vector should be 1 or 3, depending if it reperesents a scalar or vector field.\n');
-                fprintf('A VTK file containing just mesh information was written.\n');     
+                fprintf(stderr,'The number of columns in the val vector should be 1 or 3, depending if it reperesents a scalar or vector field.\n');
+                fprintf(stderr,'A VTK file containing just mesh information was written.\n');     
                 
         end % switch size(val,2)
         
@@ -126,15 +126,15 @@ switch size(val,1)
                 
             otherwise
                 
-                fprintf('The number of columns in the val vector should be 1 or 3, depending if it reperesents a scalar or vector field.\n');
-                fprintf('A VTK file containing just mesh information was written.\n');
+                fprintf(stderr,'The number of columns in the val vector should be 1 or 3, depending if it reperesents a scalar or vector field.\n');
+                fprintf(stderr,'A VTK file containing just mesh information was written.\n');
                 
         end % switch size(val,2)
         
     otherwise
         
-        fprintf('The number of rows of the val vector did not match the number of rows in vtx or in tet.\n');
-        fprintf('A VTK file containing just mesh information was written.\n');
+        fprintf(stderr,'The number of rows of the val vector did not match the number of rows in vtx or in tet.\n');
+        fprintf(stderr,'A VTK file containing just mesh information was written.\n');
         
 end % switch size(val,1)
 
