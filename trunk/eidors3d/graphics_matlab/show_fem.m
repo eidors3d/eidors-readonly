@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.3 2004-07-20 14:33:26 aadler Exp $
+% $Id: show_fem.m,v 1.4 2004-07-22 11:57:53 billlion Exp $
 
 % if we have an img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -23,10 +23,10 @@ else
 end
 
 if nargin>1
-   if     length(options)>0 && options(1)~=0
+   if     length(options)>0 & options(1)~=0
       show_electrodes(mdl);
    end
-   if length(options)>1 && options(2)~=0
+   if length(options)>1 & options(2)~=0
       if ~exist('img')
          error('need "image" object to specify options(2)');
       end

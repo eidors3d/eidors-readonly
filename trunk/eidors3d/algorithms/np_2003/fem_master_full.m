@@ -25,7 +25,7 @@ isOctave= exist('OCTAVE_VERSION');
    [E] = ref_master(Ef,vtx,gnd_ind);  
    
 % octave currently does not have symmmd
-if isOctave || all(sym == '{n}')
+if isOctave | all(sym == '{n}')
     pp = 1:size(E,1);
 elseif sym == '{y}'
     pp = symmmd(E);
