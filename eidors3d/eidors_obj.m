@@ -54,7 +54,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % because the broken Matlab syntax does not allow persistent
 % variables to be passed to subfunctions
 % global eidors_objects
-% (Short circuit boolean removed for compatibility with Matlab 6.x WRBL 22/02/2004)
+% (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
 if nargin==0 | ~isstr(type)
    error('cannot call eidors_obj with no arguments');
