@@ -30,11 +30,14 @@ function obj_id= eidors_obj(type,name, varargin );
 % USAGE: to cache values
 %     obj  = eidors_obj('cache',obj, cacheprop1,value1, ...)
 %
-% this will set the values of cached properties of the object.
+% this will get or set the values of cached properties of the object.
 %
-%    example:
+%    example: % set jacobian
 %             eidors_obj('cache',fwd_mdl, 'jacobian', J):
-%   
+%
+%    example: % get jacobian or '[]' if not set
+%             J= eidors_obj('cache',fwd_mdl, 'jacobian'):
+%
 %
 % USAGE: as an accessor
 %     obj  = eidors_obj('get',objid, prop1);
@@ -100,14 +103,34 @@ function obj = set_obj( obj, varargin );
    eidors_objects= setfield( eidors_objects, obj_id, obj);
    obj = getfield( eidors_objects, obj_id );
      
+function val= cache_obj( obj, prop, value );
+   global eidors_objects
+   obj_id= test_exist( obj );
+
+   if nargin==3     %set cache
+      eidors_objects= setfield( eidors_objects, ...
+                      obj_id, 'cache', prop, value );
+      val= ''; % to satisfy matlab errors
+   elseif nargin==2 %get from cache
+      obj= getfield( eidors_objects, obj_id);
+      if isfield( obj.cache, prop );
+         val= getfield( obj, 'cache', prop );
+      else
+         val= [];
+      end
+   else
+      error('nargin wrong calling cache_obj');
+   end
+
 function obj= new_obj( type, name, varargin );
    global eidors_objects
-   if ~exist('eidors_objects.idnum'); 
+   if ~isfield(eidors_objects,'idnum'); 
        eidors_objects.idnum = 10000001;
    end
    obj_id =  sprintf('obj_%07d', eidors_objects.idnum);
    eidors_objects.idnum  = eidors_objects.idnum + 1;
 
+   % if called with obj, work as a copy-constructor
    if isstruct(name)
       obj= name;
       if isfield(obj,'name')
