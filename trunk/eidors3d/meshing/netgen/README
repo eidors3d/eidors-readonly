@@ -1,0 +1,12 @@
+This directory contains some files to help make meshes with
+Netgen http://www.hpfem.jku.at/netgen/
+
+tankmodel.m generates a netgen constructive solid geometry file
+of a cylinder with hemispheres intersected to make electrodes
+(not the best way to add electrodes but it works). Its a script so editto change no of electrodes etc.
+
+This can be meshed with netgen, and the resulting mesh saved in 'Neutral' format, which is easy to read in Matlab. 
+
+readngneutral.m is a function to read the neutral file in to arrays 
+
+Bill Lionheart 23/07/2004
