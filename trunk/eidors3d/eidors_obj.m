@@ -38,12 +38,6 @@ function obj_id= eidors_obj(type,name, varargin );
 %    example: % get jacobian or '[]' if not set
 %             J= eidors_obj('cache',fwd_mdl, 'jacobian'):
 %
-% USAGE: as an accessor
-%   gets the version of obj from the eidors_obj database
-%     obj  = eidors_obj('get',obj );
-%  or
-%     obj  = eidors_obj( obj );
-%
 % USAGE: to log status messages
 %     obj  = eidors_obj('msg', message, loglevel )
 %
@@ -67,9 +61,7 @@ end
 if nargin==1
    obj_id= get_obj( name );
 elseif nargin>1
-   if     strcmp( type, 'get')
-      obj_id= get_obj( name, varargin{:} );
-   elseif strcmp( type, 'set')
+   if     strcmp( type, 'set')
       obj_id= set_obj( name, varargin{:} );
    elseif strcmp( type, 'cache')
       obj_id= cache_obj( name, varargin{:} );
@@ -78,23 +70,8 @@ elseif nargin>1
    end
 end
 
-function obj_id= test_exist( obj );
-   global eidors_objects
-   obj_id = obj.id;   
-   if ~isfield( eidors_objects , obj_id)
-      error(sprintf('EIDORS object %s does not exist', obj_id));
-   end
-
-function obj = get_obj( obj, varargin );
-   global eidors_objects
-   obj_id= test_exist( obj );
-
-%   obj = eidors_objects.( obj_id );
-    obj = getfield(eidors_objects, obj_id )
-
 function obj = set_obj( obj, varargin );
    global eidors_objects
-   obj_id= test_exist( obj );
 
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
@@ -110,11 +87,20 @@ function obj = set_obj( obj, varargin );
    for idx= 1:2:nargin-1
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
+   obj_id= calc_obj_id( obj );
+      
+% set the obj_id into the obj after calculating the hash value
+   obj.id= obj_id;
    eval(sprintf('eidors_objects.%s=obj;',obj_id));
 
 function val= cache_obj( obj, prop, value );
    global eidors_objects
-   obj_id= test_exist( obj );
+
+   try
+      obj_id= obj.id;
+   catch
+      error('EIDORS object does not exist');
+   end
 
    if nargin==3     %set cache
 %     eidors_objects.( obj_id ).cache.( prop ) = value;
@@ -133,16 +119,7 @@ function val= cache_obj( obj, prop, value );
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
-   try
-      obj_id =  sprintf('obj_%07d', eidors_objects.idnum);
-   catch
-      eidors_objects.idnum= 10000001;
-      obj_id= 'obj_10000001';
-   end
 
-   eidors_objects.idnum  = eidors_objects.idnum + 1;
-
-   % if called with obj, work as a copy-constructor
    if isstruct(name)
       obj= name;
       try
@@ -153,8 +130,8 @@ function obj= new_obj( type, name, varargin );
    end
 
    obj.type = type;
-   obj.id   = obj_id;
    obj.name = name;
+   obj_id= calc_obj_id( obj );
 
    eval(sprintf('eidors_objects.%s=obj;', obj_id)); % create in store
    obj= set_obj(obj, varargin{:} );
@@ -170,11 +147,12 @@ function obj= new_obj( type, name, varargin );
 % the sha1 hash with sha1sum, and delete the file. Given a modern
 % OS, file data should only be cached in memory. The largest overhead
 % will be for the instantiation of the process
-function obj_id= obj_hash( var )
+function obj_id= calc_obj_id( var )
    global eidors_objects;
 
    tmpnam= [tempname ,'.mat'];
-   save('-v6',tmpnam,var);
+   save(tmpnam,'var','-v6');
+   obj_id= matrix_id(tmpnam);
    delete(tmpnam);
 
 
