@@ -1,6 +1,6 @@
 function image= np_inv_solve( inv_model, data1, data2)
 % NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
-% $Id: np_inv_solve.m,v 1.2 2004-07-10 03:58:19 aadler Exp $
+% $Id: np_inv_solve.m,v 1.1 2004-07-17 15:18:16 aadler Exp $
 
 % calculate parameters from input structures
 fwd_model= inv_model.fwd_model;
