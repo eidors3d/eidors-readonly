@@ -1,12 +1,11 @@
-function image_levels(fig_handle, img, levels )
+function image_levels(img, levels )
 % IMAGE_LEVELS(fig_handle, img ) show slices at levels of an image
 % fig_handle = handle to a figure
 % img = EIDORS3D image struct
 % levels = array of vertical levels
 
-h1= fig_handle;
-set(h1,'NumberTitle','off');
-set(h1,'Name', img.name);
+set(gcf,'NumberTitle','off');
+set(gcf,'Name', img.name);
 vtx=  img.fwd_model.nodes;
 simp= img.fwd_model.elems;
 img = img.elem_data;
