@@ -17,9 +17,9 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.sym      => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
-% $Id: np_fwd_parameters.m,v 1.3 2005-02-23 16:12:18 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.4 2005-02-23 16:47:54 aadler Exp $
 
-param = eidors_obj('cache', fwd_model, 'np_2003_fwd_param');
+param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
 if ~isempty(param)
    eidors_msg('np_fwd_parameters: using cached value', 3);
@@ -28,7 +28,7 @@ end
 
 param = calc_param( fwd_model );
 
-eidors_obj('cache', fwd_model, 'np_2003_fwd_param', param);
+eidors_obj('set-cache', fwd_model, 'np_2003_fwd_param', param);
 eidors_msg('np_fwd_parameters: setting cached value', 3);
 
 % perform actual parameter calculation

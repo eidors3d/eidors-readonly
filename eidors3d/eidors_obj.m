@@ -28,15 +28,26 @@ function obj_id= eidors_obj(type,name, varargin );
 %             eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
 %
 % USAGE: to cache values
-%     obj  = eidors_obj('cache',obj, cacheprop1,value1, ...)
+%          eidors_obj('set-cache',obj, cacheprop1,value1, dep_objs, ...)
+%     obj= eidors_obj('get-cache',obj, cacheprop1, dep_objs, ...)
 %
 % this will get or set the values of cached properties of the object.
 %
 %    example: % set jacobian
-%             eidors_obj('cache',fwd_mdl, 'jacobian', J):
+%             eidors_obj('set-cache',fwd_mdl, 'jacobian', J):
 %
 %    example: % get jacobian or '[]' if not set
-%             J= eidors_obj('cache',fwd_mdl, 'jacobian'):
+%             J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):
+%
+% However, in some cases, such as the Jacobian, the value depends
+% on other objects, such as the image background. In this case, use
+%
+%    example: % set jacobian
+%             eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):
+%
+%    example: % get jacobian or '[]' if not set
+%             J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
+%
 %
 % USAGE: to log status messages
 %     obj  = eidors_obj('msg', message, loglevel )
@@ -44,7 +55,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.14 2005-02-23 16:12:31 aadler Exp $
+% $Id: eidors_obj.m,v 1.15 2005-02-23 16:47:59 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -64,8 +75,11 @@ if nargin==1
 elseif nargin>1
    if     strcmp( type, 'set')
       obj_id= set_obj( name, varargin{:} );
-   elseif strcmp( type, 'cache')
-      obj_id= cache_obj( name, varargin{:} );
+   elseif strcmp( type, 'get-cache')
+      obj_id= get_cache_obj( name, varargin{:} );
+   elseif strcmp( type, 'set-cache')
+      set_cache_obj( name, varargin{:} );
+      obj_id= []; % quiet matlab errors
    else
       obj_id= new_obj( type, name, varargin{:} );
    end
@@ -107,9 +121,17 @@ function obj = set_obj( obj, varargin );
       eval(sprintf('eidors_objects.%s=obj;',obj_id));
    end
 
-function val= cache_obj( obj, prop, value );
+function val= get_cache_obj( obj, prop, dep_obj1 );
    global eidors_objects
-   val= ''; % to satisfy matlab errors
+   try
+%     val= eidors_objects.( obj_id ).cache.( prop );
+      val = eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
+   catch
+      val= [];
+   end
+
+function set_cache_obj( obj, prop, value, dep_obj1 );
+   global eidors_objects
 
    try
       obj_id= obj.id;
@@ -117,20 +139,8 @@ function val= cache_obj( obj, prop, value );
       return; % Can't cache onto non-existant objects
    end
 
-
-   if nargin==3     %set cache
-%     eidors_objects.( obj_id ).cache.( prop ) = value;
-      eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
-   elseif nargin==2 %get from cache
-      try
-%       val= eidors_objects.( obj_id ).cache.( prop );
-        val = eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
-      catch
-         val= [];
-      end
-   else
-      error('nargin wrong calling cache_obj');
-   end
+%  eidors_objects.( obj_id ).cache.( prop ) = value;
+   eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
