@@ -14,6 +14,11 @@ function [V] = forward_solver(vtx,E,I,tol,pp,V);
 %tol = The tolerance in the forward solution, e.g. 1e-5
 
 
+% octave does not support advanced CG methods currently
+if exist('OCTAVE_VERSION')
+   V= E\I;
+   return;
+end
 
 
 % d: number of current patterns

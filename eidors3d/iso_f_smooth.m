@@ -18,9 +18,11 @@ if w<0
    error('Weight must be possitive');
 end
 
-ndsrch = [simp,(1:size(simp,1))'];
+nsimp= size(simp,1);
+ndsrch = [simp,(1:nsimp)'];
 
-Reg = spalloc(size(simp,1),size(simp,1),20*size(simp,1));
+%Reg = spalloc(nsimp,nsimp,20*nsimp);
+Regv= zeros(0,3);
 
 for i=1:size(ndsrch,1)
    
@@ -74,7 +76,8 @@ for i=1:size(ndsrch,1)
    Xdif = setdiff(Xsimp,i);
    
    if deg == 1
-   Reg(i,Xdif) = -1/w;
+%  Reg(i,Xdif) = -1/w;
+      Regv= [Regv;[ i, Xdif, -1/w ] ];
    end
 
    if deg == 2
@@ -86,7 +89,8 @@ for i=1:size(ndsrch,1)
                        vtx(Intr(h+1),1),vtx(Intr(h+1),2),vtx(Intr(h+1),3));
           dd = dd+da;
       end
-   Reg(i,Xdif(p)) = -w/dd; 
+%  Reg(i,Xdif(p)) = -w/dd; 
+      Regv= [Regv;[ i, Xdif(p), -w/dd ] ];
    end
    end
 
@@ -95,13 +99,16 @@ for i=1:size(ndsrch,1)
        Intr = intersect(t_id,simp(Xdif(p),:)); % 3 long vector
        [ta] = triarea3d(vtx(Intr,:));
     end
-   Reg(i,Xdif) = -w/ta;
+%  Reg(i,Xdif) = -w/ta;
+      oo= ones(length(Xdif),1);
+      Regv= [Regv;[ i*oo, Xdif(:), -w/ta*oo ] ];
    end
-        
-   Reg(i,i) = abs(sum(Reg(i,:)));
    
 end %for i'th simplex
 
+% TODO: This is not quite the same as the previous version: Why?
+Reg=  sparse( Regv(:,1), Regv(:,2), Regv(:,3), nsimp, nsimp);
+Reg = Reg + sparse(1:nsimp, 1:nsimp, abs(sum(Reg)) );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

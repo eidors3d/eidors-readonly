@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.2 2004-07-02 14:07:13 aadler Exp $
+% $Id: demo_real.m,v 1.3 2004-07-05 04:20:00 aadler Exp $
 
 clear; 
 %clc;
@@ -7,13 +7,16 @@ clear;
 isOctave= exist('OCTAVE_VERSION');
 
 datareal= 'datareal.mat';
+datacom=  'datacom.mat';
 if isOctave
     datareal= file_in_loadpath(datareal);
+    datacom=  file_in_loadpath(datacom);
+    page_screen_output= 0;
 end
 
 warning('off');
 disp('This is a demo for reconstructing conductivity changes')
-disp(sprintf('\n'))
+disp(sprintf('\n'));
 
 load(datareal,'srf','vtx','simp');
 %srf : the boundary surfaces (triangles)
@@ -77,27 +80,29 @@ pause(2);
 
 
 mat=mat_ref;
-load datacom A B %Indices of the elements to represent the inhomogeneity
+load( datacom ,'A','B') %Indices of the elements to represent the inhomogeneity
 %figure; [mat,grp] = set_inho(srf,simp,vtx,mat_ref,1.1); 
 sA = mat_ref(A(1))+0.15;
 sB = mat_ref(B(1))-0.20;
-sprintf ('This at %f ',sA)
+fprintf ('This at %f ',sA)
 mat(A) = sA;
 mat(B) = sB;
 
+if ~isOctave
 figure; 
 trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
-axis image;
+axis('image');
 set(gcf,'Colormap',[0 0 0]);
-hidden off;
+hidden('off');
 hold on;
 repaint_inho(mat,mat_ref,vtx,simp); 
-camlight left;
-lighting flat;
+camlight('left');
+lighting('flat');
 drawnow;
 
 pause(2);
 close;
+end
 
 disp('Simulating measurements based on ')
 disp('the complete electrode model')
@@ -139,9 +144,7 @@ tfac = 1e-8;
 
 sol = (J'*J +  tfac*Reg'*Reg)\J' * dvaG;
 
-v = version;
-
-if str2num(v(1)) > 5
+if ~isOctave
 
 h1 = figure;
 set(h1,'NumberTitle','off');
@@ -166,32 +169,6 @@ subplot(2,3,5); [fc] = slicer_plot_n(0.83,sol,vtx,simp,fc); view(2); grid; color
 subplot(2,3,6); [fc] = slicer_plot_n(0.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
 disp('Done')
 
-else
-   
-h1 = figure; 
-set(h1,'NumberTitle','off');
-set(h1,'Name','Simulated inhomogeneities');
-trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
-axis image;
-set(gcf,'Colormap',[0 0 0]);
-hidden off;
-hold on;
-repaint_inho(mat,mat_ref,vtx,simp); 
-camlight left;
-lighting flat;
-drawnow;
-   
-h2 = figure;
-set(h2,'NumberTitle','off');
-set(h2,'Name','Reconstructed conductivity distribution');
-subplot(2,3,1); [fc] = slicer_plot(2.63,sol,vtx,simp); view(2); grid; colorbar; axis off; title('z=2.63'); 
-subplot(2,3,2); [fc] = slicer_plot(2.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.10'); 
-subplot(2,3,3); [fc] = slicer_plot(1.72,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=1.72'); 
-subplot(2,3,4); [fc] = slicer_plot(1.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=1.10'); 
-subplot(2,3,5); [fc] = slicer_plot(0.83,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.83');
-subplot(2,3,6); [fc] = slicer_plot(0.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
-disp('Done')
-   
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -87,7 +87,7 @@ LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns);
 D = LocJac * D0;
 
 
-Vols = abs(dj) / 6;
+Vols = abs(dj(:)) / 6;
 
 materials = length(a);
 volumes = size(Vols);
