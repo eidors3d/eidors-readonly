@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.2 2004-07-18 02:46:40 aadler Exp $
+% $Id: demo_real_test2.m,v 1.3 2004-07-18 03:52:13 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -23,8 +23,9 @@ demo_mdl.name = 'demo real model';
 demo_mdl.nodes= vtx;
 demo_mdl.elems= simp;
 demo_mdl.boundary= dubs3( simp );
-demo_mdl.solve= 'np_fwd_solve';
-demo_mdl.jacobian= 'np_calc_jacobian';
+demo_mdl.solve=      'np_fwd_solve';
+demo_mdl.jacobian=   'np_calc_jacobian';
+demo_mdl.system_mat= 'np_calc_system_mat';
 
 clear vtx simp
 
@@ -116,9 +117,12 @@ load(drt);
 
 compare_tol( drt.voltageH, inhomg_data.meas, 'voltageH' )
 compare_tol( drt.sol, demo_img.elem_data, 'sol' )
+
+J= calc_jacobian( demo_mdl, homg_img );
+Jcolsby100=J(:,1:100:size(J,2));
+compare_tol( drt.Jcolsby100, Jcolsby100, 'Jcolsby100' )
+
 %Diag_Reg_012= [diag(Reg,0),[diag(Reg,1);0],[diag(Reg,2);0;0]];
-%Jcolsby100=J(:,1:100:size(J,2));
-%compare_tol( drt.Jcolsby100, Jcolsby100, 'Jcolsby100' )
 %compare_tol( drt.Diag_Reg_012, Diag_Reg_012, 'Diag_Reg_012' )
 
 ok=1;

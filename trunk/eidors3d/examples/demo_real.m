@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.14 2004-07-18 02:46:40 aadler Exp $
+% $Id: demo_real.m,v 1.15 2004-07-18 03:52:13 aadler Exp $
 
 clear; 
 clc;
@@ -31,8 +31,9 @@ demo_mdl.name = 'demo real model';
 demo_mdl.nodes= vtx;
 demo_mdl.elems= simp;
 demo_mdl.boundary= dubs3( simp );
-demo_mdl.solve= 'np_fwd_solve';
-demo_mdl.jacobian= 'np_calc_jacobian';
+demo_mdl.solve=      'np_fwd_solve';
+demo_mdl.jacobian=   'np_calc_jacobian';
+demo_mdl.system_mat= 'np_calc_system_mat';
 
 clear vtx simp
 
