@@ -1,18 +1,20 @@
 clear; 
 clc;
-warning off;
+warning('off');
 disp('This is a demo for reconstructing conductivity changes')
 disp(sprintf('\n'))
 
-load datareal srf vtx simp;
+load datareal.mat srf vtx simp;
 %srf : the boundary surfaces (triangles)
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
 
+if ~exist('OCTAVE_VERSION')
 trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
-axis image;
+axis('image');
 set(gcf,'Colormap',[0 0 0]);
 hold on;
+end
 
 disp('This is a cylindrical mesh with homogeneous conductivity distribution of 1')
 disp('Wait to attach the electrodes')
@@ -20,7 +22,7 @@ disp(sprintf('\n'))
 
 pause(2);
 
-load datareal sels;
+load datareal.mat sels;
 %sels :Index in srf matrix denoting the faces to be assigned as electrodes
 
   for u=1:size(sels)
@@ -28,7 +30,7 @@ load datareal sels;
   end
   
 hidden off;
-load datareal gnd_ind elec zc protocol no_pl sym;
+load datareal.mat gnd_ind elec zc protocol no_pl sym;
 %elec : The electrodes matrix. 
 %np_pl : Number of electrode planes (in planar arrangements)
 %protocol : Adjacent or Opposite or Customized.
