@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.5 2004-07-22 03:32:37 aadler Exp $
+% $Id: demo_real_test3.m,v 1.1 2004-07-22 03:32:37 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -18,13 +18,13 @@ end
 
 load(datareal,'vtx','simp');
 
-demo_mdl.name = 'demo real model';
-demo_mdl.nodes= vtx;
-demo_mdl.elems= simp;
-demo_mdl.boundary= dubs3( simp );
-demo_mdl.solve=      'np_fwd_solve';
-demo_mdl.jacobian=   'np_calc_jacobian';
-demo_mdl.system_mat= 'np_calc_system_mat';
+demo_mdl= eidors_obj('model', 'Demo real model', ...
+                     'nodes', vtx, ...
+                     'elems', simp, ...
+                     'boundary', dubs3( simp ), ...
+                     'solve',      'np_fwd_solve', ...
+                     'jacobian',   'np_calc_jacobian', ...
+                     'system_mat', 'np_calc_system_mat' );
 
 clear vtx simp
 
@@ -32,14 +32,15 @@ clear vtx simp
 
 load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 
-demo_mdl.gnd_node= gnd_ind;
+demo_mdl= eidors_obj('set', demo_mdl, 'gnd_node', gnd_ind);
+
 for i=1:length(zc)
     demo_mdl.electrode(i).z_contact= zc(i);
     demo_mdl.electrode(i).nodes=     elec(i,:);
 end
-
-% TODO: generalize the way that protocol sym no_pl are managed
 demo_mdl.misc.sym     = sym;
+
+demo_mdl= eidors_obj('set', demo_mdl);
 
 % create FEM model stimulation and measurement patterns
 
@@ -76,24 +77,23 @@ demo_mdl= eidors_obj('fwd_model', demo_mdl);
 
 % simulate data for homogeneous medium
 
-homg_img.name = 'homogeneous image';
-homg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
-homg_img.fwd_model= demo_mdl;
+mat= ones( size(demo_mdl.elems,1) ,1);
 
-homg_img = eidors_obj('image', homg_img);
+homg_img= eidors_obj('image', 'homogeneous image', ...
+                     'elem_data', mat, ...
+                     'fwd_model', demo_mdl );
 
 homg_data=fwd_solve( demo_mdl, homg_img);
 
 % simulate data for inhomogeneous medium
 
-mat= ones( size(demo_mdl.elems,1) ,1);
 load( datacom ,'A','B') %Indices of the elements to represent the inhomogeneity
 mat(A)= mat(A)+0.15;
 mat(B)= mat(B)-0.20;
 
-inhomg_img.name = 'inhomogeneous image';
-inhomg_img.elem_data= mat;
-inhomg_img.fwd_model= demo_mdl;
+inhomg_img= eidors_obj('image', 'inhomogeneous image', ...
+                       'elem_data', mat, ...
+                       'fwd_model', demo_mdl );
 clear A B mat
 inhomg_img = eidors_obj('image', inhomg_img );
 
@@ -102,14 +102,15 @@ inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 % create inverse model
 
 % create an inv_model structure of name 'demo_inv'
-demo_inv.name= 'Nick Polydorides EIT inverse';
-demo_inv.solve=       'np_inv_solve';
-demo_inv.hyperparameter= 1e-8;
+demo_inv= eidors_obj('inv_model', 'Nick Polydorides EIT inverse', ...
+'solve',                  'np_inv_solve', ...
+'hyperparameter',         1e-8, ...
+'reconst_type',           'differential', ...
+'fwd_model',               demo_mdl);
+
 demo_inv.image_prior.func= 'np_calc_image_prior';
-demo_inv.image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
-demo_inv.reconst_type= 'differential';
-demo_inv.fwd_model= demo_mdl;
-demo_inv= eidors_obj('inv_model', demo_inv);
+demo_inv.image_prior.parameters= [3 1];
+demo_inv= eidors_obj('set', demo_inv);
 
 % solve inverse model
 

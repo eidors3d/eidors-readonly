@@ -48,7 +48,7 @@ function obj_id= eidors_obj(type,name, varargin );
 
 % TODO: 
 %   1. add code to delete old objects
-%   2. octave support
+%   2. accessors and setters of the form 'prop1.subprop1'
 
 % FIXME: this variable must be global, rather than persistent
 % because the broken Matlab syntax does not allow persistent
@@ -85,9 +85,9 @@ function obj = get_obj( obj, varargin );
    obj_id= test_exist( obj );
 
    if nargin==1
-      obj = getfield( eidors_objects, obj_id );
+      obj = eidors_objects.( obj_id );
    elseif nargin==2
-      obj = getfield( eidors_objects, obj_id, varargin );
+      obj = eidors_objects.( obj_id ).( varargin{1} );
    else
       error('get_obj cannot interpret input');
    end
@@ -96,30 +96,26 @@ function obj = set_obj( obj, varargin );
    global eidors_objects
    obj_id= test_exist( obj );
 
-% HACK: since Matlab does not have pointers, we need to 
-% load in the object, set it's new values and then
-% push it back into the store
-   obj= setfield( obj, 'cache', []); %clear cache
+   eidors_objects.( obj_id ) = obj;
+   eidors_objects.( obj_id ).cache= []; %clear cache
    for idx= 1:2:nargin-1
-      obj= setfield( obj, varargin{idx}, varargin{idx+1});
+      eidors_objects.( obj_id ).( varargin{idx} )= ...
+                                  varargin{idx+1};
    end
 
-   eidors_objects= setfield( eidors_objects, obj_id, obj);
-   obj = getfield( eidors_objects, obj_id );
+   obj = eidors_objects.( obj_id );
      
 function val= cache_obj( obj, prop, value );
    global eidors_objects
    obj_id= test_exist( obj );
 
    if nargin==3     %set cache
-      eidors_objects= setfield( eidors_objects, ...
-                      obj_id, 'cache', prop, value );
+      eidors_objects.( obj_id ).cache.( prop ) = value;
       val= ''; % to satisfy matlab errors
    elseif nargin==2 %get from cache
-      obj= getfield( eidors_objects, obj_id);
-      if isfield( obj.cache, prop );
-         val= getfield( obj, 'cache', prop );
-      else
+      try
+         val= eidors_objects.( obj_id ).cache.( prop );
+      catch
          val= [];
       end
    else
@@ -128,7 +124,7 @@ function val= cache_obj( obj, prop, value );
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
-   if ~isfield(eidors_objects,'idnum'); 
+   if isempty(eidors_objects)
        eidors_objects.idnum = 10000001;
    end
    obj_id =  sprintf('obj_%07d', eidors_objects.idnum);
@@ -137,9 +133,9 @@ function obj= new_obj( type, name, varargin );
    % if called with obj, work as a copy-constructor
    if isstruct(name)
       obj= name;
-      if isfield(obj,'name')
+      try
          name= obj.name;
-      else
+      catch
          name= 'unknown';
       end
    end
