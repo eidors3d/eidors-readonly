@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.18 2004-07-21 19:37:09 aadler Exp $
+% $Id: demo_real.m,v 1.19 2004-07-21 21:09:14 aadler Exp $
 
 clear; 
 clc;
@@ -146,8 +146,9 @@ demo_inv.solve=       'np_inv_solve';
 demo_inv.hyperparameter= 1e-8;
 demo_inv.image_prior.func= 'np_calc_image_prior';
 demo_inv.image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
-demo_inv.type= 'differential';
+demo_inv.reconst_type= 'differential';
 demo_inv.fwd_model= demo_mdl;
+demo_inv= eidors_obj('inv_model', demo_inv);
 
 disp('step 8: solve inverse model');
 

@@ -11,6 +11,12 @@ function image_prior = calc_image_prior( inv_model )
 % image_prior   is the calculated image prior
 % inv_model    is an inv_model structure
 %
-% $Id: calc_image_prior.m,v 1.1 2004-07-18 04:16:51 aadler Exp $
+% $Id: calc_image_prior.m,v 1.2 2004-07-21 21:09:14 aadler Exp $
 
-image_prior= feval( inv_model.image_prior.func, inv_model);
+image_prior = eidors_obj('cache', inv_model, 'image_prior');
+
+if isempty(image_prior)
+   image_prior= feval( inv_model.image_prior.func, inv_model);
+   disp('calc_image_prior: setting cached value');
+   eidors_obj('cache', inv_model, 'image_prior', image_prior);
+end

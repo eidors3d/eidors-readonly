@@ -6,15 +6,15 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.5 2004-07-18 04:16:50 aadler Exp $
+% $Id: np_inv_solve.m,v 1.6 2004-07-21 21:09:05 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 p= np_fwd_parameters( fwd_model );
 
 % calc jacobian with homogeneous background
-homg_img.type = 'image';
-homg_img.elem_data= ones( p.n_elem ,1);
-homg_img.fwd_model= fwd_model;
+homg_img= eidors_obj('image', 'homog image from np_inv_solve', ...
+                     'elem_data', ones( p.n_elem ,1), ...
+                     'fwd_model', fwd_model );
 
 J = calc_jacobian( fwd_model, homg_img);
 
