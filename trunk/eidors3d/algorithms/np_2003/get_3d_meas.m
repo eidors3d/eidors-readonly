@@ -51,43 +51,43 @@ for w=1:size(Vm,2) %For each column of Vm
    
    for vv = 1:el_pp:el_no %i.e. 1 17 33 49 for 4 planes of 16 electrodes
    
-   	for t=vv:vv+(el_pp-1)-1 %t=1:15
+      for t=vv:vv+(el_pp-1)-1 %t=1:15
       
        	if Ib(t,w) == 0  & Ib(t+1,w) == 0   %Electrode not in the drive pair
          
              voltageH = [voltageH; (this_inj(t)-this_inj(t+1))];
              indH = [indH;[t , t+1]];
              cn = cn+1;
-        	end
+        end
         
-         if t == vv+(el_pp-1)-1 & Ib(vv,w) == 0 & Ib(t+1,w) == 0
+        if t == vv+(el_pp-1)-1 & Ib(vv,w) == 0 & Ib(t+1,w) == 0
  
-			 	voltageH = [voltageH; (this_inj(t+1))-this_inj(vv)]; %or is it vv=1;
+             voltageH = [voltageH; (this_inj(t+1))-this_inj(vv)]; %or is it vv=1;
              indH = [indH;[t+1, vv]];
              cn = cn+1;
-         end
+        end
           
-       end %for t -Measurements of the one plane
+      end %for t -Measurements of the one plane
        
-    end %for vv -Measurements for all electrode planes
+   end %for vv -Measurements for all electrode planes
     
-    df = [df;cn];
+   df = [df;cn];
    
- voltageV = [];
- indV = [];
- 
- Y = reshape(X,el_no,1);
- 
- 
-    cn = 0;
-    wc = w;
+   voltageV = [];
+   indV = [];
     
-    
+   Y = reshape(X,el_no,1);
+ 
+ 
+   cn = 0;
+   wc = w;
+   
+   
    this_inj = Vm(:,wc); %(no_of_electrodes x 1) vector
-   	
-    for ee = 1:no_pl:el_no
+       
+   for ee = 1:no_pl:el_no
          
-         this_chunk = Y(ee:ee+no_pl-1);
+        this_chunk = Y(ee:ee+no_pl-1);
          
         for jj=1:length(this_chunk)-1 
          
