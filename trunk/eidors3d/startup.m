@@ -1,6 +1,6 @@
 % Script to start EIDORS3D
 % Set path and variables correctly
-% $Id: startup.m,v 1.5 2004-07-20 00:39:50 aadler Exp $
+% $Id: startup.m,v 1.6 2004-07-22 03:32:36 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -14,3 +14,4 @@ addpath([HOMEDIR, '/graphics_vtk']);
 addpath([HOMEDIR, '/tests']);
 
 clear HOMEDIR;
+

@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.19 2004-07-21 21:09:14 aadler Exp $
+% $Id: demo_real.m,v 1.20 2004-07-22 03:32:37 aadler Exp $
 
 clear; 
 clc;
@@ -63,7 +63,7 @@ end
 
 demo_mdl.misc.sym     = sym;
 
-demo_mdl= eidors_obj('model', demo_mdl); % create object
+demo_mdl= eidors_obj('fwd_model', demo_mdl); % create object
 
 disp('step 3: create FEM model stimulation and measurement patterns');
 
