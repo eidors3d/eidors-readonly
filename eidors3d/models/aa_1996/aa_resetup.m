@@ -1,7 +1,5 @@
 function param= aa_resetup(reponse,r1,r2,r3)
 % RESETUP: prepare fwd_model for EIT image reconstruction
-% prepare les variables necessaire pour 
-% fonctionner res.m, grille.m, et imgr.m dynproj.m
 %
 % format  res_setup(' (abcd)(012345)[-|+][x] ',
 %                     position_initial,
@@ -10,214 +8,41 @@ function param= aa_resetup(reponse,r1,r2,r3)
 % if string begins with - then no verbose output
 %
 % position_initial = [0 2] DEFAUT
-% [x] --> ne pas calculer DVV
 %
 % (c) 1993-2002 A.Adler
-% $Id: aa_resetup.m,v 1.1 2004-07-20 00:39:50 aadler Exp $
+% $Id: aa_resetup.m,v 1.2 2004-07-20 13:34:27 aadler Exp $
 
-VERBOSE=1;
+inp = proc_input_args( nargin, reponse );
 
-if nargin==0
-  reponse=input('quelle geometrie,position, etc.(''?'' pour aide): ','s'); 
+if inp.selec >= 'c' && inp.selec <= 'f'
+   rings    = inp.selec-abs('c')+1
+elseif  inp.selec>='i'
+   rings    =  8;
+elseif  inp.selec>='k'
 
-  if reponse=='?'
-    fprintf(['preparer quelle geometrie\n' ...
-             ' a: tank with 120 elements    0: circ tank.\n' ...
-             ' b: tank with 216 elements    1: thorax lev1 \n' ...
-             ' c: tank with 64 elements     2: thorax lev2 \n' ...
-             ' d: tank with 256 elements    3: thorax lev3 \n' ...
-             ' e: tank with 576 elements    4: thorax lev4 \n' ...
-             ' f: tank with 1024 elements   5: thorax lev5 \n' ...
-             ' i: tank with 352 elements    9: thorax of dog\n'... 
-             ' j: tank with 86 elements     \n'... 
-             ' m: bassin 3D a 6*64 elem     \n' ...
-             ' n: bassin 3D a 6*256 elem    \n' ...
-             ' o: bassin 3D a 6*576 elem    \n' ...
-             ' p: bassin 3D a 6*1024 elem   \n' ...
-             ' s: bassin 3D a 12*64 elem    \n' ...
-             ' t: bassin 3D a 12*256 elem   \n' ...
-             '\nexemple> a0,0 1 16,1' ...
-             ' a0= geometrie,0 1 16=[sce puit #electr],1= elliptique' ]); 
-    reponse=input('votre choix: ','s'); 
-  end
-
-elseif nargin==2
-  reponse=[reponse ',' r1];
-elseif nargin==3
-  reponse=[reponse ',' r1 ',' r2];
-elseif nargin==4
-  reponse=[reponse ',' r1 ',' r2 ',' r3];
-end
-
-if reponse(1)=='-'
-  VERBOSE=0;
-  reponse = reponse(2:length(reponse));
-end
-
-i=[ find(reponse==','), find(reponse=='/')];
-
-if length(i)==0
-  ellip=[];
-  pos_i=[];
-elseif length(i)==1
-  ellip=[];
-  pos_i=sscanf(reponse(i+1:length(reponse)),'%f')';
-  reponse=reponse(1:i-1);
-elseif length(i)==2
-  ellip=sscanf(reponse(i(2)+1:length(reponse)),'%f')';
-  pos_i=sscanf(reponse(i(1)+1:i(2)-1),'%f')';
-  reponse=reponse(1:i(1)-1);
-else
-  error('parametres non comprises');
-end
-
-
-  if isempty(ellip)
-    if reponse(2)=='9'
-      ellip=1.2;
-    else
-      ellip=1;
-    end;
-  end
-  if VERBOSE ; fprintf('ellip= %2.2f\n',ellip); end
-
-  if length(pos_i)==0
-    if any( reponse(2)== '123459' )
-      pos_i= [8 9];
-    else
-      pos_i= [0 1];
-    end %if reponse
-    elec=16;
-  elseif length(pos_i)==1
-    pos_i= pos_i+[0 1];
-    elec=16;
-  elseif length(pos_i)==2
-    elec= 16;
-  elseif length(pos_i)==3
-    elec= pos_i(3);
-    if ~any(elec==[4 8 16 32 64])
-      error('Nombre d''electrodes invalide');
-    end %if ~any
-    pos_i= pos_i(1:2);
-  else
-    error('POS_I non interpretable');
-  end %if length
-
-  if VERBOSE;
-  fprintf('[sce puit #electr] = [%2.1f  %2.1f  %2d]\n',pos_i(1),pos_i(2),elec);
-  end
-  if exist('OCTAVE_VERSION')
-  choix=[reponse(1:2), ...
-         setstr( pos_i+toascii('0')*(pos_i<10)+(toascii('a')-10)*(pos_i>9) )];
-  else
-  choix=[reponse(1:2), ...
-         setstr( pos_i+abs('0')*(pos_i<10)+(abs('a')-10)*(pos_i>9) )];
-  end
-  if strcmp(ChoiX,choix)
-    if VERBOSE ;
-        disp([ChoiX '  ' choix])
-        disp(['Resetup deja fait pour choix= ' ChoiX]);
-    end
-    return;
-  else
-    ChoiX= choix;
-    if VERBOSE ; disp(['choix= ' ChoiX]); end
-    clear global ZparaM ZproJ
-  end
-
-  if reponse(1)=='a' | reponse(1)=='b';
-    phi=(2*pi/64)*(0:63);
-    NODE=[ [0;0] ...
-      .2*[ sin(phi(1:16:64)); cos(phi(1:16:64)) ] ...
-      .4*[ sin(phi(1:8:64)); cos(phi(1:8:64)) ] ... 
-      .6*[ sin(phi(1:4:64)); cos(phi(1:4:64)) ] ...
-      .8*[ sin(phi(3:4:64)); cos(phi(3:4:64)) ] ... 
-     .95*[ sin(phi(1:2:64)); cos(phi(1:2:64)) ] ];
-    ELEM= [ [2:5; 3:5 2; ones(1,4)] ...
-            [2:5; 3:5 2; 7:2:13 ] ...
-            [6:13; 7:13 6; 2+ceil(0:.5:3) 2] ...      
-            [6:13; 7:13 6; 15:2:29 ] ...
-            [14:29;15:29 14;6+ceil(0:.5:7) 6] ...
-            [14:29;15:29 14;30:45] ... 
-            [45 30:44;30:45;14:29] ...
-            [45 30:44;30:45;46:2:77] ...
-            [46:77;47:77 46;30+floor(0:.5:15.5)] ]; 
-    MES=[46:32/elec:77];     
-    CPTR=[1:72 73*ones(1,48)];
-
-    if reponse(1)=='b'
-      NODE=[ NODE [sin(phi); cos(phi)] ];   
-      ELEM=[ ELEM ...
-           [46:77;47:77 46;79:2:142] ...
-           [78:141;79:141 78;46+ceil(0:.5:31) 46] ];
-      MES= [78:64/elec:141];
-      CPTR= [1:120 121*ones(1,96)];
-    end %if reponse=='b'
-  end %if reponse=='a' | reponse=='b';
-
-  if reponse(1)=='j' 
-    thomas_circ
-  end
-
-  if any(reponse(1)=='mnop')
+  if inp.selec >= 'k' && inp.selec <= 'n'
      niveaux= [-.1;0;.1];
-     reponse(1)= reponse(1)-abs('m')+abs('c');
-     if reponse(2) ~= '0'
-       niveaux=niveaux*100;
-     end
-  end %if reponse='mnop'
-
-  if any(reponse(1)=='st')
+     rings    = inp.selec-abs('m')+1
+  if inp.selec >= 's' && inp.selec <= 'v'
      niveaux= [-.25;-.1;0;.1;.25];
-     reponse(1)= reponse(1)-abs('s')+abs('c');
-     if reponse(2) ~= '0'
-       niveaux=niveaux*100;
-     end
+     rings    = inp.selec-abs('s')+1
   end %if reponse='st'
 
-  if any(reponse(1)=='cdefi')
-    if exist('OCTAVE_VERSION')
-        N= ( toascii(reponse(1))-toascii('b') )*4;
-    else
-        N= ( abs(reponse(1))-abs('b') )*4;
-    end
-    if reponse(1)=='i', N=8; end;
-    ELEM=[];
-    NODE= [0;0];
-    int=1;
-    for k=1:N
-      phi= (0:4*k-1)*pi/2/k;
-      NODE= [NODE k/N*[sin(phi);cos(phi)]];
+  % if using thorax model, then we need to expand size of layers
+  if inp.reponse(2) ~= '0'
+    niveaux=niveaux*100;
+  end
 
-      ext= 2*(k*k-k+1);
-      idxe=[0:k-1; 1:k];
-      idxi=[0:k-1]; 
-      elem= [ ext+idxe ext+2*k+[-idxe idxe] ...
-                      ext+rem(4*k-idxe,4*k) ...
-              ext+idxe ext+2*k+[-idxe idxe] ...
-                      ext+rem(4*k-idxe,4*k);
-              int+idxi int+2*(k-1)+[-idxi idxi] ... 
-                          int+rem(4*(k-1)-idxi, ...
-                               4*(k-1)+(k==1) ) ...
-              ext+4*k+1+idxi ext+6*k+ ...
-               [1-idxi 3+idxi] ext+8*k+3-idxi ];
-      for j=1:k
-        r1= rem(j+k-1,3)+1;
-        r2= rem(j+k,3)+1;
-        r3= 6-r1-r2;
-        elem([r1 r2 r3],j+k*(0:7) )= elem(:,j+k*(0:7));
-      end
-  
-      ELEM=[ ELEM elem(:,1:(8-4*(k==N))*k) ];
-      int=ext;
-    end %for k=1:N
-  
-    MES= ext+N*4/elec*([0:elec-1]);
- 
-    CPTR= [1:(2*N-2)^2 ((2*N-2)^2+1)*ones(1,8*N-4) ];
-  end %if reponse= 'c' 'd' 'e'
+end %if inp.selec > 'c'
 
-  if reponse(1)=='i'
+
+if inp.selec=='a' | inp.selec=='b';
+  [node, elem, mes] = mk_2d_fem_type1( selec );
+else
+  mdl= mk_circ_tank(rings, niveaux, inp.n_elec, inp.n_planes );
+end
+
+  if inp.selec=='i'
     phi=(2*pi/64)*(0:63);
     NODE=[ .95*NODE [sin(phi); cos(phi)] ];
     ELEM=[ ELEM ...
@@ -240,40 +65,6 @@ end
   ELS=~any(rem( elec+[-1 0 [-1 0]+pos_i*[-1;1] ] ,elec)' ...
 		     *ones(1,elec^2)==ones(4,1)*ELS')';
 
-  if any(reponse(2)=='12345')
-    niv= reponse(2)-abs('0');
-    x_coord= [ ...
-      0,60,123,173,223,202,144,75,0,-75,-144,-202,-223,-173,-123,-60;
-      0,50,105,138,144,144,109,50,0,-50,-109,-144,-144,-138,-105,-50;
-      0,52, 99,133,148,141,110,61,0,-61,-110,-141,-148,-133,- 99,-52;
-      0,51, 92,129,148,136, 96,47,0,-47,- 96,-136,-148,-129,- 92,-51;
-      0,49, 92,128,148,141,111,64,0,-64,-111,-141,-148,-128,- 92,-49 ];
-    y_coord= [ ...
-      123,116, 91,42,-4,-67,-105,-119,-108,-119,-105,-67,-4,42, 91,116;
-      129,132,112,62, 3,-57,-101,-110,-107,-110,-101,-57, 3,62,112,132;
-%     128,132,112,62, 3,-57,-101,-110,-102,-110,-101,-57, 3,62,112,132;
-      116,112, 92,53, 3,-48,- 88,-106,-105,-106,- 88,-48, 3,53, 92,112;
-      143,130, 99,63,14,-35,- 68,- 82,- 82,- 82,- 68,-35,14,63, 99,130;
-      136,128,103,68,23,-25,- 62,- 78,- 80,- 78,- 62,-25,23,68,103,128 ];
-    geo= [x_coord(niv,[13:16 1:12])',  ...
-              y_coord(niv,[13:16 1:12])'];
-    a_max= size(geo,1);
-    ab_geo=sqrt(sum(([ geo; geo(1,:) ]').^2)');
-    nn= zeros(size(NODE));
-    for i=1:size(NODE,2);
-      angle = rem(a_max*atan2( NODE(2,i), ...
-            NODE(1,i) )/2/pi+a_max,a_max)+1;
-      fac=(  (floor(angle+1.001)- angle)* ...
-              ab_geo(floor(angle+.001)) + ...
-             (angle-floor(angle+.001))* ...
-              ab_geo(floor(angle+1.001))  );
-      nn(:,i)= NODE(:,i)* fac;
-    end  %for i=1:size
-    NODE=nn;
-  end %if reponse(2)
-
-  NODE(1,:)= NODE(1,:)*sqrt(2)/sqrt(1+ellip^2);
-  NODE(2,:)= NODE(2,:)*sqrt(2)*ellip/sqrt(1+ellip^2);
 
 
 d=  size(ELEM,1);       %dimentions+1
@@ -427,3 +218,185 @@ param.ELS   = ELS;
 param.CPTR  = CPTR;
 param.DVV   = DVV;
 param.AIRE  = AIRE;
+
+% process input args to select parameters to use
+% Output is:
+%   inparam.VERBOSE=     VERBOSE;
+%   inparam.ellip=       ellip;
+%   inparam.pos_i=       pos_i;
+%   inparam.reponse=     reponse;
+%   inparam.n_elec=      elec;
+%   inparam.n_planes=    elec_planes;
+%   inparam.selec=       reponse(1);
+function inparam= proc_input_args( num_args, reponse )
+
+if num_args==0
+  reponse=input('quelle geometrie,position, etc.(''?'' pour aide): ','s'); 
+
+  if reponse=='?'
+    fprintf(['Choose a model geometery to prepare\n' ...
+             ' a: 2D tank with 120 elements  0: circ tank.\n' ...
+             ' b: 2D tank with 216 elements  1: thorax lev1 \n' ...
+             ' c: 2D tank with 64 elements   2: thorax lev2 \n' ...
+             ' d: 2D tank with 256 elements  3: thorax lev3 \n' ...
+             ' e: 2D tank with 576 elements  4: thorax lev4 \n' ...
+             ' f: 2D tank with 1024 elements 5: thorax lev5 \n' ...
+             ' i: 2D tank with 352 elements  9: thorax of dog\n'... 
+             ' k: 3D tank with 6*64 elem     \n' ...
+             ' l: 3D tank with 6*256 elem    \n' ...
+             ' m: 3D tank with 6*576 elem    \n' ...
+             ' n: 3D tank with 6*1024 elem   \n' ...
+             ' o: 3D tank with 12*64 elem    \n' ...
+             ' p: 3D tank with 12*256 elem   \n' ...
+             ' q: 3D tank with 12*576 elem    \n' ...
+             ' r: 3D tank with 12*1024 elem   \n' ...
+             '\nexample> a0,0 1 16 1' ...
+             ' a0= geometry,0 1 16=[source sink #electr #planes]' ]); 
+    reponse=input('Your choice: ','s'); 
+  end
+
+elseif num_args==2
+  reponse=[reponse ',' r1];
+elseif num_args==3
+  reponse=[reponse ',' r1 ',' r2];
+elseif num_args==4
+  reponse=[reponse ',' r1 ',' r2 ',' r3];
+end
+
+VERBOSE=1;
+
+if reponse(1)=='-'
+  VERBOSE=0;
+  reponse = reponse(2:length(reponse));
+end
+
+i=[ find(reponse==','), find(reponse=='/')];
+
+if length(i)==0
+  ellip=[];
+  pos_i=[];
+elseif length(i)==1
+  ellip=[];
+  pos_i=sscanf(reponse(i+1:length(reponse)),'%f')';
+  reponse=reponse(1:i-1);
+elseif length(i)==2
+  ellip=sscanf(reponse(i(2)+1:length(reponse)),'%f')';
+  pos_i=sscanf(reponse(i(1)+1:i(2)-1),'%f')';
+  reponse=reponse(1:i(1)-1);
+else
+  error('Input parameters not understood');
+end
+
+  if isempty(ellip)
+    if reponse(2)=='9'
+      ellip=1.2;
+    else
+      ellip=1;
+    end;
+  end
+  if VERBOSE ;
+     fprintf('Elliptical excentricity (1=circular)= %2.2f\n',ellip);
+  end
+
+  if length(pos_i)>=4
+    elec_planes= pos_i(4);
+  end
+
+  if length(pos_i)==0
+    pos_i= [0 1];
+    elec=16;
+  elseif length(pos_i)==1
+    pos_i= pos_i+[0 1];
+    elec=16;
+  elseif length(pos_i)==2
+    elec= 16;
+  elseif length(pos_i)<=3
+    elec= pos_i(3);
+    if ~any(elec==[4 8 16 32 64])
+      error('Invalid number of electrodes');
+    end %if ~any
+    pos_i= pos_i(1:2);
+  end %if length
+
+  if VERBOSE;
+    fprintf('[source sink #electr #planes] = [%2d %2d %2d %2d]\n', ...
+             pos_i(1),pos_i(2),elec, elec_planes);
+  end
+
+inparam.VERBOSE=     VERBOSE;
+inparam.ellip=       ellip;
+inparam.pos_i=       pos_i;
+inparam.reponse=     reponse;
+inparam.n_elec=      elec;
+inparam.n_planes=    elec_planes;
+inparam.selec=       reponse(1);
+
+function [NODE, ELEM, MES] = mk_2d_fem_type1( selec )
+    phi=(2*pi/64)*(0:63);
+    NODE=[ [0;0] ...
+      .2*[ sin(phi(1:16:64)); cos(phi(1:16:64)) ] ...
+      .4*[ sin(phi(1:8:64)); cos(phi(1:8:64)) ] ... 
+      .6*[ sin(phi(1:4:64)); cos(phi(1:4:64)) ] ...
+      .8*[ sin(phi(3:4:64)); cos(phi(3:4:64)) ] ... 
+     .95*[ sin(phi(1:2:64)); cos(phi(1:2:64)) ] ];
+    ELEM= [ [2:5; 3:5 2; ones(1,4)] ...
+            [2:5; 3:5 2; 7:2:13 ] ...
+            [6:13; 7:13 6; 2+ceil(0:.5:3) 2] ...      
+            [6:13; 7:13 6; 15:2:29 ] ...
+            [14:29;15:29 14;6+ceil(0:.5:7) 6] ...
+            [14:29;15:29 14;30:45] ... 
+            [45 30:44;30:45;14:29] ...
+            [45 30:44;30:45;46:2:77] ...
+            [46:77;47:77 46;30+floor(0:.5:15.5)] ]; 
+    MES=[46:32/elec:77];     
+
+    if selec=='b'
+      NODE=[ NODE [sin(phi); cos(phi)] ];   
+      ELEM=[ ELEM ...
+           [46:77;47:77 46;79:2:142] ...
+           [78:141;79:141 78;46+ceil(0:.5:31) 46] ];
+      MES= [78:64/elec:141];
+    end %if reponse=='b'
+
+% reshape model based on elliptical excentricity and a thorax level
+function newmdl = reshape_mdl( mdl, niv, ellip );
+% mdl is input model
+% niv is the thorax level (1 to 5)
+% ellip is elliptical excentricity
+    NODE= mdl.nodes';
+    ELEM= mdl.elems';
+    x_coord= [ ...
+      0,60,123,173,223,202,144,75,0,-75,-144,-202,-223,-173,-123,-60;
+      0,50,105,138,144,144,109,50,0,-50,-109,-144,-144,-138,-105,-50;
+      0,52, 99,133,148,141,110,61,0,-61,-110,-141,-148,-133,- 99,-52;
+      0,51, 92,129,148,136, 96,47,0,-47,- 96,-136,-148,-129,- 92,-51;
+      0,49, 92,128,148,141,111,64,0,-64,-111,-141,-148,-128,- 92,-49 ];
+    y_coord= [ ...
+      123,116, 91,42,-4,-67,-105,-119,-108,-119,-105,-67,-4,42, 91,116;
+      129,132,112,62, 3,-57,-101,-110,-107,-110,-101,-57, 3,62,112,132;
+      116,112, 92,53, 3,-48,- 88,-106,-105,-106,- 88,-48, 3,53, 92,112;
+      143,130, 99,63,14,-35,- 68,- 82,- 82,- 82,- 68,-35,14,63, 99,130;
+      136,128,103,68,23,-25,- 62,- 78,- 80,- 78,- 62,-25,23,68,103,128 ];
+    geo= [x_coord(niv,[13:16 1:12])',  ...
+              y_coord(niv,[13:16 1:12])'];
+    a_max= size(geo,1);
+    ab_geo=sqrt(sum(([ geo; geo(1,:) ]').^2)');
+    nn= zeros(size(NODE));
+    for i=1:size(NODE,2);
+      angle = rem(a_max*atan2( NODE(2,i), ...
+            NODE(1,i) )/2/pi+a_max,a_max)+1;
+      fac=(  (floor(angle+1.001)- angle)* ...
+              ab_geo(floor(angle+.001)) + ...
+             (angle-floor(angle+.001))* ...
+              ab_geo(floor(angle+1.001))  );
+      nn(:,i)= NODE(:,i)* fac;
+    end  %for i=1:size
+    NODE=nn;
+  end %if reponse(2)
+
+  NODE(1,:)= NODE(1,:)*sqrt(2)/sqrt(1+ellip^2);
+  NODE(2,:)= NODE(2,:)*sqrt(2)*ellip/sqrt(1+ellip^2);
+
+  newmdl= mdl;
+  newmdl.nodes= NODE';
+  newmdl.elems= ELEM';
