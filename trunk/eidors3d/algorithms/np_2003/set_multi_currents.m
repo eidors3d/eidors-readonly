@@ -42,9 +42,7 @@ end
 I = zeros(size(vtx,1),size(Ib,2));
 I = [I;II];
 
-end %protocol
-
-if protocol == '{ad}'
+elseif protocol == '{ad}'
    
    d = elpp;
    
@@ -66,6 +64,8 @@ if protocol == '{ad}'
        Ib = [Ib,lx];
        
    II = [II;Ib];
+else
+   error('protocol must be {ad} or {op}');
 end
 
 I = zeros(size(vtx,1),size(Ib,2));
