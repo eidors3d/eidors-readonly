@@ -1,4 +1,52 @@
 <HTML><BODY>
+<html>
+   <head>
+<title>EIDORS-3D</title>
+   <style type="text/css">
+        body, td, th {
+        font-family: Verdana, Helvetica, Arial, sans-serif;
+        font-size:80%;
+        }
+        pre, tt {
+        font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
+        font-size:100%;
+        }
+   </style>
+
+</head>
+
+<body link="#800000"
+      marginwidth=0 marginheight=0 topmargin=0 leftmargin=5 
+      vlink="#400000" >
+<h2>
+   &nbsp; &nbsp;
+    EIDORS-3D:<br>
+    <small><i>Electrical Impedance Tomography and Diffuse Optical Tomography Reconstruction Software</i></small>
+</h2>
+<hr>
+<table border="0"> <tr>
+<td valign="top">
+<a href="http://www.eidors.org/"
+   >EIDORS</a><br>
+<hr>
+<a href="index.html"
+   >Main</a><br>
+<a href="docs.html"
+   >Documentation</a><br>
+<a href="screenshot.html"
+   >Screenshots</a><br>
+<a href="http://sourceforge.net/projects/eidors3d/"
+   >Download</a><br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
+   >Browse CVS</a><br>
+<hr>
+<a href="news.html">News</a><br>
+<a href="faq.html">FAQ</a><br>
+<a href="programming.html">Developer Info</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td> <td valign="top">
+<h2>EIDORS-3D: Information for developers</h2>
     <H3>General</H3>
     <br>&minus; We avoid an OO framework because
     1) Matlab's OO framework sucks,
@@ -24,6 +72,9 @@
       </b><br>
       <ul>
         <b>Properties</b>:
+        <li><tt>data.name
+        </tt> &nbsp; &nbsp;
+        name of data (optional)
         <li><tt>data.meas
         </tt> &nbsp; &nbsp;
         actual measured data
@@ -156,12 +207,12 @@
         termination tolerance (or array of parameters)
         <li><tt>inv_model.iterations
         </tt> &nbsp; &nbsp;
-        <li><tt>inv_model.hyperparameter
-        </tt> &nbsp; &nbsp;
-        position of FEM nodes
         <li><tt>inv_model.type
         </tt> &nbsp; &nbsp;
         'differential' or 'static'
+        <li><tt>inv_model.fwd_model
+        </tt> &nbsp; &nbsp;
+        pointer to fwd_model
 
         <p><b>Methods</b>:
         <li><tt>inv_model.solve
@@ -182,6 +233,9 @@
       </b><br>
       <ul>
         <b>Properties</b>:
+        <li><tt>image.name
+        </tt> &nbsp; &nbsp;
+        name of image (optional)
         <li><tt>image.elem_data
         </tt> &nbsp; &nbsp;
         data for each element
