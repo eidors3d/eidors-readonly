@@ -38,13 +38,17 @@ function obj_id= eidors_obj(type,name, varargin );
 %    example: % get jacobian or '[]' if not set
 %             J= eidors_obj('cache',fwd_mdl, 'jacobian'):
 %
-%
 % USAGE: as an accessor
-%     obj  = eidors_obj('get',objid, prop1);
+%   gets the version of obj from the eidors_obj database
+%     obj  = eidors_obj('get',obj );
 %  or
-%     obj  = eidors_obj('get',objid );
-%  or
-%     obj  = eidors_obj( objid );
+%     obj  = eidors_obj( obj );
+%
+% USAGE: to log status messages
+%     obj  = eidors_obj('msg', message, loglevel )
+%
+% this will get or set the values of cached properties of the object.
+%
 
 % TODO: 
 %   1. add code to delete old objects
@@ -85,46 +89,41 @@ function obj = get_obj( obj, varargin );
    global eidors_objects
    obj_id= test_exist( obj );
 
-   if nargin==1
-   %   obj = eidors_objects.( obj_id );
-   obj = getfield(eidors_objects, obj_id )
-   elseif nargin==2
-    %  obj = eidors_objects.( obj_id ).( varargin{1} );
-       obj = getfield(getfield(eidors_objects, obj_id ), varargin{1} );
-   else
-      error('get_obj cannot interpret input');
-   end
+%   obj = eidors_objects.( obj_id );
+    obj = getfield(eidors_objects, obj_id )
 
 function obj = set_obj( obj, varargin );
    global eidors_objects
    obj_id= test_exist( obj );
 
-   %eidors_objects.( obj_id ) = obj;
-   eidors_objects=setfield(eidors_objects,obj_id,obj);
-   %eidors_objects.( obj_id ).cache= []; %clear cache
-   eidors_objects=setfield(eidors_objects,obj_id,'cache',[]);
-   
+%  eidors_objects.( obj_id ) = obj;
+%  eidors_objects.( obj_id ).cache= []; %clear cache
+%  
+%  for idx= 1:2:nargin-1
+%     eidors_objects.( obj_id ).( varargin{idx} )= ...
+%                                 varargin{idx+1};
+%  end
+%  obj = eidors_objects.( obj_id );
+
+% for octave and matlab 6.1 compatibility
+   obj.cache= [];
    for idx= 1:2:nargin-1
-    %  eidors_objects.( obj_id ).( varargin{idx} )= ...
-%                                  varargin{idx+1};
-
-      eidors_objects=setfield(eidors_objects,obj_id,varargin{idx},varargin{idx+1}); 
+      eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
+   eval(sprintf('eidors_objects.%s=obj;',obj_id));
 
-   %obj = eidors_objects.( obj_id );
-    obj = getfield(  eidors_objects, obj_id );
 function val= cache_obj( obj, prop, value );
    global eidors_objects
    obj_id= test_exist( obj );
 
    if nargin==3     %set cache
-    %  eidors_objects.( obj_id ).cache.( prop ) = value;
-    eidors_objects= setfield(eidors_objects, obj_id ,'cache', prop, value);
+%     eidors_objects.( obj_id ).cache.( prop ) = value;
+      eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
       val= ''; % to satisfy matlab errors
    elseif nargin==2 %get from cache
       try
-     %    val= eidors_objects.( obj_id ).cache.( prop );
-     val = getfield(eidors_objects,obj_id,'cache',prop);
+%       val= eidors_objects.( obj_id ).cache.( prop );
+        val = eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
       catch
          val= [];
       end
@@ -134,10 +133,13 @@ function val= cache_obj( obj, prop, value );
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
-   if isempty(eidors_objects)
-       eidors_objects.idnum = 10000001;
+   try
+      obj_id =  sprintf('obj_%07d', eidors_objects.idnum);
+   catch
+      eidors_objects.idnum= 10000001;
+      obj_id= 'obj_10000001';
    end
-   obj_id =  sprintf('obj_%07d', eidors_objects.idnum);
+
    eidors_objects.idnum  = eidors_objects.idnum + 1;
 
    % if called with obj, work as a copy-constructor
@@ -155,6 +157,4 @@ function obj= new_obj( type, name, varargin );
    obj.name = name;
 
    eval(sprintf('eidors_objects.%s=obj;', obj_id)); % create in store
-   obj.name = name;
-   obj.id   = obj_id;
    obj= set_obj(obj, varargin{:} );
