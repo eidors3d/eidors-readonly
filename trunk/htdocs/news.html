@@ -55,7 +55,72 @@ EIDORS-3D package.
 
 <ul>
 
-<br><li><b>
+<p><li><b>
+    23 Feb 2005: 
+</b>
+Caching interface for EIDORS3D
+<br>
+Andy Adler
+<p>
+After thinking about how to implement caching for a while, I've
+finally implemented one approach. The idea is that each object
+must be 'hashed' to get an ID. If we calculate the image for data
+we've already seen, then we must be able to detect that fact.
+<p>
+Some issues are:
+<br>&minus; We can't simply keep a pointer to previous variables.
+     For example, the Jacobian is used many times. Each time
+     it normally calculated for a homogeneous background, but
+     the actual variable representing the background is different.
+<br>&minus; Cross-platform cross version support. We need to support
+     (Unix + Windows) &times; (Matlab v6 + v7 + octave). Windows
+     makes it difficult to 'shell' out to a helper program. The various
+     software packages make Mex type functions a compatibility issue.
+<br>&minus; Matlab Mex file limitations make it difficult to get pointers
+     to the raw data storage for variables.
+<p>
+<b>Design:</b>
+The following design was chosen. In the eidors object constructor
+<tt>eidors_obj.m</tt>, and obj_id is calculated for each variable
+by saving it to disk, and then running the file through the
+SHA1 hash, and deleting the file.
+The mex file <tt>matrix_id.cpp</tt> is used to calculate
+the SHA1. Because the Matlab V6 file format puts a comment header with
+the save time in the first 125 bytes, it is necessary to begin the
+hash after that point.
+<p>
+<b>Questions:</b>
+<br>&minus; Should the saved files be deleted? If not, it may be a nice
+way to improve overall performance. If files are kept, we need to user
+selected <tt>EIDORS_TMPDIR</tt> in which to put the files.
+
+<br>&minus; Not all cached data is useful. For example each measured
+data set will end up in the cache as currently implemented. 
+One advantage of the current implementation, however, is 
+the way that it can 'remember' if it has seen previous data without
+actually storing that data. This would allow user selection of
+which variables to cache.
+
+
+
+<p><li><b>
+    23 Nov. 2004: 
+</b>
+Bill Lionheart
+<br>
+Umer Zeeshan Ijaz &lt;um&#101;r@ch&#101;ju.ac.kr&gt; from Korea has kindly contributed some
+code to help us find our electrodes in a netgen mesh.
+<br>
+I have uploaded the code to the cvs on sf.net
+http://eidors3d.sourceforge.net/
+<br>
+You should be able to see it on the browse cvs link (sometimes there is a
+delay) in the subdirectory meshing/netgen/ElectrodeInfo
+<br>
+Several others have been working on the same problem and your contributions
+to automated electrode numbering are very welcome.
+
+<p><li><b>
     26 July 2004: 
 </b>
 Design of a caching interface for EIDORS3D
@@ -78,22 +143,6 @@ Of hash functions and rand by Xelax
                    >mathforum.org/epigone/comp.soft-sys.matlab/flomglumskem</a>
 </ul>
 
-<br><li><b>
-    23 Nov. 2004: 
-</b>
-Bill Lionheart
-<br>
-Umer Zeeshan Ijaz &lt;um&#101;r@ch&#101;ju.ac.kr&gt; from Korea has kindly contributed some
-code to help us find our electrodes in a netgen mesh.
-<br>
-I have uploaded the code to the cvs on sf.net
-http://eidors3d.sourceforge.net/
-<br>
-You should be able to see it on the browse cvs link (sometimes there is a
-delay) in the subdirectory meshing/netgen/ElectrodeInfo
-<br>
-Several others have been working on the same problem and your contributions
-to automated electrode numbering are very welcome.
 
 
 <p><li><b>
@@ -504,7 +553,7 @@ following desirata for EIDORS software.
 </ul>
 </td></tr></table>
 <small>
-    Last Modified: $Date: 2005-02-23 00:08:59 $ by $Author: aadler $
+    Last Modified: $Date: 2005-02-23 14:43:56 $ by $Author: aadler $
 </small>
 </body>
 
