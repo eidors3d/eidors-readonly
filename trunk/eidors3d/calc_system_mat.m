@@ -15,7 +15,7 @@ function system_mat = calc_system_mat( fwd_model, img)
 % fwd_model is a fwd_model structure
 % image     is an image structure
 %
-% $Id: calc_system_mat.m,v 1.2 2004-07-21 21:09:14 aadler Exp $
+% $Id: calc_system_mat.m,v 1.3 2004-07-24 01:34:40 aadler Exp $
 
 if nargin==1
    img= fwd_model;
@@ -26,6 +26,9 @@ system_mat = eidors_obj('cache', img, 'FEM_system_mat');
 
 if isempty(system_mat)
    system_mat= feval( fwd_model.system_mat, fwd_model, img);
-   disp('calc_system_mat: setting cached value');
    eidors_obj('cache', img, 'FEM_system_mat', system_mat);
+
+   eidors_msg('calc_system_mat: setting cached value', 2);
+else
+   eidors_msg('calc_system_mat: using cached value', 2);
 end
