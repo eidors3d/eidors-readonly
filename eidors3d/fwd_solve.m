@@ -13,7 +13,7 @@ function data = fwd_solve( fwd_model, img)
 % fwd_model is a fwd_model structure
 % img       is an img structure
 %
-% $Id: fwd_solve.m,v 1.5 2004-07-24 03:29:40 aadler Exp $
+% $Id: fwd_solve.m,v 1.6 2005-02-23 04:36:57 aadler Exp $
 
 if nargin==1
    img= fwd_model;
@@ -22,13 +22,12 @@ end
 
 data = eidors_obj('cache', img, 'fwd_solve_data');
 
-if isempty(data)
-   data = feval( fwd_model.solve, fwd_model, img);
-   data= eidors_obj('data',data);  % create data object
-   eidors_obj('cache', img, 'fwd_solve_data', data);
-
-   eidors_msg('fwd_solve: setting cached value',1);
-else
+if ~isempty(data)
    eidors_msg('fwd_solve: using cached value',1);
 end
 
+data = feval( fwd_model.solve, fwd_model, img);
+data= eidors_obj('data',data);  % create data object
+
+eidors_obj('cache', img, 'fwd_solve_data', data);
+eidors_msg('fwd_solve: setting cached value',1);

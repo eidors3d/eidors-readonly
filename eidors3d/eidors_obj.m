@@ -44,6 +44,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
+% $Id: eidors_obj.m,v 1.12 2005-02-23 04:36:57 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -76,7 +77,7 @@ function obj = set_obj( obj, varargin );
    try
       old_obj_id= obj.id;
       % If we're modifying an old object, then remove the old version
-      rmfield(eidors_objects, old_obj_id);
+      eidors_objects= rmfield(eidors_objects, old_obj_id);
    end
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
@@ -96,7 +97,9 @@ function obj = set_obj( obj, varargin );
       
 % set the obj_id into the obj after calculating the hash value
    obj.id= obj_id;
-   eval(sprintf('eidors_objects.%s=obj;',obj_id));
+   if ~isfield('eidors_objects',obj_id)
+      eval(sprintf('eidors_objects.%s=obj;',obj_id));
+   end
 
 function val= cache_obj( obj, prop, value );
    global eidors_objects
@@ -157,5 +160,6 @@ function obj_id= calc_obj_id( var )
    save(tmpnam,'var','-v6');
    obj_id= matrix_id(tmpnam);
    delete(tmpnam);
+%  fprintf('creating object %s\n',obj_id);
 
 
