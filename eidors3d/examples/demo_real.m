@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.16 2004-07-18 04:16:51 aadler Exp $
+% $Id: demo_real.m,v 1.17 2004-07-21 18:38:08 aadler Exp $
 
 clear; 
 clc;
@@ -26,14 +26,23 @@ load(datareal,'vtx','simp');
 % create a 'fwd_model' object with name demo_mdl
 %
 
-demo_mdl.type = 'model';
-demo_mdl.name = 'demo real model';
-demo_mdl.nodes= vtx;
-demo_mdl.elems= simp;
-demo_mdl.boundary= dubs3( simp );
-demo_mdl.solve=      'np_fwd_solve';
-demo_mdl.jacobian=   'np_calc_jacobian';
-demo_mdl.system_mat= 'np_calc_system_mat';
+%demo_mdl.type = 'model';
+%demo_mdl.name = 'demo real model';
+%demo_mdl.nodes= vtx;
+%demo_mdl.elems= simp;
+%demo_mdl.boundary= dubs3( simp );
+%demo_mdl.solve=      'np_fwd_solve';
+%demo_mdl.jacobian=   'np_calc_jacobian';
+%demo_mdl.system_mat= 'np_calc_system_mat';
+
+demo_mdl= eidors_obj('model', 'Demo real model', ...
+                     'nodes', vtx, ...
+                     'elems', simp, ...
+                     'boundary', dubs3( simp ), ...
+                     'solve',      'np_fwd_solve', ...
+                     'jacobian',   'np_calc_jacobian', ...
+                     'system_mat', 'np_calc_system_mat' );
+                     
 
 clear vtx simp
 
@@ -53,8 +62,9 @@ for i=1:length(zc)
     demo_mdl.electrode(i).nodes=     elec(i,:);
 end
 
-% TODO: generalize the way that protocol sym no_pl are managed
 demo_mdl.misc.sym     = sym;
+
+demo_mdl= eidors_obj('set', demo_mdl); %send to cache
 
 disp('step 3: create FEM model stimulation and measurement patterns');
 
@@ -87,6 +97,7 @@ end
 clear gnd_ind elec zc sym protocol no_pl I Ib
 clear indH indV indH_sz meas_pat idx jnk
 
+demo_mdl= eidors_obj('set', demo_mdl); %send to cache
 
 disp('step 4: simulate data for homogeneous medium');
 
