@@ -36,7 +36,7 @@ a=1:el_no;
 X = reshape(a,el_pp,no_pl)';
 
 
-Vm = V(size(vtx,1)+1:end,:); %Lower chunk of forward solution (complete electrode model)
+Vm = V(size(vtx,1)+1:size(V,1),:); %Lower chunk of forward solution (complete electrode model)
 
 voltageH = [];
 indH = [];

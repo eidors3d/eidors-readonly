@@ -13,7 +13,6 @@ function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);
 %gnd_ind = The ground index
 %v_f     = The measurements fields
 
-
 [vr,vc] = size(vtx);
 
 Is_supl = zeros(vr,size(m_ind,1)); 
@@ -38,6 +37,12 @@ I(gnd_ind,:) = 0;
 if nargin < 7
 v_f = zeros(size(E,1),size(I,2));
 end
+
+if exist('OCTAVE_VERSION')
+   v_f= E\I;
+   return;
+end
+
 
 
 if isreal(E)==1

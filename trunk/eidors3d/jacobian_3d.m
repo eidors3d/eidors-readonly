@@ -50,9 +50,10 @@ cnt = 0;
         Dvf = D*v_f(:,sum(df(1:p-1))+m); %Gradient of the measurement fields
               
         Jrow_x3 = Dvf .* DV ;  
-        Jrow_u = Jrow_x3(1:3:end) + Jrow_x3(2:3:end) + Jrow_x3(3:3:end);
+        lJrow= length(Jrow_x3);
+        Jrow_u = Jrow_x3(1:3:lJrow) + Jrow_x3(2:3:lJrow) + Jrow_x3(3:3:lJrow);
         
-        Jrow = Jrow_u .* diag(Ela(1:3:end,1:3:end));
+        Jrow = Jrow_u .* diag(Ela(1:3:size(Ela,1),1:3:size(Ela,2)));
         
         cnt = cnt+1;
         J(cnt,:) = -Jrow.';

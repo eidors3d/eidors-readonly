@@ -34,10 +34,10 @@ if length(zc) == er
 
 [Ef,D,Ela] = bld_master(vtx,simp,mat);
 
-vertos = sparse(zeros(vr,er));
-horos = sparse(zeros(er,vr+er));
 
-Ef = [Ef,vertos;horos];
+% Add zeros so Ef is of size (vr+er) x (vr+er)
+[Ef_i, Ef_j, Ef_s]= find( Ef );
+Ef = sparse(Ef_i, Ef_j, Ef_s, vr+er, vr+er);
 
 
 %Up to this point we have calculated the master matrix without the influence of contact impedance.
