@@ -1,14 +1,14 @@
 function image= np_inv_solve( inv_model, data1, data2)
 % NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
-% $Id: np_inv_solve.m,v 1.2 2004-07-17 16:41:34 aadler Exp $
+% $Id: np_inv_solve.m,v 1.3 2004-07-18 02:46:40 aadler Exp $
 
 % calculate parameters from input structures
 fwd_model= inv_model.fwd_model;
 vtx= fwd_model.nodes;
 simp= fwd_model.elems;
-elems= size(simp,1);
 gnd_ind= fwd_model.gnd_node;
 % calc num electrodes, nodes, stim_patterns
+n_elem= size(simp,1);
 n_elec=  length(fwd_model.electrode );
 n_nodes= size(fwd_model.nodes,1);
 n_stim = length(fwd_model.stimulation );
@@ -53,28 +53,12 @@ I(fwd_model.gnd_node,:) = 0;
 Ib= I( n_nodes + (1:n_elec), : );
 
 
-mat_ref= ones(elems,1); % homogeneous background for jacobian
+% calc jacobian with homogeneous background
+homg_img.type = 'image';
+homg_img.elem_data= ones( n_elem ,1);
+homg_img.fwd_model= fwd_model;
 
-%Set the tolerance for the forward solver
-tol = 1e-5;
-
-% HACK: we need a way to cache previous results so that
-% things do not need to be recalculated here
-[Eref,D,Ela,ppr] = fem_master_full( ...
-                fwd_model.nodes, ...
-                fwd_model.elems, ...
-                mat_ref, ...
-                fwd_model.gnd_node, ...
-                elec, ...
-                zc, ...
-                fwd_model.misc.sym);
-% END HACK recalculation
-
- [v_f] = m_3d_fields(vtx,32,indH,Eref,tol,gnd_ind);
-
-% Calculating the Jacobian
-[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol, ...
-                  fwd_model.misc.sym);
+J = calc_jacobian( fwd_model, homg_img);
 
 % Calculating a smoothing prior
 [Reg] = iso_f_smooth(simp,vtx,3,1);

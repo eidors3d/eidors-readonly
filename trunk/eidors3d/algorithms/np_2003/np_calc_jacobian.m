@@ -1,10 +1,10 @@
-function data= np_calc_jacobian( fwd_model, image)
-% NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, image)
+function J= np_calc_jacobian( fwd_model, img)
+% NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)
 % Fwd solver for Nick Polydorides EIDORS3D code
 % data = measurements struct
 % fwd_model = forward model
-% image = image struct
-% $Id: np_calc_jacobian.m,v 1.1 2004-07-17 23:02:56 aadler Exp $
+% img = image background for jacobian calc
+% $Id: np_calc_jacobian.m,v 1.2 2004-07-18 02:46:40 aadler Exp $
 
 % calculate parameters from input structures
 vtx= fwd_model.nodes;
@@ -55,10 +55,6 @@ end
 I(fwd_model.gnd_node,:) = 0;
 Ib= I( n_nodes + (1:n_elec), : );
 
-
-% FIXME: calculate Jacobian at a background level
-mat_ref= ones(elems,1); % homogeneous background for jacobian
-
 %Set the tolerance for the forward solver
 tol = 1e-5;
 
@@ -67,16 +63,18 @@ tol = 1e-5;
 [Eref,D,Ela,ppr] = fem_master_full( ...
                 fwd_model.nodes, ...
                 fwd_model.elems, ...
-                mat_ref, ...
+                img.elem_data, ...
                 fwd_model.gnd_node, ...
                 elec, ...
                 zc, ...
                 fwd_model.misc.sym);
 % END HACK recalculation
 
- [v_f] = m_3d_fields(vtx,32,indH,Eref,tol,gnd_ind);
+[v_f] = m_3d_fields(vtx,n_elec,indH,Eref,tol,gnd_ind);
 
 % Calculating the Jacobian
-J = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol, ...
+J = jacobian_3d(I,elec,vtx,simp,gnd_ind, ...
+                  img.elem_data, ...
+                  zc,v_f,df,tol, ...
                   fwd_model.misc.sym);
 
