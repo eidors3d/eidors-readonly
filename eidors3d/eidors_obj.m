@@ -158,3 +158,23 @@ function obj= new_obj( type, name, varargin );
 
    eval(sprintf('eidors_objects.%s=obj;', obj_id)); % create in store
    obj= set_obj(obj, varargin{:} );
+
+% This function hashes the value of the variable var
+% to create an obj_id. The goal is to allow proper caching
+% of calculated matrices, by detecting when a previous
+% calculation with same parameters has been made
+%
+% Matlab does not offer any way to create hashes of variables.
+% It does not even offer a good way to get the size of the total
+% variable storage.  Thus, I choose to save the variable, calculate
+% the sha1 hash with sha1sum, and delete the file. Given a modern
+% OS, file data should only be cached in memory. The largest overhead
+% will be for the instantiation of the process
+function obj_id= obj_hash( var )
+   global eidors_objects;
+
+   tmpnam= [tempname ,'.mat'];
+   save('-v6',tmpnam,var);
+   delete(tmpnam);
+
+
