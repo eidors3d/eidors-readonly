@@ -6,7 +6,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.6 2004-07-21 21:09:05 aadler Exp $
+% $Id: np_inv_solve.m,v 1.7 2004-07-25 21:59:41 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 p= np_fwd_parameters( fwd_model );
@@ -29,6 +29,5 @@ sol = (J'*J +  tfac*Reg'*Reg)\J' * dva;
 % create a data structure to return
 img.name= 'solved by np_inv_solve';
 img.elem_data = sol;
-img.type = 'real conductivity differences';
-img.fwd_model= fwd_model;
 img.inv_model= inv_model;
+img.fwd_model= fwd_model;
