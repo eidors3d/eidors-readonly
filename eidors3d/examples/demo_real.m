@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.10 2004-07-16 17:06:42 aadler Exp $
+% $Id: demo_real.m,v 1.11 2004-07-17 02:25:07 aadler Exp $
 
 clear; 
 clc;
@@ -17,7 +17,7 @@ end
 
 disp('step 1: create FEM model');
 
-load(datareal,'srf','vtx','simp');
+load(datareal,'vtx','simp');
 %srf : the boundary surfaces (triangles)
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
@@ -30,10 +30,10 @@ demo_mdl.type = 'model';
 demo_mdl.name = 'demo real model';
 demo_mdl.nodes= vtx;
 demo_mdl.elems= simp;
-demo_mdl.boundary= srf;
+demo_mdl.boundary= dubs3( simp );
 demo_mdl.solve= 'np_fwd_solve';
 
-clear srf vtx simp
+clear vtx simp
 
 load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 %elec : The electrodes matrix. 
@@ -49,11 +49,24 @@ for i=1:length(zc)
     demo_mdl.electrode(i).nodes=     elec(i,:);
 end
 
+
 demo_mdl.misc.protocol= protocol;
 demo_mdl.misc.sym     = sym;
 demo_mdl.misc.no_pl   = no_pl;
 % TODO: generalize the way that protocol sym no_pl are managed
-clear gnd_ind elec zc sym protocol no_pl
+
+% Set the current stimulation patterns
+[I,Ib] = set_3d_currents(protocol, ...
+                         elec, ...
+                         demo_mdl.nodes, ...
+                         demo_mdl.gnd_node, ...
+                         demo_mdl.misc.no_pl);
+for i=1:size(Ib,2)
+    demo_mdl.stimulation(i).stimulation= 'mA';
+    demo_mdl.stimulation(i).stim_pattern= Ib(:,i);
+end
+    
+clear gnd_ind elec zc sym protocol no_pl I Ib
 
 
 %

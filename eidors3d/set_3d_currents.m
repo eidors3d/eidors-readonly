@@ -8,7 +8,7 @@ function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
 %
 %
 %protocol= The selected protocol '{op}' or '{ad}'
-%elec    = The electrodes
+%elec    = The electrodes (only the number of electrodes is used)
 %vtx     = The vertices
 %gnd_ind = the index of the ground node
 %no_pl   = The number of planes
@@ -18,7 +18,7 @@ function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
 
 [vr,vc] = size(vtx);
    
-[el_no,q] = size(elec);
+[el_no,q] = size(elec); 
 
 el_pp = el_no/no_pl;
 
@@ -45,16 +45,13 @@ if protocol == '{op}'
    end 
    
     
-Is_supl = zeros(vr,size(Ib,2));
+   Is_supl = zeros(vr,size(Ib,2));
 
-I = [Is_supl;Ib];
+   I = [Is_supl;Ib];
 
-I(gnd_ind,:) = 0;
+   I(gnd_ind,:) = 0;
 
-end %protocol
-
-
-if protocol == '{ad}'
+elseif protocol == '{ad}'
    
    Ib = [];
    
@@ -83,12 +80,14 @@ if protocol == '{ad}'
         
      end
      
-Is_supl = zeros(vr,size(Ib,2));
+    Is_supl = zeros(vr,size(Ib,2));
 
-I = [Is_supl;Ib];
+    I = [Is_supl;Ib];
 
-I(gnd_ind,:) = 0;
+    I(gnd_ind,:) = 0;
 
+else
+   error(['protocol ',protocol,' is not recognized']);
 end %protocol
          
 

@@ -4,24 +4,31 @@ function data= np_fwd_solve( fwd_model, image)
 % data = measurements struct
 % fwd_model = forward model
 % image = image struct
-% $Id: np_fwd_solve.m,v 1.4 2004-07-16 18:13:18 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.5 2004-07-17 02:25:06 aadler Exp $
 
 mat_ref= image.elem_data;
 
-elec= zeros(length(fwd_model.electrode ), ...
-            length(fwd_model.electrode(1).nodes) );
-zc  = zeros(length(fwd_model.electrode ), 1);
+% calc num electrodes, nodes, stim_patterns
+n_elec=  length(fwd_model.electrode );
+n_nodes= size(fwd_model.nodes,1);
+n_stim = length(fwd_model.stimulation );
 
-for i=1:length(fwd_model.electrode);
+elec= zeros(n_elec, length(fwd_model.electrode(1).nodes) );
+zc  = zeros(n_elec, 1);
+
+for i=1:n_elec
     elec(i,:)= fwd_model.electrode(i).nodes;
     zc(i)    = fwd_model.electrode(i).z_contact;
 end
 
-[I,Ib] = set_3d_currents(fwd_model.misc.protocol, ...
-                         elec, ...
-                         fwd_model.nodes, ...
-                         fwd_model.gnd_node, ...
-                         fwd_model.misc.no_pl);
+% calculate FEM RHS matrix, i.e., the current patterns padded with zeroes 
+I = zeros( n_elec + n_nodes, n_stim );
+for i=1:n_stim
+   I( n_nodes + (1:n_elec), i ) = ...
+         fwd_model.stimulation(i).stim_pattern;
+end
+I(fwd_model.gnd_node,:) = 0;
+Ib= I( n_nodes + (1:n_elec), : );
 
 %Set the tolerance for the forward solver
 tol = 1e-5;

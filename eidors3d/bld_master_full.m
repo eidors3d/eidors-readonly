@@ -42,8 +42,8 @@ Ef = sparse(Ef_i, Ef_j, Ef_s, vr+er, vr+er);
 
 %Up to this point we have calculated the master matrix without the influence of contact impedance.
 
-while length(zc) ~= er
-      disp(sprintf('Please enter the correct zc column vector with length: %d',er));
+if length(zc) ~= er
+      error(sprintf('zc (=%d) should be equal to er (=%d)',length(zc),er));
 end
 
 
