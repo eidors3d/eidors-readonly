@@ -1,7 +1,13 @@
-function show_fem( mdl, sels )
+function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
-% mdl is a EIDORS3D model structure
-% $Id: show_fem.m,v 1.1 2004-07-16 14:10:14 aadler Exp $
+% mdl is a EIDORS3D 'model' or 'image' structure
+% $Id: show_fem.m,v 1.2 2004-07-16 17:06:42 aadler Exp $
+
+% if we have an img input, then define mdl
+if strcmp( mdl.type , 'image' )
+   img= mdl;
+   mdl= img.fwd_model;
+end
 
 set(gcf, 'Name', mdl.name);
 trimesh(mdl.boundary, ...
@@ -10,7 +16,22 @@ trimesh(mdl.boundary, ...
         mdl.nodes(:,3) );
 axis('image');
 set(gcf,'Colormap',[0 0 0]);
-hold on;
+hidden('off');
+
+if nargin>1
+   if     length(options)>0 && options(1)~=0
+      show_electrodes(mdl);
+   end
+   if length(options)>1 && options(2)~=0
+      if ~exist('img')
+         error('need "image" object to specify options(2)');
+      end
+      show_inhomogeneities( img.elem_data, mdl);
+   end
+end
+
+function show_electrodes(mdl)
+% show electrode positions on model
 
 ee= mdl.boundary;
 for e=1:length(mdl.electrode)
@@ -28,7 +49,17 @@ for e=1:length(mdl.electrode)
                          mdl.nodes);
     end
 end
-hidden('off');
+
+function show_inhomogeneities( elem_data, mdl)
+% show
+hold('on');
+homg_elem_data= ones(size(elem_data));
+repaint_inho(elem_data, homg_elem_data, ...
+             mdl.nodes, ...
+             mdl.elems); 
+camlight('left');
+lighting('flat');
+hold('off');
 
 function paint_electrodes(sel,srf,vtx);
 %function paint_electrodes(sel,srf,vtx);
@@ -49,7 +80,7 @@ Xs = [vtx(l,1);vtx(m,1);vtx(n,1)];
 Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
-patch(Xs,Ys,Zs,'r');
+patch(Xs,Ys,Zs,'y');
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

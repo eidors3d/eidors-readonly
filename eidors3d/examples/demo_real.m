@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.9 2004-07-16 14:36:50 aadler Exp $
+% $Id: demo_real.m,v 1.10 2004-07-16 17:06:42 aadler Exp $
 
 clear; 
 clc;
@@ -22,8 +22,11 @@ load(datareal,'srf','vtx','simp');
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
 
+%
 % create a 'fwd_model' object with name demo_mdl
+%
 
+demo_mdl.type = 'model';
 demo_mdl.name = 'demo real model';
 demo_mdl.nodes= vtx;
 demo_mdl.elems= simp;
@@ -52,51 +55,34 @@ demo_mdl.misc.no_pl   = no_pl;
 % TODO: generalize the way that protocol sym no_pl are managed
 clear gnd_ind elec zc sym protocol no_pl
 
-if ~isOctave
-   show_fem( demo_mdl)
-end
-  
 
+%
 % create a homogeneous image
+%
+homg_img.type = 'image';
+homg_img.name = 'homogeneous image';
 homg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
 homg_img.fwd_model= demo_mdl;
 
 homg_data=fwd_solve( demo_mdl, homg_img);
 
-disp('Allow a local inhomogeneity')
-disp(sprintf('\n'))
-
-
 mat= ones( size(demo_mdl.elems,1) ,1);
 load( datacom ,'A','B') %Indices of the elements to represent the inhomogeneity
-%figure; [mat,grp] = set_inho(srf,simp,vtx,mat_ref,1.1); 
 mat(A)= mat(A)+0.15;
 mat(B)= mat(B)-0.20;
 
+%
+% create an inhomogeneous image
+%
+inhomg_img.type = 'image';
+inhomg_img.name = 'inhomogeneous image';
 inhomg_img.elem_data= mat;
 inhomg_img.fwd_model= demo_mdl;
 clear A B mat
 
 if ~isOctave
-    figure; 
-    trimesh(demo_mdl.boundary, ...
-            demo_mdl.nodes(:,1), ...
-            demo_mdl.nodes(:,2), ...
-            demo_mdl.nodes(:,3) );
-    axis('image');
-    set(gcf,'Colormap',[0 0 0]);
-    hidden('off');
-    hold on;
-    repaint_inho(inhomg_img.elem_data, ...
-                 homg_img.elem_data, ...
-                 demo_mdl.nodes, ...
-                 demo_mdl.elems); 
-    camlight('left');
-    lighting('flat');
-    drawnow;
-
-    pause(2);
-    close;
+%   show_fem( demo_mdl, 1);
+    show_fem( inhomg_img , [1 1]);
 end
 
 disp('Simulating measurements based on ')
@@ -115,7 +101,7 @@ inhomg_data.meas = inhomg_data.meas + 1e-5*randn(size(inhomg_data.meas));
   homg_data.meas =   homg_data.meas + 1e-5*randn(size(  homg_data.meas));
 
 % create an inv_model structure of name 'demo_inv'
-demo_inv.name= 'NP EIT inverse';
+demo_inv.name= 'Nick Polydorides EIT inverse';
 demo_inv.solve= 'np_inv_solve';
 demo_inv.hyperparameter= 1e-8;
 demo_inv.type= 'differential';
