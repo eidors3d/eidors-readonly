@@ -4,7 +4,7 @@ function data= np_fwd_solve( fwd_model, image)
 % data = measurements struct
 % fwd_model = forward model
 % image = image struct
-% $Id: np_fwd_solve.m,v 1.6 2004-07-17 14:25:03 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.1 2004-07-17 15:18:16 aadler Exp $
 
 mat_ref= image.elem_data;
 
