@@ -1,6 +1,10 @@
 function data= np_fwd_solve( fwd_model, image)
+% NP_FWD_SOLVE: data= np_fwd_solve( fwd_model, image)
 % Fwd solver for Nick Polydorides EIDORS3D code
-% $Id: np_fwd_solve.m,v 1.3 2004-07-10 03:58:19 aadler Exp $
+% data = measurements struct
+% fwd_model = forward model
+% image = image struct
+% $Id: np_fwd_solve.m,v 1.4 2004-07-16 18:13:18 aadler Exp $
 
 mat_ref= image.elem_data;
 
