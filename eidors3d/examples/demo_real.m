@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.3 2004-07-05 04:20:00 aadler Exp $
+% $Id: demo_real.m,v 1.4 2004-07-05 04:41:10 aadler Exp $
 
 clear; 
 %clc;
@@ -149,24 +149,24 @@ if ~isOctave
 h1 = figure;
 set(h1,'NumberTitle','off');
 set(h1,'Name','Simulated inhomogeneities');
-subplot(2,3,1); [fc] = slicer_plot_n(2.63,mat-mat_ref,vtx,simp); view(2); grid; colorbar; axis off; title('z=2.63'); 
+subplot(2,3,1); [fc] = slicer_plot_n(2.63,mat-mat_ref,vtx,simp); view(2); grid; colorbar; axis('off'); title('z=2.63'); 
 %Calculates also fc. Just once!
-subplot(2,3,2); [fc] = slicer_plot_n(2.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.10'); 
-subplot(2,3,3); [fc] = slicer_plot_n(1.72,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=1.72'); 
-subplot(2,3,4); [fc] = slicer_plot_n(1.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=1.10'); 
-subplot(2,3,5); [fc] = slicer_plot_n(0.83,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.83');
-subplot(2,3,6); [fc] = slicer_plot_n(0.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
+subplot(2,3,2); [fc] = slicer_plot_n(2.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=2.10'); 
+subplot(2,3,3); [fc] = slicer_plot_n(1.72,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.72'); 
+subplot(2,3,4); [fc] = slicer_plot_n(1.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.10'); 
+subplot(2,3,5); [fc] = slicer_plot_n(0.83,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.83');
+subplot(2,3,6); [fc] = slicer_plot_n(0.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.10');
 
 
 h2 = figure;
 set(h2,'NumberTitle','off');
 set(h2,'Name','Reconstructed conductivity distribution');
-subplot(2,3,1); [fc] = slicer_plot_n(2.63,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.63'); 
-subplot(2,3,2); [fc] = slicer_plot_n(2.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.10'); 
-subplot(2,3,3); [fc] = slicer_plot_n(1.72,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=1.72'); 
-subplot(2,3,4); [fc] = slicer_plot_n(1.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=1.10'); 
-subplot(2,3,5); [fc] = slicer_plot_n(0.83,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.83');
-subplot(2,3,6); [fc] = slicer_plot_n(0.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
+subplot(2,3,1); [fc] = slicer_plot_n(2.63,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=2.63'); 
+subplot(2,3,2); [fc] = slicer_plot_n(2.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=2.10'); 
+subplot(2,3,3); [fc] = slicer_plot_n(1.72,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.72'); 
+subplot(2,3,4); [fc] = slicer_plot_n(1.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.10'); 
+subplot(2,3,5); [fc] = slicer_plot_n(0.83,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.83');
+subplot(2,3,6); [fc] = slicer_plot_n(0.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.10');
 disp('Done')
 
 end

@@ -21,7 +21,6 @@ end
 nsimp= size(simp,1);
 ndsrch = [simp,(1:nsimp)'];
 
-%Reg = spalloc(nsimp,nsimp,20*nsimp);
 Regv= zeros(0,3);
 
 for i=1:size(ndsrch,1)
@@ -108,7 +107,7 @@ end %for i'th simplex
 
 % TODO: This is not quite the same as the previous version: Why?
 Reg=  sparse( Regv(:,1), Regv(:,2), Regv(:,3), nsimp, nsimp);
-Reg = Reg + sparse(1:nsimp, 1:nsimp, abs(sum(Reg)) );
+Reg = Reg + sparse(1:nsimp, 1:nsimp, abs(sum(Reg')) );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
