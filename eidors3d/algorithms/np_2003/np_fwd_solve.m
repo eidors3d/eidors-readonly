@@ -1,52 +1,21 @@
-function data= np_fwd_solve( fwd_model, image)
-% NP_FWD_SOLVE: data= np_fwd_solve( fwd_model, image)
+function data= np_fwd_solve( fwd_model, img)
+% NP_FWD_SOLVE: data= np_fwd_solve( fwd_model, img)
 % Fwd solver for Nick Polydorides EIDORS3D code
 % data = measurements struct
 % fwd_model = forward model
-% image = image struct
-% $Id: np_fwd_solve.m,v 1.2 2004-07-17 16:41:34 aadler Exp $
+% img = image struct
+% $Id: np_fwd_solve.m,v 1.3 2004-07-18 03:17:25 aadler Exp $
 
-mat_ref= image.elem_data;
-
-% calc num electrodes, nodes, stim_patterns
-n_elec=  length(fwd_model.electrode );
-n_nodes= size(fwd_model.nodes,1);
-n_stim = length(fwd_model.stimulation );
-n_meas = 0;
-for i=1:n_stim;
-    n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern ,1);
-end
-
-elec= zeros(n_elec, length(fwd_model.electrode(1).nodes) );
-zc  = zeros(n_elec, 1);
-
-for i=1:n_elec
-    elec(i,:)= fwd_model.electrode(i).nodes;
-    zc(i)    = fwd_model.electrode(i).z_contact;
-end
-
-% calculate FEM RHS matrix, i.e., the current patterns padded with zeroes 
-I = zeros( n_elec + n_nodes, n_stim );
-idx=0;
-for i=1:n_stim
-   I( n_nodes + (1:n_elec), i ) = ...
-         fwd_model.stimulation(i).stim_pattern;
-end
-I(fwd_model.gnd_node,:) = 0;
-Ib= I( n_nodes + (1:n_elec), : );
+p= np_fwd_parameters( fwd_model );
 
 %Set the tolerance for the forward solver
 tol = 1e-5;
 
-[Eref,D,Ela,ppr] = fem_master_full( ...
-                fwd_model.nodes, ...
-                fwd_model.elems, ...
-                mat_ref, ...
-                fwd_model.gnd_node, ...
-                elec, ...
-                zc, ...
-                fwd_model.misc.sym);
-[Vfwd] = forward_solver(fwd_model.nodes,Eref,I,tol,ppr);
+[Eref,D,Ela,ppr] = fem_master_full( p.vtx, p.simp, ...
+                img.elem_data, ...
+                p.gnd_ind, p.elec, p.zc, p.sym );
+
+[Vfwd] = forward_solver(p.vtx,Eref,p.I,tol,ppr);
 
 % MODIFIED: the specification of the measurement sequence
 % should be part of the fwd_model, here it is part of the solver
@@ -58,10 +27,10 @@ tol = 1e-5;
 %data.misc.indH= indH;
 %data.misc.df= dfr;
 
-Velec=Vfwd( n_nodes+(1:n_elec),:);
-voltH = zeros( n_meas, 1 );
+Velec=Vfwd( p.n_node+(1:p.n_elec),:);
+voltH = zeros( p.n_meas, 1 );
 idx=0;
-for i=1:n_stim
+for i=1:p.n_stim
    meas_pat= fwd_model.stimulation(i).meas_pattern;
    n_meas  = size(meas_pat,1);
    voltH( idx+(1:n_meas) ) = meas_pat*Velec(:,i);
