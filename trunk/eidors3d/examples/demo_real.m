@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.6 2004-07-10 02:40:22 aadler Exp $
+% $Id: demo_real.m,v 1.7 2004-07-10 03:55:35 aadler Exp $
 
 clear; 
 %clc;
@@ -84,9 +84,7 @@ clear gnd_ind elec zc sym protocol no_pl
 homg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
 homg_img.fwd_model= demo_mdl;
 
-homg_data=solve( demo_mdl, homg_img);
-
-refH= homg_data.meas;
+homg_data=fwd_solve( demo_mdl, homg_img);
 
 disp('Allow a local inhomogeneity')
 disp(sprintf('\n'))
@@ -96,14 +94,11 @@ mat= ones( size(demo_mdl.elems,1) ,1);
 load( datacom ,'A','B') %Indices of the elements to represent the inhomogeneity
 %figure; [mat,grp] = set_inho(srf,simp,vtx,mat_ref,1.1); 
 mat(A)= mat(A)+0.15;
-mat(B)= mat(B)+0.15;
-clear A B
+mat(B)= mat(B)-0.20;
 
-disp('Simulating measurements based on ')
-disp('the complete electrode model')
-
-inhomg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
+inhomg_img.elem_data= mat;
 inhomg_img.fwd_model= demo_mdl;
+clear A B mat
 
 if ~isOctave
     figure; 
@@ -127,19 +122,20 @@ if ~isOctave
     close;
 end
 
-inhomg_data=solve( demo_mdl, inhomg_img);
+disp('Simulating measurements based on ')
+disp('the complete electrode model')
 
-voltageH= inhomg_data.meas;
-
-
-dva = voltageH - refH;
-disp('Measurements infused with Gaussian noise ...')
+inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 
 
-% FIXME: this appears to be a strange definition of noise
-dc = mean(dva); %DC component of the noise
-noi = dc./7 * ones(length(dva),1) + dc * randn(length(dva),1); %Add the AC component
-dvaG = dva + noi;
+% FIXME: I don't understand how this noise should work
+% Add noise to data
+% dva = homg_data.meas - inhomg_data.meas;
+% 
+% dc = mean(dva); %DC component of the noise
+% noi = dc./7 * ones(length(dva),1) + dc * randn(length(dva),1); %Add the AC component
+inhomg_data.meas = inhomg_data.meas + 1e-5*randn(size(inhomg_data.meas));
+  homg_data.meas =   homg_data.meas + 1e-5*randn(size(  homg_data.meas));
 
 % create an inv_model structure of name 'demo_inv'
 demo_inv.name= 'NP EIT inverse';
@@ -148,32 +144,18 @@ demo_inv.hyperparameter= 1e-8;
 demo_inv.type= 'differential';
 demo_inv.fwd_model= demo_mdl;
 
-demo_img= inv_solve( demo_inv, homg_data, inhomg_data);
+demo_img= inv_solve( demo_inv, inhomg_data, homg_data);
 
 if ~isOctave
 
-h1 = figure;
-set(h1,'NumberTitle','off');
-set(h1,'Name','Simulated inhomogeneities');
-subplot(2,3,1); [fc] = slicer_plot_n(2.63,mat-mat_ref,vtx,simp); view(2); grid; colorbar; axis('off'); title('z=2.63'); 
-%Calculates also fc. Just once!
-subplot(2,3,2); [fc] = slicer_plot_n(2.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=2.10'); 
-subplot(2,3,3); [fc] = slicer_plot_n(1.72,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.72'); 
-subplot(2,3,4); [fc] = slicer_plot_n(1.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.10'); 
-subplot(2,3,5); [fc] = slicer_plot_n(0.83,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.83');
-subplot(2,3,6); [fc] = slicer_plot_n(0.10,mat-mat_ref,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.10');
+    levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
+    org_img= inhomg_img;
+    org_img.elem_data= org_img.elem_data - homg_img.elem_data;
+    org_img.name= 'Simulated inhomogeneities';
+    image_levels( figure, org_img, levels );
 
-
-h2 = figure;
-set(h2,'NumberTitle','off');
-set(h2,'Name','Reconstructed conductivity distribution');
-subplot(2,3,1); [fc] = slicer_plot_n(2.63,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=2.63'); 
-subplot(2,3,2); [fc] = slicer_plot_n(2.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=2.10'); 
-subplot(2,3,3); [fc] = slicer_plot_n(1.72,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.72'); 
-subplot(2,3,4); [fc] = slicer_plot_n(1.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=1.10'); 
-subplot(2,3,5); [fc] = slicer_plot_n(0.83,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.83');
-subplot(2,3,6); [fc] = slicer_plot_n(0.10,sol,vtx,simp,fc); view(2); grid; colorbar; axis('off'); title('z=0.10');
-disp('Done')
+    demo_img.name= 'Reconstructed conductivity distribution';
+    image_levels( figure, demo_img, levels );
 
 end
 

@@ -1,6 +1,6 @@
 function data= np_fwd_solve( fwd_model, image)
 % Fwd solver for Nick Polydorides EIDORS3D code
-% $Id: np_fwd_solve.m,v 1.2 2004-07-10 02:40:22 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.3 2004-07-10 03:58:19 aadler Exp $
 
 mat_ref= image.elem_data;
 
@@ -39,3 +39,8 @@ dfr = dfr(1:2:length(dfr)); %Taking just the horrizontal measurements
 data.meas= voltH;
 data.time= 0;
 data.name= 'solved by np_fwd_solve';
+% TODO: Normally the specification of the measurement sequence
+% should be part of the fwd_model, here it is part of the solver
+data.misc.indH= indH;
+data.misc.df= dfr;
+   

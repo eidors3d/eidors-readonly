@@ -17,7 +17,7 @@ function [fc] = slicer_plot(h,BB,vtx,simp,fc);
 %       and calculate fc.
 
 
-if nargin < 5
+if nargin < 5 || (nargin == 6 && isempty(fc))
 fc = [];
 %Develop the faces           
 
