@@ -6,7 +6,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.4 2004-07-18 03:17:25 aadler Exp $
+% $Id: np_inv_solve.m,v 1.5 2004-07-18 04:16:50 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 p= np_fwd_parameters( fwd_model );
@@ -18,11 +18,9 @@ homg_img.fwd_model= fwd_model;
 
 J = calc_jacobian( fwd_model, homg_img);
 
-% Calculating a smoothing prior
-[Reg] = iso_f_smooth(p.simp,p.vtx,3,1);
+Reg = calc_image_prior( inv_model );
 
 % Calculating a linear inverse solution
-
 tfac= inv_model.hyperparameter;
 dva= data1.meas - data2.meas;
 sol = (J'*J +  tfac*Reg'*Reg)\J' * dva;
