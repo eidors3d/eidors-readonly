@@ -17,7 +17,21 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.sym      => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
-% $Id: np_fwd_parameters.m,v 1.1 2004-07-18 03:17:25 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.2 2004-07-24 03:29:39 aadler Exp $
+
+param = eidors_obj('cache', fwd_model, 'np_fwd_param');
+
+if isempty(param)
+   param = calc_param( fwd_model );
+   eidors_obj('cache', fwd_model, 'np_fwd_param', param);
+
+   eidors_msg('np_fwd_parameters: setting cached value', 3);
+else
+   eidors_msg('np_fwd_parameters: using cached value', 3);
+end
+
+% perform actual parameter calculation
+function param= calc_param( fwd_model );
 
 vtx= fwd_model.nodes;
 simp= fwd_model.elems;
@@ -35,12 +49,19 @@ for i=1:n_stim;
     n_meas = n_meas + df(i);
 end
 
-elec= zeros(length(fwd_model.electrode ), ...
-            length(fwd_model.electrode(1).nodes) );
-zc  = zeros(length(fwd_model.electrode ), 1);
+elec= [];
+zc  = zeros(n_elec, 1);
 
+bdy = fwd_model.boundary;
+% get electrode parameters
 for i=1:n_elec
-    elec(i,:)= fwd_model.electrode(i).nodes;
+    elec_nodes= fwd_model.electrode(i).nodes;
+    e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
+    n_bdy  = bdy(e_bdy,:)';
+% elec is a series of nodes matching bdy faces
+    elec   = [elec; n_bdy(:)' ];
+
+% contact impedance
     zc(i)    = fwd_model.electrode(i).z_contact;
 end
 
@@ -49,10 +70,14 @@ indH= zeros(n_stim, 2);
 idx=0;
 for i=1:n_stim
    meas_pat= fwd_model.stimulation(i).meas_pattern';
-   elpos= rem( find(meas_pat(:)== 1)-1 , n_elec) + 1;
-   indH( idx+(1:df(i)),1 ) = elpos;
-   elpos= rem( find(meas_pat(:)==-1)-1 , n_elec) + 1;
-   indH( idx+(1:df(i)),2 ) = elpos;
+
+   sourcepos= find(meas_pat(:)== 1);
+   sourcepos= rem( sourcepos-1 , n_elec) + 1;
+
+   sinkpos  = find(meas_pat(:)==-1);
+   sinkpos  = rem( sinkpos  -1 , n_elec) + 1;
+
+   indH( idx+(1:df(i)) , : ) = [sourcepos, sinkpos];
    idx= idx+ df(i);
 end
 
@@ -82,3 +107,11 @@ param.I        = I;
 param.Ib       = Ib;
 param.sym      = fwd_model.misc.sym;
 param.gnd_ind  = fwd_model.gnd_node;
+
+% get boundary faces which match nodes
+function e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
+   mbdy= zeros(size(bdy));
+   for n= elec_nodes
+      mbdy= mbdy + (bdy == n); 
+   end 
+   e_bdy = find( all(mbdy') );

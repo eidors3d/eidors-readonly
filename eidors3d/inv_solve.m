@@ -14,7 +14,12 @@ function img = inv_solve( inv_model, data1, data2)
 % inv_model is a inv_model structure
 % img       is an image structure
 %
-% $Id: inv_solve.m,v 1.2 2004-07-21 21:09:14 aadler Exp $
+% $Id: inv_solve.m,v 1.3 2004-07-24 03:29:40 aadler Exp $
+
+% TODO: does it make sense to cache solutions here?
+%       if so, to where do they belong, data1 or data2?
+
+eidors_msg('inv_solve',1);
 
 if     strcmp(inv_model.reconst_type,'static')
    if nargin~=2;

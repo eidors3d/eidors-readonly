@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.20 2004-07-22 03:32:37 aadler Exp $
+% $Id: demo_real.m,v 1.21 2004-07-24 03:29:40 aadler Exp $
 
 clear; 
 clc;
@@ -58,7 +58,7 @@ load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 demo_mdl.gnd_node= gnd_ind;
 for i=1:length(zc)
     demo_mdl.electrode(i).z_contact= zc(i);
-    demo_mdl.electrode(i).nodes=     elec(i,:);
+    demo_mdl.electrode(i).nodes=     unique( elec(i,:) );
 end
 
 demo_mdl.misc.sym     = sym;
