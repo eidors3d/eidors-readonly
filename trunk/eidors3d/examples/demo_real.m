@@ -1,8 +1,9 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.7 2004-07-10 03:55:35 aadler Exp $
+% $Id: demo_real.m,v 1.8 2004-07-16 14:10:13 aadler Exp $
 
 clear; 
-%clc;
+clc;
+warning('off');
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -14,9 +15,7 @@ if isOctave
     page_screen_output= 0;
 end
 
-warning('off');
-disp('This is a demo for reconstructing conductivity changes')
-disp(sprintf('\n'));
+disp('step 1: create FEM model');
 
 load(datareal,'srf','vtx','simp');
 %srf : the boundary surfaces (triangles)
@@ -33,33 +32,6 @@ demo_mdl.solve= 'np_fwd_solve';
 
 clear srf vtx simp
 
-if ~isOctave
-    trimesh(demo_mdl.boundary, ...
-            demo_mdl.nodes(:,1), ...
-            demo_mdl.nodes(:,2), ...
-            demo_mdl.nodes(:,3) );
-    axis('image');
-    set(gcf,'Colormap',[0 0 0]);
-    hold on;
-end
-
-disp('This is a cylindrical mesh with homogeneous conductivity distribution of 1')
-disp('Wait to attach the electrodes')
-disp(sprintf('\n'))
-
-load(datareal,'sels');
-%sels :Index in srf matrix denoting the faces to be assigned as electrodes
-
-if ~isOctave
-  for u=1:size(sels)
-      paint_electrodes(sels(u),demo_mdl.boundary, ...
-                       demo_mdl.nodes);
-  end
-  hidden('off');
-end
-
-clear sels
-  
 load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 %elec : The electrodes matrix. 
 %np_pl : Number of electrode planes (in planar arrangements)
@@ -79,6 +51,16 @@ demo_mdl.misc.sym     = sym;
 demo_mdl.misc.no_pl   = no_pl;
 % TODO: generalize the way that protocol sym no_pl are managed
 clear gnd_ind elec zc sym protocol no_pl
+
+load(datareal,'sels');
+%sels :Index in srf matrix denoting the faces to be assigned as electrodes
+
+if ~isOctave
+   show_fem( demo_mdl, sels)
+end
+
+clear sels
+  
 
 % create a homogeneous image
 homg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
@@ -152,10 +134,10 @@ if ~isOctave
     org_img= inhomg_img;
     org_img.elem_data= org_img.elem_data - homg_img.elem_data;
     org_img.name= 'Simulated inhomogeneities';
-    image_levels( figure, org_img, levels );
+    figure; image_levels( org_img, levels );
 
     demo_img.name= 'Reconstructed conductivity distribution';
-    image_levels( figure, demo_img, levels );
+    figure; image_levels( demo_img, levels );
 
 end
 
