@@ -10,16 +10,18 @@ function param= aa_resetup(varargin)
 % position_initial = [0 2] DEFAUT
 %
 % (c) 1993-2002 A.Adler
-% $Id: aa_resetup.m,v 1.3 2004-07-20 14:33:27 aadler Exp $
+% $Id: aa_resetup.m,v 1.4 2004-07-24 04:11:07 aadler Exp $
 
 inp = proc_input_args( varargin{:} );
 
 niveaux= [];
 if inp.selec >= 'c' && inp.selec <= 'f'
+ % 2D models
    rings    = (inp.selec-abs('c')+1 )*4;
 elseif  inp.selec=='i'
    rings    =  8;
 elseif  inp.selec>='k'
+  % 3D Models
 
   if inp.selec >= 'k' && inp.selec <= 'n'
      niveaux= [-.1;0;.1];
@@ -27,7 +29,7 @@ elseif  inp.selec>='k'
   elseif inp.selec >= 'o' && inp.selec <= 'r'
      niveaux= [-.25;-.1;0;.1;.25];
      rings    = (inp.selec-abs('o')+4)*4;
-  end %if reponse='st'
+  end 
 
   % if using thorax model, then we need to expand size of layers
   if inp.reponse(2) ~= '0'
@@ -38,7 +40,7 @@ end %if inp.selec > 'c'
 
 
 if inp.selec=='a' || inp.selec=='b';
-  mdl= mk_2d_fem_type1( inp.selec );
+  mdl= mk_2d_fem_type1( inp.selec, inp.n_elec );
 else
   mdl= mk_circ_tank(rings, niveaux, inp.n_elec, inp.n_planes );
 end
@@ -72,17 +74,10 @@ return;
 
 
 
-d=  size(ELEM,1);       %dimentions+1
+d= size(ELEM,1);       %dimentions+1
 n= size(NODE,2);        %NODEs
 e= size(ELEM,2);        %ELEMents     
 
-if length(reponse)>2 if reponse(3)=='+'
-  disp('CPTR adapte'); end
-else
-  CPTR= 1:e;
-  if VERBOSE; disp('CPTR = 1:elements'); end
-end; 
- 
 
 fichier= ['eptr_' reponse(1:2) '.mat' ];
 if exist(fichier)==2 
@@ -92,7 +87,7 @@ if exist(fichier)==2
 
 else %if exist
 
- if VERBOSE; fprintf('creant EPTR ..'); end
+ eidors_msg('creating EPTR ..',5);
  tic=cputime;
  npx= 64; npy= 64;    %nombre de points en chaque direction
  %used 
@@ -132,7 +127,6 @@ if exist('niveaux')
   end %for k
 
   MES= MES + floor(length(niveaux)/2)*n;
-  CPTR= [CPTR CPTR CPTR CPTR CPTR CPTR];
   cour(1:elec,:)= cour(1:elec,:)+ floor(length(niveaux)/2)*n;
 
 end %if exist('niveaux')
@@ -141,7 +135,6 @@ d=  size(ELEM,1);       %dimentions+1
 n= size(NODE,2);        %NODEs
 e= size(ELEM,2);        %ELEMents     
 p= size(volt,1)-1;
-c= max(CPTR);
 
 AIRE=zeros(e,1);
 for i=1:e
@@ -175,7 +168,7 @@ QQ=sparse(cour(1:p,:),(1:p)'*ones(1,size(cour,2)), ...
 if any(reponse(2:length(reponse))=='x')
     disp('je ne calcule pas DVV');
 else
-  if VERBOSE ; fprintf('creant DVV ..'); end
+  eidors_msg('creating jacobian ..',4);
   tic=cputime;
   i=1:n; i(volt(1,:))=[];
   DVV= zeros(sum(ELS),c);
@@ -190,27 +183,12 @@ else
   vvh= dzi*QQ;
   sv= zinv*QQ;
   for j=1:c
-    idx= find(ones(d,1)*(CPTR==j));
+    idx= find(ones(d,1)*((1:e)==j));
     dq= dzi*(  CC(idx,:)'*SS(idx,idx)*CC(idx,:)  )*sv;
     DVV(:,j)= dq(ELS)./vvh(ELS);
   end
-  if VERBOSE ; disp(cputime-tic); end
 end
 
-   
-if 1 %nargin==0
-% grille; %(0);
-
-  %s=.5* (0:1/32:1).^(.5);
-  %s=[ .5-fliplr(s(2:33)) s+.5 1]'*ones(1,3);
-
-  %s=[ zeros(1,10) (0:1/44:1) ones(1,11) ]'*ones(1,3);
-  %s=[ ones(1,10) (1:-1/44:0) zeros(1,10) 1 ]'*ones(1,3);
-
-  s= [flipud(fliplr(hot(64))) ;hot(64)];
-  s= [s([1:2:63 64:2:128],:)*.7+.3;[.5 .3 .6]];
-  colormap(s);
-end %if nargin
 
 param.nodes = NODE;
 param.elems = ELEM;
@@ -220,7 +198,6 @@ param.CC    = CC;
 param.SS    = SS;
 param.EPTR  = EPTR;
 param.ELS   = ELS;
-param.CPTR  = CPTR;
 param.DVV   = DVV;
 param.AIRE  = AIRE;
 
@@ -299,9 +276,7 @@ end
       ellip=1;
     end;
   end
-  if VERBOSE ;
-     fprintf('Elliptical excentricity (1=circular)= %2.2f\n',ellip);
-  end
+  eidors_msg('Elliptical excentricity (1=circular)= %2.2f',ellip,4);
 
   if length(pos_i)>=4
     elec_planes= pos_i(4);
@@ -325,10 +300,8 @@ end
     pos_i= pos_i(1:2);
   end %if length
 
-  if VERBOSE;
-    fprintf('[source sink #electr #planes] = [%2d %2d %2d %2d]\n', ...
-             pos_i(1),pos_i(2),elec, elec_planes);
-  end
+  eidors_msg('[source sink #electr #planes] = [%2d %2d %2d %2d]', ...
+             pos_i(1),pos_i(2),elec, elec_planes, 1);
 
 inparam.VERBOSE=     VERBOSE;
 inparam.ellip=       ellip;
@@ -338,7 +311,7 @@ inparam.n_elec=      elec;
 inparam.n_planes=    elec_planes;
 inparam.selec=       reponse(1);
 
-function param = mk_2d_fem_type1( selec )
+function param = mk_2d_fem_type1( selec, n_elec )
     phi=(2*pi/64)*(0:63);
     NODE=[ [0;0] ...
       .2*[ sin(phi(1:16:64)); cos(phi(1:16:64)) ] ...
@@ -355,7 +328,7 @@ function param = mk_2d_fem_type1( selec )
             [45 30:44;30:45;14:29] ...
             [45 30:44;30:45;46:2:77] ...
             [46:77;47:77 46;30+floor(0:.5:15.5)] ]; 
-%   MES=[46:32/elec:77];     
+    MES=[46:32/n_elec:77];     
     bdy_nodes=[ 46:77;47:77,46 ];
 
     if selec=='b'
@@ -363,7 +336,7 @@ function param = mk_2d_fem_type1( selec )
       ELEM=[ ELEM ...
            [46:77;47:77 46;79:2:142] ...
            [78:141;79:141 78;46+ceil(0:.5:31) 46] ];
-%     MES= [78:64/elec:141];
+      MES= [78:64/n_elec:141];
     end %if reponse=='b'
     bdy_nodes=[ 78:141;79:141,78 ];
 
@@ -372,6 +345,13 @@ function param = mk_2d_fem_type1( selec )
     param.boundary = bdy_nodes';
     param.gnd_node = 1; % node at center of the tank
     param.name= sprintf('2D FEM for EIT with %d nodes',size(NODE,2));
+
+% create point electrodes
+    for i=1:length(MES)
+       param.electrode(i).nodes= MES(i);
+       param.electrode(i).z_contact= 0;
+    end
+   
 
 % reshape model based on elliptical excentricity and a thorax level
 function newmdl = reshape_mdl( mdl, niv, ellip );

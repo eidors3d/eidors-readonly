@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.4 2004-07-22 11:57:53 billlion Exp $
+% $Id: show_fem.m,v 1.5 2004-07-24 04:11:07 aadler Exp $
 
 % if we have an img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -98,7 +98,8 @@ function show_2d_fem( mdl, options )
   end
 
 if     size(mdl.nodes,2)==2  %2D
-  plot_2d_mesh(mdl.nodes', mdl.elems',[], .95, [0,0,0])
+  el_pos= avg_electrode_posn( mdl );  
+  plot_2d_mesh(mdl.nodes', mdl.elems', el_pos', .95, [0,0,0])
    
 elseif size(mdl.nodes,2)==3  %3D
 
@@ -120,7 +121,7 @@ elseif size(mdl.nodes,2)==3  %3D
 
 end
 
-function plot_2d_mesh(NODE,ELEM,MES, S, options)
+function plot_2d_mesh(NODE,ELEM,el_pos, S, options)
 %  if options(1) -> do mesh num
 %  if options(2) -> do node num
 %  if options(3) -> do text
@@ -128,9 +129,8 @@ function plot_2d_mesh(NODE,ELEM,MES, S, options)
 
   e=size(ELEM,2);
   d=size(ELEM,1);
-  if ~isempty(MES)
-    xy=NODE(:,MES(1,:));
-  end
+  R= zeros(1,e);
+
 
   arrow= [1.02 0;1.06 .05;1.06 .02;1.1 .02; ...
           1.1 -.02; 1.06 -.02;1.06 -.05;1.02 0];
@@ -144,7 +144,7 @@ function plot_2d_mesh(NODE,ELEM,MES, S, options)
   yyy= S*yyy+ (1-S)*ones(3,1)*mean(yyy);
   yyy= [yyy;yyy(1,:)];
 
-  if isempty(MES)
+  if isempty(el_pos)
       plot(xxx,yyy,'b');
   elseif exist('OCTAVE_VERSION')
       plot(arrow*xy,arrow*[0 1;-1 0]*xy,'m');
@@ -157,6 +157,7 @@ function plot_2d_mesh(NODE,ELEM,MES, S, options)
       if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'b'); end
       hold('off')
   else
+      xy= el_pos;
       hh=plot([xxx;xxx(1,:)],[yyy;yyy(1,:)],'b', ...
               arrow*xy,arrow*[0 1;-1 0]*xy,'r');
       set(hh(find(R>0)),'Color',[1 0 0],'LineWidth',2);
@@ -187,6 +188,15 @@ function plot_2d_mesh(NODE,ELEM,MES, S, options)
   end  % if nargin~=0
   axis([ [-1.1 1.1]*max(NODE(1,:)) [-1.1 1.1]*max(NODE(2,:)) ])
 
+function  mes= avg_electrode_posn( mdl )
+   n_elec= length( mdl.electrode );
+   nodes = mdl.nodes;
+   n_dims= size(nodes,2);
+   mes= zeros( n_elec, n_dims );
+   for i= 1:n_elec
+      e_nodes=  mdl.electrode(i).nodes;
+      mes(i,:)= mean( nodes(e_nodes,:) , 1 );
+   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
