@@ -1,8 +1,8 @@
 function data= np_fwd_solve( fwd_model, image)
 % Fwd solver for Nick Polydorides EIDORS3D code
-% $Id: np_fwd_solve.m,v 1.1 2004-07-09 18:51:28 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.2 2004-07-10 02:40:22 aadler Exp $
 
-mat_ref= image; %% TODO: make object
+mat_ref= image.elem_data;
 
 elec= zeros(length(fwd_model.electrode ), ...
             length(fwd_model.electrode(1).nodes) );
@@ -30,9 +30,12 @@ tol = 1e-5;
                 elec, ...
                 zc, ...
                 fwd_model.misc.sym);
-[Vref] = forward_solver(fwd_model.nodes,Eref,I,tol,ppr);
-[refH,refV,indH,indV,dfr]=get_3d_meas(elec,fwd_model.nodes,Vref,Ib, ...
+[Vfwd] = forward_solver(fwd_model.nodes,Eref,I,tol,ppr);
+[voltH,voltV,indH,indV,dfr]=get_3d_meas(elec,fwd_model.nodes,Vfwd,Ib, ...
                 fwd_model.misc.no_pl);
 dfr = dfr(1:2:length(dfr)); %Taking just the horrizontal measurements
 
-data= dfr;
+% create a data structure to return
+data.meas= voltH;
+data.time= 0;
+data.name= 'solved by np_fwd_solve';

@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.5 2004-07-09 18:51:28 aadler Exp $
+% $Id: demo_real.m,v 1.6 2004-07-10 02:40:22 aadler Exp $
 
 clear; 
 %clc;
@@ -47,14 +47,13 @@ disp('This is a cylindrical mesh with homogeneous conductivity distribution of 1
 disp('Wait to attach the electrodes')
 disp(sprintf('\n'))
 
-pause(2);
-
 load(datareal,'sels');
 %sels :Index in srf matrix denoting the faces to be assigned as electrodes
 
 if ~isOctave
   for u=1:size(sels)
-      paint_electrodes(sels(u),srf,vtx);
+      paint_electrodes(sels(u),demo_mdl.boundary, ...
+                       demo_mdl.nodes);
   end
   hidden('off');
 end
@@ -81,116 +80,75 @@ demo_mdl.misc.no_pl   = no_pl;
 % TODO: generalize the way that protocol sym no_pl are managed
 clear gnd_ind elec zc sym protocol no_pl
 
-mat_ref = 1*ones(828,1);
-data=solve( demo_mdl, mat_ref);
-return
+% create a homogeneous image
+homg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
+homg_img.fwd_model= demo_mdl;
 
+homg_data=solve( demo_mdl, homg_img);
 
-elec= zeros(length(demo_mdl.electrode ), ...
-            length(demo_mdl.electrode(1).nodes) );
-zc  = zeros(length(demo_mdl.electrode ), 1);
-for i=1:length(demo_mdl.electrode);
-    elec(i,:)= demo_mdl.electrode(i).nodes;
-    zc(i)    = demo_mdl.electrode(i).z_contact;
-end
-[I,Ib] = set_3d_currents(protocol, ...
-                         elec, ...
-                         demo_mdl.nodes, ...
-                         demo_mdl.gnd_node, ...
-                         no_pl);
+refH= homg_data.meas;
 
-disp('Adjacent current patterns selected') 
-disp('Calculating reference measurements')
-disp(sprintf('\n'))
-
-pause(2);
-
-mat_ref = 1*ones(828,1); %%%%%%
-%Jacobian will be calculated based on this
-
-%Set the tolerance for the forward solver
-tol = 1e-5;
-
-[Eref,D,Ela,ppr] = fem_master_full( ...
-                demo_mdl.nodes, ...
-                demo_mdl.elems, ...
-                mat_ref, ...
-                demo_mdl.gnd_node, ...
-                elec,zc,sym);
-[Vref] = forward_solver(demo_mdl.nodes,Eref,I,tol,ppr);
-[refH,refV,indH,indV,dfr]=get_3d_meas(elec,demo_mdl.nodes,Vref,Ib,no_pl);
-dfr = dfr(1:2:length(dfr)); %Taking just the horrizontal measurements
-
-close;
 disp('Allow a local inhomogeneity')
 disp(sprintf('\n'))
-pause(2);
 
 
-mat=mat_ref;
+mat= ones( size(demo_mdl.elems,1) ,1);
 load( datacom ,'A','B') %Indices of the elements to represent the inhomogeneity
 %figure; [mat,grp] = set_inho(srf,simp,vtx,mat_ref,1.1); 
-sA = mat_ref(A(1))+0.15;
-sB = mat_ref(B(1))-0.20;
-fprintf ('This at %f ',sA)
-mat(A) = sA;
-mat(B) = sB;
-
-if ~isOctave
-figure; 
-trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
-axis('image');
-set(gcf,'Colormap',[0 0 0]);
-hidden('off');
-hold on;
-repaint_inho(mat,mat_ref,vtx,simp); 
-camlight('left');
-lighting('flat');
-drawnow;
-
-pause(2);
-close;
-end
+mat(A)= mat(A)+0.15;
+mat(B)= mat(B)+0.15;
+clear A B
 
 disp('Simulating measurements based on ')
 disp('the complete electrode model')
 
-[En,D,Ela,ppn] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
-[Vn] = forward_solver(vtx,En,I,tol,ppn,Vref);
-[voltageH,voltageV,indH,indV,dfv]=get_3d_meas(elec,vtx,Vn,Ib,no_pl);
-dfv = dfv(1:2:end);
+inhomg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
+inhomg_img.fwd_model= demo_mdl;
 
-if size(dfr)~= size(dfv)
-   error('Mismatched measurements')
+if ~isOctave
+    figure; 
+    trimesh(demo_mdl.boundary, ...
+            demo_mdl.nodes(:,1), ...
+            demo_mdl.nodes(:,2), ...
+            demo_mdl.nodes(:,3) );
+    axis('image');
+    set(gcf,'Colormap',[0 0 0]);
+    hidden('off');
+    hold on;
+    repaint_inho(inhomg_img.elem_data, ...
+                 homg_img.elem_data, ...
+                 demo_mdl.nodes, ...
+                 demo_mdl.elems); 
+    camlight('left');
+    lighting('flat');
+    drawnow;
+
+    pause(2);
+    close;
 end
+
+inhomg_data=solve( demo_mdl, inhomg_img);
+
+voltageH= inhomg_data.meas;
 
 
 dva = voltageH - refH;
 disp('Measurements infused with Gaussian noise ...')
 
 
+% FIXME: this appears to be a strange definition of noise
 dc = mean(dva); %DC component of the noise
 noi = dc./7 * ones(length(dva),1) + dc * randn(length(dva),1); %Add the AC component
 dvaG = dva + noi;
 
+% create an inv_model structure of name 'demo_inv'
+demo_inv.name= 'NP EIT inverse';
+demo_inv.solve= 'np_inv_solve';
+demo_inv.hyperparameter= 1e-8;
+demo_inv.type= 'differential';
+demo_inv.fwd_model= demo_mdl;
 
-disp('Calculating measurement fields')
-disp('Please wait, this may take some time ..')
-disp(sprintf('\n'))
- [v_f] = m_3d_fields(vtx,32,indH,Eref,tol,gnd_ind);
-
- disp('Calculating the Jacobian')
-[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfr,tol,sym);
-
-disp('Calculating a smoothing prior')
-[Reg] = iso_f_smooth(simp,vtx,3,1);
-
-disp('Calculating a linear inverse solution')
-disp(sprintf('\n'))
-
-tfac = 1e-8;
-
-sol = (J'*J +  tfac*Reg'*Reg)\J' * dvaG;
+demo_img= inv_solve( demo_inv, homg_data, inhomg_data);
 
 if ~isOctave
 
