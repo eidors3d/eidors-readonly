@@ -44,7 +44,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.12 2005-02-23 04:36:57 aadler Exp $
+% $Id: eidors_obj.m,v 1.13 2005-02-23 14:43:48 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -74,6 +74,7 @@ end
 function obj = set_obj( obj, varargin );
    global eidors_objects
 
+   if strcmp(obj.type, 'inv_model'); keyboard; end
    try
       old_obj_id= obj.id;
       % If we're modifying an old object, then remove the old version
@@ -97,7 +98,7 @@ function obj = set_obj( obj, varargin );
       
 % set the obj_id into the obj after calculating the hash value
    obj.id= obj_id;
-   if ~isfield('eidors_objects',obj_id)
+   if ~isfield(eidors_objects,obj_id)
       eval(sprintf('eidors_objects.%s=obj;',obj_id));
    end
 
@@ -156,10 +157,24 @@ function obj= new_obj( type, name, varargin );
 function obj_id= calc_obj_id( var )
    global eidors_objects;
 
+% the obj_id does not depend on the cache or id
+   try; var = rmfield(var,'cache'); end
+   try; var = rmfield(var,'id');    end
+
    tmpnam= [tempname ,'.mat'];
-   save(tmpnam,'var','-v6');
+
+% This is another awful example of matlab's
+% versionitis. Why can't they stay compatible?
+   if version(1)>='7' 
+       save(tmpnam,'var','-v6');
+   elseif exist('OCTAVE_VERSION')
+       save(tmpnam,'-mat','var');
+   else
+       save(tmpnam,'var');
+   end
+
    obj_id= matrix_id(tmpnam);
    delete(tmpnam);
-%  fprintf('creating object %s\n',obj_id);
+%  fprintf('creating [%s] object %s\n',var.type,obj_id);
 
 
