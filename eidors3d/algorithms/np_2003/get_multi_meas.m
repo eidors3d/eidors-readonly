@@ -97,15 +97,15 @@ for in=1:dd:lf %   1    13    25    37
    		break;
       	end
    	end
-   end 
-   
-   if protocol =='{ad}'
+   elseif protocol =='{ad}'
       for j=1:size(th_LM,1)
          if th_LM(j,1)== intersect(find(I(:,i)<0),in:k*el_pp)+1
          	LN = [th_LM(j:end,:);th_LM(1:j-1,:)];
    		break;
       	end
    	end
+   else
+      error('Protocol needs to be {op} or {ad}');
    end 
    
 for u=1:size(LN,1)
