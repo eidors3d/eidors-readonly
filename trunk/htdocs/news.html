@@ -49,10 +49,204 @@
 <h2>News</h2>
 This page is a list of updates, discussions, and 
 ideas for enhancements to the
-EIDORS-3D package. Not all ideas will be implmeneted,
-of course, but at least they're written down.
+EIDORS-3D package.
 
 <ul>
+<br><li><b>
+    13 July 2004: 
+</b>
+EIDORS3D Developers strategic meeting.
+<br>
+UMIST:
+Bill Lionheart (chair)  (WL),
+Nick Polydorides        (NP),
+David Stephenson        (DS),
+John Davidson           (JD),
+Sharon Mohanna          (SM),
+
+UCL:
+Lior Horesh             (LH),
+Richard Bayford         (AB),
+
+U.OTTAWA:
+Andy Adler              (AA),
+Yednek Asfaw            (YA),
+Brad Graham             (BG),
+<p>
+<b>Minutes:</b>
+<ol>
+<li> Everyone introduced themselves
+
+<li> It was agreed by all that the code circulated for this meeting that was not
+yet released would be treated as confidential, as the authors needed a chance
+to publish papers on their work first. When ready the authors can contribute
+it to the eidors3d source tree on sourceforge.net either themselves or via
+one one of those registered as developers.
+
+<li> Current work in EIT and with EIDORS software was discussed.
+
+<li> Standard file formats.<br>
+(AA) As we develop project we have a chance to set a standard.
+<br>
+
+(RB) Kevin Boon suggested standard data format in Ankara. Confidential medical
+data, patient owns it.
+Community has to be seen to respect medical data (eg name prognosis.). Phantom
+data not an issue. Cant just send a data file. Issue about type of system.
+Collection protocol, dynamic range, data scaling. Electrode placement within
+error. In real data another level, may need to preprocess to data.
+Do we want EIDORS to be a teaching tool or a more advanced tool.
+Reverse is to say what syntax EIDORS needs.
+<br>
+
+(RB) Image format. SPN, statistical parametric modelling. What is output
+format.  VTK?
+30 Images different freq. Need for comparison of data.
+<br>
+
+
+(AA) Symantic difficulty, cond on vertices, elements, mapping to cut planes.
+So what is image? Rasterizing.
+<br>
+
+
+(NP) Test set for others to compare. Dist with EIDORS.
+<br>
+
+
+(RB) OT, see Martin Schweiger's web site at UCL.
+There is lots of error checking in TOAST. This can be an issue when trying to
+adapt the code to a different application.
+<br>
+
+
+(AA) Defining a new standard would raise political issues. On the other hand,
+simply saying that "this is what you need to work with EIDORS" is easier.
+<br>
+
+
+<i>Action</i>: AA -- consult  OT people (HD). Check with RB for head, JLD for Process
+Tomography.
+<br>
+
+Models meshes -- standard file formats. Can we use standard ones? Iges, EDS,
+Universal File Format,
+SLT (parametric surface).
+
+Mesh quality factors.
+<br>
+
+<li>  (AA) API and plugable algorithms.
+<br>
+
+Want to easily plug in new idea and compare with named reference algorithms.
+API written so this is easy but also safe.
+<br>
+
+(RB) Grid algorithms, multiple self contained program, moduarity.
+<br>
+
+<li>   CVS version on source forge.
+<br>
+Octave compatible using if statements to bypass matlab graphics.
+Matlab OO. Not well written. Use structures instead
+
+<br>&minus;<i>
+data </i> - measurements, units, time, comment,
+              electrode positions, current pattern
+
+<br>&minus;<i>
+fwd_model</i> - FEM, electrode posn. and models,
+        excitation / meas. patterns, electrode models
+
+<br>&minus;<i>
+inv_model</i> - hyperparameters, pointers to code
+
+<br>&minus;<i>
+image</i> - image data, pointers to fwd_model, inv_model
+
+
+<br>    Basic Methods:
+<br>&minus;
+fwd_solve, inv_solve, jacobian, etc.
+<br>&minus;
+methods call alg. specific
+<br>&minus;
+'centralized' caching to avoid repeat calcs
+
+Demo_real modified on CVS tree to do this.
+<br>
+
+Discussion on packing un packing
+<br>
+AA explained the "copy on write" issue in matlab. If you assign one big array
+to another it does not make a copy until you assign to the old one. Care is
+needed to avoid meemory bloat.
+<br>
+
+DS and LH wondered whether this structure is appropriate for computationally
+intensive problems.
+<br>
+
+<i>Action</i> LH and DS to look at AA's structures and see how it would suit their problems.
+
+<br>
+
+(WL) Are we prepared to make big changes now, such as changes to variable
+names.
+Yes, as long as we carry the main users with us. Proposed major changes will
+be discussed on eidors-3d listserv.
+
+<br>
+
+
+<li> Research Issues
+(RB) Cross continent funding? Grid computing -- no real applications?
+"e-science community"
+<br>
+
+Action: AA to check on Canadian position.
+RB To check on Grid stuff. Large computing, para'l computing.
+<br>
+
+(AA) Testabilty big deal in software eng. Not much work on numerical
+algorithms. Inverse problems and medical imaging.
+<br>
+(RB) Design for testability
+<br>
+(BG) Has MS in CS , code inspection at RMC s/w for nuclear inspection.
+<br>
+(WL) Testing of of IP software, so that one transparently avoids any cheating,
+whether or not intended, seems to be an interesting issue.
+<br>
+(RB) VLSI, scalability testing. TOAST experience suggests problem we might
+encounter when code grows. Do we need built in test methods in EIDORS as it
+grows?
+<br>
+
+
+ (AA) This is a great multidisciplinary collaboration. We need good testing
+now.
+<br>
+ Repositary for standard data and  Meshes, as well as standard algorithms.
+<br>
+
+
+<li> (RB) Suggested giving EIDORS3D a higher profile on eit.org.uk to encourage
+contributions. (WL) Suggested that we consolodate changes with the main
+groups actively developing EIDORS3D first.
+<br>
+
+<li> AOB: The meeting thanked the AG coordinators, the video conferencing went
+well apart from a loss of audio.
+<br>
+
+<li> It was agreed to schedule a meeting in about two months with London and
+Dartmouth both joining us over AG as well.
+ Action: HD, RB, AA, WL to check availability of their AG nodes.
+<br>
+</ol>
+
 <br><li><b>
     4 July 2004: 
 </b><br>
