@@ -4,28 +4,16 @@ function data= np_fwd_solve( fwd_model, img)
 % data = measurements struct
 % fwd_model = forward model
 % img = image struct
-% $Id: np_fwd_solve.m,v 1.3 2004-07-18 03:17:25 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.4 2004-07-18 03:52:13 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
 %Set the tolerance for the forward solver
 tol = 1e-5;
 
-[Eref,D,Ela,ppr] = fem_master_full( p.vtx, p.simp, ...
-                img.elem_data, ...
-                p.gnd_ind, p.elec, p.zc, p.sym );
+s_mat= calc_system_mat( fwd_model, img );
 
-[Vfwd] = forward_solver(p.vtx,Eref,p.I,tol,ppr);
-
-% MODIFIED: the specification of the measurement sequence
-% should be part of the fwd_model, here it is part of the solver
-%[voltH,voltV,indH,indV,dfr]= ...
-%    get_3d_meas(elec,fwd_model.nodes,Vfwd,Ib, ...
-%                fwd_model.misc.no_pl);
-%
-%dfr = dfr(1:2:length(dfr)); %Taking just the horrizontal measurements
-%data.misc.indH= indH;
-%data.misc.df= dfr;
+Vfwd = forward_solver(p.vtx, s_mat.E, p.I, tol, s_mat.perm);
 
 Velec=Vfwd( p.n_node+(1:p.n_elec),:);
 voltH = zeros( p.n_meas, 1 );
