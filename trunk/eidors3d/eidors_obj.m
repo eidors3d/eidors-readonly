@@ -55,7 +55,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.15 2005-02-23 16:47:59 aadler Exp $
+% $Id: eidors_obj.m,v 1.16 2005-02-23 16:59:32 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -125,7 +125,7 @@ function val= get_cache_obj( obj, prop, dep_obj1 );
    global eidors_objects
    try
 %     val= eidors_objects.( obj_id ).cache.( prop );
-      val = eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
+      val = eval(sprintf('eidors_objects.%s.cache.%s;',obj.id,prop));
    catch
       val= [];
    end
