@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: matrix_id.cpp,v 1.2 2005-02-23 02:48:49 aadler Exp $
+ *   $Id: matrix_id.cpp,v 1.3 2005-02-23 03:59:10 aadler Exp $
  */
 
 #include <stdio.h>
@@ -68,6 +68,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
     fclose(fid);
     return;
   }
+
+  fseek( fid, 125L, SEEK_SET); // matlab v6 files have 125 bytes comments
 
   #define BUFSIZE 4096
   unsigned char buffer[ BUFSIZE ];

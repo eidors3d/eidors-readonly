@@ -73,6 +73,11 @@ end
 function obj = set_obj( obj, varargin );
    global eidors_objects
 
+   try
+      old_obj_id= obj.id;
+      % If we're modifying an old object, then remove the old version
+      rmfield(eidors_objects, old_obj_id);
+   end
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
 %  
@@ -101,6 +106,7 @@ function val= cache_obj( obj, prop, value );
    catch
       error('EIDORS object does not exist');
    end
+
 
    if nargin==3     %set cache
 %     eidors_objects.( obj_id ).cache.( prop ) = value;
@@ -131,9 +137,6 @@ function obj= new_obj( type, name, varargin );
 
    obj.type = type;
    obj.name = name;
-   obj_id= calc_obj_id( obj );
-
-   eval(sprintf('eidors_objects.%s=obj;', obj_id)); % create in store
    obj= set_obj(obj, varargin{:} );
 
 % This function hashes the value of the variable var
