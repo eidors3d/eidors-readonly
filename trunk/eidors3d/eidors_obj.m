@@ -1,7 +1,7 @@
 function obj_id= eidors_obj(type,name, varargin );
 % EIDORS_OBJ: 'constructor' to create a eidors structure
 % USAGE: as a constructor
-%     mdlid= eidors_obj(type,name,prop1,value1, prop1, value2, ...)
+%     obj  = eidors_obj(type,name,prop1,value1, prop1, value2, ...)
 %
 %     type:  obj type: fwd_model, inv_model, data, image
 %     name:  text string identifier for model (may be '')
@@ -11,8 +11,14 @@ function obj_id= eidors_obj(type,name, varargin );
 %             eidors_obj('fwd_model','My FWD MODEL', ...
 %                        'nodes', NODES, 'elems', ELEMS, ...
 %
+% OR construct from structure
+%     obj  = eidors_obj(type,obj);
+%
+%     example: fwd_mdl.nodes = NODES; .... %etc
+%              fwd_mdl = eidors_obj('fwd_model',fwd_mdl);
+%
 % USAGE: to set values
-%     mdlid= eidors_obj('set',obj,prop1,value1, prop1, value2, ...)
+%     obj  = eidors_obj('set',obj,prop1,value1, prop1, value2, ...)
 %
 % this will set the values of properties of the object. At the
 % same time, any cached values will be erased (because they may
@@ -22,7 +28,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %             eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
 %
 % USAGE: to cache values
-%     mdlid= eidors_obj('cache',obj, cacheprop1,value1, ...)
+%     obj  = eidors_obj('cache',obj, cacheprop1,value1, ...)
 %
 % this will set the values of cached properties of the object.
 %
@@ -31,11 +37,11 @@ function obj_id= eidors_obj(type,name, varargin );
 %   
 %
 % USAGE: as an accessor
-%     mdlid= eidors_obj('get',objid, prop1);
+%     obj  = eidors_obj('get',objid, prop1);
 %  or
-%     mdlid= eidors_obj('get',objid );
+%     obj  = eidors_obj('get',objid );
 %  or
-%     mdlid= eidors_obj( objid );
+%     obj  = eidors_obj( objid );
 
 % FIXME: this variable must be global, rather than persistent
 % because the broken Matlab syntax does not allow persistent
@@ -101,9 +107,21 @@ function obj= new_obj( type, name, varargin );
    end
    obj_id =  sprintf('obj_%07d', eidors_objects.idnum);
    eidors_objects.idnum  = eidors_objects.idnum + 1;
+
+   if isstruct(name)
+      obj= name;
+      if isfield(obj,'name')
+         name= obj.name;
+      else
+         name= 'unknown';
+      end
+   end
+
    obj.type = type;
+   obj.id   = obj_id;
+   obj.name = name;
+
+   eval(sprintf('eidors_objects.%s=obj;', obj_id)); % create in store
    obj.name = name;
    obj.id   = obj_id;
-   eval(sprintf('eidors_objects.%s=obj;', obj_id)); % create object in store
-
    obj= set_obj(obj, varargin{:} );

@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.17 2004-07-21 18:38:08 aadler Exp $
+% $Id: demo_real.m,v 1.18 2004-07-21 19:37:09 aadler Exp $
 
 clear; 
 clc;
@@ -26,24 +26,23 @@ load(datareal,'vtx','simp');
 % create a 'fwd_model' object with name demo_mdl
 %
 
-%demo_mdl.type = 'model';
-%demo_mdl.name = 'demo real model';
-%demo_mdl.nodes= vtx;
-%demo_mdl.elems= simp;
-%demo_mdl.boundary= dubs3( simp );
-%demo_mdl.solve=      'np_fwd_solve';
-%demo_mdl.jacobian=   'np_calc_jacobian';
-%demo_mdl.system_mat= 'np_calc_system_mat';
+demo_mdl.name = 'demo real model';
+demo_mdl.nodes= vtx;
+demo_mdl.elems= simp;
+demo_mdl.boundary= dubs3( simp );
+demo_mdl.solve=      'np_fwd_solve';
+demo_mdl.jacobian=   'np_calc_jacobian';
+demo_mdl.system_mat= 'np_calc_system_mat';
 
-demo_mdl= eidors_obj('model', 'Demo real model', ...
-                     'nodes', vtx, ...
-                     'elems', simp, ...
-                     'boundary', dubs3( simp ), ...
-                     'solve',      'np_fwd_solve', ...
-                     'jacobian',   'np_calc_jacobian', ...
-                     'system_mat', 'np_calc_system_mat' );
+% The model could also be created this way
+%demo_mdl= eidors_obj('model', 'Demo real model', ...
+%                     'nodes', vtx, ...
+%                     'elems', simp, ...
+%                     'boundary', dubs3( simp ), ...
+%                     'solve',      'np_fwd_solve', ...
+%                     'jacobian',   'np_calc_jacobian', ...
+%                     'system_mat', 'np_calc_system_mat' );
                      
-
 clear vtx simp
 
 disp('step 2: create FEM model electrodes definitions');
@@ -64,7 +63,7 @@ end
 
 demo_mdl.misc.sym     = sym;
 
-demo_mdl= eidors_obj('set', demo_mdl); %send to cache
+demo_mdl= eidors_obj('model', demo_mdl); % create object
 
 disp('step 3: create FEM model stimulation and measurement patterns');
 
@@ -105,10 +104,11 @@ disp('step 4: simulate data for homogeneous medium');
 % create a homogeneous image
 %
 
-homg_img.type = 'image';
-homg_img.name = 'homogeneous image';
-homg_img.elem_data= ones( size(demo_mdl.elems,1) ,1);
-homg_img.fwd_model= demo_mdl;
+mat= ones( size(demo_mdl.elems,1) ,1);
+
+homg_img= eidors_obj('image', 'homogeneous image', ...
+                     'elem_data', mat, ...
+                     'fwd_model', demo_mdl );
 
 homg_data=fwd_solve( demo_mdl, homg_img);
 
@@ -116,15 +116,13 @@ disp('step 5: simulate data for inhomogeneous medium');
 %
 % create an inhomogeneous image
 %
-mat= ones( size(demo_mdl.elems,1) ,1);
 load( datacom ,'A','B') %Indices of the elements to represent the inhomogeneity
 mat(A)= mat(A)+0.15;
 mat(B)= mat(B)-0.20;
 
-inhomg_img.type = 'image';
-inhomg_img.name = 'inhomogeneous image';
-inhomg_img.elem_data= mat;
-inhomg_img.fwd_model= demo_mdl;
+inhomg_img= eidors_obj('image', 'inhomogeneous image', ...
+                       'elem_data', mat, ...
+                       'fwd_model', demo_mdl );
 clear A B mat
 
 if ~isOctave
@@ -137,12 +135,6 @@ inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 
 disp('step 6: add noise to simulated data');
 
-% FIXME: I don't understand how this noise should work
-% Add noise to data
-% dva = homg_data.meas - inhomg_data.meas;
-% 
-% dc = mean(dva); %DC component of the noise
-% noi = dc./7 * ones(length(dva),1) + dc * randn(length(dva),1); %Add the AC component
 inhomg_data.meas = inhomg_data.meas + 1e-5*randn(size(inhomg_data.meas));
   homg_data.meas =   homg_data.meas + 1e-5*randn(size(  homg_data.meas));
 
