@@ -24,8 +24,10 @@ catch
 end
 
 fid= 2; %stderr
-if level <= log_level
-   fprintf(fid,  message );
+if strcmp('msg','set_level')
+   eidors_objects.log_level= level;
+elseif level <= log_level
+   fprintf(fid, 'EIDORS:[ %s ]\n', message );
    if exist('OCTAVE_VERSION');
       fflush(fid);
    end
