@@ -54,8 +54,9 @@ function obj_id= eidors_obj(type,name, varargin );
 % because the broken Matlab syntax does not allow persistent
 % variables to be passed to subfunctions
 % global eidors_objects
-
-if nargin==0 || ~isstr(type)
+% (Short circuit boolean removed for compatibility with Matlab 6.x WRBL 22/02/2004)
+% Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
+if nargin==0 | ~isstr(type)
    error('cannot call eidors_obj with no arguments');
 end
 
@@ -85,9 +86,11 @@ function obj = get_obj( obj, varargin );
    obj_id= test_exist( obj );
 
    if nargin==1
-      obj = eidors_objects.( obj_id );
+   %   obj = eidors_objects.( obj_id );
+   obj = getfield(eidors_objects, obj_id )
    elseif nargin==2
-      obj = eidors_objects.( obj_id ).( varargin{1} );
+    %  obj = eidors_objects.( obj_id ).( varargin{1} );
+       obj = getfield(getfield(eidors_objects, obj_id ), varargin{1} );
    else
       error('get_obj cannot interpret input');
    end
@@ -96,25 +99,32 @@ function obj = set_obj( obj, varargin );
    global eidors_objects
    obj_id= test_exist( obj );
 
-   eidors_objects.( obj_id ) = obj;
-   eidors_objects.( obj_id ).cache= []; %clear cache
+   %eidors_objects.( obj_id ) = obj;
+   eidors_objects=setfield(eidors_objects,obj_id,obj);
+   %eidors_objects.( obj_id ).cache= []; %clear cache
+   eidors_objects=setfield(eidors_objects,obj_id,'cache',[]);
+   
    for idx= 1:2:nargin-1
-      eidors_objects.( obj_id ).( varargin{idx} )= ...
-                                  varargin{idx+1};
+    %  eidors_objects.( obj_id ).( varargin{idx} )= ...
+%                                  varargin{idx+1};
+
+      eidors_objects=setfield(eidors_objects,obj_id,varargin{idx},varargin{idx+1}); 
    end
 
-   obj = eidors_objects.( obj_id );
-     
+   %obj = eidors_objects.( obj_id );
+    obj = getfield(  eidors_objects, obj_id );
 function val= cache_obj( obj, prop, value );
    global eidors_objects
    obj_id= test_exist( obj );
 
    if nargin==3     %set cache
-      eidors_objects.( obj_id ).cache.( prop ) = value;
+    %  eidors_objects.( obj_id ).cache.( prop ) = value;
+    eidors_objects= setfield(eidors_objects, obj_id ,'cache', prop, value);
       val= ''; % to satisfy matlab errors
    elseif nargin==2 %get from cache
       try
-         val= eidors_objects.( obj_id ).cache.( prop );
+     %    val= eidors_objects.( obj_id ).cache.( prop );
+     val = getfield(eidors_objects,obj_id,'cache',prop);
       catch
          val= [];
       end
