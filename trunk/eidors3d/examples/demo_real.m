@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.4 2004-07-05 04:41:10 aadler Exp $
+% $Id: demo_real.m,v 1.5 2004-07-09 18:51:28 aadler Exp $
 
 clear; 
 %clc;
@@ -23,8 +23,21 @@ load(datareal,'srf','vtx','simp');
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
 
+% create a 'fwd_model' object with name demo_mdl
+
+demo_mdl.name = 'demo real model';
+demo_mdl.nodes= vtx;
+demo_mdl.elems= simp;
+demo_mdl.boundary= srf;
+demo_mdl.solve= 'np_fwd_solve';
+
+clear srf vtx simp
+
 if ~isOctave
-    trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
+    trimesh(demo_mdl.boundary, ...
+            demo_mdl.nodes(:,1), ...
+            demo_mdl.nodes(:,2), ...
+            demo_mdl.nodes(:,3) );
     axis('image');
     set(gcf,'Colormap',[0 0 0]);
     hold on;
@@ -45,6 +58,8 @@ if ~isOctave
   end
   hidden('off');
 end
+
+clear sels
   
 load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 %elec : The electrodes matrix. 
@@ -54,7 +69,35 @@ load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 %sym : Boolean entry for efficient forward computations 
 %sym='{n}';
 
-[I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
+demo_mdl.gnd_node= gnd_ind;
+for i=1:length(zc)
+    demo_mdl.electrode(i).z_contact= zc(i);
+    demo_mdl.electrode(i).nodes=     elec(i,:);
+end
+
+demo_mdl.misc.protocol= protocol;
+demo_mdl.misc.sym     = sym;
+demo_mdl.misc.no_pl   = no_pl;
+% TODO: generalize the way that protocol sym no_pl are managed
+clear gnd_ind elec zc sym protocol no_pl
+
+mat_ref = 1*ones(828,1);
+data=solve( demo_mdl, mat_ref);
+return
+
+
+elec= zeros(length(demo_mdl.electrode ), ...
+            length(demo_mdl.electrode(1).nodes) );
+zc  = zeros(length(demo_mdl.electrode ), 1);
+for i=1:length(demo_mdl.electrode);
+    elec(i,:)= demo_mdl.electrode(i).nodes;
+    zc(i)    = demo_mdl.electrode(i).z_contact;
+end
+[I,Ib] = set_3d_currents(protocol, ...
+                         elec, ...
+                         demo_mdl.nodes, ...
+                         demo_mdl.gnd_node, ...
+                         no_pl);
 
 disp('Adjacent current patterns selected') 
 disp('Calculating reference measurements')
@@ -68,10 +111,15 @@ mat_ref = 1*ones(828,1); %%%%%%
 %Set the tolerance for the forward solver
 tol = 1e-5;
 
-[Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,sym);
-[Vref] = forward_solver(vtx,Eref,I,tol,ppr);
-[refH,refV,indH,indV,dfr]=get_3d_meas(elec,vtx,Vref,Ib,no_pl);
-dfr = dfr(1:2:end); %Taking just the horrizontal measurements
+[Eref,D,Ela,ppr] = fem_master_full( ...
+                demo_mdl.nodes, ...
+                demo_mdl.elems, ...
+                mat_ref, ...
+                demo_mdl.gnd_node, ...
+                elec,zc,sym);
+[Vref] = forward_solver(demo_mdl.nodes,Eref,I,tol,ppr);
+[refH,refV,indH,indV,dfr]=get_3d_meas(elec,demo_mdl.nodes,Vref,Ib,no_pl);
+dfr = dfr(1:2:length(dfr)); %Taking just the horrizontal measurements
 
 close;
 disp('Allow a local inhomogeneity')
