@@ -3,7 +3,7 @@ function param= mk_circ_tank(rings, levels, n_elec, n_planes )
 % param= mk_circ_tank(rings, levels, n_elec, n_planes )
 % 
 % rings:  number of horizontal plane rings (divisible by 4)
-% levels: vector of vertical placement of levels (divisible by 4)
+% levels: vector of vertical placement of levels
 %     for 2D mesh, levels = []
 % n_elec: number of electrodes in each horiz plane (divisible by 4)
 % n_planes: number of planes of electrodes (divisible by 4)
