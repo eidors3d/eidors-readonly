@@ -68,7 +68,171 @@
   jj= calc_jacobian( my_model, ...
                 conductivites); % calls my_jac_calc_function
 </pre>
-    <H3>Objects</H3>
+    <H3>Simple Example</H3>
+Consider the simplest possible EIT system. We have a resistor, and
+we want to know its value. We therefore attach one electrode to each
+terminal, and apply several different test currents 
+(<i>I</i><sub>1</sub>, <i>I</i><sub>2</sub>, <i>I</i><sub>3</sub>)
+and measure the
+voltages: 
+(<i>V</i><sub>1</sub>, <i>V</i><sub>2</sub>, <i>V</i><sub>3</sub>)
+From these measurements the a least-squares estimate of the resistance
+is calculated.
+<h4>Step 1: Define functions for
+    <i>fwd_solve</i>,
+    <i>inv_solve</i>, and
+    <i>calc_jacobian</i>
+</h4>
+<b>Forward Solver</b>
+<pre>
+    <font color="#0000ff">% Forward Model:</font>
+    <font color="#0000ff">% For each stimulation there is I1 into Node1</font>
+    <font color="#0000ff">%  Node2 is connected to gnd with Zcontact</font>
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% each stim has one measurement pattern where</font>
+    <font color="#0000ff">%  Vmeas= Meas_pat * Node1</font>
+    <font color="#0000ff">%       = Meas_pat * I1 * ( Zcontact*2 + R )</font>
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% Thus</font>
+    <font color="#0000ff">%  V= IR    =&gt; [V1;V2;V3] = [I1;I2*I3]*(R + 2*Zcontact)</font>
+    <font color="#008080">function</font> data =f_solve( f_mdl, img )
+      R= img.elem_data<font color="#6a5acd">;</font>
+
+      n_stim= length( f_mdl.stimulation )<font color="#6a5acd">;</font>
+      V= <font color="#804040"><b>zeros</b></font>(n_stim, <font color="#ff00ff">1</font>)<font color="#6a5acd">;</font>
+
+      <font color="#804040"><b>for</b></font> i=<font color="#ff00ff">1</font>:n_stim
+        I        = f_mdl.stimulation(i).stim_pattern <font color="#804040"><b>/</b></font> <font color="#ff00ff">1000</font><font color="#6a5acd">;</font> <font color="#0000ff">% mA</font>
+        meas_pat = f_mdl.stimulation(i).meas_pattern<font color="#6a5acd">;</font>
+
+        stim_elec= find( I )<font color="#6a5acd">;</font>
+        zc       = f_mdl.electrode( stim_elec ).z_contact<font color="#6a5acd">;</font>
+
+        V(i)= meas_pat <font color="#804040"><b>*</b></font> I <font color="#804040"><b>*</b></font> ( R <font color="#804040"><b>+</b></font> <font color="#ff00ff">2</font><font color="#804040"><b>*</b></font>zc)<font color="#6a5acd">;</font>
+      <font color="#804040"><b>end</b></font>
+
+      data.name=<font color="#ff00ff">'resistor model data'</font><font color="#6a5acd">;</font>
+      data.meas= V<font color="#6a5acd">;</font>
+</pre>
+<b>Inverse Solver</b>
+<pre>
+    <font color="#0000ff">% Inverse Model: R= inv(J'*J)*J'*V</font>
+    <font color="#0000ff">%    This corresponds to the least squares solution</font>
+    <font color="#008080">function</font> img= i_solve( i_mdl, data )
+      <font color="#0000ff">% Normally the Jacobian depends on an image. Create a dummy one here</font>
+      i_img= eidors_obj(<font color="#ff00ff">'image'</font>,<font color="#ff00ff">'Unused'</font>)<font color="#6a5acd">;</font>
+      f_mdl= i_mdl.fwd_model<font color="#6a5acd">;</font>
+      J = calc_jacobian( f_mdl, i_img)<font color="#6a5acd">;</font>
+
+      img.name= <font color="#ff00ff">'solved by i_solve'</font><font color="#6a5acd">;</font>
+      img.elem_data= (J<font color="#804040"><b>'</b></font><font color="#804040"><b>*</b></font>J)<font color="#804040"><b>\</b></font>J<font color="#804040"><b>'</b></font><font color="#804040"><b>*</b></font> data.meas<font color="#6a5acd">;</font>
+      img.inv_model= i_mdl<font color="#6a5acd">;</font>
+    </pre>
+
+<b>Jacobian Calculator</b>
+    <pre>
+    <font color="#0000ff">% Jacobian:      J= dV/dR =I = [I1; I2; I3]</font>
+    <font color="#008080">function</font> J= c_jacobian( f_mdl, img)
+      n_stim= length( f_mdl.stimulation )<font color="#6a5acd">;</font>
+      J= <font color="#804040"><b>zeros</b></font>(n_stim, <font color="#ff00ff">1</font>)<font color="#6a5acd">;</font>
+      <font color="#804040"><b>for</b></font> i=<font color="#ff00ff">1</font>:n_stim
+        J(i)     = f_mdl.stimulation(i).stim_pattern <font color="#804040"><b>/</b></font> <font color="#ff00ff">1000</font><font color="#6a5acd">;</font> <font color="#0000ff">% mA</font>
+      <font color="#804040"><b>end</b></font>
+    </pre>
+<h4>Step 2: Create Eidors based code using functions
+</h4>
+    <pre>
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% create FEM model structure</font>
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% Fwd model:</font>
+    <font color="#0000ff">%  Two nodes are in space at [1,1,1] and [2,2,2]</font>
+    <font color="#0000ff">%  The resistor is connected between them</font>
+
+    r_mdl.name = <font color="#ff00ff">'demo resistor model'</font><font color="#6a5acd">;</font>
+    r_mdl.nodes= <font color="#008080">[</font><font color="#ff00ff">1</font>,<font color="#ff00ff">1</font>,<font color="#ff00ff">1</font><font color="#6a5acd">;</font>  <font color="#ff00ff">2</font>,<font color="#ff00ff">2</font>,<font color="#ff00ff">2</font><font color="#008080">]</font><font color="#6a5acd">;</font>
+    r_mdl.elems= <font color="#008080">[</font><font color="#ff00ff">1</font><font color="#6a5acd">;</font><font color="#ff00ff">2</font><font color="#008080">]</font><font color="#6a5acd">;</font>
+    r_mdl.solve=      @f_solve<font color="#6a5acd">;</font>
+    r_mdl.jacobian=   @c_jacobian<font color="#6a5acd">;</font>
+
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% create FEM model electrode definitions</font>
+    <font color="#0000ff">%</font>
+
+    r_mdl.electrode(<font color="#ff00ff">1</font>).z_contact= <font color="#ff00ff">10</font><font color="#6a5acd">;</font> <font color="#0000ff">% ohms</font>
+    r_mdl.electrode(<font color="#ff00ff">1</font>).nodes=     <font color="#ff00ff">1</font><font color="#6a5acd">;</font>
+    r_mdl.gnd_node= <font color="#ff00ff">2</font><font color="#6a5acd">;</font>
+
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% create stimulation and measurement patterns</font>
+    <font color="#0000ff">% patterns are 0.010,0.020,0.030 mA</font>
+
+    <font color="#804040"><b>for</b></font> i=<font color="#ff00ff">1</font>:<font color="#ff00ff">3</font>
+        r_mdl.stimulation(i).stimulation= <font color="#ff00ff">'mA'</font><font color="#6a5acd">;</font>
+        r_mdl.stimulation(i).stim_pattern= ( <font color="#ff00ff">0.010</font><font color="#804040"><b>*</b></font>i )<font color="#6a5acd">;</font>
+        r_mdl.stimulation(i).meas_pattern= <font color="#ff00ff">1</font><font color="#6a5acd">;</font> <font color="#0000ff">% measure electrode 1</font>
+    <font color="#804040"><b>end</b></font>
+
+    r_mdl= eidors_obj(<font color="#ff00ff">'fwd_model'</font>, r_mdl)<font color="#6a5acd">;</font>
+
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% simulate data for medium with R=1 kohms</font>
+    <font color="#0000ff">% This medium is called an 'image'</font>
+    <font color="#0000ff">%</font>
+
+    img_1k = eidors_obj(<font color="#ff00ff">'image'</font>, <font color="#ff00ff">'homogeneous image'</font>, <font color="#6a5acd">...</font>
+                         <font color="#ff00ff">'elem_data'</font>, <font color="#ff00ff">1e3</font>, <font color="#6a5acd">...</font>
+                         <font color="#ff00ff">'fwd_model'</font>, r_mdl )<font color="#6a5acd">;</font>
+
+    data_1k =fwd_solve( r_mdl, img_1k )<font color="#6a5acd">;</font>
+
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% add noise to simulated data</font>
+    <font color="#0000ff">%</font>
+
+    data_noise= eidors_obj(<font color="#ff00ff">'data'</font>, <font color="#ff00ff">'noisy data'</font>, <font color="#6a5acd">...</font>
+                           <font color="#ff00ff">'meas'</font>, data_1k.meas <font color="#804040"><b>+</b></font> <font color="#ff00ff">1e-3</font><font color="#804040"><b>*</b></font>randn(<font color="#ff00ff">3</font>,<font color="#ff00ff">1</font>))<font color="#6a5acd">;</font>
+
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% create inverse model</font>
+    <font color="#0000ff">%</font>
+
+    <font color="#0000ff">% create an inv_model structure of name 'demo_inv'</font>
+    r_inv.name=  <font color="#ff00ff">'Resistor Model inverse'</font><font color="#6a5acd">;</font>
+    r_inv.solve= @i_solve<font color="#6a5acd">;</font>
+    r_inv.reconst_type= <font color="#ff00ff">'static'</font><font color="#6a5acd">;</font>
+    r_inv.fwd_model= r_mdl<font color="#6a5acd">;</font>
+    r_inv= eidors_obj(<font color="#ff00ff">'inv_model'</font>, r_inv)<font color="#6a5acd">;</font>
+
+    <font color="#0000ff">%</font>
+    <font color="#0000ff">% solve inverse model');</font>
+    <font color="#0000ff">%</font>
+
+    R= inv_solve( r_inv, data_1k )<font color="#6a5acd">;</font>
+    fprintf(<font color="#ff00ff">'R calculated with clean data= %5.3f kOhm\n'</font>, R.elem_data <font color="#804040"><b>/</b></font> <font color="#ff00ff">1000</font> )<font color="#6a5acd">;</font>
+
+    R= inv_solve( r_inv, data_noise )<font color="#6a5acd">;</font>
+    fprintf(<font color="#ff00ff">'R calculated with noisy data= %5.3f kOhm\n'</font>, R.elem_data <font color="#804040"><b>/</b></font> <font color="#ff00ff">1000</font> )<font color="#6a5acd">;</font>
+    </pre>
+
+<h4>Step 3: Run code
+</h4>
+    <pre>
+    &gt;&gt; resistor_model
+        EIDORS:[ fwd_solve: setting cached value ]
+        EIDORS:[ inv_solve ]
+        EIDORS:[ calc_jacobian: setting cached value ]
+    Value calculated with clean data= 1.020 kOhm
+        EIDORS:[ inv_solve ]
+        EIDORS:[ calc_jacobian: setting cached value ]
+    Value calculated with noisy data= 1.068 kOhm
+    </pre>
+
+
+
+
+
+<H3>EIDORS Objects Reference</H3>
     <ul>
       <p><li><b>
         data
@@ -420,7 +584,7 @@ now it is (using the <tt>eidors_obj</tt> function):
    </ol>
 </td></tr></table>
 <small>
-    Last Modified: $Date: 2004-07-22 22:32:46 $ by $Author: aadler $
+    Last Modified: $Date: 2004-07-25 21:51:54 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
