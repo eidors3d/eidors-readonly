@@ -1,18 +1,31 @@
+% DEMO to show usage of EIDORS3D
+% $Id: demo_real.m,v 1.2 2004-07-02 14:07:13 aadler Exp $
+
 clear; 
-clc;
-warning off;
+%clc;
+
+isOctave= exist('OCTAVE_VERSION');
+
+datareal= 'datareal.mat';
+if isOctave
+    datareal= file_in_loadpath(datareal);
+end
+
+warning('off');
 disp('This is a demo for reconstructing conductivity changes')
 disp(sprintf('\n'))
 
-load datareal srf vtx simp;
+load(datareal,'srf','vtx','simp');
 %srf : the boundary surfaces (triangles)
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
 
-trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
-axis image;
-set(gcf,'Colormap',[0 0 0]);
-hold on;
+if ~isOctave
+    trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
+    axis('image');
+    set(gcf,'Colormap',[0 0 0]);
+    hold on;
+end
 
 disp('This is a cylindrical mesh with homogeneous conductivity distribution of 1')
 disp('Wait to attach the electrodes')
@@ -20,15 +33,17 @@ disp(sprintf('\n'))
 
 pause(2);
 
-load datareal sels;
+load(datareal,'sels');
 %sels :Index in srf matrix denoting the faces to be assigned as electrodes
 
+if ~isOctave
   for u=1:size(sels)
       paint_electrodes(sels(u),srf,vtx);
   end
+  hidden('off');
+end
   
-hidden off;
-load datareal gnd_ind elec zc protocol no_pl sym;
+load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
 %elec : The electrodes matrix. 
 %np_pl : Number of electrode planes (in planar arrangements)
 %protocol : Adjacent or Opposite or Customized.

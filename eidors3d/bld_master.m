@@ -49,12 +49,13 @@ J1 = D0 * vtx(:,1);
 J2 = D0 * vtx(:,2);
 J3 = D0 * vtx(:,3);
   
+JJ= zeros( 3,3, ns );
 for w=1:3
    r=1;
-  	JJ(r,w,:) = J1(w:dimen:ns*dimen);
-  	JJ(r+1,w,:) = J2(w:dimen:ns*dimen);
-  	JJ(r+2,w,:) = J3(w:dimen:ns*dimen);
-  end
+   JJ(r,w,:)   = J1(w:dimen:ns*dimen);
+   JJ(r+1,w,:) = J2(w:dimen:ns*dimen);
+   JJ(r+2,w,:) = J3(w:dimen:ns*dimen);
+end
 
 dj = squeeze(sum( [prod([JJ(1,1,:);JJ(2,2,:);JJ(3,3,:)]); prod([JJ(1,2,:);JJ(2,3,:);JJ(3,1,:)]);...
                    prod([JJ(1,3,:);JJ(2,1,:);JJ(3,2,:)]); prod([-JJ(1,3,:);JJ(2,2,:);JJ(3,1,:)]);...
