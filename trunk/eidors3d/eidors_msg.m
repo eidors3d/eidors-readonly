@@ -1,9 +1,14 @@
-function eidors_msg( message, level )
+function eidors_msg( message, varargin )
 %EIDORS_MSG: eidors progress and status messages
 %
 % USAGE: eidors_msg('mission accomplished; time to relax', 1)
-%   prints 'mission accomplished; time to relax' if loglevel <=1
+%   prints 'EIDORS:[ mission accomplished; time to relax ]'
+%       if log_level <=1
 %   less important messages have higher levels
+%
+% other parameters will be sent to print; example
+% eidors_msg('did %d of %s at %f', 2, 'stuff', sqrt(2), 1)
+%   prints 'EIDORS:[ did 2 of stuff at 1.414214 ]'
 %
 % USAGE: eidors_msg( 'set_level', 1)
 %   sets the loglevel to 1
@@ -16,18 +21,27 @@ function eidors_msg( message, level )
 
 global eidors_objects
 
+if nargin==1
+   args= {};
+   level= 2;
+else
+   level= varargin{ nargin-1 };
+   args= varargin( 1:nargin-2 );
+end
+
 try
    log_level= eidors_objects.log_level;
 catch
    log_level= 1; % default;
-   eidors_msg.log_level= log_level;
+   eidors_objects.log_level= log_level;
 end
 
 fid= 2; %stderr
-if strcmp('msg','set_level')
+if strcmp(message,'set_level')
    eidors_objects.log_level= level;
 elseif level <= log_level
-   fprintf(fid, 'EIDORS:[ %s ]\n', message );
+   string= sprintf('EIDORS:[ %s ]\n', message );
+   fprintf(fid, string, args{:});
    if exist('OCTAVE_VERSION');
       fflush(fid);
    end
