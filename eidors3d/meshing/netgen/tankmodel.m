@@ -18,7 +18,9 @@ electrode_radius= 9
 %height_between_centres = 15
 %electrode_radius= 2
 eps = 1e-8;
-[fid,mess]=fopen('tank.geo','w');
+geofn='tank.geo';
+meshfn='tank.msh';
+[fid,mess]=fopen(geofn,'w');
 fprintf(fid,'#Automatically generated cylinder surface mesh with round electrodes\n');
 fprintf(fid,'algebraic3d\n');
 fprintf(fid,'solid cy=cylinder(0,0,0;0,0,%6.2f;%6.2f) \n',tank_height, ...
@@ -48,3 +50,14 @@ fprintf(fid,'#Making two top level objects means they both get meshed.\n');
 fprintf(fid,'tlo body -transparent;\n');
 fprintf(fid,'tlo e1;\n');     
 fclose(fid);
+% Now call Netgen in batchmode to mesh this CSG file
+disp('Calling Netgen. Please wait.....');
+status= system(sprintf('ng -batchmode -geofile=%s  -meshfile=%s ',geofn,meshfn));
+if status~=0
+   error('Netgen call failed. Is netgen installed and on the search path?');
+end
+% Check of we can read the mesh in
+[vtx,simp,surf] = readngvol(meshfn);
+size(vtx)
+size(simp)
+size(surf)
