@@ -1,0 +1,174 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+   <head>
+<title>EIDORS-3D: Future Enhancements</title>
+   <style type="text/css">
+        body, td, th {
+        font-family: Verdana, Helvetica, Arial, sans-serif;
+        font-size:80%;
+        }
+        pre, tt {
+        font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
+        font-size:100%;
+        }
+   </style>
+
+</head>
+
+<body link="#800000"
+      marginwidth=0 marginheight=0 topmargin=0 leftmargin=5 
+      vlink="#400000" >
+<h2>
+   &nbsp; &nbsp;
+    EIDORS-3D:<br>
+    <i>EIT and Diffuse Optical Tomography Reconstruction Software</i>
+</h2>
+<table border="0"> <tr>
+<td valign="top">
+<a href="http://www.eidors.org/"
+   >EIDORS</a><br>
+<hr>
+<a href="index.html"
+   >Main</a><br>
+<a href="screenshot.html"
+   >Screenshots</a><br>
+<a href="docs.html"
+   >Documentation</a><br>
+<a href="http://sourceforge.net/projects/eidors3d/"
+   >Download</a><br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
+   >Browse CVS</a><br>
+<hr>
+<a href="news.html">News</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td> <td valign="top">
+<h2>News</h2>
+This page is a list of updates, discussions, and 
+ideas for enhancements to the
+EIDORS-3D package. Not all ideas will be implmeneted,
+of course, but at least they're written down.
+<ul>
+<br><li><b>
+    23 June 2004: Discussion
+</b> W.R.B. Lionheart, A. Adler
+In order to further EIDORS development, we developed the
+following desirata for EIDORS software.
+<ul>
+    <li> <b>
+        API design
+    </b><br>
+    EIDORS needs a clean, well-encapsulated and easy to understand
+    API. We do not feel that an object oriented API is particularly
+    useful because:
+    1) the Matlab OO design is somewhat of a "hack"
+    2) such an OO interface would make portability to other 
+       languages less easy
+
+    <p>
+    <li> <b>
+        Language portability
+    </b><br>
+    EIDORS is primarily aimed at MATLAB. We would like to EIDORS
+    to support Octave and Scilab, as far as possible. Currently,
+    Octave and Scilab have the features needed by EIDORS (sparse
+    matrices, 3D matrix support, etc.)
+    <p>
+    In the core, it should be possible to have portability. However,
+    Matlab graphics features are not supported in these languages.
+    Our idea is therefore to separate the graphics functions
+    from the core code. Graphics code would therefore be permitted
+    to be language specific.
+    <p>
+    Another desirable feature would be to support approaches
+    to enhance execution speed: ie. C functions, multiprocessor
+    support, etc. This is dealt with under <i>plug-in algorithms</i>
+
+
+    <p>
+    <li> <b>
+        Plugin algorithms
+    </b><br>
+    Many users will want to use EIDORS infrastructure to test their
+    own ideas. EIDORS should support <i>plugging in</i> such new
+    algorithms or techniques. 
+    <p>
+    It is not obvious to us at this point exactly what features
+    need to be added. Thus is is likely that some refactoring
+    of the code will be required as we learn more about users needs.
+    Please contact the authors with suggestions.
+
+    <p>
+    <li> <b>
+        Reference algorithms
+    </b><br>
+    One of the main goals of EIDORS is to allow people to compare
+    their <i>new fangled algorithms</i> to those implemented by others.
+    Unfortunately, the typical approach in this field has been to 
+    compare the <i>new fangled</i> to badly implement versions 
+    of others.
+    Ideally, EIDORS will make it easy to do the comparison 
+    correctly, <i>if desired</i>.
+    <p>
+    EIDORS should therefore offer:
+    1) use of the <i>latest  and greatest</i>
+        algorithms,
+        and
+    2) use of specific algorithms corresponding to
+        specific papers
+
+    <p>
+    <li> <b>
+        Simple and transparent code-base
+    </b><br>
+    EIDORS code is primarily aimed at numerical researchers.
+    This means EIDORS should be:
+    <br>&minus; simple. Code should be sufficiently small for 
+        an interested person to learn quite quickly
+    <br>&minus; command line based. Code should expose it's capabilities
+        and internal structure for inclusion into other algorithms.
+        Graphic interface contributions will be accepted, but will
+        be placed outside of the core.
+    <br>&minus; modifiable. Many users will want to modify EIDORS
+        to try their own ideas. This should be reasonably easy
+        to do.
+    <br>&minus; 
+
+    <p>
+    <li> <b>
+    Encourage contributions
+    </b><br>
+    We want 
+
+    <p>
+    <li> <b>
+    </b><br>
+
+    <p>
+    <li> <b>
+    </b><br>
+
+    <p>
+    <li> <b>
+    </b><br>
+
+    <p>
+    <li> <b>
+    </b><br>
+
+    <p>
+    <li> <b>
+    </b><br>
+</ul>
+<br>
+<!--
+<br><li><b>
+</b><br>
+-->
+
+</ul>
+</td></tr></table>
+</body>
+
+</html>
+
