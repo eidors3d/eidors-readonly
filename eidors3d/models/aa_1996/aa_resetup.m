@@ -1,4 +1,4 @@
-function param= aa_resetup(reponse,r1,r2,r3)
+function param= aa_resetup(varargin)
 % RESETUP: prepare fwd_model for EIT image reconstruction
 %
 % format  res_setup(' (abcd)(012345)[-|+][x] ',
@@ -10,22 +10,23 @@ function param= aa_resetup(reponse,r1,r2,r3)
 % position_initial = [0 2] DEFAUT
 %
 % (c) 1993-2002 A.Adler
-% $Id: aa_resetup.m,v 1.2 2004-07-20 13:34:27 aadler Exp $
+% $Id: aa_resetup.m,v 1.3 2004-07-20 14:33:27 aadler Exp $
 
-inp = proc_input_args( nargin, reponse );
+inp = proc_input_args( varargin{:} );
 
+niveaux= [];
 if inp.selec >= 'c' && inp.selec <= 'f'
-   rings    = inp.selec-abs('c')+1
-elseif  inp.selec>='i'
+   rings    = (inp.selec-abs('c')+1 )*4;
+elseif  inp.selec=='i'
    rings    =  8;
 elseif  inp.selec>='k'
 
   if inp.selec >= 'k' && inp.selec <= 'n'
      niveaux= [-.1;0;.1];
-     rings    = inp.selec-abs('m')+1
-  if inp.selec >= 's' && inp.selec <= 'v'
+     rings    = (inp.selec-abs('k')+1)*4;
+  elseif inp.selec >= 'o' && inp.selec <= 'r'
      niveaux= [-.25;-.1;0;.1;.25];
-     rings    = inp.selec-abs('s')+1
+     rings    = (inp.selec-abs('o')+4)*4;
   end %if reponse='st'
 
   % if using thorax model, then we need to expand size of layers
@@ -36,21 +37,25 @@ elseif  inp.selec>='k'
 end %if inp.selec > 'c'
 
 
-if inp.selec=='a' | inp.selec=='b';
-  [node, elem, mes] = mk_2d_fem_type1( selec );
+if inp.selec=='a' || inp.selec=='b';
+  mdl= mk_2d_fem_type1( inp.selec );
 else
   mdl= mk_circ_tank(rings, niveaux, inp.n_elec, inp.n_planes );
 end
 
-  if inp.selec=='i'
-    phi=(2*pi/64)*(0:63);
-    NODE=[ .95*NODE [sin(phi); cos(phi)] ];
-    ELEM=[ ELEM ...
-       [114:145;115:145 114;147:2:209] ...
-       [146:209;147:209 146;114+ceil(0:.5:31) 114] ];
-    MES= [146:64/elec:209];
-    CPTR= [1:256 257*ones(1,96)];
-  end %if reponse=='i'
+%  if inp.selec=='i'
+%    phi=(2*pi/64)*(0:63);
+%    NODE=[ .95*NODE [sin(phi); cos(phi)] ];
+%    ELEM=[ ELEM ...
+%       [114:145;115:145 114;147:2:209] ...
+%       [146:209;147:209 146;114+ceil(0:.5:31) 114] ];
+%    MES= [146:64/elec:209];
+%    CPTR= [1:256 257*ones(1,96)];
+%  end %if reponse=='i'
+
+param= mdl;
+param.type= 'model';
+return;
 
   j=pos_i(1); k=floor(j);
   MES=[MES( 1+rem( (0:elec-1)+k,elec) )+floor(MES(1:2)*[-1;1]*(j-k));
@@ -228,10 +233,10 @@ param.AIRE  = AIRE;
 %   inparam.n_elec=      elec;
 %   inparam.n_planes=    elec_planes;
 %   inparam.selec=       reponse(1);
-function inparam= proc_input_args( num_args, reponse )
+function inparam= proc_input_args( reponse, r1, r2, r3 )
 
-if num_args==0
-  reponse=input('quelle geometrie,position, etc.(''?'' pour aide): ','s'); 
+if nargin==0
+  reponse=input('Choose model geometry. (type "?" for help): ','s'); 
 
   if reponse=='?'
     fprintf(['Choose a model geometery to prepare\n' ...
@@ -255,11 +260,11 @@ if num_args==0
     reponse=input('Your choice: ','s'); 
   end
 
-elseif num_args==2
+elseif nargin==2
   reponse=[reponse ',' r1];
-elseif num_args==3
+elseif nargin==3
   reponse=[reponse ',' r1 ',' r2];
-elseif num_args==4
+elseif nargin==4
   reponse=[reponse ',' r1 ',' r2 ',' r3];
 end
 
@@ -300,6 +305,8 @@ end
 
   if length(pos_i)>=4
     elec_planes= pos_i(4);
+  else 
+    elec_planes= 1;
   end
 
   if length(pos_i)==0
@@ -331,7 +338,7 @@ inparam.n_elec=      elec;
 inparam.n_planes=    elec_planes;
 inparam.selec=       reponse(1);
 
-function [NODE, ELEM, MES] = mk_2d_fem_type1( selec )
+function param = mk_2d_fem_type1( selec )
     phi=(2*pi/64)*(0:63);
     NODE=[ [0;0] ...
       .2*[ sin(phi(1:16:64)); cos(phi(1:16:64)) ] ...
@@ -348,15 +355,23 @@ function [NODE, ELEM, MES] = mk_2d_fem_type1( selec )
             [45 30:44;30:45;14:29] ...
             [45 30:44;30:45;46:2:77] ...
             [46:77;47:77 46;30+floor(0:.5:15.5)] ]; 
-    MES=[46:32/elec:77];     
+%   MES=[46:32/elec:77];     
+    bdy_nodes=[ 46:77;47:77,46 ];
 
     if selec=='b'
       NODE=[ NODE [sin(phi); cos(phi)] ];   
       ELEM=[ ELEM ...
            [46:77;47:77 46;79:2:142] ...
            [78:141;79:141 78;46+ceil(0:.5:31) 46] ];
-      MES= [78:64/elec:141];
+%     MES= [78:64/elec:141];
     end %if reponse=='b'
+    bdy_nodes=[ 78:141;79:141,78 ];
+
+    param.nodes = NODE';
+    param.elems = ELEM';
+    param.boundary = bdy_nodes';
+    param.gnd_node = 1; % node at center of the tank
+    param.name= sprintf('2D FEM for EIT with %d nodes',size(NODE,2));
 
 % reshape model based on elliptical excentricity and a thorax level
 function newmdl = reshape_mdl( mdl, niv, ellip );
@@ -392,7 +407,6 @@ function newmdl = reshape_mdl( mdl, niv, ellip );
       nn(:,i)= NODE(:,i)* fac;
     end  %for i=1:size
     NODE=nn;
-  end %if reponse(2)
 
   NODE(1,:)= NODE(1,:)*sqrt(2)/sqrt(1+ellip^2);
   NODE(2,:)= NODE(2,:)*sqrt(2)*ellip/sqrt(1+ellip^2);

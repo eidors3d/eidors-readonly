@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.2 2004-07-16 17:06:42 aadler Exp $
+% $Id: show_fem.m,v 1.3 2004-07-20 14:33:26 aadler Exp $
 
 % if we have an img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -10,13 +10,17 @@ if strcmp( mdl.type , 'image' )
 end
 
 set(gcf, 'Name', mdl.name);
-trimesh(mdl.boundary, ...
-        mdl.nodes(:,1), ...
-        mdl.nodes(:,2), ...
-        mdl.nodes(:,3) );
-axis('image');
-set(gcf,'Colormap',[0 0 0]);
-hidden('off');
+if size(mdl.nodes,2)==2
+   show_2d_fem( mdl );
+else
+   trimesh(mdl.boundary, ...
+           mdl.nodes(:,1), ...
+           mdl.nodes(:,2), ...
+           mdl.nodes(:,3) );
+   axis('image');
+   set(gcf,'Colormap',[0 0 0]);
+   hidden('off');
+end
 
 if nargin>1
    if     length(options)>0 && options(1)~=0
@@ -81,6 +85,107 @@ Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
 patch(Xs,Ys,Zs,'y');
+
+function show_2d_fem( mdl, options )
+  domesnum= 0;
+  donodenum= 0;
+  dotext=0;
+  if exist('OCTAVE_VERSION')
+    gset('nokey');
+    dotext=0;
+    domesnum= 0;
+    donodenum= 0;
+  end
+
+if     size(mdl.nodes,2)==2  %2D
+  plot_2d_mesh(mdl.nodes', mdl.elems',[], .95, [0,0,0])
+   
+elseif size(mdl.nodes,2)==3  %3D
+
+  xxx=zeros(4,e); xxx(:)=NODE(1,ELEM(:));
+  xxx= S*xxx+ (1-S)*ones(4,1)*mean(xxx);
+  yyy=zeros(4,e); yyy(:)=NODE(2,ELEM(:));
+  yyy= S*yyy+ (1-S)*ones(4,1)*mean(yyy);
+  zzz=zeros(4,e); zzz(:)=NODE(3,ELEM(:));
+  zzz= S*zzz+ (1-S)*ones(4,1)*mean(zzz);
+  plot3( xxx([1 2 3 1 4 2 3 4],:), ...
+         yyy([1 2 3 1 4 2 3 4],:), ...
+         zzz([1 2 3 1 4 2 3 4],:),'k' );
+  hold on;
+  xy=NODE(1:2,MES(1,:));
+  plot3(arrow*xy,arrow*[0 1;-1 0]*xy,ones(8,1)*NODE(3,MES(1,:)),'b') 
+  hold off;
+  axis([ [-1.1 1.1]*max(NODE(1,:)) [-1.1 1.1]*max(NODE(2,:)) ...
+         [-1.1 1.1]*max(NODE(3,:))  ])
+
+end
+
+function plot_2d_mesh(NODE,ELEM,MES, S, options)
+%  if options(1) -> do mesh num
+%  if options(2) -> do node num
+%  if options(3) -> do text
+%  S=.95; % shrink simplices by this factor
+
+  e=size(ELEM,2);
+  d=size(ELEM,1);
+  if ~isempty(MES)
+    xy=NODE(:,MES(1,:));
+  end
+
+  arrow= [1.02 0;1.06 .05;1.06 .02;1.1 .02; ...
+          1.1 -.02; 1.06 -.02;1.06 -.05;1.02 0];
+  % arrow= [1.06 0;1.18 .15;1.18 .06;1.3 .06; ...
+  %          1.3 -.06; 1.18 -.06;1.18 -.15;1.06 0];
+  xxx=zeros(3,e); xxx(:)=NODE(1,ELEM(:));
+  xxx= S*xxx+ (1-S)*ones(3,1)*mean(xxx);
+  xxx= [xxx;xxx(1,:)];
+
+  yyy=zeros(3,e); yyy(:)=NODE(2,ELEM(:));
+  yyy= S*yyy+ (1-S)*ones(3,1)*mean(yyy);
+  yyy= [yyy;yyy(1,:)];
+
+  if isempty(MES)
+      plot(xxx,yyy,'b');
+  elseif exist('OCTAVE_VERSION')
+      plot(arrow*xy,arrow*[0 1;-1 0]*xy,'m');
+      hold('on')
+      idx= find(R==0);
+      if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'c'); end
+      idx= find(R>0);
+      if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'r'); end
+      idx= find(R<0);
+      if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'b'); end
+      hold('off')
+  else
+      hh=plot([xxx;xxx(1,:)],[yyy;yyy(1,:)],'b', ...
+              arrow*xy,arrow*[0 1;-1 0]*xy,'r');
+      set(hh(find(R>0)),'Color',[1 0 0],'LineWidth',2);
+      set(hh(find(R<0)),'Color',[0 0 1],'LineWidth',2);
+  end
+
+  if options(1) %domesnum
+    mesnum= reshape(sprintf(' %-2d',[0:15]),3,16)';
+    text(NODE(1,MES(1,:))*1.08,NODE(2,MES(1,:))*1.08,mesnum, ...
+         'Color','green','HorizontalAlignment','center');
+  end %if domesnum
+
+  if options(2) %donodenum
+    nodenum= reshape(sprintf('%3d',1:length(NODE)),3,length(NODE))';
+    text(NODE(1,:),NODE(2,:),nodenum, ...
+         'Color','yellow','HorizontalAlignment','center','FontSize',14);
+  end %if domesnum
+
+  if options(3) %dotext
+    numeros= reshape(sprintf('%4d',[1:e]),4,e)';
+%   decal= ( 2-0.2*floor(log10([1:e]')))*sqrt(axis*axis'/4)/100;
+    decal= .02;
+    xcoor=mean(NODE(2*ELEM-1))';
+    ycoor=mean(NODE(2*ELEM))';
+    text(xcoor-decal,ycoor,numeros,'FontSize',8, ...
+         'HorizontalAlignment','center');
+
+  end  % if nargin~=0
+  axis([ [-1.1 1.1]*max(NODE(1,:)) [-1.1 1.1]*max(NODE(2,:)) ])
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
