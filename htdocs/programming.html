@@ -129,13 +129,12 @@
         Number of node connected to ground
         <li><tt>fwd_model.electrode
         </tt> &nbsp; &nbsp;
-        Vector of electrode models (<b>elec_model</b>)
-        <li><tt>fwd_model.curr_pattern
+        Vector <i>(Num_elecs &times;1)</i>
+           of electrode models (<b>elec_model</b>)
+        <li><tt>fwd_model.stimulation
         </tt> &nbsp; &nbsp;
-        Current patterns
-        <li><tt>fwd_model.meas_pattern
-        </tt> &nbsp; &nbsp;
-        Measurment patterns
+        Vector <i>(Stim_pat &times;1)</i> of stimulation
+        patterns (current in EIT)
         <li><tt>fwd_model.dimention
         </tt> &nbsp; &nbsp;
         2D, 3D, etc.
@@ -189,6 +188,35 @@
         </tt> &nbsp; &nbsp;
         nodes to which this electrode is attached
 
+        <p><b>Methods</b>:
+      </ul>
+
+      <p><li><b>
+        stim_model
+      </b><br>
+      <ul>
+model of a stimulation pattern and accociated measurements
+<br>
+        <b>Properties</b>:
+        <li><tt>stim_model.name
+        </tt> &nbsp; &nbsp;
+        Stimulation name (optional)
+
+        <li><tt>stim_model.stimulation
+        </tt> &nbsp; &nbsp;
+        Quantity stimulated (mA) in EIT, light in DOT
+        <li><tt>stim_model.stim_pattern
+        </tt> &nbsp; &nbsp;
+        Quantity of stimulation on each electrode
+        <i>(Num_elecs&times;1)</i>
+        in units of <tt>.stimulation</tt>
+        <br>
+        <li><tt>stim_model.meas_pattern
+        </tt> &nbsp; &nbsp;
+        Measurements pattern for this stimulation
+        <i>(Num_meas&times;Num_elecs)</i>.
+        This is a sparse matrix of the contribution of
+        each electrode to the measurement.
         <p><b>Methods</b>:
       </ul>
 
