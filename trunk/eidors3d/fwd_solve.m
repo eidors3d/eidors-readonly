@@ -1,25 +1,31 @@
-function data = fwd_solve( fwd_model, image)
+function data = fwd_solve( fwd_model, img)
 % FWD_SOLVE: calculate data from a fwd_model object and an image
 % 
 % fwd_solve can be called as
-%    data= fwd_solve( fwd_model, image)
+%    data= fwd_solve( fwd_model, img)
 % or
-%    data= fwd_solve( image)
+%    data= fwd_solve( img)
 %
 % in each case it will call the fwd_model.solve
-%                      or image.fwd_model.solve method
+%                        or img.fwd_model.solve method
 %
 % data      is a measurement data structure
 % fwd_model is a fwd_model structure
-% image     is an image structure
+% img       is an img structure
 %
-% $Id: fwd_solve.m,v 1.2 2004-07-21 19:37:06 aadler Exp $
+% $Id: fwd_solve.m,v 1.3 2004-07-21 20:13:25 aadler Exp $
 
 if nargin==1
-   image= fwd_model;
-   fwd_model= image.fwd_model;
+   img= fwd_model;
+   fwd_model= img.fwd_model;
 end
-data = feval( fwd_model.solve, fwd_model, image);
 
-data= eidors_obj('data',data); 
+data = eidors_obj('cache', img, 'fwd_solve_data');
+
+if isempty(data)
+   data = feval( fwd_model.solve, fwd_model, img);
+   data= eidors_obj('data',data); 
+%  disp('setting cached value');
+   eidors_obj('cache', img, 'fwd_solve_data', data);
+end
 
