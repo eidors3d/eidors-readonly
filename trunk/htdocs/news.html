@@ -84,6 +84,17 @@ following desirata for EIDORS software.
     to enhance execution speed: ie. C functions, multiprocessor
     support, etc. This is dealt with under <i>plug-in algorithms</i>
 
+    <p>
+    <li> <b>
+        Platform portability
+    </b><br>
+    EIDORS is intended to work on all platforms with support 
+    Matlab/Scilab/Octave. This means Unix/Windows/Mac OSX.
+    In order to do this, we have the following rules:
+    <br>&nsbp;No spaces in file names
+    <br>&nsbp;The path separator is '/'
+    <br>&nsbp;File names are lower case letters and 
+              numbers with optional underscores
 
     <p>
     <li> <b>
@@ -138,27 +149,81 @@ following desirata for EIDORS software.
     <li> <b>
     Encourage contributions
     </b><br>
-    We want 
+    We want to find ways to encourage people to contibute:
+    <ul>
+       <li> Bug fixes
+       <li> Sample data and meshes
+       <li> Demo code and help files
+       <li> new reconstruction algorithms
+       <br>
+       also inproved forward solver (with higher order elements,
+        BEM-FEM, etc.)
+       modifications to algorithms (e.g. anisotropic conductivity)
+       <li> and meta-algorithms
+       (e.g. erroneous electrode detection techniques)
+       <li> visualization
+       (e.g. code to export to graphics packages such as mayavi)
+    </ul>
 
     <p>
     <li> <b>
+    Define subdirectories cleanly
     </b><br>
+    In order to separate algorithms and details.
 
     <p>
     <li> <b>
+        File format
     </b><br>
+    It would be nice to define a EIT data file format that
+    would facilitate interchange of data. We would be interested
+    in receiving any suggestions about what such a data format
+    would include.
+    <p>
+    Things to include in the data file are
+    <br>&minus; Time and date of each data measurement
+    <br>&minus; Electrode locations / shape &amp; size / contact impedance
+    <br>&minus; Current &amp; measurement patterns
+    <br>&minus; The data itself
+    <br>&minus; Sampling intervals
+    <br>&minus; Description
+    <p>
+    It would be convenient to put data into a structure.
+
+
+
 
     <p>
     <li> <b>
+        Licence
     </b><br>
+    The licence for EIDORS is the <a href="http://www.gnu.org/gpl.html"
+        >GPL</a>. Therefore, there are no problems with the following
+    uses of EIDORS:
+    <ul>
+        <li> Selling EIT equipment with EIDORS on board, as 
+             long as the source code is available.
+        <li> Using EIDORS with proprietary software like Matlab
+    </ul>
+    The following uses of EIDORS are barred by the GPL
+    <ul>
+        <li> Compiling EIDORS or a derived work and selling
+             a system wihout access to both EIDORS and the
+             software it is linked to.
+        <li> Rewriting EIDORS in a different language and
+             distributing it not under the GPL (eg. without source code)
+    </ul>
+    We are currently thinking about the scenario in which an EIT
+    vendor provides EIDORS (including source) along with a proprietary
+    add-on, such as a GUI. Email us if you have opinions on this
+    issue.
 
+
+    <!--
     <p>
     <li> <b>
     </b><br>
-
-    <p>
-    <li> <b>
-    </b><br>
+    -->
 </ul>
 <br>
 <!--
