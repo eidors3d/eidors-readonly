@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.23 2005-02-23 14:43:48 aadler Exp $
+% $Id: demo_real.m,v 1.24 2005-02-23 16:12:31 aadler Exp $
 
 clear; 
 clc;
@@ -14,6 +14,8 @@ if isOctave
     datacom=  file_in_loadpath(datacom);
     page_screen_output= 0;
 end
+
+eidors_msg('set_level',2); % most messages
 
 disp('step 1: create FEM model structure');
 
@@ -96,7 +98,7 @@ end
 clear gnd_ind elec zc sym protocol no_pl I Ib
 clear indH indV indH_sz meas_pat idx jnk
 
-demo_mdl= eidors_obj('set', demo_mdl); %send to cache
+demo_mdl= eidors_obj('set', demo_mdl); %add new properties
 
 disp('step 4: simulate data for homogeneous medium');
 

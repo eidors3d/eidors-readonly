@@ -44,7 +44,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.13 2005-02-23 14:43:48 aadler Exp $
+% $Id: eidors_obj.m,v 1.14 2005-02-23 16:12:31 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -73,8 +73,11 @@ end
 
 function obj = set_obj( obj, varargin );
    global eidors_objects
+% we choose not to cache data and images because this will
+% tend to fill up the workspace.
+% TODO: make the DONT_CACHE list use configuable
+   DONT_CACHE= {'data','image'};
 
-   if strcmp(obj.type, 'inv_model'); keyboard; end
    try
       old_obj_id= obj.id;
       % If we're modifying an old object, then remove the old version
@@ -94,6 +97,8 @@ function obj = set_obj( obj, varargin );
    for idx= 1:2:nargin-1
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
+
+   if any(strcmp( obj.type, DONT_CACHE)); return; end 
    obj_id= calc_obj_id( obj );
       
 % set the obj_id into the obj after calculating the hash value
@@ -104,18 +109,18 @@ function obj = set_obj( obj, varargin );
 
 function val= cache_obj( obj, prop, value );
    global eidors_objects
+   val= ''; % to satisfy matlab errors
 
    try
       obj_id= obj.id;
    catch
-      error('EIDORS object does not exist');
+      return; % Can't cache onto non-existant objects
    end
 
 
    if nargin==3     %set cache
 %     eidors_objects.( obj_id ).cache.( prop ) = value;
       eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
-      val= ''; % to satisfy matlab errors
    elseif nargin==2 %get from cache
       try
 %       val= eidors_objects.( obj_id ).cache.( prop );
