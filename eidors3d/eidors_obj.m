@@ -46,6 +46,10 @@ function obj_id= eidors_obj(type,name, varargin );
 %  or
 %     obj  = eidors_obj( objid );
 
+% TODO: 
+%   1. add code to delete old objects
+%   2. octave support
+
 % FIXME: this variable must be global, rather than persistent
 % because the broken Matlab syntax does not allow persistent
 % variables to be passed to subfunctions
