@@ -1,11 +1,11 @@
 function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);
-%function [voltageH,voltageV,indH,indV,df]=get_3d_meas(elec,vtx,V,Ib,no_pl);
+% GET_3D_MEAS: extracts multiplane voltage measurements from a calculated
+% 3D nodal potential distribution V inside a tank with (no_pl) electrode
+% planes. Each plane holds the same number of electrodes. Only the
+% non-current carring electrodes at the time are involved in the
+% measurements.
 %
-%This function extracts multiplane voltage measurements from a calculated 3D nodal potential 
-%distribution V inside a tank with (no_pl) electrode planes. Each plane holds the same number 
-%of electrodes. Only the non-current carring electrodes at the time are involved in the measurements.
-%
-%
+% [voltageH,voltageV,indH,indV,df]=get_3d_meas(elec,vtx,V,Ib,no_pl);
 %
 %elec      = The electrodes matrix
 %vtx       = The vertices
