@@ -4,7 +4,12 @@ function J= np_calc_jacobian( fwd_model, img)
 % J         = Jacobian matrix
 % fwd_model = forward model
 % img = image background for jacobian calc
-% $Id: np_calc_jacobian.m,v 1.4 2004-07-18 03:52:13 aadler Exp $
+% $Id: np_calc_jacobian.m,v 1.5 2005-02-23 04:37:00 aadler Exp $
+
+J = eidors_obj('cache', fwd_model, 'jacobian');
+if ~isempty(J)
+   eidors_msg('np_calc_jacobian: using cached value',1);
+end
 
 p= np_fwd_parameters( fwd_model );
 
@@ -21,3 +26,6 @@ J = jacobian_3d(p.I,p.elec,p.vtx,p.simp,p.gnd_ind, ...
                   img.elem_data, ...
                   p.zc,v_f,p.df,tol, p.sym );
 
+
+eidors_obj('cache', fwd_model, 'jacobian', J);
+eidors_msg('np_calc_jacobian: setting cached value',1);

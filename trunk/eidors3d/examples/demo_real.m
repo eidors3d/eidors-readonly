@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.21 2004-07-24 03:29:40 aadler Exp $
+% $Id: demo_real.m,v 1.22 2005-02-23 04:37:00 aadler Exp $
 
 clear; 
 clc;
@@ -110,6 +110,7 @@ homg_img= eidors_obj('image', 'homogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', demo_mdl );
 
+keyboard
 homg_data=fwd_solve( demo_mdl, homg_img);
 
 disp('step 5: simulate data for inhomogeneous medium');
