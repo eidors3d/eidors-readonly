@@ -52,13 +52,6 @@
       which use the metadata to reformat the data.
 
       <p><li><b>
-      </b><br>
-      <ul>
-      </ul>
-      <i>Questions</i>:
-      <br>&minus;
-
-      <p><li><b>
         fwd_model
       </b><br>
       <ul>
@@ -68,13 +61,21 @@
         Model name (if known)
         <li><tt>fwd_model.nodes
         </tt> &nbsp; &nbsp;
-        position of FEM nodes
+        position of FEM nodes (<i>Nodes</i>&times;<i>Dims</i>)
         <li><tt>fwd_model.elems
         </tt> &nbsp; &nbsp;
-        definition of FEM elements
-        <li><tt>fwd_model.electrodes
+        definition of FEM elements (<i>Elems</i>&times;<i>Dims+1</i>)
+        <br>Currently defined only for simplex element shapes
+        (i.e. each element had dimentions + 1 nodes)
+        <li><tt>fwd_model.boundary
         </tt> &nbsp; &nbsp;
-        Electrode positions and electrode fwd_models
+        nodes of element faces on the medium surface
+        <li><tt>fwd_model.gnd_node
+        </tt> &nbsp; &nbsp;
+        Number of node connected to ground
+        <li><tt>fwd_model.electrode
+        </tt> &nbsp; &nbsp;
+        Vector of electrode models (<b>elec_model</b>)
         <li><tt>fwd_model.curr_pattern
         </tt> &nbsp; &nbsp;
         Current patterns
@@ -116,6 +117,26 @@
       <br>&minus; No definition of conductivities in model?
       <br>&minus; We need an approach to cache 'hard to
       calculate' parameters for some of these methods
+
+      <p><li><b>
+        elec_model
+      </b><br>
+      <ul>
+        <b>Properties</b>:
+        <li><tt>elec_model.name
+        </tt> &nbsp; &nbsp;
+        Electrode name (optional)
+
+        <li><tt>elec_model.z_contact
+        </tt> &nbsp; &nbsp;
+        contact impedance (in &Omega;) may be complex
+
+        <li><tt>elec_model.nodes
+        </tt> &nbsp; &nbsp;
+        nodes to which this electrode is attached
+
+        <p><b>Methods</b>:
+      </ul>
 
       <p><li><b>
         inv_model
@@ -185,3 +206,12 @@
     </ul>
 
 </BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->
