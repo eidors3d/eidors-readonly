@@ -1,0 +1,187 @@
+<HTML><BODY>
+    <H3>General</H3>
+    <br>&minus; We avoid an OO framework because
+    1) Matlab's OO framework sucks,
+    2) Too much OO is bad for project clarity
+
+    <br>&minus; Instead, we use a structure for each
+       important object in the system
+       <br>&minus; Each structure will have data elements,
+       as well as function "pointers" (the name of a function)
+       which will be used. For example, consider
+       this code:
+<pre>
+  my_model.nodes= ... % add data here
+  my_model.elems= ... % add data here
+  my_model.jacobian= "my_jac_calc_function";
+  jj= jacobian( my_model, ...
+                conductivites); % calls my_jac_calc_function
+</pre>
+    <H3>Objects</H3>
+    <ul>
+      <p><li><b>
+        data
+      </b><br>
+      <ul>
+        <b>Properties</b>:
+        <li><tt>data.meas
+        </tt> &nbsp; &nbsp;
+        actual measured data
+        <br><i>format to be specified</i>
+        <li><tt>data.time
+        </tt> &nbsp; &nbsp;
+        meas start time, seconds since the epoch, 0=unknown
+        <li><tt>data.comment
+        </tt> &nbsp; &nbsp;
+        comments on this measurement
+        <li><tt>data.metadata
+        </tt> &nbsp; &nbsp;
+        metadata object common to all measurements with
+        the same configuration
+        <br>&minus; number of electrodes and position
+        <br>&minus; current and measurment configuration 
+        <br>&minus; subject
+        <br>&minus; time
+        <br>&minus; comments
+        <br>&minus; units for data (volts, etc.)
+        <p><b>Methods</b>:
+      </ul>
+      <i>Questions</i>:
+      <br>&minus; should there be a common data
+      format, or should there rather be converters,
+      which use the metadata to reformat the data.
+
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      <p><li><b>
+        fwd_model
+      </b><br>
+      <ul>
+        <b>Properties</b>:
+        <li><tt>fwd_model.name
+        </tt> &nbsp; &nbsp;
+        Model name (if known)
+        <li><tt>fwd_model.nodes
+        </tt> &nbsp; &nbsp;
+        position of FEM nodes
+        <li><tt>fwd_model.elems
+        </tt> &nbsp; &nbsp;
+        definition of FEM elements
+        <li><tt>fwd_model.electrodes
+        </tt> &nbsp; &nbsp;
+        Electrode positions and electrode fwd_models
+        <li><tt>fwd_model.curr_pattern
+        </tt> &nbsp; &nbsp;
+        Current patterns
+        <li><tt>fwd_model.meas_pattern
+        </tt> &nbsp; &nbsp;
+        Measurment patterns
+        <li><tt>fwd_model.dimention
+        </tt> &nbsp; &nbsp;
+        2D, 3D, etc.
+
+        <p><b>Methods</b>:
+        <li><tt>fwd_model.solve
+        </tt> &nbsp; &nbsp;
+        Calculate data object:
+        <br>
+        <i>usage:</i><tt>
+          data = fwd_solve( fwd_model, image )
+        </tt>
+
+        <li><tt>fwd_model.jacobian
+        </tt> &nbsp; &nbsp;
+        <i>usage:</i><tt>
+          data = jacobian( fwd_model, image )
+        </tt>
+
+        <li><tt>fwd_model.image_prior
+        </tt> &nbsp; &nbsp;
+        <i>usage:</i><tt>
+          data = image_prior( fwd_model, image )
+        </tt>
+
+        <li><tt>fwd_model.data_prior
+        </tt> &nbsp; &nbsp;
+        <i>usage:</i><tt>
+          data = data_prior( fwd_model, image )
+        </tt>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus; No definition of conductivities in model?
+      <br>&minus; We need an approach to cache 'hard to
+      calculate' parameters for some of these methods
+
+      <p><li><b>
+        inv_model
+      </b><br>
+      <ul>
+        <i>Note all properties are required for all inv_models</i>
+        <br>
+        <b>Properties</b>:
+        <li><tt>inv_model.name
+        </tt> &nbsp; &nbsp;
+        Model name (if known)
+        <li><tt>inv_model.hyperparameter
+        </tt> &nbsp; &nbsp;
+        scalar (or array of parameters)
+        <li><tt>inv_model.term_tolerance
+        </tt> &nbsp; &nbsp;
+        termination tolerance (or array of parameters)
+        <li><tt>inv_model.iterations
+        </tt> &nbsp; &nbsp;
+        <li><tt>inv_model.hyperparameter
+        </tt> &nbsp; &nbsp;
+        position of FEM nodes
+        <li><tt>inv_model.type
+        </tt> &nbsp; &nbsp;
+        'differential' or 'static'
+
+        <p><b>Methods</b>:
+        <li><tt>inv_model.solve
+        </tt> &nbsp; &nbsp;
+        Calculate image object:
+        <br>
+        <i>usage:</i><tt>
+          image = inv_solve( model_static, data )
+          <br><i>or</i>
+          image = inv_solve( model_diff, data_1, data_2 )
+        </tt>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      <p><li><b>
+        image
+      </b><br>
+      <ul>
+        <b>Properties</b>:
+        <li><tt>image.elem_data
+        </tt> &nbsp; &nbsp;
+        data for each element
+        <li><tt>image.type
+        </tt> &nbsp; &nbsp;
+        real, complex, tensor?
+        <li><tt>image.fwd_model
+        </tt> &nbsp; &nbsp;
+        pointer to fwd_model
+        <li><tt>image.inv_model
+        </tt> &nbsp; &nbsp;
+        pointer to inv_model
+
+        <p><b>Methods</b>:
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      <p><li><b>
+      </b><br>
+
+    </ul>
+
+</BODY></HTML>
