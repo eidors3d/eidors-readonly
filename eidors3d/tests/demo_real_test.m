@@ -1,8 +1,20 @@
 function ok= demo_real_test
 % Perform tests based on the demo_real function
-% $Id: demo_real_test.m,v 1.1 2004-07-17 00:01:39 aadler Exp $
+% $Id: demo_real_test.m,v 1.2 2004-07-17 14:26:13 aadler Exp $
 
-load datareal
+isOctave= exist('OCTAVE_VERSION');
+
+datareal= 'datareal.mat';
+datacom=  'datacom.mat';
+drt=      'demo_real_test.mat';
+if isOctave
+    datareal= file_in_loadpath(datareal);
+    datacom=  file_in_loadpath(datacom);
+    drt    =  file_in_loadpath(drt);
+    page_screen_output= 0;
+end
+
+load(datareal);
 
 [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
 
@@ -17,7 +29,7 @@ tol = 1e-5;
 dfr = dfr(1:2:end); %Taking just the horrizontal measurements
 
 mat=mat_ref;
-load datacom A B %Indices of the elements to represent the inhomogeneity
+load(datacom,'A','B'); %Indices of the elements to represent the inhomogeneity
 sA = mat_ref(A(1))+0.15;
 sB = mat_ref(B(1))-0.20;
 mat(A) = sA;
@@ -47,8 +59,7 @@ Jcolsby100=J(:,1:100:size(J,2));
 
 %% verifications
 
-load demo_real_test
-
+load(drt);
 
 compare_tol( drt.voltageH, voltageH, 'voltageH' )
 compare_tol( drt.voltageV, voltageV, 'voltageV' )
