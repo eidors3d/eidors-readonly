@@ -9,15 +9,14 @@ function jacobian = calc_jacobian( fwd_model, img)
 % fwd_model is a fwd_model structure
 % img       is an image structure
 %
-% $Id: calc_jacobian.m,v 1.4 2005-02-23 16:47:59 aadler Exp $
+% $Id: calc_jacobian.m,v 1.5 2005-02-23 17:50:31 aadler Exp $
 
 if nargin==1
    img= fwd_model;
    fwd_model= img.fwd_model;
 end
 
-% TODO: caching jacobian depends on fwd_model and image
-jacobian = eidors_obj('get-cache', fwd_model, 'jacobian');
+jacobian = eidors_obj('get-cache', fwd_model, 'jacobian', img);
 
 if ~isempty(jacobian)
    eidors_msg('calc_jacobian: using cached value', 2);
@@ -25,6 +24,6 @@ if ~isempty(jacobian)
 end
 
 jacobian = feval( fwd_model.jacobian, fwd_model, img);
-eidors_obj('set-cache', fwd_model, 'jacobian', jacobian);
+eidors_obj('set-cache', fwd_model, 'jacobian', jacobian, img);
 
 eidors_msg('calc_jacobian: setting cached value', 2);
