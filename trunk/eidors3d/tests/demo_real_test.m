@@ -1,0 +1,73 @@
+function ok= demo_real_test
+% Perform tests based on the demo_real function
+% $Id: demo_real_test.m,v 1.1 2004-07-17 00:01:39 aadler Exp $
+
+load datareal
+
+[I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
+
+mat_ref = 1*ones(828,1);
+
+%Set the tolerance for the forward solver
+tol = 1e-5;
+
+[Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,sym);
+[Vref] = forward_solver(vtx,Eref,I,tol,ppr);
+[refH,refV,indH,indV,dfr]=get_3d_meas(elec,vtx,Vref,Ib,no_pl);
+dfr = dfr(1:2:end); %Taking just the horrizontal measurements
+
+mat=mat_ref;
+load datacom A B %Indices of the elements to represent the inhomogeneity
+sA = mat_ref(A(1))+0.15;
+sB = mat_ref(B(1))-0.20;
+mat(A) = sA;
+mat(B) = sB;
+
+[En,D,Ela,ppn] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
+[Vn] = forward_solver(vtx,En,I,tol,ppn,Vref);
+[voltageH,voltageV,indH,indV,dfv]=get_3d_meas(elec,vtx,Vn,Ib,no_pl);
+dfv = dfv(1:2:end);
+
+if size(dfr)~= size(dfv)
+   error('Mismatched measurements')
+end
+
+[v_f] = m_3d_fields(vtx,32,indH,Eref,tol,gnd_ind);
+
+[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfr,tol,sym);
+
+[Reg] = iso_f_smooth(simp,vtx,3,1);
+
+tfac = 1e-8;
+
+sol = (J'*J +  tfac*Reg'*Reg)\J' * (voltageH - refH);
+
+Diag_Reg_012= [diag(Reg,0),[diag(Reg,1);0],[diag(Reg,2);0;0]];
+Jcolsby100=J(:,1:100:size(J,2));
+
+%% verifications
+
+load demo_real_test
+
+
+compare_tol( drt.voltageH, voltageH, 'voltageH' )
+compare_tol( drt.voltageV, voltageV, 'voltageV' )
+compare_tol( drt.sol, sol, 'sol' )
+compare_tol( drt.Jcolsby100, Jcolsby100, 'Jcolsby100' )
+compare_tol( drt.Diag_Reg_012, Diag_Reg_012, 'Diag_Reg_012' )
+
+ok=1;
+
+
+function compare_tol( cmp1, cmp2, errtext )
+% compare matrices and give error if not equal
+fprintf(2,'testing parameter: %s ...\n',errtext);
+
+tol= 1e-5;
+
+v= mean(mean( abs(cmp1 - cmp2) ));
+if v > tol
+   error(sprintf( ...
+     'parameter %s exceeds tolerance %g (=%g)', errtext, tol, v) );
+end
+
