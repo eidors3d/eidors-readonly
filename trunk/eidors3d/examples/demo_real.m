@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.11 2004-07-17 02:25:07 aadler Exp $
+% $Id: demo_real.m,v 1.12 2004-07-17 14:25:02 aadler Exp $
 
 clear; 
 clc;
@@ -55,18 +55,34 @@ demo_mdl.misc.sym     = sym;
 demo_mdl.misc.no_pl   = no_pl;
 % TODO: generalize the way that protocol sym no_pl are managed
 
-% Set the current stimulation patterns
+% get the current stimulation patterns
 [I,Ib] = set_3d_currents(protocol, ...
                          elec, ...
                          demo_mdl.nodes, ...
                          demo_mdl.gnd_node, ...
-                         demo_mdl.misc.no_pl);
+                         no_pl);
+% get the measurement patterns, only indH is used in this model
+%   here we only want to get the meas pattern from 'get_3d_meas',
+%   not the voltages, so we enter zeros
+[jnk,jnk,indH,indV,jnk] = get_3d_meas( ...
+                  elec, demo_mdl.nodes, ...
+                  zeros(size(I)), ... % Vfwd
+                  Ib, no_pl );
+n_elec= size(elec,1);
+n_meas= size(indH,1) / size(Ib,2);
 for i=1:size(Ib,2)
     demo_mdl.stimulation(i).stimulation= 'mA';
     demo_mdl.stimulation(i).stim_pattern= Ib(:,i);
+    idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
+    meas_pat = sparse( (1:n_meas)'*[1,1], ...
+                       indH( idx, : ), ...
+                       ones(n_meas,2)*[1,0;0,-1], ...
+                       n_meas, n_elec );
+    demo_mdl.stimulation(i).meas_pattern= meas_pat;
 end
     
 clear gnd_ind elec zc sym protocol no_pl I Ib
+clear indH indV indH_sz meas_pat idx
 
 
 %
