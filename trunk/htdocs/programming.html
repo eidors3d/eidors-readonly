@@ -77,20 +77,26 @@
         <b>Properties</b>:
         <li><tt>data.name
         </tt> &nbsp; &nbsp;
-        name of data (optional)
+        <i>string</i>
+        name of data (or '')
         <li><tt>data.meas
         </tt> &nbsp; &nbsp;
-        actual measured data
-        <br><i>format to be specified</i>
+        <i>vector</i> (n_meas &times; 1)
+        actual measured data, ordered as measurements for each
+        stimulation pattern
         <li><tt>data.time
         </tt> &nbsp; &nbsp;
-        meas start time, seconds since the epoch, 0=unknown
+        <i>scalar</i>
+        measurement start time in seconds since the epoch, 0=unknown.
+        In Matlab this is given by <tt>time</tt>.
         <li><tt>data.comment
         </tt> &nbsp; &nbsp;
+        <i>string</i>
         comments on this measurement
-        <li><tt>data.metadata
+        <li><tt>data.meas_config
         </tt> &nbsp; &nbsp;
-        metadata object common to all measurements with
+        <i>EIDORS3D configuration structure</i>
+        common to all measurements with
         the same configuration
         <br>&minus; number of electrodes and position
         <br>&minus; current and measurment configuration 
@@ -100,10 +106,22 @@
         <br>&minus; units for data (volts, etc.)
         <p><b>Methods</b>:
       </ul>
-      <i>Questions</i>:
-      <br>&minus; should there be a common data
-      format, or should there rather be converters,
-      which use the metadata to reformat the data.
+
+      <p><li><b>
+          meas_config
+      </b><br>
+      this structure represents a given measurement configuration.
+      This would be created by a data reading function as it loads
+      the data from a file (or gets the input directly from the
+      hardware)
+      <ul>
+        <b>Properties</b>:
+        <li><tt>data.name
+        </tt> &nbsp; &nbsp;
+        <i>string</i>
+        name of data (or '')
+        <p><b>Methods</b>:
+      </ul>
 
       <p><li><b>
         fwd_model
@@ -286,7 +304,78 @@ model of a stimulation pattern and accociated measurements
       <br>&minus;
 
     </ul>
+<H3>Caching</H3>
 
+It is essential that EIDORS3D be able to cache values that
+are reused. The design tries to make this
+as clean as possible, so that the long calculation steps
+can be sped up without resorting to convoluted code.
+The design is as follows:
+<ol>
+
+    <li> Caching should be 'natural'
+<p>
+This part of the
+    'overloaded' accessor functions, so for example,
+<p>
+
+<tt>calc_image_prior</tt> used to be<br>
+<pre>
+       image_prior= feval( inv_model.image_prior.func, inv_model);
+</pre>
+now it is (using the <tt>eidors_obj</tt> function):
+<pre>
+       image_prior = eidors_obj('cache', inv_model, 'image_prior');
+
+       if isempty(image_prior)
+           image_prior= feval( inv_model.image_prior.func, inv_model);
+           eidors_obj('cache', inv_model, 'image_prior', image_prior);
+       end
+</pre>
+
+   so this means that the function 'pointer' in
+   <tt>inv_model.image_prior.func = 'np_calc_image_prior'</tt>
+   doesn't need to know anything about possible caching.
+
+   <p>
+<li> Cached values should not appear when the underlying
+    model has changed.
+<p>
+   This is ensured by creating an 'object repository' using the
+   eidors_obj function. eidors objects now must be constructed
+   using this function, either as
+<p>
+
+<pre>
+       demo_inv.name= 'Nick Polydorides EIT inverse';
+       demo_inv.solve=       'np_inv_solve';
+       demo_inv.hyperparameter= 1e-8;
+       demo_inv.image_prior.func= 'np_calc_image_prior';
+       demo_inv= eidors_obj('inv_model', demo_inv);
+</pre>
+
+   or as
+
+<pre>
+       demo_inv= eidors_obj( ...
+            'inv_model', 'Nick Polydorides EIT inverse',...
+            'solve',          'np_inv_solve', ...
+            'hyperparameter', 1e-8, ...
+            'func',           'np_calc_image_prior');
+</pre>
+
+   whenever an 'object' is modified, such as
+<pre>
+       eidors_obj('set', demo_inv, 'solve', 'NEW_SOLVER_CODE' );
+</pre>
+   then all cached values are flushed.
+
+
+   </ol>
+</td></tr></table>
+<small>
+    Last Modified: $Date: 2004-07-22 21:57:36 $ by $Author: aadler $
+</small>
 </BODY></HTML>
 <!--
       <p><li><b>
