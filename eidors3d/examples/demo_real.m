@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.8 2004-07-16 14:10:13 aadler Exp $
+% $Id: demo_real.m,v 1.9 2004-07-16 14:36:50 aadler Exp $
 
 clear; 
 clc;
@@ -52,14 +52,9 @@ demo_mdl.misc.no_pl   = no_pl;
 % TODO: generalize the way that protocol sym no_pl are managed
 clear gnd_ind elec zc sym protocol no_pl
 
-load(datareal,'sels');
-%sels :Index in srf matrix denoting the faces to be assigned as electrodes
-
 if ~isOctave
-   show_fem( demo_mdl, sels)
+   show_fem( demo_mdl)
 end
-
-clear sels
   
 
 % create a homogeneous image
