@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>EIDORS: Toward an extensible software community for EIT</title>
+</head>
+<body>
+<center>
+<h2> EIDORS: Towards a community-based extensible software base for EIT
+</h2>
+Andy Adler<sup>1</sup>,
+William R.B. Lionheart<sup>2</sup>
+<br>
+<sup>1</sup> School of Information Technology and Engineering,
+University of Ottawa, Canada
+<br>
+<sup>2</sup> School of Mathematics, University of Manchester, U.K.
+</center>
+<p>
+EIDORS3D is a software suite for image reconstruction in
+electrical impedance tomography and diffuse optical tomography.
+The original EIDORS software is based on software
+from Kuopio (Vaukhonen 1997).
+In order to provide 3D software capability, a new project, EIDORS3D,
+was begun based on the thesis of Polydorides (2002).
+In the three years since the publication of EIDORS3D, several patterns
+of use have been noted.
+Because of lack of a modular software structure of EIDORS3D,
+changes tended to made into the code itself. This resulted in
+duplicated
+code which could not easily be <i>modularized</i> in order to
+be contributed back to EIDORS3D. Also, as recent work has begun to move
+away from basic reconstruction algorithms, focussing
+on such issues as mesh generation, electrode modelling, visualization
+and electrode error detection. This research would be facilitated
+by using modular components which could be <i>plugged</i> into
+a selection of reconstruction algorithms.
+</p>
+<p>To address these issues, EIDORS3D has been restructured
+in order to facilitate a <i>community-based extensible software base</i>.
+This has been accomplished by the following:
+</p>
+<ul>
+  <li> <b> Sourceforge hosting </b> EIDORS3D is hosted by <tt>sourceforge.net</tt>
+at <tt>eidors3d.sf.net</tt>. This tool allows for collaborative
+development for group members, while permitting all users to access the
+code. </li>
+  <li> <b> Language independance: Octave and Matlab </b> While
+EIDORS3D was originally written for Matlab, the eventual goal is for
+language independance. Currently EIDORS works with Octave (version &ge;
+2.1.66) and Matlab (version &ge; 6.0). </li>
+  <li> <b> Pluggable code base </b> "Pluggable" software allows users
+to modify functions by adding new modules, without
+needing to make changes to the underlying code. This offers similar
+capabilities to an object oriented implementation, although it was been
+instead implemented using function pointers. </li>
+  <li> <b> Automatic value caching </b> In order to increase
+performance of image reconstruction software, it is important to cache
+computationally expensive variables, such as the Jacobian. Such caching
+complicates the software implementation. To solve this problem,
+EIDORS3D extracts caching to a separate module which is inhereted by
+each functional module. </li>
+  <li> <b> Generalized data formats </b> In order to support the wide
+variety of EIT measurements and algorithms, a general EIT data format
+structure is developed. </li>
+  <li> <b> Interface software for common EIT systems </b> Functions
+to load data from some common EIT systems to the generalized data
+format have been developed. </li>
+  <li> <b> Usage examples </b> Some simple and more complex usage
+examples are provided. </li>
+  <li> <b> Open-source license </b> EIDORS3D is licenced under the
+GNU General Public License. Uses are free to use, modify, and
+distribute their modifications. All modifications must include the
+source code, or instructions on how to obtain it. EIDORS3D may be used
+in a commercial product, as long as the source code for EIDORS and all
+modifications to it are made available.
+  </li>
+</ul>
+We hope that by providing a structure for community collaboration
+in EIT algorithms we can produce robust,
+reliable and fairly portable software which draws on our collective
+expertise and facilitates innovations in the field.
+
+<h3> Software Architecture
+</h3>
+
+<ul>
+  <li> <b> Forward Models
+       </b>
+
+  <li> <b> Inverse Models
+       </b>
+
+  <li> <b> Data Format
+       </b>
+</ul>
+
+<h3> Usage Examples
+</h3>
+
+<ul>
+  <li> <b> Simple Example: 
+       </b>
+
+  <li> <b> Inverse Models:
+       </b>
+</ul>
+
+
+<h3> References
+</h3>
+<ul>
+  <li>Vauhkonen,M, (1997) Electrical impedance tomography and prior
+information, PhD thesis, University of Kuopio, Finland.<br>
+  </li>
+  <li> Polydorides N, Lionheart W R B (2002), "A Matlab toolkit for
+three-dimensional electrical impedance tomography: a contribution to
+the Electrical Impedance and Diffuse Optical Reconstruction Software
+project", <i>Meas. Sci. Technol.</i> 13:1871-1883 </li>
+  <li> Polydorides N (2002), <i>Image reconstruction algorithms for
+soft-field tomography</i>, Ph.D. Thesis, University of Manchester
+Institute of Science and Technology</li>
+</ul>
+</body>
+</html>
