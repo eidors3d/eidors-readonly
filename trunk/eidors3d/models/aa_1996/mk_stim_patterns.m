@@ -47,8 +47,15 @@ if isstr(inj)
 
 end
 
+% iterate through the options cell array
 for opt = options
+   if     strcmp(opt, 'no_meas_current')
+   elseif strcmp(opt, 'meas_current')
+   else
+      error(['option parameter opt=',opt,' not understood']);
+   end
 end
+
 Ne = n_elec * n_rings;
 for i=1:Ne
    stim(i).stimulation = 'mA';
