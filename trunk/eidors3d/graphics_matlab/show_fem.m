@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.5 2004-07-24 04:11:07 aadler Exp $
+% $Id: show_fem.m,v 1.6 2005-06-02 17:13:52 aadler Exp $
 
 % if we have an img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -36,6 +36,7 @@ end
 
 function show_electrodes(mdl)
 % show electrode positions on model
+if ~exist('mdl.electrode'); return; end
 
 ee= mdl.boundary;
 for e=1:length(mdl.electrode)
@@ -189,6 +190,7 @@ function plot_2d_mesh(NODE,ELEM,el_pos, S, options)
   axis([ [-1.1 1.1]*max(NODE(1,:)) [-1.1 1.1]*max(NODE(2,:)) ])
 
 function  mes= avg_electrode_posn( mdl )
+   if ~exist('mdl.electrode'); mes=[]; return; end
    n_elec= length( mdl.electrode );
    nodes = mdl.nodes;
    n_dims= size(nodes,2);
