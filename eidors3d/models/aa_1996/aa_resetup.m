@@ -3,14 +3,14 @@ function param= aa_resetup(varargin)
 %
 % format  res_setup(' (abcd)(012345)[-|+][x] ',
 %                     position_initial,
-%                    ratio elliptique [x/y] );
+%                     elliptical ratio [x/y] );
 %
-% if string begins with - then no verbose output
+% if string begins with '-' then no verbose output
 %
 % position_initial = [0 2] DEFAUT
 %
 % (c) 1993-2002 A.Adler
-% $Id: aa_resetup.m,v 1.4 2004-07-24 04:11:07 aadler Exp $
+% $Id: aa_resetup.m,v 1.5 2005-06-02 17:13:52 aadler Exp $
 
 inp = proc_input_args( varargin{:} );
 
@@ -166,7 +166,7 @@ QQ=sparse(cour(1:p,:),(1:p)'*ones(1,size(cour,2)), ...
                      cour(p+1:2*p,:),n,p );
 
 if any(reponse(2:length(reponse))=='x')
-    disp('je ne calcule pas DVV');
+    disp('Note: Jacobian not calculated');
 else
   eidors_msg('creating jacobian ..',4);
   tic=cputime;

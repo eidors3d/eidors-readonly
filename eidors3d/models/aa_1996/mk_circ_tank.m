@@ -8,6 +8,10 @@ function param= mk_circ_tank(rings, levels, n_elec, n_planes )
 % n_elec: number of electrodes in each horiz plane (divisible by 4)
 % n_planes: number of planes of electrodes (divisible by 4)
 %
+% mk_circ_tank creates simple, point electrodes. If you wish
+%   to implement more complete models, functions will need to
+%   be overridden in this model
+%
 % output:
 %  param.name        Model name (if known) 
 %  param.nodes       position of FEM nodes (Nodes x Dims) 
@@ -21,7 +25,7 @@ if rem(rings,4) ~= 0 || rem(n_elec,4) ~= 0;
 end
 
 
-[elem, node, boundary] = mk_2D_model( rings);
+[elem, node, bdy, elec_nodes] = mk_2D_model( rings, n_elec);
 if ~isempty( levels )
    [elem, node] = mk_3D_model( elem, node, levels );
 end
@@ -30,11 +34,14 @@ param.name= sprintf('EIT FEM by mk_circ_tank with N=%d levs=%d', ...
                     rings, length(levels) );
 param.nodes = node';
 param.elems = elem';
-param.boundary = boundary';
+param.boundary = bdy';
 param.gnd_node = 1; % node at bottom and center of the tank
+param.electrode = mk_electrodes( elec_nodes );
 
 
-function [ELEM, NODE, bdy_nodes] = mk_2D_model( N );
+% Create a simple 2D regular mesh, based on N circular rings
+%   and n_elec electrodes
+function [ELEM, NODE, bdy_nodes, elec_nodes] = mk_2D_model( N, n_elec );
   ELEM=[];
   NODE= [0;0];
   int=1;
@@ -67,7 +74,7 @@ function [ELEM, NODE, bdy_nodes] = mk_2D_model( N );
 
   bdy_nodes= [ (ext  :ext+N*4-1) ; ...
                (ext+1:ext+N*4-1), ext ];
-% MES= ext+N*4/elec*([0:elec-1]);
+  elec_nodes= ext+N*4/n_elec*([0:n_elec-1]);
  
 
 % 'extrude' a 2D model defined by ELEM and NODE into a 3D model
@@ -94,4 +101,14 @@ function [ELEM, NODE] = mk_3D_model(ELEM, NODE, niveaux );
 
 % MES= MES + floor(length(niveaux)/2)*n;
 % cour(1:elec,:)= cour(1:elec,:)+ floor(length(niveaux)/2)*n;
+
+%param.electrode = mk_electrodes( elec_nodes );
+% Create the electrode structure from elec_nodes
+% Currently implements point electrodes with 
+%   contact impedance of zero.
+function elec_struct = mk_electrodes( elec_nodes)
+   for i= 1:length( elec_nodes )
+      elec_struct(i).nodes     = elec_nodes(i);
+      elec_struct(i).z_contact = 0;
+   end
 
