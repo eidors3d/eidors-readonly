@@ -50,7 +50,7 @@ for ring = 0:v.n_rings-1
    for elec= 0:v.n_elec-1
        stim(i).stimulation = 'mA';
        stim(i).stim_pattern= mk_stim_pat(v, elec, ring );
-       stim(i).meas_pattern= mk_stim_pat(v, elec, ring );
+       stim(i).meas_pattern= mk_meas_pat(v, elec, ring );
 
        i=i+1;
    end
@@ -67,14 +67,22 @@ function stim_pat = mk_stim_pat(v, elec, ring, amplitude)
 function meas = mk_meas_pat(v, elec, ring, amplitude)
    meas= zeros(v.tn_elec, v.tn_elec);
 
-   within_ring = rem(0:v.tn_elec-1, n_elec);
-   ouside_ring = floor( (0:v.tn_elec-1)/ n_elec) * n_elec;
-   meas_pat = rem( v.meas(1) + within_ring, n_elec ) + ...
-                    ouside_ring;
+   within_ring = rem(0:v.tn_elec-1, v.n_elec);
+   ouside_ring = floor( (0:v.tn_elec-1)/ v.n_elec) * v.n_elec;
+   meas_seq    = (0:v.tn_elec-1)*v.tn_elec + 1;
+   meas_pat = rem( v.meas(1) + within_ring, v.n_elec ) + ...
+                    ouside_ring + meas_seq;
    meas(meas_pat) =1;
-   meas_pat = rem( v.meas(2) + within_ring, n_elec ) + ...
-                    ouside_ring;
+   meas_pat = rem( v.meas(2) + within_ring, v.n_elec ) + ...
+                    ouside_ring + meas_seq;
    meas(meas_pat) = -1;
+
+   if ~v.use_meas_current
+       stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
+       elim= any(meas_pat == stim_idx(1) |  ... % WRONG
+                 meas_pat == stim_idx(2) );
+       meas(:,elim) = [];
+   end
 
 
 function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
