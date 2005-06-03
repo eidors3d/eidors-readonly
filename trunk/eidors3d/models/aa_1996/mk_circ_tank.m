@@ -27,7 +27,7 @@ end
 
 [elem, node, bdy, elec_nodes] = mk_2D_model( rings, n_elec);
 if ~isempty( levels )
-   [elem, node] = mk_3D_model( elem, node, levels );
+   [elem, node, bdy, elec_nodes] = mk_3D_model( elem, node, levels, bdy );
 end
 
 param.name= sprintf('EIT FEM by mk_circ_tank with N=%d levs=%d', ...
@@ -36,7 +36,7 @@ param.nodes = node';
 param.elems = elem';
 param.boundary = bdy';
 param.gnd_node = 1; % node at bottom and center of the tank
-param.electrode = mk_electrodes( elec_nodes );
+%param.electrode = mk_electrodes( elec_nodes );
 
 
 % Create a simple 2D regular mesh, based on N circular rings
@@ -78,8 +78,9 @@ function [ELEM, NODE, bdy_nodes, elec_nodes] = mk_2D_model( N, n_elec );
  
 
 % 'extrude' a 2D model defined by ELEM and NODE into a 3D model
-% defined by 'niveaux'
-function [ELEM, NODE] = mk_3D_model(ELEM, NODE, niveaux );
+% levels are defined by 'niveaux', 
+% 2D parameters are ELEM, NODE, and bdy
+function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model(ELEM, NODE, niveaux, bdy );
   d=  size(ELEM,1);       %dimentions+1
   n= size(NODE,2);        %NODEs
   e= size(ELEM,2);        %ELEMents     
@@ -90,14 +91,23 @@ function [ELEM, NODE] = mk_3D_model(ELEM, NODE, niveaux );
          ELEM([3 2 1 3],:)]; 
   NODE= [node; niveaux(1)*ones(1,n) ];
   ELEM= [];
+  bdy1= [bdy;bdy(1,:)];
+  bdy2= [bdy;bdy(2,:)];
+  bl= size(bdy,2);
+  BDY = [];
  
   for k=2:length(niveaux);
     NODE=[NODE  [node; niveaux(k)*ones(1,n)] ];
+    BDY= [BDY, ...
+          bdy1 + [(k-1)*n*ones(2,bl); (k-2)*n*ones(1,bl)], ...
+          bdy2 + [(k-2)*n*ones(2,bl); (k-1)*n*ones(1,bl)] ];
     ELEM= [ELEM (elem + ...
        [[(k-1)*n*ones(1,e);(k-2)*n*ones(3,e)] ...
         [(k-1)*n*ones(2,e);(k-2)*n*ones(2,e)] ...  
         [(k-1)*n*ones(3,e);(k-2)*n*ones(1,e)]] ) ];
   end %for k
+
+  elec_nodes = [];
 
 % MES= MES + floor(length(niveaux)/2)*n;
 % cour(1:elec,:)= cour(1:elec,:)+ floor(length(niveaux)/2)*n;
