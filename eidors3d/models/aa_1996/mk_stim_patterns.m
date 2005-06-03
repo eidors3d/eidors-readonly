@@ -1,7 +1,7 @@
-function stim= mk_stim_pattern( n_elec, n_rings, inj, meas, options)
+function stim= mk_stim_patterns( n_elec, n_rings, inj, meas, options, amplitude)
 %MK_STIM_PATTER: create an EIDORS3D stimulation pattern structure
 %                to form part of a fwd_model object
-% stim= mk_stim_pattern( n_elec, n_rings, inj, meas, options)
+% stim= mk_stim_patterns( n_elec, n_rings, inj, meas, options, amplitude)
 %
 % where
 % stim(#).stimulation = 'mA'
@@ -35,7 +35,52 @@ function stim= mk_stim_pattern( n_elec, n_rings, inj, meas, options)
 %                            carrying electrodes
 %      'meas_current'  -> do make measurements on current
 %                            carrying electrodes
+%   amplitude: drive current levels, DEFAULT = 1mA
 
+if nargin<6; amplitude= 1; end
+if nargin<5; options= {};  end
+v = process_args(n_elec, n_rings, inj, meas, options, amplitude );
+
+curr_pat = v.inj(:) * ones(1,n_elec);
+meas_pat = v.meas(:) * ones(1,n_elec);
+offset   = [1;1]*(0:n_elec-1);
+
+i=1;
+for ring = 0:v.n_rings-1
+   for elec= 0:v.n_elec-1
+       stim(i).stimulation = 'mA';
+       stim(i).stim_pattern= mk_stim_pat(v, elec, ring );
+       stim(i).meas_pattern= mk_stim_pat(v, elec, ring );
+
+       i=i+1;
+   end
+end
+
+
+function stim_pat = mk_stim_pat(v, elec, ring, amplitude)
+   stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
+   stim_pat = zeros(v.tn_elec, 1);
+   stim_pat( stim_idx ) = v.amplitude*[1;-1];
+
+% Measurement config can stay static, or can rotate with
+% the stim pattern. This code keeps measurements static
+function meas = mk_meas_pat(v, elec, ring, amplitude)
+   meas= zeros(v.tn_elec, v.tn_elec);
+
+   within_ring = rem(0:v.tn_elec-1, n_elec);
+   ouside_ring = floor( (0:v.tn_elec-1)/ n_elec) * n_elec;
+   meas_pat = rem( v.meas(1) + within_ring, n_elec ) + ...
+                    ouside_ring;
+   meas(meas_pat) =1;
+   meas_pat = rem( v.meas(2) + within_ring, n_elec ) + ...
+                    ouside_ring;
+   meas(meas_pat) = -1;
+
+
+function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
+
+% Stimulation (injection) pattern
+% This currently does not handle complex injection patterns
 if isstr(inj)
    if      strcmp(inj,'{ad}') | strcmp(inj,'adjacent')
       inj= [0, 1];
@@ -44,19 +89,45 @@ if isstr(inj)
    else
       error(['parameter inj=',inj,' not understood']);
    end
-
+elseif prod(size(inj))==2
+% OK
+else
+      error(['parameter inj not understood']);
 end
+
+v.inj= inj;
+
+% Measurement configuration. 
+% All systems I know of use adjacent measurement,
+% are there actually any others?
+if isstr(meas)
+   if      strcmp(meas,'{ad}') | strcmp(meas,'adjacent')
+      meas= [0, 1];
+   else
+      error(['parameter meas=',meas,' not understood']);
+   end
+elseif prod(size(meas))==2
+% OK
+else
+      error(['parameter meas not understood']);
+end
+
+v.meas= meas;
+
+v.use_meas_current = 1;
 
 % iterate through the options cell array
 for opt = options
    if     strcmp(opt, 'no_meas_current')
+      v.use_meas_current = 0;
    elseif strcmp(opt, 'meas_current')
+      v.use_meas_current = 1;
    else
       error(['option parameter opt=',opt,' not understood']);
    end
 end
 
-Ne = n_elec * n_rings;
-for i=1:Ne
-   stim(i).stimulation = 'mA';
-end
+v.n_elec = n_elec;
+v.n_rings= n_rings;
+v.tn_elec= n_rings * n_elec;
+v.amplitude = amplitude;
