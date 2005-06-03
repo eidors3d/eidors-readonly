@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: mk_simdata.m,v 1.3 2005-06-03 14:34:31 aadler Exp $
+% $Id: mk_simdata.m,v 1.4 2005-06-03 18:45:48 aadler Exp $
 
 % 
 % Example 1: Create simple 16 electrode 2D model
@@ -11,6 +11,7 @@ n_rings= 1;
 params= mk_circ_tank(8, [], n_elec, n_rings); 
 mdl_2d = eidors_obj('fwd_model', params);
 mdl_2d.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}');
+mdl_2d.solve= 'aa96_fwd_solve';
 % show_fem( sim_mdl );
 
 
