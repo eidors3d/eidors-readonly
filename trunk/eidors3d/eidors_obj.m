@@ -55,7 +55,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.17 2005-02-23 17:50:33 aadler Exp $
+% $Id: eidors_obj.m,v 1.18 2005-06-03 02:48:06 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -194,6 +194,9 @@ function obj= new_obj( type, name, varargin );
 % will be for the instantiation of the process
 function obj_id= calc_obj_id( var )
    global eidors_objects;
+   if ~isfield(eidors_objects,'hash_type')
+       test_for_hashtypes;
+   end
 
 % the obj_id does not depend on the cache or id
    try; var = rmfield(var,'cache'); end
@@ -210,9 +213,35 @@ function obj_id= calc_obj_id( var )
    else
        save(tmpnam,'var');
    end
-
-   obj_id= matrix_id(tmpnam);
+ 
+   if eidors_objects.hash_type==1; 
+       obj_id= matrix_id(tmpnam);
+   elseif eidors_objects.hash_type > 1e6
+%if hashing code is unavailable, then disable caching function
+       obj_id= sprintf('id_%040d', eidors_objects.hash_type );
+       eidors_objects.hash_type= eidors_objects.hash_type + 1;
+   else
+       error('hash_type value unrecognized');
+   end
    delete(tmpnam);
 %  fprintf('creating [%s] object %s\n',var.type,obj_id);
 
+% Since we use a dynamically loaded function to test
+% for hashtypes, all sorts of things can go wrong
+%   - The compilers or libraries may not be available
+%
+% We test for:
+%   1. Existance of 'matrix_id' mex file
+%   2. Existance of utilities 'sha1sum' to do this
+% 
+% If nothing exists, then the best we can do is to
+% disable hashing completely. We set hashtype to a
+% number and increment it each time   
+function test_for_hashtypes
+   global eidors_objects; 
+   if exist('matrix_id')==3 % MEX-file on MATLAB's search path
+      eidors_objects.hash_type = 1;
+   else
+      eidors_objects.hash_type= 1e6+1; 
+   end
 

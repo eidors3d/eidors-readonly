@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: matrix_id.cpp,v 1.3 2005-02-23 03:59:10 aadler Exp $
+ *   $Id: matrix_id.cpp,v 1.4 2005-06-03 02:48:06 aadler Exp $
  */
 
 #include <stdio.h>
@@ -78,6 +78,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
      hash_process( &c, buffer, nread);
      if (nread != BUFSIZE ) break;
   }
+  fclose(fid);
 
   unsigned long digest[5];
   hash_final( &c, digest);
