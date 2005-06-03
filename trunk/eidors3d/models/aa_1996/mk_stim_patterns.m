@@ -79,8 +79,7 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
 
    if ~v.use_meas_current
        stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
-       elim= any(meas_pat == stim_idx(1) |  ... % WRONG
-                 meas_pat == stim_idx(2) );
+       elim= any(meas(stim_idx,:));
        meas(:,elim) = [];
    end
 
