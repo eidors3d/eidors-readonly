@@ -36,7 +36,7 @@ param.nodes = node';
 param.elems = elem';
 param.boundary = bdy';
 param.gnd_node = 1; % node at bottom and center of the tank
-%param.electrode = mk_electrodes( elec_nodes );
+param.electrode =  mk_electrodes( elec_nodes );
 
 
 % Create a simple 2D regular mesh, based on N circular rings
@@ -110,7 +110,7 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model(elem0, node0, niveaux, bdy 
   % Now add top and bottom boundary 
   BDY= [elem0, BDY, elem0+n*(ln-1) ];
 
-  elec_nodes = [];
+  elec_nodes = []; % FIXME
 
 % MES= MES + floor(length(niveaux)/2)*n;
 % cour(1:elec,:)= cour(1:elec,:)+ floor(length(niveaux)/2)*n;
@@ -123,5 +123,9 @@ function elec_struct = mk_electrodes( elec_nodes)
    for i= 1:length( elec_nodes )
       elec_struct(i).nodes     = elec_nodes(i);
       elec_struct(i).z_contact = 0;
+   end
+   % Need to do it this way to be compatible accross versions
+   if ~exist('elec_struct');
+       elec_struct= [];
    end
 
