@@ -79,8 +79,10 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
 
    if ~v.use_meas_current
        stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
+   % each column of meas is a measurement pattern
+   % Test whether each col has contribution from stim
        elim= any(meas(stim_idx,:));
-       meas(:,elim) = [];
+       meas(elim,:) = [];
    end
 
 
