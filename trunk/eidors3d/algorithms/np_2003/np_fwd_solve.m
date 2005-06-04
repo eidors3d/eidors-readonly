@@ -4,7 +4,7 @@ function data= np_fwd_solve( fwd_model, img)
 % data = measurements struct
 % fwd_model = forward model
 % img = image struct
-% $Id: np_fwd_solve.m,v 1.4 2004-07-18 03:52:13 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.5 2005-06-04 16:40:06 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -30,4 +30,4 @@ data.meas= voltH;
 data.time= 0;
 data.name= 'solved by np_fwd_solve';
 % TODO: figure out how to describe measurment pattern
-data.configuration='32 electrodes in 2 planes, adjacent drive';
+data.configuration='unknown';
