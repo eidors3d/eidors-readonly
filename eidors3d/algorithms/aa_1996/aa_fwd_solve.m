@@ -1,4 +1,4 @@
-function data =aa_fwd_solve(R)
+function data =aa_fwd_solve(fwd_model, img)
 % AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)
 % Fwd solver for Andy Adler's EIT code
 % data = measurements struct
@@ -7,54 +7,29 @@ function data =aa_fwd_solve(R)
 
 % (C) 1995-2002 Andy Adler
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.2 2005-06-04 16:39:02 aadler Exp $
+% $Id: aa_fwd_solve.m,v 1.3 2005-06-04 17:12:39 aadler Exp $
 
-p= aa_fwd_parameters( fwd_model );
-SS= calc_system_mat( fwd_model, img );
+pp= aa_fwd_parameters( fwd_model );
+s_mat= calc_system_mat( fwd_model, img );
 
-d= size(ELEM,1);        %dimentions+1
-e= size(ELEM,2);        %ELEMents
-p= size(QQ,2);
+gnd= fwd_model.gnd_node;
 
-if nargin==1
-  global NODE SS
-  node=NODE;
-elseif nargin==2
+d=   pp.n_dims+1;
+idx= 1:pp.n_elem*d;
+SS= s_mat.SS*sparse(idx,idx, img.elem_data(ceil(idx/d)) );
+z= s_mat.CC'* SS * s_mat.CC;
 
-if 0;
-    SS= spalloc( d*e , d*e, d*d*e);
-    for j=1:e
-      a=  inv([ ones(d,1) node( :, ELEM(:,j) )' ]);
-      SS(d*(j-1)+1:d*j,d*(j-1)+1:d*j)=  ...
-           2*a(2:d,:)'*a(2:d,:)/(d-1)/(d-2)/abs(det(a));
-    end %for j=1:ELEMs 
-else
-    SSiidx= floor([0:d*e-1]'/d)*d*ones(1,d) + ones(d*e,1)*(1:d) ;
-    SSjidx= [1:d*e]'*ones(1,d);
-    SSdata= zeros(d*e,d);
-    dfact= (d-1)*(d-2); % Note this wont work for d>3
-    for j=1:e
-      a=  inv([ ones(d,1), node( :, ELEM(:,j) )' ]);
-      SSdata(d*(j-1)+1:d*j,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
-    end %for j=1:ELEMs 
-    SS= sparse(SSiidx,SSjidx,SSdata);
-end
+idx= 1:pp.n_node;
+idx(gnd) = [];
 
-end
+v= zeros(pp.n_node,pp.n_stim);
+v(idx,:)= z(idx,idx) \ pp.QQ(idx,:);
+%vv= v(MES(1,:),:)- v(MES(2,:),:);
+%vv= vv(ELS);
 
-if length(R)==max(CPTR)
-  R=R(CPTR);
-elseif R==0 
-  R=zeros(1,size(ELEM,2));
-end
-
-i=1:size(SS,2);
-d=size(SS,2)/length(R);
-z= CC'*SS*sparse(i,i, exp(R(ceil(i/d))) )*CC;
-
-i=2:size(CC,2);
-
-v= [zeros(1,p) ;full( z(i,i)\QQ(i,:) )];
-vv= v(MES(1,:),:)- v(MES(2,:),:);
-vv= vv(ELS);
-
+% create a data structure to return
+data.meas= v;
+data.time= -1; % unknown
+data.name= 'solved by np_fwd_solve';
+% TODO: figure out how to describe measurment pattern
+data.configuration='unknown';
