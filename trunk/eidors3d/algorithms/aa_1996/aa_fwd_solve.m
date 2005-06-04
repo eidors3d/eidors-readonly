@@ -7,9 +7,10 @@ function data =aa_fwd_solve(R)
 
 % (C) 1995-2002 Andy Adler
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.1 2005-06-03 19:09:11 aadler Exp $
+% $Id: aa_fwd_solve.m,v 1.2 2005-06-04 16:39:02 aadler Exp $
 
-global MES ELS CPTR CC QQ ELEM
+p= aa_fwd_parameters( fwd_model );
+SS= calc_system_mat( fwd_model, img );
 
 d= size(ELEM,1);        %dimentions+1
 e= size(ELEM,2);        %ELEMents
