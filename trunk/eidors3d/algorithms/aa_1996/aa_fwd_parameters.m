@@ -11,7 +11,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.NODE     => vertex matrix
 %   param.ELEM     => connection matrix
 %   param.QQ       => Current into each NODE
-% $Id: aa_fwd_parameters.m,v 1.4 2005-06-04 17:49:45 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.5 2005-06-04 18:59:18 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -38,7 +38,7 @@ p = length(fwd_model.stimulation );
 n_elec= length( fwd_model.electrode );
 
 % Matrix to convert Nodes to Electrodes
-N2E = zeros(n_elec, n);
+N2E = sparse(n_elec, n);
 for i=1:n_elec
     elec_nodes = fwd_model.electrode(i).nodes;
     N2E(i, elec_nodes) = 1/length(elec_nodes);
@@ -46,7 +46,7 @@ end
   
 
 n_meas= 0; % sum total number of measurements
-pp.QQ= zeros(n,p);
+pp.QQ= sparse(n,p);
 for i=1:p
     pp.QQ(:,i) = N2E'* fwd_model.stimulation(i).stim_pattern;
 end
