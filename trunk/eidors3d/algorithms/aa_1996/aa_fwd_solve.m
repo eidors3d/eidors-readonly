@@ -7,7 +7,7 @@ function data =aa_fwd_solve(fwd_model, img)
 
 % (C) 1995-2002 Andy Adler
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.4 2005-06-04 17:49:45 aadler Exp $
+% $Id: aa_fwd_solve.m,v 1.5 2005-06-05 03:16:09 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -35,8 +35,8 @@ vv = zeros( pp.n_meas, 1 );
 idx=0;
 for i=1:pp.n_stim
    meas_pat= fwd_model.stimulation(i).meas_pattern;
-   n_meas  = size(meas_pat,1);
-   vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
+   n_meas  = size(meas_pat,2);
+   vv( idx+(1:n_meas) ) = meas_pat'*v_els(:,i);
    idx= idx+ n_meas;
 end
 

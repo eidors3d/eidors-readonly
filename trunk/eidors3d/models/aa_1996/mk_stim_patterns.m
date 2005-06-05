@@ -35,6 +35,9 @@ function stim= mk_stim_patterns( n_elec, n_rings, inj, meas, options, amplitude)
 %                            carrying electrodes
 %      'meas_current'  -> do make measurements on current
 %                            carrying electrodes
+%      'rotate_meas'     -> rotate measurements with stimulation
+%      'no_rotate_meas'  -> don't rotate measurements with stimulation
+%
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 if nargin<6; amplitude= 1; end
@@ -59,30 +62,38 @@ end
 
 function stim_pat = mk_stim_pat(v, elec, ring, amplitude)
    stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
-   stim_pat = zeros(v.tn_elec, 1);
+   stim_pat = sparse(v.tn_elec, 1);
    stim_pat( stim_idx ) = v.amplitude*[1;-1];
 
 % Measurement config can stay static, or can rotate with
 % the stim pattern. This code keeps measurements static
 function meas = mk_meas_pat(v, elec, ring, amplitude)
-   meas= zeros(v.tn_elec, v.tn_elec);
+   meas= sparse(v.tn_elec, v.tn_elec);
+
+   if v.rotate_meas
+      ofs = elec;
+   else
+      ofs = 0;
+   end 
 
    within_ring = rem(0:v.tn_elec-1, v.n_elec);
    ouside_ring = floor( (0:v.tn_elec-1)/ v.n_elec) * v.n_elec;
    meas_seq    = (0:v.tn_elec-1)*v.tn_elec + 1;
-   meas_pat = rem( v.meas(1) + within_ring, v.n_elec ) + ...
+
+   meas_pat = rem( v.meas(1) + within_ring + ofs, v.n_elec ) + ...
                     ouside_ring + meas_seq;
    meas(meas_pat) =1;
-   meas_pat = rem( v.meas(2) + within_ring, v.n_elec ) + ...
+
+   meas_pat = rem( v.meas(2) + within_ring + ofs, v.n_elec ) + ...
                     ouside_ring + meas_seq;
    meas(meas_pat) = -1;
 
-   if ~v.use_meas_current
+   if v.use_meas_current == 0
        stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
    % each column of meas is a measurement pattern
    % Test whether each col has contribution from stim
        elim= any(meas(stim_idx,:));
-       meas(elim,:) = [];
+       meas(:,elim) = [];
    end
 
 
@@ -123,7 +134,8 @@ end
 
 v.meas= meas;
 
-v.use_meas_current = 1;
+v.use_meas_current = 0;
+v.rotate_meas = 0;
 
 % iterate through the options cell array
 for opt = options
@@ -131,6 +143,10 @@ for opt = options
       v.use_meas_current = 0;
    elseif strcmp(opt, 'meas_current')
       v.use_meas_current = 1;
+   elseif strcmp(opt, 'rotate_meas')
+      v.rotate_meas = 1;
+   elseif strcmp(opt, 'no_rotate_meas')
+      v.rotate_meas = 0;
    else
       error(['option parameter opt=',opt,' not understood']);
    end
