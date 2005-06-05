@@ -7,15 +7,13 @@ function data =aa_fwd_solve(fwd_model, img)
 
 % (C) 1995-2002 Andy Adler
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.6 2005-06-05 13:23:35 aadler Exp $
+% $Id: aa_fwd_solve.m,v 1.7 2005-06-05 13:42:59 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
-gnd= fwd_model.gnd_node;
-
 idx= 1:pp.n_node;
-idx(gnd) = [];
+idx( fwd_model.gnd_node ) = [];
 
 v= zeros(pp.n_node,pp.n_stim);
 v(idx,:)= s_mat(idx,idx) \ pp.QQ(idx,:);
