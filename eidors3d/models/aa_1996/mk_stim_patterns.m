@@ -63,7 +63,7 @@ end
 function stim_pat = mk_stim_pat(v, elec, ring, amplitude)
    stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
    stim_pat = sparse(v.tn_elec, 1);
-   stim_pat( stim_idx ) = v.amplitude*[1;-1];
+   stim_pat( stim_idx ) = v.amplitude*[-1;1];
 
 % Measurement config can stay static, or can rotate with
 % the stim pattern. This code keeps measurements static
