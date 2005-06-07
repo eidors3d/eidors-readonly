@@ -308,19 +308,73 @@ calling function.
 <h3> Usage Examples
 </h3>
 
-<ul>
-  <li> <b> Usage Example: 
-       </b>
-  This example shows how to test EIT image reconstructions from 
-  two different algorithms on a given data set.
+In this section two examples of the usage of EIDORS3D
+software functions are provided. The first illustrates
+the use of forward models to simulate data. The second
+illustrates how to modify the image reconstruction
+behaviour of an existing algorithm to
+add new features without needing to edit the original
+software.
 
-  <li> <b> Inverse Models:
-       </b>
-  This example shows how modify an existing algorithm to test the
-  effect of a modification. In this example, we wish to modify the
-  hyperparameter selection strategy of Polydorides (2002) to use
-  instead the <i>Noise Figure</i> parameter introduced by
-  Adler and Guardo.
+<h4> Simulate Data
+</h4>
+
+In order to simulate data, a FEM model object <tt>mdl_3d</tt>
+and a conductivity image need to be created.
+<ul><pre>
+% mk_circ_tank(FEM_rings, FEM_levels, n_elec, elec_planes )
+param= mk_circ_tank(8, [-1:.25:1], 16, 3);
+
+% mk_stim_patterns(n_elec, elec_planes, stim, meas, opt, stim_amplitude)
+options = {'no_meas_current','no_rotate_meas'};
+params.stimulation= mk_stim_patterns(16, 3, '{ad}','{ad}', opt, 10);
+
+params.solve=      'np_fwd_solve';
+mdl_3d = eidors_obj('fwd_model', params);
+show_fem( mdl_3d );  % View model
+
+% simulate using <i>img_bkgnd</i> above
+homg_data=fwd_solve( mdl_3d, img_bkgnd);
+</pre></ul>
+
+The functions <tt>mk_circ_tank</tt> and <tt>mk_stim_patterns</tt>
+build regular cylidrical EIT FEM models. In order to use more
+sophisticated simulations, these functions can be replaced
+by the user. For example, code to build models using <i>netgen</i>
+(http://www.hpfem.jku.at/netgen/) is available in the
+<tt>meshing/netgen/</tt> directory.
+
+<h4> Reconstruct Images
+</h4>
+
+This example shows how modify an existing algorithm.
+For example, we wish to modify the
+hyperparameter selection strategy of Polydorides (2002) to use
+instead the <i>Noise Figure</i> parameter introduced by
+Adler and Guardo (1996). The first step is to create a
+<tt>fwd_model</tt> structure <tt>demo_mdl</tt> in a similar
+way to the above (details are shown in <tt>examples/demo_real.m</tt>).
+Subsequently, an <tt>inv_model</tt>, <tt>demo_inv</tt> is created,
+and the image reconstructed from difference data: 
+<tt>data1</tt> and <tt>data2</tt>.
+
+<ul><pre>
+demo_inv.name= 'Nick Polydorides - Modified';
+demo_inv.solve= 'np_inv_solve';
+demo_inv.reconst_type= 'differential';
+demo_inv.fwd_model= demo_mdl;
+
+% modify to use Tikhonov prior
+demo_inv.image_prior.func= 'tikhonov_image_prior';
+
+% modify to use <i>Noise Figure of 2.0</i> 
+demo_inv.hyperparameter.func = 'aa_calc_noise_figure';
+demo_inv.hyperparameter.noise_figure = 2.0;
+demo_inv= eidors_obj('inv_model', demo_inv);
+
+% solve inverse
+solve_img= inv_solve( demo_inv, data1, data2);
+</pre></ul>
 
 </ul>
 
