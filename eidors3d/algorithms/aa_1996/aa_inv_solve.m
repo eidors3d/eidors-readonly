@@ -1,12 +1,12 @@
 function img= aa_inv_solve( inv_model, data1, data2)
-% NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
+% AA_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
 % img= aa_inv_solve( inv_model, data1, data2)
 % img        => output image
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: aa_inv_solve.m,v 1.2 2005-06-07 03:18:08 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.3 2005-06-07 03:19:00 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
