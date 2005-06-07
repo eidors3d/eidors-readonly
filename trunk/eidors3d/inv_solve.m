@@ -14,12 +14,16 @@ function img = inv_solve( inv_model, data1, data2)
 % inv_model is a inv_model structure
 % img       is an image structure
 %
-% $Id: inv_solve.m,v 1.5 2005-02-23 16:12:31 aadler Exp $
+% $Id: inv_solve.m,v 1.6 2005-06-07 01:14:21 aadler Exp $
 
 % TODO: does it make sense to cache solutions here?
 %       if so, to where do they belong, data1 or data2?
 
 eidors_msg('inv_solve',1);
+
+% caching of images is disabled -
+%  in order to implement image caching, it needs to be possible
+%  to tag them with both data1 and data2
 
 if     strcmp(inv_model.reconst_type,'static')
    if nargin~=2;
@@ -28,7 +32,7 @@ if     strcmp(inv_model.reconst_type,'static')
    img= feval( inv_model.solve, inv_model, data1);
 elseif strcmp(inv_model.reconst_type,'differential')
    if nargin~=3;
-      error('two data set are required for a differential reconstruction');
+      error('two data sets are required for a differential reconstruction');
    end
    img= feval( inv_model.solve, inv_model, data1, data2);
 else
