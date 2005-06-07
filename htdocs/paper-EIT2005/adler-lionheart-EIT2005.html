@@ -80,26 +80,54 @@ designed to support <i>community</i> use, modification and contribution.
 This has been accomplished by the following:
 </p>
 <ul>
-  <li> <b> Sourceforge hosting </b>
+  <li> <b> Sourceforge hosting:</b>
 EIDORS3D is hosted by <tt>sourceforge.net</tt>
-at <tt>http://eidors3d.sf.net</tt>. This tool allows for collaborative
-development for group members, while permitting all users to access the
-code. </li>
-  <li> <b> Language independance: Octave and Matlab </b> While
-EIDORS3D was originally written for Matlab, the eventual goal is for
-language independance. Currently EIDORS works with Octave (version &ge;
-2.1.66) and Matlab (version &ge; 6.0). </li>
-  <li> <b> Pluggable code base </b> "Pluggable" software allows users
-to modify functions by adding new modules, without
-needing to make changes to the underlying code. This offers similar
-capabilities to an object oriented implementation, although it was been
-instead implemented using function pointers. </li>
-  <li> <b> Automatic value caching </b> In order to increase
+at <tt>http://eidors3d.sf.net</tt>.
+Software is available for download as packaged released versions
+(version 2.0 contains the modification described in this paper),
+or the latest developments may be downloaded from the CVS
+version control repository.
+Sourceforge hosting allows for collaborative development for
+group members, while permitting anyone to read-only access.
+In order to become a member of the developer group, new
+contributors should contact the authors.
+
+  <li> <b> Language independance: (Octave and Matlab)</b>
+EIDORS3D was originally written for Matlab.
+However, the eventual goal is for language independance.
+The current version of EIDORS3D works with Octave
+(<tt>www.octave.org</tt>, version &ge; 2.9.3)
+and Matlab (version &ge; 6.0).
+Since Octave is free software, EIDORS3D could be provided
+as part of an EIT system without incurring the additional
+licensing costs of Matlab.
+
+
+  <li> <b> Pluggable code base:</b>
+In order to facilitate user modifications, EIDORS3D
+has been designed to provide some of the benefits of
+Object-oriented (OO) software: <i>Packaging</i>
+ and <I>Abstraction</i>. We have decided not to
+use the OO framework provided by Matlab, because
+it appears somewhat cumbersome, and may be intimidating
+to many mathematicians and engineers who do not 
+regularly write OO software. This decision may
+be revisited in the future.
+Instead, EIDORS3D has been designed as 
+"Pluggable" software. This design uses function
+pointers to allow adding new modules and modifying
+in which parts of functions are executed.
+A detailed description of this capability is
+provided in the next section.
+
+  <li> <b> Automatic matrix caching: </b> 
+In order to increase
 performance of image reconstruction software, it is important to cache
 computationally expensive variables, such as the Jacobian. Such caching
 complicates the software implementation. To solve this problem,
 EIDORS3D extracts caching to a separate module which is inhereted by
-each functional module. </li>
+each functional module. This capability is described in the next section.
+
   <li> <b> Generalized data formats </b> In order to support the wide
 variety of EIT measurements and algorithms, a general EIT data format
 structure is developed. </li>
@@ -123,6 +151,51 @@ expertise and facilitates innovations in the field.
 
 <h3> Software Architecture
 </h3>
+
+<h4> Sofware architecture
+</h4>
+
+In order to illustrate the usage of EIDORS3D, we consider
+the calculation of the Jacobian or sensitivity matrix, <b>J</b>
+Given a finite element model (FEM) model of an EIT medium,
+<i>F</i>, we calculate the vector of voltages, <b>v</b>, 
+at each FEM vertex as:
+<center>
+<b>v</b> = <i>F</i>(<b>&sigma;</b>) <b>q</b>
+</center>
+where <b>&sigma;</b> is the vector of element conductivites
+and <b>q</b> is the current stimulation pattern, a vector
+of current inputs to each vertex (Neumann boundary conditions).
+Depending on the electrode model used, the measured electrode
+voltage can be represented as a linear combination of vertex
+voltages, <b>V</b><sub>2E</sub>.
+For each simulation pattern, <b>q</b><sub><i>i</i></sub>,
+measurements <i>m</i><sub><i>i</i>,<i>j</i></sub>
+are performed, each of which consist of a linear combination of
+electrode measurements, <b>m</b><sub><i>j</i></sub>.
+Thus:
+<center>
+<i>m</i><sub><i>i</i>,<i>j</i></sub> =
+<b>m</b><sub><i>j</i></sub>
+<b>V</b><sub>2E</sub>
+<i>F</i>(<b>&sigma;</b>) <b>q</b><sub><i>i</i></sub>
+</center>
+Based on this model, <b>J</b> is calculated as:
+<center>
+<b>J</b><sub><i>i</i>,<i>j</i>,<i>k</i></sub> =
+<b>m</b><sub><i>j</i></sub>
+<b>V</b><sub>2E</sub>
+&part;<i>F</i>(<b>&sigma;</b>) <b>q</b><sub><i>i</i></sub>
+/ &part;<b>&sigma;</b><sub><i>k</i></sub>
+<big>|</big><sub><b>&sigma;</b>=
+                 <b>&sigma;</b><sub><b>0</b></sub></sub>
+</center>
+where <b>&sigma;</b><sub><b>0</b></sub> is the "background"
+conductivity around which small changes are assumed to occur.
+In EIDORS3D, the Jacobian is calculated using <tt>calc_jacobian</tt>;
+this function needs as parameters the FEM model <tt>fem</tt>,
+and the image of the background <tt>img</tt>.
+
 
 <ul>
   <li> <b> Forward Models
