@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: mk_simdata.m,v 1.8 2005-06-07 00:39:34 aadler Exp $
+% $Id: mk_simdata.m,v 1.9 2005-06-07 03:26:08 aadler Exp $
 
 % 
 % Example 1: Create simple 16 electrode 2D model
@@ -36,6 +36,17 @@ inh_img= eidors_obj('image', 'homogeneous image', ...
 inh_data=fwd_solve( inh_img);
 
 %J= calc_jacobian( homg_img );
+
+inv2d.name= 'EIT inverse';
+inv2d.solve=       'aa_inv_solve';
+%inv2d.hyperparameter.value = 1e-8;
+inv2d.hyperparameter.func = 'aa_calc_noise_figure';
+inv2d.image_prior.func= 'tikhonov_image_prior';
+inv2d.reconst_type= 'differential';
+inv2d.fwd_model= mdl_2d;
+inv2d= eidors_obj('inv_model', inv2d);
+
+img= inv_solve( inv2d, inh_data, homg_data);
 
 % 
 % Example 2: Create simple 16 electrode 3D model
