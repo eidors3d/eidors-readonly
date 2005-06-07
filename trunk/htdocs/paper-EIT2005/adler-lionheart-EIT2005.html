@@ -25,12 +25,11 @@ EIDORS3D is an open source software suite for image reconstruction in
 electrical impedance tomography and diffuse optical tomography;
 designed to facilitate collaboration, testing and new research
 in these fields.  This paper describes recent work to
-redesign the software structure in order to simplify its use,
+redesign the software structure in order to simplify its use
 and provide a uniform interface,
 permitting easier modification and customization.
-We describe the key features of this structure, followed by
-examples of its use, and an outline of future directions
-for development.
+We describe the key features of this software, followed by
+examples of its use.
 
 <H3>
 Introduction
@@ -39,7 +38,7 @@ Introduction
 EIDORS3D is a software suite for image reconstruction in
 electrical impedance tomography and diffuse optical tomography.
 The goal is to provide a freely distributable and modifyable
-software suite for image reconstruction of electrical 
+software for image reconstruction of electrical 
 or diffuse optical data. Such software facilitates research
 in these fields by providing a reference implementation
 against which new developments can be compared, and by
@@ -49,7 +48,7 @@ The original EIDORS software (Vaukhonen et al., 2000)
 is based on software from the thesis of Vaukhonen (1997)
 It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
-problem and reconstructing and displaying the reconstructed images.
+problem and reconstruction and display of the images.
 In order to provide capability to solve 3D reconstruction models,
 a new project, EIDORS3D, was begun (Polydorides and Lionheart, 2002),
 based on the software developed for thesis of Polydorides (2002).
@@ -60,14 +59,14 @@ and the images are reconstructed using regularized inverse techniques.
 <p>
 In the three years since the publication of EIDORS3D, several patterns
 of use have been noted. Researchers typically download the software,
-run the provided demonstration examples, and modify them, and 
+run the provided demonstration examples,  and 
 make modifications in the demonstration examples and the software
 internals to meet their needs.
-Because of lack of a modular software structure of EIDORS3D,
+Because of the lack of a modular software structure of EIDORS3D,
 changes tended to made into the code itself. This resulted in
 duplicated
-code which could not easily be <i>modularized</i> in order to
-be contributed back to EIDORS3D. Also, as recent work has begun to move
+code which could not easily be <i>refactored</i> in order to
+be contributed back to EIDORS3D. Additionally, recent work has begun to move
 away from basic reconstruction algorithms, focussing
 on such issues as mesh generation, electrode modelling, visualization
 and electrode error detection. This research would be facilitated
@@ -80,7 +79,7 @@ designed to support <i>community</i> use, modification and contribution.
 This has been accomplished by the following:
 </p>
 <ul>
-  <li> <b> Open-source license </b> EIDORS3D is licensed under the
+  <li> <b> Open-source license:</b> EIDORS3D is licensed under the
 GNU General Public License. Uses are free to use, modify, and
 distribute their modifications. All modifications must include the
 source code, or instructions on how to obtain it. EIDORS3D may be used
@@ -91,11 +90,11 @@ modifications to it are made available.
 EIDORS3D is hosted by <tt>sourceforge.net</tt>
 at <tt>http://eidors3d.sf.net</tt>.
 Software is available for download as packaged released versions
-(version 2.0 contains the modification described in this paper),
+(version 2.0 contains the modifications described in this paper),
 or the latest developments may be downloaded from the CVS
 version control repository.
 Sourceforge hosting allows for collaborative development for
-group members, while permitting anyone to read-only access.
+group members, while permitting read-only access to everyone.
 In order to become a member of the developer group, new
 contributors should contact the authors.
 
@@ -122,17 +121,19 @@ regularly write OO software. This decision may
 be revisited in the future.
 Instead, EIDORS3D has been designed as 
 "Pluggable" software. This design uses function
-pointers to allow adding new modules and modifying
-in which parts of functions are executed.
+pointers to allow adding new modules and controlling
+which parts of functions are executed.
 A detailed description of this capability is
 provided in the next section.
 
   <li> <b> Automatic matrix caching: </b> 
 In order to increase
 performance of image reconstruction software, it is important to cache
-computationally expensive variables, such as the Jacobian. Such caching
+computationally expensive variables, such as the Jacobian and image priors.
+Such caching
 complicates the software implementation. To solve this problem,
-EIDORS3D extracts caching to a separate module which is inherited by
+EIDORS3D extracts caching to a separate module <tt>eidors_obj</tt>
+which is inherited by
 each functional module. This capability is described in the next section.
 
   <li> <b> Generalized data formats:</b> In order to support the wide
@@ -161,8 +162,8 @@ EIDORS3D has begun to implement a series of regression test
 scripts to allow automatic testing of code modifications.
 
   <li> <b> Logo: </b>
-Since EIDORS3D images blobby objects in aqueous media;
-the logo (figure 1), was chosen to be a walrus, since it is
+Since EIDORS3D images blobby objects in aqueous media,
+the logo (Fig. 1), was chosen to be a walrus; it is (also)
 a fat, blobby animal that lives in water.
 <center>
 <img src="../eidors-logo.jpg">
@@ -172,7 +173,7 @@ a fat, blobby animal that lives in water.
 
 </ul>
 We hope that by providing a structure for community collaboration
-in EIT algorithms we can produce robust,
+in EIT algorithms, we can produce robust,
 reliable and fairly portable software which draws on our collective
 expertise and facilitates innovations in the field.
 
@@ -183,7 +184,7 @@ expertise and facilitates innovations in the field.
 </h4>
 
 In order to illustrate the usage of EIDORS3D, we consider
-the calculation of the Jacobian or sensitivity matrix, <b>J</b>.
+the calculation of the Jacobian, or sensitivity matrix, <b>J</b>.
 Given a finite element model (FEM) model of an EIT medium,
 <i>F</i>, we calculate the vector of voltages, <b>v</b>, 
 at each FEM vertex as:
@@ -221,7 +222,7 @@ where <b>&sigma;</b><sub><b>0</b></sub> is the "background"
 conductivity around which small changes are assumed to occur.
 In EIDORS3D, the Jacobian is calculated using <tt>calc_jacobian</tt>;
 this function needs as parameters the FEM model <tt>fem</tt>,
-of type <tt>fwd_model</tt>
+of type <tt>fwd_model</tt>,
 and the image of the background <tt>img_bkgnd</tt>
 of type <tt>image</tt>.
 
@@ -294,11 +295,13 @@ homg_conductivity= ones( length(fem.elems) ,1);
 img_bkgnd= eidors_obj('image', 'homog background', ...
   'elem_data', homg_conductivity, 'fwd_model', fem );
 </pre></ul>
+where the object <tt>name</tt> is assigned
+(arbitrarily) to 'homog background'.
 In order to calculate the Jacobian, we call
 <tt>J= calc_jacobian( fem, img_bkgnd )</tt>, which
 1) tests to see whether <b>J</b> has been previously
 calculated for <tt>fem</tt> and <tt>img_bkgnd</tt>; if
-so, the cached value is returned, and
+so, the cached value is returned; otherwise,
 2) loads and calls the function in <tt>fem.jacobian</tt>,
 which may be <tt>np_calc_jacobian</tt>, which 
 calls the code from Polydorides (2002); the returned
@@ -388,9 +391,9 @@ software collection, by providing a structure that is
 open-source, modular, and documented. Overall,
 the goals for EIDORS3D are to:
 1) advance research by providing a set of reference algorithms
-     against which new research can be compared
+     against which new research can be compared;
 2) facilitate new work in EIT by providing examples, and ways
-     to quickly expand on existing work.
+     to quickly expand on existing work;
 and
 3) allow experimental and clinical researchers to easily
      benefit from new research in reconstruction algorithms.
