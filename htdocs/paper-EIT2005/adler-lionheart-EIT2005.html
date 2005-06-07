@@ -80,6 +80,13 @@ designed to support <i>community</i> use, modification and contribution.
 This has been accomplished by the following:
 </p>
 <ul>
+  <li> <b> Open-source license </b> EIDORS3D is licenced under the
+GNU General Public License. Uses are free to use, modify, and
+distribute their modifications. All modifications must include the
+source code, or instructions on how to obtain it. EIDORS3D may be used
+in a commercial product, as long as the source code for EIDORS and all
+modifications to it are made available.
+
   <li> <b> Sourceforge hosting:</b>
 EIDORS3D is hosted by <tt>sourceforge.net</tt>
 at <tt>http://eidors3d.sf.net</tt>.
@@ -128,21 +135,41 @@ complicates the software implementation. To solve this problem,
 EIDORS3D extracts caching to a separate module which is inhereted by
 each functional module. This capability is described in the next section.
 
-  <li> <b> Generalized data formats </b> In order to support the wide
+  <li> <b> Generalized data formats:</b> In order to support the wide
 variety of EIT measurements and algorithms, a general EIT data format
-structure is developed. </li>
-  <li> <b> Interface software for common EIT systems </b> Functions
-to load data from some common EIT systems to the generalized data
-format have been developed. </li>
-  <li> <b> Usage examples </b> Some simple and more complex usage
-examples are provided. </li>
-  <li> <b> Open-source license </b> EIDORS3D is licenced under the
-GNU General Public License. Uses are free to use, modify, and
-distribute their modifications. All modifications must include the
-source code, or instructions on how to obtain it. EIDORS3D may be used
-in a commercial product, as long as the source code for EIDORS and all
-modifications to it are made available.
-  </li>
+structure is developed (the <tt>fwd_model</tt> structure).
+This format specifies the electrode positions, contact impedances,
+and stimulation and measurement patterns.
+
+  <li> <b> Interface software for common EIT systems:</b> Functions
+to load data from some common EIT systems to the EIDORS3D data
+format have been developed.
+As coverage of more data formats is implemented, 
+we hope that this will advance the ability of researchers
+to share data and results.
+
+  <li> <b> Usage examples:</b>
+It is observed that researchers typically base new software on
+demonstration examples. To facilitate this, some simple and more
+complex usage examples are provided.
+
+  <li> <b> Test suite:</b>
+Software is intrinsically difficult to test. While little work
+has been done specifically on testing numerical software, we
+believe that such tests are even more difficult.
+EIDORS3D has begun to implement a series of regression test
+scripts to allow automatic testing of code modifications.
+
+  <li> <b> Logo: </b>
+Since EIDORS3D images blobby objects in aqueous media;
+the logo (figure 1), was chosen to be a walrus, since it is
+a fat, blobby animal that lives in water.
+<center>
+<img src="../eidors-logo.jpg">
+<br>Fig. 1: EIDORS3D logo
+</center>
+
+
 </ul>
 We hope that by providing a structure for community collaboration
 in EIT algorithms we can produce robust,
@@ -152,11 +179,11 @@ expertise and facilitates innovations in the field.
 <h3> Software Architecture
 </h3>
 
-<h4> Sofware architecture
+<h4> Example: Calculation of Jacobian
 </h4>
 
 In order to illustrate the usage of EIDORS3D, we consider
-the calculation of the Jacobian or sensitivity matrix, <b>J</b>
+the calculation of the Jacobian or sensitivity matrix, <b>J</b>.
 Given a finite element model (FEM) model of an EIT medium,
 <i>F</i>, we calculate the vector of voltages, <b>v</b>, 
 at each FEM vertex as:
@@ -197,94 +224,86 @@ this function needs as parameters the FEM model <tt>fem</tt>,
 of type <tt>fwd_model</tt>
 and the image of the background <tt>img_bkgnd</tt>
 of type <tt>image</tt>.
-Each of these parameters is defined to be an <tt>eidors_obj</tt>
-structure, with 
-the following properties.
 
-<p> <b> Forward Models
-       </b>
+<h4> Forward Model structure <tt>fwd_model</tt>
+</h4>
+The following table shows a partial representation of 
+the structure of an EIDORS3D <tt>fwd_model</tt> object.
 <ul>
-      <p><li><b>
-        fwd_model
-      </b><br>
-      <ul>
-        <b>Properties</b>:
-        <li><tt>fwd_model.name
-        </tt> &nbsp; &nbsp;
-            Model name (arbitrary)
-
-        <li><tt>fwd_model.nodes
-        </tt> &nbsp; &nbsp;
-            position of FEM vertices (<i>Nodes</i>&times;<i>Dims</i>)
-        <li><tt>fwd_model.elems
-        </tt> &nbsp; &nbsp;
-            definition of FEM elements (<i>Elems</i>&times;<i>Dims+1</i>)
-            (for simplex elements)
-        <li><tt>fwd_model.boundary
-        </tt> &nbsp; &nbsp;
-            nodes of element faces on the medium surface
-        <li><tt>fwd_model.gnd_node
-        </tt> &nbsp; &nbsp;
-            index of nodes connected to ground
-        <li><tt>fwd_model.electrode
-        </tt> &nbsp; &nbsp;
-            Vector <i>(Num_elecs &times;1)</i>
+<table border=0>
+<tr><th>Properties
+<tr><td valign="top"><tt>
+        fwd_model.name
+    </tt><td>
+        Model name (arbitrary)
+<tr><td valign="top"><tt>
+        fwd_model.nodes
+    </tt><td>
+        Position of FEM vertices (<i>Nodes</i>&times;<i>Dims</i>)
+<tr><td valign="top"><tt>
+        fwd_model.elems
+    </tt><td>
+        Node indices of FEM elements (<i>Elems</i>&times;<i>Dims+1</i>)
+<tr><td valign="top"><tt>
+        fwd_model.boundary
+    </tt><td>
+        Node indices of element faces on the medium surface
+<tr><td valign="top"><tt>
+        fwd_model.electrode
+    </tt><td>
+        Vector <i>(Num_elecs &times;1)</i>
            of electrode models (<b>elec_model</b>)
-        <li><tt>fwd_model.stimulation
-        </tt> &nbsp; &nbsp;
-            Vector <i>(Num_Stim &times;1)</i> of stimulation
+<tr><td valign="top"><tt>
+        fwd_model.stimulation
+&nbsp; &nbsp;
+    </tt><td>
+         Vector <i>(Num_Stim &times;1)</i> of stimulation
             patterns (<b>stim_model</b>)
-        <li><tt>fwd_model.dimention
-        </tt> &nbsp; &nbsp;
-            2D, 3D, etc.
-        <li><tt>fwd_model.normalized_measurements
-        </tt> &nbsp; &nbsp;
-            Do we do difference (v<sub>i</sub>&minus;v<sub>h</sub>) or
-            normalized difference
-             (v<sub>i</sub>&minus;v<sub>h</sub>)/v<sub>h</sub>?
-
-        <p><b>Methods</b>:
-        <li><tt>fwd_model.solve
-        </tt> &nbsp; &nbsp;
-        Calculate data object:
+<tr><th>Methods
+<tr><td valign="top"><tt>
+        fwd_model.solve
+    </tt><td>
+        Function to calculate solve FEM:
         <br>
         <i>usage:</i><tt>
-          data = fwd_solve( fwd_model, image )
-        </tt>
-
-        <li><tt>fwd_model.jacobian
-        </tt> &nbsp; &nbsp;
+          <i>data</i> = fwd_solve( fwd_model, <i>image</i> )</tt>
+<tr><td valign="top"><tt>
+        fwd_model.jacobian
+    </tt><td>
+        Function to calculate Jacobian at <i>image</i> background
+        <br>
         <i>usage:</i><tt>
-          data = jacobian( fwd_model, image )
-        </tt>
-
-        <li><tt>fwd_model.image_prior
-        </tt> &nbsp; &nbsp;
+          <i>J</i> = calc_jacobian( fwd_model, <i>image</i> )</tt>
+<tr><td valign="top"><tt>
+        fwd_model.image_prior
+    </tt><td>
+        Function to calculate image_prior
+        <br>
         <i>usage:</i><tt>
-          data = image_prior( fwd_model, image )
-        </tt>
+          <i>J</i> = calc_image_prior( fwd_model, <i>image</i> )</tt>
+</table></ul>
 
-        <li><tt>fwd_model.data_prior
-        </tt> &nbsp; &nbsp;
-        <i>usage:</i><tt>
-          data = data_prior( fwd_model, image )
-        </tt>
-      </ul>
 
-  <li> <b> Data Format
-       </b>
-</ul>
-
-In order to create the a homogeneous background image, the
-following code is used:
+Each object is created using the <tt>eidors_obj</tt>
+function, which can fill in default attributes, and 
+keeps track of cached properties.
+Given a <tt>fwd_model</tt> <i><tt>fem</tt></i>
+a background image may be defined as follows:
 <ul><pre>
 homg_conductivity= ones( length(fem.elems) ,1);
 img_bkgnd= eidors_obj('image', 'homog background', ...
   'elem_data', homg_conductivity, 'fwd_model', fem );
 </pre></ul>
-where <tt>fem</tt> is a <tt>fwd_model</tt> on which the 
-Jacobian is calculated. The string "homog background" is
-the <i>name</i> of the object, and may be arbitrary.
+In order to calculate the Jacobian, we call
+<tt>J= calc_jacobian( fem, img_bkgnd )</tt>, which
+1) tests to see whether <b>J</b> has been previously
+calculated for <tt>fem</tt> and <tt>img_bkgnd</tt>; if
+so, the cached value is returned, and
+2) loads and calls the function in <tt>fem.jacobian</tt>,
+which may be <tt>np_calc_jacobian</tt>, which 
+calls the code from Polydorides (2002); the returned
+value is then stored in the cache and returned to the
+calling function.
 
 <h3> Usage Examples
 </h3>
