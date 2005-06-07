@@ -6,12 +6,14 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.12 2005-06-07 01:21:54 aadler Exp $
+% $Id: np_inv_solve.m,v 1.13 2005-06-07 03:01:42 aadler Exp $
 
 % The one_step reconstruction matrix is cached
+one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');
 if ~isempty(one_step_inv)
     eidors_msg('np_inv_solve: using cached value', 2);
 else
+    fwd_model= inv_model.fwd_model;
     p= np_fwd_parameters( fwd_model );
 
     % calc jacobian with homogeneous background
@@ -26,8 +28,6 @@ else
 
     % Calculating a linear inverse solution
     one_step_inv= (J'*J +  tfac*Reg'*Reg)\J';
-    fwd_model= inv_model.fwd_model;
-    one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');
 
     eidors_obj('set-cache', inv_model, 'np_2003_one_step_inv', one_step_inv);
     eidors_msg('np_inv_solve: setting cached value', 2);
