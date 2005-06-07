@@ -194,19 +194,97 @@ where <b>&sigma;</b><sub><b>0</b></sub> is the "background"
 conductivity around which small changes are assumed to occur.
 In EIDORS3D, the Jacobian is calculated using <tt>calc_jacobian</tt>;
 this function needs as parameters the FEM model <tt>fem</tt>,
-and the image of the background <tt>img</tt>.
+of type <tt>fwd_model</tt>
+and the image of the background <tt>img_bkgnd</tt>
+of type <tt>image</tt>.
+Each of these parameters is defined to be an <tt>eidors_obj</tt>
+structure, with 
+the following properties.
 
-
+<p> <b> Forward Models
+       </b>
 <ul>
-  <li> <b> Forward Models
-       </b>
+      <p><li><b>
+        fwd_model
+      </b><br>
+      <ul>
+        <b>Properties</b>:
+        <li><tt>fwd_model.name
+        </tt> &nbsp; &nbsp;
+            Model name (arbitrary)
 
-  <li> <b> Inverse Models
-       </b>
+        <li><tt>fwd_model.nodes
+        </tt> &nbsp; &nbsp;
+            position of FEM vertices (<i>Nodes</i>&times;<i>Dims</i>)
+        <li><tt>fwd_model.elems
+        </tt> &nbsp; &nbsp;
+            definition of FEM elements (<i>Elems</i>&times;<i>Dims+1</i>)
+            (for simplex elements)
+        <li><tt>fwd_model.boundary
+        </tt> &nbsp; &nbsp;
+            nodes of element faces on the medium surface
+        <li><tt>fwd_model.gnd_node
+        </tt> &nbsp; &nbsp;
+            index of nodes connected to ground
+        <li><tt>fwd_model.electrode
+        </tt> &nbsp; &nbsp;
+            Vector <i>(Num_elecs &times;1)</i>
+           of electrode models (<b>elec_model</b>)
+        <li><tt>fwd_model.stimulation
+        </tt> &nbsp; &nbsp;
+            Vector <i>(Num_Stim &times;1)</i> of stimulation
+            patterns (<b>stim_model</b>)
+        <li><tt>fwd_model.dimention
+        </tt> &nbsp; &nbsp;
+            2D, 3D, etc.
+        <li><tt>fwd_model.normalized_measurements
+        </tt> &nbsp; &nbsp;
+            Do we do difference (v<sub>i</sub>&minus;v<sub>h</sub>) or
+            normalized difference
+             (v<sub>i</sub>&minus;v<sub>h</sub>)/v<sub>h</sub>?
+
+        <p><b>Methods</b>:
+        <li><tt>fwd_model.solve
+        </tt> &nbsp; &nbsp;
+        Calculate data object:
+        <br>
+        <i>usage:</i><tt>
+          data = fwd_solve( fwd_model, image )
+        </tt>
+
+        <li><tt>fwd_model.jacobian
+        </tt> &nbsp; &nbsp;
+        <i>usage:</i><tt>
+          data = jacobian( fwd_model, image )
+        </tt>
+
+        <li><tt>fwd_model.image_prior
+        </tt> &nbsp; &nbsp;
+        <i>usage:</i><tt>
+          data = image_prior( fwd_model, image )
+        </tt>
+
+        <li><tt>fwd_model.data_prior
+        </tt> &nbsp; &nbsp;
+        <i>usage:</i><tt>
+          data = data_prior( fwd_model, image )
+        </tt>
+      </ul>
 
   <li> <b> Data Format
        </b>
 </ul>
+
+In order to create the a homogeneous background image, the
+following code is used:
+<ul><pre>
+homg_conductivity= ones( length(fem.elems) ,1);
+img_bkgnd= eidors_obj('image', 'homog background', ...
+  'elem_data', homg_conductivity, 'fwd_model', fem );
+</pre></ul>
+where <tt>fem</tt> is a <tt>fwd_model</tt> on which the 
+Jacobian is calculated. The string "homog background" is
+the <i>name</i> of the object, and may be arbitrary.
 
 <h3> Usage Examples
 </h3>
