@@ -501,9 +501,19 @@ model of a stimulation pattern and accociated measurements
         <li><tt>inv_model.name
         </tt> &nbsp; &nbsp;
         Model name (if known)
-        <li><tt>inv_model.hyperparameter
+        <li><tt>inv_model.hyperparameter.func
         </tt> &nbsp; &nbsp;
-        scalar (or array of parameters)
+        function to call to set hyperparameter value
+        <li><tt>inv_model.hyperparameter.value
+        </tt> &nbsp; &nbsp;
+            specified value of hyperparameter (if 
+            <tt>inv_model.hyperparameter.func</tt> doesn't exist)
+        <li><tt>inv_model.image_prior.func
+        </tt> &nbsp; &nbsp;
+        function to calculate image prior
+        <li><tt>inv_model.image_prior.parameters
+        </tt> &nbsp; &nbsp;
+        parameters to <tt>inv_model.image_prior.func</tt>
         <li><tt>inv_model.term_tolerance
         </tt> &nbsp; &nbsp;
         termination tolerance (or array of parameters)
@@ -628,7 +638,7 @@ now it is (using the <tt>eidors_obj</tt> function):
    </ol>
 </td></tr></table>
 <small>
-    Last Modified: $Date: 2005-06-07 00:33:48 $ by $Author: aadler $
+    Last Modified: $Date: 2005-06-07 01:01:19 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

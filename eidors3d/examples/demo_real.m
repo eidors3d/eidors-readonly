@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.24 2005-02-23 16:12:31 aadler Exp $
+% $Id: demo_real.m,v 1.25 2005-06-07 00:59:49 aadler Exp $
 
 clear; 
 clc;
@@ -145,7 +145,7 @@ disp('step 7: create inverse model');
 % create an inv_model structure of name 'demo_inv'
 demo_inv.name= 'Nick Polydorides EIT inverse';
 demo_inv.solve=       'np_inv_solve';
-demo_inv.hyperparameter= 1e-8;
+demo_inv.hyperparameter.value = 1e-8;
 demo_inv.image_prior.func= 'np_calc_image_prior';
 demo_inv.image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
 demo_inv.reconst_type= 'differential';
