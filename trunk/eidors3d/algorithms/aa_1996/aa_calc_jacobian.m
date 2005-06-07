@@ -4,7 +4,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 % J         = Jacobian matrix
 % fwd_model = forward model
 % img = image background for jacobian calc
-% $Id: aa_calc_jacobian.m,v 1.2 2005-06-06 22:35:42 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.3 2005-06-07 00:16:57 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -13,37 +13,40 @@ d= pp.n_dims+1;
 e= pp.n_elem;
 n= pp.n_node;
 
-% DE_{i,j} is dV_i / dS_j
-%  where V_i is change in voltage on electrode i and
-%        E_j is change in conductivity on element j
-DE= zeros(pp.n_elec, e, pp.n_stim);
+% DE_{i,j,k} is dV_i,j / dS_k
+%  where V_i is change in voltage on electrode i for
+%        stimulation pattern j
+%        S_k is change in conductivity on element k
+DE= zeros(pp.n_elec, pp.n_stim, e);
 
 idx= 1:pp.n_node;
 idx( fwd_model.gnd_node ) = [];
 sv= zeros(n, pp.n_stim );
 sv( idx,:) = s_mat(idx,idx) \ pp.QQ( idx,: );
 
+zinv= zeros(n,n);
+zinv(idx,idx) = inv( s_mat(idx,idx) );
+zi2E= pp.N2E*zinv;
+
 % connectivity matrix
 CC= sparse((1:d*e),pp.ELEM(:),ones(d*e,1), d*e, n);
 dfact= (d-1)*(d-2); % Valid for d<=3
 
-for j= 1:e
-    a=  inv([ ones(d,1), pp.NODE( :, pp.ELEM(:,j) )' ]);
+for k= 1:e
+    a=  inv([ ones(d,1), pp.NODE( :, pp.ELEM(:,k) )' ]);
     dSS_dEj= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
 
-    idx= d*(j-1)+1 : d*j;
-    dq= pp.N2E*(  CC(idx,:)'*dSS_dEj*CC(idx,:)  )*sv;
-    DE(:,j,:)= dq;
+    idx= d*(k-1)+1 : d*k;
+    CC_idx = CC(idx,:);
+    dq= zi2E * CC_idx' * dSS_dEj * CC_idx * sv;
+    DE(:,:,k)= dq;
 end
 
 J = zeros( pp.n_meas, e );
 idx=0;
-for i=1:pp.n_stim
-   meas_pat= fwd_model.stimulation(i).meas_pattern;
+for j= 1:pp.n_stim
+   meas_pat= fwd_model.stimulation(j).meas_pattern;
    n_meas  = size(meas_pat,2);
-   J( idx+(1:n_meas),: ) = meas_pat'*DE(:,:,i);
+   J( idx+(1:n_meas),: ) = meas_pat'*DE(:,j,:);
    idx= idx+ n_meas;
 end
-
-return;
-
