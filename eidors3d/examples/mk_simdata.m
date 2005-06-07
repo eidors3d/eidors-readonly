@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: mk_simdata.m,v 1.7 2005-06-07 00:31:38 aadler Exp $
+% $Id: mk_simdata.m,v 1.8 2005-06-07 00:39:34 aadler Exp $
 
 % 
 % Example 1: Create simple 16 electrode 2D model
@@ -35,7 +35,7 @@ inh_img= eidors_obj('image', 'homogeneous image', ...
                      'fwd_model', mdl_2d );
 inh_data=fwd_solve( inh_img);
 
-J= calc_jacobian( homg_img );
+%J= calc_jacobian( homg_img );
 
 % 
 % Example 2: Create simple 16 electrode 3D model
