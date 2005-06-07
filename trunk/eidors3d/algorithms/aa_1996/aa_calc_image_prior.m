@@ -1,13 +1,19 @@
-function Reg= np_calc_image_prior( inv_model );
+function Reg= aa_calc_image_prior( inv_model );
 % AA_CALC_IMAGE_PRIOR calculate image prior
 % Reg= aa_calc_image_prior( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
+% Parameters:
+%   diam_frac= inv_model.image_prior.parameters(1) DEFAULT 0.1
 
-% $Id: aa_calc_image_prior.m,v 1.1 2005-06-07 02:14:56 aadler Exp $
+% $Id: aa_calc_image_prior.m,v 1.2 2005-06-07 02:47:31 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
-diam_frac= inv_model.image_prior.parameters(1);
+if isfield(inv_model.image_prior,'parameters')
+    diam_frac= inv_model.image_prior.parameters(1);
+else
+    diam_frac= 0.1;
+end
 
 Reg = calc_Gaussian_HPF( pp.NODE, pp.ELEM, diam_frac );
 
