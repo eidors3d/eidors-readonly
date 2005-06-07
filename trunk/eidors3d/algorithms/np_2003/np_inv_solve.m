@@ -6,7 +6,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.9 2005-02-23 16:47:55 aadler Exp $
+% $Id: np_inv_solve.m,v 1.10 2005-06-07 00:59:49 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');
@@ -26,7 +26,7 @@ else
     Reg = calc_image_prior( inv_model );
 
     % Calculating a linear inverse solution
-    tfac= inv_model.hyperparameter;
+    tfac= calc_hyperparameter( inv_model );
     one_step_inv= (J'*J +  tfac*Reg'*Reg)\J';
 
     eidors_obj('set-cache', inv_model, 'np_2003_one_step_inv', one_step_inv);
