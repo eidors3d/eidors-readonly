@@ -11,7 +11,8 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.NODE     => vertex matrix
 %   param.ELEM     => connection matrix
 %   param.QQ       => Current into each NODE
-% $Id: aa_fwd_parameters.m,v 1.5 2005-06-04 18:59:18 aadler Exp $
+%   param.normalize=> are difference measurements normalized
+% $Id: aa_fwd_parameters.m,v 1.6 2005-06-07 00:31:32 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -60,3 +61,9 @@ pp.n_stim   = p;
 pp.n_dims   = d-1;
 pp.n_meas   = n_meas;
 pp.N2E      = N2E;
+
+if isfield(fwd_model,'normalize_measurements')
+   pp.normalize = fwd_model.normalize_measurements;
+else
+   pp.normalize = 0;
+end

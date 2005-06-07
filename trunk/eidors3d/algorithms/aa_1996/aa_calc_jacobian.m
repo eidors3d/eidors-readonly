@@ -3,8 +3,12 @@ function J= aa_calc_jacobian( fwd_model, img)
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
 % fwd_model = forward model
+%
+% fwd_model.normalize_measurements if param exists, calculate
+%                                  a Jacobian for normalized
+%                                  difference measurements
 % img = image background for jacobian calc
-% $Id: aa_calc_jacobian.m,v 1.3 2005-06-07 00:16:57 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.4 2005-06-07 00:31:32 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -49,4 +53,11 @@ for j= 1:pp.n_stim
    n_meas  = size(meas_pat,2);
    J( idx+(1:n_meas),: ) = meas_pat'*DE(:,j,:);
    idx= idx+ n_meas;
+end
+
+% calculate normalized Jacobian
+if pp.normalize
+   data= fwd_solve( img );
+   J= J ./ (data.meas(:)*ones(1,e));
+   
 end
