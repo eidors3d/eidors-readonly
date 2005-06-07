@@ -16,14 +16,53 @@ University of Ottawa, Canada
 <sup>2</sup> School of Mathematics, University of Manchester, U.K.
 </center>
 <p>
+
+<H3>
+Abstract
+</H3>
+
+EIDORS3D is an open source software suite for image reconstruction in
+electrical impedance tomography and diffuse optical tomography;
+designed to facilitate collaboration, testing and new research
+in these fields.  This paper describes recent work to
+redesign the software structure in order to simplify its use,
+and provide a uniform interface,
+permitting easier modification and customization.
+We describe the key features of this structure, followed by
+examples of its use, and an outline of future directions
+for development.
+
+<H3>
+Introduction
+</H3>
+
 EIDORS3D is a software suite for image reconstruction in
 electrical impedance tomography and diffuse optical tomography.
-The original EIDORS software is based on software
-from Kuopio (Vaukhonen 1997).
-In order to provide 3D software capability, a new project, EIDORS3D,
-was begun based on the thesis of Polydorides (2002).
+The goal is to provide a freely distributable and modifyable
+software suite for image reconstruction of electrical 
+or diffuse optical data. Such software facilitates research
+in these fields by providing a reference implementation
+against which new developments can be compared, and by
+providing a functioning software base onto which new
+ideas may be built and tested.
+The original EIDORS software (Vaukhonen et al., 2000) 
+is based on software from the thesis of Vaukhonen (1997)
+It implemented a MATLAB package for two-dimensional mesh generation,
+solving of the forward
+problem and reconstructing and displaying the reconstructed images.
+In order to provide capability to solve 3D reconstruction models,
+a new project, EIDORS3D, was begun (Polydorides and Lionheart, 2002),
+based on the software developed for thesis of Polydorides (2002).
+The EIDORS software packages shared the same numerical
+foundations; media are modelled using a finite element representation,
+and the images are reconstructed using regularized inverse techniques.
+
+<p>
 In the three years since the publication of EIDORS3D, several patterns
-of use have been noted.
+of use have been noted. Researchers typically download the software,
+run the provided demonstration examples, and modify them, and 
+make modifications in the demonstration examples and the software
+internals to meet their needs.
 Because of lack of a modular software structure of EIDORS3D,
 changes tended to made into the code itself. This resulted in
 duplicated
@@ -35,13 +74,15 @@ and electrode error detection. This research would be facilitated
 by using modular components which could be <i>plugged</i> into
 a selection of reconstruction algorithms.
 </p>
-<p>To address these issues, EIDORS3D has been restructured
-in order to facilitate a <i>community-based extensible software base</i>.
+<p>To address these issues, the EIDORS3D software has been completely
+restructured with the goal of providing an <i>extensible software base</i>,
+designed to support <i>community</i> use, modification and contribution.
 This has been accomplished by the following:
 </p>
 <ul>
-  <li> <b> Sourceforge hosting </b> EIDORS3D is hosted by <tt>sourceforge.net</tt>
-at <tt>eidors3d.sf.net</tt>. This tool allows for collaborative
+  <li> <b> Sourceforge hosting </b>
+EIDORS3D is hosted by <tt>sourceforge.net</tt>
+at <tt>http://eidors3d.sf.net</tt>. This tool allows for collaborative
 development for group members, while permitting all users to access the
 code. </li>
   <li> <b> Language independance: Octave and Matlab </b> While
@@ -141,21 +182,26 @@ Future work:
 <ul>
   <li> Adler A, Guardo R (1996) "Electrical Impedance Tomography:
        Regularised Imaging and Contrast Detection",
-       <i>IEEE Trans. Medical Imaging</i>, 15:170-179, 1996. 
+       <i>IEEE Trans. Medical Imaging</i>, <b>15</b> 170-179
 
-  <li> Polydorides N, Lionheart W R B (2002), "A Matlab toolkit for
+  <li> Polydorides N, Lionheart W R B (2002) "A Matlab toolkit for
 three-dimensional electrical impedance tomography: a contribution to
 the Electrical Impedance and Diffuse Optical Reconstruction Software
-project", <i>Meas. Sci. Technol.</i> 13:1871-1883
-  </li>
+project", <i>Meas. Sci. Technol.</i> <b>13</b> 1871-1883
+
 
   <li> Polydorides N (2002), <i>Image reconstruction algorithms for
 soft-field tomography</i>, Ph.D. Thesis, University of Manchester
 Institute of Science and Technology
-  </li>
 
-  <li>Vauhkonen,M, (1997) Electrical impedance tomography and prior
-information, PhD thesis, University of Kuopio, Finland.<br>
+
+  <li>Vauhkonen M  (1997) Electrical impedance tomography and prior
+information, PhD thesis, University of Kuopio, Finland.
+
+  <li>Vauhkonen M, Lionheart W R B, Heikkinen L M, Vauhkonen P J,
+      Kaipio J P (2000) "A MATLAB package for the EIDORS project to
+      reconstruct two-dimensional EIT images"
+      <i>Physiol. Meas.</i> <b>22</b> 107-111
   </li>
 </ul>
 </body>
