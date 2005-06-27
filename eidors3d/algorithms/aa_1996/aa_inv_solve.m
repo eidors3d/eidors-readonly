@@ -6,7 +6,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: aa_inv_solve.m,v 1.3 2005-06-07 03:19:00 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.4 2005-06-27 15:55:47 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -24,6 +24,7 @@ else
     J = calc_jacobian( fwd_model, homg_img);
 
     R = calc_image_prior( inv_model );
+    W = calc_noise_prior( inv_model );
     hp= calc_hyperparameter( inv_model );
 
     one_step_inv= (J'*J +  hp*R)\J';
