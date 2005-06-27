@@ -2,11 +2,25 @@ function hparam= aa_calc_noise_figure( inv_model );
 % AA_CALC_NOISE_FIGURE
 % hparam= aa_calc_noise_figure( inv_model );
 % inv_model  => inverse model struct
+%
+% The NF parameter is defined in Adler & Guardo (1996), as
+%   measurements => z (Mx1), image elements => x (Nx1)
+%   NF = SNR_z / SNR_x
+% SNR_z = mean(z) / var(z) = mean(z) /sqrt( M trace(Rn) )
+% SNR_x = mean(x) / var(x) = mean(x) /sqrt( N trance(ABRnB'A)
+%   where Rn = sigma_n x inv(W) = the noise covariance, iW= inv(W)
+%     and A  = diag matrix s.t. A_ii = area of element i
+%
+% NF = mean(z)/mean(ABz) * sqrt(N/M) * sqrt( trace(ABiWB'A) / trance(iW) )
+%
+% NOTE: SNR _should_ be defined in terms of power! This defines
+%       it in terms of images amplitude
 
-% $Id: aa_calc_noise_figure.m,v 1.1 2005-06-07 03:26:19 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.2 2005-06-27 15:55:46 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 
+% FIXME: this is a hack for now
 hparam = 1e-4;
 
 return % ----------------------
