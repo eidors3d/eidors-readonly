@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: matrix_id.cpp,v 1.4 2005-06-03 02:48:06 aadler Exp $
+ *   $Id: matrix_id.cpp,v 1.5 2005-06-29 16:36:50 aadler Exp $
  */
 
 #include <stdio.h>
@@ -38,6 +38,16 @@ hash_final( hash_context * c, unsigned long[HW] );
 void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
+  int buflen;
+  char* fname;
+  char* output_buf;
+  char* sha1buf;
+  hash_context c;
+  FILE * fid;
+  #define BUFSIZE 4096
+  unsigned char buffer[ BUFSIZE ];
+  unsigned long digest[5];
+
   if (nrhs != 1)  {
     mexErrMsgTxt("One input required.");
     return;
@@ -49,20 +59,19 @@ void mexFunction(int nlhs, mxArray *plhs[],
   }
 
   /* Get the length of the input string. */
-  int buflen = (mxGetM(prhs[0]) * mxGetN(prhs[0])) + 1;
+  buflen = (mxGetM(prhs[0]) * mxGetN(prhs[0])) + 1;
 
   /* Allocate memory for input and output strings. */
-  char * fname = (char *) mxCalloc(buflen, sizeof(char));
-  char * output_buf = (char *) mxCalloc(buflen, sizeof(char));
+  fname = (char *) mxCalloc(buflen, sizeof(char));
+  output_buf = (char *) mxCalloc(buflen, sizeof(char));
   if ( 0 != 
        mxGetString(prhs[0], fname, buflen) ) {
     mexWarnMsgTxt("Not enough space. String is truncated.");
     return;
   }
     
-  hash_context c;
   hash_initial( &c);
-  FILE * fid = fopen( fname, "rb");
+  fid = fopen( fname, "rb");
   if (fid == NULL ) { 
     mexWarnMsgTxt("Cannot open file");
     fclose(fid);
@@ -71,8 +80,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   fseek( fid, 125L, SEEK_SET); // matlab v6 files have 125 bytes comments
 
-  #define BUFSIZE 4096
-  unsigned char buffer[ BUFSIZE ];
   while(1) {
      int nread= fread ( buffer, 1, BUFSIZE, fid);
      hash_process( &c, buffer, nread);
@@ -80,10 +87,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
   }
   fclose(fid);
 
-  unsigned long digest[5];
   hash_final( &c, digest);
 
-  char* sha1buf = (char *) mxCalloc(44, sizeof(char));
+  sha1buf = (char *) mxCalloc(44, sizeof(char));
 
   sprintf(sha1buf, "id_%08X%08X%08X%08X%08X", 
           digest[0], digest[1], digest[2], digest[3], digest[4] );
