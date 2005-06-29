@@ -5,8 +5,13 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
+%
+% both data1 and data2 may be matrices (MxT) each of
+%  M measurements at T times
+% if either data1 or data2 is a vector, then it is expanded
+%  to be the same size matrix
 
-% $Id: aa_inv_solve.m,v 1.4 2005-06-27 15:55:47 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.5 2005-06-29 16:39:28 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -24,7 +29,7 @@ else
     J = calc_jacobian( fwd_model, homg_img);
 
     R = calc_image_prior( inv_model );
-    W = calc_noise_prior( inv_model );
+    W = calc_data_prior( inv_model );
     hp= calc_hyperparameter( inv_model );
 
     one_step_inv= (J'*J +  hp*R)\J';
@@ -33,13 +38,27 @@ else
     eidors_msg('aa_inv_solve: setting cached value', 2);
 end
 
+l_data1= length(data1); l1_0 = l_data1 ~=0;
+l_data2= length(data2); l2_0 = l_data2 ~=0;
+l_data= max( l_data1, l_data2 );
+
+dva= zeros(pp.n_meas, l_data);
+
 if pp.normalize
-   dva= 1 - data2.meas ./ data1.meas;
+   for i=0:l_data-1
+      idx1= i*l1_0 + 1;
+      idx2= i*l2_0 + 1;
+      dva(:,i+1)= 1 - data2(idx2).meas ./ data1(idx1).meas;
+   end
 else   
-   dva= data1.meas - data2.meas;
+   for i=0:l_data-1
+      idx1= i*l1_0 + 1;
+      idx2= i*l2_0 + 1;
+      dva(:,i+1)= data1(idx2).meas - data2(idx1).meas;
+   end
 end
 
-sol = one_step_inv * dva(:);
+sol = one_step_inv * dva;
 
 % create a data structure to return
 img.name= 'solved by aa_inv_solve';

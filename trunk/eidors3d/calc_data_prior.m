@@ -15,7 +15,7 @@ function data_prior = calc_data_prior( inv_model )
 %  contain a data prior term. For these algorithms, this function
 %  generates a reasonable approximation based on uniform noise.
 %
-% $Id: calc_data_prior.m,v 1.3 2005-06-27 15:55:51 aadler Exp $
+% $Id: calc_data_prior.m,v 1.4 2005-06-29 16:39:28 aadler Exp $
 
 data_prior = eidors_obj('get-cache', inv_model, 'data_prior');
 
@@ -58,7 +58,7 @@ function data_prior = default_data_prior( inv_model )
    if ~normalize
       data_prior= speye( n );
    else
-      % How to do this??
+      error('data_prior estimate for normalized data is needed')
       data_prior= speye( n );
    end
 
@@ -66,5 +66,5 @@ function n_meas = calc_n_meas( fwd_model )
 
    n_meas = 0;
    for i= 1:length(fwd_model.stimulation );
-       n_meas = size(fwd_model.stimulation(i).meas_pattern,??);
+       n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,2);
    end
