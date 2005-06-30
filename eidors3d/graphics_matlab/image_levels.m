@@ -1,8 +1,10 @@
 function image_levels(img, levels, clim )
 % IMAGE_LEVELS(img, levels, clim  ) show slices at levels of an image
-% img    = EIDORS3D image struct
+% img    = EIDORS image struct
 % levels = array of vertical levels
 % clim   = colourmap limit (or default if not specified)
+%
+% $Id: image_levels.m,v 1.4 2005-06-30 10:13:22 aadler Exp $
 
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);

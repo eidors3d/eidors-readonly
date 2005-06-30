@@ -101,10 +101,12 @@ Z = h*ones(length(vtxp),1);
 trisurf(tri,X,Y,Z,vap);
 set(gca,'LineWidth',1e-6);
 shading interp;  %%%%%%If the solution is too smooth and you can't see it comment this line.
-axis([min(vtx(:,1)) max(vtx(:,1)) min(vtx(:,2)) max(vtx(:,2)) min(vtx(:,3)) max(vtx(:,3))]);
+axis([min(vtx(:,1)), max(vtx(:,1)), ...
+      min(vtx(:,2)), max(vtx(:,2)), ...
+      min(vtx(:,3)), max(vtx(:,3))]);
 
 %You may want to change this setting !!  
-caxis([min(BB) max(BB)]);
+caxis([min(BB), max(BB)]);
 
 axis square;
   
