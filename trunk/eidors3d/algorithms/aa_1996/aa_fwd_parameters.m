@@ -13,7 +13,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.QQ       => Current into each NODE
 %   param.VOLUME   => Volume (or area) of each element
 %   param.normalize=> are difference measurements normalized
-% $Id: aa_fwd_parameters.m,v 1.8 2005-06-29 16:39:28 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.9 2005-06-30 10:13:36 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -55,12 +55,12 @@ for i=1:p
 end
 
 % calculate element volume
-VOLUME=zeros(e,1);
+pp.VOLUME=zeros(e,1);
 ones_d = ones(1,d);
 d1fac = prod( 1:d-1 );
 for i=1:e
     this_elem = pp.NODE(:,pp.ELEM(:,i)); 
-    VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+    pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
 end
 
 

@@ -11,7 +11,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% $Id: aa_inv_solve.m,v 1.5 2005-06-29 16:39:28 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.6 2005-06-30 10:13:36 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -32,7 +32,7 @@ else
     W = calc_data_prior( inv_model );
     hp= calc_hyperparameter( inv_model );
 
-    one_step_inv= (J'*J +  hp*R)\J';
+    one_step_inv= (J'*W*J +  hp*R)\J'*W;
 
     eidors_obj('set-cache', inv_model, 'one_step_inv', one_step_inv);
     eidors_msg('aa_inv_solve: setting cached value', 2);
