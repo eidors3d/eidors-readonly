@@ -1,0 +1,56 @@
+function rimg= show_slices( img, levels, clim )
+% show_slices (img, levels, clim  ) show slices at levels of an
+%             using a fast rendering algorithm
+% img    = EIDORS image struct
+% levels = array of vertical levels
+% clim   = colourmap limit (or default if not specified)
+
+% $Id: show_slices.m,v 1.1 2005-06-30 15:06:25 aadler Exp $
+
+% NOTES:
+%  - currently works for 2D samples only
+
+fwd_model= img.fwd_model;
+elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
+
+np= 64;
+
+if ~isempty(elem_ptr)
+   eidors_msg('show_slices: using cached value', 2);
+else
+   NODE= fwd_model.nodes';
+   ELEM= fwd_model.elems';
+   elem_ptr= img_mapper( NODE, ELEM, np, np);
+   eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
+end
+
+
+
+
+backgnd= .01;
+scale=1;
+rval= [backgnd; scale*img.elem_data];
+%rimg= reshape( rval(eptr+1), npy,npx );
+rimg= reshape( rval(elem_ptr+1), np,np );
+
+
+% create a set of pointers to elements in a 2D representation
+% of the mesh
+function EPTR= img_mapper(NODE, ELEM, npx, npy );
+  [x y]=meshgrid( ...
+      linspace( min(NODE(1,:))*1.05, max(NODE(1,:))*1.05 ,npx ), ...
+     -linspace( min(NODE(2,:))*1.05, max(NODE(2,:))*1.05 ,npy )  ); 
+  v_yx= [-y(:) x(:)];
+  tourne= [0 -1 1;1 0 -1;-1 1 0];
+  EPTR=zeros(npy,npx);
+  for j= 1: size(ELEM,2)
+    xy= NODE(:,ELEM(:,j))';
+    a= xy([2;3;1],1).*xy([3;1;2],2)- xy([3;1;2],1).*xy([2;3;1],2);
+    endr=find( y(:)<=max(xy(:,2)) & y(:)>=min(xy(:,2)) ...
+             & x(:)<=max(xy(:,1)) & x(:)>=min(xy(:,1)) );
+    aa= sum(abs(ones(length(endr),1)*a'+ ...
+                v_yx(endr,:)*xy'*tourne)');
+    endr( abs( (abs(sum(a))-aa) ./ sum(a)) >1e-8)=[];
+    EPTR(endr)= j;
+  end %for j=1:ELEM
+
