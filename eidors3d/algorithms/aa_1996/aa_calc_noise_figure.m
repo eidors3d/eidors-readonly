@@ -11,7 +11,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 %
 % The NF parameter is defined in Adler & Guardo (1996), as
 %   measurements => z (Mx1), image elements => x (Nx1)
-%   NF = SNR_z / SNR_x
+%   NF = SNR_z / SNR_x   -- IS THIS WRONG???
 % SNR_z = mean(z) / std(z) = mean(z) /sqrt( M trace(Rn) )
 % SNR_x = mean(x) / std(x) = mean(x) /sqrt( N trance(ABRnB'A)
 %   where Rn = sigma_n x inv(W) = the noise covariance, iW= inv(W)
@@ -26,18 +26,18 @@ function hparam= aa_calc_noise_figure( inv_model );
 %       it in terms of images amplitude
 % NOTE: M and N are wrong here. They should be trace/M NOT trace*M
 
-% $Id: aa_calc_noise_figure.m,v 1.3 2005-06-29 16:39:28 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.4 2005-06-30 10:13:36 aadler Exp $
 
-fwd_model= inv_model.fwd_model;
-pp= aa_fwd_parameters( fwd_model );
-
-invv = calc_noise_figure( inv_model, 1e-4);
-keyboard
 % FIXME: this is a hack for now
+for hparam= [1e-4,1e-3,1e-2,1e-1,1]
+   NF= calc_noise_figure( inv_model, hparam);
+   eidors_msg(sprintf('aa_calc_noise_figure: NF=%f hp=%f', ...
+                      NF, hparam), 2);
+end
 hparam = 1e-4;
 
 % simulate homg data and a small target in centre
-function [h_data, c_data]= simulate_targets( fwd_model, ctr_elems)
+function [h_data, c_data, J]= simulate_targets( fwd_model, ctr_elems)
 
    %Step 1: homogeneous image
    sigma= ones( size(fwd_model.elems,1) ,1);
@@ -46,6 +46,8 @@ function [h_data, c_data]= simulate_targets( fwd_model, ctr_elems)
                    'elem_data', sigma, ...
                    'fwd_model', fwd_model );
    h_data=fwd_solve( img );
+
+   J = calc_jacobian( fwd_model, img);
 
    %Step 1: inhomogeneous image with contrast in centre
    delta = 1e-2;
@@ -59,18 +61,35 @@ function [h_data, c_data]= simulate_targets( fwd_model, ctr_elems)
 % based on the provided hyperparameter hp
 function NF = calc_noise_figure( inv_model, hp)
 
-   [h_data, c_data]= simulate_targets( inv_model.fwd_model, ...
+   fwd_model= inv_model.fwd_model;
+   pp= aa_fwd_parameters( fwd_model );
+
+   [h_data, c_data, J]= simulate_targets( fwd_model, ...
         inv_model.hyperparameter.tgt_elems);
+   if pp.normalize
+      dva= 1 - c_data.meas ./ h_data.meas;
+   else   
+      dva= c_data.meas - h_data.meas;
+   end
 
-   % create a new inv_model, except with hyperparameter
-   imdl_hp = rmfield(inv_model,'hyperparameter');
-   imdl_hp.hyperparameter.value= hp;
-   imdl_hp = eidors_obj( 'inv_model', imdl_hp );
+   R = calc_image_prior( inv_model );
+   W = calc_data_prior( inv_model );
 
-   tgt_img= inv_solve( imdl_hp, h_data, c_data); 
+   RM= (J'*W*J +  hp*R)\J'*W;
 
-   data_prior= calc_data_prior( inv_model );
+   sig_data= mean(dva);
+   sig_img = pp.VOLUME' * RM * dva;
 
+   DP= calc_data_prior( inv_model );
+
+   var_data = trace(DP)/size(DP,1); % DP is square
+   var_img  = sum( pp.VOLUME' * RM * DP ) / pp.n_elem;
+
+   NF = ( sig_data/sqrt(var_data) ) / ...
+        ( sig_img /sqrt(var_img ) );
+%   NF = SNR_z / SNR_x
+% SNR_z = mean(z) / std(z) = mean(z) /sqrt( M trace(Rn) )
+% SNR_x = mean(x) / std(x) = mean(x) /sqrt( N trance(ABRnB'A)
    
 
 return % ----------------------
