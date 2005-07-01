@@ -1,5 +1,5 @@
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.26 2005-06-29 16:37:54 aadler Exp $
+% $Id: demo_real.m,v 1.27 2005-07-01 10:17:02 aadler Exp $
 
 clear; 
 clc;
@@ -15,7 +15,7 @@ if isOctave
     page_screen_output= 0;
 end
 
-eidors_msg('set_level',2); % most messages
+eidors_msg('log_level',2); % most messages
 
 disp('step 1: create FEM model structure');
 

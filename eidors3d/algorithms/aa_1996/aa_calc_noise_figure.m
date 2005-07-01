@@ -26,15 +26,15 @@ function hparam= aa_calc_noise_figure( inv_model );
 %       it in terms of images amplitude
 % NOTE: M and N are wrong here. They should be trace/M NOT trace*M
 
-% $Id: aa_calc_noise_figure.m,v 1.4 2005-06-30 10:13:36 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.5 2005-07-01 10:16:59 aadler Exp $
 
 % FIXME: this is a hack for now
-for hparam= [1e-4,1e-3,1e-2,1e-1,1]
+for hparam= [1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1]
    NF= calc_noise_figure( inv_model, hparam);
    eidors_msg(sprintf('aa_calc_noise_figure: NF=%f hp=%f', ...
                       NF, hparam), 2);
 end
-hparam = 1e-4;
+hparam = 1e-8;
 
 % simulate homg data and a small target in centre
 function [h_data, c_data, J]= simulate_targets( fwd_model, ctr_elems)

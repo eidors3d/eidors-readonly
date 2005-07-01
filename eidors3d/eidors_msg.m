@@ -10,7 +10,7 @@ function eidors_msg( message, varargin )
 % eidors_msg('did %d of %s at %f', 2, 'stuff', sqrt(2), 1)
 %   prints 'EIDORS:[ did 2 of stuff at 1.414214 ]'
 %
-% USAGE: eidors_msg( 'set_level', 1)
+% USAGE: eidors_msg( 'log_level', 1)
 %   sets the loglevel to 1
 %
 % meanings of levels
@@ -37,7 +37,7 @@ catch
 end
 
 fid= 2; %stderr
-if strcmp(message,'set_level')
+if strcmp(message,'log_level')
    eidors_objects.log_level= level;
 elseif level <= log_level
    string= sprintf('EIDORS:[ %s ]\n', message );
