@@ -1,5 +1,7 @@
 % How to make simulation data using EIDORS3D
-% $Id: mk_simdata.m,v 1.10 2005-06-29 16:37:54 aadler Exp $
+% $Id: mk_simdata.m,v 1.11 2005-07-01 10:17:02 aadler Exp $
+
+eidors_msg('log_level',2); % most messages
 
 % 
 % Example 1: Create simple 16 electrode 2D model
