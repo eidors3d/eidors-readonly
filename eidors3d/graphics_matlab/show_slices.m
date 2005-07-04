@@ -1,4 +1,4 @@
-function rimg= show_slices( img, levels, clim )
+function rimg_out = show_slices( img, levels, clim )
 % show_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct
@@ -6,12 +6,37 @@ function rimg= show_slices( img, levels, clim )
 %          each row of the matrix specifies the x,y,z intercepts
 %          of the slice
 % clim   = colourmap limit (or default if not specified)
+%        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.2 2005-07-01 10:17:02 aadler Exp $
+% $Id: show_slices.m,v 1.3 2005-07-04 09:07:09 aadler Exp $
 
 % NOTES:
 %  - currently works for 2D samples only
 %  - 
+
+dims= size(img.fwd_model.nodes,2);
+if ~exist('levels') && dims==2
+   levels= [Inf,Inf,0];
+end
+
+if ~exist('clim')
+   clim = [];
+end
+
+for img_no = 1:prod(size( img ))
+   for lev_no = 1:size( levels,1 )
+      level= levels( lev_no, : );
+      rimg= calc_image( img( img_no ), level, clim );
+   end
+end
+
+if nargout==0
+   imagesc( rimg );
+else
+   rimg_out = rimg;
+end
+
+function rimg= calc_image( img, level, clim)
 
 fwd_model= img.fwd_model;
 elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
