@@ -8,7 +8,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.3 2005-07-04 09:07:09 aadler Exp $
+% $Id: show_slices.m,v 1.4 2005-07-29 14:33:26 aadler Exp $
 
 % NOTES:
 %  - currently works for 2D samples only
@@ -69,15 +69,25 @@ function EPTR= img_mapper(NODE, ELEM, npx, npy );
       linspace( min(NODE(1,:))*1.05, max(NODE(1,:))*1.05 ,npx ), ...
      -linspace( min(NODE(2,:))*1.05, max(NODE(2,:))*1.05 ,npy )  ); 
   v_yx= [-y(:) x(:)];
-  tourne= [0 -1 1;1 0 -1;-1 1 0];
+  turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
+  % for each element j, we get points on the simplex a,b,c
+  %   area A = abc
+  %   for each candidate point d,
+  %      area AA = abd + acd + bcd
+  %      d is in j if AA = A  
   for j= 1: size(ELEM,2)
     xy= NODE(:,ELEM(:,j))';
+    % a is determinant of matrix [i,j,k, xy]
     a= xy([2;3;1],1).*xy([3;1;2],2)- xy([3;1;2],1).*xy([2;3;1],2);
+    % come up with a limited set of candidate points which
+    % may be within the simplex
     endr=find( y(:)<=max(xy(:,2)) & y(:)>=min(xy(:,2)) ...
              & x(:)<=max(xy(:,1)) & x(:)>=min(xy(:,1)) );
+    % calculate area of three subtrianges to each candidate point.
+    
     aa= sum(abs(ones(length(endr),1)*a'+ ...
-                v_yx(endr,:)*xy'*tourne)');
+                v_yx(endr,:)*xy'*turn)');
     endr( abs( (abs(sum(a))-aa) ./ sum(a)) >1e-8)=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
