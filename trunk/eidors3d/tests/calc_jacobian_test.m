@@ -3,7 +3,7 @@ function ok= calc_jacobian_test
 % Also calculate dataprior
 %     Difference dataprior should be 1
 %     normalized difference dataprior should be 1./ homg_data
-% $Id: calc_jacobian_test.m,v 1.4 2005-09-12 23:16:00 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.5 2005-09-12 23:25:58 aadler Exp $
 
 ok= 1;
 
@@ -55,7 +55,7 @@ end
 
 % test dataprior
 DP= calc_data_prior( homg_img );
-testvec= spdiags(DP);
+testvec= diag(DP);
 if max(abs(diff( testvec ))) > 1e-12 
    ok=0;
    error('Dataprior calculation error');
@@ -96,7 +96,7 @@ end
 % test dataprior
 DP= calc_data_prior( homg_img );
 
-testvec = homg_data.meas.^2 .* spdiags(DP);
+testvec = homg_data.meas.^2 .* diag(DP);
 if max(abs(diff( testvec ))) > 1e-12 
    max(abs(diff( testvec )))
    ok=0;
