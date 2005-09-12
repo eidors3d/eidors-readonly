@@ -15,7 +15,7 @@ function data_prior = calc_data_prior( inv_model )
 %  contain a data prior term. For these algorithms, this function
 %  generates a reasonable approximation based on uniform noise.
 %
-% $Id: calc_data_prior.m,v 1.4 2005-06-29 16:39:28 aadler Exp $
+% $Id: calc_data_prior.m,v 1.5 2005-09-12 23:16:00 aadler Exp $
 
 data_prior = eidors_obj('get-cache', inv_model, 'data_prior');
 
@@ -58,8 +58,8 @@ function data_prior = default_data_prior( inv_model )
    if ~normalize
       data_prior= speye( n );
    else
-      error('data_prior estimate for normalized data is needed')
-      data_prior= speye( n );
+      homg_data=  solve_homg_image( fwd_model );
+      data_prior = sparse(1:n, 1:n, ( 1./ homg_data.meas ).^2 );
    end
 
 function n_meas = calc_n_meas( fwd_model )
@@ -68,3 +68,11 @@ function n_meas = calc_n_meas( fwd_model )
    for i= 1:length(fwd_model.stimulation );
        n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,2);
    end
+
+% create homogeneous image + simulate data
+function homg_data = solve_homg_image( fwd_mdl )
+    n_elems= size( fwd_mdl.elems , 1);
+    mat= ones( n_elems, 1);
+    homg_img= eidors_obj('image', 'homogeneous image', ...
+                         'elem_data', mat, 'fwd_model', fwd_mdl );
+    homg_data=fwd_solve( homg_img);
