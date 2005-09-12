@@ -1,6 +1,9 @@
 function ok= calc_jacobian_test
 % Verify Jacobian Calculation by small derivative from forward problem
-% $Id: calc_jacobian_test.m,v 1.3 2005-06-07 00:31:45 aadler Exp $
+% Also calculate dataprior
+%     Difference dataprior should be 1
+%     normalized difference dataprior should be 1./ homg_data
+% $Id: calc_jacobian_test.m,v 1.4 2005-09-12 23:16:00 aadler Exp $
 
 ok= 1;
 
@@ -38,7 +41,7 @@ for testelem = testvec
                          'elem_data', mat, 'fwd_model', mdl_2d );
     inh_data=fwd_solve( inh_img);
 
-    simJ= 1/delta* (homg_data.meas-inh_data.meas)';
+    simJ= 1/delta* (homg_data.meas-inh_data.meas);
     
 %   plot([J(:,testelem) simJ]);
     sumdiff = sumdiff + std( J(:,testelem) - simJ );
@@ -46,8 +49,16 @@ end
 
 tol= 1e-4*std(J(:));
 if sumdiff/length(testvec) > tol
-   error('Jacobian calculation error');
    ok=0;
+   error('Jacobian calculation error');
+end
+
+% test dataprior
+DP= calc_data_prior( homg_img );
+testvec= spdiags(DP);
+if max(abs(diff( testvec ))) > 1e-12 
+   ok=0;
+   error('Dataprior calculation error');
 end
 
 
@@ -70,7 +81,7 @@ for testelem = testvec
                          'elem_data', mat, 'fwd_model', mdl_2d );
     inh_data=fwd_solve( inh_img);
 
-    simJ= 1/delta* (1 - inh_data.meas ./ homg_data.meas)';
+    simJ= 1/delta* (1 - inh_data.meas ./ homg_data.meas);
     
 %   plot([J(:,testelem) simJ]);
     sumdiff = sumdiff + std( J(:,testelem) - simJ );
@@ -78,6 +89,16 @@ end
 
 tol= 1e-4*std(J(:));
 if sumdiff/length(testvec) > tol
-   error('normalize Jacobian calculation error');
    ok=0;
+   error('normalize Jacobian calculation error');
+end
+
+% test dataprior
+DP= calc_data_prior( homg_img );
+
+testvec = homg_data.meas.^2 .* spdiags(DP);
+if max(abs(diff( testvec ))) > 1e-12 
+   max(abs(diff( testvec )))
+   ok=0;
+   error('Dataprior calculation error');
 end
