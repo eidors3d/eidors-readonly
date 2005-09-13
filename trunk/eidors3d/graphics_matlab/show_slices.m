@@ -3,12 +3,13 @@ function rimg_out = show_slices( img, levels, clim )
 %             using a fast rendering algorithm
 % img    = EIDORS image struct
 % levels = Matrix [Lx3] of L image levels
-%          each row of the matrix specifies the x,y,z intercepts
-%          of the slice
+%          each row of the matrix specifies the intercepts
+%          of the slice on the x, y, z axis. To specify a z=2 plane
+%          parallel to the x,y: use levels= [inf,inf,2]
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.4 2005-07-29 14:33:26 aadler Exp $
+% $Id: show_slices.m,v 1.5 2005-09-13 12:57:35 aadler Exp $
 
 % NOTES:
 %  - currently works for 2D samples only

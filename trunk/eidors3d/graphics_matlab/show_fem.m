@@ -1,38 +1,33 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.7 2005-06-02 17:18:37 aadler Exp $
+% $Id: show_fem.m,v 1.8 2005-09-13 12:57:35 aadler Exp $
 
-% if we have an img input, then define mdl
+% if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
    img= mdl;
    mdl= img.fwd_model;
 end
 
+if nargin == 1 % options not currently defined
+   options= [];
+end
+
 set(gcf, 'Name', mdl.name);
 if size(mdl.nodes,2)==2
    show_2d_fem( mdl );
+elseif size(mdl.nodes,2)==3
+   show_3d_fem( mdl );
 else
-   trimesh(mdl.boundary, ...
-           mdl.nodes(:,1), ...
-           mdl.nodes(:,2), ...
-           mdl.nodes(:,3) );
-   axis('image');
-   set(gcf,'Colormap',[0 0 0]);
-   hidden('off');
+   error(['model is not 2D or 3D']);
 end
 
-if nargin>1
-   if     length(options)>0 & options(1)~=0
-      show_electrodes(mdl);
-   end
-   if length(options)>1 & options(2)~=0
-      if ~exist('img')
-         error('need "image" object to specify options(2)');
-      end
-      show_inhomogeneities( img.elem_data, mdl);
-   end
+show_electrodes(mdl);
+
+if exist('img')
+   show_inhomogeneities( img.elem_data, mdl);
 end
+
 
 function show_electrodes(mdl)
 % show electrode positions on model
@@ -40,18 +35,26 @@ if ~isfield(mdl,'electrode'); return; end
 
 ee= mdl.boundary;
 for e=1:length(mdl.electrode)
-    % find elems on boundary attached to this electrode
-    nn=ones(size(ee,1),1)*mdl.electrode(e).nodes;
-    oo=ones(1,size(nn,2));
-    ec=zeros(size(ee));
-    for i=1:size(ec,2);
-       ec(:,i) = any( (ee(:,i)*oo==nn)' )';
-    end
-    sels= find(all(ec'));
+    elec_nodes= mdl.electrode(e).nodes;
 
-    for u=1:length(sels)
-        paint_electrodes(sels(u),mdl.boundary, ...
-                         mdl.nodes);
+    if length(elec_nodes) == 1  % point electrode model
+        vtx= mdl.nodes(elec_nodes,:);
+        line(vtx(1),vtx(2),vtx(3), ...
+            'Marker','.','MarkerSize',16,'MarkerEdgeColor','red')
+    else
+        % find elems on boundary attached to this electrode
+        nn=ones(size(ee,1),1)*mdl.electrode(e).nodes;
+        oo=ones(1,size(nn,2));
+        ec=zeros(size(ee));
+        for i=1:size(ec,2);
+           ec(:,i) = any( (ee(:,i)*oo==nn)' )';
+        end
+        sels= find(all(ec'));
+
+        for u=1:length(sels)
+            paint_electrodes(sels(u),mdl.boundary, ...
+                             mdl.nodes);
+        end
     end
 end
 
@@ -69,15 +72,12 @@ hold('off');
 function paint_electrodes(sel,srf,vtx);
 %function paint_electrodes(sel,srf,vtx);
 %
-%Auxilary function which plots the electrodes red at the boundaries.
-%
-%
+% plots the electrodes red at the boundaries.
 %
 % sel = The index of the electrode faces in the srf matrix
 %       sel can be created by set_electrodes.m 
 % srf = the boundary faces (triangles)
 % vtx = The vertices matrix.
-
 
 l = srf(sel,1); m = srf(sel,2); n = srf(sel,3);
 
@@ -86,6 +86,15 @@ Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
 patch(Xs,Ys,Zs,'y');
+
+function show_3d_fem( mdl, options )
+   trimesh(mdl.boundary, ...
+           mdl.nodes(:,1), ...
+           mdl.nodes(:,2), ...
+           mdl.nodes(:,3) );
+   axis('image');
+   set(gcf,'Colormap',[0 0 0]);
+   hidden('off');
 
 function show_2d_fem( mdl, options )
   domesnum= 0;
