@@ -1,35 +1,55 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.8 2005-09-13 12:57:35 aadler Exp $
+% $Id: show_fem.m,v 1.9 2005-09-13 20:32:35 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
    img= mdl;
    mdl= img.fwd_model;
+   name= img.name;
+   colours= calc_colours(img);
+else
+   name= mdl.name;
+   colours= length(colormap);
 end
+set(gcf, 'Name', name);
 
 if nargin == 1 % options not currently defined
    options= [];
 end
 
-set(gcf, 'Name', mdl.name);
 if size(mdl.nodes,2)==2
-   show_2d_fem( mdl );
+   show_2d_fem( mdl, colours );
+%  show_electrodes_2d(mdl); - currently part of show_2d
 elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
+   show_electrodes_3d(mdl);
+
+   if exist('img')
+       show_inhomogeneities( img.elem_data, mdl);
+   end
 else
    error(['model is not 2D or 3D']);
 end
 
-show_electrodes(mdl);
+function colours= calc_colours(img)
+   elem_data= img.elem_data(:); %col vector
+   e= length(elem_data);
+   scale_ed = elem_data / max(abs(elem_data));
 
-if exist('img')
-   show_inhomogeneities( img.elem_data, mdl);
-end
+   grn= 3*abs(scale_ed    ) -1;
+   grn= grn.*(grn>0).*(grn<1) + (grn>=1);
+   red= 3*abs(scale_ed+.33) -1;
+   red= red.*(red>0).*(red<1) + (red>=1);
+   blu= 3*abs(scale_ed-.33) -1;
+   blu= blu.*(blu>0).*(blu<1) + (blu>=1);
+
+   colours= ones(1, length(elem_data), 3);
+   colours(1,:,:)= [red,grn,blu]*.8+ .2; %add grey
 
 
-function show_electrodes(mdl)
+function show_electrodes_3d(mdl)
 % show electrode positions on model
 if ~isfield(mdl,'electrode'); return; end
 
@@ -96,7 +116,24 @@ function show_3d_fem( mdl, options )
    set(gcf,'Colormap',[0 0 0]);
    hidden('off');
 
-function show_2d_fem( mdl, options )
+function show_2d_fem( mdl, colours )
+  
+  el_pos= avg_electrode_posn( mdl );  
+% plot_2d_mesh(mdl.nodes', mdl.elems', el_pos', .95, [0,0,0])
+
+  S= 1; %.95; % shrink factor
+  elem= mdl.elems'; e= size(elem,2);
+  Xs=zeros(3,e);
+  Xs(:)=mdl.nodes(elem(:),1);
+  Xs= S*Xs+ (1-S)*ones(3,1)*mean(Xs);
+  Ys=zeros(3,e);
+  Ys(:)=mdl.nodes(elem(:),2);
+  Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
+  patch(Xs,Ys,zeros(3,e),colours);
+
+
+
+function old_code_3d_plot
   domesnum= 0;
   donodenum= 0;
   dotext=0;
@@ -106,12 +143,6 @@ function show_2d_fem( mdl, options )
     domesnum= 0;
     donodenum= 0;
   end
-
-if     size(mdl.nodes,2)==2  %2D
-  el_pos= avg_electrode_posn( mdl );  
-  plot_2d_mesh(mdl.nodes', mdl.elems', el_pos', .95, [0,0,0])
-   
-elseif size(mdl.nodes,2)==3  %3D
 
   xxx=zeros(4,e); xxx(:)=NODE(1,ELEM(:));
   xxx= S*xxx+ (1-S)*ones(4,1)*mean(xxx);
@@ -129,7 +160,6 @@ elseif size(mdl.nodes,2)==3  %3D
   axis([ [-1.1 1.1]*max(NODE(1,:)) [-1.1 1.1]*max(NODE(2,:)) ...
          [-1.1 1.1]*max(NODE(3,:))  ])
 
-end
 
 function plot_2d_mesh(NODE,ELEM,el_pos, S, options)
 %  if options(1) -> do mesh num
