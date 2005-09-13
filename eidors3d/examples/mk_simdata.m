@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: mk_simdata.m,v 1.12 2005-09-13 00:56:58 aadler Exp $
+% $Id: mk_simdata.m,v 1.13 2005-09-13 12:57:34 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -42,17 +42,21 @@ inv2d.solve=       'aa_inv_solve';
 inv2d.hyperparameter.func = 'aa_calc_noise_figure';
 inv2d.hyperparameter.noise_figure= 2;
 inv2d.hyperparameter.tgt_elems= 1:4;
-inv2d.image_prior.func= 'tikhonov_image_prior';
+ inv2d.image_prior.func= 'tikhonov_image_prior';
+%inv2d.image_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d;
 inv2d= eidors_obj('inv_model', inv2d);
 
 img= inv_solve( inv2d, inh_data, homg_data);
+show_slices(img);
 
 % 
 % Example 2: Create simple 16 electrode 3D model
 % 
 % get parameters for model from mk_circ_tank
-% param= mk_circ_tank(rings, levels, n_elec, n_planes )
-params= mk_circ_tank(8, [-.5,0,.5], n_elec, n_rings); 
+% param= mk_circ_tank(rings, levels, n_elec, e_planes )
+e_planes = [3,5,7]; % single level of electrodes on plane#2
+params= mk_circ_tank(8, [-.5:.1:.5], n_elec, e_planes); 
 mdl_3d = eidors_obj('fwd_model', params);
+show_fem(mdl_3d);

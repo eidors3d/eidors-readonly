@@ -1,12 +1,12 @@
-function param= mk_circ_tank(rings, levels, n_elec, n_planes )
+function param= mk_circ_tank(rings, levels, n_elec, e_planes )
 %MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D
-% param= mk_circ_tank(rings, levels, n_elec, n_planes )
+% param= mk_circ_tank(rings, levels, n_elec, e_planes )
 % 
 % rings:  number of horizontal plane rings (divisible by 4)
 % levels: vector of vertical placement of levels
 %     for 2D mesh, levels = []
 % n_elec: number of electrodes in each horiz plane (divisible by 4)
-% n_planes: number of planes of electrodes (divisible by 4)
+% e_planes: index of planes of electrodes (1 .. length(levels))
 %
 % mk_circ_tank creates simple, point electrodes. If you wish
 %   to implement more complete models, functions will need to
@@ -27,7 +27,8 @@ end
 
 [elem, node, bdy, elec_nodes] = mk_2D_model( rings, n_elec);
 if ~isempty( levels )
-   [elem, node, bdy, elec_nodes] = mk_3D_model( elem, node, levels, bdy );
+   [elem, node, bdy, elec_nodes] = mk_3D_model( elem, node, ...
+                  levels, bdy, elec_nodes, e_planes );
 end
 
 param.name= sprintf('EIT FEM by mk_circ_tank with N=%d levs=%d', ...
@@ -37,6 +38,8 @@ param.elems = elem';
 param.boundary = bdy';
 param.gnd_node = 1; % node at bottom and center of the tank
 param.electrode =  mk_electrodes( elec_nodes );
+
+return;
 
 
 % Create a simple 2D regular mesh, based on N circular rings
@@ -80,7 +83,9 @@ function [ELEM, NODE, bdy_nodes, elec_nodes] = mk_2D_model( N, n_elec );
 % 'extrude' a 2D model defined by ELEM and NODE into a 3D model
 % levels are defined by 'niveaux', 
 % 2D parameters are ELEM, NODE, and bdy
-function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model(elem0, node0, niveaux, bdy );
+function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
+     elem0, node0, niveaux, bdy, elec_nodes0, e_planes );
+
   d= size(elem0,1);       %dimentions+1
   n= size(node0,2);       %NODEs
   e= size(elem0,2);       %ELEMents     
@@ -110,8 +115,13 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model(elem0, node0, niveaux, bdy 
   % Now add top and bottom boundary 
   BDY= [elem0, BDY, elem0+n*(ln-1) ];
 
-  elec_nodes = []; % FIXME
+  elec_nodes= [];
+  for k=1:length(e_planes)
+     elec_nodes = [elec_nodes, ...
+                   elec_nodes0 + n*(e_planes(k)-1) ];
+  end
 
+% Old code here
 % MES= MES + floor(length(niveaux)/2)*n;
 % cour(1:elec,:)= cour(1:elec,:)+ floor(length(niveaux)/2)*n;
 
