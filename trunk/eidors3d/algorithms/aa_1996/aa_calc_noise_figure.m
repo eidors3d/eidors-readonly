@@ -25,7 +25,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 % NOTE: SNR _should_ be defined in terms of power! This defines
 %       it in terms of images amplitude
 
-% $Id: aa_calc_noise_figure.m,v 1.8 2005-09-13 01:47:49 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.9 2005-09-13 02:37:54 aadler Exp $
 
 % FIXME: this is a hack for now
 
@@ -36,7 +36,7 @@ if ~isempty(NFtable)
    % this would be sooo much easier if Matlab has assoc. arrays
    if any(NFtable(:,1) == reqNF)
        idx= find( NFtable(:,1) == reqNF);
-       hparam= NFtable( idx(1), 2);
+       hparam= 10^NFtable( idx(1), 2);
        eidors_msg('aa_calc_noise_figure: using cached value', 2);
        return
    end
@@ -46,7 +46,7 @@ end
 
 startpoint = -5;
 opts = optimset('tolX',1e-4);
-hparam= fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
+hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    
 NFtable = [NFtable; [reqNF, hparam] ];
 eidors_obj('set-cache', inv_model, 'noise_figure_table', NFtable);
@@ -123,5 +123,5 @@ function NF = calc_noise_figure( inv_model, hp)
 
    NF = ( sig_data/sqrt(var_data) ) / ...
         ( sig_img /sqrt(var_img ) );
-   fprintf('%f - %f = %f\n', 1e6*sig_img, 1e6*var_img, NF );
+%  fprintf('%f - %f = %f\n', 1e6*sig_img, 1e6*var_img, NF );
    
