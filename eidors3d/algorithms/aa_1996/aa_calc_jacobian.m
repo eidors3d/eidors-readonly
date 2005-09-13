@@ -1,5 +1,5 @@
 function J= aa_calc_jacobian( fwd_model, img)
-% AA_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)
+% AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
 % fwd_model = forward model
@@ -8,7 +8,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 % img = image background for jacobian calc
-% $Id: aa_calc_jacobian.m,v 1.4 2005-06-07 00:31:32 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.5 2005-09-13 01:50:27 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );

@@ -1,5 +1,5 @@
 function param = aa_fwd_parameters( fwd_model )
-% NP_FWD_PARAMETERS: data= np_fwd_solve( fwd_model, image)
+% AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Andy Adler's EIT code
 %   param.n_elem   => number of elements
@@ -13,7 +13,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.QQ       => Current into each NODE
 %   param.VOLUME   => Volume (or area) of each element
 %   param.normalize=> are difference measurements normalized
-% $Id: aa_fwd_parameters.m,v 1.9 2005-06-30 10:13:36 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.10 2005-09-13 01:50:27 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 

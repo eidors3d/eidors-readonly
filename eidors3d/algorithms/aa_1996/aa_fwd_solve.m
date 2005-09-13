@@ -7,7 +7,7 @@ function data =aa_fwd_solve(fwd_model, img)
 
 % (C) 1995-2002 Andy Adler
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.7 2005-06-05 13:42:59 aadler Exp $
+% $Id: aa_fwd_solve.m,v 1.8 2005-09-13 01:50:27 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -37,6 +37,6 @@ end
 % create a data structure to return
 data.meas= vv;
 data.time= -1; % unknown
-data.name= 'solved by np_fwd_solve';
+data.name= 'solved by aa_fwd_solve';
 % TODO: figure out how to describe measurment pattern
 data.configuration='unknown';
