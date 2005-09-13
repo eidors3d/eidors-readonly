@@ -6,12 +6,12 @@ function hparam= aa_calc_noise_figure( inv_model );
 % In order to use this function, it is necessary to specify
 % inv_model.hyperparameter. has the following fields
 % hpara.func         = 'aa_calc_noise_figure';
-% hpara.noise_figure = VALUE
+% hpara.noise_figure = NF Value requested
 % hpara.tgt_elems    = vector of element numbers of contrast in centre
 %
 % The NF parameter is defined in Adler & Guardo (1996), as
 %   measurements => z (Mx1), image elements => x (Nx1)
-%   NF = SNR_z / SNR_x   -- IS THIS WRONG???
+%   NF = SNR_z / SNR_x
 % SNR_z = mean(z) / std(z) = mean(z) /sqrt( M trace(Rn) )
 % SNR_x = mean(x) / std(x) = mean(x) /sqrt( N trance(ABRnB'A)
 %   where Rn = sigma_n x inv(W) = the noise covariance, iW= inv(W)
@@ -24,18 +24,36 @@ function hparam= aa_calc_noise_figure( inv_model );
 %
 % NOTE: SNR _should_ be defined in terms of power! This defines
 %       it in terms of images amplitude
-% NOTE: M and N are wrong here. They should be trace/M NOT trace*M
 
-% $Id: aa_calc_noise_figure.m,v 1.6 2005-09-13 00:56:58 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.7 2005-09-13 01:47:22 aadler Exp $
 
 % FIXME: this is a hack for now
 
 reqNF= inv_model.hyperparameter.noise_figure;
+
+NFtable = eidors_obj('get-cache', inv_model, 'noise_figure_table');
+if ~isempty(NFtable)
+   % this would be sooo much easier if Matlab has assoc. arrays
+   if any(NFtable(:,1) == reqNF)
+       idx= find( NFtable(:,1) == reqNF);
+       hparam= NFtable( idx(1), 2);
+       eidors_msg('aa_calc_noise_figure: using cached value', 2);
+       return
+   end
+else
+   NFtable= [];
+end
+
 startpoint = -5;
 opts = optimset('tolX',1e-4);
 hparam= fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    
+NFtable = [NFtable; [reqNF, hparam] ];
+eidors_obj('set-cache', inv_model, 'noise_figure_table', NFtable);
+eidors_msg('aa_calc_noise_figure: setting cached value', 2);
 
+% define a function that can be called by fzero. Also convert
+% hparameter to log space to allow better searching by fzero
 function out= calc_log_NF( log_hparam, reqNF, inv_model )
   out = calc_noise_figure( inv_model, 10^log_hparam ) - reqNF; 
 
