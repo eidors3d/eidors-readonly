@@ -26,15 +26,19 @@ function hparam= aa_calc_noise_figure( inv_model );
 %       it in terms of images amplitude
 % NOTE: M and N are wrong here. They should be trace/M NOT trace*M
 
-% $Id: aa_calc_noise_figure.m,v 1.5 2005-07-01 10:16:59 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.6 2005-09-13 00:56:58 aadler Exp $
 
 % FIXME: this is a hack for now
-for hparam= [1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1]
-   NF= calc_noise_figure( inv_model, hparam);
-   eidors_msg(sprintf('aa_calc_noise_figure: NF=%f hp=%f', ...
-                      NF, hparam), 2);
-end
-hparam = 1e-8;
+
+reqNF= inv_model.hyperparameter.noise_figure;
+startpoint = -5;
+opts = optimset('tolX',1e-4);
+hparam= fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
+   
+
+function out= calc_log_NF( log_hparam, reqNF, inv_model )
+  out = calc_noise_figure( inv_model, 10^log_hparam ) - reqNF; 
+
 
 % simulate homg data and a small target in centre
 function [h_data, c_data, J]= simulate_targets( fwd_model, ctr_elems)
@@ -75,21 +79,33 @@ function NF = calc_noise_figure( inv_model, hp)
    R = calc_image_prior( inv_model );
    W = calc_data_prior( inv_model );
 
+   n_img = size(J,2);
+   n_data= size(W,1);
+
+   % one step reconstruction matrix
    RM= (J'*W*J +  hp*R)\J'*W;
 
-   sig_data= mean(dva);
-   sig_img = pp.VOLUME' * RM * dva;
+   sig_data= sum(dva) / n_data;
+   sig_img = ( pp.VOLUME' * RM * dva ) / n_img;
 
-   DP= calc_data_prior( inv_model );
+%  img= eidors_obj('image', 'x', ...
+%                  'elem_data', RM*dva, 'fwd_model', fwd_model );
+%  show_slices(img); pause
+%  plot(RM*dva); pause
 
-   var_data = trace(DP)/size(DP,1); % DP is square
-   var_img  = sum( pp.VOLUME' * RM * DP ) / pp.n_elem;
+   var_data = trace(W)/n_data;
+%  var_img  = sum( pp.VOLUME' * RM * DP ) / pp.n_elem;
+% nf= sum(sig)*sqrt(sum(sum( ((AIRE*n_var').*Z).^2 ))) / ...
+   var_img  = sum(sum( ((pp.VOLUME*diag(W)') .*RM).^2 )) / n_img;
 
-   NF = ( sig_data/sqrt(var_data) ) / ...
-        ( sig_img /sqrt(var_img ) );
+% The NF parameter is calculated as follows
 %   NF = SNR_z / SNR_x
 % SNR_z = mean(z) / std(z) = mean(z) /sqrt( M trace(Rn) )
 % SNR_x = mean(x) / std(x) = mean(x) /sqrt( N trance(ABRnB'A)
+
+   NF = ( sig_data/sqrt(var_data) ) / ...
+        ( sig_img /sqrt(var_img ) );
+   fprintf('%f - %f = %f\n', 1e6*sig_img, 1e6*var_img, NF );
    
 
 return % ----------------------
