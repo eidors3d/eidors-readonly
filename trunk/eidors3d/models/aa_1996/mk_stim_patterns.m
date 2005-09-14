@@ -1,7 +1,9 @@
-function stim= mk_stim_patterns( n_elec, n_rings, inj, meas, options, amplitude)
+function [stim, meas_sel]= mk_stim_patterns( ...
+            n_elec, n_rings, inj, meas, options, amplitude)
 %MK_STIM_PATTER: create an EIDORS3D stimulation pattern structure
 %                to form part of a fwd_model object
-% stim= mk_stim_patterns( n_elec, n_rings, inj, meas, options, amplitude)
+% [stim, meas_sel] = mk_stim_patterns( n_elec, n_rings, ...
+%                                      inj, meas, options, amplitude)
 %
 % where
 % stim(#).stimulation = 'mA'
@@ -15,6 +17,12 @@ function stim= mk_stim_patterns( n_elec, n_rings, inj, meas, options, amplitude)
 %                       -1, 1, 0, 0 
 %                        0,-1, 1, 0 
 %                        0, 0,-1, 1]
+%
+% meas_sel: when not using data from current injection electrodes,
+%           it is common to be given a full measurement set.
+%           For example 16 electrodes gives 208 measures, but 256
+%           measure sets are common. 'meas_sel' indicates which
+%           electrodes are used
 %
 % PARAMETERS:
 %   n_elec:   number of electrodes per ring
@@ -58,6 +66,25 @@ for ring = 0:v.n_rings-1
        i=i+1;
    end
 end
+
+meas_sel= meas_select( n_elec, v.inj);
+
+% when not using data from current injection electrodes,
+% it is common to be given a full measurement set.
+% For example 16 electrodes gives 208 measures, but 256
+% measure sets are common.
+%
+% This function calculates a selector matrix to remove the extra
+function meas_sel= meas_select( n_elec, inj)
+  n2_elec= n_elec^2;
+  e_idx= 0:n2_elec-1;
+  ELS=rem(   rem(e_idx,n_elec)- ...
+           floor(e_idx/n_elec)+n_elec , ...
+           n_elec)';
+  injx= n_elec+[-1 0 [-1 0]+inj*[-1;1] ];
+  ELS= rem( injx ,n_elec)' * ones(1,n2_elec) ==ones(4,1)*ELS';
+  meas_sel= ~any( ELS )';
+
 
 
 function stim_pat = mk_stim_pat(v, elec, ring, amplitude)
