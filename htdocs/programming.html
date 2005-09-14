@@ -402,10 +402,14 @@ is calculated. This example is available
         <li><tt>fwd_model.dimention
         </tt> &nbsp; &nbsp;
         2D, 3D, etc.
-        <li><tt>fwd_model.normalized_measurements
+        <li><tt>fwd_model.normalize_measurements
         </tt> &nbsp; &nbsp;
         Do we do difference (v<sub>i</sub>&minus;v<sub>h</sub>) or
         normalized difference
+        <li><tt>fwd_model.meas_select
+        </tt> &nbsp; &nbsp;
+        measurement reduction (when not measuring on injection
+           electrodes, while given full data set)
  (v<sub>i</sub>&minus;v<sub>h</sub>)/v<sub>h</sub>?
 
         <p><b>Methods</b>:
@@ -638,7 +642,7 @@ now it is (using the <tt>eidors_obj</tt> function):
    </ol>
 </td></tr></table>
 <small>
-    Last Modified: $Date: 2005-06-07 01:01:19 $ by $Author: aadler $
+    Last Modified: $Date: 2005-09-14 21:37:44 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
