@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.1 2005-09-13 20:32:35 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.2 2005-09-14 22:15:12 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -12,7 +12,7 @@ n_elec= 16;
 n_rings= 1;
 levels= [-.5:.1:.5];
 e_planes = ceil( length(levels)/2 );
-params= mk_circ_tank(8, levels, n_elec, e_planes); 
+params= mk_circ_tank(12, levels, n_elec, e_planes); 
 
 %options = {'no_meas_current','rotate_meas'};
  options = {'no_meas_current','no_rotate_meas'};
@@ -22,7 +22,7 @@ params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'aa_calc_jacobian';
 mdl_3d = eidors_obj('fwd_model', params);
-show_fem( mdl_3d );
+%show_fem( mdl_3d );
 
 
 % create homogeneous image + simulate data
@@ -33,7 +33,7 @@ homg_img= eidors_obj('image', 'homogeneous image', ...
 homg_data=fwd_solve( homg_img);
 
 % create inhomogeneous image + simulate data
-mat(5)= 2;
+mat(50)= 2;
 inh_img= eidors_obj('image', 'homogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', mdl_3d );

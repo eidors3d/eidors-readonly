@@ -1,7 +1,7 @@
 % Based on the 'bubble' data from Eidors2D, use several 
 % different algorithms to image it
 %
-% $Id: image_2d_algs.m,v 1.1 2005-09-14 21:06:26 aadler Exp $
+% $Id: image_2d_algs.m,v 1.2 2005-09-14 22:15:12 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -18,6 +18,7 @@ params= mk_circ_tank(8, [], n_elec, n_rings);
 
 [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
 params.stimulation= st;
+params.meas_select= els;
 params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'aa_calc_jacobian';
@@ -43,12 +44,9 @@ inv2d= eidors_obj('inv_model', inv2d);
 % Step 3: Reconst and show image
 % 
 load eidors2d_bubble.mat
-d= bubble2(1280+(-255:0));
-j1.meas= d(els);
-d= bubble1(1280+(-255:0));
-j2.meas= d(els);
+d1= bubble2(1280+(-255:0));
+d2= bubble1(1280+(-255:0));
 
-
-img= inv_solve( inv2d, j1, j2);
+img= inv_solve( inv2d, d1, d2);
 show_fem(img);
 

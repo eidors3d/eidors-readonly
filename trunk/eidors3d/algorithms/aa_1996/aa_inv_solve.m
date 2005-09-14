@@ -11,7 +11,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% $Id: aa_inv_solve.m,v 1.6 2005-06-30 10:13:36 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.7 2005-09-14 22:15:12 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -45,17 +45,9 @@ l_data= max( l_data1, l_data2 );
 dva= zeros(pp.n_meas, l_data);
 
 if pp.normalize
-   for i=0:l_data-1
-      idx1= i*l1_0 + 1;
-      idx2= i*l2_0 + 1;
-      dva(:,i+1)= 1 - data2(idx2).meas ./ data1(idx1).meas;
-   end
+   dva= 1 - data2 ./ data1;
 else   
-   for i=0:l_data-1
-      idx1= i*l1_0 + 1;
-      idx2= i*l2_0 + 1;
-      dva(:,i+1)= data1(idx2).meas - data2(idx1).meas;
-   end
+   dva= data1 - data2;
 end
 
 sol = one_step_inv * dva;

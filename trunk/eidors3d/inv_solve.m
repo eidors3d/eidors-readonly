@@ -18,45 +18,94 @@ function img = inv_solve( inv_model, data1, data2)
 % data1      => difference data at earlier time
 % data2      => difference data at later time
 %
-% both data1 and data2 may be vectors of data
-%  structures. In which case a vector of
-%  reconstructed images will be returned
-% if either data1 or data2 is a scalar structure, then it
-%  is expanded to be the same size matrix
+% data can be:
+%   - an EIDORS3D data object
 %
-% $Id: inv_solve.m,v 1.7 2005-06-29 16:39:28 aadler Exp $
+%   - an M x S matrix, where M is the total number
+%         of measurements expected by inv_model
+%
+%   - an M x S matrix, where M is n_elec^2
+%        when not using data from current injection
+%        electrodes, it is common to be given a full
+%        measurement set.  For example, 16 electrodes give
+%        208 measures, but 256 measure sets are common.
+%        Data will be selected based on fwd_model.meas_select.
+%
+% If S > 1 for both data1 and data2 then the values must be equal
+%
+% $Id: inv_solve.m,v 1.8 2005-09-14 22:15:12 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
 %       to do it separately. It may be possible to cache
 %       one-step inverse matrices, but that is not done. 
 
-eidors_msg('inv_solve',1);
+eidors_msg(['inv_solve:', inv_model.name],1);
 
 % caching of images is disabled -
 %  in order to implement image caching, it needs to be possible
 %  to tag them with both data1 and data2
 
+
 if     strcmp(inv_model.reconst_type,'static')
    if nargin~=2;
       error('only one data set is allowed for a static reconstruction');
    end
-   img= feval( inv_model.solve, inv_model, data1);
+   img= feval( inv_model.solve, inv_model, ...
+               filter_data(inv_model,data1) );
+
 elseif strcmp(inv_model.reconst_type,'difference')
    if nargin~=3;
       error('two data sets are required for a difference reconstruction');
    end
 
-   l_data1= length(data1);
-   l_data2= length(data2);
-   if l_data1 ~=1 & l_data2 ~=1 & ...
-         l_data1 ~= l_data2
-      error('inconsistent number of specified measurements');
-   end 
+   fdata1 = filt_data( inv_model, data1 ); l_data1= size(fdata1,1);
+   fdata2 = filt_data( inv_model, data2 ); l_data2= size(fdata2,1);
 
-   img= feval( inv_model.solve, inv_model, data1, data2);
+   if l_data1 ~=1 & l_data2 ~=1 & l_data1 ~= l_data2
+      error('inconsistent number of specified measurements');
+   elseif l_data1 >1 & l_data2==1 
+      fdata2 = fdata2*ones(l_data1,1);
+   elseif l_data1==1 & l_data2 >1 
+      fdata1 = fdata1*ones(l_data2,1);
+   end
+
+   img= feval( inv_model.solve, inv_model, fdata1, fdata2);
 else
    error('inv_model.reconst_type not understood'); 
 end
 
 img= eidors_obj('image', img);
+
+% test for existance of meas_select and filter data
+function d1= filt_data(inv_model, d0 )
+    if ~isnumeric( d0 )
+        % we probably have a 'data' object
+
+        l_obj = length(d0);
+        d1 = zeros( length( d0(1).meas ), l_obj);
+        for i=1:l_obj
+           if strcmp( d0(i).type, 'data' )
+               d1(:,i) = d0(i).meas;
+           else
+               error('expecting an object of type data');
+           end
+        end
+
+    elseif isfield(inv_model.fwd_model,'meas_select');
+       % we have a meas_select
+
+       meas_select= inv_model.fwd_model.meas_select;
+       if     size(d0,1) == length(meas_select)
+          d1= d0(meas_select,:);
+       elseif size(d0,1) == sum(meas_select>0)
+          d1= d0;
+       else
+          error('data size does not match meas_select');
+       end
+
+    else
+       % we have no info about whether data is ok
+       % hope for the best
+       d1 = d0;
+    end
