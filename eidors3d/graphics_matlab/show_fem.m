@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.9 2005-09-13 20:32:35 aadler Exp $
+% $Id: show_fem.m,v 1.10 2005-09-14 03:10:22 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -13,6 +13,7 @@ else
    name= mdl.name;
    colours= length(colormap);
 end
+cla;
 set(gcf, 'Name', name);
 
 if nargin == 1 % options not currently defined
