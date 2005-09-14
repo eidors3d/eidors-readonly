@@ -1,6 +1,6 @@
-function param= mk_circ_tank(rings, levels, elec_spec, e_planes, optioms )
+function param= mk_circ_tank(rings, levels, elec_spec );
 %MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D
-% param= mk_circ_tank(rings, levels, n_elec, e_planes, options )
+% param= mk_circ_tank(rings, levels, elec_spec );
 % 
 % rings:  number of horizontal plane rings (divisible by 4)
 % levels: vector of vertical placement of levels
@@ -53,8 +53,17 @@ if isempty( levels ) % 2D
       error('2D models only support scalar electrode patterns');
    end
 else  %3D
-   [elem, node, bdy, elec_nodes] = mk_3D_model( elem, node, ...
-                  levels, bdy, elec_nodes, e_planes );
+   [elem, node, bdy, point_elec_nodes] = mk_3D_model( elem, node, ...
+                  levels, bdy, point_elec_nodes );
+
+   if ~isempty( n_elec )
+      idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
+      half_lev = ceil( length(levels)/2 );
+      elec_nodes= point_elec_nodes( half_lev, idx );
+   else
+      elec_nodes= electrode_pattern( point_elec_nodes, e_planes );
+   end
+
 end
 
 param.name= sprintf('EIT FEM by mk_circ_tank with N=%d levs=%d', ...
@@ -110,7 +119,7 @@ function [ELEM, NODE, bdy_nodes, point_elec_nodes] = mk_2D_model( N );
 % levels are defined by 'niveaux', 
 % 2D parameters are ELEM, NODE, and bdy
 function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
-     elem0, node0, niveaux, bdy, elec_nodes0, e_planes );
+     elem0, node0, niveaux, bdy, elec_nodes0 );
 
   d= size(elem0,1);       %dimentions+1
   n= size(node0,2);       %NODEs
@@ -141,15 +150,10 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
   % Now add top and bottom boundary 
   BDY= [elem0, BDY, elem0+n*(ln-1) ];
 
-  elec_nodes= [];
-  for k=1:length(e_planes)
-     elec_nodes = [elec_nodes, ...
-                   elec_nodes0 + n*(e_planes(k)-1) ];
-  end
+  % elec_nodes is all nodes for all layers
+  elec_nodes= ones(ln,1) * elec_nodes0 + ...
+              (0:ln-1)'  * n*ones(1, length(elec_nodes0) );
 
-% Old code here
-% MES= MES + floor(length(niveaux)/2)*n;
-% cour(1:elec,:)= cour(1:elec,:)+ floor(length(niveaux)/2)*n;
 
 %param.electrode = mk_electrodes( elec_nodes );
 % Create the electrode structure from elec_nodes
