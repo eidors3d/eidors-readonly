@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.10 2005-09-14 03:10:22 aadler Exp $
+% $Id: show_fem.m,v 1.11 2005-09-14 20:05:06 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -22,7 +22,8 @@ end
 
 if size(mdl.nodes,2)==2
    show_2d_fem( mdl, colours );
-%  show_electrodes_2d(mdl); - currently part of show_2d
+   show_electrodes_2d(mdl);
+   view(2);
 elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
    show_electrodes_3d(mdl);
@@ -49,6 +50,28 @@ function colours= calc_colours(img)
    colours= ones(1, length(elem_data), 3);
    colours(1,:,:)= [red,grn,blu]*.8+ .2; %add grey
 
+
+function show_electrodes_2d(mdl)
+    if ~isfield(mdl,'electrode'); return; end
+
+    ee= mdl.boundary;
+    ctr_x= mean(mdl.nodes(:,1));
+    ctr_y= mean(mdl.nodes(:,2));
+
+% scale away from model
+    S= 1.02;
+
+for e=1:length(mdl.electrode)
+    elec_nodes= mdl.electrode(e).nodes;
+
+    vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+    vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+    % sort nodes around the model (to avoid crossed lines)
+    [jnk,idx] = sort(atan2( vy, vx ));
+    line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
+         'LineWidth', 2, 'Color', [1 0 0], ...
+         'Marker','.','MarkerSize',16,'MarkerEdgeColor','red')
+end
 
 function show_electrodes_3d(mdl)
 % show electrode positions on model

@@ -1,16 +1,28 @@
-function param= mk_circ_tank(rings, levels, n_elec, e_planes )
+function param= mk_circ_tank(rings, levels, elec_spec, e_planes, optioms )
 %MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D
-% param= mk_circ_tank(rings, levels, n_elec, e_planes )
+% param= mk_circ_tank(rings, levels, n_elec, e_planes, options )
 % 
 % rings:  number of horizontal plane rings (divisible by 4)
 % levels: vector of vertical placement of levels
 %     for 2D mesh, levels = []
-% n_elec: number of electrodes in each horiz plane (divisible by 4)
-% e_planes: index of planes of electrodes (1 .. length(levels))
+% 
+% elec_spec: parameter to specify number of electrodes
+%        specified as { 'opt1', val11, val12 , 'opt2', val21, val22 }
 %
-% mk_circ_tank creates simple, point electrodes. If you wish
-%   to implement more complete models, functions will need to
-%   be overridden in this model
+% elec_spec = scalar (divisible by 4)
+%      - puts a single plane of electrodes in centre of cylinder
+% eg. elec_spec  = 16
+%
+% elec_spec = { 'planes', n_elecs, elec_planes }
+%      - puts plane each of n_elecs at planes specified by elec_planes
+% eg. elec_spec  =  {'planes', 16, [2,6,8]}
+%
+% elec_spec = { 'zigzag', n_elecs, elec_planes }
+%      - puts plane of n_elecs 'zigzagged' electrodes onto planes specified
+%        1st elec on plane 2, 2nd elec on plane 6, 3rd on plane 2, etc 
+% eg. elec_spec  =  {'zigzag', 16, [2,6]}
+%
+% mk_circ_tank creates simple, point electrodes.
 %
 % output:
 %  param.name        Model name (if known) 
@@ -20,13 +32,27 @@ function param= mk_circ_tank(rings, levels, n_elec, e_planes )
 %  param.gnd_node    Number of node connected to ground 
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
-if rem(rings,4) ~= 0 || rem(n_elec,4) ~= 0;
-   error('parameter rings and n_elec must be divisible by 4');
+if rem(rings,4) ~= 0
+   error('parameter rings and must be divisible by 4');
 end
 
+% parse easy case of electrode specifications
+n_elec= [];
+if size(elec_spec) == [1,1] if isnumeric(elec_spec)
+   n_elec= elec_spec;
+end; end
 
-[elem, node, bdy, elec_nodes] = mk_2D_model( rings, n_elec);
-if ~isempty( levels )
+[elem, node, bdy, point_elec_nodes] = mk_2D_model( rings );
+
+if isempty( levels ) % 2D
+   
+   if ~isempty( n_elec )
+      idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
+      elec_nodes= point_elec_nodes( idx );
+   else
+      error('2D models only support scalar electrode patterns');
+   end
+else  %3D
    [elem, node, bdy, elec_nodes] = mk_3D_model( elem, node, ...
                   levels, bdy, elec_nodes, e_planes );
 end
@@ -44,7 +70,7 @@ return;
 
 % Create a simple 2D regular mesh, based on N circular rings
 %   and n_elec electrodes
-function [ELEM, NODE, bdy_nodes, elec_nodes] = mk_2D_model( N, n_elec );
+function [ELEM, NODE, bdy_nodes, point_elec_nodes] = mk_2D_model( N );
   ELEM=[];
   NODE= [0;0];
   int=1;
@@ -77,7 +103,7 @@ function [ELEM, NODE, bdy_nodes, elec_nodes] = mk_2D_model( N, n_elec );
 
   bdy_nodes= [ (ext  :ext+N*4-1) ; ...
                (ext+1:ext+N*4-1), ext ];
-  elec_nodes= ext+N*4/n_elec*([0:n_elec-1]);
+  point_elec_nodes= (ext):(ext+N*4-1) ;
  
 
 % 'extrude' a 2D model defined by ELEM and NODE into a 3D model
