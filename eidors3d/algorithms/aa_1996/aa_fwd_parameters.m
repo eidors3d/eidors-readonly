@@ -2,18 +2,18 @@ function param = aa_fwd_parameters( fwd_model )
 % AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Andy Adler's EIT code
-%   param.n_elem   => number of elements
-%   param.n_elec   => number of electrodes
-%   param.n_node   => number of nodes (vertices)
-%   param.n_stim   => number of current stimulation patterns
-%   param.n_dims   => dimentions (2= 2D, 3=3D)
-%   param.n_meas   => number of measurements (total)
-%   param.NODE     => vertex matrix
-%   param.ELEM     => connection matrix
-%   param.QQ       => Current into each NODE
-%   param.VOLUME   => Volume (or area) of each element
-%   param.normalize=> are difference measurements normalized
-% $Id: aa_fwd_parameters.m,v 1.10 2005-09-13 01:50:27 aadler Exp $
+%   param.n_elem     => number of elements
+%   param.n_elec     => number of electrodes
+%   param.n_node     => number of nodes (vertices)
+%   param.n_stim     => number of current stimulation patterns
+%   param.n_dims     => dimentions (2= 2D, 3=3D)
+%   param.n_meas     => number of measurements (total)
+%   param.NODE       => vertex matrix
+%   param.ELEM       => connection matrix
+%   param.QQ         => Current into each NODE
+%   param.VOLUME     => Volume (or area) of each element
+%   param.normalize  => difference measurements normalized?
+% $Id: aa_fwd_parameters.m,v 1.11 2005-09-14 22:15:12 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
