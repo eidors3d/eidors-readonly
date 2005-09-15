@@ -15,7 +15,7 @@ function data_prior = calc_data_prior( inv_model )
 %  contain a data prior term. For these algorithms, this function
 %  generates a reasonable approximation based on uniform noise.
 %
-% $Id: calc_data_prior.m,v 1.5 2005-09-12 23:16:00 aadler Exp $
+% $Id: calc_data_prior.m,v 1.6 2005-09-15 04:53:04 aadler Exp $
 
 data_prior = eidors_obj('get-cache', inv_model, 'data_prior');
 
@@ -66,7 +66,7 @@ function n_meas = calc_n_meas( fwd_model )
 
    n_meas = 0;
    for i= 1:length(fwd_model.stimulation );
-       n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,2);
+       n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,1);
    end
 
 % create homogeneous image + simulate data
