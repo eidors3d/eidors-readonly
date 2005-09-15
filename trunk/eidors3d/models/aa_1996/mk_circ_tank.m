@@ -61,7 +61,7 @@ else  %3D
       half_lev = ceil( length(levels)/2 );
       elec_nodes= point_elec_nodes( half_lev, idx );
    else
-      elec_nodes= electrode_pattern( point_elec_nodes, e_planes );
+      elec_nodes= electrode_pattern( point_elec_nodes, elec_spec );
    end
 
 end
@@ -76,6 +76,43 @@ param.electrode =  mk_electrodes( elec_nodes );
 
 return;
 
+% parse the elec_spec parameter
+% elec_spec = { 'planes', n_elecs, elec_planes }
+%      - puts plane each of n_elecs at planes specified by elec_planes
+% eg. elec_spec  =  {'planes', 16, [2,6,8]}
+%
+% elec_spec = { 'zigzag', n_elecs, elec_planes }
+%      - puts plane of n_elecs 'zigzagged' electrodes onto planes specified
+%        1st elec on plane 2, 2nd elec on plane 6, 3rd on plane 2, etc 
+% eg. elec_spec  =  {'zigzag', 16, [2,6]}
+function elec_nodes= electrode_pattern( point_elec_nodes, elec_spec )
+   elec_nodes= [];
+   lpe = size(point_elec_nodes,2);
+   nlev= size(point_elec_nodes,1);
+   for i=1:3:length(elec_spec)-2
+      spec = elec_spec{i};
+      if      strcmp( spec,'planes' )
+          n_elec= elec_spec{i+1};
+          levs =  elec_spec{i+2};
+
+          eidx= (0:n_elec-1);
+          idx= round(eidx*lpe/n_elec) + 1;
+          nodes= point_elec_nodes( levs, idx )';
+          elec_nodes= [ elec_nodes; nodes(:) ];
+      elseif  strcmp( spec,'zigzag' )
+          n_elec= elec_spec{i+1};
+          levs =  elec_spec{i+2};
+
+          eidx= (0:n_elec-1);
+          idx= round(eidx*lpe/n_elec)*nlev + ...
+               levs( rem( eidx, length(levs))+1);
+          nodes= point_elec_nodes( idx );
+          elec_nodes= [ elec_nodes; nodes(:) ];
+
+      else
+        error('elec_spec parameter not understood');
+      end
+   end
 
 % Create a simple 2D regular mesh, based on N circular rings
 %   and n_elec electrodes
