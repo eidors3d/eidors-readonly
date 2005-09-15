@@ -123,6 +123,8 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
        meas(:,elim) = [];
    end
 
+   meas= meas';
+
 
 function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
 

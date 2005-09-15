@@ -13,7 +13,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.QQ         => Current into each NODE
 %   param.VOLUME     => Volume (or area) of each element
 %   param.normalize  => difference measurements normalized?
-% $Id: aa_fwd_parameters.m,v 1.11 2005-09-14 22:15:12 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.12 2005-09-15 04:11:50 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -51,7 +51,7 @@ n_meas= 0; % sum total number of measurements
 pp.QQ= sparse(n,p);
 for i=1:p
     pp.QQ(:,i) = N2E'* fwd_model.stimulation(i).stim_pattern;
-    n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,2);
+    n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,1);
 end
 
 % calculate element volume
