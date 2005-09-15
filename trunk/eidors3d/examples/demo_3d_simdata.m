@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.2 2005-09-14 22:15:12 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.3 2005-09-15 03:53:58 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -11,8 +11,10 @@ eidors_msg('log_level',1); % 2 for most messages
 n_elec= 16;
 n_rings= 1;
 levels= [-.5:.1:.5];
-e_planes = ceil( length(levels)/2 );
-params= mk_circ_tank(12, levels, n_elec, e_planes); 
+% params= mk_circ_tank(12, levels, n_elec );
+  params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [4,8] } );
+% params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [3,5,7] , ...
+%                                    'planes', n_elec, 2} );
 
 %options = {'no_meas_current','rotate_meas'};
  options = {'no_meas_current','no_rotate_meas'};
@@ -40,9 +42,23 @@ inh_img= eidors_obj('image', 'homogeneous image', ...
 inh_data=fwd_solve( inh_img);
 
 % 
-% Step 2: Create different model for reconstruction
+% Step 2: Reconstruction in 3D (using np_2003 code)
 % 
-params= mk_circ_tank(8, [], n_elec, n_rings); 
+inv3d.name=  'EIT inverse: 3D';
+inv3d.solve= 'np_inv_solve';
+inv3d.hyperparameter.value = 1e-2;
+inv3d.image_prior.func= 'tikhonov_image_prior';
+inv3d.reconst_type= 'difference';
+inv3d.fwd_model= mdl_3d;
+inv3d= eidors_obj('inv_model', inv3d);
+
+img= inv_solve( inv3d, inh_data, homg_data);
+show_fem(img);
+
+% 
+% Step 3: Reconstruction in 2D
+% 
+params= mk_circ_tank(8, [], n_elec);
 
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
@@ -56,7 +72,7 @@ inv2d.solve=       'aa_inv_solve';
 %inv2d.hyperparameter.func = 'aa_calc_noise_figure';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;
- inv2d.hyperparameter.value = 1e-8;
+ inv2d.hyperparameter.value = 1e-2;
  inv2d.image_prior.func= 'tikhonov_image_prior';
 %inv2d.image_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
