@@ -8,7 +8,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 % img = image background for jacobian calc
-% $Id: aa_calc_jacobian.m,v 1.5 2005-09-13 01:50:27 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.6 2005-09-15 04:11:50 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -50,8 +50,8 @@ J = zeros( pp.n_meas, e );
 idx=0;
 for j= 1:pp.n_stim
    meas_pat= fwd_model.stimulation(j).meas_pattern;
-   n_meas  = size(meas_pat,2);
-   J( idx+(1:n_meas),: ) = meas_pat'*DE(:,j,:);
+   n_meas  = size(meas_pat,1);
+   J( idx+(1:n_meas),: ) = meas_pat*DE(:,j,:);
    idx= idx+ n_meas;
 end
 
