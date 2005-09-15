@@ -1,0 +1,245 @@
+<HTML><BODY>
+<html>
+   <head>
+<title>EIDORS-3D</title>
+   <style type="text/css">
+        body, td, th {
+        font-family: Verdana, Helvetica, Arial, sans-serif;
+        font-size:80%;
+        }
+        pre, tt {
+        font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
+        font-size:100%;
+        }
+   </style>
+
+</head>
+
+<body link="#800000"
+      marginwidth=5 marginheight=5 topmargin=5 leftmargin=5 
+      vlink="#400000" >
+<table border="0" cellspacing="0" cellpadding="0"><tr><td>
+<img alt="Eidors-logo" src="../eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+</td><td>
+<h2>
+    EIDORS-3D:
+    <small><i>Electrical Impedance Tomography and
+    Diffuse Optical Tomography Reconstruction Software</i></small>
+</h2>
+</td></tr></table>
+<table border="0"> <tr>
+<td valign="top">
+<a href="http:/www.eidors.org/" >EIDORS</a><br>
+<a href="../index.html" >Main</a><br>
+<a href="../docs.html" >Documentation</a><br>
+<a href="../screenshot.html" >Screenshots</a><br>
+<a href="http:/sourceforge.net/projects/eidors3d/"
+   >Download</a><br>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/"
+   >Browse CVS</a><br>
+<hr>
+<a href="../news.html">News</a><br>
+<a href="../faq.html">FAQ</a><br>
+<a href="../programming.html">Developer</a><br>
+<a href="../programming/examples.html" >&minus; Examples</a><br>
+<a href="../programming/structure.html">&minus; Structure</a><br>
+<a href="../programming/objects.html"  >&minus; Objects</a><br>
+<a href="../programming/caching.html"  >&minus; Caching</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td><td>&nbsp;</td><td valign="top">
+
+<h2>EIDORS-3D: Programming / Structure</h2>
+
+The EIDORS project is organized according to the
+following structure:
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/eidors3d/eidors3d">
+htdocs
+</a>
+<br><i>Comment:</i> Documentation for
+         <a href="http://eidors3d.sf.net">Home page</a>
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/eidors3d/eidors3d">
+eidors3d
+</a>
+<br><i>Comment:</i>
+Project software directory
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms">
+algorithms
+</a>
+<br><i>Comment:</i>
+Image reconstruction algoriths
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/aa_1996">
+algorithms/aa_1996
+</a>
+<br><i>Comment:</i>
+Algorithms from paper:<br>
+A. Adler, R. Guardo
+"Electrical Impedance Tomography: Regularised Imaging and Contrast Detection",
+IEEE Trans. Medical Imaging, <b>15</b>:170-179, 1996. 
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/mv_2001">
+algorithms/mv_2001
+</a>
+<br><i>Comment:</i>
+Algorithms from paper:<br>
+M. Vauhkonen, W.R.B. Lionheart, L.M. Heikkinen, P.J. Vauhkonen, and
+J.P. Kaipio, "A MATLAB package for the EIDORS project to reconstruct
+two-dimensional EIT images", <i>Physiol Meas</i>, <b>22</b> 107-111, 2001.
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/np_2003">
+algorithms/np_2003
+</a>
+<br><i>Comment:</i>
+Algorithms from paper:<br>
+Nick Polydorides and William R B Lionheart,
+"A Matlab toolkit for three-dimensional electrical impedance
+tomography: a contribution to the Electrical Impedance and
+Diffuse Optical Reconstruction Software project",
+<i>Meas. Sci. Technol.</i> <b>13</b>:12 (December 2002) 1871-1883
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/aa_2005">
+algorithms/aa_2005
+</a>
+<br><i>Comment:</i>
+New code written by <a href="http://www.site.uottawa.ca/~adler"
+                       >Andy Adler</a> 
+while developing EIDORS
+
+</ul>
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/examples">
+examples
+</a>
+<br><i>Comment:</i>
+Example and demo software
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/graphics_matlab">
+graphics_matlab
+</a>
+<br><i>Comment:</i>
+Display graphics in Matlab
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/graphics_vtk">
+graphics_vtk
+</a>
+<br><i>Comment:</i>
+Display graphics for VTK tool
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/meshing">
+meshing
+</a>
+<br><i>Comment:</i>
+Code to interface with FEM meshing algorithms
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/meshing/netgen">
+meshing/netgen
+</a>
+<br><i>Comment:</i>
+Code to interface with Netgen FEM meshing algorithms
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/meshing/netgen/ElectrodeInfo">
+meshing/netgen/ElectrodeInfo
+</a>
+<br><i>Comment:</i>
+</ul>
+</ul>
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/models">
+models
+</a>
+<br><i>Comment:</i>
+Code to build FEM models (either via software or preloaded)
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/models/aa_1996">
+models/aa_1996
+</a>
+<br><i>Comment:</i>
+Models from paper:<br>
+A. Adler, R. Guardo
+"Electrical Impedance Tomography: Regularised Imaging and Contrast Detection",
+IEEE Trans. Medical Imaging, <b>15</b>:170-179, 1996. 
+
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/models/mv_2001">
+models/mv_2001
+</a>
+<br><i>Comment:</i>
+Models from paper:<br>
+M. Vauhkonen, W.R.B. Lionheart, L.M. Heikkinen, P.J. Vauhkonen, and
+J.P. Kaipio, "A MATLAB package for the EIDORS project to reconstruct
+two-dimensional EIT images", <i>Physiol Meas</i>, <b>22</b> 107-111, 2001.
+</ul>
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/sample_data">
+sample_data
+</a>
+<br><i>Comment:</i>
+Contributed simulation and measured sample data
+</ul>
+
+<ul>
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/tests">
+tests
+</a>
+<br><i>Comment:</i>
+Tests to validate code correctness
+</ul>
+</ul>
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2005-09-15 20:06:21 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->
