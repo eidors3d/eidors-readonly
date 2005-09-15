@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.3 2005-09-15 03:53:58 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.4 2005-09-15 04:22:20 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -49,10 +49,11 @@ inv3d.solve= 'np_inv_solve';
 inv3d.hyperparameter.value = 1e-2;
 inv3d.image_prior.func= 'tikhonov_image_prior';
 inv3d.reconst_type= 'difference';
+mdl_3d.misc.sym= '{n}';
 inv3d.fwd_model= mdl_3d;
 inv3d= eidors_obj('inv_model', inv3d);
 
-img= inv_solve( inv3d, inh_data, homg_data);
+img3= inv_solve( inv3d, inh_data, homg_data);
 show_fem(img);
 
 % 
@@ -79,6 +80,6 @@ inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
 inv2d= eidors_obj('inv_model', inv2d);
 
-img= inv_solve( inv2d, inh_data, homg_data);
+img2= inv_solve( inv2d, inh_data, homg_data);
 show_fem(img);
 
