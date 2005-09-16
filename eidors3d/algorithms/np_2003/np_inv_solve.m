@@ -6,7 +6,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.15 2005-09-15 04:03:55 aadler Exp $
+% $Id: np_inv_solve.m,v 1.16 2005-09-16 03:36:50 aadler Exp $
 
 % The one_step reconstruction matrix is cached
 one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');
@@ -22,7 +22,7 @@ else
                          'elem_data', ones( p.n_elem ,1), ...
                          'fwd_model', fwd_model );
 
-    J = calc_jacobian( fwd_model, homg_img);
+    J = calc_jacobian( fwd_model, homg_img, 'cache:np_calc_jacobian_homgimg');
 
     Reg = calc_image_prior( inv_model );
     tfac= calc_hyperparameter( inv_model );

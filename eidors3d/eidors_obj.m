@@ -53,14 +53,8 @@ function obj_id= eidors_obj(type,name, varargin );
 %    example: % get jacobian or '[]' if not set
 %             J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
 %
-%
-% USAGE: to log status messages
-%     obj  = eidors_obj('msg', message, loglevel )
-%
-% this will get or set the values of cached properties of the object.
-%
 
-% $Id: eidors_obj.m,v 1.22 2005-09-16 03:25:54 aadler Exp $
+% $Id: eidors_obj.m,v 1.23 2005-09-16 03:36:50 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -138,17 +132,18 @@ function obj = set_obj( obj, varargin );
       eval(sprintf('eidors_objects.%s=obj;',obj_id));
    end
 
-function val= calc_or_cache( obj, funcname, dep_obj1 )
-   val = get_cache_obj( obj, funcname, dep_obj1 );
+function val= calc_or_cache( obj, funcname, varargin )
+   val = get_cache_obj( obj, funcname, varargin{:} );
    if ~isempty( val );
       eidors_msg([funcname, ': using cached value'], 2);
    else
-      val = feval( funcname, obj, dep_obj1);
-      set_cache_obj( obj, funcname, val, dep_obj1 );
+      val = feval( funcname, obj, varargin{:} );
+      set_cache_obj( obj, funcname, val, varargin{:} );
       eidors_msg([funcname, ': setting cached value'], 2);
    end
 
-function val= get_cache_obj( obj, prop, dep_obj1 );
+% val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachefile );
+function val= get_cache_obj( obj, prop, varargin );
    global eidors_objects
    val= [];
 
@@ -158,14 +153,25 @@ function val= get_cache_obj( obj, prop, dep_obj1 );
       return; % Can't cache onto non-existant objects
    end
 
-   if nargin==3
-      try
-          prop= [prop,'_', dep_obj1.id];
-      catch
-          prop= [prop,'_', calc_obj_id(dep_obj1)];
+   % loop through extra args and fill to prop or cachefile
+   cachefile= '';
+   if nargin>=3
+      for dep_obj = varargin{:}
+          if isstr(dep_obj)
+              cachefile= dep_obj;
+          else
+              try
+                  prop= [prop,'_', dep_obj.id];
+              catch
+                  prop= [prop,'_', calc_obj_id(dep_obj)];
+              end
+          end
       end
    end
 
+% if cachefile is specified, then cache to that file, rather
+%  than to the standard eidors_objects location
+% TODO: fixthis
    try
 %     val= eidors_objects.( obj_id ).cache.( prop );
       val = eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
