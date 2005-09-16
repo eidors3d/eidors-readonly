@@ -60,7 +60,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.21 2005-09-16 03:17:46 aadler Exp $
+% $Id: eidors_obj.m,v 1.22 2005-09-16 03:25:54 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -225,32 +225,36 @@ function obj_id= calc_obj_id( var )
        test_for_hashtypes;
    end
 
-% the obj_id does not depend on the cache or id
-   try; var = rmfield(var,'cache'); end
-   try; var = rmfield(var,'id');    end
-
-   tmpnam= [tempname ,'.mat'];
-
-% This is another awful example of matlab's
-% versionitis. Why can't they stay compatible?
-   if version(1)>='7' 
-       save(tmpnam,'var','-v6');
-   elseif exist('OCTAVE_VERSION')
-       save(tmpnam,'-mat','var');
-   else
-       save(tmpnam,'var');
-   end
- 
    if eidors_objects.hash_type==1; 
+       % the obj_id does not depend on the cache or id
+       try; var = rmfield(var,'cache'); end
+       try; var = rmfield(var,'id');    end
+
+       tmpnam= [tempname ,'.mat'];
+
+       % This is another awful example of matlab's
+       % versionitis. Why can't they stay compatible?
+       if version(1)>='7' 
+           save(tmpnam,'var','-v6');
+       elseif exist('OCTAVE_VERSION')
+           save(tmpnam,'-mat','var');
+       else
+           save(tmpnam,'var');
+       end
+ 
        obj_id= matrix_id(tmpnam);
+       delete(tmpnam);
    elseif eidors_objects.hash_type > 1e6
 %if hashing code is unavailable, then disable caching function
-       obj_id= sprintf('id_%040d', eidors_objects.hash_type );
-       eidors_objects.hash_type= eidors_objects.hash_type + 1;
+       if isfield(var,'id')
+          obj_id= var.id;
+       else
+           obj_id= sprintf('id_%08d', eidors_objects.hash_type );
+           eidors_objects.hash_type= eidors_objects.hash_type + 1;
+       end
    else
        error('hash_type value unrecognized');
    end
-   delete(tmpnam);
 %  fprintf('creating [%s] object %s\n',var.type,obj_id);
 
 % Since we use a dynamically loaded function to test
@@ -269,6 +273,6 @@ function test_for_hashtypes
    if exist('matrix_id')==3 % MEX-file on MATLAB's search path
       eidors_objects.hash_type = 1;
    else
-      eidors_objects.hash_type= 1e6+1; 
+      eidors_objects.hash_type= 1e8+1; 
    end
 
