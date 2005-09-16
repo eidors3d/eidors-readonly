@@ -1,15 +1,17 @@
-function jacobian = calc_jacobian( fwd_model, img)
+function jacobian = calc_jacobian( fwd_model, img, cachename)
 % CALC_JACOBIAN: calculate jacobian from a fwd_model object and an image
 % 
-%    jacobian= calc_jacobian( fwd_model, img)
+%    jacobian= calc_jacobian( fwd_model, img, cachename)
 %
-% it will call the fwd_model.solve
 %
 % jacobian  is a jacobian matrix
+%      returned by the function fwd_model.solve
+%
 % fwd_model is a fwd_model structure
 % img       is an image structure
+% cachename is an explicit file to cache to 'cache:text' [OPTIONAL]
 %
-% $Id: calc_jacobian.m,v 1.6 2005-09-16 03:17:46 aadler Exp $
+% $Id: calc_jacobian.m,v 1.7 2005-09-16 03:36:50 aadler Exp $
 
 if nargin==1
    img= fwd_model;
