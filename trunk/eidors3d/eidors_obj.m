@@ -27,9 +27,14 @@ function obj_id= eidors_obj(type,name, varargin );
 %    example:
 %             eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
 %
+% USAGE: to cache as required
+%     obj= eidors_obj('calc-or-cache', obj, funcname, dep_objs ...
+%      
+% return obj from cache, or calculate it and store in the cache  
+%
 % USAGE: to cache values
-%          eidors_obj('set-cache',obj, cacheprop1,value1, dep_objs, ...)
-%     obj= eidors_obj('get-cache',obj, cacheprop1, dep_objs, ...)
+%          eidors_obj('set-cache',obj, cachename,value1, dep_objs, ...)
+%     obj= eidors_obj('get-cache',obj, cachename, dep_objs, ...)
 %
 % this will get or set the values of cached properties of the object.
 %
@@ -55,7 +60,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 
-% $Id: eidors_obj.m,v 1.20 2005-09-16 02:59:31 aadler Exp $
+% $Id: eidors_obj.m,v 1.21 2005-09-16 03:17:46 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -88,6 +93,9 @@ elseif nargin>1
    elseif strcmp( type, 'set-cache')
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
+   elseif strcmp( type, 'calc-or-cache')
+      val = calc_or_cache(name, varargin{:} );
+      obj_id= val;
    else
       obj_id= new_obj( type, name, varargin{:} );
    end
@@ -128,6 +136,16 @@ function obj = set_obj( obj, varargin );
 % set the obj_id into the obj after calculating the hash value
    if ~isfield(eidors_objects,obj_id)
       eval(sprintf('eidors_objects.%s=obj;',obj_id));
+   end
+
+function val= calc_or_cache( obj, funcname, dep_obj1 )
+   val = get_cache_obj( obj, funcname, dep_obj1 );
+   if ~isempty( val );
+      eidors_msg([funcname, ': using cached value'], 2);
+   else
+      val = feval( funcname, obj, dep_obj1);
+      set_cache_obj( obj, funcname, val, dep_obj1 );
+      eidors_msg([funcname, ': setting cached value'], 2);
    end
 
 function val= get_cache_obj( obj, prop, dep_obj1 );
