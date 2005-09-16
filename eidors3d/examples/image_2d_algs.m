@@ -1,7 +1,7 @@
 % Based on the 'bubble' data from Eidors2D, use several 
 % different algorithms to image it
 %
-% $Id: image_2d_algs.m,v 1.2 2005-09-14 22:15:12 aadler Exp $
+% $Id: image_2d_algs.m,v 1.3 2005-09-16 02:59:31 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -14,7 +14,7 @@ n_elec= 16;
 n_rings= 1;
  options = {'no_meas_current','no_rotate_meas'};
 
-params= mk_circ_tank(8, [], n_elec, n_rings); 
+params= mk_circ_tank(8, [], n_elec); 
 
 [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
 params.stimulation= st;
@@ -29,7 +29,8 @@ mdl_2d   = eidors_obj('fwd_model', params);
 % Step 3: Create inverse model
 % 
 inv2d.name= 'AA mdl with excluded measurements';
-inv2d.solve=       'aa_inv_solve';
+%inv2d.solve=       'aa_inv_solve';
+inv2d.solve=       'aa_inv_conj_grad';
  inv2d.hyperparameter.value = 1e+2;
 %   inv2d.hyperparameter.func = 'aa_calc_noise_figure';
 %   inv2d.hyperparameter.noise_figure= 1;
