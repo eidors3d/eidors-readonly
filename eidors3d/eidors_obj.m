@@ -8,8 +8,8 @@ function obj_id= eidors_obj(type,name, varargin );
 %     prop1, value1, etc: properites and values for object
 %
 %    example: fwd_mdl = ...
-%             eidors_obj('fwd_model','My FWD MODEL', ...
-%                        'nodes', NODES, 'elems', ELEMS, ...
+%        eidors_obj('fwd_model','My FWD MODEL', ...
+%                    'nodes', NODES, 'elems', ELEMS, ...
 %
 % OR construct from structure
 %     obj  = eidors_obj(type,obj);
@@ -25,7 +25,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % depend on older properties of the model)
 %   
 %    example:
-%             eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
+%        eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
 %
 % USAGE: to cache as required
 %     obj= eidors_obj('calc-or-cache', obj, funcname, dep_objs ...
@@ -39,22 +39,35 @@ function obj_id= eidors_obj(type,name, varargin );
 % this will get or set the values of cached properties of the object.
 %
 %    example: % set jacobian
-%             eidors_obj('set-cache',fwd_mdl, 'jacobian', J):
+%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J):
 %
 %    example: % get jacobian or '[]' if not set
-%             J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):
+%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):
 %
 % However, in some cases, such as the Jacobian, the value depends
 % on other objects, such as the image background. In this case, use
 %
 %    example: % set jacobian
-%             eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):
+%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):
 %
 %    example: % get jacobian or '[]' if not set
-%             J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
+%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
 %
+% In many cases, data can be labelled, and explicitly cached to a file:
+% To specify the file, use the last parameter of a 'get-cache',
+%   'set-cache' or 'calc-or-cache' command
+%
+%     example: % set jacobian for homg_img
+%        eidors_obj('set-cache',fwd_mdl,'jacobian',J, h_img,'homg'): 
+%        J= eidors_obj('get-cache',fwd_mdl,'jacobian',h_img,'homg'):
+%
+%     this will save to 'cachedir/homg.mat' where cachedir is
+%        eidors_object.cachedir. Typically, a subdirectory is 
+%        created for each algorithm's data
+%
+% 
 
-% $Id: eidors_obj.m,v 1.23 2005-09-16 03:36:50 aadler Exp $
+% $Id: eidors_obj.m,v 1.24 2005-10-10 03:12:55 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -133,19 +146,23 @@ function obj = set_obj( obj, varargin );
    end
 
 function val= calc_or_cache( obj, funcname, varargin )
+
    val = get_cache_obj( obj, funcname, varargin{:} );
    if ~isempty( val );
       eidors_msg([funcname, ': using cached value'], 2);
    else
-      val = feval( funcname, obj, varargin{:} );
+      [objlist, cachename]= proc_obj_list( varargin{:} );
+      val = feval( funcname, obj, objlist{:} );
       set_cache_obj( obj, funcname, val, varargin{:} );
       eidors_msg([funcname, ': setting cached value'], 2);
    end
 
-% val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachefile );
-function val= get_cache_obj( obj, prop, varargin );
+% val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
+function value= get_cache_obj( obj, prop, varargin );
    global eidors_objects
-   val= [];
+   value= [];
+
+   [objlist, cachename]= proc_obj_list( varargin{:} );
 
    try
       obj_id= obj.id;
@@ -153,50 +170,62 @@ function val= get_cache_obj( obj, prop, varargin );
       return; % Can't cache onto non-existant objects
    end
 
-   % loop through extra args and fill to prop or cachefile
-   cachefile= '';
-   if nargin>=3
-      for dep_obj = varargin{:}
-          if isstr(dep_obj)
-              cachefile= dep_obj;
-          else
-              try
-                  prop= [prop,'_', dep_obj.id];
-              catch
-                  prop= [prop,'_', calc_obj_id(dep_obj)];
-              end
+   % loop through extra args and fill to prop or cachename
+   if nargin>=3 & isempty(cachename)
+      for dep_obj = objlist{:}
+          try
+              prop= [prop,'_', dep_obj.id];
+          catch
+              prop= [prop,'_', calc_obj_id(dep_obj)];
+          end
+          
+      end
+   end
+
+% if cachename is specified, then cache to that file, rather
+%  than to the standard eidors_objects location
+% TODO: fixthis - use ( ) for matlab > 6.0
+   if ~isempty( cachename )
+      test_for_cachdir;
+      filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
+      if exist( filename, 'file')
+         load(filename); %variable 'value' should be there
+      end
+   else
+      try
+   %     value= eidors_objects.( obj_id ).cache.( prop );
+         value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
+      end
+   end
+
+function set_cache_obj( obj, prop, value, varargin )
+   global eidors_objects
+   [objlist, cachename]= proc_obj_list( varargin{:} );
+
+   try
+      obj_id= obj.id;
+   catch
+      return; % Can't cache onto non-existant objects
+   end
+
+   if nargin>=4 & isempty(cachename)
+      for dep_obj = objlist{:}
+          try
+              prop= [prop,'_', dep_obj.id];
+          catch
+              prop= [prop,'_', calc_obj_id(dep_obj)];
           end
       end
    end
 
-% if cachefile is specified, then cache to that file, rather
-%  than to the standard eidors_objects location
-% TODO: fixthis
-   try
-%     val= eidors_objects.( obj_id ).cache.( prop );
-      val = eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
+   if isempty(cachename)
+   %  eidors_objects.( obj_id ).cache.( prop ) = value;
+      eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
+   else
+      filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
+      save(filename, 'value');
+keyboard
    end
-
-function set_cache_obj( obj, prop, value, dep_obj1 );
-   global eidors_objects
-
-   try
-      obj_id= obj.id;
-   catch
-      return; % Can't cache onto non-existant objects
-   end
-
-   if nargin==4
-      try
-          prop= [prop,'_', dep_obj1.id];
-      catch
-          prop= [prop,'_', calc_obj_id(dep_obj1)];
-      end
-   end
-
-
-%  eidors_objects.( obj_id ).cache.( prop ) = value;
-   eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
@@ -282,3 +311,32 @@ function test_for_hashtypes
       eidors_objects.hash_type= 1e8+1; 
    end
 
+% Test whether the cachedir field has been set. This is
+%  where eidors will store cached calculations. If it has
+%  not been set, then create it as 'eidors_cache' in the
+%  current directory
+function test_for_cachdir
+   global eidors_objects; 
+   if ~isfield(eidors_objects, 'cachedir')
+      eidors_objects.cachedir= [pwd,'/eidors_cache'];
+
+% Now we need to ensure that cachedir exists. Because the
+% STUPID!!! matlab has a completely useless and nonstandard
+% mkdir function, we shell out to the OS to do this for us.
+% Luckly, most OSes provide a fairly reasonable mkdir function
+      system(['mkdir ''',eidors_objects.cachedir,'']);
+   end
+
+% Test whether a cachedir function has been provided
+% (by testing whether the last entry is a string). If so,
+% return it in objlist, otherwise return []
+function [objlist, cachedir]= proc_obj_list( varargin );
+   cachedir= [];
+   if nargin==0
+      objlist= {};
+   elseif isstr(varargin{nargin})
+      cachedir= varargin{nargin};
+      objlist = varargin(1:nargin-1);
+   else
+      objlist = varargin(:);
+   end
