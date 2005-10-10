@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.5 2005-10-10 18:43:52 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.6 2005-10-10 18:50:51 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -48,6 +48,11 @@ hash_final( hash_context * c, unsigned long[HW] );
 //   4. Empty -> Ignore (Assume not relevant) 
 //   5. Cell -> recursively call for each element
 //   6. Struct -> recursively call ( In SORTED order )
+//
+// NOTE: this function does not hash the array size and
+//    orientation. That means that a vectorized version of
+//    the same array will have the same ID
+
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
 #define TESTDBL(vv) if( !mxIsDouble(vv) ) { \
@@ -55,7 +60,6 @@ hash_final( hash_context * c, unsigned long[HW] );
 #define VERBOSE 
 
 void recurse_hash( hash_context *c, mxArray *var ) {
-  double *pr,*pi;
 
   if ( var == NULL ) {
     #ifdef VERBOSE
@@ -65,6 +69,7 @@ void recurse_hash( hash_context *c, mxArray *var ) {
   if ( mxIsSparse(var) ) {
     // sparse variable. We need to hash the numeric data,
     // as well as the row and col index pointers
+    double *pr,*pi;
     int *irs, *jcs, nnz, cols; 
     TESTDBL( var );
     pr  = mxGetPr( var );
@@ -83,6 +88,7 @@ void recurse_hash( hash_context *c, mxArray *var ) {
   } else
   if ( mxIsNumeric(var) ) {
     // full numeric variable. We need to hash the numeric data.
+    double *pr,*pi;
     int len= sDBL * mxGetNumberOfElements( var );
     TESTDBL( var );
     pr = mxGetPr( var );
@@ -145,20 +151,28 @@ void recurse_hash( hash_context *c, mxArray *var ) {
 
 }
 
+// Calculate a variable_id, which represents the
+// content. This can be used to test whether a 
+// particular calculation has been done before.
+//
+// usage: eidors_var_id( var1, var2)
+// output: id_87AB ... [40 hex digits]
 void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   hash_context c;
   unsigned long digest[5];
 
-  if (nrhs != 1)  {
-    mexErrMsgTxt("One input required.");
-    return;
+  if ( !nrhs )  {
+    mexErrMsgTxt("eidors_var_id: requires at least one input");
   }
 
   hash_initial( &c);
 
-  recurse_hash( &c, prhs[0] );
+  { int i;
+    for( i=0; i< nrhs; i++ ) 
+      recurse_hash( &c, prhs[i] );
+  }
 
   hash_final( &c, digest);
 
