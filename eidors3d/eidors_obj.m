@@ -52,7 +52,9 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 %    example: % get jacobian or '[]' if not set
 %        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
-%
+ 
+
+% OLD FUNCTION - Is this still needed
 % In many cases, data can be labelled, and explicitly cached to a file:
 % To specify the file, use the last parameter of a 'get-cache',
 %   'set-cache' or 'calc-or-cache' command
@@ -67,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.27 2005-10-10 19:23:55 aadler Exp $
+% $Id: eidors_obj.m,v 1.28 2005-10-10 19:34:23 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
