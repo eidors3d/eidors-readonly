@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.2 2005-10-10 14:24:19 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.3 2005-10-10 14:34:38 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -87,6 +87,10 @@ void recurse_hash( hash_context *c, mxArray *var ) {
   } else
   if ( mxIsChar(var) ) {
     #ifdef VERBOSE
+       char * str= mxArrayToString( var ); 
+       mexWarnMsgTxt("eidors_var_id: ignoring string:");
+       mexWarnMsgTxt(str);
+       mxFree( str );
     #endif
   } else
   {
