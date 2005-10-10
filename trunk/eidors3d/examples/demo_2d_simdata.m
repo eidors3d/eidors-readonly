@@ -1,7 +1,7 @@
 % Example of using EIDORS to simulate 2D data and to
 % solve it using various 2D solvers
 %
-% $Id: demo_2d_simdata.m,v 1.1 2005-09-13 12:23:03 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.2 2005-10-10 01:50:22 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -14,7 +14,7 @@ n_elec= 16;
 n_rings= 1;
 %options = {'no_meas_current','rotate_meas'};
  options = {'no_meas_current','no_rotate_meas'};
-params= mk_circ_tank(12, [], n_elec, n_rings); 
+params= mk_circ_tank(12, [], n_elec ); 
 
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
@@ -40,7 +40,7 @@ inh_data=fwd_solve( inh_img);
 % 
 % Step 2: Create different model for reconstruction
 % 
-params= mk_circ_tank(8, [], n_elec, n_rings); 
+params= mk_circ_tank(8, [], n_elec ); 
 
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
