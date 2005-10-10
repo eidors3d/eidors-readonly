@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.3 2005-10-10 14:34:38 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.4 2005-10-10 14:59:25 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -57,7 +57,14 @@ hash_final( hash_context * c, unsigned long[HW] );
 void recurse_hash( hash_context *c, mxArray *var ) {
   double *pr,*pi;
 
+  if ( var == NULL ) {
+    #ifdef VERBOSE
+       mexPrintf("ignoring element ( NULL ):");
+    #endif
+  } else
   if ( mxIsSparse(var) ) {
+    // sparse variable. We need to hash the numeric data,
+    // as well as the row and col index pointers
     int *irs, *jcs, nnz, cols; 
     TESTDBL( var );
     pr  = mxGetPr( var );
@@ -75,6 +82,7 @@ void recurse_hash( hash_context *c, mxArray *var ) {
     }
   } else
   if ( mxIsNumeric(var) ) {
+    // full numeric variable. We need to hash the numeric data.
     int len= sDBL * mxGetM( var ) * mxGetN( var );
     TESTDBL( var );
     pr = mxGetPr( var );
@@ -86,14 +94,42 @@ void recurse_hash( hash_context *c, mxArray *var ) {
     }
   } else
   if ( mxIsChar(var) ) {
+    // string variable. Ignore
     #ifdef VERBOSE
        char * str= mxArrayToString( var ); 
-       mexWarnMsgTxt("eidors_var_id: ignoring string:");
-       mexWarnMsgTxt(str);
+       mexPrintf("ignoring string( %s ):", str);
        mxFree( str );
     #endif
   } else
+  if ( mxIsCell(var) ) {
+    // cell variable. Iterate through elements and recurse
+  } else
+  if ( mxIsStruct(var) ) {
+    int i,j;
+    for (i= 0;
+         i< mxGetNumberOfFields( var );
+         i++) {
+      #ifdef VERBOSE
+        mexPrintf("processing field ( %s ):", mxGetFieldNameByNumber(var, i));
+      #endif
+      for (j= 0;
+           j< mxGetNumberOfElements( var );
+           j++) {
+        mxArray * fd = mxGetFieldByNumber( var, j, i );
+        if (fd == NULL ) {
+          mexPrintf("empty field(%s,%d):",
+                    mxGetFieldNameByNumber(var,i), j+1);
+        } else {
+          recurse_hash(c, fd);
+        }
+      }
+    }
+
+  } else
   {
+    #ifdef VERBOSE
+      mexPrintf("ignoring var of ClassID ( %d ):", mxGetClassID( var ) );
+    #endif
   }
 
 
