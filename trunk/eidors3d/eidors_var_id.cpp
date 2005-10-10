@@ -3,11 +3,22 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.7 2005-10-10 19:12:44 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.8 2005-10-10 19:23:56 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
  * http://www.mathworks.com/access/helpdesk/help/techdoc/matlab_external/f11333.html
+
+ * This code was created to solve the issue that Matlab doesn't save
+ *   variables to disk consistently
+ * OLD TEST CODE:
+   %   for i=1:20; t1=mk_stim_patterns(16, 16, '{ad}','{ad}',{}, 10); save(sprintf('t%02d.mat',i),'t1');end
+   % for i in t*.mat ; do dd if=$i  skip=100 ibs=1 | xxd > $i.xxd ; done
+   % for i in *.xxd ; do sha1sum $i ; done
+   % 6 different saved formats exist.
+ * NEW TEST CODE:
+   %   for i=1:20; t1=mk_stim_patterns(16, 16, '{ad}','{ad}',{}, 10); disp(eidors_var_id(t1)); end
+
  */
 
 #include <stdio.h>
@@ -57,7 +68,7 @@ hash_final( hash_context * c, unsigned long[HW] );
 #define sINT sizeof(int)
 #define TESTDBL(vv) if( !mxIsDouble(vv) ) { \
             mexErrMsgTxt("var must be type double");}
-#define VERBOSE 
+#undef VERBOSE 
 
 void recurse_hash( hash_context *c, mxArray *var ) {
 
