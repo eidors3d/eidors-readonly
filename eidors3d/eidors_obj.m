@@ -67,24 +67,10 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.26 2005-10-10 19:12:44 aadler Exp $
-% TODO: 
-%   1. add code to delete old objects
-%   2. accessors and setters of the form 'prop1.subprop1'
+% $Id: eidors_obj.m,v 1.27 2005-10-10 19:23:55 aadler Exp $
 
-% FIXME: this variable must be global, rather than persistent
-% because the broken Matlab syntax does not allow persistent
-% variables to be passed to subfunctions
-% global eidors_objects
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
-
-% FIXME!!! Bloody Matlab doesn't save its variables consistently
-% Testcode:
-%   for i=1:20; t1=mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}',options, 10); save(sprintf('t%02d.mat',i),'t1');end
-% for i in t*.mat ; do dd if=$i  skip=100 ibs=1 | xxd > $i.xxd ; done
-% for i in *.xxd ; do sha1sum $i ; done
-% 6! different saved formats exist. Damn
 
 if nargin==0 | ~isstr(type)
    error('cannot call eidors_obj with no arguments');
