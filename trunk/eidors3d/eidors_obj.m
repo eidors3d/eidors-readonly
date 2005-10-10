@@ -67,7 +67,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.25 2005-10-10 03:21:20 aadler Exp $
+% $Id: eidors_obj.m,v 1.26 2005-10-10 19:12:44 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -260,24 +260,12 @@ function obj_id= calc_obj_id( var )
    end
 
    if eidors_objects.hash_type==1; 
-       % the obj_id does not depend on the cache or id
+       % the obj_id does not depend on the cache, id or name
        try; var = rmfield(var,'cache'); end
        try; var = rmfield(var,'id');    end
+       try; var = rmfield(var,'name');  end
 
-       tmpnam= [tempname ,'.mat'];
-
-       % This is another awful example of matlab's
-       % versionitis. Why can't they stay compatible?
-       if version(1)>='7' 
-           save(tmpnam,'var','-v6');
-       elseif exist('OCTAVE_VERSION')
-           save(tmpnam,'-mat','var');
-       else
-           save(tmpnam,'var');
-       end
- 
-       obj_id= matrix_id(tmpnam);
-       delete(tmpnam);
+       obj_id= eidors_var_id( var );
    elseif eidors_objects.hash_type > 1e6
 %if hashing code is unavailable, then disable caching function
        if isfield(var,'id')
@@ -296,7 +284,7 @@ function obj_id= calc_obj_id( var )
 %   - The compilers or libraries may not be available
 %
 % We test for:
-%   1. Existance of 'matrix_id' mex file
+%   1. Existance of 'eidors_var_id' mex file
 %   2. Existance of utilities 'sha1sum' to do this
 % 
 % If nothing exists, then the best we can do is to
@@ -304,7 +292,7 @@ function obj_id= calc_obj_id( var )
 % number and increment it each time   
 function test_for_hashtypes
    global eidors_objects; 
-   if exist('matrix_id')==3 % MEX-file on MATLAB's search path
+   if exist('eidors_var_id')==3 % MEX-file on MATLAB's search path
       eidors_objects.hash_type = 1;
    else
       eidors_objects.hash_type= 1e8+1; 
