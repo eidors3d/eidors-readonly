@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.6 2005-10-10 18:50:51 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.7 2005-10-10 19:12:44 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -100,24 +100,21 @@ void recurse_hash( hash_context *c, mxArray *var ) {
     }
   } else
   if ( mxIsChar(var) ) {
-    // string variable. Ignore
-    #ifdef VERBOSE
-       char * str= mxArrayToString( var ); 
-       mexPrintf("ignoring string( %s ):", str);
-       mxFree( str );
-    #endif
+    // string variable. Each char is packed into 2 bytes
+    double * pr = mxGetPr( var );
+    hash_process( c, pr, 2*mxGetNumberOfElements( var ) );
   } else
   if ( mxIsCell(var) ) {
     // cell variable. Iterate through elements and recurse
     int i;
     #ifdef VERBOSE
-      mexPrintf("processing cell ( %s ):\n", mxGetNumberOfElements(var));
+      mexPrintf("processing cell ( %d ):\n", mxGetNumberOfElements(var));
     #endif
     for (i= 0;
          i< mxGetNumberOfElements( var );
          i++) {
-//    mxArray * fd = mxGetCell( var, i );
-//    recurse_hash(c, fd);
+      mxArray * fd = mxGetCell( var, i );
+      recurse_hash(c, fd);
     }
   } else
   if ( mxIsStruct(var) ) {
@@ -212,7 +209,7 @@ A million repetitions of "a"
   #endif
 #endif
 
-/* #define SHA1HANDSOFF * Copies data before messing with it. */
+#define SHA1HANDSOFF /* Copies data before messing with it. */
 
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
