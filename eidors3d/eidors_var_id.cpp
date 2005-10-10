@@ -3,7 +3,11 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.1 2005-10-10 13:29:47 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.2 2005-10-10 14:24:19 aadler Exp $
+
+ * Documentation 
+ * http://www.mathworks.com/support/tech-notes/1600/1605.html
+ * http://www.mathworks.com/access/helpdesk/help/techdoc/matlab_external/f11333.html
  */
 
 #include <stdio.h>
@@ -35,17 +39,66 @@ hash_process( hash_context * c, unsigned char * data, unsigned len );
 static void
 hash_final( hash_context * c, unsigned long[HW] );
 
+// This is the core function. Iterate over the variable
+//   to calculate the in-memory SHA1 hash
+// Processing - test if:
+//   1. Numeric (full) -> Add to SHA1 hash (including complex part)
+//   2. Numeric (Sparse) -> Add to SHA1 hash (including complex part)
+//   3. String (or other) -> Ignore (Assume not relevant) 
+//   4. Empty -> Ignore (Assume not relevant) 
+//   5. Cell -> recursively call for each element
+//   6. Struct -> recursively call ( In SORTED order )
+#define sDBL sizeof(double)
+#define sINT sizeof(int)
+#define TESTDBL(vv) if( !mxIsDouble(vv) ) { \
+            mexErrMsgTxt("var must be type double");}
+#define VERBOSE 
+
+void recurse_hash( hash_context *c, mxArray *var ) {
+  double *pr,*pi;
+
+  if ( mxIsSparse(var) ) {
+    int *irs, *jcs, nnz, cols; 
+    TESTDBL( var );
+    pr  = mxGetPr( var );
+    pi  = mxGetPi( var );
+    irs = mxGetIr( var );
+    jcs = mxGetJc( var ); // size 
+    cols= mxGetN( var );
+    nnz = *(jcs + cols ); /* after last element of jcs */
+
+    hash_process( c, jcs, sINT * cols );
+    hash_process( c, irs, sINT * nnz );
+    hash_process( c, pr,  sDBL * nnz );
+    if ( pi != NULL ) {
+       hash_process( c, pi, sDBL * nnz );
+    }
+  } else
+  if ( mxIsNumeric(var) ) {
+    int len= sDBL * mxGetM( var ) * mxGetN( var );
+    TESTDBL( var );
+    pr = mxGetPr( var );
+    pi = mxGetPi( var );
+
+    hash_process( c, pr, len );
+    if ( pi != NULL ) {
+       hash_process( c, pi, len );
+    }
+  } else
+  if ( mxIsChar(var) ) {
+    #ifdef VERBOSE
+    #endif
+  } else
+  {
+  }
+
+
+}
+
 void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
-  int buflen;
-  char* fname;
-  char* output_buf;
-  char* sha1buf;
   hash_context c;
-  FILE * fid;
-  #define BUFSIZE 4096
-  unsigned char buffer[ BUFSIZE ];
   unsigned long digest[5];
 
   if (nrhs != 1)  {
@@ -53,51 +106,24 @@ void mexFunction(int nlhs, mxArray *plhs[],
     return;
   }
 
-  if (mxIsChar(prhs[0]) != 1) { // not string
-    mexErrMsgTxt("Input must be a string.");
-    return;
-  }
-
-  /* Get the length of the input string. */
-  buflen = (mxGetM(prhs[0]) * mxGetN(prhs[0])) + 1;
-
-  /* Allocate memory for input and output strings. */
-  fname = (char *) mxCalloc(buflen, sizeof(char));
-  output_buf = (char *) mxCalloc(buflen, sizeof(char));
-  if ( 0 != 
-       mxGetString(prhs[0], fname, buflen) ) {
-    mexWarnMsgTxt("Not enough space. String is truncated.");
-    return;
-  }
-    
   hash_initial( &c);
-  fid = fopen( fname, "rb");
-  if (fid == NULL ) { 
-    mexWarnMsgTxt("Cannot open file");
-    fclose(fid);
-    return;
-  }
 
-  fseek( fid, 125L, SEEK_SET); // matlab v6 files have 125 bytes comments
-
-  while(1) {
-     int nread= fread ( buffer, 1, BUFSIZE, fid);
-     hash_process( &c, buffer, nread);
-     if (nread != BUFSIZE ) break;
-  }
-  fclose(fid);
+  recurse_hash( &c, prhs[0] );
 
   hash_final( &c, digest);
 
+  { char *
   sha1buf = (char *) mxCalloc(44, sizeof(char));
-
   sprintf(sha1buf, "id_%08X%08X%08X%08X%08X", 
           digest[0], digest[1], digest[2], digest[3], digest[4] );
   plhs[0] = mxCreateString(sha1buf);
+  }  
   return;
 }
 
 /*
+SHA1 Calculation Code
+
 This code is available from:
    http://ds.dial.pipex.com/george.barwood/v8/pegwit.htm
 SHA-1 in C
