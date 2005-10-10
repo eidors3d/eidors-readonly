@@ -1,4 +1,4 @@
-function jacobian = calc_jacobian( fwd_model, img, cachename)
+function jacobian = calc_jacobian( fwd_model, img, varargin)
 % CALC_JACOBIAN: calculate jacobian from a fwd_model object and an image
 % 
 %    jacobian= calc_jacobian( fwd_model, img, cachename)
@@ -11,7 +11,7 @@ function jacobian = calc_jacobian( fwd_model, img, cachename)
 % img       is an image structure
 % cachename is an explicit file to cache to 'cache:text' [OPTIONAL]
 %
-% $Id: calc_jacobian.m,v 1.7 2005-09-16 03:36:50 aadler Exp $
+% $Id: calc_jacobian.m,v 1.8 2005-10-10 03:21:20 aadler Exp $
 
 if nargin==1
    img= fwd_model;
@@ -19,4 +19,4 @@ if nargin==1
 end
 
 jacobian = eidors_obj('calc-or-cache', fwd_model, ...
-                  fwd_model.jacobian, img );
+                  fwd_model.jacobian, img , varargin{:} );

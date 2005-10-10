@@ -1,9 +1,7 @@
 % Example of using EIDORS to simulate 2D data and to
 % solve it using various 2D solvers
 %
-% $Id: demo_2d_simdata.m,v 1.2 2005-10-10 01:50:22 aadler Exp $
-
-eidors_msg('log_level',1); % 2 for most messages
+% $Id: demo_2d_simdata.m,v 1.3 2005-10-10 03:21:20 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model

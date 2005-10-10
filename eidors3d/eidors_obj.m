@@ -67,7 +67,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.24 2005-10-10 03:12:55 aadler Exp $
+% $Id: eidors_obj.m,v 1.25 2005-10-10 03:21:20 aadler Exp $
 % TODO: 
 %   1. add code to delete old objects
 %   2. accessors and setters of the form 'prop1.subprop1'
@@ -224,7 +224,6 @@ function set_cache_obj( obj, prop, value, varargin )
    else
       filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
       save(filename, 'value');
-keyboard
    end
 
 function obj= new_obj( type, name, varargin );
@@ -318,13 +317,15 @@ function test_for_hashtypes
 function test_for_cachdir
    global eidors_objects; 
    if ~isfield(eidors_objects, 'cachedir')
-      eidors_objects.cachedir= [pwd,'/eidors_cache'];
+      cachedir= 'eidors_cache';
+      eidors_objects.cachedir= [pwd,'/',cachedir];
 
+      if ~exist( eidors_objects.cachedir, 'dir')
 % Now we need to ensure that cachedir exists. Because the
 % STUPID!!! matlab has a completely useless and nonstandard
-% mkdir function, we shell out to the OS to do this for us.
-% Luckly, most OSes provide a fairly reasonable mkdir function
-      system(['mkdir ''',eidors_objects.cachedir,'']);
+% mkdir function, we try this
+         mkdir(pwd,cachedir); 
+      end
    end
 
 % Test whether a cachedir function has been provided
