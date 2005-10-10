@@ -1,4 +1,4 @@
-function image_prior = calc_image_prior( inv_model )
+function image_prior = calc_image_prior( inv_model, varargin )
 % CALC_DATA_PRIOR: calculate prior probabilities for image term
 %   The image prior is matrix n_elem x n_elem of the a priori
 %     crosscorrelation FEM element values
@@ -11,16 +11,8 @@ function image_prior = calc_image_prior( inv_model )
 % image_prior   is the calculated image prior
 % inv_model    is an inv_model structure
 %
-% $Id: calc_image_prior.m,v 1.5 2005-02-23 16:47:58 aadler Exp $
+% $Id: calc_image_prior.m,v 1.6 2005-10-10 03:32:49 aadler Exp $
 
-image_prior = eidors_obj('get-cache', inv_model, 'image_prior');
+image_prior= eidors_obj('calc-or-cache', inv_model, ...
+                 inv_model.image_prior.func, varargin{:} ); 
 
-if ~isempty(image_prior)
-   eidors_msg('calc_image_prior: using cached value', 2);
-   return
-end
-
-image_prior= feval( inv_model.image_prior.func, inv_model);
-
-eidors_obj('set-cache', inv_model, 'image_prior', image_prior);
-eidors_msg('calc_image_prior: setting cached value', 2);

@@ -11,7 +11,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% $Id: aa_inv_solve.m,v 1.8 2005-10-10 03:21:20 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.9 2005-10-10 03:32:49 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -28,7 +28,7 @@ else
 
     J = calc_jacobian( fwd_model, homg_img, 'homg_img' );
 
-    R = calc_image_prior( inv_model );
+    R = calc_image_prior( inv_model, 'img_prior' );
     W = calc_data_prior( inv_model );
     hp= calc_hyperparameter( inv_model );
 
