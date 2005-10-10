@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.4 2005-10-10 14:59:25 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.5 2005-10-10 18:43:52 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -83,7 +83,7 @@ void recurse_hash( hash_context *c, mxArray *var ) {
   } else
   if ( mxIsNumeric(var) ) {
     // full numeric variable. We need to hash the numeric data.
-    int len= sDBL * mxGetM( var ) * mxGetN( var );
+    int len= sDBL * mxGetNumberOfElements( var );
     TESTDBL( var );
     pr = mxGetPr( var );
     pi = mxGetPi( var );
@@ -103,6 +103,16 @@ void recurse_hash( hash_context *c, mxArray *var ) {
   } else
   if ( mxIsCell(var) ) {
     // cell variable. Iterate through elements and recurse
+    int i;
+    #ifdef VERBOSE
+      mexPrintf("processing cell ( %s ):\n", mxGetNumberOfElements(var));
+    #endif
+    for (i= 0;
+         i< mxGetNumberOfElements( var );
+         i++) {
+//    mxArray * fd = mxGetCell( var, i );
+//    recurse_hash(c, fd);
+    }
   } else
   if ( mxIsStruct(var) ) {
     int i,j;
