@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.5 2005-10-11 02:31:04 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.6 2005-10-11 20:27:04 aadler Exp $
 
 % 
 % Example 1: Create simple 16 electrode 2D model
@@ -22,7 +22,7 @@ params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'aa_calc_jacobian';
 mdl_3d = eidors_obj('fwd_model', params);
-%show_fem( mdl_3d );
+ show_fem( mdl_3d ); pause
 
 
 % create homogeneous image + simulate data
@@ -34,26 +34,36 @@ homg_data=fwd_solve( homg_img);
 
 % create inhomogeneous image + simulate data
 mat(50)= 2;
-inh_img= eidors_obj('image', 'homogeneous image', ...
+inh_img= eidors_obj('image', 'inhomogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
+figure;image_levels(inh_img, [-.4:.2:.4])
 
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code)
 % 
 clear inv3d;
+params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [4,8] } );
+params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
+                            options, 10);
+params.solve=      'aa_fwd_solve';
+params.system_mat= 'aa_calc_system_mat';
+params.jacobian=   'aa_calc_jacobian';
+params.misc.sym= '{n}';
+fm3d = eidors_obj('fwd_model', params);
+
 inv3d.name=  'EIT inverse: 3D';
 inv3d.solve= 'np_inv_solve';
 inv3d.hyperparameter.value = 1e-2;
 inv3d.image_prior.func= 'tikhonov_image_prior';
 inv3d.reconst_type= 'difference';
-mdl_3d.misc.sym= '{n}';
-inv3d.fwd_model= mdl_3d;
+inv3d.fwd_model= fm3d;
 inv3d= eidors_obj('inv_model', inv3d);
 
 img3= inv_solve( inv3d, inh_data, homg_data);
-show_fem(img);
+%show_fem(img3);
+figure;image_levels(img3, [-.4:.2:.4])
 
 % 
 % Step 3: Reconstruction in 2D
