@@ -1,7 +1,7 @@
 % Example of using EIDORS to simulate 2D data and to
 % solve it using various 2D solvers
 %
-% $Id: demo_2d_simdata.m,v 1.3 2005-10-10 03:21:20 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.4 2005-10-11 02:31:04 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model
@@ -51,6 +51,7 @@ show_fem( mdl_2d_2 ); pause;
 % 
 % Step 3: Create inverse model
 % 
+clear inv2d;
 inv2d.name= 'EIT inverse';
 inv2d.solve=       'aa_inv_solve';
 %inv2d.hyperparameter.value = 1e-8;
@@ -68,4 +69,6 @@ inv2d= eidors_obj('inv_model', inv2d);
 % 
 img= inv_solve( inv2d, inh_data, homg_data);
 show_slices(img);
+disp('-----------------------------')
+img= inv_solve( inv2d, inh_data, homg_data);
 
