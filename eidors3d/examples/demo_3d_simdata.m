@@ -1,7 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.4 2005-09-15 04:22:20 aadler Exp $
-
-eidors_msg('log_level',1); % 2 for most messages
+% $Id: demo_3d_simdata.m,v 1.5 2005-10-11 02:31:04 aadler Exp $
 
 % 
 % Example 1: Create simple 16 electrode 2D model
@@ -44,6 +42,7 @@ inh_data=fwd_solve( inh_img);
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code)
 % 
+clear inv3d;
 inv3d.name=  'EIT inverse: 3D';
 inv3d.solve= 'np_inv_solve';
 inv3d.hyperparameter.value = 1e-2;

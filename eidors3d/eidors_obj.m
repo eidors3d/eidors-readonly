@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.28 2005-10-10 19:34:23 aadler Exp $
+% $Id: eidors_obj.m,v 1.29 2005-10-11 02:31:04 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -106,7 +106,12 @@ function obj = set_obj( obj, varargin );
    try
       old_obj_id= obj.id;
       % If we're modifying an old object, then remove the old version
-      eidors_objects= rmfield(eidors_objects, old_obj_id);
+      % unless it contains cached data
+      
+      if ~isfield( eidors_objects.old_obj_id, 'cache' )
+         eidors_objects= rmfield(eidors_objects, old_obj_id);
+      end
+      obj= rmfield(obj,'id');
    end
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
@@ -118,7 +123,6 @@ function obj = set_obj( obj, varargin );
 %  obj = eidors_objects.( obj_id );
 
 % for octave and matlab 6.1 compatibility
-   obj.cache= [];
    for idx= 1:2:nargin-1
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
@@ -158,15 +162,9 @@ function value= get_cache_obj( obj, prop, varargin );
       return; % Can't cache onto non-existant objects
    end
 
-   % loop through extra args and fill to prop or cachename
-   if nargin>=3 & isempty(cachename)
+   if nargin==3
       for dep_obj = objlist{:}
-          try
-              prop= [prop,'_', dep_obj.id];
-          catch
-              prop= [prop,'_', calc_obj_id(dep_obj)];
-          end
-          
+         prop= [prop,'_', calc_obj_id(dep_obj)];
       end
    end
 
@@ -198,11 +196,7 @@ function set_cache_obj( obj, prop, value, varargin )
 
    if nargin>=4 & isempty(cachename)
       for dep_obj = objlist{:}
-          try
-              prop= [prop,'_', dep_obj.id];
-          catch
-              prop= [prop,'_', calc_obj_id(dep_obj)];
-          end
+         prop= [prop,'_', calc_obj_id(dep_obj)];
       end
    end
 
@@ -234,14 +228,12 @@ function obj= new_obj( type, name, varargin );
 % to create an obj_id. The goal is to allow proper caching
 % of calculated matrices, by detecting when a previous
 % calculation with same parameters has been made
-%
-% Matlab does not offer any way to create hashes of variables.
-% It does not even offer a good way to get the size of the total
-% variable storage.  Thus, I choose to save the variable, calculate
-% the sha1 hash with sha1sum, and delete the file. Given a modern
-% OS, file data should only be cached in memory. The largest overhead
-% will be for the instantiation of the process
 function obj_id= calc_obj_id( var )
+   if isfield(var,'id')
+      obj_id= var.id;
+      return;
+   end
+
    global eidors_objects;
    if ~isfield(eidors_objects,'hash_type')
        test_for_hashtypes;
@@ -256,24 +248,18 @@ function obj_id= calc_obj_id( var )
        obj_id= eidors_var_id( var );
    elseif eidors_objects.hash_type > 1e6
 %if hashing code is unavailable, then disable caching function
-       if isfield(var,'id')
-          obj_id= var.id;
-       else
-           obj_id= sprintf('id_%08d', eidors_objects.hash_type );
-           eidors_objects.hash_type= eidors_objects.hash_type + 1;
-       end
+       obj_id= sprintf('id_%08d', eidors_objects.hash_type );
+       eidors_objects.hash_type= eidors_objects.hash_type + 1;
    else
        error('hash_type value unrecognized');
    end
-%  fprintf('creating [%s] object %s\n',var.type,obj_id);
 
 % Since we use a dynamically loaded function to test
 % for hashtypes, all sorts of things can go wrong
 %   - The compilers or libraries may not be available
+%   - Compiler library versions may not match Matlab
 %
-% We test for:
-%   1. Existance of 'eidors_var_id' mex file
-%   2. Existance of utilities 'sha1sum' to do this
+% We test for existance of 'eidors_var_id' mex file
 % 
 % If nothing exists, then the best we can do is to
 % disable hashing completely. We set hashtype to a
