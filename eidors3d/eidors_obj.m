@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.29 2005-10-11 02:31:04 aadler Exp $
+% $Id: eidors_obj.m,v 1.30 2005-10-11 18:43:55 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -108,10 +108,10 @@ function obj = set_obj( obj, varargin );
       % If we're modifying an old object, then remove the old version
       % unless it contains cached data
       
+      obj= rmfield(obj,'id');
       if ~isfield( eidors_objects.old_obj_id, 'cache' )
          eidors_objects= rmfield(eidors_objects, old_obj_id);
       end
-      obj= rmfield(obj,'id');
    end
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
