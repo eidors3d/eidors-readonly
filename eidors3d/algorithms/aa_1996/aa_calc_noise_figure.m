@@ -9,25 +9,19 @@ function hparam= aa_calc_noise_figure( inv_model );
 % hpara.noise_figure = NF Value requested
 % hpara.tgt_elems    = vector of element numbers of contrast in centre
 %
-% The NF parameter is defined in Adler & Guardo (1996), as
-%   measurements => z (Mx1), image elements => x (Nx1)
-%   NF = SNR_z / SNR_x
-% SNR_z = mean(z) / std(z) = mean(z) /sqrt( M trace(Rn) )
-% SNR_x = mean(x) / std(x) = mean(x) /sqrt( N trance(ABRnB'A)
-%   where Rn = sigma_n x inv(W) = the noise covariance, iW= inv(W)
-%     and A  = diag matrix s.t. A_ii = area of element i
+% The NF parameter is modified from the definition in Adler & Guardo (1996).
+% It is better to define it in terms of signal power, rather than amplitude.
+%   measurements => z0 (Mx1), image elements => x0 (Nx1)
 %
-% NF = mean(z)/mean(ABz) * sqrt(N/M) * sqrt( trace(ABiWB'A) / trance(iW) )
+% given a (potentially nonlinear) reconstructor x=R(z), then
+% the Taylor expansion x = R(z) ~= x0 + B*(z-z0) where B is NxM
 %
-% given a reconstructor x=R(z), then
-%   ABz = A R(z)
-%
-% NOTE: SNR _should_ be defined in terms of power! This defines
-%       it in terms of images amplitude
+% SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)
+% SNR_x = sumsq(A*x0) / var(A*x) = sum((A*x0).^2) / trace(ABRnB'A')
+%   where Rn = noise covariance and A_ii = area of element i
+% NF = SNR_z / SNR_x
 
-% $Id: aa_calc_noise_figure.m,v 1.9 2005-09-13 02:37:54 aadler Exp $
-
-% FIXME: this is a hack for now
+% $Id: aa_calc_noise_figure.m,v 1.10 2005-10-11 18:37:09 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -101,27 +95,27 @@ function NF = calc_noise_figure( inv_model, hp)
    n_data= size(W,1);
 
    % one step reconstruction matrix
+   % for non-linear algorithms, we need the Taylor expansion at the soln
    RM= (J'*W*J +  hp*R)\J'*W;
 
-   sig_data= sum(dva) / n_data;
-   sig_img = ( pp.VOLUME' * RM * dva ) / n_img;
-
-%  img= eidors_obj('image', 'x', ...
-%                  'elem_data', RM*dva, 'fwd_model', fwd_model );
-%  show_slices(img); pause
-%  plot(RM*dva); pause
-
-   var_data = trace(W)/n_data;
-%  var_img  = sum( pp.VOLUME' * RM * DP ) / pp.n_elem;
-% nf= sum(sig)*sqrt(sum(sum( ((AIRE*n_var').*Z).^2 ))) / ...
-   var_img  = sum(sum( ((pp.VOLUME*diag(W)') .*RM).^2 )) / n_img;
-
-% The NF parameter is calculated as follows
 %   NF = SNR_z / SNR_x
-% SNR_z = mean(z) / std(z) = mean(z) /sqrt( M trace(Rn) )
-% SNR_x = mean(x) / std(x) = mean(x) /sqrt( N trance(ABRnB'A)
+% SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)
+% SNR_x = sumsq(x0) / var(x) = sum(x0.^2) / trace(ABRnB'A')
 
-   NF = ( sig_data/sqrt(var_data) ) / ...
-        ( sig_img /sqrt(var_img ) );
-%  fprintf('%f - %f = %f\n', 1e6*sig_img, 1e6*var_img, NF );
+   VOL2= pp.VOLUME'.^2;
+   Rn= 1./diag(W); % assume independent noise, calc variance
+
+   sig_data= sum( dva.^2);
+   var_data= sum( Rn );
+   sig_img = VOL2 * (RM * dva).^2;
+   var_img = VOL2 * RM.^2 * Rn;
+% Equiv expresssions for var_img
+%   A= diag(pp.VOLUME);
+% var_img= trace(A*RM*diag(Rn.^2)*RM'*A');
+% vv=A*RM*diag(Rn);var_img=trace(vv*vv'); var_img= sum(sum(vv.^2));
+% var_img= VOL2* (RM*diag(Rn)).^2
+% var_img= VOL2* RM.^2 * Rn.^2
+
+   NF = ( sig_data/ var_data ) / ( sig_img / var_img  );
+   fprintf('%f - %f = %f\n', 1e6*sig_img, 1e6*var_img, NF );
    
