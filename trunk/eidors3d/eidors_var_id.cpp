@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.8 2005-10-10 19:23:56 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.9 2005-10-11 15:24:44 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -70,7 +70,7 @@ hash_final( hash_context * c, unsigned long[HW] );
             mexErrMsgTxt("var must be type double");}
 #undef VERBOSE 
 
-void recurse_hash( hash_context *c, mxArray *var ) {
+void recurse_hash( hash_context *c, const mxArray *var ) {
 
   if ( var == NULL ) {
     #ifdef VERBOSE
@@ -90,11 +90,11 @@ void recurse_hash( hash_context *c, mxArray *var ) {
     cols= mxGetN( var );
     nnz = *(jcs + cols ); /* after last element of jcs */
 
-    hash_process( c, jcs, sINT * cols );
-    hash_process( c, irs, sINT * nnz );
-    hash_process( c, pr,  sDBL * nnz );
+    hash_process( c, (unsigned char *) jcs, sINT * cols );
+    hash_process( c, (unsigned char *) irs, sINT * nnz );
+    hash_process( c, (unsigned char *) pr,  sDBL * nnz );
     if ( pi != NULL ) {
-       hash_process( c, pi, sDBL * nnz );
+       hash_process( c, (unsigned char *) pi, sDBL * nnz );
     }
   } else
   if ( mxIsNumeric(var) ) {
@@ -105,15 +105,15 @@ void recurse_hash( hash_context *c, mxArray *var ) {
     pr = mxGetPr( var );
     pi = mxGetPi( var );
 
-    hash_process( c, pr, len );
+    hash_process( c, (unsigned char *) pr, len );
     if ( pi != NULL ) {
-       hash_process( c, pi, len );
+       hash_process( c, (unsigned char *) pi, len );
     }
   } else
   if ( mxIsChar(var) ) {
     // string variable. Each char is packed into 2 bytes
     double * pr = mxGetPr( var );
-    hash_process( c, pr, 2*mxGetNumberOfElements( var ) );
+    hash_process( c, (unsigned char *) pr, 2*mxGetNumberOfElements( var ) );
   } else
   if ( mxIsCell(var) ) {
     // cell variable. Iterate through elements and recurse
