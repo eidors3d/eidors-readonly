@@ -21,7 +21,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 %   where Rn = noise covariance and A_ii = area of element i
 % NF = SNR_z / SNR_x
 
-% $Id: aa_calc_noise_figure.m,v 1.10 2005-10-11 18:37:09 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.11 2005-10-11 18:52:57 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -117,5 +117,5 @@ function NF = calc_noise_figure( inv_model, hp)
 % var_img= VOL2* RM.^2 * Rn.^2
 
    NF = ( sig_data/ var_data ) / ( sig_img / var_img  );
-   fprintf('%f - %f = %f\n', 1e6*sig_img, 1e6*var_img, NF );
+   eidors_msg('calculating NF=%f hp=%g', NF, hp, 4);
    
