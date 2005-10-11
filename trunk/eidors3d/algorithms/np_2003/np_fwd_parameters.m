@@ -1,5 +1,5 @@
 function param = np_fwd_parameters( fwd_model )
-% NP_FWD_PARAMETERS: data= np_fwd_solve( fwd_model, image)
+% NP_FWD_PARAMETERS: data= np_fwd_solve( fwd_model )
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Nick Polydorides EIDORS3D code
 %   param.n_elem   => number of elements
@@ -17,7 +17,7 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.sym      => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
-% $Id: np_fwd_parameters.m,v 1.4 2005-02-23 16:47:54 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.5 2005-10-11 15:17:59 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
