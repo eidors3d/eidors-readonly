@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.13 2005-10-12 16:28:54 aadler Exp $
+% $Id: show_slices.m,v 1.14 2005-10-12 17:14:21 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
@@ -59,7 +59,6 @@ end
 backgnd= .01;
 scale=1;
 rval= [backgnd; scale*img.elem_data];
-%rimg= reshape( rval(eptr+1), npy,npx );
 rimg= reshape( rval(elem_ptr+1), np,np );
 
 
@@ -107,7 +106,7 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
   xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
   xmean= mean([xmin,xmax]); xrange= xmax-xmin;
 
-  ymin = min(NODE(1,:));    ymax = max(NODE(1,:));
+  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
@@ -158,7 +157,7 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
   xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
   xmean= mean([xmin,xmax]); xrange= xmax-xmin;
 
-  ymin = min(NODE(1,:));    ymax = max(NODE(1,:));
+  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
@@ -238,7 +237,7 @@ function [NODE,ELEM]= level_model( fwd_model, level )
    v1= v1 - ctr;
    v1= v1 / norm(v1);
 
-   % Step 3: Get off-plane vector, by cross % product
+   % Step 3: Get off-plane vector, by cross product
    v2= [0,0,0]; v2(s_ax(2))= level(s_ax(2));
    v2= v2 - ctr;
    v2= v2 / norm(v2);
