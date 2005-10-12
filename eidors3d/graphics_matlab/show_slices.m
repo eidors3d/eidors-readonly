@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.9 2005-10-12 03:18:48 aadler Exp $
+% $Id: show_slices.m,v 1.10 2005-10-12 03:26:13 aadler Exp $
 
 % NOTES:
 %  - currently works for 2D samples only
@@ -136,7 +136,6 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 
     nn=  size(ELEM,1); %Simplex vertices
     ll=  length(endr);
-    ot= ones(1,ll);
     vol=zeros(ll,nn);
     for i=1:nn
        i1= i; i2= rem(i,nn)+1;
@@ -182,28 +181,27 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
     min_x= min(xyz(:,1)); max_x= max(xyz(:,1));
     min_y= min(xyz(:,2)); max_y= max(xyz(:,2));
 
-    % The simplex volume is 1/N! of the enclosing rectange
-    % However, we can skip the 1/6 (3D) factor since it is common
-    VOL= (max_x-min_x)*(max_y-min_y)*(max_z-min_z);
+    % Simplex volume is det([v2-v1,v3-v1, ...])
+    VOL= abs(det(xyz'*[-1,1,0,0;-1,0,1,0;-1,0,0,1]'));
 
     % come up with a limited set of candidate points which
     % may be within the simplex
     endr=find( y(:)<=max_y & y(:)>=min_y ...
              & x(:)<=max_x & x(:)>=min_x );
 
-    ot= ones(size(endr));
-    vol=zeros(size(endr));
-    for i=1: size(ELEM,1) % Simplex vertices
-       vv=1:4; vv(i)=[]; %eliminate this vertex
-       xx= [x(endr)';xyz(vv,1)*ot]; 
-       yy= [y(endr)';xyz(vv,2)*ot];
-       zz= [z(endr)';xyz(vv,3)*ot];
-       vol(i,:)= (max(xx)-min(xx)).* ...
-                 (max(yy)-min(yy)).* ...
-                 (max(zz)-min(zz));
+    nn=  size(ELEM,1); %Simplex vertices
+    ll=  length(endr);
+    vol=zeros(ll,nn);
+    for i=1:nn
+       i1= i; i2= rem(i,nn)+1; i3= rem(i+1,nn)+1;
+       x1= xyz(i1,1)-x(endr); y1= xyz(i1,2)-y(endr); z1= xyz(i1,3)-z(endr);
+       x2= xyz(i2,1)-x(endr); y2= xyz(i2,2)-y(endr); z2= xyz(i2,3)-z(endr);
+       x3= xyz(i3,1)-x(endr); y3= xyz(i3,2)-y(endr); z3= xyz(i3,3)-z(endr);
+       vol(:,i)= x1.*y2.*z3 - x1.*y3.*z2 - x2.*y1.*z3 + ...
+                 x3.*y1.*z2 + x2.*y3.*z1 - x3.*y2.*z1;
     end
        
-    endr( sum(vol) - VOL >1e-8 )=[];
+    endr( sum(abs(vol),2) - VOL >1e-8 )=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
 
