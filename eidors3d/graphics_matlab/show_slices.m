@@ -9,10 +9,10 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.10 2005-10-12 03:26:13 aadler Exp $
+% $Id: show_slices.m,v 1.11 2005-10-12 14:49:56 aadler Exp $
 
 % NOTES:
-%  - currently works for 2D samples only
+%  - currently works for slices through z plane
 %  - 
 
 dims= size(img.fwd_model.nodes,2);
@@ -49,9 +49,10 @@ if ~isempty(elem_ptr)
    eidors_msg('show_slices: using cached value', 2);
 else
    NODE= fwd_model.nodes';
+   NODE(3,:) = NODE(3,:) - level(3); % move z axis
    ELEM= fwd_model.elems';
-   elem_ptr= img_mapper2 ( NODE, ELEM, np, np);
-   eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
+   elem_ptr= img_mapper3 ( NODE, ELEM, np, np);
+%  eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
 end
 
 
@@ -194,9 +195,9 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
     vol=zeros(ll,nn);
     for i=1:nn
        i1= i; i2= rem(i,nn)+1; i3= rem(i+1,nn)+1;
-       x1= xyz(i1,1)-x(endr); y1= xyz(i1,2)-y(endr); z1= xyz(i1,3)-z(endr);
-       x2= xyz(i2,1)-x(endr); y2= xyz(i2,2)-y(endr); z2= xyz(i2,3)-z(endr);
-       x3= xyz(i3,1)-x(endr); y3= xyz(i3,2)-y(endr); z3= xyz(i3,3)-z(endr);
+       x1= xyz(i1,1)-x(endr); y1= xyz(i1,2)-y(endr); z1= xyz(i1,3);
+       x2= xyz(i2,1)-x(endr); y2= xyz(i2,2)-y(endr); z2= xyz(i2,3);
+       x3= xyz(i3,1)-x(endr); y3= xyz(i3,2)-y(endr); z3= xyz(i3,3);
        vol(:,i)= x1.*y2.*z3 - x1.*y3.*z2 - x2.*y1.*z3 + ...
                  x3.*y1.*z2 + x2.*y3.*z1 - x3.*y2.*z1;
     end
