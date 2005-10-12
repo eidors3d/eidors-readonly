@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.8 2005-10-12 03:12:54 aadler Exp $
+% $Id: show_slices.m,v 1.9 2005-10-12 03:18:48 aadler Exp $
 
 % NOTES:
 %  - currently works for 2D samples only
@@ -50,7 +50,7 @@ if ~isempty(elem_ptr)
 else
    NODE= fwd_model.nodes';
    ELEM= fwd_model.elems';
-   elem_ptr= img_mapper2a( NODE, ELEM, np, np);
+   elem_ptr= img_mapper2 ( NODE, ELEM, np, np);
    eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
 end
 
@@ -74,8 +74,8 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
-      linspace( xmean- xrange*0.55, xmean + xrange*0.55, npx ), ...
-      linspace( ymean- yrange*0.55, ymean + yrange*0.55, npy ) );
+      linspace( xmean - xrange*0.55, xmean + xrange*0.55, npx ), ...
+      linspace( ymean + yrange*0.55, ymean - yrange*0.55, npy ) );
   v_yx= [-y(:) x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
@@ -85,12 +85,12 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
   %      area AA = abd + acd + bcd
   %      d is in j if AA = A  
   for j= 1: size(ELEM,2)
+    % calculate area of three subtrianges to each candidate point.
+    xy= NODE(:,ELEM(:,j))';
     % come up with a limited set of candidate points which
     % may be within the simplex
     endr=find( y(:)<=max(xy(:,2)) & y(:)>=min(xy(:,2)) ...
              & x(:)<=max(xy(:,1)) & x(:)>=min(xy(:,1)) );
-    % calculate area of three subtrianges to each candidate point.
-    xy= NODE(:,ELEM(:,j))';
     % a is determinant of matrix [i,j,k, xy]
     a= xy([2;3;1],1).*xy([3;1;2],2)- xy([3;1;2],1).*xy([2;3;1],2);
     
@@ -113,7 +113,7 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 
   [x y]=meshgrid( ...
       linspace( xmean - xrange*0.55, xmean + xrange*0.55, npx ), ...
-      linspace( ymean - yrange*0.55, ymean + yrange*0.55, npy ) );
+      linspace( ymean + yrange*0.55, ymean - yrange*0.55, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -127,7 +127,7 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
     min_y= min(xyz(:,2)); max_y= max(xyz(:,2));
 
     % Simplex volume is det([v2-v1,v3-v1, ...])
-    VOL= det(xyz'*[-1,1,0;-1,0,1]');
+    VOL= abs(det(xyz'*[-1,1,0;-1,0,1]'));
 
     % come up with a limited set of candidate points which
     % may be within the simplex
@@ -164,8 +164,8 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
-      linspace( xmean- xrange*0.55, xmean + xrange*0.55, npx ), ...
-      linspace( ymean- yrange*0.55, ymean + yrange*0.55, npy ) );
+      linspace( xmean - xrange*0.55, xmean + xrange*0.55, npx ), ...
+      linspace( ymean + yrange*0.55, ymean - yrange*0.55, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
