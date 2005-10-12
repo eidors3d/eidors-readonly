@@ -4,25 +4,41 @@ function image_levels(img, levels, clim )
 % levels = array of vertical levels
 % clim   = colourmap limit (or default if not specified)
 %
-% $Id: image_levels.m,v 1.4 2005-06-30 10:13:22 aadler Exp $
+% $Id: image_levels.m,v 1.5 2005-10-12 14:20:00 aadler Exp $
 
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);
-vtx=  img.fwd_model.nodes;
-simp= img.fwd_model.elems;
-img = img.elem_data;
+fwd_mdl= img.fwd_model;
+vtx=  fwd_mdl.nodes;
+simp= fwd_mdl.elems;
+img_data = img.elem_data;
 
 fc= [];
 
-set_clim= set_colors( img );
+set_clim= set_colors( img_data );
 if nargin < 3 
     clim= set_clim;
 end
 
+ll = length( levels );
+img_cols = ceil( sqrt( ll ));
+img_rows = ceil( ll/ img_cols );
+subplot(img_rows,img_cols,1);
+
+% Get geometry Fc
+fc = eidors_obj('get-cache', fwd_mdl, 'slicer_plot_fc');
+if ~isempty( fc )
+    eidors_msg('image_levels: using cached value', 3);
+else
+   [fc] = slicer_plot_n(levels(1),img_data,vtx,simp);
+   eidors_obj('set-cache', fwd_mdl, 'slicer_plot_fc', fc);
+   eidors_msg('image_levels: setting cached value', 3);
+end
+
 for idx= 1:length(levels);
-    subplot(2,3,idx);
+    subplot(img_rows,img_cols,idx);
     lev= levels(idx);
-    [fc] = slicer_plot_n(lev,img,vtx,simp);
+    slicer_plot_n(lev,img_data,vtx,simp, fc);
     view(2);
     grid;
     caxis([-clim,clim]);
