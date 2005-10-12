@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.11 2005-10-12 14:49:56 aadler Exp $
+% $Id: show_slices.m,v 1.12 2005-10-12 16:05:07 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
@@ -48,9 +48,7 @@ np= 128;
 if ~isempty(elem_ptr)
    eidors_msg('show_slices: using cached value', 2);
 else
-   NODE= fwd_model.nodes';
-   NODE(3,:) = NODE(3,:) - level(3); % move z axis
-   ELEM= fwd_model.elems';
+   [NODE, ELEM] = level_model( fwd_model, level );
    elem_ptr= img_mapper3 ( NODE, ELEM, np, np);
 %  eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
 end
@@ -206,3 +204,44 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
     EPTR(endr)= j;
   end %for j=1:ELEM
 
+
+% Level model: usage
+%   NODE= level_model( fwd_model, level );
+% 
+% Level is a 1x3 vector specifying the x,y,z axis intercepts
+% NODE describes the vertices in this coord space
+
+function [NODE,ELEM]= level_model( fwd_model, level )
+   ELEM= fwd_model.elems';
+
+   vtx= fwd_model.nodes;
+   if size(vtx,2) ==2 % 2D case
+       NODE= [1,0;0,1;0,0]*vtx'; % add 0-level z-axis
+       return;
+   end
+
+   % Infinities tend to cause issues -> replace with realmax
+   % Don't need to worry about the sign of the inf
+   level( isinf(level) ) = realmax;
+
+   % Step 1: Choose a centre point in the plane
+   %  Weight the point by it's inv axis coords
+   invlev= 1./level;
+   ctr= invlev / sum( invlev.^2 );
+
+   % Step 2: Choose basis vectors in the plane
+   %  First is the axis furthest from ctr
+   [jnk, s_ax]= sort( - abs(level - ctr) );
+   v1= [0,0,0]; v1(s_ax(1))= level(s_ax(1));
+   v1= v1 - ctr;
+   v1= v1 / norm(v1);
+
+   % Step 3: Get off-plane vector, by cross % product
+   v2= [0,0,0]; v2(s_ax(2))= level(s_ax(2));
+   v2= v2 - ctr;
+   v2= v2 / norm(v2);
+   v3= cross(v1,v2);
+
+   % Step 4: Get orthonormal basis. Replace v2
+   v2= cross(v1,v3);
+   keyboard
