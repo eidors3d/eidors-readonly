@@ -1,6 +1,7 @@
-function demo_real;
+function [org_img, demo_img] = demo_real;
+% [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.28 2005-09-25 23:04:36 aadler Exp $
+% $Id: demo_real.m,v 1.29 2005-10-12 14:02:38 aadler Exp $
 clc;
 
 isOctave= exist('OCTAVE_VERSION');
@@ -91,20 +92,17 @@ disp('step 8: solve inverse model');
 
 demo_img= inv_solve( demo_inv, inhomg_data, homg_data);
 
-if ~isOctave
+disp('step 9: display results');
 
-    disp('step 9: display results');
+levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
 
-    levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
-    org_img= inhomg_img;
-    org_img.elem_data= org_img.elem_data - homg_img.elem_data;
-    org_img.name= 'Simulated inhomogeneities';
-    figure; image_levels( org_img, levels );
+org_img= eidors_obj('image', 'Simulated inhomogeneities', ...
+                    'elem_data', inhomg_img.elem_data - homg_img.elem_data, ...
+                    'fwd_model', demo_mdl );
+figure; image_levels( org_img, levels );
 
-    demo_img.name= 'Reconstructed conductivity distribution';
-    figure; image_levels( demo_img, levels );
-
-end
+demo_img.name= 'Reconstructed conductivity distribution';
+figure; image_levels( demo_img, levels );
 
 function [vtx,simp,bdy] = get_model_elems;
 %bdy : the boundary surfaces (triangles)
