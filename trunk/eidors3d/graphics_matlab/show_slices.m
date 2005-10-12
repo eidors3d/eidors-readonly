@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.7 2005-10-11 20:26:03 aadler Exp $
+% $Id: show_slices.m,v 1.8 2005-10-12 03:12:54 aadler Exp $
 
 % NOTES:
 %  - currently works for 2D samples only
@@ -126,9 +126,8 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
     min_x= min(xyz(:,1)); max_x= max(xyz(:,1));
     min_y= min(xyz(:,2)); max_y= max(xyz(:,2));
 
-    % The simplex volume is 1/N! of the enclosing rectange
-    % However, we can skip the 1/2 (2D) factor since it is common
-    VOL= (max_x-min_x)*(max_y-min_y);
+    % Simplex volume is det([v2-v1,v3-v1, ...])
+    VOL= det(xyz'*[-1,1,0;-1,0,1]');
 
     % come up with a limited set of candidate points which
     % may be within the simplex
@@ -138,17 +137,17 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
     nn=  size(ELEM,1); %Simplex vertices
     ll=  length(endr);
     ot= ones(1,ll);
-    vol=zeros(nn,ll);
-    for i=1: size(ELEM,1) % Simplex vertices
-       vv=1:3; vv(i)=[]; %eliminate this vertex
-       xx= [x(endr)';xyz(vv,1*ot)]; 
-       yy= [y(endr)';xyz(vv,2*ot)];
-       vol(i,:)= (max(xx)-min(xx)).* ...
-                 (max(yy)-min(yy));
+    vol=zeros(ll,nn);
+    for i=1:nn
+       i1= i; i2= rem(i,nn)+1;
+       x1= xyz(i1,1) - x(endr);
+       y1= xyz(i1,2) - y(endr);
+       x2= xyz(i2,1) - x(endr);
+       y2= xyz(i2,2) - y(endr);
+       vol(:,i)= x1.*y2 - x2.*y1;  % determinant
     end
        
-    keyboard
-    endr( sum(vol) - VOL >1e-8 )=[];
+    endr( sum(abs(vol),2) - VOL >1e-8 )=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
 
