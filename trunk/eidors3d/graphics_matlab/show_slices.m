@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.12 2005-10-12 16:05:07 aadler Exp $
+% $Id: show_slices.m,v 1.13 2005-10-12 16:28:54 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
@@ -215,7 +215,8 @@ function [NODE,ELEM]= level_model( fwd_model, level )
    ELEM= fwd_model.elems';
 
    vtx= fwd_model.nodes;
-   if size(vtx,2) ==2 % 2D case
+   [nn, dims] = size(vtx);
+   if dims ==2 % 2D case
        NODE= [1,0;0,1;0,0]*vtx'; % add 0-level z-axis
        return;
    end
@@ -223,6 +224,7 @@ function [NODE,ELEM]= level_model( fwd_model, level )
    % Infinities tend to cause issues -> replace with realmax
    % Don't need to worry about the sign of the inf
    level( isinf(level) ) = realmax;
+   level( level==0 ) =     eps;
 
    % Step 1: Choose a centre point in the plane
    %  Weight the point by it's inv axis coords
@@ -244,4 +246,5 @@ function [NODE,ELEM]= level_model( fwd_model, level )
 
    % Step 4: Get orthonormal basis. Replace v2
    v2= cross(v1,v3);
-   keyboard
+   
+   NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
