@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.14 2005-10-12 17:14:21 aadler Exp $
+% $Id: show_slices.m,v 1.15 2005-10-12 17:25:23 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
@@ -41,15 +41,37 @@ end
 function rimg= calc_image( img, level, clim)
 
 fwd_model= img.fwd_model;
-elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
 
 np= 128;
 
-if ~isempty(elem_ptr)
-   eidors_msg('show_slices: using cached value', 2);
+% Get elem_ptr from cache, if available 
+% EPtable is cell array of 
+EPtable = eidors_obj('get-cache', fwd_model, 'elem_ptr_table');
+elem_ptr= [];
+if ~isempty(EPtable)
+   % this would be sooo much easier if Matlab has assoc. arrays
+   for i=1:size(EPtable,1)
+      if all( EPtable{i,1} == level )
+         elem_ptr= EPtable{i,2};
+         eidors_msg('show_slices: using cached value', 3);
+         break;
+      end
+   end
 else
+   EPtable= [];
+end
+
+if isempty(elem_ptr)
    [NODE, ELEM] = level_model( fwd_model, level );
-   elem_ptr= img_mapper3 ( NODE, ELEM, np, np);
+   if size(NODE,1) ==2 %2D
+      elem_ptr= img_mapper2( NODE, ELEM, np, np);
+   else
+      elem_ptr= img_mapper3( NODE, ELEM, np, np);
+   end
+
+   EPtable = [EPtable; [{level}, {elem_ptr}] ];
+   eidors_obj('set-cache', fwd_model, 'elem_ptr_table', EPtable);
+   eidors_msg('show_slices: setting cached value', 3);
 %  eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
 end
 
@@ -216,7 +238,7 @@ function [NODE,ELEM]= level_model( fwd_model, level )
    vtx= fwd_model.nodes;
    [nn, dims] = size(vtx);
    if dims ==2 % 2D case
-       NODE= [1,0;0,1;0,0]*vtx'; % add 0-level z-axis
+       NODE= vtx';
        return;
    end
 
