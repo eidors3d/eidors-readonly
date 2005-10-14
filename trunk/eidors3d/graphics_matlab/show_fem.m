@@ -1,7 +1,11 @@
-function show_fem( mdl, options )
+function show_fem( mdl, background )
+% show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.13 2005-10-14 15:55:35 aadler Exp $
+%
+% background = background conductivity reference
+% 
+% $Id: show_fem.m,v 1.14 2005-10-14 19:40:14 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -17,7 +21,7 @@ cla;
 set(gcf, 'Name', name);
 
 if nargin == 1 % options not currently defined
-   options= [];
+   background =0;
 end
 
 if size(mdl.nodes,2)==2
@@ -26,11 +30,12 @@ if size(mdl.nodes,2)==2
    view(2);
 elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
-   show_electrodes_3d(mdl);
 
    if exist('img')
-       show_inhomogeneities( img.elem_data, mdl);
+       show_inhomogeneities( img.elem_data - background, mdl);
    end
+
+   show_electrodes_3d(mdl);
 else
    error(['model is not 2D or 3D']);
 end
@@ -113,7 +118,7 @@ Xs = [vtx(l,1);vtx(m,1);vtx(n,1)];
 Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
-patch(Xs,Ys,Zs,'y');
+patch(Xs,Ys,Zs,'g');
 
 function show_3d_fem( mdl, options )
    trimesh(mdl.boundary, ...
