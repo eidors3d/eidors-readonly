@@ -1,5 +1,5 @@
-function repaint_inho(mat,mat_ref,vtx,simp);
-%function repaint_inho(mat,mat_ref,vtx,simp);
+function repaint_inho(mat,mat_ref,vtx,simp, thresh);
+%function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %
 %Repaints the simulated inhomogeneity according to the reference
 %distribution. (Increase -> Red, Decrease -> Blue) 
@@ -8,19 +8,25 @@ function repaint_inho(mat,mat_ref,vtx,simp);
 %mat_ref = The known initial (homogeneous) distribution.
 %vtx     = The vertices matrix.
 %simp    = The simplices matrix.
+%thresh  = Threshold to show imaged region
 %
-% $Id: repaint_inho.m,v 1.2 2004-07-16 17:06:42 aadler Exp $
+% $Id: repaint_inho.m,v 1.3 2005-10-14 14:02:20 aadler Exp $
 
 inhomg= mat - mat_ref;
 hold('on');
 
-for ii= find( inhomg(:)' )
+if nargin<5
+    thresh = max(abs(inhomg(:)))/3;
+end
+
+
+for ii= find( abs(inhomg(:)') > thresh)
    
    this_x = simp(ii,:);
    
-   if inhomg(ii) > 0
+   if inhomg(ii) > thresh
       colour= 'r';
-   elseif inhomg(ii) < 0;
+   elseif inhomg(ii) < -thresh;
       colour= 'b';
    else
       error('shouldn''t get here');
