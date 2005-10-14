@@ -10,54 +10,35 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %simp    = The simplices matrix.
 %thresh  = Threshold to show imaged region
 %
-% $Id: repaint_inho.m,v 1.3 2005-10-14 14:02:20 aadler Exp $
+% $Id: repaint_inho.m,v 1.4 2005-10-14 15:55:35 aadler Exp $
 
 inhomg= mat - mat_ref;
-hold('on');
 
 if nargin<5
-    thresh = max(abs(inhomg(:)))/3;
+    thresh = max(abs(inhomg(:)))/4;
 end
 
+ii= find( abs(inhomg(:)') > thresh);
+   
+this_x = simp(ii,:);
+   
+colour= calc_colours( inhomg(ii) );
+ELEM= vtx';
+      
+Xs=   zeros(3,length(ii));
+Ys=   zeros(3,length(ii));
+Zs=   zeros(3,length(ii));
+for idx=[[1;2;3], ...
+         [1;2;4], ...
+         [1;3;4], ...
+         [2;3;4]];
+   Xs(:)=vtx(this_x(:,idx)',1);
+   Ys(:)=vtx(this_x(:,idx)',2);
+   Zs(:)=vtx(this_x(:,idx)',3);
 
-for ii= find( abs(inhomg(:)') > thresh)
-   
-   this_x = simp(ii,:);
-   
-   if inhomg(ii) > thresh
-      colour= 'r';
-   elseif inhomg(ii) < -thresh;
-      colour= 'b';
-   else
-      error('shouldn''t get here');
-   end
-      
-      
-      Xas = vtx(this_x(1:3),1);
-      Yas = vtx(this_x(1:3),2);
-      Zas = vtx(this_x(1:3),3);
-      
-      patch(Xas,Yas,Zas,colour,'EdgeColor','none');
-      
-      Xbs = vtx(this_x([1,2,4]),1);
-      Ybs = vtx(this_x([1,2,4]),2);
-      Zbs = vtx(this_x([1,2,4]),3);
-      patch(Xbs,Ybs,Zbs,colour,'EdgeColor','none');
-      
-      
-      Xcs = vtx(this_x([1,3,4]),1);
-      Ycs = vtx(this_x([1,3,4]),2);
-      Zcs = vtx(this_x([1,3,4]),3);
-      patch(Xcs,Ycs,Zcs,colour,'EdgeColor','none');
-      
-      
-      Xds = vtx(this_x(2:4),1);
-      Yds = vtx(this_x(2:4),2);
-      Zds = vtx(this_x(2:4),3);
-      patch(Xds,Yds,Zds,colour,'EdgeColor','none');
-      
+   patch(Xs,Ys,Zs,colour,'EdgeColor','none');
 end
-hold('off')
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
