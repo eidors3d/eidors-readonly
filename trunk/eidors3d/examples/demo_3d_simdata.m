@@ -1,16 +1,18 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.6 2005-10-11 20:27:04 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.7 2005-10-14 02:51:51 aadler Exp $
 
 % 
-% Example 1: Create simple 16 electrode 2D model
+% Example 1: Create 16 electrode 3D model
 % 
+disp('STEP 1: Model simultion 3D');
+
 % get parameters for model from mk_circ_tank
 % param= mk_circ_tank(rings, levels, n_elec, n_planes )
 n_elec= 16;
 n_rings= 1;
 levels= [-.5:.1:.5];
 % params= mk_circ_tank(12, levels, n_elec );
-  params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [4,8] } );
+  params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [4,8] } );
 % params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [3,5,7] , ...
 %                                    'planes', n_elec, 2} );
 
@@ -25,6 +27,7 @@ mdl_3d = eidors_obj('fwd_model', params);
  show_fem( mdl_3d ); pause
 
 
+disp('STEP 1A: simultion 3D - homogeneous');
 % create homogeneous image + simulate data
 mat= ones( size(mdl_3d.elems,1) ,1);
 homg_img= eidors_obj('image', 'homogeneous image', ...
@@ -32,24 +35,26 @@ homg_img= eidors_obj('image', 'homogeneous image', ...
                      'fwd_model', mdl_3d );
 homg_data=fwd_solve( homg_img);
 
+disp('STEP 1B: simultion 3D - inhomogeneous');
 % create inhomogeneous image + simulate data
-mat(50)= 2;
+mat(256*6+50)= 2;
 inh_img= eidors_obj('image', 'inhomogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
-figure;image_levels(inh_img, [-.4:.2:.4])
+keyboard % figure;image_levels(inh_img, [-.4:.2:.4])
 
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code)
 % 
+disp('STEP 2: Reconstruction 3D');
 clear inv3d;
 params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [4,8] } );
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
-params.solve=      'aa_fwd_solve';
-params.system_mat= 'aa_calc_system_mat';
-params.jacobian=   'aa_calc_jacobian';
+params.solve=      'np_fwd_solve';
+params.system_mat= 'np_calc_system_mat';
+params.jacobian=   'np_calc_jacobian';
 params.misc.sym= '{n}';
 fm3d = eidors_obj('fwd_model', params);
 
@@ -61,9 +66,9 @@ inv3d.reconst_type= 'difference';
 inv3d.fwd_model= fm3d;
 inv3d= eidors_obj('inv_model', inv3d);
 
-img3= inv_solve( inv3d, inh_data, homg_data);
+%img3= inv_solve( inv3d, inh_data, homg_data);
 %show_fem(img3);
-figure;image_levels(img3, [-.4:.2:.4])
+%figure;image_levels(img3, [-.4:.2:.4])
 
 % 
 % Step 3: Reconstruction in 2D
@@ -90,5 +95,5 @@ inv2d.fwd_model= mdl_2d_2;
 inv2d= eidors_obj('inv_model', inv2d);
 
 img2= inv_solve( inv2d, inh_data, homg_data);
-show_fem(img);
+show_fem(img2);
 
