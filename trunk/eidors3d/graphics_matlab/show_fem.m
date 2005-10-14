@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.12 2005-10-14 14:02:20 aadler Exp $
+% $Id: show_fem.m,v 1.13 2005-10-14 15:55:35 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -11,7 +11,7 @@ if strcmp( mdl.type , 'image' )
    colours= calc_colours(img);
 else
    name= mdl.name;
-   colours= length(colormap);
+   colours= length(colormap); %set colours to black
 end
 cla;
 set(gcf, 'Name', name);
@@ -34,22 +34,6 @@ elseif size(mdl.nodes,2)==3
 else
    error(['model is not 2D or 3D']);
 end
-
-function colours= calc_colours(img)
-   elem_data= img.elem_data(:); %col vector
-   e= length(elem_data);
-   scale_ed = elem_data / max(abs(elem_data));
-
-   grn= 3*abs(scale_ed    ) -1;
-   grn= grn.*(grn>0).*(grn<1) + (grn>=1);
-   red= 3*abs(scale_ed+.33) -1;
-   red= red.*(red>0).*(red<1) + (red>=1);
-   blu= 3*abs(scale_ed-.33) -1;
-   blu= blu.*(blu>0).*(blu<1) + (blu>=1);
-
-   colours= ones(1, length(elem_data), 3);
-   colours(1,:,:)= [red,grn,blu]*.8+ .2; %add grey
-
 
 function show_electrodes_2d(mdl)
     if ~isfield(mdl,'electrode'); return; end
