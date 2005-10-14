@@ -4,7 +4,7 @@ function image_levels(img, levels, clim )
 % levels = array of vertical levels
 % clim   = colourmap limit (or default if not specified)
 %
-% $Id: image_levels.m,v 1.5 2005-10-12 14:20:00 aadler Exp $
+% $Id: image_levels.m,v 1.6 2005-10-14 19:40:14 aadler Exp $
 
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);
@@ -49,7 +49,5 @@ end
 
 function colour_lim = set_colors( sol );
 
-  s= hot(64); s=s(2:60,:);
-  s= [flipud(fliplr(s));0,0,0;s]*.8 + .2;
-  colormap(s);
+  colormap( squeeze( calc_colours( linspace(-1,1,128) ) ));
   colour_lim= max(abs(sol));
