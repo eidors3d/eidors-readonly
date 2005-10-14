@@ -1,7 +1,7 @@
 function rimg_out = show_slices( img, levels, clim )
 % show_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
-% img    = EIDORS image struct
+% img    = EIDORS image struct, or a array of structs
 % levels = Matrix [Lx3] of L image levels
 %          each row of the matrix specifies the intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
@@ -9,13 +9,13 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.15 2005-10-12 17:25:23 aadler Exp $
+% $Id: show_slices.m,v 1.16 2005-10-14 18:27:26 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
 %  - 
 
-dims= size(img.fwd_model.nodes,2);
+dims= size(img(1).fwd_model.nodes,2);
 if ~exist('levels') && dims==2
    levels= [Inf,Inf,0];
 end
@@ -24,15 +24,24 @@ if ~exist('clim')
    clim = [];
 end
 
-for img_no = 1:prod(size( img ))
+for img_no = 1:length(img)
    for lev_no = 1:size( levels,1 )
       level= levels( lev_no, : );
-      rimg= calc_image( img( img_no ), level, clim );
+      rimg{img_no,lev_no}= calc_image( img( img_no ), level, clim );
    end
 end
 
 if nargout==0
-   imagesc( rimg );
+   ll = length(rimg(:));
+   img_cols = ceil( sqrt( ll ));
+   img_rows = ceil( ll/ img_cols );
+
+   for imno= 1:ll
+       subplot(img_rows,img_cols,imno);
+       r_img = rimg{imno};
+       c_img = calc_colours( r_img);
+       image(reshape(c_img, [size(r_img),3]))
+   end
 else
    rimg_out = rimg;
 end
@@ -78,7 +87,7 @@ end
 
 
 
-backgnd= .01;
+backgnd= NaN;
 scale=1;
 rval= [backgnd; scale*img.elem_data];
 rimg= reshape( rval(elem_ptr+1), np,np );
@@ -94,8 +103,8 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
-      linspace( xmean - xrange*0.55, xmean + xrange*0.55, npx ), ...
-      linspace( ymean + yrange*0.55, ymean - yrange*0.55, npy ) );
+      linspace( xmean - xrange*0.52, xmean + xrange*0.52, npx ), ...
+      linspace( ymean + yrange*0.52, ymean - yrange*0.52, npy ) );
   v_yx= [-y(:) x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
@@ -132,8 +141,8 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
-      linspace( xmean - xrange*0.55, xmean + xrange*0.55, npx ), ...
-      linspace( ymean + yrange*0.55, ymean - yrange*0.55, npy ) );
+      linspace( xmean - xrange*0.52, xmean + xrange*0.52, npx ), ...
+      linspace( ymean + yrange*0.52, ymean - yrange*0.52, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -183,8 +192,8 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
   [x y]=meshgrid( ...
-      linspace( xmean - xrange*0.55, xmean + xrange*0.55, npx ), ...
-      linspace( ymean + yrange*0.55, ymean - yrange*0.55, npy ) );
+      linspace( xmean - xrange*0.52, xmean + xrange*0.52, npx ), ...
+      linspace( ymean + yrange*0.52, ymean - yrange*0.52, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c

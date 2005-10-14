@@ -12,10 +12,11 @@ function colours= calc_colours(img, scale)
 %       - default = autoscale
 
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.2 2005-10-14 15:55:35 aadler Exp $  
+% $Id: calc_colours.m,v 1.3 2005-10-14 18:27:26 aadler Exp $  
 
 greylev=.2;
-sat_adj=.95;
+sat_adj=.9 ;
+back_gnd_clr= [.5,.5,.15];
  
 if isfield(img,'type')
    if strcmp( img.type, 'image' )
@@ -27,6 +28,8 @@ else
    elem_data= img(:);
 end
 
+backgnd= isnan(elem_data);
+elem_data(backgnd)= mean( elem_data(~backgnd));
 e= length(elem_data);
 
 % can't use | or || to support all stupid matlab versions > 6.0
@@ -38,12 +41,17 @@ end
 scale_ed = elem_data / scale;
 
 F= 3*sat_adj;
-grn= F*abs(scale_ed    ) -1;
-grn= grn.*(grn>0).*(grn<1) + (grn>=1);
 red= F*abs(scale_ed+1/F) -1;
 red= red.*(red>0).*(red<1) + (red>=1);
+grn(backgnd) = back_gnd_clr(1);
+
+grn= F*abs(scale_ed    ) -1;
+grn= grn.*(grn>0).*(grn<1) + (grn>=1);
+grn(backgnd) = back_gnd_clr(2);
+
 blu= F*abs(scale_ed-1/F) -1;
 blu= blu.*(blu>0).*(blu<1) + (blu>=1);
+grn(backgnd) = back_gnd_clr(3);
 
 colours= ones(1, length(elem_data), 3);
 colours(1,:,:)= [red,grn,blu]*(1-greylev)+ greylev;
