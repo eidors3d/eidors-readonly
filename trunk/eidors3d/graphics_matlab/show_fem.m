@@ -1,7 +1,7 @@
 function show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
-% $Id: show_fem.m,v 1.11 2005-09-14 20:05:06 aadler Exp $
+% $Id: show_fem.m,v 1.12 2005-10-14 14:02:20 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -105,7 +105,7 @@ end
 function show_inhomogeneities( elem_data, mdl)
 % show
 hold('on');
-homg_elem_data= ones(size(elem_data));
+homg_elem_data= zeros(size(elem_data));
 repaint_inho(elem_data, homg_elem_data, ...
              mdl.nodes, ...
              mdl.elems); 
