@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.7 2005-10-14 02:51:51 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.8 2005-10-15 17:20:42 aadler Exp $
 
 % 
 % Example 1: Create 16 electrode 3D model
@@ -24,7 +24,6 @@ params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'aa_calc_jacobian';
 mdl_3d = eidors_obj('fwd_model', params);
- show_fem( mdl_3d ); pause
 
 
 disp('STEP 1A: simultion 3D - homogeneous');
@@ -42,14 +41,15 @@ inh_img= eidors_obj('image', 'inhomogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
-keyboard % figure;image_levels(inh_img, [-.4:.2:.4])
+ show_fem( inh_img, 1);
 
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code)
 % 
 disp('STEP 2: Reconstruction 3D');
 clear inv3d;
-params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [4,8] } );
+levels= [-.4:.2:.4];
+params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [2,4] } );
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
 params.solve=      'np_fwd_solve';
