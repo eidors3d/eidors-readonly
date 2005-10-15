@@ -102,6 +102,9 @@ function elec_nodes= electrode_pattern( point_elec_nodes, elec_spec )
       elseif  strcmp( spec,'zigzag' )
           n_elec= elec_spec{i+1};
           levs =  elec_spec{i+2};
+          if any(levs > size(point_elec_nodes,1))
+             error('requested electrode plane larger than FEModel');
+          end
 
           eidx= (0:n_elec-1);
           idx= round(eidx*lpe/n_elec)*nlev + ...
