@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.14 2005-10-14 19:40:14 aadler Exp $
+% $Id: show_fem.m,v 1.15 2005-10-15 18:08:12 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -15,7 +15,7 @@ if strcmp( mdl.type , 'image' )
    colours= calc_colours(img);
 else
    name= mdl.name;
-   colours= length(colormap); %set colours to black
+   colours= [1,1,1]; % white elements if no image
 end
 cla;
 set(gcf, 'Name', name);
