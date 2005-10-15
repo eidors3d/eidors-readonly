@@ -1,7 +1,7 @@
 function [org_img, demo_img] = demo_real;
 % [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.29 2005-10-12 14:02:38 aadler Exp $
+% $Id: demo_real.m,v 1.30 2005-10-15 18:08:12 aadler Exp $
 clc;
 
 isOctave= exist('OCTAVE_VERSION');
@@ -65,7 +65,7 @@ inhomg_img= eidors_obj('image', 'inhomogeneous image', ...
 
 if ~isOctave
 %   show_fem( demo_mdl, 1);
-    show_fem( inhomg_img , [1 1]);
+    show_fem( inhomg_img , 1);
 end
 
 

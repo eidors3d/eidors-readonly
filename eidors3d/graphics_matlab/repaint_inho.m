@@ -10,7 +10,7 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %simp    = The simplices matrix.
 %thresh  = Threshold to show imaged region
 %
-% $Id: repaint_inho.m,v 1.4 2005-10-14 15:55:35 aadler Exp $
+% $Id: repaint_inho.m,v 1.5 2005-10-15 18:08:12 aadler Exp $
 
 inhomg= mat - mat_ref;
 
@@ -23,6 +23,7 @@ ii= find( abs(inhomg(:)') > thresh);
 this_x = simp(ii,:);
    
 colour= calc_colours( inhomg(ii) );
+colour= 1 - colour(1,:,[3,2,1]); % flipr R,B, brightness
 ELEM= vtx';
       
 Xs=   zeros(3,length(ii));
