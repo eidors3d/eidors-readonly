@@ -2,6 +2,8 @@ function system_mat = calc_system_mat( fwd_model, img)
 % CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image
 % 
 %    system_mat= calc_system_mat( fwd_model, image)
+% OR
+%    system_mat= calc_system_mat( image)
 %
 % it will call the fwd_model.solve
 %
@@ -11,7 +13,12 @@ function system_mat = calc_system_mat( fwd_model, img)
 % fwd_model is a fwd_model structure
 % image     is an image structure
 %
-% $Id: calc_system_mat.m,v 1.7 2005-09-16 03:17:46 aadler Exp $
+% $Id: calc_system_mat.m,v 1.8 2005-10-17 13:46:16 aadler Exp $
+
+if strcmp( fwd_model.type , 'image')
+    img= fwd_model;
+    fwd_model= img.fwd_model;
+end
 
 system_mat = eidors_obj('calc-or-cache', fwd_model, ...
                   fwd_model.system_mat, img);
