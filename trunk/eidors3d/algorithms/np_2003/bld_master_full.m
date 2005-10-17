@@ -27,11 +27,6 @@ if length(mat) ~= sr
 end
 
 
-if length(zc) == er
-%The column vector zc with the contact 
-%impedances in [Ohms] is required
-
-
 [Ef,D,Ela] = bld_master(vtx,simp,mat);
 
 
@@ -42,6 +37,8 @@ Ef = sparse(Ef_i, Ef_j, Ef_s, vr+er, vr+er);
 
 %Up to this point we have calculated the master matrix without the influence of contact impedance.
 
+%The column vector zc with the contact 
+%impedances in [Ohms] is required
 if length(zc) ~= er
       error(sprintf('zc (=%d) should be equal to er (=%d)',length(zc),er));
 end
@@ -53,6 +50,18 @@ for q=1:er
    
    q_th_ele = nonzeros(elec(q,:));  % Select the row of nodes corresponding to the current electrode
    
+   if length(q_th_ele) ==1 % check if point electrode
+      m = q_th_ele;
+      cali_area = 1 / zc(q);
+   
+      tang_area = tang_area + cali_area;
+      
+      Ef(m,vr+q) = Ef(m,vr+q) - cali_area/2 ; 
+      Ef(vr+q,m) = Ef(vr+q,m) - cali_area/2 ; 
+      
+      Ef(m,m) = Ef(m,m) + cali_area/2;
+
+   else % not point electrode - use complete electrode model
    for w=1:3:length(q_th_ele)
       
       m = q_th_ele(w);
@@ -96,13 +105,11 @@ for q=1:er
     
       
    end % dealing with this electrode
-   
+   end % point electrode
    Ef(vr+q,vr+q) = Ef(vr+q,vr+q) + 0.5*tang_area;
    
 end %for the whole set of electrodes
-
-end
-
+1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
 % Copyright (c) N. Polydorides 2003

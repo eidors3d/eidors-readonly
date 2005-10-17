@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.9 2005-10-17 16:12:14 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.10 2005-10-17 19:51:54 aadler Exp $
 
 % 
 % Example 1: Create 16 electrode 3D model
@@ -12,7 +12,7 @@ n_elec= 16;
 n_rings= 1;
 levels= [-.5:.1:.5];
 e_levels= [4, 8];
-% params= mk_circ_tank(12, levels, n_elec );
+% params= mk_circ_tank( 8, levels, n_elec );
   params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
 % params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [3,5,7] , ...
 %                                    'planes', n_elec, 2} );
@@ -21,9 +21,10 @@ e_levels= [4, 8];
  options = {'no_meas_current','no_rotate_meas'};
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
-params.solve=      'aa_fwd_solve';
-params.system_mat= 'aa_calc_system_mat';
-params.jacobian=   'aa_calc_jacobian';
+params.solve=      'np_fwd_solve';
+params.system_mat= 'np_calc_system_mat';
+params.jacobian=   'np_calc_jacobian';
+params.misc.sym=   '{n}';
 mdl_3d = eidors_obj('fwd_model', params);
 
 
@@ -40,7 +41,8 @@ disp('STEP 1B: simultion 3D - inhomogeneous');
 % create inhomogeneous image + simulate data
 inhv= [38,50,51,66,67,83];
 for inhlev= (e_levels(1)-1)*3 + [-3:2];
-   cond(256*inhlev+inhv) =2;
+     cond(256*inhlev+inhv) =2;
+%    cond(64*inhlev+[5,9,10,17,18,26]) =2;
 end
 
 inh_img= eidors_obj('image', 'inhomogeneous image', ...
@@ -54,9 +56,10 @@ inh_data=fwd_solve( inh_img);
 % 
 disp('STEP 2: Reconstruction 3D');
 clear inv3d;
-%levels= [-.4:.2:.4];
-%params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [2,4] } );
-  params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+ levels= [-.4:.2:.4];
+ params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [2,4] } );
+%params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+%params= mk_circ_tank( 4, levels, n_elec );
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
 params.solve=      'np_fwd_solve';
