@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.19 2005-10-17 16:12:14 aadler Exp $
+% $Id: show_fem.m,v 1.20 2005-10-17 18:55:52 aadler Exp $
 
 
 if nargin == 1
@@ -76,8 +76,10 @@ for e=1:length(mdl.electrode)
 
     if length(elec_nodes) == 1  % point electrode model
         vtx= mdl.nodes(elec_nodes,:);
+        colour = [0,.5,0]; % dark green
         line(vtx(1),vtx(2),vtx(3), ...
-            'Marker','.','MarkerSize',16,'MarkerEdgeColor','red')
+            'Marker','h','MarkerSize',24, ...
+            'MarkerFaceColor',colour, 'MarkerEdgeColor', colour);
     else
         % find elems on boundary attached to this electrode
         nn=ones(size(ee,1),1)*mdl.electrode(e).nodes;
