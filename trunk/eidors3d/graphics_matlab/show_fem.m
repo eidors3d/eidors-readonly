@@ -5,30 +5,33 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.16 2005-10-17 13:55:58 aadler Exp $
+% $Id: show_fem.m,v 1.17 2005-10-17 14:09:52 aadler Exp $
 
-% if we have an only img input, then define mdl
-if strcmp( mdl.type , 'image' )
-   img= mdl;
-   mdl= img.fwd_model;
-   name= img.name;
-   colours= calc_colours(img);
-else
-   name= mdl.name;
-   colours= [1,1,1]; % white elements if no image
-end
-cla;
-set(gcf, 'Name', name);
 
-if nargin == 1 % options not currently defined
+if nargin == 1
    background =0;
 end
 
+% if we have an only img input, then define mdl
+name= mdl.name;
+if strcmp( mdl.type , 'image' )
+   img= mdl;
+   mdl= img.fwd_model;
+end
+
+cla;
+set(gcf, 'Name', name);
+
 if size(mdl.nodes,2)==2
+   if exist('img');
+      colours= calc_colours(img.elem_data - background);
+   else
+      colours= [1,1,1]; % white elements if no image
+   end
    cla;
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl);
-   view(2);
+   view(0,-90);
 elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
 
