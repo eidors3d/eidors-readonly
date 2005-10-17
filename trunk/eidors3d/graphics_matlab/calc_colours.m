@@ -12,7 +12,7 @@ function colours= calc_colours(img, scale)
 %       - default = autoscale
 
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.3 2005-10-14 18:27:26 aadler Exp $  
+% $Id: calc_colours.m,v 1.4 2005-10-17 15:07:02 aadler Exp $  
 
 greylev=.2;
 sat_adj=.9 ;
@@ -28,15 +28,20 @@ else
    elem_data= img(:);
 end
 
+if isempty(elem_data)
+    colours = zeros(1,1,3);
+    return;
+end
+
 backgnd= isnan(elem_data);
 elem_data(backgnd)= mean( elem_data(~backgnd));
 e= length(elem_data);
 
 % can't use | or || to support all stupid matlab versions > 6.0
 if nargin <= 1
-   scale =  max(abs(elem_data));
+   scale =  max(abs(elem_data)) + eps;
 elseif isempty(scale)
-   scale =  max(abs(elem_data));
+   scale =  max(abs(elem_data)) + eps;
 end
 scale_ed = elem_data / scale;
 
