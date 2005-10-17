@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.15 2005-10-15 18:08:12 aadler Exp $
+% $Id: show_fem.m,v 1.16 2005-10-17 13:55:58 aadler Exp $
 
 % if we have an only img input, then define mdl
 if strcmp( mdl.type , 'image' )
@@ -25,6 +25,7 @@ if nargin == 1 % options not currently defined
 end
 
 if size(mdl.nodes,2)==2
+   cla;
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl);
    view(2);
@@ -59,7 +60,7 @@ for e=1:length(mdl.electrode)
     [jnk,idx] = sort(atan2( vy, vx ));
     line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
          'LineWidth', 2, 'Color', [1 0 0], ...
-         'Marker','.','MarkerSize',16,'MarkerEdgeColor','red')
+         'Marker','.','MarkerSize',20,'MarkerEdgeColor','red')
 end
 
 function show_electrodes_3d(mdl)
@@ -143,6 +144,11 @@ function show_2d_fem( mdl, colours )
   Ys(:)=mdl.nodes(elem(:),2);
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
   patch(Xs,Ys,zeros(3,e),colours);
+
+  max_x= max(mdl.nodes(:,1)); min_x= min(mdl.nodes(:,1));
+  max_y= max(mdl.nodes(:,2)); min_y= min(mdl.nodes(:,2));
+  axis([ mean([max_x,min_x]) + 0.55*[-1,1]*(max_x-min_x), ...
+         mean([max_y,min_y]) + 0.55*[-1,1]*(max_y-min_y) ]);
 
 
 
