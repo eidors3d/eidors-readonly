@@ -17,7 +17,7 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.sym      => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
-% $Id: np_fwd_parameters.m,v 1.6 2005-10-17 02:04:17 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.7 2005-10-17 19:51:54 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -57,8 +57,12 @@ bdy = fwd_model.boundary;
 % get electrode parameters
 for i=1:n_elec
     elec_nodes= fwd_model.electrode(i).nodes;
-    e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
-    n_bdy  = bdy(e_bdy,:)';
+    if length(elec_nodes)>1
+       e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
+       n_bdy  = bdy(e_bdy,:)';
+    else
+       n_bdy= elec_nodes;
+    end
 % elec is a series of nodes matching bdy faces
     elec   = [elec; n_bdy(:)' ];
 
