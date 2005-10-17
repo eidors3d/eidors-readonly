@@ -198,11 +198,11 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
 %param.electrode = mk_electrodes( elec_nodes );
 % Create the electrode structure from elec_nodes
 % Currently implements point electrodes with 
-%   contact impedance of zero.
+%   contact impedance of near zero.
 function elec_struct = mk_electrodes( elec_nodes)
    for i= 1:length( elec_nodes )
       elec_struct(i).nodes     = elec_nodes(i);
-      elec_struct(i).z_contact = 0;
+      elec_struct(i).z_contact = 0.001; % corresponds to 1 ohm
    end
    % Need to do it this way to be compatible accross versions
    if ~exist('elec_struct');

@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.18 2005-10-17 14:47:44 aadler Exp $
+% $Id: show_fem.m,v 1.19 2005-10-17 16:12:14 aadler Exp $
 
 
 if nargin == 1
@@ -103,7 +103,7 @@ repaint_inho(elem_data, homg_elem_data, ...
              mdl.nodes, ...
              mdl.elems); 
 camlight('left');
-lighting('flat');
+%lighting('flat');
 hold('off');
 
 function paint_electrodes(sel,srf,vtx);

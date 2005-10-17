@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.8 2005-10-15 17:20:42 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.9 2005-10-17 16:12:14 aadler Exp $
 
 % 
 % Example 1: Create 16 electrode 3D model
@@ -11,8 +11,9 @@ disp('STEP 1: Model simultion 3D');
 n_elec= 16;
 n_rings= 1;
 levels= [-.5:.1:.5];
+e_levels= [4, 8];
 % params= mk_circ_tank(12, levels, n_elec );
-  params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [4,8] } );
+  params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
 % params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [3,5,7] , ...
 %                                    'planes', n_elec, 2} );
 
@@ -28,28 +29,34 @@ mdl_3d = eidors_obj('fwd_model', params);
 
 disp('STEP 1A: simultion 3D - homogeneous');
 % create homogeneous image + simulate data
-mat= ones( size(mdl_3d.elems,1) ,1);
+cond= ones( size(mdl_3d.elems,1) ,1);
 homg_img= eidors_obj('image', 'homogeneous image', ...
-                     'elem_data', mat, ...
+                     'elem_data', cond, ...
                      'fwd_model', mdl_3d );
 homg_data=fwd_solve( homg_img);
 
 disp('STEP 1B: simultion 3D - inhomogeneous');
+
 % create inhomogeneous image + simulate data
-mat(256*6+50)= 2;
+inhv= [38,50,51,66,67,83];
+for inhlev= (e_levels(1)-1)*3 + [-3:2];
+   cond(256*inhlev+inhv) =2;
+end
+
 inh_img= eidors_obj('image', 'inhomogeneous image', ...
-                     'elem_data', mat, ...
+                     'elem_data', cond, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
- show_fem( inh_img, 1);
+ show_fem( inh_img, 1); pause
 
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code)
 % 
 disp('STEP 2: Reconstruction 3D');
 clear inv3d;
-levels= [-.4:.2:.4];
-params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [2,4] } );
+%levels= [-.4:.2:.4];
+%params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [2,4] } );
+  params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
 params.solve=      'np_fwd_solve';
@@ -66,7 +73,7 @@ inv3d.reconst_type= 'difference';
 inv3d.fwd_model= fm3d;
 inv3d= eidors_obj('inv_model', inv3d);
 
-%img3= inv_solve( inv3d, inh_data, homg_data);
+ img3= inv_solve( inv3d, inh_data, homg_data);
 %show_fem(img3);
 %figure;image_levels(img3, [-.4:.2:.4])
 
