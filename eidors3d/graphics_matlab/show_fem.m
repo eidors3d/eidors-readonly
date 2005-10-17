@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.17 2005-10-17 14:09:52 aadler Exp $
+% $Id: show_fem.m,v 1.18 2005-10-17 14:47:44 aadler Exp $
 
 
 if nargin == 1
@@ -31,7 +31,7 @@ if size(mdl.nodes,2)==2
    cla;
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl);
-   view(0,-90);
+   view(0, 90); axis('xy');
 elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
 
