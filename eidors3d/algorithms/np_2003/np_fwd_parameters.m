@@ -17,7 +17,7 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.sym      => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
-% $Id: np_fwd_parameters.m,v 1.5 2005-10-11 15:17:59 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.6 2005-10-17 02:04:17 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -116,3 +116,15 @@ function e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
       mbdy= mbdy + (bdy == n); 
    end 
    e_bdy = find( all(mbdy') );
+
+% get boundary faces which match any node
+% Use this for point electrodes where there are no bdy faces
+% This is sort of an abuse of the model, but at least it can
+% produce a reasonable result for pt electrode mdls.
+
+   if isempty(e_bdy)
+      e_bdy = find( sum(mbdy')>=2 );
+   end
+   if isempty(e_bdy)
+      e_bdy = find( any(mbdy') );
+   end
