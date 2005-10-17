@@ -1,7 +1,7 @@
 % Example of using EIDORS to simulate 2D data and to
 % solve it using various 2D solvers
 %
-% $Id: demo_2d_simdata.m,v 1.5 2005-10-11 03:21:04 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.6 2005-10-17 14:09:52 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model
@@ -29,7 +29,7 @@ homg_img= eidors_obj('image', 'homogeneous image', ...
 homg_data=fwd_solve( homg_img);
 
 % create inhomogeneous image + simulate data
-mat(5)= 2;
+mat([65,81,82,101,102,122])=2;
 inh_img= eidors_obj('image', 'homogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', mdl_2d );
