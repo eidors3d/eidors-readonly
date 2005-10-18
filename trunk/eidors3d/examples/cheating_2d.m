@@ -1,7 +1,81 @@
 % code to simulate inverse crimes in EIT
-% $Id: cheating_2d.m,v 1.1 2005-10-18 13:50:30 aadler Exp $
+% $Id: cheating_2d.m,v 1.2 2005-10-18 15:25:23 aadler Exp $
 
-%addpath('../../../../proj/eit/reconst/')
+function out=cheating_2d
+
+   [vis,vhs,s_mdl]= small_2d_mdl;
+    i_mdl= large_inv_model;
+
+   im= inv_solve( i_mdl, vis, vhs );
+   show_fem(im);
+   reconst_with_noise(i_mdl, vis, vhs, 4)
+
+
+return;
+
+% simulate 'sad' data for small model
+function [vis,vhs,mdl]= small_2d_mdl
+   params= mk_circ_tank(8, [], 16 ); 
+   params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
+                         {'no_meas_current','no_rotate_meas'}, 1);
+   params.solve=      'aa_fwd_solve';
+   params.system_mat= 'aa_calc_system_mat';
+   mdl= eidors_obj('fwd_model', params);
+
+   mat= ones( size(mdl.elems,1), 1);
+
+   % homogeneous data
+   vhs= fwd_solve( eidors_obj('image','name',  ...
+                     'elem_data', mat, 'fwd_model', mdl ));
+
+   % inhomogeneous data for sad face model
+   leye= [78,97,98,117,118,141];
+   reye= [66,82,83,102,103,123];
+   mouth= [28,31,40,43,58,57,53,54,74,73,92,93,113, ...
+            112,135,69,87,70,107,88,108,129];
+   mat(leye)= 2;
+   mat(reye)= 2;
+   mat(mouth)=1.5;
+
+   vis= fwd_solve( eidors_obj('image','name',  ...
+                     'elem_data', mat, 'fwd_model', mdl ));
+
+function i_mdl= large_inv_model;
+   params= mk_circ_tank(12, [], 16 ); 
+   params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
+                         {'no_meas_current','no_rotate_meas'}, 1);
+   params.solve=      'aa_fwd_solve';
+   params.system_mat= 'aa_calc_system_mat';
+   params.jacobian  = 'aa_calc_jacobian';
+   l_mdl= eidors_obj('fwd_model', params);
+
+% create inverse model
+  %hparam.value = 1e-8;
+   hparam.func = 'aa_calc_noise_figure';
+   hparam.noise_figure= 4;
+   hparam.tgt_elems= 1:4;
+
+   img_prior.func = 'tikhonov_image_prior';
+  %img_prior.func = 'aa_calc_image_prior';
+
+   i_mdl= eidors_obj( ...
+          'inv_model', 'large 2D inverse', ...
+          'hyperparameter', hparam, 'image_prior', img_prior, ...
+          'reconst_type', 'difference', ...
+          'fwd_model', l_mdl, 'solve', 'aa_inv_solve' );
+
+
+function reconst_with_noise(i_mdl, vis, vhs, num_tries)
+    noise = .0002*randn(size(vis.meas,1),num_tries);
+
+    vi_n(1:num_tries) = vis;
+    for i= 1:num_tries % stupid matlab doesn't allow easy vectorization
+       vi_n(i).meas = vi_n(i).meas + noise(:,i);
+    end
+    show_slices( inv_solve( i_mdl, vi_n, vhs ));
+
+function boo;
+
 global vhs vis;
 
 if ~exist('vhs') || isempty(vhs)
@@ -17,7 +91,7 @@ if ~exist('vhs') || isempty(vhs)
     sad(reye)=1;
     sad(mouth)=.5;
     vis= prob_dir( sad );
-endif
+end
 
 function cleancolourmap
   s= 1-[flipud(hot(64)) ;fliplr(hot(64))];
@@ -128,7 +202,7 @@ function Z= mkreconst( lamda, p_prior, p_noise, p_ww );
     global DVV;
     [m,e]= size(DVV);
 
-    if ~exist('p_ww'); p_ww = ones(1,e); endif
+    if ~exist('p_ww'); p_ww = ones(1,e); end
 
     n_var= 1./prob_dir( zeros(1,e) );
     W= sparse(1:m,1:m, n_var.^(-p_noise) );
@@ -275,7 +349,7 @@ function node1= angl_deform(node0, kk)
    for k= 2:2:length(kk)
       m = k/2;
       A1= A1 + kk(k-1)*cos(m*A0) + kk(k)*sin(m*A0);
-   endfor
+   end
    node1 = [R0.*cos(A1); R0.*sin(A1) ];
 endfunction
 
@@ -283,7 +357,7 @@ function [vi,vh,dist] = make_deform( deform );
     global ChoiX;
     if ~strcmp(ChoiX, 'd001') 
        resetup('d0'); cleancolourmap;
-    endif
+    end
     global NODE; node0 = NODE;
 
     leye= [78,97,98,117,118,141];

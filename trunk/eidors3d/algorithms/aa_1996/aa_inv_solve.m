@@ -1,7 +1,7 @@
 function img= aa_inv_solve( inv_model, data1, data2)
 % AA_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
 % img= aa_inv_solve( inv_model, data1, data2)
-% img        => output image
+% img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
@@ -11,7 +11,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% $Id: aa_inv_solve.m,v 1.10 2005-10-10 19:34:23 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.11 2005-10-18 15:25:23 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
