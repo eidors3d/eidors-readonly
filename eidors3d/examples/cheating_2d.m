@@ -1,17 +1,48 @@
 % code to simulate inverse crimes in EIT
-% $Id: cheating_2d.m,v 1.2 2005-10-18 15:25:23 aadler Exp $
+% $Id: cheating_2d.m,v 1.3 2005-10-18 16:43:31 aadler Exp $
 
 function out=cheating_2d
 
    [vis,vhs,s_mdl]= small_2d_mdl;
-    i_mdl= large_inv_model;
 
-   im= inv_solve( i_mdl, vis, vhs );
-   show_fem(im);
-   reconst_with_noise(i_mdl, vis, vhs, 4)
+   il_g = make_inv_model( 12 ); %large model
+   disp('Approach #1: reconstruct with noise');
+%  reconst_with_noise(il_g, vis, vhs, 10); pause
 
+   disp('Approach #2: reconstruct with tikhonov cheat');
+   pp= small_face;
+   % homog (normal) model
+   image_prior.func= @cheat_tikhonov;
+   image_prior.cheat_elements= [];
+   image_prior.cheat_weight = 0.5;
+   is_n = make_inv_model( 8 , image_prior ); 
+   % sad model
+   image_prior.cheat_elements= [pp.eyes, pp.sad];
+   is_s = make_inv_model( 8 , image_prior ); 
+   % happy model
+   image_prior.cheat_elements= [pp.eyes, pp.smile];
+   is_h = make_inv_model( 8 , image_prior ); 
+   % happy/sad (medium) model
+   image_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
+   is_m = make_inv_model( 8 , image_prior ); 
+
+   show_slices( [ inv_solve( is_n, vis, vhs ), ... 
+                  inv_solve( is_s, vis, vhs ), ... 
+                  inv_solve( is_h, vis, vhs ), ... 
+                  inv_solve( is_m, vis, vhs ) ] ); pause
 
 return;
+
+function p= small_face;
+   p.leye=   [78,97,98,117,118,141];
+   p.reye=   [66,82,83,102,103,123];
+   p.rsmile= [40:41, 53:55, 69:71, 86:88];
+   p.lsmile= [43:44, 57:59, 73:75, 91:93];
+   p.lsad =  [31,43,58,57,74,73,92,93,113,112,135];
+   p.sad =   [28,31,40,43,58,57,53,54,74,73,92,93,113, ...
+              112,135,69,87,70,107,88,108,129];
+   p.eyes= [p.leye,p.reye];
+   p.smile= [p.rsmile, p.lsmile];
 
 % simulate 'sad' data for small model
 function [vis,vhs,mdl]= small_2d_mdl
@@ -29,37 +60,37 @@ function [vis,vhs,mdl]= small_2d_mdl
                      'elem_data', mat, 'fwd_model', mdl ));
 
    % inhomogeneous data for sad face model
-   leye= [78,97,98,117,118,141];
-   reye= [66,82,83,102,103,123];
-   mouth= [28,31,40,43,58,57,53,54,74,73,92,93,113, ...
-            112,135,69,87,70,107,88,108,129];
-   mat(leye)= 2;
-   mat(reye)= 2;
-   mat(mouth)=1.5;
+   pp= small_face;
+   mat(pp.eyes)= 2;
+   mat(pp.sad)=1.5;
 
    vis= fwd_solve( eidors_obj('image','name',  ...
                      'elem_data', mat, 'fwd_model', mdl ));
 
-function i_mdl= large_inv_model;
+% create inv_model, and specify img_prior if required
+function i_mdl= make_inv_model( n_rings, img_prior );
    params= mk_circ_tank(12, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
                          {'no_meas_current','no_rotate_meas'}, 1);
    params.solve=      'aa_fwd_solve';
    params.system_mat= 'aa_calc_system_mat';
    params.jacobian  = 'aa_calc_jacobian';
+%  params.normalize_measurements  = 1; TODO: we have a bug here
    l_mdl= eidors_obj('fwd_model', params);
 
 % create inverse model
-  %hparam.value = 1e-8;
-   hparam.func = 'aa_calc_noise_figure';
-   hparam.noise_figure= 4;
-   hparam.tgt_elems= 1:4;
+   hparam.value = 1e-8;
+  %hparam.func = 'aa_calc_noise_figure';
+  %hparam.noise_figure= 1;
+  %hparam.tgt_elems= 1:4;
 
-   img_prior.func = 'tikhonov_image_prior';
-  %img_prior.func = 'aa_calc_image_prior';
+   if nargin < 2
+      img_prior.func = 'tikhonov_image_prior';
+     %img_prior.func = 'aa_calc_image_prior';
+   end
 
    i_mdl= eidors_obj( ...
-          'inv_model', 'large 2D inverse', ...
+          'inv_model', '2D inverse', ...
           'hyperparameter', hparam, 'image_prior', img_prior, ...
           'reconst_type', 'difference', ...
           'fwd_model', l_mdl, 'solve', 'aa_inv_solve' );
@@ -74,119 +105,26 @@ function reconst_with_noise(i_mdl, vis, vhs, num_tries)
     end
     show_slices( inv_solve( i_mdl, vi_n, vhs ));
 
+% Image prior with Tikhonov + cheating elements
+function Reg= cheat_tikhonov( inv_model, elems, weight );
+% Reg= cheat_tikhonov( inv_model )
+% Reg        => output regularization term
+% Parameters:
+%   elems    = inv_model.image_prior.cheat_elements;
+%            => elements weights to modify
+%   weight   = inv_model.image_prior.cheat_weight;
+%            => new weight to set elements to
+
+
+pp= aa_fwd_parameters( inv_model.fwd_model );
+idx= 1:pp.n_elem;
+weight= ones(1,pp.n_elem);
+weight( inv_model.image_prior.cheat_elements ) = ...
+        inv_model.image_prior.cheat_weight;
+
+Reg = sparse( idx, idx, weight );
+
 function boo;
-
-global vhs vis;
-
-if ~exist('vhs') || isempty(vhs)
-    resetup('d0')
-
-    leye= [78,97,98,117,118,141];
-    reye= [66,82,83,102,103,123];
-    mouth= [28,31,40,43,58,57,53,54,74,73,92,93,113, ...
-            112,135,69,87,70,107,88,108,129];
-    sad= zeros(1,256);
-    vhs= prob_dir( sad );
-    sad(leye)=1;
-    sad(reye)=1;
-    sad(mouth)=.5;
-    vis= prob_dir( sad );
-end
-
-function cleancolourmap
-  s= 1-[flipud(hot(64)) ;fliplr(hot(64))];
-  s= [flipud(fliplr(hot(64))); hot(64)];
-  s= [s([1:2:63 64:2:128],:)*.7+.2;[1 1 1]];
-  colormap(s);
-endfunction
-
-
-
-resetup('e0'); cleancolourmap;
-
-
-
-function noise_test(vhs,vis)
-    % Noise Test
-    nn= 400;
-    nvec= .0002*randn(208,nn);
-    vn = vis*ones(1,nn) + nvec;
-    image(imgr(irec(vn,vhs,0,4),50),1);
-endfunction
-
-noise1= 1e-5*[-27.76546; -7.59427; -1.93711; -27.05896; -12.85904; -11.46233;
-    1.71458; -15.84886; 9.49042; 26.54607; 26.12679; 10.28903; 11.27190;
-    5.94225; 6.44672; -19.99604; -22.04821; -8.67624; 11.81035; 4.80488;
-   29.03764; -22.83378; 32.48301; 30.09973; 33.70337; -0.47085; 3.85125;
-    9.05904; 12.30617; 14.14135; -10.76137; 11.01337; 17.39058; 37.05449;
-   28.25643; 18.98459; 26.58454; 11.32970; -35.71133; -1.36525; -5.43171;
-    9.98939; -3.04222; 21.29392; -15.11127; -8.27054; 13.01116; 5.32276;
-   19.24881; -16.71019; -15.73683; -4.06076; 2.37260; 6.83274; 5.26589;
-    8.83536; -6.29922; 0.63870; -20.85604; -5.73974; 11.16503; -9.94519;
-    8.64528; 21.63097; -4.20898; 8.17845; -17.65653; 10.60018; 8.51757;
-   15.55584; 30.22712; 0.71698; 18.94148; -15.84283; 26.82607; -12.08514;
-  -21.82176; -10.15707; -15.43742; -1.46121; -31.93084; -35.00449; 43.65366;
-  -28.86313; -8.89273; -4.88046; 12.11069; 13.11200; 24.02962; 25.25127;
-   -6.39429; -18.28042; -22.45900; 11.12896; -16.43752; 11.79022; 26.50192;
-    6.81792; 14.81372; -15.59964; -18.31752; 2.16775; 25.24500; 20.77933;
-   -2.09474; 13.79688; -31.40512; 9.63977; 13.49541; -35.61789; -9.74602;
-   15.56013; 12.24740; -2.10360; 11.13246; -5.85497; 0.79389; 36.91269;
-   35.25533; 43.20230; -1.32461; -15.47513; 29.92197; 6.57967; -0.61718;
-   12.68731; 39.90042; 10.47227; -38.75338; -35.50139; -35.01525; -14.01510;
-   -6.43549; 11.36402; 11.05323; 18.26093; 6.74087; -25.88768; -36.80022;
-   15.95831; 6.77176; 20.80731; 21.31454; 27.03949; -36.53713; -0.63354;
-   37.45211; 21.17920; 1.71484; 10.29992; -37.99016; 6.85604; -16.11494;
-   -7.55474; 20.94234; 12.73071; 16.33950; -2.41776; -16.23419; 25.60348;
-  -13.22026; -0.41706; -6.05165; -13.65678; -40.08519; -9.26705; 4.14438;
-    9.65111; 21.48499; 9.51472; -8.41532; -6.05089; -2.66941; -13.33649;
-   -6.67147; 22.97640; -0.21244; 1.87677; 37.91273; -21.12891; 11.22574;
-   13.86916; 11.60222; -14.87688; -16.05350; -19.14326; -11.15221; 3.82456;
-   10.36910; 11.75312; -30.31466; -28.21045; 17.44571; -38.11927; 1.55531;
-   11.29632; -13.01711; 23.26577; 28.83256; -44.26250; -2.35528; -14.15714;
-  -28.49528; 34.63137; -19.37650; -14.00479; 11.41968; -8.54238]; 
-noise3=1e-5*[ 5.89382; -11.76715; -20.38383; 25.08106; -12.05456;
-   42.44387; 30.43318; 6.56803; 16.58853; 1.97596; 24.88580;
-    0.83537; -1.81821; -21.13378; 17.27234; 7.04205; -35.14670;
-   15.98648; 19.50310; -7.40796; -11.66726; -23.45204; 44.69655;
-    0.17090; 31.43564; -27.55132; 2.21016; -21.08567; 16.25432;
-  -11.63719; 12.41088; 14.11388; 7.72355; -5.39017; -0.12547;
-  -38.58446; -20.10008; -15.15861; -15.86851; -5.84053; -30.07290;
-  -37.36250; -2.53053; 2.54702; -43.21144; 35.84945; 20.05358;
-  -11.16362; -2.38681; 20.40710; 18.91450; 30.85527; 23.66431;
-   -9.11852; 3.31994; -10.97963; 29.01126; -40.09789; -2.74479;
-    9.48409; -17.94402; 36.94314; 31.88554; -25.40466; -13.15508;
-  -47.24235; -17.08644; -46.53377; -10.74565; 11.32868; 18.86069;
-   22.13141; 5.42699; 1.41991; -36.29532; -20.18932; -30.89348;
-   20.54996; 16.83219; -33.43325; 20.56161; -19.14693; -6.48806;
-    5.46298; -9.15376; -3.86233; 9.63450; 11.44795; 37.29246;
-   43.19218; 22.32386; -28.51360; 9.94637; -6.16323; -48.93215;
-  -12.29428; 17.79531; -8.09356; 17.83567; 28.58079; 13.56182;
-   -7.04320; -28.85897; -13.93723; 15.28342; -13.16094; 40.85824;
-    9.99891; -35.85101; 8.10981; 0.66691; 34.24551; 6.44166;
-   15.34364; -2.77896; 42.85408; 6.59410; 11.76109; 11.95449;
-   15.50520; -4.78434; 15.30083; -46.30672; 39.56400; -3.20849;
-   -9.92821; -9.78347; 34.56455; 7.89952; 66.45235; -32.17386;
-    1.68791; 39.34762; -17.82598; 32.91579; 15.01798; -10.67046;
-    6.50035; -19.61355; 5.31837; 34.16613; 8.41203; -9.61931;
-   -7.23913; 27.83542; -9.88770; 33.82686; -23.26859; 5.41904;
-    9.06312; 16.01742; 8.79307; -6.71841; 8.02480; 1.07434;
-    0.70523; -6.28717; 4.78425; -57.24199; -29.81538; -19.67294;
-   27.44577; 18.46645; -1.85555; -16.30453; -24.93155; 10.69559;
-  -29.67271; 6.18243; 14.99266; 22.73511; -26.77038; -13.64186;
-   -3.83900; 1.00810; 63.84263; -7.44160; -19.39190; 2.35079;
-    8.04457; 24.87581; 19.30803; -0.26582; 6.46934; -15.08571;
-    2.17275; 15.56750; 18.75319; 2.68343; 18.73000; 6.30140;
-  -26.80381; -34.22573; 14.17559; -8.28483; 5.89168; -2.67605;
-   20.63114; 2.23133; -45.23000; 0.21635; 4.08253; -29.12417;
-  -11.76195; -24.50549; 26.35054; 4.04918; -13.95879]; 
-
-%
-% STEP 1: Create image of 'random' noise which happens
-%    to result in a happytransform
-%
-ii= imgr(irec([vis+noise1,vis+noise3],vhs,0,4));
-image(ii)
-imwrite('happynoise.png',ii,colormap);
 
 
 % Create Tikhonov reconstruction matrix
@@ -338,7 +276,6 @@ printf('dataprior rg1 = %f\n', dataprior(rg1, vis,vhs));
 printf('dataprior rg3 = %f\n', dataprior(rg3, vis,vhs));
 printf('dataprior rb1 = %f\n', dataprior(rb1, vis,vhs));
 printf('dataprior rb3 = %f\n', dataprior(rb3, vis,vhs));
-keyboard
 
 % deform a model by Delta
 % A1 = A0 + k1*sin(A0) + k2*cos(A0) + k3*sin(2*A0) ... 
