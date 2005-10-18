@@ -1,0 +1,262 @@
+<html><Body>
+<H1>Lying with Regularization</H1>
+
+<center>
+Andy Adler, William R.B. Lionheart
+</center>
+
+In this document, we try to point out some
+simple approaches that work with common, linear
+regularization techniques. As the solution
+strategy becomes more comples, then clearly there
+become more advanced ways to cheat.
+
+<h2>
+Sample Problem: The happy transform
+</h2>
+To motivate the problem, assume that EIT measurement
+data has been acquired from an image which resembles
+a 'sad' face. Being of an optimistic outlook, we wish
+that the image reconstructed represent a 'happy' face
+instead. Fig. 1 illustrates this 'happy transform'.
+
+<center>
+<img height="128" src="sad.png" align="middle"> 
+<font size="+4"><b>&rarr;</b></font>
+<img height="128" src="happy.png" align="Middle"> 
+<br>
+<b>Fig. 1:</b>
+The happy transform
+</center>
+
+<h2>
+Approach #1: Careful selection of noise
+</h2>
+
+Typically, a reconstruction algorithm is presented
+with added white Gaussian noise (WGN) to the data. One
+technique to perform the happy transform is to
+carefully select the noise.
+In this case, we simulated a homogenous (v<sub>h</sub>)
+and inhomogeneous (v<sub>i</sub>) data on a 256
+element FEM. Subsequently 17.75dB of WGN was added to
+v<sub>i</sub>, and the images reconstructed using
+the algorithm of Adler and Guardo (1996).
+Image were reconstructed with different
+noise values, and reviewed by the author to determine which cases
+corresponded to the happy transform. Fig. 2 shows two successful
+'happy' images.
+
+<center>
+<img height="128" src="happynoise.png" >
+<br>
+<b>Fig. 2:</b>
+Images with 17.75dB WGN which were selected as 'happy'
+</center>
+
+In order to determine the frequency of 'happy' noise, 2000
+images were reviewed and 41 were selected, corresponding
+to an occurance rate of approximately 2%.
+<br>
+While careful noise selection is not a regularization technique,
+it is commonly used in association with regularization research,
+and thus merits mention here.
+
+<h2>
+Approach #2: Careful selection of priors
+</h2>
+
+The Bayesian framework for regularization interprets
+the image penalty term as <i>a priori</i> information 
+about the underlying image probability distribution.
+In practice, however, this term is selected using
+ad hoc or heuristic techniques. If the prior does
+not correspond to the real case, then the reconstructed
+image will be biased. This idea is key for approach #2.
+<p>
+In a Tikhonov regularization scheme, image amplitude
+is penalized. We use the following formulation:
+<center>
+   <b>x</b> = (<b>H</b><sup>t</sup><b>H</b> +
+                &lambda;<b>R</b>)<sup>&minus;1</sup>
+               <b>H</b><sup>t</sup><b>y</b>
+</center>
+where the regularization term 
+<center>
+<b>R</b> = &radic;( trace <b>H</b><sup>t</sup><b>H</b> )
+</center>
+
+If, however, we <i>know</i> that <i>a priori</i>
+our data were measured from a happy face, then we 
+would not wish to penalize image pixels which we
+<i>know</i> to be large. Thus for each pixel <i>i</i>
+in the happy face, we set 
+<center>
+<b>R</b><sub><i>i</i>,<i>i</i></sub> =
+   &frac12; &radic;( trace <b>H</b><sup>t</sup><b>H</b>
+                   )<sub><i>i</i>,<i>i</i></sub>
+</center>
+The effect of careful prior selection is hown in Fig. 3.
+In this case, images were reconstructed on a 576 element
+FEM (chosen to differ from the 256 element simulation mesh).
+
+<center>
+<img height="128" src="tikhonov.png" >
+<br>
+<b>Fig. 3:</b>
+Reconstructed images illustrating the effect of image priors,
+using different mesh for model and reconstruction.
+Images are numbered from left to right.
+<i>Image 1:</i> Tikhonov prior with no weighting,
+<i>Image 2:</i> Tikhonov prior with weighting for positions in sad face,
+<i>Image 3:</i> Tikhonov prior with weighting for sad face (left) and
+happy face (right),
+<i>Image 4:</i> Tikhonov prior with weighting for positions in happy face,
+</center>
+
+<p>
+In order to enhance this effect, we use an <i>inverse crime</i>,
+by putting the Tikhonov prior information <i>exactly</i> where
+it needs to be to get the happy face (Fig. 4).
+
+<center>
+<img height="128" src="tikhonov-icrime.png" >
+<br>
+<b>Fig. 4:</b>
+Reconstructed images illustrating the effect of image priors,
+using same mesh for model and reconstruction.
+Images are numbered from left to right.
+<i>Image 1:</i> Tikhonov prior with no weighting,
+<i>Image 2:</i> Tikhonov prior with weighting for positions in sad face,
+<i>Image 3:</i> Tikhonov prior with weighting for sad face (left) and
+happy face (right),
+<i>Image 4:</i> Tikhonov prior with weighting for positions in happy face,
+</center>
+
+<h2>
+Approach #3: Edge based priors
+</h2>
+
+It is somewhat difficult to properly model a Laplacian filter
+on a Finite Element mesh, but one way to approximate it is to
+do the following: for each edge between elements <i>i</i>
+and <i>j</i>, put 1 at <i>i</i>,<i>i</i> and <i>j</i>,<i>j</i>
+and &minus;1 at <i>i</i>,<i>j</i> and <i>j</i>,<i>i</i>.
+
+<p>
+Such a Laplacian filter can be used as a regularization prior
+to penalize high frequency components (edges) in the image.
+On the other hand, if we <i>know</i> where the edges are,
+then edges should not be penalized (or be less penalized) in
+those places. Fig 5 shows the effect of such careful
+edge preserving prior selection (with no <i>inverse crime</i>).
+<i>Known edges</i> are weighted at 0.3&times;that of other
+edges in the image.
+
+<center>
+<img height="128" src="laplace3.png" >
+<br>
+<b>Fig. 5:</b>
+Reconstructed images illustrating the effect of edge
+preserving image priors,
+using <i>different</i> mesh for model and reconstruction.
+Images are numbered from left to right.
+<i>Known edges</i> are weighted at 0.3&times;that of other
+edges in the image.
+<i>Image 1:</i> Edge prior with no weighting,
+<i>Image 2:</i> Edge prior with weighting for positions in sad face,
+<i>Image 3:</i> Edge prior with weighting for sad face (left) and
+happy face (right),
+<i>Image 4:</i> Edge prior with weighting for positions in happy face,
+</center>
+
+<p>
+In order to enhance this effect, we use an <i>inverse crime</i>,
+by putting the Tikhonov prior information <i>exactly</i> where
+it needs to be to get the happy face (Fig. 6).
+<i>Known edges</i> are weighted at 0.3&times;that of other
+edges in the image.
+
+
+<center>
+<img height="128" src="laplace3-icrime.png" >
+<br>
+<b>Fig. 6:</b>
+Reconstructed images illustrating the effect of edge
+preserving image priors,
+using <i>same</i> mesh for model and reconstruction.
+Images are numbered from left to right.
+<i>Known edges</i> are weighted at 0.3&times;that of other
+edges in the image.
+<i>Image 1:</i> Edge prior with no weighting,
+<i>Image 2:</i> Edge prior with weighting for positions in sad face,
+<i>Image 3:</i> Edge prior with weighting for sad face (left) and
+happy face (right),
+<i>Image 4:</i> Edge prior with weighting for positions in happy face,
+</center>
+<p>
+An even more dramatic effect is obtained by setting the
+penalty for <i>Known edges</i> to be zero (Fig. 7).
+
+<center>
+<img height="128" src="laplace0-icrime.png" >
+<br>
+<b>Fig. 7:</b>
+Reconstructed images illustrating the effect of edge
+preserving image priors,
+using <i>same</i> mesh for model and reconstruction.
+Images are numbered from left to right.
+<i>Known edges</i> are weighted at 0.0&times;that of other
+edges in the image.
+<i>Image 1:</i> Edge prior with no weighting,
+<i>Image 2:</i> Edge prior with weighting for positions in sad face,
+<i>Image 3:</i> Edge prior with weighting for sad face (left) and
+happy face (right),
+<i>Image 4:</i> Edge prior with weighting for positions in happy face,
+</center>
+
+
+
+<h2>
+Approach #4: Model mismatches
+</h2>
+
+Mismatches between measured (or simulated) data and the
+reconstruction model can be an excellent way to introduce
+artefacts into the reconstructed images. Perhaps the
+most common occurance in EIT is when electrode positions
+are not exactly where they were in the model.
+<p>
+In order to simulate this effect, the geometry of
+the simulation model (based on 256 elements) was randomly
+deformed in the radial direction based on the three low
+order harmonics of the angle. Fig. 8 shows an example
+of this effect.
+
+The electrodes are positioned at a radial distance of 1.0
+and underwent an average movement of 0.091&plusmn;0.035.
+<center>
+<img src="deform-grille.png" >
+<br>
+<b>Fig. 8:</b>
+A finite element mesh deformed in the radial direction to
+simulate the effect of model errors for electrode positions.
+</center>
+
+Simulations of model error were conducted and evaluated as
+to whether they implemented the happy transform, as shown
+in Fig. 9. Of 400 images, approximate 1% showed this effect. 
+
+<center>
+<img src="deform.png" height="128">
+<br>
+<b>Fig. 9:</b>
+Sample images reconstucted from a deformed finite element
+mesh. Some images were chosen which implement the happy
+transform, while others were chosen because they appeared
+humerous.
+</center>
+
+
+
+</Body></html>
