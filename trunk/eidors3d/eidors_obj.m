@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.30 2005-10-11 18:43:55 aadler Exp $
+% $Id: eidors_obj.m,v 1.31 2005-10-18 14:36:11 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -126,11 +126,11 @@ function obj = set_obj( obj, varargin );
    for idx= 1:2:nargin-1
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
+   if any(strcmp( obj.type, DONT_CACHE)); return; end 
 
    obj_id= calc_obj_id( obj );
       
    obj.id= obj_id;
-   if any(strcmp( obj.type, DONT_CACHE)); return; end 
 
 % set the obj_id into the obj after calculating the hash value
    if ~isfield(eidors_objects,obj_id)
