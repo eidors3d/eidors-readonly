@@ -1,6 +1,7 @@
 % code to simulate inverse crimes in EIT
-% $Id: cheating_2d.m,v 1.3 2005-10-18 16:43:31 aadler Exp $
+% $Id: cheating_2d.m,v 1.4 2005-10-18 16:49:37 aadler Exp $
 
+%TODO: calculate how well data matches priors
 function out=cheating_2d
 
    [vis,vhs,s_mdl]= small_2d_mdl;
@@ -9,7 +10,7 @@ function out=cheating_2d
    disp('Approach #1: reconstruct with noise');
 %  reconst_with_noise(il_g, vis, vhs, 10); pause
 
-   disp('Approach #2: reconstruct with tikhonov cheat');
+   disp('Approach #2: reconstruct with tikhonov cheat - with inv crime');
    pp= small_face;
    % homog (normal) model
    image_prior.func= @cheat_tikhonov;
@@ -31,6 +32,30 @@ function out=cheating_2d
                   inv_solve( is_h, vis, vhs ), ... 
                   inv_solve( is_m, vis, vhs ) ] ); pause
 
+
+
+   disp('Approach #3: reconstruct with tikhonov cheat - without inv crime');
+   pp= large_face;
+   % homog (normal) model
+   image_prior.func= @cheat_tikhonov;
+   image_prior.cheat_elements= [];
+   image_prior.cheat_weight = 0.5;
+   il_n = make_inv_model(12 , image_prior ); 
+   % sad model
+   image_prior.cheat_elements= pp.sad;
+   il_s = make_inv_model(12 , image_prior ); 
+   % happy model
+   image_prior.cheat_elements= pp.happy;
+   il_h = make_inv_model(12 , image_prior ); 
+   % happy/sad (medium) model
+   image_prior.cheat_elements= pp.halfy;
+   il_m = make_inv_model(12 , image_prior ); 
+
+   show_slices( [ inv_solve( il_n, vis, vhs ), ... 
+                  inv_solve( il_s, vis, vhs ), ... 
+                  inv_solve( il_h, vis, vhs ), ... 
+                  inv_solve( il_m, vis, vhs ) ] ); pause
+
 return;
 
 function p= small_face;
@@ -43,6 +68,30 @@ function p= small_face;
               112,135,69,87,70,107,88,108,129];
    p.eyes= [p.leye,p.reye];
    p.smile= [p.rsmile, p.lsmile];
+
+function p=large_face
+p.sad=  [ 53; 57; 69; 73; 86; 87; 91; 92; 106; 107; 111; 112; 127; 128;
+         129; 133; 134; 135; 147; 151; 152; 153; 157; 158; 159; 165;
+         171; 172; 177; 178; 179; 184; 185; 186; 192; 193; 199; 200;
+         205; 206; 207; 212; 213; 214; 220; 221; 227; 228; 229; 235;
+         236; 243; 244; 251; 252; 253; 259; 260; 261; 267; 268; 275;
+         276; 283; 284; 285; 292; 293; 301; 310; 319; 320]; 
+
+p.happy= [ ...
+        69; 70; 71; 73; 74; 75; 86; 87; 88; 89; 91; 92; 93; 94; 106;
+       107; 108; 109; 111; 112; 113; 114; 127; 128; 129; 130; 131; 133;
+       134; 135; 136; 137; 147; 151; 152; 153; 154; 155; 157; 158; 159;
+       160; 161; 165; 171; 172; 176; 177; 178; 179; 180; 183; 184; 185;
+       186; 187; 192; 193; 199; 200; 220; 221; 227; 228; 229; 251; 252;
+       253; 259; 260; 261; 283; 284; 285; 292; 293; 319; 320]; 
+
+p.halfy= [ ...
+        57; 69; 70; 71; 73; 86; 87; 88; 89; 91; 92; 106; 107; 108; 109;
+       111; 112; 127; 128; 129; 130; 131; 133; 134; 135; 147; 151; 152;
+       153; 154; 155; 157; 158; 159; 165; 171; 172; 176; 177; 178; 179;
+       180; 184; 185; 186; 192; 193; 199; 200; 212; 213; 214; 220; 221;
+       227; 228; 229; 243; 244; 251; 252; 253; 259; 260; 261; 275; 276;
+       283; 284; 285; 292; 293; 310; 319; 320];
 
 % simulate 'sad' data for small model
 function [vis,vhs,mdl]= small_2d_mdl
