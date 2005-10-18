@@ -9,11 +9,13 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.17 2005-10-18 15:25:23 aadler Exp $
+% $Id: show_slices.m,v 1.18 2005-10-18 15:42:21 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
 %  - 
+
+np= 128; % no points for each figure
 
 dims= size(img(1).fwd_model.nodes,2);
 if ~exist('levels') && dims==2
@@ -27,7 +29,7 @@ end
 for img_no = 1:length(img)
    for lev_no = 1:size( levels,1 )
       level= levels( lev_no, : );
-      rimg{img_no,lev_no}= calc_image( img( img_no ), level, clim );
+      rimg{img_no,lev_no}= calc_image( img( img_no ), level, clim, np );
    end
 end
 
@@ -36,23 +38,26 @@ if nargout==0
    img_cols = ceil( sqrt( ll ));
    img_rows = ceil( ll/ img_cols );
 
+   r_img = NaN*ones(img_rows*np, img_cols*np);
+
+   idx= (-np:-1)+1;
    for imno= 1:ll
-       subplot(img_rows,img_cols,imno);
-       r_img = rimg{imno};
-       c_img = calc_colours( r_img);
-       image(reshape(c_img, [size(r_img),3]))
-       axis('image');axis('off');
+       i_col= rem( imno-1, img_cols) + 1;
+       i_row= ceil( imno / img_cols);
+       r_img(i_row*np + idx, i_col*np + idx) = rimg{imno};
    end
+   c_img = calc_colours( r_img);
+   image(reshape(c_img, [size(r_img),3]))
+   axis('image');axis('off');
+
 else
    rimg_out = rimg;
 end
 
 % Calculate an image by mapping it onto the elem_ptr matrix
-function rimg= calc_image( img, level, clim)
+function rimg= calc_image( img, level, clim, np)
 
 fwd_model= img.fwd_model;
-
-np= 128;
 
 % Get elem_ptr from cache, if available 
 % EPtable is cell array of 
