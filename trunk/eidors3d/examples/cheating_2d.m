@@ -1,5 +1,5 @@
 % code to simulate inverse crimes in EIT
-% $Id: cheating_2d.m,v 1.5 2005-10-18 18:08:53 aadler Exp $
+% $Id: cheating_2d.m,v 1.6 2005-10-18 19:02:00 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d
@@ -59,6 +59,57 @@ function out=cheating_2d
    image_prior.func= @cheat_tikhonov;
    image_prior.cheat_elements= [];
    image_prior.cheat_weight = 0.5;
+   il_n = make_inv_model(12 , image_prior ); 
+   % sad model
+   image_prior.cheat_elements= pp.sad;
+   il_s = make_inv_model(12 , image_prior ); 
+   % happy model
+   image_prior.cheat_elements= pp.happy;
+   il_h = make_inv_model(12 , image_prior ); 
+   % happy/sad (medium) model
+   image_prior.cheat_elements= pp.halfy;
+   il_m = make_inv_model(12 , image_prior ); 
+
+   show_slices( [ inv_solve( il_n, vis, vhs ), ... 
+                  inv_solve( il_s, vis, vhs ), ... 
+                  inv_solve( il_h, vis, vhs ), ... 
+                  inv_solve( il_m, vis, vhs ) ] ); pause
+
+%
+% APPROACH 3
+%
+   disp('Approach #3: reconstruct with Laplace filter cheat - with inv crime');
+   pp= small_face;
+   % homog (normal) model
+   image_prior.func= @cheat_laplace;
+   image_prior.cheat_elements= [];
+   image_prior.cheat_weight = 0.2;
+   is_n = make_inv_model( 8 , image_prior ); 
+   % sad model
+   image_prior.cheat_elements= [pp.eyes, pp.sad];
+   is_s = make_inv_model( 8 , image_prior ); 
+   % happy model
+   image_prior.cheat_elements= [pp.eyes, pp.smile];
+   is_h = make_inv_model( 8 , image_prior ); 
+   % happy/sad (medium) model
+   image_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
+   is_m = make_inv_model( 8 , image_prior ); 
+
+   show_slices( [ inv_solve( is_n, vis, vhs ), ... 
+                  inv_solve( is_s, vis, vhs ), ... 
+                  inv_solve( is_h, vis, vhs ), ... 
+                  inv_solve( is_m, vis, vhs ) ] ); pause
+
+
+%
+% APPROACH 3B
+%
+   disp('Approach #3B: reconstruct with Laplace cheat - without inv crime');
+   pp= large_face;
+   % homog (normal) model
+   image_prior.func= @cheat_laplace;
+   image_prior.cheat_elements= [];
+   image_prior.cheat_weight = 0.2;
    il_n = make_inv_model(12 , image_prior ); 
    % sad model
    image_prior.cheat_elements= pp.sad;
@@ -201,7 +252,7 @@ function reconst_with_noise(i_mdl, vis, vhs, num_tries)
     show_slices( inv_solve( i_mdl, vi_n, vhs ));
 
 % Image prior with Tikhonov + cheating elements
-function Reg= cheat_tikhonov( inv_model, elems, weight );
+function Reg= cheat_tikhonov( inv_model )
 % Reg= cheat_tikhonov( inv_model )
 % Reg        => output regularization term
 % Parameters:
@@ -218,6 +269,53 @@ weight( inv_model.image_prior.cheat_elements ) = ...
         inv_model.image_prior.cheat_weight;
 
 Reg = sparse( idx, idx, weight );
+
+% find elems which are connected to elems ee
+function elems= find_adjoin(ee, ELEM)
+   nn= ELEM(:,ee);
+   [d,e]= size(ELEM);
+   ss= zeros(1,e);
+   for i=1:d
+     ss= ss+ any(ELEM==nn(i));
+   end
+   elems= find(ss==d-1);
+
+% Image prior with FEM based Laplacian + cheating
+function Reg= cheat_laplace( inv_model )
+% Reg= cheat_laplace( inv_model )
+% Reg        => output regularization term
+% Parameters:
+%   elems    = inv_model.image_prior.cheat_elements;
+%            => elements weights to modify
+%   weight   = inv_model.image_prior.cheat_weight;
+%            => new weight to set elements to
+
+% make pseudo laplacian filter
+%   roielems = region to exclude boundary
+%   if both ii and jj are in or out of roielems
+%   then include the term
+   pp= aa_fwd_parameters( inv_model.fwd_model );
+
+   ROI = zeros(1,pp.n_elem);
+   ROI( inv_model.image_prior.cheat_elements ) = 1;
+
+   Iidx= [];
+   Jidx= [];
+   Vidx= [];
+   for ii=1:pp.n_elem
+     el_adj = find_adjoin( ii, pp.ELEM );
+     for jj=el_adj(:)'
+         if (ROI(ii) + ROI(jj)) == 1 %one only
+            fac= inv_model.image_prior.cheat_weight *.5;
+         else 
+            fac = .5;
+         end
+         Iidx= [Iidx,      ii, ii, jj, jj];
+         Jidx= [Jidx,      ii, jj, ii, jj];
+         Vidx= [Vidx, fac*([1, -1, -1,  1]) ];
+     end
+   end
+   Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
 
 % deform a model by Delta
 % A1 = A0 + k1*sin(A0) + k2*cos(A0) + k3*sin(2*A0) ... 
@@ -241,93 +339,6 @@ function mdl1 = angl_deform(mdl0 );
 function boo;
 
 
-
-function [vi,vh,dist] = make_deform( deform );
-    global ChoiX;
-    if ~strcmp(ChoiX, 'd001') 
-       resetup('d0'); cleancolourmap;
-    end
-    global NODE; node0 = NODE;
-
-    leye= [78,97,98,117,118,141];
-    reye= [66,82,83,102,103,123];
-    mouth= [28,31,40,43,58,57,53,54,74,73,92,93,113, ...
-            112,135,69,87,70,107,88,108,129];
-
-    node1= angl_deform(node0, deform);
-    sad= zeros(1,256);
-    vh= prob_dir( sad, node1 );
-    sad(leye)=1;
-    sad(reye)=1;
-    sad(mouth)=.5;
-    vi= prob_dir( sad, node1 );
-% Find deformation of nodes at boundary
-    bdy = 114:145;
-    dist= mean(sumsq( node1(:,bdy) - node0(:,bdy) ));
-endfunction
-
-%
-% STEP 4: Create image of 'random' deformations which happens
-%    to result in a happytransform
-%
-    for i=1:size(deform,1)
-        [vi,vh,dist] = make_deform( deform(i,:));
-        vhd(:,i)= vh;
-        vid(:,i)= vi;
-        dists(i)= dist;
-    end
-
-  
-
-    resetup('e0'); cleancolourmap;
-ii=imgr(irec(vid,vhd,0,4));
-image(ii,1);
-imwrite('deform.png',ii,colormap);
-
-
-% find numbers of elements which are adjoining given element
-%     find_adjoin(3) => [7, 2, 4]
-function elems= find_adjoin(ee)
-   global ELEM;
-   nn= ELEM(:,ee);
-   [d,e]= size(ELEM);
-   ss= zeros(1,e);
-   for i=1:d
-     ss= ss+ any(ELEM==nn(i));
-   end
-   elems= find(ss==d-1);
-endfunction
-
-% make pseudo laplacian filter
-%   roielems = region to exclude boundary
-%   if both ii and jj are in or out of roielems
-%   then include the term
-function D= mk_plaplace( roielems, ff )
-   global ELEM;
-   [d,e]= size(ELEM);
-   ROI = zeros(1,e); ROI(roielems) = 1;
-   Iidx= [];
-   Jidx= [];
-   Vidx= [];
-   for ii=1:e
-     el_adj = find_adjoin( ii );
-%        ll= ones(size(el_adj));
-%        Iidx= [Iidx, i, i*ll];
-%        Jidx= [Jidx, i, el_adj];
-%        Vidx= [Vidx, 3, -ll];
-     for jj=el_adj(:)'
-         if (ROI(ii) + ROI(jj)) == 1 %one or both
-            fac= ff*.5;
-         else 
-            fac = .5;
-         end
-         Iidx= [Iidx,      ii, ii, jj, jj];
-         Jidx= [Jidx,      ii, jj, ii, jj];
-         Vidx= [Vidx, fac*([1, -1, -1,  1]) ];
-     end
-   end
-   D= sparse(Iidx,Jidx, Vidx,e,e,'sum');
-endfunction
    
 % Create Reconstruction matrix
 %    p_noise        ( 0 -> Hi = 1 
