@@ -1,21 +1,77 @@
-<html><Body>
-<H1>Lying with Regularization</H1>
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+   <head>
+<title>EIDORS: Cheating ...</title>
+   <style type="text/css">
+        body, td, th {
+        font-family: Verdana, Helvetica, Arial, sans-serif;
+        font-size:80%;
+        }
+        pre, tt {
+        font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
+        font-size:100%;
+        }
+   </style>
+
+</head>
+
+<body link="#800000"
+      marginwidth=5 marginheight=5 topmargin=5 leftmargin=5 
+      vlink="#400000" >
+<table border="0" cellspacing="0" cellpadding="0"><tr><td>
+<img alt="Eidors-logo" src="../eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+</td><td>
+<h2>
+    EIDORS:
+    <small><i>Electrical Impedance Tomography and
+    Diffuse Optical Tomography Reconstruction Software</i></small>
+</h2>
+</td></tr></table>
+<table border="0"> <tr>
+<td valign="top">
+<a href="http://www.eidors.org/"
+   >EIDORS</a><br>
+<a href="index.html"
+   >Main</a><br>
+<a href="docs.html"
+   >Documentation</a><br>
+<a href="screenshot.html"
+   >Screenshots</a><br>
+<a href="http://sourceforge.net/projects/eidors3d/"
+   >Download</a><br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
+   >Browse CVS</a><br>
+<hr>
+<a href="news.html">News</a><br>
+<a href="faq.html">FAQ</a><br>
+<a href="programming.html">Developer</a><br>
+<a href="programming/examples.html" >&minus; Examples</a><br>
+<a href="programming/structure.html">&minus; Structure</a><br>
+<a href="programming/objects.html"  >&minus; Objects</a><br>
+<a href="programming/caching.html"  >&minus; Caching</a><br>
+<a href="paper-cheating/cheating-with-eidors.html"
+                                    >&minus; Cheating</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td><td>&nbsp;</td><td valign="top">
+
+<H2>Cheating with EIDORS</H2>
 
 <center>
 Andy Adler, William R.B. Lionheart
-</center>
+</center><p>
 
 In this document, we try to point out some
 simple approaches that work with common, linear
 regularization techniques. As the solution
-strategy becomes more comples, then clearly there
+strategy becomes more complex, then clearly there
 become more advanced ways to cheat.
 
-<h2>
+<h3>
 Sample Problem: The happy transform
-</h2>
+</h3>
 To motivate the problem, assume that EIT measurement
-data has been acquired from an image which resembles
+data have been acquired from an image which resembles
 a 'sad' face. Being of an optimistic outlook, we wish
 that the image reconstructed represent a 'happy' face
 instead. Fig. 1 illustrates this 'happy transform'.
@@ -26,24 +82,25 @@ instead. Fig. 1 illustrates this 'happy transform'.
 <img height="128" src="happy.png" align="Middle"> 
 <br>
 <b>Fig. 1:</b>
-The happy transform
-</center>
+The <i>happy transform</i>
+</center><p>
 
-<h2>
+<h3>
 Approach #1: Careful selection of noise
-</h2>
+</h3>
 
 Typically, a reconstruction algorithm is presented
-with added white Gaussian noise (WGN) to the data. One
+with white Gaussian noise (WGN) added to the data. One
 technique to perform the happy transform is to
 carefully select the noise.
 In this case, we simulated a homogenous (v<sub>h</sub>)
 and inhomogeneous (v<sub>i</sub>) data on a 256
 element FEM. Subsequently 17.75dB of WGN was added to
 v<sub>i</sub>, and the images reconstructed using
-the algorithm of Adler and Guardo (1996).
-Image were reconstructed with different
-noise values, and reviewed by the author to determine which cases
+the algorithm of 
+<a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/aa_1996/">Adler and Guardo (1996)</a>.
+Each image was reconstructed (with different selections of
+hyperparameter values), and reviewed by the author to determine which cases
 corresponded to the happy transform. Fig. 2 shows two successful
 'happy' images.
 
@@ -52,19 +109,19 @@ corresponded to the happy transform. Fig. 2 shows two successful
 <br>
 <b>Fig. 2:</b>
 Images with 17.75dB WGN which were selected as 'happy'
-</center>
+</center><p>
 
 In order to determine the frequency of 'happy' noise, 2000
 images were reviewed and 41 were selected, corresponding
 to an occurance rate of approximately 2%.
 <br>
-While careful noise selection is not a regularization technique,
-it is commonly used in association with regularization research,
+While careful noise selection is not a mathematical/computational
+technique, it is commonly used in association in research,
 and thus merits mention here.
 
-<h2>
+<h3>
 Approach #2: Careful selection of priors
-</h2>
+</h3>
 
 The Bayesian framework for regularization interprets
 the image penalty term as <i>a priori</i> information 
@@ -86,10 +143,10 @@ where the regularization term
 <b>R</b> = &radic;( trace <b>H</b><sup>t</sup><b>H</b> )
 </center>
 
-If, however, we <i>know</i> that <i>a priori</i>
+If, however, we <u>know</u> <i>a priori</i> that 
 our data were measured from a happy face, then we 
 would not wish to penalize image pixels which we
-<i>know</i> to be large. Thus for each pixel <i>i</i>
+<u>know</u> to be large. Thus for each pixel <i>i</i>
 in the happy face, we set 
 <center>
 <b>R</b><sub><i>i</i>,<i>i</i></sub> =
@@ -105,14 +162,14 @@ FEM (chosen to differ from the 256 element simulation mesh).
 <br>
 <b>Fig. 3:</b>
 Reconstructed images illustrating the effect of image priors,
-using different mesh for model and reconstruction.
+using <i>different</i> mesh for model and reconstruction.
 Images are numbered from left to right.
 <i>Image 1:</i> Tikhonov prior with no weighting,
 <i>Image 2:</i> Tikhonov prior with weighting for positions in sad face,
 <i>Image 3:</i> Tikhonov prior with weighting for sad face (left) and
 happy face (right),
 <i>Image 4:</i> Tikhonov prior with weighting for positions in happy face,
-</center>
+</center><p>
 
 <p>
 In order to enhance this effect, we use an <i>inverse crime</i>,
@@ -124,18 +181,18 @@ it needs to be to get the happy face (Fig. 4).
 <br>
 <b>Fig. 4:</b>
 Reconstructed images illustrating the effect of image priors,
-using same mesh for model and reconstruction.
+using <i>same</i> mesh for model and reconstruction.
 Images are numbered from left to right.
 <i>Image 1:</i> Tikhonov prior with no weighting,
 <i>Image 2:</i> Tikhonov prior with weighting for positions in sad face,
 <i>Image 3:</i> Tikhonov prior with weighting for sad face (left) and
 happy face (right),
 <i>Image 4:</i> Tikhonov prior with weighting for positions in happy face,
-</center>
+</center><p>
 
-<h2>
+<h3>
 Approach #3: Edge based priors
-</h2>
+</h3>
 
 It is somewhat difficult to properly model a Laplacian filter
 on a Finite Element mesh, but one way to approximate it is to
@@ -168,7 +225,7 @@ edges in the image.
 <i>Image 3:</i> Edge prior with weighting for sad face (left) and
 happy face (right),
 <i>Image 4:</i> Edge prior with weighting for positions in happy face,
-</center>
+</center><p>
 
 <p>
 In order to enhance this effect, we use an <i>inverse crime</i>,
@@ -193,7 +250,7 @@ edges in the image.
 <i>Image 3:</i> Edge prior with weighting for sad face (left) and
 happy face (right),
 <i>Image 4:</i> Edge prior with weighting for positions in happy face,
-</center>
+</center><p>
 <p>
 An even more dramatic effect is obtained by setting the
 penalty for <i>Known edges</i> to be zero (Fig. 7).
@@ -213,13 +270,13 @@ edges in the image.
 <i>Image 3:</i> Edge prior with weighting for sad face (left) and
 happy face (right),
 <i>Image 4:</i> Edge prior with weighting for positions in happy face,
-</center>
+</center><p>
 
 
 
-<h2>
+<h3>
 Approach #4: Model mismatches
-</h2>
+</h3>
 
 Mismatches between measured (or simulated) data and the
 reconstruction model can be an excellent way to introduce
@@ -241,7 +298,7 @@ and underwent an average movement of 0.091&plusmn;0.035.
 <b>Fig. 8:</b>
 A finite element mesh deformed in the radial direction to
 simulate the effect of model errors for electrode positions.
-</center>
+</center><p>
 
 Simulations of model error were conducted and evaluated as
 to whether they implemented the happy transform, as shown
@@ -255,8 +312,19 @@ Sample images reconstucted from a deformed finite element
 mesh. Some images were chosen which implement the happy
 transform, while others were chosen because they appeared
 humerous.
-</center>
+</center><p>
 
+<h3>
+Conclusion
+</h3>
+
+The goal of this document is to illustrate some of the things
+that can go wrong with the algorithms provided with EIDORS.
+While the treatment in this document is lighthearted, it
+is surprisingly easy to unwittingly develop mathematical
+algorithms which are subject to variants of these <i>cheats</i>.
+We hope that these ideas will help clarify the kinds of
+possible errors, and help researchers to avoid them.
 
 
 </Body></html>
