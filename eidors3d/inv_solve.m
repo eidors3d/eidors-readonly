@@ -13,13 +13,14 @@ function img = inv_solve( inv_model, data1, data2)
 % data      is a measurement data structure
 % inv_model is a inv_model structure
 % img       is an image structure
+%           or a vector of images is data1 or data2 are vectors
 %
 % For difference EIT:
 % data1      => difference data at earlier time
 % data2      => difference data at later time
 %
 % data can be:
-%   - an EIDORS3D data object
+%   - an EIDORS data object
 %
 %   - an M x S matrix, where M is the total number
 %         of measurements expected by inv_model
@@ -33,7 +34,7 @@ function img = inv_solve( inv_model, data1, data2)
 %
 % If S > 1 for both data1 and data2 then the values must be equal
 %
-% $Id: inv_solve.m,v 1.8 2005-09-14 22:15:12 aadler Exp $
+% $Id: inv_solve.m,v 1.9 2005-10-18 15:25:23 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -51,7 +52,7 @@ if     strcmp(inv_model.reconst_type,'static')
    if nargin~=2;
       error('only one data set is allowed for a static reconstruction');
    end
-   img= feval( inv_model.solve, inv_model, ...
+   imgc= feval( inv_model.solve, inv_model, ...
                filter_data(inv_model,data1) );
 
 elseif strcmp(inv_model.reconst_type,'difference')
@@ -59,23 +60,30 @@ elseif strcmp(inv_model.reconst_type,'difference')
       error('two data sets are required for a difference reconstruction');
    end
 
-   fdata1 = filt_data( inv_model, data1 ); l_data1= size(fdata1,1);
-   fdata2 = filt_data( inv_model, data2 ); l_data2= size(fdata2,1);
+   % expand data sets if one is provided that is longer
+   fdata1 = filt_data( inv_model, data1 ); l_data1= size(fdata1,2);
+   fdata2 = filt_data( inv_model, data2 ); l_data2= size(fdata2,2);
 
    if l_data1 ~=1 & l_data2 ~=1 & l_data1 ~= l_data2
       error('inconsistent number of specified measurements');
    elseif l_data1 >1 & l_data2==1 
-      fdata2 = fdata2*ones(l_data1,1);
+      fdata2 = fdata2 * ones(1,l_data1);
    elseif l_data1==1 & l_data2 >1 
-      fdata1 = fdata1*ones(l_data2,1);
+      fdata1 = fdata1 * ones(1,l_data2);
    end
 
-   img= feval( inv_model.solve, inv_model, fdata1, fdata2);
+   imgc= feval( inv_model.solve, inv_model, fdata1, fdata2);
 else
    error('inv_model.reconst_type not understood'); 
 end
 
-img= eidors_obj('image', img);
+elem_data= imgc.elem_data;
+n_img = size(elem_data,2);
+
+for i=1:n_img
+   imgc.elem_data= elem_data(:,i);
+   img(i) = eidors_obj('image', imgc );
+end
 
 % test for existance of meas_select and filter data
 function d1= filt_data(inv_model, d0 )

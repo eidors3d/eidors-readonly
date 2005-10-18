@@ -9,7 +9,7 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.16 2005-10-14 18:27:26 aadler Exp $
+% $Id: show_slices.m,v 1.17 2005-10-18 15:25:23 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane
@@ -41,6 +41,7 @@ if nargout==0
        r_img = rimg{imno};
        c_img = calc_colours( r_img);
        image(reshape(c_img, [size(r_img),3]))
+       axis('image');axis('off');
    end
 else
    rimg_out = rimg;
@@ -89,8 +90,9 @@ end
 
 backgnd= NaN;
 scale=1;
-rval= [backgnd; scale*img.elem_data];
-rimg= reshape( rval(elem_ptr+1), np,np );
+n_images= size(img.elem_data,2);
+rval= [backgnd*ones(1,n_images); scale*img.elem_data];
+rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
 
 % Search through each element and find the points which
