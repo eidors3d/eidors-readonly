@@ -21,7 +21,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 %   where Rn = noise covariance and A_ii = area of element i
 % NF = SNR_z / SNR_x
 
-% $Id: aa_calc_noise_figure.m,v 1.11 2005-10-11 18:52:57 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.12 2005-10-20 02:50:08 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -91,9 +91,6 @@ function NF = calc_noise_figure( inv_model, hp)
    R = calc_image_prior( inv_model );
    W = calc_data_prior( inv_model );
 
-   n_img = size(J,2);
-   n_data= size(W,1);
-
    % one step reconstruction matrix
    % for non-linear algorithms, we need the Taylor expansion at the soln
    RM= (J'*W*J +  hp*R)\J'*W;
@@ -109,13 +106,15 @@ function NF = calc_noise_figure( inv_model, hp)
    var_data= sum( Rn );
    sig_img = VOL2 * (RM * dva).^2;
    var_img = VOL2 * RM.^2 * Rn;
-% Equiv expresssions for var_img
-%   A= diag(pp.VOLUME);
-% var_img= trace(A*RM*diag(Rn.^2)*RM'*A');
-% vv=A*RM*diag(Rn);var_img=trace(vv*vv'); var_img= sum(sum(vv.^2));
-% var_img= VOL2* (RM*diag(Rn)).^2
-% var_img= VOL2* RM.^2 * Rn.^2
 
    NF = ( sig_data/ var_data ) / ( sig_img / var_img  );
    eidors_msg('calculating NF=%f hp=%g', NF, hp, 4);
+
+   % For the record, the expression for var_img is derived as:
+   % Equiv expresssions for var_img % given: A= diag(pp.VOLUME);
+   % var_img= trace(A*RM*diag(Rn.^2)*RM'*A');
+   % vv=A*RM*diag(Rn);var_img=trace(vv*vv'); var_img= sum(sum(vv.^2));
+   % var_img= VOL2* (RM*diag(Rn)).^2
+   % var_img= VOL2* RM.^2 * Rn.^2
+
    
