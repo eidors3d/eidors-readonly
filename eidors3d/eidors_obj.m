@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.34 2005-10-23 01:04:35 aadler Exp $
+% $Id: eidors_obj.m,v 1.35 2005-10-23 03:57:15 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -103,16 +103,6 @@ function obj = set_obj( obj, varargin );
 % TODO: make the DONT_CACHE list use configuable
    DONT_CACHE= {'data','image'};
 
-   try
-      old_obj_id= obj.id;
-      % If we're modifying an old object, then remove the old version
-      % unless it contains cached data
-      
-      obj= rmfield(obj,'id');
-      if ~isfield( eidors_objects.old_obj_id, 'cache' )
-         eidors_objects= rmfield(eidors_objects, old_obj_id);
-      end
-   end
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
 %  
@@ -140,8 +130,6 @@ function obj = set_obj( obj, varargin );
    end
 
    obj_id= calc_obj_id( obj );
-      
-   obj.id= obj_id;
 
 % set the obj_id into the obj after calculating the hash value
    if ~isfield(eidors_objects,obj_id)
@@ -173,11 +161,7 @@ function value= get_cache_obj( obj, prop, varargin );
 
    [objlist, cachename]= proc_obj_list( varargin{:} );
 
-   try
-      obj_id= obj.id;
-   catch
-      return; % Can't cache onto non-existant objects
-   end
+   obj_id= calc_obj_id( obj ); % recalculate in case obj changed
 
    if nargin==3
       for dep_obj = objlist{:}
@@ -205,11 +189,7 @@ function set_cache_obj( obj, prop, value, varargin )
    global eidors_objects
    [objlist, cachename]= proc_obj_list( varargin{:} );
 
-   try
-      obj_id= obj.id;
-   catch
-      return; % Can't cache onto non-existant objects
-   end
+   obj_id = calc_obj_id( obj );
 
    if nargin>=4 & isempty(cachename)
       for dep_obj = objlist{:}
