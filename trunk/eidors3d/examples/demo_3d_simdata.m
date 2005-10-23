@@ -1,6 +1,13 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.10 2005-10-17 19:51:54 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.11 2005-10-23 01:03:36 aadler Exp $
 
+% STIMULATION PATTERN
+n_elec= 16;
+n_rings= 1;
+%options = {'no_meas_current','rotate_meas'};
+ options = {'no_meas_current','no_rotate_meas'};
+stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
+                            options, 10);
 % 
 % Example 1: Create 16 electrode 3D model
 % 
@@ -8,8 +15,6 @@ disp('STEP 1: Model simultion 3D');
 
 % get parameters for model from mk_circ_tank
 % param= mk_circ_tank(rings, levels, n_elec, n_planes )
-n_elec= 16;
-n_rings= 1;
 levels= [-.5:.1:.5];
 e_levels= [4, 8];
 % params= mk_circ_tank( 8, levels, n_elec );
@@ -17,10 +22,7 @@ e_levels= [4, 8];
 % params= mk_circ_tank(12, levels, { 'zigzag', n_elec, [3,5,7] , ...
 %                                    'planes', n_elec, 2} );
 
-%options = {'no_meas_current','rotate_meas'};
- options = {'no_meas_current','no_rotate_meas'};
-params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
-                            options, 10);
+params.stimulation= stimulation;
 params.solve=      'np_fwd_solve';
 params.system_mat= 'np_calc_system_mat';
 params.jacobian=   'np_calc_jacobian';
@@ -51,42 +53,16 @@ inh_img= eidors_obj('image', 'inhomogeneous image', ...
 inh_data=fwd_solve( inh_img);
  show_fem( inh_img, 1); pause
 
-% 
-% Step 2: Reconstruction in 3D (using np_2003 code)
-% 
-disp('STEP 2: Reconstruction 3D');
-clear inv3d;
- levels= [-.4:.2:.4];
- params= mk_circ_tank(4 , levels, { 'zigzag', n_elec, [2,4] } );
-%params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
-%params= mk_circ_tank( 4, levels, n_elec );
-params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
-                            options, 10);
-params.solve=      'np_fwd_solve';
-params.system_mat= 'np_calc_system_mat';
-params.jacobian=   'np_calc_jacobian';
-params.misc.sym= '{n}';
-fm3d = eidors_obj('fwd_model', params);
-
-inv3d.name=  'EIT inverse: 3D';
-inv3d.solve= 'np_inv_solve';
-inv3d.hyperparameter.value = 1e-2;
-inv3d.image_prior.func= 'tikhonov_image_prior';
-inv3d.reconst_type= 'difference';
-inv3d.fwd_model= fm3d;
-inv3d= eidors_obj('inv_model', inv3d);
-
- img3= inv_solve( inv3d, inh_data, homg_data);
-%show_fem(img3);
-%figure;image_levels(img3, [-.4:.2:.4])
+% Add 10% noise
+sig= std( inh_data.meas - homg_data.meas );
+inh_data.meas= inh_data.meas + 0.10 * sig* randn( size(inh_data.meas) );
 
 % 
-% Step 3: Reconstruction in 2D
+% Step 2: Reconstruction in 2D
 % 
 params= mk_circ_tank(8, [], n_elec);
 
-params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
-                            options, 10);
+params.stimulation= stimulation;
 params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'aa_calc_jacobian';
@@ -98,12 +74,41 @@ inv2d.solve=       'aa_inv_solve';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;
  inv2d.hyperparameter.value = 1e-2;
- inv2d.image_prior.func= 'tikhonov_image_prior';
+ inv2d.image_prior.func= 'laplace_image_prior';
 %inv2d.image_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
 inv2d= eidors_obj('inv_model', inv2d);
 
 img2= inv_solve( inv2d, inh_data, homg_data);
-show_fem(img2);
+img2.name= '2D inverse solution';
+show_fem(img2); pause;
 
+% 
+% Step 2: Reconstruction in 3D (using np_2003 code)
+% 
+disp('STEP 2: Reconstruction 3D');
+clear inv3d;
+ levels= [-.4:.2:.4];
+ params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [2,4] } );
+%params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+%params= mk_circ_tank( 4, levels, n_elec );
+params.stimulation= stimulation;
+params.solve=      'np_fwd_solve';
+params.system_mat= 'np_calc_system_mat';
+params.jacobian=   'np_calc_jacobian';
+params.misc.sym= '{n}';
+fm3d = eidors_obj('fwd_model', params);
+
+inv3d.name=  'EIT inverse: 3D';
+inv3d.solve= 'np_inv_solve';
+inv3d.hyperparameter.value = 1e-4;
+inv3d.image_prior.func= 'laplace_image_prior';
+inv3d.reconst_type= 'difference';
+inv3d.fwd_model= fm3d;
+inv3d= eidors_obj('inv_model', inv3d);
+
+ img3= inv_solve( inv3d, inh_data, homg_data);
+ img3.name= '3D inverse solution';
+ show_fem(img3);
+%figure;image_levels(img3, [-.4:.2:.4])
