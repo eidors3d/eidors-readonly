@@ -1,7 +1,7 @@
 % Based on the 'bubble' data from Eidors2D, use several 
 % different algorithms to image it
 %
-% $Id: image_2d_algs.m,v 1.3 2005-09-16 02:59:31 aadler Exp $
+% $Id: image_2d_algs.m,v 1.4 2005-10-23 04:25:57 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -22,7 +22,7 @@ params.meas_select= els;
 params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'aa_calc_jacobian';
-params.normalize_measurements= 1;
+params.normalize_measurements= 0;
 mdl_2d   = eidors_obj('fwd_model', params);
 
 % 
@@ -31,11 +31,11 @@ mdl_2d   = eidors_obj('fwd_model', params);
 inv2d.name= 'AA mdl with excluded measurements';
 %inv2d.solve=       'aa_inv_solve';
 inv2d.solve=       'aa_inv_conj_grad';
- inv2d.hyperparameter.value = 1e+2;
-%   inv2d.hyperparameter.func = 'aa_calc_noise_figure';
-%   inv2d.hyperparameter.noise_figure= 1;
-%   inv2d.hyperparameter.tgt_elems= 1:4;
- inv2d.image_prior.func= 'tikhonov_image_prior';
+%inv2d.hyperparameter.value = 1e-2;
+inv2d.hyperparameter.func = 'aa_calc_noise_figure';
+inv2d.hyperparameter.noise_figure= 1;
+inv2d.hyperparameter.tgt_elems= 1:4;
+ inv2d.image_prior.func= 'laplace_image_prior';
 %inv2d.image_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d;
