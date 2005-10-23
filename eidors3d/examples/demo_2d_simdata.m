@@ -1,7 +1,7 @@
 % Example of using EIDORS to simulate 2D data and to
 % solve it using various 2D solvers
 %
-% $Id: demo_2d_simdata.m,v 1.6 2005-10-17 14:09:52 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.7 2005-10-23 01:03:36 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model
@@ -58,7 +58,7 @@ inv2d.solve=       'aa_inv_solve';
 inv2d.hyperparameter.func = 'aa_calc_noise_figure';
 inv2d.hyperparameter.noise_figure= 2;
 inv2d.hyperparameter.tgt_elems= 1:4;
- inv2d.image_prior.func= 'tikhonov_image_prior';
+ inv2d.image_prior.func= 'laplace_image_prior';
 %inv2d.image_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
