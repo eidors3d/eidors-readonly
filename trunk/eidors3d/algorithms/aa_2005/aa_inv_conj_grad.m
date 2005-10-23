@@ -8,7 +8,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 % data2      => differential data at later time
 %
 
-% $Id: aa_inv_conj_grad.m,v 1.1 2005-09-15 04:55:17 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.2 2005-10-23 04:15:20 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -40,7 +40,11 @@ else
 end
 
 imax= 100; etol= 1e-3;
-sol = cg_inv( J'*W*J +  hp*R, J'*W*dva, imax, etol );
+n_img= size(dva,2);
+sol = zeros( size(J,2), n_img );
+for i=1:n_img
+   sol(:,i) = cg_inv( J'*W*J +  hp*R, J'*W*dva(:,i), imax, etol );
+end
 
 % create a data structure to return
 img.name= 'solved by aa_inv_conj_grad';
