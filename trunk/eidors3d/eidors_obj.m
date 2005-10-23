@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.33 2005-10-18 18:56:23 aadler Exp $
+% $Id: eidors_obj.m,v 1.34 2005-10-23 01:04:35 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -246,11 +246,6 @@ function obj= new_obj( type, name, varargin );
 % of calculated matrices, by detecting when a previous
 % calculation with same parameters has been made
 function obj_id= calc_obj_id( var )
-   if isfield(var,'id')
-      obj_id= var.id;
-      return;
-   end
-
    global eidors_objects;
    if ~isfield(eidors_objects,'hash_type')
        test_for_hashtypes;
