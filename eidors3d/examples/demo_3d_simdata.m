@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.11 2005-10-23 01:03:36 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.12 2005-10-23 04:25:41 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -101,7 +101,8 @@ params.misc.sym= '{n}';
 fm3d = eidors_obj('fwd_model', params);
 
 inv3d.name=  'EIT inverse: 3D';
-inv3d.solve= 'np_inv_solve';
+%inv3d.solve= 'np_inv_solve';
+ inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
 inv3d.hyperparameter.value = 1e-4;
 inv3d.image_prior.func= 'laplace_image_prior';
 inv3d.reconst_type= 'difference';
