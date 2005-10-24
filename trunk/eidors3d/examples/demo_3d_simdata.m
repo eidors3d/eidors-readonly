@@ -1,5 +1,5 @@
 % How to make simulation data using EIDORS3D
-% $Id: demo_3d_simdata.m,v 1.13 2005-10-24 18:56:30 camilgomez Exp $
+% $Id: demo_3d_simdata.m,v 1.14 2005-10-24 19:11:51 camilgomez Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -91,7 +91,7 @@ disp('STEP 2: Reconstruction 3D');
 clear inv3d;
 %levels= [-.4:.2:.4];
 %params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [2,4] } );
- params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+ params= mk_circ_tank( 4, levels, { 'zigzag', n_elec, e_levels } );
 %params= mk_circ_tank( 4, levels, n_elec );
 params.stimulation= stimulation;
 params.solve=      'np_fwd_solve';
