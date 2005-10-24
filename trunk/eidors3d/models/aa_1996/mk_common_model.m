@@ -15,8 +15,10 @@ function inv_mdl= mk_common_model( str, varargin )
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
 
-if strcmp( str, 'ac')
+if     strcmp( str, 'ac')
     inv_mdl = mk_ac_model( n_elec, options );
+elseif strcmp( str, 'dz')
+    inv_mdl = mk_dz_model( n_elec, options );
 else
     error('don`t know what to do with option=',str);
 end
@@ -48,3 +50,28 @@ function inv2d= mk_ac_model( n_elec, options )
     inv2d.fwd_model= mdl_2d;
     inv2d= eidors_obj('inv_model', inv2d);
 
+function inv3d= mk_dz_model( n_elec, options )
+
+    n_rings= 1;
+    levels= [-.4:.2:.4];
+    e_levels= [2,4];
+    params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+
+    [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
+
+    params.stimulation= st;
+    params.meas_select= els;
+    params.solve=      'np_fwd_solve';
+    params.system_mat= 'np_calc_system_mat';
+    params.jacobian=   'np_calc_jacobian';
+    params.misc.sym= '{n}';
+    fm3d = eidors_obj('fwd_model', params);
+
+    inv3d.name=  'EIT inverse: 3D';
+    %inv3d.solve= 'np_inv_solve';
+     inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
+    inv3d.hyperparameter.value = 1e-4;
+    inv3d.image_prior.func= 'laplace_image_prior';
+    inv3d.reconst_type= 'difference';
+    inv3d.fwd_model= fm3d;
+    inv3d= eidors_obj('inv_model', inv3d);
