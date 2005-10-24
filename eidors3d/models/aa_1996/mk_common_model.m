@@ -53,9 +53,11 @@ function inv2d= mk_ac_model( n_elec, options )
 function inv3d= mk_dz_model( n_elec, options )
 
     n_rings= 1;
-    levels= [-.4:.2:.4];
-    e_levels= [2,4];
-    params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+
+    levels= [-.4:.2:.4]; e_levels= [2,4]; nr= 8;
+    levels= [-.5:.1:.5]; e_levels= [4,8]; nr= 4;
+
+    params= mk_circ_tank( nr, levels, { 'zigzag', n_elec, e_levels } );
 
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
 
