@@ -13,7 +13,7 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %
 %  if format is unspecified, we attempt to autodetect
 %
-% $Id: eidors_readdata.m,v 1.1 2005-10-25 14:54:17 aadler Exp $
+% $Id: eidors_readdata.m,v 1.2 2005-10-25 15:32:12 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -21,7 +21,7 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 
 if nargin < 2
 % unspecified file format, autodetect
-   dotpos = find(fname,'.');
+   dotpos = find(fname == '.');
    if isempty( dotpos ) 
       error('file format unspecified, can`t autodetect');
    else
