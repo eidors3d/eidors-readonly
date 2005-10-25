@@ -1,6 +1,6 @@
 % Script to start EIDORS3D
 % Set path and variables correctly
-% $Id: startup.m,v 1.8 2005-10-24 15:34:53 aadler Exp $
+% $Id: startup.m,v 1.9 2005-10-25 14:54:33 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -8,6 +8,7 @@ addpath( HOMEDIR );
 addpath([HOMEDIR, '/algorithms/np_2003']);
 addpath([HOMEDIR, '/algorithms/aa_1996']);
 addpath([HOMEDIR, '/algorithms/aa_2005']);
+addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/aa_1996']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
