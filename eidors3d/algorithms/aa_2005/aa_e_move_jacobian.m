@@ -9,13 +9,18 @@ function J= aa_e_move_jacobian( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 % img = image background for jacobian calc
-% $Id: aa_e_move_jacobian.m,v 1.1 2005-10-25 15:38:07 aadler Exp $
+% $Id: aa_e_move_jacobian.m,v 1.2 2005-10-25 15:49:37 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 stim= fwd_model.stimulation;
 s_mat= calc_system_mat( fwd_model, img );
 
 J= conductivity_jacobian( pp, s_mat, stim, fwd_model.gnd_node);
+% J= conductivity_jacobian_perturb( pp, 1e-5, img );
+
+d= pp.n_dims+1;
+e= pp.n_elem;
+
 
 % calculate normalized Jacobian
 if pp.normalize
@@ -64,4 +69,31 @@ for j= 1:pp.n_stim
    n_meas  = size(meas_pat,1);
    J( idx+(1:n_meas),: ) = meas_pat*DE(:,j,:);
    idx= idx+ n_meas;
+end
+
+% Calculate the conductivity jacobian based on a perturbation
+% of each element by a delta 
+function J= conductivity_jacobian_perturb( pp, delta, img );
+
+J = zeros( pp.n_meas, pp.n_elem );
+
+elem_data = img.elem_data;
+d0= fwd_solve( img );
+for i=1:pp.n_elem
+   img.elem_data   = elem_data;
+   img.elem_data(i)= elem_data(i) + delta;
+   di= fwd_solve( img );
+   J(:,i) = (di.meas - d0.meas) / delta;
+end
+
+function J= movement_jacobian( pp, s_mat, stim )
+% xy-Movement Jacobian
+rr= zeros(1,ne);
+for i= 1:2*nm
+   idx= elect(ceil(i/2)); % select electrode
+   node_xy= rem(i,2) + 1; % select move in x or y
+   node= NODE;
+   node(node_xy,idx) = node(node_xy,idx) + delta; % electrode movement
+   vi = prob_dir( rr, node );
+   H(:,ne+i) = (1/delta) * (vi./vh - 1); 
 end
