@@ -11,7 +11,7 @@ function Reg= aa_e_move_image_prior( inv_model );
 % For the movmenent portion, we define a smoothness
 % constraint, such that Rij = -1 for adjacent electrodes
 
-% $Id: aa_e_move_image_prior.m,v 1.1 2005-10-25 17:18:27 aadler Exp $
+% $Id: aa_e_move_image_prior.m,v 1.2 2005-10-25 17:36:33 aadler Exp $
 
 % relative strengths of conductivity and movement priors
 hp_cond= 1;
@@ -36,7 +36,7 @@ Reg= [hp_cond* RegC,           RegCM;
 function RegM = movement_image_prior( dims, elecs );
 
    % movement constraint for 1 dimention
-   idx =(1:elecs)';
+   idx =(0:elecs-1)';
    im1= rem(idx-1+elecs,elecs);
    ip1= rem(idx+1,elecs); 
    mv= sparse([idx,idx,idx]+1,[im1,idx,ip1]+1,ones(elecs,1)*[-1,2,-1]);
@@ -44,6 +44,7 @@ function RegM = movement_image_prior( dims, elecs );
    RegM= spalloc(dims*elecs,dims*elecs, 3*dims*elecs);
 
    for i=0:dims-1;
-     RegM( idx+i*elecs, idx+i*elecs) = mv;
+     m_idx= idx + i*elecs + 1;
+     RegM( m_idx, m_idx ) = mv;
    end
 
