@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.35 2005-10-23 03:57:15 aadler Exp $
+% $Id: eidors_obj.m,v 1.36 2005-10-25 14:06:55 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -118,16 +118,6 @@ function obj = set_obj( obj, varargin );
 
    end
    if any(strcmp( obj.type, DONT_CACHE)); return; end 
-
-   % to ensure that function handles become part of eidors_var_id
-   % FIX this when we update mex file
-   
-   try 
-      if strcmp( class( obj.image_prior.func ), 'function_handle')
-          eval(sprintf('obj.misc.function_handles.ipf=''%s'';', ...
-                func2str( obj.image_prior.func) ) );
-      end
-   end
 
    obj_id= calc_obj_id( obj );
 
