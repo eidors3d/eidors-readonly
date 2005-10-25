@@ -1,6 +1,6 @@
 function ok= var_id_test
 % Test that the mex file eidors_var_id works 
-% $Id: var_id_test.m,v 1.2 2005-10-25 13:44:58 aadler Exp $
+% $Id: var_id_test.m,v 1.3 2005-10-25 14:20:20 aadler Exp $
 
 ok=1;
 
@@ -63,8 +63,7 @@ for iter=1:100
    if isempty(var_id)
       var_id= evi;
    elseif ~strcmp( var_id, evi );
-         ok=0;
-keyboard
+      warning('var_id_test: 6'); ok=0;
    end
 end
 
