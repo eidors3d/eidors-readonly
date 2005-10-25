@@ -9,18 +9,16 @@ function J= aa_e_move_jacobian( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 % img = image background for jacobian calc
-% $Id: aa_e_move_jacobian.m,v 1.3 2005-10-25 16:43:03 aadler Exp $
+% $Id: aa_e_move_jacobian.m,v 1.4 2005-10-25 17:02:41 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 stim= fwd_model.stimulation;
 s_mat= calc_system_mat( fwd_model, img );
 
-J= conductivity_jacobian( pp, s_mat, stim, fwd_model.gnd_node);
-% Jx= conductivity_jacobian_perturb( pp, 1e-5, img );
-
-d= pp.n_dims+1;
-e= pp.n_elem;
-
+Jc= conductivity_jacobian( pp, s_mat, stim, fwd_model.gnd_node);
+% Jx= conductivity_jacobian_perturb( pp, 1e-6, img );
+Jm= movement_jacobian( pp, 1e-6, img );
+J= [Jc,Jm];
 
 % calculate normalized Jacobian
 if pp.normalize
@@ -73,6 +71,15 @@ end
 
 % Calculate the conductivity jacobian based on a perturbation
 % of each element by a delta 
+% Relative error mean(mean(abs(J-Jx)))/ mean(mean(abs(J)))
+%   10^-2   0.00308129369015
+%   10^-3   0.00030910899216
+%   10^-4   0.00003092078190
+%   10^-5   0.00000309281790
+%   10^-6   0.00000035468582
+%   10^-7   0.00000098672198
+%   10^-8   0.00000938262464
+%   10^-9   0.00009144743903
 function J= conductivity_jacobian_perturb( pp, delta, img );
 
 J = zeros( pp.n_meas, pp.n_elem );
@@ -83,21 +90,23 @@ for i=1:pp.n_elem
    img.elem_data   = elem_data;
    img.elem_data(i)= elem_data(i) + delta;
    di= fwd_solve( img );
-   J(:,i) = (1/delta) * (di.meas - d0.meas);
+   J(:,i) = (1/delta) * (d0.meas - di.meas);
 end
 
 % xy-Movement Jacobian
-function J= movement_jacobian( pp, electr )
+function J= movement_jacobian( pp, delta, img )
 
+node0= img.fwd_model.nodes;
 d0= fwd_solve( img );
-for d= 1:pp.n_dim
+for d= 1:pp.n_dims
    for i= 1:pp.n_elec
-      J_idx = n_elec*(d-1) + i;
-      idx= elect(ceil(i/2)); % select electrode
-      node_xy= rem(i,2) + 1; % select move in x or y
-      node= NODE;
-      node(node_xy,idx) = node(node_xy,idx) + delta; % electrode movement
-      vi = prob_dir( rr, node );
-      J(:,J_idx) = (1/delta) * (di.meas - d0.meas);
+      J_idx = pp.n_elec*(d-1) + i;
+      idx= img.fwd_model.electrode(i).nodes;
+
+      img.fwd_model.nodes = node0;
+      img.fwd_model.nodes( idx, d)= node0(idx,d) + delta;
+      di= fwd_solve( img );
+
+      J(:,J_idx) = (1/delta) * (d0.meas - di.meas);
    end
 end
