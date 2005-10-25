@@ -69,7 +69,7 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% $Id: eidors_obj.m,v 1.36 2005-10-25 14:06:55 aadler Exp $
+% $Id: eidors_obj.m,v 1.37 2005-10-25 16:16:59 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -98,10 +98,6 @@ end
 
 function obj = set_obj( obj, varargin );
    global eidors_objects
-% we choose not to cache data and images because this will
-% tend to fill up the workspace.
-% TODO: make the DONT_CACHE list use configuable
-   DONT_CACHE= {'data','image'};
 
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
@@ -117,7 +113,8 @@ function obj = set_obj( obj, varargin );
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
 
    end
-   if any(strcmp( obj.type, DONT_CACHE)); return; end 
+
+   if ~cache_this( obj.type) ; return ; end
 
    obj_id= calc_obj_id( obj );
 
@@ -177,6 +174,8 @@ function value= get_cache_obj( obj, prop, varargin );
 
 function set_cache_obj( obj, prop, value, varargin )
    global eidors_objects
+   if ~cache_this( obj.type) ; return ; end
+
    [objlist, cachename]= proc_obj_list( varargin{:} );
 
    obj_id = calc_obj_id( obj );
@@ -285,3 +284,15 @@ function [objlist, cachedir]= proc_obj_list( varargin );
    else
       objlist = varargin(:);
    end
+
+function retval= cache_this( type )
+% we choose not to cache data and images because this will
+% tend to fill up the workspace.
+% TODO: make the DONT_CACHE list use configuable
+   DONT_CACHE= {'data','image'};
+   if any(strcmp( type, DONT_CACHE));
+      retval = 0;
+   else
+      retval = 1;
+   end
+ 
