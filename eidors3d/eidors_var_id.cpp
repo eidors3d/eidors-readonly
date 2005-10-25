@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.9 2005-10-11 15:24:44 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.10 2005-10-25 14:06:55 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -148,7 +148,20 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
         }
       }
     }
-
+  } else
+  if ( mxIsFunctionHandle(var) ) {
+    // function_handle. Get string of fcn name
+    /* I can't find any documentation on getting fcn string in mex */
+    mxArray *lhs[1];
+    mexCallMATLAB(1,lhs, 1, &var, "func2str");
+    if ( mxIsChar(lhs[0]) ) {
+      // string variable. Each char is packed into 2 bytes
+      double * pr = mxGetPr( *lhs );
+      hash_process( c, (unsigned char *) pr, 2*mxGetNumberOfElements( var ) );
+    } else {
+      mexErrMsgTxt("eidors_var_id: weird output for function_handle");
+    }
+//  mxDestroyArray( lhs[0] );
   } else
   {
     #ifdef VERBOSE
