@@ -1,8 +1,44 @@
 function ok= var_id_test
 % Test that the mex file eidors_var_id works 
-% $Id: var_id_test.m,v 1.1 2005-10-25 13:40:07 aadler Exp $
+% $Id: var_id_test.m,v 1.2 2005-10-25 13:44:58 aadler Exp $
 
 ok=1;
+
+%
+% Test 1:
+%  Test variable types
+%
+vv1.a=1; vv1.b='asfd'; vv1.c(1)=1; vv1.c(2)=2; vv1.s= @sin;
+vv2.a=1; vv2.b='asfd'; vv2.c(1)=1; vv2.c(2)=2; vv2.s= @sin;
+if ~strcmp( eidors_var_id(vv1), eidors_var_id(vv2) )
+   warning('var_id_test: 1');
+   ok=0;
+end
+
+vv2.a=1; vv2.b='asfd'; vv2.c(1)=1; vv2.c(2)=2; vv2.s= @sin;
+vv2.c(2)=3;
+if strcmp( eidors_var_id(vv1), eidors_var_id(vv2) )
+   warning('var_id_test: 2'); ok=0;
+end
+
+vv2.a=1; vv2.b='asfd'; vv2.c(1)=1; vv2.c(2)=2; vv2.s= @sin;
+vv2.b='asdf';
+if strcmp( eidors_var_id(vv1), eidors_var_id(vv2) )
+   warning('var_id_test: 3'); ok=0;
+end
+
+vv2.a=1; vv2.b='asfd'; vv2.c(1)=1; vv2.c(2)=2; vv2.s= @sin;
+vv2.s= @cos;
+if strcmp( eidors_var_id(vv1), eidors_var_id(vv2) )
+   warning('var_id_test: 4'); ok=0;
+end
+
+vv2.a=1; vv2.b='asfd'; vv2.c(1)=1; vv2.c(2)=2; vv2.s= @sin;
+vv2.a=1 + eps;
+if strcmp( eidors_var_id(vv1), eidors_var_id(vv2) )
+   warning('var_id_test: 5'); ok=0;
+end
+
 
 %
 % Test 2:
