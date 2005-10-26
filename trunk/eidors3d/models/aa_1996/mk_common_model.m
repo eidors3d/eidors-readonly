@@ -19,6 +19,8 @@ if     strcmp( str, 'ac')
     inv_mdl = mk_ac_model( n_elec, options );
 elseif strcmp( str, 'dz')
     inv_mdl = mk_dz_model( n_elec, options );
+elseif strcmp( str, 'n3r2')
+    inv_mdl = mk_n3r2_model( n_elec, options );
 else
     error('don`t know what to do with option=',str);
 end
@@ -77,3 +79,55 @@ function inv3d= mk_dz_model( n_elec, options )
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= fm3d;
     inv3d= eidors_obj('inv_model', inv3d);
+
+function inv_mdl = mk_n3r2_model( n_elec, options );
+   load( 'datareal.mat' );
+   bdy= dubs3( simp );
+   fmdl.nodes= vtx;
+   fmdl.elems= simp;
+   fmdl.boundary= dubs3( simp );
+
+   fmdl.solve=      'np_fwd_solve';
+   fmdl.jacobian=   'np_calc_jacobian';
+   fmdl.system_mat= 'np_calc_system_mat';
+
+   for i=1:length(zc)
+       electrodes(i).z_contact= zc(i);
+       electrodes(i).nodes=     unique( elec(i,:) );
+   end
+
+   fmdl.gnd_node=           gnd_ind;
+   fmdl.electrode =         electrodes;
+   fmdl.misc.sym =          sym;
+
+   [I,Ib] = set_3d_currents(protocol, elec, ...
+               fmdl.nodes, fmdl.gnd_node, no_pl);
+
+   % get the measurement patterns, only indH is used in this model
+   %   here we only want to get the meas pattern from 'get_3d_meas',
+   %   not the voltages, so we enter zeros
+   [jnk,jnk,indH,indV,jnk] = get_3d_meas( elec, ...
+            fmdl.nodes, zeros(size(I)), Ib, no_pl );
+   n_elec= size(elec,1);
+   n_meas= size(indH,1) / size(Ib,2);
+   for i=1:size(Ib,2)
+      fmdl.stimulations(i).stimulation= 'mA';
+      fmdl.stimulations(i).stim_pattern= Ib(:,i);
+
+      idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
+      fmdl.stimulations(i).meas_pattern= sparse ( ...
+              (1:n_meas)'*[1,1], ...
+              indH( idx, : ), ...
+              ones(n_meas,2)*[1,0;0,-1], ...
+              n_meas, n_elec );
+   end
+   fmdl= eidors_obj('fwd_model', fmdl);
+
+   inv_mdl.name=         'Nick Polydorides EIT inverse';
+   inv_mdl.solve=       'np_inv_solve';
+   inv_mdl.hyperparameter.value = 1e-8;
+   inv_mdl.image_prior.func= 'np_calc_image_prior';
+   inv_mdl.image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
+   inv_mdl.reconst_type= 'difference';
+   inv_mdl.fwd_model= fmdl;
+   inv_mdl= eidors_obj('inv_model', inv_mdl);
