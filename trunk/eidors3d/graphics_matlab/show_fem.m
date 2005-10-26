@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.22 2005-10-26 03:32:46 aadler Exp $
+% $Id: show_fem.m,v 1.23 2005-10-26 14:28:18 aadler Exp $
 
 
 if nargin == 1
@@ -61,11 +61,7 @@ for e=1:length(mdl.electrode)
     vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
     % sort nodes around the model (to avoid crossed lines)
     [jnk,idx] = sort(atan2( vy, vx ));
-    if e==1
-       ecolour= [0,.8,0];
-    else
-       ecolour= [0,.5,0];
-    end
+    ecolour = electr_colour( e );
     line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
          'LineWidth', 2, 'Color', [1 0 0], ...
          'Marker','.','MarkerSize',20,'MarkerEdgeColor',ecolour);
@@ -79,9 +75,10 @@ ee= mdl.boundary;
 for e=1:length(mdl.electrode)
     elec_nodes= mdl.electrode(e).nodes;
 
+    colour= electr_colour( e);
+
     if length(elec_nodes) == 1  % point electrode model
         vtx= mdl.nodes(elec_nodes,:);
-        colour = [0,.5,0]; % dark green
         line(vtx(1),vtx(2),vtx(3), ...
             'Marker','h','MarkerSize',24, ...
             'MarkerFaceColor',colour, 'MarkerEdgeColor', colour);
@@ -97,7 +94,7 @@ for e=1:length(mdl.electrode)
 
         for u=1:length(sels)
             paint_electrodes(sels(u),mdl.boundary, ...
-                             mdl.nodes);
+                             mdl.nodes, colour);
         end
     end
 end
@@ -113,7 +110,7 @@ camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');
 
-function paint_electrodes(sel,srf,vtx);
+function paint_electrodes(sel,srf,vtx, colour);
 %function paint_electrodes(sel,srf,vtx);
 %
 % plots the electrodes red at the boundaries.
@@ -129,7 +126,8 @@ Xs = [vtx(l,1);vtx(m,1);vtx(n,1)];
 Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
-patch(Xs,Ys,Zs,'g');
+h=patch(Xs,Ys,Zs, colour);
+set(h, 'FaceLighting','none');
 
 function show_3d_fem( mdl, options )
    trimesh(mdl.boundary, ...
@@ -267,6 +265,13 @@ function  mes= avg_electrode_posn( mdl )
       e_nodes=  mdl.electrode(i).nodes;
       mes(i,:)= mean( nodes(e_nodes,:) , 1 );
    end
+
+function colour= electr_colour( e);
+    if e==1;
+       colour = [0,.8,0]; % light green
+    else
+       colour = [0,.5,0]; % dark green
+    end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
