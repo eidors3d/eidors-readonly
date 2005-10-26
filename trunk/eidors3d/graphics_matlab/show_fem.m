@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.21 2005-10-24 19:11:51 camilgomez Exp $
+% $Id: show_fem.m,v 1.22 2005-10-26 03:32:46 aadler Exp $
 
 
 if nargin == 1
@@ -61,9 +61,14 @@ for e=1:length(mdl.electrode)
     vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
     % sort nodes around the model (to avoid crossed lines)
     [jnk,idx] = sort(atan2( vy, vx ));
+    if e==1
+       ecolour= [0,.8,0];
+    else
+       ecolour= [0,.5,0];
+    end
     line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
          'LineWidth', 2, 'Color', [1 0 0], ...
-         'Marker','.','MarkerSize',20,'MarkerEdgeColor','red')
+         'Marker','.','MarkerSize',20,'MarkerEdgeColor',ecolour);
 end
 
 function show_electrodes_3d(mdl)
