@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.11 2005-10-25 14:17:33 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.12 2005-10-26 14:04:05 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -163,7 +163,7 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     } else {
       mexErrMsgTxt("eidors_var_id: weird output for function_handle");
     }
-//  mxDestroyArray( lhs[0] );
+    mxDestroyArray( lhs[0] );
   } else
   {
     #ifdef VERBOSE
