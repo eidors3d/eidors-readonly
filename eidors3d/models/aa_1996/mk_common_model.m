@@ -5,7 +5,10 @@ function inv_mdl= mk_common_model( str, varargin )
 % so that users do not need to re-write common code
 %
 % Usage: 
-%   mk_common_model('ac',16)   - 2D circ model with 16 electrodes
+%   mk_common_model('ac',16)   - 2D circ model (64 elems) with 16 elecs
+%   mk_common_model('bc',16)   - 2D circ model (256 elems)
+%   mk_common_model('cc',16)   - 2D circ model (576 elems)
+%   mk_common_model('dc',16)   - 2D circ model (1024 elems)
 %
 %   mk_common_model('dr',16)   - circular ring with 16 electrodes
 %   mk_common_model('dr2',16)  - two circular rings with 16 electrodes
@@ -16,7 +19,13 @@ options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
 
 if     strcmp( str, 'ac')
-    inv_mdl = mk_ac_model( n_elec, options );
+    inv_mdl = mk_xc_model( n_elec, 4, options );
+elseif strcmp( str, 'bc')
+    inv_mdl = mk_xc_model( n_elec, 8, options );
+elseif strcmp( str, 'cc')
+    inv_mdl = mk_xc_model( n_elec, 12, options );
+elseif strcmp( str, 'dc')
+    inv_mdl = mk_xc_model( n_elec, 16, options );
 elseif strcmp( str, 'dz')
     inv_mdl = mk_dz_model( n_elec, options );
 elseif strcmp( str, 'n3r2')
@@ -25,10 +34,10 @@ else
     error('don`t know what to do with option=',str);
 end
     
-function inv2d= mk_ac_model( n_elec, options )
+function inv2d= mk_xc_model( n_elec, n_circles, options )
 
     n_rings= 1;
-    params= mk_circ_tank(8, [], n_elec); 
+    params= mk_circ_tank(n_circles, [], n_elec); 
 
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
     params.stimulation= st;
