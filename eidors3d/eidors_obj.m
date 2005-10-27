@@ -70,7 +70,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_obj.m,v 1.38 2005-10-27 13:28:08 aadler Exp $
+% $Id: eidors_obj.m,v 1.39 2005-10-27 13:50:55 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -132,7 +132,7 @@ function val= calc_or_cache( obj, funcname, varargin )
       funcstr= funcname;
    end
    
-   val = get_cache_obj( obj, funcname, varargin{:} );
+   val = get_cache_obj( obj, funcstr, varargin{:} );
    if ~isempty( val );
       eidors_msg([funcstr, ': using cached value'], 2);
    else

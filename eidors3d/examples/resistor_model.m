@@ -1,4 +1,4 @@
-% DEMO to show really simple application of EIDORS
+% DEMO to show really simple application of EIDORS framework
 %
 % This code models a resistor (resitance R), with one electrode at each end. 
 %
@@ -9,7 +9,7 @@
 %    This corresponds to the least squares solution
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: resistor_model.m,v 1.2 2005-10-27 13:28:08 aadler Exp $
+% $Id: resistor_model.m,v 1.3 2005-10-27 13:50:55 aadler Exp $
 
 function resistor_model;
 
@@ -139,7 +139,7 @@ function img= i_solve( i_mdl, data )
   J = calc_jacobian( f_mdl, i_img); 
 
   img.name= 'solved by i_solve';
-  img.elem_data= (J'*J)\J'* data.meas;
+  img.elem_data= (J'*J)\J'* data(:);
   img.inv_model= i_mdl;
   img.fwd_model= f_mdl;
 
