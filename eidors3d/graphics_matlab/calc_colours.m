@@ -22,9 +22,10 @@ function colours= calc_colours(img, scale)
 %         size. Total colourmap is 2*mapped_colour
 
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.7 2005-10-27 12:35:34 aadler Exp $  
+% $Id: calc_colours.m,v 1.8 2005-10-27 12:55:31 aadler Exp $  
 
 pp=get_colours;
+if nargin==0; return; end
  
 if isfield(img,'type')
    if strcmp( img.type, 'image' )
@@ -76,15 +77,15 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    glev= abs(pp.greylev);
    F= 3*pp.sat_adj;
 
-   red= D*F*abs(scale_data+1/F) -D;
+   red= D*F*abs(scale_data+1/F) - D + (D==-1);
    red= red.*(red>0).*(red<1) + (red>=1);
    red= red*(1-glev) + glev;
 
-   grn= D*F*abs(scale_data    ) -D;
+   grn= D*F*abs(scale_data    ) - D + (D==-1);
    grn= grn.*(grn>0).*(grn<1) + (grn>=1);
    grn= grn*(1-glev) + glev;
 
-   blu= D*F*abs(scale_data-1/F) -D;
+   blu= D*F*abs(scale_data-1/F) - D + (D==-1);
    blu= blu.*(blu>0).*(blu<1) + (blu>=1);
    blu= blu*(1-glev) + glev;
 
