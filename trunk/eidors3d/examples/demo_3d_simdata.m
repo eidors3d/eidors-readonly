@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.15 2005-10-27 13:28:08 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.16 2005-10-27 17:28:43 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -87,19 +87,16 @@ img2.name= '2D inverse solution';
 show_fem(img2); pause;
 
 % 
-% Step 2: Reconstruction in 3D (using np_2003 code)
+% Step 2: Reconstruction in 3D (using np_2003 code) and point
+%          electrode models with 'zigzag' electrodes
 % 
 disp('STEP 2: Reconstruction 3D');
 clear inv3d;
-<<<<<<< demo_3d_simdata.m
-%levels= [-.4:.2:.4];
-%params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [2,4] } );
- params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
-=======
-%levels= [-.4:.2:.4];
-%params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [2,4] } );
- params= mk_circ_tank( 4, levels, { 'zigzag', n_elec, e_levels } );
->>>>>>> 1.14
+
+ levels= [-.4:.2:.4];
+ params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, [2,4] } );
+%params= mk_circ_tank( 8, levels, { 'zigzag', n_elec, e_levels } );
+%params= mk_circ_tank( 4, levels, { 'zigzag', n_elec, e_levels } );
 %params= mk_circ_tank( 4, levels, n_elec );
 params.stimulation= stimulation;
 params.solve=      'np_fwd_solve';
