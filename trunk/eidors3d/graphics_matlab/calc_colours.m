@@ -19,10 +19,10 @@ function colours= calc_colours(img, scale)
 %   eidors_colours.backgnd= [.5,.5,.15]; % colour for non image regions
 %   eidors_colours.mapped_colour= 0; % use colormap function
 %         if mapped_colour is non-zero, it indicates the colourmap
-%         size to use
+%         size. Total colourmap is 2*mapped_colour
 
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.6 2005-10-27 12:02:00 aadler Exp $  
+% $Id: calc_colours.m,v 1.7 2005-10-27 12:35:34 aadler Exp $  
 
 pp=get_colours;
  
@@ -51,28 +51,45 @@ if nargin <= 1
 elseif isempty(scale)
    scale =  max(abs(elem_data)) + eps;
 end
-[red,grn,blu] = blu_red_axis( pp, elem_data / scale, backgnd );
-colours= ones(1, length(elem_data), 3);
 
-glev= abs(pp.greylev);
-   colours(1,:,:)= [red,grn,blu]*(1-glev) + glev;
-if pp.greylev < 0
-   colours = 1- colours(1,:,[3,2,1]);
+if ~pp.mapped_colour
+   [red,grn,blu] = blu_red_axis( pp, elem_data / scale, backgnd );
+   colours= shiftdim( [red,grn,blu], -1);
+else
+   % need to generate a colourmap with pp.mapped_colour+1 elements
+   % background pixel will be at entry #1. Thus for
+   % mapped_colour= 3. CMAP = [backgnd,[-1 -.5  0 .5 1]
+   %
+   % Note: ensure patch uses 'direct' CDataMapping
+   ncol= pp.mapped_colour;
+   [red,grn,blu] = blu_red_axis( pp, ...
+          [-1,linspace(-1,1,2*ncol - 1)]', 1 );
+   colormap([red,grn,blu]);
+   colours = round( elem_data/ scale * (ncol-1))' + ncol + 1;
 end
 
 
+
+%scaled data must go from -1 to 1
 function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
+   D= sign(pp.greylev+eps); %force 0 to 1
+   glev= abs(pp.greylev);
    F= 3*pp.sat_adj;
-   red= F*abs(scale_data+1/F) -1;
+
+   red= D*F*abs(scale_data+1/F) -D;
    red= red.*(red>0).*(red<1) + (red>=1);
-   red(backgnd) = pp.backgnd(1);
+   red= red*(1-glev) + glev;
 
-   grn= F*abs(scale_data    ) -1;
+   grn= D*F*abs(scale_data    ) -D;
    grn= grn.*(grn>0).*(grn<1) + (grn>=1);
-   grn(backgnd) = pp.backgnd(2);
+   grn= grn*(1-glev) + glev;
 
-   blu= F*abs(scale_data-1/F) -1;
+   blu= D*F*abs(scale_data-1/F) -D;
    blu= blu.*(blu>0).*(blu<1) + (blu>=1);
+   blu= blu*(1-glev) + glev;
+
+   red(backgnd) = pp.backgnd(1);
+   grn(backgnd) = pp.backgnd(2);
    blu(backgnd) = pp.backgnd(3);
 
 
