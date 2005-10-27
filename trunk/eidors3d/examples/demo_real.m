@@ -1,7 +1,9 @@
 function [org_img, demo_img] = demo_real;
 % [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
-% $Id: demo_real.m,v 1.30 2005-10-15 18:08:12 aadler Exp $
+
+% (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
+% $Id: demo_real.m,v 1.31 2005-10-27 13:28:08 aadler Exp $
 clc;
 
 isOctave= exist('OCTAVE_VERSION');

@@ -3,8 +3,9 @@ function image_levels(img, levels, clim )
 % img    = EIDORS image struct
 % levels = array of vertical levels
 % clim   = colourmap limit (or default if not specified)
-%
-% $Id: image_levels.m,v 1.6 2005-10-14 19:40:14 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: image_levels.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
 
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);

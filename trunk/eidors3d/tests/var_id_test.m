@@ -1,6 +1,8 @@
 function ok= var_id_test
 % Test that the mex file eidors_var_id works 
-% $Id: var_id_test.m,v 1.3 2005-10-25 14:20:20 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: var_id_test.m,v 1.4 2005-10-27 13:28:08 aadler Exp $
 
 ok=1;
 

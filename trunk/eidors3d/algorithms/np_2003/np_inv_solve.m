@@ -6,7 +6,8 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% $Id: np_inv_solve.m,v 1.17 2005-10-11 15:26:08 aadler Exp $
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: np_inv_solve.m,v 1.18 2005-10-27 13:28:08 aadler Exp $
 
 % The one_step reconstruction matrix is cached
 one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');

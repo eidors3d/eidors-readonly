@@ -33,8 +33,9 @@ function img = inv_solve( inv_model, data1, data2)
 %        Data will be selected based on fwd_model.meas_select.
 %
 % If S > 1 for both data1 and data2 then the values must be equal
-%
-% $Id: inv_solve.m,v 1.9 2005-10-18 15:25:23 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: inv_solve.m,v 1.10 2005-10-27 13:28:08 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs

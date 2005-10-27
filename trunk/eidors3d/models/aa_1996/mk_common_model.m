@@ -17,6 +17,9 @@ function inv_mdl= mk_common_model( str, varargin )
 %
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
 
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: mk_common_model.m,v 1.9 2005-10-27 13:28:08 aadler Exp $
+
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
 

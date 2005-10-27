@@ -11,7 +11,8 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% $Id: aa_inv_solve.m,v 1.11 2005-10-18 15:25:23 aadler Exp $
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: aa_inv_solve.m,v 1.12 2005-10-27 13:28:08 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

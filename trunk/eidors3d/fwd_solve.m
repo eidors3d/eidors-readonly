@@ -12,8 +12,9 @@ function data = fwd_solve( fwd_model, img)
 % data      is a measurement data structure
 % fwd_model is a fwd_model structure
 % img       is an img structure
-%
-% $Id: fwd_solve.m,v 1.9 2005-02-23 16:47:59 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: fwd_solve.m,v 1.10 2005-10-27 13:28:08 aadler Exp $
 
 if nargin==1
    img= fwd_model;

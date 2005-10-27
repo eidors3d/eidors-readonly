@@ -13,7 +13,9 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.QQ         => Current into each NODE
 %   param.VOLUME     => Volume (or area) of each element
 %   param.normalize  => difference measurements normalized?
-% $Id: aa_fwd_parameters.m,v 1.12 2005-09-15 04:11:50 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: aa_fwd_parameters.m,v 1.13 2005-10-27 13:28:08 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 

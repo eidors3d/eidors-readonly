@@ -14,8 +14,9 @@ function data_prior = calc_data_prior( inv_model )
 % Many common EIT (and other regularized) algorithms do not
 %  contain a data prior term. For these algorithms, this function
 %  generates a reasonable approximation based on uniform noise.
-%
-% $Id: calc_data_prior.m,v 1.6 2005-09-15 04:53:04 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: calc_data_prior.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
 
 data_prior = eidors_obj('get-cache', inv_model, 'data_prior');
 

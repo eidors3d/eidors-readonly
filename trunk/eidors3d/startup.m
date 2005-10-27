@@ -1,6 +1,8 @@
 % Script to start EIDORS3D
 % Set path and variables correctly
-% $Id: startup.m,v 1.9 2005-10-25 14:54:33 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: startup.m,v 1.10 2005-10-27 13:28:08 aadler Exp $
 
 HOMEDIR=pwd;
 

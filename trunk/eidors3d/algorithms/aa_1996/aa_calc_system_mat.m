@@ -7,7 +7,9 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 % where:
 %   SS  = Unconnected system Matrix
 %   CC  = Connectivity Matrix
-% $Id: aa_calc_system_mat.m,v 1.3 2005-06-05 13:23:35 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: aa_calc_system_mat.m,v 1.4 2005-10-27 13:28:08 aadler Exp $
 
 p= aa_fwd_parameters( fwd_model );
 

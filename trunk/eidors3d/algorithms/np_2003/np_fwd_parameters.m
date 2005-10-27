@@ -17,7 +17,9 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.sym      => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
-% $Id: np_fwd_parameters.m,v 1.7 2005-10-17 19:51:54 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: np_fwd_parameters.m,v 1.8 2005-10-27 13:28:08 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 

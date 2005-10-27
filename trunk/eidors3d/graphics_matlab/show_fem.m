@@ -4,8 +4,9 @@ function show_fem( mdl, background )
 % mdl is a EIDORS3D 'model' or 'image' structure
 %
 % background = background conductivity reference
-% 
-% $Id: show_fem.m,v 1.24 2005-10-27 12:35:34 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: show_fem.m,v 1.25 2005-10-27 13:28:08 aadler Exp $
 
 
 if nargin == 1

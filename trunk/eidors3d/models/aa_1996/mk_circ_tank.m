@@ -32,6 +32,9 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.gnd_node    Number of node connected to ground 
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: mk_circ_tank.m,v 1.13 2005-10-27 13:28:08 aadler Exp $
+
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');
 end

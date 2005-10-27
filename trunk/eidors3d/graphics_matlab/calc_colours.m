@@ -21,8 +21,10 @@ function colours= calc_colours(img, scale)
 %         if mapped_colour is non-zero, it indicates the colourmap
 %         size. Total colourmap is 2*mapped_colour
 
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: calc_colours.m,v 1.10 2005-10-27 13:28:08 aadler Exp $  
+
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.9 2005-10-27 13:13:44 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end

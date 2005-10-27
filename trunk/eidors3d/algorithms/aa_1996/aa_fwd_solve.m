@@ -5,9 +5,9 @@ function data =aa_fwd_solve(fwd_model, img)
 % fwd_model = forward model
 % img = image struct
 
-% (C) 1995-2002 Andy Adler
+% (C) 1995-2002 Andy Adler. Licenced under the GPL Version 2
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.9 2005-09-15 04:11:50 aadler Exp $
+% $Id: aa_fwd_solve.m,v 1.10 2005-10-27 13:28:08 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );

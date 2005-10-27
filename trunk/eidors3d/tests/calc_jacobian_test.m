@@ -3,7 +3,9 @@ function ok= calc_jacobian_test
 % Also calculate dataprior
 %     Difference dataprior should be 1
 %     normalized difference dataprior should be 1./ homg_data
-% $Id: calc_jacobian_test.m,v 1.5 2005-09-12 23:25:58 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: calc_jacobian_test.m,v 1.6 2005-10-27 13:28:08 aadler Exp $
 
 ok= 1;
 
