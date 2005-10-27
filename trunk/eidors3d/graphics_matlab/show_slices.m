@@ -6,17 +6,19 @@ function rimg_out = show_slices( img, levels, clim )
 %          each row of the matrix specifies the intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
 %          parallel to the x,y: use levels= [inf,inf,2]
+% 
+% if levels is [L x 5] then levels= [x,y,z,h,v] where,
+%          x,y,z specify the axes intercepts, and 
+%          h,v   specify the horizontal, vertical position
+%                of that slice in the output image
+%      
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.19 2005-10-27 13:28:08 aadler Exp $
+% $Id: show_slices.m,v 1.20 2005-10-27 16:36:18 aadler Exp $
 
-% NOTES:
-%  - currently works for slices through z plane
-%  - 
-
-np= 128; % no points for each figure
+np= 128; % number of points for each figure
 
 dims= size(img(1).fwd_model.nodes,2);
 if ~exist('levels') && dims==2
@@ -27,28 +29,44 @@ if ~exist('clim')
    clim = [];
 end
 
+if size(levels,2) == 5
+   spec_position= 1;
+else
+   spec_position= 0;
+end
+
 for img_no = 1:length(img)
    for lev_no = 1:size( levels,1 )
-      level= levels( lev_no, : );
+      level= levels( lev_no, 1:3 );
       rimg{img_no,lev_no}= calc_image( img( img_no ), level, clim, np );
    end
 end
 
 if nargout==0
    ll = length(rimg(:));
-   img_cols = ceil( sqrt( ll ));
-   img_rows = ceil( ll/ img_cols );
+   if spec_position %won't work for multiple image inputs
+      img_cols = max( levels(:,4) );
+      img_rows = max( levels(:,5) );
+   else
+      img_cols = ceil( sqrt( ll ));
+      img_rows = ceil( ll/ img_cols );
+   end
 
    r_img = NaN*ones(img_rows*np, img_cols*np);
 
    idx= (-np:-1)+1;
    for imno= 1:ll
-       i_col= rem( imno-1, img_cols) + 1;
-       i_row= ceil( imno / img_cols);
-       r_img(i_row*np + idx, i_col*np + idx) = rimg{imno};
+      if spec_position %won't work for multiple image inputs
+         i_col= levels( imno, 4);
+         i_row= levels( imno, 5);
+      else
+         i_col= rem( imno-1, img_cols) + 1;
+         i_row= ceil( imno / img_cols);
+      end
+      r_img(i_row*np + idx, i_col*np + idx) = rimg{imno};
    end
    c_img = calc_colours( r_img);
-   image(reshape(c_img, [size(r_img),3]))
+   image(reshape(c_img, size(r_img,1), size(r_img,2) ,[]));
    axis('image');axis('off');
 
 else
