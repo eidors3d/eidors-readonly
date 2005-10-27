@@ -22,7 +22,7 @@ function colours= calc_colours(img, scale)
 %         size. Total colourmap is 2*mapped_colour
 
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.8 2005-10-27 12:55:31 aadler Exp $  
+% $Id: calc_colours.m,v 1.9 2005-10-27 13:13:44 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
@@ -98,7 +98,7 @@ function pp=get_colours;
    global eidors_colours;
 
    if isempty( eidors_colours );
-      eidors_colours.greylev = .2;
+      eidors_colours.greylev = -.01;
       eidors_colours.sat_adj = .9;
       eidors_colours.backgnd= [.5,.5,.15];
       eidors_colours.mapped_colour= 0;
