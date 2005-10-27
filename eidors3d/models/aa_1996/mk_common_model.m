@@ -5,28 +5,30 @@ function inv_mdl= mk_common_model( str, varargin )
 % so that users do not need to re-write common code
 %
 % Usage: 
-%   mk_common_model('ac',16)   - 2D circ model (64 elems) with 16 elecs
-%   mk_common_model('bc',16)   - 2D circ model (256 elems)
-%   mk_common_model('cc',16)   - 2D circ model (576 elems)
-%   mk_common_model('dc',16)   - 2D circ model (1024 elems)
+%   mk_common_model('a2c',16)   - 2D circ model (64 elems) with 16 elecs
+%   mk_common_model('b2c',16)   - 2D circ model (256 elems)
+%   mk_common_model('c2c',16)   - 2D circ model (576 elems)
+%   mk_common_model('d2c',16)   - 2D circ model (1024 elems)
 %
-%   mk_common_model('dr',16)   - circular ring with 16 electrodes
-%   mk_common_model('dr2',16)  - two circular rings with 16 electrodes
+%   mk_common_model('b3r1',16)  - circular ring with 16 electrodes
+%   mk_common_model('b3r2',16)  - two circular rings with 16 electrodes
 %
-%   mk_common_model('dz',16)   - zigzag pattern electrodes
+%   mk_common_model('b3z',16)   - zigzag pattern electrodes
+%
+%   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
 
-if     strcmp( str, 'ac')
-    inv_mdl = mk_xc_model( n_elec, 4, options );
-elseif strcmp( str, 'bc')
-    inv_mdl = mk_xc_model( n_elec, 8, options );
-elseif strcmp( str, 'cc')
-    inv_mdl = mk_xc_model( n_elec, 12, options );
-elseif strcmp( str, 'dc')
-    inv_mdl = mk_xc_model( n_elec, 16, options );
-elseif strcmp( str, 'dz')
+if     strcmp( str, 'a2c')
+    inv_mdl = mk_2c_model( n_elec, 4, options );
+elseif strcmp( str, 'b2c')
+    inv_mdl = mk_2c_model( n_elec, 8, options );
+elseif strcmp( str, 'c2c')
+    inv_mdl = mk_2c_model( n_elec, 12, options );
+elseif strcmp( str, 'd2c')
+    inv_mdl = mk_2c_model( n_elec, 16, options );
+elseif strcmp( str, 'b3z')
     inv_mdl = mk_dz_model( n_elec, options );
 elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
@@ -34,7 +36,7 @@ else
     error('don`t know what to do with option=',str);
 end
     
-function inv2d= mk_xc_model( n_elec, n_circles, options )
+function inv2d= mk_2c_model( n_elec, n_circles, options )
 
     n_rings= 1;
     params= mk_circ_tank(n_circles, [], n_elec); 
