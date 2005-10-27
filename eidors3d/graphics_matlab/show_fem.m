@@ -5,7 +5,7 @@ function show_fem( mdl, background )
 %
 % background = background conductivity reference
 % 
-% $Id: show_fem.m,v 1.23 2005-10-26 14:28:18 aadler Exp $
+% $Id: show_fem.m,v 1.24 2005-10-27 12:35:34 aadler Exp $
 
 
 if nargin == 1
@@ -127,7 +127,8 @@ Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
 h=patch(Xs,Ys,Zs, colour);
-set(h, 'FaceLighting','none');
+% need 'direct' otherwise colourmap is screwed up
+set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function show_3d_fem( mdl, options )
    trimesh(mdl.boundary, ...
@@ -151,7 +152,8 @@ function show_2d_fem( mdl, colours )
   Ys=zeros(3,e);
   Ys(:)=mdl.nodes(elem(:),2);
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
-  patch(Xs,Ys,zeros(3,e),colours);
+  h= patch(Xs,Ys,zeros(3,e),colours);
+  set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
   max_x= max(mdl.nodes(:,1)); min_x= min(mdl.nodes(:,1));
   max_y= max(mdl.nodes(:,2)); min_y= min(mdl.nodes(:,2));
