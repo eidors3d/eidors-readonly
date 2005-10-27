@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_solve.m,v 1.10 2005-10-27 13:28:08 aadler Exp $
+% $Id: inv_solve.m,v 1.11 2005-10-27 13:50:55 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -54,7 +54,7 @@ if     strcmp(inv_model.reconst_type,'static')
       error('only one data set is allowed for a static reconstruction');
    end
    imgc= feval( inv_model.solve, inv_model, ...
-               filter_data(inv_model,data1) );
+               filt_data(inv_model,data1) );
 
 elseif strcmp(inv_model.reconst_type,'difference')
    if nargin~=3;
