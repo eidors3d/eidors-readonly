@@ -12,11 +12,9 @@ function colours= calc_colours(img, scale)
 %       - default = autoscale
 
 % TODO: create a global eidors_colours object to control behaviour
-% $Id: calc_colours.m,v 1.4 2005-10-17 15:07:02 aadler Exp $  
+% $Id: calc_colours.m,v 1.5 2005-10-27 03:27:37 aadler Exp $  
 
-greylev=.2;
-sat_adj=.9 ;
-back_gnd_clr= [.5,.5,.15];
+pp=get_colours;
  
 if isfield(img,'type')
    if strcmp( img.type, 'image' )
@@ -45,18 +43,35 @@ elseif isempty(scale)
 end
 scale_ed = elem_data / scale;
 
-F= 3*sat_adj;
+F= 3*pp.sat_adj;
 red= F*abs(scale_ed+1/F) -1;
 red= red.*(red>0).*(red<1) + (red>=1);
-grn(backgnd) = back_gnd_clr(1);
+red(backgnd) = pp.backgnd(1);
 
 grn= F*abs(scale_ed    ) -1;
 grn= grn.*(grn>0).*(grn<1) + (grn>=1);
-grn(backgnd) = back_gnd_clr(2);
+grn(backgnd) = pp.backgnd(2);
 
 blu= F*abs(scale_ed-1/F) -1;
 blu= blu.*(blu>0).*(blu<1) + (blu>=1);
-grn(backgnd) = back_gnd_clr(3);
+blu(backgnd) = pp.backgnd(3);
 
 colours= ones(1, length(elem_data), 3);
-colours(1,:,:)= [red,grn,blu]*(1-greylev)+ greylev;
+
+glev= abs(pp.greylev);
+   colours(1,:,:)= [red,grn,blu]*(1-glev) + glev;
+if pp.greylev < 0
+   colours = 1- colours(1,:,[3,2,1]);
+end
+
+
+function pp=get_colours;
+   global eidors_colours;
+
+   if isempty( eidors_colours );
+      eidors_colours.greylev = .2;
+      eidors_colours.sat_adj = .9;
+      eidors_colours.backgnd= [.5,.5,.15];
+   end
+
+   pp= eidors_colours;
