@@ -1,6 +1,8 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test3.m,v 1.1 2004-07-22 03:32:37 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: demo_real_test3.m,v 1.2 2005-10-27 13:28:08 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 

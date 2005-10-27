@@ -12,8 +12,9 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %     fname = file name
 %
 %  if format is unspecified, we attempt to autodetect
-%
-% $Id: eidors_readdata.m,v 1.2 2005-10-25 15:32:12 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: eidors_readdata.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
 
 % TODO:
 %   - output an eidors data object

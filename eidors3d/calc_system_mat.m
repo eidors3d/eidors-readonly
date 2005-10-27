@@ -12,8 +12,9 @@ function system_mat = calc_system_mat( fwd_model, img)
 %   system_mat.perm is permutation of E  i.e. E(perm,perm)
 % fwd_model is a fwd_model structure
 % image     is an image structure
-%
-% $Id: calc_system_mat.m,v 1.8 2005-10-17 13:46:16 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: calc_system_mat.m,v 1.9 2005-10-27 13:28:08 aadler Exp $
 
 if strcmp( fwd_model.type , 'image')
     img= fwd_model;

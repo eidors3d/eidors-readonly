@@ -8,7 +8,8 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 % data2      => differential data at later time
 %
 
-% $Id: aa_inv_conj_grad.m,v 1.3 2005-10-23 04:25:25 aadler Exp $
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: aa_inv_conj_grad.m,v 1.4 2005-10-27 13:28:08 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

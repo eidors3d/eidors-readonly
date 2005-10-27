@@ -8,7 +8,8 @@
 % Inverse Model: R= inv(J'*J)*J'*V
 %    This corresponds to the least squares solution
 
-% $Id: resistor_model.m,v 1.1 2004-07-25 21:59:41 aadler Exp $
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: resistor_model.m,v 1.2 2005-10-27 13:28:08 aadler Exp $
 
 function resistor_model;
 

@@ -19,6 +19,9 @@ function eidors_msg( message, varargin )
 %   2 => most messages
 %   3 => detailed information
 
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: eidors_msg.m,v 1.5 2005-10-27 13:28:08 aadler Exp $
+
 global eidors_objects
 
 if nargin==1

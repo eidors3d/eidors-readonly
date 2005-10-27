@@ -1,5 +1,7 @@
 % How to make simulation data using EIDORS3D
-% $Id: mk_simdata.m,v 1.13 2005-09-13 12:57:34 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: mk_simdata.m,v 1.14 2005-10-27 13:28:08 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 

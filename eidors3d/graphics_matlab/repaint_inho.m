@@ -9,8 +9,9 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %vtx     = The vertices matrix.
 %simp    = The simplices matrix.
 %thresh  = Threshold to show imaged region
-%
-% $Id: repaint_inho.m,v 1.6 2005-10-27 13:13:45 aadler Exp $
+
+% (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
+% $Id: repaint_inho.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
 
 inhomg= mat - mat_ref;
 

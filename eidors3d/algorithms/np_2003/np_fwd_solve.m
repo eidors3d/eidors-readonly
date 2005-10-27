@@ -4,7 +4,9 @@ function data= np_fwd_solve( fwd_model, img)
 % data = measurements struct
 % fwd_model = forward model
 % img = image struct
-% $Id: np_fwd_solve.m,v 1.6 2005-06-04 17:12:29 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: np_fwd_solve.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 

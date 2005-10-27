@@ -4,7 +4,9 @@ function J= np_calc_jacobian( fwd_model, img)
 % J         = Jacobian matrix
 % fwd_model = forward model
 % img = image background for jacobian calc
-% $Id: np_calc_jacobian.m,v 1.7 2005-02-23 16:12:17 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: np_calc_jacobian.m,v 1.8 2005-10-27 13:28:08 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 

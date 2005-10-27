@@ -9,7 +9,8 @@ function rimg_out = show_slices( img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
-% $Id: show_slices.m,v 1.18 2005-10-18 15:42:21 aadler Exp $
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: show_slices.m,v 1.19 2005-10-27 13:28:08 aadler Exp $
 
 % NOTES:
 %  - currently works for slices through z plane

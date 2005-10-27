@@ -13,8 +13,9 @@ function hyperparameter = calc_hyperparameter( inv_model )
 %
 % TODO: does hyperparameter depend on inv_model, or does
 %       it also depend on the data?
-%
-% $Id: calc_hyperparameter.m,v 1.2 2005-10-11 02:31:04 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: calc_hyperparameter.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
 
 if isfield( inv_model.hyperparameter, 'func')
 

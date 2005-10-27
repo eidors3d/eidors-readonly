@@ -11,7 +11,9 @@ function J= aa_e_move_jacobian( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 % img = image background for jacobian calc
-% $Id: aa_e_move_jacobian.m,v 1.6 2005-10-27 02:56:02 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: aa_e_move_jacobian.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 delta= 1e-6; % tests indicate this is a good value

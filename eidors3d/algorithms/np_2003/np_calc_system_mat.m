@@ -5,7 +5,9 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 % s_mat.perm= permutation of system matrix
 % fwd_model = forward model
 % img       = image background for system matrix calc
-% $Id: np_calc_system_mat.m,v 1.2 2005-02-23 16:12:18 aadler Exp $
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: np_calc_system_mat.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
