@@ -1,5 +1,5 @@
-function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,sym,gnd_ind,tfac,Reg,it);
-%function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,sym,gnd_ind,tfac,Reg,it);
+function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);
+%function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);
 %
 %Calculates a Newton non-linear inverse solution by iteration.
 %
@@ -37,7 +37,7 @@ function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,
 
 for i=1:it
  
- [E,D,Ela,pp] = fem_master_full(vtx,simp,sol_upd,gnd_ind,elec,zc,sym);
+ [E,D,Ela,pp] = fem_master_full(vtx,simp,sol_upd,gnd_ind,elec,zc,perm_sym);
  
  if i==1
    %sprintf('Current fields for iteration %d',i)
@@ -57,7 +57,7 @@ else
    [v_f] = m_3d_fields(vtx,el_no,indH,E,tol,gnd_ind,v_f);
 end
 
-[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,sol_upd,zc,v_f,dfv,tol,sym);    
+[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,sol_upd,zc,v_f,dfv,tol,perm_sym);    
 
 sol = (J.'*J + tfac*Reg.'*Reg)\ (J.' * (voltage - vi));
 %sol = pinv([J;sgrt(tfac)*Reg],tol) * [sqrt(tfac)*Reg*sol_upd; (voltage - vi)];

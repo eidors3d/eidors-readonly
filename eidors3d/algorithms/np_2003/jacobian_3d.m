@@ -1,5 +1,5 @@
-function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,sym);
-%function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,sym);
+function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);
+%function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);
 %
 %This function calculates the Jacobian (sensitivity) matrix of the system at
 %mat_ref. 
@@ -28,7 +28,7 @@ if sum(df)~= size(v_f,2);
    error('Mismatched data input');
 end
 
-[E,D,Ela,pp] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,sym);
+[E,D,Ela,pp] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,perm_sym);
 
 [V] = forward_solver(vtx,E,I,tol,pp);
 

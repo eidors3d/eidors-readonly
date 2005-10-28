@@ -18,7 +18,7 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.9 2005-10-27 13:28:08 aadler Exp $
+% $Id: mk_common_model.m,v 1.10 2005-10-28 15:10:55 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -82,7 +82,7 @@ function inv3d= mk_dz_model( n_elec, options )
     params.solve=      'np_fwd_solve';
     params.system_mat= 'np_calc_system_mat';
     params.jacobian=   'np_calc_jacobian';
-    params.misc.sym= '{n}';
+    params.misc.perm_sym= '{n}';
     fm3d = eidors_obj('fwd_model', params);
 
     inv3d.name=  'EIT inverse: 3D';
@@ -112,7 +112,7 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
 
    fmdl.gnd_node=           gnd_ind;
    fmdl.electrode =         electrodes;
-   fmdl.misc.sym =          sym;
+   fmdl.misc.perm_sym =     '{n}';
 
    [I,Ib] = set_3d_currents(protocol, elec, ...
                fmdl.nodes, fmdl.gnd_node, no_pl);

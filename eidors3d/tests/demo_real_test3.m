@@ -2,7 +2,7 @@ function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real_test3.m,v 1.2 2005-10-27 13:28:08 aadler Exp $
+% $Id: demo_real_test3.m,v 1.3 2005-10-28 15:10:55 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -32,7 +32,8 @@ clear vtx simp
 
 % create FEM model electrodes definitions
 
-load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
+load(datareal,'gnd_ind','elec','zc','protocol','no_pl');
+perm_sym= '{n}';
 
 demo_mdl= eidors_obj('set', demo_mdl, 'gnd_node', gnd_ind);
 
@@ -40,7 +41,7 @@ for i=1:length(zc)
     demo_mdl.electrode(i).z_contact= zc(i);
     demo_mdl.electrode(i).nodes=     elec(i,:);
 end
-demo_mdl.misc.sym     = sym;
+demo_mdl.misc.perm_sym     = perm_sym;
 
 demo_mdl= eidors_obj('set', demo_mdl);
 
@@ -72,7 +73,7 @@ for i=1:size(Ib,2)
     demo_mdl.stimulation(i).meas_pattern= meas_pat;
 end
 
-clear gnd_ind elec zc sym protocol no_pl I Ib
+clear gnd_ind elec zc protocol no_pl I Ib
 clear indH indV indH_sz meas_pat idx jnk
 
 demo_mdl= eidors_obj('fwd_model', demo_mdl);

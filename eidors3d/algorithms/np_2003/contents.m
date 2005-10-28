@@ -3,7 +3,7 @@
 %Matlab 6.1 is required for some of the plotting functions.
 %
 %-------------------------------------------------------------------------
-%[1] function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
+%[1] function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
 %
 %Builds up the system matrix based on the complete electrode model. E is not 
 %yet permuted. To permute E -> E(pp,pp) as in fwd_solver.
@@ -92,13 +92,13 @@
 %called from slicer_plot function.
 %
 %--------------------------------------------------------------------------
-%[15] function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,sym);
+%[15] function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);
 %
 %This function calculates the Jacobian (sensitivity) matrix of the system wrt to conductivity.
 %
 %--------------------------------------------------------------------------
 %[16] function [Jrr,Jri,Jir,Jii] = 
-% jacobian_3d_comp(I,elec,vtx,simp,gnd_ind,mat_ref,no_pl,zc,v_f,df,tol,sym);
+% jacobian_3d_comp(I,elec,vtx,simp,gnd_ind,mat_ref,no_pl,zc,v_f,df,tol,perm_sym);
 %
 %This function calculates the Jacobian matrices (wrt conductivity) for the complex EIT system.
 %
@@ -187,7 +187,7 @@
 %
 %--------------------------------------------------------------------------
 %[32] function [solf,solp] = 
-% inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,sym,gnd_ind,tfac,Reg,it);
+% inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);
 %
 %Calculates a Newton non-linear inverse solution.
 %

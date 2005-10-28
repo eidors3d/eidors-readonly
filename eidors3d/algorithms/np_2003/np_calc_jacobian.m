@@ -6,7 +6,7 @@ function J= np_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_calc_jacobian.m,v 1.8 2005-10-27 13:28:08 aadler Exp $
+% $Id: np_calc_jacobian.m,v 1.9 2005-10-28 15:10:55 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -21,5 +21,5 @@ s_mat= calc_system_mat( fwd_model, img );
 % Calculating the Jacobian
 J = jacobian_3d(p.I,p.elec,p.vtx,p.simp,p.gnd_ind, ...
                   img.elem_data, ...
-                  p.zc,v_f,p.df,tol, p.sym );
+                  p.zc,v_f,p.df,tol, p.perm_sym );
 

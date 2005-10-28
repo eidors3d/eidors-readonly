@@ -15,11 +15,11 @@ function param = np_fwd_parameters( fwd_model )
 %   param.indH     => electrodes used for each measurement
 %   param.I        => RHS (current term) for FEM solution
 %   param.Ib       => Current for electrodes
-%   param.sym      => 'sym' parameter
+%   param.perm_sym => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_parameters.m,v 1.8 2005-10-27 13:28:08 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.9 2005-10-28 15:10:55 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -112,7 +112,7 @@ param.zc       = zc;
 param.indH     = indH;
 param.I        = I;
 param.Ib       = Ib;
-param.sym      = fwd_model.misc.sym;
+param.perm_sym = fwd_model.misc.perm_sym;
 param.gnd_ind  = fwd_model.gnd_node;
 
 % get boundary faces which match nodes

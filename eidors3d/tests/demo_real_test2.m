@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.5 2004-07-22 03:32:37 aadler Exp $
+% $Id: demo_real_test2.m,v 1.6 2005-10-28 15:10:55 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -30,7 +30,8 @@ clear vtx simp
 
 % create FEM model electrodes definitions
 
-load(datareal,'gnd_ind','elec','zc','protocol','no_pl','sym');
+load(datareal,'gnd_ind','elec','zc','protocol','no_pl');
+perm_sym= '{n}';
 
 demo_mdl.gnd_node= gnd_ind;
 for i=1:length(zc)
@@ -39,7 +40,7 @@ for i=1:length(zc)
 end
 
 % TODO: generalize the way that protocol sym no_pl are managed
-demo_mdl.misc.sym     = sym;
+demo_mdl.misc.perm_sym     = perm_sym;
 
 % create FEM model stimulation and measurement patterns
 
@@ -69,7 +70,7 @@ for i=1:size(Ib,2)
     demo_mdl.stimulation(i).meas_pattern= meas_pat;
 end
 
-clear gnd_ind elec zc sym protocol no_pl I Ib
+clear gnd_ind elec zc protocol no_pl I Ib
 clear indH indV indH_sz meas_pat idx jnk
 
 demo_mdl= eidors_obj('fwd_model', demo_mdl);
