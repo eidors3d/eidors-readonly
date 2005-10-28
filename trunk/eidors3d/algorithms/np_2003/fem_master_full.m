@@ -1,5 +1,5 @@
-function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
-%function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
+function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
+%function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
 %
 %Builds up the system matrix based on the complete electrode model. E is not 
 %yet permuted. To permute E -> E(pp,pp) as in forward_solver.
@@ -16,7 +16,7 @@ function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
 %gnd_ind = The index of the ground node
 %elec    = The bounary electrodes matrix
 %zc      = The contact impedance vector, satisfying size(elec,1) = length(zc)
-%sym     = Column permutation of E, either '{y}' to opt or '{n}' to avoid.       
+%perm_sym= Column permutation of E, either '{y}' to opt or '{n}' to avoid.       
 
 isOctave= exist('OCTAVE_VERSION');
      
@@ -25,9 +25,9 @@ isOctave= exist('OCTAVE_VERSION');
    [E] = ref_master(Ef,vtx,gnd_ind);  
    
 % octave currently does not have symmmd
-if isOctave | all(sym == '{n}')
+if strcmp(perm_sym,'{n}')
     pp = 1:size(E,1);
-elseif sym == '{y}'
+elseif perm_sym == '{y}'
     pp = symmmd(E);
 end
 
