@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.1 2005-10-27 23:52:33 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.2 2005-10-28 03:40:53 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -184,9 +184,15 @@ a fat, blobby animal that lives in water.
 % FIGURE: EIDORS LOGO
 \begin{figure}[th]
 \begin{flushright}
-%\includegraphics[width= 0.80 \textwidth]{img/fig1.eps}
-\caption{\small EIDORS logo}
-% Images credit: www.biosbcc.net (C) Genny Anderson
+\includegraphics[width= 0.30 \textwidth]{./eidors-logo.eps}
+\caption{\small EIDORS logo.
+{\em EIT}: images blobby objects in aqueous media;
+{\em Walrus}: a fat, blobby animal that lives in water.
+ Images credit: www.biosbcc.net (C) Genny Anderson
+
+{\tt TODO: Get a better picture}
+ }
+
 
 \end{flushright}
 \end{figure}
@@ -225,13 +231,14 @@ m_{i,j} = {\bf m}_{i} {\bf V}_{2E} F( \sigma )
 \end{equation}
 Based on this model, $\bf J$ is calculated as:
 \begin{equation}
-{\bf F}_{i,j,k} = \frac{
-m_{i,j} = {\bf m}_{i} {\bf V}_{2E} del?? F( \sigma )
+{\bf F}_{i,j,k} = \left.\frac{
+ {\bf m}_{i} {\bf V}_{2E}{\partial}F( \sigma )
 }{
-del?? {\bf \sigma}_k
+{\partial}{\bf \sigma}_k
 }
-vertical bar??
-{\bf \sigma} = {\bf \sigma}_0
+\right|_{
+   {\bf \sigma} = {\bf \sigma}_0 
+}
 \end{equation}
 where ${\bf \sigma}_0$ is the "background"
 conductivity around which small changes are assumed to occur.
@@ -246,7 +253,62 @@ of type {\tt image}.
 The following table shows a partial representation of 
 the structure of an EIDORS3D {\tt fwd\_model} object.
 
-{\tt table goes here}
+\begin{tabular}{ll}
+{\bf Properties} & {\bf Description } \\
+\hline
+{\tt
+        fwd\_model.name
+} &
+        Model name (arbitrary)
+\\
+{\tt
+        fwd\_model.nodes
+} &
+        Position of FEM vertices
+        $n_V{\times}n_D$
+\\
+{\tt
+        fwd\_model.elems
+} &
+        Node indices of FEM elements
+        $n_N{\times}n_D+1$
+\\
+{\tt
+        fwd\_model.boundary
+} &
+        Node indices of element faces on the medium surface
+\\
+{\tt
+        fwd\_model.electrode
+} &
+        Vector $n_E{\times}1$
+           of electrode models ({\tt elec\_model})
+\\
+{\tt
+        fwd\_model.stimulation
+} &
+         Vector $n_S{\times}1$of stimulation
+            patterns ({\tt stim\_model})
+\\
+\hline
+{\bf Methods} & {\bf Description } \\
+\hline
+{\tt
+        fwd\_model.solve
+} &
+        Function to calculate inverse solution
+\\ &
+        {\tt {\em data} = fwd\_solve( fwd\_model, {\em image} )}
+\\
+{\tt
+        fwd\_model.jacobian
+} &
+        Function to calculate Jacobian at {\em image} background
+\\ &
+        {\tt {\em J} = calc\_jacobian( fwd\_model, {\em image} )}
+\\
+\end{tabular}
+
 
 Each object is created using the {\tt eidors\_obj}
 function, which can fill in default attributes, and 
