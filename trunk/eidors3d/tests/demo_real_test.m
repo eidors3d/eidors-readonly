@@ -2,7 +2,7 @@ function ok= demo_real_test
 % Perform tests based on the demo_real function
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: demo_real_test.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
+% $Id: demo_real_test.m,v 1.4 2005-10-28 15:10:55 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -17,6 +17,7 @@ if isOctave
 end
 
 load(datareal);
+perm_sym= '{n}';
 
 [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
 
@@ -25,7 +26,7 @@ mat_ref = 1*ones(828,1);
 %Set the tolerance for the forward solver
 tol = 1e-5;
 
-[Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,sym);
+[Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,perm_sym);
 [Vref] = forward_solver(vtx,Eref,I,tol,ppr);
 [refH,refV,indH,indV,dfr]=get_3d_meas(elec,vtx,Vref,Ib,no_pl);
 dfr = dfr(1:2:end); %Taking just the horrizontal measurements
@@ -37,7 +38,7 @@ sB = mat_ref(B(1))-0.20;
 mat(A) = sA;
 mat(B) = sB;
 
-[En,D,Ela,ppn] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
+[En,D,Ela,ppn] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
 [Vn] = forward_solver(vtx,En,I,tol,ppn,Vref);
 [voltageH,voltageV,indH,indV,dfv]=get_3d_meas(elec,vtx,Vn,Ib,no_pl);
 dfv = dfv(1:2:end);
@@ -48,7 +49,7 @@ end
 
 [v_f] = m_3d_fields(vtx,32,indH,Eref,tol,gnd_ind);
 
-[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfr,tol,sym);
+[J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfr,tol,perm_sym);
 
 [Reg] = iso_f_smooth(simp,vtx,3,1);
 

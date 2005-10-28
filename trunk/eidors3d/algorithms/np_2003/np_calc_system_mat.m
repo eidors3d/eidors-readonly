@@ -7,7 +7,7 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 % img       = image background for system matrix calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_calc_system_mat.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
+% $Id: np_calc_system_mat.m,v 1.4 2005-10-28 15:10:55 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -16,7 +16,7 @@ tol = 1e-5;
 
 [Eref,D,Ela,ppr] = fem_master_full( p.vtx, p.simp, ...
                 img.elem_data, ...
-                p.gnd_ind, p.elec, p.zc, p.sym );
+                p.gnd_ind, p.elec, p.zc, p.perm_sym );
 
 s_mat.E     = Eref;
 s_mat.perm  = ppr;

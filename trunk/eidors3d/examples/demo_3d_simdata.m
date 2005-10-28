@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.16 2005-10-27 17:28:43 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.17 2005-10-28 15:10:55 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -28,7 +28,7 @@ params.stimulation= stimulation;
 params.solve=      'np_fwd_solve';
 params.system_mat= 'np_calc_system_mat';
 params.jacobian=   'np_calc_jacobian';
-params.misc.sym=   '{n}';
+params.misc.perm_sym=   '{n}';
 mdl_3d = eidors_obj('fwd_model', params);
 
 
@@ -102,7 +102,7 @@ params.stimulation= stimulation;
 params.solve=      'np_fwd_solve';
 params.system_mat= 'np_calc_system_mat';
 params.jacobian=   'np_calc_jacobian';
-params.misc.sym= '{n}';
+params.misc.perm_sym= '{n}';
 fm3d = eidors_obj('fwd_model', params);
 
 inv3d.name=  'EIT inverse: 3D';

@@ -3,7 +3,7 @@ function [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.31 2005-10-27 13:28:08 aadler Exp $
+% $Id: demo_real.m,v 1.32 2005-10-28 15:10:55 aadler Exp $
 clc;
 
 isOctave= exist('OCTAVE_VERSION');
@@ -26,10 +26,10 @@ demo_mdl.system_mat= 'np_calc_system_mat';
 
 disp('step 2: create FEM model electrodes definitions');
 
-[gnd_ind, electrodes, sym, elec, protocol, no_pl] = get_model_elecs;
+[gnd_ind, electrodes, perm_sym, elec, protocol, no_pl] = get_model_elecs;
 demo_mdl.gnd_node=           gnd_ind;
 demo_mdl.electrode =         electrodes;
-demo_mdl.misc.sym =          sym;
+demo_mdl.misc.perm_sym =          perm_sym;
 
 disp('step 3: create FEM model stimulation and measurement patterns');
 
@@ -115,25 +115,27 @@ bdy= dubs3( simp );
 
 
 
-function [gnd_ind, electrodes, sym, elec, protocol, no_pl] = get_model_elecs;
+function [gnd_ind, electrodes, perm_sym, elec, protocol, no_pl] = get_model_elecs;
 %elec : The electrodes matrix. 
 %np_pl : Number of electrode planes (in planar arrangements)
 %protocol : Adjacent or Opposite or Customized.
 %zc : Contact impedances of the electrodes
-%sym : Boolean entry for efficient forward computations 
-%sym='{n}';
+%perm_sym : Boolean entry for efficient forward computations 
+%perm_sym='{n}';
 
-load(datareal_file,'gnd_ind','elec','zc','protocol','no_pl','sym');
+load(datareal_file,'gnd_ind','elec','zc','protocol','no_pl');
 
 for i=1:length(zc)
     electrodes(i).z_contact= zc(i);
     electrodes(i).nodes=     unique( elec(i,:) );
 end
 
+perm_sym='{n}';
+
 % get the current stimulation patterns
 function [stimulations] = get_model_stim( mdl );
 
-load(datareal_file,'protocol','no_pl','sym','elec');
+load(datareal_file,'protocol','no_pl','elec');
 [I,Ib] = set_3d_currents(protocol, ...
                          elec, ...
                          mdl.nodes, ...
