@@ -22,7 +22,7 @@ function colours= calc_colours(img, scale)
 %         size. Total colourmap is 2*mapped_colour
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.10 2005-10-27 13:28:08 aadler Exp $  
+% $Id: calc_colours.m,v 1.11 2005-10-28 15:23:42 aadler Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
@@ -65,10 +65,12 @@ else
    %
    % Note: ensure patch uses 'direct' CDataMapping
    ncol= pp.mapped_colour;
+   backgndidx= 1;
    [red,grn,blu] = blu_red_axis( pp, ...
-          [-1,linspace(-1,1,2*ncol - 1)]', 1 );
+          [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
    colours = round( elem_data/ scale * (ncol-1))' + ncol + 1;
+   colours(backgnd)= backgndidx;
 end
 
 
