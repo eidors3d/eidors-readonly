@@ -3,7 +3,7 @@ function [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.32 2005-10-28 15:10:55 aadler Exp $
+% $Id: demo_real.m,v 1.33 2005-10-29 23:14:00 aadler Exp $
 clc;
 
 isOctave= exist('OCTAVE_VERSION');
@@ -166,14 +166,14 @@ end
 function fname= datareal_file;
    fname= 'datareal.mat';
    if exist('OCTAVE_VERSION');
-       fname= file_in_loadpath(datareal);
+       fname= file_in_loadpath(fname);
    end
 
 % Get filename for datacom
 function fname= datacom_file;
    fname=  'datacom.mat';
    if exist('OCTAVE_VERSION');
-       fname=  file_in_loadpath(datacom);
+       fname=  file_in_loadpath(fname);
    end
 
 
