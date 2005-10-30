@@ -1,5 +1,5 @@
-function colours= calc_colours(img, scale)
-% colours= calc_colours(img)
+function colours= calc_colours(img, scale, do_colourbar)
+% colours= calc_colours(img, scale, do_colourbar)
 % Calculate a colour for each image element 
 % Conductive (positive) areas are shown in red
 % Non-Conductive (negative) areas are shown in blue
@@ -9,7 +9,10 @@ function colours= calc_colours(img, scale)
 %     - a matrix of values;
 %
 % scale - colour value corresponding to maximum
-%       - default = autoscale
+%       - if not specified or scale==[] => autoscale
+%
+% do_colourbar ==1 => show a Matlab colorbar with
+%        appropriate scaling
 %
 % Colour maps are controlled by the global variable
 %   eidors_colours. The following settings
@@ -22,7 +25,7 @@ function colours= calc_colours(img, scale)
 %         size. Total colourmap is 2*mapped_colour
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.12 2005-10-28 16:53:15 aadler Exp $  
+% $Id: calc_colours.m,v 1.13 2005-10-30 23:34:03 aadler Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
@@ -73,6 +76,21 @@ else
    colours(backgnd)= backgndidx;
 end
 
+% print colorbar if do_colourbar is specified
+% can't use & or && to support all stupid matlab versions > 6.0
+if nargin >=3 if do_colourbar==1
+   hh= colorbar;
+   p= get(hh,'Position');
+   pm= p(2) + p(4)/2;
+   set(hh,'Position', [p(1)+p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
+
+   % set scaling
+   OrdOfMag = 10^floor(log10(scale));
+   scale_r  = OrdOfMag * floor( scale / OrdOfMag );
+   ticks = 128.5 + 127.5*[-1,0,+1]*scale_r/scale;
+   set(hh,'YTick', ticks');
+   set(hh,'YTickLabel', [-scale_r, 0, scale_r]');
+end; end
 
 
 %scaled data must go from -1 to 1
