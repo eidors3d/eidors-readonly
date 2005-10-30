@@ -10,7 +10,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_jacobian.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.8 2005-10-30 12:41:11 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -53,7 +53,8 @@ idx=0;
 for j= 1:pp.n_stim
    meas_pat= fwd_model.stimulation(j).meas_pattern;
    n_meas  = size(meas_pat,1);
-   J( idx+(1:n_meas),: ) = meas_pat*DE(:,j,:);
+   DEj = reshape( DE(:,j,:), pp.n_elec, e );
+   J( idx+(1:n_meas),: ) = meas_pat*DEj;
    idx= idx+ n_meas;
 end
 
