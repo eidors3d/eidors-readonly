@@ -1,4 +1,4 @@
-function show_fem( mdl, background )
+function show_fem( mdl, background, do_colourbar )
 % show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
@@ -6,15 +6,19 @@ function show_fem( mdl, background )
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.27 2005-10-30 11:13:48 aadler Exp $
+% $Id: show_fem.m,v 1.28 2005-10-30 23:34:03 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
    return
 end
 
-if nargin == 1
+if nargin <= 1
    background =0;
+end
+
+if nargin <=2
+    do_colourbar= 0;
 end
 
 % if we have an only img input, then define mdl
@@ -28,20 +32,29 @@ cla;
 set(gcf, 'Name', name);
 
 if size(mdl.nodes,2)==2
+   hax= gca;
+   pax= get(hax,'position');
+   cscale= [];
    if exist('img');
-      colours= calc_colours(img.elem_data - background);
+      colours= calc_colours(img.elem_data - background, cscale, do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
    end
    cla;
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl);
+
+   set(hax,'position', pax);
    view(0, 90); axis('xy'); grid('off');
 elseif size(mdl.nodes,2)==3
+   cscale= [];
    show_3d_fem( mdl );
 
    if exist('img')
        show_inhomogeneities( img.elem_data - background, mdl);
+       if do_colourbar
+           calc_colours(img.elem_data - background, cscale, do_colourbar);
+       end
    end
 
    show_electrodes_3d(mdl);
@@ -275,9 +288,9 @@ function  mes= avg_electrode_posn( mdl )
 
 function colour= electr_colour( e);
     if e==1;
-       colour = [0,.8,0]; % light green
+       colour = [0,.6,0]; % light green
     else
-       colour = [0,.5,0]; % dark green
+       colour = [0,.3,0]; % dark green
     end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
