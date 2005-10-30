@@ -2,7 +2,7 @@ function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real_test3.m,v 1.3 2005-10-28 15:10:55 aadler Exp $
+% $Id: demo_real_test3.m,v 1.4 2005-10-30 14:13:08 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -107,10 +107,10 @@ inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 % create an inv_model structure of name 'demo_inv'
 demo_inv= eidors_obj('inv_model', 'Nick Polydorides EIT inverse', ...
 'solve',                  'np_inv_solve', ...
-'hyperparameter',         1e-8, ...
-'reconst_type',           'differential', ...
+'reconst_type',           'difference', ...
 'fwd_model',               demo_mdl);
 
+demo_inv.hyperparameter.value= 1e-8;
 demo_inv.image_prior.func= 'np_calc_image_prior';
 demo_inv.image_prior.parameters= [3 1];
 demo_inv= eidors_obj('set', demo_inv);
@@ -145,7 +145,6 @@ tol= 1e-5;
 vd= mean(mean( abs(cmp1 - cmp2) ));
 vs= mean(mean( abs(cmp1 + cmp2) ));
 if vd/vs > tol
-   warning(sprintf( ...
-     'parameter %s exceeds tolerance %g (=%g)', errtext, tol, vd/vs) );
+   warning('parameter %s exceeds tolerance %g (=%g)', errtext, tol, vd/vs );
 end
 

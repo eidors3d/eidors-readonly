@@ -5,7 +5,7 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_test.m,v 1.6 2005-10-27 13:28:08 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.7 2005-10-30 14:13:07 aadler Exp $
 
 ok= 1;
 
@@ -14,7 +14,7 @@ ok= 1;
 n_elec= 16;
 n_rings= 1;
  options = {'no_meas_current','no_rotate_meas'};
-params= mk_circ_tank(8, [], n_elec, n_rings); 
+params= mk_circ_tank(8, [], n_elec);
 
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
