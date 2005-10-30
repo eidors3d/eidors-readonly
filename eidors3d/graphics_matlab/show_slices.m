@@ -16,7 +16,7 @@ function rimg_out = show_slices( img, levels, clim )
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.22 2005-10-30 11:34:09 aadler Exp $
+% $Id: show_slices.m,v 1.23 2005-10-30 22:17:20 aadler Exp $
 
 np= 128; % number of points for each figure
 
@@ -310,8 +310,8 @@ function [NODE,ELEM]= level_model( fwd_model, level )
    v2= cross(v1,v3);
 
    % Step 5: Get bases to point in 'positive directions'
-   v1= sign(sum(v1))*v1;
-   v2= sign(sum(v2))*v2;
-   v3= sign(sum(v3))*v3;
+   v1= v1 * (1-2*(sum(v1)<0));
+   v2= v2 * (1-2*(sum(v2)<0));
+   v3= v3 * (1-2*(sum(v3)<0));
    
    NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
