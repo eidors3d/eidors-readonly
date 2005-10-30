@@ -2,7 +2,7 @@ function ok= demo_real_test
 % Perform tests based on the demo_real function
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: demo_real_test.m,v 1.5 2005-10-30 14:13:07 aadler Exp $
+% $Id: demo_real_test.m,v 1.6 2005-10-30 14:20:30 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -81,7 +81,7 @@ tol= 1e-5;
 
 vd= mean(mean( abs(cmp1 - cmp2) ));
 vs= mean(mean( abs(cmp1 + cmp2) ));
-if v > tol
+if vd/vs > tol
    warning('parameter %s exceeds tolerance %g (=%g)', errtext, tol, vd/vs );
 end
 
