@@ -6,8 +6,12 @@ function show_fem( mdl, background )
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.26 2005-10-27 17:28:43 aadler Exp $
+% $Id: show_fem.m,v 1.27 2005-10-30 11:13:48 aadler Exp $
 
+if exist('OCTAVE_VERSION');
+   warning('show_fem does not support octave');
+   return
+end
 
 if nargin == 1
    background =0;

@@ -3,8 +3,7 @@ function [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.33 2005-10-29 23:14:00 aadler Exp $
-clc;
+% $Id: demo_real.m,v 1.34 2005-10-30 11:13:48 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -65,11 +64,8 @@ inhomg_img= eidors_obj('image', 'inhomogeneous image', ...
                        'elem_data', mat, ...
                        'fwd_model', demo_mdl );
 
-if ~isOctave
 %   show_fem( demo_mdl, 1);
     show_fem( inhomg_img , 1);
-end
-
 
 inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 
@@ -101,10 +97,20 @@ levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
 org_img= eidors_obj('image', 'Simulated inhomogeneities', ...
                     'elem_data', inhomg_img.elem_data - homg_img.elem_data, ...
                     'fwd_model', demo_mdl );
-figure; image_levels( org_img, levels );
+if ~exist('OCTAVE_VERSION');
+   figure; image_levels( org_img, levels );
+else
+   show_slices( org_img, levels' * [inf,inf,1] );
+   disp('Original Image. Press a key');
+end
 
 demo_img.name= 'Reconstructed conductivity distribution';
-figure; image_levels( demo_img, levels );
+if ~exist('OCTAVE_VERSION');
+   figure; image_levels( demo_img, levels );
+else
+   show_slices( demo_img, levels' * [inf,inf,1] );
+   disp('Reconstructed Image. Press a key');
+end
 
 function [vtx,simp,bdy] = get_model_elems;
 %bdy : the boundary surfaces (triangles)

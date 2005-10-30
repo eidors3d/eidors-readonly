@@ -16,7 +16,7 @@ function rimg_out = show_slices( img, levels, clim )
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.20 2005-10-27 16:36:18 aadler Exp $
+% $Id: show_slices.m,v 1.21 2005-10-30 11:13:48 aadler Exp $
 
 np= 128; % number of points for each figure
 
@@ -66,7 +66,12 @@ if nargout==0
       r_img(i_row*np + idx, i_col*np + idx) = rimg{imno};
    end
    c_img = calc_colours( r_img);
-   image(reshape(c_img, size(r_img,1), size(r_img,2) ,[]));
+   out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
+   if exist('OCTAVE_VERSION');
+      imshow(out_img);
+   else
+      image(out_img);
+   end
    axis('image');axis('off');
 
 else
@@ -279,7 +284,8 @@ function [NODE,ELEM]= level_model( fwd_model, level )
 
    % Infinities tend to cause issues -> replace with realmax
    % Don't need to worry about the sign of the inf
-   level( isinf(level) ) = realmax;
+   % Octave returns inf for norm of realmax
+   level( isinf(level) ) = 1e154; %realmax;
    level( level==0 ) =     eps;
 
    % Step 1: Choose a centre point in the plane
