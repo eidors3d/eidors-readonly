@@ -5,7 +5,7 @@ function image_levels(img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: image_levels.m,v 1.8 2005-10-30 11:13:48 aadler Exp $
+% $Id: image_levels.m,v 1.9 2005-10-31 01:21:12 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('image_levels does not support octave. Try show_slices');
@@ -53,6 +53,9 @@ for idx= 1:length(levels);
 end
 
 function colour_lim = set_colors( sol );
-
-  colormap( squeeze( calc_colours( linspace(-1,1,128) ) ));
-  colour_lim= max(abs(sol));
+   global eidors_colours;
+   mpc= eidors_colours.mapped_colour;
+   eidors_colours.mapped_colour = 0;
+   colormap( squeeze( calc_colours( linspace(-1,1,128) ) ));
+   colour_lim= max(abs(sol));
+   eidors_colours.mapped_colour = mpc;
