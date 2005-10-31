@@ -16,9 +16,10 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('b3z',16)   - zigzag pattern electrodes
 %
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
+%   mk_common_model('n3z',16)  - NP's 3D model with zigzag electrodes
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.10 2005-10-28 15:10:55 aadler Exp $
+% $Id: mk_common_model.m,v 1.11 2005-10-31 03:37:11 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -35,6 +36,8 @@ elseif strcmp( str, 'b3z')
     inv_mdl = mk_dz_model( n_elec, options );
 elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
+elseif strcmp( str, 'n3z')
+    inv_mdl = mk_n3z_model( n_elec, options );
 else
     error('don`t know what to do with option=',str);
 end
@@ -93,6 +96,19 @@ function inv3d= mk_dz_model( n_elec, options )
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= fm3d;
     inv3d= eidors_obj('inv_model', inv3d);
+
+function inv_mdl = mk_n3z_model( n_elec, options );
+   inv_mdl= mk_n3r2_model( n_elec, options);
+   fwd_mdl= inv_mdl.fwd_model;
+   renumber= [1:2:15; 18:2:32];
+   fwd_mdl.electrode= fwd_mdl.electrode(renumber(:));
+   n_rings= 1;
+   [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
+   fwd_mdl.stimulation= st;
+   fwd_model.meas_select= els;
+   inv_mdl.fwd_model= fwd_mdl;
+   inv_mdl.name= 'NP 3D model with zigzag electrodes';
+   inv_mdl= eidors_obj('inv_model', inv_mdl);
 
 function inv_mdl = mk_n3r2_model( n_elec, options );
    load( 'datareal.mat' );
