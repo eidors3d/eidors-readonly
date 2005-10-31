@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.9 2005-10-31 02:13:36 aadler Exp $
+% $Id: cheating_2d.m,v 1.10 2005-10-31 02:30:35 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno )
@@ -163,6 +163,7 @@ function approach3b(vis, vhs, s_mdl, il_g)
 %
 function approach4(vis, vhs, s_mdl, il_g)
    disp('Approach #4: deform the model');
+   num_tries=12;
 
    params= mk_circ_tank(8, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
