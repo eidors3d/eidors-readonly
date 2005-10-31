@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.6 2005-10-31 13:18:10 aadler Exp $
+# $Id: Makefile,v 1.7 2005-10-31 14:36:38 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -33,7 +33,7 @@ clean:
 	-rm $(FIGURES)
 
 fig_3d.m: Makefile
-	fname :=`basename $@`;
+	fname=`basename $@ .m`; \
 	echo \
   "global eidors_colours;" \
   "eidors_colours.backgnd= [1,1,1];" \
@@ -73,13 +73,13 @@ fig_3d.m: Makefile
   "imn3z= inv_solve( n3z, vh_n3z, vi_n3z);" \
   \
   "clf;" \
-  "axes('position',[0,0,.6,1]);" \
-  "show_fem(imn3z);" \
+  "axes('position',[.1,.05,.5,.95]);" \
+  "show_fem(imn3z); view([-28 12]);" \
   "axes('position',[.6,0,.4,1]);" \
   "show_slices(imn3z,[(1:2:7)'*[inf,inf,1/8], ones(4,1), (4:-1:1)']);" \
-  "set(gcf, 'PaperPosition', [0.25,2.5, 4,4]);" \
-  "print( gcf, '-depsc2','-painters', '$(fname).eps');" \
-      > $(fname).m
+  "set(gcf, 'PaperPosition', [0.25,2.5, 4,3]);" \
+  "print( gcf, '-depsc2','-painters', '$$fname.eps');" \
+      > $@
 
 fig_3d.eps: fig_3d.m
 	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
