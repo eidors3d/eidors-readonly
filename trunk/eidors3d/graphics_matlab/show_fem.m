@@ -6,7 +6,7 @@ function show_fem( mdl, background, do_colourbar )
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.28 2005-10-30 23:34:03 aadler Exp $
+% $Id: show_fem.m,v 1.29 2005-10-31 01:28:50 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -149,10 +149,11 @@ h=patch(Xs,Ys,Zs, colour);
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function show_3d_fem( mdl, options )
-   trimesh(mdl.boundary, ...
+   hh= trimesh(mdl.boundary, ...
            mdl.nodes(:,1), ...
            mdl.nodes(:,2), ...
-           mdl.nodes(:,3) );
+           mdl.nodes(:,3));
+   set(hh, 'EdgeColor', [0,0,0]);
    axis('image');
    set(gcf,'Colormap',[0 0 0]);
    hidden('off');
