@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.5 2005-10-31 12:37:35 aadler Exp $
+# $Id: Makefile,v 1.6 2005-10-31 13:18:10 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -32,8 +32,15 @@ clean:
 	-rm $(NAME).dvi $(NAME).log $(NAME).aux $(NAME).pdf
 	-rm $(FIGURES)
 
-fig_3d:
+fig_3d.m: Makefile
+	fname :=`basename $@`;
 	echo \
+  "global eidors_colours;" \
+  "eidors_colours.backgnd= [1,1,1];" \
+  "eidors_colours.sat_adj= .95;" \
+  "eidors_colours.greylev= .1;" \
+  "eidors_colours.mapped_colour= 256;" \
+  \
   "n3r2= mk_common_model('n3r2'); " \
   "n3r2.fwd_model.nodes = n3r2.fwd_model.nodes/3;" \
   "fmdl_n3r2 = n3r2.fwd_model;" \
@@ -44,6 +51,7 @@ fig_3d:
   \
   "n3z= mk_common_model('n3z'); " \
   "n3z.fwd_model.nodes = n3z.fwd_model.nodes/3;" \
+  "n3z.hyperparameter.value= 1e-4;" \
   "fmdl_n3z = n3z.fwd_model;" \
   "img_n3z= eidors_obj('image', 'homog', 'elem_data', sigma, " \
   "                'fwd_model', fmdl_n3z );" \
@@ -59,9 +67,19 @@ fig_3d:
   "img_n3z.elem_data= sigma; " \
   "vi_n3z= fwd_solve( img_n3z );" \
   "noise= 0.1*std( vh_n3z.meas - vi_n3z.meas )*randn( size(vi_n3z.meas) );" \
-  "vi_n3z.meas= vi_n3z.meas + 0*noise;" \
+  "vi_n3z.meas= vi_n3z.meas + noise;" \
   \
   "imn3r2= inv_solve( n3r2, vh_n3r2, vi_n3r2);" \
   "imn3z= inv_solve( n3z, vh_n3z, vi_n3z);" \
-      > $@.m
-	matlab -r "run('../../eidors3d/startup'); $@; exit"
+  \
+  "clf;" \
+  "axes('position',[0,0,.6,1]);" \
+  "show_fem(imn3z);" \
+  "axes('position',[.6,0,.4,1]);" \
+  "show_slices(imn3z,[(1:2:7)'*[inf,inf,1/8], ones(4,1), (4:-1:1)']);" \
+  "set(gcf, 'PaperPosition', [0.25,2.5, 4,4]);" \
+  "print( gcf, '-depsc2','-painters', '$(fname).eps');" \
+      > $(fname).m
+
+fig_3d.eps: fig_3d.m
+	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
