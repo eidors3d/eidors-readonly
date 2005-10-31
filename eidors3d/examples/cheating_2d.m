@@ -1,18 +1,38 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.8 2005-10-31 01:52:11 aadler Exp $
+% $Id: cheating_2d.m,v 1.9 2005-10-31 02:13:36 aadler Exp $
 
 %TODO: calculate how well data matches priors
-function out=cheating_2d
-
+function out=cheating_2d( figno )
+   global eidors_colours;
+   eidors_colours.greylev= 0.1;
+   eidors_colours.sat_adj= 0.98;
    [vis,vhs,s_mdl]= small_2d_mdl;
 
    il_g = make_inv_model( 12 ); %large model
 
+   if nargin==0; figno= {'1','2a','2b','3a','3b','4'}; end 
+
+   for idx= 1:length(figno)
+       if idx~=1; pause; end
+
+       if     strcmp( figno{idx}, '1' )
+           approach1(vis, vhs, s_mdl, il_g)
+       elseif strcmp( figno{idx}, '2a' )
+           approach2a(vis, vhs, s_mdl, il_g)
+       elseif strcmp( figno{idx}, '2b' )
+           approach2b(vis, vhs, s_mdl, il_g)
+       elseif strcmp( figno{idx}, '3a' )
+           approach3b(vis, vhs, s_mdl, il_g)
+       elseif strcmp( figno{idx}, '4' )
+           approach4(vis, vhs, s_mdl, il_g)
+       end
+   end
 %
 % APPROACH 1
 %
+function approach1(vis, vhs, s_mdl, il_g)
    disp('Approach #1: reconstruct with noise');
 
    num_tries=12;
@@ -25,10 +45,12 @@ function out=cheating_2d
    end
    show_slices( inv_solve( il_g, vhs, vi_n ));
 
+
+%
+% APPROACH 2A
+%
+function approach2a(vis, vhs, s_mdl, il_g)
    levels= [0,0,0,1,1];
-%
-% APPROACH 2
-%
    disp('Approach #2: reconstruct with tikhonov cheat - with inv crime');
    pp= small_face;
    % homog (normal) model
@@ -49,14 +71,16 @@ function out=cheating_2d
    show_slices( [ inv_solve( is_n, vhs, vis ), ... 
                   inv_solve( is_s, vhs, vis ), ... 
                   inv_solve( is_h, vhs, vis ), ... 
-                  inv_solve( is_m, vhs, vis ) ], levels ); pause
+                  inv_solve( is_m, vhs, vis ) ], levels );
 
 
 
 %
 % APPROACH 2B
 %
+function approach2b(vis, vhs, s_mdl, il_g)
    disp('Approach #2B: reconstruct with tikhonov cheat - without inv crime');
+   levels= [0,0,0,1,1];
    pp= large_face;
    % homog (normal) model
    image_prior.func= @cheat_tikhonov;
@@ -76,12 +100,14 @@ function out=cheating_2d
    show_slices( [ inv_solve( il_n, vhs, vis ), ... 
                   inv_solve( il_s, vhs, vis ), ... 
                   inv_solve( il_h, vhs, vis ), ... 
-                  inv_solve( il_m, vhs, vis ) ] ); pause
+                  inv_solve( il_m, vhs, vis ) ], levels );
 
 %
-% APPROACH 3
+% APPROACH 3A
 %
+function approach3a(vis, vhs, s_mdl, il_g)
    disp('Approach #3: reconstruct with Laplace filter cheat - with inv crime');
+   levels= [0,0,0,1,1];
    pp= small_face;
    % homog (normal) model
    image_prior.func= @cheat_laplace;
@@ -101,13 +127,15 @@ function out=cheating_2d
    show_slices( [ inv_solve( is_n, vhs, vis ), ... 
                   inv_solve( is_s, vhs, vis ), ... 
                   inv_solve( is_h, vhs, vis ), ... 
-                  inv_solve( is_m, vhs, vis ) ] ); pause
+                  inv_solve( is_m, vhs, vis ) ], levels );
 
 
 %
 % APPROACH 3B
 %
+function approach3b(vis, vhs, s_mdl, il_g)
    disp('Approach #3B: reconstruct with Laplace cheat - without inv crime');
+   levels= [0,0,0,1,1];
    pp= large_face;
    % homog (normal) model
    image_prior.func= @cheat_laplace;
@@ -127,12 +155,13 @@ function out=cheating_2d
    show_slices( [ inv_solve( il_n, vhs, vis ), ... 
                   inv_solve( il_s, vhs, vis ), ... 
                   inv_solve( il_h, vhs, vis ), ... 
-                  inv_solve( il_m, vhs, vis ) ] ); pause
+                  inv_solve( il_m, vhs, vis ) ], levels );
 
 
 %
 % APPROACH 4
 %
+function approach4(vis, vhs, s_mdl, il_g)
    disp('Approach #4: deform the model');
 
    params= mk_circ_tank(8, [], 16 ); 
