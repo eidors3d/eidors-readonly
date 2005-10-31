@@ -16,7 +16,7 @@ function rimg_out = show_slices( img, levels, clim )
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.23 2005-10-30 22:17:20 aadler Exp $
+% $Id: show_slices.m,v 1.24 2005-10-31 01:52:11 aadler Exp $
 
 np= 128; % number of points for each figure
 
@@ -42,41 +42,46 @@ for img_no = 1:length(img)
    end
 end
 
-if nargout==0
-   ll = length(rimg(:));
-   if spec_position %won't work for multiple image inputs
-      img_cols = max( levels(:,4) );
-      img_rows = max( levels(:,5) );
-   else
-      img_cols = ceil( sqrt( ll ));
-      img_rows = ceil( ll/ img_cols );
-   end
+if nargout>0
+   rimg_out = rimg;
+   return;
+end
 
-   r_img = NaN*ones(img_rows*np, img_cols*np);
+ll = length(rimg(:));
+if spec_position %won't work for multiple image inputs
+   img_cols = max( levels(:,4) );
+   img_rows = max( levels(:,5) );
+else
+   img_cols = ceil( sqrt( ll ));
+   img_rows = ceil( ll/ img_cols );
+end
 
-   idx= (-np:-1)+1;
-   for imno= 1:ll
+r_img = NaN*ones(img_rows*np, img_cols*np);
+
+idx= (-np:-1)+1;
+imno= 1;
+for img_no = 1:length(img)
+   for lev_no = 1:size( levels,1 )
       if spec_position %won't work for multiple image inputs
-         i_col= levels( imno, 4);
-         i_row= levels( imno, 5);
+         i_col= levels( lev_no, 4) + img_no -1;
+         i_row= levels( lev_no, 5);
       else
          i_col= rem( imno-1, img_cols) + 1;
          i_row= ceil( imno / img_cols);
       end
       r_img(i_row*np + idx, i_col*np + idx) = rimg{imno};
+      imno= imno+1;
    end
-   c_img = calc_colours( r_img);
-   out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
-   if exist('OCTAVE_VERSION');
-      imshow(out_img);
-   else
-      image(out_img);
-   end
-   axis('image');axis('off');
-
-else
-   rimg_out = rimg;
 end
+
+c_img = calc_colours( r_img);
+out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
+if exist('OCTAVE_VERSION');
+   imshow(out_img);
+else
+   image(out_img);
+end
+axis('image');axis('off');
 
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image( img, level, clim, np)

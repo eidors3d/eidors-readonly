@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
+% $Id: cheating_2d.m,v 1.8 2005-10-31 01:52:11 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d
@@ -23,8 +23,9 @@ function out=cheating_2d
    for i= 1:num_tries % stupid matlab doesn't allow easy vectorization
       vi_n(i).meas = vi_n(i).meas + noise(:,i);
    end
-   show_slices( inv_solve( il_g, vi_n, vhs ));
+   show_slices( inv_solve( il_g, vhs, vi_n ));
 
+   levels= [0,0,0,1,1];
 %
 % APPROACH 2
 %
@@ -45,10 +46,10 @@ function out=cheating_2d
    image_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
    is_m = make_inv_model( 8 , image_prior ); 
 
-   show_slices( [ inv_solve( is_n, vis, vhs ), ... 
-                  inv_solve( is_s, vis, vhs ), ... 
-                  inv_solve( is_h, vis, vhs ), ... 
-                  inv_solve( is_m, vis, vhs ) ] ); pause
+   show_slices( [ inv_solve( is_n, vhs, vis ), ... 
+                  inv_solve( is_s, vhs, vis ), ... 
+                  inv_solve( is_h, vhs, vis ), ... 
+                  inv_solve( is_m, vhs, vis ) ], levels ); pause
 
 
 
@@ -72,10 +73,10 @@ function out=cheating_2d
    image_prior.cheat_elements= pp.halfy;
    il_m = make_inv_model(12 , image_prior ); 
 
-   show_slices( [ inv_solve( il_n, vis, vhs ), ... 
-                  inv_solve( il_s, vis, vhs ), ... 
-                  inv_solve( il_h, vis, vhs ), ... 
-                  inv_solve( il_m, vis, vhs ) ] ); pause
+   show_slices( [ inv_solve( il_n, vhs, vis ), ... 
+                  inv_solve( il_s, vhs, vis ), ... 
+                  inv_solve( il_h, vhs, vis ), ... 
+                  inv_solve( il_m, vhs, vis ) ] ); pause
 
 %
 % APPROACH 3
@@ -97,10 +98,10 @@ function out=cheating_2d
    image_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
    is_m = make_inv_model( 8 , image_prior ); 
 
-   show_slices( [ inv_solve( is_n, vis, vhs ), ... 
-                  inv_solve( is_s, vis, vhs ), ... 
-                  inv_solve( is_h, vis, vhs ), ... 
-                  inv_solve( is_m, vis, vhs ) ] ); pause
+   show_slices( [ inv_solve( is_n, vhs, vis ), ... 
+                  inv_solve( is_s, vhs, vis ), ... 
+                  inv_solve( is_h, vhs, vis ), ... 
+                  inv_solve( is_m, vhs, vis ) ] ); pause
 
 
 %
@@ -123,10 +124,10 @@ function out=cheating_2d
    image_prior.cheat_elements= pp.halfy;
    il_m = make_inv_model(12 , image_prior ); 
 
-   show_slices( [ inv_solve( il_n, vis, vhs ), ... 
-                  inv_solve( il_s, vis, vhs ), ... 
-                  inv_solve( il_h, vis, vhs ), ... 
-                  inv_solve( il_m, vis, vhs ) ] ); pause
+   show_slices( [ inv_solve( il_n, vhs, vis ), ... 
+                  inv_solve( il_s, vhs, vis ), ... 
+                  inv_solve( il_h, vhs, vis ), ... 
+                  inv_solve( il_m, vhs, vis ) ] ); pause
 
 
 %
@@ -150,7 +151,7 @@ function out=cheating_2d
       vi_m(i)= fwd_solve( eidors_obj('image','name',  ...
                      'elem_data', mat, 'fwd_model', def_mdl ));
    end
-   show_slices( inv_solve( il_g, vi_m, vhs ));
+   show_slices( inv_solve( il_g, vhs, vi_m ));
 
 
 
