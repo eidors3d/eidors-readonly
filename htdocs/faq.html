@@ -204,6 +204,17 @@ This error occurs because the functions are not part of the Matlab path.
 The easiest solution is to type <tt>startup</tt> in the main <tt>eidors</tt> directory.
 
 <p><li><b>
+<tt>"Warning: RGB color data not yet supported in Painter's mode."</tt>
+</b><p>
+This is a limitation of Matlab. RGB data cannot be exported to postscript
+files. This can be solved by using colourmaps instead. 
+Try this:
+<pre>
+global eidors_colours;
+eidors_colours.mapped_colour= 256;
+</pre>
+
+<p><li><b>
 <tt>"??? Invalid MEX-file ..."</tt> error on Linux
 </b><p>
 Sometimes one can get linux errors of the form 
@@ -225,7 +236,7 @@ on which the mex file was built. The easiest solution is to recompile the mex fi
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-10-19 14:22:48 $ by $Author: aadler $
+    Last Modified: $Date: 2005-10-31 12:58:56 $ by $Author: aadler $
 </small>
 </body>
 
