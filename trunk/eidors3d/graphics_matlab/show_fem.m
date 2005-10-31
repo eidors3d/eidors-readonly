@@ -1,12 +1,16 @@
-function show_fem( mdl, background, do_colourbar )
-% show_fem( mdl, options )
+function show_fem( mdl, background, options )
+% show_fem( mdl, background, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
+%
+% options specifies a set of options
+%   options(1) => show colourbar
+%   options(2) => number electrodes
 %
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.29 2005-10-31 01:28:50 aadler Exp $
+% $Id: show_fem.m,v 1.30 2005-10-31 03:02:51 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -17,8 +21,13 @@ if nargin <= 1
    background =0;
 end
 
-if nargin <=2
-    do_colourbar= 0;
+do_colourbar=0;
+number_electrodes=0;
+if nargin >=2
+    optionstr= zeros(1,100);
+    optionstr(1:length(options)) = options;
+    do_colourbar=      optionstr(1);
+    number_electrodes= optionstr(2);
 end
 
 % if we have an only img input, then define mdl
@@ -57,7 +66,7 @@ elseif size(mdl.nodes,2)==3
        end
    end
 
-   show_electrodes_3d(mdl);
+   show_electrodes_3d(mdl, number_electrodes);
 else
    error(['model is not 2D or 3D']);
 end
@@ -85,7 +94,7 @@ for e=1:length(mdl.electrode)
          'Marker','.','MarkerSize',20,'MarkerEdgeColor',ecolour);
 end
 
-function show_electrodes_3d(mdl)
+function show_electrodes_3d(mdl, number_electrodes);
 % show electrode positions on model
 if ~isfield(mdl,'electrode'); return; end
 
@@ -100,6 +109,9 @@ for e=1:length(mdl.electrode)
         line(vtx(1),vtx(2),vtx(3), ...
             'Marker','h','MarkerSize',24, ...
             'MarkerFaceColor',colour, 'MarkerEdgeColor', colour);
+        if number_electrodes
+            text(vtx(1),vtx(2),vtx(3), num2str(e));
+        end
     else
         % find elems on boundary attached to this electrode
         nn=ones(size(ee,1),1)*mdl.electrode(e).nodes;
@@ -112,7 +124,15 @@ for e=1:length(mdl.electrode)
 
         for u=1:length(sels)
             paint_electrodes(sels(u),mdl.boundary, ...
-                             mdl.nodes, colour);
+                             mdl.nodes, colour, ...
+                             number_electrodes);
+        end
+        if number_electrodes
+            el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
+            hh=text( mean(el_nodes(:,1)), ...
+                     mean(el_nodes(:,2)), ...
+                     mean(el_nodes(:,3)), num2str(e) );
+            set(hh,'FontWeight','bold','Color',[.6,0,0]);
         end
     end
 end
@@ -128,7 +148,7 @@ camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');
 
-function paint_electrodes(sel,srf,vtx, colour);
+function paint_electrodes(sel,srf,vtx, colour, show_num);
 %function paint_electrodes(sel,srf,vtx);
 %
 % plots the electrodes red at the boundaries.
