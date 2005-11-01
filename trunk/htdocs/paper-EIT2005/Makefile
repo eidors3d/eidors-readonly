@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.9 2005-11-01 02:43:04 aadler Exp $
+# $Id: Makefile,v 1.10 2005-11-01 03:37:47 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -15,7 +15,8 @@ CHEAT_FIGS= deform-grille.eps deform.eps \
     happy.eps happynoise.eps sad.eps \
     laplace0-icrime.eps laplace3-icrime.eps \
     laplace3.eps tikhonov-icrime.eps \
-    tikhonov.eps
+    tikhonov.eps \
+    fig_noise.eps
 
 FIGURES = fig_tik_w-icrime.eps \
           fig_tik_wo-icrime.eps \
