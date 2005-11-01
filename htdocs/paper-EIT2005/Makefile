@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.10 2005-11-01 03:37:47 aadler Exp $
+# $Id: Makefile,v 1.11 2005-11-01 15:46:21 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -11,18 +11,17 @@ SET_COLOUR= global eidors_colours; \
             eidors_colours.backgnd= [1,1,1]; \
             eidors_colours.mapped_colour= 256;
 
-CHEAT_FIGS= deform-grille.eps deform.eps \
-    happy.eps happynoise.eps sad.eps \
-    laplace0-icrime.eps laplace3-icrime.eps \
-    laplace3.eps tikhonov-icrime.eps \
-    tikhonov.eps \
-    fig_noise.eps
+CHEAT_FIGS= happy.eps sad.eps \
+ deform-grille.eps deform.eps
 
-FIGURES = fig_tik_w-icrime.eps \
-          fig_tik_wo-icrime.eps \
-          fig_lapl_w-icrime.eps \
-          fig_lapl_wo-icrime.eps \
-	  fig_3d.eps
+FIGURES = $(CHEAT_FIGS) \
+    fig_noise.eps \
+    fig_tik_w-icrime.eps \
+    fig_tik_wo-icrime.eps \
+    fig_lapl_w-icrime.eps \
+    fig_lapl_wo-icrime.eps \
+    fig_3d.eps \
+    eidors-logo.eps
 
 all: $(NAME).pdf
 
@@ -31,18 +30,18 @@ $(NAME).pdf: $(NAME).dvi
 
 $(NAME).dvi: $(NAME).tex $(FIGURES)
 	latex $<
-
-eidors-logo.eps: ../eidors-logo.jpg
+# image: http://www.biosbcc.net/ocean/marinesci/04benthon/arcimg/arc7773.jpg
+eidors-logo.eps: ./arc7773.jpg
 	convert $< eps2:$@
 
-#$(CHEAT_FIGS): %.eps: ../paper-cheating/%.png
-#	convert $< eps2:$@
+$(CHEAT_FIGS): %.eps: ../paper-cheating/%.png
+	convert $< eps2:$@
 
 clean: 
 	-rm $(NAME).dvi $(NAME).log $(NAME).aux $(NAME).pdf
 	-rm $(FIGURES)
 
-fig_noise.m: Makefile
+fig_noise.m:
 	fname=`basename $@ .m`; \
 	echo \
   "$(SET_COLOUR)" \
@@ -69,7 +68,7 @@ fig_lapl_w-icrime.eps:
 fig_lapl_wo-icrime.eps:
 	matlab -r "$(STARTUP); cheating_2d('3b'); $(PRINTEPS)$@'); exit"
 
-fig_3d.m: Makefile
+fig_3d.m: 
 	fname=`basename $@ .m`; \
 	echo \
   "$(SET_COLOUR)" \
