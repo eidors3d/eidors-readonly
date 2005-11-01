@@ -16,12 +16,16 @@ function rimg_out = show_slices( img, levels, clim )
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.24 2005-10-31 01:52:11 aadler Exp $
+% $Id: show_slices.m,v 1.25 2005-11-01 02:09:56 aadler Exp $
 
 np= 128; % number of points for each figure
 
 dims= size(img(1).fwd_model.nodes,2);
-if ~exist('levels') && dims==2
+if nargin<=1;
+   levels= [];
+end
+
+if isempty(levels) && dims==2
    levels= [Inf,Inf,0];
 end
 

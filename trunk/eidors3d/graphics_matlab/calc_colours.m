@@ -25,7 +25,7 @@ function colours= calc_colours(img, scale, do_colourbar)
 %         size. Total colourmap is 2*mapped_colour
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.13 2005-10-30 23:34:03 aadler Exp $  
+% $Id: calc_colours.m,v 1.14 2005-11-01 02:09:56 aadler Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
@@ -119,10 +119,16 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
 function pp=get_colours;
    global eidors_colours;
 
-   if isempty( eidors_colours );
+   if ~isfield( eidors_colours, 'greylev' );
       eidors_colours.greylev = -.01;
+   end
+   if ~isfield( eidors_colours, 'sat_adj' );
       eidors_colours.sat_adj = .9;
+   end
+   if ~isfield( eidors_colours, 'backgnd' );
       eidors_colours.backgnd= [.5,.5,.15];
+   end
+   if ~isfield( eidors_colours, 'mapped_colour' );
       eidors_colours.mapped_colour= 0;
    end
 
