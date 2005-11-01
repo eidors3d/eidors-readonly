@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.11 2005-11-01 15:46:21 aadler Exp $
+# $Id: Makefile,v 1.12 2005-11-01 17:02:23 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -15,13 +15,16 @@ CHEAT_FIGS= happy.eps sad.eps \
  deform-grille.eps deform.eps
 
 FIGURES = $(CHEAT_FIGS) \
+    fig-fwd_model.eps \
     fig_noise.eps \
     fig_tik_w-icrime.eps \
     fig_tik_wo-icrime.eps \
     fig_lapl_w-icrime.eps \
     fig_lapl_wo-icrime.eps \
     fig_3d.eps \
-    eidors-logo.eps
+    eidors-logo.eps \
+    fig_model1.eps \
+    fig_model2.eps
 
 all: $(NAME).pdf
 
@@ -37,6 +40,12 @@ eidors-logo.eps: ./arc7773.jpg
 $(CHEAT_FIGS): %.eps: ../paper-cheating/%.png
 	convert $< eps2:$@
 
+fig_model1.eps fig_model2.eps: figs-models.pdf
+	gs -sDEVICE=epswrite -dEPSCrop -dBATCH -dNOPAUSE \
+           -sOutputFile=fig_model%d.eps \
+           -c '<</ProcessColorModel /DeviceCMYK>>setpagedevice' \
+           -f $<
+	
 clean: 
 	-rm $(NAME).dvi $(NAME).log $(NAME).aux $(NAME).pdf
 	-rm $(FIGURES)
