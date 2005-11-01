@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.11 2005-11-01 02:10:13 aadler Exp $
+% $Id: cheating_2d.m,v 1.12 2005-11-01 02:16:44 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -35,7 +35,7 @@ function out=cheating_2d( figno, rand_seed )
 function approach1(vis, vhs, s_mdl, il_g, rand_seed)
    disp('Approach #1: reconstruct with noise');
 
-   num_tries=12;
+   num_tries=6;
    levels= [];
    if ~isempty(rand_seed);
       num_tries= length(rand_seed);
@@ -168,7 +168,12 @@ function approach3b(vis, vhs, s_mdl, il_g)
 %
 function approach4(vis, vhs, s_mdl, il_g, rand_seed)
    disp('Approach #4: deform the model');
-   num_tries=12;
+   num_tries=6;
+   levels= [];
+   if ~isempty(rand_seed);
+      num_tries= length(rand_seed);
+      levels= [0,0,0,1,1];
+   end
 
    params= mk_circ_tank(8, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
@@ -188,7 +193,7 @@ function approach4(vis, vhs, s_mdl, il_g, rand_seed)
       vi_m(i)= fwd_solve( eidors_obj('image','name',  ...
                      'elem_data', mat, 'fwd_model', def_mdl ));
    end
-   show_slices( inv_solve( il_g, vhs, vi_m ));
+   show_slices( inv_solve( il_g, vhs, vi_m ), levels);
 
 
 
@@ -362,7 +367,7 @@ function Reg= cheat_laplace( inv_model )
 function mdl1 = angl_deform(mdl0 );
 
    node0= mdl0.nodes';
-   deform = .0001*(ones(400,1)*(8:-1:1)).*randn(400,8);
+   deform = .00015*(ones(400,1)*(8:-1:1)).*randn(400,8);
 
    A0 = atan2( node0(2,:), node0(1,:) );
    R0 = sqrt( sum( node0.^2 ));
@@ -376,103 +381,3 @@ function mdl1 = angl_deform(mdl0 );
    mdl1 = mdl0;
    mdl1.nodes = node1';
 
-function boo;
-
-
-   
-% Create Reconstruction matrix
-%    p_noise        ( 0 -> Hi = 1 
-%                     1 -> Hi = 1/homg
-%                     2 -> Hi = 1/homg^2 
-%
-%    Prior Weighting  p_ww (default = ones)
-function Z= mkreconst_R( lamda, R, p_noise)
-    global DVV;
-    [m,e]= size(DVV);
-
-    n_var= 1./prob_dir( zeros(1,e) );
-    W= sparse(1:m,1:m, n_var.^(-p_noise) );
-    dd= DVV'*W*DVV;
-    dx= DVV'*W;
-    Z= (dd+ lamda*R)\dx;
-endfunction
-
-% calc functions with laplacian regulies
-% ff is amount of Non-penalty for elements
-function ii=bad_reg_icrime_laplace(ff, ll);
-    global vis vhs
-    resetup('d0'); cleancolourmap;
-
-    if ~exist('ll'); ll= .00025; end
-    D= mk_plaplace([],ff);
-    zg1=  mkreconst_R(ll,D,1);
-    calc_nf(zg1)
-    rg1= irec(vis,vhs,zg1);
-
-    leye= [78,97,98,117,118,141];
-    reye= [66,82,83,102,103,123];
-    rsmile= [40:41, 53:55, 69:71, 86:88];
-    lsmile= [43:44, 57:59, 73:75, 91:93];
-    lsad = [31,43,58,57,74,73,92,93,113,112,135];
-    sad = [28,31,40,43,58,57,53,54,74,73,92,93,113, ...
-            112,135,69,87,70,107,88,108,129];
-
-    DD= mk_plaplace([leye,reye,sad],ff);
-    zg3=  mkreconst_R(ll,DD,1);
-    calc_nf(zg3)
-    rg3= irec(vis,vhs,zg3);
-
-    DD= mk_plaplace([leye,reye,rsmile,lsad],ff);
-    zb1=  mkreconst_R(ll,DD,1);
-    calc_nf(zb1)
-    rb1= irec(vis,vhs,zb1);
-
-    DD= mk_plaplace([leye,reye,rsmile,lsmile],ff);
-    zb3=  mkreconst_R(ll,DD,1);
-    calc_nf(zb3)
-    rb3= irec(vis,vhs,zb3);
-
-    ii=imgr([rg1,  rg3, rb1,  rb3]);
-endfunction
-
-%
-% STEP 5: Laplace regularization happytransform WITH i_crime
-%
-    ii=bad_reg_icrime_laplace(0,.00025);
-    imwrite('laplace0-icrime.png',ii,colormap);
-    image(ii);
-    ii=bad_reg_icrime_laplace(.3,.00025);
-    imwrite('laplace3-icrime.png',ii,colormap);
-    image(ii);
-
-%
-% STEP 3: Tikhonov regularization happytransform WITHOUT i_crime
-%
-resetup('e0'); cleancolourmap;
-
-ff= .3;
-ll= .00025;
-DD= mk_plaplace([],ff);
-zg1=  mkreconst_R(ll,DD,1);
-calc_nf(zg1)
-rg1= irec(vis,vhs,zg1);
-
-DD= mk_plaplace([sad_e0],ff);
-zg3=  mkreconst_R(ll,DD,1);
-calc_nf(zg3)
-rg3= irec(vis,vhs,zg3);
-
-DD= mk_plaplace([halfy_e0],ff);
-zb1=  mkreconst_R(ll,DD,1);
-calc_nf(zb1)
-rb1= irec(vis,vhs,zb1);
-
-
-DD= mk_plaplace([happy_e0],ff);
-zb3=  mkreconst_R(ll,DD,1);
-calc_nf(zb3)
-rb3= irec(vis,vhs,zb3);
-
-ii=imgr([rg1,  rg3, rb1,  rb3]);
-imwrite('laplace3.png',ii,colormap);
-image(ii);
