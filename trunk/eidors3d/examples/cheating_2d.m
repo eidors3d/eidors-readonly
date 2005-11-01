@@ -1,24 +1,24 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.10 2005-10-31 02:30:35 aadler Exp $
+% $Id: cheating_2d.m,v 1.11 2005-11-01 02:10:13 aadler Exp $
 
 %TODO: calculate how well data matches priors
-function out=cheating_2d( figno )
-   global eidors_colours;
-   eidors_colours.greylev= 0.1;
-   eidors_colours.sat_adj= 0.98;
+function out=cheating_2d( figno, rand_seed )
    [vis,vhs,s_mdl]= small_2d_mdl;
+
+   if nargin<2; rand_seed= []; end
 
    il_g = make_inv_model( 12 ); %large model
 
    if nargin==0; figno= {'1','2a','2b','3a','3b','4'}; end 
+   if isstr(figno); figno= {figno}; end
 
    for idx= 1:length(figno)
        if idx~=1; pause; end
 
        if     strcmp( figno{idx}, '1' )
-           approach1(vis, vhs, s_mdl, il_g)
+           approach1(vis, vhs, s_mdl, il_g, rand_seed)
        elseif strcmp( figno{idx}, '2a' )
            approach2a(vis, vhs, s_mdl, il_g)
        elseif strcmp( figno{idx}, '2b' )
@@ -26,24 +26,29 @@ function out=cheating_2d( figno )
        elseif strcmp( figno{idx}, '3a' )
            approach3b(vis, vhs, s_mdl, il_g)
        elseif strcmp( figno{idx}, '4' )
-           approach4(vis, vhs, s_mdl, il_g)
+           approach4(vis, vhs, s_mdl, il_g, rand_seed)
        end
    end
 %
 % APPROACH 1
 %
-function approach1(vis, vhs, s_mdl, il_g)
+function approach1(vis, vhs, s_mdl, il_g, rand_seed)
    disp('Approach #1: reconstruct with noise');
 
    num_tries=12;
-
-   noise = .0002*randn(size(vis.meas,1),num_tries);
+   levels= [];
+   if ~isempty(rand_seed);
+      num_tries= length(rand_seed);
+      levels= [0,0,0,1,1];
+   end
 
    vi_n(1:num_tries) = vis;
    for i= 1:num_tries % stupid matlab doesn't allow easy vectorization
-      vi_n(i).meas = vi_n(i).meas + noise(:,i);
+      if ~isempty(rand_seed); randn('state', rand_seed(i)); end
+      noise = .0002*randn(size(vis.meas));
+      vi_n(i).meas = vi_n(i).meas + noise;
    end
-   show_slices( inv_solve( il_g, vhs, vi_n ));
+   show_slices( inv_solve( il_g, vhs, vi_n ), levels);
 
 
 %
@@ -161,7 +166,7 @@ function approach3b(vis, vhs, s_mdl, il_g)
 %
 % APPROACH 4
 %
-function approach4(vis, vhs, s_mdl, il_g)
+function approach4(vis, vhs, s_mdl, il_g, rand_seed)
    disp('Approach #4: deform the model');
    num_tries=12;
 
@@ -177,6 +182,8 @@ function approach4(vis, vhs, s_mdl, il_g)
    mat(pp.sad)=1.5;
 
    for i= 1:num_tries % stupid matlab doesn't allow easy vectorization
+      if ~isempty(rand_seed); randn('state', rand_seed(i)); end
+
       def_mdl = eidors_obj('fwd_model', angl_deform(params ) );
       vi_m(i)= fwd_solve( eidors_obj('image','name',  ...
                      'elem_data', mat, 'fwd_model', def_mdl ));
@@ -258,7 +265,7 @@ function i_mdl= make_inv_model( n_rings, img_prior );
    l_mdl= eidors_obj('fwd_model', params);
 
 % create inverse model
-   hparam.value = 1e-8;
+   hparam.value = 1e-7;
   %hparam.func = 'aa_calc_noise_figure';
   %hparam.noise_figure= 1;
   %hparam.tgt_elems= 1:4;
