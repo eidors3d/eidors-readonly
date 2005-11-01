@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.7 2005-11-01 04:01:26 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.8 2005-11-01 15:46:22 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -74,12 +74,12 @@ internals to meet their needs.
 Because of the lack of a modular software structure of EIDORS3D,
 changes tended to made into the code itself. This resulted in
 duplicated
-code which could not easily be <i>refactored</i> in order to
+code which could not easily be {\em refactored} in order to
 be contributed back to EIDORS3D. Additionally, recent work has begun to move
 away from basic reconstruction algorithms, focussing
 on such issues as mesh generation, electrode modelling, visualization
 and electrode error detection. This research would be facilitated
-by using modular components which could be <i>plugged</i> into
+by using modular components which could be {\em plugged} into
 a selection of reconstruction algorithms.
 
 To address these issues, the EIDORS3D software has been completely
@@ -186,16 +186,12 @@ a fat, blobby animal that lives in water.
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.30 \textwidth]{./eidors-logo.eps}
+\includegraphics[width= 0.50 \textwidth]{./eidors-logo.eps}
 \caption{\small EIDORS logo.
 {\em EIT}: images blobby objects in aqueous media;
 {\em Walrus}: a fat, blobby animal that lives in water.
  Images credit: www.biosbcc.net (C) Genny Anderson
-
-{\tt TODO: Get a better picture}
  }
-
-
 \end{flushright}
 \end{figure}
 
@@ -254,6 +250,16 @@ of type {\tt image}.
 
 The following table shows a partial representation of 
 the structure of an EIDORS3D {\tt fwd\_model} object.
+%
+% FIGURE: Forward Model
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./fig-fwd_model.eps}
+\caption{\small {\tt fwd\_model} structure
+ }
+\end{flushright}
+\end{figure}
 
 \begin{tabular}{ll}
 {\bf Properties} & {\bf Description } \\
@@ -360,7 +366,7 @@ params.solve=      'np_fwd_solve';
 mdl_3d = eidors_obj('fwd_model', params);
 show_fem( mdl_3d );  % View model
 
-% simulate using <i>img_bkgnd</i> above
+% simulate using img_bkgnd above
 homg_data=fwd_solve( mdl_3d, img_bkgnd);
 \end{verbatim}
 
