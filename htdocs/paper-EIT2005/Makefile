@@ -1,10 +1,15 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.7 2005-10-31 14:36:38 aadler Exp $
+# $Id: Makefile,v 1.8 2005-11-01 02:08:46 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
+SET_COLOUR= global eidors_colours; \
+            eidors_colours.greylev= 0.1; \
+            eidors_colours.sat_adj= 0.98; \
+            eidors_colours.backgnd= [1,1,1]; \
+            eidors_colours.mapped_colour= 256;
 
 CHEAT_FIGS= deform-grille.eps deform.eps \
     happy.eps happynoise.eps sad.eps \
@@ -32,14 +37,22 @@ clean:
 	-rm $(NAME).dvi $(NAME).log $(NAME).aux $(NAME).pdf
 	-rm $(FIGURES)
 
+fig_noise.m:
+	fname=`basename $@ .m`; \
+	echo \
+  "$(SET_COLOUR)" \
+  "cheating_2d('1',[1702 7901 10801 11204]);" \
+  "set(gcf, 'PaperPosition', [0.25,2.5, 4,3]);" \
+  "print( gcf, '-depsc2','-painters', '$$fname.eps');" \
+      > $@
+
+fig_noise.eps: fig_noise.m
+	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
+
 fig_3d.m: Makefile
 	fname=`basename $@ .m`; \
 	echo \
-  "global eidors_colours;" \
-  "eidors_colours.backgnd= [1,1,1];" \
-  "eidors_colours.sat_adj= .95;" \
-  "eidors_colours.greylev= .1;" \
-  "eidors_colours.mapped_colour= 256;" \
+  "$(SET_COLOUR)" \
   \
   "n3r2= mk_common_model('n3r2'); " \
   "n3r2.fwd_model.nodes = n3r2.fwd_model.nodes/3;" \
@@ -83,3 +96,4 @@ fig_3d.m: Makefile
 
 fig_3d.eps: fig_3d.m
 	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
+
