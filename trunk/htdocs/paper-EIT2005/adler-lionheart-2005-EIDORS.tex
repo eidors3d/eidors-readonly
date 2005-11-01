@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.4 2005-10-31 23:11:14 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.5 2005-11-01 03:50:55 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -11,7 +11,7 @@
 \address{$^1$ School of Mathematics, University of Manchester, U.K.}
 \eads{
    \mailto{adler@site.uOttawa.ca}
-   \mailto{???@manchester.ac.uk},
+   \mailto{bill.lionheart@manchester.ac.uk}
      }
 
 \begin{abstract} %Single paragraph text only (no ref. eqn. max.200 words)
@@ -403,6 +403,23 @@ solve_img= inv_solve( demo_inv, data1, data2);
 \end{verbatim}
 
 \section{
+ Example: modifying electrode configuration for 3D model
+}
+
+%
+% FIGURE: Zigzag electrode config
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.80 \textwidth]{./fig_3d.eps}
+\caption{\small The 
+{\em Modification of NP's model to use 16 electrodes in a
+zig zag configuration and reconstruction with them}
+ \label{fig:fig_3d}
+\end{flushright}
+\end{figure}
+
+\section{
  Cheating with EIT
 }
 
@@ -459,7 +476,7 @@ Fig. \ref{fig:happynoise} shows two successful
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./happynoise.eps}
+\includegraphics[width= 0.50 \textwidth]{./fig_noise.eps}
 \caption{\small 
 Images with 17.75dB WGN which were selected as ``happy''
  }
@@ -520,7 +537,7 @@ FEM (chosen to differ from the 256 element simulation mesh).
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./tikhonov.eps}
+\includegraphics[width= 0.80 \textwidth]{./fig_tik_wo-icrime.eps}
 \caption{\small 
 Reconstructed images illustrating the effect of image priors,
 using different mesh for model and reconstruction.
@@ -544,7 +561,7 @@ it needs to be to get the happy face (Fig. \ref{fig:tikprior_icrime}).
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./tikhonov-icrime.eps}
+\includegraphics[width= 0.80 \textwidth]{./fig_tik_w-icrime.eps}
 \caption{\small 
 Reconstructed images illustrating the effect of image priors,
 using {\em same} mesh for model and reconstruction.
@@ -584,7 +601,7 @@ edges in the image.
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./laplace3.eps}
+\includegraphics[width= 0.80 \textwidth]{./fig_lapl_wo-icrime.eps}
 \caption{\small 
 Reconstructed images illustrating the effect of edge
 preserving image priors,
@@ -612,7 +629,7 @@ edges in the image.
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./laplace3-icrime.eps}
+\includegraphics[width= 0.80 \textwidth]{./fig_lapl_w-icrime.eps}
 \caption{\small 
 Reconstructed images illustrating the effect of edge
 preserving image priors,
@@ -628,34 +645,11 @@ happy face (right),
 \end{flushright}
 \end{figure}
 
-An even more dramatic effect is obtained by setting the
-penalty for Known edges to be zero (\ref{fig:laplprior-icrime0}.
-
-%
-% FIGURE: Laplace prior with inv crime and zero penalty
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./laplace0-icrime.eps}
-\caption{\small 
-Reconstructed images illustrating the effect of edge
-preserving image priors,
-using same mesh for model and reconstruction.
-Images are numbered from left to right.
-Known edges are weighted at $0.0\times$ that of other
-edges in the image.
-{\em Image 1:} Edge prior with no weighting,
-{\em Image 2:} Edge prior with weighting for positions in sad face,
-{\em Image 3:} Edge prior with weighting for sad face (left) and
-happy face (right),
-{\em Image 4:} Edge prior with weighting for positions in happy face,
- }
- \label{fig:laplprior-icrime0}
-\end{flushright}
-\end{figure}
 
 \subsection{ Cheating approach \#4:
              Model mismatches}
+
+{\tt Do we want to do this?}
 
 Mismatches between measured (or simulated) data and the
 reconstruction model can be an excellent way to introduce
