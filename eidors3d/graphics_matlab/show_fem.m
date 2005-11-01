@@ -10,7 +10,7 @@ function show_fem( mdl, background, options )
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.30 2005-10-31 03:02:51 aadler Exp $
+% $Id: show_fem.m,v 1.31 2005-11-01 03:09:35 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -23,7 +23,7 @@ end
 
 do_colourbar=0;
 number_electrodes=0;
-if nargin >=2
+if nargin >=3
     optionstr= zeros(1,100);
     optionstr(1:length(options)) = options;
     do_colourbar=      optionstr(1);
