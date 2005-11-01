@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.8 2005-11-01 02:08:46 aadler Exp $
+# $Id: Makefile,v 1.9 2005-11-01 02:43:04 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -17,7 +17,11 @@ CHEAT_FIGS= deform-grille.eps deform.eps \
     laplace3.eps tikhonov-icrime.eps \
     tikhonov.eps
 
-FIGURES = eidors-logo.eps $(CHEAT_FIGS)
+FIGURES = fig_tik_w-icrime.eps \
+          fig_tik_wo-icrime.eps \
+          fig_lapl_w-icrime.eps \
+          fig_lapl_wo-icrime.eps \
+	  fig_3d.eps
 
 all: $(NAME).pdf
 
@@ -30,24 +34,39 @@ $(NAME).dvi: $(NAME).tex $(FIGURES)
 eidors-logo.eps: ../eidors-logo.jpg
 	convert $< eps2:$@
 
-$(CHEAT_FIGS): %.eps: ../paper-cheating/%.png
-	convert $< eps2:$@
+#$(CHEAT_FIGS): %.eps: ../paper-cheating/%.png
+#	convert $< eps2:$@
 
 clean: 
 	-rm $(NAME).dvi $(NAME).log $(NAME).aux $(NAME).pdf
 	-rm $(FIGURES)
 
-fig_noise.m:
+fig_noise.m: Makefile
 	fname=`basename $@ .m`; \
 	echo \
   "$(SET_COLOUR)" \
   "cheating_2d('1',[1702 7901 10801 11204]);" \
-  "set(gcf, 'PaperPosition', [0.25,2.5, 4,3]);" \
+  "set(gcf, 'PaperPosition', [0.25,2.5, 4,2]);" \
   "print( gcf, '-depsc2','-painters', '$$fname.eps');" \
       > $@
 
 fig_noise.eps: fig_noise.m
 	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
+
+STARTUP = run('../../eidors3d/startup'); $(SET_COLOUR)
+PRINTEPS= set(gcf, 'PaperPosition', [0.25,2.5, 4,2]); print( gcf, '-depsc2','-painters', '
+
+fig_tik_w-icrime.eps:
+	matlab -r "$(STARTUP); cheating_2d('2a'); $(PRINTEPS)$@'); exit"
+
+fig_tik_wo-icrime.eps:
+	matlab -r "$(STARTUP); cheating_2d('2b'); $(PRINTEPS)$@'); exit"
+
+fig_lapl_w-icrime.eps:
+	matlab -r "$(STARTUP); cheating_2d('3a'); $(PRINTEPS)$@'); exit"
+
+fig_lapl_wo-icrime.eps:
+	matlab -r "$(STARTUP); cheating_2d('3b'); $(PRINTEPS)$@'); exit"
 
 fig_3d.m: Makefile
 	fname=`basename $@ .m`; \
