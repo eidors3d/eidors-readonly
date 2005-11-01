@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.12 2005-11-01 02:16:44 aadler Exp $
+% $Id: cheating_2d.m,v 1.13 2005-11-01 02:29:35 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -27,6 +27,11 @@ function out=cheating_2d( figno, rand_seed )
            approach3b(vis, vhs, s_mdl, il_g)
        elseif strcmp( figno{idx}, '4' )
            approach4(vis, vhs, s_mdl, il_g, rand_seed)
+       elseif strcmp( figno{idx}, '4b' )
+	   mdl= mk_common_model('b2c');
+           if ~isempty(rand_seed); randn('state', rand_seed(i)); end
+           def_mdl = eidors_obj('fwd_model', angl_deform(mdl.fwd_model, .02));
+	   show_fem(def_mdl);
        end
    end
 %
@@ -186,10 +191,12 @@ function approach4(vis, vhs, s_mdl, il_g, rand_seed)
    mat(pp.eyes)= 2;
    mat(pp.sad)=1.5;
 
+   def_amount= .0035;
+
    for i= 1:num_tries % stupid matlab doesn't allow easy vectorization
       if ~isempty(rand_seed); randn('state', rand_seed(i)); end
 
-      def_mdl = eidors_obj('fwd_model', angl_deform(params ) );
+      def_mdl = eidors_obj('fwd_model', angl_deform(params, def_amount ) );
       vi_m(i)= fwd_solve( eidors_obj('image','name',  ...
                      'elem_data', mat, 'fwd_model', def_mdl ));
    end
@@ -364,10 +371,10 @@ function Reg= cheat_laplace( inv_model )
 
 % deform a model by Delta
 % A1 = A0 + k1*sin(A0) + k2*cos(A0) + k3*sin(2*A0) ... 
-function mdl1 = angl_deform(mdl0 );
+function mdl1 = angl_deform(mdl0, def_amount );
 
    node0= mdl0.nodes';
-   deform = .00015*(ones(400,1)*(8:-1:1)).*randn(400,8);
+   deform = def_amount*(8:-1:1).*randn(1,8);
 
    A0 = atan2( node0(2,:), node0(1,:) );
    R0 = sqrt( sum( node0.^2 ));
