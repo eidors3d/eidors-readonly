@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.13 2005-11-01 02:29:35 aadler Exp $
+% $Id: cheating_2d.m,v 1.14 2005-11-02 04:54:37 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -24,6 +24,8 @@ function out=cheating_2d( figno, rand_seed )
        elseif strcmp( figno{idx}, '2b' )
            approach2b(vis, vhs, s_mdl, il_g)
        elseif strcmp( figno{idx}, '3a' )
+           approach3a(vis, vhs, s_mdl, il_g)
+       elseif strcmp( figno{idx}, '3b' )
            approach3b(vis, vhs, s_mdl, il_g)
        elseif strcmp( figno{idx}, '4' )
            approach4(vis, vhs, s_mdl, il_g, rand_seed)
