@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.9 2005-11-01 17:02:24 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.10 2005-11-02 01:01:08 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -45,26 +45,36 @@ Inverse Problems
 
 \section{Introduction}
 
-EIDORS3D is a software suite for image reconstruction in
+EIDORS
+({\bf E}lectrical
+ {\bf I}mpedance and
+ {\bf D}iffuse
+ {\bf O}ptical tomography
+ {\bf R}econstruction
+ {\bf S}oftware )
+is a software suite for image reconstruction in
 electrical impedance tomography and diffuse optical tomography.
-The goal is to provide a freely distributable and modifyable
+The goal is to provide a freely distributable and modifiable
 software for image reconstruction of electrical 
 or diffuse optical data. Such software facilitates research
+and development
 in these fields by providing a reference implementation
 against which new developments can be compared, and by
 providing a functioning software base onto which new
 ideas may be built and tested.
-The original EIDORS software (Vaukhonen et al., 2000) 
+The original EIDORS (version 1) software (Vaukhonen \etal, 2000) 
 is based on software from the thesis of Vaukhonen (1997)
 It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
 problem and reconstruction and display of the images.
 In order to provide capability to solve 3D reconstruction models,
-a new project, EIDORS3D, was begun (Polydorides and Lionheart, 2002),
+a new project, EIDORS3D (version 2), was begun (Polydorides and Lionheart, 2002),
 based on the software developed for thesis of Polydorides (2002).
 The EIDORS software packages shared the same numerical
-foundations; media are modelled using a finite element representation,
-and the images are reconstructed using regularized inverse techniques.
+and algorithmic foundations, but shared very little software code.
+Each software package modelled the medium under investigation
+using a simplex based finite element representation,
+and images were reconstructed using regularized inverse techniques.
 
 In the three years since the publication of EIDORS3D, several patterns
 of use have been noted. Researchers typically download the software,
@@ -75,60 +85,83 @@ Because of the lack of a modular software structure of EIDORS3D,
 changes tended to made into the code itself. This resulted in
 duplicated
 code which could not easily be {\em refactored} in order to
-be contributed back to EIDORS3D. Additionally, recent work has begun to move
+be contributed back to EIDORS. Additionally, recent work has begun to move
 away from basic reconstruction algorithms, focussing
 on such issues as mesh generation, electrode modelling, visualization
 and electrode error detection. This research would be facilitated
 by using modular components which could be {\em plugged} into
 a selection of reconstruction algorithms.
 
-To address these issues, the EIDORS3D software has been completely
+To address these issues, the EIDORS software has been completely
 restructured with the goal of providing an {\em extensible software base}
 designed to support {\em community} use, modification and contribution.
-This has been accomplished by the following:
+These modifications have been released as EIDORS version 3.0,
+which incorporates the following features:
 
 \begin{itemize}
 
   \item {\em Open-source license:}
-EIDORS3D is licensed under the
-GNU General Public License. Uses are free to use, modify, and
+EIDORS is licensed under the
+GNU General Public License (FSF, 1991).
+Uses are free to use, modify, and
 distribute their modifications. All modifications must include the
-source code, or instructions on how to obtain it. EIDORS3D may be used
+source code, or instructions on how to obtain it. EIDORS may be used
 in a commercial product, as long as the source code for EIDORS and all
 modifications to it are made available.
 
   \item {\em Sourceforge hosting:}
+In order to allow collaborative development, 
 EIDORS is hosted by {\tt sourceforge.net}
-at {\tt http://eidors3d.sf.net}.
+available at {\tt http://eidors3d.sf.net}.
 Software is available for download as packaged released versions
-(version 3.0 was released on 28 Oct 2005, and
+(version 3.0 was released on 31 Oct 2005, and
 contains the features described in this paper),
-or the latest developments may be downloaded from the CVS
-version control repository.
+or the latest developments may be downloaded from the
+CVS version control repository (Cederqvist, 2002).
 Sourceforge hosting allows for collaborative development for
 group members, while permitting read-only access to everyone.
 In order to become a member of the developer group, new
 contributors should contact the authors.
+One concern with a distributed software project is
+the possibility of conflict due to disparate authors
+working on the same module.
+Version control software such as CVS is widely understood
+to facilitate collaborative development, and manage
+software version conflicts.
+
 
   \item {\em Language independence: (Octave and Matlab)}
-EIDORS3D was originally written for Matlab.
-However, the eventual goal is for language independence.
-The current version of EIDORS3D works with Octave
-({\em www.octave.org}, version $\ge$ 2.9.3)
+EIDORS was originally written for Matlab.
+However, the eventual goal is to support multiple
+mathematical software packages.
+Some progress has been achieved, and EIDORS version 3
+works with Octave (Eaton, 2002), although some 
+advanced graphics functions still function only with Matlab.
+The current version of EIDORS works with Octave
+(version $\ge$ 2.9.3)
 and Matlab (version $\ge$ 6.0).
-Since Octave is free software, EIDORS could be provided
-as part of an EIT system without incurring the additional
-licensing costs of Matlab.
+Support for octave was motivated by two goals:
+first, octave provides a free software platform
+which can encourage the development of embedded
+and commercial applications of EIT
+are limited by the cost of Matlab, and secondly
+octave provides an open source platform to match
+the open source nature of EIDORS.
 
   \item {\em Pluggable code base:}
-In order to facilitate user modifications, EIDORS3D
+In order to facilitate user modifications, EIDORS
 has been designed to provide some of the benefits of
-Object-oriented (OO) software: {\em Packaging}
- and {\em Abstraction}. We have decided not to
+Object-oriented (OO) software (Gamma \etal, 1995):
+{\em Packaging} and {\em Abstraction}.
+We have decided not to
 use the OO framework provided by Matlab, because
-it appears somewhat cumbersome, and may be intimidating
+in our experience it is somewhat cumbersome,
+and may be intimidating
 to many mathematicians and engineers who do not 
-regularly write OO software. This decision may
+regularly write OO software.
+Another issue is the unfortunate reputation of
+Matlab for new features...
+This decision may
 be revisited in the future.
 Instead, EIDORS has been designed as 
 "Pluggable" software. This design uses function
@@ -742,6 +775,26 @@ Adler A and Guardo R
 1996
 Electrical impedance tomography: regularised imaging and contrast detection 
 \textit{IEEE Trans. Med. Imaging} \textbf{15} 170--9
+
+\item[]
+Cederqvist P 2002
+{\it Version Management with CVS},
+Network Theory Ltd, Bristol, UK
+
+\item[]
+Free Software Foundation, 1991
+{\it GNU General Public Licence}
+{\tt http://www.gnu.org/copyleft/gpl.html}
+
+\item[]
+Eaton J W 2002
+{\it Gnu Octave Manual}
+Network Theory Ltd, Bristol, UK
+
+\item[]
+Gamma E Helm R Johnson R Vlissides J 1995
+{\it Design Patterns: Elements of Reusable Object-Oriented Software}
+Addison-Wesley, Boston, MA, USA
 
 \item[] 
 Polydorides N and Lionheart W R B
