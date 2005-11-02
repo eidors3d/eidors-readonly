@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.10 2005-11-02 01:01:08 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.11 2005-11-02 04:26:06 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -100,9 +100,65 @@ which incorporates the following features:
 
 \begin{itemize}
 
+  \item {\em Multiple algorithm support:}
+EIDORS V.3 has been redesigned to allow flexibility of
+using multiple algorithms (or parts of algorithms). 
+This version provides access to the algorithms of
+Adler and Guardo (1996), Polydorides \etal (2002),
+Soleimani \etal (2005) and Vauhkonen \etal (2000).
+We feel that this capability is becoming more
+important with a trend toward meta-algorithms
+in EIT, such as algorithms for detection of
+electrode errors (Asfaw and Adler, 2005). 
+
+  \item {\em Generalized data formats:}
+One limitation of previous versions of the EIDORS software
+is that they were designed around specific electrode configurations
+and stimulation and measurements patterns. While it was possible
+to use the software for more general configurations, this was 
+a fairly daunting task. In order to support the wide
+variety of EIT measurements and algorithms, EIDORS now provides
+a general EIT data format (the {\tt fwd\_model} structure).
+Additionally, several utility functions are provided to
+create common electrode and stimulation configurations.
+This format specifies the electrode positions, contact impedances,
+and stimulation and measurement patterns, and all supported
+algorithms are able to reconstruct images based on data
+provided in these formats.
+
+  \item {\em Interface software for common EIT systems:}
+functions are provided (in the {\em interface} directory) to load
+from a variety of EIT hardware storage formats into the
+EIT data format. Currently, EIDORS will detect when data
+does not match the specified protocol in the {\tt fwd\_model},
+but will not (yet) automatically convert the data.
+At this point it has only been possible for the developers to 
+offer support for EIT hardware that they have access
+to. We hope that EIDORS will attract contributions from
+software developers who have access to other hardware
+systems.
+
+  \item {\em Usage examples:}
+It is observed that researchers typically base new software on
+demonstration examples. To facilitate this, some simple and more
+complex usage examples are provided for image reconstruction
+in two-and three dimentions using various image reconstruction
+algorithms and combinations of algorithms.
+
+  \item {\em Test suite:}
+Software is intrinsically difficult to test. While little work
+has been done specifically on testing numerical software, we
+believe that such tests are even more difficult.
+EIDORS has begun to implement a series of regression test
+scripts (in the {\tt tests} directory)
+to allow automatic testing of code modifications.
+For example the function {\tt calc\_jacobian\_test.m}
+validates a function to calculate the Jacobian against
+a calculation using the perturbation method. 
+
   \item {\em Open-source license:}
 EIDORS is licensed under the
-GNU General Public License (FSF, 1991).
+GNU General Public License (Free Software Foundation, 1991).
 Uses are free to use, modify, and
 distribute their modifications. All modifications must include the
 source code, or instructions on how to obtain it. EIDORS may be used
@@ -151,8 +207,9 @@ the open source nature of EIDORS.
   \item {\em Pluggable code base:}
 In order to facilitate user modifications, EIDORS
 has been designed to provide some of the benefits of
-Object-oriented (OO) software (Gamma \etal, 1995):
-{\em Packaging} and {\em Abstraction}.
+object-oriented (OO) software (Gamma \etal, 1995):
+{\em abstraction}, {\em encaptulation}, 
+{\em polymophism} and {\em inheritance}.
 We have decided not to
 use the OO framework provided by Matlab, because
 in our experience it is somewhat cumbersome,
@@ -160,75 +217,39 @@ and may be intimidating
 to many mathematicians and engineers who do not 
 regularly write OO software.
 Another issue is the unfortunate reputation of
-Matlab for new features...
-This decision may
-be revisited in the future.
-Instead, EIDORS has been designed as 
-"Pluggable" software. This design uses function
+Matlab for making dramatic modifications to new
+language features in the first few versions.
+For these reason, EIDORS has been designed using
+a  ''Pluggable`` software approach.
+This design uses function
 pointers to allow adding new modules and controlling
 which parts of functions are executed.
+EIDORS is thus able to offer the OO features 
+of {\em packaging}, { and {\em polymophism}, while
+not {\em encaptulation} or {\em inheritance}.
 A detailed description of this capability is
 provided in the next section.
 
-  \item {\em Automatic matrix caching:}
-In order to increase
-performance of image reconstruction software, it is important to cache
-computationally expensive variables, such as the Jacobian and image priors.
-Such caching
-complicates the software implementation. To solve this problem,
-EIDORS3D extracts caching to a separate module {\em eidors\_obj}
-which is inherited by
-each functional module. This capability is described in the next section.
-
-  \item {\em Generalized data formats:}
-In order to support the wide
-variety of EIT measurements and algorithms, a general EIT data format
-structure is developed (the {\em fwd\_model} structure).
-This format specifies the electrode positions, contact impedances,
-and stimulation and measurement patterns.
-
-  \item {\em Interface software for common EIT systems:}
-Functions
-to load data from some common EIT systems to the EIDORS3D data
-format have been developed.
-As coverage of more data formats is implemented, 
-we hope that this will advance the ability of researchers
-to share data and results.
-
-  \item {\em Usage examples:}
-It is observed that researchers typically base new software on
-demonstration examples. To facilitate this, some simple and more
-complex usage examples are provided.
-
-  \item {\em Test suite:}
-Software is intrinsically difficult to test. While little work
-has been done specifically on testing numerical software, we
-believe that such tests are even more difficult.
-EIDORS3D has begun to implement a series of regression test
-scripts to allow automatic testing of code modifications.
-
-  \item {\em Enhanced Finite Element Modelling and Graphical output:}
-
   \item {\em Logo:}
 Since EIDORS images blobby objects in aqueous media,
-the logo \label{fig:logo}, was chosen to be a walrus; it is (also)
+the logo \label{fig:logo}, was chosen to be a walrus,
+since it is (also)
 a fat, blobby animal that lives in water.
 
 %
 % FIGURE: EIDORS LOGO
 %
 \begin{figure}[th]
-\begin{flushright}
 \includegraphics[width= 0.50 \textwidth]{./eidors-logo.eps}
 \caption{\small EIDORS logo.
 {\em EIT}: images blobby objects in aqueous media;
 {\em Walrus}: a fat, blobby animal that lives in water.
- Images credit: www.biosbcc.net (C) Genny Anderson
+ Images credit: (C) Genny Anderson {\tt www.biosbcc.net} 
  }
-\end{flushright}
 \end{figure}
 
 \end{itemize}
+
 We hope that by providing a structure for community collaboration
 in EIT algorithms, we can produce robust,
 reliable and fairly portable software which draws on our collective
@@ -777,6 +798,12 @@ Electrical impedance tomography: regularised imaging and contrast detection
 \textit{IEEE Trans. Med. Imaging} \textbf{15} 170--9
 
 \item[]
+Asfaw Y and Adler A 2005
+Automatic detection of detached and erroneous electrodes in electrical impedance tomography
+{\it Physiol. Meas.}, {\bf 26} S175--S183
+        
+
+\item[]
 Cederqvist P 2002
 {\it Version Management with CVS},
 Network Theory Ltd, Bristol, UK
@@ -795,6 +822,11 @@ Network Theory Ltd, Bristol, UK
 Gamma E Helm R Johnson R Vlissides J 1995
 {\it Design Patterns: Elements of Reusable Object-Oriented Software}
 Addison-Wesley, Boston, MA, USA
+
+\item[]
+Soleimani M G\'omez-Laberge C Adler A 2005
+Imaging of conductivity changes and electrode movement in EIT
+{\it Physiol. Meas.}, submitted
 
 \item[] 
 Polydorides N and Lionheart W R B
