@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.14 2005-11-02 15:05:37 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.15 2005-11-02 15:32:34 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -255,7 +255,7 @@ EIDORS provides several functions for image presentation:
 finite element mesh and conductivity changes, while
 {\tt show\_slices.m} allows generation of images of arbitrary
 two dimentional slices through a volume. Examples of these
-functions are shown in \ref{fig:fig_3d}.
+functions are shown in \ref{fig:fig_3d_zigzag} and \ref{fig:fig_3d_2rings}.
 All EIDORS graphics functions now use a single colour
 mapping function {\tt calc\_colours.m}, which allows
 global modification of all image colouring using a
@@ -541,15 +541,30 @@ solve_img= inv_solve( demo_inv, data1, data2);
 }
 
 %
+% FIGURE: 2 rings electrode config
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_2rings.eps}
+\caption{\small The 
+{\em The 3D model of EIDORS3D (Polydorides \etal, 2002)
+using two rings of 16 electrodes with 20dB SNR
+}
+ \label{fig:fig_3d_2rings}
+}
+\end{flushright}
+\end{figure}
+
+%
 % FIGURE: Zigzag electrode config
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d.eps}
+\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_zigzag.eps}
 \caption{\small The 
 {\em Modification of NP's model to use 16 electrodes in a
 zig zag configuration and reconstruction with them}
- \label{fig:fig_3d}
+ \label{fig:fig_3d_zigzag}
 }
 \end{flushright}
 \end{figure}
