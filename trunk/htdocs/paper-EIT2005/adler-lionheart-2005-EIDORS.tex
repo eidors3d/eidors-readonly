@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.12 2005-11-02 04:28:08 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.13 2005-11-02 04:49:03 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -225,7 +225,7 @@ This design uses function
 pointers to allow adding new modules and controlling
 which parts of functions are executed.
 EIDORS is thus able to offer the OO features 
-of {\em packaging}, { and {\em polymophism}, while
+of {\em packaging}, and {\em polymophism}, while
 not {\em encaptulation} or {\em inheritance}.
 A detailed description of this capability is
 provided in the next section.
@@ -290,6 +290,57 @@ expertise and facilitates innovations in the field.
 
 \section{Software Architecture}
 
+EIDORS software consists of four primary objects:
+{\tt data},
+{\tt image},
+{\tt fwd\_model},
+{\tt inv\_model}. Each object is represented by a
+structure. All objects have the properties of a
+{\tt name} and {\tt type}. The {\tt name} is
+arbirary; it is displayed by the graphics functions,
+used could also be be useful to distinguish objects
+in a user specified function. The {\tt type} must
+be one of the primary objects. In this section we
+consider each software object and its properties.
+
+\begin{itemize}
+
+\item {\bf data}
+An EIDORS {\tt data} object represents a set of
+measures or simulated data.
+
+\item {\bf image}
+
+\item {\bf fwd\_model}
+
+%
+% FIGURE: Forward Model
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./fig_model2.eps}
+\caption{\small {\tt fwd\_model} structure
+\label{fig:fwd_model}
+ }
+\end{flushright}
+\end{figure}
+
+\item {\bf inv\_model}
+
+%
+% FIGURE: Inverse Model
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./fig_model1.eps}
+\caption{\small {\tt inv\_model} structure
+\label{fig:inv_model}
+ }
+\end{flushright}
+\end{figure}
+
+\end{itemize}
+
 \subsection{Software Example: Calculation of the Jacobian}
 In order to illustrate the usage of EIDORS3D, we consider
 the calculation of the Jacobian, or sensitivity matrix,
@@ -337,28 +388,6 @@ of type {\tt image}.
 
 The following table shows a partial representation of 
 the structure of an EIDORS3D {\tt fwd\_model} object.
-
-%
-% FIGURE: Forward Model
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./fig_model2.eps}
-\caption{\small {\tt fwd\_model} structure
- }
-\end{flushright}
-\end{figure}
-
-%
-% FIGURE: Inverse Model
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./fig_model1.eps}
-\caption{\small {\tt inv\_model} structure
- }
-\end{flushright}
-\end{figure}
 
 \begin{tabular}{ll}
 {\bf Properties} & {\bf Description } \\
@@ -550,8 +579,8 @@ illustrates this ``happy transform''.
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.30 \textwidth]{./sad.eps}
-\includegraphics[width= 0.30 \textwidth]{./happy.eps}
+\includegraphics[width= 0.25 \textwidth]{./sad.eps}
+\includegraphics[width= 0.25 \textwidth]{./happy.eps}
 \caption{\small The 
 {\em happy transform}
  }
@@ -582,7 +611,7 @@ Fig. \ref{fig:happynoise} shows two successful
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./fig_noise.eps}
+\includegraphics[width= 0.80 \textwidth]{./fig_noise.eps}
 \caption{\small 
 Images with 17.75dB WGN which were selected as ``happy''
  }
