@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.17 2005-10-28 15:10:55 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.18 2005-11-02 04:54:18 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -53,7 +53,8 @@ inh_img= eidors_obj('image', 'inhomogeneous image', ...
                      'elem_data', cond, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
- show_fem( inh_img, 1); pause
+show_fem( inh_img, 1);
+disp([inh_img.name, '. Press a key']); pause;
 
 % Add 10% noise
 sig= std( inh_data.meas - homg_data.meas );
@@ -84,7 +85,12 @@ inv2d= eidors_obj('inv_model', inv2d);
 
 img2= inv_solve( inv2d, inh_data, homg_data);
 img2.name= '2D inverse solution';
-show_fem(img2); pause;
+if ~exist('OCTAVE_VERSION')
+   show_fem(img2);
+else
+   show_slices(img2);
+end
+disp([img2.name, '. Press a key']); pause;
 
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code) and point
@@ -116,5 +122,10 @@ inv3d= eidors_obj('inv_model', inv3d);
 
  img3= inv_solve( inv3d, inh_data, homg_data);
  img3.name= '3D inverse solution';
- show_fem(img3);
-%figure;image_levels(img3, [-.4:.2:.4])
+
+if ~exist('OCTAVE_VERSION')
+   show_fem(img3);
+else
+   show_slices(img3, [-.35:.2:.4]'*[inf,inf,1])
+end
+
