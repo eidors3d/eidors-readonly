@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.15 2005-11-02 15:45:19 aadler Exp $
+# $Id: Makefile,v 1.16 2005-11-02 15:49:07 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -161,4 +161,7 @@ ifneq (,$(wildcard $(COMPRESSFIGS)))
 COMPFIGS = $(patsubst figs/%.eps.gz, figs/%.eps, $(wildcard $(COMPRESSFIGS)))
 $(COMPFIGS): figs/%.eps: figs/%.eps.gz
 	gunzip -c $< > $@
+
+figs-models.pdf:
+	touch $@
 endif
