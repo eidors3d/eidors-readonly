@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.12 2005-11-01 17:02:23 aadler Exp $
+# $Id: Makefile,v 1.13 2005-11-02 15:05:37 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -11,20 +11,20 @@ SET_COLOUR= global eidors_colours; \
             eidors_colours.backgnd= [1,1,1]; \
             eidors_colours.mapped_colour= 256;
 
-CHEAT_FIGS= happy.eps sad.eps \
- deform-grille.eps deform.eps
+CHEAT_FIGS= \
+    figs/happy.eps figs/sad.eps \
+    figs/deform-grille.eps figs/deform.eps
 
 FIGURES = $(CHEAT_FIGS) \
-    fig-fwd_model.eps \
-    fig_noise.eps \
-    fig_tik_w-icrime.eps \
-    fig_tik_wo-icrime.eps \
-    fig_lapl_w-icrime.eps \
-    fig_lapl_wo-icrime.eps \
-    fig_3d.eps \
-    eidors-logo.eps \
-    fig_model1.eps \
-    fig_model2.eps
+    figs/fig_noise.eps \
+    figs/fig_tik_w-icrime.eps \
+    figs/fig_tik_wo-icrime.eps \
+    figs/fig_lapl_w-icrime.eps \
+    figs/fig_lapl_wo-icrime.eps \
+    figs/fig_3d.eps \
+    figs/eidors-logo.eps \
+    figs/fig_model1.eps \
+    figs/fig_model2.eps
 
 all: $(NAME).pdf
 
@@ -33,16 +33,21 @@ $(NAME).pdf: $(NAME).dvi
 
 $(NAME).dvi: $(NAME).tex $(FIGURES)
 	latex $<
+
+#
+# Code to build figures
+# 
+
 # image: http://www.biosbcc.net/ocean/marinesci/04benthon/arcimg/arc7773.jpg
-eidors-logo.eps: ./arc7773.jpg
+figs/eidors-logo.eps: ./figs/arc7773.jpg
 	convert $< eps2:$@
 
-$(CHEAT_FIGS): %.eps: ../paper-cheating/%.png
+$(CHEAT_FIGS): figs/%.eps: ../paper-cheating/%.png
 	convert $< eps2:$@
 
-fig_model1.eps fig_model2.eps: figs-models.pdf
+figs/fig_model1.eps figs/fig_model2.eps: figs-models.pdf
 	gs -sDEVICE=epswrite -dEPSCrop -dBATCH -dNOPAUSE \
-           -sOutputFile=fig_model%d.eps \
+           -sOutputFile=figs/fig_model%d.eps \
            -c '<</ProcessColorModel /DeviceCMYK>>setpagedevice' \
            -f $<
 	
@@ -50,7 +55,7 @@ clean:
 	-rm $(NAME).dvi $(NAME).log $(NAME).aux $(NAME).pdf
 	-rm $(FIGURES)
 
-fig_noise.m:
+figs/fig_noise.m:
 	fname=`basename $@ .m`; \
 	echo \
   "$(SET_COLOUR)" \
@@ -59,25 +64,25 @@ fig_noise.m:
   "print( gcf, '-depsc2','-painters', '$$fname.eps');" \
       > $@
 
-fig_noise.eps: fig_noise.m
+figs/fig_noise.eps: figs/fig_noise.m
 	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
 
 STARTUP = run('../../eidors3d/startup'); $(SET_COLOUR)
 PRINTEPS= set(gcf, 'PaperPosition', [0.25,2.5, 4,2]); print( gcf, '-depsc2','-painters', '
 
-fig_tik_w-icrime.eps:
+figs/fig_tik_w-icrime.eps:
 	matlab -r "$(STARTUP); cheating_2d('2a'); $(PRINTEPS)$@'); exit"
 
-fig_tik_wo-icrime.eps:
+figs/fig_tik_wo-icrime.eps:
 	matlab -r "$(STARTUP); cheating_2d('2b'); $(PRINTEPS)$@'); exit"
 
-fig_lapl_w-icrime.eps:
+figs/fig_lapl_w-icrime.eps:
 	matlab -r "$(STARTUP); cheating_2d('3a'); $(PRINTEPS)$@'); exit"
 
-fig_lapl_wo-icrime.eps:
+figs/fig_lapl_wo-icrime.eps:
 	matlab -r "$(STARTUP); cheating_2d('3b'); $(PRINTEPS)$@'); exit"
 
-fig_3d.m: 
+figs/fig_3d.m: 
 	fname=`basename $@ .m`; \
 	echo \
   "$(SET_COLOUR)" \
@@ -122,6 +127,6 @@ fig_3d.m:
   "print( gcf, '-depsc2','-painters', '$$fname.eps');" \
       > $@
 
-fig_3d.eps: fig_3d.m
+figs/fig_3d.eps: figs/fig_3d.m
 	matlab -r "run('../../eidors3d/startup'); run('./$<'); exit"
 
