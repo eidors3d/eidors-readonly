@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.15 2005-11-02 15:32:34 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.16 2005-11-02 21:32:50 aadler Exp $
 \documentclass[12pt]{iopart}
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -220,7 +220,7 @@ Another issue is the unfortunate reputation of
 Matlab for making dramatic modifications to new
 language features in the first few versions.
 For these reason, EIDORS has been designed using
-a  ''Pluggable`` software approach.
+a  ``Pluggable'' software approach.
 This design uses function
 pointers to allow adding new modules and controlling
 which parts of functions are executed.
@@ -273,7 +273,7 @@ a fat, blobby animal that lives in water.
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./figs/eidors-logo.eps}
+\includegraphics[width= 0.40 \textwidth]{./figs/eidors-logo.eps}
 \caption{\small EIDORS logo.
 {\em EIT}: images blobby objects in aqueous media;
 {\em Walrus}: a fat, blobby animal that lives in water.
@@ -309,7 +309,31 @@ consider each software object and its properties.
 An EIDORS {\tt data} object represents a set of
 measures or simulated data.
 
+%
+% FIGURE: Data
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./figs/fig_model4.eps}
+\caption{\small {\tt data} structure
+\label{fig:data}
+ }
+\end{flushright}
+\end{figure}
+
 \item {\bf image}
+
+%
+% FIGURE: Forward Model
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./figs/fig_model3.eps}
+\caption{\small {\tt image} structure
+\label{fig:image}
+ }
+\end{flushright}
+\end{figure}
 
 \item {\bf fwd\_model}
 
