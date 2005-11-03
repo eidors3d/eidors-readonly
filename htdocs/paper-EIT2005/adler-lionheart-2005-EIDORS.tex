@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.21 2005-11-03 06:43:05 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.22 2005-11-03 16:50:31 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -159,7 +159,8 @@ algorithms and combinations of algorithms.
 
   \item {\em Test suite:}
 Software is intrinsically difficult to test. While little work
-has been done specifically on testing numerical software, we
+has been done specifically on testing numerical software
+for inverse problems, we
 believe that such tests are even more difficult.
 EIDORS has begun to implement a series of regression test
 scripts (in the {\tt tests} directory)
@@ -366,7 +367,7 @@ The electrodes are defined by a vector ($E\times1$) of
 objects has fields
 {\tt z\_contact} (scalar) and {\tt nodes} (vector)
  which represent the
-(possibly complex) contact impedance (in $\Omega$)
+(possibly complex) contact impedance
 and vertices to which that electrode is connected.
 A point electrode would have a single element
 {\tt nodes} field with ${\tt z\_contact}=0$ while
@@ -603,9 +604,9 @@ for each FEM degree of freedom
 \end{equation}
 where $\bf \sigma$ is the vector of element conductivities
 and $\bf q$ is the current stimulation pattern, a vector
-of current inputs to each vertex.
+of current inputs to each FEM degree of freedom.
 Depending on the electrode model used, the measured electrode
-voltage can be represented as a linear combination of vertex
+voltage can be represented as a linear combination of 
 voltages, ${\bf V}_{2E}$.
 For each simulation pattern, ${\bf }q_{i}$,
 measurements $m_{i,j}$
@@ -849,7 +850,7 @@ is penalized. We use the following formulation:
 \end{equation}
 where the regularization term 
 \begin{equation}
-   {\bf R} = \sqrt{ trace {\bf H}^t{\bf H} }
+   {\bf R} = \sqrt{ \mathrm{trace} {\bf H}^t{\bf H} }
 \end{equation}
 
 If, however, we {\em know} {\em a priori} that 
@@ -860,7 +861,7 @@ in the happy face, we set
 
 \begin{equation}
    {\bf R}_{i,j} = \frac{1}{2} \left[
-              \sqrt{ trace {\bf H}^t{\bf H} }
+              \sqrt{ \mathrm{trace} {\bf H}^t{\bf H} }
                                \right]_{i,j}
 \end{equation}
 
