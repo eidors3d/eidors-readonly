@@ -1,11 +1,21 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.16 2005-11-02 21:32:50 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.17 2005-11-03 03:14:01 aadler Exp $
 \documentclass[12pt]{iopart}
+%Query macro
+\newcommand{\query}[1]{%
+    \marginpar{%
+      \hrule height1pt
+      \vspace*{4pt}
+      {\raggedright\scriptsize\slshape #1\par}%
+      \vspace*{4pt}
+      \hrule height1pt
+    }%
+}
+
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
-\title{Electrial Impedance and Diffuse Optical
-       Tomography Reconstruction Software (EIDORS) version 3: uses and abuses}
+\title{Uses and abuses of EIDORS: An extensible software base for EIT}
 \author{Andy Adler$^1$, William R. B. Lionheart$^2$}
 \address{$^1$ School of Information Technology and Engineering (SITE), University of Ottawa, Canada}
 \address{$^2$ School of Mathematics, University of Manchester, U.K.}
@@ -32,7 +42,7 @@ EIDORS helps with this issue, by allowing sharing and reuse
 of well documented and debugged software. On the other hand, 
 EIDORS potentially encourages such issues by facilitating use
 by non-specialists. In order to address this issue, we develop
-a list "cheats with inverse problems". Our hope is that such
+a list ``cheats'' with inverse problems. Our hope is that such
 a list will assist authors of software to avoid such implemention
 issues.
 
@@ -62,14 +72,16 @@ in these fields by providing a reference implementation
 against which new developments can be compared, and by
 providing a functioning software base onto which new
 ideas may be built and tested.
-The original EIDORS (version 1) software (Vaukhonen \etal, 2000) 
-is based on software from the thesis of Vaukhonen (1997)
+Making the source code available also facilitates scrutiny
+of algorithms and their implementation by other researchers.
+The original EIDORS (version 1) software (\cite{Vaukhonen_etal_2000})
+is based on software from the thesis of Vaukhonen \cite{Vauhkonen_1997}
 It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
 problem and reconstruction and display of the images.
 In order to provide capability to solve 3D reconstruction models,
-a new project, EIDORS3D (version 2), was begun (Polydorides and Lionheart, 2002),
-based on the software developed for thesis of Polydorides (2002).
+a new project, EIDORS3D (version 2), was begun \cite{Polydorides_and_Lionheart_2002}
+based on the software developed for thesis of Polydorides \cite{Polydorides_2002}
 The EIDORS software packages shared the same numerical
 and algorithmic foundations, but shared very little software code.
 Each software package modelled the medium under investigation
@@ -104,12 +116,12 @@ which incorporates the following features:
 EIDORS V.3 has been redesigned to allow flexibility of
 using multiple algorithms (or parts of algorithms). 
 This version provides access to the algorithms of
-Adler and Guardo (1996), Polydorides \etal (2002),
-Soleimani \etal (2005) and Vauhkonen \etal (2000).
+\cite{Adler_and_Guardo_1996}, \cite{Polydorides_and_Lionheart_2002},
+\cite{Soleimani_etal_2005} and \cite{Vauhkonen_etal_2000}.
 We feel that this capability is becoming more
 important with a trend toward meta-algorithms
 in EIT, such as algorithms for detection of
-electrode errors (Asfaw and Adler, 2005). 
+electrode errors \cite{Asfaw_and_Adler_2005}. 
 
   \item {\em Generalized data formats:}
 One limitation of previous versions of the EIDORS software
@@ -158,7 +170,7 @@ a calculation using the perturbation method.
 
   \item {\em Open-source license:}
 EIDORS is licensed under the
-GNU General Public License (Free Software Foundation, 1991).
+GNU General Public License \cite{Free_Software_Foundation_1991}.
 Uses are free to use, modify, and
 distribute their modifications. All modifications must include the
 source code, or instructions on how to obtain it. EIDORS may be used
@@ -173,7 +185,7 @@ Software is available for download as packaged released versions
 (version 3.0 was released on 31 Oct 2005, and
 contains the features described in this paper),
 or the latest developments may be downloaded from the
-CVS version control repository (Cederqvist, 2002).
+CVS version control repository \cite{Cederqvist_2002}.
 Sourceforge hosting allows for collaborative development for
 group members, while permitting read-only access to everyone.
 In order to become a member of the developer group, new
@@ -191,7 +203,7 @@ EIDORS was originally written for Matlab.
 However, the eventual goal is to support multiple
 mathematical software packages.
 Some progress has been achieved, and EIDORS version 3
-works with Octave (Eaton, 2002), although some 
+works with Octave \cite{Eaton_2002}, although some 
 advanced graphics functions still function only with Matlab.
 The current version of EIDORS works with Octave
 (version $\ge$ 2.9.3)
@@ -207,7 +219,7 @@ the open source nature of EIDORS.
   \item {\em Pluggable code base:}
 In order to facilitate user modifications, EIDORS
 has been designed to provide some of the benefits of
-object-oriented (OO) software (Gamma \etal, 1995):
+object-oriented (OO) software \cite{Gamma_etal_1995}:
 {\em abstraction}, {\em encaptulation}, 
 {\em polymophism} and {\em inheritance}.
 We have decided not to
@@ -533,9 +545,9 @@ by the user. For example, code to build models using {\em netgen}
 
 This example shows how modify an existing algorithm.
 For example, we wish to modify the
-hyperparameter selection strategy of Polydorides (2002) to use
+hyperparameter selection strategy of \cite{Polydorides_2002} to use
 instead the {\em Noise Figure} parameter introduced by
-Adler and Guardo (1996). The first step is to create a
+\cite{Adler_and_Guardo_1996}. The first step is to create a
 {\tt fwd\_model} structure {\em demo\_mdl} in a similar
 way to the above (details are shown in {\tt examples/demo\_real.m}).
 Subsequently, an {\tt inv\_model}, {\tt demo\_inv} is created,
@@ -638,7 +650,7 @@ In this case, we simulated a homogenous (${\bf v}_h$)
 and inhomogeneous (${\bf v}_i$) data on a 256
 element FEM. Subsequently 17.75dB of WGN was added to
 ${\bf v}_i$, and the images reconstructed using
-the algorithm of Adler and Guardo (1996).
+the algorithm of \cite{Adler_and_Guardo_1996}.
 Each image was reconstructed (with different selections of
 hyperparameter values), and reviewed by the author to determine which cases
 corresponded to the happy transform.
@@ -890,78 +902,69 @@ We hope that these ideas will help clarify the kinds of
 possible errors, and help researchers to avoid them.
 
 
-\References % Harvard style references
-
-\item[]
+\section*{References}
+\begin{thebibliography}{99}
+% IOP standard references
+%\References % Harvard style references
+\bibitem{Adler_and_Guardo_1996}
 Adler A and Guardo R
 1996
 Electrical impedance tomography: regularised imaging and contrast detection 
 \textit{IEEE Trans. Med. Imaging} \textbf{15} 170--9
-
-\item[]
-Asfaw Y and Adler A 2005
+\bibitem{Asfaw_and_Adler_2005}
+Asfaw Y and Adler A
+ 2005
 Automatic detection of detached and erroneous electrodes in electrical impedance tomography
 {\it Physiol. Meas.}, {\bf 26} S175--S183
-        
-
-\item[]
+\bibitem{Cederqvist_2002}
 Cederqvist P 2002
 {\it Version Management with CVS},
 Network Theory Ltd, Bristol, UK
-
-\item[]
+\bibitem{Free_Software_Foundation_1991}
 Free Software Foundation 1991
 {\it GNU General Public Licence}
 Boston MA USA
 {\tt http://www.gnu.org/copyleft/gpl.html}
-
-\item[]
+\bibitem{Eaton_2002}
 Eaton J W 2002
 {\it Gnu Octave Manual}
 Network Theory Ltd, Bristol, UK
-
-\item[]
-Gamma E Helm R Johnson R Vlissides J 1995
+\bibitem{Gamma_etal_1995}
+Gamma E Helm R Johnson R and Vlissides J 1995
 {\it Design Patterns: Elements of Reusable Object-Oriented Software}
 Addison-Wesley, Boston, MA, USA
-
-\item[]
-Soleimani M G\'omez-Laberge C Adler A 2005
+\bibitem{Soleimani_etal_2005}
+Soleimani M G\'omez-Laberge C and Adler A 2005
 Imaging of conductivity changes and electrode movement in EIT
 {\it Physiol. Meas.}, submitted
-
-\item[] 
+\bibitem{Polydorides_and_Lionheart_2002}
 Polydorides N and Lionheart W R B
 2002
 A Matlab toolkit for three-dimensional electrical impedance
 tomography: a contribution to the Electrical Impedance and
 Diffuse Optical Reconstruction Software project,
 {\it Meas. Sci. Technol.} {\bf 13} 1871--1883 
-
-\item[] 
+\bibitem{Polydorides_2002}
 Polydorides N 
 2002
 {\it Image reconstruction algorithms for soft-field tomography}
 Ph.D. Thesis,
 University of Manchester Institute of Science and Technology, U.K. 
-
-\item[] 
+\bibitem{Vauhkonen_1997} 
 Vauhkonen M 
 1997
 {\it Electrical impedance tomography and prior information}
 PhD thesis, University of Kuopio, Finland 
-
-\item[] 
-Vauhkonen M
-Lionheart W R B
-Heikkinen L M
-Vauhkonen P J
-Kaipio J P 
+\bibitem{Vauhkonen_etal_2000} 
+Vauhkonen M,
+Lionheart W R B,
+Heikkinen L M,
+Vauhkonen P J and
+Kaipio J P, 
 2000
 A MATLAB package for the EIDORS project to reconstruct
 two-dimensional EIT images
 {\it Physiol. Meas.} 22 107--111 
-
-
-\endrefs
+\end{thebibliography}
 \end{document}
+

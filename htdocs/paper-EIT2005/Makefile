@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.16 2005-11-02 15:49:07 aadler Exp $
+# $Id: Makefile,v 1.17 2005-11-03 03:14:01 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -25,7 +25,9 @@ FIGURES = $(CHEAT_FIGS) \
     figs/fig_3d_zigzag.eps \
     figs/eidors-logo.eps \
     figs/fig_model1.eps \
-    figs/fig_model2.eps
+    figs/fig_model2.eps \
+    figs/fig_model3.eps \
+    figs/fig_model4.eps
 
 all: $(NAME).pdf
 
