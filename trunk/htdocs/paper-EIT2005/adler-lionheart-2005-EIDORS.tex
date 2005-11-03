@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.20 2005-11-03 05:39:09 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.21 2005-11-03 06:43:05 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -302,6 +302,8 @@ expertise and facilitates innovations in the field.
 
 \section{Software Architecture}
 
+\subsection{Object Structure}
+
 EIDORS software consists of four primary objects:
 {\tt data},
 {\tt image},
@@ -325,6 +327,8 @@ The {\tt name} is arbirary, and may be used or ignored
 by software using EIDORS; it is only used by the
 graphical functions of EIDORS to anotate displayed images.
 
+\subsubsection{fwd\_model}
+
 %
 % FIGURE: Forward Model
 %
@@ -337,8 +341,6 @@ graphical functions of EIDORS to anotate displayed images.
 \end{flushright}
 \end{figure}
 
-\begin{itemize}
-\item {\bf fwd\_model}
 
 The most complex EIDORS object is the {\tt fwd\_model},
 which is designed to represent the finite element model 
@@ -444,7 +446,7 @@ are solved using the utility functions
 For example, given
 a {\tt fwd\_model} object {\tt fmdl}, we may write:
 \begin{verbatim}
-Smat = calc_system_mat( fmdl );
+    Smat = calc_system_mat( fmdl ); 
 \end{verbatim}
 This function 
 call the appropriate function and also manages
@@ -456,7 +458,7 @@ returned, without the computation function being
 called.
 
 
-\item {\bf data}
+\subsubsection{data}
 
 An EIDORS {\tt data} object represents a frame of
 measurement or simulated data. The structure of the
@@ -480,7 +482,6 @@ for unknown times or simulated data.
 \end{flushright}
 \end{figure}
 
-\item {\bf image}
 
 The {\tt meas} field is a $M\times1$ matrix where
 $M$ is the number of measurements in each data frame
@@ -492,19 +493,17 @@ Data may be loaded into EIDORS using the {\tt eidors\_readdata}
 function, which provides an interface to the storage
 format used by some EIT equipment manufacturers.
 
-%
-% FIGURE: Forward Model
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./figs/fig_model3.eps}
-\caption{\small The structure of the EIDORS {\tt image} object.
-\label{fig:image}
- }
-\end{flushright}
-\end{figure}
+The {\tt data} object may also contain two options fields,
+{\tt configuration} and {\tt fwd\_model}. Specification
+of {\tt fwd\_model} allows EIDORS to validate that the
+data is being interpreted correctly, and being reconstructed
+using the correct model. The {\tt configuration} is
+a user specified string with a similar function; software
+may assign a value to this field in order to distinguish
+{\tt data} objects.
 
-\item {\bf inv\_model}
+
+\subsubsection{inv\_model}
 
 %
 % FIGURE: Inverse Model
@@ -518,12 +517,80 @@ format used by some EIT equipment manufacturers.
 \end{flushright}
 \end{figure}
 
-\end{itemize}
+The {\tt inv\_model} object groups information necessary to 
+allow reconstruction of images. Two basic types of reconstructon
+are distinguished based on the {\tt reconst\_type} field, 
+``difference'' (which calculates an image based on the difference
+between two {\tt data} objects) and ``static'' (which calculates an
+image based on a single {\tt data} object.
+
+The pointer to the solver function is stored as a string or function
+pointer in the {\tt solve} field. The provided functions are based
+on regularized image reconstruction algorithms, and require 
+an {\em image prior} and a choice of {\em hyperparameter}. 
+The latter is specified in the {\tt hyperparameter} field. For
+simple cases, a scalar value is provided in the {\tt value} field.
+However, for more complex cases, a hyperparameter selection strategy
+is specified in a function in the {\tt func} field. One example
+is the {\em noise figure} strategy of \cite{Adler_and_Guardo_1996}.
+This strategy may be specified by setting
+ {\tt hyperparameter.func=``aa\_calc\_noise\_figure''}
+and 
+ {\tt hyperparameter.noise\_figure=\em Value}.
+The image prior is selected by the {\tt image\_prior} field;
+the function to calculate the image prior is the {\tt func}
+field, while
+any parameters to this function are provided as {\tt parameters}.
+A detailed example using this field is provides in
+section \ref{modify_hp_to_cheat}.
+
+\subsubsection{image}
+
+The EIDORS image object expresses the reconstruced or
+simulated conductivity values. The field {\tt elem\_data}
+($N\times1$) is the value of each of the image elements in 
+the finite element model which in the field {\tt fwd\_model}.
+
+For example, given
+an {\tt inv\_model} object {\tt imdl}, we may express
+image reconstruction by (assuming
+difference EIT, and {\tt data} objects {\tt data1} and {\tt data2}):
+\begin{verbatim}
+    img = inv_solve( imdl, data1, data2 );
+\end{verbatim}
+Similarly, in order to simulate {\tt data} object {\tt datasim}
+from a simulation image {\tt imgsim}, we may write:
+\begin{verbatim}
+    datasim = fwd_solve( fmdl, imgsim );
+\end{verbatim}
+%
+% FIGURE: Forward Model
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./figs/fig_model3.eps}
+\caption{\small The structure of the EIDORS {\tt image} object.
+\label{fig:image}
+ }
+\end{flushright}
+\end{figure}
+
 
 \subsection{Software Example: Calculation of the Jacobian}
-In order to illustrate the usage of EIDORS3D, we consider
+
+In order to illustrate the usage of EIDORS, we consider
 the calculation of the Jacobian, or sensitivity matrix,
-$\bf J$
+$\bf J$.
+Specifically, we wish to explore 3D EIT reconstructions
+using a sixteen electrode EIT system. The configuration
+given in EIDORS3D \cite{Polydorides_and_Lionheart_2002}
+uses two rings on 16 electrodes, and thus is not directly
+applicable to this case. We would like to explore the
+possibilities of using a ``zigzag'' electrode placement 
+using 16 electrodes, in which odd and even numbered
+electrodes are vertically separated onto two different
+planes \ref{fig:fig_3d_zigzag}.
+
 Given a finite element model (FEM) model of an EIT medium,
 $F$, we calculate the vector of voltages, $\bf v$, 
 for each FEM degree of freedom
@@ -567,77 +634,16 @@ of type $\tt fwd\_model$,
 and the image of the background {\tt img\_bkgnd}
 of type {\tt image}.
 
-\subsection{Forward Model structure {\tt fwd\_model} }
-
-The following table shows a partial representation of 
-the structure of an EIDORS3D {\tt fwd\_model} object.
-
-\begin{tabular}{ll}
-{\bf Properties} & {\bf Description } \\
-\hline
-{\tt
-        fwd\_model.name
-} &
-        Model name (arbitrary)
-\\
-{\tt
-        fwd\_model.nodes
-} &
-        Position of FEM vertices
-        $n_V{\times}n_D$
-\\
-{\tt
-        fwd\_model.elems
-} &
-        Node indices of FEM elements
-        $n_N{\times}n_D+1$
-\\
-{\tt
-        fwd\_model.boundary
-} &
-        Node indices of element faces on the medium surface
-\\
-{\tt
-        fwd\_model.electrode
-} &
-        Vector $n_E{\times}1$
-           of electrode models ({\tt elec\_model})
-\\
-{\tt
-        fwd\_model.stimulation
-} &
-         Vector $n_S{\times}1$of stimulation
-            patterns ({\tt stim\_model})
-\\
-\hline
-{\bf Methods} & {\bf Description } \\
-\hline
-{\tt
-        fwd\_model.solve
-} &
-        Function to calculate inverse solution
-\\ &
-        {\tt {\em data} = fwd\_solve( fwd\_model, {\em image} )}
-\\
-{\tt
-        fwd\_model.jacobian
-} &
-        Function to calculate Jacobian at {\em image} background
-\\ &
-        {\tt {\em J} = calc\_jacobian( fwd\_model, {\em image} )}
-\\
-\end{tabular}
-
-
 Each object is created using the {\tt eidors\_obj}
 function, which can fill in default attributes, and 
 keeps track of cached properties.
 Given a {\tt fwd\_model} {\tt\em fem}
 a background image may be defined as follows:
 \begin{verbatim}
-homg_conductivity= ones( length(fem.elems) ,1);
-img_bkgnd= eidors_obj('image', 'homog background', ...
-  'elem_data', homg_conductivity, 'fwd_model', fem );
+    homg_conductivity = ones( length(fem.elems) ,1);
+    img_bkgnd         = eidors_obj('image', 'homog background', ... 
+                                     'elem_data', homg_conductivity, ...
+                                     'fwd_model', fem ); 
 \end{verbatim}
 where the object {\tt name} is assigned
 (arbitrarily) to {\tt 'homog background'}.
@@ -666,19 +672,18 @@ software.
 In order to simulate data, a FEM model object {\tt mdl\_3d}
 and a conductivity image need to be created.
 \begin{verbatim}
-% mk_circ_tank(FEM_rings, FEM_levels, n_elec, elec_planes )
-param= mk_circ_tank(8, [-1:.25:1], 16, 3);
+    % mk_circ_tank(FEM_rings, FEM_levels, n_elec, elec_planes )
+    param= mk_circ_tank(8, [-1:.25:1], 16, 3);
 
-% mk_stim_patterns(n_elec, elec_planes, stim, meas, opt, stim_amplitude)
-options = {'no_meas_current','no_rotate_meas'};
-params.stimulation= mk_stim_patterns(16, 3, '{ad}','{ad}', opt, 10);
+    % mk_stim_patterns(n_elec, elec_planes, stim, meas, opt, stim_amplitude)
+    options = {'no_meas_current','no_rotate_meas'};
+    params.stimulation= mk_stim_patterns(16, 3, '{ad}','{ad}', opt, 10);
 
-params.solve=      'np_fwd_solve';
-mdl_3d = eidors_obj('fwd_model', params);
-show_fem( mdl_3d );  % View model
+    params.solve=      'np_fwd_solve';
+    mdl_3d = eidors_obj('fwd_model', params);
 
-% simulate using img_bkgnd above
-homg_data=fwd_solve( mdl_3d, img_bkgnd);
+    % simulate using img_bkgnd above
+    homg_data=fwd_solve( mdl_3d, img_bkgnd);
 \end{verbatim}
 
 The functions {\tt mk\_circ\_tank} and {\tt mk\_stim\_patterns}
