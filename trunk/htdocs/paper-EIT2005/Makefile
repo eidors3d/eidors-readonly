@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.18 2005-11-03 03:58:39 aadler Exp $
+# $Id: Makefile,v 1.19 2005-11-03 04:47:52 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -23,7 +23,6 @@ FIGURES = $(CHEAT_FIGS) \
     figs/fig_lapl_wo-icrime.eps \
     figs/fig_3d_2rings.eps \
     figs/fig_3d_zigzag.eps \
-    figs/eidors-logo.eps \
     figs/fig_model1.eps \
     figs/fig_model2.eps \
     figs/fig_model3.eps \
@@ -47,10 +46,6 @@ $(NAME).dvi: $(NAME).tex $(FIGURES)
 #
 # Code to build figures
 # 
-
-# image: http://www.biosbcc.net/ocean/marinesci/04benthon/arcimg/arc7773.jpg
-figs/eidors-logo.eps: ./figs/arc7773.jpg
-	convert $< eps2:$@
 
 $(CHEAT_FIGS): figs/%.eps: ../paper-cheating/%.png
 	convert $< eps2:$@

@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.18 2005-11-03 03:58:40 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.19 2005-11-03 04:47:52 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -35,7 +35,7 @@ and provide a uniform interface,
 permitting easier modification and customization.
 We describe the key features of this software, followed by
 examples of its use.
-One general issue with inverse problem software, is the difficulty
+One general issue with inverse problem software is the difficulty
 of correctly implemeting algorithms, and the consequent ease with
 which subtle numerical bugs can be inadvertently introducted.
 EIDORS helps with this issue, by allowing sharing and reuse
@@ -74,7 +74,7 @@ providing a functioning software base onto which new
 ideas may be built and tested.
 Making the source code available also facilitates scrutiny
 of algorithms and their implementation by other researchers.
-The original EIDORS (version 1) software (\cite{Vaukhonen_etal_2000})
+The original EIDORS (version 1) software (\cite{Vauhkonen_etal_2000})
 is based on software from the thesis of Vaukhonen \cite{Vauhkonen_1997}
 It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
@@ -315,11 +315,95 @@ in a user specified function. The {\tt type} must
 be one of the primary objects. In this section we
 consider each software object and its properties.
 
+
+All EIDORS objects are represented using as a Matlab
+(or Octave) structure. All objects must have 
+{\tt name} and {\tt type} fields. 
+The {\tt type} is used to identify the object type 
+(ie {\tt data}, {\tt image} etc.).
+The {\tt name} is arbirary, and may be used or ignored
+by software using EIDORS; it is only used by the
+graphical functions of EIDORS to anotate displayed images.
+
 \begin{itemize}
+\item {\bf fwd\_model}
+
+The most complex EIDORS object is the {\tt fwd\_model},
+which is designed to represent the finite element model 
+(FEM), electrode
+positions and properties, and stimulation patterns, as
+well as the pointers to functions to solve the forward
+problem on this model. Fig. \ref{fig:fwd_model} illustrates
+the structure of a {\tt fwd\_model}.
+
+The FEM is described by the fields
+{\tt nodes} ($V{\times}D$),
+{\tt elems} ($N{\times}(D+1)$), and
+{\tt boundary} ($B{\times}D$), where
+$V$ is the number of vertices, $N$ is the number of
+simplices (and also the number of unknown conductivities
+to be solved by the inverse solution), $B$ the number
+of simplices with a face on the boundary, and $D$ the
+model dimention ($D=2$ for 2D and $D=3$ for 3D).
+The {\tt gnd\_node} is the vertex number attached to ground.
+
+The electrodes are defined by a vector ($E\times1$) of
+{\tt electrode} fields. Each of $E$ {\tt electrode}
+objects has fields
+{\tt z\_contact} (scalar) and {\tt nodes} (vector)
+ which represent the
+(possibly complex) contact impedance (in $\Omega$)
+and vertices to which that electrode is connected.
+A point electrode would have a single element
+{\tt nodes} field with ${\tt z\_contact}=0$ while
+an electrode with a complete electrode model
+would have multiple vertices specified in {\tt nodes}
+and ${\tt z\_contact}\ge0$. Note that EIDORS
+does not require the electrode model to be the same
+for all electrodes in a {\tt fwd\_model}.
+
+Using these electrodes, a sequence of $S$ stimulation
+patterns are applied and measurements are performed
+in order to generate a frame of data.
+Stimulation patterns are defined by a vector
+($S\times1$) of {\tt stimulation} fields. Each
+{\tt stimulation} object has fields
+{\tt stimulation}, 
+{\tt stim\_pattern}, and
+{\tt meas\_pattern}.
+
+%
+% FIGURE: Forward Model
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.50 \textwidth]{./figs/fig_model2.eps}
+\caption{\small {\tt fwd\_model} structure
+\label{fig:fwd_model}
+ }
+\end{flushright}
+\end{figure}
 
 \item {\bf data}
 An EIDORS {\tt data} object represents a set of
-measures or simulated data.
+measures or simulated data. The structure of the
+{\tt data} objects is shown in \ref{fig:data}. The
+required fields are {\tt time} in seconds 
+after the epoch. In a particular application {\tt time}
+may be defined with respect to another start point, such as
+the start of the experiment, or may be set to $0$ or $-1$ 
+for unknown times or simulated data.
+
+The {\tt meas} field is a $M\times1$ matrix where
+$M$ is the number of measurements in each data frame
+(the sum of number of measurements for each stimulation
+pattern). The data in {\tt meas} is ordered such that
+the measurements for {\tt stimulation(1)} are first.
+For many EIT systems, an adjacent stimulation
+pattern is used with no measurement taken at current
+stimulation electrodes, given $M = E\times(E-3)$,
+where $E$ is the number of electrodes. 
+meas\_select
 
 %
 % FIGURE: Data
@@ -343,20 +427,6 @@ measures or simulated data.
 \includegraphics[width= 0.50 \textwidth]{./figs/fig_model3.eps}
 \caption{\small {\tt image} structure
 \label{fig:image}
- }
-\end{flushright}
-\end{figure}
-
-\item {\bf fwd\_model}
-
-%
-% FIGURE: Forward Model
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./figs/fig_model2.eps}
-\caption{\small {\tt fwd\_model} structure
-\label{fig:fwd_model}
  }
 \end{flushright}
 \end{figure}
