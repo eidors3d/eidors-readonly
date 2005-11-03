@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.17 2005-11-03 03:14:01 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.18 2005-11-03 03:58:40 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -80,7 +80,7 @@ It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
 problem and reconstruction and display of the images.
 In order to provide capability to solve 3D reconstruction models,
-a new project, EIDORS3D (version 2), was begun \cite{Polydorides_and_Lionheart_2002}
+a new project, EIDORS3D (version 2), was begun \cite{Polydorides_and_Lionheart_2002},
 based on the software developed for thesis of Polydorides \cite{Polydorides_2002}
 The EIDORS software packages shared the same numerical
 and algorithmic foundations, but shared very little software code.
@@ -171,7 +171,7 @@ a calculation using the perturbation method.
   \item {\em Open-source license:}
 EIDORS is licensed under the
 GNU General Public License \cite{Free_Software_Foundation_1991}.
-Uses are free to use, modify, and
+Users are free to use, modify, and
 distribute their modifications. All modifications must include the
 source code, or instructions on how to obtain it. EIDORS may be used
 in a commercial product, as long as the source code for EIDORS and all
@@ -185,7 +185,7 @@ Software is available for download as packaged released versions
 (version 3.0 was released on 31 Oct 2005, and
 contains the features described in this paper),
 or the latest developments may be downloaded from the
-CVS version control repository \cite{Cederqvist_2002}.
+Concurrent Versions System (CVS) \cite{Cederqvist_2002}.
 Sourceforge hosting allows for collaborative development for
 group members, while permitting read-only access to everyone.
 In order to become a member of the developer group, new
@@ -274,25 +274,25 @@ global modification of all image colouring using a
 global variable {\tt eidors\_colours}.
 
 
-  \item {\em Logo:}
-Since EIDORS images blobby objects in aqueous media,
-the logo \label{fig:logo}, was chosen to be a walrus,
-since it is (also)
-a fat, blobby animal that lives in water.
-
+%  \item {\em Logo:}
+%Since EIDORS images blobby objects in aqueous media,
+%the logo \label{fig:logo}, was chosen to be a walrus,
+%since it is (also)
+%a fat, blobby animal that lives in water.
 %
-% FIGURE: EIDORS LOGO
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.40 \textwidth]{./figs/eidors-logo.eps}
-\caption{\small EIDORS logo.
-{\em EIT}: images blobby objects in aqueous media;
-{\em Walrus}: a fat, blobby animal that lives in water.
- Images credit: (C) Genny Anderson {\tt www.biosbcc.net} 
- }
-\end{flushright}
-\end{figure}
+%%
+%% FIGURE: EIDORS LOGO
+%%
+%\begin{figure}[th]
+%\begin{flushright}
+%\includegraphics[width= 0.40 \textwidth]{./figs/eidors-logo.eps}
+%\caption{\small EIDORS logo.
+%{\em EIT}: images blobby objects in aqueous media;
+%{\em Walrus}: a fat, blobby animal that lives in water.
+% Images credit: (C) Genny Anderson {\tt www.biosbcc.net} 
+% }
+%\end{flushright}
+%\end{figure}
 
 \end{itemize}
 We hope that by providing a structure for community collaboration
@@ -383,13 +383,17 @@ the calculation of the Jacobian, or sensitivity matrix,
 $\bf J$
 Given a finite element model (FEM) model of an EIT medium,
 $F$, we calculate the vector of voltages, $\bf v$, 
-at each FEM vertex as:
+for each FEM degree of freedom
+ (mainly degrees of freedom are nodes, but in the
+ Complete Electrode Model \cite{Cheng_etal_1989},
+ electodes are also associated
+ with a degree of freedom):
 \begin{equation}
-{\bf v} = F( \sigma ){\bf q} 
+{\bf v} = F({\bf \sigma}){\bf q} 
 \end{equation}
-where $\sigma$ is the vector of element conductivities
+where $\bf \sigma$ is the vector of element conductivities
 and $\bf q$ is the current stimulation pattern, a vector
-of current inputs to each vertex (Neumann boundary conditions).
+of current inputs to each vertex.
 Depending on the electrode model used, the measured electrode
 voltage can be represented as a linear combination of vertex
 voltages, ${\bf V}_{2E}$.
@@ -399,12 +403,12 @@ are performed, each of which consist of a linear combination of
 electrode measurements, ${\bf m}_j$.
 Thus:
 \begin{equation}
-m_{i,j} = {\bf m}_{i} {\bf V}_{2E} F( \sigma )
+m_{i,j} = {\bf m}_{i} {\bf V}_{2E} F({\bf \sigma})
 \end{equation}
 Based on this model, $\bf J$ is calculated as:
 \begin{equation}
 {\bf F}_{i,j,k} = \left.\frac{
- {\bf m}_{i} {\bf V}_{2E}{\partial}F( \sigma )
+ {\bf m}_{i} {\bf V}_{2E}{\partial}F({\bf \sigma})
 }{
 {\partial}{\bf \sigma}_k
 }
@@ -416,7 +420,7 @@ where ${\bf \sigma}_0$ is the "background"
 conductivity around which small changes are assumed to occur.
 In EIDORS, the Jacobian is calculated using {\tt calc\_jacobian};
 this function needs as parameters the FEM model {\tt fem},
-of type $\tt fwd_model$,
+of type $\tt fwd\_model$,
 and the image of the background {\tt img\_bkgnd}
 of type {\tt image}.
 
@@ -493,7 +497,7 @@ img_bkgnd= eidors_obj('image', 'homog background', ...
   'elem_data', homg_conductivity, 'fwd_model', fem );
 \end{verbatim}
 where the object {\tt name} is assigned
-(arbitrarily) to 'homog background'.
+(arbitrarily) to {\tt 'homog background'}.
 In order to calculate the Jacobian, we call
 {\tt J= calc\_jacobian( fem, img\_bkgnd )}, which
 1). tests to see whether {\bf J} has been previously
@@ -832,70 +836,130 @@ happy face (right),
 \end{figure}
 
 
-\subsection{ Cheating approach \#4:
-             Model mismatches}
-
-{\tt Do we want to do this?}
-
-Mismatches between measured (or simulated) data and the
-reconstruction model can be an excellent way to introduce
-artefacts into the reconstructed images. Perhaps the
-most common occurance in EIT is when electrode positions
-are not exactly where they were in the model.
-
-In order to simulate this effect, the geometry of
-the simulation model (based on 256 elements) was randomly
-deformed in the radial direction based on the three low
-order harmonics of the angle.
-Fig. \ref{fig:deform-grille} shows an example
-of this effect.
-
-The electrodes are positioned at a radial distance of 1.0
-and underwent an average movement of $0.091\pm0.035$.
+\subsection{
+Sample Problem: Three fingers
+}
+We now illustrate some cheating for a three dimensional
+problem. We model a cylindical phantom tank with a rather
+course FEM mesh of only xx elements with 32 rectangular
+electrodes in two planes. Note that to realistically
+fit data even for a homogeneous tank to a sensible
+measurement accuracy requires a much finer mesh, but the
+principles of cheating will be similar. The mesh geometry
+was constructed using constructive solid geometry in
+netgen. The electodes were created by the intesectiont
+of cuboids with the cylinder representing the tank. The
+target object is three triangular prisms projecting from
+the base of cylinder as a crude approximation to three
+fingers inserted in a slaine filled tank. To make the
+simulated data we used a mesh respecting these fingers
+\fref{fig:threefingers} and added gaussian pseudo-random
+error to this data with a variance of ?? of the maximum
+voltage. The images shown are typical of thos generated
+from data from several draws of the psuedorandom number
+generator. We then attempt to reconstruct the conductivity
+using a mesh that does not incorporate the fingers. We will
+use a single step of regularized Gauss-Newton to perform
+the reconstruction, and note that we do not expect to do
+very well with a crude mesh and reconstruction algorithm,
+but we are interested to see if we can distinguish three
+fingers and their approximate position. Our first attempt,
+using an arbitrarily chosen regularization factor
+of ??? appears in \fref{fig:3fingers1}. It is
+displayed using the VTK visualisation program Mayav {\tt
+www.mayavi.org}, after exporting the data to a vtk file
+using EIDORS function writevtkfile ***New OO name?. The
+piecewise constant conductivity of the reconstruction has
+been interpolated using the {\tt CellToPointData} filter in
+Mayavi, and displayed using Mayavi's {\tt isosurface} with
+the contour level selected manually. The image projection
+has been selected to best see the fingers.
 
 %
-% FIGURE: Model mismatches
+% FIGURE:  fingers original
 %
 \begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./figs/deform-grille.eps}
-\caption{\small 
-A finite element mesh deformed in the radial direction to
-simulate the effect of model errors for electrode positions.
- }
- \label{fig:deform}
-\end{flushright}
+\includegraphics[width= 0.50 \textwidth]{figs/threefingers.eps}
+\caption{\label{fig:threefingers}The three fingers test object and mesh used to generate voltage data.}
 \end{figure}
 
-Simulations of model error were conducted and evaluated as
-to whether they implemented the happy transform, as shown
-in Fig. \ref{fig:deform}.
-Of 400 images, approximate 1\% showed this effect. 
+
 
 %
-% FIGURE: Model mismatch images
+% FIGURE:  fingers first stab
 %
 \begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.50 \textwidth]{./figs/deform.eps}
-\caption{\small 
-Sample images reconstucted from a deformed finite element
-mesh. Some images were chosen which implement the happy
-transform, while others were chosen because they appeared
-humourous.
- }
- \label{fig:deform}
-\end{flushright}
+\includegraphics[width= 0.50 \textwidth]{figs/three-fingers-reconstructed.eps}
+\caption{\label{fig:3fingers1}
+Initial reconstruction of the three finger object.}
 \end{figure}
+
+Cross sectional images of origial and reconstructed
+conductivity are shown in \fref{fig:3fingersXsect}
+The contour selected for display is itself a
+hyperparameter and its choice is suceptable to
+cheating. In the absence of a priori information about
+the number or shape of the taget some automatic selection
+procedure is needed. Mayavi's default contour selection
+in this case produces an image that is not as easy to
+interpret as three fingers \fref{fig:3fingersMVdefault}
+
+%
+% FIGURE:  fingers X section
+%
+\begin{figure}[th]
+
+\scalebox{0.5}{{\includegraphics{figs/simulated_inhomogeneities.eps}}}
+\scalebox{0.5}{{\includegraphics{figs/reconstructed_conductivity.eps}}}
+\caption{\label{fig:3fingersXsect}
+Cross sections and initial reconstruction of the three finger object.}
+\end{figure}
+
+%
+% FIGURE:  fingers Mayavi default contour selection
+%
+\begin{figure}[th]
+\includegraphics[width= 0.50 \textwidth]{figs/three-fingers-recon-default-mv-iso.eps}
+\caption{\label{fig:3fingersMVdefault}
+Mayavi's automatic selection of contour}
+\end{figure}
+A choosing a smaller regularization parameter will of
+course generate a less smooth conductivity and we might
+easily interpret such an image as having a different number
+of fingers.
+\Fref{fig:3fingersLessTik} illustrates the effect of
+reducing the regularization parameter by a factor of
+10. Similarly an unfortunate choice of contour could
+produce an image suceptable to interpreted more fingers
+\fref{fig:3fingersMoreFingers}.
+\begin{figure}[th]
+\includegraphics[width= 0.50 \textwidth]{figs/less-tikhonov.eps}
+\caption{\label{fig:3fingersLessTik}
+The effect of decreasing the Tikhonov regularization parameter
+ by a factor of 10}
+\end{figure}
+\begin{figure}[th]
+\includegraphics[width= 0.50 \textwidth]{figs/lots-of-fingers.eps}
+\caption{\label{fig:3fingersMoreFingers}
+Seemingly different number of fingers resulting simply from a
+ different choice of contour}
+\end{figure}
+
+
+
+
+
 
 
 \section{
  Discussion
 }
 
-The goal of this document is to illustrate some of the things
-that can go wrong with the algorithms provided with EIDORS.
-While the treatment in this document is lighthearted, it
+As well as to illustrate the use of the new plugable OO
+framework for EIDORS one of our aims in this paper is to
+illustrate some of the things
+that can go wrong with the algorithms provided.
+While the examples chosen are somewhat lighthearted, it
 is surprisingly easy to unwittingly develop mathematical
 algorithms which are subject to variants of these {\em cheats}.
 We hope that these ideas will help clarify the kinds of
@@ -920,6 +984,16 @@ Automatic detection of detached and erroneous electrodes in electrical impedance
 Cederqvist P 2002
 {\it Version Management with CVS},
 Network Theory Ltd, Bristol, UK
+\bibitem{Cheng_etal_1989}
+Cheng K-S
+Isaacson D
+Newell J C and
+Gisser D G
+1989
+Electrode models for electric current
+computed tomography
+{\it IEEE Trans Biomed Eng}
+{\bf 36} 918--924
 \bibitem{Free_Software_Foundation_1991}
 Free Software Foundation 1991
 {\it GNU General Public Licence}
