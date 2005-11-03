@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.17 2005-11-03 03:14:01 aadler Exp $
+# $Id: Makefile,v 1.18 2005-11-03 03:58:39 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -27,7 +27,14 @@ FIGURES = $(CHEAT_FIGS) \
     figs/fig_model1.eps \
     figs/fig_model2.eps \
     figs/fig_model3.eps \
-    figs/fig_model4.eps
+    figs/fig_model4.eps \
+    figs/less-tikhonov.eps \
+    figs/lots-of-fingers.eps \
+    figs/three-fingers-recon-default-mv-iso.eps \
+    figs/three-fingers-reconstructed.eps \
+    figs/simulated_inhomogeneities.eps \
+    figs/reconstructed_conductivity.eps \
+    figs/threefingers.eps
 
 all: $(NAME).pdf
 
