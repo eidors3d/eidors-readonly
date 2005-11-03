@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.22 2005-11-03 16:50:31 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.23 2005-11-03 23:28:47 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -579,23 +579,16 @@ from a simulation image {\tt imgsim}, we may write:
 
 \subsection{Software Example: Calculation of the Jacobian}
 
-In order to illustrate the usage of EIDORS, we consider
+In order to illustrate the usage of EIDORS, and provide
+an example of the use of the objects defined in the previous
+section, we consider
 the calculation of the Jacobian, or sensitivity matrix,
 $\bf J$.
-Specifically, we wish to explore 3D EIT reconstructions
-using a sixteen electrode EIT system. The configuration
-given in EIDORS3D \cite{Polydorides_and_Lionheart_2002}
-uses two rings on 16 electrodes, and thus is not directly
-applicable to this case. We would like to explore the
-possibilities of using a ``zigzag'' electrode placement 
-using 16 electrodes, in which odd and even numbered
-electrodes are vertically separated onto two different
-planes \ref{fig:fig_3d_zigzag}.
 
 Given a finite element model (FEM) model of an EIT medium,
 $F$, we calculate the vector of voltages, $\bf v$, 
 for each FEM degree of freedom
- (mainly degrees of freedom are nodes, but in the
+ (mainly, degrees of freedom are nodes, but in the
  Complete Electrode Model \cite{Cheng_etal_1989},
  electodes are also associated
  with a degree of freedom):
@@ -608,14 +601,16 @@ of current inputs to each FEM degree of freedom.
 Depending on the electrode model used, the measured electrode
 voltage can be represented as a linear combination of 
 voltages, ${\bf V}_{2E}$.
-For each simulation pattern, ${\bf }q_{i}$,
+For each simulation pattern, ${\bf q}_{i}$,
 measurements $m_{i,j}$
 are performed, each of which consist of a linear combination of
 electrode measurements, ${\bf m}_j$.
 Thus:
+
 \begin{equation}
 m_{i,j} = {\bf m}_{i} {\bf V}_{2E} F({\bf \sigma})
 \end{equation}
+
 Based on this model, $\bf J$ is calculated as:
 \begin{equation}
 {\bf F}_{i,j,k} = \left.\frac{
@@ -627,65 +622,109 @@ Based on this model, $\bf J$ is calculated as:
    {\bf \sigma} = {\bf \sigma}_0 
 }
 \end{equation}
-where ${\bf \sigma}_0$ is the "background"
+
+where ${\bf \sigma}_0$ is the ``background"
 conductivity around which small changes are assumed to occur.
-In EIDORS, the Jacobian is calculated using {\tt calc\_jacobian};
-this function needs as parameters the FEM model {\tt fem},
-of type $\tt fwd\_model$,
-and the image of the background {\tt img\_bkgnd}
+In EIDORS, the Jacobian is calculated using the function
+{\tt calc\_jacobian},
+which takes as parameters FEM model (type {\tt fwd\_model}),
+and the image of ${\bf sigma}_0$ 
 of type {\tt image}.
 
 Each object is created using the {\tt eidors\_obj}
 function, which can fill in default attributes, and 
 keeps track of cached properties.
-Given a {\tt fwd\_model} {\tt\em fem}
-a background image may be defined as follows:
+For example, given a {\tt fwd\_model} {\tt\em fem}
+a homogeneous background of conductivity one,
+{\tt\em img\_bkgnd}, may be computed by:
 \begin{verbatim}
     homg_conductivity = ones( length(fem.elems) ,1);
     img_bkgnd         = eidors_obj('image', 'homog background', ... 
-                                     'elem_data', homg_conductivity, ...
-                                     'fwd_model', fem ); 
+                                   'elem_data', homg_conductivity, ...
+                                   'fwd_model', fem ); 
 \end{verbatim}
-where the object {\tt name} is assigned
+In this expression, the {\tt type} field is assigned
+to {\tt 'image'} and then {\tt name} is assigned
 (arbitrarily) to {\tt 'homog background'}.
+
 In order to calculate the Jacobian, we call
-{\tt J= calc\_jacobian( fem, img\_bkgnd )}, which
-1). tests to see whether {\bf J} has been previously
+
+\begin{verbatim}
+{\tt J= calc\_jacobian( fem, img\_bkgnd )}
+\end{verbatim}
+
+which, first, tests to see whether {\bf J} has been previously
 calculated for {\tt fem} and {\tt img\_bkgnd}; if
 so, the cached value is returned; otherwise,
-2) loads and calls the function in {\tt fem.jacobian},
+it loads and calls the function in {\tt fem.jacobian},
 which may be {\tt np\_calc\_jacobian}, which 
-calls the code from Polydorides (2002); the returned
+calls the function from the software of
+\cite{Polydorides_and_Lionheart_2002}; the returned
 value is then stored in the cache and returned to the
 calling function.
 
 \section{ Usage Examples}
 
-In this section two examples of the usage of EIDORS3D
+In this section two examples of the usage of EIDORS
 software functions are provided. The first illustrates
-the use of forward models to simulate data. The second
-illustrates how to modify the image reconstruction
+how to a change in electrode configuation and stimulation 
+pattern can be taken
+into account with a modification of the {\tt fwd\_model}.
+The second illustrates how to modify the image reconstruction
 behaviour of an existing algorithm to
-add new features without needing to edit the original
-software.
+add new features.
 
-\subsection{ Simulate Data }
+\subsection{Modification of electrode configuration}
+
+In this section we wish to explore 3D EIT reconstructions
+using a sixteen electrode EIT system. This is a practical
+problem in many applications where a sixteen electrode
+EIT hardware system is available, and the goal is to 
+choose where to put those electrodes to image a specific
+physiological process.
+
+In our tests, we use a ``zigzag'' electrode placement 
+using 16 electrodes, in which odd and even numbered
+electrodes are vertically separated onto two different
+planes (as illustrated in fig. \ref{fig:fig_3d_zigzag}).
+To illustrate the construction of this model, we begin
+with the demonstration finite element configuration
+given in EIDORS3D \cite{Polydorides_and_Lionheart_2002},
+which uses two vertically separated rings of 16 electrodes.
+applicable to this case.
+
 In order to simulate data, a FEM model object {\tt mdl\_3d}
 and a conductivity image need to be created.
+EIDORS provides a utility function {\tt mk\_common\_model}
+to provide many of useful 2D and 3D models. This function
+may be used as follows to construct the FEM and use it
+to simulate voltage patterns.
+
 \begin{verbatim}
-    % mk_circ_tank(FEM_rings, FEM_levels, n_elec, elec_planes )
-    param= mk_circ_tank(8, [-1:.25:1], 16, 3);
+    mdl  = mk_common_model('n3r2');
+    mdl.fwd_model.jacobian   = 'np_calc_jacobian';
+    mdl.fwd_model.system_mat = 'np_calc_system_mat';
+    mdl.fwd_model.solve      = 'np_fwd_solve';
 
-    % mk_stim_patterns(n_elec, elec_planes, stim, meas, opt, stim_amplitude)
-    options = {'no_meas_current','no_rotate_meas'};
-    params.stimulation= mk_stim_patterns(16, 3, '{ad}','{ad}', opt, 10);
+    n_elems     =    size(mdl.fwd_model.elems,1);
+    conductivity=    ones( n_elems, 1); 
 
-    params.solve=      'np_fwd_solve';
-    mdl_3d = eidors_obj('fwd_model', params);
+    img_sim= eidors_obj('image', 'demo');
+    img_sim.elem_data = conductivity;
+    img_sim.fwd_model = mdl.fwd_model;
 
-    % simulate using img_bkgnd above
-    homg_data=fwd_solve( mdl_3d, img_bkgnd);
+    meas_h= fwd_solve( img_sim );
+
+    img_sim.elem_data(target_A)= 1.2;
+    img_sim.elem_data(target_B)= 0.8;
+    meas_i= fwd_solve( img_sim );
 \end{verbatim}
+
+In this sample code, lines 1--4 set up the model and assign
+the functions to solve the forward problem.
+{\tt target\_A} and {\tt target\_B} are the indices of the 
+elements accociated with a non-conductive and conductive
+target shape (Fig. \ref{fig_3d_2rings})
 
 The functions {\tt mk\_circ\_tank} and {\tt mk\_stim\_patterns}
 build regular cylidrical EIT FEM models. In order to use more
@@ -736,7 +775,8 @@ solve_img= inv_solve( demo_inv, data1, data2);
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_2rings.eps}
 \caption{\small The 
-{\em The 3D model of EIDORS3D (Polydorides \etal, 2002)
+{\em The 3D demonstration FEM provided with the EIDORS3D
+\cite{Polydorides_and_Lionheart_2002},
 using two rings of 16 electrodes with 20dB SNR
 }
  \label{fig:fig_3d_2rings}
