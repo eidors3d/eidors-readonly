@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.23 2005-11-03 23:28:47 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.24 2005-11-04 21:27:18 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -12,15 +12,19 @@
       \hrule height1pt
     }%
 }
+\newcommand{\CN}{\tt\small} % small teletype font
+\newcommand{\CC}{&\verb@}   % start code
+\newcommand{\CI}{&\it}   % start code
 
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
 \title{Uses and abuses of EIDORS: An extensible software base for EIT}
 \author{Andy Adler$^1$, William R. B. Lionheart$^2$}
-\address{$^1$ School of Information Technology and Engineering (SITE), University of Ottawa, Canada}
+\address{$^1$ School of Information Technology and Engineering,
+              University of Ottawa, Canada}
 \address{$^2$ School of Mathematics, University of Manchester, U.K.}
 \eads{
-   \mailto{adler@site.uOttawa.ca}
+   \mailto{adler@site.uOttawa.ca},
    \mailto{bill.lionheart@manchester.ac.uk}
      }
 
@@ -631,27 +635,28 @@ which takes as parameters FEM model (type {\tt fwd\_model}),
 and the image of ${\bf sigma}_0$ 
 of type {\tt image}.
 
-Each object is created using the {\tt eidors\_obj}
+Objects may be created using the {\tt eidors\_obj()}
 function, which can fill in default attributes, and 
 keeps track of cached properties.
 For example, given a {\tt fwd\_model} {\tt\em fem}
 a homogeneous background of conductivity one,
 {\tt\em img\_bkgnd}, may be computed by:
-\begin{verbatim}
-    homg_conductivity = ones( length(fem.elems) ,1);
-    img_bkgnd         = eidors_obj('image', 'homog background', ... 
-                                   'elem_data', homg_conductivity, ...
-                                   'fwd_model', fem ); 
-\end{verbatim}
+
+\begin{tabular}{rr}
+\CN    \CC img_bkgnd           = eidors_obj('image', 'homog bkgnd'); @\\
+\CN    \CC img_bkgnd.elem_data = ones( length(fem.elems) ,1); @\\
+\CN    \CC img_bkgnd.fwd_model = fem; @\\
+\end{tabular}
+
 In this expression, the {\tt type} field is assigned
 to {\tt 'image'} and then {\tt name} is assigned
-(arbitrarily) to {\tt 'homog background'}.
+(arbitrarily) to {\tt 'homog bkgnd'}.
 
 In order to calculate the Jacobian, we call
 
-\begin{verbatim}
-{\tt J= calc\_jacobian( fem, img\_bkgnd )}
-\end{verbatim}
+\begin{tabular}{rr}
+\CN    \CC J= calc_jacobian( fem, img_bkgnd ) @\\
+\end{tabular}
 
 which, first, tests to see whether {\bf J} has been previously
 calculated for {\tt fem} and {\tt img\_bkgnd}; if
@@ -700,28 +705,39 @@ to provide many of useful 2D and 3D models. This function
 may be used as follows to construct the FEM and use it
 to simulate voltage patterns.
 
-\begin{verbatim}
-    mdl  = mk_common_model('n3r2');
-    mdl.fwd_model.jacobian   = 'np_calc_jacobian';
-    mdl.fwd_model.system_mat = 'np_calc_system_mat';
-    mdl.fwd_model.solve      = 'np_fwd_solve';
-
-    n_elems     =    size(mdl.fwd_model.elems,1);
-    conductivity=    ones( n_elems, 1); 
-
-    img_sim= eidors_obj('image', 'demo');
-    img_sim.elem_data = conductivity;
-    img_sim.fwd_model = mdl.fwd_model;
-
-    meas_h= fwd_solve( img_sim );
-
-    img_sim.elem_data(target_A)= 1.2;
-    img_sim.elem_data(target_B)= 0.8;
-    meas_i= fwd_solve( img_sim );
-\end{verbatim}
+\begin{tabular}{ll}
+\CN    \CC mdl  = mk_common_model('n3r2');   @\\
+\CN    \CC mdl.fwd_model.jacobian   = 'np_calc_jacobian';   @\\
+\CN    \CC mdl.fwd_model.system_mat = 'np_calc_system_mat';   @\\
+\CN 04 \CC mdl.fwd_model.solve      = 'np_fwd_solve';   @\\
+\CN    \CC @\\
+\CN    \CC n_elems     =    size(mdl.fwd_model.elems);   @\\
+\CN    \CC @\\
+\CN 08 \CI \% simulate forward data \\
+\CN    \CC img_sim= eidors_obj('image', 'demo');   @\\
+\CN    \CC img_sim.elem_data = ones( n_elems );    @\\
+\CN    \CC img_sim.fwd_model = mdl.fwd_model;   @\\
+\CN 12 \CC @\\
+\CN    \CC meas_h= fwd_solve( img_sim );   @\\
+\CN    \CC @\\
+\CN    \CC img_sim.elem_data(target_A)= 1.2;   @\\
+\CN 16 \CC img_sim.elem_data(target_B)= 0.8;   @\\
+\CN    \CC meas_i= fwd_solve( img_sim );   @\\
+\CN    \CC @\\
+\CN    \CI \% add noise \\
+\CN    \CC noise= 0.1*std( meas_h.meas-meas_i.meas )*randn( n_elems ); @\\
+\CN    \CC meas_i.meas= meas_i.meas + noise; @\\
+\CN    \CC @\\
+\CN    \CI \% inverse model and reconstruct\\
+\CN    \CC mdl.hyparparameter.value= 1e-4; @\\
+\CN    \CC mdl.solve = 'np_inv_solve'; @\\
+\CN    \CC mdl.solve.func = 'laplace_image_prior'; @\\
+\CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\
+\end{tabular}
 
 In this sample code, lines 1--4 set up the model and assign
 the functions to solve the forward problem.
+Lines 
 {\tt target\_A} and {\tt target\_B} are the indices of the 
 elements accociated with a non-conductive and conductive
 target shape (Fig. \ref{fig_3d_2rings})
