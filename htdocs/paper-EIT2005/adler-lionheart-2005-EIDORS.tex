@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.29 2005-11-05 19:43:40 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.30 2005-11-05 20:28:13 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -907,23 +907,28 @@ to avoid such implemention issues.
 Sample Problem: The ``happy'' transform
 }
 
-In this section, we try to point out some
-simple approaches that work with common, linear
+In this section, we describe some simple implementation
+errors that work with common, linear
 regularization techniques. As the solution
-strategy becomes more complex, then clearly there
-become more advanced ways to cheat.
+strategy becomes more complex such as for non-linear 
+and iterative imaging algorithms, then clearly there
+become more detailed interactions between different 
+parts of the algorithms, leading to more possiblities
+for ``cheating''.
 
 To motivate the problem, assume that EIT measurement
 data have been acquired from a 2D simulated phantom which resembles
 a ``sad''' face. Being of an optimistic outlook, we wish
-that the image reconstructed represent a ``happy'' face
+that the reconstructed images represent a ``happy'' face
 instead. Fig. \ref{fig:happytransform}
-illustrates this ``happy transform''.
+illustrates what we will refer to as the ``happy transform''.
 We choose this example because it is important to distinguish
-the type of reconstruction artefacts. Most such artefacts
+the  two types of reconstruction artefacts. Most such artefacts
 produce noisy images. While such noise is inconvenient, it does
-not introduce the possibility of a misinterpretation of the
-output. We are concerned with reconstruction artefacts which
+not introduce the a strong possibility of a misinterpretation of the
+output. The most likely scenario is that an observer will conclude
+that there is an error, and ignore the results, or redo the experiments.
+We are concerned with reconstruction artefacts which
 produce structured output which would tend to result in a 
 misinterpretation of the image. Such an error could result, in a
 medical imaging application, for example, in an dramatically
@@ -953,19 +958,17 @@ image resembles the happy face.
  Careful selection of noise }
 
 Typically, a reconstruction algorithm is presented
-with white Gaussian noise (WGN) added to the data. One
-technique to perform the happy transform is to
-carefully select the noise.
-In this case, we simulated a homogenous (${\bf v}_h$)
+with additive white Gaussian noise (AWGN) added to the data. One
+possible way to the happy transform is to
+carefully select the noise introduced.
+For this exmple, we simulated a homogenous (${\bf v}_h$)
 and inhomogeneous (${\bf v}_i$) data on a 256
 element FEM. Subsequently 17.75dB of WGN was added to
 ${\bf v}_i$, and the images reconstructed using
 the algorithm of \cite{Adler_and_Guardo_1996}.
-Each image was reconstructed (with different selections of
-hyperparameter values), and reviewed by the author to determine which cases
-corresponded to the happy transform.
-Fig. \ref{fig:happynoise} shows two successful
-``happy'' images.
+Each image was reconstructed, and evaluated by us to
+detect which cases produced the ``happy face'';
+some examples are shown in Fig. \ref{fig:happynoise}.
 
 %
 % FIGURE: Happy Noise
@@ -974,40 +977,64 @@ Fig. \ref{fig:happynoise} shows two successful
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_noise.eps}
 \caption{\small 
-Images with 17.75dB WGN which were selected as ``happy''
+Images of data from figure \ref{fig:happytransform} (left)
+with 17.75dB AWGN. Images were reviewed and selected if
+the output was visually ``happy''. Sample images are shown.
  }
  \label{fig:happynoise}
 \end{flushright}
 \end{figure}
 
-In order to determine the frequency of 'happy' noise, 2000
+In order to determine the frequency which which AWGN noise
+may result in ``happy'' faces, 2000
 images were reviewed and 41 were selected, corresponding
 to an occurance rate of approximately 2\%.
 
 \subsection{ Cheating approach \#2:
              Careful selection of priors}
 
+Regularization techniques provide a powerful set of tools
+to approach ill-conditioned and ill-posed problems like
+EIT. At the same time, however, the use of a regularized
+algorithm implicitly makes probablistic assumptions
+about the image element values and correlations. 
+This section reviews ways in incorrect assumptions for
+the prior probablities may introduce artefacts into 
+the reconstructed images.
+
+We model linearized one-step difference
+EIT regularized image reconstruction
+by:
+
+\begin{equation}
+   \hat{\bf x} = 
+   \left({\bf J}^t{\bf J} + \lambda{\bf R}\right)^{-1}
+         {\bf J}^t{\bf y}
+\end{equation}
+
+where the $\hat{\bf x}$ is the reconstructed image, 
+$\bf y$ is the vector of difference data,
+$\bf J$ is the FEM Jacobian, 
+and $\bf R$ is the regularization matrix. Many 
+difference EIT reconstruction algorithms have been
+formulated this way, such as
+\cite{Cheney_etal_1990}, \cite{Adler_and_Guardo_1996},
+and \cite{Polydorides_2002}.
 The Bayesian framework for regularization interprets
-the image penalty term as {\em a priori} information 
-about the underlying image probability distribution.
-In practice, however, this term is selected using
+the regularization matrix ($\bf R$) as {\em a priori} information 
+about the underlying image probability distribution;
+$\bf R$ is a penalty term which discourages reconstructed
+images with high values of $\hat{\bf x}^t{\bf R}\hat{\bf x}$.
+In practice, however, $\bf R$ is selected using
 ad hoc or heuristic techniques. If the prior does
 not correspond to the real case, then the reconstructed
 image will be biased.
 
-In a Tikhonov regularization scheme, image amplitude
-is penalized. We use the following formulation:
+In a Tikhonov regularization scheme, the amplitude
+of image elements is penalized, and we use a
 
 \begin{equation}
-   \hat{\bf x} = 
-   \left({\bf H}^t{\bf H} + \lambda{\bf R}\right)^{-1}
-         {\bf H}^t{\bf y}
-\end{equation}
-
-where the regularization term 
-
-\begin{equation}
-   {\bf R} = \sqrt{ \mathrm{trace} {\bf H}^t{\bf H} }
+   {\bf R} = {\bf I}
 \end{equation}
 
 If, however, we {\em know} {\em a priori} that 
@@ -1017,9 +1044,7 @@ would not wish to penalize image pixels which we
 in the happy face, we set 
 
 \begin{equation}
-   {\bf R}_{i,j} = \frac{1}{2} \left[
-              \sqrt{ \mathrm{trace} {\bf H}^t{\bf H} }
-                               \right]_{i,j}
+   {\bf R}_{i,i} = \frac{1}{2}
 \end{equation}
 
 The effect of careful prior selection is hown in
@@ -1311,6 +1336,16 @@ Cederqvist P 2002
 {\it Version Management with CVS},
 Network Theory Ltd, Bristol, UK
 
+\bibitem{Cheney_etal_1990}
+Cheney M
+Isaacson D
+Newell J C
+Simske C and
+Goble J C 1990
+NOSER: An algorithm for solving the inverse conductivity problem
+\textit{Int. J. Imaging Systems \& Technol.} \textbf{2} 66--75
+
+
 \bibitem{Cheng_etal_1989}
 Cheng K-S
 Isaacson D
@@ -1322,16 +1357,16 @@ computed tomography
 {\it IEEE Trans Biomed Eng}
 {\bf 36} 918--924
 
+\bibitem{Eaton_2002}
+Eaton J W 2002
+{\it Gnu Octave Manual}
+Network Theory Ltd, Bristol, UK
+
 \bibitem{Free_Software_Foundation_1991}
 Free Software Foundation 1991
 {\it GNU General Public Licence}
 Boston MA USA
 {\tt http://www.gnu.org/copyleft/gpl.html}
-
-\bibitem{Eaton_2002}
-Eaton J W 2002
-{\it Gnu Octave Manual}
-Network Theory Ltd, Bristol, UK
 
 \bibitem{Gamma_etal_1995}
 Gamma E Helm R Johnson R and Vlissides J 1995
