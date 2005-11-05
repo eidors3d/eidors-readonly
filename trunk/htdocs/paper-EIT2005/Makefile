@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.19 2005-11-03 04:47:52 aadler Exp $
+# $Id: Makefile,v 1.20 2005-11-05 12:48:05 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -42,6 +42,10 @@ $(NAME).pdf: $(NAME).dvi
 
 $(NAME).dvi: $(NAME).tex $(FIGURES)
 	latex $<
+
+# show the code so we can check if it runs
+showcode: $(NAME).tex
+	perl -ne'print if s/^.CN.*CC (.*)@\\\\\s*$$/$$1\n/s' $<
 
 #
 # Code to build figures

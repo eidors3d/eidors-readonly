@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.24 2005-11-04 21:27:18 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.25 2005-11-05 12:48:05 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -642,7 +642,7 @@ For example, given a {\tt fwd\_model} {\tt\em fem}
 a homogeneous background of conductivity one,
 {\tt\em img\_bkgnd}, may be computed by:
 
-\begin{tabular}{rr}
+\begin{tabular}{ll}
 \CN    \CC img_bkgnd           = eidors_obj('image', 'homog bkgnd'); @\\
 \CN    \CC img_bkgnd.elem_data = ones( length(fem.elems) ,1); @\\
 \CN    \CC img_bkgnd.fwd_model = fem; @\\
@@ -654,7 +654,7 @@ to {\tt 'image'} and then {\tt name} is assigned
 
 In order to calculate the Jacobian, we call
 
-\begin{tabular}{rr}
+\begin{tabular}{ll}
 \CN    \CC J= calc_jacobian( fem, img_bkgnd ) @\\
 \end{tabular}
 
@@ -711,36 +711,64 @@ to simulate voltage patterns.
 \CN    \CC mdl.fwd_model.system_mat = 'np_calc_system_mat';   @\\
 \CN 04 \CC mdl.fwd_model.solve      = 'np_fwd_solve';   @\\
 \CN    \CC @\\
-\CN    \CC n_elems     =    size(mdl.fwd_model.elems);   @\\
-\CN    \CC @\\
-\CN 08 \CI \% simulate forward data \\
-\CN    \CC img_sim= eidors_obj('image', 'demo');   @\\
-\CN    \CC img_sim.elem_data = ones( n_elems );    @\\
+\CN    \CI \% simulate forward data \\
+\CN    \CC n_elems = size(mdl.fwd_model.elems,1);   @\\
+\CN 08 \CC img_sim= eidors_obj('image', 'demo');   @\\
+\CN    \CC img_sim.elem_data = ones( n_elems,1 );    @\\
 \CN    \CC img_sim.fwd_model = mdl.fwd_model;   @\\
-\CN 12 \CC @\\
+\CN    \CC @\\
 \CN    \CC meas_h= fwd_solve( img_sim );   @\\
-\CN    \CC @\\
+\CN 12 \CC @\\
 \CN    \CC img_sim.elem_data(target_A)= 1.2;   @\\
-\CN 16 \CC img_sim.elem_data(target_B)= 0.8;   @\\
+\CN    \CC img_sim.elem_data(target_B)= 0.8;   @\\
 \CN    \CC meas_i= fwd_solve( img_sim );   @\\
-\CN    \CC @\\
+\CN 16 \CC @\\
 \CN    \CI \% add noise \\
-\CN    \CC noise= 0.1*std( meas_h.meas-meas_i.meas )*randn( n_elems ); @\\
-\CN    \CC meas_i.meas= meas_i.meas + noise; @\\
+\CN    \CC n_meas = size( meas_h.meas, 1); @\\
+\CN    \CC noise= 0.1*std( meas_h.meas-meas_i.meas )*randn( n_meas,1 ); @\\
+\CN 20 \CC meas_i.meas= meas_i.meas + noise; @\\
 \CN    \CC @\\
 \CN    \CI \% inverse model and reconstruct\\
-\CN    \CC mdl.hyparparameter.value= 1e-4; @\\
-\CN    \CC mdl.solve = 'np_inv_solve'; @\\
-\CN    \CC mdl.solve.func = 'laplace_image_prior'; @\\
+\CN    \CC mdl.solve               = 'np_inv_solve'; @\\
+\CN 24 \CC mdl.hyparparameter.value= 1e-7; @\\
+\CN    \CC mdl.image_prior.func    = 'np_calc_image_prior'; @\\
 \CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\
 \end{tabular}
 
 In this sample code, lines 1--4 set up the model and assign
 the functions to solve the forward problem.
-Lines 
+Lines 7--10 create an image object with a homogeneous
+conductivity in all elements, and solves the forward
+problem to simulate data {\tt meas\_h} on line 11. To simulate an
+inhomogeneous model, lines 13--14 modify the conductivity
+distribution, and calculates {\tt meas\_i} on line 15,
+to which we add noise of signal to noise ratio (SNR) $20\rm dB$
+on lines 18--20.
 {\tt target\_A} and {\tt target\_B} are the indices of the 
 elements accociated with a non-conductive and conductive
 target shape (Fig. \ref{fig_3d_2rings})
+To solve the inverse problem, we assign the functions to
+the inverse model on lines 23--25, and call the inverse solver
+on line 26 to calculate the image {\tt img}. This image
+may be displayed using the following imaging functions:
+
+\begin{tabular}{ll}
+\CN    \CC show_fem( img ) @\\
+\CN 28 \CC image_levels(img, [.5,1.5,2.5]); @\\
+\CN    \CC show_slices(img, [inf, inf, .5; ... @\\
+\CN    \CC                   inf, inf, 2.5; ... @\\
+\CN    \CC                   -.2, inf, inf; ... @\\
+\CN 30 \CC                   inf,-1.5,   2 ]); @\\
+\end{tabular}
+
+where {\tt show\_fem} images a 3D visualization of the
+FEM and image, {\tt image\_levels} displays slices through
+the $z-\rm axis$ and {\tt show\_slices} displays an
+arbirary set planar slices though the model, for which the
+$x-$, $y-$ and $z-\rm axes$ are specified.
+
+
+
 
 The functions {\tt mk\_circ\_tank} and {\tt mk\_stim\_patterns}
 build regular cylidrical EIT FEM models. In order to use more
