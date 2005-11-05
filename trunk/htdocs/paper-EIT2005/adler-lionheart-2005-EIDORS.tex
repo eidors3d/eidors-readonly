@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.25 2005-11-05 12:48:05 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.26 2005-11-05 13:26:03 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -730,10 +730,26 @@ to simulate voltage patterns.
 \CN    \CC @\\
 \CN    \CI \% inverse model and reconstruct\\
 \CN    \CC mdl.solve               = 'np_inv_solve'; @\\
-\CN 24 \CC mdl.hyparparameter.value= 1e-7; @\\
+\CN 24 \CC mdl.hyparparameter.value= 1e-4; @\\
 \CN    \CC mdl.image_prior.func    = 'np_calc_image_prior'; @\\
 \CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\
 \end{tabular}
+
+%
+% FIGURE: 2 rings electrode config
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_2rings.eps}
+\caption{\small The 
+{\em The 3D demonstration FEM provided with the EIDORS3D
+\cite{Polydorides_and_Lionheart_2002},
+using two rings of 16 electrodes with 20dB SNR
+}
+ \label{fig:fig_3d_2rings}
+}
+\end{flushright}
+\end{figure}
 
 In this sample code, lines 1--4 set up the model and assign
 the functions to solve the forward problem.
@@ -746,11 +762,12 @@ to which we add noise of signal to noise ratio (SNR) $20\rm dB$
 on lines 18--20.
 {\tt target\_A} and {\tt target\_B} are the indices of the 
 elements accociated with a non-conductive and conductive
-target shape (Fig. \ref{fig_3d_2rings})
+target shape.
 To solve the inverse problem, we assign the functions to
 the inverse model on lines 23--25, and call the inverse solver
 on line 26 to calculate the image {\tt img}. This image
-may be displayed using the following imaging functions:
+may be displayed using the following imaging functions
+(Fig. \ref{fig:fig_3d_2rings}):
 
 \begin{tabular}{ll}
 \CN    \CC show_fem( img ) @\\
@@ -767,15 +784,60 @@ the $z-\rm axis$ and {\tt show\_slices} displays an
 arbirary set planar slices though the model, for which the
 $x-$, $y-$ and $z-\rm axes$ are specified.
 
-
-
-
-The functions {\tt mk\_circ\_tank} and {\tt mk\_stim\_patterns}
-build regular cylidrical EIT FEM models. In order to use more
+The functions ilustrated
+build cylidrical EIT FEM models. In order to use more
 sophisticated simulations, these functions can be replaced
 by the user. For example, code to build models using {\em netgen}
-{\tt http://www.hpfem.jku.at/netgen/} is available in the
+\cite{Schoberl_1997}  is available in the
 {\tt meshing/netgen/} directory.
+In addition to the Matlab based visualization functions,
+functions are provides to write data to the {\em VTK}
+in the {\tt graphics\_vtk} directory,
+format to allow visualization using {\em Mayavi}
+\cite{Ramachandran_2003}.
+
+%
+% FIGURE: Zigzag electrode config
+%
+\begin{figure}[th]
+\begin{flushright}
+\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_zigzag.eps}
+\caption{\small The 
+{\em Modification of NP's model to use 16 electrodes in a
+zig zag configuration and reconstruction with them}
+ \label{fig:fig_3d_zigzag}
+}
+\end{flushright}
+\end{figure}
+
+In order to use this model with a sixteen electrode EIT
+system, we need to: 1) modify and reorder the electrode
+definitions, and 2) define a new stimulation and measurement
+protocol. We implement this as follows:
+
+\begin{tabular}{ll}
+\CN    \CI \% lines 1--5 from above \\
+\CN    \CC @\\
+\CN    \CC select = [1:2:15; 18:2:32]; @\\
+\CN 08 \CC mdl.fwd_model.electrode=  ... @\\
+\CN    \CC     mdl.fwd_model.electrode( select(:) ); @\\
+\CN    \CC n_elecs= 16; @\\
+\CN    \CC n_rings= 1; @\\
+\CN 12 \CC mdl.fwd_model.stimulation = mk_stim_patterns( ... @\\
+\CN    \CC              n_elecs, n_rings, '{ad}', '{ad}'); @\\
+\CN    \CC @\\
+\CN    \CI \% lines 6--30 from above \\
+\end{tabular}
+
+This modification of the model requires 7 lines to be added
+to the previous example. Lines 7--9 modify and reorder the
+electrodes, and lines 10--13 introduce a new, adjacent
+stimulation protocol with $1$ ring of $16$ electrodes. Reconstructed
+images are show in Fig. \ref{fig:fig_3d_zigzag}.
+It is clear that the image quality is less than that of
+\ref{fig:fig_3d_2rings}; this is to be expected this configuration
+has less than $frac{1}{4}$ the number of independant measurements.
+ 
 
 \subsection{  Reconstruct Images }
 
@@ -811,36 +873,6 @@ solve_img= inv_solve( demo_inv, data1, data2);
 \section{
  Example: modifying electrode configuration for 3D model
 }
-
-%
-% FIGURE: 2 rings electrode config
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_2rings.eps}
-\caption{\small The 
-{\em The 3D demonstration FEM provided with the EIDORS3D
-\cite{Polydorides_and_Lionheart_2002},
-using two rings of 16 electrodes with 20dB SNR
-}
- \label{fig:fig_3d_2rings}
-}
-\end{flushright}
-\end{figure}
-
-%
-% FIGURE: Zigzag electrode config
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_zigzag.eps}
-\caption{\small The 
-{\em Modification of NP's model to use 16 electrodes in a
-zig zag configuration and reconstruction with them}
- \label{fig:fig_3d_zigzag}
-}
-\end{flushright}
-\end{figure}
 
 \section{
  Cheating with EIT
@@ -1203,20 +1235,24 @@ possible errors, and help researchers to avoid them.
 \begin{thebibliography}{99}
 % IOP standard references
 %\References % Harvard style references
+
 \bibitem{Adler_and_Guardo_1996}
 Adler A and Guardo R
 1996
 Electrical impedance tomography: regularised imaging and contrast detection 
 \textit{IEEE Trans. Med. Imaging} \textbf{15} 170--9
+
 \bibitem{Asfaw_and_Adler_2005}
 Asfaw Y and Adler A
  2005
 Automatic detection of detached and erroneous electrodes in electrical impedance tomography
 {\it Physiol. Meas.}, {\bf 26} S175--S183
+
 \bibitem{Cederqvist_2002}
 Cederqvist P 2002
 {\it Version Management with CVS},
 Network Theory Ltd, Bristol, UK
+
 \bibitem{Cheng_etal_1989}
 Cheng K-S
 Isaacson D
@@ -1227,23 +1263,23 @@ Electrode models for electric current
 computed tomography
 {\it IEEE Trans Biomed Eng}
 {\bf 36} 918--924
+
 \bibitem{Free_Software_Foundation_1991}
 Free Software Foundation 1991
 {\it GNU General Public Licence}
 Boston MA USA
 {\tt http://www.gnu.org/copyleft/gpl.html}
+
 \bibitem{Eaton_2002}
 Eaton J W 2002
 {\it Gnu Octave Manual}
 Network Theory Ltd, Bristol, UK
+
 \bibitem{Gamma_etal_1995}
 Gamma E Helm R Johnson R and Vlissides J 1995
 {\it Design Patterns: Elements of Reusable Object-Oriented Software}
 Addison-Wesley, Boston, MA, USA
-\bibitem{Soleimani_etal_2005}
-Soleimani M G\'omez-Laberge C and Adler A 2005
-Imaging of conductivity changes and electrode movement in EIT
-{\it Physiol. Meas.}, submitted
+
 \bibitem{Polydorides_and_Lionheart_2002}
 Polydorides N and Lionheart W R B
 2002
@@ -1251,17 +1287,38 @@ A Matlab toolkit for three-dimensional electrical impedance
 tomography: a contribution to the Electrical Impedance and
 Diffuse Optical Reconstruction Software project,
 {\it Meas. Sci. Technol.} {\bf 13} 1871--1883 
+
 \bibitem{Polydorides_2002}
 Polydorides N 
 2002
 {\it Image reconstruction algorithms for soft-field tomography}
 Ph.D. Thesis,
 University of Manchester Institute of Science and Technology, U.K. 
+
+\bibitem{Ramachandran_2003}
+Ramachandran P 2003
+Scientific data visualization with MayaVi
+{\it Conf. SciPy: Python for Scientific Computing}
+Pasadena, CA, USA
+{\tt http://mayavi.sf.net/}
+
+\bibitem{Soleimani_etal_2005}
+Soleimani M G\'omez-Laberge C and Adler A 2005
+Imaging of conductivity changes and electrode movement in EIT
+{\it Physiol. Meas.}, submitted
+
+\bibitem{Schoberl_1997}
+Sch\"oberl J 1997
+NETGEN - An advancing front 2D/3D-mesh generator based on abstract rules.
+{\it Comput. Visual. Sci} {\bf 1} 41--52
+{\tt http://www.hpfem.jku.at/netgen/}
+
 \bibitem{Vauhkonen_1997} 
 Vauhkonen M 
 1997
 {\it Electrical impedance tomography and prior information}
 PhD thesis, University of Kuopio, Finland 
+
 \bibitem{Vauhkonen_etal_2000} 
 Vauhkonen M,
 Lionheart W R B,
