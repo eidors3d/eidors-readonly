@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.28 2005-11-05 14:19:14 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.29 2005-11-05 19:43:40 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -31,7 +31,7 @@
 \begin{abstract} %Single paragraph text only (no ref. eqn. max.200 words)
 
 EIDORS is an open source software suite for image reconstruction in
-electrical impedance tomography and diffuse optical tomography;
+electrical impedance tomography and diffuse optical tomography,
 designed to facilitate collaboration, testing and new research
 in these fields.  This paper describes recent work to
 redesign the software structure in order to simplify its use
@@ -44,11 +44,13 @@ of correctly implemeting algorithms, and the consequent ease with
 which subtle numerical bugs can be inadvertently introducted.
 EIDORS helps with this issue, by allowing sharing and reuse
 of well documented and debugged software. On the other hand, 
-EIDORS potentially encourages such issues by facilitating use
-by non-specialists. In order to address this issue, we develop
-a list ``cheats'' with inverse problems. Our hope is that such
-a list will assist authors of software to avoid such implemention
-issues.
+since EIDORS is designed to facilitating use by non-specialists,
+its use may inadvertently result in such numerical errors.
+In order to address this issue, we develop a list of ways in
+which such errors with inverse problems
+ (which we refer to as ``cheats'') may occur.
+Our hope is that such an overview may assist authors
+of software to avoid such implemention issues.
 
 
 \end{abstract}
