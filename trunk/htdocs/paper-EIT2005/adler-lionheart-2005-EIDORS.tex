@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.27 2005-11-05 13:58:06 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.28 2005-11-05 14:19:14 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -546,8 +546,6 @@ The image prior is selected by the {\tt image\_prior} field;
 the function to calculate the image prior is the {\tt func}
 field, while
 any parameters to this function are provided as {\tt parameters}.
-A detailed example using this field is provides in
-section \ref{modify_hp_to_cheat}.
 
 \subsubsection{image}
 
@@ -858,9 +856,11 @@ example.
 \CN    \CI \% lines 1--24 from above \\
 \CN    \CC mdl.image_prior.func       = 'my_cheating_prior'; @\\
 \CN    \CC mdl.image_prior.parameter2 = [target_A]; @\\
-\begin{tabular}{ll}
+\CN    \CI \% lines 26--30 from above \\
+\end{tabular}
 
-We define the function {\tt my_cheating_prior} in a separate file:
+We define the function {\tt my\_cheating\_prior} in a separate file:
+
 \begin{tabular}{ll}
 \CN    \CC function Reg = my_cheating_prior( inv_model ); @\\
 \CN    \CC   inv_model.image_prior.func = 'np_calc_image_prior'; @\\
@@ -870,7 +870,7 @@ We define the function {\tt my_cheating_prior} in a separate file:
 \CN    \CC   posn = posn + (posn-1)*size(Reg,1); @\\
 \CN    \CC @\\
 \CN 08 \CC   Reg(posn) = Reg(posn) * 0.5; @\\
-\begin{tabular}{ll}
+\end{tabular}
 
 In lines 2--3, the previous prior function is calculated
 from {\tt np\_calc\_image\_prior()}. Subsequently, on lines
@@ -889,31 +889,59 @@ in detail in the following section.
  Cheating with EIT
 }
 
+One general issue with inverse problem software is the difficulty
+of correctly implemeting algorithms, and the consequent ease with
+which subtle numerical bugs can be inadvertently introducted.
+EIDORS helps with this issue, by allowing sharing and reuse
+of well documented and debugged software. On the other hand, 
+since EIDORS is designed to facilitate use by non-specialists,
+it may inadvertently encourage numerical errors.
+In order to address this issue, we develop in this section
+a list ways in which such errors, or ``cheats'' may occur.
+Our hope is that such a list will assist authors of software
+to avoid such implemention issues.
+
+\subsection{
+Sample Problem: The ``happy'' transform
+}
+
 In this section, we try to point out some
 simple approaches that work with common, linear
 regularization techniques. As the solution
 strategy becomes more complex, then clearly there
 become more advanced ways to cheat.
 
-\subsection{
-Sample Problem: The happy transform
-}
 To motivate the problem, assume that EIT measurement
-data have been acquired from an image which resembles
-a 'sad' face. Being of an optimistic outlook, we wish
-that the image reconstructed represent a 'happy' face
+data have been acquired from a 2D simulated phantom which resembles
+a ``sad''' face. Being of an optimistic outlook, we wish
+that the image reconstructed represent a ``happy'' face
 instead. Fig. \ref{fig:happytransform}
 illustrates this ``happy transform''.
+We choose this example because it is important to distinguish
+the type of reconstruction artefacts. Most such artefacts
+produce noisy images. While such noise is inconvenient, it does
+not introduce the possibility of a misinterpretation of the
+output. We are concerned with reconstruction artefacts which
+produce structured output which would tend to result in a 
+misinterpretation of the image. Such an error could result, in a
+medical imaging application, for example, in an dramatically
+incorrect diagnosis. We have designed the ``happy transform''
+to illustrate this type of image artefact.
+
 
 %
 % FIGURE: Happy Transform
 %
 \begin{figure}[th]
 \begin{flushright}
-\includegraphics[width= 0.25 \textwidth]{./figs/sad.eps}
-\includegraphics[width= 0.25 \textwidth]{./figs/happy.eps}
+\includegraphics[width= 0.20 \textwidth]{./figs/sad.eps}
+\includegraphics[width= 0.20 \textwidth]{./figs/happy.eps}
 \caption{\small The 
-{\em happy transform}
+{\em happy transform}. Left, a 2D phantom representing
+a sad face, and, right, a 2D phantom representing a
+happy face. The {\em happy} transform attempts to 
+reconstruct data from the sad face phantom such that the
+image resembles the happy face.
  }
  \label{fig:happytransform}
 \end{flushright}
@@ -953,9 +981,6 @@ Images with 17.75dB WGN which were selected as ``happy''
 In order to determine the frequency of 'happy' noise, 2000
 images were reviewed and 41 were selected, corresponding
 to an occurance rate of approximately 2\%.
-While careful noise selection is not a mathematical/computational
-technique, it is commonly used in association in research,
-and thus merits mention here.
 
 \subsection{ Cheating approach \#2:
              Careful selection of priors}
@@ -966,16 +991,19 @@ about the underlying image probability distribution.
 In practice, however, this term is selected using
 ad hoc or heuristic techniques. If the prior does
 not correspond to the real case, then the reconstructed
-image will be biased. This idea is key for approach \#2.
+image will be biased.
 
 In a Tikhonov regularization scheme, image amplitude
 is penalized. We use the following formulation:
+
 \begin{equation}
    \hat{\bf x} = 
    \left({\bf H}^t{\bf H} + \lambda{\bf R}\right)^{-1}
          {\bf H}^t{\bf y}
 \end{equation}
+
 where the regularization term 
+
 \begin{equation}
    {\bf R} = \sqrt{ \mathrm{trace} {\bf H}^t{\bf H} }
 \end{equation}
@@ -1019,8 +1047,10 @@ happy face (right),
 \end{figure}
 
 In order to enhance this effect, we use an {\em inverse crime},
-by putting the Tikhonov prior information {\em exactly} where
-it needs to be to get the happy face (Fig. \ref{fig:tikprior_icrime}).
+using the same FEM for both data simulation and image reconstruction.
+This allows the Tikhonov prior information to be {\em exactly} where
+in the positions of the happy face finite elements
+(Fig. \ref{fig:tikprior_icrime}).
 
 %
 % FIGURE: Tikhonov Prior with inv crime
@@ -1230,6 +1260,21 @@ Seemingly different number of fingers resulting simply from a
 \section{
  Discussion
 }
+
+Items to discuss
+
+ - EIDORS adv and disadv
+ - Call for contributions to EIDORS
+ - Cheating real world implications
+ - Define "inverse GIGO"
+
+    Normally we say "garbage in, garbage out"
+
+  We define "Don't whitewash our garbage" DWG
+
+    "If we have Garbage input, we want to see garbage out"
+
+
 
 As well as to illustrate the use of the new plugable OO
 framework for EIDORS one of our aims in this paper is to
