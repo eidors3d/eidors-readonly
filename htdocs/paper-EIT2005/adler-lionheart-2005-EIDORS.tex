@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.26 2005-11-05 13:26:03 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.27 2005-11-05 13:58:06 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -817,15 +817,13 @@ protocol. We implement this as follows:
 
 \begin{tabular}{ll}
 \CN    \CI \% lines 1--5 from above \\
-\CN    \CC @\\
 \CN    \CC select = [1:2:15; 18:2:32]; @\\
-\CN 08 \CC mdl.fwd_model.electrode=  ... @\\
-\CN    \CC     mdl.fwd_model.electrode( select(:) ); @\\
+\CN    \CC mdl.fwd_model.electrode=  ... @\\
+\CN 08 \CC     mdl.fwd_model.electrode( select(:) ); @\\
 \CN    \CC n_elecs= 16; @\\
 \CN    \CC n_rings= 1; @\\
-\CN 12 \CC mdl.fwd_model.stimulation = mk_stim_patterns( ... @\\
-\CN    \CC              n_elecs, n_rings, '{ad}', '{ad}'); @\\
-\CN    \CC @\\
+\CN    \CC mdl.fwd_model.stimulation = mk_stim_patterns( ... @\\
+\CN 12 \CC              n_elecs, n_rings, '{ad}', '{ad}'); @\\
 \CN    \CI \% lines 6--30 from above \\
 \end{tabular}
 
@@ -841,38 +839,51 @@ has less than $frac{1}{4}$ the number of independant measurements.
 
 \subsection{  Reconstruct Images }
 
-This example shows how modify an existing algorithm.
-For example, we wish to modify the
-hyperparameter selection strategy of \cite{Polydorides_2002} to use
-instead the {\em Noise Figure} parameter introduced by
-\cite{Adler_and_Guardo_1996}. The first step is to create a
-{\tt fwd\_model} structure {\em demo\_mdl} in a similar
-way to the above (details are shown in {\tt examples/demo\_real.m}).
-Subsequently, an {\tt inv\_model}, {\tt demo\_inv} is created,
-and the image reconstructed from difference data: 
-{\tt data1} and {\tt data2}.
+In this section we show a way to override the image prior
+for an existing algorithm. In the subsequent section,
+we discuss the importance of correct image priors,
+and how image artefacts may easily be introduced by the incorrect
+choice of these parameters. The ``plugability'' feature of the
+EIDORS design allows this to be implemented in an convenient way.
 
-\begin{verbatim}
-demo_inv.name= 'Nick Polydorides - Modified';
-demo_inv.solve= 'np_inv_solve';
-demo_inv.reconst_type= 'differential';
-demo_inv.fwd_model= demo_mdl;
+If we wish to modify the example of the previous section
+to use an image prior defined by the function
+{\tt my\_cheating\_prior()} which uses the structure of the
+prior to \cite{Polydorides_2002} but modifies it to reduce
+halve the penalty at specific image elements, chosen by
+the user. To do this, we replace line 25 from the previous
+example.
 
-% modify to use Tikhonov prior
-demo_inv.image_prior.func= 'tikhonov_image_prior';
+\begin{tabular}{ll}
+\CN    \CI \% lines 1--24 from above \\
+\CN    \CC mdl.image_prior.func       = 'my_cheating_prior'; @\\
+\CN    \CC mdl.image_prior.parameter2 = [target_A]; @\\
+\begin{tabular}{ll}
 
-% modify to use Noise Figure of 2.0
-demo_inv.hyperparameter.func = 'aa_calc_noise_figure';
-demo_inv.hyperparameter.noise_figure = 2.0;
-demo_inv= eidors_obj('inv_model', demo_inv);
+We define the function {\tt my_cheating_prior} in a separate file:
+\begin{tabular}{ll}
+\CN    \CC function Reg = my_cheating_prior( inv_model ); @\\
+\CN    \CC   inv_model.image_prior.func = 'np_calc_image_prior'; @\\
+\CN    \CC   Reg= calc_image_prior( inv_model ); @\\
+\CN 04 \CC @\\
+\CN    \CC   posn = inv_model.image_prior.parameter2; @\\
+\CN    \CC   posn = posn + (posn-1)*size(Reg,1); @\\
+\CN    \CC @\\
+\CN 08 \CC   Reg(posn) = Reg(posn) * 0.5; @\\
+\begin{tabular}{ll}
 
-% solve inverse
-solve_img= inv_solve( demo_inv, data1, data2);
-\end{verbatim}
+In lines 2--3, the previous prior function is calculated
+from {\tt np\_calc\_image\_prior()}. Subsequently, on lines
+5--8, the position of target elements is calculated and
+the penalty term multipled by $0.5$. Line 6 calculates
+a column major index into the matrix {\tt Reg} of the
+diagonal element indicated by {\tt posn}. As expected,
+images reconstructed with this prior, shows sharper
+images than that of \ref{fig:fig_3d_zigzag}.
+The implications of this type of ``cheating'' are explored
+in detail in the following section.
 
-\section{
- Example: modifying electrode configuration for 3D model
-}
+
 
 \section{
  Cheating with EIT
