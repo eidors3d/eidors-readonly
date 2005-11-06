@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.30 2005-11-05 20:28:13 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.31 2005-11-06 00:02:26 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -741,11 +741,17 @@ to simulate voltage patterns.
 \begin{figure}[th]
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_2rings.eps}
-\caption{\small The 
-{\em The 3D demonstration FEM provided with the EIDORS3D
+\caption{\small
+The 3D demonstration FEM provided with the EIDORS3D
 \cite{Polydorides_and_Lionheart_2002},
 using two rings of 16 electrodes with 20dB SNR
-}
+Left: FEM Model with coloured and filled in elements for
+reconstructed image values what an absolute value
+above $frac{1}{4}$ of the absolute maximum image value.
+Right: 2D slices through the reconstructed image at
+$z-$axis intercepts of $0.125$, $0.375$, $0.625$, and $0.875$
+from bottom to top.
+
  \label{fig:fig_3d_2rings}
 }
 \end{flushright}
@@ -780,7 +786,7 @@ may be displayed using the following imaging functions
 
 where {\tt show\_fem} images a 3D visualization of the
 FEM and image, {\tt image\_levels} displays slices through
-the $z-\rm axis$ and {\tt show\_slices} displays an
+the $z-$axis and {\tt show\_slices} displays an
 arbirary set planar slices though the model, for which the
 $x-$, $y-$ and $z-\rm axes$ are specified.
 
