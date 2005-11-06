@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.31 2005-11-06 00:02:26 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.32 2005-11-06 22:02:34 billlion Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -1193,21 +1193,19 @@ the base of cylinder as a crude approximation to three
 fingers inserted in a slaine filled tank. To make the
 simulated data we used a mesh respecting these fingers
 \fref{fig:threefingers} and added gaussian pseudo-random
-error to this data with a variance of ?? of the maximum
+error to this data with a variance of $10^{-5}$ of the maximum
 voltage. The images shown are typical of thos generated
 from data from several draws of the psuedorandom number
 generator. We then attempt to reconstruct the conductivity
-using a mesh that does not incorporate the fingers. We will
-use a single step of regularized Gauss-Newton to perform
-the reconstruction, and note that we do not expect to do
+using a single step of regularized Gauss-Newton. Note that we do not expect to do
 very well with a crude mesh and reconstruction algorithm,
 but we are interested to see if we can distinguish three
 fingers and their approximate position. Our first attempt,
 using an arbitrarily chosen regularization factor
-of ??? appears in \fref{fig:3fingers1}. It is
+of $10^{-8}$ appears in \fref{fig:3fingers1}. It is
 displayed using the VTK visualisation program Mayav {\tt
 www.mayavi.org}, after exporting the data to a vtk file
-using EIDORS function writevtkfile ***New OO name?. The
+using EIDORS function {\tt writevtkfile(filename,model,image)}. The
 piecewise constant conductivity of the reconstruction has
 been interpolated using the {\tt CellToPointData} filter in
 Mayavi, and displayed using Mayavi's {\tt isosurface} with
