@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.32 2005-11-06 22:02:34 billlion Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.33 2005-11-07 04:03:56 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -1037,15 +1037,13 @@ not correspond to the real case, then the reconstructed
 image will be biased.
 
 In a Tikhonov regularization scheme, the amplitude
-of image elements is penalized, and we use a
+of image elements is penalized. To illustrate
+this regularization scheme, we use a uniform
+weighting to each image element, ${\bf R} = {\bf I}$.
 
-\begin{equation}
-   {\bf R} = {\bf I}
-\end{equation}
-
-If, however, we {\em know} {\em a priori} that 
-our data were measured from a happy face, then we 
-would not wish to penalize image pixels which we
+If, however, it were {\em known} {\em a priori} that 
+data were measured from a happy face, then we 
+would not wish to penalize image elements which we
 {\em know} to be large. Thus for each pixel {\em i}
 in the happy face, we set 
 
@@ -1053,7 +1051,7 @@ in the happy face, we set
    {\bf R}_{i,i} = \frac{1}{2}
 \end{equation}
 
-The effect of careful prior selection is hown in
+The effect of modified Tikhonov prior selection is shown in
 Fig. \ref{fig:tikprior}.
 In this case, images were reconstructed on a 576 element
 FEM (chosen to differ from the 256 element simulation mesh).
@@ -1071,9 +1069,9 @@ using different mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Tikhonov prior with no weighting,
 {\em Image 2:} Tikhonov prior with weighting for positions in sad face,
-{\em Image 3:} Tikhonov prior with weighting for sad face (left) and
+{\em Image 3:} Tikhonov prior with weighting for positions in happy face,
+{\em Image 4:} Tikhonov prior with weighting for sad face (left) and
 happy face (right),
-{\em Image 4:} Tikhonov prior with weighting for positions in happy face,
  }
  \label{fig:tikprior}
 \end{flushright}
@@ -1097,9 +1095,9 @@ using {\em same} mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Tikhonov prior with no weighting,
 {\em Image 2:} Tikhonov prior with weighting for positions in sad face,
-{\em Image 3:} Tikhonov prior with weighting for sad face (left) and
+{\em Image 3:} Tikhonov prior with weighting for positions in happy face,
+{\em Image 4:} Tikhonov prior with weighting for sad face (left) and
 happy face (right),
-{\em Image 4:} Tikhonov prior with weighting for positions in happy face,
  }
  \label{fig:tikprior_icrime}
 \end{flushright}
@@ -1138,9 +1136,9 @@ using different mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Edge prior with no weighting,
 {\em Image 2:} Edge prior with weighting for positions in sad face,
-{\em Image 3:} Edge prior with weighting for sad face (left) and
+{\em Image 3:} Edge prior with weighting for positions in happy face,
+{\em Image 4:} Edge prior with weighting for sad face (left) and
 happy face (right),
-{\em Image 4:} Edge prior with weighting for positions in happy face,
  }
  \label{fig:laplprior}
 \end{flushright}
@@ -1166,9 +1164,9 @@ using same mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Edge prior with no weighting,
 {\em Image 2:} Edge prior with weighting for positions in sad face,
-{\em Image 3:} Edge prior with weighting for sad face (left) and
+{\em Image 3:} Edge prior with weighting for positions in happy face,
+{\em Image 4:} Edge prior with weighting for sad face (left) and
 happy face (right),
-{\em Image 4:} Edge prior with weighting for positions in happy face,
  }
  \label{fig:laplprior-icrime}
 \end{flushright}
