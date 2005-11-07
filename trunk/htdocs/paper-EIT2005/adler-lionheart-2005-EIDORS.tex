@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.34 2005-11-07 05:37:29 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.35 2005-11-07 05:46:06 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -1315,11 +1315,10 @@ Seemingly different number of fingers resulting simply from a
 This paper presents version 3 of the EIDORS,
 open source software suite for image reconstruction
 in EIT and diffuse optical tomography.
-Earlier versions of EIDORS provided 2D image
 The current version build on the capabilities of
-earlier versions of EIDORS (\cite{Vauhkonen_etal_2000},
+earlier versions of EIDORS \cite{Vauhkonen_etal_2000},
 \cite{Polydorides_and_Lionheart_2002}, but
-has a very different focus. Rather than
+has a different focus. Rather than
 simply providing image reconstruction software, 
 EIDORS version 3 takes a software engineering
 approach to its design, in order to address the
@@ -1335,7 +1334,7 @@ following practical issues.
   We address this issue by providing many simple
   and more detailed examples, and by implementing
   a unified ``pluggable'' software architecture,
-  into which many FEM models, image algorithms, and
+  into which multiple FEM models, image algorithms, and
   interfaces to common hardware are provided.
 
   \item {\em Design for testability}:
@@ -1349,24 +1348,15 @@ following practical issues.
   users of the software as follows:
   For numerical difficulties, we provide several well used independant
   algorithms to solve core functions, as well as a test suite
-  to validate the calculations of several important parameters
-  such as the Jacobian.
+  to validate the calculations of several important parameters.
   The algorithm model errors, on the other
-  hand, we are not able to address by software. Instead we
+  hand, we are not able to address in software. Instead, we
   have written a section on how to identify and avoid such
   errors as part of this paper.
   We hope that these ideas will help clarify the kinds of
   possible errors, and help researchers to avoid them.
 
 \end{itemize}
-
-Open source software like EIDORS has could
-potentially dramatically facilitate
-research and development in medical imaging fields like EIT.
-It could assist in the development on new works
-based on combinations of previous approaches, and
-could allow correct comparison of new approaches
-to older ones. 
 
 We make the following additional observations related to 
 ``cheating'' with inverse problems.
@@ -1401,6 +1391,14 @@ version 3 release. These developments have been
 focussed on software engineering improvements that
 will facilitate collaborative use, modification and
 enhancement of the software by the EIT community.
+Open source software like EIDORS could
+potentially be a dramatical help to
+research and development in medical imaging fields like EIT.
+We are hopeful that EIDORS will assist in the development
+and testing of new approaches and ideas, and will
+ease the use of advanced algorithms in experimental,
+industrial and clinical applications of these technologies.
+
 
 \section*{References}
 \begin{thebibliography}{99}
