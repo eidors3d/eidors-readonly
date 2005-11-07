@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.35 2005-11-07 05:46:06 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.36 2005-11-07 05:53:57 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -40,8 +40,8 @@ permitting easier modification and customization.
 We describe the key features of this software, followed by
 examples of its use.
 One general issue with inverse problem software is the difficulty
-of correctly implemeting algorithms, and the consequent ease with
-which subtle numerical bugs can be inadvertently introducted.
+of correctly implementing algorithms, and the consequent ease with
+which subtle numerical bugs can be inadvertently introduced.
 EIDORS helps with this issue, by allowing sharing and reuse
 of well documented and debugged software. On the other hand, 
 since EIDORS is designed to facilitating use by non-specialists,
@@ -50,7 +50,7 @@ In order to address this issue, we develop a list of ways in
 which such errors with inverse problems
  (which we refer to as ``cheats'') may occur.
 Our hope is that such an overview may assist authors
-of software to avoid such implemention issues.
+of software to avoid such implementation issues.
 
 
 \end{abstract}
@@ -160,7 +160,7 @@ systems.
 It is observed that researchers typically base new software on
 demonstration examples. To facilitate this, some simple and more
 complex usage examples are provided for image reconstruction
-in two-and three dimentions using various image reconstruction
+in two-and three dimensions using various image reconstruction
 algorithms and combinations of algorithms.
 
   \item {\em Test suite:}
@@ -227,7 +227,7 @@ the open source nature of EIDORS.
 In order to facilitate user modifications, EIDORS
 has been designed to provide some of the benefits of
 object-oriented (OO) software \cite{Gamma_etal_1995}:
-{\em abstraction}, {\em encaptulation}, 
+{\em abstraction}, {\em encapsulation}, 
 {\em polymophism} and {\em inheritance}.
 We have decided not to
 use the OO framework provided by Matlab, because
@@ -245,7 +245,7 @@ pointers to allow adding new modules and controlling
 which parts of functions are executed.
 EIDORS is thus able to offer the OO features 
 of {\em packaging}, and {\em polymophism}, while
-not {\em encaptulation} or {\em inheritance}.
+not {\em encapsulation} or {\em inheritance}.
 A detailed description of this capability is
 provided in the next section.
 
@@ -270,10 +270,10 @@ modules.
 Image reconstruction, especially in 3D, requires functions
 to show high quality graphical representations of the images.
 EIDORS provides several functions for image presentation:
-{\tt show\_fem.m} displays a three dimentional model of the
+{\tt show\_fem.m} displays a three dimensional model of the
 finite element mesh and conductivity changes, while
 {\tt show\_slices.m} allows generation of images of arbitrary
-two dimentional slices through a volume. Examples of these
+two dimensional slices through a volume. Examples of these
 functions are shown in \ref{fig:fig_3d_zigzag} and \ref{fig:fig_3d_2rings}.
 All EIDORS graphics functions now use a single colour
 mapping function {\tt calc\_colours.m}, which allows
@@ -318,7 +318,7 @@ EIDORS software consists of four primary objects:
 {\tt inv\_model}. Each object is represented by a
 structure. All objects have the properties of a
 {\tt name} and {\tt type}. The {\tt name} is
-arbirary; it is displayed by the graphics functions,
+arbitrary; it is displayed by the graphics functions,
 used could also be be useful to distinguish objects
 in a user specified function. The {\tt type} must
 be one of the primary objects. In this section we
@@ -330,9 +330,9 @@ All EIDORS objects are represented using as a Matlab
 {\tt name} and {\tt type} fields. 
 The {\tt type} is used to identify the object type 
 (ie {\tt data}, {\tt image} etc.).
-The {\tt name} is arbirary, and may be used or ignored
+The {\tt name} is arbitrary, and may be used or ignored
 by software using EIDORS; it is only used by the
-graphical functions of EIDORS to anotate displayed images.
+graphical functions of EIDORS to annotate displayed images.
 
 \subsubsection{fwd\_model}
 
@@ -365,7 +365,7 @@ $V$ is the number of vertices, $N$ is the number of
 simplices (and also the number of unknown conductivities
 to be solved by the inverse solution), $B$ the number
 of simplices with a face on the boundary, and $D$ the
-model dimention ($D=2$ for 2D and $D=3$ for 3D).
+model dimension ($D=2$ for 2D and $D=3$ for 3D).
 The {\tt gnd\_node} is the vertex number attached to ground.
 
 The electrodes are defined by a vector ($E\times1$) of
@@ -421,7 +421,7 @@ measurements. One practical consideration is that
 many EIT systems store data as a matrix of size
 ($E^2{\times}F$) where $F$ is the number of data
 frames. In this case $E^2= 256$ and $48$ measurements
-in each frame yeild zero. In order to allow easy 
+in each frame yield zero. In order to allow easy 
 use of EIDORS with such systems, the optional
 field {\tt meas\_select} ($E^2\times1$) is defined
 for the {\tt fwd\_model}. This field contains a 
@@ -435,7 +435,7 @@ patterns, such as the
 {\tt mk\_circ\_tank.m},
 {\tt mk\_stim\_patterns.m} and
 {\tt mk\_common\_model.m} functions. These functions
-allow easy definition of circular and cylindrial
+allow easy definition of circular and cylindrical
 FEM models with rings of electrodes and adjacent
 stimulation protocols.
 
@@ -525,7 +525,7 @@ may assign a value to this field in order to distinguish
 \end{figure}
 
 The {\tt inv\_model} object groups information necessary to 
-allow reconstruction of images. Two basic types of reconstructon
+allow reconstruction of images. Two basic types of reconstruction
 are distinguished based on the {\tt reconst\_type} field, 
 ``difference'' (which calculates an image based on the difference
 between two {\tt data} objects) and ``static'' (which calculates an
@@ -551,7 +551,7 @@ any parameters to this function are provided as {\tt parameters}.
 
 \subsubsection{image}
 
-The EIDORS image object expresses the reconstruced or
+The EIDORS image object expresses the reconstructed or
 simulated conductivity values. The field {\tt elem\_data}
 ($N\times1$) is the value of each of the image elements in 
 the finite element model which in the field {\tt fwd\_model}.
@@ -594,7 +594,7 @@ $F$, we calculate the vector of voltages, $\bf v$,
 for each FEM degree of freedom
  (mainly, degrees of freedom are nodes, but in the
  Complete Electrode Model \cite{Cheng_etal_1989},
- electodes are also associated
+ electrodes are also associated
  with a degree of freedom):
 \begin{equation}
 {\bf v} = F({\bf \sigma}){\bf q} 
@@ -672,7 +672,7 @@ calling function.
 
 In this section two examples of the usage of EIDORS
 software functions are provided. The first illustrates
-how to a change in electrode configuation and stimulation 
+how to a change in electrode configuration and stimulation 
 pattern can be taken
 into account with a modification of the {\tt fwd\_model}.
 The second illustrates how to modify the image reconstruction
@@ -730,7 +730,7 @@ to simulate voltage patterns.
 \CN    \CC @\\
 \CN    \CI \% inverse model and reconstruct\\
 \CN    \CC mdl.solve               = 'np_inv_solve'; @\\
-\CN 24 \CC mdl.hyparparameter.value= 1e-4; @\\
+\CN 24 \CC mdl.hyperparameter.value= 1e-4; @\\
 \CN    \CC mdl.image_prior.func    = 'np_calc_image_prior'; @\\
 \CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\
 \end{tabular}
@@ -767,7 +767,7 @@ distribution, and calculates {\tt meas\_i} on line 15,
 to which we add noise of signal to noise ratio (SNR) $20\rm dB$
 on lines 18--20.
 {\tt target\_A} and {\tt target\_B} are the indices of the 
-elements accociated with a non-conductive and conductive
+elements associated with a non-conductive and conductive
 target shape.
 To solve the inverse problem, we assign the functions to
 the inverse model on lines 23--25, and call the inverse solver
@@ -787,11 +787,11 @@ may be displayed using the following imaging functions
 where {\tt show\_fem} images a 3D visualization of the
 FEM and image, {\tt image\_levels} displays slices through
 the $z-$axis and {\tt show\_slices} displays an
-arbirary set planar slices though the model, for which the
+arbitrary set planar slices though the model, for which the
 $x-$, $y-$ and $z-\rm axes$ are specified.
 
-The functions ilustrated
-build cylidrical EIT FEM models. In order to use more
+The functions illustrated
+build cylindrical EIT FEM models. In order to use more
 sophisticated simulations, these functions can be replaced
 by the user. For example, code to build models using {\em netgen}
 \cite{Schoberl_1997}  is available in the
@@ -850,7 +850,7 @@ stimulation protocol with $1$ ring of $16$ electrodes. Reconstructed
 images are show in Fig. \ref{fig:fig_3d_zigzag}.
 It is clear that the image quality is less than that of
 \ref{fig:fig_3d_2rings}; this is to be expected this configuration
-has less than $frac{1}{4}$ the number of independant measurements.
+has less than $frac{1}{4}$ the number of independent measurements.
  
 
 \subsection{  Reconstruct Images }
@@ -893,7 +893,7 @@ We define the function {\tt my\_cheating\_prior} in a separate file:
 In lines 2--3, the previous prior function is calculated
 from {\tt np\_calc\_image\_prior()}. Subsequently, on lines
 5--8, the position of target elements is calculated and
-the penalty term multipled by $0.5$. Line 6 calculates
+the penalty term multiplied by $0.5$. Line 6 calculates
 a column major index into the matrix {\tt Reg} of the
 diagonal element indicated by {\tt posn}. As expected,
 images reconstructed with this prior, shows sharper
@@ -908,8 +908,8 @@ in detail in the following section.
 }
 
 One general issue with inverse problem software is the difficulty
-of correctly implemeting algorithms, and the consequent ease with
-which subtle numerical bugs can be inadvertently introducted.
+of correctly implementing algorithms, and the consequent ease with
+which subtle numerical bugs can be inadvertently introduced.
 EIDORS helps with this issue, by allowing sharing and reuse
 of well documented and debugged software. On the other hand, 
 since EIDORS is designed to facilitate use by non-specialists,
@@ -929,7 +929,7 @@ regularization techniques. As the solution
 strategy becomes more complex such as for non-linear 
 and iterative imaging algorithms, then clearly there
 become more detailed interactions between different 
-parts of the algorithms, leading to more possiblities
+parts of the algorithms, leading to more possibilities
 for ``cheating''.
 
 To motivate the problem, assume that EIT measurement
@@ -977,7 +977,7 @@ Typically, a reconstruction algorithm is presented
 with additive white Gaussian noise (AWGN) added to the data. One
 possible way to the happy transform is to
 carefully select the noise introduced.
-For this exmple, we simulated a homogenous (${\bf v}_h$)
+For this example, we simulated a homogeneous (${\bf v}_h$)
 and inhomogeneous (${\bf v}_i$) data on a 256
 element FEM. Subsequently 17.75dB of WGN was added to
 ${\bf v}_i$, and the images reconstructed using
@@ -1004,7 +1004,7 @@ the output was visually ``happy''. Sample images are shown.
 In order to determine the frequency which which AWGN noise
 may result in ``happy'' faces, 2000
 images were reviewed and 41 were selected, corresponding
-to an occurance rate of approximately 2\%.
+to an occurrence rate of approximately 2\%.
 
 \subsection{ Cheating approach \#2:
              Careful selection of priors}
@@ -1012,10 +1012,10 @@ to an occurance rate of approximately 2\%.
 Regularization techniques provide a powerful set of tools
 to approach ill-conditioned and ill-posed problems like
 EIT. At the same time, however, the use of a regularized
-algorithm implicitly makes probablistic assumptions
+algorithm implicitly makes probabilistic assumptions
 about the image element values and correlations. 
 This section reviews ways in incorrect assumptions for
-the prior probablities may introduce artefacts into 
+the prior probabilities may introduce artefacts into 
 the reconstructed images.
 
 We model linearized one-step difference
@@ -1129,7 +1129,7 @@ One common edge sensitive filter is the discrete Laplacian,
 in which the penalty term is calculated for each element
 and its surrounding finite element neighbors; each
 neighbor is given a weighting of $-1$ and the element itself
-has a weighting of $D+1$, where $D$ is the model dimention,
+has a weighting of $D+1$, where $D$ is the model dimension,
 in order for the penalty term to sum to zero for smooth
 images.
 
@@ -1199,23 +1199,23 @@ Cheating approach \#3:
      Reconstruction of Three fingers
 }
 We now illustrate some cheating for a three dimensional
-problem. We model a cylindical phantom tank with a rather
+problem. We model a cylindrical phantom tank with a rather
 coarse FEM mesh of only xx elements with 32 rectangular
 electrodes in two planes. Note that to realistically
 fit data even for a homogeneous tank to a sensible
 measurement accuracy requires a much finer mesh, but the
 principles of cheating will be similar. The mesh geometry
 was constructed using constructive solid geometry in
-netgen. The electodes were created by the intesection
+netgen. The electrodes were created by the intersection
 of cuboids with the cylinder representing the tank. The
 target object is three triangular prisms projecting from
 the base of cylinder as a crude approximation to three
-fingers inserted in a slaine filled tank. To make the
+fingers inserted in a saline filled tank. To make the
 simulated data we used a mesh respecting these fingers
-\fref{fig:threefingers} and added gaussian pseudo-random
+\fref{fig:threefingers} and added Gaussian pseudo-random
 error to this data with a variance of $10^{-5}$ of the maximum
-voltage. The images shown are typical of thos generated
-from data from several draws of the psuedorandom number
+voltage. The images shown are typical of those generated
+from data from several draws of the pseudo random number
 generator. We then attempt to reconstruct the conductivity
 using a single step of regularized Gauss-Newton. Note that we do not expect to do
 very well with a crude mesh and reconstruction algorithm,
@@ -1223,7 +1223,7 @@ but we are interested to see if we can distinguish three
 fingers and their approximate position. Our first attempt,
 using an arbitrarily chosen regularization factor
 of $10^{-8}$ appears in \fref{fig:3fingers1}. It is
-displayed using the VTK visualisation program MayaVi
+displayed using the VTK visualization program MayaVi
 \cite{Ramachandran_2003}, after exporting the data to a vtk file
 using the EIDORS function {\tt writevtkfile(filename,model,image)}. The
 piecewise constant conductivity of the reconstruction has
@@ -1251,12 +1251,12 @@ has been selected to best see the fingers.
 Initial reconstruction of the three finger object.}
 \end{figure}
 
-Cross sectional images of origial and reconstructed
+Cross sectional images of original and reconstructed
 conductivity are shown in \fref{fig:3fingersXsect}
 The contour selected for display is itself a
-hyperparameter and its choice is suceptable to
+hyperparameter and its choice is susceptible to
 cheating. In the absence of a priori information about
-the number or shape of the taget some automatic selection
+the number or shape of the target some automatic selection
 procedure is needed. Mayavi's default contour selection
 in this case produces an image that is not as easy to
 interpret as three fingers \fref{fig:3fingersMVdefault}
@@ -1287,7 +1287,7 @@ of fingers.
 \Fref{fig:3fingersLessTik} illustrates the effect of
 reducing the regularization parameter by a factor of
 10. Similarly an unfortunate choice of contour could
-produce an image suceptable to interpreted more fingers
+produce an image susceptible to interpreted more fingers
 \fref{fig:3fingersMoreFingers}.
 \begin{figure}[th]
 \includegraphics[width= 0.50 \textwidth]{figs/less-tikhonov.eps}
@@ -1346,7 +1346,7 @@ following practical issues.
   subtle model errors can cause image artefacts.
   In the EIDORS software, we attempt to assist 
   users of the software as follows:
-  For numerical difficulties, we provide several well used independant
+  For numerical difficulties, we provide several well used independent
   algorithms to solve core functions, as well as a test suite
   to validate the calculations of several important parameters.
   The algorithm model errors, on the other
@@ -1370,13 +1370,13 @@ algorithms which are subject to variants of these {\em cheats}.
 
 As mentioned, many algorithm errors simply result in 
 noisy artefacts in the images. These errors are not a big
-concern, in the sense that there existance is obvious.
+concern, in the sense that there existence is obvious.
 Such cases can be described by the aphorism:
 ``Garbage in; garbage out''.
-The worrysome errors are those that introduce the possibility
+The worrisome errors are those that introduce the possibility
 of false image interpretation, since the quality of the
 produced image does not obviously call it into question.
-The example of a trasformation of a sad to happy face 
+The example of a transformation of a sad to happy face 
 was chosen to illustrate this kind of error. It would
 clearly be preferable for an algorithm to produce an
 obviously wrong output -- noise -- rather than one
@@ -1385,7 +1385,7 @@ to introduce the following edict:
 ``Don't whitewash our garbage!''.
 
 
-In conclusiong, we have described the new
+In conclusion, we have described the new
 developments of the EIDORS software for the
 version 3 release. These developments have been 
 focussed on software engineering improvements that
