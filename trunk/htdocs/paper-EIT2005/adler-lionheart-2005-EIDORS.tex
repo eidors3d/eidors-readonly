@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.38 2005-11-07 09:00:42 billlion Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.39 2005-11-07 16:17:33 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -70,13 +70,13 @@ EIDORS
  {\bf S}oftware )
 is a software suite for image reconstruction in
 electrical impedance tomography and diffuse optical tomography.
-The goal is to provide a freely distributable and modifiable
+Its goal is to provide a freely distributable and modifiable
 software for image reconstruction of electrical 
 or diffuse optical data. Such software facilitates research
 and development
 in these fields by providing a reference implementation
 against which new developments can be compared, and by
-providing a functioning software base onto which new
+providing a functioning software base from which which new
 ideas may be built and tested.
 Making the source code available also facilitates scrutiny
 of algorithms and their implementation by other researchers.
@@ -158,7 +158,7 @@ systems.
 
   \item {\em Usage examples:}
 It is observed that researchers typically base new software on
-demonstration examples. To facilitate this, some simple and more
+demonstration examples. To facilitate this, several simple and more
 complex usage examples are provided for image reconstruction
 in two-and three dimensions using various image reconstruction
 algorithms and combinations of algorithms.
@@ -173,7 +173,7 @@ scripts (in the {\tt tests} directory)
 to allow automatic testing of code modifications.
 For example the function {\tt calc\_jacobian\_test.m}
 validates a function to calculate the Jacobian against
-a calculation using the perturbation method. 
+an approximation of the Jacobian using the perturbation method. 
 
   \item {\em Open-source license:}
 EIDORS is licensed under the
@@ -202,7 +202,7 @@ the possibility of conflict due to disparate authors
 working on the same module.
 Version control software such as CVS is widely understood
 to facilitate collaborative development, and manage
-software version conflicts.
+software version conflicts \cite{Cederqvist_2002}.
 
 
   \item {\em Language independence: (Octave and Matlab)}
@@ -218,9 +218,10 @@ and Matlab (version $\ge$ 6.0).
 Support for octave was motivated by two goals:
 first, octave provides a free software platform
 which can encourage the development of embedded
-and commercial applications of EIT
-are limited by the cost of Matlab, and secondly
-octave provides an open source platform to match
+and commercial applications of EIT which are
+currently
+limited by the cost of Matlab, and secondly,
+Octave provides an open source platform to match
 the open source nature of EIDORS.
 
   \item {\em Pluggable code base:}
@@ -236,15 +237,15 @@ and may be intimidating
 to many mathematicians and engineers who do not 
 regularly write OO software.
 Another issue is the unfortunate reputation of
-Matlab for making dramatic modifications to new
+the Matlab language for undergoing dramatic modifications to new
 language features in the first few versions.
 For these reason, EIDORS has been designed using
-a  ``Pluggable'' software approach.
+a  ``pluggable'' software approach.
 This design uses function
 pointers to allow adding new modules and controlling
 which parts of functions are executed.
 EIDORS is thus able to offer the OO features 
-of {\em packaging}, and {\em polymophism}, while
+of {\em packaging} and {\em polymophism}, while
 not {\em encapsulation} or {\em inheritance}.
 A detailed description of this capability is
 provided in the next section.
@@ -262,7 +263,7 @@ retrieve that previous value.
 EIDORS extracts caching to a separate module {\tt eidors\_obj},
 in a way that will generally happen transparently for the
 programmer. This capability helps software based on EIDORS
-to be cleaner and easier to decompose into functional
+to be more clear and easier to decompose into functional
 modules.
 
 
@@ -274,7 +275,7 @@ EIDORS provides several functions for image presentation:
 finite element mesh and conductivity changes, while
 {\tt show\_slices.m} allows generation of images of arbitrary
 two dimensional slices through a volume. Examples of these
-functions are shown in \ref{fig:fig_3d_zigzag} and \ref{fig:fig_3d_2rings}.
+functions are shown in Figs. \ref{fig:fig_3d_2rings} and \ref{fig:fig_3d_zigzag}.
 All EIDORS graphics functions now use a single colour
 mapping function {\tt calc\_colours.m}, which allows
 global modification of all image colouring using a
@@ -308,6 +309,10 @@ reliable and fairly portable software which draws on our collective
 expertise and facilitates innovations in the field.
 
 \section{Software Architecture}
+
+This section describes the structure of EIDORS objects
+and their relationship to the underlying finite element
+models and numerical functions.
 
 \subsection{Object Structure}
 
@@ -417,10 +422,11 @@ For many EIT systems, an adjacent stimulation
 pattern is used with no measurement taken at current
 stimulation electrodes, giving $M = E\times(E-3)$.
 For a $16$ electrode system, this gives $208$
-measurements. One practical consideration is that
+measurements (or, considering reciprocity, $104$ independent
+measurements). One practical consideration is that
 many EIT systems store data as a matrix of size
 ($E^2{\times}F$) where $F$ is the number of data
-frames. In this case $E^2= 256$ and $48$ measurements
+frames. In this case $E^2= 256$ and $3{\times}E = 48$ measurements
 in each frame yield zero. In order to allow easy 
 use of EIDORS with such systems, the optional
 field {\tt meas\_select} ($E^2\times1$) is defined
@@ -451,13 +457,14 @@ are solved using the utility functions
 {\tt calc\_solve()} and
 {\tt calc\_system\_mat()}.
 For example, given
-a {\tt fwd\_model} object {\tt fmdl}, we may write:
+a {\tt fwd\_model} object {\tt fmdl}, we may calculate
+the system matrix, {\tt Smat}, using:
 \begin{verbatim}
     Smat = calc_system_mat( fmdl ); 
 \end{verbatim}
-This function 
-call the appropriate function and also manages
-of caching the computed result. In this case, if a
+This code will
+call the appropriate function and also manage
+the caching the computed result. In this case, if a
 system matrix has previously been computed for
 a {\tt fwd\_model} object with the same values
 as {\tt fmdl}, then the previous result will be
@@ -469,8 +476,8 @@ called.
 
 An EIDORS {\tt data} object represents a frame of
 measurement or simulated data. The structure of the
-{\tt data} objects is shown in \ref{fig:data}. The
-required fields are actual frame data, {\tt meas},
+{\tt data} objects is shown in Fig. \ref{fig:data}. The
+required fields are the actual frame data, {\tt meas},
 and the acquisition time {\tt time} in seconds 
 after the epoch. In a particular application {\tt time}
 may be defined with respect to another start point, such as
@@ -496,9 +503,9 @@ $M$ is the number of measurements in each data frame
 pattern). The data in {\tt meas} is ordered such that
 the measurements for {\tt stimulation(1)} are first.
 
-Data may be loaded into EIDORS using the {\tt eidors\_readdata}
+Data may be loaded into EIDORS using the {\tt eidors\_readdata()}
 function, which provides an interface to the storage
-format used by some EIT equipment manufacturers.
+formats used by some EIT equipment manufacturers.
 
 The {\tt data} object may also contain two options fields,
 {\tt configuration} and {\tt fwd\_model}. Specification
@@ -538,10 +545,10 @@ an {\em image prior} and a choice of {\em hyperparameter}.
 The latter is specified in the {\tt hyperparameter} field. For
 simple cases, a scalar value is provided in the {\tt value} field.
 However, for more complex cases, a hyperparameter selection strategy
-is specified in a function in the {\tt func} field. One example
+is specified as a function in the {\tt func} field. One example
 is the {\em noise figure} strategy of \cite{Adler_and_Guardo_1996}.
 This strategy may be specified by setting
- {\tt hyperparameter.func=``aa\_calc\_noise\_figure''}
+ {\tt hyperparameter.func='aa\_calc\_noise\_figure'}
 and 
  {\tt hyperparameter.noise\_figure=\em Value}.
 The image prior is selected by the {\tt image\_prior} field;
@@ -554,7 +561,7 @@ any parameters to this function are provided as {\tt parameters}.
 The EIDORS image object expresses the reconstructed or
 simulated conductivity values. The field {\tt elem\_data}
 ($N\times1$) is the value of each of the image elements in 
-the finite element model which in the field {\tt fwd\_model}.
+the finite element model (in the field {\tt fwd\_model}).
 
 For example, given
 an {\tt inv\_model} object {\tt imdl}, we may express
@@ -589,7 +596,7 @@ section, we consider
 the calculation of the Jacobian, or sensitivity matrix,
 $\bf J$.
 
-Given a finite element model (FEM) model of an EIT medium,
+Given a FEM  model of an EIT medium,
 $F$, we calculate the vector of voltages, $\bf v$, 
 for each FEM degree of freedom
  (mainly, degrees of freedom are nodes, but in the
@@ -604,7 +611,7 @@ and $\bf q$ is the current stimulation pattern, a vector
 of current inputs to each FEM degree of freedom.
 Depending on the electrode model used, the measured electrode
 voltage can be represented as a linear combination of 
-voltages, ${\bf V}_{2E}$.
+voltages, ${\bf V}_{toE}$.
 For each simulation pattern, ${\bf q}_{i}$,
 measurements $m_{i,j}$
 are performed, each of which consist of a linear combination of
@@ -612,13 +619,13 @@ electrode measurements, ${\bf m}_j$.
 Thus:
 
 \begin{equation}
-m_{i,j} = {\bf m}_{i} {\bf V}_{2E} F({\bf \sigma})
+m_{i,j} = {\bf m}_{i} {\bf V}_{toE} F({\bf \sigma})
 \end{equation}
 
 Based on this model, $\bf J$ is calculated as:
 \begin{equation}
-{\bf F}_{i,j,k} = \left.\frac{
- {\bf m}_{i} {\bf V}_{2E}{\partial}F({\bf \sigma})
+{\bf J}_{i,j,k} = \left.\frac{
+ {\bf m}_{i} {\bf V}_{toE}{\partial}F({\bf \sigma})
 }{
 {\partial}{\bf \sigma}_k
 }
@@ -629,18 +636,21 @@ Based on this model, $\bf J$ is calculated as:
 
 where ${\bf \sigma}_0$ is the ``background"
 conductivity around which small changes are assumed to occur.
+To represent $\bf J$ as a matrix, measurements $i$ for each stimulation
+pattern $j$ are flattened into column vectors which are concatenated
+for each element $k$.
 In EIDORS, the Jacobian is calculated using the function
 {\tt calc\_jacobian},
 which takes as parameters FEM model (type {\tt fwd\_model}),
-and the image of ${\bf sigma}_0$ 
+and the image of ${\bf \sigma}_0$ 
 of type {\tt image}.
 
 Objects may be created using the {\tt eidors\_obj()}
 function, which can fill in default attributes, and 
 keeps track of cached properties.
-For example, given a {\tt fwd\_model} {\tt\em fem}
-a homogeneous background of conductivity one,
-{\tt\em img\_bkgnd}, may be computed by:
+For example, given a {\tt fwd\_model}, {\tt fem}, and
+a homogeneous background image of conductivity one,
+{\tt img\_bkgnd}, may be computed by:
 
 \begin{tabular}{ll}
 \CN    \CC img_bkgnd           = eidors_obj('image', 'homog bkgnd'); @\\
@@ -672,7 +682,7 @@ calling function.
 
 In this section two examples of the usage of EIDORS
 software functions are provided. The first illustrates
-how to a change in electrode configuration and stimulation 
+how to change in electrode configuration and stimulation 
 pattern can be taken
 into account with a modification of the {\tt fwd\_model}.
 The second illustrates how to modify the image reconstruction
@@ -742,12 +752,13 @@ to simulate voltage patterns.
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_2rings.eps}
 \caption{\small
-The 3D demonstration FEM provided with the EIDORS3D
+The 3D demonstration FEM provided with EIDORS3D
 \cite{Polydorides_and_Lionheart_2002},
-using two rings of 16 electrodes with 20dB SNR
-Left: FEM Model with coloured and filled in elements for
-reconstructed image values what an absolute value
-above $frac{1}{4}$ of the absolute maximum image value.
+using two rings of 16 electrodes. Simulated data
+are used with 20dB SNR AWGN added.
+Left: FEM Model with coloured elements for
+reconstructed image values with an absolute value
+above $\frac{1}{4}$ of the absolute maximum image value.
 Right: 2D slices through the reconstructed image at
 $z-$axis intercepts of $0.125$, $0.375$, $0.625$, and $0.875$
 from bottom to top.
@@ -760,10 +771,10 @@ from bottom to top.
 In this sample code, lines 1--4 set up the model and assign
 the functions to solve the forward problem.
 Lines 7--10 create an image object with a homogeneous
-conductivity in all elements, and solves the forward
-problem to simulate data {\tt meas\_h} on line 11. To simulate an
+conductivity in all elements, and solve the forward
+problem to simulate data, {\tt meas\_h}, on line 11. To simulate an
 inhomogeneous model, lines 13--14 modify the conductivity
-distribution, and calculates {\tt meas\_i} on line 15,
+distribution, and calculate {\tt meas\_i} on line 15,
 to which we add noise of signal to noise ratio (SNR) $20\rm dB$
 on lines 18--20.
 {\tt target\_A} and {\tt target\_B} are the indices of the 
@@ -787,7 +798,7 @@ may be displayed using the following imaging functions
 where {\tt show\_fem} images a 3D visualization of the
 FEM and image, {\tt image\_levels} displays slices through
 the $z-$axis and {\tt show\_slices} displays an
-arbitrary set planar slices though the model, for which the
+arbitrary set of planar slices though the model, for which the
 $x-$, $y-$ and $z-\rm axes$ are specified.
 
 The functions illustrated
@@ -815,9 +826,11 @@ electrodes in a zigzag configuration. Electrodes are placed
 in a projected circle, but even and odd numbered electrodes
 are moved away from the plane in different directions in the
 $z-$axis.
+Simulated data
+are used with 20dB SNR AWGN added.
 Left: FEM Model with coloured and filled in elements for
 reconstructed image values what an absolute value
-above $frac{1}{4}$ of the absolute maximum image value.
+above $\frac{1}{4}$ of the absolute maximum image value.
 Right: 2D slices through the reconstructed image at
 $z-$axis intercepts of $0.125$, $0.375$, $0.625$, and $0.875$
 from bottom to top.
@@ -846,18 +859,19 @@ protocol. We implement this as follows:
 This modification of the model requires 7 lines to be added
 to the previous example. Lines 7--9 modify and reorder the
 electrodes, and lines 10--13 introduce a new, adjacent
-stimulation protocol with $1$ ring of $16$ electrodes. Reconstructed
-images are show in Fig. \ref{fig:fig_3d_zigzag}.
-It is clear that the image quality is less than that of
-\ref{fig:fig_3d_2rings}; this is to be expected this configuration
-has less than $frac{1}{4}$ the number of independent measurements.
+stimulation protocol with one ring of $16$ electrodes. Reconstructed
+images are shown in Fig. \ref{fig:fig_3d_zigzag}.
+It is clear that the image quality is lower in Fig. \ref{fig:fig_3d_zigzag}
+than for \ref{fig:fig_3d_2rings}; this is to be expected this configuration
+has less than $\frac{1}{4}$ the number of independent measurements.
  
 
 \subsection{  Reconstruct Images }
 
-In this section we show a way to override the image prior
+This section shows how to use EIDORS to conveniently
+override the image prior
 for an existing algorithm. In the subsequent section,
-we discuss the importance of correct image priors,
+we discuss the importance of using correct image priors,
 and how image artefacts may easily be introduced by the incorrect
 choice of these parameters. The ``plugability'' feature of the
 EIDORS design allows this to be implemented in an convenient way.
@@ -865,8 +879,8 @@ EIDORS design allows this to be implemented in an convenient way.
 If we wish to modify the example of the previous section
 to use an image prior defined by the function
 {\tt my\_cheating\_prior()} which uses the structure of the
-prior to \cite{Polydorides_2002} but modifies it to reduce
-halve the penalty at specific image elements, chosen by
+prior of \cite{Polydorides_2002} but modifies it to reduce
+by half the recontruction penalty at specific image elements chosen by
 the user. To do this, we replace line 25 from the previous
 example.
 
@@ -896,7 +910,7 @@ from {\tt np\_calc\_image\_prior()}. Subsequently, on lines
 the penalty term multiplied by $0.5$. Line 6 calculates
 a column major index into the matrix {\tt Reg} of the
 diagonal element indicated by {\tt posn}. As expected,
-images reconstructed with this prior, shows sharper
+images reconstructed with this prior show sharper
 images than that of \ref{fig:fig_3d_zigzag}.
 The implications of this type of ``cheating'' are explored
 in detail in the following section.
@@ -926,7 +940,7 @@ Sample Problem: The ``happy'' transform
 In this section, we describe some simple implementation
 errors that work with common, linear
 regularization techniques. As the solution
-strategy becomes more complex such as for non-linear 
+strategy becomes more complex, such as for non-linear 
 and iterative imaging algorithms, then clearly there
 become more detailed interactions between different 
 parts of the algorithms, leading to more possibilities
@@ -934,17 +948,17 @@ for ``cheating''.
 
 To motivate the problem, assume that EIT measurement
 data have been acquired from a 2D simulated phantom which resembles
-a ``sad''' face. Being of an optimistic outlook, we wish
+a ``sad'' face. Being of an optimistic outlook, we wish
 that the reconstructed images represent a ``happy'' face
 instead. Fig. \ref{fig:happytransform}
 illustrates what we will refer to as the ``happy transform''.
 We choose this example because it is important to distinguish
-the  two types of reconstruction artefacts. Most such artefacts
-produce noisy images. While such noise is inconvenient, it does
+two types of reconstruction artefacts. Most artefacts result
+in additing noise to images. While such noise is inconvenient, it does
 not introduce the a strong possibility of a misinterpretation of the
 output. The most likely scenario is that an observer will conclude
 that there is an error, and ignore the results, or redo the experiments.
-We are concerned with reconstruction artefacts which
+On the other hand, some reconstruction artefacts can
 produce structured output which would tend to result in a 
 misinterpretation of the image. Such an error could result, in a
 medical imaging application, for example, in an dramatically
@@ -975,11 +989,11 @@ image resembles the happy face.
 
 Typically, a reconstruction algorithm is presented
 with additive white Gaussian noise (AWGN) added to the data. One
-possible way to the happy transform is to
+possible way to create the happy transform is to
 carefully select the noise introduced.
 For this example, we simulated a homogeneous (${\bf v}_h$)
 and inhomogeneous (${\bf v}_i$) data on a 256
-element FEM. Subsequently 17.75dB of WGN was added to
+element FEM. Subsequently 17.75dB of AWGN was added to
 ${\bf v}_i$, and the images reconstructed using
 the algorithm of \cite{Adler_and_Guardo_1996}.
 Each image was reconstructed, and evaluated by us to
@@ -1014,7 +1028,7 @@ to approach ill-conditioned and ill-posed problems like
 EIT. At the same time, however, the use of a regularized
 algorithm implicitly makes probabilistic assumptions
 about the image element values and correlations. 
-This section reviews ways in incorrect assumptions for
+This section reviews ways in which incorrect assumptions for
 the prior probabilities may introduce artefacts into 
 the reconstructed images.
 
@@ -1051,10 +1065,10 @@ of image elements is penalized. To illustrate
 this regularization scheme, we use a uniform
 weighting to each image element, ${\bf R} = {\bf I}$.
 
-If, however, it were {\em known} {\em a priori} that 
+If, however, it were {\em known} (or assumed) {\em a priori} that 
 data were measured from a happy face, then we 
 would not wish to penalize image elements which we
-{\em know} (or assume) to be large. Thus for each pixel {\em i}
+{\em know} (or assume) to be large. Thus for each image element {\em i}
 in the happy face, we set 
 
 \begin{equation}
@@ -1088,7 +1102,7 @@ happy face (right),
 \end{figure}
 
 In order to enhance this effect, we use an {\em inverse crime},
-which as defined by \cite{Colton_and_Kress_1992}, occurs when
+which, as defined by \cite{Colton_and_Kress_1992}, occurs when
 using the same model for both data simulation and image reconstruction.
 In this case, the regularized prior information is placed
 {\em exactly} at the positions of the happy face finite elements
