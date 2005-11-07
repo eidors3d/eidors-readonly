@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.39 2005-11-07 16:17:33 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.40 2005-11-07 19:53:22 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -12,9 +12,11 @@
       \hrule height1pt
     }%
 }
-\newcommand{\CN}{\tt\small} % small teletype font
-\newcommand{\CC}{&\verb@}   % start code
-\newcommand{\CI}{&\it}   % start code
+\newcommand{\CODEstart}{\medskip\begin{tabular}{ll}}
+\newcommand{\CN}{\tt\scriptsize} % small teletype font
+\newcommand{\CC}{&\small\verb@}   % start code
+\newcommand{\CI}{&\small\tt\em}   % start code
+\newcommand{\CODEend}{\end{tabular}\medskip}
 
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -459,9 +461,11 @@ are solved using the utility functions
 For example, given
 a {\tt fwd\_model} object {\tt fmdl}, we may calculate
 the system matrix, {\tt Smat}, using:
-\begin{verbatim}
-    Smat = calc_system_mat( fmdl ); 
-\end{verbatim}
+
+\CODEstart
+\CN    \CC Smat = calc_system_mat( fmdl ); @\\[-3pt]
+\CODEend
+
 This code will
 call the appropriate function and also manage
 the caching the computed result. In this case, if a
@@ -567,14 +571,18 @@ For example, given
 an {\tt inv\_model} object {\tt imdl}, we may express
 image reconstruction by (assuming
 difference EIT, and {\tt data} objects {\tt data1} and {\tt data2}):
-\begin{verbatim}
-    img = inv_solve( imdl, data1, data2 );
-\end{verbatim}
+
+\CODEstart
+\CN    \CC img = inv_solve( imdl, data1, data2 ); @\\[-3pt]
+\CODEend
+
 Similarly, in order to simulate {\tt data} object {\tt datasim}
 from a simulation image {\tt imgsim}, we may write:
-\begin{verbatim}
-    datasim = fwd_solve( fmdl, imgsim );
-\end{verbatim}
+
+\CODEstart
+\CN    \CC datasim = fwd_solve( fmdl, imgsim ); @\\[-3pt]
+\CODEend
+
 %
 % FIGURE: Forward Model
 %
@@ -633,7 +641,6 @@ Based on this model, $\bf J$ is calculated as:
    {\bf \sigma} = {\bf \sigma}_0 
 }
 \end{equation}
-
 where ${\bf \sigma}_0$ is the ``background"
 conductivity around which small changes are assumed to occur.
 To represent $\bf J$ as a matrix, measurements $i$ for each stimulation
@@ -652,11 +659,11 @@ For example, given a {\tt fwd\_model}, {\tt fem}, and
 a homogeneous background image of conductivity one,
 {\tt img\_bkgnd}, may be computed by:
 
-\begin{tabular}{ll}
-\CN    \CC img_bkgnd           = eidors_obj('image', 'homog bkgnd'); @\\
-\CN    \CC img_bkgnd.elem_data = ones( length(fem.elems) ,1); @\\
-\CN    \CC img_bkgnd.fwd_model = fem; @\\
-\end{tabular}
+\CODEstart
+\CN    \CC img_bkgnd           = eidors_obj('image', 'homog bkgnd'); @\\[-3pt]
+\CN    \CC img_bkgnd.elem_data = ones( length(fem.elems) ,1); @\\[-3pt]
+\CN    \CC img_bkgnd.fwd_model = fem; @\\[-3pt]
+\CODEend
 
 In this expression, the {\tt type} field is assigned
 to {\tt 'image'} and then {\tt name} is assigned
@@ -664,9 +671,9 @@ to {\tt 'image'} and then {\tt name} is assigned
 
 In order to calculate the Jacobian, we call
 
-\begin{tabular}{ll}
-\CN    \CC J= calc_jacobian( fem, img_bkgnd ) @\\
-\end{tabular}
+\CODEstart
+\CN    \CC J= calc_jacobian( fem, img_bkgnd ) @\\[-3pt]
+\CODEend
 
 which, first, tests to see whether {\bf J} has been previously
 calculated for {\tt fem} and {\tt img\_bkgnd}; if
@@ -715,35 +722,31 @@ to provide many of useful 2D and 3D models. This function
 may be used as follows to construct the FEM and use it
 to simulate voltage patterns.
 
-\begin{tabular}{ll}
-\CN    \CC mdl  = mk_common_model('n3r2');   @\\
-\CN    \CC mdl.fwd_model.jacobian   = 'np_calc_jacobian';   @\\
-\CN    \CC mdl.fwd_model.system_mat = 'np_calc_system_mat';   @\\
-\CN 04 \CC mdl.fwd_model.solve      = 'np_fwd_solve';   @\\
-\CN    \CC @\\
-\CN    \CI \% simulate forward data \\
-\CN    \CC n_elems = size(mdl.fwd_model.elems,1);   @\\
-\CN 08 \CC img_sim= eidors_obj('image', 'demo');   @\\
-\CN    \CC img_sim.elem_data = ones( n_elems,1 );    @\\
-\CN    \CC img_sim.fwd_model = mdl.fwd_model;   @\\
-\CN    \CC @\\
-\CN    \CC meas_h= fwd_solve( img_sim );   @\\
-\CN 12 \CC @\\
-\CN    \CC img_sim.elem_data(target_A)= 1.2;   @\\
-\CN    \CC img_sim.elem_data(target_B)= 0.8;   @\\
-\CN    \CC meas_i= fwd_solve( img_sim );   @\\
-\CN 16 \CC @\\
-\CN    \CI \% add noise \\
-\CN    \CC n_meas = size( meas_h.meas, 1); @\\
-\CN    \CC noise= 0.1*std( meas_h.meas-meas_i.meas )*randn( n_meas,1 ); @\\
-\CN 20 \CC meas_i.meas= meas_i.meas + noise; @\\
-\CN    \CC @\\
-\CN    \CI \% inverse model and reconstruct\\
-\CN    \CC mdl.solve               = 'np_inv_solve'; @\\
-\CN 24 \CC mdl.hyperparameter.value= 1e-4; @\\
-\CN    \CC mdl.image_prior.func    = 'np_calc_image_prior'; @\\
-\CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\
-\end{tabular}
+\CODEstart
+\CN    \CC mdl  = mk_common_model('n3r2');   @\\[-3pt]
+\CN    \CC mdl.fwd_model.jacobian   = 'np_calc_jacobian';   @\\[-3pt]
+\CN    \CC mdl.fwd_model.system_mat = 'np_calc_system_mat';   @\\[-3pt]
+\CN 04 \CC mdl.fwd_model.solve      = 'np_fwd_solve';   @\\[-3pt]
+\CN    \CI \% simulate forward data - homogeneous \\[-3pt]
+\CN    \CC n_elems = size(mdl.fwd_model.elems,1);   @\\[-3pt]
+\CN    \CC img_sim= eidors_obj('image', 'name:demo');   @\\[-3pt]
+\CN 08 \CC img_sim.elem_data = ones( n_elems,1 );    @\\[-3pt]
+\CN    \CC img_sim.fwd_model = mdl.fwd_model;   @\\[-3pt]
+\CN    \CC meas_h= fwd_solve( img_sim );   @\\[-3pt]
+\CN    \CI \% simulate forward data - inhomogeneous \\[-3pt]
+\CN 12 \CC img_sim.elem_data(target_A)= 1.2;   @\\[-3pt]
+\CN    \CC img_sim.elem_data(target_B)= 0.8;   @\\[-3pt]
+\CN    \CC meas_i= fwd_solve( img_sim );   @\\[-3pt]
+\CN    \CI \% add noise \\[-3pt]
+\CN 16 \CC n_meas = size( meas_h.meas, 1); @\\[-3pt]
+\CN    \CC noise= 0.1*std( meas_h.meas-meas_i.meas )*randn( n_meas,1 ); @\\[-3pt]
+\CN    \CC meas_i.meas= meas_i.meas + noise; @\\[-3pt]
+\CN    \CI \% inverse model and reconstruct\\[-3pt]
+\CN 20 \CC mdl.solve               = 'np_inv_solve'; @\\[-3pt]
+\CN    \CC mdl.hyperparameter.value= 1e-4; @\\[-3pt]
+\CN    \CC mdl.image_prior.func    = 'np_calc_image_prior'; @\\[-3pt]
+\CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\[-3pt]
+\CODEend
 
 %
 % FIGURE: 2 rings electrode config
@@ -755,10 +758,10 @@ to simulate voltage patterns.
 The 3D demonstration FEM provided with EIDORS3D
 \cite{Polydorides_and_Lionheart_2002},
 using two rings of 16 electrodes. Simulated data
-are used with 20dB SNR AWGN added.
+are used with added noise to 20dB SNR.
 Left: FEM Model with coloured elements for
 reconstructed image values with an absolute value
-above $\frac{1}{4}$ of the absolute maximum image value.
+above $0.25$ of the absolute maximum image value.
 Right: 2D slices through the reconstructed image at
 $z-$axis intercepts of $0.125$, $0.375$, $0.625$, and $0.875$
 from bottom to top.
@@ -770,31 +773,32 @@ from bottom to top.
 
 In this sample code, lines 1--4 set up the model and assign
 the functions to solve the forward problem.
-Lines 7--10 create an image object with a homogeneous
+Lines 6--9 create an image object with a homogeneous
 conductivity in all elements, and solve the forward
-problem to simulate data, {\tt meas\_h}, on line 11. To simulate an
-inhomogeneous model, lines 13--14 modify the conductivity
-distribution, and calculate {\tt meas\_i} on line 15,
+problem to simulate data, {\tt meas\_h}, on line 10. To simulate an
+inhomogeneous model, lines 12--13 modify the conductivity
+distribution, and calculate {\tt meas\_i} on line 14,
 to which we add noise of signal to noise ratio (SNR) $20\rm dB$
-on lines 18--20.
+on lines 16--18.
 {\tt target\_A} and {\tt target\_B} are the indices of the 
 elements associated with a non-conductive and conductive
 target shape.
 To solve the inverse problem, we assign the functions to
-the inverse model on lines 23--25, and call the inverse solver
-on line 26 to calculate the image {\tt img}. This image
+the inverse model on lines 20--23, and call the inverse solver
+on line 24 to calculate the image {\tt img}. This image
 may be displayed using the following imaging functions
 (Fig. \ref{fig:fig_3d_2rings}):
 
-\begin{tabular}{ll}
-\CN    \CC show_fem( img ) @\\
-\CN 28 \CC image_levels(img, [.5,1.5,2.5]); @\\
-\CN    \CC show_slices(img, [inf, inf, .5; ... @\\
-\CN    \CC                   inf, inf, 2.5; ... @\\
-\CN    \CC                   -.2, inf, inf; ... @\\
-\CN 30 \CC                   inf,-1.5,   2 ]); @\\
-\end{tabular}
+\CODEstart
+\CN 24 \CC show_fem( img ) @\\[-3pt]
+\CN    \CC image_levels(img, [.5,1.5,2.5]); @\\[-3pt]
+\CN    \CC show_slices(img, [inf, inf, .5; ... @\\[-3pt]
+\CN    \CC                   inf, inf, 2.5; ... @\\[-3pt]
+\CN 28 \CC                   -.2, inf, inf; ... @\\[-3pt]
+\CN    \CC                   inf,-1.5,   2 ]); @\\[-3pt]
+\CODEend
 
+\noindent
 where {\tt show\_fem} images a 3D visualization of the
 FEM and image, {\tt image\_levels} displays slices through
 the $z-$axis and {\tt show\_slices} displays an
@@ -830,7 +834,7 @@ Simulated data
 are used with 20dB SNR AWGN added.
 Left: FEM Model with coloured and filled in elements for
 reconstructed image values what an absolute value
-above $\frac{1}{4}$ of the absolute maximum image value.
+above $0.25$ of the absolute maximum image value.
 Right: 2D slices through the reconstructed image at
 $z-$axis intercepts of $0.125$, $0.375$, $0.625$, and $0.875$
 from bottom to top.
@@ -844,25 +848,25 @@ system, we need to: 1) modify and reorder the electrode
 definitions, and 2) define a new stimulation and measurement
 protocol. We implement this as follows:
 
-\begin{tabular}{ll}
-\CN    \CI \% lines 1--5 from above \\
-\CN    \CC select = [1:2:15; 18:2:32]; @\\
-\CN    \CC mdl.fwd_model.electrode=  ... @\\
-\CN 08 \CC     mdl.fwd_model.electrode( select(:) ); @\\
-\CN    \CC n_elecs= 16; @\\
-\CN    \CC n_rings= 1; @\\
-\CN    \CC mdl.fwd_model.stimulation = mk_stim_patterns( ... @\\
-\CN 12 \CC              n_elecs, n_rings, '{ad}', '{ad}'); @\\
-\CN    \CI \% lines 6--30 from above \\
-\end{tabular}
+\CODEstart
+\CN    \CI \% lines 1-4 from above \\[-3pt]
+\CN 05 \CC select = [1:2:15; 18:2:32]; @\\[-3pt]
+\CN    \CC mdl.fwd_model.electrode=  ... @\\[-3pt]
+\CN    \CC     mdl.fwd_model.electrode( select(:) ); @\\[-3pt]
+\CN 08 \CC n_elecs= 16; @\\[-3pt]
+\CN    \CC n_rings= 1; @\\[-3pt]
+\CN    \CC mdl.fwd_model.stimulation = mk_stim_patterns( ... @\\[-3pt]
+\CN    \CC              n_elecs, n_rings, '{ad}', '{ad}'); @\\[-3pt]
+\CN    \CI \% lines 5-28 from above \\[-3pt]
+\CODEend
 
 This modification of the model requires 7 lines to be added
-to the previous example. Lines 7--9 modify and reorder the
-electrodes, and lines 10--13 introduce a new, adjacent
+to the previous example. Lines 5--7 modify and reorder the
+electrodes, and lines 8--11 introduce a new, adjacent
 stimulation protocol with one ring of $16$ electrodes. Reconstructed
 images are shown in Fig. \ref{fig:fig_3d_zigzag}.
 It is clear that the image quality is lower in Fig. \ref{fig:fig_3d_zigzag}
-than for \ref{fig:fig_3d_2rings}; this is to be expected this configuration
+than for Fig. \ref{fig:fig_3d_2rings}; this is to be expected this configuration
 has less than $\frac{1}{4}$ the number of independent measurements.
  
 
@@ -881,32 +885,31 @@ to use an image prior defined by the function
 {\tt my\_cheating\_prior()} which uses the structure of the
 prior of \cite{Polydorides_2002} but modifies it to reduce
 by half the recontruction penalty at specific image elements chosen by
-the user. To do this, we replace line 25 from the previous
+the user. To do this, we replace line 22 from the previous
 example.
 
-\begin{tabular}{ll}
-\CN    \CI \% lines 1--24 from above \\
-\CN    \CC mdl.image_prior.func       = 'my_cheating_prior'; @\\
-\CN    \CC mdl.image_prior.parameter2 = [target_A]; @\\
-\CN    \CI \% lines 26--30 from above \\
-\end{tabular}
+\CODEstart
+\CN    \CI \% lines 1-21 from above \\[-3pt]
+\CN    \CC mdl.image_prior.func       = 'my_cheating_prior'; @\\[-3pt]
+\CN    \CC mdl.image_prior.parameter2 = [target_A]; @\\[-3pt]
+\CN    \CI \% lines 23-28 from above \\[-3pt]
+\CODEend
 
 We define the function {\tt my\_cheating\_prior} in a separate file:
 
-\begin{tabular}{ll}
-\CN    \CC function Reg = my_cheating_prior( inv_model ); @\\
-\CN    \CC   inv_model.image_prior.func = 'np_calc_image_prior'; @\\
-\CN    \CC   Reg= calc_image_prior( inv_model ); @\\
-\CN 04 \CC @\\
-\CN    \CC   posn = inv_model.image_prior.parameter2; @\\
-\CN    \CC   posn = posn + (posn-1)*size(Reg,1); @\\
-\CN    \CC @\\
-\CN 08 \CC   Reg(posn) = Reg(posn) * 0.5; @\\
-\end{tabular}
+\CODEstart
+\CN    \CC function Reg = my_cheating_prior( inv_model ); @\\[-3pt]
+\CN    \CC   inv_model.image_prior.func = 'np_calc_image_prior'; @\\[-3pt]
+\CN    \CC   Reg= calc_image_prior( inv_model ); @\\[-3pt]
+\CN 04 \CI   \% modify Reg matrix \\[-3pt]
+\CN    \CC   posn = inv_model.image_prior.parameter2; @\\[-3pt]
+\CN    \CC   posn = posn + (posn-1)*size(Reg,1); @\\[-3pt]
+\CN    \CC   Reg(posn) = Reg(posn) * 0.5; @\\[-3pt]
+\CODEend
 
 In lines 2--3, the previous prior function is calculated
 from {\tt np\_calc\_image\_prior()}. Subsequently, on lines
-5--8, the position of target elements is calculated and
+5--7, the position of target elements is calculated and
 the penalty term multiplied by $0.5$. Line 6 calculates
 a column major index into the matrix {\tt Reg} of the
 diagonal element indicated by {\tt posn}. As expected,
@@ -938,30 +941,30 @@ Sample Problem: The ``happy'' transform
 }
 
 In this section, we describe some simple implementation
-errors that work with common, linear
-regularization techniques. As the solution
+errors that may occur with common, linear
+regularization algorithms. As the solution
 strategy becomes more complex, such as for non-linear 
-and iterative imaging algorithms, then clearly there
-become more detailed interactions between different 
+and iterative imaging algorithms, there are
+more complex interactions between different 
 parts of the algorithms, leading to more possibilities
 for ``cheating''.
 
 To motivate the problem, assume that EIT measurement
 data have been acquired from a 2D simulated phantom which resembles
-a ``sad'' face. Being of an optimistic outlook, we wish
-that the reconstructed images represent a ``happy'' face
+a sad face. Being of an optimistic outlook, we wish
+that the reconstructed images represent a happy face
 instead. Fig. \ref{fig:happytransform}
 illustrates what we will refer to as the ``happy transform''.
 We choose this example because it is important to distinguish
 two types of reconstruction artefacts. Most artefacts result
-in additing noise to images. While such noise is inconvenient, it does
-not introduce the a strong possibility of a misinterpretation of the
-output. The most likely scenario is that an observer will conclude
-that there is an error, and ignore the results, or redo the experiments.
+in adding noise to images. While such noise is inconvenient, it does
+not cause a strong possibility of a misinterpretation.
+The most likely scenario is that an observer will conclude
+that there is an error, and ignore the results, or redo the measurements.
 On the other hand, some reconstruction artefacts can
-produce structured output which would tend to result in a 
+produce structured output which could result in a 
 misinterpretation of the image. Such an error could result, in a
-medical imaging application, for example, in an dramatically
+medical imaging application in a dramatically
 incorrect diagnosis. We have designed the ``happy transform''
 to illustrate this type of image artefact.
 
@@ -976,8 +979,9 @@ to illustrate this type of image artefact.
 \caption{\small The 
 {\em happy transform}. Left, a 2D phantom representing
 a sad face, and, right, a 2D phantom representing a
-happy face. The {\em happy} transform attempts to 
-reconstruct data from the sad face phantom such that the
+happy face. The {\em happy transform} describes an
+image reconstruction method which (incorrectly) 
+reconstructs data from the sad face phantom such that the
 image resembles the happy face.
  }
  \label{fig:happytransform}
@@ -988,7 +992,7 @@ image resembles the happy face.
  Careful selection of noise }
 
 Typically, a reconstruction algorithm is presented
-with additive white Gaussian noise (AWGN) added to the data. One
+with additive white Gaussian noise (AWGN) added to simulation data. One
 possible way to create the happy transform is to
 carefully select the noise introduced.
 For this example, we simulated a homogeneous (${\bf v}_h$)
@@ -997,8 +1001,8 @@ element FEM. Subsequently 17.75dB of AWGN was added to
 ${\bf v}_i$, and the images reconstructed using
 the algorithm of \cite{Adler_and_Guardo_1996}.
 Each image was reconstructed, and evaluated by us to
-detect which cases produced the ``happy face'';
-some examples are shown in Fig. \ref{fig:happynoise}.
+detect which cases produced the ``happy face''.
+Examples are shown in Fig. \ref{fig:happynoise}.
 
 %
 % FIGURE: Happy Noise
@@ -1015,9 +1019,9 @@ the output was visually ``happy''. Sample images are shown.
 \end{flushright}
 \end{figure}
 
-In order to determine the frequency which which AWGN noise
+In order to determine the frequency with which AWGN noise
 may result in ``happy'' faces, 2000
-images were reviewed and 41 were selected, corresponding
+images were reviewed and 41 were identified, corresponding
 to an occurrence rate of approximately 2\%.
 
 \subsection{ Cheating approach \#2:
@@ -1063,17 +1067,17 @@ image will be biased.
 In a Tikhonov regularization scheme, the amplitude
 of image elements is penalized. To illustrate
 this regularization scheme, we use a uniform
-weighting to each image element, ${\bf R} = {\bf I}$.
+weighting for each image element, using ${\bf R} = {\bf I}$.
 
 If, however, it were {\em known} (or assumed) {\em a priori} that 
 data were measured from a happy face, then we 
 would not wish to penalize image elements which we
 {\em know} (or assume) to be large. Thus for each image element {\em i}
 in the happy face, we set 
-
 \begin{equation}
-   {\bf R}_{i,i} = \frac{1}{2}
+   {\bf R}_{i,i} = 0.5
 \end{equation}
+while all remaining diagonal elements of $\bf R$ are $1.0$.
 
 The effect of modified Tikhonov prior selection is shown in
 Fig. \ref{fig:tikprior}.
@@ -1088,8 +1092,9 @@ FEM (chosen to differ from the 256 element simulation mesh).
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_tik_wo-icrime.eps}
 \caption{\small 
-Reconstructed images illustrating the effect of image priors,
-using different mesh for model and reconstruction.
+Reconstructed images illustrating the effect of modifications
+to Tikhonov image priors,
+using a different mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Tikhonov prior with no weighting,
 {\em Image 2:} Tikhonov prior with weighting for positions in sad face,
@@ -1115,8 +1120,9 @@ In this case, the regularized prior information is placed
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_tik_w-icrime.eps}
 \caption{\small 
-Reconstructed images illustrating the effect of image priors,
-using {\em same} mesh for model and reconstruction.
+Reconstructed images illustrating the effect of modifications
+to Tikhonov image priors,
+using the {\em same} mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Tikhonov prior with no weighting,
 {\em Image 2:} Tikhonov prior with weighting for positions in sad face,
@@ -1138,14 +1144,24 @@ However, it is reasonable to assume, for most EIT applications,
 the conductivity distribution in the medium is largely
 smooth. It is thus advantageous to model this smoothness
 as a penalty for non-smooth image regions, using a
-matrix $R$ based on an edge sensitive filter.
+matrix $\bf R$ based on an edge sensitive filter.
 One common edge sensitive filter is the discrete Laplacian,
 in which the penalty term is calculated for each element
-and its surrounding finite element neighbors; each
-neighbor is given a weighting of $-1$ and the element itself
+and its surrounding finite element neighbors. Each
+neighboring element is assigned a weighting of $-1$ and the element itself
 has a weighting of $D+1$, where $D$ is the model dimension,
 in order for the penalty term to sum to zero for smooth
-images.
+images. Thus,
+\begin{equation}
+R_{i,j} =   \left\{ 
+   \begin{array}{ll}
+      D+1    & \mbox{if $i=j$ } \\
+      -1     & \mbox{if element $i$ is adjacent to $j$ } \\
+      0      & \mbox{otherwise.}
+   \end{array}
+             \right.
+\end{equation}
+
 
 Such a Laplacian filter can be used as a regularization prior
 to penalize high frequency components (edges) in the image.
@@ -1155,7 +1171,7 @@ then edges should not be penalized (or be less penalized) in
 those places. Fig \ref{fig:laplprior}
 shows the effect of such careful
 edge preserving prior selection (with no {\em inverse crime}).
-{\em Known edges} are weighted at $0.2$ time that of other
+{\em Known edges} are weighted at $0.2$ times that of other
 edges in the image.
 
 %
@@ -1165,8 +1181,8 @@ edges in the image.
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_lapl_wo-icrime.eps}
 \caption{\small 
-Reconstructed images illustrating the effect of edge
-preserving image priors,
+Reconstructed images illustrating the effect modifying the
+weighting of edge preserving image priors,
 using different mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Edge prior with no weighting,
@@ -1180,10 +1196,10 @@ happy face (right),
 \end{figure}
 
 In order to enhance this effect, we use an {\em inverse crime},
-by putting the prior information {\em exactly} where
-it needs to be to get the happy face
+by putting the prior information {\em exactly} where edges
+occur in the happy face
 (Fig. \ref{fig:laplprior-icrime}).
-{\em Known edges} are weighted at $0.2$ times that of other
+{\em Known} (or assumed) edges are weighted at $0.2$ times that of other
 edges in the image.
 
 %
@@ -1193,8 +1209,8 @@ edges in the image.
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_lapl_w-icrime.eps}
 \caption{\small 
-Reconstructed images illustrating the effect of edge
-preserving image priors,
+Reconstructed images illustrating the effect modifying the
+weighting of edge preserving image priors,
 using same mesh for model and reconstruction.
 Images are numbered from left to right.
 {\em Image 1:} Edge prior with no weighting,
@@ -1329,7 +1345,7 @@ Seemingly different number of fingers resulting simply from a
 This paper presents version 3 of the EIDORS,
 open source software suite for image reconstruction
 in EIT and diffuse optical tomography.
-The current version build on the capabilities of
+The current version builds on the capabilities of
 earlier versions of EIDORS \cite{Vauhkonen_etal_2000},
 \cite{Polydorides_and_Lionheart_2002}, but
 has a different focus. Rather than
@@ -1380,16 +1396,16 @@ imply that anyone is being accused of making such errors.
 Furthermore, in our experience, it 
 is surprisingly easy to unwittingly develop
 algorithms which are subject to variants of these {\em cheats}.
-
 As mentioned, many algorithm errors simply result in 
 noisy artefacts in the images. These errors are not a big
-concern, in the sense that there existence is obvious.
+concern, in the sense that their presence is obvious.
 Such cases can be described by the aphorism:
 ``Garbage in; garbage out''.
 The worrisome errors are those that introduce the possibility
 of false image interpretation, since the quality of the
 produced image does not obviously call it into question.
-The example of a transformation of a sad to happy face 
+The example of a transformation of a sad to happy face,
+or the calculation of the wrong number of fingers, 
 was chosen to illustrate this kind of error. It would
 clearly be preferable for an algorithm to produce an
 obviously wrong output -- noise -- rather than one
