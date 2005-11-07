@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.33 2005-11-07 04:03:56 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.34 2005-11-07 05:37:29 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -809,8 +809,18 @@ format to allow visualization using {\em Mayavi}
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_3d_zigzag.eps}
 \caption{\small The 
-{\em Modification of NP's model to use 16 electrodes in a
-zig zag configuration and reconstruction with them}
+Images reconstructed using a modification of
+the model of \ref{fig:fig_3d_2rings} using $16$
+electrodes in a zigzag configuration. Electrodes are placed
+in a projected circle, but even and odd numbered electrodes
+are moved away from the plane in different directions in the
+$z-$axis.
+Left: FEM Model with coloured and filled in elements for
+reconstructed image values what an absolute value
+above $frac{1}{4}$ of the absolute maximum image value.
+Right: 2D slices through the reconstructed image at
+$z-$axis intercepts of $0.125$, $0.375$, $0.625$, and $0.875$
+from bottom to top.
  \label{fig:fig_3d_zigzag}
 }
 \end{flushright}
@@ -1044,7 +1054,7 @@ weighting to each image element, ${\bf R} = {\bf I}$.
 If, however, it were {\em known} {\em a priori} that 
 data were measured from a happy face, then we 
 would not wish to penalize image elements which we
-{\em know} to be large. Thus for each pixel {\em i}
+{\em know} (or assume) to be large. Thus for each pixel {\em i}
 in the happy face, we set 
 
 \begin{equation}
@@ -1078,9 +1088,10 @@ happy face (right),
 \end{figure}
 
 In order to enhance this effect, we use an {\em inverse crime},
-using the same FEM for both data simulation and image reconstruction.
-This allows the Tikhonov prior information to be {\em exactly} where
-in the positions of the happy face finite elements
+which as defined by \cite{Colton_and_Kress_1992}, occurs when
+using the same model for both data simulation and image reconstruction.
+In this case, the regularized prior information is placed
+{\em exactly} at the positions of the happy face finite elements
 (Fig. \ref{fig:tikprior_icrime}).
 
 %
@@ -1107,20 +1118,30 @@ happy face (right),
 \subsection{ Cheating approach \#3:
              Edge based priors}
 
-It is somewhat difficult to properly model a Laplacian filter
-on a Finite Element mesh, but one way to approximate it is to
-do the following: for each edge between elements $i$
-and $j$, put 1 at $i,i$ and $j,j$
-and $-1$ at $i,j$ and $j,i$.
+Tikhonov priors impose a penalty on the amplitude of image
+elements, but do not model inter-element correlations. 
+However, it is reasonable to assume, for most EIT applications,
+the conductivity distribution in the medium is largely
+smooth. It is thus advantageous to model this smoothness
+as a penalty for non-smooth image regions, using a
+matrix $R$ based on an edge sensitive filter.
+One common edge sensitive filter is the discrete Laplacian,
+in which the penalty term is calculated for each element
+and its surrounding finite element neighbors; each
+neighbor is given a weighting of $-1$ and the element itself
+has a weighting of $D+1$, where $D$ is the model dimention,
+in order for the penalty term to sum to zero for smooth
+images.
 
 Such a Laplacian filter can be used as a regularization prior
 to penalize high frequency components (edges) in the image.
-On the other hand, if we {\em know} where the edges are,
+In a similar way to the Tikhonov case, 
+if we {\em know} (or assume) where the edges are,
 then edges should not be penalized (or be less penalized) in
 those places. Fig \ref{fig:laplprior}
 shows the effect of such careful
 edge preserving prior selection (with no {\em inverse crime}).
-{\em Known edges} are weighted at $0.3\times$ that of other
+{\em Known edges} are weighted at $0.2$ time that of other
 edges in the image.
 
 %
@@ -1145,10 +1166,10 @@ happy face (right),
 \end{figure}
 
 In order to enhance this effect, we use an {\em inverse crime},
-by putting the Tikhonov prior information {\em exactly} where
+by putting the prior information {\em exactly} where
 it needs to be to get the happy face
 (Fig. \ref{fig:laplprior-icrime}).
-{\em Known edges} are weighted at $0.3\times$ that of other
+{\em Known edges} are weighted at $0.2$ times that of other
 edges in the image.
 
 %
@@ -1174,17 +1195,18 @@ happy face (right),
 
 
 \subsection{
-Sample Problem: Three fingers
+Cheating approach \#3:
+     Reconstruction of Three fingers
 }
 We now illustrate some cheating for a three dimensional
 problem. We model a cylindical phantom tank with a rather
-course FEM mesh of only xx elements with 32 rectangular
+coarse FEM mesh of only xx elements with 32 rectangular
 electrodes in two planes. Note that to realistically
 fit data even for a homogeneous tank to a sensible
 measurement accuracy requires a much finer mesh, but the
 principles of cheating will be similar. The mesh geometry
 was constructed using constructive solid geometry in
-netgen. The electodes were created by the intesectiont
+netgen. The electodes were created by the intesection
 of cuboids with the cylinder representing the tank. The
 target object is three triangular prisms projecting from
 the base of cylinder as a crude approximation to three
@@ -1201,9 +1223,9 @@ but we are interested to see if we can distinguish three
 fingers and their approximate position. Our first attempt,
 using an arbitrarily chosen regularization factor
 of $10^{-8}$ appears in \fref{fig:3fingers1}. It is
-displayed using the VTK visualisation program Mayav {\tt
-www.mayavi.org}, after exporting the data to a vtk file
-using EIDORS function {\tt writevtkfile(filename,model,image)}. The
+displayed using the VTK visualisation program MayaVi
+\cite{Ramachandran_2003}, after exporting the data to a vtk file
+using the EIDORS function {\tt writevtkfile(filename,model,image)}. The
 piecewise constant conductivity of the reconstruction has
 been interpolated using the {\tt CellToPointData} filter in
 Mayavi, and displayed using Mayavi's {\tt isosurface} with
@@ -1290,31 +1312,95 @@ Seemingly different number of fingers resulting simply from a
  Discussion
 }
 
-Items to discuss
+This paper presents version 3 of the EIDORS,
+open source software suite for image reconstruction
+in EIT and diffuse optical tomography.
+Earlier versions of EIDORS provided 2D image
+The current version build on the capabilities of
+earlier versions of EIDORS (\cite{Vauhkonen_etal_2000},
+\cite{Polydorides_and_Lionheart_2002}, but
+has a very different focus. Rather than
+simply providing image reconstruction software, 
+EIDORS version 3 takes a software engineering
+approach to its design, in order to address the
+following practical issues.
 
- - EIDORS adv and disadv
- - Call for contributions to EIDORS
- - Cheating real world implications
- - Define "inverse GIGO"
+\begin{itemize}
 
-    Normally we say "garbage in, garbage out"
+  \item {\em Extensible software}:
+  In order to see community use and participation
+  in EIDORS, it is important to provide a 
+  software framework which makes it clear how
+  the pieces are used and fit together.
+  We address this issue by providing many simple
+  and more detailed examples, and by implementing
+  a unified ``pluggable'' software architecture,
+  into which many FEM models, image algorithms, and
+  interfaces to common hardware are provided.
 
-  We define "Don't whitewash our garbage" DWG
+  \item {\em Design for testability}:
+  In our experience, correct design of software for
+  inverse problems such as EIT is difficult. Among the
+  many causes we identify: 1) the numerical issues associated
+  with the solution of ill-conditioned problems on
+  large linear algebra systems, and 2) the ease with which
+  subtle model errors can cause image artefacts.
+  In the EIDORS software, we attempt to assist 
+  users of the software as follows:
+  For numerical difficulties, we provide several well used independant
+  algorithms to solve core functions, as well as a test suite
+  to validate the calculations of several important parameters
+  such as the Jacobian.
+  The algorithm model errors, on the other
+  hand, we are not able to address by software. Instead we
+  have written a section on how to identify and avoid such
+  errors as part of this paper.
+  We hope that these ideas will help clarify the kinds of
+  possible errors, and help researchers to avoid them.
 
-    "If we have Garbage input, we want to see garbage out"
+\end{itemize}
 
+Open source software like EIDORS has could
+potentially dramatically facilitate
+research and development in medical imaging fields like EIT.
+It could assist in the development on new works
+based on combinations of previous approaches, and
+could allow correct comparison of new approaches
+to older ones. 
 
-
-As well as to illustrate the use of the new plugable OO
-framework for EIDORS one of our aims in this paper is to
-illustrate some of the things
-that can go wrong with the algorithms provided.
-While the examples chosen are somewhat lighthearted, it
-is surprisingly easy to unwittingly develop mathematical
+We make the following additional observations related to 
+``cheating'' with inverse problems.
+We intentionally take a
+lighthearted tone (ie\. using terms like ``cheating'',
+and ``happy transform'') because we do not want to
+imply that anyone is being accused of making such errors.
+Furthermore, in our experience, it 
+is surprisingly easy to unwittingly develop
 algorithms which are subject to variants of these {\em cheats}.
-We hope that these ideas will help clarify the kinds of
-possible errors, and help researchers to avoid them.
 
+As mentioned, many algorithm errors simply result in 
+noisy artefacts in the images. These errors are not a big
+concern, in the sense that there existance is obvious.
+Such cases can be described by the aphorism:
+``Garbage in; garbage out''.
+The worrysome errors are those that introduce the possibility
+of false image interpretation, since the quality of the
+produced image does not obviously call it into question.
+The example of a trasformation of a sad to happy face 
+was chosen to illustrate this kind of error. It would
+clearly be preferable for an algorithm to produce an
+obviously wrong output -- noise -- rather than one
+that can be misinterpreted in this way. We would like
+to introduce the following edict: 
+``Don't whitewash our garbage!''.
+
+
+In conclusiong, we have described the new
+developments of the EIDORS software for the
+version 3 release. These developments have been 
+focussed on software engineering improvements that
+will facilitate collaborative use, modification and
+enhancement of the software by the EIT community.
 
 \section*{References}
 \begin{thebibliography}{99}
@@ -1358,6 +1444,12 @@ Electrode models for electric current
 computed tomography
 {\it IEEE Trans Biomed Eng}
 {\bf 36} 918--924
+
+\bibitem{Colton_and_Kress_1992}
+Colton D and Kress R 1992
+{\it Inverse Acoustic and Electromagnetic Scattering Theory}
+Springer, Berlin.
+
 
 \bibitem{Eaton_2002}
 Eaton J W 2002
@@ -1423,7 +1515,8 @@ Kaipio J P,
 2000
 A MATLAB package for the EIDORS project to reconstruct
 two-dimensional EIT images
-{\it Physiol. Meas.} 22 107--111 
+{\it Physiol. Meas.} {\bf 22} 107--111 
+
 \end{thebibliography}
 \end{document}
 
