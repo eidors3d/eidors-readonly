@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.10 2005-10-27 13:28:08 aadler Exp $
+% $Id: startup.m,v 1.11 2005-11-30 15:57:26 billlion Exp $
 
 HOMEDIR=pwd;
 
@@ -22,7 +22,10 @@ addpath([HOMEDIR, '/tests']);
 if exist('eidors_var_id')~=3
   warning(sprintf([ ...
      'you do not have a compiled mex file eidors_var_id.\n' ...
-     'Please compile it using: mex eidors_var_id.cpp']));
+     'Please compile it using: mex eidors_var_id.cpp\n'...
+     'or if you have Matlab <6.5 under linux try:\n'...
+     ' eval([''mex -v -f '' matlabroot ''/bin/cxxopts.sh eidors_var_id.cpp''])'
+     ]));
 end
 
 clear HOMEDIR;
