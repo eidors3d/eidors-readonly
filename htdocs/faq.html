@@ -143,10 +143,35 @@ of references here, also.
 <p><li><b>
     Does EIDORS support 2D algorithms
 </b><p>
-Yes.
+Yes. Look at <tt>examples/image_2d_algs.m</tt>
 
 <p><li><b>
-    How do I use EIDORS3D to compare my idea to a 
+    Does EIDORS provide sample data
+</b><p>
+Yes. Look in the <tt>sample_data</tt> directory.
+We would love to have additional contributions of
+sample data from various experimental and clinical
+settings.
+
+<p><li><b>
+    May I use EIDORS sample data to test my algorithm
+</b><p>
+Yes. However, if you publish your tests, you are generall
+required to refer to EIDORS in your publication. In general,
+you may simply list this paper in your
+references:
+<ul>
+   Adler and Lionheart (2005),
+  "Uses and abuses of EIDORS: An extensible software base for EIT"
+   Submitted to <i>Physiol. Meas.</i>, Nov. 2005
+</ul>
+However, certain data sets may require reference to a different
+paper. Please read the documentation for the particular data
+set.
+
+
+<p><li><b>
+    How do I use EIDORS to compare my idea to a 
     published algorithm
 </b><p>
 Please remember that this is only a toolkit, and that the
@@ -158,7 +183,7 @@ the demo code on your own data, using the tiny demo mesh, a randomly
 chosen regularization parameter and only one iteration of regularized
 Newton's method then compare this with your own highly optimised code
 and claim that your code is vastly superior than EIDORS' best shot
-(Yes, I exagerate, slightly).
+(Yes, we exagerate, slightly).
 This is a toolkit of routines for you to build a code which suits your
 application.
 
@@ -175,11 +200,11 @@ application.
 You may write an email to the <a href="#maintainers">maintainers</a>.
 
 <p><li><b>
-    I need some features that are missing in EIDORS3D?
+    I need some features that are missing in EIDORS?
 </b><p>
-Please note that EIDORS3D is a volunteer project by some
+Please note that EIDORS is a volunteer project by some
 very busy people. You are welcome to make suggestions
-for new features, but we are unlikely to be able to
+for new features, but we may not be able to 
 find the time to implement them.
 <p>
 Good options are: 1) implement new features yourself,
@@ -236,7 +261,7 @@ on which the mex file was built. The easiest solution is to recompile the mex fi
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-10-31 12:58:56 $ by $Author: aadler $
+    Last Modified: $Date: 2005-11-30 17:49:50 $ by $Author: aadler $
 </small>
 </body>
 
