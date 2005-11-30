@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.12 2005-10-26 14:04:05 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.13 2005-11-30 15:42:57 billlion Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -67,11 +67,15 @@ hash_final( hash_context * c, unsigned long[HW] );
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
 #define TESTDBL(vv) if( !mxIsDouble(vv) ) { \
-            mexErrMsgTxt("var must be type double");}
+            mexErrMsgTxt("var  must be type double");}
 #undef VERBOSE 
-
+// #define VERBOSE
+		
 void recurse_hash( hash_context *c, const mxArray *var ) {
 
+  #ifdef VERBOSE    
+      mexPrintf("processing var of ClassID ( %d ):", mxGetClassID( var ) );
+  #endif
   if ( var == NULL ) {
     #ifdef VERBOSE
        mexPrintf("ignoring element ( NULL ):");
@@ -82,7 +86,7 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     // as well as the row and col index pointers
     double *pr,*pi;
     int *irs, *jcs, nnz, cols; 
-    TESTDBL( var );
+    // Don't check sparse is double since it isn't in Matlab 6
     pr  = mxGetPr( var );
     pi  = mxGetPi( var );
     irs = mxGetIr( var );
@@ -98,7 +102,7 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     }
   } else
   if ( mxIsNumeric(var) ) {
-    // full numeric variable. We need to hash the numeric data.
+    // full numeric variable. ) We need to hash the numeric data.
     double *pr,*pi;
     int len= sDBL * mxGetNumberOfElements( var );
     TESTDBL( var );
