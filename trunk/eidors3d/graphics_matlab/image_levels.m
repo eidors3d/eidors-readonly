@@ -5,7 +5,7 @@ function image_levels(img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: image_levels.m,v 1.9 2005-10-31 01:21:12 aadler Exp $
+% $Id: image_levels.m,v 1.10 2005-11-30 15:44:03 billlion Exp $
 
 if exist('OCTAVE_VERSION');
    warning('image_levels does not support octave. Try show_slices');
@@ -49,6 +49,7 @@ for idx= 1:length(levels);
     caxis([-clim,clim]);
     colorbar;
     axis('off');
+    axis equal
     title(sprintf('z=%4.2f',lev));
 end
 
