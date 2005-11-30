@@ -108,7 +108,7 @@ axis([min(vtx(:,1)), max(vtx(:,1)), ...
 %You may want to change this setting !!  
 caxis([min(BB), max(BB)]);
 
-axis square;
+axis equal 
 
 
 function [CC] = solution_ext(BB,vtx,simp);
