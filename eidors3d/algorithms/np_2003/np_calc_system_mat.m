@@ -2,12 +2,14 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 % NP_CALC_SYSTEM_MAT: s_mat= np_calc_system_mat( fwd_model, img)
 % Fwd solver for Nick Polydorides EIDORS3D code
 % s_mat.E   = FEM system matrix
+% s_mat.D   = The sgradients of the shape functions over each element.
+% s_mat.Vols= Normalised volums of the elements
 % s_mat.perm= permutation of system matrix
 % fwd_model = forward model
 % img       = image background for system matrix calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_calc_system_mat.m,v 1.4 2005-10-28 15:10:55 aadler Exp $
+% $Id: np_calc_system_mat.m,v 1.5 2005-12-01 09:04:51 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -19,4 +21,6 @@ tol = 1e-5;
                 p.gnd_ind, p.elec, p.zc, p.perm_sym );
 
 s_mat.E     = Eref;
+s_mat.D     = D;
+s_mat.Vols  = Ela;
 s_mat.perm  = ppr;
