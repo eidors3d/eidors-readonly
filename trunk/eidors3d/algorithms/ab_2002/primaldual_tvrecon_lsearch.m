@@ -17,7 +17,7 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2)
 %
 
 % Initialisation
-fwd_model= inv_model.fwd_model;
+fwd_model= inv_mdl.fwd_model;
 
 msh.TC = fwd_model.elems';
 msh.PC = fwd_model.nodes';
@@ -33,7 +33,7 @@ epsilon=1e-6;
 len=([0,1e-4,1e-3,1e-2,0.1,0.2,0.5,0.8,1]); % this is used for the line search procedure, the last element, and the biggest must be one
 
 % Inizialisation
-A=tv_op(msh); 	% The Total Variation operator is created
+A=calc_image_prior( inv_mdl);
 
 n=size(A,1); % num_rows_L
 m=size(A,2); % num_elem
@@ -59,7 +59,7 @@ J= calc_jacobian( IM );
 de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
 s=s+de_s;
 
-dispmsh(msh,s); colorbar; drawnow;
+%dispmsh(msh,s); colorbar; drawnow;
 
 % Iterative procedure
 
@@ -75,7 +75,8 @@ while (~terminate)&(iter<maxiter)
     IM.elem_data= s;
     VV= fwd_solve( IM );
     vsim= VV.meas;
-    
+    J= calc_jacobian( IM );
+
     z=A*s;	% This is the dual variable
     
     eta=sqrt(z.^2+beta);
@@ -109,12 +110,16 @@ while (~terminate)&(iter<maxiter)
     % line search
     
     for k=1:length(len)
-        meas_k = measures(msh,s+len(k)*de_s,c);
+%       meas_k = measures(msh,s+len(k)*de_s,c);
+        IM.elem_data= s + len(k) * de_s;
+        VV= fwd_solve( IM );
+        meas_k= VV.meas;
         func_val(k)=0.5*norm( meas_k - vmeas )^2 + ...
                     alpha2*sum(abs(A*(s+len(k)*de_s)));
     end % for
     
     [temp,ind]=min(func_val);
+    ind,
     
     % conductivity update
         
@@ -193,7 +198,7 @@ while (~terminate)&(iter<maxiter)
     
     iter=iter+1;
     
-    dispmsh(msh,s); colorbar; drawnow
+%   dispmsh(msh,s); colorbar; drawnow
        
     rs(:,iter)=s;
     
