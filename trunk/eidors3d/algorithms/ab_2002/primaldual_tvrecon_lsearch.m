@@ -1,4 +1,5 @@
-function rs=tvrecon(msh,c,vmeas,maxiter,alpha1,alpha2)
+function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2)
+% rs=tvrecon(msh,c,vmeas,maxiter,alpha1,alpha2)
 
 % 11/02/01 By Andrea Borsic
 % 01/02/02 Modified: new steplength search on dual variable
@@ -16,6 +17,11 @@ function rs=tvrecon(msh,c,vmeas,maxiter,alpha1,alpha2)
 %
 
 % Initialisation
+fwd_model= inv_model.fwd_model;
+
+msh.TC = fwd_model.elems';
+msh.PC = fwd_model.nodes';
+
 
 % A good alpha11 is 2e-5, a good alpha2 is 1e-9
 
@@ -27,7 +33,6 @@ epsilon=1e-6;
 len=([0,1e-4,1e-3,1e-2,0.1,0.2,0.5,0.8,1]); % this is used for the line search procedure, the last element, and the biggest must be one
 
 % Inizialisation
-
 A=tv_op(msh); 	% The Total Variation operator is created
 
 n=size(A,1); % num_rows_L
@@ -36,13 +41,21 @@ s=ones(m,1);
 x=zeros(n,1);
 
 
-vsim=measures(msh,s,c); % Homogeneous background fitting
+IM= eidors_obj('image',''); IM.fwd_model= fwd_model;
+IM.elem_data= s;
+VV= fwd_solve( IM );
+vsim= VV.meas;
+%vsim=measures(msh,s,c); % Homogeneous background fitting
 scaling=vmeas\vsim;
 s=s*scaling;
-u=potentials(msh,s,c);
-vsim=measures(msh,u);
+%u=potentials(msh,s,c);
+%vsim=measures(msh,u);
+IM.elem_data= s;
+VV= fwd_solve( IM );
+vsim= VV.meas;
 de_v=vmeas-vsim;
-J=jacobian(msh,u);
+%J=jacobian(msh,u);
+J= calc_jacobian( IM );
 de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
 s=s+de_s;
 
@@ -56,9 +69,12 @@ ind=1;
 
 while (~terminate)&(iter<maxiter)
     
-    u=potentials(msh,s,c);
-    vsim=measures(msh,u); 
-    J=jacobian(msh,u);
+%   u=potentials(msh,s,c);
+%   vsim=measures(msh,u); 
+%   J=jacobian(msh,u);  - Jacobian is same in difference EIT
+    IM.elem_data= s;
+    VV= fwd_solve( IM );
+    vsim= VV.meas;
     
     z=A*s;	% This is the dual variable
     
@@ -93,7 +109,9 @@ while (~terminate)&(iter<maxiter)
     % line search
     
     for k=1:length(len)
-        func_val(k)=0.5*norm(measures(msh,s+len(k)*de_s,c)-vmeas)^2+alpha2*sum(abs(A*(s+len(k)*de_s)));
+        meas_k = measures(msh,s+len(k)*de_s,c);
+        func_val(k)=0.5*norm( meas_k - vmeas )^2 + ...
+                    alpha2*sum(abs(A*(s+len(k)*de_s)));
     end % for
     
     [temp,ind]=min(func_val);
