@@ -7,15 +7,15 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.18 2005-10-27 13:28:08 aadler Exp $
+% $Id: np_inv_solve.m,v 1.19 2005-12-01 09:15:02 aadler Exp $
+
+fwd_model= inv_model.fwd_model;
 
 % The one_step reconstruction matrix is cached
 one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');
 if ~isempty(one_step_inv)
     eidors_msg('np_inv_solve: using cached value', 2);
-    fwd_model= inv_model.fwd_model;
 else
-    fwd_model= inv_model.fwd_model;
     p= np_fwd_parameters( fwd_model );
 
     % calc jacobian with homogeneous background
