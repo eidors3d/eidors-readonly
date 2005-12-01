@@ -2,14 +2,14 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.12 2005-12-01 09:14:24 aadler Exp $
+% $Id: startup.m,v 1.13 2005-12-01 12:07:21 aadler Exp $
 
 HOMEDIR=pwd;
 
 addpath( HOMEDIR );
 addpath([HOMEDIR, '/algorithms/aa_1996']);
 addpath([HOMEDIR, '/algorithms/aa_2005']);
-%addpath([HOMEDIR, '/algorithms/ab_2002']);
+addpath([HOMEDIR, '/algorithms/ab_2002']);
 %addpath([HOMEDIR, '/algorithms/at_2002']);
 addpath([HOMEDIR, '/algorithms/ms_2005']);
 %addpath([HOMEDIR, '/algorithms/mv_2001']);
