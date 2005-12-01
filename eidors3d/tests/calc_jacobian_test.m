@@ -5,73 +5,51 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_test.m,v 1.8 2005-11-30 17:46:46 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.9 2005-12-01 09:06:34 aadler Exp $
 
 ok= 1;
-
-mdl= make_aa_mdl;
-%
-%
-% test Jacobian
-delta = 2e-5;
+delta = 1e-6;
 testvec= [5,20,40,130];
-ok=ok & run_jacobian_test(mdl, delta, testvec );
+
+mdl= make_aa_mdl2;
+%
+disp('test aa_calc_jacobian (2D) for difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
 
 %
+disp('test aa_calc_jacobian (2D) for normalized difference data');
+mdl.normalize_measurements= 1;
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
+
+mdl= make_aa_mdl3;
 %
-% test dataprior
-DP= calc_data_prior( homg_img );
-testvec= diag(DP);
-if max(abs(diff( testvec ))) > 1e-12 
-   ok=0;
-   error('Dataprior calculation error');
-end
+disp('test aa_calc_jacobian (3D) for difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
 
+mdl= make_np_mdl;
+%
+disp('test np_calc_jacobian for difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
 
-% create normalized model
-params.normalize_measurements = 1;
-mdl_2d_norm = eidors_obj('fwd_model', params);
-% create homogeneous image with normalize_measurements
-mat= ones( size(mdl_2d.elems,1) ,1);
-homg_img= eidors_obj('image', 'homg image', ...
-                     'elem_data', mat, 'fwd_model', mdl_2d_norm );
-
-J= calc_jacobian( homg_img );
-sumdiff= 0;
-delta = 2e-5;
-testvec= [5,20,40,130];
-for testelem = testvec
-    mat= ones( size(mdl_2d.elems,1) ,1);
-    mat(testelem)= 1+delta;
-    inh_img= eidors_obj('image', 'inh', ...
-                         'elem_data', mat, 'fwd_model', mdl_2d );
-    inh_data=fwd_solve( inh_img);
-
-    simJ= 1/delta* (1 - inh_data.meas ./ homg_data.meas);
-    
-%   plot([J(:,testelem) simJ]);
-    sumdiff = sumdiff + std( J(:,testelem) - simJ );
-end
-
-tol= 1e-4*std(J(:));
-if sumdiff/length(testvec) > tol
-   ok=0;
-   error('normalize Jacobian calculation error');
-end
-
-% test dataprior
-DP= calc_data_prior( homg_img );
-
-testvec = homg_data.meas.^2 .* diag(DP);
-if max(abs(diff( testvec ))) > 1e-12 
-   max(abs(diff( testvec )))
-   ok=0;
-   error('Dataprior calculation error');
-end
-
+mdl= make_ms_mdl;
+%
+disp('test ms_calc_jacobian for difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
 
 % run the jacobian test 
 function ok= run_jacobian_test( mdl, delta, testvec ); 
+    calc_norm = 0;
+    if isfield(mdl,'normalize_measurements')
+       if mdl.normalize_measurements
+           calc_norm = 1;
+       end
+    end
+
     img= eidors_obj('image', 'homg image');
     img.fwd_model= mdl;
 
@@ -80,30 +58,67 @@ function ok= run_jacobian_test( mdl, delta, testvec );
 
     J= calc_jacobian( img );
 
+    % J = dF/dx = [F(x+d)  - F(x)]/d
     sumdiff= 0;
     for testelem = testvec
-        mat= ones( size(mdl.elems,1) ,1);
-        mat(testelem)= 1+delta;
-        img.elem_data= mat;
-        inh_data=fwd_solve( img);
+       mat= ones( size(mdl.elems,1) ,1);
+       mat(testelem)= 1+delta;
+       img.elem_data= mat;
+       inh_data=fwd_solve( img);
 
-        simJ= 1/delta* (homg_data.meas-inh_data.meas);
-        
-    %   plot([J(:,testelem) simJ]);
-        sumdiff = sumdiff + std( J(:,testelem) - simJ );
+       if calc_norm
+          simJ= 1/delta* (1 - homg_data.meas ./ inh_data.meas);
+       else
+          simJ= 1/delta* (inh_data.meas-homg_data.meas);
+       end
+       
+%      plot([J(:,testelem) simJ]);
+       sumdiff = sumdiff + std( J(:,testelem) - simJ );
     end
 
     tol= 1e-4*std(J(:));
+    dif= sumdiff/length(testvec);
     if sumdiff/length(testvec) > tol
+       eidors_msg('Jacobian calculation error (%s) tol(%3.2g)>diff(%3.2g)', ...
+                mdl.name,tol,dif, 1);
        ok=0;
-       error('Jacobian calculation error');
     else
        ok=1;
     end
 
-% Create simple 2D model to test aa_calc_jacobian
+%
+% test dataprior
+%     Difference dataprior should be 1
+%     normalized difference dataprior should be 1./ homg_data
+function ok= run_dataprior_test( mdl )
+    img= eidors_obj('image', 'homg image');
+    img.fwd_model= mdl;
+
+    img.elem_data= ones( size(mdl.elems,1) ,1);
+    homg_data=fwd_solve( img);
+
+    DP= calc_data_prior( img );
+
+    % difference dataprior
+    testvec= diag(DP);
+    if isfield(mdl,'normalize_measurements')
+       if mdl.normalize_measurements
+           testvec = homg_data.meas.^2 .* diag(DP);
+       end
+    end
+
+    if max(abs(diff( testvec ))) > 1e-12 
+       ok=0;
+       eidors_msg('Dataprior calculation error (%s)', mdl.name, 1);
+    else
+       ok=1;
+    end
+
+
+
+% 2D model with point electrodes
 % 
-function mdl_2d= make_aa_mdl;
+function mdl= make_aa_mdl2;
     n_elec= 16;
     n_rings= 1;
     options = {'no_meas_current','no_rotate_meas'};
@@ -115,6 +130,31 @@ function mdl_2d= make_aa_mdl;
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements = 0;
-    mdl_2d = eidors_obj('fwd_model', params);
+    mdl = eidors_obj('fwd_model', params);
+    mdl.name= 'AA_1996 mdl';
 
+function mdl= make_aa_mdl3;
+    i_mdl = mk_common_model('b3z',16);
+    mdl= i_mdl.fwd_model;
+    mdl.name= 'AA_1996 mdl';
+    mdl.solve=      'aa_fwd_solve';
+    mdl.system_mat= 'aa_calc_system_mat';
+    mdl.jacobian=   'aa_calc_jacobian';
+    
+    
 
+function mdl= make_np_mdl;
+    i_mdl = mk_common_model('n3r2',16);
+    mdl= i_mdl.fwd_model;
+    mdl.name=     'NP_2003 mdl';
+    mdl.solve=      'np_fwd_solve';
+    mdl.system_mat= 'np_calc_system_mat';
+    mdl.jacobian=   'np_calc_jacobian';
+
+function mdl= make_ms_mdl;
+    i_mdl = mk_common_model('n3r2',16);
+    mdl= i_mdl.fwd_model;
+    mdl.name=       'MS_2005 mdl';
+    mdl.solve=      'np_fwd_solve';
+    mdl.system_mat= 'np_calc_system_mat';
+    mdl.jacobian=   'ms_calc_jacobian';
