@@ -1,7 +1,7 @@
 % Compare different 2D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.1 2005-12-01 17:59:05 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.2 2005-12-01 18:20:10 aadler Exp $
 
 imb=  mk_common_model('b2c',16);
 e= size(imb.fwd_model.elems,1);
@@ -18,13 +18,13 @@ vi= fwd_solve( img );
 
 sig= sqrt(norm(vi.meas - vh.meas));
 m= size(vi.meas,1);
-vi.meas = vi.meas + .001*sig*randn(m,1);
+vi.meas = vi.meas + .000001*sig*randn(m,1);
 
 %show_slices(img);
 inv2d.name= 'EIT inverse';
 %inv2d.solve=       'aa_inv_solve';
- inv2d.solve=       'np_inv_solve';
-%inv2d.solve=       'ab_tv_diff_solve';
+ inv2d.solve=       'np_inv_solve'; iidx=1;
+%inv2d.solve=       'ab_tv_diff_solve'; iidx= [2:10];
 %inv2d.solve=       'aa_inv_total_var';
  inv2d.hyperparameter.value = 1e-3;
 %inv2d.hyperparameter.func = 'aa_calc_noise_figure';
@@ -42,5 +42,5 @@ inv2d= eidors_obj('inv_model', inv2d);
 % Step 3: Reconst and show image
 % 
 img= inv_solve( inv2d, vi, vh);
-show_slices(img);
+show_slices(img(iidx));
 
