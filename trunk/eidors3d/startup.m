@@ -2,21 +2,25 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.11 2005-11-30 15:57:26 billlion Exp $
+% $Id: startup.m,v 1.12 2005-12-01 09:14:24 aadler Exp $
 
 HOMEDIR=pwd;
 
 addpath( HOMEDIR );
-addpath([HOMEDIR, '/algorithms/np_2003']);
 addpath([HOMEDIR, '/algorithms/aa_1996']);
 addpath([HOMEDIR, '/algorithms/aa_2005']);
+%addpath([HOMEDIR, '/algorithms/ab_2002']);
+%addpath([HOMEDIR, '/algorithms/at_2002']);
+addpath([HOMEDIR, '/algorithms/ms_2005']);
+%addpath([HOMEDIR, '/algorithms/mv_2001']);
+addpath([HOMEDIR, '/algorithms/np_2003']);
 addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/aa_1996']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/graphics_matlab']);
 addpath([HOMEDIR, '/graphics_vtk']);
-addpath([HOMEDIR, '/tests']);
+%addpath([HOMEDIR, '/tests']);
 
 % test if eidors_var_id.cpp is a valid mexfile
 if exist('eidors_var_id')~=3
