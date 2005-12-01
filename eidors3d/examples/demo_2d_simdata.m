@@ -2,7 +2,7 @@
 % solve it using various 2D solvers
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_2d_simdata.m,v 1.9 2005-12-01 09:16:27 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.10 2005-12-01 12:07:21 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model
@@ -55,15 +55,18 @@ show_fem( mdl_2d_2 ); pause;
 clear inv2d;
 inv2d.name= 'EIT inverse';
 %inv2d.solve=       'aa_inv_solve';
-inv2d.solve=       'aa_inv_tv';
-%inv2d.hyperparameter.value = 1e-8;
-inv2d.hyperparameter.func = 'aa_calc_noise_figure';
-inv2d.hyperparameter.noise_figure= 2;
-inv2d.hyperparameter.tgt_elems= 1:4;
- inv2d.image_prior.func= 'laplace_image_prior';
+ inv2d.solve=       'np_inv_solve';
+%inv2d.solve=       'aa_inv_total_var';
+ inv2d.hyperparameter.value = 1e-5;
+%inv2d.hyperparameter.func = 'aa_calc_noise_figure';
+%inv2d.hyperparameter.noise_figure= 2;
+%inv2d.hyperparameter.tgt_elems= 1:4;
+%inv2d.image_prior.func= 'laplace_image_prior';
+ inv2d.image_prior.func= 'ab_calc_tv_prior';
 %inv2d.image_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
+inv2d.fwd_model.misc.perm_sym= '{y}';
 inv2d= eidors_obj('inv_model', inv2d);
 
 % 
