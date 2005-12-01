@@ -2,7 +2,7 @@
 % solve it using various 2D solvers
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_2d_simdata.m,v 1.8 2005-10-27 13:28:08 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.9 2005-12-01 09:16:27 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model
@@ -54,7 +54,8 @@ show_fem( mdl_2d_2 ); pause;
 % 
 clear inv2d;
 inv2d.name= 'EIT inverse';
-inv2d.solve=       'aa_inv_solve';
+%inv2d.solve=       'aa_inv_solve';
+inv2d.solve=       'aa_inv_tv';
 %inv2d.hyperparameter.value = 1e-8;
 inv2d.hyperparameter.func = 'aa_calc_noise_figure';
 inv2d.hyperparameter.noise_figure= 2;
