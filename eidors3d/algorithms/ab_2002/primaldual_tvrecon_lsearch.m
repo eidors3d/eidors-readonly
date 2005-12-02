@@ -70,9 +70,9 @@ if 0 % static EIT
 else
    J= calc_jacobian( IM );
    de_v=vmeas-vsim;
-%  de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
-%  s=s+de_s;
-   s=s+ (J'*J + alpha1^2*A'*A)\J'*de_v;
+   de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
+   s=s+de_s;
+%  s=s+ (J'*J + alpha1^2*A'*A)\J'*de_v;
    scaling= 1;
 end
 
@@ -133,7 +133,7 @@ while (~terminate)&(iter<maxiter)
                     alpha2*sum(abs(A*(s+len(k)*de_s)));
     end % for
     
-    [temp,ind]=min(func_val); disp(len(ind));
+    [temp,ind]=min(func_val);% disp(len(ind));
     
     % conductivity update
         

@@ -8,12 +8,17 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ab_tv_diff_solve.m,v 1.2 2005-12-02 14:36:15 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.3 2005-12-02 15:28:46 aadler Exp $
 
 
-alpha1= 2e-2;
-alpha2= 1e-6;
-maxiter= 5;
+hp= calc_hyperparameter( inv_model);
+alpha1= hp(1); % Tikhonov parameter, should be large to start of right
+alpha2= hp(2);
+if isfield(inv_model,'parameters')
+    maxiter = inv_model.parameters.max_iterations;
+else
+    maxiter= 3;
+end
 dva= data1 - data2;
 %dva= data1;
 
