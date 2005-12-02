@@ -8,15 +8,17 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ab_tv_diff_solve.m,v 1.1 2005-12-01 17:47:52 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.2 2005-12-02 14:36:15 aadler Exp $
 
 
 alpha1= 2e-2;
-alpha2= 1e-9;
-maxiter= 10;
+alpha2= 1e-6;
+maxiter= 5;
 dva= data1 - data2;
-dva= data1;
+%dva= data1;
+
 sol=primaldual_tvrecon_lsearch(inv_model, dva ,maxiter,alpha1,alpha2);
+
 img.name= 'solved by ab_tv_diff_solve';
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
