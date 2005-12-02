@@ -1,7 +1,7 @@
 % Compare different 3D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.3 2005-12-02 11:49:57 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.4 2005-12-02 15:55:22 aadler Exp $
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -19,7 +19,7 @@ vi= fwd_solve( img );
 
 sig= sqrt(norm(vi.meas - vh.meas));
 m= size(vi.meas,1);
-vi.meas = vi.meas + .01*sig*randn(m,1);
+vi.meas = vi.meas + .001*sig*randn(m,1);
 
 %show_slices(img);
 inv3d= eidors_obj('inv_model', 'EIT inverse');
@@ -28,7 +28,7 @@ inv3d.fwd_model= imb.fwd_model;
 inv3d.fwd_model.misc.perm_sym= '{y}';
 
      iidx=1;
-switch 3
+switch 4
    case 1,
      inv3d.hyperparameter.value = 1e-4;
      inv3d.solve=            'np_inv_solve';
@@ -44,6 +44,17 @@ switch 3
      inv3d.hyperparameter.value = 1e-2;
      inv3d.image_prior.func=  'ab_calc_tv_prior';
      inv3d.solve=             'np_inv_solve';
+
+   case 4,
+     inv3d.hyperparameter.value = [1e-2, 1e-5];
+     inv3d.parameters.max_iterations= 5;
+     inv3d.image_prior.func=  'ab_calc_tv_prior';
+     inv3d.solve=             'ab_tv_diff_solve';
+     for k=1:5
+     subplot(1,5,k);ix=imgr(k);ix.elem_data=ix.elem_data-1;
+     show_slices(ix, linspace(.2,2.8,4)'*[Inf,Inf,1]);
+     end
+
 
    otherwise,
      error('action unknown');
