@@ -14,7 +14,7 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_readdata.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
+% $Id: eidors_readdata.m,v 1.4 2005-12-02 09:08:28 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -34,6 +34,8 @@ end
 fmt= lower(format);
 if     strcmp(fmt, 'get') | strcmp(fmt, 'mceit')  
    [vv,curr,volt] = mceit_readdata( fname );
+elseif strcmp(fmt, 'p2k') | strcmp(fmt, 'its')
+   vv = its_readdata( fname );
 else
    error('eidors_readdata: file "%s" format unknown', fmt);
 end
@@ -81,4 +83,24 @@ function [vv,curr,volt] = mceit_readdata( fname );
    curr=0.00512*dd(209:224,:);  % Amps
    volt=12*dd(225:240,:); %Vrms
    %input impedance=voltage./current-440;	Ohm
+
+% Read data from p2k files (I T S system)
+% FIXME: this code is very rough, it works for
+%   only eight ring data records
+function  vv = its_readdata( fname ) 
+   fid= fopen( fname, 'rb', 'ieee-le');
+   vv=[];
+
+   % don't know how to interpret header
+   header= fread(fid, 880, 'uchar');
+   frameno= 0;
+   rings= 8;
+   while( ~feof(fid) )
+       frameno= frameno+1;
+       % don't know how to interpret frame header
+       framehdr= fread(fid, 40);
+       data= fread(fid, 104*rings, 'double');
+       vv= [vv, data];
+   end
+
 
