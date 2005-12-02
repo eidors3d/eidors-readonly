@@ -1,7 +1,7 @@
 % Compare different 3D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.2 2005-12-02 10:53:47 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.3 2005-12-02 11:49:57 aadler Exp $
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -28,7 +28,7 @@ inv3d.fwd_model= imb.fwd_model;
 inv3d.fwd_model.misc.perm_sym= '{y}';
 
      iidx=1;
-switch 1
+switch 3
    case 1,
      inv3d.hyperparameter.value = 1e-4;
      inv3d.solve=            'np_inv_solve';
@@ -41,7 +41,7 @@ switch 1
      inv3d.solve=             'np_inv_solve';
 
    case 3,
-     inv3d.hyperparameter.value = 1e-4;
+     inv3d.hyperparameter.value = 1e-2;
      inv3d.image_prior.func=  'ab_calc_tv_prior';
      inv3d.solve=             'np_inv_solve';
 
