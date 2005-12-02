@@ -14,7 +14,7 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_readdata.m,v 1.4 2005-12-02 09:08:28 aadler Exp $
+% $Id: eidors_readdata.m,v 1.5 2005-12-02 10:23:08 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -103,4 +103,23 @@ function  vv = its_readdata( fname )
        vv= [vv, data];
    end
 
+   if 0 % convert a ring to 208
+      ringno= 1;
+      ld= size(vv,2);
+      vx= [zeros(1,ld);vv( ringno*104 + (-103:0) ,: )];
+      idx= ptr104_208;
+      vv= vx(idx+1,:);
+   end
 
+% pointer to convert from 104 to 208 meas patterns
+function idx= ptr104_208;
+    idx= zeros(16);
+    idx(1,:)= [0,0,1:13,0];
+    ofs= 13;
+    for i= 2:14
+        mm= 15-i;
+        idx(i,:) = [zeros(1,i+1), (1:mm)+ofs ];
+        ofs= ofs+ mm;
+    end
+
+    idx= idx + idx';
