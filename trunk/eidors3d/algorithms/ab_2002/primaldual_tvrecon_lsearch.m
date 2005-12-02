@@ -8,6 +8,10 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2)
 % ex. rs=pd_tvrecon(msh,c,vmeas,10,5e-3,1e-9); for simulated data
 % ex. rs=pd_tvrecon(msh,c,vmeas,10,5e-3,5e-9); for tank data
 %
+% PARAMETERS
+%   alpha1 - hyperparameter for the initial Tikhonov step
+%   alpha2 - hyperparameter for the TV update
+%
 % PRIMAL DUAL IMPLEMENTATION
 %
 % Total variation reconstruction with norm-2 fitting of the measurements
@@ -30,7 +34,9 @@ beta=1;
 decay_beta=0.7;
 epsilon=1e-6;
 
-len=([0,1e-4,1e-3,1e-2,0.1,0.2,0.5,0.8,1]); % this is used for the line search procedure, the last element, and the biggest must be one
+% this is used for the line search procedure,
+% the last element, and the biggest must be one
+len=([0,1e-4,1e-3,1e-2,0.1,0.2,0.5,0.8,1]);
 
 % Inizialisation
 A=calc_image_prior( inv_mdl);
@@ -41,23 +47,34 @@ s=ones(m,1);
 x=zeros(n,1);
 
 
-IM= eidors_obj('image',''); IM.fwd_model= fwd_model;
+% Create homogeneous model
+IM= eidors_obj('image','');
+IM.fwd_model= fwd_model;
 IM.elem_data= s;
-VV= fwd_solve( IM );
-vsim= VV.meas;
+
+vsim= sim_measures( IM, s);
+
 %vsim=measures(msh,s,c); % Homogeneous background fitting
-scaling=vmeas\vsim;
-s=s*scaling;
-%u=potentials(msh,s,c);
-%vsim=measures(msh,u);
-IM.elem_data= s;
-VV= fwd_solve( IM );
-vsim= VV.meas;
-de_v=vmeas-vsim;
-%J=jacobian(msh,u);
-J= calc_jacobian( IM );
-de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
-s=s+de_s;
+
+if 0 % static EIT
+   scaling=vmeas\vsim;
+   s=s*scaling;
+   %u=potentials(msh,s,c);
+   %vsim=measures(msh,u);
+   vsim= sim_measures( IM, s);
+   de_v=vmeas-vsim;
+   %J=jacobian(msh,u);
+   J= calc_jacobian( IM );
+   de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
+   s=s+de_s;
+else
+   J= calc_jacobian( IM );
+   de_v=vmeas-vsim;
+%  de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
+%  s=s+de_s;
+   s=s+ (J'*J + alpha1^2*A'*A)\J'*de_v;
+   scaling= 1;
+end
 
 %dispmsh(msh,s); colorbar; drawnow;
 
@@ -66,16 +83,16 @@ s=s+de_s;
 terminate=0;
 iter=1;
 ind=1;
+    rs(:,iter)=s;
 
 while (~terminate)&(iter<maxiter)
     
 %   u=potentials(msh,s,c);
 %   vsim=measures(msh,u); 
 %   J=jacobian(msh,u);  - Jacobian is same in difference EIT
-    IM.elem_data= s;
-    VV= fwd_solve( IM );
-    vsim= VV.meas;
-    J= calc_jacobian( IM );
+    vsim= sim_measures( IM, s);
+%   J= calc_jacobian( IM );
+    plot([vsim, vmeas]);% pause
 
     z=A*s;	% This is the dual variable
     
@@ -111,15 +128,12 @@ while (~terminate)&(iter<maxiter)
     
     for k=1:length(len)
 %       meas_k = measures(msh,s+len(k)*de_s,c);
-        IM.elem_data= s + len(k) * de_s;
-        VV= fwd_solve( IM );
-        meas_k= VV.meas;
+        meas_k= sim_measures( IM, s+len(k)*de_s);
         func_val(k)=0.5*norm( meas_k - vmeas )^2 + ...
                     alpha2*sum(abs(A*(s+len(k)*de_s)));
     end % for
     
-    [temp,ind]=min(func_val);
-    ind,
+    [temp,ind]=min(func_val); disp(len(ind));
     
     % conductivity update
         
@@ -207,3 +221,9 @@ end % while
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+function vsim= sim_measures( IM, s);
+   vh= fwd_solve( IM );
+   IM.elem_data= s;
+   vi= fwd_solve( IM );
+
+   vsim= vi.meas - vh.meas;

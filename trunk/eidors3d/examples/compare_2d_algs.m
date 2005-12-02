@@ -1,9 +1,9 @@
 % Compare different 2D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.3 2005-12-02 09:13:22 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.4 2005-12-02 14:36:16 aadler Exp $
 
-imb=  mk_common_model('b2c',16);
+imb=  mk_common_model('c2c',16);
 e= size(imb.fwd_model.elems,1);
 sigma= ones(e,1);
 img= eidors_obj('image','');
@@ -19,16 +19,17 @@ vi= fwd_solve( img );
 
 sig= sqrt(norm(vi.meas - vh.meas));
 m= size(vi.meas,1);
-vi.meas = vi.meas + .01*sig*randn(m,1);
+vi.meas = vi.meas + .0000*sig*randn(m,1);
+figure(2); show_slices(img); figure(1);
 
 %show_slices(img);
+imb=  mk_common_model('b2c',16);
 inv2d= eidors_obj('inv_model', 'EIT inverse');
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
 
-     iidx=1;
-switch 6
+switch 4
    case 1,
      inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'aa_inv_solve';
@@ -47,7 +48,7 @@ switch 6
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
-     inv2d.hyperparameter.value = 1e-3;
+     inv2d.hyperparameter.value = 1e-1;
      inv2d.image_prior.func= 'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
      iidx= [2:10];
@@ -79,5 +80,5 @@ end
 % Step 3: Reconst and show image
 % 
 imgr= inv_solve( inv2d, vi, vh);
-show_slices(imgr(iidx));
 
+figure(1); show_slices(imgr);
