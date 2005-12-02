@@ -1,20 +1,19 @@
-function L=scaip_3D_TV_operator(msh);
-%
-% Copyright 2004 Andrea Borsic, SC-AIP s.a.s.
-% Scientific Computing & Applied Inverse Problems
-% www.sc-aip.com
-% Version 1.00 26/01/04
-% 
-% This function constructs Total Variation operator for a 3D mesh
-%
-% Use: L=scaip_3D_TV_operator(msh);
+function L=TV_operator_3D( msh )
+% L=TV_operator_3D( msh )
+% construct Total Variation operator for a 3D mesh
 %
 % INPUTS:
 % msh = a 3D scaip msh structure with .msh.vtx_c_c, .elem_c defined
 % OUTPUTS:
 % L = TV operator (generally used for regularisation)
+%
+% Copyright 2004 Andrea Borsic, SC-AIP s.a.s.
+% Scientific Computing & Applied Inverse Problems  www.sc-aip.com
+% Modifications (C) 2005 Andy Adler.
+% Licenced under the GPL Version 2
+% $Id: TV_operator_3D.m,v 1.2 2005-12-02 10:53:47 aadler Exp $
 
-global SP3D % Sparse 3D matrix used in the computations
+%global SP3D % Sparse 3D matrix used in the computations
 SP3D=[];
 
 num_vtx=size(msh.vtx_c,1);
@@ -26,7 +25,8 @@ list=[]; % List is an auxiliary variable which will hold for each row the two fa
 
 SEL=[ 1 1 1 2; 2 3 4 4; 3 4 2 3];
 
-allocate_3Dsparse(num_vtx,num_vtx,num_vtx,num_tet*4);
+% allocate_3Dsparse(num_vtx,num_vtx,num_vtx,num_tet*4);
+SP3D=spalloc(M,N*P,max_elements);
 
 for k=1:num_tet
     
@@ -42,7 +42,11 @@ for k=1:num_tet
         
         if (simplex==0)
             
-            write_to_3Dsparse(face_vtx,num_vtx,num_vtx,num_vtx,k);
+%         write_to_3Dsparse(mnp,M,N,P,val);
+%           SP3D(mnp(1),(mnp(2)-1)*N+mnp(3))=val;
+%
+%           write_to_3Dsparse(face_vtx,num_vtx,num_vtx,num_vtx,k);
+            SP3D(face_vtx(1),(face_vtx(2)-1)*num_vtx+mnp(3))=val;
             
         else
             
@@ -68,25 +72,24 @@ end % for
 
 clear SP3D;
 
-% end of file ( Bye Bye )
-
 
 %%%%%%%%%% Auxiliary functions for handling the 3D sparse matrix %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%% mnp is a vector of 3 indexes into the matrix, and M,N,P the matrix size along the three dimensions
-
-function allocate_3Dsparse(M,N,P,max_elements);
-
-global SP3D
-SP3D=spalloc(M,N*P,max_elements);
-
-function write_to_3Dsparse(mnp,M,N,P,val);
-
-global SP3D
-SP3D(mnp(1),(mnp(2)-1)*N+mnp(3))=val;
-
-function val=read_from_3Dsparse(mnp,M,N,P);
-
-global SP3D
-val=SP3D(mnp(1),(mnp(2)-1)*N+mnp(3));
-
+% - removed these functions for inclusion with EIDORS -aa Dec05
+%
+%function allocate_3Dsparse(M,N,P,max_elements);
+%
+%global SP3D
+%SP3D=spalloc(M,N*P,max_elements);
+%
+%function write_to_3Dsparse(mnp,M,N,P,val);
+%
+%global SP3D
+%SP3D(mnp(1),(mnp(2)-1)*N+mnp(3))=val;
+%
+%function val=read_from_3Dsparse(mnp,M,N,P);
+%
+%global SP3D
+%val=SP3D(mnp(1),(mnp(2)-1)*N+mnp(3));
+%
