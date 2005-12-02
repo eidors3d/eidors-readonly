@@ -11,10 +11,10 @@ function L=TV_operator_3D( msh )
 % Scientific Computing & Applied Inverse Problems  www.sc-aip.com
 % Modifications (C) 2005 Andy Adler.
 % Licenced under the GPL Version 2
-% $Id: TV_operator_3D.m,v 1.2 2005-12-02 10:53:47 aadler Exp $
+% $Id: TV_operator_3D.m,v 1.3 2005-12-02 11:49:57 aadler Exp $
 
 %global SP3D % Sparse 3D matrix used in the computations
-SP3D=[];
+%SP3D=[];
 
 num_vtx=size(msh.vtx_c,1);
 num_tet=size(msh.elem_c,1);
@@ -26,7 +26,7 @@ list=[]; % List is an auxiliary variable which will hold for each row the two fa
 SEL=[ 1 1 1 2; 2 3 4 4; 3 4 2 3];
 
 % allocate_3Dsparse(num_vtx,num_vtx,num_vtx,num_tet*4);
-SP3D=spalloc(M,N*P,max_elements);
+SP3D=spalloc(num_vtx,num_vtx^2,num_tet*4);
 
 for k=1:num_tet
     
@@ -38,7 +38,12 @@ for k=1:num_tet
         
         face_vtx=sort(face_vtx); % faces must be unique
         
-        simplex=read_from_3Dsparse(face_vtx,num_vtx,num_vtx,num_vtx);
+%       simplex=read_from_3Dsparse(face_vtx,num_vtx,num_vtx,num_vtx);
+%function val=read_from_3Dsparse(mnp,M,N,P);
+%
+%global SP3D
+        %val=SP3D(mnp(1),(mnp(2)-1)*N+mnp(3));
+        simplex=SP3D(face_vtx(1),(face_vtx(2)-1)*num_vtx+face_vtx(3));
         
         if (simplex==0)
             
@@ -46,7 +51,7 @@ for k=1:num_tet
 %           SP3D(mnp(1),(mnp(2)-1)*N+mnp(3))=val;
 %
 %           write_to_3Dsparse(face_vtx,num_vtx,num_vtx,num_vtx,k);
-            SP3D(face_vtx(1),(face_vtx(2)-1)*num_vtx+mnp(3))=val;
+            SP3D(face_vtx(1),(face_vtx(2)-1)*num_vtx+face_vtx(3))=k;
             
         else
             
@@ -70,7 +75,7 @@ for i=1:length(list)
     
 end % for
 
-clear SP3D;
+%clear SP3D;
 
 
 %%%%%%%%%% Auxiliary functions for handling the 3D sparse matrix %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
