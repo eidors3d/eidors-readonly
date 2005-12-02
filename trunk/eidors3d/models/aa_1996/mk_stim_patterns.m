@@ -45,11 +45,13 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %                            carrying electrodes
 %      'rotate_meas'     -> rotate measurements with stimulation
 %      'no_rotate_meas'  -> don't rotate measurements with stimulation
+%      'do_redundant'    -> do make reciprocally redundant measures
+%      'no_redundant'    -> don't make reciprocally redundant measures
 %
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.11 2005-10-27 13:28:08 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.12 2005-12-02 09:10:46 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -70,7 +72,9 @@ for ring = 0:v.n_rings-1
    end
 end
 
-meas_sel= meas_select( n_elec, v.inj);
+
+
+meas_sel= meas_select( n_elec, v.inj, v);
 
 % when not using data from current injection electrodes,
 % it is common to be given a full measurement set.
@@ -78,7 +82,7 @@ meas_sel= meas_select( n_elec, v.inj);
 % measure sets are common.
 %
 % This function calculates a selector matrix to remove the extra
-function meas_sel= meas_select( n_elec, inj)
+function meas_sel= meas_select( n_elec, inj, v)
   n2_elec= n_elec^2;
   e_idx= 0:n2_elec-1;
   ELS=rem(   rem(e_idx,n_elec)- ...
@@ -88,6 +92,7 @@ function meas_sel= meas_select( n_elec, inj)
   ELS= rem( injx ,n_elec)' * ones(1,n2_elec) ==ones(4,1)*ELS';
   meas_sel= ~any( ELS )';
 
+  %FIXME: do we need to modify this for v?
 
 
 function stim_pat = mk_stim_pat(v, elec, ring, amplitude)
@@ -106,9 +111,10 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
       ofs = 0;
    end 
 
-   within_ring = rem(0:v.tn_elec-1, v.n_elec);
-   ouside_ring = floor( (0:v.tn_elec-1)/ v.n_elec) * v.n_elec;
-   meas_seq    = (0:v.tn_elec-1)*v.tn_elec + 1;
+   mseq= 0:v.tn_elec-1;
+   within_ring = rem(   mseq , v.n_elec);
+   ouside_ring = floor( mseq / v.n_elec) * v.n_elec;
+   meas_seq    = mseq *v.tn_elec + 1;
 
    meas_pat = rem( v.meas(1) + within_ring + ofs, v.n_elec ) + ...
                     ouside_ring + meas_seq;
@@ -117,6 +123,10 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
    meas_pat = rem( v.meas(2) + within_ring + ofs, v.n_elec ) + ...
                     ouside_ring + meas_seq;
    meas(meas_pat) = -1;
+
+   if ~v.do_redundant
+% FIXME HERE
+   end
 
    if v.use_meas_current == 0
        stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
@@ -168,6 +178,7 @@ v.meas= meas;
 
 v.use_meas_current = 0;
 v.rotate_meas = 0;
+v.do_redundant = 1;
 
 % iterate through the options cell array
 for opt = options
@@ -179,6 +190,10 @@ for opt = options
       v.rotate_meas = 1;
    elseif strcmp(opt, 'no_rotate_meas')
       v.rotate_meas = 0;
+   elseif strcmp(opt, 'do_redundant')
+      v.do_redundant = 1;
+   elseif strcmp(opt, 'no_redundant')
+      v.do_redundant = 0;
    else
       error(['option parameter opt=',opt,' not understood']);
    end
