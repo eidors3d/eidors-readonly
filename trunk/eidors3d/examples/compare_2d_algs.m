@@ -1,7 +1,7 @@
 % Compare different 2D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.4 2005-12-02 14:36:16 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.5 2005-12-02 15:28:46 aadler Exp $
 
 imb=  mk_common_model('c2c',16);
 e= size(imb.fwd_model.elems,1);
@@ -19,8 +19,8 @@ vi= fwd_solve( img );
 
 sig= sqrt(norm(vi.meas - vh.meas));
 m= size(vi.meas,1);
-vi.meas = vi.meas + .0000*sig*randn(m,1);
-figure(2); show_slices(img); figure(1);
+vi.meas = vi.meas + .001*sig*randn(m,1);
+figure(2); img.elem_data= img.elem_data - 1; show_slices(img); figure(1);
 
 %show_slices(img);
 imb=  mk_common_model('b2c',16);
@@ -48,10 +48,10 @@ switch 4
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
-     inv2d.hyperparameter.value = 1e-1;
+     inv2d.hyperparameter.value = [1e-2, 1e-6];
+     inv2d.parameters.max_iterations= 5;
      inv2d.image_prior.func= 'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
-     iidx= [2:10];
 
    case 5,
      inv2d.hyperparameter.value = 1e-2;
@@ -61,7 +61,7 @@ switch 4
 
    case 6,
      subplot(141); show_slices(img);
-     inv2d.hyperparameter.value = 1e-2;
+     inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
      inv2d.image_prior.func= 'laplace_image_prior';
      inv2d.parameters.max_iterations= 1;
@@ -80,5 +80,11 @@ end
 % Step 3: Reconst and show image
 % 
 imgr= inv_solve( inv2d, vi, vh);
+for i =1:length(imgr);
+    ii= imgr(i).elem_data;
+    ii=ii-1;
+    ii=ii/max(ii(:));
+    imgr(i).elem_data=ii;
+end
 
 figure(1); show_slices(imgr);
