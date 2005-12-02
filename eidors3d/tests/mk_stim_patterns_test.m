@@ -1,0 +1,202 @@
+function ok= mk_stim_patterns_test
+% Verify mk_stim_patterns function
+
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: mk_stim_patterns_test.m,v 1.1 2005-12-02 09:09:59 aadler Exp $
+
+ok= 1;
+
+pat= mk_stim_patterns(16,1,'{ad}','{ad}');
+ok= ok& test_adj(pat);
+
+options= {'no_rotate_meas'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj(pat);
+
+options= {'no_rotate_meas', 'no_meas_current'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj(pat);
+
+options= {'no_rotate_meas', 'meas_current'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj_full(pat);
+
+options= {'meas_current'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj_full(pat);
+
+options= {'rotate_meas'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj_rotate(pat);
+
+options= {'rotate_meas', 'no_meas_current'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj_rotate(pat);
+
+options= {'rotate_meas','no_redundant', 'no_meas_current'};
+pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+ok= ok& test_adj_no_redund(pat);
+
+
+function ok= test_adj(pat)
+   eidors_msg('test adjacent current pattern',2);
+
+   ok=1;
+   if length(pat) ~= 16
+      ok=0; return; end
+
+   if ~strcmp( pat(1).stimulation, 'mA');
+      ok=0; return; end
+
+   % Stim pattern # 1
+   if pat(1).stim_pattern ~= [-1;1;zeros(14,1)]
+      ok=0; return; end
+
+   meas= pat(1).meas_pattern;
+
+   if any( size(meas)~= [13 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [0,0,1,-1,zeros(1,12)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [zeros(1,14),1,-1] )
+      ok=0; return; end
+
+   % Stim pattern # 10
+   if any( pat(10).stim_pattern ~= [zeros(9,1);-1;1;zeros(5,1)] )
+      ok=0; return; end
+
+   meas= pat(10).meas_pattern;
+
+   if any( size(meas)~= [13 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [1,-1,zeros(1,14)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [-1,zeros(1,14),1] )
+      ok=0; return; end
+
+function ok= test_adj_full(pat)
+   eidors_msg('test adjacent current pattern (full)',2);
+
+   ok=1;
+   if length(pat) ~= 16
+      ok=0; return; end
+
+   if ~strcmp( pat(1).stimulation, 'mA');
+      ok=0; return; end
+
+   % Stim pattern # 1
+   if pat(1).stim_pattern ~= [-1;1;zeros(14,1)]
+      ok=0; return; end
+
+   meas= pat(1).meas_pattern;
+
+   if any( size(meas)~= [16 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [1,-1,zeros(1,14)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [zeros(1,12),1,-1,0,0] )
+      ok=0; return; end
+
+   % Stim pattern # 10
+   if any( pat(10).stim_pattern ~= [zeros(9,1);-1;1;zeros(5,1)] )
+      ok=0; return; end
+
+   meas= pat(10).meas_pattern;
+
+   if any( size(meas)~= [16 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [1,-1,zeros(1,14)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [zeros(1,12),1,-1,0,0] )
+      ok=0; return; end
+
+
+function ok= test_adj_rotate(pat)
+   eidors_msg('test adjacent current pattern (rotate)',2);
+
+   ok=1;
+   if length(pat) ~= 16
+      ok=0; return; end
+
+   if ~strcmp( pat(1).stimulation, 'mA');
+      ok=0; return; end
+
+   % Stim pattern # 1
+   if pat(1).stim_pattern ~= [-1;1;zeros(14,1)]
+      ok=0; return; end
+
+   meas= pat(1).meas_pattern;
+
+   if any( size(meas)~= [13 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [0,0,1,-1,zeros(1,12)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [zeros(1,14),1,-1] )
+      ok=0; return; end
+
+   % Stim pattern # 10
+   if any( pat(10).stim_pattern ~= [zeros(9,1);-1;1;zeros(5,1)] )
+      ok=0; return; end
+
+   meas= pat(10).meas_pattern;
+
+   if any( size(meas)~= [13 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [zeros(1,11),1,-1,zeros(1,3)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [zeros(1,7),1,-1,zeros(1,7)] )
+      ok=0; return; end
+
+function ok= test_adj_no_redund(pat)
+   eidors_msg('test adjacent current pattern (rotate)',2);
+
+   ok=1;
+   if length(pat) ~= 16
+      ok=0; return; end
+
+   if ~strcmp( pat(1).stimulation, 'mA');
+      ok=0; return; end
+
+   % Stim pattern # 1
+   if pat(1).stim_pattern ~= [-1;1;zeros(14,1)]
+      ok=0; return; end
+
+   meas= pat(1).meas_pattern;
+
+   if any( size(meas)~= [13 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [0,0,1,-1,zeros(1,12)] )
+      ok=0; return; end
+
+   if any( meas(13,:)~= [zeros(1,14),1,-1] )
+      ok=0; return; end
+
+   % Stim pattern # 10
+   if any( pat(10).stim_pattern ~= [zeros(9,1);-1;1;zeros(5,1)] )
+      ok=0; return; end
+
+   meas= pat(10).meas_pattern;
+
+   keyboard
+   if any( size(meas)~= [5 16] )
+      ok=0; return; end
+
+   if any( meas(1,:)~= [zeros(1,11),1,-1,zeros(1,3)] )
+      ok=0; return; end
+
+   if any( meas(5,:)~= [zeros(1,14),1,-1] )
+      ok=0; return; end
+
