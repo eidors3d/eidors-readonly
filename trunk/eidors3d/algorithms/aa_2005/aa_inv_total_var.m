@@ -29,7 +29,7 @@ function img= aa_inv_total_var( inv_model, data1, data2)
 % 2000, ch. 3.6, pp. 141-160.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_total_var.m,v 1.3 2005-12-05 17:55:58 aadler Exp $
+% $Id: aa_inv_total_var.m,v 1.4 2005-12-05 22:12:11 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -41,8 +41,8 @@ homg_img= eidors_obj('image', 'homog image', ...
 
 J = calc_jacobian( fwd_model, homg_img);
 
-R = calc_image_prior( inv_model );
-W = calc_data_prior( inv_model );
+R = calc_R_prior( inv_model );
+W = calc_meas_icov( inv_model );
 hp= calc_hyperparameter( inv_model );
 
 

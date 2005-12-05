@@ -39,7 +39,7 @@ epsilon=1e-6;
 len=([0,1e-4,1e-3,1e-2,0.1,0.2,0.5,0.8,1]);
 
 % Inizialisation
-A=calc_image_prior( inv_mdl);
+A=calc_R_prior( inv_mdl);
 
 n=size(A,1); % num_rows_L
 m=size(A,2); % num_elem

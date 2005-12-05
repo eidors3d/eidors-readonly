@@ -4,6 +4,9 @@ function Reg= laplace_image_prior( inv_model );
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 %
+% This image prior is intended to be used as
+%  R'*R, but may be used as R for as well.
+%
 % The Laplace prior is a 2nd order high pass filter.
 % On a rectangular mesh, it is a convolution with
 %   [-1,-1,-1;      [ 0;-1; 0
@@ -15,7 +18,7 @@ function Reg= laplace_image_prior( inv_model );
 % for the element itself
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: laplace_image_prior.m,v 1.2 2005-10-27 13:28:08 aadler Exp $
+% $Id: laplace_image_prior.m,v 1.3 2005-12-05 22:12:11 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 

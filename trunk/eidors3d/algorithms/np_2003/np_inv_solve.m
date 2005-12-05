@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.19 2005-12-01 09:15:02 aadler Exp $
+% $Id: np_inv_solve.m,v 1.20 2005-12-05 22:12:11 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -25,11 +25,11 @@ else
 
     J = calc_jacobian( fwd_model, homg_img );
 
-    Reg = calc_image_prior( inv_model );
-    tfac= calc_hyperparameter( inv_model );
+    RtR = calc_RtR_prior( inv_model );
+    hp= calc_hyperparameter( inv_model );
 
     % Calculating a linear inverse solution
-    one_step_inv= (J'*J +  tfac*Reg'*Reg)\J';
+    one_step_inv= (J'*J +  hp^2*RtR)\J';
 
     eidors_obj('set-cache', inv_model, 'np_2003_one_step_inv', one_step_inv);
     eidors_msg('np_inv_solve: setting cached value', 2);
