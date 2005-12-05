@@ -7,11 +7,11 @@ function Reg= aa_calc_image_prior( inv_model );
 %   diam_frac= inv_model.image_prior.parameters(1) DEFAULT 0.1
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_image_prior.m,v 1.3 2005-10-27 13:28:08 aadler Exp $
+% $Id: aa_calc_image_prior.m,v 1.4 2005-12-05 23:28:32 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
-if isfield(inv_model.image_prior,'parameters')
-    diam_frac= inv_model.image_prior.parameters(1);
+if isfield(inv_model,'aa_calc_image_prior')
+    diam_frac= inv_model.aa_calc_image_prior.parameters(1);
 else
     diam_frac= 0.1;
 end

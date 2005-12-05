@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.15 2005-12-05 22:12:11 aadler Exp $
+% $Id: cheating_2d.m,v 1.16 2005-12-05 23:28:32 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -279,7 +279,7 @@ function i_mdl= make_inv_model( n_rings, img_prior );
    l_mdl= eidors_obj('fwd_model', params);
 
 % create inverse model
-   hparam.value = 1e-7;
+   hparam.value = 3e-4;
   %hparam.func = 'aa_calc_noise_figure';
   %hparam.noise_figure= 1;
   %hparam.tgt_elems= 1:4;
