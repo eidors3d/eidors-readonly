@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.8 2005-12-05 22:12:11 aadler Exp $
+% $Id: demo_real_test2.m,v 1.9 2005-12-05 22:50:43 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -107,7 +107,7 @@ demo_inv.name= 'Nick Polydorides EIT inverse';
 demo_inv.solve=       'np_inv_solve';
 demo_inv.hyperparameter.value= 1e-8;
 demo_inv.R_prior.func= 'np_calc_image_prior';
-demo_inv.R_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
+demo_inv.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
 demo_inv.reconst_type= 'difference';
 demo_inv.fwd_model= demo_mdl;
 demo_inv= eidors_obj('inv_model', demo_inv);
