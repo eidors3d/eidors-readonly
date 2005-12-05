@@ -13,7 +13,7 @@ function J= aa_e_move_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_e_move_jacobian.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
+% $Id: aa_e_move_jacobian.m,v 1.8 2005-12-05 22:49:50 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 delta= 1e-6; % tests indicate this is a good value
@@ -75,6 +75,6 @@ for d= 1:pp.n_dims
       img.fwd_model.nodes( idx, d)= node0(idx,d);
 
       J_idx = pp.n_elec*(d-1) + i;
-      J(:,J_idx) = (1/delta) * (d0.meas - di.meas);
+      J(:,J_idx) = (1/delta) * (di.meas - d0.meas);
    end
 end
