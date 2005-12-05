@@ -10,7 +10,7 @@ function show_fem( mdl, background, options )
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.31 2005-11-01 03:09:35 aadler Exp $
+% $Id: show_fem.m,v 1.32 2005-12-05 23:28:11 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -19,6 +19,9 @@ end
 
 if nargin <= 1
    background =0;
+else
+   global eidors_colours;
+   background= eidors_colours.ref_level;
 end
 
 do_colourbar=0;
