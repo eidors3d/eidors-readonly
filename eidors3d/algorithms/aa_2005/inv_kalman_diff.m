@@ -9,7 +9,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.2 2005-12-05 15:53:58 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.3 2005-12-05 16:36:33 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -77,7 +77,9 @@ RegI_x0= RegI*x0;
 x_k1_k1= x0;
 
 ll= size(y,2);
+x= zeros(n,ll);
 for i=1:ll
+   eidors_msg('iteration %d',i,2);
    % Update variables
    C_k_k= C_k1_k1;
    x_k_k= x_k1_k1;
@@ -93,6 +95,9 @@ for i=1:ll
    yerr   = yi - H_k1 * x_k1_k;
    x_k1_k1= x_k1_k + K_k1 * yerr; 
    C_k1_k1= (speye(n) - K_k1 * H_k1) * C_k1_k;
+
+   % Store output
+   x(:,i) = x_k1_k1;
 end
    
 
