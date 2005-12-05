@@ -22,7 +22,7 @@ function inv_mdl= mk_common_model( str, varargin )
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.12 2005-12-01 09:17:28 aadler Exp $
+% $Id: mk_common_model.m,v 1.13 2005-12-05 22:30:00 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -66,8 +66,8 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     %inv2d.hyperparameter.func = 'aa_calc_noise_figure';
     %inv2d.hyperparameter.noise_figure= 1;
     %inv2d.hyperparameter.tgt_elems= 1:4;
-     inv2d.image_prior.func= 'laplace_image_prior';
-    %inv2d.image_prior.func= 'aa_calc_image_prior';
+     inv2d.RtR_prior.func= 'laplace_image_prior';
+    %inv2d.RtR_prior.func= 'aa_calc_image_prior';
     inv2d.reconst_type= 'difference';
     inv2d.fwd_model= mdl_2d;
     inv2d= eidors_obj('inv_model', inv2d);
@@ -95,7 +95,7 @@ function inv3d= mk_dz_model( n_elec, options )
     %inv3d.solve= 'np_inv_solve';
      inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
     inv3d.hyperparameter.value = 1e-4;
-    inv3d.image_prior.func= 'laplace_image_prior';
+    inv3d.RtR_prior.func= 'laplace_image_prior';
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= fm3d;
     inv3d= eidors_obj('inv_model', inv3d);
@@ -159,8 +159,8 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    inv_mdl.name=         'Nick Polydorides EIT inverse';
    inv_mdl.solve=       'np_inv_solve';
    inv_mdl.hyperparameter.value = 1e-8;
-   inv_mdl.image_prior.func= 'np_calc_image_prior';
-   inv_mdl.image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
+   inv_mdl.RtR_prior.func= 'np_calc_image_prior';
+   inv_mdl.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
    inv_mdl.reconst_type= 'difference';
    inv_mdl.fwd_model= fmdl;
    inv_mdl= eidors_obj('inv_model', inv_mdl);
