@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.14 2005-11-02 04:54:37 aadler Exp $
+% $Id: cheating_2d.m,v 1.15 2005-12-05 22:12:11 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -66,19 +66,19 @@ function approach2a(vis, vhs, s_mdl, il_g)
    disp('Approach #2: reconstruct with tikhonov cheat - with inv crime');
    pp= small_face;
    % homog (normal) model
-   image_prior.func= @cheat_tikhonov;
-   image_prior.cheat_elements= [];
-   image_prior.cheat_weight = 0.5;
-   is_n = make_inv_model( 8 , image_prior ); 
+   RtR_prior.func= @cheat_tikhonov;
+   RtR_prior.cheat_elements= [];
+   RtR_prior.cheat_weight = 0.5;
+   is_n = make_inv_model( 8 , RtR_prior ); 
    % sad model
-   image_prior.cheat_elements= [pp.eyes, pp.sad];
-   is_s = make_inv_model( 8 , image_prior ); 
+   RtR_prior.cheat_elements= [pp.eyes, pp.sad];
+   is_s = make_inv_model( 8 , RtR_prior ); 
    % happy model
-   image_prior.cheat_elements= [pp.eyes, pp.smile];
-   is_h = make_inv_model( 8 , image_prior ); 
+   RtR_prior.cheat_elements= [pp.eyes, pp.smile];
+   is_h = make_inv_model( 8 , RtR_prior ); 
    % happy/sad (medium) model
-   image_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
-   is_m = make_inv_model( 8 , image_prior ); 
+   RtR_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
+   is_m = make_inv_model( 8 , RtR_prior ); 
 
    show_slices( [ inv_solve( is_n, vhs, vis ), ... 
                   inv_solve( is_s, vhs, vis ), ... 
@@ -95,19 +95,19 @@ function approach2b(vis, vhs, s_mdl, il_g)
    levels= [0,0,0,1,1];
    pp= large_face;
    % homog (normal) model
-   image_prior.func= @cheat_tikhonov;
-   image_prior.cheat_elements= [];
-   image_prior.cheat_weight = 0.5;
-   il_n = make_inv_model(12 , image_prior ); 
+   RtR_prior.func= @cheat_tikhonov;
+   RtR_prior.cheat_elements= [];
+   RtR_prior.cheat_weight = 0.5;
+   il_n = make_inv_model(12 , RtR_prior ); 
    % sad model
-   image_prior.cheat_elements= pp.sad;
-   il_s = make_inv_model(12 , image_prior ); 
+   RtR_prior.cheat_elements= pp.sad;
+   il_s = make_inv_model(12 , RtR_prior ); 
    % happy model
-   image_prior.cheat_elements= pp.happy;
-   il_h = make_inv_model(12 , image_prior ); 
+   RtR_prior.cheat_elements= pp.happy;
+   il_h = make_inv_model(12 , RtR_prior ); 
    % happy/sad (medium) model
-   image_prior.cheat_elements= pp.halfy;
-   il_m = make_inv_model(12 , image_prior ); 
+   RtR_prior.cheat_elements= pp.halfy;
+   il_m = make_inv_model(12 , RtR_prior ); 
 
    show_slices( [ inv_solve( il_n, vhs, vis ), ... 
                   inv_solve( il_s, vhs, vis ), ... 
@@ -122,19 +122,19 @@ function approach3a(vis, vhs, s_mdl, il_g)
    levels= [0,0,0,1,1];
    pp= small_face;
    % homog (normal) model
-   image_prior.func= @cheat_laplace;
-   image_prior.cheat_elements= [];
-   image_prior.cheat_weight = 0.2;
-   is_n = make_inv_model( 8 , image_prior ); 
+   RtR_prior.func= @cheat_laplace;
+   RtR_prior.cheat_elements= [];
+   RtR_prior.cheat_weight = 0.2;
+   is_n = make_inv_model( 8 , RtR_prior ); 
    % sad model
-   image_prior.cheat_elements= [pp.eyes, pp.sad];
-   is_s = make_inv_model( 8 , image_prior ); 
+   RtR_prior.cheat_elements= [pp.eyes, pp.sad];
+   is_s = make_inv_model( 8 , RtR_prior ); 
    % happy model
-   image_prior.cheat_elements= [pp.eyes, pp.smile];
-   is_h = make_inv_model( 8 , image_prior ); 
+   RtR_prior.cheat_elements= [pp.eyes, pp.smile];
+   is_h = make_inv_model( 8 , RtR_prior ); 
    % happy/sad (medium) model
-   image_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
-   is_m = make_inv_model( 8 , image_prior ); 
+   RtR_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
+   is_m = make_inv_model( 8 , RtR_prior ); 
 
    show_slices( [ inv_solve( is_n, vhs, vis ), ... 
                   inv_solve( is_s, vhs, vis ), ... 
@@ -150,19 +150,19 @@ function approach3b(vis, vhs, s_mdl, il_g)
    levels= [0,0,0,1,1];
    pp= large_face;
    % homog (normal) model
-   image_prior.func= @cheat_laplace;
-   image_prior.cheat_elements= [];
-   image_prior.cheat_weight = 0.2;
-   il_n = make_inv_model(12 , image_prior ); 
+   RtR_prior.func= @cheat_laplace;
+   RtR_prior.cheat_elements= [];
+   RtR_prior.cheat_weight = 0.2;
+   il_n = make_inv_model(12 , RtR_prior ); 
    % sad model
-   image_prior.cheat_elements= pp.sad;
-   il_s = make_inv_model(12 , image_prior ); 
+   RtR_prior.cheat_elements= pp.sad;
+   il_s = make_inv_model(12 , RtR_prior ); 
    % happy model
-   image_prior.cheat_elements= pp.happy;
-   il_h = make_inv_model(12 , image_prior ); 
+   RtR_prior.cheat_elements= pp.happy;
+   il_h = make_inv_model(12 , RtR_prior ); 
    % happy/sad (medium) model
-   image_prior.cheat_elements= pp.halfy;
-   il_m = make_inv_model(12 , image_prior ); 
+   RtR_prior.cheat_elements= pp.halfy;
+   il_m = make_inv_model(12 , RtR_prior ); 
 
    show_slices( [ inv_solve( il_n, vhs, vis ), ... 
                   inv_solve( il_s, vhs, vis ), ... 
@@ -291,7 +291,7 @@ function i_mdl= make_inv_model( n_rings, img_prior );
 
    i_mdl= eidors_obj( ...
           'inv_model', '2D inverse', ...
-          'hyperparameter', hparam, 'image_prior', img_prior, ...
+          'hyperparameter', hparam, 'RtR_prior', img_prior, ...
           'reconst_type', 'difference', ...
           'fwd_model', l_mdl, 'solve', 'aa_inv_solve' );
 
@@ -310,17 +310,17 @@ function Reg= cheat_tikhonov( inv_model )
 % Reg= cheat_tikhonov( inv_model )
 % Reg        => output regularization term
 % Parameters:
-%   elems    = inv_model.image_prior.cheat_elements;
+%   elems    = inv_model.RtR_prior.cheat_elements;
 %            => elements weights to modify
-%   weight   = inv_model.image_prior.cheat_weight;
+%   weight   = inv_model.RtR_prior.cheat_weight;
 %            => new weight to set elements to
 
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 idx= 1:pp.n_elem;
 weight= ones(1,pp.n_elem);
-weight( inv_model.image_prior.cheat_elements ) = ...
-        inv_model.image_prior.cheat_weight;
+weight( inv_model.RtR_prior.cheat_elements ) = ...
+        inv_model.RtR_prior.cheat_weight;
 
 Reg = sparse( idx, idx, weight );
 
@@ -339,9 +339,9 @@ function Reg= cheat_laplace( inv_model )
 % Reg= cheat_laplace( inv_model )
 % Reg        => output regularization term
 % Parameters:
-%   elems    = inv_model.image_prior.cheat_elements;
+%   elems    = inv_model.RtR_prior.cheat_elements;
 %            => elements weights to modify
-%   weight   = inv_model.image_prior.cheat_weight;
+%   weight   = inv_model.RtR_prior.cheat_weight;
 %            => new weight to set elements to
 
 % make pseudo laplacian filter
@@ -351,7 +351,7 @@ function Reg= cheat_laplace( inv_model )
    pp= aa_fwd_parameters( inv_model.fwd_model );
 
    ROI = zeros(1,pp.n_elem);
-   ROI( inv_model.image_prior.cheat_elements ) = 1;
+   ROI( inv_model.RtR_prior.cheat_elements ) = 1;
 
    Iidx= [];
    Jidx= [];
@@ -360,7 +360,7 @@ function Reg= cheat_laplace( inv_model )
      el_adj = find_adjoin( ii, pp.ELEM );
      for jj=el_adj(:)'
          if (ROI(ii) + ROI(jj)) == 1 %one only
-            fac= inv_model.image_prior.cheat_weight *.5;
+            fac= inv_model.RtR_prior.cheat_weight *.5;
          else 
             fac = .5;
          end

@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_simdata.m,v 1.14 2005-10-27 13:28:08 aadler Exp $
+% $Id: mk_simdata.m,v 1.15 2005-12-05 22:12:11 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -44,8 +44,8 @@ inv2d.solve=       'aa_inv_solve';
 inv2d.hyperparameter.func = 'aa_calc_noise_figure';
 inv2d.hyperparameter.noise_figure= 2;
 inv2d.hyperparameter.tgt_elems= 1:4;
- inv2d.image_prior.func= 'tikhonov_image_prior';
-%inv2d.image_prior.func= 'aa_calc_image_prior';
+ inv2d.RtR_prior.func= 'tikhonov_image_prior';
+%inv2d.RtR_prior.func= 'aa_calc_image_prior';
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d;
 inv2d= eidors_obj('inv_model', inv2d);

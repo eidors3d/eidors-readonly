@@ -1,7 +1,7 @@
 % Compare different 3D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.4 2005-12-02 15:55:22 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.5 2005-12-05 22:12:11 aadler Exp $
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -32,23 +32,23 @@ switch 4
    case 1,
      inv3d.hyperparameter.value = 1e-4;
      inv3d.solve=            'np_inv_solve';
-     inv3d.image_prior.func= 'np_calc_image_prior';
-     inv3d.image_prior.parameters= [3 1]; %  deg=1, w=1
+     inv3d.R_prior.func=     'np_calc_image_prior';
+     inv3d.np_calc_image_prior.parameters= [3 1]; %  deg=1, w=1
 
    case 2,
      inv3d.hyperparameter.value = 1e-4;
-     inv3d.image_prior.func=  'laplace_image_prior';
+     inv3d.RtR_prior.func=    'laplace_image_prior';
      inv3d.solve=             'np_inv_solve';
 
    case 3,
      inv3d.hyperparameter.value = 1e-2;
-     inv3d.image_prior.func=  'ab_calc_tv_prior';
+     inv3d.R_prior.func=      'ab_calc_tv_prior';
      inv3d.solve=             'np_inv_solve';
 
    case 4,
      inv3d.hyperparameter.value = [1e-2, 1e-5];
      inv3d.parameters.max_iterations= 5;
-     inv3d.image_prior.func=  'ab_calc_tv_prior';
+     inv3d.R_prior.func=      'ab_calc_tv_prior';
      inv3d.solve=             'ab_tv_diff_solve';
      for k=1:5
      subplot(1,5,k);ix=imgr(k);ix.elem_data=ix.elem_data-1;

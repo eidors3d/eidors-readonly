@@ -22,7 +22,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_noise_figure.m,v 1.13 2005-10-27 13:28:08 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.14 2005-12-05 22:12:11 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -89,12 +89,13 @@ function NF = calc_noise_figure( inv_model, hp)
       dva= c_data.meas - h_data.meas;
    end
 
-   R = calc_image_prior( inv_model );
-   W = calc_data_prior( inv_model );
+   RtR = calc_RtR_prior( inv_model );
+   W   = calc_meas_icov( inv_model );
 
    % one step reconstruction matrix
    % for non-linear algorithms, we need the Taylor expansion at the soln
-   RM= (J'*W*J +  hp*R)\J'*W;
+   % The hp needs to be scaled by hp^2 to match units
+   RM= (J'*W*J +  hp^2*RtR)\J'*W;
 
 %   NF = SNR_z / SNR_x
 % SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)

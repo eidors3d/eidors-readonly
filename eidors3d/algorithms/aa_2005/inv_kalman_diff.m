@@ -9,7 +9,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.3 2005-12-05 16:36:33 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.4 2005-12-05 22:12:11 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -22,8 +22,8 @@ homg_img= eidors_obj('image', 'homog image', ...
 J = calc_jacobian( fwd_model, homg_img);
 
 RtR = calc_RtR_prior( inv_model );
-Q = calc_meas_icov( inv_model );
-hp= calc_hyperparameter( inv_model );
+Q   = calc_meas_icov( inv_model );
+hp  = calc_hyperparameter( inv_model );
 
 
 l_data1= length(data1); l1_0 = l_data1 ~=0;
@@ -38,7 +38,7 @@ else
    dva= data1 - data2;
 end
 
-sol = kalman_inv( J, Q, hp*RtR, dva );
+sol = kalman_inv( J, Q, hp^2*RtR, dva );
 
 % create a data structure to return
 img.name= 'solved by inv_kalman_diff';
