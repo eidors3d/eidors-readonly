@@ -38,6 +38,7 @@ else
    electrode_width = input('Electrode width? ');
 end
 
+
 % Need some sanity checks here on the data!
 
 fnstem = input('Enter file base file name for .geo and .vol file (ext is added):','s');
@@ -61,6 +62,7 @@ for l=1:no_of_planes
  for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
     kel=kel+1;
     [x,y]=pol2cart(th,tank_radius);
+    centres(kel,:)= [x,y,z]; % keep the centres
     dirn = [x,y,0];
     dirn = dirn ./ norm(dirn);
     writengcuboid(fid,sprintf('rod%d',kel),[x,y,z],dirn,electrode_height,electrode_width,0.5*tank_radius);	 	 
@@ -102,6 +104,7 @@ for l=1:no_of_planes
     kel=kel+1;
     [x,y]=pol2cart(th,tank_radius);
     dirn = [x,y,0];
+    centres(kel,:)= [x,y,z]; % keep the centres
     dirn = dirn ./ norm(dirn);
     writengcylrod(fid,sprintf('rod%d',kel),[x,y,z],dirn,electrode_radius, 0.5*tank_radius);	 	 
 %    fprintf(fid,'solid cyl%d = bigcyl and  cylinder %(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f;%6.3f);\n',kcyl,-x,-y,z,x,y,z,electrode_radius );
@@ -150,7 +153,7 @@ disp('..you just have to take your hats off to those guys at Johannes Kepler Uni
 disp('what a good job.');
 
 disp(['Now reading back data from file: ' meshfn])
-[srf,vtx,fc,bc,simp,edg,mat_ind] = FEM_read_mesh_2(meshfn);
+[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(meshfn);
 disp([meshfn ' contains ' num2str(max(fc)) ' faces'])
 
 %Translate to v3 notation!
@@ -161,7 +164,7 @@ tank_mdl.boundary= srf;
 
 
 
-disp('Now I need some help finding which faces are electrodes')
+%disp('Now I need some help finding which faces are electrodes')
 
 
 
@@ -178,16 +181,15 @@ mshaxs = axis; % Save present axes for use with faces
 pause(3)
 
 % Select the electrodes
-[elec,sels] = ng_tank_select_elec(srf,vtx,bc,mshaxs);
+[elec,sels] = ng_tank_find_elec(srf,vtx,bc,mshaxs,centres);
 
-size(elec)
+%size(elec)
 
 %[gnd_ind, electrodes, perm_sym, elec, protocol, no_pl] = get_model_elecs;
 
 
 while size(elec,1) ~= nelec 
   disp('That did''t work. Wrong number of electrodes! You need');
-  nelec
   disp('Have another try..');
   [elec,sels] = ng_tank_select_elec(srf,vtx,bc,mshaxs);
 end
