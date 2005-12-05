@@ -1,7 +1,7 @@
 % Compare different 2D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.8 2005-12-05 23:28:32 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.9 2005-12-05 23:35:21 aadler Exp $
 
 global eidors_colours;
 
@@ -60,18 +60,18 @@ switch 6
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
      inv2d.R_prior.func= 'laplace_image_prior';
-     inv2d.aa_inv_total_var.parameters.max_iter= 10;
+     inv2d.parameters.max_iterations= 10;
 
    case 6,
      subplot(141); show_slices(img);
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
      inv2d.R_prior.func= 'laplace_image_prior';
-     inv2d.aa_inv_total_var.parameters.max_iter= 1;
+     inv2d.parameters.max_iterations= 1;
      subplot(142); show_slices( inv_solve( inv2d, vi, vh) );
-     inv2d.aa_inv_total_var.parameters.max_iter= 2;
+     inv2d.parameters.max_iterations= 2;
      subplot(143); show_slices( inv_solve( inv2d, vi, vh) );
-     inv2d.aa_inv_total_var.parameters.max_iter= 5;
+     inv2d.parameters.max_iterations= 5;
      subplot(144); show_slices( inv_solve( inv2d, vi, vh) );
      return;
 
