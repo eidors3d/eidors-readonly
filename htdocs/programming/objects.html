@@ -72,9 +72,9 @@ In terms of design choices for EIDORS:<br>
 <pre>
   my_model.nodes= ... % add data here
   my_model.elems= ... % add data here
-  my_model.jacobian= "my_jac_calc_function";
+  my_model.jacobian= 'my_jacobian_calc_function';
   jj= calc_jacobian( my_model, ...
-                conductivites); % calls my_jac_calc_function
+                conductivites); % calls my_jacobian_calc_function
 </pre>
 
 
@@ -361,19 +361,21 @@ In terms of design choices for EIDORS:<br>
         </tt> <td valign="top">
         function to calculate image prior
 
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;R_prior.parameters
+        <tr><td valign="top"><tt>inv_model.
+                    <br>&nbsp;<i>alg_name</i>.
+                    <br>parameters
         </tt> <td valign="top">
-        parameters to <tt>inv_model.image_prior.func</tt>
+        parameters to <tt>inv_model.<i>alg_name</i>.func</tt>
+        <br>
+        For example, parameters to <tt>np_image_prior</tt>
+        will be stored in <tt>inv_model.np_image_prior.parameter</tt>
 
        <tr><td valign="top"><tt>inv_model.<br>&nbsp;RtR_prior.func
         </tt> <td valign="top">
         function to calculate image prior
 
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;RtR_prior.parameters
-        </tt> <td valign="top">
-        parameters to <tt>inv_model.image_prior.func</tt>
-
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;parameters.<br>&nbsp;term_tolerance
+        <tr><td valign="top"><tt>inv_model.
+                    <br>&nbsp;parameters.<br>&nbsp;term_tolerance
         </tt> <td valign="top">
         termination tolerance for iterative algorithms
         (or array of parameters, if appropriate)
@@ -434,7 +436,6 @@ In terms of design choices for EIDORS:<br>
           data = calc_R_prior( inv_model )
         </tt>
         <br> calls: <tt>fwd_model.R_prior.func</tt>
-        based on    <tt>fwd_model.R_prior.parameters</tt>
         <br>
         If the <tt>fwd_model.R_prior.func</tt> is not provided
         EIDORS will attempt to generate is from 
@@ -450,11 +451,11 @@ In terms of design choices for EIDORS:<br>
         ||<b>Hx</b>-<b>y</b>|| + ||<b>R</b>(<b>x</b>-<b>x</b><sub>0</sub>)||
         </center>
         <i>usage:</i><tt>
-          data = calc_R_prior( inv_model )
+          data = calc_RtR_prior( inv_model )
         </tt>
-        <br> calls: <tt>fwd_model.R_prior.func</tt>
-        based on    <tt>fwd_model.R_prior.parameters</tt>
-
+        <br> calls: <tt>fwd_model.RtR_prior.func</tt>
+        If the <tt>fwd_model.RtR_prior.func</tt> is not provided
+        EIDORS will generate it from <i>R'*R</i>
 
       </table>
 
@@ -491,7 +492,7 @@ In terms of design choices for EIDORS:<br>
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-05 11:17:32 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-05 22:11:52 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
