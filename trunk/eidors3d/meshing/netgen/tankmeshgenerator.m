@@ -2,32 +2,32 @@
 % Bill Lionheart 23/01/2005 (somewhere over Siberia)
 % Part of EIDORS 3D
 % Revised for new version 3.0 structure BL 05/12/2005
-display('EIDORS 3D tank generation script');
-display('You have to answer lots of tedious questions');
-display('Someone please make a GUI!');
+disp('EIDORS 3D tank generation script');
+disp('You have to answer lots of tedious questions');
+disp('Someone please make a GUI!');
 
 
 CorR = upper(input('Circular electrodes or rectangular? [C/R]','s'));
 tank_radius = input('Tank radius? ');
 tank_height = input('Tank height? ');
-display('Number of electrodes on each plane is 2^k? ');
+disp('Number of electrodes on each plane is 2^k? ');
 elec_per_plane_index=input('Input the index k? ');
 elecs_per_plane= 2^elec_per_plane_index;
 
-display(sprintf('Thats %d electrodes per plane? ',elecs_per_plane));
+disp(sprintf('Thats %d electrodes per plane? ',elecs_per_plane));
 no_of_planes = input('Number of planes? ');
 
 
 nelec = no_of_planes*elecs_per_plane;
-display(sprintf('Ok so you have %d electrodes in total? ',nelec));
+disp(sprintf('Ok so you have %d electrodes in total? ',nelec));
 if nelec < 9
-  display('That''s not very many!');
+  disp('That''s not very many!');
 elseif nelec <17
-  display('Come on this is 3D EIT. It''s not the 1980s you know!');
+  disp('Come on this is 3D EIT. It''s not the 1980s you know!');
 elseif nelec <65
-  display('Ok sounds like enough!');
+  disp('Ok sounds like enough!');
 else
-  display('Awesome!');
+  disp('Awesome!');
 end
 first_plane_starts = input('Height of centre of first plane? ');
 height_between_centres = input('Height between centres? ');
@@ -123,15 +123,32 @@ end % of circular case
 
 fclose(fid);
 % Now call Netgen in batchmode to mesh this CSG file
-disp('Calling Netgen. Please wait.....');
-status= system(sprintf('ng -batchmode -geofile=%s  -meshfile=%s ',geofn,meshfn));
-if status~=0
-   error('Netgen call failed. Is netgen installed and on the search path? see http://www.hpfem.jku.at/netgen/ for download');
-else
-   display('Netgen seems to have meshed your tank ok and written it to file!');
-   display('..you just have to take your hats off to those guys at Johannes Kepler University, Linz,');
-   display('what a good job.');
+while( 1 )
+   disp('Calling Netgen. Please wait.....');
+   status= system(sprintf( ...
+        'ng -batchmode -geofile=%s  -meshfile=%s ',geofn,meshfn));
+   if status==0; break; end
+
+   fprintf([ ...
+    'Netgen call failed. Is netgen installed and on the search path?\n' ...
+    'If you are running under windows, I can attempt to create\n' ...
+    'a batch file to access netgen.\n' ...
+    'Please enter the directory in which to find netgen.' ...
+    'If you don''t have a copy, press Ctrl-C to break, and' ...
+    'see http://www.hpfem.jku.at/netgen/ for download\n\n' ...
+    ]);
+   netgen_path = input('netgen_path? ','s');
+   fid= fopen('ng.bat','w');
+   fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
+   fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
+   fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
+   fclose(fid);
 end
+
+disp('Netgen seems to have meshed your tank ok and written it to file!');
+disp('..you just have to take your hats off to those guys at Johannes Kepler University, Linz,');
+disp('what a good job.');
+
 disp(['Now reading back data from file: ' meshfn])
 [srf,vtx,fc,bc,simp,edg,mat_ind] = FEM_read_mesh_2(meshfn);
 disp([meshfn ' contains ' num2str(max(fc)) ' faces'])
@@ -169,9 +186,9 @@ size(elec)
 
 
 while size(elec,1) ~= nelec 
-  display('That did''t work. Wrong number of electrodes! You need');
+  disp('That did''t work. Wrong number of electrodes! You need');
   nelec
-  display('Have another try..');
+  disp('Have another try..');
   [elec,sels] = ng_tank_select_elec(srf,vtx,bc,mshaxs);
 end
 

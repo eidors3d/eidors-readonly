@@ -11,3 +11,4 @@ fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', bl(1)
 fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;0, 0, 1  )\n ',tr(1),tr(2),tr(3));
 fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', tr(1),tr(2),tr(3),dirn(1),dirn(2),0);
 fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  );\n ', tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0);
+
