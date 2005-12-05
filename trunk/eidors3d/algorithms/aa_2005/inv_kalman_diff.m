@@ -9,7 +9,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.1 2005-12-05 13:14:50 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.2 2005-12-05 15:53:58 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -38,12 +38,7 @@ else
    dva= data1 - data2;
 end
 
-n_img= size(dva,2);
-
-sol = zeros( size(J,2), n_img );
-for i=1:n_img
-   sol(:,i) = kalman_inv( J, Q, hp*RtR, dva(:,i) );
-end
+sol = kalman_inv( J, Q, hp*RtR, dva );
 
 % create a data structure to return
 img.name= 'solved by inv_kalman_diff';
@@ -51,6 +46,53 @@ img.elem_data = sol;
 img.inv_model= inv_model;
 img.fwd_model= fwd_model;
 
-% FIXME: This is NOT a Kalman inv
-function x= kalman_inv( H, Q, RtR, y);
-   x = (H'*Q*H + RtR )\H'*Q*y;
+% Kalman filter
+% J - Jacobian NxM
+% RegM - Regularization on the Measurements
+% RegI - Regularization on the Image
+function x= kalman_inv( J, RegM, RegI, y);
+%x = (J'*RegM*J + RegI )\J'*RegM*y; return;
+%Notation x_k1_k is x_{k+1|k}
+ 
+
+% n is nmeas, m is ndata
+[m,n]=  size(J);
+% H is augmented matrix [J(x_k|k-1); RegI]
+H_k1= [J;RegI];
+% G (Gamma) is blockdiag [RegM, I]
+scaling_const=1; % FIXME: what is this const?
+G= speye(n+m)*scaling_const;
+G(1:m,1:m) = RegM;
+% F is the state transition matrix (I for random walk)
+F_k= speye(n);
+% Q is state noise covariance (model with I)
+Q_k= speye(n);
+
+% Initial C estimate. It is unitless, so no scale factor
+C_k1_k1= speye(n);
+
+% mean x_priori image - assume 0
+x0= zeros(n,1);
+RegI_x0= RegI*x0;
+x_k1_k1= x0;
+
+ll= size(y,2);
+for i=1:ll
+   % Update variables
+   C_k_k= C_k1_k1;
+   x_k_k= x_k1_k1;
+   % yi is [y_k; RegI*x0];
+   yi= [y(:,i); RegI_x0];
+
+   % Prediction
+   x_k1_k = F_k * x_k_k;
+   C_k1_k = F_k * C_k_k * F_k' + Q_k;
+   % Correction
+   HCHt   = H_k1 * C_k1_k * H_k1';
+   K_k1   = C_k1_k * H_k1' / (HCHt + G);
+   yerr   = yi - H_k1 * x_k1_k;
+   x_k1_k1= x_k1_k + K_k1 * yerr; 
+   C_k1_k1= (speye(n) - K_k1 * H_k1) * C_k1_k;
+end
+   
+
