@@ -1,7 +1,7 @@
 % Compare different 2D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.5 2005-12-02 15:28:46 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.6 2005-12-05 17:55:59 aadler Exp $
 
 imb=  mk_common_model('c2c',16);
 e= size(imb.fwd_model.elems,1);
@@ -29,7 +29,7 @@ inv2d.reconst_type= 'difference';
 inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
 
-switch 4
+switch 6
    case 1,
      inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'aa_inv_solve';
@@ -66,7 +66,7 @@ switch 4
      inv2d.image_prior.func= 'laplace_image_prior';
      inv2d.parameters.max_iterations= 1;
      subplot(142); show_slices( inv_solve( inv2d, vi, vh) );
-     inv2d.parameters.max_iterations= 2;
+     inv2d.parameters.max_iterations= 3;
      subplot(143); show_slices( inv_solve( inv2d, vi, vh) );
      inv2d.parameters.max_iterations= 5;
      subplot(144); show_slices( inv_solve( inv2d, vi, vh) );

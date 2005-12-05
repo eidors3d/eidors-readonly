@@ -18,14 +18,18 @@ function img= aa_inv_total_var( inv_model, data1, data2)
 % formula and l in WB, so overall hyperparameter is l. This
 % makes the units work for the L1 norm.
  
-% REF: 
+% REFS: 
+% Andrea Borsic, Ph.D. Thesis, Oxford Brookes, UK 
+% See Section 7.2.4 Lagged Diffusivity
+% http://www.sc-aip.com/thesis/Andrea%20Borsic%20PhD.pdf
+%
 % W. Clem Karl, "Regularization in Image Restoration
 % and Reconstruction," in Handbook of Image and Video
 % Processing, A. Bovic, Ed. San Diego, CA: Academic Press,
 % 2000, ch. 3.6, pp. 141-160.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_total_var.m,v 1.2 2005-12-02 09:11:21 aadler Exp $
+% $Id: aa_inv_total_var.m,v 1.3 2005-12-05 17:55:58 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -75,9 +79,10 @@ img.fwd_model= fwd_model;
 
 function x= tv_inv( H, W, R, y, imax, etol )
    n= size(R,1);
-   x= zeros(n,1);
-   Beta = 1e-8;
-   for iter= 1:imax
+   x= (H'*W*H + R'*R)\H'*W*y; %take reasonable first step
+   Beta = 1e-4;
+   for iter= 2:imax
+      eidors_msg('AA_INV_TV: iteration %d',iter,3);
       WB = spdiags( 0.5 ./ sqrt( (R*x).^2 + Beta ), 0, n, n );
       x = (H'*W*H + R'*WB*R )\H'*W*y;
    end
