@@ -68,11 +68,8 @@ Optical Tomography, in medical and industrial settings.
 <p><li><b>
 How is EIDORS pronounced?
 </b><p>
-EIDORS is pronounced like eiderdown. That means
-is sounds like <i>eye doors</i>.
-<br>
-Note: correct pronounciation will make you compliant
-with <i>Bill Lionheart</i>.
+EIDORS is pronounced like eiderdown. 
+It sounds like <i>eye doors</i>.
 
 <p><li><b>
 What is the logo?
@@ -108,9 +105,9 @@ and contribution of sample data, meshes, and algorithms.
 -->
 
 <p><li><b>
-    Under what terms is EIDORS3D licenced
+    Under what terms is EIDORS licenced
 </b><p>
-EIDORS3D is licenced under the GNU 
+EIDORS is licenced under the GNU 
 <a href="http://www.gnu.org/licenses/gpl.html"
     >General Public License</a>. Uses are free to
 use, modify, and distribute their modifications.
@@ -121,7 +118,8 @@ instructions on how to obtain it.
     May I include EIDORS in a commercial product
 </b><p>
 Yes. As long as you make the source code for EIDORS
-and all possible modifications to it available.
+and all modifications you made to it available to 
+your clients.
 
 <p><li><b>
     How should I refer to EIDORS in a scientific publication
@@ -226,7 +224,28 @@ you are welcome to contact the
 <tt>"??? Undefined command/function 'eidors_msg'."</tt> 
 </b><p>
 This error occurs because the functions are not part of the Matlab path. 
-The easiest solution is to type <tt>startup</tt> in the main <tt>eidors</tt> directory.
+Use the command: 
+<pre>
+  &gt;&gt;run <i>path/to/eidors/</i>startup.m
+</pre>
+<p>
+
+<p><li><b>
+Matlab prints ugly bitmapped figures rather than vector graphics
+</b><p>
+Matlab seems to try to guess what the user wants. At any rate,
+it often gets the choice wrong. To force vector graphics,
+use the '-painters' option. One useful trick to control the
+size of generated figures is to use the 'PaperPosition'
+property. Another useful trick to crop postscript figures
+is to use the
+<a href="http://www.imagemagick.org">imagemagick</a>
+<tt>convert</tt> utility.
+<pre>
+  &gt;&gt; set(gcf, 'PaperPosition', [0.25,2.5, width, height]);
+  &gt;&gt; print( gcf, '-depsc2','-painters', 'temp.eps')
+  &gt;&gt; system('convert -crop 0x0 temp.eps output.eps');
+</pre>
 
 <p><li><b>
 <tt>"Warning: RGB color data not yet supported in Painter's mode."</tt>
@@ -235,8 +254,8 @@ This is a limitation of Matlab. RGB data cannot be exported to postscript
 files. This can be solved by using colourmaps instead. 
 Try this:
 <pre>
-global eidors_colours;
-eidors_colours.mapped_colour= 256;
+  &gt;&gt;global eidors_colours;
+  &gt;&gt;eidors_colours.mapped_colour= 256;
 </pre>
 
 <p><li><b>
@@ -248,20 +267,23 @@ Sometimes one can get linux errors of the form
 </tt>
 or
 <br><tt>
-??? Invalid MEX-file '/home/andy/work/eidors3d/eidors_var_id.mexglx': /disks/hda5/opt/matlab7/bin/glnx86/../../sys/os/glnx86/libgcc_s.so.1: version `GCC_3.3' not found (required by /usr/lib/libstdc++.so.6).
+??? Invalid MEX-file '/home/andy/work/eidors3d/eidors_var_id.mexglx':
+[...]/../sys/os/ glnx86/libgcc_s.so.1:
+version `GCC_3.3' not found (required by /usr/lib/libstdc++.so.6).
 </tt>
-These errors are can occur when the linux version on which EIDORS is run is different from that
-on which the mex file was built. The easiest solution is to recompile the mex file, as follows:
-<br><tt>
-&gt;&gt; mex eidors_var_id.cpp
-</tt>
+These errors are can occur when the linux version on which EIDORS is run
+is different from that on which the mex file was built.
+The easiest solution is to recompile the mex file, as follows:
+<pre>
+  &gt;&gt; mex eidors_var_id.cpp
+</pre>
 
 </ol>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-11-30 17:49:50 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-05 22:11:52 $ by $Author: aadler $
 </small>
 </body>
 
