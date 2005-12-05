@@ -1,7 +1,9 @@
 % Compare different 3D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.5 2005-12-05 22:12:11 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.6 2005-12-05 23:41:55 aadler Exp $
+
+global eidors_colours;
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -28,7 +30,7 @@ inv3d.fwd_model= imb.fwd_model;
 inv3d.fwd_model.misc.perm_sym= '{y}';
 
      iidx=1;
-switch 4
+switch 5
    case 1,
      inv3d.hyperparameter.value = 1e-4;
      inv3d.solve=            'np_inv_solve';
@@ -36,7 +38,7 @@ switch 4
      inv3d.np_calc_image_prior.parameters= [3 1]; %  deg=1, w=1
 
    case 2,
-     inv3d.hyperparameter.value = 1e-4;
+     inv3d.hyperparameter.value = 1e-3;
      inv3d.RtR_prior.func=    'laplace_image_prior';
      inv3d.solve=             'np_inv_solve';
 
@@ -50,11 +52,14 @@ switch 4
      inv3d.parameters.max_iterations= 5;
      inv3d.R_prior.func=      'ab_calc_tv_prior';
      inv3d.solve=             'ab_tv_diff_solve';
-     for k=1:5
-     subplot(1,5,k);ix=imgr(k);ix.elem_data=ix.elem_data-1;
-     show_slices(ix, linspace(.2,2.8,4)'*[Inf,Inf,1]);
-     end
+     iidx=[1,2,5];
+     eidors_colours.ref_level=1;
 
+   case 5,
+     inv3d.hyperparameter.value = 1e-3;
+     inv3d.R_prior.func=      'ab_calc_tv_prior';
+     inv3d.solve=             'aa_inv_total_var';
+     inv3d.parameters.max_iterations= 5;
 
    otherwise,
      error('action unknown');
@@ -66,3 +71,4 @@ end
 imgr= inv_solve( inv3d, vi, vh);
 show_slices(imgr(iidx), [.5:1:2.5]'*[Inf,Inf,1]);
 
+eidors_colours.ref_level=0; %reset
