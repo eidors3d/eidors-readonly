@@ -20,12 +20,13 @@ function colours= calc_colours(img, scale, do_colourbar)
 %   eidors_colours.greylev = .2; % Grey level to colour to
 %   eidors_colours.sat_adj = .9; % max G,B when R=1
 %   eidors_colours.backgnd= [.5,.5,.15]; % colour for non image regions
+%   eidors_colours.ref_level = 0  % conductivity of this value is 0
 %   eidors_colours.mapped_colour= 0; % use colormap function
 %         if mapped_colour is non-zero, it indicates the colourmap
 %         size. Total colourmap is 2*mapped_colour
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.14 2005-11-01 02:09:56 aadler Exp $  
+% $Id: calc_colours.m,v 1.15 2005-12-05 23:28:11 aadler Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
@@ -46,6 +47,9 @@ if isempty(elem_data)
     colours = 'k'; %black
     return;
 end
+
+% remove background
+elem_data = elem_data - pp.ref_level;
 
 backgnd= isnan(elem_data);
 elem_data(backgnd)= mean( elem_data(~backgnd));
@@ -130,6 +134,9 @@ function pp=get_colours;
    end
    if ~isfield( eidors_colours, 'mapped_colour' );
       eidors_colours.mapped_colour= 0;
+   end
+   if ~isfield( eidors_colours, 'ref_level' );
+      eidors_colours.ref_level= 0;
    end
 
    pp= eidors_colours;

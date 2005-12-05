@@ -16,7 +16,7 @@ function rimg_out = show_slices( img, levels, clim )
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.25 2005-11-01 02:09:56 aadler Exp $
+% $Id: show_slices.m,v 1.26 2005-12-05 23:28:11 aadler Exp $
 
 np= 128; % number of points for each figure
 
@@ -44,11 +44,6 @@ for img_no = 1:length(img)
       level= levels( lev_no, 1:3 );
       rimg{img_no,lev_no}= calc_image( img( img_no ), level, clim, np );
    end
-end
-
-if nargout>0
-   rimg_out = rimg;
-   return;
 end
 
 ll = length(rimg(:));
@@ -80,6 +75,12 @@ end
 
 c_img = calc_colours( r_img);
 out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
+
+if nargout>0
+   rimg_out = out_img;
+   return;
+end
+
 if exist('OCTAVE_VERSION');
    imshow(out_img);
 else
