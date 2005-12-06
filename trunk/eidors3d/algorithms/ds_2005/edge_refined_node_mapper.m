@@ -1,16 +1,20 @@
-function [index_vtx] = vex(vtx_coarse,vtx_dense,simp_coarse,simp_dense);
-
-% This function maps a dense mesh verticies array onto a more coarse mesh verticies
-% array.  The closest vertex on the dense mesh to the objective vertex on
-% the coarse mesh is found.
+function [index_vtx] = edge_refined_node_mapper(M_coarse, M_dense);
+% EDGE_REFINED_NODE_MAPPER: 
+%      maps a dense mesh verticies array onto a more coarse mesh verticies
+%      array.  The closest vertex on the dense mesh to the objective vertex on
+%      the coarse mesh is found.
 %
-% vtx_coarse  = vertices array from the coarse mesh
-% vtx_dense   = vertices array from the dense mesh
-% simp_coarse = simplicies array from the coarse mesh
-% simp_dense  = simplicies array from the dense mesh
-% index_vtx   = the index array mapping each coarse mesh (from netgen) vtx onto a dense mesh (from netgen) vtx
+% Usage:
+%  [index_vtx] = edge_refined_node_mapper(M_coarse, M_dense);
+%
+% M_coarse  = fwd_model of coarse mesh
+% M_dense   = fwd_model of dense mesh
 
-% Array pre-allocation
+
+vtx_dense  = M_dense.nodes;
+simp_dense = M_dense.elems;
+vtx_coarse  = M_coarse.nodes;
+simp_coarse = M_coarse.elems;
 
 dist=zeros(size(vtx_dense,1),size(vtx_coarse,1));
 index=zeros(size(vtx_coarse,1),2);
