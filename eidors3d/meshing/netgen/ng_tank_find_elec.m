@@ -1,5 +1,5 @@
-function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,mshaxs,centres);
-%function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,mshaxs,centres);
+function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,centres);
+%function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,centres);
 %
 % This function Tries to find the electrdes given the x y x coords of their centres.
 %
@@ -12,7 +12,6 @@ function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,mshaxs,centres);
 % srf      = The boundary surfaces
 % vtx      = The vertices matrix
 % fc       = A one column matrix containing the face numbers
-% mshaxs   = Axes details for plotting wire frame
 % elsrf    = Cell array of indices matrices mapping into vtx each electrode face
 % sels     = The indices into the srf matrix of the selected electrode faces
 % elec  = The EIDORS-3D electrode matrix of dimensions NxM, where 
