@@ -3,7 +3,7 @@ function img = inv_solve( inv_model, data1, data2)
 % 
 % inv_solve can be called as
 %     img= inv_solve( inv_model, data1, data2)
-%   if inv_model.type = 'differential'
+%   if inv_model.type = 'difference'
 % or
 %     img= inv_solve( inv_model, data )
 %   if inv_model.type = 'static'
@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_solve.m,v 1.11 2005-10-27 13:50:55 aadler Exp $
+% $Id: inv_solve.m,v 1.12 2005-12-06 20:38:53 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
