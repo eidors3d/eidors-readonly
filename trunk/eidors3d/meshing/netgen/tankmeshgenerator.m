@@ -181,7 +181,7 @@ mshaxs = axis; % Save present axes for use with faces
 pause(3)
 
 % Select the electrodes
-[elec,sels] = ng_tank_find_elec(srf,vtx,bc,mshaxs,centres);
+[elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
 
 %size(elec)
 
@@ -190,7 +190,8 @@ pause(3)
 
 while size(elec,1) ~= nelec 
   disp('That did''t work. Wrong number of electrodes! You need');
-  disp('Have another try..');
+  nelec
+  disp('Lets try it manually..');
   [elec,sels] = ng_tank_select_elec(srf,vtx,bc,mshaxs);
 end
 
