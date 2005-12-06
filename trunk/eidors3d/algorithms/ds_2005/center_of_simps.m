@@ -1,15 +1,24 @@
-function [center_simp]=center_of_simps(fwd_model)
+function [center_simp]=center_of_simps(fwd_model, extraparam)
 % CENTER_OF_SIMPS: Calculates the Center of Mass of the Simplicies.
+%
+% Usage type #1
 % [center_simp]=center_of_simps(fwd_model);
+% Usage type #2
+% [center_simp]=center_of_simps(simp,vtx);
 %
 % center_simp = The center of mass of simps 
 %               [Nelems x 3] (x y z co-ordinates)
 %
 % (C) 2005 David Stephenson. Licensed under GPL Version 2
-% $Id: center_of_simps.m,v 1.2 2005-12-06 17:33:31 aadler Exp $
+% $Id: center_of_simps.m,v 1.3 2005-12-06 17:50:33 aadler Exp $
 
-vtx = fwd_model.nodes;
-simp= fwd_model.elems;
+if nargin==1
+    simp= fwd_model.elems;
+    vtx = fwd_model.nodes;
+else
+    simp= fwd_model;
+    vtx= extraparam;
+end
 
     x_sum=vtx(simp(:,1),1)+vtx(simp(:,2),1)+vtx(simp(:,3),1)+vtx(simp(:,4),1);
     y_sum=vtx(simp(:,1),2)+vtx(simp(:,2),2)+vtx(simp(:,3),2)+vtx(simp(:,4),2);
