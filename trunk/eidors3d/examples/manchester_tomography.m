@@ -3,7 +3,7 @@
 % group from U.Manchester, UK
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.3 2005-12-06 17:33:18 aadler Exp $
+% $Id: manchester_tomography.m,v 1.4 2005-12-06 20:39:14 aadler Exp $
 function manchester_tomography( M_coarse, M_dense)
 
 example2( M_coarse, M_dense)
@@ -89,4 +89,20 @@ imdl= mk_common_model('b2c',16);
 imdl.hyperparameter.value= 1e-2;
 imgr= inv_solve(imdl, vi,vh);
 show_fem(imgr);
+
+
+imdl2= eidors_obj('inv_model', 'DS dual mesh');
+imdl2.solve= 'inv_solve_dual_mesh';
+imdl2.hyperparameter.value = 1e-4;
+imdl2.R_prior.func= 'np_calc_image_prior';
+imdl2.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
+imdl2.jacobian_bkgnd.value= 1;
+imdl2.reconst_type= 'static';
+imdl2.fwd_model= M_dense;
+imdl2.parameters.max_iterations= 5;
+
+imdl2.inv_solve_dual_mesh.coarse_mdl= M_coarse;
+imdl2.inv_solve_dual_mesh.mapper_func= 'edge_refined_elem_mapper';
+
+imgr= inv_solve(imdl2, vi);
 
