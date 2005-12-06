@@ -6,30 +6,24 @@ function [center_simp]=center_of_simps(fwd_model)
 %               [Nelems x 3] (x y z co-ordinates)
 %
 % (C) 2005 David Stephenson. Licensed under GPL Version 2
-% $Id: center_of_simps.m,v 1.1 2005-12-06 17:13:37 aadler Exp $
+% $Id: center_of_simps.m,v 1.2 2005-12-06 17:33:31 aadler Exp $
 
 vtx = fwd_model.nodes;
 simp= fwd_model.elems;
 
-for i=1:size(simp,1)
-    
-    x_sum=vtx(simp(i,1),1)+vtx(simp(i,2),1)+vtx(simp(i,3),1)+vtx(simp(i,4),1);
-    y_sum=vtx(simp(i,1),2)+vtx(simp(i,2),2)+vtx(simp(i,3),2)+vtx(simp(i,4),2);
-    z_sum=vtx(simp(i,1),3)+vtx(simp(i,2),3)+vtx(simp(i,3),3)+vtx(simp(i,4),3);
+    x_sum=vtx(simp(:,1),1)+vtx(simp(:,2),1)+vtx(simp(:,3),1)+vtx(simp(:,4),1);
+    y_sum=vtx(simp(:,1),2)+vtx(simp(:,2),2)+vtx(simp(:,3),2)+vtx(simp(:,4),2);
+    z_sum=vtx(simp(:,1),3)+vtx(simp(:,2),3)+vtx(simp(:,3),3)+vtx(simp(:,4),3);
     
     x_center=x_sum/4;
     y_center=y_sum/4;
     z_center=z_sum/4;
     
-    center_simp(i,1)=x_center;
-    center_simp(i,2)=y_center;
-    center_simp(i,3)=z_center;
+    center_simp(:,1)=x_center;
+    center_simp(:,2)=y_center;
+    center_simp(:,3)=z_center;
     
-    i=i+1;
-    
-end
 
-close(h);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
