@@ -7,7 +7,7 @@ function [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 %  [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 %
 % (C) 2005 David Stephenson. Licensed under GPL v 2
-% $Id: edge_refined_elem_mapper.m,v 1.2 2005-12-06 18:13:31 aadler Exp $
+% $Id: edge_refined_elem_mapper.m,v 1.3 2005-12-06 18:28:50 aadler Exp $
 
 index_simp = eidors_obj('get-cache', mdl_dense, 'index_simp', mdl_coarse);
 if ~isempty(index_simp)
@@ -283,25 +283,19 @@ for id=1:size(simp_dense,1);   % for all dense center of simplicies
 
     waitbar(id/size(simp_dense,1))
 
-    for ic=1:size(center_h_refined_simps,1);   % for all coarse center of simplicies
+    % find the x,y,z co-ord difference
+    dx=centre_simp_dense(id,1)-center_h_refined_simps(:,1);
+    dy=centre_simp_dense(id,2)-center_h_refined_simps(:,2);
+    dz=centre_simp_dense(id,3)-center_h_refined_simps(:,3);
     
-        dx=centre_simp_dense(id,1)-center_h_refined_simps(ic,1);   % find the x co-ord difference
-        dy=centre_simp_dense(id,2)-center_h_refined_simps(ic,2);   % find the y co-ord difference
-        dz=centre_simp_dense(id,3)-center_h_refined_simps(ic,3);   % find the z co-ord difference
-    
-        dist_simp(ic)=sqrt((dx^2)+(dy^2)+(dz^2));   % distance between points for each dense vertex and the ic'th coarse vertex
+    dist_simp=sqrt((dx.^2)+(dy.^2)+(dz.^2));
        
-        ic=ic+1;
-        
-    end 
     
     [m,I]=min(dist_simp);   % index out the minimum distance from the dense mesh to the id'th center of simplex
     
     index_simp(id,1)=lookup(I);
 
     index_simp(id,2)=m;   % write the actual minimum distance (as a quality control procedure)
-    
-    id=id+1;
     
 end
 
