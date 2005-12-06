@@ -18,12 +18,13 @@ electrode_width=1;
 electrode_height=2
 
 
-[tank_mdl1,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres, electrode_width,electrode_height,fnstem1)
+[tank_mdl1,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres, electrode_width,electrode_height,fnstem1);
 
 r = tank_radius/5; %that is radius of ball
 %Now put a ball in somewhere
 x=0;y=0,z=tankheight/2;
 fidin=fopen(fnin);
+fidout =fopen(fnout,'w');
 foundit=0;
   while 1
     tline = fgetl(fidin);
