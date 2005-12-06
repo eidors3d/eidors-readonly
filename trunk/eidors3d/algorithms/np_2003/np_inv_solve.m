@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.20 2005-12-05 22:12:11 aadler Exp $
+% $Id: np_inv_solve.m,v 1.21 2005-12-06 15:02:51 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -18,9 +18,12 @@ if ~isempty(one_step_inv)
 else
     p= np_fwd_parameters( fwd_model );
 
-    % calc jacobian with homogeneous background
+    % FIXME: call a function to calculate the jacobian bkgnd
+    bkgnd = ones(p.n_elem,1);
+    bkgnd(:)= inv_model.jacobian_bkgnd.value;
+
     homg_img= eidors_obj('image', 'homog image from np_inv_solve', ...
-                         'elem_data', ones( p.n_elem ,1), ...
+                         'elem_data', bkgnd, ...
                          'fwd_model', fwd_model );
 
     J = calc_jacobian( fwd_model, homg_img );
