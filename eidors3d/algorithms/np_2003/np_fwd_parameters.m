@@ -9,6 +9,7 @@ function param = np_fwd_parameters( fwd_model )
 %   param.n_meas   => number of measurements (total)
 %   param.vtx      => vertex matrix
 %   param.simp     => connection matrix
+%   param.srf      => boundary triangles
 %   param.df       => vector of measurements for each current pattern
 %   param.elec     => nodes attached to each electrode
 %   param.zc       => vector of contact impedances
@@ -19,7 +20,7 @@ function param = np_fwd_parameters( fwd_model )
 %   param.gnd_ind  => node attached to ground
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_parameters.m,v 1.9 2005-10-28 15:10:55 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.10 2005-12-06 14:47:08 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -56,6 +57,7 @@ elec= [];
 zc  = zeros(n_elec, 1);
 
 bdy = fwd_model.boundary;
+max_elec_nodes=0;
 % get electrode parameters
 for i=1:n_elec
     elec_nodes= fwd_model.electrode(i).nodes;
@@ -66,10 +68,19 @@ for i=1:n_elec
        n_bdy= elec_nodes;
     end
 % elec is a series of nodes matching bdy faces
-    elec   = [elec; n_bdy(:)' ];
+    en_list{i}= n_bdy(:)';
+    if length(n_bdy) > max_elec_nodes
+        max_elec_nodes = length(n_bdy);
+    end
 
 % contact impedance
     zc(i)    = fwd_model.electrode(i).z_contact;
+end
+
+elec= zeros(n_elec, max_elec_nodes);
+for i=1:n_elec
+    en= en_list{i};
+    elec(i,1:length(en)) = en;
 end
 
 % Recreate 'indH' from fwd_model.stimulation
@@ -106,6 +117,7 @@ param.n_stim   = n_stim;
 param.n_meas   = n_meas;
 param.vtx      = vtx;
 param.simp     = simp;
+param.srf      = fwd_model.boundary;
 param.df       = df;
 param.elec     = elec;
 param.zc       = zc;
