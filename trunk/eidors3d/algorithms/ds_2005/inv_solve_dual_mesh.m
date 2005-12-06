@@ -7,7 +7,7 @@ function img= inv_solve_dual_mesh( inv_model, voltage)
 %
 
 % (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_dual_mesh.m,v 1.2 2005-12-06 20:37:52 aadler Exp $
+% $Id: inv_solve_dual_mesh.m,v 1.3 2005-12-06 21:07:15 aadler Exp $
 
 M_dense= inv_model.fwd_model;
 % Load parameters
@@ -24,7 +24,8 @@ tol_for= 1e-5;
 tol_inv= 1e-5;
 
 tfac= calc_hyperparameter(inv_model);
-RtR= calc_RtR_prior( inv_model);
+IM_coarse= inv_model; IM_coarse.fwd_model= M_coarse;
+RtR= calc_RtR_prior( IM_coarse );
 
 % Initial conductivity estimate
 mat_ref_coarse = ones(size(M_coarse.elems,1),1);
@@ -118,16 +119,16 @@ sol_upd_coarse = sol_upd_coarse + sol_coarse;
 sol_coarse = sol_upd_coarse;
 sol_dense = sol_upd_dense;
 
-sol_array(:,i)=sol_coarse;
+sol_array(:,iter)=sol_coarse;
 
-sprintf('Error norm at iteration %d is %f',i,norm(voltage - vi))
+sprintf('Error norm at iteration %d is %f',iter,norm(voltage - vi))
 
 end
 
 
 % create a data structure to return
 img.name= 'solved by inv_solve_trunc_iterative';
-img.elem_data = sol;
+img.elem_data = sol_array;
 img.fwd_model= M_dense;
 
 function voltH = elec_volts( Vfwd, fwd_model)
