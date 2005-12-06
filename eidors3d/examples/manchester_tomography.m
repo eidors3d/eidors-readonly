@@ -3,8 +3,12 @@
 % group from U.Manchester, UK
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.2 2005-12-06 15:38:39 aadler Exp $
+% $Id: manchester_tomography.m,v 1.3 2005-12-06 17:33:18 aadler Exp $
+function manchester_tomography( M_coarse, M_dense)
 
+example2( M_coarse, M_dense)
+
+function example1
 load 2planes_2rods_Opp
 fwd_m1=eidors_obj('fwd_model',fwd_mdl);
 fwd_m1=eidors_obj('fwd_model',fwd_mdl); 
@@ -59,4 +63,30 @@ imr= inv_solve(imdl, meas, reference);
 
 
 show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
+
+
+function example2( M_coarse, M_dense)
+
+stim= mk_stim_patterns(16,1,'{ad}','{ad}',[],1);
+M_coarse.stimulation= stim;
+M_dense.stimulation= stim;
+%display_meas( M_dense);
+
+n= size(M_dense.elems,1);
+img2=eidors_obj('image','homog');
+img2.elem_data= ones(n,1);
+img2.fwd_model= M_dense;
+vh= fwd_solve(img2);
+
+cc= center_of_simps( M_dense);
+[jnk,mat]= elems_in_cylinder(cc,[0,.03,.02],.01,ones(n,1),1.2);
+img2.elem_data= mat;
+
+show_fem(img2);
+vi= fwd_solve(img2);
+
+imdl= mk_common_model('b2c',16);
+imdl.hyperparameter.value= 1e-2;
+imgr= inv_solve(imdl, vi,vh);
+show_fem(imgr);
 
