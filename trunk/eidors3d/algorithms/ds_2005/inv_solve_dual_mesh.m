@@ -1,4 +1,4 @@
-function img= inv_solve_dual_mesh( inv_model, data1)
+function img= inv_solve_dual_mesh( inv_model, voltage)
 % INV_SOLVE_DUAL_MESH using a coarse and fine mesh
 % img= inv_solve_dual_mesh( inv_model, data1)
 % img        => output image (or vector of images)
@@ -7,26 +7,32 @@ function img= inv_solve_dual_mesh( inv_model, data1)
 %
 
 % (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_dual_mesh.m,v 1.1 2005-12-06 19:40:11 aadler Exp $
-
-voltage = data1.meas;
+% $Id: inv_solve_dual_mesh.m,v 1.2 2005-12-06 20:37:52 aadler Exp $
 
 M_dense= inv_model.fwd_model;
-
-[index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense);
-c2d_elem= index_simp(:,1);
-[index_vtx]=edge_refined_node_mapper( mdl_coarse, mdl_dense);
-d2c_node= index_vtx(:,1);
-
-
 % Load parameters
 M_coarse= inv_model.inv_solve_dual_mesh.coarse_mdl;
-mapper_func= inv_model.inv_solve_dual_mesh.mapper_func;
+%mapper_func= inv_model.inv_solve_dual_mesh.mapper_func;
+
+[index_simp]=edge_refined_elem_mapper( M_coarse, M_dense);
+c2d_elem= index_simp(:,1);
+[index_vtx]=edge_refined_node_mapper( M_coarse, M_dense);
+d2c_node= index_vtx(:,1);
+
+%FIXME: create parameters
+tol_for= 1e-5;
+tol_inv= 1e-5;
+
+tfac= calc_hyperparameter(inv_model);
+RtR= calc_RtR_prior( inv_model);
 
 % Initial conductivity estimate
 mat_ref_coarse = ones(size(M_coarse.elems,1),1);
 mat_ref_coarse(:)= inv_model.jacobian_bkgnd.value;
-mat_ref_dense= mat_ref_coarse( coarse2dense );
+mat_ref_dense= mat_ref_coarse( c2d_elem );
+% Initial estimate - homogeneous background coarse mesh
+sol_upd_dense= mat_ref_dense;
+sol_upd_coarse = mat_ref_coarse;
 
 index_simp=edge_refined_elem_mapper(M_coarse,M_dense);
 
@@ -34,38 +40,89 @@ index_simp=edge_refined_elem_mapper(M_coarse,M_dense);
 img_dense= eidors_obj('image', 'dense image');
 img_dense.elem_data= mat_ref_dense;
 img_dense.fwd_model= M_dense;
-pp_dense= np_fwd_parameters( M_dense );
+pdense= np_fwd_parameters( M_dense );
+vtx_dense      = pdense.vtx;
+simp_dense     = pdense.simp;
+gnd_ind_dense  = pdense.gnd_ind;
+elec_dense     = pdense.elec;
+I_dense        = pdense.I;
+Ib_dense       = pdense.Ib;
+df_dense       = pdense.df;
+elec_dense     = pdense.elec;
+zc             = pdense.zc;
+perm_sym       = pdense.perm_sym;
+no_pl          = 1; % FIXME
+el_no          = pdense.n_elec;
 
 % create coarse model
 img_coarse= eidors_obj('image', 'coarse image');
 img_coarse.elem_data= mat_ref_coarse;
 img_coarse.fwd_model= M_coarse;
-pp_coarse= np_fwd_parameters( M_coarse );
+pcoarse= np_fwd_parameters( M_coarse );
+vtx_coarse      = pcoarse.vtx;
+simp_coarse     = pcoarse.simp;
+gnd_ind_coarse  = pcoarse.gnd_ind;
+elec_coarse     = pcoarse.elec;
+I_coarse        = pcoarse.I;
+Ib_coarse       = pcoarse.Ib;
+df_coarse       = pcoarse.df;
+elec_coarse     = pcoarse.elec;
 
 %Set the tolerance for the forward solver
-tol = 1e-5;
-
 for iter= 1:inv_model.parameters.max_iterations;                     
+    [E_dense,D_dense,Ela_dense,pp_dense] = ...
+        fem_master_full(vtx_dense,simp_dense,sol_upd_dense,gnd_ind_dense,elec_dense,zc,perm_sym);
+ 
+ if iter==1
+   %sprintf('Current fields for iteration %d',i)
+   [V_dense] = forward_solver(vtx_dense,E_dense,I_dense,tol_for,pp_dense);
+   [viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
+   dfv = df(1:2:end);
+   vi = (viH); 
+   %sprintf('Measurement fields for iteration %d',i)
+   [v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense);
+else
+   %sprintf('Current fields for iteration %d',i)
+   [V_dense] = forward_solver(vtx_dense,E_dense,I_dense,tol_for,pp_dense,V_dense);
+   [viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
+   dfv = df(1:2:end);
+   vi = (viH); 
+   %sprintf('Measurement fields for iteration %d',i)
+   [v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense,v_f_dense);
+end
+    
+    
+%% DENSE MESH TO COARSE MESH HERE for scaler potentials
 
-   s_mat= calc_system_mat( M_dense, img_dense );
-   V_dense = forward_solver( ...
-              pp_dense.vtx, s_mat.E, pp_dense.I, tol, s_mat.perm);
-   v_f_dense = m_3d_fields( ...
-              pp_dense.vtx, pp_dense.n_elec, pp_dense.indH, ...
-              s_mat.E, tol, pp_dense.gnd_ind);
+[V_coarse] = mapvd(V_dense,index_vtx,elec_dense,vtx_coarse,vtx_dense);
 
-    %% DENSE MESH TO COARSE MESH HERE for scalar potentials
+[v_f_coarse] = mapvm(v_f_dense,index_vtx,indH_dense,vtx_coarse,vtx_dense);
 
-   [V_coarse] = mapvd(V_dense,index_vtx, ...
-                     length(M_dense.stimulation), ...
-                     M_coarse.nodes, M_dense.nodes );
+[viH,viV,indH_coarse,indV,df_coarse] = get_3d_meas(elec_coarse,vtx_coarse,V_coarse,Ib_coarse,no_pl); % for dfv_coarse in Jacobian calculation
 
-   [v_f_coarse] = mapvm(v_f_dense,index_vtx, ...
-                     length(voltage), ...
-                     M_coarse.nodes, M_dense.nodes );
+dfv_coarse = df_coarse(1:2:end);
 
-   J_coarse= calc_jacobian( M_coarse, 
+[E_coarse,D_coarse,Ela_coarse,pp_coarse] = fem_master_full(vtx_coarse,simp_coarse,mat_ref_coarse,gnd_ind_coarse,elec_coarse,zc,perm_sym);  % for D in Jacobian calculation
 
+[J_coarse] = jacobian_3d_with_fields(V_coarse,Ela_coarse,D_coarse,I_coarse,elec_coarse,vtx_coarse,simp_coarse,gnd_ind_coarse,sol_upd_coarse,zc,v_f_coarse,dfv_coarse,tol_for,perm_sym);
+
+sol_coarse = (J_coarse.'*J_coarse + tfac^2*RtR)\ (J_coarse.' * (voltage - vi));
+
+% COARSE MESH TO DENSE MESH HERE for conductivity
+
+sol_dense=sol_coarse(c2d_elem);
+
+sol_upd_dense = sol_upd_dense + sol_dense;
+sol_upd_coarse = sol_upd_coarse + sol_coarse;
+
+sol_coarse = sol_upd_coarse;
+sol_dense = sol_upd_dense;
+
+sol_array(:,i)=sol_coarse;
+
+sprintf('Error norm at iteration %d is %f',i,norm(voltage - vi))
+
+end
 
 
 % create a data structure to return
@@ -85,13 +142,13 @@ function voltH = elec_volts( Vfwd, fwd_model)
        idx= idx+ n_meas;
     end
 
-function [V_coarse] = mapvd(V_dense,index_vtx,n_stim_patterns,vtx_coarse,vtx_dense);
+function [V_coarse] = mapvd(V_dense,index_vtx,elec,vtx_coarse,vtx_dense);
 
 % This function maps the scaler potential field
 % from the dense mesh to the coarse
 % mesh using verticies extraction.
 
-for j=1:n_stim_patterns
+for j=1:size(elec,1);
 
     for i=1:size(vtx_coarse,1);
 
@@ -108,7 +165,7 @@ V_coarse=[V_coarse;V_coarse_elec];
 % This function maps the scaler potential field
 % from the dense mesh to the coarse
 % mesh using verticies extraction.
-function [v_f_coarse] = mapvm(v_f_dense,index_vtx,n_measurements,vtx_coarse,vtx_dense);
+function [v_f_coarse] = mapvm(v_f_dense,index_vtx,indH_dense,vtx_coarse,vtx_dense);
 
 
 for j=1:size(indH_dense,1);
