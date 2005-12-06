@@ -3,7 +3,7 @@
 % group from U.Manchester, UK
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.1 2005-12-06 14:50:10 aadler Exp $
+% $Id: manchester_tomography.m,v 1.2 2005-12-06 15:38:39 aadler Exp $
 
 load 2planes_2rods_Opp
 fwd_m1=eidors_obj('fwd_model',fwd_mdl);
@@ -34,13 +34,20 @@ display_meas(fwd_m2)
 end
 
 fwd_m1.jacobian= 'np_calc_jacobian';
-fwd_m1.
 
 imdl= eidors_obj('inv_model','NP mdl');
-imdl.solve= 'np_inv_solve';
-%imdl.solve= 'aa_inv_conj_grad';
-imdl.hyperparameter.value = 1e-3;
-imdl.R_prior.func= 'np_calc_image_prior';
+if 1
+    imdl.solve= 'np_inv_solve';
+    imdl.solve= 'inv_solve_trunc_iterative';
+    imdl.R_prior.func= 'np_calc_image_prior';
+    imdl.hyperparameter.value = 1e-2;
+else
+    imdl.solve= 'ab_tv_diff_solve';
+    imdl.R_prior.func= 'ab_calc_tv_prior';
+    imdl.parameters.max_iterations= 2;
+    imdl.hyperparameter.value = [1e-2, 1e-5];
+end
+imdl.jacobian_bkgnd.value = .01;
 imdl.np_calc_image_prior.parameters= [3 1];
 imdl.reconst_type= 'difference';
 imdl.fwd_model= fwd_m1;
@@ -50,13 +57,6 @@ reference.type='data';
 imr= inv_solve(imdl, meas, reference);
 %imr= inv_solve(imdl, vi, vh);
 
-img.elem_data= mat_ref;
-J0 = np_calc_Jacobian(fwd_m1 , img);
-img.elem_data= 100*mat_ref;
-J1 = np_calc_Jacobian(fwd_m1 , img);
 
-%hess = J'*J;
-%[sol] = pcg(hess, J'*(meas.meas-reference.meas), 1e-4, 50);
-%imr.elem_data=sol;
 show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 

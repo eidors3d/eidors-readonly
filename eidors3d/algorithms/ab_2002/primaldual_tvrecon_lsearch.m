@@ -43,9 +43,9 @@ A=calc_R_prior( inv_mdl);
 
 n=size(A,1); % num_rows_L
 m=size(A,2); % num_elem
-s=ones(m,1);
+%s=ones(m,1);
+s= inv_mdl.jacobian_bkgnd.value * ones(m,1);
 x=zeros(n,1);
-
 
 % Create homogeneous model
 IM= eidors_obj('image','');
