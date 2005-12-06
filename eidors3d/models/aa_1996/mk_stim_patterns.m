@@ -1,6 +1,6 @@
 function [stim, meas_sel]= mk_stim_patterns( ...
             n_elec, n_rings, inj, meas, options, amplitude)
-%MK_STIM_PATTER: create an EIDORS3D stimulation pattern structure
+%MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure
 %                to form part of a fwd_model object
 % [stim, meas_sel] = mk_stim_patterns( n_elec, n_rings, ...
 %                                      inj, meas, options, amplitude)
@@ -51,7 +51,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.12 2005-12-02 09:10:46 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.13 2005-12-06 15:02:51 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -142,7 +142,7 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
 function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
 
 % Stimulation (injection) pattern
-% This currently does not handle complex injection patterns
+% This currently does not handle complicated injection patterns
 if isstr(inj)
    if      strcmp(inj,'{ad}') | strcmp(inj,'adjacent')
       inj= [0, 1];
@@ -197,6 +197,16 @@ for opt = options
    else
       error(['option parameter opt=',opt,' not understood']);
    end
+end
+
+% do_redundant only works for adjacent stimulations
+if v.do_redundant
+    inj_diff= abs(diff(inj));
+    meas_diff= abs(diff(meas));
+    if inj_diff>1  & inj_diff<n_elec-1 & ...
+       meas_diff>1 & meas_diff<n_elec-1
+        error('do_redundant is only applicable to adjacent patterns');
+    end
 end
 
 v.n_elec = n_elec;
