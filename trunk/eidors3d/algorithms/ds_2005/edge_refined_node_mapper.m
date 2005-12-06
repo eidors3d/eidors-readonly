@@ -1,22 +1,26 @@
-function [index_vtx] = edge_refined_node_mapper(M_coarse, M_dense);
+function [index_vtx] = edge_refined_node_mapper(mdl_coarse, mdl_dense);
 % EDGE_REFINED_NODE_MAPPER: 
 %      maps a dense mesh verticies array onto a more coarse mesh verticies
 %      array.  The closest vertex on the dense mesh to the objective vertex on
 %      the coarse mesh is found.
 %
 % Usage:
-%  [index_vtx] = edge_refined_node_mapper(M_coarse, M_dense);
+%  [index_vtx] = edge_refined_node_mapper(mdl_coarse, mdl_dense);
 %
-% M_coarse  = fwd_model of coarse mesh
-% M_dense   = fwd_model of dense mesh
+% mdl_coarse  = fwd_model of coarse mesh
+% mdl_dense   = fwd_model of dense mesh
 
+index_vtx = eidors_obj('get-cache', mdl_dense, 'index_vtx', mdl_coarse);
+if ~isempty(index_vtx)
+    eidors_msg('edge_refined_node_mapper: using cached value', 2);
+    return
+end
 
-vtx_dense  = M_dense.nodes;
-simp_dense = M_dense.elems;
-vtx_coarse  = M_coarse.nodes;
-simp_coarse = M_coarse.elems;
+vtx_dense  = mdl_dense.nodes;
+simp_dense = mdl_dense.elems;
+vtx_coarse  = mdl_coarse.nodes;
+simp_coarse = mdl_coarse.elems;
 
-dist=zeros(size(vtx_dense,1),size(vtx_coarse,1));
 index=zeros(size(vtx_coarse,1),2);
 
 
@@ -28,30 +32,26 @@ for ic=1:size(vtx_coarse,1);   % for all coarse verticies
     
     waitbar(ic/size(vtx_coarse,1))
 
-
-    for id=1:size(vtx_dense,1);   % for all dense verticies
+    dx=vtx_dense(:,1)-vtx_coarse(ic,1);   % find the x co-ord difference
+    dy=vtx_dense(:,2)-vtx_coarse(ic,2);   % find the y co-ord difference
+    dz=vtx_dense(:,3)-vtx_coarse(ic,3);   % find the z co-ord difference
     
-        dx=vtx_dense(id,1)-vtx_coarse(ic,1);   % find the x co-ord difference
-        dy=vtx_dense(id,2)-vtx_coarse(ic,2);   % find the y co-ord difference
-        dz=vtx_dense(id,3)-vtx_coarse(ic,3);   % find the z co-ord difference
+    % distance between points for each dense vertex and the ic'th coarse vertex
+    dist=sqrt((dx.^2)+(dy.^2)+(dz.^2));
     
-        dist(id,ic)=sqrt((dx^2)+(dy^2)+(dz^2));   % distance between points for each dense vertex and the ic'th coarse vertex
-       
-        id=id+1;
-        
-    end 
-    
-    [m,index(ic,1)]=min(dist(:,ic));   % index out the minimum distance from the dense mesh to the ic'th vertex
+    [m,index(ic,1)]=min(dist);   % index out the minimum distance from the dense mesh to the ic'th vertex
     
     index(ic,2)=m;   % write the actual minimum distance (as a quality control procedure)
-    
-    ic=ic+1;
     
 end
 
 close(h)
 
 index_vtx=index;
+
+% Cache the restult - it depends on both dense and coarse mdl
+eidors_obj('set-cache', mdl_dense, 'index_vtx', index_vtx, mdl_coarse);
+eidors_msg('edge_refined_node_mapper: setting cached value', 2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.

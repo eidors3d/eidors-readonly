@@ -7,7 +7,7 @@ function [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 %  [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 %
 % (C) 2005 David Stephenson. Licensed under GPL v 2
-% $Id: edge_refined_elem_mapper.m,v 1.3 2005-12-06 18:28:50 aadler Exp $
+% $Id: edge_refined_elem_mapper.m,v 1.4 2005-12-06 18:52:18 aadler Exp $
 
 index_simp = eidors_obj('get-cache', mdl_dense, 'index_simp', mdl_coarse);
 if ~isempty(index_simp)
@@ -37,7 +37,7 @@ eidors_msg('edge_refined_elem_mapper: calc_simp_index',4);
 
 % Cache the restult - it depends on both dense and coarse mdl
 eidors_obj('set-cache', mdl_dense, 'index_simp', index_simp, mdl_coarse);
-eidors_msg('inv_solve_dual_mesh: setting cached value', 2);
+eidors_msg('edge_refined_elem_mapper: setting cached value', 2);
 
 
 function [lookup]=lookup_bld(simp_coarse,simp_dense);
