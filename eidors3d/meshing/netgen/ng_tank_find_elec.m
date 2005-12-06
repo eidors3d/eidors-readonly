@@ -50,6 +50,7 @@ end
 elsrf = ttlfcsrf(lgelfc);
 
 close(gcf)
+if 0
 % Display each electrode in turn as a wire mesh
 figure
 set(gcf,'Name','Wire Mesh Electrode Faces')
@@ -66,7 +67,7 @@ end
 title('Electrodes: red,')
 hidden off
 pause(2)
-
+end
 % Convert elsrf into the EIDORS-3D matrix electrode matrix format
 
 nmel = size(elsrf,2);
