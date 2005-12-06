@@ -1,7 +1,7 @@
 % Compare different 3D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.6 2005-12-05 23:41:55 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.7 2005-12-06 15:38:39 aadler Exp $
 
 global eidors_colours;
 
@@ -26,11 +26,12 @@ vi.meas = vi.meas + .001*sig*randn(m,1);
 %show_slices(img);
 inv3d= eidors_obj('inv_model', 'EIT inverse');
 inv3d.reconst_type= 'difference';
+inv3d.jacobian_bkgnd.value = 1;
 inv3d.fwd_model= imb.fwd_model;
 inv3d.fwd_model.misc.perm_sym= '{y}';
 
      iidx=1;
-switch 5
+switch 4
    case 1,
      inv3d.hyperparameter.value = 1e-4;
      inv3d.solve=            'np_inv_solve';
