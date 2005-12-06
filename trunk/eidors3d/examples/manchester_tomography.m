@@ -3,8 +3,12 @@
 % group from U.Manchester, UK
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.4 2005-12-06 20:39:14 aadler Exp $
+% $Id: manchester_tomography.m,v 1.5 2005-12-06 21:14:36 aadler Exp $
 function manchester_tomography( M_coarse, M_dense)
+
+% load dual_mesh
+% DS_coarse= set_fwd_model(vtx_coarse,simp_coarse,[],elec_coarse,zc,gnd_ind_coarse,Ib_coarse, [], []);
+% DS_dense= set_fwd_model(vtx_dense,simp_dense,[],elec_dense,zc,gnd_ind_dense,Ib_dense, [], []);
 
 example2( M_coarse, M_dense)
 
@@ -105,4 +109,4 @@ imdl2.inv_solve_dual_mesh.coarse_mdl= M_coarse;
 imdl2.inv_solve_dual_mesh.mapper_func= 'edge_refined_elem_mapper';
 
 imgr= inv_solve(imdl2, vi);
-
+keyboard
