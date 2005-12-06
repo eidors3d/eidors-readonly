@@ -1,10 +1,23 @@
-function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,sym);
+function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);
 % SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters
-% [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,sym);
+% [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);
+%
+% Optional parameters
+%   srf = specify [] to automatically generate
+%   perm_sym = default is '{y}'
+%
+% Unknown parameters
+%   specify '[]' to be used later
 %
 % (C) 2005 Stephen Murphy. Licenced under GPL Version 2
-% $Id: set_fwd_model.m,v 1.1 2005-12-06 15:55:40 aadler Exp $
+% $Id: set_fwd_model.m,v 1.2 2005-12-06 16:14:55 aadler Exp $
 
+if nargin<10
+    perm_sym= '{y}';
+end
+if isempty( srf)
+    srf= dubs3( simp );
+end
 fwd_mdl= eidors_obj('fwd_model','FWD_MDL created by set_fwd_model');
 fwd_mdl.nodes=vtx;
 fwd_mdl.elems=simp;
@@ -34,7 +47,7 @@ for loop1=1:size(df,1)
 end
 
 fwd_mdl.stimulation=stim_mdl;
-fwd_mdl.misc.sym=sym;
+fwd_mdl.misc.perm_sym=perm_sym;
 fwd_mdl.solve='np_fwd_solve';
 fwd_mdl.jacobian='np_calc_jacobian';
 fwd_mdl.system_mat='np_calc_system_mat';
