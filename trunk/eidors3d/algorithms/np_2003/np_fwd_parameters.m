@@ -20,7 +20,7 @@ function param = np_fwd_parameters( fwd_model )
 %   param.gnd_ind  => node attached to ground
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_parameters.m,v 1.10 2005-12-06 14:47:08 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.11 2005-12-07 13:19:15 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -56,14 +56,19 @@ end
 elec= [];
 zc  = zeros(n_elec, 1);
 
-bdy = fwd_model.boundary;
+if isfield(fwd_model,'boundary')
+    srf = fwd_model.boundary;
+else
+    srf= dubs3(simp);
+end
+
 max_elec_nodes=0;
 % get electrode parameters
 for i=1:n_elec
     elec_nodes= fwd_model.electrode(i).nodes;
     if length(elec_nodes)>1
-       e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
-       n_bdy  = bdy(e_bdy,:)';
+       e_bdy  = bdy_with_nodes(srf,  elec_nodes );
+       n_bdy  = srf(e_bdy,:)';
     else
        n_bdy= elec_nodes;
     end
@@ -117,7 +122,7 @@ param.n_stim   = n_stim;
 param.n_meas   = n_meas;
 param.vtx      = vtx;
 param.simp     = simp;
-param.srf      = fwd_model.boundary;
+param.srf      = srf;
 param.df       = df;
 param.elec     = elec;
 param.zc       = zc;
