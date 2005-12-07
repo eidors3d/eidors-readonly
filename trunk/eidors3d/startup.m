@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.15 2005-12-07 17:48:02 aadler Exp $
+% $Id: startup.m,v 1.16 2005-12-07 22:45:32 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -19,6 +19,7 @@ addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/aa_1996']);
 addpath([HOMEDIR, '/models/ds_2005']);
 addpath([HOMEDIR, '/models/sm_2005']);
+addpath([HOMEDIR, '/meshing/netgen']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/graphics_matlab']);
