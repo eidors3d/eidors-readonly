@@ -9,16 +9,19 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.6 2005-12-07 22:45:04 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.7 2005-12-07 22:58:46 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
 
 % Note: no caching needed
 
-% calc jacobian with homogeneous background
+% FIXME: call a function to calculate the jacobian bkgnd
+bkgnd = ones(size(fwd_model.elems,1),1);
+bkgnd(:)= inv_model.jacobian_bkgnd.value;
+
 homg_img= eidors_obj('image', 'homog image', ...
-                     'elem_data', ones( pp.n_elem ,1), ...
+                     'elem_data', bkgnd, ...
                      'fwd_model', fwd_model );
 
 J = calc_jacobian( fwd_model, homg_img);
@@ -26,6 +29,14 @@ J = calc_jacobian( fwd_model, homg_img);
 R = calc_RtR_prior( inv_model );
 W = calc_meas_icov( inv_model );
 hp= calc_hyperparameter( inv_model );
+
+maxiter= 50;
+tol= 1e-4;
+if isfield(inv_model,'parameters')
+    tol =     inv_model.parameters.term_tolerance;
+    maxiter = inv_model.parameters.max_iterations;
+end
+
 
 
 l_data1= length(data1); l1_0 = l_data1 ~=0;
@@ -57,7 +68,11 @@ img.fwd_model= fwd_model;
 
 % x = [J;R]\[y;R*x0] using Moore - Penrose inverse
 function x= cg_ls_inv( J, R, y, Rx0, imax, etol )
-  x = [J;R]\[y;Rx0]; % using Moore - Penrose inverse
+%  x = [J;R]\[y;Rx0]; % using Moore - Penrose inverse
+
+   A = [J;R]
+% Notation r_{k+1} => r_k1
+   r_k1 = ;
   
    
 

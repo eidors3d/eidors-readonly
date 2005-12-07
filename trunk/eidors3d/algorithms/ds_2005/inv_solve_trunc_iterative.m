@@ -12,7 +12,7 @@ function img= inv_solve_trunc_iterative( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_trunc_iterative.m,v 1.1 2005-12-06 15:30:54 aadler Exp $
+% $Id: inv_solve_trunc_iterative.m,v 1.2 2005-12-07 22:58:47 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 % FIXME: call a function to calculate the jacobian bkgnd
@@ -48,12 +48,12 @@ else
    dva= data1 - data2;
 end
 
-parameters= [1e-4,50];
-if isfield(inv_model,'inv_solve_trunc_iterative');
-    parameters= inv_model.inv_solve_trunc_iterative.parameters;
+tol= 1e-4;
+maxiter= 50;
+if isfield(inv_model,'parameters');
+    tol=     inv_model.parameters.term_tolerance;
+    maxiter= inv_model.parameters.max_iterations;
 end
-tol=     parameters(1);
-maxiter= parameters(2);
 sol = pcg(JtJ, J'*dva, tol, maxiter);
 
 

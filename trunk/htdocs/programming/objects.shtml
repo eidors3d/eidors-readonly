@@ -337,7 +337,7 @@ In terms of design choices for EIDORS:<br>
 
         <tr><td valign="top"><tt>inv_model.
                     <br>&nbsp;paramters.
-                    <br>&nbsp;max_iterations
+                    <br>&nbsp;term_tolerance
         </tt> <td valign="top">
         termination tolerance (relative) for iterative algorithms
 
@@ -448,7 +448,7 @@ In terms of design choices for EIDORS:<br>
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 22:51:29 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-07 22:54:10 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
