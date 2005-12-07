@@ -2,27 +2,97 @@
 % the Process Tomography 
 % group from U.Manchester, UK
 %
+% manchester_tomography( example_no)
+%
+% example_no == 1
+%    show reconstructions from 2planes / 2rods
+%    Reconstruction = inv_solve_trunc_iterative
+%
+% example_no == 2
+%    show reconstructions from 2planes / 2rods
+%    Reconstruction = np_inv_solve
+%
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.5 2005-12-06 21:14:36 aadler Exp $
-function manchester_tomography( M_coarse, M_dense)
+% $Id: manchester_tomography.m,v 1.6 2005-12-07 13:28:08 aadler Exp $
+function manchester_tomography( example_no)
+
+switch example_no
+    case 1,
+        example_diff_morozov_reconst;
+    case 1,
+        example_diff_np_reconst;
+
+    case 10,
+        example2
+example2( M_coarse, M_dense)
+end
 
 % load dual_mesh
 % DS_coarse= set_fwd_model(vtx_coarse,simp_coarse,[],elec_coarse,zc,gnd_ind_coarse,Ib_coarse, [], []);
 % DS_dense= set_fwd_model(vtx_dense,simp_dense,[],elec_dense,zc,gnd_ind_dense,Ib_dense, [], []);
 
-example2( M_coarse, M_dense)
 
-function example1
-load 2planes_2rods_Opp
-fwd_m1=eidors_obj('fwd_model',fwd_mdl);
-fwd_m1=eidors_obj('fwd_model',fwd_mdl); 
-fwd_m1.misc.perm_sym = '{y}';
-img=eidors_obj('image','homog');
+function example_diff_morozov_reconst
+    load 2planes_Op_drive;
+    fwd_m1=eidors_obj('fwd_model',mdl_2plane);
+    fwd_m1.misc.perm_sym = '{y}';
+    fwd_m1.solve=    'np_fwd_solve';
+    fwd_m1.jacobian= 'ms_calc_jacobian';
+    fwd_m1.system_mat= 'np_calc_system_mat';
+
+    imdl= eidors_obj('inv_model','NP mdl');
+    imdl.solve= 'np_inv_solve';
+    imdl.solve= 'inv_solve_trunc_iterative';
+    imdl.R_prior.func= 'np_calc_image_prior';
+    imdl.jacobian_bkgnd.value = .01;
+    imdl.np_calc_image_prior.parameters= [3 1];
+    imdl.reconst_type= 'difference';
+    imdl.fwd_model= fwd_m1;
+
+    meas_ref.type='data';
+    meas_2rod.type='data';
+    imr= inv_solve(imdl, meas_2rod, meas_ref);
+
+    show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
+
+function example_diff_np_reconst
+    load 2planes_Op_drive;
+    fwd_m1=eidors_obj('fwd_model',mdl_2plane);
+    fwd_m1.misc.perm_sym = '{y}';
+    fwd_m1.solve=    'np_fwd_solve';
+    fwd_m1.jacobian= 'np_calc_jacobian';
+    fwd_m1.system_mat= 'np_calc_system_mat';
+
+    imdl= eidors_obj('inv_model','NP mdl');
+    imdl.solve= 'np_inv_solve';
+    imdl.R_prior.func= 'np_calc_image_prior';
+    imdl.hyperparameter.value = 1e-2;
+
+    imdl.jacobian_bkgnd.value = .01;
+    imdl.np_calc_image_prior.parameters= [3 1];
+    imdl.reconst_type= 'difference';
+    imdl.fwd_model= fwd_m1;
+
+    meas_ref.type='data';
+    meas_2rod.type='data';
+    imr= inv_solve(imdl, meas_2rod, meas_ref);
+
+    show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 
 
-img.fwd_model= fwd_m1;
-img.elem_data= mat_ref;
-vh= fwd_solve(img);
+function example_diff_sim_reconst
+    load 2planes_Op_drive;
+    fwd_m1=eidors_obj('fwd_model',mdl_2plane);
+    fwd_m1.misc.perm_sym = '{y}';
+    fwd_m1.solve=    'np_fwd_solve';
+    fwd_m1.jacobian= 'np_calc_jacobian';
+    fwd_m1.system_mat= 'np_calc_system_mat';
+
+
+
+%img.fwd_model= fwd_m1;
+%img.elem_data= mat_ref;
+%vh= fwd_solve(img);
 %display_meas(fwd_m1)
 
 %img.elem_data= ... 
@@ -41,8 +111,6 @@ vh2= fwd_solve(img2);
 display_meas(fwd_m2)
 end
 
-fwd_m1.jacobian= 'np_calc_jacobian';
-
 imdl= eidors_obj('inv_model','NP mdl');
 if 1
     imdl.solve= 'np_inv_solve';
@@ -60,9 +128,9 @@ imdl.np_calc_image_prior.parameters= [3 1];
 imdl.reconst_type= 'difference';
 imdl.fwd_model= fwd_m1;
 
-meas.type='data';
-reference.type='data';
-imr= inv_solve(imdl, meas, reference);
+meas_ref.type='data';
+meas_2rod.type='data';
+imr= inv_solve(imdl, meas_2rod, meas_ref);
 %imr= inv_solve(imdl, vi, vh);
 
 
