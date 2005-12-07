@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.5 2005-12-05 22:12:11 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.6 2005-12-07 22:45:04 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -23,8 +23,8 @@ homg_img= eidors_obj('image', 'homog image', ...
 
 J = calc_jacobian( fwd_model, homg_img);
 
-RtR = calc_RtR_prior( inv_model );
-W   = calc_meas_icov( inv_model );
+R = calc_RtR_prior( inv_model );
+W = calc_meas_icov( inv_model );
 hp= calc_hyperparameter( inv_model );
 
 
@@ -43,8 +43,10 @@ end
 imax= 100; etol= 1e-3;
 n_img= size(dva,2);
 sol = zeros( size(J,2), n_img );
+Rx0 = zeros( size(R,1), 1);
 for i=1:n_img
-   sol(:,i) = cg_inv( J'*W*J +  hp^2*RtR, J'*W*dva(:,i), imax, etol );
+%  sol(:,i) = cg_inv( J'*W*J +  hp^2*RtR, J'*W*dva(:,i), imax, etol );
+   sol(:,i) = cg_ls_inv( chol(W)*J,  hp*R, dva(:,i), Rx0, imax, etol );
 end
 
 % create a data structure to return
@@ -53,12 +55,15 @@ img.elem_data = sol;
 img.inv_model= inv_model;
 img.fwd_model= fwd_model;
 
+% x = [J;R]\[y;R*x0] using Moore - Penrose inverse
+function x= cg_ls_inv( J, R, y, Rx0, imax, etol )
+  x = [J;R]\[y;Rx0]; % using Moore - Penrose inverse
+  
+   
+
 % CG code from [Shewchuck, 1994] Appendix B2
 % www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf
-
-% FIXME: implement Bill's idea of the Moore-Penrose inverse of
-% the adjoint, using sparse multiplication in the cg to speed up
-function x= cg_inv( A, b, imax, etol )
+function x= cg_inv_shewchuck( A, b, imax, etol )
    x= 1e-3*rand( size(A,2), 1);
    
    i=0;
