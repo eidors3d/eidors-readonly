@@ -10,7 +10,7 @@ function show_fem( mdl, background, options )
 % background = background conductivity reference
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.32 2005-12-05 23:28:11 aadler Exp $
+% $Id: show_fem.m,v 1.33 2005-12-07 15:37:13 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -77,7 +77,7 @@ end
 function show_electrodes_2d(mdl)
     if ~isfield(mdl,'electrode'); return; end
 
-    ee= mdl.boundary;
+    ee= get_boundary( mdl );
     ctr_x= mean(mdl.nodes(:,1));
     ctr_y= mean(mdl.nodes(:,2));
 
@@ -101,7 +101,7 @@ function show_electrodes_3d(mdl, number_electrodes);
 % show electrode positions on model
 if ~isfield(mdl,'electrode'); return; end
 
-ee= mdl.boundary;
+ee= get_boundary( mdl );
 for e=1:length(mdl.electrode)
     elec_nodes= mdl.electrode(e).nodes;
 
@@ -126,7 +126,8 @@ for e=1:length(mdl.electrode)
         sels= find(all(ec'));
 
         for u=1:length(sels)
-            paint_electrodes(sels(u),mdl.boundary, ...
+            ee= get_boundary( mdl );
+            paint_electrodes(sels(u), ee, ...
                              mdl.nodes, colour, ...
                              number_electrodes);
         end
@@ -172,10 +173,10 @@ h=patch(Xs,Ys,Zs, colour);
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function show_3d_fem( mdl, options )
-   hh= trimesh(mdl.boundary, ...
-           mdl.nodes(:,1), ...
-           mdl.nodes(:,2), ...
-           mdl.nodes(:,3));
+   ee= get_boundary( mdl );
+   hh= trimesh(ee, mdl.nodes(:,1), ...
+                   mdl.nodes(:,2), ...
+                   mdl.nodes(:,3));
    set(hh, 'EdgeColor', [0,0,0]);
    axis('image');
    set(gcf,'Colormap',[0 0 0]);
@@ -316,6 +317,15 @@ function colour= electr_colour( e);
     else
        colour = [0,.3,0]; % dark green
     end
+
+function ee= get_boundary( mdl )
+   if isfield(mdl,'boundary')
+       ee= mdl.boundary;
+   else
+       % calc and cache boundary
+       pp = np_fwd_parameters( mdl );
+       ee = pp.srf;
+   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
