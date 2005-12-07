@@ -14,13 +14,13 @@ log2_electrodes_per_plane =4;
 no_of_planes=2;
 first_plane_starts=10; 
 height_between_centres=10;
-electrode_width=1;
-electrode_height=2;
+electrode_width=1.5;
+electrode_height=2.5;
 nelec=no_of_planes*2^log2_electrodes_per_plane;
 
 [tank_mdl1,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres, electrode_width,electrode_height,fnstemnb);
 % comment out if already made
-r = tank_radius/5; %that is radius of ball
+r = tank_radius/10; %that is radius of ball
 %Now put a ball in somewhere
 x=0;y=0,z=tank_height/2;
 fnnb
@@ -142,5 +142,5 @@ tank_img(itime) = eidors_obj('image', sprintf('ball image t=%d',itime), ...
 tank_data(itime)=fwd_solve(tank_img(itime));
 
 end %for
-save('all_models_for_moving_ball',tank_mdls,tank_img,tank_data);
+save('all_models_for_moving_ball','tank_mdls','tank_img','tank_data');
 
