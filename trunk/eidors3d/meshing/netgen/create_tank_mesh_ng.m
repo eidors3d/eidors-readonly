@@ -10,8 +10,7 @@ function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR
 %  first_plane_starts  z coordinate were centre of first plane starts
 %, height_between_centres   of electrode planes , 
 % electrode_width, electrode_height , the width is just radius if 'R'
-% fnstem the file name stem to use for mesh files
-%   
+%  fnstem the file name used for saving netgen files
 % Function to generate tank model
 % Bill Lionheart 23/01/2005 (somewhere over Siberia)
 % Part of EIDORS 3D
@@ -193,5 +192,5 @@ tank_mdl.gnd_node=           1;
 tank_mdl.electrode =         electrodes;
 tank_mdl.misc.perm_sym =          perm_sym;
 
-save(fnstem,'tank_mdl');
+% save(fnstem,'tank_mdl');
 
