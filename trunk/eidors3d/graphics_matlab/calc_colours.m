@@ -24,16 +24,23 @@ function colours= calc_colours(img, scale, do_colourbar)
 %   eidors_colours.mapped_colour= 0; % use colormap function
 %         if mapped_colour is non-zero, it indicates the colourmap
 %         size. Total colourmap is 2*mapped_colour
+%
+% These global values may also be set via calc_colours
+%    eg. calc_colours('ref_level',1)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.15 2005-12-05 23:28:11 aadler Exp $  
+% $Id: calc_colours.m,v 1.16 2005-12-07 23:55:11 aadler Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
 pp=get_colours;
 if nargin==0; return; end
  
-if isfield(img,'type')
+if isstr(img)
+    global eidors_colours;
+    eidors_colours = setfield(eidors_colours, img, scale);
+    return;
+elseif isfield(img,'type')
    if strcmp( img.type, 'image' )
       elem_data= img.elem_data(:); %col vector
    else
