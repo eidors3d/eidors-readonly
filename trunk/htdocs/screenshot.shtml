@@ -1,0 +1,59 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>Screenshots of the EIDORS demos</h2>
+<ul>
+
+<p><li><h3>
+    demo_real
+</h3>
+The following images and output is obtained under matlab
+executing
+<a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/examples/demo_real.m?view=markup"
+    >demo_real.m</a>
+<p>
+
+<center>
+<font size="+1">
+<b>Finite element mesh with
+   electrode positions (yellow) and
+   Simulated inhomogeneities (blue and red)
+</b>
+</font>
+<p>
+<img src="demo_real-i1.gif">
+</center>
+<p>
+
+<center>
+<font size="+1">
+<b>Simulated Inhomogeneities</b>
+</font>
+<br>
+<img src="demo_real-i2.gif">
+</center>
+<p>
+
+<center>
+<font size="+1">
+<b>Reconstructed conductivity distribution</b>
+</font>
+<br>
+<img src="demo_real-i3.gif">
+</center>
+<p>
+<!--
+<p><li><b>
+</b><br>
+<br>
+<img src="">
+-->
+
+</ul>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2005-12-07 09:44:36 $ by $Author: aadler $
+</small>
+</body>
+
+</html>
+

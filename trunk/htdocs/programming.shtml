@@ -1,0 +1,62 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>EIDORS: Information for developers</h2>
+    <H3>Getting the EIDORS Source</H3>
+
+    <ul>
+
+<li><b>Windows</b>:
+<br>&minus;
+    Download and install <a href="http://www.tortoisecvs.org">Tortoise CVS</a>
+<br>&minus;
+    Right click in the directory you would like to download to, and type
+    in the value of <tt>CVSROOT</tt> below.
+<br>&minus;
+    In the box <tt>Module</tt> enter <b>eidors3d</b>
+    <br>
+
+<li><b>Unix / Linux</b>:
+Type
+<br><tt>export CVS_RSH=ssh</tt>
+<br><tt>cvs -d$CVSROOT checkout eidors3d</tt>
+    </ul>
+
+Use the following values for <tt>CVSROOT</tt>
+    <ul>
+<li><b>Anonymous Access</b>: <i>Available to everyone</i>
+<br><tt>CVSROOT=:pserver:anonymous@cvs.sourceforge.net:/cvsroot/eidors3d</tt>
+<li><b>Developer Access</b>: <i>Available to registered eidors3d developers</i>
+<br><tt>CVSROOT=:ext:<b>DEVELOPERNAME</b>@cvs.sourceforge.net:/cvsroot/eidors3d</tt>
+
+    </ul>
+
+    <H3>Becomming an EIDORS Developer</H3>
+    <ol>
+<li>Go the the <a href="http://sourceforge.net/cvs/?group_id=100454">EIDORS project page</a>
+<li>Click on the link for <i>New User via SSL</i>. Register your username
+<li>Send a request for membership to the
+    <a href="http://eidors3d.sourceforge.net/faq.html#maintainers">maintainers</a>
+    </ol>
+
+    <H3>Developer information</H3>
+<ul>
+    <li><a href="programming/examples.html" >Examples</a><br>
+    <li><a href="programming/structure.html">Structure</a><br>
+    <li><a href="programming/objects.html"  >Objects</a><br>
+    <li><a href="programming/caching.html"  >Caching</a><br>
+</ul>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2005-12-07 09:44:36 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->
