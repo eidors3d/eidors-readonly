@@ -9,22 +9,13 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.7 2005-12-07 22:58:46 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.8 2005-12-07 23:35:24 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
 
-% Note: no caching needed
-
-% FIXME: call a function to calculate the jacobian bkgnd
-bkgnd = ones(size(fwd_model.elems,1),1);
-bkgnd(:)= inv_model.jacobian_bkgnd.value;
-
-homg_img= eidors_obj('image', 'homog image', ...
-                     'elem_data', bkgnd, ...
-                     'fwd_model', fwd_model );
-
-J = calc_jacobian( fwd_model, homg_img);
+img_bkgnd= calc_jacobian_bkgnd( inv_model );
+J = calc_jacobian( fwd_model, img_bkgnd);
 
 R = calc_RtR_prior( inv_model );
 W = calc_meas_icov( inv_model );
@@ -70,9 +61,31 @@ img.fwd_model= fwd_model;
 function x= cg_ls_inv( J, R, y, Rx0, imax, etol )
 %  x = [J;R]\[y;Rx0]; % using Moore - Penrose inverse
 
-   A = [J;R]
+   A = [J;R];
+   Astar = A';
+   b = [y;Rx0];
 % Notation r_{k+1} => r_k1
-   r_k1 = ;
+   x_k1 = zeros(size(A,2),1);
+   r_k1 = b - A*x_k1;
+   p_k1 = Astar*r_k1;
+   g_k1 = norm( A*p_k1);
+   for k= 1: imax
+       % update
+       x_k= x_k1;
+       r_k= r_k1;
+       p_k= p_k1;
+       g_k= g_k1;
+
+       % calculations
+       q_k = A*p_k;
+       a_k = g_k / norm( q_k );
+       x_k1= x_k + a_k*p_k;
+       r_k1= r_k - a_k*q_k;
+       s_k1= Astar*r_k1;
+       g_k1= norm(s_k1);
+       p_k1= s_k1 + (g_k1/g_k)*p_k;
+   end
+   x= x_k1;
   
    
 
