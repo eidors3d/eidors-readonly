@@ -13,7 +13,7 @@
 %    Reconstruction = np_inv_solve
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.7 2005-12-07 15:09:11 aadler Exp $
+% $Id: manchester_tomography.m,v 1.8 2005-12-07 15:54:09 aadler Exp $
 function manchester_tomography( example_no)
 
 switch example_no
@@ -91,12 +91,13 @@ function example_diff_tv_reconst
     imdl.solve= 'ab_tv_diff_solve';
     imdl.R_prior.func= 'ab_calc_tv_prior';
     imdl.parameters.max_iterations= 1;
-    imdl.hyperparameter.value = [1e-2,1e-5];
+    imdl.hyperparameter.value = [1e+1,1e-5];
 
-    imdl.jacobian_bkgnd.value = .01;
+    imdl.jacobian_bkgnd.value = 1;
     imdl.np_calc_image_prior.parameters= [3 1];
     imdl.reconst_type= 'difference';
     imdl.fwd_model= fwd_m1;
+    [vi,vh] = sim_inhomg(fwd_m1);
 
     imr= inv_solve(imdl, vi, vh);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
@@ -125,27 +126,13 @@ function [vi,vh] = sim_inhomg( mdl);
 %   show_fem(img2);
     vi= fwd_solve(img2);
 
-function [vi,vh,mdl_z]= zig_zag_from_2rings(mdl_2r)
+function mdl_z= zig_zag_from_2rings(mdl_2r)
     mdl_z= mdl_2r;
     renumber=[1:2:16;18:2:32];
     renumber=renumber(:);
     mdl_z.electrode= mdl_2r.electrode(renumber);
     mdl_z.stimulation= mk_stim_patterns(16,1,'{ad}','{ad}',[],1);
 
-    img_z=eidors_obj('image','homog');
-    img_z.fwd_model= mdl_z;
-
-    n= size(mdl.elems,1);
-    mat= ones(n,1);
-    img_z.elem_data= mat;
-    vh= fwd_solve(img_z);
-
-    cc= center_of_simps( mdl_z);
-    [jnk,mat]= elems_in_cylinder(cc,[0,.03,.02],.01,mat,1.2);
-    [jnk,mat]= elems_in_cylinder(cc,[0,-.03,-.02],.01,mat,0.8);
-    img_z.elem_data= mat;
-    vi= fwd_solve(img_z);
-%   display_meas(fwd_m2)
 
 function example2( M_coarse, M_dense)
     [M_coarse, M_dense]= coarse_dense_mdl;
