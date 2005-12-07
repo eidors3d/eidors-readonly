@@ -42,12 +42,13 @@ end
 % Need some sanity checks here on the data!
 
 fnstem = input('Enter file base file name for .geo and .vol file (ext is added):','s');
-
+fnstem
 geofn= [fnstem,'.geo'];
 meshfn= [fnstem,'.vol'];
 [fid,mess]=fopen(geofn,'w');
 
-[tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,... log2_electrodes_per_plane, no_of_planes,...
-first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem)
+[tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,...
+log2_electrodes_per_plane, no_of_planes,...
+first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem);
 save(fnstem,'tank_mdl')
 
