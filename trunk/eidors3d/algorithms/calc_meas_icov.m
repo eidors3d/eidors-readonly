@@ -21,7 +21,7 @@ function meas_icov = calc_meas_icov( inv_model )
 %  generates a reasonable approximation based on uniform noise.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_meas_icov.m,v 1.1 2005-12-05 11:33:58 aadler Exp $
+% $Id: calc_meas_icov.m,v 1.1 2005-12-07 23:01:31 aadler Exp $
 
 meas_icov = eidors_obj('get-cache', inv_model, 'meas_icov');
 

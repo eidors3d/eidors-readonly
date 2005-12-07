@@ -1,12 +1,13 @@
-% Script to start EIDORS3D
+% Script to start EIDORS
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.16 2005-12-07 22:45:32 aadler Exp $
+% $Id: startup.m,v 1.17 2005-12-07 23:01:27 aadler Exp $
 
 HOMEDIR=pwd;
 
 addpath( HOMEDIR );
+addpath([HOMEDIR, '/algorithms']);
 addpath([HOMEDIR, '/algorithms/aa_1996']);
 addpath([HOMEDIR, '/algorithms/aa_2005']);
 addpath([HOMEDIR, '/algorithms/ab_2002']);
