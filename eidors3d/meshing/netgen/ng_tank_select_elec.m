@@ -37,7 +37,7 @@ for loop1 = 1:max(fc)
     % Create a logical array (lgelfc) to determine which faces are electrodes
     lgelfc(loop1) = logical(0);
     
-    [fcsrf,fci] = FEM_extract_face(srf,vtx,fc,loop1);
+    [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);
     if ~isempty(fcsrf)
         % Add this face's vtx indices matrix to the cell array ttlfcsrf
         ttlfcsrf(loop1) = {fcsrf};
