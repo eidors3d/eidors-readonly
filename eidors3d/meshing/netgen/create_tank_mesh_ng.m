@@ -157,6 +157,7 @@ tank_mdl.boundary= srf;
 
 % Plot wire frame equivalent of mesh model
 %tetramesh(simp,vtx,'FaceColor','none','EdgeColor','cyan')%it doesn't work in matlab 5.3
+if 0
 set(gcf,'Name','Wire Mesh Model')
 view(45,10)
 hold on
@@ -166,7 +167,7 @@ hidden off
 axis equal image; % Tightly fit square axes around plot
 mshaxs = axis; % Save present axes for use with faces
 pause(3)
-
+end
 % Select the electrodes
 [elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
 
