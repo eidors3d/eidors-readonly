@@ -1,0 +1,37 @@
+<!--#include virtual="nav-sidebar.html" -->
+
+<h2>EIDORS: Bug / Feature List</h2>
+
+<ul>
+   <li><b>EIDORS infrastructure</b>
+   <ul>
+
+    <li>Caching. Function handles are not stored in the eidors_var_id.
+         This means that objects which differ only by a function handle
+         will not have different ids.
+
+   </ul>
+   <li><b>Algorithms</b>
+   <ul>
+
+   <li>EIDORS 1.0 code &minus; need to integrate
+
+   <li> fwd_model.normalize_measurements appears to have a bug
+
+   </ul>
+</ul>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2005-12-07 09:51:41 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->

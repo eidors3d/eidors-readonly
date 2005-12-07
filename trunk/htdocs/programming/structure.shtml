@@ -1,55 +1,4 @@
-<HTML><BODY>
-<html>
-   <head>
-<title>EIDORS-3D</title>
-   <style type="text/css">
-        body, td, th {
-        font-family: Verdana, Helvetica, Arial, sans-serif;
-        font-size:80%;
-        }
-        pre, tt {
-        font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
-        font-size:100%;
-        }
-   </style>
-
-</head>
-
-<body link="#800000"
-      marginwidth=5 marginheight=5 topmargin=5 leftmargin=5 
-      vlink="#400000" >
-<table border="0" cellspacing="0" cellpadding="0"><tr><td>
-<img alt="Eidors-logo" src="../eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
-</td><td>
-<h2>
-    EIDORS-3D:
-    <small><i>Electrical Impedance Tomography and
-    Diffuse Optical Tomography Reconstruction Software</i></small>
-</h2>
-</td></tr></table>
-<table border="0"> <tr>
-<td valign="top">
-<a href="http:/www.eidors.org/" >EIDORS</a><br>
-<a href="../index.html" >Main</a><br>
-<a href="../docs.html" >Documentation</a><br>
-<a href="../screenshot.html" >Screenshots</a><br>
-<a href="http:/sourceforge.net/projects/eidors3d/"
-   >Download</a><br>
-<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/"
-   >Browse CVS</a><br>
-<hr>
-<a href="../news.html">News</a><br>
-<a href="../faq.html">FAQ</a><br>
-<a href="../programming.html">Developer</a><br>
-<a href="../programming/examples.html" >&minus; Examples</a><br>
-<a href="../programming/structure.html">&minus; Structure</a><br>
-<a href="../programming/objects.html"  >&minus; Objects</a><br>
-<a href="../programming/caching.html"  >&minus; Caching</a><br>
-<a href="../paper-cheating/cheating-with-eidors.html"
-                                    >&minus; Cheating</a><br>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-</td><td>&nbsp;</td><td valign="top">
+<!--#include virtual="nav-sidebar.html" -->
 
 <h2>EIDORS-3D: Programming / Structure</h2>
 
@@ -233,7 +182,7 @@ Tests to validate code correctness
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-10-18 13:18:13 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-07 09:51:41 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
