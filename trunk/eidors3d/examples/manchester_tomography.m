@@ -13,7 +13,7 @@
 %    Reconstruction = np_inv_solve
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.8 2005-12-07 15:54:09 aadler Exp $
+% $Id: manchester_tomography.m,v 1.9 2005-12-07 16:39:08 aadler Exp $
 function manchester_tomography( example_no)
 
 switch example_no
@@ -24,11 +24,14 @@ switch example_no
         example_diff_np_reconst;
 
     case 3,
+        example_diff_tv_reconst_sim
+
+    case 4,
         example_diff_tv_reconst
 
     case 10,
         example2
-example2( M_coarse, M_dense)
+
 end
 
 % output fwd_model, vinh, vhom
@@ -56,7 +59,7 @@ function [DS_coarse, DS_dense]= coarse_dense_mdl
 function example_diff_morozov_reconst
     [fwd_m1,vi,vh]= twoplane_mdl;
 
-    imdl= eidors_obj('inv_model','NP mdl');
+    imdl= eidors_obj('inv_model','Morozov mdl');
     imdl.solve= 'np_inv_solve';
     imdl.solve= 'inv_solve_trunc_iterative';
     imdl.R_prior.func= 'np_calc_image_prior';
@@ -84,23 +87,40 @@ function example_diff_np_reconst
     imr= inv_solve(imdl, vi, vh);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 
-function example_diff_tv_reconst
+function example_diff_tv_reconst_sim
     [fwd_m1,vi,vh]= twoplane_mdl;
 
-    imdl= eidors_obj('inv_model','NP mdl');
+    imdl= eidors_obj('inv_model','TV mdl');
     imdl.solve= 'ab_tv_diff_solve';
     imdl.R_prior.func= 'ab_calc_tv_prior';
-    imdl.parameters.max_iterations= 1;
-    imdl.hyperparameter.value = [1e+1,1e-5];
+    imdl.parameters.max_iterations= 2;
+    imdl.hyperparameter.value = [1e-1,1e-5];
 
     imdl.jacobian_bkgnd.value = 1;
-    imdl.np_calc_image_prior.parameters= [3 1];
     imdl.reconst_type= 'difference';
     imdl.fwd_model= fwd_m1;
     [vi,vh] = sim_inhomg(fwd_m1);
 
     imr= inv_solve(imdl, vi, vh);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
+
+function example_diff_tv_reconst
+    [fwd_m1,vi,vh]= twoplane_mdl;
+
+    imdl= eidors_obj('inv_model','TV mdl');
+    imdl.solve= 'ab_tv_diff_solve';
+    imdl.R_prior.func= 'ab_calc_tv_prior';
+    imdl.parameters.max_iterations= 1;
+    imdl.hyperparameter.value = [1e-1,1e-5];
+
+    imdl.jacobian_bkgnd.value = .01;
+    imdl.reconst_type= 'difference';
+    imdl.fwd_model= fwd_m1;
+    [vi,vh] = sim_inhomg(fwd_m1);
+
+    imr= inv_solve(imdl, vi, vh);
+    show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
+
 
 
 function example_diff_sim_reconst
