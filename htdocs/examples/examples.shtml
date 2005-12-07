@@ -1,0 +1,40 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>EIDORS Examples</h2>
+
+<ul>
+    <li><h3> 
+<a href="../examples/examples.shtml" >3D Model</a>
+</h3>
+3D simulated demonstration of difference EIT using
+a one step regularized inverse.
+
+    <li><h3> 
+<a href="../examples/walruses.shtml" >Walruses</a>
+</h3>
+Great images of our favourite animals
+
+    <li> 
+    <li><h3> 
+<a href="../paper-cheating/cheating-with-eidors.shtml"
+                                     >Cheating</a>
+</h3>
+Examples of using regularized image techniques to 
+cheat.
+
+</ul>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2005-12-07 12:36:26 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->
