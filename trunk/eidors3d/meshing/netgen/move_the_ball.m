@@ -2,10 +2,10 @@
 % First make the mesh
 
 fnstem ='tank_for_kalman_test_ball_';
-fnstem1=[fnstem,'no_ball'];
-fnin =[fnstem1,'.geo']; 
-;
-fnout= [fnstem,'00.geo'];
+fnstemnb=[fnstem,'no_ball'];
+fnnb =[fnstemnb,'.geo'];
+
+fn00= [fnstem,'00.geo'];
 
 tank_radius =15;
 tank_height=30;
@@ -15,36 +15,35 @@ no_of_planes=2;
 first_plane_starts=10; 
 height_between_centres=10;
 electrode_width=1;
-electrode_height=2
+electrode_height=2;
+nelec=no_of_planes*2^log2_electrodes_per_plane;
 
-
-[tank_mdl1,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres, electrode_width,electrode_height,fnstem1);
-
+[tank_mdl1,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres, electrode_width,electrode_height,fnstemnb);
+% comment out if already made
 r = tank_radius/5; %that is radius of ball
 %Now put a ball in somewhere
-x=0;y=0,z=tankheight/2;
-fidin=fopen(fnin);
-fidout =fopen(fnout,'w');
+x=0;y=0,z=tank_height/2;
+fnnb
+fidnb=fopen(fnnb);
+fidout =fopen(fn00,'w');
 foundit=0;
   while 1
-    tline = fgetl(fidin);
+    tline = fgetl(fidnb);
     if ~ischar(tline), break, end
-    if ~isempty( findstr(tline,'solid')) & ~foundit
+    if ~isempty( findstr(tline,'algebraic3d')) & ~foundit
          fprintf(fidout,'%s\n',tline);
          foundit = 1;
-          if  ~isempty( findstr(tline,'ball'))
-              tline=   sprintf('solid ball = sphere(%3.3f,%3.3f,%3.3f;%3.3f);',x,y,z,r);
-          end
+         tline=   sprintf('solid ball = sphere(%3.3f,%3.3f,%3.3f;%3.3f);',x,y,z,r);
     end
 %    disp(tline)
     fprintf(fidout,'%s\n',tline);
   end  %while
-fprintf(fidout,'tlo ball   -col=[0,1,0];')
+fprintf(fidout,' tlo ball   -col=[0,1,0];\n')
 fclose(fidout);
-fclose(fidin);
+fclose(fidnb);
 
 %Made the base file
-fnin = fnout;
+fnin = fn00;
 
 ntimes = 32;
 
@@ -57,13 +56,13 @@ for itime = 1:ntimes
   fnout=[fnouts,'.geo']
   fidout=fopen(fnout,'w');
 
-fidin=fopen(fnin,'r');
+fidin=fopen(fn00,'r');
 fidout=fopen(fnout,'w');
 
 %r = tank_radius/5;
-z = (itime/ntimes)*(tank_height - 2*r);
-R = (itime/ntimes)*(tank_radius-r);
-th = mod(itime,floor(ntimes/4))*2*pi;
+z = (itime/ntimes)*(tank_height - 2*r)+ r +0.05*tank_height;
+R = ((itime-1)/ntimes)*(tank_radius-r);
+th = itime*2*pi/(ntimes/4);
 [x,y]=pol2cart(th,R);
 % Round to 3dp as netgen hates -0.000
 x= round(x*1000)/1000;
@@ -94,12 +93,12 @@ end %for
 
 for itime = 1:ntimes
   if itime<10
-         fnouts=sprintf('tank_for_kalman_test_ball_0%1d',itime);
+         fnins=sprintf('tank_for_kalman_test_ball_0%1d',itime);
   else
-         fnouts=sprintf('tank_for_kalman_test_ball_%2d',itime);
+         fnins=sprintf('tank_for_kalman_test_ball_%2d',itime);
   end
-  fnout=[fnouts,'.vol']
-  [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(fnout);
+  fnin=[fnins,'.vol'];
+  [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(fnin);
   the_mat_indices = unique(mat_ind);
   if size(the_mat_indices,1)~=2
      error('This mesh does not have two material indices');
@@ -111,15 +110,18 @@ for itime = 1:ntimes
 
 % Construct mesh object
 tank_mdls(itime).name = sprintf('Tank model with ball time %d',itime)';
-tank_mdls(itime).nodes= vtx;
-tank_mdls(itime).elems= simp;
-tank_mdls(itime).boundary= srf;
+tank_mdls(itime).nodes= vtx;clear vtx;
+tank_mdls(itime).elems= simp;clear simp;
+tank_mdls(itime).boundary= srf;clear srf;
 [elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
+if size(elec,1) ~= nelec
+   error('Failed to find all the electrodes')
+end
 for i=1:nelec
     electrodes(i).z_contact= 1.0;  %well you can change that later!
     electrodes(i).nodes=     unique( elec(i,:) );
 end
-cond = 1.0*ones(size(simp,1));
+cond = 1.0*ones(size(simp,1),1);
 cond(elements_in_sphere) =  2.0  % The contrast
 perm_sym='{n}';
 tank_mdls(itime).gnd_node=           1;
@@ -133,3 +135,4 @@ tank_data(itime)=fwd_solve(ball_img);
 
 end %for
 save('all_models_for_moving_ball',tank_mdls,tank_img,tank_data);
+
