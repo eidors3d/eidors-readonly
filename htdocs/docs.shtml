@@ -1,13 +1,4 @@
 <!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
-<html>
-   <head>
-<title>EIDORS</title>
-<!--#include virtual="stylesheet.html" -->
-<h2>
-    EIDORS:
-    <small><i>Electrical Impedance Tomography and
-    Diffuse Optical Tomography Reconstruction Software</i></small>
-</h2>
 <!--#include virtual="nav-sidebar.html" -->
 
 <h2>EIDORS: Documentation</h2>
@@ -93,7 +84,7 @@ Draft
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 09:33:23 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-07 09:40:59 $ by $Author: aadler $
 </small>
 
 </body>
