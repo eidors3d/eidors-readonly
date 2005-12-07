@@ -110,9 +110,9 @@ for itime = 1:ntimes
 
 % Construct mesh object
 tank_mdls(itime).name = sprintf('Tank model with ball time %d',itime)';
-tank_mdls(itime).nodes= vtx;clear vtx;
-tank_mdls(itime).elems= simp;clear simp;
-tank_mdls(itime).boundary= srf;clear srf;
+tank_mdls(itime).nodes= vtx;
+tank_mdls(itime).elems= simp;
+tank_mdls(itime).boundary= srf;
 [elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
 if size(elec,1) ~= nelec
    error('Failed to find all the electrodes')
@@ -124,14 +124,22 @@ end
 cond = 1.0*ones(size(simp,1),1);
 cond(elements_in_sphere) =  2.0  % The contrast
 perm_sym='{n}';
+tank_mdls(itime).type = 'fwd_model';
 tank_mdls(itime).gnd_node=           1;
 tank_mdls(itime).electrode =         electrodes;
 tank_mdls(itime).misc.perm_sym =          perm_sym;
 
+tank_mdls(itime).solve= 'np_fwd_solve';
+tank_mdls(itime).jacobian= 'np_calc_jacobian';
+tank_mdls(itime).system_mat= 'np_calc_system_mat';
+tank_mdls(itime).stimulation =mk_stim_patterns( 2^log2_electrodes_per_plane, no_of_planes, '{op}', '{ad}',{'meas_current'});
+
+
+
 tank_img(itime) = eidors_obj('image', sprintf('ball image t=%d',itime), ...
                      'elem_data', cond, ...
                      'fwd_model', tank_mdls(itime) );
-tank_data(itime)=fwd_solve(ball_img);
+tank_data(itime)=fwd_solve(tank_img(itime));
 
 end %for
 save('all_models_for_moving_ball',tank_mdls,tank_img,tank_data);
