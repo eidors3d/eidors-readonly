@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.14 2005-12-06 21:04:15 aadler Exp $
+% $Id: startup.m,v 1.15 2005-12-07 17:48:02 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -37,3 +37,5 @@ end
 
 clear HOMEDIR;
 
+%prevent warnings in v7
+warning off MATLAB:symmmd:obsolete
