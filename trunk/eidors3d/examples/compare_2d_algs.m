@@ -1,7 +1,7 @@
 % Compare different 2D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.9 2005-12-05 23:35:21 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.10 2005-12-07 22:45:06 aadler Exp $
 
 global eidors_colours;
 
@@ -31,7 +31,7 @@ inv2d.reconst_type= 'difference';
 inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
 
-switch 6
+switch 7
    case 1,
      inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'aa_inv_solve';
@@ -74,6 +74,11 @@ switch 6
      inv2d.parameters.max_iterations= 5;
      subplot(144); show_slices( inv_solve( inv2d, vi, vh) );
      return;
+
+   case 7,
+     inv2d.hyperparameter.value = 1e-2;
+     inv2d.solve=          'aa_inv_conj_grad';
+     inv2d.R_prior.func=   'ab_calc_tv_prior';
 
    otherwise,
      error('action unknown');
