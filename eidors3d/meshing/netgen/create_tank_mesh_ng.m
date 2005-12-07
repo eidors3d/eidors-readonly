@@ -193,5 +193,5 @@ tank_mdl.gnd_node=           1;
 tank_mdl.electrode =         electrodes;
 tank_mdl.misc.perm_sym =          perm_sym;
 
-save(fnstem,'tank_mdl')
+save(fnstem,'tank_mdl');
 
