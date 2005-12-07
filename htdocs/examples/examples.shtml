@@ -3,7 +3,7 @@
 
 <ul>
     <li><h3> 
-<a href="../examples/examples.shtml" >3D Model</a>
+<a href="../examples/demo-real.shtml" >3D Model</a>
 </h3>
 3D simulated demonstration of difference EIT using
 a one step regularized inverse.
@@ -26,7 +26,7 @@ cheat.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 12:36:26 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-07 12:54:07 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
