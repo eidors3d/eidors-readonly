@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.11 2005-12-08 10:43:18 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.12 2005-12-08 11:08:40 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -53,11 +53,9 @@ tic;
    toc;
 end
 tic;
-   sol(:,i+1) = cg_ls_inv3( J,  hp*R, dva(:,i), Rx0, maxiter, tol );
-   toc;
-tic;
-   sol(:,i+2) = cg_ls_inv1( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
+   sol(:,i+1) = cg_ls_inv1( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
 toc;
+%tic; sol(:,i+1) = cg_ls_inv3( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
 
 % create a data structure to return
 img.name= 'solved by aa_inv_conj_grad';
@@ -87,6 +85,7 @@ function x= cg_ls_inv2( J, R, y, Rx0, maxiter, tol )
    p_k1= [Jstar*r_k1(m_idx) + Rstar*r_k1(n_idx)];
    g_k1 = norm( p_k1);
    k=0;
+   rr= zeros(maxiter,1);
    while 1; 
        % update
        k=k+1;
@@ -99,8 +98,7 @@ function x= cg_ls_inv2( J, R, y, Rx0, maxiter, tol )
 %      q_k = A*p_k;
        q_k = [J*p_k;R*p_k];
        a_k = g_k / norm( q_k );
-       x_k1= x_k + a_k*p_k;
-       if rem(k,50)==0
+       if rem(k,50)==-1
            r_k1 = b - [J*x_k1;R*x_k1];
        else
            r_k1= r_k - a_k*q_k;
@@ -109,8 +107,10 @@ function x= cg_ls_inv2( J, R, y, Rx0, maxiter, tol )
        s_k1= [Jstar*r_k1(m_idx) + Rstar*r_k1(n_idx)];
        g_k1= norm(s_k1);
        p_k1= s_k1 + (g_k1/g_k)*p_k;
+       rr(k)= g_k1;
        if k==maxiter
            x= x_k1;
+           figure(3);subplot(313); plot(rr(1:1000))
            return;
        end
    end
@@ -121,8 +121,6 @@ function x= cg_ls_inv3( J, R, y, Rx0, maxiter, tol )
    b = [y;Rx0];
 % Notation r_{k+1} => r_k1
    [m,n]= size(J);
-   m_idx = 1:m;
-   n_idx = m+(1:n);
    x_k1 = zeros(n, 1);
    r_k1 = b - A*x_k1;
    p_k1 = Astar*r_k1;
@@ -140,7 +138,6 @@ function x= cg_ls_inv3( J, R, y, Rx0, maxiter, tol )
        q_k = A*p_k;
        a_k = g_k / norm( q_k );
        x_k1= x_k + a_k*p_k;
-       r_k1= r_k - a_k*q_k;
        if rem(k,50)==0
            r_k1 = b - A*x_k1;
        else
