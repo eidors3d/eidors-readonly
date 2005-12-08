@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.15 2005-12-08 12:02:40 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.16 2005-12-08 12:16:11 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -55,8 +55,12 @@ end
 tic;
    sol(:,i+1) = cg_ls_inv1( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
 toc;
- tic; sol(:,i+2) = cg_ls_inv5( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
+%tic; sol(:,i+2) = cg_ls_inv5( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
    [m,n]= size(J);
+ tic
+ ii = cgls([ J;  hp*R], [dva(:,i); Rx0], maxiter );
+ subplot(311); plot(std(ii));
+ sol(:,i+2) = ii(:,end); toc;
  tic; sol(:,i+3) = cg_ls_inv6( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
 
 % create a data structure to return
