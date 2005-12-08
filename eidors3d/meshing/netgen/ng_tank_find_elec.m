@@ -28,7 +28,7 @@ for loop1 = 1:max(fc)
     lgelfc(loop1) = logical(0);
     
     [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);
-    size(fcsrf) % should be vertex numbers for this face
+%   size(fcsrf) % should be vertex numbers for this face
     coordsforthisface= vtx(fcsrf,:);
     centreofface(loop1,:)= mean(coordsforthisface);
     ttlfcsrf(loop1) = {fcsrf};
@@ -37,7 +37,9 @@ end
 
 for ielec = 1:size(centres,1)
 % Find the distance from the centre of faces to this electrode
-    dists =  (centreofface(:,1) - centres(ielec,1)).^2 +(centreofface(:,2) - centres(ielec,2)).^2 + (centreofface(:,3) - centres(ielec,3)).^2;
+    dists =  (centreofface(:,1) - centres(ielec,1)).^2 + ...
+             (centreofface(:,2) - centres(ielec,2)).^2 + ...
+             (centreofface(:,3) - centres(ielec,3)).^2;
     [d,iface] = min(dists); %iface is closest face to this electrode.
     lgelfc(iface) = logical(1);
     sels(ielec)= iface;
@@ -78,7 +80,9 @@ end
 elec = zeros(nmel,3*max(nmfc));
 % Put electrode surface information into elec
 for loop1 = 1:nmel
-    for loop2 = 1:size(elsrf{loop1},1)
-        elec(loop1,loop2*3-2:loop2*3)=elsrf{loop1}(loop2,:);
+    el_idx= sels(loop1);
+    this_el= ttlfcsrf{el_idx};
+    for loop2 = 1:size(this_el,1)
+        elec(loop1,loop2*3 + (-2:0))=this_el(loop2,:);
     end
 end

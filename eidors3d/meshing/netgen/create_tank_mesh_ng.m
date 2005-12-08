@@ -1,6 +1,5 @@
 function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR, log2_electrodes_per_plane, no_of_planes,first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem)
-%function tank_mod = create_tank_mesh_ng( tank_radius, tank_height, circ_or_rec, log2_electrodes_per_plane, no_of_planes,..
-%number_of_planes, first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem)
+% USAGE: [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR, log2_electrodes_per_plane, no_of_planes,first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem)
 %
 % Parameters  tank_radius, tank_height, 
 %   CorR= 'C' for circular 'R' for rectangular
