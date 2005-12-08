@@ -11,7 +11,7 @@ function show_fem( mdl, options )
 % calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.34 2005-12-08 00:08:57 aadler Exp $
+% $Id: show_fem.m,v 1.35 2005-12-08 14:16:05 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -38,7 +38,7 @@ if strcmp( mdl.type , 'image' )
 end
 
 cla;
-set(gcf, 'Name', name);
+set(gcf, 'Name', name(:)');
 
 if size(mdl.nodes,2)==2
    hax= gca;
