@@ -167,7 +167,7 @@ axis equal image; % Tightly fit square axes around plot
 mshaxs = axis; % Save present axes for use with faces
 pause(3)
 end
-% Select the electrodes
+% Find the electrodes
 [elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
 
 %size(elec)
