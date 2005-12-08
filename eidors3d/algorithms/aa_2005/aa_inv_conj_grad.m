@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.14 2005-12-08 11:26:05 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.15 2005-12-08 12:02:40 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -56,6 +56,8 @@ tic;
    sol(:,i+1) = cg_ls_inv1( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
 toc;
  tic; sol(:,i+2) = cg_ls_inv5( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
+   [m,n]= size(J);
+ tic; sol(:,i+3) = cg_ls_inv6( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
 
 % create a data structure to return
 img.name= 'solved by aa_inv_conj_grad';
@@ -66,6 +68,41 @@ img.fwd_model= fwd_model;
 % x = [J;R]\[y;R*x0] using Moore - Penrose inverse
 function x= cg_ls_inv1( J, R, y, Rx0, maxiter, tol )
    x = [J;R]\[y;Rx0];
+
+   % Borchers p 132
+function x= cg_ls_inv6( J, R, y, Rx0, maxiter, etol )
+   G = [J;R];
+   Gt = G';
+   d = [y;Rx0];
+   B=0;
+   [m,n]= size(J);
+   x_k= zeros(n,1);
+   k=0;
+   p_k_1 = zeros(n,1);
+   s_k= d;
+   r_k= Gt*s_k;
+   rr= zeros(1,maxiter);
+   while 1
+       p_k= r_k + B*p_k_1;
+       Gp_k= G*p_k;
+       a = .5*norm(r_k) / norm(Gp_k);
+       x_k1 = x_k + a*p_k;
+       s_k1 = s_k - a*Gp_k;
+       r_k1 = G'*s_k;
+       k=k+1;
+       rr(k)= norm(r_k);
+       if k==maxiter
+           x= x_k1;
+           figure(3);subplot(312); plot(rr(1:200))
+           return
+       end
+
+       x_k= x_k1;
+       s_k= s_k1;
+       B= norm(r_k1) / norm(r_k);
+       r_k= r_k1;
+       p_k_1= p_k;
+   end
 
 % x = [J;R]\[y;R*x0] using Moore - Penrose inverse
 % Implemented from algorithm 6.14 on page 143 of Hansen (1998)
@@ -106,7 +143,7 @@ function x= cg_ls_inv5( J, R, y, Rx0, maxiter, etol )
        rr(k)= norm_Atr_k;
        if k==maxiter
            x= x_k;
-           figure(3);subplot(311); plot(rr(1:1000))
+           figure(3);subplot(311); plot(rr(1:200))
            return
        end
 
@@ -142,7 +179,7 @@ function x= cg_ls_inv4( J, R, y, Rx0, maxiter, etol )
        rr(k)= norm_Atr_k;
        if k==maxiter
            x= x_k;
-           figure(3);subplot(311); plot(rr(1:1000))
+           figure(3);subplot(311); plot(rr(1:200))
            return
        end
 
@@ -197,7 +234,7 @@ function x= cg_ls_inv2( J, R, y, Rx0, maxiter, tol )
        rr(k)= g_k1;
        if k==maxiter
            x= x_k1;
-           figure(3);subplot(313); plot(rr(1:1000))
+           figure(3);subplot(313); plot(rr(1:200))
            return;
        end
    end
