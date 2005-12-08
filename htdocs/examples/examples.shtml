@@ -9,6 +9,13 @@
 a one step regularized inverse.
 
     <li><h3> 
+<a href="../examples/2d-back-forth.shtml" >2D Movie #1</a>
+</h3>
+Animated graphic of reconstructed images of
+a non-conductive object moving in a cylindrical tank.
+
+
+    <li><h3> 
 <a href="../examples/walruses.shtml" >Walruses</a>
 </h3>
 Great images of our favourite animals
@@ -25,7 +32,7 @@ cheat.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 12:56:41 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-08 00:19:28 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
