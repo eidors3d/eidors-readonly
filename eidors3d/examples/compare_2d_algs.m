@@ -16,10 +16,9 @@ function [imgr, img]= compare_2d_algs(option);
 %   7  aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.12 2005-12-08 09:05:35 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.13 2005-12-08 13:42:31 aadler Exp $
 
-global eidors_colours;
-ecrl= eidors_colours.ref_level;
+calc_colours('ref_level',0);
 
 imb=  mk_common_model('c2c',16);
 e= size(imb.fwd_model.elems,1);
@@ -37,7 +36,7 @@ vi= fwd_solve( img );
 
 sig= sqrt(norm(vi.meas - vh.meas));
 m= size(vi.meas,1);
-vi.meas = vi.meas + .001*sig*randn(m,1);
+vi.meas = vi.meas + .0001*sig*randn(m,1);
 figure(2); img.elem_data= img.elem_data - 1; show_slices(img); figure(1);
 
 %show_slices(img);
@@ -71,7 +70,7 @@ switch option
      inv2d.parameters.max_iterations= 5;
      inv2d.R_prior.func= 'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
-     eidors_colours.ref_level= 1;
+     calc_colours('ref_level',1);
 
    case 5,
      inv2d.hyperparameter.value = 1e-4;
@@ -93,9 +92,9 @@ switch option
      return;
 
    case 7,
-     inv2d.hyperparameter.value = 1e-7;
-     inv2d.parameters.max_iterations = 1e4;
-     inv2d.parameters.term_tolerance = 1000;
+     inv2d.hyperparameter.value = 1e-2;
+     inv2d.parameters.max_iterations = 1e3;
+     inv2d.parameters.term_tolerance = 1e-3;
      inv2d.solve=          'aa_inv_conj_grad';
      inv2d.R_prior.func=   'ab_calc_tv_prior';
 
@@ -109,4 +108,4 @@ end
 imgr= inv_solve( inv2d, vi, vh);
 
 figure(1); show_slices(imgr);
-eidors_colours.ref_level=ecrl; %reset
+calc_colours('ref_level',0);
