@@ -1,9 +1,25 @@
+function [imgr, img]= compare_2d_algs(option);
 % Compare different 2D reconstructions
+% [imgr, img]= compare_2d_algs(option);
+%
+% imgr - reconstructed image (256 elements)
+% img  - original image      (576 elements)
+%
+% option -> select algorithm
+% OPTION   SOLVER               PRIOR             HP
+%   1  aa_inv_solve       laplace_image_prior   1e-3
+%   2  np_inv_solve       laplace_image_prior   1e-3
+%   3  aa_inv_solve       aa_calc_image_prior   NF=2
+%   4  ab_tv_diff_solve   ab_calc_tv_prior      1e-4
+%   5  aa_inv_total_var   laplace_image_prior   1e-4
+%   6  aa_inv_total_var   laplace_image_prior   1e-4
+%   7  aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.11 2005-12-08 00:20:01 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.12 2005-12-08 09:05:35 aadler Exp $
 
 global eidors_colours;
+ecrl= eidors_colours.ref_level;
 
 imb=  mk_common_model('c2c',16);
 e= size(imb.fwd_model.elems,1);
@@ -32,7 +48,7 @@ inv2d.jacobian_bkgnd.value= 1;
 inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
 
-switch 7
+switch option
    case 1,
      inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'aa_inv_solve';
@@ -51,7 +67,7 @@ switch 7
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
-     inv2d.hyperparameter.value = [1e-2, 1e-6];
+     inv2d.hyperparameter.value = [1e-2, 1e-4];
      inv2d.parameters.max_iterations= 5;
      inv2d.R_prior.func= 'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
@@ -93,4 +109,4 @@ end
 imgr= inv_solve( inv2d, vi, vh);
 
 figure(1); show_slices(imgr);
-eidors_colours.ref_level=0; %reset
+eidors_colours.ref_level=ecrl; %reset
