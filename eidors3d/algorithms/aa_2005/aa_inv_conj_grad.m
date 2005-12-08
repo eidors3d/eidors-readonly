@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.18 2005-12-08 12:32:57 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.19 2005-12-08 12:57:19 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -80,48 +80,34 @@ function x= cg_ls_inv0( J, R, y, Rx0, maxiter, tol )
    r = b; 
    normr2 = d'*d; 
     
-   % Iterate. 
-   for j=1:maxiter 
-    
+   k=0; % Iterate. 
+   x_delta_filt= 1; x_filt= .1;
+   while 1 
      % Update x and r vectors. 
 %    Ad = A*d;
      Ad = [J*d;R*d];
-     alpha = normr2/(Ad'*Ad); 
-     x  = x + alpha*d; 
-     r  = r - alpha*Ad; 
+     Alpha = normr2/(Ad'*Ad); 
+     xpre= x;
+     x  = x + Alpha*d; 
+
+     k= k+1; if k==maxiter; break ; end
+
+     x_delta= norm(xpre-x)/norm(x);
+     x_delta_filt= x_delta_filt*(1-x_filt) + x_filt*x_delta;
+
+     if x_delta_filt<tol; break ; end
+
+     r  = r - Alpha*Ad; 
 %    s  = A'*r; 
      s  = Jt*r(m_idx) + Rt*r(n_idx);
     
      % Update d vector. 
      normr2_new = s'*s; 
-     beta = normr2_new/normr2; 
+     Beta = normr2_new/normr2; 
      normr2 = normr2_new; 
-     d = s + beta*d; 
+     d = s + Beta*d; 
       
    end 
+%     disp([k, x_delta, x_delta_filt]);
 
-% Adapted from code in Hansen's regularization tools
-function x= cg_ls_inv2( J, R, y, Rx0, maxiter, tol )
-   A = [J;R]; b=[y;Rx0];
-   [m,n]= size(J);
-   x = zeros(n,1); 
-   d = (b'*A)';   % A'*b; 
-   r = b; 
-   normr2 = d'*d; 
-    
-   % Iterate. 
-   for j=1:maxiter 
-    
-     % Update x and r vectors. 
-     Ad = A*d; alpha = normr2/(Ad'*Ad); 
-     x  = x + alpha*d; 
-     r  = r - alpha*Ad; 
-     s  = (r'*A)';   % A'*r; 
-    
-     % Update d vector. 
-     normr2_new = s'*s; 
-     beta = normr2_new/normr2; 
-     normr2 = normr2_new; 
-     d = s + beta*d; 
-      
-   end 
+   
