@@ -1,5 +1,5 @@
-function show_fem( mdl, background, options )
-% show_fem( mdl, background, options )
+function show_fem( mdl, options )
+% show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
 %
@@ -7,10 +7,11 @@ function show_fem( mdl, background, options )
 %   options(1) => show colourbar
 %   options(2) => number electrodes
 %
-% background = background conductivity reference
+% set ref_level for conductivities with
+% calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.33 2005-12-07 15:37:13 aadler Exp $
+% $Id: show_fem.m,v 1.34 2005-12-08 00:08:57 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -18,10 +19,6 @@ if exist('OCTAVE_VERSION');
 end
 
 if nargin <= 1
-   background =0;
-else
-   global eidors_colours;
-   background= eidors_colours.ref_level;
 end
 
 do_colourbar=0;
@@ -48,7 +45,7 @@ if size(mdl.nodes,2)==2
    pax= get(hax,'position');
    cscale= [];
    if exist('img');
-      colours= calc_colours(img.elem_data - background, cscale, do_colourbar);
+      colours= calc_colours(img.elem_data, cscale, do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
    end
@@ -63,9 +60,9 @@ elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
 
    if exist('img')
-       show_inhomogeneities( img.elem_data - background, mdl);
+       show_inhomogeneities( img.elem_data , mdl);
        if do_colourbar
-           calc_colours(img.elem_data - background, cscale, do_colourbar);
+           calc_colours(img.elem_data, cscale, do_colourbar);
        end
    end
 
@@ -144,10 +141,7 @@ end
 function show_inhomogeneities( elem_data, mdl)
 % show
 hold('on');
-homg_elem_data= zeros(size(elem_data));
-repaint_inho(elem_data, homg_elem_data, ...
-             mdl.nodes, ...
-             mdl.elems); 
+repaint_inho(elem_data, 0, mdl.nodes, mdl.elems); 
 camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');
