@@ -12,7 +12,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_solve.m,v 1.13 2005-12-05 22:12:11 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.14 2005-12-08 00:19:57 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -22,12 +22,8 @@ one_step_inv = eidors_obj('get-cache', inv_model, 'one_step_inv');
 if ~isempty(one_step_inv)
     eidors_msg('aa_inv_solve: using cached value', 2);
 else
-    % calc jacobian with homogeneous background
-    homg_img= eidors_obj('image', 'homog image', ...
-                         'elem_data', ones( pp.n_elem ,1), ...
-                         'fwd_model', fwd_model );
-
-    J = calc_jacobian( fwd_model, homg_img );
+    img_bkgnd= calc_jacobian_bkgnd( inv_model );
+    J = calc_jacobian( fwd_model, img_bkgnd);
 
     RtR = calc_RtR_prior( inv_model );
     W   = calc_meas_icov( inv_model );

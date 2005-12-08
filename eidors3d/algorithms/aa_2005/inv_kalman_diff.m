@@ -9,17 +9,13 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.4 2005-12-05 22:12:11 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.5 2005-12-08 00:19:58 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
 
-% calc jacobian with homogeneous background
-homg_img= eidors_obj('image', 'homog image', ...
-                     'elem_data', ones( pp.n_elem ,1), ...
-                     'fwd_model', fwd_model );
-
-J = calc_jacobian( fwd_model, homg_img);
+img_bkgnd= calc_jacobian_bkgnd( inv_model );
+J = calc_jacobian( fwd_model, img_bkgnd);
 
 RtR = calc_RtR_prior( inv_model );
 Q   = calc_meas_icov( inv_model );

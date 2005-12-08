@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.19 2005-12-05 22:12:11 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.20 2005-12-08 00:20:01 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -53,7 +53,9 @@ inh_img= eidors_obj('image', 'inhomogeneous image', ...
                      'elem_data', cond, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
-show_fem( inh_img, 1);
+calc_colours('ref_level',1);
+show_fem( inh_img);
+calc_colours('ref_level',0);
 disp([inh_img.name, '. Press a key']); pause;
 
 % Add 10% noise
@@ -79,6 +81,7 @@ inv2d.solve=       'aa_inv_solve';
  inv2d.hyperparameter.value = 1e-2;
  inv2d.RtR_prior.func= 'laplace_image_prior';
 %inv2d.RtR_prior.func= 'aa_calc_image_prior';
+inv2d.jacobian_bkgnd.value= 1;
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
 inv2d= eidors_obj('inv_model', inv2d);
@@ -115,6 +118,7 @@ inv3d.name=  'EIT inverse: 3D';
 %inv3d.solve= 'np_inv_solve';
  inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
 inv3d.hyperparameter.value = 1e-4;
+inv3d.jacobian_bkgnd.value= 1;
 inv3d.RtR_prior.func= 'laplace_image_prior';
 inv3d.reconst_type= 'difference';
 inv3d.fwd_model= fm3d;

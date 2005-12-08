@@ -29,17 +29,13 @@ function img= aa_inv_total_var( inv_model, data1, data2)
 % 2000, ch. 3.6, pp. 141-160.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_total_var.m,v 1.6 2005-12-05 23:35:21 aadler Exp $
+% $Id: aa_inv_total_var.m,v 1.7 2005-12-08 00:19:58 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
 
-% calc jacobian with homogeneous background
-homg_img= eidors_obj('image', 'homog image', ...
-                     'elem_data', ones( pp.n_elem ,1), ...
-                     'fwd_model', fwd_model );
-
-J = calc_jacobian( fwd_model, homg_img);
+img_bkgnd= calc_jacobian_bkgnd( inv_model );
+J = calc_jacobian( fwd_model, img_bkgnd);
 
 R = calc_R_prior( inv_model );
 W = calc_meas_icov( inv_model );
