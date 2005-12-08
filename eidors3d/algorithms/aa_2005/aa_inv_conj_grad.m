@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.13 2005-12-08 11:19:47 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.14 2005-12-08 11:26:05 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -55,7 +55,7 @@ end
 tic;
    sol(:,i+1) = cg_ls_inv1( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
 toc;
- tic; sol(:,i+2) = cg_ls_inv4( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
+ tic; sol(:,i+2) = cg_ls_inv5( J,  hp*R, dva(:,i), Rx0, maxiter, tol ); toc;
 
 % create a data structure to return
 img.name= 'solved by aa_inv_conj_grad';
@@ -67,6 +67,54 @@ img.fwd_model= fwd_model;
 function x= cg_ls_inv1( J, R, y, Rx0, maxiter, tol )
    x = [J;R]\[y;Rx0];
 
+% x = [J;R]\[y;R*x0] using Moore - Penrose inverse
+% Implemented from algorithm 6.14 on page 143 of Hansen (1998)
+function x= cg_ls_inv5( J, R, y, Rx0, maxiter, etol )
+%  A = [J;R];
+%  At = A';
+   Jt = J'; Rt= R';
+   [m,n]= size(J);
+   m_idx = 1:m;
+   n_idx = m+(1:n);
+   b = [y;Rx0];
+% Notation r_{k_1} => r_k1
+   x_k1 = zeros(n,1);
+%  r_k1 = b - A*x_k1;
+   r_k1 = b; % x_k1 is zero
+%  d_k1 = At*r_k1;
+   d_k1 = Jt*r_k1(m_idx) + Rt*r_k1(n_idx);
+   k=0; rr= zeros(maxiter,1);
+   while (1)
+       % calculations
+%      Atr_k1 = At*r_k1;
+       Atr_k1 = Jt*r_k1(m_idx) + Rt*r_k1(n_idx);
+       norm_Atr_k1= norm(Atr_k1); 
+%      Ad_k1  = A*d_k1;
+       Ad_k1  = [J*d_k1 ; R*d_k1];
+       norm_Ad_k1 = norm(Ad_k1);
+       a_k= norm_Atr_k1 / norm_Ad_k1;
+       x_k= x_k1 + a_k*d_k1;
+       r_k= r_k1 - a_k*Ad_k1;
+%      Atr_k  = At*r_k ;
+       Atr_k  = Jt*r_k(m_idx) + Rt*r_k(n_idx);
+       norm_Atr_k = norm(Atr_k ); 
+       B_k = norm_Atr_k / norm_Atr_k1;
+       d_k= Atr_k + B_k*d_k1;
+
+       % Test stop
+       k=k+1;
+       rr(k)= norm_Atr_k;
+       if k==maxiter
+           x= x_k;
+           figure(3);subplot(311); plot(rr(1:1000))
+           return
+       end
+
+       % update
+       x_k1= x_k; 
+       r_k1= r_k; 
+       d_k1= d_k; 
+   end
 % x = [J;R]\[y;R*x0] using Moore - Penrose inverse
 % Implemented from algorithm 6.14 on page 143 of Hansen (1998)
 function x= cg_ls_inv4( J, R, y, Rx0, maxiter, etol )
