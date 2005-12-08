@@ -17,7 +17,7 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 %  inv_model.jacobian_bkgnd.func;
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_bkgnd.m,v 1.1 2005-12-07 23:35:26 aadler Exp $
+% $Id: calc_jacobian_bkgnd.m,v 1.2 2005-12-08 00:19:58 aadler Exp $
 
 img_bkgnd= eidors_obj('get-cache', inv_model, 'jacobian_bkgnd');
 if ~isempty(img_bkgnd)
@@ -25,16 +25,17 @@ if ~isempty(img_bkgnd)
    return
 end
 
-if isfield(inv_model,jacobian_bkgnd,'func')
+if isfield(inv_model.jacobian_bkgnd,'func')
    img_bkgnd= feval( inv_model.jacobian_bkgnd.func, inv_model );
 else
    % allow bkgnd to be scalar or vector
+   fwd_model= inv_model.fwd_model;
    bkgnd = ones(size(fwd_model.elems,1),1);
    bkgnd(:)= inv_model.jacobian_bkgnd.value;
 
-   img= eidors_obj('image', 'homog image', ...
-                   'elem_data', bkgnd, ...
-                   'fwd_model', inv_model.fwd_model );
+   img_bkgnd= eidors_obj('image', 'homog image', ...
+                         'elem_data', bkgnd, ...
+                         'fwd_model', fwd_model );
 end
 
 

@@ -12,18 +12,12 @@ function img= inv_solve_trunc_iterative( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_trunc_iterative.m,v 1.2 2005-12-07 22:58:47 aadler Exp $
+% $Id: inv_solve_trunc_iterative.m,v 1.3 2005-12-08 00:19:59 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
-% FIXME: call a function to calculate the jacobian bkgnd
-bkgnd = ones(size(fwd_model.elems,1),1);
-bkgnd(:)= inv_model.jacobian_bkgnd.value;
 
-homg_img= eidors_obj('image', 'homog image', ...
-                     'elem_data', bkgnd, ...
-                     'fwd_model', fwd_model );
-
-J = calc_jacobian( fwd_model, homg_img );
+img_bkgnd= calc_jacobian_bkgnd( inv_model );
+J = calc_jacobian( fwd_model, img_bkgnd);
 
 % The one_step reconstruction matrix is cached
 JtJ = eidors_obj('get-cache', inv_model, 'Hessian');

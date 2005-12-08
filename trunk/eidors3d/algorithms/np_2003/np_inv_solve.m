@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.21 2005-12-06 15:02:51 aadler Exp $
+% $Id: np_inv_solve.m,v 1.22 2005-12-08 00:20:00 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -22,11 +22,8 @@ else
     bkgnd = ones(p.n_elem,1);
     bkgnd(:)= inv_model.jacobian_bkgnd.value;
 
-    homg_img= eidors_obj('image', 'homog image from np_inv_solve', ...
-                         'elem_data', bkgnd, ...
-                         'fwd_model', fwd_model );
-
-    J = calc_jacobian( fwd_model, homg_img );
+    img_bkgnd= calc_jacobian_bkgnd( inv_model );
+    J = calc_jacobian( fwd_model, img_bkgnd);
 
     RtR = calc_RtR_prior( inv_model );
     hp= calc_hyperparameter( inv_model );
