@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.9 2005-12-08 10:04:15 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.10 2005-12-08 10:26:49 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -45,6 +45,7 @@ end
 n_img= size(dva,2);
 sol = zeros( size(J,2), n_img );
 Rx0 = zeros( size(R,1), 1);
+hp
 for i=1:n_img
 %  sol(:,i) = cg_inv( J'*W*J +  hp^2*RtR, J'*W*dva(:,i), imax, etol );
    sol(:,i) = cg_ls_inv( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
@@ -57,34 +58,46 @@ img.inv_model= inv_model;
 img.fwd_model= fwd_model;
 
 % x = [J;R]\[y;R*x0] using Moore - Penrose inverse
-function x= cg_ls_inv( J, R, y, Rx0, imax, etol )
-%  x = [J;R]\[y;Rx0]; % using Moore - Penrose inverse
+function x= cg_ls_inv( J, R, y, Rx0, maxiter, tol )
+   x = [J;R]\[y;Rx0]; return; % using Moore - Penrose inverse
 
-   A = [J;R];
-   Astar = A';
+%  A = [J;R];
+%  Astar = A';
+   Jstar = J'; 
+   Rstar = R';
    b = [y;Rx0];
 % Notation r_{k+1} => r_k1
-   x_k1 = zeros(size(A,2),1);
-   r_k1 = b - A*x_k1;
-   p_k1 = Astar*r_k1;
-   g_k1 = norm( A*p_k1);
-   for k= 1: imax
+   [m,n]= size(J);
+   m_idx = 1:m;
+   n_idx = m+(1:n);
+   x_k1 = zeros(n, 1);
+%  r_k1 = b - A*x_k1;
+%  r_k1 = b - [J*x_k1;R*x_k1];
+   r_k1 = b ; % since x0 is 0
+%  p_k1 = Astar*r_k1;
+   p_k1= [Jstar*r_k1(m_idx) + Rstar*r_k1(n_idx)];
+   g_k1 = norm( p_k1);
+   maxiter, 
+   k=0;
+   while 1; 
        % update
+       k=k+1;
        x_k= x_k1;
        r_k= r_k1;
        p_k= p_k1;
        g_k= g_k1;
 
        % calculations
-       q_k = A*p_k;
+%      q_k = A*p_k;
+       q_k = [J*p_k;R*p_k];
        a_k = g_k / norm( q_k );
        x_k1= x_k + a_k*p_k;
        r_k1= r_k - a_k*q_k;
-       s_k1= Astar*r_k1;
+%      s_k1= Astar*r_k1;
+       s_k1= [Jstar*r_k1(m_idx) + Rstar*r_k1(n_idx)];
        g_k1= norm(s_k1);
        p_k1= s_k1 + (g_k1/g_k)*p_k;
-       k=k+1;
-       if k==imax
+       if k==maxiter
            x= x_k1;
            return;
        end
