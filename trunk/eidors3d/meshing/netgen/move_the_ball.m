@@ -107,8 +107,8 @@ for itime = 1:ntimes
   elements_in_sphere = find(mat_ind==mat_index_sphere);
 
 % Construct mesh object
-name= sprintf('Tank model with ball time %d',itime);
-tank_mdls(itime) = eidors_obj('fwd_model', name);
+tank_mdls(itime).type= 'fwd_model';
+tank_mdls(itime).name= sprintf('Tank model with ball time %d',itime);
 tank_mdls(itime).nodes= vtx;
 tank_mdls(itime).elems= simp;
 tank_mdls(itime).boundary= srf;
@@ -135,7 +135,7 @@ tank_mdls(itime).stimulation =mk_stim_patterns( ...
 
 
 cond = 1.0*ones(size(simp,1),1);
-cond(elements_in_sphere) =  2.0  % The contrast
+cond(elements_in_sphere) =  2.0;  % The contrast
 tank_img(itime) = eidors_obj('image', sprintf('ball image t=%d',itime), ...
                      'elem_data', cond, ...
                      'fwd_model', tank_mdls(itime) );
