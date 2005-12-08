@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.8 2005-12-07 23:35:24 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.9 2005-12-08 10:04:15 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -42,13 +42,12 @@ else
    dva= data1 - data2;
 end
 
-imax= 100; etol= 1e-3;
 n_img= size(dva,2);
 sol = zeros( size(J,2), n_img );
 Rx0 = zeros( size(R,1), 1);
 for i=1:n_img
 %  sol(:,i) = cg_inv( J'*W*J +  hp^2*RtR, J'*W*dva(:,i), imax, etol );
-   sol(:,i) = cg_ls_inv( chol(W)*J,  hp*R, dva(:,i), Rx0, imax, etol );
+   sol(:,i) = cg_ls_inv( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
 end
 
 % create a data structure to return
@@ -84,8 +83,12 @@ function x= cg_ls_inv( J, R, y, Rx0, imax, etol )
        s_k1= Astar*r_k1;
        g_k1= norm(s_k1);
        p_k1= s_k1 + (g_k1/g_k)*p_k;
+       k=k+1;
+       if k==imax
+           x= x_k1;
+           return;
+       end
    end
-   x= x_k1;
   
    
 
