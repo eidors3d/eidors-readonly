@@ -18,12 +18,17 @@ electrode_width=1.5;
 electrode_height=2.5;
 nelec=no_of_planes*2^log2_electrodes_per_plane;
 
-[tank_mdl1,centres] = create_tank_mesh_ng( tank_radius, tank_height, CorR,log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres, electrode_width,electrode_height,fnstemnb);
+[tank_mdl1,centres] = create_tank_mesh_ng( ...
+                        tank_radius, tank_height, ...
+                        CorR,log2_electrodes_per_plane, ...
+                        no_of_planes,first_plane_starts, ...
+                        height_between_centres, ...
+                        electrode_width,electrode_height,fnstemnb);
 % comment out if already made
 r = tank_radius/10; %that is radius of ball
 %Now put a ball in somewhere
-x=0;y=0,z=tank_height/2;
-fnnb
+x=0;y=0;z=tank_height/2;
+%fnnb
 fidnb=fopen(fnnb);
 fidout =fopen(fn00,'w');
 foundit=0;
@@ -48,11 +53,7 @@ fnin = fn00;
 ntimes = 32;
 
 for itime = 1:ntimes
-  if itime<10
-         fnouts=sprintf('tank_for_kalman_test_ball_0%1d',itime);
-  else
-         fnouts=sprintf('tank_for_kalman_test_ball_%2d',itime);
-  end
+  fnouts=sprintf('tank_for_kalman_test_ball_%02d',itime);
   fnout=[fnouts,'.geo']
   fidout=fopen(fnout,'w');
 
@@ -92,11 +93,7 @@ end %for
 % Now read them in again and do the calculations
 
 for itime = 1:ntimes
-  if itime<10
-         fnins=sprintf('tank_for_kalman_test_ball_0%1d',itime);
-  else
-         fnins=sprintf('tank_for_kalman_test_ball_%2d',itime);
-  end
+  fnins=sprintf('tank_for_kalman_test_ball_%02d',itime);
   fnin=[fnins,'.vol'];
   [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(fnin);
   the_mat_indices = unique(mat_ind);
@@ -104,12 +101,14 @@ for itime = 1:ntimes
      error('This mesh does not have two material indices');
   end
   %Assume the sphere is smaller than the rest of tank
-  [junk,k]=min([length(find (mat_ind==the_mat_indices(1))),length(find (mat_ind==the_mat_indices(2)))])
+  [junk,k]=min([length(find (mat_ind==the_mat_indices(1))), ...
+                length(find (mat_ind==the_mat_indices(2)))]);
   mat_index_sphere= the_mat_indices(k);
   elements_in_sphere = find(mat_ind==mat_index_sphere);
 
 % Construct mesh object
-tank_mdls(itime).name = sprintf('Tank model with ball time %d',itime)';
+name= sprintf('Tank model with ball time %d',itime);
+tank_mdls(itime) = eidors_obj('fwd_model', name);
 tank_mdls(itime).nodes= vtx;
 tank_mdls(itime).elems= simp;
 tank_mdls(itime).boundary= srf;
@@ -121,26 +120,37 @@ for i=1:nelec
     electrodes(i).z_contact= 1.0;  %well you can change that later!
     electrodes(i).nodes=     unique( elec(i,:) );
 end
-cond = 1.0*ones(size(simp,1),1);
-cond(elements_in_sphere) =  2.0  % The contrast
 perm_sym='{n}';
 tank_mdls(itime).type = 'fwd_model';
 tank_mdls(itime).gnd_node=           1;
 tank_mdls(itime).electrode =         electrodes;
-tank_mdls(itime).misc.perm_sym =          perm_sym;
+tank_mdls(itime).misc.perm_sym =     perm_sym;
 
 tank_mdls(itime).solve= 'np_fwd_solve';
 tank_mdls(itime).jacobian= 'np_calc_jacobian';
 tank_mdls(itime).system_mat= 'np_calc_system_mat';
-tank_mdls(itime).stimulation =mk_stim_patterns( 2^log2_electrodes_per_plane, no_of_planes, '{op}', '{ad}',{'meas_current'});
+tank_mdls(itime).stimulation =mk_stim_patterns( ...
+                   2^log2_electrodes_per_plane, ...
+                   no_of_planes, '{op}', '{ad}',{'meas_current'});
 
 
-
+cond = 1.0*ones(size(simp,1),1);
+cond(elements_in_sphere) =  2.0  % The contrast
 tank_img(itime) = eidors_obj('image', sprintf('ball image t=%d',itime), ...
                      'elem_data', cond, ...
                      'fwd_model', tank_mdls(itime) );
 tank_data(itime)=fwd_solve(tank_img(itime));
 
+if itime==1
+   cond = 1.0*ones(size(simp,1),1);
+   tank_img_homg= tank_img(itime);
+   tank_img_homg.elem_data = cond;
+   tank_data_homg=fwd_solve(tank_img_homg);
+end
+
+
 end %for
-save('all_models_for_moving_ball','tank_mdls','tank_img','tank_data');
+save('all_models_for_moving_ball', ...
+              'tank_mdls','tank_img','tank_data', ...
+              'tank_img_homg','tank_data_homg');
 
