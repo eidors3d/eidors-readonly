@@ -6,6 +6,83 @@ EIDORS package.
 
 <ul>
 
+<!--
+<p><li><b>
+    9 Dec 2005: 
+</b>
+EIDORS V3.1RC1 Released
+<br>
+Andy Adler &amp; Bill Lionheart
+<p>
+Request for discussion: <i>EIT data repository</i>
+<p>
+Over the last few months, while discussing EIDORS
+software with various research groups, it has become
+clear that it would be of great benefir to the EIT
+community to have a repository of EIT measurements.
+Clearly, such a repository would be voluntary, and
+contributors would be able to specify the attribution
+requirements for each data set.
+
+<p>
+Such a repository would serve several functions
+&minus; It would allow new researchers in this community
+    to have some real data against which they can test
+    their software
+&minus; It would allow testing of algorithms against
+    available and standard benchmark data.
+
+<p>
+We would like to generate discussion of ways in
+which such an EIT data repository. To provide a framework
+for discussion, we make the following suggestion.
+<ul>
+   <li> A data repository can be formed on the 
+        eidors web site www.eidors.org.
+   <li> Groups who wish to contribute sets of measured
+        data will assemble a file of
+        1) the data iteself
+        2) a description of the measurement protocol
+        3) if possible, software to demonstrate
+           sample analysis of the data
+        4) a copyright statement (explained later)
+        5) attribution requirements 
+        (ie. papers refering to this data must
+           reference Author1 et al, Journal of EIT, 2020)
+
+   <li> License. Contributed data will be licensed under
+        the creative commons 
+</ul>
+
+-->
+
+<!--
+<p><li><b>
+    9 Dec 2005: 
+</b>
+EIDORS V3.1RC1 Released
+<br>
+Andy Adler &amp; Bill Lionheart
+<p>
+Blobby the walrus would like to announce
+the release of <tt>EIDORS-3.1RC1</tt>. This is the
+first release candidate for EIDORS 3.1. Users are
+encouraged to report and bugs to the EIDORS maintainers.
+<p>
+EIDORS version 3.1 contains a considerable number of
+new features to facilitate writing of reconstruction
+algorithms and models for EIT and other soft field
+tomography technologies. New features include
+<br>&minus; New algorithms (Total Variation, Kalman filtering)
+<br>&minus; Faster algorithms (better CGLS, Jacobian code)
+<br>&minus; Many more usage examples.
+<br>&minus; Improved links to netgen to generate models
+<p>
+As always, if your favourite feature is absent, or your
+least favourite bug is present, please make your comments
+to the authors
+-->
+
 <p><li><b>
     29 Nov&minus;9 Dec 2005: 
 </b>
@@ -23,6 +100,15 @@ The following software has been implemented
            for Kalman filtering
     <li> Kalman filtering for difference EIT
     <li> Improved software to integrate Netgen with EIDORS
+    <li> Detailed FEM model of ball moving in a vortex in
+         a tank. (<a href="examples/ball-model.html"
+             >See animated image</a>)
+    <li> New inverse algorithms
+          <br>&minus;Truncated iteration (Morozov criterion)
+          <br>&minus;CGLS (with efficient sparse matrix handling)
+          <br>&minus;Coarse / Dense mesh solver
+                  (thank to David Stephenson)
+</ul>
 <p>
 
 <p><li><b>
@@ -631,7 +717,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 09:44:36 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-08 23:10:21 $ by $Author: aadler $
 </small>
 </body>
 

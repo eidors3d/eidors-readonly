@@ -70,6 +70,29 @@ New code written by <a href="http://www.site.uottawa.ca/~adler"
                        >Andy Adler</a> 
 while developing EIDORS
 
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/ms_2005">
+algorithms/ms_2005
+</a>
+<br><i>Comment:</i>
+EIT algorithms by Manuch Soleimani
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/ab_2005">
+algorithms/ab_2005
+</a>
+<br><i>Comment:</i>
+EIT algorithms by Andrea Borsic. Code contributed courtesy of 
+<a href="http://www.sc-aip.com">Scientific Computing and
+    Applied Inverse Problems</a>
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/ds_2005">
+algorithms/ds_2005
+</a>
+<br><i>Comment:</i>
+EIT algorithms by David Stephenson
+
 </ul>
 </ul>
 
@@ -155,6 +178,21 @@ Models from paper:<br>
 M. Vauhkonen, W.R.B. Lionheart, L.M. Heikkinen, P.J. Vauhkonen, and
 J.P. Kaipio, "A MATLAB package for the EIDORS project to reconstruct
 two-dimensional EIT images", <i>Physiol Meas</i>, <b>22</b> 107-111, 2001.
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/models/sm_2005">
+models/sm_2005
+</a>
+<br><i>Comment:</i>
+FEM models and software by Stephen Murphy, U. Manchester
+
+<li>
+<a href="http:/cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/models/ds_2005">
+models/ds_2005
+</a>
+<br><i>Comment:</i>
+FEM models and software by David Stephenson, U. Manchester
+
 </ul>
 </ul>
 
@@ -182,7 +220,7 @@ Tests to validate code correctness
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 09:51:41 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-08 23:10:21 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

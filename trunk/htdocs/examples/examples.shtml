@@ -14,6 +14,11 @@ a one step regularized inverse.
 Animated graphic of reconstructed images of
 a non-conductive object moving in a cylindrical tank.
 
+    <li><h3> 
+<a href="../examples/ball-model.shtml" >Moving Ball 3D FEM</a>
+</h3>
+Animated graphic of the finite element mesh of a 
+small ball contrasting object in a 3D tank. 
 
     <li><h3> 
 <a href="../examples/walruses.shtml" >Walruses</a>
@@ -32,7 +37,7 @@ cheat.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-08 00:19:28 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-08 23:10:16 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

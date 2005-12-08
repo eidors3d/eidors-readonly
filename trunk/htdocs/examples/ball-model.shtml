@@ -8,18 +8,20 @@
 
 <center>
 <font size="+1">
-Animated graphic of reconstructed images of
-a non-conductive object moving in a cylindrical tank.
-Images were reconstructed using a 256 element 2D model
 </font>
 <p>
 <img src="ball-models.gif" width="450" alt="animated gif">
+<p>
+Animated graphic of the finite element mesh of a 
+small ball contrasting object in a 3D tank. 
+
 </center>
 <p>
 
 <pre>
     % Matlab instructions
-    load models\bl_2005\all_models_for_moving_ball.mat
+    % You need to have netgen installed to run this demo
+    move_the_ball
     vv=view;
     set(gcf,'paperposition',[2,2,3,3]);
         for i=1:31;
@@ -35,7 +37,7 @@ Images were reconstructed using a 256 element 2D model
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-08 14:01:16 $ by $Author: aadler $
+    Last Modified: $Date: 2005-12-08 23:10:16 $ by $Author: aadler $
 </small>
 </body>
 
