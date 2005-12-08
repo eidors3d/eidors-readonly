@@ -11,7 +11,7 @@ function show_fem( mdl, options )
 % calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.35 2005-12-08 14:16:05 aadler Exp $
+% $Id: show_fem.m,v 1.36 2005-12-08 14:35:38 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -23,7 +23,7 @@ end
 
 do_colourbar=0;
 number_electrodes=0;
-if nargin >=3
+if nargin >=2
     optionstr= zeros(1,100);
     optionstr(1:length(options)) = options;
     do_colourbar=      optionstr(1);
