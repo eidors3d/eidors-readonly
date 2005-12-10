@@ -1,0 +1,151 @@
+DATA SET:
+TITLE:
+Montreal Data 1995
+
+EQUIPMENT:
+    Data were captured using the EIT scanner designed by
+    Ghislain Savoie and Robert Guardo in 1994. This equipment
+    is described in the following publications
+
+    1) Savoie G., (1994). "Applications de la tomographie
+       d'impédance électrique à l'étude de phénomènes
+       physiologiques", mémoire M.Sc.A., École Polytechnique de
+       Montréal, Canada.
+
+    2) Guardo V., Boulay C., Savoie A., Adler A., (1993). "A
+       superheterodyne serial Data Acquisition System for
+       Electrical Impedance Tomography", Proc. 15th Ann. Int.
+       Conf. IEEE Eng. in Med. Biol. Soc., San Diego, CA, USA,
+       15 (1), 86-87.
+
+    This system is a 16-electrode EIT system with adjacent drive
+    and measurements.
+
+STIMULATION AND MEASUREMENT PROTOCOL:
+
+    Num. Electrodes = 16
+    Stimulation =     Adjacent
+    First pattern =   Electrodes 0-1
+
+    Measurement =     Adjacent
+    First pattern =   Electrodes 0-1
+
+    No measures at driven electrodes
+
+    Measures per frame = 16*13 = 208
+
+EIDORS STIMULATION PROTOCOL
+
+    mk_stim_patterns(16,1,'{ad}','{ad}',{'no_meas_current'},1);
+
+DATA FORMAT:
+
+    Data frames are acquired at 7 frames per second. 
+    Auxialiary signals such as ECG are acquired at 16 samples
+    per frame. Each matrix column represents a data frame.
+
+    Data are represented in *.mat files as 256 measures,
+    where 
+    STIM (i,i+1)   0<=i<=15
+    MEAS (j,i+1)   0<=i<=15
+    DATAPOSITION   16*i + j 
+
+    Zeros are inserted at non-measured driven electrodes
+
+    Values represent absolute value of measured signal.
+
+DATA SETS:
+
+1. DEMO3
+
+   Measurements on 30 cm diameter acrylic tank
+   Non conductive rod is moved in circle around tank
+
+   Homogeneous Frame:
+      - zc_h_demo3
+  
+   Measurement Frames:
+      - zc_demo3
+
+2. DEMO4
+
+   Measurements on 30 cm diameter acrylic tank
+   Non conductive rod is moved diametrically across tank
+
+   Homogeneous Frame:
+      - zc_h_demo4
+  
+   Measurement Frames:
+      - zc_demo4
+
+3. RESP and RESPSC2
+   Homogeneous Frame:
+      - zc_h_demo4
+  
+   Measurement Frames:
+      - zc_demo4
+
+   Electrodes were attached in a plane around the
+   chest just below the level of the nipples.
+   Electrode # 0 was at the centre of the back.
+   The subject lay supine 
+   A series of data frames were acquired at 7 frames/s
+   during while the subject was breathing normally.
+
+   Data were acquired with the subject lying supine.
+  
+   Measurement Frames:
+      - zc_resp
+      - zc_respsc2
+
+4. BREATHOLD
+
+   Electrodes were attached in a plane around the
+   chest just below the level of the nipples.
+   Electrode # 0 was at the centre of the back.
+   A series of data frames were acquired at 7 frames/s
+   during expiratory breathold at FRC.
+
+   Data were acquired with the subject lying supine.
+
+   Measurement Frames:
+      - zc_breathold
+
+   ECG data
+      - ecg_breathold
+  
+
+5. STOMACH
+
+   Electrodes were attached in a plane around the
+   subject at the level of the stomach.
+   Electrode # 0 was at the centre of the back.
+
+   Data frame "zc_h_stomach_pre" was acquired at FRC
+   breathold.  Subsequently, the subject drank a can of
+   Coca-cola (355 mL). A measurements frame was immediately
+   taken and additional frames were taken each five minutes
+   for the next hour (data set "zc_stomach_0_5_60min")
+
+   Data were acquired with the subject seated.
+
+   Homogeneous Frame:
+      - zc_stomach_0_5_60min
+  
+   Measurement Frames:
+      - zc_h_stomach_pre
+
+LICENSE
+
+   This data is (C) 1995 Andy Adler.
+   You may use this data under the terms of the Creative Commons
+   Attrib-NoDerivs License. 
+   http://www.creativecommons.org/ ???
+
+   The following is the attribution requirement for this data:
+
+   If you use this data in a scientific publication, you must
+   refer to the following paper:
+   Adler A and Lionheart W R B (2006)
+   "Uses and abuses of EIDORS: An extensible software base for EIT",
+   in press, Phyiol. Meas.  
