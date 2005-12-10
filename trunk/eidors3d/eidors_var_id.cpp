@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.13 2005-11-30 15:42:57 billlion Exp $
+ *   $Id: eidors_var_id.cpp,v 1.14 2005-12-10 10:46:08 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -55,10 +55,13 @@ hash_final( hash_context * c, unsigned long[HW] );
 // Processing - test if:
 //   1. Numeric (full) -> Add to SHA1 hash (including complex part)
 //   2. Numeric (Sparse) -> Add to SHA1 hash (including complex part)
-//   3. String (or other) -> Ignore (Assume not relevant) 
+//   3. String (or other)
+//         - hash string content
+//         - check if string points to a function hash that
 //   4. Empty -> Ignore (Assume not relevant) 
 //   5. Cell -> recursively call for each element
 //   6. Struct -> recursively call ( In SORTED order )
+//   7. Function pointer -> Convert to string and add
 //
 // NOTE: this function does not hash the array size and
 //    orientation. That means that a vectorized version of
@@ -66,11 +69,30 @@ hash_final( hash_context * c, unsigned long[HW] );
 
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
-#define TESTDBL(vv) if( !mxIsDouble(vv) ) { \
-            mexErrMsgTxt("var  must be type double");}
 #undef VERBOSE 
 // #define VERBOSE
 		
+// check to see if a given string points to an function
+//   on disk *.m file.  If it does -> get the file modification
+//   time
+void lookupfiletime( hash_context *c, const mxArray *var ) {
+
+    // we know that var is char
+    // TODO: add *.m to char
+    mxArray *lhs[1];
+    // Complete BULLS*** from Matlab here. You need to call Matlab
+    // using a non-const pointer, but you get a const one
+    mexCallMATLAB(1,lhs, 1, (mxArray **) &var, "which");
+    if ( mxGetNumberOfElements(lhs[0])>0 ) {
+      double * pr = mxGetPr( *lhs );
+      // string variable. Each char is packed into 2 bytes
+      int len= 2* mxGetNumberOfElements( *lhs );
+      hash_process( c, (unsigned char *) pr, len );
+      //TODO: NEED TO stat file, get mtime and hash that
+    }
+    mxDestroyArray( lhs[0] );
+}
+
 void recurse_hash( hash_context *c, const mxArray *var ) {
 
   #ifdef VERBOSE    
@@ -104,8 +126,22 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
   if ( mxIsNumeric(var) ) {
     // full numeric variable. ) We need to hash the numeric data.
     double *pr,*pi;
-    int len= sDBL * mxGetNumberOfElements( var );
-    TESTDBL( var );
+    int len= mxGetNumberOfElements( var );
+    if( mxIsDouble(var) ) {
+        len= sDBL * len;
+    } else 
+    if( mxIsInt32(var) || mxIsUint32(var) ) {
+        len= 4 * len;
+    } else 
+    if( mxIsInt16(var) || mxIsUint16(var) ) {
+        len= 2 * len;
+    } else 
+    if( mxIsInt8(var) || mxIsUint8(var) ) {
+        len= 1 * len;
+    } else {
+        mexErrMsgTxt("Unrecognized numeric type");
+    }
+
     pr = mxGetPr( var );
     pi = mxGetPi( var );
 
@@ -118,6 +154,10 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     // string variable. Each char is packed into 2 bytes
     double * pr = mxGetPr( var );
     hash_process( c, (unsigned char *) pr, 2*mxGetNumberOfElements( var ) );
+
+    // If var is a *.m file, add it's modification time
+    lookupfiletime( c, var);
+
   } else
   if ( mxIsCell(var) ) {
     // cell variable. Iterate through elements and recurse
@@ -163,7 +203,9 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     if ( mxIsChar(lhs[0]) ) {
       // string variable. Each char is packed into 2 bytes
       double * pr = mxGetPr( *lhs );
-      hash_process( c, (unsigned char *) pr, 2*mxGetNumberOfElements( var ) );
+      // string variable. Each char is packed into 2 bytes
+      int len= 2* mxGetNumberOfElements( *lhs );
+      hash_process( c, (unsigned char *) pr, len );
     } else {
       mexErrMsgTxt("eidors_var_id: weird output for function_handle");
     }
