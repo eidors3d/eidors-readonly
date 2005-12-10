@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.14 2005-12-10 10:46:08 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.15 2005-12-10 22:36:43 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -25,6 +25,11 @@
 #include <string.h>
 #include "mex.h"
 /*
+ * Defines to alow stat
+ */
+#include <sys/stat.h>
+#include <sys/types.h>
+/*
  * defines for SHA1.c code
  */
 
@@ -36,6 +41,12 @@
 #elif (__BYTE_ORDER == __BIG_ENDIAN ) 
   #define BIG_ENDIAN_DEF 5
 #endif
+
+#define IF_NULL_ERR(a) if (!a) { \
+    mexErrMsgTxt("Memory allocation problem"); } 
+#define IF_BADSTATUS_ERR(a) if (0) {} else if (a) { \
+    mexErrMsgTxt("syscall returned bad status"); }
+//  mexErrMsgTxt(__FILE__  __LINE__  "syscall returned bad status",
 
 typedef struct {
     unsigned long state[5];
@@ -84,11 +95,22 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
     // using a non-const pointer, but you get a const one
     mexCallMATLAB(1,lhs, 1, (mxArray **) &var, "which");
     if ( mxGetNumberOfElements(lhs[0])>0 ) {
-      double * pr = mxGetPr( *lhs );
-      // string variable. Each char is packed into 2 bytes
-      int len= 2* mxGetNumberOfElements( *lhs );
-      hash_process( c, (unsigned char *) pr, len );
-      //TODO: NEED TO stat file, get mtime and hash that
+      int len= mxGetNumberOfElements( *lhs ) + 1;
+      char * fname= (char *) mxMalloc(len* sizeof(char));
+      IF_NULL_ERR( fname );
+
+      IF_BADSTATUS_ERR(
+         mxGetString( *lhs, fname, len) );
+
+      struct stat buffer;
+      IF_BADSTATUS_ERR(
+         stat(fname, &buffer) );
+
+//    printf("Got string=%s mtime=%d\n", fname, buffer.st_mtime);
+      hash_process( c, (unsigned char *) &buffer.st_mtime, 
+                       sizeof( time_t ) );
+
+      mxFree( fname );
     }
     mxDestroyArray( lhs[0] );
 }
@@ -203,7 +225,6 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     if ( mxIsChar(lhs[0]) ) {
       // string variable. Each char is packed into 2 bytes
       double * pr = mxGetPr( *lhs );
-      // string variable. Each char is packed into 2 bytes
       int len= 2* mxGetNumberOfElements( *lhs );
       hash_process( c, (unsigned char *) pr, len );
     } else {
@@ -246,10 +267,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
   hash_final( &c, digest);
 
   { char *
-  sha1buf = (char *) mxCalloc(44, sizeof(char));
+  sha1buf = (char *) mxMalloc(44* sizeof(char));
   sprintf(sha1buf, "id_%08X%08X%08X%08X%08X", 
           digest[0], digest[1], digest[2], digest[3], digest[4] );
   plhs[0] = mxCreateString(sha1buf);
+  mxFree( sha1buf );
   }  
   return;
 }
