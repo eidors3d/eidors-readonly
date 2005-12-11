@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.15 2005-12-10 22:36:43 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.16 2005-12-11 14:48:16 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -60,6 +60,8 @@ static void
 hash_process( hash_context * c, unsigned char * data, unsigned len );
 static void
 hash_final( hash_context * c, unsigned long[HW] );
+static void
+recurse_hash( hash_context *c, const mxArray *var );
 
 // This is the core function. Iterate over the variable
 //   to calculate the in-memory SHA1 hash
@@ -88,31 +90,83 @@ hash_final( hash_context * c, unsigned long[HW] );
 //   time
 void lookupfiletime( hash_context *c, const mxArray *var ) {
 
-    // we know that var is char
-    // TODO: add *.m to char
-    mxArray *lhs[1];
-    // Complete BULLS*** from Matlab here. You need to call Matlab
-    // using a non-const pointer, but you get a const one
-    mexCallMATLAB(1,lhs, 1, (mxArray **) &var, "which");
-    if ( mxGetNumberOfElements(lhs[0])>0 ) {
-      int len= mxGetNumberOfElements( *lhs ) + 1;
-      char * fname= (char *) mxMalloc(len* sizeof(char));
-      IF_NULL_ERR( fname );
+  mxArray * lhs[1];
+  // STEP 1: see if function is an M-file
 
-      IF_BADSTATUS_ERR(
-         mxGetString( *lhs, fname, len) );
-
-      struct stat buffer;
-      IF_BADSTATUS_ERR(
-         stat(fname, &buffer) );
-
-//    printf("Got string=%s mtime=%d\n", fname, buffer.st_mtime);
-      hash_process( c, (unsigned char *) &buffer.st_mtime, 
-                       sizeof( time_t ) );
-
-      mxFree( fname );
+  { // STEP 1A: Call exist
+    mxArray * rhs[1];
+    rhs[0] = (mxArray *) var; // BULLS**T from Matlab. Why throw away const?
+//  rhs[1] = mxCreateString("file");
+//  This should save time, but breaks badly. More BS from Matlab?
+    
+    mexCallMATLAB(1,lhs, 1, rhs, "exist");
+//  mxDestroyArray( rhs[1] );
+    if (  mxGetNumberOfElements(lhs[0])!=1 ||
+         !mxIsNumeric( lhs[0] ) ) {
+      // var doesn't point to a function -> leave
+      mxDestroyArray( lhs[0] );
+      return;
     }
+  }
+
+  // STEP 1A: Check if exist( var ) == 2 (m-file)
+  { double * 
+    pr  = mxGetPr( lhs[0] );
+    if ( !pr ||
+          pr[0] != 2.0 ) {
+        mxDestroyArray( lhs[0] );
+        return;
+    }
+  }
+
+  // STEP 2: Get the path to the file
+  mexCallMATLAB(1,lhs, 1, (mxArray **) &var, "which");
+  if ( mxGetNumberOfElements(lhs[0])==0 ) {
+    // var doesn't point to a function -> leave
     mxDestroyArray( lhs[0] );
+    return;
+  }
+
+  int len= mxGetNumberOfElements( *lhs ) + 1;
+  char * fname= (char *) mxMalloc(len* sizeof(char));
+  IF_NULL_ERR( fname );
+
+  IF_BADSTATUS_ERR(
+     mxGetString( *lhs, fname, len) );
+  mxDestroyArray( lhs[0] );
+
+  struct stat buffer;
+  IF_BADSTATUS_ERR(
+     stat(fname, &buffer) );
+
+//printf("Got string=%s mtime=%d\n", fname, buffer.st_mtime);
+  hash_process( c, (unsigned char *) &buffer.st_mtime, 
+                   sizeof( time_t ) );
+
+  mxFree( fname );
+}
+
+void hash_struct( hash_context *c, const mxArray *var )
+{
+    int i,j;
+    for (i= 0;
+         i< mxGetNumberOfFields( var );
+         i++) {
+      #ifdef VERBOSE
+        mexPrintf("processing field ( %s ):", mxGetFieldNameByNumber(var, i));
+      #endif
+      for (j= 0;
+           j< mxGetNumberOfElements( var );
+           j++) {
+        mxArray * fd = mxGetFieldByNumber( var, j, i );
+        if (fd == NULL ) {
+          mexPrintf("empty field(%s,%d):",
+                    mxGetFieldNameByNumber(var,i), j+1);
+        } else {
+          recurse_hash(c, fd);
+        }
+      }
+    }
 }
 
 void recurse_hash( hash_context *c, const mxArray *var ) {
@@ -195,25 +249,7 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     }
   } else
   if ( mxIsStruct(var) ) {
-    int i,j;
-    for (i= 0;
-         i< mxGetNumberOfFields( var );
-         i++) {
-      #ifdef VERBOSE
-        mexPrintf("processing field ( %s ):", mxGetFieldNameByNumber(var, i));
-      #endif
-      for (j= 0;
-           j< mxGetNumberOfElements( var );
-           j++) {
-        mxArray * fd = mxGetFieldByNumber( var, j, i );
-        if (fd == NULL ) {
-          mexPrintf("empty field(%s,%d):",
-                    mxGetFieldNameByNumber(var,i), j+1);
-        } else {
-          recurse_hash(c, fd);
-        }
-      }
-    }
+    hash_struct( c, var);
   } else
   if ( mxIsFunctionHandle(var) ) {
     // function_handle. Get string of fcn name
