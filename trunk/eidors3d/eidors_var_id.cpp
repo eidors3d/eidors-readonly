@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.16 2005-12-11 14:48:16 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.17 2005-12-12 00:50:51 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -99,9 +99,10 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
 //  rhs[1] = mxCreateString("file");
 //  This should save time, but breaks badly. More BS from Matlab?
     
-    mexCallMATLAB(1,lhs, 1, rhs, "exist");
+    int retval = mexCallMATLAB(1,lhs, 1, rhs, "exist");
 //  mxDestroyArray( rhs[1] );
-    if (  mxGetNumberOfElements(lhs[0])!=1 ||
+    if ( retval != 0 ||
+         mxGetNumberOfElements(lhs[0])!=1 ||
          !mxIsNumeric( lhs[0] ) ) {
       // var doesn't point to a function -> leave
       mxDestroyArray( lhs[0] );
@@ -109,6 +110,12 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
     }
   }
 
+  #ifdef VERBOSE
+  { char buf[100]; //it'll do for debugging
+    mxGetString( var, buf, mxGetNumberOfElements(var)+1 );
+    mexPrintf("exist('%s') => %3.1f\n", buf, (mxGetPr(lhs[0]))[0] );
+  }
+  #endif
   // STEP 1A: Check if exist( var ) == 2 (m-file)
   { double * 
     pr  = mxGetPr( lhs[0] );
@@ -139,7 +146,9 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
   IF_BADSTATUS_ERR(
      stat(fname, &buffer) );
 
-//printf("Got string=%s mtime=%d\n", fname, buffer.st_mtime);
+  #ifdef VERBOSE
+  mexPrintf("Got string=%s mtime=%d\n", fname, buffer.st_mtime);
+  #endif
   hash_process( c, (unsigned char *) &buffer.st_mtime, 
                    sizeof( time_t ) );
 
@@ -148,25 +157,59 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
 
 void hash_struct( hash_context *c, const mxArray *var )
 {
+  mxArray * sortord;
+  { // STEP 1: Sort field names
+    mxArray *lhs1[1], *lhs2[1];
+    int retval;
+    retval = mexCallMATLAB(1,lhs1, 1, (mxArray **) &var, "fieldnames");
+    if ( retval != 0 ) {
+      return;
+    }
+
+    retval = mexCallMATLAB(2,lhs2, 1, lhs1, "sort");
+    if ( retval != 0 ) {
+      mxDestroyArray( lhs1[0] );
+      return;
+    }
+
+    mxDestroyArray( lhs1[0] );
+    mxDestroyArray( lhs2[0] );
+    sortord = lhs2[1];
+  }
+
+
+  { // Step 2: Recurse through the fields
     int i,j;
-    for (i= 0;
-         i< mxGetNumberOfFields( var );
-         i++) {
+    double * s_idx;
+    int NF, NE;
+
+    s_idx= mxGetPr( sortord );
+    if (!s_idx) {
+        mxDestroyArray( sortord );
+        return;
+    }
+    
+    NF= mxGetNumberOfFields( var );
+    NE= mxGetNumberOfElements( var );
+
+    for (i= 0; i< NF; i++) {
+      int k= (int) s_idx[i] -1; // -1 because Matlab uses 1 indexing
       #ifdef VERBOSE
-        mexPrintf("processing field ( %s ):", mxGetFieldNameByNumber(var, i));
+        mexPrintf("processing field ( %s ) [%d->%d]:\n",
+                  mxGetFieldNameByNumber(var, k), i, k);
       #endif
-      for (j= 0;
-           j< mxGetNumberOfElements( var );
-           j++) {
-        mxArray * fd = mxGetFieldByNumber( var, j, i );
+      for (j= 0; j< NE; j++) {
+        mxArray * fd = mxGetFieldByNumber( var, j, k );
         if (fd == NULL ) {
           mexPrintf("empty field(%s,%d):",
-                    mxGetFieldNameByNumber(var,i), j+1);
+                    mxGetFieldNameByNumber(var,k), j+1);
         } else {
           recurse_hash(c, fd);
         }
       }
     }
+  }
+  mxDestroyArray( sortord );
 }
 
 void recurse_hash( hash_context *c, const mxArray *var ) {
