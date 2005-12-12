@@ -51,7 +51,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.13 2005-12-06 15:02:51 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.14 2005-12-12 00:55:48 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -63,10 +63,33 @@ offset   = [1;1]*(0:n_elec-1);
 
 i=1;
 for ring = 0:v.n_rings-1
+   redundant_elim= [];
    for elec= 0:v.n_elec-1
-       stim(i).stimulation = 'mA';
-       stim(i).stim_pattern= mk_stim_pat(v, elec, ring );
-       stim(i).meas_pattern= mk_meas_pat(v, elec, ring );
+       s_pat= mk_stim_pat(v, elec, ring );
+       m_pat= mk_meas_pat(v, elec, ring );
+
+       if v.do_redundant == 0 % elim redudant
+           ff= abs(diff([s_pat(:);s_pat(:)]));
+           ff= find( ff > 1.9*v.amplitude);
+           redundant_elim= [redundant_elim, ff(1) ];
+
+           % TODO: check whether this works for n_rings>1
+           elim= [];
+           for j=1:size(m_pat,1);
+              ff= abs(diff([m_pat(j,:),m_pat(j,:)]));
+              ff= find( ff > 1.9 );
+              if any( ff(1)==redundant_elim ); 
+                  elim= [elim, j];
+              end
+           end
+           m_pat(elim,:) =[];
+       end
+
+       if ~isempty(m_pat) 
+           stim(i).stimulation = 'mA';
+           stim(i).stim_pattern= s_pat;
+           stim(i).meas_pattern= m_pat;
+       end
 
        i=i+1;
    end
@@ -123,10 +146,6 @@ function meas = mk_meas_pat(v, elec, ring, amplitude)
    meas_pat = rem( v.meas(2) + within_ring + ofs, v.n_elec ) + ...
                     ouside_ring + meas_seq;
    meas(meas_pat) = -1;
-
-   if ~v.do_redundant
-% FIXME HERE
-   end
 
    if v.use_meas_current == 0
        stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
@@ -199,12 +218,12 @@ for opt = options
    end
 end
 
-% do_redundant only works for adjacent stimulations
-if v.do_redundant
+% no_redundant only works for adjacent stimulations
+if v.do_redundant==0
     inj_diff= abs(diff(inj));
     meas_diff= abs(diff(meas));
-    if inj_diff>1  & inj_diff<n_elec-1 & ...
-       meas_diff>1 & meas_diff<n_elec-1
+    if ( inj_diff>1  & inj_diff<n_elec-1 ) | ...
+       ( meas_diff>1 & meas_diff<n_elec-1 )
         error('do_redundant is only applicable to adjacent patterns');
     end
 end
