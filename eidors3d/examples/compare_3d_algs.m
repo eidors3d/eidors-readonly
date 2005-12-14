@@ -1,9 +1,9 @@
 % Compare different 3D reconstructions
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.7 2005-12-06 15:38:39 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.8 2005-12-14 16:34:52 aadler Exp $
 
-global eidors_colours;
+calc_colours('ref_level',0);
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -54,7 +54,7 @@ switch 4
      inv3d.R_prior.func=      'ab_calc_tv_prior';
      inv3d.solve=             'ab_tv_diff_solve';
      iidx=[1,2,5];
-     eidors_colours.ref_level=1;
+     calc_colours('ref_level',1);
 
    case 5,
      inv3d.hyperparameter.value = 1e-3;
@@ -72,4 +72,4 @@ end
 imgr= inv_solve( inv3d, vi, vh);
 show_slices(imgr(iidx), [.5:1:2.5]'*[Inf,Inf,1]);
 
-eidors_colours.ref_level=0; %reset
+calc_colours('ref_level',0);
