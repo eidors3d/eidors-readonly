@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.18 2005-12-14 15:48:16 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.19 2005-12-14 16:02:13 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -85,7 +85,7 @@ recurse_hash( hash_context *c, const mxArray *var );
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
 #undef VERBOSE 
- #define VERBOSE
+// #define VERBOSE
 		
 // check to see if a given string points to an function
 //   on disk *.m file.  If it does -> get the file modification
@@ -161,7 +161,7 @@ void hash_struct( hash_context *c, const mxArray *var )
 {
   mxArray * sortord;
   { // STEP 1: Sort field names
-    mxArray *lhs1[1], *lhs2[1];
+    mxArray *lhs1[1], *lhs2[2];
     int retval;
     retval = mexCallMATLAB(1,lhs1, 1, (mxArray **) &var, "fieldnames");
     if ( retval != 0 ) {
@@ -178,7 +178,6 @@ void hash_struct( hash_context *c, const mxArray *var )
     mxDestroyArray( lhs2[0] );
     sortord = lhs2[1];
   }
-
 
   { // Step 2: Recurse through the fields
     int i,j;
