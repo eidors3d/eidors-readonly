@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.17 2005-12-12 00:50:51 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.18 2005-12-14 15:48:16 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -48,9 +48,11 @@
     mexErrMsgTxt("syscall returned bad status"); }
 //  mexErrMsgTxt(__FILE__  __LINE__  "syscall returned bad status",
 
+#define unsigned_int32 UINT32_T
+
 typedef struct {
-    unsigned long state[5];
-    unsigned long count[2];
+    unsigned_int32 state[5];
+    unsigned_int32 count[2];
     unsigned char buffer[64];
 } hash_context;
 
@@ -59,7 +61,7 @@ hash_initial( hash_context * c );
 static void
 hash_process( hash_context * c, unsigned char * data, unsigned len );
 static void
-hash_final( hash_context * c, unsigned long[HW] );
+hash_final( hash_context * c, unsigned_int32[HW] );
 static void
 recurse_hash( hash_context *c, const mxArray *var );
 
@@ -83,7 +85,7 @@ recurse_hash( hash_context *c, const mxArray *var );
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
 #undef VERBOSE 
-// #define VERBOSE
+ #define VERBOSE
 		
 // check to see if a given string points to an function
 //   on disk *.m file.  If it does -> get the file modification
@@ -247,6 +249,9 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
     double *pr,*pi;
     int len= mxGetNumberOfElements( var );
     if( mxIsDouble(var) ) {
+        #ifdef VERBOSE    
+          mexPrintf("DBL len=%d, first=%5.3g\n:", len, *mxGetPr( var ) );
+        #endif
         len= sDBL * len;
     } else 
     if( mxIsInt32(var) || mxIsUint32(var) ) {
@@ -330,7 +335,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   hash_context c;
-  unsigned long digest[5];
+  unsigned_int32 digest[5];
 
   if ( !nrhs )  {
     mexErrMsgTxt("eidors_var_id: requires at least one input");
@@ -409,12 +414,12 @@ A million repetitions of "a"
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
 static
-void SHA1Transform(unsigned long state[5], unsigned char buffer[64])
+void SHA1Transform(unsigned_int32 state[5], unsigned char buffer[64])
 {
-unsigned long a, b, c, d, e;
+unsigned_int32 a, b, c, d, e;
 typedef union {
     unsigned char c[64];
-    unsigned long l[16];
+    unsigned_int32 l[16];
 } CHAR64LONG16;
 CHAR64LONG16* block;
 #ifdef SHA1HANDSOFF
@@ -482,7 +487,7 @@ static
 void hash_process( hash_context * context, unsigned char * data, unsigned len )
 {
 unsigned int i, j;
-unsigned long blen = ((unsigned long)len)<<3;
+unsigned_int32 blen = ((unsigned_int32)len)<<3;
 
     j = (context->count[0] >> 3) & 63;
     if ((context->count[0] += blen) < blen ) context->count[1]++;
@@ -503,9 +508,9 @@ unsigned long blen = ((unsigned long)len)<<3;
 /* Add padding and return the message digest. */
 
 static
-void hash_final( hash_context* context, unsigned long digest[5] )
+void hash_final( hash_context* context, unsigned_int32 digest[5] )
 {
-unsigned long i, j;
+unsigned_int32 i, j;
 unsigned char finalcount[8];
 
     for (i = 0; i < 8; i++) {
@@ -537,5 +542,5 @@ hash_initial( hash_context * c );
 static void
 hash_process( hash_context * c, unsigned char * data, unsigned len );
 static void
-hash_final( hash_context * c, unsigned long[HW] );
+hash_final( hash_context * c, unsigned_int32[HW] );
 
