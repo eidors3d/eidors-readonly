@@ -2,7 +2,7 @@ function ok= var_id_test
 % Test that the mex file eidors_var_id works 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: var_id_test.m,v 1.4 2005-10-27 13:28:08 aadler Exp $
+% $Id: var_id_test.m,v 1.5 2005-12-14 15:48:18 aadler Exp $
 
 ok=1;
 
@@ -46,14 +46,14 @@ end
 % Test 2:
 %   test for random sorting
 %
-n_var= 100;
+n_var= 10;
 for i=1:n_var
    str{i} = char( 'a' + floor(26*rand(1,20)) );
 end
 
 % Randomly order them, and assign to a variable
 var_id= '';
-for iter=1:100
+for iter=1:2
    [jnk, idx] = sort( rand(1,n_var) );
    
    vv= struct([]);
