@@ -9,7 +9,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.5 2005-12-08 00:19:58 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.6 2005-12-14 16:33:59 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -22,19 +22,15 @@ Q   = calc_meas_icov( inv_model );
 hp  = calc_hyperparameter( inv_model );
 
 
-l_data1= length(data1); l1_0 = l_data1 ~=0;
-l_data2= length(data2); l2_0 = l_data2 ~=0;
-l_data= max( l_data1, l_data2 );
-
-dva= zeros(pp.n_meas, l_data);
-
 if pp.normalize
    dva= 1 - data2 ./ data1;
 else   
    dva= data1 - data2;
 end
 
-sol = kalman_inv( J, Q, hp^2*RtR, dva );
+%sol = kalman_inv( J, Q, hp^2*RtR, dva );
+R= calc_R_prior(inv_model);
+sol = kalman_inv_cgls( J, Q, hp^2*R, dva );
 
 % create a data structure to return
 img.name= 'solved by inv_kalman_diff';
@@ -91,9 +87,62 @@ for i=1:ll
    yerr   = yi - H_k1 * x_k1_k;
    x_k1_k1= x_k1_k + K_k1 * yerr; 
    C_k1_k1= (speye(n) - K_k1 * H_k1) * C_k1_k;
+%   C_k1_k1=  C_k1_k; - what is the effect of no update?
 
    % Store output
    x(:,i) = x_k1_k1;
 end
    
 
+function x= kalman_inv_cgls( J, RegM, RegI, y);
+   [m,n]=  size(J);
+   Rx0= zeros(n,1);
+   H= [chol(W)*J;RegI];
+   b= [y;Rx0];
+   x= H\b;
+
+% Adapted from code in Hansen's regularization tools
+function x= cg_ls_inv0( J, R, y, Rx0, maxiter, tol )
+%  A = [J;R];
+   b=[y;Rx0];
+   [m,n]= size(J);
+   m_idx= 1:m; n_idx = m+(1:n);
+   Jt = J.';
+   Rt = R.';
+   x = zeros(n,1); 
+%  d = A'*b; 
+   d = Jt*b(m_idx) + Rt*b(n_idx);
+   r = b; 
+   normr2 = d'*d; 
+    
+   k=0; % Iterate. 
+   x_delta_filt= 1; x_filt= .1;
+   while 1 
+     % Update x and r vectors. 
+%    Ad = A*d;
+     Ad = [J*d;R*d];
+     Alpha = normr2/(Ad'*Ad); 
+     xpre= x;
+     x  = x + Alpha*d; 
+
+     k= k+1; if k==maxiter; break ; end
+
+     x_delta= norm(xpre-x)/norm(x);
+     x_delta_filt= x_delta_filt*(1-x_filt) + x_filt*x_delta;
+
+     if x_delta_filt<tol; break ; end
+
+     r  = r - Alpha*Ad; 
+%    s  = A'*r; 
+     s  = Jt*r(m_idx) + Rt*r(n_idx);
+    
+     % Update d vector. 
+     normr2_new = s'*s; 
+     Beta = normr2_new/normr2; 
+     normr2 = normr2_new; 
+     d = s + Beta*d; 
+      
+   end 
+%     disp([k, x_delta, x_delta_filt]);
+
+   
