@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.19 2005-12-08 12:57:19 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.20 2005-12-14 16:33:24 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -46,15 +46,8 @@ n_img= size(dva,2);
 sol = zeros( size(J,2), n_img );
 Rx0 = zeros( size(R,1), 1);
 for i=1:n_img
-%  sol(:,i) = cg_inv( J'*W*J +  hp^2*RtR, J'*W*dva(:,i), imax, etol );
-%  sol(:,i) = cg_ls_inv3( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
-tic;
    sol(:,i) = cg_ls_inv0( J,  hp*R, dva(:,i), Rx0, maxiter, tol );
-   toc;
 end
-tic;
-   sol(:,i+1) = cg_ls_inv1( chol(W)*J,  hp*R, dva(:,i), Rx0, maxiter, tol );
-toc;
 
 % create a data structure to return
 img.name= 'solved by aa_inv_conj_grad';
@@ -63,6 +56,7 @@ img.inv_model= inv_model;
 img.fwd_model= fwd_model;
 
 % x = [J;R]\[y;R*x0] using Moore - Penrose inverse
+% For comparison purposes
 function x= cg_ls_inv1( J, R, y, Rx0, maxiter, tol )
    x = [J;R]\[y;Rx0];
 
