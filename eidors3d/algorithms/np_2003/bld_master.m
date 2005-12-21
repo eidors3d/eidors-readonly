@@ -82,7 +82,9 @@ slst = zeros(1,ns*dimen^2);
   slst(pat+8) = squeeze(sum([prod([JJ(1,1,:) ; JJ(2,2,:)]); prod([-JJ(2,1,:) ; JJ(1,2,:)])])) ./ dj; 
   
 
-LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns);
+%LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns);
+%Brad's correction - match Silvestri's and match equivalent resistor
+LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns)*sqrt(2);
 
 D = LocJac * D0;
 
