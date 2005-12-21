@@ -40,6 +40,9 @@ J = zeros(sum(df),size(simp,1));
 Jrow = zeros(1,size(simp,1));
 cnt = 0;
 
+el_idx= 1:3:size(Ela,1); % Ela must be square
+Vol_cond = diag(Ela(el_idx,el_idx)).* mat_ref;
+
    for p=1:size(V,2) 
      
       DV =  D*V(:,p); %Gradient of the current fields 
@@ -53,7 +56,8 @@ cnt = 0;
         lJrow= length(Jrow_x3);
         Jrow_u = Jrow_x3(1:3:lJrow) + Jrow_x3(2:3:lJrow) + Jrow_x3(3:3:lJrow);
         
-        Jrow = Jrow_u .* diag(Ela(1:3:size(Ela,1),1:3:size(Ela,2)));
+%       Jrow = Jrow_u .* diag(Ela(1:3:size(Ela,1),1:3:size(Ela,2))); % Must account for background conductivity
+        Jrow = Jrow_u .* Vol_cond;
         
         cnt = cnt+1;
         J(cnt,:) = -Jrow.';

@@ -5,7 +5,7 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_test.m,v 1.9 2005-12-01 09:06:34 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.10 2005-12-21 19:26:35 aadler Exp $
 
 ok= 1;
 delta = 1e-6;
@@ -97,7 +97,7 @@ function ok= run_dataprior_test( mdl )
     img.elem_data= ones( size(mdl.elems,1) ,1);
     homg_data=fwd_solve( img);
 
-    DP= calc_data_prior( img );
+    DP= calc_meas_icov( img );
 
     % difference dataprior
     testvec= diag(DP);
