@@ -11,19 +11,19 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %thresh  = Threshold to show imaged region
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: repaint_inho.m,v 1.8 2005-12-08 00:08:57 aadler Exp $
+% $Id: repaint_inho.m,v 1.9 2006-01-09 22:58:56 aadler Exp $
 
 inhomg= mat - mat_ref;
-
-if nargin<5
-    thresh = max(abs(inhomg(:)))/4;
-end
 
 global eidors_colours;
 if isfield(eidors_colours,'ref_level');
    ref_level= eidors_colours.ref_level;
 else
    ref_level =0;
+end
+
+if nargin<5
+    thresh = max(abs(inhomg(:)-ref_level))/4;
 end
 
 ii= find( abs(inhomg(:)'-ref_level) > thresh);
