@@ -3,7 +3,7 @@ function [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.37 2005-12-06 15:02:51 aadler Exp $
+% $Id: demo_real.m,v 1.38 2006-01-09 22:32:59 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -64,8 +64,9 @@ inhomg_img= eidors_obj('image', 'inhomogeneous image', ...
                        'elem_data', mat, ...
                        'fwd_model', demo_mdl );
 
-%   show_fem( demo_mdl, 1);
-    show_fem( inhomg_img , 1);
+calc_colours('ref_level',1);
+show_fem( inhomg_img );
+calc_colours('ref_level',0);
 
 inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 
