@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.42 2006-01-17 03:21:20 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.43 2006-01-17 03:36:30 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -87,12 +87,12 @@ or diffuse optical data. Such software facilitates research
 and development
 in these fields by providing a reference implementation
 against which new developments can be compared, and by
-providing a functioning software base from which which new
+providing a functioning software base from which new
 ideas may be built and tested.
 Making the source code available also facilitates scrutiny
 of algorithms and their implementation by other researchers.
 The original EIDORS (version 1) software (\cite{Vauhkonen_etal_2000})
-is based on software from the thesis of Vaukhonen \cite{Vauhkonen_1997}
+is based on software from the thesis of Vaukhonen \cite{Vauhkonen_1997}.
 It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
 problem and reconstruction and display of the images.
@@ -336,7 +336,7 @@ EIDORS software consists of four primary objects:
 structure. All objects have the properties of a
 {\tt name} and {\tt type}. The {\tt name} is
 arbitrary; it is displayed by the graphics functions,
-and could also be be useful to distinguish objects
+and could also be useful to distinguish objects
 in a user specified function. The {\tt type} must
 be one of the primary objects. In this section we
 consider each software object and its properties.
@@ -895,7 +895,7 @@ If we wish to modify the example of the previous section
 to use an image prior defined by the function
 {\tt my\_cheating\_prior()} which uses the structure of the
 prior of \cite{Polydorides_2002} but modifies it to reduce
-by half the recontruction penalty at specific image elements chosen by
+by half the reconstruction penalty at specific image elements chosen by
 the user. To do this, we replace line 22 from the previous
 example.
 
