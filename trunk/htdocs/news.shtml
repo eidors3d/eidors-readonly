@@ -101,7 +101,7 @@ The following software has been implemented
     <li> Kalman filtering for difference EIT
     <li> Improved software to integrate Netgen with EIDORS
     <li> Detailed FEM model of ball moving in a vortex in
-         a tank. (<a href="examples/ball-model.html"
+         a tank. (<a href="examples/ball-model.shtml"
              >See animated image</a>)
     <li> New inverse algorithms
           <br>&minus;Truncated iteration (Morozov criterion)
@@ -717,7 +717,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-08 23:10:21 $ by $Author: aadler $
+    Last Modified: $Date: 2006-01-21 22:38:07 $ by $Author: aadler $
 </small>
 </body>
 
