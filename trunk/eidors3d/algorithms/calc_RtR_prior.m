@@ -7,7 +7,10 @@ function RtR_prior = calc_RtR_prior( inv_model, varargin )
 % calc_RtR_prior can be called as
 %    RtR_prior= calc_RtR_prior( inv_model, ... )
 %
-% in each case it will call the inv_model.RtR_prior.func
+% and will call the function inv_model.RtR_prior
+% parameters to RtR_prior should be passed in the field
+% inv_model.RtR_prior_function_name.parameters
+%
 %
 % RtR_prior    the calculated RtR regularization prior
 % inv_model    is an inv_model structure
@@ -16,7 +19,7 @@ function RtR_prior = calc_RtR_prior( inv_model, varargin )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_RtR_prior.m,v 1.1 2005-12-07 23:01:30 aadler Exp $
+% $Id: calc_RtR_prior.m,v 1.2 2006-01-23 18:14:19 aadler Exp $
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)
@@ -25,11 +28,11 @@ if ~isempty(RtR_prior)
 end
 
 if isfield(inv_model,'RtR_prior')
-   RtR_prior= feval( inv_model.RtR_prior.func, inv_model );
+   RtR_prior= feval( inv_model.RtR_prior, inv_model );
 elseif isfield(inv_model,'R_prior')
    % The user has provided an R prior. We can use this to
    % calculate RtR= R'*R;
-   R= feval( inv_model.R_prior.func, inv_model );
+   R= feval( inv_model.R_prior, inv_model );
 
    RtR_prior = R'*R;
 else
