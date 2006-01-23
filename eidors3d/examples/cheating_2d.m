@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.16 2005-12-05 23:28:32 aadler Exp $
+% $Id: cheating_2d.m,v 1.17 2006-01-23 18:14:19 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -66,19 +66,19 @@ function approach2a(vis, vhs, s_mdl, il_g)
    disp('Approach #2: reconstruct with tikhonov cheat - with inv crime');
    pp= small_face;
    % homog (normal) model
-   RtR_prior.func= @cheat_tikhonov;
-   RtR_prior.cheat_elements= [];
-   RtR_prior.cheat_weight = 0.5;
-   is_n = make_inv_model( 8 , RtR_prior ); 
+   RtR_prior= @cheat_tikhonov;
+   param_vals.cheat_elements= [];
+   param_vals.cheat_weight = 0.5;
+   is_n = make_inv_model( 8 , RtR_prior, 'cheat_tikhonov', param_vals ); 
    % sad model
-   RtR_prior.cheat_elements= [pp.eyes, pp.sad];
-   is_s = make_inv_model( 8 , RtR_prior ); 
+   param_vals.cheat_elements= [pp.eyes, pp.sad];
+   is_s = make_inv_model( 8 , RtR_prior, 'cheat_tikhonov', param_vals ); 
    % happy model
-   RtR_prior.cheat_elements= [pp.eyes, pp.smile];
-   is_h = make_inv_model( 8 , RtR_prior ); 
+   param_vals.cheat_elements= [pp.eyes, pp.smile];
+   is_h = make_inv_model( 8 , RtR_prior, 'cheat_tikhonov', param_vals ); 
    % happy/sad (medium) model
-   RtR_prior.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
-   is_m = make_inv_model( 8 , RtR_prior ); 
+   param_vals.cheat_elements= [pp.eyes, pp.rsmile, pp.lsad];
+   is_m = make_inv_model( 8 , RtR_prior, 'cheat_tikhonov', param_vals ); 
 
    show_slices( [ inv_solve( is_n, vhs, vis ), ... 
                   inv_solve( is_s, vhs, vis ), ... 
@@ -268,7 +268,7 @@ function [vis,vhs,mdl]= small_2d_mdl
                      'elem_data', mat, 'fwd_model', mdl ));
 
 % create inv_model, and specify img_prior if required
-function i_mdl= make_inv_model( n_rings, img_prior );
+function i_mdl= make_inv_model( n_rings, img_prior, param_name, param_vals );
    params= mk_circ_tank(n_rings, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
                          {'no_meas_current','no_rotate_meas'}, 1);
@@ -286,14 +286,17 @@ function i_mdl= make_inv_model( n_rings, img_prior );
 
    if nargin < 2
       img_prior.func = 'tikhonov_image_prior';
+      param_name= 'jnk___'; param_vals= 'jnk___';
      %img_prior.func = 'aa_calc_image_prior';
    end
 
    i_mdl= eidors_obj( ...
           'inv_model', '2D inverse', ...
           'hyperparameter', hparam, 'RtR_prior', img_prior, ...
+          param_name, param_vals, ...
           'reconst_type', 'difference', ...
           'fwd_model', l_mdl, 'solve', 'aa_inv_solve' );
+   i_mdl.jacobian_bkgnd.value= 1;
 
 
 function reconst_with_noise(i_mdl, vis, vhs, num_tries)
@@ -319,8 +322,8 @@ function Reg= cheat_tikhonov( inv_model )
 pp= aa_fwd_parameters( inv_model.fwd_model );
 idx= 1:pp.n_elem;
 weight= ones(1,pp.n_elem);
-weight( inv_model.RtR_prior.cheat_elements ) = ...
-        inv_model.RtR_prior.cheat_weight;
+weight( inv_model.cheat_tikhonov.cheat_elements ) = ...
+        inv_model.cheat_tikhonov.cheat_weight;
 
 Reg = sparse( idx, idx, weight );
 

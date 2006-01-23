@@ -6,13 +6,15 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % calc_R_prior can be called as
 %    R_prior= calc_R_prior( inv_model, ... )
 %
-% in each case it will call the inv_model.R_prior.func
+% and will call the function inv_model.R_prior
+% parameters to R_prior should be passed in the field
+% inv_model.R_prior_function_name.parameters
 %
 % R_prior      calculated regularization prior R
 % inv_model    is an inv_model structure
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_R_prior.m,v 1.1 2005-12-07 23:01:30 aadler Exp $
+% $Id: calc_R_prior.m,v 1.2 2006-01-23 18:14:18 aadler Exp $
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)
@@ -21,11 +23,11 @@ if ~isempty(R_prior)
 end
 
 if isfield(inv_model,'R_prior')
-   R_prior= feval( inv_model.R_prior.func, inv_model );
+   R_prior= feval( inv_model.R_prior, inv_model );
 elseif isfield(inv_model,'RtR_prior')
    % The user has provided an RtR prior. We can use this to
    % get R =RtR^(1/2). Not that this is non unique
-   RtR_prior= feval( inv_model.RtR_prior.func, inv_model );
+   RtR_prior= feval( inv_model.RtR_prior, inv_model );
 
    % generates an error for rank deficient RtR_prior
    R_prior = chol (RtR_prior);
