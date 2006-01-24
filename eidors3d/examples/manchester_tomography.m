@@ -13,7 +13,7 @@
 %    Reconstruction = np_inv_solve
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.9 2005-12-07 16:39:08 aadler Exp $
+% $Id: manchester_tomography.m,v 1.10 2006-01-24 02:53:26 aadler Exp $
 function manchester_tomography( example_no)
 
 switch example_no
@@ -62,7 +62,7 @@ function example_diff_morozov_reconst
     imdl= eidors_obj('inv_model','Morozov mdl');
     imdl.solve= 'np_inv_solve';
     imdl.solve= 'inv_solve_trunc_iterative';
-    imdl.R_prior.func= 'np_calc_image_prior';
+    imdl.R_prior= 'np_calc_image_prior';
     imdl.jacobian_bkgnd.value = .01;
     imdl.np_calc_image_prior.parameters= [3 1];
     imdl.reconst_type= 'difference';
@@ -76,7 +76,7 @@ function example_diff_np_reconst
 
     imdl= eidors_obj('inv_model','NP mdl');
     imdl.solve= 'np_inv_solve';
-    imdl.R_prior.func= 'np_calc_image_prior';
+    imdl.R_prior= 'np_calc_image_prior';
     imdl.hyperparameter.value = 1e-4;
 
     imdl.jacobian_bkgnd.value = .01;
@@ -92,7 +92,7 @@ function example_diff_tv_reconst_sim
 
     imdl= eidors_obj('inv_model','TV mdl');
     imdl.solve= 'ab_tv_diff_solve';
-    imdl.R_prior.func= 'ab_calc_tv_prior';
+    imdl.R_prior= 'ab_calc_tv_prior';
     imdl.parameters.max_iterations= 2;
     imdl.hyperparameter.value = [1e-1,1e-5];
 
@@ -109,7 +109,7 @@ function example_diff_tv_reconst
 
     imdl= eidors_obj('inv_model','TV mdl');
     imdl.solve= 'ab_tv_diff_solve';
-    imdl.R_prior.func= 'ab_calc_tv_prior';
+    imdl.R_prior= 'ab_calc_tv_prior';
     imdl.parameters.max_iterations= 1;
     imdl.hyperparameter.value = [1e-1,1e-5];
 
@@ -166,7 +166,7 @@ show_fem(imgr);
 imdl2= eidors_obj('inv_model', 'DS dual mesh');
 imdl2.solve= 'inv_solve_dual_mesh';
 imdl2.hyperparameter.value = 1e-4;
-imdl2.R_prior.func= 'np_calc_image_prior';
+imdl2.R_prior= 'np_calc_image_prior';
 imdl2.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
 imdl2.jacobian_bkgnd.value= 1;
 imdl2.reconst_type= 'static';

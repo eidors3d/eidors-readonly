@@ -16,7 +16,7 @@ function [imgr, img]= compare_2d_algs(option);
 %   7  aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.13 2005-12-08 13:42:31 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.14 2006-01-24 02:53:26 aadler Exp $
 
 calc_colours('ref_level',0);
 
@@ -46,43 +46,44 @@ inv2d.reconst_type= 'difference';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
+inv2d.parameters.term_tolerance= 1e-3;
 
 switch option
    case 1,
      inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'aa_inv_solve';
-     inv2d.RtR_prior.func= 'laplace_image_prior';
+     inv2d.RtR_prior=   'laplace_image_prior';
 
    case 2,
      inv2d.hyperparameter.value = 1e-3;
-     inv2d.RtR_prior.func= 'laplace_image_prior';
+     inv2d.RtR_prior=   'laplace_image_prior';
      inv2d.solve=       'np_inv_solve';
 
    case 3,
      inv2d.hyperparameter.func = 'aa_calc_noise_figure';
      inv2d.hyperparameter.noise_figure= 2;
      inv2d.hyperparameter.tgt_elems= 1:4;
-     inv2d.RtR_prior.func= 'aa_calc_image_prior';
+     inv2d.RtR_prior=   'aa_calc_image_prior';
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
      inv2d.hyperparameter.value = [1e-2, 1e-4];
      inv2d.parameters.max_iterations= 5;
-     inv2d.R_prior.func= 'ab_calc_tv_prior';
+     inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
      calc_colours('ref_level',1);
 
    case 5,
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
-     inv2d.R_prior.func= 'laplace_image_prior';
+     inv2d.R_prior=     'laplace_image_prior';
      inv2d.parameters.max_iterations= 10;
 
    case 6,
      subplot(141); show_slices(img);
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
-     inv2d.R_prior.func= 'laplace_image_prior';
+     inv2d.R_prior=     'laplace_image_prior';
      inv2d.parameters.max_iterations= 1;
      subplot(142); show_slices( inv_solve( inv2d, vi, vh) );
      inv2d.parameters.max_iterations= 2;
@@ -96,7 +97,7 @@ switch option
      inv2d.parameters.max_iterations = 1e3;
      inv2d.parameters.term_tolerance = 1e-3;
      inv2d.solve=          'aa_inv_conj_grad';
-     inv2d.R_prior.func=   'ab_calc_tv_prior';
+     inv2d.R_prior=        'ab_calc_tv_prior';
 
    otherwise,
      error('action unknown');
