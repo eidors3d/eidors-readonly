@@ -10,7 +10,7 @@ EIDORS package.
 <p><li><b>
     9 Dec 2005: 
 </b>
-EIDORS V3.1RC1 Released
+
 <br>
 Andy Adler &amp; Bill Lionheart
 <p>
@@ -56,13 +56,12 @@ for discussion, we make the following suggestion.
 
 -->
 
-<!--
 <p><li><b>
-    9 Dec 2005: 
+    23 Jan 2005:
 </b>
 EIDORS V3.1RC1 Released
 <br>
-Andy Adler &amp; Bill Lionheart
+Andy Adler
 <p>
 Blobby the walrus would like to announce
 the release of <tt>EIDORS-3.1RC1</tt>. This is the
@@ -81,7 +80,6 @@ tomography technologies. New features include
 As always, if your favourite feature is absent, or your
 least favourite bug is present, please make your comments
 to the authors
--->
 
 <p><li><b>
     29 Nov&minus;9 Dec 2005: 
@@ -717,7 +715,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-01-21 22:38:07 $ by $Author: aadler $
+    Last Modified: $Date: 2006-01-24 03:21:47 $ by $Author: aadler $
 </small>
 </body>
 
