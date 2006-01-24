@@ -3,7 +3,7 @@ function [org_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.38 2006-01-09 22:32:59 aadler Exp $
+% $Id: demo_real.m,v 1.39 2006-01-24 02:53:26 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -81,7 +81,7 @@ disp('step 7: create inverse model');
 demo_inv.name= 'Nick Polydorides EIT inverse';
 demo_inv.solve=       'np_inv_solve';
 demo_inv.hyperparameter.value = 1e-4;
-demo_inv.R_prior.func= 'np_calc_image_prior';
+demo_inv.R_prior= 'np_calc_image_prior';
 demo_inv.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
 demo_inv.jacobian_bkgnd.value= 1;
 demo_inv.reconst_type= 'difference';

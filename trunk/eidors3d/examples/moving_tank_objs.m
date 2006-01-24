@@ -14,7 +14,7 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 %   inv_sel = 2 => 2D reconstruction=> inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.5 2005-12-10 10:46:40 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.6 2006-01-24 02:53:26 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
@@ -51,25 +51,25 @@ switch inv_sel
     case 1
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior.func= 'laplace_image_prior';
+        imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'aa_inv_solve';
 
     case 1.1
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior.func= 'laplace_image_prior';
+        imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'aa_inv_solve';
 
     case 2
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior.func= 'laplace_image_prior';
+        imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'inv_kalman_diff';
 
     case 3
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior.func= 'laplace_image_prior';
+        imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'aa_inv_conj_grad';
 end
 

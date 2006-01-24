@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.20 2005-12-08 00:20:01 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.21 2006-01-24 02:53:26 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -79,8 +79,8 @@ inv2d.solve=       'aa_inv_solve';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;
  inv2d.hyperparameter.value = 1e-2;
- inv2d.RtR_prior.func= 'laplace_image_prior';
-%inv2d.RtR_prior.func= 'aa_calc_image_prior';
+ inv2d.RtR_prior= 'laplace_image_prior';
+%inv2d.RtR_prior= 'aa_calc_image_prior';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
@@ -119,7 +119,7 @@ inv3d.name=  'EIT inverse: 3D';
  inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
 inv3d.hyperparameter.value = 1e-4;
 inv3d.jacobian_bkgnd.value= 1;
-inv3d.RtR_prior.func= 'laplace_image_prior';
+inv3d.RtR_prior= 'laplace_image_prior';
 inv3d.reconst_type= 'difference';
 inv3d.fwd_model= fm3d;
 inv3d= eidors_obj('inv_model', inv3d);
