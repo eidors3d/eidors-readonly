@@ -1,7 +1,13 @@
+function imgr= compare_3d_algs( algno )
 % Compare different 3D reconstructions
+% 
+% algno=1     np_inv_solve            np_calc_image_prior
+% algno=2     laplace_image_prior     np_inv_solve
+% algno=3     ab_calc_tv_prior        np_inv_solve
+% algno=4     ab_calc_tv_prior        ab_tv_diff_solve
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.9 2006-01-24 02:53:26 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.10 2006-01-24 03:07:34 aadler Exp $
 
 calc_colours('ref_level',0);
 
@@ -31,7 +37,7 @@ inv3d.fwd_model= imb.fwd_model;
 inv3d.fwd_model.misc.perm_sym= '{y}';
 
      iidx=1;
-switch 4
+switch algno
    case 1,
      inv3d.hyperparameter.value = 1e-4;
      inv3d.solve=       'np_inv_solve';
@@ -51,6 +57,7 @@ switch 4
    case 4,
      inv3d.hyperparameter.value = [1e-2, 1e-5];
      inv3d.parameters.max_iterations= 5;
+     inv3d.parameters.term_tolerance= 1e-3;
      inv3d.R_prior=      'ab_calc_tv_prior';
      inv3d.solve=        'ab_tv_diff_solve';
      iidx=[1,2,5];

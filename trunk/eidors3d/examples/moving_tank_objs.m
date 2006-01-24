@@ -14,7 +14,7 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 %   inv_sel = 2 => 2D reconstruction=> inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.6 2006-01-24 02:53:26 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.7 2006-01-24 03:07:34 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
@@ -75,6 +75,7 @@ end
 
 imgs= inv_solve(imdl,vi,vh);
 mk_movie2(filename, imgs);
+fprintf('file %s.gif created\n',filename);
 
 
 
