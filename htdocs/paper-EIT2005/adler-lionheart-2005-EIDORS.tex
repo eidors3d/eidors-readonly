@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.46 2006-01-26 20:06:55 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.47 2006-01-26 20:41:36 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -18,14 +18,6 @@
 \newcommand{\CI}{&\small\tt\em}   % start code
 \newcommand{\CODEend}{\end{tabular}\medskip}
 
-% Response to reviewers and new issues to deal with in 
-% EIDORS V3.1
-%
-% - Note EIDORS 3.1 release
-% - comment on TV, Kalman filtering, etc
-% - Unit matching - hp^2 
-% - RtR_prior vs R_prior
-% - modify figures
 
 \usepackage[dvips]{graphicx} % Package for inserting figures
 \begin{document}
@@ -1077,7 +1069,7 @@ by:
 
 \begin{equation}
    \hat{\bf x} = 
-   \left({\bf J}^t{\bf J} + \lambda{\bf R}\right)^{-1}
+   \left({\bf J}^t{\bf J} + \lambda^2{\bf R}\right)^{-1}
          {\bf J}^t{\bf y}
 \end{equation}
 
@@ -1115,7 +1107,7 @@ in the happy face, we set
 while all remaining diagonal elements of $\bf R$ are $1.0$.
 
 The effect of modified Tikhonov prior selection is shown in
-Fig.~\ref{fig:tikprior}.
+Fig.~\ref{fig:tikprior}A.
 In this case, images were reconstructed on a 576 element
 FEM (chosen to differ from the 256 element simulation mesh).
 
@@ -1126,10 +1118,16 @@ FEM (chosen to differ from the 256 element simulation mesh).
 \begin{figure}[th]
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_tik_wo-icrime.eps}
+\put(-360,75){\LARGE{\bf A}}
+\vspace{-1mm}
+\includegraphics[width= 0.80 \textwidth]{./figs/fig_tik_w-icrime.eps}
+\put(-360,75){\LARGE{\bf B}}
 \caption{\small 
 Reconstructed images illustrating the effect of modifications
-to Tikhonov image priors,
-using a different mesh for model and reconstruction.
+to Tikhonov image priors, using:
+{\em Row A} a different mesh for model and reconstruction.
+{\em Row B} the {\em same} mesh for model and reconstruction 
+({\em ie\. inverse crime}).
 Images are numbered from left to right.
 {\em Image 1:} Tikhonov prior with no weighting,
 {\em Image 2:} Tikhonov prior with weighting for positions in sad face,
@@ -1141,34 +1139,14 @@ happy face (right),
 \end{flushright}
 \end{figure}
 
+
 In order to enhance this effect, we use an {\em inverse crime},
 which, as defined by \cite{Colton_and_Kress_1992}, occurs when
 using the same model for both data simulation and image reconstruction.
 In this case, the regularized prior information is placed
 {\em exactly} at the positions of the happy face finite elements
-(Fig.~\ref{fig:tikprior_icrime}). The results show sharper region boundaries
+(Fig.~\ref{fig:tikprior}B). The results show sharper region boundaries
 and a more pronounced 'happy transform' effect.
-
-%
-% FIGURE: Tikhonov Prior with inv crime
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./figs/fig_tik_w-icrime.eps}
-\caption{\small 
-Reconstructed images illustrating the effect of modifications
-to Tikhonov image priors,
-using the {\em same} mesh for model and reconstruction.
-Images are numbered from left to right.
-{\em Image 1:} Tikhonov prior with no weighting,
-{\em Image 2:} Tikhonov prior with weighting for positions in sad face,
-{\em Image 3:} Tikhonov prior with weighting for positions in happy face,
-{\em Image 4:} Tikhonov prior with weighting for sad face (left) and
-happy face (right),
- }
- \label{fig:tikprior_icrime}
-\end{flushright}
-\end{figure}
 
 
 \subsection{ Cheating approach \#3:
@@ -1204,12 +1182,19 @@ to penalize high frequency components (edges) in the image.
 In a similar way to the Tikhonov case, 
 if we {\em know} (or assume) where the edges are,
 then edges should not be penalized (or be less penalized) in
-those places. Fig.~\ref{fig:laplprior}
+those places. Fig.~\ref{fig:laplprior}A
 shows the effect of such careful
 edge preserving prior selection (with no {\em inverse crime}).
 {\em Known edges} are weighted at $0.2$ times that of other
 edges in the image. Again, the inverse crime produces sharper
 image contrasts and a more pronounced effect.
+In order to enhance this effect, we use an {\em inverse crime},
+by putting the prior information {\em exactly} where edges
+occur in the happy face
+(Fig.~\ref{fig:laplprior})B.
+{\em Known} (or assumed) edges are weighted at $0.2$ times that of other
+edges in the image.
+
 
 %
 % FIGURE: Laplace prior
@@ -1217,10 +1202,16 @@ image contrasts and a more pronounced effect.
 \begin{figure}[th]
 \begin{flushright}
 \includegraphics[width= 0.80 \textwidth]{./figs/fig_lapl_wo-icrime.eps}
+\put(-360,75){\LARGE{\bf A}}
+\vspace{-1mm}
+\includegraphics[width= 0.80 \textwidth]{./figs/fig_lapl_w-icrime.eps}
+\put(-360,75){\LARGE{\bf B}}
 \caption{\small 
 Reconstructed images illustrating the effect modifying the
-weighting of edge preserving image priors,
-using different mesh for model and reconstruction.
+weighting of edge preserving image priors, using:
+{\em Row A} a different mesh for model and reconstruction.
+{\em Row B} the {\em same} mesh for model and reconstruction 
+({\em ie\. inverse crime}).
 Images are numbered from left to right.
 {\em Image 1:} Edge prior with no weighting,
 {\em Image 2:} Edge prior with weighting for positions in sad face,
@@ -1231,35 +1222,6 @@ happy face (right),
  \label{fig:laplprior}
 \end{flushright}
 \end{figure}
-
-In order to enhance this effect, we use an {\em inverse crime},
-by putting the prior information {\em exactly} where edges
-occur in the happy face
-(Fig.~\ref{fig:laplprior-icrime}).
-{\em Known} (or assumed) edges are weighted at $0.2$ times that of other
-edges in the image.
-
-%
-% FIGURE: Laplace prior with inv crime
-%
-\begin{figure}[th]
-\begin{flushright}
-\includegraphics[width= 0.80 \textwidth]{./figs/fig_lapl_w-icrime.eps}
-\caption{\small 
-Reconstructed images illustrating the effect modifying the
-weighting of edge preserving image priors,
-using same mesh for model and reconstruction.
-Images are numbered from left to right.
-{\em Image 1:} Edge prior with no weighting,
-{\em Image 2:} Edge prior with weighting for positions in sad face,
-{\em Image 3:} Edge prior with weighting for positions in happy face,
-{\em Image 4:} Edge prior with weighting for sad face (left) and
-happy face (right),
- }
- \label{fig:laplprior-icrime}
-\end{flushright}
-\end{figure}
-
 
 \subsection{
 Cheating approach \#3:
@@ -1290,7 +1252,7 @@ very well with a crude mesh and reconstruction algorithm,
 but we are interested to see if we can distinguish three
 fingers and their approximate position. Our first attempt,
 using an arbitrarily chosen regularization factor
-of $10^{-8}$ appears in Fig.~\ref{fig:3fingers1}. It is
+of $10^{-4}$ appears in Fig.~\ref{fig:3fingers1}. It is
 displayed using the VTK visualization program MayaVi
 \cite{Ramachandran_2003}, after exporting the data to a vtk file
 using the EIDORS function {\tt writevtkfile(filename,model,image)}. The
