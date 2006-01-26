@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.44 2006-01-26 03:52:55 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.45 2006-01-26 04:03:50 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -907,9 +907,9 @@ and how image artefacts may easily be introduced by the incorrect
 choice of these parameters. The ``plugability'' feature of the
 EIDORS design allows this to be implemented in an convenient way.
 
-If we wish to modify the example of the previous section
+In this section, we modify the example of the previous section
 to use an image prior defined by the function
-{\tt my\_cheating\_prior()} which uses the structure of the
+{\tt my\_cheating\_prior()}; this function is similar to the
 prior of \cite{Polydorides_2002} but modifies it to reduce
 by half the reconstruction penalty at specific image elements chosen by
 the user. To do this, we replace line 22 from the previous
@@ -1270,7 +1270,8 @@ of cuboids with the cylinder representing the tank. The
 target object is three triangular prisms projecting from
 the base of cylinder as a crude approximation to three
 fingers inserted in a saline filled tank. To make the
-simulated data, we used a mesh respecting these fingers
+simulated data, we used a mesh with added contrasts to model
+these fingers
 (Fig.~\ref{fig:threefingers}) and added Gaussian pseudo-random
 error to this data with a variance of $10^{-5}$ of the maximum
 voltage. The images shown are typical of those generated
