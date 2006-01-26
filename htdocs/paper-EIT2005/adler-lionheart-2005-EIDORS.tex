@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.48 2006-01-26 20:51:27 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.49 2006-01-26 21:38:04 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -1229,6 +1229,20 @@ happy face (right),
 Cheating approach \#3:
      Reconstruction of Three fingers
 }
+
+%
+% FIGURE:  fingers X section
+%
+\begin{figure}[th]
+
+\scalebox{0.45}{{\includegraphics{figs/simulated_inhomogeneities.eps}}}
+\scalebox{0.45}{{\includegraphics{figs/reconstructed_conductivity.eps}}}
+\caption{\label{fig:3fingersXsect}
+{\em Left} The three fingers test object cross section used to simulate voltage data.
+{\em Right} Initial reconstruction of the three finger object.
+}
+\end{figure}
+
 We now illustrate some cheating for a three dimensional
 problem. We model a cylindrical phantom tank with a rather
 coarse FEM mesh of only 828 elements with 32 rectangular
@@ -1243,8 +1257,7 @@ target object is three triangular prisms projecting from
 the base of cylinder as a crude approximation to three
 fingers inserted in a saline filled tank. To make the
 simulated data, we used a mesh with added contrasts to model
-these fingers
-(Fig.~\ref{fig:threefingers}) and added Gaussian pseudo-random
+these fingers (Fig.~\ref{fig:3fingersXsect} Left) and added Gaussian pseudo-random
 error to this data with a variance of $10^{-5}$ of the maximum
 voltage. The images shown are typical of those generated
 from data from several draws of the pseudo random number
@@ -1254,7 +1267,7 @@ very well with a crude mesh and reconstruction algorithm,
 but we are interested to see if we can distinguish three
 fingers and their approximate position. Our first attempt,
 using an arbitrarily chosen regularization factor
-of $10^{-4}$ appears in Fig.~\ref{fig:3fingers1}. It is
+of $10^{-4}$ appears in Fig.~\ref{fig:3fingers}A. It is
 displayed using the VTK visualization program MayaVi
 \cite{Ramachandran_2003}, after exporting the data to a vtk file
 using the EIDORS function {\tt writevtkfile(filename,model,image)}. The
@@ -1264,24 +1277,6 @@ Mayavi, and displayed using Mayavi's {\tt isosurface} with
 the contour level selected manually. The image projection
 has been selected to best see the fingers.
 
-%
-% FIGURE:  fingers original
-%
-\begin{figure}[th]
-\includegraphics[width= 0.50 \textwidth]{figs/threefingers.eps}
-\caption{\label{fig:threefingers}The three fingers test object and mesh used to generate voltage data.}
-\end{figure}
-
-
-
-%
-% FIGURE:  fingers first stab
-%
-\begin{figure}[th]
-\includegraphics[width= 0.50 \textwidth]{figs/three-fingers-reconstructed.eps}
-\caption{\label{fig:3fingers1}
-Initial reconstruction of the three finger object.}
-\end{figure}
 
 Cross sectional images of original and reconstructed
 conductivity are shown in Fig.~\ref{fig:3fingersXsect}
@@ -1291,49 +1286,44 @@ cheating. In the absence of a priori information about
 the number or shape of the target some automatic selection
 procedure is needed. Mayavi's default contour selection
 in this case produces an image that is not as easy to
-interpret as three fingers (Fig.~\ref{fig:3fingersMVdefault})
+interpret as three fingers (Fig.~\ref{fig:3fingers}B)
 
 %
-% FIGURE:  fingers X section
+% FIGURE:  fingers first stab
 %
 \begin{figure}[th]
-
-\scalebox{0.5}{{\includegraphics{figs/simulated_inhomogeneities.eps}}}
-\scalebox{0.5}{{\includegraphics{figs/reconstructed_conductivity.eps}}}
-\caption{\label{fig:3fingersXsect}
-Cross sections and initial reconstruction of the three finger object.}
+\begin{flushright}
+\includegraphics[width=0.20 \textwidth,trim=170 30 20 0]{figs/three-fingers-reconstructed.eps}
+\put(-90,85){\LARGE{\bf A}}
+\hspace{0mm}
+\includegraphics[width=0.20 \textwidth,trim=170 0 20 0]{figs/three-fingers-recon-default-mv-iso.eps}
+\put(-90,85){\LARGE{\bf B}}
+\hspace{0mm}
+\includegraphics[width=0.25 \textwidth,trim=140 100 50 0]{figs/less-tikhonov.eps}
+\put(-100,85){\LARGE{\bf C}}
+\hspace{0mm}
+\includegraphics[width=0.25 \textwidth,trim=160 100 30 0]{figs/lots-of-fingers.eps}
+\put(-125,85){\LARGE{\bf D}}
+\end{flushright}
+\caption{\label{fig:3fingers}
+{\em A:} Initial reconstruction of the three finger object
+{\em B:} Mayavi's automatic selection of contour
+{\em C:} The effect of decreasing the Tikhonov regularization parameter
+ by a factor of 10
+{\em D:} Seemingly different number of fingers resulting simply from a
+ different choice of contour
+}
 \end{figure}
 
-%
-% FIGURE:  fingers Mayavi default contour selection
-%
-\begin{figure}[th]
-\includegraphics[width= 0.50 \textwidth]{figs/three-fingers-recon-default-mv-iso.eps}
-\caption{\label{fig:3fingersMVdefault}
-Mayavi's automatic selection of contour}
-\end{figure}
 Choosing a smaller regularization parameter will of
 course generate a less smooth conductivity and we might
 easily interpret such an image as having a different number
 of fingers.
-Fig.~\ref{fig:3fingersLessTik} illustrates the effect of
+Fig.~\ref{fig:3fingers}C illustrates the effect of
 reducing the regularization parameter by a factor of
 10. Similarly an unfortunate choice of contour could
 produce an image susceptible to interpreting more fingers
-(Fig.~\ref{fig:3fingersMoreFingers}).
-\begin{figure}[th]
-\includegraphics[width= 0.50 \textwidth]{figs/less-tikhonov.eps}
-\caption{\label{fig:3fingersLessTik}
-The effect of decreasing the Tikhonov regularization parameter
- by a factor of 10}
-\end{figure}
-\begin{figure}[th]
-\includegraphics[width= 0.50 \textwidth]{figs/lots-of-fingers.eps}
-\caption{\label{fig:3fingersMoreFingers}
-Seemingly different number of fingers resulting simply from a
- different choice of contour}
-\end{figure}
-
+(Fig.~\ref{fig:3fingers}D).
 
 
 
