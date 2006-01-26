@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.43 2006-01-17 03:36:30 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.44 2006-01-26 03:52:55 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -78,7 +78,7 @@ EIDORS
  {\bf D}iffuse
  {\bf O}ptical tomography
  {\bf R}econstruction
- {\bf S}oftware )
+ {\bf S}oftware)
 is a software suite for image reconstruction in
 electrical impedance tomography and diffuse optical tomography.
 Its goal is to provide a freely distributable and modifiable
@@ -117,7 +117,7 @@ code which could not easily be refactored in order to
 be contributed back to EIDORS. Additionally, recent work has begun to move
 away from basic reconstruction algorithms, focussing
 on such issues as mesh generation, electrode modelling, visualization
-and electrode error detection. This research would be facilitated
+and electrode error detection. Such research would be facilitated
 by using modular components which could be ``plugged'' into
 a selection of reconstruction algorithms.
 
@@ -133,7 +133,8 @@ which incorporates the following features:
 EIDORS V.3 has been redesigned to allow flexibility of
 using multiple algorithms (or parts of algorithms). 
 This version provides access to the algorithms of
-\cite{Adler_and_Guardo_1996}, \cite{Polydorides_and_Lionheart_2002},
+\cite{Adler_and_Guardo_1996}, \cite{Borsic_2002},
+\cite{Polydorides_and_Lionheart_2002},
 \cite{Soleimani_etal_2005} and \cite{Vauhkonen_etal_2000}.
 We feel that this capability is becoming more
 important with a trend toward meta-algorithms
@@ -198,9 +199,9 @@ modifications to it are made available.
   \item {\em Sourceforge hosting:}
 In order to allow collaborative development, 
 EIDORS is hosted by {\tt sourceforge.net}
-available at {\tt http://eidors3d.sf.net}.
+available at {\tt http://eidors.org} or {\tt http://eidors3d.sf.net}.
 Software is available for download as packaged released versions
-(version 3.0 was released on 31 Oct 2005, and
+(version 3.1 was released on 24 Jan 2006, and
 contains the features described in this paper),
 or the latest developments may be downloaded from the
 Concurrent Versions System (CVS) \cite{Cederqvist_2002}.
@@ -224,7 +225,7 @@ Some progress has been achieved, and EIDORS version 3
 works with Octave \cite{Eaton_2002}, although some 
 advanced graphics functions still function only with Matlab.
 The current version of EIDORS works with Octave
-(version $\ge$ 2.9.3)
+(version $\ge$ 2.9.4)
 and Matlab (version $\ge$ 6.0).
 Support for Octave was motivated by two goals:
 first, octave provides a free software platform
@@ -281,7 +282,10 @@ modules.
   \item {\em Enhanced Finite Element Modelling and Graphical output:}
 Image reconstruction, especially in 3D, requires functions
 to show high quality graphical representations of the images.
-EIDORS provides several functions for image presentation:
+EIDORS provides several functions for image presentation using
+the Matlab graphics features, as well as functions to 
+display images using the VTK visualization program 
+\cite{Ramachandran_2003}, after exporting the data to a vtk file.
 {\tt show\_fem.m} displays a three dimensional model of the
 finite element mesh and conductivity changes, while
 {\tt show\_slices.m} allows generation of images of arbitrary
@@ -292,6 +296,10 @@ All EIDORS graphics functions now use a single colour
 mapping function {\tt calc\_colours.m}, which allows
 global modification of all image colouring using a
 global variable {\tt eidors\_colours}.
+For modelling, the {\tt create\_tank\_mesh\_ng.m}
+function is provided to automatically interface to the
+netgen \cite{Schoberl_1997} finite element modelling
+tool.
 
 
 %  \item {\em Logo:}
@@ -337,21 +345,11 @@ structure. All objects have the properties of a
 {\tt name} and {\tt type}. The {\tt name} is
 arbitrary; it is displayed by the graphics functions,
 and could also be useful to distinguish objects
-in a user specified function. The {\tt type} must
-be one of the primary objects. In this section we
-consider each software object and its properties.
-
-
-All EIDORS objects are represented using a Matlab
-(or Octave) structure. All objects must have 
-{\tt name} and {\tt type} fields. 
+in a user specified function.
 The {\tt type} is used to identify the object type 
 (ie {\tt data}, {\tt image} etc.).
-The {\tt name} is arbitrary, and may be used or ignored
-by software using EIDORS; it is only used by the
-graphical functions of EIDORS to annotate displayed images.
 
-\subsubsection{fwd\_model}
+\subsubsection{fwd\_model}:
 
 %
 % FIGURE: Forward Model
@@ -401,7 +399,7 @@ does not require the electrode model to be the same
 for all electrodes in a {\tt fwd\_model}.
 
 Using these electrodes, a sequence of $S$ stimulation
-patterns are applied and measurements are performed
+patterns are applied and measurements performed
 in order to generate a frame of data.
 Stimulation patterns are defined by a vector
 ($S\times1$) of {\tt stimulation} fields. Each
@@ -417,6 +415,11 @@ EIDORS only accepts current stimulations.
 {\tt stim\_pattern} is a vector ($E\times1$)
 of the stimulation quantity applied to each electrode
 during that stimulation pattern.
+Each {\tt stimulation} object also has an optional 
+{\tt delta\_time} field representing the time increment
+between measurements at this stimulation and the beginning
+of the measurement frame. Such data may be used to perform
+Kalman filtering, for example.
 {\tt meas\_pattern} is a (sparse) matrix ($E{\times}M_i$) 
 representing the $M_i$ measurement patterns for
 stimulation $i$. Each column of this matrix represents
@@ -438,7 +441,7 @@ measurements (or, considering reciprocity, $104$ independent
 measurements). One practical consideration is that
 many EIT systems store data as a matrix of size
 ($E^2{\times}F$) where $F$ is the number of data
-frames. In this case $E^2= 256$ and $3{\times}E = 48$ measurements
+frames. In this case $E^2= 256$ of which $3{\times}E = 48$ measurements
 in each frame yield zero. In order to allow easy 
 use of EIDORS with such systems, the optional
 field {\tt meas\_select} ($E^2\times1$) is defined
@@ -466,7 +469,7 @@ name (as a string) or a function pointer to calculate
 these quantities. In each case, these quantities
 are solved using the utility functions 
 {\tt fwd\_solve()}, 
-{\tt calc\_solve()} and
+{\tt calc\_jacobian()} and
 {\tt calc\_system\_mat()}.
 For example, given
 a {\tt fwd\_model} object {\tt fmdl}, we may calculate
@@ -492,7 +495,7 @@ An EIDORS {\tt data} object represents a frame of
 measurement or simulated data. The structure of the
 {\tt data} objects is shown in Fig.~\ref{fig:data}. The
 required fields are the actual frame data, {\tt meas},
-and the acquisition time {\tt time} in seconds 
+and the acquisition time, {\tt time}, in seconds 
 after the epoch. In a particular application {\tt time}
 may be defined with respect to another start point, such as
 the start of the experiment, or may be set to $0$ or $-1$ 
@@ -565,10 +568,23 @@ This strategy may be specified by setting
  {\tt hyperparameter.func='aa\_calc\_noise\_figure'}
 and 
  {\tt hyperparameter.noise\_figure=\em Value}.
-The image prior is selected by the {\tt image\_prior} field;
-the function to calculate the image prior is the {\tt func}
-field, while
-any parameters to this function are provided as {\tt parameters}.
+
+Image prior's may be specified in two ways, using a 
+regularization term of ${\bf x}^t{\bf R}{\bf x}$
+while others use ${\bf x}^t{\bf R}^t{\bf R}{\bf x}$.
+One implementation concern is to make it clear to the
+user which type of image prior is required. EIDORS
+implements this by defining two different image prior
+calculations functions {\tt R\_prior} and {\tt RtR\_prior}.
+A user may provide either or both. When the algorithm
+specified in the {\tt solve} field is called, it will request
+either an {\tt R\_prior} or {\tt RtR\_prior}. If the 
+{\tt RtR\_prior} is required, but the {\tt R\_prior} 
+is specified, then it will be calculated from ${\bf R}^t{\bf R}$.
+Similarly, EIDORS will attempt to calculate ${\bf R}$ 
+from the Cholesky factorization of the {\tt RtR\_prior},
+if required. Parameters to an image prior function are
+specified in an added field with the name of the function.
 
 \subsubsection{image}
 
@@ -686,7 +702,7 @@ In order to calculate the Jacobian, we call
 \CODEend
 
 which, first, tests to see whether {\bf J} has been previously
-calculated for {\tt fem} and {\tt img\_bkgnd}; if
+calculated for {\tt fem} and {\tt img\_bkgnd}. If
 so, the cached value is returned; otherwise,
 it loads and calls the function in {\tt fem.jacobian},
 which may be {\tt np\_calc\_jacobian}, which 
@@ -699,9 +715,9 @@ calling function.
 
 In this section two examples of the usage of EIDORS
 software functions are provided. The first illustrates
-how to change the electrode configuration and stimulation 
-pattern can be taken
-into account with a modification of the {\tt fwd\_model}.
+how a change in the electrode configuration and stimulation 
+pattern can be done
+with a modification of the {\tt fwd\_model}.
 The second illustrates how to modify the image reconstruction
 behaviour of an existing algorithm to
 add new features.
@@ -753,8 +769,8 @@ to simulate voltage patterns.
 \CN    \CC meas_i.meas= meas_i.meas + noise; @\\[-3pt]
 \CN    \CI \% inverse model and reconstruct\\[-3pt]
 \CN 20 \CC mdl.solve               = 'np_inv_solve'; @\\[-3pt]
-\CN    \CC mdl.hyperparameter.value= 1e-4; @\\[-3pt]
-\CN    \CC mdl.image_prior.func    = 'np_calc_image_prior'; @\\[-3pt]
+\CN    \CC mdl.hyperparameter.value= 1e-2; @\\[-3pt]
+\CN    \CC mdl.RtR_prior           = 'np_calc_image_prior'; @\\[-3pt]
 \CN    \CC img= inv_solve( mdl, meas_h, meas_i); @\\[-3pt]
 \CODEend
 
@@ -901,8 +917,8 @@ example.
 
 \CODEstart
 \CN    \CI \% lines 1-21 from above \\[-3pt]
-\CN    \CC mdl.image_prior.func       = 'my_cheating_prior'; @\\[-3pt]
-\CN    \CC mdl.image_prior.parameter2 = [target_A]; @\\[-3pt]
+\CN    \CC mdl.RtR_prior.func               = 'my_cheating_prior'; @\\[-3pt]
+\CN    \CC mdl.my_cheating_prior.target = [target_A]; @\\[-3pt]
 \CN    \CI \% lines 23-28 from above \\[-3pt]
 \CODEend
 
@@ -910,10 +926,10 @@ We define the function {\tt my\_cheating\_prior} in a separate file:
 
 \CODEstart
 \CN    \CC function Reg = my_cheating_prior( inv_model ); @\\[-3pt]
-\CN    \CC   inv_model.image_prior.func = 'np_calc_image_prior'; @\\[-3pt]
+\CN    \CC   inv_model.RtR_prior.func = 'np_calc_image_prior'; @\\[-3pt]
 \CN    \CC   Reg= calc_image_prior( inv_model ); @\\[-3pt]
 \CN 04 \CI   \% modify Reg matrix \\[-3pt]
-\CN    \CC   posn = inv_model.image_prior.parameter2; @\\[-3pt]
+\CN    \CC   posn = inv_model.my_cheating_prior.target; @\\[-3pt]
 \CN    \CC   posn = posn + (posn-1)*size(Reg,1); @\\[-3pt]
 \CN    \CC   Reg(posn) = Reg(posn) * 0.5; @\\[-3pt]
 \CODEend
@@ -1072,7 +1088,7 @@ $\bf R$ is a penalty term which discourages reconstructed
 images with high values of $\hat{\bf x}^t{\bf R}\hat{\bf x}$.
 In practice, however, $\bf R$ is selected using
 ad hoc or heuristic techniques. If the prior does
-not correspond to the real case, then the reconstructed
+not model the actual data, then the reconstructed
 image will be biased.
 
 In a Tikhonov regularization scheme, the amplitude
@@ -1122,7 +1138,8 @@ which, as defined by \cite{Colton_and_Kress_1992}, occurs when
 using the same model for both data simulation and image reconstruction.
 In this case, the regularized prior information is placed
 {\em exactly} at the positions of the happy face finite elements
-(Fig.~\ref{fig:tikprior_icrime}).
+(Fig.~\ref{fig:tikprior_icrime}). The results show sharper region boundaries
+and a more pronounced 'happy transform' effect.
 
 %
 % FIGURE: Tikhonov Prior with inv crime
@@ -1183,7 +1200,8 @@ those places. Fig.~\ref{fig:laplprior}
 shows the effect of such careful
 edge preserving prior selection (with no {\em inverse crime}).
 {\em Known edges} are weighted at $0.2$ times that of other
-edges in the image.
+edges in the image. Again, the inverse crime produces sharper
+image contrasts and a more pronounced effect.
 
 %
 % FIGURE: Laplace prior
@@ -1325,7 +1343,7 @@ Choosing a smaller regularization parameter will of
 course generate a less smooth conductivity and we might
 easily interpret such an image as having a different number
 of fingers.
-\Fref{fig:3fingersLessTik} illustrates the effect of
+Fig.~\ref{fig:3fingersLessTik} illustrates the effect of
 reducing the regularization parameter by a factor of
 10. Similarly an unfortunate choice of contour could
 produce an image susceptible to interpreting more fingers
@@ -1353,7 +1371,7 @@ Seemingly different number of fingers resulting simply from a
  Discussion
 }
 
-This paper presents version 3 of the EIDORS,
+This paper presents version 3.1 of the EIDORS
 open source software suite for image reconstruction
 in EIT and diffuse optical tomography.
 The current version builds on the capabilities of
@@ -1427,7 +1445,7 @@ to introduce the following edict:
 
 In conclusion, we have described the new
 developments of the EIDORS software for the
-version 3 release. These developments have been 
+version 3.1 release. These developments have been 
 focussed on software engineering improvements that
 will facilitate collaborative use, modification and
 enhancement of the software by the EIT community.
@@ -1456,6 +1474,11 @@ Asfaw Y and Adler A
  2005
 Automatic detection of detached and erroneous electrodes in electrical impedance tomography
 {\it Physiol. Meas.}, {\bf 26} S175--S183
+
+\bibitem{Borsic_2002}
+Borsic A 2002
+{\it Regularisation Methods for Imaging from Electrical Measurements}
+PhD thesis, Oxford Brookes University, U.K.,
 
 \bibitem{Cederqvist_2002}
 Cederqvist P 2002
