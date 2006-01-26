@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.45 2006-01-26 04:03:50 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.46 2006-01-26 20:06:55 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -80,7 +80,7 @@ EIDORS
  {\bf R}econstruction
  {\bf S}oftware)
 is a software suite for image reconstruction in
-electrical impedance tomography and diffuse optical tomography.
+electrical impedance tomography (EIT) and diffuse optical tomography (DOT).
 Its goal is to provide a freely distributable and modifiable
 software for image reconstruction of electrical 
 or diffuse optical data. Such software facilitates research
@@ -91,7 +91,7 @@ providing a functioning software base from which new
 ideas may be built and tested.
 Making the source code available also facilitates scrutiny
 of algorithms and their implementation by other researchers.
-The original EIDORS (version 1) software (\cite{Vauhkonen_etal_2000})
+The original EIDORS (version 1) software \cite{Vauhkonen_etal_2000}
 is based on software from the thesis of Vaukhonen \cite{Vauhkonen_1997}.
 It implemented a MATLAB package for two-dimensional mesh generation,
 solving of the forward
@@ -195,6 +195,10 @@ distribute their modifications. All modifications must include the
 source code, or instructions on how to obtain it. EIDORS may be used
 in a commercial product, as long as the source code for EIDORS and all
 modifications to it are made available.
+In addition, by making EIDORS available in this way,
+we would like to encourage other authors to publish
+their scientific software, in order to make results
+verifiable and repeatable.
 
   \item {\em Sourceforge hosting:}
 In order to allow collaborative development, 
@@ -261,6 +265,10 @@ of {\em packaging} and {\em polymophism}, while
 not {\em encapsulation} or {\em inheritance}.
 A detailed description of this capability is
 provided in the next section.
+While EIDORS does not yet provide algorithms for DOT,
+this aspect of the software architecture allows integration of such
+algorithms with the advanced inverse solvers provided.
+
 
   \item {\em Automatic matrix caching:}
 In order to increase
@@ -297,9 +305,9 @@ mapping function {\tt calc\_colours.m}, which allows
 global modification of all image colouring using a
 global variable {\tt eidors\_colours}.
 For modelling, the {\tt create\_tank\_mesh\_ng.m}
-function is provided to automatically interface to the
-netgen \cite{Schoberl_1997} finite element modelling
-tool.
+function is provided to generate
+a finite element mesh of a cylindrical tank with circular of rectangular
+electrodes using the netgen \cite{Schoberl_1997} mesh generator.
 
 
 %  \item {\em Logo:}
@@ -1374,7 +1382,7 @@ Seemingly different number of fingers resulting simply from a
 
 This paper presents version 3.1 of the EIDORS
 open source software suite for image reconstruction
-in EIT and diffuse optical tomography.
+in electrical impedance and diffuse optical tomography.
 The current version builds on the capabilities of
 earlier versions of EIDORS \cite{Vauhkonen_etal_2000},
 \cite{Polydorides_and_Lionheart_2002}, but
