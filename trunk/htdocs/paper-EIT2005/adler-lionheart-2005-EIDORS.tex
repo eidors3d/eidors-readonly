@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.49 2006-01-26 21:38:04 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.50 2006-01-27 05:03:52 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -569,14 +569,18 @@ This strategy may be specified by setting
 and 
  {\tt hyperparameter.noise\_figure=\em Value}.
 
-Image prior's may be specified in two ways, using a 
-regularization term of ${\bf x}^t{\bf R}{\bf x}$
-while others use ${\bf x}^t{\bf R}^t{\bf R}{\bf x}$.
+Image priors are commonly used in two ways, using either a 
+regularization term of $||\lambda{\bf R}{\bf x}||$ or
+$||\lambda{\bf x}||_{\bf R}$, where {\bf x} is the vector
+of image element values. In the most common case, a 
+quadratic norm is used, and these regularization terms
+may be expressed as  $\lambda^2{\bf x}^t{\bf R}{\bf x}$
+or $\lambda^2{\bf x}^t{\bf R}^t{\bf R}{\bf x}$, respectively.
 One implementation concern is to make it clear to the
 user which type of image prior is required. EIDORS
-implements this by defining two different image prior
-calculations functions {\tt R\_prior} and {\tt RtR\_prior}.
-A user may provide either or both. When the algorithm
+addresses this by defining two different functions to
+calculate image priors, {\tt R\_prior} and {\tt RtR\_prior}.
+A user may provide a value for either or both. When the algorithm
 specified in the {\tt solve} field is called, it will request
 either an {\tt R\_prior} or {\tt RtR\_prior}. If the 
 {\tt RtR\_prior} is required, but the {\tt R\_prior} 
@@ -630,7 +634,7 @@ section, we consider
 the calculation of the Jacobian, or sensitivity matrix,
 $\bf J$.
 
-Given a FEM  model of an EIT medium,
+Given a FEM model of an EIT medium,
 $F$, we calculate the vector of voltages, $\bf v$, 
 for each FEM degree of freedom
  (mainly, degrees of freedom are nodes, but in the
@@ -638,40 +642,40 @@ for each FEM degree of freedom
  electrodes are also associated
  with a degree of freedom):
 \begin{equation}
-{\bf v} = F({\bf \sigma}){\bf q} 
+{\bf v} = F({\bf \sigma,{\bf q})
 \end{equation}
 where $\bf \sigma$ is the vector of element conductivities
 and $\bf q$ is the current stimulation pattern, a vector
 of current inputs to each FEM degree of freedom.
-Depending on the electrode model used, the measured electrode
+The measured electrode
 voltage can be represented as a linear combination of 
-voltages, ${\bf V}_{toE}$.
+voltages, ${\bf M}_{toE}$.
 For each simulation pattern, ${\bf q}_{i}$,
-measurements $m_{i,j}$
-are performed, each of which consist of a linear combination of
-electrode measurements, ${\bf m}_j$.
+a vector of measurements ${\bf m}_i$
+are acquired, each of which consist of a linear combination of
+electrode measurements, represented by ${\bf M}_i$.
 Thus:
 
 \begin{equation}
-m_{i,j} = {\bf m}_{i} {\bf V}_{toE} F({\bf \sigma})
+{\bf m}_i = {\bf M}_{i} {\bf V}_{toE} F({\bf \sigma},{\bf q}_i)
 \end{equation}
 
 Based on this model, $\bf J$ is calculated as:
 \begin{equation}
-{\bf J}_{i,j,k} = \left.\frac{
- {\bf m}_{i} {\bf V}_{toE}{\partial}F({\bf \sigma})
+{\bf J}_{i,j} = \left.\frac{
+ {\bf M}_{i} {\bf V}_{toE}{\partial}F({\bf \sigma},{\bf q}_i)
 }{
-{\partial}{\bf \sigma}_k
+{\partial}{\bf \sigma}_j
 }
 \right|_{
    {\bf \sigma} = {\bf \sigma}_0 
 }
 \end{equation}
-where ${\bf \sigma}_0$ is the ``background"
+where ${\bf \sigma}_0$ is the ``background''
 conductivity around which small changes are assumed to occur.
-To represent $\bf J$ as a matrix, measurements $i$ for each stimulation
-pattern $j$ are flattened into column vectors which are concatenated
-for each element $k$.
+To represent $\bf J$ as a matrix, measurements for each stimulation
+pattern $i$ are flattened into column vectors which are concatenated
+for each finite element $j$.
 In EIDORS, the Jacobian is calculated using the function
 {\tt calc\_jacobian},
 which takes as parameters FEM model (type {\tt fwd\_model}),
