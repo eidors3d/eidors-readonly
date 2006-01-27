@@ -27,9 +27,13 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 % These global values may also be set via calc_colours
 %    eg. calc_colours('ref_level',1)
+%
+%    eg. calc_colours('mapped_colour',256)
+%            Use this to allow printing vector eps files to get around
+%            a matlab bug with warning 'RGB color data not ...'
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.16 2005-12-07 23:55:11 aadler Exp $  
+% $Id: calc_colours.m,v 1.17 2006-01-27 17:40:04 camilgomez Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
@@ -64,9 +68,9 @@ e= length(elem_data);
 
 % can't use | or || to support all stupid matlab versions > 6.0
 if nargin <= 1
-   scale =  max(abs(elem_data)) + eps;
+   scale =  max(abs(elem_data - pp.ref_level)) + eps;
 elseif isempty(scale)
-   scale =  max(abs(elem_data)) + eps;
+   scale =  max(abs(elem_data - pp.ref_level)) + eps;
 end
 
 if ~pp.mapped_colour
@@ -96,9 +100,10 @@ if nargin >=3 if do_colourbar==1
    set(hh,'Position', [p(1)+p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
 
    % set scaling
+   lcm= size(colormap,1)/2+.5;
    OrdOfMag = 10^floor(log10(scale));
    scale_r  = OrdOfMag * floor( scale / OrdOfMag );
-   ticks = 128.5 + 127.5*[-1,0,+1]*scale_r/scale;
+   ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/scale;
    set(hh,'YTick', ticks');
    set(hh,'YTickLabel', [-scale_r, 0, scale_r]');
 end; end
