@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.50 2006-01-27 05:03:52 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.51 2006-01-27 05:19:00 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -570,8 +570,10 @@ and
  {\tt hyperparameter.noise\_figure=\em Value}.
 
 Image priors are commonly used in two ways, using either a 
-regularization term of $||\lambda{\bf R}{\bf x}||$ or
-$||\lambda{\bf x}||_{\bf R}$, where {\bf x} is the vector
+regularization term of $\|\lambda{\bf R}{\bf x}\|$ or
+% Damn! this _R doesn't work
+% $\|\lambda{\bf x}\|_\mathbf{R}$, where {\bf x} is the vector
+$\|\lambda{\bf x}\|_{R}$, where {\bf x} is the vector
 of image element values. In the most common case, a 
 quadratic norm is used, and these regularization terms
 may be expressed as  $\lambda^2{\bf x}^t{\bf R}{\bf x}$
@@ -642,7 +644,7 @@ for each FEM degree of freedom
  electrodes are also associated
  with a degree of freedom):
 \begin{equation}
-{\bf v} = F({\bf \sigma,{\bf q})
+{\bf v} = F({\bf \sigma},{\bf q})
 \end{equation}
 where $\bf \sigma$ is the vector of element conductivities
 and $\bf q$ is the current stimulation pattern, a vector
