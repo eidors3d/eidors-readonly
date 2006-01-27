@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.51 2006-01-27 05:19:00 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.52 2006-01-27 14:41:37 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -116,8 +116,8 @@ a selection of reconstruction algorithms.
 To address these issues, the EIDORS software has been completely
 restructured with the goal of providing an extensible software base
 designed to support community use, modification and contribution.
-These modifications have been released as EIDORS version 3.0,
-which incorporates the following features:
+These modifications have been released as EIDORS version 3
+(currently at release 3.1), which incorporates the following features:
 
 \begin{itemize}
 
@@ -133,14 +133,14 @@ important with a trend toward meta-algorithms
 in EIT, such as algorithms for detection of
 electrode errors \cite{Asfaw_and_Adler_2005}. 
 
-  \item {\em Generalized data formats:}
+  \item {\em Generalized model formats:}
 One limitation of previous versions of the EIDORS software
 is that they were designed around specific electrode configurations
 and stimulation and measurements patterns. While it was possible
 to use the software for more general configurations, this was 
 a fairly daunting task. In order to support the wide
 variety of EIT measurements and algorithms, EIDORS now provides
-a general EIT data format (the {\tt fwd\_model} structure).
+a general EIT model format (ie\. the {\tt fwd\_model} structure).
 Additionally, several utility functions are provided to
 create common electrode and stimulation configurations.
 This format specifies the electrode positions, contact impedances,
@@ -190,7 +190,7 @@ modifications to it are made available.
 In addition, by making EIDORS available in this way,
 we would like to encourage other authors to publish
 their scientific software, in order to make results
-verifiable and repeatable.
+more easily verifiable and repeatable.
 
   \item {\em Sourceforge hosting:}
 In order to allow collaborative development, 
@@ -590,7 +590,8 @@ is specified, then it will be calculated from ${\bf R}^t{\bf R}$.
 Similarly, EIDORS will attempt to calculate ${\bf R}$ 
 from the Cholesky factorization of the {\tt RtR\_prior},
 if required. Parameters to an image prior function are
-specified in an added field with the name of the function.
+specified in a field, using the name of the image prior function,
+added to the {\tt inv\_model} object.
 
 \subsubsection{image}
 
@@ -651,7 +652,7 @@ and $\bf q$ is the current stimulation pattern, a vector
 of current inputs to each FEM degree of freedom.
 The measured electrode
 voltage can be represented as a linear combination of 
-voltages, ${\bf M}_{toE}$.
+voltages, ${\bf V}_{toE}$.
 For each simulation pattern, ${\bf q}_{i}$,
 a vector of measurements ${\bf m}_i$
 are acquired, each of which consist of a linear combination of
@@ -675,14 +676,13 @@ Based on this model, $\bf J$ is calculated as:
 \end{equation}
 where ${\bf \sigma}_0$ is the ``background''
 conductivity around which small changes are assumed to occur.
-To represent $\bf J$ as a matrix, measurements for each stimulation
-pattern $i$ are flattened into column vectors which are concatenated
+To represent $\bf J$ as a matrix, measurements for all stimulation
+patterns $i$ are flattened into column vectors which are concatenated
 for each finite element $j$.
 In EIDORS, the Jacobian is calculated using the function
 {\tt calc\_jacobian},
-which takes as parameters FEM model (type {\tt fwd\_model}),
-and the image of ${\bf \sigma}_0$ 
-of type {\tt image}.
+which takes as parameters the FEM model (type {\tt fwd\_model})
+and the image of ${\bf \sigma}_0$ (type {\tt image}).
 
 Objects may be created using the {\tt eidors\_obj()}
 function, which can fill in default attributes, and 
@@ -1285,7 +1285,7 @@ has been selected to best see the fingers.
 
 
 Cross sectional images of original and reconstructed
-conductivity are shown in Fig.~\ref{fig:3fingersXsect}
+conductivity are shown in Fig.~\ref{fig:3fingersXsect}.
 The contour selected for display is itself a
 hyperparameter and its choice is susceptible to
 cheating. In the absence of a priori information about
