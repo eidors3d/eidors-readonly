@@ -33,7 +33,7 @@ function colours= calc_colours(img, scale, do_colourbar)
 %            a matlab bug with warning 'RGB color data not ...'
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.17 2006-01-27 17:40:04 camilgomez Exp $  
+% $Id: calc_colours.m,v 1.18 2006-01-30 14:44:19 camilgomez Exp $  
 
 % TODO: create a global eidors_colours object to control behaviour
 
@@ -68,9 +68,9 @@ e= length(elem_data);
 
 % can't use | or || to support all stupid matlab versions > 6.0
 if nargin <= 1
-   scale =  max(abs(elem_data - pp.ref_level)) + eps;
+   scale =  max(abs(elem_data)) + eps;
 elseif isempty(scale)
-   scale =  max(abs(elem_data - pp.ref_level)) + eps;
+   scale =  max(abs(elem_data)) + eps;
 end
 
 if ~pp.mapped_colour
