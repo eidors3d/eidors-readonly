@@ -84,11 +84,14 @@ sol2D = zeros(size(gCts,1),1);
  
   
 %(5) Plot the planar solution sol2D with patches
+c_img = calc_colours( sol2D(:), max(abs(sol))+ eps );
 for q=1:size(tri)
-patch(vtxp(tri(q,:),1),vtxp(tri(q,:),2),sol2D(q),'EdgeColor','none');
-caxis([min(sol),max(sol)]);
+   tri_q= tri(q,:);
+% need 'direct' otherwise colourmap is screwed up
+   patch(vtxp(tri_q,1),vtxp(tri_q,2),c_img(:,q), ...
+         'CDataMapping','direct','EdgeColor','none');
 end %for q 
-colorbar;
+% colorbar;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
