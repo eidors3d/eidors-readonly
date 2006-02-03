@@ -11,12 +11,15 @@ function rimg_out = show_slices( img, levels, clim )
 %          x,y,z specify the axes intercepts, and 
 %          h,v   specify the horizontal, vertical position
 %                of that slice in the output image
+%
+% if levels is scalar, then make levels equispaced horizontal
+%          cuts through the object
 %      
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.26 2005-12-05 23:28:11 aadler Exp $
+% $Id: show_slices.m,v 1.27 2006-02-03 02:33:56 aadler Exp $
 
 np= 128; % number of points for each figure
 
@@ -35,6 +38,12 @@ end
 
 if size(levels,2) == 5
    spec_position= 1;
+elseif size(levels)== [1,1]
+   zmax= max(img(1).fwd_model.nodes(:,3));
+   zmin= min(img(1).fwd_model.nodes(:,3));
+   levels = linspace(zmin,zmax, levels+2);
+   levels = levels(2:end-1)'*[Inf,Inf,1];
+   spec_position= 0;
 else
    spec_position= 0;
 end
