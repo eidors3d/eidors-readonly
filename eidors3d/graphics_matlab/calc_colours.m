@@ -15,15 +15,24 @@ function colours= calc_colours(img, scale, do_colourbar)
 %        appropriate scaling
 %
 % Colour maps are controlled by the global variable
-%   eidors_colours. The following settings
+%   eidors_colours. The following settings are defaults
 %
-%   eidors_colours.greylev = .2; % Grey level to colour to
-%   eidors_colours.sat_adj = .9; % max G,B when R=1
-%   eidors_colours.backgnd= [.5,.5,.15]; % colour for non image regions
-%   eidors_colours.ref_level = 0  % conductivity of this value is 0
+%   eidors_colours.greylev = .2;
+%      greylev is the colour of the ref_level (the non-changing regions
+%      for difference imaging). Negative values indicate black (inversed
+%      colour). For almost white, greylev=.01; Black=> greylev=-.01
+%   eidors_colours.sat_adj = .9;
+%       max G,B when R=1
+%   eidors_colours.backgnd= [.5,.5,.15]; 
+%      colour for non image regions, ie. the border around the image
+%   eidors_colours.ref_level = 0  
+%      conductivity of this value is centre of colour mapping. Normally,
+%      this would be set to the conductivity of the background
 %   eidors_colours.mapped_colour= 0; % use colormap function
-%         if mapped_colour is non-zero, it indicates the colourmap
-%         size. Total colourmap is 2*mapped_colour
+%      if mapped_colour is non-zero, it indicates the colourmap
+%      size; otherwise, RGB values are used.
+%               Total colourmap is 2*mapped_colour
+%      using mapped_colour allows matlab to print vector graphics to eps
 %
 % These global values may also be set via calc_colours
 %    eg. calc_colours('ref_level',1)
@@ -31,11 +40,10 @@ function colours= calc_colours(img, scale, do_colourbar)
 %    eg. calc_colours('mapped_colour',256)
 %            Use this to allow printing vector eps files to get around
 %            a matlab bug with warning 'RGB color data not ...'
+%
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.18 2006-01-30 14:44:19 camilgomez Exp $  
-
-% TODO: create a global eidors_colours object to control behaviour
+% $Id: calc_colours.m,v 1.19 2006-02-03 21:30:46 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
