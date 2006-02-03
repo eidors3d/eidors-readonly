@@ -22,7 +22,7 @@ function inv_mdl= mk_common_model( str, varargin )
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.15 2006-01-24 02:53:27 aadler Exp $
+% $Id: mk_common_model.m,v 1.16 2006-02-03 02:33:57 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -160,7 +160,7 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
 
    inv_mdl.name=         'Nick Polydorides EIT inverse';
    inv_mdl.solve=       'np_inv_solve';
-   inv_mdl.hyperparameter.value = 1e-8;
+   inv_mdl.hyperparameter.value = 1e-4;
    inv_mdl.RtR_prior= 'np_calc_image_prior';
    inv_mdl.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
    inv_mdl.reconst_type= 'difference';
