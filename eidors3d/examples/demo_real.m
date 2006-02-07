@@ -1,9 +1,9 @@
-function [org_img, demo_img] = demo_real;
-% [org_img, demo_img] = demo_real;
+function [inhomg_img, demo_img] = demo_real;
+% [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.39 2006-01-24 02:53:26 aadler Exp $
+% $Id: demo_real.m,v 1.40 2006-02-07 02:24:41 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -96,18 +96,17 @@ disp('step 9: display results');
 
 levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
 
-org_img= eidors_obj('image', 'Simulated inhomogeneities', ...
-                    'elem_data', inhomg_img.elem_data - homg_img.elem_data, ...
-                    'fwd_model', demo_mdl );
 if ~exist('OCTAVE_VERSION');
-   figure; image_levels( org_img, levels );
+   calc_colours('ref_level',1);
+   figure; image_levels( inhomg_img, levels );
 else
-   show_slices( org_img, levels' * [inf,inf,1] );
+   show_slices( inhomg_img, levels' * [inf,inf,1] );
    disp('Original Image. Press a key');
 end
 
 demo_img.name= 'Reconstructed conductivity distribution';
 if ~exist('OCTAVE_VERSION');
+   calc_colours('ref_level',0);
    figure; image_levels( demo_img, levels );
 else
    show_slices( demo_img, levels' * [inf,inf,1] );
