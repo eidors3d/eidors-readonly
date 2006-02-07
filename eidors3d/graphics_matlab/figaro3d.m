@@ -31,9 +31,7 @@ set(p,'FaceColor',[0.6 1 0.5],'EdgeColor','none');
 camlight left 
 lighting flat;
 hold on;
-[fc] = slicer_plot(h,BB,vtx,simp,fc);
-%or change to
-%[fc] = slicer_plot_n(h,BB,vtx,simp,fc);
+[fc] = slicer_plot_n(h,BB,vtx,simp,fc);
 daspect([1 1 1]);
 
 
