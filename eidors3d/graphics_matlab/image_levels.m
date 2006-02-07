@@ -2,10 +2,13 @@ function image_levels(img, levels, clim )
 % IMAGE_LEVELS(img, levels, clim  ) show slices at levels of an image
 % img    = EIDORS image struct
 % levels = array of vertical levels
+%  OR
+% levels = [ [z_lev1 ,xpos,ypos], ...
+%
 % clim   = colourmap limit (or default if not specified)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: image_levels.m,v 1.10 2005-11-30 15:44:03 billlion Exp $
+% $Id: image_levels.m,v 1.11 2006-02-07 02:18:00 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('image_levels does not support octave. Try show_slices');
@@ -20,15 +23,16 @@ img_data = img.elem_data;
 
 fc= [];
 
-set_clim= set_colors( img_data );
-if nargin < 3 
-    clim= set_clim;
+if size(levels,1)==3
+   ll = size(levels,2);
+   img_cols = max(levels(2,:));
+   img_rows = max(levels(3,:));
+else
+   ll = length( levels );
+   img_cols = ceil( sqrt( ll ));
+   img_rows = ceil( ll/ img_cols );
 end
-
-ll = length( levels );
-img_cols = ceil( sqrt( ll ));
-img_rows = ceil( ll/ img_cols );
-subplot(img_rows,img_cols,1);
+   subplot(img_rows,img_cols,1);
 
 % Get geometry Fc
 fc = eidors_obj('get-cache', fwd_mdl, 'slicer_plot_fc');
@@ -40,23 +44,20 @@ else
    eidors_msg('image_levels: setting cached value', 3);
 end
 
+% Set mapped colours
+global eidors_colours;
+mpc= eidors_colours.mapped_colour;
+eidors_colours.mapped_colour = 128;
+
 for idx= 1:length(levels);
     subplot(img_rows,img_cols,idx);
     lev= levels(idx);
     slicer_plot_n(lev,img_data,vtx,simp, fc);
     view(2);
-    grid;
-    caxis([-clim,clim]);
-    colorbar;
     axis('off');
     axis equal
     title(sprintf('z=%4.2f',lev));
 end
 
-function colour_lim = set_colors( sol );
-   global eidors_colours;
-   mpc= eidors_colours.mapped_colour;
-   eidors_colours.mapped_colour = 0;
-   colormap( squeeze( calc_colours( linspace(-1,1,128) ) ));
-   colour_lim= max(abs(sol));
-   eidors_colours.mapped_colour = mpc;
+% Reset mapped colours
+eidors_colours.mapped_colour = mpc;
