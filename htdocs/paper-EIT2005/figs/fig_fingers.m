@@ -1,6 +1,6 @@
 function [im0,irec]= fig_figures
 % Generate fingers images for EIDORS paper
-% $Id: fig_fingers.m,v 1.3 2006-02-07 03:26:27 aadler Exp $
+% $Id: fig_fingers.m,v 1.4 2006-02-07 03:54:39 aadler Exp $
 
 calc_colours('mapped_colour', 128); % so matlab can print to eps properly
 calc_colours('greylev',0.1);
@@ -26,17 +26,19 @@ imdl.hyperparameter.value= 1e-4;
 irec= inv_solve(imdl,vi,vh);
 irec.elem_data= irec.elem_data + calc_colours('ref_level');
 
- slicer_plots(im0 ,'simulated_inhomogeneities.eps');
- slicer_plots(irec,'reconstructed_conductivity.eps');
-
-function slicer_plots(img,fname)
+%slicer_plots(im0 ,'simulated_inhomogeneities.eps');
+%slicer_plots(irec,'reconstructed_conductivity.eps');
    clf;
+ slicer_plots(im0 ,'', .35);
+ slicer_plots(irec,'fig_fingers.eps', 0);
+
+function slicer_plots(img,fname,tb)
    levels= [.1,.83,1.1,1.72,2.1,2.63];
    ll= length(levels);
    dx= 0.9/ll;
    for i=1:ll
 %     subplot(1,ll,i);
-      axes('position', [.05+dx*(i-1),.1,dx,.9]);
+      axes('position', [.05+dx*(i-1),.05+tb,dx*1.1,.4 ]);
       slicer_plot(img, levels(i));
       % kill colorbar. We must create then kill the colorbar,
       %   otherwise the figures with and without it look different.
@@ -45,9 +47,9 @@ function slicer_plots(img,fname)
       end
    end  
 
-   if nargin>=2
+   if nargin>=2 && ~isempty(fname)
       set(gcf,'PaperUnits','inches');
-      set(gcf,'PaperPosition',[.25,2.5,8,2]); 
+      set(gcf,'PaperPosition',[.25,2.5,8,4]); 
       print(gcf,'-depsc2',fname);
    end
 
