@@ -46,7 +46,7 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.21 2006-02-07 02:43:27 aadler Exp $  
+% $Id: calc_colours.m,v 1.22 2006-02-07 03:09:40 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
@@ -130,7 +130,7 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    glev= abs(pp.greylev);
    F= 3*pp.sat_adj;
 
-   red= D*F*abs(scale_data-1/F) - D + (D==-1);
+   red= D*F*abs(scale_data+D/F) - D + (D==-1);
    red= red.*(red>0).*(red<1) + (red>=1);
    red= red*(1-glev) + glev;
 
@@ -138,7 +138,7 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    grn= grn.*(grn>0).*(grn<1) + (grn>=1);
    grn= grn*(1-glev) + glev;
 
-   blu= D*F*abs(scale_data+1/F) - D + (D==-1);
+   blu= D*F*abs(scale_data-D/F) - D + (D==-1);
    blu= blu.*(blu>0).*(blu<1) + (blu>=1);
    blu= blu*(1-glev) + glev;
 
