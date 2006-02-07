@@ -41,16 +41,23 @@ function colours= calc_colours(img, scale, do_colourbar)
 %            Use this to allow printing vector eps files to get around
 %            a matlab bug with warning 'RGB color data not ...'
 %
+% Values may be obtained by calling calc_colours with 1 parameter
+%   r_lev= calc_colours('ref_level');
+%
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.20 2006-02-07 02:24:41 aadler Exp $  
+% $Id: calc_colours.m,v 1.21 2006-02-07 02:43:27 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
  
 if isstr(img)
     global eidors_colours;
-    eidors_colours = setfield(eidors_colours, img, scale);
+    if nargin==1
+       colours = getfield(eidors_colours, img);
+    else
+       eidors_colours = setfield(eidors_colours, img, scale);
+    end
     return;
 elseif isfield(img,'type')
    if strcmp( img.type, 'image' )
