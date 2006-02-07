@@ -1,6 +1,6 @@
 % Publication: EIDORS: uses and abuses
 % Authors: Andy Adler, Bill Lionheart
-% $Id: adler-lionheart-2005-EIDORS.tex,v 1.53 2006-01-27 14:45:04 aadler Exp $
+% $Id: adler-lionheart-2005-EIDORS.tex,v 1.54 2006-02-07 03:26:26 aadler Exp $
 \documentclass[12pt]{iopart}
 %Query macro
 \newcommand{\query}[1]{%
@@ -1240,12 +1240,18 @@ Cheating approach \#3:
 % FIGURE:  fingers X section
 %
 \begin{figure}[th]
-
-\scalebox{0.45}{{\includegraphics{figs/simulated_inhomogeneities.eps}}}
-\scalebox{0.45}{{\includegraphics{figs/reconstructed_conductivity.eps}}}
+\begin{flushright}
+\includegraphics[width=1.00 \textwidth]{figs/simulated_inhomogeneities.eps}
+\put(-90,85){\LARGE{\bf A}}
+\vspace{0mm}
+\includegraphics[width=1.00 \textwidth]{figs/reconstructed_conductivity.eps}
+\put(-90,85){\LARGE{\bf B}}
+\end{flushright}
 \caption{\label{fig:3fingersXsect}
-{\em Left} The three fingers test object cross section used to simulate voltage data.
-{\em Right} Initial reconstruction of the three finger object.
+{\em Row A}: The three fingers test object cross section used to simulate voltage data.
+{\em Row B}: Initial reconstruction of the three finger object.
+From left to right, cross sections of reconstructed volume at $z$-axis
+values of $0.1$, $0.83$, $1.1$, $1.72$, $2.1$, and $2.63$.
 }
 \end{figure}
 

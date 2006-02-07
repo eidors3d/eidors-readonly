@@ -1,38 +1,55 @@
-function fig_figures
+function [im0,irec]= fig_figures
 % Generate fingers images for EIDORS paper
-% $Id: fig_fingers.m,v 1.2 2006-02-03 22:19:31 aadler Exp $
+% $Id: fig_fingers.m,v 1.3 2006-02-07 03:26:27 aadler Exp $
 
 calc_colours('mapped_colour', 128); % so matlab can print to eps properly
 calc_colours('greylev',0.1);
-calc_colours('sat_adj',0.98);
+calc_colours('sat_adj',0.95);
 calc_colours('backgnd',[1,1,1]);
+calc_colours('ref_level',1);
 
 imdl=mk_common_model('n3r2');
-im=eidors_obj('image','3 fingers','fwd_model',imdl.fwd_model);
+im0=eidors_obj('image','3 fingers','fwd_model',imdl.fwd_model);
 rr= ones(size(imdl.fwd_model.elems,1),1);
-im.elem_data=rr;
-vh= fwd_solve(im);
+im0.elem_data=rr;
+vh= fwd_solve(im0);
 
 fingerelems=  [ ...
  232 233 234 238 239 240 253 254 255 ...
  508 509 510 514 515 516 529 530 531];
 rr(fingerelems)=1.5;
-im.elem_data=rr;
-vi= fwd_solve(im);
-calc_colours('ref_level',1);
-% show_fem(im)
+im0.elem_data=rr;
+vi= fwd_solve(im0);
+% show_fem(im0)
 
 imdl.hyperparameter.value= 1e-4;
-irec= inv_solve(imdl,vh,vi);
-calc_colours('ref_level',0);
-% show_fem(irec)
-% show_slices(irec,4)
-levels= [.1,.83,1.1,1.72,2.1,2.63];
-ll= length(levels);
-for i=1:ll
-   subplot(2,ll,i);
-   slicer_plot(irec, levels(i));
-end  
+irec= inv_solve(imdl,vi,vh);
+irec.elem_data= irec.elem_data + calc_colours('ref_level');
+
+ slicer_plots(im0 ,'simulated_inhomogeneities.eps');
+ slicer_plots(irec,'reconstructed_conductivity.eps');
+
+function slicer_plots(img,fname)
+   clf;
+   levels= [.1,.83,1.1,1.72,2.1,2.63];
+   ll= length(levels);
+   dx= 0.9/ll;
+   for i=1:ll
+%     subplot(1,ll,i);
+      axes('position', [.05+dx*(i-1),.1,dx,.9]);
+      slicer_plot(img, levels(i));
+      % kill colorbar. We must create then kill the colorbar,
+      %   otherwise the figures with and without it look different.
+      if i<ll
+         hh= colorbar; axis(hh,'off');
+      end
+   end  
+
+   if nargin>=2
+      set(gcf,'PaperUnits','inches');
+      set(gcf,'PaperPosition',[.25,2.5,8,2]); 
+      print(gcf,'-depsc2',fname);
+   end
 
 function slicer_plot(img,level)
    fwd_mdl= img.fwd_model;
