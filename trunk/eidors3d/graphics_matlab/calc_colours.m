@@ -43,7 +43,7 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.19 2006-02-03 21:30:46 aadler Exp $  
+% $Id: calc_colours.m,v 1.20 2006-02-07 02:24:41 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
@@ -113,7 +113,7 @@ if nargin >=3 if do_colourbar==1
    scale_r  = OrdOfMag * floor( scale / OrdOfMag );
    ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/scale;
    set(hh,'YTick', ticks');
-   set(hh,'YTickLabel', [-scale_r, 0, scale_r]');
+   set(hh,'YTickLabel', [-scale_r, 0, scale_r]'+ pp.ref_level);
 end; end
 
 

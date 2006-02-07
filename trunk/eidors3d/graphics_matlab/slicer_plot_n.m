@@ -84,7 +84,7 @@ sol2D = zeros(size(gCts,1),1);
  
   
 %(5) Plot the planar solution sol2D with patches
-c_img = calc_colours( sol2D(:), max(abs(sol))+ eps, 1 );
+c_img = calc_colours( sol2D(:), [], 1 );
 for q=1:size(tri)
    tri_q= tri(q,:);
 % need 'direct' otherwise colourmap is screwed up
