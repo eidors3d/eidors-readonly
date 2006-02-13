@@ -16,13 +16,13 @@ function Reg= aa_e_move_image_prior( inv_model );
 % constraint, such that Rij = -1 for adjacent electrodes
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_e_move_image_prior.m,v 1.6 2005-12-05 22:12:11 aadler Exp $
+% $Id: aa_e_move_image_prior.m,v 1.7 2006-02-13 15:42:18 camilgomez Exp $
 
 % relative strengths of conductivity and movement priors
 if isfield( inv_model,'aa_e_move_image_prior')
    hp_move= inv_model.aa_e_move_image_prior.parameters(1);
 else
-   hp_move= 100;
+   hp_move= 10;
 end
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
@@ -37,7 +37,7 @@ RegM = movement_image_prior( pp.n_dims, pp.n_elec );
 RegCM= sparse( pp.n_elem, pp.n_dims*pp.n_elec );
 
 Reg= [RegC,           RegCM;
-      RegCM', hp_move*RegM ];
+      RegCM', hp_move^2*RegM ];
 
 % For the movmenent portion, we define a smoothness
 % constraint, such that Rij = -1 for adjacent electrodes
