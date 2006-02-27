@@ -121,16 +121,31 @@ while( 1 )
     'Netgen call failed. Is netgen installed and on the search path?\n' ...
     'If you are running under windows, I can attempt to create\n' ...
     'a batch file to access netgen.\n' ...
-    'Please enter the directory in which to find netgen.' ...
+    'Please enter the directory in which to find netgen.\n' ...
     'If you don''t have a copy, press Ctrl-C to break, and' ...
     'see http://www.hpfem.jku.at/netgen/ for download\n\n' ...
     ]);
    netgen_path = input('netgen_path? ','s');
-   fid= fopen('ng.bat','w');
-   fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-   fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-   fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
-   fclose(fid);
+   if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) 
+      disp('Found netgen version 4.4');
+
+      fid= fopen('ng.bat','w');
+      fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
+      fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);
+      fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);
+      fclose(fid);
+   elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
+      disp('Found netgen version 4.3.1');
+
+      fid= fopen('ng.bat','w');
+      fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
+      fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
+      fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
+      fclose(fid);
+   else
+      warning(['cannot find a version of netgen that I know about\n' ...
+               'Install netgen 4.4 or 4.3.1 or check the path\n']);
+   end
 end
 
 disp('Netgen seems to have meshed your tank ok and written it to file!');
