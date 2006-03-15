@@ -1,4 +1,4 @@
-function [Y,D,Vols,Y_homo] = bg_bld_master(mesh,param2, param3);
+function [Y,D,Y_homo,Vols] = bg_bld_master(mesh,param2, param3);
 %function [Y,D,Y_homo,Vols] = bld_master_PointElectrodes(vtx,simp,mat_ref);
 %Builds up the main compartment (GAP-SHUNT) of the system matrix 
 %for the complete electrode model. It is called within the function 
@@ -15,7 +15,7 @@ function [Y,D,Vols,Y_homo] = bg_bld_master(mesh,param2, param3);
 %
 % (C) 2003 Nick Polydorides, modified by  Brad Graham (2005)
 %  Licenced under GNU GPL
-% $Id: bg_bld_master.m,v 1.1 2005-12-21 18:27:57 aadler Exp $
+% $Id: bg_bld_master.m,v 1.2 2006-03-15 21:55:33 aadler Exp $
 
 if nargin == 3
     mesh.NODE = mesh;
