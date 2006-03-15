@@ -9,22 +9,13 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 %   CC  = Connectivity Matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_system_mat.m,v 1.4 2005-10-27 13:28:08 aadler Exp $
+% $Id: aa_calc_system_mat.m,v 1.5 2006-03-15 21:54:20 aadler Exp $
 
 p= aa_fwd_parameters( fwd_model );
 
 d= p.n_dims+1;
 e= p.n_elem;
 n= p.n_node;
-
-if 0; % old code - less efficient
-    SS= spalloc( d*e , d*e, d*d*e);
-    for j=1:e
-      a=  inv([ ones(d,1) node( :, ELEM(:,j) )' ]);
-      SS(d*(j-1)+1:d*j,d*(j-1)+1:d*j)=  ...
-           2*a(2:d,:)'*a(2:d,:)/(d-1)/(d-2)/abs(det(a));
-    end %for j=1:ELEMs 
-end
 
 SSiidx= floor([0:d*e-1]'/d)*d*ones(1,d) + ones(d*e,1)*(1:d) ;
 SSjidx= [1:d*e]'*ones(1,d);
