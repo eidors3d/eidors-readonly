@@ -17,9 +17,13 @@ function rimg_out = show_slices( img, levels, clim )
 %      
 % clim   = colourmap limit (or default if not specified)
 %        = [] => Autoscale
+%
+% rimg= show_slices ...
+%    if output parameter is specified, then image (without colour
+%    scaling) is returned
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.27 2006-02-03 02:33:56 aadler Exp $
+% $Id: show_slices.m,v 1.28 2006-03-23 15:56:20 camilgomez Exp $
 
 np= 128; % number of points for each figure
 
@@ -55,6 +59,11 @@ for img_no = 1:length(img)
    end
 end
 
+if nargout>0
+   rimg_out = rimg;
+   return;
+end
+
 ll = length(rimg(:));
 if spec_position %won't work for multiple image inputs
    img_cols = max( levels(:,4) );
@@ -85,10 +94,6 @@ end
 c_img = calc_colours( r_img);
 out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
 
-if nargout>0
-   rimg_out = out_img;
-   return;
-end
 
 if exist('OCTAVE_VERSION');
    imshow(out_img);
