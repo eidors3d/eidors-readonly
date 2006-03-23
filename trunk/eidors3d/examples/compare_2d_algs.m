@@ -1,4 +1,4 @@
-function [imgr, img]= compare_2d_algs(option);
+function [imgr, img]= compare_2d_algs(option,shape);
 % Compare different 2D reconstructions
 % [imgr, img]= compare_2d_algs(option);
 %
@@ -14,9 +14,17 @@ function [imgr, img]= compare_2d_algs(option);
 %   5  aa_inv_total_var   laplace_image_prior   1e-4
 %   6  aa_inv_total_var   laplace_image_prior   1e-4
 %   7  aa_inv_conj_grad   ab_calc_tv_prior      ??? 
+%
+% shape
+%   0  two triangles
+%   1  round
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.14 2006-01-24 02:53:26 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.15 2006-03-23 15:56:18 camilgomez Exp $
+
+if nargin<2
+    shape=0;
+end
 
 calc_colours('ref_level',0);
 
@@ -28,9 +36,17 @@ img.elem_data= sigma;
 img.fwd_model= imb.fwd_model;
 vh= fwd_solve( img );
 
-%sigma([65,81,82,101,102,122])=2; round
-sigma([25,37,49:50,65:66,81:83,101:103,121:124])=2;
-sigma([95,98:100,79,80,76,63,64,60,48,45,36,33,22])=2;
+if shape==0
+    sigma([25,37,49:50,65:66,81:83,101:103,121:124])=2;
+    sigma([95,98:100,79,80,76,63,64,60,48,45,36,33,22])=2;
+elseif shape==1
+    sigma([65,81,82,101,102,122])=2; 
+elseif shape==2
+    sigma(1:4)=2;
+else
+    error('shape not defined (%d)',shape);
+end
+    
 img.elem_data= sigma;
 vi= fwd_solve( img );
 

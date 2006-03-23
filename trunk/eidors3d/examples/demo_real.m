@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.40 2006-02-07 02:24:41 aadler Exp $
+% $Id: demo_real.m,v 1.41 2006-03-23 15:56:18 camilgomez Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -49,8 +49,7 @@ homg_img= eidors_obj('image', 'homogeneous image', ...
                      'elem_data', mat, ...
                      'fwd_model', demo_mdl );
 
-homg_data=fwd_solve( demo_mdl, homg_img);
-
+homg_data=fwd_solve( demo_mdl, homg_img);                    
 disp('step 5: simulate data for inhomogeneous medium');
 %
 % create an inhomogeneous image
