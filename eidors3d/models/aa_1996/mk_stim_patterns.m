@@ -51,7 +51,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.14 2005-12-12 00:55:48 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.15 2006-05-29 18:09:09 camilgomez Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -113,9 +113,23 @@ function meas_sel= meas_select( n_elec, inj, v)
            n_elec)';
   injx= n_elec+[-1 0 [-1 0]+inj*[-1;1] ];
   ELS= rem( injx ,n_elec)' * ones(1,n2_elec) ==ones(4,1)*ELS';
-  meas_sel= ~any( ELS )';
-
+  inj_meas_sel= ~any( ELS )';
+  
+  % Insert electrode indices for multiple ring measurements
+  n_rings = v.n_rings;
+  if n_rings == 1
+    meas_sel = inj_meas_sel;
+  elseif n_rings == 2
+    inj_meas_sel = reshape(inj_meas_sel,n_elec,n_elec);
+    %oth_meas_sel = ones(n_elec*(v.n_rings-1),n_elec);
+    meas_sel = blkdiag(~inj_meas_sel, ~inj_meas_sel);
+    meas_sel = ~logical(meas_sel(:));
+  else
+    error('meas_sel() can''t handle more than 2 rings...');
+  end
+  
   %FIXME: do we need to modify this for v?
+  %cgomez: I have modified this for multiple rings using v.
 
 
 function stim_pat = mk_stim_pat(v, elec, ring, amplitude)

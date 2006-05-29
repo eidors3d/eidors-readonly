@@ -12,17 +12,18 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('b3z',16)   - zigzag pattern electrodes
 %
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
-%   mk_common_model('n3z',16)  - NP's 3D model with zigzag electrodes
+%   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
 %
 % 2D Models:
 %   mk_common_model('a2c',16)   - 2D circ model (64 elems) with 16 elecs
 %   mk_common_model('b2c',16)   - 2D circ model (256 elems)
 %   mk_common_model('c2c',16)   - 2D circ model (576 elems)
 %   mk_common_model('d2c',16)   - 2D circ model (1024 elems)
-%
+%   mk_common_model('e2c',16)   - 2D circ model (1600 elems)
+%   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.16 2006-02-03 02:33:57 aadler Exp $
+% $Id: mk_common_model.m,v 1.17 2006-05-29 18:09:09 camilgomez Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -35,12 +36,20 @@ elseif strcmp( str, 'c2c')
     inv_mdl = mk_2c_model( n_elec, 12, options );
 elseif strcmp( str, 'd2c')
     inv_mdl = mk_2c_model( n_elec, 16, options );
+elseif strcmp( str, 'e2c')
+    inv_mdl = mk_2c_model( n_elec, 20, options );
+elseif strcmp( str, 'f2c')
+    inv_mdl = mk_2c_model( n_elec, 24, options );   
 elseif strcmp( str, 'b3z')
     inv_mdl = mk_dz_model( n_elec, options );
 elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
 elseif strcmp( str, 'n3z')
     inv_mdl = mk_n3z_model( n_elec, options );
+elseif strcmp( str, 'b3r1')
+    inv_mdl = mk_b3r1_model( n_elec, options );
+elseif strcmp( str, 'b3r2')
+    inv_mdl = mk_b3r2_model( n_elec, options );    
 else
     error('don`t know what to do with option=',str);
 end
@@ -206,3 +215,61 @@ function inv_mdl = deform_cylinder( inv_mdl, niv, y_expand, x_expand)
   NODE(2,:)= NODE(2,:)*y_expand;
   NODE(3,:)= NODE(3,:)*z_expand;
 
+function inv3d= mk_b3r1_model( n_elec, options )
+    n_rings= 1;
+    levels= [-.5:.1:.5]; 
+    e_levels= 6; 
+    nr= 8;
+
+    params= mk_circ_tank( nr, levels, { 'planes', n_elec, e_levels } );
+    [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
+
+    params.stimulation= st;
+    params.meas_select= els;
+    params.solve=      'aa_fwd_solve';
+    params.system_mat= 'aa_calc_system_mat';
+    params.jacobian=   'aa_calc_jacobian';
+    params.normalize_measurements= 0;
+    params.misc.perm_sym= '{n}';
+    mdl_3d = eidors_obj('fwd_model', params);
+
+    inv3d.name = 'EIT inverse: 3D';
+    inv3d.solve=       'aa_inv_solve';
+    %inv3d.solve=       'aa_inv_conj_grad';
+    inv3d.hyperparameter.value = 1e-5;
+    inv3d.RtR_prior= 'laplace_image_prior';
+    %inv3d.RtR_prior= 'aa_calc_image_prior';
+    inv3d.jacobian_bkgnd.value= 1;
+    inv3d.reconst_type= 'difference';
+    inv3d.fwd_model= mdl_3d;
+    inv3d= eidors_obj('inv_model', inv3d);
+
+function inv3d= mk_b3r2_model( n_elec, options )
+    n_rings= 2;
+    levels= [-.5:.1:.5]; 
+    e_levels= [4,8]; 
+    nr= 8;
+    n_elec = 8;
+    
+    params= mk_circ_tank( nr, levels, { 'planes', n_elec, e_levels } );
+    [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
+
+    params.stimulation= st;
+    params.meas_select= els;
+    params.solve=      'aa_fwd_solve';
+    params.system_mat= 'aa_calc_system_mat';
+    params.jacobian=   'aa_calc_jacobian';
+    params.normalize_measurements= 0;
+    params.misc.perm_sym= '{n}';
+    mdl_3d = eidors_obj('fwd_model', params);
+
+    inv3d.name = 'EIT inverse: 3D';
+    inv3d.solve=       'aa_inv_solve';
+    %inv3d.solve=       'aa_inv_conj_grad';
+    inv3d.hyperparameter.value = 1e-5;
+    inv3d.RtR_prior= 'laplace_image_prior';
+    %inv3d.RtR_prior= 'aa_calc_image_prior';
+    inv3d.jacobian_bkgnd.value= 1;
+    inv3d.reconst_type= 'difference';
+    inv3d.fwd_model= mdl_3d;
+    inv3d= eidors_obj('inv_model', inv3d);
