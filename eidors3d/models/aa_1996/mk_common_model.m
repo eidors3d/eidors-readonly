@@ -23,7 +23,7 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.17 2006-05-29 18:09:09 camilgomez Exp $
+% $Id: mk_common_model.m,v 1.18 2006-06-14 18:33:21 camilgomez Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -246,12 +246,13 @@ function inv3d= mk_b3r1_model( n_elec, options )
 
 function inv3d= mk_b3r2_model( n_elec, options )
     n_rings= 2;
-    levels= [-.5:.1:.5]; 
+%    levels= [-.5:.1:.5]; 
+    z_axis = [0:.1:1];  % show_slices() needs levels bw 0 and 1.
     e_levels= [4,8]; 
-    nr= 8;
+    nr= 4;
     n_elec = 8;
     
-    params= mk_circ_tank( nr, levels, { 'planes', n_elec, e_levels } );
+    params= mk_circ_tank( nr, z_axis, { 'planes', n_elec, e_levels } );
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
 
     params.stimulation= st;
@@ -262,7 +263,15 @@ function inv3d= mk_b3r2_model( n_elec, options )
     params.normalize_measurements= 0;
     params.misc.perm_sym= '{n}';
     mdl_3d = eidors_obj('fwd_model', params);
-
+    
+    % Specify number of levels in mesh for imaging slices
+    num_levs = length(e_levels);
+    levels = inf*ones(num_levs,3);
+    levels(:,3) = e_levels / (length(z_axis)-1);
+    levels(:,4) = ones(num_levs,1);
+    levels(:,5) = (1:num_levs)';    
+    mdl_3d.levels = levels;
+    
     inv3d.name = 'EIT inverse: 3D';
     inv3d.solve=       'aa_inv_solve';
     %inv3d.solve=       'aa_inv_conj_grad';
