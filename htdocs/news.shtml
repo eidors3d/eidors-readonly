@@ -56,8 +56,16 @@ for discussion, we make the following suggestion.
 
 -->
 
+<br><li><b>
+    28 June 2006:
+</b><br>
+Andy Adler
+<p>
+Modified EIDORS web pages for changes to SourceForge.net's
+cvs servers.
+
 <p><li><b>
-    23 Jan 2005:
+    23 Jan 2006:
 </b>
 EIDORS V3.1RC1 Released
 <br>
@@ -715,7 +723,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-01-24 03:21:47 $ by $Author: aadler $
+    Last Modified: $Date: 2006-06-28 23:38:28 $ by $Author: aadler $
 </small>
 </body>
 
