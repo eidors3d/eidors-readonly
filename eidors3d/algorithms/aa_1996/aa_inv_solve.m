@@ -12,7 +12,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_solve.m,v 1.14 2005-12-08 00:19:57 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.15 2006-07-11 17:33:44 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -34,12 +34,6 @@ else
     eidors_obj('set-cache', inv_model, 'one_step_inv', one_step_inv);
     eidors_msg('aa_inv_solve: setting cached value', 2);
 end
-
-l_data1= length(data1); l1_0 = l_data1 ~=0;
-l_data2= length(data2); l2_0 = l_data2 ~=0;
-l_data= max( l_data1, l_data2 );
-
-dva= zeros(pp.n_meas, l_data);
 
 if pp.normalize
    dva= 1 - data2 ./ data1;
