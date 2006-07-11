@@ -1,0 +1,70 @@
+<!--#include virtual="nav-sidebar.html" -->
+
+<h2>EIDORS: Download</h2>
+
+<h3>Released Versions</h3>
+<ul>
+
+<p><li><b>
+Download latest released version
+</b><br>
+<a href="http://prdownloads.sourceforge.net/eidors3d/eidors-3.1RC1.zip"
+   >EIDORS-3.1RC1.zip</a><br>
+
+<p><li><b>
+Download All Versions
+</b><br>
+<a href="http://sourceforge.net/projects/eidors3d/"
+   >EIDORS</a><br>
+
+</ul>
+
+<h3>Developer (latest) Version</h3>
+<ul>
+<p><li><b>
+Browse Developer Versions 
+</b><br>
+<a href="http://eidors3d.cvs.sourceforge.net/eidors3d/"
+   >Browse CVS</a><br>
+
+<p><li><b>
+Read only access to Developer Version 
+</b><br>
+Read-only, worldwide access is available via CVS using
+Anonymous CVS Access with
+<pre>
+cvs -d:pserver:anonymous@eidors3d.cvs.sf.net:/cvsroot/eidors3d co eidors3d
+</pre>
+
+<p><li><b>
+Access Developer Version 
+</b><br>
+Read-write, access is available via CVS for registered
+developers. To become a developer, 
+email the <a href="faq.shtml#maintainers">maintainers</a>.
+Access CVS via:
+<pre>
+cvs -d:ext:developername@eidors3d.cvs.sf.net:/cvsroot/eidors3d co eidors3d
+</pre>
+
+</ul>
+
+<!--
+<p><li><b>
+</b><br>
+<br>
+<a href=""
+    >
+</a>
+-->
+
+</table>
+<p>
+<small>
+    Last Modified: $Date: 2006-07-11 17:31:40 $ by $Author: aadler $
+</small>
+
+</body>
+
+</html>
+
