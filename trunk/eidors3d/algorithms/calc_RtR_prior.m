@@ -1,7 +1,9 @@
 function RtR_prior = calc_RtR_prior( inv_model, varargin )
 % RtR = calc_RtR_prior( inv_model, varargin )
-% CALC_RtR_PRIOR: calculate image covariance R'*R
-%   The image prior is matrix n_elem x n_elem of the
+% CALC_RtR_PRIOR: calculate image regularization prior
+%   R'*R (which is an estimate of the inverse of the covariance)
+%
+%   Typically, the image prior is matrix n_elem x n_elem of the
 %   normalized a priori crosscorrelation FEM element values
 % 
 % calc_RtR_prior can be called as
@@ -19,7 +21,7 @@ function RtR_prior = calc_RtR_prior( inv_model, varargin )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_RtR_prior.m,v 1.2 2006-01-23 18:14:19 aadler Exp $
+% $Id: calc_RtR_prior.m,v 1.3 2006-07-11 17:34:51 aadler Exp $
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)
