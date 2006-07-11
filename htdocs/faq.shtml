@@ -32,7 +32,7 @@ great picture of fat waruses see this
 The current maintainers of EIDORS are
 <a href="mailto:bill.lionh&#101;&#97;rt@umist.ac.uk">Bill Lionheart</a>
 and
-<a href="mailto:&#97;dl&#101;r@site.uott&#97;w&#97;.c&#97;"
+<a href="mailto:&#97;dl&#101;r@sce.c&#97;rleton.c&#97;"
     >Andy Adler</a>.
 Please contact them with suggestions, contribution of code,
 and contribution of sample data, meshes, and algorithms.
@@ -231,7 +231,7 @@ The easiest solution is to recompile the mex file, as follows:
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 09:44:36 $ by $Author: aadler $
+    Last Modified: $Date: 2006-07-11 17:31:40 $ by $Author: aadler $
 </small>
 </body>
 
