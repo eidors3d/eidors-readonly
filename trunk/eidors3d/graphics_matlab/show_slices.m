@@ -23,7 +23,7 @@ function rimg_out = show_slices( img, levels, clim )
 %    scaling) is returned
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.28 2006-03-23 15:56:20 camilgomez Exp $
+% $Id: show_slices.m,v 1.29 2006-07-11 17:35:29 aadler Exp $
 
 np= 128; % number of points for each figure
 
@@ -52,10 +52,21 @@ else
    spec_position= 0;
 end
 
-for img_no = 1:length(img)
-   for lev_no = 1:size( levels,1 )
+len_img= length(img);
+num_levs= size(levels,1);
+
+rimg=[]; idx=1;
+for img_no = 1:len_img
+   for lev_no = 1:num_levs
       level= levels( lev_no, 1:3 );
-      rimg{img_no,lev_no}= calc_image( img( img_no ), level, clim, np );
+
+      calc_img= calc_image( img( img_no ), level, clim, np );
+
+      if isempty(rimg);
+         rimg=zeros([size(calc_img), len_img*num_levs]); 
+      end
+      rimg(:,:,idx) = calc_img;
+      idx=idx+1;
    end
 end
 
@@ -64,7 +75,7 @@ if nargout>0
    return;
 end
 
-ll = length(rimg(:));
+ll = size(rimg,3);
 if spec_position %won't work for multiple image inputs
    img_cols = max( levels(:,4) );
    img_rows = max( levels(:,5) );
@@ -77,7 +88,7 @@ r_img = NaN*ones(img_rows*np, img_cols*np);
 
 idx= (-np:-1)+1;
 imno= 1;
-for img_no = 1:length(img)
+for img_no = 1:len_img
    for lev_no = 1:size( levels,1 )
       if spec_position %won't work for multiple image inputs
          i_col= levels( lev_no, 4) + img_no -1;
@@ -86,7 +97,7 @@ for img_no = 1:length(img)
          i_col= rem( imno-1, img_cols) + 1;
          i_row= ceil( imno / img_cols);
       end
-      r_img(i_row*np + idx, i_col*np + idx) = rimg{imno};
+      r_img(i_row*np + idx, i_col*np + idx) = rimg(:,:,imno);
       imno= imno+1;
    end
 end

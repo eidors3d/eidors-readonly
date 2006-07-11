@@ -4,9 +4,12 @@ function colours= calc_colours(img, scale, do_colourbar)
 % Conductive (positive) areas are shown in red
 % Non-Conductive (negative) areas are shown in blue
 %
-% img - an eidors image object
-%    or
-%     - a matrix of values;
+% Usage:
+%   c_img = calc_colours( r_img);
+%   image( c_img );
+% 
+% img - an eidors image object, OR
+%     - a 2D image matrix
 %
 % scale - colour value corresponding to maximum
 %       - if not specified or scale==[] => autoscale
@@ -46,7 +49,7 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.22 2006-02-07 03:09:40 aadler Exp $  
+% $Id: calc_colours.m,v 1.23 2006-07-11 17:35:29 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
