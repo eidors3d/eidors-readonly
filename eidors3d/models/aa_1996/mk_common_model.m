@@ -23,7 +23,7 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.18 2006-06-14 18:33:21 camilgomez Exp $
+% $Id: mk_common_model.m,v 1.19 2006-07-24 19:26:05 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -71,7 +71,7 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     inv2d.name= 'EIDORS model a0';
     inv2d.solve=       'aa_inv_solve';
     %inv2d.solve=       'aa_inv_conj_grad';
-    inv2d.hyperparameter.value = 1e-5;
+    inv2d.hyperparameter.value = 3e-3;
     %inv2d.hyperparameter.func = 'aa_calc_noise_figure';
     %inv2d.hyperparameter.noise_figure= 1;
     %inv2d.hyperparameter.tgt_elems= 1:4;
