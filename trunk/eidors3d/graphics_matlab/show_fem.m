@@ -11,7 +11,7 @@ function show_fem( mdl, options )
 % calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.36 2005-12-08 14:35:38 aadler Exp $
+% $Id: show_fem.m,v 1.37 2006-07-25 16:26:45 camilgomez Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -28,6 +28,7 @@ if nargin >=2
     optionstr(1:length(options)) = options;
     do_colourbar=      optionstr(1);
     number_electrodes= optionstr(2);
+    scl_colourbar=     optionstr(3);
 end
 
 % if we have an only img input, then define mdl
@@ -43,7 +44,11 @@ set(gcf, 'Name', name(:)');
 if size(mdl.nodes,2)==2
    hax= gca;
    pax= get(hax,'position');
+   if exist('scl_colourbar')
+       cscale = scl_colourbar;
+   else
    cscale= [];
+   end
    if exist('img');
       colours= calc_colours(img.elem_data, cscale, do_colourbar);
    else
