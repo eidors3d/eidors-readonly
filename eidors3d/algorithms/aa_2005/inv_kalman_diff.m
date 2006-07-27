@@ -9,7 +9,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.6 2005-12-14 16:33:59 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.7 2006-07-27 01:42:20 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -28,9 +28,9 @@ else
    dva= data1 - data2;
 end
 
-%sol = kalman_inv( J, Q, hp^2*RtR, dva );
-R= calc_R_prior(inv_model);
-sol = kalman_inv_cgls( J, Q, hp^2*R, dva );
+ sol = kalman_inv( J, Q, hp^2*RtR, dva );
+%R= calc_R_prior(inv_model);
+%sol = kalman_inv_cgls( J, Q, hp^2*R, dva );
 
 % create a data structure to return
 img.name= 'solved by inv_kalman_diff';

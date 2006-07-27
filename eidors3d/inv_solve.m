@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_solve.m,v 1.14 2006-07-11 17:45:26 aadler Exp $
+% $Id: inv_solve.m,v 1.15 2006-07-27 01:42:20 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -87,7 +87,7 @@ for i=1:n_img
 end
 
 % test for existance of meas_select and filter data
-function d1= filt_data(inv_model, d0 )
+function d2= filt_data(inv_model, d0 )
     if ~isnumeric( d0 )
         % we probably have a 'data' object
 
@@ -112,12 +112,14 @@ function d1= filt_data(inv_model, d0 )
        % we have a meas_select parameter
 
        meas_select= inv_model.fwd_model.meas_select;
-       if     size(d0,1) == length(meas_select)
-          d1= d0(meas_select,:);
-       elseif size(d0,1) == sum(meas_select>0)
-          d1= d0;
+       if     size(d1,1) == length(meas_select)
+          d2= d1(meas_select,:);
+       elseif size(d1,1) == sum(meas_select>0)
+          d2= d1;
        else
           error('data size does not match meas_select');
        end
+    else
+       d2= d1;
     end
 
