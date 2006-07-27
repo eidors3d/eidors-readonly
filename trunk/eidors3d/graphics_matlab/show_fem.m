@@ -6,12 +6,13 @@ function show_fem( mdl, options )
 % options specifies a set of options
 %   options(1) => show colourbar
 %   options(2) => number electrodes
+%   options(3) => colourbar scale
 %
 % set ref_level for conductivities with
 % calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.37 2006-07-25 16:26:45 camilgomez Exp $
+% $Id: show_fem.m,v 1.38 2006-07-27 01:03:23 camilgomez Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -28,7 +29,11 @@ if nargin >=2
     optionstr(1:length(options)) = options;
     do_colourbar=      optionstr(1);
     number_electrodes= optionstr(2);
-    scl_colourbar=     optionstr(3);
+    if optionstr(3)~=0
+        scl_colourbar= optionstr(3);
+    else
+        scl_colourbar=[];
+    end
 end
 
 % if we have an only img input, then define mdl
