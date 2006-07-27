@@ -1,36 +1,60 @@
-function imgr= moving_tank_objs(data_sel, inv_sel)
+function imgs= moving_tank_objs(data_sel, inv_sel)
 % MOVING_TANK_OBJS: create movies of objects moving in tanks
 % Usage:
-% imgr= moving_tank_objs(data_sel, invmdl)
+% imgs= moving_tank_objs(data_sel, invmdl)
 %
-% imgr = reconstructed images
+% imgs = reconstructed images
 %
 % data_sel select data_sel to use
-%   data_sel = 1 => target across tank data
-%   data_sel = 2 => target around tank data
+%   data_sel = 1x => tank data - target moves across
+%              11 => complete tank data (assume each frame
+%                       at one instant)
+%              12 => each channel meas is at a different time
+%
+%
+%   data_sel = 22 => tank data - target moves in circle
+%
+%   data_sel = 32 => tank data - target moves in part of circle
+%
 %
 % inv_sel
 %   inv_sel = 1 => 2D reconstruction=> aa_inv_solve
 %   inv_sel = 2 => 2D reconstruction=> inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.7 2006-01-24 03:07:34 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.8 2006-07-27 01:42:20 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
 if nargin<2; inv_sel  = 1; end
 
 switch data_sel
-    case 1
+    case 11,
+        load montreal_data_1995;
+        [vh,vi] = mk_data_objs( zc_h_demo4, zc_demo4, 7);
+        filename= 'target-across';
+
+    case 12,
         load montreal_data_1995;
         vh= zc_h_demo4;
         vi= zc_demo4;
         filename= 'target-across';
 
-    case 2
+    case 21,
+        load montreal_data_1995;
+        [vh,vi] = mk_data_objs( zc_h_demo3, zc_demo3, 7);
+        filename= 'target-around';
+
+    case 22,
         load montreal_data_1995;
         vh= zc_h_demo3;
         vi= zc_demo3;
+        filename= 'target-around';
+
+    case 32,
+        load montreal_data_1995;
+        vh= zc_h_demo3;
+        vi= zc_demo3(:,1:20);
         filename= 'target-around';
 
     case 3
@@ -51,26 +75,36 @@ switch inv_sel
     case 1
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'aa_inv_solve';
+        imdl.RtR_prior= @laplace_image_prior;
+        imdl.solve= @aa_inv_solve;
 
     case 1.1
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'aa_inv_solve';
+        imdl.RtR_prior= @laplace_image_prior;
+        imdl.solve= @aa_inv_solve;
 
     case 2
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'inv_kalman_diff';
+        imdl.RtR_prior= @laplace_image_prior;
+        imdl.solve= @inv_kalman_diff;
 
     case 3
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'aa_inv_conj_grad';
+        imdl.RtR_prior= @laplace_image_prior;
+        imdl.solve= @aa_inv_conj_grad;
+
+    % Inverse model for paper Adler & Lionheart, 7th EIT conf, Seoul
+    case 4
+        imdl= mk_common_model('c2c',16);
+        imdl.hyperparameter.value= 1e-2;
+        imdl.RtR_prior= 'time_smooth_prior';
+        imdl.time_smooth_prior.space_prior= @laplace_image_prior;
+        imdl.time_smooth_prior.time_weight= 0;
+        imdl.time_smooth_prior.time_steps= 0;
+        imdl.solve= @aa_inv_solve;
 end
 
 imgs= inv_solve(imdl,vi,vh);
@@ -97,21 +131,29 @@ function mk_movie(fname, imgs)
    close(fig);
 
 function mk_movie2(fname, imgs)
-   calc_colours('mapped_colour', 127);
+   ncolours= 127;
+   calc_colours('mapped_colour', ncolours);
+   cmap= colormap;
+
+   img= show_slices(imgs);
+   max_img= max(abs(img(:)));
+   img= round(ncolours * img/max_img + ncolours) + 1;
+   img(isnan(img(:)))= 1;
+   
    dirname= 'tmp_mk_movie2';
    rm_rf( dirname );
    mkdir( dirname );
    for i=1:length(imgs)
-     img= show_slices(imgs(i));
-     cmap= colormap;
-     imwrite(img,cmap, ...
+     imwrite(img(:,:,i),cmap, ...
             sprintf('%s/img%05d.png',dirname, i), 'png');
    end
    retval= system(sprintf( ...
-       'convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
+       'convert -delay 25 "%s/img*.png" -loop 0 "%s.gif"', ...
        dirname, fname ));
    if retval~=0
-       error('please ensure the imagemagick convert program is in your path');
+       error(['The function mk_movie2 requires the imagemagick "convert"' ...
+              ' program. It cannot be found. Please ensure is in' ...
+              ' your "path" variable']);
    end
    rm_rf(dirname);
 
@@ -137,3 +179,18 @@ function vv= do_simulation( img, stim_pat)
    img.fwd_model.stimulation= stim_pat;
 
    vv= fwd_solve( img);
+
+
+% v_hom is a vector Mx1 of frame data (reference)
+% v_inh is a vector Mx1 of frame data (data to reconstruct)
+% fps   is the frame rate (/sec)
+function [vh,vi] = mk_data_objs( v_ref, v_inh, fps)
+        imdl= mk_common_model('b2c',16);
+        vh= eidors_obj('data','homog tank', ...
+                       'meas', v_ref, ...
+                       'time', 0, ...
+                       'fwd_model', imdl.fwd_model);
+        for i=1:size(v_inh,2);
+           vi(i)= eidors_obj('set',vh,'meas',v_inh(:,i), ...
+                                      'time',i/fps);
+        end
