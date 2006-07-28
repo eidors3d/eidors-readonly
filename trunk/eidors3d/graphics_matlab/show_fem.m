@@ -5,14 +5,14 @@ function show_fem( mdl, options )
 %
 % options specifies a set of options
 %   options(1) => show colourbar
-%   options(2) => number electrodes
+%   options(2) => show numbering on electrodes
 %   options(3) => colourbar scale
 %
 % set ref_level for conductivities with
 % calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.38 2006-07-27 01:03:23 camilgomez Exp $
+% $Id: show_fem.m,v 1.39 2006-07-28 14:45:55 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -50,9 +50,9 @@ if size(mdl.nodes,2)==2
    hax= gca;
    pax= get(hax,'position');
    if exist('scl_colourbar')
-       cscale = scl_colourbar;
+      cscale = scl_colourbar;
    else
-   cscale= [];
+      cscale= [];
    end
    if exist('img');
       colours= calc_colours(img.elem_data, cscale, do_colourbar);
