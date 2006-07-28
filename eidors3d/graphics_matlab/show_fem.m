@@ -12,27 +12,29 @@ function show_fem( mdl, options )
 % calc_colours('ref_level', ref_level)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.39 2006-07-28 14:45:55 aadler Exp $
+% $Id: show_fem.m,v 1.40 2006-07-28 18:56:16 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
    return
 end
 
-if nargin <= 1
+if nargin == 0
+    error('Insufficient options for show_fem');
 end
 
 do_colourbar=0;
 number_electrodes=0;
+scl_colourbar=[];
 if nargin >=2
+    % fill in default options
     optionstr= zeros(1,100);
     optionstr(1:length(options)) = options;
+
     do_colourbar=      optionstr(1);
     number_electrodes= optionstr(2);
     if optionstr(3)~=0
         scl_colourbar= optionstr(3);
-    else
-        scl_colourbar=[];
     end
 end
 
@@ -47,15 +49,11 @@ cla;
 set(gcf, 'Name', name(:)');
 
 if size(mdl.nodes,2)==2
+   % 2D Case
    hax= gca;
    pax= get(hax,'position');
-   if exist('scl_colourbar')
-      cscale = scl_colourbar;
-   else
-      cscale= [];
-   end
    if exist('img');
-      colours= calc_colours(img.elem_data, cscale, do_colourbar);
+      colours= calc_colours(img.elem_data, scl_colourbar, do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
    end
@@ -66,6 +64,7 @@ if size(mdl.nodes,2)==2
    set(hax,'position', pax);
    view(0, 90); axis('xy'); grid('off');
 elseif size(mdl.nodes,2)==3
+   % 3D Case
    cscale= [];
    show_3d_fem( mdl );
 
