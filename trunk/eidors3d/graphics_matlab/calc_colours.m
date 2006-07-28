@@ -49,7 +49,7 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.23 2006-07-11 17:35:29 aadler Exp $  
+% $Id: calc_colours.m,v 1.24 2006-07-28 18:56:16 aadler Exp $  
 
 pp=get_colours;
 if nargin==0; return; end
@@ -84,34 +84,34 @@ backgnd= isnan(elem_data);
 elem_data(backgnd)= mean( elem_data(~backgnd));
 e= length(elem_data);
 
-% can't use | or || to support all stupid matlab versions > 6.0
-if nargin <= 1
+% Now process scaling 
+autoscale=1;
+if nargin >= 1; if ~isempty(scale)
+    autoscale=0;
+end; end
+
+if autoscale
    scale =  max(abs(elem_data)) + eps;
-elseif isempty(scale)
-   scale =  max(abs(elem_data)) + eps;
+end
+
+% Do we want a colourbar
+if nargin <=2;
+   do_colourbar = 0;
 end
 
 if ~pp.mapped_colour
    [red,grn,blu] = blu_red_axis( pp, elem_data / scale, backgnd );
    colours= shiftdim( [red,grn,blu], -1);
 else
-   % need to generate a colourmap with pp.mapped_colour+1 elements
-   % background pixel will be at entry #1. Thus for
-   % mapped_colour= 3. CMAP = [backgnd,[-1 -.5  0 .5 1]
-   %
-   % Note: ensure patch uses 'direct' CDataMapping
-   ncol= pp.mapped_colour;
-   backgndidx= 1;
-   [red,grn,blu] = blu_red_axis( pp, ...
-          [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
-   colormap([red,grn,blu]);
-   colours = round( elem_data/ scale * (ncol-1))' + ncol + 1;
-   colours(backgnd)= backgndidx;
+   colours=set_mapped_colour(pp, scale, backgnd, elem_data);
 end
 
 % print colorbar if do_colourbar is specified
-% can't use & or && to support all stupid matlab versions > 6.0
-if nargin >=3 if do_colourbar==1
+if do_colourbar
+   if ~pp.mapped_colour
+       warning('Colorbar not available without mapped_colour option');
+   else
+
    hh= colorbar;
    p= get(hh,'Position');
    pm= p(2) + p(4)/2;
@@ -124,7 +124,9 @@ if nargin >=3 if do_colourbar==1
    ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/scale;
    set(hh,'YTick', ticks');
    set(hh,'YTickLabel', [-scale_r, 0, scale_r]'+ pp.ref_level);
-end; end
+
+   end
+end
 
 
 %scaled data must go from -1 to 1
@@ -170,3 +172,17 @@ function pp=get_colours;
    end
 
    pp= eidors_colours;
+
+function colours=set_mapped_colour(pp, scale, backgnd, elem_data)
+   % need to generate a colourmap with pp.mapped_colour+1 elements
+   % background pixel will be at entry #1. Thus for
+   % mapped_colour= 3. CMAP = [backgnd,[-1 -.5  0 .5 1]
+   %
+   % Note: ensure patch uses 'direct' CDataMapping
+   ncol= pp.mapped_colour;
+   backgndidx= 1;
+   [red,grn,blu] = blu_red_axis( pp, ...
+          [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
+   colormap([red,grn,blu]);
+   colours = round( elem_data/ scale * (ncol-1))' + ncol + 1;
+   colours(backgnd)= backgndidx;
