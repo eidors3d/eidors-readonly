@@ -14,6 +14,9 @@ function colours= calc_colours(img, scale, do_colourbar)
 % scale - colour value corresponding to maximum
 %       - if not specified or scale==[] => autoscale
 %
+%    When autoscale is set, an appropriate background
+%    reference conductivity is selected, if possible
+%
 % do_colourbar ==1 => show a Matlab colorbar with
 %        appropriate scaling
 %
@@ -49,10 +52,23 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.24 2006-07-28 18:56:16 aadler Exp $  
+% $Id: calc_colours.m,v 1.25 2006-07-29 15:50:26 aadler Exp $  
+
+% Process input args
+if nargin==0; return; end
+
+% Now process scaling 
+autoscale=1;
+if nargin >= 2; if ~isempty(scale)
+    autoscale=0;
+end; end
+
+% Do we want a colourbar
+if nargin < 3;
+   do_colourbar = 0;
+end
 
 pp=get_colours;
-if nargin==0; return; end
  
 if isstr(img)
     global eidors_colours;
@@ -78,25 +94,23 @@ if isempty(elem_data)
 end
 
 % remove background
-elem_data = elem_data - pp.ref_level;
+e= length(elem_data);
+if autoscale
+    % we attempt to extimate the mode.
+    % find the mean of the most common 50% of
+    % elements
+    s_ed= sort(elem_data);
+    elem_data = elem_data - mean(s_ed( ceil(.25*e):floor(.75*e) ));
+keyboard
+else
+    elem_data = elem_data - pp.ref_level;
+end
 
 backgnd= isnan(elem_data);
 elem_data(backgnd)= mean( elem_data(~backgnd));
-e= length(elem_data);
-
-% Now process scaling 
-autoscale=1;
-if nargin >= 1; if ~isempty(scale)
-    autoscale=0;
-end; end
 
 if autoscale
    scale =  max(abs(elem_data)) + eps;
-end
-
-% Do we want a colourbar
-if nargin <=2;
-   do_colourbar = 0;
 end
 
 if ~pp.mapped_colour
@@ -164,8 +178,10 @@ function pp=get_colours;
    if ~isfield( eidors_colours, 'backgnd' );
       eidors_colours.backgnd= [.5,.5,.15];
    end
+   % better to set the default to mapped_colour. Matlab
+   %  seems to like this better anyway (ie less bugs)
    if ~isfield( eidors_colours, 'mapped_colour' );
-      eidors_colours.mapped_colour= 0;
+      eidors_colours.mapped_colour= 127;
    end
    if ~isfield( eidors_colours, 'ref_level' );
       eidors_colours.ref_level= 0;
