@@ -6,32 +6,26 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %
 %mat     = The simulated (targeted) distribution.
 %mat_ref = The known initial (homogeneous) distribution.
+%        = A default value of [] or 'auto' should scale reasonably
 %vtx     = The vertices matrix.
 %simp    = The simplices matrix.
 %thresh  = Threshold to show imaged region
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: repaint_inho.m,v 1.9 2006-01-09 22:58:56 aadler Exp $
+% $Id: repaint_inho.m,v 1.10 2006-07-29 19:44:37 aadler Exp $
 
-inhomg= mat - mat_ref;
-
-global eidors_colours;
-if isfield(eidors_colours,'ref_level');
-   ref_level= eidors_colours.ref_level;
-else
-   ref_level =0;
-end
+abs_inhomg= abs( scale_for_display( mat, mat_ref) );
 
 if nargin<5
-    thresh = max(abs(inhomg(:)-ref_level))/4;
+    thresh = max(abs_inhomg)/4;
 end
 
-ii= find( abs(inhomg(:)'-ref_level) > thresh);
+ii= find( abs_inhomg > thresh);
    
 this_x = simp(ii,:);
    
 % looks best if eidors_colours.greylev < 0
-colour= calc_colours( inhomg(ii) );
+colour= calc_colours( mat(ii) );
 ELEM= vtx';
       
 Xs=   zeros(3,length(ii));
