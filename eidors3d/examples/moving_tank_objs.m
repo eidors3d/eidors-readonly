@@ -1,60 +1,36 @@
-function imgs= moving_tank_objs(data_sel, inv_sel)
+function imgr= moving_tank_objs(data_sel, inv_sel)
 % MOVING_TANK_OBJS: create movies of objects moving in tanks
 % Usage:
-% imgs= moving_tank_objs(data_sel, invmdl)
+% imgr= moving_tank_objs(data_sel, invmdl)
 %
-% imgs = reconstructed images
+% imgr = reconstructed images
 %
 % data_sel select data_sel to use
-%   data_sel = 1x => tank data - target moves across
-%              11 => complete tank data (assume each frame
-%                       at one instant)
-%              12 => each channel meas is at a different time
-%
-%
-%   data_sel = 22 => tank data - target moves in circle
-%
-%   data_sel = 32 => tank data - target moves in part of circle
-%
+%   data_sel = 1 => target across tank data
+%   data_sel = 2 => target around tank data
 %
 % inv_sel
 %   inv_sel = 1 => 2D reconstruction=> aa_inv_solve
 %   inv_sel = 2 => 2D reconstruction=> inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.8 2006-07-27 01:42:20 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.9 2006-07-29 15:49:54 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
 if nargin<2; inv_sel  = 1; end
 
 switch data_sel
-    case 11,
-        load montreal_data_1995;
-        [vh,vi] = mk_data_objs( zc_h_demo4, zc_demo4, 7);
-        filename= 'target-across';
-
-    case 12,
+    case 1
         load montreal_data_1995;
         vh= zc_h_demo4;
         vi= zc_demo4;
         filename= 'target-across';
 
-    case 21,
-        load montreal_data_1995;
-        [vh,vi] = mk_data_objs( zc_h_demo3, zc_demo3, 7);
-        filename= 'target-around';
-
-    case 22,
+    case 2
         load montreal_data_1995;
         vh= zc_h_demo3;
         vi= zc_demo3;
-        filename= 'target-around';
-
-    case 32,
-        load montreal_data_1995;
-        vh= zc_h_demo3;
-        vi= zc_demo3(:,1:20);
         filename= 'target-around';
 
     case 3
@@ -67,6 +43,26 @@ switch data_sel
         filename= 'ball-model';
         % FIXME: something weird is happening here
 
+    case 4
+        dirname= 'tmp_mk_movie2';
+        rm_rf( dirname );
+        mkdir( dirname );
+
+        load tank_mdls
+        for i=1:length(tank_mdls);
+            show_fem( tank_mdls(i) );
+            print('-dpng', ...
+                sprintf('%s/mdl%05d.png',dirname, i) );
+        end
+        fname= 'move_ball';
+        retval= system(sprintf( ...
+            'convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
+            dirname, fname ));
+        if retval~=0
+            error('please ensure the imagemagick convert program is in your path');
+        end
+        rm_rf(dirname);
+
     otherwise
         error('Don''t recognize data_sel');
 end
@@ -75,36 +71,26 @@ switch inv_sel
     case 1
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @laplace_image_prior;
-        imdl.solve= @aa_inv_solve;
+        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.solve= 'aa_inv_solve';
 
     case 1.1
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @laplace_image_prior;
-        imdl.solve= @aa_inv_solve;
+        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.solve= 'aa_inv_solve';
 
     case 2
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @laplace_image_prior;
-        imdl.solve= @inv_kalman_diff;
+        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.solve= 'inv_kalman_diff';
 
     case 3
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @laplace_image_prior;
-        imdl.solve= @aa_inv_conj_grad;
-
-    % Inverse model for paper Adler & Lionheart, 7th EIT conf, Seoul
-    case 4
-        imdl= mk_common_model('c2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'time_smooth_prior';
-        imdl.time_smooth_prior.space_prior= @laplace_image_prior;
-        imdl.time_smooth_prior.time_weight= 0;
-        imdl.time_smooth_prior.time_steps= 0;
-        imdl.solve= @aa_inv_solve;
+        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.solve= 'aa_inv_conj_grad';
 end
 
 imgs= inv_solve(imdl,vi,vh);
@@ -131,29 +117,21 @@ function mk_movie(fname, imgs)
    close(fig);
 
 function mk_movie2(fname, imgs)
-   ncolours= 127;
-   calc_colours('mapped_colour', ncolours);
-   cmap= colormap;
-
-   img= show_slices(imgs);
-   max_img= max(abs(img(:)));
-   img= round(ncolours * img/max_img + ncolours) + 1;
-   img(isnan(img(:)))= 1;
-   
+   calc_colours('mapped_colour', 127);
    dirname= 'tmp_mk_movie2';
    rm_rf( dirname );
    mkdir( dirname );
    for i=1:length(imgs)
-     imwrite(img(:,:,i),cmap, ...
+     img= show_slices(imgs(i));
+     cmap= colormap;
+     imwrite(img,cmap, ...
             sprintf('%s/img%05d.png',dirname, i), 'png');
    end
    retval= system(sprintf( ...
-       'convert -delay 25 "%s/img*.png" -loop 0 "%s.gif"', ...
+       'convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
        dirname, fname ));
    if retval~=0
-       error(['The function mk_movie2 requires the imagemagick "convert"' ...
-              ' program. It cannot be found. Please ensure is in' ...
-              ' your "path" variable']);
+       error('please ensure the imagemagick convert program is in your path');
    end
    rm_rf(dirname);
 
@@ -179,18 +157,3 @@ function vv= do_simulation( img, stim_pat)
    img.fwd_model.stimulation= stim_pat;
 
    vv= fwd_solve( img);
-
-
-% v_hom is a vector Mx1 of frame data (reference)
-% v_inh is a vector Mx1 of frame data (data to reconstruct)
-% fps   is the frame rate (/sec)
-function [vh,vi] = mk_data_objs( v_ref, v_inh, fps)
-        imdl= mk_common_model('b2c',16);
-        vh= eidors_obj('data','homog tank', ...
-                       'meas', v_ref, ...
-                       'time', 0, ...
-                       'fwd_model', imdl.fwd_model);
-        for i=1:size(v_inh,2);
-           vi(i)= eidors_obj('set',vh,'meas',v_inh(:,i), ...
-                                      'time',i/fps);
-        end
