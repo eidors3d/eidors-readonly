@@ -1,7 +1,7 @@
 % Takes a netgen geo file with a ball in and moves it around
 % First make the mesh
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
-% $Id: move_the_ball.m,v 1.9 2006-07-29 15:38:01 aadler Exp $
+% $Id: move_the_ball.m,v 1.10 2006-07-29 21:01:14 aadler Exp $
 
 
 fnstem ='tank_for_kalman_test_ball_';
@@ -53,7 +53,7 @@ fclose(fidnb);
 %Made the base file
 fnin = fn00;
 
-ntimes = 32;
+ntimes = 4;% 32;
 
 for itime = 1:ntimes
   fnouts=sprintf('tank_for_kalman_test_ball_%02d',itime);

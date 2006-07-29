@@ -15,6 +15,8 @@ function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR
 % Part of EIDORS 3D
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
+%
+% $Id: create_tank_mesh_ng.m,v 1.8 2006-07-29 21:01:14 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
@@ -153,58 +155,5 @@ disp('..you just have to take your hats off to those guys at Johannes Kepler Uni
 disp('what a good job.');
 
 disp(['Now reading back data from file: ' meshfn])
-[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(meshfn);
-disp([meshfn ' contains ' num2str(max(fc)) ' faces'])
-
-%Translate to v3 notation!
-tank_mdl.name = 'Tank model';
-tank_mdl.nodes= vtx;
-tank_mdl.elems= simp;
-tank_mdl.boundary= srf;
-
-
-
-%disp('Now I need some help finding which faces are electrodes')
-
-
-
-% Plot wire frame equivalent of mesh model
-%tetramesh(simp,vtx,'FaceColor','none','EdgeColor','cyan')%it doesn't work in matlab 5.3
-if 0
-set(gcf,'Name','Wire Mesh Model')
-view(45,10)
-hold on
-trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3),'EdgeColor','blue')
-title('Surface of body: blue, Volume of body: cyan')
-hidden off
-axis equal image; % Tightly fit square axes around plot
-mshaxs = axis; % Save present axes for use with faces
-pause(3)
-end
-% Find the electrodes
-[elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
-
-%size(elec)
-
-%[gnd_ind, electrodes, perm_sym, elec, protocol, no_pl] = get_model_elecs;
-
-
-if size(elec,1) ~= nelec 
-  error('That did''t work. Wrong number of electrodes!');
-end
-
-for i=1:nelec
-    electrodes(i).z_contact= 1.0;  %well you can change that later!
-    electrodes(i).nodes=     unique( elec(i,:) );
-end
-
-perm_sym='{n}';
-
-
-
-tank_mdl.gnd_node=           1;
-tank_mdl.electrode =         electrodes;
-tank_mdl.misc.perm_sym =          perm_sym;
-
-% save(fnstem,'tank_mdl');
-
+tank_mdl= ng_mk_fwd_model( meshfn, centres, ...
+             'Netgen based cylindrical tank model', [] );
