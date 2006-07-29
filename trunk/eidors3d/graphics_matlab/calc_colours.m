@@ -34,6 +34,8 @@ function colours= calc_colours(img, scale, do_colourbar)
 %   eidors_colours.ref_level = 0  
 %      conductivity of this value is centre of colour mapping. Normally,
 %      this would be set to the conductivity of the background
+%   eidors_colours.ref_level = 'auto'
+%      automatically calculate a good reference level for the images
 %   eidors_colours.mapped_colour= 0; % use colormap function
 %      if mapped_colour is non-zero, it indicates the colourmap
 %      size; otherwise, RGB values are used.
@@ -52,10 +54,10 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.25 2006-07-29 15:50:26 aadler Exp $  
+% $Id: calc_colours.m,v 1.26 2006-07-29 19:44:37 aadler Exp $  
 
-% Process input args
-if nargin==0; return; end
+% If no args - set defaults
+if nargin==0; get_colours; return; end
 
 % Now process scaling 
 autoscale=1;
@@ -96,22 +98,14 @@ end
 % remove background
 e= length(elem_data);
 if autoscale
-    % we attempt to extimate the mode.
-    % find the mean of the most common 50% of
-    % elements
-    s_ed= sort(elem_data);
-    elem_data = elem_data - mean(s_ed( ceil(.25*e):floor(.75*e) ));
-keyboard
+   elem_data = scale_for_display( elem_data, 'auto');
+   scale =  max(abs(elem_data)) + eps;
 else
-    elem_data = elem_data - pp.ref_level;
+   elem_data = scale_for_display( elem_data );
 end
 
 backgnd= isnan(elem_data);
 elem_data(backgnd)= mean( elem_data(~backgnd));
-
-if autoscale
-   scale =  max(abs(elem_data)) + eps;
-end
 
 if ~pp.mapped_colour
    [red,grn,blu] = blu_red_axis( pp, elem_data / scale, backgnd );
@@ -184,7 +178,7 @@ function pp=get_colours;
       eidors_colours.mapped_colour= 127;
    end
    if ~isfield( eidors_colours, 'ref_level' );
-      eidors_colours.ref_level= 0;
+      eidors_colours.ref_level= 'auto';
    end
 
    pp= eidors_colours;

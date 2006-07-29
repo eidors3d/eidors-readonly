@@ -9,10 +9,11 @@ function show_fem( mdl, options )
 %   options(3) => colourbar scale
 %
 % set ref_level for conductivities with
-% calc_colours('ref_level', ref_level)
+%    calc_colours('ref_level', ref_level)
+%    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.40 2006-07-28 18:56:16 aadler Exp $
+% $Id: show_fem.m,v 1.41 2006-07-29 19:44:37 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -150,7 +151,7 @@ end
 function show_inhomogeneities( elem_data, mdl)
 % show
 hold('on');
-repaint_inho(elem_data, 0, mdl.nodes, mdl.elems); 
+repaint_inho(elem_data, 'use_global' , mdl.nodes, mdl.elems); 
 camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');
