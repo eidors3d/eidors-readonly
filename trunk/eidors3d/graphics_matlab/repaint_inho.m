@@ -12,7 +12,7 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %thresh  = Threshold to show imaged region
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: repaint_inho.m,v 1.10 2006-07-29 19:44:37 aadler Exp $
+% $Id: repaint_inho.m,v 1.11 2006-07-31 17:24:28 aadler Exp $
 
 abs_inhomg= abs( scale_for_display( mat, mat_ref) );
 
@@ -25,7 +25,8 @@ ii= find( abs_inhomg > thresh);
 this_x = simp(ii,:);
    
 % looks best if eidors_colours.greylev < 0
-colour= calc_colours( mat(ii) );
+colours= calc_colours( mat );
+colours= colours(:,ii,:);
 ELEM= vtx';
       
 Xs=   zeros(3,length(ii));
@@ -39,7 +40,7 @@ for idx=[[1;2;3], ...
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
 
-   patch(Xs,Ys,Zs,colour,'EdgeColor','none');
+   patch(Xs,Ys,Zs,colours,'EdgeColor','none');
 end
 
 
