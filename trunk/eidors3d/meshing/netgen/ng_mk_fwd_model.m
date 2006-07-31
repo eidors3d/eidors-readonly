@@ -1,8 +1,10 @@
-function fwd_mdl= ng_mk_fwd_model( ng_vol_filename, centres, ...
-                                   name, stim_pattern, z_contact)
+function [fwd_mdl, mat_indices]= ...
+             ng_mk_fwd_model( ng_vol_filename, centres, ...
+                              name, stim_pattern, z_contact)
 % NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file
-% fwd_mdl= ng_mk_fwd_model( ng_vol_filename, name, ...
-%                           stim_pattern, z_contact)
+% [fwd_mdl, mat_indices]= ...
+%      ng_mk_fwd_model( ng_vol_filename, centres, ...
+%                       name, stim_pattern, z_contact)
 %
 %  ng_vol_filename:   filename output from netgen
 %  name:              name for object (if [] use ng_vol_filename)
@@ -11,24 +13,34 @@ function fwd_mdl= ng_mk_fwd_model( ng_vol_filename, centres, ...
 %                     empty ([]) if stim_pattern is not available
 %  z_contact:         vector or scalar electrode contact impedance
 %
+%  fwd_mdl:           eidors format fwd_model
+%  mat_indices:       cell array of material indices from eidors 
+%
 % (C) 2006 Andy Adler. Licenced under GPL V2
 
-if nargin<5
-   z_contact=0;
+if isempty(name); 
+   name = ['MDL from', ng_vol_filename];
 end
 
-mdl.name = name;
-if isempty(name); 
-   mdl.name = ['MDL from', ng_vol_filename];
+if nargin<5
+   z_contact=0.01; % singular if z_contact=0
 end
 
 % Model Geometry
 [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(ng_vol_filename);
+fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
+                             stim_pattern, centres, z_contact);
+mat_indices= mk_mat_indices( mat_ind);
+
+% build fwd_model structure
+function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
+                       stim_pattern, centres, z_contact)
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
 mdl.gnd_node=           1;
 mdl.misc.perm_sym =     '{n}';
+mdl.name = name;
 
 % Model Stimulation
 if ~isempty(stim_pattern)
@@ -54,3 +66,20 @@ mdl.jacobian=       'np_calc_jacobian';
 mdl.system_mat=     'np_calc_system_mat';
 
 fwd_mdl= eidors_obj('fwd_model', mdl);
+
+% Output cell array of indices into each material type
+%   array order is sorted by length of material type
+function mat_indices= mk_mat_indices( mat_ind);
+  % find length of mat_indices 
+  % test example: mat_ind=[10 12 14 14 12 12 14 12];
+  sort_mi= sort(mat_ind(:));
+  find_mi= find( diff([-1e8;sort_mi]) );
+  len_mi = diff([find_mi;length(sort_mi)+1]);
+  [jnk,idxs]= sort(-len_mi); %reverse sort
+  l_idxs= length(idxs);
+  mat_indices= cell(1, l_idxs);
+  for i= 1:l_idxs;
+     mat_idx_i= sort_mi(find_mi(idxs(i)));
+     mat_indices{i}= find(mat_ind == mat_idx_i);
+  end
+
