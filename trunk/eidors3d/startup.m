@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.20 2005-12-08 14:00:27 billlion Exp $
+% $Id: startup.m,v 1.21 2006-07-31 17:23:37 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -43,3 +43,6 @@ clear HOMEDIR;
 if str2num(version('-release'))>=14
 warning off MATLAB:symmmd:obsolete
 end
+
+% Setup defaults in calc_colours
+calc_colours
