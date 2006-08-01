@@ -1,7 +1,7 @@
 % Takes a netgen geo file with a ball in and moves it around
 % First make the mesh
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
-% $Id: move_the_ball.m,v 1.10 2006-07-29 21:01:14 aadler Exp $
+% $Id: move_the_ball.m,v 1.11 2006-08-01 14:56:25 billlion Exp $
 
 
 fnstem ='tank_for_kalman_test_ball_';
@@ -44,7 +44,12 @@ foundit=0;
          tline=   sprintf('solid ball = sphere(%3.3f,%3.3f,%3.3f;%3.3f);',x,y,z,r);
     end
 %    disp(tline)
-    fprintf(fidout,'%s\n',tline);
+% take the ball from the tank
+if strfind(tline,'and  cyl;')  %care  - two spaces!
+    disp(tline);
+    tline='and cyl and not ball;'
+end
+fprintf(fidout,'%s\n',tline);
   end  %while
 fprintf(fidout,' tlo ball   -col=[0,1,0];\n')
 fclose(fidout);
@@ -84,13 +89,25 @@ for itime = 1:ntimes
           end
     end
 %    disp(tline)
+  if strfind(tline,  'and  cyl;')
+      tline = 'and  cyl and not ball;'
+  end    
     fprintf(fidout,'%s\n',tline);
   end  %while
 fclose(fidout);
 fclose(fidin);
 meshfn=[fnouts,'.vol'];
+ldpath='';
+if  strfind(system_dependent('getos'),'Linux')
+    islinux =1;
+    s=ver;
+    if str2num(s.Version)>=7
+    %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
+          ldpath ='LD_LIBRARY_PATH=;';
+    end      
+end    
 status= system(sprintf( ...
-        'ng -batchmode -geofile=%s  -meshfile=%s ',fnout,meshfn));
+        '%s ng -batchmode -geofile=%s  -meshfile=%s ',ldpath,fnout,meshfn));
    
 end %for
 
