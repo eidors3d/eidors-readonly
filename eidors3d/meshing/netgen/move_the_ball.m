@@ -1,7 +1,7 @@
 % Takes a netgen geo file with a ball in and moves it around
 % First make the mesh
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
-% $Id: move_the_ball.m,v 1.11 2006-08-01 14:56:25 billlion Exp $
+% $Id: move_the_ball.m,v 1.12 2006-08-01 17:16:56 aadler Exp $
 
 
 fnstem ='tank_for_kalman_test_ball_';
@@ -94,21 +94,11 @@ for itime = 1:ntimes
   end    
     fprintf(fidout,'%s\n',tline);
   end  %while
-fclose(fidout);
-fclose(fidin);
-meshfn=[fnouts,'.vol'];
-ldpath='';
-if  strfind(system_dependent('getos'),'Linux')
-    islinux =1;
-    s=ver;
-    if str2num(s.Version)>=7
-    %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
-          ldpath ='LD_LIBRARY_PATH=;';
-    end      
-end    
-status= system(sprintf( ...
-        '%s ng -batchmode -geofile=%s  -meshfile=%s ',ldpath,fnout,meshfn));
-   
+  fclose(fidout);
+  fclose(fidin);
+  meshfn=[fnouts,'.vol'];
+
+  call_netgen(fnout,meshfn);
 end %for
 
 % Now read them in again and do the calculations
