@@ -16,7 +16,7 @@ function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng.m,v 1.10 2006-08-01 16:35:37 aadler Exp $
+% $Id: create_tank_mesh_ng.m,v 1.11 2006-08-01 17:16:56 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
@@ -112,59 +112,11 @@ end
 end % of circular case
 
 fclose(fid);
+
 % Now call Netgen in batchmode to mesh this CSG file
-while( 1 )
-   disp('Calling Netgen. Please wait.....');
-   ldpath='';
-   if  strfind(system_dependent('getos'),'Linux')
-     islinux =1;
-     s=ver;
-      if str2num(s.Version)>=7
-        %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
-          ldpath ='LD_LIBRARY_PATH=;';
-      end      
-   else
-     islinux =0;
-   end    
+disp('Calling Netgen. Please wait.....');
+call_netgen( geofn, meshfn );
 
-   status= system(sprintf( ...
-        '%s ng -batchmode -geofile=%s  -meshfile=%s ',ldpath,geofn,meshfn));
-   if status==0; break; end
-   if ~islinux
-   fprintf([ ...
-    'Netgen call failed. Is netgen installed and on the search path?\n' ...
-    'If you are running under windows, I can attempt to create\n' ...
-    'a batch file to access netgen.\n' ...
-    'Please enter the directory in which to find netgen.\n' ...
-    'If you don''t have a copy, press Ctrl-C to break, and' ...
-    'see http://www.hpfem.jku.at/netgen/ for download\n\n' ...
-    ]);
-   netgen_path = input('netgen_path? ','s');
-   if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) 
-      disp('Found netgen version 4.4');
-
-      fid= fopen('ng.bat','w');
-      fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-      fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);
-      fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);
-      fclose(fid);
-   elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
-      disp('Found netgen version 4.3.1');
-
-      fid= fopen('ng.bat','w');
-      fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-      fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-      fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
-      fclose(fid);
-   else
-      warning(['cannot find a version of netgen that I know about\n' ...
-               'Install netgen 4.4 or 4.3.1 or check the path\n']);
-   end
-   else
-       disp('It seems you are running Linux and netgen has not worked. Check that it is installed and on the path. Perhaps LD_LIBRARY_PATH needs to be set?');
-
-   end
-end
 disp('Netgen seems to have meshed your tank ok and written it to file!');
 disp('..you just have to take your hats off to those guys at Johannes Kepler University, Linz,');
 disp('what a good job.');
