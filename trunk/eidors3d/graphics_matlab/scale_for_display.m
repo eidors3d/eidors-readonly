@@ -6,7 +6,7 @@ function elem_data= scale_for_display( elem_data, ref_lev )
 %               otherwise use the global value
 %             Can be numeric or 'auto' or 'use_global' 
 %
-% $Id: scale_for_display.m,v 1.1 2006-07-29 19:44:37 aadler Exp $
+% $Id: scale_for_display.m,v 1.2 2006-08-01 16:33:57 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL v2
 
    global eidors_colours;
@@ -21,8 +21,10 @@ function elem_data= scale_for_display( elem_data, ref_lev )
       if ~strcmp(ref_lev, 'auto')
           error('ref_level parameter must be "auto" or numeric');
       end
-      s_ed= sort(elem_data);
-      e= length(elem_data);
+      s_ed= elem_data(:);
+      s_ed(isnan(s_ed)) = [];
+      s_ed= sort(s_ed);
+      e= length(s_ed);
       ref_lev = mean(s_ed( ceil(.25*e):floor(.75*e) ));
    end
 
