@@ -3,7 +3,7 @@ function status= call_netgen(geo_file, vol_file)
 % status= call_netgen(geo_file, vol_file)
 %  staus = 0 -> success , negative -> failure
 %
-% $Id: call_netgen.m,v 1.1 2006-08-01 17:16:56 aadler Exp $
+% $Id: call_netgen.m,v 1.2 2006-08-01 19:54:32 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL V2
 
 while( 1 )
@@ -19,8 +19,11 @@ while( 1 )
      islinux =0;
    end    
 
+%       '%s ng -veryfine -batchmode -geofile=%s  -meshfile=%s ', ...
+
    status= system(sprintf( ...
-        '%s ng -batchmode -geofile=%s  -meshfile=%s ',ldpath,geo_file,vol_file));
+        '%s ng -batchmode -geofile=%s  -meshfile=%s ', ...
+         ldpath,geo_file,vol_file));
    if status==0; break; end
 
    if ~islinux
