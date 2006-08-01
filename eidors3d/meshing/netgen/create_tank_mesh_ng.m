@@ -16,7 +16,7 @@ function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng.m,v 1.9 2006-08-01 14:57:47 billlion Exp $
+% $Id: create_tank_mesh_ng.m,v 1.10 2006-08-01 16:35:37 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
@@ -123,6 +123,8 @@ while( 1 )
         %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
           ldpath ='LD_LIBRARY_PATH=;';
       end      
+   else
+     islinux =0;
    end    
 
    status= system(sprintf( ...
@@ -170,3 +172,5 @@ disp('what a good job.');
 disp(['Now reading back data from file: ' meshfn])
 tank_mdl= ng_mk_fwd_model( meshfn, centres, ...
              'Netgen based cylindrical tank model', [] );
+
+
