@@ -3,7 +3,7 @@ function status= call_netgen(geo_file, vol_file)
 % status= call_netgen(geo_file, vol_file)
 %  staus = 0 -> success , negative -> failure
 %
-% $Id: call_netgen.m,v 1.2 2006-08-01 19:54:32 aadler Exp $
+% $Id: call_netgen.m,v 1.3 2006-08-02 11:15:45 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL V2
 
 while( 1 )
@@ -26,7 +26,7 @@ while( 1 )
          ldpath,geo_file,vol_file));
    if status==0; break; end
 
-   if ~islinux
+   if islinux
        disp('It seems you are running Linux and netgen has not worked. Check that it is installed and on the path. Perhaps LD_LIBRARY_PATH needs to be set?');
    else
 
@@ -37,6 +37,8 @@ while( 1 )
     'Please enter the directory in which to find netgen.\n' ...
     'If you don''t have a copy, download it from' ...
     'http://www.hpfem.jku.at/netgen/\n\n' ...
+    'Note that you must use names without spaces. Thus\n' ...
+    'instead of C:/Program Files/ write C:/Progra~1/\n\n' ...
     ]);
    netgen_path = input('netgen_path? ','s');
    if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) 
@@ -45,7 +47,7 @@ while( 1 )
       fid= fopen('ng.bat','w');
       fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
       fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);
-      fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);
+      fprintf(fid,'"%s/netgen.exe" %%*\n', netgen_path);
       fclose(fid);
    elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
       disp('Found netgen version 4.3.1');
@@ -53,7 +55,7 @@ while( 1 )
       fid= fopen('ng.bat','w');
       fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
       fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-      fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
+      fprintf(fid,'"%s/ng431.exe" %%*\n', netgen_path);
       fclose(fid);
    else
       warning(['cannot find a version of netgen that I know about\n' ...
