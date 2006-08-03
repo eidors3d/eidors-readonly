@@ -1,7 +1,7 @@
 % Takes a netgen geo file with a ball in and moves it around
 % First make the mesh
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
-% $Id: move_the_ball.m,v 1.12 2006-08-01 17:16:56 aadler Exp $
+% $Id: move_the_ball.m,v 1.13 2006-08-03 06:59:50 billlion Exp $
 
 
 fnstem ='tank_for_kalman_test_ball_';
@@ -12,20 +12,37 @@ fn00= [fnstem,'00.geo'];
 
 tank_radius =15;
 tank_height=30;
-CorR = 'R';
+CorR = 'C';  %C for circular R for rectangular
 log2_electrodes_per_plane =4;
 no_of_planes=2;
 first_plane_starts=10; 
 height_between_centres=10;
+%electrode_width=1.5;
+%electrode_height=2.5;
 electrode_width=1.5;
-electrode_height=2.5;
-nelec=no_of_planes*2^log2_electrodes_per_plane;
+electrode_height=1.5;
 
-[tank_mdl1,centres] = create_tank_mesh_ng( ...
+elecs_per_plane=2^log2_electrodes_per_plane;
+nelec=no_of_planes*elecs_per_plane;
+
+
+%Make list of centres
+kel = 0;
+for l=1:no_of_planes
+ z = first_plane_starts + (l-1)*height_between_centres;
+ for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
+    kel=kel+1;
+    [x,y]=pol2cart(th+0.02*randn(1),tank_radius);  %jiggle to avoid netgen errors
+    dirn = [x,y,0];
+    centres(kel,:)= [x,y,z]; % keep the centres
+    
+ end;
+end;
+
+
+tank_mdl1 = create_tank_mesh_ng_centres( ...
                         tank_radius, tank_height, ...
-                        CorR,log2_electrodes_per_plane, ...
-                        no_of_planes,first_plane_starts, ...
-                        height_between_centres, ...
+                        CorR,centres,...
                         electrode_width,electrode_height,fnstemnb);
 % comment out if already made
 r = tank_radius/10; %that is radius of ball
