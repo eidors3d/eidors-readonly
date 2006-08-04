@@ -1,10 +1,18 @@
-function status= call_netgen(geo_file, vol_file)
+function status= call_netgen(geo_file, vol_file, finelevel)
 % CALL_NETGEN: call netgen to create a vol_file from a geo_file
-% status= call_netgen(geo_file, vol_file)
+% status= call_netgen(geo_file, vol_file, finelevel)
 %  staus = 0 -> success , negative -> failure
 %
-% $Id: call_netgen.m,v 1.3 2006-08-02 11:15:45 aadler Exp $
+% Finelevel controls the fineness of the mesh
+%   default is '' -> coarse
+%   valid values are 'fine' or 'veryfine'
+%
+% $Id: call_netgen.m,v 1.4 2006-08-04 20:09:42 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL V2
+
+if nargin<3
+   finelevel= 'veryfine';
+end
 
 while( 1 )
    ldpath='';
@@ -22,8 +30,8 @@ while( 1 )
 %       '%s ng -veryfine -batchmode -geofile=%s  -meshfile=%s ', ...
 
    status= system(sprintf( ...
-        '%s ng -batchmode -geofile=%s  -meshfile=%s ', ...
-         ldpath,geo_file,vol_file));
+        '%s ng %s -batchmode -geofile=%s  -meshfile=%s ', ...
+         ldpath,finelevel,geo_file,vol_file));
    if status==0; break; end
 
    if islinux
