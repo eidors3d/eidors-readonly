@@ -6,6 +6,7 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % 
 % Version 4.0
 % B.D.Grieve - 27/01/2002 + modifications by lmazurk
+% A.Adler - 2006 mods to run quicker
 %
 % EIDORS's srf array is a subset of NetGen's surface element data
 % (columns 6:8). The first column of the surface element data also
@@ -23,9 +24,45 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % filename = Name of file containing NetGen .vol information
 % mat_ind  = Material index
 
+% $Id: ng_read_mesh.m,v 1.3 2006-08-04 20:02:05 aadler Exp $
+% (C) 2002-2006 (C) Licenced under the GPL
 
 %filename = input('Please enter the mesh filename [e.g. demo.vol]: ','s');
 
+eidors_msg('ng_read_mesh',3);
+
+
+fid = fopen(filename,'r');
+while 1
+    tline = fgetl(fid);
+    if ~ischar(tline); fclose(fid); break; end
+
+    if     strcmp(tline,'surfaceelementsgi')
+       se= get_lines_with_numbers( fid, 11);
+    elseif strcmp(tline,'volumeelements')
+       ve= get_lines_with_numbers( fid, 6);
+    elseif strcmp(tline,'edgesegmentsgi2')
+       es= get_lines_with_numbers( fid, 12);
+    elseif strcmp(tline,'points')
+       vtx= get_lines_with_numbers( fid, 3);
+    end
+end
+
+
+srf = se(:,6:8);
+fc = se(:,1);
+simp = ve(:,3:6);
+edg = es;
+mat_ind=ve(:,1);
+bc = se(:,2);
+
+function mat= get_lines_with_numbers( fid, n_cols);
+   tline = fgetl(fid);
+   n_rows = sscanf(tline,'%d');
+   mat= fscanf(fid,'%f',[n_cols,n_rows])';
+
+
+function oldjnk
 
 mdca = textread(filename,'%s');
 
@@ -50,6 +87,7 @@ for loop3 = 1:size(mdca,1)
         for loop1 = 0:lngve-1
             for loop2 = 0:5
                 ve(loop1+1,loop2+1) = str2num(cat(2,mdca{startve+loop1*6+loop2}));
+keyboard
             end
         end
         disp([num2str(lngve) ' volume elements retrieved'])
@@ -77,10 +115,3 @@ for loop3 = 1:size(mdca,1)
         disp([num2str(lngp) ' vertices retrieved'])
     end
 end
-
-srf = se(:,6:8);
-fc = se(:,1);
-simp = ve(:,3:6);
-edg = es;
-mat_ind=ve(:,1);
-bc = se(:,2);
