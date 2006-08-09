@@ -1,5 +1,11 @@
-function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR, log2_electrodes_per_plane, no_of_planes,first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem)
-% USAGE: [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR, log2_electrodes_per_plane, no_of_planes,first_plane_starts, height_between_centres, electrode_width, electrode_height,fnstem)
+function [tank_mdl,centres] = create_tank_mesh_ng( ...
+            tank_radius, tank_height,CorR, log2_electrodes_per_plane, ...
+            no_of_planes,first_plane_starts, height_between_centres,  ...
+            electrode_width, electrode_height,fnstem)
+%USAGE: [tank_mdl,centres] = create_tank_mesh_ng( ...
+%           tank_radius, tank_height,CorR, log2_electrodes_per_plane, ...
+%           no_of_planes,first_plane_starts, height_between_centres,  ...
+%           electrode_width, electrode_height,fnstem)
 %
 % Parameters  tank_radius, tank_height, 
 %   CorR= 'C' for circular 'R' for rectangular
@@ -10,13 +16,16 @@ function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR
 %, height_between_centres   of electrode planes , 
 % electrode_width, electrode_height , the width is just radius if 'R'
 %  fnstem the file name used for saving netgen files
+%
+%
+%
 % Function to generate tank model
 % Bill Lionheart 23/01/2005 (somewhere over Siberia)
 % Part of EIDORS 3D
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng.m,v 1.12 2006-08-09 13:54:05 aadler Exp $
+% $Id: create_tank_mesh_ng.m,v 1.13 2006-08-09 14:39:27 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
@@ -39,13 +48,15 @@ end
 
 geofn= [fnstem,'.geo'];
 meshfn= [fnstem,'.vol'];
-[fid,mess]=fopen(geofn,'w');
+sizefn= [fnstem,'.msz'];
+fid=fopen(geofn,'w');
+
+fsf=fopen(sizefn,'w');
+
 
 if CorR =='R'
 
    % Rectangular case 
-   [fid,mess]=fopen(geofn,'w');
-
    write_header(fid,tank_height,tank_radius);
 
    kel = 0;
@@ -72,26 +83,45 @@ else
 % Circular case
    write_header(fid,tank_height,tank_radius);
 
+% meshsize 
+   circ_density= 50; % 50 points on outsize of electrode
+   fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*circ_density);
+   mesh_density= 2*pi*electrode_radius/circ_density;
+   %Density can only have one decimal place
+   mesh_density= ceil(mesh_density*10)/10;
 
+   
+   theta= linspace(0,2*pi, circ_density+1)'; theta(1)=[];
+   th_col= ones(size(theta));
+   [xyz]= [0*th_col, ...
+           electrode_radius*sin(theta), ...
+           electrode_radius*cos(theta)];
+
+   xyz2= [];
+   jiggle= 0.01; %jiggle to avoid netgen errors
    kel = 0;
    for l=1:no_of_planes
       z = first_plane_starts + (l-1)*height_between_centres;
       for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
          kel=kel+1;
-         [x,y]=pol2cart(th+0.02*randn(1),tank_radius);  %jiggle to avoid netgen errors
+         [x,y]=pol2cart(th+jiggle,tank_radius); 
          dirn = [x,y,0];
          centres(kel,:)= [x,y,z]; % keep the centres
          dirn = dirn ./ norm(dirn);
          writengcylrod(fid,sprintf('rod%d',kel),[x,y,z],dirn, ....
                        electrode_radius, 0.5*tank_radius);	 	 
 
-%        writengcylrod(fid,sprintf('out_rod%d',kel),[x,y,z],dirn, ....
-%                      1.1*electrode_radius, 0.5*tank_radius);	 	 
+         %write to meshsize file
+         xyz1= th_col*[x,y,z] + xyz* ...
+                   [cos(th),sin(th),0; ...
+                   -sin(th),cos(th),0; ...
+                    0      ,0      ,1];
+         fprintf(fsf,'%f %f %f %4.1f\n',[xyz1,th_col*mesh_density]');
+
       end;
    end;
 
 end % of circular case
-
 
    for k= 1:nelec
      fprintf(fid,'solid cyl%d = bigcyl    and rod%d; \n',k,k);
@@ -105,10 +135,11 @@ end % of circular case
 
 
 fclose(fid);
+fclose(fsf);
 
 % Now call Netgen in batchmode to mesh this CSG file
 disp('Calling Netgen. Please wait.....');
-call_netgen( geofn, meshfn );
+call_netgen( geofn, meshfn, sizefn);
 
 disp('Netgen seems to have meshed your tank ok and written it to file!');
 disp('..you just have to take your hats off to those guys at Johannes Kepler University, Linz,');
