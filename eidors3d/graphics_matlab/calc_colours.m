@@ -54,10 +54,31 @@ function colours= calc_colours(img, scale, do_colourbar)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.26 2006-07-29 19:44:37 aadler Exp $  
+% $Id: calc_colours.m,v 1.27 2006-08-11 16:09:59 aadler Exp $  
 
 % If no args - set defaults
-if nargin==0; get_colours; return; end
+if nargin==0;
+    get_colours;
+    return;
+elseif isstr(img)
+    % called as calc_colours('parameter' ... )
+    global eidors_colours;
+    if nargin==1
+       colours = getfield(eidors_colours, img);
+    else
+       eidors_colours = setfield(eidors_colours, img, scale);
+       colours= eidors_colours;
+    end
+    return;
+elseif isfield(img,'type')
+   if strcmp( img.type, 'image' )
+      elem_data= img.elem_data(:); %col vector
+   else
+      error('calc_colours: input is not eidors image object');
+   end
+else
+   elem_data= img(:);
+end
 
 % Now process scaling 
 autoscale=1;
@@ -71,24 +92,6 @@ if nargin < 3;
 end
 
 pp=get_colours;
- 
-if isstr(img)
-    global eidors_colours;
-    if nargin==1
-       colours = getfield(eidors_colours, img);
-    else
-       eidors_colours = setfield(eidors_colours, img, scale);
-    end
-    return;
-elseif isfield(img,'type')
-   if strcmp( img.type, 'image' )
-      elem_data= img.elem_data(:); %col vector
-   else
-      error('calc_colours: input is not eidors image object');
-   end
-else
-   elem_data= img(:);
-end
 
 if isempty(elem_data)
     colours = 'k'; %black
@@ -113,6 +116,8 @@ if ~pp.mapped_colour
 else
    colours=set_mapped_colour(pp, scale, backgnd, elem_data);
 end
+
+
 
 % print colorbar if do_colourbar is specified
 if do_colourbar
