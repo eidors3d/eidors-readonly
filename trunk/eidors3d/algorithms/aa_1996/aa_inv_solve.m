@@ -12,13 +12,13 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_solve.m,v 1.16 2006-07-27 01:42:20 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.17 2006-08-11 16:08:40 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
 
 % The one_step reconstruction matrix is cached
-one_step_inv = eidors_obj('get-cache', inv_model, 'one_step_inv');
+one_step_inv = eidors_obj('get-cache', inv_model, 'aa_inv_solve');
 if ~isempty(one_step_inv)
     eidors_msg('aa_inv_solve: using cached value', 2);
 else
@@ -31,7 +31,7 @@ else
 
     one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
 
-    eidors_obj('set-cache', inv_model, 'one_step_inv', one_step_inv);
+    eidors_obj('set-cache', inv_model, 'aa_inv_solve', one_step_inv);
     eidors_msg('aa_inv_solve: setting cached value', 2);
 end
 
