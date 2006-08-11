@@ -3,6 +3,12 @@ function Reg= time_smooth_prior( inv_model );
 % Reg= time_smooth_prior( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
+% inv_model.time_smooth_prior.space_prior =
+%          @space_prior_function
+% inv_model.time_smooth_prior.time_steps  =
+%          # of steps into future and past
+% inv_model.time_smooth_prior.time_weight =  0..1
+%    each step is weighted by time_weight^time_difference
 %
 % This image prior is intended to be used as
 %  R'*R, but may be used as R for as well.
@@ -19,7 +25,7 @@ function Reg= time_smooth_prior( inv_model );
 % for the element itself
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_smooth_prior.m,v 1.1 2006-07-27 11:33:41 aadler Exp $
+% $Id: time_smooth_prior.m,v 1.2 2006-08-11 16:09:23 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 ne = pp.n_elem;
@@ -35,16 +41,11 @@ time_steps = inv_model.time_smooth_prior.time_steps;
 
 space_Reg= feval(space_prior, inv_model);
 time_Reg= -speye(ne);
+tlen= 2*time_steps + 1;
+[x,y]= meshgrid(-time_steps:time_steps, ...
+                -time_steps:time_steps);
+time_w_mat= time_weight.^abs(x-y) .* (1-eye(tlen));
 
-Reg= [];
-for i= -time_steps:time_steps;
-   R_row= [];
-   for j= -time_steps:time_steps;
-      if i==j
-         R_row= [R_row, space_Reg];
-      else
-         R_row= [R_row, time_Reg*time_weight*abs(i-j)];
-      end
-   end
-   Reg= [Reg; R_row];
-end
+Reg= kron( eye(tlen),  space_Reg ) + ...
+     kron( time_w_mat, time_Reg );
+     
