@@ -6,34 +6,45 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 % imgr = reconstructed images
 %
 % data_sel select data_sel to use
-%   data_sel = 1 => target across tank data
-%   data_sel = 2 => target around tank data
+%   data_sel: 10 => target across tank data
+%             20 => target around tank data
+%             21 => target around tank data (10 positions)
+%             30 => from netgen simulations
+%             40 => show netgen FEM simulation
 %
 % inv_sel
-%   inv_sel = 1 => 2D reconstruction=> aa_inv_solve
-%   inv_sel = 2 => 2D reconstruction=> inv_kalman_diff
+%  2D reconstructions
+%   inv_sel = 1   => aa_inv_solve
+%   inv_sel = 1.1 => aa_inv_solve (576 elems)
+%   inv_sel = 2   => inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.9 2006-07-29 15:49:54 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.10 2006-08-11 16:10:52 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
 if nargin<2; inv_sel  = 1; end
 
 switch data_sel
-    case 1
+    case 10
         load montreal_data_1995;
         vh= zc_h_demo4;
         vi= zc_demo4;
         filename= 'target-across';
 
-    case 2
+    case 20
         load montreal_data_1995;
         vh= zc_h_demo3;
         vi= zc_demo3;
         filename= 'target-around';
 
-    case 3
+    case 21
+        load montreal_data_1995;
+        vh= zc_h_demo3;
+        vi= zc_demo3(:,1:2:20);
+        filename= 'target-around10';
+
+    case 30
         load all_models_for_moving_ball
         stim_pat = mk_stim_patterns(16,1,'{ad}','{ad}',{'no_meas_current'},1);
         vh= do_simulation( tank_img_homg, stim_pat);
@@ -43,7 +54,7 @@ switch data_sel
         filename= 'ball-model';
         % FIXME: something weird is happening here
 
-    case 4
+    case 40
         dirname= 'tmp_mk_movie2';
         rm_rf( dirname );
         mkdir( dirname );
@@ -72,13 +83,13 @@ switch inv_sel
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'aa_inv_solve';
+        imdl.solve= 'np_inv_solve';
 
     case 1.1
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'aa_inv_solve';
+        imdl.solve= 'np_inv_solve';
 
     case 2
         imdl= mk_common_model('b2c',16);
@@ -91,6 +102,21 @@ switch inv_sel
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'aa_inv_conj_grad';
+
+    case 4
+        imdl= mk_common_model('b2c',16);
+        imdl.hyperparameter.value= 1e-2;
+        time_steps= 2;
+
+        imdl.RtR_prior= @time_smooth_prior;
+        imdl.time_smooth_prior.space_prior= @laplace_image_prior;
+        imdl.time_smooth_prior.time_weight= .5;
+        imdl.time_smooth_prior.time_steps=  time_steps;
+
+        imdl.solve= @time_prior_solve;
+        imdl.time_prior_solve.time_steps=   time_steps;
+%       imdl.solve= @np_inv_solve;
+%       imdl.solve= 'aa_inv_conj_grad';
 end
 
 imgs= inv_solve(imdl,vi,vh);
@@ -121,10 +147,14 @@ function mk_movie2(fname, imgs)
    dirname= 'tmp_mk_movie2';
    rm_rf( dirname );
    mkdir( dirname );
+
+   r_img= show_slices(imgs);
+   c_img = calc_colours( r_img);
+   out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
+   cmap= colormap;
+
    for i=1:length(imgs)
-     img= show_slices(imgs(i));
-     cmap= colormap;
-     imwrite(img,cmap, ...
+     imwrite(out_img(:,:,i),cmap, ...
             sprintf('%s/img%05d.png',dirname, i), 'png');
    end
    retval= system(sprintf( ...
