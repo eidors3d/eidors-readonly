@@ -23,7 +23,7 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.19 2006-07-24 19:26:05 aadler Exp $
+% $Id: mk_common_model.m,v 1.20 2006-08-11 16:10:33 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 n_elec= 16; % default
@@ -53,6 +53,9 @@ elseif strcmp( str, 'b3r2')
 else
     error('don`t know what to do with option=',str);
 end
+
+inv_mdl.name= ['EIDORS common_model_',str]; 
+inv_mdl= eidors_obj('inv_model', inv_mdl);
     
 function inv2d= mk_2c_model( n_elec, n_circles, options )
 
@@ -66,9 +69,9 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements= 0;
+    params.misc.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);
 
-    inv2d.name= 'EIDORS model a0';
     inv2d.solve=       'aa_inv_solve';
     %inv2d.solve=       'aa_inv_conj_grad';
     inv2d.hyperparameter.value = 3e-3;
@@ -80,7 +83,6 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     inv2d.jacobian_bkgnd.value= 1;
     inv2d.reconst_type= 'difference';
     inv2d.fwd_model= mdl_2d;
-    inv2d= eidors_obj('inv_model', inv2d);
 
 function inv3d= mk_dz_model( n_elec, options )
 
@@ -109,7 +111,6 @@ function inv3d= mk_dz_model( n_elec, options )
     inv3d.reconst_type= 'difference';
     inv3d.jacobian_bkgnd.value= 1;
     inv3d.fwd_model= fm3d;
-    inv3d= eidors_obj('inv_model', inv3d);
 
 function inv_mdl = mk_n3z_model( n_elec, options );
    inv_mdl= mk_n3r2_model( n_elec, options);
@@ -122,7 +123,6 @@ function inv_mdl = mk_n3z_model( n_elec, options );
    fwd_model.meas_select= els;
    inv_mdl.fwd_model= fwd_mdl;
    inv_mdl.name= 'NP 3D model with zigzag electrodes';
-   inv_mdl= eidors_obj('inv_model', inv_mdl);
 
 function inv_mdl = mk_n3r2_model( n_elec, options );
    load( 'datareal.mat' );
@@ -175,7 +175,6 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    inv_mdl.reconst_type= 'difference';
    inv_mdl.jacobian_bkgnd.value= 1;
    inv_mdl.fwd_model= fmdl;
-   inv_mdl= eidors_obj('inv_model', inv_mdl);
 
 % Deform the boundary of the cylinder to make it like a torso
 % niv= 1.. 5 => Torso shape from T5 - T12
@@ -242,7 +241,6 @@ function inv3d= mk_b3r1_model( n_elec, options )
     inv3d.jacobian_bkgnd.value= 1;
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= mdl_3d;
-    inv3d= eidors_obj('inv_model', inv3d);
 
 function inv3d= mk_b3r2_model( n_elec, options )
     n_rings= 2;
@@ -281,4 +279,3 @@ function inv3d= mk_b3r2_model( n_elec, options )
     inv3d.jacobian_bkgnd.value= 1;
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= mdl_3d;
-    inv3d= eidors_obj('inv_model', inv3d);
