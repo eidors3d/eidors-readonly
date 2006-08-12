@@ -15,7 +15,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.normalize  => difference measurements normalized?
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_fwd_parameters.m,v 1.13 2005-10-27 13:28:08 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.14 2006-08-12 22:22:11 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -41,11 +41,41 @@ e= size(pp.ELEM,2);        %ELEMents
 p = length(fwd_model.stimulation );
 n_elec= length( fwd_model.electrode );
 
+% calculate element volume and surface area
+pp.VOLUME=zeros(e,1);
+pp.SURFACE=zeros(e,1);
+ones_d = ones(1,d);
+ones_d1= ones(1,d-1);
+d1fac = prod( 1:d-1 );
+d2fac = prod( 1:d-2 );
+for i=1:e
+    this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+    pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+
+    % check each face to see if it is an edge
+    ff= zeros(d,e);
+    for j=1:d
+      ff(j,:) = any( pp.ELEM(j,i) == pp.ELEM ,1);
+    end
+    for j=1:d
+      jj= 1:d; jj(j)=[];
+      edge_use= sum(all(ff(jj,:))); 
+      if edge_use ==1
+         this_elem = pp.NODE(:,pp.ELEM(jj,i)); 
+         AB = this_elem*[-1;1;0];
+         AC = this_elem*[-1;0;1];
+         pp.SURFACE(i)= pp.SURFACE(i) + abs(sum(cross(AB,AC)))/2;
+      end
+    end
+end
+
 % Matrix to convert Nodes to Electrodes
 N2E = sparse(n_elec, n);
 for i=1:n_elec
     elec_nodes = fwd_model.electrode(i).nodes;
-    N2E(i, elec_nodes) = 1/length(elec_nodes);
+    srf_area   = get_srf_area( elec_nodes, pp.ELEM, pp.SURFACE);
+%   N2E(i, elec_nodes) = 1/length(elec_nodes);
+    N2E(i, elec_nodes) = srf_area/sum(srf_area);
 end
   
 
@@ -54,15 +84,6 @@ pp.QQ= sparse(n,p);
 for i=1:p
     pp.QQ(:,i) = N2E'* fwd_model.stimulation(i).stim_pattern;
     n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,1);
-end
-
-% calculate element volume
-pp.VOLUME=zeros(e,1);
-ones_d = ones(1,d);
-d1fac = prod( 1:d-1 );
-for i=1:e
-    this_elem = pp.NODE(:,pp.ELEM(:,i)); 
-    pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
 end
 
 
@@ -80,3 +101,11 @@ if isfield(fwd_model,'normalize_measurements')
 else
    pp.normalize = 0;
 end
+
+function srf_area   = get_srf_area( elec_nodes, elems, surf);
+   srf_area= zeros(size(elec_nodes));
+   for i= 1:length(elec_nodes(:))
+      nn= elec_nodes(i);
+      ff = find(any(elems==nn,2));
+      srf_area(i) = sum(surf (ff));
+   end
