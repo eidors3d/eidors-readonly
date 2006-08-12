@@ -25,7 +25,7 @@ function Reg= time_smooth_prior( inv_model );
 % for the element itself
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_smooth_prior.m,v 1.2 2006-08-11 16:09:23 aadler Exp $
+% $Id: time_smooth_prior.m,v 1.3 2006-08-12 01:20:53 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 ne = pp.n_elem;
@@ -40,7 +40,8 @@ time_weight= inv_model.time_smooth_prior.time_weight;
 time_steps = inv_model.time_smooth_prior.time_steps;
 
 space_Reg= feval(space_prior, inv_model);
-time_Reg= -speye(ne);
+%time_Reg= -speye(ne);
+time_Reg= -abs(space_Reg);
 tlen= 2*time_steps + 1;
 [x,y]= meshgrid(-time_steps:time_steps, ...
                 -time_steps:time_steps);
