@@ -25,7 +25,7 @@ function [tank_mdl,centres] = create_tank_mesh_ng( ...
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng.m,v 1.13 2006-08-09 14:39:27 aadler Exp $
+% $Id: create_tank_mesh_ng.m,v 1.14 2006-08-12 22:22:11 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
@@ -84,11 +84,13 @@ else
    write_header(fid,tank_height,tank_radius);
 
 % meshsize 
-   circ_density= 50; % 50 points on outsize of electrode
+   circ_density= 10; % # points on outsize of electrode
    fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*circ_density);
-   mesh_density= 2*pi*electrode_radius/circ_density;
-   %Density can only have one decimal place
-   mesh_density= ceil(mesh_density*10)/10;
+   mesh_density= pi*electrode_radius/circ_density;
+   %Density has some very funny limits. It sometimes just
+   % breaks. Try adding random jitter so that it will
+   % at least work sometimes
+   mesh_density= mesh_density*(1+randn(1)*.01);
 
    
    theta= linspace(0,2*pi, circ_density+1)'; theta(1)=[];
@@ -101,9 +103,12 @@ else
    jiggle= 0.01; %jiggle to avoid netgen errors
    kel = 0;
    for l=1:no_of_planes
+      % test effect of this
+
       z = first_plane_starts + (l-1)*height_between_centres;
       for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
          kel=kel+1;
+         if kel ==elecs_per_plane; tank_radius=tank_radius*1.2; end
          [x,y]=pol2cart(th+jiggle,tank_radius); 
          dirn = [x,y,0];
          centres(kel,:)= [x,y,z]; % keep the centres
@@ -116,7 +121,7 @@ else
                    [cos(th),sin(th),0; ...
                    -sin(th),cos(th),0; ...
                     0      ,0      ,1];
-         fprintf(fsf,'%f %f %f %4.1f\n',[xyz1,th_col*mesh_density]');
+         fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
 
       end;
    end;
