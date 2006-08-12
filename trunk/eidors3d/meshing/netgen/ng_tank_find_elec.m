@@ -1,5 +1,5 @@
-function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,centres);
-%function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,centres);
+function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
+%[elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
 %
 % This function Tries to find the electrdes given the x y x coords of their centres.
 %
@@ -8,20 +8,23 @@ function[elec,sels] = ng_tank_find_elec(srf,vtx,fc,centres);
 % WRBL added default as prevous choice 20/1/2004
 % WRBL deleted ground plane 05/12/2005
 % WRBL derived automatic version ditto
+% AA   speedup and fix to not output zeros
 %
 % srf      = The boundary surfaces
 % vtx      = The vertices matrix
 % fc       = A one column matrix containing the face numbers
 % elsrf    = Cell array of indices matrices mapping into vtx each electrode face
 % sels     = The indices into the srf matrix of the selected electrode faces
-% elec  = The EIDORS-3D electrode matrix of dimensions NxM, where 
+% elec     = The EIDORS-3D electrode matrix of dimensions NxM, where 
 %            where N: no. of electrodes, M: 3 * max no. of faces per electrode
+%            [ kept for backward compatibility. Use electrodes output instead]
 % centres(k,:)=[ x,y,z ] of kth electrode
+% electrodes = EIDORS V3.x electrodes structure
 
+% (C) 2002-2006. Licenced under the GPL
+% $Id: ng_tank_find_elec.m,v 1.6 2006-08-12 04:05:46 aadler Exp $
 
 sels = [];
-
-
 
 for loop1 = 1:max(fc)
     % Create a logical array (lgelfc) to determine which faces are electrodes
@@ -51,24 +54,23 @@ end
 % array (elsrf)
 elsrf = ttlfcsrf(lgelfc);
 
-close(gcf)
 if 0
-% Display each electrode in turn as a wire mesh
-figure
-set(gcf,'Name','Wire Mesh Electrode Faces')
-for loop1 = 1:size(elsrf,2)
-    trimesh(elsrf{loop1},vtx(:,1),vtx(:,2),vtx(:,3),'EdgeColor','red')
-    title(['Electrode ' num2str(loop1) ': red'])
-    axis equal
-    axis(mshaxs)
-    view(45,10)
-    hidden off
-    hold on
-    pause(0.75)
-end
-title('Electrodes: red,')
-hidden off
-pause(2)
+   % Display each electrode in turn as a wire mesh
+   figure
+   set(gcf,'Name','Wire Mesh Electrode Faces')
+   for loop1 = 1:size(elsrf,2)
+       trimesh(elsrf{loop1},vtx(:,1),vtx(:,2),vtx(:,3),'EdgeColor','red')
+       title(['Electrode ' num2str(loop1) ': red'])
+       axis equal
+       axis(mshaxs)
+       view(45,10)
+       hidden off
+       hold on
+       pause(0.75)
+   end
+   title('Electrodes: red,')
+   hidden off
+   pause(2)
 end
 % Convert elsrf into the EIDORS-3D matrix electrode matrix format
 
@@ -81,8 +83,12 @@ elec = zeros(nmel,3*max(nmfc));
 % Put electrode surface information into elec
 for loop1 = 1:nmel
     el_idx= sels(loop1);
-    this_el= ttlfcsrf{el_idx};
-    for loop2 = 1:size(this_el,1)
-        elec(loop1,loop2*3 + (-2:0))=this_el(loop2,:);
-    end
+    this_el= ttlfcsrf{el_idx}';
+    l_this_el= prod(size(this_el));
+    elec(loop1, 1:l_this_el) = this_el(:)';
+
+    electrodes(loop1).nodes     = unique( this_el )';
+    electrodes(loop1).z_contact = 0.1; % set placeholder value
 end
+
+

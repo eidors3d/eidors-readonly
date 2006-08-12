@@ -49,21 +49,21 @@ end
 
 nelec= size(centres,1);
 % Electrodes
-[elec,sels] = ng_tank_find_elec(srf,vtx,bc,centres);
+[elec,sels,electrodes] = ng_tank_find_elec(srf,vtx,bc,centres);
 if size(elec,1) ~= nelec
    error('Failed to find all the electrodes')
 end
 
+% set the z_contact
 z_contact= z_contact.*ones(nelec,1);
 for i=1:nelec
    electrodes(i).z_contact= z_contact(i);
-   electrodes(i).nodes=     unique( elec(i,:) );
 end
 
-mdl.electrode =         electrodes;
-mdl.solve=          'np_fwd_solve';
-mdl.jacobian=       'np_calc_jacobian';
-mdl.system_mat=     'np_calc_system_mat';
+mdl.electrode =     electrodes;
+mdl.solve=          @np_fwd_solve;
+mdl.jacobian=       @np_calc_jacobian;
+mdl.system_mat=     @np_calc_system_mat;
 
 fwd_mdl= eidors_obj('fwd_model', mdl);
 
