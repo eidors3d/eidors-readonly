@@ -19,7 +19,7 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 %   inv_sel = 2   => inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.10 2006-08-11 16:10:52 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.11 2006-08-12 00:01:24 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
@@ -66,9 +66,11 @@ switch data_sel
                 sprintf('%s/mdl%05d.png',dirname, i) );
         end
         fname= 'move_ball';
+
+        ld_lib_path= sys_dep;
         retval= system(sprintf( ...
-            'convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
-            dirname, fname ));
+            '%s convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
+            ld_lib_path, dirname, fname ));
         if retval~=0
             error('please ensure the imagemagick convert program is in your path');
         end
@@ -106,7 +108,7 @@ switch inv_sel
     case 4
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        time_steps= 2;
+        time_steps= 1;
 
         imdl.RtR_prior= @time_smooth_prior;
         imdl.time_smooth_prior.space_prior= @laplace_image_prior;
@@ -157,9 +159,12 @@ function mk_movie2(fname, imgs)
      imwrite(out_img(:,:,i),cmap, ...
             sprintf('%s/img%05d.png',dirname, i), 'png');
    end
+
+   ld_lib_path= sys_dep;
+
    retval= system(sprintf( ...
-       'convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
-       dirname, fname ));
+       '%s convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
+       ld_lib_path, dirname, fname ));
    if retval~=0
        error('please ensure the imagemagick convert program is in your path');
    end
@@ -187,3 +192,14 @@ function vv= do_simulation( img, stim_pat)
    img.fwd_model.stimulation= stim_pat;
 
    vv= fwd_solve( img);
+
+% work around stupid matlab bugs
+function ld_lib_path= sys_dep;
+   ld_lib_path='';
+   if  strfind(system_dependent('getos'),'Linux')
+     s=ver;
+      if str2num(s.Version)>=7
+        %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks external progs
+          ld_lib_path='LD_LIBRARY_PATH=;';
+      end      
+   end    
