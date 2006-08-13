@@ -25,10 +25,12 @@ function [tank_mdl,centres] = create_tank_mesh_ng( ...
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng.m,v 1.14 2006-08-12 22:22:11 aadler Exp $
+% $Id: create_tank_mesh_ng.m,v 1.15 2006-08-13 12:09:46 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
+% meshsize around electrodes
+   elec_mesh_density= 50; % points on outsize of electrode
 
 nelec = no_of_planes*elecs_per_plane;
 if CorR=='C'
@@ -59,6 +61,21 @@ if CorR =='R'
    % Rectangular case 
    write_header(fid,tank_height,tank_radius);
 
+   fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
+   mesh_density= (electrode_height+electrode_width)/elec_mesh_density;
+   %Density has some very funny limits. It sometimes just
+   % breaks. Try adding random jitter so that it will
+   % at least work sometimes - or after multiple attempts
+   mesh_density= mesh_density*(1+randn(1)*.01);
+
+   
+   theta= linspace(0,2*pi, elec_mesh_density+1)'; theta(1)=[];
+   th_col= ones(size(theta));
+   [xyz]= [0*th_col, ...
+           electrode_radius*sin(theta), ...
+           electrode_radius*cos(theta)];
+
+
    kel = 0;
    for l=1:no_of_planes
       z = first_plane_starts + (l-1)*height_between_centres;
@@ -72,10 +89,13 @@ if CorR =='R'
           % Write basic electrode shape
           writengcuboid(fid,sprintf('rod%d',kel),[x,y,z],dirn, ...
                         electrode_height,electrode_width,0.5*tank_radius);	 	 
-          
-          % Write surrounding box to force dense electrodes
-%         writengcuboid(fid,sprintf('out_rod%d',kel),[x,y,z],dirn, ...
-%                       1.05*electrode_height,1.1*electrode_width,0.5*tank_radius);	 	 
+          %write to meshsize file
+          xyz1= th_col*[x,y,z] + xyz* ...
+                    [cos(th),sin(th),0; ...
+                    -sin(th),cos(th),0; ...
+                     0      ,0      ,1];
+          fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+
       end;
    end;
 else
@@ -83,17 +103,15 @@ else
 % Circular case
    write_header(fid,tank_height,tank_radius);
 
-% meshsize 
-   circ_density= 10; % # points on outsize of electrode
-   fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*circ_density);
-   mesh_density= pi*electrode_radius/circ_density;
+   fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
+   mesh_density= pi*electrode_radius/elec_mesh_density;
    %Density has some very funny limits. It sometimes just
    % breaks. Try adding random jitter so that it will
    % at least work sometimes
    mesh_density= mesh_density*(1+randn(1)*.01);
 
    
-   theta= linspace(0,2*pi, circ_density+1)'; theta(1)=[];
+   theta= linspace(0,2*pi, elec_mesh_density+1)'; theta(1)=[];
    th_col= ones(size(theta));
    [xyz]= [0*th_col, ...
            electrode_radius*sin(theta), ...
@@ -108,7 +126,8 @@ else
       z = first_plane_starts + (l-1)*height_between_centres;
       for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
          kel=kel+1;
-         if kel ==elecs_per_plane; tank_radius=tank_radius*1.2; end
+%        modify a single electrode to see the effect
+%        if kel ==elecs_per_plane; electrode_radius=electrode_radius*0.7; end
          [x,y]=pol2cart(th+jiggle,tank_radius); 
          dirn = [x,y,0];
          centres(kel,:)= [x,y,z]; % keep the centres
@@ -147,8 +166,8 @@ disp('Calling Netgen. Please wait.....');
 call_netgen( geofn, meshfn, sizefn);
 
 disp('Netgen seems to have meshed your tank ok and written it to file!');
-disp('..you just have to take your hats off to those guys at Johannes Kepler University, Linz,');
-disp('what a good job.');
+disp('..you just have to take your hats off to those guys at Johannes Kepler University, Linz, what a good job.');
+disp('Please note that netgen has some strange limitations that we have not been able to fully debug. To get around this, we have added a small random jitter to the config files, which randomly solves the problem. Thus, you may need to try to re-run your program a few times, if you are getting strange errors');
 
 disp(['Now reading back data from file: ' meshfn])
 tank_mdl= ng_mk_fwd_model( meshfn, centres, ...
