@@ -15,7 +15,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.normalize  => difference measurements normalized?
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_fwd_parameters.m,v 1.14 2006-08-12 22:22:11 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.15 2006-08-13 11:15:40 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -43,7 +43,6 @@ n_elec= length( fwd_model.electrode );
 
 % calculate element volume and surface area
 pp.VOLUME=zeros(e,1);
-pp.SURFACE=zeros(e,1);
 ones_d = ones(1,d);
 ones_d1= ones(1,d-1);
 d1fac = prod( 1:d-1 );
@@ -51,30 +50,20 @@ d2fac = prod( 1:d-2 );
 for i=1:e
     this_elem = pp.NODE(:,pp.ELEM(:,i)); 
     pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+end
 
-    % check each face to see if it is an edge
-    ff= zeros(d,e);
-    for j=1:d
-      ff(j,:) = any( pp.ELEM(j,i) == pp.ELEM ,1);
-    end
-    for j=1:d
-      jj= 1:d; jj(j)=[];
-      edge_use= sum(all(ff(jj,:))); 
-      if edge_use ==1
-         this_elem = pp.NODE(:,pp.ELEM(jj,i)); 
-         AB = this_elem*[-1;1;0];
-         AC = this_elem*[-1;0;1];
-         pp.SURFACE(i)= pp.SURFACE(i) + abs(sum(cross(AB,AC)))/2;
-      end
-    end
+if isfield(fwd_model,'boundary')
+    bdy = fwd_model.boundary;
+else
+    bdy= dubs3(fwd_model.elems);
 end
 
 % Matrix to convert Nodes to Electrodes
 N2E = sparse(n_elec, n);
 for i=1:n_elec
     elec_nodes = fwd_model.electrode(i).nodes;
-    srf_area   = get_srf_area( elec_nodes, pp.ELEM, pp.SURFACE);
 %   N2E(i, elec_nodes) = 1/length(elec_nodes);
+    srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
     N2E(i, elec_nodes) = srf_area/sum(srf_area);
 end
   
@@ -102,10 +91,47 @@ else
    pp.normalize = 0;
 end
 
-function srf_area   = get_srf_area( elec_nodes, elems, surf);
-   srf_area= zeros(size(elec_nodes));
-   for i= 1:length(elec_nodes(:))
-      nn= elec_nodes(i);
-      ff = find(any(elems==nn,2));
-      srf_area(i) = sum(surf (ff));
+% get surface area of each element on an electrode
+function srf_area   = get_srf_area(bdy, elec_nodes, nodes);
+   mbdy= zeros(size(bdy));
+   for n= elec_nodes
+      mbdy= mbdy + (bdy == n); 
+   end 
+   e_bdy = find( all(mbdy') );
+
+% get boundary faces which match any node (for pt electrode etc)
+
+   if isempty(e_bdy)
+      e_bdy = find( sum(mbdy')>=2 );
+   end
+   if isempty(e_bdy)
+      e_bdy = find( any(mbdy') );
+   end
+
+   bdy_els= bdy(e_bdy,:);
+
+   % calculate area of each boundary element
+   l_e_bdy= length(e_bdy);
+   e_srf_area= zeros(l_e_bdy,1);
+   if size(nodes,2) == 3
+      for i= 1:l_e_bdy
+         pts = nodes(bdy_els(i,:),:);
+         e_srf_area(i)= triarea3d(pts);
+      end
+   elseif size(nodes,2) == 2
+      for i= 1:l_e_bdy
+         pts = nodes(bdy_els(i,:),:);
+         e_srf_area(i)= sqrt(sum(diff(pts).^2));
+      end
+   else
+      error('not 2D or 3d');
+   end
+
+   %map boundary element area to each node
+   l_elec_nodes = length(elec_nodes);
+   srf_area= zeros(1,l_elec_nodes);
+   for i= 1:l_elec_nodes
+      mbdy= any(bdy_els == elec_nodes(i),2); 
+      % 1st order node effect integrates to 1/3 of element area
+      srf_area(i) = sum( e_srf_area(mbdy) )/3;
    end
