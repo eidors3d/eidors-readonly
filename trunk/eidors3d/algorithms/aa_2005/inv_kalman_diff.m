@@ -7,9 +7,15 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 %
+% inv_model.inv_kalman_diff.sequence(1..nframes)
+%            => sequence(1..nframes).meas_no
+%            => sequence(1..nframes).time_delta (currently unused)
+%            => sequence indicates which data are provided at
+%               each frame (in order, starting with frame #1).
+%               if not provided, all data are available at each frame
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.7 2006-07-27 01:42:20 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.8 2006-08-14 23:29:57 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -21,6 +27,12 @@ RtR = calc_RtR_prior( inv_model );
 Q   = calc_meas_icov( inv_model );
 hp  = calc_hyperparameter( inv_model );
 
+if isfield(inv_model,'inv_kalman_diff')
+   sequence= inv_model.inv_kalman_diff.sequence;
+else
+   sequence.meas_no= 1:size(J,1); % all data all the time
+end
+
 
 if pp.normalize
    dva= 1 - data2 ./ data1;
@@ -28,7 +40,7 @@ else
    dva= data1 - data2;
 end
 
- sol = kalman_inv( J, Q, hp^2*RtR, dva );
+ sol = kalman_inv( J, Q, hp^2*RtR, dva, sequence );
 %R= calc_R_prior(inv_model);
 %sol = kalman_inv_cgls( J, Q, hp^2*R, dva );
 
@@ -42,19 +54,18 @@ img.fwd_model= fwd_model;
 % J - Jacobian NxM
 % RegM - Regularization on the Measurements
 % RegI - Regularization on the Image
-function x= kalman_inv( J, RegM, RegI, y);
+% y is vector of measurements
+% seq is sequence vector
+function x= kalman_inv( J, RegM, RegI, y, seq);
 %x = (J'*RegM*J + RegI )\J'*RegM*y; return;
 %Notation x_k1_k is x_{k+1|k}
  
 
 % n is nmeas, m is ndata
 [m,n]=  size(J);
-% H is augmented matrix [J(x_k|k-1); RegI]
-H_k1= [J;RegI];
 % G (Gamma) is blockdiag [RegM, I]
 scaling_const=1; % FIXME: what is this const?
-G= speye(n+m)*scaling_const;
-G(1:m,1:m) = RegM;
+
 % F is the state transition matrix (I for random walk)
 F_k= speye(n);
 % Q is state noise covariance (model with I)
@@ -72,6 +83,17 @@ ll= size(y,2);
 x= zeros(n,ll);
 for i=1:ll
    eidors_msg('iteration %d',i,2);
+
+   % H is augmented matrix [J(x_k|k-1); RegI]
+   % need to account for sequence
+   seq_i= seq( rem(i-1,length(seq))+1 ).meas_no;
+   Jframe= J(seq_i,:); 
+   H_k1= [Jframe;RegI];
+   mm= size(Jframe,1);
+
+   G= speye(n+mm)*scaling_const;
+   G(1:mm,1:mm) = RegM(seq_i,seq_i);
+
    % Update variables
    C_k_k= C_k1_k1;
    x_k_k= x_k1_k1;

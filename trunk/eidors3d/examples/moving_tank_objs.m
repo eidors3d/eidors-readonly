@@ -23,7 +23,7 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 %   inv_sel = 2   => inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.14 2006-08-14 22:43:41 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.15 2006-08-14 23:29:57 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
@@ -118,6 +118,19 @@ switch inv_sel
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'np_inv_solve';
+
+    case 12
+        vi = sub_frame(vi,vh);
+        vh = zeros(length(vi(1).meas),1);
+        imdl= mk_common_model('b2c',16);
+        imdl.hyperparameter.value= 1e-2;
+        imdl.RtR_prior= @laplace_image_prior;
+        imdl.solve= @inv_kalman_diff;
+        for i=1:16;
+           imdl.inv_kalman_diff.sequence(i).meas_no= (i-1)*13+(1:13);
+        end
+        imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
+        imdl.fwd_model.normalize=0;
 end
 
 imgs= inv_solve(imdl,vi,vh);
@@ -138,13 +151,19 @@ function rm_rf(dirname)
 % stimulation. Thus each frame data represents
 % a different stimulation pattern
 %
+% if both vi and vh are provided, calculate difference
+%  signal
+%
 % Hardcoded for 16 electrode 2D adjacent stimulation
-function vv= sub_frame(vi)
+function vv= sub_frame(vi,vh)
    if ~isstruct(vi);
       viold= vi; vi=struct;
       [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
       for i=1:size(viold,2)
          vi(i).meas= viold(els,i);
+      end
+      if nargin==2
+         vh = struct('meas', vh(els,1));
       end
    end
 
@@ -152,9 +171,15 @@ function vv= sub_frame(vi)
    na= ne-3; % data per frame (adjacent)
    for i=1:length(vi)
       f=rem(i-1,ne)+1; %extract jth frame
+      if nargin==1
+         meas= double(vi(i).meas((f-1)*na+(1:na)));
+      else
+         meas= double(vi(i).meas((f-1)*na+(1:na))) -  ...
+               double(vh(1).meas((f-1)*na+(1:na)));
+      end
       vv(i) = eidors_obj('data','', ...
            'configuration', sprintf('Data from %dth stimulation',j), ...
-           'meas', vi(i).meas((f-1)*na+(1:na)) );
+           'meas', meas);
    end
 
 % native reconstruction will simply push data 
