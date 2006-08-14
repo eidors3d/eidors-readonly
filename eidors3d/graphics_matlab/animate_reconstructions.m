@@ -53,6 +53,18 @@ function mk_movie2(fname, imgs)
 
    ld_lib_path= sys_dep;
 
+   if 0 % enumerate each file
+      files= dir(sprintf('%s/img*.png', dirname ));
+      % font selected is a windows font - how to make os-neutral?
+      for ff= files(:)'
+         fn= [dirname,'/',ff.name];
+         fno= ff.name(4:8);
+         retval= system(sprintf( ...
+          '%s convert -font 6x8 -draw "text 0,10 ''%s''" %s %s', ...
+          ld_lib_path, fno, fn, fn ));
+      end
+   end
+      
    retval= system(sprintf( ...
        '%s convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
        ld_lib_path, dirname, fname ));
