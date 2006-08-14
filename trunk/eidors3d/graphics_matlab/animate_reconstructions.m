@@ -60,6 +60,7 @@ function mk_movie2(fname, imgs)
        error('please ensure the imagemagick convert program is in your path');
    end
    rm_rf(dirname);
+   fprintf('file %s.gif created (in current directory)\n',fname);
 
 function rm_rf(dirname)
    if isdir(dirname)==0
