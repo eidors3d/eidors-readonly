@@ -23,7 +23,7 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 %   inv_sel = 2   => inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.12 2006-08-14 20:48:23 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.13 2006-08-14 21:33:43 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
@@ -51,30 +51,15 @@ if isnumeric(data_sel) & size(data_sel)==[1,1]
 
     case 30
         load netgen_moving_ball
-        vh= vh;
-        vi= vi;
+        vh= homg_tank;
+        vi= target_spiral;
+        filename= 'netgen-spiral';
 
-    case 40
-        dirname= 'tmp_mk_movie2';
-        rm_rf( dirname );
-        mkdir( dirname );
-
-        load tank_mdls
-        for i=1:length(tank_mdls);
-            show_fem( tank_mdls(i) );
-            print('-dpng', ...
-                sprintf('%s/mdl%05d.png',dirname, i) );
-        end
-        fname= 'move_ball';
-
-        ld_lib_path= sys_dep;
-        retval= system(sprintf( ...
-            '%s convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
-            ld_lib_path, dirname, fname ));
-        if retval~=0
-            error('please ensure the imagemagick convert program is in your path');
-        end
-        rm_rf(dirname);
+    case 31
+        load netgen_moving_ball
+        vh= homg_tank;
+        vi= target_spiral;
+        filename= 'netgen-spiral';
 
     otherwise
         error('Don''t recognize data_sel');
@@ -125,11 +110,18 @@ switch inv_sel
         imdl.time_prior_solve.time_steps=   time_steps;
 %       imdl.solve= @np_inv_solve;
 %       imdl.solve= 'aa_inv_conj_grad';
+
+    case 11
+        vv = sub_frame(vi);
+        vi = repack_frame(vv);
+        imdl= mk_common_model('b2c',16);
+        imdl.hyperparameter.value= 1e-2;
+        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.solve= 'np_inv_solve';
 end
 
 imgs= inv_solve(imdl,vi,vh);
 animate_reconstructions(filename, imgs);
-fprintf('file %s.gif created\n',filename);
 
 function rm_rf(dirname)
    if isdir(dirname)==0
@@ -140,4 +132,39 @@ function rm_rf(dirname)
        system(['rm -rf "',dirname,'"']);
    else
        system(['rmdir /s /q "',dirname,'"']);
+   end
+
+% simulate condition where frame changes for each
+% stimulation. Thus each frame data represents
+% a different stimulation pattern
+%
+% Hardcoded for 16 electrode 2D adjacent stimulation
+function vv= sub_frame(vi)
+   vv= vi;
+   ne= 16; % nelectrodes
+   na= ne-3; % data per frame (adjacent)
+   for i=1:length(vi)
+      f=rem(i-1,ne)+1; %extract jth frame
+      vv(i).configuration= sprintf('Data from %dth stimulation',j);
+      vv(i).meas = vi(i).meas((f-1)*na+(1:na));
+   end
+
+% native reconstruction will simply push data 
+% back together from different frames
+%
+% Hardcoded for 16 electrode 2D adjacent stimulation
+
+function vv = repack_frame(vi);
+   vv= vi;
+   l_vi= length(vi);
+   ne= 16; % nelectrodes
+   na= ne-3; % data per frame (adjacent)
+   for i=1:l_vi
+      meas= NaN*ones(ne*na,1);
+      offset= (1:ne) - min(ne/2,i) + min(l_vi-i-ne/2, 0);
+      for j= i+offset;
+         f=rem(j-1,ne)+1; %extract jth frame
+         meas((f-1)*na+(1:na)) = vi(j).meas;
+      end
+      vv(i).meas= meas;
    end
