@@ -23,7 +23,7 @@ function imgr= moving_tank_objs(data_sel, inv_sel)
 %   inv_sel = 2   => inv_kalman_diff
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.13 2006-08-14 21:33:43 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.14 2006-08-14 22:43:41 aadler Exp $
 
 
 if nargin<1; data_sel = 1; end
@@ -140,13 +140,21 @@ function rm_rf(dirname)
 %
 % Hardcoded for 16 electrode 2D adjacent stimulation
 function vv= sub_frame(vi)
-   vv= vi;
+   if ~isstruct(vi);
+      viold= vi; vi=struct;
+      [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
+      for i=1:size(viold,2)
+         vi(i).meas= viold(els,i);
+      end
+   end
+
    ne= 16; % nelectrodes
    na= ne-3; % data per frame (adjacent)
    for i=1:length(vi)
       f=rem(i-1,ne)+1; %extract jth frame
-      vv(i).configuration= sprintf('Data from %dth stimulation',j);
-      vv(i).meas = vi(i).meas((f-1)*na+(1:na));
+      vv(i) = eidors_obj('data','', ...
+           'configuration', sprintf('Data from %dth stimulation',j), ...
+           'meas', vi(i).meas((f-1)*na+(1:na)) );
    end
 
 % native reconstruction will simply push data 
