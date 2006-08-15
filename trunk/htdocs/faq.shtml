@@ -250,6 +250,10 @@ on Fedora FC5 by doing:
    <li> install the packages <tt>compat-gcc-32-3.2.3</tt>
         and <tt>compat-gcc-32-c++-3.2.3</tt>
 
+   <li> ensure <tt>tk</tt>,
+               <tt>tcl</tt>, and
+               <tt>tix</tt> are installed.
+
    <li> Download and install the source from
         <a href="http://www.hpfem.jku.at/netgen/"
                 >http://www.hpfem.jku.at/netgen/</a>
@@ -261,19 +265,28 @@ on Fedora FC5 by doing:
         (I found it here <tt>/usr/include/tk-private/generic/tkInt.h</tt>)
 
    <li> Get TK version (<tt>grep TK_PATCH_LEVEL /usr/include/tk.h</tt>)
-   <li> Add a line  to <tt>togl/togl.cpp</tt> based on the TK_PATCH_LEVEL
+   <li> Add a line  to <tt>togl/togl.cpp</tt> (around line 143)
+        based on the TK_PATCH_LEVEL
 <pre>
 #elif TK_MAJOR_VERSION==8 &amp;&amp; TK_MINOR_VERSION==4 &amp;&amp; TK_RELEASE_SERIAL==13
 #  include "/usr/include/tk-private/generic/tkInt.h"
 </pre>
 
+<!--
    <li> Modify line 100 of <tt>./libsrc/gprim/transform3d.cpp</tt> to
 <pre>
   ::netgen::CalcInverse ((const netgen::Mat&lt;3,3&gt; &amp;) a, (netgen::Mat&lt;3,3&gt; &amp;)  inva);
+</pre>
+-->
 
    <li> It would be nice to build using <tt>CC=gcc32 MACHINE=LINUX make</tt>,
-        but <tt>netgen</tt> 
+        but <tt>netgen</tt> hardcodes gcc. So, edit the Makefiles
+        using:
+<pre>
+find -name Makefile -exec perl -i -pe's/(\sgcc)\s/${1}32 /' \{} \;
 </pre>
+
+   <li> Build using: <tt>MACHINE=LINUX make CC=gcc32</tt>,
 
 
 
@@ -288,7 +301,7 @@ Useful information is found
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-15 16:55:36 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-15 17:31:12 $ by $Author: aadler $
 </small>
 </body>
 
