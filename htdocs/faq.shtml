@@ -226,12 +226,69 @@ The easiest solution is to recompile the mex file, as follows:
   &gt;&gt; mex eidors_var_id.cpp
 </pre>
 
+<p><li><b>
+<tt>Using Netgen
+</b><p>
+EIDORS can use netgen to create some fairly impressive 3D meshes.
+See the <a href="./examples/">examples</a>.
+Netgen usage with EIDORS is fairly easy under windows. You need to
+<ol>
+   <li> Download and install the windows binary from
+        <a href="http://www.hpfem.jku.at/netgen/"
+                >http://www.hpfem.jku.at/netgen/</a>
+   <li> Run an example which calls netgen (ie <tt>call_netgen.m</tt>)
+   <li> Enter a path to the netgen binary <u>without spaces</u>
+        (ie for C:\Program Files\netgen write C:/Progra~1/netgen)
 </ol>
+
+<p><li><b>
+<tt>Compiling Netgen under linux
+</b><p>
+To use netgen under linux is more complicated. I got it to work 
+on Fedora FC5 by doing:
+<ol>
+   <li> install the packages <tt>compat-gcc-32-3.2.3</tt>
+        and <tt>compat-gcc-32-c++-3.2.3</tt>
+
+   <li> Download and install the source from
+        <a href="http://www.hpfem.jku.at/netgen/"
+                >http://www.hpfem.jku.at/netgen/</a>
+        and install it under <tt>$HOME/src/ngs44</tt>
+   <li> cd to <tt>$HOME/src/ngs44</tt>
+   <li> Edit the file <tt>./libsrc/meshing/meshtype.hpp</tt> to
+        add <tt>class Mesh;</tt> at line 957.
+   <li> Find <tt>tkInt.h</tt> in the tk includes.
+        (I found it here <tt>/usr/include/tk-private/generic/tkInt.h</tt>)
+
+   <li> Get TK version (<tt>grep TK_PATCH_LEVEL /usr/include/tk.h</tt>)
+   <li> Add a line  to <tt>togl/togl.cpp</tt> based on the TK_PATCH_LEVEL
+<pre>
+#elif TK_MAJOR_VERSION==8 &amp;&amp; TK_MINOR_VERSION==4 &amp;&amp; TK_RELEASE_SERIAL==13
+#  include "/usr/include/tk-private/generic/tkInt.h"
+</pre>
+
+   <li> Modify line 100 of <tt>./libsrc/gprim/transform3d.cpp</tt> to
+<pre>
+  ::netgen::CalcInverse ((const netgen::Mat&lt;3,3&gt; &amp;) a, (netgen::Mat&lt;3,3&gt; &amp;)  inva);
+
+   <li> It would be nice to build using <tt>CC=gcc32 MACHINE=LINUX make</tt>,
+        but <tt>netgen</tt> 
+</pre>
+
+
+
+
+</ol>
+Useful information is found
+<a href="http://www.sfb013.uni-linz.ac.at/~joachim/netgen/troubles.html"
+       >here</a>, and
+<a href="http://openfoam.cfd-online.com/forum/messages/1/1271.html?1148456565"
+       >here</a>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-07-28 14:35:20 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-15 16:55:36 $ by $Author: aadler $
 </small>
 </body>
 
