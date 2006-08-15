@@ -272,6 +272,14 @@ on Fedora FC5 by doing:
 #  include "/usr/include/tk-private/generic/tkInt.h"
 </pre>
 
+   <li> Modify <tt>tcltklib</tt> and <tt>syslib</tt> in <tt>Makefile</tt>
+<pre>
+#(OLD) tcltklib = -ltix8.1.8.4 -ltk8.4  -ltcl8.4
+tcltklib = -ltix -ltk8.4  -ltcl8.4
+#(OLD) syslib = $(tcltklib) -lGL -lGLU -lX11  -lXi -lm  -ldl -lpthread $(SYSLIB2)
+syslib = $(tcltklib) -lGL -lGLU -lX11  -lm  -ldl -lpthread $(SYSLIB2)
+</pre>
+
 <!--
    <li> Modify line 100 of <tt>./libsrc/gprim/transform3d.cpp</tt> to
 <pre>
@@ -301,7 +309,7 @@ Useful information is found
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-15 17:31:12 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-15 18:23:26 $ by $Author: aadler $
 </small>
 </body>
 
