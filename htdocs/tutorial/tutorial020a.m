@@ -1,11 +1,11 @@
 % tutorial1_create_fwd_model
-% $Id: tutorial020a.m,v 1.2 2006-08-17 21:07:09 aadler Exp $
+% $Id: tutorial020a.m,v 1.3 2006-08-17 22:11:32 aadler Exp $
 
 r_mdl= eidors_obj('fwd_model','demo resistor model');
 
 % Geometry
 r_mdl.nodes= [1,1,1;  2,2,2];
-r_mdl.elems= [1;2];
+r_mdl.elems= [1,2];
 r_mdl.boundary= [1,2]; 
 
 % Define Electrodes (there is only one)
