@@ -1,0 +1,35 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>EIDORS fwd_models</h2>
+
+<h3> 
+Create a simple 3D fwd_model structure
+</h3>
+
+EIDORS has functions to create common FEM
+models.
+
+<pre>
+<!--#include virtual="tutorial010a.m" -->
+</pre>
+
+Output image:
+<center>
+<img src="tutorial010a.png">
+</center>
+
+
+<!-- ################################# -->
+    <li><h3> 
+Create a simple 3D fwd_model structure
+   </h3>
+
+</ul>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-08-17 17:57:33 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
