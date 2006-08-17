@@ -10,7 +10,7 @@ function J= perturb_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: perturb_jacobian.m,v 1.1 2006-08-17 21:13:49 aadler Exp $
+% $Id: perturb_jacobian.m,v 1.2 2006-08-17 22:14:43 aadler Exp $
 
 if isfield(fwd_model,'perturb_jacobian')
    delta = fwd_model.perturb_jacobian.delta;
@@ -18,15 +18,20 @@ else
    delta= 1e-6; % tests indicate this is a good value
 end
 
-pp= aa_fwd_parameters( fwd_model );
+n_elem = size(fwd_model.elems,1);
 
-J = zeros( pp.n_meas, pp.n_elem );
-
-elem_data = img.elem_data;
+% solve one time to get the size
 d0= fwd_solve( img );
-for i=1:pp.n_elem
-   img.elem_data   = elem_data;
-   img.elem_data(i)= elem_data(i) + delta;
-   di= fwd_solve( img );
-   J(:,i) = (1/delta) * (d0.meas - di.meas);
+Jcol= perturb(img, 1, delta, d0);
+
+J= zeros(length(Jcol), n_elem);
+J(:,1)= Jcol;
+
+for i=2:n_elem
+  J(:,i)= perturb(img, i, delta, d0);
 end
+
+function Jcol= perturb( img, i, delta, d0)
+   img.elem_data(i)= img.elem_data(i) + delta;
+   di= fwd_solve( img );
+   Jcol = (1/delta) * (di.meas - d0.meas);
