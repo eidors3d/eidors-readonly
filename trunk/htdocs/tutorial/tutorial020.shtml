@@ -1,0 +1,52 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>EIDORS fwd_models</h2>
+
+<h3> 
+Basic EIDORS data structures: the fwd_model
+</h3>
+
+To understand a the basic EIDORS data structures, we
+define an electrical resistor, with ground at one end,
+and a single electrode at the other.
+
+<pre>
+<!--#include virtual="tutorial020a.m" -->
+</pre>
+
+Output image: 
+this shows a single line representing the resistor
+in 3D. Not very interesting, but this <i>is</i> a
+simple example.
+<center>
+<img src="tutorial20a.png">
+</center>
+
+In order to simulate the voltages, 
+define an electrical resistor, with ground at one end,
+and a single electrode at the other.
+
+<pre>
+<!--#include virtual="tutorial020a.m" -->
+</pre>
+
+
+
+<pre>
+&gt;&gt; disp(data_1k)
+    name: 'resistor model data'
+    meas: [3x1 double]
+    type: 'data'
+
+&gt;&gt; disp(data_1k.meas')
+    1.0200    2.0400    3.0600
+</pre>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-08-17 17:57:33 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
