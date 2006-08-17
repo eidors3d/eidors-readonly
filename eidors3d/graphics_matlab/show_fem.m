@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.41 2006-07-29 19:44:37 aadler Exp $
+% $Id: show_fem.m,v 1.42 2006-08-17 15:53:02 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -128,7 +128,7 @@ for e=1:length(mdl.electrode)
         oo=ones(1,size(nn,2));
         ec=zeros(size(ee));
         for i=1:size(ec,2);
-           ec(:,i) = any( (ee(:,i)*oo==nn)' )';
+           ec(:,i) = any( ee(:,i*oo)==nn, 2);
         end
         sels= find(all(ec'));
 
