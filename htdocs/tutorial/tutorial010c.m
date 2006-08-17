@@ -1,8 +1,13 @@
 % Reconstruct images
-% $Id: tutorial010c.m,v 1.2 2006-08-17 20:44:02 aadler Exp $
+% $Id: tutorial010c.m,v 1.3 2006-08-17 21:07:09 aadler Exp $
 
 subplot(131)
 show_fem(sim_img);
+
+%Add 20dB SNR noise to data
+noise_level= std(inh_data.meas - homg_data.meas)/10^(20/20);
+inh_data.meas = inh_data.meas + noise_level* ...
+                randn(size(inh_data.meas));
 
 %reconstruct 
 rec_img= inv_solve(imdl_3d, inh_data, homg_data);

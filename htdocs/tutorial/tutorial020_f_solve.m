@@ -25,4 +25,3 @@ function data =tutorial020_f_solve( f_mdl, img )
 
   data.name='resistor model data';
   data.meas= V;
-
