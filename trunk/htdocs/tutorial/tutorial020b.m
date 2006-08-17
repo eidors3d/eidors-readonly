@@ -1,5 +1,5 @@
 % tutorial1_create_fwd_model
-% $Id: tutorial020b.m,v 1.1 2006-08-17 17:57:33 aadler Exp $
+% $Id: tutorial020b.m,v 1.2 2006-08-17 21:07:09 aadler Exp $
 
 
 % Define stimulation patterns
@@ -12,9 +12,13 @@ end
 r_mdl.solve=      @tutorial020_f_solve;
 
 % Define an 'image'
-img_1k = eidors_obj('image', 'resistor');
-img_1k.elem_data= 1000;
-img_1k.fwd_model= r_mdl;
+resistor = eidors_obj('image', 'resistor');
+resistor.elem_data= 1000;
+resistor.fwd_model= r_mdl;
 
-data_1k =fwd_solve( img_1k );
+% Calculate data for 1k resistor
+data_1k0 =fwd_solve( resistor );
 
+% Now change resistor to be 1.2k
+resistor.elem_data= 1200;
+data_1k2 =fwd_solve( resistor );

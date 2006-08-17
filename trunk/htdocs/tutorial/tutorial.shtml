@@ -7,6 +7,11 @@
 </h3>
 Basic usage of EIDORS
 
+    <li><h3> 
+<a href="./tutorial020.shtml" >EIDORS Data structures</a>
+</h3>
+EIDORS data structures illustrated using a resistor model
+
 </ul>
 
 <h3>Older Tutorials</h3>
@@ -22,7 +27,7 @@ Basic usage of EIDORS
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 17:57:33 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-17 21:07:09 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

@@ -1,5 +1,5 @@
 % tutorial1_create_fwd_model
-% $Id: tutorial020a.m,v 1.1 2006-08-17 17:57:33 aadler Exp $
+% $Id: tutorial020a.m,v 1.2 2006-08-17 21:07:09 aadler Exp $
 
 r_mdl= eidors_obj('fwd_model','demo resistor model');
 
@@ -14,6 +14,4 @@ r_mdl.electrode(1).nodes=     1;
 r_mdl.gnd_node= 2;
 
 show_fem(r_mdl); view(-12,24);
-print -r50 -dpng tutorial02a.png
-
-
+print -r50 -dpng tutorial020a.png

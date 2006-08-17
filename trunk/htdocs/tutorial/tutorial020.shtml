@@ -1,5 +1,5 @@
 <!--#include virtual="nav-sidebar.html" -->
-<h2>EIDORS fwd_models</h2>
+<h2>Basic EIDORS data structures</h2>
 
 <h3> 
 Basic EIDORS data structures: the fwd_model
@@ -7,45 +7,71 @@ Basic EIDORS data structures: the fwd_model
 
 To understand a the basic EIDORS data structures, we
 define an electrical resistor, with ground at one end,
-and a single electrode at the other.
+and a single electrode (with contact resistance
+of 20&Omega;) at the other.
 
 <pre>
 <!--#include virtual="tutorial020a.m" -->
 </pre>
 
-Output image: 
+<center>
+<img src="tutorial020a.png">
+<br><i>Figure:</i>
 this shows a single line representing the resistor
 in 3D. Not very interesting, but this <i>is</i> a
 simple example.
-<center>
-<img src="tutorial20a.png">
 </center>
+
+<h3> 
+Defining stimulation patterns
+</h3>
 
 In order to simulate the voltages, 
 define an electrical resistor, with ground at one end,
 and a single electrode at the other.
 
 <pre>
-<!--#include virtual="tutorial020a.m" -->
+<!--#include virtual="tutorial020b.m" -->
 </pre>
 
-
-
-<pre>
-&gt;&gt; disp(data_1k)
+Output data is given by:
+<pre width="50">
+&gt;&gt; disp(data_1k0)
     name: 'resistor model data'
     meas: [3x1 double]
     type: 'data'
 
-&gt;&gt; disp(data_1k.meas')
+&gt;&gt; disp(data_1k0.meas')
     1.0200    2.0400    3.0600
 </pre>
+
+<h3> 
+Forward solver function
+</h3>
+
+This calculation depends on a forward solver
+function, which calculates measurements from
+a given image. This function
+ normally needs to be custom written
+for the physics of the problem. EIDORS provides
+several fuctions for EIT.
+<p>
+The forward solver used here is:
+
+<pre>
+<!--#include virtual="tutorial020_f_solve.m" -->
+</pre>
+
+
+<h3> 
+Defining stimulation patterns
+</h3>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 17:57:33 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-17 21:07:09 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
