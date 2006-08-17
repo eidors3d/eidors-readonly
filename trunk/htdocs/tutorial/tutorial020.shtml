@@ -62,6 +62,26 @@ The forward solver used here is:
 <!--#include virtual="tutorial020_f_solve.m" -->
 </pre>
 
+<h3> 
+Image reconstruction
+</h3>
+
+Image reconstruction can be handled via a standard
+EIDORS image functions.
+<pre>
+<!--#include virtual="tutorial020c.m" -->
+</pre>
+
+Thus the output is, giving a resistance change of 200&Omega;
+<pre width="50">
+&gt;&gt;reconst = 
+         name: 'solved by aa_inv_solve'
+    elem_data: 200.0000
+    inv_model: [1x1 struct]
+    fwd_model: [1x1 struct]
+         type: 'image'
+</pre>
+
 
 <h3> 
 Defining stimulation patterns
@@ -71,7 +91,7 @@ Defining stimulation patterns
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 21:07:09 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-17 22:11:32 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

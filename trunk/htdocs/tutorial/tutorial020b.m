@@ -1,5 +1,5 @@
-% tutorial1_create_fwd_model
-% $Id: tutorial020b.m,v 1.2 2006-08-17 21:07:09 aadler Exp $
+% Create stimulation patterns and solve fwd_model
+% $Id: tutorial020b.m,v 1.3 2006-08-17 22:11:32 aadler Exp $
 
 
 % Define stimulation patterns
