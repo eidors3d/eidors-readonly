@@ -1,5 +1,5 @@
-% tutorial1_create_fwd_model
-% $Id: tutorial010a.m,v 1.1 2006-08-17 17:57:33 aadler Exp $
+% Create fwd models
+% $Id: tutorial010a.m,v 1.2 2006-08-17 20:34:34 aadler Exp $
 
 subplot(121);
 
@@ -15,4 +15,4 @@ imdl_3d= mk_common_model('n3r2',16);
 show_fem(imdl_3d.fwd_model);
 
 axis square; view(-35,14);
-print -r75 -dpng tutorial1_create_fwd_model.png
+%print -r75 -dpng tutorial010a.png;
