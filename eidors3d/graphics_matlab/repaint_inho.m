@@ -12,7 +12,7 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %thresh  = Threshold to show imaged region
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: repaint_inho.m,v 1.11 2006-07-31 17:24:28 aadler Exp $
+% $Id: repaint_inho.m,v 1.12 2006-08-17 22:15:39 aadler Exp $
 
 abs_inhomg= abs( scale_for_display( mat, mat_ref) );
 
@@ -40,7 +40,16 @@ for idx=[[1;2;3], ...
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
 
-   patch(Xs,Ys,Zs,colours,'EdgeColor','none');
+   if size(colours)==[1,3]
+      % need to work around ^%$#%$# matlab bug which
+      % forces an incorrect interpretation is colours is this size
+      patch(Xs(:,[1:3,1]), ...
+            Ys(:,[1:3,1]), ...
+            Zs(:,[1:3,1]), ...
+            colours(:,[1:3,1]),'EdgeColor','none');
+   else
+      patch(Xs,Ys,Zs,colours,'EdgeColor','none');
+   end
 end
 
 
