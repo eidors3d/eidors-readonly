@@ -15,7 +15,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.normalize  => difference measurements normalized?
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_fwd_parameters.m,v 1.15 2006-08-13 11:15:40 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.16 2006-08-17 22:15:13 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -44,12 +44,30 @@ n_elec= length( fwd_model.electrode );
 % calculate element volume and surface area
 pp.VOLUME=zeros(e,1);
 ones_d = ones(1,d);
-ones_d1= ones(1,d-1);
 d1fac = prod( 1:d-1 );
-d2fac = prod( 1:d-2 );
-for i=1:e
-    this_elem = pp.NODE(:,pp.ELEM(:,i)); 
-    pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+if d > size(pp.NODE,1)
+   for i=1:e
+       this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+       pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+   end
+elseif d == 3 % 3D nodes in 2D mesh
+   for i=1:e
+       this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+       d12= det([ones_d;this_elem([1,2],:)])^2;
+       d13= det([ones_d;this_elem([1,3],:)])^2;
+       d23= det([ones_d;this_elem([2,3],:)])^2;
+       pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+   end
+elseif d == 2 % 3D nodes in 1D mesh (ie resistor mesh)
+   for i=1:e
+       this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+       d12= det([ones_d;this_elem([1],:)])^2;
+       d13= det([ones_d;this_elem([2],:)])^2;
+       d23= det([ones_d;this_elem([3],:)])^2;
+       pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+   end
+else
+   error('mesh size not understood when calculating volumes')
 end
 
 if isfield(fwd_model,'boundary')
@@ -62,9 +80,12 @@ end
 N2E = sparse(n_elec, n);
 for i=1:n_elec
     elec_nodes = fwd_model.electrode(i).nodes;
-%   N2E(i, elec_nodes) = 1/length(elec_nodes);
-    srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
-    N2E(i, elec_nodes) = srf_area/sum(srf_area);
+    if length(elec_nodes) == 1 
+       N2E(i, elec_nodes) = 1;
+    else
+       srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
+       N2E(i, elec_nodes) = srf_area/sum(srf_area);
+    end
 end
   
 
