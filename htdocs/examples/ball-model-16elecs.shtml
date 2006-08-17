@@ -1,0 +1,49 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>Screenshots of the EIDORS demos</h2>
+<ul>
+
+<p><li><h3>
+    Ball Model
+</h3>
+
+<center>
+<font size="+1">
+</font>
+<p>
+<img src="ball_model_16elecs.gif" alt="animated gif">
+<p>
+Animated graphic of the finite element mesh of a 
+small ball contrasting object in a 2D tank. 
+This follows a "spirograph" type pattern. Simulation
+data for this model is available in
+ <tt>sample_data/netgen_moving_ball.mat</tt>
+
+
+</center>
+<p>
+
+<pre>
+    % Matlab instructions
+    % You need to have netgen installed to run this demo
+    move_the_ball
+    vv=view;
+    set(gcf,'paperposition',[2,2,3,3]);
+        for i=1:31;
+        show_fem(tank_mdls(i));
+        view(vv);
+        grid off;
+        print('-dpng',sprintf('ball_model%02d.png',i));
+    end
+    !convert -delay 25 ball_model*.png -loop 0 ball-models.gif
+</pre>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-08-17 17:58:15 $ by $Author: aadler $
+</small>
+</body>
+
+</html>
+
