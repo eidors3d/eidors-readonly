@@ -56,7 +56,15 @@ for discussion, we make the following suggestion.
 
 -->
 
-<br><li><b>
+<p><li><b>
+    17 Aug 2006:
+</b><br>
+Andy Adler
+<p>
+An online tutorial has been written. You can access it 
+<a href="./tutorial/tutorial.shtml">here</a>
+
+<p><li><b>
     28 July 2006:
 </b><br>
 Andy Adler &amp; Bill Lionheart
@@ -66,7 +74,7 @@ Seoul, Korea as part of the 7th EIT conference.
 The tutorial will be at Kyung Hee University (bus
 transportation provided from COEX conference centre)
 
-<br><li><b>
+<p><li><b>
     28 June 2006:
 </b><br>
 Andy Adler
@@ -733,7 +741,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-07-28 14:35:20 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-17 21:16:27 $ by $Author: aadler $
 </small>
 </body>
 
