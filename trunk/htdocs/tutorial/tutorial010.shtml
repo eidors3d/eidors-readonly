@@ -12,19 +12,19 @@ models.
 <!--#include virtual="tutorial010a.m" -->
 </pre>
 
-<ul>
+<center>
 <img src="tutorial010a.png">
 <br><i> Figure:</i>
 output image showing 2D and 3D EIT finite element
 models. Electrodes are shown in green. Electrode #1
 is light green.
-</ul>
+</center>
 
 <h3> 
 Create a simple 3D fwd_model structure
 </h3>
 
-Based on these FEM models, we can simulate
+Based on these FEM models, we can simcenterate
 data. This code simulates difference data
 for a pattern with two inhomogeneities.
 
@@ -32,13 +32,13 @@ for a pattern with two inhomogeneities.
 <!--#include virtual="tutorial010b.m" -->
 </pre>
 
-<ul>
+<center>
 <img src="tutorial010b.png">
 <br><i> Figure:</i>
 Simulated voltages from 3D EIT mesh. Right
 axis (left) shows the difference signal due
 to an inhomogeneity.
-</ul>
+</center>
 
 <h3> 
 Reconstruct images
@@ -51,18 +51,18 @@ image may be reconstructed.
 <!--#include virtual="tutorial010c.m" -->
 </pre>
 
-<ul>
+<center>
 <img src="tutorial010c.png">
 <br><i> Figure:</i>
 <i>Left</i>: Simulation image;
 <i>Middle</i>: Reconstructed image (as mesh);
 <i>Right</i>: Reconstructed image slices at <i>z=1.0</i> and <i>z=2.0</i>.
-</ul>
+</center>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 20:34:34 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-17 20:44:02 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
