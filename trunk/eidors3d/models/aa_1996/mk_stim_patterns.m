@@ -51,7 +51,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.15 2006-05-29 18:09:09 camilgomez Exp $
+% $Id: mk_stim_patterns.m,v 1.16 2006-08-18 17:06:43 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -198,6 +198,8 @@ v.inj= inj;
 if isstr(meas)
    if      strcmp(meas,'{ad}') | strcmp(meas,'adjacent')
       meas= [0, 1];
+   elseif  strcmp(meas,'{op}') | strcmp(meas,'opposite')
+      meas= [0, floor(n_elec/2)];
    else
       error(['parameter meas=',meas,' not understood']);
    end
