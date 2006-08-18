@@ -5,12 +5,20 @@
     <li><h3> 
 <a href="./tutorial010.shtml" >EIDORS Basics</a>
 </h3>
-Basic usage of EIDORS
 
     <li><h3> 
-<a href="./tutorial020.shtml" >EIDORS Data structures</a>
+<a href="./tutorial020.shtml" >Basic EIDORS Data structures</a>
 </h3>
-EIDORS data structures illustrated using a resistor model
+
+    <li><h3> 
+<a href="./tutorial030.shtml" >Modifying EIDORS models</a>
+</h3>
+
+
+    <li><h3> 
+<a href="./tutorial040.shtml" >Using Netgen to build EIDORS models</a>
+</h3>
+
 
 </ul>
 
@@ -27,7 +35,7 @@ Basic usage of EIDORS
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 21:07:09 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-18 17:37:39 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
