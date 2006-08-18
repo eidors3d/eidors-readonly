@@ -1,0 +1,39 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>Basic EIDORS data structures</h2>
+
+<h3> 
+Modifying EIDORS data structures and models
+</h3>
+
+Rather than creating new FEM models from scratch,
+it is normally easier to take a model that
+almost works, and then modify it.
+<p>
+In this tutorial, we explore using different
+16 electrode configurations for 3D EIT.
+Assume that we have a 16 electrode adjacent
+stimulation, adjacent measurment system. Of course,
+the electrodes can be placed anywhere, and
+the corresponding images reconstructed.
+
+<pre>
+<!--#include virtual="tutorial030a.m" -->
+</pre>
+
+<center>
+<img src="tutorial030a.png">
+<br><i>Figure:</i>
+this shows a single line representing the resistor
+in 3D. Not very interesting, but this <i>is</i> a
+simple example.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date
+</small>
+</BODY></HTML>
+<!--
+      -->
