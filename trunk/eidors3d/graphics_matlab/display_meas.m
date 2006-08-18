@@ -16,12 +16,13 @@ function display_meas(fwd_model,disp_meas,offset,elec_pp);
 % Advanced Options
 % "disp_meas" - 'y' or 'n' - selects whether the measuring electrodes are
 %                            displayed or not
+% "disp_meas" - 'ya' or 'na' - animate the patterns
 % "offset" - integer (1 to number of electrodes per plane), default=0
 %          - rotates the display by number of electrodes selected
 % "elec_pp" - number of electrodes per plane
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: display_meas.m,v 1.1 2005-12-06 14:53:07 aadler Exp $
+% $Id: display_meas.m,v 1.2 2006-08-18 17:06:27 aadler Exp $
 
 % old parameters
 %function display_meas(vtx,srf,elec,Ib,indH,df,disp_meas,offset,elec_pp);
@@ -34,7 +35,7 @@ Ib   = pp.Ib;
 df   = pp.df;
 indH = pp.indH;
 
-figure
+%figure
 set(gcf,'Name','Wire Mesh Current Injections')
 
 if nargin<2
@@ -43,8 +44,16 @@ end
 if nargin<4
     elec_pp= [];
 end
-    
 
+animate=0;
+if length(disp_meas)==2
+   if disp_meas(2)=='a'
+      animate= .2;
+   else
+      error('don''t understand disp_meas parameter');
+   end
+   disp_meas= disp_meas(1);
+end
 
 if disp_meas=='n'
 
@@ -99,10 +108,13 @@ if disp_meas=='n'
             end
         end     
     
-        pause
+        if animate>0
+           pause(animate);
+        else
+           pause;
+        end
 
     end
-    close;
     
 elseif disp_meas=='y'
     meas_no=1;
@@ -123,7 +135,7 @@ elseif disp_meas=='y'
             end
             
             hidden off;
-            title(['Measurement Number ' num2str(meas_no)])
+            title(sprintf('Stim #=%d, Meas #=%d', loop1, meas_no))
 
             drive_elec=[];
             sink_elec=[];
@@ -179,10 +191,17 @@ elseif disp_meas=='y'
                 patch(X,Y,Z,'y');
             end
             meas_no=meas_no+1;
-            pause
+
+            if animate>0
+               pause(animate);
+            else
+               pause;
+            end
 
         end
     end
-    close;
+else
+   error('parameter disp_meas not understood');
 end
     
+%   close;
