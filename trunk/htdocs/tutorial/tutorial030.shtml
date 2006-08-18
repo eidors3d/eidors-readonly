@@ -1,8 +1,10 @@
 <!--#include virtual="nav-sidebar.html" -->
-<h2>Basic EIDORS data structures</h2>
+<h2> 
+Modifying EIDORS data structures and models
+</h2>
 
 <h3> 
-Modifying EIDORS data structures and models
+EIDORS Stimulation patterns
 </h3>
 
 Rather than creating new FEM models from scratch,
@@ -23,10 +25,49 @@ the corresponding images reconstructed.
 <center>
 <img src="tutorial030a.png">
 <br><i>Figure:</i>
-this shows a single line representing the resistor
-in 3D. Not very interesting, but this <i>is</i> a
-simple example.
+Two layer 16 ring FEM models with different
+stimulation patterns.
 </center>
+
+<h3> 
+Using 16 electrodes from a 32 electrode model
+</h3>
+
+<pre>
+<!--#include virtual="tutorial030b.m" -->
+</pre>
+
+<center>
+<img src="tutorial030b.png">
+<br><i>Figure:</i>
+Three different ways to place 16 electrodes
+on a 32 electrode phantom. 
+<i>Left:</i> Zigzag,
+<i>Middle:</i> Planar,
+<i>Right:</i> Planar-opposite,
+</center>
+
+<h3> 
+Reconstruct images with different electrode placements
+</h3>
+
+<pre>
+<!--#include virtual="tutorial030c.m" -->
+</pre>
+
+<center>
+<img src="tutorial030c.png">
+<br><i>Figure:</i>
+Reconstructions with three different ways to place
+16 electrodes on a 32 electrode phantom. 
+<i>Left:</i> Zigzag,
+<i>Middle:</i> Planar,
+<i>Right:</i> Planar-opposite.
+As expected, image quality is worse (at 25dB SNR) than
+for the <a href="./tutorial010c.png">32 electrode case</a>
+a 20dB SNR.
+</center>
+
 
 
 </td></tr></table>
