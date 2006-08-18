@@ -1,6 +1,14 @@
 <!--#include virtual="nav-sidebar.html" -->
 <h2>EIDORS Examples</h2>
 
+To run these tutorials, you need to 
+<a href="../download.html">download and install</a>
+EIDORS and then run this command in a matlab
+(or octave) session.
+<pre width="40">
+&gt;&gt;run /path/to/eidors3d/startup.m
+</pre>
+
 <ul>
     <li><h3> 
 <a href="./tutorial010.shtml" >EIDORS Basics</a>
@@ -28,14 +36,13 @@
 <a href="./eidors3d_tutorial.shtml"
    >Tutorial for EIDORS Version 2 (EIDORS3D)</a>
 </h3>
-Basic usage of EIDORS
 
 </ul>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-18 17:37:39 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-18 19:38:21 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
