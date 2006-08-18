@@ -51,7 +51,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.16 2006-08-18 17:06:43 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.17 2006-08-18 17:32:47 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -63,26 +63,28 @@ offset   = [1;1]*(0:n_elec-1);
 
 i=1;
 for ring = 0:v.n_rings-1
-   redundant_elim= [];
+   seen_patterns= struct;
    for elec= 0:v.n_elec-1
        s_pat= mk_stim_pat(v, elec, ring );
        m_pat= mk_meas_pat(v, elec, ring );
 
        if v.do_redundant == 0 % elim redudant
-           ff= abs(diff([s_pat(:);s_pat(:)]));
-           ff= find( ff > 1.9*v.amplitude);
-           redundant_elim= [redundant_elim, ff(1) ];
-
-           % TODO: check whether this works for n_rings>1
-           elim= [];
+           m_pat_new= sparse([]);
+           s_pat_str= ['s',sprintf('%d_', find(s_pat) ),'m'];
            for j=1:size(m_pat,1);
-              ff= abs(diff([m_pat(j,:),m_pat(j,:)]));
-              ff= find( ff > 1.9 );
-              if any( ff(1)==redundant_elim ); 
-                  elim= [elim, j];
+              this_m_pat= m_pat(j,:);
+              pat_str= [s_pat_str, sprintf('%d_', find(this_m_pat))];
+              if ~isfield(seen_patterns,pat_str);
+                 m_pat_new= [m_pat_new;this_m_pat];
+                 % we've seen this pattern
+                 seen_patterns.(pat_str)= 1;
+                 % and it's dual by reciprocity
+                 pat_str= ['s',sprintf('%d_', find(this_m_pat) ), ...
+                           'm',sprintf('%d_', find(s_pat))];
+                 seen_patterns.(pat_str)= 1;
               end
            end
-           m_pat(elim,:) =[];
+           m_pat= m_pat_new;
        end
 
        if ~isempty(m_pat) 
@@ -232,16 +234,6 @@ for opt = options
    else
       error(['option parameter opt=',opt,' not understood']);
    end
-end
-
-% no_redundant only works for adjacent stimulations
-if v.do_redundant==0
-    inj_diff= abs(diff(inj));
-    meas_diff= abs(diff(meas));
-    if ( inj_diff>1  & inj_diff<n_elec-1 ) | ...
-       ( meas_diff>1 & meas_diff<n_elec-1 )
-        error('do_redundant is only applicable to adjacent patterns');
-    end
 end
 
 v.n_elec = n_elec;
