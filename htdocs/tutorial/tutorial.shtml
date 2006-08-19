@@ -34,6 +34,23 @@ EIDORS and then run this command in a matlab
     <li><h3> 
 <a href="./tutorial110.shtml" >Basic Image reconstruction</a>
 </h3>
+
+    <li><h3> 
+<a href="./tutorial120.shtml" >Compare 2D Image reconstruction</a>
+</h3>
+
+    <li><h3> 
+<a href="./tutorial130.shtml" >Compare 3D Image reconstruction</a>
+</h3>
+
+    <li><h3> 
+<a href="./tutorial140.shtml" >Image reconstruction of moving objects</a>
+</h3>
+
+    <li><h3> 
+<a href="./tutorial210.shtml" >"Cheating" with EIDORS</a>
+</h3>
+
 </ul>
 
 <h3>Older Tutorials</h3>
@@ -48,7 +65,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-19 04:09:40 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-19 14:39:20 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
