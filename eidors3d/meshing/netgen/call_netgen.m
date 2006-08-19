@@ -11,7 +11,7 @@ function status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 %   default is '' -> coarse
 %   valid values are 'fine' or 'veryfine'
 %
-% $Id: call_netgen.m,v 1.5 2006-08-09 13:52:23 aadler Exp $
+% $Id: call_netgen.m,v 1.6 2006-08-19 01:46:49 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL V2
 
 if nargin<3
@@ -36,14 +36,14 @@ while( 1 )
      islinux =0;
    end    
 
+   fid= fopen('ng.opt','w'); %create ng.opt file in local dir
    if ~isempty(msz_file)
-      fid= fopen('ng.opt','w'); %create ng.opt file in local dir
 %     fprintf(fid,'options.segmentsperedge 5\n'); % Another
 %                                                   potentially useful parameter
 %                                                   except netgen ignores it
       fprintf(fid,'options.meshsizefilename  %s\n',msz_file);
-      fclose(fid);
    end
+   fclose(fid);
 
    status= system(sprintf( ...
         '%s ng %s -batchmode -geofile=%s  -meshfile=%s ', ...
