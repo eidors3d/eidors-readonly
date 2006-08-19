@@ -1,0 +1,31 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>EIDORS image reconstructions</h2>
+
+<h3> 
+EIDORS data structures: the inv_model
+</h3>
+
+The EIDORS inv_model describes all the
+parameters as part of image reconstruction
+
+<pre>
+<!--#include virtual="tutorial110a.m" -->
+</pre>
+
+<center>
+<img src="tutorial110a.png">
+<br><i>Figure:</i>
+Image reconstructions shown as images
+(<i>top</i>) or meshes (<i>bottom</i>)
+for different hyperparameter values.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-08-19 04:09:40 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
