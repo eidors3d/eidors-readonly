@@ -1,11 +1,11 @@
 function [tank_mdl,centres] = create_tank_mesh_ng( ...
             tank_radius, tank_height,CorR, log2_electrodes_per_plane, ...
             no_of_planes,first_plane_starts, height_between_centres,  ...
-            electrode_width, electrode_height,fnstem)
+            electrode_width, electrode_height,fnstem, elec_mesh_density )
 %USAGE: [tank_mdl,centres] = create_tank_mesh_ng( ...
 %           tank_radius, tank_height,CorR, log2_electrodes_per_plane, ...
 %           no_of_planes,first_plane_starts, height_between_centres,  ...
-%           electrode_width, electrode_height,fnstem)
+%           electrode_width, electrode_height,fnstem, elec_mesh_density )
 %
 % Parameters  tank_radius, tank_height, 
 %   CorR= 'C' for circular 'R' for rectangular
@@ -16,6 +16,8 @@ function [tank_mdl,centres] = create_tank_mesh_ng( ...
 %, height_between_centres   of electrode planes , 
 % electrode_width, electrode_height , the width is just radius if 'R'
 %  fnstem the file name used for saving netgen files
+% elec_mesh_density  - force enhanced mesh density near electrodes
+%           default is to not enhance mesh density
 %
 %
 %
@@ -25,12 +27,14 @@ function [tank_mdl,centres] = create_tank_mesh_ng( ...
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng.m,v 1.15 2006-08-13 12:09:46 aadler Exp $
+% $Id: create_tank_mesh_ng.m,v 1.16 2006-08-19 01:44:33 aadler Exp $
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
 % meshsize around electrodes
-   elec_mesh_density= 50; % points on outsize of electrode
+if nargin<11
+   elec_mesh_density= 0; % points on outsize of electrode
+end
 
 nelec = no_of_planes*elecs_per_plane;
 if CorR=='C'
@@ -53,7 +57,9 @@ meshfn= [fnstem,'.vol'];
 sizefn= [fnstem,'.msz'];
 fid=fopen(geofn,'w');
 
-fsf=fopen(sizefn,'w');
+if elec_mesh_density > 0
+   fsf=fopen(sizefn,'w');
+end
 
 
 if CorR =='R'
@@ -61,19 +67,36 @@ if CorR =='R'
    % Rectangular case 
    write_header(fid,tank_height,tank_radius);
 
-   fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
-   mesh_density= (electrode_height+electrode_width)/elec_mesh_density;
-   %Density has some very funny limits. It sometimes just
-   % breaks. Try adding random jitter so that it will
-   % at least work sometimes - or after multiple attempts
-   mesh_density= mesh_density*(1+randn(1)*.01);
-
+   if elec_mesh_density>0
+      mesh_density= (electrode_height+electrode_width)/elec_mesh_density;
+      %Density has some very funny limits. It sometimes just
+      % breaks. Try adding random jitter so that it will
+      % at least work sometimes - or after multiple attempts
+      mesh_density= mesh_density*(1+randn(1)*.01);
    
-   theta= linspace(0,2*pi, elec_mesh_density+1)'; theta(1)=[];
-   th_col= ones(size(theta));
-   [xyz]= [0*th_col, ...
-           electrode_radius*sin(theta), ...
-           electrode_radius*cos(theta)];
+      % add 2 points because we duplicate the points at each corner
+      vert_points= ceil( elec_mesh_density*electrode_height / ...
+                         2 / (electrode_height + electrode_width) ) + 2;
+      vert_sides= linspace(-electrode_height/2, ...
+                            electrode_height/2, vert_points );
+
+      horz_points= ceil( elec_mesh_density*electrode_width / ...
+                         2 / (electrode_height + electrode_width) ) + 2;
+      horz_sides= linspace(-electrode_width/2, ...
+                            electrode_width/2, horz_points );
+
+      fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane* ...
+               (vert_points + horz_points)*2 );
+
+      yy= [vert_sides,vert_sides, ...
+           electrode_height/2*ones(1,horz_points), ...
+          -electrode_height/2*ones(1,horz_points)]';
+      zz= [electrode_width/2*ones(1,vert_points), ...
+          -electrode_width/2*ones(1,vert_points), ...
+           horz_sides,horz_sides]';
+      th_col= 0*yy+1;
+      xyz= [0*th_col,yy,zz];
+   end
 
 
    kel = 0;
@@ -89,12 +112,15 @@ if CorR =='R'
           % Write basic electrode shape
           writengcuboid(fid,sprintf('rod%d',kel),[x,y,z],dirn, ...
                         electrode_height,electrode_width,0.5*tank_radius);	 	 
-          %write to meshsize file
-          xyz1= th_col*[x,y,z] + xyz* ...
-                    [cos(th),sin(th),0; ...
-                    -sin(th),cos(th),0; ...
-                     0      ,0      ,1];
-          fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+          if elec_mesh_density>0
+             %write to meshsize file
+             xyz1= th_col*[x,y,z] + xyz* ...
+                       [cos(th),sin(th),0; ...
+                       -sin(th),cos(th),0; ...
+                        0      ,0      ,1];
+             fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+%            plot3(xyz1(:,1),xyz1(:,2),xyz1(:,3),'.') % View to debug
+          end
 
       end;
    end;
@@ -103,12 +129,14 @@ else
 % Circular case
    write_header(fid,tank_height,tank_radius);
 
-   fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
-   mesh_density= pi*electrode_radius/elec_mesh_density;
-   %Density has some very funny limits. It sometimes just
-   % breaks. Try adding random jitter so that it will
-   % at least work sometimes
-   mesh_density= mesh_density*(1+randn(1)*.01);
+   if elec_mesh_density>0
+      fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
+      mesh_density= pi*electrode_radius/elec_mesh_density;
+      %Density has some very funny limits. It sometimes just
+      % breaks. Try adding random jitter so that it will
+      % at least work sometimes
+      mesh_density= mesh_density*(1+randn(1)*.01);
+   end
 
    
    theta= linspace(0,2*pi, elec_mesh_density+1)'; theta(1)=[];
@@ -135,12 +163,14 @@ else
          writengcylrod(fid,sprintf('rod%d',kel),[x,y,z],dirn, ....
                        electrode_radius, 0.5*tank_radius);	 	 
 
-         %write to meshsize file
-         xyz1= th_col*[x,y,z] + xyz* ...
-                   [cos(th),sin(th),0; ...
-                   -sin(th),cos(th),0; ...
-                    0      ,0      ,1];
-         fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+         if elec_mesh_density>0
+            %write to meshsize file
+            xyz1= th_col*[x,y,z] + xyz* ...
+                      [cos(th),sin(th),0; ...
+                      -sin(th),cos(th),0; ...
+                       0      ,0      ,1];
+            fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+         end
 
       end;
    end;
@@ -159,11 +189,18 @@ end % of circular case
 
 
 fclose(fid);
-fclose(fsf);
+if elec_mesh_density>0
+   fclose(fsf);
+end
 
 % Now call Netgen in batchmode to mesh this CSG file
 disp('Calling Netgen. Please wait.....');
-call_netgen( geofn, meshfn, sizefn);
+if elec_mesh_density>0
+   call_netgen( geofn, meshfn, sizefn);
+else
+   call_netgen( geofn, meshfn);
+end
+
 
 disp('Netgen seems to have meshed your tank ok and written it to file!');
 disp('..you just have to take your hats off to those guys at Johannes Kepler University, Linz, what a good job.');
