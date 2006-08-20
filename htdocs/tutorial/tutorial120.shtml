@@ -7,22 +7,20 @@ the parameters of the <tt>inv_model</tt>
 structure.
 
 <pre>
-<!--#include virtual="tutorial130a.m" -->
-</pre>
+<!--#include virtual="tutorial120a.m"
+ --></pre>
 
 <center>
-<img src="tutorial130a.png">
+<img src="tutorial120a.png">
 <br><i>Figure:</i>
-Image reconstructions shown as images
-(<i>top</i>) or meshes (<i>bottom</i>)
-for different hyperparameter values.
+Sample image to test 2D image reconstruction algorithms
 </center>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-20 03:44:23 $
+    Last Modified: $Date: 2006-08-20 03:51:31 $
 </small>
 </BODY></HTML>
 <!--
