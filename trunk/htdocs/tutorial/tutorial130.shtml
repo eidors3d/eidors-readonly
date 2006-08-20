@@ -1,0 +1,29 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>Compare 2D image reconstructions</h2>
+
+EIDORS IS able to easily compare different
+image reconstruction algorithms by changing
+the parameters of the <tt>inv_model</tt>
+structure.
+
+<pre>
+<!--#include virtual="tutorial120a.m" -->
+</pre>
+
+<center>
+<img src="tutorial120a.png">
+<br><i>Figure:</i>
+Image reconstructions shown as images
+(<i>top</i>) or meshes (<i>bottom</i>)
+for different hyperparameter values.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-08-20 03:44:23 $
+</small>
+</BODY></HTML>
+<!--
+      -->
