@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.22 2005-12-08 00:20:00 aadler Exp $
+% $Id: np_inv_solve.m,v 1.23 2006-08-21 03:50:28 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -42,5 +42,4 @@ sol = one_step_inv * dva;
 % create a data structure to return
 img.name= 'solved by np_inv_solve';
 img.elem_data = sol;
-img.inv_model= inv_model;
 img.fwd_model= fwd_model;

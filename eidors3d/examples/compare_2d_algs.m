@@ -20,7 +20,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.15 2006-03-23 15:56:18 camilgomez Exp $
+% $Id: compare_2d_algs.m,v 1.16 2006-08-21 03:50:28 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -83,10 +83,12 @@ switch option
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
-     inv2d.hyperparameter.value = [1e-2, 1e-4];
+     inv2d.hyperparameter.value = 1e-2;
+     inv2d.ab_calc_tv_prior.alpha2= 1e-4;
      inv2d.parameters.max_iterations= 5;
      inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
+     inv2d.parameters.keep_iterations=1;
      calc_colours('ref_level',1);
 
    case 5,
@@ -101,6 +103,7 @@ switch option
      inv2d.solve=       'aa_inv_total_var';
      inv2d.R_prior=     'laplace_image_prior';
      inv2d.parameters.max_iterations= 1;
+     inv2d.parameters.keep_iterations=1;
      subplot(142); show_slices( inv_solve( inv2d, vi, vh) );
      inv2d.parameters.max_iterations= 2;
      subplot(143); show_slices( inv_solve( inv2d, vi, vh) );
