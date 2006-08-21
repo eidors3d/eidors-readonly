@@ -1,28 +1,29 @@
 <!--#include virtual="nav-sidebar.html" -->
-<h2>Compare 2D image reconstructions</h2>
+<h2>Compare 3D image reconstructions</h2>
 
-EIDORS IS able to easily compare different
+EIDORS is able to easily compare different
 image reconstruction algorithms by changing
 the parameters of the <tt>inv_model</tt>
 structure.
 
+<p>
+The first step is to create a simulation model
+
 <pre>
-<!--#include virtual="tutorial120a.m" -->
-</pre>
+<!--#include virtual="tutorial130a.m"
+ --></pre>
 
 <center>
-<img src="tutorial120a.png">
+<img src="tutorial130a.png">
 <br><i>Figure:</i>
-Image reconstructions shown as images
-(<i>top</i>) or meshes (<i>bottom</i>)
-for different hyperparameter values.
+Simulation image for sample data (two different views)
 </center>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-20 03:44:23 $
+    Last Modified: $Date: 2006-08-21 17:49:29 $
 </small>
 </BODY></HTML>
 <!--
