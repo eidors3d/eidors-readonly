@@ -20,7 +20,7 @@ function eidors_msg( message, varargin )
 %   3 => detailed information
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_msg.m,v 1.5 2005-10-27 13:28:08 aadler Exp $
+% $Id: eidors_msg.m,v 1.6 2006-08-21 19:21:33 aadler Exp $
 
 global eidors_objects
 
@@ -35,7 +35,7 @@ end
 try
    log_level= eidors_objects.log_level;
 catch
-   log_level= 1; % default;
+   log_level= 2; % default;
    eidors_objects.log_level= log_level;
 end
 

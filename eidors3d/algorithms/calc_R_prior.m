@@ -14,11 +14,11 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % inv_model    is an inv_model structure
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_R_prior.m,v 1.2 2006-01-23 18:14:18 aadler Exp $
+% $Id: calc_R_prior.m,v 1.3 2006-08-21 19:21:33 aadler Exp $
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)
-   eidors_msg('calc_R_prior: using cached value', 2);
+   eidors_msg('calc_R_prior: using cached value', 3);
    return
 end
 
@@ -36,7 +36,4 @@ else
 end
 
 eidors_obj('set-cache', inv_model, 'R_prior', R_prior);
-eidors_msg('calc_R_prior: setting cached value', 2);
-
-
-
+eidors_msg('calc_R_prior: setting cached value', 3);

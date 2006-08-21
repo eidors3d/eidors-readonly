@@ -17,11 +17,11 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 %  inv_model.jacobian_bkgnd.func;
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_bkgnd.m,v 1.2 2005-12-08 00:19:58 aadler Exp $
+% $Id: calc_jacobian_bkgnd.m,v 1.3 2006-08-21 19:21:33 aadler Exp $
 
 img_bkgnd= eidors_obj('get-cache', inv_model, 'jacobian_bkgnd');
 if ~isempty(img_bkgnd)
-   eidors_msg('calc_jacobian_bkgnd: using cached value', 2);
+   eidors_msg('calc_jacobian_bkgnd: using cached value', 3);
    return
 end
 
@@ -40,4 +40,4 @@ end
 
 
 eidors_obj('set-cache', inv_model, 'jacobian_bkgnd', img_bkgnd);
-eidors_msg('jacobian_bkgnd: setting cached value', 2);
+eidors_msg('jacobian_bkgnd: setting cached value', 3);
