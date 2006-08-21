@@ -1,4 +1,4 @@
-<!--#include virtual="../examples/nav-sidebar.html" -->
+<!--#include virtual="./nav-sidebar.shtml" -->
 <H2>Cheating with EIDORS</H2>
 
 <center>
@@ -29,6 +29,27 @@ instead. Fig. 1 illustrates this 'happy transform'.
 The <i>happy transform</i>
 </center><p>
 
+<H3>
+EIDORS Setup
+</H3>
+
+<p>
+To configure EIDORS, we use the following code in Matlab.
+Images are shown dark on a light background, so we set
+the colours as follows:
+
+<pre width="50">
+&gt;&gt; run /path/to/eidors/start.m
+&gt;&gt; calc_colours('backgnd',[1,1,1])
+&gt;&gt; calc_colours('greylev',.01
+</pre>
+
+In order to simulate data for these images, we use
+the following code for a small (256 element) face model:
+<pre><!--#include virtual="tutorial210a.m" --></pre>
+and for a larger (576 element) face model:
+<pre><!--#include virtual="tutorial210b.m" --></pre>
+
 <h3>
 Approach #1: Careful selection of noise
 </h3>
@@ -45,9 +66,11 @@ the algorithm of
 <a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/eidors3d/algorithms/aa_1996/">Adler and Guardo (1996)</a>.
 Each image was reconstructed (with different selections of
 hyperparameter values), and reviewed by the author to determine which cases
-corresponded to the happy transform. Fig. 2 shows two successful
-'happy' images.
+corresponded to the happy transform.
 
+<pre><!--#include virtual="tutorial210c.m" --></pre>
+
+ Fig. 2 shows two successful 'happy' images.
 <center>
 <img height="128" src="tutorial210-happynoise.png" >
 <br>
@@ -58,7 +81,7 @@ Images with 17.75dB WGN which were selected as 'happy'
 In order to determine the frequency of 'happy' noise, 2000
 images were reviewed and 41 were selected, corresponding
 to an occurance rate of approximately 2%.
-<br>
+
 While careful noise selection is not a mathematical/computational
 technique, it is commonly used in association in research,
 and thus merits mention here.
@@ -97,6 +120,15 @@ in the happy face, we set
    &frac12; &radic;( trace <b>H</b><sup>t</sup><b>H</b>
                    )<sub><i>i</i>,<i>i</i></sub>
 </center>
+
+In order to implement this prior function with
+EIDORS, we define function
+<tt>tutorial210_cheat_tikhonov.m</tt> as follows
+<pre><!--#include virtual="tutorial210_cheat_tikhonov.m" --></pre>
+
+Images are reconstructed with this prior as follows:
+<pre><!--#include virtual="tutorial210d.m" --></pre>
+
 The effect of careful prior selection is hown in Fig. 3.
 In this case, images were reconstructed on a 576 element
 FEM (chosen to differ from the 256 element simulation mesh).
