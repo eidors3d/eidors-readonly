@@ -21,11 +21,11 @@ function RtR_prior = calc_RtR_prior( inv_model, varargin )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_RtR_prior.m,v 1.3 2006-07-11 17:34:51 aadler Exp $
+% $Id: calc_RtR_prior.m,v 1.4 2006-08-21 19:21:33 aadler Exp $
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)
-   eidors_msg('calc_RtR_prior: using cached value', 2);
+   eidors_msg('calc_RtR_prior: using cached value', 3);
    return
 end
 
@@ -42,7 +42,4 @@ else
 end
 
 eidors_obj('set-cache', inv_model, 'RtR_prior', RtR_prior);
-eidors_msg('calc_RtR_prior: setting cached value', 2);
-
-
-
+eidors_msg('calc_RtR_prior: setting cached value', 3);
