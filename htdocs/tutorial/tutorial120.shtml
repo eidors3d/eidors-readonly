@@ -28,6 +28,9 @@ paramters.
 <img src="tutorial120b.png">
 <br><i>Figure:</i>
 Images reconstructed with different 2D algorithms.
+<i>Top Row:</i> Data without noise,
+<i>Bottom Row:</i> Data with added 15dB noise,
+
 <i>Left:</i> One step Gauss-Newton reconstruction
 (fixed hyperparameter)
 <i>Middle:</i> One step Gauss-Newton reconstruction 
@@ -39,7 +42,7 @@ Images reconstructed with different 2D algorithms.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 03:45:57 $
+    Last Modified: $Date: 2006-08-21 04:30:45 $
 </small>
 </BODY></HTML>
 <!--
