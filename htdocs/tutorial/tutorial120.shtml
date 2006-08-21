@@ -17,7 +17,7 @@ Sample image to test 2D image reconstruction algorithms
 </center>
 
 Images are reconstructed using the following
-three different algorithms, using different
+five different algorithms, using different
 paramters.
 
 <pre>
@@ -25,12 +25,10 @@ paramters.
  --></pre>
 
 <center>
-<img src="tutorial120b.png"><br>
-<img src="tutorial120c.png">
+<img src="tutorial120b.png">
 <br><i>Figure:</i>
-Images reconstructed with different 2D algorithms.
-<i>Top Row:</i> Data without noise,
-<i>Bottom Row:</i> Data with added 12dB SNR,
+Images reconstructed with 
+data without noise,
 
 <i>From Left to Right:</i>
 <i>1)</i> One step Gauss-Newton reconstruction
@@ -44,11 +42,28 @@ Images reconstructed with different 2D algorithms.
 <i>5):</i> Total Variation reconstruction
 </center>
 
+<center>
+<img src="tutorial120c.png">
+<br><i>Figure:</i>
+Images reconstructed with
+data with added 12dB SNR.
+
+<i>From Left to Right:</i>
+<i>1)</i> One step Gauss-Newton reconstruction
+(Tikhonov prior)
+<i>2)</i> One step Gauss-Newton reconstruction
+(NOSER prior)
+<i>3)</i> One step Gauss-Newton reconstruction
+(Laplace filter prior)
+<i>5):</i> One step Gauss-Newton reconstruction 
+(automatic hyperparameter selection)
+<i>5):</i> Total Variation reconstruction
+</center>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:42:42 $
+    Last Modified: $Date: 2006-08-21 19:24:06 $
 </small>
 </BODY></HTML>
 <!--
