@@ -11,7 +11,7 @@ function status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 %   default is '' -> coarse
 %   valid values are 'fine' or 'veryfine'
 %
-% $Id: call_netgen.m,v 1.6 2006-08-19 01:46:49 aadler Exp $
+% $Id: call_netgen.m,v 1.7 2006-08-21 22:54:06 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL V2
 
 if nargin<3
@@ -27,8 +27,8 @@ while( 1 )
    ldpath='';
    if  strfind(system_dependent('getos'),'Linux')
      islinux =1;
-     s=ver;
-      if str2num(s.Version)>=7
+     s=version; ff= find(s=='.');
+      if str2num(s(1:ff(2)-1))>=7
         %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
           ldpath ='LD_LIBRARY_PATH=;';
       end      
