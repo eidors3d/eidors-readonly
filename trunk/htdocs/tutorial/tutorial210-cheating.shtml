@@ -134,7 +134,7 @@ In this case, images were reconstructed on a 576 element
 FEM (chosen to differ from the 256 element simulation mesh).
 
 <center>
-<img height="128" src="tikhonov.png" >
+<img height="128" src="tutorial210d.png" >
 <br>
 <b>Fig. 3:</b>
 Reconstructed images illustrating the effect of image priors,
@@ -151,9 +151,11 @@ happy face (right),
 In order to enhance this effect, we use an <i>inverse crime</i>,
 by putting the Tikhonov prior information <i>exactly</i> where
 it needs to be to get the happy face (Fig. 4).
+Images are reconstructed with this prior as follows:
+<pre><!--#include virtual="tutorial210e.m" --></pre>
 
 <center>
-<img height="128" src="tikhonov-icrime.png" >
+<img height="128" src="tutorial210e.png" >
 <br>
 <b>Fig. 4:</b>
 Reconstructed images illustrating the effect of image priors,

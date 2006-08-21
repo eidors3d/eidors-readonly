@@ -1,6 +1,7 @@
 % Define Face Shapes: Small Face
-% $Id: tutorial210a.m,v 1.2 2006-08-21 20:30:51 aadler Exp $
+% $Id: tutorial210a.m,v 1.3 2006-08-21 20:46:22 aadler Exp $
 
+clear p;
 p.leye=   [78,97,98,117,118,141];
 p.reye=   [66,82,83,102,103,123];
 p.rsmile= [40:41, 53:55, 69:71, 86:88];
