@@ -1,6 +1,7 @@
 % Define Face Shapes: Large Face
-% $Id: tutorial210b.m,v 1.1 2006-08-21 20:29:59 aadler Exp $
+% $Id: tutorial210b.m,v 1.2 2006-08-21 20:46:23 aadler Exp $
 
+clear p;
 p.sad=  [ ...
      53; 57; 69; 73; 86; 87; 91; 92; 106; 107; 111; 112; 127; 128;
     129; 133; 134; 135; 147; 151; 152; 153; 157; 158; 159; 165;
@@ -26,18 +27,3 @@ p.halfy= [ ...
    283; 284; 285; 292; 293; 310; 319; 320];
 
 large_face= p;
-
-% Simulate data for large face
-imdl= mk_circ_model('c2c');
-e= size(imdl.fwd_model.elems,1);
-simg= eidors_obj('image','large face');
-simg.fwd_model= imdl.fwd_model;
-
-% homogeneous data
-simg.elem_data= ones(e,1);
-vhs= fwd_solve( simg);
-
-% inhomogeneous data for sad face model
-simg.elems(large_face.eyes)= 2;
-simg.elems(small_face.sad)=  1.5;
-vis= fwd_solve( simg);

@@ -1,5 +1,5 @@
-% Reconstruct images with cheating Tikhonov prior
-% $Id: tutorial210e.m,v 1.1 2006-08-21 20:42:59 aadler Exp $
+% Reconstruct images with cheating Tikhonov prior (large model)
+% $Id: tutorial210e.m,v 1.2 2006-08-21 20:46:23 aadler Exp $
 
 lmdl= mk_common_model('c2c');
 lmdl.RtR_prior= @tutorial210_cheat_tikhonov;
