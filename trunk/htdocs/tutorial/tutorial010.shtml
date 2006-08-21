@@ -24,7 +24,7 @@ is light green.
 Create a simple 3D fwd_model structure
 </h3>
 
-Based on these FEM models, we can simcenterate
+Based on these FEM models, we can simulate
 data. This code simulates difference data
 for a pattern with two inhomogeneities.
 
@@ -62,7 +62,7 @@ image may be reconstructed.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 20:44:02 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-21 03:45:57 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

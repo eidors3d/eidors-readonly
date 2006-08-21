@@ -16,11 +16,30 @@ structure.
 Sample image to test 2D image reconstruction algorithms
 </center>
 
+Images are reconstructed using the following
+three different algorithms, using different
+paramters.
+
+<pre>
+<!--#include virtual="tutorial120b.m"
+ --></pre>
+
+<center>
+<img src="tutorial120b.png">
+<br><i>Figure:</i>
+Images reconstructed with different 2D algorithms.
+<i>Left:</i> One step Gauss-Newton reconstruction
+(fixed hyperparameter)
+<i>Middle:</i> One step Gauss-Newton reconstruction 
+(automatic hyperparameter selection)
+<i>Right:</i> Total Variation reconstruction
+</center>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-20 03:51:31 $
+    Last Modified: $Date: 2006-08-21 03:45:57 $
 </small>
 </BODY></HTML>
 <!--
