@@ -1,5 +1,5 @@
 % Compare 3D algorithms
-% $Id: tutorial130a.m,v 1.3 2006-08-21 18:42:42 aadler Exp $
+% $Id: tutorial130a.m,v 1.4 2006-08-21 19:23:43 aadler Exp $
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -18,9 +18,9 @@ img.elem_data(B)= bkgnd*0.8;
 clear A B;
 vi= fwd_solve( img );
 
-% Add 15dB noise
+% Add 12dB noise
 vi_n= vi; 
-vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(15/20) ...
+vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(12/20) ...
                      *randn(size(vi.meas));
 sig= sqrt(norm(vi.meas - vh.meas));
 
