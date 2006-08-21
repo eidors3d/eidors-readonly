@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.html" -->
+<!--#include virtual="nav-sidebar.shtml" -->
 <h2>Basic EIDORS data structures</h2>
 
 <h3> 
@@ -86,7 +86,7 @@ Thus the output is, giving a resistance change of 200&Omega;
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-18 15:43:54 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-21 18:42:42 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

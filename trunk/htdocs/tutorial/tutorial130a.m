@@ -1,5 +1,5 @@
 % Compare 3D algorithms
-% $Id: tutorial130a.m,v 1.2 2006-08-21 17:49:29 aadler Exp $
+% $Id: tutorial130a.m,v 1.3 2006-08-21 18:42:42 aadler Exp $
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -23,8 +23,6 @@ vi_n= vi;
 vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(15/20) ...
                      *randn(size(vi.meas));
 sig= sqrt(norm(vi.meas - vh.meas));
-m= size(vi.meas,1);
-vi.meas = vi.meas + .001*sig*randn(m,1);
 
 subplot(121);
 show_fem(img); axis square;

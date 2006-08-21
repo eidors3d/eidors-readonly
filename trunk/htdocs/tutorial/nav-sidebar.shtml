@@ -1,4 +1,9 @@
 <!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<!--#if expr="$SERVER_NAME = 'localhost'" -->
+<!--#set var="HOST" value="http://eidors3d.sourceforge.net" -->
+<!--#else -->
+<!--#set var="HOST" value=".." -->
+<!--#endif -->
 <html>
    <head>
 <title>EIDORS</title>
@@ -37,46 +42,46 @@
 <td valign="top">
 <a href="http://www.eidors.org/"
    >EIDORS</a><br>
-<a href="../index.shtml"
+<a href="<!--#echo var='HOST'-->/index.shtml"
    >Main</a><br>
-<a href="../docs.shtml"
+<a href="<!--#echo var='HOST'-->/docs.shtml"
    >Documentation</a><br>
-<a href="../examples/examples.shtml"
+<a href="<!--#echo var='HOST'-->/examples/examples.shtml"
    >Examples</a><br>
 <a href="../tutorial/tutorial.shtml"
    >Tutorials</a><br>
-<a href="../tutorial/tutorial010.shtml"
+<a href="./tutorial010.shtml"
       >&minus; Basics</a><br>
-<a href="../tutorial/tutoial020.shtml"
+<a href="./tutorial020.shtml"
       >&minus; Data structures</a><br>
-<a href="../tutorial/tutorial030.shtml"
+<a href="./tutorial030.shtml"
       >&minus; Modifying models</a><br>
-<a href="../tutorial/tutorial040.shtml"
+<a href="./tutorial040.shtml"
       >&minus; Netgen</a><br>
-<a href="../tutorial/tutorial050.shtml"
+<a href="./tutorial050.shtml"
       >&minus; More Netgen</a><br>
-<a href="../tutorial/tutorial110.shtml"
+<a href="./tutorial110.shtml"
       >&minus; Imaging</a><br>
-<a href="../tutorial/tutorial120.shtml"
+<a href="./tutorial120.shtml"
       >&minus; 2D Imaging</a><br>
-<a href="../tutorial/tutorial130.shtml"
+<a href="./tutorial130.shtml"
       >&minus; 3D Imaging</a><br>
-<a href="../tutorial/tutorial140.shtml"
+<a href="./tutorial140.shtml"
       >&minus; Moving Objects</a><br>
-<a href="../tutorial/tutorial210.shtml"
+<a href="./tutorial210.shtml"
       >&minus; Cheating</a><br>
-<a href="../download.shtml"
+<a href="<!--#echo var='HOST'-->/download.shtml"
    >Download</a><br>
 <a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
    >Browse CVS</a><br>
 <hr>
-<a href="../news.shtml">News</a><br>
-<a href="../faq.shtml">FAQ</a><br>
-<a href="../programming.shtml">Developer</a><br>
+<a href="<!--#echo var='HOST'-->/news.shtml">News</a><br>
+<a href="<!--#echo var='HOST'-->/faq.shtml">FAQ</a><br>
+<a href="<!--#echo var='HOST'-->/programming.shtml">Developer</a><br>
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar.html,v 1.4 2006-08-20 03:51:31 aadler Exp $
+     $Id: nav-sidebar.shtml,v 1.1 2006-08-21 18:42:42 aadler Exp $
   -->
 </td><td>&nbsp;</td><td valign="top">

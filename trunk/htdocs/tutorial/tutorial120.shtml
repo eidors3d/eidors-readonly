@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.html" -->
+<!--#include virtual="nav-sidebar.shtml" -->
 <h2>Compare 3D image reconstructions</h2>
 
 EIDORS IS able to easily compare different
@@ -48,7 +48,7 @@ Images reconstructed with different 2D algorithms.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:33:47 $
+    Last Modified: $Date: 2006-08-21 18:42:42 $
 </small>
 </BODY></HTML>
 <!--
