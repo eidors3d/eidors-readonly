@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: tutorial120a.m,v 1.4 2006-08-21 04:30:45 aadler Exp $
+% $Id: tutorial120a.m,v 1.5 2006-08-21 18:33:47 aadler Exp $
 
 imb=  mk_common_model('c2c',16);
 
@@ -17,9 +17,9 @@ img.elem_data([25,37,49:50,65:66,81:83,101:103,121:124])=bkgnd * 2;
 img.elem_data([95,98:100,79,80,76,63,64,60,48,45,36,33,22])=bkgnd * 2;
 vi= fwd_solve( img );
 
-% Add 15dB noise
+% Add 12dB noise
 vi_n= vi; 
-vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(15/20) ...
+vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(12/20) ...
                      *randn(size(vi.meas));
 
 show_fem(img);

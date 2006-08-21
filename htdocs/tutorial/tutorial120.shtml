@@ -25,24 +25,30 @@ paramters.
  --></pre>
 
 <center>
-<img src="tutorial120b.png">
+<img src="tutorial120b.png"><br>
+<img src="tutorial120c.png">
 <br><i>Figure:</i>
 Images reconstructed with different 2D algorithms.
 <i>Top Row:</i> Data without noise,
-<i>Bottom Row:</i> Data with added 15dB noise,
+<i>Bottom Row:</i> Data with added 12dB SNR,
 
-<i>Left:</i> One step Gauss-Newton reconstruction
-(fixed hyperparameter)
-<i>Middle:</i> One step Gauss-Newton reconstruction 
+<i>From Left to Right:</i>
+<i>1)</i> One step Gauss-Newton reconstruction
+(Tikhonov prior)
+<i>2)</i> One step Gauss-Newton reconstruction
+(NOSER prior)
+<i>3)</i> One step Gauss-Newton reconstruction
+(Laplace filter prior)
+<i>5):</i> One step Gauss-Newton reconstruction 
 (automatic hyperparameter selection)
-<i>Right:</i> Total Variation reconstruction
+<i>5):</i> Total Variation reconstruction
 </center>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 04:30:45 $
+    Last Modified: $Date: 2006-08-21 18:33:47 $
 </small>
 </BODY></HTML>
 <!--
