@@ -109,7 +109,7 @@ while (~terminate)&(iter<maxiter)
     primal=sum(abs(z)); % we don't care here about 0.5*norm(de_v)
     dual=sum(x.*z);
     
-    fprintf('%2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(vsim-vmeas),beta,len(ind),norm(grad));
+    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(vsim-vmeas),beta,len(ind),norm(grad),2);
         
     E=spdiags(eta,0,n,n);
     F=spdiags(ones(n,1)-(1./eta).*x.*z,0,n,n);
@@ -122,7 +122,7 @@ while (~terminate)&(iter<maxiter)
     
     ang=acos((dot(de_s,-grad)/(norm(de_s)*norm(-grad))))*(360/(2*pi));
     
-    fprintf('angle=%+3.1f deg \n',ang);
+    eidors_msg('PDIPM angle=%+3.1f deg \n',ang,2);
     
     % line search
     

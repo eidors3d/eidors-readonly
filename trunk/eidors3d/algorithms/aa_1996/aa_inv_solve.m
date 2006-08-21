@@ -12,7 +12,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_solve.m,v 1.17 2006-08-11 16:08:40 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.18 2006-08-21 03:50:28 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -46,5 +46,4 @@ sol = one_step_inv * dva;
 % create a data structure to return
 img.name= 'solved by aa_inv_solve';
 img.elem_data = sol;
-img.inv_model= inv_model;
 img.fwd_model= fwd_model;
