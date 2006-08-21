@@ -68,7 +68,7 @@
       >&minus; 3D Imaging</a><br>
 <a href="./tutorial140.shtml"
       >&minus; Moving Objects</a><br>
-<a href="./tutorial210.shtml"
+<a href="./tutorial210-cheating.shtml"
       >&minus; Cheating</a><br>
 <a href="<!--#echo var='HOST'-->/download.shtml"
    >Download</a><br>
@@ -82,6 +82,6 @@
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar.shtml,v 1.1 2006-08-21 18:42:42 aadler Exp $
+     $Id: nav-sidebar.shtml,v 1.2 2006-08-21 20:31:26 aadler Exp $
   -->
 </td><td>&nbsp;</td><td valign="top">
