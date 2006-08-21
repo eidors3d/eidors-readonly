@@ -127,14 +127,14 @@ EIDORS, we define function
 <pre><!--#include virtual="tutorial210_cheat_tikhonov.m" --></pre>
 
 Images are reconstructed with this prior as follows:
-<pre><!--#include virtual="tutorial210d.m" --></pre>
+<pre><!--#include virtual="tutorial210e.m" --></pre>
 
 The effect of careful prior selection is hown in Fig. 3.
 In this case, images were reconstructed on a 576 element
 FEM (chosen to differ from the 256 element simulation mesh).
 
 <center>
-<img height="128" src="tutorial210d.png" >
+<img height="128" src="tutorial210e.png" >
 <br>
 <b>Fig. 3:</b>
 Reconstructed images illustrating the effect of image priors,
@@ -152,10 +152,10 @@ In order to enhance this effect, we use an <i>inverse crime</i>,
 by putting the Tikhonov prior information <i>exactly</i> where
 it needs to be to get the happy face (Fig. 4).
 Images are reconstructed with this prior as follows:
-<pre><!--#include virtual="tutorial210e.m" --></pre>
+<pre><!--#include virtual="tutorial210d.m" --></pre>
 
 <center>
-<img height="128" src="tutorial210e.png" >
+<img height="128" src="tutorial210d.png" >
 <br>
 <b>Fig. 4:</b>
 Reconstructed images illustrating the effect of image priors,
@@ -183,13 +183,27 @@ Such a Laplacian filter can be used as a regularization prior
 to penalize high frequency components (edges) in the image.
 On the other hand, if we <i>know</i> where the edges are,
 then edges should not be penalized (or be less penalized) in
-those places. Fig 5 shows the effect of such careful
+those places.
+<p>
+In order to implement this prior function with
+EIDORS, we define function
+<tt>tutorial210_cheat_laplace.m</tt> as follows. 
+This function is clearly more complicated than the
+<tt>tutorial210_cheat_tikhonov.m</tt> because we
+need to search for adjoining elements in the FEM.
+
+<pre><!--#include virtual="tutorial210_cheat_laplace.m" --></pre>
+Images are reconstructed with this prior as follows (using
+almost identical code to the previous example):
+<pre><!--#include virtual="tutorial210g.m" --></pre>
+
+ Fig 5 shows the effect of such careful
 edge preserving prior selection (with no <i>inverse crime</i>).
 <i>Known edges</i> are weighted at 0.3&times;that of other
 edges in the image.
 
 <center>
-<img height="128" src="laplace3.png" >
+<img height="128" src="tutorial210g-laplace3.png" >
 <br>
 <b>Fig. 5:</b>
 Reconstructed images illustrating the effect of edge
@@ -211,10 +225,12 @@ by putting the Tikhonov prior information <i>exactly</i> where
 it needs to be to get the happy face (Fig. 6).
 <i>Known edges</i> are weighted at 0.3&times;that of other
 edges in the image.
+Images are reconstructed with this prior as follows:
+<pre><!--#include virtual="tutorial210f.m" --></pre>
 
 
 <center>
-<img height="128" src="laplace3-icrime.png" >
+<img height="128" src="tutorial210f-laplace3-icrime.png" >
 <br>
 <b>Fig. 6:</b>
 Reconstructed images illustrating the effect of edge
@@ -234,7 +250,7 @@ An even more dramatic effect is obtained by setting the
 penalty for <i>Known edges</i> to be zero (Fig. 7).
 
 <center>
-<img height="128" src="laplace0-icrime.png" >
+<img height="128" src="tutorial210f-laplace0-icrime.png" >
 <br>
 <b>Fig. 7:</b>
 Reconstructed images illustrating the effect of edge
@@ -251,6 +267,7 @@ happy face (right),
 </center><p>
 
 
+<!--
 
 <h3>
 Approach #4: Model mismatches
@@ -291,7 +308,7 @@ mesh. Some images were chosen which implement the happy
 transform, while others were chosen because they appeared
 humerous.
 </center><p>
-
+-->
 <h3>
 Conclusion
 </h3>
