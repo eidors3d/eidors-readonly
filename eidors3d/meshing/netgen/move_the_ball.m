@@ -11,7 +11,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.16 2006-08-22 06:42:06 aadler Exp $
+% $Id: move_the_ball.m,v 1.17 2006-08-22 15:00:54 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane')
@@ -81,7 +81,6 @@ end
 
 fmdl_save=fmdl;
 % save memory
-fmdl_save.nodes=uint16(fmdl.nodes);
 fmdl_save.elems=uint16(fmdl.elems);
       
 
@@ -149,8 +148,16 @@ for fno= 1:fno_max
    img=eidors_obj('image','netgen_problem', ...
                   'fwd_model',fmdl, 'elem_data', elem_data);
    img.elem_data(ball)= 2;
-   vi{fno}= fwd_solve( img);
-   vi{fno}.time = fno;
+   vi(fno)= fwd_solve( img);
+   vi(fno).time = fno;
 end
 
 save netgen_moving_ball vi vh fmdl_save
+return
+
+% Example to reconstruct images 
+imdl= mk_common_model('n3r2');
+imdl.fwd_model.stimulation= stim_pat;
+img= inv_solve(imdl,vi,vh);
+
+
