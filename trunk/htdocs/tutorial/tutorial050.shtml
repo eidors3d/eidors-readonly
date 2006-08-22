@@ -15,7 +15,9 @@ This data simulates a moving ball in a
 3D tank. You may either run
 
 <pre width=50>
-&gt;&gt;move_the_ball(16,1)
+&gt;&gt;number_of_planes = 1;
+&gt;&gt;electrodes_per_plane = 16;
+&gt;&gt;move_the_ball;
 </pre>
 
 or load the data directly from a file
@@ -42,7 +44,7 @@ See an <a href="../examples/ball_model_16elecs.gif"
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:42:42 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-22 14:44:10 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
