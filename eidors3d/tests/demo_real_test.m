@@ -2,7 +2,7 @@ function ok= demo_real_test
 % Perform tests based on the demo_real function
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: demo_real_test.m,v 1.6 2005-10-30 14:20:30 aadler Exp $
+% $Id: demo_real_test.m,v 1.7 2006-08-22 15:37:41 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -64,10 +64,11 @@ Jcolsby100=J(:,1:100:size(J,2));
 
 load(drt);
 
-compare_tol( drt.voltageH, voltageH, 'voltageH' )
-compare_tol( drt.voltageV, voltageV, 'voltageV' )
+% Need to divide by 2 since code bugs are fixed
+compare_tol( drt.voltageH/2, voltageH, 'voltageH' )
+compare_tol( drt.voltageV/2, voltageV, 'voltageV' )
 compare_tol( drt.sol, sol, 'sol' )
-compare_tol( drt.Jcolsby100, Jcolsby100, 'Jcolsby100' )
+compare_tol( drt.Jcolsby100/2, Jcolsby100, 'Jcolsby100' )
 compare_tol( drt.Diag_Reg_012, Diag_Reg_012, 'Diag_Reg_012' )
 
 ok=1;
@@ -77,7 +78,7 @@ function compare_tol( cmp1, cmp2, errtext )
 % compare matrices and give error if not equal
 fprintf(2,'testing parameter: %s ...\n',errtext);
 
-tol= 1e-5;
+tol= 1e-4;
 
 vd= mean(mean( abs(cmp1 - cmp2) ));
 vs= mean(mean( abs(cmp1 + cmp2) ));

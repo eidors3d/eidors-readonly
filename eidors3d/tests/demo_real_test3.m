@@ -2,7 +2,7 @@ function ok= demo_real_test3
 % Perform tests based on the demo_real function with new structs
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real_test3.m,v 1.9 2006-01-24 02:53:27 aadler Exp $
+% $Id: demo_real_test3.m,v 1.10 2006-08-22 15:37:41 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -110,7 +110,7 @@ demo_inv= eidors_obj('inv_model', 'Nick Polydorides EIT inverse', ...
 'reconst_type',           'difference', ...
 'fwd_model',               demo_mdl);
 
-demo_inv.hyperparameter.value= 1e-8;
+demo_inv.hyperparameter.value= 1e-4; %what value to use?
 demo_inv.R_prior= 'np_calc_image_prior';
 demo_inv.np_calc_image_prior.parameters= [3 1];
 demo_inv.jacobian_bkgnd.value= 1;
@@ -124,12 +124,12 @@ demo_img= inv_solve( demo_inv, inhomg_data, homg_data);
 
 load(drt);
 
-compare_tol( drt.voltageH, inhomg_data.meas, 'voltageH' )
+compare_tol( drt.voltageH/2, inhomg_data.meas, 'voltageH' )
 compare_tol( drt.sol, demo_img.elem_data, 'sol' )
 
 J= calc_jacobian( demo_mdl, homg_img );
 Jcolsby100=J(:,1:100:size(J,2));
-compare_tol( drt.Jcolsby100, Jcolsby100, 'Jcolsby100' )
+compare_tol( drt.Jcolsby100/2, Jcolsby100, 'Jcolsby100' )
 
 %Diag_Reg_012= [diag(Reg,0),[diag(Reg,1);0],[diag(Reg,2);0;0]];
 %compare_tol( drt.Diag_Reg_012, Diag_Reg_012, 'Diag_Reg_012' )
