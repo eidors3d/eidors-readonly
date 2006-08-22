@@ -39,9 +39,9 @@ Images are shown dark on a light background, so we set
 the colours as follows:
 
 <pre width="50">
-&gt;&gt; run /path/to/eidors/start.m
+&gt;&gt; run /path/to/eidors/startup.m
 &gt;&gt; calc_colours('backgnd',[1,1,1])
-&gt;&gt; calc_colours('greylev',.01
+&gt;&gt; calc_colours('greylev',.01);
 </pre>
 
 In order to simulate data for these images, we use
