@@ -15,8 +15,8 @@ To try the EIDORS software, follow these steps:
 <li> Download the software (release or developer version):
     <ul>
     <li> <i>Release Version:</i>
-         <a href="http://sourceforge.net/projects/eidors3d/"
-             >Download here</a>
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.1.zip"
+             >EIDORS 3.1</a>
     <li> <i>Developer Version:</i>
          Follow instructions for 
          <a href="http://sourceforge.net/cvs/?group_id=100454"
@@ -51,7 +51,7 @@ interesting uses or modifications, please inform us.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 09:44:36 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-22 15:53:33 $ by $Author: aadler $
 </small>
 
 </body>
