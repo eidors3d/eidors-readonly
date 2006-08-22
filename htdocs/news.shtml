@@ -55,6 +55,33 @@ for discussion, we make the following suggestion.
 </ul>
 
 -->
+<p><li><b>
+    22 Aug 2006:
+</b><br>
+Andy Adler &amp; Bill Lionheart
+<p>
+Blobby the walrus would like to announce version 3.1 of EIDORS.
+<p>
+EIDORS version 3.1 contains a considerable number of new features to facilitate
+using, testing, and development of reconstruction algorithms and models for EIT
+and other soft field tomography technologies.
+<p>
+New features include
+<br>&minus; New algorithms (Total Variation, Kalman filtering)
+<br>&minus; Improved Matlab graphics
+<br>&minus; Faster algorithms (better CGLS, Jacobian code)
+<br>&minus; Extensive tutorial: http://eidors3d.sourceforge.net/tutorial/
+<br>&minus; Many more usage examples.
+<br>&minus; Improved links to netgen to generate finite element models
+<br>&minus; Bug fixes
+<p>
+EIDORS version 3.1 is available for download here:
+<a href="http://prdownloads.sf.net/eidors3d/eidors-3.1.zip"
+        >http://prdownloads.sf.net/eidors3d/eidors-3.1.zip</a>.
+As always, users are encouraged to report and bugs to the
+EIDORS maintainers.
+
+
 
 <p><li><b>
     17 Aug 2006:
@@ -741,7 +768,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-17 21:16:27 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-22 15:40:40 $ by $Author: aadler $
 </small>
 </body>
 
