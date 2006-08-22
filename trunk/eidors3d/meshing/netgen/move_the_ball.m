@@ -1,21 +1,41 @@
 % Takes a netgen geo file with a ball in and moves it around
 % First make the mesh
+%Inputs are: (and defaults) 
+%    electrodes_per_plane = 16;
+%    number_of_planes     = 2;
+%
+%  Example
+%    electrodes_per_plane = 16;  number_of_planes = 2; move_the_ball
+%  Output:
+%    output is saved to netgen_moving_ball.mat
+%    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.15 2006-08-21 23:19:14 aadler Exp $
+% $Id: move_the_ball.m,v 1.16 2006-08-22 06:42:06 aadler Exp $
+
+% user input
+if ~exist('electrodes_per_plane')
+   electrodes_per_plane= 16;
+end
+if ~exist('number_of_planes')
+   number_of_planes= 2;
+end
 
 fname ='tank_for_kalman_test_ball_';
 
 refine_electrodes= 50;
 tank_radius= 15;
 tank_height= 30;
+
+first_plane_starts= tank_height/(number_of_planes+1);
+
 [tank_mdl1,centres] = create_tank_mesh_ng( ...
                         tank_radius, ...
                         tank_height, ...
                         'R', ... % rect_electrodes
-                        4,  ... % log2_electrodes_per_plane,
-                        2, ...  % no_of_planes,
-                        tank_height/3, ... % first_plane_starts
+                        log2(electrodes_per_plane), ...
+                        number_of_planes, ...
+                        first_plane_starts, ...
                         10, ... % height_between_centres
                         1.5, ... % electrode_width
                         1.5, ... % electrode_height
