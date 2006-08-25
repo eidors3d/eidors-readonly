@@ -15,7 +15,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %               if not provided, all data are available at each frame
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.8 2006-08-14 23:29:57 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.9 2006-08-25 00:03:31 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -82,7 +82,7 @@ x_k1_k1= x0;
 ll= size(y,2);
 x= zeros(n,ll);
 for i=1:ll
-   eidors_msg('iteration %d',i,2);
+   eidors_msg('inv_kalman_diff: iteration %d',i,2);
 
    % H is augmented matrix [J(x_k|k-1); RegI]
    % need to account for sequence
