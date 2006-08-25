@@ -5,6 +5,10 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 % Currently the list of supported file formats is:
 %    1. MCEIT (Goettingen / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
+%    2. ITS (International Tomography Systems)
+%        format = "ITS" or "p2k"
+%    3. IIRC (Impedance Imaging Research Center, Korea)
+%        format = "txt" or "IIRC"
 %
 % Usage
 %  [vv,curr,volt]= eidors_readdata( fname, format )
@@ -14,7 +18,7 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_readdata.m,v 1.5 2005-12-02 10:23:08 aadler Exp $
+% $Id: eidors_readdata.m,v 1.6 2006-08-25 07:02:50 tonginoh Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -36,6 +40,8 @@ if     strcmp(fmt, 'get') | strcmp(fmt, 'mceit')
    [vv,curr,volt] = mceit_readdata( fname );
 elseif strcmp(fmt, 'p2k') | strcmp(fmt, 'its')
    vv = its_readdata( fname );
+elseif strcmp(fmt,'txt') | strcmp(fmt, 'iirc')
+   vv = iirc_readdata( fname );
 else
    error('eidors_readdata: file "%s" format unknown', fmt);
 end
@@ -123,3 +129,45 @@ function idx= ptr104_208;
     end
 
     idx= idx + idx';
+    
+function vv = iirc_readdata( fname );
+    fid= fopen( fname, 'r');
+    while ~feof(fid)
+       line = fgetl(fid);
+       if isempty(line)
+           continue;
+       end
+       
+       num= regexp(line,'Channel : (\d+)','tokens');
+       if ~isempty(num)
+           channels= str2num( num{1}{1} );
+           continue;
+       end
+       
+       num= regexp(line,'Frequency : (\d+)kHz','tokens');
+       if ~isempty(num)
+           freqency= str2num( num{1}{1} );
+           continue;
+       end
+
+       num= regexp(line,'Scan Method : (\w+)','tokens');
+       if ~isempty(num)
+           scan_method=  num{1}{1};
+           continue;
+       end
+
+       num= regexp(line,'Study : (\w+)','tokens');
+       if ~isempty(num)
+           study=  num{1}{1};
+           continue;
+       end
+           
+       if strcmp(line,'Data');
+           data= fscanf(fid,'%f',[4,inf])';
+           continue;
+       end
+    end
+    vv= data(:,1) + 1i*data(:,2);
+    if length(vv) ~= channels^2
+        error('eidors_readdata: data length wrong')
+    end
