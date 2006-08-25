@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.41 2006-03-23 15:56:18 camilgomez Exp $
+% $Id: demo_real.m,v 1.42 2006-08-25 00:13:44 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -63,9 +63,7 @@ inhomg_img= eidors_obj('image', 'inhomogeneous image', ...
                        'elem_data', mat, ...
                        'fwd_model', demo_mdl );
 
-calc_colours('ref_level',1);
 show_fem( inhomg_img );
-calc_colours('ref_level',0);
 
 inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 
@@ -96,7 +94,6 @@ disp('step 9: display results');
 levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
 
 if ~exist('OCTAVE_VERSION');
-   calc_colours('ref_level',1);
    figure; image_levels( inhomg_img, levels );
 else
    show_slices( inhomg_img, levels' * [inf,inf,1] );
@@ -105,7 +102,6 @@ end
 
 demo_img.name= 'Reconstructed conductivity distribution';
 if ~exist('OCTAVE_VERSION');
-   calc_colours('ref_level',0);
    figure; image_levels( demo_img, levels );
 else
    show_slices( demo_img, levels' * [inf,inf,1] );
