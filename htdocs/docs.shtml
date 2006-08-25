@@ -8,12 +8,13 @@ EIDORS functions.
 <p><li><b>
 Andy Adler and William R B Lionheart
 </b><br>
-<a href="http://www.site.uottawa.ca/~adler/publications/2005/adler-lionheart-2005-EIDORS.pdf">
+<a href="http://www.iop.org/EJ/abstract/0967-3334/27/5/S03">
 <i>Uses and abuses of EIDORS: An extensible software base for EIT
 </i>
 </a>
 <br>
-Submitted to <i>Physiol. Meas.</i>, Nov. 2005
+<i>Physiol. Meas.</i>, 27:S25-S42, 2006 
+<a href="http://www.sce.carleton.ca/faculty/adler/publications/2005/adler-lionheart-2005-EIDORS.pdf">Final Draft</a>
 
 <p><li><b>
 Andy Adler and William R B Lionheart
@@ -62,11 +63,16 @@ should assist writing software compatible with the EIDORS
 framework.
 <ul>
 <p><li><b>
-    Software Architecture
-</b><br>
-<br>
+<a href="tutorial/tutorial.shtml">
+    Tutorial:
+</a>
+</b>
+
+<p><li><b>
+    Software Architecture:
+</b>
 Draft
-<a href="programming/programming.shtml#"
+<a href="programming/programming.shtml"
     >design framework
 </a>
 </ul>
@@ -83,7 +89,7 @@ Draft
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2006-01-21 22:38:06 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-25 21:07:37 $ by $Author: aadler $
 </small>
 
 </body>

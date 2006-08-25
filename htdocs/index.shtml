@@ -1,38 +1,33 @@
 <!--#include virtual="nav-sidebar.html" -->
-<H2>Project Goal</H2>
-The idea of this project is to promote a collaboration between groups
+<H3>Project Goal</H3>
+to promote a collaboration between groups
 working on Electrical Impedance Tomography (EIT) and Diffusion based
-Optical Tomography, in medical and industrial settings.  The aim is
+Optical Tomography, in medical and industrial settings; 
 to produce a suite of programs which perform mesh generation
 reconstruction and display for both techniques.  We hope that we can
 produce robust, reliable and fairly portable software which draws on
 our collective expertise and implements some of the latest innovations.
 
-<H2>Getting Started</H2>
+<H3>Getting Started</H3>
 
 To try the EIDORS software, follow these steps:
 <ol>
 <li> Download the software (release or developer version):
-    <ul>
-    <li> <i>Release Version:</i>
+    <br>&minus; <i>Release Version:</i>
          <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.1.zip"
              >EIDORS 3.1</a>
-    <li> <i>Developer Version:</i>
+    <br>&minus; <i>Developer Version:</i>
          Follow instructions for 
          <a href="http://sourceforge.net/cvs/?group_id=100454"
             >Anonymous CVS Access</a>
-    </ul>
+<li> Unzip the software in a directory <tt>/path/to/eidors</tt>
 
-<li> Unzip the software in a directory <tt>DIR</tt>
+<li> Start Matlab (or Octave).
 
-<li> Start Matlab (or Octave), and cd to <tt>DIR</tt>
+<li> type: <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
 
-<li> type:<br> <tt>
-     startup<br>
-     cd examples<br>
-     </tt>
-
-<li> Execute one of the sample programs in the <tt>examples</tt>
+<li> Execute one of the sample programs in the
+    <tt>/path/to/eidors/examples</tt>
      directory (such as <tt>demo_real.m</tt>)
 </ol>
 
@@ -51,7 +46,7 @@ interesting uses or modifications, please inform us.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-22 15:53:33 $ by $Author: aadler $
+    Last Modified: $Date: 2006-08-25 21:07:37 $ by $Author: aadler $
 </small>
 
 </body>
