@@ -6,14 +6,14 @@ function show_fem( mdl, options )
 % options specifies a set of options
 %   options(1) => show colourbar
 %   options(2) => show numbering on electrodes
-%   options(3) => colourbar scale
+%   options(3) => colour limit (crop outside lim)
 %
 % set ref_level for conductivities with
 %    calc_colours('ref_level', ref_level)
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.42 2006-08-17 15:53:02 aadler Exp $
+% $Id: show_fem.m,v 1.43 2006-08-25 00:11:17 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -21,12 +21,12 @@ if exist('OCTAVE_VERSION');
 end
 
 if nargin == 0
-    error('Insufficient options for show_fem');
+    error('Insufficient parameters for show_fem');
 end
 
 do_colourbar=0;
 number_electrodes=0;
-scl_colourbar=[];
+clim=[];
 if nargin >=2
     % fill in default options
     optionstr= zeros(1,100);
@@ -35,7 +35,7 @@ if nargin >=2
     do_colourbar=      optionstr(1);
     number_electrodes= optionstr(2);
     if optionstr(3)~=0
-        scl_colourbar= optionstr(3);
+        clim= optionstr(3);
     end
 end
 
@@ -54,7 +54,7 @@ if size(mdl.nodes,2)==2
    hax= gca;
    pax= get(hax,'position');
    if exist('img');
-      colours= calc_colours(img.elem_data, scl_colourbar, do_colourbar);
+      colours= calc_colours(img, clim, do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
    end
@@ -66,13 +66,12 @@ if size(mdl.nodes,2)==2
    view(0, 90); axis('xy'); grid('off');
 elseif size(mdl.nodes,2)==3
    % 3D Case
-   cscale= [];
    show_3d_fem( mdl );
 
    if exist('img')
-       show_inhomogeneities( img.elem_data , mdl);
+       show_inhomogeneities( img.elem_data , mdl, clim);
        if do_colourbar
-           calc_colours(img.elem_data, cscale, do_colourbar);
+           calc_colours(img.elem_data, clim, do_colourbar);
        end
    end
 
@@ -148,10 +147,10 @@ for e=1:length(mdl.electrode)
     end
 end
 
-function show_inhomogeneities( elem_data, mdl)
+function show_inhomogeneities( elem_data, mdl, clim)
 % show
 hold('on');
-repaint_inho(elem_data, 'use_global' , mdl.nodes, mdl.elems); 
+repaint_inho(elem_data, 'use_global' , mdl.nodes, mdl.elems, [], clim); 
 camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');

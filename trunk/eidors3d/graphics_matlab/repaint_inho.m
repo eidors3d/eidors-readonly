@@ -1,4 +1,4 @@
-function repaint_inho(mat,mat_ref,vtx,simp, thresh);
+function repaint_inho(mat,mat_ref,vtx,simp, thresh, clim);
 %function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %
 %Repaints the simulated inhomogeneity according to the reference
@@ -9,26 +9,34 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %        = A default value of [] or 'auto' should scale reasonably
 %vtx     = The vertices matrix.
 %simp    = The simplices matrix.
-%thresh  = Threshold to show imaged region
+%thresh  = Threshold to show imaged region (or [] for default)
+%clim    = Colour limit
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: repaint_inho.m,v 1.12 2006-08-17 22:15:39 aadler Exp $
-
-abs_inhomg= abs( scale_for_display( mat, mat_ref) );
+% $Id: repaint_inho.m,v 1.13 2006-08-25 00:11:17 aadler Exp $
 
 if nargin<5
+    thresh = [];
+end
+if nargin<6
+    clim = [];
+end
+
+abs_inhomg= abs( scale_for_display( mat, mat_ref, clim) );
+if isempty(thresh)
     thresh = max(abs_inhomg)/4;
 end
+
 
 ii= find( abs_inhomg > thresh);
    
 this_x = simp(ii,:);
    
 % looks best if eidors_colours.greylev < 0
-colours= calc_colours( mat );
+colours= calc_colours( mat, clim, 0, mat_ref );
 colours= colours(:,ii,:);
 ELEM= vtx';
-      
+
 Xs=   zeros(3,length(ii));
 Ys=   zeros(3,length(ii));
 Zs=   zeros(3,length(ii));
@@ -40,15 +48,17 @@ for idx=[[1;2;3], ...
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
 
-   if size(colours)==[1,3]
+   if size(colours,1)==1 & size(colours,2)==3
       % need to work around ^%$#%$# matlab bug which
-      % forces an incorrect interpretation is colours is this size
+      % forces an incorrect interpretation is colours of this size
       patch(Xs(:,[1:3,1]), ...
             Ys(:,[1:3,1]), ...
             Zs(:,[1:3,1]), ...
-            colours(:,[1:3,1]),'EdgeColor','none');
+            colours(:,[1:3,1]), ...
+            'EdgeColor','none', 'CdataMapping','Direct');
    else
-      patch(Xs,Ys,Zs,colours,'EdgeColor','none');
+      patch(Xs,Ys,Zs,colours, ...
+            'EdgeColor','none', 'CdataMapping','Direct');
    end
 end
 

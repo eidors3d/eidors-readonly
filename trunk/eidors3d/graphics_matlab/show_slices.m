@@ -1,7 +1,8 @@
-function rimg_out = show_slices( img, levels, clim )
+function show_slices( img, levels, clim, ref_lev )
 % show_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or a array of structs
+
 % levels = Matrix [Lx3] of L image levels
 %          each row of the matrix specifies the intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
@@ -15,18 +16,13 @@ function rimg_out = show_slices( img, levels, clim )
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
 %      
-% clim   = colourmap limit (or default if not specified)
-%        = [] => Autoscale
-%
-% rimg= show_slices ...
-%    if output parameter is specified, then image (without colour
-%    scaling) is returned
+% clim      = colourmap limit ([] -> use image maximum)
+% ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.29 2006-07-11 17:35:29 aadler Exp $
+% $Id: show_slices.m,v 1.30 2006-08-25 00:11:17 aadler Exp $
 
-np= 128; % number of points for each figure
-
+np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
 if nargin<=1;
    levels= [];
@@ -36,9 +32,8 @@ if isempty(levels) && dims==2
    levels= [Inf,Inf,0];
 end
 
-if ~exist('clim')
-   clim = [];
-end
+if nargin< 3; clim = [];             end
+if nargin< 4; ref_lev= 'use_global'; end
 
 if size(levels,2) == 5
    spec_position= 1;
@@ -52,30 +47,9 @@ else
    spec_position= 0;
 end
 
-len_img= length(img);
-num_levs= size(levels,1);
+rimg= calc_slices( img, levels(:,1:3) );
 
-rimg=[]; idx=1;
-for img_no = 1:len_img
-   for lev_no = 1:num_levs
-      level= levels( lev_no, 1:3 );
-
-      calc_img= calc_image( img( img_no ), level, clim, np );
-
-      if isempty(rimg);
-         rimg=zeros([size(calc_img), len_img*num_levs]); 
-      end
-      rimg(:,:,idx) = calc_img;
-      idx=idx+1;
-   end
-end
-
-if nargout>0
-   rimg_out = rimg;
-   return;
-end
-
-ll = size(rimg,3);
+ll = size(rimg,3)*size(rimg,4);
 if spec_position %won't work for multiple image inputs
    img_cols = max( levels(:,4) );
    img_rows = max( levels(:,5) );
@@ -88,7 +62,7 @@ r_img = NaN*ones(img_rows*np, img_cols*np);
 
 idx= (-np:-1)+1;
 imno= 1;
-for img_no = 1:len_img
+for img_no = 1:length(img)
    for lev_no = 1:size( levels,1 )
       if spec_position %won't work for multiple image inputs
          i_col= levels( lev_no, 4) + img_no -1;
@@ -97,12 +71,12 @@ for img_no = 1:len_img
          i_col= rem( imno-1, img_cols) + 1;
          i_row= ceil( imno / img_cols);
       end
-      r_img(i_row*np + idx, i_col*np + idx) = rimg(:,:,imno);
-      imno= imno+1;
+      r_img(i_row*np + idx, i_col*np + idx) = rimg(:,:,img_no,lev_no);
+      imno= imno + 1;
    end
 end
 
-c_img = calc_colours( r_img);
+c_img = calc_colours( r_img, clim, 0, ref_lev );
 out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
 
 
@@ -111,7 +85,7 @@ if exist('OCTAVE_VERSION');
 else
    image(out_img);
 end
-axis('image');axis('off');
+axis('image');axis('off');axis('equal');
 
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image( img, level, clim, np)
@@ -119,23 +93,13 @@ function rimg= calc_image( img, level, clim, np)
 fwd_model= img.fwd_model;
 
 % Get elem_ptr from cache, if available 
-% EPtable is cell array of 
+% EPtable is cell array of elem_ptrs for different levels
 EPtable = eidors_obj('get-cache', fwd_model, 'elem_ptr_table');
-elem_ptr= [];
-if ~isempty(EPtable)
-   % this would be sooo much easier if Matlab has assoc. arrays
-   for i=1:size(EPtable,1)
-      if all( EPtable{i,1} == level )
-         elem_ptr= EPtable{i,2};
-         eidors_msg('show_slices: using cached value', 3);
-         break;
-      end
-   end
-else
-   EPtable= [];
-end
+level_hash= eidors_var_id( level );
 
-if isempty(elem_ptr)
+if isfield(EPtable, level_hash);
+   elem_ptr= getfield(EPtable, level_hash);
+else
    [NODE, ELEM] = level_model( fwd_model, level );
    if size(NODE,1) ==2 %2D
       elem_ptr= img_mapper2( NODE, ELEM, np, np);
@@ -143,19 +107,15 @@ if isempty(elem_ptr)
       elem_ptr= img_mapper3( NODE, ELEM, np, np);
    end
 
-   EPtable = [EPtable; [{level}, {elem_ptr}] ];
+   EPtable = setfield(EPtable, level_hash, elem_ptr);
    eidors_obj('set-cache', fwd_model, 'elem_ptr_table', EPtable);
    eidors_msg('show_slices: setting cached value', 3);
-%  eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
 end
 
 
-
-
 backgnd= NaN;
-scale=1;
 n_images= size(img.elem_data,2);
-rval= [backgnd*ones(1,n_images); scale*img.elem_data];
+rval= [backgnd*ones(1,n_images); img.elem_data];
 rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
 
