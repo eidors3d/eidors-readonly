@@ -1,16 +1,37 @@
-function animate_reconstructions(fname, imgs);
+function fname_out= animate_reconstructions(fname, imgs, clim, ref_lev);
 % animate_reconstructions(fname, imgs);
 % animate a sequence of reconstructed images
-% fname  is filename to save to (extension is added)
-% imgs   is array of eidors images
+%
+% PARAMETER:  fname
+%     filename to save to (extension is added)
+% PARAMETER:  imgs
+%     is array of eidors images
+% PARAMETER:  clim
+%     Colour scale limit (DEFAULT is no limit -> [])
+% PARAMETER:  ref_lev
+%     Background level (DEFAULT is 'use_global')
+%
+% OUTPUT: fname_out
+%     Name of animated file written to.
+%     An animated window will not pop up if output requested
 
-mk_movie2(fname,imgs);
-if  strfind(system_dependent('getos'),'Windows')
+if nargin<3; clim= [];              end
+if nargin<4; ref_lev= 'use_global'; end
+
+mk_movie2(fname,imgs,clim,ref_lev);
+
+if nargout>0
+   fname_out= [fname, '.gif'];
+else
    fid= fopen([fname ,'.html'],'w');
    fprintf(fid,'<HTML><HEAD><TITLE>%s</TITLE><BODY>\n',fname);
    fprintf(fid,'<img src="%s.gif" width="256"></BODY></HTML>',fname);
    fclose(fid);
-   system(sprintf('explorer "%s.html"',fname));
+   if  strfind(system_dependent('getos'),'Windows')
+      system(sprintf('explorer "%s.html"',fname));
+   else % we hope this is here - under linux etc
+      system(sprintf('mozilla "%s.html"',fname));
+   end
 end
 
 % create avi movie fname
@@ -18,13 +39,13 @@ end
 %
 % This results in really poor images with lots
 %  of compression artefacts. NO really good reason to use
-function mk_movie(fname, imgs)
+function mk_movie(fname, imgs, clim, ref_lev)
    fig=figure;
    set(fig,'DoubleBuffer','on');
    mov = avifile( [fname ,'.avi'] );%, 'Compression', 'RLE' );
 
    for i=1:length(imgs)
-     show_slices(imgs(i));
+     show_slices(imgs(i),1,clim,ref_lev);
      F = getframe(gca);
      mov = addframe(mov,F);
    end
@@ -35,14 +56,14 @@ function mk_movie(fname, imgs)
 % imgs is array of eidors images
 %
 % This requires imagemagick convert program.
-function mk_movie2(fname, imgs)
+function mk_movie2(fname, imgs, clim, ref_lev)
    calc_colours('mapped_colour', 127);
    dirname= 'tmp_mk_movie2';
    rm_rf( dirname );
    mkdir( dirname );
 
-   r_img= show_slices(imgs);
-   c_img = calc_colours( r_img);
+   r_img= calc_slices(imgs);
+   c_img = calc_colours( r_img, clim, 0, ref_lev);
    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
    cmap= colormap;
 
