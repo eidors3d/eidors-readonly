@@ -1,12 +1,22 @@
-function elem_data= scale_for_display( elem_data, ref_lev )
-% elem_data= scale_for_display( elem_data, ref_lev )
+function [elem_data,ref_lev] = scale_for_display( elem_data, ref_lev, clim )
+% [elem_data,ref_lev] = scale_for_display( elem_data, ref_lev, clim )
 %
-%  elem_data: prescaled elem_data
+% PARAMETERS: elem_data
+%  elem_data: data for fem elements or image pixels
+%
+% PARAMETERS: ref_lev
 %  ref_lev:   if param provided, use it,
 %               otherwise use the global value
 %             Can be numeric or 'auto' or 'use_global' 
 %
-% $Id: scale_for_display.m,v 1.2 2006-08-01 16:33:57 aadler Exp $
+% PARAMETERS: clim
+%    clim - colour limit. Colours more different from ref_level are cropped.
+%         - if not specified or scale==[] => no limit
+%
+% OUTPUT: ref_lev
+%    - the actual numerical ref_level used
+%
+% $Id: scale_for_display.m,v 1.3 2006-08-25 00:11:17 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL v2
 
    global eidors_colours;
@@ -15,6 +25,10 @@ function elem_data= scale_for_display( elem_data, ref_lev )
       ref_lev = eidors_colours.ref_level;
    elseif strcmp(ref_lev, 'use_global' );
       ref_lev = eidors_colours.ref_level;
+   end
+
+   if nargin<=2
+      clim= [];
    end
 
    if ~isnumeric(ref_lev)
@@ -30,4 +44,9 @@ function elem_data= scale_for_display( elem_data, ref_lev )
 
    elem_data = elem_data - ref_lev;
 
+   % Crop output to the colour limit
+   if ~isempty(clim)
+      elem_data( elem_data> clim)=  clim;
+      elem_data( elem_data<-clim)= -clim;
+   end
 

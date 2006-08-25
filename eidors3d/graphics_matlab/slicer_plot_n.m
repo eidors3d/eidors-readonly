@@ -87,8 +87,7 @@ sol2D = zeros(size(gCts,1),1);
 % Autoscale each axes to its own scale
 % c_img = calc_colours( sol2D(:), [], 1 );
 
-c_scale = max(abs(sol(:) - calc_colours('ref_level') )) + eps;
-c_img = calc_colours( sol2D(:), c_scale, 1 );
+c_img = calc_colours( sol2D(:), [], 1 );
 for q=1:size(tri)
    tri_q= tri(q,:);
 % need 'direct' otherwise colourmap is screwed up
