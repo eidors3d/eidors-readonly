@@ -1,123 +1,128 @@
-function colours= calc_colours(img, scale, do_colourbar)
-% colours= calc_colours(img, scale, do_colourbar)
+function colours= calc_colours(img, clim, do_colourbar, ref_lev)
+% colours= calc_colours(img, clim, do_colourbar, ref_lev)
 % Calculate a colour for each image element 
+%
 % Conductive (positive) areas are shown in red
 % Non-Conductive (negative) areas are shown in blue
 %
-% Usage:
-%   c_img = calc_colours( r_img);
+% PARAMETERS: img
+%     - 1) an EIDORS image object, or a Ex1 vector
+%     - 2) a 2D image matrix
+%
+% Usage #1 (img is a Ex1 vector of element conductivities)
+%
+%   Cs = calc_colours( img);
+%   patch(Xs,Ys,Zs,Cs);
+%
+% Cs is 1xEx1 colourmap entries (if mapped_colour>0)
+%       1xEx3 colourmap entries (if mapped_colour==0)
+%
+% Usage #2 (img is a MxN image matrix of reconstructed pixels):
+%  
+%   c_img = calc_colours( img);
 %   image( c_img );
-% 
-% img - an eidors image object, OR
-%     - a 2D image matrix
 %
-% scale - colour value corresponding to maximum
-%       - if not specified or scale==[] => autoscale
+% c_img is MxN colourmap entries (if mapped_colour>0)
+%          MxNx3 colourmap entries (if mapped_colour==0)
 %
-%    When autoscale is set, an appropriate background
-%    reference conductivity is selected, if possible
+% Usage #3 (img is string parameter value)
+%  
+%   value = calc_colours( 'param' );
+%   calc_colours( 'param', value );
+%    eg. calc_colours('mapped_colour',127)
+%         Use this to allow printing vector eps files to get around
+%         a matlab bug with warning 'RGB color data not ...'
 %
-% do_colourbar ==1 => show a Matlab colorbar with
-%        appropriate scaling
+%   The following parameters are accepted
 %
-% Colour maps are controlled by the global variable
-%   eidors_colours. The following settings are defaults
-%
-%   eidors_colours.greylev = .2;
-%      greylev is the colour of the ref_level (the non-changing regions
-%      for difference imaging). Negative values indicate black (inversed
-%      colour). For almost white, greylev=.01; Black=> greylev=-.01
-%   eidors_colours.sat_adj = .9;
-%       max G,B when R=1
-%   eidors_colours.backgnd= [.5,.5,.15]; 
-%      colour for non image regions, ie. the border around the image
-%   eidors_colours.ref_level = 0  
-%      conductivity of this value is centre of colour mapping. Normally,
-%      this would be set to the conductivity of the background
-%   eidors_colours.ref_level = 'auto'
-%      automatically calculate a good reference level for the images
-%   eidors_colours.mapped_colour= 0; % use colormap function
-%      if mapped_colour is non-zero, it indicates the colourmap
-%      size; otherwise, RGB values are used.
-%               Total colourmap is 2*mapped_colour
+%   'greylev' ( DEFAULT .2): the colour of the ref_level.
+%      Negative values indicate black (inversed colour).
+%      For almost white, greylev=.01; Black=> greylev=-.01
+%   'sat_adj' ( DEFAULT .9):    max G,B when R=1
+%   'backgnd' ( DEFAULT [.5,.5,.15] ): image border colour 
+%   'ref_level' (DEFAULT 'auto') conductivity of centre of
+%      colour mapping. 'auto' tries to estimate a good level.
+%   'mapped_colour' (DEFAULT 127) number of colourmap entries
 %      using mapped_colour allows matlab to print vector graphics to eps
+%   'npoints' (DEFAULT 128) number of points accross the image
+% 
+% PARAMETERS: clim
+%    clim - colour limit. Colours more different from ref_level are cropped.
+%         - if not specified or scale==[] => no limit
 %
-% These global values may also be set via calc_colours
-%    eg. calc_colours('ref_level',1)
+% PARAMETERS: do_colourbar
+%    - show a Matlab colorbar with appropriate scaling
 %
-%    eg. calc_colours('mapped_colour',256)
-%            Use this to allow printing vector eps files to get around
-%            a matlab bug with warning 'RGB color data not ...'
+%  usage: c_img= calc_colours( img, clim );
+%         image( c_img );
+%         calc_colours( img, clim, 1); %now do colorbar 
 %
-% Values may be obtained by calling calc_colours with 1 parameter
-%   r_lev= calc_colours('ref_level');
+% PARAMETERS: ref_lev
+%     - if specified, override the global ref_level parameter
 %
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.27 2006-08-11 16:09:59 aadler Exp $  
+% (C) 2005-2006 Andy Adler. Licenced under the GPL Version 2
+% $Id: calc_colours.m,v 1.28 2006-08-25 00:10:10 aadler Exp $  
 
-% If no args - set defaults
 if nargin==0;
+% If no args - set defaults
     get_colours;
     return;
-elseif isstr(img)
+end
+
+% Set default parameters
+if nargin < 2; clim=[];                end
+if nargin < 3; do_colourbar = 0;       end
+if nargin < 4; ref_lev = 'use_global'; end
+
+if isstr(img)
     % called as calc_colours('parameter' ... )
-    global eidors_colours;
-    if nargin==1
-       colours = getfield(eidors_colours, img);
-    else
-       eidors_colours = setfield(eidors_colours, img, scale);
-       colours= eidors_colours;
-    end
+    colours= get_set_field(img, clim);
     return;
 elseif isfield(img,'type')
    if strcmp( img.type, 'image' )
-      elem_data= img.elem_data(:); %col vector
+      elem_data= img.elem_data; %col vector
    else
       error('calc_colours: input is not eidors image object');
    end
 else
-   elem_data= img(:);
+   elem_data= img;
 end
-
-% Now process scaling 
-autoscale=1;
-if nargin >= 2; if ~isempty(scale)
-    autoscale=0;
-end; end
-
-% Do we want a colourbar
-if nargin < 3;
-   do_colourbar = 0;
-end
-
-pp=get_colours;
 
 if isempty(elem_data)
     colours = 'k'; %black
     return;
 end
 
-% remove background
-e= length(elem_data);
-if autoscale
-   elem_data = scale_for_display( elem_data, 'auto');
-   scale =  max(abs(elem_data)) + eps;
-else
-   elem_data = scale_for_display( elem_data );
+pp=get_colours;
+
+m= size(elem_data,1); n=size(elem_data,2);
+
+% We can only plot the real part of data
+[scl_data, ref_lev] = scale_for_display( real(elem_data(:)), ref_lev, clim );
+
+backgnd= isnan(scl_data);
+scl_data(backgnd)= mean( scl_data(~backgnd));
+
+if isempty(clim);
+   clim= max(abs(scl_data)) + eps;
 end
 
-backgnd= isnan(elem_data);
-elem_data(backgnd)= mean( elem_data(~backgnd));
-
-if ~pp.mapped_colour
-   [red,grn,blu] = blu_red_axis( pp, elem_data / scale, backgnd );
-   colours= shiftdim( [red,grn,blu], -1);
+if pp.mapped_colour
+   colours=set_mapped_colour(pp, backgnd, scl_data/clim);
+   if n==1;
+      colours= reshape( colours, 1,[]);
+   else
+      colours= reshape( colours, m,n,[]);
+   end
 else
-   colours=set_mapped_colour(pp, scale, backgnd, elem_data);
+   [red,grn,blu] = blu_red_axis( pp, scl_data/clim , backgnd );
+   if n==1;
+      colours= reshape( [red,grn,blu],1,[],3);
+   else
+      colours= reshape( [red,grn,blu],m,n,3);
+   end
 end
-
-
 
 % print colorbar if do_colourbar is specified
 if do_colourbar
@@ -126,17 +131,23 @@ if do_colourbar
    else
 
    hh= colorbar;
+   % make colourbar smaller and closer to axis
    p= get(hh,'Position');
    pm= p(2) + p(4)/2;
    set(hh,'Position', [p(1)+p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
 
    % set scaling
-   lcm= size(colormap,1)/2+.5;
-   OrdOfMag = 10^floor(log10(scale));
-   scale_r  = OrdOfMag * floor( scale / OrdOfMag );
-   ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/scale;
+%  lcm= size(colormap,1)/2+.5; - you would expect it to be this
+   lcm= max(get(hh,'Ylim'))/2 + .5;
+   OrdOfMag = 10^floor(log10(clim));
+%  in order to make the labels clean, we round to a near level
+   scale_r  = OrdOfMag * floor( clim / OrdOfMag );
+%  ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/clim;
+   ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
+   ofs      = [-1,0,+1]*scale_r + (ref_r-ref_lev);
+   ticks = lcm + (lcm-1)*ofs/clim;
    set(hh,'YTick', ticks');
-   set(hh,'YTickLabel', [-scale_r, 0, scale_r]'+ pp.ref_level);
+   set(hh,'YTickLabel', [-scale_r, 0, scale_r]'+ ref_r);
 
    end
 end
@@ -185,10 +196,13 @@ function pp=get_colours;
    if ~isfield( eidors_colours, 'ref_level' );
       eidors_colours.ref_level= 'auto';
    end
+   if ~isfield( eidors_colours, 'npoints' );
+      eidors_colours.npoints= 128;
+   end
 
    pp= eidors_colours;
 
-function colours=set_mapped_colour(pp, scale, backgnd, elem_data)
+function colours=set_mapped_colour(pp, backgnd, elem_data)
    % need to generate a colourmap with pp.mapped_colour+1 elements
    % background pixel will be at entry #1. Thus for
    % mapped_colour= 3. CMAP = [backgnd,[-1 -.5  0 .5 1]
@@ -199,5 +213,14 @@ function colours=set_mapped_colour(pp, scale, backgnd, elem_data)
    [red,grn,blu] = blu_red_axis( pp, ...
           [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
-   colours = round( elem_data/ scale * (ncol-1))' + ncol + 1;
+   colours = fix( elem_data * (ncol-1))' + ncol + 1;
    colours(backgnd)= backgndidx;
+
+function value= get_set_field(param, value);
+    global eidors_colours;
+    if isempty(value)
+       value = getfield(eidors_colours, param);
+    else
+       eidors_colours = setfield(eidors_colours, param, value);
+       value= eidors_colours;
+    end
