@@ -7,9 +7,9 @@ function imgr= compare_3d_algs( algno )
 % algno=4     ab_calc_tv_prior        ab_tv_diff_solve
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_3d_algs.m,v 1.11 2006-08-21 19:21:33 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.12 2006-08-25 00:14:51 aadler Exp $
 
-%calc_colours('ref_level',0);
+calc_colours('ref_level','auto');
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);
@@ -63,7 +63,6 @@ switch algno
      inv3d.R_prior=      'ab_calc_tv_prior';
      inv3d.solve=        'ab_tv_diff_solve';
      iidx=[1,2,5];
-%    calc_colours('ref_level',1);
 
    case 5,
      inv3d.hyperparameter.value = 1e-3;
@@ -81,4 +80,3 @@ end
 imgr= inv_solve( inv3d, vi, vh);
 show_slices(imgr(iidx), [.5:1:2.5]'*[Inf,Inf,1]);
 
-% calc_colours('ref_level',0);

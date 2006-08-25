@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.21 2006-01-24 02:53:26 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.22 2006-08-25 00:14:51 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -53,9 +53,7 @@ inh_img= eidors_obj('image', 'inhomogeneous image', ...
                      'elem_data', cond, ...
                      'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
-calc_colours('ref_level',1);
 show_fem( inh_img);
-calc_colours('ref_level',0);
 disp([inh_img.name, '. Press a key']); pause;
 
 % Add 10% noise

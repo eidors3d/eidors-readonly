@@ -20,13 +20,13 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.16 2006-08-21 03:50:28 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.17 2006-08-25 00:14:51 aadler Exp $
 
 if nargin<2
     shape=0;
 end
 
-calc_colours('ref_level',0);
+calc_colours('ref_level','auto');
 
 imb=  mk_common_model('c2c',16);
 e= size(imb.fwd_model.elems,1);
@@ -89,7 +89,6 @@ switch option
      inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
      inv2d.parameters.keep_iterations=1;
-     calc_colours('ref_level',1);
 
    case 5,
      inv2d.hyperparameter.value = 1e-4;
@@ -128,4 +127,3 @@ end
 imgr= inv_solve( inv2d, vi, vh);
 
 figure(1); show_slices(imgr);
-calc_colours('ref_level',0);
