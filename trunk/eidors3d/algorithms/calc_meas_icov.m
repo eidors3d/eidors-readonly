@@ -21,12 +21,12 @@ function meas_icov = calc_meas_icov( inv_model )
 %  generates an approximation based on uniform noise.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_meas_icov.m,v 1.2 2006-01-23 18:14:19 aadler Exp $
+% $Id: calc_meas_icov.m,v 1.3 2006-08-25 00:01:07 aadler Exp $
 
 meas_icov = eidors_obj('get-cache', inv_model, 'meas_icov');
 
 if ~isempty(meas_icov)
-   eidors_msg('calc_meas_icov: using cached value', 2);
+   eidors_msg('calc_meas_icov: using cached value', 3);
    return
 end
 
@@ -37,7 +37,7 @@ else
 end
 
 eidors_obj('set-cache', inv_model, 'meas_icov', meas_icov);
-eidors_msg('calc_meas_icov: setting cached value', 2);
+eidors_msg('calc_meas_icov: setting cached value', 3);
  
 % Calculate a data prior for an assumption of uniform noise
 % on each channel
