@@ -12,7 +12,7 @@ function img= time_prior_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_prior_solve.m,v 1.2 2006-08-25 00:03:43 aadler Exp $
+% $Id: time_prior_solve.m,v 1.3 2006-08-26 21:35:12 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;
@@ -76,6 +76,12 @@ function one_step_inv= data_form( inv_model, J );
     space_prior= inv_model.time_smooth_prior.space_prior;
     time_weight= inv_model.time_smooth_prior.time_weight;
     ts         = inv_model.time_prior_solve.time_steps;
+
+    if isfield(inv_model.time_prior_solve,'inv_kalman_diff')
+       sequence= inv_model.time_prior_solve.sequence;
+    else
+       sequence.meas_no= 1:size(J,1); % all data all the time
+    end
 
     space_Reg= feval(space_prior, inv_model);
 
