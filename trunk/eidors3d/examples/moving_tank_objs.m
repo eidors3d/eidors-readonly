@@ -29,7 +29,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.16 2006-08-25 00:14:37 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.17 2006-08-26 21:35:12 aadler Exp $
 
 clim= [];
 
@@ -56,6 +56,22 @@ if isnumeric(data_sel) & size(data_sel)==[1,1]
         vi= zc_demo3(:,1:2:20);
         filename= 'target-around10';
 
+    case 22
+        load iirc_data_2006
+        vh= v_reference;
+        vi= v_rotate(:,1:30);
+        filename= 'iirc-around-clean';
+
+    case 23
+        load iirc_data_2006
+        vh= v_reference;
+        vi= v_rotate(:,1:30);
+        snr= norm(vi)/norm(vi - vh(:,ones(1,30)));
+        rand('seed',50);
+        vh= vh+snr*2*randn(size(vh));
+        vi= vi+snr*2*randn(size(vi));
+        filename= 'iirc-around-noise';
+
     case 30
         load netgen_moving_ball
         vh= homg_tank;
@@ -80,7 +96,7 @@ if isnumeric(data_sel) & size(data_sel)==[1,1]
         vi= target_spirograph_slow([31:52,72:90]);
         randn('seed',20);
         for i=1:length(vi)
-           vi(i).meas = vi(i).meas + 25e-6*randn(size(vi(i).meas));
+%          vi(i).meas = vi(i).meas + 25e-6*randn(size(vi(i).meas));
         end
         filename= 'netgen-spirograph-slow-part';
 
@@ -114,6 +130,12 @@ switch inv_sel
 
     case 2
         imdl= mk_common_model('b2c',16);
+        imdl.hyperparameter.value= 1e-2;
+        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.solve= 'inv_kalman_diff';
+
+    case 2.1
+        imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'inv_kalman_diff';
@@ -193,6 +215,42 @@ switch inv_sel
         imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
         imdl.fwd_model.normalize=0;
 
+    case 12.1
+        vi = sub_frame(vi,vh);
+        vh = zeros(length(vi(1).meas),1);
+        imdl= mk_common_model('c2c',16);
+        imdl.hyperparameter.value= 1e-2;
+        imdl.RtR_prior= @laplace_image_prior;
+        imdl.solve= @inv_kalman_diff;
+        for i=1:16;
+           imdl.inv_kalman_diff.sequence(i).meas_no= (i-1)*13+(1:13);
+        end
+        imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
+        imdl.fwd_model.normalize=0;
+
+    case 14.1
+        vi = sub_frame(vi,vh);
+        vh = zeros(length(vi(1).meas),1);
+
+        imdl= mk_common_model('c2c',16);
+        imdl.hyperparameter.value= 3e-1;
+        time_steps= 3;
+
+        imdl.RtR_prior= @time_smooth_prior;
+        imdl.time_smooth_prior.space_prior= @noser_image_prior;
+        imdl.noser_image_prior.exponent= .5;
+        imdl.time_smooth_prior.time_weight= .5;
+        imdl.time_smooth_prior.time_steps=  time_steps;
+
+        imdl.solve= @time_prior_solve;
+        imdl.time_prior_solve.time_steps=   time_steps;
+
+        for i=1:16;
+           imdl.time_prior_solve.sequence(i).meas_no= (i-1)*13+(1:13);
+        end
+        imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
+        imdl.fwd_model.normalize=0;
+
     otherwise
         error(['inv_sel (' inv_sel ') not recognized']);
 end
@@ -214,7 +272,9 @@ if nargin>=3
    end; end
 end
 
+t=cputime;
 imgs= inv_solve(imdl,vi,vh);
+fprintf('solve time=%f\n',cputime-t);
 animate_reconstructions(filename, imgs, clim);
 
 % simulate condition where frame changes for each
@@ -231,6 +291,7 @@ function vv= sub_frame(vi,vh)
       [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
       for i=1:size(viold,2)
          vi(i).meas= viold(els,i);
+         vi(i).name= 'unknown';
       end
       if nargin==2
          vh = struct('meas', vh(els,1));
