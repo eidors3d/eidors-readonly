@@ -18,7 +18,7 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_readdata.m,v 1.6 2006-08-25 07:02:50 tonginoh Exp $
+% $Id: eidors_readdata.m,v 1.7 2006-08-26 21:22:07 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -138,27 +138,27 @@ function vv = iirc_readdata( fname );
            continue;
        end
        
-       num= regexp(line,'Channel : (\d+)','tokens');
+       num= regexp(line,'Channel : (\d+)');
        if ~isempty(num)
-           channels= str2num( num{1}{1} );
+           channels= str2num( line(num(1):end ) );
            continue;
        end
        
-       num= regexp(line,'Frequency : (\d+)kHz','tokens');
+       num= regexp(line,'Frequency : (\d+)kHz');
        if ~isempty(num)
-           freqency= str2num( num{1}{1} );
+           freqency= str2num( line(num(1):end ) );
            continue;
        end
 
-       num= regexp(line,'Scan Method : (\w+)','tokens');
+       num= regexp(line,'Scan Method : (\w+)');
        if ~isempty(num)
-           scan_method=  num{1}{1};
+           scan_method=  line(num(1):end );
            continue;
        end
 
-       num= regexp(line,'Study : (\w+)','tokens');
+       num= regexp(line,'Study : (\w+)');
        if ~isempty(num)
-           study=  num{1}{1};
+           study=  line(num(1):end);
            continue;
        end
            
