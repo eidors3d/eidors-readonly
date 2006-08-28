@@ -1,4 +1,4 @@
-function inv_mdl= mk_common_model( str, varargin )
+function inv_mdl= mk_common_model( str, n_elec, varargin )
 % MK_COMMON_MODEL: make common EIT models
 %
 % Utility function to create common EIT FEM models,
@@ -23,11 +23,14 @@ function inv_mdl= mk_common_model( str, varargin )
 %   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.20 2006-08-11 16:10:33 aadler Exp $
+% $Id: mk_common_model.m,v 1.21 2006-08-28 12:29:32 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
-n_elec= 16; % default
-
+% n_elec is number of [elec/ring n_rings]
+if nargin<2
+    n_elec= [16,1]; % default
+end
+    
 if     strcmp( str, 'a2c')
     inv_mdl = mk_2c_model( n_elec, 4, options );
 elseif strcmp( str, 'b2c')
@@ -59,6 +62,7 @@ inv_mdl= eidors_obj('inv_model', inv_mdl);
     
 function inv2d= mk_2c_model( n_elec, n_circles, options )
 
+    n_elec= n_elec(1);
     n_rings= 1;
     params= mk_circ_tank(n_circles, [], n_elec); 
 
