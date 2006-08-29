@@ -6,7 +6,7 @@ function transfimp = calc_transferimpedance( img)
 % fwd_model is a fwd_model structure
 % img       is an image structure
 % (C) 2006 Bill Lionheart. Licenced under the GPL Version 2
-% $Id: calc_transferimpedance.m,v 1.1 2006-08-28 12:26:14 aadler Exp $
+% $Id: calc_transferimpedance.m,v 1.2 2006-08-29 14:26:10 aadler Exp $
 
 % create new stim patterns
 % stimulate with one ref electrode and then each in turn
@@ -20,12 +20,14 @@ n_elecs= length( img.fwd_model.electrode );
  [stim_pat, meas_pat]= monopolar_even( n_elecs );
 img.fwd_model.stimulation = stim_pat;
 
+lambda= 1e-3;
+imeas_pat= pinv(meas_pat);
+
 data = fwd_solve(img);
 
 sz= length(img.fwd_model.stimulation);
 transfimp = reshape( data.meas, sz, sz);
-%transfimp = ( ( transfimp / meas_pat )' / meas_pat' )';
-%transfimp = meas_pat' * transfimp * meas_pat;
+transfimp = imeas_pat * transfimp * imeas_pat';
 
 function [stim_pat, meas_pat] = trigonometric( n_elecs )
     stim_pat = struct;
@@ -38,7 +40,7 @@ function [stim_pat, meas_pat] = trigonometric( n_elecs )
         stim_pat(i).meas_pattern= meas_pat;
     end
 
-function stim_pat = electrode_wise( n_elecs)
+function [stim_pat, meas_pat] = electrode_wise( n_elecs)
     stim_pat = struct;
     meas_pat= [-ones(n_elecs-1,1), speye(n_elecs-1)];
     for i=2:n_elecs
