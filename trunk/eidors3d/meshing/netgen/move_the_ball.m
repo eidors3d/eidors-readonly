@@ -11,7 +11,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.17 2006-08-22 15:00:54 aadler Exp $
+% $Id: move_the_ball.m,v 1.18 2006-09-05 19:43:58 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane')
@@ -44,7 +44,8 @@ first_plane_starts= tank_height/(number_of_planes+1);
 
 
 % Create Homog
-stim_pat= mk_stim_patterns(16,2,'{ad}','{ad}',{'meas_current'});
+stim_pat= mk_stim_patterns(electrodes_per_plane, number_of_planes, ...
+              '{ad}','{ad}',{'meas_current'});
 [fmdl,mat_idxs]= ng_mk_fwd_model( ...
   [fname,'0000.vol'], centres, [], stim_pat);
 n_elem= size(fmdl.elems,1);
