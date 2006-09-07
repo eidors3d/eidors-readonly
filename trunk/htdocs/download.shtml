@@ -8,14 +8,14 @@
 <p><li><b>
 Download latest released version
 </b><br>
-<a href="http://prdownloads.sourceforge.net/eidors3d/eidors-3.1.zip"
-   >EIDORS-3.1.zip</a><br>
+<a href="http://prdownloads.sourceforge.net/eidors3d/eidors-v3.1.zip"
+   >eidors-v3.1.zip</a><br>
 
 <p><li><b>
 Download All Versions
 </b><br>
 <a href="http://sourceforge.net/projects/eidors3d/"
-   >EIDORS</a><br>
+   >EIDORS download</a><br>
 
 </ul>
 
@@ -61,7 +61,7 @@ cvs -d:ext:developername@eidors3d.cvs.sf.net:/cvsroot/eidors3d co eidors3d
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-22 15:40:40 $ by $Author: aadler $
+    Last Modified: $Date: 2006-09-07 00:58:30 $ by $Author: aadler $
 </small>
 
 </body>
