@@ -23,7 +23,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.21 2006-08-28 12:29:32 aadler Exp $
+% $Id: mk_common_model.m,v 1.22 2006-10-02 14:39:24 camilgomez Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -52,7 +52,13 @@ elseif strcmp( str, 'n3z')
 elseif strcmp( str, 'b3r1')
     inv_mdl = mk_b3r1_model( n_elec, options );
 elseif strcmp( str, 'b3r2')
-    inv_mdl = mk_b3r2_model( n_elec, options );    
+    % varargin{2} is the number of element rings per plane 'nr'
+    if length(varargin) == 2
+        nr = varargin{2};
+    else
+        nr = 4; % default
+    end
+    inv_mdl = mk_b3r2_model( n_elec, nr, options );    
 else
     error('don`t know what to do with option=',str);
 end
@@ -92,7 +98,6 @@ function inv3d= mk_dz_model( n_elec, options )
 
     n_rings= 1;
 
-    levels= [-.4:.2:.4]; e_levels= [2,4]; nr= 8;
     levels= [-.5:.1:.5]; e_levels= [4,8]; nr= 4;
 
     params= mk_circ_tank( nr, levels, { 'zigzag', n_elec, e_levels } );
@@ -101,15 +106,15 @@ function inv3d= mk_dz_model( n_elec, options )
 
     params.stimulation= st;
     params.meas_select= els;
-    params.solve=      'np_fwd_solve';
-    params.system_mat= 'np_calc_system_mat';
-    params.jacobian=   'np_calc_jacobian';
+    params.solve=      'aa_fwd_solve';
+    params.system_mat= 'aa_calc_system_mat';
+    params.jacobian=   'aa_calc_jacobian';
     params.misc.perm_sym= '{n}';
     fm3d = eidors_obj('fwd_model', params);
 
     inv3d.name=  'EIT inverse: 3D';
-    %inv3d.solve= 'np_inv_solve';
-     inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
+    inv3d.solve= 'aa_inv_solve';
+    %inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
     inv3d.hyperparameter.value = 1e-4;
     inv3d.RtR_prior= 'laplace_image_prior';
     inv3d.reconst_type= 'difference';
@@ -246,14 +251,13 @@ function inv3d= mk_b3r1_model( n_elec, options )
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= mdl_3d;
 
-function inv3d= mk_b3r2_model( n_elec, options )
+function inv3d= mk_b3r2_model( n_elec, nr, options )
     n_rings= 2;
-%    levels= [-.5:.1:.5]; 
-    z_axis = [0:.1:1];  % show_slices() needs levels bw 0 and 1.
+    z_axis = [0:.1:1];
     e_levels= [4,8]; 
     nr= 4;
     n_elec = 8;
-    
+   
     params= mk_circ_tank( nr, z_axis, { 'planes', n_elec, e_levels } );
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
 
