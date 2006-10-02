@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.43 2006-08-25 00:11:17 aadler Exp $
+% $Id: show_fem.m,v 1.44 2006-10-02 14:39:24 camilgomez Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -317,6 +317,12 @@ function  mes= avg_electrode_posn( mdl )
 function colour= electr_colour( e);
     if e==1;
        colour = [0,.6,0]; % light green
+    elseif e==2
+       colour = [0,.45,0];
+    elseif e==9
+       colour = [0,0,.6];
+    elseif e==10
+       colour = [0, 0,0.45];
     else
        colour = [0,.3,0]; % dark green
     end
