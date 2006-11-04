@@ -33,16 +33,20 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %      '{op}'        -> opposite drive: equivalent to [0, n_elec/2]
 %      '{trig}'      -> trigonometric drive [sin,cos,sin,cos ...]
 %      '{mono}'      -> Drive via each elec, current leaves by ground
-%      [x y]: First pattern is [x,y] next is [x+1,y+1] 
-%      [x]:   First pattern is [x]   next is [x+1] 
+%      Bi-polar injection patterns:
+%        [x y]: First pattern is [x,y] next is [x+1,y+1] 
+%      Mono-polar injection patterns:
+%        [x]:   First pattern is [x]   next is [x+1] 
 %
 %   meas: measurement pattern
 %      '{ad}'        -> adjacent measurement
 %      '{op}'        -> opposite drive: equivalent to [0, n_elec/2]
 %      '{trig}'      -> trigonometric drive [sin,cos,sin,cos ...]
 %      '{mono}'      -> Meas at each elec
-%      [x y]: First pattern is [x,y] next is [x+1,y+1] 
-%      [x]:   First pattern is [x]   next is [x+1] 
+%      Bi-polar measurement patterns:
+%        [x y]: First pattern is [x,y] next is [x+1,y+1] 
+%      Mono-polar measurement patterns:
+%        [x]:   First pattern is [x]   next is [x+1] 
 %
 %   options: cell array of options, eg {'no_meas_current'}
 %     if contradictory options are specified, only the last applies
@@ -62,7 +66,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_stim_patterns.m,v 1.19 2006-08-29 14:24:36 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.20 2006-11-04 15:09:16 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -165,7 +169,7 @@ function meas = mk_meas_pat(v, elec, ring );
    end 
 
    mseq= 0:v.tn_elec-1;
-   within_ring = rem(   mseq , v.n_elec);
+   within_ring = rem(v.n_elec +  mseq , v.n_elec);
    ouside_ring = floor( mseq / v.n_elec) * v.n_elec;
    meas_seq    = mseq *v.tn_elec + 1;
 
