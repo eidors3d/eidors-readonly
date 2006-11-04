@@ -29,16 +29,17 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('b3cz',16)      - cylender: zigzag pattern elecs
 %   mk_common_model('b3cp',16)      - cylinder: planar 3D pattern electrodes
 %
-%   mk_common_model('a3cr',16)      - 64 elems * 5 planes
-%   mk_common_model('b3cr',16)      - 256 elems * 11 planes 
-%   mk_common_model('c3cr',16)      - 576 elems * 21 planes
+%   mk_common_model('a3cr',16)      - 64 elems * 4 planes
+%   mk_common_model('b3cr',16)      - 256 elems * 10 planes 
+%   mk_common_model('c3cr',16)      - 576 elems * 20 planes
+%   mk_common_model('d3cr',16)      - 1024 elems * 40 planes
 %
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
 %   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.23 2006-11-04 21:50:16 aadler Exp $
+% $Id: mk_common_model.m,v 1.24 2006-11-04 22:58:38 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -76,7 +77,7 @@ elseif str(2:3)=='2t' & length(str)==4
    elseif str(1)=='d'; layers= 16;
    elseif str(1)=='e'; layers= 20;
    elseif str(1)=='f'; layers= 24;
-   else;  error('don`t know what to do with option=',str);
+   else;  error('don`t know what to do with option(1)=',str);
    end
 
    inv_mdl = mk_2c_model( n_elec, layers, options );   
@@ -86,15 +87,28 @@ elseif str(2:3)=='2t' & length(str)==4
       
    inv_mdl = deform_cylinder( inv_mdl, str2num(str(4)), 1 );
 
-elseif str(2:3)=='3c'
-   if     str(1)=='a'; xy_layers=  4; z_layers=  linspace(-.5,.5,5);
-   elseif str(1)=='b'; xy_layers=  8; z_layers=  8;
-   elseif str(1)=='c'; xy_layers= 12; z_layers= 12;
-   elseif str(1)=='d'; xy_layers= 16; z_layers= 16;
-   else;  error('don`t know what to do with option=',str);
+elseif str(2:3)=='3c' & length(str)==4
+   if     str(1)=='a'; xy_layers=  4; z_layers= linspace(-.5,.5,5);
+   elseif str(1)=='b'; xy_layers=  8; z_layers= linspace(-.7,.7,11);
+   elseif str(1)=='c'; xy_layers= 12; z_layers= linspace(-.9,.9,21);
+   elseif str(1)=='d'; xy_layers= 16; z_layers= linspace(-1,1,41);
+   else;  error('don`t know what to do with option(1)=',str);
    end
 
-   inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, options );
+   spacing=.5;
+   if     str(4)=='r';
+      elec_conf= 'planes'; elec_space= 0;
+   elseif str(4)=='z';
+      elec_conf= 'zigzag'; elec_space= [1,-1]*spacing/2;
+   elseif str(4)=='p';
+      elec_conf= 'planes'; elec_space= [1,-1]*spacing/2;
+      n_elec(1)=n_elec(1)/2;
+   else;  error('don`t know what to do with option(4)=',str);
+   end
+
+   inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, ...
+                elec_space, elec_conf, options );
+%  inv_mdl = rotate_model( inv_mdl, n_elec(1)/8 );
 
 elseif strcmp( str, 'b3z')
     inv_mdl = mk_dz_model( n_elec, options );
@@ -147,11 +161,18 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     inv2d.reconst_type= 'difference';
     inv2d.fwd_model= mdl_2d;
 
-function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, options );
+function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
+                            elec_space, elec_conf, options );
 
-    e_levels = [2:4];
+    e_layers=[];
+    for es= elec_space;
+       ff= abs(z_layers  -es);
+       ff= find(ff==min(ff));
+       e_layers= [e_layers,ff(1)];
+    end
+
     params= mk_circ_tank( xy_layers, z_layers, ...
-           { 'zigzag', n_elec(1), e_levels } );
+           { elec_conf, n_elec(1), e_layers} );
 
     [st, els]= mk_stim_patterns(n_elec(1), n_elec(2), '{ad}','{ad}', options, 10);
 
