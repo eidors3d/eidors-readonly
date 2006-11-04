@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_slices.m,v 1.2 2006-11-04 15:08:16 aadler Exp $
+% $Id: calc_slices.m,v 1.3 2006-11-04 21:52:49 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -90,9 +90,10 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
   ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
+  range= max([xrange, yrange]);
   [x y]=meshgrid( ...
-      linspace( xmean - xrange*0.52, xmean + xrange*0.52, npx ), ...
-      linspace( ymean + yrange*0.52, ymean - yrange*0.52, npy ) );
+      linspace( xmean - range*0.52, xmean + range*0.52, npx ), ...
+      linspace( ymean + range*0.52, ymean - range*0.52, npy ) );
   v_yx= [-y(:) x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
@@ -128,9 +129,10 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
   ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
+  range= max([xrange, yrange]);
   [x y]=meshgrid( ...
-      linspace( xmean - xrange*0.52, xmean + xrange*0.52, npx ), ...
-      linspace( ymean + yrange*0.52, ymean - yrange*0.52, npy ) );
+      linspace( xmean - range*0.52, xmean + range*0.52, npx ), ...
+      linspace( ymean + range*0.52, ymean - range*0.52, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -179,9 +181,10 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
   ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
   ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
+  range= max([xrange, yrange]);
   [x y]=meshgrid( ...
-      linspace( xmean - xrange*0.52, xmean + xrange*0.52, npx ), ...
-      linspace( ymean + yrange*0.52, ymean - yrange*0.52, npy ) );
+      linspace( xmean - range*0.52, xmean + range*0.52, npx ), ...
+      linspace( ymean + range*0.52, ymean - range*0.52, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
