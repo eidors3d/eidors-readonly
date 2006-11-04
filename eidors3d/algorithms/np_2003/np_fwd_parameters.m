@@ -18,9 +18,11 @@ function param = np_fwd_parameters( fwd_model )
 %   param.Ib       => Current for electrodes
 %   param.perm_sym => 'sym' parameter
 %   param.gnd_ind  => node attached to ground
+%   param.normalize  => difference measurements normalized?
+
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_parameters.m,v 1.11 2005-12-07 13:19:15 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.12 2006-11-04 15:07:39 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -131,6 +133,14 @@ param.I        = I;
 param.Ib       = Ib;
 param.perm_sym = fwd_model.misc.perm_sym;
 param.gnd_ind  = fwd_model.gnd_node;
+
+if isfield(fwd_model,'normalize_measurements')
+   param.normalize = fwd_model.normalize_measurements;
+else
+   param.normalize = 0;
+end
+
+
 
 % get boundary faces which match nodes
 function e_bdy  = bdy_with_nodes(bdy,  elec_nodes );

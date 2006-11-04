@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.23 2006-08-21 03:50:28 aadler Exp $
+% $Id: np_inv_solve.m,v 1.24 2006-11-04 15:07:39 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -35,8 +35,18 @@ else
     eidors_msg('np_inv_solve: setting cached value', 2);
 end
 
+try
+   normalize = fwd_model.normalize_measurements;
+catch
+   normalize = 0;
+end
 
-dva= data1 - data2;
+if normalize
+   dva= 1 - data2 ./ data1;
+else   
+   dva= data1 - data2;
+end
+
 sol = one_step_inv * dva;
 
 % create a data structure to return
