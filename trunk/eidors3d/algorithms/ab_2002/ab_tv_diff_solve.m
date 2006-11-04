@@ -8,13 +8,23 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ab_tv_diff_solve.m,v 1.5 2006-08-21 03:50:28 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.6 2006-11-04 15:07:39 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
 
-dva= data1 - data2;
-%dva= data1;
+try
+   normalize = inv_model.fwd_model.normalize_measurements;
+catch
+   normalize = 0;
+end
+
+if normalize
+   dva= 1 - data2 ./ data1;
+else   
+   dva= data1 - data2;
+end
+
 
 sol=primaldual_tvrecon_lsearch(inv_model, dva ,maxiter,alpha1,alpha2);
 if ~keepiters

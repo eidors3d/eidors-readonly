@@ -29,9 +29,8 @@ msh.PC = fwd_model.nodes';
 
 % A good alpha11 is 2e-5, a good alpha2 is 1e-9
 
-beta=1;
-%decay_beta=0.5;
-decay_beta=0.7;
+beta=.01;
+decay_beta=0.5;
 epsilon=1e-6;
 
 % this is used for the line search procedure,
@@ -226,4 +225,13 @@ function vsim= sim_measures( IM, s);
    IM.elem_data= s;
    vi= fwd_solve( IM );
 
-   vsim= vi.meas - vh.meas;
+   try
+      normalize = IM.fwd_model.normalize_measurements;
+   catch
+      normalize = 0;
+   end
+   if normalize
+      vsim= 1 - vi.meas ./ vh.meas;
+   else   
+      vsim= vi.meas - vh.meas;
+   end
