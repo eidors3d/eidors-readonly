@@ -10,10 +10,11 @@ function rimg = calc_slices( img, levels );
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
 %
-% rimg= 128 x 128 x I x L
+% rimg= np x np x I x L where np is 128 by default
+% np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_slices.m,v 1.1 2006-08-25 00:10:50 aadler Exp $
+% $Id: calc_slices.m,v 1.2 2006-11-04 15:08:16 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -50,6 +51,8 @@ function rimg= calc_image( img, level, np)
 
 % assume all images have the same fwd model
 fwd_model= img(1).fwd_model;
+% elem_ptr_table also depends on the number of mapped points
+fwd_model.misc.mapping_npoints=np;
 
 % Get elem_ptr from cache, if available
 % EPtable is cell array of elem_ptrs for different levels
