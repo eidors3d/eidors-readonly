@@ -21,8 +21,15 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %      - puts plane of n_elecs 'zigzagged' electrodes onto planes specified
 %        1st elec on plane 2, 2nd elec on plane 6, 3rd on plane 2, etc 
 % eg. elec_spec  =  {'zigzag', 16, [2,6]}
+%      - Note, based on the restults of Graham et al (2006), zigzag
+%        electrode placement is not recommended
 %
-% mk_circ_tank creates simple, point electrodes.
+% elec_spec = { 'planar3d', n_elecs, elec_planes }
+%      - puts 2d electrodes onto rings ie [ ...  7  8  1  2  ...
+% eg. elec_spec  =  {'planar3d', 16, [2,6]} ... 15 16  9 10  ... ]
+%
+% mk_circ_tank creates simple, point electrodes. Improved models
+%  may be created with create_tank_mesh_ng
 %
 % output:
 %  param.name        Model name (if known) 
@@ -33,7 +40,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_circ_tank.m,v 1.15 2006-08-12 03:36:10 aadler Exp $
+% $Id: mk_circ_tank.m,v 1.16 2006-11-04 21:50:16 aadler Exp $
 
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');
