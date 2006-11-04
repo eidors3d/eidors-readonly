@@ -15,12 +15,14 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   6  aa_inv_total_var   laplace_image_prior   1e-4
 %   7  aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 %
+%  OPTION = 1dd => do OPTION=dd with normalized_measurements
+%
 % shape
 %   0  two triangles
 %   1  round
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.17 2006-08-25 00:14:51 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.18 2006-11-04 15:08:38 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -64,6 +66,11 @@ inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
 inv2d.parameters.term_tolerance= 1e-3;
 
+if option>100
+   inv2d.fwd_model.normalized_measurements=1;
+   option=option-100;
+end
+
 switch option
    case 1,
      inv2d.hyperparameter.value = 1e-3;
@@ -83,9 +90,9 @@ switch option
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
-     inv2d.hyperparameter.value = 1e-2;
+     inv2d.hyperparameter.value = 1e-3;
      inv2d.ab_calc_tv_prior.alpha2= 1e-4;
-     inv2d.parameters.max_iterations= 5;
+     inv2d.parameters.max_iterations= 15;
      inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
      inv2d.parameters.keep_iterations=1;
