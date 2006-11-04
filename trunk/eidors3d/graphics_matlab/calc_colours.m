@@ -62,7 +62,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.28 2006-08-25 00:10:10 aadler Exp $  
+% $Id: calc_colours.m,v 1.29 2006-11-04 15:08:16 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
@@ -77,6 +77,7 @@ if nargin < 4; ref_lev = 'use_global'; end
 
 if isstr(img)
     % called as calc_colours('parameter' ... )
+    test_exist_colours;
     colours= get_set_field(img, clim);
     return;
 elseif isfield(img,'type')
@@ -176,7 +177,7 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    blu(backgnd) = pp.backgnd(3);
 
 
-function pp=get_colours;
+function test_exist_colours;
    global eidors_colours;
 
    if ~isfield( eidors_colours, 'greylev' );
@@ -200,6 +201,9 @@ function pp=get_colours;
       eidors_colours.npoints= 128;
    end
 
+function pp=get_colours;
+   test_exist_colours;
+   global eidors_colours;
    pp= eidors_colours;
 
 function colours=set_mapped_colour(pp, backgnd, elem_data)
