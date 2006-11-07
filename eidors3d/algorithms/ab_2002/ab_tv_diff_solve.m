@@ -8,27 +8,26 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ab_tv_diff_solve.m,v 1.6 2006-11-04 15:07:39 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.7 2006-11-07 13:35:35 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
 
-try
-   normalize = inv_model.fwd_model.normalize_measurements;
-catch
-   normalize = 0;
-end
-
-if normalize
+if inv_model.fwd_model.normalize_measurements;
    dva= 1 - data2 ./ data1;
 else   
    dva= data1 - data2;
 end
 
 
-sol=primaldual_tvrecon_lsearch(inv_model, dva ,maxiter,alpha1,alpha2);
-if ~keepiters
-   sol=sol(:,end);
+for i=1:size(dva,2)
+   soln=primaldual_tvrecon_lsearch(inv_model, dva(:,i), ...
+        maxiter,alpha1,alpha2, tol, beta);
+   if ~keepiters & size(dva,2)>1
+      sol(:,i)=soln(:,end);
+   else
+      sol=soln;
+   end
 end
 
 img.name= 'solved by ab_tv_diff_solve';
@@ -37,19 +36,19 @@ img.fwd_model= inv_model.fwd_model;
 
 function [alpha1,alpha2,beta,maxiter,tol,keepiters]= ...
           get_params(inv_model);
-   alpha1= calc_hyperparameter( inv_model);
-   alpha2= 1e-4;
-   beta= 1;
+   alpha1= 1e-2;
+   beta= .01;
    if isfield(inv_model,'ab_tv_diff_solve')
-      if isfield(inv_model.ab_tv_diff_solve,'alpha2')
-         alpha2= inv_model.ab_tv_diff_solve.alpha2;
+      if isfield(inv_model.ab_tv_diff_solve,'alpha1')
+         alpha1= inv_model.ab_tv_diff_solve.alpha1;
       end
       if isfield(inv_model.ab_tv_diff_solve,'beta')
-         alpha2= inv_model.ab_tv_diff_solve.beta;
+         beta= inv_model.ab_tv_diff_solve.beta;
       end
    end
+   alpha2= calc_hyperparameter( inv_model);
 
-   maxiter= 3;
+   maxiter= 10;
    tol= 1e-4;
    keepiters= 0;
    if isfield(inv_model,'parameters')
