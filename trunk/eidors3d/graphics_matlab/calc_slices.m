@@ -14,11 +14,12 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_slices.m,v 1.3 2006-11-04 21:52:49 aadler Exp $
+% $Id: calc_slices.m,v 1.4 2006-11-07 13:29:59 aadler Exp $
 
 np= calc_colours('npoints');
 
-dims= size(img(1).fwd_model.nodes,2);
+fwd_model= img(1).fwd_model; % Assume all fwd_models are same
+dims= size(fwd_model.nodes,2);
 if nargin<=1;
    levels= [];
 end
@@ -28,29 +29,28 @@ if isempty(levels) && dims==2
 end
 
 if size(levels)== [1,1]
-   zmax= max(img(1).fwd_model.nodes(:,3));
-   zmin= min(img(1).fwd_model.nodes(:,3));
+   zmax= max(fwd_model.nodes(:,3));
+   zmin= min(fwd_model.nodes(:,3));
    levels = linspace(zmin,zmax, levels+2);
    levels = levels(2:end-1)'*[Inf,Inf,1];
 end
 
-len_img= length(img);
+elem_data= [img.elem_data];
+n_images= size(elem_data,2);
 num_levs= size(levels,1);
 
-rimg=zeros(np,np,len_img,num_levs);
+rimg=zeros(np,np,n_images,num_levs);
 
 for lev_no = 1:num_levs
    level= levels( lev_no, 1:3 );
 
-   rimg(:,:,:,lev_no) = calc_image( img, level, np );
+   rimg(:,:,:,lev_no) = calc_image( elem_data, level, fwd_model, np);
 end
 
 
 % Calculate an image by mapping it onto the elem_ptr matrix
-function rimg= calc_image( img, level, np)
+function rimg= calc_image( elem_data, level, fwd_model, np)
 
-% assume all images have the same fwd model
-fwd_model= img(1).fwd_model;
 % elem_ptr_table also depends on the number of mapped points
 fwd_model.misc.mapping_npoints=np;
 
@@ -76,8 +76,8 @@ end
 
 
 backgnd= NaN;
-n_images= length(img);
-rval= [backgnd*ones(1,n_images); img.elem_data];
+n_images= size(elem_data,2);
+rval= [backgnd*ones(1,n_images); elem_data];
 rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
 
