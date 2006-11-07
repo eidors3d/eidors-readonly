@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.24 2006-11-04 22:58:38 aadler Exp $
+% $Id: mk_common_model.m,v 1.25 2006-11-07 13:32:37 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -102,7 +102,6 @@ elseif str(2:3)=='3c' & length(str)==4
       elec_conf= 'zigzag'; elec_space= [1,-1]*spacing/2;
    elseif str(4)=='p';
       elec_conf= 'planes'; elec_space= [1,-1]*spacing/2;
-      n_elec(1)=n_elec(1)/2;
    else;  error('don`t know what to do with option(4)=',str);
    end
 
@@ -151,7 +150,7 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
 
     inv2d.solve=       'aa_inv_solve';
     %inv2d.solve=       'aa_inv_conj_grad';
-    inv2d.hyperparameter.value = 3e-3;
+    inv2d.hyperparameter.value = 3e-2;
     %inv2d.hyperparameter.func = 'aa_calc_noise_figure';
     %inv2d.hyperparameter.noise_figure= 1;
     %inv2d.hyperparameter.tgt_elems= 1:4;
@@ -171,8 +170,14 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
        e_layers= [e_layers,ff(1)];
     end
 
+    if elec_conf=='planes';  
+       elec_per_plane=n_elec(1)/length(e_layers);
+    else
+       elec_per_plane=n_elec(1);
+    end
+
     params= mk_circ_tank( xy_layers, z_layers, ...
-           { elec_conf, n_elec(1), e_layers} );
+           { elec_conf, elec_per_plane, e_layers} );
 
     [st, els]= mk_stim_patterns(n_elec(1), n_elec(2), '{ad}','{ad}', options, 10);
 
@@ -188,7 +193,10 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
     inv3d.name=  'EIT inverse: 3D';
     inv3d.solve= @time_prior_solve;
     inv3d.time_prior_solve.time_steps=   0;
-    inv3d.RtR_prior= @laplace_image_prior;
+    inv3d.time_smooth_prior.space_prior = @noser_image_prior;
+    inv3d.time_smooth_prior.time_weight = 0;
+    inv3d.time_prior_solve.time_steps   = 0;
+
     inv3d.hyperparameter.value = 3e-2;
     inv3d.reconst_type= 'difference';
     inv3d.jacobian_bkgnd.value= 1;
@@ -251,7 +259,7 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
 
    inv_mdl.name=         'Nick Polydorides EIT inverse';
    inv_mdl.solve=       'np_inv_solve';
-   inv_mdl.hyperparameter.value = 1e-4;
+   inv_mdl.hyperparameter.value = 1e-2;
    inv_mdl.RtR_prior= 'np_calc_image_prior';
    inv_mdl.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
    inv_mdl.reconst_type= 'difference';
