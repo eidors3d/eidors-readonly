@@ -1,4 +1,5 @@
-function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2)
+function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
+              maxiter,alpha1,alpha2, epsilon, beta)
 % rs=tvrecon(msh,c,vmeas,maxiter,alpha1,alpha2)
 
 % 11/02/01 By Andrea Borsic
@@ -11,6 +12,9 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2)
 % PARAMETERS
 %   alpha1 - hyperparameter for the initial Tikhonov step
 %   alpha2 - hyperparameter for the TV update
+%       A good alpha11 is 2e-5, a good alpha2 is 1e-9
+%   epsilon - termination tolerance (recommend 1e-6);
+%   beta    - initial value of approx: abs ~ sqrt(sqr+beta)
 %
 % PRIMAL DUAL IMPLEMENTATION
 %
@@ -20,6 +24,9 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2)
 % Note about notation: A is A' for us, and y is s, C is B, beta=mu^2
 %
 
+% (C) 2002-2006 Andrea Borsic. Licenced under GPL version 2
+% $Id: primaldual_tvrecon_lsearch.m,v 1.10 2006-11-07 13:36:25 aadler Exp $
+
 % Initialisation
 fwd_model= inv_mdl.fwd_model;
 
@@ -27,11 +34,8 @@ msh.TC = fwd_model.elems';
 msh.PC = fwd_model.nodes';
 
 
-% A good alpha11 is 2e-5, a good alpha2 is 1e-9
 
-beta=.01;
 decay_beta=0.5;
-epsilon=1e-6;
 
 % this is used for the line search procedure,
 % the last element, and the biggest must be one
@@ -55,7 +59,7 @@ vsim= sim_measures( IM, s);
 
 %vsim=measures(msh,s,c); % Homogeneous background fitting
 
-if 0 % static EIT
+if 0 % static EIT - this code doesn't work yet
    scaling=vmeas\vsim;
    s=s*scaling;
    %u=potentials(msh,s,c);
