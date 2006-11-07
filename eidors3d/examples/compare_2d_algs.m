@@ -7,13 +7,14 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %
 % option -> select algorithm
 % OPTION   SOLVER               PRIOR             HP
-%   1  aa_inv_solve       laplace_image_prior   1e-3
-%   2  np_inv_solve       laplace_image_prior   1e-3
-%   3  aa_inv_solve       aa_calc_image_prior   NF=2
-%   4  ab_tv_diff_solve   ab_calc_tv_prior      1e-4
-%   5  aa_inv_total_var   laplace_image_prior   1e-4
-%   6  aa_inv_total_var   laplace_image_prior   1e-4
-%   7  aa_inv_conj_grad   ab_calc_tv_prior      ??? 
+%   1   aa_inv_solve       laplace_image_prior   1e-3
+%   2   np_inv_solve       laplace_image_prior   1e-3
+%   3   aa_inv_solve       aa_calc_image_prior   NF=2
+%   3.1 aa_inv_solve       noser_image_prior     NF=2
+%   4   ab_tv_diff_solve   ab_calc_tv_prior      1e-4
+%   5   aa_inv_total_var   laplace_image_prior   1e-4
+%   6   aa_inv_total_var   laplace_image_prior   1e-4
+%   7   aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 %
 %  OPTION = 1dd => do OPTION=dd with normalized_measurements
 %
@@ -22,7 +23,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.18 2006-11-04 15:08:38 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.19 2006-11-07 13:28:22 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -58,13 +59,13 @@ vi.meas = vi.meas + .0001*sig*randn(m,1);
 figure(2); img.elem_data= img.elem_data - 1; show_slices(img); figure(1);
 
 %show_slices(img);
-imb=  mk_common_model('b2c',16);
+imb=  mk_common_model('b2c2',16);
 inv2d= eidors_obj('inv_model', 'EIT inverse');
 inv2d.reconst_type= 'difference';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.misc.perm_sym= '{y}';
-inv2d.parameters.term_tolerance= 1e-3;
+inv2d.parameters.term_tolerance= 1e-4;
 
 if option>100
    inv2d.fwd_model.normalized_measurements=1;
@@ -73,7 +74,7 @@ end
 
 switch option
    case 1,
-     inv2d.hyperparameter.value = 1e-3;
+     inv2d.hyperparameter.value = 1e-1;
      inv2d.solve=       'aa_inv_solve';
      inv2d.RtR_prior=   'laplace_image_prior';
 
@@ -89,10 +90,17 @@ switch option
      inv2d.RtR_prior=   'aa_calc_image_prior';
      inv2d.solve=       'aa_inv_solve';
 
+   case 3.1,
+     inv2d.hyperparameter.func = 'aa_calc_noise_figure';
+     inv2d.hyperparameter.noise_figure= 2;
+     inv2d.hyperparameter.tgt_elems= 1:4;
+     inv2d.RtR_prior=   @noser_image_prior;
+     inv2d.solve=       'aa_inv_solve';
+
    case 4,
-     inv2d.hyperparameter.value = 1e-3;
-     inv2d.ab_calc_tv_prior.alpha2= 1e-4;
-     inv2d.parameters.max_iterations= 15;
+     inv2d.hyperparameter.value = 1e-9;
+     inv2d.ab_calc_tv_prior.alpha1= 1e-2;
+     inv2d.parameters.max_iterations= 10;
      inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
      inv2d.parameters.keep_iterations=1;
