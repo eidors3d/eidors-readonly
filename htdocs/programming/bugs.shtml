@@ -1,29 +1,78 @@
 <!--#include virtual="nav-sidebar.html" -->
 
-<h2>EIDORS: Bug / Feature List</h2>
+<h2>EIDORS: List of feature requests / plans / bugs</h2>
 
 <ul>
    <li><b>EIDORS infrastructure</b>
    <ul>
-
-    <li>Caching. Function handles are not stored in the eidors_var_id.
-         This means that objects which differ only by a function handle
-         will not have different ids.
+      <li> Testing: build test for each image reconstruction algorithm
+<br>&minus; can take multiple measurements
+<br>&minus; can take multiple measurements
+     
+<br>&minus;
 
    </ul>
+
+   <li><b>Todo for V3.2</b>
+<pre>
+- Announce
+    - new features
+
+- Web site
+    - Document new features for inv_model
+        - accept_multiple_frames
+    - Document new features for fwd_solve
+        - meas_select
+        - normalize_measurements
+
+- Features to do
+    * check solvers can handle multiple images
+    - Check normalized_difference
+    - Proper NF calculator?
+    - Gaussian filters - and test with lungs
+    * inv_solve memory **
+    - build lung imaging examples
+    - proper temporal solver with frames
+    - measures of hyperparameter?
+    - mechanism to allow solved elem_data to not map to elements
+       - need matrix reconst_map = M = sparse(n_elem,n_sols)
+       - calc_reconst_map ...
+
+- Generate some lung imaging examples
+    - 2x8 in 3D?
+
+- Can 3D reconstruction from 2D reject off-plane data
+</pre>
+
    <li><b>Algorithms</b>
    <ul>
 
    <li>EIDORS 1.0 code &minus; need to integrate
 
-   <li> fwd_model.normalize_measurements appears to have a bug
+   </ul>
+
+   <li><b>Questions / Artefacts</b>
+   <ul>
+
+    <li> why artefacts in centre of lung images?
+<br>&minus; prior does not do spatial filtering?
+<br>&minus; homogeneous background assumption is wrong?
+<br>&minus; features outside of 3D plane
+
+    <li> why does aa_inv_solve take a higher hyperparameter
+
+    <li> why does aa_calc_noise_figure only work when defined
+         for mean(abs(signal)) and not norm(signal)?
+<br>&minus;
+<br>&minus;
+<br>&minus;
 
    </ul>
 </ul>
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 09:51:41 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-07 12:58:11 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
