@@ -9,7 +9,12 @@ function eidors_cache( command, varargin )
 %  
 %
 % (C) 2005 Andy Adler. Licensed under GPL version 2
-% $Id: eidors_cache.m,v 1.2 2005-12-07 15:09:09 aadler Exp $
+% $Id: eidors_cache.m,v 1.3 2006-11-07 13:27:40 aadler Exp $
+
+% Comments
+% Want to clear specific structures
+%      to clear old variables
+%      to clear specific parts of structures
 
 if nargin<1
     return;
