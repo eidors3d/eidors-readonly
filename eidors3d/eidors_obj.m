@@ -17,6 +17,9 @@ function obj_id= eidors_obj(type,name, varargin );
 %     example: fwd_mdl.nodes = NODES; .... %etc
 %              fwd_mdl = eidors_obj('fwd_model',fwd_mdl);
 %
+% All constructors will set the appropriate default
+%   values for each type: image, fwd_model, inv_model, data
+%
 % USAGE: to set values
 %     obj  = eidors_obj('set',obj,prop1,value1, prop1, value2, ...)
 %
@@ -70,7 +73,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_obj.m,v 1.40 2006-08-21 19:21:33 aadler Exp $
+% $Id: eidors_obj.m,v 1.41 2006-11-07 13:27:31 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -112,8 +115,9 @@ function obj = set_obj( obj, varargin );
 % for octave and matlab 6.1 compatibility
    for idx= 1:2:nargin-1
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
-
    end
+
+   obj= test_obj_properties( obj );
 
    if ~cache_this( obj.type) ; return ; end
 
@@ -297,3 +301,14 @@ function retval= cache_this( type )
       retval = 1;
    end
  
+% Ensure each object has the required default attributes
+%  that are optional
+function  obj= test_obj_properties( obj );
+   switch obj.type
+      case 'inv_model'
+      case 'fwd_model'
+         if ~isfield(obj,'normalize_measurements');
+            obj.normalize_measurements= 0;
+         end
+   end
+
