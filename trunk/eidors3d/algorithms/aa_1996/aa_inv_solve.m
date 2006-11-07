@@ -11,8 +11,11 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
+% Test for multiple measurements in solver
+%  ok= aa_inv_solve('can_process_multiple_meas');
+
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_solve.m,v 1.18 2006-08-21 03:50:28 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.19 2006-11-07 13:33:42 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
