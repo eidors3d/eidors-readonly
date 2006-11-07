@@ -22,15 +22,15 @@ function hparam= aa_calc_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_noise_figure.m,v 1.14 2005-12-05 22:12:11 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.15 2006-11-07 13:33:02 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
 NFtable = eidors_obj('get-cache', inv_model, 'noise_figure_table');
 if ~isempty(NFtable)
    % this would be sooo much easier if Matlab has assoc. arrays
-   if any(NFtable(:,1) == reqNF)
-       idx= find( NFtable(:,1) == reqNF);
+   idx= find( NFtable(:,1) == reqNF);
+   if any(idx)
        hparam= 10^NFtable( idx(1), 2);
        eidors_msg('aa_calc_noise_figure: using cached value', 2);
        return
@@ -41,6 +41,7 @@ end
 
 startpoint = -5;
 opts = optimset('tolX',1e-4);
+calc_log_NF(0,1,inv_model);
 hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    
 NFtable = [NFtable; [reqNF, hparam] ];
@@ -54,63 +55,67 @@ function out= calc_log_NF( log_hparam, reqNF, inv_model )
 
 
 % simulate homg data and a small target in centre
-function [h_data, c_data, J]= simulate_targets( fwd_model, ctr_elems)
+function [h_data, c_data]= simulate_targets( fwd_model, ctr_elems)
+
+   homg= 1; % homogeneous conductivity level is 1
 
    %Step 1: homogeneous image
-   sigma= ones( size(fwd_model.elems,1) ,1);
+   sigma= homg*ones( size(fwd_model.elems,1) ,1);
 
    img= eidors_obj('image', 'homogeneous image', ...
                    'elem_data', sigma, ...
                    'fwd_model', fwd_model );
    h_data=fwd_solve( img );
-
-   J = calc_jacobian( fwd_model, img);
+   h_data= h_data.meas;
 
    %Step 1: inhomogeneous image with contrast in centre
    delta = 1e-2;
-   sigma(ctr_elems) = 1 + delta;
-   img= eidors_obj('image', 'homogeneous image', ...
-                   'elem_data', sigma, ...
-                   'fwd_model', fwd_model );
+   sigma(ctr_elems) = homg*(1 + delta);
+   img.elem_data = sigma;
    c_data=fwd_solve( img );
+   c_data= c_data.meas;
 
 % calculate the noise figure for inv_model parameters
 % based on the provided hyperparameter hp
 function NF = calc_noise_figure( inv_model, hp)
 
-   fwd_model= inv_model.fwd_model;
-   pp= aa_fwd_parameters( fwd_model );
+   pp= aa_fwd_parameters( inv_model.fwd_model );
+   VOL2= pp.VOLUME'.^2;
 
-   [h_data, c_data, J]= simulate_targets( fwd_model, ...
+   [h_data, c_data]= simulate_targets( inv_model.fwd_model, ...
         inv_model.hyperparameter.tgt_elems);
-   if pp.normalize
-      dva= 1 - c_data.meas ./ h_data.meas;
-   else   
-      dva= c_data.meas - h_data.meas;
-   end
 
-   RtR = calc_RtR_prior( inv_model );
-   W   = calc_meas_icov( inv_model );
 
-   % one step reconstruction matrix
-   % for non-linear algorithms, we need the Taylor expansion at the soln
-   % The hp needs to be scaled by hp^2 to match units
-   RM= (J'*W*J +  hp^2*RtR)\J'*W;
+   inv_model= rmfield(inv_model,'hyperparameter');
+   inv_model.hyperparameter.value= hp;
 
 %   NF = SNR_z / SNR_x
 % SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)
 % SNR_x = sumsq(x0) / var(x) = sum(x0.^2) / trace(ABRnB'A')
 
-   VOL2= pp.VOLUME'.^2;
-   Rn= 1./diag(W); % assume independent noise, calc variance
+   % calculate signal
+   d_len   = size(h_data,1);
+   delta   = 1e-2* mean(h_data);;
+   c_noise = c_data*ones(1,d_len) + eye(d_len);
+   h_full  = h_data*ones(1,d_len);
+   if inv_model.fwd_model.normalize_measurements
+      sig_data= norm(h_data - c_data);
+      var_data = trace((h_full - c_noise).^2);
+   else
+      sig_data= norm( 1 - c_data ./ h_data);
+      var_data = trace((1 - c_noise./ h_full).^2);
+   end
 
-   sig_data= sum( dva.^2);
-   var_data= sum( Rn );
-   sig_img = VOL2 * (RM * dva).^2;
-   var_img = VOL2 * RM.^2 * Rn;
-
+   % calculate image 
+   % Note, this won't work if the algorithm output is not zero biased
+   img0 = inv_solve( inv_model, h_data, c_data);
+   sig_img = VOL2*img0.elem_data.^2;
+   img0n= inv_solve( inv_model, h_full, c_noise);
+   var_img = sum(VOL2*img0n.elem_data.^2); % trace weighted by area
+   
    NF = ( sig_data/ var_data ) / ( sig_img / var_img  );
-   eidors_msg('calculating NF=%f hp=%g', NF, hp, 4);
+   eidors_msg('calculating NF=%f hp=%g', NF, hp, 3);
+keyboard
 
    % For the record, the expression for var_img is derived as:
    % Equiv expresssions for var_img % given: A= diag(pp.VOLUME);
