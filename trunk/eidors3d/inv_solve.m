@@ -16,8 +16,8 @@ function img = inv_solve( inv_model, data1, data2)
 %           or a vector of images is data1 or data2 are vectors
 %
 % For difference EIT:
-% data1      => difference data at earlier time
-% data2      => difference data at later time
+% data1      => difference data at earlier time (ie homogeneous)
+% data2      => difference data at later time   (ie inhomogeneous)
 %
 % data can be:
 %   - an EIDORS data object
@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_solve.m,v 1.15 2006-07-27 01:42:20 aadler Exp $
+% $Id: inv_solve.m,v 1.16 2006-11-07 13:28:00 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -53,6 +53,7 @@ if     strcmp(inv_model.reconst_type,'static')
    if nargin~=2;
       error('only one data set is allowed for a static reconstruction');
    end
+
    imgc= feval( inv_model.solve, inv_model, ...
                filt_data(inv_model,data1) );
 
@@ -62,64 +63,80 @@ elseif strcmp(inv_model.reconst_type,'difference')
    end
 
    % expand data sets if one is provided that is longer
-   fdata1 = filt_data( inv_model, data1 ); l_data1= size(fdata1,2);
-   fdata2 = filt_data( inv_model, data2 ); l_data2= size(fdata2,2);
+   data_width= max(num_frames(data1), num_frames(data2));
 
-   if l_data1 ~=1 & l_data2 ~=1 & l_data1 ~= l_data2
-      error('inconsistent number of specified measurements');
-   elseif l_data1 >1 & l_data2==1 
-      fdata2 = fdata2 * ones(1,l_data1);
-   elseif l_data1==1 & l_data2 >1 
-      fdata1 = fdata1 * ones(1,l_data2);
-   end
+   fdata1 = filt_data( inv_model, data1, data_width );
+   fdata2 = filt_data( inv_model, data2, data_width );
 
+   % Check if solver can handle being called with multiple data
    imgc= feval( inv_model.solve, inv_model, fdata1, fdata2);
 else
    error('inv_model.reconst_type not understood'); 
 end
 
-elem_data= imgc.elem_data;
-n_img = size(elem_data,2);
+img = eidors_obj('image', imgc );
 
-for i=1:n_img
-   imgc.elem_data= elem_data(:,i);
-   img(i) = eidors_obj('image', imgc );
-end
-
+function nf= num_frames(d0)
+   if isnumeric( d0 )
+      nf= size(d0,2);
+   elseif d0(1).type == 'data';
+      nf= length(d0);
+   else
+      error('Problem calculating number of frames');
+   end
+   
 % test for existance of meas_select and filter data
-function d2= filt_data(inv_model, d0 )
-    if ~isnumeric( d0 )
-        % we probably have a 'data' object
+function d2= filt_data(inv_model, d0, data_width )
+   if ~isnumeric( d0 )
+       % we probably have a 'data' object
 
-        l_obj = length(d0);
-        d1 = zeros( length( d0(1).meas ), l_obj);
-        for i=1:l_obj
-           if strcmp( d0(i).type, 'data' )
-               d1(:,i) = d0(i).meas;
-           else
-               error('expecting an object of type data');
-           end
-        end
-
-    else
-       % we have a matrix of data. Hope for the best
-       d1 = d0;
-    end
-
-    d1= double(d1); % ensure we can do math on our object
-
-    if isfield(inv_model.fwd_model,'meas_select');
-       % we have a meas_select parameter
-
-       meas_select= inv_model.fwd_model.meas_select;
-       if     size(d1,1) == length(meas_select)
-          d2= d1(meas_select,:);
-       elseif size(d1,1) == sum(meas_select>0)
-          d2= d1;
-       else
-          error('data size does not match meas_select');
+       l_obj = length(d0);
+       d1 = zeros( length( d0(1).meas ), l_obj);
+       for i=1:l_obj
+          if strcmp( d0(i).type, 'data' )
+              d1(:,i) = d0(i).meas;
+          else
+              error('expecting an object of type data');
+          end
        end
-    else
-       d2= d1;
-    end
 
+   else
+      % we have a matrix of data. Hope for the best
+      d1 = d0;
+   end
+
+   d1= double(d1); % ensure we can do math on our object
+
+   if isfield(inv_model.fwd_model,'meas_select');
+      % we have a meas_select parameter
+
+      meas_select= inv_model.fwd_model.meas_select;
+      if     size(d1,1) == length(meas_select)
+         d2= d1(meas_select,:);
+      elseif size(d1,1) == sum(meas_select==1)
+         d2= d1;
+      else
+         error('data size does not match meas_select');
+      end
+   else
+      d2= d1;
+   end
+
+   if nargin==3 % expand to data width
+      d2_width= size(d2,2);
+      if d2_width == data_width
+         % ok
+      elseif d2_width == 1
+         d2= d2(:,ones(1,data_width));
+      else
+         error('inconsistent difference data: (%d ~= %d)',  ...
+               d2_width, data_width);
+      end
+   end
+
+function ok= can_process_multiple_meas( inv_model );
+   ok= 0;
+   try 
+     ok= feval(inv_model.solve, 'can_process_multiple_meas');
+   end
+   
