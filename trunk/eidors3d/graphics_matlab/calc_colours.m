@@ -44,7 +44,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %      colour mapping. 'auto' tries to estimate a good level.
 %   'mapped_colour' (DEFAULT 127) number of colourmap entries
 %      using mapped_colour allows matlab to print vector graphics to eps
-%   'npoints' (DEFAULT 128) number of points accross the image
+%   'npoints' (DEFAULT 64) number of points accross the image
 % 
 % PARAMETERS: clim
 %    clim - colour limit. Colours more different from ref_level are cropped.
@@ -62,7 +62,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.29 2006-11-04 15:08:16 aadler Exp $  
+% $Id: calc_colours.m,v 1.30 2006-11-07 13:31:01 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
@@ -198,7 +198,7 @@ function test_exist_colours;
       eidors_colours.ref_level= 'auto';
    end
    if ~isfield( eidors_colours, 'npoints' );
-      eidors_colours.npoints= 128;
+      eidors_colours.npoints= 64;
    end
 
 function pp=get_colours;
