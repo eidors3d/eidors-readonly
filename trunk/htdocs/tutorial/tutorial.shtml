@@ -50,6 +50,14 @@ EIDORS and then run this command in a matlab
     <li><h3> 
 <a href="./tutorial210-cheating.shtml" >"Cheating" with EIDORS</a>
 </h3>
+</ul>
+
+<h3>Application specific tutorials</h3>
+<ul>
+    <li><h3> 
+<a href="./tutorial310-lung-images.shtml"
+   >Images of lungs</a>
+</h3>
 
 </ul>
 
@@ -65,7 +73,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 20:31:26 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-13 18:16:11 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
