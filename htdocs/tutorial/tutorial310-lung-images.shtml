@@ -41,10 +41,23 @@ repositioning of electrodes
 dorsal side)
 </center>
 
+<pre>
+<!--#include virtual="tutorial310c.m" -->
+</pre>
+
+<center>
+<img src="tutorial310c.png">
+<br><i> Figure:</i>
+Lung image slices (frame rate of 1/7 seconds). Image progression
+is from left to right, top to bottom. One breath is shows. There
+also appears to be a movement of blood dorsally during the cardiac
+cycle.
+</center>
+
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-13 18:03:37 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-13 18:16:11 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
