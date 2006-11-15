@@ -20,7 +20,7 @@ function show_slices( img, levels, clim, ref_lev )
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.31 2006-11-07 13:30:40 aadler Exp $
+% $Id: show_slices.m,v 1.32 2006-11-15 17:17:55 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
@@ -40,7 +40,7 @@ if size(levels,2) == 5
 elseif size(levels)== [1,1]
    zmax= max(img(1).fwd_model.nodes(:,3));
    zmin= min(img(1).fwd_model.nodes(:,3));
-   levels = linspace(zmin,zmax, levels+2);
+   levels = linspace(zmax,zmin, levels+2);
    levels = levels(2:end-1)';
    levels = [(1+0*levels)*[Inf,Inf], levels];
    spec_position= 0;
