@@ -33,6 +33,20 @@ difference and absolute imaging.
 <i>Blue</i> Target measurements,
 </center>
 
+Using a smaller model for the inverse, we can
+reconstruct this pattern with <i>difference</i>
+imaging.
+
+<pre><!--#include virtual="tutorial151c.m" --></pre>
+
+<center>
+<img src="tutorial151b.png">
+<br><i>Figure:</i>
+<i>Green</i> Homogeneous measurements,
+<i>Blue</i> Target measurements,
+</center>
+
+
 
 
 <!-- comment #include virtual="tutorial150-abs-imaging.m" -->
@@ -40,7 +54,7 @@ difference and absolute imaging.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-15 17:03:14 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-15 17:16:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
