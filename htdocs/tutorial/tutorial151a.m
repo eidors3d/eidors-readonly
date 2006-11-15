@@ -1,8 +1,15 @@
 % Create model for Absolute Imaging
 % Based on example from Stephen Murphy
-% $Id: tutorial151a.m,v 1.1 2006-11-15 16:42:03 aadler Exp $
+% $Id: tutorial151a.m,v 1.2 2006-11-15 16:58:56 aadler Exp $
 
 load tutorial151_model.mat
+
+% Fix model properties - and work around matlab bugs
+imdl.fwd_model.elems= double( imdl.fwd_model.elems );
+imdl.fwd_model.boundary= double( imdl.fwd_model.boundary );
+simmdl.boundary= double( simmdl.boundary );
+simmdl.elems= double( simmdl.elems );
+
 
 % Create Simulation Model
 sim_img= eidors_obj('image', 'Simulation Image');
