@@ -1,0 +1,28 @@
+<!--#include virtual="nav-sidebar.shtml" -->
+<h2>
+Absolute Imaging: Non-Linaer Gauss Newton Image Reconstruction
+</H2>
+
+
+<pre><!--#include virtual="tutorial150a.m" --></pre>
+
+<center>
+<img src="tutorial150a.png">
+<br><i>Figure:</i>
+<i>Left:</i> Simulation Model (20951 elements),
+   showing a non-conductive (blue) and conductive (red) target
+<i>Right:</i> Simulation Model viewed as equispaced horizontal
+   slices
+</center>
+
+
+<!-- comment #include virtual="tutorial150-abs-imaging.m" -->
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-11-15 16:42:03 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
