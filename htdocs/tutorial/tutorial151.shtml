@@ -4,10 +4,14 @@ Absolute Imaging: Non-Linaer Gauss Newton Image Reconstruction
 </H2>
 
 
-<pre><!--#include virtual="tutorial150a.m" --></pre>
+
+Use a large (20951 element) model to simulate target
+inhomogeneities.
+
+<pre><!--#include virtual="tutorial151a.m" --></pre>
 
 <center>
-<img src="tutorial150a.png">
+<img src="tutorial151a.png">
 <br><i>Figure:</i>
 <i>Left:</i> Simulation Model (20951 elements),
    showing a non-conductive (blue) and conductive (red) target
@@ -15,13 +19,28 @@ Absolute Imaging: Non-Linaer Gauss Newton Image Reconstruction
    slices
 </center>
 
+Simulation measured voltages using this model.
+We simulate both homogeneous measurements and
+target measurements in order to do both 
+difference and absolute imaging.
+
+<pre><!--#include virtual="tutorial151b.m" --></pre>
+
+<center>
+<img src="tutorial151b.png">
+<br><i>Figure:</i>
+<i>Green</i> Homogeneous measurements,
+<i>Blue</i> Target measurements,
+</center>
+
+
 
 <!-- comment #include virtual="tutorial150-abs-imaging.m" -->
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-15 16:42:03 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-15 17:03:14 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
