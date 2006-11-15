@@ -14,12 +14,13 @@ function data = fwd_solve( fwd_model, img)
 % img       is an img structure
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: fwd_solve.m,v 1.11 2006-08-21 19:21:33 aadler Exp $
+% $Id: fwd_solve.m,v 1.12 2006-11-15 19:36:05 aadler Exp $
 
 if nargin==1
    img= fwd_model;
    fwd_model= img.fwd_model;
 end
+fwd_model= eidors_model_params( fwd_model );
 
 % By default EIDORS doesn't cache images, so this doesn't normally help
 data = eidors_obj('get-cache', img, 'fwd_solve_data');
