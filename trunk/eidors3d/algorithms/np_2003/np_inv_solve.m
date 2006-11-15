@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.25 2006-11-07 13:35:58 aadler Exp $
+% $Id: np_inv_solve.m,v 1.26 2006-11-15 17:09:19 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -17,10 +17,6 @@ if ~isempty(one_step_inv)
     eidors_msg('np_inv_solve: using cached value', 2);
 else
     p= np_fwd_parameters( fwd_model );
-
-    % FIXME: call a function to calculate the jacobian bkgnd
-    bkgnd = ones(p.n_elem,1);
-    bkgnd(:)= inv_model.jacobian_bkgnd.value;
 
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
     J = calc_jacobian( fwd_model, img_bkgnd);
