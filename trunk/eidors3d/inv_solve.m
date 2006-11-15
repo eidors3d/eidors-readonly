@@ -35,18 +35,15 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_solve.m,v 1.17 2006-11-15 16:29:32 aadler Exp $
+% $Id: inv_solve.m,v 1.18 2006-11-15 19:36:05 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
 %       to do it separately. It may be possible to cache
 %       one-step inverse matrices, but that is not done. 
 
+inv_model= eidors_model_params( inv_model );
 eidors_msg(['inv_solve:', inv_model.name],1);
-
-% caching of images is disabled -
-%  in order to implement image caching, it needs to be possible
-%  to tag them with both data1 and data2
 
 
 if     strcmp(inv_model.reconst_type,'static') || ...
