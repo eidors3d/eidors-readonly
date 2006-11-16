@@ -3,6 +3,7 @@
 %Inputs are: (and defaults) 
 %    electrodes_per_plane = 16;
 %    number_of_planes     = 2;
+%    movement_patter      = 'spiral','radial','vertical','spirograph'
 %
 %  Example
 %    electrodes_per_plane = 16;  number_of_planes = 2; move_the_ball
@@ -11,7 +12,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.18 2006-09-05 19:43:58 aadler Exp $
+% $Id: move_the_ball.m,v 1.19 2006-11-16 21:46:35 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane')
@@ -20,10 +21,14 @@ end
 if ~exist('number_of_planes')
    number_of_planes= 2;
 end
+if ~exist('movement_pattern')
+   movement_pattern= 'spiral';
+end
 
 fname ='tank_for_kalman_test_ball_';
 
-refine_electrodes= 50;
+%refine_electrodes= 50;
+refine_electrodes= 10;
 tank_radius= 15;
 tank_height= 30;
 
@@ -94,14 +99,13 @@ posn= findstr(geo_homg,'algebraic3d'); posn1=posn(1);
 posn= findstr(geo_homg,'and  cyl;');   posn2=posn(1);
 
 fno_max= 100;
-% go around circle and move to boundary
 for fno= 1:fno_max
    % ensure memory isn't completely full
    eidors_cache clear all;
 
    r = 1.5;
    f_frac= fno/fno_max;
-   switch 'spiral'
+   switch movement_pattern
       case 'spiral'
          t=2*pi*f_frac * 4;
          x= tank_radius*f_frac*.7.*sin(t);
@@ -132,6 +136,7 @@ for fno= 1:fno_max
    fid=fopen([fname_,'.geo'],'w');
    fwrite(fid,geo_file);
    fclose( fid);
+   % netgen was already called in create_tank_mesh_ng. The msz file is set.
    call_netgen([fname_,'.geo'],[fname_,'.vol']);
 
    [fmdl,mat_idxs]= ng_mk_fwd_model( ...
