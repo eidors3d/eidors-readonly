@@ -4,8 +4,9 @@ Absolute Imaging: Non-Linaer Gauss Newton Image Reconstruction
 </H2>
 
 
-
-Use a large (20951 element) model to simulate target
+This tutorial shows use of EIDORS for static image
+reconstructions. First,
+use a large (20951 element) model to simulate target
 inhomogeneities.
 
 <pre><!--#include virtual="tutorial151a.m" --></pre>
@@ -40,10 +41,33 @@ imaging.
 <pre><!--#include virtual="tutorial151c.m" --></pre>
 
 <center>
-<img src="tutorial151b.png">
+<img src="tutorial151c.png">
 <br><i>Figure:</i>
-<i>Green</i> Homogeneous measurements,
-<i>Blue</i> Target measurements,
+<i>Left:</i> Reconstructed Image (2266 elements),
+   showing a non-conductive (blue) and conductive (red) target
+<i>Right:</i> Simulation Model viewed as equispaced horizontal
+   slices
+</center>
+
+<b>Absolute Imaging:</b>
+First, the download the following function file
+<a href="tutorial151_nonlinearGN.m">tutorial151_nonlinearGN.m</a>
+and save it to a directory in your path, or copy-and-paste
+the file here:
+<pre><!--#include virtual="tutorial151_nonlinearGN.m" --></pre>
+
+Using this function, the following code will do absolute imaging
+
+<pre><!--#include virtual="tutorial151d.m" --></pre>
+
+
+<center>
+<img src="tutorial151d.png">
+<br><i>Figure:</i>
+<i>Left:</i> Reconstructed absolute Image (2266 elements),
+   showing a non-conductive (blue) and conductive (red) target
+<i>Right:</i> Simulation Model viewed as equispaced horizontal
+   slices
 </center>
 
 
@@ -54,7 +78,7 @@ imaging.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-15 17:16:27 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-17 03:57:30 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

@@ -3,7 +3,7 @@ function img= tutorial151_nonlinearGN( inv_model, data )
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data       => measurement data
-% $Id: tutorial151_nonlinearGN.m,v 1.1 2006-11-17 03:23:29 aadler Exp $
+% $Id: tutorial151_nonlinearGN.m,v 1.2 2006-11-17 03:57:30 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -12,28 +12,39 @@ img.fwd_model= fwd_model;
 sol= inv_model.tutorial151_nonlinearGN.init_backgnd * ...
      ones(size(fwd_model.elems,1),1);
 
-    RtR = calc_RtR_prior( inv_model );
-    hp2  = calc_hyperparameter( inv_model )^2;
+RtR = calc_RtR_prior( inv_model );
+hp2  = calc_hyperparameter( inv_model )^2;
 
+factor= 0;
 for iter= 1:inv_model.parameters.max_iterations
    img.elem_data= sol;
-keyboard
    simdata= fwd_solve( img );
 
-   data_diff= data - simdata.meas;
-   eidors_msg('tutorial151_nonlinearGN: iter=%d err=%f', ...
-           iter,norm(data_diff), 3);
-   if norm(data_diff) < inv_model.parameters.term_tolerance
+   d_data= data - simdata.meas;
+   norm_d_data= norm(d_data); 
+   eidors_msg('tutorial151_nonlinearGN: iter=%d err=%f factor=%f', ...
+           iter,norm_d_data, factor, 2);
+
+   if norm_d_data < inv_model.parameters.term_tolerance
       break;
    end
    
-
    J = calc_jacobian( fwd_model, img);
-   delta_sol = (J.'*J + hp2*RtR)\ (J.' * data_diff);
-   sol = sol + delta_sol;
+   delta_sol = (J.'*J + hp2*RtR)\ (J.' * d_data);
+   factor= linesearch(img, data, sol, delta_sol, norm_d_data);
+   sol = sol + factor*delta_sol;
 end
 
    img.elem_data= sol;
 
-
-
+% Test several different factors to see which minimizes best
+function factor= linesearch(img, data, sol, delta_sol, norm_d_data);
+   facts= [0, logspace(-3,0,19)];  
+   norms= norm_d_data;
+   for f= 2:length(facts);
+      img.elem_data= sol + facts(f)*delta_sol;
+      simdata= fwd_solve( img );
+      norms(f)= norm(data - simdata.meas);
+   end
+   ff= find(norms==min(norms));
+   factor= facts(ff(end));

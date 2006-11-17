@@ -1,11 +1,11 @@
 % Difference imaging result
-% $Id: tutorial151c.m,v 1.2 2006-11-15 20:36:27 aadler Exp $
+% $Id: tutorial151c.m,v 1.3 2006-11-17 03:57:30 aadler Exp $
 
 % imdl is loaded from file tutorial151_model.mat
 imdl.reconst_type= 'difference';
 imdl.solve=        @np_inv_solve;
 imdl.jacobian_bkgnd.value= backgnd;
-imdl.hyperparameter.value= 1e-1;
+imdl.hyperparameter.value= 1e-2;
 img_diff= inv_solve(imdl, v_homg, v_targ);
 
 clf;
