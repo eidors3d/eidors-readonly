@@ -3,7 +3,10 @@
 %Inputs are: (and defaults) 
 %    electrodes_per_plane = 16;
 %    number_of_planes     = 2;
-%    movement_patter      = 'spiral','radial','vertical','spirograph'
+%    movement_pattern     = 'spiral',
+%                           'spirograph'
+%                           'radial_move'
+%                           'vertical_move'
 %
 %  Example
 %    electrodes_per_plane = 16;  number_of_planes = 2; move_the_ball
@@ -12,7 +15,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.19 2006-11-16 21:46:35 aadler Exp $
+% $Id: move_the_ball.m,v 1.20 2006-11-17 13:59:25 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane')
@@ -27,10 +30,18 @@ end
 
 fname ='tank_for_kalman_test_ball_';
 
+% control mesh refinement
+%  finelevel= '-veryfine';
+%  finelevel= '-fine';
+   finelevel= '';
+
 %refine_electrodes= 50;
 refine_electrodes= 10;
 tank_radius= 15;
 tank_height= 30;
+
+% number of simulations to do;
+fno_max= 100;
 
 first_plane_starts= tank_height/(number_of_planes+1);
 
@@ -46,6 +57,7 @@ first_plane_starts= tank_height/(number_of_planes+1);
                         1.5, ... % electrode_height
                         [fname,'0000'], ...
                         refine_electrodes  );
+msz_file= [fname,'0000.msz'];
 
 
 % Create Homog
@@ -57,8 +69,8 @@ n_elem= size(fmdl.elems,1);
 elem_data= ones(n_elem,1);
 img=eidors_obj('image','netgen_problem', ...
                'fwd_model',fmdl, 'elem_data', elem_data);
-vh= fwd_solve( img);
-vh.time= 0;
+%vh= fwd_solve( img);
+%vh.time= 0;
 
 if 0 % TEST CODE - check electrodes
    show_fem( fmdl);
@@ -98,7 +110,6 @@ fclose( fid);
 posn= findstr(geo_homg,'algebraic3d'); posn1=posn(1);
 posn= findstr(geo_homg,'and  cyl;');   posn2=posn(1);
 
-fno_max= 100;
 for fno= 1:fno_max
    % ensure memory isn't completely full
    eidors_cache clear all;
@@ -115,11 +126,26 @@ for fno= 1:fno_max
       case 'spirograph'
          % Parametric eqn from
          % online.redwoods.cc.ca.us/instruct/darnold/CalcProj/Fall98/CraigA/project3.htm
-         t=2*pi*f_frac * 5; % GCD of a and b
+         t=2*pi*f_frac * 5;
+%        t=2*pi*f_frac ; %  SLOW
          a=tank_radius;b=a*5/8;h=b*.8;
          x=(a-b)*cos(t) + h*cos( (a-b)/b*t );
          y=(a-b)*sin(t) - h*sin( (a-b)/b*t );
          z=tank_height/2;
+
+      case 'vertical_move'
+         t=  0;
+         x= tank_radius*.5.*sin(t);
+         y= tank_radius*.5.*cos(t);
+         z= f_frac*(tank_height-4*r) + 2*r;
+
+      case 'radial_move'
+         t= 0;
+         Rad_dist= tank_radius*f_frac*(1-2*r);
+         x= Rad_dist*sin(t);
+         y= Rad_dist*cos(t);
+         z= tank_height/2;
+
 
       otherwise
          error('don''t understand movement options')
@@ -136,14 +162,14 @@ for fno= 1:fno_max
    fid=fopen([fname_,'.geo'],'w');
    fwrite(fid,geo_file);
    fclose( fid);
-   % netgen was already called in create_tank_mesh_ng. The msz file is set.
-   call_netgen([fname_,'.geo'],[fname_,'.vol']);
+   call_netgen([fname_,'.geo'],[fname_,'.vol'],msz_file, finelevel);
 
    [fmdl,mat_idxs]= ng_mk_fwd_model( ...
      [fname_,'.vol'], centres, [], stim_pat);
    ball= mat_idxs{2};
 
    if 0 % Create a movie of the moving ball
+      show_fem(fmdl);
       crop_model([],  inline('z>=30','x','y','z'))
       view(0,60);
       print('-dpng','-r100',[fname_,'.png']);
@@ -159,11 +185,11 @@ for fno= 1:fno_max
 end
 
 save netgen_moving_ball vi vh fmdl_save
-return
+
 
 % Example to reconstruct images 
-imdl= mk_common_model('n3r2');
-imdl.fwd_model.stimulation= stim_pat;
-img= inv_solve(imdl,vi,vh);
+%imdl= mk_common_model('n3r2');
+%imdl.fwd_model.stimulation= stim_pat;
+%img= inv_solve(imdl,vi,vh);
 
 
