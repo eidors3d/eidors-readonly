@@ -48,6 +48,10 @@ EIDORS and then run this command in a matlab
 </h3>
 
     <li><h3> 
+<a href="./tutorial151.shtml" >Absolute image reconstruction</a>
+</h3>
+
+    <li><h3> 
 <a href="./tutorial210-cheating.shtml" >"Cheating" with EIDORS</a>
 </h3>
 </ul>
@@ -73,7 +77,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-13 18:16:11 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-17 03:57:30 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
