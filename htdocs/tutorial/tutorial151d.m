@@ -1,5 +1,5 @@
 % Difference imaging result
-% $Id: tutorial151d.m,v 1.2 2006-11-17 03:57:30 aadler Exp $
+% $Id: tutorial151d.m,v 1.3 2006-11-17 13:22:31 aadler Exp $
 
 % imdl is loaded from file tutorial151_model.mat
 imdl.reconst_type= 'static';
@@ -9,7 +9,7 @@ imdl.parameters.max_iterations= 10;
 % special parameter for this model
 imdl.tutorial151_nonlinearGN.init_backgnd= backgnd;
 
-imdl.hyperparameter.value= 3e-1;
+imdl.hyperparameter.value= 1e-2;
 img_diff= inv_solve(imdl, v_targ);
 
 clf;

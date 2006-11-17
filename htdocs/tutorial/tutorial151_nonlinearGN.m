@@ -3,7 +3,7 @@ function img= tutorial151_nonlinearGN( inv_model, data )
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data       => measurement data
-% $Id: tutorial151_nonlinearGN.m,v 1.2 2006-11-17 03:57:30 aadler Exp $
+% $Id: tutorial151_nonlinearGN.m,v 1.3 2006-11-17 13:22:31 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -15,17 +15,17 @@ sol= inv_model.tutorial151_nonlinearGN.init_backgnd * ...
 RtR = calc_RtR_prior( inv_model );
 hp2  = calc_hyperparameter( inv_model )^2;
 
-factor= 0;
+factor= 0; norm_d_data= inf;
 for iter= 1:inv_model.parameters.max_iterations
    img.elem_data= sol;
    simdata= fwd_solve( img );
 
    d_data= data - simdata.meas;
-   norm_d_data= norm(d_data); 
+   prev_norm_d_data= norm_d_data; norm_d_data= norm(d_data); 
    eidors_msg('tutorial151_nonlinearGN: iter=%d err=%f factor=%f', ...
            iter,norm_d_data, factor, 2);
 
-   if norm_d_data < inv_model.parameters.term_tolerance
+   if prev_norm_d_data - norm_d_data < inv_model.parameters.term_tolerance
       break;
    end
    
