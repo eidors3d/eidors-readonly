@@ -63,6 +63,22 @@ Using this function, the following code will do absolute imaging
 
 <pre><!--#include virtual="tutorial151d.m" --></pre>
 
+Running this code gives the following output:
+<pre>
+&gt;&gt; tutorial151d;
+EIDORS:[ inv_solve:nonlinear Gauss Newton for absolute imaging demo ]
+EIDORS:[ tutorial151_nonlinearGN: iter=1 err=52.820965 factor=0.000000 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=2 err=11.468709 factor=0.014678 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=3 err=7.208743 factor=0.014678 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=4 err=2.284559 factor=0.031623 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=5 err=0.850762 factor=0.014678 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=6 err=0.599933 factor=0.021544 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=7 err=0.519560 factor=0.031623 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=8 err=0.341341 factor=0.068129 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=9 err=0.307938 factor=0.014678 ]
+EIDORS:[ tutorial151_nonlinearGN: iter=10 err=0.262837 factor=0.068129 ]
+</pre>
+
 
 <center>
 <img src="tutorial151d.png">
@@ -81,7 +97,7 @@ Using this function, the following code will do absolute imaging
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-17 04:19:43 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-17 13:22:31 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
