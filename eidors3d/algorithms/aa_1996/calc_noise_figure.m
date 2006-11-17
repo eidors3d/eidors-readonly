@@ -18,7 +18,7 @@ function NF = calc_noise_figure( inv_model, hp)
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_noise_figure.m,v 1.1 2006-11-17 14:47:38 aadler Exp $
+% $Id: calc_noise_figure.m,v 1.2 2006-11-17 14:49:43 aadler Exp $
 
 % A 'proper' definition of noise power is:
 %      NF = SNR_z / SNR_x
@@ -41,7 +41,7 @@ function NF = calc_noise_figure( inv_model, hp)
       inv_model= rmfield(inv_model,'hyperparameter');
       inv_model.hyperparameter.value= hp;
    end
-   if exist(inv_model.hyperparameter,'func')
+   if isfield(inv_model.hyperparameter,'func')
       if inv_model.hyperparameter.func == 'choose_noise_figure'
          error('specifying inv_model.hp.func == choose_noise_figure will recurse');
       end
