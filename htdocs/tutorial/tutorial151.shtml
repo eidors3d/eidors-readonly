@@ -7,7 +7,10 @@ Absolute Imaging: Non-Linaer Gauss Newton Image Reconstruction
 This tutorial shows use of EIDORS for static image
 reconstructions. First,
 use a large (20951 element) model to simulate target
-inhomogeneities.
+inhomogeneities. The <i>mat</i> file with the FEM
+models may be downloaded here
+ (<a href="tutorial151_model.mat">tutorial151_model.mat</a>).
+
 
 <pre><!--#include virtual="tutorial151a.m" --></pre>
 
@@ -78,7 +81,7 @@ Using this function, the following code will do absolute imaging
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-17 03:57:30 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-17 04:19:43 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

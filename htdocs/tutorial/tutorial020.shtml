@@ -56,7 +56,9 @@ a given image. This function
 for the physics of the problem. EIDORS provides
 several fuctions for EIT.
 <p>
-The forward solver used here is:
+The forward solver used here is
+<a href="tutorial020_f_solve.m">tutorial020_f_solve</a>,
+shown below:
 
 <pre>
 <!--#include virtual="tutorial020_f_solve.m" -->
@@ -86,7 +88,7 @@ Thus the output is, giving a resistance change of 200&Omega;
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:42:42 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-17 04:19:43 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
