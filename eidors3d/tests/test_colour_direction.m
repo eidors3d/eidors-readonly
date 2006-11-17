@@ -9,6 +9,7 @@ v_homg = fwd_solve(s_img);
 s_img.elem_data(1)= 1.1;
 v_targ = fwd_solve(s_img);
 imgr1= inv_solve(imdl,v_homg,v_targ);
+slice1= calc_slices(imgr1);
 show_fem(imgr1);
 disp('image should be red');
 
@@ -20,6 +21,6 @@ s_img.elem_data= ones(size(s_img.fwd_model.elems,1),1);
 v_homg = fwd_solve(s_img);
 s_img.elem_data(1)= 1.1;
 v_targ = fwd_solve(s_img);
-imgr1= inv_solve(imdl,v_homg,v_targ);
-show_fem(imgr1);
+imgr2= inv_solve(imdl,v_homg,v_targ);
+show_fem(imgr2);
 disp('image should be red');

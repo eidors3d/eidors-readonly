@@ -29,7 +29,7 @@ function img= aa_inv_total_var( inv_model, data1, data2)
 % 2000, ch. 3.6, pp. 141-160.
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_total_var.m,v 1.7 2005-12-08 00:19:58 aadler Exp $
+% $Id: aa_inv_total_var.m,v 1.8 2006-11-17 00:40:03 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -49,9 +49,9 @@ l_data= max( l_data1, l_data2 );
 dva= zeros(pp.n_meas, l_data);
 
 if pp.normalize
-   dva= 1 - data2 ./ data1;
+   dva= data2 ./ data1 - 1;
 else   
-   dva= data1 - data2;
+   dva= data2 - data1;
 end
 
 imax= 3 ; % we need to do this avoid matlab version issues

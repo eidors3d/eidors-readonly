@@ -15,7 +15,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %               if not provided, all data are available at each frame
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.9 2006-08-25 00:03:31 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.10 2006-11-17 00:40:03 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -35,9 +35,9 @@ end
 
 
 if pp.normalize
-   dva= 1 - data2 ./ data1;
+   dva= data2 ./ data1 - 1;
 else   
-   dva= data1 - data2;
+   dva= data2 - data1;
 end
 
  sol = kalman_inv( J, Q, hp^2*RtR, dva, sequence );
