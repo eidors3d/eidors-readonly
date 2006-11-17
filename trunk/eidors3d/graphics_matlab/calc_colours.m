@@ -35,10 +35,12 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 %   The following parameters are accepted
 %
-%   'greylev' ( DEFAULT .2): the colour of the ref_level.
+%   'greylev'    (DEFAULT -.01): the colour of the ref_level.
 %      Negative values indicate black (inversed colour).
 %      For almost white, greylev=.01; Black=> greylev=-.01
-%   'sat_adj' ( DEFAULT .9):    max G,B when R=1
+%   'sat_adj'    (DEFAULT .9): max G,B when R=1
+%   'window_range' (DEFAULT .9); window colour range
+%      Colour slope outside range is 1/3 of centre slope
 %   'backgnd' ( DEFAULT [.5,.5,.15] ): image border colour 
 %   'ref_level' (DEFAULT 'auto') conductivity of centre of
 %      colour mapping. 'auto' tries to estimate a good level.
@@ -62,7 +64,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.30 2006-11-07 13:31:01 aadler Exp $  
+% $Id: calc_colours.m,v 1.31 2006-11-17 13:02:53 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
@@ -131,11 +133,11 @@ if do_colourbar
        warning('Colorbar not available without mapped_colour option');
    else
 
-   hh= colorbar;
+   hh= colorbar; delete(hh); hh=colorbar;
    % make colourbar smaller and closer to axis
    p= get(hh,'Position');
    pm= p(2) + p(4)/2;
-   set(hh,'Position', [p(1)+p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
+   set(hh,'Position', [p(1)+1.2*p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
 
    % set scaling
 %  lcm= size(colormap,1)/2+.5; - you would expect it to be this
@@ -156,6 +158,7 @@ end
 
 %scaled data must go from -1 to 1
 function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
+if 0
    D= sign(pp.greylev+eps); %force 0 to 1
    glev= abs(pp.greylev);
    F= 3*pp.sat_adj;
@@ -163,12 +166,31 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    red= D*F*abs(scale_data+D/F) - D + (D==-1);
    red= red.*(red>0).*(red<1) + (red>=1);
    red= red*(1-glev) + glev;
+end
+   ofs= (pp.greylev >= 0);   % 1 if greylev>=0
+   D= (2*ofs - 1);
+   ofs= ofs - 2*(ofs==0);
+   F= 3*pp.sat_adj;
+   DF= D*F; D_F= D/F;
 
-   grn= D*F*abs(scale_data    ) - D + (D==-1);
+   glev= abs(pp.greylev);
+
+   % window data such that slope above w is 1/3 of that below
+   % thus w is mapped to k st k/w = 3(1-k)/(1-w) -> k=3w/(1+2w)
+   W= pp.window_range; K= 3*W/(1+2*W);
+   scale_data= sign(scale_data) .* ( ...
+     (  K/W*   abs(scale_data)   ) .* (abs(scale_data)<=W) + ...
+     (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
+
+   red= DF*abs(scale_data+D_F) - ofs;
+   red= red.*(red>0).*(red<1) + (red>=1);
+   red= red*(1-glev) + glev;
+
+   grn= DF*abs(scale_data    ) - ofs;
    grn= grn.*(grn>0).*(grn<1) + (grn>=1);
    grn= grn*(1-glev) + glev;
 
-   blu= D*F*abs(scale_data-D/F) - D + (D==-1);
+   blu= DF*abs(scale_data-D_F) - ofs;
    blu= blu.*(blu>0).*(blu<1) + (blu>=1);
    blu= blu*(1-glev) + glev;
 
@@ -185,6 +207,9 @@ function test_exist_colours;
    end
    if ~isfield( eidors_colours, 'sat_adj' );
       eidors_colours.sat_adj = .9;
+   end
+   if ~isfield( eidors_colours, 'window_range' );
+      eidors_colours.window_range = .5;
    end
    if ~isfield( eidors_colours, 'backgnd' );
       eidors_colours.backgnd= [.5,.5,.15];
