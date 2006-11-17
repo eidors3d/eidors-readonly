@@ -5,7 +5,7 @@ function hparam= select_noise_figure( inv_model );
 %
 % In order to use this function, it is necessary to specify
 % inv_model.hyperparameter. has the following fields
-% hpara.func         = 'aa_calc_noise_figure';
+% hpara.func         = @select_noise_figure;
 % hpara.noise_figure = NF Value requested
 % hpara.tgt_elems    = vector of element numbers of contrast in centre
 %
@@ -17,7 +17,7 @@ function hparam= select_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: choose_noise_figure.m,v 1.1 2006-11-17 14:47:38 aadler Exp $
+% $Id: choose_noise_figure.m,v 1.2 2006-11-17 14:53:26 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -27,7 +27,7 @@ if ~isempty(NFtable)
    idx= find( NFtable(:,1) == reqNF);
    if any(idx)
        hparam= 10^NFtable( idx(1), 2);
-       eidors_msg('aa_calc_noise_figure: using cached value', 2);
+       eidors_msg('select_noise_figure: using cached value', 2);
        return
    end
 else
@@ -35,12 +35,12 @@ else
 end
 
 startpoint = -2;
-opts = optimset('tolX',1e-4);
+opts = optimset('tolX',1e-3);
 hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    
 NFtable = [NFtable; [reqNF, hparam] ];
 eidors_obj('set-cache', inv_model, 'noise_figure_table', NFtable);
-eidors_msg('aa_calc_noise_figure: setting cached value', 2);
+eidors_msg('select_noise_figure: setting cached value', 2);
 
 % define a function that can be called by fzero. Also convert
 % hparameter to log space to allow better searching by fzero

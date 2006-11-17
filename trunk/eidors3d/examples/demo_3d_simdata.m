@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_3d_simdata.m,v 1.22 2006-08-25 00:14:51 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.23 2006-11-17 14:53:26 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -73,7 +73,7 @@ mdl_2d_2 = eidors_obj('fwd_model', params);
 
 inv2d.name= 'EIT inverse';
 inv2d.solve=       'aa_inv_solve';
-%inv2d.hyperparameter.func = 'aa_calc_noise_figure';
+%inv2d.hyperparameter.func = 'select_noise_figure';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;
  inv2d.hyperparameter.value = 1e-2;
