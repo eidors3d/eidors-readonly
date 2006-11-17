@@ -22,7 +22,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_noise_figure.m,v 1.16 2006-11-17 00:40:03 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.17 2006-11-17 14:31:50 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -39,9 +39,8 @@ else
    NFtable= [];
 end
 
-startpoint = -5;
+startpoint = -2;
 opts = optimset('tolX',1e-4);
-calc_log_NF(0,1,inv_model);
 hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    
 NFtable = [NFtable; [reqNF, hparam] ];
@@ -80,7 +79,6 @@ function [h_data, c_data]= simulate_targets( fwd_model, ctr_elems)
 function NF = calc_noise_figure( inv_model, hp)
 
    pp= aa_fwd_parameters( inv_model.fwd_model );
-   VOL2= pp.VOLUME'.^2;
 
    [h_data, c_data]= simulate_targets( inv_model.fwd_model, ...
         inv_model.hyperparameter.tgt_elems);
@@ -95,27 +93,40 @@ function NF = calc_noise_figure( inv_model, hp)
 
    % calculate signal
    d_len   = size(h_data,1);
-   delta   = 1e-2* mean(h_data);;
+   delta   = 1e-2* mean(h_data);
    c_noise = c_data*ones(1,d_len) + eye(d_len);
    h_full  = h_data*ones(1,d_len);
    if inv_model.fwd_model.normalize_measurements
       sig_data= norm(c_data - h_data);
-      var_data = trace((h_full - c_noise).^2);
+      var_data = trace((c_noise - h_full).^2);
    else
       sig_data= norm( c_data ./ h_data - 1);
-      var_data = trace((1 - c_noise./ h_full).^2);
+      var_data = trace((c_noise./ h_full - 1).^2);
    end
 
    % calculate image 
    % Note, this won't work if the algorithm output is not zero biased
-   img0 = inv_solve( inv_model, h_data, c_data);
-   sig_img = VOL2*img0.elem_data.^2;
-   img0n= inv_solve( inv_model, h_full, c_noise);
-   var_img = sum(VOL2*img0n.elem_data.^2); % trace weighted by area
+      img0 = inv_solve( inv_model, h_data, c_data);
+      img0n= inv_solve( inv_model, h_full, c_noise);
+   if 0
+      VOL2= pp.VOLUME'.^2;
+      sig_img = VOL2*img0.elem_data.^2;
+      var_img = sum(VOL2*img0n.elem_data.^2); % trace weighted by area
+   else
+      if inv_model.fwd_model.normalize_measurements
+         sig_data= mean(abs(c_data - h_data));
+      else
+         sig_data= mean(abs( c_data ./ h_data - 1));
+      end
+      var_data= sqrt(var_data);
+
+      VOL = pp.VOLUME';
+      sig_img= VOL*img0.elem_data;
+      var_img = sqrt(sum(VOL.^2*img0n.elem_data.^2));
+   end
    
    NF = ( sig_data/ var_data ) / ( sig_img / var_img  );
-   eidors_msg('calculating NF=%f hp=%g', NF, hp, 3);
-keyboard
+   eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
 
    % For the record, the expression for var_img is derived as:
    % Equiv expresssions for var_img % given: A= diag(pp.VOLUME);
