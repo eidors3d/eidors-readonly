@@ -7,7 +7,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.26 2006-11-15 17:09:19 aadler Exp $
+% $Id: np_inv_solve.m,v 1.27 2006-11-17 00:40:03 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -32,9 +32,9 @@ else
 end
 
 if fwd_model.normalize_measurements
-   dva= 1 - data2 ./ data1;
+   dva= data2 ./ data1 - 1;
 else   
-   dva= data1 - data2;
+   dva= data2 - data1;
 end
 
 sol = one_step_inv * dva;

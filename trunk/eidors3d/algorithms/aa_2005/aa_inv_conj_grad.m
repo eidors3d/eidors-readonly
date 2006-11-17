@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_conj_grad.m,v 1.20 2005-12-14 16:33:24 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.21 2006-11-17 00:40:03 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -37,9 +37,9 @@ l_data= max( l_data1, l_data2 );
 dva= zeros(pp.n_meas, l_data);
 
 if pp.normalize
-   dva= 1 - data2 ./ data1;
+   dva= data2 ./ data1 - 1;
 else   
-   dva= data1 - data2;
+   dva= data2 - data1;
 end
 
 n_img= size(dva,2);

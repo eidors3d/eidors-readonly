@@ -22,7 +22,7 @@ function hparam= aa_calc_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_noise_figure.m,v 1.15 2006-11-07 13:33:02 aadler Exp $
+% $Id: aa_calc_noise_figure.m,v 1.16 2006-11-17 00:40:03 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -99,10 +99,10 @@ function NF = calc_noise_figure( inv_model, hp)
    c_noise = c_data*ones(1,d_len) + eye(d_len);
    h_full  = h_data*ones(1,d_len);
    if inv_model.fwd_model.normalize_measurements
-      sig_data= norm(h_data - c_data);
+      sig_data= norm(c_data - h_data);
       var_data = trace((h_full - c_noise).^2);
    else
-      sig_data= norm( 1 - c_data ./ h_data);
+      sig_data= norm( c_data ./ h_data - 1);
       var_data = trace((1 - c_noise./ h_full).^2);
    end
 

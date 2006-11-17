@@ -12,7 +12,7 @@ function img= time_prior_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_prior_solve.m,v 1.4 2006-11-07 13:34:55 aadler Exp $
+% $Id: time_prior_solve.m,v 1.5 2006-11-17 00:40:03 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;
@@ -35,9 +35,9 @@ end
 
 % TODO: account for normalized data
 if fwd_model.normalize_measurements
-   dva= 1 - data2 ./ data1;
+   dva= data2 ./ data1 - 1;
 else   
-   dva= data1 - data2;
+   dva= data2 - data1;
 end
 l_dva = size( dva, 2);
 

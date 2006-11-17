@@ -8,15 +8,15 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ab_tv_diff_solve.m,v 1.7 2006-11-07 13:35:35 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.8 2006-11-17 00:40:03 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
 
 if inv_model.fwd_model.normalize_measurements;
-   dva= 1 - data2 ./ data1;
+   dva= data2 ./ data1 - 1;
 else   
-   dva= data1 - data2;
+   dva= data2 - data1;
 end
 
 
