@@ -26,8 +26,23 @@ Use the following values for <tt>CVSROOT</tt>
 <br><tt>CVSROOT=:pserver:anonymous@eidors3d.cvs.sf.net:/cvsroot/eidors3d</tt>
 <li><b>Developer Access</b>: <i>Available to registered eidors3d developers</i>
 <br><tt>CVSROOT=:ext:<b>DEVELOPERNAME</b>@eidors3d.cvs.sf.net:/cvsroot/eidors3d</tt>
-
     </ul>
+
+    <H3>EIDORS Mailing List</H3>
+    <ul>
+<li> Send message to the mailing list at
+<a href="mailto:EIDORS3D@listserv.umist.ac.uk"
+               >EIDORS3D@listserv.umist.ac.uk</a>
+<li> To subscribe, send mail to
+<a href="mailto:LISTSERV@LISTSERV.UMIST.AC.UK"
+               >LISTSERV@LISTSERV.UMIST.AC.UK</a>
+with the body text <tt> SUBSCRIBE EIDORS3D </tt>
+<li> Mailing list archive is:
+<a href="http://listserv.umist.ac.uk/archives/eidors3d.html"
+        >http://listserv.umist.ac.uk/archives/eidors3d.html</a>
+    </ul>
+
+
 
     <H3>Becomming an EIDORS Developer</H3>
     <ol>
@@ -48,7 +63,7 @@ Use the following values for <tt>CVSROOT</tt>
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-25 21:38:28 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-18 18:48:29 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

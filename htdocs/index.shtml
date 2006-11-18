@@ -25,6 +25,8 @@ To try the EIDORS software, follow these steps:
 <li> Start Matlab (or Octave).
 
 <li> type: <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
+<br> (windows
+           <tt>&gt;&gt;run C:/path/to/eidors/startup.m</tt>)
 
 <li> Execute one of the sample programs in the
     <tt>/path/to/eidors/examples</tt>
@@ -46,7 +48,7 @@ interesting uses or modifications, please inform us.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-25 21:07:37 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-18 18:48:29 $ by $Author: aadler $
 </small>
 
 </body>
