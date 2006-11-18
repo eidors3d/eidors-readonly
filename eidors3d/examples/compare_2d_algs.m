@@ -23,7 +23,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.20 2006-11-17 14:53:26 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.21 2006-11-18 12:08:02 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -85,14 +85,14 @@ switch option
 
    case 3,
      inv2d.hyperparameter.func = @choose_noise_figure;
-     inv2d.hyperparameter.noise_figure= .5;
+     inv2d.hyperparameter.noise_figure= 2;
      inv2d.hyperparameter.tgt_elems= 1:4;
      inv2d.RtR_prior=   'aa_calc_image_prior';
      inv2d.solve=       'aa_inv_solve';
 
    case 3.1,
      inv2d.hyperparameter.func = @choose_noise_figure;
-     inv2d.hyperparameter.noise_figure= .5;
+     inv2d.hyperparameter.noise_figure= 2;
      inv2d.hyperparameter.tgt_elems= 1:4;
      inv2d.RtR_prior=   @laplace_image_prior;
      inv2d.solve=       'aa_inv_solve';

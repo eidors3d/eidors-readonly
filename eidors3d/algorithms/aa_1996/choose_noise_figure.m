@@ -17,7 +17,7 @@ function hparam= select_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: choose_noise_figure.m,v 1.2 2006-11-17 14:53:26 aadler Exp $
+% $Id: choose_noise_figure.m,v 1.3 2006-11-18 12:08:02 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -35,7 +35,7 @@ else
 end
 
 startpoint = -2;
-opts = optimset('tolX',1e-3);
+opts = optimset('tolX',1e-4);
 hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    
 NFtable = [NFtable; [reqNF, hparam] ];
