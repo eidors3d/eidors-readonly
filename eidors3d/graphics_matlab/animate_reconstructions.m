@@ -90,7 +90,7 @@ function mk_movie2(fname, imgs, clim, ref_lev)
        '%s convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
        ld_lib_path, dirname, fname ));
    if retval~=0
-       error('please ensure the imagemagick convert program is in your path');
+       error('please ensure the imagemagick convert program is in your path. Under windows the easist is to download from www.imagemagick.org/script/binary-releases.php');
    end
    rm_rf(dirname);
    fprintf('file %s.gif created (in current directory)\n',fname);
