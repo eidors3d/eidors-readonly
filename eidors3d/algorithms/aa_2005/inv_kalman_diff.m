@@ -7,15 +7,17 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 %
-% inv_model.inv_kalman_diff.sequence(1..nframes)
-%            => sequence(1..nframes).meas_no
-%            => sequence(1..nframes).time_delta (currently unused)
-%            => sequence indicates which data are provided at
-%               each frame (in order, starting with frame #1).
-%               if not provided, all data are available at each frame
+% if inv_model.fwd_model.stimulation(:).delta_time
+%   exists and is non_zero, then the kalman filter will
+%   be applied to each data measurement separately
+%
+% Note that the classic Kalman filter assumes that the
+%   time step between each measurement is constant
+%   (ie as part of the state update eqn). inv_kalman_diff
+%   cannot work with non-constant time steps
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.10 2006-11-17 00:40:03 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.11 2006-11-23 22:41:09 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -27,10 +29,23 @@ RtR = calc_RtR_prior( inv_model );
 Q   = calc_meas_icov( inv_model );
 hp  = calc_hyperparameter( inv_model );
 
-if isfield(inv_model,'inv_kalman_diff')
-   sequence= inv_model.inv_kalman_diff.sequence;
+if isfield(fwd_model.stimulation(1),'delta_time')
+   delta_time= inv_model.inv_kalman_diff.delta_time;
+   if diff(delta_time) ~= 0;
+      error('All time steps must be same for kalman filter');
+   end
 else
-   sequence.meas_no= 1:size(J,1); % all data all the time
+   delta_time=0;
+end
+
+% sequence is a vector location of each stimulation in the frame
+if delta_time == 0
+   sequence = size(J,1);
+else
+   for i=1:length(fwd_model.stimulation)
+      sequence(i) = size(fwd_model.stimulation(i).meas_pattern,2);
+   end
+   sequence= cumsum( sequence );
 end
 
 
@@ -81,24 +96,31 @@ x_k1_k1= x0;
 
 ll= size(y,2);
 x= zeros(n,ll);
+
+seq= [0;seq(:)];
 for i=1:ll
-   eidors_msg('inv_kalman_diff: iteration %d',i,2);
+   for ss= 2:length(seq);
+      eidors_msg('inv_kalman_diff: iteration %d.%d',i,ss-1,2);
 
-   % H is augmented matrix [J(x_k|k-1); RegI]
-   % need to account for sequence
-   seq_i= seq( rem(i-1,length(seq))+1 ).meas_no;
-   Jframe= J(seq_i,:); 
-   H_k1= [Jframe;RegI];
-   mm= size(Jframe,1);
+      % H is augmented matrix [J(x_k|k-1); RegI]
+      seq_i= (seq(ss-1)+1) : seq(ss);
+      H_k1= [J(seq_i,:);RegI];
+      yi= [y(seq_i,i); RegI_x0];
 
-   G= speye(n+mm)*scaling_const;
-   G(1:mm,1:mm) = RegM(seq_i,seq_i);
+      mm = length(seq_i);
+      G= speye(n+mm)*scaling_const;
+      G(1:mm,1:mm) = RegM(seq_i,seq_i);
+      [x_k1_k1, C_k1_k1] = kalman_step( x_k1_k1, C_k1_k1, ...
+                                        H_k1, yi, F_k, Q_k, G );
+      x(:,i) = x_k1_k1;
+   end
+end
 
-   % Update variables
-   C_k_k= C_k1_k1;
-   x_k_k= x_k1_k1;
-   % yi is [y_k; RegI*x0];
-   yi= [y(:,i); RegI_x0];
+function [x_k1_k1, C_k1_k1] = kalman_step( x_k_k, C_k_k, ...
+                                        H_k1, yi, F_k, Q_k, G )
+   %yi= [y_i; RegI_x0];
+
+   n= size(H_k1,2);
 
    % Prediction
    x_k1_k = F_k * x_k_k;
@@ -110,10 +132,6 @@ for i=1:ll
    x_k1_k1= x_k1_k + K_k1 * yerr; 
    C_k1_k1= (speye(n) - K_k1 * H_k1) * C_k1_k;
 %   C_k1_k1=  C_k1_k; - what is the effect of no update?
-
-   % Store output
-   x(:,i) = x_k1_k1;
-end
    
 
 function x= kalman_inv_cgls( J, RegM, RegI, y);
