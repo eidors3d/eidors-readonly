@@ -67,7 +67,7 @@ function mk_movie2(fname, imgs, clim, ref_lev)
    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
    cmap= colormap;
 
-   for i=1:length(imgs)
+   for i=1:size(out_img,3)
      imwrite(out_img(:,:,i),cmap, ...
             sprintf('%s/img%05d.png',dirname, i), 'png');
    end
