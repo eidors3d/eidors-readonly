@@ -21,7 +21,7 @@ In terms of design choices for EIDORS:<br>
 <pre>
   my_model.nodes= ... % add data here
   my_model.elems= ... % add data here
-  my_model.jacobian= 'my_jacobian_calc_function';
+  my_model.jacobian= @my_jacobian_calc_function;
   jj= calc_jacobian( my_model, ...
                 conductivites); % calls my_jacobian_calc_function
 </pre>
@@ -37,105 +37,9 @@ In terms of design choices for EIDORS:<br>
       representing the conductivity distribution at an instant.
       It is invisaged that data converter software be written to
       load from the various hardware systems into this format.
-      <table><tr>
-      <td colspan="2">
-        <b>Properties</b>:
-      <tr><td valign="top"><tt>data.name
-        </tt>
-      <td valign="top">
-        <i>string</i>
-        name of data (or empty string)
-
-       <tr><td valign="top"><tt>data.meas
-        </tt> <td valign="top">
-        <i>vector</i> (Num_meas &times; 1)
-        actual measured data, ordered as measurements for each
-        stimulation pattern
-
-       <tr><td valign="top"><tt>data.time
-        </tt> <td valign="top">
-        <i>scalar</i>
-        measurement start time in seconds since the epoch,
-        unknown=-1.
-        In Matlab this is given by <tt>time</tt>.
-
-       <tr><td valign="top"><tt>data.comment
-        </tt> <td valign="top">
-        <i>string</i>
-        comments on this measurement
-
-       <tr><td valign="top"><tt>data.fwd_model
-        </tt> <td valign="top">
-        EIDORS fwd_model
-
-        <!--
-        <i>EIDORS configuration structure</i>
-        <b>meas_config</b>
-        common to all measurements with
-        the same configuration
-        <p><b>Methods</b>:
-        None
-        -->
-      </table>
-
-        <!--
-      <p><li><b>
-          meas_config
-      </b><br>
-      this structure represents a given measurement configuration.
-      This would be created by a data reading function as it loads
-      the data from a file (or gets the input directly from the
-      hardware)
-      <ul>
-        <b>Properties</b>:
-        <li><tt>meas_config.name
-        </tt> &nbsp; &nbsp;
-        <i>string</i>
-        name of measurement configuration (or empty string)
-
-        <li><tt>meas_config.units
-        </tt> &nbsp; &nbsp;
-        <i>string</i>
-        measurement units (ie. volts)
-
-        <li><tt>meas_config.subject
-        </tt> &nbsp; &nbsp;
-        <i>string</i>
-        description of subject (or empty string)
-
-        <li><tt>meas_config.electrodes
-        </tt> &nbsp; &nbsp;
-        <i>vector</i> (Num_elec &times; 1)
-        vector of descripions of electrodes, where each electrode has
-
-        <ul>
-            <li><tt>electrode(index).position
-            </tt> &nbsp; &nbsp;
-            <i>vector</i> (x,y,z) position of centre of electrode
-            in units of <i>mm</i>
-
-            <li><tt>electrode(index).diameter
-            </tt> &nbsp; &nbsp;
-            <i>scalar</i> diameter of electrode in <i>mm</i>
-
-            <li><tt>electrode(index).diameter
-            </tt> &nbsp; &nbsp;
-            <i>scalar</i> diameter of electrode in <i>mm</i>
-
-            <li><tt>electrode(index).z_contact
-            </tt> &nbsp; &nbsp;
-            contact impedance (in &Omega;) may be complex
-        </ul>
-
-        <li><tt>meas_config.stimulation
-        </tt> &nbsp; &nbsp;
-        <i>vector</i> (Num_stim &times; 1)
-        stimulation patterns <b>stim_model</b>
-
-        <p><b>Methods</b>:
-        None
-      </ul>
-      -->
+<blockquote>
+<img src="obj_data.gif">
+</blockquote>
 
       <h4>
         fwd_model
@@ -143,312 +47,28 @@ In terms of design choices for EIDORS:<br>
       The EIDORS fwd_model represents the setup of the measurement
       configuration, including the medium geometry, electrode 
       position and locations, and stimulation patterns
-      <table><tr>
-      <td colspan="2">
-        <b>Properties</b>:
-
-       <tr><td valign="top"><tt>fwd_model.name
-        </tt> <td valign="top">
-        Model name (if known)
-
-       <tr><td valign="top"><tt>fwd_model.nodes
-        </tt> <td valign="top">
-        position of FEM nodes (<i>Nodes</i>&times;<i>Dims</i>)
-
-       <tr><td valign="top"><tt>fwd_model.elems
-        </tt> <td valign="top">
-        definition of FEM elements (<i>Elems</i>&times;<i>Dims+1</i>)
-        <br>Currently defined only for simplex element shapes
-        (i.e. each simplex element had dimentions + 1 nodes)
-
-       <tr><td valign="top"><tt>fwd_model.boundary
-        </tt> <td valign="top">
-        nodes of element faces on the medium surface
-
-       <tr><td valign="top"><tt>fwd_model.gnd_node
-        </tt> <td valign="top">
-        Number of node connected to ground
-
-       <tr><td valign="top"><tt>fwd_model.electrode
-        </tt> <td valign="top">
-        Vector <i>(Num_elecs &times;1)</i>
-           of electrode models (<b>elec_model</b>)
-
-       <tr><td valign="top"><tt>fwd_model.stimulation
-        </tt> <td valign="top">
-        Vector <i>(Num_Stim &times;1)</i> of stimulation
-        patterns (<b>stim_model</b>) (current in EIT)
-
-       <tr><td valign="top"><tt>fwd_model.<br>&nbsp;normalize_measurements
-        </tt> <td valign="top">
-        Do we do difference (v<sub>i</sub>&minus;v<sub>h</sub>) or
-        normalized difference
-
-       <tr><td valign="top"><tt>fwd_model.meas_select
-        </tt> <td valign="top">
-        measurement reduction (when not measuring on injection
-           electrodes, while given full data set)
- (v<sub>i</sub>&minus;v<sub>h</sub>)/v<sub>h</sub>?
-
-        <tr><td colspan="2">
-        <p><b>Methods</b>:
-
-       <tr><td valign="top"><tt>fwd_solve
-        </tt> <td valign="top">
-        Solve forward model to calculate measurements
-        <br>
-        <i>usage:</i><tt>
-          data = fwd_solve( fwd_model, image )
-        </tt>
-        <br> calls: <tt>fwd_model.solve</tt>
-
-       <tr><td valign="top"><tt>fwd_model.jacobian
-        </tt> <td valign="top">
-        Calculate Jacobian of fwd_model
-        <i>usage:</i><tt>
-          data = calc_jacobian( fwd_model, image )
-        </tt>
-        <br> calls: <tt>fwd_model.jacobian</tt>
-
-       <tr><td valign="top"><tt>fwd_model.system_mat
-        </tt> <td valign="top">
-        Calculate FEM System Matrix
-        <i>usage:</i><tt>
-          data = calc_jacobian( fwd_model, image )
-        </tt>
-        <br> calls: <tt>fwd_model.jacobian</tt>
-
-      </table>
-
-      <h4>
-        elec_model
-      </h4>
-      The elec_model describes each electrode
-      <table><tr>
-      <td colspan="2">
-        <b>Properties</b>
-
-       <tr><td valign="top"><tt>elec_model.name
-        </tt> <td valign="top">
-        Electrode name (optional)
-
-       <tr><td valign="top"><tt>elec_model.z_contact
-        </tt> <td valign="top">
-        contact impedance (in &Omega;) may be complex
-
-       <tr><td valign="top"><tt>elec_model.nodes
-        </tt> <td valign="top">
-        nodes to which this electrode is attached
-
-        <tr><td colspan="2">
-        <p><b>Methods</b>:
-        None
-      </table>
-
-      <h4>
-        stim_model
-      </h4>
-      Model of a stimulation pattern and accociated measurements
-      <table><tr>
-      <td colspan="2">
-        <b>Properties</b>:
-
-       <tr><td valign="top"><tt>stim_model.name
-        </tt> <td valign="top">
-        Stimulation name (optional)
-
-       <tr><td valign="top"><tt>stim_model.stimulation
-        </tt> <td valign="top">
-        Quantity stimulated (mA) in EIT, light in DOT
-
-       <tr><td valign="top"><tt>stim_model.time_increment
-        </tt> <td valign="top">
-        Time increment (in seconds) from the <tt>data.time</tt>
-        value. This is appropriate in reconstruction models
-        based on Kalman filtering, in which stimulation patterns
-        are serially applied.
-
-       <tr><td valign="top"><tt>stim_model.stim_pattern
-        </tt> <td valign="top">
-        Quantity of stimulation on each electrode
-        <i>(Num_elecs&times;1)</i>
-        in units of <tt>.stimulation</tt>
-
-       <tr><td valign="top"><tt>stim_model.meas_pattern
-        </tt> <td valign="top">
-        Measurements pattern for this stimulation
-        <i>(Num_meas&times;Num_elecs)</i>.
-        This is a sparse matrix of the contribution of
-        each electrode to the measurement.
-
-       <tr><td colspan="2">
-        <p><b>Methods</b>:
-        None
-      </table>
+<blockquote>
+<img src="objl_fwd_model.gif">
+</blockquote>
 
       <h4>
         inv_model
       </h4>
-      <table><tr>
-      <td colspan="2">
-        <b>Properties</b>:
-
-       <tr><td valign="top"><tt>inv_model.name
-        </tt> <td valign="top">
-        Model name (if known)
-
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;hyperparameter.func
-        </tt> <td valign="top">
-        function to call to set hyperparameter value
-
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;hyperparameter.value
-        </tt> <td valign="top">
-            specified value of hyperparameter (if 
-            <tt>inv_model.hyperparameter.func</tt> doesn't exist)
-
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;R_prior.func
-        </tt> <td valign="top">
-        function to calculate image prior
-
-        <tr><td valign="top"><tt>inv_model.
-                    <br>&nbsp;<i>alg_name</i>.
-                    <br>parameters
-        </tt> <td valign="top">
-        parameters to <tt>inv_model.<i>alg_name</i>.func</tt>
-        <br>
-        For example, parameters to <tt>np_image_prior</tt>
-        will be stored in <tt>inv_model.np_image_prior.parameter</tt>
-
-       <tr><td valign="top"><tt>inv_model.<br>&nbsp;RtR_prior.func
-        </tt> <td valign="top">
-        function to calculate image prior
-
-        <tr><td valign="top"><tt>inv_model.
-                    <br>&nbsp;parameters.<br>&nbsp;term_tolerance
-        </tt> <td valign="top">
-        termination tolerance for iterative algorithms
-        (or array of parameters, if appropriate)
-
-        <tr><td valign="top"><tt>inv_model.
-                    <br>&nbsp;paramters.
-                    <br>&nbsp;max_iterations
-        </tt> <td valign="top">
-        maximum number of iterations for iterative algorithms
-
-        <tr><td valign="top"><tt>inv_model.
-                    <br>&nbsp;paramters.
-                    <br>&nbsp;term_tolerance
-        </tt> <td valign="top">
-        termination tolerance (relative) for iterative algorithms
-
-       <tr><td valign="top"><tt>inv_model.type
-        </tt> <td valign="top">
-        'difference' or 'static'
-
-       <tr><td valign="top"><tt>inv_model.fwd_model
-        </tt> <td valign="top">
-        pointer to fwd_model structure
-
-       <tr><td colspan="2">
-        <p><b>Methods</b>:
-
-       <tr><td valign="top"><tt>inv_model.solve
-        </tt> <td valign="top">
-        Calculate image object:
-        <br>
-        <i>usage:</i><tt>
-          image = inv_solve( model_static, data )
-          <br><i>or</i>
-          image = inv_solve( model_diff, data_1, data_2 )
-        </tt>
-
-       <tr><td valign="top"><tt>inv_model.hyperparameter
-        </tt> <td valign="top">
-        Calculate hyperparameter using either a set value 
-        or one of the standard techniques (L-curve, etc.)
-        <i>usage:</i><tt>
-          data = calc_hyperparameter( inv_model )
-        </tt>
-        <br> calls: <tt>fwd_model.hyperparameter.func</tt>
-             or: <tt>fwd_model.hyperparameter.value</tt>
-
-       <tr><td valign="top"><tt>inv_model.meas_icov
-        </tt> <td valign="top">
-        Calculate inv(covariance) of measurements
-        Normally this is a diagonal matrix with 1/var for each meas channel
-        <i>usage:</i><tt>
-          data = calc_meas_icov( inv_model )
-        </tt>
-        <br> calls: <tt>fwd_model.meas_icov.func</tt>
-
-       <tr><td valign="top"><tt>inv_model.R_prior
-        </tt> <td valign="top">
-        Calculate regulularization matrix R. R is typically used
-        to generate the expression
-        <center>
-        ||<b>Hx</b>-<b>y</b>|| + ||<b>R</b>(<b>x</b>-<b>x</b><sub>0</sub>)||
-        </center>
-        <i>usage:</i><tt>
-          data = calc_R_prior( inv_model )
-        </tt>
-        <br> calls: <tt>fwd_model.R_prior.func</tt>
-        <br>
-        If the <tt>fwd_model.R_prior.func</tt> is not provided
-        EIDORS will attempt to generate is from 
-        <tt>fwd_model.RtR_prior.func</tt>. This may generate an
-        error if RtR is rank deficient.
-
-       <tr><td valign="top"><tt>inv_model.RtR_prior
-        </tt> <td valign="top">
-        Calculate regulularization matrix RtR=R<sup><i>t</i></sup>R.
-        R is typically used
-        to generate the expression
-        <center>
-        ||<b>Hx</b>-<b>y</b>|| + ||<b>R</b>(<b>x</b>-<b>x</b><sub>0</sub>)||
-        </center>
-        <i>usage:</i><tt>
-          data = calc_RtR_prior( inv_model )
-        </tt>
-        <br> calls: <tt>fwd_model.RtR_prior.func</tt>
-        If the <tt>fwd_model.RtR_prior.func</tt> is not provided
-        EIDORS will generate it from <i>R'*R</i>
-
-      </table>
+<blockquote>
+<img src="obj_inv_model.gif">
+</blockquote>
 
       <h4>
         image
       </h4>
-      <table>
-       <tr><td colspan="2">
-        <b>Properties</b>:
-
-       <tr><td valign="top"><tt>image.name
-        </tt> <td valign="top">
-        name of image (optional)
-
-       <tr><td valign="top"><tt>image.elem_data
-        </tt> <td valign="top">
-        data for each element
-
-        <!--
-       <tr><td valign="top"><tt>image.type
-        </tt> <td valign="top">
-        real, complex, tensor?
-        -->
-
-       <tr><td valign="top"><tt>image.fwd_model
-        </tt> <td valign="top">
-        pointer to fwd_model
-
-       <tr><td colspan="2">
-        <p><b>Methods</b>:
-        None
-      </table>
+<blockquote>
+<img src="obj_image.gif">
+</blockquote>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2005-12-07 22:54:10 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-23 19:51:58 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
