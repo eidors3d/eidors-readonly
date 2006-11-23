@@ -17,7 +17,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %   cannot work with non-constant time steps
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.12 2006-11-23 23:12:50 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.13 2006-11-23 23:30:50 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -30,7 +30,7 @@ Q   = calc_meas_icov( inv_model );
 hp  = calc_hyperparameter( inv_model );
 
 if isfield(fwd_model.stimulation(1),'delta_time')
-   delta_time= inv_model.inv_kalman_diff.delta_time;
+   delta_time= [fwd_model.stimulation(:).delta_time];
    if diff(delta_time) ~= 0;
       error('All time steps must be same for kalman filter');
    end
@@ -43,7 +43,7 @@ if delta_time == 0
    sequence = size(J,1);
 else
    for i=1:length(fwd_model.stimulation)
-      sequence(i) = size(fwd_model.stimulation(i).meas_pattern,2);
+      sequence(i) = size(fwd_model.stimulation(i).meas_pattern,1);
    end
    sequence= cumsum( sequence );
 end
