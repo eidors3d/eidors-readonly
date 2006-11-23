@@ -17,7 +17,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %   cannot work with non-constant time steps
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.11 2006-11-23 22:41:09 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.12 2006-11-23 23:12:50 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -98,6 +98,7 @@ ll= size(y,2);
 x= zeros(n,ll);
 
 seq= [0;seq(:)];
+iter=0;
 for i=1:ll
    for ss= 2:length(seq);
       eidors_msg('inv_kalman_diff: iteration %d.%d',i,ss-1,2);
@@ -112,7 +113,8 @@ for i=1:ll
       G(1:mm,1:mm) = RegM(seq_i,seq_i);
       [x_k1_k1, C_k1_k1] = kalman_step( x_k1_k1, C_k1_k1, ...
                                         H_k1, yi, F_k, Q_k, G );
-      x(:,i) = x_k1_k1;
+      iter=iter+1;
+      x(:,iter) = x_k1_k1;
    end
 end
 
