@@ -15,7 +15,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.20 2006-11-17 13:59:25 aadler Exp $
+% $Id: move_the_ball.m,v 1.21 2006-11-24 02:31:50 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane')
@@ -32,31 +32,34 @@ fname ='tank_for_kalman_test_ball_';
 
 % control mesh refinement
 %  finelevel= '-veryfine';
-%  finelevel= '-fine';
-   finelevel= '';
+   finelevel= '-fine';
+%  finelevel= '';
 
 %refine_electrodes= 50;
 refine_electrodes= 10;
 tank_radius= 15;
 tank_height= 30;
 
+electrode_width = 1.5;
+electrode_height= 1.5;
+rect_or_circ_electrode= 'C';
+
 % number of simulations to do;
 fno_max= 100;
 
 first_plane_starts= tank_height/(number_of_planes+1);
+height_between_centres = first_plane_starts;
 
 [tank_mdl1,centres] = create_tank_mesh_ng( ...
-                        tank_radius, ...
-                        tank_height, ...
-                        'R', ... % rect_electrodes
-                        log2(electrodes_per_plane), ...
-                        number_of_planes, ...
-                        first_plane_starts, ...
-                        10, ... % height_between_centres
-                        1.5, ... % electrode_width
-                        1.5, ... % electrode_height
-                        [fname,'0000'], ...
-                        refine_electrodes  );
+   tank_radius, tank_height, ...
+   rect_or_circ_electrode, ...
+   log2(electrodes_per_plane), ...
+   number_of_planes, ...
+   first_plane_starts, ...
+   height_between_centres, ...
+   electrode_width, electrode_height, ...
+   [fname,'0000'], ...
+   refine_electrodes  );
 msz_file= [fname,'0000.msz'];
 
 
