@@ -18,7 +18,7 @@ function NF = calc_noise_figure( inv_model, hp)
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_noise_figure.m,v 1.4 2006-11-24 04:04:56 aadler Exp $
+% $Id: calc_noise_figure.m,v 1.5 2006-11-24 04:21:27 aadler Exp $
 
 % A 'proper' definition of noise power is:
 %      NF = SNR_z / SNR_x
@@ -40,6 +40,12 @@ function NF = calc_noise_figure( inv_model, hp)
    if nargin>1
       inv_model= rmfield(inv_model,'hyperparameter');
       inv_model.hyperparameter.value= hp;
+   else
+      try
+         hp = inv_model.hyperparameter.value;
+      catch
+         np = NaN;
+      end
    end
    if isfield(inv_model.hyperparameter,'func')
       if inv_model.hyperparameter.func == 'choose_noise_figure'
@@ -134,7 +140,18 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
       error('Dont know how to calculate TV noise figure')
 
    case 'inv_kalman_diff'
-      error('Dont know how to calculate KF noise figure')
+      inv_model.inv_kalman_diff.keep_K_k1= 1;
+      stablize = 6;
+      img0 = inv_solve( inv_model, h_data, ...
+                                   c_data*ones(1,stablize) );
+      K= img0.inv_kalman_diff.K_k1;
+      if inv_model.fwd_model.normalize_measurements
+         img0.elem_data = K*( c_data  - h_data );
+         img0n.elem_data= K*( c_noise - h_full );
+      else
+         img0.elem_data = K*( c_data ./ h_data - 1 );
+         img0n.elem_data= K*( c_noise./ h_full - 1 );
+      end
 
    otherwise
       img0 = inv_solve( inv_model, h_data, c_data);
