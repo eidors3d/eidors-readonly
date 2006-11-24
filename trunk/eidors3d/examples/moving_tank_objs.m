@@ -29,7 +29,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.19 2006-11-24 01:02:14 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.20 2006-11-24 17:49:37 aadler Exp $
 
 clim= [];
 
@@ -137,13 +137,13 @@ switch inv_sel
     case 2
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.RtR_prior= @noser_image_prior;
         imdl.solve= 'inv_kalman_diff';
 
     case 2.1
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
+        imdl.RtR_prior= @noser_image_prior;
         imdl.solve= 'inv_kalman_diff';
 
     case 3
@@ -154,7 +154,7 @@ switch inv_sel
 
     case 4
         imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 3e-2;
+        imdl.hyperparameter.value= 3e-1;
         time_steps= 0;
 
         imdl.RtR_prior= @time_smooth_prior;
@@ -225,17 +225,12 @@ switch inv_sel
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= @laplace_image_prior;
         imdl.solve= @inv_kalman_diff;
-        for i=1:16;
-           imdl.inv_kalman_diff.sequence(i).meas_no= (i-1)*13+(1:13);
-        end
-        imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
-        imdl.fwd_model.normalize=0;
+        [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
 
-    case 14.1
-        vi = sub_frame(vi,vh);
-        vh = zeros(length(vi(1).meas),1);
+        vi = extract_subframes(vi,4);
 
-        imdl= mk_common_model('c2c',16);
+    case 14
+        imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 3e-1;
         time_steps= 3;
 
@@ -248,11 +243,9 @@ switch inv_sel
         imdl.solve= @time_prior_solve;
         imdl.time_prior_solve.time_steps=   time_steps;
 
-        for i=1:16;
-           imdl.time_prior_solve.sequence(i).meas_no= (i-1)*13+(1:13);
-        end
-        imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
-        imdl.fwd_model.normalize=0;
+        [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
+
+        vi = extract_subframes(vi,4);
 
     otherwise
         error(['inv_sel (' inv_sel ') not recognized']);
