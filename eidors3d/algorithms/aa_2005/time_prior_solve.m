@@ -11,8 +11,12 @@ function img= time_prior_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
+% TODO: This function really should be calling the proper
+%   prior calculator functions, and not reimplementing
+%   them internally
+
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_prior_solve.m,v 1.5 2006-11-17 00:40:03 aadler Exp $
+% $Id: time_prior_solve.m,v 1.6 2006-11-24 17:49:32 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;
@@ -33,7 +37,6 @@ else
     eidors_msg('time_prior_solve: setting cached value', 2);
 end
 
-% TODO: account for normalized data
 if fwd_model.normalize_measurements
    dva= data2 ./ data1 - 1;
 else   
@@ -81,21 +84,20 @@ function one_step_inv= data_form( inv_model, J );
     time_weight= inv_model.time_smooth_prior.time_weight;
     ts         = inv_model.time_prior_solve.time_steps;
 
-    if isfield(inv_model.time_prior_solve,'inv_kalman_diff')
-       sequence= inv_model.time_prior_solve.sequence;
-    else
-       sequence.meas_no= 1:size(J,1); % all data all the time
-    end
-
     space_Reg= feval(space_prior, inv_model);
 
     iRtRJt_frac=  (space_Reg\J');
     JiRtRJt_frac= J*iRtRJt_frac;
 
+    delta_vec= calc_delta( inv_model, J);
+    delta_vec1= delta_vec*ones(1,length(delta_vec));
+    JiRtRJt_mult = time_weight.^abs(delta_vec1 - delta_vec1');
+
     [x,y]= meshgrid(-ts:ts,  -ts:ts);
     time_w_mat= time_weight.^abs(x-y);
 
-    JiRtRJt= kron( time_w_mat, JiRtRJt_frac );
+
+    JiRtRJt= kron( time_w_mat, JiRtRJt_frac .* JiRtRJt_mult );
     iRtRJt=  kron( time_w_mat(ts+1,:), iRtRJt_frac );
 
     iW   = kron( speye(1+2*ts), inv( ...
@@ -103,3 +105,40 @@ function one_step_inv= data_form( inv_model, J );
     hp   = calc_hyperparameter( inv_model );
 
     one_step_inv= iRtRJt/(JiRtRJt +  hp^2*iW);
+
+function delta_vec= calc_delta( inv_model, J)
+   stimulation= inv_model.fwd_model.stimulation;
+   n_N= size(J,1);
+
+   if isfield(stimulation(1),'delta_time')
+      delta_time= [stimulation(:).delta_time];
+      if diff(delta_time) ~= 0;
+         error('All time steps must be same for kalman filter');
+      end
+   else
+      delta_time=0;
+   end
+
+   % sequence is a vector location of each stimulation in the frame
+   if delta_time == 0
+      seq= size(J,1);
+   else
+      for i=1:length(stimulation)
+         seq(i) = size(stimulation(i).meas_pattern,1);
+      end
+      seq= cumsum( seq );
+   end
+
+   delta_time= cumsum(delta_time);
+
+   delta_vec= zeros(size(J,1),1);
+   seq= [0;seq(:)];
+   for i=1:length(seq)-1
+      delta_vec( (seq(i)+1):seq(i+1) )= delta_time(i);
+   end
+
+   % normalize so middle time is centre, and max time is 1
+   delta_vec= (delta_vec - mean(delta_vec)) / ...
+              (sum(delta_time) + eps );
+
+   
