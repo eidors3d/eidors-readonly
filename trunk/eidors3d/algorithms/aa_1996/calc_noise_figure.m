@@ -18,7 +18,7 @@ function NF = calc_noise_figure( inv_model, hp)
 % NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_noise_figure.m,v 1.3 2006-11-18 12:08:02 aadler Exp $
+% $Id: calc_noise_figure.m,v 1.4 2006-11-24 04:04:56 aadler Exp $
 
 % A 'proper' definition of noise power is:
 %      NF = SNR_z / SNR_x
@@ -81,8 +81,8 @@ function NF = calc_noise_figure( inv_model, hp)
 
    % calculate image 
    % Note, this won't work if the algorithm output is not zero biased
-      img0 = inv_solve( inv_model, h_data, c_data);
-      img0n= inv_solve( inv_model, h_full, c_noise);
+   [img0, img0n] = get_images( inv_model, h_data, c_data, ...
+                               h_full, c_noise);
 
       VOL = pp.VOLUME';
       sig_img= VOL*abs(img0.elem_data);
@@ -119,3 +119,24 @@ function [h_data, c_data]= simulate_targets( fwd_model, ctr_elems)
    img.elem_data = sigma;
    c_data=fwd_solve( img );
    c_data= c_data.meas;
+
+function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
+                               h_full, c_noise);
+   if isa(inv_model.solve,'function_handle')
+      solve= func2str(inv_model.solve);
+   else
+      solve= inv_model.solve;
+   end
+
+% Test for special functions and solve them specially
+   switch solve
+   case 'ab_tv_diff_solve'
+      error('Dont know how to calculate TV noise figure')
+
+   case 'inv_kalman_diff'
+      error('Dont know how to calculate KF noise figure')
+
+   otherwise
+      img0 = inv_solve( inv_model, h_data, c_data);
+      img0n= inv_solve( inv_model, h_full, c_noise);
+   end
