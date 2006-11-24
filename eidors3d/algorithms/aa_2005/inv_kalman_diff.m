@@ -15,9 +15,13 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %   time step between each measurement is constant
 %   (ie as part of the state update eqn). inv_kalman_diff
 %   cannot work with non-constant time steps
+%
+% if inv_model.inv_kalman_diff.keep_K_k1 = 1
+%  then img outputs img.inv_kalman_diff.K_k1 = K_k1
+%  this can be used to estimate noise properties
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.14 2006-11-24 03:30:56 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.15 2006-11-24 04:04:56 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -55,7 +59,7 @@ else
    dva= data2 - data1;
 end
 
- sol = kalman_inv( J, hp^2*Q, RtR, dva, sequence );
+[sol, K_k1] = kalman_inv( J, hp^2*Q, RtR, dva, sequence );
 
 % create a data structure to return
 img.name= 'solved by inv_kalman_diff';
@@ -63,16 +67,24 @@ img.elem_data = sol;
 img.inv_model= inv_model;
 img.fwd_model= fwd_model;
 
-% Kalman filter
+try % keep parameter if requested
+   if inv_model.inv_kalman_diff.keep_K_k1
+      img.inv_kalman_diff.K_k1 = K_k1
+   end
+end
+
+% Kalman filter - estimates x where z_k = H_k*x_k + noise
 % J - Jacobian NxM
 % RegM - Regularization on the Measurements
 % RegI - Regularization on the Image
 % y is vector of measurements
 % seq is sequence vector
 %
-% The Kalman filter estimates x where z_k = H_k*x_k + noise
-% For a regularized model we need z_k = [y;0];H_k = [J;hp*R]
-function x= kalman_inv( J, RegM, RegI, y, seq);
+% K_k1 is the linearized reconstruction matrix for
+%   the final step. It can be used to estimate noise
+%   properties of the algorithm 
+%
+function [x, K_k1]= kalman_inv( J, RegM, RegI, y, seq);
 %x = (J'*RegM*J + RegI )\J'*RegM*y; return;
 %Notation x_k1_k is x_{k+1|k}
 
@@ -106,15 +118,17 @@ for i=1:ll
       H_k1= J(seq_i,:);
       yi= y(seq_i,i);
       G = RegM(seq_i,seq_i);
-      [x_k1_k1, C_k1_k1] = kalman_step( x_k1_k1, C_k1_k1, ...
-                                        H_k1, yi, F_k, Q_k, G );
+      [x_k1_k1, C_k1_k1, K_k1] = ...
+             kalman_step( x_k1_k1, C_k1_k1, ...
+                          H_k1, yi, F_k, Q_k, G );
       iter=iter+1;
       x(:,iter) = x_k1_k1;
    end
 end
 
-function [x_k1_k1, C_k1_k1] = kalman_step( x_k_k, C_k_k, ...
-                                        H_k1, yi, F_k, Q_k, G )
+function [x_k1_k1, C_k1_k1, K_k1] = ...
+                  kalman_step( x_k_k, C_k_k, ...
+                               H_k1, yi, F_k, Q_k, G )
    n= size(H_k1,2);
 
    % Prediction
