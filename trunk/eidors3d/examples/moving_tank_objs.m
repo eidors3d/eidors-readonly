@@ -24,12 +24,12 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   inv_sel = 2   => inv_kalman_diff
 %
 % options (not changed if value is NaN);
-%   options(1) - hyperparameter
+%   options(1) - noise figure
 %   options(2) - time_steps
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.18 2006-11-24 00:36:15 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.19 2006-11-24 01:02:14 aadler Exp $
 
 clim= [];
 
@@ -158,7 +158,8 @@ switch inv_sel
         time_steps= 0;
 
         imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @laplace_image_prior;
+        imdl.time_smooth_prior.space_prior= @noser_image_prior;
+        imdl.noser_image_prior.exponent= .5;
         imdl.time_smooth_prior.time_weight= .04;
         imdl.time_smooth_prior.time_steps=  time_steps;
 
@@ -260,7 +261,10 @@ end
 % options
 if nargin>=3
    if length(options) >=1 if ~isnan(options(1))
-         imdl.hyperparameter.value= options(1);
+      imdl= rmfield(imdl,'hyperparameter');
+      imdl.hyperparameter.func= @choose_noise_figure;
+      imdl.hyperparameter.tgt_elems= [1:4];
+      imdl.hyperparameter.noise_figure= options(1);
          filename = sprintf('%s-hp=%g', filename, options(1));
    end; end
    if length(options) >=2 if ~isnan(options(2))
@@ -293,15 +297,7 @@ animate_reconstructions(filename, imgs, clim);
 %
 % Hardcoded for 16 electrode 2D adjacent stimulation
 function ve= extract_subframes( vv, subseq)
-   if isstruct(vv);
-      vv= [vv(:).meas];
-   end
-   [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
-
-   % thow away measurements at current elecs if needed
-   if size(vv,1)==size(els,1)
-      vv= vv(els,:);
-   end
+   vv= remove_curr_elecs(vv);
 
    ve= zeros( size(vv,1), floor(size(vv,2)*subseq/16) );
    dst=0; src=0;
@@ -329,6 +325,8 @@ function ve= extract_subframes( vv, subseq)
 % Hardcoded for 16 electrode 2D adjacent stimulation
 
 function ve = repack_subframes(vv,subseq);
+   vv= remove_curr_elecs(vv);
+
    % duplicate first and last 
    ve= zeros( size(vv,1), floor(size(vv,2)*16/subseq) );
    vv= vv(:,[1:end,end]);
@@ -339,5 +337,17 @@ function ve = repack_subframes(vv,subseq);
          pat(13*k + (1:13)) = pat(13*k + (1:13)) + 208;
       end
       ve(:,i) = vv(pat);
+   end
+
+
+function vv= remove_curr_elecs(vv)
+   if isstruct(vv);
+      vv= [vv(:).meas];
+   end
+   [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
+
+   % thow away measurements at current elecs if needed
+   if size(vv,1)==size(els,1)
+      vv= vv(els,:);
    end
 
