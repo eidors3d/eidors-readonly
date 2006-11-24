@@ -29,7 +29,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.17 2006-08-26 21:35:12 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.18 2006-11-24 00:36:15 aadler Exp $
 
 clim= [];
 
@@ -60,6 +60,12 @@ if isnumeric(data_sel) & size(data_sel)==[1,1]
         load iirc_data_2006
         vh= v_reference;
         vi= v_rotate(:,1:30);
+        filename= 'iirc-around-clean';
+
+    case 22.1
+        load iirc_data_2006
+        vh= v_reference;
+        vi= v_rotate(:,1:10);
         filename= 'iirc-around-clean';
 
     case 23
@@ -187,37 +193,33 @@ switch inv_sel
         imdl.time_prior_solve.time_steps=   time_steps;
 
     case 11
-        vv = sub_frame(vi);
-        vi = repack_frame(vv);
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'np_inv_solve';
 
+        vi = extract_subframes(vi,4);
+        vi = repack_subframes(vi,4);
+
     case 11.1
-        vv = sub_frame(vi);
-        vi = repack_frame(vv);
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= 'laplace_image_prior';
         imdl.solve= 'np_inv_solve';
 
+        vi = extract_subframes(vi,4);
+        vi = repack_subframes(vi,4);
+
     case 12
-        vi = sub_frame(vi,vh);
-        vh = zeros(length(vi(1).meas),1);
         imdl= mk_common_model('b2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= @laplace_image_prior;
         imdl.solve= @inv_kalman_diff;
-        for i=1:16;
-           imdl.inv_kalman_diff.sequence(i).meas_no= (i-1)*13+(1:13);
-        end
-        imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
-        imdl.fwd_model.normalize=0;
+        [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
+
+        vi = extract_subframes(vi,4);
 
     case 12.1
-        vi = sub_frame(vi,vh);
-        vh = zeros(length(vi(1).meas),1);
         imdl= mk_common_model('c2c',16);
         imdl.hyperparameter.value= 1e-2;
         imdl.RtR_prior= @laplace_image_prior;
@@ -277,60 +279,65 @@ imgs= inv_solve(imdl,vi,vh);
 fprintf('solve time=%f\n',cputime-t);
 animate_reconstructions(filename, imgs, clim);
 
-% simulate condition where frame changes for each
-% stimulation. Thus each frame data represents
-% a different stimulation pattern
-%
-% if both vi and vh are provided, calculate difference
-%  signal
-%
-% Hardcoded for 16 electrode 2D adjacent stimulation
-function vv= sub_frame(vi,vh)
-   if ~isstruct(vi);
-      viold= vi; vi=struct;
-      [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
-      for i=1:size(viold,2)
-         vi(i).meas= viold(els,i);
-         vi(i).name= 'unknown';
-      end
-      if nargin==2
-         vh = struct('meas', vh(els,1));
-      end
-   end
-
-   ne= 16; % nelectrodes
-   na= ne-3; % data per frame (adjacent)
-   for i=1:length(vi)
-      f=rem(i-1,ne)+1; %extract jth frame
-      idx= (f-1)*na+( 1:na );
-      if nargin==1
-         meas= double( vi(i).meas(idx) );
-      else
-         meas= double( vi(i).meas(idx) ) -  ...
-               double( vh(1).meas(idx) );
-      end
-      vv(i) = eidors_obj('data',vi(i).name, ...
-           'configuration', sprintf('Data from %dth stimulation',j), ...
-           'meas', meas);
-   end
-
-% native reconstruction will simply push data 
-% back together from different frames
+% original = [ 1.1 2.1 3.1 4.1 5.1
+%              1.2 2.2 3.2 4.2 5.2
+%              1.3 2.3 3.3 4.3 5.3
+%              1.4 2.4 3.4 4.4 5.4
+%              1.5 2.5 3.5 4.5 5.5  ] 
+% subseq = 2
+% output   = [ 1.1 3.1 
+%              1.2 4.2 
+%              2.3 4.3 
+%              2.4 5.4 
+%              3.5 5.5 ] 
 %
 % Hardcoded for 16 electrode 2D adjacent stimulation
-
-function vv = repack_frame(vi);
-   vv= vi;
-   l_vi= length(vi);
-   ne= 16; % nelectrodes
-   na= ne-3; % data per frame (adjacent)
-   for i=1:l_vi
-      meas= NaN*ones(ne*na,1); % Nan's will be replaced
-      offset= (1:ne) - min(ne/2,i) + min(l_vi-i-ne/2, 0);
-      for j= i+offset;
-         f=rem(j-1,ne)+1; %extract jth frame
-         idx= (f-1)*na+( 1:na );
-         meas(idx) = vi(j).meas;
-      end
-      vv(i).meas= meas;
+function ve= extract_subframes( vv, subseq)
+   if isstruct(vv);
+      vv= [vv(:).meas];
    end
+   [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
+
+   % thow away measurements at current elecs if needed
+   if size(vv,1)==size(els,1)
+      vv= vv(els,:);
+   end
+
+   ve= zeros( size(vv,1), floor(size(vv,2)*subseq/16) );
+   dst=0; src=0;
+   for k=0:16*size(ve,2)-1;
+      pat = (1:13) + 13*rem(k,16);
+      if 0==rem(k,16);     dst= dst+1; end
+      if 0==rem(k,subseq); src= src+1; end
+      ve(pat,dst) = vv(pat, src);
+   end
+
+
+% original = [ 1.1 2.1 3.1 4.1 5.1
+%              1.2 2.2 3.2 4.2 5.2
+%              1.3 2.3 3.3 4.3 5.3
+%              1.4 2.4 3.4 4.4 5.4
+%              1.5 2.5 3.5 4.5 5.5  ] 
+% subseq = 2
+%
+% output   = [ 1.1 2.1 2.1 3.1 3.1 
+%              1.2 2.2 2.2 2.2 3.2 
+%              1.3 1.3 2.3 2.3 3.3 
+%              1.4 1.4 2.4 2.4 2.4 
+%              1.5 1.5 1.5 3.5 3.5 ] 
+%
+% Hardcoded for 16 electrode 2D adjacent stimulation
+
+function ve = repack_subframes(vv,subseq);
+   % duplicate first and last 
+   ve= zeros( size(vv,1), floor(size(vv,2)*16/subseq) );
+   vv= vv(:,[1:end,end]);
+   dst=0; src=0;
+   pat = (1:208)';
+   for i=1:size(ve,2)
+      for k=rem(subseq*i + (-subseq:-1),16);
+         pat(13*k + (1:13)) = pat(13*k + (1:13)) + 208;
+      end
+      ve(:,i) = vv(pat);
+   end
+
