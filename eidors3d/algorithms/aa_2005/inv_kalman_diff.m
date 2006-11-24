@@ -17,7 +17,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %   cannot work with non-constant time steps
  
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.13 2006-11-23 23:30:50 aadler Exp $
+% $Id: inv_kalman_diff.m,v 1.14 2006-11-24 03:30:56 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -55,9 +55,7 @@ else
    dva= data2 - data1;
 end
 
- sol = kalman_inv( J, Q, hp^2*RtR, dva, sequence );
-%R= calc_R_prior(inv_model);
-%sol = kalman_inv_cgls( J, Q, hp^2*R, dva );
+ sol = kalman_inv( J, hp^2*Q, RtR, dva, sequence );
 
 % create a data structure to return
 img.name= 'solved by inv_kalman_diff';
@@ -71,31 +69,30 @@ img.fwd_model= fwd_model;
 % RegI - Regularization on the Image
 % y is vector of measurements
 % seq is sequence vector
+%
+% The Kalman filter estimates x where z_k = H_k*x_k + noise
+% For a regularized model we need z_k = [y;0];H_k = [J;hp*R]
 function x= kalman_inv( J, RegM, RegI, y, seq);
 %x = (J'*RegM*J + RegI )\J'*RegM*y; return;
 %Notation x_k1_k is x_{k+1|k}
- 
 
 % n is nmeas, m is ndata
 [m,n]=  size(J);
-% G (Gamma) is blockdiag [RegM, I]
-scaling_const=1; % FIXME: what is this const?
 
 % F is the state transition matrix (I for random walk)
 F_k= speye(n);
 % Q is state noise covariance (model with I)
-Q_k= speye(n);
+Q_k= RegI;
 
-% Initial C estimate. It is unitless, so no scale factor
+% Initial error covariance estimate.
 C_k1_k1= speye(n);
 
 % mean x_priori image - assume 0
 x0= zeros(n,1);
-RegI_x0= RegI*x0;
 x_k1_k1= x0;
 
 ll= size(y,2);
-x= zeros(n,ll);
+x= zeros(n,ll*length(seq));
 
 seq= [0;seq(:)];
 iter=0;
@@ -103,14 +100,12 @@ for i=1:ll
    for ss= 2:length(seq);
       eidors_msg('inv_kalman_diff: iteration %d.%d',i,ss-1,2);
 
-      % H is augmented matrix [J(x_k|k-1); RegI]
       seq_i= (seq(ss-1)+1) : seq(ss);
-      H_k1= [J(seq_i,:);RegI];
-      yi= [y(seq_i,i); RegI_x0];
 
-      mm = length(seq_i);
-      G= speye(n+mm)*scaling_const;
-      G(1:mm,1:mm) = RegM(seq_i,seq_i);
+% The Kalman filter doesn't need the regularization at all
+      H_k1= J(seq_i,:);
+      yi= y(seq_i,i);
+      G = RegM(seq_i,seq_i);
       [x_k1_k1, C_k1_k1] = kalman_step( x_k1_k1, C_k1_k1, ...
                                         H_k1, yi, F_k, Q_k, G );
       iter=iter+1;
@@ -120,8 +115,6 @@ end
 
 function [x_k1_k1, C_k1_k1] = kalman_step( x_k_k, C_k_k, ...
                                         H_k1, yi, F_k, Q_k, G )
-   %yi= [y_i; RegI_x0];
-
    n= size(H_k1,2);
 
    % Prediction
@@ -133,7 +126,6 @@ function [x_k1_k1, C_k1_k1] = kalman_step( x_k_k, C_k_k, ...
    yerr   = yi - H_k1 * x_k1_k;
    x_k1_k1= x_k1_k + K_k1 * yerr; 
    C_k1_k1= (speye(n) - K_k1 * H_k1) * C_k1_k;
-%   C_k1_k1=  C_k1_k; - what is the effect of no update?
    
 
 function x= kalman_inv_cgls( J, RegM, RegI, y);
