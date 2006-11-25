@@ -50,9 +50,14 @@
             eidors_cache clear new timestamp
              (ie to delete intermediate calcs: moving ball)
 
+    - code to calculate BR and position of an image
+
 - Bugs
     - fwd_model.stimulation.meas_pattern is transposed wrt the 
       documentation. Fix one or the other
+    - The code in time_prior_solve is somewhat disorganized;
+      it really should use calc_JiRtRJt, but this function
+      needs to be thought out properly, too.
 
 - Generate some lung imaging examples
     - 2x8 in 3D?
@@ -88,7 +93,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-23 23:29:54 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-25 11:19:09 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
