@@ -1,0 +1,24 @@
+<!--#include virtual="nav-sidebar.shtml" -->
+<h2> 
+Netgen Models in EIDORS
+</h2>
+
+<h3> 
+</h3>
+
+Since these simulations generally take a long time,
+the following simulations are precalculated in EIDORS (ver&ge;3.2)
+
+Moving balls with a single plane of round electrodes
+<pre>
+<!--#include virtual="tutorial052a.m" -->
+</pre>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2006-11-26 01:01:55 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
