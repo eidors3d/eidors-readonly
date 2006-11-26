@@ -23,13 +23,16 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   inv_sel = 1.1 => aa_inv_solve (576 elems)
 %   inv_sel = 2   => inv_kalman_diff
 %
+%   if inv_sel is a inv_model structure, then use it to
+%   do reconstructions.
+%
 % options (not changed if value is NaN);
 %   options(1) - noise figure
 %   options(2) - time_steps
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.20 2006-11-24 17:49:37 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.21 2006-11-26 01:02:51 aadler Exp $
 
 clim= [];
 
@@ -58,14 +61,14 @@ if isnumeric(data_sel) & size(data_sel)==[1,1]
 
     case 22
         load iirc_data_2006
-        vh= v_reference;
-        vi= v_rotate(:,1:30);
+        vh= real(v_reference);
+        vi= real(v_rotate(:,1:30));
         filename= 'iirc-around-clean';
 
     case 22.1
         load iirc_data_2006
         vh= v_reference;
-        vi= v_rotate(:,1:10);
+        vi= v_rotate(:,11:20);
         filename= 'iirc-around-clean';
 
     case 23
@@ -115,128 +118,80 @@ else
   filename= 'user-data';
 end
 
+% noise_figure?
+% Calc BR and posn error
+
+try; if inv_sel.type=='inv_model'
+   imdl= inv_sel;
+   inv_sel= 'set'
+end; end
+
 switch inv_sel
+    case 'set'
+        eidors_msg('Using imdl=%s',imdl.name,2);
+
     case 1
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'np_inv_solve';
+        imdl= set_basic( 'b2c' );
 
     case 1.1
-        imdl= mk_common_model('c2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'np_inv_solve';
+        imdl= set_basic( 'c2c' );
 
     case 1.2
-        imdl= mk_common_model('d2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'np_inv_solve';
+        imdl= set_basic( 'd2c' );
 
     case 2
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @noser_image_prior;
-        imdl.solve= 'inv_kalman_diff';
+        imdl= set_basic( 'b2c' );
+        imdl.solve= @inv_kalman_diff;
 
     case 2.1
-        imdl= mk_common_model('c2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @noser_image_prior;
-        imdl.solve= 'inv_kalman_diff';
+        imdl= set_basic( 'c2c' );
+        imdl.solve= @inv_kalman_diff;
 
     case 3
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'aa_inv_conj_grad';
+        imdl= set_basic( 'b2c' );
+        imdl.solve= @aa_inv_conj_grad;
 
     case 4
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 3e-1;
-        time_steps= 0;
-
-        imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @noser_image_prior;
-        imdl.noser_image_prior.exponent= .5;
-        imdl.time_smooth_prior.time_weight= .04;
-        imdl.time_smooth_prior.time_steps=  time_steps;
-
-        imdl.solve= @time_prior_solve;
-        imdl.time_prior_solve.time_steps=   time_steps;
+        imdl= set_basic( 'b2c', 'temporal', [3, .6] );
 
     case 4.1
-        imdl= mk_common_model('c2c',16);
-        imdl.hyperparameter.value= 3e-1;
-        time_steps= 3;
+        imdl= set_basic( 'c2c', 'temporal', [3, .6] );
 
-        imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @noser_image_prior;
-        imdl.noser_image_prior.exponent= .5;
-        imdl.time_smooth_prior.time_weight= .5;
-        imdl.time_smooth_prior.time_steps=  time_steps;
-
-        imdl.solve= @time_prior_solve;
-        imdl.time_prior_solve.time_steps=   time_steps;
-
-    case 4.2
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 3e-1;
-        time_steps= 0;
-
-        imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @tikhonov_image_prior;
-        imdl.time_smooth_prior.time_weight= .01;
-        imdl.time_smooth_prior.time_steps=  time_steps;
-
-        imdl.solve= @time_prior_solve;
-        imdl.time_prior_solve.time_steps=   time_steps;
+    case 5
+        imdl= set_basic( 'b2c', 'temporal', [8, 1] );
 
     case 11
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'np_inv_solve';
+        imdl= set_basic( 'b2c' );
 
         vi = extract_subframes(vi,4);
         vi = repack_subframes(vi,4);
 
     case 11.1
-        imdl= mk_common_model('c2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= 'laplace_image_prior';
-        imdl.solve= 'np_inv_solve';
+        imdl= set_basic( 'c2c' );
 
         vi = extract_subframes(vi,4);
         vi = repack_subframes(vi,4);
 
     case 12
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @laplace_image_prior;
+        imdl= set_basic( 'b2c' );
         imdl.solve= @inv_kalman_diff;
         [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
 
         vi = extract_subframes(vi,4);
 
     case 12.1
-        imdl= mk_common_model('c2c',16);
-        imdl.hyperparameter.value= 1e-2;
-        imdl.RtR_prior= @laplace_image_prior;
+        imdl= set_basic( 'c2c' );
         imdl.solve= @inv_kalman_diff;
         [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
 
         vi = extract_subframes(vi,4);
 
     case 14
-        imdl= mk_common_model('b2c',16);
-        imdl.hyperparameter.value= 3e-1;
+        imdl= set_basic( 'b2c' );
         time_steps= 3;
 
         imdl.RtR_prior= @time_smooth_prior;
         imdl.time_smooth_prior.space_prior= @noser_image_prior;
-        imdl.noser_image_prior.exponent= .5;
         imdl.time_smooth_prior.time_weight= .5;
         imdl.time_smooth_prior.time_steps=  time_steps;
 
@@ -272,7 +227,7 @@ if nargin>=3
 end
 
 t=cputime;
-imgs= inv_solve(imdl,vi,vh);
+imgs= inv_solve(imdl,vh,vi);
 fprintf('solve time=%f\n',cputime-t);
 animate_reconstructions(filename, imgs, clim);
 
@@ -344,3 +299,29 @@ function vv= remove_curr_elecs(vv)
       vv= vv(els,:);
    end
 
+function imdl= set_basic( shape_str, type, vals )
+   imdl = mk_common_model( shape_str, 16 );
+   imdl.RtR_prior= @noser_image_prior;
+   imdl.noser_image_prior.exponent= .5;
+   imdl.solve= @np_inv_solve;
+   imdl.hyperparameter.value= 1e-2;
+
+   if nargin==1; return; end
+
+   switch type
+     case 'temporal'
+        time_steps= vals(1); 
+        time_weight= vals(2);
+
+        imdl.RtR_prior= @time_smooth_prior;
+        imdl.time_smooth_prior.space_prior= @noser_image_prior;
+        imdl.time_smooth_prior.time_weight= time_weight;
+        imdl.time_smooth_prior.time_steps=  time_steps;
+
+        imdl.solve= @time_prior_solve;
+        imdl.time_prior_solve.time_steps=   time_steps;
+        imdl.hyperparameter.value= 1e-1;
+
+     otherwise
+        error('dont understand parameter');
+   end
