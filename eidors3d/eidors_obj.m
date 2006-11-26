@@ -73,7 +73,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_obj.m,v 1.42 2006-11-15 19:36:05 aadler Exp $
+% $Id: eidors_obj.m,v 1.43 2006-11-26 00:57:59 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -107,26 +107,19 @@ function obj = set_obj( obj, varargin );
 %  eidors_objects.( obj_id ).cache= []; %clear cache
 %  
 %  for idx= 1:2:nargin-1
-%     eidors_objects.( obj_id ).( varargin{idx} )= ...
-%                                 varargin{idx+1};
 %  end
 %  obj = eidors_objects.( obj_id );
 
-% for octave and matlab 6.1 compatibility
    for idx= 1:2:nargin-1
+%     obj.( obj_id ).( varargin{idx} )= varargin{idx+1};
+% for matlab 6.1 compatibility
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
 
-%  obj= test_obj_properties( obj ); -- moved to eidors_model_params
-
-   if ~cache_this( obj.type) ; return ; end
-
-   obj_id= calc_obj_id( obj );
-
-% set the obj_id into the obj after calculating the hash value
-   if ~isfield(eidors_objects,obj_id)
-      eval(sprintf('eidors_objects.%s=obj;',obj_id));
-   end
+% There is no need to cache an object at this point,
+% the only useful time is when something is actually done
+% with the object, and then the function calls the set cache
+% type functions
 
 function val= calc_or_cache( obj, funcname, varargin )
 
@@ -174,6 +167,7 @@ function value= get_cache_obj( obj, prop, varargin );
       try
    %     value= eidors_objects.( obj_id ).cache.( prop );
          value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
+         update_timestamp(obj_id);
       end
    end
 
@@ -194,6 +188,7 @@ function set_cache_obj( obj, prop, value, varargin )
    if isempty(cachename)
    %  eidors_objects.( obj_id ).cache.( prop ) = value;
       eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
+      update_timestamp(obj_id);
    else
       filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
       save(filename, 'value');
@@ -300,3 +295,15 @@ function retval= cache_this( type )
    else
       retval = 1;
    end
+
+function update_timestamp( obj_id )
+   global eidors_objects;
+
+   eval(sprintf('eidors_objects.%s.last_used=now;', obj_id ));
+
+   max_memory= eidors_objects.max_cache_size;
+   ww= whos('eidors_objects');
+   if ww.bytes > max_memory
+      eidors_cache('clear_max',floor(max_memory*.75));
+   end
+
