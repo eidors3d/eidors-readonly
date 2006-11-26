@@ -27,8 +27,8 @@
 
 - Features to do
     * check solvers can handle multiple images
-    - Check normalized_difference
-    - Proper NF calculator?
+    * Check normalized_difference
+    * Proper NF calculator?
     - Gaussian filters - and test with lungs
     * inv_solve memory **
     - build lung imaging examples
@@ -41,16 +41,19 @@
        - set default properites, 
        - work around matlab bugs (ie no int16 support)
        - create extra parameters (n_elems etc) - (from np_fwd_parameters)
-    - cache intermediate results in Jacobian
+    - cache intermediate results in np_calc_jacobian
 
-    - caching - set timestamp with each cached variable
-       - allow deleting of old variables 
+    * caching - set timestamp with each cached variable
+       * allow deleting of old variables 
             eidors_cache clear old timestamp
-       - allow deleting of from timestamp
+       * allow deleting of from timestamp
             eidors_cache clear new timestamp
              (ie to delete intermediate calcs: moving ball)
 
-    - code to calculate BR and position of an image
+    - caching - allow high value specifier on cached objects
+    - caching - allow caching to disk
+
+    * code to calculate BR and position of an image
 
 - Bugs
     - fwd_model.stimulation.meas_pattern is transposed wrt the 
@@ -58,6 +61,7 @@
     - The code in time_prior_solve is somewhat disorganized;
       it really should use calc_JiRtRJt, but this function
       needs to be thought out properly, too.
+    - measurements are negative for simple mk_stim_patterns
 
 - Generate some lung imaging examples
     - 2x8 in 3D?
@@ -93,7 +97,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-25 11:19:09 $ by $Author: aadler $
+    Last Modified: $Date: 2006-11-26 01:00:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
