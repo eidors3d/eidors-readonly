@@ -17,7 +17,7 @@ function hparam= select_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: choose_noise_figure.m,v 1.3 2006-11-18 12:08:02 aadler Exp $
+% $Id: choose_noise_figure.m,v 1.4 2006-11-26 00:58:52 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -34,9 +34,13 @@ else
    NFtable= [];
 end
 
-startpoint = -2;
+startpoint = [5,-7]; % works better with a bracketed search
 opts = optimset('tolX',1e-4);
+
+% We don't want to cache any of these values
+   pre_nf_timestamp = now;
 hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
+   eidors_cache('clear_new', pre_nf_timestamp);
    
 NFtable = [NFtable; [reqNF, hparam] ];
 eidors_obj('set-cache', inv_model, 'noise_figure_table', NFtable);
