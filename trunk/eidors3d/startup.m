@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.22 2006-08-28 12:28:49 aadler Exp $
+% $Id: startup.m,v 1.23 2006-11-26 00:57:59 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -47,3 +47,7 @@ end
 
 % Setup defaults in calc_colours
 calc_colours
+
+% Set max cache size. Not completely sure about this
+%  but 100MB should be available in most modern machines
+eidors_cache('cache_size', 100e6 );
