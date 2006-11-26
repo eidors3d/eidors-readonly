@@ -15,34 +15,25 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.21 2006-11-24 02:31:50 aadler Exp $
+% $Id: move_the_ball.m,v 1.22 2006-11-26 00:59:56 aadler Exp $
 
 % user input
-if ~exist('electrodes_per_plane')
-   electrodes_per_plane= 16;
-end
-if ~exist('number_of_planes')
-   number_of_planes= 2;
-end
-if ~exist('movement_pattern')
-   movement_pattern= 'spiral';
-end
+if ~exist('electrodes_per_plane');  electrodes_per_plane= 16;    end
+if ~exist('number_of_planes');      number_of_planes= 2;         end
+if ~exist('movement_pattern');      movement_pattern= 'spiral';  end
 
-fname ='tank_for_kalman_test_ball_';
+% control mesh refinement: options are '-veryfine'; '-fine'; '';
+if ~exist('finelevel');             finelevel= '';               end
 
-% control mesh refinement
-%  finelevel= '-veryfine';
-   finelevel= '-fine';
-%  finelevel= '';
+fname =['tank_with_tank_',movement_pattern];
 
-%refine_electrodes= 50;
-refine_electrodes= 10;
-tank_radius= 15;
-tank_height= 30;
 
-electrode_width = 1.5;
-electrode_height= 1.5;
-rect_or_circ_electrode= 'C';
+if ~exist('refine_electrodes');     refine_electrodes= 10;        end
+if ~exist('tank_radius');           tank_radius= 15;              end
+if ~exist('tank_height');           tank_height= 30;              end
+if ~exist('electrode_width');       electrode_width = 0.5;        end
+if ~exist('electrode_height');      electrode_height= 0.5;        end
+if ~exist('rect_or_circ_electrode');rect_or_circ_electrode= 'C';  end
 
 % number of simulations to do;
 fno_max= 100;
@@ -50,7 +41,7 @@ fno_max= 100;
 first_plane_starts= tank_height/(number_of_planes+1);
 height_between_centres = first_plane_starts;
 
-[tank_mdl1,centres] = create_tank_mesh_ng( ...
+[jnk,centres] = create_tank_mesh_ng( ...
    tank_radius, tank_height, ...
    rect_or_circ_electrode, ...
    log2(electrodes_per_plane), ...
@@ -60,7 +51,13 @@ height_between_centres = first_plane_starts;
    electrode_width, electrode_height, ...
    [fname,'0000'], ...
    refine_electrodes  );
+
+% The msz file created here can be reused later
 msz_file= [fname,'0000.msz'];
+
+if ~isempty(finelevel);
+   call_netgen([fname,'0000.geo'],[fname,'0000.vol'],msz_file, finelevel);
+end
 
 
 % Create Homog
@@ -72,8 +69,8 @@ n_elem= size(fmdl.elems,1);
 elem_data= ones(n_elem,1);
 img=eidors_obj('image','netgen_problem', ...
                'fwd_model',fmdl, 'elem_data', elem_data);
-%vh= fwd_solve( img);
-%vh.time= 0;
+vh= fwd_solve( img);
+vh.time= 0;
 
 if 0 % TEST CODE - check electrodes
    show_fem( fmdl);
@@ -102,7 +99,7 @@ end
 
 fmdl_save=fmdl;
 % save memory
-fmdl_save.elems=uint16(fmdl.elems);
+fmdl_save.elems=uint32(fmdl.elems);
       
 
 
@@ -144,7 +141,7 @@ for fno= 1:fno_max
 
       case 'radial_move'
          t= 0;
-         Rad_dist= tank_radius*f_frac*(1-2*r);
+         Rad_dist= (tank_radius-2*r)*f_frac;
          x= Rad_dist*sin(t);
          y= Rad_dist*cos(t);
          z= tank_height/2;
@@ -187,7 +184,18 @@ for fno= 1:fno_max
    vi(fno).time = fno;
 end
 
-save netgen_moving_ball vi vh fmdl_save
+save_filename= ...
+   sprintf('tr=%f_th=%d_E=%s_EP=%d_NP_%d_EW=%f_EH=%f_RE=%d', ...
+   tank_radius, tank_height, ...
+   rect_or_circ_electrode, ...
+   log2(electrodes_per_plane), ...
+   number_of_planes, ...
+   first_plane_starts, ...
+   height_between_centres, ...
+   electrode_width, electrode_height, ...
+   [fname,'0000'], ...
+   refine_electrodes  );
+save(save_filename,'vi','vh','fmdl_save');
 
 
 % Example to reconstruct images 
