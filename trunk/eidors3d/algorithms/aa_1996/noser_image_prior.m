@@ -5,16 +5,16 @@ function Reg= noser_image_prior( inv_model );
 % inv_model  => inverse model struct
 %
 % Prior is diag( diag(J'*J)^exponent )
-% param is normally 2, this value can be changed by
-% setting inv_model.noser_image_prior.exponent=1
+% param is normally .5, this value can be changed by
+% setting inv_model.noser_image_prior.exponent= new_value
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: noser_image_prior.m,v 1.3 2006-08-25 00:00:39 aadler Exp $
+% $Id: noser_image_prior.m,v 1.4 2006-11-27 19:34:38 aadler Exp $
 
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
     J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
 
-    exponent= 1;
+    exponent= 0.5;
     if isfield(inv_model,'noser_image_prior');
        exponent= inv_model.noser_image_prior.exponent;
     end

@@ -17,7 +17,7 @@ function hparam= select_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: choose_noise_figure.m,v 1.4 2006-11-26 00:58:52 aadler Exp $
+% $Id: choose_noise_figure.m,v 1.5 2006-11-27 19:34:38 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 
@@ -34,7 +34,7 @@ else
    NFtable= [];
 end
 
-startpoint = [5,-7]; % works better with a bracketed search
+startpoint = [4,-6]; % works better with a bracketed search
 opts = optimset('tolX',1e-4);
 
 % We don't want to cache any of these values

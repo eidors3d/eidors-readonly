@@ -16,7 +16,7 @@ function img= time_prior_solve( inv_model, data1, data2)
 %   them internally
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_prior_solve.m,v 1.6 2006-11-24 17:49:32 aadler Exp $
+% $Id: time_prior_solve.m,v 1.7 2006-11-27 19:34:39 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;
@@ -77,8 +77,9 @@ function one_step_inv= standard_form( inv_model, J )
     n_el= size(J,2);
     one_step_inv= one_step_inv(n_el*time_steps + (1:n_el),:);
 
-% calculate the one_step_inverse using the standard
-% formulation (JtWJ + hp^2*RtR)\JtW
+% calculate the one_step_inverse using the data form
+% CovX * J' * inv(J*CovX*J' + CovZ)
+%   iRtR*Jt/(Ji*RtR*Jt +  hp^2*iW);
 function one_step_inv= data_form( inv_model, J );
     space_prior= inv_model.time_smooth_prior.space_prior;
     time_weight= inv_model.time_smooth_prior.time_weight;
@@ -89,6 +90,8 @@ function one_step_inv= data_form( inv_model, J );
     iRtRJt_frac=  (space_Reg\J');
     JiRtRJt_frac= J*iRtRJt_frac;
 
+    % JiRtRJt_mult accounts for different parts of the
+    % frame being taken at different times
     delta_vec= calc_delta( inv_model, J);
     delta_vec1= delta_vec*ones(1,length(delta_vec));
     JiRtRJt_mult = time_weight.^abs(delta_vec1 - delta_vec1');
@@ -96,8 +99,9 @@ function one_step_inv= data_form( inv_model, J );
     [x,y]= meshgrid(-ts:ts,  -ts:ts);
     time_w_mat= time_weight.^abs(x-y);
 
-
     JiRtRJt= kron( time_w_mat, JiRtRJt_frac .* JiRtRJt_mult );
+
+    %FIXME: do we multiply be JiRtRJt_mult here?
     iRtRJt=  kron( time_w_mat(ts+1,:), iRtRJt_frac );
 
     iW   = kron( speye(1+2*ts), inv( ...
@@ -106,6 +110,8 @@ function one_step_inv= data_form( inv_model, J );
 
     one_step_inv= iRtRJt/(JiRtRJt +  hp^2*iW);
 
+% if measurements are taken at different times,
+% then calculate a delta of each wrt the centre time
 function delta_vec= calc_delta( inv_model, J)
    stimulation= inv_model.fwd_model.stimulation;
    n_N= size(J,1);
