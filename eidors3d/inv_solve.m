@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_solve.m,v 1.18 2006-11-15 19:36:05 aadler Exp $
+% $Id: inv_solve.m,v 1.19 2006-12-06 20:13:42 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -132,9 +132,3 @@ function d2= filt_data(inv_model, d0, data_width )
       end
    end
 
-function ok= can_process_multiple_meas( inv_model );
-   ok= 0;
-   try 
-     ok= feval(inv_model.solve, 'can_process_multiple_meas');
-   end
-   
