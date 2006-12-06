@@ -14,25 +14,25 @@ function dva = calc_difference_data( data1, data2, fwd_model)
 %  3) allow both raw data and eidors_obj formats for data
 
 % (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_difference_data.m,v 1.1 2006-12-06 19:47:13 aadler Exp $
+% $Id: calc_difference_data.m,v 1.2 2006-12-06 20:14:05 aadler Exp $
 
 data_width= max(num_frames(data1), num_frames(data2));
 
 if ~isnumeric(data2) if isfield(data2,'fwd_model')
    if nargin>=3; warning('ignoring parameter 3'); end
    fwd_model= data2.fwd_model;
-end
+end ; end
 if ~isnumeric(data1) if isfield(data1,'fwd_model')
    if nargin>=3; warning('ignoring parameter 3'); end
    fwd_model= data1.fwd_model;
-end
+end ; end
 
 if ~isfield(fwd_model,'normalize_measurements')
    fwd_model.normalize_measurements = 0;
 end
 
-fdata1 = filt_data( inv_model, data1, data_width );
-fdata2 = filt_data( inv_model, data2, data_width );
+fdata1 = filt_data( fwd_model, data1, data_width );
+fdata2 = filt_data( fwd_model, data2, data_width );
 
 if fwd_model.normalize_measurements
    dva= data2 ./ data1 - 1;
@@ -50,7 +50,7 @@ function nf= num_frames(d0)
    end
    
 % test for existance of meas_select and filter data
-function d2= filt_data(inv_model, d0, data_width )
+function d2= filt_data(fwd_model, d0, data_width )
    if ~isnumeric( d0 )
        % we probably have a 'data' object
 
@@ -71,10 +71,10 @@ function d2= filt_data(inv_model, d0, data_width )
 
    d1= double(d1); % ensure we can do math on our object
 
-   if isfield(inv_model.fwd_model,'meas_select');
+   if isfield(fwd_model,'meas_select');
       % we have a meas_select parameter
 
-      meas_select= inv_model.fwd_model.meas_select;
+      meas_select= fwd_model.meas_select;
       if     size(d1,1) == length(meas_select)
          d2= d1(meas_select,:);
       elseif size(d1,1) == sum(meas_select==1)
