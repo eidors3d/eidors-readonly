@@ -24,19 +24,24 @@
     - Document new features for fwd_solve
         - meas_select
         - normalize_measurements
+        - calc_difference_data
 
 - Features to do
     * check solvers can handle multiple images
     * Check normalized_difference
+    - move all difference algs to use calc_difference_data
     * Proper NF calculator?
     - Gaussian filters - and test with lungs
     * inv_solve memory **
     - build lung imaging examples
-    - proper temporal solver with frames
-    - measures of hyperparameter?
+    - proper functions to call data_form solver variables
+    - proper temporal solver calling data_form priors
+    - measures of hyperparameter - get Brad G to contribute?
     - mechanism to allow solved elem_data to not map to elements
        - need matrix reconst_map = M = sparse(n_elem,n_sols)
        - calc_reconst_map ...
+    - move static examples into main code
+
     - create function eidors_defaults in algorithms
        - set default properites, 
        - work around matlab bugs (ie no int16 support)
@@ -97,7 +102,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-26 01:00:27 $ by $Author: aadler $
+    Last Modified: $Date: 2006-12-06 20:19:57 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
