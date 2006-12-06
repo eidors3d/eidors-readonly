@@ -6,19 +6,24 @@ function NF = calc_noise_figure( inv_model, hp)
 % hp is specified, it will be used for the hyperparameter.
 %    Otherwise the inv_model.hyperparameter will be used.
 %
-% In order to use this function, it is necessary to specify
-% inv_model.hyperparameter. has the following fields
-% hpara.tgt_elems    = vector of element numbers of contrast in centre
+% Noise Figure must be defined for a specifc measurement
+% In order to specify data, use
+%     inv_model.hyperparameter.tgt_data.meas_t1
+%     inv_model.hyperparameter.tgt_data.meas_t2
+%   to use a temporal solver (or the Kalman filter), the
+%   measurement to perform the NF calc must also be specified,
+%   using:
+%     inv_model.hyperparameter.tgt_data.meas_select
+%   otherwise, the middle measurement will be used
 %
-% The NF parameter is modified from the definition in Adler & Guardo (1996).
+% In order to automatically simulate data, specify tgt_elems,
+%   containing a vector of elements to use
+% 
+%     inv_model.hyperparameter.tgt_elems
 %
-% SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)
-% SNR_x = sumsq(A*x0) / var(A*x) = sum((A*x0).^2) / trace(ABRnB'A')
-%   where Rn = noise covariance and A_ii = area of element i
-% NF = SNR_z / SNR_x
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_noise_figure.m,v 1.5 2006-11-24 04:21:27 aadler Exp $
+% $Id: calc_noise_figure.m,v 1.6 2006-12-06 20:14:05 aadler Exp $
 
 % A 'proper' definition of noise power is:
 %      NF = SNR_z / SNR_x
@@ -33,8 +38,16 @@ function NF = calc_noise_figure( inv_model, hp)
 
    pp= aa_fwd_parameters( inv_model.fwd_model );
 
-   [h_data, c_data]= simulate_targets( inv_model.fwd_model, ...
-        inv_model.hyperparameter.tgt_elems);
+   if     isfield(inv_model.hyperparameter,'tgt_elems')
+      [h_data, c_data]= simulate_targets( inv_model.fwd_model, ...
+           inv_model.hyperparameter.tgt_elems);
+   elseif isfield(inv_model.hyperparameter,'tgt_data')
+      tgt_data= inv_model.hyperparameter.tgt_data;
+      h_data= tgt_data.meas_t1;
+      c_data= tgt_data.meas_t2;
+   else
+      error('unsure how to get data to measure signal');
+   end
 
    % if hp is specified, then use that value
    if nargin>1
@@ -44,7 +57,7 @@ function NF = calc_noise_figure( inv_model, hp)
       try
          hp = inv_model.hyperparameter.value;
       catch
-         np = NaN;
+         hp = NaN;
       end
    end
    if isfield(inv_model.hyperparameter,'func')
@@ -77,22 +90,22 @@ function NF = calc_noise_figure( inv_model, hp)
    c_noise = c_data*ones(1,d_len) + eye(d_len);
    h_full  = h_data*ones(1,d_len);
 
-   if inv_model.fwd_model.normalize_measurements
-      sig_data= mean(abs(  c_data - h_data       ));
-      var_data= mean(sum( (c_noise- h_full).^2, 2));
-   else
-      sig_data= mean(abs(  c_data ./ h_data -1       ));
-      var_data= mean(sum( (c_noise./ h_full -1).^2, 2));
-   end
+   sig_data = mean(abs( ...
+         calc_difference_data( h_data, c_data , inv_model.fwd_model ) ...
+                       ));
+   var_data = mean(sum( ...
+         calc_difference_data( h_full, c_noise, inv_model.fwd_model ) ...
+                       .^2, 2)); 
+                      
 
    % calculate image 
    % Note, this won't work if the algorithm output is not zero biased
    [img0, img0n] = get_images( inv_model, h_data, c_data, ...
                                h_full, c_noise);
 
-      VOL = pp.VOLUME';
-      sig_img= VOL*abs(img0.elem_data);
-      var_img= VOL.^2*sum(img0n.elem_data.^2 ,2);
+   VOL = pp.VOLUME';
+   sig_img= VOL*abs(img0.elem_data);
+   var_img= VOL.^2*sum(img0n.elem_data.^2 ,2);
    
    NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
    eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
@@ -145,13 +158,8 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
       img0 = inv_solve( inv_model, h_data, ...
                                    c_data*ones(1,stablize) );
       K= img0.inv_kalman_diff.K_k1;
-      if inv_model.fwd_model.normalize_measurements
-         img0.elem_data = K*( c_data  - h_data );
-         img0n.elem_data= K*( c_noise - h_full );
-      else
-         img0.elem_data = K*( c_data ./ h_data - 1 );
-         img0n.elem_data= K*( c_noise./ h_full - 1 );
-      end
+      img0.elem_data = K*calc_difference_data( h_data , c_data , inv_model.fwd_model);
+      img0n.elem_data= K*calc_difference_data( h_full , c_noise, inv_model.fwd_model);
 
    otherwise
       img0 = inv_solve( inv_model, h_data, c_data);
