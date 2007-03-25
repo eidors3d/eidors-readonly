@@ -1,4 +1,4 @@
-function [vv,curr,volt]= eit_readdata( fname, format )
+function [vv, auxdata ]= eit_readdata( fname, format )
 % EIDORS readdata - read data files from various EIT equipment
 %    manufacturers
 %
@@ -11,18 +11,21 @@ function [vv,curr,volt]= eit_readdata( fname, format )
 %        format = "txt" or "IIRC"
 %
 % Usage
-%  [vv,curr,volt]= eidors_readdata( fname, format )
-%     vv = measurements 208xmeas
+% [vv, auxdata ]= eit_readdata( fname, format )
+%     vv      = measurements - data frames in each column
+%     auxdata = auxillary data - if provided by system 
 %     fname = file name
 %
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_readdata.m,v 1.7 2006-08-26 21:22:07 aadler Exp $
+% $Id: eidors_readdata.m,v 1.8 2007-03-25 23:28:17 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
 %   - test whether file format matches specified stimulation pattern
+%   - todo MCEIT provides curr and volt on driven electrodes.
+%       how can this be provided to system?
 
 if nargin < 2
 % unspecified file format, autodetect
@@ -37,7 +40,7 @@ end
 
 fmt= lower(format);
 if     strcmp(fmt, 'get') | strcmp(fmt, 'mceit')  
-   [vv,curr,volt] = mceit_readdata( fname );
+   [vv,curr,volt,auxdata] = mceit_readdata( fname );
 elseif strcmp(fmt, 'p2k') | strcmp(fmt, 'its')
    vv = its_readdata( fname );
 elseif strcmp(fmt,'txt') | strcmp(fmt, 'iirc')
@@ -47,13 +50,13 @@ else
 end
    
 
-function [vv,curr,volt] = mceit_readdata( fname );
+function [vv,curr,volt,auxdata] = mceit_readdata( fname );
    elec=16;
    pos_i= [0,1];
    ELS= rem(rem(0:elec^2-1,elec) - ...
         floor((0:elec^2-1)/elec)+elec,elec)';
    ELS=~any(rem( elec+[-1 0 [-1 0]+pos_i*[-1;1] ] ,elec)' ...
-		     *ones(1,elec^2)==ones(4,1)*ELS')';
+        *ones(1,elec^2)==ones(4,1)*ELS')';
 
    fid= fopen(fname,'rb');
    d= fread(fid,inf,'float');
@@ -88,7 +91,9 @@ function [vv,curr,volt] = mceit_readdata( fname );
 
    curr=0.00512*dd(209:224,:);  % Amps
    volt=12*dd(225:240,:); %Vrms
-   %input impedance=voltage./current-440;	Ohm
+   auxdata= dd(241:255,:);
+   auxdata= auxdata(:);
+   %input impedance=voltage./current-440;        Ohm
 
 % Read data from p2k files (I T S system)
 % FIXME: this code is very rough, it works for
