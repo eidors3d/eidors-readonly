@@ -1,0 +1,93 @@
+<!--#include virtual="nav-sidebar.shtml" -->
+<h2>EIDORS data structures for forward models</h2>
+
+<h3> 
+2D foward models
+</h3>
+
+We can build a simple rectangular model
+which
+
+<pre>
+<!--#include virtual="tutorial022a.m" -->
+</pre>
+
+<center>
+<img src="tutorial020a.png">
+<br><i>Figure:</i>
+this shows a single line representing the resistor
+in 3D. Not very interesting, but this <i>is</i> a
+simple example.
+</center>
+
+<h3> 
+Defining stimulation patterns
+</h3>
+
+In order to simulate the voltages, 
+define an electrical resistor, with ground at one end,
+and a single electrode at the other.
+
+<pre>
+<!--#include virtual="tutorial020b.m" -->
+</pre>
+
+Output data is given by:
+<pre width="50">
+&gt;&gt; disp(data_1k0)
+    name: 'resistor model data'
+    meas: [3x1 double]
+    type: 'data'
+
+&gt;&gt; disp(data_1k0.meas')
+    1.0200    2.0400    3.0600
+</pre>
+
+<h3> 
+Forward solver function
+</h3>
+
+This calculation depends on a forward solver
+function, which calculates measurements from
+a given image. This function
+ normally needs to be custom written
+for the physics of the problem. EIDORS provides
+several fuctions for EIT.
+<p>
+The forward solver used here is
+<a href="tutorial020_f_solve.m">tutorial020_f_solve</a>,
+shown below:
+
+<pre>
+<!--#include virtual="tutorial020_f_solve.m" -->
+</pre>
+
+<h3> 
+Image reconstruction
+</h3>
+
+Image reconstruction can be handled via a standard
+EIDORS image functions.
+<pre>
+<!--#include virtual="tutorial020c.m" -->
+</pre>
+
+Thus the output is, giving a resistance change of 200&Omega;
+<pre width="50">
+&gt;&gt;reconst = 
+         name: 'solved by aa_inv_solve'
+    elem_data: 200.0000
+    inv_model: [1x1 struct]
+    fwd_model: [1x1 struct]
+         type: 'image'
+</pre>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-03-26 17:49:04 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
