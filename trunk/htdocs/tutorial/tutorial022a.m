@@ -1,4 +1,4 @@
-% Create 2D model $Id: tutorial022a.m,v 1.1 2007-03-26 17:49:05 aadler Exp $
+% Create 2D model $Id: tutorial022a.m,v 1.2 2007-03-26 20:48:32 aadler Exp $
 
 nn= 84;     % number of nodes
 ww=4;       % width = 4
@@ -7,15 +7,13 @@ mdl= eidors_obj('fwd_model','2D rectangle');
 mdl.nodes = [floor( (0:nn-1)/ww );rem(0:nn-1,ww)]';
 mdl.elems = delaunayn(mdl.nodes);
 mdl.gnd_node = 1;
-stim.stim_pattern= zeros(nn,1);
-stim.stim_pattern(1:ww) = -1; % 1 amp out gnd
-stim.stim_pattern(nn-(0:ww-1)) = 1; % 1 amp in end
-stim.meas_pattern= zeros(1,nn);
-stim.meas_pattern([1,nn])= [1,-1];
-mdl.stimulation(1)= stim;
-    img= eidors_obj('image','2D rectangle', ...
-          'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
-          'fwd_model', mdl); 
+elec(1).nodes= [1:ww];      elec(1).z_contact= 0;
+elec(2).nodes= nn-[0:ww-1]; elec(2).z_contact= 0;
+stim.stim_pattern= [-1,1];
+stim.meas_pattern= [-1,1];
+mdl.stimulation= stim;
+mdl.electrode= elec;
+mdl.solve = @aa_fwd_solve;
 
 show_fem(mdl); axis('equal'); set(gca,'Ylim',[-.5,ww-.5]);
 print -r100 -dpng tutorial022a.png
