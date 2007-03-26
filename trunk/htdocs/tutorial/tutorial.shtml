@@ -15,23 +15,6 @@ EIDORS and then run this command in a matlab
 </h3>
 
     <li><h3> 
-<a href="./tutorial020.shtml" >Basic EIDORS Data structures</a>
-</h3>
-
-    <li><h3> 
-<a href="./tutorial030.shtml" >Modifying EIDORS models</a>
-</h3>
-
-
-    <li><h3> 
-<a href="./tutorial040.shtml" >Using Netgen to build EIDORS models</a>
-</h3>
-
-    <li><h3> 
-<a href="./tutorial050.shtml" >More sophisticated uses of Netgen</a>
-</h3>
-
-    <li><h3> 
 <a href="./tutorial110.shtml" >Basic Image reconstruction</a>
 </h3>
 
@@ -65,6 +48,27 @@ EIDORS and then run this command in a matlab
 
 </ul>
 
+<h3>EIDORS data structures and models</h3>
+<ul>
+    <li><h3> 
+<a href="./tutorial020.shtml" >Basic EIDORS Data structures</a>
+</h3>
+
+    <li><h3> 
+<a href="./tutorial030.shtml" >Modifying EIDORS models</a>
+</h3>
+
+
+    <li><h3> 
+<a href="./tutorial040.shtml" >Using Netgen to build EIDORS models</a>
+</h3>
+
+    <li><h3> 
+<a href="./tutorial050.shtml" >More sophisticated uses of Netgen</a>
+</h3>
+
+</ul>
+
 <h3>Older Tutorials</h3>
 <ul>
     <li><h3> 
@@ -77,7 +81,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-17 03:57:30 $ by $Author: aadler $
+    Last Modified: $Date: 2007-03-26 17:37:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
