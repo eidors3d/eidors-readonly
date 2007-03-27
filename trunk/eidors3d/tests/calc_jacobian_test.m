@@ -5,10 +5,10 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_test.m,v 1.10 2005-12-21 19:26:35 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.11 2007-03-27 17:09:37 aadler Exp $
 
 ok= 1;
-delta = 1e-6;
+delta = 1e-4;
 testvec= [5,20,40,130];
 
 mdl= make_aa_mdl2;
@@ -29,15 +29,30 @@ disp('test aa_calc_jacobian (3D) for difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
+mdl.normalize_measurements= 1;
+disp('test aa_calc_jacobian (3D) for normalized difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
+
 mdl= make_np_mdl;
 %
 disp('test np_calc_jacobian for difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
+mdl.normalize_measurements= 1;
+disp('test np_calc_jacobian for normalized difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
+
 mdl= make_ms_mdl;
 %
 disp('test ms_calc_jacobian for difference data')
+ok=ok & run_jacobian_test( mdl, delta, testvec );
+ok=ok & run_dataprior_test( mdl );
+
+mdl.normalize_measurements= 1;
+disp('test ms_calc_jacobian for normalized difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
@@ -60,19 +75,19 @@ function ok= run_jacobian_test( mdl, delta, testvec );
 
     % J = dF/dx = [F(x+d)  - F(x)]/d
     sumdiff= 0;
+    bkgnd_elem_data= img.elem_data;
     for testelem = testvec
-       mat= ones( size(mdl.elems,1) ,1);
-       mat(testelem)= 1+delta;
-       img.elem_data= mat;
+       img.elem_data= bkgnd_elem_data;
+       img.elem_data(testelem)= bkgnd_elem_data(testelem)+delta;
        inh_data=fwd_solve( img);
 
        if calc_norm
-          simJ= 1/delta* (1 - homg_data.meas ./ inh_data.meas);
+          simJ= 1/delta* (inh_data.meas ./ homg_data.meas - 1);
        else
           simJ= 1/delta* (inh_data.meas-homg_data.meas);
        end
        
-%      plot([J(:,testelem) simJ]);
+       plot([J(:,testelem) simJ]);
        sumdiff = sumdiff + std( J(:,testelem) - simJ );
     end
 
@@ -134,7 +149,7 @@ function mdl= make_aa_mdl2;
     mdl.name= 'AA_1996 mdl';
 
 function mdl= make_aa_mdl3;
-    i_mdl = mk_common_model('b3z',16);
+    i_mdl = mk_common_model('b3cz',16);
     mdl= i_mdl.fwd_model;
     mdl.name= 'AA_1996 mdl';
     mdl.solve=      'aa_fwd_solve';
