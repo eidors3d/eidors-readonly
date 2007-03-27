@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_real.m,v 1.43 2006-11-23 18:19:48 aadler Exp $
+% $Id: demo_real.m,v 1.44 2007-03-27 16:14:59 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -113,7 +113,7 @@ function [vtx,simp,bdy] = get_model_elems;
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
 load(datareal_file,'vtx','simp');
-bdy= dubs3( simp );
+bdy= find_boundary( simp );
 
 
 

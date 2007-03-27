@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.25 2006-11-07 13:32:37 aadler Exp $
+% $Id: mk_common_model.m,v 1.26 2007-03-27 16:13:14 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -216,10 +216,9 @@ function inv_mdl = mk_n3z_model( n_elec, options );
 
 function inv_mdl = mk_n3r2_model( n_elec, options );
    load( 'datareal.mat' );
-   bdy= dubs3( simp );
    fmdl.nodes= vtx;
    fmdl.elems= simp;
-   fmdl.boundary= dubs3( simp );
+   fmdl.boundary= find_boundary( simp );
 
    fmdl.solve=      'np_fwd_solve';
    fmdl.jacobian=   'np_calc_jacobian';

@@ -3,7 +3,7 @@ function mdl = eidors_model_params( mdl );
 % Fill in default parameter values in EIDORS types
 %
 % (C) 2006 Andy Adler. Licensed under the GPL v2
-% $Id: eidors_model_params.m,v 1.4 2007-03-26 23:52:23 aadler Exp $
+% $Id: eidors_model_params.m,v 1.5 2007-03-27 16:13:07 aadler Exp $
 
 % TODO - to caching
 
@@ -19,7 +19,7 @@ switch mdl.type;
       if isfield(mdl,'boundary')
          mdl.boundary= double(mdl.boundary);
       else
-         mdl.boundary= dubs3(mdl.elems);
+         mdl.boundary= find_boundary(mdl.elems);
       end
 
       % fill in boundary if it doesn't exist

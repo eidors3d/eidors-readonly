@@ -15,7 +15,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.normalize  => difference measurements normalized?
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_fwd_parameters.m,v 1.16 2006-08-17 22:15:13 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.17 2007-03-27 16:13:07 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -73,7 +73,7 @@ end
 if isfield(fwd_model,'boundary')
     bdy = fwd_model.boundary;
 else
-    bdy= dubs3(fwd_model.elems);
+    bdy= find_boundary(fwd_model.elems);
 end
 
 % Matrix to convert Nodes to Electrodes

@@ -10,13 +10,13 @@ function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sy
 %   specify '[]' to be used later
 %
 % (C) 2005 Stephen Murphy. Licenced under GPL Version 2
-% $Id: set_fwd_model.m,v 1.2 2005-12-06 16:14:55 aadler Exp $
+% $Id: set_fwd_model.m,v 1.3 2007-03-27 16:15:07 aadler Exp $
 
 if nargin<10
     perm_sym= '{y}';
 end
 if isempty( srf)
-    srf= dubs3( simp );
+    srf= find_boundary( simp );
 end
 fwd_mdl= eidors_obj('fwd_model','FWD_MDL created by set_fwd_model');
 fwd_mdl.nodes=vtx;
