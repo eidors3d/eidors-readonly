@@ -26,7 +26,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 % 3D Models:
 %   mk_common_model('b3cr',[16,3])  - cylinder with 3 rings of 16 elecs
 %   mk_common_model('b3t2r',[16,1]) - t2 thorax shape with 1 ring of 16 elecs
-%   mk_common_model('b3cz',16)      - cylender: zigzag pattern elecs
+%   mk_common_model('b3cz',16)      - cylinder: zigzag pattern elecs
 %   mk_common_model('b3cp',16)      - cylinder: planar 3D pattern electrodes
 %
 %   mk_common_model('a3cr',16)      - 64 elems * 4 planes
@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.26 2007-03-27 16:13:14 aadler Exp $
+% $Id: mk_common_model.m,v 1.27 2007-03-27 16:24:39 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -109,8 +109,6 @@ elseif str(2:3)=='3c' & length(str)==4
                 elec_space, elec_conf, options );
 %  inv_mdl = rotate_model( inv_mdl, n_elec(1)/8 );
 
-elseif strcmp( str, 'b3z')
-    inv_mdl = mk_dz_model( n_elec, options );
 elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
 elseif strcmp( str, 'n3z')
