@@ -1,10 +1,8 @@
-function [srf] = dubs3(simp);
-%function [srf] = dubs3(simp);
+function [srf] = find_boundary(simp);
+% [srf] = find_boundary(simp);
 %
-%Auxilairy fuction that caclulates the boundary faces of a given 3D volume.
+%Caclulates the boundary faces of a given 3D volume.
 %Usefull in electrode assignment.
-%
-%
 %
 %srf  =  Outter boundary surfaces
 %simp = The simplices matrix

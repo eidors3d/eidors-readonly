@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.12 2006-08-22 15:37:41 aadler Exp $
+% $Id: demo_real_test2.m,v 1.13 2007-03-27 16:13:21 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -21,7 +21,7 @@ load(datareal,'vtx','simp');
 demo_mdl.name = 'demo real model';
 demo_mdl.nodes= vtx;
 demo_mdl.elems= simp;
-demo_mdl.boundary= dubs3( simp );
+demo_mdl.boundary= find_boundary( simp );
 demo_mdl.solve=      'np_fwd_solve';
 demo_mdl.jacobian=   'np_calc_jacobian';
 demo_mdl.system_mat= 'np_calc_system_mat';

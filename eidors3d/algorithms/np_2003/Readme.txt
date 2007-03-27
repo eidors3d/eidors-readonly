@@ -39,7 +39,7 @@ laserbeam.m
 paint_electrodes.m
 potplot.m
 db23d.m
-dubs3.m
+find_boundary.m
 iso_f_smooth.m
 iso_s_smooth.m 
 inverse_solver.m

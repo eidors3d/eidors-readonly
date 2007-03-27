@@ -22,7 +22,7 @@ function param = np_fwd_parameters( fwd_model )
 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_parameters.m,v 1.12 2006-11-04 15:07:39 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.13 2007-03-27 16:13:08 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -61,7 +61,7 @@ zc  = zeros(n_elec, 1);
 if isfield(fwd_model,'boundary')
     srf = fwd_model.boundary;
 else
-    srf= dubs3(simp);
+    srf= find_boundary(simp);
 end
 
 max_elec_nodes=0;

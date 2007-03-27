@@ -154,7 +154,7 @@
 %Auxiliary function that calculates the distance between two points in 3D.
 %
 %--------------------------------------------------------------------------
-%[26] function [srf] = dubs3(simp);
+%[26] function [srf] = find_boundary(simp);
 %
 %Auxiliary function that calculates the boundary faces of a given 3D volume.
 %Useful in electrode assignment.
