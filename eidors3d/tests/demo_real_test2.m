@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.13 2007-03-27 16:13:21 aadler Exp $
+% $Id: demo_real_test2.m,v 1.14 2007-03-27 17:59:54 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -31,7 +31,7 @@ clear vtx simp
 % create FEM model electrodes definitions
 
 load(datareal,'gnd_ind','elec','zc','protocol','no_pl');
-perm_sym= '{n}';
+perm_sym= '{y}';
 
 demo_mdl.gnd_node= gnd_ind;
 for i=1:length(zc)
@@ -105,7 +105,7 @@ inhomg_data=fwd_solve( demo_mdl, inhomg_img);
 % create an inv_model structure of name 'demo_inv'
 demo_inv.name= 'Nick Polydorides EIT inverse';
 demo_inv.solve=       'np_inv_solve';
-demo_inv.hyperparameter.value= 1e-4; %what value should we use here??
+demo_inv.hyperparameter.value= 1e-4;
 demo_inv.R_prior= 'np_calc_image_prior';
 demo_inv.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
 demo_inv.jacobian_bkgnd.value= 1;
@@ -115,18 +115,18 @@ demo_inv= eidors_obj('inv_model', demo_inv);
 
 % solve inverse model
 
-demo_img= inv_solve( demo_inv, inhomg_data, homg_data);
+demo_img= inv_solve( demo_inv, homg_data, inhomg_data);
 
 % verifications
 
 load(drt);
 
-compare_tol( drt.voltageH/2, inhomg_data.meas, 'voltageH' )
+compare_tol( drt.voltageH, inhomg_data.meas, 'voltageH' )
 compare_tol( drt.sol, demo_img.elem_data, 'sol' )
 
 J= calc_jacobian( demo_mdl, homg_img );
 Jcolsby100=J(:,1:100:size(J,2));
-compare_tol( drt.Jcolsby100/2, Jcolsby100, 'Jcolsby100' )
+compare_tol( drt.Jcolsby100, Jcolsby100, 'Jcolsby100' )
 
 %Diag_Reg_012= [diag(Reg,0),[diag(Reg,1);0],[diag(Reg,2);0;0]];
 %compare_tol( drt.Diag_Reg_012, Diag_Reg_012, 'Diag_Reg_012' )
@@ -138,12 +138,12 @@ function compare_tol( cmp1, cmp2, errtext )
 % compare matrices and give error if not equal
 fprintf(2,'testing parameter: %s ...\n',errtext);
 
-tol= 1e-5;
+tol= 1e-4;
 
 vd= mean(mean( abs(cmp1 - cmp2) ));
-vs= mean(mean( abs(cmp1 + cmp2) ));
+vs= mean(mean( abs(cmp1) + abs(cmp2) ));
 if vd/vs > tol
-   warning(sprintf( ...
-     'parameter %s exceeds tolerance %g (=%g)', errtext, tol, vd/vs) );
+   eidors_msg( ...
+     'parameter %s exceeds tolerance %g (=%g)', errtext, tol, vd/vs, 1 );
 end
 
