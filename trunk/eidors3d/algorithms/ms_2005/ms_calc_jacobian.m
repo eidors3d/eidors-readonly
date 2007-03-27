@@ -6,7 +6,7 @@ function J= ms_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ms_calc_jacobian.m,v 1.1 2005-12-01 09:04:52 aadler Exp $
+% $Id: ms_calc_jacobian.m,v 1.2 2007-03-27 17:08:39 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -35,4 +35,10 @@ J = jacobian_3d_precalc( ...
                   Vref, ...
                   p.zc,v_f,p.df,tol, p.perm_sym, ...
                   s_mat.D, s_mat.Vols);
+
+% calculate normalized Jacobian
+if p.normalize
+   data= fwd_solve( img );
+   J= J ./ (data.meas(:)*ones(1,p.n_elem));
+end
 
