@@ -4,11 +4,42 @@ function [srf] = find_boundary(simp);
 %Caclulates the boundary faces of a given 3D volume.
 %Usefull in electrode assignment.
 %
-%srf  =  Outter boundary surfaces
+%srf  =  array of elements on each boundary simplex
+%        boundary simplices are of 1 lower dimention than simp
 %simp = The simplices matrix
+
+% $Id: find_boundary.m,v 1.2 2007-04-09 23:05:10 aadler Exp $
 
 wew = size(simp,2) - 1;
 
+if wew==3
+   srf= find_3d_boundary(simp,wew);
+elseif wew==2
+   srf= find_2d_boundary(simp,wew);
+else
+   error('not 2D or 3D simplices');
+end
+
+function srf= find_2d_boundary(simp,wew);
+els= size(simp,1);
+srf= [];
+% find elements on the boundary
+ks= zeros(els,wew+1);
+for i=1:els
+   for j=1:wew+1
+      ks(:,j)= sum(simp== simp(i,j),2);
+   end
+   fs= (  sum(ks,2) == wew  );
+   if sum(fs) < wew+1; % elem is on boundary 
+      % sel is number of times each point is seen
+      sel = ks(fs,:);
+      idx = 1:wew+1;
+      idx(sum(sel,1) == wew)= [];
+      srf= [srf; sort(simp(i,idx))]; 
+   end
+end
+
+function srf= findk3d_boundary(simp,wew);
 S=[];
 
 for b=1:size(simp,1)
