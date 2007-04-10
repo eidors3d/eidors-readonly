@@ -8,19 +8,17 @@ function [srf] = find_boundary(simp);
 %        boundary simplices are of 1 lower dimention than simp
 %simp = The simplices matrix
 
-% $Id: find_boundary.m,v 1.2 2007-04-09 23:05:10 aadler Exp $
+% $Id: find_boundary.m,v 1.3 2007-04-10 14:40:28 aadler Exp $
 
 wew = size(simp,2) - 1;
 
-if wew==3
-   srf= find_3d_boundary(simp,wew);
-elseif wew==2
-   srf= find_2d_boundary(simp,wew);
+if wew==3 || wew==2
+   srf= find_2or3d_boundary(simp,wew);
 else
    error('not 2D or 3D simplices');
 end
 
-function srf= find_2d_boundary(simp,wew);
+function srf= find_2or3d_boundary(simp,wew);
 els= size(simp,1);
 srf= [];
 % find elements on the boundary
@@ -32,12 +30,21 @@ for i=1:els
    fs= (  sum(ks,2) == wew  );
    if sum(fs) < wew+1; % elem is on boundary 
       % sel is number of times each point is seen
-      sel = ks(fs,:);
-      idx = 1:wew+1;
-      idx(sum(sel,1) == wew)= [];
-      srf= [srf; sort(simp(i,idx))]; 
+      sel = sum(ks(fs,:),1);
+      % if elem is on one boundary  , sel has one element  == wew
+      % if elem is on two boundaries, sel has two elements == wew-1
+      m_sel = max(sel);
+      for ff= find( sel == m_sel );
+         idx = 1:wew+1;
+         idx(ff) = [];
+         srf= [srf; simp(i,idx)]; 
+      end
    end
 end
+
+% sort the output srf
+   srf = sort(srf,2);
+   srf = sortrows(srf);
 
 function srf= findk3d_boundary(simp,wew);
 S=[];
