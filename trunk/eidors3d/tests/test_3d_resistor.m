@@ -1,11 +1,12 @@
 % Create 3D model of a Rectangular resistor
-% $Id: test_3d_resistor.m,v 1.1 2007-04-10 14:58:21 aadler Exp $
+% $Id: test_3d_resistor.m,v 1.2 2007-04-10 15:31:03 aadler Exp $
 
 ll=5; % length
 ww=1; % width
 hh=1; % height
 conduc= .1;  % conductivity in Ohm-meters
 current= 4;  % Amps
+z_contact= 1e-6;
 mdl= eidors_obj('fwd_model','3D rectangle');
 nn=0;
 for z=0:ll; for x=0:ww; for y=0:hh
@@ -16,23 +17,34 @@ mdl.elems = delaunayn(mdl.nodes);
 mdl.boundary= find_boundary(mdl.elems);
 mdl.gnd_node = 1;
 elec_nodes= [1:(ww+1)*(hh+1)];
-elec(1).nodes= elec_nodes;      elec(1).z_contact= 0;
-elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= 0;
-stim.stim_pattern= [-1;1]*current/length(elec_nodes);
+elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
+elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
+stim.stim_pattern= [-1;1]*current;
 stim.meas_pattern= [-1,1];
 mdl.stimulation= stim;
 mdl.electrode= elec;
+show_fem(mdl);
+
 mdl.solve = @aa_fwd_solve;
 mdl.system_mat = @aa_calc_system_mat;
 
-show_fem(mdl);
 img= eidors_obj('image','3D rectangle', ...
       'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
       'fwd_model', mdl); 
 
 fsol= fwd_solve(img)
 
-% analytical solution
-R = ll / ww / hh / conduc;
+mdl.solve = @np_fwd_solve;
+mdl.system_mat = @np_calc_system_mat;
+mdl.misc.perm_sym= '{n}';
+img= eidors_obj('image','3D rectangle', ...
+      'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
+      'fwd_model', mdl); 
 
-V= current*R;
+
+fsol= fwd_solve(img)
+
+% analytical solution
+R = ll / ww / hh / conduc + 2*z_contact;
+
+V= current*R 
