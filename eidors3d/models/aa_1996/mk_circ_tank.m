@@ -40,7 +40,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_circ_tank.m,v 1.17 2006-11-04 22:58:38 aadler Exp $
+% $Id: mk_circ_tank.m,v 1.18 2007-04-10 14:40:44 aadler Exp $
 
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');
@@ -192,9 +192,6 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
   ln= length(niveaux);
   for k=2:ln
     NODE=[NODE  [node0; niveaux(k)*ones(1,n)] ];
-    BDY= [BDY, ...
-          bdy1 + [(k-1)*n*ones(2,bl); (k-2)*n*ones(1,bl)], ...
-          bdy2 + [(k-2)*n*ones(2,bl); (k-1)*n*ones(1,bl)] ];
     if rem(k,2)==1
         elem= elem_odd;
     else
@@ -204,6 +201,10 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
        [[(k-1)*n*ones(1,e);(k-2)*n*ones(3,e)] ...
         [(k-1)*n*ones(2,e);(k-2)*n*ones(2,e)] ...  
         [(k-1)*n*ones(3,e);(k-2)*n*ones(1,e)]] ) ];
+    % BUG TO FIX HERE
+    BDY= [BDY, ...
+          bdy1 + [(k-1)*n*ones(2,bl); (k-2)*n*ones(1,bl)], ...
+          bdy2 + [(k-2)*n*ones(2,bl); (k-1)*n*ones(1,bl)] ];
   end %for k
 
   % Now add top and bottom boundary
