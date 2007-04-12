@@ -30,7 +30,7 @@ end
 
 [E,D,Ela,pp] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,perm_sym);
 
-[V] = forward_solver(vtx,E,I,tol,pp);
+[V] = forward_solver(E,I,tol,pp);
 
 %Select the part referring to the interior nodes
 V = V(1:vr,:);

@@ -41,7 +41,7 @@ for i=1:it
  
  if i==1
    %sprintf('Current fields for iteration %d',i)
-   [V] = forward_solver(vtx,E,I,tol,pp);
+   [V] = forward_solver(E,I,tol,pp);
    [viH,viV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);
    dfv = df(1:2:end);
    vi = viH; 
@@ -49,7 +49,7 @@ for i=1:it
    [v_f] = m_3d_fields(vtx,el_no,indH,E,tol,gnd_ind);
 else
    %sprintf('Current fields for iteration %d',i)
-   [V] = forward_solver(vtx,E,I,tol,pp,V);
+   [V] = forward_solver(E,I,tol,pp,V);
    [viH,viV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);
    dfv = df(1:2:end);
    vi = viH; 

@@ -6,7 +6,7 @@ function data= np_fwd_solve( fwd_model, img)
 % img = image struct
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_solve.m,v 1.7 2005-10-27 13:28:08 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.8 2007-04-12 14:54:55 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -15,7 +15,7 @@ tol = 1e-5;
 
 s_mat= calc_system_mat( fwd_model, img );
 
-Vfwd = forward_solver(p.vtx, s_mat.E, p.I, tol, s_mat.perm);
+Vfwd = forward_solver(s_mat.E, p.I, tol, s_mat.perm);
 
 Velec=Vfwd( p.n_node+(1:p.n_elec),:);
 voltH = zeros( p.n_meas, 1 );
