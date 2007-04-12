@@ -1,5 +1,5 @@
 % Create 2D model of a cylindrical resistor
-% $Id: test_2d_resistor.m,v 1.1 2007-04-10 14:58:21 aadler Exp $
+% $Id: test_2d_resistor.m,v 1.2 2007-04-12 15:44:20 aadler Exp $
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4
@@ -25,10 +25,12 @@ img= eidors_obj('image','2D rectangle', ...
       'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
       'fwd_model', mdl); 
 
-fsol= fwd_solve(img)
+fsol= fwd_solve(img);
+fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 
 % analytical solution
 wid_len= max(mdl.nodes) - min(mdl.nodes);
 R = wid_len(1) / wid_len(2) / conduc;
 
 V= current*R;
+fprintf('Solver %s: %f\n', 'analytic', V);
