@@ -40,7 +40,7 @@
 %the planes of the system simultaneously. 
 %
 %--------------------------------------------------------------------------
-%[7] function [V] = forward_solver(vtx,E,I,tol,pp,V);
+%[7] function [V] = forward_solver(E,I,tol,pp,V);
 %
 %This function solves the forward problem using the Cholesky or LU method or 
 %conjugate gradients. 

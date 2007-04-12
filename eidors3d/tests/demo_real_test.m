@@ -2,7 +2,7 @@ function ok= demo_real_test
 % Perform tests based on the demo_real function
 
 % (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: demo_real_test.m,v 1.8 2007-03-27 17:59:12 aadler Exp $
+% $Id: demo_real_test.m,v 1.9 2007-04-12 14:55:00 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -27,7 +27,7 @@ mat_ref = 1*ones(828,1);
 tol = 1e-5;
 
 [Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,perm_sym);
-[Vref] = forward_solver(vtx,Eref,I,tol,ppr);
+[Vref] = forward_solver(Eref,I,tol,ppr);
 [refH,refV,indH,indV,dfr]=get_3d_meas(elec,vtx,Vref,Ib,no_pl);
 dfr = dfr(1:2:end); %Taking just the horrizontal measurements
 
@@ -39,7 +39,7 @@ mat(A) = sA;
 mat(B) = sB;
 
 [En,D,Ela,ppn] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
-[Vn] = forward_solver(vtx,En,I,tol,ppn,Vref);
+[Vn] = forward_solver(En,I,tol,ppn,Vref);
 [voltageH,voltageV,indH,indV,dfv]=get_3d_meas(elec,vtx,Vn,Ib,no_pl);
 dfv = dfv(1:2:end);
 

@@ -7,7 +7,7 @@ function img= inv_solve_dual_mesh( inv_model, voltage)
 %
 
 % (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_dual_mesh.m,v 1.3 2005-12-06 21:07:15 aadler Exp $
+% $Id: inv_solve_dual_mesh.m,v 1.4 2007-04-12 14:54:55 aadler Exp $
 
 M_dense= inv_model.fwd_model;
 % Load parameters
@@ -76,7 +76,7 @@ for iter= 1:inv_model.parameters.max_iterations;
  
  if iter==1
    %sprintf('Current fields for iteration %d',i)
-   [V_dense] = forward_solver(vtx_dense,E_dense,I_dense,tol_for,pp_dense);
+   [V_dense] = forward_solver(E_dense,I_dense,tol_for,pp_dense);
    [viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
    dfv = df(1:2:end);
    vi = (viH); 
@@ -84,7 +84,7 @@ for iter= 1:inv_model.parameters.max_iterations;
    [v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense);
 else
    %sprintf('Current fields for iteration %d',i)
-   [V_dense] = forward_solver(vtx_dense,E_dense,I_dense,tol_for,pp_dense,V_dense);
+   [V_dense] = forward_solver(E_dense,I_dense,tol_for,pp_dense,V_dense);
    [viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
    dfv = df(1:2:end);
    vi = (viH); 

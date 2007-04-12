@@ -55,7 +55,7 @@ mat_ref = (1+0.5i)*ones(828,1); %%%%%%
 %Jacobians will be calculated based on this
 
 [Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,sym);
-[Vref] = forward_solver(vtx,Eref,I,tol,ppr);
+[Vref] = forward_solver(Eref,I,tol,ppr);
 [refH,refV,indH,indV,dfr]=get_3d_meas(elec,vtx,Vref,Ib,no_pl);
 dfr = dfr(1:2:end); %Taking just the horrizontal measurements
 
@@ -131,7 +131,7 @@ close;
 disp(sprintf('\n'))
 
 [En,D,Ela,ppn] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,sym);
-[Vn] = forward_solver(vtx,En,I,tol,ppn);
+[Vn] = forward_solver(En,I,tol,ppn);
 [voltageH,voltageV,indH,indV,dfv]=get_3d_meas(elec,vtx,Vn,Ib,no_pl);
 dfv = dfv(1:2:end);
 

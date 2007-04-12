@@ -1,12 +1,11 @@
-function [V] = forward_solver(vtx,E,I,tol,pp,V);
-%function [V] = forward_solver(vtx,E,I,tol,pp,V);
+function [V] = forward_solver(E,I,tol,pp,V);
+%[V] = forward_solver(E,I,tol,pp,V);
 %
 %This function solves the forward problem using the Cholesky or LU method or 
 %conjugate gradients. 
 %
 %
 %
-%vtx = The vertices
 %E   = The full rank system matrix 
 %I   = The currents matrix (RHS) 
 %pp  = the column permutation vector 
@@ -22,7 +21,7 @@ end
 
 
 % d: number of current patterns
-[bla,d] = size(I);
+[n_nodes,d] = size(I);
 
 if nargin < 6
 V = zeros(size(E,1),d);
@@ -45,7 +44,7 @@ if isreal(E)==1
         %Alternatively use pcg ********
         K = cholinc(E,tol*100);
         for i=1:d
-            [V(:,i),flag,relres,iter,resvec] = pcg(E,I(:,i),tol*norm(I(:,i)),d^3,K',K,V(:,i));
+            [V(:,i),flag,relres,iter,resvec] = pcg(E,I(:,i),tol*norm(I(:,i)),n_nodes,K',K,V(:,i));
         end
 
     end

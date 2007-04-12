@@ -23,7 +23,7 @@ function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,Vref,zc,v_f,df,tol,sym,D,Ela)
 
 % (C) 2005 Manuchehr Soleimani based on work by Nick Polydorides.
 %     Licenced under the GPL Version 2
-% $Id: jacobian_3d_precalc.m,v 1.1 2005-12-01 09:04:52 aadler Exp $
+% $Id: jacobian_3d_precalc.m,v 1.2 2007-04-12 14:54:55 aadler Exp $
 
 [vr,vc] = size(vtx);
 [sr,sc] = size(simp);
@@ -37,7 +37,7 @@ end
 %[E,D,Ela,pp] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,sym);
 
 V=Vref;
-%[V] = forward_solver(vtx,E,I,tol,pp);
+%[V] = forward_solver(E,I,tol,pp);
 
 %Select the part referring to the interior nodes
 V = V(1:vr,:);

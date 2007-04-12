@@ -6,7 +6,7 @@ function J= ms_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ms_calc_jacobian.m,v 1.2 2007-03-27 17:08:39 aadler Exp $
+% $Id: ms_calc_jacobian.m,v 1.3 2007-04-12 14:54:55 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -23,7 +23,7 @@ Vref = eidors_obj('get-cache', fwd_model, 'ms_2005_Vref');
 if ~isempty(Vref)
    eidors_msg('ms_calc_jacobian: using cached value', 4);
 else
-   Vref = forward_solver(p.vtx,s_mat.E,p.I,tol,s_mat.perm);
+   Vref = forward_solver(s_mat.E,p.I,tol,s_mat.perm);
 
    eidors_obj('set-cache', fwd_model, 'ms_2005_Vref', Vref);
    eidors_msg('ms_calc_jacobian: setting cached value', 4);
