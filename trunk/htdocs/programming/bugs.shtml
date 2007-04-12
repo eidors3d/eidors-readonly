@@ -68,6 +68,9 @@
       needs to be thought out properly, too.
     - measurements are negative for simple mk_stim_patterns
 
+    - jacobian calculation bugs
+    - bug on 3d boundary in mk_circ_model
+
 - Generate some lung imaging examples
     - 2x8 in 3D?
 
@@ -102,7 +105,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-12-06 20:19:57 $ by $Author: aadler $
+    Last Modified: $Date: 2007-04-12 12:40:10 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
