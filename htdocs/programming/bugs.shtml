@@ -71,6 +71,9 @@
     - jacobian calculation bugs
     - bug on 3d boundary in mk_circ_model
 
+    - remove 'misc' structure from np_solvers. Change 
+      to 'fwd_solve.np_fwd_solve'
+
 - Generate some lung imaging examples
     - 2x8 in 3D?
 
@@ -105,7 +108,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-04-12 12:40:10 $ by $Author: aadler $
+    Last Modified: $Date: 2007-04-18 13:36:45 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
