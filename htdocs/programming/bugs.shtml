@@ -59,6 +59,8 @@
     - caching - allow caching to disk
 
     * code to calculate BR and position of an image
+ 
+    - add code to inverse_solver in np_inv_solve
 
 - Bugs
     - fwd_model.stimulation.meas_pattern is transposed wrt the 
@@ -108,7 +110,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-04-18 13:36:45 $ by $Author: aadler $
+    Last Modified: $Date: 2007-04-21 02:24:13 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
