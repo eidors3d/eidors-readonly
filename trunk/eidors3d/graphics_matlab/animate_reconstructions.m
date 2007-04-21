@@ -30,7 +30,7 @@ else
    if  strfind(system_dependent('getos'),'Windows')
       system(sprintf('explorer "%s.html"',fname));
    else % we hope this is here - under linux etc
-      system(sprintf('mozilla "%s.html"',fname));
+      system(sprintf('mozilla "%s/%s.html"',pwd,fname));
    end
 end
 
@@ -110,8 +110,12 @@ function rm_rf(dirname)
 function ld_lib_path= sys_dep;
    ld_lib_path='';
    if  strfind(system_dependent('getos'),'Linux')
-     s=ver;
-      if str2num(s.Version)>=7
+     vv=version; 
+     ff=find(vv == ' '); 
+     if length(ff)>0;vv=vv(1:ff(1)-1);end
+     ff=find(vv == '.');
+     if length(ff)>1;vv=vv(1:ff(2)-1);end     
+     if str2num(vv)>=7
         %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks external progs
           ld_lib_path='LD_LIBRARY_PATH=;';
       end      
