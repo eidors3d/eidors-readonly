@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.20 2007-04-21 18:52:35 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.21 2007-04-21 18:58:30 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -311,7 +311,7 @@ void recurse_hash( hash_context *c, const mxArray *var ) {
       int len= 2* mxGetNumberOfElements( *lhs );
       hash_process( c, (unsigned char *) pr, len );
       // and file changed time of file - if it is a file on disk
-      lookupfiletime( c, (unsigned char *) pr ) {
+      lookupfiletime( c, lhs[0] );
     } else {
       mexErrMsgTxt("eidors_var_id: weird output for function_handle");
     }
