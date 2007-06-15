@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2>EIDORS3D tutorial</h2>
 
 This tutorial was created by Nick Polydorides,
@@ -15,7 +15,7 @@ of code is now deprecated.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 17:51:36 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 17:52:48 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
