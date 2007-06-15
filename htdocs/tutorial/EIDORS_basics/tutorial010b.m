@@ -1,5 +1,5 @@
 % Simulate EIT data
-% $Id: tutorial010b.m,v 1.1 2006-08-17 20:32:24 aadler Exp $
+% $Id: tutorial010b.m,v 1.1 2007-06-15 18:17:51 aadler Exp $
 
 sim_img= eidors_obj('image', 'stimulation image');
 sim_img.fwd_model= imdl_3d.fwd_model;

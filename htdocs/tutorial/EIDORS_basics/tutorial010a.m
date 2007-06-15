@@ -1,5 +1,5 @@
 % Create fwd models
-% $Id: tutorial010a.m,v 1.2 2006-08-17 20:34:34 aadler Exp $
+% $Id: tutorial010a.m,v 1.1 2007-06-15 18:17:51 aadler Exp $
 
 subplot(121);
 
