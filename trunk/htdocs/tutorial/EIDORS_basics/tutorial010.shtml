@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2>EIDORS fwd_models</h2>
 
 <h3> 
@@ -62,7 +62,7 @@ image may be reconstructed.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:42:42 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:17:51 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
