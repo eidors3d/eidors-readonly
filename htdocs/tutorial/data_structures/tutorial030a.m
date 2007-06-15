@@ -1,5 +1,5 @@
 % Explore Stimulation Patterns
-% $Id: tutorial030a.m,v 1.2 2006-08-18 18:03:27 aadler Exp $
+% $Id: tutorial030a.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
 
 % 3D Model
 imdl_3d= mk_common_model('n3r2',16);

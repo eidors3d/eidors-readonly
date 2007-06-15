@@ -1,5 +1,5 @@
 % Explore Stimulation Patterns - and reconstruct images
-% $Id: tutorial030c.m,v 1.1 2006-08-18 19:07:32 aadler Exp $
+% $Id: tutorial030c.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
 
 % Define an image
 sim_img= eidors_obj('image', 'stimulation image');

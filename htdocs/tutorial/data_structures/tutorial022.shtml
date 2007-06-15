@@ -1,17 +1,15 @@
 <!--#include virtual="nav-sidebar.shtml" -->
-<h2>Basic EIDORS data structures</h2>
+<h2>EIDORS data structures for forward models</h2>
 
 <h3> 
-Basic EIDORS data structures: the fwd_model
+2D foward models
 </h3>
 
-To understand a the basic EIDORS data structures, we
-define an electrical resistor, with ground at one end,
-and a single electrode (with contact resistance
-of 20&Omega;) at the other.
+We can build a simple rectangular model
+which
 
 <pre>
-<!--#include virtual="tutorial020a.m" -->
+<!--#include virtual="tutorial022a.m" -->
 </pre>
 
 <center>
@@ -88,7 +86,7 @@ Thus the output is, giving a resistance change of 200&Omega;
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-17 04:19:43 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:24:37 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
