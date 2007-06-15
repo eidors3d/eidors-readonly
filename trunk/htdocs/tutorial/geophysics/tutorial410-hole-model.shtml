@@ -5,7 +5,9 @@
 Borehole model
 </h3>
 
+<h4>
 Create 3D FEM model of the gallery and load homogeneous model
+</h4>
 <pre>
 <!--#include virtual="tutorial410a.m" -->
 </pre>
@@ -16,8 +18,10 @@ Create 3D FEM model of the gallery and load homogeneous model
 3D FEM of gallery from two viewing angles
 </center>
 
+<h4>
 Create forward model. Calculate the difference (residual) between the
 gallery data and a homogeneous forward model.
+</h4>
 <pre>
 <!--#include virtual="tutorial410b.m" -->
 </pre>
@@ -28,7 +32,9 @@ gallery data and a homogeneous forward model.
 Electrode data: <i>blue</i> simulation, <i>green</i> measurement
 </center>
 
+<h4>
 Reconstruct image and show residual.
+</h4>
 <pre>
 <!--#include virtual="tutorial410c.m" -->
 </pre>
@@ -39,7 +45,9 @@ Reconstruct image and show residual.
 Electrode data: <i>blue</i> simulation, <i>green</i> measurement
 </center>
 
+<h4>
 Show reconstructed images
+</h4>
 <pre>
 <!--#include virtual="tutorial410d.m" -->
 </pre>
@@ -68,7 +76,7 @@ gallery_gradient(EZG04_Ring1,Data_Ring1_July2004_Wen32_1,2,9,'R2Jul2004Wenner1')
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 19:56:56 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 20:24:00 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
