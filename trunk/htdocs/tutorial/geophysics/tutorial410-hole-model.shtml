@@ -28,9 +28,32 @@ gallery data and a homogeneous forward model.
 Electrode data: <i>blue</i> simulation, <i>green</i> measurement
 </center>
 
+Reconstruct image and show residual.
+<pre>
+<!--#include virtual="tutorial410c.m" -->
+</pre>
 
-Load data and run reconstruction
+<center>
+<img src="tutorial410c.png">
+<br><i> Figure:</i>
+Electrode data: <i>blue</i> simulation, <i>green</i> measurement
+</center>
 
+Show reconstructed images
+<pre>
+<!--#include virtual="tutorial410d.m" -->
+</pre>
+
+<center>
+<img src="tutorial410d.png">
+<br><i> Figure:</i>
+Reconstructed images:
+ <i>right</i>: 3D,
+ <i>left</i>: slice through centre
+</center>
+
+
+<!--
 <pre>
 Anneau1_Juillet2004_wen32_1   
 %Anneau1_Decembre2004_wen32_1
@@ -38,13 +61,14 @@ Anneau1_Juillet2004_wen32_1
 Electrode_Positions_Ring1_EZG04
 gallery_gradient(EZG04_Ring1,Data_Ring1_July2004_Wen32_1,2,9,'R2Jul2004Wenner1')
 </pre>
+-->
 
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 19:37:45 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 19:56:56 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
