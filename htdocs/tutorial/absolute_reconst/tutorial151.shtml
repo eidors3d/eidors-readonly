@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2>
 Absolute Imaging: Non-Linear Gauss Newton Image Reconstruction
 </H2>
@@ -97,7 +97,7 @@ EIDORS:[ tutorial151_nonlinearGN: iter=10 err=0.262837 factor=0.068129 ]
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-17 14:09:18 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:22:06 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

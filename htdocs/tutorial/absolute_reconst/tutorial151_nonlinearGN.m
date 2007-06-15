@@ -3,7 +3,7 @@ function img= tutorial151_nonlinearGN( inv_model, data )
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data       => measurement data
-% $Id: tutorial151_nonlinearGN.m,v 1.3 2006-11-17 13:22:31 aadler Exp $
+% $Id: tutorial151_nonlinearGN.m,v 1.1 2007-06-15 18:22:06 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 

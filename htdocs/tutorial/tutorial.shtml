@@ -36,7 +36,8 @@ EIDORS and then run this command in a matlab
 </h3>
 
     <li><h3> 
-<a href="./tutorial151.shtml" >Absolute image reconstruction</a>
+<a href="./absolute_reconst/tutorial151.shtml"
+       >Absolute image reconstruction</a>
 </h3>
 
     <li><h3> 
@@ -94,7 +95,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:19:04 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:22:53 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
