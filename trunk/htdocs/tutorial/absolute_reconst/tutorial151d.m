@@ -1,5 +1,5 @@
 % Difference imaging result
-% $Id: tutorial151d.m,v 1.3 2006-11-17 13:22:31 aadler Exp $
+% $Id: tutorial151d.m,v 1.1 2007-06-15 18:22:06 aadler Exp $
 
 % imdl is loaded from file tutorial151_model.mat
 imdl.reconst_type= 'static';
