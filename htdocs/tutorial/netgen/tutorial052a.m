@@ -1,5 +1,5 @@
 % Radial move ball in a single electrode plane
-% $Id: tutorial052a.m,v 1.1 2006-11-26 01:01:55 aadler Exp $
+% $Id: tutorial052a.m,v 1.1 2007-06-15 18:05:51 aadler Exp $
 
 electrodes_per_plane= 16;
 number_of_planes= 1;
