@@ -1,5 +1,5 @@
 % Reconstruct data on Gallery
-% $Id: tutorial410c.m,v 1.1 2007-06-15 19:56:56 aadler Exp $
+% $Id: tutorial410c.m,v 1.2 2007-06-15 20:24:00 aadler Exp $
 
 n_iter=9;
 
@@ -9,7 +9,6 @@ for k= 1:n_iter
     jacobian = dg_calc_jacobian(gallery_3D_img);
     [ref_data,gallery_3D_img]= dg_fwd_solve(gallery_3D_img);
     residuals= real_data.meas-ref_data.meas;
-    disp('Solving the inverse problem');
     svj= svd(jacobian);
     % compute pseudo-inverse using only the largest singular values
     delta_params= pinv(jacobian,svj(1)/20.)*residuals;
@@ -22,4 +21,4 @@ end
 
 subplot(211)
 plot([ref_data.meas,real_data.meas]);
- print -r75 -dpng tutorial410c.png;
+%print -r75 -dpng tutorial410c.png;
