@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial310b.m,v 1.1 2006-11-13 18:03:37 aadler Exp $
+% $Id: tutorial310b.m,v 1.1 2007-06-15 18:10:19 aadler Exp $
 
 % If electrodes are counter-clockwise, then do this
 imdl_ccw = imdl;
