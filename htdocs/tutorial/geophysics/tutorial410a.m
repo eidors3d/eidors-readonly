@@ -1,5 +1,5 @@
 % Create 3D FEM model of the gallery
-% $Id: tutorial410a.m,v 1.1 2007-06-15 18:59:35 aadler Exp $
+% $Id: tutorial410a.m,v 1.2 2007-06-15 19:37:45 aadler Exp $
 n_rings= 9;
 factor= 2;
 levels= [-6 -4 -2.5 -1.5 -1 -0.5 -0.25 0 0.25 0.5 1 1.5 2.5 4 6];
@@ -18,4 +18,3 @@ show_fem(gallery_3D_fwd); axis square; view(0.,15.);
 subplot(122)
 show_fem(gallery_3D_fwd); axis square; view(0.,75);
 %print -r100 -dpng tutorial410a.png;
-
