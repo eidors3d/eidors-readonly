@@ -65,11 +65,13 @@ EIDORS and then run this command in a matlab
 <h3>EIDORS data structures and models</h3>
 <ul>
     <li><h3> 
-<a href="./tutorial020.shtml" >Basic EIDORS Data structures</a>
+<a href="./data_structures/tutorial020.shtml"
+      >Basic EIDORS Data structures</a>
 </h3>
 
     <li><h3> 
-<a href="./tutorial030.shtml" >Modifying EIDORS models</a>
+<a href="./data_structures/tutorial030.shtml"
+      >Modifying EIDORS models</a>
 </h3>
 
 
@@ -95,7 +97,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:22:53 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:25:10 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

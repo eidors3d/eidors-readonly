@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2> 
 Modifying EIDORS data structures and models
 </h2>
@@ -73,7 +73,7 @@ a 20dB SNR.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:42:42 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:24:37 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

@@ -1,4 +1,4 @@
-% Create 2D model $Id: tutorial022a.m,v 1.2 2007-03-26 20:48:32 aadler Exp $
+% Create 2D model $Id: tutorial022a.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
 
 nn= 84;     % number of nodes
 ww=4;       % width = 4
