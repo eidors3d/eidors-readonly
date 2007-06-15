@@ -57,8 +57,8 @@ EIDORS and then run this command in a matlab
 <h3>Application: EIT for geophysics</h3>
 <ul>
     <li><h3> 
-<a href="./tutorial310-lung-images.shtml"
-   >Images of lungs</a>
+<a href="./geophysics/tutorial410-hole-model.shtml"
+   >EIT of borehole</a>
 
 </ul>
 
@@ -97,7 +97,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:25:10 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:45:23 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
