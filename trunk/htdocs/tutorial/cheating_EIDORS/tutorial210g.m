@@ -1,5 +1,5 @@
 % Reconstruct images with cheating Laplace prior (large model)
-% $Id: tutorial210g.m,v 1.1 2006-08-21 21:00:45 aadler Exp $
+% $Id: tutorial210g.m,v 1.1 2007-06-15 18:12:08 aadler Exp $
 
 lmdl= mk_common_model('c2c');
 lmdl.RtR_prior= @tutorial210_cheat_laplace;

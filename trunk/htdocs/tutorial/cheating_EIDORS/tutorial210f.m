@@ -1,5 +1,5 @@
 % Reconstruct images with cheating Laplace prior (small model)
-% $Id: tutorial210f.m,v 1.1 2006-08-21 21:00:45 aadler Exp $
+% $Id: tutorial210f.m,v 1.1 2007-06-15 18:12:07 aadler Exp $
 
 smdl= mk_common_model('b2c');
 smdl.RtR_prior= @tutorial210_cheat_laplace;
