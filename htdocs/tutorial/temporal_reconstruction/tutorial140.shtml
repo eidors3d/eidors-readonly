@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2>
 Image reconstruction of moving objects
 </H2>
@@ -38,7 +38,7 @@ Output images are:
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-21 18:42:42 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:15:38 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

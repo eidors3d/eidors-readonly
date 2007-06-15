@@ -1,5 +1,5 @@
 % Image reconstruction of moving objects
-% $Id: tutorial140a.m,v 1.1 2006-08-19 14:39:20 aadler Exp $
+% $Id: tutorial140a.m,v 1.1 2007-06-15 18:15:38 aadler Exp $
 
 load netgen_moving_ball
 vh= homg_tank;

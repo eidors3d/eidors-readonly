@@ -27,7 +27,8 @@ EIDORS and then run this command in a matlab
 </h3>
 
     <li><h3> 
-<a href="./tutorial140.shtml" >Image reconstruction of moving objects</a>
+<a href="./temporal_reconstruction/tutorial140.shtml"
+       >Image reconstruction of moving objects</a>
 </h3>
 
     <li><h3> 
@@ -89,7 +90,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:13:53 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:16:17 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
