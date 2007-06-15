@@ -1,5 +1,5 @@
 % Test image for different noise
-% $Id: tutorial210c.m,v 1.1 2006-08-21 20:31:51 aadler Exp $
+% $Id: tutorial210c.m,v 1.1 2007-06-15 18:12:03 aadler Exp $
 
 il_g= mk_common_model('c2c');
 

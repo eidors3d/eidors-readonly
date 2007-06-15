@@ -1,5 +1,5 @@
 % Define Face Shapes: Large Face
-% $Id: tutorial210b.m,v 1.2 2006-08-21 20:46:23 aadler Exp $
+% $Id: tutorial210b.m,v 1.1 2007-06-15 18:12:03 aadler Exp $
 
 clear p;
 p.sad=  [ ...
