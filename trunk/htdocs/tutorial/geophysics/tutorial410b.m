@@ -1,5 +1,5 @@
 % Reconstruct data on Gallery
-% $Id: tutorial410b.m,v 1.1 2007-06-15 19:34:43 aadler Exp $
+% $Id: tutorial410b.m,v 1.2 2007-06-15 19:37:45 aadler Exp $
 
 % homogeneous starting model
 background_resistivity= 15.0; % Unit is Ohm.m
@@ -22,5 +22,5 @@ residuals= real_data.meas-ref_data.meas;
 %% plot the data
 subplot(211);
 plot([ref_data.meas,real_data.meas]);
- print -r75 -dpng tutorial410b.png;
+%print -r75 -dpng tutorial410b.png;
 

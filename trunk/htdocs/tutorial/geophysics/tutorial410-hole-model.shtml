@@ -5,6 +5,30 @@
 Borehole model
 </h3>
 
+Create 3D FEM model of the gallery and load homogeneous model
+<pre>
+<!--#include virtual="tutorial410a.m" -->
+</pre>
+
+<center>
+<img src="tutorial410a.png">
+<br><i> Figure:</i>
+3D FEM of gallery from two viewing angles
+</center>
+
+Create forward model. Calculate the difference (residual) between the
+gallery data and a homogeneous forward model.
+<pre>
+<!--#include virtual="tutorial410b.m" -->
+</pre>
+
+<center>
+<img src="tutorial410b.png">
+<br><i> Figure:</i>
+Electrode data: <i>blue</i> simulation, <i>green</i> measurement
+</center>
+
+
 Load data and run reconstruction
 
 <pre>
@@ -15,26 +39,12 @@ Electrode_Positions_Ring1_EZG04
 gallery_gradient(EZG04_Ring1,Data_Ring1_July2004_Wen32_1,2,9,'R2Jul2004Wenner1')
 </pre>
 
-<center>
-<img src="tutorial310a.png">
-<br><i> Figure:</i>
-2D FEM of thorax (units in mm). Electrode #1
-(<font color="#00B300"><b>o</b></font>)
-and electrode #2 
-(<font color="#008000"><b>o</b></font>)
-are shown in different colours than the others
-(<font color="#004D00"><b>o</b></font>).
-</center>
-
-<pre>
-<!--#include virtual="tutorial310b.m" -->
-</pre>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:45:23 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 19:37:45 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
