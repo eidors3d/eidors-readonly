@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2> 
 Netgen Models in EIDORS
 </h2>
@@ -17,7 +17,7 @@ Moving balls with a single plane of round electrodes
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-26 01:01:55 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:05:51 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

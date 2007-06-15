@@ -60,11 +60,11 @@ EIDORS and then run this command in a matlab
 
 
     <li><h3> 
-<a href="./tutorial040.shtml" >Using Netgen to build EIDORS models</a>
+<a href="./netgen/tutorial040.shtml" >Using Netgen to build EIDORS models</a>
 </h3>
 
     <li><h3> 
-<a href="./tutorial050.shtml" >More sophisticated uses of Netgen</a>
+<a href="./netgen/tutorial050.shtml" >More sophisticated uses of Netgen</a>
 </h3>
 
 </ul>
@@ -81,7 +81,7 @@ EIDORS and then run this command in a matlab
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 17:51:35 $ by $Author: aadler $
+    Last Modified: $Date: 2007-06-15 18:05:50 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
