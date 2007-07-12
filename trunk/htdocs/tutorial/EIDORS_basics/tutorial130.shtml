@@ -1,0 +1,75 @@
+<!--#include virtual="../nav-sidebar.shtml" -->
+<h2>Compare 3D image reconstructions</h2>
+
+EIDORS is able to easily compare different
+image reconstruction algorithms by changing
+the parameters of the <tt>inv_model</tt>
+structure.
+
+<p>
+The first step is to create a simulation model
+
+<pre>
+<!--#include virtual="tutorial130a.m"
+ --></pre>
+
+<center>
+<img src="tutorial130a.png">
+<br><i>Figure:</i>
+Simulation image for sample data (two different views)
+</center>
+
+Images are reconstructed using the following
+three different algorithms, using different
+paramters.
+
+<pre>
+<!--#include virtual="tutorial130b.m"
+ --></pre>
+
+<center>
+<img src="tutorial130b.png">
+<br><i>Figure:</i>
+Images reconstructed with 
+data without noise. Slices are shown
+at heights of (top to bottom):
+<i>1)</i> 2.5,
+<i>2)</i> 1.5,
+<i>3)</i> 0.5.
+
+
+<i>From Left to Right:</i>
+<i>1)</i> One step Gauss-Newton reconstruction
+(Tikhonov prior)
+<i>2)</i> One step Gauss-Newton reconstruction
+(Laplace filter prior)
+<i>3):</i> Total Variation reconstruction
+</center>
+
+<center>
+<img src="tutorial130c.png">
+<br><i>Figure:</i>
+Images reconstructed with 
+data with 15dB SNR. Slices are shown
+at heights of (top to bottom):
+<i>1)</i> 2.5,
+<i>2)</i> 1.5,
+<i>3)</i> 0.5.
+
+
+<i>From Left to Right:</i>
+<i>1)</i> One step Gauss-Newton reconstruction
+(Tikhonov prior)
+<i>2)</i> One step Gauss-Newton reconstruction
+(Laplace filter prior)
+<i>3):</i> Total Variation reconstruction
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-07-12 18:08:41 $
+</small>
+</BODY></HTML>
+<!--
+      -->
