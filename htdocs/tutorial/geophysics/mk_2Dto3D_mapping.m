@@ -20,5 +20,3 @@ for k= 1:n_elems2D
     m2Dto3D(fwd_model.misc.map_2Dto3D(k,:),k)= 1.;
 end
 m2Dto3D= sparse(m2Dto3D);
-end
-
