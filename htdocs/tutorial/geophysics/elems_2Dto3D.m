@@ -3,4 +3,3 @@ a= (1:n_elems_2D:3*n_elems_2D*(n_levels-1));
 for k= 1:n_elems_2D
     map_2Dto3D(k,:)= (k-1)+a;
 end
-end
