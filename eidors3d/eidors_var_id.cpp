@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.21 2007-04-21 18:58:30 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.22 2007-08-19 10:57:34 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -101,6 +101,7 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
 //  rhs[1] = mxCreateString("file");
 //  This should save time, but breaks badly. More BS from Matlab?
     
+    { // for C
     int retval = mexCallMATLAB(1,lhs, 1, rhs, "exist");
 //  mxDestroyArray( rhs[1] );
     if ( retval != 0 ||
@@ -109,6 +110,7 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
       // var doesn't point to a function -> leave
       mxDestroyArray( lhs[0] );
       return;
+    }
     }
   }
 
@@ -136,7 +138,9 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
     return;
   }
 
+  { // for C
   int len= mxGetNumberOfElements( *lhs ) + 1;
+  { // for C
   char * fname= (char *) mxMalloc(len* sizeof(char));
   IF_NULL_ERR( fname );
 
@@ -144,6 +148,7 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
      mxGetString( *lhs, fname, len) );
   mxDestroyArray( lhs[0] );
 
+  { // for C
   struct stat buffer;
   IF_BADSTATUS_ERR(
      stat(fname, &buffer) );
@@ -152,9 +157,10 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
   mexPrintf("Got string=%s mtime=%d\n", fname, buffer.st_mtime);
   #endif
   hash_process( c, (unsigned char *) &buffer.st_mtime, 
-                   sizeof( time_t ) );
+                   sizeof( buffer.st_mtime ) );
 
   mxFree( fname );
+  } } } // for C
 }
 
 void hash_struct( hash_context *c, const mxArray *var )
@@ -213,7 +219,8 @@ void hash_struct( hash_context *c, const mxArray *var )
   mxDestroyArray( sortord );
 }
 
-void recurse_hash( hash_context *c, const mxArray *var ) {
+static void
+recurse_hash( hash_context *c, const mxArray *var ) {
 
   #ifdef VERBOSE    
       mexPrintf("processing var of ClassID ( %d ):", mxGetClassID( var ) );
