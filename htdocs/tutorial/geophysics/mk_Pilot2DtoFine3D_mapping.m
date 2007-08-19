@@ -63,14 +63,13 @@ for k= 1:n_dense
         dist(kdist(1))= dist(kdist(2))/2;
     end
     dist = 1./dist;
-    ms2d(k,kdist(1:n_neighbor)) = dist(kdist(1:n_neighbor))/sum(dist(kdist(1:n_neighbor)));
+    dist_kdist = dist(kdist(1:n_neighbor));
+    ms2d(k,kdist(1:n_neighbor)) = dist_kdist(:)'/sum(dist_kdist);
 end
 ms2d= sparse(ms2d);
-end
 
 function img = dg_sparse2Dto3D_mapping(img)
 %% Function to be called to perform the mapping in the forward problem
 mapping_matrix= img.params_mapping.data;
 coarse_elems= img.params_mapping.params;
 img.elem_data= exp(mapping_matrix*coarse_elems); % take exp because parameters are in log domain
-end

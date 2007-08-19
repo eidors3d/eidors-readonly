@@ -25,4 +25,3 @@ for k= 1:n_params
     img.params_mapping.params(k)=img.params_mapping.params(k)-img.params_mapping.perturb(k);
     jacobian(:,k)= (data.meas-data_ref.meas);
 end
-end
