@@ -2,7 +2,7 @@
 % different algorithms to image it
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: image_2d_algs.m,v 1.19 2007-08-29 09:25:18 aadler Exp $
+% $Id: image_2d_algs.m,v 1.20 2007-08-29 09:26:39 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 
@@ -33,7 +33,7 @@ inv2d.name= 'AA mdl with excluded measurements';
 %inv2d.solve=       'aa_inv_solve';
 inv2d.solve=       'aa_inv_conj_grad';
 %inv2d.hyperparameter.value = 1e-2;
-inv2d.hyperparameter.func = 'calc_noise_figure';
+inv2d.hyperparameter.func = 'choose_noise_figure';
 inv2d.hyperparameter.noise_figure= 1;
 inv2d.hyperparameter.tgt_elems= 1:4;
  inv2d.RtR_prior= 'laplace_image_prior';

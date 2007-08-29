@@ -11,7 +11,7 @@ function img= coarse_fine_solve( inv_model, data1, data2)
 % inv_model.coarse_fine.mapping => sparse matrix to map coarse->fine
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: coarse_fine_solve.m,v 1.7 2007-08-29 09:24:59 aadler Exp $
+% $Id: coarse_fine_solve.m,v 1.8 2007-08-29 09:26:17 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 

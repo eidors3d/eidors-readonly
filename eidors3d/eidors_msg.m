@@ -20,7 +20,7 @@ function eidors_msg( message, varargin )
 %   3 => detailed information
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_msg.m,v 1.19 2007-08-29 09:25:00 aadler Exp $
+% $Id: eidors_msg.m,v 1.20 2007-08-29 09:26:18 aadler Exp $
 
 global eidors_objects
 

@@ -16,7 +16,7 @@ function [J] = jacobian_3d_with_fields(V,Ela,D,I,elec,vtx,simp,gnd_ind,mat_ref,z
 %J        = The Jacobian (sensitivity) matrix with respect to conductivity
 %
 % (C) 2003-2005 Nick Polydorides and David Stephenson. Licensed under GPL
-% $Id: jacobian_3d_with_fields.m,v 1.11 2007-08-29 09:24:59 aadler Exp $
+% $Id: jacobian_3d_with_fields.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
 
 [vr,vc] = size(vtx);
 [sr,sc] = size(simp);

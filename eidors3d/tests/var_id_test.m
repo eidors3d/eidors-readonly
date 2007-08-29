@@ -2,7 +2,7 @@ function ok= var_id_test
 % Test that the mex file eidors_var_id works 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: var_id_test.m,v 1.17 2007-08-29 09:25:19 aadler Exp $
+% $Id: var_id_test.m,v 1.18 2007-08-29 09:26:40 aadler Exp $
 
 ok=1;
 

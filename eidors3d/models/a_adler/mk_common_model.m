@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.9 2007-08-29 09:25:34 aadler Exp $
+% $Id: mk_common_model.m,v 1.10 2007-08-29 09:26:55 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -149,7 +149,7 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     inv2d.solve=       'aa_inv_solve';
     %inv2d.solve=       'aa_inv_conj_grad';
     inv2d.hyperparameter.value = 3e-2;
-    %inv2d.hyperparameter.func = 'calc_noise_figure';
+    %inv2d.hyperparameter.func = 'choose_noise_figure';
     %inv2d.hyperparameter.noise_figure= 1;
     %inv2d.hyperparameter.tgt_elems= 1:4;
      inv2d.RtR_prior= 'laplace_image_prior';
