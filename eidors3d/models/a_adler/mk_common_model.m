@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.1 2007-08-29 09:10:46 aadler Exp $
+% $Id: mk_common_model.m,v 1.2 2007-08-29 09:12:20 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]

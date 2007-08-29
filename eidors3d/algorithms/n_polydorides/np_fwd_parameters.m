@@ -22,7 +22,7 @@ function param = np_fwd_parameters( fwd_model )
 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_fwd_parameters.m,v 1.2 2007-08-29 09:10:13 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.3 2007-08-29 09:11:49 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
