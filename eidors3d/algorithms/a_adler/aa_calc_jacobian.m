@@ -10,7 +10,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_calc_jacobian.m,v 1.6 2007-08-29 09:16:45 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );

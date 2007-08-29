@@ -9,7 +9,7 @@
 %    This corresponds to the least squares solution
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: resistor_model.m,v 1.10 2007-08-29 09:17:05 aadler Exp $
+% $Id: resistor_model.m,v 1.11 2007-08-29 09:18:27 aadler Exp $
 
 function resistor_model;
 

@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_3d_simdata.m,v 1.30 2007-08-29 09:17:05 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.31 2007-08-29 09:18:27 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
