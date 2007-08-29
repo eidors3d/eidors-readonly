@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.7 2007-08-29 09:21:28 aadler Exp $
+% $Id: mk_common_model.m,v 1.8 2007-08-29 09:24:24 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -142,7 +142,7 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     params.solve=      'aa_fwd_solve';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
-    params.normalize_measurements= 1;
+    params.normalize_measurements= 0;
     params.misc.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);
 
@@ -184,7 +184,7 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
     params.solve=      'aa_fwd_solve';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
-    params.normalize_measurements= 1;
+    params.normalize_measurements= 0;
     params.misc.perm_sym= '{n}';
     fm3d = eidors_obj('fwd_model', params);
 

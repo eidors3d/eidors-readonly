@@ -7,7 +7,7 @@ function Reg= gaussian_HPF_prior( inv_model );
 %   diam_frac= inv_model.image_prior.parameters(1) DEFAULT 0.1
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: gaussian_HPF_prior.m,v 1.1 2007-08-29 09:20:54 aadler Exp $
+% $Id: gaussian_HPF_prior.m,v 1.2 2007-08-29 09:23:48 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 if isfield(inv_model,'gaussian_HPF_prior')

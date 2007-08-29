@@ -9,7 +9,7 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 %   CC  = Connectivity Matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_calc_system_mat.m,v 1.9 2007-08-29 09:20:53 aadler Exp $
+% $Id: aa_calc_system_mat.m,v 1.10 2007-08-29 09:23:47 aadler Exp $
 
 p= aa_fwd_parameters( fwd_model );
 

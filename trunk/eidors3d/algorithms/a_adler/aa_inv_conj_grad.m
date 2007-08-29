@@ -9,7 +9,7 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_conj_grad.m,v 1.9 2007-08-29 09:20:53 aadler Exp $
+% $Id: aa_inv_conj_grad.m,v 1.10 2007-08-29 09:23:47 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

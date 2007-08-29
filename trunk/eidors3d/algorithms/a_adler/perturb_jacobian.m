@@ -10,7 +10,7 @@ function J= perturb_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: perturb_jacobian.m,v 1.9 2007-08-29 09:20:54 aadler Exp $
+% $Id: perturb_jacobian.m,v 1.10 2007-08-29 09:23:48 aadler Exp $
 
 if isfield(fwd_model,'perturb_jacobian')
    delta = fwd_model.perturb_jacobian.delta;
