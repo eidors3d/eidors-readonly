@@ -2,25 +2,22 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.26 2007-08-29 09:07:15 aadler Exp $
+% $Id: startup.m,v 1.27 2007-08-29 09:10:13 aadler Exp $
 
 HOMEDIR=pwd;
 
 addpath( HOMEDIR );
 addpath([HOMEDIR, '/algorithms']);
-addpath([HOMEDIR, '/algorithms/aa_1996']);
-addpath([HOMEDIR, '/algorithms/aa_2005']);
-addpath([HOMEDIR, '/algorithms/ab_2002']);
-addpath([HOMEDIR, '/algorithms/bl_2006']);
-%addpath([HOMEDIR, '/algorithms/at_2002']);
-addpath([HOMEDIR, '/algorithms/ms_2005']);
-%addpath([HOMEDIR, '/algorithms/mv_2001']);
-addpath([HOMEDIR, '/algorithms/np_2003']);
-addpath([HOMEDIR, '/algorithms/ds_2005']);
+addpath([HOMEDIR, '/algorithms/a_adler']);
+addpath([HOMEDIR, '/algorithms/a_borsic']);
+addpath([HOMEDIR, '/algorithms/b_lionheart']);
+%addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
+addpath([HOMEDIR, '/algorithms/n_polydorides']);
+addpath([HOMEDIR, '/algorithms/d_stephenson']);
 addpath([HOMEDIR, '/interface']);
-addpath([HOMEDIR, '/models/aa_1996']);
-addpath([HOMEDIR, '/models/ds_2005']);
-addpath([HOMEDIR, '/models/sm_2005']);
+addpath([HOMEDIR, '/models/a_adler']);
+addpath([HOMEDIR, '/models/d_stephenson']);
+addpath([HOMEDIR, '/models/s_murphy']);
 addpath([HOMEDIR, '/meshing/netgen']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);

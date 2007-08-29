@@ -13,7 +13,7 @@
 %    Reconstruction = np_inv_solve
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.12 2007-08-29 09:07:15 aadler Exp $
+% $Id: manchester_tomography.m,v 1.13 2007-08-29 09:10:28 aadler Exp $
 function manchester_tomography( example_no)
 
 switch example_no
