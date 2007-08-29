@@ -20,7 +20,7 @@ function show_slices( img, levels, clim, ref_lev )
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.35 2007-08-29 09:07:16 aadler Exp $
+% $Id: show_slices.m,v 1.36 2007-08-29 09:10:28 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);

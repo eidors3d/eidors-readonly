@@ -64,7 +64,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.34 2007-08-29 09:07:16 aadler Exp $  
+% $Id: calc_colours.m,v 1.35 2007-08-29 09:10:28 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
