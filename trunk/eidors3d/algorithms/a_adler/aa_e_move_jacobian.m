@@ -13,7 +13,7 @@ function J= aa_e_move_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_e_move_jacobian.m,v 1.5 2007-08-29 09:15:29 aadler Exp $
+% $Id: aa_e_move_jacobian.m,v 1.6 2007-08-29 09:16:45 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 delta= 1e-6; % tests indicate this is a good value
