@@ -9,8 +9,8 @@ function J= perturb_jacobian( fwd_model, img)
 % fwd_model.perturb_jacobian.delta   - delta perturbation to use
 % img = image background for jacobian calc
 
-% (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: perturb_jacobian.m,v 1.2 2006-08-17 22:14:43 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: perturb_jacobian.m,v 1.3 2007-08-29 09:00:54 aadler Exp $
 
 if isfield(fwd_model,'perturb_jacobian')
    delta = fwd_model.perturb_jacobian.delta;

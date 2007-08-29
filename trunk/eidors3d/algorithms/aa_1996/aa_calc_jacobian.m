@@ -9,8 +9,8 @@ function J= aa_calc_jacobian( fwd_model, img)
 %                                  difference measurements
 % img = image background for jacobian calc
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_jacobian.m,v 1.9 2005-12-01 09:08:23 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: aa_calc_jacobian.m,v 1.10 2007-08-29 09:00:54 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );

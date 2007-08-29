@@ -38,8 +38,8 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
 %
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_common_model.m,v 1.27 2007-03-27 16:24:39 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: mk_common_model.m,v 1.28 2007-08-29 09:01:31 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]

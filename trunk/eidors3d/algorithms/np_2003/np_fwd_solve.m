@@ -5,8 +5,8 @@ function data= np_fwd_solve( fwd_model, img)
 % fwd_model = forward model
 % img = image struct
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_solve.m,v 1.8 2007-04-12 14:54:55 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: np_fwd_solve.m,v 1.9 2007-08-29 09:00:56 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 

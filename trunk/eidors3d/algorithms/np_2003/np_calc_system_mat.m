@@ -8,8 +8,8 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 % fwd_model = forward model
 % img       = image background for system matrix calc
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_calc_system_mat.m,v 1.5 2005-12-01 09:04:51 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: np_calc_system_mat.m,v 1.6 2007-08-29 09:00:56 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 

@@ -1,8 +1,8 @@
 % Based on the 'bubble' data from Eidors2D, use several 
 % different algorithms to image it
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: image_2d_algs.m,v 1.7 2006-01-24 02:53:26 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: image_2d_algs.m,v 1.8 2007-08-29 09:01:09 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 

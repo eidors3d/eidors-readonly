@@ -16,8 +16,8 @@ function hparam= select_noise_figure( inv_model );
 %   where Rn = noise covariance and A_ii = area of element i
 % NF = SNR_z / SNR_x
 
-% (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: choose_noise_figure.m,v 1.5 2006-11-27 19:34:38 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: choose_noise_figure.m,v 1.6 2007-08-29 09:00:54 aadler Exp $
 
 reqNF= inv_model.hyperparameter.noise_figure;
 

@@ -12,8 +12,8 @@ function show_fem( mdl, options )
 %    calc_colours('ref_level', ref_level)
 %    the default value is 'auto', which should normally autoscale well.
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_fem.m,v 1.45 2006-11-04 21:58:32 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: show_fem.m,v 1.46 2007-08-29 09:01:09 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');

@@ -10,8 +10,8 @@ function L=TV_operator_3D( msh )
 % Copyright 2004 Andrea Borsic, SC-AIP s.a.s.
 % Scientific Computing & Applied Inverse Problems  www.sc-aip.com
 % Modifications (C) 2005 Andy Adler.
-% Licenced under the GPL Version 2
-% $Id: TV_operator_3D.m,v 1.3 2005-12-02 11:49:57 aadler Exp $
+% License: GPL version 2 or version 3
+% $Id: TV_operator_3D.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
 
 %global SP3D % Sparse 3D matrix used in the computations
 %SP3D=[];

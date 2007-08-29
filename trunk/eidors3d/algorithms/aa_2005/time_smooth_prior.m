@@ -24,8 +24,8 @@ function Reg= time_smooth_prior( inv_model );
 % -1 for each adjacent element, and 3 (in 2D) or 4 (in 3D)
 % for the element itself
 
-% (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_smooth_prior.m,v 1.3 2006-08-12 01:20:53 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: time_smooth_prior.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 ne = pp.n_elem;

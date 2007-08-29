@@ -19,8 +19,8 @@ function show_slices( img, levels, clim, ref_lev )
 % clim      = colourmap limit ([] -> use image maximum)
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: show_slices.m,v 1.32 2006-11-15 17:17:55 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: show_slices.m,v 1.33 2007-08-29 09:01:09 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);

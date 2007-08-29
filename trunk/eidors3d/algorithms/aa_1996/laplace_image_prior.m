@@ -17,8 +17,8 @@ function Reg= laplace_image_prior( inv_model );
 % -1 for each adjacent element, and 3 (in 2D) or 4 (in 3D)
 % for the element itself
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: laplace_image_prior.m,v 1.3 2005-12-05 22:12:11 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: laplace_image_prior.m,v 1.4 2007-08-29 09:00:54 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 

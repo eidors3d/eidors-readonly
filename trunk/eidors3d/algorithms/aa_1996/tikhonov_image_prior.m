@@ -4,8 +4,8 @@ function Reg= tikhonov_image_prior( inv_model );
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: tikhonov_image_prior.m,v 1.2 2005-10-27 13:28:08 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: tikhonov_image_prior.m,v 1.3 2007-08-29 09:00:54 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 

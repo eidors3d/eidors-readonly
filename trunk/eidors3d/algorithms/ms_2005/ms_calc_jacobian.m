@@ -5,8 +5,8 @@ function J= ms_calc_jacobian( fwd_model, img)
 % fwd_model = forward model
 % img = image background for jacobian calc
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ms_calc_jacobian.m,v 1.3 2007-04-12 14:54:55 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: ms_calc_jacobian.m,v 1.4 2007-08-29 09:00:56 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 

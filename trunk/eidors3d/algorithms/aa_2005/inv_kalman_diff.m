@@ -20,8 +20,8 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %  then img outputs img.inv_kalman_diff.K_k1 = K_k1
 %  this can be used to estimate noise properties
  
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: inv_kalman_diff.m,v 1.16 2006-11-24 04:21:27 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: inv_kalman_diff.m,v 1.17 2007-08-29 09:00:54 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

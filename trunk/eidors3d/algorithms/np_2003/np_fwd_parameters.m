@@ -21,8 +21,8 @@ function param = np_fwd_parameters( fwd_model )
 %   param.normalize  => difference measurements normalized?
 
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_fwd_parameters.m,v 1.13 2007-03-27 16:13:08 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: np_fwd_parameters.m,v 1.14 2007-08-29 09:00:56 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 

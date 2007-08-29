@@ -20,8 +20,8 @@ function meas_icov = calc_meas_icov( inv_model )
 %  contain a meas_icov term. For these algorithms, this function
 %  generates an approximation based on uniform noise.
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_meas_icov.m,v 1.3 2006-08-25 00:01:07 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_meas_icov.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
 
 meas_icov = eidors_obj('get-cache', inv_model, 'meas_icov');
 

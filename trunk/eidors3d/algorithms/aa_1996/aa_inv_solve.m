@@ -14,8 +14,8 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % Test for multiple measurements in solver
 %  ok= aa_inv_solve('can_process_multiple_meas');
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_solve.m,v 1.21 2007-04-10 03:43:31 daitao Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: aa_inv_solve.m,v 1.22 2007-08-29 09:00:54 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

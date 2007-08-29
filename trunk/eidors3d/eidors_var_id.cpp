@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.22 2007-08-19 10:57:34 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.23 2007-08-29 09:00:57 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -101,8 +101,7 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
 //  rhs[1] = mxCreateString("file");
 //  This should save time, but breaks badly. More BS from Matlab?
     
-    { // for C
-    int retval = mexCallMATLAB(1,lhs, 1, rhs, "exist");
+   {int retval = mexCallMATLAB(1,lhs, 1, rhs, "exist");
 //  mxDestroyArray( rhs[1] );
     if ( retval != 0 ||
          mxGetNumberOfElements(lhs[0])!=1 ||
@@ -110,8 +109,7 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
       // var doesn't point to a function -> leave
       mxDestroyArray( lhs[0] );
       return;
-    }
-    }
+   } } // for C
   }
 
   #ifdef VERBOSE
@@ -138,18 +136,15 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
     return;
   }
 
-  { // for C
-  int len= mxGetNumberOfElements( *lhs ) + 1;
-  { // for C
-  char * fname= (char *) mxMalloc(len* sizeof(char));
+ {int len= mxGetNumberOfElements( *lhs ) + 1;
+ {char * fname= (char *) mxMalloc(len* sizeof(char));
   IF_NULL_ERR( fname );
 
   IF_BADSTATUS_ERR(
      mxGetString( *lhs, fname, len) );
   mxDestroyArray( lhs[0] );
 
-  { // for C
-  struct stat buffer;
+ {struct stat buffer;
   IF_BADSTATUS_ERR(
      stat(fname, &buffer) );
 

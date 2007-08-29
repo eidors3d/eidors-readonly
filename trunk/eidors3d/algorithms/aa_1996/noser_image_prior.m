@@ -8,8 +8,8 @@ function Reg= noser_image_prior( inv_model );
 % param is normally .5, this value can be changed by
 % setting inv_model.noser_image_prior.exponent= new_value
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: noser_image_prior.m,v 1.4 2006-11-27 19:34:38 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: noser_image_prior.m,v 1.5 2007-08-29 09:00:54 aadler Exp $
 
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
     J = calc_jacobian( inv_model.fwd_model, img_bkgnd);

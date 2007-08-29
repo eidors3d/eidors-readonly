@@ -12,8 +12,8 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh, clim);
 %thresh  = Threshold to show imaged region (or [] for default)
 %clim    = Colour limit
 
-% (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: repaint_inho.m,v 1.13 2006-08-25 00:11:17 aadler Exp $
+% (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3
+% $Id: repaint_inho.m,v 1.14 2007-08-29 09:01:09 aadler Exp $
 
 if nargin<5
     thresh = [];

@@ -6,8 +6,8 @@ function img= np_inv_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_inv_solve.m,v 1.27 2006-11-17 00:40:03 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: np_inv_solve.m,v 1.28 2007-08-29 09:00:56 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 

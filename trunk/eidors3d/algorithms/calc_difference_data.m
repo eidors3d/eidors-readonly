@@ -13,8 +13,8 @@ function dva = calc_difference_data( data1, data2, fwd_model)
 %  1) normalize_data, 2) remove zero meas from adjacent systems,
 %  3) allow both raw data and eidors_obj formats for data
 
-% (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_difference_data.m,v 1.3 2007-03-27 16:13:07 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_difference_data.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
 
 data_width= max(num_frames(data1), num_frames(data2));
 

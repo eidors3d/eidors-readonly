@@ -13,8 +13,8 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % R_prior      calculated regularization prior R
 % inv_model    is an inv_model structure
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_R_prior.m,v 1.3 2006-08-21 19:21:33 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_R_prior.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)

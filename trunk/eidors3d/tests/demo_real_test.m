@@ -1,8 +1,8 @@
 function ok= demo_real_test
 % Perform tests based on the demo_real function
 
-% (C) 2005 Andy Adler + Nick Polydorides. Licenced under the GPL Version 2
-% $Id: demo_real_test.m,v 1.9 2007-04-12 14:55:00 aadler Exp $
+% (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3
+% $Id: demo_real_test.m,v 1.10 2007-08-29 09:01:10 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 

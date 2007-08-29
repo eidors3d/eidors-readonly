@@ -7,8 +7,8 @@ function Reg= np_calc_image_prior( inv_model );
 % Ref        => output regularization term
 % inv_model  => inverse model struct
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_calc_image_prior.m,v 1.4 2005-12-05 22:12:11 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: np_calc_image_prior.m,v 1.5 2007-08-29 09:00:56 aadler Exp $
 
 parameters=  inv_model.np_calc_image_prior.parameters;
 smooth_deg= parameters(1);
