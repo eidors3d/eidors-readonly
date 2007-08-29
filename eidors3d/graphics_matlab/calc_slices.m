@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.15 2007-08-29 09:24:10 aadler Exp $
+% $Id: calc_slices.m,v 1.16 2007-08-29 09:25:18 aadler Exp $
 
 np= calc_colours('npoints');
 

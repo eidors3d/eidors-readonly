@@ -6,7 +6,7 @@ function data= np_fwd_solve( fwd_model, img)
 % img = image struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_fwd_solve.m,v 1.10 2007-08-29 09:23:50 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.11 2007-08-29 09:25:00 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
