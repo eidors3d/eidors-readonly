@@ -2,7 +2,7 @@
 % different algorithms to image it
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: image_2d_algs.m,v 1.9 2007-08-29 09:04:21 aadler Exp $
+% $Id: image_2d_algs.m,v 1.10 2007-08-29 09:07:15 aadler Exp $
 
 eidors_msg('log_level',1); % 2 for most messages
 

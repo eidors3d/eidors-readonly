@@ -1,5 +1,8 @@
 function obj_id= eidors_obj(type,name, varargin );
 % EIDORS_OBJ: 'constructor' to create a eidors structure
+% USAGE: to get eidors_version
+%     version = eidors_obj('eidors_version')
+%
 % USAGE: as a constructor
 %     obj  = eidors_obj(type,name,prop1,value1, prop1, value2, ...)
 %
@@ -73,7 +76,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.45 2007-08-29 09:04:06 aadler Exp $
+% $Id: eidors_obj.m,v 1.46 2007-08-29 09:07:15 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -82,22 +85,21 @@ if nargin==0 | ~isstr(type)
    error('cannot call eidors_obj with no arguments');
 end
 
-if nargin==1
-   obj_id= get_obj( name );
-elseif nargin>1
-   if     strcmp( type, 'set')
+switch type
+   case 'set'
       obj_id= set_obj( name, varargin{:} );
-   elseif strcmp( type, 'get-cache')
+   case 'get-cache'
       obj_id= get_cache_obj( name, varargin{:} );
-   elseif strcmp( type, 'set-cache')
+   case 'set-cache'
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
-   elseif strcmp( type, 'calc-or-cache')
+   case 'calc-or-cache'
       val = calc_or_cache(name, varargin{:} );
       obj_id= val;
-   else
+   case 'eidors_version'
+      obj_id= '3.1+'; % Update for New eidors version
+   otherwise
       obj_id= new_obj( type, name, varargin{:} );
-   end
 end
 
 function obj = set_obj( obj, varargin );

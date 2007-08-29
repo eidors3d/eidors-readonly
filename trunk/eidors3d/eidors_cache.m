@@ -1,4 +1,4 @@
-function eidors_cache( command, limit )
+function retval=eidors_cache( command, limit )
 % Control eidors_caching
 % Usage: eidors_cache( command, limit )
 %
@@ -19,10 +19,11 @@ function eidors_cache( command, limit )
 %
 %   eidors_cache( 'cache_size', memory_in_bytes );
 %      - set max cache size to be memory_in_bytes
+%      - without 2nd arg will return current cache_size
 %  
 
 % (C) 2005 Andy Adler. Licensed under GPL version 2
-% $Id: eidors_cache.m,v 1.4 2006-11-26 00:57:59 aadler Exp $
+% $Id: eidors_cache.m,v 1.5 2007-08-29 09:07:15 aadler Exp $
 
 % Comments
 % Want to clear specific structures
@@ -44,7 +45,11 @@ switch command
       remove_objids( objid, sizes,  1:length(sizes) );
 
    case 'cache_size'
-      eidors_objects.max_cache_size = limit;
+      if nargin==2
+         eidors_objects.max_cache_size = limit;
+      else
+         retval= eidors_objects.max_cache_size;
+      end
 
    case 'show_objs'
       for i=1:length(times)
