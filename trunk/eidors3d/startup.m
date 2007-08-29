@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.33 2007-08-29 09:19:29 aadler Exp $
+% $Id: startup.m,v 1.34 2007-08-29 09:20:58 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -42,7 +42,7 @@ end
 if exist('eidors_var_id')~=3
   warning(sprintf([ ...
      'you do not have a compiled mex file eidors_var_id.\n' ...
-     'Please compile it using: mex eidors_var_id.cpp\n'...
+     'Please compile it using: mex ',HOMEDIR,'/arch/eidors_var_id.cpp\n'...
      'or if you have Matlab <6.5 under linux try:\n'...
      ' eval([''mex -v -f '' matlabroot ''/bin/cxxopts.sh eidors_var_id.cpp''])'
      ]));

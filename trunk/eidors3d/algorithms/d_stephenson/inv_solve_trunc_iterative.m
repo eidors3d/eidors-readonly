@@ -12,7 +12,7 @@ function img= inv_solve_trunc_iterative( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 David Stephenson. License: GPL version 2 or version 3
-% $Id: inv_solve_trunc_iterative.m,v 1.8 2007-08-29 09:19:27 aadler Exp $
+% $Id: inv_solve_trunc_iterative.m,v 1.9 2007-08-29 09:20:56 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 

@@ -8,7 +8,7 @@ function image_levels(img, levels, clim )
 % clim   = colourmap limit (or default if not specified)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: image_levels.m,v 1.20 2007-08-29 09:19:43 aadler Exp $
+% $Id: image_levels.m,v 1.21 2007-08-29 09:21:15 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('image_levels does not support octave. Try show_slices');

@@ -15,7 +15,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  ok= aa_inv_solve('can_process_multiple_meas');
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_solve.m,v 1.8 2007-08-29 09:19:23 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.9 2007-08-29 09:20:53 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -32,10 +32,10 @@ else
     W   = calc_meas_icov( inv_model );
     hp  = calc_hyperparameter( inv_model );
 
-%     one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
+      one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
 % in order to decrease matrix size, change to this form:
-    P = inv(RtR); V = inv(W);
-    one_step_inv= P*J'/(J*P*J' + hp^2*V);
+%   P = inv(RtR); V = inv(W);
+%   one_step_inv= P*J'/(J*P*J' + hp^2*V);
 
     eidors_obj('set-cache', inv_model, 'aa_inv_solve', one_step_inv);
     eidors_msg('aa_inv_solve: setting cached value', 2);

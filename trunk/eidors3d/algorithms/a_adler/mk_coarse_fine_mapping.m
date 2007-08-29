@@ -11,7 +11,7 @@ function mapping= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %                 - number of points to interpolate in each dimension
 
 % (C) 2007 Andy Adler. Licenced under the GPL Version 2
-% $Id: mk_coarse_fine_mapping.m,v 1.4 2007-08-29 09:19:24 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.5 2007-08-29 09:20:54 aadler Exp $
 
 % Mapping depends f_mdl and c_mdl, but only on nodes and elems
 cc_mdl.elems = c_mdl.elems;
@@ -34,7 +34,7 @@ else
     try
        n_interp = f_mdl.mk_coarse_fine_mapping.n_interp;
     catch
-       n_interp = 25;
+       n_interp = 50;
     end
    
     xyzmin = min([ff_mdl.nodes;cc_mdl.nodes]);

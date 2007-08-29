@@ -11,7 +11,7 @@ function img= coarse_fine_solve( inv_model, data1, data2)
 % inv_model.coarse_fine.mapping => sparse matrix to map coarse->fine
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: coarse_fine_solve.m,v 1.4 2007-08-29 09:19:24 aadler Exp $
+% $Id: coarse_fine_solve.m,v 1.5 2007-08-29 09:20:54 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -20,6 +20,13 @@ one_step_inv = eidors_obj('get-cache', inv_model, 'coarse_fine_one_step_inv');
 if ~isempty(one_step_inv)
     eidors_msg('coarse_fine_solve: using cached value', 2);
 else
+
+%TODO: Note that this is a work in progress
+% The right way to do it is to modify the
+% call to calc_jacobian and RtR_prior, so that
+% they're modified by M, as shown here. Then the
+% inverse can proceed normally.
+
     p= np_fwd_parameters( fwd_model );
 
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
@@ -44,7 +51,7 @@ dva= calc_difference_data(data1, data2, fwd_model);
 sol = one_step_inv * dva;
 
 % create a data structure to return
-img.name= 'solved by np_inv_solve';
+img.name= 'solved by coarse_fine_solve';
 img.elem_data = inv_model.coarse_fine.mapping * sol;
 img.fwd_model= fwd_model;
 
