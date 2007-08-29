@@ -9,7 +9,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 % OPTION   SOLVER               PRIOR             HP
 %   1   aa_inv_solve       laplace_image_prior   1e-3
 %   2   np_inv_solve       laplace_image_prior   1e-3
-%   3   aa_inv_solve       aa_calc_image_prior   NF=2
+%   3   aa_inv_solve       gaussian_HPF_prior   NF=2
 %   3.1 aa_inv_solve       noser_image_prior     NF=2
 %   4   ab_tv_diff_solve   ab_calc_tv_prior      1e-4
 %   5   aa_inv_total_var   laplace_image_prior   1e-4
@@ -23,7 +23,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_2d_algs.m,v 1.30 2007-08-29 09:19:42 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.31 2007-08-29 09:21:13 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -87,7 +87,7 @@ switch option
      inv2d.hyperparameter.func = @choose_noise_figure;
      inv2d.hyperparameter.noise_figure= 2;
      inv2d.hyperparameter.tgt_elems= 1:4;
-     inv2d.RtR_prior=   'aa_calc_image_prior';
+     inv2d.RtR_prior=   'gaussian_HPF_prior';
      inv2d.solve=       'aa_inv_solve';
 
    case 3.1,

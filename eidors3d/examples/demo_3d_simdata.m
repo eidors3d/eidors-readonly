@@ -1,7 +1,7 @@
 % How to make simulation data using EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_3d_simdata.m,v 1.32 2007-08-29 09:19:42 aadler Exp $
+% $Id: demo_3d_simdata.m,v 1.33 2007-08-29 09:21:14 aadler Exp $
 
 % STIMULATION PATTERN
 n_elec= 16;
@@ -78,7 +78,7 @@ inv2d.solve=       'aa_inv_solve';
 %inv2d.hyperparameter.tgt_elems= 1:4;
  inv2d.hyperparameter.value = 1e-2;
  inv2d.RtR_prior= 'laplace_image_prior';
-%inv2d.RtR_prior= 'aa_calc_image_prior';
+%inv2d.RtR_prior= 'gaussian_HPF_prior';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;

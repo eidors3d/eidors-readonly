@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.6 2007-08-29 09:19:57 aadler Exp $
+% $Id: mk_common_model.m,v 1.7 2007-08-29 09:21:28 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -153,7 +153,7 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     %inv2d.hyperparameter.noise_figure= 1;
     %inv2d.hyperparameter.tgt_elems= 1:4;
      inv2d.RtR_prior= 'laplace_image_prior';
-    %inv2d.RtR_prior= 'aa_calc_image_prior';
+    %inv2d.RtR_prior= 'gaussian_HPF_prior';
     inv2d.jacobian_bkgnd.value= 1;
     inv2d.reconst_type= 'difference';
     inv2d.fwd_model= mdl_2d;
@@ -323,7 +323,7 @@ function inv3d= mk_b3r1_model( n_elec, options )
     %inv3d.solve=       'aa_inv_conj_grad';
     inv3d.hyperparameter.value = 1e-5;
     inv3d.RtR_prior= 'laplace_image_prior';
-    %inv3d.RtR_prior= 'aa_calc_image_prior';
+    %inv3d.RtR_prior= 'gaussian_HPF_prior';
     inv3d.jacobian_bkgnd.value= 1;
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= mdl_3d;
@@ -360,7 +360,7 @@ function inv3d= mk_b3r2_model( n_elec, nr, options )
     %inv3d.solve=       'aa_inv_conj_grad';
     inv3d.hyperparameter.value = 1e-5;
     inv3d.RtR_prior= 'laplace_image_prior';
-    %inv3d.RtR_prior= 'aa_calc_image_prior';
+    %inv3d.RtR_prior= 'gaussian_HPF_prior';
     inv3d.jacobian_bkgnd.value= 1;
     inv3d.reconst_type= 'difference';
     inv3d.fwd_model= mdl_3d;

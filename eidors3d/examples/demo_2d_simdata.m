@@ -2,7 +2,7 @@
 % solve it using various 2D solvers
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_2d_simdata.m,v 1.24 2007-08-29 09:19:42 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.25 2007-08-29 09:21:14 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model
@@ -63,7 +63,7 @@ inv2d.name= 'EIT inverse';
 %inv2d.hyperparameter.tgt_elems= 1:4;
 %inv2d.RtR_prior= 'laplace_image_prior';
  inv2d.R_prior= 'ab_calc_tv_prior';
-%inv2d.RtR_prior= 'aa_calc_image_prior';
+%inv2d.RtR_prior= 'gaussian_HPF_prior';
 inv2d.reconst_type= 'difference';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.fwd_model= mdl_2d_2;

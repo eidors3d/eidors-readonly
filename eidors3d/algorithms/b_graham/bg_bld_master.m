@@ -15,7 +15,7 @@ function [Y,D,Y_homo,Vols] = bg_bld_master(mesh,param2, param3);
 %
 % (C) 2003 Nick Polydorides, modified by  Brad Graham (2005)
 %  Licenced under GNU GPL
-% $Id: bg_bld_master.m,v 1.8 2007-08-29 09:19:25 aadler Exp $
+% $Id: bg_bld_master.m,v 1.9 2007-08-29 09:20:55 aadler Exp $
 
 if nargin == 3
     mesh.NODE = mesh;
