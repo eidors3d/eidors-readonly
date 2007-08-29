@@ -15,7 +15,7 @@ function hyperparameter = calc_hyperparameter( inv_model )
 %       it also depend on the data?
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_hyperparameter.m,v 1.2 2007-08-29 09:00:55 aadler Exp $
+% $Id: calc_hyperparameter.m,v 1.3 2007-08-29 09:04:04 aadler Exp $
 
 if isfield( inv_model.hyperparameter, 'func')
 

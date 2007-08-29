@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: inv_solve.m,v 1.20 2007-08-29 09:00:57 aadler Exp $
+% $Id: inv_solve.m,v 1.21 2007-08-29 09:04:06 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs

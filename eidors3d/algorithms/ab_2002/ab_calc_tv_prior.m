@@ -5,7 +5,7 @@ function Reg= ab_calc_tv_prior( inv_model );
 % inv_model  => inverse model struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: ab_calc_tv_prior.m,v 1.5 2007-08-29 09:00:55 aadler Exp $
+% $Id: ab_calc_tv_prior.m,v 1.6 2007-08-29 09:04:04 aadler Exp $
 
 % Andrea's code requires a msh 
 elem = inv_model.fwd_model.elems;

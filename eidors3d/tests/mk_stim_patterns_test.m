@@ -2,7 +2,7 @@ function ok= mk_stim_patterns_test
 % Verify mk_stim_patterns function
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_stim_patterns_test.m,v 1.4 2007-08-29 09:01:10 aadler Exp $
+% $Id: mk_stim_patterns_test.m,v 1.5 2007-08-29 09:04:21 aadler Exp $
 
 ok= 1;
 

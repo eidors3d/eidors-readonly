@@ -32,41 +32,7 @@ end
 
 [V] = forward_solver(E,I,tol,pp);
 
-%Select the part referring to the interior nodes
-V = V(1:vr,:);
-v_f = v_f(1:vr,:);
-   
-J = zeros(sum(df),size(simp,1)); 
-Jrow = zeros(1,size(simp,1));
-cnt = 0;
-
-el_idx= 1:3:size(Ela,1); % Ela must be square
-Vol_cond = diag(Ela(el_idx,el_idx)).* mat_ref;
-
-   for p=1:size(V,2) 
-     
-      DV =  D*V(:,p); %Gradient of the current fields 
-       
-      for m=1:df(p) 
-        
-      
-        Dvf = D*v_f(:,sum(df(1:p-1))+m); %Gradient of the measurement fields
-              
-        Jrow_x3 = Dvf .* DV ;  
-        lJrow= length(Jrow_x3);
-        Jrow_u = Jrow_x3(1:3:lJrow) + Jrow_x3(2:3:lJrow) + Jrow_x3(3:3:lJrow);
-        
-%       Jrow = Jrow_u .* diag(Ela(1:3:size(Ela,1),1:3:size(Ela,2))); % Must account for background conductivity
-        Jrow = Jrow_u .* Vol_cond;
-        
-        cnt = cnt+1;
-        J(cnt,:) = -Jrow.';
-        Jrow = zeros(1,size(simp,1));
-        
-    end %m
-       
-   end %p
-  
+[J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

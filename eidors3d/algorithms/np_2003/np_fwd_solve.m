@@ -6,7 +6,7 @@ function data= np_fwd_solve( fwd_model, img)
 % img = image struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_fwd_solve.m,v 1.9 2007-08-29 09:00:56 aadler Exp $
+% $Id: np_fwd_solve.m,v 1.10 2007-08-29 09:04:05 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -31,5 +31,3 @@ end
 data.meas= voltH;
 data.time= -1; % unknown
 data.name= 'solved by np_fwd_solve';
-% TODO: figure out how to describe measurment pattern
-data.configuration='unknown';

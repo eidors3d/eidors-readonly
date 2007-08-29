@@ -23,7 +23,7 @@ function NF = calc_noise_figure( inv_model, hp)
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_noise_figure.m,v 1.7 2007-08-29 09:00:54 aadler Exp $
+% $Id: calc_noise_figure.m,v 1.8 2007-08-29 09:04:03 aadler Exp $
 
 % A 'proper' definition of noise power is:
 %      NF = SNR_z / SNR_x

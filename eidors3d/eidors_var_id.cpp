@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.23 2007-08-29 09:00:57 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.24 2007-08-29 09:04:06 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -23,7 +23,13 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "mex.h"
+#include <mex.h>
+// This shouldn't be necessary - bug in octave2.9.13 build for windows
+#ifdef OCTAVE_API
+#include <octave/config.h>
+#include <octave/oct-types.h>
+#endif
+
 /*
  * Defines to alow stat
  */
@@ -46,9 +52,12 @@
     mexErrMsgTxt("Memory allocation problem"); } 
 #define IF_BADSTATUS_ERR(a) if (0) {} else if (a) { \
     mexErrMsgTxt("syscall returned bad status"); }
+// This would be nice but doesn't work for the default matlab compiler
 //  mexErrMsgTxt(__FILE__  __LINE__  "syscall returned bad status",
 
+#ifndef unsigned_int32
 #define unsigned_int32 UINT32_T
+#endif
 
 typedef struct {
     unsigned_int32 state[5];
@@ -300,6 +309,7 @@ recurse_hash( hash_context *c, const mxArray *var ) {
   if ( mxIsStruct(var) ) {
     hash_struct( c, var);
   } else
+#ifndef OCTAVE_API // Octave can't do this yet
   if ( mxIsFunctionHandle(var) ) {
     // function_handle. Get string of fcn name
     /* I can't find any documentation on getting fcn string in mex */
@@ -319,6 +329,7 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     }
     mxDestroyArray( lhs[0] );
   } else
+#endif
   {
     #ifdef VERBOSE
       mexPrintf("ignoring var of ClassID ( %d ):", mxGetClassID( var ) );
