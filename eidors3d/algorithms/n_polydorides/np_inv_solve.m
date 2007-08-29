@@ -9,11 +9,12 @@ function img= np_inv_solve( inv_model, data1, data2)
 % inv_model.parameters.term_tolerance (default 1e-3);
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_inv_solve.m,v 1.4 2007-08-29 09:13:53 aadler Exp $
+% $Id: np_inv_solve.m,v 1.5 2007-08-29 09:15:32 aadler Exp $
 
 [maxiter, tol] = get_parameters(inv_model);
   
-dv = diff_measurement(inv_model, data1, data2);
+dv = calc_difference_data( data1, data2, inv_model.fwd_model);
+
 sol = one_step_inv_matrix(inv_model) * dv;
 
 if maxiter>1
@@ -22,11 +23,12 @@ if maxiter>1
 
    for iter=2:maxiter
       dv_sim= forward_solve_diff(inv_model, sol);
+      eidors_msg('iter=%d, norm(err)= %f', iter, norm(dv_sim - dv),3);
       if norm(dv_sim - dv)<tol; break; end  % test tolerance
 
       img_bkgnd= calc_jacobian_bkgnd( inv_model );
       img_bkgnd.elem_data = img_bkgnd.elem_data + sol;
-      J = calc_jacobian( fwd_model, img_bkgnd);
+      J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
 
       sol_upd= (J'*J +  hp^2*RtR)\(J' * (dv - dv_sim));
       sol = sol + sol_upd;
@@ -62,8 +64,7 @@ function dv_sim= forward_solve_diff(inv_model, sol)
    v_homg = fwd_solve(img);
    img.elem_data = img.elem_data + sol;
    v_solv = fwd_solve(img);
-   dv_sim= diff_measurement(inv_model, v_homg, v_solv);
-
+   dv_sim= calc_difference_data( v_homg, v_solv, inv_model.fwd_model);
 
 function dva=diff_measurement(inv_model, data1, data2);
    fwd_model= inv_model.fwd_model;
