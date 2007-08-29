@@ -5,7 +5,7 @@ function Reg= tikhonov_image_prior( inv_model );
 % inv_model  => inverse model struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: tikhonov_image_prior.m,v 1.3 2007-08-29 09:11:47 aadler Exp $
+% $Id: tikhonov_image_prior.m,v 1.4 2007-08-29 09:13:49 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 

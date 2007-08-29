@@ -6,7 +6,7 @@ function J= np_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_jacobian.m,v 1.3 2007-08-29 09:11:49 aadler Exp $
+% $Id: np_calc_jacobian.m,v 1.4 2007-08-29 09:13:53 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -14,10 +14,12 @@ s_mat= calc_system_mat( fwd_model, img );
 
 v_f = np_calc_3d_fields( fwd_model, img );
 
+tol = 1e-5; %tolerance for the forward solver
+
 % Calculating the Jacobian
 Vfwd = forward_solver(s_mat.E, p.I, tol, s_mat.perm);
 J = jacobian_3d_fields(Vfwd,s_mat.Ela,s_mat.D, p.elec, ...
-                       p.vtx,p.simp, img.elem_data, v_f, df);
+                       p.vtx,p.simp, img.elem_data, v_f, p.df);
 
 % calculate normalized Jacobian if required
 if p.normalize

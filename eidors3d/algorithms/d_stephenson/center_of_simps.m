@@ -10,7 +10,7 @@ function [center_simp]=center_of_simps(fwd_model, extraparam)
 %               [Nelems x 3] (x y z co-ordinates)
 %
 % (C) 2005 David Stephenson. Licensed under GPL Version 2
-% $Id: center_of_simps.m,v 1.3 2007-08-29 09:11:49 aadler Exp $
+% $Id: center_of_simps.m,v 1.4 2007-08-29 09:13:52 aadler Exp $
 
 if nargin==1
     simp= fwd_model.elems;

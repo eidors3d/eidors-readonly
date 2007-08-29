@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.50 2007-08-29 09:12:07 aadler Exp $
+% $Id: show_fem.m,v 1.51 2007-08-29 09:14:10 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');

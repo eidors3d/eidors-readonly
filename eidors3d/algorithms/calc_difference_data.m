@@ -14,18 +14,17 @@ function dva = calc_difference_data( data1, data2, fwd_model)
 %  3) allow both raw data and eidors_obj formats for data
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_difference_data.m,v 1.8 2007-08-29 09:11:48 aadler Exp $
+% $Id: calc_difference_data.m,v 1.9 2007-08-29 09:13:51 aadler Exp $
 
 data_width= max(num_frames(data1), num_frames(data2));
 
-if ~isnumeric(data2) if isfield(data2,'fwd_model')
-   if nargin>=3; warning('ignoring parameter 3'); end
-   fwd_model= data2.fwd_model;
-end ; end
-if ~isnumeric(data1) if isfield(data1,'fwd_model')
-   if nargin>=3; warning('ignoring parameter 3'); end
-   fwd_model= data1.fwd_model;
-end ; end
+try if data1.type == 'data'
+   data1= data1.meas;
+end; end
+
+try if data2.type == 'data'
+   data2= data2.meas;
+end; end
 
 if ~isfield(fwd_model,'normalize_measurements')
    fwd_model.normalize_measurements = 0;

@@ -2,7 +2,7 @@ function show_slices( img, levels, clim, ref_lev )
 % show_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or a array of structs
-
+%
 % levels = Matrix [Lx3] of L image levels
 %          each row of the matrix specifies the intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
@@ -20,7 +20,7 @@ function show_slices( img, levels, clim, ref_lev )
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.37 2007-08-29 09:12:07 aadler Exp $
+% $Id: show_slices.m,v 1.38 2007-08-29 09:14:10 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
