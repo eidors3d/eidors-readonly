@@ -6,7 +6,7 @@ function show_fem_move( img, move, scale, options )
 %       scale   - factor to scale movement arrows (optional)
 %       options - options array passed on to show_fem()
 
-% $Id: show_fem_move.m,v 1.3 2007-08-29 09:24:11 aadler Exp $
+% $Id: show_fem_move.m,v 1.4 2007-08-29 09:25:18 aadler Exp $
 
 % Check for single argument call
 if nargin == 1

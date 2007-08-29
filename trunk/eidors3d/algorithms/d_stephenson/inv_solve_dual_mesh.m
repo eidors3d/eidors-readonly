@@ -7,7 +7,7 @@ function img= inv_solve_dual_mesh( inv_model, voltage)
 %
 
 % (C) 2005 David Stephenson. License: GPL version 2 or version 3
-% $Id: inv_solve_dual_mesh.m,v 1.10 2007-08-29 09:23:50 aadler Exp $
+% $Id: inv_solve_dual_mesh.m,v 1.11 2007-08-29 09:24:59 aadler Exp $
 
 M_dense= inv_model.fwd_model;
 % Load parameters

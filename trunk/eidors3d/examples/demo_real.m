@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real.m,v 1.55 2007-08-29 09:24:10 aadler Exp $
+% $Id: demo_real.m,v 1.56 2007-08-29 09:25:18 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
