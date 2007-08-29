@@ -72,8 +72,8 @@ function obj_id= eidors_obj(type,name, varargin );
 %
 % 
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: eidors_obj.m,v 1.43 2006-11-26 00:57:59 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: eidors_obj.m,v 1.44 2007-08-29 09:00:56 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004

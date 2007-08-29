@@ -16,8 +16,8 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 %      The background may be calculated by a function
 %  inv_model.jacobian_bkgnd.func;
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_jacobian_bkgnd.m,v 1.3 2006-08-21 19:21:33 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_jacobian_bkgnd.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
 
 img_bkgnd= eidors_obj('get-cache', inv_model, 'jacobian_bkgnd');
 if ~isempty(img_bkgnd)

@@ -7,8 +7,8 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: ab_tv_diff_solve.m,v 1.8 2006-11-17 00:40:03 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: ab_tv_diff_solve.m,v 1.9 2007-08-29 09:00:55 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);

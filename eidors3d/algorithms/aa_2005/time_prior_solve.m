@@ -15,8 +15,8 @@ function img= time_prior_solve( inv_model, data1, data2)
 %   prior calculator functions, and not reimplementing
 %   them internally
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: time_prior_solve.m,v 1.7 2006-11-27 19:34:39 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: time_prior_solve.m,v 1.8 2007-08-29 09:00:55 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;

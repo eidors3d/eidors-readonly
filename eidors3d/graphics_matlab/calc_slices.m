@@ -13,8 +13,8 @@ function rimg = calc_slices( img, levels );
 % rimg= np x np x I x L where np is 128 by default
 % np can be adjusted by calc_colours('npoints')
 
-% (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_slices.m,v 1.4 2006-11-07 13:29:59 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_slices.m,v 1.5 2007-08-29 09:01:09 aadler Exp $
 
 np= calc_colours('npoints');
 

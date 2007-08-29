@@ -7,8 +7,8 @@ function crop_model( axis_handle, fcn_handle );
 %   crop_model([],  inline('z==3','x','y','z'))
 %   crop_model(gca, inline('x+y>0','x','y','z'))
 
-% (C) 2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: crop_model.m,v 1.1 2006-08-25 00:10:23 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: crop_model.m,v 1.2 2007-08-29 09:01:09 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');

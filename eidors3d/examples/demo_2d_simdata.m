@@ -1,8 +1,8 @@
 % Example of using EIDORS to simulate 2D data and to
 % solve it using various 2D solvers
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: demo_2d_simdata.m,v 1.15 2006-11-17 14:53:26 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: demo_2d_simdata.m,v 1.16 2007-08-29 09:01:09 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model

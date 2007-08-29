@@ -6,8 +6,8 @@ function img= inv_solve_dual_mesh( inv_model, voltage)
 % data1      => EIT data object
 %
 
-% (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_dual_mesh.m,v 1.4 2007-04-12 14:54:55 aadler Exp $
+% (C) 2005 David Stephenson. License: GPL version 2 or version 3
+% $Id: inv_solve_dual_mesh.m,v 1.5 2007-08-29 09:00:55 aadler Exp $
 
 M_dense= inv_model.fwd_model;
 % Load parameters

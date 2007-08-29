@@ -8,8 +8,8 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 %   SS  = Unconnected system Matrix
 %   CC  = Connectivity Matrix
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_system_mat.m,v 1.5 2006-03-15 21:54:20 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: aa_calc_system_mat.m,v 1.6 2007-08-29 09:00:54 aadler Exp $
 
 p= aa_fwd_parameters( fwd_model );
 

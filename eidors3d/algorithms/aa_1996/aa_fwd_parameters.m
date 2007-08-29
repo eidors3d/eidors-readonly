@@ -14,8 +14,8 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.VOLUME     => Volume (or area) of each element
 %   param.normalize  => difference measurements normalized?
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_fwd_parameters.m,v 1.17 2007-03-27 16:13:07 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: aa_fwd_parameters.m,v 1.18 2007-08-29 09:00:54 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 

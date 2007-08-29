@@ -17,9 +17,6 @@ function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
 %elec    = The bounary electrodes matrix
 %zc      = The contact impedance vector, satisfying size(elec,1) = length(zc)
 %perm_sym= Column permutation of E, either '{y}' to opt or '{n}' to avoid.       
-
-isOctave= exist('OCTAVE_VERSION');
-     
    [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc); 
    
    [E] = ref_master(Ef,vtx,gnd_ind);  

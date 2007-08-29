@@ -28,8 +28,8 @@ function img= aa_inv_total_var( inv_model, data1, data2)
 % Processing, A. Bovic, Ed. San Diego, CA: Academic Press,
 % 2000, ch. 3.6, pp. 141-160.
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_inv_total_var.m,v 1.8 2006-11-17 00:40:03 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: aa_inv_total_var.m,v 1.9 2007-08-29 09:00:54 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

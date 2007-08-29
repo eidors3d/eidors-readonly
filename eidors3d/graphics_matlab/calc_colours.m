@@ -63,8 +63,8 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %     - if specified, override the global ref_level parameter
 %
 
-% (C) 2005-2006 Andy Adler. Licenced under the GPL Version 2
-% $Id: calc_colours.m,v 1.31 2006-11-17 13:02:53 aadler Exp $  
+% (C) 2005-2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_colours.m,v 1.32 2007-08-29 09:01:09 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults

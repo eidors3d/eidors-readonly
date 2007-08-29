@@ -11,8 +11,8 @@ function img= inv_solve_trunc_iterative( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% (C) 2005 David Stephenson. Licenced under the GPL Version 2
-% $Id: inv_solve_trunc_iterative.m,v 1.4 2006-11-17 00:40:03 aadler Exp $
+% (C) 2005 David Stephenson. License: GPL version 2 or version 3
+% $Id: inv_solve_trunc_iterative.m,v 1.5 2007-08-29 09:00:55 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 

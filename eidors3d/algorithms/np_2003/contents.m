@@ -131,7 +131,7 @@
 %[21] function [sel] = laserbeam(vtx,srf,cnts);
 %
 %Auxiliary plotting function
-%
+%Licenced
 %--------------------------------------------------------------------------
 %[22] function paint_electrodes(sel,srf,vtx);
 %

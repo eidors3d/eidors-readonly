@@ -1,8 +1,8 @@
 % Script to start EIDORS
 % Set path and variables correctly
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: startup.m,v 1.23 2006-11-26 00:57:59 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: startup.m,v 1.24 2007-08-29 09:00:57 aadler Exp $
 
 HOMEDIR=pwd;
 

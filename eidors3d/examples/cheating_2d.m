@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: cheating_2d.m,v 1.19 2006-11-17 14:53:26 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: cheating_2d.m,v 1.20 2007-08-29 09:01:09 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )

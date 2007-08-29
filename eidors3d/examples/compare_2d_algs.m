@@ -22,8 +22,8 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   0  two triangles
 %   1  round
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: compare_2d_algs.m,v 1.21 2006-11-18 12:08:02 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: compare_2d_algs.m,v 1.22 2007-08-29 09:01:09 aadler Exp $
 
 if nargin<2
     shape=0;
