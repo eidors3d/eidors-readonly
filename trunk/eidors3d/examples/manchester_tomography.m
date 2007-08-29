@@ -13,7 +13,7 @@
 %    Reconstruction = np_inv_solve
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.10 2006-01-24 02:53:26 aadler Exp $
+% $Id: manchester_tomography.m,v 1.11 2007-08-29 09:04:21 aadler Exp $
 function manchester_tomography( example_no)
 
 switch example_no
@@ -40,7 +40,7 @@ function [fwd_m1,meas_2rod,meas_ref]= twoplane_mdl;
     fwd_m1=eidors_obj('fwd_model',mdl_2plane);
     fwd_m1.misc.perm_sym = '{y}';
     fwd_m1.solve=    'np_fwd_solve';
-    fwd_m1.jacobian= 'ms_calc_jacobian';
+    fwd_m1.jacobian= 'np_calc_jacobian';
     fwd_m1.system_mat= 'np_calc_system_mat';
     meas_ref.type='data';
     meas_2rod.type='data';

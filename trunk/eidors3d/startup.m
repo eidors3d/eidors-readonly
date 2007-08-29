@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.24 2007-08-29 09:00:57 aadler Exp $
+% $Id: startup.m,v 1.25 2007-08-29 09:04:06 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -27,6 +27,15 @@ addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/graphics_matlab']);
 addpath([HOMEDIR, '/graphics_vtk']);
 %addpath([HOMEDIR, '/tests']);
+
+% We need to add an architecture specific directory for mex files
+if exist('OCTAVE_VERSION')==5
+   if findstr(computer,'-pc-');
+      addpath([HOMEDIR, '/arch/octave/pc']);
+   end
+else
+   addpath([HOMEDIR, '/arch/matlab']);
+end
 
 % test if eidors_var_id.cpp is a valid mexfile
 if exist('eidors_var_id')~=3

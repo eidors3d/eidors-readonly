@@ -38,35 +38,42 @@ if nargin < 7
 v_f = zeros(size(E,1),size(I,2));
 end
 
-if exist('OCTAVE_VERSION')
-   v_f= E\I;
-   return;
-end
-
-
+maxiter=10000; % This should be high enough, but it may maybe this should
+               % depend on the number of measurements?
+              
 
 if isreal(E)==1
 
-%Preconditioner
-M = cholinc(E,tol/10);
+   %Preconditioner
+   % OCtave doesn't have Cholinc yet (as of 2.9.13)
+    if exist('OCTAVE_VERSION')
+       M= [];
+    else
+       M = cholinc(E,tol/10);
+    end
 
     for y=1:size(MC,2)
     %Set this line to suit your approximation needs. ***************
     %for more details use help pcg on Matlab's command window.
-    [v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y),tol*norm(I(:,y)),1000,M',M,v_f(:,y)); 
+    [v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y), ...
+            tol*norm(I(:,y)),maxiter,M',M,v_f(:,y)); 
     end
-end %is real
+else  %is real
 
+   %Preconditioner
+   % OCtave doesn't have Cholinc yet (as of 2.9.13)
+    if exist('OCTAVE_VERSION')
+       L= []; U=[];
+    else
+       [L,U] = luinc(E,tol/10);
+    end
 
-if isreal(E)==0
-
-[L,U] = luinc(E,tol/10);
-
-  for y=1:size(MC,2)
-
-  [v_f(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y),tol*norm(I(:,y)),1000,L,U);
-
-  end 
+   for y=1:size(MC,2)
+ 
+      [v_f(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y), ...
+              tol*norm(I(:,y)),maxiter,L,U);
+ 
+   end 
 end %is complex
 
 

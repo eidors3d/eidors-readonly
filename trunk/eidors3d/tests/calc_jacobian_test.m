@@ -5,7 +5,7 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian_test.m,v 1.12 2007-08-29 09:01:10 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.13 2007-08-29 09:04:21 aadler Exp $
 
 ok= 1;
 delta = 1e-4;
@@ -45,16 +45,6 @@ disp('test np_calc_jacobian for normalized difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
-mdl= make_ms_mdl;
-%
-disp('test ms_calc_jacobian for difference data')
-ok=ok & run_jacobian_test( mdl, delta, testvec );
-ok=ok & run_dataprior_test( mdl );
-
-mdl.normalize_measurements= 1;
-disp('test ms_calc_jacobian for normalized difference data')
-ok=ok & run_jacobian_test( mdl, delta, testvec );
-ok=ok & run_dataprior_test( mdl );
 
 % run the jacobian test 
 function ok= run_jacobian_test( mdl, delta, testvec ); 

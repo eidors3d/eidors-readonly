@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real.m,v 1.45 2007-08-29 09:01:09 aadler Exp $
+% $Id: demo_real.m,v 1.46 2007-08-29 09:04:21 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -20,7 +20,7 @@ demo_mdl.nodes= vtx;
 demo_mdl.elems= simp;
 demo_mdl.boundary= bdy;
 demo_mdl.solve=      'np_fwd_solve';
-demo_mdl.jacobian=   'ms_calc_jacobian';
+demo_mdl.jacobian=   'np_calc_jacobian';
 demo_mdl.system_mat= 'np_calc_system_mat';
 
 disp('step 2: create FEM model electrodes definitions');

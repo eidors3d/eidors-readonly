@@ -8,7 +8,7 @@ function Reg= np_calc_image_prior( inv_model );
 % inv_model  => inverse model struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_image_prior.m,v 1.5 2007-08-29 09:00:56 aadler Exp $
+% $Id: np_calc_image_prior.m,v 1.6 2007-08-29 09:04:05 aadler Exp $
 
 parameters=  inv_model.np_calc_image_prior.parameters;
 smooth_deg= parameters(1);

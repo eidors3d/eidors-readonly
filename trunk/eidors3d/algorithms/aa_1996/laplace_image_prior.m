@@ -18,7 +18,7 @@ function Reg= laplace_image_prior( inv_model );
 % for the element itself
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: laplace_image_prior.m,v 1.4 2007-08-29 09:00:54 aadler Exp $
+% $Id: laplace_image_prior.m,v 1.5 2007-08-29 09:04:03 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 

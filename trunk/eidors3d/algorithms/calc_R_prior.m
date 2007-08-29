@@ -14,7 +14,7 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % inv_model    is an inv_model structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_R_prior.m,v 1.4 2007-08-29 09:00:55 aadler Exp $
+% $Id: calc_R_prior.m,v 1.5 2007-08-29 09:04:04 aadler Exp $
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)
