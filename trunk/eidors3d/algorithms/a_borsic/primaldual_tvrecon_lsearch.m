@@ -25,7 +25,7 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %
 
 % (C) 2002-2006 Andrea Borsic. Licenced under GPL version 2
-% $Id: primaldual_tvrecon_lsearch.m,v 1.6 2007-08-29 09:16:45 aadler Exp $
+% $Id: primaldual_tvrecon_lsearch.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
 
 % Initialisation
 fwd_model= inv_mdl.fwd_model;
@@ -35,7 +35,7 @@ msh.PC = fwd_model.nodes';
 
 
 
-decay_beta=0.5;
+decay_beta=0.7;
 
 % this is used for the line search procedure,
 % the last element, and the biggest must be one
@@ -95,7 +95,7 @@ while (~terminate)&(iter<maxiter)
 %   J=jacobian(msh,u);  - Jacobian is same in difference EIT
     vsim= sim_measures( IM, s);
 %   J= calc_jacobian( IM );
-    plot([vsim, vmeas]);% pause
+%   plot([vsim, vmeas]);% pause
 
     z=A*s;	% This is the dual variable
     
@@ -150,78 +150,44 @@ while (~terminate)&(iter<maxiter)
     
     clearance=lims-x; % this is the signed distance to the limits
     
-    for i=1:length(de_x)
+ % this protects against division, other values wil dominate, it doesn't affect the algorithm
+    de_x(de_x==0)=1e-6;
         
-        if de_x(i)==0
-            
-            de_x(i)=1e-6; % this protects against division, other values wil dominate, it doesn't affect the algorithm
-            
-        end % if
-        
-    end % for
-        
-    steps=clearance./de_x; % stemps that will make on compunent of x exceed the limits of step*de_x is applied
+ % stemps that will make on compunent of x exceed the limits of step*de_x is applied
+    steps=clearance./de_x;
     
-    for i=1:length(steps)
-        
-        if steps(i)==0
-            
-            steps(i)=de_x;
-            
-        end % if
-        
-    end % for
+    idx= steps==0;
+    steps(idx)=de_x(idx);
     
     % we need to pick up the smallest, and have some safety room
        
     x=x+min(1,0.99*min(steps))*de_x;
         
     % Upper and lower limits enforcement
-        
-    for i=1:m   % Reconstruction with lower 
-        
-        if s(i)<0.01*scaling
-            
-            s(i)=0.01*scaling;
-            
-        end % if
-        
-    end % for
-    
-    for i=1:m  % and upper bounds, dynamic range=1e4
-        
-        if s(i)>100*scaling
-            
-            s(i)=100*scaling;
-            
-        end % if
-        
-    end % for
+    s( s<0.01*scaling )=0.01*scaling;
+    % and upper bounds, dynamic range=1e4
+    s( s>100*scaling )=100*scaling;
     
     beta=beta*decay_beta;       % beta is reduced
     decay_beta=decay_beta*0.8;  % the rate at wich beta is reduced is also adjusted
-    
     if beta<1e-12
         beta=1e-12;
     end
     
 %    if norm(A*x)>gap(x,z) error('Rounding errors are spoiling the calculation, stopping.'); end % if
     
-    if (sum(abs(z)-x.*z)<epsilon)&(norm(vsim-vmeas)<epsilon) % The primal-dual gap has been reduced and measures match
-        
+    % The primal-dual gap has been reduced and measures match
+    if (sum(abs(z)-x.*z)<epsilon)&(norm(vsim-vmeas)<epsilon)
         terminate=1;
-        
     end % if
     
     iter=iter+1;
-    
-%   dispmsh(msh,s); colorbar; drawnow
-       
+
     rs(:,iter)=s;
     
 end % while
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 function vsim= sim_measures( IM, s);
@@ -229,13 +195,4 @@ function vsim= sim_measures( IM, s);
    IM.elem_data= s;
    vi= fwd_solve( IM );
 
-   try
-      normalize = IM.fwd_model.normalize_measurements;
-   catch
-      normalize = 0;
-   end
-   if normalize
-      vsim= 1 - vi.meas ./ vh.meas;
-   else   
-      vsim= vi.meas - vh.meas;
-   end
+   vsim = calc_difference_data( vh, vi, IM.fwd_model);

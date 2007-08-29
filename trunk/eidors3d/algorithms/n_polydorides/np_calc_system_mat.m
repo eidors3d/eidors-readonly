@@ -10,7 +10,7 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 % img       = image background for system matrix calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_system_mat.m,v 1.6 2007-08-29 09:16:48 aadler Exp $
+% $Id: np_calc_system_mat.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
 
 s_mat = eidors_obj('get-cache', fwd_model, 'np_2003_system_mat', img);
 

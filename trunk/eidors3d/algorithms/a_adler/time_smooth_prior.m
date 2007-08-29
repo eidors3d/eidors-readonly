@@ -25,7 +25,7 @@ function Reg= time_smooth_prior( inv_model );
 % for the element itself
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: time_smooth_prior.m,v 1.6 2007-08-29 09:16:45 aadler Exp $
+% $Id: time_smooth_prior.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
 ne = pp.n_elem;

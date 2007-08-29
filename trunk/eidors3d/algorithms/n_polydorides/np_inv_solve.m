@@ -9,7 +9,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % inv_model.parameters.term_tolerance (default 1e-3);
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_inv_solve.m,v 1.6 2007-08-29 09:16:48 aadler Exp $
+% $Id: np_inv_solve.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
 
 [maxiter, tol] = get_parameters(inv_model);
   
@@ -65,15 +65,6 @@ function dv_sim= forward_solve_diff(inv_model, sol)
    img.elem_data = img.elem_data + sol;
    v_solv = fwd_solve(img);
    dv_sim= calc_difference_data( v_homg, v_solv, inv_model.fwd_model);
-
-function dva=diff_measurement(inv_model, data1, data2);
-   fwd_model= inv_model.fwd_model;
-
-   if fwd_model.normalize_measurements
-      dva= data2 ./ data1 - 1;
-   else   
-      dva= data2 - data1;
-   end
 
 function [maxiter, tol] = get_parameters(inv_model);
 
