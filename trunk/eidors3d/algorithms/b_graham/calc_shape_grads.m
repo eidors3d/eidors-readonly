@@ -8,7 +8,7 @@ function [D,Vols] = calc_shape_grads(fwd_model);
 %Vols     = Normalised volumes of the elements
 %
 % (C) 2005  Brad Graham.  %  Licenced under GNU GPL
-% $Id: calc_shape_grads.m,v 1.3 2007-08-29 09:11:48 aadler Exp $
+% $Id: calc_shape_grads.m,v 1.4 2007-08-29 09:13:50 aadler Exp $
 
 NODE = fwd_model.nodes;
 ELEM = fwd_model.elems;
