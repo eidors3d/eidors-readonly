@@ -1,4 +1,4 @@
-<!--#include virtual="../nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2>Using EIDORS to image lungs</h2>
 
 <h3> 
@@ -57,7 +57,7 @@ cycle.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:10:19 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-29 09:37:59 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

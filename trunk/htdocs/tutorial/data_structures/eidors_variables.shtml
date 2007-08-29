@@ -1,0 +1,28 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>EIDORS data structures and Variables</h2>
+
+<h3> 
+What version am I running?
+</h3>
+
+<pre>
+&gt;&gt; eidors_obj('eidors_version')
+ans =
+3.2
+</pre>
+
+<h3>
+Control Colour Mapping
+</H3>
+
+The colours of the graphics may be controlled with the
+<tt>calc_colours</tt> function.
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-29 09:37:59 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->

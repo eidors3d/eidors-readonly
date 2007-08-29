@@ -1,4 +1,4 @@
-<!--#include virtual="../nav-sidebar.shtml" -->
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2>Using EIDORS to image geophysics</h2>
 
 <h3> 
@@ -76,7 +76,7 @@ gallery_gradient(EZG04_Ring1,Data_Ring1_July2004_Wen32_1,2,9,'R2Jul2004Wenner1')
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 20:24:00 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-29 09:37:59 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

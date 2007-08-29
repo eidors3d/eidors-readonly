@@ -56,6 +56,25 @@ for discussion, we make the following suggestion.
 
 -->
 <p><li><b>
+    24 Aug 2007:
+</b><br>
+Andy Adler
+<p>
+EIDORS v3.2 development.
+EIDORS has progressed significantly from the 3.1 release, and
+yet there has not been a new release. The only thing stopping us
+is a few bug fixes and a few remaining features. The following
+list is the fixes/features added preparing for 3.2.
+<br>&minus;Caching added to the m_3d_fields function in
+           Nick Polydorides' code.
+<br>&minus;EIDORS is released under GPL 2 and 3. (ie It may be 
+           copied under the GPL 2 or GPL 3 terms)
+<br>&minus;
+<br>&minus;
+<br>&minus;
+<br>&minus;
+
+<p><li><b>
     27 Aug 2006:
 </b><br>
 Andy Adler &amp; Bill Lionheart
@@ -779,7 +798,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-10-11 17:13:39 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-29 09:33:35 $ by $Author: aadler $
 </small>
 </body>
 

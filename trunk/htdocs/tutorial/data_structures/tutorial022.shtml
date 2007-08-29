@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#include virtual="nav-sidebar-tut.shtml" -->
 <h2>EIDORS data structures for forward models</h2>
 
 <h3> 
@@ -86,7 +86,7 @@ Thus the output is, giving a resistance change of 200&Omega;
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-06-15 18:24:37 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-29 09:37:59 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
