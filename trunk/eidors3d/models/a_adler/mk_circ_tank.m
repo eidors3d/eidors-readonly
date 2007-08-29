@@ -40,7 +40,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_circ_tank.m,v 1.9 2007-08-29 09:25:34 aadler Exp $
+% $Id: mk_circ_tank.m,v 1.10 2007-08-29 09:26:55 aadler Exp $
 
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');

@@ -6,7 +6,7 @@ function J= np_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_jacobian.m,v 1.11 2007-08-29 09:24:59 aadler Exp $
+% $Id: np_calc_jacobian.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 

@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.36 2007-08-29 09:25:00 aadler Exp $
+% $Id: startup.m,v 1.37 2007-08-29 09:26:18 aadler Exp $
 
 HOMEDIR=pwd;
 
