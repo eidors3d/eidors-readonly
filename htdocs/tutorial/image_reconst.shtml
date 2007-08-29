@@ -1,5 +1,5 @@
 <!--#include virtual="nav-sidebar.shtml" -->
-<h2>EIDORS Examples</h2>
+<h2>EIDORS Image Reconstruction</h2>
 
 To run these tutorials, you need to 
 <a href="../download.shtml">download and install</a>
@@ -10,18 +10,6 @@ EIDORS and then run this command in a matlab
 </pre>
 
 <!--#include virtual="./image_reconst.html" -->
-<!--#include virtual="./data_structures.html" -->
-<!--#include virtual="./application_examples.html" -->
-<!--#include virtual="./netgen.html" -->
-
-<h3>Older Tutorials</h3>
-<ul>
-    <li><h3> 
-<a href="./version2/eidors3d_tutorial.shtml"
-   >Tutorial for EIDORS Version 2 (EIDORS3D)</a>
-</h3>
-
-</ul>
 
 </td></tr></table>
 <p>

@@ -8,8 +8,8 @@ function s_mat= dg_calc_system_mat(fwd_model,img)
 %   SS  = Unconnected system Matrix
 %   CC  = Connectivity Matrix
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: dg_calc_system_mat.m,v 1.1 2007-06-15 20:24:45 aadler Exp $
+% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% $Id: dg_calc_system_mat.m,v 1.2 2007-08-29 09:37:59 aadler Exp $
 
 persistent CC SS;
 

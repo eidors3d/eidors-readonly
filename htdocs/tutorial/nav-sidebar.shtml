@@ -4,33 +4,13 @@
 <!--#else -->
 <!--#set var="HOST" value=".." -->
 <!--#endif -->
-<html>
-   <head>
-<title>EIDORS</title>
-   <style type="text/css">
-        body, td, th {
-        font-family: Verdana, Helvetica, Arial, sans-serif;
-        font-size:80%;
-        }
-        pre, tt {
-        font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
-        font-size:100%;
-        }
-        pre {
-        background-color: #E0F0FE;
-        border-style: groove;
-        border-color: black;
-        border-width: 2px;
-        }
-   </style>
-
-</head>
+<html><!--#include virtual="../header.html" -->
 
 <body link="#800000"
       marginwidth=5 marginheight=5 topmargin=5 leftmargin=5 
       vlink="#400000" >
 <table border="0" cellspacing="0" cellpadding="0"><tr><td>
-<img alt="Eidors-logo" src="../../eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+<img alt="Eidors-logo" src="../eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
 </td><td>
 <h2>
     EIDORS:
@@ -42,47 +22,35 @@
 <td valign="top">
 <a href="http://www.eidors.org/"
    >EIDORS</a><br>
-<a href="<!--#echo var='HOST'-->/index.shtml"
+<a href="../index.shtml"
    >Main</a><br>
-<a href="<!--#echo var='HOST'-->/docs.shtml"
+<a href="../docs.shtml"
    >Documentation</a><br>
-<a href="<!--#echo var='HOST'-->/examples/examples.shtml"
+<a href="../examples/examples.shtml"
    >Examples</a><br>
-<a href="../tutorial/tutorial.shtml"
+<a href="./tutorial.shtml"
    >Tutorials</a><br>
-<a href="./tutorial010.shtml"
-      >&minus; Basics</a><br>
-<a href="./tutorial020.shtml"
-      >&minus; Data structures</a><br>
-<a href="./tutorial030.shtml"
-      >&minus; Modifying models</a><br>
-<a href="./tutorial040.shtml"
-      >&minus; Netgen</a><br>
-<a href="./tutorial050.shtml"
-      >&minus; More Netgen</a><br>
-<a href="./tutorial110.shtml"
-      >&minus; Imaging</a><br>
-<a href="./tutorial120.shtml"
-      >&minus; 2D Imaging</a><br>
-<a href="./tutorial130.shtml"
-      >&minus; 3D Imaging</a><br>
-<a href="./tutorial140.shtml"
-      >&minus; Moving Objects</a><br>
-<a href="./tutorial210-cheating.shtml"
-      >&minus; Cheating</a><br>
-<a href="<!--#echo var='HOST'-->/download.shtml"
+<a href="./image_reconst.shtml"
+      >&minus; Image Reconst</a><br>
+<a href="./data_structures.shtml"
+      >&minus; Data Structures</a><br>
+<a href="./application_examples.shtml"
+      >&minus; Application Examples</a><br>
+<a href="./netgen.shtml"
+      >&minus; FEM Modelling</a><br>
+<a href="../download.shtml"
    >Download</a><br>
 <a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
    >Browse CVS</a><br>
 <hr>
-<a href="<!--#echo var='HOST'-->/news.shtml">News</a><br>
-<a href="<!--#echo var='HOST'-->/faq.shtml">FAQ</a><br>
-<a href="<!--#echo var='HOST'-->/programming.shtml">Developer</a><br>
+<a href="../news.shtml">News</a><br>
+<a href="../faq.shtml">FAQ</a><br>
+<a href="../programming/programming.shtml">Developer</a><br>
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar.shtml,v 1.4 2007-06-15 18:02:16 aadler Exp $
+     $Id: nav-sidebar.shtml,v 1.5 2007-08-29 09:33:35 aadler Exp $
   -->
 <!--#if expr="$SERVER_NAME = 'localhost'" -->
 <!--#else -->

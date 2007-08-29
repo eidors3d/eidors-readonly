@@ -82,7 +82,7 @@ function gallery_fwd_model = mk_gallery(elec_posn,data_tomel,n_contours,factor,l
 n_elec= size(elec_posn,1);
 cross_section= [elec_posn(:,3),elec_posn(:,4)];
 params= mk_geom_gallery(n_contours,levels,cross_section,factor);
-params.stimulation= mk_stim_patterns_tomel(elec_posn,data_tomel);
+params.stimulation= mk_stim_patterns_tomel_(elec_posn,data_tomel);
 if isempty(levels)
     params.name= 'EIDORS 2D FEM gallery geometry';
 %     params.misc.n_elems_2D= size(params.elems,1);
