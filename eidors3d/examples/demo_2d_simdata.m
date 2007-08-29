@@ -2,7 +2,7 @@
 % solve it using various 2D solvers
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_2d_simdata.m,v 1.25 2007-08-29 09:21:14 aadler Exp $
+% $Id: demo_2d_simdata.m,v 1.26 2007-08-29 09:24:09 aadler Exp $
 
 % 
 % Step 1: Create simple 16 electrode 2D model

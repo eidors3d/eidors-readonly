@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.6 2007-08-29 09:21:12 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.7 2007-08-29 09:24:09 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html

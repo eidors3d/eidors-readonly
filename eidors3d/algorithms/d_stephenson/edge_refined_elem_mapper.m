@@ -7,7 +7,7 @@ function [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 %  [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 %
 % (C) 2005 David Stephenson. Licensed under GPL v 2
-% $Id: edge_refined_elem_mapper.m,v 1.9 2007-08-29 09:20:56 aadler Exp $
+% $Id: edge_refined_elem_mapper.m,v 1.10 2007-08-29 09:23:50 aadler Exp $
 
 index_simp = eidors_obj('get-cache', mdl_dense, 'index_simp', mdl_coarse);
 if ~isempty(index_simp)

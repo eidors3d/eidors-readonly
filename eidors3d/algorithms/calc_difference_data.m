@@ -14,7 +14,7 @@ function dva = calc_difference_data( data1, data2, fwd_model)
 %  3) allow both raw data and eidors_obj formats for data
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_difference_data.m,v 1.14 2007-08-29 09:20:55 aadler Exp $
+% $Id: calc_difference_data.m,v 1.15 2007-08-29 09:23:49 aadler Exp $
 
 data_width= max(num_frames(data1), num_frames(data2));
 

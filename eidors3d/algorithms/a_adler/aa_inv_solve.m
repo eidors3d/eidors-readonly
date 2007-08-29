@@ -11,11 +11,8 @@ function img= aa_inv_solve( inv_model, data1, data2)
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
 
-% Test for multiple measurements in solver
-%  ok= aa_inv_solve('can_process_multiple_meas');
-
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_solve.m,v 1.9 2007-08-29 09:20:53 aadler Exp $
+% (C) 2005 Andy Adler. Licenced under the GPL Version 2
+% $Id: aa_inv_solve.m,v 1.10 2007-08-29 09:23:47 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -32,7 +29,7 @@ else
     W   = calc_meas_icov( inv_model );
     hp  = calc_hyperparameter( inv_model );
 
-      one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
+    one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
 % in order to decrease matrix size, change to this form:
 %   P = inv(RtR); V = inv(W);
 %   one_step_inv= P*J'/(J*P*J' + hp^2*V);
@@ -41,13 +38,9 @@ else
     eidors_msg('aa_inv_solve: setting cached value', 2);
 end
 
-if pp.normalize
-   dva= data2 ./ data1 - 1;
-else   
-   dva= data2 - data1;
-end
+dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 
-sol = one_step_inv * dva;
+sol = one_step_inv * dv;
 
 % create a data structure to return
 img.name= 'solved by aa_inv_solve';

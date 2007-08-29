@@ -6,7 +6,7 @@ function show_fem_move( img, move, scale, options )
 %       scale   - factor to scale movement arrows (optional)
 %       options - options array passed on to show_fem()
 
-% $Id: show_fem_move.m,v 1.2 2007-08-29 09:21:16 aadler Exp $
+% $Id: show_fem_move.m,v 1.3 2007-08-29 09:24:11 aadler Exp $
 
 % Check for single argument call
 if nargin == 1
@@ -60,3 +60,16 @@ end
 axis('off'); 
 axis('image'); 
 axis(1.3*[-1,1,-1,1]);
+
+function hh= working_quiver( varargin )
+% WORKING_QUIVER   Matlab has made a completely imcompatible
+% quiver function which you can't call properly with different
+% versions of matlab.
+
+v = version;
+octave = exist('OCTAVE_VERSION') | str2num(v(1)) < 7;
+if octave
+    hh = quiver( varargin{:} );
+else
+    hh = quiver('v6', varargin{:} );
+end

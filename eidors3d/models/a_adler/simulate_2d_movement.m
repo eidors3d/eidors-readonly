@@ -2,7 +2,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
 % SIMULATE_MOVEMENT simulate rotational movement in 2D
 % [vh,vi,xpr_pt]= simulate_movement( pattern )
 %
-% $Id: simulate_2d_movement.m,v 1.3 2007-08-29 09:21:28 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.4 2007-08-29 09:24:24 aadler Exp $
 
     n_circles = 36;
     n_elec= 16;
