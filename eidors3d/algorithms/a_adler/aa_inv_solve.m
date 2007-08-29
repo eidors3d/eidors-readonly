@@ -15,7 +15,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  ok= aa_inv_solve('can_process_multiple_meas');
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_solve.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.8 2007-08-29 09:19:23 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
