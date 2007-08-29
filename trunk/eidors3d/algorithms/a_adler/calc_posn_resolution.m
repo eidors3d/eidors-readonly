@@ -15,7 +15,7 @@ function [br,pos]= calc_posn_resolution( img, fwd_model)
 % centre of the medium. This may not be appropriate
 
 % (C) 2006 Andy Adler. Licensed under GPL version 2
-% $Id: calc_posn_resolution.m,v 1.2 2007-08-29 09:10:10 aadler Exp $
+% $Id: calc_posn_resolution.m,v 1.3 2007-08-29 09:11:47 aadler Exp $
 
 if nargin>=2
    img.fwd_model= fwd_model;

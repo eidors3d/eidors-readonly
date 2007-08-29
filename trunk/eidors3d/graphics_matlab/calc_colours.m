@@ -47,10 +47,15 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %   'mapped_colour' (DEFAULT 127) number of colourmap entries
 %      using mapped_colour allows matlab to print vector graphics to eps
 %   'npoints' (DEFAULT 64) number of points accross the image
+%   'clim'    (DEFAULT []) crop colour display of values above clim
 % 
 % PARAMETERS: clim
-%    clim - colour limit. Colours more different from ref_level are cropped.
-%         - if not specified or scale==[] => no limit
+%    clim - colour limit. values more different from ref_level are cropped.
+%         - if not specified or clim==[] => no limit
+%    clim can be specified three ways (in decending priority order)
+%       1. clim parameter to calc_colours('clim')
+%       2. clim in img.calc_colours.clim
+%       3. clim parameter to calc_colours()
 %
 % PARAMETERS: do_colourbar
 %    - show a Matlab colorbar with appropriate scaling
@@ -64,7 +69,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.35 2007-08-29 09:10:28 aadler Exp $  
+% $Id: calc_colours.m,v 1.36 2007-08-29 09:12:07 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
@@ -72,16 +77,16 @@ if nargin==0;
     return;
 end
 
-% Set default parameters
-if nargin < 2; clim=[];                end
-if nargin < 3; do_colourbar = 0;       end
-if nargin < 4; ref_lev = 'use_global'; end
-
 if isstr(img)
     % called as calc_colours('parameter' ... )
     test_exist_colours;
-    colours= get_set_field(img, clim);
+    if nargin==1;
+       colours= get_field(img);
+    else
+       colours= set_field(img, clim);
+    end
     return;
+
 elseif isfield(img,'type')
    if strcmp( img.type, 'image' )
       elem_data= img.elem_data; %col vector
@@ -92,6 +97,12 @@ else
    elem_data= img;
 end
 
+% Set default parameters
+if nargin < 2; clim=[];                end
+if nargin < 3; do_colourbar = 0;       end
+if nargin < 4; ref_lev = 'use_global'; end
+
+
 if isempty(elem_data)
     colours = 'k'; %black
     return;
@@ -101,15 +112,13 @@ pp=get_colours;
 
 m= size(elem_data,1); n=size(elem_data,2);
 
+disp_data= real(elem_data(:));
+clim = calc_clim(img, clim, disp_data);
 % We can only plot the real part of data
-[scl_data, ref_lev] = scale_for_display( real(elem_data(:)), ref_lev, clim );
+[scl_data, ref_lev] = scale_for_display( disp_data, ref_lev, clim );
 
 backgnd= isnan(scl_data);
 scl_data(backgnd)= mean( scl_data(~backgnd));
-
-if isempty(clim);
-   clim= max(abs(scl_data)) + eps;
-end
 
 if pp.mapped_colour
    colours=set_mapped_colour(pp, backgnd, scl_data/clim);
@@ -225,6 +234,9 @@ function test_exist_colours;
    if ~isfield( eidors_colours, 'npoints' );
       eidors_colours.npoints= 64;
    end
+   if ~isfield( eidors_colours, 'clim' );
+      eidors_colours.clim= [];
+   end
 
 function pp=get_colours;
    test_exist_colours;
@@ -245,11 +257,30 @@ function colours=set_mapped_colour(pp, backgnd, elem_data)
    colours = fix( elem_data * (ncol-1))' + ncol + 1;
    colours(backgnd)= backgndidx;
 
-function value= get_set_field(param, value);
+function value= get_field(param);
     global eidors_colours;
-    if isempty(value)
-       value = getfield(eidors_colours, param);
-    else
-       eidors_colours = setfield(eidors_colours, param, value);
-       value= eidors_colours;
-    end
+    value = getfield(eidors_colours, param);
+
+function value= set_field(param, value);
+    global eidors_colours;
+    eidors_colours = setfield(eidors_colours, param, value);
+    value= eidors_colours;
+
+function clim = calc_clim(img, clim, scl_data);
+%       1. clim parameter to calc_colours('clim')
+   if ~isempty(clim);
+      return;
+   end
+%       2. clim in img.calc_colours.clim
+   try
+      clim= img.calc_colours.clim;
+   catch;
+%       3. clim parameter to calc_colours()
+      global eidors_colours;
+      clim = eidors_colours.clim;
+   end
+   
+% if it's still empty get from scl_data
+   if isempty(clim);
+      clim= max(abs(scl_data)) + eps;
+   end

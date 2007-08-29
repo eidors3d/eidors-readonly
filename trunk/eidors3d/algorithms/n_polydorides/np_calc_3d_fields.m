@@ -6,7 +6,7 @@ function v_f= np_calc_3d_fields( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_3d_fields.m,v 1.2 2007-08-29 09:10:12 aadler Exp $
+% $Id: np_calc_3d_fields.m,v 1.3 2007-08-29 09:11:49 aadler Exp $
 
 % Here we use caching differently. The v_h previous depends only
 %  on the fwd_model (depending on the image wouldn't help, because
