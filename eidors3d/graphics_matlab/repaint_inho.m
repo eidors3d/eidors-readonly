@@ -13,7 +13,7 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh, clim);
 %clim    = Colour limit
 
 % (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3
-% $Id: repaint_inho.m,v 1.19 2007-08-29 09:14:10 aadler Exp $
+% $Id: repaint_inho.m,v 1.20 2007-08-29 09:17:05 aadler Exp $
 
 if nargin<5
     thresh = [];
@@ -24,7 +24,7 @@ end
 
 abs_inhomg= abs( scale_for_display( mat, mat_ref, clim) );
 if isempty(thresh)
-    thresh = max(abs_inhomg)/4;
+    thresh = 1/4;
 end
 
 

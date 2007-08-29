@@ -8,7 +8,7 @@ function Reg= np_calc_image_prior( inv_model );
 % inv_model  => inverse model struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_image_prior.m,v 1.5 2007-08-29 09:15:31 aadler Exp $
+% $Id: np_calc_image_prior.m,v 1.6 2007-08-29 09:16:48 aadler Exp $
 
 Reg = eidors_obj('get-cache', inv_model, 'np_2003_image_prior');
 

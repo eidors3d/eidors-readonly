@@ -1,5 +1,5 @@
-function [elem_data,ref_lev] = scale_for_display( elem_data, ref_lev, clim )
-% [elem_data,ref_lev] = scale_for_display( elem_data, ref_lev, clim )
+function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, clim )
+% [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, clim )
 %
 % PARAMETERS: elem_data
 %  elem_data: data for fem elements or image pixels
@@ -13,10 +13,11 @@ function [elem_data,ref_lev] = scale_for_display( elem_data, ref_lev, clim )
 %    clim - colour limit. Colours more different from ref_level are cropped.
 %         - if not specified or scale==[] => no limit
 %
-% OUTPUT: ref_lev
-%    - the actual numerical ref_level used
+% OUTPUT: 
+%    ref_lev, max_scale - the centre and max of the colour scale
+%    elem_data - data scaled in the range [-1 .. 1]
 %
-% $Id: scale_for_display.m,v 1.3 2006-08-25 00:11:17 aadler Exp $
+% $Id: scale_for_display.m,v 1.4 2007-08-29 09:17:05 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL v2
 
    global eidors_colours;
@@ -50,3 +51,5 @@ function [elem_data,ref_lev] = scale_for_display( elem_data, ref_lev, clim )
       elem_data( elem_data<-clim)= -clim;
    end
 
+   max_scale = max(abs(elem_data(:))) + eps;
+   elem_data = elem_data/max_scale;

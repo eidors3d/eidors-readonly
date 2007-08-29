@@ -36,8 +36,8 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %   The following parameters are accepted
 %
 %   'greylev'    (DEFAULT -.01): the colour of the ref_level.
-%      Negative values indicate black (inversed colour).
-%      For almost white, greylev=.01; Black=> greylev=-.01
+%      Negative values indicate white background
+%      For almost white, greylev=-.01; Black=> greylev=.01
 %   'sat_adj'    (DEFAULT .9): max G,B when R=1
 %   'window_range' (DEFAULT .9); window colour range
 %      Colour slope outside range is 1/3 of centre slope
@@ -69,7 +69,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.37 2007-08-29 09:14:10 aadler Exp $  
+% $Id: calc_colours.m,v 1.38 2007-08-29 09:17:05 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
@@ -112,23 +112,24 @@ pp=get_colours;
 
 m= size(elem_data,1); n=size(elem_data,2);
 
-disp_data= real(elem_data(:));
-clim = calc_clim(img, clim, disp_data);
+clim = calc_clim(img, clim);
 % We can only plot the real part of data
-[scl_data, ref_lev] = scale_for_display( disp_data, ref_lev, clim );
+% Vectorize elem_data here, is get's reshaped later
+[scl_data, ref_lev, max_scale] = ...
+      scale_for_display( real(elem_data(:)), ref_lev, clim );
 
 backgnd= isnan(scl_data);
 scl_data(backgnd)= mean( scl_data(~backgnd));
 
 if pp.mapped_colour
-   colours=set_mapped_colour(pp, backgnd, scl_data/clim);
+   colours=set_mapped_colour(pp, backgnd, scl_data);
    if n==1;
       colours= reshape( colours, 1,[]);
    else
       colours= reshape( colours, m,n,[]);
    end
 else
-   [red,grn,blu] = blu_red_axis( pp, scl_data/clim , backgnd );
+   [red,grn,blu] = blu_red_axis( pp, scl_data, backgnd );
    if n==1;
       colours= reshape( [red,grn,blu],1,[],3);
    else
@@ -151,13 +152,13 @@ if do_colourbar
    % set scaling
 %  lcm= size(colormap,1)/2+.5; - you would expect it to be this
    lcm= max(get(hh,'Ylim'))/2 + .5;
-   OrdOfMag = 10^floor(log10(clim));
+   OrdOfMag = 10^floor(log10(max_scale));
 %  in order to make the labels clean, we round to a near level
-   scale_r  = OrdOfMag * floor( clim / OrdOfMag );
-%  ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/clim;
+   scale_r  = OrdOfMag * floor( max_scale / OrdOfMag );
+%  ticks = lcm + (lcm-1)*[-1,0,+1]*scale_r/max_scale;
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
    ofs      = [-1,0,+1]*scale_r + (ref_r-ref_lev);
-   ticks = lcm + (lcm-1)*ofs/clim;
+   ticks = lcm + (lcm-1)*ofs/max_scale;
    set(hh,'YTick', ticks');
    set(hh,'YTickLabel', [-scale_r, 0, scale_r]'+ ref_r);
 
@@ -167,6 +168,13 @@ end
 
 %scaled data must go from -1 to 1
 function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
+   % window data such that slope above w is 1/3 of that below
+   % thus w is mapped to k st k/w = 3(1-k)/(1-w) -> k=3w/(1+2w)
+   W= pp.window_range; K= 3*W/(1+2*W);
+   scale_data= sign(scale_data) .* ( ...
+     (  K/W*   abs(scale_data)   ) .* (abs(scale_data)<=W) + ...
+     (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
+
 if 0
    D= sign(pp.greylev+eps); %force 0 to 1
    glev= abs(pp.greylev);
@@ -177,31 +185,31 @@ if 0
    red= red*(1-glev) + glev;
 end
    ofs= (pp.greylev >= 0);   % 1 if greylev>=0
+   glev= abs(pp.greylev);
+
    D= (2*ofs - 1);
    ofs= ofs - 2*(ofs==0);
    F= 3*pp.sat_adj;
    DF= D*F; D_F= D/F;
 
-   glev= abs(pp.greylev);
-
-   % window data such that slope above w is 1/3 of that below
-   % thus w is mapped to k st k/w = 3(1-k)/(1-w) -> k=3w/(1+2w)
-   W= pp.window_range; K= 3*W/(1+2*W);
-   scale_data= sign(scale_data) .* ( ...
-     (  K/W*   abs(scale_data)   ) .* (abs(scale_data)<=W) + ...
-     (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
-
    red= DF*abs(scale_data+D_F) - ofs;
    red= red.*(red>0).*(red<1) + (red>=1);
-   red= red*(1-glev) + glev;
 
    grn= DF*abs(scale_data    ) - ofs;
    grn= grn.*(grn>0).*(grn<1) + (grn>=1);
-   grn= grn*(1-glev) + glev;
 
    blu= DF*abs(scale_data-D_F) - ofs;
    blu= blu.*(blu>0).*(blu<1) + (blu>=1);
-   blu= blu*(1-glev) + glev;
+
+   if pp.greylev >=0 % Black background
+      red= red*(1-glev) + glev;
+      grn= grn*(1-glev) + glev;
+      blu= blu*(1-glev) + glev;
+   else
+      red= red*(1-glev);
+      grn= grn*(1-glev);
+      blu= blu*(1-glev);
+   end
 
    red(backgnd) = pp.backgnd(1);
    grn(backgnd) = pp.backgnd(2);
@@ -212,7 +220,7 @@ function test_exist_colours;
    global eidors_colours;
 
    if ~isfield( eidors_colours, 'greylev' );
-      eidors_colours.greylev = -.01;
+      eidors_colours.greylev = -.001;
    end
    if ~isfield( eidors_colours, 'sat_adj' );
       eidors_colours.sat_adj = .9;
@@ -266,7 +274,7 @@ function value= set_field(param, value);
     eidors_colours = setfield(eidors_colours, param, value);
     value= eidors_colours;
 
-function clim = calc_clim(img, clim, scl_data);
+function clim = calc_clim(img, clim)
 %       1. clim parameter to calc_colours('clim')
    if ~isempty(clim);
       return;
@@ -278,9 +286,4 @@ function clim = calc_clim(img, clim, scl_data);
 %       3. clim parameter to calc_colours()
       global eidors_colours;
       clim = eidors_colours.clim;
-   end
-   
-% if it's still empty get from scl_data
-   if isempty(clim);
-      clim= max(abs(scl_data)) + eps;
    end
