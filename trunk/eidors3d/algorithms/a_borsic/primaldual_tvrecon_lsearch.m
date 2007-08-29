@@ -25,7 +25,7 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %
 
 % (C) 2002-2006 Andrea Borsic. Licenced under GPL version 2
-% $Id: primaldual_tvrecon_lsearch.m,v 1.7 2007-08-29 09:18:08 aadler Exp $
+% $Id: primaldual_tvrecon_lsearch.m,v 1.8 2007-08-29 09:19:25 aadler Exp $
 
 % Initialisation
 fwd_model= inv_mdl.fwd_model;

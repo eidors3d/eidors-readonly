@@ -2,7 +2,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
 % SIMULATE_MOVEMENT simulate rotational movement in 2D
 % [vh,vi,xpr_pt]= simulate_movement( pattern )
 %
-% $Id: simulate_2d_movement.m,v 1.1 2007-08-29 09:18:43 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.2 2007-08-29 09:19:57 aadler Exp $
 
     n_circles = 36;
     n_elec= 16;
@@ -13,7 +13,6 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
                     'fwd_model', fmdl, ...
                     'elem_data', ones(n_elems,1) );
     vh= fwd_solve(img);
-%show_fem(img);drawnow;
 
     np= 512;
     [x,y]=meshgrid( linspace(-1,1,np), linspace(-1,1,np) );
@@ -45,6 +44,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
        img.elem_data= 1 + target_conductivity * (obj_n./eptr_n);
 
        vi(i)= fwd_solve( img );
+%show_fem(img);drawnow; keyboard
     end
 
 % convert to data matrix

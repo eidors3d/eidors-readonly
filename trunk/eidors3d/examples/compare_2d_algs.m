@@ -23,7 +23,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_2d_algs.m,v 1.29 2007-08-29 09:18:27 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.30 2007-08-29 09:19:42 aadler Exp $
 
 if nargin<2
     shape=0;
