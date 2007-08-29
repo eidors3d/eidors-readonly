@@ -21,7 +21,7 @@ function RtR_prior = calc_RtR_prior( inv_model, varargin )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_RtR_prior.m,v 1.10 2007-08-29 09:13:51 aadler Exp $
+% $Id: calc_RtR_prior.m,v 1.11 2007-08-29 09:15:30 aadler Exp $
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)

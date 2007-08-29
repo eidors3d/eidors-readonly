@@ -23,7 +23,7 @@ function retval=eidors_cache( command, limit )
 %  
 
 % (C) 2005 Andy Adler. Licensed under GPL version 2
-% $Id: eidors_cache.m,v 1.8 2007-08-29 09:13:53 aadler Exp $
+% $Id: eidors_cache.m,v 1.9 2007-08-29 09:15:32 aadler Exp $
 
 % Comments
 % Want to clear specific structures
