@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.25 2007-08-29 09:04:06 aadler Exp $
+% $Id: startup.m,v 1.26 2007-08-29 09:07:15 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -29,12 +29,16 @@ addpath([HOMEDIR, '/graphics_vtk']);
 %addpath([HOMEDIR, '/tests']);
 
 % We need to add an architecture specific directory for mex files
+archdir= '';
 if exist('OCTAVE_VERSION')==5
    if findstr(computer,'-pc-');
-      addpath([HOMEDIR, '/arch/octave/pc']);
+      archdir= '/arch/octave/pc';
    end
 else
-   addpath([HOMEDIR, '/arch/matlab']);
+   archdir= '/arch/matlab';
+end
+if ~isempty(archdir)
+   addpath([HOMEDIR, archdir]);
 end
 
 % test if eidors_var_id.cpp is a valid mexfile
@@ -47,8 +51,6 @@ if exist('eidors_var_id')~=3
      ]));
 end
 
-clear HOMEDIR;
-
 %prevent warnings in v7
 if str2num(version('-release'))>=14
 warning off MATLAB:symmmd:obsolete
@@ -60,3 +62,17 @@ calc_colours
 % Set max cache size. Not completely sure about this
 %  but 100MB should be available in most modern machines
 eidors_cache('cache_size', 100e6 );
+
+
+eidors_msg('Completed setting up of EIDORS Version %s', ...
+    eidors_obj('eidors_version'),1);
+eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
+eidors_msg('Parameter: mapped_colour=%d',calc_colours('mapped_colour'),1);
+if calc_colours('greylev')>=0
+   eidors_msg('Default background colour: white');
+else
+   eidors_msg('Default background colour: black');
+end
+eidors_msg('Architecture specific directory: %s',archdir,1);
+
+clear HOMEDIR archdir;
