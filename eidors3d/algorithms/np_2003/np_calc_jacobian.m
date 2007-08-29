@@ -6,12 +6,11 @@ function J= np_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: np_calc_jacobian.m,v 1.11 2006-11-15 17:18:23 aadler Exp $
+% $Id: np_calc_jacobian.m,v 1.12 2007-08-29 07:07:53 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
-%Set the tolerance for the forward solver
-tol = 1e-5;
+tol = 1e-5; %tolerance for the forward solver
 
 s_mat= calc_system_mat( fwd_model, img );
 
