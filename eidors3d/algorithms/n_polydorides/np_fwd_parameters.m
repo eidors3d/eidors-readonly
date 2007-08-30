@@ -22,7 +22,7 @@ function param = np_fwd_parameters( fwd_model )
 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_fwd_parameters.m,v 1.13 2007-08-30 03:37:04 aadler Exp $
+% $Id: np_fwd_parameters.m,v 1.14 2007-08-30 04:47:19 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
 
@@ -131,7 +131,11 @@ param.zc       = zc;
 param.indH     = indH;
 param.I        = I;
 param.Ib       = Ib;
-param.perm_sym = fwd_model.np_fwd_solve.perm_sym;
+try
+   param.perm_sym = fwd_model.np_fwd_solve.perm_sym;
+catch
+   param.perm_sym = '{n}';
+end
 param.gnd_ind  = fwd_model.gnd_node;
 
 if isfield(fwd_model,'normalize_measurements')
