@@ -12,16 +12,123 @@ ans =
 </pre>
 
 <h3>
-Control Colour Mapping
+Controlling Output Images
 </H3>
 
 The colours of the graphics may be controlled with the
-<tt>calc_colours</tt> function.
+<tt>calc_colours</tt> function. This applies to output
+of the <tt>show_fem</tt> and <tt>show_slices</tt> and
+other functions that work using the matlab graphics
+engine.
+
+<pre>
+<!--#include virtual="eidors_vars01.m" -->
+</pre>
+<center>
+<img src="eidors_vars01a.png">
+<br><i>Figure:</i>
+Simple EIDORS image with three contrasts to show the
+effect of changing the colour mapping parameters
+</center>
+
+<p>
+The Calc Colours function can modify these values:
+<p>
+<tt>calc_colours( 'param', value );</tt>
+<br>The following parameters are accepted
+
+<ul>
+ 
+<li>
+    'greylev'    (DEFAULT -.01): the colour of the ref_level.
+<br>
+       Negative values indicate black (inversed colour).
+       For almost white, greylev=.01; Black=&gt; greylev=-.01
+<li>
+    'sat_adj'    (DEFAULT .9): max G,B when R=1
+<li>
+    'window_range' (DEFAULT .9); window colour range
+       Colour slope outside range is 1/3 of centre slope
+<li>
+    'backgnd' ( DEFAULT [.5,.5,.15] ): image border colour 
+<li>
+    'ref_level' (DEFAULT 'auto') conductivity of centre of
+       colour mapping. 'auto' tries to estimate a good level.
+<li>
+    'mapped_colour' (DEFAULT 127) number of colourmap entries
+       using mapped_colour allows matlab to print vector graphics to eps
+<li>
+    'npoints' (DEFAULT 64) number of points accross the image
+</ul>
+
+<h3>
+Image Output Resolution
+</H3>
+
+<pre>
+<!--#include virtual="eidors_vars02.m" -->
+</pre>
+<center>
+<img src="eidors_vars02a.png">
+<br><i>Figure:</i>
+Effect of changing the <tt>npoints</tt> parameter. From
+left:
+ 1) <tt>npoints=32</tt>
+ 2) <tt>npoints=128</tt>
+ 3) <tt>npoints=64</tt> (default)
+</center>
+
+<h3>
+Image Reference Colours
+</H3>
+
+<pre>
+<!--#include virtual="eidors_vars03.m" -->
+</pre>
+<center>
+<img src="eidors_vars03a.png">
+<img src="eidors_vars03b.png">
+<img src="eidors_vars03c.png">
+<img src="eidors_vars03d.png">
+<img src="eidors_vars03e.png">
+<br><i>Figure:</i>
+Effect of changing the <tt>greylev</tt> parameter. From
+left:
+ 1) <tt>greylev=0.001</tt>
+ 2) <tt>greylev=0.2</tt>
+ 3) <tt>greylev=-0.2</tt>
+ 4) <tt>greylev=-0.001</tt> (default)
+5) Changing <tt>backgnd</tt>
+</center>
+
+<h3>
+Colour Mapping in the image
+</H3>
+
+The default EIDORS behaviour is to auto range the colours, so that
+the full image range is displayed. This can be changed to set
+a strict colour limit, or to show a non linear colour break.
+
+<pre>
+<!--#include virtual="eidors_vars04.m" -->
+</pre>
+<center>
+<img src="eidors_vars04a.png">
+<br><i>Figure:</i>
+Effect of changing the <tt>greylev</tt> parameter. From
+left:
+ 1) <tt>greylev=0.01</tt>
+ 2) <tt>greylev=0.2</tt>
+ 3) <tt>greylev=-0.01</tt> (default)
+4) Changing <tt>backgnd</tt>
+</center>
+
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-29 09:37:59 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-30 03:30:40 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

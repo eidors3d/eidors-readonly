@@ -1,0 +1,108 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Iterative Gauss Newton reconstruction in 3D
+</h2>
+
+This tutorial shows the generation of images from the
+paper:
+<ul>
+<i>Total Variation Regularization in Electrical Impedance Tomography</i>
+Andrea Borsic, Brad M. Graham, Andy Adler, William R. B. Lionheart 
+</ul>
+
+The first step is to simulate an image which
+has a blocky shape (here we choose a pie slice).
+
+<pre>
+<!--#include virtual="total_variation01.m" -->
+</pre>
+
+<center>
+<img src="total_variation01a.png">
+<br><i> Figure:</i>
+Pie slice shape that is to be reconstructed
+</center>
+
+<h3> GN reconstruction </h3>
+<pre>
+<!--#include virtual="total_variation02.m" -->
+</pre>
+
+<center>
+<img src="total_variation02a.png">
+<br><i> Figure:</i>
+Simulation image (left) and GN reconstructed image (right)
+Gauss-Newton (2-norm) reconstructions are not
+very successful for this shape.
+<i>Note:</i> The 'sliver' of background shown on the meshes
+at right is a rendering bug in matlab 6.5. It does not
+show up in the matlab window.
+</center>
+
+<h3> TV reconstruction </h3>
+One technique to permit image regularization without imposing smooth-
+ing is the Total Variation (TV) formulation of regularization. The Total
+Variation functional is assuming an important role in the regularization
+of inverse problems belonging to many disciplines, thanks to its ability to
+preserve discontinuities in the reconstructed profiles. Application of
+non-smooth reconstruction techniques is important for medical and process
+imaging applications of EIT, as they involve discontinuous profiles.
+Qualitative and quantitative benefits can be expected in these fields.
+<p>
+We outline the properties of the TV functional in the next section, to
+motivate its use as a regularization penalty term and to understand the nu-
+merical difficulties associated with it. The use of the TV functional leads
+in fact to the formulation of the inverse problem as a minimization of a
+non-differentiable function. Application of traditional minimization
+techniques (Steepest Descent Method, Newton Method) has proven to be
+inefficient [Dobson, Santosa, 1994][Borsic, 2002].
+Recent developments in non-smooth optimization (Primal
+Dual-Interior Point Methods) have brought the means of dealing with the
+minimization problem efficiently. The performance of this algorithm with
+respect to traditional smooth algorithms is the subject of this paper.
+
+<pre>
+<!--#include virtual="total_variation03.m" -->
+</pre>
+
+
+<center>
+<img src="total_variation03a.png">
+<br><i> Figure:</i>
+Total Variation reconstructions as a function of the number
+of iterations. From left to right iterations are: 1,3,6,8
+</center>
+
+<h3> TV reconstruction vs iteration </h3>
+
+In order to understand how TV reconstructions improve with
+the iteration number, we calculate:
+
+<pre>
+<!--#include virtual="total_variation04.m" -->
+</pre>
+
+
+<center>
+<img src="total_variation04a.png">
+<img src="total_variation04b.png">
+<br><i> Figure:</i>
+<b>Left</b>
+Total Variation reconstructions for iterations 1 to 20
+(from left to right, top to bottom)
+<b>Right</b>
+Slices through the conductivity distribution vs iteration 
+number.
+ <i>Top</i> vertical centre cut, 
+ <i>Bottom</i> horizontal centre cut, 
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:30:48 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->

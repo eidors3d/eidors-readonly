@@ -1,0 +1,69 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Iterative Gauss Newton reconstruction in 3D
+</h2>
+
+Here we create a simple 3D shape and iteratively
+reconstruct the image.
+
+<pre>
+<!--#include virtual="basic_iterative01.m" -->
+</pre>
+
+<center>
+<img src="basic_iterative01a.png">
+<br><i> Figure:</i>
+Three slices of a simple 3D shape to image
+(from top to bottom, at z=2.2, z=1.5, z=0.8)
+</center>
+
+<h3> 
+Reconstruction with different iterations
+</h3>
+
+We use the 3D Gauss-Newton reconstruction
+algorithms written by Nick Polydorides
+
+<pre>
+<!--#include virtual="basic_iterative02.m" -->
+</pre>
+
+<center>
+<img src="basic_iterative02a.png">
+<br><i> Figure:</i>
+Images from GN reconstructions. From left to right:
+1 iteration, 2 iterations, 6 iterations. Little
+difference is seen in this case, mostly because
+this is a difference imaging problem with small 
+contrasts.
+</center>
+
+<h3> 
+Error norm
+</h3>
+
+Using these difference data sets, an
+image may be reconstructed.
+
+In order to view the decreasing norm of the
+difference
+ (<i>V</i><sub>sim</sub> &minus;
+  <i>V</i><sub>meas</sub>), one can do the 
+following.
+<pre>
+&gt;&gt;eidors_msg('log_level',3);
+EIDORS:[ iter=2, norm(err)= 0.005008 ]
+EIDORS:[ iter=3, norm(err)= 0.002842 ]
+EIDORS:[ iter=4, norm(err)= 0.002186 ]
+EIDORS:[ iter=5, norm(err)= 0.001872 ]
+EIDORS:[ iter=6, norm(err)= 0.001687 ]
+</pre>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:30:46 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->

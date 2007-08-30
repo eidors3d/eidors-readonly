@@ -1,0 +1,59 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<!--#if expr="$SERVER_NAME = 'localhost'" -->
+<!--#set var="HOST" value="http://eidors3d.sourceforge.net" -->
+<!--#else -->
+<!--#set var="HOST" value=".." -->
+<!--#endif -->
+<html><!--#include virtual="../header.html" -->
+
+<body link="#800000"
+      marginwidth=5 marginheight=5 topmargin=5 leftmargin=5 
+      vlink="#400000" >
+<table border="0" cellspacing="0" cellpadding="0"><tr><td>
+<img alt="Eidors-logo" src="../../eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+</td><td>
+<h2>
+    EIDORS:
+    <small><i>Electrical Impedance Tomography and
+    Diffuse Optical Tomography Reconstruction Software</i></small>
+</h2>
+</td></tr></table>
+<table border="0"> <tr>
+<td valign="top">
+<a href="http://www.eidors.org/"
+   >EIDORS</a><br>
+<a href="../../index.shtml"
+   >Main</a><br>
+<a href="../../docs.shtml"
+   >Documentation</a><br>
+<a href="../../examples/examples.shtml"
+   >Examples</a><br>
+<a href="../tutorial.shtml"
+   >Tutorials</a><br>
+<a href="../../download.shtml"
+   >Download</a><br>
+<a href="../../data-contrib.shtml"
+   >Contributed Data</a><br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
+   >Browse CVS</a><br>
+<hr>
+<a href="../../news.shtml">News</a><br>
+<a href="../../faq.shtml">FAQ</a><br>
+<a href="../../programming/programming.shtml">Developer</a><br>
+
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+<!-- EIDORS Navigation sidebar
+     $Id: nav-sidebar-tut.shtml,v 1.1 2007-08-30 03:30:40 aadler Exp $
+  -->
+<!--#if expr="$SERVER_NAME = 'localhost'" -->
+<!--#else -->
+<p>&nbsp;
+<p>
+<small>Hosted by</small>
+<a  href="http://sourceforge.net">
+   <img src="http://sourceforge.net/sflogo.php?group_id=100454&type=4"
+         border="0" alt="SourceForge.net Logo"  />
+</a>
+<!--#endif -->
+</td><td>&nbsp;</td><td valign="top">

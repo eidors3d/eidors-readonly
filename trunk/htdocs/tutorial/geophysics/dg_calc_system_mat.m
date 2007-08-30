@@ -9,7 +9,7 @@ function s_mat= dg_calc_system_mat(fwd_model,img)
 %   CC  = Connectivity Matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: dg_calc_system_mat.m,v 1.2 2007-08-29 09:37:59 aadler Exp $
+% $Id: dg_calc_system_mat.m,v 1.3 2007-08-30 03:30:45 aadler Exp $
 
 persistent CC SS;
 
