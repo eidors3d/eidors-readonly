@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: tutorial120a.m,v 1.1 2007-07-12 18:08:41 aadler Exp $
+% $Id: tutorial120a.m,v 1.2 2007-08-30 03:58:27 aadler Exp $
 
 imb=  mk_common_model('c2c',16);
 
@@ -17,10 +17,10 @@ img.elem_data([25,37,49:50,65:66,81:83,101:103,121:124])=bkgnd * 2;
 img.elem_data([95,98:100,79,80,76,63,64,60,48,45,36,33,22])=bkgnd * 2;
 vi= fwd_solve( img );
 
-% Add 12dB noise
+% Add -12dB SNR
 vi_n= vi; 
-vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(12/20) ...
-                     *randn(size(vi.meas));
+nampl= std(vi.meas - vh.meas)*10^(-12/20);
+vi_n.meas = vi.meas + nampl *randn(size(vi.meas));
 
 show_fem(img);
 axis square; axis off

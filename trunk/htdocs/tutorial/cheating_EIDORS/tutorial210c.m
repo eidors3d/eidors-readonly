@@ -1,5 +1,5 @@
 % Test image for different noise
-% $Id: tutorial210c.m,v 1.1 2007-06-15 18:12:03 aadler Exp $
+% $Id: tutorial210c.m,v 1.2 2007-08-30 03:58:28 aadler Exp $
 
 il_g= mk_common_model('c2c');
 
@@ -11,4 +11,4 @@ for i= 1:num_tries % matlab can't vectorize
 end
 
 levels= [0,0,0,1,1];
-show_slices( inv_solve( il_g, vi_n, vh ), levels);
+show_slices( inv_solve( il_g, vh, vi_n ), levels);

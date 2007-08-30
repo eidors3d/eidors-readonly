@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: total_variation02.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
+% $Id: total_variation02.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
 
 % Create Inverse Model
 inv2d= eidors_obj('inv_model', 'EIT inverse');
@@ -8,7 +8,7 @@ inv2d.jacobian_bkgnd.value= 1;
 
 imb=  mk_common_model('c2c',16); %576 Elem model
 inv2d.fwd_model= imb.fwd_model;
-inv2d.fwd_model.misc.perm_sym= '{y}';
+inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 
 % Guass-Newton solvers
 inv2d.solve=       @np_inv_solve;

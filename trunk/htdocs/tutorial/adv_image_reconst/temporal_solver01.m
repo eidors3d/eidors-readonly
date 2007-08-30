@@ -1,4 +1,4 @@
-% Sample Data $Id: temporal_solver01.m,v 1.1 2007-08-30 03:55:34 aadler Exp $
+% Sample Data $Id: temporal_solver01.m,v 1.2 2007-08-30 03:58:27 aadler Exp $
 
 if ~exist('simulate_2d_movement_data.mat')
     [vh,vi,xyr_pt]=simulate_2d_movement;

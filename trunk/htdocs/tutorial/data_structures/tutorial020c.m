@@ -1,5 +1,5 @@
 % Solve resistor model
-% $Id: tutorial020c.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
+% $Id: tutorial020c.m,v 1.2 2007-08-30 03:58:28 aadler Exp $
 
 % Now we complete the fwd_model
 r_mdl.jacobian= @perturb_jacobian;
@@ -17,4 +17,4 @@ i_mdl.reconst_type= 'difference';
 i_mdl.solve= @aa_inv_solve;
 
 % Reconstruct resistor change
-reconst= inv_solve(i_mdl, data_1k2, data_1k0);
+reconst= inv_solve(i_mdl, data_1k0, data_1k2);

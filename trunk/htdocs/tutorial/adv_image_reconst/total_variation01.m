@@ -1,4 +1,4 @@
-% Create mesh with blocky objects $Id: total_variation01.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
+% Create mesh with blocky objects $Id: total_variation01.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
 
 % Simulation (forward model) 1024 elements
 imdl= mk_common_model('d2c0',16); 

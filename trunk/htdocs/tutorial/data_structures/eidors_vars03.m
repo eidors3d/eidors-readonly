@@ -1,4 +1,4 @@
-% Show EIDORS colours $Id: eidors_vars03.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
+% Show EIDORS colours $Id: eidors_vars03.m,v 1.3 2007-08-30 03:58:28 aadler Exp $
 
 clf;
 % Set square figure and make figure fill the axis

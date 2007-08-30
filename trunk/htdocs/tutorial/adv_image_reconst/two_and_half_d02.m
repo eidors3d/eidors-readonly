@@ -1,4 +1,4 @@
-% Solve 2D and 3D model $Id: two_and_half_d02.m,v 1.1 2007-08-30 03:55:35 aadler Exp $
+% Solve 2D and 3D model $Id: two_and_half_d02.m,v 1.2 2007-08-30 03:58:28 aadler Exp $
 
 % Create inverse Model: Classic
 imdl.name= 'Nick Polydorides GN inverse';
