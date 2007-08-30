@@ -1,5 +1,5 @@
 % Reconstruct images
-% $Id: tutorial010c.m,v 1.1 2007-06-15 18:17:51 aadler Exp $
+% $Id: tutorial010c.m,v 1.2 2007-08-30 03:30:38 aadler Exp $
 
 subplot(131)
 show_fem(sim_img);
@@ -10,7 +10,7 @@ inh_data.meas = inh_data.meas + noise_level* ...
                 randn(size(inh_data.meas));
 
 %reconstruct 
-rec_img= inv_solve(imdl_3d, inh_data, homg_data);
+rec_img= inv_solve(imdl_3d, homg_data, inh_data);
 
 % Show reconstruction as a 3D mesh
 subplot(132)

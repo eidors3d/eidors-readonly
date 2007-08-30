@@ -1,5 +1,5 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
-<h2>Compare 3D image reconstructions</h2>
+<h2>Compare 2D image reconstructions</h2>
 
 EIDORS IS able to easily compare different
 image reconstruction algorithms by changing
@@ -63,7 +63,7 @@ data with added 12dB SNR.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-29 09:37:58 $
+    Last Modified: $Date: 2007-08-30 03:30:38 $
 </small>
 </BODY></HTML>
 <!--

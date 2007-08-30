@@ -1,0 +1,45 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>
+Image reconstruction of moving objects
+</H2>
+
+One advantage of EIT is the relatively high
+data frame rates. It is possible to take this
+into account using a reconstruction algorithm
+which accounts for inter frame correlations.
+The classic algorithm for this is the
+Kalman filter.
+
+<pre><!--#include virtual="temporal_solver02.m" --></pre>
+
+<center>
+<img src="temporal_solver02a.png">
+<br><i>Figure:</i>
+Image reconstructions of a moving ball
+in a medium.
+<i>Top:</i> using a classic one-stop solver,
+<i>Bottom:</i> using a Kalman solver.
+Note the <i>warm up period</i> of the Kalman images
+when the time correlations are being <i>trained</i>.
+</center>
+
+EIDORS can animate the resulting reconstructed images,
+as follows
+
+<pre>
+animate_reconstructions('temporal_solver02b', imgs1(1:20));
+animate_reconstructions('temporal_solver02c', imgs2(1:20));
+</pre>
+
+Output images are:
+<br>&minus;<a href="./temporal_solver02b.gif">Gauss-Newton solver</a>
+<br>&minus;<a href="./temporal_solver02c.gif">Kalman solver</a>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:30:47 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
