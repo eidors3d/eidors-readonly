@@ -1,4 +1,4 @@
-% Reconstruct images $Id: basic_iterative02.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
+% Reconstruct images $Id: basic_iterative02.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
 
 % Set reconstruction parameters
 imdl_3d.solve= @np_inv_solve;

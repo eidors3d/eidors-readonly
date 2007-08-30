@@ -1,5 +1,5 @@
 % Explore Stimulation Patterns - and reconstruct images
-% $Id: tutorial030c.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
+% $Id: tutorial030c.m,v 1.2 2007-08-30 03:58:28 aadler Exp $
 
 % Define an image
 sim_img= eidors_obj('image', 'stimulation image');
@@ -48,17 +48,17 @@ slices= [inf,inf,2.0,1,1; inf,inf,1.0,1,2];
 
 subplot(131)
 imdl_3d.fwd_model= zigzag_mdl;
-img= inv_solve(imdl_3d, zigzag_data_i, zigzag_data_h);
+img= inv_solve(imdl_3d, zigzag_data_h, zigzag_data_i);
 show_slices(img, slices);
 
 subplot(132)
 imdl_3d.fwd_model= planar_mdl;
-img= inv_solve(imdl_3d, planar_data_i, planar_data_h);
+img= inv_solve(imdl_3d, planar_data_h, planar_data_i);
 show_slices(img, slices);
 
 subplot(133)
 imdl_3d.fwd_model= pl_ops_mdl;
-img= inv_solve(imdl_3d, pl_ops_data_i, pl_ops_data_h);
+img= inv_solve(imdl_3d, pl_ops_data_h, pl_ops_data_i);
 show_slices(img, slices);
 
 print -r75 -dpng tutorial030c.png;

@@ -1,0 +1,37 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Electrode movement reconstruction for simulated 3D data
+</h2>
+
+Here we create a simple 3D model and change the boundary shape between two measurments.
+
+<pre>
+<!--#include virtual="move_3d01.m" -->
+</pre>
+
+<center>
+<img src="move_3d01.png">
+<br><i> Figure:</i>
+Illustration of the deformation of the 3D model (exaggerated 10x).
+</center>
+
+Next we solve the inverse problem in two ways: first, without correcting for electrode movements, and second, with movement correction.
+
+<pre>
+<!--#include virtual="move_3d02.m" -->
+</pre>
+
+<center>
+<img src="move_3d02.png">
+<br><i> Figure:</i>
+Inverse solutions of the problem above. Each column shows three cross-sectional slices of the model.  Forward problem with true electrode movement (scaled 10x) (left column).  Inverse solution without movement compensation (centre column) and with movement estimation and compensation (scaled 10x) (right column). 
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:58:28 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->

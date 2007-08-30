@@ -13,40 +13,52 @@
 
    </ul>
 
+   <li><b>Todo for V3.3</b>
+<pre>
+- Backward compatibility limit ====} Matlab. 6.5
+    - remove bad shortcuts, remove isfields
+- Jacobian calculation accuracy (calc_jacobian_test)
+
+- Document new features for inv_model
+    - accept_multiple_frames
+- Document new features for fwd_solve
+    - meas_select
+    - normalize_measurements
+    - calc_difference_data
+
+- proper functions to call data_form solver variables
+- proper temporal solver calling data_form priors
+- The code in time_prior_solve is somewhat disorganized;
+  it really should use calc_JiRtRJt, but this function
+
+- measures of hyperparameter - get Brad G to contribute?
+
+- fix coarse_fine solver to be more general
+
+- move static examples into main code
+  needs to be thought out properly, too.
+- complex examples and complex tests
+- bug in analytical model (test_2d_resistor)
+- create function eidors_defaults in algorithms
+   - set default properites, 
+   - work around matlab bugs (ie no int16 support)
+   - create extra parameters (n_elems etc) - (from np_fwd_parameters)
+
+</pre>
+
    <li><b>Todo for V3.2</b>
 <pre>
 - Announce
     - new features
 
-- Web site
-    - Document new features for inv_model
-        - accept_multiple_frames
-    - Document new features for fwd_solve
-        - meas_select
-        - normalize_measurements
-        - calc_difference_data
-
 - Features to do
     * check solvers can handle multiple images
     * Check normalized_difference
-    - move all difference algs to use calc_difference_data
+    * move all difference algs to use calc_difference_data
     * Proper NF calculator?
     - Gaussian filters - and test with lungs
     * inv_solve memory **
-    - build lung imaging examples
-    - proper functions to call data_form solver variables
-    - proper temporal solver calling data_form priors
-    - measures of hyperparameter - get Brad G to contribute?
-    - mechanism to allow solved elem_data to not map to elements
-       - need matrix reconst_map = M = sparse(n_elem,n_sols)
-       - calc_reconst_map ...
-    - move static examples into main code
-
-    - create function eidors_defaults in algorithms
-       - set default properites, 
-       - work around matlab bugs (ie no int16 support)
-       - create extra parameters (n_elems etc) - (from np_fwd_parameters)
-    - cache intermediate results in np_calc_jacobian
+    * build lung imaging examples
 
     * caching - set timestamp with each cached variable
        * allow deleting of old variables 
@@ -59,27 +71,15 @@
     - caching - allow caching to disk
 
     * code to calculate BR and position of an image
- 
-    - add code to inverse_solver in np_inv_solve
 
 - Bugs
-    - fwd_model.stimulation.meas_pattern is transposed wrt the 
+    * fwd_model.stimulation.meas_pattern is transposed wrt the 
       documentation. Fix one or the other
-    - The code in time_prior_solve is somewhat disorganized;
-      it really should use calc_JiRtRJt, but this function
-      needs to be thought out properly, too.
-    - measurements are negative for simple mk_stim_patterns
+    * bug on 3d boundary in mk_circ_model
 
-    - jacobian calculation bugs
-    - bug on 3d boundary in mk_circ_model
-
-    - remove 'misc' structure from np_solvers. Change 
+    * remove 'misc' structure from np_solvers. Change 
       to 'fwd_solve.np_fwd_solve'
 
-- Generate some lung imaging examples
-    - 2x8 in 3D?
-
-- Can 3D reconstruction from 2D reject off-plane data
 </pre>
 
    <li><b>Algorithms</b>
@@ -110,7 +110,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-04-21 02:24:13 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-30 03:58:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
