@@ -32,8 +32,8 @@
    >Tutorials</a><br>
 <a href="../../download.shtml"
    >Download</a><br>
-<a href="../../data-contrib.shtml"
-   >Contributed Data</a><br>
+<a href="../../data_contrib.shtml"
+   >Contrib Data</a><br>
 <a href="http://cvs.sourceforge.net/viewcvs.py/eidors3d/"
    >Browse CVS</a><br>
 <hr>
@@ -44,7 +44,7 @@
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar-tut.shtml,v 1.1 2007-08-30 03:30:40 aadler Exp $
+     $Id: nav-sidebar-tut.shtml,v 1.2 2007-08-30 03:32:27 aadler Exp $
   -->
 <!--#if expr="$SERVER_NAME = 'localhost'" -->
 <!--#else -->

@@ -15,7 +15,7 @@ function param = dg_fwd_parameters(fwd_model)
 %   param.normalize  => difference measurements normalized?
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: dg_fwd_parameters.m,v 1.3 2007-08-30 03:30:45 aadler Exp $
+% $Id: dg_fwd_parameters.m,v 1.4 2007-08-30 03:32:27 aadler Exp $
 
 % Caching suppressed to save memory filling
 % param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');

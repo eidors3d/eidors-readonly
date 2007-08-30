@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: total_variation02.m,v 1.1 2007-08-30 03:30:50 aadler Exp $
+% $Id: total_variation02.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
 
 % Create Inverse Model
 inv2d= eidors_obj('inv_model', 'EIT inverse');

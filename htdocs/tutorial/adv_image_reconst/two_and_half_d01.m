@@ -1,7 +1,8 @@
-% FIRST RUN DEMO_REAL
+% Build 2D and 3D model $Id: two_and_half_d01.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
 
 if ~exist('demo_img');
    [inhomg_img, demo_img] = demo_real;
+   close all;
 end
 
 % Create 2D FEM of all NODES with z=0
@@ -12,27 +13,18 @@ e2d = delaunayn(n2d);
 c_mdl = eidors_obj('fwd_model','2d','elems',e2d,'nodes',n2d);
 c2f= mk_coarse_fine_mapping( f_mdl, c_mdl );
 
-% Simulate images
+subplot(121);
+show_fem(f_mdl); title('fine (3d) model');
+
+subplot(122);
+show_fem(c_mdl); title('coarse (2d) model');
+axis square
+
+print -r75 -dpng two_and_half_d01a.png
+
+% Simulate data - inhomogeneous
 vi= fwd_solve(inhomg_img);
+
+% Simulate data - homogeneous
 homg_img= inhomg_img; homg_img.elem_data(:) = 1;
 vh= fwd_solve(homg_img);
-
-
-imdl.name= 'Nick Polydorides EIT inverse';
-imdl.solve=       @np_inv_solve;
-imdl.hyperparameter.value = 1e-2;
-imdl.R_prior= @np_calc_image_prior;
-imdl.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
-imdl.jacobian_bkgnd.value= 1;
-imdl.reconst_type= 'difference';
-imdl.fwd_model= demo_img.fwd_model;
-
-
-imdl.coarse_fine.solve = imdl.solve;
-imdl.solve = @coarse_fine_solve;
-% imdl.coarse_fine.mapping = speye(n_e3d); % original solver
-  imdl.coarse_fine.mapping = c2f;
-imdl= eidors_obj('inv_model', imdl);
-
-img= inv_solve(imdl, vh, vi);
-show_slices(img,4);

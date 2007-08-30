@@ -1,4 +1,4 @@
-% Create simulation data $Id: basic_iterative01.m,v 1.1 2007-08-30 03:30:46 aadler Exp $
+% Create simulation data $Id: basic_iterative01.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
 
 % 3D Model
 imdl_3d= mk_common_model('n3r2',16);

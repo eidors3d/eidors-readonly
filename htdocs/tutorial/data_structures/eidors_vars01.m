@@ -1,4 +1,4 @@
-% Show EIDORS colours $Id: eidors_vars01.m,v 1.1 2007-08-30 03:30:41 aadler Exp $
+% Show EIDORS colours $Id: eidors_vars01.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
 
 imdl= mk_common_model('a2c2',16);
 img= eidors_obj('image','small demo','fwd_model',imdl.fwd_model, ...

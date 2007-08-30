@@ -1,30 +1,34 @@
-% Image reconstruction of moving objects
-% $Id: temporal_solver02.m,v 1.1 2007-08-30 03:30:48 aadler Exp $
+% Image reconstruction of moving objects $Id: temporal_solver02.m,v 1.2 2007-08-30 03:32:27 aadler Exp $
 
-load netgen_moving_ball
-vh= homg_tank;
-vi= target_spirograph_fast;
+time_steps=  3;
+time_weight= .8;
 
-imdl= mk_common_model('b2c',16);
-imdl.hyperparameter.value= 1e-2;
-imdl.RtR_prior= @laplace_image_prior;
+base_model = mk_common_model( 'c2c2', 16 ); % 576 element
+base_model.fwd_model.normalize_measurements= 0;
+% HP value gives good solutions (calculated via Noise Figure)
+hp= 0.101046;
+base_model.hyperparameter.value= hp;
 
-% Use a Newton one-step solver
-imdl.solve= @np_inv_solve;
+% GN Solver
+imdl_GN = base_model;
+imdl_GN.RtR_prior= @noser_image_prior;
+imdl_GN.noser_image_prior.exponent= .5;
+imdl_GN.solve= @np_inv_solve;
+imdl_GN.hyperparameter.value= hp;
+imdl_GN.fwd_model.normalize_measurements= 0;
 
-subplot(211)
-imgs1= inv_solve(imdl,vi,vh);
-show_slices(imgs1(1:5),[ inf,inf,0,1,1])
+% Temporal Solver
+imdl_TS = base_model;
+imdl_TS.RtR_prior= @time_smooth_prior;
+imdl_TS.time_smooth_prior.space_prior= @noser_image_prior;
+imdl_TS.noser_image_prior.exponent= .5;
+imdl_TS.time_smooth_prior.time_weight= time_weight;
+imdl_TS.time_smooth_prior.time_steps=  time_steps;
+imdl_TS.solve= @time_prior_solve;
+imdl_TS.time_prior_solve.time_steps=   time_steps;
 
-% Use a Kalman filter solver
-imdl.solve= @inv_kalman_diff;
-
-subplot(212)
-imgs2= inv_solve(imdl,vi,vh);
-show_slices(imgs2(1:5),[ inf,inf,0,1,1])
-
-% Print as images
-pp=get(gcf,'paperposition');
-set(gcf,'paperposition',pp.*[1,1,1,0.6]);
-print -r100 -dpng tutorial140a.png;
-set(gcf,'paperposition',pp.*[1,1,1,1]);
+% Kalman Solver
+imdl_KS = base_model;
+imdl_KS.RtR_prior= @noser_image_prior;
+imdl_KS.noser_image_prior.exponent= .5;
+imdl_KS.solve= @inv_kalman_diff;
