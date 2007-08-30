@@ -1,0 +1,120 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Camille G&oacute;mez-Laberge 
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> June 15, 2006. 
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Single-plane 16 electrode deformable phantom tank data 
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with attribution). 
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> Please refer to this paper in any publications:
+<ul>
+Manuchehr Soleimani, Camille G&oacute;mez-Laberge, Andy Adler.
+<i>Imaging of conductivity changes and electrode movement in EIT</i>
+Physiol. Meas., 2006, no.27, pp.S103-S113.
+</ul>
+
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are stored as a Zip file containing the VIASYS *.get file format and description text file.
+<hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./cg_invitro_15-06-06.zip"
+            >Data (zip format): Single plane measurements</a>
+       <hr>
+   </table>
+
+<h3> Detailed information on measurement protocol </H3>
+
+<pre>
+% ************************************
+% Electrical Impendance Tomography
+% VIASYS invitro data
+% University of Ottawa
+% Department of Electrical Engineering
+% Date:   June 15, 2006
+% Author: Camille Gomez-Laberge
+% ************************************
+
+This README file is the documentation that accompanies the data collected in these directories: ph1t1/ 
+
+% ****************************
+% THE EXPERIMENT
+% ****************************
+Experimenter: Camille Gomez-Laberge
+Date Collected: June 15, 2006
+Locale: Research laboratory, University of Ottawa
+Equipment: EIT Viasys / University of Gottingen
+Phantom: Phantom used is a polyethylene pail 30 cm in height and diameter.
+Electrodes: See individual phantom descriptions in each
+part of the experiment.
+Electrolytic solution: 0.9% saline solution
+Objects: 2 golf balls (non-conductive) 2 cm radius spheres
+suspended in solution with 2.7 kg tension fishing line
+(nylon).
+Measurement Procedure: Ambient temperature in room is 25
+degrees Celsius. Details for each part of the experiment
+follow:
+
+PART I:
+Directory: ph1t1/
+Phantom description: 
+The phantom has two rings of 8 electrodes with electrodes
+vertically aligned. The first ring is 10cm above tank base
+and the second is 20cm above tank base. A ground/reference
+electrode is placed in the centre of the tank base.
+
+The electrodes are a copper bolts pinning a small
+rectangular steel plate to the tank wall.
+
+Setup 1: Baseline data (just solution)
+Data files: vitro150606_ph1t1_bld.get
+
+Setup 2: No objects in tank
+Data files: vitro150606_ph1t1_001.get
+
+Setup 3: 1 Moving object (a long metal bar)
+Data files: vitro150606_ph1t1_002.get
+
+Setup 4: Object 1 at (0,0, 16) cm
+Data files: vitro150606_ph1t1_003.get
+
+Setup 5: Object 1 at (-7, 0, 20) cm
+Data files: vitro150606_ph1t1_004.get
+
+Setup 6: Object 1 at (7, 0, 10) cm
+Data files: vitro150606_ph1t1_005.get
+
+Setup 7: Object 1 at (7, 0, 10) cm; Object 2 at (0, 7, 20) cm
+Data files: vitro150606_ph1t1_006.get
+
+Setup 8: As setup 4 except there is a compression along
+the x-axis of the tank by 5 cm at the top of the tank.
+Compress 1-5%
+Dilate   15-20%
+Compress 35-40%
+Dilate   55-60%
+Compress 75-80%
+Dilate   95-100%
+Data files: vitro150606_ph1t1_007.get
+
+Setup 9: As in setup 3 except with compression as in setup 8
+Data files: vitro150606_ph1t1_008.get
+
+% END OF EXPERIMENT
+</pre>
+
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:31 $ by $Author: aadler $
+</small>
+</body></html>

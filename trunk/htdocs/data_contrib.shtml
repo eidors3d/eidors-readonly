@@ -1,0 +1,129 @@
+<!--#include virtual="nav-sidebar.html" -->
+
+<h2>Contributed Data</h2>
+
+The resources here are not strictly part of EIDORS. Instead,
+as a service to the EIT community, we are providing a place 
+for those who wish to make data available to the community.
+<b>Note that each contributor may specify a different
+license for their data. Typically, attribution is required,
+normally making a specific reference in publications which
+use the data</b>
+
+<h2>Data Repository</h2>
+
+<h3>Human Data</h3>
+<ul>
+<h4>Breathing Data</h4>
+<li> <a href="./data_contrib/cg_normal_breathing_2006/cg_normal_breathing_2006.shtml">
+      EIT measurements of normal and paradoxical breathing on healthy subject</a>
+      By: C. G&oacute;mez-Laberge
+</ul>
+
+<h3>Phantom Data</h3>
+
+<ul>
+<li> <a href="./data_contrib/ds_tank_phantom/ds_tank_phantom.shtml">
+      Calibrated targets in tank with U.Manchester LCT system</a>
+      By: D. Stephenson
+<li>  Cylindrical tank phantom deformed to test electrode movement:
+     <a href="./data_contrib/cg_deforming_tank_phantom/cg_deforming_tank_phantom_01.shtml">Single plane</a>,
+     <a href="./data_contrib/cg_deforming_tank_phantom/cg_deforming_tank_phantom_02.shtml">Single and double plane</a>,
+      By: C. G&oacute;mez-Laberge
+</ul>
+
+<h3>Simulated Data</h3>
+
+<ul>
+<li> <a href="./data_contrib/aa_simulate_2d_movement/aa_simulate_2d_movement.shtml">
+      Circular movement of small object in circular tank</a>
+      By: A. Adler
+<li> <a href="./data_contrib/netgen_moving_ball/netgen_moving_ball.shtml">
+      Netgen simulations of object moving in circular tank</a>
+      By: A. Adler, W.R.B. Lionheart
+</ul>
+
+<h2>Contributing Your Data</h2>
+
+We very much welcome anyone to contribute. The goal of this
+data repository is:
+<br>
+&minus; It will allow new researchers in this community
+    to have some real data against which they can test
+    their software
+<br>
+&minus; It will allow testing of algorithms against
+    available and standard benchmark data.
+
+<p>
+<b>To contribute:</b>
+Fill out the following table
+<br>
+<center><table border=1 width=80%><tr><td>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Submitting authors.
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> Data of submission and date (range) of original
+            data measurements
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Describe what the data is and what (briefly) it was
+            used for. If it is used in a paper, give a referene.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> The default license is the Creative Commons
+            Artistic License (with attribution). However, you may
+            choose any license that suits you.
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> If you require users of the data to give credit, list
+            your requirements here. Normally, users who publish
+            results based on these data will be required to 
+            reference a specific paper.
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Format in which the data is stored
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Measurement or Simulation Protocol. Give as much
+            detail as possible to allow replication of the 
+            experimental protocol.
+            <p>
+            As a minimum, give the medium shape, 
+            electrode positions and
+            stimulation and measurement protocol.
+       <hr>
+   </table>
+
+
+</table></center>
+
+Also, please provide
+<ul>
+<li> The data itself!
+<li> Samples images/figure of the measurement protocol, 
+     or output results or images. Anything that may make it
+     easier for the data to be used.
+</ul>
+
+And send this in an email to the
+ <a href="./faq.shtml#maintainers">EIDORS Maintainers</a>.
+<p>
+
+<i>Remember</i>, the easier it is to use you data, the more
+likely you are to get references to your paper ;-).
+
+
+
+</table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:30 $ by $Author: aadler $
+</small>
+
+</body>
+
+</html>
+
