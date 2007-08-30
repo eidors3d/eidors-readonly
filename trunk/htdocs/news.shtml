@@ -6,55 +6,6 @@ EIDORS package.
 
 <ul>
 
-<!--
-<p><li><b>
-    9 Dec 2005: 
-</b>
-
-<br>
-Andy Adler &amp; Bill Lionheart
-<p>
-Request for discussion: <i>EIT data repository</i>
-<p>
-Over the last few months, while discussing EIDORS
-software with various research groups, it has become
-clear that it would be of great benefir to the EIT
-community to have a repository of EIT measurements.
-Clearly, such a repository would be voluntary, and
-contributors would be able to specify the attribution
-requirements for each data set.
-
-<p>
-Such a repository would serve several functions
-&minus; It would allow new researchers in this community
-    to have some real data against which they can test
-    their software
-&minus; It would allow testing of algorithms against
-    available and standard benchmark data.
-
-<p>
-We would like to generate discussion of ways in
-which such an EIT data repository. To provide a framework
-for discussion, we make the following suggestion.
-<ul>
-   <li> A data repository can be formed on the 
-        eidors web site www.eidors.org.
-   <li> Groups who wish to contribute sets of measured
-        data will assemble a file of
-        1) the data iteself
-        2) a description of the measurement protocol
-        3) if possible, software to demonstrate
-           sample analysis of the data
-        4) a copyright statement (explained later)
-        5) attribution requirements 
-        (ie. papers refering to this data must
-           reference Author1 et al, Journal of EIT, 2020)
-
-   <li> License. Contributed data will be licensed under
-        the creative commons 
-</ul>
-
--->
 <p><li><b>
     24 Aug 2007:
 </b><br>
@@ -69,10 +20,16 @@ list is the fixes/features added preparing for 3.2.
            Nick Polydorides' code.
 <br>&minus;EIDORS is released under GPL 2 and 3. (ie It may be 
            copied under the GPL 2 or GPL 3 terms)
-<br>&minus;
-<br>&minus;
-<br>&minus;
-<br>&minus;
+<br>&minus;Data repository formed for groups wishing
+           to conribute data
+<br>&minus;Moved and renamed files
+<br>&minus;Fixed almost all the bugs in the bug list (with a
+           few bugs posponed to v3.3)
+<br>&minus;New electrode movement code
+<br>&minus;Rewrote time solver
+<br>&minus;Lots more tutorials
+<br>&minus;Fixed caching bugs and added new priority scheme
+           for cache
 
 <p><li><b>
     27 Aug 2006:
@@ -798,7 +755,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 03:58:27 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-30 04:13:30 $ by $Author: aadler $
 </small>
 </body>
 
