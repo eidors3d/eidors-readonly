@@ -7,6 +7,34 @@ EIDORS package.
 <ul>
 
 <p><li><b>
+    30 Aug 2007:
+</b><br>
+Blobby the walrus would like to announce version 3.2 of EIDORS.
+<ul>
+<p>
+EIDORS Version 3.2 is a significant improvement on the previous
+versions. The number and quality of tutorials has been increased.
+Bugs that have been reported have been (mostly) fixed, and the
+software carefully tested.
+Like always, EIDORS aims to facilitate using, testing, and
+development of reconstruction algorithms and models for EIT
+and other soft field tomography technologies.
+<p>
+New features include
+<br>&minus; New algorithms (Temporal reconstruction, Electrode movement)
+<br>&minus; Repository for contributed data
+<br>&minus; Faster algorithms (better CGLS, Jacobian code)
+<br>&minus; Extensive tutorial: http://eidors3d.sourceforge.net/tutorial/
+<br>&minus; Improved links to netgen to generate finite element models
+<p>
+EIDORS version 3.2 is available for download here:
+<a href="http://prdownloads.sf.net/eidors3d/eidors-v3.2.zip"
+        >http://prdownloads.sf.net/eidors3d/eidors-v3.2.zip</a>.
+As always, users are encouraged to report and bugs to the
+EIDORS maintainers.
+</ul>
+
+<p><li><b>
     24 Aug 2007:
 </b><br>
 Andy Adler
@@ -30,6 +58,11 @@ list is the fixes/features added preparing for 3.2.
 <br>&minus;Lots more tutorials
 <br>&minus;Fixed caching bugs and added new priority scheme
            for cache
+</ul>
+
+<p><li><b>
+    24 Aug 2007:
+</b><br>
 
 <p><li><b>
     27 Aug 2006:
@@ -755,7 +788,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 04:13:30 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-30 04:21:35 $ by $Author: aadler $
 </small>
 </body>
 
