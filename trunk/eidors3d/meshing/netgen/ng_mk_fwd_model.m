@@ -39,7 +39,7 @@ mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
 mdl.gnd_node=           1;
-mdl.misc.perm_sym =     '{n}';
+mdl.np_fwd_solve.perm_sym =     '{n}';
 mdl.name = name;
 
 % Model Stimulation

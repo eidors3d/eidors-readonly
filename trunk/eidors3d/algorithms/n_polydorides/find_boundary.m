@@ -8,14 +8,15 @@ function [srf] = find_boundary(simp);
 %        boundary simplices are of 1 lower dimention than simp
 %simp = The simplices matrix
 
-% $Id: find_boundary.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
+% $Id: find_boundary.m,v 1.13 2007-08-30 03:37:04 aadler Exp $
 
 wew = size(simp,2) - 1;
 
 if wew==3 || wew==2
    srf= find_2or3d_boundary(simp,wew);
 else
-   error('not 2D or 3D simplices');
+   eidors_msg('find_boundary: WARNING: not 2D or 3D simplices',1);
+   srf=[]; return;
 end
 
 function srf= find_2or3d_boundary(simp,wew);

@@ -35,7 +35,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: inv_solve.m,v 1.33 2007-08-29 09:26:18 aadler Exp $
+% $Id: inv_solve.m,v 1.34 2007-08-30 03:37:05 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -43,7 +43,7 @@ function img = inv_solve( inv_model, data1, data2)
 %       one-step inverse matrices, but that is not done. 
 
 inv_model= eidors_model_params( inv_model );
-eidors_msg(['inv_solve:', inv_model.name],1);
+eidors_msg('inv_solve: %s', inv_model.solve,1);
 
 
 if     strcmp(inv_model.reconst_type,'static') || ...

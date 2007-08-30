@@ -7,7 +7,7 @@ function imgr= compare_3d_algs( algno )
 % algno=4     ab_calc_tv_prior        ab_tv_diff_solve
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_3d_algs.m,v 1.25 2007-08-29 09:26:39 aadler Exp $
+% $Id: compare_3d_algs.m,v 1.26 2007-08-30 03:37:32 aadler Exp $
 
 calc_colours('ref_level','auto');
 
@@ -34,7 +34,7 @@ inv3d= eidors_obj('inv_model', 'EIT inverse');
 inv3d.reconst_type= 'difference';
 inv3d.jacobian_bkgnd.value = 1;
 inv3d.fwd_model= imb.fwd_model;
-inv3d.fwd_model.misc.perm_sym= '{y}';
+inv3d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 
      iidx=1;
 switch algno
@@ -55,8 +55,7 @@ switch algno
      inv3d.solve=        'np_inv_solve';
 
    case 4,
-     inv3d.hyperparameter.value = 1e-2;
-     inv3d.ab_calc_tv_prior.alpha2 = 1e-5;
+     inv3d.hyperparameter.value = 1e-4;
      inv3d.parameters.max_iterations= 5;
      inv3d.parameters.term_tolerance= 1e-3;
      inv3d.parameters.keep_iterations= 1;
@@ -77,6 +76,7 @@ end
 % 
 % Step 3: Reconst and show image
 % 
-imgr= inv_solve( inv3d, vi, vh);
-show_slices(imgr(iidx), [.5:1:2.5]'*[Inf,Inf,1]);
+imgr= inv_solve( inv3d, vh, vi);
+imgr.elem_data= imgr.elem_data(:,iidx);
+show_slices(imgr, [.5:1:2.5]'*[Inf,Inf,1]);
 

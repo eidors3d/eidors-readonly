@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.37 2007-08-29 09:26:18 aadler Exp $
+% $Id: startup.m,v 1.38 2007-08-30 03:37:05 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -11,6 +11,7 @@ addpath([HOMEDIR, '/algorithms']);
 addpath([HOMEDIR, '/algorithms/a_adler']);
 addpath([HOMEDIR, '/algorithms/a_borsic']);
 addpath([HOMEDIR, '/algorithms/b_lionheart']);
+addpath([HOMEDIR, '/algorithms/c_gomez']);
 %addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
 addpath([HOMEDIR, '/algorithms/n_polydorides']);
 addpath([HOMEDIR, '/algorithms/d_stephenson']);
@@ -59,6 +60,7 @@ calc_colours
 % Set max cache size. Not completely sure about this
 %  but 100MB should be available in most modern machines
 eidors_cache('cache_size', 100e6 );
+eidors_cache('boost_priority', 0 ); % set default priority
 
 
 eidors_msg('Completed setting up of EIDORS Version %s', ...

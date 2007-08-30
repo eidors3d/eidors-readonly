@@ -12,8 +12,8 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   3   aa_inv_solve       gaussian_HPF_prior   NF=2
 %   3.1 aa_inv_solve       noser_image_prior     NF=2
 %   4   ab_tv_diff_solve   ab_calc_tv_prior      1e-4
-%   5   aa_inv_total_var   laplace_image_prior   1e-4
-%   6   aa_inv_total_var   laplace_image_prior   1e-4
+%   5   aa_inv_total_var   laplace_image_prior   1e-4 (not the usual prior)
+%   6   aa_inv_total_var   ab_calc_tv_prior      1e-4
 %   7   aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 %
 %  OPTION = 1dd => do OPTION=dd with normalized_measurements
@@ -23,7 +23,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_2d_algs.m,v 1.34 2007-08-29 09:26:39 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.35 2007-08-30 03:37:32 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -64,7 +64,7 @@ inv2d= eidors_obj('inv_model', 'EIT inverse');
 inv2d.reconst_type= 'difference';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.fwd_model= imb.fwd_model;
-inv2d.fwd_model.misc.perm_sym= '{y}';
+inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 inv2d.parameters.term_tolerance= 1e-4;
 
 if option>100
@@ -74,7 +74,7 @@ end
 
 switch option
    case 1,
-     inv2d.hyperparameter.value = 1e-1;
+     inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'aa_inv_solve';
      inv2d.RtR_prior=   'laplace_image_prior';
 
@@ -99,7 +99,6 @@ switch option
 
    case 4,
      inv2d.hyperparameter.value = 1e-9;
-     inv2d.ab_calc_tv_prior.alpha1= 1e-2;
      inv2d.parameters.max_iterations= 10;
      inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
@@ -115,14 +114,14 @@ switch option
      subplot(141); show_slices(img);
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
-     inv2d.R_prior=     'laplace_image_prior';
+     inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.parameters.max_iterations= 1;
      inv2d.parameters.keep_iterations=1;
-     subplot(142); show_slices( inv_solve( inv2d, vi, vh) );
-     inv2d.parameters.max_iterations= 2;
-     subplot(143); show_slices( inv_solve( inv2d, vi, vh) );
-     inv2d.parameters.max_iterations= 5;
-     subplot(144); show_slices( inv_solve( inv2d, vi, vh) );
+     subplot(142); show_slices( inv_solve( inv2d, vh, vi) );
+     inv2d.parameters.max_iterations= 2;                
+     subplot(143); show_slices( inv_solve( inv2d, vh, vi) );
+     inv2d.parameters.max_iterations= 5;                
+     subplot(144); show_slices( inv_solve( inv2d, vh, vi) );
      return;
 
    case 7,
@@ -139,6 +138,6 @@ end
 % 
 % Step 3: Reconst and show image
 % 
-imgr= inv_solve( inv2d, vi, vh);
+imgr= inv_solve( inv2d, vh, vi);
 
 figure(1); show_slices(imgr);

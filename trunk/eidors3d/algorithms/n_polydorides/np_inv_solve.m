@@ -9,7 +9,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % inv_model.parameters.term_tolerance (default 1e-3);
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_inv_solve.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
+% $Id: np_inv_solve.m,v 1.13 2007-08-30 03:37:04 aadler Exp $
 
 [maxiter, tol] = get_parameters(inv_model);
   
@@ -44,7 +44,7 @@ function one_step_inv = one_step_inv_matrix(inv_model)
 % The one_step reconstruction matrix is cached
    one_step_inv = eidors_obj('get-cache', inv_model, 'np_2003_one_step_inv');
    if ~isempty(one_step_inv)
-       eidors_msg('np_inv_solve: using cached value', 2);
+       eidors_msg('np_inv_solve: using cached value', 3);
    else
        img_bkgnd= calc_jacobian_bkgnd( inv_model );
        J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
@@ -56,7 +56,7 @@ function one_step_inv = one_step_inv_matrix(inv_model)
        one_step_inv= (J'*J +  hp^2*RtR)\J';
 
        eidors_obj('set-cache', inv_model, 'np_2003_one_step_inv', one_step_inv);
-       eidors_msg('np_inv_solve: setting cached value', 2);
+       eidors_msg('np_inv_solve: setting cached value', 3);
    end
 
 function dv_sim= forward_solve_diff(inv_model, sol) 

@@ -1,6 +1,6 @@
 function ok= demo_real_test2
 % Perform tests based on the demo_real function with new structs
-% $Id: demo_real_test2.m,v 1.14 2007-03-27 17:59:54 aadler Exp $
+% $Id: demo_real_test2.m,v 1.15 2007-08-30 03:37:33 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -40,7 +40,7 @@ for i=1:length(zc)
 end
 
 % TODO: generalize the way that protocol sym no_pl are managed
-demo_mdl.misc.perm_sym     = perm_sym;
+demo_mdl.np_fwd_solve.perm_sym     = perm_sym;
 
 % create FEM model stimulation and measurement patterns
 

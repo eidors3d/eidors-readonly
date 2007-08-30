@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real.m,v 1.57 2007-08-29 09:26:39 aadler Exp $
+% $Id: demo_real.m,v 1.58 2007-08-30 03:37:32 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -28,7 +28,7 @@ disp('step 2: create FEM model electrodes definitions');
 [gnd_ind, electrodes, perm_sym, elec, protocol, no_pl] = get_model_elecs;
 demo_mdl.gnd_node=           gnd_ind;
 demo_mdl.electrode =         electrodes;
-demo_mdl.misc.perm_sym =          perm_sym;
+demo_mdl.np_fwd_solve.perm_sym =          perm_sym;
 
 disp('step 3: create FEM model stimulation and measurement patterns');
 

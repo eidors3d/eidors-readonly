@@ -8,7 +8,7 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % data2      => differential data at later time
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: ab_tv_diff_solve.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.13 2007-08-30 03:37:03 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
@@ -48,11 +48,12 @@ function [alpha1,alpha2,beta,maxiter,tol,keepiters]= ...
    maxiter= 10;
    tol= 1e-4;
    keepiters= 0;
-   if isfield(inv_model,'parameters')
+   try 
       tol =     inv_model.parameters.term_tolerance;
+   end
+   try
       maxiter = inv_model.parameters.max_iterations;
-
-      if isfield(inv_model.parameters,'keep_iterations')
-         keepiters = inv_model.parameters.keep_iterations;
-      end
+   end
+   try
+      keepiters = inv_model.parameters.keep_iterations;
    end

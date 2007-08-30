@@ -1,7 +1,7 @@
 % code to simulate inverse crimes in EIT
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: cheating_2d.m,v 1.32 2007-08-29 09:26:39 aadler Exp $
+% $Id: cheating_2d.m,v 1.33 2007-08-30 03:37:32 aadler Exp $
 
 %TODO: calculate how well data matches priors
 function out=cheating_2d( figno, rand_seed )
@@ -305,7 +305,7 @@ function reconst_with_noise(i_mdl, vis, vhs, num_tries)
     for i= 1:num_tries % stupid matlab doesn't allow easy vectorization
        vi_n(i).meas = vi_n(i).meas + noise(:,i);
     end
-    show_slices( inv_solve( i_mdl, vi_n, vhs ));
+    show_slices( inv_solve( i_mdl, vhd, vi_n ));
 
 % Image prior with Tikhonov + cheating elements
 function Reg= cheat_tikhonov( inv_model )

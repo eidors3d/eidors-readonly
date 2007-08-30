@@ -21,9 +21,12 @@ function retval=eidors_cache( command, limit )
 %      - set max cache size to be memory_in_bytes
 %      - without 2nd arg will return current cache_size
 %  
+%   eidors_cache( 'boost_priority', value)
+%      - modify the priority of the next cached items
+%      - higher priority variables will be deleted less when memory is tight  
 
 % (C) 2005 Andy Adler. Licensed under GPL version 2
-% $Id: eidors_cache.m,v 1.16 2007-08-29 09:26:18 aadler Exp $
+% $Id: eidors_cache.m,v 1.17 2007-08-30 03:37:04 aadler Exp $
 
 % Comments
 % Want to clear specific structures
@@ -38,7 +41,7 @@ end
 
 global eidors_objects;
 
-[objid, times, sizes] = get_names_times;
+[objid, times, sizes, prios, priidx] = get_names_times;
 
 switch command
    case {'clear_all','clear'}
@@ -51,30 +54,46 @@ switch command
          retval= eidors_objects.max_cache_size;
       end
 
+   case 'boost_priority'
+      try
+         retval= eidors_objects.cache_priority;
+      catch
+         retval= 0; % default priority
+      end
+      if nargin==2
+         retval = retval + limit;
+      end
+      eidors_objects.cache_priority = retval;
+
    case 'show_objs'
       for i=1:length(times)
-         fprintf('t=%8.7f b=%9.0d: %s\n', rem(times(i),1), ... %today
-             sizes(i), objid{i} ); 
+         fprintf('t=%9.7f b=%9.0d p=%02d, i=%03d: %s\n', rem(times(i),1), ... %today
+             sizes(i), prios(i), priidx(i), objid{i} ); 
       end
 
    case 'clear_max'
-      remove_objids( objid, sizes,  ...
-        find(cumsum(sizes) > limit) );
+% This will remove just in order of time.
+%     remove_objids( objid, sizes,  find(cumsum(sizes) > limit) );
+% Remove in order of time + priority
+      tot= cumsum(sizes(priidx)); 
+      tot= tot(priidx);
+      remove_objids( objid, sizes,  find(tot > limit) );
 
    case 'clear_old'
       remove_objids( objid, sizes,  ...
-        find(cumsum(times) < limit) );
+        find(times < limit) );
 
    case 'clear_new'
       remove_objids( objid, sizes,  ...
-        find(cumsum(times) > limit) );
+        find(times > limit) );
    
    otherwise
       error('command %s not understood',command);
 end
 
-function [objid, times, sizes] = get_names_times;
-   objid={}; times=[]; sizes=[]; 
+% priidx is priority index, where 1 prio is 0.1 of a day
+function [objid, times, sizes, prios, priidx] = get_names_times;
+   objid={}; times=[]; sizes=[]; pri=[]; prios=[]; priidx=[];
    global eidors_objects;
    if isempty(eidors_objects); return; end
    idx=1;
@@ -85,6 +104,7 @@ function [objid, times, sizes] = get_names_times;
 
          obj = getfield(eidors_objects, fn1 );
          times(idx) = obj.last_used;
+         prios(idx) =   obj.priority;
 
          ww= whos('obj');
          sizes(idx) = ww.bytes;
@@ -95,8 +115,12 @@ function [objid, times, sizes] = get_names_times;
 
    % sort from recent (high) to old (low)
    [times, idx] = sort(-times);
+   times= -times;
    objid= objid(idx);
    sizes= sizes(idx);
+   prios= prios(idx);
+   [jnk, priidx] = sort(-(times+0.1*prios));
+   priidx(priidx)= 1:length(priidx);
 
 function remove_objids( objid, sizes, idx)
    global eidors_objects;

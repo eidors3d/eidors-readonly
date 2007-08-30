@@ -10,7 +10,7 @@ function jacobian = calc_jacobian( fwd_model, img, varargin)
 % img       is an image structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m,v 1.15 2007-08-29 09:26:18 aadler Exp $
+% $Id: calc_jacobian.m,v 1.16 2007-08-30 03:37:04 aadler Exp $
 
 if nargin==1
    img= fwd_model;

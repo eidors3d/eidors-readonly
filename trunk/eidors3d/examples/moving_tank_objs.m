@@ -32,7 +32,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.21 2006-11-26 01:02:51 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.22 2007-08-30 03:37:32 aadler Exp $
 
 clim= [];
 
@@ -304,7 +304,7 @@ function imdl= set_basic( shape_str, type, vals )
    imdl.RtR_prior= @noser_image_prior;
    imdl.noser_image_prior.exponent= .5;
    imdl.solve= @np_inv_solve;
-   imdl.hyperparameter.value= 1e-2;
+   imdl.hyperparameter.value= 1e-1;
 
    if nargin==1; return; end
 

@@ -1,5 +1,5 @@
 % Test colour mapping
-% $Id: test_colour_direction.m,v 1.3 2006-11-17 13:02:53 aadler Exp $
+% $Id: test_colour_direction.m,v 1.4 2007-08-30 03:37:33 aadler Exp $
 
 % 2D Test
 imdl= mk_common_model('b2c',16);
@@ -11,6 +11,7 @@ s_img.elem_data(1)= 1.1;
 v_targ = fwd_solve(s_img);
 imgr1= inv_solve(imdl,v_homg,v_targ);
 slice1= calc_slices(imgr1);
+subplot(121)
 show_fem(imgr1);
 disp('image should be red');
 
@@ -23,5 +24,6 @@ v_homg = fwd_solve(s_img);
 s_img.elem_data(1)= 1.1;
 v_targ = fwd_solve(s_img);
 imgr2= inv_solve(imdl,v_homg,v_targ);
+subplot(122)
 show_fem(imgr2);
 disp('image should be red');

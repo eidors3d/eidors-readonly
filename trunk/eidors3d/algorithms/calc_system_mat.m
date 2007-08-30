@@ -14,7 +14,7 @@ function system_mat = calc_system_mat( fwd_model, img)
 % image     is an image structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_system_mat.m,v 1.15 2007-08-29 09:26:18 aadler Exp $
+% $Id: calc_system_mat.m,v 1.16 2007-08-30 03:37:04 aadler Exp $
 
 if strcmp( fwd_model.type , 'image')
     img= fwd_model;

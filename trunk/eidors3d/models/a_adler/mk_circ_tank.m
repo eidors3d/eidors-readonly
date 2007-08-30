@@ -40,7 +40,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_circ_tank.m,v 1.10 2007-08-29 09:26:55 aadler Exp $
+% $Id: mk_circ_tank.m,v 1.11 2007-08-30 03:38:26 aadler Exp $
 
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');
@@ -65,6 +65,8 @@ if isempty( levels ) % 2D
 else  %3D
    [elem, node, bdy, point_elec_nodes] = mk_3D_model( elem, node, ...
                   levels, bdy, point_elec_nodes );
+    % 3D - need to replace buggy calcs
+   bdy= find_boundary(elem')';
 
    if ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
@@ -167,6 +169,9 @@ function [ELEM, NODE, bdy_nodes, point_elec_nodes] = mk_2D_model( N );
 % 'extrude' a 2D model defined by ELEM and NODE into a 3D model
 % levels are defined by 'niveaux', 
 % 2D parameters are ELEM, NODE, and bdy
+%
+% FIXME: The boundary calculated in 3D is no good. Instead
+%   it needs to be fixed using find_boundary, later
 function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
      elem0, node0, niveaux, bdy, elec_nodes0 );
 
