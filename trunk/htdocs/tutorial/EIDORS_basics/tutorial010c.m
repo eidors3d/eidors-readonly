@@ -1,5 +1,5 @@
 % Reconstruct images
-% $Id: tutorial010c.m,v 1.2 2007-08-30 03:30:38 aadler Exp $
+% $Id: tutorial010c.m,v 1.3 2007-08-30 03:32:26 aadler Exp $
 
 subplot(131)
 show_fem(sim_img);

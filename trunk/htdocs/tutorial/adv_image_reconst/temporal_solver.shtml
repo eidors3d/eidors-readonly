@@ -1,19 +1,113 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
+
 <h2>
 Image reconstruction of moving objects
 </H2>
 
-One advantage of EIT is the relatively high
-data frame rates. It is possible to take this
-into account using a reconstruction algorithm
-which accounts for inter frame correlations.
-The classic algorithm for this is the
-Kalman filter.
+These results are taken from the paper:
+<ul>
+Andy Adler, Tao Dai, William R.B. Lionheart
+<i>Temporal Image Reconstruction in Electrical Impedance Tomography</i>
+Physiol. Meas., 2007.
+</ul>
 
+Electrical Impedance Tomography (EIT) calculates images of the body
+from body impedance measurements. While the spatial resolution of
+these images is relatively low, the temporal resolution of EIT
+data can be high. Most EIT reconstruction algorithms solve each
+data frame independently, although Kalman filter algorithms track
+the image changes across frames. This paper proposes a new approach
+which directly accounts for correlations between images in successive
+data frames.  Image reconstruction is posed in terms of an augmented
+image <b>x</b> and measurement vector <b>y</b>,
+ which concatenate the values from
+the <i>d</i> previous and future frames. Image reconstruction is then based
+on an augmented regularization matrix <b>R</b>, which accounts for a model
+of both the spatial and temporal correlations between image elements.
+Results are compared for reconstruction algorithms based on independent
+frames, Kalman filters, and the proposed approach. For low values of the
+regularization hyperparameter, the proposed approach performs similarly
+to independent frames, but for higher hyperparameter values, it uses
+adjacent frame data to reduce reconstructed image noise.
+
+<h3>
+Sample Data
+</H3>
+
+Simulated data are calculated using the function
+<tt>simulate_2d_movement</tt>, which models a
+small (0.05&times;radius) object moving in a 
+circle in a 2D circular tank.  These data are 
+<a href="../../data_contrib/aa_simulate_2d_movement/aa_simulate_2d_movement.shtml"> available here</a>.
+<p>
+Since the temporal solver works best for noisy data,
+we simulate a fairly low SNR (high NSR). To understand
+why the temporal solver works best at for noisy data,
+consider that if data are clean, then there is no reason
+to look at data from the past/future, since the current
+measurement tells us everything we need to know.
+
+<pre>
+<!--#include virtual="temporal_solver01.m" -->
+</pre>
+
+<h3>
+Reconstruction Algorithms
+</H3>
+
+<p>
+
+
+Over time steps, <i>k</i>, a sequence of
+difference vectors, <b>y</b><sub>k</sub> =
+<b>J</b><b>x</b><sub>k</sub>, are measured (assuming
+the body and electrode geometry, and thus <b>J</b>, stay
+fixed). If the conductivity of the body under investigation
+doesn’t change too rapidly, then it is reasonable to expect
+that a certain number of measurements, <i>d</i>, into
+the past and future provide useful information about the
+current image. Labelling the current instant as <i>t</i>,
+we therefore seek to estimate <b>x</b><sub>t</sub> from
+data [<b>y</b><sub>t-d</sub>; ... ; <b>y</b><sub>t-1</sub>;
+<b>y</b><sub>t</sub>; <b>y</b><sub>t+1</sub>; ... ;
+<b>y</b><sub>t+d</sub>].
+<p>
+
+In the subsequent sections we consider three traditional approaches and the
+proposed temporal inverse; each estimates <b>x</b><sub>t</sub> at frame <i>t</i> from a sequence of data starting
+at frame 0, using the indicated data:
+<ol>
+ <li> Gauss-Newton (GN) inverse, using <b>y</b><sub>t</sub>
+ only;
+
+ <li> GN with weighted data, using a weighted average of
+ <b>y</b><sub>t-d</sub> ... <b>y</b><sub>t+d</sub>;
+
+ <li> Kalman filter inverse, using all previous and current
+ data, <b>y</b><sub>0</sub> ... <b>y</b><sub>t</sub>; 
+
+ <li> Temporal inverse, using <b>y</b><sub>t-d</sub>
+ ... <b>y</b><sub>t+d</sub> based on a temporal prior
+ model.
+
+</ol>
+
+The following code defines the reconstruction algorithms:
+<pre><!--#include virtual="temporal_solver02.m" --></pre>
+
+<h3>
+Image Reconstruction
+</H3>
+
+We reconstruct the image at 9&nbsp;O'clock using
+each algorithm, using the code:
 <pre><!--#include virtual="temporal_solver02.m" --></pre>
 
 <center>
-<img src="temporal_solver02a.png">
+<img src="temporal_solver03a.png">
+<img src="temporal_solver03b.png">
+<img src="temporal_solver03c.png">
+<img src="temporal_solver03d.png">
 <br><i>Figure:</i>
 Image reconstructions of a moving ball
 in a medium.
@@ -23,22 +117,26 @@ Note the <i>warm up period</i> of the Kalman images
 when the time correlations are being <i>trained</i>.
 </center>
 
-EIDORS can animate the resulting reconstructed images,
-as follows
+<h3>
+Image Reconstruction Movies
+</H3>
+
+In order to show animated movies of temporal 
+solvers, we can do the following
 
 <pre>
-animate_reconstructions('temporal_solver02b', imgs1(1:20));
-animate_reconstructions('temporal_solver02c', imgs2(1:20));
+<!--#include virtual="temporal_solver04.m" -->
 </pre>
 
 Output images are:
-<br>&minus;<a href="./temporal_solver02b.gif">Gauss-Newton solver</a>
-<br>&minus;<a href="./temporal_solver02c.gif">Kalman solver</a>
+<br>&minus;<a href="./temporal_solver04a.gif">Gauss-Newton solver</a>
+<br>&minus;<a href="./temporal_solver04c.gif">Temporal solver</a>
+<br>&minus;<a href="./temporal_solver04d.gif">Kalman solver</a>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 03:30:47 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-30 03:32:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

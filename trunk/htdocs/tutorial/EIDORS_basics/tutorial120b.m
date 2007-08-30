@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: tutorial120b.m,v 1.1 2007-07-12 18:08:41 aadler Exp $
+% $Id: tutorial120b.m,v 1.2 2007-08-30 03:32:26 aadler Exp $
 
 % Create Inverse Model
 inv2d= eidors_obj('inv_model', 'EIT inverse');
@@ -17,29 +17,31 @@ inv2d.solve=       @np_inv_solve;
 % Tikhonov prior
 inv2d.hyperparameter.value = 1e-3;
 inv2d.RtR_prior=   @tikhonov_image_prior;
-imgr(1)= inv_solve( inv2d, vi, vh);
-imgn(1)= inv_solve( inv2d, vi_n, vh);
+imgr(1)= inv_solve( inv2d, vh, vi);
+imgn(1)= inv_solve( inv2d, vh, vi_n);
 
 % NOSER prior
 inv2d.hyperparameter.value = 3e-1;
 inv2d.RtR_prior=   @noser_image_prior;
-imgr(2)= inv_solve( inv2d, vi, vh);
-imgn(2)= inv_solve( inv2d, vi_n, vh);
+imgr(2)= inv_solve( inv2d, vh, vi);
+imgn(2)= inv_solve( inv2d, vh, vi_n);
 
 % Laplace image prior
 inv2d.hyperparameter.value = 1e-3;
 inv2d.RtR_prior=   @laplace_image_prior;
-imgr(3)= inv_solve( inv2d, vi, vh);
-imgn(3)= inv_solve( inv2d, vi_n, vh);
+imgr(3)= inv_solve( inv2d, vh, vi);
+imgn(3)= inv_solve( inv2d, vh, vi_n);
 
 % Automatic hyperparameter selection
-inv2d.hyperparameter.func = @aa_calc_noise_figure;
+inv2d.hyperparameter = rmfield(inv2d.hyperparameter,'value');
+inv2d.hyperparameter.func = @choose_noise_figure;
 inv2d.hyperparameter.noise_figure= 2;
 inv2d.hyperparameter.tgt_elems= 1:4;
-inv2d.RtR_prior=   @aa_calc_image_prior;
+inv2d.RtR_prior=   @gaussian_HPF_prior;
 inv2d.solve=       @aa_inv_solve;
-imgr(4)= inv_solve( inv2d, vi, vh);
-imgn(4)= inv_solve( inv2d, vi_n, vh);
+imgr(4)= inv_solve( inv2d, vh, vi);
+imgn(4)= inv_solve( inv2d, vh, vi_n);
+inv2d.hyperparameter = rmfield(inv2d.hyperparameter,'func');
 
 % Total variation using PDIPM
 inv2d.hyperparameter.value = 1e-2;
@@ -49,11 +51,11 @@ inv2d.parameters.max_iterations= 20;
 inv2d.parameters.term_tolerance= 1e-3;
 
 % TVimg will add the background value
-tvimg= inv_solve( inv2d, vi, vh);
+tvimg= inv_solve( inv2d, vh, vi);
 tvimg.elem_data = tvimg.elem_data - bkgnd;
 imgr(5)= tvimg;
 
-tvimg= inv_solve( inv2d, vi_n, vh);
+tvimg= inv_solve( inv2d, vh, vi_n);
 tvimg.elem_data = tvimg.elem_data - bkgnd;
 imgn(5)= tvimg;
 
