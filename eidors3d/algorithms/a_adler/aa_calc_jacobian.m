@@ -10,7 +10,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_calc_jacobian.m,v 1.12 2007-08-29 09:26:17 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.13 2007-08-30 03:37:01 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -28,11 +28,11 @@ DE= zeros(pp.n_elec, pp.n_stim, e);
 idx= 1:pp.n_node;
 idx( fwd_model.gnd_node ) = [];
 sv= zeros(n, pp.n_stim );
-sv( idx,:) = s_mat(idx,idx) \ pp.QQ( idx,: );
+sv( idx,:) = s_mat.E(idx,idx) \ pp.QQ( idx,: );
 
    zi2E= zeros(pp.n_elec, n);
-%  zi2E(:, idx)= pp.N2E(:,idx)* inv( s_mat(idx,idx) );
-   zi2E(:, idx)= pp.N2E(:,idx)/ s_mat(idx,idx) ;
+%  zi2E(:, idx)= pp.N2E(:,idx)* inv( s_mat.E(idx,idx) );
+   zi2E(:, idx)= pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 
 % connectivity matrix
 CC= sparse((1:d*e),pp.ELEM(:),ones(d*e,1), d*e, n);

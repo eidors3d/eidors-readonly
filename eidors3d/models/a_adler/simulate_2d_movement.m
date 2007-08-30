@@ -2,7 +2,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
 % SIMULATE_MOVEMENT simulate rotational movement in 2D
 % [vh,vi,xpr_pt]= simulate_movement( pattern )
 %
-% $Id: simulate_2d_movement.m,v 1.6 2007-08-29 09:26:55 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.7 2007-08-30 03:38:26 aadler Exp $
 
     n_circles = 36;
     n_elec= 16;
@@ -101,5 +101,5 @@ function mdl_2d= mk_fwd_model(n_circles, n_elec)
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements= 1;
-    params.misc.perm_sym= '{n}';
+    params.np_fwd_solve.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);

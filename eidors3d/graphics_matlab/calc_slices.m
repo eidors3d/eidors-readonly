@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.17 2007-08-29 09:26:39 aadler Exp $
+% $Id: calc_slices.m,v 1.18 2007-08-30 03:37:32 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -53,7 +53,7 @@ end
 function rimg= calc_image( elem_data, level, fwd_model, np)
 
 % elem_ptr_table also depends on the number of mapped points
-fwd_model.misc.mapping_npoints=np;
+fwd_model.calc_slices.mapping_npoints=np;
 
 % Get elem_ptr from cache, if available
 % EPtable is cell array of elem_ptrs for different levels

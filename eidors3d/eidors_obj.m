@@ -76,7 +76,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.57 2007-08-29 09:26:18 aadler Exp $
+% $Id: eidors_obj.m,v 1.58 2007-08-30 03:37:04 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -190,6 +190,8 @@ function set_cache_obj( obj, prop, value, varargin )
    if isempty(cachename)
    %  eidors_objects.( obj_id ).cache.( prop ) = value;
       eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
+      eval(sprintf('eidors_objects.%s.priority=%d;', obj_id, ...
+            eidors_objects.cache_priority));
       update_timestamp(obj_id);
    else
       filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];

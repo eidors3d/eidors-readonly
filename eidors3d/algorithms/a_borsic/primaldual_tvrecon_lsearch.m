@@ -25,7 +25,7 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %
 
 % (C) 2002-2006 Andrea Borsic. Licenced under GPL version 2
-% $Id: primaldual_tvrecon_lsearch.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
+% $Id: primaldual_tvrecon_lsearch.m,v 1.13 2007-08-30 03:37:03 aadler Exp $
 
 % Initialisation
 fwd_model= inv_mdl.fwd_model;
@@ -112,7 +112,7 @@ while (~terminate)&(iter<maxiter)
     primal=sum(abs(z)); % we don't care here about 0.5*norm(de_v)
     dual=sum(x.*z);
     
-    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(vsim-vmeas),beta,len(ind),norm(grad),2);
+    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(vsim-vmeas),beta,len(ind),norm(grad),3);
         
     E=spdiags(eta,0,n,n);
     F=spdiags(ones(n,1)-(1./eta).*x.*z,0,n,n);
@@ -125,7 +125,7 @@ while (~terminate)&(iter<maxiter)
     
     ang=acos((dot(de_s,-grad)/(norm(de_s)*norm(-grad))))*(360/(2*pi));
     
-    eidors_msg('PDIPM angle=%+3.1f deg \n',ang,2);
+    fprintf('+'); eidors_msg('PDIPM angle=%+3.1f deg',ang,3);
     
     % line search
     

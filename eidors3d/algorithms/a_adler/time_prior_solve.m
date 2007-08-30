@@ -16,7 +16,7 @@ function img= time_prior_solve( inv_model, data1, data2)
 %   them internally
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: time_prior_solve.m,v 1.12 2007-08-29 09:26:17 aadler Exp $
+% $Id: time_prior_solve.m,v 1.13 2007-08-30 03:37:02 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;
@@ -37,11 +37,8 @@ else
     eidors_msg('time_prior_solve: setting cached value', 2);
 end
 
-if fwd_model.normalize_measurements
-   dva= data2 ./ data1 - 1;
-else   
-   dva= data2 - data1;
-end
+dva = calc_difference_data( data1, data2, inv_model.fwd_model);
+
 l_dva = size( dva, 2);
 
 idx= [-time_steps:time_steps]'*ones(1,l_dva) + ...

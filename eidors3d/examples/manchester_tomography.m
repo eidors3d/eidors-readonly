@@ -12,8 +12,8 @@
 %    show reconstructions from 2planes / 2rods
 %    Reconstruction = np_inv_solve
 %
-% (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: manchester_tomography.m,v 1.22 2007-08-29 09:26:39 aadler Exp $
+% (C) 2005 by Stephen Murphy.  License: GPL version 2 or version 3
+% $Id: manchester_tomography.m,v 1.23 2007-08-30 03:37:32 aadler Exp $
 function manchester_tomography( example_no)
 
 switch example_no
@@ -38,7 +38,7 @@ end
 function [fwd_m1,meas_2rod,meas_ref]= twoplane_mdl;
     load 2planes_Op_drive;
     fwd_m1=eidors_obj('fwd_model',mdl_2plane);
-    fwd_m1.misc.perm_sym = '{y}';
+    fwd_m1.np_fwd_solve.perm_sym = '{y}';
     fwd_m1.solve=    'np_fwd_solve';
     fwd_m1.jacobian= 'np_calc_jacobian';
     fwd_m1.system_mat= 'np_calc_system_mat';
@@ -68,7 +68,7 @@ function example_diff_morozov_reconst
     imdl.reconst_type= 'difference';
     imdl.fwd_model= fwd_m1;
 
-    imr= inv_solve(imdl, vi, vh);
+    imr= inv_solve(imdl, vh, vi);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 
 function example_diff_np_reconst
@@ -77,14 +77,14 @@ function example_diff_np_reconst
     imdl= eidors_obj('inv_model','NP mdl');
     imdl.solve= 'np_inv_solve';
     imdl.R_prior= 'np_calc_image_prior';
-    imdl.hyperparameter.value = 1e-4;
+    imdl.hyperparameter.value = 1e-2;
 
     imdl.jacobian_bkgnd.value = .01;
     imdl.np_calc_image_prior.parameters= [3 1];
     imdl.reconst_type= 'difference';
     imdl.fwd_model= fwd_m1;
 
-    imr= inv_solve(imdl, vi, vh);
+    imr= inv_solve(imdl, vh, vi);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 
 function example_diff_tv_reconst_sim
@@ -93,15 +93,15 @@ function example_diff_tv_reconst_sim
     imdl= eidors_obj('inv_model','TV mdl');
     imdl.solve= 'ab_tv_diff_solve';
     imdl.R_prior= 'ab_calc_tv_prior';
-    imdl.parameters.max_iterations= 2;
-    imdl.hyperparameter.value = [1e-1,1e-5];
+    imdl.parameters.max_iterations= 5;
+    imdl.hyperparameter.value = 1e-4;
 
     imdl.jacobian_bkgnd.value = 1;
     imdl.reconst_type= 'difference';
     imdl.fwd_model= fwd_m1;
     [vi,vh] = sim_inhomg(fwd_m1);
 
-    imr= inv_solve(imdl, vi, vh);
+    imr= inv_solve(imdl, vh, vi);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 
 function example_diff_tv_reconst
@@ -110,15 +110,15 @@ function example_diff_tv_reconst
     imdl= eidors_obj('inv_model','TV mdl');
     imdl.solve= 'ab_tv_diff_solve';
     imdl.R_prior= 'ab_calc_tv_prior';
-    imdl.parameters.max_iterations= 1;
-    imdl.hyperparameter.value = [1e-1,1e-5];
+    imdl.parameters.max_iterations= 3;
+    imdl.hyperparameter.value = 1e-4;
 
     imdl.jacobian_bkgnd.value = .01;
     imdl.reconst_type= 'difference';
     imdl.fwd_model= fwd_m1;
     [vi,vh] = sim_inhomg(fwd_m1);
 
-    imr= inv_solve(imdl, vi, vh);
+    imr= inv_solve(imdl, vh, vi);
     show_slices(imr, linspace(.01,.09,4)'*[inf,inf,1])
 
 
@@ -126,7 +126,7 @@ function example_diff_tv_reconst
 function example_diff_sim_reconst
     load 2planes_Op_drive;
     fwd_m1=eidors_obj('fwd_model',mdl_2plane);
-    fwd_m1.misc.perm_sym = '{y}';
+    fwd_m1.np_fwd_solve.perm_sym = '{y}';
     fwd_m1.solve=    'np_fwd_solve';
     fwd_m1.jacobian= 'np_calc_jacobian';
     fwd_m1.system_mat= 'np_calc_system_mat';
@@ -159,7 +159,7 @@ function example2( M_coarse, M_dense)
 
 imdl= mk_common_model('b2c',16);
 imdl.hyperparameter.value= 1e-2;
-imgr= inv_solve(imdl, vi,vh);
+imgr= inv_solve(imdl, vh,vi);
 show_fem(imgr);
 
 

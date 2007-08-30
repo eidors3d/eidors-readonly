@@ -12,7 +12,7 @@ function img= inv_solve_trunc_iterative( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 David Stephenson. License: GPL version 2 or version 3
-% $Id: inv_solve_trunc_iterative.m,v 1.12 2007-08-29 09:26:18 aadler Exp $
+% $Id: inv_solve_trunc_iterative.m,v 1.13 2007-08-30 03:37:04 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 
@@ -34,13 +34,8 @@ l_data1= length(data1); l1_0 = l_data1 ~=0;
 l_data2= length(data2); l2_0 = l_data2 ~=0;
 l_data= max( l_data1, l_data2 );
 
-dva= zeros(size(J,1), l_data);
 
-if pp.normalize
-   dva= data2 ./ data1 - 1;
-else   
-   dva= data2 - data1;
-end
+dva = calc_difference_data( data1, data2, fwd_model);
 
 tol= 1e-4;
 maxiter= 50;

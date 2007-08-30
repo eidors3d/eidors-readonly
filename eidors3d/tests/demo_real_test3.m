@@ -2,7 +2,7 @@ function ok= demo_real_test3
 % Perform tests based on the demo_real function with new structs
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real_test3.m,v 1.25 2007-08-29 09:26:40 aadler Exp $
+% $Id: demo_real_test3.m,v 1.26 2007-08-30 03:37:33 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -41,7 +41,7 @@ for i=1:length(zc)
     demo_mdl.electrode(i).z_contact= zc(i);
     demo_mdl.electrode(i).nodes=     elec(i,:);
 end
-demo_mdl.misc.perm_sym     = perm_sym;
+demo_mdl.np_fwd_solve.perm_sym     = perm_sym;
 
 demo_mdl= eidors_obj('set', demo_mdl);
 

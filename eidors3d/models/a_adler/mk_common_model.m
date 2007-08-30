@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.10 2007-08-29 09:26:55 aadler Exp $
+% $Id: mk_common_model.m,v 1.11 2007-08-30 03:38:26 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -143,7 +143,7 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements= 0;
-    params.misc.perm_sym= '{n}';
+    params.np_fwd_solve.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);
 
     inv2d.solve=       'aa_inv_solve';
@@ -185,7 +185,7 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements= 0;
-    params.misc.perm_sym= '{n}';
+    params.np_fwd_solve.perm_sym= '{n}';
     fm3d = eidors_obj('fwd_model', params);
 
     inv3d.name=  'EIT inverse: 3D';
@@ -229,7 +229,7 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
 
    fmdl.gnd_node=           gnd_ind;
    fmdl.electrode =         electrodes;
-   fmdl.misc.perm_sym =     '{n}';
+   fmdl.np_fwd_solve.perm_sym =     '{n}';
 
    [I,Ib] = set_3d_currents(protocol, elec, ...
                fmdl.nodes, fmdl.gnd_node, no_pl);
@@ -315,7 +315,7 @@ function inv3d= mk_b3r1_model( n_elec, options )
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements= 0;
-    params.misc.perm_sym= '{n}';
+    params.np_fwd_solve.perm_sym= '{n}';
     mdl_3d = eidors_obj('fwd_model', params);
 
     inv3d.name = 'EIT inverse: 3D';
@@ -344,7 +344,7 @@ function inv3d= mk_b3r2_model( n_elec, nr, options )
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'aa_calc_jacobian';
     params.normalize_measurements= 0;
-    params.misc.perm_sym= '{n}';
+    params.np_fwd_solve.perm_sym= '{n}';
     mdl_3d = eidors_obj('fwd_model', params);
     
     % Specify number of levels in mesh for imaging slices

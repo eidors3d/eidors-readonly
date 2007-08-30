@@ -20,7 +20,7 @@ function eidors_msg( message, varargin )
 %   3 => detailed information
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_msg.m,v 1.20 2007-08-29 09:26:18 aadler Exp $
+% $Id: eidors_msg.m,v 1.21 2007-08-30 03:37:04 aadler Exp $
 
 global eidors_objects
 
@@ -30,6 +30,12 @@ if nargin==1
 else
    level= varargin{ nargin-1 };
    args= varargin( 1:nargin-2 );
+end
+
+for i= 1:length(args)
+   if isa( args{i}, 'function_handle')
+      args{i} = func2str(args{i});
+   end
 end
 
 try
