@@ -1,0 +1,37 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Electrode movement reconstruction for simulated 2D data
+</h2>
+
+Here we create a simple 2D model and change the boundary shape between two measurments.
+
+<pre>
+<!--#include virtual="move_2d01.m" -->
+</pre>
+
+<center>
+<img src="move_2d01.png">
+<br><i> Figure:</i>
+Forward solution of a 2D model where the boundary was changed between measurements.  The arrows show how the electrodes were displaced (scaled 20x).
+</center>
+
+Next we solve the inverse problem in two ways: first, without correcting for electrode movements, and second, with movement correction.
+
+<pre>
+<!--#include virtual="move_2d02.m" -->
+</pre>
+
+<center>
+<img src="move_2d02.png">
+<br><i> Figure:</i>
+Inverse solutions of the problem above.  Left image shows image reconstruction without movement correction, and right image shows reconstruction with estimated movement corrections shown by green arrows (scaled 20x).
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:34 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->

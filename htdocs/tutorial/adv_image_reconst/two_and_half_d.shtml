@@ -1,0 +1,65 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Two and a half dim (2&frac12;D) image reconstruction
+</h2>
+
+The term "2&frac12;D" originates from geophysics.
+Measurements are made around a medium (or in a borehole)
+in 3D. However, in order to simplify image reconstruction,
+the medium properties are assumed to be constant in
+the <i>z</i> direction. 
+<p>
+Thus, the <i>z</i> direction is part of the forward
+model, but not the inverse. It is thus "half" a 
+dimension.
+
+<p>
+This tutorial shows how to do this as a application
+of coarse/fine mapping, where the a fine (high density)
+forward model is used with a coarse (low density) 
+inverse model.
+<pre>
+<!--#include virtual="two_and_half_d01.m" -->
+</pre>
+
+<center>
+<img src="two_and_half_d01a.png">
+<br><i> Figure:</i>
+<i>Left</i> fine (3d) model,
+<i>Right</i> coarse (2d) model
+</center>
+
+<h3> Image reconstruction </h3>
+
+Images are reconstructed by calling the
+<tt>coase_fine_solver</tt> function rather
+than the original. (<i>Note</i> this function
+still needs some work, it doesn't account for
+all cases)
+
+<pre>
+<!--#include virtual="two_and_half_d02.m" -->
+</pre>
+
+Note the reconstructed image on the coarse
+mesh is extruded into 2D, as the assumptions
+require.
+
+<center>
+<img src="two_and_half_d02a.png">
+<br><i> Figure:</i>
+<i>Left</i> original (3d) model
+<i>Centre</i> fine (3d) reconstruction
+<i>Right</i> coarse (2d) reconstruction
+</center>
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:35 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->

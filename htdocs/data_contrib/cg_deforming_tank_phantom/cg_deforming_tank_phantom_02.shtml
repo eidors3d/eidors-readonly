@@ -1,0 +1,228 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Camille G&oacute;mez-Laberge 
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> October 14, 2005. 
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Single- and double-plane 16 electrode deformable phantom tank data 
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with attribution). 
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> Please refer to this paper in any publications:
+<ul>
+Manuchehr Soleimani, Camille G&oacute;mez-Laberge, Andy Adler.
+<i>Imaging of conductivity changes and electrode movement in EIT</i>
+Physiol. Meas., 2006, no.27, pp.S103-S113.
+</ul>
+
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are stored as a Zip file containing averaged static VIASYS *.get files in .mat file format and description text file.
+<hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./cg_invitro_14-10-05.zip"
+            >Data (zip format): Single- and double-plane measurements</a>
+       <hr>
+   </table>
+
+<h3> Detailed information on measurement protocol </H3>
+
+<pre>
+% ************************************
+% Electrical Impendance Tomography
+% VIASYS invitro data
+% University of Ottawa
+% Department of Electrical Engineering
+% Date:   October 14, 2005
+% Author: Camille Gomez-Laberge
+% ************************************
+
+This README file is the documentation that accompanies the
+data collected in these directories: ph1t1/ ph2t1/ ph3t1/
+ph3t2/
+
+% ****************************
+% THE EXPERIMENT
+% ****************************
+Experimenter: Camille Gomez-Laberge
+Date Collected: October 4, 2005
+Locale: Research laboratory, University of Ottawa
+Equipment: EIT Viasys / University of Gottingen
+Phantoms: All phantoms used are polyethylene pails 30 cm in height and diameter.
+Electrodes: See individual phantom descriptions in each part of the experiment.
+Electrolytic solution: 0.9% saline solution
+Objects: 2 golf balls (non-conductive) 2 cm radius spheres
+suspended in solution with 2.7 kg tension fishing line
+(nylon).
+Measurement Procedure: Ambient temperature in room is 25
+degrees Celsius. Details for each part of the experiment
+follow:
+
+PART I:
+Directory: ph1t1/
+Phantom description: Phantom 1 - Uses brass plated,
+steel thumb-tacs as electrodes.  They are arranged in
+a 16 electrode plane 13 cm above the phantom bottom.
+The ground electrode is placed in the centre of the
+bottom. The solution is filled to the 26 cm mark.
+With time these electrodes became very corroded. The
+coordinate system to define the object positions in the
+phantom use the ground electrode as the origin. The x-axis
+is aligned with electrode 1 and the y-axis with electrode
+5. The z-axis is aligned upwards.
+
+Procedure: There are 5 different measurement setups. Each
+setup was measured 5 times. Objects are placed at the
+electrode plane level (i.e. we only vary the x and y
+coordinates). 
+
+Setup 1: No objects in phantom (just solution)
+Data files: vitro200905_ph1t1_001.get - vitro200905_ph1t1_005.get
+
+Setup 2: Object 1 in centre of electrode ring (0,0) cm
+Data files: vitro200905_ph1t1_006.get - vitro200905_ph1t1_010.get
+
+Setup 3: Object 1 at (0,7) cm
+Data files: vitro200905_ph1t1_011.get - vitro200905_ph1t1_015.get
+
+Setup 4: Object 1 at (0,7) cm and object 2 at (7,0) cm
+Data files: vitro200905_ph1t1_016.get - vitro200905_ph1t1_020.get
+
+Setup 5: Object 1 at (0,7) cm and object 2 at (7,0)
+cm and phantom is distored into an elliptical shape by
+compressing the walls in the y-axis direction until the
+short axis measures 25 cm across.
+Initially the phantom is circular, during the first 6
+seconds it is gradually compressed into the elliptical
+shape and held like so for the remainder of the
+measurement.
+Data files: vitro200905_ph1t1_021.get - vitro200905_ph1t1_025.get
+Note: Object positions were measured before distorting the phantom.
+
+Averaged data: The five measurements in each setup (1-4
+only) have been read into Matlab and avereaged. The average
+data is stored in the avgdata_ph1t1.mat file.
+
+PART II:
+Directory: ph2t1/
+Phantom description: Phantom 2 - Uses brass plated, steel
+thumb-tacs as electrodes.  They are arranged in two 8
+electrode planes. The lower is at z = 10 cm level and the
+upper at z = 20 cm.  The upper ring is offset by a small
+rotation so that the electrodes between both planes form
+a zig-zag pattern (e.g. Charlie Brown's sweater). The
+ground electrode is placed in the centre of the bottom
+(0,0,0). The solution is filled to the 30 cm mark.
+With time these electrodes became very corroded. The
+coordinate system to define the object positions in the
+phantom use the ground electrode as the origin. The x-axis
+is aligned with electrode 1 (upper plane) and the y-axis
+with electrode 5 (upper). The upper plane has all odd
+numbered electrodes. The z-axis is aligned upwards.
+
+Procedure: There are 6 different measurement setups. Each
+setup was measured 5 times. Objects are placed using
+(x,y,z) coordinates.
+
+Setup 1: No objects in phantom (just solution)
+Data files: vitro200905_ph2t1_002.get - vitro200905_ph2t1_006.get
+Note: Measurement 001.get was discarded.
+
+Setup 2: Object 1 in centre of electrode ring (0,0,15) cm
+Data files: vitro200905_ph2t1_007.get - vitro200905_ph2t1_011.get
+
+Setup 3: Object 1 at (0,7,10) cm; object 2 (0,7,20) cm
+Data files: vitro200905_ph1t1_012.get - vitro200905_ph1t1_016.get
+
+Setup 4: Object 1 at (7,0,10) cm and object 2 at (0,7,10) cm
+Data files: vitro200905_ph2t1_017.get - vitro200905_ph2t1_021.get
+
+Setup 5: Object 1 at (7,0,10) cm and object 2 at (0,7,20) cm
+Data files: vitro200905_ph2t1_022.get - vitro200905_ph2t1_026.get
+
+Setup 6: Object 1 at (7,0,10) cm and object 2 at (0,7,20)
+cm and phantom is distored into an elliptical shape by
+compression. See PART I setup 5.
+Data files: vitro200905_ph2t1_027.get - vitro200905_ph2t1_031.get
+Note: Object positions were measured before distorting the phantom.
+
+Averaged data: The five measurements in each setup (1-5
+only) have been read into Matlab and avereaged. The average
+data is stored in the avgdata_p2t1.mat file.
+
+PART III:
+Directory: ph3t1/
+Phantom description: Phantom 3 - Uses stainless-steel
+screws as electrodes.  They are arranged in two 16
+electrode planes. The lower is at z = 10 cm level and the
+upper at z = 20 cm.  The electrodes between rings are
+aligned vertically.  The ground electrode is placed in
+the centre of the bottom (0,0,0). The solution is filled
+to the 30 cm mark. The coordinate system to define the
+object positions in the phantom use the ground electrode as
+the origin. The x-axis is aligned with electrode 1 (upper
+plane) and the y-axis with electrode 5 (upper). The upper
+plane has electrodes 1-16 and lower 17-32. The z-axis is
+aligned upwards.
+Procedure: Only 16 electrodes were used (the entire bottom ring).
+There is only one measurement here as it was used as a
+proof of concept test.  The single object is moved around
+in a circular motion during the entire measurement.
+Data file: vitro200905_ph3t1_001.get
+Note: Electrodes were found to have varying impedances between 200 and 400 Ohms according to the system's calibration test. These values are all within the system's acceptable limits.
+
+PART IV:
+Directory: ph3t2/
+Phantom description: Phantom 3 - see PART III.
+Procedure: Only 16 electrodes were used (the entire bottom ring).
+The first 5 setups are almost as in PART I. A sixth setup is also added.
+Setup 1: No objects in phantom (just solution)
+Data files: vitro200905_ph3t2_001.get - vitro200905_ph3t2_005.get
+
+Setup 2: Object 1 in centre of electrode ring (0,0) cm
+Data files: vitro200905_ph3t2_006.get - vitro200905_ph3t2_010.get
+
+Setup 3: Object 1 at (0,7) cm
+Data files: vitro200905_ph3t2_011.get - vitro200905_ph3t2_015.get
+
+Setup 4: Object 1 at (0,7) cm and object 2 at (-7,0) cm
+Data files: vitro200905_ph3t2_016.get - vitro200905_ph3t2_020.get
+
+Setup 5: Object 1 at (0,7) cm and object 2 at (7,0)
+cm and phantom is distored into an elliptical shape by
+compression. See PART I setup 5.
+Data files: vitro200905_ph1t1_021.get - vitro200905_ph1t1_025.get
+Note: Object positions were measured before distorting the phantom.
+
+Setup 6: Object 1 at (0,7) cm and object 2 at (-7,0)
+cm and phantom is distored into an elliptical shape by
+compressing the walls in the y-axis direction until the
+short axis measures 25 cm across.
+Initially the phantom is circular, during the first 6
+seconds it is gradually compressed into the elliptical
+shape. Then for the next 6 seconds it is slowly restored
+to original shape. This is repeated to simulate periodic
+motion (as in chest wall expansion during breathing)
+until measurement is complete (60 seconds).
+Data files: vitro200905_ph3t2_026.get
+Note: Object positions were measured before distorting the phantom.
+
+Averaged data: The five measurements in each setup (1-4
+only) have been read into Matlab and avereaged. The average
+data is stored in the avgdata_p3t2.mat file. 
+% END OF EXPERIMENT
+</pre>
+
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:31 $ by $Author: aadler $
+</small>
+</body></html>

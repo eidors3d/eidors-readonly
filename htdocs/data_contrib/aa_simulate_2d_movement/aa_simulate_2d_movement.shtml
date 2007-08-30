@@ -1,0 +1,63 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Andy Adler, Tao Dai, William R.B. Lionheart
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> Aug 26, 2007.
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Simulation of the movement of a small target in 
+            a 2D medium, based on a very fine FEM.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with attribution). 
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> Please refer to this paper in any publications:
+<ul>
+Andy Adler, Tao Dai, William R.B. Lionheart
+<i>Temporal Image Reconstruction in Electrical Impedance Tomography</i>
+Physiol. Meas., 2007.
+</ul>
+
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are in the matlab v6 *.mat file format.
+Variables:<ul>
+<li>
+  vh - voltages from homogeneous medium
+<li>
+  vi - voltages measured from media with target (each column is a measurement)
+<li>
+  xyr_pt - the (x,y) position and target radius for each target
+</ul>
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Circular Medium. 
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+            Adjacent stimulation and measurement. No measurement at
+            the stimulation electrodes.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./simulate_2d_movement_data.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<center>
+<img src="simulate_2d_movement.png">
+<br><i>Figure:</i>
+Sample FEM image from simulation medium
+</center>
+
+
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:31 $ by $Author: aadler $
+</small>
+</body></html>
+

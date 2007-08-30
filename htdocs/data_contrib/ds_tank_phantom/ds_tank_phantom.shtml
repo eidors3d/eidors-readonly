@@ -1,0 +1,40 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> David Stephenson
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2004
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Measurements in carefully calibrated
+            phantom at U.Manchester using LCT tomograph
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> None
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are in *txt files encoded in a zip file
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Circular Medium. 
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./ds_data_2004.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:33 $ by $Author: aadler $
+</small>
+</body></html>
+

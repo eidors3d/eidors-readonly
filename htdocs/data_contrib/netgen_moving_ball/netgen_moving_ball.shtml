@@ -1,0 +1,65 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Andy Adler, William R.B. Lionheart
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2006.
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Simulation of the movement of a small target moving
+            in a 3D medium. Netgen is used to remesh the medium
+            at each step.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> Not required
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are in the matlab v6 *.mat file format.
+Variables:<ul>
+<li> fmdl - forward model for simulation of the homogenous tank
+<li> homg_tank - measurements on the homogenous tank
+<li> target_spiral - target moving in a spiral starting at the centre
+<li> target_spirograph_fast - target moving in a 'spirograph' pattern
+       (star shaped movement)
+<li> target_spirograph_slow - target moving slowly in a 'spirograph' 
+       (star shaped movement)
+</ul>
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Circular Medium. 
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+            Adjacent stimulation and measurement. No measurement at
+            the stimulation electrodes.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./netgen_moving_ball.mat"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<center>
+<img src="netgen_mesh_a.png">
+<br><i>Figure:</i>
+Image of the FEM for the homogenous tank simulation
+</center>
+
+<center>
+<img src="netgen_mesh_b.png">
+<br><i>Figure:</i>
+Detailed inset of FEM geometry near electrodes
+</center>
+
+
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:34 $ by $Author: aadler $
+</small>
+</body></html>
+

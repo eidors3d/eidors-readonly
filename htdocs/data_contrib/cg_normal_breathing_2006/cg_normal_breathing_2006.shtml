@@ -1,0 +1,213 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Author:
+       <td> Camille G&oacute;mez-Laberge 
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> September 21, 2005. 
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> EIT invivo measurements collected on a normal human subject performing normal and paradoxical breathing manoeuvres.
+Measurements were collected using single- and double-plane electrode configurations. 
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with attribution). 
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> None 
+
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are stored as Zip files containing the VIASYS *.get file format.
+<hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./cg_invivo_1pl.zip"
+            >Data (zip format): Single plane measurements</a>
+       <br>
+            <a href="./cg_invivo_2pl.zip"
+            >Data (zip format): Double plane measurements</a>
+       <hr>
+   </table>
+
+<h3> Detailed information on single-plane (cg_invivo_1pl.zip) measurement protocol </H3>
+
+<pre>
+% ************************************
+% Electrical Impendance Tomography
+% VIASYS invivo data
+% University of Ottawa
+% Department of Electrical Engineering
+% Date:   September 21, 2005
+% Author: Camille Gomez-Laberge
+% $Id: cg_normal_breathing_2006.shtml,v 1.1 2007-08-30 03:55:33 aadler Exp $
+% ************************************
+
+This README file is the documentation that accompanies the data collected in these directory: cgomez-1pl/
+
+% ****************************
+% THE EXPERIMENT
+% ****************************
+Subject: Camille Gomez-Laberge
+Age: 25
+Status: Healthy
+Experimenter: Li Peng Xie
+Date Collected: September 15, 2005
+Locale: Research laboratory
+Equipment: EIT Viasys / University of Gottingen
+Electrodes: 17 EKG Blue Sensor Ag/Ag-Cl electrodes (16 + reference)
+Skin Preparation: Rubbing alcohol
+Measurement Procedure: All measurements are taken while the subject is
+supine. Ambient temperature in room is 25 degrees Celcius. Details for
+each part of the experiment follow.
+
+PART I:
+Directory: cgomez-1pl/
+Placement: Single plane 16 electrodes aligned with the fifth rib directly
+below the nipple. Electrode 1 is in the centre of the sternum. The other
+electrodes are labelled moving towards the subject's right side so that
+electrode 5 in under the right armpit, electrode 9 on the spine and
+electrode 13 under the left armpit. The reference electrode is placed
+on the right side of the subject's waist line.
+
+Subject is rested - in normal state
+
+1. Tidal breathing
+Heart rate: 62 bpm
+Data file: vivo150905_t1_001.get
+Note: Measurement begins when lungs are at functional residual capacity.
+
+2. Total Lung Capacity - Residual Capacity (TLC-RC)
+Heart rate: 62 bpm
+Data file: vivo150905_t1_002.get
+Note: Measurement begins when lungs are at residual capacity.
+
+3. Paradoxial Breathing
+Heart rate: 62 bpm
+Data file: vivo150905_t1_003.get
+Note: Subject is holding breath and transfering air across thorax by
+expanding the rib cage and then expanding the abdomen. This is repeated
+every 5 seconds for the duration of the sample.
+
+Subject induces stress on the cardiovascular system by lower-body
+excercise (e.g running, climbing stairs).
+Subject ran until heartrate exceeded 90 bpm (approx. 6 minutes in this case).
+NOTE: The electrodes are not removed during excercise.
+
+4. Tidal breathing
+Heart rate: 92 bpm
+Data file: vivo150905_t1_004.get
+Note: Measurement begins when lungs are at functional residual capacity.
+
+5. TLC-RC
+Heart rate: 90 bpm
+Data file: vivo150905_t1_005.get
+Note: Measurement begins when lungs are at residual capacity.
+
+6. Paradoxial Breathing
+Heart rate: 84 bpm
+Data file: vivo150905_t1_006.get
+Note: Subject is holding breath and transfering air across thorax by
+expanding the rib cage and then expanding the abdomen. This is repeated
+every 5 seconds for the duration of the sample.
+
+% END OF EXPERIMENT
+</pre>
+
+<h3> Detailed information on double-plane (cg_invivo_2pl.zip) measurement protocol </H3>
+
+<pre>
+% ************************************
+% Electrical Impendance Tomography
+% VIASYS invivo data
+% University of Ottawa
+% Department of Electrical Engineering
+% Date:   September 21, 2005
+% Author: Camille Gomez-Laberge
+% $Id: cg_normal_breathing_2006.shtml,v 1.1 2007-08-30 03:55:33 aadler Exp $
+% ************************************
+
+This README file is the documentation that accompanies the data collected in these directory: cgomez-2pl/
+
+% ****************************
+% THE EXPERIMENT
+% ****************************
+Subject: Camille Gomez-Laberge
+Age: 25
+Status: Healthy
+Experimenter: Li Peng Xie
+Date Collected: September 15, 2005
+Locale: Research laboratory
+Equipment: EIT Viasys / University of Gottingen
+Electrodes: 17 EKG Blue Sensor Ag/Ag-Cl electrodes (16 + reference)
+Skin Preparation: Rubbing alcohol
+Measurement Procedure: All measurements are taken while the subject is
+supine. Ambient temperature in room is 25 degrees Celcius. Details for
+each part of the experiment follow.
+
+PART II:
+Directory: cgomez-2pl/
+Placement: Two planes of 8 electrodes each. The upper plane is vertically
+aligned with the fifth (5) rib directly below the nipple and the lower
+plane with the seventh (7) rib directly below the nipple. Electrode 1
+is on the upper plane in the centre of the sternum. Electrode 2 is on
+the lower plane but shifted to the right by half the inter-electrode
+distance on the upper plane. The other electrodes are labelled in a
+zig-zag pattern, moving towards the subject's right side. The reference
+electrode is placed on the right side of the subject's waist line.
+
+Subject is rested - in normal state
+
+1. Tidal breathing
+Heart rate: 58 bpm
+Data file: vivo150905_t2_001.get
+Note: Measurement begins when lungs are at functional residual capacity.
+
+2. Total Lung Capacity - Residual Capacity (TLC-RC)
+Heart rate: 64 bpm
+Data file: vivo150905_t2_002.get
+Note: Measurement begins when lungs are at residual capacity.
+
+3. Paradoxial Breathing
+Heart rate: 60 bpm
+Data file: vivo150905_t2_003.get
+Note: Subject is holding breath and transfering air across thorax by
+expanding the rib cage and then expanding the abdomen. This is repeated
+every 5 seconds for the duration of the sample. Measurement begins with
+abdomen expanded.
+
+Subject induces stress on the cardiovascular system by lower-body
+excercise (e.g running, climbing stairs).
+
+Subject ran until heartrate exceeded 90 bpm (approx. 6 minutes in this case).
+NOTE: The electrodes are not removed during excercise.
+
+4. Tidal breathing
+Heart rate: 102 bpm
+Data file: vivo150905_t2_004.get
+Note: Measurement begins when lungs are at functional residual capacity.
+
+5. TLC-RC
+Heart rate: 96 bpm
+Data file: vivo150905_t2_005.get
+Note: Measurement begins when lungs are at residual capacity.
+
+6. Paradoxial Breathing
+Heart rate: 76 bpm
+Data file: vivo150905_t2_006.get
+Note: Subject is holding breath and transfering air across thorax by
+expanding the rib cage and then expanding the abdomen. This is repeated
+every 5 seconds for the duration of the sample. Measurement begins with
+abdomen expanded.
+ 
+% END OF EXPERIMENT
+</pre>
+
+<small>
+    Last Modified: $Date: 2007-08-30 03:55:33 $ by $Author: aadler $
+</small>
+</body></html>
+
