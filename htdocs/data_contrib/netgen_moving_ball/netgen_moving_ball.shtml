@@ -41,7 +41,7 @@ Variables:<ul>
        <hr>
    <tr><th valign="top"> Data:
        <td> <a href="./netgen_moving_ball.mat"
-            >Data (zip format)</a>
+            >Data (mat format)</a>
        <hr>
    </table>
 
@@ -59,7 +59,7 @@ Detailed inset of FEM geometry near electrodes
 
 
 <small>
-    Last Modified: $Date: 2007-08-30 03:58:27 $ by $Author: aadler $
+    Last Modified: $Date: 2007-08-31 04:43:38 $ by $Author: aadler $
 </small>
 </body></html>
 
