@@ -40,7 +40,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_circ_tank.m,v 1.11 2007-08-30 03:38:26 aadler Exp $
+% $Id: mk_circ_tank.m,v 1.12 2007-08-31 05:41:43 aadler Exp $
 
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');
@@ -66,7 +66,7 @@ else  %3D
    [elem, node, bdy, point_elec_nodes] = mk_3D_model( elem, node, ...
                   levels, bdy, point_elec_nodes );
     % 3D - need to replace buggy calcs
-   bdy= find_boundary(elem')';
+%  bdy= find_boundary(elem')';
 
    if ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
@@ -185,13 +185,13 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
   elem_even=[elem0([2 1 2 3],:), ...
              elem0([2 3 1 3],:), ...
              elem0([3 2 1 1],:)]; 
-         
-         
+
   NODE= [node0; niveaux(1)*ones(1,n) ];
   ELEM= [];
-  bdy1= [bdy;bdy(1,:)];
-  bdy2= [bdy;bdy(2,:)];
   bl= size(bdy,2);
+% Interlaced bdy idx
+  bdy_e0= bdy( 2*(1:bl)-rem(1:bl,2));
+  bdy_e1= bdy( 2*(1:bl)-rem(0:bl-1,2));
   BDY = [];
  
   ln= length(niveaux);
@@ -208,8 +208,8 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
         [(k-1)*n*ones(3,e);(k-2)*n*ones(1,e)]] ) ];
     % BUG TO FIX HERE
     BDY= [BDY, ...
-          bdy1 + [(k-1)*n*ones(2,bl); (k-2)*n*ones(1,bl)], ...
-          bdy2 + [(k-2)*n*ones(2,bl); (k-1)*n*ones(1,bl)] ];
+         [bdy + (k-2)*n*ones(2,bl); bdy_e1 + (k-1)*n*ones(1,bl)], ...
+         [bdy + (k-1)*n*ones(2,bl); bdy_e0 + (k-2)*n*ones(1,bl)] ];
   end %for k
 
   % Now add top and bottom boundary
