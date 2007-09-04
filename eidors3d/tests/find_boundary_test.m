@@ -23,9 +23,15 @@ bdy = find_boundary(mdl.fwd_model.elems);
 bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
 
-% Bug is expected with old code in mk_circ_model - now uses find_boundary
-ok= match(bdy,bdyc,ok,'3D test a3c2 - expected bug');
+ok= match(bdy,bdyc,ok,'3D test a3c2');
 
+%3D Test:  
+mdl = mk_common_model('b3cr',16);
+bdy = find_boundary(mdl.fwd_model.elems);
+bdy = sort_boundary(bdy);
+bdyc= sort_boundary(mdl.fwd_model.boundary);
+
+ok= match(bdy,bdyc,ok,'3D test b3c2');
 
 function bdy= sort_boundary(bdy)
    bdy = sort(bdy,2);

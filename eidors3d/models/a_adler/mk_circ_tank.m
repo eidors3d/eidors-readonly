@@ -40,7 +40,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model) 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_circ_tank.m,v 1.12 2007-08-31 05:41:43 aadler Exp $
+% $Id: mk_circ_tank.m,v 1.13 2007-09-04 15:24:55 aadler Exp $
 
 if rem(rings,4) ~= 0
    error('parameter rings and must be divisible by 4');
@@ -52,7 +52,7 @@ if size(elec_spec) == [1,1] if isnumeric(elec_spec)
    n_elec= elec_spec;
 end; end
 
-[elem, node, bdy, point_elec_nodes] = mk_2D_model( rings );
+[elem, node, bdy, point_elec_nodes, node_order] = mk_2D_model( rings );
 
 if isempty( levels ) % 2D
    
@@ -64,8 +64,8 @@ if isempty( levels ) % 2D
    end
 else  %3D
    [elem, node, bdy, point_elec_nodes] = mk_3D_model( elem, node, ...
-                  levels, bdy, point_elec_nodes );
-    % 3D - need to replace buggy calcs
+                  levels, bdy, point_elec_nodes, node_order );
+    % 3D - fixed - don't need this anymore!
 %  bdy= find_boundary(elem')';
 
    if ~isempty( n_elec )
@@ -130,13 +130,20 @@ function elec_nodes= electrode_pattern( point_elec_nodes, elec_spec )
 
 % Create a simple 2D regular mesh, based on N circular rings
 %   and n_elec electrodes
-function [ELEM, NODE, bdy_nodes, point_elec_nodes] = mk_2D_model( N );
+function [ELEM, NODE, bdy_nodes, point_elec_nodes, NODE_order] =  ...
+          mk_2D_model( N );
   ELEM=[];
   NODE= [0;0];
+  NODE_order= [1];
   int=1;
   for k=1:N
     phi= (0:4*k-1)*pi/2/k;
     NODE= [NODE k/N*[sin(phi);cos(phi)]];
+
+% NODE_order for extruded 3D model      3 1 2 3 1
+%                                     1 2 3 1 2 3
+    NOq= rem(k+(0:k),3)+1;
+    NODE_order= [NODE_order, NOq([1:k, k+1:-1:2, 1:k, k+1:-1:2])];
 
     ext= 2*(k*k-k+1);
     idxe=[0:k-1; 1:k];
@@ -173,25 +180,33 @@ function [ELEM, NODE, bdy_nodes, point_elec_nodes] = mk_2D_model( N );
 % FIXME: The boundary calculated in 3D is no good. Instead
 %   it needs to be fixed using find_boundary, later
 function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
-     elem0, node0, niveaux, bdy, elec_nodes0 );
+     elem0, node0, niveaux, bdy, elec_nodes0, node_order );
+
+  elem0= node_reorder( elem0, node_order);
 
   d= size(elem0,1);       %dimentions+1
   n= size(node0,2);       %NODEs
   e= size(elem0,2);       %ELEMents     
 
-  elem_odd= [elem0([1 1 2 3],:), ...
-             elem0([1 3 2 3],:), ...
-             elem0([3 2 1 2],:)]; 
-  elem_even=[elem0([2 1 2 3],:), ...
-             elem0([2 3 1 3],:), ...
-             elem0([3 2 1 1],:)]; 
+%                   D     U
+  elem_odd= [elem0([3,2,1,1],:), ... % 1 up 1 2 3 down
+             elem0([3,2,2,1],:), ... % 1 2 up 2 3 down 
+             elem0([3,3,2,1],:)];    % 1 2 3 up 3 down
+  elem_even=[elem0([1,2,3,3],:), ... % 3 up 1 2 3 down
+             elem0([1,2,2,3],:), ... % 3 2 up 2 1 down 
+             elem0([1,1,2,3],:)];    % 3 2 1 up 1 down
 
   NODE= [node0; niveaux(1)*ones(1,n) ];
   ELEM= [];
   bl= size(bdy,2);
 % Interlaced bdy idx
-  bdy_e0= bdy( 2*(1:bl)-rem(1:bl,2));
-  bdy_e1= bdy( 2*(1:bl)-rem(0:bl-1,2));
+
+  bdy_order =node_order(bdy);
+  bdy_up= find(bdy_order>[1;1]*min(bdy_order));
+  bdy_dn= find(bdy_order<[1;1]*max(bdy_order));
+  
+  bdy_odd = [bdy; bdy(bdy_up')];
+  bdy_even= [bdy; bdy(bdy_dn')];
   BDY = [];
  
   ln= length(niveaux);
@@ -199,17 +214,19 @@ function [ELEM, NODE, BDY, elec_nodes] = mk_3D_model( ...
     NODE=[NODE  [node0; niveaux(k)*ones(1,n)] ];
     if rem(k,2)==1
         elem= elem_odd;
+        bdy_e0= bdy_even;
+        bdy_e1= bdy_odd;
     else
         elem= elem_even;
+        bdy_e1= bdy_even;
+        bdy_e0= bdy_odd;
     end
-    ELEM= [ELEM (elem + ...
-       [[(k-1)*n*ones(1,e);(k-2)*n*ones(3,e)] ...
-        [(k-1)*n*ones(2,e);(k-2)*n*ones(2,e)] ...  
-        [(k-1)*n*ones(3,e);(k-2)*n*ones(1,e)]] ) ];
-    % BUG TO FIX HERE
-    BDY= [BDY, ...
-         [bdy + (k-2)*n*ones(2,bl); bdy_e1 + (k-1)*n*ones(1,bl)], ...
-         [bdy + (k-1)*n*ones(2,bl); bdy_e0 + (k-2)*n*ones(1,bl)] ];
+    el_add = (k-2)*n+[[zeros(3,e);n*ones(1,e)], ...
+                      [zeros(2,e);n*ones(2,e)], ...
+                      [zeros(1,e);n*ones(3,e)]];
+    ELEM= [ELEM,elem + el_add];
+    BDY= [BDY, bdy_e0+(k-2)*n+[zeros(2,bl);n*ones(1,bl)], ...
+               bdy_e1+(k-2)*n+[n*ones(2,bl);zeros(1,bl)] ];
   end %for k
 
   % Now add top and bottom boundary
@@ -234,3 +251,14 @@ function elec_struct = mk_electrodes( elec_nodes)
        elec_struct= [];
    end
 
+function elem=  node_reorder( elem0, node_order);
+  e= size(elem0,2);       %ELEMents     
+
+  no_test=  node_order(elem0);
+  no_test=  (0:e-1)'*[3,3,3]+no_test';
+  elem=     elem0(no_test');
+
+  no_test = node_order(elem);
+  ok= ~norm(no_test - [1;2;3]*ones(1,e));
+
+  if ~ok; error('test_node_order fails - cant do 3D meshes'); end

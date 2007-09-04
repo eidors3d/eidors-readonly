@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.38 2007-08-30 03:37:05 aadler Exp $
+% $Id: startup.m,v 1.39 2007-09-04 15:24:55 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -72,6 +72,6 @@ if calc_colours('greylev')>=0
 else
    eidors_msg('Default background colour: black');
 end
-eidors_msg('Architecture specific directory: %s',archdir,1);
+eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
 clear HOMEDIR archdir;
