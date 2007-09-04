@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.11 2007-08-30 03:38:26 aadler Exp $
+% $Id: mk_common_model.m,v 1.12 2007-09-04 15:24:55 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -61,7 +61,7 @@ if str(2:3)=='2c'
    elseif str(1)=='d'; layers= 16;
    elseif str(1)=='e'; layers= 20;
    elseif str(1)=='f'; layers= 24;
-   else;  error('don`t know what to do with option=',str);
+   else;  error(['don`t know what to do with option=%s',str]);
    end
 
    inv_mdl = mk_2c_model( n_elec, layers, options );   
@@ -77,7 +77,7 @@ elseif str(2:3)=='2t' & length(str)==4
    elseif str(1)=='d'; layers= 16;
    elseif str(1)=='e'; layers= 20;
    elseif str(1)=='f'; layers= 24;
-   else;  error('don`t know what to do with option(1)=',str);
+   else;  error(['don`t know what to do with option(1)=',str]);
    end
 
    inv_mdl = mk_2c_model( n_elec, layers, options );   
@@ -92,7 +92,7 @@ elseif str(2:3)=='3c' & length(str)==4
    elseif str(1)=='b'; xy_layers=  8; z_layers= linspace(-.7,.7,11);
    elseif str(1)=='c'; xy_layers= 12; z_layers= linspace(-.9,.9,21);
    elseif str(1)=='d'; xy_layers= 16; z_layers= linspace(-1,1,41);
-   else;  error('don`t know what to do with option(1)=',str);
+   else;  error(['don`t know what to do with option(1)=',str]);
    end
 
    spacing=.5;
@@ -102,7 +102,7 @@ elseif str(2:3)=='3c' & length(str)==4
       elec_conf= 'zigzag'; elec_space= [1,-1]*spacing/2;
    elseif str(4)=='p';
       elec_conf= 'planes'; elec_space= [1,-1]*spacing/2;
-   else;  error('don`t know what to do with option(4)=',str);
+   else;  error(['don`t know what to do with option(4)=',str]);
    end
 
    inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, ...
@@ -124,7 +124,7 @@ elseif strcmp( str, 'b3r2')
     end
     inv_mdl = mk_b3r2_model( n_elec, nr, options );    
 else
-    error('don`t know what to do with option=',str);
+    error(['don`t know what to do with option=',str]);
 end
 
 inv_mdl.name= ['EIDORS common_model_',str]; 
