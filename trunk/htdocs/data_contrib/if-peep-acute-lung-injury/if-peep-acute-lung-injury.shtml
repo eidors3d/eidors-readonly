@@ -1,0 +1,66 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Inez Frerichs,
+Peter A. Dargaville,
+Taras Dudykevych,
+Peter C. Rimensberger
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2003
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+The measurements were performed in the same pig after induction of
+acute lung injury by repeated bronchoalveolar lavage (p1130107.get) and
+after administration of surfactant (p1130122.get). Both measurements
+were acquired at a rate of 13 scans/s, a total of 1500 frames were
+obtained. The excitation current was 50 kHz. The data was acquired
+during an incremental and decremental PEEP trial (stepwise increase and
+decrease of positive end-expiratory pressure).
+<p>
+Data were published in 
+<a href="http://www.springerlink.com/content/220rudd750445m6y/"
+   >Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
+   P.M.:Electrical Impedance Tomography &minus; a method for monitoring
+   regional lung aeration and tidal volume distribution? <i>Intensive
+   Care Med.</i> 29:2312-2316, 2003</a>.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attibution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+ Use or presentation of these data must acknowledge
+In&eacute;z Frerichs, and reference this publication:
+<a href="http://www.springerlink.com/content/220rudd750445m6y/"
+   >Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
+   P.M.:Electrical Impedance Tomography &minus; a method for monitoring
+   regional lung aeration and tidal volume distribution? <i>Intensive
+   Care Med.</i> 29:2312-2316, 2003</a>.
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are in *get files encoded in a zip file
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Pig torso. Single plane of  
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./if_data_2003.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<a href="http://www.springerlink.com/content/220rudd750445m6y/"
+   ><img src="Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
+
+<small>
+    Last Modified: $Date: 2007-09-04 15:49:46 $ by $Author: aadler $
+</small>
+</body></html>
+

@@ -12,6 +12,14 @@ use the data</b>
 
 <h2>Data Repository</h2>
 
+<h3>Animal Data</h3>
+<ul>
+<h4>Breathing Data</h4>
+<li> <a href="./data_contrib/if-peep-acute-lung-injury/if-peep-acute-lung-injury.shtml"
+     >EIT of incremental and decremental PEEP trial of acute lung injury in pig</a>
+      By: I. Frerichs
+</ul>
+
 <h3>Human Data</h3>
 <ul>
 <h4>Breathing Data</h4>
@@ -120,7 +128,7 @@ likely you are to get references to your paper ;-).
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 03:58:27 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-04 15:49:45 $ by $Author: aadler $
 </small>
 
 </body>
