@@ -20,8 +20,9 @@
 </td></tr></table>
 <table border="0"> <tr>
 <td valign="top">
-<a href="http://www.eidors.org/"
-   >EIDORS</a><br>
+<a href="http://eidors3d.sf.net/" >EIDORS</a>
+(<a href="http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml">
+   >mirror</a>)<br>
 <a href="../index.shtml"
    >Main</a><br>
 <a href="../docs.shtml"
@@ -52,7 +53,7 @@
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar.shtml,v 1.8 2007-08-30 03:58:28 aadler Exp $
+     $Id: nav-sidebar.shtml,v 1.9 2007-09-04 16:51:37 aadler Exp $
   -->
 <!--#if expr="$SERVER_NAME = 'localhost'" -->
 <!--#else -->
