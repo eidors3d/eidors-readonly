@@ -1,4 +1,4 @@
-% TV Solutions % $Id: total_variation03.m,v 1.3 2007-08-30 03:58:28 aadler Exp $
+% TV Solutions % $Id: total_variation03.m,v 1.4 2007-09-04 15:26:02 aadler Exp $
 
 % Create TV Inverse Model
 invtv= eidors_obj('inv_model', 'EIT inverse');
@@ -25,7 +25,9 @@ for i= 1:length(maxiters)
    show_slices(imgtv)
    subplot(2,length(maxiters),i+length(maxiters));
    z=calc_slices(imgtv);
-   c=calc_colours(z); mesh(z,c);
+   c=calc_colours(z); h=mesh(z,c);
+   set(h, 'CDataMapping', 'direct' );
+
    title(sprintf('TV iters=%d',maxiters(i)))
    view(173,34);
    set(gca,{'XLim','YLim','ZLim','XTickLabel','YTickLabel'}, ...

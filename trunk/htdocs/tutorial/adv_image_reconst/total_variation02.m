@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: total_variation02.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
+% $Id: total_variation02.m,v 1.4 2007-09-04 15:26:02 aadler Exp $
 
 % Create Inverse Model
 inv2d= eidors_obj('inv_model', 'EIT inverse');
@@ -24,7 +24,8 @@ subplot(221)
 show_slices(sim_img)
 subplot(223)
 z=calc_slices(sim_img);
-c=calc_colours(z); mesh(z,c);
+c=calc_colours(z); h=mesh(z,c);
+set(h, 'CDataMapping', 'direct' );
 view(173,34);
 set(gca,{'XLim','YLim','ZLim','XTickLabel','YTickLabel'}, ...
         {[1 64],[1 64],[0.9,1.1],[],[]})
@@ -34,7 +35,8 @@ subplot(222)
 show_slices(imgr)
 subplot(224)
 z=calc_slices(imgr);
-c=calc_colours(z); mesh(z,c);
+c=calc_colours(z); h=mesh(z,c);
+set(h, 'CDataMapping', 'direct' );
 view(173,34);
 set(gca,{'XLim','YLim','ZLim','XTickLabel','YTickLabel'}, ...
         {[1 64],[1 64],[-0.1,0.1],[],[]})

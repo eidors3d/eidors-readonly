@@ -1,5 +1,5 @@
 % Basic Image reconstruction
-% $Id: tutorial110a.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
+% $Id: tutorial110a.m,v 1.4 2007-09-04 15:26:02 aadler Exp $
 
 % Load some data
 load iirc_data_2006
@@ -27,9 +27,8 @@ for idx= 1:3
    subplot(2,3,idx+3);
    z=calc_slices(img);
    c=calc_colours(z);
-   mesh(z,c); view(-11,44);
- %NOT ONLY DO WE SPECIFY COLOURS, WE ACTUALLY WANT MATLAB TO USE THEM!
-   set(gca,'Clim',[1 256]);
+   h=mesh(z,c); view(-11,44);
+   set(h,'CDataMapping','Direct');
    set(gca,{'XLim','YLim','ZLim','XTickLabel','YTickLabel'}, ...
         {[1 64],[1 64],[-1.3,0.2],[],[]})
 end
