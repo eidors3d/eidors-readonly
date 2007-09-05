@@ -22,7 +22,7 @@
 <td valign="top">
 <a href="http://eidors3d.sf.net/" >EIDORS</a>
 (<a href="http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml">
-   >mirror</a>)<br>
+   mirror</a>)<br>
 
 <a href="../../index.shtml"
    >Main</a><br>
@@ -46,7 +46,7 @@
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar-tut.shtml,v 1.4 2007-09-04 16:51:37 aadler Exp $
+     $Id: nav-sidebar-tut.shtml,v 1.5 2007-09-05 00:39:25 aadler Exp $
   -->
 <!--#if expr="$SERVER_NAME = 'localhost'" -->
 <!--#else -->
