@@ -1,0 +1,117 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Brian Brown
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 27th November 1981
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+Data were recorded from Rod Smallwoood's arm on the 27th
+November 1981; the dot matrix image which shows the ulna
+and radius bones.  We made a 'radiotherapy type' mould of the
+arm and then put drawing pins through the plastic (pin head
+inwards) as electrodes. There two sets of data. One is recorded
+from the arm and the other is with saline filling the mould. The
+<p>
+Data were published in 
+<a href="http://link.aip.org/link/?ELLEAK/19/933/1"
+   >C.C. Barber, B.H. Brown, and I.L. Freeston,
+    "Imaging spatial distributions of resistivity using applied
+     potential tomography", <i>Electronics Letters</i>,
+     19(22):933-935, 1983</a>
+
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attibution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+Use or presentation of these data reference this publication:
+       <hr>
+<a href="http://link.aip.org/link/?ELLEAK/19/933/1"
+   >C.C. Barber, B.H. Brown, and I.L. Freeston,
+    "Imaging spatial distributions of resistivity using applied
+     potential tomography", <i>Electronics Letters</i>,
+     19(22):933-935, 1983</a>
+   <tr><th valign="top"> Format:
+       <td>
+Data are handwritten and scanned into the linked pdf file.
+The adjacent drive/receive data sets for both the
+Uniform(Saline) and Arm data and these are included in the
+attached Excel file. The are 6 columns of data in the xls file. The
+first three are for the uniform case and give the two reciprocal
+data sets and the mean of the two. Columns 4-6 are for the arm. I
+did a quick reconstruction using columns 3 and 6 as ref and data
+respectively and it looked OK.
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Pig torso. Single plane of  
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./if_data_2003.zip"
+            >Data (zip format)</a>
+       <hr>
+The pdf file that is attached shows the line printer output of the
+data we recorded from Rod Smallwoood's arm on the 27th
+November 1981 and the dot matrix image which shows the ulna
+and radius bones.  We made a 'radiotherapy type' mould of the
+arm and then put drawing pins through the plastic (pin head
+inwards) as electrodes. There two sets of data. One is recorded
+from the arm and the other is with saline filling the mould. The
+pdf file also shows my plot of the XY position of the electrodes.
+<p>
+
+Now the data set on the line printer is a complete data set i.e.
+Drive 1/2 then 1/3 then 1/4 etc for every combination. I could
+only find the print out for one of the data sets. However, I found
+my notebook with the adjacent drive/receive data set and this is
+page 7 of the pdf file.
+<p>
+
+I have extracted the adjacent drive/receive data sets for both the
+Uniform(Saline) and Arm data and these are included in the
+attached Excel file. The are 6 columns of data in the xls file. The
+first three are for the uniform case and give the two reciprocal
+data sets and the mean of the two. Columns 4-6 are for the arm. I
+did a quick reconstruction using columns 3 and 6 as ref and data
+respectively and it looked OK.
+<p>
+
+The first column of data is 104 point as follows.
+<pre>
+Drive 1/2 receive 3/4
+Drive 1/2 receive 4/5
+etc
+Drive 1/2 receive 16/1
+
+Drive 2/3 receive 4/5
+Drive 2/3 receive 5/6
+etc
+Drive 2/3 receive 16/1
+
+Drive 4/5 receive 6/7
+Drive 4/5 receive 7/8
+etc
+Drive 4/5 receive 16/1
+etc
+etc
+Drive 14/15 receive 16/1
+</pre>
+The second column is the other reciprocal set.
+<p>
+
+I think these data are the ones used to produce the image in the
+Electronics Letters paper of 1983 - page 1 of my pdf file.
+   </table>
+
+<small>
+    Last Modified: $Date: 2007-09-10 14:19:26 $ by $Author: aadler $
+</small>
+</body></html>
