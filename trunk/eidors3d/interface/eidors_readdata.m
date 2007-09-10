@@ -1,4 +1,4 @@
-function [vv, auxdata ]= eit_readdata( fname, format )
+function [vv, auxdata ]= eidors_readdata( fname, format )
 % EIDORS readdata - read data files from various EIT equipment
 %    manufacturers
 %
@@ -19,7 +19,7 @@ function [vv, auxdata ]= eit_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_readdata.m,v 1.22 2007-08-30 03:37:33 aadler Exp $
+% $Id: eidors_readdata.m,v 1.23 2007-09-10 21:38:03 camilgomez Exp $
 
 % TODO:
 %   - output an eidors data object
