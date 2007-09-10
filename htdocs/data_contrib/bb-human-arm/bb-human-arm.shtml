@@ -17,9 +17,10 @@ November 1981; the dot matrix image which shows the ulna
 and radius bones.  We made a 'radiotherapy type' mould of the
 arm and then put drawing pins through the plastic (pin head
 inwards) as electrodes. There two sets of data. One is recorded
-from the arm and the other is with saline filling the mould. The
+from the arm and the other is with saline filling the mould.
 <p>
-Data were published in 
+ The data were published in: 
+<br>
 <a href="http://link.aip.org/link/?ELLEAK/19/933/1"
    >C.C. Barber, B.H. Brown, and I.L. Freeston,
     "Imaging spatial distributions of resistivity using applied
@@ -33,12 +34,12 @@ Data were published in
    <tr><th valign="top"> Attribution Requirement:
        <td> 
 Use or presentation of these data reference this publication:
-       <hr>
 <a href="http://link.aip.org/link/?ELLEAK/19/933/1"
    >C.C. Barber, B.H. Brown, and I.L. Freeston,
     "Imaging spatial distributions of resistivity using applied
      potential tomography", <i>Electronics Letters</i>,
      19(22):933-935, 1983</a>
+       <hr>
    <tr><th valign="top"> Format:
        <td>
 Data are handwritten and scanned into the linked pdf file.
@@ -55,9 +56,10 @@ respectively and it looked OK.
             16 Electrodes numbered clockwise, with electrode #1 at the top.
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./if_data_2003.zip"
-            >Data (zip format)</a>
-       <hr>
+       <td>
+ <a href="./Rods_arm_1981.xls">Data (xls format - 19kB)</a>,
+ <a href="./Rods_arm_1981.pdf">Data (xls format - 7.3MB)</a>
+<p>
 The pdf file that is attached shows the line printer output of the
 data we recorded from Rod Smallwoood's arm on the 27th
 November 1981 and the dot matrix image which shows the ulna
@@ -109,9 +111,10 @@ The second column is the other reciprocal set.
 
 I think these data are the ones used to produce the image in the
 Electronics Letters paper of 1983 - page 1 of my pdf file.
+       <hr>
    </table>
 
 <small>
-    Last Modified: $Date: 2007-09-10 14:19:26 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-10 14:25:42 $ by $Author: aadler $
 </small>
 </body></html>
