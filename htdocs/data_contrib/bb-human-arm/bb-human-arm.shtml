@@ -52,14 +52,7 @@ did a quick reconstruction using columns 3 and 6 as ref and data
 respectively and it looked OK.
        <hr>
    <tr><th valign="top"> Methods:
-       <td> Pig torso. Single plane of  
-            16 Electrodes numbered clockwise, with electrode #1 at the top.
-       <hr>
-   <tr><th valign="top"> Data:
-       <td>
- <a href="./Rods_arm_1981.xls">Data (xls format - 19kB)</a>,
- <a href="./Rods_arm_1981.pdf">Data (xls format - 7.3MB)</a>
-<p>
+       <td> 
 The pdf file that is attached shows the line printer output of the
 data we recorded from Rod Smallwoood's arm on the 27th
 November 1981 and the dot matrix image which shows the ulna
@@ -87,6 +80,7 @@ respectively and it looked OK.
 <p>
 
 The first column of data is 104 point as follows.
+<blockquote>
 <pre>
 Drive 1/2 receive 3/4
 Drive 1/2 receive 4/5
@@ -106,15 +100,21 @@ etc
 etc
 Drive 14/15 receive 16/1
 </pre>
+</blockquote>
 The second column is the other reciprocal set.
 <p>
 
 I think these data are the ones used to produce the image in the
 Electronics Letters paper of 1983 - page 1 of my pdf file.
        <hr>
+   <tr><th valign="top"> Data:
+       <td>
+ <a href="./Rods_arm_1981.xls">Data (xls format - 19kB)</a>,
+ <a href="./Rods_arm_1981.pdf">Data (xls format - 7.3MB)</a>
+       <hr>
    </table>
 
 <small>
-    Last Modified: $Date: 2007-09-10 14:25:42 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-11 00:45:17 $ by $Author: aadler $
 </small>
 </body></html>
