@@ -8,7 +8,7 @@ function Reg= exponential_covar_prior( inv_model );
 %       DEFAULT is 5% of medium x,y radius
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: exponential_covar_prior.m,v 1.1 2007-08-31 04:39:21 aadler Exp $
+% $Id: exponential_covar_prior.m,v 1.2 2007-09-14 15:29:24 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 Reg = eidors_obj('get-cache', fwd_model, 'exponential_covar_prior');
@@ -50,7 +50,7 @@ function [rad,elem_ctr]= get_elem_rad_ctr( fwd_model );
    if     pp.n_dims==2 % in 2d A=pi*r^2
       rad= sqrt(pp.VOLUME/pi);
    elseif pp.n_dims ==3 % in 3D V=4/3*pi*r^3
-      rad= (pp.VOLUME*3/4/pi);
+      rad= (pp.VOLUME*3/4/pi).^(1/3);
    elseif pp.n_dims ==1 % in 1D V=2*r
       rad= pp.VOLUME/2;
    else 
