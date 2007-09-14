@@ -8,7 +8,7 @@ function Reg= exponential_covar_prior( inv_model );
 %       DEFAULT is 5% of medium x,y radius
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: exponential_covar_prior.m,v 1.2 2007-09-14 15:29:24 aadler Exp $
+% $Id: exponential_covar_prior.m,v 1.3 2007-09-14 15:35:34 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 Reg = eidors_obj('get-cache', fwd_model, 'exponential_covar_prior');
@@ -73,6 +73,7 @@ function [rad,elem_ctr]= get_elem_rad_ctr( fwd_model );
 % calculate the exponential integral over a space x1,x2
 %  given gamma, x1, x2, y1, y2
 function fi= integ_fn(x1i,x2i,y1i,y2i, gamma)
+   i_gam = 1/gamma;
 
    x1= min(x1i,x2i); x2= max(x1i,x2i);
    y1= min(y1i,y2i); y2= max(y1i,y2i);
@@ -84,14 +85,14 @@ function fi= integ_fn(x1i,x2i,y1i,y2i, gamma)
    xb2= max(x1,min(x2,y2)); xc1= xb2;
    xc2= x2;
 
-   RA= exp(-gamma*y1).*(1-exp(-gamma*Dy));
-   RC= exp( gamma*y2).*(1-exp(-gamma*Dy));
-   fi = 1./Dx./Dy/gamma^2 .* ( ... 
-            RA.*(exp( gamma*xa2) - exp( gamma*xa1)) - ...
-            RC.*(exp(-gamma*xc2) - exp(-gamma*xc1)) + ...
-            2*gamma*(xb2-xb1) - ...
-            exp(-gamma*y2).*(exp( gamma*xb2) - exp( gamma*xb1)) + ...
-            exp( gamma*y1).*(exp(-gamma*xb2) - exp(-gamma*xb1))...
+   RA= exp(-i_gam*y1).*(1-exp(-i_gam*Dy));
+   RC= exp( i_gam*y2).*(1-exp(-i_gam*Dy));
+   fi = 1./Dx./Dy/i_gam^2 .* ( ... 
+            RA.*(exp( i_gam*xa2) - exp( i_gam*xa1)) - ...
+            RC.*(exp(-i_gam*xc2) - exp(-i_gam*xc1)) + ...
+            2*i_gam*(xb2-xb1) - ...
+            exp(-i_gam*y2).*(exp( i_gam*xb2) - exp( i_gam*xb1)) + ...
+            exp( i_gam*y1).*(exp(-i_gam*xb2) - exp(-i_gam*xb1))...
            );
    
    
