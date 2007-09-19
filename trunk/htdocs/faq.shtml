@@ -37,15 +37,23 @@ and
 Please contact them with suggestions, contribution of code,
 and contribution of sample data, meshes, and algorithms.
 
-<!--
 <p><li><b>
     How do I get started with EIDORS?
 </b><p>
+Step 1: Download
+<a href="http://sourceforge.net/projects/eidors3d/"
+   >EIDORS</a>
+<br>
+Step 2: Unzip the file and save it to a directory like
+   <tt>/path/to/eidors</tt>
+<br>
+Step 3: Start Matlab (or Octave). Run this command:
+   <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
 
 <p><li><b>
     Are there any prebuilt examples?
 </b><p>
--->
+Yes, please look at the <a href="tutorial/index.html">tutorial</a>.
 
 <p><li><b>
     Under what terms is EIDORS licenced
@@ -67,19 +75,12 @@ your clients.
 <p><li><b>
     How should I refer to EIDORS in a scientific publication
 </b><p>
-For the core EIDORS code, based on the work of Nick Polydorides,
-you may quote the following paper
+Please quote the following paper
 <blockquote>
-Nick Polydorides and William R B Lionheart 2002
-A Matlab toolkit for three-dimensional electrical impedance tomography: a contribution to the Electrical Impedance and Diffuse Optical Reconstruction Software project
-<i>
-    Meas. Sci. Technol.</i> 13(12):1871-1883
+Andy Adler, William R B Lionheart (2006)
+"Uses and abuses of EIDORS: An extensible software base for EIT",
+<i> Physiol. Meas.</i> 27:S25-S42, 2006
 </blockquote>
-
-Code which implements other published algorithms will also be included
-with EIDORS. References to the appropriate publications will be
-listed in the source code. Hopefully, we will include a list
-of references here, also.
 
 <p><li><b>
     Does EIDORS support 2D algorithms
@@ -227,7 +228,7 @@ The easiest solution is to recompile the mex file, as follows:
 </pre>
 
 <p><li><b>
-<tt>Using Netgen
+Using Netgen
 </b><p>
 EIDORS can use netgen to create some fairly impressive 3D meshes.
 See the <a href="./examples/">examples</a>.
@@ -242,7 +243,47 @@ Netgen usage with EIDORS is fairly easy under windows. You need to
 </ol>
 
 <p><li><b>
-<tt>Compiling Netgen under linux
+<tt>mk_stim_patterns</tt> question
+</b><p>
+is the code
+<center><tt>
+stim= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
+</tt></center>
+equivalent to
+<center> <tt> 
+stim= mk_stim_patterns(8, 2, '{ad}','{ad}', {}, 10);
+</tt></center>
+
+No, each ring is treated separately, so that, for example
+<pre>
+&gt;&gt; stim= mk_stim_patterns(4, 2, '{ad}','{ad}', {}, 10);
+&gt;&gt; full([stim(:).stim_pattern])
+ans = -10     0     0    10     0     0     0     0
+       10   -10     0     0     0     0     0     0
+        0    10   -10     0     0     0     0     0
+        0     0    10   -10     0     0     0     0
+        0     0     0     0   -10     0     0    10
+        0     0     0     0    10   -10     0     0
+        0     0     0     0     0    10   -10     0
+        0     0     0     0     0     0    10   -10
+
+&gt;&gt; stim= mk_stim_patterns(8, 1, '{ad}','{ad}', {}, 10);
+&gt;&gt; full([stim(:).stim_pattern])
+ans = -10     0     0     0     0     0     0    10
+       10   -10     0     0     0     0     0     0
+        0    10   -10     0     0     0     0     0
+        0     0    10   -10     0     0     0     0
+        0     0     0    10   -10     0     0     0
+        0     0     0     0    10   -10     0     0
+        0     0     0     0     0    10   -10     0
+        0     0     0     0     0     0    10   -10
+</pre>
+
+
+
+
+<p><li><b>
+Compiling Netgen under linux
 </b><p>
 To use netgen under linux is more complicated. I got it to work 
 on Fedora FC5 by doing:
@@ -309,7 +350,7 @@ Useful information is found
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-15 18:23:26 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-19 16:50:27 $ by $Author: aadler $
 </small>
 </body>
 
