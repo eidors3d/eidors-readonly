@@ -66,7 +66,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_stim_patterns.m,v 1.11 2007-08-30 03:38:26 aadler Exp $
+% $Id: mk_stim_patterns.m,v 1.12 2007-09-19 16:48:01 aadler Exp $
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
@@ -89,8 +89,8 @@ for ring = 0:v.n_rings-1
 
        if ~isempty(m_pat) 
            stim(i).stimulation = 'mA';
-           stim(i).stim_pattern= s_pat;
-           stim(i).meas_pattern= m_pat;
+           stim(i).stim_pattern= sparse(s_pat);
+           stim(i).meas_pattern= sparse(m_pat);
            i=i+1;
        end
 
