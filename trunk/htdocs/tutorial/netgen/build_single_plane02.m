@@ -1,5 +1,5 @@
 % Test area of electrodes
-% $Id: build_single_plane02.m,v 1.1 2007-09-20 20:30:33 aadler Exp $
+% $Id: build_single_plane02.m,v 1.2 2007-09-20 21:08:01 aadler Exp $
 
 % verify np_fwd_parameters identifies
 pp= np_fwd_parameters( fmdl);
@@ -21,6 +21,7 @@ for i= 1:electrodes_per_plane*number_of_planes
    fprintf('elec#%d: area=%f\n',i,elec_area);
 end
 
+view(0,14);
 show_fem( fmdl);
 print -r100 -dpng build_single_plane01a.png;
 
