@@ -18,7 +18,7 @@ function [JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )
 % TODO: think about how to implement this!!
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_JiRtRJt.m,v 1.16 2007-08-30 03:37:03 aadler Exp $
+% $Id: calc_JiRtRJt.m,v 1.17 2007-09-20 10:40:18 aadler Exp $
 
 JiRtRJt = eidors_obj('get-cache', inv_model, 'JiRtRJt');
 if ~isempty(JiRtRJt)
@@ -39,7 +39,7 @@ else
    img_bkgnd= calc_jacobian_bkgnd( inv_model );
    J = calc_jacobian( fwd_model, img_bkgnd);
 
-   JiRtRJt= J*inv(RtR_p_reg)*J';
+   JiRtRJt= J*(RtR_p_reg\J');
 end
 
 eidors_obj('set-cache', inv_model, 'JiRtRJt', JiRtRJt);
