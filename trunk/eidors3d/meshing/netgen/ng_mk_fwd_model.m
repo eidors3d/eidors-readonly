@@ -15,8 +15,9 @@ function [fwd_mdl, mat_indices]= ...
 %
 %  fwd_mdl:           eidors format fwd_model
 %  mat_indices:       cell array of material indices from eidors 
-%
-% (C) 2006 Andy Adler. Licenced under GPL V2
+ 
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: ng_mk_fwd_model.m,v 1.5 2007-09-21 13:52:11 aadler Exp $
 
 if isempty(name); 
    name = ['MDL from', ng_vol_filename];
@@ -61,9 +62,9 @@ for i=1:nelec
 end
 
 mdl.electrode =     electrodes;
-mdl.solve=          @np_fwd_solve;
-mdl.jacobian=       @np_calc_jacobian;
-mdl.system_mat=     @np_calc_system_mat;
+mdl.solve=          'np_fwd_solve';
+mdl.jacobian=       'np_calc_jacobian';
+mdl.system_mat=     'np_calc_system_mat';
 
 fwd_mdl= eidors_obj('fwd_model', mdl);
 

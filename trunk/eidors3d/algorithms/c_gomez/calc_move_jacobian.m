@@ -7,8 +7,8 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 % Returns:          J - the Jacobian matrix [Jc, Jm]
 
 % (C) 2007, Camille Gomez-Laberge and Andy Adler.
-% Licenced under the GPL Version 2
-% $Id: calc_move_jacobian.m,v 1.1 2007-08-30 03:37:05 aadler Exp $
+%  License: GPL version 2 or version 3
+% $Id: calc_move_jacobian.m,v 1.2 2007-09-21 13:52:00 aadler Exp $
 
 % System matrix and its parameters
 
