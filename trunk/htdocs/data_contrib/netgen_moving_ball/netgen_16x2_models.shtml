@@ -31,16 +31,18 @@
             the stimulation electrodes.
        <hr>
    <tr><th valign="top"> Data:
+       <td>
        Data are in Matlab v6 format,
        compressed with <a href="http://www.7-zip.org">7-Zip</a>
 
-       <td> <a href="./ng_mdl_16x2_coarse.7z"
+        <br>
+        <a href="./ng_mdl_16x2_coarse.7z"
                 >Model with '-coarse' (default) meshing</a>
-<br>
-       <td> <a href="./ng_mdl_16x2_fine.7z"
+        <br>
+        <a href="./ng_mdl_16x2_fine.7z"
                 >Model with '-fine' meshing</a>
-<br>
-       <td> <a href="./ng_mdl_16x2_vfine.7z"
+        <br>
+        <a href="./ng_mdl_16x2_vfine.7z"
                 >Model with '-veryfine' meshing</a>
        <hr>
    </table>
@@ -59,7 +61,7 @@ different levels of refinement flag to netgen.
 
 
 <small>
-    Last Modified: $Date: 2007-09-21 18:25:32 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-21 18:29:19 $ by $Author: aadler $
 </small>
 </body></html>
 
