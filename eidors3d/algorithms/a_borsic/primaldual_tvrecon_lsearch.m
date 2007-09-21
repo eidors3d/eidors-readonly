@@ -24,8 +24,8 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 % Note about notation: A is A' for us, and y is s, C is B, beta=mu^2
 %
 
-% (C) 2002-2006 Andrea Borsic. Licenced under GPL version 2
-% $Id: primaldual_tvrecon_lsearch.m,v 1.13 2007-08-30 03:37:03 aadler Exp $
+% (C) 2002-2006 Andrea Borsic. License: GPL version 2 or version 3
+% $Id: primaldual_tvrecon_lsearch.m,v 1.14 2007-09-21 13:52:00 aadler Exp $
 
 % Initialisation
 fwd_model= inv_mdl.fwd_model;

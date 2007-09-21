@@ -12,8 +12,8 @@ function display_data( data, fwd_model )
 %   where data is a matrix M x F (Measurements x Frames)
 %   and fwd_model is an eidors fwd model structure
  
-% (C) 2005 Andy Adler. Licenced under GPL v. 2
-% $Id: display_data.m,v 1.1 2005-12-12 00:53:44 aadler Exp $
+% (C) 2005 Andy Adler.  License: GPL version 2 or version 3
+% $Id: display_data.m,v 1.2 2007-09-21 13:52:05 aadler Exp $
 
 if nargin==1
     fwd_model= data.fwd_model;

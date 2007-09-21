@@ -10,8 +10,8 @@ function img= coarse_fine_solve( inv_model, data1, data2)
 % inv_model.coarse_fine.solve   => actual underlying solver
 % inv_model.coarse_fine.mapping => sparse matrix to map coarse->fine
 
-% (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: coarse_fine_solve.m,v 1.9 2007-08-30 03:37:02 aadler Exp $
+% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% $Id: coarse_fine_solve.m,v 1.10 2007-09-21 13:51:59 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 

@@ -9,8 +9,8 @@ function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sy
 % Unknown parameters
 %   specify '[]' to be used later
 %
-% (C) 2005 Stephen Murphy. Licenced under GPL Version 2
-% $Id: set_fwd_model.m,v 1.11 2007-08-30 03:38:26 aadler Exp $
+% (C) 2005 Stephen Murphy. Licenced under GPL
+% $Id: set_fwd_model.m,v 1.12 2007-09-21 13:52:15 aadler Exp $
 
 if nargin<10
     perm_sym= '{y}';
