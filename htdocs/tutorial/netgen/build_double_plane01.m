@@ -1,5 +1,5 @@
 % Build model
-% $Id: build_double_plane01.m,v 1.2 2007-09-21 18:24:49 aadler Exp $
+% $Id: build_double_plane01.m,v 1.3 2007-09-21 19:07:47 aadler Exp $
 
 % Choose Parameters
 electrodes_per_plane= 16;
@@ -67,7 +67,7 @@ for finemodels= 0:2
         sprintf('build_double_plane01%c.png',97+finemodels));
 end
    
-save ng_mdl_16x2_coarse.mat  ng_mdl_16x2_coarse -v6
-save ng_mdl_16x2_fine.mat    ng_mdl_16x2_fine -v6
-save ng_mdl_16x2_vfine.mat   ng_mdl_16x2_vfine -v6
+save ng_mdl_16x2_coarse.mat  ng_mdl_16x2_coarse
+save ng_mdl_16x2_fine.mat    ng_mdl_16x2_fine
+save ng_mdl_16x2_vfine.mat   ng_mdl_16x2_vfine
 
