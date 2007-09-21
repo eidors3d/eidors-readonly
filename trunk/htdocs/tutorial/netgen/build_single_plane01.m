@@ -1,5 +1,5 @@
 % Build model
-% $Id: build_single_plane01.m,v 1.3 2007-09-21 18:24:49 aadler Exp $
+% $Id: build_single_plane01.m,v 1.4 2007-09-21 19:07:47 aadler Exp $
 
 % Choose Parameters
 electrodes_per_plane= 16;
@@ -67,6 +67,6 @@ for finemodels= 0:2
 end
    
 
-save ng_mdl_16x1_coarse.mat  ng_mdl_16x1_coarse -v6
-save ng_mdl_16x1_fine.mat    ng_mdl_16x1_fine -v6
-save ng_mdl_16x1_vfine.mat   ng_mdl_16x1_vfine -v6
+save ng_mdl_16x1_coarse.mat  ng_mdl_16x1_coarse
+save ng_mdl_16x1_fine.mat    ng_mdl_16x1_fine
+save ng_mdl_16x1_vfine.mat   ng_mdl_16x1_vfine
