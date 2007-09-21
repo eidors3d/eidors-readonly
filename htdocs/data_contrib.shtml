@@ -56,6 +56,12 @@ use the data</b>
 <li> <a href="./data_contrib/netgen_moving_ball/netgen_moving_ball.shtml">
       Netgen simulations of object moving in circular tank</a>
       By: A. Adler, W.R.B. Lionheart
+<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x2_models.shtml">
+      Netgen FEM model of a 16 electrode&times;2 layer cylindrical tank</a>
+      By: A. Adler
+<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x1_models.shtml">
+      Netgen FEM model of a 16 electrode&times;1 layer cylindrical tank</a>
+      By: A. Adler
 </ul>
 
 <h2>Contributing Your Data</h2>
@@ -135,7 +141,7 @@ likely you are to get references to your paper ;-).
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-10 14:38:08 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-21 18:24:49 $ by $Author: aadler $
 </small>
 
 </body>

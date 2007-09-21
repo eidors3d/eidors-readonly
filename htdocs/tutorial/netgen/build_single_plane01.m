@@ -1,5 +1,5 @@
 % Build model
-% $Id: build_single_plane01.m,v 1.2 2007-09-20 21:08:01 aadler Exp $
+% $Id: build_single_plane01.m,v 1.3 2007-09-21 18:24:49 aadler Exp $
 
 % Choose Parameters
 electrodes_per_plane= 16;
@@ -45,13 +45,9 @@ for finemodels= 0:2
 
   [fmdl,mat_idxs]= ng_mk_fwd_model( [fname,'.vol'], centres, [], stim_pat);
 
-  % Save some space
-  fmdl.elems=    uint16(fmdl.elems);
-  fmdl.boundary= uint16(fmdl.boundary);
-
-  if     finemodels==0; mdl_coarse= fmdl;
-  elseif finemodels==1; mdl_fine  = fmdl;
-  elseif finemodels==2; mdl_vfine = fmdl;
+  if     finemodels==0; ng_mdl_16x1_coarse= fmdl;
+  elseif finemodels==1; ng_mdl_16x1_fine  = fmdl;
+  elseif finemodels==2; ng_mdl_16x1_vfine = fmdl;
   end
 
   subplot(311);
@@ -70,4 +66,7 @@ for finemodels= 0:2
         sprintf('build_single_plane01%c.png',96+finemodels));
 end
    
-save single_plane_models mdl_coarse mdl_fine mdl_vfine
+
+save ng_mdl_16x1_coarse.mat  ng_mdl_16x1_coarse -v6
+save ng_mdl_16x1_fine.mat    ng_mdl_16x1_fine -v6
+save ng_mdl_16x1_vfine.mat   ng_mdl_16x1_vfine -v6
