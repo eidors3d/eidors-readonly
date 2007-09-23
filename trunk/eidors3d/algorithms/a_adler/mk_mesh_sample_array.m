@@ -1,8 +1,8 @@
-function [eptr, pt_elem]= mk_mesh_sample_array( varargin )
+function [eptr, pt_xyz]= mk_mesh_sample_array( varargin )
 % MK_MESH_SAMPLE_ARRAY - create rectangular coordinate map into mesh
-% [eptr, pt_elem]= mk_mesh_sample_array( mdl1, mdl2, ... , npoints);
+% [eptr, pt_xyz]= mk_mesh_sample_array( mdl1, mdl2, ... , npoints);
 %
-% pt_elem - n_points x dims matrix of sample points
+% pt_xyz - n_points x dims matrix of sample points
 % eptr -     element number containing the pt_coord
 % mdl1, mdl2 - fwd_model objects
 %
@@ -15,19 +15,19 @@ function [eptr, pt_elem]= mk_mesh_sample_array( varargin )
 % npoints - total number of points for rectangular mapping
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_mesh_sample_array.m,v 1.4 2007-09-21 20:05:22 aadler Exp $
+% $Id: mk_mesh_sample_array.m,v 1.5 2007-09-23 02:02:35 aadler Exp $
 
 [pp, mdls] = proc_input (varargin);
-xyz = interpxyz(pp.min_xyz , pp.max_xyz, pp.npoints);
-for mdl= mdls{:}'
-   xyz= [xyz; interpmdl( mdl )];
+pt_xyz = interpxyz(pp.min_xyz , pp.max_xyz, pp.npoints);
+for mdl= mdls(:)'
+   pt_xyz= [pt_xyz; interpmdl( mdl{1} )];
 end
 
 
-pt_elem= [];
-for mdl= mdls{:}'
-   tri_pts = mk_tri_pts( mdl, xyz);
-   pt_elem = [pt_elem, tri_pts];
+eptr= [];
+for mdl= mdls(:)'
+   tri_pts = mk_tri_pts( mdl{1}, pt_xyz);
+   eptr = [eptr, tri_pts];
 end
 
 % Add four interpolation points in each elem
@@ -118,7 +118,8 @@ function [p, mdls] = proc_input (varargin);
    p.dims= 1;
    p.min_xyz =  [inf,inf,inf];
    p.max_xyz = -[inf,inf,inf];
-   for mdl = mdls{:}'
+   for mdlc = mdls(:)'
+      mdl= mdlc{1}; 
       try if ~strcmp( mdl.type , 'fwd_model');
          error('model is not a fwd_model');
       end; catch
