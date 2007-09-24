@@ -1,12 +1,13 @@
 % Map elements onto mesh
-% $Id: moving_ball02.m,v 1.2 2007-09-24 17:47:51 aadler Exp $
+% $Id: moving_ball02.m,v 1.3 2007-09-24 17:56:59 aadler Exp $
 
 % Load models at start
 
 load ng_mdl_16x1_ptrs; % calculated from mk_mesh_sample_array
 xx=xyz(:,1); yy=xyz(:,2); zz=xyz(:,3);
 
-stimulation= mk_stim_patterns(16,1,'{ad}','{ad}');
+stimulation= mk_stim_patterns(16,1,'{ad}','{ad}', ...
+                      {'meas_current', 'do_redundant'});
 
 for mdlidx= 1:3
    if     mdlidx==1; fmdl= ng_mdl_16x1_coarse;
@@ -16,7 +17,7 @@ for mdlidx= 1:3
 
    fmdl.stimulation= stimulation;
  
-   f_no = 2  ;              % number to simulate
+   f_no = 200;              % number to simulate
    target_conductivity= .2; % Delta coneductivity for contrast
 
    xyzr_pt= [];
