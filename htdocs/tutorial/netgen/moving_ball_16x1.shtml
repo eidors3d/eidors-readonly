@@ -1,6 +1,6 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2> 
-Create moving ball in 16x2 netgen model
+Create moving ball in 16x1 netgen model
 </h2>
 
 <h3>
@@ -9,24 +9,33 @@ Get netgen models
 <br>
 Use netgen to create the models using the
 tutorials
-<a href="build_double_plane.shtml"
-   >build_double_plane</a>.
+<a href="build_single_plane.shtml"
+   >build_single_plane</a> (slow).
 <br>
 Or, download the models from 
-<a href="../../data_contrib/netgen_moving_ball/netgen_16x2_models.shtml"
-   >build_double_plane</a> (about 10MB download).
+<a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
+   >build_single_plane</a> (about 4MB download).
 
 <h3>
 Single plane simulations
 </h3>
 
+First, we load the saved models and create the sample
+array (slow)
+
 <pre>
-<!--#include virtual="moving_ball01.m" -->
+<!--#include virtual="moving_ball_16x1_01.m" -->
 </pre>
 
-The calculated models are saved
- <a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
-        >here [data_conbrib 16x1 models]</a>
+In a single plane, there is only one way to hook up the electrodes.
+Here we conduct adjacent stimulation and measurement and include
+the measurements on the driven electrodes.
+
+<pre>
+<!--#include virtual="moving_ball_16x1_02.m" -->
+</pre>
+
+
 
 
 <center>
@@ -35,15 +44,11 @@ The calculated models are saved
 Tank
 </center>
 
-<h3>
-Double electrode plane simulations
-</h3>
-
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-24 17:47:52 $
+    Last Modified: $Date: 2007-09-24 20:53:24 $
 </small>
 </BODY></HTML>
 <!--
