@@ -1,6 +1,6 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2> 
-Create moving ball in netgen models
+Create moving ball in 16x1 netgen model
 </h2>
 
 <h3>
@@ -47,7 +47,7 @@ Double electrode plane simulations
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-24 14:42:28 $
+    Last Modified: $Date: 2007-09-24 17:25:37 $
 </small>
 </BODY></HTML>
 <!--
