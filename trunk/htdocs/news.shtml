@@ -7,6 +7,19 @@ EIDORS package.
 <ul>
 
 <p><li><b>
+    24 Sep 2007:
+</b><br>
+Tutorials to
+<a href="./tutorial/netgen/build_double_plane.shtml"
+ >create netgen FEM models</a>
+ and 
+<a href="./tutorial/netgen/moving_ball.shtml"
+ >simulation of moving</a>
+objects in fine and coarse netgen meshes. 
+
+
+
+<p><li><b>
     30 Aug 2007:
 </b><br>
 Blobby the walrus would like to announce version 3.2 of EIDORS.
@@ -788,7 +801,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 04:21:35 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-24 14:34:22 $ by $Author: aadler $
 </small>
 </body>
 
