@@ -1,12 +1,12 @@
 % Map elements onto mesh
-% $Id: moving_ball02.m,v 1.1 2007-09-24 17:21:13 aadler Exp $
+% $Id: moving_ball02.m,v 1.2 2007-09-24 17:47:51 aadler Exp $
 
 % Load models at start
 
 load ng_mdl_16x1_ptrs; % calculated from mk_mesh_sample_array
 xx=xyz(:,1); yy=xyz(:,2); zz=xyz(:,3);
 
-simulation= mk_stim_patterns(16,1,'{ad}','{ad}');
+stimulation= mk_stim_patterns(16,1,'{ad}','{ad}');
 
 for mdlidx= 1:3
    if     mdlidx==1; fmdl= ng_mdl_16x1_coarse;
@@ -46,7 +46,7 @@ for mdlidx= 1:3
        xp= path_radius * cos(f_frac*2*pi);
        yp= path_radius * sin(f_frac*2*pi);
        zp= tank_height / 2;
-       xyrz_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
+       xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
 
        ff= find( (xx-xp).^2 + (yy-yp).^2 + (zz-zp).^2 <= rp^2 )';
        obj_n= sparse( eptr(ff,mdlidx),1,1, n_elems, 1);
@@ -60,8 +60,9 @@ for mdlidx= 1:3
    % convert to data matrix
    vi= [vi(:).meas]; 
    vh= [vh(:).meas];
-   if     mdlidx==1; save move_ball_16x1_adj_coarse.mat vi vh
-   elseif mdlidx==2; save move_ball_16x1_adj_fine.mat   vi vh
-   elseif mdlidx==3; save move_ball_16x1_adj_vfine.mat  vi vh
+   if     mdlidx==1; save move_ball_16x1_adj_coarse.mat vi vh xyzr_pt
+   elseif mdlidx==2; save move_ball_16x1_adj_fine.mat   vi vh xyzr_pt
+   elseif mdlidx==3; save move_ball_16x1_adj_vfine.mat  vi vh xyzr_pt
    end
+   clear vi vh;
 end

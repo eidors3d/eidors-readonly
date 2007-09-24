@@ -9,28 +9,33 @@ Get netgen models
 <br>
 Use netgen to create the models using the
 tutorials
-<a href="build_double_plane.shtml"
-   >build_double_plane</a> and
 <a href="build_single_plane.shtml"
    >build_single_plane</a> (slow).
 <br>
 Or, download the models from 
-<a href="../../data_contrib/netgen_moving_ball/netgen_16x2_models.shtml"
-   >build_double_plane</a> and
 <a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
-   >build_single_plane</a> (about 5MB download).
+   >build_single_plane</a> (about 4MB download).
 
 <h3>
 Single plane simulations
 </h3>
 
+First, we load the saved models and create the sample
+array (slow)
+
 <pre>
 <!--#include virtual="moving_ball01.m" -->
 </pre>
 
-The calculated models are saved
- <a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
-        >here [data_conbrib 16x1 models]</a>
+In a single plane, there is only one way to hook up the electrodes.
+Here we conduct adjacent stimulation and measurement and include
+the measurements on the driven electrodes.
+
+<pre>
+<!--#include virtual="moving_ball02.m" -->
+</pre>
+
+
 
 
 <center>
@@ -47,7 +52,7 @@ Double electrode plane simulations
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-24 17:25:37 $
+    Last Modified: $Date: 2007-09-24 17:47:52 $
 </small>
 </BODY></HTML>
 <!--
