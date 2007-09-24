@@ -1,6 +1,6 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2> 
-Create moving ball in 16x1 netgen model
+Create moving ball in 16x2 netgen model
 </h2>
 
 <h3>
@@ -10,15 +10,11 @@ Get netgen models
 Use netgen to create the models using the
 tutorials
 <a href="build_double_plane.shtml"
-   >build_double_plane</a> and
-<a href="build_single_plane.shtml"
-   >build_single_plane</a> (slow).
+   >build_double_plane</a>.
 <br>
 Or, download the models from 
 <a href="../../data_contrib/netgen_moving_ball/netgen_16x2_models.shtml"
-   >build_double_plane</a> and
-<a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
-   >build_single_plane</a> (about 5MB download).
+   >build_double_plane</a> (about 10MB download).
 
 <h3>
 Single plane simulations
@@ -47,7 +43,7 @@ Double electrode plane simulations
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-24 17:25:37 $
+    Last Modified: $Date: 2007-09-24 17:47:52 $
 </small>
 </BODY></HTML>
 <!--
