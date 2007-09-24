@@ -19,6 +19,11 @@ Setup parameters and call netgen
 <!--#include virtual="build_single_plane01.m" -->
 </pre>
 
+The calculated models are saved
+ <a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
+        >here [data_conbrib 16x1 models]</a>
+
+
 <center>
 <img src="build_single_plane01a.png">
 <img src="build_single_plane01b.png">
@@ -31,15 +36,23 @@ different levels of refinement flag to netgen.
 <i>Left</i>:   refinement = '-verfine'
 </center>
 
-
 <h3>
-Setup parameters and call netgen
+Verify that models are correct.
 </h3>
+
+To test these models, we calculate the electrode surface
+area to see if it is the same for all electrodes and
+for all models
+
+<pre>
+<!--#include virtual="build_single_plane02.m" -->
+</pre>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-21 16:40:30 $ by $Author: aadler $
+    Last Modified: $Date: 2007-09-24 14:13:09 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
