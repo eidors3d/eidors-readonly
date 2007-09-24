@@ -1,5 +1,5 @@
 % Map elements onto mesh
-% $Id: moving_ball02.m,v 1.3 2007-09-24 17:56:59 aadler Exp $
+% $Id: moving_ball_16x1_02.m,v 1.1 2007-09-24 20:53:24 aadler Exp $
 
 % Load models at start
 
