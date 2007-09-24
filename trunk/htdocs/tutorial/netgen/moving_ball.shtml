@@ -1,0 +1,55 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Create moving ball in netgen models
+</h2>
+
+<h3>
+Get netgen models
+</h3>
+<br>
+Use netgen to create the models using the
+tutorials
+<a href="build_double_plane.shtml"
+   >build_double_plane</a> and
+<a href="build_single_plane.shtml"
+   >build_single_plane</a> (slow).
+<br>
+Or, download the models from 
+<a href="../../data_contrib/netgen_moving_ball/netgen_16x2_models.shtml"
+   >build_double_plane</a> and
+<a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
+   >build_single_plane</a> (about 5MB download).
+
+<h3>
+Single plane simulations
+</h3>
+
+<pre>
+<!--#include virtual="moving_ball01.m" -->
+</pre>
+
+The calculated models are saved
+ <a href="../../data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
+        >here [data_conbrib 16x1 models]</a>
+
+
+<center>
+<img src="build_single_plane01a.png">
+<br><i>Figure:</i>
+Tank
+</center>
+
+<h3>
+Double electrode plane simulations
+</h3>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-09-24 14:42:28 $
+</small>
+</BODY></HTML>
+<!--
+      -->
+
