@@ -1,5 +1,5 @@
 % Map elements onto mesh
-% $Id: moving_ball_16x2_02.m,v 1.2 2007-09-25 11:40:27 aadler Exp $
+% $Id: moving_ball_16x2_02.m,v 1.3 2007-09-25 15:28:38 aadler Exp $
 
 % Load models at start
 
@@ -47,7 +47,7 @@ for mdlidx= 1:3
 
        xp= path_radius * cos(f_frac*2*pi);
        yp= path_radius * sin(f_frac*2*pi);
-       zp= tank_height / 2;
+       zp= tank_height * (.25 + .5*f_frac);
        xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
 
        ff= find( (xx-xp).^2 + (yy-yp).^2 + (zz-zp).^2 <= rp^2 )';
