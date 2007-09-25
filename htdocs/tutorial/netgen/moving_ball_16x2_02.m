@@ -1,16 +1,24 @@
 % Map elements onto mesh
-% $Id: moving_ball_16x2_02.m,v 1.1 2007-09-25 11:21:44 aadler Exp $
+% $Id: moving_ball_16x2_02.m,v 1.2 2007-09-25 11:40:27 aadler Exp $
 
-% Load models
-fmdl= ng_mdl_16x2_vfine;
-fmdl= ng_mdl_16x2_fine;
-fmdl= ng_mdl_16x2_coarse;
+% Load models at start
 
-mdlidx= 1;
 load ng_mdl_16x2_ptrs; % calculated from mk_mesh_sample_array
 xx=xyz(:,1); yy=xyz(:,2); zz=xyz(:,3);
+
+stimulation= mk_stim_patterns(16,1,'{ad}','{ad}', ...
+                      {'meas_current', 'do_redundant'});
+
+for mdlidx= 1:3
+   if     mdlidx==1; fmdl= ng_mdl_16x2_coarse;
+   elseif mdlidx==2; fmdl= ng_mdl_16x2_fine;
+   elseif mdlidx==3; fmdl= ng_mdl_16x2_vfine;
+   end
+
+   fmdl.electrode=   fmdl.electrode([17:2:31, 1:2:15]); % planar pattern
+   fmdl.stimulation= stimulation;
  
-   f_no = 2  ;              % number to simulate
+   f_no = 200;              % number to simulate
    target_conductivity= .2; % Delta coneductivity for contrast
 
    xyzr_pt= [];
@@ -40,7 +48,7 @@ xx=xyz(:,1); yy=xyz(:,2); zz=xyz(:,3);
        xp= path_radius * cos(f_frac*2*pi);
        yp= path_radius * sin(f_frac*2*pi);
        zp= tank_height / 2;
-       xyrz_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
+       xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
 
        ff= find( (xx-xp).^2 + (yy-yp).^2 + (zz-zp).^2 <= rp^2 )';
        obj_n= sparse( eptr(ff,mdlidx),1,1, n_elems, 1);
@@ -49,8 +57,14 @@ xx=xyz(:,1); yy=xyz(:,2); zz=xyz(:,3);
 
        vi(i)= fwd_solve( img );
 %show_fem(img);drawnow; keyboard
-    end
+   end
 
-% convert to data matrix
-vi= [vi(:).meas]; 
-vh= [vh(:).meas];
+   % convert to data matrix
+   vi= [vi(:).meas]; 
+   vh= [vh(:).meas];
+   if     mdlidx==1; save move_ball_16x2_adj_coarse.mat vi vh xyzr_pt
+   elseif mdlidx==2; save move_ball_16x2_adj_fine.mat   vi vh xyzr_pt
+   elseif mdlidx==3; save move_ball_16x2_adj_vfine.mat  vi vh xyzr_pt
+   end
+   clear vi vh;
+end
