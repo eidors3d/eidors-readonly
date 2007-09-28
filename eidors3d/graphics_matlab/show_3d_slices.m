@@ -7,7 +7,7 @@ function show_3d_slices(img, varargin);
 % Default show 2 z_cuts and 1 x and 1 y cut
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_3d_slices.m,v 1.8 2007-09-28 16:46:33 aadler Exp $
+% $Id: show_3d_slices.m,v 1.9 2007-09-28 19:10:02 aadler Exp $
 
 cla;
 hold on
@@ -26,7 +26,7 @@ end
 for xi= 1:length(x_cuts)
    M_trans= [0,0;1,0;0,1];
    M_add= [x_cuts(xi),0,0];
-   idx= zi+xi;
+   idx= length(z_cuts) + xi;
    surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
               M_trans, M_add, 1);
 end
@@ -34,7 +34,7 @@ end
 for yi= 1:length(y_cuts)
    M_trans= [1,0;0,0;0,1];
    M_add= [0,y_cuts(yi),0];
-   idx= zi+xi+yi;
+   idx= length(z_cuts) + length(x_cuts) + yi;
    surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
               M_trans, M_add, 1);
 end
@@ -68,7 +68,7 @@ function [xyz_max, xyz_min, rimg, cimg, ...
 
    limts= [ z_cuts(:)*[inf,inf,1  ]; ...
             x_cuts(:)*[1  ,inf,inf]; ...
-            y_cuts(:)*[inf,1  ,inf]] + 1e-10;
+            y_cuts(:)*[inf,1  ,inf]];
 
    clim = [];
    ref_lev= 'use_global';
