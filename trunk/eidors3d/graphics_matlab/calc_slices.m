@@ -1,5 +1,5 @@
 function rimg = calc_slices( img, levels );
-% show_slices (img, levels, clim  ) show slices at levels of an
+% calc_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or array of I images
 % levels = Matrix [Lx3] of L image levels
@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.18 2007-08-30 03:37:32 aadler Exp $
+% $Id: calc_slices.m,v 1.19 2007-09-28 00:26:15 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -93,8 +93,8 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
 
   range= max([xrange, yrange]);
   [x y]=meshgrid( ...
-      linspace( xmean - range*0.52, xmean + range*0.52, npx ), ...
-      linspace( ymean + range*0.52, ymean - range*0.52, npy ) );
+      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
+      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
   v_yx= [-y(:) x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
@@ -132,8 +132,8 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 
   range= max([xrange, yrange]);
   [x y]=meshgrid( ...
-      linspace( xmean - range*0.52, xmean + range*0.52, npx ), ...
-      linspace( ymean + range*0.52, ymean - range*0.52, npy ) );
+      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
+      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -184,8 +184,8 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
 
   range= max([xrange, yrange]);
   [x y]=meshgrid( ...
-      linspace( xmean - range*0.52, xmean + range*0.52, npx ), ...
-      linspace( ymean + range*0.52, ymean - range*0.52, npy ) );
+      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
+      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
