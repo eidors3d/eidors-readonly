@@ -7,7 +7,7 @@ function show_3d_slices(img, varargin);
 % Default show 2 z_cuts and 1 x and 1 y cut
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_3d_slices.m,v 1.7 2007-09-28 14:14:57 aadler Exp $
+% $Id: show_3d_slices.m,v 1.8 2007-09-28 16:46:33 aadler Exp $
 
 cla;
 hold on
@@ -97,7 +97,7 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    xyz= reshape( [x(:),y(:)]*M_trans', np+4,np+4,3);
 
    ff=isnan(rimg);
-   bdr= (conv2(~ff,ones(3),'same')>0) & ff;
+   bdr= (conv2(double(~ff),ones(3),'same')>0) & ff;
    outbdr = ff & ~bdr;
    cimg(outbdr)= NaN;
 
