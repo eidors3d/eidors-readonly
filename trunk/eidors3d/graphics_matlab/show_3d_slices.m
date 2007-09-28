@@ -7,7 +7,7 @@ function show_3d_slices(img, varargin);
 % Default show 2 z_cuts and 1 x and 1 y cut
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_3d_slices.m,v 1.4 2007-09-28 02:02:30 aadler Exp $
+% $Id: show_3d_slices.m,v 1.5 2007-09-28 13:52:43 aadler Exp $
 
 cla;
 hold on
@@ -65,22 +65,32 @@ function [xyz_max, xyz_min, rimg, cimg, ...
    clim = [];
    ref_lev= 'use_global';
    np= calc_colours('npoints');
-   rimg= NaN*ones(np+2,np+2,size(limts,1));
-   rimg(2:end-1,2:end-1,:)= calc_slices( img, limts);
+% SURF DOESN'T SHOW THE BLOODY OUTER BOUNDARY, WE NEED TO ADD 4 POINTS
+   rimg= NaN*ones(np+4,np+4,size(limts,1));
+   rimg(3:end-2,3:end-2,:)= calc_slices( img, limts);
    cimg = calc_colours( rimg, clim, 0, ref_lev );
 
-function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
-   np= calc_colours('npoints')+2;
+function xyz= linspace_plus4(lim_min, lim_max, np);
+   ooo= ones(length(lim_min),1);
+   delta = lim_max(:)-lim_min(:);
+   xyz= lim_min(:)*ones(1,np+4) + ...
+        delta/(np+3)*[-2:np+1];
+%       delta/(np+1)*[-1:np+0]; % for plus2
+%       delta/(np-1)*[0:np-1]; % for plus0
 
+function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
+   np= calc_colours('npoints');
    lim_min= xyz_min*M_trans;
    lim_max= xyz_max*M_trans;
-   [x,y]=meshgrid( linspace(lim_min(1),lim_max(1), np), ...
-                   linspace(lim_min(2),lim_max(2), np) );
-
-   xyz= reshape([x(:),y(:)]*M_trans', np,np,3);
+   xyz= linspace_plus4( lim_min, lim_max, np);
+   [x,y]= meshgrid(xyz(1,:),xyz(2,:));
+   xyz= reshape( [x(:),y(:)]*M_trans', np+4,np+4,3);
 
    ff=isnan(rimg);
-   cimg(isnan(rimg))= NaN;
+   bdr= (conv2(~ff,ones(3),'same')>0) & ff;
+   outbdr = ff & ~bdr;
+   cimg(outbdr)= NaN;
+keyboard
 
 
    if show_surf
@@ -92,7 +102,7 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
              'EdgeAlpha',0);
    end
 
-   draw_line_around(cimg, rimg, x,y, M_trans, M_add);
+%  draw_line_around(cimg, rimg, x,y, M_trans, M_add);
 
 
 function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
