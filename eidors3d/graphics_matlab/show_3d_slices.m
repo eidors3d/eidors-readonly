@@ -7,7 +7,7 @@ function show_3d_slices(img, varargin);
 % Default show 2 z_cuts and 1 x and 1 y cut
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_3d_slices.m,v 1.5 2007-09-28 13:52:43 aadler Exp $
+% $Id: show_3d_slices.m,v 1.6 2007-09-28 14:06:35 aadler Exp $
 
 cla;
 hold on
@@ -73,10 +73,11 @@ function [xyz_max, xyz_min, rimg, cimg, ...
 function xyz= linspace_plus4(lim_min, lim_max, np);
    ooo= ones(length(lim_min),1);
    delta = lim_max(:)-lim_min(:);
-   xyz= lim_min(:)*ones(1,np+4) + ...
-        delta/(np+3)*[-2:np+1];
-%       delta/(np+1)*[-1:np+0]; % for plus2
-%       delta/(np-1)*[0:np-1]; % for plus0
+   middle=(lim_max(:)+lim_min(:))/2;
+   xyz= middle(:)*ones(1,np+4) + ...
+        delta/(np-1)*[-(np+3)/2:(np+3)/2]; % for plus4
+%       delta/(np-1)*[-(np+1)/2:(np+1)/2]; % for plus2
+%       delta/(np-1)*[-(np-1)/2:(np-1)/2]; % for plus0
 
 function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    np= calc_colours('npoints');
