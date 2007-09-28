@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.19 2007-09-28 00:26:15 aadler Exp $
+% $Id: calc_slices.m,v 1.20 2007-09-28 19:10:01 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -246,8 +246,8 @@ function [NODE,ELEM]= level_model( fwd_model, level )
    % Infinities tend to cause issues -> replace with realmax
    % Don't need to worry about the sign of the inf
    % Octave returns inf for norm of realmax
-   level( isinf(level) ) = 1e154; %realmax;
-   level( level==0 ) =     eps;
+   level( isinf(level) | isnan(level) ) = 1e154; %realmax;
+   level( level==0 ) =     1e-10; %eps;
 
    % Step 1: Choose a centre point in the plane
    %  Weight the point by it's inv axis coords
