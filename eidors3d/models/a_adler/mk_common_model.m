@@ -39,7 +39,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.12 2007-09-04 15:24:55 aadler Exp $
+% $Id: mk_common_model.m,v 1.13 2007-09-28 16:47:02 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -169,9 +169,9 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
     end
 
     if elec_conf=='planes';  
-       elec_per_plane=n_elec(1)/length(e_layers);
-    else
        elec_per_plane=n_elec(1);
+    else
+       elec_per_plane=n_elec(1)*length(e_layers);
     end
 
     params= mk_circ_tank( xy_layers, z_layers, ...
