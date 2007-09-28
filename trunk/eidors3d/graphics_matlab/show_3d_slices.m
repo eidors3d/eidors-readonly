@@ -7,7 +7,7 @@ function show_3d_slices(img, varargin);
 % Default show 2 z_cuts and 1 x and 1 y cut
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_3d_slices.m,v 1.6 2007-09-28 14:06:35 aadler Exp $
+% $Id: show_3d_slices.m,v 1.7 2007-09-28 14:14:57 aadler Exp $
 
 cla;
 hold on
@@ -27,6 +27,14 @@ for xi= 1:length(x_cuts)
    M_trans= [0,0;1,0;0,1];
    M_add= [x_cuts(xi),0,0];
    idx= zi+xi;
+   surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
+              M_trans, M_add, 1);
+end
+
+for yi= 1:length(y_cuts)
+   M_trans= [1,0;0,0;0,1];
+   M_add= [0,y_cuts(yi),0];
+   idx= zi+xi+yi;
    surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
               M_trans, M_add, 1);
 end
@@ -73,6 +81,7 @@ function [xyz_max, xyz_min, rimg, cimg, ...
 function xyz= linspace_plus4(lim_min, lim_max, np);
    ooo= ones(length(lim_min),1);
    delta = lim_max(:)-lim_min(:);
+   delta = max(delta)*ones(size(delta)); 
    middle=(lim_max(:)+lim_min(:))/2;
    xyz= middle(:)*ones(1,np+4) + ...
         delta/(np-1)*[-(np+3)/2:(np+3)/2]; % for plus4
@@ -91,7 +100,6 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    bdr= (conv2(~ff,ones(3),'same')>0) & ff;
    outbdr = ff & ~bdr;
    cimg(outbdr)= NaN;
-keyboard
 
 
    if show_surf
