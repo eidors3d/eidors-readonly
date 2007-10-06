@@ -17,7 +17,8 @@ Middlesex University, Bramley Road, London N14 4YZ.
 A range Finite Element meshes of different densities for the human
  head including two neonate meshes. 
 <p>
-Data were published in 
+The underlying geometry is described in Tizzard et al. (2005b) and all meshes except SA262 are used in Tizzard &amp; Bayford (2007a)
+
        <hr>
    <tr><th valign="top"> License:
        <td> Creative Commons Artistic License (with Attibution)
@@ -70,13 +71,20 @@ and Bayford 2007b; Yerworth et al. 2004).
 <TH style="border-bottom: solid"> Stretch <br>Maximum
 <TH style="border-bottom: solid"> Stretch <br>Mean
 <TH style="border-bottom: solid"> Model <br>Name
-<TR><TD> 27684 <TD> 5226 <TD> 0.0018 <TD> 0.9641 <TD> 0.6025 <TD> SAH028
-<TR><TD> 31111 <TD> 5939 <TD> 0.0257 <TD> 0.9770 <TD> 0.6605 <TD> SAH031
-<TR><TD> 35073 <TD> 6556 <TD> 0.0254 <TD> 0.9781 <TD> 0.6310 <TD> SAH035
-<TR><TD> 49172 <TD> 9142 <TD> 0.0691 <TD> 0.9815 <TD> 0.6572 <TD> SAH049
-<TR><TD> 77196 <TD> 14188 <TD> 0.0570 <TD> 0.9869 <TD> 0.6752 <TD> SAH077
-<TR><TD> 131672 <TD> 24688 <TD> 0.1046 <TD> 0.9896 <TD> 0.6794 <TD> SAH132
-<TR><TD> 262368 <TD> 48394 <TD> 0.0970 <TD> 0.9878 <TD> 0.6833 <TD> SAH262
+<TR><TD> 27684 <TD> 5226 <TD> 0.0018 <TD> 0.9641 <TD> 0.6025 <TD> 
+     <a href="./SAH028.7z">SAH028</a>
+<TR><TD> 31111 <TD> 5939 <TD> 0.0257 <TD> 0.9770 <TD> 0.6605 <TD> 
+     <a href="./SAH031.7z">SAH031</a>
+<TR><TD> 35073 <TD> 6556 <TD> 0.0254 <TD> 0.9781 <TD> 0.6310 <TD> 
+     <a href="./SAH035.7z">SAH035</a>
+<TR><TD> 49172 <TD> 9142 <TD> 0.0691 <TD> 0.9815 <TD> 0.6572 <TD> 
+     <a href="./SAH049.7z">SAH049</a>
+<TR><TD> 77196 <TD> 14188 <TD> 0.0570 <TD> 0.9869 <TD> 0.6752 <TD> 
+     <a href="./SAH077.7z">SAH077</a>
+<TR><TD> 131672 <TD> 24688 <TD> 0.1046 <TD> 0.9896 <TD> 0.6794 <TD> 
+     <a href="./SAH132.7z">SAH132</a>
+<TR><TD> 262368 <TD> 48394 <TD> 0.0970 <TD> 0.9878 <TD> 0.6833 <TD> 
+     <a href="./SAH262.7z">SAH262</a>
 </table>
 <p>
 <b>Summary of shelled neonate head meshes</b>
@@ -88,8 +96,10 @@ and Bayford 2007b; Yerworth et al. 2004).
 <TH style="border-bottom: solid"> Stretch <br>Maximum
 <TH style="border-bottom: solid"> Stretch <br>Mean
 <TH style="border-bottom: solid"> Model <br>Name
-<TR><TD> 45702 <TD> 8703 <TD> 0.024 <TD> 0.982 <TD> 0.643 <TD> SNH046
-<TR><TD> 142654 <TD> 26586 <TD> 0.033 <TD> 0.988 <TD> 0.686 <TD> SNH143
+<TR><TD> 45702 <TD> 8703 <TD> 0.024 <TD> 0.982 <TD> 0.643 <TD> 
+     <a href="./SNH046.7z">SNH046</a>
+<TR><TD> 142654 <TD> 26586 <TD> 0.033 <TD> 0.988 <TD> 0.686 <TD> 
+     <a href="./SNH143.7z">SNH143</a>
 </table>
 
 </div></center>
@@ -97,77 +107,133 @@ and Bayford 2007b; Yerworth et al. 2004).
 <b> References</b>
 <ul>
 <li>
-Bagshaw, A., Liston, A. D., Bayford, R. H., Tizzard, A., Gibson, A., Tidswell, A. T., Sparkes, M. K., Dehghani, H., Binnie, C. D. and Holder, D. S.
- 2003.
- Electrical impedance tomography of human brain function using
-reconstruction algorithms based on the finite element method.
- Neuroimage 20, pp752-64.
+Bagshaw, A., 
+Liston, A. D.,
+ Bayford, R. H.,
+ Tizzard, A.,
+ Gibson, A.,
+ Tidswell, A. T.,
+ Sparkes, M. K.,
+ Dehghani, H.,
+ Binnie, C. D. and
+ Holder, D. S.
+(2003)
+"Electrical impedance tomography of human brain function using
+reconstruction algorithms based on the finite element method."
+<i>Neuroimage</i> 20, pp752-64.
 
 <li>
-Bayford, R. H., Tizzard, A. and Liu, X. 2005.
-Dynamic modelling of electrical current distribution in the deep
-structure of the brain.
-Proceedings of the 3rd IEE International Seminar on Medical Applications of Signal Processing (London, UK: Institute of Electrical Engineers), pp131-4.
+Bayford, R. H.,
+ Tizzard, A. and
+ Liu, X.
+(2005)
+"Dynamic modelling of electrical current distribution in the deep
+structure of the brain."
+<i>Proceedings of the 3rd IEE International Seminar on 
+Medical Applications of Signal Processing</i>
+(London, UK: Institute of Electrical Engineers), pp131-4.
 
 <li>
-Bayford, R. H., Tizzard, A. and Liu, X. 2006a.
-The Forward Model. 7th conference on Biomedical Applications
-of Electrical Impedance Tomography (Seoul, South Korea), p21.
+Bayford, R. H., Tizzard, A. and Liu, X.
+(2006a)
+"The Forward Model",
+<i>7th conference on Biomedical Applications
+of Electrical Impedance Tomography </i>(Seoul, South Korea), p21.
 
 <li>
-Bayford, R. H., Tizzard, A., Yousif, N. and Liu, X. 2006b.
-Investigating the mechanism of deep brain
-stimulation using a dynamic complex model of the head incorporated with the complete model of electrode.
-Clin.Neurophys. 117, ppS219-S220.
+Bayford, R. H., Tizzard, A., Yousif, N. and Liu, X.
+(2006b)
+"Investigating the mechanism of deep brain
+stimulation using a dynamic complex model of the head incorporated with the complete model of electrode"
+<i>Clin. Neurophys.</i>
+117, ppS219-S220.
 
 <li>
-Horesh, L., Bayford, R. H., Yerworth, R. J., Tizzard, A., Ahadzi, G. E. and Holder, D. S. 2004.
-Beyond the linear domain - the way forward in MFEIT reconstruction of the human head.
-XII International Conference on Electrical Bioimpedance and V Electrical Impedance Tomography (Gdansk, Poland: Gdansk University of
+Horesh, L.,
+ Bayford, R. H.,
+ Yerworth, R. J.,
+ Tizzard, A.,
+ Ahadzi, G. E. and
+ Holder, D. S.
+(2004)
+"Beyond the linear domain - the way forward in MFEIT
+ reconstruction of the human head."
+<i>XII International Conference on Electrical Bioimpedance
+and V Electrical Impedance Tomography</i>
+ (Gdansk, Poland: Gdansk University of
 Technology), pp683-6.
 
 <li>
-Tizzard, A. and Bayford, R. H. 2007a.
-Improving the Finite Element Forward Model of the Human Head by
-Warping using Elastic Deformation. Physiol.Meas. 28, ppS163-S182.
+Tizzard, A. and Bayford, R. H. 
+(2007a)
+"Improving the Finite Element Forward Model of the Human Head by
+Warping using Elastic Deformation."
+<i>Physiol. Meas.</i> 28, ppS163-S182.
 
 <li>
-Tizzard, A. and Bayford, R. H. 2007b.
-Validation of Finite Element mesh warping for improving the forward
-model in EIT of brain function.
-13th International Conference on Electrical Bioimpedance &amp; 8th Conference on
-Electrical Impedance Tomography. (Graz, Austria: Springer-Verlag).
+Tizzard, A. and Bayford, R. H.
+(2007b)
+"Validation of Finite Element mesh warping for improving the forward
+model in EIT of brain function."
+<i>13th International Conference on Electrical Bioimpedance &amp;
+ 8th Conference on Electrical Impedance Tomography.</i>
+ (Graz, Austria: Springer-Verlag).
 
 <li>
-Tizzard, A., Holder, D. S. and Bayford, R. H. 2005a.
- Generating surfaces for registration and warping FE
-meshes for the forward model in EIT of brain function.
-EMBEC05: The 3rd European Medical and Biological
-Engineering Conference (Prague, Cz: IFMBE).
+Tizzard, A., Holder, D. S. and Bayford, R. H.
+(2005a)
+"Generating surfaces for registration and warping FE
+meshes for the forward model in EIT of brain function"
+<i>EMBEC05: The 3rd European Medical and Biological
+Engineering Conference</i> (Prague, Cz: IFMBE).
 
 <li>
-Tizzard, A., Horesh, L., Yerworth, R. J., Holder, D. S. and Bayford, R. H. 2005b.
-Generating accurate finite element meshes for the forward model of the human head in EIT.
-Physiol.Meas. 26, ppS251-S261.
+Tizzard, A.,
+ Horesh, L.,
+ Yerworth, R. J.,
+ Holder, D. S. and
+ Bayford, R. H. 
+(2005b)
+"Generating accurate finite element meshes for the forward model of
+ the human head in EIT"
+<i>Physiol. Meas.</i> 26, ppS251-S261.
 
 <li>
-Yerworth, R. J., Horesh, L., Bayford, R. H., Tizzard, A. and Holder, D. S. 2004.
-Robustness of linear and nonlinear reconstruction algorithms for brain EITS.
-XII International Conference on Electrical Bioimpedance
-and V Electrical Impedance Tomography (Gdansk, Poland: Gdansk University of Technology).
+Yerworth, R. J.,
+ Horesh, L.,
+ Bayford, R. H.,
+ Tizzard, A. and
+ Holder, D. S. 
+(2004)
+"Robustness of linear and nonlinear reconstruction algorithms for brain EITS"
+<i>XII International Conference on Electrical Bioimpedance
+and V Electrical Impedance Tomography</i>
+(Gdansk, Poland: Gdansk University of Technology).
 </ul>
 
 
 
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./"
-            >Data (7-zip format)</a>
+       <td> 
+<div style="td.align='right'">
+<b>Adult head meshes:</b>
+   <br>&minus;<a href="./SAH028.7z">SAH028 (27684 elements)</a>,
+   <br>&minus;<a href="./SAH031.7z">SAH031 (31111 elements)</a>,
+   <br>&minus;<a href="./SAH035.7z">SAH035 (35073 elements)</a>,
+   <br>&minus;<a href="./SAH049.7z">SAH049 (49172 elements)</a>,
+   <br>&minus;<a href="./SAH077.7z">SAH077 (77196 elements)</a>,
+   <br>&minus;<a href="./SAH132.7z">SAH132 (131672 elements)</a>,
+   <br>&minus;<a href="./SAH262.7z">SAH262 (262368 elements)</a>
+<br>
+<b>Neonate head meshes:</b>
+   <br>&minus;<a href="./SNH046.7z">SNH046 (45702 elements)</a>
+   <br>&minus;<a href="./SNH143.7z">SNH143 (142654 elements)</a>
        <hr>
    </table>
 
-Example:
-<pre>
+Example images:
+<pre width="50%">
  for str = {'SAH028', 'SAH262'}
     load(str{1});
     ee= find_boundary(tri);
@@ -181,10 +247,15 @@ Example:
 end
 </pre>
 
-   <img src="Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
+<center>
+   <img src="SAH028-mesh.png" alt="SAH028-mesh"></a>
+   <img src="SAH262-mesh.png" alt="SAH262-mesh"></a>
+<br>Figure:
+ <i>Left:</i> Outer boundary of SAH028 (27684 element) mesh
+ <i>Right:</i> Outer boundary of SAH262 (262368 elements) mesh
 
 <small>
-    Last Modified: $Date: 2007-10-06 00:02:18 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-06 16:05:05 $ by $Author: aadler $
 </small>
 </body></html>
 
