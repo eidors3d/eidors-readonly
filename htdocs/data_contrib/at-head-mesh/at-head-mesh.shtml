@@ -1,0 +1,190 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+<a href="mailto:a.tizzard@mdx.ac.uk">Andrew Tizzard</a>,
+Middlesex University, Bramley Road, London N14 4YZ. 
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> October 2007. (Created from 2002 to 2006)
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+A range Finite Element meshes of different densities for the human
+ head including two neonate meshes. 
+<p>
+Data were published in 
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attibution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+Tizzard, A. and Bayford, R.H. (2007).
+<a href="http://www.iop.org/EJ/article/0967-3334/28/7/S13/pm7_7_s13.pdf"
+>Improving the Finite Element Forward Model of the Human Head by
+Warping using Elastic Deformation.</a>
+<i>Physiol.Meas.</i> 28:S163-S182.
+       <hr>
+   <tr><th valign="top"> Format:
+       <td>
+       Data are in Matlab v6 format,
+       compressed with <a href="http://www.7-zip.org">7-Zip</a>
+<p> Each model is shelled comprising regions
+defining Scalp, Skull, CSF and brain as defined by the
+<tt>materials</tt> structure. The important arrays in this structure
+are names and <tt>ref</tt>. The vector <tt>ref</tt>
+relates elements (<tt>tri</tt>) to
+each region by index into the <tt>names</tt> array. Nodal positions
+(mm) are defined by the <tt>vtx</tt> array.
+<p>
+The underlying geometry is described in Tizzard et al. (2005b) and all
+meshes except SA262 are used in Tizzard and Bayford (2007a)
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td>
+Geometry generated using Alias Studio Tools (now Autodesk Alias)
+and the meshing carried out using EDS I-DEAS (now UGS NX).
+<p>
+The tables below give a summary of the adult and neonate
+head meshes. They are all shelled comprising regions
+defining Scalp, Skull, CSF and brain.  The underlying geometry is
+described in Tizzard et al. (2005b) and all meshes except SA262 are used
+in Tizzard and Bayford (2007a) Some of these meshes and others based
+on the same underlying geometry have been used by the UCL and Middlesex
+groups (Bagshaw et al. 2003; Bayford et al. 2005; Bayford et al. 2006b;
+Bayford et al. 2006a; Horesh et al. 2004; Tizzard et al. 2005a; Tizzard
+and Bayford 2007b; Yerworth et al. 2004).
+<p>
+<center><div style="td.align='right'">
+<b> Summary of shelled adult head meshes.</b>
+<Table style="border-collapse: collapse; border-top">
+<tr>
+<TH style="border-bottom: solid"> Number of <br>Elements
+<TH style="border-bottom: solid"> Number of <br>Nodes
+<TH style="border-bottom: solid"> Stretch <br>Minimum
+<TH style="border-bottom: solid"> Stretch <br>Maximum
+<TH style="border-bottom: solid"> Stretch <br>Mean
+<TH style="border-bottom: solid"> Model <br>Name
+<TR><TD> 27684 <TD> 5226 <TD> 0.0018 <TD> 0.9641 <TD> 0.6025 <TD> SAH028
+<TR><TD> 31111 <TD> 5939 <TD> 0.0257 <TD> 0.9770 <TD> 0.6605 <TD> SAH031
+<TR><TD> 35073 <TD> 6556 <TD> 0.0254 <TD> 0.9781 <TD> 0.6310 <TD> SAH035
+<TR><TD> 49172 <TD> 9142 <TD> 0.0691 <TD> 0.9815 <TD> 0.6572 <TD> SAH049
+<TR><TD> 77196 <TD> 14188 <TD> 0.0570 <TD> 0.9869 <TD> 0.6752 <TD> SAH077
+<TR><TD> 131672 <TD> 24688 <TD> 0.1046 <TD> 0.9896 <TD> 0.6794 <TD> SAH132
+<TR><TD> 262368 <TD> 48394 <TD> 0.0970 <TD> 0.9878 <TD> 0.6833 <TD> SAH262
+</table>
+<p>
+<b>Summary of shelled neonate head meshes</b>
+<Table style="border-collapse: collapse; border-top">
+<tr>
+<TH style="border-bottom: solid"> Number of <br>Elements
+<TH style="border-bottom: solid"> Number of <br>Nodes
+<TH style="border-bottom: solid"> Stretch <br>Minimum
+<TH style="border-bottom: solid"> Stretch <br>Maximum
+<TH style="border-bottom: solid"> Stretch <br>Mean
+<TH style="border-bottom: solid"> Model <br>Name
+<TR><TD> 45702 <TD> 8703 <TD> 0.024 <TD> 0.982 <TD> 0.643 <TD> SNH046
+<TR><TD> 142654 <TD> 26586 <TD> 0.033 <TD> 0.988 <TD> 0.686 <TD> SNH143
+</table>
+
+</div></center>
+<p>
+<b> References</b>
+<ul>
+<li>
+Bagshaw, A., Liston, A. D., Bayford, R. H., Tizzard, A., Gibson, A., Tidswell, A. T., Sparkes, M. K., Dehghani, H., Binnie, C. D. and Holder, D. S.
+ 2003.
+ Electrical impedance tomography of human brain function using
+reconstruction algorithms based on the finite element method.
+ Neuroimage 20, pp752-64.
+
+<li>
+Bayford, R. H., Tizzard, A. and Liu, X. 2005.
+Dynamic modelling of electrical current distribution in the deep
+structure of the brain.
+Proceedings of the 3rd IEE International Seminar on Medical Applications of Signal Processing (London, UK: Institute of Electrical Engineers), pp131-4.
+
+<li>
+Bayford, R. H., Tizzard, A. and Liu, X. 2006a.
+The Forward Model. 7th conference on Biomedical Applications
+of Electrical Impedance Tomography (Seoul, South Korea), p21.
+
+<li>
+Bayford, R. H., Tizzard, A., Yousif, N. and Liu, X. 2006b.
+Investigating the mechanism of deep brain
+stimulation using a dynamic complex model of the head incorporated with the complete model of electrode.
+Clin.Neurophys. 117, ppS219-S220.
+
+<li>
+Horesh, L., Bayford, R. H., Yerworth, R. J., Tizzard, A., Ahadzi, G. E. and Holder, D. S. 2004.
+Beyond the linear domain - the way forward in MFEIT reconstruction of the human head.
+XII International Conference on Electrical Bioimpedance and V Electrical Impedance Tomography (Gdansk, Poland: Gdansk University of
+Technology), pp683-6.
+
+<li>
+Tizzard, A. and Bayford, R. H. 2007a.
+Improving the Finite Element Forward Model of the Human Head by
+Warping using Elastic Deformation. Physiol.Meas. 28, ppS163-S182.
+
+<li>
+Tizzard, A. and Bayford, R. H. 2007b.
+Validation of Finite Element mesh warping for improving the forward
+model in EIT of brain function.
+13th International Conference on Electrical Bioimpedance &amp; 8th Conference on
+Electrical Impedance Tomography. (Graz, Austria: Springer-Verlag).
+
+<li>
+Tizzard, A., Holder, D. S. and Bayford, R. H. 2005a.
+ Generating surfaces for registration and warping FE
+meshes for the forward model in EIT of brain function.
+EMBEC05: The 3rd European Medical and Biological
+Engineering Conference (Prague, Cz: IFMBE).
+
+<li>
+Tizzard, A., Horesh, L., Yerworth, R. J., Holder, D. S. and Bayford, R. H. 2005b.
+Generating accurate finite element meshes for the forward model of the human head in EIT.
+Physiol.Meas. 26, ppS251-S261.
+
+<li>
+Yerworth, R. J., Horesh, L., Bayford, R. H., Tizzard, A. and Holder, D. S. 2004.
+Robustness of linear and nonlinear reconstruction algorithms for brain EITS.
+XII International Conference on Electrical Bioimpedance
+and V Electrical Impedance Tomography (Gdansk, Poland: Gdansk University of Technology).
+</ul>
+
+
+
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./"
+            >Data (7-zip format)</a>
+       <hr>
+   </table>
+
+Example:
+<pre>
+ for str = {'SAH028', 'SAH262'}
+    load(str{1});
+    ee= find_boundary(tri);
+    trimesh(ee,vtx(:,1),vtx(:,2),vtx(:,3))
+    hh=trimesh(ee,vtx(:,1),vtx(:,2),vtx(:,3));
+    set(hh,'EdgeColor', [0,0,0]);
+    axis tight
+    axis equal
+    view(-55,10);
+    print('-dpng','-r100',[str{1},'.png']);
+end
+</pre>
+
+   <img src="Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
+
+<small>
+    Last Modified: $Date: 2007-10-06 00:02:18 $ by $Author: aadler $
+</small>
+</body></html>
+
