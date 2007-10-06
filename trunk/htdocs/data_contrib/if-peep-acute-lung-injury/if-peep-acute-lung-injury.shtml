@@ -24,11 +24,12 @@ during an incremental and decremental PEEP trial (stepwise increase and
 decrease of positive end-expiratory pressure).
 <p>
 Data were published in 
+Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
+   P.M. (2003)
 <a href="http://www.springerlink.com/content/220rudd750445m6y/"
-   >Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
-   P.M.:Electrical Impedance Tomography &minus; a method for monitoring
-   regional lung aeration and tidal volume distribution? <i>Intensive
-   Care Med.</i> 29:2312-2316, 2003</a>.
+   >Electrical Impedance Tomography &minus; a method for monitoring
+   regional lung aeration and tidal volume distribution?</a>
+  <i>Intensive Care Med.</i> 29:2312-2316, 2003.
        <hr>
    <tr><th valign="top"> License:
        <td> Creative Commons Artistic License (with Attibution)
@@ -37,12 +38,14 @@ Data were published in
        <td> 
  Use or presentation of these data must acknowledge
 In&eacute;z Frerichs, and reference this publication:
+<ul>
+Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
+   P.M. (2003)
 <a href="http://www.springerlink.com/content/220rudd750445m6y/"
-   >Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
-   P.M.:Electrical Impedance Tomography &minus; a method for monitoring
-   regional lung aeration and tidal volume distribution? <i>Intensive
-   Care Med.</i> 29:2312-2316, 2003</a>.
-       <hr>
+   >Electrical Impedance Tomography &minus; a method for monitoring
+   regional lung aeration and tidal volume distribution?</a>
+  <i>Intensive Care Med.</i> 29:2312-2316, 2003.
+</ul>
    <tr><th valign="top"> Format:
        <td> Data are in *get files encoded in a zip file
        <hr>
@@ -60,7 +63,7 @@ In&eacute;z Frerichs, and reference this publication:
    ><img src="Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
 
 <small>
-    Last Modified: $Date: 2007-09-04 15:49:46 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-06 16:05:24 $ by $Author: aadler $
 </small>
 </body></html>
 
