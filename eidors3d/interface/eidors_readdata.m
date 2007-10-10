@@ -21,7 +21,7 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_readdata.m,v 1.24 2007-10-10 15:35:57 aadler Exp $
+% $Id: eidors_readdata.m,v 1.25 2007-10-10 18:22:32 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -67,8 +67,36 @@ function df= is_get_file_a_draeger_file( fname)
    fclose(fid);
    df = all(d == '---Draeger EIT-Software---');
 
-function vv = draeger_readdata( fname );
-[adler@adler01 sept07]$ xxd Sch_Pneumoperitoneum_01_001.get | head -30
+function [vv,curr,volt,auxdata] = draeger_readdata( fname );
+   fid= fopen(fname,'rb');
+   emptyctr=0;
+   while emptyctr<2
+     line= fgetl(fid);
+     if isempty(line)
+        emptyctr= emptyctr+1;
+     else
+        eidors_msg(line,0);
+        emptyctr=0;
+     end
+   end
+   d= fread(fid,inf,'float',0,'ieee-le');
+   fclose(fid);
+
+   if rem( length(d), 256) ~=0
+      eidors_msg('File length strange - cropping file',0);
+      d=d(1:floor(length(d)/256)*256);
+   end
+
+   dd= reshape( d, 256, length(d)/256);
+   vv= untwist(dd);
+
+   curr=0.00512*dd(209:224,:);  % Amps
+   volt=12*dd(225:240,:); %Vrms
+   auxdata= dd(241:255,:);
+   auxdata= auxdata(:);
+    
+function jnk
+%[adler@adler01 sept07]$ xxd Sch_Pneumoperitoneum_01_001.get | head -30
 %0000000: 2d2d 2d44 7261 6567 6572 2045 4954 2d53  ---Draeger EIT-S
 %0000010: 6f66 7477 6172 652d 2d2d 0d0a 2d2d 2d50  oftware---..---P
 %0000020: 726f 746f 636f 6c20 4461 7461 2d2d 2d2d  rotocol Data----
@@ -90,37 +118,46 @@ function vv = draeger_readdata( fname );
 %0000120: 0a50 6572 696f 6473 3a20 2020 2020 2020  .Periods:
 %0000130: 2020 2020 2020 2020 2032 300d 0a46 7261           20..Fra
 %0000140: 6d65 733a 2020 2020 2020 2020 2020 2020  mes:
-%0000150: 2020 2020 2031 300d 0a0d 0a0d 0a8b c33e       10........>
-%0000160: 3f05 4863 3ebf 2093 3de1 9239 3da5 68ea  ?.Hc>. .=..9=.h.
-%0000170: 3c25 30f6 3c27 e604 3d20 43ad 3c25 ce93  <%0.<'..= C.<%..
-%0000180: 3cae bcce 3c87 1464 3de3 533d 3e65 b6e1  <...<..d=.S=>e..
-%0000190: 3e7a 6210 3f81 c414 3e8c 9981 3d35 921d  >zb.?...>...=5..
-%00001a0: 3d8e 6b0d 3d69 0cf9 3c99 1071 3c3c 9289  =.k.=i..<..q<<..
-%00001b0: 3cf6 736f 3c22 9145 3dad 1cab 3d38 6f15  <.so<".E=...=8o.
-%00001c0: 3ee8 2a14 3f2a 952e 3ff5 6849 3ef0 8a8c  >.*.?*..?.hI>...
-%00001d0: 3de4 3e0e 3d70 4025 3d19 f4af 3c67 fd93  =.>.=p@%=...<g..
+%0000150: 2020 2020 2031 300d 0a0d 0a0d 0a
+%                                       8bc33e       10........>
+%0000160: 3f 0548633e bf20933d e192393d a568ea  ?.Hc>. .=..9=.h.
+%0000170: 3c 2530f63c 27e6043d 2043ad3c 25ce93  <%0.<'..= C.<%..
+%0000180: 3c aebcce3c 8714643d e3533d3e 65b6e1  <...<..d=.S=>e..
+%0000190: 3e 7a62103f 81c4143e 8c99813d 35921d  >zb.?...>...=5..
+%00001a0: 3d 8e6b0d3d 690cf93c 9910713c 3c9289  =.k.=i..<..q<<..
+%00001b0: 3c f6736f3c 2291453d ad1cab3d 386f15  <.so<".E=...=8o.
+%00001c0: 3e e82a143f 2a952e3f f568493e f08a8c  >.*.?*..?.hI>...
+%00001d0: 3d e43e0e3d 7040253d 19f4af3c 67fd93  =.>.=p@%=...<g..
 
 
 function [vv,curr,volt,auxdata] = mceit_readdata( fname );
-   elec=16;
-   pos_i= [0,1];
-   ELS= rem(rem(0:elec^2-1,elec) - ...
-        floor((0:elec^2-1)/elec)+elec,elec)';
-   ELS=~any(rem( elec+[-1 0 [-1 0]+pos_i*[-1;1] ] ,elec)' ...
-        *ones(1,elec^2)==ones(4,1)*ELS')';
 
    fid= fopen(fname,'rb');
    d= fread(fid,inf,'float');
    fclose(fid);
 
    if rem( length(d), 256) ~=0
-      warning('File length strange - cropping file');
+      eidors_msg('File length strange - cropping file',0);
       d=d(1:floor(length(d)/256)*256);
    end
 
    dd= reshape( d, 256, length(d)/256);
+   vv= untwist(dd);
+
+   curr=0.00512*dd(209:224,:);  % Amps
+   volt=12*dd(225:240,:); %Vrms
+   auxdata= dd(241:255,:);
+   auxdata= auxdata(:);
+   %input impedance=voltage./current-440;        Ohm
 
 % measurements rotate with stimulation, we untwist them
+function vv= untwist(dd);
+   elec=16;
+   pos_i= [0,1];
+   ELS= rem(rem(0:elec^2-1,elec) - ...
+        floor((0:elec^2-1)/elec)+elec,elec)';
+   ELS=~any(rem( elec+[-1 0 [-1 0]+pos_i*[-1;1] ] ,elec)' ...
+        *ones(1,elec^2)==ones(4,1)*ELS')';
    twist= [               0+(1:13), ...
                          13+(1:13), ...
            39-(0:-1:0),  26+(1:12), ...
@@ -140,12 +177,6 @@ function [vv,curr,volt,auxdata] = mceit_readdata( fname );
     vv= zeros(256,size(dd,2));
     vv(ELS,:)= dd(twist,:);
    %vv= dd(1:208,:);
-
-   curr=0.00512*dd(209:224,:);  % Amps
-   volt=12*dd(225:240,:); %Vrms
-   auxdata= dd(241:255,:);
-   auxdata= auxdata(:);
-   %input impedance=voltage./current-440;        Ohm
 
 % Read data from p2k files (I T S system)
 % FIXME: this code is very rough, it works for
