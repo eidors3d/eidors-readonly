@@ -1,5 +1,5 @@
 function img= aa_inv_solve( inv_model, data1, data2)
-% AA_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
+% AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996
 % img= aa_inv_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
@@ -12,7 +12,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_solve.m,v 1.16 2007-09-21 13:51:59 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.17 2007-10-15 17:46:04 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
