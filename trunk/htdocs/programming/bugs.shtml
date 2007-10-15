@@ -26,6 +26,8 @@
     - normalize_measurements
     - calc_difference_data
 
+- eidors_msg should print then remove low log level entries
+
 - proper functions to call data_form solver variables
 - proper temporal solver calling data_form priors
 - The code in time_prior_solve is somewhat disorganized;
@@ -44,6 +46,8 @@
    - work around matlab bugs (ie no int16 support)
    - create extra parameters (n_elems etc) - (from np_fwd_parameters)
 
+- make mk_common_models cleanly in 3D
+- bugs in mk_stim_patterns with no_meas_current
 </pre>
 
    <li><b>Todo for V3.2</b>
@@ -110,7 +114,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 03:58:27 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-15 21:07:10 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
