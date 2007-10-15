@@ -1,23 +1,38 @@
-% $Id: backproj_solve02.m,v 1.2 2007-10-15 20:32:47 aadler Exp $
+% $Id: backproj_solve02.m,v 1.3 2007-10-15 21:25:45 aadler Exp $
 
-% Gauss Newton Solver
-inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);
-inv_GN.reconst_type= 'difference';
-inv_GN.solve= @np_inv_solve;
-inv_GN.RtR_prior= @noser_image_prior;
-inv_GN.jacobian_bkgnd.value= 1;
-inv_GN.hyperparameter.value= 1e-3;
+for idx=1:3
+  if     idx==1; mdltype= 'b2c';
+  elseif idx==2; mdltype= 'd2c2';
+  elseif idx==3; mdltype= 'd2t2';
+  end
 
-imgr= inv_solve(inv_GN, vh,vi);
-subplot(121)
-show_fem(imgr);
-axis equal; axis off
+   imdl= mk_common_model(mdltype,16);
+   fmdl= imdl.fwd_model;
+   params= aa_fwd_parameters( fmdl );
 
-% Backprojection Solver
-inv_BP= eidors_obj('inv_model','BP_solver','fwd_model', img.fwd_model);
-inv_BP.reconst_type= 'difference';
-inv_BP.solve= @backproj_solve;
-inv_BP.backproj_solve.type= 'naive';
-imgr= inv_solve(inv_BP, vh,vi);
+   homog= ones(size(fmdl.elems,1),1);
+   img= eidors_obj('image','','elem_data',homog);
+   img.fwd_model= fmdl;
 
+   node_v= calc_all_node_voltages( img );
+   elem_v= reshape(node_v( fmdl.elems',:),3,[],16);
+   elem_v= squeeze(mean(elem_v,1));
+   meas_v= params.N2E * node_v;
 
+   sel= 4;
+   ed= elem_v(:,sel);
+   img.elem_data= ed;
+   subplot(2,3,idx);
+   show_fem(img);
+
+   ej = zeros(size(ed));
+   for i=1:16
+     ej= ej + ( ed<meas_v(i,sel) );
+   end
+   img.elem_data= ej;
+   subplot(2,3,idx+3);
+   show_fem(img);
+
+end
+
+print -r125 -dpng backproj_solve02a.png;
