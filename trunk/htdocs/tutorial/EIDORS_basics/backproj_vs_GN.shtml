@@ -5,7 +5,7 @@ This tutorial shows how one can approximate backprojection
 image reconstruction with EIDORS.
 
 <h3> 
-Calculate Equipotential lines 
+Calculate the nodal voltage field
 </h3>
 
 <pre>
@@ -21,6 +21,24 @@ Adjacent stimulation ([0 1]),
 45&deg; stimulation ([0 2]),
 90&deg; stimulation ([0 4]),
 180&deg; stimulation ([0 8])
+</center>
+
+<h3> 
+Calculate Equipotential lines 
+</h3>
+
+<pre>
+<!--#include virtual="backproj_solve02.m" -->
+</pre>
+
+<center>
+<img src="backproj_solve02a.png">
+<br><i> Figure:</i>
+Equipotential lines for adjacent stimulation
+<i>From Left to right:</i>
+256 element circular mesh,
+1024 element circular mesh,
+1024 element mesh of human upper thorax
 </center>
 
 <h3> 
@@ -49,7 +67,7 @@ Sample image to test 2D image reconstruction algorithms
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-15 20:32:47 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-15 21:25:45 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
