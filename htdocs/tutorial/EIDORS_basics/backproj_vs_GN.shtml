@@ -1,0 +1,37 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<H2>GN reconstruction vs Backprojection</H2>
+
+This tutorial shows how one can approximate backprojection
+image reconstruction with EIDORS.
+
+<h3> 
+Create 2D Model and simulate measurements
+</h3>
+
+Reuse the model from the
+ <a href="./tutorial120.shtml">this tutorial</a>.
+
+<pre>
+<!--#include virtual="tutorial120a.m" -->
+</pre>
+
+<center>
+<img src="tutorial120a.png">
+<br><i> Figure:</i>
+Sample image to test 2D image reconstruction algorithms
+</center>
+
+
+<pre>
+<!--#include virtual="backproj_solve02.m" -->
+</pre>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-10-15 18:09:43 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
