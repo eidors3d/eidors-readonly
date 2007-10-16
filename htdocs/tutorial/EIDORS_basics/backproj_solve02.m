@@ -1,4 +1,4 @@
-% $Id: backproj_solve02.m,v 1.3 2007-10-15 21:25:45 aadler Exp $
+% $Id: backproj_solve02.m,v 1.4 2007-10-16 01:18:40 aadler Exp $
 
 for idx=1:3
   if     idx==1; mdltype= 'b2c';
@@ -27,7 +27,7 @@ for idx=1:3
 
    ej = zeros(size(ed));
    for i=1:16
-     ej= ej + ( ed<meas_v(i,sel) );
+     ej= ej + ( ed < meas_v(i,sel) );
    end
    img.elem_data= ej;
    subplot(2,3,idx+3);
