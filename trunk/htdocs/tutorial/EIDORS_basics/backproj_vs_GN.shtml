@@ -58,16 +58,20 @@ Reuse the model from the
 Sample image to test 2D image reconstruction algorithms
 </center>
 
+<h3> 
+Image reconstruction with GN (NOSER) and Backprojection solvers
+</h3>
+
 
 <pre>
-<!--#include virtual="backproj_solve02.m" -->
+<!--#include virtual="backproj_solve03.m" -->
 </pre>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-15 21:25:45 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-17 13:58:21 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
