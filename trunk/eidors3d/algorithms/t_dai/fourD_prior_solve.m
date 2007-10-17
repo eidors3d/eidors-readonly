@@ -13,7 +13,7 @@ function img= fourD_prior_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007, Tao Dai and Andy Adler. Licenced under the GPL Version 2
-% $Id: fourD_prior_solve.m,v 1.1 2007-10-17 00:37:31 daitao Exp $
+% $Id: fourD_prior_solve.m,v 1.2 2007-10-17 17:25:09 daitao Exp $
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.fourD_prior.time_steps;
@@ -156,7 +156,7 @@ cov_y = cov(data');%cov matrix of data
 JcovxJt = (cov_y-cov_n);%cov_y=JcovxJt+cov_n
 
 % find out the best r to describe correlation between
-% adjacent images
+% adjacent images. 
 r=.01:.01:.99;
 [k,l]= meshgrid(-ts:ts,-ts:ts);
 I = eye(ts*2+1);
@@ -165,8 +165,6 @@ I = eye(ts*2+1);
 MP = Gama_y*norm(cov_y,'fro') -I*norm( cov_n,'fro');%matrix precalculated
 for i =1:length(r)
     G = r(i).^abs(k-l);
-%     GG = kron(G, JcovxJt);
-%     e(i)=norm(cov_y_telda - cov_n_telda - GG,'fro');
     e(i) = norm(MP - G*norm(JcovxJt,'fro'),'fro'); %this is equivalent to above. but save mem.
 end
 [e_min,ind] = min(e);
@@ -176,7 +174,7 @@ Gama = gama.^abs(k-l);%correlation matrix of image set
 function P_3d = calc_P_3d(inv_model,P_2d)
 
 % P_C = exponential_covar_prior( inv_model );
-P_C = calc_covar_prior( inv_model );%a simplied calculation of "exponential_covar_prior"
+P_C = calc_covar_prior( inv_model );%a simplified calculation of "exponential_covar_prior"
 
 P_N = sqrt(P_2d);
 P_3d = P_N*P_C*P_N;
