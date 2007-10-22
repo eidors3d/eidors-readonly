@@ -1,4 +1,4 @@
-% $Id: backproj_solve03.m,v 1.2 2007-10-17 13:58:21 aadler Exp $
+% $Id: backproj_solve03.m,v 1.3 2007-10-22 21:34:39 aadler Exp $
 
 % Gauss Newton Solver
 inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);
@@ -24,9 +24,11 @@ subplot(132)
 show_fem(imgr);
 axis equal; axis off
 
-inv_BP.backproj_solve.type= 'filtered';
+inv_BP.backproj_solve.type= 'simple_filter';
 
 imgr= inv_solve(inv_BP, vh,vi);
 subplot(133)
 show_fem(imgr);
 axis equal; axis off
+
+print -r125 -dpng backproj_solve03a.png;

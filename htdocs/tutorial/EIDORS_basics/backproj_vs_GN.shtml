@@ -67,11 +67,19 @@ Image reconstruction with GN (NOSER) and Backprojection solvers
 <!--#include virtual="backproj_solve03.m" -->
 </pre>
 
+<center>
+<img src="backproj_solve03a.png">
+<br><i> Figure:</i>
+Reconstructions using:
+<i>Left:</i> GN Solver with NOSER Prior
+<i>Middle:</i> Naive Backprojection
+<i>Right:</i> Backprojection with a simple filter
+</center>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-17 13:58:21 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-22 21:34:39 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
