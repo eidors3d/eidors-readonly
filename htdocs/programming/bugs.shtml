@@ -41,6 +41,7 @@
   needs to be thought out properly, too.
 - complex examples and complex tests
 - bug in analytical model (test_2d_resistor)
+    - looks like bug is in aa_fwd_parameters: -- srf_area/sum(srf_area);
 - create function eidors_defaults in algorithms
    - set default properites, 
    - work around matlab bugs (ie no int16 support)
@@ -114,7 +115,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-15 21:07:10 $ by $Author: aadler $
+    Last Modified: $Date: 2007-10-22 19:35:55 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
