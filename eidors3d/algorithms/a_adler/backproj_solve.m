@@ -18,7 +18,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: backproj_solve.m,v 1.1 2007-10-22 20:04:07 aadler Exp $
+% $Id: backproj_solve.m,v 1.2 2007-10-22 20:21:08 aadler Exp $
 
 try
    type= inv_model.backproj_solve.type;
@@ -63,10 +63,21 @@ function Jbp = calc_backprojection_mask( fmdl );
 
    meas_v= pp.N2E * node_v;
 
-   stimulation= fwd_model.stimulation;
-   for i = 1:length(stimulation);
-     [idx_pl,jnk]=find(fmdl.stimulation(1).meas_pattern'<0)
-     [idx_mi,jnk]=find(fmdl.stimulation(1).meas_pattern'>0)
+   Jbp = zeros(pp.n_elem, sum(fmdl.meas_select) );
+
+   idx= 1;
+   % This will only work for stim_patterns with bipolar injection
+   for i = 1:pp.n_stim;
+     meas_pat_i= fmdl.stimulation(i).meas_pattern;
+     elem_vi= elem_v(:,i);
+     for j= 1:size(meas_pat_i,1); 
+        idx_pl= find(meas_pat_i(j,:)<0);
+        idx_mi= find(meas_pat_i(j,:)>0);
+        Jbp(:,idx) = (elem_vi  > meas_v(i,idx_pl)) & ...
+                     (elem_vi <= meas_v(i,idx_mi));
+        idx= idx+1;
+     end
+   end
 
 
 keyboard
@@ -83,18 +94,3 @@ keyboard
    img.elem_data= ej;
    subplot(2,3,idx+3);
    show_fem(img);
-e
-
-function N2E= calc_mappings(fwd_model);
-   electrode= fwd_model.electrode;
-   n_elec= length(electrode);
-   N2E = sparse(n_elec, size(fwd_model.nodes,1));
-   for i=1:n_elec
-       elec_nodes = electrode(i).nodes;
-       if length(elec_nodes) == 1 
-          N2E(i, elec_nodes) = 1;
-       else
-          srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
-          N2E(i, elec_nodes) = srf_area/length(elec_nodes);
-       end
-   end
