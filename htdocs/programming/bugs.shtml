@@ -46,6 +46,9 @@
    - set default properites, 
    - work around matlab bugs (ie no int16 support)
    - create extra parameters (n_elems etc) - (from np_fwd_parameters)
+- bug in solver direction (ie simulated data are negative, so
+     that the inverse looks right. Doesn't work with test data)
+- show_fem gives weird images
 
 - make mk_common_models cleanly in 3D
 - bugs in mk_stim_patterns with no_meas_current
@@ -115,7 +118,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-22 19:35:55 $ by $Author: aadler $
+    Last Modified: $Date: 2007-11-20 20:26:06 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
