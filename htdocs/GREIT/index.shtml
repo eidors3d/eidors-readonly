@@ -36,14 +36,14 @@
     >mirror</a>)<br>
 <a href="data_contrib.shtml"
    >Contrib Data</a><br>
-<a href="http://eidors3d.cvs.sourceforge.net/GREIT/"
+<a href="http://eidors3d.cvs.sourceforge.net/eidors3d/GREIT/"
    >Browse CVS</a><br>
 <hr>
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: index.shtml,v 1.1 2007-11-20 11:54:35 aadler Exp $
+     $Id: index.shtml,v 1.2 2007-11-20 12:00:33 aadler Exp $
   -->
 <p>&nbsp;
 <p>
@@ -55,3 +55,60 @@
 </td><td>&nbsp;</td><td valign="top">
 
 
+<H3>Project Goal</H3>
+GREIT is a collaborative project to develop a
+consensus "best-of-breed" linear reconstucution
+algorithm for lung EIT.
+
+<H3>Getting Started</H3>
+
+GREIT is in active development. No software
+has yet been released. 
+
+<ul>
+<p><li><b>
+Browse Developer Versions 
+</b><br>
+<a href="http://eidors3d.cvs.sourceforge.net/eidors3d/GREIT/"
+   >Browse CVS</a><br>
+
+<p><li><b>
+Read only access to Developer Version 
+</b><br>
+Read-only, worldwide access is available via CVS using
+Anonymous CVS Access with
+<pre>
+cvs -d:pserver:anonymous@eidors3d.cvs.sf.net:/cvsroot/eidors3d co GREIT
+</pre>
+
+<p><li><b>
+Access Developer Version 
+</b><br>
+Read-write, access is available via CVS for registered
+developers. To become a developer, 
+email the <a href="../faq.shtml#maintainers">maintainers</a>.
+Access CVS via:
+<pre>
+cvs -d:ext:developername@eidors3d.cvs.sf.net:/cvsroot/eidors3d co GREIT
+</pre>
+
+</ul>
+
+
+
+
+
+<H2>License</H2>
+GREIT is licenced under the GNU 
+<a href="http://www.gnu.org/licenses/lgpl.html"
+    >Lesser General Public License</a>. Uses are free to
+use, modify, and distribute their modifications.
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2007-11-20 12:00:33 $ by $Author: aadler $
+</small>
+
+</body>
+
+</html>
