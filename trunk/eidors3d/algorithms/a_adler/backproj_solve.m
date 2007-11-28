@@ -18,7 +18,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: backproj_solve.m,v 1.2 2007-10-22 20:21:08 aadler Exp $
+% $Id: backproj_solve.m,v 1.3 2007-11-28 15:07:39 aadler Exp $
 
 try
    type= inv_model.backproj_solve.type;
@@ -33,9 +33,9 @@ one_step_inv = eidors_obj('get-cache', inv_model, 'backproj_solve');
 if ~isempty(one_step_inv)
     eidors_msg('backproj_solve: using cached value', 2);
 else
-    Jbp = calc_backprojection_mask( fwd_model );
+    Jbp = calc_backprojection_mask( fwd_model, type );
 
-    one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
+    one_step_inv= Jbp;
 
     eidors_obj('set-cache', inv_model, 'backproj_solve', one_step_inv);
     eidors_msg('backproj_solve: setting cached value', 2);
@@ -50,7 +50,7 @@ img.name= 'solved by backproj_solve';
 img.elem_data = sol;
 img.fwd_model= fwd_model;
 
-function Jbp = calc_backprojection_mask( fmdl );
+function Jbp = calc_backprojection_mask( fmdl , type);
    % create homog image
    himg= eidors_obj('image','', 'fwd_model',fmdl, ...
                     'elem_data',ones(size(fmdl.elems,1),1) );
@@ -73,24 +73,20 @@ function Jbp = calc_backprojection_mask( fmdl );
      for j= 1:size(meas_pat_i,1); 
         idx_pl= find(meas_pat_i(j,:)<0);
         idx_mi= find(meas_pat_i(j,:)>0);
-        Jbp(:,idx) = (elem_vi  > meas_v(i,idx_pl)) & ...
-                     (elem_vi <= meas_v(i,idx_mi));
+        Jbp(:,idx) = (elem_vi <= meas_v(idx_pl,i)) & ...
+                     (elem_vi >  meas_v(idx_mi,i));
         idx= idx+1;
      end
    end
 
-
-keyboard
-   sel= 4;
-   ed= elem_v(:,sel);
-   img.elem_data= ed;
-   subplot(2,3,idx);
-   show_fem(img);
-
-   ej = zeros(size(ed));
-   for i=1:16
-     ej= ej + ( ed < meas_v(i,sel) );
+   if strcmp(type,'naive')
+% do nothing
+   elseif strcmp(type,'simple_filter')
+      xe=mean(reshape(fmdl.nodes(fmdl.elems',1),pp.n_dims+1,pp.n_elem));
+      ye=mean(reshape(fmdl.nodes(fmdl.elems',2),pp.n_dims+1,pp.n_elem));
+      filt=sqrt(1-xe.^2-ye.^2);
+      Jbp= Jbp.*( filt'*ones(1,size(Jbp,2)) );
+   else
+      error(['dont know what to do with filter type=',type]);
    end
-   img.elem_data= ej;
-   subplot(2,3,idx+3);
-   show_fem(img);
+
