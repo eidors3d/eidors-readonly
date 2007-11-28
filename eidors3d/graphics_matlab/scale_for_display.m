@@ -17,7 +17,7 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
 %    ref_lev, max_scale - the centre and max of the colour scale
 %    elem_data - data scaled in the range [-1 .. 1]
 %
-% $Id: scale_for_display.m,v 1.11 2007-08-30 03:37:32 aadler Exp $
+% $Id: scale_for_display.m,v 1.12 2007-11-28 15:06:46 aadler Exp $
 % (C) 2006 Andy Adler. Licensed under GPL v2
 
    global eidors_colours;
@@ -46,10 +46,12 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
    elem_data = elem_data - ref_lev;
 
    % Crop output to the colour limit
-   if ~isempty(clim)
+   if isempty(clim)
+      max_scale = max(abs(elem_data(:))) + eps;
+   else
       elem_data( elem_data> clim)=  clim;
       elem_data( elem_data<-clim)= -clim;
+      max_scale = clim;
    end
 
-   max_scale = max(abs(elem_data(:))) + eps;
    elem_data = elem_data/max_scale;
