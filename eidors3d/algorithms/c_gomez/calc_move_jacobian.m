@@ -8,7 +8,7 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 
 % (C) 2007, Camille Gomez-Laberge and Andy Adler.
 %  License: GPL version 2 or version 3
-% $Id: calc_move_jacobian.m,v 1.2 2007-09-21 13:52:00 aadler Exp $
+% $Id: calc_move_jacobian.m,v 1.3 2007-11-29 20:38:14 camilgomez Exp $
 
 % System matrix and its parameters
 
@@ -261,7 +261,7 @@ if pp.DEBUG
     if norm(delSm -delSm_pert ,1) > 1e-5
         eidors_msg('delSm calc wrong',1);
         delVm = pp.Re * pp.Ce' * delSm_pert * pp.Ce * pp.Vc;
-        eeyboard
+        keyboard
     end
 end
 
