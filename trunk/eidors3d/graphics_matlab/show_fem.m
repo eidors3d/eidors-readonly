@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.59 2007-08-30 03:37:32 aadler Exp $
+% $Id: show_fem.m,v 1.60 2007-11-29 20:38:15 camilgomez Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -116,7 +116,7 @@ for e=1:length(mdl.electrode)
     if length(elec_nodes) == 1  % point electrode model
         vtx= mdl.nodes(elec_nodes,:);
         line(vtx(1),vtx(2),vtx(3), ...
-            'Marker','h','MarkerSize',24, ...
+            'Marker','o','MarkerSize',12, ...
             'MarkerFaceColor',colour, 'MarkerEdgeColor', colour);
         if number_electrodes
             text(vtx(1),vtx(2),vtx(3), num2str(e));
