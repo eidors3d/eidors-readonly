@@ -5,6 +5,32 @@
 Borehole model
 </h3>
 
+Files needed for this tutorial are here:
+<ul>
+   <li>
+<li> <a href="./Anneau1_Decembre2004_wen32_1.m">Anneau1_Decembre2004_wen32_1.m</a>
+<li> <a href="./Anneau1_Janvier2005_wen64_1.m">Anneau1_Janvier2005_wen64_1.m</a>
+<li> <a href="./Anneau1_Juillet2004_wen32_1.m">Anneau1_Juillet2004_wen32_1.m</a>
+<li> <a href="./dg_calc_jacobian.m">dg_calc_jacobian.m</a>
+<li> <a href="./dg_calc_system_mat.m">dg_calc_system_mat.m</a>
+<li> <a href="./dg_downhill_simplex_nr.m">dg_downhill_simplex_nr.m</a>
+<li> <a href="./dg_fwd_parameters.m">dg_fwd_parameters.m</a>
+<li> <a href="./dg_fwd_solve.m">dg_fwd_solve.m</a>
+<li> <a href="./dg_gallery_penalty_simplex.m">dg_gallery_penalty_simplex.m</a>
+<li> <a href="./dg_show_gallery_models.m">dg_show_gallery_models.m</a>
+<li> <a href="./Electrode_Positions_Ring1_EZG04.m">Electrode_Positions_Ring1_EZG04.m</a>
+<li> <a href="./elems_2Dto3D.m">elems_2Dto3D.m</a>
+<li> <a href="./gallery_gradient.m">gallery_gradient.m</a>
+<li> <a href="./lance_inversions_MontTerri.m">lance_inversions_MontTerri.m</a>
+<li> <a href="./mk_2Dto3D_mapping.m">mk_2Dto3D_mapping.m</a>
+<li> <a href="./mk_Coarse2DtoFine3D_mapping.m">mk_Coarse2DtoFine3D_mapping.m</a>
+<li> <a href="./mk_coarse_fine_mapping.m">mk_coarse_fine_mapping.m</a>
+<li> <a href="./mk_data_tomel.m">mk_data_tomel.m</a>
+<li> <a href="./mk_gallery.m">mk_gallery.m</a>
+<li> <a href="./mk_Pilot2DtoFine3D_mapping.m">mk_Pilot2DtoFine3D_mapping.m</a>
+<li> <a href="./mk_stim_patterns_tomel.m">mk_stim_patterns_tomel.m</a>
+</ul>
+
 <h4>
 Create 3D FEM model of the gallery and load homogeneous model
 </h4>
@@ -76,7 +102,7 @@ gallery_gradient(EZG04_Ring1,Data_Ring1_July2004_Wen32_1,2,9,'R2Jul2004Wenner1')
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-08-30 03:58:29 $ by $Author: aadler $
+    Last Modified: $Date: 2008-01-18 12:56:49 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
