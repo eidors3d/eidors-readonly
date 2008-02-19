@@ -1,7 +1,8 @@
-function show_slices( img, levels, clim, ref_lev )
-% show_slices (img, levels, clim  ) show slices at levels of an
+function out_img= show_slices( img, levels, clim, ref_lev )
+% out_img = show_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or a array of structs
+% out_img= matrix in the current colormap which we can use image(out_img);
 %
 % levels = Matrix [Lx3] of L image levels
 %          each row of the matrix specifies the intercepts
@@ -20,7 +21,7 @@ function show_slices( img, levels, clim, ref_lev )
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.46 2007-08-30 03:37:32 aadler Exp $
+% $Id: show_slices.m,v 1.47 2008-02-19 16:05:43 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
