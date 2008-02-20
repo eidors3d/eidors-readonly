@@ -13,13 +13,6 @@ function [V] = forward_solver(E,I,tol,pp,V);
 %tol = The tolerance in the forward solution, e.g. 1e-5
 
 
-% octave does not support advanced CG methods currently
-if exist('OCTAVE_VERSION')
-   V= E\I;
-   return;
-end
-
-
 % d: number of current patterns
 [n_nodes,d] = size(I);
 
@@ -28,6 +21,12 @@ V = zeros(size(E,1),d);
 end
 
 if isreal(E)==1
+
+    % USE \ operator for real case, to make it work
+    % FIXME: this needs to be tested to see if it is most
+    % efficient - AA 20 Feb 08
+    V= E\I;
+    return
 
     if  pp ~= 1:size(I,1) %There is a colume permutation, hence Cholesky opted
         %Permute the rows and columns to make the factors sparser
@@ -44,20 +43,18 @@ if isreal(E)==1
         %Alternatively use pcg ********
         K = cholinc(E,tol*100);
         for i=1:d
-            [V(:,i),flag,relres,iter,resvec] = pcg(E,I(:,i),tol*norm(I(:,i)),n_nodes,K',K,V(:,i));
+            V(:,i) = pcg(E,I(:,i),tol*norm(I(:,i)),n_nodes,K',K,V(:,i));
         end
 
     end
 
-end %is real
-
-if isreal(E)==0
+else % is complex
     
   [L,U] = luinc(E,tol/10);
 
   for y=1:d
 
-  [V(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y),tol*norm(I(:,y)),1000,L,U);
+     V(:,y) = bicgstab(E,I(:,y),tol*norm(I(:,y)),1000,L,U);
 
   end 
    
