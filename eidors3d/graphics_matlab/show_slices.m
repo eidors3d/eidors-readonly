@@ -21,7 +21,7 @@ function out_img= show_slices( img, levels, clim, ref_lev )
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.47 2008-02-19 16:05:43 aadler Exp $
+% $Id: show_slices.m,v 1.48 2008-02-20 15:01:50 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
@@ -98,3 +98,5 @@ out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
 
 image(out_img);
 axis('image');axis('off');axis('equal');
+
+if nargout==0; clear('out_img'); end
