@@ -1,13 +1,15 @@
 % Create 2D model of a cylindrical resistor
-% $Id: test_2d_resistor.m,v 1.3 2008-02-21 19:06:50 aadler Exp $
+% $Id: test_2d_resistor.m,v 1.4 2008-02-21 21:15:21 aadler Exp $
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4
-conduc= .1;  % conductivity in Ohm-meters
+if ~exist('conduc');conduc=   1;end  % conductivity in Ohm-meters
 current= 4;  % Amps
 z_contact= 1e-2;
+scale = .35;
 mdl= eidors_obj('fwd_model','2D rectangle');
 mdl.nodes = [floor( (0:nn-1)/ww );rem(0:nn-1,ww)]';
+mdl.nodes = scale*mdl.nodes;
 mdl.elems = delaunayn(mdl.nodes);
 mdl.boundary= find_boundary(mdl.elems);
 mdl.gnd_node = 1;
@@ -19,8 +21,9 @@ stim.meas_pattern= [-1,1];
 mdl.stimulation= stim;
 mdl.electrode= elec;
 show_fem(mdl);
+n_el = size(mdl.elems,1);
 img= eidors_obj('image','2D rectangle', ...
-      'elem_data', ones(size(mdl.elems,1),1) * conduc );
+      'elem_data', ones(n_el,1) * conduc );
 
 % AA_SOLVER
 mdl.solve = @aa_fwd_solve;
@@ -29,7 +32,7 @@ img.fwd_model = mdl;
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 
-% AA_SOLVER
+% NP_SOLVER
 mdl.solve = @np_fwd_solve;
 mdl.system_mat = @np_calc_system_mat;
 img.fwd_model = mdl;
@@ -38,7 +41,32 @@ fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 
 % analytical solution
 wid_len= max(mdl.nodes) - min(mdl.nodes);
-R = wid_len(1) / wid_len(2) / conduc + 2*z_contact;
+R = wid_len(1) / wid_len(2) / conduc + 2*z_contact/scale;
 
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
+
+% NOW CALCULATE THE ANALYTICAL JACOBIAN
+mdl.solve = @np_fwd_solve;
+mdl.jacobian = @np_calc_jacobian;
+mg.elem_data= ones(n_el,1) * conduc ;
+Jnp= calc_jacobian(mdl,img);
+
+mdl.jacobian = @perturb_jacobian;
+Jp1= calc_jacobian(mdl,img);
+
+img.elem_data= ones(n_el,1) * conduc ;
+Jp2= zeros(size(Jnp));
+delta= 1e-8;
+for i=1:n_el
+   fsol_h= fwd_solve(img);
+   img.elem_data(i) = img.elem_data(i) + delta;
+   fsol_i= fwd_solve(img);
+   Jp2(:,i) = (fsol_i.meas - fsol_h.meas)/delta; 
+end
+   
+mdl.solve = @aa_fwd_solve;
+mdl.jacobian = @aa_calc_jacobian;
+Jaa= calc_jacobian(mdl,img);
+
+[Jaa;Jnp;Jp1;Jp2]
