@@ -1,4 +1,17 @@
-function [Vfields] = measfields(protocol,model,vtx,simp,elec,E,pp,gnd_ind)
+function [Vfields] = m_2d_fields(vtx,elec,E,pp,gnd_ind)
+%function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);
+%
+%This function calculates the measurement fields using preconditioned conjugate gradients.
+%
+%
+%
+%vtx     = The vertices
+%el_no   = The total number of electrodes in the system
+%m_ind   = The measurements matrix (indices of electrode pairs)
+%E       = The full rank system matrix
+%tol     = The tolerance in the forward solution 
+%gnd_ind = The ground index
+%v_f     = The measurements fields
 
 [er,ec] = size(elec);
 [vr,vc] = size(vtx);
