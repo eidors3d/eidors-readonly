@@ -31,24 +31,21 @@ Jrow = zeros(1,size(simp,1));
 cnt = 0;
 
 el_idx= 1:dim:size(Ela,1); % Ela must be square
-Vol_cond = diag(Ela(el_idx,el_idx)).* mat_ref;
 
    for p=1:size(V,2) 
      
       DV =  D*V(:,p); %Gradient of the current fields 
        
       for m=1:df(p) 
-        
       
         Dvf = D*v_f(:,sum(df(1:p-1))+m); %Gradient of the measurement fields
               
         Jrow_x3 = Dvf .* DV ;  
         lJrow= length(Jrow_x3);
-        Jrow_u = sum(reshape(Jrow_x3,dim,[]),1)'; % Works for 2D and 3D
-        
 %       Jrow_u = Jrow_x3(1:dim:lJrow) + Jrow_x3(2:dim:lJrow) + Jrow_x3(3:dim:lJrow);
-%       Jrow = Jrow_u .* diag(Ela(1:3:size(Ela,1),1:3:size(Ela,2))); % Must account for background conductivity
-        Jrow = Jrow_u .* Vol_cond;
+        Jrow_u = sum(reshape(Jrow_x3,dim,[]),1)'; % Works for 2D and 3D now
+        
+        Jrow = Jrow_u .* diag(Ela(1:dim:size(Ela,1),1:dim:size(Ela,2)));
         
         cnt = cnt+1;
         J(cnt,:) = -Jrow.';
@@ -58,7 +55,6 @@ Vol_cond = diag(Ela(el_idx,el_idx)).* mat_ref;
        
    end %p
   
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.

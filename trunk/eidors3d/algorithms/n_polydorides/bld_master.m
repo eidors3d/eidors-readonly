@@ -134,6 +134,9 @@ Ela = sparse( (1:vc*sr), (1:vc*sr),kron( (a .* Vols)',ones(1,vc)) );
 
 Ef = A'*Ela*A; 
 
+%This is for the Jacobian matrix (does not include conductivity)
+Ela = sparse( (1:vc*sr), (1:vc*sr),kron( Vols.',ones(1,vc)) );
+
 
 %
 % 3D BLD MASTER
