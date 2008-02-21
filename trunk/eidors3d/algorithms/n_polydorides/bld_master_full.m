@@ -16,7 +16,99 @@ function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);
 %       dimensions are [number of electrodes x 3*number of faces per electrode].
 %zc   = The array of electrode contact impedances. 
 
+dimen= size(vtx,2);
+if dimen==2
+   [Ef,D,Ela] = bld_master_full_2d(vtx,simp,mat,elec,zc);
+elseif dimen==3
+   [Ef,D,Ela] = bld_master_full_3d(vtx,simp,mat,elec,zc);
+else
+   error('not 2d or 3d');
+end
 
+function [Ef,D,Ela] = bld_master_full_2d(vtx,simp,mat,elec,zc);
+
+[vr, vc] = size(vtx);
+[sr, sc] = size(simp);
+[er, ec] = size(elec);
+
+
+if length(mat) ~= sr
+   error('Invalid conductivity information for this mesh');
+end
+
+
+if length(zc) == er
+
+
+%The column vector zc with the contact impedances in [Ohms] is required
+
+[E,D,Ela] = bld_master(vtx,simp,mat);
+
+
+E = full(E);
+
+Ef = spalloc(vr+er,vr+er, er * vr);
+
+Ef(1:vr,1:vr) = E;
+
+
+while length(zc) ~= er
+      disp(sprintf('Please enter the correct zc column vector with length: %d',er));
+      %[zc] = contact_impedance;
+end
+
+
+for q=1:er
+   
+   tang_dist = 0;
+   
+   q_th_ele = elec(q,:);  % Select the row of nodes corresponding to the current electrode
+   
+   q_th_ele_zf = nonzeros(q_th_ele)'; % Extract the dummy "zero" nodal numbers
+   
+   for w=1:length(q_th_ele_zf)-1
+      
+      m = q_th_ele_zf(w);
+      n = q_th_ele_zf(w+1);
+      
+      % This way m & n nodes belong to the edge tangent to the electrode and also at the same simplex.
+      
+      % We now evaluate the distance "tangential contact" between m & n 
+      
+      xm = vtx(m,1);
+      ym = vtx(m,2); % m node coords
+      xn = vtx(n,1);  
+      yn = vtx(n,2); % n node coords
+      
+      [dist] = db2p(xm,ym,xn,yn); % distance mn
+      
+      cali_dist = dist ./ zc(q);  % coeficient for the distance mn
+      
+      tang_dist = tang_dist + cali_dist;
+      
+      % Start modifying "expanding" the E master matrix
+      
+      Ef(m,vr+q) = Ef(m,vr+q) - cali_dist/2 ; % Kv -> Ec  -> Vertical bar
+      Ef(n,vr+q) = Ef(n,vr+q) - cali_dist/2 ; % Kv -> Ec
+      
+      Ef(vr+q,m) = Ef(vr+q,m) - cali_dist/2 ; % Kv' -> Ec' -> Horizontal bar
+      Ef(vr+q,n) = Ef(vr+q,n) - cali_dist/2 ; % Kv' -> Ec'
+      
+      
+      Ef(m,m) = Ef(m,m) + cali_dist/3; % Kz -> E -> Main bar
+      Ef(n,n) = Ef(n,n) + cali_dist/3; % Kz -> E
+      Ef(m,n) = Ef(m,n) + cali_dist/6; % Kz -> E
+      Ef(n,m) = Ef(n,m) + cali_dist/6; % Kz -> E
+      
+   end % dealing with this electrode
+   
+   Ef(vr+q,vr+q) = Ef(vr+q,vr+q) + tang_dist;
+   
+end %for the whole set of electrodes
+
+end
+
+function [Ef,D,Ela] = bld_master_full_3d(vtx,simp,mat,elec,zc);
 [vr, vc] = size(vtx);
 [sr, sc] = size(simp);
 [er, ec] = size(elec);
@@ -109,7 +201,12 @@ for q=1:er
    Ef(vr+q,vr+q) = Ef(vr+q,vr+q) + 0.5*tang_area;
    
 end %for the whole set of electrodes
-1;
+
+% calculate distance between two points
+function [dist] = db2p(xa,ya,xb,yb);
+
+   dist = sqrt((xb - xa).^2 + (yb - ya).^2);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
 % Copyright (c) N. Polydorides 2003
