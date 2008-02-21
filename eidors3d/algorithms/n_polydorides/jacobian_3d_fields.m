@@ -14,7 +14,7 @@ function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df);
 %v_f      = The measurement fields
 %df       = Measurements per current pattern as used in v_f 
 
-[vr,vc] = size(vtx);
+[vr,dim] = size(vtx);
 
 el_no = size(elec,1);
 
@@ -30,7 +30,7 @@ J = zeros(sum(df),size(simp,1));
 Jrow = zeros(1,size(simp,1));
 cnt = 0;
 
-el_idx= 1:3:size(Ela,1); % Ela must be square
+el_idx= 1:dim:size(Ela,1); % Ela must be square
 Vol_cond = diag(Ela(el_idx,el_idx)).* mat_ref;
 
    for p=1:size(V,2) 
@@ -44,8 +44,9 @@ Vol_cond = diag(Ela(el_idx,el_idx)).* mat_ref;
               
         Jrow_x3 = Dvf .* DV ;  
         lJrow= length(Jrow_x3);
-        Jrow_u = Jrow_x3(1:3:lJrow) + Jrow_x3(2:3:lJrow) + Jrow_x3(3:3:lJrow);
+        Jrow_u = sum(reshape(Jrow_x3,dim,[]),1)'; % Works for 2D and 3D
         
+%       Jrow_u = Jrow_x3(1:dim:lJrow) + Jrow_x3(2:dim:lJrow) + Jrow_x3(3:dim:lJrow);
 %       Jrow = Jrow_u .* diag(Ela(1:3:size(Ela,1),1:3:size(Ela,2))); % Must account for background conductivity
         Jrow = Jrow_u .* Vol_cond;
         
