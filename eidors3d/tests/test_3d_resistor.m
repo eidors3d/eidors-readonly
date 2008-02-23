@@ -1,5 +1,5 @@
 % Create 3D model of a Rectangular resistor
-% $Id: test_3d_resistor.m,v 1.3 2007-04-12 15:44:20 aadler Exp $
+% $Id: test_3d_resistor.m,v 1.4 2008-02-23 01:58:32 aadler Exp $
 
 ll=5; % length
 ww=1; % width
@@ -42,8 +42,9 @@ show_fem(mdl);
 mdl.solve = @aa_fwd_solve;
 mdl.system_mat = @aa_calc_system_mat;
 
+n_el = size(mdl.elems,1);
 img= eidors_obj('image','3D rectangle', ...
-      'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
+      'elem_data', ones(n_el,1) * conduc, ...
       'fwd_model', mdl); 
 
 fsol= fwd_solve(img);
@@ -64,3 +65,29 @@ R = ll / ww / hh / conduc + 2*z_contact;
 
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
+
+
+% NOW CALCULATE THE ANALYTICAL JACOBIAN
+mdl.solve = @np_fwd_solve;
+mdl.jacobian = @np_calc_jacobian;
+mg.elem_data= ones(n_el,1) * conduc ;
+Jnp= calc_jacobian(mdl,img);
+
+mdl.jacobian = @perturb_jacobian;
+Jp1= calc_jacobian(mdl,img);
+
+img.elem_data= ones(n_el,1) * conduc ;
+Jp2= zeros(size(Jnp));
+delta= 1e-8;
+for i=1:n_el
+   fsol_h= fwd_solve(img);
+   img.elem_data(i) = img.elem_data(i) + delta;
+   fsol_i= fwd_solve(img);
+   Jp2(:,i) = (fsol_i.meas - fsol_h.meas)/delta; 
+end
+   
+mdl.solve = @aa_fwd_solve;
+mdl.jacobian = @aa_calc_jacobian;
+Jaa= calc_jacobian(mdl,img);
+
+[Jaa;Jnp;Jp1;Jp2]
