@@ -1,0 +1,30 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<H2>GN reconstruction vs Backprojection</H2>
+
+This tutorial shows how solvers can be defined to
+reconstruct onto the nodes or the elements
+
+<h3> 
+Define a regular GN solver
+</h3>
+
+<pre>
+<!--#include virtual="backproj_solve01.m" -->
+</pre>
+
+<center>
+<img src="backproj_solve01a.png">
+<br><i> Figure:</i>
+Nodal voltages in a mesh with different stimulation patterns.
+<i>From Left to right:</i>
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-02-26 22:04:46 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
