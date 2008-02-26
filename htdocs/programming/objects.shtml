@@ -6,25 +6,30 @@ In order to clarify the operation of EIDORS, variables are
 packaged in to eidors objects. This page describes
 each EIDORS object and its members and methods.
 
-<p>
-In terms of design choices for EIDORS:<br>
-    &minus; We avoid an OO framework because
-    1) Matlab's OO framework sucks,
-    2) Too much OO is bad for project clarity
-
-    <br>&minus; Instead, we use a structure for each
-       important object in the system
-       <br>&minus; Each structure will have data elements,
-       as well as function "pointers" (the name of a function)
-       which will be used. For example, consider
-       this code:
-<pre>
-  my_model.nodes= ... % add data here
-  my_model.elems= ... % add data here
-  my_model.jacobian= @my_jacobian_calc_function;
-  jj= calc_jacobian( my_model, ...
-                conductivites); % calls my_jacobian_calc_function
-</pre>
+<H3>Definition of Symbols</H3>
+<dl>
+   <DT><b><i>D</i></b>
+       <DD>Problem dimension (D=2 for 2D, D=3 for 3D, etc)
+   <DT><b><i>N</i><sub>f</sub></b>
+       <DD>Number of simplices (elems) in fwd problem (fine mesh)
+   <DT><b><i>N</i><sub>c</sub></b>
+       <DD>Number of simplices (elems) in inv problem (coarse/reconst mesh)
+   <DT><b><i>V</i><sub>f</sub></b>
+       <DD>Number of vertices (nodes) in fwd problem (fine mesh)
+   <DT><b><i>V</i><sub>c</sub></b>
+       <DD>Number of vertices (nodes) in inv problem (coarse/reconst mesh)
+   <DT><b><i>B</i><sub>f</sub></b>
+       <DD>Number of vertices (nodes) on boundary in fwd problem (finemesh)
+   <DT><b><i>E</i></b>
+       <DD>Number of electrodes
+   <DT><b><i>S</i></b>
+       <DD>Number of stimulation patterns
+   <DT><b><i>M</i><sub>j</sub></b>
+       <DD>Number measurements made for stimulation pattern <i>j</i>
+   <DT><b><i>M</i></b>
+       <DD>Number measurements per data frame
+            (<i>M</i> = &Sigma;<i>M</i><sub>j</sub>)
+</dl>
 
 
 <H3>EIDORS Objects Reference</H3>
@@ -50,6 +55,12 @@ In terms of design choices for EIDORS:<br>
 <blockquote>
 <img src="objl_fwd_model.gif">
 </blockquote>
+      <b>Notes</b>
+      <ul>
+          <li> If the fwd_model does not correspond to a finite
+               element model, then the <tt>elems</tt> parameter
+               will not be present 
+      </ul>
 
       <h4>
         inv_model
@@ -57,6 +68,18 @@ In terms of design choices for EIDORS:<br>
 <blockquote>
 <img src="obj_inv_model.gif">
 </blockquote>
+      <b>Notes</b>
+      <ul>
+          <li> The <tt>fwd_model</tt> in the <tt>inv_model</tt> refers to the 
+               model on which the <i>reconstruction</i> is done.
+               If any of the calculations take place on a fine
+               mesh model, then these would be parameters to the
+               particular <tt>inv_solve</tt> function.
+          <li> If the <tt>inv_model</tt> solves onto nodes, rather than
+               elements, then the fwd_model
+               <tt>elems</tt> parameter
+               will not be present 
+      </ul>
 
       <h4>
         image
@@ -64,11 +87,16 @@ In terms of design choices for EIDORS:<br>
 <blockquote>
 <img src="obj_image.gif">
 </blockquote>
+      <ul>
+          <li> If the <tt>inv_model</tt> solves onto nodes, rather than
+               elements, then the image will have a parameter
+               <tt>node_data</tt> (rather than <tt>elem_data</tt>)
+      </ul>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-23 19:51:58 $ by $Author: aadler $
+    Last Modified: $Date: 2008-02-26 19:52:38 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
