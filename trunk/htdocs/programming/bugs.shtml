@@ -18,6 +18,7 @@
 - Backward compatibility limit ====} Matlab. 6.5
     - remove bad shortcuts, remove isfields
 - Jacobian calculation accuracy (calc_jacobian_test)
+    - this is mostly a z_contact issue
 
 - Document new features for inv_model
     - accept_multiple_frames
@@ -33,15 +34,18 @@
 - The code in time_prior_solve is somewhat disorganized;
   it really should use calc_JiRtRJt, but this function
 
+- sort out calc_JiRtRJt to take inverses of RtR and vice-versa.
 - measures of hyperparameter - get Brad G to contribute?
 
 - fix coarse_fine solver to be more general
+
+- build general nodal solver framework
 
 - move static examples into main code
   needs to be thought out properly, too.
 - complex examples and complex tests
 - bug in analytical model (test_2d_resistor)
-    - looks like bug is in aa_fwd_parameters: -- srf_area/sum(srf_area);
+    - issues with point electrodes and current on electrodes
 - create function eidors_defaults in algorithms
    - set default properites, 
    - work around matlab bugs (ie no int16 support)
@@ -118,7 +122,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-11-20 20:26:06 $ by $Author: aadler $
+    Last Modified: $Date: 2008-02-27 02:10:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
