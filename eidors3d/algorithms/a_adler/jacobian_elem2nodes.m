@@ -1,5 +1,5 @@
-function J= jacobian_nodes_from_elems( fwd_model, img);
-% JACOBIAN_NODES_FROM_ELEMS: calculate Jacobian on Nodes from Elem solver
+function J= jacobian_elem2nodes( fwd_model, img);
+% JACOBIAN_ELEM2NODES: calculate Jacobian on Nodes from Elem solver
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
 % fwd_model = forward model defined on nodes (elems may not be defined)
@@ -9,7 +9,7 @@ function J= jacobian_nodes_from_elems( fwd_model, img);
 % img = image background for jacobian calc
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: jacobian_nodes_from_elems.m,v 1.2 2008-02-26 22:05:02 aadler Exp $
+% $Id: jacobian_elem2nodes.m,v 1.1 2008-02-29 20:55:54 aadler Exp $
 
 fem_fmdl= fwd_model.jacobian_nodes_from_elems.fwd_model;
 EtoN = mapper_nodes_elems( fem_fmdl);
