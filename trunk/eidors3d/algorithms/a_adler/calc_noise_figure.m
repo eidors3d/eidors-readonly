@@ -23,7 +23,7 @@ function NF = calc_noise_figure( inv_model, hp)
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_noise_figure.m,v 1.13 2007-08-30 03:37:01 aadler Exp $
+% $Id: calc_noise_figure.m,v 1.14 2008-02-29 20:57:30 aadler Exp $
 
 % A 'proper' definition of noise power is:
 %      NF = SNR_z / SNR_x
@@ -171,3 +171,34 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
       img0 = inv_solve( inv_model, h_data, c_data);
       img0n= inv_solve( inv_model, h_full, c_noise);
    end
+
+% OLD CODE - iterate
+function old_code
+   % calculate signal
+   d_len   = size(h_data,1);
+   delta   = 1e-2* mean(h_data);
+   sig_data = mean(abs( ...
+         calc_difference_data( h_data, c_data , inv_model.fwd_model ) ...
+                       ));
+   % calculate image 
+   % Note, this won't work if the algorithm output is not zero biased
+
+   VOL = pp.VOLUME';
+   [img0] = get_images( inv_model, h_data, c_data);
+   sig_img= VOL*abs(img0.elem_data);
+
+   % Now do noise
+   var_data= 0;
+   var_img = 0;
+   for i=1:d_len
+      this_noise = zeros(d_len, size(c_data,2));
+      this_noise(i,:) = 1;
+      c_noise = c_data + this_noise;
+      var_data = var_data + sum( ...
+         calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
+                       .^2, 2); 
+      [imgn] = get_images( inv_model, h_data, c_noise);
+      var_img= VOL.^2*imgn.elem_data.^2; 
+   end
+   var_data = var_data / d_len;
+   var_img  = var_img  / d_len;
