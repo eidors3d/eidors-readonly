@@ -3,29 +3,31 @@ function J= jacobian_elem2nodes( fwd_model, img);
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
 % fwd_model = forward model defined on nodes (elems may not be defined)
-% jacobian_nodes_from_elems.fwd_model 
+% jacobian_elem2nodes.fwd_model 
 %           = full forward model (with nodes and elements)
 %
 % img = image background for jacobian calc
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: jacobian_elem2nodes.m,v 1.1 2008-02-29 20:55:54 aadler Exp $
+% $Id: jacobian_elem2nodes.m,v 1.2 2008-02-29 22:32:41 aadler Exp $
 
-fem_fmdl= fwd_model.jacobian_nodes_from_elems.fwd_model;
+fem_fmdl= fwd_model.jacobian_elem2nodes.fwd_model;
 EtoN = mapper_nodes_elems( fem_fmdl);
-n_elems= size(EtoN,2);
+
+if ~isfield(img,'elem_data')
+  img.elem_data= calc_elem_from_node_image(EtoN, img.node_data);
+end
+
+J= calc_jacobian(fem_fmdl, img)*EtoN';
 
 % Create an image on the elements with a fwd_model on the elemtents
-img_e= img;
-% jnkflag needed to make lsqr shut up
-mu=1e-3;
-[e_d, jnkflag] = lsqr([EtoN;mu*speye(n_elems)], ...
-                      [img_e.node_data;zeros(n_elems,1)], ...
-                       1e-8,1000); % should be enough, accuracy is ok
-img_e.elem_data= e_d;
-img_e.fwd_model = fem_fmdl;
-
-J= calc_jacobian(fem_fmdl, img_e)*EtoN';
+function e_d = calc_elem_from_node_image(EtoN, node_data); 
+   n_elems= size(EtoN,2);
+   mu=1e-3; % regularization hyperparameter (squared)
+   % jnkflag needed to make lsqr shut up
+   [e_d, jnkflag] = lsqr([EtoN;mu*speye(n_elems)], ...
+                         [node_data;zeros(n_elems,1)], ...
+                          1e-8,1000); % should be enough, accuracy is ok
 
 return;
 % Three different ways to invert iEtoN. We only need something fairly
