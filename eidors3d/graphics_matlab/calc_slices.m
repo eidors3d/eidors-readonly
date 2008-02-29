@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.21 2008-02-29 22:56:27 aadler Exp $
+% $Id: calc_slices.m,v 1.22 2008-02-29 23:19:01 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -48,42 +48,80 @@ if isfield(img,'elem_data')
       rimg(:,:,:,lev_no) = calc_image_elems( elem_data, level, fwd_model, np);
    end
 elseif isfield(img,'node_data')
+   node_data= [img.node_data];
+   if size(node_data,1)==1; node_data=node_data';end
+   n_images= size(node_data,2);
+   rimg=zeros(np,np,n_images,num_levs);
+
+   for lev_no = 1:num_levs
+      level= levels( lev_no, 1:3 );
+
+      rimg(:,:,:,lev_no) = calc_image_nodes( node_data, level, fwd_model, np);
+   end
 else
    error('img does not have a data field');
 end
 
+% Calculate an image by mapping it onto the node_ptr matrix
+function rimg= calc_image_nodes( node_data, level, fwd_model, np);
+
+   % elem_ptr_table also depends on the number of mapped points
+   fwd_model.calc_slices.mapping_npoints=np;
+
+   % Get node_ptr from cache, if available
+   % NPtable is cell array of elem_ptrs for different levels
+   NPtable = eidors_obj('get-cache', fwd_model, 'node_ptr_table');
+   level_hash= eidors_var_id( level );
+
+   if isfield(NPtable, level_hash);
+      node_ptr= getfield(NPtable, level_hash);
+   else
+      NODE = level_model( fwd_model, level );
+      node_ptr= node_mapper( NODE, np, np);
+
+      NPtable = setfield(NPtable, level_hash, node_ptr);
+      eidors_obj('set-cache', fwd_model, 'node_ptr_table', NPtable);
+      eidors_msg('show_slices: setting cached value', 3);
+   end
+
+
+   backgnd= NaN;
+   n_images= size(elem_data,2);
+   rval= [backgnd*ones(1,n_images); elem_data];
+   rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image_elems( elem_data, level, fwd_model, np)
 
-% elem_ptr_table also depends on the number of mapped points
-fwd_model.calc_slices.mapping_npoints=np;
+   % elem_ptr_table also depends on the number of mapped points
+   fwd_model.calc_slices.mapping_npoints=np;
 
-% Get elem_ptr from cache, if available
-% EPtable is cell array of elem_ptrs for different levels
-EPtable = eidors_obj('get-cache', fwd_model, 'elem_ptr_table');
-level_hash= eidors_var_id( level );
+   % Get elem_ptr from cache, if available
+   % EPtable is cell array of elem_ptrs for different levels
+   EPtable = eidors_obj('get-cache', fwd_model, 'elem_ptr_table');
+   level_hash= eidors_var_id( level );
 
-if isfield(EPtable, level_hash);
-   elem_ptr= getfield(EPtable, level_hash);
-else
-   [NODE, ELEM] = level_model( fwd_model, level );
-   if size(NODE,1) ==2 %2D
-      elem_ptr= img_mapper2( NODE, ELEM, np, np);
+   if isfield(EPtable, level_hash);
+      elem_ptr= getfield(EPtable, level_hash);
    else
-      elem_ptr= img_mapper3( NODE, ELEM, np, np);
+      NODE = level_model( fwd_model, level );
+      ELEM= fwd_model.elems';
+      if size(NODE,1) ==2 %2D
+         elem_ptr= img_mapper2( NODE, ELEM, np, np);
+      else
+         elem_ptr= img_mapper3( NODE, ELEM, np, np);
+      end
+
+      EPtable = setfield(EPtable, level_hash, elem_ptr);
+      eidors_obj('set-cache', fwd_model, 'elem_ptr_table', EPtable);
+      eidors_msg('show_slices: setting cached value', 3);
    end
 
-   EPtable = setfield(EPtable, level_hash, elem_ptr);
-   eidors_obj('set-cache', fwd_model, 'elem_ptr_table', EPtable);
-   eidors_msg('show_slices: setting cached value', 3);
-end
 
-
-backgnd= NaN;
-n_images= size(elem_data,2);
-rval= [backgnd*ones(1,n_images); elem_data];
-rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
+   backgnd= NaN;
+   n_images= size(elem_data,2);
+   rval= [backgnd*ones(1,n_images); elem_data];
+   rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
 
 % Search through each element and find the points which
@@ -237,8 +275,7 @@ function EPTR= img_mapper3(NODE, ELEM, npx, npy );
 % Level is a 1x3 vector specifying the x,y,z axis intercepts
 % NODE describes the vertices in this coord space
 
-function [NODE,ELEM]= level_model( fwd_model, level )
-   ELEM= fwd_model.elems';
+function NODE= level_model( fwd_model, level )
 
    vtx= fwd_model.nodes;
    [nn, dims] = size(vtx);
