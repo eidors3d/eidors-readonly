@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.20 2007-09-28 19:10:01 aadler Exp $
+% $Id: calc_slices.m,v 1.21 2008-02-29 22:56:27 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -35,22 +35,26 @@ if size(levels)== [1,1]
    levels = levels(2:end-1)'*[Inf,Inf,1];
 end
 
-elem_data= [img.elem_data];
-if size(elem_data,1)==1; elem_data=elem_data';end
-n_images= size(elem_data,2);
 num_levs= size(levels,1);
+if isfield(img,'elem_data')
+   elem_data= [img.elem_data];
+   if size(elem_data,1)==1; elem_data=elem_data';end
+   n_images= size(elem_data,2);
+   rimg=zeros(np,np,n_images,num_levs);
 
-rimg=zeros(np,np,n_images,num_levs);
+   for lev_no = 1:num_levs
+      level= levels( lev_no, 1:3 );
 
-for lev_no = 1:num_levs
-   level= levels( lev_no, 1:3 );
-
-   rimg(:,:,:,lev_no) = calc_image( elem_data, level, fwd_model, np);
+      rimg(:,:,:,lev_no) = calc_image_elems( elem_data, level, fwd_model, np);
+   end
+elseif isfield(img,'node_data')
+else
+   error('img does not have a data field');
 end
 
 
 % Calculate an image by mapping it onto the elem_ptr matrix
-function rimg= calc_image( elem_data, level, fwd_model, np)
+function rimg= calc_image_elems( elem_data, level, fwd_model, np)
 
 % elem_ptr_table also depends on the number of mapped points
 fwd_model.calc_slices.mapping_npoints=np;
