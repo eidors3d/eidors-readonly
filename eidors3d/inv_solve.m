@@ -3,10 +3,15 @@ function img = inv_solve( inv_model, data1, data2)
 % 
 % inv_solve can be called as
 %     img= inv_solve( inv_model, data1, data2)
-%   if inv_model.type = 'difference'
+%   if inv_model.reconst_type = 'difference'
 % or
 %     img= inv_solve( inv_model, data )
-%   if inv_model.type = 'static'
+%   if inv_model.reconst_type = 'static'
+%
+%   if inv_model.reconst_to = 'nodes' then output
+%      img.node_data has output data
+%   else   reconst_to = 'elems' then output to
+%      img.elem_data has output data
 %
 % in each case it will call the inv_model.solve
 %
@@ -35,7 +40,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: inv_solve.m,v 1.34 2007-08-30 03:37:05 aadler Exp $
+% $Id: inv_solve.m,v 1.35 2008-02-29 22:51:30 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -73,6 +78,12 @@ else
 end
 
 img = eidors_obj('image', imgc );
+try % move elem_data to nodes if required
+   if inv_model.reconst_to == 'nodes'
+      img.node_data= img.elem_data;
+      img = rmfield(img,'elem_data');
+   end
+end
 
 function nf= num_frames(d0)
    if isnumeric( d0 )
