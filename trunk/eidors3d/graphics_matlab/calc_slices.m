@@ -14,7 +14,7 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.22 2008-02-29 23:19:01 aadler Exp $
+% $Id: calc_slices.m,v 1.23 2008-03-04 16:28:52 aadler Exp $
 
 np= calc_colours('npoints');
 
@@ -77,18 +77,17 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np);
       node_ptr= getfield(NPtable, level_hash);
    else
       NODE = level_model( fwd_model, level );
-      node_ptr= node_mapper( NODE, np, np);
+      node_ptr= node_mapper( NODE, fwd_model.boundary, np, np);
 
       NPtable = setfield(NPtable, level_hash, node_ptr);
       eidors_obj('set-cache', fwd_model, 'node_ptr_table', NPtable);
       eidors_msg('show_slices: setting cached value', 3);
    end
 
-
    backgnd= NaN;
-   n_images= size(elem_data,2);
-   rval= [backgnd*ones(1,n_images); elem_data];
-   rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
+   n_images= size(node_data,2);
+   rval= [backgnd*ones(1,n_images); node_data];
+   rimg= reshape( rval(node_ptr+1,:), np,np, n_images );
 
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image_elems( elem_data, level, fwd_model, np)
@@ -123,20 +122,44 @@ function rimg= calc_image_elems( elem_data, level, fwd_model, np)
    rval= [backgnd*ones(1,n_images); elem_data];
    rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
+% Search through each element and find the points which
+% are in that element
+% NPTR is matrix npx x npy with a pointer to the
+% node closest to it.
+function NPTR= node_mapper( NODE, bdy, npx, npy);
+  [x,y] = grid_the_space( NODE, npx, npy);
+  NODEx= NODE(1,:);
+  NODEy= NODE(2,:);
+  if size(NODE,1) == 2
+     NODEz2= 0;
+     bdy= unique(bdy(:));
+     in = inpolygon(x(:),y(:),NODE(1,bdy)',NODE(2,bdy)');
+  else
+     NODEz2= NODE(3,:).^2;
+%     ELEM= fwd_model.elems';
+%        elem_ptr= img_mapper3( NODE, ELEM, np, np);
+%        node_ptr=  0% FIXME how to get boundary in 3D?
+  end
+  NPTR=zeros(npy,npx);
+
+% This next operation can be vectorized, but we don't
+%  do it because that can make really big matrices
+
+  for i= 1: npy
+     for j= 1: npx
+        dist2 = (NODEx-x(i,j)).^2 + (NODEy-y(i,j)).^2 + NODEz2;
+        ff = find(dist2 == min(dist2));
+        NPTR(i,j) = ff(1);
+     end
+  end
+  NPTR(~in)= 0; % outside
 
 % Search through each element and find the points which
 % are in that element
+% EPTR is matrix npx x npy with a pointer to the
+% element which contains it.
 function EPTR= img_mapper2(NODE, ELEM, npx, npy );
-  xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
-  xmean= mean([xmin,xmax]); xrange= xmax-xmin;
-
-  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
-  ymean= mean([ymin,ymax]); yrange= ymax-ymin;
-
-  range= max([xrange, yrange]);
-  [x y]=meshgrid( ...
-      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
-      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
+  [x,y] = grid_the_space( NODE, npx, npy);
   v_yx= [-y(:) x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
@@ -166,16 +189,7 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
 % so that the imaging plane is on the z-axis. Then we iterate
 % through elements to find the containing each pixel
 function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
-  xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
-  xmean= mean([xmin,xmax]); xrange= xmax-xmin;
-
-  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
-  ymean= mean([ymin,ymax]); yrange= ymax-ymin;
-
-  range= max([xrange, yrange]);
-  [x y]=meshgrid( ...
-      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
-      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
+  [x,y] = grid_the_space( NODE, npx, npy);
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -218,16 +232,7 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 % so that the imaging plane is on the z-axis. Then we iterate
 % through elements to find the containing each pixel
 function EPTR= img_mapper3(NODE, ELEM, npx, npy );
-  xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
-  xmean= mean([xmin,xmax]); xrange= xmax-xmin;
-
-  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
-  ymean= mean([ymin,ymax]); yrange= ymax-ymin;
-
-  range= max([xrange, yrange]);
-  [x y]=meshgrid( ...
-      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
-      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
+  [x,y] = grid_the_space( NODE, npx, npy);
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -317,3 +322,16 @@ function NODE= level_model( fwd_model, level )
    v3= v3 * (1-2*(sum(v3)<0));
 
    NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
+
+% Create matrices x y which grid the space of NODE
+function  [x,y] = grid_the_space( NODE, npx, npy);
+  xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
+  xmean= mean([xmin,xmax]); xrange= xmax-xmin;
+
+  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
+  ymean= mean([ymin,ymax]); yrange= ymax-ymin;
+
+  range= max([xrange, yrange]);
+  [x y]=meshgrid( ...
+      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
+      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );

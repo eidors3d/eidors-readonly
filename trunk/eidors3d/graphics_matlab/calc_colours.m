@@ -69,7 +69,7 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %
 
 % (C) 2005-2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.45 2007-08-30 03:37:32 aadler Exp $  
+% $Id: calc_colours.m,v 1.46 2008-03-04 16:28:52 aadler Exp $  
 
 if nargin==0;
 % If no args - set defaults
@@ -89,12 +89,16 @@ if isstr(img)
 
 elseif isfield(img,'type')
    if strcmp( img.type, 'image' )
-      elem_data= img.elem_data; %col vector
+      try
+         img_data= img.node_data;
+      catch
+         img_data= img.elem_data; %col vector
+      end
    else
       error('calc_colours: input is not eidors image object');
    end
 else
-   elem_data= img;
+   img_data= img;
 end
 
 % Set default parameters
@@ -103,20 +107,20 @@ if nargin < 3; do_colourbar = 0;       end
 if nargin < 4; ref_lev = 'use_global'; end
 
 
-if isempty(elem_data)
+if isempty(img_data)
     colours = 'k'; %black
     return;
 end
 
 pp=get_colours;
 
-m= size(elem_data,1); n=size(elem_data,2);
+m= size(img_data,1); n=size(img_data,2);
 
 clim = calc_clim(img, clim);
 % We can only plot the real part of data
-% Vectorize elem_data here, is get's reshaped later
+% Vectorize img_data here, is get's reshaped later
 [scl_data, ref_lev, max_scale] = ...
-      scale_for_display( real(elem_data(:)), ref_lev, clim );
+      scale_for_display( real(img_data(:)), ref_lev, clim );
 
 backgnd= isnan(scl_data);
 scl_data(backgnd)= mean( scl_data(~backgnd));
@@ -251,7 +255,7 @@ function pp=get_colours;
    global eidors_colours;
    pp= eidors_colours;
 
-function colours=set_mapped_colour(pp, backgnd, elem_data)
+function colours=set_mapped_colour(pp, backgnd, img_data)
    % need to generate a colourmap with pp.mapped_colour+1 elements
    % background pixel will be at entry #1. Thus for
    % mapped_colour= 3. CMAP = [backgnd,[-1 -.5  0 .5 1]
@@ -262,7 +266,7 @@ function colours=set_mapped_colour(pp, backgnd, elem_data)
    [red,grn,blu] = blu_red_axis( pp, ...
           [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
-   colours = fix( elem_data * (ncol-1))' + ncol + 1;
+   colours = fix( img_data * (ncol-1))' + ncol + 1;
    colours(backgnd)= backgndidx;
 
 function value= get_field(param);
