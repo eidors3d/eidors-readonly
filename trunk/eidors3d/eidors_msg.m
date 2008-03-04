@@ -25,7 +25,7 @@ function eidors_msg( message, varargin )
 % Messages at log_level2 are displayed temprorarily
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_msg.m,v 1.23 2008-03-03 12:49:53 aadler Exp $
+% $Id: eidors_msg.m,v 1.24 2008-03-04 16:28:33 aadler Exp $
 
 global eidors_objects
 
@@ -47,7 +47,7 @@ end
 
 fid= 2; %stderr
 try, lms= eidors_objects.last_message_size;
-   if lms>0; fprintf(fid,'%c', 8*ones(lms,1)); end
+%  if lms>0; fprintf(fid,'%c', 8*ones(lms,1)); end
 end
 
 if strcmp(message,'log_level')
@@ -59,7 +59,7 @@ elseif level <= log_level
       fflush(fid);
    end
    eidors_objects.last_message_size= 0;
-elseif level <= log_level2
+elseif 0 %level <= log_level2
    string= sprintf('EIDORS:[ %s ]', message, args{:} );
    fprintf(fid, string);
    eidors_objects.last_message_size= length(string);
