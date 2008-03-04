@@ -5,6 +5,25 @@ ideas for enhancements to the
 EIDORS package.
 
 <ul>
+<p><li><b>
+    4 Mar 2008:
+</b><br>
+New code to generally handle reconstructions with coarse
+and fine inverse models. This will take care of: 1) reconstructions
+on nodes rather than elements, 2) reconstructions to a 
+raster output (such as GREIT), and 3) 2&frac12;D reconstructions.
+<P>
+To do this, the function <tt>calc_jacobian</tt> is redefined
+to take a single <tt>inv_model</tt> parameter. <tt>inv_model</tt>
+now has fields <tt>rec_model</tt> (reconstruction, coarse model)
+and <tt>fwd_model</tt> (forward, fine model).
+
+
+<p><li><b>
+    22 Feb 2008:
+</b><br>
+Andy Adler, Bill Lionheart, Andrea Borsic met with Nick Polydorides at MIT for the week. We made progress on a number of fronts including reintegrating Nick's 2D version of his code and validating it against Andy's. We made a start in incorporating MCMC methods in EIDORS and worked on boundary shape. Validation of 3D codes against each other showed a bug that had crept in to the forward solver in algroithms/n_polydorides which caused an error of relative size 1e-5 under some circumstances. We also had the great pleasure of meeting Gilbert Strang who introduced us to <a href="http://www-math.mit.edu/~persson/mesh/">distmesh</a>, which we are now planning to include in EIDORS.
+
 
 <p><li><b>
     24 Sep 2007:
@@ -801,7 +820,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-09-24 14:34:22 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-04 19:55:06 $ by $Author: aadler $
 </small>
 </body>
 
