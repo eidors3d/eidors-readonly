@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.60 2007-11-29 20:38:15 camilgomez Exp $
+% $Id: show_fem.m,v 1.61 2008-03-04 16:28:52 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -198,8 +198,16 @@ function show_2d_fem( mdl, colours )
   Ys=zeros(3,e);
   Ys(:)=mdl.nodes(elem(:),2);
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
-  h= patch(Xs,Ys,zeros(3,e),colours);
-  set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+  if size(colours,2) == e  % defined on elems
+     h= patch(Xs,Ys,zeros(3,e),colours);
+     set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+  else
+     h= patch(Xs,Ys,zeros(3,e));
+     col_cols= shiftdim(colours,1); %DAMN MATLAB can't even be clear on colours
+     set(h,'Faces',col_cols);
+  %  get(h,'CDataMapping');
+  end
+
 
   max_x= max(mdl.nodes(:,1)); min_x= min(mdl.nodes(:,1));
   max_y= max(mdl.nodes(:,2)); min_y= min(mdl.nodes(:,2));
