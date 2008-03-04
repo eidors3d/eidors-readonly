@@ -1,5 +1,5 @@
-%$Id: nodal_jacobian01.m,v 1.2 2008-02-29 22:50:43 aadler Exp $
-imdl_e= mk_common_model('b2t2',16);
+%$Id: nodal_jacobian01.m,v 1.3 2008-03-04 16:29:35 aadler Exp $
+imdl_e= mk_common_model('b2c2',16);
 imdl_e.hyperparameter.value= 0.05;
 imdl_e.RtR_prior = @laplace_image_prior;
 
@@ -22,15 +22,3 @@ img_n.node_data= mapper_nodes_elems(fmdl)*img_e.elem_data;
 J_e= calc_jacobian( img_e);
 J_n= calc_jacobian( img_n);
 
-% load some lung data
-load montreal_data_1995;
-vi = zc_resp(:,2); 
-vh = zc_resp(:,19); 
-
-img1= inv_solve(imdl_e,vh,vi);
-show_slices(img1);
-img2= inv_solve(imdl_n,vh,vi);
-NtoE = mapper_nodes_elems( fmdl );
-
-
-%print -r125 -dpng nodal_jacobian_solver.png;
