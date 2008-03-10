@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.62 2008-03-10 16:00:54 aadler Exp $
+% $Id: show_fem.m,v 1.63 2008-03-10 16:24:44 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -198,10 +198,14 @@ function show_2d_fem( mdl, colours )
   Ys=zeros(3,e);
   Ys(:)=mdl.nodes(elem(:),2);
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
-  if size(colours,2) == 3  % no reconstruction 
+  if size(colours) == [1,3]  % no reconstruction 
      h= patch(Xs,Ys,zeros(3,e),colours);
-  elseif size(colours,2) == e  % defined on elems
+  elseif size(colours) == [1,e]  % defined on elems
      h= patch(Xs,Ys,zeros(3,e),colours);
+     set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+  elseif size(colours,1) == e  % multiple images
+     eidors_msg('warning: show_fem only shows first image',1);
+     h= patch(Xs,Ys,zeros(3,e),colours(:,1)');
      set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
   else
      h= patch(Xs,Ys,zeros(3,e));
