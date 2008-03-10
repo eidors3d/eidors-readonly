@@ -69,7 +69,7 @@ while 1
     pair=unique(sort(pair,2),'rows');
     % 5. Graphical output of the current mesh
     if dim==2
-      trimesh(t,p(:,1),p(:,2),zeros(N,1))
+      hh=trimesh(t,p(:,1),p(:,2),zeros(N,1),'edgecolor','black');
       view(2),axis equal,axis off,drawnow
     elseif dim==3
       if mod(count,5)==0
