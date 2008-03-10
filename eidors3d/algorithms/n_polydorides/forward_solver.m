@@ -1,10 +1,8 @@
 function [V] = forward_solver(E,I,tol,pp,V);
 %[V] = forward_solver(E,I,tol,pp,V);
 %
-%This function solves the forward problem using the Cholesky or LU method or 
-%conjugate gradients. 
-%
-%
+%This function solves the forward problem using matlab's \ sovler, or
+%conjugate gradients (for large problems). 
 %
 %E   = The full rank system matrix 
 %I   = The currents matrix (RHS) 
