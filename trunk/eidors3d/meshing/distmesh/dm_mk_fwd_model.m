@@ -1,5 +1,5 @@
 function [fwd_mdl]= dm_mk_fwd_model( fd, fh, h0, bbox, ...
-                               stim_pattern, z_contact, name)
+                     elec_nodes, stim_pattern, z_contact, name)
 % DM_MK_FWD_MODEL: create a fwd_model object using distmesh
 % fwd_mdl= dm_mk_fwd_model( fd, fh, h0, bbox,...
 %                          elec_nodes, stim_pattern, z_contact, name);
@@ -9,32 +9,38 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, fh, h0, bbox, ...
 %  H0:        Initial edge length
 %  BBOX:      Bounding box [xmin,ymin, {zmin}; xmax,ymax,{zmax}]
 %
-%  centres:           vector of electrode centres from 'create_tank_mesh_ng' 
 %  stim_pattern:      a stimulation pattern structure
 %                     empty ([]) if stim_pattern is not available
+%  elec_nodes:        cell of matrix N x [x,y,{z}] for each electrode
 %  z_contact:         vector or scalar electrode contact impedance
 %  name:              name for eidors object
 %
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.2 2008-03-10 14:41:28 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.3 2008-03-10 16:02:20 aadler Exp $
 
 if nargin <8
    name = 'MDL from dm_mk_fwd_model';
 end
 
-fix_node= [];
-keyboard
-[vtx,simp] = distmeshnd(fd,fh,h0,bbox,fix_node);
+% fixed_node= [elec_nodes{:}]; - wish we could do it like this - matlab bug!!
+fixed_node= [];
+for i= 1:prod(size(elec_nodes)) 
+   this_elec= [fixed_node; elec_nodes{i}];
+   fixed_node= [fixed_node; elec_nodes{i}];
+end
+[vtx,simp] = distmeshnd(fd,fh,h0,bbox,fixed_node);
 srf= find_boundary(simp);
 
-fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
-                       stim_pattern, centres, z_contact)
+fwd_mdl= construct_fwd_model(srf,vtx,simp, name, ...
+                       stim_pattern, elec_nodes, z_contact);
 
 % build fwd_model structure
-function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
-                       stim_pattern, centres, z_contact)
+function mdl= construct_fwd_model(srf,vtx,simp, name, ...
+                       stim_pattern, elec_nodes, z_contact)
+mdl= eidors_obj('fwd_model', name);
+
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
@@ -47,17 +53,23 @@ if ~isempty(stim_pattern)
    mdl.stimulation= stim_pattern;
 end
 
-% Electrodes
+% Electrodes and z_contact
 
 % set the z_contact
-z_contact= z_contact.*ones(nelec,1);
-for i=1:nelec
+n_elec= prod(size(elec_nodes));
+z_contact= z_contact.*ones(n_elec,1);
+curr_e_node=0;
+for i= 1:n_elec
+   this_elec= size(elec_nodes{i},1);
+
+   electrodes(i).nodes    = curr_e_node + (1:this_elec);
    electrodes(i).z_contact= z_contact(i);
+
+   curr_e_node= curr_e_node + this_elec;
 end
+
 
 mdl.electrode =     electrodes;
 mdl.solve=          'np_fwd_solve';
 mdl.jacobian=       'np_calc_jacobian';
 mdl.system_mat=     'np_calc_system_mat';
-
-fwd_mdl= eidors_obj('fwd_model', mdl);
