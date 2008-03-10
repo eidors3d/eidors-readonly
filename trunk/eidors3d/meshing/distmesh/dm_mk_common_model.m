@@ -9,12 +9,11 @@ function [fwd_mdl]= dm_mk_common_model( mdl_name, nnodes, elec_pattern, stim_pat
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_common_model.m,v 1.3 2008-03-10 16:02:19 aadler Exp $
+% $Id: dm_mk_common_model.m,v 1.4 2008-03-10 18:12:35 aadler Exp $
 
 
 if mdl_name == 'c2'
    fd=inline('sqrt(sum(p.^2,2))-1','p');
-   fh= inline('ones(size(p,1),1)','p'); % initially uniform
    bbox = [-1,-1;1,1];
 else
    error(['Dont know what to do with mdl_name=',mdl_name]);
@@ -38,7 +37,7 @@ end
       z_contact=z_contact+0.001;
    end
 
-   fwd_mdl= dm_mk_fwd_model( fd, fh, h0, bbox, elec_nodes, stim_pattern, ...
+   fwd_mdl= dm_mk_fwd_model( fd, h0, bbox, elec_nodes, stim_pattern, ...
                            z_contact, ['dm_mk_common_model= ',mdl_name]);
 
 
@@ -50,9 +49,10 @@ function  h0= estimate_h0(bbox, nnodes);
 function  elec_nodes = mk_2d_circ_elec_nodes( n_elecs, elec_width )
    radius=1;
    th_delta = elec_width/2/pi/radius;
+% electrodes start top and go clockwise
    for i=1:n_elecs
       th= (i-1)*2*pi/n_elecs;
       th= th + th_delta*[-.5;0;.5];
-      this_e_node= radius*[cos(th),sin(th)];
+      this_e_node= radius*[sin(th),cos(th)];
       elec_nodes{i} = this_e_node;
    end
