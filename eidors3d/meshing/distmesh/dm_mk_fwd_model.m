@@ -18,17 +18,19 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, fh, h0, bbox, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.1 2008-03-10 14:16:19 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.2 2008-03-10 14:41:28 aadler Exp $
 
 if nargin <8
    name = 'MDL from dm_mk_fwd_model';
 end
 
-% Prevent singularity from zero contact impedance
-if any(z_contact)<.001
-   z_contact=z_contact+0.001;
-end
+fix_node= [];
+keyboard
+[vtx,simp] = distmeshnd(fd,fh,h0,bbox,fix_node);
+srf= find_boundary(simp);
 
+fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
+                       stim_pattern, centres, z_contact)
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
