@@ -23,6 +23,9 @@ function [p,t]=distmesh2d(fd,fh,h0,bbox,pfix,varargin)
 %   See also: MESHDEMO2D, DISTMESHND, DELAUNAYN, TRIMESH.
 
 %   Copyright (C) 2004-2006 Per-Olof Persson. See COPYRIGHT.TXT for details.
+% This file is taken from the 3.2 Release by Per-Olof Persson,
+% available under the GPL version 2 or any later version.   
+% Source is from http://www-math.mit.edu/~persson/mesh/
 
 dptol=.01; ttol=.1; Fscale=1.2; deltat=.2; geps=.001*h0; deps=sqrt(eps)*h0;
 
