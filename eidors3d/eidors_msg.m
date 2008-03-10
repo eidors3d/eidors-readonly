@@ -25,7 +25,7 @@ function eidors_msg( message, varargin )
 % Messages at log_level2 are displayed temprorarily
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_msg.m,v 1.24 2008-03-04 16:28:33 aadler Exp $
+% $Id: eidors_msg.m,v 1.25 2008-03-10 14:36:50 aadler Exp $
 
 global eidors_objects
 
@@ -46,21 +46,23 @@ for i= 1:length(args)
 end
 
 fid= 2; %stderr
-try, lms= eidors_objects.last_message_size;
+%try, lms= eidors_objects.last_message_size;
 %  if lms>0; fprintf(fid,'%c', 8*ones(lms,1)); end
-end
+%end
+
+% Need to do twice to interpret text in message
+message= sprintf(message, args{:} );
+string= sprintf('EIDORS:[ %s ]', message);
 
 if strcmp(message,'log_level')
    eidors_objects.log_level= level;
 elseif level <= log_level
-   string= sprintf('EIDORS:[ %s ]\n', message, args{:} );
-   fprintf(fid, string);
-   if exist('OCTAVE_VERSION');
-      fflush(fid);
-   end
+   fprintf(fid, '%s\n', string);
+   if exist('OCTAVE_VERSION'); fflush(fid); end
    eidors_objects.last_message_size= 0;
 elseif 0 %level <= log_level2
-   string= sprintf('EIDORS:[ %s ]', message, args{:} );
+% TODO, save messages, and write them out via (printing-hyperlinks)
+%   so that users can see them.
    fprintf(fid, string);
    eidors_objects.last_message_size= length(string);
 end
