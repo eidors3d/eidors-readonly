@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, h0, bbox, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.5 2008-03-10 18:30:32 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.6 2008-03-10 19:48:18 aadler Exp $
 
 if nargin <8
    name = 'MDL from dm_mk_fwd_model';
@@ -27,6 +27,9 @@ fwd_mdl= create_refined_model(name, fd, h0, bbox, elec_nodes, ...
 
 function fmdl= create_refined_model(name, fd, h0, bbox, elec_nodes, ...
                         stim_pattern, z_contact); 
+global node_voltages_for_distmesh
+   node_voltages_for_distmesh=[];
+
    % fixed_node= [elec_nodes{:}]; - wish we could do it like this - matlab bug!!
    fixed_node= [];
    for i= 1:prod(size(elec_nodes)) 
@@ -34,15 +37,39 @@ function fmdl= create_refined_model(name, fd, h0, bbox, elec_nodes, ...
       fixed_node= [fixed_node; elec_nodes{i}];
    end
    [vtx,simp] = call_distmesh(fd,h0,bbox,fixed_node);
-   srf= find_boundary(simp);
 
+   srf= find_boundary(simp);
    fmdl = construct_fwd_model(srf,vtx,simp, name, ...
                           stim_pattern, elec_nodes, z_contact);
 
-   homg_img= eidors_obj('image','', 'fwd_mode',fmdl, ...
+   homg_img= eidors_obj('image','', 'fwd_model',fmdl, ...
                         'elem_data',ones(size(simp,1),1));
-   node_v= calc_all_node_voltages( homg_img);
-keyboard
+
+% horrid way to handle this - send this to distmesh
+   % 4. Describe each edge by a unique pair of nodes
+   pair=zeros(0,2);
+   dim=2;
+   localpairs=nchoosek(1:dim+1,2);
+   for ii=1:size(localpairs,1)
+     pair=[pair;simp(:,localpairs(ii,:))];
+   end
+   pair=unique(sort(pair,2),'rows');
+   
+   node_v = calc_all_node_voltages( homg_img);
+   pair_v = node_v(pair(:,1),:) - node_v(pair(:,2),:);
+   max_pair_v = max(abs(pair_v),[],2);
+   pair_d = sqrt(sum(( vtx(pair(:,1),:) - vtx(pair(:,2),:) ).^2,2));
+   pair_E = max_pair_v./pair_d;
+   pair_p = (vtx(pair(:,1),:) + vtx(pair(:,2),:) )/2;
+   node_voltages_for_distmesh.pair_E= 1./(pair_E+30); % inv E field
+   node_voltages_for_distmesh.pair_p= pair_p; % posn
+
+   [vtx,simp] = call_distmesh(fd,h0,bbox,fixed_node);
+
+   srf= find_boundary(simp);
+   fmdl = construct_fwd_model(srf,vtx,simp, name, ...
+                          stim_pattern, elec_nodes, z_contact);
+
 
 % build fwd_model structure
 function mdl= construct_fwd_model(srf,vtx,simp, name, ...
@@ -78,11 +105,25 @@ function mdl= construct_fwd_model(srf,vtx,simp, name, ...
 
 
    mdl.electrode =     electrodes;
-   mdl.solve=          'np_fwd_solve';
-   mdl.jacobian=       'np_calc_jacobian';
-   mdl.system_mat=     'np_calc_system_mat';
+   mdl.solve=          'aa_fwd_solve';
+   mdl.jacobian=       'aa_calc_jacobian';
+   mdl.system_mat=     'aa_calc_system_mat';
 
 function [vtx,simp] = call_distmesh(fd,h0,bbox,fixed_node);
+   [vtx,simp] = distmeshnd(fd,@huniform,h0,bbox,fixed_node);
+
 %  FH:        Scaled edge length function - decrease in refined areas
-   fh= inline('ones(size(p,1),1)','p'); % initially uniform
-   [vtx,simp] = distmeshnd(fd,fh,h0,bbox,fixed_node);
+function h= huniform(p);
+   global node_voltages_for_distmesh;
+   if isempty(node_voltages_for_distmesh)
+      h= ones(size(p,1),1);
+   else
+      np= size(node_voltages_for_distmesh.pair_p,1);
+      op= ones(np,1);
+      h=  ones(size(p,1),1);
+      for i= 1:size(p,1)
+         df= sum( (op*p(i,:) - node_voltages_for_distmesh.pair_p).^2 ,2);
+         ff= find( df == min(df));
+         h(i)= mean( node_voltages_for_distmesh.pair_E(ff) );
+      end
+   end
