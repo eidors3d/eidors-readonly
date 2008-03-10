@@ -13,7 +13,7 @@ function show_fem( mdl, options )
 %    the default value is 'auto', which should normally autoscale well.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.61 2008-03-04 16:28:52 aadler Exp $
+% $Id: show_fem.m,v 1.62 2008-03-10 16:00:54 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -187,8 +187,8 @@ function show_3d_fem( mdl, options )
 
 function show_2d_fem( mdl, colours )
   
-  el_pos= avg_electrode_posn( mdl );  
-% plot_2d_mesh(mdl.nodes', mdl.elems', el_pos', .95, [0,0,0])
+% el_pos= avg_electrode_posn( mdl );  
+% plot_2d_mesh(mdl.nodes', mdl.elems', el_pos', .95, [0,0,0]);
 
   S= 1; %.95; % shrink factor
   elem= mdl.elems'; e= size(elem,2);
@@ -198,7 +198,9 @@ function show_2d_fem( mdl, colours )
   Ys=zeros(3,e);
   Ys(:)=mdl.nodes(elem(:),2);
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
-  if size(colours,2) == e  % defined on elems
+  if size(colours,2) == 3  % no reconstruction 
+     h= patch(Xs,Ys,zeros(3,e),colours);
+  elseif size(colours,2) == e  % defined on elems
      h= patch(Xs,Ys,zeros(3,e),colours);
      set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
   else
