@@ -9,7 +9,7 @@ function [fwd_mdl]= dm_mk_common_model( mdl_name, nnodes, elec_pattern, stim_pat
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_common_model.m,v 1.2 2008-03-10 14:41:28 aadler Exp $
+% $Id: dm_mk_common_model.m,v 1.3 2008-03-10 16:02:19 aadler Exp $
 
 
 if mdl_name == 'c2'
@@ -20,6 +20,16 @@ else
    error(['Dont know what to do with mdl_name=',mdl_name]);
 end
 
+if elec_pattern == [16, 1]
+   elecs_per_ring = elec_pattern(1);
+   num_rings      = elec_pattern(2);
+   stim_pattern = mk_stim_patterns(elecs_per_ring, num_rings, ...
+                  '{ad}','{ad}',{},100);
+
+   elec_width= .1;
+   elec_nodes = mk_2d_circ_elec_nodes( elecs_per_ring, elec_width);
+end
+
    h0= estimate_h0(bbox, nnodes);
 
    z_contact = 0;
@@ -28,8 +38,7 @@ end
       z_contact=z_contact+0.001;
    end
 
-   stim_pattern= [];
-   f_mdl= dm_mk_fwd_model( fd, fh, h0, bbox, stim_pattern, ...
+   fwd_mdl= dm_mk_fwd_model( fd, fh, h0, bbox, elec_nodes, stim_pattern, ...
                            z_contact, ['dm_mk_common_model= ',mdl_name]);
 
 
@@ -37,3 +46,13 @@ function  h0= estimate_h0(bbox, nnodes);
    dims= size(bbox,2);
    area_est= prod(abs(diff(dims,1)));
    h0 = (area_est/nnodes)^(1/dims);
+
+function  elec_nodes = mk_2d_circ_elec_nodes( n_elecs, elec_width )
+   radius=1;
+   th_delta = elec_width/2/pi/radius;
+   for i=1:n_elecs
+      th= (i-1)*2*pi/n_elecs;
+      th= th + th_delta*[-.5;0;.5];
+      this_e_node= radius*[cos(th),sin(th)];
+      elec_nodes{i} = this_e_node;
+   end
