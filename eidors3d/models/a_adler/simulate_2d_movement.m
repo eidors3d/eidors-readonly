@@ -1,12 +1,21 @@
-function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
+function [vh,vi,xpr_pt]= simulate_movement( n_sims, fmdl )
 % SIMULATE_MOVEMENT simulate rotational movement in 2D
-% [vh,vi,xpr_pt]= simulate_movement( pattern )
+% [vh,vi,xpr_pt]= simulate_movement( n_points, model )
+% 
+%   n_points = number of points to simulate (default = 200)
+%   fwd_model = fwd_model to simulate (use internal default)
 %
-% $Id: simulate_2d_movement.m,v 1.7 2007-08-30 03:38:26 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.8 2008-03-10 16:25:19 aadler Exp $
 
-    n_circles = 36;
-    n_elec= 16;
-    fmdl= mk_fwd_model(n_circles, n_elec);
+    if nargin <1
+       n_sims = 200;
+    end
+
+    if nargin<2 % create our own fmdl
+       n_circles = 36;
+       n_elec= 16;
+       fmdl= mk_fwd_model(n_circles, n_elec);
+    end
 
     n_elems= size(fmdl.elems,1);
     img= eidors_obj('image','simulate_movement', ...
@@ -26,10 +35,9 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( pattern )
     
     target_conductivity= .2;
  
-    f_no = 200;
-    for i=1:f_no
-       f_frac= (i-1)/f_no;
-       fprintf('simulating %d / %d \n',i,f_no);
+    for i=1:n_sims
+       f_frac= (i-1)/n_sims;
+       fprintf('simulating %d / %d \n',i,n_sims);
 
        rp= .05;
        radius= 2/3;
