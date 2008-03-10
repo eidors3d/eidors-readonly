@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, h0, bbox, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.6 2008-03-10 19:48:18 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.7 2008-03-10 20:15:01 aadler Exp $
 
 if nargin <8
    name = 'MDL from dm_mk_fwd_model';
@@ -42,6 +42,7 @@ global node_voltages_for_distmesh
    fmdl = construct_fwd_model(srf,vtx,simp, name, ...
                           stim_pattern, elec_nodes, z_contact);
 
+   return
    homg_img= eidors_obj('image','', 'fwd_model',fmdl, ...
                         'elem_data',ones(size(simp,1),1));
 
@@ -61,7 +62,7 @@ global node_voltages_for_distmesh
    pair_d = sqrt(sum(( vtx(pair(:,1),:) - vtx(pair(:,2),:) ).^2,2));
    pair_E = max_pair_v./pair_d;
    pair_p = (vtx(pair(:,1),:) + vtx(pair(:,2),:) )/2;
-   node_voltages_for_distmesh.pair_E= 1./(pair_E+30); % inv E field
+   node_voltages_for_distmesh.pair_E= (pair_E+30); % inv E field
    node_voltages_for_distmesh.pair_p= pair_p; % posn
 
    [vtx,simp] = call_distmesh(fd,h0,bbox,fixed_node);
@@ -116,8 +117,16 @@ function [vtx,simp] = call_distmesh(fd,h0,bbox,fixed_node);
 function h= huniform(p);
    global node_voltages_for_distmesh;
    if isempty(node_voltages_for_distmesh)
-      h= ones(size(p,1),1);
+%     h= ones(size(p,1),1);
+      h= abs(sqrt(sum(p.^2,2))-1);
+      h= h+.03;
+      h(h>.2)= .2;
    else
+      h= abs(sqrt(sum(p.^2,2))-1);
+      h= 101*(h+.3);
+      
+   end
+   if 0
       np= size(node_voltages_for_distmesh.pair_p,1);
       op= ones(np,1);
       h=  ones(size(p,1),1);
