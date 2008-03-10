@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, h0, bbox, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.4 2008-03-10 18:12:35 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.5 2008-03-10 18:30:32 aadler Exp $
 
 if nargin <8
    name = 'MDL from dm_mk_fwd_model';
@@ -38,6 +38,11 @@ function fmdl= create_refined_model(name, fd, h0, bbox, elec_nodes, ...
 
    fmdl = construct_fwd_model(srf,vtx,simp, name, ...
                           stim_pattern, elec_nodes, z_contact);
+
+   homg_img= eidors_obj('image','', 'fwd_mode',fmdl, ...
+                        'elem_data',ones(size(simp,1),1));
+   node_v= calc_all_node_voltages( homg_img);
+keyboard
 
 % build fwd_model structure
 function mdl= construct_fwd_model(srf,vtx,simp, name, ...
