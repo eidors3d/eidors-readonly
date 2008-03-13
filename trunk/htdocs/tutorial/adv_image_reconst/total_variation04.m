@@ -1,4 +1,4 @@
-% TV Solutions % $Id: total_variation04.m,v 1.3 2007-08-30 03:58:28 aadler Exp $
+% TV Solutions % $Id: total_variation04.m,v 1.4 2008-03-13 19:36:38 aadler Exp $
 
 % Create TV Inverse Model
 invtv= eidors_obj('inv_model', 'EIT inverse');
@@ -25,11 +25,11 @@ idx = [1,3,6,10,20];
 
 subplot(211);
 plot(squeeze(imgs(:,32,[idx])));
-axis([1 64 0.96 1.12]); set(gca,'XTickLabel',[]);
+axis([1 64 -0.04 0.12]); set(gca,'XTickLabel',[]);
  legend('1','3','6','10','20');
 
 subplot(212);
 plot(squeeze(imgs(32,:,[idx])));
-axis([1 64 0.96 1.12]); set(gca,'XTickLabel',[]);
+axis([1 64 -0.04 0.12]); set(gca,'XTickLabel',[]);
 
 print -r75 -dpng total_variation04b.png;
