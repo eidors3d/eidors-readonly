@@ -76,7 +76,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.59 2007-09-04 15:24:55 aadler Exp $
+% $Id: eidors_obj.m,v 1.60 2008-03-13 20:41:05 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -97,7 +97,7 @@ switch type
       val = calc_or_cache(name, varargin{:} );
       obj_id= val;
    case 'eidors_version'
-      obj_id= '3.2+ ($Date: 2007-09-04 15:24:55 $)'; % Update for New eidors version
+      obj_id= '3.2+ ($Date: 2008-03-13 20:41:05 $)'; % Update for New eidors version
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
@@ -175,7 +175,7 @@ function value= get_cache_obj( obj, prop, varargin );
 
 function set_cache_obj( obj, prop, value, varargin )
    global eidors_objects
-   if ~cache_this( obj.type) ; return ; end
+   if ~cache_this( obj ) ; return ; end
 
    [objlist, cachename]= proc_obj_list( varargin{:} );
 
@@ -289,12 +289,13 @@ function [objlist, cachedir]= proc_obj_list( varargin );
       objlist = varargin(:);
    end
 
-function retval= cache_this( type )
+function retval= cache_this( obj )
 % we choose not to cache data and images because this will
 % tend to fill up the workspace.
 % TODO: make the DONT_CACHE list use configuable
+   if ~isstruct( obj); retval=1; return; end
    DONT_CACHE= {'data','image'};
-   if any(strcmp( type, DONT_CACHE));
+   if any(strcmp( obj.type, DONT_CACHE));
       retval = 0;
    else
       retval = 1;
