@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, h0, bbox, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.7 2008-03-10 20:15:01 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.8 2008-03-13 20:44:31 aadler Exp $
 
 if nargin <8
    name = 'MDL from dm_mk_fwd_model';
@@ -111,19 +111,17 @@ function mdl= construct_fwd_model(srf,vtx,simp, name, ...
    mdl.system_mat=     'aa_calc_system_mat';
 
 function [vtx,simp] = call_distmesh(fd,h0,bbox,fixed_node);
-   [vtx,simp] = distmeshnd(fd,@huniform,h0,bbox,fixed_node);
+   [vtx,simp] = distmesh2d(fd,@huniform,h0,bbox,fixed_node);
 
 %  FH:        Scaled edge length function - decrease in refined areas
 function h= huniform(p);
    global node_voltages_for_distmesh;
    if isempty(node_voltages_for_distmesh)
-%     h= ones(size(p,1),1);
-      h= abs(sqrt(sum(p.^2,2))-1);
-      h= h+.03;
-      h(h>.2)= .2;
+      h= ones(size(p,1),1);
    else
       h= abs(sqrt(sum(p.^2,2))-1);
-      h= 101*(h+.3);
+      h= h+.10;
+      h(h>.2)= .2;
       
    end
    if 0
