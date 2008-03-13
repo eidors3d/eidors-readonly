@@ -1,4 +1,4 @@
-% TV Solutions % $Id: total_variation03.m,v 1.4 2007-09-04 15:26:02 aadler Exp $
+% TV Solutions % $Id: total_variation03.m,v 1.5 2008-03-13 19:36:38 aadler Exp $
 
 % Create TV Inverse Model
 invtv= eidors_obj('inv_model', 'EIT inverse');
@@ -31,7 +31,7 @@ for i= 1:length(maxiters)
    title(sprintf('TV iters=%d',maxiters(i)))
    view(173,34);
    set(gca,{'XLim','YLim','ZLim','XTickLabel','YTickLabel'}, ...
-           {[1 64],[1 64],[0.98,1.1],[],[]})
+           {[1 64],[1 64],[-0.02,0.1],[],[]})
 end
 
 print -r150 -dpng total_variation03a.png;
