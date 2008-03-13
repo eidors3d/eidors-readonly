@@ -1,12 +1,12 @@
-function node_v= calc_all_nodes_voltages( himg );
-% CALC_ALL_NODES_VOLTAGES - calculate voltage on all nodes
-% node_v= calc_all_nodes_voltages( himg );
+function node_v= calc_all_node_voltages( himg );
+% CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes
+% node_v= calc_all_node_voltages( himg );
 % img        => image object
 %
 % node_v     = n_nodes x n_stims voltage on each node
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_all_node_voltages.m,v 1.2 2008-03-10 18:27:25 aadler Exp $
+% $Id: calc_all_node_voltages.m,v 1.3 2008-03-13 20:39:53 aadler Exp $
 
    % create one "measurement electrode" per node and
    % stim patterns to match
