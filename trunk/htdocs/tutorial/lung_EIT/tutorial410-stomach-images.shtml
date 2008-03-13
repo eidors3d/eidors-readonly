@@ -1,0 +1,87 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>Using EIDORS to image gastric emptying</h2>
+
+<h3> 
+2D EIT for imaging of gastric emptying
+</h3>
+
+These data were gathered by asking volunteers to drink
+Bovril (salty soup mix) and taking EIT images at the
+level of the stomach. These experiments were part
+of 
+<ul>Trudelle, St&eacute;phane,
+&Eacute;valuation de la vidange gastrique par 
+tomographie d'imp&eacute;dance &eacute;lectrique,
+Thesis (M.Sc.A.)--&Eacute;cole polytechnique de Montr&eacute;al
+</ul>
+The protocol is similar to 
+<ul>
+A. Adler, R. Guardo, Y. Berthiaume
+<a href="http://www.sce.carleton.ca/faculty/adler/publications/1994/adler-cmbs94-gastric-emptying.pdf">
+Imaging of Gastric Emptying with Electrical Impedance Tomography</a>
+Canadian Medical and Biolological Eng. Soc., Vancouver, Canada,
+ May 1994. 20:14-15.
+</ul>
+
+<h3>
+Step 1: Create models
+</h3>
+Use mk_common_model to create a thorax shaped
+model with 16 electrodes. Ensure the model
+uses 1) Correct stimulation patterns (adjacent is default),
+2) Normalized difference imaging
+
+<pre>
+<!--#include virtual="tutorial410a.m" -->
+</pre>
+
+<center>
+<img src="tutorial410a.png">
+<br><i> Figure:</i>
+2D FEM of thorax (units in mm). Electrode #1
+(<font color="#00B300"><b>o</b></font>)
+and electrode #2 
+(<font color="#008000"><b>o</b></font>)
+are shown in different colours than the others
+(<font color="#004D00"><b>o</b></font>).
+</center>
+
+<H3>
+Image reconstruction
+</H3>
+
+<pre>
+<!--#include virtual="tutorial410b.m" -->
+</pre>
+
+<center>
+<img src="tutorial410b.png">
+<br><i> Figure:</i>
+Image slices of the abdomen every five minutes after 
+drink. Image progression
+is from left to right, top to bottom. 
+</center>
+
+<H3>
+Calculate signal as a function of time
+</H3>
+
+<pre>
+<!--#include virtual="tutorial410c.m" -->
+</pre>
+
+<center>
+<img src="tutorial410c.png">
+<br><i> Figure:</i>
+Normalized image in stomach as a function of time.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-13 21:34:55 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
