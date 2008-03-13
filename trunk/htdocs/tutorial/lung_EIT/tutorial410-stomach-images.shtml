@@ -76,11 +76,29 @@ Calculate signal as a function of time
 Normalized image in stomach as a function of time.
 </center>
 
+<H3>
+Different algorithms for stomach images
+</H3>
+
+<pre>
+<!--#include virtual="tutorial410d.m" -->
+</pre>
+
+<center>
+<img src="tutorial410d.png">
+<br><i> Figure:</i>
+<i>Top Left</i>: Gauss-Newton Reconstruction with Gaussian HPF prior
+<i>Top Right</i>: Gauss-Newton Reconstruction with Laplacian filter
+<i>Bottom Left</i>: Total Variation Reconstruction (hp=1e-3)
+<i>Bottom Right</i>: Total Variation Reconstruction (hp=1e-4)
+</center>
+
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-13 21:34:55 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-13 22:08:30 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
