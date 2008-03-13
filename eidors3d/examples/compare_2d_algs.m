@@ -23,7 +23,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_2d_algs.m,v 1.35 2007-08-30 03:37:32 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.36 2008-03-13 20:43:37 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -98,7 +98,7 @@ switch option
      inv2d.solve=       'aa_inv_solve';
 
    case 4,
-     inv2d.hyperparameter.value = 1e-9;
+     inv2d.hyperparameter.value = 1e-6;
      inv2d.parameters.max_iterations= 10;
      inv2d.R_prior=     'ab_calc_tv_prior';
      inv2d.solve=       'ab_tv_diff_solve';
