@@ -25,7 +25,7 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %
 
 % (C) 2002-2006 Andrea Borsic. License: GPL version 2 or version 3
-% $Id: primaldual_tvrecon_lsearch.m,v 1.14 2007-09-21 13:52:00 aadler Exp $
+% $Id: primaldual_tvrecon_lsearch.m,v 1.15 2008-03-13 19:28:04 aadler Exp $
 
 % Initialisation
 fwd_model= inv_mdl.fwd_model;
@@ -46,18 +46,10 @@ A=calc_R_prior( inv_mdl);
 
 n=size(A,1); % num_rows_L
 m=size(A,2); % num_elem
-%s=ones(m,1);
-s= inv_mdl.jacobian_bkgnd.value * ones(m,1);
-x=zeros(n,1);
 
 % Create homogeneous model
 IM= eidors_obj('image','');
 IM.fwd_model= fwd_model;
-IM.elem_data= s;
-
-vsim= sim_measures( IM, s);
-
-%vsim=measures(msh,s,c); % Homogeneous background fitting
 
 if 0 % static EIT - this code doesn't work yet
    scaling=vmeas\vsim;
@@ -67,15 +59,21 @@ if 0 % static EIT - this code doesn't work yet
    vsim= sim_measures( IM, s);
    de_v=vmeas-vsim;
    %J=jacobian(msh,u);
+   IM.s= s;
    J= calc_jacobian( IM );
    de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
    s=s+de_s;
 else
-   J= calc_jacobian( IM );
+   s= zeros(m,1);
+   x=zeros(n,1);
+   J= calc_jacobian( calc_jacobian_bkgnd(inv_mdl) );
+   IM.elem_data= s;
+   IM.reconst_type = 'difference';
+   IM.J = J;
+   vsim= sim_measures( IM, s);
    de_v=vmeas-vsim;
    de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
    s=s+de_s;
-%  s=s+ (J'*J + alpha1^2*A'*A)\J'*de_v;
    scaling= 1;
 end
 
@@ -191,8 +189,12 @@ end % while
 
 
 function vsim= sim_measures( IM, s);
-   vh= fwd_solve( IM );
-   IM.elem_data= s;
-   vi= fwd_solve( IM );
+   if IM.reconst_type == 'difference'
+      vsim = IM.J*s;
+   else
+      vh= fwd_solve( IM );
+      IM.elem_data= s;
+      vi= fwd_solve( IM );
 
-   vsim = calc_difference_data( vh, vi, IM.fwd_model);
+      vsim = calc_difference_data( vh, vi, IM.fwd_model);
+   end

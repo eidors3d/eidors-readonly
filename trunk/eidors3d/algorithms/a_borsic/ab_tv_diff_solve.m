@@ -6,14 +6,20 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
+% Parameters
+%   alpha1
+%   alpha2
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: ab_tv_diff_solve.m,v 1.13 2007-08-30 03:37:03 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.14 2008-03-13 19:28:04 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
 
 dva = calc_difference_data( data1, data2, inv_model.fwd_model);
+% TEST CODE -> Put elsewhere
+back_val = get_good_background(inv_model, data1);
+inv_model.jacobian_bkgnd.value= back_val;
 
 sol= [];
 for i=1:size(dva,2)
@@ -57,3 +63,16 @@ function [alpha1,alpha2,beta,maxiter,tol,keepiters]= ...
    try
       keepiters = inv_model.parameters.keep_iterations;
    end
+
+function back_val = get_good_background(inv_mdl, data1);
+
+   % Create homogeneous model
+   IM= eidors_obj('image','');
+   IM.fwd_model= inv_mdl.fwd_model;
+   s= ones(size(IM.fwd_model.elems,1),1);
+   IM.elem_data= s;
+
+   vsim= fwd_solve( IM);
+   back_val=abs( data1\vsim.meas ) 
+   back_val=1;
+
