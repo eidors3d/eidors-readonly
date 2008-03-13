@@ -38,10 +38,11 @@ p=[x(:),y(:)];                                       % List of node coordinates
 p=p(feval(fd,p,varargin{:})<geps,:);                 % Keep only d<0 points
 r0=1./feval(fh,p,varargin{:}).^2;                    % Probability to keep point
 p=[pfix; p(rand(size(p,1),1)<r0./max(r0),:)];        % Rejection method
-N=size(p,1);                                         % Number of points N
 
 pold=inf;                                            % For first iteration
+iteration=1;
 while 1
+  N=size(p,1);                                       % Number of points N
   % 3. Retriangulation by the Delaunay algorithm
   if max(sqrt(sum((p-pold).^2,2))/h0)>ttol           % Any large movement?
     pold=p;                                          % Save current positions
@@ -50,7 +51,8 @@ while 1
     t=t(feval(fd,pmid,varargin{:})<-geps,:);         % Keep interior triangles
     % 4. Describe each bar by a unique pair of nodes
     bars=[t(:,[1,2]);t(:,[1,3]);t(:,[2,3])];         % Interior bars duplicated
-    bars=unique(sort(bars,2),'rows');                % Bars as node pairs
+    [bars,i_bars,j_bars]=unique(bars,'rows');% Bars as node pairs
+%   [bars,i_bars,j_bars]=unique(sort(bars,2),'rows');% Bars as node pairs
     % 5. Graphical output of the current mesh
     trimesh(t,p(:,1),p(:,2),zeros(N,1),'edgecolor','black')
     view(2),axis equal,axis off,drawnow
@@ -59,10 +61,36 @@ while 1
   % 6. Move mesh points based on bar lengths L and forces F
   barvec=p(bars(:,1),:)-p(bars(:,2),:);              % List of bar vectors
   L=sqrt(sum(barvec.^2,2));                          % L = Bar lengths
-  hbars=feval(fh,(p(bars(:,1),:)+p(bars(:,2),:))/2,varargin{:});
+
+  if 1
+% Get length function at average
+     hbars=feval(fh,(p(bars(:,1),:)+p(bars(:,2),:))/2,varargin{:});
+  else
+% Get minimum length function at both ends
+     hbars1=feval(fh,p(bars(:,1),:),varargin{:});
+     hbars2=feval(fh,p(bars(:,2),:),varargin{:});
+     hbars= min([hbars1,hbars2],[],2);
+  end
+
   L0=hbars*Fscale*sqrt(sum(L.^2)/sum(hbars.^2));     % L0 = Desired lengths
+
+  % 6.3 Desired length cannot be larger than tshape * connecting ones
+  nt= size(t,1); % number of triangles
+  min_L= zeros(nt,1);
+  add_p= zeros(0,2);
+  for i= 1:nt
+     Lt = L(j_bars([i,i+nt,i+nt*2]));
+     min_L(i) = min(Lt);
+  
+     if min(Lt)*5 < max(Lt); add_p= [add_p;pmid(i,:)];end
+  end
+  min_L = 2*[min_L;min_L;min_L];
+  L0i= L0;
+  L0 = min([L0,min_L(i_bars)],[],2);
+
   F=max(L0-L,0);                                     % Bar forces (scalars)
   Fvec=F./L*[1,1].*barvec;                           % Bar forces (x,y components)
+
   % 6.5. Points get sucked to the centroid to make them equilateral
 if 0
   for i= 1:size(t,1)
@@ -70,7 +98,7 @@ if 0
      dist_vtx = p(idx,:) - ones(3,1)*pmid(i,:);
      dist_mn  = sqrt(sum(dist_vtx.^2,2));
      dist_mn  = dist_mn/mean(dist_mn) - 1;
-%    dist_mn  = dist_mn.*(abs(dist_mn)>.4); %zero if too small
+     dist_mn  = dist_mn.*(abs(dist_mn)>.4); %zero if too small
      F_adj    = (dist_mn*[1,1]) .* dist_vtx; 
      Fvec(idx,:) = Fvec(idx,:) + .3*F_adj;
   end
@@ -89,4 +117,11 @@ end
 
   % 8. Termination criterion: All interior nodes move less than dptol (scaled)
   if max(sqrt(sum(deltat*Ftot(d<-geps,:).^2,2))/h0)<dptol, break; end
+
+  % 9. Add new points
+  if size(add_p,1)>0 && rem(iteration,10)==1
+     p= [p;add_p];
+     pold=inf; 
+  end
+  iteration=iteration+1;
 end
