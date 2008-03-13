@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial410c.m,v 1.1 2008-03-13 21:34:56 aadler Exp $
+% $Id: tutorial410c.m,v 1.2 2008-03-13 22:08:30 aadler Exp $
 
 raster_img= calc_slices(img);
 raster_img(isnan(raster_img))=0;
@@ -16,6 +16,4 @@ plot( ((1:s_ri(3))-1)*5, sig/sig(1))
 xlabel('minutes after drink')
 ylabel('normalized conductivity');
 
-
 print -r125 -dpng tutorial410c.png;
-
