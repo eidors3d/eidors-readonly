@@ -1,0 +1,113 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>EIDORS display functions and control of colours</h2>
+
+<h3>
+Colour Mapping in the image
+</H3>
+
+The parameters to control the colours of an
+eidors image may be specified globally, or for
+a specific image.
+<p>
+<b>Specify <tt>clim=1.5</tt> for all subsequent display</b>
+<pre>
+calc_colours('clim',1.5);
+show_slices( img )
+% future images still use clim=1.5
+</pre>
+<p>
+<b>Specify <tt>clim=1.5</tt> for only this image</b>
+<pre>
+img.calc_colours.clim= 1.5;
+show_slices( img )
+% only 'img' uses clim=1.5
+</pre>
+
+<H3>Create a demo image</H3>
+
+Here we create a small sample image with a sequence
+of colours around the boundary
+<pre>
+<!--#include virtual="eidors_colours01.m" -->
+</pre>
+
+<H3>Change colour mapping parameters: greylev
+</H3>
+
+<pre>
+<!--#include virtual="eidors_colours02.m" -->
+</pre>
+<center>
+<img src="eidors_colours02a.png">
+<img src="eidors_colours02b.png">
+<img src="eidors_colours02c.png">
+<br><i>Figure:</i>
+<tt>greylev</tt>
+ values of (from left to right)
+1) -.001 <i>default</i>,
+2) -.35,
+3) +.35,
+</center>
+
+<H3>Change colour mapping parameters: clim
+</H3>
+
+<pre>
+<!--#include virtual="eidors_colours03.m" -->
+</pre>
+<center>
+<img src="eidors_colours03a.png">
+<img src="eidors_colours03b.png">
+<img src="eidors_colours03c.png">
+<br><i>Figure:</i>
+<tt>clim</tt>
+ values of (from left to right)
+1) [] <i>default</i>,
+2) 1.0,
+3) 0.3,
+</center>
+
+<H3>Change colour mapping parameters: sat_adj
+</H3>
+
+<pre>
+<!--#include virtual="eidors_colours04.m" -->
+</pre>
+<center>
+<img src="eidors_colours04a.png">
+<img src="eidors_colours04b.png">
+<img src="eidors_colours04c.png">
+<br><i>Figure:</i>
+<tt>sat_adj</tt>
+ values of (from left to right)
+1) 0.9 <i>default</i>,
+2) 0.90,
+3) 0.8,
+</center>
+
+<H3>Change colour mapping parameters: window_range
+</H3>
+
+<pre>
+<!--#include virtual="eidors_colours05.m" -->
+</pre>
+<center>
+<img src="eidors_colours05a.png">
+<img src="eidors_colours05b.png">
+<img src="eidors_colours05c.png">
+<br><i>Figure:</i>
+<tt>window_range</tt>
+ values of (from left to right)
+1) 0.7 <i>default</i>,
+2) 0.9,
+3) 0.2,
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-14 15:26:02 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
