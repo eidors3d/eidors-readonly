@@ -21,7 +21,7 @@ function out_img= show_slices( img, levels, clim, ref_lev )
 % ref_lev   = reference conductivity ([] -> 'use_global')
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.48 2008-02-20 15:01:50 aadler Exp $
+% $Id: show_slices.m,v 1.49 2008-03-14 17:35:58 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
@@ -33,13 +33,12 @@ if isempty(levels) && dims==2
    levels= [Inf,Inf,0];
 end
 
-if nargin< 3; clim = [];             end
-if nargin< 4; ref_lev= 'use_global'; end
+if nargin==4;
+   img.calc_colours.ref_level= ref_lev;
+end
 
-if isempty(clim)
-   try
-      clim= img.calc_colours.clim;
-   end
+if nargin> 3 && ~isempty(clim)
+   img.calc_colours.clim = clim;
 end
 
 if size(levels,2) == 5
@@ -92,7 +91,7 @@ for img_no = 1:n_frames
    end
 end
 
-c_img = calc_colours( r_img, clim, 0, ref_lev );
+c_img = calc_colours( r_img, img);
 out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
 
 
