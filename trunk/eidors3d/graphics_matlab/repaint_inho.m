@@ -1,4 +1,4 @@
-function repaint_inho(mat,mat_ref,vtx,simp, thresh, clim);
+function repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);
 %function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %
 %Repaints the simulated inhomogeneity according to the reference
@@ -6,34 +6,34 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh, clim);
 %
 %mat     = The simulated (targeted) distribution.
 %mat_ref = The known initial (homogeneous) distribution.
-%        = A default value of [] or 'auto' should scale reasonably
+%        = Override default unless 'use_global'
 %vtx     = The vertices matrix.
 %simp    = The simplices matrix.
 %thresh  = Threshold to show imaged region (or [] for default)
-%clim    = Colour limit
+%clr_def = Colour definitions val.calc_colours.field etc
 
 % (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3
-% $Id: repaint_inho.m,v 1.27 2007-08-30 03:37:32 aadler Exp $
+% $Id: repaint_inho.m,v 1.28 2008-03-14 15:06:14 aadler Exp $
 
 if nargin<5
     thresh = [];
 end
 if nargin<6
-    clim = [];
+    clr_def = [];
+end
+if mat_ref ~= 'use_global'
+   img.calc_colours.ref_level = mat_ref;
 end
 
-abs_inhomg= abs( scale_for_display( mat, mat_ref, clim) );
 if isempty(thresh)
     thresh = 1/4;
 end
 
-
-ii= find( abs_inhomg > thresh);
-   
-this_x = simp(ii,:);
-   
 % looks best if eidors_colours.greylev < 0
-colours= calc_colours( mat, clim, 0, mat_ref );
+[colours,scl_data] = calc_colours( mat, clr_def, 0);
+ii=find( abs(scl_data) > thresh);
+this_x = simp(ii,:);
+
 colours= colours(:,ii,:);
 ELEM= vtx';
 
