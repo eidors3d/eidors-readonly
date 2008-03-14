@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.41 2008-03-10 15:58:02 aadler Exp $
+% $Id: startup.m,v 1.42 2008-03-14 15:06:14 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -56,7 +56,14 @@ warning off MATLAB:symmmd:obsolete
 end
 
 % Setup defaults in calc_colours
-calc_colours
+calc_colours('greylev',-.001);       % background colour = white
+calc_colours('sat_adj',.9);          % saturation of red and blue
+calc_colours('window_range', .7);    % windowing of colours
+calc_colours('backgnd',[.5,.5,.15]); % background colour
+calc_colours('mapped_colour',127);   % use 127*2+1 colourmap entries
+calc_colours('ref_level','auto');    % auto set background colour
+calc_colours('npoints',64);          % 64 raster points
+calc_colours('clim',[]);             % no colour cropping
 
 % Set max cache size. Not completely sure about this
 %  but 100MB should be available in most modern machines
@@ -76,3 +83,4 @@ end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
 clear HOMEDIR archdir;
+

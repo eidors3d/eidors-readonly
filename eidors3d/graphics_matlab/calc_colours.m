@@ -1,5 +1,5 @@
-function colours= calc_colours(img, clim, do_colourbar, ref_lev)
-% colours= calc_colours(img, clim, do_colourbar, ref_lev)
+function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
+% [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 % Calculate a colour for each image element 
 %
 % Conductive (positive) areas are shown in red
@@ -48,14 +48,16 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %      using mapped_colour allows matlab to print vector graphics to eps
 %   'npoints' (DEFAULT 64) number of points accross the image
 %   'clim'    (DEFAULT []) crop colour display of values above clim
-% 
-% PARAMETERS: clim
-%    clim - colour limit. values more different from ref_level are cropped.
-%         - if not specified or clim==[] => no limit
-%    clim can be specified three ways (in decending priority order)
-%       1. clim parameter to calc_colours('clim')
-%       2. clim in img.calc_colours.clim
-%       3. clim parameter to calc_colours()
+%           colour limit. values more different from ref_level are cropped.
+%           if not specified or clim==[] => no limit
+%
+% PARAMETERS CAN BE SPECIFIED IN TWO WAYS
+%   1. as an image parameter (ie clim in img.calc_colours.clim)
+%   2. a second parameter to ( calc_colours(data, param2 )
+%          where param2.calc_colours.clim= ... etc
+%   3. parameter to calc_colours('clim')
+%
+% Parameters specified as (1) will override (2)
 %
 % PARAMETERS: do_colourbar
 %    - show a Matlab colorbar with appropriate scaling
@@ -68,22 +70,20 @@ function colours= calc_colours(img, clim, do_colourbar, ref_lev)
 %     - if specified, override the global ref_level parameter
 %
 
-% (C) 2005-2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.46 2008-03-04 16:28:52 aadler Exp $  
+% (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_colours.m,v 1.47 2008-03-14 15:06:13 aadler Exp $  
 
-if nargin==0;
-% If no args - set defaults
-    get_colours;
+if nargin==0
+    error('must specify at args to calc_colours');
     return;
 end
 
 if isstr(img)
     % called as calc_colours('parameter' ... )
-    test_exist_colours;
     if nargin==1;
        colours= get_field(img);
     else
-       colours= set_field(img, clim);
+       colours= set_field(img, set_value);
     end
     return;
 
@@ -94,17 +94,24 @@ elseif isfield(img,'type')
       catch
          img_data= img.elem_data; %col vector
       end
+
+      pp=get_colours(img);
    else
       error('calc_colours: input is not eidors image object');
    end
 else
    img_data= img;
+
+   if nargin==1
+      pp=get_colours( [] ); 
+   else
+      pp=get_colours(set_value); 
+   end
 end
 
 % Set default parameters
-if nargin < 2; clim=[];                end
 if nargin < 3; do_colourbar = 0;       end
-if nargin < 4; ref_lev = 'use_global'; end
+ref_lev = 'use_global';
 
 
 if isempty(img_data)
@@ -112,21 +119,19 @@ if isempty(img_data)
     return;
 end
 
-pp=get_colours;
-
 m= size(img_data,1); n=size(img_data,2);
 
-clim = calc_clim(img, clim);
 % We can only plot the real part of data
-% Vectorize img_data here, is get's reshaped later
+% Vectorize img_data here, it get's reshaped later
 [scl_data, ref_lev, max_scale] = ...
-      scale_for_display( real(img_data(:)), ref_lev, clim );
+      scale_for_display( real(img_data(:)), pp.ref_level, pp.clim );
 
 backgnd= isnan(scl_data);
 scl_data(backgnd)= mean( scl_data(~backgnd));
 
 if pp.mapped_colour
    colours=set_mapped_colour(pp, backgnd, scl_data);
+% Stupidity because matlab can't come up with consistent way to define cols
    if n==1;
       colours= reshape( colours, 1,[]);
    else
@@ -134,6 +139,7 @@ if pp.mapped_colour
    end
 else
    [red,grn,blu] = blu_red_axis( pp, scl_data, backgnd );
+% Stupidity because matlab can't come up with consistent way to define cols
    if n==1;
       colours= reshape( [red,grn,blu],1,[],3);
    else
@@ -220,40 +226,19 @@ end
    blu(backgnd) = pp.backgnd(3);
 
 
-function test_exist_colours;
-   global eidors_colours;
-
-   if ~isfield( eidors_colours, 'greylev' );
-      eidors_colours.greylev = -.001;
-   end
-   if ~isfield( eidors_colours, 'sat_adj' );
-      eidors_colours.sat_adj = .9;
-   end
-   if ~isfield( eidors_colours, 'window_range' );
-      eidors_colours.window_range = .5;
-   end
-   if ~isfield( eidors_colours, 'backgnd' );
-      eidors_colours.backgnd= [.5,.5,.15];
-   end
-   % better to set the default to mapped_colour. Matlab
-   %  seems to like this better anyway (ie less bugs)
-   if ~isfield( eidors_colours, 'mapped_colour' );
-      eidors_colours.mapped_colour= 127;
-   end
-   if ~isfield( eidors_colours, 'ref_level' );
-      eidors_colours.ref_level= 'auto';
-   end
-   if ~isfield( eidors_colours, 'npoints' );
-      eidors_colours.npoints= 64;
-   end
-   if ~isfield( eidors_colours, 'clim' );
-      eidors_colours.clim= [];
-   end
-
-function pp=get_colours;
-   test_exist_colours;
+function pp=get_colours( img );
    global eidors_colours;
    pp= eidors_colours;
+
+% override global if calc.colours specified
+   try
+% DAMN Matlab should have syntax for this loop
+      fds= fieldnames(img.calc_colours);
+      for fdn= fds(:)';
+         fdn= fdn{1};
+         pp.( fdn ) = img.calc_colours.(fdn);
+      end
+   end
 
 function colours=set_mapped_colour(pp, backgnd, img_data)
    % need to generate a colourmap with pp.mapped_colour+1 elements
@@ -278,16 +263,3 @@ function value= set_field(param, value);
     eidors_colours = setfield(eidors_colours, param, value);
     value= eidors_colours;
 
-function clim = calc_clim(img, clim)
-%       1. clim parameter to calc_colours('clim')
-   if ~isempty(clim);
-      return;
-   end
-%       2. clim in img.calc_colours.clim
-   try
-      clim= img.calc_colours.clim;
-   catch;
-%       3. clim parameter to calc_colours()
-      global eidors_colours;
-      clim = eidors_colours.clim;
-   end

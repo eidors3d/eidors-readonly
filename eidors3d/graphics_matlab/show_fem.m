@@ -6,14 +6,12 @@ function show_fem( mdl, options )
 % options specifies a set of options
 %   options(1) => show colourbar
 %   options(2) => show numbering on electrodes
-%   options(3) => colour limit (crop outside lim)
 %
-% set ref_level for conductivities with
-%    calc_colours('ref_level', ref_level)
-%    the default value is 'auto', which should normally autoscale well.
+% control colours using 
+%    calc_colours('param', value)
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.63 2008-03-10 16:24:44 aadler Exp $
+% (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
+% $Id: show_fem.m,v 1.64 2008-03-14 15:06:14 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -26,7 +24,6 @@ end
 
 do_colourbar=0;
 number_electrodes=0;
-clim=[];
 if nargin >=2
     % fill in default options
     optionstr= zeros(1,100);
@@ -34,9 +31,6 @@ if nargin >=2
 
     do_colourbar=      optionstr(1);
     number_electrodes= optionstr(2);
-    if optionstr(3)~=0
-        clim= optionstr(3);
-    end
 end
 
 % if we have an only img input, then define mdl
@@ -54,7 +48,7 @@ if size(mdl.nodes,2)==2
    hax= gca;
    pax= get(hax,'position');
    if exist('img');
-      colours= calc_colours(img, clim, do_colourbar);
+      colours= calc_colours(img, [], do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
    end
@@ -69,7 +63,7 @@ elseif size(mdl.nodes,2)==3
    show_3d_fem( mdl );
 
    if exist('img')
-       show_inhomogeneities( img.elem_data , mdl, clim);
+       show_inhomogeneities( img.elem_data , mdl, img);
        if do_colourbar
            calc_colours(img.elem_data, clim, do_colourbar);
        end
@@ -147,10 +141,10 @@ for e=1:length(mdl.electrode)
     end
 end
 
-function show_inhomogeneities( elem_data, mdl, clim)
+function show_inhomogeneities( elem_data, mdl, img)
 % show
 hold('on');
-repaint_inho(elem_data, 'use_global' , mdl.nodes, mdl.elems, [], clim); 
+repaint_inho(elem_data, 'use_global' , mdl.nodes, mdl.elems, [], img); 
 camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');
