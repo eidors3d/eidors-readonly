@@ -20,6 +20,8 @@
 - Jacobian calculation accuracy (calc_jacobian_test)
     - this is mostly a z_contact issue
 
+- Fix NP code to take arbitrary current patterns.
+
 - Document new features for inv_model
     - accept_multiple_frames
 - Document new features for fwd_solve
@@ -122,7 +124,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-02-27 02:10:27 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-14 15:06:46 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
