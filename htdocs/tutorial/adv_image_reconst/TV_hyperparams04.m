@@ -1,11 +1,12 @@
-% Generate HTML frame to view $Id: TV_hyperparams04.m,v 1.2 2008-03-15 01:16:58 aadler Exp $
+% Generate HTML frame to view $Id: TV_hyperparams04.m,v 1.3 2008-03-15 01:18:32 aadler Exp $
 
 a=sprintf('%calpha;',38); % alpha
 m=sprintf('%cminus;',38); % alpha
 s=sprintf('%c',60); % less than 
 e=sprintf('%c',62); % greater than<'; e
 tr= [s,'TR',e]; etr= [s,'/TR',e];
-th= [s,'TH',e]; etr= [s,'/TH',e];
+th= [s,'TH',e]; eth= [s,'/TH',e];
+td= [s,'TD',e]; etd= [s,'/TD',e];
 sub=[s,'SUB',e];esub=[s,'/SUB',e];
 sup=[s,'SUP',e];esup=[s,'/SUP',e];
 
@@ -24,5 +25,5 @@ for alpha2= alpha2list
    end
 end
 
-fprintf(fid,['\n',s,'/TABLE',e]\n');
+fprintf(fid,['\n',s,'/TABLE',e,'\n']);
 fclose(fid);
