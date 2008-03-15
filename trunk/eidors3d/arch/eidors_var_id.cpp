@@ -3,7 +3,7 @@
  *   files and a quick way to determine whether files are
  *   identical
  *
- *   $Id: eidors_var_id.cpp,v 1.10 2007-08-30 03:37:32 aadler Exp $
+ *   $Id: eidors_var_id.cpp,v 1.11 2008-03-15 22:03:31 aadler Exp $
 
  * Documentation 
  * http://www.mathworks.com/support/tech-notes/1600/1605.html
@@ -205,15 +205,19 @@ void hash_struct( hash_context *c, const mxArray *var )
 
     for (i= 0; i< NF; i++) {
       int k= (int) s_idx[i] -1; // -1 because Matlab uses 1 indexing
+      const char * fdname = mxGetFieldNameByNumber(var, k);
       #ifdef VERBOSE
-        mexPrintf("processing field ( %s ) [%d->%d]:\n",
-                  mxGetFieldNameByNumber(var, k), i, k);
+        mexPrintf("processing field ( %s ) [%d->%d]:\n", fdname, i, k);
       #endif
       for (j= 0; j< NE; j++) {
         mxArray * fd = mxGetFieldByNumber( var, j, k );
         if (fd == NULL ) {
           mexPrintf("empty field(%s,%d):",
                     mxGetFieldNameByNumber(var,k), j+1);
+        } else if (strcmp("name",fdname)==0) {
+      #ifdef VERBOSE
+           mexPrintf("field => IGNORE ( %s ) [%d->%d]:\n", fdname, i, k);
+      #endif
         } else {
           recurse_hash(c, fd);
         }

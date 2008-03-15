@@ -76,7 +76,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.60 2008-03-13 20:41:05 aadler Exp $
+% $Id: eidors_obj.m,v 1.61 2008-03-15 22:03:32 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -97,7 +97,7 @@ switch type
       val = calc_or_cache(name, varargin{:} );
       obj_id= val;
    case 'eidors_version'
-      obj_id= '3.2+ ($Date: 2008-03-13 20:41:05 $)'; % Update for New eidors version
+      obj_id= '3.2+ ($Date: 2008-03-15 22:03:32 $)'; % Update for New eidors version
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
@@ -219,43 +219,18 @@ function obj= new_obj( type, name, varargin );
 % of calculated matrices, by detecting when a previous
 % calculation with same parameters has been made
 function obj_id= calc_obj_id( var )
-   global eidors_objects;
-   if ~isfield(eidors_objects,'hash_type')
-       test_for_hashtypes;
-   end
-
-   if eidors_objects.hash_type==1; 
-       % the obj_id does not depend on the cache, id or name
-       try; var = rmfield(var,'cache'); end
-       try; var = rmfield(var,'id');    end
-       try; var = rmfield(var,'name');  end
-
-       obj_id= eidors_var_id( var );
-   elseif eidors_objects.hash_type > 1e6
+   try 
+      obj_id= eidors_var_id( var );
+   else
+      global eidors_objects;
+      if ~isfield(eidors_objects,'hash_type')
+         eidors_objects.hash_type= 1e8+1; 
+      end
 %if hashing code is unavailable, then disable caching function
-       obj_id= sprintf('id_%08d', eidors_objects.hash_type );
-       eidors_objects.hash_type= eidors_objects.hash_type + 1;
-   else
-       error('hash_type value unrecognized');
+      obj_id= sprintf('id_%08d', eidors_objects.hash_type );
+      eidors_objects.hash_type= eidors_objects.hash_type + 1;
    end
 
-% Since we use a dynamically loaded function to test
-% for hashtypes, all sorts of things can go wrong
-%   - The compilers or libraries may not be available
-%   - Compiler library versions may not match Matlab
-%
-% We test for existance of 'eidors_var_id' mex file
-% 
-% If nothing exists, then the best we can do is to
-% disable hashing completely. We set hashtype to a
-% number and increment it each time   
-function test_for_hashtypes
-   global eidors_objects; 
-   if exist('eidors_var_id')==3 % MEX-file on MATLAB's search path
-      eidors_objects.hash_type = 1;
-   else
-      eidors_objects.hash_type= 1e8+1; 
-   end
 
 % Test whether the cachedir field has been set. This is
 %  where eidors will store cached calculations. If it has
