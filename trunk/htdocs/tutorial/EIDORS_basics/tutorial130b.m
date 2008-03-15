@@ -1,5 +1,5 @@
 % Compare 3D algorithms
-% $Id: tutorial130b.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
+% $Id: tutorial130b.m,v 1.4 2008-03-15 21:16:34 aadler Exp $
 
 % Create Inverse Model
 inv3d= eidors_obj('inv_model', 'EIT inverse');
@@ -30,14 +30,8 @@ inv3d.parameters.term_tolerance= 1e-3;
 inv3d.R_prior=     @ab_calc_tv_prior;
 inv3d.solve=       @ab_tv_diff_solve;
 
-% TVimg will add the background value
-tvimg= inv_solve( inv3d, vh, vi);
-tvimg.elem_data = tvimg.elem_data - bkgnd;
-imgr(3)= tvimg;
-
-tvimg= inv_solve( inv3d, vh, vi_n);
-tvimg.elem_data = tvimg.elem_data - bkgnd;
-imgn(3)= tvimg;
+imgr(3)= inv_solve( inv3d, vh, vi);
+imgn(3)= inv_solve( inv3d, vh, vi_n);
 
 % Output image
 posn= [inf,inf,2.5,1,1;inf,inf,1.5,1,2;inf,inf,0.5,1,3];
