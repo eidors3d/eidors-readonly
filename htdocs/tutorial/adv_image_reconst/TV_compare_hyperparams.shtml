@@ -1,0 +1,85 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Compare selection of hyperparameters for Total Variation
+</h2>
+
+Total Variation typically uses a GN step to initialize the
+first iteration. We thus have a hyperparameter for the
+GN step (&alpha1;<sub>2</sub>), and another for the GN interations
+(&alpha;<sub>1</sub>).
+
+<h3>Simluation object</H3>
+
+Simulate shape with edges 
+<pre>
+<!--#include virtual="TV_hyperparams01.m" -->
+</pre>
+
+<center>
+<img src="TV_hyperparams01a.png">
+<br><i> Figure:</i>
+Shape that is to be reconstructed (generated on 576 element mesh)
+</center>
+
+<h3>Create TV reconstruction model</H3>
+<pre>
+<!--#include virtual="TV_hyperparams02.m" -->
+</pre>
+<center>
+<img src="TV_hyperparams02a.png">
+<br><i> Figure:</i>
+Reconstruction model (256 elements)
+</center>
+
+<h3>Reconstruction with no noise</H3>
+<pre>
+name_base= 'tv_hp_00_img-a1=%3.1f-a2=%3.1f.jpg';
+<!--#include virtual="tv_hyperparams03.m" -->
+</pre>
+
+<p><B> To display these results, create an html table with matlab</B>
+<pre>
+fid= fopen('TV-params-NSR=0.html','w');
+<!--#include virtual="TV_hyperparams04.m" -->
+</pre>
+
+<H3>Reconstruction Results (No Noise) 
+(GN param = &alpha;<sub>2</sub>, TV param= &alpha;<sub>1</sub>)</H3>
+<center>
+<!--#include virtual="TV-params-NSR=0.html" -->
+</center>
+
+
+<h3>Reconstruction with 20db SNR noise</H3>
+<p><B> Add Noise</B>
+<pre>
+<!--#include virtual="tv_hyperparams05.m" -->
+</pre>
+
+<p><B> Calculations</B>
+
+<pre>
+name_base= 'tv_hp_20_img-a1=%3.1f-a2=%3.1f.jpg';
+<!--#include virtual="tv_hyperparams03.m" -->
+</pre>
+
+<p><B> To display these results, create an html table with matlab</B>
+<pre>
+fid= fopen('TV-params-NSR=.01.html','w');
+<!--#include virtual="TV_hyperparams04.m" -->
+</pre>
+
+<H3>Reconstruction Results (20dB SNR) 
+(GN param = &alpha;<sub>2</sub>, TV param= &alpha;<sub>1</sub>)</H3>
+<center>
+<!--#include virtual="TV-params-NSR=.01.html" -->
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-15 00:12:20 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
