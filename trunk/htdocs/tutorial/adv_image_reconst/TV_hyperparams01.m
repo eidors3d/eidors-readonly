@@ -1,4 +1,4 @@
-% TV: Create object $Id: TV_hyperparams01.m,v 1.1 2008-03-14 15:57:31 aadler Exp $
+% TV: Create object $Id: TV_hyperparams01.m,v 1.2 2008-03-15 00:12:20 aadler Exp $
 
 imb=  mk_common_model('c2c2',16);
 fmdl= imb.fwd_model;
@@ -12,10 +12,6 @@ sigma([95,98:100,79,80,76,63,64,60,48,45,36,33,22])=2;
     
 img.elem_data= sigma;
 vi= fwd_solve( img );
-
-sig= sqrt(norm(vi.meas - vh.meas));
-m= size(vi.meas,1);
-vi.meas = vi.meas + .0001*sig*randn(m,1);
 
 subplot(221)
 show_fem(img);
