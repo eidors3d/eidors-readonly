@@ -25,7 +25,7 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %
 
 % (C) 2002-2006 Andrea Borsic. License: GPL version 2 or version 3
-% $Id: primaldual_tvrecon_lsearch.m,v 1.15 2008-03-13 19:28:04 aadler Exp $
+% $Id: primaldual_tvrecon_lsearch.m,v 1.16 2008-03-15 01:29:40 aadler Exp $
 
 % Initialisation
 fwd_model= inv_mdl.fwd_model;
@@ -68,7 +68,7 @@ else
    x=zeros(n,1);
    J= calc_jacobian( calc_jacobian_bkgnd(inv_mdl) );
    IM.elem_data= s;
-   IM.reconst_type = 'difference';
+   IM.difference_rec = 1;
    IM.J = J;
    vsim= sim_measures( IM, s);
    de_v=vmeas-vsim;
@@ -160,11 +160,13 @@ while (~terminate)&(iter<maxiter)
     % we need to pick up the smallest, and have some safety room
        
     x=x+min(1,0.99*min(steps))*de_x;
-        
+
+    if IM.difference_rec ==0 
     % Upper and lower limits enforcement
     s( s<0.01*scaling )=0.01*scaling;
     % and upper bounds, dynamic range=1e4
     s( s>100*scaling )=100*scaling;
+    end
     
     beta=beta*decay_beta;       % beta is reduced
     decay_beta=decay_beta*0.8;  % the rate at wich beta is reduced is also adjusted
@@ -189,7 +191,7 @@ end % while
 
 
 function vsim= sim_measures( IM, s);
-   if IM.reconst_type == 'difference'
+   if IM.difference_rec == 1
       vsim = IM.J*s;
    else
       vh= fwd_solve( IM );
