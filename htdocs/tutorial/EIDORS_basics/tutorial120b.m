@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: tutorial120b.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
+% $Id: tutorial120b.m,v 1.4 2008-03-15 21:16:34 aadler Exp $
 
 % Create Inverse Model
 inv2d= eidors_obj('inv_model', 'EIT inverse');
@@ -50,14 +50,8 @@ inv2d.R_prior=     @ab_calc_tv_prior;
 inv2d.parameters.max_iterations= 10;
 inv2d.parameters.term_tolerance= 1e-3;
 
-% TVimg will add the background value
-tvimg= inv_solve( inv2d, vh, vi);
-tvimg.elem_data = tvimg.elem_data - bkgnd;
-imgr(5)= tvimg;
-
-tvimg= inv_solve( inv2d, vh, vi_n);
-tvimg.elem_data = tvimg.elem_data - bkgnd;
-imgn(5)= tvimg;
+imgr(5)= inv_solve( inv2d, vh, vi);
+imgn(5)= inv_solve( inv2d, vh, vi_n);
 
 % Output image
 show_slices(imgr, [inf,inf,0,1,1]);
