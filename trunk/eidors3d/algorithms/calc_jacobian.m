@@ -1,27 +1,35 @@
-function jacobian = calc_jacobian( fwd_model, img, varargin )
+function J = calc_jacobian( fwd_model, img, varargin )
 % CALC_JACOBIAN: calculate jacobian from an inv_model
 % 
 %  J = calc_jacobian( fwd_model, img )
 %      calc Jacobian on fwd_model at conductivity given
 %      in image (fwd_model is for forward and reconstruction)
 %
-%  J = calc_jacobian( fwd_model, img, rec_model )
-%      calc Jacobian on fwd_model at conductivity given
-%      in image (rec_model is for image reconstruction)
+% For reconstructions on dual meshes, the interpolation matrix
+%    is defined as fwd_model.coarse2fine. This takes
+%    coarse2fine * x_coarse = x_fine
 %
-% fwd_model is a fwd_model structure
-% rec_model is a fwd_model structure (but may not
-%       have elems or electrodes)
+% If the underlying jacobian calculator doesn't understand dual
+%    meshes, then calc_jacobian will automatically postmultiply
+%    by fwd_model.coarse2fine.
+%
 % img       is an image structure, with 'elem_data' or
 %           'node_data' parameters
 
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m,v 1.17 2008-03-13 20:42:11 aadler Exp $
+% $Id: calc_jacobian.m,v 1.18 2008-03-15 22:36:52 aadler Exp $
 
-if nargin==1
-   img= fwd_model;
-   fwd_model= img.fwd_model;
+if nargin>1
+   img.fwd_model= fwd_model;
 end
 
-jacobian = eidors_obj('calc-or-cache', fwd_model, ...
-                  fwd_model.jacobian, img , varargin{:} );
+J= eidors_obj('get-cache', img, 'jacobian');
+if ~isempty(J)
+   eidors_msg('calc_jacobian: using cached value', 3);
+   return
+end
+
+J= feval(img.fwd_model.jacobian, img.fwd_model, img);
+
+eidors_obj('set-cache', img, 'jacobian', J);
+eidors_msg('calc_jacobian: setting cached value', 3);
