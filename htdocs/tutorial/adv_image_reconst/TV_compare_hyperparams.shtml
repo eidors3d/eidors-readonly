@@ -34,7 +34,7 @@ Reconstruction model (256 elements)
 <h3>Reconstruction with no noise</H3>
 <pre>
 name_base= 'tv_hp_00_img-a1=%3.1f-a2=%3.1f.jpg';
-<!--#include virtual="tv_hyperparams03.m" -->
+<!--#include virtual="TV_hyperparams03.m" -->
 </pre>
 
 <p><B> To display these results, create an html table with matlab</B>
@@ -53,14 +53,14 @@ fid= fopen('TV-params-NSR=0.html','w');
 <h3>Reconstruction with 20db SNR noise</H3>
 <p><B> Add Noise</B>
 <pre>
-<!--#include virtual="tv_hyperparams05.m" -->
+<!--#include virtual="TV_hyperparams05.m" -->
 </pre>
 
 <p><B> Calculations</B>
 
 <pre>
 name_base= 'tv_hp_20_img-a1=%3.1f-a2=%3.1f.jpg';
-<!--#include virtual="tv_hyperparams03.m" -->
+<!--#include virtual="TV_hyperparams03.m" -->
 </pre>
 
 <p><B> To display these results, create an html table with matlab</B>
@@ -78,7 +78,7 @@ fid= fopen('TV-params-NSR=.01.html','w');
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-15 01:27:14 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-15 21:20:05 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
