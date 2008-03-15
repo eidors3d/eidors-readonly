@@ -8,6 +8,7 @@ clim= .088;
 % Solve inverse problem for mdl2dim eidors_obj model.
 img2dim = inv_solve(mdl2dim, vh, vi);
 img2dim.calc_colours.clim= clim;
+img2dim.calc_colours.backgnd= [.9,.9,.9];
 
 % Plot results for each algorithm
 subplot(1,2,1);
@@ -26,6 +27,7 @@ mdlM.aa_e_move_image_prior.parameters = sqrt(1e2/1);
 % Solve inverse problem for mdlM eidors_obj model.
 imgM = inv_solve(mdlM, vh, vi);
 imgM.calc_colours.clim= clim;
+imgM.calc_colours.backgnd= [.9,.9,.9];
 
 % Plot results for each algorithm
 subplot(1,2,2);
