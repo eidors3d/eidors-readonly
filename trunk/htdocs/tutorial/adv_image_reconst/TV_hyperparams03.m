@@ -1,4 +1,4 @@
-
+% Iterate over params $Id: TV_hyperparams03.m,v 1.5 2008-03-15 21:23:06 aadler Exp $
 alpha1list= [1.5:0.5:4.5];
 alpha2list= [3.5:1.0:9.5];
 for alpha2= alpha2list
