@@ -1,9 +1,9 @@
-% Generate HTML frame to view $Id: TV_hyperparams04.m,v 1.3 2008-03-15 01:18:32 aadler Exp $
+% Generate HTML frame to view $Id: TV_hyperparams04.m,v 1.4 2008-03-15 21:25:00 aadler Exp $
 
 a=sprintf('%calpha;',38); % alpha
 m=sprintf('%cminus;',38); % alpha
 s=sprintf('%c',60); % less than 
-e=sprintf('%c',62); % greater than<'; e
+e=sprintf('%c',62); % greater than
 tr= [s,'TR',e]; etr= [s,'/TR',e];
 th= [s,'TH',e]; eth= [s,'/TH',e];
 td= [s,'TD',e]; etd= [s,'/TD',e];
