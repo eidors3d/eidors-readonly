@@ -32,7 +32,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.22 2007-08-30 03:37:32 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.23 2008-03-15 22:06:45 aadler Exp $
 
 clim= [];
 
@@ -75,11 +75,15 @@ if isnumeric(data_sel) & size(data_sel)==[1,1]
         load iirc_data_2006
         vh= v_reference;
         vi= v_rotate(:,1:30);
-        snr= norm(vi)/norm(vi - vh(:,ones(1,30)));
-        rand('seed',50);
-        vh= vh+snr*2*randn(size(vh));
-        vi= vi+snr*2*randn(size(vi));
+        [vi,vh]= add_noise(vi,vh,2)
         filename= 'iirc-around-noise';
+
+      case 24
+        load iirc_data_2006
+        vh= v_reference;
+        vi= v_rotate;
+        filename= 'iirc-around-clean';
+
 
     case 30
         load netgen_moving_ball
@@ -325,3 +329,11 @@ function imdl= set_basic( shape_str, type, vals )
      otherwise
         error('dont understand parameter');
    end
+
+%  Add noise to a data set, snr_mult is # time SNR  
+function [vi,vh]= add_noise(vi,vh,snr_mult)
+   ll= size(vi,2);
+   snr= norm(vi)/norm(vi - vh(:,ones(1,ll)));
+   rand('seed',50);
+   vh= vh+snr*snr_mult*randn(size(vh));
+   vi= vi+snr*snr_mult*randn(size(vi));
