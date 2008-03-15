@@ -1,5 +1,3 @@
-% Set eidors default colours
-calc_colours('backgnd',[.9,.9,.9]);
 
 % Generate simulation data without noise and standard reconstruction
 % Create circular FEM - creates a eidors_mdl type inv_model.
@@ -27,6 +25,8 @@ movement = [1-0.01 0; 0 1+0.01];
 node0 = f_img.fwd_model.nodes;
 node1 = node0*movement;
 f_img.fwd_model.nodes = node1;
+% Set eidors background colour
+f_img.calc_colours.backgnd= [.9,.9,.9];
 
 % Solve inhomogeneous forward problem with movements and normal noise
 % 1% of standard deviation of signal
