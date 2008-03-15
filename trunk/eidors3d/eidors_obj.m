@@ -76,7 +76,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.61 2008-03-15 22:03:32 aadler Exp $
+% $Id: eidors_obj.m,v 1.62 2008-03-15 22:13:28 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -97,7 +97,7 @@ switch type
       val = calc_or_cache(name, varargin{:} );
       obj_id= val;
    case 'eidors_version'
-      obj_id= '3.2+ ($Date: 2008-03-15 22:03:32 $)'; % Update for New eidors version
+      obj_id= '3.2+ ($Date: 2008-03-15 22:13:28 $)'; % Update for New eidors version
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
@@ -221,7 +221,7 @@ function obj= new_obj( type, name, varargin );
 function obj_id= calc_obj_id( var )
    try 
       obj_id= eidors_var_id( var );
-   else
+   catch
       global eidors_objects;
       if ~isfield(eidors_objects,'hash_type')
          eidors_objects.hash_type= 1e8+1; 
@@ -230,7 +230,6 @@ function obj_id= calc_obj_id( var )
       obj_id= sprintf('id_%08d', eidors_objects.hash_type );
       eidors_objects.hash_type= eidors_objects.hash_type + 1;
    end
-
 
 % Test whether the cachedir field has been set. This is
 %  where eidors will store cached calculations. If it has
