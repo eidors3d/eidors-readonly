@@ -11,7 +11,7 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 %   alpha2
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: ab_tv_diff_solve.m,v 1.14 2008-03-13 19:28:04 aadler Exp $
+% $Id: ab_tv_diff_solve.m,v 1.15 2008-03-15 01:29:40 aadler Exp $
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
@@ -73,6 +73,6 @@ function back_val = get_good_background(inv_mdl, data1);
    IM.elem_data= s;
 
    vsim= fwd_solve( IM);
-   back_val=abs( data1\vsim.meas ) 
+   back_val=abs( data1\vsim.meas );
    back_val=1;
 
