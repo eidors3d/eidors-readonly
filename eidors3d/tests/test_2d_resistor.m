@@ -1,5 +1,5 @@
 % Create 2D model of a cylindrical resistor
-% $Id: test_2d_resistor.m,v 1.4 2008-02-21 21:15:21 aadler Exp $
+% $Id: test_2d_resistor.m,v 1.5 2008-03-15 22:06:06 aadler Exp $
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4
@@ -12,7 +12,7 @@ mdl.nodes = [floor( (0:nn-1)/ww );rem(0:nn-1,ww)]';
 mdl.nodes = scale*mdl.nodes;
 mdl.elems = delaunayn(mdl.nodes);
 mdl.boundary= find_boundary(mdl.elems);
-mdl.gnd_node = 1;
+mdl.gnd_node = 7;
 elec_nodes= [1:ww];
 elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
 elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
@@ -70,3 +70,25 @@ mdl.jacobian = @aa_calc_jacobian;
 Jaa= calc_jacobian(mdl,img);
 
 [Jaa;Jnp;Jp1;Jp2]
+
+
+
+
+% TEST RESISTOR THAT IS NOT RECTANGULAR
+s1=.6;s2=3*s1;
+m2= eidors_obj('fwd_model','not rect');
+m2.nodes= [s1/2,-1;-s1/2,-1;s1/2,0;-s1/2,0;s2/2,1;-s2/2,1];
+m2.elems= [1,2,3;2,3,4;3,4,5;4,5,6];
+m2.gnd_node= 3;
+m2.electrode(1).nodes= [1,2];
+m2.electrode(2).nodes= [3,4];
+m2.electrode(3).nodes= [5,6];
+[m2.electrode(:).z_contact]= deal(.0001);
+m2.stimulation(1).stim_pattern= [-1;0;1];
+m2.stimulation(1).meas_pattern= [1,-1,0;0,-1,1];
+% AA_SOLVER
+m2.solve = @aa_fwd_solve;
+m2.system_mat = @aa_calc_system_mat;
+img= eidors_obj('image','','fwd_model',m2,'elem_data',[1,1,1,1]);
+fsol= fwd_solve(img);
+fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
