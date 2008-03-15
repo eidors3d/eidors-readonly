@@ -1,4 +1,4 @@
-function fname_out= animate_reconstructions(fname, imgs, clim, ref_lev);
+function fname_out= animate_reconstructions(fname, imgs);
 % animate_reconstructions(fname, imgs);
 % animate a sequence of reconstructed images
 %
@@ -6,19 +6,12 @@ function fname_out= animate_reconstructions(fname, imgs, clim, ref_lev);
 %     filename to save to (extension is added)
 % PARAMETER:  imgs
 %     is array of eidors images
-% PARAMETER:  clim
-%     Colour scale limit (DEFAULT is no limit -> [])
-% PARAMETER:  ref_lev
-%     Background level (DEFAULT is 'use_global')
 %
 % OUTPUT: fname_out
 %     Name of animated file written to.
 %     An animated window will not pop up if output requested
 
-if nargin<3; clim= [];              end
-if nargin<4; ref_lev= 'use_global'; end
-
-mk_movie2(fname,imgs,clim,ref_lev);
+mk_movie2(fname,imgs)
 
 if nargout>0
    fname_out= [fname, '.gif'];
@@ -56,14 +49,14 @@ function mk_movie(fname, imgs, clim, ref_lev)
 % imgs is array of eidors images
 %
 % This requires imagemagick convert program.
-function mk_movie2(fname, imgs, clim, ref_lev)
+function mk_movie2(fname, imgs);
    calc_colours('mapped_colour', 127);
    dirname= 'tmp_mk_movie2';
    rm_rf( dirname );
    mkdir( dirname );
 
    r_img= calc_slices(imgs);
-   c_img = calc_colours( r_img, clim, 0, ref_lev);
+   c_img = calc_colours( r_img, imgs);
    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
    cmap= colormap;
 
