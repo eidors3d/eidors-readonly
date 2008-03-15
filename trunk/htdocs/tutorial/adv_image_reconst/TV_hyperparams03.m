@@ -13,4 +13,3 @@ for alpha2= alpha2list
       imwrite(out_img, colormap, sprintf(name_base,alpha1,alpha2) );
     end
 end
- 
