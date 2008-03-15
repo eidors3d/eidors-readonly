@@ -33,11 +33,6 @@ function obj_id= eidors_obj(type,name, varargin );
 %    example:
 %        eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
 %
-% USAGE: to cache as required
-%     obj= eidors_obj('calc-or-cache', obj, funcname, dep_objs ...
-%      
-% return obj from cache, or calculate it and store in the cache  
-%
 % USAGE: to cache values
 %          eidors_obj('set-cache',obj, cachename,value1, dep_objs, ...)
 %     obj= eidors_obj('get-cache',obj, cachename, dep_objs, ...)
@@ -60,23 +55,8 @@ function obj_id= eidors_obj(type,name, varargin );
 %        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
  
 
-% OLD FUNCTION - Is this still needed
-% In many cases, data can be labelled, and explicitly cached to a file:
-% To specify the file, use the last parameter of a 'get-cache',
-%   'set-cache' or 'calc-or-cache' command
-%
-%     example: % set jacobian for homg_img
-%        eidors_obj('set-cache',fwd_mdl,'jacobian',J, h_img,'homg'): 
-%        J= eidors_obj('get-cache',fwd_mdl,'jacobian',h_img,'homg'):
-%
-%     this will save to 'cachedir/homg.mat' where cachedir is
-%        eidors_object.cachedir. Typically, a subdirectory is 
-%        created for each algorithm's data
-%
-% 
-
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.62 2008-03-15 22:13:28 aadler Exp $
+% $Id: eidors_obj.m,v 1.63 2008-03-15 22:36:53 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -93,11 +73,8 @@ switch type
    case 'set-cache'
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
-   case 'calc-or-cache'
-      val = calc_or_cache(name, varargin{:} );
-      obj_id= val;
    case 'eidors_version'
-      obj_id= '3.2+ ($Date: 2008-03-15 22:13:28 $)'; % Update for New eidors version
+      obj_id= '3.2+ ($Date: 2008-03-15 22:36:53 $)'; % Update for New eidors version
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
@@ -116,29 +93,6 @@ function obj = set_obj( obj, varargin );
 %     obj.( obj_id ).( varargin{idx} )= varargin{idx+1};
 % for matlab 6.1 compatibility
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
-   end
-
-% There is no need to cache an object at this point,
-% the only useful time is when something is actually done
-% with the object, and then the function calls the set cache
-% type functions
-
-function val= calc_or_cache( obj, funcname, varargin )
-
-   if strcmp( class(funcname), 'function_handle')
-      funcstr= func2str(funcname);
-   else
-      funcstr= funcname;
-   end
-   
-   val = get_cache_obj( obj, funcstr, varargin{:} );
-   if ~isempty( val );
-      eidors_msg([funcstr, ': using cached value'], 3);
-   else
-      [objlist, cachename]= proc_obj_list( varargin{:} );
-      val = feval( funcname, obj, objlist{:} );
-      set_cache_obj( obj, funcstr, val, varargin{:} );
-      eidors_msg([funcstr, ': setting cached value'], 3);
    end
 
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
