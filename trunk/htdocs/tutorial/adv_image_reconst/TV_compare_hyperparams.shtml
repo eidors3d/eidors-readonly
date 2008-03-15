@@ -72,13 +72,13 @@ fid= fopen('TV-params-NSR=.01.html','w');
 <H3>Reconstruction Results (20dB SNR) 
 (GN param = &alpha;<sub>1</sub>, TV param= &alpha;<sub>2</sub>)</H3>
 <center>
-<!--#include virtual="TV-params-NSR=.01.html" -->
+<!--#include virtual="TV-params-NSR=0.01.html" -->
 </center>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-15 00:53:30 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-15 01:27:14 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
