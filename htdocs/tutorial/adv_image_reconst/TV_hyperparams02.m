@@ -1,6 +1,6 @@
-% TV: Reconstruction model $Id: TV_hyperparams02.m,v 1.2 2008-03-15 00:12:20 aadler Exp $
+% TV: Reconstruction model $Id: TV_hyperparams02.m,v 1.3 2008-03-15 00:53:30 aadler Exp $
 
-maxit=40;  % max number of iterations
+maxit=20;  % max number of iterations
 imdl=mk_common_model('b2c0',16);
 
 invtv= eidors_obj('inv_model', 'EIT inverse');
