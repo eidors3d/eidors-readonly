@@ -1,14 +1,14 @@
-% Simulate data $Id: dual_model02.m,v 1.2 2008-03-16 01:33:10 aadler Exp $
+% Simulate data $Id: dual_model02.m,v 1.3 2008-03-16 10:35:23 aadler Exp $
 
 % create base model
 mdl_base=mk_common_model('a2c0',16);
+mdl_base.RtR_prior = @noser_image_prior;
+mdl_base.hyperparameter.value = 3e-2;
+
 elems= mdl_base.fwd_model.elems;
 nodes= mdl_base.fwd_model.nodes;
 e= size(elems,1);
 
-% Use NOSER prior
-mdl_base.RtR_prior = @noser_image_prior;
-mdl_base.hyperparameter.value = 1e-2;
 
 for model = 1:2
    if model==1
