@@ -19,7 +19,7 @@ Dual model systems use two models of the underlying system:
 Schematic of a dual model based inverse problem
 </center>
 
-<h3>Simple Example</H3>
+<h3>Simulated data</h3>
 
 First, simulate some data, based on a 576 element mesh
 <pre>
@@ -31,6 +31,9 @@ First, simulate some data, based on a 576 element mesh
 <br><i> Figure:</i>
 Simulation data
 </center>
+
+<h3>Simple Example: Dual model using multi-element parameters</H3>
+
 
 Next, we compare two coarse meshes
 <ol>
@@ -89,11 +92,29 @@ Reconstructed images.
 </center>
 
 
+<h3>Example #2: Fine and Coarse meshes</h3>
+
+We consider a coarse mesh of 64 elements, and fine meshes
+of 64 (same as coarse), 256, and 576 elements
+
+<pre>
+<!--#include virtual="dual_model04.m" -->
+</pre>
+
+<center>
+<img src="dual_model04a.png">
+<br><i> Figure:</i>
+Reconstructed images.
+<i>Left</i> "Fine" mesh (64 elements)
+<i>Middle</i> Fine mesh (256 elements)
+<i>Right</i> Fine mesh (576 elements)
+</center>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-16 11:06:27 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-16 21:16:07 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
