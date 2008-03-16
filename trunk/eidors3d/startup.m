@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.42 2008-03-14 15:06:14 aadler Exp $
+% $Id: startup.m,v 1.43 2008-03-16 00:36:10 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -51,8 +51,10 @@ if exist('eidors_var_id')~=3
 end
 
 %prevent warnings in v7
-if str2num(version('-release'))>=14
-warning off MATLAB:symmmd:obsolete
+if ~exist('OCTAVE_VERSION')
+   if str2num(version('-release'))>=14
+      warning off MATLAB:symmmd:obsolete
+   end
 end
 
 % Setup defaults in calc_colours
@@ -69,7 +71,6 @@ calc_colours('clim',[]);             % no colour cropping
 %  but 100MB should be available in most modern machines
 eidors_cache('cache_size', 100e6 );
 eidors_cache('boost_priority', 0 ); % set default priority
-
 
 eidors_msg('Completed setting up of EIDORS Version %s', ...
     eidors_obj('eidors_version'),1);
