@@ -11,7 +11,7 @@ function mapping= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %                 - number of points to interpolate in each dimension
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.10 2007-09-21 13:52:00 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.11 2008-03-16 21:04:30 aadler Exp $
 
 % Mapping depends f_mdl and c_mdl, but only on nodes and elems
 cc_mdl.elems = c_mdl.elems;
@@ -44,7 +44,7 @@ else
     f_tria= mk_tri_pts( ff_mdl, xyz, fto3d);
     c_tria= mk_tri_pts( cc_mdl, xyz, cto3d);
 
-    ff= find(~isnan(f_tria));
+    ff= find(~isnan(f_tria) & ~isnan(c_tria));
     c2f = sparse(f_tria(ff),c_tria(ff),1,n_ff, n_cc);
     csum = sparse(f_tria(ff),1,1,n_ff, 1);
     mapping = c2f./(csum*ones(1,n_cc));
