@@ -71,7 +71,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.47 2008-03-14 15:06:13 aadler Exp $  
+% $Id: calc_colours.m,v 1.48 2008-03-16 11:08:04 aadler Exp $  
 
 if nargin==0
     error('must specify at args to calc_colours');
@@ -88,17 +88,8 @@ if isstr(img)
     return;
 
 elseif isfield(img,'type')
-   if strcmp( img.type, 'image' )
-      try
-         img_data= img.node_data;
-      catch
-         img_data= img.elem_data; %col vector
-      end
-
-      pp=get_colours(img);
-   else
-      error('calc_colours: input is not eidors image object');
-   end
+   img_data= get_img_data( img );
+   pp=get_colours(img);
 else
    img_data= img;
 
