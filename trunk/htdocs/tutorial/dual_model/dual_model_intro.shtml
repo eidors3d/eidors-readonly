@@ -36,9 +36,12 @@ Next, we compare two coarse meshes
 <ol>
 <li> A 64 element mesh where the fine==coarse mesh. There are
       64 conductivity parameters to solve
-<li> A 64 element mesh where all 28 outer elements have the
-      same conductivity. Thus there are 37 conductivity
+<li> A 64 element mesh where 4 inner elements have the
+      same conductivity. Thus there are 64-(4-1)=61 conductivity
       parameters to solve
+<li> A 64 element mesh where 9 elements in an inner pie
+      slice have the same conductivity. Thus there are
+      64-(9-1)=56 conductivity parameters to solve
 </ol>
 
 <pre>
@@ -49,7 +52,8 @@ Next, we compare two coarse meshes
 <img src="dual_model02a.png">
 <br><i> Figure:</i>
 <i>Left</i> "Fine" mesh (64 parameters)
-<i>Right</i> Coarse mesh (37 parameters)
+<i>Middle</i> Coarse mesh (61 parameters)
+<i>Right</i> Coarse mesh (56 parameters)
 </center>
 
 <h3>Coarse to Fine Mapping</H3>
@@ -80,7 +84,8 @@ Then the mapping from coarse to fine would be
 <br><i> Figure:</i>
 Reconstructed images.
 <i>Left</i> "Fine" mesh (64 parameters)
-<i>Right</i> Coarse mesh (37 parameters)
+<i>Middle</i> Coarse mesh (61 parameters)
+<i>Right</i> Coarse mesh (56 parameters)
 </center>
 
 
@@ -88,7 +93,7 @@ Reconstructed images.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-16 01:33:11 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-16 11:06:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

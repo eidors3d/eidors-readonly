@@ -1,4 +1,4 @@
-% Simulate data $Id: dual_model02.m,v 1.3 2008-03-16 10:35:23 aadler Exp $
+% Simulate data $Id: dual_model02.m,v 1.4 2008-03-16 11:06:26 aadler Exp $
 
 % create base model
 mdl_base=mk_common_model('a2c0',16);
@@ -10,21 +10,25 @@ nodes= mdl_base.fwd_model.nodes;
 e= size(elems,1);
 
 
-for model = 1:2
+for model = 1:3
    if model==1
 % Model 1: coarse==fine. each elem has a parameter
       params= 1:e; 
-   else
-% Model 2: outer two layers have only one parameter, 
+   elseif model==2
+% Model 2: coarse model, inner circle has one parameter
+      params= [1,1,1,1, 2:e-3];
+   elseif model==3
+% Model 3: coarse model, top left slice has one parameter
       params= 1:e;
-      params(params>36)= 37;
+      params([4,8,15:16,23:24,34:36])= 0;
+      [jnk1,jnk2,params]= unique(params);
    end
 
 % Create inverse_model
    imdl(model)= mdl_base;
    imdl(model).fwd_model.coarse2fine = sparse(1:e,params,1,e,max(params));
 
-   subplot(2,2, model)
+   subplot(2,3, model)
    show_fem(imdl(model).fwd_model);
 
 % Show parameter numbers
