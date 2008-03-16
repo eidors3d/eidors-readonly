@@ -1,0 +1,63 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Introduction to dual models
+</h2>
+
+Dual model systems use two models of the underlying system:
+<ul>
+<li> a fine (high density) FEM, on which to perform the 
+   forward model (calculate <i>measurements</i> from
+   <i>parameters</i>), and
+<li> a coarse (lower density) FEM, on which to perform the 
+   inverse problem (reconstructing image <i>parameters</i>
+   from <i>measurements</i>)
+</ul>
+
+<center>
+<img src="coarse-fine-figure.png">
+<br><i> Figure:</i>
+Schematic of a dual model based inverse problem
+</center>
+
+<h3>Simple Example</H3>
+
+First, simulate some data, based on a 576 element mesh
+<pre>
+<!--#include virtual="dual_model01.m" -->
+</pre>
+
+<center>
+<img src="dual_model01a.png">
+<br><i> Figure:</i>
+Simulation data
+</center>
+
+Next, we compare two coarse meshes
+<ol>
+<li> A 64 element mesh where the fine==coarse mesh. There are
+      64 conductivity parameters to solve
+<li> A 64 element mesh where all 28 outer elements have the
+      same conductivity. Thus there are 37 conductivity
+      parameters to solve
+</ol>
+
+<pre>
+<!--#include virtual="dual_model02.m" -->
+</pre>
+
+<center>
+<img src="dual_model02a.png">
+<br><i> Figure:</i>
+<i>Left</i> "Fine" mesh (64 parameters)
+<i>Right</i> Coarse mesh (37 parameters)
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-16 00:12:52 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
