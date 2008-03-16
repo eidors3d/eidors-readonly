@@ -1,9 +1,11 @@
-function TVop=tv_op(msh);
+function TVop=TV_operator_2D(msh);
 % 03/12/00 By Andrea Borsic
 %
 % This function constructs Total Variation operator
 %
 % function TVop=tv_op(msh);
+
+% $Id: TV_operator_2D.m,v 1.2 2008-03-16 00:57:50 aadler Exp $
 
 
 num_tri=length(msh.TC);

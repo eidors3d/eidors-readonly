@@ -14,10 +14,12 @@ function system_mat = calc_system_mat( fwd_model, img)
 % image     is an image structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_system_mat.m,v 1.17 2008-03-15 22:36:52 aadler Exp $
+% $Id: calc_system_mat.m,v 1.18 2008-03-16 00:57:50 aadler Exp $
 
 if nargin>1
    img.fwd_model= fwd_model;
+else
+   img= fwd_model; % only img specified
 end
 
 system_mat= eidors_obj('get-cache', img, 'system_mat');

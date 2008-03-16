@@ -1,4 +1,4 @@
-function J = calc_jacobian( fwd_model, img, varargin )
+function J = calc_jacobian( fwd_model, img)
 % CALC_JACOBIAN: calculate jacobian from an inv_model
 % 
 %  J = calc_jacobian( fwd_model, img )
@@ -17,10 +17,12 @@ function J = calc_jacobian( fwd_model, img, varargin )
 %           'node_data' parameters
 
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m,v 1.18 2008-03-15 22:36:52 aadler Exp $
+% $Id: calc_jacobian.m,v 1.19 2008-03-16 00:57:50 aadler Exp $
 
 if nargin>1
    img.fwd_model= fwd_model;
+else
+   img= fwd_model; % only img specified
 end
 
 J= eidors_obj('get-cache', img, 'jacobian');
