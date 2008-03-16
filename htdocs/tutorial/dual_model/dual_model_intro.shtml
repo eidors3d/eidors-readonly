@@ -52,11 +52,43 @@ Next, we compare two coarse meshes
 <i>Right</i> Coarse mesh (37 parameters)
 </center>
 
+<h3>Coarse to Fine Mapping</H3>
+
+If we consider a smaller model, where
+<pre width=50>
+   % fine_param_1 == coarse_param_1
+   % fine_param_2 == coarse_param_2
+   % fine_param_3 == coarse_param_3
+   % fine_param_4 == coarse_param_3
+</pre>
+Then the mapping from coarse to fine would be
+<pre width=50>
+   [ 1 0 0 ] [ coarse_param_1 ]   [ fine_param_1 ]
+   [ 0 1 0 ] [ coarse_param_2 ] = [ fine_param_2 ]
+   [ 0 0 1 ] [ coarse_param_3 ]   [ fine_param_3 ]
+   [ 0 0 1 ]                      [ fine_param_4 ]
+</pre>
+
+<h3>Image Reconstructions</H3>
+
+<pre>
+<!--#include virtual="dual_model03.m" -->
+</pre>
+
+<center>
+<img src="dual_model03a.png">
+<br><i> Figure:</i>
+Reconstructed images.
+<i>Left</i> "Fine" mesh (64 parameters)
+<i>Right</i> Coarse mesh (37 parameters)
+</center>
+
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-16 00:12:52 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-16 01:33:11 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
