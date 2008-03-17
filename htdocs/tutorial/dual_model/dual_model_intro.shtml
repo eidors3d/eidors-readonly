@@ -110,11 +110,35 @@ Reconstructed images.
 <i>Right</i> Fine mesh (576 elements)
 </center>
 
+Reconstruct images, and then image onto the
+coarse model and the fine model.
+
+<pre>
+<!--#include virtual="dual_model05.m" -->
+</pre>
+
+<center>
+<img src="dual_model05a.png">
+<br><i> Figure:</i>
+Reconstructed images mapped onto the coarse model.
+<i>Left</i> "Fine" mesh (64 elements)
+<i>Middle</i> Fine mesh (256 elements)
+<i>Right</i> Fine mesh (576 elements)
+</center>
+<center>
+<img src="dual_model05b.png">
+<br><i> Figure:</i>
+Reconstructed images mapped onto the fine model.
+<i>Left</i> "Fine" mesh (64 elements)
+<i>Middle</i> Fine mesh (256 elements)
+<i>Right</i> Fine mesh (576 elements)
+</center>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-16 21:16:07 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-17 13:45:35 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
