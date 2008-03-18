@@ -3,6 +3,8 @@ function fmdl= crop_model( axis_handle, fcn_handle );
 %
 % USAGE #1: crop display to show model internals
 %   crop_model( axis_handle, fcn_handle );
+%
+%   fcn_handle ==1 where model is *kept*
 % 
 %   if axis_handle==[], then use the current axis
 %   examples:
@@ -16,7 +18,7 @@ function fmdl= crop_model( axis_handle, fcn_handle );
 %   fmdl2= crop_model(fmdl1, inline('x+y>0','x','y','z'))
 
 % (C) 2006-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: crop_model.m,v 1.16 2008-03-18 15:36:26 aadler Exp $
+% $Id: crop_model.m,v 1.17 2008-03-18 16:17:21 aadler Exp $
 
 usage_graphics= 1;
 try if axis_handle.type == 'fwd_model'
@@ -32,7 +34,7 @@ else
    fmdl= crop_fwd_model(axis_handle, fcn_handle);
 end
 
-
+% CROP GRAPHICS
 function crop_graphics_model(axis_handle, fcn_handle);
    kk= get(axis_handle,'Children');
    % only the FEM frame
@@ -56,4 +58,41 @@ function crop_graphics_model(axis_handle, fcn_handle);
                   'Zdata', z(:,idx));
          end
       end
+   end
+
+% CROP fwd_model
+function   fmdl1= crop_fwd_model(fmdl0, fcn_handle);
+   fmdl1= fmdl0;
+
+% Find nodes to remove
+   nodes= fmdl0.nodes;
+   [n,d]= size(nodes);
+   n2xyz= eye(d,3); 
+   xyz= nodes*n2xyz;
+   idx0= ~all( feval(fcn_handle,xyz(:,1), ...
+                               xyz(:,2), ...
+                               xyz(:,3)),2);
+% remove these nodes
+   fmdl1.nodes(idx0,:) = [];
+
+% renumber nodes, set unused ones to 0
+   idx1= zeros(n,1);
+   idx1(~idx0)= 1:sum(~idx0);
+
+   fmdl1.elems(:) = idx1(fmdl0.elems);
+   remove= any( fmdl1.elems == 0, 2);
+   fmdl1.elems(remove,:)= [];
+
+   fmdl1.boundary(:) = idx1(fmdl0.boundary);
+   remove= any( fmdl1.boundary == 0, 2);
+   fmdl1.boundary(remove,:)= [];
+
+% renumber nodes, set unused ones to 0
+   for i=1:length(fmdl1.electrode)
+      el_nodes= fmdl0.electrode(i).nodes;
+      el_nodes(:)= idx1(el_nodes);
+      if any(el_nodes==0);
+         error('crop_model: nodes in electrode are removed');
+      end
+      fmdl1.electrode(i).nodes= el_nodes;
    end
