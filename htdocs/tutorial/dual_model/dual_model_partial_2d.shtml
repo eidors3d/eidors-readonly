@@ -21,7 +21,7 @@ conductivity near this region.
 <center>
 <img src="dual_partial2d01a.png">
 <br><i> Figure:</i>
-Fine (<i>left</i>) and coarse (<i>right</i>) models
+Fine (<i>left</i>) and dual (<i>right</i>) models
 </center>
 
 
@@ -40,6 +40,40 @@ Data are simulated of a point rotating on a fine mesh
 Simulation data
 </center>
 
+<h3>Reconstruction models</h3>
+
+Create fine mesh (<tt>fmdl_mdl</tt>)
+   and dual mesh (<tt>dmdl_mdl</tt>) reconstruction models.
+<pre>
+<!--#include virtual="dual_partial2d03.m" -->
+</pre>
+
+<h3>Reconstructed images (projected to fine mesh)</h3>
+
+<pre>
+<!--#include virtual="dual_partial2d04.m" -->
+</pre>
+
+<center>
+<img src="dual_partial2d04a.png"><br>
+<img src="dual_partial2d04b.png">
+<br><i> Figure:</i>
+Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
+</center>
+
+<h3>Reconstructed images (projected to coarse mesh)</h3>
+
+<pre>
+<!--#include virtual="dual_partial2d05.m" -->
+</pre>
+
+<center>
+<img src="dual_partial2d05a.png"><br>
+<img src="dual_partial2d05b.png">
+<br><i> Figure:</i>
+Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
+</center>
+
 
 
 
@@ -48,7 +82,7 @@ Simulation data
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-18 16:49:16 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-18 18:59:46 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
