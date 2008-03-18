@@ -55,7 +55,8 @@ Create fine mesh (<tt>fmdl_mdl</tt>)
 </pre>
 
 <center>
-<img src="dual_partial2d04a.png"><br>
+<img src="dual_partial2d04a.png">
+<br>
 <img src="dual_partial2d04b.png">
 <br><i> Figure:</i>
 Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
@@ -68,7 +69,8 @@ Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
 </pre>
 
 <center>
-<img src="dual_partial2d05a.png"><br>
+<img src="dual_partial2d05a.png">
+<br>
 <img src="dual_partial2d05b.png">
 <br><i> Figure:</i>
 Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
@@ -82,7 +84,7 @@ Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-18 18:59:46 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-18 19:10:08 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
