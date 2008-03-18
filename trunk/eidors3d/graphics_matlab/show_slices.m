@@ -1,5 +1,5 @@
-function out_img= show_slices( img, levels, clim, ref_lev )
-% out_img = show_slices (img, levels, clim  ) show slices at levels of an
+function out_img= show_slices( img, levels )
+% out_img = show_slices (img, levels ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or a array of structs
 % out_img= matrix in the current colormap which we can use image(out_img);
@@ -16,12 +16,9 @@ function out_img= show_slices( img, levels, clim, ref_lev )
 %
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
-%      
-% clim      = colourmap limit ([] -> use image maximum)
-% ref_lev   = reference conductivity ([] -> 'use_global')
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.49 2008-03-14 17:35:58 aadler Exp $
+% (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
+% $Id: show_slices.m,v 1.50 2008-03-18 18:40:28 aadler Exp $
 
 np= calc_colours('npoints');
 dims= size(img(1).fwd_model.nodes,2);
@@ -31,14 +28,6 @@ end
 
 if isempty(levels) && dims==2
    levels= [Inf,Inf,0];
-end
-
-if nargin==4;
-   img.calc_colours.ref_level= ref_lev;
-end
-
-if nargin> 3 && ~isempty(clim)
-   img.calc_colours.clim = clim;
 end
 
 if size(levels,2) == 5
