@@ -1,11 +1,14 @@
 function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl )
-% SIMULATE_MOVEMENT simulate rotational movement in 2D
-% [vh,vi,xpr_pt]= simulate_movement( n_points, model )
+% SIMULATE_2D_MOVEMENT simulate rotational movement in 2D
+% [vh,vi,xpr_pt]= simulate_2d_movement( n_points, model )
+% 
+% the target starts at (2/3,0) and rotates around counter
+%  clockwise
 % 
 %   n_points = number of points to simulate (default = 200)
 %   fwd_model = fwd_model to simulate (use internal default)
 %
-% $Id: simulate_2d_movement.m,v 1.9 2008-03-15 21:49:46 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.10 2008-03-18 16:23:51 aadler Exp $
 
     if nargin <1
        n_sims = 200;
