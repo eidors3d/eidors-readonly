@@ -1,0 +1,55 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Dual Models &minus; Coarse model partially covers fine model
+</h2>
+
+In many cases, the inverse model only covers part of the
+space. It is necessary to cover the entire space with
+the fine model to provide an accurate forward solution,
+but it is not possible to accurately calculate parameters
+for the low sensitivity parts of the space.
+
+<h3>Coarse and Fine models</h3>
+
+Create a fine model of a tank with 7 electrodes just near
+one side. The coarse model will only represent the 
+conductivity near this region.
+<pre>
+<!--#include virtual="dual_partial2d01.m" -->
+</pre>
+
+<center>
+<img src="dual_partial2d01a.png">
+<br><i> Figure:</i>
+Fine (<i>left</i>) and coarse (<i>right</i>) models
+</center>
+
+
+<h3>Simulated data</h3>
+
+Data are simulated of a point rotating on a fine mesh
+(inverse crime in this case)
+
+<pre>
+<!--#include virtual="dual_partial2d02.m" -->
+</pre>
+
+<center>
+<img src="dual_partial2d02a.png">
+<br><i> Figure:</i>
+Simulation data
+</center>
+
+
+
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-18 16:49:16 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
