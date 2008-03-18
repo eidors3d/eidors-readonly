@@ -1,4 +1,4 @@
-function fmdl= crop_model( axis_handle, fcn_handle );
+function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 % CROP_MODEL: Crop away parts of a fem model
 %
 % USAGE #1: crop display to show model internals
@@ -16,9 +16,13 @@ function fmdl= crop_model( axis_handle, fcn_handle );
 % 
 %   example:
 %   fmdl2= crop_model(fmdl1, inline('x+y>0','x','y','z'))
+%
+%  with two parameters output
+% [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
+%     c2f_idx maps each elemen in fmdl_new to fwd_model
 
 % (C) 2006-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: crop_model.m,v 1.17 2008-03-18 16:17:21 aadler Exp $
+% $Id: crop_model.m,v 1.18 2008-03-18 17:51:22 aadler Exp $
 
 usage_graphics= 1;
 try if axis_handle.type == 'fwd_model'
@@ -31,7 +35,7 @@ if usage_graphics
    end
    crop_graphics_model(axis_handle, fcn_handle);
 else
-   fmdl= crop_fwd_model(axis_handle, fcn_handle);
+   [fmdl,c2f_idx]= crop_fwd_model(axis_handle, fcn_handle);
 end
 
 % CROP GRAPHICS
@@ -61,7 +65,7 @@ function crop_graphics_model(axis_handle, fcn_handle);
    end
 
 % CROP fwd_model
-function   fmdl1= crop_fwd_model(fmdl0, fcn_handle);
+function [fmdl1,c2f_idx]= crop_fwd_model(fmdl0, fcn_handle);
    fmdl1= fmdl0;
 
 % Find nodes to remove
@@ -70,8 +74,8 @@ function   fmdl1= crop_fwd_model(fmdl0, fcn_handle);
    n2xyz= eye(d,3); 
    xyz= nodes*n2xyz;
    idx0= ~all( feval(fcn_handle,xyz(:,1), ...
-                               xyz(:,2), ...
-                               xyz(:,3)),2);
+                                xyz(:,2), ...
+                                xyz(:,3)),2);
 % remove these nodes
    fmdl1.nodes(idx0,:) = [];
 
@@ -82,6 +86,8 @@ function   fmdl1= crop_fwd_model(fmdl0, fcn_handle);
    fmdl1.elems(:) = idx1(fmdl0.elems);
    remove= any( fmdl1.elems == 0, 2);
    fmdl1.elems(remove,:)= [];
+% c2f_idx maps each new elem to its original position
+   c2f_idx= find(~remove);
 
    fmdl1.boundary(:) = idx1(fmdl0.boundary);
    remove= any( fmdl1.boundary == 0, 2);
@@ -96,3 +102,4 @@ function   fmdl1= crop_fwd_model(fmdl0, fcn_handle);
       end
       fmdl1.electrode(i).nodes= el_nodes;
    end
+
