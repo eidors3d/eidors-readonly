@@ -14,7 +14,7 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % inv_model    is an inv_model structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_R_prior.m,v 1.18 2007-08-30 03:37:03 aadler Exp $
+% $Id: calc_R_prior.m,v 1.19 2008-03-18 20:54:30 aadler Exp $
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)
@@ -29,8 +29,12 @@ elseif isfield(inv_model,'RtR_prior')
    % get R =RtR^(1/2). Not that this is non unique
    RtR_prior= feval( inv_model.RtR_prior, inv_model );
 
-   % generates an error for rank deficient RtR_prior
-   R_prior = chol (RtR_prior);
+   % chol generates an error for rank deficient RtR_prior
+   %     R_prior = chol (RtR_prior);
+   % Instead we calculate cholinc with a droptol of 1e-5.
+   %  For priors, this should be fine, since exact values
+   %  especially far away, are not necessary
+   R_prior = cholinc(RtR_prior,1e-5);
 else
    error('calc_R_prior: neither R_prior or RtR_prior func provided');
 end
