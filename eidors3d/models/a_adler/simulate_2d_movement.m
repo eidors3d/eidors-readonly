@@ -1,23 +1,35 @@
-function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl )
+function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
 % SIMULATE_2D_MOVEMENT simulate rotational movement in 2D
-% [vh,vi,xyr_pt]= simulate_2d_movement( n_points, model )
-% 
-% the target starts at (2/3,0) and rotates around counter
+% [vh,vi,xyr_pt]= simulate_2d_movement( n_points, model, rad_pr )
+%
+% the target starts at (rad_pr(1),0) and rotates around 
 %  clockwise
 % 
+%   rad_pr = [path_radius, target_radius] = [2/3, .05] (default)
+% 
 %   n_points = number of points to simulate (default = 200)
-%   fwd_model = fwd_model to simulate (use internal default)
 %
-% $Id: simulate_2d_movement.m,v 1.11 2008-03-18 16:33:44 aadler Exp $
+%   model = fwd_model to simulate 
+%         (default use internal, or if model= []);
+%
+% $Id: simulate_2d_movement.m,v 1.12 2008-03-18 18:48:58 aadler Exp $
 
     if nargin <1
        n_sims = 200;
     end
 
-    if nargin<2 % create our own fmdl
+    if nargin<2 || isempty(fmdl) % create our own fmdl
        n_circles = 36;
        n_elec= 16;
        fmdl= mk_fwd_model(n_circles, n_elec);
+    end
+
+    if nargin<3
+       radius= 2/3;
+       rp= .05;
+    else
+       radius= rad_pr(1);
+       rp=     rad_pr(2);
     end
 
     n_elems= size(fmdl.elems,1);
@@ -42,8 +54,6 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl )
        f_frac= (i-1)/n_sims;
        fprintf('simulating %d / %d \n',i,n_sims);
 
-       rp= .05;
-       radius= 2/3;
        xp= radius * cos(f_frac*2*pi);
        yp= radius * sin(f_frac*2*pi);
        xyr_pt(:,i)= [xp;-yp;rp]; % -y because images and axes are reversed
