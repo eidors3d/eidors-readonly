@@ -3,7 +3,7 @@ function [inhomg_img, demo_img] = demo_real;
 % DEMO to show usage of EIDORS3D
 
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real.m,v 1.58 2007-08-30 03:37:32 aadler Exp $
+% $Id: demo_real.m,v 1.59 2008-03-19 16:37:25 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
@@ -97,7 +97,6 @@ if ~exist('OCTAVE_VERSION');
    figure; image_levels( inhomg_img, levels );
 else
    show_slices( inhomg_img, levels' * [inf,inf,1] );
-   disp('Original Image. Press a key');
 end
 
 demo_img.name= 'Reconstructed conductivity distribution';
@@ -105,7 +104,6 @@ if ~exist('OCTAVE_VERSION');
    figure; image_levels( demo_img, levels );
 else
    show_slices( demo_img, levels' * [inf,inf,1] );
-   disp('Reconstructed Image. Press a key');
 end
 
 function [vtx,simp,bdy] = get_model_elems;
