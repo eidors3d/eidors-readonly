@@ -1,7 +1,7 @@
-% Solve 2D and 3D model $Id: two_and_half_d02.m,v 1.3 2008-03-19 16:50:43 aadler Exp $
+% Solve 2D and 3D model $Id: two_and_half_d02.m,v 1.4 2008-03-19 19:02:45 aadler Exp $
 
 % Original target
-subplot(131)
+subplot(141)
 show_fem(inhomg_img); view(-62,28)
 
 % Create inverse Model: Classic
@@ -16,7 +16,5 @@ imdl.fwd_model= f_mdl; % fine model
 
 % Classic (inverse crime) solver
 img1= inv_solve(imdl, vh, vi);
-subplot(132)
+subplot(142)
 show_fem(img1); view(-62,28)
-
-print -r125 -dpng two_and_half_d02a.png

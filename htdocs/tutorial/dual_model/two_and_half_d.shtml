@@ -46,11 +46,12 @@ mesh is extruded into 2D, as the assumptions
 require.
 
 <center>
-<img src="two_and_half_d02a.png">
+<img src="two_and_half_d03a.png">
 <br><i> Figure:</i>
 <i>Left</i> original (3d) model
-<i>Centre</i> fine (3d) reconstruction
-<i>Right</i> coarse (2d) reconstruction
+<i>Centre left</i> fine (3d) reconstruction
+<i>Centre right</i> 2&frac12; reconstruction onto fine model
+<i>Right</i>  2&frac12; reconstruction onto coarse model
 </center>
 
 
@@ -58,7 +59,7 @@ require.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-15 19:13:56 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-19 19:02:44 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
