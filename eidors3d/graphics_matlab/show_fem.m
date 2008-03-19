@@ -11,7 +11,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.64 2008-03-14 15:06:14 aadler Exp $
+% $Id: show_fem.m,v 1.65 2008-03-19 19:12:42 aadler Exp $
 
 if exist('OCTAVE_VERSION');
    warning('show_fem does not support octave');
@@ -61,11 +61,12 @@ if size(mdl.nodes,2)==2
 elseif size(mdl.nodes,2)==3
    % 3D Case
    show_3d_fem( mdl );
+   elem_data = get_img_data(img);
 
    if exist('img')
-       show_inhomogeneities( img.elem_data , mdl, img);
+       show_inhomogeneities( elem_data , mdl, img);
        if do_colourbar
-           calc_colours(img.elem_data, clim, do_colourbar);
+           calc_colours(elem_data, clim, do_colourbar);
        end
    end
 
