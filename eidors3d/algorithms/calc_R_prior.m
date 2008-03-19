@@ -14,7 +14,7 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % inv_model    is an inv_model structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_R_prior.m,v 1.19 2008-03-18 20:54:30 aadler Exp $
+% $Id: calc_R_prior.m,v 1.20 2008-03-19 00:05:09 aadler Exp $
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)
@@ -37,6 +37,14 @@ elseif isfield(inv_model,'RtR_prior')
    R_prior = cholinc(RtR_prior,1e-5);
 else
    error('calc_R_prior: neither R_prior or RtR_prior func provided');
+end
+
+if isfield(inv_model.fwd_model,'coarse2fine')
+   c2f= inv_model.fwd_model.coarse2fine;
+   if size(R_prior,1)==size(c2f,1)
+%     we need to take into account coarse2fine - using a reasonable tol
+      R_prior=R_prior*c2f;
+   end
 end
 
 eidors_obj('set-cache', inv_model, 'R_prior', R_prior);

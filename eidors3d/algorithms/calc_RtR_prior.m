@@ -21,7 +21,7 @@ function RtR_prior = calc_RtR_prior( inv_model )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_RtR_prior.m,v 1.20 2008-03-16 11:07:43 aadler Exp $
+% $Id: calc_RtR_prior.m,v 1.21 2008-03-19 00:05:09 aadler Exp $
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)
@@ -39,6 +39,15 @@ elseif isfield(inv_model,'R_prior')
    RtR_prior = R'*R;
 else
    error('calc_RtR_prior: neither R_prior or RtR_prior func provided');
+end
+
+if isfield(inv_model.fwd_model,'coarse2fine')
+   c2f= inv_model.fwd_model.coarse2fine;
+   if size(RtR_prior,1)==size(c2f,1)
+%     we need to take into account coarse2fine - using a reasonable tol
+      f2c= c2f'; %pinv(c2f,1e-6);
+      RtR_prior=c2f'*RtR_prior*c2f;
+   end
 end
 
 eidors_obj('set-cache', inv_model, 'RtR_prior', RtR_prior);
