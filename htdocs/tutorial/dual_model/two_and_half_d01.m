@@ -1,4 +1,4 @@
-% Build 2D and 3D model $Id: two_and_half_d01.m,v 1.1 2008-03-15 19:13:56 aadler Exp $
+% Build 2D and 3D model $Id: two_and_half_d01.m,v 1.2 2008-03-19 00:04:28 aadler Exp $
 
 if ~exist('demo_img');
    [inhomg_img, demo_img] = demo_real;
@@ -11,7 +11,6 @@ n2d = f_mdl.nodes( ...
            (f_mdl.nodes(:,3) == 0), 1:2);
 e2d = delaunayn(n2d);
 c_mdl = eidors_obj('fwd_model','2d','elems',e2d,'nodes',n2d);
-c2f= mk_coarse_fine_mapping( f_mdl, c_mdl );
 
 subplot(121);
 show_fem(f_mdl); title('fine (3d) model');
