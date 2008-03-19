@@ -29,6 +29,8 @@
     - normalize_measurements
     - calc_difference_data
 
+- nodal solvers and elem solvers should emit the same
+   data and inv_solve should take care of it.
 - eidors_msg should print then remove low log level entries
 
 - proper functions to call data_form solver variables
@@ -124,7 +126,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-14 15:06:46 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-19 16:37:42 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
