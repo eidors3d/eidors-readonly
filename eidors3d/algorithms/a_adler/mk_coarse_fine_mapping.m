@@ -11,7 +11,7 @@ function mapping= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %                 - number of points to interpolate in each dimension
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.11 2008-03-16 21:04:30 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.12 2008-03-20 23:19:14 aadler Exp $
 
 % Mapping depends f_mdl and c_mdl, but only on nodes and elems
 cc_mdl.elems = c_mdl.elems;
@@ -37,6 +37,12 @@ else
        n_interp = 50;
     end
    
+
+    eidors_obj('set-cache', ff_mdl, 'coarse_fine_mapping', mapping, cc_mdl);
+    eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
+end
+
+function mapping= mk_mapping( ff_mdl, cc_mdl, n_interp);
     xyzmin = min([ff_mdl.nodes;cc_mdl.nodes]);
     xyzmax = max([ff_mdl.nodes;cc_mdl.nodes]);
     xyz = interpxyz( xyzmin, xyzmax, n_interp);
@@ -48,10 +54,6 @@ else
     c2f = sparse(f_tria(ff),c_tria(ff),1,n_ff, n_cc);
     csum = sparse(f_tria(ff),1,1,n_ff, 1);
     mapping = c2f./(csum*ones(1,n_cc));
-
-    eidors_obj('set-cache', ff_mdl, 'coarse_fine_mapping', mapping, cc_mdl);
-    eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
-end
 
 % Do 3D interpolation of region xyzmin= [x,y,z] to xyzmax
 %  with n_interp points in the minimum direction
