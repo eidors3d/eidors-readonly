@@ -1,4 +1,4 @@
-function [mapping,c_elems] = mk_coarse_fine_mapping( f_mdl, c_mdl );
+function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM
 % mapping= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %
@@ -7,11 +7,14 @@ function [mapping,c_elems] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %
 % c_mdl is coarse fwd_model
 % f_mdl is fine fwd_model
-% f_mdl.mk_coarse_fine_mapping.n_interp - default 50
-%                 - number of points to interpolate in each dimension
+%
+% if c_mdl is 2D and f_mdl is 3D, then parameter
+%     c_mdl.mk_coarse_fine_mapping.z_depth (default = inf)
+% indicates the +/- z_depth which is reflected onto the
+% c_mdl (ie c_mdl is at z=0 +/- z_depth)
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.13 2008-03-21 01:24:03 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.14 2008-03-21 01:46:36 aadler Exp $
 
 % Mapping depends f_mdl and c_mdl, but only on nodes and elems
 cc_mdl.elems = c_mdl.elems;
@@ -32,31 +35,18 @@ if ~isempty(mapping)
 else
 
     try
-       n_interp = f_mdl.mk_coarse_fine_mapping.n_interp;
+       n_interp = c_mdl.mk_coarse_fine_mapping.z_depth;
     catch
-       n_interp = 50;
+       n_interp = inf;
     end
-   
+
+    f_elems = all_contained_elems( ff_mdl, cc_mdl);
+    mapping = contained_elems_i( ff_mdl, cc_mdl, f_elems);
 
     eidors_obj('set-cache', {ff_mdl,cc_mdl}, 'coarse_fine_mapping', mapping);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
 end
 
-f_elems = all_contained_elems( ff_mdl, cc_mdl);
-c_elems = contained_elems_i( ff_mdl, cc_mdl, f_elems);
-
-function mapping= mk_mapping( ff_mdl, cc_mdl, n_interp);
-    xyzmin = min([ff_mdl.nodes;cc_mdl.nodes]);
-    xyzmax = max([ff_mdl.nodes;cc_mdl.nodes]);
-    xyz = interpxyz( xyzmin, xyzmax, n_interp);
-
-    f_tria= mk_tri_pts( ff_mdl, xyz, fto3d);
-    c_tria= mk_tri_pts( cc_mdl, xyz, cto3d);
-
-    ff= find(~isnan(f_tria) & ~isnan(c_tria));
-    c2f = sparse(f_tria(ff),c_tria(ff),1,n_ff, n_cc);
-    csum = sparse(f_tria(ff),1,1,n_ff, 1);
-    mapping = c2f./(csum*ones(1,n_cc));
 
 % find all elems of ff_mdl completely contained in cc_mdl
 function c_elems = all_contained_elems( fm, cm)
@@ -126,18 +116,3 @@ function xyz = interpxyz( xyzmin, xyzmax, n_interp);
     xyz= [xx3(:), yy3(:), zz3(:)];
 
 
-% calculate mapping of points xyz into triangle
-% fmdl is fwd_mode, xyz is points [x(:), y(:), z(:)]
-% to 3d is 
-function tri_pts = mk_tri_pts( fmdl, xyz, to3d )
-    nodes = fmdl.nodes*to3d'; 
-    elems = fmdl.elems;
-    tri_pts= tsearchn(nodes, elems, xyz*to3d');
-
-    ff= find(~isnan(tri_pts));
-    n_ff= size(elems, 1);
-    csum = sparse(tri_pts(ff),1,1,n_ff, 1);
-    if any(csum<10)
-       warning(sprintf( ...
-         'mesh density is too low: min=%d', full(min(csum)) ))
-    end
