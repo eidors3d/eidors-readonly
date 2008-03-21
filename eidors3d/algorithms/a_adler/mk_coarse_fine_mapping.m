@@ -13,49 +13,53 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % indicates the +/- z_depth which is reflected onto the
 % c_mdl (ie c_mdl is at z=0 +/- z_depth)
 
+% TODO provide twist and translate vector
+
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.14 2008-03-21 01:46:36 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.15 2008-03-21 14:49:01 aadler Exp $
 
-% Mapping depends f_mdl and c_mdl, but only on nodes and elems
-cc_mdl.elems = c_mdl.elems;
-cto3d = speye(size(c_mdl.nodes,2), 3);
-cc_mdl.nodes = c_mdl.nodes * cto3d;
-cc_mdl.type  = 'fwd_model';
-n_cc= size(c_mdl.elems, 1);
+% Mapping depends only on nodes and elems
+try; c_mdl= rmfield(c_mdl,'electrode');   end
+try; c_mdl= rmfield(c_mdl,'stimulation'); end
+try; f_mdl= rmfield(f_mdl,'electrode');   end
+try; f_mdl= rmfield(f_mdl,'stimulation'); end
 
-ff_mdl.elems = f_mdl.elems;
-fto3d = speye(size(f_mdl.nodes,2), 3);
-ff_mdl.nodes = f_mdl.nodes * fto3d;
-ff_mdl.type  = 'fwd_model';
-n_ff= size(f_mdl.elems, 1);
+% TODO: mapping step-> map f_mdl onto c_mdl
 
-mapping = eidors_obj('get-cache', {ff_mdl,cc_mdl}, 'coarse_fine_mapping');
+mapping = eidors_obj('get-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping');
 if ~isempty(mapping)
     eidors_msg('mk_coarse_fine_mapping: using cached value', 3);
 else
 
     try
-       n_interp = c_mdl.mk_coarse_fine_mapping.z_depth;
+       z_depth = c_mdl.mk_coarse_fine_mapping.z_depth;
     catch
-       n_interp = inf;
+       z_depth = inf;
     end
 
-    f_elems = all_contained_elems( ff_mdl, cc_mdl);
-    mapping = contained_elems_i( ff_mdl, cc_mdl, f_elems);
+    f_elems = all_contained_elems( f_mdl, c_mdl, z_depth);
+    mapping = contained_elems_i( f_mdl, c_mdl, f_elems);
 
-    eidors_obj('set-cache', {ff_mdl,cc_mdl}, 'coarse_fine_mapping', mapping);
+    % look for f_mdl z out of range
+    [nf,ne] = size(f_mdl.elems);
+    f_elem_z= reshape(f_mdl.nodes( f_mdl.elems(:), 3), nf, ne);
+    oor= all( abs(f_elem_z) > z_depth , 2);
+
+    mapping = spdiags(~oor, 0, nf,nf) * mapping;
+
+    eidors_obj('set-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping', mapping);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
 end
 
 
 % find all elems of ff_mdl completely contained in cc_mdl
-function c_elems = all_contained_elems( fm, cm)
+function c_elems = all_contained_elems( fm, cm, z_depth)
     nd= size(fm.nodes,2); % n dims
     [nf,ef]= size(fm.elems);
     nc= size(cm.elems,1);
     fm_pts = zeros(nf*ef,3);
     % shrink pts slightly so they're not on the boundary
-    s_fac= 1-1e-6;
+    s_fac= .9999;
     for dim= 1:nd
        % fm_pts is local_nodes x elems x xyz
        fm_pt= reshape(fm.nodes(fm.elems,dim),nf,ef);
