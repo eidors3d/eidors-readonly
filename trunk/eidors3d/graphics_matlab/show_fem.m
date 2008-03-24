@@ -11,12 +11,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.66 2008-03-21 02:07:00 aadler Exp $
-
-if exist('OCTAVE_VERSION');
-   warning('show_fem does not support octave');
-   return
-end
+% $Id: show_fem.m,v 1.67 2008-03-24 21:14:13 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
@@ -40,7 +35,6 @@ if strcmp( mdl.type , 'image' )
    mdl= img.fwd_model;
 end
 
-cla;
 set(gcf, 'Name', name(:)');
 
 if size(mdl.nodes,2)==2
@@ -52,7 +46,6 @@ if size(mdl.nodes,2)==2
    else
       colours= [1,1,1]; % white elements if no image
    end
-   cla;
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl);
 
