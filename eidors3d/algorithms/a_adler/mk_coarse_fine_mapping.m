@@ -21,10 +21,8 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % indicates the +/- z_depth which is reflected onto the
 % c_mdl (ie c_mdl is at z=0 +/- z_depth)
 
-% TODO provide twist and translate vector
-
-% (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.16 2008-03-25 02:09:44 aadler Exp $
+% (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
+% $Id: mk_coarse_fine_mapping.m,v 1.17 2008-03-25 14:37:46 aadler Exp $
 
 % Mapping depends only on nodes and elems
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -80,6 +78,8 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
     tsn= tsearchn(cm.nodes(:,1:2), cm.elems, fm_pts(:,1:2));
     tsn= reshape( tsn, nf, ef);
     % if node in fm is outside cm, then set it back inside
+    % this way only elems in fm that are completely outside cm
+    % will cause a problem
     tsn= sort( tsn, 2); % send Nans to right
     isn= find(isnan(tsn));
     tsn(isn)= tsn( 1+rem(isn-1,nf ) );
@@ -88,33 +88,53 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
 
 % interpolate over a triangle with n_interp points
 % generate a set of points to fairly cover the triangle
-function interp= triangle_interpolation(n_interp)
-    interp= zeros(0,3);
-    for i=0:n_interp
-       for j=0:n_interp-i
-          interp= [interp;i,j,n_interp-i-j];
+% dim_coarse is dimensions + 1 of coarse model
+function interp= triangle_interpolation(n_interp, dim_fine)
+    interp= zeros(0,dim_fine);
+
+    if dim_fine==3
+       for i=0:n_interp
+          for j=0:n_interp-i
+             interp= [interp;i,j,n_interp-i-j];
+          end
        end
+    elseif dim_fine==4
+       for i=0:n_interp
+          for j=0:n_interp-i
+             for k=0:n_interp-i-j
+                interp= [interp;i,j,k,n_interp-i-j-k];
+             end
+          end
+       end
+    else
+       error('cant handle dim_fine!=2');
     end
 
-    interp= (interp+1/3)/(n_interp+1);
+    interp= (interp + 1/dim_fine )/(n_interp+1);
 
 % find fraction of elem contained in cm
 function c_elems = contained_elems_i( fm, cm, idx)
-   nc= size(cm.elems,1);
-   nf= size(fm.elems,1);
+   [nc,dc]= size(cm.elems);
+   [nf,df]= size(fm.elems);
 
    fidx= find(idx==0);
-   ridx= 1:nf; ridx(fidx)=[];Sch_Pneumoperitoneum_01_001.get
+   ridx= 1:nf; ridx(fidx)=[];
    idx(fidx)=[];
    c_elems = sparse(ridx,idx,1,nf,nc);
 
-   interp= triangle_interpolation( 4 );
-   l_interp= size(interp,1);
+   if df==3
+      interp= triangle_interpolation( 4, df );
+   else
+      interp= triangle_interpolation( 3, df );
+   end
+   dims = 1:dc-1; % run calc over dimensions 1 to dc-1
    for i = fidx'
       el_nodes= fm.nodes(fm.elems(i,:),:);
       fm_pts = interp*el_nodes;
-      tsn= tsearchn(cm.nodes(:,1:2), cm.elems, fm_pts(:,1:2));
-      c_elems(i,:)= sparse(1,tsn,1,1,nc)/l_interp;
+      tsn= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(:,dims));
+      tsn(isnan(tsn))=[];
+      c_elems(i,:)= sparse(1,tsn,1,1,nc)/length(tsn);
+%     if length(unique(tsn))==1; disp(i);end % how many unnecessary calcs?
    end
       
 % Do 3D interpolation of region xyzmin= [x,y,z] to xyzmax
@@ -130,16 +150,16 @@ function xyz = interpxyz( xyzmin, xyzmax, n_interp);
 
 % Offset and project f_mdl as required
 function f_mdl= offset_and_project( f_mdl, c_mdl);
-    [fn,fd]= size(f_mdl);
+    [fn,fd]= size(f_mdl.nodes);
     try
-       T= c_mdl.coarse_fine_mapping.f2c_offset;
+       T= c_mdl.mk_coarse_fine_mapping.f2c_offset;
     catch
        T= zeros(1,fd);
     end
     try
-       M= c_mdl.coarse_fine_mapping.f2c_project;
+       M= c_mdl.mk_coarse_fine_mapping.f2c_project;
     catch
        M= speye(fd);
     end
 
-    f_mdl.nodes= M*( f_mdl.nodes - ones(fn,1)*T );
+    f_mdl.nodes= ( f_mdl.nodes - ones(fn,1)*T )*M;
