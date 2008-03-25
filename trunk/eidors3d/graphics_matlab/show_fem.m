@@ -11,7 +11,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.67 2008-03-24 21:14:13 aadler Exp $
+% $Id: show_fem.m,v 1.68 2008-03-25 17:25:43 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
@@ -138,7 +138,10 @@ end
 function show_inhomogeneities( elem_data, mdl, img)
 % show
 hold('on');
-repaint_inho(elem_data, 'use_global' , mdl.nodes, mdl.elems, [], img); 
+if size(elem_data,2)>1
+   eidors_msg('warning: show_fem only shows first image',1);
+end
+repaint_inho(elem_data(:,1), 'use_global' , mdl.nodes, mdl.elems, [], img); 
 camlight('left');
 lighting('none'); % lighting doesn't help much
 hold('off');
