@@ -12,7 +12,13 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
 %   model = fwd_model to simulate 
 %         (default use internal, or if model= []);
 %
-% $Id: simulate_2d_movement.m,v 1.12 2008-03-18 18:48:58 aadler Exp $
+% OUTPUT:
+%   vh - homogeneous measurements M x 1
+%   vi - target simulations       M x n_points
+%   xyr_pt - x y and radius of each point 3 x n_points
+
+%
+% $Id: simulate_2d_movement.m,v 1.13 2008-03-25 01:39:48 aadler Exp $
 
     if nargin <1
        n_sims = 200;

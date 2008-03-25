@@ -1,18 +1,38 @@
-function [vh,vi,xyr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr )
+function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr )
 % SIMULATE_3D_MOVEMENT simulate rotational movement in 2D
-% [vh,vi,xyr_pt]= simulate_3d_movement( n_points, model, rad_pr )
+% [vh,vi,xyzr_pt]= simulate_3d_movement( n_points, model, rad_pr )
 %
 % the target starts at (rad_pr(1),0) and rotates around 
 %  clockwise
 % 
-%   rad_pr = [path_radius, target_radius] = [2/3, .05] (default)
+%   rad_pr = [path_radius, target_radius, zmin, zmax]
+%      values are the fraction of the extent in each dimension
+%      DEFAULT: [2/3, .05, .1, .9 ]
 % 
 %   n_points = number of points to simulate (default = 200)
 %
 %   model = fwd_model to simulate 
 %         (default use internal, or if model= []);
 %
-% $Id: simulate_3d_movement.m,v 1.3 2008-03-24 15:59:38 aadler Exp $
+% OUTPUT:
+%   vh - homogeneous measurements            M x 1
+%   vi - target simulations                  M x n_points
+%   xyzr_pt - x,y,z and radius of each point 3 x n_points
+
+% $Id: simulate_3d_movement.m,v 1.4 2008-03-25 01:39:48 aadler Exp $
+
+    if nargin <1
+       n_sims = 200;
+    end
+
+    if nargin<2 || isempty(mdl_3d) % create our own fmdl
+       mdl_3d= mk_common_model('n3r2',[16,2]); % NP's demo model
+       mdl_3d= mdl_3d.fwd_model;
+    end
+
+    if nargin<3
+       rad_pr= [2/3, 0.05, 0.1, 0.9];
+    end
 
 
 mdl_3d.solve=      'np_fwd_solve';
@@ -29,20 +49,16 @@ img= eidors_obj('image', 'homogeneous image', ...
     'fwd_model', mdl_3d );
 vh = fwd_solve( img);
 % show_fem( homg_img);
-
-rp= 1;%.05;%obj radius
-radius=10;% 2/3;%obj trajactory radius (x-y plane)
-z0 =5;% -.3;
-zt =25;% .3;%obj moves along zaxis from z0 to zt
+eidors_msg('simulate_3d_movement: step #1: homogeneous simulation');
 
 npx=64;
 npy=64;
 npz=64;
-[x,y,z] = calc_point_grid(mdl_3d.nodes', npx, npy, npz);
+[x,y,z,radius,rp,z0,zt] = calc_point_grid(mdl_3d.nodes', npx, npy, npz, rad_pr);
+keyboard
 clear pts;
 for i=1:n_sims
     f_frac= (i-1)/n_sims;
-    if rem(i,20)==0; fprintf('simulating %d / %d \n',i,n_sims); end
 
     xp= radius * cos(f_frac*2*pi);
     yp= radius * sin(f_frac*2*pi);
@@ -58,6 +74,7 @@ for i=1:n_sims
    [jnk,idx_i]= intersect( pts_all, pts{i});
    pts_idx{i}= idx_i;
 end
+eidors_msg('simulate_3d_movement: step #2: find points');
 
 [eptr,vol]= img_mapper3a(mdl_3d.nodes', mdl_3d.elems',  ...
          x(pts_all), y(pts_all), z(pts_all));
@@ -67,10 +84,11 @@ target_conductivity= .2;
 for i=1:n_sims
     obj_n= sparse( eptr(pts_idx{i}),1,1, n_elems, 1);
     img.elem_data= 1 + target_conductivity * obj_n./vol;
-%   show_fem(img); pause;
+%   show_fem(img); view([-2,84]);pause;
 
     vi(i)= fwd_solve( img );% measurement
 end
+eidors_msg('simulate_3d_movement: step #3: target simulations');
 
 vi= [vi(:).meas];
 vh= [vh(:).meas];
@@ -125,7 +143,9 @@ function [EPTR, VOL] = img_mapper3a(NODE, ELEM, x,y,z );
        EPTR(endr)= j;
    end %for j=1:ELEM
 
-function [x,y,z] = calc_point_grid(NODE, npx, npy, npz);
+function [x,y,z, radius, rp, zmin, zmax] = ...
+         calc_point_grid(NODE, npx, npy, npz, rad_pr);
+
    xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
    xmean= mean([xmin,xmax]); xrange= xmax-xmin;
 
@@ -140,3 +160,8 @@ function [x,y,z] = calc_point_grid(NODE, npx, npy, npz);
        linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
        linspace( ymean + range*0.5, ymean - range*0.5, npy ),...
        linspace( zmean - zrange*0.5, zmean + zrange*0.5, npz ));
+
+   radius= rad_pr(1)*(xmax-xmin)/2;
+   rp=     rad_pr(2)*(xmax-xmin)/2;
+   zmin=   (rad_pr(3)-.5)*zrange + zmean;
+   zmax=   (rad_pr(4)-.5)*zrange + zmean;
