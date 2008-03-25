@@ -31,6 +31,15 @@ inverse model.
 
 <h3> Image reconstruction </h3>
 
+First, show the simulated target and
+the reconstruction on the fine (<i>inverse crime</i>)
+mesh.
+<pre>
+<!--#include virtual="two_and_half_d02.m" -->
+</pre>
+
+Next, create geometries for the fine and
+coarse mesh. 
 Images are reconstructed by calling the
 <tt>coase_fine_solver</tt> function rather
 than the original. (<i>Note</i> this function
@@ -38,7 +47,7 @@ still needs some work, it doesn't account for
 all cases)
 
 <pre>
-<!--#include virtual="two_and_half_d02.m" -->
+<!--#include virtual="two_and_half_d03.m" -->
 </pre>
 
 Note the reconstructed image on the coarse
@@ -59,7 +68,7 @@ require.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-19 19:02:44 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-25 14:04:28 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
