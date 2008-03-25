@@ -8,6 +8,14 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % c_mdl is coarse fwd_model
 % f_mdl is fine fwd_model
 %
+% if the geometry of the fine and coarse models are not
+%  aligned, then they can be translated and mapped using
+%    coarse_xyz = M*( fine_xyz - T)
+%  where
+%    T= c_mdl.mk_coarse_fine_mapping.f2c_offset (1xN_dims)
+%    M= c_mdl.mk_coarse_fine_mapping.f2c_project (N_dimsxN_dims)
+%  by default T= [0,0,0] and M=eye(3)
+%
 % if c_mdl is 2D and f_mdl is 3D, then parameter
 %     c_mdl.mk_coarse_fine_mapping.z_depth (default = inf)
 % indicates the +/- z_depth which is reflected onto the
@@ -16,7 +24,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % TODO provide twist and translate vector
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.15 2008-03-21 14:49:01 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.16 2008-03-25 02:09:44 aadler Exp $
 
 % Mapping depends only on nodes and elems
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -30,6 +38,7 @@ mapping = eidors_obj('get-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping');
 if ~isempty(mapping)
     eidors_msg('mk_coarse_fine_mapping: using cached value', 3);
 else
+    f_mdl= offset_and_project( f_mdl, c_mdl);
 
     try
        z_depth = c_mdl.mk_coarse_fine_mapping.z_depth;
@@ -95,7 +104,7 @@ function c_elems = contained_elems_i( fm, cm, idx)
    nf= size(fm.elems,1);
 
    fidx= find(idx==0);
-   ridx= 1:nf; ridx(fidx)=[];
+   ridx= 1:nf; ridx(fidx)=[];Sch_Pneumoperitoneum_01_001.get
    idx(fidx)=[];
    c_elems = sparse(ridx,idx,1,nf,nc);
 
@@ -119,4 +128,18 @@ function xyz = interpxyz( xyzmin, xyzmax, n_interp);
     [xx3,yy3,zz3] = ndgrid( xspace, yspace, zspace );
     xyz= [xx3(:), yy3(:), zz3(:)];
 
+% Offset and project f_mdl as required
+function f_mdl= offset_and_project( f_mdl, c_mdl);
+    [fn,fd]= size(f_mdl);
+    try
+       T= c_mdl.coarse_fine_mapping.f2c_offset;
+    catch
+       T= zeros(1,fd);
+    end
+    try
+       M= c_mdl.coarse_fine_mapping.f2c_project;
+    catch
+       M= speye(fd);
+    end
 
+    f_mdl.nodes= M*( f_mdl.nodes - ones(fn,1)*T );
