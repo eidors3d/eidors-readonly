@@ -19,7 +19,7 @@ function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr )
 %   vi - target simulations                  M x n_points
 %   xyzr_pt - x,y,z and radius of each point 3 x n_points
 
-% $Id: simulate_3d_movement.m,v 1.4 2008-03-25 01:39:48 aadler Exp $
+% $Id: simulate_3d_movement.m,v 1.5 2008-03-25 02:10:35 aadler Exp $
 
     if nargin <1
        n_sims = 200;
@@ -49,13 +49,12 @@ img= eidors_obj('image', 'homogeneous image', ...
     'fwd_model', mdl_3d );
 vh = fwd_solve( img);
 % show_fem( homg_img);
-eidors_msg('simulate_3d_movement: step #1: homogeneous simulation');
+eidors_msg('simulate_3d_movement: step #1: homogeneous simulation',2);
 
-npx=64;
-npy=64;
+npx=128;
+npy=128;
 npz=64;
 [x,y,z,radius,rp,z0,zt] = calc_point_grid(mdl_3d.nodes', npx, npy, npz, rad_pr);
-keyboard
 clear pts;
 for i=1:n_sims
     f_frac= (i-1)/n_sims;
@@ -74,7 +73,7 @@ for i=1:n_sims
    [jnk,idx_i]= intersect( pts_all, pts{i});
    pts_idx{i}= idx_i;
 end
-eidors_msg('simulate_3d_movement: step #2: find points');
+eidors_msg('simulate_3d_movement: step #2: find points',2);
 
 [eptr,vol]= img_mapper3a(mdl_3d.nodes', mdl_3d.elems',  ...
          x(pts_all), y(pts_all), z(pts_all));
@@ -88,7 +87,7 @@ for i=1:n_sims
 
     vi(i)= fwd_solve( img );% measurement
 end
-eidors_msg('simulate_3d_movement: step #3: target simulations');
+eidors_msg('simulate_3d_movement: step #3: target simulations',2);
 
 vi= [vi(:).meas];
 vh= [vh(:).meas];
