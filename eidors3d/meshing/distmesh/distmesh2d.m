@@ -74,10 +74,11 @@ while 1
 
   L0=hbars*Fscale*sqrt(sum(L.^2)/sum(hbars.^2));     % L0 = Desired lengths
 
+  add_p= zeros(0,2);
+if 0
   % 6.3 Desired length cannot be larger than tshape * connecting ones
   nt= size(t,1); % number of triangles
   min_L= zeros(nt,1);
-  add_p= zeros(0,2);
   for i= 1:nt
      Lt = L(j_bars([i,i+nt,i+nt*2]));
      min_L(i) = min(Lt);
@@ -87,6 +88,7 @@ while 1
   min_L = 2*[min_L;min_L;min_L];
   L0i= L0;
   L0 = min([L0,min_L(i_bars)],[],2);
+end
 
   F=max(L0-L,0);                                     % Bar forces (scalars)
   Fvec=F./L*[1,1].*barvec;                           % Bar forces (x,y components)
