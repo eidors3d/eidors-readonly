@@ -24,22 +24,24 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   - all t1-t5 are available for each a-f models
 %
 % 3D Models:
+%   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
+%   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
+%
 %   mk_common_model('b3cr',[16,3])  - cylinder with 3 rings of 16 elecs
 %   mk_common_model('b3t2r',[16,1]) - t2 thorax shape with 1 ring of 16 elecs
-%   mk_common_model('b3cz',16)      - cylinder: zigzag pattern elecs
-%   mk_common_model('b3cp',16)      - cylinder: planar 3D pattern electrodes
+%   mk_common_model('b3cz2',[16,1]) - cylinder with 2 rows of 8
+%           zigzag pattern elecs. Stimulation treats this as 16x1 pattern
+%   mk_common_model('b3cp2',16)      - cylinder with 2 rows of 8
+%           elecs in 'planar' pattern. Stim treats this as 16x1 pattern
 %
 %   mk_common_model('a3cr',16)      - 64 elems * 4 planes
 %   mk_common_model('b3cr',16)      - 256 elems * 10 planes 
 %   mk_common_model('c3cr',16)      - 576 elems * 20 planes
 %   mk_common_model('d3cr',16)      - 1024 elems * 40 planes
 %
-%   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
-%   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
-%
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.14 2007-09-28 19:58:51 aadler Exp $
+% $Id: mk_common_model.m,v 1.15 2008-03-25 18:09:13 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -95,18 +97,25 @@ elseif str(2:3)=='3c' & length(str)==4
    else;  error(['don`t know what to do with option(1)=',str]);
    end
 
+   elec_per_plane = n_elec(1);
    spacing=.5;
    if     str(4)=='r';
-      elec_conf= 'planes'; elec_space= 0;
-   elseif str(4)=='z';
-      elec_conf= 'zigzag'; elec_space= [1,-1]*spacing/2;
-   elseif str(4)=='p';
-      elec_conf= 'planes'; elec_space= [1,-1]*spacing/2;
-   else;  error(['don`t know what to do with option(4)=',str]);
+      elec_conf= 'planes';
+      ne_1  = (n_elec(2)-1)/2;
+      elec_space= [ne_1:-1:-ne_1]*spacing;
+   elseif str(4:5)=='z2';
+      elec_conf= 'zigzag';
+      elec_space= [1,-1]*spacing/2;
+   elseif str(4:5)=='p2';
+      elec_conf= 'planes';
+      elec_space= [1,-1]*spacing/2;
+      elec_per_plane = n_elec(1)/2;
+   else;
+      error(['don`t know what to do with option(4)=',str]);
    end
 
-   inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, ...
-                elec_space, elec_conf, options );
+   inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
+                              elec_per_plane, elec_conf, options );
 %  inv_mdl = rotate_model( inv_mdl, n_elec(1)/8 );
 
 elseif strcmp( str, 'n3r2')
@@ -158,20 +167,14 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     inv2d.reconst_type= 'difference';
     inv2d.fwd_model= mdl_2d;
 
-function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, ...
-                            elec_space, elec_conf, options );
+function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
+                              elec_per_plane, elec_conf, options );
 
     e_layers=[];
     for es= elec_space;
        ff= abs(z_layers  -es);
        ff= find(ff==min(ff));
        e_layers= [e_layers,ff(1)];
-    end
-
-    if elec_conf=='planes';  
-       elec_per_plane=n_elec(1)/length(e_layers);
-    else
-       elec_per_plane=n_elec(1);
     end
 
     params= mk_circ_tank( xy_layers, z_layers, ...
