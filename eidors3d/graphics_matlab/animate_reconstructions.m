@@ -23,7 +23,7 @@ else
    if  strfind(system_dependent('getos'),'Windows')
       system(sprintf('explorer "%s.html"',fname));
    else % we hope this is here - under linux etc
-      system(sprintf('mozilla "%s/%s.html"',pwd,fname));
+      system(sprintf('mozilla "./%s.html"',fname));
    end
 end
 
@@ -80,7 +80,7 @@ function mk_movie2(fname, imgs);
    end
       
    retval= system(sprintf( ...
-       '%s convert -delay 25 %s/img*.png -loop 0 %s.gif', ...
+       '%s convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
        ld_lib_path, dirname, fname ));
    if retval~=0
        error('please ensure the imagemagick convert program is in your path. Under windows the easist is to download from www.imagemagick.org/script/binary-releases.php');
