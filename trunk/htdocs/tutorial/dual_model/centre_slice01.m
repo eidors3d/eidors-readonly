@@ -1,12 +1,14 @@
-% Simulate Moving Ball - Helix $Id: centre_slice01.m,v 1.4 2008-03-25 14:37:50 aadler Exp $
+% Simulate Moving Ball - Helix $Id: centre_slice01.m,v 1.5 2008-03-25 19:21:49 aadler Exp $
 
 % get ng_mdl_16x2_vfine from data_contrib section of web page
 n_sims= 20;
 load ng_mdl_16x2_vfine.mat; fmdl= ng_mdl_16x2_vfine;
+%imdl= mk_common_model('b3cr',[16,2]); fmdl= imdl.fwd_model;
 [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl);
 
 show_fem(fmdl)
 crop_model(gca, inline('x-z<-15','x','y','z'))
+%crop_model(gca, inline('x-z<-0.5','x','y','z'))
 view(-23,14)
 
 hold on
