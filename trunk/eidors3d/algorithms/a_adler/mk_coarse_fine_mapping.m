@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % c_mdl (ie c_mdl is at z=0 +/- z_depth)
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.17 2008-03-25 14:37:46 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.18 2008-03-25 15:34:27 aadler Exp $
 
 % Mapping depends only on nodes and elems
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -118,9 +118,8 @@ function c_elems = contained_elems_i( fm, cm, idx)
    [nf,df]= size(fm.elems);
 
    fidx= find(idx==0);
-   ridx= 1:nf; ridx(fidx)=[];
-   idx(fidx)=[];
-   c_elems = sparse(ridx,idx,1,nf,nc);
+
+   c_e_i= []; c_e_j=[]; c_e_v=[];
 
    if df==3
       interp= triangle_interpolation( 4, df );
@@ -128,14 +127,25 @@ function c_elems = contained_elems_i( fm, cm, idx)
       interp= triangle_interpolation( 3, df );
    end
    dims = 1:dc-1; % run calc over dimensions 1 to dc-1
+kk=0;
    for i = fidx'
       el_nodes= fm.nodes(fm.elems(i,:),:);
       fm_pts = interp*el_nodes;
       tsn= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(:,dims));
       tsn(isnan(tsn))=[];
-      c_elems(i,:)= sparse(1,tsn,1,1,nc)/length(tsn);
-%     if length(unique(tsn))==1; disp(i);end % how many unnecessary calcs?
+      c_elems_i = sparse(1,tsn,1,1,nc)'/length(tsn);
+      [c_i, c_j, c_v] = find(c_elems_i);
+      c_e_i= [c_e_i;0*c_i+i];
+      c_e_j= [c_e_j;c_j];
+      c_e_v= [c_e_v;c_v];
+%     c_elems(i,:)= sparse(1,tsn,1,1,nc)/length(tsn);
+      if length(unique(tsn))==1;kk=kk+1; disp([kk,i]);end % how many unnecessary calcs?
    end
+
+   ridx= 1:nf; ridx(fidx)=[];
+   idx(fidx)=[];
+   c_elems = sparse(ridx,idx,1,nf,nc) +  ...
+             sparse(c_e_i,c_e_j,c_e_v,nf,nc);
       
 % Do 3D interpolation of region xyzmin= [x,y,z] to xyzmax
 %  with n_interp points in the minimum direction
