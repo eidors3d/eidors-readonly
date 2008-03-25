@@ -17,29 +17,28 @@ function J = calc_jacobian( fwd_model, img)
 %           'node_data' parameters
 
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m,v 1.20 2008-03-16 11:07:44 aadler Exp $
+% $Id: calc_jacobian.m,v 1.21 2008-03-25 18:55:30 aadler Exp $
 
-if nargin>1
-   img.fwd_model= fwd_model;
-else
-   img= fwd_model; % only img specified
+if nargin==1
+   fwd_model = img.fwd_model;
 end
 
-J= eidors_obj('get-cache', img, 'jacobian');
+cache_obj= {fwd_model, img.elem_data};
+J= eidors_obj('get-cache', cache_obj, 'jacobian');
 if ~isempty(J)
    eidors_msg('calc_jacobian: using cached value', 3);
    return
 end
 
-J= feval(img.fwd_model.jacobian, img.fwd_model, img);
+J= feval(fwd_model.jacobian, fwd_model, img);
 
-if isfield(img.fwd_model,'coarse2fine')
-   c2f= img.fwd_model.coarse2fine;
+if isfield(fwd_model,'coarse2fine')
+   c2f= fwd_model.coarse2fine;
    if size(J,2)==size(c2f,1)
 %     calc_jacobian did not take into account the coarse2fine
       J=J*c2f;
    end
 end
 
-eidors_obj('set-cache', img, 'jacobian', J);
+eidors_obj('set-cache', cache_obj, 'jacobian', J);
 eidors_msg('calc_jacobian: setting cached value', 3);
