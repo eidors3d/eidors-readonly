@@ -34,9 +34,9 @@ Use the following values for <tt>CVSROOT</tt>
 <a href="mailto:EIDORS3D@listserv.umist.ac.uk"
                >EIDORS3D@listserv.umist.ac.uk</a>
 <li> To subscribe, send mail to
-<a href="mailto:LISTSERV@LISTSERV.UMIST.AC.UK"
-               >LISTSERV@LISTSERV.UMIST.AC.UK</a>
-with the body text <tt> SUBSCRIBE EIDORS3D </tt>
+<a href="mailto:EIDORS3D-request@LISTSERV.UMIST.AC.UK"
+               >EIDORS3D-request@LISTSERV.UMIST.AC.UK</a>
+with the body text <tt> SUBSCRIBE EIDORS3D <i>your name</i></tt>
 <li> Mailing list archive is:
 <a href="http://listserv.umist.ac.uk/archives/eidors3d.html"
         >http://listserv.umist.ac.uk/archives/eidors3d.html</a>
@@ -63,7 +63,7 @@ with the body text <tt> SUBSCRIBE EIDORS3D </tt>
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2006-11-18 18:48:29 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-25 16:48:55 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
