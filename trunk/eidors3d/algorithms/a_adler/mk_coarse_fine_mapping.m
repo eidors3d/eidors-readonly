@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % c_mdl (ie c_mdl is at z=0 +/- z_depth)
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.18 2008-03-25 15:34:27 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.19 2008-03-25 16:38:09 aadler Exp $
 
 % Mapping depends only on nodes and elems
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -66,7 +66,10 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
     nc= size(cm.elems,1);
     fm_pts = zeros(nf*ef,3);
     % shrink pts slightly so they're not on the boundary
-    s_fac= .9999;
+    % by shrinking, we avoid cases where an element is
+    % only slighly intersecting another. This is beyond the
+    % resolution of the next step (interpolation) anyway
+    s_fac= .9; % .9999;
     for dim= 1:nd
        % fm_pts is local_nodes x elems x xyz
        fm_pt= reshape(fm.nodes(fm.elems,dim),nf,ef);
@@ -118,6 +121,7 @@ function c_elems = contained_elems_i( fm, cm, idx)
    [nf,df]= size(fm.elems);
 
    fidx= find(idx==0);
+   l_fidx= length(fidx);
 
    c_e_i= []; c_e_j=[]; c_e_v=[];
 
@@ -126,8 +130,35 @@ function c_elems = contained_elems_i( fm, cm, idx)
    else
       interp= triangle_interpolation( 3, df );
    end
+   l_interp = size(interp,1);
    dims = 1:dc-1; % run calc over dimensions 1 to dc-1
-kk=0;
+
+   el_nodes= fm.nodes(fm.elems(fidx,:)',:);
+   % need to be of size df x N for reshape
+   el_nodes= reshape(el_nodes, df, l_fidx*(df-1) );
+   fm_pts = interp*el_nodes;
+   fm_pts = reshape(fm_pts, l_fidx*l_interp, df-1);
+   % find which element in the coarse mesh we're in
+   tsn=     tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(:,dims));
+   tsn_idx= ones(l_interp,1)*fidx(:)';
+   tsn_idx= tsn_idx(:)';
+   % find and isolate Nans
+   nan_idx= isnan(tsn);
+   tsn(nan_idx) = [];
+   tsn_idx(nan_idx) = [];
+   % scale for effect of removed nans
+   nan_weight= reshape(nan_idx, l_interp, l_fidx);
+   nan_weight= l_interp - sum(nan_weight,1);
+   
+   ridx= 1:nf; ridx(fidx)=[];
+   idx(fidx)=[];
+   c_elems = sparse(ridx,idx,1,nf,nc) +  ...
+             sparse(fidx,fidx,1./nan_weight,nf,nf) * ...
+             sparse(tsn_idx,tsn,1,nf,nc);
+   return
+   
+
+% non vectorized calculation
    for i = fidx'
       el_nodes= fm.nodes(fm.elems(i,:),:);
       fm_pts = interp*el_nodes;
