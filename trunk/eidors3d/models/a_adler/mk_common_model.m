@@ -41,7 +41,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.15 2008-03-25 18:09:13 aadler Exp $
+% $Id: mk_common_model.m,v 1.16 2008-03-25 19:19:52 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -122,16 +122,6 @@ elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
 elseif strcmp( str, 'n3z')
     inv_mdl = mk_n3z_model( n_elec, options );
-elseif strcmp( str, 'b3r1')
-    inv_mdl = mk_b3r1_model( n_elec, options );
-elseif strcmp( str, 'b3r2')
-    % varargin{2} is the number of element rings per plane 'nr'
-    if length(varargin) == 2
-        nr = varargin{2};
-    else
-        nr = 4; % default
-    end
-    inv_mdl = mk_b3r2_model( n_elec, nr, options );    
 else
     error(['don`t know what to do with option=',str]);
 end
