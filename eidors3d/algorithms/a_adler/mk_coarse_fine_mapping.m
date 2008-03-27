@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.23 2008-03-27 18:30:03 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.24 2008-03-27 19:19:41 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -102,7 +102,7 @@ function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
     end
 
     tsn(not_oor)= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(not_oor,dims));
-
+    tsn(isnan(tsn))= -1;
 
 % interpolate over a triangle with n_interp points
 % generate a set of points to fairly cover the triangle
