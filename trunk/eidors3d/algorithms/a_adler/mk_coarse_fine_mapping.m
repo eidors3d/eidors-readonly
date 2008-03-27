@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.22 2008-03-27 18:06:50 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.23 2008-03-27 18:30:03 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -74,7 +74,7 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
     % if all points are in one elem   then c_elems = elem #
     % if all points are in diff elems then c_elems = 0
     c_elems= all(diff(tsn,1,2)==0,2) .* tsn(:,1);
-    c_elems(any(tsn==-1,2))= -1;
+    c_elems(all(tsn==-1,2))= -1; % all points outside
 
 
 % tsn = vector of length z_depth x 1
