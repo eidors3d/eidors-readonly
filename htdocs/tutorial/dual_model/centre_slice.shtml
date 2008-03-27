@@ -1,0 +1,77 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Dual Models to reconstruct a slice of a volume
+</h2>
+
+A common use of dual models is to allow the forward
+model to represent the entire space, while the
+reconstruction model represents a slice through
+the volume at the place of interest. 
+<p>
+To simulate this, we simulate a ball moving in
+a helical path on a fine netgen model
+(available
+ <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x2_vfine.7z"
+           >here</a>)
+<pre>
+<!--#include virtual="centre_slice01.m" -->
+</pre>
+
+<b>Note:</b> this stimulation requires at least 4GB memory
+and many minutes of CPU time to run. The calculated data
+are available 
+<a href="./centre_slice01_output.mat">here</a>
+
+<center>
+<img src="centre_slice01a.png">
+<br><i> Figure:</i>
+Netgen model of a 2&times;16 electrode tank. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple.
+</center>
+
+<h3> Create reconstruction model </h3>
+
+In order to reconstruct the image, we use a dual
+model where the 2D coarse model is mapped to only
+a layer of elements in the fine model.
+(available
+ <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x2_coarse.7z"
+           >here</a>)
+
+<pre>
+<!--#include virtual="centre_slice01.m" -->
+</pre>
+
+
+<center>
+<img src="centre_slice02a.png">
+<br><i> Figure:</i>
+Netgen model of a 2&times;16 electrode tank. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple.
+The 3D fine model is shown (cropped). The upper (blue) 
+and lower (red) layers corresponding to the 
+geometry of the coarse model are shown. The <i>z</i>
+direction limits of the coarse model are shown in grey.
+</center>
+
+<center>
+<img src="two_and_half_d03a.png">
+<br><i> Figure:</i>
+<i>Left</i> original (3d) model
+<i>Centre left</i> fine (3d) reconstruction
+<i>Centre right</i> 2&frac12; reconstruction onto fine model
+<i>Right</i>  2&frac12; reconstruction onto coarse model
+</center>
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-27 19:47:24 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
