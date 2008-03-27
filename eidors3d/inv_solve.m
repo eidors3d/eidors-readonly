@@ -40,7 +40,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: inv_solve.m,v 1.35 2008-02-29 22:51:30 aadler Exp $
+% $Id: inv_solve.m,v 1.36 2008-03-27 19:19:22 aadler Exp $
 
 % COMMENT: There seems to be no general way to cache
 %       inv_model parameters. Thus, each algorithm needs
@@ -75,6 +75,12 @@ elseif strcmp(inv_model.reconst_type,'difference')
    imgc= feval( inv_model.solve, inv_model, fdata1, fdata2);
 else
    error('inv_model.reconst_type not understood'); 
+end
+
+% If we reconstruct with a different 'rec_model' then
+%  put this into the img
+if isfield(inv_model,'rec_model')
+   img.fwd_model= inv_model.rec_model;
 end
 
 img = eidors_obj('image', imgc );

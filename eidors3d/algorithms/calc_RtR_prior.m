@@ -13,6 +13,9 @@ function RtR_prior = calc_RtR_prior( inv_model )
 % parameters to RtR_prior should be passed in the field
 % inv_model.RtR_prior_function_name.parameters
 %
+% if there exists a field inv_model.rec_model, then
+%   the prior is calculated on the rec_model rather than
+%   the fwd_model
 %
 % RtR_prior    the calculated RtR regularization prior
 % inv_model    is an inv_model structure
@@ -20,8 +23,13 @@ function RtR_prior = calc_RtR_prior( inv_model )
 % If a function to calculate RtR_prior is not provided,
 % RtR = R_prior' * R_prior;
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_RtR_prior.m,v 1.21 2008-03-19 00:05:09 aadler Exp $
+% (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
+% $Id: calc_RtR_prior.m,v 1.22 2008-03-27 19:19:22 aadler Exp $
+
+if isfield(inv_model,'rec_model');
+   inv_model.fwd_model= inv_model.rec_model;
+   inv_model= rmfield(inv_model,'rec_model');
+end
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)
