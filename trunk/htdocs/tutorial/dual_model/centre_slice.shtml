@@ -55,21 +55,95 @@ geometry of the coarse model are shown. The <i>z</i>
 direction limits of the coarse model are shown in grey.
 </center>
 
+<h3> Image reconstructions </h3>
+
+First, we create a coarse model which represents
+the entire depth in <i>z</i> (ie. like the 2&frac12;D model).
+Images reconstructed with this model have more artefacts,
+but show the reconstructed target at all depths.
+
+<pre>
+<!--#include virtual="centre_slice03.m" -->
+</pre>
+
+Next, we create coarse models which represent
+the a thin <i>0.1&times;scale</i> slice in <i>z</i>.
+These images display a targets in the space
+from the original volume.
+
+<pre>
+<!--#include virtual="centre_slice04.m" -->
+</pre>
+
+
+
 <center>
-<img src="two_and_half_d03a.png">
+<img src="centre_slice04a.png">
 <br><i> Figure:</i>
-<i>Left</i> original (3d) model
-<i>Centre left</i> fine (3d) reconstruction
-<i>Centre right</i> 2&frac12; reconstruction onto fine model
-<i>Right</i>  2&frac12; reconstruction onto coarse model
+Reconstructed images of a target moving in a helical
+pattern using difference coarse models
+<i>Left</i>  coarse model with z<sub>depth</sub>=&infin;
+<i>Centre</i>coarse model with z<sub>depth</sub>=0.1&times;scale at upper position
+<i>Right</i> coarse model with z<sub>depth</sub>=0.1&times;scale at lower positions
 </center>
+
+<h3> Simpler reconstruction model </h3>
+
+The previous model requires lots of time an memory
+to calculate the Jacobian for the reconstruction,
+because of the large number of FEMs.
+To speed up the calcualion, we use a simpler 
+fine model.
+
+<pre>
+<!--#include virtual="centre_slice05.m" -->
+</pre>
+
+<center>
+<img src="centre_slice05a.png">
+<br><i> Figure:</i>
+Simple extruded model of a 2&times;16 electrode tank. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple.
+The 3D fine model is shown (cropped). The upper (blue) 
+and lower (red) layers corresponding to the 
+geometry of the coarse model are shown. The <i>z</i>
+direction limits of the coarse model are shown in grey.
+</center>
+
+<h3> Image reconstructions </h3>
+
+We reconstruct with coarse models with
+a) the entire depth in <i>z</i> (ie. like the 2&frac12;D model).
+Images reconstructed with this model have more artefacts,
+b) we create coarse models which represent
+the a thin <i>0.1&times;scale</i> slice in <i>z</i>.
+These images display a targets in the space
+from the original volume.
+
+<pre>
+<!--#include virtual="centre_slice06.m" -->
+</pre>
+
+
+<center>
+<img src="centre_slice06a.png">
+<br><i> Figure:</i>
+Reconstructed images of a target moving in a helical
+pattern using difference coarse models
+<i>Left</i>  coarse model with z<sub>depth</sub>=&infin;
+<i>Centre</i>coarse model with z<sub>depth</sub>=0.1&times;scale at upper position
+<i>Right</i> coarse model with z<sub>depth</sub>=0.1&times;scale at lower positions
+</center>
+
+
 
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-27 19:52:46 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-27 20:56:00 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
