@@ -40,9 +40,8 @@ a layer of elements in the fine model.
            >here</a>)
 
 <pre>
-<!--#include virtual="centre_slice01.m" -->
+<!--#include virtual="centre_slice02.m" -->
 </pre>
-
 
 <center>
 <img src="centre_slice02a.png">
@@ -70,7 +69,7 @@ direction limits of the coarse model are shown in grey.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-27 19:47:24 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-27 19:52:46 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
