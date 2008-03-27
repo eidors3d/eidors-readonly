@@ -7,10 +7,16 @@ function Reg= gaussian_HPF_prior( inv_model );
 %   diam_frac= inv_model.fwd_model.gaussian_HPF_prior.diam_frac DEFAULT 0.1
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: gaussian_HPF_prior.m,v 1.6 2008-03-13 20:40:15 aadler Exp $
+% $Id: gaussian_HPF_prior.m,v 1.7 2008-03-27 18:29:27 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
-cache_test_obj= {fwd_model.nodes, fwd_model.elems};
+try 
+    diam_frac= fwd_model.gaussian_HPF_prior.diam_frac;
+catch
+    diam_frac= 0.1;
+end
+
+cache_test_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
 Reg = eidors_obj('get-cache', cache_test_obj, 'gaussian_HPF_prior');
 if ~isempty(Reg)
    eidors_msg('gaussian_HPF_prior: using cached value', 3);
@@ -18,12 +24,6 @@ if ~isempty(Reg)
 end
 
 pp= aa_fwd_parameters( fwd_model );
-
-try 
-    diam_frac= fwd_model.gaussian_HPF_prior.diam_frac;
-catch
-    diam_frac= 0.1;
-end
 
 Reg = calc_Gaussian_HPF( pp.NODE, pp.ELEM, diam_frac );
 
