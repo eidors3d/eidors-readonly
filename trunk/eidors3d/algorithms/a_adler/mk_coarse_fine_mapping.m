@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.21 2008-03-27 17:56:54 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.22 2008-03-27 18:06:50 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -76,16 +76,6 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
     c_elems= all(diff(tsn,1,2)==0,2) .* tsn(:,1);
     c_elems(any(tsn==-1,2))= -1;
 
-return
-    % This is not quite correct, 
-
-    % if node in fm is outside cm, then set it back inside
-    % this way only elems in fm that are completely outside cm
-    % will be identified that way
-    tsn= sort( tsn, 2); % send Nans to right
-    isn= find(isnan(tsn));
-    tsn(isn)= tsn( 1+rem(isn-1,nf ) );
-    c_elems= c_elems.* tsn(:,1);
 
 % tsn = vector of length z_depth x 1
 % tsn(i) = elem in cm which contains point
@@ -98,7 +88,7 @@ function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
     not_oor= (tsn==-1); % logical 1
 
     if dc==3
-       if df==4
+       if df==3
        % look for f_mdl z not out of range 
           not_oor= not_oor &  any( abs(fm_pts(:,3) ) <= z_depth , 2);
        end
@@ -176,7 +166,7 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    tsn(outside_idx) = [];
    tsn_idx(outside_idx) = [];
    
-   in_idx= find((idx==0) | isnan(idx));
+   in_idx= find(idx<=0);
    ridx= 1:nf; ridx(in_idx)=[];
    idx(in_idx)=[];
 
@@ -184,31 +174,6 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    % next term is contribution from f_elems in many c_elems, weighted
    c_elems = sparse(ridx,idx,1,nf,nc) +  ...
              sparse(tsn_idx,tsn,1,nf,nc)/l_interp;
-   return
-   c_elems1= sparse(ridx,idx,1,nf,nc);
-   c_elems2= sparse(fidx,fidx,1./nan_weight,nf,nf);
-   c_elems3= sparse(tsn_idx,tsn,1,nf,nc);
-   
-
-% non vectorized calculation
-   for i = fidx'
-      el_nodes= fm.nodes(fm.elems(i,:),:);
-      fm_pts = interp*el_nodes;
-      tsn= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(:,dims));
-      tsn(isnan(tsn))=[];
-      c_elems_i = sparse(1,tsn,1,1,nc)'/length(tsn);
-      [c_i, c_j, c_v] = find(c_elems_i);
-      c_e_i= [c_e_i;0*c_i+i];
-      c_e_j= [c_e_j;c_j];
-      c_e_v= [c_e_v;c_v];
-%     c_elems(i,:)= sparse(1,tsn,1,1,nc)/length(tsn);
-      if length(unique(tsn))==1;kk=kk+1; disp([kk,i]);end % how many unnecessary calcs?
-   end
-
-   ridx= 1:nf; ridx(fidx)=[];
-   idx(fidx)=[];
-   c_elems = sparse(ridx,idx,1,nf,nc) +  ...
-             sparse(c_e_i,c_e_j,c_e_v,nf,nc);
       
 % Do 3D interpolation of region xyzmin= [x,y,z] to xyzmax
 %  with n_interp points in the minimum direction
