@@ -14,7 +14,7 @@ function system_mat = calc_system_mat( fwd_model, img)
 % image     is an image structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_system_mat.m,v 1.19 2008-03-25 18:55:30 aadler Exp $
+% $Id: calc_system_mat.m,v 1.20 2008-03-27 17:42:00 aadler Exp $
 
 if nargin==1
    fwd_model = img.fwd_model;
@@ -29,6 +29,6 @@ end
 
 system_mat= feval(fwd_model.system_mat, fwd_model, img);
 
-eidors_obj('set-cache', cache_obj, 'jacobian', system_mat);
+eidors_obj('set-cache', cache_obj, 'system_mat', system_mat);
 eidors_msg('calc_system_mat: setting cached value', 3);
 
