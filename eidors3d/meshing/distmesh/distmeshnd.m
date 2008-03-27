@@ -59,7 +59,7 @@ while 1
     for ii=1:dim+1
       pmid=pmid+p(t(:,ii),:)/(dim+1);
     end
-    t=t(feval(fdist,pmid,varargin{:})<-geps,:);
+    t=t(feval(fdist,pmid,varargin{:})<geps,:); %BUGFIX -geps to geps
     % 4. Describe each edge by a unique pair of nodes
     pair=zeros(0,2);
     localpairs=nchoosek(1:dim+1,2);
