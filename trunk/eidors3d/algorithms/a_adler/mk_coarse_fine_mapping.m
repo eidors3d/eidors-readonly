@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.20 2008-03-27 17:15:47 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.21 2008-03-27 17:56:54 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -43,7 +43,7 @@ else
     end
 
     f_elems = all_contained_elems( f_mdl, c_mdl, z_depth);
-    mapping = contained_elems_i( f_mdl, c_mdl, f_elems);
+    mapping = contained_elems_i( f_mdl, c_mdl, f_elems, z_depth);
 
     eidors_obj('set-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping', mapping);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
@@ -69,11 +69,12 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
     end
 
     tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
-    % if all points are outside (NaN) then c_elems = NaN
-    % if all points are in one elem   then c_elems = 1
+    tsn= reshape( tsn, [], ef);
+    % if all points are outside (NaN) then c_elems = -1
+    % if all points are in one elem   then c_elems = elem #
     % if all points are in diff elems then c_elems = 0
-    c_elems= all(diff(tsn,1,2)==0,2);
-    c_elems(any(isnan(tsn),1))= NaN;
+    c_elems= all(diff(tsn,1,2)==0,2) .* tsn(:,1);
+    c_elems(any(tsn==-1,2))= -1;
 
 return
     % This is not quite correct, 
@@ -86,12 +87,15 @@ return
     tsn(isn)= tsn( 1+rem(isn-1,nf ) );
     c_elems= c_elems.* tsn(:,1);
 
+% tsn = vector of length z_depth x 1
+% tsn(i) = elem in cm which contains point
+% tsn(i) = -1 if point is outside cm (and z_depth, if appropriate)
 function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
     dc= size(cm.elems,2);  %coarse dim+1
-    [nf,df]= size(fm_pts); %fine dim+1
+    df= size(fm_pts,2); %fine dim+1
 
-    tsn= NaN*ones(size(fm_pts,1),1);
-    not_oor= ~any( isnan(fm_pts,2) );
+    tsn= -ones(size(fm_pts,1),1);
+    not_oor= (tsn==-1); % logical 1
 
     if dc==3
        if df==4
@@ -108,7 +112,6 @@ function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
     end
 
     tsn(not_oor)= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(not_oor,dims));
-    tsn= reshape( tsn, nf, df);
 
 
 % interpolate over a triangle with n_interp points
@@ -141,7 +144,7 @@ function interp= triangle_interpolation(n_interp, dim_fine)
 % idx is the index into which the elem is contained
 % if idx >= 1, the element is completely with in that coarse elem
 % if idx == 0, the element is crosses several coarse elems
-% if idx == Nan, the element is outside the coarse model
+% if idx ==-1, the element is outside the coarse model
 function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    [nc,dc]= size(cm.elems);
    [nf,df]= size(fm.elems);
@@ -168,13 +171,10 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
 
    tsn_idx= ones(l_interp,1)*fidx(:)';
    tsn_idx= tsn_idx(:)';
-   % find and isolate Nans
-   nan_idx= isnan(tsn);
-   tsn(nan_idx) = [];
-   tsn_idx(nan_idx) = [];
-   % scale for effect of removed nans
-   nan_weight= reshape(nan_idx, l_interp, l_fidx);
-   nan_weight= l_interp - sum(nan_weight,1);
+   % find and isolate outside elements
+   outside_idx= tsn==-1;
+   tsn(outside_idx) = [];
+   tsn_idx(outside_idx) = [];
    
    in_idx= find((idx==0) | isnan(idx));
    ridx= 1:nf; ridx(in_idx)=[];
@@ -183,8 +183,7 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    % first term is contribution from f_elems in one c_elem
    % next term is contribution from f_elems in many c_elems, weighted
    c_elems = sparse(ridx,idx,1,nf,nc) +  ...
-             sparse(fidx,fidx,1./nan_weight,nf,nf) * ...
-             sparse(tsn_idx,tsn,1,nf,nc);
+             sparse(tsn_idx,tsn,1,nf,nc)/l_interp;
    return
    c_elems1= sparse(ridx,idx,1,nf,nc);
    c_elems2= sparse(fidx,fidx,1./nan_weight,nf,nf);
