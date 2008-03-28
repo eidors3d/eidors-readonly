@@ -1,9 +1,9 @@
-% Dual models $Id: square_mesh03.m,v 1.1 2008-03-28 16:01:28 aadler Exp $
+% Dual models $Id: square_mesh03.m,v 1.2 2008-03-28 17:55:23 aadler Exp $
 
-load ng_mdl_16x1_coarse; fmdl= ng_mdl_16x1_coarse;
+load ng_mdl_16x1_coarse; f_mdl= ng_mdl_16x1_coarse;
 
 subplot(122)
-show_fem(fmdl);  % fine model
+show_fem(f_mdl);  % fine model
 crop_model(gca, inline('x-z<-8','x','y','z'))
 
 % Map coarse model geometry
@@ -16,4 +16,3 @@ axis(15*[-1.1,+1.1,-1.1,+1.1,zofs-0.4,zofs+0.4]);
 view(-47,28); axis square
 
 print -r150 -dpng square_mesh03a.png
-

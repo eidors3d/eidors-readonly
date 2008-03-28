@@ -1,6 +1,4 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
-
-249891 elems
 <h2> 
 Dual Models using a rectangular mesh of a volume slice
 </h2>
@@ -62,14 +60,72 @@ is available
 <i>Right</i> correspondence between coarse and fine model.
 </center>
 
+<h3> 
+Simulation Data
+</h3>
 
+We simulate a ball moving in
+a helical path on a fine netgen model (249891 elems)
+(available
+ <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x1_vfine.7z"
+           >here</a>)
+<pre>
+<!--#include virtual="centre_slice04.m" -->
+</pre>
+<b>Note:</b> this stimulation requires at least 4GB memory
+and many minutes of CPU time to run. The calculated data
+are available 
+<a href="./square_mesh04_output.mat">here</a>
+
+<center>
+<img src="square_mesh04a.png">
+<img src="square_mesh04b.png">
+<br><i> Figure:</i>
+Two different views of netgen model of a
+16&times;1 electrode tank on which data
+are sumulated. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple, and the plane of
+the reconstructed images are shown in blue.
+</center>
+
+<h3> 
+Reconstruct Images
+</h3>
+
+First, we reconstruct images on the rectangular
+mesh, using the coarse to fine mapping.
+<pre>
+<!--#include virtual="centre_slice05.m" -->
+</pre>
+Next, we reconstruct images on a classic 2D
+circular FEM, and compare the images.
+<pre>
+<!--#include virtual="centre_slice06.m" -->
+</pre>
+
+<center>
+<img src="square_mesh06a.png">
+<br><i> Figure:</i>
+FEM and reconstructed image
+<i>Left</i> Reconstructed image on rectangular mesh (Dual mesh)
+<i>Right</i> Reconstructed image on 2D circular mesh
+</center>
+
+<center>
+<img src="square_mesh06b.png">
+<br><i> Figure:</i>
+Reconstructed images
+<i>Left</i> Reconstructed image on rectangular mesh (Dual mesh)
+<i>Right</i> Reconstructed image on 2D circular mesh
+</center>
 
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-28 16:32:24 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-28 17:55:23 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
