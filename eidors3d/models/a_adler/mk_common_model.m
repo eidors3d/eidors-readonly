@@ -52,7 +52,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.17 2008-03-28 15:03:27 aadler Exp $
+% $Id: mk_common_model.m,v 1.18 2008-03-28 18:04:48 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -166,9 +166,10 @@ function inv2d= mk_2r_model( n_elec, xy_size, options)
                      linspace(-1,1,xy_size(2)));
     x=x';y=y';
     fmdl.nodes= [x(:),y(:)];
-    k= (1:xy_size(1)-1)';
-    elem_frac = [[k,k+1,k+xy_size(2)]; ...
-                 [k+1,k+xy_size(2),k+xy_size(2)+1]];
+    k= 1:xy_size(1)-1;
+    elem_frac = [ k;k+1;k+xy_size(2); ...
+                  k+1;k+xy_size(2);k+xy_size(2)+1];
+    elem_frac= reshape(elem_frac, 3,[])';
     fmdl.elems=  [];
     for j=0:xy_size(2)-2
        fmdl.elems=  [fmdl.elems; elem_frac + xy_size(2)*j];
