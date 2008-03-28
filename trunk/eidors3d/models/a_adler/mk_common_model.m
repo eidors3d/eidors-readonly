@@ -18,6 +18,9 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   models ??c or ??c0 are rotated by zero.
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
 %
+% 2D Models using distmesh (D = show distmesh graphics, d= no graphics)
+%   mk_common_model('a2D0c',16)  - 2D circ model using distmesh
+%
 % 2D Thorax models (levels 1 - 5 from shoulders to abdomen)
 %   mk_common_model('b2t2',16)  - 2D Thorax#2 (chest) (256 elems)
 %   mk_common_model('c2t4',16)  - 2D Thorax#3 (upper abdomen) (576 elems)
@@ -52,7 +55,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.18 2008-03-28 18:04:48 aadler Exp $
+% $Id: mk_common_model.m,v 1.19 2008-03-28 19:54:55 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -84,6 +87,13 @@ if str(2:3)=='2c'
       
    inv_mdl = rotate_model( inv_mdl, str2num(str(4)));
 
+elseif str(2:3)=='2D'
+   global distmesh_do_graphics; distmesh_do_graphics= 1;
+   str= lower(str);
+   inv_mdl= distmesh_2d_model(str, n_elec, options);
+elseif str(2:3)=='2d'
+   global distmesh_do_graphics; distmesh_do_graphics= 0;
+   inv_mdl= distmesh_2d_model(str, n_elec, options);
 elseif str(2:3)=='2s'
 % 2D square models
    if     str(1)=='a'; layers=  4;
@@ -157,6 +167,35 @@ end
 inv_mdl.name= ['EIDORS common_model_',str]; 
 inv_mdl= eidors_obj('inv_model', inv_mdl);
     
+function inv2d = distmesh_2d_model(str, n_elec, options);
+   if     str(1)=='a'; n_nodes= 100;
+%  elseif str(1)=='b'; layers=  8;
+%  elseif str(1)=='c'; layers= 16;
+%  elseif str(1)=='d'; layers= 24;
+%  elseif str(1)=='e'; layers= 32;
+%  elseif str(1)=='f'; layers= 40;
+   else;  error('don`t know what to do with option=%s',str);
+   end
+
+   elec_width= .1;
+   [elec_nodes, refine_nodes] = dm_mk_elec_nodes( n_elec(1), elec_width);
+   fd=inline('sqrt(sum(p.^2,2))-1','p');
+   bbox = [-1,-1;1,1];
+   z_contact = 0.01;
+   fwd_mdl= dm_mk_fwd_model( fd, [], n_nodes, bbox, ...
+                             elec_nodes, refine_nodes, z_contact);
+
+   inv2d= add_params_2d_mdl( fwd_mdl, n_elec(1), options);
+
+
+
+function inv2d= mk_2c_model( n_elec, n_circles, options )
+
+    n_elec= n_elec(1);
+    params= mk_circ_tank(n_circles, [], n_elec); 
+    inv2d= add_params_2d_mdl( params, n_elec, options);
+   
+
 function inv2d= mk_2r_model( n_elec, xy_size, options)
     if length(xy_size)==1; xy_size= xy_size*[1,1]; end
     xy_size= xy_size+1;
@@ -205,12 +244,6 @@ function inv2d= mk_2r_model( n_elec, xy_size, options)
 %      plot(fmdl.nodes(n,1),fmdl.nodes(n,2),'*'); pause;
     end
     inv2d= add_params_2d_mdl( fmdl, n_elec(1), options);
-
-function inv2d= mk_2c_model( n_elec, n_circles, options )
-
-    n_elec= n_elec(1);
-    params= mk_circ_tank(n_circles, [], n_elec); 
-    inv2d= add_params_2d_mdl( params, n_elec, options);
 
 % params is the part of the fwd_model
 function inv2d= add_params_2d_mdl( params, n_elec, options);
