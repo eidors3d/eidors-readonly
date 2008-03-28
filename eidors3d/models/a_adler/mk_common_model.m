@@ -23,6 +23,17 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('c2t4',16)  - 2D Thorax#3 (upper abdomen) (576 elems)
 %   - all t1-t5 are available for each a-f models
 %
+% 2D square models:
+%   mk_common_model('a2s',8)   - 2D square model (4x4x2 elems) (max 8 elecs)
+%   mk_common_model('b2s',16)  - 2D square model (8x8x2 elems) (16 elecs)
+%   mk_common_model('c2s',16)  - 2D square model (16x16x2 elems)
+%   mk_common_model('d2s',16)  - 2D square model (24x24x2 elems)
+%   mk_common_model('e2s',16)  - 2D square model (32x32x2 elems)
+%   mk_common_model('f2s',16)  - 2D square model (40x40x2 elems)
+%
+%   models ??c or ??c0 are rotated by zero.
+%   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
+%
 % 3D Models:
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
 %   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
@@ -41,7 +52,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.16 2008-03-25 19:19:52 aadler Exp $
+% $Id: mk_common_model.m,v 1.17 2008-03-28 15:03:27 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -57,6 +68,7 @@ if length(str)<3
 end
 
 if str(2:3)=='2c'
+% 2D circular models
    if     str(1)=='a'; layers=  4;
    elseif str(1)=='b'; layers=  8;
    elseif str(1)=='c'; layers= 12;
@@ -71,6 +83,22 @@ if str(2:3)=='2c'
    if length(str)==3; str= [str,'0'];end
       
    inv_mdl = rotate_model( inv_mdl, str2num(str(4)));
+
+elseif str(2:3)=='2s'
+% 2D square models
+   if     str(1)=='a'; layers=  4;
+   elseif str(1)=='b'; layers=  8;
+   elseif str(1)=='c'; layers= 16;
+   elseif str(1)=='d'; layers= 24;
+   elseif str(1)=='e'; layers= 32;
+   elseif str(1)=='f'; layers= 40;
+   else;  error('don`t know what to do with option=%s',str);
+   end
+
+   if rem( layers, n_elec(1)/2)~=0; 
+      error('the %s model can`t support %d electrodes',str,n_elec(1));
+   end
+   inv_mdl = mk_2r_model( n_elec, layers, options);
 
 elseif str(2:3)=='2t' & length(str)==4
    if     str(1)=='a'; layers=  4;
@@ -123,18 +151,69 @@ elseif strcmp( str, 'n3r2')
 elseif strcmp( str, 'n3z')
     inv_mdl = mk_n3z_model( n_elec, options );
 else
-    error(['don`t know what to do with option=',str]);
+    error(['Don`t know what to do with option=',str]);
 end
 
 inv_mdl.name= ['EIDORS common_model_',str]; 
 inv_mdl= eidors_obj('inv_model', inv_mdl);
     
+function inv2d= mk_2r_model( n_elec, xy_size, options)
+    if length(xy_size)==1; xy_size= xy_size*[1,1]; end
+    xy_size= xy_size+1;
+
+% TODO: To keep elements square, we should scale the 1's
+    [x,y]= meshgrid( linspace(-1,1,xy_size(1)), ...
+                     linspace(-1,1,xy_size(2)));
+    x=x';y=y';
+    fmdl.nodes= [x(:),y(:)];
+    k= (1:xy_size(1)-1)';
+    elem_frac = [[k,k+1,k+xy_size(2)]; ...
+                 [k+1,k+xy_size(2),k+xy_size(2)+1]];
+    fmdl.elems=  [];
+    for j=0:xy_size(2)-2
+       fmdl.elems=  [fmdl.elems; elem_frac + xy_size(2)*j];
+    end
+
+    fmdl.boundary = find_boundary( fmdl.elems);
+
+    % put 1/4 of elecs on each side 
+    tb_elecs= linspace(1, xy_size(1), 1+2*n_elec(1)/4); 
+    tb_elecs= tb_elecs(2:2:end);
+    sd_elecs= linspace(1, xy_size(2), 1+2*n_elec(1)/4);
+    sd_elecs= sd_elecs(2:2:end);
+    
+    el_nodes= [];
+    % Top nodes -left to right
+    bdy_nodes= (1:xy_size(1)) + xy_size(1)*(xy_size(2)-1); 
+    el_nodes= [el_nodes, bdy_nodes(tb_elecs)];
+    % Right nodes - top to bottom
+    bdy_nodes= (1:xy_size(2))*xy_size(1); 
+    el_nodes= [el_nodes, bdy_nodes(fliplr(sd_elecs))];
+    % Bottom nodes - right to left
+    bdy_nodes= 1:xy_size(1); 
+    el_nodes= [el_nodes, bdy_nodes(fliplr(tb_elecs))];
+    % Left nodes - bottom to top
+    bdy_nodes= (0:xy_size(2)-1)*xy_size(1)+1; 
+    el_nodes= [el_nodes, bdy_nodes(sd_elecs)];
+
+%   trimesh(fmdl.elems,fmdl.nodes(:,1), fmdl.nodes(:,2));
+    for i=1:n_elec(1)
+       n= el_nodes(i);
+       fmdl.electrode(i).nodes= n;
+       fmdl.electrode(i).z_contact= .001; % choose a low value
+%      plot(fmdl.nodes(n,1),fmdl.nodes(n,2),'*'); pause;
+    end
+    inv2d= add_params_2d_mdl( fmdl, n_elec(1), options);
+
 function inv2d= mk_2c_model( n_elec, n_circles, options )
 
     n_elec= n_elec(1);
-    n_rings= 1;
     params= mk_circ_tank(n_circles, [], n_elec); 
+    inv2d= add_params_2d_mdl( params, n_elec, options);
 
+% params is the part of the fwd_model
+function inv2d= add_params_2d_mdl( params, n_elec, options);
+    n_rings= 1;
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
     params.stimulation= st;
     params.meas_select= els;
@@ -146,7 +225,6 @@ function inv2d= mk_2c_model( n_elec, n_circles, options )
     mdl_2d   = eidors_obj('fwd_model', params);
 
     inv2d.solve=       'aa_inv_solve';
-    %inv2d.solve=       'aa_inv_conj_grad';
     inv2d.hyperparameter.value = 3e-2;
     %inv2d.hyperparameter.func = 'choose_noise_figure';
     %inv2d.hyperparameter.noise_figure= 1;
