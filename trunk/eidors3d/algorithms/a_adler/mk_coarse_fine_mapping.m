@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.24 2008-03-27 19:19:41 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.25 2008-03-28 17:38:17 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -30,11 +30,11 @@ try; c_mdl= rmfield(c_mdl,'stimulation'); end
 try; f_mdl= rmfield(f_mdl,'electrode');   end
 try; f_mdl= rmfield(f_mdl,'stimulation'); end
 
+f_mdl= offset_and_project( f_mdl, c_mdl);
 mapping = eidors_obj('get-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping');
 if ~isempty(mapping)
     eidors_msg('mk_coarse_fine_mapping: using cached value', 3);
 else
-    f_mdl= offset_and_project( f_mdl, c_mdl);
 
     try
        z_depth = c_mdl.mk_coarse_fine_mapping.z_depth;
@@ -44,6 +44,10 @@ else
 
     f_elems = all_contained_elems( f_mdl, c_mdl, z_depth);
     mapping = contained_elems_i( f_mdl, c_mdl, f_elems, z_depth);
+
+    if isfield(c_mdl,'coarse2fine')
+       mapping = mapping*c_mdl.coarse2fine;
+    end
 
     eidors_obj('set-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping', mapping);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
