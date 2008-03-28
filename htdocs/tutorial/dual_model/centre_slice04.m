@@ -1,4 +1,6 @@
-% 2D solver $Id: centre_slice04.m,v 1.2 2008-03-28 02:28:30 aadler Exp $
+% 2D solver $Id: centre_slice04.m,v 1.3 2008-03-28 03:12:59 aadler Exp $
+
+imdl.hyperparameter.value= 0.003;
 
 c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,(1-.3)*scl];
 c_mdl.mk_coarse_fine_mapping.z_depth = 0.1;
