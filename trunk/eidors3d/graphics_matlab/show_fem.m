@@ -11,11 +11,13 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.68 2008-03-25 17:25:43 aadler Exp $
+% $Id: show_fem.m,v 1.69 2008-03-28 14:11:42 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
 end
+
+if ~ishold; cla; end % clear axis unless we're axes to hold
 
 do_colourbar=0;
 number_electrodes=0;
