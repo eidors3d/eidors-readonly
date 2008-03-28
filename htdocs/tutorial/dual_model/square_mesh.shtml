@@ -1,0 +1,76 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+
+249891 elems
+<h2> 
+Dual Models using a rectangular mesh of a volume slice
+</h2>
+
+If we wish to reconstruct a slice of a volume onto
+a rectangular mesh, that can be done using the
+following dual model scheme.
+A common use of dual models is to allow the forward
+model to represent the entire space, while the
+reconstruction model represents a slice through
+the volume at the place of interest. 
+
+<h3> 
+Rectangular mesh represented as a triangular FEM
+</h3>
+<p>
+The rectangular mesh is represented as a triangular
+FEM where each square pixel includes two triangular
+elements. The model is parametrized such that 
+both elements in each pixel have the same parameter
+<pre>
+<!--#include virtual="square_mesh01.m" -->
+</pre>
+
+<center>
+<img src="square_mesh01a.png">
+<br><i> Figure:</i>
+32&times;32 rectangular mesh representing a square
+pixels in the space. The parameterization is chosen
+so the parameter is the same for both elements
+in each pixel.
+</center>
+
+<h3> 
+Dual mesh correspondance
+</h3>
+<p>
+First, we select the vertical extent of the
+coarse mesh (<i>z</i><sub>depth</sub>=0.1). 
+This can be shown as follows:
+<pre>
+<!--#include virtual="square_mesh02.m" -->
+</pre>
+
+Next, we show the coarse and fine models
+and their relationship. 
+(The fine model is generated using netgen, and
+is available
+ <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x1_vfine.7z"
+           >here</a>)
+<pre>
+<!--#include virtual="square_mesh03.m" -->
+</pre>
+
+<center>
+<img src="square_mesh03a.png">
+<br><i> Figure:</i>
+<i>Left</i>  coarse model with z<sub>depth</sub>=0.1
+<i>Right</i> correspondence between coarse and fine model.
+</center>
+
+
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-28 16:32:24 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
