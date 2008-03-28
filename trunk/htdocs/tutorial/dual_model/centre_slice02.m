@@ -1,9 +1,9 @@
-% 2D solver $Id: centre_slice02.m,v 1.4 2008-03-27 19:47:24 aadler Exp $
+% 2D solver $Id: centre_slice02.m,v 1.5 2008-03-28 02:28:30 aadler Exp $
 
 % Create and show inverse solver
 imdl = mk_common_model('b3cr',[16,2]);
 
-load ng_mdl_16x2_coarse; fmdl = ng_mdl_16x2_coarse;
+load ng_mdl_16x2_coarse; f_mdl = ng_mdl_16x2_coarse;
 
 imdl.fwd_model = f_mdl;
 
