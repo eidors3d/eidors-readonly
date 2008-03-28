@@ -1,10 +1,7 @@
-function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr )
+function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )
 % SIMULATE_3D_MOVEMENT simulate rotational movement in 2D
-% [vh,vi,xyzr_pt]= simulate_3d_movement( n_points, model, rad_pr )
+% [vh,vi,xyzr_pt]= simulate_3d_movement( n_points, model, rad_pr, movefcn )
 %
-% the target starts at (rad_pr(1),0) and rotates around 
-%  clockwise
-% 
 %   rad_pr = [path_radius, target_radius, zmin, zmax]
 %      values are the fraction of the extent in each dimension
 %      DEFAULT: [2/3, .05, .1, .9 ]
@@ -14,25 +11,47 @@ function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr )
 %   model = fwd_model to simulate 
 %         (default use internal, or if model= []);
 %
+%   movefcn = 1 (Default)  helical motion where the target starts
+%     at (rad_pr(1),0) and rotates clockwise moving bottom to top.
+%   movefcn = 2            radial movement in the vertical plane
+%
+%   movefcn = FUCN NAME or FUNC HANDLE
+%      the function must accept the following parameters
+%      [xp,yp,zp] = movefcn(f_frac, radius, z_bottom,z_top);
+%
 % OUTPUT:
 %   vh - homogeneous measurements            M x 1
 %   vi - target simulations                  M x n_points
 %   xyzr_pt - x,y,z and radius of each point 3 x n_points
 
-% $Id: simulate_3d_movement.m,v 1.5 2008-03-25 02:10:35 aadler Exp $
+% $Id: simulate_3d_movement.m,v 1.6 2008-03-28 19:01:10 aadler Exp $
 
-    if nargin <1
-       n_sims = 200;
-    end
+if nargin <1
+   n_sims = 200;
+end
 
-    if nargin<2 || isempty(mdl_3d) % create our own fmdl
-       mdl_3d= mk_common_model('n3r2',[16,2]); % NP's demo model
-       mdl_3d= mdl_3d.fwd_model;
-    end
+if nargin<2 || isempty(mdl_3d) % create our own fmdl
+   mdl_3d= mk_common_model('n3r2',[16,2]); % NP's demo model
+   mdl_3d= mdl_3d.fwd_model;
+end
 
-    if nargin<3
-       rad_pr= [2/3, 0.05, 0.1, 0.9];
-    end
+if nargin<3 || isempty(rad_pr);
+   rad_pr= [2/3, 0.05, 0.1, 0.9];
+end
+
+if nargin<4
+   movefcn = 1;
+elseif isnumeric(movefcn)
+   if     movefcn==1
+      movefcn = @helical_path;
+   elseif movefcn==2
+      movefcn = @radial_path;
+   else
+      error('value of movefcn not understood');
+   end
+else
+   % assume movefcn is a function 
+end
 
 
 mdl_3d.solve=      'np_fwd_solve';
@@ -55,13 +74,14 @@ npx=128;
 npy=128;
 npz=64;
 [x,y,z,radius,rp,z0,zt] = calc_point_grid(mdl_3d.nodes', npx, npy, npz, rad_pr);
+
 clear pts;
 for i=1:n_sims
     f_frac= (i-1)/n_sims;
 
-    xp= radius * cos(f_frac*2*pi);
-    yp= radius * sin(f_frac*2*pi);
-    zp = z0 + (zt - z0) * f_frac;% object moves from bottow to top
+    % call function to simulate data
+    [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
+
     xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
 
     ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 + (z(:)-zp).^2 <= rp^2 )';
@@ -92,6 +112,22 @@ eidors_msg('simulate_3d_movement: step #3: target simulations',2);
 vi= [vi(:).meas];
 vh= [vh(:).meas];
 
+%   movefcn = 1 (Default)  helical motion where the target starts
+%     at (rad_pr(1),0) and rotates clockwise moving bottom to top.
+% calculate x,y,z position of point, given f_frac of path
+function [xp,yp,zp]= helical_path(f_frac, radius, z0,zt);
+   xp= radius * cos(f_frac*2*pi);
+   yp= radius * sin(f_frac*2*pi);
+   % object moves from bottow to top
+   zp = z0 + (zt - z0) * f_frac;
+
+%   movefcn = 2            radial movement in the vertical plane
+function [xp,yp,zp]= radial_path(f_frac, radius, z0,zt);
+   rp= f_frac*radius; 
+   cv= 2*pi*f_frac;
+   xp= rp * cos(cv);
+   yp= rp * sin(cv);
+   zp = mean([zt,z0]);
 
 % modified img_mapper3 from calc_slices.m
 % this is like tsearch, but doesn't require
