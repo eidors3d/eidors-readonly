@@ -80,7 +80,11 @@ while 1
         drawnow
       end
     else
-      eidors_msg('Retriangulation #%d',count,2);
+      if count ==0
+         eidors_msg('distmeshnd: retriangulation #%d',count,2);
+      else
+         eidors_msg('.',2);
+      end
     end
 
     count=count+1;
