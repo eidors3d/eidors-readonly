@@ -26,7 +26,7 @@ function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)
 global distmesh_do_graphics; % flag do decide if we do graphics
 
 dim=size(box,2);
-ptol=.01; ttol=.1; L0mult=1+.4/2^(dim-1); deltat=.1; geps=1e-1*h; deps=sqrt(eps)*h;
+ptol=.03; ttol=.1; L0mult=1+.4/2^(dim-1); deltat=.1; geps=1e-1*h; deps=sqrt(eps)*h;
 
 % 1. Create initial distribution in bounding box
 if dim==1
