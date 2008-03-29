@@ -1,0 +1,79 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Simulate a moving 2D target on a fixed mesh
+</h2>
+
+Another way to simulate a moving target is to
+remesh around each new target. Doing this with
+<i>distmesh</i> involves directly accessing the
+mesh creation functions.
+
+<h3>Step 1: Create fine mesh (2376 elems)</h3>
+
+<pre>
+<!--#include virtual="simulate_move2_01.m" -->
+</pre>
+
+<h3>Step 2: Simulate movement</h3>
+
+To simulate a target, we insert fixed note positions
+surrounding the target. Then using <tt>interp_mesh.m</tt>,
+we find the elements that are in the target position.
+
+<pre>
+<!--#include virtual="simulate_move1_02.m" -->
+</pre>
+
+<center>
+<img src="simulate_move2_02a.png"
+<br><i>Figure:</i>
+<i>Left</i> Simulation mesh homogeneous mesh
+<i>Right</i> Simulation mesh with target at (0.1,0.7)
+</center>
+
+<center>
+<img src="simulate_move2_02b.png"
+<br><i>Figure:</i>
+Magnification of areas of interest in the previous figure.
+<i>Left</i> Simulation mesh homogeneous mesh
+<i>Right</i> Simulation mesh with target at (0.1,0.7)
+</center>
+
+<h3>Step 3: Simulate Homogeneous measurements</h3>
+<pre>
+<!--#include virtual="simulate_move2_03.m" -->
+</pre>
+
+<h3>Step 4: Simulate moving target and simulate measurements</h3>
+<pre>
+<!--#include virtual="simulate_move2_04.m" -->
+</pre>
+
+In order to animate these meshes, we call the 
+<a href="http://www.imagemagick.org">imagemagick</a>
+<tt>convert</tt> function to create the animations
+
+<pre>
+<!--#include virtual="simulate_move2_05.m" -->
+</pre>
+
+<center>
+<img src="simulate_move2_05a.gif"
+<br><i>Figure:</i>
+Animation of the simulation mesh surrounding a moving target
+</center>
+
+<h3>Step 5: Reconstruct images</h3>
+<pre>
+<!--#include virtual="simulate_move2_06.m" -->
+</pre>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-29 15:39:56 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
+
