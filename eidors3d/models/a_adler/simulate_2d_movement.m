@@ -18,7 +18,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
 %   xyr_pt - x y and radius of each point 3 x n_points
 
 %
-% $Id: simulate_2d_movement.m,v 1.13 2008-03-25 01:39:48 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.14 2008-03-29 01:52:07 aadler Exp $
 
     if nargin <1
        n_sims = 200;
@@ -46,7 +46,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
 
     np= 512;
     [x,y]=meshgrid( linspace(-1,1,np), linspace(-1,1,np) );
-    eptr= img_mapper2(fmdl.nodes', fmdl.elems', np, np);
+    [eptr,vol]= img_mapper2(fmdl.nodes', fmdl.elems', np, np);
 
     % there is a faster way to do this with sparse, but it is confusing
 %   eptr_n= zeros(n_elems,1);
@@ -68,7 +68,8 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
        obj_n= sparse( eptr(ff)+1,1,1, n_elems+1, 1);
        obj_n= full(obj_n(2:end));
 
-       img.elem_data= 1 + target_conductivity * (obj_n./eptr_n);
+%      img.elem_data= 1 + target_conductivity * (obj_n./eptr_n);
+       img.elem_data= 1 + target_conductivity * (obj_n./vol);
 
        vi(i)= fwd_solve( img );
 %show_fem(img);drawnow; keyboard
@@ -81,7 +82,7 @@ vh= [vh(:).meas];
 % THis is the code copied from calc_slices
 % Search through each element and find the points which
 % are in that element
-function EPTR= img_mapper2(NODE, ELEM, npx, npy );
+function [EPTR,VOL]= img_mapper2(NODE, ELEM, npx, npy );
   xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
   xmean= mean([xmin,xmax]); xrange= xmax-xmin;
 
@@ -100,7 +101,9 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
   %   for each candidate point d,
   %      area AA = abd + acd + bcd
   %      d is in j if AA = A
-  for j= 1: size(ELEM,2)
+  e= size(ELEM,2);
+  VOL= zeros(e,1);
+  for j= 1:e
     % calculate area of three subtrianges to each candidate point.
     xy= NODE(:,ELEM(:,j))';
     % come up with a limited set of candidate points which
@@ -109,10 +112,11 @@ function EPTR= img_mapper2(NODE, ELEM, npx, npy );
              & x(:)<=max(xy(:,1)) & x(:)>=min(xy(:,1)) );
     % a is determinant of matrix [i,j,k, xy]
     a= xy([2;3;1],1).*xy([3;1;2],2)- xy([3;1;2],1).*xy([2;3;1],2);
+    VOL(j)= abs(sum(a));
 
     aa= sum(abs(ones(length(endr),1)*a'+ ...
                 v_yx(endr,:)*xy'*turn)');
-    endr( abs( (abs(sum(a))-aa) ./ sum(a)) >1e-8)=[];
+    endr( abs( ( VOL(j)-aa ) ./ VOL(j) ) >1e-8)=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
 
