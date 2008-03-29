@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.25 2008-03-28 17:38:17 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.26 2008-03-29 14:26:31 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -108,32 +108,6 @@ function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
     tsn(not_oor)= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(not_oor,dims));
     tsn(isnan(tsn))= -1;
 
-% interpolate over a triangle with n_interp points
-% generate a set of points to fairly cover the triangle
-% dim_coarse is dimensions + 1 of coarse model
-function interp= triangle_interpolation(n_interp, dim_fine)
-    interp= zeros(0,dim_fine);
-
-    if dim_fine==3
-       for i=0:n_interp
-          for j=0:n_interp-i
-             interp= [interp;i,j,n_interp-i-j];
-          end
-       end
-    elseif dim_fine==4
-       for i=0:n_interp
-          for j=0:n_interp-i
-             for k=0:n_interp-i-j
-                interp= [interp;i,j,k,n_interp-i-j-k];
-             end
-          end
-       end
-    else
-       error('cant handle dim_fine!=2');
-    end
-
-    interp= (interp + 1/dim_fine )/(n_interp+1);
-
 % find fraction of elem contained in cm
 % idx is the index into which the elem is contained
 % if idx >= 1, the element is completely with in that coarse elem
@@ -150,21 +124,20 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
 
    % lower density interpolation in higher dimentions, since 
    % the added dimensions will give extra interpolation points.
-   interp= triangle_interpolation( 7-df, df );
+   n_interp = 7-df;
+   interp_mdl.nodes= fm.nodes;
+   interp_mdl.elems= fm.elems(fidx,:);
 
-   l_interp = size(interp,1);
-   dims = 1:dc-1; % run calc over dimensions 1 to dc-1
+   fm_pts = interp_mesh( interp_mdl, n_interp);
+   l_interp = size(fm_pts,3);
 
-   el_nodes= fm.nodes(fm.elems(fidx,:)',:);
-   % need to be of size df x N for reshape
-   el_nodes= reshape(el_nodes, df, l_fidx*(df-1) );
-   fm_pts = interp*el_nodes;
-   fm_pts = reshape(fm_pts, l_fidx*l_interp, df-1);
+   fm_pts = permute( fm_pts, [3,1,2]);
+   fm_pts = reshape(fm_pts, [], df-1);
 
    tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
 
    tsn_idx= ones(l_interp,1)*fidx(:)';
-   tsn_idx= tsn_idx(:)';
+   tsn_idx= tsn_idx(:);
    % find and isolate outside elements
    outside_idx= tsn==-1;
    tsn(outside_idx) = [];
