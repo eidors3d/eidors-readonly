@@ -19,7 +19,11 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
 %
 % 2D Models using distmesh (D = show distmesh graphics, d= no graphics)
-%   mk_common_model('a2D0c',16)  - 2D circ model using distmesh
+%   mk_common_model('a2d0c',16)  - 2D circ model using distmesh 
+%   mk_common_model('b2d0c',16)  - 2D circ model using distmesh ~ 1300 elems
+%   mk_common_model('d2d0c',16)  - 2D circ model using distmesh ~ 3200 elems
+%
+%      2d0 -> no 
 %
 % 2D Thorax models (levels 1 - 5 from shoulders to abdomen)
 %   mk_common_model('b2t2',16)  - 2D Thorax#2 (chest) (256 elems)
@@ -55,7 +59,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.19 2008-03-28 19:54:55 aadler Exp $
+% $Id: mk_common_model.m,v 1.20 2008-03-29 00:42:11 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -168,17 +172,20 @@ inv_mdl.name= ['EIDORS common_model_',str];
 inv_mdl= eidors_obj('inv_model', inv_mdl);
     
 function inv2d = distmesh_2d_model(str, n_elec, options);
-   if     str(1)=='a'; n_nodes= 100;
-%  elseif str(1)=='b'; layers=  8;
-%  elseif str(1)=='c'; layers= 16;
-%  elseif str(1)=='d'; layers= 24;
-%  elseif str(1)=='e'; layers= 32;
-%  elseif str(1)=='f'; layers= 40;
+   if     str(1)=='a'; n_nodes=  50;
+   elseif str(1)=='b'; n_nodes= 100;
+   elseif str(1)=='c'; n_nodes= 200;
+   elseif str(1)=='d'; n_nodes= 400;
+   elseif str(1)=='e'; n_nodes= 800;
+   elseif str(1)=='f'; n_nodes=1600;
    else;  error('don`t know what to do with option=%s',str);
    end
 
-   elec_width= .1;
-   [elec_nodes, refine_nodes] = dm_mk_elec_nodes( n_elec(1), elec_width);
+   elec_width= .1; refine_level=0;
+   th=linspace(0,2*pi,n_elec(1)+1)';th(end)=[];
+   elec_posn= [sin(th),cos(th)];
+   [elec_nodes, refine_nodes] = dm_mk_elec_nodes( elec_posn, ...
+          elec_width, refine_level);
    fd=inline('sqrt(sum(p.^2,2))-1','p');
    bbox = [-1,-1;1,1];
    z_contact = 0.01;
