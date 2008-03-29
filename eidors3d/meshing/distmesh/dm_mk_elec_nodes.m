@@ -16,7 +16,7 @@ function [elec_nodes, refine_nodes] = dm_mk_elec_nodes( elec_posn, ...
 %  refine_nodes:      vector of fixed nodes to add to model to refine it
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_elec_nodes.m,v 1.2 2008-03-29 00:42:04 aadler Exp $
+% $Id: dm_mk_elec_nodes.m,v 1.3 2008-03-29 01:08:05 aadler Exp $
 
 [ne,nd]= size(elec_posn);
 elec_width=   ones(ne,1).*elec_width;   % expand scalar if required
@@ -40,21 +40,63 @@ function [elec_nodes, refine_nodes]= mk_elec_nodes_2d( ...
       [ctr, radius] = find_ctr_rad( elec_posn(i,:), elec_posn);
       th= (i-1)*2*pi/ne;
       th_delta = elec_width(i)/2/pi/radius;
-      the= th + th_delta*[-1;-.5;0;.5;1];
+      switch refine_level(i)
+        case 0,
+           the= th;
+           thr= th;
+        case 1,
+           the= th + th_delta*[-1;;0;1];
+           thr= th + th_delta*[-3;-1;0;1;3];
+        case 2,
+           the= th + th_delta*[-1;;0;1];
+           thr= th + th_delta*[-5;-2;-1;0;1;2;5];
+        case 3,
+           the= th + th_delta*[-1;-.5;0;.5;1];
+           thr= th + th_delta*[-5;-2;-1;-.5;0;.5;1;2;5];
+        case 4,
+           the= th + th_delta*[-1;-.5;0;.5;1];
+           thr= th + th_delta*[-5;-3;-2;-1.5;-1;-.5;0;.5;1;1.5;2;3;5];
+        otherwise
+           error('refine level = %d not understood', refine_level(i));
+      end
       this_e_node= radius*[sin(the),cos(the)];
       this_e_node= this_e_node + ones(size(this_e_node,1),1)*ctr;
       elec_nodes{i} = this_e_node;
 
-      thr= th + th_delta*[-5;-2;-1;-.5;0;.5;1;2;5];
       csthr= [sin(thr),cos(thr)];
-      refine_nodes= [refine_nodes; ...
-                   radius*csthr([1:2,8:9],:); ...
-               .98*radius*csthr([1:9],:); ...
-               .95*radius*csthr([1:2:9],:); ...
-               .90*radius*csthr([1:4:9],:)];
-      refine_nodes= refine_nodes + ones(size(refine_nodes,1),1)*ctr;
+      switch refine_level(i)      
+        case 0,
+           % no refine_nodes
+           refine_new= zeros(0,2);
+        case 1,
+           refine_new= [radius*csthr([1,5],:); ...
+                    .97*radius*csthr([3],:)];
+        case 2,
+           refine_new= [radius*csthr([1:2,6:7],:); ...
+                    .98*radius*csthr([1:7],:); ...
+                    .95*radius*csthr([1:3:7],:)];
+        case 3,
+           refine_new= [radius*csthr([1:2,8:9],:); ...
+                    .98*radius*csthr([1:9],:); ...
+                    .95*radius*csthr([1:2:9],:); ...
+                    .90*radius*csthr([1:4:9],:)];
+        case 4,
+           refine_new= [radius*csthr([1:4,10:13],:); ...
+                    .98*radius*csthr([1:13],:); ...
+                    .96*radius*csthr([1:2:13],:); ...
+                    .93*radius*csthr([1,4,6,8,10,13],:); ...
+                    .90*radius*csthr([2:5:12],:)];
+        otherwise
+           error('refine level = %d not understood', refine_level(i));
+      end
+      refine_new = refine_new + ones(size(refine_new,1),1)*ctr;
+      refine_nodes= [refine_nodes; refine_new];
    end
 
+% Find the ctr and radius of this_elec and the two closest
+%  ones. This will allow fitting the electrode to the curvature
+%  locally.
+% Alg: http://www.geocities.com/kiranisingh/center.html
 function [ctr, rad] = find_ctr_rad( this_elec, elec_posn);
    ctr= [0,0];
    rad= sqrt(sum(this_elec.^2));

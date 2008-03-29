@@ -59,7 +59,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.20 2008-03-29 00:42:11 aadler Exp $
+% $Id: mk_common_model.m,v 1.21 2008-03-29 01:08:09 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -180,8 +180,10 @@ function inv2d = distmesh_2d_model(str, n_elec, options);
    elseif str(1)=='f'; n_nodes=1600;
    else;  error('don`t know what to do with option=%s',str);
    end
+ 
+   refine_level= abs(str(4))-'0';
 
-   elec_width= .1; refine_level=0;
+   elec_width= .1;
    th=linspace(0,2*pi,n_elec(1)+1)';th(end)=[];
    elec_posn= [sin(th),cos(th)];
    [elec_nodes, refine_nodes] = dm_mk_elec_nodes( elec_posn, ...
@@ -193,7 +195,6 @@ function inv2d = distmesh_2d_model(str, n_elec, options);
                              elec_nodes, refine_nodes, z_contact);
 
    inv2d= add_params_2d_mdl( fwd_mdl, n_elec(1), options);
-
 
 
 function inv2d= mk_2c_model( n_elec, n_circles, options )
