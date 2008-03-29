@@ -68,10 +68,20 @@ Animation of the simulation mesh surrounding a moving target
 <!--#include virtual="simulate_move2_06.m" -->
 </pre>
 
+<center>
+<img src="simulate_move2_06a.png"
+<br><i>Figure:</i>
+Reconstructed images of targets moving in the mesh
+<i>Left</i> Reconstruction mesh with first image
+<i>Right</i> Reconstructed images of all targets
+</center>
+
+<h3>Exploring the effect of mesh density</h3>
+
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-29 15:39:56 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-29 15:48:11 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
