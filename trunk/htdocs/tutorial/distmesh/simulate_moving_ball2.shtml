@@ -78,10 +78,20 @@ Reconstructed images of targets moving in the mesh
 
 <h3>Exploring the effect of mesh density</h3>
 
+This image shows a large amount of what looks like
+noise. In order to explore the effect of mesh density
+and electrode refinement, we modify the parameters
+<tt>n_nodes</tt> and <tt>refine_level</tt> (electrode
+refinement.
+
+<h3>Mesh with <tt>n_nodes=50</tt> and <tt>refine_level=2</tt></H3>
+<h3>Mesh with <tt>n_nodes=600</tt> and <tt>refine_level=4</tt></H3>
+
+
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-29 15:48:11 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-29 15:55:12 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
