@@ -85,13 +85,40 @@ and electrode refinement, we modify the parameters
 refinement.
 
 <h3>Mesh with <tt>n_nodes=50</tt> and <tt>refine_level=2</tt></H3>
+<center>
+<img src="simulate_move2_05b.gif"
+<br><i>Figure:</i>
+Animation of the simulation mesh surrounding a moving target
+</center>
+
+<center>
+<img src="simulate_move2_06b.png"
+<br><i>Figure:</i>
+Reconstructed images of targets moving in the mesh
+<i>Left</i> Reconstruction mesh with first image
+<i>Right</i> Reconstructed images of all targets
+</center>
+
 <h3>Mesh with <tt>n_nodes=600</tt> and <tt>refine_level=4</tt></H3>
+<center>
+<img src="simulate_move2_05c.gif"
+<br><i>Figure:</i>
+Animation of the simulation mesh surrounding a moving target
+</center>
+
+<center>
+<img src="simulate_move2_06c.png"
+<br><i>Figure:</i>
+Reconstructed images of targets moving in the mesh
+<i>Left</i> Reconstruction mesh with first image
+<i>Right</i> Reconstructed images of all targets
+</center>
 
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-29 15:55:12 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-29 16:17:42 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
