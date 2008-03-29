@@ -20,10 +20,12 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 % 2D Models using distmesh (D = show distmesh graphics, d= no graphics)
 %   mk_common_model('a2d0c',16)  - 2D circ model using distmesh 
-%   mk_common_model('b2d0c',16)  - 2D circ model using distmesh ~ 1300 elems
-%   mk_common_model('d2d0c',16)  - 2D circ model using distmesh ~ 3200 elems
-%
-%      2d0 -> no 
+%   mk_common_model('b2d1c',16)  - 2D circ model using distmesh ~ 1300 elems
+%   mk_common_model('d2d4c',16)  - 2D circ model using distmesh ~ 3200 elems
+%      a-f => mesh density
+%      2d  => 2d Distmesh model
+%      0-4 => element refinement
+%      c   => circular mesh
 %
 % 2D Thorax models (levels 1 - 5 from shoulders to abdomen)
 %   mk_common_model('b2t2',16)  - 2D Thorax#2 (chest) (256 elems)
@@ -59,7 +61,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.21 2008-03-29 01:08:09 aadler Exp $
+% $Id: mk_common_model.m,v 1.22 2008-03-29 14:26:52 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
