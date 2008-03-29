@@ -1,0 +1,48 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Simulate a moving 2D target on a fixed mesh
+</h2>
+
+The easiest way to simulate a moving is to select
+the interpolate which elements are part of that target.
+This function is provided by <tt>simulate_2d_movement</tt>
+
+<h3>Step 1: Create fine mesh (6076 elems)</h3>
+
+<pre>
+<!--#include virtual="simulate_move1_01.m" -->
+</pre>
+
+
+<h3>Step 2: Simulate movement</h3>
+<pre>
+<!--#include virtual="simulate_move1_02.m" -->
+</pre>
+
+<center>
+<img src="simulate_move1_02a.png"
+<br><i>Figure:</i>
+Simulation mesh and simulated target positions
+</center>
+
+<h3>Step 3: Reconstruct images</h3>
+<pre>
+<!--#include virtual="simulate_move1_03.m" -->
+</pre>
+<center>
+<img src="simulate_move1_03a.png"
+<br><i>Figure:</i>
+Reconstructed images
+<i>Left</i> FEM of first image
+<i>Right</i> Reconstructed image sequence
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-03-29 02:27:17 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
+
