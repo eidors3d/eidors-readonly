@@ -70,7 +70,7 @@ a helical path on a fine netgen model (249891 elems)
  <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x1_vfine.7z"
            >here</a>)
 <pre>
-<!--#include virtual="centre_slice04.m" -->
+<!--#include virtual="square_mesh04.m" -->
 </pre>
 <b>Note:</b> this stimulation requires at least 4GB memory
 and many minutes of CPU time to run. The calculated data
@@ -96,12 +96,12 @@ Reconstruct Images
 First, we reconstruct images on the rectangular
 mesh, using the coarse to fine mapping.
 <pre>
-<!--#include virtual="centre_slice05.m" -->
+<!--#include virtual="square_mesh05.m" -->
 </pre>
 Next, we reconstruct images on a classic 2D
 circular FEM, and compare the images.
 <pre>
-<!--#include virtual="centre_slice06.m" -->
+<!--#include virtual="square_mesh06.m" -->
 </pre>
 
 <center>
@@ -125,7 +125,7 @@ Reconstructed images
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-28 17:55:23 $ by $Author: aadler $
+    Last Modified: $Date: 2008-03-29 14:21:27 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
