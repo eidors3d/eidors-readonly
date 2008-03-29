@@ -1,9 +1,10 @@
-% moving target $Id: simulate_move2_04.m,v 1.1 2008-03-29 15:39:56 aadler Exp $
+% moving target $Id: simulate_move2_04.m,v 1.2 2008-03-29 15:48:11 aadler Exp $
 
 % Create a moving object within the model
 trg_rad= 0.1;
 radius= 0.75;
 n_sims= 20;
+contrast= 0.1;
 
 clear vi;
 for i= 1:n_sims;
@@ -25,7 +26,7 @@ for i= 1:n_sims;
 
    % Create target image object
    timg= eidors_obj('image','','fwd_model',tmdl,...
-                    'elem_data',1 + in_trg*.5);
+                    'elem_data',1 + in_trg*contrast);
 
    clf; show_fem(timg);
    print('-dpng','-r50',sprintf('simulate_move2_04a%02d.png',i));
