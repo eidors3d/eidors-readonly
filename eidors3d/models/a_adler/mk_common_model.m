@@ -61,7 +61,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.22 2008-03-29 14:26:52 aadler Exp $
+% $Id: mk_common_model.m,v 1.23 2008-03-30 21:57:59 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -133,7 +133,11 @@ elseif str(2:3)=='2t' & length(str)==4
       
    inv_mdl = deform_cylinder( inv_mdl, str2num(str(4)), 1 );
 
-elseif str(2:3)=='3c' & length(str)==4
+elseif strcmp( str, 'n3r2')
+    inv_mdl = mk_n3r2_model( n_elec, options );
+elseif strcmp( str, 'n3z') || strcmp(str, 'n3z2')
+    inv_mdl = mk_n3z_model( n_elec, options );
+elseif str(2:3)=='3c' 
    if     str(1)=='a'; xy_layers=  4; z_layers= linspace(-.5,.5,5);
    elseif str(1)=='b'; xy_layers=  8; z_layers= linspace(-.7,.7,11);
    elseif str(1)=='c'; xy_layers= 12; z_layers= linspace(-.9,.9,21);
@@ -161,11 +165,6 @@ elseif str(2:3)=='3c' & length(str)==4
    inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
                               elec_per_plane, elec_conf, options );
 %  inv_mdl = rotate_model( inv_mdl, n_elec(1)/8 );
-
-elseif strcmp( str, 'n3r2')
-    inv_mdl = mk_n3r2_model( n_elec, options );
-elseif strcmp( str, 'n3z')
-    inv_mdl = mk_n3z_model( n_elec, options );
 else
     error(['Don`t know what to do with option=',str]);
 end
