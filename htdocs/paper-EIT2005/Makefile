@@ -1,7 +1,7 @@
 # Makefile for adler-lionheart-2005-EIDORS.tex
 # Paper describing EIDORS v3.0
 #
-# $Id: Makefile,v 1.21 2006-02-07 03:54:35 aadler Exp $
+# $Id: Makefile,v 1.22 2008-03-30 21:55:11 aadler Exp $
 
 NAME = adler-lionheart-2005-EIDORS
 
@@ -94,7 +94,7 @@ figs/fig_3d_zigzag.m:
 	echo \
   "$(SET_COLOUR)" \
   \
-  "n3z= mk_common_model('n3z'); " \
+  "n3z= mk_common_model('n3z2'); " \
   "n3z.fwd_model.nodes = n3z.fwd_model.nodes/3;" \
   "n3z.hyperparameter.value= 1e-4;" \
   "fmdl_n3z = n3z.fwd_model;" \

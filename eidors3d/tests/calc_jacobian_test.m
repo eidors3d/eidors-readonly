@@ -5,7 +5,7 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian_test.m,v 1.25 2007-08-30 03:37:33 aadler Exp $
+% $Id: calc_jacobian_test.m,v 1.26 2008-03-30 21:55:07 aadler Exp $
 
 ok= 1;
 delta = 1e-4;
@@ -139,7 +139,7 @@ function mdl= make_aa_mdl2;
     mdl.name= 'AA_1996 mdl';
 
 function mdl= make_aa_mdl3;
-    i_mdl = mk_common_model('b3cz',16);
+    i_mdl = mk_common_model('b3cz2',16);
     mdl= i_mdl.fwd_model;
     mdl.name= 'AA_1996 mdl';
     mdl.solve=      'aa_fwd_solve';
