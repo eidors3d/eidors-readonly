@@ -2,6 +2,7 @@ function J = calc_jacobian( fwd_model, img)
 % CALC_JACOBIAN: calculate jacobian from an inv_model
 % 
 %  J = calc_jacobian( fwd_model, img )
+%  J = calc_jacobian( img )
 %      calc Jacobian on fwd_model at conductivity given
 %      in image (fwd_model is for forward and reconstruction)
 %
@@ -17,9 +18,10 @@ function J = calc_jacobian( fwd_model, img)
 %           'node_data' parameters
 
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m,v 1.21 2008-03-25 18:55:30 aadler Exp $
+% $Id: calc_jacobian.m,v 1.22 2008-03-30 21:49:42 aadler Exp $
 
 if nargin==1
+   img       = fwd_model;
    fwd_model = img.fwd_model;
 end
 
