@@ -24,6 +24,7 @@ function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)
 % Source is from http://www-math.mit.edu/~persson/mesh/
 
 global distmesh_do_graphics; % flag do decide if we do graphics
+maxiter = 500;
 
 dim=size(box,2);
 ptol=.03; ttol=.1; L0mult=1+.4/2^(dim-1); deltat=.1; geps=1e-1*h; deps=sqrt(eps)*h;
@@ -70,10 +71,10 @@ while 1
     end
     pair=unique(sort(pair,2),'rows');
     % 5. Graphical output of the current mesh
-    if dim==2 && distmesh_do_graphics
+    if dim==2 & distmesh_do_graphics
       hh=trimesh(t,p(:,1),p(:,2),zeros(N,1),'edgecolor','black');
       view(2),axis equal,axis off,drawnow
-    elseif dim==3 && distmesh_do_graphics
+    elseif dim==3 & distmesh_do_graphics
       if mod(count,5)==0
         simpplot(p,t,'p(:,2)>0');
         title(['Retriangulation #',int2str(count)])
@@ -116,5 +117,7 @@ while 1
 
   % 8. Termination criterion
   maxdp=max(deltat*sqrt(sum(dp(d<-geps,:).^2,2)));
-  if maxdp<ptol*h, break; end
+  if maxdp<ptol*h; break; end
+  % maximum iterations
+  if count>maxiter; break; end
 end
