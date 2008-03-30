@@ -8,11 +8,11 @@ function [img_data, n_images]= get_img_data(img, flag);
 %    get data mapped onto elems in the fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: get_img_data.m,v 1.2 2008-03-18 18:40:27 aadler Exp $
+% $Id: get_img_data.m,v 1.3 2008-03-30 21:48:34 aadler Exp $
 
 if nargin==1; flag=0; end
 
-if ~strcmp( img.type, 'image' );
+if ~strcmp( img(1).type, 'image' );
     error('get_img_data expects an image type object');
     return;
 end
