@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.10 2008-03-28 19:47:54 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.11 2008-03-30 21:49:57 aadler Exp $
 
 if nargin <7
    error('dm_mk_fwd_model requires 7 or 8 parameters');
@@ -82,9 +82,9 @@ function mdl= construct_fwd_model(srf,vtx,simp, name, ...
 
 
    mdl.electrode =     electrodes;
-   mdl.solve=          'aa_fwd_solve';
-   mdl.jacobian=       'aa_calc_jacobian';
-   mdl.system_mat=     'aa_calc_system_mat';
+   mdl.solve=          'np_fwd_solve';
+   mdl.jacobian=       'np_calc_jacobian';
+   mdl.system_mat=     'np_calc_system_mat';
 
 function [vtx,simp] = call_distmesh(fd,fh,h0,bbox,fixed_node);
    [vtx,simp] = distmeshnd(fd,fh,h0,bbox,fixed_node);
