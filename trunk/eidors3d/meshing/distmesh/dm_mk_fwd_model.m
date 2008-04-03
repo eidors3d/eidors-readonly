@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.11 2008-03-30 21:49:57 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.12 2008-04-03 17:19:47 aadler Exp $
 
 if nargin <7
    error('dm_mk_fwd_model requires 7 or 8 parameters');
@@ -34,7 +34,7 @@ fwd_mdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes, ...
 % estimate initial edge length to get nnodes
 function  h0= estimate_h0(bbox, nnodes);
    dims= size(bbox,2);
-   area_est= prod(abs(diff(dims,1)));
+   area_est= prod(abs(diff(bbox,[],1)));
    h0 = (area_est/nnodes)^(1/dims);
 
 function fmdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes, ...
