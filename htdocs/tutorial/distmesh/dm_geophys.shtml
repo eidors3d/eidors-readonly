@@ -27,10 +27,57 @@ Geophysical model with electrodes on surface from distmesh
 <i>Right</i>: Mesh density refined going from surface to bottom
 </center>
 
+<h3>Create rectangular coarse mesh</h3>
+
+Here we simulate the coarse model using the
+<tt>mk_common_model</tt> function. Clearly,
+it would make more sense to use a more rectangular
+mesh in this case.
+<pre>
+<!--#include virtual="dm_geophys02.m" -->
+</pre>
+
+<center>
+<img src="dm_geophys02a.png"
+<br><i>Figure:</i>
+Coarse mesh (blue) superimposed onto the fine mesh (black).
+Electrode positions are shown in green.
+</center>
+
+<h3>Simulate Target</H3>
+
+A target is simulated as a square region. This is interpolated
+onto the fine mesh using the <tt>interp_mesh</tt> function.
+<pre>
+<!--#include virtual="dm_geophys03.m" -->
+</pre>
+
+<center>
+<img src="dm_geophys03a.png"
+<br><i>Figure:</i>
+Simulated position of target in the fine mesh
+</center>
+
+
+<h3>Reconstruct image using dual model</H3>
+
+The image is reconstructed onto the coarse
+(rectangular) mesh
+<pre>
+<!--#include virtual="dm_geophys04.m" -->
+</pre>
+
+<center>
+<img src="dm_geophys04a.png"
+<br><i>Figure:</i>
+Reconstructed target showing coarse and fine mesh
+in background.
+</center>
+
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-04-03 19:37:03 $ by $Author: aadler $
+    Last Modified: $Date: 2008-04-03 19:43:54 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
