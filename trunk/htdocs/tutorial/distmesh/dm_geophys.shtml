@@ -1,0 +1,38 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+2D Geophysical models with Distmesh
+</h2>
+
+This tutorial shows building of 2D geophysical
+models with
+<a href="http://www-math.mit.edu/~persson/mesh/"
+>distmesh</a>.
+<p>
+
+<h3>Create fine mesh</h3>
+
+Here we simulate the fine model with distmesh.
+Note that to be stable, points on the mesh corners need
+to be supplied to distmesh.
+<pre>
+<!--#include virtual="dm_geophys01.m" -->
+</pre>
+
+<center>
+<img src="dm_geophys01a.png"
+<img src="dm_geophys01b.png"
+<br><i>Figure:</i>
+Geophysical model with electrodes on surface from distmesh
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-04-03 19:37:03 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
+
