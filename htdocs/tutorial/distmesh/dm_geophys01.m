@@ -1,4 +1,4 @@
-% Geophysics model $Id: dm_geophys01.m,v 1.1 2008-04-03 18:17:45 aadler Exp $
+% Geophysics model $Id: dm_geophys01.m,v 1.2 2008-04-03 19:33:27 aadler Exp $
 
 n_nodes= 1000;
 z_contact= 0.01;
@@ -28,7 +28,7 @@ end
 %fd=inline('-min([10+p(:,1),10-p(:,1),-p(:,2),10+p(:,2)],[],2)','p');
 fd=inline('-min(-p(:,2),10-sqrt(sum(p.^2,2)))','p');
 bbox = [xllim,ydepth;xrlim,0];
-smdl= dm_mk_fwd_model( fd, [], n_nodes, bbox, ...
+gmdl= dm_mk_fwd_model( fd, [], n_nodes, bbox, ...
                           elec_nodes, refine_nodes, z_contact);
 
 
@@ -40,7 +40,7 @@ fmdl= dm_mk_fwd_model( fd, fh, n_nodes, bbox, ...
 
 % Show results - big
 subplot(121)
-show_fem(smdl); axis on
+show_fem(gmdl); axis on
 subplot(122)
 show_fem(fmdl); axis on
 
@@ -48,7 +48,7 @@ print -dpng -r150 dm_geophys01a.png
 
 % Show results - small
 subplot(121)
-show_fem(smdl); axis([-3,3,-3,0.3]);
+show_fem(gmdl); axis([-3,3,-3,0.3]);
 subplot(122)
 show_fem(fmdl); axis([-3,3,-3,0.3]);
 print -dpng -r150 dm_geophys01b.png
