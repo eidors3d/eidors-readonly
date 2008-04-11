@@ -1,5 +1,5 @@
 % Main file for the GREIT Algorithm
-% $Id: GREIT-algorithm.tex,v 1.1 2008-04-11 15:17:45 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.2 2008-04-11 16:16:06 aadler Exp $
 \documentclass[letterpaper,twocolumn,11pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -18,32 +18,68 @@
 \begin{document}
 
 %\title[GREIT: reconstruction algorithm for EIT chest images]
-\title{GREIT: towards a consensus EIT algorithm for lung images}
+\title{\bf GREIT: towards a consensus EIT algorithm for lung images}
 
-\author{Andy Adler$^1$,
-        John Arnold$^2$,
-        Richard Bayford$^3$,
-        Andrea Borsic$^4$,
-        Paul Dixon$^5$,
-        Brian Brown$^6$,
-        Theo Faes$^7$,
-        In\'ez Frerichs$^8$,
-        Herv\'e Gagnon$^9$,
-        Yvo G\"arber$^10$,
-        William R B Lionheart$^12$,
-        Gerhard Wolf$^2$,
-        Alex Hartov$^4$,
-        G\"unter Hahn$^13$,
-        David Holder$^14$,
-        David Isaacson$^15$,
-        Anjum Malik$^16$,
-        Janet Stocks$^17$,
-        Marco Vauhkonen$^18$,
-        Eung Je Woo$^19$,
+\author{Andy Adler$^{1}$,
+        John Arnold$^{2}$,
+        Richard Bayford$^{3}$,
+        Andrea Borsic$^{4}$,
+        Brian Brown$^{5}$,
+        Paul Dixon$^{6}$,
+\\
+        Theo Faes$^{7}$,
+        In\'ez Frerichs$^{8}$,
+        Herv\'e Gagnon$^{9}$,
+        Yvo G\"arber$^{10}$,
+        William R B Lionheart$^{12}$,
+\\
+        Alex Hartov$^{4}$,
+        G\"unter Hahn$^{13}$,
+        David Holder$^{14}$,
+        David Isaacson$^{15}$,
+        Anjum Malik$^{16}$,
+\\
+        Janet Stocks$^{17}$,
+        Marco Vauhkonen$^{18}$,
+        Gerhard Wolf$^{2}$,
+        Eung Je Woo$^{19}$,
         and many others%
        }
 
+\date{}
 \maketitle
+
+
+
+
+\begin{abstract}
+Recently, Electrical Impedance Tomography (EIT) has begun to see a
+significant clinical interest for monitoring of
+ventilated patients.  The key capability of EIT is to
+provide a real-time image distribution of ventilation in
+the patient's lungs.
+However, most clinical and physiological research in lung EIT
+done using older and proprietary algorithms; this is
+an obstacle to interpretation of EIT results because the
+reconstructed images are not well characterized.
+To address this issue, we propose to develop a 
+consensus linear reconstruction algorithm for lung EIT.
+This algorithm will be developed in three phases:
+1) selection of the ``ingredients'' and evaluation 
+methodology (this paper),
+2) evaluation and experience with GREIT variants, and
+3) consensus and definition of the GREIT algorithm.
+This approach represents the consensus of a large and representative
+group of experts in EIT algorithm and clinical applications.
+All software and data to implement and test GREIT had been
+made available under an open source license which allows free
+research and commercial use.
+\end{abstract}
+
+% \noindent{\it Keywords\/}:
+% Electrical Impedance Tomography,
+% Lung Function Imaging,
+% Image Reconstruction,
 
 {\small
 \noindent $^?$ Systems and Computer Engineering,
@@ -55,40 +91,6 @@
                Middlesex University, London, UK \\
 }
 
-
-
-\begin{abstract}
-Recently, Electrical Impedance Tomography (EIT) has begun to see a
-significant clinical interest for the application of monitoring
-ventilated patients. To best manage these patients, it is important
-to correctly set the many parameters of modern ventilators. This,
-in turn, requires accurate monitoring of the
-typically inhomogeneous distribution of ventilation.
-The clinical promise of EIT is because it is able to non-invasively
-provide a continuous image of the lungs of these patients in order
-to better manage ventilation.
-However, most clinical and physiological research in lung EIT
-being done using the backprojection image reconstruction algorithm
-developed in 1988.  While many newer and better algorithms have been
-proposed, it has not been easy to compare and evaluate them.
-To address this issue, we propose a ``best of breed'' linear
-reconstruction algorithm for lung EIT. This algorithm is named
-GREIT (the Graz consensus Reconstruction algorithm for EIT) and
-applies to EIT systems using 16 electrodes with adjacent
-current stimulation and voltage measurement applied in a single
-plane around the subject's chest.
-This approach represents the consensus of a large and representative
-group of experts in EIT algorithm and clinical applications.
-All software and data to implement and test GREIT had been
-made available under an open source license which allows free
-research and commercial use.
-\end{abstract}
-
-\noindent{\it Keywords\/}:
-Electrical Impedance Tomography,
-Lung Function Imaging,
-Image Reconstruction,
-
 \section{Introduction}
 Electrical Impedance Tomography (EIT) measures conductivity
 changes within a body from current stimulation and voltage
@@ -98,50 +100,54 @@ are large organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
 was the among first physiological applications of this technology
 (refs). While there are many medical imaging and instrumentation
-technologies to measure the lungs, EIT is unique in that it
-is able to non-invasively monitor the distribution of 
-ventionation. Other imaging technologies cannot (practically 
-and safely) continuously monitor patients; instrumentation
-techniques give measure of lung volumes and pressures without
-an image of the distribution of the air in the lungs. 
+technologies to measure the distribution of ventilation
+in the lungs, EIT is unique in that it
+is able to non-invasively and continuously monitor the distribution of 
+ventiolation. Based on these advantages, there is significant
+interest in EIT to 
+monitor mechanically ventilated patients.
 
-There is now significant interest in EIT to 
-monitor patients on mechanical ventilation. These patients
-typically have very inhomogeneous patterns of ventilation,
-due to the non-uniform patterns of tissue destruction
-in the underlying disease and due to the mechanical ventilation
-itself (refs). However, there is now considerable clinical
-evidence to show significant patient benefit can be obtained
-by proper selection of the many settings
-available on modern ventilators. EIT can provide vital 
-information to help clinical staff manage patient ventilation.
-For example, a PEEP manoeuvre may increase FRC; however, the
-EIT image may show that volume only increased in one lung, and
-that there may still be additional benefit to be gained 
-{\em can we come up with a better example}.
-
-One limitation to current EIT clinical and physiological research
-is that being done by reconstructing images with the backprojection
+One limitation is that most clinical and physiological research
+on lung EIT is that being done using proprietary variants of
+older image reconstruction algorithms, such as the backprojection
 algorithm as implemented
 in the Sheffield (Brown and Seagar, 1987)
-or G\"ottingen (Hahn et al, 2001) EIT systems. This is a 
-problem because this algorithm is known to produce various
-image artefacts.
-While many newer and better algorithms have been proposed, it has
-not easy  to compare them and select the best. Thus, the
-the EIT equipment manufacturers and the clinical and physiological
-researchers have stayed with familiar algorithms, even though
-these have well known deficiencies. 
+or G\"ottingen (Hahn et al, 2001) EIT systems.
+This is an obstacle to clinical use of EIT because:
+1) it is difficult to determine whether a given image feature is 
+an physiological or artefact,
+2) comparison of regional ventilation is impacted by
+algorithm spatial non-uniformity and position errors,
+and 
+3) multi-centre studies are not possible without a 
+common imaging algorithm.
+Many approaches to reconstruct EIT images have been proposed,
+however, it has not easy to compare among them, because 
+detailed comparisons of performance have not been done. 
+However, there is general consensus amongst experts
+in EIT image processing of the ``ingredients'' that should
+be part of a robust and high performance algorithm.
 
-To address this problem, a group of experts in EIT imaging
-algorithm and clinical applications has worked together to
-develop a ``best of breed'' EIT reconstruction algorithm
-for imaging of the lungs. This algorithm is named GREIT, 
-the Graz consensus Reconstruction algorithm for EIT (since
-preliminary discussions took place at the 2007 EIT conference
-in Graz, Austria). All developed algorithm, simulation
+We plan to address this problem, and to develop a
+consensus linear reconstruction algorithm for EIT
+images of the chest.
+This algorithm is named GREIT, 
+the ``Graz consensus Reconstruction algorithm for EIT'',
+since early discussions took place at the 2007 EIT conference
+in Graz, Austria. Our aim is develop a standard which
+has broad agreement from experts in the mathematical,
+engineering, physiological, and clinical EIT communities.
+The current work is limited to the reconstruction algorithm.
+We do not propose calibration tests or phantoms, standards
+for image interpretation or EIT based lung parameters; 
+we do not feel this sufficient experience yet to reach
+consensus in these areas.
+It is important to clarify that there is no financial
+goal to develoment of this algorithm. Participants have
+agreed not to seek patent protection on this algorithm,
+and all developed algorithms, simulation
 models and simulation and experimental test data used
-in this algorithm have been made available as part of
+in this algorithm will been made available as part of
 the EIDORS distribution (Adler and Lionheart, 2006).
 
 Consensus was developed as follows: 1) a specific limited
