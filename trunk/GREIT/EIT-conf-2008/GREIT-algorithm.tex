@@ -1,22 +1,20 @@
-% $Id: GREIT-algorithm.tex,v 1.5 2008-04-13 16:26:30 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.6 2008-04-13 19:51:25 aadler Exp $
 \documentclass[letterpaper,twocolumn,11pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
 \usepackage{graphicx}
-\newcommand{\vB}{\mbox{$\mathbf{v}$}}
-\newcommand{\xB}{\mbox{$\mathbf{x}$}}
-\newcommand{\yB}{\mbox{$\mathbf{y}$}}
-\newcommand{\JB}{\mbox{$\mathbf{J}$}}
-\newcommand{\RB}{\mbox{$\mathbf{J}$}}
-\newcommand{\WB}{\mbox{$\mathbf{W}$}}
-\newcommand{\PB}{\mbox{$\mathbf{P}$}}
-\newcommand{\MB}{\mbox{$\mathbf{M}$}}
+\newcommand{\vB}{\mbox{$\bf v$}}
+\newcommand{\xB}{\mbox{$\bf x$}}
+\newcommand{\yB}{\mbox{$\bf y$}}
+\newcommand{\JB}{\mbox{$\bf J$}}
+\newcommand{\RB}{\mbox{$\bf R$}}
+\newcommand{\WB}{\mbox{$\bf W$}}
+\newcommand{\PB}{\mbox{$\bf P$}}
+\newcommand{\MB}{\mbox{$\bf M$}}
+\newcommand{\IB}{\mbox{$\bf I$}}
 %\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
-\newcommand{\SG}{\mbox{${\boldmath \Sigma}$}}
-\newcommand{\sG}{\mbox{${\boldmath \sigma}$}}
-\newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
-\newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
-\newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
+\newcommand{\SG}{\mbox{$\bf \Sigma$}}
+\newcommand{\sG}{\mbox{$\bf \sigma$}}
 \begin{document}
 
 %\title[GREIT: reconstruction algorithm for EIT chest images]
@@ -48,7 +46,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-13 16:26:30 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-13 19:51:25 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -235,9 +233,10 @@ pixels of defined height.
 
 \newcounter{Ictr}
 \begin{list}{\bf \arabic{section}.\arabic{Ictr}}
-  {\leftmargin=1.0em \itemindent=0.8em
+  {\leftmargin=0.0em \itemindent=2.0em
     \topsep= 0.0\baselineskip
-    \itemsep= 0.0\baselineskip
+    \itemsep=-0.0em
+    \listparindent=1.0em \parsep=-0.0em
     \usecounter{Ictr}}
 
 \item {\bf Dual Modals.}
@@ -334,15 +333,46 @@ $\sigma_n^2 \WB^{-1}= \SG_n$ and
 $\sigma_x^2 \RB^{-1}= \SG_x$. Here $\lambda= \sigma_n/\sigma_x$,
 is the regularization {\em hyperparameter}.
 Precalculated GREIT models assume uniform uncorrelated
-Gaussian measurement noise
+Gaussian measurement noise, and thus $\WB = \IB$.
+
+Many different approaches have been used to select
+the image prior $\RB$, including a scaled diagonal
+matrices and various forms of spatial high pass
+filters including discrete Laplacian and Gaussian
+high pass filters. The choice of $\RB$ has several
+subtle but important implications on reconstructed
+images, as illustrated in \ref{fig:prior_effects}.
+We identify these undesirable image features as:
+a) {\em ringing} the presence of opposite polarity
+regions surrounding a reconstructed target (which
+may be incorrectly interpreted as physiological),
+b) {\em position error} incorrect positioning of
+a reconstructed target,
+and 
+c) {\em blurring} increased area of a reconstructed
+target.
+There are clearly compromises to be made between
+these features, especially {\em ringing} and
+{\em blurring}. Additionally, the uniformity of
+a feature with spatial position is more important
+than low average feature errors.
+
+For the evaluation process for GREIT, various
+proposed reconstruction matrices (and combinations)
+will be tested against the image features. Matrices
+will be defined directly on the inverse (coarse) grid
+(not the forward model).
+
 
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.4\textwidth, bb=0 0 597 229]{figs/spatial-uniformity.png}
-\caption{ \label{fig:space_uniform}
-Example reconstructed images from a small nonconductive target
-moving from the medium centre to the boundary, illustrating
-several undesirable features.%
+ \includegraphics[width= 0.4\textwidth, bb=0 0 512 532]{figs/spatial-uniformity.png}
+\caption{ \label{fig:prior_effects}
+Illustration of several undesirable features affected by the
+choice of $\RB$. {\em A}: Ground truth simulations of a small
+non-conductive target. {\em B}: Reconstructed images. The
+lower graphs show total image amplitude and position error
+as a function of simulated radial position.%
 }
 \end{center}
 \end{figure}
@@ -514,6 +544,12 @@ Adler A and Lionheart WRB 2006
 27 S25--S42
 
 \item[]
+Adler A Dai T Lionheart WRB 2007
+``Temporal Image Reconstruction in Electrical Impedance Tomography''
+{\em Physiol. Meas.}, 28 S1--S11
+
+
+\item[]
 Barber DC and Brown BH 1984
 ``Applied potential tomography'', 
 {\em J Phys E: Sci Instrum}
@@ -533,6 +569,11 @@ Brown BH and Seagar AD 1987
  8(Suppl A) 91--97
 
 \item[]
+Cheney M Isaacson D Newell JC Simske S and Goble JC 1990
+``NOSER: An algorithm for solving the inverse conductivity problem''
+{\em J Imaging Syst Technol} 2 66--75
+
+\item[]
 Creative Commons/Science Commons 2007
 ``Creative Commons 3.0 Attribution License''
 \verb+creativecommons.org/licenses/by/3.0/+
@@ -550,13 +591,17 @@ different electrical tomography devices''
 {\em  Biomed Tech (Berl)}
 46 91--95
 
-
 \item[]
 Kotre CJ 1988
 ``A fast approximation for the calculation of potential distributions in electrical impedance tomography''
 {\em Clin Phys Physiol Meas}
-9 353-361
-\end{list}
+9 353--361
 
+\item[]
+Soleimani M G\'omez-Laberge C and Adler A 2006
+``Imaging of conductivity changes and electrode movement in EIT''
+{\em Physiol. Meas.} 27 S103--S113
+
+\end{list}
 \end{document}
 
