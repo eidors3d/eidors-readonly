@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.7 2008-04-13 20:18:45 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.8 2008-04-13 20:38:17 aadler Exp $
 \documentclass[letterpaper,twocolumn,11pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -46,7 +46,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-13 20:18:45 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-13 20:38:17 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -405,7 +405,32 @@ performance) and the expected EIT signal level (of
 thoracic EIT measurements). We propose to define
 calibration protocols that may be performed by the 
 equipment maker (or as part of installation) from which
-a n optimal $\lambda$ may be chosen.
+an optimal $\lambda$ may be chosen.
+
+\item {\bf Electrode movement and model inaccuracy compensation}
+
+Movement of electrodes due to breathing and posture change
+contributes artefacts to EIT images, both as clearly perceptible
+image degradation near the boundary, and as a broad artefact
+that changes image calibration. 
+Some recent work to correct for movement (Soleimani et al, 2006)
+and general model inaccuracies (Kaipio and Somersalo, 2007)
+show promising results and may be represented in a linear
+GN reconstruction, as by modifying the data noise model
+($\SG_n$) to include both measurement noise and ``noise'' 
+due to geometrical inaccuracies. Given parameters, $\xB_g$,
+which express electrode movement and other model inaccuracies,
+we create $\SG_n = \sigma_n^2 \WB^{-1} + \JB_g \RB_g \JB_g^t$,
+where $\JB_g$ is the Jacobian of model parameters and $\RB_g$
+represents the prior covariance between parameters.
+
+Since such techniques are relatively new, they are less well
+understood than the ``ingredients'' discussed previously. 
+The evaluation of GREIT parameters may establish the value
+of these techniques, or not.
+
+
+
 
 \end{list}
 
@@ -623,6 +648,12 @@ Graham B, Adler A 2006
 ``Objective selection of the hyperparameter for EIT''
 {\em Physiol. Meas.}
 27 S65-S79
+
+\item[]
+Kaipio J and Somersalo E 2007
+``Statistical inverse problems: Discretization, model reduction and inverse crimes''
+{\em J Comput Appl Math}
+198 493--504
 
 \item[]
 Kotre CJ 1988
