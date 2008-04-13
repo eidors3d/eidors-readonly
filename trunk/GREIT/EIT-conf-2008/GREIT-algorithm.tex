@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.6 2008-04-13 19:51:25 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.7 2008-04-13 20:18:45 aadler Exp $
 \documentclass[letterpaper,twocolumn,11pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -46,7 +46,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-13 19:51:25 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-13 20:18:45 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -166,36 +166,41 @@ in this algorithm will been made available as part of
 the EIDORS distribution (Adler and Lionheart, 2006).
 
 The goals identified for GREIT are for:
-\begin{list}{}
+\begin{list}{$\circ$} %{\textbullet}
   {\leftmargin=1.0em \itemindent=-0.0em
     \topsep=-1.5\baselineskip
     \itemsep=-0.4\baselineskip}
-\item[-]
+\item
  single and double ring electrode
 configurations with Sheffield-type EIT systems, using
       adjacent current injection and measurement.
-\item[-]
+\item
  linear (real-time) reconstruction of a 2D conductivity
 change image, based on a 3D forward model
-\item[-]
+\item
  quantitative reconstructions:
    given an input in transfer impedance ($\Omega$) units,
                     the output is in impedivity change ($\Omega\cdot m$))
-\item[-]
+\item
  settings for all parameters:
      any tunable parameters must have assigned
      values in the recommended algorithm.
-\item[-]
- published reconstruction matrices are to be developed for the
-      reconstruction to a $32\times 32$ pixel array for
+\item
+ published reconstruction matrices for
+      a $32\times 32$ pixel array for
       for $16\times1$ and $8\times 2$
-      electrode configurations for the following average shapes:
+      electrode configurations for the shapes:
    a) neonate chests, 
    b) adult chests, and 
    c) cylindrical tank phantoms.
- For other shapes and electrode configurations, users will need
-   to calculate the reconstruction matrices from the 
+ For other shapes and electrode configurations,
+   reconstruction matrices may be calculated from the
    provided source code.
+
+\item
+   all software and data to implement and test GREIT to be
+   made available under an open source license which allows 
+   royalty free use in both research and commercial applications.
 
 \end{list}
 \vspace{1cm}
@@ -226,7 +231,8 @@ Dual model example. {\em black:} a cut away view of a
 cylindrical 3D FEM (fine) forward model (with electrode
  refinement),
 {\em blue:} (coarse) reconstruction model with 2D square
-pixels of defined height.
+pixels of defined height.%
+\vspace{-0.5cm}
 }
 \end{center}
 \end{figure}
@@ -377,8 +383,29 @@ as a function of simulated radial position.%
 \end{center}
 \end{figure}
 
-
 \item {\bf Hyperparameter selection method}
+
+In many studies, the EIT hyperparameter, $\lambda$, is selected
+manually based on heuristic criterion, probaby because
+automatic techniques such as the L-curve, work poorly
+on the EIT problem (Graham and Adler, 2006).  Furthermore,
+traditional hyperparameter selection methods, such as the L-curve,
+choose a value for each image, which is not appropriate.
+ However, it
+is essential that GREIT define the hyperparameter 
+automatically, as this is necessary for reliable
+clinical interpretation, or multi-centre studies.
+
+Unfortunately, there is little consensus on the best
+way to choose $\lambda$, and thus exploration of 
+this issue will be a major part of the GREIT evaluation
+process. The criteria for selection are:
+$\lambda$ must depend on the EIT equipment (and noise
+performance) and the expected EIT signal level (of
+thoracic EIT measurements). We propose to define
+calibration protocols that may be performed by the 
+equipment maker (or as part of installation) from which
+a n optimal $\lambda$ may be chosen.
 
 \end{list}
 
@@ -590,6 +617,12 @@ and Hellige G 2001
 different electrical tomography devices''
 {\em  Biomed Tech (Berl)}
 46 91--95
+
+\item[]
+Graham B, Adler A 2006
+``Objective selection of the hyperparameter for EIT''
+{\em Physiol. Meas.}
+27 S65-S79
 
 \item[]
 Kotre CJ 1988
