@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.8 2008-04-13 20:38:17 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.9 2008-04-13 21:41:03 aadler Exp $
 \documentclass[letterpaper,twocolumn,11pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -12,7 +12,6 @@
 \newcommand{\PB}{\mbox{$\bf P$}}
 \newcommand{\MB}{\mbox{$\bf M$}}
 \newcommand{\IB}{\mbox{$\bf I$}}
-%\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
 \newcommand{\SG}{\mbox{$\bf \Sigma$}}
 \newcommand{\sG}{\mbox{$\bf \sigma$}}
 \begin{document}
@@ -46,7 +45,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-13 20:38:17 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-13 21:41:03 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -227,6 +226,7 @@ to experiment to find the best recipe.
 \begin{center}
  \includegraphics[width= 0.4\textwidth, bb=0 0 427 419]{figs/square_mesh03a.png}
 \caption{ \label{fig:dual_model}
+\small
 Dual model example. {\em black:} a cut away view of a
 cylindrical 3D FEM (fine) forward model (with electrode
  refinement),
@@ -283,6 +283,7 @@ the chest (or the diameter of the cylindrial tank).
 \begin{center}
  \includegraphics[width= 0.4\textwidth, bb=0 0 749 378]{figs/square_mesh06a.png}
 \caption{ \label{fig:square_pixels}
+\small
 {\em Left}: Reconstructed image onto $16\times 16$ pixel array using
 dual model (triangular divisions of pixels is an artefact of EIDORS
 representation). Precalculated GREIT models
@@ -374,6 +375,7 @@ will be defined directly on the inverse (coarse) grid
 \begin{center}
  \includegraphics[width= 0.4\textwidth, bb=0 0 512 532]{figs/spatial-uniformity.png}
 \caption{ \label{fig:prior_effects}
+\small
 Illustration of several undesirable features affected by the
 choice of $\RB$. {\em A}: Ground truth simulations of a small
 non-conductive target. {\em B}: Reconstructed images. The
@@ -429,158 +431,102 @@ understood than the ``ingredients'' discussed previously.
 The evaluation of GREIT parameters may establish the value
 of these techniques, or not.
 
+\item {\bf Temporal reconstruction}
 
-
+Typically, a frame of EIT data is reconstructed assuming
+that all measurements were made at the same momement.
+However, EIT systems make sequential measurements for
+each current pattern. It is possible to take this
+time difference into account to calculate more
+accurate EIT images of rapid conductivity changes, such
+as those due to perfusion and from high frequency oscillatory
+ventilation. This approach may be generalized as 
+a ``temporal'' image reconstruction (Adler et al, 2007)
+in which measurements from several nearby frames are
+used. Such an approach may be used to
+achieve improved noise performance.
 
 \end{list}
 
 
-\subsection{Algorithms}
-\subsection{Evaluation: model data}
+\section{Evaluation: model data}
 
 Each algorithm will be evaluated against the
 following criteria.
 
-\subsubsection{Amplitude Response}
-   \begin{itemize}
-   \item Output amplitude is correct ($\Omega \cdot m$)
-   \item the amplitude response is uniform for all radial positions.
-   \end{itemize}
+\newcounter{Ectr}
+\begin{list}{\bf \arabic{section}.\arabic{Ectr}}
+  {\leftmargin=0.0em \itemindent=2.0em
+    \topsep= 0.0\baselineskip
+    \itemsep=-0.0em
+    \listparindent=1.0em \parsep=-0.0em
+    \usecounter{Ectr}}
 
-\subsubsection{Position Error}
-   \begin{itemize}
-   \item low average position error
-   \item uniform position error with radial position
-   \end{itemize}
+\item {\bf Amplitude Response}
+\\ \noindent $\circ$
+  Output amplitude is correct ($\Omega \cdot m$)
+\\ \noindent $\circ$ 
+  the amplitude response is uniform for all radial positions.
 
-\subsubsection{ Resolution}
-   \begin{itemize}
-   \item small average PSF size
-   \item uniform PSF size with radial position
-   \item no (or very little) overshoot in the PSF
+\item {\bf Position Error}
+\\ \noindent $\circ$
+  low average position error
+\\ \noindent $\circ$
+  uniform position error with radial position
+
+\item {\bf Resolution}
+\\ \noindent $\circ$
+      small average PSF size
+\\ \noindent $\circ$
+      uniform PSF size with radial position
+\\ \noindent $\circ$
+      no (or very little) overshoot in the PSF
   (overshoot is the negative ring around a target)
-   \item regular shape (round or oval) PSF
+\\ \noindent $\circ$
+      regular shape (round or oval) PSF
   (backprojection, with its streaks, does badly here)
-   \end{itemize}
 
-\subsubsection{ Noise Performance}
-   \begin{itemize}
-   \item low average noise amplification
-   \end{itemize}
+\item {\bf Noise Performance}
+\\ \noindent $\circ$
+         low average noise amplification
 
-\subsubsection{ Boundary shape and electrode sensitivity}
-   \begin{itemize}
-   \item low sensitivity to electrode movement
-   \item low sensitivity to boundary distortions
+\item {\bf Boundary shape and electrode sensitivity}
+\\ \noindent $\circ$
+      low sensitivity to electrode movement
+\\ \noindent $\circ$
+      low sensitivity to boundary distortions
          (with breathing and posture change)
-   \item low sensitivity to changes in electrode contact impedance
-   \end{itemize}
+\\ \noindent $\circ$
+      low sensitivity to changes in electrode contact impedance
 
-
-\subsection{Evaluation: experimental data}
-
-
+\item {\bf Performance on experimental data}
+\\ \noindent $\circ$
  good performance on real clinical images.
      (NB, we need to develop a small database of 
           clinical images to do this)
+\end{list}
 
-\section{Results}
-\subsection{Model data}
-\subsection{Experimental data}
-\subsection{Summary}
+
+
 \section{Discusion}
 
-In summary, we have developed an algorithm (GREIT)
-for reconstruction of images of the thorax
-from 16 EIT electrodes placed in a single plane
-around the chest. This algorithm does not represent
-new ideas in image reconstruction, but rather represent
-a ``best of breed'' algorithm based on the experience
-of a group of experts in EIT algorithms and clinical
-applications.
-
-\subsection{Deliverables}
-
-This paper makes the following contributions. All are
-available on the internet at \verb+eidors3d.sf.net/GREIT+:
-\begin{itemize}
-\item An algorithm (described in the section ??) for reconstruction
-         of EIT images
-\item Software to implement this algorithm in the Matlab/GNU Octave
-         language available as part of EIDORS (Adler and Lionheart, 2006)
-\item Reconstruction matrices for EIT image reconstruction for
-      adult and neonate chest shapes and for a cylindrical phantom.
-\end{itemize}
-
-
-\subsection{Licensing}
-All algorithms, models and test data have been make
-available at \verb+eidors3d.sf.net/GREIT+,
-under an open source license which allows
-free commercial and non-commercial use. Therefore,
-we licence the following aspects as follows:
-
-{\em Algorithm and FEM models}:
-   are licensed under the GNU LGPL (Free Software Foundation, 2007).
-   This license allows
-   unrestricted use and allows the provided software to
-   be provided with proprietary addons. The requirement is
-   that the source code of any modifications be provided to
-   the users. For a commercial vendor, this requirement would
-   mean that it would be possible to review and understand any
-   changes made to the software.
-
-{\em Reconstruction matrix, and the Experimental and Clinical Data}:
-   are licensed under the Creative Commons Attribution
-   License (Creative Commons, 2007). Users are permitted
-   to copy to copy, distribute, transmit and adapt the work,
-   under the conditions of attribution by citing the
-   papers as indicated.
-
-\subsection{Implementation }
-This section describes the use of the reconstruction
-matrix to generate EIT images.
-The {\em input} data to the algorithm are:
-\begin{itemize}
-\item[]
-the model type (neonate, adult, cylindrical tank) 
-\item[]
-   -- one dimension parameter (the chest lateral diameter) 
-\item[]
-   -- $13\times 16=208$ measurements in transfer impedance units
-      ($\Omega = \frac{\mbox{Measured voltage}}
-                      {\mbox{Stimulation current}}$)
-\end{itemize}
-
-The {\em output} from the algorithm is:
-\\
-   -- a pixelized image ($32\times 32$) of 
-      impedivity change ($\Omega \cdot m$)
-
-
-      This matrix consists of a mapping matrix $\MB$ (size $32\times 32$ of
-      integers) and a reconstruction matrix $\RB$ (size $104\times P$ of
-      floating point doubles).
-      Given a vector $\vB$ of difference voltage measurements, where
-      the $i^{\rm th}$ measurement on stimulation pattern $j$ is
-      $\vB_{i+16\times(j-1)}$. A 
-      The index in $\MB$ corresponding to each output pixel
-      (Fig. \ref{fig:reconst_detail}) gives a row ind index into the
-      reconstruction matrix 
-???
-
-\begin{figure}[bhtp]
-\begin{center}
-% \includegraphics[width= 0.2 \textwidth]{figs/reconstruction-detail.eps}
-
-\caption{ \label{fig:reconst_detail}
-Diagram of $32\times 32$ rasterization of the output image. Black
-squares represent the output pixels and are numbered from top
-to bottom, left to right.
-}
-\end{center}
-\end{figure}
-
+This paper clarifies two aspects of the
+GREIT algorithm: the technical ``ingredients''
+and the evaluation methodology. Based on
+this description, we aim to select the best
+``recipe'' for GREIT algorithm as follows:. 
+First, algorithm candidates will be
+built and made available for testing on
+simluation and experimental data
+(timeframe June -- Sept, 2008). 
+Based on this experience, a consensus
+on each parameter will be developed
+and the GREIT algorithm will be
+defined and published.
+Such a consensus algorithm will provide
+numerous benefits. Because every detail
+is clarified and made freely available, it
+will be possible to 
 
 
 \section*{References}
