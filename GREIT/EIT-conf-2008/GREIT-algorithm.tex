@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.4 2008-04-13 13:29:07 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.5 2008-04-13 16:26:30 aadler Exp $
 \documentclass[letterpaper,twocolumn,11pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -8,6 +8,8 @@
 \newcommand{\yB}{\mbox{$\mathbf{y}$}}
 \newcommand{\JB}{\mbox{$\mathbf{J}$}}
 \newcommand{\RB}{\mbox{$\mathbf{J}$}}
+\newcommand{\WB}{\mbox{$\mathbf{W}$}}
+\newcommand{\PB}{\mbox{$\mathbf{P}$}}
 \newcommand{\MB}{\mbox{$\mathbf{M}$}}
 %\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
 \newcommand{\SG}{\mbox{${\boldmath \Sigma}$}}
@@ -46,7 +48,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-13 13:29:07 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-13 16:26:30 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -166,22 +168,26 @@ in this algorithm will been made available as part of
 the EIDORS distribution (Adler and Lionheart, 2006).
 
 The goals identified for GREIT are for:
-\\ \noindent -- 
+\begin{list}{}
+  {\leftmargin=1.0em \itemindent=-0.0em
+    \topsep=-1.5\baselineskip
+    \itemsep=-0.4\baselineskip}
+\item[-]
  single and double ring electrode
 configurations with Sheffield-type EIT systems, using
       adjacent current injection and measurement.
-\\ \noindent -- 
+\item[-]
  linear (real-time) reconstruction of a 2D conductivity
 change image, based on a 3D forward model
-\\ \noindent -- 
+\item[-]
  quantitative reconstructions:
    given an input in transfer impedance ($\Omega$) units,
                     the output is in impedivity change ($\Omega\cdot m$))
-\\ \noindent -- 
+\item[-]
  settings for all parameters:
      any tunable parameters must have assigned
      values in the recommended algorithm.
-\\ \noindent -- 
+\item[-]
  published reconstruction matrices are to be developed for the
       reconstruction to a $32\times 32$ pixel array for
       for $16\times1$ and $8\times 2$
@@ -193,10 +199,14 @@ change image, based on a 3D forward model
    to calculate the reconstruction matrices from the 
    provided source code.
 
-As discussed, this paper clarifies the two aspects GREIT:
+\end{list}
+\vspace{1cm}
+
+
+This goal of this paper is to clarify two aspects GREIT:
 1) the ``ingredients'' for the algorithm, and
 2) the evaluation methodology. Details are given in the
-next sections
+next sections.
 
 \section{``Ingredients''}
 
@@ -210,45 +220,139 @@ but are not certain of the best reconstruction matrix prior.
 For this reason, we use the metaphor ``ingredients'' and
 ``recipe''; we are certian of the ingredients, but need
 to experiment to find the best recipe.
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.4\textwidth, bb=0 0 427 419]{figs/square_mesh03a.png}
+\caption{ \label{fig:dual_model}
+Dual model example. {\em black:} a cut away view of a
+cylindrical 3D FEM (fine) forward model (with electrode
+ refinement),
+{\em blue:} (coarse) reconstruction model with 2D square
+pixels of defined height.
+}
+\end{center}
+\end{figure}
 
-\begin{itemize}
-\item[Dual Modals]
+\newcounter{Ictr}
+\begin{list}{\bf \arabic{section}.\arabic{Ictr}}
+  {\leftmargin=1.0em \itemindent=0.8em
+    \topsep= 0.0\baselineskip
+    \itemsep= 0.0\baselineskip
+    \usecounter{Ictr}}
+
+\item {\bf Dual Modals.}
 
 A dual reconstruction model uses a fine finite element
 model (FEM) to implement the forward solution (voltages
 at electrodes), and a coarses mesh for the inverse
 solution. For GREIT, the forward model is a 3D FEM with
 a mesh refined near the electrodes, and the reconstruction
-model is square pixel mesh. Given a forward model, $F$,
+model is square pixel mesh (Fig. \ref{fig:dual_model}).
+Given a forward model, $F$,
 which calculates a voltage measurement vector, $\vB$, from
-a forward model conductivity element vector, $\sG$, we
-have $\sG = F( \vB )$ 
+a forward (fine) model conductivity element vector, $\sG_f$, we
+have $\vB = F( \sG_f )$. The reconstruction (coarse)
+model is defined on square elements $\sG_r$ related by
+a coarse to fine projection matrix $\PB$, where $\sG_f = \PB \sG_r$.
 
-\item[Regularized Gauss Newton Reconstruction]
+\item {\bf Rasterized Output image with units}
 
+GREIT output images will be parameterized onto
+a 2D grid with square pixels (Fig. \ref{fig:square_pixels}).
+This differs from many EIT reconstruction algorithms
+which reconstruct to an arbitrary FEM triangularization.
+Square pixels are chosen because it allows easier
+display and analysis of images, and because the 
+resolution limits of EIT is easier to communicate this way.
+Non circular reconstruction geometries (for adult and
+neonate chests) will be represented onto the same 2D grid.
 
+GREIT output images will be in conducitivity change units
+($\Omega\cdot m$) given input in tranfer impedance units
+({\em measured V/stimulation I} $=\Omega$). Assigning units
+this way requires one dimensional parameter to be measured
+from the patient. For GREIT, this is the lateral width of
+the chest (or the diameter of the cylindrial tank).
 
-\item[Image Prior with spatial correlations]
-
-\item[Scaling for units and spatial uniformity]
-
-\item[Hyperparameter selection method]
-
-\end{itemize}
-
-
-
-\begin{figure}[bhtp]
+\begin{figure}[tbh]
 \begin{center}
-  \includegraphics[width= 0.4 \textwidth]{figs/forward_model_2.eps}
-  \includegraphics[width= 0.4 \textwidth]{figs/forward_model_3.eps}
-
-\caption{ \label{fig:fm2}
-{\em left:} FEM of the cylindrical phantom
-{\em right:} FEM of the neonate chest 
+ \includegraphics[width= 0.4\textwidth, bb=0 0 749 378]{figs/square_mesh06a.png}
+\caption{ \label{fig:square_pixels}
+{\em Left}: Reconstructed image onto $16\times 16$ pixel array using
+dual model (triangular divisions of pixels is an artefact of EIDORS
+representation). Precalculated GREIT models
+will use $32\times 32$ pixel array.
+{\em Right}: Reconstructed image using a single FEM reconstruction model.
 }
 \end{center}
 \end{figure}
+
+\item {\bf Linearized Regularized Gauss Newton (GN) Reconstruction.}
+
+GN reconstruction seeks a solution $\hat{\xB}$ which minimizes
+$$\| \yB - \JB \xB \|^2_{\WB} + \lambda^2\|\xB - \xB_0\|^2_{\RB}.$$
+$\yB = \vB^{(2)} - \vB^{(1)}$ is the vector of
+time difference measurements (between times $(1)$ and $(2)$).
+GREIT does not use normalized difference measurements
+($[\yB]_i = [\vB^{(2)} - \vB^{(1)}]_i / [\vB^{(1)}]_i$) since precludes
+the ability to assign units to $\hat{\xB}$. 
+$\xB = f(\sG^{(2)}_r) - f(\sG^{(1)}_r)$ is the (parameterized) 
+conductivity change vector on the inverse model.
+The parameterization will be
+chosen to maximize the linear range of the solution; 
+some possible parameterization functions $f()$ are log and linear.
+
+$\JB$ is the Jacobian matrix calculated from the 
+fine model and projected on the inverse model,
+such that 
+$$[\JB]_{ij} = \sum_k \frac{\partial [\yB ]_i}
+                           {\partial [ f(\sG_f) - f(\sG_{bkg}) ]_k}
+                           \PB_{kj} ,$$ 
+where $\sG_{bkg}$ is the background conductivity distribution in 
+the body about which conductivity changes take place. Precalculated
+GREIT models will assume homogeneous $\sG_{bkg}$, since this
+assumption is well understood, even though it is not
+physiologically realistic in the chest. Efficient techniques
+to compute $\JB$ are out of scope for GREIT, since the calculation
+of the Jacobian is off-line.
+
+GN reconstruction uses the 2-norm ($\| \cdot \|^2$), since this
+makes image reconstruction linear, and allows precalculation
+of a reconstruction matrix. Based on this matrix, real-time
+EIT image reconstruction is implemented using matrix multiplication.
+It may be possible to increase the computational efficiency
+of reconstruction using scaling and integer multiplication,
+including use of hardware which supports parallel computation;
+however, such implementation details are out of scope for GREIT.
+
+\item {\bf Image Prior with spatial correlations}
+
+$\WB$ and $\RB$ represent the estimates of inverse covariances
+of the data noise ($\SG_n$) and conductivity change, or
+image prior ($\SG_x$), such that
+$\sigma_n^2 \WB^{-1}= \SG_n$ and
+$\sigma_x^2 \RB^{-1}= \SG_x$. Here $\lambda= \sigma_n/\sigma_x$,
+is the regularization {\em hyperparameter}.
+Precalculated GREIT models assume uniform uncorrelated
+Gaussian measurement noise
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.4\textwidth, bb=0 0 597 229]{figs/spatial-uniformity.png}
+\caption{ \label{fig:space_uniform}
+Example reconstructed images from a small nonconductive target
+moving from the medium centre to the boundary, illustrating
+several undesirable features.%
+}
+\end{center}
+\end{figure}
+
+
+\item {\bf Hyperparameter selection method}
+
+\end{list}
+
+
 \subsection{Algorithms}
 \subsection{Evaluation: model data}
 
@@ -385,7 +489,7 @@ The {\em output} from the algorithm is:
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.2 \textwidth]{figs/reconstruction-detail.eps}
+% \includegraphics[width= 0.2 \textwidth]{figs/reconstruction-detail.eps}
 
 \caption{ \label{fig:reconst_detail}
 Diagram of $32\times 32$ rasterization of the output image. Black
@@ -399,28 +503,31 @@ to bottom, left to right.
 
 \section*{References}
 
-\begin{itemize}
+\begin{list}{}
+  {\leftmargin=1.0em \itemindent=-1.0em
+    \topsep=-1.5\baselineskip
+    \itemsep=-0.4\baselineskip}
 \item[]
-Adler A and Lionheart W R B 2006
+Adler A and Lionheart WRB 2006
 ``Uses and abuses of EIDORS: An extensible software base for EIT''
 {\em Physiol Meas}
 27 S25--S42
 
 \item[]
-Barber D C and Brown B H 1984
+Barber DC and Brown BH 1984
 ``Applied potential tomography'', 
 {\em J Phys E: Sci Instrum}
  17 723--733
 
 \item[]
-Barber D C 1989
+Barber DC 1989
 ``A review of image reconstruction techniques for electrical
  impedance tomography''
 {\em Med Phys}
 16 162--169
 
 \item[]
-Brown B H and Seagar A D 1987 
+Brown BH and Seagar AD 1987 
 ``The Sheffield data collection system''
 {\em Clin Phys Physiol Meas}
  8(Suppl A) 91--97
@@ -445,11 +552,11 @@ different electrical tomography devices''
 
 
 \item[]
-Kotre C J 1988
+Kotre CJ 1988
 ``A fast approximation for the calculation of potential distributions in electrical impedance tomography''
 {\em Clin Phys Physiol Meas}
 9 353-361
-\end{itemize}
+\end{list}
 
 \end{document}
 
