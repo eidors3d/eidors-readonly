@@ -7,7 +7,7 @@ function Reg= gaussian_HPF_prior( inv_model );
 %   diam_frac= inv_model.fwd_model.gaussian_HPF_prior.diam_frac DEFAULT 0.1
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: gaussian_HPF_prior.m,v 1.8 2008-03-28 17:37:49 aadler Exp $
+% $Id: gaussian_HPF_prior.m,v 1.9 2008-04-14 19:37:34 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 try 
@@ -23,7 +23,7 @@ if ~isempty(Reg)
    return
 end
 
-Reg = calc_Gaussian_HPF( fwd_model.nodes', fwd_model.elems', diam_frac );
+Reg = calc_Gaussian_HPF( fwd_model, diam_frac );
 
 cache_test_obj= {fwd_model.nodes, fwd_model.elems};
 eidors_obj('set-cache', cache_test_obj, 'gaussian_HPF_prior', Reg);
@@ -31,7 +31,11 @@ eidors_msg('gaussian_HPF_prior: setting cached value', 3);
 
 % Calculate Gaussian HP Filter as per Adler & Guardo 96
 % parameter is diam_frac (normally 0.1)
-function filt= calc_Gaussian_HPF( NODE, ELEM, diam_frac)
+function filt= calc_Gaussian_HPF( fmdl, diam_frac)
+  ELEM= fmdl.elems';
+  NODE= fmdl.nodes';
+
+
   e= size(ELEM, 2);
   np= 128;
   [x,xc,y,yc] = interp_points(NODE,ELEM,np);
@@ -65,7 +69,8 @@ function filt= calc_Gaussian_HPF( NODE, ELEM, diam_frac)
   end %for j=1:ELEM
 % filt=filt/taille(1)/taille(2)+eye(e);
   filt=filt/np^2+eye(e);
-  filt= sparse(filt.*(abs(filt)>.001)); 
+  filt= ( filt+filt' )/ 2;
+  filt= sparse(filt.*(abs(filt)>.003)); 
 
 function [x,xc,y,yc] = interp_points(NODE,ELEM,np);
   taille=max(NODE')-min(NODE');
