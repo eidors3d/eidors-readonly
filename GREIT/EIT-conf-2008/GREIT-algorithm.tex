@@ -1,5 +1,5 @@
-% $Id: GREIT-algorithm.tex,v 1.9 2008-04-13 21:41:03 aadler Exp $
-\documentclass[letterpaper,twocolumn,11pt]{article}
+% $Id: GREIT-algorithm.tex,v 1.10 2008-04-14 01:49:11 aadler Exp $
+\documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
 \usepackage{graphicx}
@@ -14,6 +14,7 @@
 \newcommand{\IB}{\mbox{$\bf I$}}
 \newcommand{\SG}{\mbox{$\bf \Sigma$}}
 \newcommand{\sG}{\mbox{$\bf \sigma$}}
+\newcommand{\etal}{{\em et al}}
 \begin{document}
 
 %\title[GREIT: reconstruction algorithm for EIT chest images]
@@ -45,7 +46,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-13 21:41:03 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-14 01:49:11 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -101,24 +102,24 @@ research and commercial use.
 Electrical Impedance Tomography (EIT) measures conductivity
 changes within a body from current stimulation and voltage
 measurement on the body surface. One of the most promising
-application of EIT is for measuring the lungs, since these
+applications of EIT is for measuring the lungs, since these
 are large organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
 was the among first physiological applications of this technology
-(refs). While there are many medical imaging and instrumentation
-technologies to measure the distribution of ventilation
-in the lungs, EIT is unique in that it
+(Barber and Brown 1984).
+While there are several medical imaging and instrumentation
+technologies to measure ventilation, EIT is unique in that it
 is able to non-invasively and continuously monitor the distribution of 
 ventiolation. Based on these advantages, there is significant
 interest in EIT to 
 monitor mechanically ventilated patients.
 
 One limitation is that most clinical and physiological research
-on lung EIT is that being done using proprietary variants of
+on lung EIT is being done using proprietary variants of
 older image reconstruction algorithms, such as the backprojection
 algorithm as implemented
 in the Sheffield (Brown and Seagar, 1987)
-or G\"ottingen (Hahn et al, 2001) EIT systems.
+or G\"ottingen (Hahn \etal, 2001) EIT systems.
 This is an obstacle to clinical use of EIT because:
 1) it is difficult to determine whether a given image feature is 
 an physiological or artefact,
@@ -158,16 +159,16 @@ we do not feel this sufficient experience yet to reach
 consensus in these areas.
 It is important to clarify that there is no financial
 goal to develoment of this algorithm. Participants have
-agreed not to seek patent protection on this algorithm,
-and all developed algorithms, simulation
+agreed not to seek patent protection on approach,
+and all developed algorithms, software
 models and simulation and experimental test data used
 in this algorithm will been made available as part of
-the EIDORS distribution (Adler and Lionheart, 2006).
+the open source EIDORS distribution (Adler and Lionheart, 2006).
 
 The goals identified for GREIT are for:
 \begin{list}{$\circ$} %{\textbullet}
   {\leftmargin=1.0em \itemindent=-0.0em
-    \topsep=-1.5\baselineskip
+    \topsep=0.0\baselineskip
     \itemsep=-0.4\baselineskip}
 \item
  single and double ring electrode
@@ -202,23 +203,21 @@ change image, based on a 3D forward model
    royalty free use in both research and commercial applications.
 
 \end{list}
-\vspace{1cm}
 
 
-This goal of this paper is to clarify two aspects GREIT:
+In the remainder of this paper, we clarify two aspects GREIT:
 1) the ``ingredients'' for the algorithm, and
-2) the evaluation methodology. Details are given in the
-next sections.
+2) the evaluation methodology.
 
 \section{``Ingredients''}
 
 There is general agreement that the algorithm features
-described in this section are represent the best approach
-to linear EIT reconstruction. However, the best selections
+described in this section are the most suitable for
+linear EIT reconstruction. However, the best selections
 for the details of each feature are subject to discussion
 and experimentation. For example, we all agree that
 regularized image reconstruction techniques are necessary,
-but are not certain of the best reconstruction matrix prior.
+but are not yet certain of the best reconstruction matrix prior.
 For this reason, we use the metaphor ``ingredients'' and
 ``recipe''; we are certian of the ingredients, but need
 to experiment to find the best recipe.
@@ -251,8 +250,8 @@ A dual reconstruction model uses a fine finite element
 model (FEM) to implement the forward solution (voltages
 at electrodes), and a coarses mesh for the inverse
 solution. For GREIT, the forward model is a 3D FEM with
-a mesh refined near the electrodes, and the reconstruction
-model is square pixel mesh (Fig. \ref{fig:dual_model}).
+mesh refinement near the electrodes, and the reconstruction
+model is square pixel grid (Fig. \ref{fig:dual_model}).
 Given a forward model, $F$,
 which calculates a voltage measurement vector, $\vB$, from
 a forward (fine) model conductivity element vector, $\sG_f$, we
@@ -272,10 +271,10 @@ resolution limits of EIT is easier to communicate this way.
 Non circular reconstruction geometries (for adult and
 neonate chests) will be represented onto the same 2D grid.
 
-GREIT output images will be in conducitivity change units
+GREIT output images will be in impedivity change units
 ($\Omega\cdot m$) given input in tranfer impedance units
 ({\em measured V/stimulation I} $=\Omega$). Assigning units
-this way requires one dimensional parameter to be measured
+this way requires one length parameter to be measured
 from the patient. For GREIT, this is the lateral width of
 the chest (or the diameter of the cylindrial tank).
 
@@ -327,8 +326,8 @@ makes image reconstruction linear, and allows precalculation
 of a reconstruction matrix. Based on this matrix, real-time
 EIT image reconstruction is implemented using matrix multiplication.
 It may be possible to increase the computational efficiency
-of reconstruction using scaling and integer multiplication,
-including use of hardware which supports parallel computation;
+of reconstruction using scaled integer multiplication,
+and with use of hardware which supports parallel computation;
 however, such implementation details are out of scope for GREIT.
 
 \item {\bf Image Prior with spatial correlations}
@@ -350,16 +349,16 @@ high pass filters. The choice of $\RB$ has several
 subtle but important implications on reconstructed
 images, as illustrated in \ref{fig:prior_effects}.
 We identify these undesirable image features as:
-a) {\em ringing} the presence of opposite polarity
+a) {\em ringing:} the presence of opposite polarity
 regions surrounding a reconstructed target (which
 may be incorrectly interpreted as physiological),
-b) {\em position error} incorrect positioning of
+b) {\em position error:} incorrect positioning of
 a reconstructed target,
 and 
-c) {\em blurring} increased area of a reconstructed
+c) {\em blurring:} increased area of a reconstructed
 target.
-There are clearly compromises to be made between
-these features, especially {\em ringing} and
+Clearly, there are compromises to be made between
+optimizing each features, such as for {\em ringing} and
 {\em blurring}. Additionally, the uniformity of
 a feature with spatial position is more important
 than low average feature errors.
@@ -388,16 +387,15 @@ as a function of simulated radial position.%
 \item {\bf Hyperparameter selection method}
 
 In many studies, the EIT hyperparameter, $\lambda$, is selected
-manually based on heuristic criterion, probaby because
-automatic techniques such as the L-curve, work poorly
+manually based on heuristic criteria, probably because
+automatic techniques, such as the L-curve, work poorly
 on the EIT problem (Graham and Adler, 2006).  Furthermore,
-traditional hyperparameter selection methods, such as the L-curve,
-choose a value for each image, which is not appropriate.
- However, it
-is essential that GREIT define the hyperparameter 
-automatically, as this is necessary for reliable
-clinical interpretation, or multi-centre studies.
+these methods select the best $\lambda$
+each image, rather than for the system configuration.
 
+It is essential that GREIT define the hyperparameter 
+selection, as this is necessary for reliable
+clinical interpretation, or multi-centre studies.
 Unfortunately, there is little consensus on the best
 way to choose $\lambda$, and thus exploration of 
 this issue will be a major part of the GREIT evaluation
@@ -412,13 +410,13 @@ an optimal $\lambda$ may be chosen.
 \item {\bf Electrode movement and model inaccuracy compensation}
 
 Movement of electrodes due to breathing and posture change
-contributes artefacts to EIT images, both as clearly perceptible
+contributes artefacts to EIT images, which appear as
 image degradation near the boundary, and as a broad artefact
-that changes image calibration. 
-Some recent work to correct for movement (Soleimani et al, 2006)
+that changes image amplitude. 
+Some recent work to correct for movement (Soleimani \etal, 2006)
 and general model inaccuracies (Kaipio and Somersalo, 2007)
 show promising results and may be represented in a linear
-GN reconstruction, as by modifying the data noise model
+GN reconstruction, by modifying the data noise model
 ($\SG_n$) to include both measurement noise and ``noise'' 
 due to geometrical inaccuracies. Given parameters, $\xB_g$,
 which express electrode movement and other model inaccuracies,
@@ -428,8 +426,8 @@ represents the prior covariance between parameters.
 
 Since such techniques are relatively new, they are less well
 understood than the ``ingredients'' discussed previously. 
-The evaluation of GREIT parameters may establish the value
-of these techniques, or not.
+During the evaluation these techniques may demonstrate
+their value, or not.
 
 \item {\bf Temporal reconstruction}
 
@@ -439,9 +437,9 @@ However, EIT systems make sequential measurements for
 each current pattern. It is possible to take this
 time difference into account to calculate more
 accurate EIT images of rapid conductivity changes, such
-as those due to perfusion and from high frequency oscillatory
+as those due to perfusion or high frequency oscillatory
 ventilation. This approach may be generalized as 
-a ``temporal'' image reconstruction (Adler et al, 2007)
+a ``temporal'' image reconstruction (Adler \etal, 2007)
 in which measurements from several nearby frames are
 used. Such an approach may be used to
 achieve improved noise performance.
@@ -451,12 +449,16 @@ achieve improved noise performance.
 
 \section{Evaluation: model data}
 
-Each algorithm will be evaluated against the
-following criteria.
+This paper also defines the evaluation strategy
+against which GREIT algorithms candidates will
+be evaluated. Unfortunately, this abstract
+does not provide space to algorithmically
+define how each evaluation parameter is calculated;
+instead, the general criteria are listed:
 
 \newcounter{Ectr}
 \begin{list}{\bf \arabic{section}.\arabic{Ectr}}
-  {\leftmargin=0.0em \itemindent=2.0em
+  {\leftmargin=1.0em \itemindent=1.0em
     \topsep= 0.0\baselineskip
     \itemsep=-0.0em
     \listparindent=1.0em \parsep=-0.0em
@@ -464,7 +466,7 @@ following criteria.
 
 \item {\bf Amplitude Response}
 \\ \noindent $\circ$
-  Output amplitude is correct ($\Omega \cdot m$)
+  Output image amplitude is correct
 \\ \noindent $\circ$ 
   the amplitude response is uniform for all radial positions.
 
@@ -496,16 +498,22 @@ following criteria.
 \\ \noindent $\circ$
       low sensitivity to boundary distortions
          (with breathing and posture change)
-\\ \noindent $\circ$
-      low sensitivity to changes in electrode contact impedance
 
 \item {\bf Performance on experimental data}
 \\ \noindent $\circ$
- good performance on real clinical images.
-     (NB, we need to develop a small database of 
-          clinical images to do this)
+ good performance on real experimental animal
+    and human clinical images.
 \end{list}
 
+The most difficult evaluation criteria will be the 
+last ``experimental data performance''. Our approach
+is based on a database of experimental
+EIT data from Frerichs \etal and Hahn \etal  (need refs
+here??). Some of these EIT data sets were measured with
+simultaneous CT images, which will facilitate developing
+validation tests of EIT algorithm output. We also
+plan to develop a blinded evaluation protocol for
+EIT images.
 
 
 \section{Discusion}
@@ -514,7 +522,7 @@ This paper clarifies two aspects of the
 GREIT algorithm: the technical ``ingredients''
 and the evaluation methodology. Based on
 this description, we aim to select the best
-``recipe'' for GREIT algorithm as follows:. 
+``recipe'' for GREIT algorithm as follows:
 First, algorithm candidates will be
 built and made available for testing on
 simluation and experimental data
@@ -523,10 +531,14 @@ Based on this experience, a consensus
 on each parameter will be developed
 and the GREIT algorithm will be
 defined and published.
-Such a consensus algorithm will provide
-numerous benefits. Because every detail
-is clarified and made freely available, it
-will be possible to 
+We anticipate several benefits for
+this work. It will allow detailed
+interpretation of EIT images in terms of
+known algorithm performance. This will facilitate
+multi-centre EIT tests. For EIT research in
+general, it will provide a completely characterized
+baseline against which newer work can be compared.
+
 
 
 \section*{References}
