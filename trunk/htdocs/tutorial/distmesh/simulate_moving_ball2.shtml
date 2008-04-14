@@ -21,7 +21,7 @@ surrounding the target. Then using <tt>interp_mesh.m</tt>,
 we find the elements that are in the target position.
 
 <pre>
-<!--#include virtual="simulate_move1_02.m" -->
+<!--#include virtual="simulate_move2_02.m" -->
 </pre>
 
 <center>
@@ -118,7 +118,7 @@ Reconstructed images of targets moving in the mesh
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-29 16:17:42 $ by $Author: aadler $
+    Last Modified: $Date: 2008-04-14 19:40:17 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
