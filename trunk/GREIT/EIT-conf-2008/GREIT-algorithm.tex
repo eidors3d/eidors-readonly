@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.10 2008-04-14 01:49:11 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.11 2008-04-14 01:54:14 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -46,7 +46,7 @@
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-14 01:49:11 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-14 01:54:14 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -69,7 +69,7 @@ This algorithm will be developed in three phases:
 methodology (this paper),
 2) evaluation and experience with GREIT variants, and
 3) consensus and definition of the GREIT algorithm.
-Algorithms evalulation criteria are identified to be:
+Algorithms evaluation criteria are identified to be:
 a) quantitative output for all positions,
 b) reconstructed position error (low and uniform),
 c) resolution (small PSF, uniform, few artefacts),
@@ -110,7 +110,7 @@ was the among first physiological applications of this technology
 While there are several medical imaging and instrumentation
 technologies to measure ventilation, EIT is unique in that it
 is able to non-invasively and continuously monitor the distribution of 
-ventiolation. Based on these advantages, there is significant
+ventilation. Based on these advantages, there is significant
 interest in EIT to 
 monitor mechanically ventilated patients.
 
@@ -150,7 +150,7 @@ algorithm and the evaluation
 methodology. Subsequently, we plan to evaluate
 and gain experience with GREIT ``recipes'' based on 
 variants of the ingredients. This will lead to 
-consensus and definition of the GREIT algorthm.
+consensus and definition of the GREIT algorithm.
 
 The current work is limited to the reconstruction algorithm.
 We do not propose calibration tests or phantoms, standards
@@ -158,7 +158,7 @@ for image interpretation or EIT based lung parameters;
 we do not feel this sufficient experience yet to reach
 consensus in these areas.
 It is important to clarify that there is no financial
-goal to develoment of this algorithm. Participants have
+goal to development of this algorithm. Participants have
 agreed not to seek patent protection on approach,
 and all developed algorithms, software
 models and simulation and experimental test data used
@@ -219,7 +219,7 @@ and experimentation. For example, we all agree that
 regularized image reconstruction techniques are necessary,
 but are not yet certain of the best reconstruction matrix prior.
 For this reason, we use the metaphor ``ingredients'' and
-``recipe''; we are certian of the ingredients, but need
+``recipe''; we are certain of the ingredients, but need
 to experiment to find the best recipe.
 \begin{figure}[tbh]
 \begin{center}
@@ -248,7 +248,7 @@ pixels of defined height.%
 
 A dual reconstruction model uses a fine finite element
 model (FEM) to implement the forward solution (voltages
-at electrodes), and a coarses mesh for the inverse
+at electrodes), and a coarse mesh for the inverse
 solution. For GREIT, the forward model is a 3D FEM with
 mesh refinement near the electrodes, and the reconstruction
 model is square pixel grid (Fig. \ref{fig:dual_model}).
@@ -261,7 +261,7 @@ a coarse to fine projection matrix $\PB$, where $\sG_f = \PB \sG_r$.
 
 \item {\bf Rasterized Output image with units}
 
-GREIT output images will be parameterized onto
+GREIT output images will be parametrized onto
 a 2D grid with square pixels (Fig. \ref{fig:square_pixels}).
 This differs from many EIT reconstruction algorithms
 which reconstruct to an arbitrary FEM triangularization.
@@ -272,11 +272,11 @@ Non circular reconstruction geometries (for adult and
 neonate chests) will be represented onto the same 2D grid.
 
 GREIT output images will be in impedivity change units
-($\Omega\cdot m$) given input in tranfer impedance units
+($\Omega\cdot m$) given input in transfer impedance units
 ({\em measured V/stimulation I} $=\Omega$). Assigning units
 this way requires one length parameter to be measured
 from the patient. For GREIT, this is the lateral width of
-the chest (or the diameter of the cylindrial tank).
+the chest (or the diameter of the cylindrical tank).
 
 \begin{figure}[tbh]
 \begin{center}
@@ -301,11 +301,11 @@ time difference measurements (between times $(1)$ and $(2)$).
 GREIT does not use normalized difference measurements
 ($[\yB]_i = [\vB^{(2)} - \vB^{(1)}]_i / [\vB^{(1)}]_i$) since precludes
 the ability to assign units to $\hat{\xB}$. 
-$\xB = f(\sG^{(2)}_r) - f(\sG^{(1)}_r)$ is the (parameterized) 
+$\xB = f(\sG^{(2)}_r) - f(\sG^{(1)}_r)$ is the (parametrized) 
 conductivity change vector on the inverse model.
-The parameterization will be
+The parametrization will be
 chosen to maximize the linear range of the solution; 
-some possible parameterization functions $f()$ are log and linear.
+some possible parametrization functions $f()$ are log and linear.
 
 $\JB$ is the Jacobian matrix calculated from the 
 fine model and projected on the inverse model,
@@ -432,7 +432,7 @@ their value, or not.
 \item {\bf Temporal reconstruction}
 
 Typically, a frame of EIT data is reconstructed assuming
-that all measurements were made at the same momement.
+that all measurements were made at the same movement.
 However, EIT systems make sequential measurements for
 each current pattern. It is possible to take this
 time difference into account to calculate more
@@ -516,7 +516,7 @@ plan to develop a blinded evaluation protocol for
 EIT images.
 
 
-\section{Discusion}
+\section{Discussion}
 
 This paper clarifies two aspects of the
 GREIT algorithm: the technical ``ingredients''
@@ -525,8 +525,8 @@ this description, we aim to select the best
 ``recipe'' for GREIT algorithm as follows:
 First, algorithm candidates will be
 built and made available for testing on
-simluation and experimental data
-(timeframe June -- Sept, 2008). 
+simulation and experimental data
+(time frame June -- Sept, 2008). 
 Based on this experience, a consensus
 on each parameter will be developed
 and the GREIT algorithm will be
