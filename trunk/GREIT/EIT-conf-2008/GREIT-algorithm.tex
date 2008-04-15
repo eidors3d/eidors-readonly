@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.11 2008-04-14 01:54:14 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.12 2008-04-15 13:03:16 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -17,7 +17,6 @@
 \newcommand{\etal}{{\em et al}}
 \begin{document}
 
-%\title[GREIT: reconstruction algorithm for EIT chest images]
 \title{\bf GREIT: towards a consensus EIT algorithm for lung images}
 
 \author{Andy Adler$^{1}$,
@@ -27,26 +26,19 @@
         Brian Brown$^{5}$,
         Paul Dixon$^{6}$,
 \\
-        Theo Faes$^{7}$,
         In\'ez Frerichs$^{8}$,
         Herv\'e Gagnon$^{9}$,
         Yvo G\"arber$^{10}$,
         William R B Lionheart$^{12}$,
-\\
-        Alex Hartov$^{4}$,
         G\"unter Hahn$^{13}$,
-        David Holder$^{14}$,
-        David Isaacson$^{15}$,
         Anjum Malik$^{16}$,
 \\
         Janet Stocks$^{17}$,
-        Marco Vauhkonen$^{18}$,
         Gerhard Wolf$^{2}$,
-        Eung Je Woo$^{19}$,
         and many others%
        }
 
-\date{\bf DRAFT ($Date: 2008-04-14 01:54:14 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-15 13:03:16 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
@@ -63,7 +55,8 @@ done using older and proprietary algorithms; this is
 an obstacle to interpretation of EIT results because the
 reconstructed images are not well characterized.
 To address this issue, we propose to develop a 
-consensus linear reconstruction algorithm for lung EIT.
+consensus linear reconstruction algorithm for lung EIT,
+called GREIT (Graz consensus Reconstruction algorithm for EIT).
 This algorithm will be developed in three phases:
 1) selection of the ``ingredients'' and evaluation 
 methodology (this paper),
@@ -89,13 +82,16 @@ research and commercial use.
 % Image Reconstruction,
 
 {\small
-\noindent $^?$ Systems and Computer Engineering,
+\noindent $^1$Systems and Computer Engineering,
                Carleton University, Ottawa, Canada \\
-\noindent $^?$ Health and Social Sciences,
+\noindent $^3$Health and Social Sciences,
                Middlesex University, London, UK \\
-\noindent $^?$ School of Mathematics,
+\noindent $^4$Thayer School of Engineering,
+               Dartmouth College, Hanover, NH, USA \\
+\noindent $^{12}$School of Mathematics,
                University of Manchester, UK \\
-               Middlesex University, London, UK \\
+\noindent $^{13}$Intensive and Critical Care Medicine,
+                University of G\"ottingen, Germany \\
 }
 
 \section{Introduction}
@@ -508,8 +504,8 @@ instead, the general criteria are listed:
 The most difficult evaluation criteria will be the 
 last ``experimental data performance''. Our approach
 is based on a database of experimental
-EIT data from Frerichs \etal and Hahn \etal  (need refs
-here??). Some of these EIT data sets were measured with
+EIT data from Groups in Kiel and G\"ottingen (Hahn \etal, 
+2006). Some of these EIT data sets were measured with
 simultaneous CT images, which will facilitate developing
 validation tests of EIT algorithm output. We also
 plan to develop a blinded evaluation protocol for
@@ -583,29 +579,36 @@ Cheney M Isaacson D Newell JC Simske S and Goble JC 1990
 ``NOSER: An algorithm for solving the inverse conductivity problem''
 {\em J Imaging Syst Technol} 2 66--75
 
-\item[]
-Creative Commons/Science Commons 2007
-``Creative Commons 3.0 Attribution License''
-\verb+creativecommons.org/licenses/by/3.0/+
-
-\item[]
-GNU Lesser General Public License: Version 3, 29 June 2007
-{\em Free Software Foundation, Inc.}
-\verb+www.gnu.org/licenses/lgpl.html+
-
-\item[]
-Hahn G Thiel F Dudykevych T Frerichs I Gersing E
-and Hellige G 2001
-``Quantitative evaluation of the performance of
-different electrical tomography devices''
-{\em  Biomed Tech (Berl)}
-46 91--95
+%\item[]
+%Creative Commons/Science Commons 2007
+%``Creative Commons 3.0 Attribution License''
+%\verb+creativecommons.org/licenses/by/3.0/+
+%
+%\item[]
+%GNU Lesser General Public License: Version 3, 29 June 2007
+%{\em Free Software Foundation, Inc.}
+%\verb+www.gnu.org/licenses/lgpl.html+
 
 \item[]
 Graham B, Adler A 2006
 ``Objective selection of the hyperparameter for EIT''
 {\em Physiol. Meas.}
 27 S65-S79
+
+\item[]
+Hahn G Thiel F Dudykevych T Frerichs I Gersing E
+and Hellige G 2001
+``Quantitative evaluation of the performance of
+different electrical tomography devices''
+{\em  Biomed Tech (Berlin)}
+46 91--95
+
+\item[]
+Hahn G Just A Dudykevych T Frerichs I Hinz J Quintel M and Hellige G
+2006
+``Imaging pathologic pulmonary air and fluid accumulation by functional and absolute EIT''
+{\em Physiol. Meas.}
+27 S187--S198
 
 \item[]
 Kaipio J and Somersalo E 2007
