@@ -138,14 +138,14 @@ show_fem(inv_solve(imdl,vh,vi(2)));
 axis image; print -dpng -r125 fig4b.png
 show_fem(inv_solve(imdl,vh,vi(3)));
 axis image; print -dpng -r125 fig4c.png
-!find -name 'fig*.png' -exec convert  -trim '{}' PNG8:'{}' ';'
 
 
 load iirc_data_2006
-show_fem(inv_solve(imdl,v_rotate(:,41),v_reference)));
+show_fem(inv_solve(imdl,v_rotate(:,41),v_reference));
 axis image; print -dpng -r125 fig5a.png
-show_fem(inv_solve(imdl,v_rotate(:,43),v_reference)));
+show_fem(inv_solve(imdl,v_rotate(:,43),v_reference));
 axis image; print -dpng -r125 fig5b.png
-show_fem(inv_solve(imdl,v_rotate(:,45),v_reference)));
+show_fem(inv_solve(imdl,v_rotate(:,45),v_reference));
 axis image; print -dpng -r125 fig5c.png
+!find -name 'fig*.png' -exec convert  -trim '{}' PNG8:'{}' ';'
 
