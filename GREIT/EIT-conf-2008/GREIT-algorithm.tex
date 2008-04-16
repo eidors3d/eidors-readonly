@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.13 2008-04-16 11:00:22 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.14 2008-04-16 15:05:25 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -21,37 +21,36 @@
 
 \author{Andy Adler$^{1}$,
         John Arnold$^{2}$,
-        Richard Bayford$^{3}$,
-        Andrea Borsic$^{4}$,
-        Brian Brown$^{5}$,
-        Paul Dixon$^{6}$,
+        Grychtol Bartek$^{3}$, 
+        Richard Bayford$^{4}$,
+        Andrea Borsic$^{5}$,
 \\
+        Brian Brown$^{6}$,
+        Paul Dixon$^{7}$,
         In\'ez Frerichs$^{8}$,
         Herv\'e Gagnon$^{9}$,
         Yvo G\"arber$^{10}$,
-        William R B Lionheart$^{12}$,
-        G\"unter Hahn$^{13}$,
-        Anjum Malik$^{16}$,
 \\
-        Janet Stocks$^{17}$,
-        Gerhard Wolf$^{2}$,
-        and many others%
+        William R B Lionheart$^{11}$,
+        G\"unter Hahn$^{12}$,
+        Anjum Malik$^{13}$,
+        Janet Stocks$^{14}$,
+        Gerhard Wolf$^{2}$
        }
 
-\date{\bf DRAFT ($Date: 2008-04-16 11:00:22 $): Please note that the
+\date{\bf DRAFT ($Date: 2008-04-16 15:05:25 $): Please note that the
            author list is still not agreed on}
 \maketitle
 
-
-
 \begin{abstract}
+\small \bf
 Recently, Electrical Impedance Tomography (EIT) has begun to see a
 significant clinical interest for monitoring of
 ventilated patients.  The key capability of EIT is to
 provide a real-time image distribution of ventilation in
 the patient's lungs.
 However, most clinical and physiological research in lung EIT
-done using older and proprietary algorithms; this is
+is done using older and proprietary algorithms; this is
 an obstacle to interpretation of EIT results because the
 reconstructed images are not well characterized.
 To address this issue, we propose to develop a 
@@ -82,16 +81,21 @@ research and commercial use.
 % Image Reconstruction,
 
 {\small
-\noindent $^1$Systems and Computer Engineering,
-               Carleton University, Ottawa, Canada \\
-\noindent $^3$Health and Social Sciences,
-               Middlesex University, London, UK \\
-\noindent $^4$Thayer School of Engineering,
-               Dartmouth College, Hanover, NH, USA \\
-\noindent $^{12}$School of Mathematics,
-               University of Manchester, UK \\
-\noindent $^{13}$Intensive and Critical Care Medicine,
-                University of G\"ottingen, Germany \\
+\noindent 
+ $^{1}$Carleton University, Ottawa, Canada
+ $^{2}$Harvard University, Boston, USA
+ $^{3}$University of Strathclyde, Glasgow, UK
+ $^{4}$Middlesex University, London, UK
+ $^{5}$Dartmouth College, Hanover, NH, USA
+ $^{6}$University of Sheffield, UK
+ $^{7}$Cardinal Health Care, London, UK
+ $^{8}$University of Kiel, Germany
+ $^{9}$\'Ecole Polytechnique de Montr\'eal, Canada
+$^{10}$Dr\"ager Medical, L\"ubeck, Germany
+$^{11}$University of Manchester, UK
+$^{12}$University of G\"ottingen, Germany
+$^{13}$Maltron International, Rayleigh, UK
+$^{14}$Institute of Child Health, London, UK
 }
 
 \section{Introduction}
@@ -101,7 +105,7 @@ measurement on the body surface. One of the most promising
 applications of EIT is for measuring the lungs, since these
 are large organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
-was the among first physiological applications of this technology
+was among the first physiological applications of this technology
 (Barber and Brown 1984).
 While there are several medical imaging and instrumentation
 technologies to measure ventilation, EIT is unique in that it
@@ -118,15 +122,15 @@ in the Sheffield (Brown and Seagar, 1987)
 or G\"ottingen (Hahn \etal, 2001) EIT systems.
 This is an obstacle to clinical use of EIT because:
 1) it is difficult to determine whether a given image feature is 
-an physiological or artefact,
+physiological or an artefact,
 2) comparison of regional ventilation is impacted by
 algorithm spatial non-uniformity and position errors,
 and 
 3) multi-centre studies are not possible without a 
 common imaging algorithm.
 Many approaches to reconstruct EIT images have been proposed,
-however, it has not easy to compare among them, because 
-detailed comparisons of performance have not been done. 
+however, it is not easy to compare among them, because 
+complete implementation detail are not available.
 However, there is general consensus amongst experts
 in EIT image processing of the ``ingredients'' that should
 be part of a robust and high performance algorithm.
@@ -137,7 +141,7 @@ images of the chest.
 This algorithm is named GREIT, 
 the ``Graz consensus Reconstruction algorithm for EIT'',
 since early discussions took place at the 2007 EIT conference
-in Graz, Austria. Our aim is develop a standard which
+in Graz, Austria. Our aim is to develop a standard which
 has broad agreement from experts in the mathematical,
 engineering, physiological, and clinical EIT communities.
 This paper is the first step in developing GREIT:
@@ -151,11 +155,10 @@ consensus and definition of the GREIT algorithm.
 The current work is limited to the reconstruction algorithm.
 We do not propose calibration tests or phantoms, standards
 for image interpretation or EIT based lung parameters; 
-we do not feel this sufficient experience yet to reach
+we do not feel there is sufficient experience yet to reach
 consensus in these areas.
 It is important to clarify that there is no financial
-goal to development of this algorithm. Participants have
-agreed not to seek patent protection on approach,
+goal to development of this algorithm,
 and all developed algorithms, software
 models and simulation and experimental test data used
 in this algorithm will been made available as part of
@@ -201,7 +204,7 @@ change image, based on a 3D forward model
 \end{list}
 
 
-In the remainder of this paper, we clarify two aspects GREIT:
+In the remainder of this paper, we clarify two aspects of GREIT:
 1) the ``ingredients'' for the algorithm, and
 2) the evaluation methodology.
 
@@ -240,7 +243,7 @@ pixels of defined height.%
     \listparindent=1.0em \parsep=-0.0em
     \usecounter{Ictr}}
 
-\item {\bf Dual Modals.}
+\item {\bf Dual Models}
 
 A dual reconstruction model uses a fine finite element
 model (FEM) to implement the forward solution (voltages
@@ -263,7 +266,7 @@ This differs from many EIT reconstruction algorithms
 which reconstruct to an arbitrary FEM triangularization.
 Square pixels are chosen because it allows easier
 display and analysis of images, and because the 
-resolution limits of EIT is easier to communicate this way.
+resolution limits of EIT are easier to communicate this way.
 Non circular reconstruction geometries (for adult and
 neonate chests) will be represented onto the same 2D grid.
 
@@ -292,12 +295,18 @@ will use $32\times 32$ pixel array.
 
 GN reconstruction seeks a solution $\hat{\xB}$ which minimizes
 $$\| \yB - \JB \xB \|^2_{\WB} + \lambda^2\|\xB - \xB_0\|^2_{\RB}.$$
-$\yB = \vB^{(2)} - \vB^{(1)}$ is the vector of
-time difference measurements (between times $(1)$ and $(2)$).
-GREIT does not use normalized difference measurements
-($[\yB]_i = [\vB^{(2)} - \vB^{(1)}]_i / [\vB^{(1)}]_i$) since precludes
-the ability to assign units to $\hat{\xB}$. 
-$\xB = f(\sG^{(2)}_r) - f(\sG^{(1)}_r)$ is the (parametrized) 
+$\yB = \vB^{(b)} - \vB^{(a)}$ is the vector of
+time difference measurements (between times $(a)$ and $(b)$).
+The choice of times $(a)$ and $(b)$ depend on the measurement
+protocol, and often $(a)$ is an average measurement at a time when
+the patient physiology is stable (ie end-expiration). The selection
+of times $(a)$ and $(b)$ is out of scope for GREIT.
+Some groups consider normalized difference measurements
+($[\yB]_i = [\vB^{(b)} - \vB^{(a)}]_i / [\vB^{(a)}]_i$), which
+has the advantage of compensating for differences between measurement
+channels, but makes it difficult to assign units to $\hat{\xB}$. 
+Normalized difference measurements will be considered for GREIT.
+$\xB = f(\sG^{(b)}_r) - f(\sG^{(a)}_r)$ is the (parametrized) 
 conductivity change vector on the inverse model.
 The parametrization will be
 chosen to maximize the linear range of the solution; 
@@ -474,7 +483,7 @@ instead, the general criteria are listed:
 
 \item {\bf Resolution}
 \\ \noindent $\circ$
-      small average PSF size
+      small average PSF (point spread function) size
 \\ \noindent $\circ$
       uniform PSF size with radial position
 \\ \noindent $\circ$
@@ -498,13 +507,20 @@ instead, the general criteria are listed:
 \item {\bf Performance on experimental data}
 \\ \noindent $\circ$
  good performance on real experimental animal
-    and human clinical images.
+    and human clinical images. This includes performance
+    monitoring rapid changes with ventilation and perfusion,
+    and slow changes over hours and days of monitoring.
+    Monitoring of slow changes means that GREIT will need
+    to compensate for drift in hardware and electrode
+    behaviour.
 \end{list}
 
 The most difficult evaluation criteria will be the 
 last ``experimental data performance''. Our approach
 is based on a database of experimental
-EIT data from Groups in Kiel and G\"ottingen (Hahn \etal, 
+EIT data from clinical research groups at Harvard University
+and the Universities
+of Kiel and G\"ottingen (Hahn \etal, 
 2006). Some of these EIT data sets were measured with
 simultaneous CT images, which will facilitate developing
 validation tests of EIT algorithm output. We also
