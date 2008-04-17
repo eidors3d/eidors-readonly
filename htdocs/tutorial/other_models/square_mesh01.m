@@ -1,14 +1,17 @@
-% $Id: square_mesh01.m,v 1.2 2008-04-17 16:12:05 aadler Exp $
+% $Id: square_mesh01.m,v 1.3 2008-04-17 19:45:28 aadler Exp $
 
 z_contact= 0.01;
-n_elec= 9;
+n_elec= 17;
 nodes_per_elec= 5;
 elec_width= 0.2;
 elec_spacing= 1.0;
 
-xllim=-10; xrlim= 10; ydepth=-15;
-[x,y] = meshgrid( linspace(xllim,xrlim,40), linspace(ydepth,0,30) );
+xllim=-12; xrlim= 12; ydepth=-15;
+[x,y] = meshgrid( linspace(xllim,xrlim,49), linspace(ydepth,0,31) );
 vtx= [x(:),y(:)];
+% Refine points close to electrodes - don't worry if points overlap
+[x,y] = meshgrid( -9:.25:9, -3:.25:0 );
+vtx= [vtx; x(:),y(:)];
 
 xgrid=  linspace(-elec_width/2, +elec_width/2, nodes_per_elec)';
 x2grid= elec_width* [-5,-4,-3,3,4,5]'/4;
@@ -31,6 +34,6 @@ fmdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, 'sq_m1');
 subplot(121)
 show_fem(fmdl); axis image
 subplot(122)
-show_fem(fmdl); axis image; axis([-2 2 -1.5 0.5]);
+show_fem(fmdl); axis image; axis([-2 2 -2.5 0.5]);
 
 print -dpng -r150 square_mesh01a.png
