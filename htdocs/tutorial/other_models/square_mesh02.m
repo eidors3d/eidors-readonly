@@ -1,12 +1,7 @@
-% Create and show square model $Id: square_mesh02.m,v 1.1 2008-04-17 16:12:05 aadler Exp $
+% Create and show square model $Id: square_mesh02.m,v 1.2 2008-04-17 20:34:17 aadler Exp $
 
 % Create square mesh model
-imdl= mk_common_model('c2s',16);
-cmdl= rmfield(imdl.fwd_model,{'electrode','stimulation'});
-
-% magnify and move down onto geophysics model
-cmdl.nodes(:,2)= cmdl.nodes(:,2) - 1.05;
-cmdl.nodes= cmdl.nodes*5;
+cmdl= mk_grid_model( linspace(-8,8,17), linspace(-11.5,-0.5,13) );
 
 % assign one parameter to each square
 e= size(cmdl.elems,1);
