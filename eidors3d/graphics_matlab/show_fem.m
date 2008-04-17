@@ -12,7 +12,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.70 2008-04-17 18:13:18 aadler Exp $
+% $Id: show_fem.m,v 1.71 2008-04-17 18:25:31 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
@@ -71,6 +71,15 @@ elseif size(mdl.nodes,2)==3
    show_electrodes_3d(mdl, number_electrodes);
 else
    error(['model is not 2D or 3D']);
+end
+
+if number_elements
+   xyzc= interp_mesh(mdl);
+   xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
+   for i= 1:size(mdl.elems,1);
+      text(xyzc(i,1),xyzc(i,2), xyzc(i,3), num2str(i), ...
+            'HorizontalAlignment','center');
+   end
 end
 
 function show_electrodes_2d(mdl, number_electrodes)
