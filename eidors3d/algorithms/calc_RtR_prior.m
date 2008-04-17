@@ -15,7 +15,8 @@ function RtR_prior = calc_RtR_prior( inv_model )
 %
 % if there exists a field inv_model.rec_model, then
 %   the prior is calculated on the rec_model rather than
-%   the fwd_model
+%   the fwd_model. This will not be done if 
+% inv_model.prior_use_fwd_not_rec= 1;
 %
 % RtR_prior    the calculated RtR regularization prior
 % inv_model    is an inv_model structure
@@ -24,12 +25,9 @@ function RtR_prior = calc_RtR_prior( inv_model )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_RtR_prior.m,v 1.22 2008-03-27 19:19:22 aadler Exp $
+% $Id: calc_RtR_prior.m,v 1.23 2008-04-17 19:31:58 aadler Exp $
 
-if isfield(inv_model,'rec_model');
-   inv_model.fwd_model= inv_model.rec_model;
-   inv_model= rmfield(inv_model,'rec_model');
-end
+inv_model = rec_or_fwd_model( inv_model);
 
 RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
 if ~isempty(RtR_prior)
@@ -60,3 +58,17 @@ end
 
 eidors_obj('set-cache', inv_model, 'RtR_prior', RtR_prior);
 eidors_msg('calc_RtR_prior: setting cached value', 3);
+
+function inv_model = rec_or_fwd_model( inv_model);
+
+   if isfield(inv_model,'rec_model');
+      use_rec_model = 1;
+      try if inv_model.prior_use_fwd_not_rec== 1;
+         use_rec_model = 0;
+      end; end
+
+      if use_rec_model
+         inv_model.fwd_model= inv_model.rec_model;
+         inv_model= rmfield(inv_model,'rec_model');
+      end
+   end
