@@ -6,12 +6,13 @@ function show_fem( mdl, options )
 % options specifies a set of options
 %   options(1) => show colourbar
 %   options(2) => show numbering on electrodes
+%   options(3) => number elements
 %
 % control colours using 
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.69 2008-03-28 14:11:42 aadler Exp $
+% $Id: show_fem.m,v 1.70 2008-04-17 18:13:18 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
@@ -21,6 +22,7 @@ if ~ishold; cla; end % clear axis unless we're axes to hold
 
 do_colourbar=0;
 number_electrodes=0;
+number_elements=0;
 if nargin >=2
     % fill in default options
     optionstr= zeros(1,100);
@@ -28,6 +30,7 @@ if nargin >=2
 
     do_colourbar=      optionstr(1);
     number_electrodes= optionstr(2);
+    number_elements  = optionstr(3);
 end
 
 % if we have an only img input, then define mdl
@@ -49,7 +52,7 @@ if size(mdl.nodes,2)==2
       colours= [1,1,1]; % white elements if no image
    end
    show_2d_fem( mdl, colours );
-   show_electrodes_2d(mdl);
+   show_electrodes_2d(mdl, number_electrodes);
 
    set(hax,'position', pax);
    view(0, 90); axis('xy'); grid('off');
@@ -70,7 +73,7 @@ else
    error(['model is not 2D or 3D']);
 end
 
-function show_electrodes_2d(mdl)
+function show_electrodes_2d(mdl, number_electrodes)
     if ~isfield(mdl,'electrode'); return; end
 
     ee= get_boundary( mdl );
@@ -78,19 +81,26 @@ function show_electrodes_2d(mdl)
     ctr_y= mean(mdl.nodes(:,2));
 
 % scale away from model
-    S= 1.02;
 
 for e=1:length(mdl.electrode)
     elec_nodes= mdl.electrode(e).nodes;
 
+    S= 1.00;
     vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
     vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
     % sort nodes around the model (to avoid crossed lines)
     [jnk,idx] = sort(atan2( vy, vx ));
     ecolour = electr_colour( e );
     line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
-         'LineWidth', 2, 'Color', [1 0 0], ...
-         'Marker','.','MarkerSize',20,'MarkerEdgeColor',ecolour);
+         'LineWidth', 2, 'Color', ecolour, ...
+         'Marker','o','MarkerSize', 6,'MarkerEdgeColor',ecolour);
+    if number_electrodes
+       S= 1.05;
+       vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+       vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+       hh= text(mean(vx), mean(vy), num2str(e));
+       set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
+    end
 end
 
 function show_electrodes_3d(mdl, number_electrodes);
