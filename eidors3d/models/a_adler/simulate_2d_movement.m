@@ -1,6 +1,6 @@
-function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
+function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 % SIMULATE_2D_MOVEMENT simulate rotational movement in 2D
-% [vh,vi,xyr_pt]= simulate_2d_movement( n_points, model, rad_pr )
+% [vh,vi,xyr_pt]= simulate_2d_movement( n_points, model, rad_pr, movefcn )
 %
 % the target starts at (rad_pr(1),0) and rotates around 
 %  clockwise
@@ -12,31 +12,51 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
 %   model = fwd_model to simulate 
 %         (default use internal, or if model= []);
 %
+%   movefcn = 1 (Default)  radial motion where the target starts
+%     at (rad_pr(1),0) and rotates clockwise
+%
+%   movefcn = FUCN NAME or FUNC HANDLE
+%      the function must accept the following parameters
+%      [xp,yp] = movefcn(f_frac, radius);
+%
 % OUTPUT:
 %   vh - homogeneous measurements M x 1
 %   vi - target simulations       M x n_points
 %   xyr_pt - x y and radius of each point 3 x n_points
 
 %
-% $Id: simulate_2d_movement.m,v 1.14 2008-03-29 01:52:07 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.15 2008-04-17 15:54:42 aadler Exp $
 
-    if nargin <1
-       n_sims = 200;
-    end
+if nargin <1
+   n_sims = 200;
+end
 
-    if nargin<2 || isempty(fmdl) % create our own fmdl
-       n_circles = 36;
-       n_elec= 16;
-       fmdl= mk_fwd_model(n_circles, n_elec);
-    end
+if nargin<2 || isempty(fmdl) % create our own fmdl
+   n_circles = 36;
+   n_elec= 16;
+   fmdl= mk_fwd_model(n_circles, n_elec);
+end
 
-    if nargin<3
-       radius= 2/3;
-       rp= .05;
-    else
-       radius= rad_pr(1);
-       rp=     rad_pr(2);
-    end
+if nargin<3 || isempty(rad_pr)
+   radius= 2/3;
+   rp= .05;
+else
+   radius= rad_pr(1);
+   rp=     rad_pr(2);
+end
+
+if nargin<4
+   movefcn = 1;
+end
+if isnumeric(movefcn)
+   if     movefcn==1
+      movefcn = @rotation_path;
+   else
+      error('value of movefcn not understood');
+   end
+else
+   % assume movefcn is a function 
+end
 
     n_elems= size(fmdl.elems,1);
     img= eidors_obj('image','simulate_movement', ...
@@ -45,6 +65,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
     vh= fwd_solve(img);
 
     np= 512;
+    np= 256;
     [x,y]=meshgrid( linspace(-1,1,np), linspace(-1,1,np) );
     [eptr,vol]= img_mapper2(fmdl.nodes', fmdl.elems', np, np);
 
@@ -60,8 +81,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
        f_frac= (i-1)/n_sims;
        fprintf('simulating %d / %d \n',i,n_sims);
 
-       xp= radius * cos(f_frac*2*pi);
-       yp= radius * sin(f_frac*2*pi);
+      [xp,yp]= feval(movefcn, f_frac, radius);
        xyr_pt(:,i)= [xp;-yp;rp]; % -y because images and axes are reversed
 
        ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 <= rp^2 )';
@@ -78,6 +98,13 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr )
 % convert to data matrix
 vi= [vi(:).meas]; 
 vh= [vh(:).meas];
+
+%   movefcn = 1 (Default)  rotational motion where the target starts
+%     at (rad_pr(1),0) and rotates clockwise
+% calculate x,y position of point, given f_frac of path
+function [xp,yp] = rotation_path(f_frac, radius);
+   xp= radius * cos(f_frac*2*pi);
+   yp= radius * sin(f_frac*2*pi);
 
 % THis is the code copied from calc_slices
 % Search through each element and find the points which
