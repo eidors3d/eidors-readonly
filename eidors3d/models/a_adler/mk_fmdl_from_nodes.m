@@ -13,7 +13,7 @@ function mdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, name)
 % Limitations: assumes a convex model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_fmdl_from_nodes.m,v 1.1 2008-04-17 15:54:56 aadler Exp $
+% $Id: mk_fmdl_from_nodes.m,v 1.2 2008-04-17 19:33:21 aadler Exp $
 
 mdl= eidors_obj('fwd_model', name);
 
@@ -24,10 +24,14 @@ end
 % Sort and remove duplicates
 vtx = unique(vtx, 'rows');
 simp= delaunayn( vtx );
-
+% reorder elements so they're sorted by lowest node number
+[jnk,idx] = sort(mean(simp,2));
+simp= simp(idx,:);
 
 mdl.nodes    = vtx;
 mdl.elems    = simp;
+
+
 mdl.boundary = find_boundary( simp );
 mdl.gnd_node = 1;
 mdl.np_fwd_solve.perm_sym = '{n}';
