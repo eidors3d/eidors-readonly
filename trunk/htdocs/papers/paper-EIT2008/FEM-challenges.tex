@@ -11,8 +11,10 @@
 \newcommand{\PB}{\mbox{$\bf P$}}
 \newcommand{\MB}{\mbox{$\bf M$}}
 \newcommand{\IB}{\mbox{$\bf I$}}
-\newcommand{\SG}{\mbox{$\bf \Sigma$}}
-\newcommand{\sG}{\mbox{$\bf \sigma$}}
+%\newcommand{\SG}{\mbox{$\mathbf \Sigma$}}
+%\newcommand{\sG}{\mbox{$\mathbf \sigma$}}
+\newcommand{\SG}{\mbox{$\Sigma$}}
+\newcommand{\sG}{\mbox{$\sigma$}}
 \newcommand{\etal}{{\em et al}}
 \begin{document}
 
@@ -28,15 +30,19 @@ Simple FEMs aren't as good as we thought: \\
 \date{}
 \maketitle
 
-\begin{abstract}
-This paper covers two topics. First, we announce
+%\begin{abstract}
+\section*{Abstract}
+{\bf 
+This paper covers three topics. First, we announce
 EIDORS version 3.3, and clarify the new features and
 changes to the software.
-Next,
+Next, we review the use of dual models in EIT, and
+architecture to support their use in EIDORS.
+Last,
 we discuss accuracy limitations to the single-order
 tetrahedral finite element models that are used
 in much EIT research. Specifically, the accuracy
-of simulated voltages is expored as a function
+of simulated voltages is explored as a function
 of mesh density and electrode refinement.
 A conductive object was simulated moving in a 
 circular tank, using adaptive mesh refinement
@@ -44,7 +50,7 @@ around the object. Images were reconstructed
 using difference EIT and compared to those from
 a saline tank phantom.
 FEM accuracy may be partially addressed using
-dual model solvers, for which EIDORS v3,3
+dual model solvers, for which EIDORS v3.3
 provides support.
 Briefly, the new version also includes:
 1) interfaces to FEM generation (distmesh, netgen) and 
@@ -55,9 +61,60 @@ Briefly, the new version also includes:
    and experimental data sets
 4) faster algorithms with better caching, and
 5) improved graphics and extensive tutorials
-\end{abstract}
+}
+%\end{abstract}
+
+{\small
+\noindent
+$^1$Systems and Computer Engineering, Carleton University, Ottawa, Canada
+$^2$Thayer School of Engineering, Dartmouth College, Hannover, NH, USA
+$^3$School of Engineering, Massachusetts Institute of Technology, Boston, USA
+$^4$School of Mathematics, University of Manchester, UK
+}
 
 \section{Introduction}
+
+We address three issues in this paper. Perhaps, the most surprising
+result is the third, that 
+\begin{quote}
+   simple (tetrahedral first-order) finite element models (FEMs)
+      aren't as good as we thought.
+\end{quote}
+Models with up to 10,000 elements (2D) or 1,000,000 elements
+(3D) are not able to reproduce the accuracy of tank phantom
+measurements.
+
+First, we announce
+release version 3.3 of EIDORS (Electrical Impedance Tomography and
+ Diffuse Optical Tomography Reconstruction Software),
+and report on the new features and their use. One important
+addition is the repository for contributed experimental 
+(physiological and phantom) and
+clinical data and FEM models, which we document here.
+
+Next, we review the formulation of image reconstruction based
+on dual models, in which a refined fine FEM (finite element
+model) is used for the forward model, and a
+coarse mesh (not necessarily based on FEM) is used of image
+reconstruction. Dual models have been used in many EIT algorithms,
+and we review their use, and provide an algorithmic framework
+to describe their application. EIDORS v3.3 provides an
+architecture to support general variations of dual models,
+which we describe.
+
+Third, since dual models are designed to allow use of large
+FEMs for forward modelling, we explore the accuracy of the
+first order tetrahedral models that are most commonly used
+in EIT research. Our results indicate that these models
+perform surprisingly poorly, and only slowly approximate
+the underlying phantom as the number of elements grows.
+This effect is particularly severe in 3D FEM models, because
+the number of elements required to achieve a given element
+size is larger by a power of $\frac{3}{2}$.
+In the final version of this paper, we will provide a
+test method to identify the appropriate size
+of FEM required for a specified accuracy.
+ 
 
 \section{EIDORS version 3.3}
 
@@ -68,14 +125,14 @@ field tomography modalities. The earlist version was made
 available in 1999 and provided support for 2D EIT (Vauhkonen).
 Subsequently, support for 3D EIT was provided (Polydorides) in 
 2000. In 2005, EIDORS was refactored to allow ``pluggability''
--- easy incorporation of contirubted algorithms and 
-functionality -- as part of EIDORS version $3$ (while the
-previous releases were renamed $v1$ and $v2$, respectively). 
-Version $3.0$ was released in 2005, $v3.1$ in 2006 (and described
-in Adler and Lionheart, 2006), $v3.2$ in 2007, and $v3.3$
+-- easy incorporation of contributed algorithms and 
+functionality -- as part of EIDORS version 3 (while the
+previous releases were renamed v1 and v2, respectively). 
+Version $3.0$ was released in 2005, v3.1 in 2006 (and described
+in Adler and Lionheart, 2006), v3.2 in 2007, and v3.3
 (described in this paper). Many new features have been added;
-in terms of lines of code, $v2.0$ has 3715, $v3.0$ has 10685
-and $v3.3$ has 27774 (with another 5940 in tutorials).
+in terms of lines of code, v2.0 has 3715, v3.0 has 10685
+and v3.3 has 27774 (with another 5940 in tutorials).
 
 The following high-level new features are part of EIDORS v3.3:
 
@@ -150,6 +207,35 @@ have $\vB = F( \sG_f )$. The reconstruction (coarse)
 model is defined on square elements $\sG_r$ related by
 a coarse to fine projection matrix $\PB$, where $\sG_f = \PB \sG_r$.
 
+This is implemented in EIDORS as follows. For each
+inverse model, represented as part of the {\tt inv\_model}
+structure (Fig \ref{fig:invmdl}),
+there are two {\tt fwd\_model} structures:
+1) the refined forward model {\tt fwd\_model}, and
+2) the reconstruction model {\tt rec\_model}. 
+Within each forward model structure is a matrix field
+{\tt coarse2fine} which is a sparse encoding of $\PB$.
+Each element $[\PB]_{i,j}$ represents the fraction of
+fine element $i$ enclosed within coarse element $j$.
+
+TODO: Discuss fast calculation of coarse2fine.
+
+The need for a matrix $\PB$ on the {\tt rec\_model} is
+due to the limits of the first order FEM representation.
+If the regions in the reconstruction model are not
+triangular, then each region is constructed from triangular
+regions and the parametrization represented in $\PB$.
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.40\textwidth]{figs/inv_model.png}
+\caption{ \label{fig:invmdl}
+\small
+Layout of the EIDORS {\tt inv\_model} object
+}
+\end{center}
+\end{figure}
+
 Dual meshes may be used in several applications:
 \begin{list}{$\circ$} %{\textbullet}
   {\leftmargin=1.0em \itemindent=-0.0em
@@ -170,35 +256,19 @@ Dual meshes may be used in several applications:
 \end{list}
 
 
-Dual meshes have been used by many EIT groups (FIX THIS STUFF)
+Dual meshes have been used by many EIT groups (TODO Clarify this
+material)
 \\
-- We used an interpolation method on two meshes since the early code in the Fortran code Recon started by me and contiued by Kevin Paulson at Brookes. It seemed to trivial to make a big deal our of it. The way we did it used a mesh correspondence array. 
+- Oxford Brookes used an interpolation method on two meshes since the early code in the Fortran code Recon started by Lionheart and contiued by Kevin Paulson at Brookes. The approach used a mesh correspondence array. 
 \\
-- Later on the Dartmouth group also stumbled on the idea and there was a paper by the similarly named Keith Paulsen. Although I thought there was nothing very remarkable there.
+- Later on the Dartmouth group also used the idea; paper by the
+   similarly named Keith Paulsen (ref).
 \\
-- As I remember Marko used two meshes in his code that was the original 2D Eidors. Is that in his thesis?
+- Marko Vauhkonen use two meshes in the original 2D EIDORS.
 \\
-- I am pretty sure that the UCL optimal tomography people also do it in TOAST, and so now doubt Hamid uses it in EIT too.
+- UCL optimal tomography group uses it for TOAST.
 
 \section{FEM accuracy}
-
-Finite Element Model (FEM) accuracy is normally considered
-from the point of view of voltage errors between FEM and
-physical phantom. While this is correct, any errors may be explained
-by small details in the phantom which are not considered
-in the model. Here we consider FEM accuracy from the
-approach of looking at small changes in the model and their
-consequences on time difference EIT images.
-
-The easiest (and most common) way to simulate a moving target
-in a medium is to use a single FEM to select and then interpolate
-which elements are part of that target. Fig. \ref{fig:fem1}
-shows a 2062 element FEM created by distmesh, with mesh
-refinement near the electrodes. Sixteen electrodes are
-simulated using a Sheffield-type adjacent stimulation and
-measurement. For each simulated target position (blue), the
-fraction of each element filled by the target is calculated
-and the conductivity change is scaled by this fraction.
 
 \begin{figure}[tbh]
 \begin{center}
@@ -212,11 +282,6 @@ Simulation FEM and simulated target positions in blue
 }
 \end{center}
 \end{figure}
-
-Images are reconstructed of the three target positions
-in Fig. \ref{fig:fem1_images} using a one-step regularized
-GN image reconstruction. There is no change to
-the underlying FEM, and thus no noise in the images.
 
 \begin{figure}[tbh]
 \begin{center}
@@ -232,6 +297,29 @@ left to right, targets 1 to 3.
 \end{center}
 \end{figure}
 
+Finite Element Model (FEM) accuracy is normally considered
+from the point of view of voltage errors between FEM and
+physical phantom. While this is correct, any errors may be explained
+by small details in the phantom which are not considered
+in the model. Here we consider FEM accuracy from the
+approach of looking at small changes in the model and their
+consequences on time difference EIT images.
+
+The easiest (and most common) way to simulate a moving target
+in a medium is to use a single FEM to select and then interpolate
+which elements are part of that target. Fig. \ref{fig:fem1}
+shows a 1909 element FEM created by distmesh, with mesh
+refinement near the electrodes. Sixteen electrodes are
+simulated using a Sheffield-type adjacent stimulation and
+measurement. For each simulated target position (blue), the
+fraction of each element filled by the target is calculated
+and the conductivity change is scaled by this fraction.
+
+Images are reconstructed of the three target positions
+in Fig. \ref{fig:fem1_images} using a one-step regularized
+GN image reconstruction. There is no change to
+the underlying FEM, and thus no noise in the images.
+
 However, the best way to simulate a moving target is
 create a target region within the FEM and to remesh around
 it. This means that the mesh changes between each
@@ -240,10 +328,8 @@ the FEM due to the propagation of changes in triangularization.
 
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.20\textwidth]{figs/fig3a-2062e.png}
- \includegraphics[width= 0.20\textwidth]{figs/fig3b-2062e.png}
- \includegraphics[width= 0.20\textwidth]{figs/fig3a-4226e.png}
- \includegraphics[width= 0.20\textwidth]{figs/fig3b-4226e.png}
+ \includegraphics[width= 0.20\textwidth]{figs/fig3a-1909e.png}
+ \includegraphics[width= 0.20\textwidth]{figs/fig3b-1909e.png}
  \includegraphics[width= 0.20\textwidth]{figs/fig3a-8909e.png}
  \includegraphics[width= 0.20\textwidth]{figs/fig3b-8909e.png}
 \caption{ \label{fig:fem2}
@@ -251,8 +337,7 @@ the FEM due to the propagation of changes in triangularization.
 Simulation FEM and simulated target positions in blue
 {\em Left} full scale mesh.
 {\em Right} mesh magnified near target positions 
-{\em Top} FEM with 2062 elements,
-{\em Middle} FEM with 4226 elements,
+{\em Top} FEM with 1909 elements,
 {\em Bottom} FEM with 8909 elements,
 }
 \end{center}
@@ -267,19 +352,16 @@ refinement are shown.
 
 Based on these simulations, we reconstruct images
 using a simple 576 element mesh with point electrodes
-(Fig. \ref{fig:fem2_images}. In the coarse (2062 element)
+(Fig. \ref{fig:fem2_images}. In the coarse (1909 element)
 and to some extent in the medium refinement (4226 element) 
 mesh, there are large artefacts near the electrodes which
 dramatically disturb the image clarity.
 
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.15\textwidth]{figs/fig4a-2062e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4b-2062e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4c-2062e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4a-4226e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4b-4226e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4c-4226e.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig4a-1909e.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig4b-1909e.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig4c-1909e.png}
  \includegraphics[width= 0.15\textwidth]{figs/fig4a-8909e.png}
  \includegraphics[width= 0.15\textwidth]{figs/fig4b-8909e.png}
  \includegraphics[width= 0.15\textwidth]{figs/fig4c-8909e.png}
@@ -288,18 +370,71 @@ dramatically disturb the image clarity.
 Images reconstructed of targets simulated from
 interpolated shapes in Fig. \ref{fig:fem2}, from
 left to right, targets 1 to 3.
-{\em Top} FEM with 2062 elements,
-{\em Middle} FEM with 4226 elements,
+{\em Top} FEM with 1909 elements,
 {\em Bottom} FEM with 8909 elements,
 }
 \end{center}
 \end{figure}
 
-TODO
-\\
-- compare to tank images
-\\
-- discuss results
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.15\textwidth]{figs/fig5a.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig5b.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig5c.png}
+\caption{ \label{fig:iirc_data}
+\small
+Images reconstructed of a target in a saline tank
+with the same reconstruction parameters.
+}
+\end{center}
+\end{figure}
+
+To compare with these images, a sequence of EIT
+data were gathered with a 16 electrode system from
+the IIRC from Kyung Hee University, Korea. A saline
+filled tank was used and a small non-conductive target
+was slowly rotated around the tank. Frames of data
+corresponding to the simulated positions are shown.
+Images are reconstructed from these data using the
+same reconstruction parameters and shown in
+ Fig. \ref{fig:iirc_data}
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.23\textwidth]{figs/fig6a.png}
+ \includegraphics[width= 0.23\textwidth]{figs/fig6b.png}
+\caption{ \label{fig:netgen_3D}
+\small
+3D models of a moving ball in a 16 electrode tank
+with approximately $25,000$ elements,  using Netgen.
+To simplify
+the figure, only outer boundary elements are shown, including
+the non-conuctive ball in the centre.
+}
+\end{center}
+\end{figure}
+
+
+The same effect can be seen in 3D FEM, and is even
+more significant because it the number of elements
+required is larger because of the additional
+dimention. We built a 500,000 element FEM using
+netgen to study the effect as shown in
+Fig. \ref{fig:netgen_3D}.
+
+
+\section{Discussion}
+
+This paper covers three topics: 1) announcement of
+EIDORS version 3.3, and clarification of the new features and
+changes to the software;
+2) review of the use of dual models in EIT, and
+the architecture to support their use in EIDORS;
+and
+3) discussion of accuracy limitations to the single-order
+tetrahedral finite element models that are used
+in much EIT research.
+...
 
 \end{document}
 
