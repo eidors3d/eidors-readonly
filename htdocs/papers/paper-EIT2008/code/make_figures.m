@@ -1,10 +1,17 @@
 % Make figures for EIDORS 3.3 paper
 clf
-imdm=mk_common_model('e2d4c',16);
+
+% MOVING BALL #2
+% Model parameters
+n_elec= 16;
+%n_nodes= 5000;
+%n_nodes= 2000;
+ n_nodes=  500;
+imdm=mk_common_model('e2d4c',n_elec);
 smdl= imdm.fwd_model; % simulation model
 
 radius = 0.5;
-[vh,vi_s2d,xyr_pt]= simulate_2d_movement( 20, smdl,[radius,.05]);
+[vh_s2d,vi_s2d,xyr_pt]= simulate_2d_movement( 20, smdl,[radius,.05]);
 keep= 1:3;
 vi_s2d= vi_s2d(:,keep);
 xyr_pt= xyr_pt(:,keep);
@@ -31,11 +38,6 @@ axis image
 axis([0.4,1.1,-0.5,0.2]);
 print -dpng -r100 fig1b.png
 
-
-% MOVING BALL #2
-% Model parameters
-n_elec= 16;
-n_nodes= 5000;
 
 % Create electrodes
 refine_level=4; %electrode refinement level
@@ -108,24 +110,22 @@ for i= 1:3;
    end
 end
 
-imdl= mk_common_model('c2c2',16');
+imdl= mk_common_model('c2c2',n_elec);
 imdl.RtR_prior= @gaussian_HPF_prior;
 imdl.hyperparameter.value= 0.0003;
-img_s2d= inv_solve(imdl,vh,vi_s2d);
 
 clf; subplot(121)
-img2=img;
 
-img2.elem_data= img_s2d.elem_data(:,1);
-show_fem(img2); axis image
+img= inv_solve(imdl, vh_s2d,vi_s2d(:,1));
+show_fem(img); axis image
 print -dpng -r125 fig2a.png
 
-img2.elem_data= img_s2d.elem_data(:,2);
-show_fem(img2); axis image
+img= inv_solve(imdl, vh_s2d,vi_s2d(:,2));
+show_fem(img); axis image
 print -dpng -r125 fig2b.png
 
-img2.elem_data= img_s2d.elem_data(:,3);
-show_fem(img2); axis image
+img= inv_solve(imdl, vh_s2d,vi_s2d(:,3));
+show_fem(img); axis image
 print -dpng -r125 fig2c.png
 
 
