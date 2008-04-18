@@ -47,23 +47,26 @@ use the data</b>
       By: C. G&oacute;mez-Laberge
 </ul>
 
-<h3>Simulated Data</h3>
+<h3>Finite Element Models and Simulation Data</h3>
 
 <ul>
-<li> <a href="./data_contrib/at-head-mesh/at-head-mesh.shtml">
-      Adult and Neonate head FEM meshes</a> 
+<li> <a href="./data_contrib/at-head-mesh/at-head-mesh.shtml"
+      >Adult and Neonate head FEM meshes</a> 
       By: A. Tizzard
-<li> <a href="./data_contrib/aa_simulate_2d_movement/aa_simulate_2d_movement.shtml">
-      Circular movement of small object in circular tank</a>
+<li> <a href="./data_contrib/ab_2d_thorax_model/ab_2d_thorax_model.shtml"
+      >Human Thorax 2D FEM mesh</a>
+      By: A. Borsic
+<li> <a href="./data_contrib/aa_simulate_2d_movement/aa_simulate_2d_movement.shtml"
+     >Circular movement of small object in circular tank</a>
       By: A. Adler
-<li> <a href="./data_contrib/netgen_moving_ball/netgen_moving_ball.shtml">
-      Netgen simulations of object moving in circular tank</a>
+<li> <a href="./data_contrib/netgen_moving_ball/netgen_moving_ball.shtml"
+     >Netgen simulations of object moving in circular tank</a>
       By: A. Adler, W.R.B. Lionheart
-<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x2_models.shtml">
-      Netgen FEM model of a 16 electrode&times;2 layer cylindrical tank</a>
+<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x2_models.shtml"
+     >Netgen FEM model of a 16 electrode&times;2 layer cylindrical tank</a>
       By: A. Adler
-<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x1_models.shtml">
-      Netgen FEM model of a 16 electrode&times;1 layer cylindrical tank</a>
+<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
+     >Netgen FEM model of a 16 electrode&times;1 layer cylindrical tank</a>
       By: A. Adler
 </ul>
 
@@ -144,7 +147,7 @@ likely you are to get references to your paper ;-).
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-06 16:05:05 $ by $Author: aadler $
+    Last Modified: $Date: 2008-04-18 17:15:20 $ by $Author: aadler $
 </small>
 
 </body>
