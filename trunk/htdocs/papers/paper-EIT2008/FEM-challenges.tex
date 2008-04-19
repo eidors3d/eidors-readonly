@@ -13,8 +13,8 @@
 \newcommand{\IB}{\mbox{$\bf I$}}
 %\newcommand{\SG}{\mbox{$\mathbf \Sigma$}}
 %\newcommand{\sG}{\mbox{$\mathbf \sigma$}}
-\newcommand{\SG}{\mbox{$\Sigma$}}
-\newcommand{\sG}{\mbox{$\sigma$}}
+\newcommand{\SG}{\mbox{$\bf \Sigma$}}
+\newcommand{\sG}{\mbox{$\bf \sigma$}}
 \newcommand{\etal}{{\em et al}}
 \begin{document}
 
@@ -32,7 +32,7 @@ Simple FEMs aren't as good as we thought: \\
 
 %\begin{abstract}
 \section*{Abstract}
-{\bf 
+{\small
 This paper covers three topics. First, we announce
 EIDORS version 3.3, and clarify the new features and
 changes to the software.
@@ -63,6 +63,7 @@ Briefly, the new version also includes:
 5) improved graphics and extensive tutorials
 }
 %\end{abstract}
+\\
 
 {\small
 \noindent
@@ -121,7 +122,7 @@ of FEM required for a specified accuracy.
 EIDORS (Electrical Impedance Tomography and Diffuse Optical
  Tomography Reconstruction Software) is an open source
 suite of software for reconstruction of images in soft 
-field tomography modalities. The earlist version was made
+field tomography modalities. The earliest version was made
 available in 1999 and provided support for 2D EIT (Vauhkonen).
 Subsequently, support for 3D EIT was provided (Polydorides) in 
 2000. In 2005, EIDORS was refactored to allow ``pluggability''
@@ -145,7 +146,7 @@ The following high-level new features are part of EIDORS v3.3:
     \usecounter{Ictr}}
 \item {\bf interfaces to FEM generation}
 
-Interfaces to Netgen, Distmesh
+Interfaces to Netgen (Sch\"oberl, 1997), Distmesh (Persson and Strang, 2004)
 
 \item {\bf support for dual model solvers}
 
@@ -242,24 +243,24 @@ Dual meshes may be used in several applications:
     \topsep=0.0\baselineskip
     \itemsep=-0.4\baselineskip}
 \item
-   corresponding meshes
+   corresponding meshes (coarse elements completely contain fine ones)
 \item
    elem to node (nodal solvers)
 \item
-   $2\frac{1}{2}$ solvers
+   $2\frac{1}{2}$D solvers, in which the $z$-dimension of the
+     3D fine model is projected onto the coarse.
 \item
-   constraining parameter choices (ie having one parameter
+   constraining parameter choices (ie. having one parameter
       for out of plane conductivity to prevent the system from
-      "pushing" artefacts there.
+      "pushing" artefacts there.)
 \item
-   solving to a rasterized mesh as in GREIT
+   solving to a rasterized grid (as in GREIT)
 \end{list}
 
 
-Dual meshes have been used by many EIT groups (TODO Clarify this
-material)
+Dual meshes have been used by many EIT groups
 \\
-- Oxford Brookes used an interpolation method on two meshes since the early code in the Fortran code Recon started by Lionheart and contiued by Kevin Paulson at Brookes. The approach used a mesh correspondence array. 
+- Oxford Brookes used an interpolation method on two meshes since the early code in the Fortran code Recon started by Lionheart and continued by Kevin Paulson at Brookes. The approach used a mesh correspondence array. 
 \\
 - Later on the Dartmouth group also used the idea; paper by the
    similarly named Keith Paulsen (ref).
@@ -308,7 +309,7 @@ consequences on time difference EIT images.
 The easiest (and most common) way to simulate a moving target
 in a medium is to use a single FEM to select and then interpolate
 which elements are part of that target. Fig. \ref{fig:fem1}
-shows a 1909 element FEM created by distmesh, with mesh
+shows two 2372 element FEM created by distmesh, with mesh
 refinement near the electrodes. Sixteen electrodes are
 simulated using a Sheffield-type adjacent stimulation and
 measurement. For each simulated target position (blue), the
@@ -328,8 +329,8 @@ the FEM due to the propagation of changes in triangularization.
 
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.20\textwidth]{figs/fig3a-1909e.png}
- \includegraphics[width= 0.20\textwidth]{figs/fig3b-1909e.png}
+ \includegraphics[width= 0.20\textwidth]{figs/fig3a-2372e.png}
+ \includegraphics[width= 0.20\textwidth]{figs/fig3b-2372e.png}
  \includegraphics[width= 0.20\textwidth]{figs/fig3a-8909e.png}
  \includegraphics[width= 0.20\textwidth]{figs/fig3b-8909e.png}
 \caption{ \label{fig:fem2}
@@ -337,7 +338,7 @@ the FEM due to the propagation of changes in triangularization.
 Simulation FEM and simulated target positions in blue
 {\em Left} full scale mesh.
 {\em Right} mesh magnified near target positions 
-{\em Top} FEM with 1909 elements,
+{\em Top} FEM with 2372 elements,
 {\em Bottom} FEM with 8909 elements,
 }
 \end{center}
@@ -352,16 +353,16 @@ refinement are shown.
 
 Based on these simulations, we reconstruct images
 using a simple 576 element mesh with point electrodes
-(Fig. \ref{fig:fem2_images}. In the coarse (1909 element)
-and to some extent in the medium refinement (4226 element) 
-mesh, there are large artefacts near the electrodes which
+(Fig. \ref{fig:fem2_images}. In the coarse (2372 element)
+and to a lesser extent in the refined (8909 element) 
+mesh, there are artefacts, mostly near the electrodes, which
 dramatically disturb the image clarity.
 
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.15\textwidth]{figs/fig4a-1909e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4b-1909e.png}
- \includegraphics[width= 0.15\textwidth]{figs/fig4c-1909e.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig4a-2372e.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig4b-2372e.png}
+ \includegraphics[width= 0.15\textwidth]{figs/fig4c-2372e.png}
  \includegraphics[width= 0.15\textwidth]{figs/fig4a-8909e.png}
  \includegraphics[width= 0.15\textwidth]{figs/fig4b-8909e.png}
  \includegraphics[width= 0.15\textwidth]{figs/fig4c-8909e.png}
@@ -370,7 +371,7 @@ dramatically disturb the image clarity.
 Images reconstructed of targets simulated from
 interpolated shapes in Fig. \ref{fig:fem2}, from
 left to right, targets 1 to 3.
-{\em Top} FEM with 1909 elements,
+{\em Top} FEM with 2372 elements,
 {\em Bottom} FEM with 8909 elements,
 }
 \end{center}
@@ -409,7 +410,7 @@ same reconstruction parameters and shown in
 with approximately $25,000$ elements,  using Netgen.
 To simplify
 the figure, only outer boundary elements are shown, including
-the non-conuctive ball in the centre.
+the non-conductive ball in the centre.
 }
 \end{center}
 \end{figure}
@@ -418,9 +419,11 @@ the non-conuctive ball in the centre.
 The same effect can be seen in 3D FEM, and is even
 more significant because it the number of elements
 required is larger because of the additional
-dimention. We built a 500,000 element FEM using
-netgen to study the effect as shown in
-Fig. \ref{fig:netgen_3D}.
+dimension. We built a several 3D FEMs from
+25,000 to 500,000 elements FEM using
+netgen to study the effect.
+Fig. \ref{fig:netgen_3D} shows the 25,000 element
+mesh.
 
 
 \section{Discussion}
