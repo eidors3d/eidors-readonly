@@ -6,7 +6,8 @@ clf
 n_elec= 16;
 %n_nodes= 5000;
 %n_nodes= 2000;
- n_nodes=  500;
+ n_nodes=  800; %2062
+%n_nodes=  600; %2062
 imdm=mk_common_model('e2d4c',n_elec);
 smdl= imdm.fwd_model; % simulation model
 
