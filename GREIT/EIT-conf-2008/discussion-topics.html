@@ -1,0 +1,76 @@
+<HTML><BODY>
+<UL>
+<!-- ########################################### -->
+<LI>
+    first paragraph currently specifies 'mechanically ventilated
+ patients' (and indeed these are of most direct interest to my own
+ company's customers) but there is clinical interest in the wider field
+ of 'patients with respiratory compromise' or some such, to encompass
+ both mechanical ventilation and also spontaneous breathing.
+
+<!-- ########################################### -->
+<LI>
+<pre>
+|  b) if (as I agree is a good idea) an 2x8 electrode configuration, then
+|  presumably there is a second length parameter required to characterize
+|  the distance between electrode planes (whether given as a length, or
+|  equivalently as a pure ratio to the first length parameter) - should
+|  this be made explicit?
+</pre>
+
+It would be better to make the inter-ring spacing a set fraction
+of the laterial diameter.
+<p>
+Note, however, that the idea of doing 2x8 is a little controversial
+since it is not sufficiently well-understood. (ie stimulation
+sequences are still debatable). However, we can have two levels
+of GREIT output:
+<br>&minus;
+1. Models where we specify everything, and calculate the 
+    reconstruction matrix. (16x1 electrodes, Sheffield style)
+<br>&minus;
+2. Models where we specify how to do it, but the exact forward
+    model and stimulation would need to be done by the
+    implementor. (examples 8x2, different patient shapes, etc)
+
+<!-- ########################################### -->
+<LI>
+<pre>
+|  c) the paper does not (at least to my reading) specify anything
+|  regarding the 'axial' length of the 'square' 2d output grid, and yet
+|  this may modify the results of any trials? Or is there an assumption
+|  that I have not recognized that the forward model has impedivity uniform
+|  in the (Z?) axis? This assumption is inherent in all the true 2d
+|  reconstruction methods, but is also known not to be true in the human
+|  chest and is a key driver for 3d electrode configurations.
+</pre>
+
+The height (axial length) of the output grid is a parameter which
+is subject to debate. With infinite height, we have what's called
+2.5D reconstruction. I think we're better with h=0.5xdiam. I'm
+also not sure whether is has much effect.
+
+<!-- ########################################### -->
+<LI>
+<pre>
+|  d) (here I may be showing my ignorance) is it inherent in a linear
+|  reconstruction algorithm that PSF size has direct (reciprocal) relation
+|  to ability to resolve (distinguish) two distinct impedance features in
+|  the forward model? And if not, is there any benefit in making this an
+|  explicit metric?
+</pre>
+
+I think you could show that distinguishability is related to PSF and
+noise. Yes, it may be worth making this explicit.
+
+<!-- ########################################### -->
+<LI>
+<pre>
+|  e) is it really acceptable to leave so much undefined in the evaluation
+|  metrics (is this use of term metric accepted in this discipline - I've
+|  borrowed it from software engineering) or could it be argued that this
+|  leaves it open to cook the metrics to suit the sort of cake we end up
+|  with? I can appreciate that we do not yet have the information required
+</pre>
+</UL>
+</BODY></HTML>
