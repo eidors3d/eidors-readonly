@@ -1,12 +1,7 @@
-% Create and show square model $Id: square_mesh02.m,v 1.2 2008-04-17 20:34:17 aadler Exp $
+% Create and show square model $Id: square_mesh02.m,v 1.3 2008-05-01 16:27:44 aadler Exp $
 
 % Create square mesh model
 cmdl= mk_grid_model( linspace(-8,8,17), linspace(-11.5,-0.5,13) );
-
-% assign one parameter to each square
-e= size(cmdl.elems,1);
-params= ceil(( 1:e )/2);
-cmdl.coarse2fine = sparse(1:e,params,1,e,max(params));
 
 clf;
 show_fem(fmdl);
