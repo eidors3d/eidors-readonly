@@ -13,7 +13,7 @@ function mdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, name)
 % Limitations: assumes a convex model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_fmdl_from_nodes.m,v 1.2 2008-04-17 19:33:21 aadler Exp $
+% $Id: mk_fmdl_from_nodes.m,v 1.3 2008-05-01 15:24:43 aadler Exp $
 
 mdl= eidors_obj('fwd_model', name);
 
@@ -23,10 +23,23 @@ end
 
 % Sort and remove duplicates
 vtx = unique(vtx, 'rows');
-simp= delaunayn( vtx );
+
+%vtx=  perturb_vtx(vtx) ;
+%simp= delaunayn( vtx  );
+simp= delaunayn( perturb_vtx(vtx)  );
+% remove zero area elements
+keep= ones(size(simp,1),1);
+oo= ones(size(simp,2),1);
+for i=1:size(simp,1);
+   area= abs(det([oo,vtx(simp(i,:),:)]));
+   if area<1e-6; keep(i)=0;end
+end
+simp= simp(find(keep),:);
+
 % reorder elements so they're sorted by lowest node number
 [jnk,idx] = sort(mean(simp,2));
 simp= simp(idx,:);
+
 
 mdl.nodes    = vtx;
 mdl.elems    = simp;
@@ -51,3 +64,20 @@ mdl.electrode =     electrodes;
 mdl.solve=          'np_fwd_solve';
 mdl.jacobian=       'np_calc_jacobian';
 mdl.system_mat=     'np_calc_system_mat';
+
+
+function vtx_perturb= perturb_vtx( vtx );
+   ctr= mean(vtx,1);
+   v_ctr= vtx - ones(size(vtx,1),1) * ctr;
+   r2 = (sum(v_ctr.^2,2)) .^ (1/4);
+   vtx_perturb = vtx + .1* v_ctr ./ (r2*ones(1,size(vtx,2)));
+   
+function vtx_perturb= perturb_vtx_try1( vtx );
+   max_vtx = max(vtx);
+   min_vtx = min(vtx);
+   vtx_perturb = vtx + 0.05*randn(size(vtx));
+   for d= 1:size(vtx,2)
+      idx= (vtx(:,d) == min_vtx(d)) | ...
+           (vtx(:,d) == max_vtx(d));
+      vtx_perturb(idx,d) = vtx(idx,d); 
+   end
