@@ -1,4 +1,4 @@
-function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
+function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres)
 %[elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
 %
 % This function Tries to find the electrdes given the x y x coords of their centres.
@@ -9,6 +9,7 @@ function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
 % WRBL deleted ground plane 05/12/2005
 % WRBL derived automatic version ditto
 % AA   speedup and fix to not output zeros
+% AA  add ability to define electrodes with a function
 %
 % srf      = The boundary surfaces
 % vtx      = The vertices matrix
@@ -19,11 +20,42 @@ function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
 %            where N: no. of electrodes, M: 3 * max no. of faces per electrode
 %            [ kept for backward compatibility. Use electrodes output instead]
 % centres(k,:)=[ x,y,z ] of kth electrode
+%  OR 
+% centres = struct where centres(k).centre is electrode centre and
+%             centres(k).fcn = fcn of vtx and ctr which is
+%             zero outside and one inside electrode
+%    example: ctr_fcn = inline( 'sum((vtx-ones(size(vtx,1),1)*ctr).^2,2)<1', ...
+%                               'vtx','ctr');
+%            [ctr_param(1:nn).fcn]     = deal( ctr_fcn );
+%             centres=  mat2cell( [x(:),y(:),z(:)], ones(nn,1),3);
+%            [ctr_param(1:nn).centre] = deal( centres{:} );
+%    this form allows for more complicated electrode shapes
+%          
 % electrodes = EIDORS V3.x electrodes structure
 
 % (C) 2002-2006. Licenced under the GPL
-% $Id: ng_tank_find_elec.m,v 1.6 2006-08-12 04:05:46 aadler Exp $
+% $Id: ng_tank_find_elec.m,v 1.7 2008-05-01 15:21:00 aadler Exp $
 
+if  isstruct(centres)
+   % Calc centre of each surface
+   for d=1:size(vtx,2)
+      srfctr(:,d) = mean(reshape( vtx(srf,d), size(srf) ),2);
+   end
+   for e=1:length(centres)
+      inside = feval(centres(e).fcn,srfctr,centres(e).centre);
+      this_el = srf(inside,:);
+      electrodes(e).nodes     = unique( this_el )';
+      electrodes(e).z_contact = 0.1; % set placeholder value
+   end
+   elec= NaN; sels= NaN; % No backward compatible for this mode
+elseif size(centres,3)==3;
+   [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);
+else
+   error('don`t understand format of centres');
+end
+
+
+function [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);
 sels = [];
 
 for loop1 = 1:max(fc)

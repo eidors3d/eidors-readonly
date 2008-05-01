@@ -8,7 +8,9 @@ function [fwd_mdl, mat_indices]= ...
 %
 %  ng_vol_filename:   filename output from netgen
 %  name:              name for object (if [] use ng_vol_filename)
-%  centres:           vector of electrode centres from 'create_tank_mesh_ng' 
+%  centres:           matrix of N x [x,y,z] electrode centres
+%                     centres can also be a Nx1 cell matrix of
+%                     functions which are 1 inside the electrode and 0 outside
 %  stim_pattern:      a stimulation pattern structure
 %                     empty ([]) if stim_pattern is not available
 %  z_contact:         vector or scalar electrode contact impedance
@@ -17,7 +19,7 @@ function [fwd_mdl, mat_indices]= ...
 %  mat_indices:       cell array of material indices from eidors 
  
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: ng_mk_fwd_model.m,v 1.5 2007-09-21 13:52:11 aadler Exp $
+% $Id: ng_mk_fwd_model.m,v 1.6 2008-05-01 15:21:00 aadler Exp $
 
 if isempty(name); 
    name = ['MDL from', ng_vol_filename];
