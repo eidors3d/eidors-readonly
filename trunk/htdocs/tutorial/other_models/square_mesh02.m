@@ -1,7 +1,7 @@
-% Create and show square model $Id: square_mesh02.m,v 1.3 2008-05-01 16:27:44 aadler Exp $
+% Create and show square model $Id: square_mesh02.m,v 1.4 2008-05-01 17:51:31 aadler Exp $
 
 % Create square mesh model
-cmdl= mk_grid_model( linspace(-8,8,17), linspace(-11.5,-0.5,13) );
+[cmdl,c2f]= mk_grid_model(fmdl, linspace(-8,8,17), linspace(-11.5,-0.5,13) );
 
 clf;
 show_fem(fmdl);
