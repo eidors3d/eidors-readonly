@@ -10,7 +10,7 @@ function J= perturb_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: perturb_jacobian.m,v 1.13 2007-08-30 03:37:02 aadler Exp $
+% $Id: perturb_jacobian.m,v 1.14 2008-05-02 09:17:16 aadler Exp $
 
 if isfield(fwd_model,'perturb_jacobian')
    delta = fwd_model.perturb_jacobian.delta;
@@ -22,16 +22,33 @@ n_elem = size(fwd_model.elems,1);
 
 % solve one time to get the size
 d0= fwd_solve( img );
-Jcol= perturb(img, 1, delta, d0);
 
-J= zeros(length(Jcol), n_elem);
-J(:,1)= Jcol;
+if isfield(img.fwd_model,'coarse2fine');
+   Jcol= perturb_c2f(img, 1, delta, d0);
+   J= zeros(length(Jcol), n_elem);
+   J(:,1)= Jcol;
+   for i=2:size(img.fwd_model.coarse2fine,2);
+     J(:,i)= perturb_c2f(img, i, delta, d0);
+i
+   end
+else
+   Jcol= perturb(img, 1, delta, d0);
 
-for i=2:n_elem
-  J(:,i)= perturb(img, i, delta, d0);
+   J= zeros(length(Jcol), n_elem);
+   J(:,1)= Jcol;
+
+   for i=2:n_elem
+     J(:,i)= perturb(img, i, delta, d0);
+   end
 end
+
 
 function Jcol= perturb( img, i, delta, d0)
    img.elem_data(i)= img.elem_data(i) + delta;
+   di= fwd_solve( img );
+   Jcol = (1/delta) * (di.meas - d0.meas);
+
+function Jcol= perturb_c2f( img, i, delta, d0)
+   img.elem_data= img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
    di= fwd_solve( img );
    Jcol = (1/delta) * (di.meas - d0.meas);
