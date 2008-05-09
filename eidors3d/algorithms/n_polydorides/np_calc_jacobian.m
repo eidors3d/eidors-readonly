@@ -6,7 +6,7 @@ function J= np_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_calc_jacobian.m,v 1.15 2008-02-21 19:38:17 aadler Exp $
+% $Id: np_calc_jacobian.m,v 1.16 2008-05-09 22:38:00 aadler Exp $
 
 p= np_fwd_parameters( fwd_model );
 
@@ -18,8 +18,15 @@ tol = 1e-5; %tolerance for the forward solver
 
 % Calculating the Jacobian
 Vfwd = forward_solver(s_mat.E, p.I, tol, s_mat.perm);
-J = jacobian_3d_fields(Vfwd,s_mat.Ela,s_mat.D, p.elec, ...
-                       p.vtx,p.simp, img.elem_data, v_f, p.df);
+
+if isfield(fwd_model,'coarse2fine');
+   J = jacobian_3d_fields(Vfwd,s_mat.Ela,s_mat.D, p.elec, ...
+                          p.vtx,p.simp, img.elem_data, v_f, p.df, ...
+                          fwd_model.coarse2fine);
+else 
+   J = jacobian_3d_fields(Vfwd,s_mat.Ela,s_mat.D, p.elec, ...
+                          p.vtx,p.simp, img.elem_data, v_f, p.df);
+end
 
 % calculate normalized Jacobian if required
 if p.normalize
