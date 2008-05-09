@@ -10,7 +10,7 @@ function J= perturb_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: perturb_jacobian.m,v 1.14 2008-05-02 09:17:16 aadler Exp $
+% $Id: perturb_jacobian.m,v 1.15 2008-05-09 22:24:35 aadler Exp $
 
 if isfield(fwd_model,'perturb_jacobian')
    delta = fwd_model.perturb_jacobian.delta;
@@ -19,17 +19,20 @@ else
 end
 
 n_elem = size(fwd_model.elems,1);
+% force image to use provided fwd_model
+img.fwd_model= fwd_model;
 
 % solve one time to get the size
 d0= fwd_solve( img );
 
 if isfield(img.fwd_model,'coarse2fine');
    Jcol= perturb_c2f(img, 1, delta, d0);
-   J= zeros(length(Jcol), n_elem);
+   Jrows= size(img.fwd_model.coarse2fine,2);
+   J= zeros(length(Jcol), Jrows );
    J(:,1)= Jcol;
    for i=2:size(img.fwd_model.coarse2fine,2);
      J(:,i)= perturb_c2f(img, i, delta, d0);
-i
+     if rem(i,50)==0; fprintf('+'); end
    end
 else
    Jcol= perturb(img, 1, delta, d0);
