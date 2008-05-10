@@ -1,6 +1,6 @@
 function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 % MK_GRID_MODEL: Create reconstruction model on pixelated grid 
-%  [cmdl,coarse2fine]= mk_grid_model(xvec, yvec, zvec, fmdl);
+%  [cmdl,coarse2fine]= mk_grid_model(fmdl, xvec, yvec, zvec);
 %
 % Outputs:
 %  cmdl - eidors reconstruction model (coarse model)
@@ -13,7 +13,7 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 %  zvec - z edges (optional - to create 3D model)
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_grid_model.m,v 1.5 2008-05-02 09:16:51 aadler Exp $
+% $Id: mk_grid_model.m,v 1.6 2008-05-10 17:33:16 aadler Exp $
 
 if nargin == 3
    cmdl = mk_2d_grid(xvec,yvec);
