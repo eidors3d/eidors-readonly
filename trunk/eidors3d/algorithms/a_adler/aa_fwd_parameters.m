@@ -16,7 +16,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.N2E        => Node to electrode converter
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_fwd_parameters.m,v 1.14 2007-10-22 20:21:24 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.15 2008-05-10 18:10:32 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -78,20 +78,29 @@ else
 end
 
 % Matrix to convert Nodes to Electrodes
-N2E = sparse(n_elec, n);
-for i=1:n_elec
-    elec_nodes = fwd_model.electrode(i).nodes;
-    if length(elec_nodes) == 1 
-       N2E(i, elec_nodes) = 1;
-    else
-       srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
-       N2E(i, elec_nodes) = srf_area/sum(srf_area);
-    end
+if 0 % no complete electrode model
+   N2E = sparse(n_elec, n);
+   for i=1:n_elec
+       elec_nodes = fwd_model.electrode(i).nodes;
+       if length(elec_nodes) == 1 
+          N2E(i, elec_nodes) = 1;
+       else
+          srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
+          N2E(i, elec_nodes) = srf_area/sum(srf_area);
+       end
+   end
+else
+   N2E = sparse(1:n_elec, n+ (1:n_elec), 1, n_elec, n+n_elec);
 end
   
 
 n_meas= 0; % sum total number of measurements
-pp.QQ= sparse(n,p);
+if 0 % no complete elec model
+   pp.QQ= sparse(n,p);
+else
+   pp.QQ= sparse(n+n_elec,p);
+end
+
 for i=1:p
     pp.QQ(:,i) = N2E'* fwd_model.stimulation(i).stim_pattern;
     n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,1);
