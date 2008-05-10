@@ -9,7 +9,7 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 %   CC  = Connectivity Matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_calc_system_mat.m,v 1.15 2008-05-10 18:10:32 aadler Exp $
+% $Id: aa_calc_system_mat.m,v 1.16 2008-05-10 19:12:36 aadler Exp $
 
 p= aa_fwd_parameters( fwd_model );
 
@@ -73,9 +73,9 @@ function [SSdata,SSiidx,SSjidx, CCdata,CCiidx,CCjidx] = ...
       for ff= ffb(:)'
          bdy_nds= bdy(ffb,:);
          bdy_pts= fwd_model.nodes(bdy_nds,:);
-         dist=    sqrt( sum(([1,-1]*bdy_pts).^2) );
+         area= tria_area( bdy_pts ); 
 
-         SSdata= [SSdata; SSd_block * dist/zc];
+         SSdata= [SSdata; SSd_block * area/zc];
          SSiidx= [SSiidx; SSi_block' + sidx];
          SSjidx= [SSjidx; SSi_block  + sidx];
 
@@ -89,8 +89,17 @@ function [SSdata,SSiidx,SSjidx, CCdata,CCiidx,CCjidx] = ...
    end
 
 function ffb = find_bdy_idx( bdy, elec_nodes);
-      bdy_els = zeros(size(bdy,1),1);
-      for nd= unique(elec_nodes);
-         bdy_els = bdy_els + any(bdy==nd,2);
-      end
-      ffb = find(bdy_els == size(bdy,2));
+   bdy_els = zeros(size(bdy,1),1);
+   for nd= unique(elec_nodes);
+      bdy_els = bdy_els + any(bdy==nd,2);
+   end
+   ffb = find(bdy_els == size(bdy,2));
+
+% bdy points is [x1,y1,z1;x2,y2,z2; etc]
+function area= tria_area( bdy_pts ); 
+   vectors= diff(bdy_pts); 
+   if size(vectors,1)==2
+      vectors= cross(vectors(1,:),vectors(2,:));
+   end
+   d= size(bdy_pts,1);
+   area= sqrt( sum(vectors.^2) )/( d-1 );
