@@ -1,5 +1,5 @@
 % Create 2D model of a cylindrical resistor
-% $Id: test_2d_resistor.m,v 1.5 2008-03-15 22:06:06 aadler Exp $
+% $Id: test_2d_resistor.m,v 1.6 2008-05-10 17:42:38 aadler Exp $
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4
@@ -7,12 +7,8 @@ if ~exist('conduc');conduc=   1;end  % conductivity in Ohm-meters
 current= 4;  % Amps
 z_contact= 1e-2;
 scale = .35;
-mdl= eidors_obj('fwd_model','2D rectangle');
-mdl.nodes = [floor( (0:nn-1)/ww );rem(0:nn-1,ww)]';
-mdl.nodes = scale*mdl.nodes;
-mdl.elems = delaunayn(mdl.nodes);
-mdl.boundary= find_boundary(mdl.elems);
-mdl.gnd_node = 7;
+mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
+mdl.gnd_node = 1;
 elec_nodes= [1:ww];
 elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
 elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
