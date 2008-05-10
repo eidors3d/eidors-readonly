@@ -66,7 +66,7 @@ for q=1:er
    
    q_th_ele_zf = nonzeros(q_th_ele)'; % Extract the dummy "zero" nodal numbers
    
-   for w=1:length(q_th_ele_zf)-1
+   for w=1:2:length(q_th_ele_zf)
       
       m = q_th_ele_zf(w);
       n = q_th_ele_zf(w+1);
