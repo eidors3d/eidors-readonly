@@ -7,8 +7,20 @@ function FC= aa_system_mat_fields( fwd_model )
 %   FC:        s_mat= C' * S * conduct * C = FC' * conduct * FC;
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_system_mat_fields.m,v 1.1 2008-05-11 00:20:55 aadler Exp $
+% $Id: aa_system_mat_fields.m,v 1.2 2008-05-11 00:47:58 aadler Exp $
 
+FC = eidors_obj('get-cache', fwd_model, 'aa_system_mat_fields');
+if ~isempty(FC)
+   eidors_msg('aa_system_mat_fields: using cached value', 4);
+   return
+end
+
+FC= calc_system_mat_fields( fwd_model );
+
+eidors_obj('set-cache', fwd_model, 'aa_system_mat_fields', FC);
+eidors_msg('aa_system_mat_fields: setting cached value', 4);
+
+function FC= calc_system_mat_fields( fwd_model );
    p= aa_fwd_parameters( fwd_model );
    d0= p.n_dims+0;
    d1= p.n_dims+1;
