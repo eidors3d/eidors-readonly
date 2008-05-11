@@ -1,12 +1,13 @@
 % Create 3D model of a Rectangular resistor
-% $Id: test_3d_resistor.m,v 1.4 2008-02-23 01:58:32 aadler Exp $
+% $Id: test_3d_resistor.m,v 1.5 2008-05-11 01:11:22 aadler Exp $
 
 ll=5; % length
 ww=1; % width
 hh=1; % height
-conduc= .1;  % conductivity in Ohm-meters
+conduc= .13;  % conductivity in Ohm-meters
 current= 4;  % Amps
 z_contact= 1e-2;
+scale = .46;
 mdl= eidors_obj('fwd_model','3D rectangle');
 nn=0;
 for z=0:ll; for x=0:ww; for y=0:hh
@@ -20,13 +21,16 @@ if 0
 elseif 0
 % Matlab's delaunay3 triangularization is screwed up
    mdl.elems = delaunay3(mdl.nodes(:,1), mdl.nodes(:,2), mdl.nodes(:,3));
-else
+elseif 0
    elem1= [ 1 2 3 5; 5 6 2 3; 5 6 7 3; ...
             4 2 3 8; 8 6 2 3; 8 6 7 3;];
    mdl.elems=[];
    for i=0:ll-1;
        mdl.elems= [mdl.elems; elem1+4*i];
    end
+else
+   mdl= mk_grid_model([],0:ww,0:hh,0:ll);
+   mdl.nodes= mdl.nodes*scale;
 end
 mdl.boundary= find_boundary(mdl.elems);
 mdl.gnd_node = 1;
@@ -61,7 +65,7 @@ fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 
 % analytical solution
-R = ll / ww / hh / conduc + 2*z_contact;
+R = ll / ww / hh / scale/ conduc + 2*z_contact/scale^2;
 
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
