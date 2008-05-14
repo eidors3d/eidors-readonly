@@ -10,7 +10,7 @@ function J= aa_calc_jacobian( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_calc_jacobian.m,v 1.16 2008-05-11 01:21:36 aadler Exp $
+% $Id: aa_calc_jacobian.m,v 1.17 2008-05-14 22:51:21 aadler Exp $
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -21,6 +21,7 @@ n= pp.n_node;
 
 idx= 1:size(s_mat.E,1);
 idx( fwd_model.gnd_node ) = [];
+
 sv= zeros(n, pp.n_stim );
 sv( idx,:) = s_mat.E(idx,idx) \ pp.QQ( idx,: );
 
