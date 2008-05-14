@@ -11,7 +11,7 @@ function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)
 %   bdy_area is the area corresponding to these point electrodes
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: find_electrode_bdy.m,v 1.2 2008-05-14 22:51:21 aadler Exp $
+% $Id: find_electrode_bdy.m,v 1.3 2008-05-14 22:54:54 aadler Exp $
 
 [bdy_idx, point] = find_bdy_idx( bdy, elec_nodes);
 if nargout==1; return;end
@@ -37,7 +37,7 @@ elseif l_bdy_idx == 0 && l_point >0
         xyz= vtx( bdy(ffp,:),:);
         this_area= this_area + tria_area( xyz );
      end
-     bdy_area(i)= bdy_area(i) + this_bdy_area/dims;
+     bdy_area(i)= bdy_area(i) + this_area/dims;
    end
 else
    error('can`t model this electrode, with %d CEM and %d point', ...
