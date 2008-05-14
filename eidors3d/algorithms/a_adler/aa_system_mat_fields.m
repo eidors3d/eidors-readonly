@@ -7,7 +7,7 @@ function FC= aa_system_mat_fields( fwd_model )
 %   FC:        s_mat= C' * S * conduct * C = FC' * conduct * FC;
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_system_mat_fields.m,v 1.2 2008-05-11 00:47:58 aadler Exp $
+% $Id: aa_system_mat_fields.m,v 1.3 2008-05-14 21:33:58 aadler Exp $
 
 FC = eidors_obj('get-cache', fwd_model, 'aa_system_mat_fields');
 if ~isempty(FC)
@@ -27,8 +27,8 @@ function FC= calc_system_mat_fields( fwd_model );
    e= p.n_elem;
    n= p.n_node;
 
-   FFiidx= floor([0:d0*e-1]'/d0)*d1*ones(1,d1) + ones(d0*e,1)*(1:d1);
-   FFjidx= [1:d0*e]'*ones(1,d1);
+   FFjidx= floor([0:d0*e-1]'/d0)*d1*ones(1,d1) + ones(d0*e,1)*(1:d1);
+   FFiidx= [1:d0*e]'*ones(1,d1);
    FFdata= zeros(d0*e,d1);
    dfact = (d0-1)*d0;
    for j=1:e
@@ -37,15 +37,14 @@ function FC= calc_system_mat_fields( fwd_model );
      FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
    end %for j=1:ELEMs 
 
-% FFjidx and FFiidx are inverse labelled
 if 0 % Not complete electrode model
-   FF= sparse(FFjidx,FFiidx,FFdata);
+   FF= sparse(FFiidx,FFjidx,FFdata);
    CC= sparse((1:d1*e),p.ELEM(:),ones(d1*e,1), d1*e, n);
 else
    [F2data,F2iidx,F2jidx, C2data,C2iidx,C2jidx] = ...
              compl_elec_mdl(fwd_model,p);
-   FF= sparse([FFjidx(:); F2iidx(:)],...
-              [FFiidx(:); F2jidx(:)],...
+   FF= sparse([FFiidx(:); F2iidx(:)],...
+              [FFjidx(:); F2jidx(:)],...
               [FFdata(:); F2data(:)]);
    
    CC= sparse([(1:d1*e)';    C2iidx(:)], ...
@@ -73,14 +72,14 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    cidx= (d0+1)*pp.n_elem;
    for i= 1:length(fwd_model.electrode);
       zc=  fwd_model.electrode(i).z_contact;
-      ffb = find_bdy_idx( bdy, fwd_model.electrode(i).nodes);
+%     ffb = find_bdy_idx( bdy, fwd_model.electrode(i).nodes);
+      [bdy_idx, bdy_area] = find_electrode_bdy( bdy, fwd_model.nodes, ...
+                               fwd_model.electrode(i).nodes);
 
-      for ff= ffb(:)'
-         bdy_nds= bdy(ff,:);
-         bdy_pts= fwd_model.nodes(bdy_nds,:);
-         area= tria_area( bdy_pts ); 
+      for j= 1:length(bdy_idx);
+         bdy_nds= bdy(bdy_idx(j),:);
 
-         FFdata= [FFdata; FFd_block * sqrt(area/zc)];
+         FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
          FFiidx= [FFiidx; FFi_block' + sidx];
          FFjidx= [FFjidx; FFi_block  + cidx];
 
@@ -92,19 +91,3 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
       end
       
    end
-
-function ffb = find_bdy_idx( bdy, elec_nodes);
-   bdy_els = zeros(size(bdy,1),1);
-   for nd= unique(elec_nodes);
-      bdy_els = bdy_els + any(bdy==nd,2);
-   end
-   ffb = find(bdy_els == size(bdy,2));
-
-% bdy points is [x1,y1,z1;x2,y2,z2; etc]
-function area= tria_area( bdy_pts ); 
-   vectors= diff(bdy_pts); 
-   if size(vectors,1)==2
-      vectors= cross(vectors(1,:),vectors(2,:));
-   end
-   d= size(bdy_pts,1);
-   area= sqrt( sum(vectors.^2) )/( d-1 );
