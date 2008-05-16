@@ -11,7 +11,7 @@ function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)
 %   bdy_area is the area corresponding to these point electrodes
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: find_electrode_bdy.m,v 1.3 2008-05-14 22:54:54 aadler Exp $
+% $Id: find_electrode_bdy.m,v 1.4 2008-05-16 14:12:23 aadler Exp $
 
 [bdy_idx, point] = find_bdy_idx( bdy, elec_nodes);
 if nargout==1; return;end
@@ -54,7 +54,7 @@ end
 function [ffb,unused] = find_bdy_idx( bdy, elec_nodes);
    bdy_els = zeros(size(bdy,1),1);
    elec_nodes = unique(elec_nodes);
-   for nd= elec_nodes;
+   for nd= elec_nodes(:)'
       bdy_els = bdy_els + any(bdy==nd,2);
    end
    ffb = find(bdy_els == size(bdy,2));
