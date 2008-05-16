@@ -13,7 +13,7 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 %  zvec - z edges (optional - to create 3D model)
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_grid_model.m,v 1.7 2008-05-16 15:48:29 aadler Exp $
+% $Id: mk_grid_model.m,v 1.8 2008-05-16 15:56:55 aadler Exp $
 
 if nargin == 3
    cmdl = mk_2d_grid(xvec,yvec);
@@ -25,53 +25,58 @@ end
 
 if ~isempty( fmdl)
    if nargin ==3
-      nef= size( fmdl.elems,1);
-      c2f= sparse(nef,0);
-      mdl_pts = interp_mesh( fmdl, 3);
-      x_pts = squeeze(mdl_pts(:,1,:));
-      y_pts = squeeze(mdl_pts(:,2,:));
-      for yi= 1:length(yvec)-1
-            in_y_pts = y_pts >= yvec(yi) & y_pts < yvec(yi+1);
-         for xi= 1:length(xvec)-1
-             in_x_pts =  x_pts >= xvec(xi) & x_pts < xvec(xi+1);
-             in_pts = mean( in_y_pts & in_x_pts , 2);
-             c2f = [c2f,sparse(in_pts)];
-         end
-      end
+      c2f= calc_c2f_2d( fmdl, xvec, yvec);
    elseif nargin ==4
-%     c2f= mk_coarse_fine_mapping( fmdl, cmdl);
-      nef= size( fmdl.elems,1);
-%     c2f= sparse(nef,0);
-      c2fiidx= [];
-      c2fjidx= [];
-      c2fdata= [];
-      jidx= 0;
-      mdl_pts = interp_mesh( fmdl, 3);
-      x_pts = squeeze(mdl_pts(:,1,:));
-      y_pts = squeeze(mdl_pts(:,2,:));
-      z_pts = squeeze(mdl_pts(:,3,:));
-   
-      in_x_pts = calc_in_d_pts( x_pts, xvec);
-      in_y_pts = calc_in_d_pts( y_pts, yvec);
-      in_z_pts = calc_in_d_pts( z_pts, zvec);
-
-      for zi= 1:length(zvec)-1
-         for yi= 1:length(yvec)-1
-            for xi= 1:length(xvec)-1
-                in_pts = mean( in_x_pts{xi} & ...
-                               in_y_pts{yi} & ...
-                               in_z_pts{zi}, 2);
-                % c2f = [c2f,sparse(in_pts)];
-                [ii,jj,vv] = find(in_pts);
-                c2fiidx= [c2fiidx;ii];
-                c2fjidx= [c2fjidx;jj+jidx]; jidx=jidx+1;
-                c2fdata= [c2fdata;vv];
-            end
-         end
-      end
-      c2f= sparse(c2fiidx,c2fjidx,c2fdata, length(in_pts), jidx);
+      c2f= calc_c2f_3d( fmdl, xvec, yvec, zvec);
    end
 end
+
+function c2f= calc_c2f_2d( fmdl, xvec, yvec);
+   nef= size( fmdl.elems,1);
+   c2f= sparse(nef,0);
+   mdl_pts = interp_mesh( fmdl, 3);
+   x_pts = squeeze(mdl_pts(:,1,:));
+   y_pts = squeeze(mdl_pts(:,2,:));
+   for yi= 1:length(yvec)-1
+         in_y_pts = y_pts >= yvec(yi) & y_pts < yvec(yi+1);
+      for xi= 1:length(xvec)-1
+          in_x_pts =  x_pts >= xvec(xi) & x_pts < xvec(xi+1);
+          in_pts = mean( in_y_pts & in_x_pts , 2);
+          c2f = [c2f,sparse(in_pts)];
+      end
+   end
+
+function c2f= calc_c2f_3d( fmdl, xvec, yvec, zvec);
+%  c2f= mk_coarse_fine_mapping( fmdl, cmdl);
+   nef= size( fmdl.elems,1);
+%  c2f= sparse(nef,0);
+   c2fiidx= [];
+   c2fjidx= [];
+   c2fdata= [];
+   jidx= 0;
+   mdl_pts = interp_mesh( fmdl, 3);
+   x_pts = squeeze(mdl_pts(:,1,:));
+   y_pts = squeeze(mdl_pts(:,2,:));
+   z_pts = squeeze(mdl_pts(:,3,:));
+   
+   in_x_pts = calc_in_d_pts( x_pts, xvec);
+   in_y_pts = calc_in_d_pts( y_pts, yvec);
+   in_z_pts = calc_in_d_pts( z_pts, zvec);
+
+   for zi= 1:length(zvec)-1
+      for yi= 1:length(yvec)-1
+             in_yz_pts = in_y_pts{yi} & in_z_pts{zi};
+         for xi= 1:length(xvec)-1
+             in_pts = mean( in_x_pts{xi} & in_yz_pts, 2);
+             % c2f = [c2f,sparse(in_pts)];
+             [ii,jj,vv] = find(in_pts);
+             c2fiidx= [c2fiidx;ii];
+             c2fjidx= [c2fjidx;jj+jidx]; jidx=jidx+1;
+             c2fdata= [c2fdata;vv];
+         end
+      end
+   end
+   c2f= sparse(c2fiidx,c2fjidx,c2fdata, length(in_pts), jidx);
 
 function cmdl= mk_2d_grid(xvec, yvec);
    xlen = length(xvec);
