@@ -22,7 +22,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     considered to be extruded in 3D
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.26 2008-03-29 14:26:31 aadler Exp $
+% $Id: mk_coarse_fine_mapping.m,v 1.27 2008-05-16 15:49:57 aadler Exp $
 
 % Mapping depends only on nodes and elems - remove the other stuff
 try; c_mdl= rmfield(c_mdl,'electrode');   end
@@ -99,7 +99,7 @@ function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
 
        dims=1:2;
 
-    elseif ec==4 %cm is 3D
+    elseif dc==4 %cm is 3D
        error('cant handle 3D coarse models (yet)'); 
     else
        error('coarse model must be 2 or 3D');
