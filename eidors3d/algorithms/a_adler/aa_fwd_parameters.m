@@ -16,7 +16,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.N2E        => Node to electrode converter
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_fwd_parameters.m,v 1.15 2008-05-10 18:10:32 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.16 2008-05-16 13:39:39 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -78,28 +78,33 @@ else
 end
 
 % Matrix to convert Nodes to Electrodes
-if 0 % no complete electrode model
-   N2E = sparse(n_elec, n);
-   for i=1:n_elec
-       elec_nodes = fwd_model.electrode(i).nodes;
-       if length(elec_nodes) == 1 
-          N2E(i, elec_nodes) = 1;
-       else
-          srf_area   = get_srf_area( bdy, elec_nodes, fwd_model.nodes);
-          N2E(i, elec_nodes) = srf_area/sum(srf_area);
-       end
-   end
-else
-   N2E = sparse(1:n_elec, n+ (1:n_elec), 1, n_elec, n+n_elec);
+% Complete electrode model for all electrodes
+%  N2E = sparse(1:n_elec, n+ (1:n_elec), 1, n_elec, n+n_elec);
+%  pp.QQ= sparse(n+n_elec,p);
+
+cem_electrodes= 0; % num electrodes part of Compl. Elec Model
+N2E = sparse(n_elec, n+n_elec);
+pp.QQ= sparse(n+n_elec,p);
+
+for i=1:n_elec
+    elec_nodes = fwd_model.electrode(i).nodes;
+    bdy_idx= find_electrode_bdy( fwd_model.boundary, [], elec_nodes);
+
+    if ~isempty(bdy_idx) % CEM electrode
+       cem_electrodes = cem_electrodes+1;
+       N2E(i, n+cem_electrodes) =1;
+    else % point electrodes
+         % FIXME: make current defs between point electrodes and CEMs compatible
+       [bdy_idx,srf_area]= find_electrode_bdy( fwd_model.boundary, ...
+                      fwd_model.nodes, elec_nodes);
+       N2E(i, elec_nodes) = srf_area/sum(srf_area);
+    end
 end
-  
+N2E = N2E(:, 1:(n+cem_electrodes));
+pp.QQ= pp.QQ(1:(n+cem_electrodes),:);
+
 
 n_meas= 0; % sum total number of measurements
-if 0 % no complete elec model
-   pp.QQ= sparse(n,p);
-else
-   pp.QQ= sparse(n+n_elec,p);
-end
 
 for i=1:p
     pp.QQ(:,i) = N2E'* fwd_model.stimulation(i).stim_pattern;
@@ -121,48 +126,3 @@ if isfield(fwd_model,'normalize_measurements')
 else
    pp.normalize = 0;
 end
-
-% get surface area of each element on an electrode
-function srf_area   = get_srf_area(bdy, elec_nodes, nodes);
-   mbdy= zeros(size(bdy));
-   for n= elec_nodes
-      mbdy= mbdy + (bdy == n); 
-   end 
-   e_bdy = find( all(mbdy') );
-
-% get boundary faces which match any node (for pt electrode etc)
-
-   if isempty(e_bdy)
-      e_bdy = find( sum(mbdy')>=2 );
-   end
-   if isempty(e_bdy)
-      e_bdy = find( any(mbdy') );
-   end
-
-   bdy_els= bdy(e_bdy,:);
-
-   % calculate area of each boundary element
-   l_e_bdy= length(e_bdy);
-   e_srf_area= zeros(l_e_bdy,1);
-   if size(nodes,2) == 3
-      for i= 1:l_e_bdy
-         pts = nodes(bdy_els(i,:),:);
-         e_srf_area(i)= triarea3d(pts);
-      end
-   elseif size(nodes,2) == 2
-      for i= 1:l_e_bdy
-         pts = nodes(bdy_els(i,:),:);
-         e_srf_area(i)= sqrt(sum(diff(pts).^2));
-      end
-   else
-      error('not 2D or 3d');
-   end
-
-   %map boundary element area to each node
-   l_elec_nodes = length(elec_nodes);
-   srf_area= zeros(1,l_elec_nodes);
-   for i= 1:l_elec_nodes
-      mbdy= any(bdy_els == elec_nodes(i),2); 
-      % 1st order node effect integrates to 1/3 of element area
-      srf_area(i) = sum( e_srf_area(mbdy) )/3;
-   end
