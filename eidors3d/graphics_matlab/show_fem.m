@@ -12,7 +12,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.71 2008-04-17 18:25:31 aadler Exp $
+% $Id: show_fem.m,v 1.72 2008-05-16 14:12:28 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
@@ -132,7 +132,7 @@ for e=1:length(mdl.electrode)
         end
     else
         % find elems on boundary attached to this electrode
-        nn=ones(size(ee,1),1)*mdl.electrode(e).nodes;
+        nn=ones(size(ee,1),1)*mdl.electrode(e).nodes(:)';
         oo=ones(1,size(nn,2));
         ec=zeros(size(ee));
         for i=1:size(ec,2);
