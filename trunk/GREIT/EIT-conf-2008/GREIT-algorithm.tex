@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.18 2008-04-30 15:24:01 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.19 2008-05-18 00:59:20 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -17,7 +17,9 @@
 \newcommand{\etal}{{\em et al}}
 \begin{document}
 
-\title{\bf GREIT: towards a consensus EIT algorithm for lung images}
+\title{\bf GREIT: towards a consensus EIT algorithm for lung images
+\normalsize \em (DRAFT: $Date: 2008-05-18 00:59:20 $)%
+}
 
 \author{Andy Adler$^{1}$,
         John Arnold$^{2}$,
@@ -26,21 +28,22 @@
         Brian Brown$^{5}$,
 \\
         Paul Dixon$^{6}$,
-        In\'ez Frerichs$^{7}$,
-        Herv\'e Gagnon$^{8}$,
-        Yvo G\"arber$^{9}$,
-        Bart\l{}omiej Grychtol$^{10}$, 
+        Theo J.C. Faes$^{7}$,
+        In\'ez Frerichs$^{8}$,
+        Herv\'e Gagnon$^{9}$,
 \\
-        William R B Lionheart$^{11}$,
-        G\"unter Hahn$^{12}$,
-        Anjum Malik$^{13}$,
-        Janet Stocks$^{14}$,
+        Yvo G\"arber$^{10}$,
+        Bart\l{}omiej Grychtol$^{11}$, 
+        William R B Lionheart$^{12}$,
+        G\"unter Hahn$^{13}$,
+\\
+        Anjum Malik$^{14}$,
+        Janet Stocks$^{15}$,
         Andrew Tizzard$^{4}$,
         Gerhard Wolf$^{2}$
        }
 
-\date{\bf DRAFT ($Date: 2008-04-30 15:24:01 $): Please note that the
-           author list is still not agreed on}
+\date{}
 \maketitle
 
 \begin{abstract}
@@ -48,16 +51,16 @@
 Recently, Electrical Impedance Tomography (EIT) has begun to see a
 significant clinical interest for monitoring of
 ventilated patients.  The key capability of EIT is to
-provide a real-time image distribution of ventilation in
+provide a real-time images of the distribution of ventilation in
 the patient's lungs.
 However, most clinical and physiological research in lung EIT
 is done using older and proprietary algorithms; this is
 an obstacle to interpretation of EIT results because the
 reconstructed images are not well characterized.
-To address this issue, we propose to develop a 
+To address this issue, we are developing a
 consensus linear reconstruction algorithm for lung EIT,
 called GREIT (Graz consensus Reconstruction algorithm for EIT).
-This algorithm will be developed in three phases:
+This algorithm is being developed in three phases:
 1) selection of the ``ingredients'' and evaluation 
 methodology (this paper),
 2) evaluation and experience with GREIT variants, and
@@ -71,7 +74,7 @@ e) low sensitivity to electrode and boundary movement,
 f) good performance on clinical and experimental data.
 This approach represents the consensus of a large and representative
 group of experts in EIT algorithm and clinical applications.
-All software and data to implement and test GREIT had been
+All software and data to implement and test GREIT will be
 made available under an open source license which allows free
 research and commercial use.
 \end{abstract}
@@ -89,14 +92,15 @@ research and commercial use.
  $^{4}$Dartmouth College, Hanover, NH, USA
  $^{5}$University of Sheffield, UK
  $^{6}$Cardinal Health Care, London, UK
- $^{7}$University of Kiel, Germany
- $^{8}$\'Ecole Polytechnique de Montr\'eal, Canada
- $^{9}$Dr\"ager Medical, L\"ubeck, Germany
-$^{10}$University of Strathclyde, Glasgow, UK
-$^{11}$University of Manchester, UK
-$^{12}$University of G\"ottingen, Germany
-$^{13}$Maltron International, Rayleigh, UK
-$^{14}$Institute of Child Health, London, UK
+ $^{7}$Vrije Universiteit, Amsterdam, Netherlands
+ $^{8}$University of Kiel, Germany
+ $^{9}$\'Ecole Polytechnique de Montr\'eal, Canada
+$^{10}$Dr\"ager Medical, L\"ubeck, Germany
+$^{11}$University of Strathclyde, Glasgow, UK
+$^{12}$University of Manchester, UK
+$^{13}$University of G\"ottingen, Germany
+$^{14}$Maltron International, Rayleigh, UK
+$^{15}$Institute of Child Health, London, UK
 }
 
 \section{Introduction}
@@ -106,7 +110,7 @@ measurement on the body surface. One of the most promising
 applications of EIT is for measuring the lungs, since these
 are large organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
-was among the first physiological applications of this technology
+was among the first physiological applications of this technology.
 (Barber and Brown 1984).
 While there are several medical imaging and instrumentation
 technologies to measure ventilation, EIT is unique in that it
@@ -130,7 +134,7 @@ and
 3) multi-centre studies are not possible without a 
 common imaging algorithm.
 Many approaches to reconstruct EIT images have been proposed,
-however, it is not easy to compare among them, because 
+however, it is not easy to compare them, because 
 complete implementation detail are not available.
 However, there is general consensus amongst experts
 in EIT image processing of the ``ingredients'' that should
@@ -154,7 +158,7 @@ variants of the ingredients. This will lead to
 consensus and definition of the GREIT algorithm.
 
 The current work is limited to the reconstruction algorithm.
-We do not propose calibration tests or phantoms, standards
+We do not propose calibration tests, data formats or phantoms, standards
 for image interpretation or EIT based lung parameters; 
 we do not feel there is sufficient experience yet to reach
 consensus in these areas.
@@ -188,10 +192,10 @@ change image, based on a 3D forward model
 \item
  published reconstruction matrices for
       a $32\times 32$ pixel array for
-      for $16\times1$ and $8\times 2$
-      electrode configurations for the shapes:
+      for a single ring of $16$, $12$ and $8$ 
+      electrodes, for the shapes:
    a) neonate chests, 
-   b) adult chests, and 
+   b) adult chests (for perhaps several body shapes), and 
    c) cylindrical tank phantoms.
  For other shapes and electrode configurations,
    reconstruction matrices may be calculated from the
@@ -268,7 +272,7 @@ which reconstruct to an arbitrary FEM triangularization.
 Square pixels are chosen because it allows easier
 display and analysis of images, and because the 
 resolution limits of EIT are easier to communicate this way.
-Non circular reconstruction geometries (for adult and
+Non-circular reconstruction geometries (for adult and
 neonate chests) will be represented onto the same 2D grid.
 
 GREIT output images will be in impedivity change units
