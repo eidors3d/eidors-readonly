@@ -1,7 +1,11 @@
-% $Id: GREIT-algorithm.tex,v 1.20 2008-05-18 14:18:27 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.21 2008-05-18 14:59:45 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
+
+\usepackage[compact]{titlesec}
+\titlespacing{\section}{0pt}{6pt}{6pt}
+\titlespacing{\subsection}{0pt}{6pt}{6pt}
 
 \usepackage{graphicx}
 \newcommand{\vB}{\mbox{$\bf v$}}
@@ -19,7 +23,7 @@
 \begin{document}
 
 \title{\bf GREIT: towards a consensus EIT algorithm for lung images
-\normalsize \em (DRAFT: $Date: 2008-05-18 14:18:27 $)%
+\normalsize \em (DRAFT: $Date: 2008-05-18 14:59:45 $)%
 }
 
 \author{Andy Adler$^{1}$,
@@ -41,7 +45,7 @@
         Anjum Malik$^{14}$,
         Janet Stocks$^{15}$,
         Andrew Tizzard$^{4}$,
-        Gerhard Wolf$^{2}$
+        Gerhard Wolf$^{2}$%
        }
 
 \date{}
@@ -231,7 +235,7 @@ For this reason, we use the metaphor ``ingredients'' and
 to experiment to find the best recipe.
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.4\textwidth, bb=0 0 427 419]{figs/square_mesh03a.png}
+ \includegraphics[width= 0.35\textwidth, bb=0 0 427 419]{figs/square_mesh03a.png}
 \caption{ \label{fig:dual_model}
 \small
 Dual model example. {\em black:} a cut away view of a
@@ -259,7 +263,7 @@ model (FEM) to implement the forward solution (voltages
 at electrodes), and a coarse mesh for the inverse
 solution. For GREIT, the forward model is a 3D FEM with
 mesh refinement near the electrodes, and the reconstruction
-model is square pixel grid (Fig. \ref{fig:dual_model}).
+model is square pixel grid (Fig.~\ref{fig:dual_model}).
 Given a forward model, $F$,
 which calculates a voltage measurement vector, $\vB$, from
 a forward (fine) model conductivity element vector, $\sG_f$, we
@@ -270,7 +274,7 @@ a coarse to fine projection matrix $\PB$, where $\sG_f = \PB \sG_r$.
 \item {\bf Rasterized Output image with units}
 
 GREIT output images will be parametrized onto
-a 2D grid with square pixels (Fig. \ref{fig:square_pixels}).
+a 2D grid with square pixels (Fig.~\ref{fig:square_pixels}).
 This differs from many EIT reconstruction algorithms
 which reconstruct to an arbitrary FEM triangularization.
 Square pixels are chosen because it allows easier
@@ -319,7 +323,7 @@ $\xB = f(\sG^{(b)}_r) - f(\sG^{(a)}_r)$ is the (parametrized)
 conductivity change vector on the inverse model.
 The parametrization will be
 chosen to maximize the linear range of the solution; 
-some possible parametrization functions $f()$ are log and linear.
+some possible parametrization functions $f(\cdot)$ are log and linear.
 
 $\JB$ is the Jacobian matrix calculated from the 
 fine model and projected on the inverse model,
@@ -361,7 +365,7 @@ matrices and various forms of spatial high pass
 filters including discrete Laplacian and Gaussian
 high pass filters. The choice of $\RB$ has several
 subtle but important implications on reconstructed
-images, as illustrated in \ref{fig:prior_effects}.
+images, as illustrated in Fig.~\ref{fig:prior_effects}.
 We identify these undesirable image features as:
 a) {\em ringing:} the presence of opposite polarity
 regions surrounding a reconstructed target (which
@@ -378,10 +382,11 @@ a feature with spatial position is more important
 than low average feature errors.
 
 For the evaluation process for GREIT, various
-proposed reconstruction matrices (and combinations)
+proposed reconstruction matrices (and combinations of
+these matrices)
 will be tested against the image features. Matrices
 will be defined directly on the inverse (coarse) grid
-(not the forward model).
+(and not the forward model).
 
 
 \begin{figure}[tbh]
@@ -404,7 +409,7 @@ In many studies, the EIT hyperparameter, $\lambda$, is selected
 manually based on heuristic criteria, probably because
 automatic techniques, such as the L-curve, work poorly
 on the EIT problem (Graham and Adler, 2006).  Furthermore,
-these methods select the best $\lambda$
+these methods select the best $\lambda$ for
 each image, rather than for the system configuration.
 
 It is essential that GREIT define the hyperparameter 
@@ -425,7 +430,7 @@ an optimal $\lambda$ may be chosen.
 
 Movement of electrodes due to breathing and posture change
 contributes artefacts to EIT images, which appear as
-image degradation near the boundary, and as a broad artefact
+image degradation near the boundary, and a broad artefact
 that changes image amplitude. 
 Some recent work to correct for movement (Soleimani \etal, 2006)
 and general model inaccuracies (Kaipio and Somersalo, 2007)
@@ -465,7 +470,7 @@ achieve improved noise performance.
 
 This paper also defines the evaluation strategy
 against which GREIT algorithms candidates will
-be evaluated. Unfortunately, this abstract
+be evaluated. Unfortunately, this paper
 does not provide space to algorithmically
 define how each evaluation parameter is calculated;
 instead, the general criteria are listed:
@@ -480,7 +485,7 @@ instead, the general criteria are listed:
 
 \item {\bf Amplitude Response}
 \\ \noindent $\circ$
-  Output image amplitude is correct
+  output image amplitude is correct
 \\ \noindent $\circ$ 
   the amplitude response is uniform for all radial positions.
 
@@ -497,7 +502,6 @@ instead, the general criteria are listed:
       uniform PSF size with radial position
 \\ \noindent $\circ$
       no (or very little) overshoot in the PSF
-  (overshoot is the negative ring around a target)
 \\ \noindent $\circ$
       regular shape (round or oval) PSF
   (backprojection, with its streaks, does badly here)
@@ -525,8 +529,8 @@ instead, the general criteria are listed:
 \end{list}
 
 The most difficult evaluation criteria will be the 
-last ``experimental data performance''. Our approach
-is based on a database of experimental
+last: ``experimental data performance'' (Faes \etal 2005).
+Our approach is based on a database of experimental
 EIT data from clinical research groups at Harvard University
 and the Universities
 of Kiel and G\"ottingen (Hahn \etal, 
@@ -558,7 +562,7 @@ interpretation of EIT images in terms of
 known algorithm performance. This will facilitate
 multi-centre EIT tests. For EIT research in
 general, it will provide a completely characterized
-baseline against which newer work can be compared.
+baseline against which newer work may be compared.
 
 
 
@@ -586,13 +590,13 @@ Barber DC and Brown BH 1984
 ``Applied potential tomography'', 
 {\em J Phys E: Sci Instrum}
  17 723--733
-
-\item[]
-Barber DC 1989
-``A review of image reconstruction techniques for electrical
- impedance tomography''
-{\em Med Phys}
-16 162--169
+%
+%\item[]
+%Barber DC 1989
+%``A review of image reconstruction techniques for electrical
+% impedance tomography''
+%{\em Med Phys}
+%16 162--169
 
 \item[]
 Brown BH and Seagar AD 1987 
@@ -648,12 +652,12 @@ Kaipio J and Somersalo E 2007
 {\em J Comput Appl Math}
 198 493--504
 
-\item[]
-Kotre CJ 1988
-``A fast approximation for the calculation of potential distributions in electrical impedance tomography''
-{\em Clin Phys Physiol Meas}
-9 353--361
-
+%\item[]
+%Kotre CJ 1988
+%``A fast approximation for the calculation of potential distributions in electrical impedance tomography''
+%{\em Clin Phys Physiol Meas}
+%9 353--361
+%
 \item[]
 Soleimani M G\'omez-Laberge C and Adler A 2006
 ``Imaging of conductivity changes and electrode movement in EIT''
