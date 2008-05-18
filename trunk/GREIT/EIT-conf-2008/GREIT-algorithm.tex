@@ -1,6 +1,7 @@
-% $Id: GREIT-algorithm.tex,v 1.19 2008-05-18 00:59:20 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.20 2008-05-18 14:18:27 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
+
 
 \usepackage{graphicx}
 \newcommand{\vB}{\mbox{$\bf v$}}
@@ -18,7 +19,7 @@
 \begin{document}
 
 \title{\bf GREIT: towards a consensus EIT algorithm for lung images
-\normalsize \em (DRAFT: $Date: 2008-05-18 00:59:20 $)%
+\normalsize \em (DRAFT: $Date: 2008-05-18 14:18:27 $)%
 }
 
 \author{Andy Adler$^{1}$,
@@ -46,8 +47,10 @@
 \date{}
 \maketitle
 
-\begin{abstract}
-\small \bf
+\renewcommand{\baselinestretch}{0.9} \normalfont
+
+{\small \bf
+ {\em Abstract --}
 Recently, Electrical Impedance Tomography (EIT) has begun to see a
 significant clinical interest for monitoring of
 ventilated patients.  The key capability of EIT is to
@@ -77,7 +80,7 @@ group of experts in EIT algorithm and clinical applications.
 All software and data to implement and test GREIT will be
 made available under an open source license which allows free
 research and commercial use.
-\end{abstract}
+}
 
 % \noindent{\it Keywords\/}:
 % Electrical Impedance Tomography,
@@ -85,7 +88,6 @@ research and commercial use.
 % Image Reconstruction,
 
 {\small
-\noindent 
  $^{1}$Carleton University, Ottawa, Canada
  $^{2}$Harvard University, Boston, USA
  $^{3}$Middlesex University, London, UK
@@ -102,6 +104,8 @@ $^{13}$University of G\"ottingen, Germany
 $^{14}$Maltron International, Rayleigh, UK
 $^{15}$Institute of Child Health, London, UK
 }
+\renewcommand{\baselinestretch}{1.0} \normalfont
+
 
 \section{Introduction}
 Electrical Impedance Tomography (EIT) measures conductivity
@@ -559,6 +563,7 @@ baseline against which newer work can be compared.
 
 
 \section*{References}
+\renewcommand{\baselinestretch}{0.9} \normalfont {\small
 
 \begin{list}{}
   {\leftmargin=1.0em \itemindent=-1.0em
@@ -655,5 +660,6 @@ Soleimani M G\'omez-Laberge C and Adler A 2006
 {\em Physiol. Meas.} 27 S103--S113
 
 \end{list}
+} \renewcommand{\baselinestretch}{1.0} \normalfont
 \end{document}
 
