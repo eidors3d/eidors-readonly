@@ -16,7 +16,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.N2E        => Node to electrode converter
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_fwd_parameters.m,v 1.16 2008-05-16 13:39:39 aadler Exp $
+% $Id: aa_fwd_parameters.m,v 1.17 2008-05-19 17:15:45 aadler Exp $
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 
@@ -88,16 +88,22 @@ pp.QQ= sparse(n+n_elec,p);
 
 for i=1:n_elec
     elec_nodes = fwd_model.electrode(i).nodes;
-    bdy_idx= find_electrode_bdy( fwd_model.boundary, [], elec_nodes);
+    if length(elec_nodes) ==1 % point electrode (maybe inside body)
+       N2E(i, elec_nodes) = 1;
+    elseif length(elec_nodes) ==0
+       error('zero length electrode specified');
+    else
+       bdy_idx= find_electrode_bdy( fwd_model.boundary, [], elec_nodes);
 
-    if ~isempty(bdy_idx) % CEM electrode
-       cem_electrodes = cem_electrodes+1;
-       N2E(i, n+cem_electrodes) =1;
-    else % point electrodes
-         % FIXME: make current defs between point electrodes and CEMs compatible
-       [bdy_idx,srf_area]= find_electrode_bdy( fwd_model.boundary, ...
-                      fwd_model.nodes, elec_nodes);
-       N2E(i, elec_nodes) = srf_area/sum(srf_area);
+       if ~isempty(bdy_idx) % CEM electrode
+          cem_electrodes = cem_electrodes+1;
+          N2E(i, n+cem_electrodes) =1;
+       else % point electrodes
+            % FIXME: make current defs between point electrodes and CEMs compatible
+          [bdy_idx,srf_area]= find_electrode_bdy( fwd_model.boundary, ...
+                         fwd_model.nodes, elec_nodes);
+          N2E(i, elec_nodes) = srf_area/sum(srf_area);
+       end
     end
 end
 N2E = N2E(:, 1:(n+cem_electrodes));
