@@ -64,7 +64,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.24 2008-05-19 17:16:05 aadler Exp $
+% $Id: mk_common_model.m,v 1.25 2008-05-19 17:23:44 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -499,6 +499,8 @@ function inv_mdl = rotate_model( inv_mdl, rotate_mdl);
 
     n_elec= length( inv_mdl.fwd_model.electrode );
     renum = rem(  rotate_mdl*n_elec/16 + (0:n_elec-1),n_elec)+1;
+    renum = floor(renum); % round is not quite right for all model
+                          % cases, but no errors.
     inv_mdl.fwd_model.electrode = ...
        inv_mdl.fwd_model.electrode( renum);
 
