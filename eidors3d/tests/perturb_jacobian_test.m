@@ -1,5 +1,5 @@
 % Perturbation Jacobians
-% $Id: perturb_jacobian_test.m,v 1.4 2008-02-28 19:06:35 aadler Exp $
+% $Id: perturb_jacobian_test.m,v 1.5 2008-05-19 14:18:47 aadler Exp $
 
 % imdl= mk_common_model('c2c2',16);
   imdl= mk_common_model('a3cr',16);
@@ -22,12 +22,12 @@
   img.fwd_model.jacobian=   @aa_calc_jacobian;
   img.fwd_model.system_mat= @aa_calc_system_mat;
   img.fwd_model.solve=      @aa_fwd_solve;
-  J_aa= 2*calc_jacobian( img ); % 2 for bug in my code
+  J_aa= calc_jacobian( img ); % 2 for bug in my code
 
   img.fwd_model.jacobian=   @perturb_jacobian;
   img.fwd_model.system_mat= @aa_calc_system_mat;
   img.fwd_model.solve=      @aa_fwd_solve;
-  J_aa_p= 2*calc_jacobian( img ); % 2 for bug in my code
+  J_aa_p= calc_jacobian( img ); % 2 for bug in my code
 
   norm(J_aa - J_aa_p,'fro')/norm(J_aa,'fro')
   norm(J_np - J_np_p,'fro')/norm(J_np,'fro')
