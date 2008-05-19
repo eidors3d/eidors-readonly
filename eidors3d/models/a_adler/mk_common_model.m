@@ -8,12 +8,15 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %      inv_mdl = mk_common_model( mdl_string, [n_elec/plane, n_planes])
 %
 % 2D Models circular models:
-%   mk_common_model('a2c',16)   - 2D circ model (64 elems) with 16 elecs
-%   mk_common_model('b2c',16)   - 2D circ model (256 elems)
-%   mk_common_model('c2c',16)   - 2D circ model (576 elems)
-%   mk_common_model('d2c',16)   - 2D circ model (1024 elems)
-%   mk_common_model('e2c',16)   - 2D circ model (1600 elems)
-%   mk_common_model('f2c',16)   - 2D circ model (2304 elems)
+%   mk_common_model('a2C',16)   - 2D circ model (64 elems) with 16 elecs
+%   mk_common_model('b2C',16)   - 2D circ model (256 elems)
+%   mk_common_model('c2C',16)   - 2D circ model (576 elems)
+%   mk_common_model('d2C',16)   - 2D circ model (1024 elems)
+%   mk_common_model('e2C',16)   - 2D circ model (1600 elems)
+%   mk_common_model('f2C',16)   - 2D circ model (2304 elems)
+%
+%   models with 'c' are point electrode models, 
+%   models with 'C' are use the complete electrode model
 %
 %   models ??c or ??c0 are rotated by zero.
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
@@ -61,7 +64,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.23 2008-03-30 21:57:59 aadler Exp $
+% $Id: mk_common_model.m,v 1.24 2008-05-19 17:16:05 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -76,7 +79,7 @@ if length(str)<3
    error('format specified not recognized')
 end
 
-if str(2:3)=='2c'
+if str(2:3)=='2c' | str(2:3) == '2C'
 % 2D circular models
    if     str(1)=='a'; layers=  4;
    elseif str(1)=='b'; layers=  8;
@@ -92,6 +95,17 @@ if str(2:3)=='2c'
    if length(str)==3; str= [str,'0'];end
       
    inv_mdl = rotate_model( inv_mdl, str2num(str(4)));
+
+   if str(3)=='C' % complete electrode model
+      inv_mdl = turn_model( inv_mdl, 2*pi/4/layers/2 );
+
+      bdy= inv_mdl.fwd_model.boundary;
+      for i=1:length(inv_mdl.fwd_model.electrode);
+         enode= inv_mdl.fwd_model.electrode(i).nodes;
+         ff= find( enode== bdy(:,1) );
+         inv_mdl.fwd_model.electrode(i).nodes = bdy(ff,:);
+      end
+   end
 
 elseif str(2:3)=='2D'
    global distmesh_do_graphics; distmesh_do_graphics= 1;
@@ -481,15 +495,19 @@ function inv3d= mk_b3r2_model( n_elec, nr, options )
 
 % rotate model rotate_model/16 times around
 function inv_mdl = rotate_model( inv_mdl, rotate_mdl);
-    nodes= inv_mdl.fwd_model.nodes;
-    cos_rot = cos( pi/8*rotate_mdl);
-    sin_rot = sin( pi/8*rotate_mdl);
-    nodes(:,1)= inv_mdl.fwd_model.nodes(:,1:2)*[ cos_rot;-sin_rot];
-    nodes(:,2)= inv_mdl.fwd_model.nodes(:,1:2)*[ sin_rot; cos_rot];
-    inv_mdl.fwd_model.nodes= nodes;
+    inv_mdl = turn_model( inv_mdl, pi/8*rotate_mdl );
 
     n_elec= length( inv_mdl.fwd_model.electrode );
     renum = rem(  rotate_mdl*n_elec/16 + (0:n_elec-1),n_elec)+1;
     inv_mdl.fwd_model.electrode = ...
        inv_mdl.fwd_model.electrode( renum);
+
+% rotate model rotate_model/16 times around
+function inv_mdl = turn_model( inv_mdl, angle );
+    nodes= inv_mdl.fwd_model.nodes;
+    cos_rot = cos( angle );
+    sin_rot = sin( angle );
+    nodes(:,1)= inv_mdl.fwd_model.nodes(:,1:2)*[ cos_rot;-sin_rot];
+    nodes(:,2)= inv_mdl.fwd_model.nodes(:,1:2)*[ sin_rot; cos_rot];
+    inv_mdl.fwd_model.nodes= nodes;
 
