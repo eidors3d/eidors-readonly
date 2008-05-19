@@ -1,0 +1,76 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+GREIT software framework
+</h2>
+
+The GREIT software framework is designed to simplify
+the analysis and allow contributions from different
+EIT software code bases. As shown, there are four
+steps
+<ol start="0">
+<li> <b>Construction of the forward model</b> (<tt>fwd_model</tt>).
+     This is saved to a file, and must inlude the 
+     main EIDORS structures:
+   <br>&minus; fwd_model.elems (N<sub>elems</sub>&times;4)
+        - definition of simplices
+   <br>&minus; fwd_model.nodes (N<sub>nodes</sub>&times;3)
+        - definition of vertices
+   <br>&minus; fwd_model.electrode (N<sub>electrodes</sub>)
+        - normally 16, 12 or 8
+   <br>&minus; fwd_model.electrode(<i>idx</i>).nodes
+        - nodes in the electrode
+   <br>&minus; fwd_model.electrode(<i>idx</i>).z_contact
+        - contact impedance for Complete electrode model
+
+<li> <b>Calculation of Jacobian </b>
+    <br> based on <tt>fwd_model</tt> and a reconstruction
+         model using a 32&times;32 grid which covers the
+         <i>x</i>, <i>y</i> space of the <tt>fwd_model</tt>.
+    <br> <i>Parameter</i> values include the height of the
+         reconstruction grid
+
+<li> <b>Calculation of the image prior</b>
+    <br> no parameters are required, typically, except for
+         NOSER type priors which require calculation 
+         of the Jacobian.
+
+<li> <b>Calculation of the reconstruction matrix</b>
+     <br> This step involves the inverse step, and 
+         calcualtion of the hyperparameter, via
+         an explicit hyperparameter (&lambda;) or 
+         via a scheme such as the truncated SVD.
+
+<li> <b>Evaluation of the reconstruction matrix</b>
+     <br> Each different evaluation <i>figure of metrit</i>
+          is calculated from the reconstruction matrix
+          using a different hyperparameter.
+
+</ol>
+
+<center>
+<img src="framework.png">
+<br><i> Figure:</i>
+Conceptual framework for GREIT software
+</center>
+
+<h3>Step 0: forward model</h3>
+
+First, simulate some data, based on a 576 element mesh
+<pre>
+<!--#include virtual="dual_model01.m" -->
+</pre>
+
+<center>
+<img src="dual_model01a.png">
+<br><i> Figure:</i>
+Simulation data
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-05-19 19:40:38 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
