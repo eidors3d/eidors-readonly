@@ -14,9 +14,9 @@ function [V] = forward_solver(E,I,tol,pp,V);
 % d: number of current patterns
 [n_nodes,d] = size(I);
 
-% PCG solver is better if memory is tight. This limit, 100k nodes
+% PCG solver is better if memory is tight. This limit, 50k nodes
 % seems to be good for machines with ~ 1GB of memory
-n_nodes_pcg = 1e5;
+n_nodes_pcg = 5e4;
 
 if nargin < 6
    V = zeros(size(E,1),d);
