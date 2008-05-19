@@ -1,5 +1,5 @@
 % Create 3D model of a Rectangular resistor
-% $Id: test_3d_resistor.m,v 1.5 2008-05-11 01:11:22 aadler Exp $
+% $Id: test_3d_resistor.m,v 1.6 2008-05-19 14:24:39 aadler Exp $
 
 ll=5; % length
 ww=1; % width
@@ -31,6 +31,7 @@ elseif 0
 else
    mdl= mk_grid_model([],0:ww,0:hh,0:ll);
    mdl.nodes= mdl.nodes*scale;
+   mdl= rmfield(mdl,'coarse2fine');
 end
 mdl.boundary= find_boundary(mdl.elems);
 mdl.gnd_node = 1;

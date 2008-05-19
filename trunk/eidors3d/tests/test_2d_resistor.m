@@ -1,5 +1,5 @@
 % Create 2D model of a cylindrical resistor
-% $Id: test_2d_resistor.m,v 1.7 2008-05-10 18:37:51 aadler Exp $
+% $Id: test_2d_resistor.m,v 1.8 2008-05-19 14:24:39 aadler Exp $
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4
@@ -8,6 +8,8 @@ current= 4;  % Amps
 z_contact= 1e-2;
 scale = .35;
 mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
+mdl= rmfield(mdl,'coarse2fine'); % don't calc this.
+
 mdl.gnd_node = 1;
 elec_nodes= [1:ww];
 elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
@@ -118,3 +120,4 @@ hig= max(mdl.nodes(:,2)) - min(mdl.nodes(:,2));
 R = (log(d2)-log(d1))*hig/(d2-d1)/conduc + 2*z_contact/scale;
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
+fprintf('Analytic is not expected to be same in last case');
