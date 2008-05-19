@@ -2,7 +2,7 @@ function ok= demo_real_test3
 % Perform tests based on the demo_real function with new structs
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real_test3.m,v 1.26 2007-08-30 03:37:33 aadler Exp $
+% $Id: demo_real_test3.m,v 1.27 2008-05-19 14:11:36 aadler Exp $
 
 isOctave= exist('OCTAVE_VERSION');
 
@@ -141,7 +141,7 @@ function compare_tol( cmp1, cmp2, errtext )
 % compare matrices and give error if not equal
 fprintf(2,'testing parameter: %s ...\n',errtext);
 
-tol= 1e-4;
+tol= 2e-4;
 
 vd= mean(mean( abs(cmp1 - cmp2) ));
 vs= mean(mean( abs(cmp1) + abs(cmp2) ));
