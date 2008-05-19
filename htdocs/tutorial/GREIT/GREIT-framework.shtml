@@ -75,21 +75,40 @@ FEM model of a ring of electrodes as well.
 
 <h3>Step 1: calculate Jacobian</h3>
 
-First, simulate some data, based on a 576 element mesh
+Calculate a Jacobian for a fine 3D mesh mapped onto
+a 32&times;32 pixel grid mesh
 <pre>
-<!--#include virtual="dual_model01.m" -->
+<!--#include virtual="framework01.m" -->
 </pre>
 
 <center>
-<img src="dual_model01a.png">
+<img src="framework01a.png">
 <br><i> Figure:</i>
-Simulation data
+3D fine cylindrical mesh and 32&times;32 reconstruction grid
 </center>
+
+<h3>Step 2: calculate image prior</h3>
+
+Here we use a NOSER type prior with each 
+diagonal element equal to
+ &radic;[<b>J</b><sup>T</sup><b>J</b>]<sub>i,i</sub>.
+The &radic; is based on our experience that
+a power of zero pushes artefacts to the boundary, while
+a power of one  pushes artefacts to the centre.
+<pre>
+<!--#include virtual="framework02.m" -->
+</pre>
+
+<h3>Step 3: calculate reconstruction matrix </h3>
+
+<pre>
+<!--#include virtual="framework03.m" -->
+</pre>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-05-19 20:12:55 $ by $Author: aadler $
+    Last Modified: $Date: 2008-05-19 21:19:22 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
