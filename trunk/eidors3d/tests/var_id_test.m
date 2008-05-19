@@ -2,7 +2,7 @@ function ok= var_id_test
 % Test that the mex file eidors_var_id works 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: var_id_test.m,v 1.20 2008-03-18 20:49:44 aadler Exp $
+% $Id: var_id_test.m,v 1.21 2008-05-19 14:32:27 aadler Exp $
 
 ok=1;
 
@@ -75,8 +75,9 @@ end
 % Test 7:
 %   test for random sorting
 %
+clear
 vv1.a=1; vv1.b='asfd'; vv1.c(1)=1; vv1.c(2)=2; vv1.s= @sin;
 vv3.aa=1; vv3.b='asfd'; vv3.c(1)=1; vv3.c(2)=2; vv3.s= @sin;
 if strcmp( eidors_var_id(vv1), eidors_var_id(vv3) )
-   warning('var_id_test: 7'); ok=0;
+   warning('var_id_test: 7 - expected'); ok=0;
 end
