@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: tutorial120a.m,v 1.2 2007-08-30 03:58:27 aadler Exp $
+% $Id: tutorial120a.m,v 1.3 2008-05-19 15:42:41 aadler Exp $
 
 imb=  mk_common_model('c2c',16);
 
@@ -19,7 +19,7 @@ vi= fwd_solve( img );
 
 % Add -12dB SNR
 vi_n= vi; 
-nampl= std(vi.meas - vh.meas)*10^(-12/20);
+nampl= std(vi.meas - vh.meas)*10^(-18/20);
 vi_n.meas = vi.meas + nampl *randn(size(vi.meas));
 
 show_fem(img);
