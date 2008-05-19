@@ -25,6 +25,45 @@ this way</small>)
 <center>
 <img src="square_mesh01a.png"
 <br><i>Figure:</i>
+<i>Left</i>: Fine mesh model with electrodes at surface
+<i>Right</i>: close up view of mesh near electrodes
+</center>
+
+<h3>t2</h3>
+
+<pre>
+<!--#include virtual="square_mesh02.m" -->
+</pre>
+
+<center>
+<img src="square_mesh02a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+<h3>t3</h3>
+
+<pre>
+<!--#include virtual="square_mesh03.m" -->
+</pre>
+
+<center>
+<img src="square_mesh03a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+<h3>t4</h3>
+
+<pre>
+<!--#include virtual="square_mesh04.m" -->
+</pre>
+
+<center>
+<img src="square_mesh04a.png"
+<br><i>Figure:</i>
 <i>Left</i>: Uniform mesh density
 <i>Right</i>: Mesh density refined going from surface to bottom
 </center>
@@ -32,7 +71,7 @@ this way</small>)
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-05-08 00:20:01 $ by $Author: aadler $
+    Last Modified: $Date: 2008-05-19 15:48:34 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
