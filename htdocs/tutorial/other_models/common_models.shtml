@@ -1,0 +1,66 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Models available from <tt>mk_common_model</tt>
+</h2>
+
+EIDORS provides a function <tt>mk_common_model</tt>
+which generates a number of prepackaged
+FEM models. Typically, these models
+would be used as a base and then modified as
+required.
+
+<h3>2D models</h3>
+
+<pre>
+<!--#include virtual="mk_common_model_2d_01.m" -->
+</pre>
+
+<center>
+<img src="mk_common_model_2d_01a.png"
+<img src="mk_common_model_2d_01b.png"
+<img src="mk_common_model_2d_01c.png"
+<img src="mk_common_model_2d_01d.png"
+<br><i>Figure:</i>
+<i>Left to Right</i>:
+Point electrode models with 64,256,576, and 1024 elements
+</center>
+
+<pre>
+<!--#include virtual="mk_common_model_2d_02.m" -->
+</pre>
+
+<center>
+<img src="mk_common_model_2d_02a.png"
+<img src="mk_common_model_2d_02b.png"
+<img src="mk_common_model_2d_02c.png"
+<img src="mk_common_model_2d_02d.png"
+<br><i>Figure:</i>
+<i>Left to Right</i>:
+Point electrode and Complete electrode
+models with various rotations.
+</center>
+
+<pre>
+<!--#include virtual="mk_common_model_2d_03.m" -->
+</pre>
+
+<center>
+<img src="mk_common_model_2d_03a.png"
+<img src="mk_common_model_2d_03b.png"
+<img src="mk_common_model_2d_03c.png"
+<img src="mk_common_model_2d_03d.png"
+<br><i>Figure:</i>
+<i>Left to Right</i>:
+Point electrode and complete electrode
+models for t2 and t3 thorax levels
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-05-19 17:56:31 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
+
