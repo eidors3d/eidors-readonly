@@ -55,10 +55,25 @@ Point electrode and complete electrode
 models for t2 and t3 thorax levels
 </center>
 
+<pre>
+<!--#include virtual="mk_common_model_2d_04.m" -->
+</pre>
+
+<center>
+<img src="mk_common_model_2d_04a.png"
+<img src="mk_common_model_2d_04b.png"
+<img src="mk_common_model_2d_04c.png"
+<img src="mk_common_model_2d_04d.png"
+<br><i>Figure:</i>
+<i>Left to Right</i>:
+Point electrode and complete electrode
+models for t2 and t3 thorax levels
+</center>
+
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-05-19 17:56:31 $ by $Author: aadler $
+    Last Modified: $Date: 2008-05-19 18:22:31 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
