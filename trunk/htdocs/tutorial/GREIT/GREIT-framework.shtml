@@ -55,6 +55,26 @@ Conceptual framework for GREIT software
 
 <h3>Step 0: forward model</h3>
 
+Using the <a href=" ../netgen/build_single_plane.shtml"
+             >netgen signal electrode plane</a> tutorial,
+we generate a 62465 element FEM model 
+<a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_fine.7z"
+             >download here</a>
+
+<pre>
+<!--#include virtual="framework00.m" -->
+</pre>
+
+<center>
+<img src="framework00a.png">
+<br><i> Figure:</i>
+FEM model of a ring of electrodes as well.
+<i>Right</i> Refinement of mesh near the electrode.
+</center>
+
+
+<h3>Step 1: calculate Jacobian</h3>
+
 First, simulate some data, based on a 576 element mesh
 <pre>
 <!--#include virtual="dual_model01.m" -->
@@ -69,7 +89,7 @@ Simulation data
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-05-19 19:40:38 $ by $Author: aadler $
+    Last Modified: $Date: 2008-05-19 20:12:55 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
