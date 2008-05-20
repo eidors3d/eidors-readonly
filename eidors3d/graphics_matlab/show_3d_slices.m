@@ -7,7 +7,7 @@ function show_3d_slices(img, varargin);
 % Default show 2 z_cuts and 1 x and 1 y cut
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_3d_slices.m,v 1.9 2007-09-28 19:10:02 aadler Exp $
+% $Id: show_3d_slices.m,v 1.10 2008-05-20 21:19:10 aadler Exp $
 
 cla;
 hold on
@@ -70,13 +70,11 @@ function [xyz_max, xyz_min, rimg, cimg, ...
             x_cuts(:)*[1  ,inf,inf]; ...
             y_cuts(:)*[inf,1  ,inf]];
 
-   clim = [];
-   ref_lev= 'use_global';
    np= calc_colours('npoints');
 % SURF DOESN'T SHOW THE BLOODY OUTER BOUNDARY, WE NEED TO ADD 4 POINTS
    rimg= NaN*ones(np+4,np+4,size(limts,1));
    rimg(3:end-2,3:end-2,:)= calc_slices( img, limts);
-   cimg = calc_colours( rimg, clim, 0, ref_lev );
+   cimg = calc_colours( rimg, img);
 
 function xyz= linspace_plus4(lim_min, lim_max, np);
    ooo= ones(length(lim_min),1);
