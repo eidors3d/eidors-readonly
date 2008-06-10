@@ -148,3 +148,31 @@ show_fem(inv_solve(imdl,v_rotate(:,45),v_reference));
 axis image; print -dpng -r125 fig5c.png
 !find -name 'fig*.png' -exec convert  -trim '{}' PNG8:'{}' ';'
 
+
+
+%%% 3D Movement
+clear vi
+electrodes_per_plane= 16;
+number_of_planes= 1;
+movement_pattern='radial_turn';
+tank_height= 10;
+% SET fno_max=20;
+finelevel=''; refine_electrodes=20;
+finelevel='-fine'; refine_electrodes=0;
+finelevel='-veryfine'; refine_electrodes=0;
+move_the_ball
+
+imdl= mk_common_model('c2c2',16);
+imdl.RtR_prior= @gaussian_HPF_prior;
+imdl.hyperparameter.value= 0.0003;
+
+
+clf
+show_fem(img)
+view(0,55)
+print -dpng -r100 fig9a.png
+
+clf; subplot(121)
+show_fem(inv_solve(imdl,vh,vi(1))); axis image
+print -dpng -r125 fig9b.png
+
