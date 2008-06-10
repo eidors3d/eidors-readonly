@@ -1,4 +1,4 @@
-% $Id: GREIT-algorithm.tex,v 1.21 2008-05-18 14:59:45 aadler Exp $
+% $Id: GREIT-algorithm.tex,v 1.22 2008-06-10 19:13:00 aadler Exp $
 \documentclass[letterpaper,twocolumn,10pt]{article}
 \usepackage[margin=0.75in]{geometry}
 
@@ -22,8 +22,8 @@
 \newcommand{\etal}{{\em et al}}
 \begin{document}
 
-\title{\bf GREIT: towards a consensus EIT algorithm for lung images
-\normalsize \em (DRAFT: $Date: 2008-05-18 14:59:45 $)%
+\title{\bf GREIT: towards a consensus EIT algorithm for \\ lung images%
+%\normalsize \em (DRAFT: $Date: 2008-06-10 19:13:00 $)%
 }
 
 \author{Andy Adler$^{1}$,
@@ -39,12 +39,13 @@
 \\
         Yvo G\"arber$^{10}$,
         Bart\l{}omiej Grychtol$^{11}$, 
-        William R B Lionheart$^{12}$,
-        G\"unter Hahn$^{13}$,
+        G\"unter Hahn$^{12}$,
+        William R B Lionheart$^{13}$,
 \\
         Anjum Malik$^{14}$,
         Janet Stocks$^{15}$,
         Andrew Tizzard$^{4}$,
+        Norbert Weiler$^{8}$,
         Gerhard Wolf$^{2}$%
        }
 
@@ -55,10 +56,10 @@
 
 {\small \bf
  {\em Abstract --}
-Recently, Electrical Impedance Tomography (EIT) has begun to see a
+Recently, electrical impedance tomography (EIT) has begun to see a
 significant clinical interest for monitoring of
 ventilated patients.  The key capability of EIT is to
-provide a real-time images of the distribution of ventilation in
+provide real-time images of the distribution of ventilation in
 the patient's lungs.
 However, most clinical and physiological research in lung EIT
 is done using older and proprietary algorithms; this is
@@ -93,20 +94,20 @@ research and commercial use.
 
 {\small
  $^{1}$Carleton University, Ottawa, Canada
- $^{2}$Harvard University, Boston, USA
+ $^{2}$Division of CCM, Children's Hospital, Boston, USA
  $^{3}$Middlesex University, London, UK
  $^{4}$Dartmouth College, Hanover, NH, USA
  $^{5}$University of Sheffield, UK
  $^{6}$Cardinal Health Care, London, UK
- $^{7}$Vrije Universiteit, Amsterdam, Netherlands
+ $^{7}$V.U. university medical center, Amsterdam, Netherlands
  $^{8}$University of Kiel, Germany
  $^{9}$\'Ecole Polytechnique de Montr\'eal, Canada
 $^{10}$Dr\"ager Medical, L\"ubeck, Germany
 $^{11}$University of Strathclyde, Glasgow, UK
-$^{12}$University of Manchester, UK
-$^{13}$University of G\"ottingen, Germany
+$^{12}$University of G\"ottingen, Germany
+$^{13}$University of Manchester, UK
 $^{14}$Maltron International, Rayleigh, UK
-$^{15}$Institute of Child Health, London, UK
+$^{15}$Institute of Child Health, UCL, London, UK
 }
 \renewcommand{\baselinestretch}{1.0} \normalfont
 
@@ -153,7 +154,7 @@ consensus linear reconstruction algorithm for EIT
 images of the chest.
 This algorithm is named GREIT, 
 the ``Graz consensus Reconstruction algorithm for EIT'',
-since early discussions took place at the 2007 EIT conference
+since early discussions took place at the 2007 ICEBI conference
 in Graz, Austria. Our aim is to develop a standard which
 has broad agreement from experts in the mathematical,
 engineering, physiological, and clinical EIT communities.
@@ -192,14 +193,14 @@ change image, based on a 3D forward model
 \item
  quantitative reconstructions:
    given an input in transfer impedance ($\Omega$) units,
-                    the output is in impedivity change ($\Omega\cdot m$))
+                    the output is in impedivity change ($\Omega\cdot m$)
 \item
  settings for all parameters:
      any tunable parameters must have assigned
      values in the recommended algorithm.
 \item
  published reconstruction matrices for
-      a $32\times 32$ pixel array for
+      a $32\times 32$ pixel array
       for a single ring of $16$, $12$ and $8$ 
       electrodes, for the shapes:
    a) neonate chests, 
@@ -227,12 +228,11 @@ There is general agreement that the algorithm features
 described in this section are the most suitable for
 linear EIT reconstruction. However, the best selections
 for the details of each feature are subject to discussion
-and experimentation. For example, we all agree that
-regularized image reconstruction techniques are necessary,
+and experimentation. For example, we agree on using
+regularized image reconstruction,
 but are not yet certain of the best reconstruction matrix prior.
 For this reason, we use the metaphor ``ingredients'' and
-``recipe''; we are certain of the ingredients, but need
-to experiment to find the best recipe.
+``recipe''.
 \begin{figure}[tbh]
 \begin{center}
  \includegraphics[width= 0.35\textwidth, bb=0 0 427 419]{figs/square_mesh03a.png}
@@ -263,7 +263,7 @@ model (FEM) to implement the forward solution (voltages
 at electrodes), and a coarse mesh for the inverse
 solution. For GREIT, the forward model is a 3D FEM with
 mesh refinement near the electrodes, and the reconstruction
-model is square pixel grid (Fig.~\ref{fig:dual_model}).
+model is a square pixel grid (Fig.~\ref{fig:dual_model}).
 Given a forward model, $F$,
 which calculates a voltage measurement vector, $\vB$, from
 a forward (fine) model conductivity element vector, $\sG_f$, we
@@ -271,7 +271,7 @@ have $\vB = F( \sG_f )$. The reconstruction (coarse)
 model is defined on square elements $\sG_r$ related by
 a coarse to fine projection matrix $\PB$, where $\sG_f = \PB \sG_r$.
 
-\item {\bf Rasterized Output image with units}
+\item {\bf Rasterized Output Image with Units}
 
 GREIT output images will be parametrized onto
 a 2D grid with square pixels (Fig.~\ref{fig:square_pixels}).
@@ -298,32 +298,34 @@ the chest (or the diameter of the cylindrical tank).
 {\em Left}: Reconstructed image onto $16\times 16$ pixel array using
 dual model (triangular divisions of pixels is an artefact of EIDORS
 representation). Precalculated GREIT models
-will use $32\times 32$ pixel array.
+will use $32\times 32$ pixel arrays.
 {\em Right}: Reconstructed image using a single FEM reconstruction model.
 }
 \end{center}
 \end{figure}
 
-\item {\bf Linearized Regularized Gauss Newton (GN) Reconstruction.}
+\item {\bf Regularized GN Reconstruction.}
 
-GN reconstruction seeks a solution $\hat{\xB}$ which minimizes
+Gauss-Newton (GN) reconstruction seeks a solution $\hat{\xB}$ which minimizes
 $$\| \yB - \JB \xB \|^2_{\WB} + \lambda^2\|\xB - \xB_0\|^2_{\RB}.$$
 $\yB = \vB^{(b)} - \vB^{(a)}$ is the vector of
 time difference measurements (between times $(a)$ and $(b)$).
 The choice of times $(a)$ and $(b)$ depend on the measurement
 protocol, and often $(a)$ is an average measurement at a time when
-the patient physiology is stable (ie end-expiration). The selection
+the patient lung status is stable (ie end-expiration). The selection
 of times $(a)$ and $(b)$ is out of scope for GREIT.
-Some groups consider normalized difference measurements
-($[\yB]_i = [\vB^{(b)} - \vB^{(a)}]_i / [\vB^{(a)}]_i$), which
+The use of normalized difference measurements
+($[\yB]_i = [\vB^{(b)} - \vB^{(a)}]_i / [\vB^{(a)}]_i$), 
 has the advantage of compensating for differences between measurement
 channels, but makes it difficult to assign units to $\hat{\xB}$. 
-Normalized difference measurements will be considered for GREIT.
+Both difference and normalized difference measurement schemes
+will be considered for GREIT.
 $\xB = f(\sG^{(b)}_r) - f(\sG^{(a)}_r)$ is the (parametrized) 
 conductivity change vector on the inverse model.
 The parametrization will be
 chosen to maximize the linear range of the solution; 
-some possible parametrization functions $f(\cdot)$ are log and linear.
+some possible parametrization functions $f(\cdot)$ are
+logarithmic and linear.
 
 $\JB$ is the Jacobian matrix calculated from the 
 fine model and projected on the inverse model,
@@ -348,7 +350,7 @@ of reconstruction using scaled integer multiplication,
 and with use of hardware which supports parallel computation;
 however, such implementation details are out of scope for GREIT.
 
-\item {\bf Image Prior with spatial correlations}
+\item {\bf Image Prior with Spatial Correlations}
 
 $\WB$ and $\RB$ represent the estimates of inverse covariances
 of the data noise ($\SG_n$) and conductivity change, or
@@ -357,10 +359,11 @@ $\sigma_n^2 \WB^{-1}= \SG_n$ and
 $\sigma_x^2 \RB^{-1}= \SG_x$. Here $\lambda= \sigma_n/\sigma_x$,
 is the regularization {\em hyperparameter}.
 Precalculated GREIT models assume uniform uncorrelated
-Gaussian measurement noise, and thus $\WB = \IB$.
+Gaussian measurement noise, and thus $\WB = \IB$, 
+the identity matrix.
 
 Many different approaches have been used to select
-the image prior $\RB$, including a scaled diagonal
+the image prior $\RB$, including scaled diagonal
 matrices and various forms of spatial high pass
 filters including discrete Laplacian and Gaussian
 high pass filters. The choice of $\RB$ has several
@@ -376,7 +379,7 @@ and
 c) {\em blurring:} increased area of a reconstructed
 target.
 Clearly, there are compromises to be made between
-optimizing each features, such as for {\em ringing} and
+optimizing each feature, such as for {\em ringing} and
 {\em blurring}. Additionally, the uniformity of
 a feature with spatial position is more important
 than low average feature errors.
@@ -397,7 +400,7 @@ will be defined directly on the inverse (coarse) grid
 Illustration of several undesirable features affected by the
 choice of $\RB$. {\em A}: Ground truth simulations of a small
 non-conductive target. {\em B}: Reconstructed images. The
-lower graphs show total image amplitude and position error
+lower graphs show average image amplitude and position error
 as a function of simulated radial position.%
 }
 \end{center}
@@ -412,9 +415,9 @@ on the EIT problem (Graham and Adler, 2006).  Furthermore,
 these methods select the best $\lambda$ for
 each image, rather than for the system configuration.
 
-It is essential that GREIT define the hyperparameter 
-selection, as this is necessary for reliable
-clinical interpretation, or multi-centre studies.
+It is essential that the algorithm define the hyperparameter 
+selection method, as this is necessary for reliable
+clinical interpretation.
 Unfortunately, there is little consensus on the best
 way to choose $\lambda$, and thus exploration of 
 this issue will be a major part of the GREIT evaluation
@@ -426,7 +429,7 @@ calibration protocols that may be performed by the
 equipment maker (or as part of installation) from which
 an optimal $\lambda$ may be chosen.
 
-\item {\bf Electrode movement and model inaccuracy compensation}
+\item {\bf Electrode Movement and Model Inaccuracy Compensation}
 
 Movement of electrodes due to breathing and posture change
 contributes artefacts to EIT images, which appear as
@@ -451,7 +454,7 @@ their value, or not.
 \item {\bf Temporal reconstruction}
 
 Typically, a frame of EIT data is reconstructed assuming
-that all measurements were made at the same movement.
+that all measurements were made at the same instant.
 However, EIT systems make sequential measurements for
 each current pattern. It is possible to take this
 time difference into account to calculate more
@@ -510,17 +513,17 @@ instead, the general criteria are listed:
 \\ \noindent $\circ$
          low average noise amplification
 
-\item {\bf Boundary shape and electrode sensitivity}
+\item {\bf Boundary Shape and Electrode Sensitivity}
 \\ \noindent $\circ$
       low sensitivity to electrode movement
 \\ \noindent $\circ$
       low sensitivity to boundary distortions
          (with breathing and posture change)
 
-\item {\bf Performance on experimental data}
+\item {\bf Performance on {\em in vivo} data}
 \\ \noindent $\circ$
- good performance on real experimental animal
-    and human clinical images. This includes performance
+ good performance on animal and clinical experimental data.
+    This includes performance
     monitoring rapid changes with ventilation and perfusion,
     and slow changes over hours and days of monitoring.
     Monitoring of slow changes means that GREIT will need
@@ -529,16 +532,17 @@ instead, the general criteria are listed:
 \end{list}
 
 The most difficult evaluation criteria will be the 
-last: ``experimental data performance'' (Faes \etal 2005).
+last: ``experimental data performance'' (Faes \etal. 2005).
 Our approach is based on a database of experimental
 EIT data from clinical research groups at Harvard University
-and the Universities
-of Kiel and G\"ottingen (Hahn \etal, 
-2006). Some of these EIT data sets were measured with
+and the Universities of Kiel and G\"ottingen.
+Some of these EIT data sets were measured with
 simultaneous CT images, which will facilitate developing
-validation tests of EIT algorithm output. We also
-plan to develop a blinded evaluation protocol for
-EIT images.
+validation tests of EIT algorithm output. Since the
+{\em in vivo} evaluation strategy is still somewhat 
+unclear, we plan to develop these criteria Development
+of appropriate evaluation criterion as part of
+the GREIT development process.
 
 
 \section{Discussion}
@@ -553,16 +557,16 @@ built and made available for testing on
 simulation and experimental data
 (time frame June -- Sept, 2008). 
 Based on this experience, a consensus
-on each parameter will be developed
+will be developed
 and the GREIT algorithm will be
 defined and published.
 We anticipate several benefits for
 this work. It will allow detailed
 interpretation of EIT images in terms of
-known algorithm performance. This will facilitate
-multi-centre EIT tests. For EIT research in
-general, it will provide a completely characterized
-baseline against which newer work may be compared.
+known algorithm performance,
+providing a thoroughly characterized
+baseline against which clinical measurements and
+newer EIT work may be compared.
 
 
 
@@ -632,19 +636,12 @@ Graham B, Adler A 2006
 27 S65-S79
 
 \item[]
-Hahn G Thiel F Dudykevych T Frerichs I Gersing E
-and Hellige G 2001
-``Quantitative evaluation of the performance of
-different electrical tomography devices''
-{\em  Biomed Tech (Berlin)}
+Hahn G Theil F Dudykevych T Frerichs I Gersing E and Hellige G
+2001
+``Quantitative evaluation of the performance of different
+electrical tomography devices''
+{\em Biomed Tech (Berlin)}
 46 91--95
-
-\item[]
-Hahn G Just A Dudykevych T Frerichs I Hinz J Quintel M and Hellige G
-2006
-``Imaging pathologic pulmonary air and fluid accumulation by functional and absolute EIT''
-{\em Physiol. Meas.}
-27 S187--S198
 
 \item[]
 Kaipio J and Somersalo E 2007
