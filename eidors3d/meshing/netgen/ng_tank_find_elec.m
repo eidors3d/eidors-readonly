@@ -34,7 +34,7 @@ function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres)
 % electrodes = EIDORS V3.x electrodes structure
 
 % (C) 2002-2006. Licenced under the GPL
-% $Id: ng_tank_find_elec.m,v 1.7 2008-05-01 15:21:00 aadler Exp $
+% $Id: ng_tank_find_elec.m,v 1.8 2008-06-11 10:42:21 aadler Exp $
 
 if  isstruct(centres)
    % Calc centre of each surface
@@ -48,7 +48,7 @@ if  isstruct(centres)
       electrodes(e).z_contact = 0.1; % set placeholder value
    end
    elec= NaN; sels= NaN; % No backward compatible for this mode
-elseif size(centres,3)==3;
+elseif size(centres,2)==3;
    [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);
 else
    error('don`t understand format of centres');
