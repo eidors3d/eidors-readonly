@@ -1,35 +1,54 @@
 function Reg= exponential_covar_prior( inv_model );
-% EXPONENTIAL_COVAR_PRIOR image prior with exponential interelement covar
+% EXPONENTIAL_COVAR_PRIOR image prior with exponential
+%      inter-element covariance, multiplied by a NOSER
+%      type weighting, if desired.
 % Reg= exponential_covar_prior( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 % Parameters: exponential rate
-%   gamma= inv_model.fwd_model.exponential_covar_prior.gamma
-%       DEFAULT is 5% of medium x,y radius
+%   gamma= inv_model.exponential_covar_prior.gamma
+% Parameters: NOSER exponent: diag(J'*J)^exponent )
+%   gamma= inv_model.exponential_covar_prior.noser_exp
+%       DEFAULT is 0 (ie. no NOSER exponent)
+%
+% FIXME: this code does an inv or the reg matrix. This
+%        is very inefficient.
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: exponential_covar_prior.m,v 1.4 2007-09-28 19:58:31 aadler Exp $
+% $Id: exponential_covar_prior.m,v 1.5 2008-06-11 14:30:28 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
-Reg = eidors_obj('get-cache', fwd_model, 'exponential_covar_prior');
-if ~isempty(Reg)
-   eidors_msg('exponential_covar_prior: using cached value', 3);
-   return
-end
 
 try 
-    gamma= fwd_model.exponential_covar_prior.gamma;
+    gamma= inv_model.exponential_covar_prior.gamma;
 catch
     xy_diam = max( max(fwd_model.nodes(:,1:2)) -  ...
                    min(fwd_model.nodes(:,1:2)));
-    gamma= 0.05*xy_diam 
+    gamma= 0.05*xy_diam;
 end
 
 Reg = calc_exponential_covar_prior( fwd_model, gamma);
 Reg= 0.5*(Reg+Reg'); % calculation should be symmetric, but is slightly off.
 
-eidors_obj('set-cache', fwd_model, 'exponential_covar_prior', Reg);
-eidors_msg('exponential_covar_prior: setting cached value', 3);
+Reg= inv(Reg); % FIXME - not part of inverse
+
+try 
+    noser_exp= inv_model.exponential_covar_prior.noser_exp;
+catch
+    noser_exp= 0;
+end
+
+if noser_exp>0
+    img_bkgnd= calc_jacobian_bkgnd( inv_model );
+    J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+    l_prior= size(J,2);
+
+    % Reg is spdiags(diag(J'*J),0, l_prior, l_prior);
+    diag_col= sum(J.^2,1)';
+    RegN = spdiags( diag_col.^noser_exp/2, 0, l_prior, l_prior);
+
+    Reg= RegN * Reg * RegN;
+end
 
 % Calculate exponential LPF Filter
 % parameter is gamma (normally 0.1)
