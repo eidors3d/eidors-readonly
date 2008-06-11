@@ -12,7 +12,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_solve.m,v 1.17 2007-10-15 17:46:04 aadler Exp $
+% $Id: aa_inv_solve.m,v 1.18 2008-06-11 14:37:06 aadler Exp $
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );
@@ -30,6 +30,13 @@ else
     hp  = calc_hyperparameter( inv_model );
 
     one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
+%   We need to scale OSI to Vol*OSI*J*inv(diag(Vol)) = 1
+%   Dvol = spdiags( pp.VOLUME, 0, pp.n_elem, pp.n_elem );
+%   A = ( Dvol* one_step_inv) * (J/Dvol);
+%   scl = A'\ones(pp.n_elem,1);
+%   scl = (A*A'+ hp^2*RtR)\A*ones(pp.n_elem,1);
+%   scl = (1:576)'; scl= 1 - (scl>200)*.4;
+%   one_step_inv= spdiags(scl,0, pp.n_elem, pp.n_elem) * one_step_inv;
 
     eidors_obj('set-cache', inv_model, 'aa_inv_solve', one_step_inv);
     eidors_msg('aa_inv_solve: setting cached value', 2);
