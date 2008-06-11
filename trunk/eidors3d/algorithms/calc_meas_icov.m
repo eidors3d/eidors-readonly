@@ -9,19 +9,19 @@ function meas_icov = calc_meas_icov( inv_model )
 % calc_meas_icov can be called as
 %    meas_icov= calc_meas_icov( inv_model )
 %
-% in each case it will call the inv_model.meas_icov
-%  supplied by the user. If such a function is not available,
-%  meas_icov will assume uniform independent measurement noise.
-%
 % meas_icov   is the calculated data prior
 % inv_model    is an inv_model structure
 %
-% Many common EIT (and other regularized) algorithms do not
-%  contain a meas_icov term. For these algorithms, this function
-%  generates an approximation based on uniform noise.
+% if:
+%    inv_model.meas_icov    is a function
+%          -> call it to calculate meas_icov
+%    inv_model.meas_icov    is a matrix
+%          -> return it as meas_icov
+%    inv_model.meas_icov    does not exist
+%          -> use I, or 1./homg (for normalized difference)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_meas_icov.m,v 1.18 2007-08-30 03:37:04 aadler Exp $
+% $Id: calc_meas_icov.m,v 1.19 2008-06-11 14:39:03 aadler Exp $
 
 meas_icov = eidors_obj('get-cache', inv_model, 'meas_icov');
 
@@ -31,7 +31,11 @@ if ~isempty(meas_icov)
 end
 
 if isfield(inv_model,'meas_icov')
-   meas_icov= feval( inv_model.meas_icov, inv_model);
+   if isnumeric(inv_model.meas_icov);
+      meas_icov = inv_model.meas_icov;
+   else
+      meas_icov= feval( inv_model.meas_icov, inv_model);
+   end
 else
    meas_icov= default_meas_icov( inv_model );
 end
@@ -57,7 +61,8 @@ function meas_icov = default_meas_icov( inv_model )
       meas_icov= speye( n );
    else
       homg_data=  solve_homg_image( fwd_model );
-      meas_icov = sparse(1:n, 1:n, ( 1./ homg_data.meas ).^2 );
+% sig = k/h -> std = k/h -> 1/std = kh
+      meas_icov = sparse(1:n, 1:n, ( homg_data.meas ).^2 );
    end
 
 function n_meas = calc_n_meas( fwd_model )
