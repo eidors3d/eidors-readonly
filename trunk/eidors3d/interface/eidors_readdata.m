@@ -21,13 +21,17 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_readdata.m,v 1.25 2007-10-10 18:22:32 aadler Exp $
+% $Id: eidors_readdata.m,v 1.26 2008-06-11 14:48:51 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
 %   - test whether file format matches specified stimulation pattern
 %   - todo MCEIT provides curr and volt on driven electrodes.
 %       how can this be provided to system?
+
+if ~exist(fname,'file')
+   error([fname,' does not exist']);
+end
 
 if nargin < 2
 % unspecified file format, autodetect
