@@ -22,7 +22,7 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 %     c2f_idx maps each elemen in fmdl_new to fwd_model
 
 % (C) 2006-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: crop_model.m,v 1.18 2008-03-18 17:51:22 aadler Exp $
+% $Id: crop_model.m,v 1.19 2008-06-11 14:47:37 aadler Exp $
 
 usage_graphics= 1;
 try if axis_handle.type == 'fwd_model'
@@ -94,6 +94,7 @@ function [fmdl1,c2f_idx]= crop_fwd_model(fmdl0, fcn_handle);
    fmdl1.boundary(remove,:)= [];
 
 % renumber nodes, set unused ones to 0
+if isfield(fmdl1,'electrode');
    for i=1:length(fmdl1.electrode)
       el_nodes= fmdl0.electrode(i).nodes;
       el_nodes(:)= idx1(el_nodes);
@@ -102,4 +103,5 @@ function [fmdl1,c2f_idx]= crop_fwd_model(fmdl0, fcn_handle);
       end
       fmdl1.electrode(i).nodes= el_nodes;
    end
+end
 
