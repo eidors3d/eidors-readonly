@@ -15,7 +15,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.23 2008-06-11 14:51:05 aadler Exp $
+% $Id: move_the_ball.m,v 1.24 2008-06-11 19:20:25 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane');  electrodes_per_plane= 16;    end
@@ -34,12 +34,13 @@ if ~exist('tank_height');           tank_height= 30;              end
 if ~exist('electrode_width');       electrode_width = 0.5;        end
 if ~exist('electrode_height');      electrode_height= 0.5;        end
 if ~exist('rect_or_circ_electrode');rect_or_circ_electrode= 'C';  end
+if ~exist('maxh');                  maxh= '';                     end
 
 save_img_not_vi= 0;
 clear vi;
 
 % number of simulations to do;
-fno_max= 200;
+if ~exist('fno_max');               fno_max= 100;                 end
 
 first_plane_starts= tank_height/(number_of_planes+1);
 height_between_centres = first_plane_starts;
@@ -54,6 +55,21 @@ height_between_centres = first_plane_starts;
    electrode_width, electrode_height, ...
    [fname,'0000'], ...
    refine_electrodes  );
+
+% Load file and find places to modify
+fid=fopen([fname,'0000.geo'],'r');
+if fid==-1; error('file open (r) error'); end
+geo_homg= setstr(fread(fid)');
+fclose( fid);
+posn= findstr(geo_homg,'algebraic3d'); posn1=posn(1);
+posn= findstr(geo_homg,'and  cyl;');   posn2=posn(1);
+
+% modify with maxh
+fid=fopen([fname,'0000.geo'],'w');
+if fid==-1; error('file open (w) error'); end
+fprintf(fid,[geo_homg(1:posn2+7),' ',maxh,geo_homg(posn2+8:end)]);
+fclose( fid);
+
 
 % The msz file created here can be reused later
 msz_file= [fname,'0000.msz'];
@@ -75,7 +91,7 @@ n_elem= size(fmdl.elems,1);
 elem_data= ones(n_elem,1);
 img=eidors_obj('image','netgen_problem', ...
                'fwd_model',fmdl, 'elem_data', elem_data);
-if save_img_not_vi
+if ~save_img_not_vi
    vh= fwd_solve( img);
    vh.time= 0;
    fmdl_save=fmdl;
@@ -108,21 +124,12 @@ if 0 % TEST CODE - check electrodes
    end
 end
 
-
-
-% Load file and find places to modify
-fid=fopen([fname,'0000.geo'],'r');
-geo_homg= setstr(fread(fid)');
-fclose( fid);
-posn= findstr(geo_homg,'algebraic3d'); posn1=posn(1);
-posn= findstr(geo_homg,'and  cyl;');   posn2=posn(1);
-
 for fno= 1:fno_max
    % ensure memory isn't completely full
    eidors_cache clear all;
 
    r = 1.5;
-   f_frac= fno/fno_max;
+   f_frac= (fno-1)/fno_max;
    switch movement_pattern
       case 'spiral'
          t=2*pi*f_frac * 4;
@@ -170,10 +177,11 @@ for fno= 1:fno_max
        sprintf('solid ball = sphere(%3.3f,%3.3f,%3.3f;%3.3f);', ...
           x,y,z,r), ...
        10,geo_homg((posn1+12):(posn2+7)), ...
-       ' and not ball',geo_homg((posn2+8):end), ...
+       ' and not ball ',maxh,geo_homg((posn2+8):end), ...
        10,'tlo ball   -col=[0,1,0];', 10];
    fname_ = sprintf('%s%04d', fname, fno );
    fid=fopen([fname_,'.geo'],'w');
+   if fid==-1; error('file open (w) error'); end
    fwrite(fid,geo_file);
    fclose( fid);
    call_netgen([fname_,'.geo'],[fname_,'.vol'],msz_file, finelevel);
@@ -194,7 +202,7 @@ for fno= 1:fno_max
    img=eidors_obj('image','netgen_problem', ...
                   'fwd_model',fmdl, 'elem_data', elem_data);
    img.elem_data(ball)= 1.1;
-   if save_img_not_vi
+   if ~save_img_not_vi
       vi(fno)= fwd_solve( img);
       vi(fno).time = fno;
    else
@@ -213,7 +221,7 @@ save_filename= ...
    electrode_width, electrode_height, ...
    [fname,'0000'], ...
    refine_electrodes  );
-if save_img_not_vi
+if ~save_img_not_vi
    save(save_filename,'vi','vh','fmdl_save');
 else
    save(save_filename,'imgh','imgi');
