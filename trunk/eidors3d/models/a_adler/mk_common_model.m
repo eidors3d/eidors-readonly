@@ -64,7 +64,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_model.m,v 1.25 2008-05-19 17:23:44 aadler Exp $
+% $Id: mk_common_model.m,v 1.26 2008-06-11 14:28:37 aadler Exp $
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -97,14 +97,7 @@ if str(2:3)=='2c' | str(2:3) == '2C'
    inv_mdl = rotate_model( inv_mdl, str2num(str(4)));
 
    if str(3)=='C' % complete electrode model
-      inv_mdl = turn_model( inv_mdl, 2*pi/4/layers/2 );
-
-      bdy= inv_mdl.fwd_model.boundary;
-      for i=1:length(inv_mdl.fwd_model.electrode);
-         enode= inv_mdl.fwd_model.electrode(i).nodes;
-         ff= find( enode== bdy(:,1) );
-         inv_mdl.fwd_model.electrode(i).nodes = bdy(ff,:);
-      end
+      inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
    end
 
 elseif str(2:3)=='2D'
@@ -130,7 +123,7 @@ elseif str(2:3)=='2s'
    end
    inv_mdl = mk_2r_model( n_elec, layers, options);
 
-elseif str(2:3)=='2t' & length(str)==4
+elseif ( str(2:3)=='2t' | str(2:3)=='2T') & length(str)==4
    if     str(1)=='a'; layers=  4;
    elseif str(1)=='b'; layers=  8;
    elseif str(1)=='c'; layers= 12;
@@ -144,6 +137,10 @@ elseif str(2:3)=='2t' & length(str)==4
    inv_mdl = rotate_model( inv_mdl, 2); % 45 degrees
 
    if length(str)==0; str= [str,' '];end
+
+   if str(3)=='T' % complete electrode model
+      inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
+   end
       
    inv_mdl = deform_cylinder( inv_mdl, str2num(str(4)), 1 );
 
@@ -513,3 +510,12 @@ function inv_mdl = turn_model( inv_mdl, angle );
     nodes(:,2)= inv_mdl.fwd_model.nodes(:,1:2)*[ sin_rot; cos_rot];
     inv_mdl.fwd_model.nodes= nodes;
 
+function inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
+      inv_mdl = turn_model( inv_mdl, 2*pi/4/layers/2 );
+
+      bdy= inv_mdl.fwd_model.boundary;
+      for i=1:length(inv_mdl.fwd_model.electrode);
+         enode= inv_mdl.fwd_model.electrode(i).nodes;
+         ff= find( enode== bdy(:,1) );
+         inv_mdl.fwd_model.electrode(i).nodes = bdy(ff,:);
+      end
