@@ -7,6 +7,7 @@ function Reg= aa_e_move_image_prior( inv_model );
 %   inv_model.image_prior.parameters(1) -> relative weighting
 %     of movement vs image fraction of hyperparameter
 %     => Default = 100
+%   inv_model.aa_e_move_image_prior.RegC.func = Cond Reg fcn
 %
 % For image portion, we use a Laplace prior, as 
 % -1 for each adjacent element, and 3 (in 2D) or 4 (in 3D)
@@ -16,7 +17,7 @@ function Reg= aa_e_move_image_prior( inv_model );
 % constraint, such that Rij = -1 for adjacent electrodes
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_e_move_image_prior.m,v 1.13 2007-08-30 03:37:01 aadler Exp $
+% $Id: aa_e_move_image_prior.m,v 1.14 2008-06-11 14:36:32 aadler Exp $
 
 % relative strengths of conductivity and movement priors
 if isfield( inv_model,'aa_e_move_image_prior')
@@ -28,7 +29,11 @@ end
 pp= aa_fwd_parameters( inv_model.fwd_model );
 
 % calc conductivity portion
-RegC = laplace_image_prior( inv_model );
+try
+   RegC= feval( inv_model.aa_e_move_image_prior.RegC.func, inv_model); 
+catch
+   RegC = laplace_image_prior( inv_model );
+end
 
 % calc movement portion
 RegM = movement_image_prior( pp.n_dims, pp.n_elec );
