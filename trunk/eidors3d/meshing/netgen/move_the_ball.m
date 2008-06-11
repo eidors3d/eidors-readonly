@@ -15,7 +15,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.22 2006-11-26 00:59:56 aadler Exp $
+% $Id: move_the_ball.m,v 1.23 2008-06-11 14:51:05 aadler Exp $
 
 % user input
 if ~exist('electrodes_per_plane');  electrodes_per_plane= 16;    end
@@ -35,8 +35,11 @@ if ~exist('electrode_width');       electrode_width = 0.5;        end
 if ~exist('electrode_height');      electrode_height= 0.5;        end
 if ~exist('rect_or_circ_electrode');rect_or_circ_electrode= 'C';  end
 
+save_img_not_vi= 0;
+clear vi;
+
 % number of simulations to do;
-fno_max= 100;
+fno_max= 200;
 
 first_plane_starts= tank_height/(number_of_planes+1);
 height_between_centres = first_plane_starts;
@@ -62,15 +65,23 @@ end
 
 % Create Homog
 stim_pat= mk_stim_patterns(electrodes_per_plane, number_of_planes, ...
-              '{ad}','{ad}',{'meas_current'});
+              '{ad}','{ad}',{'no_meas_current'});
+%             '{ad}','{ad}',{'meas_current'});
 [fmdl,mat_idxs]= ng_mk_fwd_model( ...
   [fname,'0000.vol'], centres, [], stim_pat);
+fmdl.elems=uint32(fmdl.elems); %save memory
+
 n_elem= size(fmdl.elems,1);
 elem_data= ones(n_elem,1);
 img=eidors_obj('image','netgen_problem', ...
                'fwd_model',fmdl, 'elem_data', elem_data);
-vh= fwd_solve( img);
-vh.time= 0;
+if save_img_not_vi
+   vh= fwd_solve( img);
+   vh.time= 0;
+   fmdl_save=fmdl;
+else
+   imgh= img;
+end
 
 if 0 % TEST CODE - check electrodes
    show_fem( fmdl);
@@ -97,10 +108,6 @@ if 0 % TEST CODE - check electrodes
    end
 end
 
-fmdl_save=fmdl;
-% save memory
-fmdl_save.elems=uint32(fmdl.elems);
-      
 
 
 % Load file and find places to modify
@@ -146,6 +153,13 @@ for fno= 1:fno_max
          y= Rad_dist*cos(t);
          z= tank_height/2;
 
+      case 'radial_turn'
+         t=2*pi*f_frac * (4/20);
+         Rad_dist= tank_radius/2;
+         x= Rad_dist*sin(t);
+         y= Rad_dist*cos(t);
+         z= tank_height/2;
+
 
       otherwise
          error('don''t understand movement options')
@@ -179,9 +193,13 @@ for fno= 1:fno_max
    elem_data= ones(n_elem,1);
    img=eidors_obj('image','netgen_problem', ...
                   'fwd_model',fmdl, 'elem_data', elem_data);
-   img.elem_data(ball)= 2;
-   vi(fno)= fwd_solve( img);
-   vi(fno).time = fno;
+   img.elem_data(ball)= 1.1;
+   if save_img_not_vi
+      vi(fno)= fwd_solve( img);
+      vi(fno).time = fno;
+   else
+      imgi(fno) = img;
+   end
 end
 
 save_filename= ...
@@ -195,7 +213,11 @@ save_filename= ...
    electrode_width, electrode_height, ...
    [fname,'0000'], ...
    refine_electrodes  );
-save(save_filename,'vi','vh','fmdl_save');
+if save_img_not_vi
+   save(save_filename,'vi','vh','fmdl_save');
+else
+   save(save_filename,'imgh','imgi');
+end
 
 
 % Example to reconstruct images 
