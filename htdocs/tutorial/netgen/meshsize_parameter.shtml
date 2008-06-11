@@ -1,0 +1,46 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Effects of the Meshsize parameter in Netgen
+</h2>
+
+<h3>
+Check Netgen is installed.
+</h3>
+<br>
+If necessary, get netgen from:
+<a href="http://www.hpfem.jku.at/netgen/">netgen</a>.
+
+<h3>
+Setup: use default meshsize
+</h3>
+
+First we build a netgen model using the default meshsize,
+by specifying <tt>maxh=''</tt>.
+<p>
+Call netgen:
+<pre>
+<!--#include virtual="meshsize_param01.m" -->
+</pre>
+<p>
+Reconstruct images:
+<pre>
+<!--#include virtual="meshsize_param02.m" -->
+</pre>
+
+<center>
+<img src="meshsize_param02a.png">
+<br><i>Figure:</i>
+<i>Left</i>:  forward model
+<i>Right</i>: reconstructed image (with target position in green)
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-06-11 18:42:39 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
+
