@@ -1,4 +1,4 @@
-% Reconstruct images $Id: meshsize_param02.m,v 1.1 2008-06-11 18:42:39 aadler Exp $
+% Reconstruct images $Id: meshsize_param02.m,v 1.2 2008-06-12 11:07:29 aadler Exp $
 imdl= mk_common_model('c2c2',16);
 imdl.RtR_prior= @laplace_image_prior;
 imdl.hyperparameter.value = 0.01;
@@ -13,5 +13,6 @@ subplot(122);
 show_fem(inv_solve( imdl, vh, vi(1)));
 line(xcirc,ycirc,'Color',[0,0.5,0],'LineWidth',2);
 axis image
+ylabel(sprintf('No. Elems= %d', size(img.fwd_model.elems,1)));
 
 print -dpng -r100 meshsize_param02a.png
