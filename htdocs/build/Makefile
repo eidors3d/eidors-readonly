@@ -2,7 +2,7 @@
 
 # Need to have a local apache pointing to eidors
 
-SZLIM= 400k
+SZLIM= 100k
 WKDIR = cd ..
 REL= ../../release/
 INCLDIRS =  data_contrib \
@@ -11,6 +11,9 @@ INCLDIRS =  data_contrib \
             programming \
             tutorial 
 WEBLINK= http://eidors3d.sourceforge.net/
+#EIDORSDL=http://localhost:80/eidors/index.shtml
+EIDORSDL=http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml
+CUTDL=3
 
 #all: $(REL) shtml other
 all: $(REL)/htdocs
@@ -50,11 +53,12 @@ jnk:
 #         -e'next unless m{href \s* = \s* . (^[$$q]*) \s* .}x;' \
           -e'print STDERR "$$r-$$_";}' \
 
+#	mv $@/localhost*/eidors/* $@
+#	rm -rf $@/localhost*
+
 $(REL)/htdocs: $(REL) Makefile
 	mkdir -p $@ && cd $@ && \
-	wget -r http://localhost:80/eidors/index.shtml
-	mv $@/localhost*/eidors/* $@
-	rm -rf $@/localhost*
+        wget -r -nH --cut-dirs=$(CUTDL) $(EIDORSDL)
 	find $@ -name \*.shtml -print \
          | while read a ; do \
            mv $$a `dirname $$a`/`basename $$a .shtml`-s.html; \
@@ -72,8 +76,8 @@ $(REL)/htdocs: $(REL) Makefile
              -e  '$$s=~ s{^.*/(.*)}{$$1};'\
              -e  '$$m{$$s}= $$t;'\
           -e'} } my $$q= q{['\''"]}; $$n= q{^['\''"]};' \
-          -e'next unless m{href \s* = \s* ($$q)(.*/)?([^\1]*)(\1) }x;' \
-          -e'if (my $$r= $$m{$$3}) {s/$$1$$2$$3$$4/"$$r"/g};' \
+          -e'next unless m{(href|src) \s* = \s* ($$q)(.*/)?([^\2]*)(\2) }x;' \
+          -e'if (my $$r= $$m{$$4}) {s/$$2$$3$$4$$5/"$$r"/g};' \
         \{} \;
 	find $@ -size +$(SZLIM) | xargs rm 
 	find $@ -name \*-s.html.bak | xargs rm
