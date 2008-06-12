@@ -34,11 +34,38 @@ Reconstruct images:
 <i>Right</i>: reconstructed image (with target position in green)
 </center>
 
+<h3>
+Calculate several meshsizes
+</h3>
+<pre>
+<!--#include virtual="meshsize_param03.m" -->
+</pre>
+<center>
+<img src="meshsize_param03aa.png"><br>
+<img src="meshsize_param03ab.png"><br>
+<img src="meshsize_param03ac.png"><br>
+<img src="meshsize_param03ad.png"><br>
+<img src="meshsize_param03ae.png"><br>
+<img src="meshsize_param03af.png"><br>
+<img src="meshsize_param03ag.png"><br>
+<hr>
+<img src="meshsize_param03ba.png"><br>
+<img src="meshsize_param03bb.png"><br>
+<img src="meshsize_param03bc.png"><br>
+<img src="meshsize_param03bd.png"><br>
+<img src="meshsize_param03be.png"><br>
+<img src="meshsize_param03bf.png"><br>
+<img src="meshsize_param03bg.png"><br>
+<br><i>Figure:</i>
+<i>Left</i>:  forward model
+<i>Right</i>: reconstructed image (with target position in green)
+</center>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-06-11 18:42:39 $ by $Author: aadler $
+    Last Modified: $Date: 2008-06-12 11:07:29 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
