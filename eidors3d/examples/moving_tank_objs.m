@@ -32,11 +32,11 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.23 2008-03-15 22:06:45 aadler Exp $
+% $Id: moving_tank_objs.m,v 1.24 2008-06-12 16:43:00 aadler Exp $
 
 clim= [];
 
-if nargin<1; data_sel = 1; end
+if nargin<1; data_sel = 10; end
 if nargin<2; inv_sel  = 1; end
 
 if isnumeric(data_sel) & size(data_sel)==[1,1]
@@ -233,7 +233,7 @@ end
 t=cputime;
 imgs= inv_solve(imdl,vh,vi);
 fprintf('solve time=%f\n',cputime-t);
-animate_reconstructions(filename, imgs, clim);
+animate_reconstructions(filename, imgs);
 
 % original = [ 1.1 2.1 3.1 4.1 5.1
 %              1.2 2.2 3.2 4.2 5.2
