@@ -6,17 +6,28 @@ EIDORS package.
 
 <ul>
 <p><li><b>
+    13 June 2008:
+</b><br>
+Blobby the walrus has decided to release the first
+release candidate of EIDORS v3.3 (EIDORS-v3.3RC1)
+on Friday, the 13th.
+
+This version incorporates many changes, bug fixes and code
+speedups since v3.2 (Aug, 2007). New features include:
+a) interfaces to FEM generation (distmesh, netgen) and
+dual model solvers, b) new algorithms (total varia- tion,
+electrode movement solver, temporal solvers), c) a data
+repository with in vivo and simulated data and models,
+d) faster algorithms with better caching, and e) improved
+graphics and extensive tutorials.
+
+<p><li><b>
     4 Mar 2008:
 </b><br>
 New code to generally handle reconstructions with coarse
 and fine inverse models. This will take care of: 1) reconstructions
 on nodes rather than elements, 2) reconstructions to a 
 raster output (such as GREIT), and 3) 2&frac12;D reconstructions.
-<P>
-To do this, the function <tt>calc_jacobian</tt> is redefined
-to take a single <tt>inv_model</tt> parameter. <tt>inv_model</tt>
-now has fields <tt>rec_model</tt> (reconstruction, coarse model)
-and <tt>fwd_model</tt> (forward, fine model).
 
 
 <p><li><b>
@@ -820,7 +831,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-04 19:55:06 $ by $Author: aadler $
+    Last Modified: $Date: 2008-06-13 17:40:57 $ by $Author: aadler $
 </small>
 </body>
 
