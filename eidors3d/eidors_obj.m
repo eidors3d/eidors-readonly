@@ -56,7 +56,7 @@ function obj_id= eidors_obj(type,name, varargin );
  
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.63 2008-03-15 22:36:53 aadler Exp $
+% $Id: eidors_obj.m,v 1.64 2008-06-13 17:30:34 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
@@ -74,7 +74,7 @@ switch type
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
-      obj_id= '3.2+ ($Date: 2008-03-15 22:36:53 $)'; % Update for New eidors version
+      obj_id= '3.3RC1 ($Date: 2008-06-13 17:30:34 $)'; % Update for New eidors version
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
