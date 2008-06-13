@@ -32,6 +32,15 @@
    >Examples</a><br>
 <a href="../tutorial.shtml"
    >Tutorials</a><br>
+<a href="../image_reconst.shtml"
+      >&minus; Image Reconst</a><br>
+<a href="../data_structures.shtml"
+      >&minus; Data Structures</a><br>
+<a href="../application_examples.shtml"
+      >&minus; Application Examples</a><br>
+<a href="../netgen.shtml"
+      >&minus; FEM Modelling</a><br>
+<a href="../download.shtml"
 <a href="../../download.shtml"
    >Download</a><br>
 <a href="../../data_contrib.shtml"
@@ -46,7 +55,7 @@
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id: nav-sidebar-tut.shtml,v 1.6 2007-09-05 00:46:22 aadler Exp $
+     $Id: nav-sidebar-tut.shtml,v 1.7 2008-06-13 17:29:27 aadler Exp $
   -->
 <!--#if expr="$SERVER_NAME = 'localhost'" -->
 <!--#else -->
