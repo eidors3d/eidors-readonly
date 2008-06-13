@@ -156,10 +156,11 @@ electrodes_per_plane= 16;
 number_of_planes= 1;
 movement_pattern='radial_turn';
 tank_height= 10;
-% SET fno_max=20;
-finelevel=''; refine_electrodes=20;
-finelevel='-fine'; refine_electrodes=0;
-finelevel='-veryfine'; refine_electrodes=0;
+finelevel=''; refine_electrodes=0;
+%finelevel='-fine'; refine_electrodes=0;
+%finelevel='-veryfine'; refine_electrodes=0;
+fno_max=1;
+maxh= '-maxh=1.0';
 move_the_ball
 
 imdl= mk_common_model('c2c2',16);
