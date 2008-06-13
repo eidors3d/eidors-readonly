@@ -11,9 +11,10 @@ INCLDIRS =  data_contrib \
             programming \
             tutorial 
 WEBLINK= http://eidors3d.sourceforge.net/
-#EIDORSDL=http://localhost:80/eidors/index.shtml
-EIDORSDL=http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml
-CUTDL=3
+ EIDORSDL=http://localhost:80/eidors/index.shtml
+ CUTDL=1
+#EIDORSDL=http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml
+#CUTDL=3
 
 #all: $(REL) shtml other
 all: $(REL)/htdocs
@@ -55,6 +56,8 @@ jnk:
 
 #	mv $@/localhost*/eidors/* $@
 #	rm -rf $@/localhost*
+#         -e'next unless m{(href|src) \s* = \s* ($$q)(.*/)?([^\2]*?)(\2) }x;' \
+#         -e'if (my $$r= $$m{$$4}) {s/$$2$$3$$4$$5/"$$r"/g};' \
 
 $(REL)/htdocs: $(REL) Makefile
 	mkdir -p $@ && cd $@ && \
@@ -76,8 +79,8 @@ $(REL)/htdocs: $(REL) Makefile
              -e  '$$s=~ s{^.*/(.*)}{$$1};'\
              -e  '$$m{$$s}= $$t;'\
           -e'} } my $$q= q{['\''"]}; $$n= q{^['\''"]};' \
-          -e'next unless m{(href|src) \s* = \s* ($$q)(.*/)?([^\2]*)(\2) }x;' \
-          -e'if (my $$r= $$m{$$4}) {s/$$2$$3$$4$$5/"$$r"/g};' \
+          -e's{(href|src) \s* = \s* ($$q)(.*/)?([^\2]*?)(\2) }' \
+          -e '{$$1 = "$$m{$$4}"}x;' \
         \{} \;
 	find $@ -size +$(SZLIM) | xargs rm 
 	find $@ -name \*-s.html.bak | xargs rm
