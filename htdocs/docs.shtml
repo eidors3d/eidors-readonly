@@ -29,16 +29,14 @@ VI Conf. Electrical Impedance Tomography, London, UK, 2005
 <p><li><b>
 Nick Polydorides and William R B Lionheart
 </b><br>
-<a href="http://www.ma.umist.ac.uk/bl/eidors/downloads/mst-paper.pdf">
+<a href="http://www.iop.org/EJ/abstract/0957-0233/13/12/310/"L
 <i>A Matlab toolkit for three-dimensional electrical impedance tomography: a contribution to the Electrical Impedance and Diffuse Optical Reconstruction Software project
 </i>
 </a>
-Meas. Sci. Technol. 13 No 12 (December 2002) 1871-1883
-<br>
-<a href="http://www.iop.org/EJ/abstract/0957-0233/13/12/310/"
-    >Abstract</a>,
+<!-- <br>
 <a href="http://www.ma.umist.ac.uk/bl/eidors/downloads/mst-paper.pdf"
     >PDF</a>
+-->
 
 <p><li><b>
    Nick Polydorides: Ph.D. thesis
@@ -89,7 +87,7 @@ Draft
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2006-08-25 21:07:37 $ by $Author: aadler $
+    Last Modified: $Date: 2008-06-16 14:50:39 $ by $Author: aadler $
 </small>
 
 </body>
