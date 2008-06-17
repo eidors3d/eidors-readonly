@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.12 2008-04-03 17:19:47 aadler Exp $
+% $Id: dm_mk_fwd_model.m,v 1.13 2008-06-17 18:59:53 aadler Exp $
 
 if nargin <7
    error('dm_mk_fwd_model requires 7 or 8 parameters');
@@ -45,10 +45,10 @@ function fmdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes, ...
    for i= 1:prod(size(elec_nodes)) 
       fixed_node= [fixed_node; elec_nodes{i}];
    end
+   n_elec_nodes= size(fixed_node,1);
    fixed_node= [fixed_node; refine_nodes];
-   [vtx,simp] = call_distmesh(fd,fh, h0,bbox,fixed_node);
+   [vtx,simp,srf] = call_distmesh(fd,fh, h0,bbox,fixed_node, n_elec_nodes);
 
-   srf= find_boundary(simp);
    fmdl = construct_fwd_model(srf,vtx,simp, name, ...
                           elec_nodes, z_contact);
 
@@ -86,8 +86,31 @@ function mdl= construct_fwd_model(srf,vtx,simp, name, ...
    mdl.jacobian=       'np_calc_jacobian';
    mdl.system_mat=     'np_calc_system_mat';
 
-function [vtx,simp] = call_distmesh(fd,fh,h0,bbox,fixed_node);
+function [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox, ...
+                                 fixed_node, n_elec_nodes);
    [vtx,simp] = distmeshnd(fd,fh,h0,bbox,fixed_node);
+   srf= find_boundary(simp);
+   % Test if distmesh puts extra unneeded nodes on boundary
+   rmnode= [];
+   % Get srf_nodes which aren't in electrodes
+   srf_nodes= unique( srf(:));
+   srf_nodes= srf_nodes( srf_nodes > n_elec_nodes);
+   for nd = srf_nodes(:)'
+       ff= find( any(srf == nd, 2) );
+       this_bdy= srf(ff,:);
+       this_bdy= unique(this_bdy(:));
+       this_bdy( find(this_bdy==nd) ) = [];
+       if all( this_bdy < n_elec_nodes);
+           rmnode= [rmnode, nd];
+%          disp([nd, this_bdy(:)']);
+       end
+   end
+
+   if ~isempty(rmnode)
+      vtx(rmnode,:) = [];
+      simp = delaunayn( vtx);
+      srf= find_boundary(simp);
+   end
 
 function h= huniform(p);
    h= ones(size(p,1),1);
