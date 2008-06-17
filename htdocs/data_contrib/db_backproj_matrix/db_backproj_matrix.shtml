@@ -1,0 +1,44 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> David C Barber, 
+            Brian H Brown
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2008
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+       <hr>
+   <tr><th valign="top"> License:
+       <td>
+This matrix is copyright DC Barber and BH Brown at
+University of Sheffield. It may be used free of
+charge for research and non-commercial purposes.
+Commercial applications require a licence from the
+University of Sheffield.
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+</ul>
+   <tr><th valign="top"> Format:
+       <td> Data are in *get files encoded in a zip file
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td>
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<small>
+    Last Modified: $Date: 2008-06-17 20:27:57 $ by $Author: aadler $
+</small>
+</body></html>
+
