@@ -1,4 +1,4 @@
-% TV Solutions % $Id: total_variation03.m,v 1.5 2008-03-13 19:36:38 aadler Exp $
+% TV Solutions % $Id: total_variation03.m,v 1.6 2008-06-19 22:02:33 aadler Exp $
 
 % Create TV Inverse Model
 invtv= eidors_obj('inv_model', 'EIT inverse');
@@ -13,12 +13,14 @@ invtv.parameters.keep_iterations= 0;
 
 invtv.fwd_model= inv2d.fwd_model;
    
+invtv.fwd_model.normalize_measurements=1;
 
 
 maxiters= [1,3,6,15];
 for i= 1:length(maxiters)
    invtv.parameters.max_iterations= maxiters(i);
    imgtv= inv_solve( invtv, v_homg, v_simu);
+   imgtv.calc_colours.ref_level=0;
 
    %Reconstructed image
    subplot(2,length(maxiters),i);
