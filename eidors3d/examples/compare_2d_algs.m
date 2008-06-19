@@ -16,14 +16,14 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   6   aa_inv_total_var   ab_calc_tv_prior      1e-4
 %   7   aa_inv_conj_grad   ab_calc_tv_prior      ??? 
 %
-%  OPTION = 1dd => do OPTION=dd with normalized_measurements
+%  OPTION = 1dd => do OPTION=dd with normalize_measurements
 %
 % shape
 %   0  two triangles
 %   1  round
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_2d_algs.m,v 1.36 2008-03-13 20:43:37 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.37 2008-06-19 21:57:30 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -68,7 +68,7 @@ inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 inv2d.parameters.term_tolerance= 1e-4;
 
 if option>100
-   inv2d.fwd_model.normalized_measurements=1;
+   inv2d.fwd_model.normalize_measurements=1;
    option=option-100;
 end
 
