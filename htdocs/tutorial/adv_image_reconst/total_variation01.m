@@ -1,4 +1,4 @@
-% Create mesh with blocky objects $Id: total_variation01.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
+% Create mesh with blocky objects $Id: total_variation01.m,v 1.4 2008-06-19 22:02:03 aadler Exp $
 
 % Simulation (forward model) 1024 elements
 imdl= mk_common_model('d2c0',16); 
@@ -6,8 +6,8 @@ fmdl= imdl.fwd_model;
 
 fm_nelems= size(fmdl.elems,1);
 % Identify block in centre
-xe= mean(reshape(fmdl.nodes(fmdl.elems',1),3,[]));
-ye= mean(reshape(fmdl.nodes(fmdl.elems',2),3,[]));
+ctrs= interp_mesh(fmdl);
+xe= ctrs(:,1); ye= ctrs(:,2);
 re= sqrt(xe.^2+ye.^2);
 block=(ye>0 & re<.69); % for 1024
 
