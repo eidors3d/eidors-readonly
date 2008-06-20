@@ -15,6 +15,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   5   aa_inv_total_var   laplace_image_prior   1e-4 (not the usual prior)
 %   6   aa_inv_total_var   ab_calc_tv_prior      1e-4
 %   7   aa_inv_conj_grad   ab_calc_tv_prior      ??? 
+%   8   ab_tv_lagged_diff  ab_calc_tv_prior      ???
 %
 %  OPTION = 1dd => do OPTION=dd with normalize_measurements
 %
@@ -23,7 +24,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1  round
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_2d_algs.m,v 1.37 2008-06-19 21:57:30 aadler Exp $
+% $Id: compare_2d_algs.m,v 1.38 2008-06-20 14:02:30 aadler Exp $
 
 if nargin<2
     shape=0;
@@ -131,6 +132,14 @@ switch option
      inv2d.solve=          'aa_inv_conj_grad';
      inv2d.R_prior=        'ab_calc_tv_prior';
 
+     
+   case 8,
+     inv2d.hyperparameter.value = 1e-5;
+     inv2d.parameters.max_iterations= 20;
+     inv2d.R_prior=     'ab_calc_tv_prior';
+     inv2d.solve=       'ab_tv_lagged_diff';
+     inv2d.parameters.keep_iterations=1;
+     
    otherwise,
      error('action unknown');
 end
