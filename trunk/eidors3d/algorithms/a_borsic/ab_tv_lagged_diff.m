@@ -24,7 +24,7 @@ end
 
 
 fwd_model= inv_model.fwd_model;
-dv=calc_difference_data( data1, data2, inv_model.fwd_model);
+d=calc_difference_data( data1, data2, inv_model.fwd_model);
 
 L=calc_R_prior( inv_model );
 
@@ -38,7 +38,8 @@ delta_sigma = zeros(size(J,2),1); % we start from no initial difference
 
 
 for k=1:max_iter
-    
+ 
+    dv =  J*delta_sigma - d;
     E=diag(sqrt((L*delta_sigma).^2+beta));
     
     phi1=J'*dv+alpha*L'*inv(E)*L*delta_sigma;
