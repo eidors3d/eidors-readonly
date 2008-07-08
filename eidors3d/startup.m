@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.43 2008-03-16 00:36:10 aadler Exp $
+% $Id: startup.m,v 1.44 2008-07-08 18:18:13 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -77,9 +77,9 @@ eidors_msg('Completed setting up of EIDORS Version %s', ...
 eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
 eidors_msg('Parameter: mapped_colour=%d',calc_colours('mapped_colour'),1);
 if calc_colours('greylev')>=0
-   eidors_msg('Default background colour: white');
-else
    eidors_msg('Default background colour: black');
+else
+   eidors_msg('Default background colour: write');
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
