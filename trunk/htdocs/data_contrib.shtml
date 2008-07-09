@@ -18,6 +18,10 @@ use the data</b>
 <li> <a href="./data_contrib/if-peep-acute-lung-injury/if-peep-acute-lung-injury.shtml"
      >EIT of incremental and decremental PEEP trial of acute lung injury in pig</a>
       By: In&eacute;z Frerichs
+
+<li> <a href="./data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.shtml"
+     >Electrical impedance tomography in monitoring experimental lung injury</a>
+      By: In&eacute;z Frerichs
 </ul>
 
 <h3>Human Data</h3>
@@ -147,7 +151,7 @@ likely you are to get references to your paper ;-).
 </table>
 <p>
 <small>
-    Last Modified: $Date: 2008-04-18 17:15:20 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-09 13:49:36 $ by $Author: aadler $
 </small>
 
 </body>

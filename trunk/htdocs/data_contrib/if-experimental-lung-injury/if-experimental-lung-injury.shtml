@@ -1,0 +1,100 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 1998
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+Five pigs before (e.g. 1-control.raw) and after induction of unilateral lung
+injury 
+(e.g. 1-injury.raw). Oleic acid was administered through the distal opening of a
+pulmonary artery catheter placed in a branch of the left pulmonary artery.
+<p>
+Data were published in: <br>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65/"
+   >Electrical impedance tomography in
+    monitoring experimental lung injury </a>
+  <i>Intensive Care Med.</i> 24:829-836, 1998.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attibution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+ Use or presentation of these data must acknowledge
+In&eacute;z Frerichs, and cite this publication:
+<ul>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65/"
+   >Electrical impedance tomography in
+    monitoring experimental lung injury </a>
+  <i>Intensive Care Med.</i> 24:829-836, 1998.
+</ul>
+   <tr><th valign="top"> Format:
+       <td>
+EIT data was acquired with the Sheffield APT device Mk 1.
+Measurement duration 240 s, frame rate 1 Hz.
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td>
+Five pigs before (e.g. 1-control.raw) and after induction of unilateral lung
+injury 
+(e.g. 1-injury.raw). Oleic acid was administered through the distal opening of a
+pulmonary artery catheter placed in a branch of the left pulmonary artery.
+<pre>
+Ventilator settings:
+Volume-controlled ventilation
+PEEP: 5 cm H2O
+FIO2: 0.5
+Fresp: 12 /min
+The ventilator settings were not changed!
+</pre>
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./if-experimental-lung-injury.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<center>
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65"
+   ><img src="if-experimental-lung-injury-fig3.png" alt="figure 3"></a>
+<br>
+Figure 3 (from Frerichs <i>et al</i>, 1998):
+Thoracic functional EIT images before (Control) and after
+the development of artificially induced left lung injury (Lung
+injury) reflecting the distribution of ventilation in the five animals
+studied. (The lungs are typically located in the central and ventral
+parts of the thorax due to the well developed backbone musculature
+in pigs.) The schematic cross-section of the pig thorax in the
+left upper corner shows the spatial orientation of the images.
+Each image is scaled to the individual maximum impedance variation.
+The scale shows that higher local impedance variation (i.e.
+higher fluctuation of regional lung volume) is represented in light
+tones
+</center>
+
+<p>
+<small>
+    Last Modified: $Date: 2008-07-09 13:49:36 $ by $Author: aadler $
+</small>
+</body></html>
+
