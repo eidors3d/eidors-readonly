@@ -6,7 +6,9 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %    - MCEIT (Goettingen / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
 %    - Draeger "get" file format
-%        format = "GET" or "Draeger"
+%        format = "GET" or "draeger"
+%    - Sheffield MK I "RAW" file format
+%        format = "RAW" or "sheffield"
 %    - ITS (International Tomography Systems)
 %        format = "ITS" or "p2k"
 %    - IIRC (Impedance Imaging Research Center, Korea)
@@ -21,7 +23,7 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_readdata.m,v 1.26 2008-06-11 14:48:51 aadler Exp $
+% $Id: eidors_readdata.m,v 1.27 2008-07-09 14:40:12 aadler Exp $
 
 % TODO:
 %   - output an eidors data object
@@ -57,6 +59,8 @@ if     strcmp(fmt, 'mceit')
    [vv,curr,volt,auxdata] = mceit_readdata( fname );
 elseif strcmp(fmt, 'draeger')
    vv = draeger_readdata( fname );
+elseif strcmp(fmt, 'raw') | strcmp(fmt, 'sheffield')
+   vv = sheffield_readdata( fname );
 elseif strcmp(fmt, 'p2k') | strcmp(fmt, 'its')
    vv = its_readdata( fname );
 elseif strcmp(fmt,'txt') | strcmp(fmt, 'iirc')
@@ -133,6 +137,31 @@ function jnk
 %00001c0: 3e e82a143f 2a952e3f f568493e f08a8c  >.*.?*..?.hI>...
 %00001d0: 3d e43e0e3d 7040253d 19f4af3c 67fd93  =.>.=p@%=...<g..
 
+function vv = sheffield_readdata( fname );
+   fid=fopen(fname,'rb','ieee-le');
+   draw=fread(fid,[104,inf],'float32');
+   fclose(fid);
+   ldat = size(draw,2);
+
+   [x,y]= meshgrid( 1:16, 1:16);
+   idxm= y-x;
+ % HW gain table
+   gtbl = [0,849,213,87,45,28,21,19,21,28,45,87,213,849,0];
+   idxm(idxm<=0)= 1;
+   idxm= gtbl(idxm);
+
+ % Multiply by gains
+   draw = draw .* (idxm(idxm>0) * ones(1,ldat)); 
+
+   vv= zeros(16*16, size(draw,2));
+   vv(find(idxm),:) = draw;
+
+ % Add reciprocal measurements
+   vv= reshape(vv,[16,16,ldat]);
+   vv= vv + permute( vv, [2,1,3]);
+   vv= reshape(vv,[16*16,ldat]);
+
+   
 
 function [vv,curr,volt,auxdata] = mceit_readdata( fname );
 
