@@ -3,7 +3,7 @@ function mdl = eidors_model_params( mdl );
 % Fill in default parameter values in EIDORS types
 %
 % (C) 2006 Andy Adler. Licensed under the GPL v2
-% $Id: eidors_model_params.m,v 1.7 2008-06-11 14:38:34 aadler Exp $
+% $Id: eidors_model_params.m,v 1.8 2008-07-10 15:10:39 aadler Exp $
 
 % TODO - to caching
 
@@ -16,11 +16,18 @@ end
 switch type;
    case 'inv_model';
       mdl.fwd_model= eidors_model_params( mdl.fwd_model );
+      if ~isfield(mdl,'reconst_type');
+         mdl.reconst_type= 'difference';
+      end
 
    case 'fwd_model';
       if ~isfield(mdl,'normalize_measurements');
          mdl.normalize_measurements= 0;
       end
+      if ~isfield(mdl,'elems');
+         return;
+      end
+      
       mdl.elems=    double(mdl.elems);
       if isfield(mdl,'boundary')
          mdl.boundary= double(mdl.boundary);
