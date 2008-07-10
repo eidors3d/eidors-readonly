@@ -9,10 +9,25 @@
             Brian H Brown
        <hr>
    <tr><th valign="top"> Date:
-       <td> 2008
+       <td> June 2008
        <hr>
    <tr><th valign="top"> Brief Description:
        <td> 
+There are several different versions of the backprojection
+algorithm in existence. The one made available here is
+the version distributed with the Sheffield Mk I system,
+and is very similar to the algorithm distributed with 
+the G&ouml;ttingen Goe MF II EIT system. Almost all clinical
+and experimental publications which mention "backprojection"
+use the version of the algorithm provided here. The
+paper which probably best describes this algorithm
+is 
+Santosa, F. and Vogelius, M. (1990)
+<a href="http://www.jstor.org/pss/2102109"
+   >Backprojection algorithm for electrical
+    impedance imaging</a>, SIAM J. Applied
+    Mathematics, 50:216&minus;243.
+ 
        <hr>
    <tr><th valign="top"> License:
        <td>
@@ -24,21 +39,22 @@ University of Sheffield.
        <hr>
    <tr><th valign="top"> Attribution Requirement:
        <td> 
-</ul>
+
    <tr><th valign="top"> Format:
-       <td> Data are in *get files encoded in a zip file
+       <td> 
        <hr>
    <tr><th valign="top"> Methods:
        <td>
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./"
-            >Data (zip format)</a>
+       <td> The Backprojection matrix is distributed
+            with EIDORS (version&ge;3.3) in the <tt>sample_data</tt>
+            directory.
        <hr>
    </table>
 
 <small>
-    Last Modified: $Date: 2008-06-17 20:27:57 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-10 01:17:50 $ by $Author: aadler $
 </small>
 </body></html>
 
