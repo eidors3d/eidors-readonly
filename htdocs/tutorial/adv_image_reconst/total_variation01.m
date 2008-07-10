@@ -1,4 +1,4 @@
-% Create mesh with blocky objects $Id: total_variation01.m,v 1.4 2008-06-19 22:02:03 aadler Exp $
+% Create mesh with blocky objects $Id: total_variation01.m,v 1.5 2008-07-10 15:05:18 aadler Exp $
 
 % Simulation (forward model) 1024 elements
 imdl= mk_common_model('d2c0',16); 
@@ -19,6 +19,6 @@ sim_img.elem_data(block) = 1.1;
 v_simu= fwd_solve(sim_img);
 
 clf;
-calc_colours('greylev',-.1); % black background
+calc_colours('greylev',-.1); % white background
 show_fem(sim_img)
 print -r50 -dpng total_variation01a.png;
