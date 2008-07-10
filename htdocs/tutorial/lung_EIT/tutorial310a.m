@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial310a.m,v 1.2 2007-08-31 04:30:02 aadler Exp $
+% $Id: tutorial310a.m,v 1.3 2008-07-10 15:07:13 aadler Exp $
 
 % 2D Model
 imdl= mk_common_model('c2t2',16);
@@ -17,7 +17,7 @@ imdl.fwd_model.stimulation= st;
 imdl.fwd_model.meas_select= els;
 
 % most EIT systems image best with normalized difference
-imdl.fwd_model.normalized_measurements= 1;
+imdl.fwd_model.normalize_measurements= 1;
 imdl.RtR_prior= @gaussian_HPF_prior;
 
 
