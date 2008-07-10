@@ -40,8 +40,32 @@ University of Sheffield.
    <tr><th valign="top"> Attribution Requirement:
        <td> 
 
+       <hr>
    <tr><th valign="top"> Format:
        <td> 
+In order to save space, only 1/8 of the image and 1/2 (reciprocity
+values) of the measurements are stored. In order to unpackage it,
+the following code from <tt>mk_common_gridmdl</tt>
+may be used:
+<pre>
+   [x,y]= meshgrid(1:16,1:16); % Take a slice
+   ss1 = (y-x)&gt;1 &amp; (y-x)&lt;15;
+   sel1 = abs(x-y)&gt;1 &amp; abs(x-y)&lt;15;
+   [x,y]= meshgrid(-15.5:15.5,-15.5:15.5);
+   ss2 = abs(x-y)&lt;25 &amp; abs(x+y)&lt;25 &amp; x&lt;0 &amp; y&lt;0 &amp; x&gt;=y ;
+   sel2 = abs(x-y)&lt;25 &amp; abs(x+y)&lt;25;
+ 
+   load Sheffield_Backproj_Matrix.mat
+   BP  = zeros(16^2, 32^2); BP(ss1,ss2) = Sheffield_Backproj_Matrix;
+   BP  = reshape(BP, 16,16,32,32); % Build up
+   BP  = BP + permute(BP, [2,1,3,4]); % Reciprocity
+   el= 16:-1:1;           BP= BP + BP(el,el,[32:-1:1],:); % FLIP LR
+   el= [8:-1:1,16:-1:9];  BP= BP + BP(el,el,:,[32:-1:1]); % FLIP UD
+   el= [12:-1:1,16:-1:13]; BP= BP + permute(BP(el,el,:,:), [1,2,4,3]); % Transpose
+   RM= reshape(BP, 256, [])'; RM= RM(sel2,sel1);
+</pre>
+
+
        <hr>
    <tr><th valign="top"> Methods:
        <td>
@@ -53,8 +77,34 @@ University of Sheffield.
        <hr>
    </table>
 
+<H3>Example</H3>
+A simple example compares GN reconstruction to that of backprojection,
+showing the 32&times;32 grid on which it is reconstructed
+<ul>
+<pre>
+imdl= mk_common_model('c2c2',16);
+imdl.fwd_model.electrode = imdl.fwd_model.electrode([1,16:-1:2]);
+img= calc_jacobian_bkgnd( imdl );
+vh= fwd_solve(img);
+img.elem_data([200,172])= 1.1;
+vi= fwd_solve(img);
+subplot(131); show_fem(img,[0,1,0]); axis square
+
+img0 = inv_solve(imdl,vh,vi);
+subplot(132); show_fem(img0,[0,1,0]); axis square
+
+imdl=mk_common_gridmdl('backproj');
+img1 = inv_solve(imdl,vh,vi);
+subplot(133); show_fem(img1,[0,1,0]); axis square
+
+print -dpng -r100 db_backproj_matrix01.png
+</pre>
+<img src="db_backproj_matrix01.png">
+</ul>
+
+
 <small>
-    Last Modified: $Date: 2008-07-10 01:17:50 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-10 02:57:14 $ by $Author: aadler $
 </small>
 </body></html>
 
