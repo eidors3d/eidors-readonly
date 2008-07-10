@@ -39,6 +39,11 @@ University of Sheffield.
        <hr>
    <tr><th valign="top"> Attribution Requirement:
        <td> 
+Publications or presentations using these data should reference this publication: 
+D.C. Barber and B.H. Brown (1984), 
+<a href="http://www.iop.org/EJ/abstract/0022-3735/17/9/002"
+   >Applied Potential Tomography</a>,
+   <i>J. Phys. E: Sci. Instrum.</i>, 17:723-733.
 
        <hr>
    <tr><th valign="top"> Format:
@@ -104,7 +109,7 @@ print -dpng -r100 db_backproj_matrix01.png
 
 
 <small>
-    Last Modified: $Date: 2008-07-10 02:57:14 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-10 12:21:28 $ by $Author: aadler $
 </small>
 </body></html>
 
