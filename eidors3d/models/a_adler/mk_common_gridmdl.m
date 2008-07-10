@@ -7,14 +7,16 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 % 2D models
 %   mk_common_gridmdl('b2c', RM)  - 32x32, 16 elec
 %   mk_common_gridmdl('b2d', RM)  - 32x32 - GBP shape, 16 elec
+%
+% Sheffield Backprojection
+%   mk_common_gridmdl('backproj') - 32x32 with Diamond shape
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_gridmdl.m,v 1.1 2008-06-11 14:52:29 aadler Exp $
+% $Id: mk_common_gridmdl.m,v 1.2 2008-07-10 02:40:45 aadler Exp $
 
 if strcmp(str,'backproj')
    str= 'b2d';
-   load ReconstrMatrix_GBP;
-   RM= -ReconstrMatrix';
+   RM= get_Sheffield_Backproj;
 end
 
 switch str
@@ -39,7 +41,6 @@ switch str
       fmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
       fmdl.coarse2fine(:,ff)= [];
 
-      RM= RM(:,twistit); % Nodes are twisted according the goettingen format
       fmdl.nodes = -fmdl.nodes;
 
    otherwise
@@ -58,21 +59,38 @@ inv_mdl.fwd_model.normalize_measurements= 1;
 [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
 inv_mdl.fwd_model.meas_select= els;
 
-function twist= twistit;
-   twist= [               0+(1:13), ...
-                         13+(1:13), ...
-           39-(0:-1:0),  26+(1:12), ...
-           52-(1:-1:0),  39+(1:11), ...
-           65-(2:-1:0),  52+(1:10), ...
-           78-(3:-1:0),  65+(1: 9), ...
-           91-(4:-1:0),  78+(1: 8), ...
-          104-(5:-1:0),  91+(1: 7), ...
-          117-(6:-1:0), 104+(1: 6), ...
-          130-(7:-1:0), 117+(1: 5), ...
-          143-(8:-1:0), 130+(1: 4), ...
-          156-(9:-1:0), 143+(1: 3), ...
-          169-(10:-1:0),156+(1: 2), ...
-          182-(11:-1:0),169+(1: 1), ...
-          195-(12:-1:0), ...
-          208-(12:-1:0) ];
+function RM = get_Sheffield_Backproj
+   load Sheffield_Backproj_Matrix.mat
+
+   % Take a slice
+   [x,y]= meshgrid(1:16,1:16);
+   ss1 = (y-x)>1 & (y-x)<15;
+   sel1 = abs(x-y)>1 & abs(x-y)<15;
+   
+   [x,y]= meshgrid(-15.5:15.5,-15.5:15.5);
+   ss2 = abs(x-y)<25 & abs(x+y)<25 ...
+       & x<0 & y<0 & x>=y ;
+   sel2 = abs(x-y)<25 & abs(x+y)<25;
+ 
+   % Build up
+   BP  = zeros(16^2, 32^2);
+   BP(ss1,ss2) = Sheffield_Backproj_Matrix;
+   BP  = reshape(BP, 16,16,32,32);
+
+   % Reciprocity
+   BP  = BP + permute(BP, [2,1,3,4]);
+
+   % FLIP LR
+   el= 16:-1:1;
+   BP= BP + BP(el,el,[32:-1:1],:);
+   % FLIP UD
+   el= [8:-1:1,16:-1:9];
+   BP= BP + BP(el,el,:,[32:-1:1]);
+   % Transpose
+   el= [12:-1:1,16:-1:13];
+   BP= BP + permute(BP(el,el,:,:), [1,2,4,3]);
+
+   RM= reshape(BP, 256, [])';
+   RM= RM(sel2,sel1);
+
 
