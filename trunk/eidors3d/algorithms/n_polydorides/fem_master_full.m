@@ -21,11 +21,11 @@ function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
    
    [E] = ref_master(Ef,vtx,gnd_ind);  
    
-% octave currently does not have symmmd
-if strcmp(perm_sym,'{n}')
-    pp = 1:size(E,1);
-elseif perm_sym == '{y}'
+% use symmmd in old matlab (pre v7)
+if ~exist('OCTAVE_VERSION') & str2num(version('-release'))<=13
     pp = symmmd(E);
+else
+    pp = symamd(E);
 end
 
    

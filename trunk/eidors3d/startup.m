@@ -2,7 +2,7 @@
 % Set path and variables correctly
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: startup.m,v 1.44 2008-07-08 18:18:13 aadler Exp $
+% $Id: startup.m,v 1.45 2008-07-13 18:28:52 aadler Exp $
 
 HOMEDIR=pwd;
 
@@ -48,13 +48,6 @@ if exist('eidors_var_id')~=3
      'or if you have Matlab <6.5 under linux try:\n'...
      ' eval([''mex -v -f '' matlabroot ''/bin/cxxopts.sh eidors_var_id.cpp''])'
      ]));
-end
-
-%prevent warnings in v7
-if ~exist('OCTAVE_VERSION')
-   if str2num(version('-release'))>=14
-      warning off MATLAB:symmmd:obsolete
-   end
 end
 
 % Setup defaults in calc_colours
