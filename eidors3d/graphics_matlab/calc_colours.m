@@ -71,14 +71,14 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.48 2008-03-16 11:08:04 aadler Exp $  
+% $Id: calc_colours.m,v 1.49 2008-07-13 18:36:21 aadler Exp $  
 
 if nargin==0
     error('must specify at args to calc_colours');
     return;
 end
 
-if isstr(img)
+if ischar(img)
     % called as calc_colours('parameter' ... )
     if nargin==1;
        colours= get_field(img);
