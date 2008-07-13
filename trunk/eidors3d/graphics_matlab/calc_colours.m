@@ -71,7 +71,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.49 2008-07-13 18:36:21 aadler Exp $  
+% $Id: calc_colours.m,v 1.50 2008-07-13 18:53:05 aadler Exp $  
 
 if nargin==0
     error('must specify at args to calc_colours');
@@ -146,9 +146,11 @@ if do_colourbar
 
    hh= colorbar; delete(hh); hh=colorbar;
    % make colourbar smaller and closer to axis
-   p= get(hh,'Position');
-   pm= p(2) + p(4)/2;
-   set(hh,'Position', [p(1)+1.2*p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
+   if sscanf(version,'%f',1) < 7.0
+      p= get(hh,'Position');
+      pm= p(2) + p(4)/2;
+      set(hh,'Position', [p(1)+1.2*p(3), pm-p(4)*.6/2, p(3)*.6, p(4)*.6]);
+   end
 
    % set scaling
 %  lcm= size(colormap,1)/2+.5; - you would expect it to be this
