@@ -14,6 +14,8 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 %
 %   movefcn = 1 (Default)  radial motion where the target starts
 %     at (rad_pr(1),0) and rotates clockwise
+%   movefcn = 2 movement from centre to outward on to
+%     at (rad_pr(1),0) on x-axis
 %
 %   movefcn = FUCN NAME or FUNC HANDLE
 %      the function must accept the following parameters
@@ -25,7 +27,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 %   xyr_pt - x y and radius of each point 3 x n_points
 
 %
-% $Id: simulate_2d_movement.m,v 1.15 2008-04-17 15:54:42 aadler Exp $
+% $Id: simulate_2d_movement.m,v 1.16 2008-07-17 18:54:37 aadler Exp $
 
 if nargin <1
    n_sims = 200;
@@ -51,6 +53,8 @@ end
 if isnumeric(movefcn)
    if     movefcn==1
       movefcn = @rotation_path;
+   elseif movefcn==2
+      movefcn = @straight_out;
    else
       error('value of movefcn not understood');
    end
@@ -105,6 +109,10 @@ vh= [vh(:).meas];
 function [xp,yp] = rotation_path(f_frac, radius);
    xp= radius * cos(f_frac*2*pi);
    yp= radius * sin(f_frac*2*pi);
+
+function [xp,yp] = straight_out(f_frac, radius);
+   xp= radius*f_frac;
+   yp= 0;
 
 % THis is the code copied from calc_slices
 % Search through each element and find the points which
