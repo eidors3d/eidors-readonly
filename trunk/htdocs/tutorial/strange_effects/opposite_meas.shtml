@@ -1,0 +1,30 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<H2>Strange Effect: Opposite vs Adjacent measurement/stimulation</H2>
+
+If we stimulate and measure using an opposite protocol, then the
+EIT image algorithm cannot tell which part of the object
+the image comes from, and a mirror image is created.
+
+<pre>
+<!--#include virtual="opposite_meas01.m" -->
+</pre>
+
+<center>
+<img src="opposite_meas01.png">
+<br><i> Figure:</i>
+Images of a target moving from centre to the right.
+<i>From Top to Bottom:</i>
+Adjacent Stim / Adjacent Meas
+Opposite Stim / Adjacent Meas
+Adjacent Stim / Opposite Meas
+Opposite Stim / Opposite Meas
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-07-17 19:13:47 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
