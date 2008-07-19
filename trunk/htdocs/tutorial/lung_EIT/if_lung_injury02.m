@@ -1,9 +1,12 @@
-for loop1= 1;
+subplot(221);
+for loop1= 1:5;
+       
   for loop2 = 1:2;
-     subplot(1,2,loop2);
      if loop2 ==1; fn = sprintf('%d-control.RAW',loop1);
      else          fn = sprintf('%d-injury.RAW',loop1);
      end
+
+     prname= sprintf('if_lung_injury02-%d%d.png', loop1,loop2);
 
      dd= eidors_readdata(fn);
 
@@ -14,6 +17,6 @@ for loop1= 1;
      img=inv_solve(imdl,dd(:,fmax), dd(:,fmin));
      show_slices(img);
 
-
+     print('-dpng','-r50',prname);
    end
 end
