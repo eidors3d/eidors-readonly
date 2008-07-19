@@ -1,0 +1,68 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2 >PEEP trial after lung injury (pig)</h2>
+
+<h3> 
+Methods and Data
+</h3>
+
+Use mk_common_model to create a thorax shaped
+model with 16 electrodes. Ensure the model
+uses 1) Correct stimulation patterns (adjacent is default),
+2) Normalized difference imaging
+
+<h3> 
+Methods and Data
+</h3>
+The measurements were performed in the same pig after induction of
+acute lung injury by repeated bronchoalveolar lavage (p1130107.get) and
+after administration of surfactant (p1130122.get). Both measurements
+were acquired at a rate of 13 scans/s, a total of 1500 frames were
+obtained. The excitation current was 50 kHz. The data was acquired
+during an incremental and decremental PEEP trial (stepwise increase and
+decrease of positive end-expiratory pressure).
+<p>
+Data were published in 
+Frerichs, I., Dargavillle, P.A., Dudykevych, T., Rimensberger,
+   P.M. (2003)
+<a href="http://www.springerlink.com/content/220rudd750445m6y/"
+   >Electrical Impedance Tomography &minus; a method for monitoring
+   regional lung aeration and tidal volume distribution?</a>
+  <i>Intensive Care Med.</i> 29:2312-2316, 2003.
+
+<h3> 
+Results
+</h3>
+The key results are shown in Fig.3 from the paper
+<br>
+<a href="http://www.springerlink.com/content/220rudd750445m6y/"
+   ><img src="../../data_contrib/if-peep-acute-lung-injury/Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
+
+<h3> 
+EIDORS Analysis
+</h3>
+
+<ol>
+<li> Download the
+    <a href="../../data_contrib/if-peep-acute-lung-injury/if_data_2003.zip"
+   >data</a> and save it to your working directory.
+
+<li> Create a FEM model of the pig
+<pre>
+<!--#include virtual="if_peep_trial01.m" -->
+</pre>
+
+<center>
+<img src="if_peep_trial01.png">
+<br><i> Figure:</i>
+2D FEM of pig thorax
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-07-19 16:42:22 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
