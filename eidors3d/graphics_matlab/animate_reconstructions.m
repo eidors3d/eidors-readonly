@@ -7,6 +7,9 @@ function fname_out= animate_reconstructions(fname, imgs);
 % PARAMETER:  imgs
 %     is array of eidors images
 %
+% if imgs.animate_reconstructions.show_times = 1
+%   then a timescale is shown on the bottom
+%
 % OUTPUT: fname_out
 %     Name of animated file written to.
 %     An animated window will not pop up if output requested
@@ -55,14 +58,20 @@ function mk_movie2(fname, imgs);
    rm_rf( dirname );
    mkdir( dirname );
 
+   show_times = 0;
+   try
+     show_times = imgs.animate_reconstructions.show_times;
+   end
+
    r_img= calc_slices(imgs);
    c_img = calc_colours( r_img, imgs);
    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
    cmap= colormap;
 
    for i=1:size(out_img,3)
-     imwrite(out_img(:,:,i),cmap, ...
-            sprintf('%s/img%05d.png',dirname, i), 'png');
+     this_img  = out_img(:,:,i);
+     this_name = sprintf('%s/img%06d.png',dirname, i);
+     imwrite(this_img, cmap, this_name, 'png');
    end
 
    ld_lib_path= sys_dep;
@@ -80,7 +89,7 @@ function mk_movie2(fname, imgs);
    end
       
    retval= system(sprintf( ...
-       '%s convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
+       '%s convert -delay 5 %s/img*.png -loop 0 PNG8:%s.gif', ...
        ld_lib_path, dirname, fname ));
    if retval~=0
        error('please ensure the imagemagick convert program is in your path. Under windows the easist is to download from www.imagemagick.org/script/binary-releases.php');
