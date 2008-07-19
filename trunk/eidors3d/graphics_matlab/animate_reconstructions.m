@@ -58,9 +58,10 @@ function mk_movie2(fname, imgs);
    rm_rf( dirname );
    mkdir( dirname );
 
-   show_times = 0;
    try
      show_times = imgs.animate_reconstructions.show_times;
+   catch 
+     show_times = 0;
    end
 
    r_img= calc_slices(imgs);
@@ -68,8 +69,14 @@ function mk_movie2(fname, imgs);
    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
    cmap= colormap;
 
-   for i=1:size(out_img,3)
+   [len_vi, len_hi, len_oi] = size(out_img);
+
+   for i=1:len_oi
      this_img  = out_img(:,:,i);
+     if show_times % add scrollbar on bottom
+        add_bar = mk_add_bar( (i-1)/(len_oi-1), len_hi );
+        this_img= [this_img; add_bar];
+     end
      this_name = sprintf('%s/img%06d.png',dirname, i);
      imwrite(this_img, cmap, this_name, 'png');
    end
@@ -86,10 +93,11 @@ function mk_movie2(fname, imgs);
           '%s convert -font 6x8 -draw "text 0,10 ''%s''" %s %s', ...
           ld_lib_path, fno, fn, fn ));
       end
+
    end
       
    retval= system(sprintf( ...
-       '%s convert -delay 5 %s/img*.png -loop 0 PNG8:%s.gif', ...
+       '%s convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
        ld_lib_path, dirname, fname ));
    if retval~=0
        error('please ensure the imagemagick convert program is in your path. Under windows the easist is to download from www.imagemagick.org/script/binary-releases.php');
@@ -122,3 +130,12 @@ function ld_lib_path= sys_dep;
           ld_lib_path='LD_LIBRARY_PATH=;';
       end      
    end    
+
+function add_bar = mk_add_bar(frac, len) 
+   sz_bar = 3/len;
+   ind_val = 90;
+   xax= linspace(0,1,len) - frac;
+   yax= 1-abs( xax/sz_bar);
+   yax= yax.*(yax>0);
+
+   add_bar = round(ind_val * yax);
