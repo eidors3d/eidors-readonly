@@ -56,12 +56,12 @@ function obj_id= eidors_obj(type,name, varargin );
  
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_obj.m,v 1.64 2008-06-13 17:30:34 aadler Exp $
+% $Id: eidors_obj.m,v 1.65 2008-07-19 16:14:18 aadler Exp $
 
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
 
-if nargin==0 | ~isstr(type)
+if nargin==0 || ~isstr(type)
    error('cannot call eidors_obj with no arguments');
 end
 
@@ -74,7 +74,7 @@ switch type
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
-      obj_id= '3.3RC1 ($Date: 2008-06-13 17:30:34 $)'; % Update for New eidors version
+      obj_id= '3.3 ($Date: 2008-07-19 16:14:18 $)'; % Update for New eidors version
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
@@ -85,13 +85,10 @@ function obj = set_obj( obj, varargin );
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
 %  
-%  for idx= 1:2:nargin-1
-%  end
-%  obj = eidors_objects.( obj_id );
 
    for idx= 1:2:nargin-1
 %     obj.( obj_id ).( varargin{idx} )= varargin{idx+1};
-% for matlab 6.1 compatibility
+% for matlab 6.1 compatibility 
       eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
    end
 
@@ -121,7 +118,7 @@ function value= get_cache_obj( obj, prop, varargin );
       end
    else
       try
-   %     value= eidors_objects.( obj_id ).cache.( prop );
+%        value= eidors_objects.( obj_id ).cache.( prop );
          value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
          update_timestamp(obj_id);
       end
@@ -143,6 +140,8 @@ function set_cache_obj( obj, prop, value, varargin )
 
    if isempty(cachename)
    %  eidors_objects.( obj_id ).cache.( prop ) = value;
+   %  eidors_objects.( obj_id ).priority = eidors_objects.cache_priority;
+   % v6.1 compatible
       eval(sprintf('eidors_objects.%s.cache.%s=value;', obj_id, prop));
       eval(sprintf('eidors_objects.%s.priority=%d;', obj_id, ...
             eidors_objects.cache_priority));
@@ -189,6 +188,8 @@ function obj_id= calc_obj_id( var )
 %  where eidors will store cached calculations. If it has
 %  not been set, then create it as 'eidors_cache' in the
 %  current directory
+%
+% NOTE: This code is not (yet) used
 function test_for_cachdir
    global eidors_objects; 
    if ~isfield(eidors_objects, 'cachedir')
@@ -232,7 +233,9 @@ function retval= cache_this( obj )
 function update_timestamp( obj_id )
    global eidors_objects;
 
+% v6.1 compatible
    eval(sprintf('eidors_objects.%s.last_used=now;', obj_id ));
+%  eidors_objects.( obj_id ).last_used = now;
 
    max_memory= eidors_objects.max_cache_size;
    ww= whos('eidors_objects');
