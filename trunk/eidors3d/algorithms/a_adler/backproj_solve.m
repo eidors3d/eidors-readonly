@@ -1,5 +1,12 @@
-function img= aa_inv_solve( inv_model, data1, data2)
+function img= backproj_solve( inv_model, data1, data2)
 % BACKPROJ_SOLVE inverse solver using backprojection
+% NOTE: This is the beginnings of an attempt to reproduce
+%  the backprojection algorithm implemented in the
+%  Sheffield MKI EIT system. It is far from complete.
+%
+% If you wish to use the actual algorithm, use the
+%  function "mk_common_gridmdl('backproj')"
+%
 % img= backproj_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
@@ -18,7 +25,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: backproj_solve.m,v 1.3 2007-11-28 15:07:39 aadler Exp $
+% $Id: backproj_solve.m,v 1.4 2008-07-19 16:13:29 aadler Exp $
 
 try
    type= inv_model.backproj_solve.type;
@@ -71,8 +78,8 @@ function Jbp = calc_backprojection_mask( fmdl , type);
      meas_pat_i= fmdl.stimulation(i).meas_pattern;
      elem_vi= elem_v(:,i);
      for j= 1:size(meas_pat_i,1); 
-        idx_pl= find(meas_pat_i(j,:)<0);
-        idx_mi= find(meas_pat_i(j,:)>0);
+        idx_pl= find(meas_pat_i(j,:)>0);
+        idx_mi= find(meas_pat_i(j,:)<0);
         Jbp(:,idx) = (elem_vi <= meas_v(idx_pl,i)) & ...
                      (elem_vi >  meas_v(idx_mi,i));
         idx= idx+1;
