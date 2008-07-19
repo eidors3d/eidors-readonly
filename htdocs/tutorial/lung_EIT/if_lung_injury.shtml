@@ -62,14 +62,30 @@ EIDORS Analysis
 
 <li><b> Create a FEM model of the pig</b>
 <pre>
-<!--#include virtual="if_peep_trial01.m" -->
+<!--#include virtual="if_lung_injury01.m" -->
 </pre>
 
 <center>
-<img src="if_peep_trial01.png">
+<img src="if_lung_injury01.png">
 <br><i> Figure:</i>
 2D FEM of pig thorax
 </center>
+
+<li><b> Analyse and show data</b>
+<pre>
+<!--#include virtual="if_lung_injury02.m" -->
+</pre>
+
+<center>
+<img src="if_lung_injury02a.png">
+<br><img src="if_lung_injury02a.png">
+<br><img src="if_lung_injury02a.png">
+<br><img src="if_lung_injury02a.png">
+<br><img src="if_lung_injury02a.png">
+<br><i> Figure:</i>
+2D FEM of pig thorax
+</center>
+
 
 </ol>
 
@@ -77,7 +93,7 @@ EIDORS Analysis
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-07-19 20:40:52 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-19 20:58:23 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
