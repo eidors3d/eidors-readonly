@@ -1,0 +1,84 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2 >PEEP trial after lung injury (pig)</h2>
+
+<h3> 
+Methods and Data
+</h3>
+
+Use mk_common_model to create a thorax shaped
+model with 16 electrodes. Ensure the model
+uses 1) Correct stimulation patterns (adjacent is default),
+2) Normalized difference imaging
+
+<h3> 
+Methods and Data
+</h3>
+Five pigs before (e.g. 1-control.raw) and after induction of unilateral lung
+injury 
+(e.g. 1-injury.raw). Oleic acid was administered through the distal opening of a
+pulmonary artery catheter placed in a branch of the left pulmonary artery.
+<p>
+Data were published in: <br>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65/"
+   >Electrical impedance tomography in
+    monitoring experimental lung injury </a>
+  <i>Intensive Care Med.</i> 24:829-836, 1998.
+
+<h3> 
+Results
+</h3>
+The key results are shown in Fig.3 from the paper
+<br>
+<center>
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65"
+   ><img src="../../data_contrib/if-experimental-lung-injury/if-experimental-lung-injury-fig3.png" alt="figure 3"></a>
+<br>
+Figure 3 (from Frerichs <i>et al</i>, 1998):
+Thoracic functional EIT images before (Control) and after
+the development of artificially induced left lung injury (Lung
+injury) reflecting the distribution of ventilation in the five animals
+studied. (The lungs are typically located in the central and ventral
+parts of the thorax due to the well developed backbone musculature
+in pigs.) The schematic cross-section of the pig thorax in the
+left upper corner shows the spatial orientation of the images.
+Each image is scaled to the individual maximum impedance variation.
+The scale shows that higher local impedance variation (i.e.
+higher fluctuation of regional lung volume) is represented in light
+tones
+</center>
+
+<h3> 
+EIDORS Analysis
+</h3>
+
+<ol>
+<li><b> Download </b> the
+    <a href="../../data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.zip"
+   >data</a> and save it to your working directory.
+
+<li><b> Create a FEM model of the pig</b>
+<pre>
+<!--#include virtual="if_peep_trial01.m" -->
+</pre>
+
+<center>
+<img src="if_peep_trial01.png">
+<br><i> Figure:</i>
+2D FEM of pig thorax
+</center>
+
+</ol>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-07-19 20:40:52 $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
