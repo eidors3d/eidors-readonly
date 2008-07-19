@@ -14,10 +14,10 @@ function rimg = calc_slices( img, levels );
 % np can be adjusted by calc_colours('npoints')
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_slices.m,v 1.25 2008-07-19 17:45:08 aadler Exp $
+% $Id: calc_slices.m,v 1.26 2008-07-19 17:46:29 aadler Exp $
 
 try   np = img.calc_colours.npoints;
-else  np = calc_colours('npoints');
+catch np = calc_colours('npoints');
 end
 
 fwd_model= img(1).fwd_model; % Assume all fwd_models are same
