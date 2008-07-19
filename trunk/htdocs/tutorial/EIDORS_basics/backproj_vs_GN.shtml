@@ -1,8 +1,21 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
 <H2>GN reconstruction vs Backprojection</H2>
 
-This tutorial shows how one can approximate backprojection
-image reconstruction with EIDORS.
+The most commonly used EIT reconstruction algorithm is
+the backprojection algorithm of Barber and Brown, as
+implemented in the Sheffield Mk I EIT system.
+<p>
+This tutorial explores the concept of reconstruction from
+electrical field projections, but does not implement the
+original backprojection algorithm.
+<p>
+The reconstruction matrix output by the original
+algorithm has been made available as part of
+EIDORS, 
+<a href="../../data_contrib/db_backproj_matrix/db_backproj_matrix.shtml" 
+   >here</a>
+
+<p>
 
 <h3> 
 Calculate the nodal voltage field
@@ -45,8 +58,8 @@ Equipotential lines for adjacent stimulation
 Create 2D Model and simulate measurements
 </h3>
 
-Reuse the model from the
- <a href="./tutorial120.shtml">this tutorial</a>.
+Here, we reuse the model from the
+ <a href="./tutorial120.shtml">this tutorial</a>, below:
 
 <pre>
 <!--#include virtual="tutorial120a.m" -->
@@ -79,7 +92,7 @@ Reconstructions using:
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2007-10-22 21:34:39 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-19 15:04:09 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
