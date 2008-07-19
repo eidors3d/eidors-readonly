@@ -77,13 +77,32 @@ EIDORS Analysis
 </pre>
 
 <center>
-<img src="if_lung_injury02a.png">
-<br><img src="if_lung_injury02a.png">
-<br><img src="if_lung_injury02a.png">
-<br><img src="if_lung_injury02a.png">
-<br><img src="if_lung_injury02a.png">
+<table border=0>
+<tr>
+   <th>
+   <th> Pig #1
+   <th> Pig #2
+   <th> Pig #3
+   <th> Pig #4
+   <th> Pig #5
+<tr>
+   <th>Control
+   <td><img src="if_lung_injury02-11.png">
+   <td><img src="if_lung_injury02-21.png">
+   <td><img src="if_lung_injury02-31.png">
+   <td><img src="if_lung_injury02-41.png">
+   <td><img src="if_lung_injury02-51.png">
+<tr>
+   <th>Left<br> Lung<br> Injury
+   <td><img src="if_lung_injury02-12.png">
+   <td><img src="if_lung_injury02-22.png">
+   <td><img src="if_lung_injury02-32.png">
+   <td><img src="if_lung_injury02-42.png">
+   <td><img src="if_lung_injury02-52.png">
+</table>
+
 <br><i> Figure:</i>
-2D FEM of pig thorax
+Images of Tidal Ventilation in Pigs
 </center>
 
 
@@ -93,7 +112,7 @@ EIDORS Analysis
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-07-19 20:58:23 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-19 21:12:29 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
