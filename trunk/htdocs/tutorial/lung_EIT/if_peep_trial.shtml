@@ -42,11 +42,11 @@ EIDORS Analysis
 </h3>
 
 <ol>
-<li> Download the
+<li><b> Download </b> the
     <a href="../../data_contrib/if-peep-acute-lung-injury/if_data_2003.zip"
    >data</a> and save it to your working directory.
 
-<li> Create a FEM model of the pig
+<li><b> Create a FEM model of the pig</b>
 <pre>
 <!--#include virtual="if_peep_trial01.m" -->
 </pre>
@@ -57,12 +57,12 @@ EIDORS Analysis
 2D FEM of pig thorax
 </center>
 
-<li> Reconstruct images
+<li><b> Reconstruct images</b>
 <pre>
 <!--#include virtual="if_peep_trial02.m" -->
 </pre>
 
-<li> Select Regions of interest to plot
+<li><b> Select Regions of interest to plot</b>
 <pre>
 <!--#include virtual="if_peep_trial03.m" -->
 </pre>
@@ -74,11 +74,24 @@ Image of ventilation and 4 identified points to analyse
 regional ventilation
 </center>
 
+<li><b> Normalized Impedance Change (&Delta;Z) at each ROI</b>
+<pre>
+<!--#include virtual="if_peep_trial04.m" -->
+</pre>
+
+<center>
+<img src="if_peep_trial04.png">
+<br><i> Figure:</i>
+Normalized &Delta;Z time course for different lung ROIs.
+<i>Left</i> Lung Injury 
+<i>Right</i> Treated
+</center>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-07-19 17:08:50 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-19 17:27:34 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
