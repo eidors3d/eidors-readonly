@@ -57,11 +57,28 @@ EIDORS Analysis
 2D FEM of pig thorax
 </center>
 
+<li> Reconstruct images
+<pre>
+<!--#include virtual="if_peep_trial02.m" -->
+</pre>
+
+<li> Select Regions of interest to plot
+<pre>
+<!--#include virtual="if_peep_trial03.m" -->
+</pre>
+
+<center>
+<img src="if_peep_trial03.png">
+<br><i> Figure:</i>
+Image of ventilation and 4 identified points to analyse
+regional ventilation
+</center>
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-07-19 16:42:22 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-19 17:08:50 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
