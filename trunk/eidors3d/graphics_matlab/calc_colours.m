@@ -17,9 +17,10 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 % Cs is 1xEx1 colourmap entries (if mapped_colour>0)
 %       1xEx3 colourmap entries (if mapped_colour==0)
 %
-% Usage #2 (img is a MxN image matrix of reconstructed pixels):
+% Usage #2 (rimg is a MxN image matrix of reconstructed pixels):
+%           img is an image structure with the image properties
 %  
-%   c_img = calc_colours( img);
+%   c_img = calc_colours( rimg, img);
 %   image( c_img );
 %
 % c_img is MxN colourmap entries (if mapped_colour>0)
@@ -71,7 +72,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.50 2008-07-13 18:53:05 aadler Exp $  
+% $Id: calc_colours.m,v 1.51 2008-07-19 17:45:07 aadler Exp $  
 
 if nargin==0
     error('must specify at args to calc_colours');
