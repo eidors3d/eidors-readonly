@@ -87,11 +87,28 @@ Normalized &Delta;Z time course for different lung ROIs.
 <i>Right</i> Treated
 </center>
 
+<li><b> Animate Output for each condition </b>
+
+This function creates a video of the sample sequences.
+<pre>
+<!--#include virtual="if_peep_trial04.m" -->
+</pre>
+
+<center>
+<img src="if_peep_trial05a.gif" width="196">
+<img src="if_peep_trial05b.gif" width="196">
+<br><i> Figure:</i>
+Video of sample sequences
+<i>Left</i> Lung Injury 
+<i>Right</i> Treated
+</center>
+
+
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-07-19 17:27:34 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-19 20:36:05 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
