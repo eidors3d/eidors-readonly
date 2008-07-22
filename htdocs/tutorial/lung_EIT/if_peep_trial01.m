@@ -1,9 +1,6 @@
-% Create Model $Id: if_peep_trial01.m,v 1.3 2008-07-19 20:58:23 aadler Exp $
+% Create Model $Id: if_peep_trial01.m,v 1.4 2008-07-22 16:00:45 aadler Exp $
 
 imdl= mk_common_model('c2c2',16);
-% Reverse electrodes to give 'clinical' view (looking toward patient head)
-imdl.fwd_model.electrode =  ...
-   imdl.fwd_model.electrode([1,16:-1:2]); 
 % Use normalized difference imaging
 imdl.fwd_model.normalize_measurements=1;
 
