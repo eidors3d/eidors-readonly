@@ -25,7 +25,7 @@ function img= backproj_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: backproj_solve.m,v 1.4 2008-07-19 16:13:29 aadler Exp $
+% $Id: backproj_solve.m,v 1.5 2008-07-22 20:26:32 aadler Exp $
 
 try
    type= inv_model.backproj_solve.type;
@@ -80,8 +80,9 @@ function Jbp = calc_backprojection_mask( fmdl , type);
      for j= 1:size(meas_pat_i,1); 
         idx_pl= find(meas_pat_i(j,:)>0);
         idx_mi= find(meas_pat_i(j,:)<0);
-        Jbp(:,idx) = (elem_vi <= meas_v(idx_pl,i)) & ...
-                     (elem_vi >  meas_v(idx_mi,i));
+        Jbp_idx  = (elem_vi <= meas_v(idx_pl,i)) & ...
+                   (elem_vi >  meas_v(idx_mi,i));
+        Jbp(:,idx) = - Jbp_idx;
         idx= idx+1;
      end
    end
