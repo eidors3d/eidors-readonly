@@ -1,6 +1,9 @@
-% Create Model $Id: if_lung_injury01.m,v 1.3 2008-07-21 14:27:24 aadler Exp $
+% Create Model $Id: if_lung_injury01.m,v 1.4 2008-07-22 15:52:41 aadler Exp $
 
 imdl= mk_common_model('c2c2',16);
+% Reverse electrodes to give 'clinical' view (looking toward patient head)
+imdl.fwd_model.electrode =  ...
+   imdl.fwd_model.electrode([9:-1:1,16:-1:10]);
 % Use normalized difference imaging
 imdl.fwd_model.normalize_measurements=1;
 
