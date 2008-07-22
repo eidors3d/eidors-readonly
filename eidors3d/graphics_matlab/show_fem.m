@@ -12,13 +12,16 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.72 2008-05-16 14:12:28 aadler Exp $
+% $Id: show_fem.m,v 1.73 2008-07-22 20:27:17 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
 end
 
-if ~ishold; cla; end % clear axis unless we're axes to hold
+% clear axis unless we're axes to hold (Octave 3.0.1 doesn't have cla)
+if ~ishold & ~exist('OCTAVE_VERSION');
+    cla;
+end
 
 do_colourbar=0;
 number_electrodes=0;
@@ -238,12 +241,6 @@ function old_code_3d_plot
   domesnum= 0;
   donodenum= 0;
   dotext=0;
-  if exist('OCTAVE_VERSION')
-    gset('nokey');
-    dotext=0;
-    domesnum= 0;
-    donodenum= 0;
-  end
 
   xxx=zeros(4,e); xxx(:)=NODE(1,ELEM(:));
   xxx= S*xxx+ (1-S)*ones(4,1)*mean(xxx);
@@ -287,16 +284,6 @@ function plot_2d_mesh(NODE,ELEM,el_pos, S, options)
 
   if isempty(el_pos)
       plot(xxx,yyy,'b');
-  elseif exist('OCTAVE_VERSION')
-      plot(arrow*xy,arrow*[0 1;-1 0]*xy,'m');
-      hold('on')
-      idx= find(R==0);
-      if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'c'); end
-      idx= find(R>0);
-      if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'r'); end
-      idx= find(R<0);
-      if ~isempty(idx); plot(xxx(:,idx),yyy(:,idx),'b'); end
-      hold('off')
   else
       xy= el_pos;
       hh=plot([xxx;xxx(1,:)],[yyy;yyy(1,:)],'b', ...
