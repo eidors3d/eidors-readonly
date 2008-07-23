@@ -12,7 +12,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.73 2008-07-22 20:27:17 aadler Exp $
+% $Id: show_fem.m,v 1.74 2008-07-23 14:05:35 aadler Exp $
 
 if nargin == 0
     error('Insufficient parameters for show_fem');
@@ -81,7 +81,7 @@ if number_elements
    xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
    for i= 1:size(mdl.elems,1);
       text(xyzc(i,1),xyzc(i,2), xyzc(i,3), num2str(i), ...
-            'HorizontalAlignment','center');
+            'HorizontalAlignment','center','FontSize',7);
    end
 end
 
