@@ -3,6 +3,30 @@
 This page is a list of updates, discussions, and 
 ideas for enhancements to the
 EIDORS package.
+<ul>
+<p><li><b>
+    23 July 2008:
+</b><br>
+Blobby the EIDORS walrus is releasing version 3.3
+(www.eidors.org).  This version incorporates many changes,
+bug fixes and code speedups. Since v3.3RC1, we have added
+the Sheffield MKI backprojection algorithm (thanks to
+David Barber and Brian Brown), added tutorials and made
+several small bug fixes.  New features since v3.3 include:
+a) interfaces to FEM generation (distmesh, netgen) and
+dual model solvers, b) new algorithms (total variation,
+electrode movement solver, temporal solvers), c) a data
+repository with in vivo and simulated data and models,
+d) faster algorithms with better caching, and e) improved
+graphics and extensive tutorials.
+
+<ul>
+<p><li><b>
+    16 June 2008:
+</b><br>
+EIDORS tutorial as part of the
+<a href="http://engineering.dartmouth.edu/eit2008/"
+    >EIT Conference 2008</a>
 
 <ul>
 <p><li><b>
@@ -11,7 +35,7 @@ EIDORS package.
 Blobby the walrus has decided to release the first
 release candidate of EIDORS v3.3 (EIDORS-v3.3RC1)
 on Friday, the 13th.
-
+<p>
 This version incorporates many changes, bug fixes and code
 speedups since v3.2 (Aug, 2007). New features include:
 a) interfaces to FEM generation (distmesh, netgen) and
@@ -831,7 +855,7 @@ following desirata for EIDORS software.
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-06-13 17:40:57 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-23 13:45:12 $ by $Author: aadler $
 </small>
 </body>
 
