@@ -5,8 +5,12 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %      inv_mdl = mk_common_gridmdl( mdl_string, RecMtx )
 %
 % 2D models
-%   mk_common_gridmdl('b2c', RM)  - 32x32, 16 elec
-%   mk_common_gridmdl('b2d', RM)  - 32x32 - GBP shape, 16 elec
+%   mk_common_gridmdl('b2c', RM)  - 32x32 circular shape, 16 elec
+%   mk_common_gridmdl('b2d', RM)  - 32x32 diamond shape, 16 elec
+%
+% Note that the electrodes added to the model are just to 
+%   indicate location, it does not necessarily correspond to the
+%   Reconstruction Matrix RM provided. 
 %
 % Sheffield Backprojection
 %   mk_common_gridmdl('backproj') - 32x32 with Diamond shape
@@ -20,12 +24,14 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %  
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_gridmdl.m,v 1.4 2008-07-23 14:06:04 aadler Exp $
+% $Id: mk_common_gridmdl.m,v 1.5 2008-07-23 14:23:13 aadler Exp $
 
 if strcmp(str,'backproj')
    str= 'b2d';
    RM= get_Sheffield_Backproj;
 end
+
+n_elec= 16;
 
 switch str
    case 'b2c'
@@ -52,6 +58,8 @@ switch str
    otherwise
       error(['mdl_string ',str,' not understood']);
 end
+
+fmdl.electrode = mk_electrode_locns( fmdl.nodes, n_elec );
 
 inv_mdl = eidors_obj('inv_model',['mk_common_gridmdl: ',str]);
 inv_mdl.reconst_type= 'difference';
@@ -103,4 +111,20 @@ function RM = get_Sheffield_Backproj
    RM= reshape(BP, 256, [])';
    RM= RM(sel2,sel1);
 
+
+function elec = mk_electrode_locns( nodes, n_elec );
+   phi = linspace(0, 2*pi, n_elec+1); 
+   phi(end) = [];
+   rad = 1;
+
+   for i= 1:n_elec
+      posn_x = rad*sin(phi(i));
+      posn_y = rad*cos(phi(i));
+      dist = (nodes(:,1)-posn_x).^2 + (nodes(:,2)-posn_y).^2;
+      [jnk,e_node] = min(dist);
+
+      elec(i).z_contact = 0.001;
+      elec(i).nodes     = e_node;
+   end
+    
 
