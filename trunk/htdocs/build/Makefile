@@ -86,6 +86,13 @@ $(REL)/htdocs: $(REL) Makefile
         \{} \;
 	find $@ -size +$(SZLIM) | xargs rm 
 	find $@ -name \*-s.html.bak | xargs rm
+
+
+# FIX adv hyperparams in build
+# for fn in *html ; do perl -i -pe's{./adv_image_reconst/TV_compare_hyperparams.*html"}{http://eidors3d.sf.net/tutorial/adv_image_reconst/TV_compare_hyperparams.shtml"}' $fn ; done
+# rm *html.bak
+# rm -r adv_image_reconst/tv_hp_imgs
+
 	
 
 # TODO FOR RELEASE
