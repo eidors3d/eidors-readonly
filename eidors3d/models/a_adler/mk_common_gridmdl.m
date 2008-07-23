@@ -20,7 +20,7 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %  
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_gridmdl.m,v 1.3 2008-07-10 02:42:21 aadler Exp $
+% $Id: mk_common_gridmdl.m,v 1.4 2008-07-23 14:06:04 aadler Exp $
 
 if strcmp(str,'backproj')
    str= 'b2d';
@@ -48,8 +48,6 @@ switch str
       fmdl.elems([2*ff, 2*ff-1],:)= [];
       fmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
       fmdl.coarse2fine(:,ff)= [];
-
-      fmdl.nodes = -fmdl.nodes;
 
    otherwise
       error(['mdl_string ',str,' not understood']);
@@ -97,6 +95,10 @@ function RM = get_Sheffield_Backproj
    % Transpose
    el= [12:-1:1,16:-1:13];
    BP= BP + permute(BP(el,el,:,:), [1,2,4,3]);
+
+   % Final UD flip to match radiological view (upward toward patient)
+   % Here electrodes are connected CW starting from TDC
+   BP= BP(:,:,:,[32:-1:1]);
 
    RM= reshape(BP, 256, [])';
    RM= RM(sel2,sel1);
