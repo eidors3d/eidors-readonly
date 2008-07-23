@@ -6,14 +6,15 @@
    <li><b>EIDORS infrastructure</b>
    <ul>
       <li> Testing: build test for each image reconstruction algorithm
-<br>&minus; can take multiple measurements
-<br>&minus; can take multiple measurements
-     
-<br>&minus;
+<pre>
+- can take multiple measurements?
+- size of data input
+- stim_patterns / meas_patterns required
+</pre>
 
    </ul>
 
-   <li><b>Todo for V3.3</b>
+   <li><b>Todo for V3.4</b>
 <pre>
 - Backward compatibility limit ====} Matlab. 6.5
     - remove bad shortcuts, remove isfields
@@ -41,24 +42,18 @@
 - sort out calc_JiRtRJt to take inverses of RtR and vice-versa.
 - measures of hyperparameter - get Brad G to contribute?
 
-- fix coarse_fine solver to be more general
-
 - build general nodal solver framework
 
 - move static examples into main code
   needs to be thought out properly, too.
 - complex examples and complex tests
-- bug in analytical model (test_2d_resistor)
     - issues with point electrodes and current on electrodes
 - create function eidors_defaults in algorithms
    - set default properites, 
    - work around matlab bugs (ie no int16 support)
    - create extra parameters (n_elems etc) - (from np_fwd_parameters)
-- bug in solver direction (ie simulated data are negative, so
-     that the inverse looks right. Doesn't work with test data)
-- show_fem gives weird images
 
-- make mk_common_models cleanly in 3D
+- make mk_common_models cleanly in 3D with multi electrode rings
 - bugs in mk_stim_patterns with no_meas_current
 </pre>
 
@@ -126,7 +121,7 @@
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-03-19 16:37:42 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-23 13:48:38 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--
