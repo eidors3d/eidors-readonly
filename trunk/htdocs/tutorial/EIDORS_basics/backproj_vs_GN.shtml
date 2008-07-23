@@ -89,10 +89,37 @@ Reconstructions using:
 <i>Right:</i> Backprojection with a simple filter
 </center>
 
+<h3> 
+GN vs Sheffield Backprojection
+</h3>
+
+There are several different versions of the backprojection algorithm
+in existence. The matrix available with EIDORS and shown
+here is the version distributed
+with the Sheffield Mk I system, and is very similar to the algorithm
+distributed with the G&ouml;ttingen Goe MF II EIT system. Almost all clinical
+and experimental publications which mention "backprojection" use this
+version of the algorithm.
+<p>
+
+<pre>
+<!--#include virtual="backproj_solve04.m" -->
+</pre>
+
+<center>
+<img src="backproj_solve04a.png">
+<br><i> Figure:</i>
+Reconstructions using:
+<i>Left:</i> GN Solver with NOSER Prior (small hyperparameter)
+<i>Middle:</i>GN Solver with NOSER Prior (larger hyperparameter)
+<i>Right:</i> Sheffield Mk I Backprojection
+</center>
+
+
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-07-19 15:04:09 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-23 14:27:56 $ by $Author: aadler $
 </small>
 </BODY></HTML>
 <!--

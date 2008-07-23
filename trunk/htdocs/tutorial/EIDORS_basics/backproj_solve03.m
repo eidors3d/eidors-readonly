@@ -1,4 +1,4 @@
-% $Id: backproj_solve03.m,v 1.4 2008-07-22 20:26:02 aadler Exp $
+% $Id: backproj_solve03.m,v 1.5 2008-07-23 14:27:56 aadler Exp $
 
 % Gauss Newton Solver
 inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);
@@ -10,8 +10,7 @@ inv_GN.hyperparameter.value= 0.03;
 
 imgr= inv_solve(inv_GN, vh,vi);
 imgr.calc_colours.ref_level=0;
-subplot(131)
-show_fem(imgr);
+subplot(131); show_fem(imgr);
 axis equal; axis off
 
 % Backprojection Solver
