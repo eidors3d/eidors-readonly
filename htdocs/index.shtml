@@ -14,8 +14,8 @@ To try the EIDORS software, follow these steps:
 <ol>
 <li> Download the software (release or developer version):
     <br>&minus; <i>Release Version:</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.3rc1.zip"
-             >EIDORS 3.3rc1</a>
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.3.zip"
+             >EIDORS 3.3</a> (23 Jul 2008)
     <br>&minus; <i>Developer Version:</i>
          Follow instructions for 
          <a href="http://sourceforge.net/cvs/?group_id=100454"
@@ -39,16 +39,18 @@ To try the EIDORS software, follow these steps:
 <H2>License</H2>
 EIDORS is licenced under the GNU 
 <a href="http://www.gnu.org/licenses/gpl.html"
-    >General Public License</a>. Uses are free to
-use, modify, and distribute their modifications.
+    >General Public License</a> (version 2 or 3).
+Users are free to use, modify, and distribute their
+modifications.
 However, we would be interested in keeping track of
 who is working with this code. If you make any
-interesting uses or modifications, please inform us.
+interesting uses or modifications, please inform us and
+consider contributing it.
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date: 2008-06-13 17:50:34 $ by $Author: aadler $
+    Last Modified: $Date: 2008-07-23 13:45:12 $ by $Author: aadler $
 </small>
 
 </body>
