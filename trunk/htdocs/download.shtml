@@ -25,28 +25,20 @@ Download All Versions
 <p><li><b>
 Browse Developer Versions 
 </b><br>
-<a href="http://eidors3d.cvs.sourceforge.net/eidors3d/"
-   >Browse CVS</a><br>
+<a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d"
+   >Browse SVN</a><br>
 
 <p><li><b>
-Read only access to Developer Version 
+Access to Developer Version 
 </b><br>
-Read-only, worldwide access is available via CVS using
-Anonymous CVS Access with
+Read-only, worldwide access is available via SVN using
 <pre>
-cvs -d:pserver:anonymous@eidors3d.cvs.sf.net:/cvsroot/eidors3d co eidors3d
+svn co <a href="https://eidors3d.svn.sf.net/svnroot/eidors3d/trunk/"
+               >https://eidors3d.svn.sf.net/svnroot/eidors3d/trunk/</a>
 </pre>
-
-<p><li><b>
-Access Developer Version 
-</b><br>
-Read-write, access is available via CVS for registered
+Read-write access is available via SVN for registered
 developers. To become a developer, 
 email the <a href="faq.shtml#maintainers">maintainers</a>.
-Access CVS via:
-<pre>
-cvs -d:ext:developername@eidors3d.cvs.sf.net:/cvsroot/eidors3d co eidors3d
-</pre>
 
 </ul>
 

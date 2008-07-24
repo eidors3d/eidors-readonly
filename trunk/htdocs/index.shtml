@@ -16,10 +16,9 @@ To try the EIDORS software, follow these steps:
     <br>&minus; <i>Release Version:</i>
          <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.3.zip"
              >EIDORS 3.3</a> (23 Jul 2008)
-    <br>&minus; <i>Developer Version:</i>
-         Follow instructions for 
-         <a href="http://sourceforge.net/cvs/?group_id=100454"
-            >Anonymous CVS Access</a>
+    <br>&minus; <a href="./download.shtml">
+                  <i>Developer Version:</i></a>
+
 <li> Unzip the software in a directory <tt>/path/to/eidors</tt>
 
 <li> Start Matlab (or Octave).
