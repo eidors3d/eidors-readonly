@@ -112,6 +112,26 @@ a power of one  pushes artefacts to the centre.
 <!--#include virtual="framework04.m" -->
 </pre>
 
+<h3>Step 4: test reconstruction matrix</h3>
+
+To test this example reconstruction matrix, we use
+test data using the EIT system from IIRC, (KHU: Korea).
+A non-conductive object is moved in a circle in a saline
+tank. (Note this this example specifically does not
+use the EIDORS imaging functions of colour mapping, showing
+   that the GREIT code is functionally separate from EIDORS) 
+
+<pre>
+<!--#include virtual="framework05.m" -->
+</pre>
+
+<center>
+<img src="framework05a.png">
+<br><i> Figure:</i>
+Images of a non-conductive object moving in a tank.
+</center>
+
+
 </td></tr></table>
 <p>
 <small>

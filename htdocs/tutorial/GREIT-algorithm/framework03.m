@@ -1,7 +1,11 @@
-% reconst $Id$
-load ImagePrior R
-load Jacobian J
+% image prior $Id$
+load GREIT_Jacobian_ng_mdl_fine J map
 
-hp = .01;
+% Remove space outside FEM model
+J= J(:,map);
+% inefficient code - but for clarity
+diagJtJ = diag(J'*J);
 
-RM= (J'*J + hp^2*R)\J';
+R= spdiags( diagJtJ,0, length(diagJtJ), length(diagJtJ));
+
+save ImagePrior_diag_JtJ R

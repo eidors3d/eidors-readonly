@@ -18,5 +18,5 @@ for k=1:4;
 end
 
 imagesc(reshape(imgs,32,4*32))
-axis off; axis equal; colormap(gray)
+axis off; axis equal; colormap(gray(256))
 print -dpng -r100 framework05a.png
