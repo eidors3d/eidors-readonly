@@ -3,11 +3,41 @@
 GREIT algorithm: Sheffield backprojection
 </h2>
 
+There are several different versions of the backprojection
+algorithm in existence. The one made available here is
+the version distributed with the Sheffield Mk I system,
+and is very similar to the algorithm distributed with 
+the G&ouml;ttingen Goe MF II EIT system. Almost all clinical
+and experimental publications which mention "backprojection"
+use the version of the algorithm provided here. The
+paper which probably best describes this algorithm
+is 
+Santosa, F. and Vogelius, M. (1990)
+<a href="http://www.jstor.org/pss/2102109"
+   >Backprojection algorithm for electrical
+    impedance imaging</a>, SIAM J. Applied
+    Mathematics, 50:216&minus;243.
+ 
+<p>
+This matrix is copyright DC Barber and BH Brown at
+University of Sheffield. It may be used free of
+charge for research and non-commercial purposes.
+Commercial applications require a licence from the
+University of Sheffield.
+
+<H3>GREIT Sheffield Backprojection reconstruction function</H3>
+
+This code requires the backprojection matrix from 
+<a href="../../data_contrib/db_backproj_matrix/db_backproj_matrix.shtml"
+     >here</a>
+<pre>
+<!--#include virtual="GREIT_Sheffield_backproj.m" -->
+</pre>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date:$ by $Author:$
+    Last Modified: $Date$ by $Author$
 </small>
 </BODY></HTML>
 <!--

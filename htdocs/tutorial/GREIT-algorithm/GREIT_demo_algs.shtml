@@ -1,0 +1,23 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+GREIT algorithms: Example images
+</h2>
+
+This tutorial uses the various GREIT algorithm to
+generate a set of example images. This is primarily
+a sanity check that the algorithms work.
+
+<H3>Prepare data</H3>
+
+<pre>
+<!--#include virtual="demo_algs01.m" -->
+</pre>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date:$ by $Author:$
+</small>
+</BODY></HTML>
+<!--
+      -->
