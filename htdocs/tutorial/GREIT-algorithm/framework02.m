@@ -1,4 +1,4 @@
-% fwd_model $Id: framework01.m 1536 2008-07-26 15:53:40Z aadler $
+% fwd_model $Id$
 
 % CALCULATE JACOBIAN AND SAVE IT
 
@@ -18,4 +18,6 @@ img.fwd_model.solve=      @aa_fwd_solve;
 img.fwd_model.jacobian=   @aa_calc_jacobian;
 
 J= calc_jacobian(img);
-save GREIT_Jacobian_ng_mdl_fine J
+
+map = reshape(sum(c2f,1),pixel_grid,pixel_grid)>0;
+save GREIT_Jacobian_ng_mdl_fine J map
