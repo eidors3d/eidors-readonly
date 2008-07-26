@@ -1,7 +1,6 @@
 function [img,map]= GREIT_Sheffield_backproj( ref_meas, reconst_meas )
 
    [RM,map] = calc_backproj_matrix;
-keyboard
 
    % Expand ref_meas to the full size of reconst_meas
    num_meas = size(reconst_meas,2);

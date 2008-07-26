@@ -1,11 +1,11 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2> 
-GREIT algorithm: NOSER normalized difference
+GREIT algorithm: NOSER
 </h2>
 
-This algorithm implements a NOSER-type 
-Gauss-Newton normalized difference inverse. This
-follows the reference:
+This algorithm implements a NOSER-type (Newton's one-step
+error reconstructor) Gauss-Newton normalized difference inverse.
+This follows the reference:
 <ul>
 M Cheney, D Isaacson, JC Newell, S Simske, J. Goble
 <a href="http://doi.wiley.com/10.1002/ima.1850020203"
@@ -15,18 +15,30 @@ Int. J. Imaging Systems and Technology,
 2:66&minus;75, 1990
 </ul>
 
-<H3>Jacobian Calculation</H3>
-
-The following code calculates and caches the Jacobian function:
-
-
-
 <H3>GREIT NOSER algorithm for time difference</H3>
 
+<pre>
+<!--#include virtual="GREIT_NOSER_diff.m" -->
+</pre>
+
+<H3>GREIT NOSER algorithm for normalized time difference</H3>
 
 <pre>
-<!--#include virtual="GREIT_Sheffield_backproj.m" -->
+<!--#include virtual="GREIT_NOSER_ndiff.m" -->
 </pre>
+
+<H3>Jacobian Calculation</H3>
+
+The previous code depends on this function to
+calculate and cache the Jacobian matrix,
+based on the 62465 element FEM model available
+<a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_fine.7z"
+             >here</a>:
+
+<pre>
+<!--#include virtual="GREIT_Jacobian_cyl.m" -->
+</pre>
+
 
 </td></tr></table>
 <p>
