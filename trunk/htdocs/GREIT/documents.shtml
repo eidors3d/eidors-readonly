@@ -1,0 +1,33 @@
+<!--#include virtual="nav-sidebar.html" -->
+
+<H3>GREIT Documents</H3>
+GREIT is a collaborative project to develop a
+consensus "best-of-breed" linear reconstucution
+algorithm for lung EIT.
+<P>
+The following documents describe GREIT:
+<UL>
+<LI>
+   <a href="http://www.sce.carleton.ca/faculty/adler/talks/2008/GREIT-presentation-7apr08.pdf"
+   >Discussion doc &minus; 7 Apr 08</a>
+
+<LI>
+   <a href="http://www.sce.carleton.ca/faculty/adler/publications/2008/GREIT-EIT2008.pdf"
+   >EIT 2008 paper</a>
+
+<LI>
+   <a href="https://eidors3d.svn.sf.net/svnroot/eidors3d/trunk/GREIT/paper/"
+      >GREIT paper (in progress)</a>
+
+</UL>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-05-19 19:53:13 $ by $Author: aadler $
+</small>
+
+</body>
+
+</html>
+
