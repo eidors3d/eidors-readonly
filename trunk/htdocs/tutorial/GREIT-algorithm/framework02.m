@@ -1,9 +1,21 @@
-% image prior $Id$
-load Jacobian J
+% fwd_model $Id: framework01.m 1536 2008-07-26 15:53:40Z aadler $
 
-% inefficient code - but for clarity
-diagJtJ = diag(J'*J);
+% CALCULATE JACOBIAN AND SAVE IT
 
-R= spdiags( diagJtJ,0, length(diagJtJ), length(diagJtJ));
+img= eidors_obj('image','GREIT-ng_mdl');
+img.fwd_model= ng_mdl_16x1_fine;
+img.fwd_model.coarse2fine = c2f;
+img.rec_model= rmdl;
+img.elem_data= ones(size(img.fwd_model,1));
 
-save ImagePrior R
+% ADJACENT STIMULATION PATTERNS
+img.fwd_model.stimulation= mk_stim_patterns(16, 1, ...
+             [0,1],[0,1], {'do_redundant', 'no_meas_current'}, 1);
+
+% SOLVERS
+img.fwd_model.system_mat= @aa_calc_system_mat;
+img.fwd_model.solve=      @aa_fwd_solve;
+img.fwd_model.jacobian=   @aa_calc_jacobian;
+
+J= calc_jacobian(img);
+save GREIT_Jacobian_ng_mdl_fine J
