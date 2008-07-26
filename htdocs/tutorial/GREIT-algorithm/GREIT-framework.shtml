@@ -79,7 +79,7 @@ Create a 32&times;32 pixel grid mesh for the
 inverse model, and show the correspondence between 
 it and the find forward model.
 <pre>
-<!--#include virtual="framework01a.m" -->
+<!--#include virtual="framework01.m" -->
 </pre>
 
 <center>
@@ -91,7 +91,7 @@ it and the find forward model.
 Calculate a Jacobian for a fine 3D mesh mapped onto
 
 <pre>
-<!--#include virtual="framework01b.m" -->
+<!--#include virtual="framework02.m" -->
 </pre>
 
 <h3>Step 2: calculate image prior</h3>
@@ -103,13 +103,13 @@ The &radic; is based on our experience that
 a power of zero pushes artefacts to the boundary, while
 a power of one  pushes artefacts to the centre.
 <pre>
-<!--#include virtual="framework02.m" -->
+<!--#include virtual="framework03.m" -->
 </pre>
 
 <h3>Step 3: calculate reconstruction matrix </h3>
 
 <pre>
-<!--#include virtual="framework03.m" -->
+<!--#include virtual="framework04.m" -->
 </pre>
 
 </td></tr></table>
