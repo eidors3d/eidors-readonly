@@ -75,10 +75,11 @@ FEM model of a ring of electrodes as well.
 
 <h3>Step 1: calculate Jacobian</h3>
 
-Calculate a Jacobian for a fine 3D mesh mapped onto
-a 32&times;32 pixel grid mesh
+Create a 32&times;32 pixel grid mesh for the
+inverse model, and show the correspondence between 
+it and the find forward model.
 <pre>
-<!--#include virtual="framework01.m" -->
+<!--#include virtual="framework01a.m" -->
 </pre>
 
 <center>
@@ -86,6 +87,12 @@ a 32&times;32 pixel grid mesh
 <br><i> Figure:</i>
 3D fine cylindrical mesh and 32&times;32 reconstruction grid
 </center>
+
+Calculate a Jacobian for a fine 3D mesh mapped onto
+
+<pre>
+<!--#include virtual="framework01b.m" -->
+</pre>
 
 <h3>Step 2: calculate image prior</h3>
 
