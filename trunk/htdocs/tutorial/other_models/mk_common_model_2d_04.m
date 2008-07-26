@@ -1,4 +1,4 @@
-% 2D models $Id: mk_common_model_2d_04.m,v 1.1 2008-05-19 18:22:32 aadler Exp $
+% 2D models $Id$
 
 clf; subplot(221)
 

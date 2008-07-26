@@ -1,5 +1,5 @@
 % Compare 2D algorithms
-% $Id: tutorial120a.m,v 1.4 2008-07-22 20:26:02 aadler Exp $
+% $Id$
 
 imb=  mk_common_model('c2c',16);
 

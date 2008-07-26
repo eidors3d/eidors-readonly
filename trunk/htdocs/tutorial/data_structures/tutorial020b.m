@@ -1,5 +1,5 @@
 % Create stimulation patterns and solve fwd_model
-% $Id: tutorial020b.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
+% $Id$
 
 
 % Define stimulation patterns

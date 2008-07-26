@@ -2,7 +2,7 @@ function ok= demo_real_test3
 % Perform tests based on the demo_real function with new structs
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: demo_real_test3.m,v 1.27 2008-05-19 14:11:36 aadler Exp $
+% $Id$
 
 isOctave= exist('OCTAVE_VERSION');
 

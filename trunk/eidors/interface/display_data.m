@@ -13,7 +13,7 @@ function display_data( data, fwd_model )
 %   and fwd_model is an eidors fwd model structure
  
 % (C) 2005 Andy Adler.  License: GPL version 2 or version 3
-% $Id: display_data.m,v 1.2 2007-09-21 13:52:05 aadler Exp $
+% $Id$
 
 if nargin==1
     fwd_model= data.fwd_model;

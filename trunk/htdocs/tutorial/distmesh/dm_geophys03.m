@@ -1,4 +1,4 @@
-% simulate targets $Id: dm_geophys03.m,v 1.1 2008-04-03 19:33:28 aadler Exp $
+% simulate targets $Id$
 
 fmdl.stimulation= mk_stim_patterns(n_elec, 1, '{ad}','{ad}', {}, 1);
 

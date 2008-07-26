@@ -6,7 +6,7 @@ function transfimp = calc_transferimpedance( img)
 % fwd_model is a fwd_model structure
 % img       is an image structure
 % (C) 2006 Bill Lionheart. License: GPL version 2 or version 3
-% $Id: calc_transferimpedance.m,v 1.13 2007-08-30 03:37:03 aadler Exp $
+% $Id$
 
 % create new stim patterns
 % stimulate with one ref electrode and then each in turn

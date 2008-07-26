@@ -16,7 +16,7 @@ function img= time_prior_solve( inv_model, data1, data2)
 %   them internally
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: time_prior_solve.m,v 1.13 2007-08-30 03:37:02 aadler Exp $
+% $Id$
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.time_prior_solve.time_steps;

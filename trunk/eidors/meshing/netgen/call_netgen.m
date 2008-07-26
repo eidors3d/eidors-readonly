@@ -11,7 +11,7 @@ function status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 %   default is '' -> coarse
 %   valid values are 'fine' or 'veryfine'
 %
-% $Id: call_netgen.m,v 1.9 2008-06-11 19:19:29 aadler Exp $
+% $Id$
 % (C) 2006 Andy Adler. Licensed under GPL V2
 
 if nargin<3

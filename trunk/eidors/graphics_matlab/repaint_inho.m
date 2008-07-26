@@ -13,7 +13,7 @@ function repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);
 %clr_def = Colour definitions val.calc_colours.field etc
 
 % (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3
-% $Id: repaint_inho.m,v 1.28 2008-03-14 15:06:14 aadler Exp $
+% $Id$
 
 if nargin<5
     thresh = [];

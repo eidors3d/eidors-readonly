@@ -2,7 +2,7 @@ function test_c2f_jacobian
 % Test calc of jacobian given coarse to fine mapping
 %
 % (C) Andy Adler 2008. Licenced under GPL v2 or v3
-% $Id: test_c2f_jacobian.m,v 1.1 2008-05-09 22:38:05 aadler Exp $
+% $Id$
 eidors_cache clear
 
 test1_np_3d

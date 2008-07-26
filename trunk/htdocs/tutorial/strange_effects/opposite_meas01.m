@@ -1,4 +1,4 @@
-%$Id: opposite_meas01.m,v 1.1 2008-07-17 19:13:47 aadler Exp $
+%$Id$
 imdl= mk_common_model('c2c2',16);
 imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
 

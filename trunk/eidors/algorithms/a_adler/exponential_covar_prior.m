@@ -15,7 +15,7 @@ function Reg= exponential_covar_prior( inv_model );
 %        is very inefficient.
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: exponential_covar_prior.m,v 1.5 2008-06-11 14:30:28 aadler Exp $
+% $Id$
 
 fwd_model= inv_model.fwd_model;
 

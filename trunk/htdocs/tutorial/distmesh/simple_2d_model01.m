@@ -1,4 +1,4 @@
-% Simple distmesh model $Id: simple_2d_model01.m,v 1.1 2008-03-29 01:23:31 aadler Exp $
+% Simple distmesh model $Id$
 
 % Create small model with little mesh refinement
 imdm=mk_common_model('a2d1c',16);

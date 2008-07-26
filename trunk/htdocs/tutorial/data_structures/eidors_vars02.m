@@ -1,4 +1,4 @@
-% Show EIDORS colours $Id: eidors_vars02.m,v 1.3 2007-08-30 03:58:28 aadler Exp $
+% Show EIDORS colours $Id$
 
 subplot(131)
 calc_colours('npoints',32);

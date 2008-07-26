@@ -17,7 +17,7 @@ function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes, ...
 %  fwd_mdl:           eidors format fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_fwd_model.m,v 1.13 2008-06-17 18:59:53 aadler Exp $
+% $Id$
 
 if nargin <7
    error('dm_mk_fwd_model requires 7 or 8 parameters');

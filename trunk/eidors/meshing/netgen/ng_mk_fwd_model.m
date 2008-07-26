@@ -19,7 +19,7 @@ function [fwd_mdl, mat_indices]= ...
 %  mat_indices:       cell array of material indices from eidors 
  
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: ng_mk_fwd_model.m,v 1.6 2008-05-01 15:21:00 aadler Exp $
+% $Id$
 
 if isempty(name); 
    name = ['MDL from', ng_vol_filename];

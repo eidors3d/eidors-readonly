@@ -6,7 +6,7 @@ function mdl= create_gmsh_2d_circle(rad, n_elec)
 % rad - model radius
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: create_gmsh_2d_circle.m,v 1.1 2007-09-21 13:31:15 aadler Exp $
+% $Id$
 
 p=[];
 

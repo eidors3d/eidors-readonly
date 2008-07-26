@@ -109,7 +109,7 @@ print -dpng -r100 db_backproj_matrix01.png
 
 
 <small>
-    Last Modified: $Date: 2008-07-10 12:21:28 $ by $Author: aadler $
+    Last Modified: $Date$ by $Author$
 </small>
 </body></html>
 

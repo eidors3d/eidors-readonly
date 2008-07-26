@@ -25,7 +25,7 @@ function img= backproj_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: backproj_solve.m,v 1.5 2008-07-22 20:26:32 aadler Exp $
+% $Id$
 
 try
    type= inv_model.backproj_solve.type;

@@ -12,7 +12,7 @@ function img= aa_inv_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_solve.m,v 1.18 2008-06-11 14:37:06 aadler Exp $
+% $Id$
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

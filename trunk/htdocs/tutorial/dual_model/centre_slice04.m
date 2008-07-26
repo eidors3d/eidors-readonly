@@ -1,4 +1,4 @@
-% 2D solver $Id: centre_slice04.m,v 1.3 2008-03-28 03:12:59 aadler Exp $
+% 2D solver $Id$
 
 imdl.hyperparameter.value= 0.003;
 

@@ -1,6 +1,6 @@
 function [im0,irec]= fig_figures
 % Generate fingers images for EIDORS paper
-% $Id: fig_fingers.m,v 1.4 2006-02-07 03:54:39 aadler Exp $
+% $Id$
 
 calc_colours('mapped_colour', 128); % so matlab can print to eps properly
 calc_colours('greylev',0.1);

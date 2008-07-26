@@ -1,4 +1,4 @@
-% Create Model $Id: if_lung_injury01.m,v 1.4 2008-07-22 15:52:41 aadler Exp $
+% Create Model $Id$
 
 imdl= mk_common_model('c2c2',16);
 % Reverse electrodes to give 'clinical' view (looking toward patient head)

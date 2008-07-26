@@ -43,7 +43,7 @@ Measurements were collected using single- and double-plane electrode configurati
 % Department of Electrical Engineering
 % Date:   September 21, 2005
 % Author: Camille Gomez-Laberge
-% $Id: cg_normal_breathing_2006.shtml,v 1.2 2007-08-30 03:58:27 aadler Exp $
+% $Id$
 % ************************************
 
 This README file is the documentation that accompanies the data collected in these directory: cgomez-1pl/
@@ -127,7 +127,7 @@ every 5 seconds for the duration of the sample.
 % Department of Electrical Engineering
 % Date:   September 21, 2005
 % Author: Camille Gomez-Laberge
-% $Id: cg_normal_breathing_2006.shtml,v 1.2 2007-08-30 03:58:27 aadler Exp $
+% $Id$
 % ************************************
 
 This README file is the documentation that accompanies the data collected in these directory: cgomez-2pl/
@@ -207,7 +207,7 @@ abdomen expanded.
 </pre>
 
 <small>
-    Last Modified: $Date: 2007-08-30 03:58:27 $ by $Author: aadler $
+    Last Modified: $Date$ by $Author$
 </small>
 </body></html>
 

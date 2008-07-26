@@ -9,7 +9,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % inv_model.parameters.term_tolerance (default 1e-3);
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: np_inv_solve.m,v 1.13 2007-08-30 03:37:04 aadler Exp $
+% $Id$
 
 [maxiter, tol] = get_parameters(inv_model);
   

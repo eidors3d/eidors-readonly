@@ -17,7 +17,7 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 %  inv_model.jacobian_bkgnd.func;
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian_bkgnd.m,v 1.18 2007-08-30 03:37:04 aadler Exp $
+% $Id$
 
 img_bkgnd= eidors_obj('get-cache', inv_model, 'jacobian_bkgnd');
 if ~isempty(img_bkgnd)

@@ -3,7 +3,7 @@ function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value
 % [index_incyl,mat]=incyl(center_simp,origin,radius,mat,value);
 %
 % (C) 2005 David Stephenson. Licenced under GPL
-% $Id: elems_in_cylinder.m,v 1.12 2007-09-21 13:52:15 aadler Exp $
+% $Id$
 
 index_incyl=[];
 a=origin(1);

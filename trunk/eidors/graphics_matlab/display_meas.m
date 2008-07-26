@@ -22,7 +22,7 @@ function display_meas(fwd_model,disp_meas,offset,elec_pp);
 % "elec_pp" - number of electrodes per plane
 %
 % (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
-% $Id: display_meas.m,v 1.2 2006-08-18 17:06:27 aadler Exp $
+% $Id$
 
 % old parameters
 %function display_meas(vtx,srf,elec,Ib,indH,df,disp_meas,offset,elec_pp);

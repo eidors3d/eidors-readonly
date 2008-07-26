@@ -7,7 +7,7 @@ function FC= aa_system_mat_fields( fwd_model )
 %   FC:        s_mat= C' * S * conduct * C = FC' * conduct * FC;
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_system_mat_fields.m,v 1.3 2008-05-14 21:33:58 aadler Exp $
+% $Id$
 
 FC = eidors_obj('get-cache', fwd_model, 'aa_system_mat_fields');
 if ~isempty(FC)

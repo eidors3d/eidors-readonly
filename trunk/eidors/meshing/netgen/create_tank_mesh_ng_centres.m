@@ -16,7 +16,7 @@ function [tank_mdl,centres] = create_tank_mesh_ng( tank_radius, tank_height,CorR
 % Revised for new version 3.0 structure WRBL 05/12/2005
 %Made in to function WRBL 6/5/2005
 %
-% $Id: create_tank_mesh_ng_centres.m,v 1.2 2006-08-13 12:10:21 aadler Exp $
+% $Id$
 
 elecs_per_plane= 2^log2_electrodes_per_plane;
 

@@ -16,7 +16,7 @@ function [elec_nodes, refine_nodes] = dm_mk_elec_nodes( elec_posn, ...
 %  refine_nodes:      vector of fixed nodes to add to model to refine it
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: dm_mk_elec_nodes.m,v 1.3 2008-03-29 01:08:05 aadler Exp $
+% $Id$
 
 [ne,nd]= size(elec_posn);
 elec_width=   ones(ne,1).*elec_width;   % expand scalar if required

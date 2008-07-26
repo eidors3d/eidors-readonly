@@ -12,7 +12,7 @@ function show_fem( mdl, options )
 %    calc_colours('param', value)
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_fem.m,v 1.74 2008-07-23 14:05:35 aadler Exp $
+% $Id$
 
 if nargin == 0
     error('Insufficient parameters for show_fem');

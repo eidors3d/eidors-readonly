@@ -25,7 +25,7 @@ function RtR_prior = calc_RtR_prior( inv_model )
 % RtR = R_prior' * R_prior;
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_RtR_prior.m,v 1.23 2008-04-17 19:31:58 aadler Exp $
+% $Id$
 
 inv_model = rec_or_fwd_model( inv_model);
 

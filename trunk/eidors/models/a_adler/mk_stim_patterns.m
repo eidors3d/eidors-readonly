@@ -66,7 +66,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 1mA
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_stim_patterns.m,v 1.13 2008-06-11 14:52:41 aadler Exp $
+% $Id$
 
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end

@@ -1,6 +1,6 @@
 function ok= calc_model_prior_test;
 % Verify model prior calcs
-% $Id: calc_model_prior_test.m,v 1.1 2008-03-18 20:44:16 aadler Exp $
+% $Id$
 
 % TODO: also test the various inverse prior calls
 

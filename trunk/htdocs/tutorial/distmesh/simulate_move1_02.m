@@ -1,4 +1,4 @@
-% Simulate movement $Id: simulate_move1_02.m,v 1.1 2008-03-29 02:27:17 aadler Exp $
+% Simulate movement $Id$
 [vh,vi,xyr_pt]= simulate_2d_movement( 20, smdl,[.75,.05]);
 
 % Show model and simulated targets

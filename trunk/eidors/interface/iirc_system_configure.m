@@ -3,7 +3,7 @@ function [Data,ErrorFlag]= iirc_system_configure( config_file )
 % Configure the IIRC EIT system
 %
 % (C) 2006 tongin oh
-% $Id: iirc_system_configure.m,v 1.1 2006-08-25 08:09:18 tonginoh Exp $
+% $Id$
 
 ErrorFlag= 0;
 Data= struct;

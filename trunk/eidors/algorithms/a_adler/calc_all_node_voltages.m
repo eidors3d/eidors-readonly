@@ -6,7 +6,7 @@ function node_v= calc_all_node_voltages( himg );
 % node_v     = n_nodes x n_stims voltage on each node
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_all_node_voltages.m,v 1.4 2008-05-19 17:15:18 aadler Exp $
+% $Id$
 
    % create one "measurement electrode" per node and
    % meas patterns to match

@@ -1,4 +1,4 @@
-% $Id: backproj_solve03.m,v 1.5 2008-07-23 14:27:56 aadler Exp $
+% $Id$
 
 % Gauss Newton Solver
 inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);

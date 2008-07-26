@@ -3,7 +3,7 @@ function Scan_Data= iirc_system_getdata( Data )
 % Read Data from the IIRC EIT system
 %
 % (C) 2006 tongin oh
-% $Id: iirc_system_getdata.m,v 1.1 2006-08-25 08:09:18 tonginoh Exp $
+% $Id$
 
 Error_Flag=0;
 

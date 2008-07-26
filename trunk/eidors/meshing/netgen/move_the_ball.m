@@ -15,7 +15,7 @@
 %    
 % (C) 2005 Bill Lionheart. Licensed under GPL v2
 % - mods by Andy Adler to allow higher density electrode models
-% $Id: move_the_ball.m,v 1.24 2008-06-11 19:20:25 aadler Exp $
+% $Id$
 
 % user input
 if ~exist('electrodes_per_plane');  electrodes_per_plane= 16;    end

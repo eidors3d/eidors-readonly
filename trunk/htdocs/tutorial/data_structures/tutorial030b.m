@@ -1,5 +1,5 @@
 % Explore Stimulation Patterns
-% $Id: tutorial030b.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
+% $Id$
 
 % We have a 16 electrode EIT machine with adjacent drive
 adjdrv= mk_stim_patterns(16,1, '{ad}','{ad}', ...

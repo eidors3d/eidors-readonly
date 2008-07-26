@@ -1,4 +1,4 @@
-% Simulate object moving $Id: dual_partial2d02.m,v 1.2 2008-03-18 18:59:46 aadler Exp $
+% Simulate object moving $Id$
 
 % simulation model
 imdl= mk_common_model('d2c2',64);

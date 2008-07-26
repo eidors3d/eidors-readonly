@@ -34,7 +34,7 @@ function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres)
 % electrodes = EIDORS V3.x electrodes structure
 
 % (C) 2002-2006. Licenced under the GPL
-% $Id: ng_tank_find_elec.m,v 1.8 2008-06-11 10:42:21 aadler Exp $
+% $Id$
 
 if  isstruct(centres)
    % Calc centre of each surface

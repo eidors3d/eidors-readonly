@@ -1,5 +1,5 @@
 % Basic Image reconstruction
-% $Id: tutorial110a.m,v 1.5 2008-07-22 20:46:29 aadler Exp $
+% $Id$
 
 % Load some data
 load iirc_data_2006

@@ -8,7 +8,7 @@ function [img_data, n_images]= get_img_data(img, flag);
 %    get data mapped onto elems in the fwd_model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: get_img_data.m,v 1.3 2008-03-30 21:48:34 aadler Exp $
+% $Id$
 
 if nargin==1; flag=0; end
 

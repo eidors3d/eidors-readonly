@@ -8,7 +8,7 @@ function Reg= RtR_prior_elem2nodes( inv_model )
 %   inv_model.RtR_prior_elem2nodes.fwd_model= fwd model for elem2nodes
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: RtR_prior_elem2nodes.m,v 1.1 2008-02-29 22:32:41 aadler Exp $
+% $Id$
 
 NtoE = mapper_nodes_elems( inv_model.RtR_prior_elem2nodes.fwd_model );
 

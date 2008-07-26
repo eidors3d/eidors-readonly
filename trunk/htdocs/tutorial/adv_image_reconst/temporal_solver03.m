@@ -1,4 +1,4 @@
-% Image reconstruction of moving objects $Id: temporal_solver03.m,v 1.2 2007-08-30 03:58:27 aadler Exp $
+% Image reconstruction of moving objects $Id$
 
 image_select= length(xyr_pt)/2+1;; % this image is at 9 O'Clock
 time_steps=  3; ts_expand= 5;

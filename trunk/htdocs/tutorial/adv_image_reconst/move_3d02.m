@@ -1,4 +1,4 @@
-% Reconstruct 3D movement $Id: move_3d02.m,v 1.2 2008-03-15 21:10:38 aadler Exp $
+% Reconstruct 3D movement $Id$
 
 img3dim= img;
 

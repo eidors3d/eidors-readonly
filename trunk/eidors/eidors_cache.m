@@ -26,7 +26,7 @@ function retval=eidors_cache( command, limit )
 %      - higher priority variables will be deleted less when memory is tight  
 
 % (C) 2005 Andy Adler. Licensed under GPL version 2
-% $Id: eidors_cache.m,v 1.17 2007-08-30 03:37:04 aadler Exp $
+% $Id$
 
 % Comments
 % Want to clear specific structures

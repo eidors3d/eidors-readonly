@@ -9,7 +9,7 @@ function img= mcmc_solve( inv_model, data1, data2)
 % inv_model.parameters.term_tolerance (default 1e-3);
 
 % (C) 2007 Nick Polydorides. License: GPL version 2 or version 3
-% $Id: mcmc_solve.m,v 1.1 2008-02-20 16:21:56 nickpolydorides Exp $
+% $Id$
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 

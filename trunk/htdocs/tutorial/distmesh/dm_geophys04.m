@@ -1,4 +1,4 @@
-% 2D solver $Id: dm_geophys04.m,v 1.1 2008-04-03 19:33:28 aadler Exp $
+% 2D solver $Id$
 
 % Create a new inverse model, and set
 % reconstruction model and fwd_model

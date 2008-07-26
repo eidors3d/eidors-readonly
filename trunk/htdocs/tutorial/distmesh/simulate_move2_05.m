@@ -1,4 +1,4 @@
-% Create animated graphics $Id: simulate_move2_05.m,v 1.1 2008-03-29 15:39:56 aadler Exp $
+% Create animated graphics $Id$
 
 % Trim images
 !find -name 'simulate_move2_04a*.png' -exec convert  -trim '{}' PNG8:'{}' ';'

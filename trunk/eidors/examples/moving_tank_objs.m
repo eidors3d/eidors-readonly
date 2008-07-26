@@ -32,7 +32,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %   options(3) - time_weight
 % 
 % Create moving objects and tanks
-% $Id: moving_tank_objs.m,v 1.24 2008-06-12 16:43:00 aadler Exp $
+% $Id$
 
 clim= [];
 

@@ -1,4 +1,4 @@
-% Show EIDORS colours $Id: eidors_colours02.m,v 1.1 2008-03-14 15:26:02 aadler Exp $
+% Show EIDORS colours $Id$
 subplot(221); img1= img;
 
 show_fem(img1,1);

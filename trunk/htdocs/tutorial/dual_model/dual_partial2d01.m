@@ -1,4 +1,4 @@
-% Dual Partial $Id: dual_partial2d01.m,v 1.2 2008-03-18 18:59:46 aadler Exp $
+% Dual Partial $Id$
 
 imdl= mk_common_model('d2c2',64);
 fmdl= imdl.fwd_model;

@@ -26,7 +26,7 @@ function mdl_pts = interp_mesh( mdl, n_interp)
 % 
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: interp_mesh.m,v 1.1 2008-03-29 14:26:31 aadler Exp $
+% $Id$
 
 if nargin<2; n_interp=0; end
 [n_elems, n_dims_1]= size(mdl.elems);

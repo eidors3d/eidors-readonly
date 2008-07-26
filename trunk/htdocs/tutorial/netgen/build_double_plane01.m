@@ -1,5 +1,5 @@
 % Build model
-% $Id: build_double_plane01.m,v 1.3 2007-09-21 19:07:47 aadler Exp $
+% $Id$
 
 % Choose Parameters
 electrodes_per_plane= 16;

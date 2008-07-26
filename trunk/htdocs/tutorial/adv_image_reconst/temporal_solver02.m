@@ -1,4 +1,4 @@
-% Image reconstruction of moving objects $Id: temporal_solver02.m,v 1.3 2007-08-30 03:58:27 aadler Exp $
+% Image reconstruction of moving objects $Id$
 
 time_steps=  3;
 time_weight= .8;

@@ -1,4 +1,4 @@
-% Simulate data $Id: dual_model05.m,v 1.1 2008-03-17 13:45:35 aadler Exp $
+% Simulate data $Id$
 
 % Reconstruct
 for model= 1:3

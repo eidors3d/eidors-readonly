@@ -15,7 +15,7 @@ function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);
 %df       = Measurements per current pattern as used in v_f 
 %c2f      = Coarse to fine map between fine and coarse model (optional)
 
-% $Id: jacobian_3d_fields.m,v 1.4 2008-05-09 22:38:00 aadler Exp $ 
+% $Id$ 
 
 [vr,dim] = size(vtx);
 

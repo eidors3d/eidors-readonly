@@ -1,5 +1,5 @@
 % Reconstruct images with cheating Tikhonov prior (small model)
-% $Id: tutorial210d.m,v 1.2 2007-08-30 03:58:28 aadler Exp $
+% $Id$
 
 smdl= mk_common_model('b2c');
 smdl.RtR_prior= @tutorial210_cheat_tikhonov;

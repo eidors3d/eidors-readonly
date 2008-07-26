@@ -1,4 +1,4 @@
-% Build 2D and 3D model $Id: two_and_half_d01.m,v 1.2 2008-03-19 00:04:28 aadler Exp $
+% Build 2D and 3D model $Id$
 
 if ~exist('demo_img');
    [inhomg_img, demo_img] = demo_real;

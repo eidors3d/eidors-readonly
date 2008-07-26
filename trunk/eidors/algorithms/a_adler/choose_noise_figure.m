@@ -17,7 +17,7 @@ function hparam= choose_noise_figure( inv_model );
 % NF = SNR_z / SNR_x
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: choose_noise_figure.m,v 1.14 2008-03-16 00:54:01 aadler Exp $
+% $Id$
 
 reqNF= inv_model.hyperparameter.noise_figure;
 

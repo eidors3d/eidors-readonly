@@ -13,7 +13,7 @@ function mdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, name)
 % Limitations: assumes a convex model
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_fmdl_from_nodes.m,v 1.3 2008-05-01 15:24:43 aadler Exp $
+% $Id$
 
 mdl= eidors_obj('fwd_model', name);
 

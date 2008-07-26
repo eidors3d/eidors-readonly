@@ -1,4 +1,4 @@
-% Sheffield MKI backprojection $Id: backproj_solve04.m,v 1.1 2008-07-23 14:27:56 aadler Exp $
+% Sheffield MKI backprojection $Id$
 
 % Gauss Newton Solvers
 inv_mdl{1} = inv_GN;

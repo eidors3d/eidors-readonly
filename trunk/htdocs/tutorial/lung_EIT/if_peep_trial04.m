@@ -1,4 +1,4 @@
-% Display Times courses $Id: if_peep_trial04.m,v 1.2 2008-07-19 17:27:35 aadler Exp $
+% Display Times courses $Id$
 
 for loop = 1:2;
    if loop == 1; img = i_injury;

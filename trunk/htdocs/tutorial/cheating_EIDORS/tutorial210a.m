@@ -1,5 +1,5 @@
 % Define Face Shapes: Small Face
-% $Id: tutorial210a.m,v 1.1 2007-06-15 18:12:03 aadler Exp $
+% $Id$
 
 clear p;
 p.leye=   [78,97,98,117,118,141];

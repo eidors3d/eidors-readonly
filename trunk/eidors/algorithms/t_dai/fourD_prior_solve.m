@@ -13,7 +13,7 @@ function img= fourD_prior_solve( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2007, Tao Dai and Andy Adler. Licenced under the GPL Version 2
-% $Id: fourD_prior_solve.m,v 1.2 2007-10-17 17:25:09 daitao Exp $
+% $Id$
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.fourD_prior.time_steps;

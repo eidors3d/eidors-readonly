@@ -1,4 +1,4 @@
-% Solve 2D and 3D model $Id: two_and_half_d03.m,v 1.2 2008-03-19 19:02:45 aadler Exp $
+% Solve 2D and 3D model $Id$
 
 c2f= mk_coarse_fine_mapping( f_mdl, c_mdl );
 

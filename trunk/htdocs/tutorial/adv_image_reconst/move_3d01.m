@@ -1,4 +1,4 @@
-% Simulate 3D movement $Id: move_3d01.m,v 1.1 2007-08-30 03:58:28 aadler Exp $
+% Simulate 3D movement $Id$
 
 noiselev = .1;
 movement = 2;

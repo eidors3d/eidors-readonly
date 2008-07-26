@@ -14,7 +14,7 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % inv_model    is an inv_model structure
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_R_prior.m,v 1.21 2008-03-27 19:19:22 aadler Exp $
+% $Id$
 
 if isfield(inv_model,'rec_model');
    inv_model.fwd_model= inv_model.rec_model;

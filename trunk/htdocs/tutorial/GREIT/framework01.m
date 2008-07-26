@@ -1,4 +1,4 @@
-% fwd_model $Id: framework01.m,v 1.1 2008-05-19 21:19:22 aadler Exp $
+% fwd_model $Id$
 load ng_mdl_16x1_fine
 
 pixel_grid= 32;

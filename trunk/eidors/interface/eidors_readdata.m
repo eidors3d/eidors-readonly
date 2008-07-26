@@ -23,7 +23,7 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %  if format is unspecified, we attempt to autodetect
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_readdata.m,v 1.27 2008-07-09 14:40:12 aadler Exp $
+% $Id$
 
 % TODO:
 %   - output an eidors data object

@@ -1,4 +1,4 @@
-% create model $Id: simulate_move2_02.m,v 1.1 2008-03-29 14:59:19 aadler Exp $
+% create model $Id$
 
 % Create an object within the model
 trg_ctr= [.7,.1];

@@ -9,7 +9,7 @@ function meas_icov = calc_reciproc_error(inv_model, data )
 %  A Adler, H Gagnon. IEEE T BME 2008.
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_reciproc_error.m,v 1.1 2008-06-11 14:37:42 aadler Exp $
+% $Id$
 
 % Only works for 16 electrode data
 nframes= size(data,2);

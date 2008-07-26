@@ -1,4 +1,4 @@
-% Create and show square model $Id: dm_geophys02.m,v 1.1 2008-04-03 19:33:28 aadler Exp $
+% Create and show square model $Id$
 
 % Create square mesh model
 imdl= mk_common_model('c2s',16);

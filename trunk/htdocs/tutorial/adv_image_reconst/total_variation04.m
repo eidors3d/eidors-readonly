@@ -1,4 +1,4 @@
-% TV Solutions % $Id: total_variation04.m,v 1.4 2008-03-13 19:36:38 aadler Exp $
+% TV Solutions % $Id$
 
 % Create TV Inverse Model
 invtv= eidors_obj('inv_model', 'EIT inverse');

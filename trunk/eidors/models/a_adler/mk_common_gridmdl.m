@@ -24,7 +24,7 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %  
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_common_gridmdl.m,v 1.5 2008-07-23 14:23:13 aadler Exp $
+% $Id$
 
 if strcmp(str,'backproj')
    str= 'b2d';

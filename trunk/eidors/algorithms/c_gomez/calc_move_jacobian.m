@@ -8,7 +8,7 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 
 % (C) 2007, Camille Gomez-Laberge and Andy Adler.
 %  License: GPL version 2 or version 3
-% $Id: calc_move_jacobian.m,v 1.3 2007-11-29 20:38:14 camilgomez Exp $
+% $Id$
 
 % System matrix and its parameters
 

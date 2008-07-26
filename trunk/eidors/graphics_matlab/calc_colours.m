@@ -72,7 +72,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m,v 1.51 2008-07-19 17:45:07 aadler Exp $  
+% $Id$  
 
 if nargin==0
     error('must specify at args to calc_colours');

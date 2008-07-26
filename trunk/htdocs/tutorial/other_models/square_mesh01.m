@@ -1,4 +1,4 @@
-% $Id: square_mesh01.m,v 1.3 2008-04-17 19:45:28 aadler Exp $
+% $Id$
 
 z_contact= 0.01;
 n_elec= 17;

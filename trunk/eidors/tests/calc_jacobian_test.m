@@ -5,7 +5,7 @@ function ok= calc_jacobian_test
 %     normalized difference dataprior should be 1./ homg_data
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian_test.m,v 1.26 2008-03-30 21:55:07 aadler Exp $
+% $Id$
 
 ok= 1;
 delta = 1e-4;

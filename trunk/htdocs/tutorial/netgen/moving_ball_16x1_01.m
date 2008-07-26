@@ -1,5 +1,5 @@
 % Map elements onto mesh
-% $Id: moving_ball_16x1_01.m,v 1.1 2007-09-24 20:53:24 aadler Exp $
+% $Id$
 
 % Load models
 load ng_mdl_16x1_coarse;

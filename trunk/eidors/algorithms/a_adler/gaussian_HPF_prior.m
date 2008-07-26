@@ -7,7 +7,7 @@ function Reg= gaussian_HPF_prior( inv_model );
 %   diam_frac= inv_model.fwd_model.gaussian_HPF_prior.diam_frac DEFAULT 0.1
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: gaussian_HPF_prior.m,v 1.9 2008-04-14 19:37:34 aadler Exp $
+% $Id$
 
 fwd_model= inv_model.fwd_model;
 try 

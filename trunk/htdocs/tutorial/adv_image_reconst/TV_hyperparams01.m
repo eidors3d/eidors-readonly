@@ -1,4 +1,4 @@
-% TV: Create object $Id: TV_hyperparams01.m,v 1.2 2008-03-15 00:12:20 aadler Exp $
+% TV: Create object $Id$
 
 imb=  mk_common_model('c2c2',16);
 fmdl= imb.fwd_model;

@@ -1,4 +1,4 @@
-% Reconstruct images $Id: meshsize_param02.m,v 1.2 2008-06-12 11:07:29 aadler Exp $
+% Reconstruct images $Id$
 imdl= mk_common_model('c2c2',16);
 imdl.RtR_prior= @laplace_image_prior;
 imdl.hyperparameter.value = 0.01;
