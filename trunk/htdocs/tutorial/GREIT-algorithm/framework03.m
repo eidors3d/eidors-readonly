@@ -1,9 +1,7 @@
-% image prior $Id$
-load GREIT_Jacobian_ng_mdl_fine J
+% reconst $Id$
+load ImagePrior R
+load Jacobian J
 
-% inefficient code - but for clarity
-diagJtJ = diag(J'*J);
+hp = .01;
 
-R= spdiags( diagJtJ,0, length(diagJtJ), length(diagJtJ));
-
-save ImagePrior_diag_JtJ R
+RM= (J'*J + hp^2*R)\J';
