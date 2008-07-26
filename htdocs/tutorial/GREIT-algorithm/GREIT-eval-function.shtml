@@ -1,0 +1,124 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+GREIT algorithm candidates
+</h2>
+
+Each GREIT algorithm candidate function must be
+of the following form:
+
+<pre>
+function [img,map]= <i><b>ALG_NAME</b></i>( ref_meas, reconst_meas )
+</pre>
+where
+ <ul>
+<table><tr> <td>
+<i><b>img</b></i>     <td> 32&times;32&times;<i><b>N</b></i>
+          conductivity change image
+          representing the <i>N</i> measurement instants
+<tr><td>
+<i><b>map</b></i>     <td> 32&times;32 vector indicating which 
+          pixels are inside the medium (=1) and which are outside (=0).
+<tr><td>
+<i><b>ref_meas</b></i> <td> 208&times;1 measurement vector
+ representing the background conductivity
+<tr><td>
+<i><b>img</b></i>      <td> 208&times;<i><b>N</b></i> measurement vector
+ representing the <i>N</i> measurement instants
+</table>
+ </ul>
+
+<H3>Difference Imaging</H3>
+
+EIT difference imaging calculates a change in conductivity
+(&Delta;<b>&sigma;</b>) from the change in measurmements
+<center>
+    <b>v</b><sub>i</sub><sup>2</sup> &minus;
+    <b>v</b><sub>i</sub><sup>1</sup>
+</center>
+where <b>v</b><sub>i</sub><sup>2</sup> is the <i>i</i><sup>th</sup>
+component of the measurement frame <i>after</i> the change, and
+      <b>v</b><sub>i</sub><sup>1</sup> is the <i>i</i><sup>th</sup>
+component of the measurement frame <i>before</i> the change.
+
+<p>
+A difference imaging algorithm may look like this example:
+<pre>
+function img= <i><b>ALG_NAME</b></i>( ref_meas, reconst_meas )
+
+   load ReconstMatrix_from_ALG_NAME RM;
+
+   % Expand ref_meas to the full size of reconst_meas
+   num_meas = size(reconst_meas,2);
+   ref_meas = ref_meas * ones(1,num_meas);
+   dv = reconst_meas - ref_meas;
+
+   % reconst image
+   ds = RM*dv;
+
+   img= reshape(ds, 32,32,num_meas);
+</pre>
+
+<H3>Normalized Difference Imaging</H3>
+
+EIT normalized difference imaging calculates a change in conductivity
+(&Delta;<b>&sigma;</b>) from a normalized change in measurmements
+<center>
+   ( <b>v</b><sub>i</sub><sup>2</sup> &minus;
+     <b>v</b><sub>i</sub><sup>1</sup> ) / 
+     <b>v</b><sub>i</sub><sup>1</sup> 
+</center>
+
+<p>
+A normalized difference imaging algorithm may look like this example:
+<pre>
+function img= <i><b>ALG_NAME</b></i>( ref_meas, reconst_meas )
+
+   load ReconstMatrix_from_ALG_NAME RM;
+
+   % Expand ref_meas to the full size of reconst_meas
+   num_meas = size(reconst_meas,2);
+   ref_meas = ref_meas * ones(1,num_meas);
+   dv = ( reconst_meas - ref_meas ) ./ ref_meas; % CHANGE IS HERE:
+
+   % reconst image
+   ds = RM*dv;
+
+   img= reshape(ds, 32,32,num_meas);
+</pre>
+
+<H3>Comments</H3>
+
+Some things to note about GREIT algorithm candidates:
+<ul>
+<li> An algorithm accepts no parameters. There is no place to
+     enter a regularization hyperparameter, for example. This
+     is intentional, since each GREIT algorithm is supposed to
+     be completely stand alone. Different variants of algorithms
+     should have different names. 
+
+<li> Algorithms do not accept shape information. Again, this is
+     intentional, since GREIT algorithms for different shapes
+     (adult thorax, cylindrical tank, etc.) are considered 
+     to be different algorithms.
+</ul>
+
+<H3>Algorithm examples</H3>
+
+Some examples of GREIT evaluation functions are:
+<ul>
+   <li><a href="./GREIT_Sheffield_backproj.shtml"
+                >Sheffield Backprojection</a>
+   <li><a href="./GREIT_NOSER_norm_diff.shtml"
+                >NOSER-type (normalized difference)</a>
+   <li><a href="./GREIT_NOSER_diff.shtml"
+                >NOSER-type (difference)</a>
+</ul>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2008-07-26 13:23:52 -0400 (Sat, 26 Jul 2008) $ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
