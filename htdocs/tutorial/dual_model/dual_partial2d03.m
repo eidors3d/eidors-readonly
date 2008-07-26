@@ -1,4 +1,4 @@
-% Dual Partial $Id: dual_partial2d03.m,v 1.1 2008-03-18 18:59:46 aadler Exp $
+% Dual Partial $Id$
 
 % base model
 imdl.RtR_prior = @noser_image_prior;

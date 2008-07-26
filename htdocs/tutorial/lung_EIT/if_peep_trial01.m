@@ -1,4 +1,4 @@
-% Create Model $Id: if_peep_trial01.m,v 1.4 2008-07-22 16:00:45 aadler Exp $
+% Create Model $Id$
 
 imdl= mk_common_model('c2c2',16);
 % Use normalized difference imaging

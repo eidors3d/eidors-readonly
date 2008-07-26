@@ -1,4 +1,4 @@
-% $Id: backproj_solve02.m,v 1.4 2007-10-16 01:18:40 aadler Exp $
+% $Id$
 
 for idx=1:3
   if     idx==1; mdltype= 'b2c';

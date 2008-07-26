@@ -18,7 +18,7 @@ function J = calc_jacobian( fwd_model, img)
 %           'node_data' parameters
 
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m,v 1.22 2008-03-30 21:49:42 aadler Exp $
+% $Id$
 
 if nargin==1
    img       = fwd_model;

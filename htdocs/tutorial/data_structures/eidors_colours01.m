@@ -1,4 +1,4 @@
-% Show EIDORS colours $Id: eidors_colours01.m,v 1.1 2008-03-14 15:26:02 aadler Exp $
+% Show EIDORS colours $Id$
 
 % Create sample image
 imdl= mk_common_model('a2c2',16);

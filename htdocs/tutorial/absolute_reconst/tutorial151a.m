@@ -1,6 +1,6 @@
 % Create model for Absolute Imaging
 % Based on example from Stephen Murphy
-% $Id: tutorial151a.m,v 1.1 2007-06-15 18:22:06 aadler Exp $
+% $Id$
 
 load tutorial151_model.mat
 

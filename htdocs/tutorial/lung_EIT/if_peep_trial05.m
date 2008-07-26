@@ -1,4 +1,4 @@
-% Show images $Id: if_peep_trial05.m,v 1.1 2008-07-19 20:58:47 aadler Exp $
+% Show images $Id$
 
 for loop = 1:2;
    if loop == 1; img = i_injury; fn= 'a';

@@ -1,4 +1,4 @@
-% Simulate data $Id: dual_model02.m,v 1.4 2008-03-16 11:06:26 aadler Exp $
+% Simulate data $Id$
 
 % create base model
 mdl_base=mk_common_model('a2c0',16);

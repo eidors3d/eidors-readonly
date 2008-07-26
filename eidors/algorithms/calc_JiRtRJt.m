@@ -18,7 +18,7 @@ function [JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )
 % TODO: think about how to implement this!!
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_JiRtRJt.m,v 1.17 2007-09-20 10:40:18 aadler Exp $
+% $Id$
 
 JiRtRJt = eidors_obj('get-cache', inv_model, 'JiRtRJt');
 if ~isempty(JiRtRJt)

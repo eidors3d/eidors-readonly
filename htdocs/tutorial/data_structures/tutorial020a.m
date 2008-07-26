@@ -1,5 +1,5 @@
 % tutorial1_create_fwd_model
-% $Id: tutorial020a.m,v 1.1 2007-06-15 18:24:37 aadler Exp $
+% $Id$
 
 r_mdl= eidors_obj('fwd_model','demo resistor model');
 

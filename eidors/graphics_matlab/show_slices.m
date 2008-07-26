@@ -18,7 +18,7 @@ function out_img= show_slices( img, levels )
 %          cuts through the object
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: show_slices.m,v 1.52 2008-07-19 17:46:29 aadler Exp $
+% $Id$
 
 try   np = img.calc_colours.npoints;
 catch np = calc_colours('npoints');

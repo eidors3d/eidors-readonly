@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial410c.m,v 1.2 2008-03-13 22:08:30 aadler Exp $
+% $Id$
 
 raster_img= calc_slices(img);
 raster_img(isnan(raster_img))=0;

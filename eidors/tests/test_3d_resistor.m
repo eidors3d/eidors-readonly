@@ -1,5 +1,5 @@
 % Create 3D model of a Rectangular resistor
-% $Id: test_3d_resistor.m,v 1.6 2008-05-19 14:24:39 aadler Exp $
+% $Id$
 
 ll=5; % length
 ww=1; % width

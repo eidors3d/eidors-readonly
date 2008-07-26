@@ -9,7 +9,7 @@ function J= jacobian_elem2nodes( fwd_model, img);
 % img = image background for jacobian calc
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: jacobian_elem2nodes.m,v 1.2 2008-02-29 22:32:41 aadler Exp $
+% $Id$
 
 fem_fmdl= fwd_model.jacobian_elem2nodes.fwd_model;
 EtoN = mapper_nodes_elems( fem_fmdl);

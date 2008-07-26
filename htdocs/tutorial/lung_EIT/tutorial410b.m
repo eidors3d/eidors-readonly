@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial410b.m,v 1.2 2008-03-13 22:08:30 aadler Exp $
+% $Id$
 
 load montreal_data_1995
 imdl.hyperparameter.value=5e-2;

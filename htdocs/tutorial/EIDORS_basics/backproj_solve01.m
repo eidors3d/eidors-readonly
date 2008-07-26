@@ -1,4 +1,4 @@
-%$Id: backproj_solve01.m,v 1.1 2007-10-15 20:32:47 aadler Exp $
+%$Id$
 imdl= mk_common_model('c2c',16);
 
 fmdl= imdl.fwd_model;

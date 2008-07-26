@@ -1,5 +1,5 @@
 % Compare 3D algorithms
-% $Id: tutorial130b.m,v 1.4 2008-03-15 21:16:34 aadler Exp $
+% $Id$
 
 % Create Inverse Model
 inv3d= eidors_obj('inv_model', 'EIT inverse');

@@ -1,4 +1,4 @@
-% simulate homogeneous $Id: simulate_move2_03.m,v 1.1 2008-03-29 15:39:56 aadler Exp $
+% simulate homogeneous $Id$
 
 % stimulation pattern: adjacent
 stim_pat= mk_stim_patterns(n_elec,1,'{ad}','{ad}',{},1);

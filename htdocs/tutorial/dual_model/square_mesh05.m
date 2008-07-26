@@ -1,4 +1,4 @@
-% 2D solver $Id: square_mesh05.m,v 1.1 2008-03-28 17:55:23 aadler Exp $
+% 2D solver $Id$
 
 % Create a new inverse model, and set
 % reconstruction model and fwd_model

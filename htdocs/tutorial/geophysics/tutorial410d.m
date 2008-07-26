@@ -1,4 +1,4 @@
-% Show images $Id: tutorial410d.m,v 1.2 2007-06-15 20:24:00 aadler Exp $
+% Show images $Id$
 
 subplot(121)
 axis square; view(30.,80.);

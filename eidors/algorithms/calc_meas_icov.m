@@ -21,7 +21,7 @@ function meas_icov = calc_meas_icov( inv_model )
 %          -> use I, or 1./homg (for normalized difference)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_meas_icov.m,v 1.19 2008-06-11 14:39:03 aadler Exp $
+% $Id$
 
 meas_icov = eidors_obj('get-cache', inv_model, 'meas_icov');
 

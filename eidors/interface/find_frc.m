@@ -8,7 +8,7 @@ function [eexpi,einsp]= find_frc( imgs, ROI, frate, name, ok, remove_pts)
 % Find candidates for FRC from a time seq of EIT data
 % frate is framerate (in fps units)
 
-% $Id: find_frc.m,v 1.1 2008-06-11 14:49:06 aadler Exp $
+% $Id$
 
 if nargin <5; ok=0; end
 if nargin <6; remove_pts=[]; end

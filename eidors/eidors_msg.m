@@ -25,7 +25,7 @@ function eidors_msg( message, varargin )
 % Messages at log_level2 are displayed temprorarily
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: eidors_msg.m,v 1.27 2008-05-19 14:03:30 aadler Exp $
+% $Id$
 
 global eidors_objects
 

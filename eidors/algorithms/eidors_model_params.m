@@ -3,7 +3,7 @@ function mdl = eidors_model_params( mdl );
 % Fill in default parameter values in EIDORS types
 %
 % (C) 2006 Andy Adler. Licensed under the GPL v2
-% $Id: eidors_model_params.m,v 1.8 2008-07-10 15:10:39 aadler Exp $
+% $Id$
 
 % TODO - to caching
 

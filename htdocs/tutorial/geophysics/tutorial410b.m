@@ -1,5 +1,5 @@
 % Reconstruct data on Gallery
-% $Id: tutorial410b.m,v 1.3 2007-06-15 20:24:00 aadler Exp $
+% $Id$
 
 % homogeneous starting model
 background_resistivity= 15.0; % Unit is Ohm.m

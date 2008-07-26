@@ -1,4 +1,4 @@
-%$Id: nodal_jacobian01.m,v 1.1 2008-03-15 19:22:43 aadler Exp $
+%$Id$
 imdl_e= mk_common_model('b2c2',16);
 imdl_e.hyperparameter.value= 0.05;
 imdl_e.RtR_prior = @laplace_image_prior;

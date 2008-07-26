@@ -15,7 +15,7 @@ function [eptr, pt_xyz]= mk_mesh_sample_array( varargin )
 % npoints - total number of points for rectangular mapping
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_mesh_sample_array.m,v 1.5 2007-09-23 02:02:35 aadler Exp $
+% $Id$
 
 [pp, mdls] = proc_input (varargin);
 pt_xyz = interpxyz(pp.min_xyz , pp.max_xyz, pp.npoints);

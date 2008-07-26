@@ -1,5 +1,5 @@
 % Use Netgen
-% $Id: tutorial040a.m,v 1.1 2007-06-15 18:05:51 aadler Exp $
+% $Id$
 
 [tank_mdl,centres] = create_tank_mesh_ng( ...
   15,      ... % tank_radius,

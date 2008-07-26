@@ -1,4 +1,4 @@
-% Simulate data $Id: dual_model01.m,v 1.2 2008-03-16 11:06:26 aadler Exp $
+% Simulate data $Id$
 imdl= mk_common_model('c2c2',16);
 img=calc_jacobian_bkgnd(imdl);
 vh=fwd_solve(img);

@@ -1,4 +1,4 @@
-% Mesh Correspondance $Id: square_mesh02.m,v 1.1 2008-03-28 16:01:28 aadler Exp $
+% Mesh Correspondance $Id$
 
 % Create grid based on mesh points
 nn= 16; nl= 1:nn+1;

@@ -24,7 +24,7 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % filename = Name of file containing NetGen .vol information
 % mat_ind  = Material index
 
-% $Id: ng_read_mesh.m,v 1.5 2006-08-12 03:35:16 aadler Exp $
+% $Id$
 % (C) 2002-2006 (C) Licenced under the GPL
 
 eidors_msg('ng_read_mesh',3);

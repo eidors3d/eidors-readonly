@@ -24,7 +24,7 @@ function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )
 %   vi - target simulations                  M x n_points
 %   xyzr_pt - x,y,z and radius of each point 3 x n_points
 
-% $Id: simulate_3d_movement.m,v 1.7 2008-04-03 19:12:19 aadler Exp $
+% $Id$
 
 if nargin <1
    n_sims = 200;

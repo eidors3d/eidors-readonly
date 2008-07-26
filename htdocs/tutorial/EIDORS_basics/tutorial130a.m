@@ -1,5 +1,5 @@
 % Compare 3D algorithms
-% $Id: tutorial130a.m,v 1.1 2007-07-12 18:08:41 aadler Exp $
+% $Id$
 
 imb=  mk_common_model('n3r2',16);
 e= size(imb.fwd_model.elems,1);

@@ -1,4 +1,4 @@
-% Reconstruct Images $Id: if_peep_trial02.m,v 1.1 2008-07-19 17:08:50 aadler Exp $
+% Reconstruct Images $Id$
 
 v_injury = eidors_readdata('p1130107.get');
 r_injury = mean(v_injury(:,1:10),2); % reference meas

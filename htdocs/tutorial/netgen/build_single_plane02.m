@@ -1,5 +1,5 @@
 % Test area of electrodes
-% $Id: build_single_plane02.m,v 1.4 2007-09-24 14:55:53 aadler Exp $
+% $Id$
 
 % verify np_fwd_parameters identifies
 for i= 1:electrodes_per_plane*number_of_planes

@@ -1,4 +1,4 @@
-% 2D solver $Id: centre_slice02.m,v 1.5 2008-03-28 02:28:30 aadler Exp $
+% 2D solver $Id$
 
 % Create and show inverse solver
 imdl = mk_common_model('b3cr',[16,2]);

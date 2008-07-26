@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial410d.m,v 1.1 2008-03-13 22:08:30 aadler Exp $
+% $Id$
 
 load montreal_data_1995
 vh= zc_h_stomach_pre; % abdomen before fluid

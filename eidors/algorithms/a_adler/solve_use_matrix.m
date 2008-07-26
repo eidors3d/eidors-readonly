@@ -11,7 +11,7 @@ function img= solve_use_matrix( inv_model, data1, data2)
 %    zero if elem is unfilled, otherwise pointer to matrix row
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: solve_use_matrix.m,v 1.1 2008-06-11 14:40:02 aadler Exp $
+% $Id$
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 

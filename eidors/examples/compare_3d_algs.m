@@ -7,7 +7,7 @@ function imgr= compare_3d_algs( algno )
 % algno=4     ab_calc_tv_prior        ab_tv_diff_solve
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: compare_3d_algs.m,v 1.26 2007-08-30 03:37:32 aadler Exp $
+% $Id$
 
 calc_colours('ref_level','auto');
 

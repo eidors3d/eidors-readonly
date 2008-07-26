@@ -7,7 +7,7 @@ function data =aa_fwd_solve(fwd_model, img)
 
 % (C) 1995-2002 Andy Adler. License: GPL version 2 or version 3
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: aa_fwd_solve.m,v 1.14 2008-05-10 18:10:32 aadler Exp $
+% $Id$
 
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );

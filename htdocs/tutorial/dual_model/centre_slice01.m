@@ -1,4 +1,4 @@
-% Simulate Moving Ball - Helix $Id: centre_slice01.m,v 1.6 2008-03-27 19:47:24 aadler Exp $
+% Simulate Moving Ball - Helix $Id$
 
 % get ng_mdl_16x2_vfine from data_contrib section of web page
 n_sims= 20;

@@ -1,4 +1,4 @@
-% Geophysics model $Id: dm_geophys01.m,v 1.2 2008-04-03 19:33:27 aadler Exp $
+% Geophysics model $Id$
 
 n_nodes= 1000;
 z_contact= 0.01;

@@ -1,4 +1,4 @@
-% Simulate Moving Ball $Id: square_mesh04.m,v 1.1 2008-03-28 16:18:50 aadler Exp $
+% Simulate Moving Ball $Id$
 
 % get ng_mdl_16x1_vfine from data_contrib section of web page
 n_sims= 20;

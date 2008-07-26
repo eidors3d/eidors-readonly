@@ -1,4 +1,4 @@
-% TV: Reconstruction model $Id: TV_hyperparams02.m,v 1.3 2008-03-15 00:53:30 aadler Exp $
+% TV: Reconstruction model $Id$
 
 maxit=20;  % max number of iterations
 imdl=mk_common_model('b2c0',16);

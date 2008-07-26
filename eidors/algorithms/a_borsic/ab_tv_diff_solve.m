@@ -11,7 +11,7 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 %   alpha2
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: ab_tv_diff_solve.m,v 1.15 2008-03-15 01:29:40 aadler Exp $
+% $Id$
 
 
 [alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);

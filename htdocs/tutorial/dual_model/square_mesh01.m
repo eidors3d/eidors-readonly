@@ -1,4 +1,4 @@
-% Make square mesh $Id: square_mesh01.m,v 1.1 2008-03-28 15:32:05 aadler Exp $
+% Make square mesh $Id$
 
 % Create square mesh model
 imdl= mk_common_model('c2s',16);

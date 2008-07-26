@@ -1,5 +1,5 @@
 % Reconstruct data on Gallery
-% $Id: tutorial410c.m,v 1.2 2007-06-15 20:24:00 aadler Exp $
+% $Id$
 
 n_iter=9;
 

@@ -1,5 +1,5 @@
 % run all tutorials in this directory
-% $Id: run_tutorials.m,v 1.1 2008-05-19 14:39:46 aadler Exp $
+% $Id$
 
 clear; clf; close all; 
 disp('tutorial010');

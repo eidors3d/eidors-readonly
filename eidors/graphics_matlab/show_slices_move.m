@@ -4,7 +4,7 @@ function show_slices_move( img, move, move_scale )
 % Args:     img  - eidors_obj type image
 %           move - new position vectors for nodes [x,y,z] after movement 
 
-% $Id: show_slices_move.m,v 1.1 2007-08-30 03:37:32 aadler Exp $
+% $Id$
 
 num_levs = 3;
 

@@ -29,7 +29,7 @@ function img= aa_inv_total_var( inv_model, data1, data2)
 % 2000, ch. 3.6, pp. 141-160.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_inv_total_var.m,v 1.13 2007-08-30 03:37:01 aadler Exp $
+% $Id$
 
 fwd_model= inv_model.fwd_model;
 pp= aa_fwd_parameters( fwd_model );

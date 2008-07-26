@@ -1,4 +1,4 @@
-% moving target $Id: simulate_move2_04.m,v 1.2 2008-03-29 15:48:11 aadler Exp $
+% moving target $Id$
 
 % Create a moving object within the model
 trg_rad= 0.1;

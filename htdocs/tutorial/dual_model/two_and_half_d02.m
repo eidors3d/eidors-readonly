@@ -1,4 +1,4 @@
-% Solve 2D and 3D model $Id: two_and_half_d02.m,v 1.4 2008-03-19 19:02:45 aadler Exp $
+% Solve 2D and 3D model $Id$
 
 % Original target
 subplot(141)

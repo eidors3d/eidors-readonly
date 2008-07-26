@@ -14,7 +14,7 @@ function data = fwd_solve( fwd_model, img)
 % img       is an img structure
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: fwd_solve.m,v 1.27 2007-08-30 03:37:05 aadler Exp $
+% $Id$
 
 if nargin==1
    img= fwd_model;

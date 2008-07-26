@@ -2,7 +2,7 @@ function ok= calc_data_prior_test
 % Verify dataprior:
 %   for  difference EIT: dataprior should be 1
 %   for  normalized EIT: dataprior should be 1 / homogeneous
-% $Id: calc_data_prior_test.m,v 1.4 2008-03-18 20:43:25 aadler Exp $
+% $Id$
 
 ok= 1;
 

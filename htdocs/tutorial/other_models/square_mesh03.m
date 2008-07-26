@@ -1,4 +1,4 @@
-% simulate targets $Id: square_mesh03.m,v 1.2 2008-04-17 19:45:28 aadler Exp $
+% simulate targets $Id$
 
 fmdl.stimulation= mk_stim_patterns(n_elec, 1, '{ad}','{ad}', {}, 1);
 

@@ -1,4 +1,4 @@
-% create fine meshes $Id: dual_model04.m,v 1.1 2008-03-16 21:16:07 aadler Exp $
+% create fine meshes $Id$
 
 % create base model
 mdl_coarse=mk_common_model('a2c0',16);

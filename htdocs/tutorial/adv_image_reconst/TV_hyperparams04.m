@@ -1,4 +1,4 @@
-% Generate HTML frame to view $Id: TV_hyperparams04.m,v 1.4 2008-03-15 21:25:00 aadler Exp $
+% Generate HTML frame to view $Id$
 
 a=sprintf('%calpha;',38); % alpha
 m=sprintf('%cminus;',38); % alpha

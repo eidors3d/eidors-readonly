@@ -1,4 +1,4 @@
-% Dual models $Id: square_mesh03.m,v 1.2 2008-03-28 17:55:23 aadler Exp $
+% Dual models $Id$
 
 load ng_mdl_16x1_coarse; f_mdl= ng_mdl_16x1_coarse;
 

@@ -1,5 +1,5 @@
 % Simulate data for difference and absolute imaging
-% $Id: tutorial151b.m,v 1.1 2007-06-15 18:22:06 aadler Exp $
+% $Id$
 
 % Create homogeneous simulation Model
 backgnd= .02; 

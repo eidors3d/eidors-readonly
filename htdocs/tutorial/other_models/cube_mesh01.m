@@ -1,4 +1,4 @@
-% $Id: cube_mesh01.m,v 1.2 2008-05-01 16:27:44 aadler Exp $
+% $Id$
 
 z_contact= 0.01;
 nx_elec= 4;

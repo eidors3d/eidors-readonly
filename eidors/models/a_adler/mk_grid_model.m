@@ -13,7 +13,7 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 %  zvec - z edges (optional - to create 3D model)
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_grid_model.m,v 1.8 2008-05-16 15:56:55 aadler Exp $
+% $Id$
 
 if nargin == 3
    cmdl = mk_2d_grid(xvec,yvec);

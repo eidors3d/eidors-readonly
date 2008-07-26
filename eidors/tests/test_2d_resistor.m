@@ -1,5 +1,5 @@
 % Create 2D model of a cylindrical resistor
-% $Id: test_2d_resistor.m,v 1.8 2008-05-19 14:24:39 aadler Exp $
+% $Id$
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4

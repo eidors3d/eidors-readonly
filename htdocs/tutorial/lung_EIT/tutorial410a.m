@@ -1,5 +1,5 @@
 % Lung images
-% $Id: tutorial410a.m,v 1.2 2008-07-10 15:07:13 aadler Exp $
+% $Id$
 
 % 2D Model
 imdl= mk_common_model('c2t3',16);

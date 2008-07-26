@@ -1,4 +1,4 @@
-% Iterate over params $Id: TV_hyperparams03.m,v 1.6 2008-06-19 22:01:44 aadler Exp $
+% Iterate over params $Id$
 name_base = 'tv_hp_00_img-a1=%3.1f-a2=%3.1f.jpg';
 alpha1list= [1.5:0.5:4.5];
 alpha2list= [3.5:1.0:9.5];

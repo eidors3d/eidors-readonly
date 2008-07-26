@@ -1,4 +1,4 @@
-% 2D solver $Id: centre_slice06.m,v 1.1 2008-03-27 20:56:01 aadler Exp $
+% 2D solver $Id$
 
 
 % Set coarse as reconstruction model

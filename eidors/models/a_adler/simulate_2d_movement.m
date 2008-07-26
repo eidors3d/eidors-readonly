@@ -27,7 +27,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 %   xyr_pt - x y and radius of each point 3 x n_points
 
 %
-% $Id: simulate_2d_movement.m,v 1.16 2008-07-17 18:54:37 aadler Exp $
+% $Id$
 
 if nargin <1
    n_sims = 200;

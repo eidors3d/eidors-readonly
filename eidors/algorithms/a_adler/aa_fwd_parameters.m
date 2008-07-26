@@ -16,7 +16,7 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.N2E        => Node to electrode converter
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: aa_fwd_parameters.m,v 1.17 2008-05-19 17:15:45 aadler Exp $
+% $Id$
 
 param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
 

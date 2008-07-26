@@ -1,4 +1,4 @@
-% Call Netgen $Id: meshsize_param01.m,v 1.1 2008-06-11 18:42:39 aadler Exp $ 
+% Call Netgen $Id$ 
 electrodes_per_plane= 16;
 number_of_planes= 1;
 movement_pattern='radial_turn';

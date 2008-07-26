@@ -1,4 +1,4 @@
-% Show EIDORS colours $Id: eidors_vars04.m,v 1.3 2007-08-30 03:58:28 aadler Exp $
+% Show EIDORS colours $Id$
 
 idx= [51:52, 56:-1:53, 57:60, 64:-1:61, 49,50]; % clockwise index elements 
 img.elem_data(idx)= linspace(-2,2,16);

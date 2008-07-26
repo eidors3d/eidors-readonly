@@ -11,7 +11,7 @@ function mapping= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %                 - number of points to interpolate in each dimension
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_coarse_fine_mapping.m,v 1.5 2007-08-30 03:58:29 aadler Exp $
+% $Id$
 
 % Mapping depends f_mdl and c_mdl, but only on nodes and elems
 cc_mdl.elems = c_mdl.elems;

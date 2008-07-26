@@ -1,4 +1,4 @@
-% Dual Partial $Id: dual_partial2d04.m,v 1.1 2008-03-18 18:59:47 aadler Exp $
+% Dual Partial $Id$
 
 clf; levels= [inf,inf,0,1,1];
 

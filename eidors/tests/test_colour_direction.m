@@ -1,5 +1,5 @@
 % Test colour mapping
-% $Id: test_colour_direction.m,v 1.4 2007-08-30 03:37:33 aadler Exp $
+% $Id$
 
 % 2D Test
 imdl= mk_common_model('b2c',16);

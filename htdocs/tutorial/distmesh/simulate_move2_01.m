@@ -1,4 +1,4 @@
-% create model $Id: simulate_move2_01.m,v 1.2 2008-03-29 14:59:19 aadler Exp $
+% create model $Id$
 
 % Model parameters
 n_elec= 16;

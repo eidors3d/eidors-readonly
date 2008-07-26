@@ -8,7 +8,7 @@ function [srf] = find_boundary(simp);
 %        boundary simplices are of 1 lower dimention than simp
 %simp = The simplices matrix
 
-% $Id: find_boundary.m,v 1.15 2008-04-25 14:55:52 aadler Exp $
+% $Id$
 
 wew = size(simp,2) - 1;
 

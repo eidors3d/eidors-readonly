@@ -1,5 +1,5 @@
 % Solve resistor model
-% $Id: tutorial020c.m,v 1.2 2007-08-30 03:58:28 aadler Exp $
+% $Id$
 
 % Now we complete the fwd_model
 r_mdl.jacobian= @perturb_jacobian;
