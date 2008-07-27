@@ -38,6 +38,29 @@ Figure: Position and size of conductie targets in medium
 
 <H2>Tests: position, amplitude, resolution, PSF</H2>
 
+These parameters are calculated from an image as illustrated
+in the following figure. The key calculation is the
+Half Maximum Set (HMS), which contains all pixels above
+half the maximum value.
+<center>
+<img src="">
+Calculation of parameters:
+position error,
+resolution,
+non-circularity,
+ringing
+</center>
+
+<H3>Calculate Half-Maximum Set</H3>
+
+The function <a href="calc_hm_set.m"><tt>calc_hm_set.m</tt></a>
+calculates the HAS from each image
+<pre>
+<!--#include virtual="calc_hm_set.m" -->
+</pre>
+
+
+<H3>Reconstruct example images</H3>
 First, we reconstruct an image using some of the 
 proposed algorithms. To do this, run the
 matlab command
@@ -46,7 +69,6 @@ matlab command
 </pre>
 to give matlab access to the algorithms folder.
 
-<H3>Reconstruct example images</H3>
 <pre>
 <!--#include virtual="simulation_test03.m" -->
 </pre>
