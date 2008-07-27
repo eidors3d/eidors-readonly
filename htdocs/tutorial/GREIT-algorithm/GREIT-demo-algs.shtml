@@ -1,0 +1,42 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+GREIT algorithms: Example images
+</h2>
+
+This tutorial uses the various GREIT algorithm to
+generate a set of example images. This is primarily
+a sanity check that the algorithms work.
+
+<H3>Prepare data: phantom data</H3>
+
+<pre>
+<!--#include virtual="demo_algs01.m" -->
+</pre>
+
+<H3>Prepare data: simulated FEM</H3>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td>
+<pre>
+<!--#include virtual="demo_algs02.m" -->
+</pre>
+</td>
+<td valign="top" align="right" width="150">
+<img src="demo_algs02a.png">
+</td>
+</table>
+
+<H3>Prepare data: human tidal breathing</H3>
+
+<pre>
+<!--#include virtual="demo_algs03.m" -->
+</pre>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
