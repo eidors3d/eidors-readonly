@@ -2,8 +2,7 @@
 <h2>GREIT Software</h2>
 
 These tutorials show how to implement and test
-GREIT software with EIDORS (<i>Note</i> that 
-EIDORS is required for all GREIT implementations)
+GREIT software with EIDORS.
 To run these tutorials, you need to 
 <a href="../download.shtml">download and install</a>
 EIDORS and then run this command in a matlab
