@@ -135,6 +135,33 @@ we calculate:
 <!--#include virtual="simulation_test04.m" -->
 </pre>
 
+<center>
+<table border="0">
+<tr>
+   <th> 
+   <th> Sheffield <br>Backproj
+   <th> NOSER <br>Norm Diff
+   <th> NOSER <br>Diff
+<tr>
+   <th> Amplitude
+   <td> <img src="simulation_test04_11.png">
+   <td> <img src="simulation_test04_21.png">
+   <td> <img src="simulation_test04_31.png">
+<tr>
+   <th> Position<br>Error
+   <td> <img src="simulation_test04_12.png">
+   <td> <img src="simulation_test04_22.png">
+   <td> <img src="simulation_test04_32.png">
+<tr>
+   <th> Resolution
+   <td> <img src="simulation_test04_13.png">
+   <td> <img src="simulation_test04_23.png">
+   <td> <img src="simulation_test04_33.png">
+</table>
+Plots of parameters as a function of radial position
+(<i>left</i> is centre, <i>right</i> is the boundary)
+</center>
+
 
 
 </td></tr></table>
