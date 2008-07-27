@@ -26,6 +26,11 @@ This function calls the function
 <!--#include virtual="simulation_radmove.m" -->
 </pre></ul>
 
+The positions of the simulated objects may be seen here:
+<pre>
+<!--#include virtual="simulation_test02.m" -->
+</pre>
+
 
 
 </td></tr></table>
