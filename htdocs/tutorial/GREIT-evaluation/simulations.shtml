@@ -1,0 +1,39 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+GREIT evaluation: Evaluation using simulation data
+</h2>
+
+In order to test the performance of GREIT, we create a set
+of simulation data. Here we look at the performance for
+an object moving radially toward the side from the centre
+of the medium.
+
+<H3>Prepare simulation data: phantom data</H3>
+
+Using the <a href=" ../netgen/build_single_plane.shtml"
+             >netgen signal electrode plane</a> tutorial,
+we generate a 62465 element FEM model 
+<a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_fine.7z"
+             >download here</a>
+
+<pre>
+<!--#include virtual="simulation_test01.m" -->
+</pre>
+
+This function calls the function 
+<a href="./simulation_radmove.m"><tt>simulation_radmove.m</tt></a>:
+<ul><pre>
+<!--#include virtual="simulation_radmove.m" -->
+</pre></ul>
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
+
