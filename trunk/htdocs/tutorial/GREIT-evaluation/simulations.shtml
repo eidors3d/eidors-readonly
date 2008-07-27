@@ -43,12 +43,14 @@ in the following figure. The key calculation is the
 Half Maximum Set (HMS), which contains all pixels above
 half the maximum value.
 <center>
-<img src="">
-Calculation of parameters:
-position error,
-resolution,
-non-circularity,
-ringing
+<img src="reconstruction_parameters.png">
+<br>
+Calculation of parameters for reconstructed images:
+Amplitude, 
+Position Error,
+Resolution,
+Shape Deformation
+Ringing
 </center>
 
 <H3>Calculate Half-Maximum Set</H3>
