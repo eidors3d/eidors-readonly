@@ -44,8 +44,8 @@ a sanity check that the algorithms work.
    <th>
    <th> Insulating <br> target in <br> tank
    <th> Simulated <br> target <br> (No noise)
-   <th> Simulated <br> target <br> (0dB SNR)
-   <th> Shallow<br> breathing
+   <th> Simulated <br> target <br> (6dB SNR)
+   <th> Shallow<br> breathing <br> (Turned 180&deg;)
 <tr>
    <th> Sheffield <br>Backproj
    <td> <img src="demo_algs04_11.png" width="96">
