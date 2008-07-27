@@ -4,38 +4,68 @@
 GREIT is a collaborative project to develop a
 consensus "best-of-breed" linear reconstucution
 algorithm for lung EIT.
+<p>
+Recently, electrical impedance tomography (EIT) has begun to see a
+significant clinical interest for monitoring of
+ventilated patients.  The key capability of EIT is to
+provide real-time images of the distribution of ventilation in
+the patient's lungs.
+However, most clinical and physiological research in lung EIT
+is done using older and proprietary algorithms; this is
+an obstacle to interpretation of EIT results because the
+reconstructed images are not well characterized.
+To address this issue, we are developing a
+consensus linear reconstruction algorithm for lung EIT,
+called GREIT (Graz consensus Reconstruction algorithm for EIT).
+This algorithm is being developed in three phases:
+1) selection of the "ingredients" and evaluation 
+methodology (see our paper at EIT Conference, 2008),
+2) evaluation and experience with GREIT variants, and
+3) consensus and definition of the GREIT algorithm.
+Algorithms evaluation criteria are identified to be:
+a) quantitative output for all positions,
+b) reconstructed position error (low and uniform),
+c) resolution (small PSF, uniform, few artefacts),
+d) good noise performance,
+e) low sensitivity to electrode and boundary movement,
+f) good performance on clinical and experimental data.
+This approach represents the consensus of a large and representative
+group of experts in EIT algorithm and clinical applications.
+All software and data to implement and test GREIT will be
+made available under an open source license which allows free
+research and commercial use.
+<p>
+Currently, software is in development, and has not yet
+been released.
+
 
 <H3>Getting Started</H3>
 
-GREIT is in active development. No software
-has yet been released. 
+GREIT is in active development. Please see the 
+<a href="./documents.shtml"
+   >released documents</a> or
+<a href="../tutorial/GREIT.shtml"
+   >Software Framework</a> for more detailed
+information.
 
 <ul>
 <p><li><b>
-Browse Developer Versions 
+Browse Documents and Software in development
 </b><br>
-<a href="http://eidors3d.cvs.sourceforge.net/eidors3d/GREIT/"
-   >Browse CVS</a><br>
+<a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/GREIT"
+   >Browse SVN</a><br>
 
 <p><li><b>
-Read only access to Developer Version 
+Access to Developer Version 
 </b><br>
-Read-only, worldwide access is available via CVS using
-Anonymous CVS Access with
+Read-only, worldwide access is available via SVN using
 <pre>
-cvs -d:pserver:anonymous@eidors3d.cvs.sf.net:/cvsroot/eidors3d co GREIT
+svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/GREIT/"
+               >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/GREIT/</a>
 </pre>
-
-<p><li><b>
-Access Developer Version 
-</b><br>
-Read-write, access is available via CVS for registered
+Read-write access is available via SVN for registered
 developers. To become a developer, 
-email the <a href="../faq.shtml#maintainers">maintainers</a>.
-Access CVS via:
-<pre>
-cvs -d:ext:developername@eidors3d.cvs.sf.net:/cvsroot/eidors3d co GREIT
-</pre>
+email the <a href="faq.shtml#maintainers">maintainers</a>.
 
 </ul>
 

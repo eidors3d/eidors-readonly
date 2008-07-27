@@ -8,16 +8,25 @@ algorithm for lung EIT.
 The following documents describe GREIT:
 <UL>
 <LI>
+   <h3>
    <a href="http://www.sce.carleton.ca/faculty/adler/talks/2008/GREIT-presentation-7apr08.pdf"
    >Discussion doc &minus; 7 Apr 08</a>
+   </h3>
 
 <LI>
-   <a href="http://www.sce.carleton.ca/faculty/adler/publications/2008/GREIT-EIT2008.pdf"
-   >EIT 2008 paper</a>
+   <h3>
+   EIT 2008 conference:
+   <a href="http://www.sce.carleton.ca/faculty/adler/publications/2008/GREIT-EIT2008.pdf">paper</a>, 
+   <a href="http://www.sce.carleton.ca/faculty/adler/talks/2008/EIT08-GREIT-pres.pdf">talk</a>,
+   <a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/GREIT/EIT-conf-2008/EIT08-GREIT-pres.zip">PPT format</a>
+
+   <h3>
 
 <LI>
-   <a href="https://eidors3d.svn.sf.net/svnroot/eidors3d/trunk/GREIT/paper/"
-      >GREIT paper (in progress)</a>
+   <h3>
+   <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/GREIT/paper/"
+      >GREIT paper</a> (in progress)
+   <h3>
 
 </UL>
 

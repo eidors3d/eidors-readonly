@@ -33,8 +33,8 @@ Access to Developer Version
 </b><br>
 Read-only, worldwide access is available via SVN using
 <pre>
-svn co <a href="https://eidors3d.svn.sf.net/svnroot/eidors3d/trunk/"
-               >https://eidors3d.svn.sf.net/svnroot/eidors3d/trunk/</a>
+svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/"
+               >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/</a>
 </pre>
 Read-write access is available via SVN for registered
 developers. To become a developer, 
