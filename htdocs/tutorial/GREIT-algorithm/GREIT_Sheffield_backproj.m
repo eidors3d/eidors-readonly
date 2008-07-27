@@ -31,9 +31,8 @@ function [RM,map] = calc_backproj_matrix;
    el= [8:-1:1,16:-1:9];   BP= BP + BP(el,el,:,[32:-1:1]);
 % Transpose
    el= [12:-1:1,16:-1:13]; BP= BP + permute(BP(el,el,:,:), [1,2,4,3]);
-% Final UD flip to match radiological view (upward toward patient)
-% Here electrodes are connected CW starting from TDC
-   BP= BP(:,:,:,[32:-1:1]);
+% Final flip to match radiological view (upward toward patient)
+   BP = permute(BP, [1,2,4,3]);
 
    RM= reshape(BP, 256, [])';
    RM= RM(:,sel1);

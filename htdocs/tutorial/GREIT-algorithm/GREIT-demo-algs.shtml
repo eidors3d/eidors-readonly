@@ -38,6 +38,37 @@ a sanity check that the algorithms work.
 <!--#include virtual="demo_algs04.m" -->
 </pre>
 
+<center>
+<table border="0">
+<tr>
+   <th>
+   <th> Insulating <br> target in <br> tank
+   <th> Simulated <br> target <br> (No noise)
+   <th> Simulated <br> target <br> (0dB SNR)
+   <th> Shallow<br> breathing
+<tr>
+   <th> Sheffield <br>Backproj
+   <td> <img src="demo_algs04_11.png" width="96">
+   <td> <img src="demo_algs04_12.png" width="96">
+   <td> <img src="demo_algs04_13.png" width="96">
+   <td> <img src="demo_algs04_14.png" width="96">
+<tr>
+   <th> NOSER <br>Norm Diff
+   <td> <img src="demo_algs04_21.png" width="96">
+   <td> <img src="demo_algs04_22.png" width="96">
+   <td> <img src="demo_algs04_23.png" width="96">
+   <td> <img src="demo_algs04_24.png" width="96">
+<tr>
+   <th> NOSER <br>Diff
+   <td> <img src="demo_algs04_31.png" width="96">
+   <td> <img src="demo_algs04_32.png" width="96">
+   <td> <img src="demo_algs04_33.png" width="96">
+   <td> <img src="demo_algs04_34.png" width="96">
+</table>
+</center>
+
+
+
 
 </td></tr></table>
 <p>
