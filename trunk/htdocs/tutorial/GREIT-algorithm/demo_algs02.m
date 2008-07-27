@@ -9,8 +9,8 @@ vv= fwd_solve( img ); v(2).vi= vv.meas;
 
 % Noise
 sig = norm(v(2).vi - v(2).vh);
-noise = randn(size(v(2).vh));
-v(3).vi = v(2).vi + noise/norm(noise)*sig;
+randn('seed',50);noise = randn(size(v(2).vh));
+v(3).vi = v(2).vi + noise/norm(noise)*sig * 10^(-6/20);
 v(3).vh = v(2).vh;
 
 subplot(221);show_fem(img);
