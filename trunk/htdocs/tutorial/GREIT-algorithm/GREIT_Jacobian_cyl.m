@@ -1,4 +1,4 @@
-function [J,map] = GREIT_Jacobian_cyl;
+function [J,map,vbkgnd] = GREIT_Jacobian_cyl;
 % Calculate the GREIT 32x32 Jacobian for a cylinder
 % The FEM Model ng_mdl_16x1_fine must be available
 %
@@ -6,14 +6,14 @@ function [J,map] = GREIT_Jacobian_cyl;
 % $Id$
 
 if exist('GREIT_Jacobian_cyl.mat','file');
-   load GREIT_Jacobian_cyl.mat J map
+   load GREIT_Jacobian_cyl.mat J map vbkgnd
 else
-   [J,map] = Jacobian_calc;
-   save GREIT_Jacobian_cyl.mat J map
+   [J,vbkgnd,map] = Jacobian_calc;
+   save GREIT_Jacobian_cyl.mat J map vbkgnd
 end
 
 
-function [J,map] = Jacobian_calc;
+function [J,vbkgnd,map] = Jacobian_calc;
    load ng_mdl_16x1_fine;
    fmdl= ng_mdl_16x1_fine;
    % yvec is reversed because image yaxis is reversed
@@ -44,6 +44,8 @@ function [J,map] = Jacobian_calc;
    img.fwd_model.solve=      @aa_fwd_solve;
    img.fwd_model.jacobian=   @aa_calc_jacobian;
 
+   vbkgnd = fwd_solve(img);
+   vbkgnd = vbkgnd.meas;
    J= calc_jacobian(img);
 
    map = reshape(sum(c2f,1),pixel_grid,pixel_grid)>0;
