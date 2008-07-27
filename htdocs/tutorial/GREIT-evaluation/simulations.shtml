@@ -76,13 +76,25 @@ to give matlab access to the algorithms folder.
 <center>
 <table border="0">
 <tr>
+   <th> 
    <th> Sheffield <br>Backproj
    <th> NOSER <br>Norm Diff
    <th> NOSER <br>Diff
 <tr>
+   <th> Image<br>Output
    <td> <img src="simulation_test03_1.png" width="96">
    <td> <img src="simulation_test03_2.png" width="96">
    <td> <img src="simulation_test03_3.png" width="96">
+<tr>
+   <th> &frac12;Max<br>Set
+   <td> <img src="simulation_test03_h1.png" width="96">
+   <td> <img src="simulation_test03_h2.png" width="96">
+   <td> <img src="simulation_test03_h3.png" width="96">
+<tr>
+   <th> &frac14;Max<br>Set
+   <td> <img src="simulation_test03_q1.png" width="96">
+   <td> <img src="simulation_test03_q2.png" width="96">
+   <td> <img src="simulation_test03_q3.png" width="96">
 </table>
 Reconstructed images. The conductivity target location is
 shown in green (the target is a circle, but shows as a small
