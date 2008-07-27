@@ -26,5 +26,5 @@ function [RM,map] = calc_NOSER_RM
    diagJtJ = diag(J'*J);
    R= spdiags( diagJtJ,0, length(diagJtJ), length(diagJtJ));
 
-   hp = .3;
+   hp = 3.0;
    RM(map,:)= (J'*J + hp^2*R)\J';

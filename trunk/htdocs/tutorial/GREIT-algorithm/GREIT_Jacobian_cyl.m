@@ -15,19 +15,22 @@ end
 
 function [J,map] = Jacobian_calc;
    load ng_mdl_16x1_fine;
+   fmdl= ng_mdl_16x1_fine;
+   % yvec is reversed because image yaxis is reversed
+   fmdl.nodes(:,1) = -fmdl.nodes(:,1);
 
    pixel_grid= 32;
-   nodes= ng_mdl_16x1_fine.nodes;
+   nodes= fmdl.nodes;
    xyzmin= min(nodes,[],1);  xyzmax= max(nodes,[],1);
    xvec= linspace( xyzmin(1), xyzmax(1), pixel_grid+1);
    yvec= linspace( xyzmin(2), xyzmax(2), pixel_grid+1);
    zvec= [0.6*xyzmin(3)+0.4*xyzmax(3), 0.4*xyzmin(3)+0.6*xyzmax(3)];
 
    % CALCULATE MODEL CORRESPONDENCES
-   [rmdl,c2f] = mk_grid_model(ng_mdl_16x1_fine, xvec, yvec, zvec);
+   [rmdl,c2f] = mk_grid_model(fmdl, xvec, yvec, zvec);
 
    img= eidors_obj('image','GREIT-ng_mdl');
-   img.fwd_model= ng_mdl_16x1_fine;
+   img.fwd_model= fmdl;
    img.fwd_model.coarse2fine = c2f;
    img.rec_model= rmdl;
    img.elem_data= ones(size(img.fwd_model,1));
