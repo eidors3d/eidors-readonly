@@ -8,6 +8,23 @@ of simulation data. Here we look at the performance for
 an object moving radially toward the side from the centre
 of the medium.
 
+<H3>Algorithms to test</H3>
+ First, run the matlab command
+<pre>
+&gt;&gt; addpath ../GREIT-algorithm
+</pre>
+to give matlab access to the algorithms folder.
+Use the function 
+<p>
+In the rest of this example, the function
+<a href="../GREIT-algorithm/get_list_of_algs.m"><tt
+                           >get_list_of_algs.m</tt></a>
+lists the provided algorithms to test.
+
+<pre>
+<!--#include virtual="../GREIT-algorithm/get_list_of_algs.m" -->
+</pre>
+
 <H3>Prepare simulation data: phantom data</H3>
 
 Using the <a href=" ../netgen/build_single_plane.shtml"
@@ -63,13 +80,9 @@ calculates the HAS from each image
 
 
 <H3>Reconstruct example images</H3>
+
 First, we reconstruct an image using some of the 
-proposed algorithms. To do this, run the
-matlab command
-<pre>
-&gt;&gt; addpath ../GREIT-algorithm
-</pre>
-to give matlab access to the algorithms folder.
+proposed algorithms.
 
 <pre>
 <!--#include virtual="simulation_test03.m" -->
@@ -103,6 +116,24 @@ shown in green (the target is a circle, but shows as a small
 square in this image)
 </center>
 
+
+<H3>Calculate parameters from images</H3>
+
+The parameters listed previously
+ are calculated from images using the function
+<a href="./GREIT_sim_params.m"><tt
+          >GREIT_sim_params.m</tt></a>.
+<pre>
+<!--#include virtual="GREIT_sim_params.m" -->
+</pre>
+
+<H3>Parameters from example images</H3>
+
+In order to display the parameters from the example images,
+we calculate:
+<pre>
+<!--#include virtual="simulation_test04.m" -->
+</pre>
 
 
 
