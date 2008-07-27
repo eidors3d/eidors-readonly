@@ -36,6 +36,38 @@ The positions of the simulated objects may be seen here:
 Figure: Position and size of conductie targets in medium
 </center>
 
+<H2>Tests: position, amplitude, resolution, PSF</H2>
+
+First, we reconstruct an image using some of the 
+proposed algorithms. To do this, run the
+matlab command
+<pre>
+&gt;&gt; addpath ../GREIT-algorithm
+</pre>
+to give matlab access to the algorithms folder.
+
+<H3>Reconstruct example images</H3>
+<pre>
+<!--#include virtual="simulation_test03.m" -->
+</pre>
+
+<center>
+<table border="0">
+<tr>
+   <th> Sheffield <br>Backproj
+   <th> NOSER <br>Norm Diff
+   <th> NOSER <br>Diff
+<tr>
+   <td> <img src="simulation_test03_1.png" width="96">
+   <td> <img src="simulation_test03_2.png" width="96">
+   <td> <img src="simulation_test03_3.png" width="96">
+</table>
+Reconstructed images. The conductivity target location is
+shown in green (the target is a circle, but shows as a small
+square in this image)
+</center>
+
+
 
 
 </td></tr></table>
