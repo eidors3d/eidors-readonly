@@ -30,6 +30,11 @@ The positions of the simulated objects may be seen here:
 <pre>
 <!--#include virtual="simulation_test02.m" -->
 </pre>
+<center>
+<img src="simulation_test02a.png">
+<br>
+Figure: Position and size of conductie targets in medium
+</center>
 
 
 
