@@ -32,6 +32,13 @@ a sanity check that the algorithms work.
 <!--#include virtual="demo_algs03.m" -->
 </pre>
 
+<H2>Algorithm results</H2>
+
+<pre>
+<!--#include virtual="demo_algs04.m" -->
+</pre>
+
+
 </td></tr></table>
 <p>
 <small>
