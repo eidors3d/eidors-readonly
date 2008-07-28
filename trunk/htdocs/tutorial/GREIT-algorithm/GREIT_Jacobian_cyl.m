@@ -14,8 +14,14 @@ end
 
 
 function [J,vbkgnd,map] = Jacobian_calc;
-   load ng_mdl_16x1_fine;
-   fmdl= ng_mdl_16x1_fine;
+use_3d_model = 0;
+if use_3d_model % This 3D model has some problems
+   load ng_mdl_16x1_fine;  fmdl= ng_mdl_16x1_fine;
+else
+   imdl = mk_common_model('f2d3c',16); fmdl= imdl.fwd_model;
+   fmdl.nodes = fmdl.nodes(:,[2,1]);
+end
+
    % yvec is reversed because image yaxis is reversed
    fmdl.nodes(:,1) = -fmdl.nodes(:,1);
 
@@ -24,10 +30,14 @@ function [J,vbkgnd,map] = Jacobian_calc;
    xyzmin= min(nodes,[],1);  xyzmax= max(nodes,[],1);
    xvec= linspace( xyzmin(1), xyzmax(1), pixel_grid+1);
    yvec= linspace( xyzmin(2), xyzmax(2), pixel_grid+1);
-   zvec= [0.6*xyzmin(3)+0.4*xyzmax(3), 0.4*xyzmin(3)+0.6*xyzmax(3)];
 
    % CALCULATE MODEL CORRESPONDENCES
+if use_3d_model
+   zvec= [0.6*xyzmin(3)+0.4*xyzmax(3), 0.4*xyzmin(3)+0.6*xyzmax(3)];
    [rmdl,c2f] = mk_grid_model(fmdl, xvec, yvec, zvec);
+else
+   [rmdl,c2f] = mk_grid_model(fmdl, xvec, yvec);
+end
 
    img= eidors_obj('image','GREIT-ng_mdl');
    img.fwd_model= fmdl;
@@ -48,4 +58,9 @@ function [J,vbkgnd,map] = Jacobian_calc;
    vbkgnd = vbkgnd.meas;
    J= calc_jacobian(img);
 
+if use_3d_model
    map = reshape(sum(c2f,1),pixel_grid,pixel_grid)>0;
+else % need to exclude some of the boundary
+   [x,y]= meshgrid(linspace(-1,1,32),linspace(-1,1,32));
+   map = x.^2 + y.^2 < 1.1;
+end
