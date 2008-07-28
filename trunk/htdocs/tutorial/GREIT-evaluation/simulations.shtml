@@ -25,33 +25,22 @@ lists the provided algorithms to test.
 <!--#include virtual="../GREIT-algorithm/get_list_of_algs.m" -->
 </pre>
 
-<H3>Prepare simulation data: phantom data</H3>
+<H2>Prepare simulation data: phantom data</H2>
 
-Using the <a href=" ../netgen/build_single_plane.shtml"
-             >netgen signal electrode plane</a> tutorial,
-we generate a 62465 element FEM model 
-<a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_fine.7z"
-             >download here</a>
+Here we can use either:
+<ul>
+       <li><h3>
+           <a href="./make_simulations_3d.shtml"
+                   >3D FEM Simulations</a> (currently working badly), 
+          </h3>
+           or
+       <li><h3>
+           <a href="./make_simulations_2d.shtml"
+                   >2D FEM Simulations</a>
 
-<pre>
-<!--#include virtual="simulation_test01.m" -->
-</pre>
+          </h3>
+</ul>
 
-This function calls the function 
-<a href="./simulation_radmove.m"><tt>simulation_radmove.m</tt></a>:
-<ul><pre>
-<!--#include virtual="simulation_radmove.m" -->
-</pre></ul>
-
-The positions of the simulated objects may be seen here:
-<pre>
-<!--#include virtual="simulation_test02.m" -->
-</pre>
-<center>
-<img src="simulation_test02a.png">
-<br>
-Figure: Position and size of conductie targets in medium
-</center>
 
 <H2>Tests: position, amplitude, resolution, PSF</H2>
 
