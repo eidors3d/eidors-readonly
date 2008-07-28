@@ -17,7 +17,7 @@ we generate a 62465 element FEM model
              >download here</a>
 
 <pre>
-<!--#include virtual="simulation_test01.m" -->
+<!--#include virtual="simulation_3d_test01.m" -->
 </pre>
 
 This function calls the function 
@@ -28,10 +28,10 @@ This function calls the function
 
 The positions of the simulated objects may be seen here:
 <pre>
-<!--#include virtual="simulation_test02.m" -->
+<!--#include virtual="simulation_3d_test02.m" -->
 </pre>
 <center>
-<img src="simulation_test02a.png">
+<img src="simulation_3d_test02a.png">
 <br>
 Figure: Position and size of conductie targets in medium
 </center>
