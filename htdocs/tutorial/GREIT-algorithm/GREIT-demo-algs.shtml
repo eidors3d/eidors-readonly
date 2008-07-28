@@ -28,12 +28,21 @@ a sanity check that the algorithms work.
 
 <H3>Prepare data: human tidal breathing</H3>
 
+
 <pre>
 <!--#include virtual="demo_algs03.m" -->
 </pre>
 
 <H2>Algorithm results</H2>
 
+Using the function <a href="get_list_of_algs.m"><tt
+   >get_list_of_algs.m</tt></a>:
+<ul>
+<pre>
+<!--#include virtual="get_list_of_algs.m" -->
+</pre>
+</ul>
+we can run the following demo script:
 <pre>
 <!--#include virtual="demo_algs04.m" -->
 </pre>
