@@ -2,7 +2,7 @@
 
 % Model parameters
 n_elec= 16;
-n_nodes= 200;
+n_nodes= 2000;
 
 % Create electrodes
 refine_level=4; %electrode refinement level
