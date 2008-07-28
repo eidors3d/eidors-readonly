@@ -1,0 +1,45 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+GREIT evaluation: Make simulation data (2D)
+</h2>
+
+In order to test the performance of GREIT, we create a set
+of simulation data. Here we look at the performance for
+an object moving radially toward the side from the centre
+of the medium.
+
+<H3>Prepare simulation data: create phantom model in 2D</H3>
+
+Prepare Model
+<pre>
+<!--#include virtual="simulate_2d_test01.m" -->
+</pre>
+
+Calculate Homogeneous simulations
+<pre>
+<!--#include virtual="simulate_2d_test02.m" -->
+</pre>
+
+
+<H3>Prepare simulation data: create phantom model in 2D</H3>
+
+The positions of the simulated objects may be seen here:
+<pre>
+<!--#include virtual="simulation_3d_test02.m" -->
+</pre>
+<center>
+<img src="simulation_2d_test02a.png">
+<br>
+Figure: Position and size of conductie targets in medium
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
+
