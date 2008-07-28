@@ -68,32 +68,46 @@ end
                     'elem_data', ones(n_elems,1) );
     vh= fwd_solve(img);
 
-    np= 512;
     np= 256;
-    [x,y]=meshgrid( linspace(-1,1,np), linspace(-1,1,np) );
+    maxxy= max(fmdl.nodes);
+    minxy= min(fmdl.nodes);
+if 0
+    [x,y]=meshgrid( linspace(minxy(1),maxxy(1),np), ...
+                    linspace(minxy(2),maxxy(2),np) );
     [eptr,vol]= img_mapper2(fmdl.nodes', fmdl.elems', np, np);
+else
+
+    mdl_pts = interp_mesh( fmdl, 8); % 45 per elem
+    x= squeeze( mdl_pts(:,1,:) );
+    y= squeeze( mdl_pts(:,2,:) );
+end
 
     % there is a faster way to do this with sparse, but it is confusing
 %   eptr_n= zeros(n_elems,1);
 %   for i=1:n_elems; eptr_n(i) = sum( eptr(:)==i ); end
-    eptr_n= sparse( eptr(:)+1,1,1, n_elems+1, 1);
-    eptr_n= full(eptr_n(2:end));
+%   eptr_n= sparse( eptr(:)+1,1,1, n_elems+1, 1);
+%   eptr_n= full(eptr_n(2:end));
     
-    target_conductivity= .2;
+    target_conductivity= .1;
  
     for i=1:n_sims
        f_frac= (i-1)/n_sims;
        fprintf('simulating %d / %d \n',i,n_sims);
 
       [xp,yp]= feval(movefcn, f_frac, radius);
-       xyr_pt(:,i)= [xp;-yp;rp]; % -y because images and axes are reversed
 
+if 0
+       xyr_pt(:,i)= [xp;-yp;rp]; % -y because images and axes are reversed
        ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 <= rp^2 )';
        obj_n= sparse( eptr(ff)+1,1,1, n_elems+1, 1);
        obj_n= full(obj_n(2:end));
-
 %      img.elem_data= 1 + target_conductivity * (obj_n./eptr_n);
        img.elem_data= 1 + target_conductivity * (obj_n./vol);
+else
+       xyr_pt(:,i)= [xp;yp;rp];
+       ff=  (x-xp).^2 + (y-yp).^2 <= rp^2;
+       img.elem_data= 1 + target_conductivity * mean(ff,2);
+end
 
        vi(i)= fwd_solve( img );
 %show_fem(img);drawnow; keyboard
