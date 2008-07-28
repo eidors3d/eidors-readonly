@@ -25,12 +25,13 @@ Calculate Homogeneous simulations
 
 The positions of the simulated objects may be seen here:
 <pre>
-<!--#include virtual="simulation_3d_test02.m" -->
+<!--#include virtual="simulation_2d_test03.m" -->
 </pre>
 <center>
-<img src="simulation_2d_test02a.png">
+<img src="simulation_2d_test03a.png">
+<img src="simulation_2d_test03b.png">
 <br>
-Figure: Position and size of conductie targets in medium
+Figure: Position and size of conductive targets in medium
 </center>
 
 
