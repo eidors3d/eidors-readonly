@@ -62,53 +62,72 @@ mdl_3d.misc.perm_sym=   '{n}';
 n_elems= size(mdl_3d.elems,1);
 
 
+eidors_msg('simulate_3d_movement: step #1: homogeneous simulation',2);
 % create homogeneous image + simulate data
 sigma= ones( size(mdl_3d.elems,1) ,1);
 img= eidors_obj('image', 'homogeneous image', ...
     'elem_data', sigma, ...
     'fwd_model', mdl_3d );
 vh = fwd_solve( img);
-% show_fem( homg_img);
-eidors_msg('simulate_3d_movement: step #1: homogeneous simulation',2);
 
-npx=128;
-npy=128;
-npz=64;
-[x,y,z,radius,rp,z0,zt] = calc_point_grid(mdl_3d.nodes', npx, npy, npz, rad_pr);
-
-clear pts;
-for i=1:n_sims
-    f_frac= (i-1)/n_sims;
-
-    % call function to simulate data
-    [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
-
-    xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
-
-    ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 + (z(:)-zp).^2 <= rp^2 )';
-    pts{i} = ff;
-end
-pts_all = unique( [pts{:}] );
-pts_all = pts_all(:);
-for i=1:n_sims
-   [jnk,idx_i]= intersect( pts_all, pts{i});
-   pts_idx{i}= idx_i;
-end
 eidors_msg('simulate_3d_movement: step #2: find points',2);
 
-[eptr,vol]= img_mapper3a(mdl_3d.nodes', mdl_3d.elems',  ...
-         x(pts_all), y(pts_all), z(pts_all));
+if 0 % Old Style
+   npx=128;
+   npy=128;
+   npz=64;
+   [radius,rp,z0,zt,x,y,z] = calc_point_grid(mdl_3d.nodes', rad_pr, npx, npy, npz);
 
-target_conductivity= .2;
+   clear pts;
+   for i=1:n_sims
+       f_frac= (i-1)/n_sims;
+
+       % call function to simulate data
+       [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
+
+       xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
+
+       ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 + (z(:)-zp).^2 <= rp^2 )';
+       pts{i} = ff;
+   end
+   pts_all = unique( [pts{:}] );
+   pts_all = pts_all(:);
+   for i=1:n_sims
+      [jnk,idx_i]= intersect( pts_all, pts{i});
+      pts_idx{i}= idx_i;
+   end
+
+   [eptr,vol]= img_mapper3a(mdl_3d.nodes', mdl_3d.elems',  ...
+            x(pts_all), y(pts_all), z(pts_all));
+else
+    mdl_pts = interp_mesh( mdl_3d, 4); % 45 per elem
+    x= mdl_pts(:,1,:);
+    y= mdl_pts(:,2,:);
+    z= mdl_pts(:,3,:);
+   [radius,rp,z0,zt] = calc_point_grid(mdl_3d.nodes', rad_pr);
+end
+
+target_conductivity= .1;
 
 for i=1:n_sims
-    obj_n= sparse( eptr(pts_idx{i}),1,1, n_elems, 1);
-    img.elem_data= 1 + target_conductivity * obj_n./vol;
-%   show_fem(img); view([-2,84]);pause;
+   if rem(i, max( floor(i/10), 10))==1; eidors_msg( ...
+       'simulate_3d_movement: step #3 (%d of %d): target simulations', ...
+       i, n_sims, 2); 
+   end
+   if 0
+      obj_n= sparse( eptr(pts_idx{i}),1,1, n_elems, 1);
+      img.elem_data= 1 + target_conductivity * obj_n./vol;
+  %   show_fem(img); view([-2,84]);pause;
+   else
+      f_frac= (i-1)/n_sims;
+      [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
+      xyzr_pt(:,i)= [xp;yp;zp;rp]; % -y because images and axes are reversed
+      ff=  (x-xp).^2 + (y-yp).^2 + (z-zp).^2 <= rp^2;
+      img.elem_data= 1 + target_conductivity * mean(ff,3);
+   end
 
-    vi(i)= fwd_solve( img );% measurement
+   vi(i)= fwd_solve( img );% measurement
 end
-eidors_msg('simulate_3d_movement: step #3: target simulations',2);
 
 vi= [vi(:).meas];
 vh= [vh(:).meas];
@@ -179,8 +198,8 @@ function [EPTR, VOL] = img_mapper3a(NODE, ELEM, x,y,z );
        EPTR(endr)= j;
    end %for j=1:ELEM
 
-function [x,y,z, radius, rp, zmin, zmax] = ...
-         calc_point_grid(NODE, npx, npy, npz, rad_pr);
+function [radius, rp, zmin, zmax,x,y,z] = ...
+         calc_point_grid(NODE, rad_pr, npx, npy, npz);
 
    xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
    xmean= mean([xmin,xmax]); xrange= xmax-xmin;
@@ -191,13 +210,14 @@ function [x,y,z, radius, rp, zmin, zmax] = ...
    zmin = min(NODE(3,:));    zmax = max(NODE(3,:));
    zmean= mean([zmin,zmax]); zrange= zmax-zmin;
 
+   radius= rad_pr(1)*(xmax-xmin)/2;
+   rp=     rad_pr(2)*(xmax-xmin)/2;
+   zmin=   (rad_pr(3)-.5)*zrange + zmean;
+   zmax=   (rad_pr(4)-.5)*zrange + zmean;
+
+   if nargout<=4; return; end
    range= max([xrange, yrange,zrange]);
    [x y z]=ndgrid( ...
        linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
        linspace( ymean + range*0.5, ymean - range*0.5, npy ),...
        linspace( zmean - zrange*0.5, zmean + zrange*0.5, npz ));
-
-   radius= rad_pr(1)*(xmax-xmin)/2;
-   rp=     rad_pr(2)*(xmax-xmin)/2;
-   zmin=   (rad_pr(3)-.5)*zrange + zmean;
-   zmax=   (rad_pr(4)-.5)*zrange + zmean;
