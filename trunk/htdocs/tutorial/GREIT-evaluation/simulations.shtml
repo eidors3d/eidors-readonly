@@ -147,6 +147,21 @@ we calculate:
    <td> <img src="simulation_test04_13.png">
    <td> <img src="simulation_test04_23.png">
    <td> <img src="simulation_test04_33.png">
+<tr>
+   <th> Shape<br>Deformation
+   <td> <img src="simulation_test04_14.png">
+   <td> <img src="simulation_test04_24.png">
+   <td> <img src="simulation_test04_34.png">
+<tr>
+   <th> Ringing
+   <td> <img src="simulation_test04_15.png">
+   <td> <img src="simulation_test04_25.png">
+   <td> <img src="simulation_test04_35.png">
+<tr>
+   <th> Noise<br>Figure
+   <td> <img src="simulation_test04_16.png">
+   <td> <img src="simulation_test04_26.png">
+   <td> <img src="simulation_test04_36.png">
 </table>
 Plots of parameters as a function of radial position
 (<i>left</i> is centre, <i>right</i> is the boundary)
