@@ -31,12 +31,13 @@ Here we can use either:
 <ul>
        <li><h3>
            <a href="./make_simulations_3d.shtml"
-                   >3D FEM Simulations</a> (currently working badly), 
+                   >3D FEM Simulations</a>
           </h3>
            or
        <li><h3>
            <a href="./make_simulations_2d.shtml"
-                   >2D FEM Simulations</a>
+                   >2D FEM Simulations (with moving ball)</a>
+                   (currently working badly), 
 
           </h3>
 </ul>
