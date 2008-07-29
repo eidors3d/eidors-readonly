@@ -74,7 +74,7 @@ fclose( fid);
 % The msz file created here can be reused later
 msz_file= [fname,'0000.msz'];
 
-if ~isempty(finelevel);
+if ~isempty(finelevel) || ~isempty(maxh);
    call_netgen([fname,'0000.geo'],[fname,'0000.vol'],msz_file, finelevel);
 end
 
@@ -126,7 +126,7 @@ end
 
 for fno= 1:fno_max
    % ensure memory isn't completely full
-   eidors_cache clear all;
+%  eidors_cache clear all;
 
    r = 1.5;
    f_frac= (fno-1)/fno_max;
@@ -222,6 +222,7 @@ save_filename= ...
    [fname,'0000'], ...
    refine_electrodes  );
 if ~save_img_not_vi
+   if ~exist('vi');vi=[];end
    save(save_filename,'vi','vh','fmdl_save');
 else
    save(save_filename,'imgh','imgi');
