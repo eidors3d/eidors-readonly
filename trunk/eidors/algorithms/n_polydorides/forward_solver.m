@@ -15,6 +15,7 @@ function [V] = forward_solver(E,I,tol,pp,V);
 
 [n_nodes,n_stims] = size(I);
 
+t=cputime;
 try
    V= E\I;
 catch 
@@ -26,7 +27,9 @@ catch
    eidors_msg('Memory exhausted for inverse. Trying PCG',2);
 
    if nargin < 5
-      V = zeros(size(E,1),n_stims);
+      sz= [size(E,1),n_stims];
+      V = eidors_obj('get-cache', sz, 'forward_solver_V');
+      if isempty(V); V= zeros(sz); end
    end
 
    if isreal(E)
@@ -41,7 +44,9 @@ catch
       [V(:,i),flag] = feval( cgsolver, E,I(:,i), ...
                tol*norm(I(:,i)),n_nodes,L,U,V(:,i));
    end 
+      eidors_obj('set-cache', sz, 'forward_solver_V', V);
 end
+disp(cputime-t);
 
 
 
