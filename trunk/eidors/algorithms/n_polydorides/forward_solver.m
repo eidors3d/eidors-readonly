@@ -6,36 +6,46 @@ function [V] = forward_solver(E,I,tol,pp,V);
 %
 %E   = The full rank system matrix 
 %I   = The currents matrix (RHS) 
-%pp  = the column permutation vector 
-%V   = The approximated nodal potential distribution
 %tol = The tolerance in the forward solution, e.g. 1e-5
+%pp  = UNUSED
+%V   = The approximated nodal potential distribution (USED FOR PCG SOLN)
 
+% (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL
+% $Id$
 
-% d: number of current patterns
-[n_nodes,d] = size(I);
+[n_nodes,n_stims] = size(I);
 
-% PCG solver is better if memory is tight. This limit, 50k nodes
-% seems to be good for machines with ~ 1GB of memory
-n_nodes_pcg = 5e4;
-
-if nargin < 6
-   V = zeros(size(E,1),d);
-end
-
-if isreal(E)==1
-
-   if n_nodes < n_nodes_pcg
-       V= E\I;
-   else
-
-       K = cholinc(E,tol*100);
-       %flags needed for quiet output
-       for i=1:d
-           [V(:,i),flag] = pcg(E,I(:,i),tol*norm(I(:,i)),n_nodes,K',K,V(:,i));
-       end
-
+try
+   V= E\I;
+catch 
+   [lasterr_str,lasterr_id]= lasterr;
+   if lasterr_id ~= 'MATLAB:nomem'
+      error(lasterr_str); % rethrow error
    end
 
+   eidors_msg('Memory exhausted for inverse. Trying PCG',2);
+
+   if nargin < 5
+      V = zeros(size(E,1),n_stims);
+   end
+
+   if isreal(E)
+      U = cholinc(E,tol*100); L = U'; 
+      cgsolver = @pcg;
+   else %Complex
+      [L,U] = luinc(E,tol/10);
+      cgsolver = @bicgstab;
+   end
+
+   for i=1:n_stims
+      [V(:,i),flag] = feval( cgsolver, E,I(:,i), ...
+               tol*norm(I(:,i)),n_nodes,L,U,V(:,i));
+   end 
+end
+
+
+
+%%% OLD CODE
    % Cholesky solver. Gives poor results matching others
    % so we no longer use it
    if 0 
@@ -51,31 +61,3 @@ if isreal(E)==1
        %De-permute the result for Cholesky
        V = Vn(rr,:);
    end
-
-else % is complex
-    
-   if n_nodes < n_nodes_pcg
-      V= E\I;
-   else
-      [L,U] = luinc(E,tol/10);
-      
-      for y=1:d
-      
-         V(:,y) = bicgstab(E,I(:,y),tol*norm(I(:,y)),1000,L,U);
-      
-      end 
-   end 
-   
-end %is complex
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This is part of the EIDORS suite.
-% Copyright (c) N. Polydorides 2003
-% Copying permitted under terms of GNU GPL
-% See enclosed file gpl.html for details.
-% EIDORS 3D version 2.0
-% MATLAB version 5.3 R11
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
