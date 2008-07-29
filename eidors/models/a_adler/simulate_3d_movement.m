@@ -55,11 +55,13 @@ else
 end
 
 
-mdl_3d.solve=      'np_fwd_solve';
-mdl_3d.system_mat= 'np_calc_system_mat';
-mdl_3d.jacobian=   'np_calc_jacobian';
-mdl_3d.misc.perm_sym=   '{n}';
-n_elems= size(mdl_3d.elems,1);
+if 0 % OLD CODE - now use solver provided
+   mdl_3d.solve=      'np_fwd_solve';
+   mdl_3d.system_mat= 'np_calc_system_mat';
+   mdl_3d.jacobian=   'np_calc_jacobian';
+   mdl_3d.misc.perm_sym=   '{n}';
+   n_elems= size(mdl_3d.elems,1);
+end
 
 
 eidors_msg('simulate_3d_movement: step #1: homogeneous simulation',2);
@@ -85,8 +87,6 @@ if 0 % Old Style
        % call function to simulate data
        [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
 
-       xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
-
        ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 + (z(:)-zp).^2 <= rp^2 )';
        pts{i} = ff;
    end
@@ -100,7 +100,7 @@ if 0 % Old Style
    [eptr,vol]= img_mapper3a(mdl_3d.nodes', mdl_3d.elems',  ...
             x(pts_all), y(pts_all), z(pts_all));
 else
-    mdl_pts = interp_mesh( mdl_3d, 4); % 45 per elem
+    mdl_pts = interp_mesh( mdl_3d, 2); % 10 per elem
     x= mdl_pts(:,1,:);
     y= mdl_pts(:,2,:);
     z= mdl_pts(:,3,:);
@@ -121,11 +121,11 @@ for i=1:n_sims
    else
       f_frac= (i-1)/n_sims;
       [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
-      xyzr_pt(:,i)= [xp;yp;zp;rp]; % -y because images and axes are reversed
       ff=  (x-xp).^2 + (y-yp).^2 + (z-zp).^2 <= rp^2;
       img.elem_data= 1 + target_conductivity * mean(ff,3);
    end
 
+   xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
    vi(i)= fwd_solve( img );% measurement
 end
 
