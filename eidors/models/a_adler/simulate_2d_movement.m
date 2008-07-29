@@ -68,10 +68,10 @@ end
                     'elem_data', ones(n_elems,1) );
     vh= fwd_solve(img);
 
+if 0
     np= 256;
     maxxy= max(fmdl.nodes);
     minxy= min(fmdl.nodes);
-if 0
     [x,y]=meshgrid( linspace(minxy(1),maxxy(1),np), ...
                     linspace(minxy(2),maxxy(2),np) );
     [eptr,vol]= img_mapper2(fmdl.nodes', fmdl.elems', np, np);
