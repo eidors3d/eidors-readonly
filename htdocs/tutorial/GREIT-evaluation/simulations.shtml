@@ -117,6 +117,34 @@ The parameters listed previously
 <!--#include virtual="GREIT_sim_params.m" -->
 </pre>
 
+<H2>Calculate noise performance</H2>
+
+Noise parameters are based on the <i>Noise Figure</i>
+which estimates the amplification of noise through
+the reconstruction algorithm (as a function of
+radial position).
+<p>
+ The desired <i>Noise Figure</i> should be as low as possible.
+<p>
+Noise sources include: 1) Pseudo-random Gaussian
+noise, and 2) Measured phantom noise (from 
+Hahn <i>et al</i>, 2008).
+<center>
+<img src="noise_parameters.png">
+<br>
+Calculation of noise parameters for reconstructed images.
+Note that the <i>l</i>1 norm is used for clarity in the
+figure. Other norms are possible:
+</center>
+
+The parameters listed previously
+ are calculated from images using the function
+<a href="./GREIT_sim_params.m"><tt
+          >GREIT_sim_params.m</tt></a>.
+<pre>
+<!--#include virtual="GREIT_noise_params.m" -->
+</pre>
+
 <H3>Parameters from example images</H3>
 
 In order to display the parameters from the example images,
