@@ -87,19 +87,19 @@ proposed algorithms.
    <th> NOSER <br>Diff
 <tr>
    <th> Image<br>Output
-   <td> <img src="simulation_test03_1.png" width="96">
-   <td> <img src="simulation_test03_2.png" width="96">
-   <td> <img src="simulation_test03_3.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_1.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_2.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_3.png" width="96">
 <tr>
    <th> &frac12;Max<br>Set
-   <td> <img src="simulation_test03_h1.png" width="96">
-   <td> <img src="simulation_test03_h2.png" width="96">
-   <td> <img src="simulation_test03_h3.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_h1.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_h2.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_h3.png" width="96">
 <tr>
    <th> &frac14;Max<br>Set
-   <td> <img src="simulation_test03_q1.png" width="96">
-   <td> <img src="simulation_test03_q2.png" width="96">
-   <td> <img src="simulation_test03_q3.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_q1.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_q2.png" width="96">
+   <td> <img src="./simulation_test_imgs/simulation_test03_q3.png" width="96">
 </table>
 Reconstructed images. The conductivity target location is
 shown in green (the target is a circle, but shows as a small
@@ -163,39 +163,39 @@ we calculate:
 <tr>
    <th> Amplitude
    <br><i>Want:<br>uniform</i>
-   <td> <img src="simulation_test04_12.png">
-   <td> <img src="simulation_test04_22.png">
-   <td> <img src="simulation_test04_32.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_12.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_22.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_32.png">
 <tr>
    <th> Position<br>Error
    <br><i>Want:<br>small,uniform</i>
-   <td> <img src="simulation_test04_13.png">
-   <td> <img src="simulation_test04_23.png">
-   <td> <img src="simulation_test04_33.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_13.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_23.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_33.png">
 <tr>
    <th> Resolution
    <br><i>Want:<br>small,uniform</i>
-   <td> <img src="simulation_test04_14.png">
-   <td> <img src="simulation_test04_24.png">
-   <td> <img src="simulation_test04_34.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_14.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_24.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_34.png">
 <tr>
    <th> Shape<br>Deformation
    <br><i>Want:<br>small,uniform</i>
-   <td> <img src="simulation_test04_15.png">
-   <td> <img src="simulation_test04_25.png">
-   <td> <img src="simulation_test04_35.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_15.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_25.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_35.png">
 <tr>
    <th> Ringing
    <br><i>Want:<br>small</i>
-   <td> <img src="simulation_test04_16.png">
-   <td> <img src="simulation_test04_26.png">
-   <td> <img src="simulation_test04_36.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_16.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_26.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_36.png">
 <tr>
    <th> Noise<br>Figure
    <br><i>Want:<br>small</i>
-   <td> <img src="simulation_test04_11.png">
-   <td> <img src="simulation_test04_21.png">
-   <td> <img src="simulation_test04_31.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_11.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_21.png">
+   <td> <img src="./simulation_test_imgs/simulation_test04_31.png">
 </table>
 Plots of parameters as a function of radial position
 (<i>left</i> is centre, <i>right</i> is the boundary)
