@@ -3,7 +3,7 @@ imb.calc_colours.ref_level = 0; % select colour output
 imb.calc_colours.greylev   = 0.01; % black backgnd
 bkgnd= [.1,.5,.1]; imb.calc_colours.backgnd   = bkgnd;
 
-idx= 157;
+idx= 157; dir='simulation_test_imgs';
 
 phi = linspace(0,2*pi,10);
 xc=-xyzr_pt(1,idx) + xyzr_pt(4,idx) * sin(phi); xc= round(xc*15.5 + 16.5);
@@ -23,8 +23,8 @@ for i= 1:length(algs)
    imc(out) = 1; hmi(out) = 3; qmi(out) = 3; % background
    imc(ind) = 1; hmi(ind) = 3; qmi(ind) = 3; % target
 
-   imwrite(imc,colormap, sprintf('simulation_test03_%d.png',i),'png')
+   imwrite(imc,colormap, sprintf('%s/simulation_test03_%d.png',dir,i),'png')
    clrmap = [0,0,0;1,1,1;bkgnd];
-   imwrite(hmi,clrmap, sprintf('simulation_test03_h%d.png',i),'png')
-   imwrite(qmi,clrmap, sprintf('simulation_test03_q%d.png',i),'png')
+   imwrite(hmi,clrmap, sprintf('%s/simulation_test03_h%d.png',dir,i),'png')
+   imwrite(qmi,clrmap, sprintf('%s/simulation_test03_q%d.png',dir,i),'png')
 end
