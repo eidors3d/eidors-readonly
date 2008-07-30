@@ -14,16 +14,20 @@ end
 
 
 function [J,vbkgnd,map] = Jacobian_calc;
-use_3d_model = 0;
+use_3d_model = 1;
 if use_3d_model % This 3D model has some problems
-   load ng_mdl_16x1_fine;  fmdl= ng_mdl_16x1_fine;
+%  load ng_mdl_16x1_fine;  fmdl= ng_mdl_16x1_fine;
+   load ng_tank1_0; 
+   fmdl.solve =    @aa_fwd_solve;
+   fmdl.jacobian = @aa_calc_jacobian;
+   fmdl.system_mat=@aa_calc_system_mat;
+   fmdl.elems = double(fmdl.elems);
 else
    imdl = mk_common_model('f2d3c',16); fmdl= imdl.fwd_model;
    fmdl.nodes = fmdl.nodes(:,[2,1]);
 end
 
-   % yvec is reversed because image yaxis is reversed
-   fmdl.nodes(:,1) = -fmdl.nodes(:,1);
+   fmdl.nodes(:,1) = -fmdl.nodes(:,1); % yvec is reversed because image yaxis is reversed
 
    pixel_grid= 32;
    nodes= fmdl.nodes;
@@ -58,9 +62,6 @@ end
    vbkgnd = vbkgnd.meas;
    J= calc_jacobian(img);
 
-if use_3d_model
-   map = reshape(sum(c2f,1),pixel_grid,pixel_grid)>0;
-else % need to exclude some of the boundary
+%  map = reshape(sum(c2f,1),pixel_grid,pixel_grid)>0;
    [x,y]= meshgrid(linspace(-1,1,32),linspace(-1,1,32));
    map = x.^2 + y.^2 < 1.1;
-end
