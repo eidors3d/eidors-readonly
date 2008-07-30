@@ -108,16 +108,14 @@ Some examples of GREIT evaluation functions are:
 <ul>
    <li><a href="./GREIT_Sheffield_backproj.shtml"
                 >Sheffield Backprojection</a>
-   <li><a href="./GREIT_NOSER_norm_diff.shtml"
-                >NOSER-type (normalized difference)</a>
-   <li><a href="./GREIT_NOSER_diff.shtml"
-                >NOSER-type (difference)</a>
+   <li><a href="./GREIT_NOSER.shtml"
+                >NOSER-type</a> difference and normalized difference
 </ul>
 
 </td></tr></table>
 <p>
 <small>
-    Last Modified: $Date:$ by $Author$
+    Last Modified: $Date$ by $Author$
 </small>
 </BODY></HTML>
 <!--
