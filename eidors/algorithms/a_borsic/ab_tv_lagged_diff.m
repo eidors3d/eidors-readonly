@@ -34,16 +34,19 @@ J=calc_jacobian( fwd_model, img_bkgnd);
 alpha=calc_hyperparameter( inv_model );
 
 
-delta_sigma = zeros(size(J,2),1); % we start from no initial difference
+delta_sigma = zeros(size(J,3),1); % we start from no initial difference
 
 
 for k=1:max_iter
  
     dv =  J*delta_sigma - d;
-    E=diag(sqrt((L*delta_sigma).^2+beta));
-    
-    phi1=J'*dv+alpha*L'*inv(E)*L*delta_sigma;
-    phi2=J'*J+alpha*L'*inv(E)*L;
+
+    E= sqrt((L*delta_sigma).^2+beta);
+    inv_E= spdiag( 1./E, 0, length(E), length(E));
+
+    phi1=J'*dv+ alpha*L'*inv_E*L*delta_sigma;
+    phi2=J'*J + alpha*L'*inv_E*L;
+
     upd=-(phi2)\phi1;
     
     delta_sigma=delta_sigma+upd;
