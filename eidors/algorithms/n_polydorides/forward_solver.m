@@ -15,7 +15,6 @@ function [V] = forward_solver(E,I,tol,pp,V);
 
 [n_nodes,n_stims] = size(I);
 
-t=cputime;
 try
    V= E\I;
 catch 
@@ -46,7 +45,6 @@ catch
    end 
       eidors_obj('set-cache', sz, 'forward_solver_V', V);
 end
-disp(cputime-t);
 
 
 
