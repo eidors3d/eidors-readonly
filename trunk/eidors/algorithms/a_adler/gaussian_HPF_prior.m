@@ -25,7 +25,7 @@ end
 
 Reg = calc_Gaussian_HPF( fwd_model, diam_frac );
 
-cache_test_obj= {fwd_model.nodes, fwd_model.elems};
+cache_test_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
 eidors_obj('set-cache', cache_test_obj, 'gaussian_HPF_prior', Reg);
 eidors_msg('gaussian_HPF_prior: setting cached value', 3);
 
