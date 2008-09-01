@@ -23,7 +23,7 @@ reqNF= inv_model.hyperparameter.noise_figure;
 
 NFtable = eidors_obj('get-cache', inv_model, 'noise_figure_table');
 if ~isempty(NFtable)
-   % this would be sooo much easier if Matlab has assoc. arrays
+   % this would be sooo much easier if Matlab had assoc. arrays
    idx= find( NFtable(:,1) == reqNF);
    if any(idx)
        hparam= 10^NFtable( idx(1), 2);
@@ -34,7 +34,7 @@ else
    NFtable= [];
 end
 
-startpoint = [6,-6]; % works better with a bracketed search
+startpoint = [6,-15]; % works better with a bracketed search
 opts = optimset('tolX',1e-4);
 
 % We don't want to cache any of these values
