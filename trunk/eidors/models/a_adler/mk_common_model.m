@@ -16,7 +16,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('f2C',16)   - 2D circ model (2304 elems)
 %
 %   models with 'c' are point electrode models, 
-%   models with 'C' are use the complete electrode model
+%   models with 'C' use the complete electrode model (with 2 nodes/elec)
 %
 %   models ??c or ??c0 are rotated by zero.
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
@@ -148,7 +148,7 @@ elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
 elseif strcmp( str, 'n3z') || strcmp(str, 'n3z2')
     inv_mdl = mk_n3z_model( n_elec, options );
-elseif str(2:3)=='3c' 
+elseif str(2:3)=='3c' | str(2:3) =='3t'
    if     str(1)=='a'; xy_layers=  4; z_layers= linspace(-.5,.5,5);
    elseif str(1)=='b'; xy_layers=  8; z_layers= linspace(-.7,.7,11);
    elseif str(1)=='c'; xy_layers= 12; z_layers= linspace(-.9,.9,21);
@@ -156,16 +156,24 @@ elseif str(2:3)=='3c'
    else;  error(['don`t know what to do with option(1)=',str]);
    end
 
+   if str(3)== 'c'
+      elec_cfg_str= str(4:end);
+   elseif str(3) == 't'
+      elec_cfg_str= str(5:end);
+   else
+      error(['don`t know what to do with option(3)=',str]);
+   end
+
    elec_per_plane = n_elec(1);
    spacing=.5;
-   if     str(4)=='r';
+   if     elec_cfg_str=='r';
       elec_conf= 'planes';
       ne_1  = (n_elec(2)-1)/2;
       elec_space= [ne_1:-1:-ne_1]*spacing;
-   elseif str(4:5)=='z2';
+   elseif elec_cfg_str=='z2';
       elec_conf= 'zigzag';
       elec_space= [1,-1]*spacing/2;
-   elseif str(4:5)=='p2';
+   elseif elec_cfg_str=='p2';
       elec_conf= 'planes';
       elec_space= [1,-1]*spacing/2;
       elec_per_plane = n_elec(1)/2;
@@ -175,7 +183,11 @@ elseif str(2:3)=='3c'
 
    inv_mdl = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
                               elec_per_plane, elec_conf, options );
-%  inv_mdl = rotate_model( inv_mdl, n_elec(1)/8 );
+
+   if str(3) == 't' % thorax models
+      inv_mdl = rotate_model( inv_mdl, 2); % 45 degrees
+      inv_mdl = deform_cylinder( inv_mdl, str2num(str(4)), 1 );
+   end
 else
     error(['Don`t know what to do with option=',str]);
 end
@@ -405,6 +417,7 @@ function inv_mdl = deform_cylinder( inv_mdl, niv, xyz_expand );
       116,112, 92,53, 3,-48,- 88,-106,-105,-106,- 88,-48, 3,53, 92,112;
       143,130, 99,63,14,-35,- 68,- 82,- 82,- 82,- 68,-35,14,63, 99,130;
       136,128,103,68,23,-25,- 62,- 78,- 80,- 78,- 62,-25,23,68,103,128 ];
+    z_mag = 150;
 
     reidx= [13:16, 1:12];
     geo= [x_coord(niv,reidx)',  ...
@@ -421,6 +434,9 @@ function inv_mdl = deform_cylinder( inv_mdl, niv, xyz_expand );
               ab_geo(floor(angle+1.001))  );
       nn(1:2,i)= NODE(1:2,i)* fac;
     end  %for i=1:size
+    if size(nn,1) == 3; 
+       nn(3,:) = NODE(3,:)*z_mag;
+    end
 
     inv_mdl.fwd_model.nodes = nn'*eye(xyz_expand);
 
