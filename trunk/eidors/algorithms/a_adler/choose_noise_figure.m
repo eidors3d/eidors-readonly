@@ -34,11 +34,16 @@ else
    NFtable= [];
 end
 
-startpoint = [4,-6]; % works better with a bracketed search
+startpoint = [6,-6]; % works better with a bracketed search
 opts = optimset('tolX',1e-4);
 
 % We don't want to cache any of these values
    pre_nf_timestamp = now;
+% Look at minimum NF. Is it less than possible
+if calc_log_NF( startpoint(1), reqNF, inv_model ) > 0
+   error('requested NF is less than possible with this algorithm');
+end
+
 hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
    eidors_cache('clear_new', pre_nf_timestamp);
    
