@@ -131,7 +131,8 @@ for e=1:length(mdl.electrode)
             'Marker','o','MarkerSize',12, ...
             'MarkerFaceColor',colour, 'MarkerEdgeColor', colour);
         if number_electrodes
-            text(vtx(1),vtx(2),vtx(3), num2str(e));
+            hh= text(vtx(1),vtx(2),vtx(3), num2str(e));
+            set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
         end
     else
         % find elems on boundary attached to this electrode
