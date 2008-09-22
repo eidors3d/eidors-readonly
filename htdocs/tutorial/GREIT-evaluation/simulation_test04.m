@@ -2,7 +2,7 @@
 
 subplot(421); algs = get_list_of_algs;
 
-for i= 1:length(algs)
+for i= 4% 1:length(algs)
    img = feval(algs{i}, vh, vi );
    param= [GREIT_noise_params(img, algs{i}, vh, vi); ... % noise parameters
            GREIT_sim_params(  img, xyzr_pt)];            % image parameters
