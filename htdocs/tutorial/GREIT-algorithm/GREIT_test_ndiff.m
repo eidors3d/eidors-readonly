@@ -4,7 +4,7 @@ function [img,map]= GREIT_NOSER_ndiff( ref_meas, reconst_meas )
 % (C) 2008 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
-   [RM] = calc_RM(1, 8);
+   [RM] = calc_RM(1, 5);
 
    % Expand ref_meas to the full size of reconst_meas
    num_meas = size(reconst_meas,2);
@@ -23,7 +23,7 @@ function RM = calc_RM(data_file, noiselev)
       error('data_file not recognized');
    end
 
-   D = desired_soln( xyzr_pt, 0.2 );
+   D = desired_soln( xyzr_pt, 0.20 );
    Y = vi./(vh*ones(1,size(vi,2))) - 1; 
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0
@@ -34,8 +34,17 @@ function RM = calc_RM(data_file, noiselev)
 
 function PSF= desired_soln(xyc, radius)
    xsz= 32; ysz= 32; sz= xsz * ysz;
-   [x,y]= ndgrid(linspace(-1,1,xsz), linspace(-1,1,ysz));
+   lim= 1.00;
+   [x,y]= ndgrid(linspace(-lim,lim,xsz), linspace(-lim,lim,ysz));
+   spc = 2*lim/(xsz-1) * 0.5;
    PSF = zeros(sz,size(xyc,2));
    for i=1:size(xyc,2);
-      PSF(:,i) = (x(:)+xyc(2,i)).^2 + (y(:)+xyc(1,i)).^2 < radius^2;
+      for dx = linspace(-spc, spc, 5)
+         for dy = linspace(-spc, spc, 5)
+            PSF(:,i) = PSF(:,i) +  1/25*( ...
+               (dx+x(:)+xyc(2,i)).^2 + (dy+y(:)+xyc(1,i)).^2 ...
+                        < radius^2 );
+         end
+      end
+%     PSF(:,i) = PSF(:,i)/sum(PSF(:,i));
    end
