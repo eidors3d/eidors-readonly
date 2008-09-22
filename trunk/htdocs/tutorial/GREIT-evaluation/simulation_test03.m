@@ -1,4 +1,6 @@
 % Reconstruct some images $Id$
+load sim_radmove_homog.mat
+
 imb.calc_colours.ref_level = 0; % select colour output
 imb.calc_colours.greylev   = 0.01; % black backgnd
 bkgnd= [.1,.5,.1]; imb.calc_colours.backgnd   = bkgnd;
