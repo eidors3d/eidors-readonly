@@ -1,10 +1,10 @@
 function [img,map]= GREIT_NOSER_ndiff( ref_meas, reconst_meas )
-% Reconstruct GREIT images using NOSER algorithm
+% Reconstruct GREIT images using GREIT algorithm
 %
 % (C) 2008 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
-   [RM,map] = calc_RM(1);
+   [RM] = calc_RM(1, 8);
 
    % Expand ref_meas to the full size of reconst_meas
    num_meas = size(reconst_meas,2);
@@ -16,37 +16,26 @@ function [img,map]= GREIT_NOSER_ndiff( ref_meas, reconst_meas )
 
    img= reshape(ds, 32,32,num_meas);
 
-function [RM,map] = calc_RM(noser_p, diff_p)
-   [J,map,vbkgnd] = GREIT_Jacobian_cyl;
-   J = J ./ (vbkgnd*ones(1,size(J,2))); % Normalized Jacobian
-   RM = zeros(size(J'));
+function RM = calc_RM(data_file, noiselev)
+   if data_file==1
+      load sim_radmove_homog.mat
+   else
+      error('data_file not recognized');
+   end
 
-   L = mk_diff_prior(map);
- 
-   % Remove space outside FEM model
-   J= J(:,map);
-   % inefficient code - but for clarity
-   diagJtJ = diag(J'*J).^(.25);
-   D= spdiags( diagJtJ,0, length(diagJtJ), length(diagJtJ));
+   D = desired_soln( xyzr_pt, 0.2 );
+   Y = vi./(vh*ones(1,size(vi,2))) - 1; 
+   noiselev = noiselev * mean(abs(Y(:)));
+   % Desired soln for noise is 0
+   Y = [Y, noiselev*eye(208)];
+   D = [D,          zeros(32^2,208)];
 
-%  R= D'*D; %NOSER
-   R= D'*L'*L*D; %Diff
-   hp = 0.1;
-   RM(map,:)= (J'*J + hp^2*R)\J';
+   RM = D*Y'/(Y*Y');
 
-function L= mk_diff_prior(map)
-   sz= prod(size(map));
-   cube0 = ones(size(map));
-
-   cube= cube0; cube(end,:) = 0; f1= find(cube(:)); lf1 = length(f1);
-   cube= cube0; cube(1,:) =   0; f2= find(cube(:)); lf2 = length(f2);
-   oo= cube(f1) + cube(f2);
-   Lx= sparse(1:lf1,f1, oo,lf1,sz) + sparse(1:lf2,f2,-oo,lf2,sz);
-
-   cube= cube0; cube(:,end) = 0; f1= find(cube(:)); lf1 = length(f1);
-   cube= cube0; cube(:,1)   = 0; f2= find(cube(:)); lf2 = length(f2);
-   oo= cube(f1) + cube(f2);
-   Ly= sparse(1:lf1,f1, oo,lf1,sz) + sparse(1:lf2,f2,-oo,lf2,sz);
-
-   L= [Lx;Ly];
-   L= L(:,map);
+function PSF= desired_soln(xyc, radius)
+   xsz= 32; ysz= 32; sz= xsz * ysz;
+   [x,y]= ndgrid(linspace(-1,1,xsz), linspace(-1,1,ysz));
+   PSF = zeros(sz,size(xyc,2));
+   for i=1:size(xyc,2);
+      PSF(:,i) = (x(:)+xyc(2,i)).^2 + (y(:)+xyc(1,i)).^2 < radius^2;
+   end
