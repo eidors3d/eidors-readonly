@@ -7,9 +7,17 @@ function params = GREIT_noise_params(imgs, alg, vh, vi )
 
 % There are better ways here
 noise = 0.01*std(vh)*randn(208,1000);
-snr_y = mean(abs(vi-vh*ones(1,size(vi,2))),1) / mean(std(noise,[],1),2); 
+vhn= vh*ones(1,size(noise,2));
+%signal_y = vi -  (vh*ones(1,size(vi,2)));
+ signal_y = vi ./ (vh*ones(1,size(vi,2))) - 1;
+%noise_y  = mean(std(noise      ),2); 
+ noise_y  = mean(std(noise./vhn ),2); 
+snr_y = mean(abs(signal_y),1) / noise_y;
 
-im_n= feval(alg, vh, vh*ones(1,size(noise,2)) + noise);
-snr_x = mean(mean(abs(imgs),1),2) / mean(abs(im_n(:)));
+im_n= feval(alg, vh, vhn + noise);
+%signal_x = mean(mean(abs(imgs),1),2);
+ signal_x = mean(mean(   (imgs),1),2);
+%noise_x  = mean(abs(im_n(:)));
+ noise_x  = mean(std(std(im_n)));
+snr_x = signal_x / noise_x;
 params= [snr_y(:)./snr_x(:)]';
-
