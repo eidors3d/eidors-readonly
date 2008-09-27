@@ -7,7 +7,7 @@ for i= 1:length(algs)
    param= [GREIT_noise_params(img, algs{i}, vh, vi); ... % noise parameters
            GREIT_sim_params(  img, xyzr_pt)];            % image parameters
 
-   for j=1 %:size(param,1)
+   for j=1:size(param,1)
       plot(param(j,:));
       set(gca,'XTickLabel',[]); set(gca,'XLim',[1,size(param,2)])
       if     j==1; set(gca,'YLim',[0,3.5]);      % Noise Figure
@@ -20,3 +20,5 @@ for i= 1:length(algs)
       print('-dpng','-r100',sprintf('simulation_test_imgs/simulation_test04_%d%d.png',i,j));
    end
 end
+
+!find simulation_test_imgs -name s*0*_??.png -exec convert -trim '{}' png8:'{}' ';'
