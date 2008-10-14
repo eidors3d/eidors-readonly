@@ -88,10 +88,10 @@ showing the 32&times;32 grid on which it is reconstructed
 <ul>
 <pre>
 imdl= mk_common_model('c2c2',16);
-imdl.fwd_model.electrode = imdl.fwd_model.electrode([1,16:-1:2]);
 img= calc_jacobian_bkgnd( imdl );
 vh= fwd_solve(img);
-img.elem_data([200,172])= 1.1;
+img.elem_data([232,240])= 1.1;
+img.elem_data([225,249])= 0.9;
 vi= fwd_solve(img);
 subplot(131); show_fem(img,[0,1,0]); axis square
 
