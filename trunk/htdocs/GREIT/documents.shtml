@@ -24,8 +24,10 @@ The following documents describe GREIT:
 
 <LI>
    <h3>
-   <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/htdocs/papers/paper-GREIT-2008/"
+   <a href="../../eidors/papers/paper-GREIT-2008/GREIT-algorithm.pdf"
       >GREIT paper</a> (in progress)
+   <a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/htdocs/papers/paper-GREIT-2008/"
+      >[version history]</a>
    <h3>
 
 </UL>
