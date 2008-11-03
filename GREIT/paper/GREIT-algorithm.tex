@@ -15,44 +15,98 @@
 \newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
 \begin{document}
 
-\title[GREIT: reconstruction algorithm for EIT chest images]
-      {GREIT: a consensus algorithm for linear reconstruction of
-              Electrical Impedance Tomography images of the chest}
+\title[GREIT: framework for linear image reconstruction]{%
+GREIT: a framework for 2D linear image reconstruction for
+       EIT images of lungs.
+\\
+\hspace{3cm}{\em or } \\
+A unified approach to a linear EIT Reconstruction algorithm
+       for lung images
+\\
+\normalsize \em (DRAFT: $Date: 2008-06-10 19:13:00 $)%
+}
 
-\author{TBA$^1$,
-        TBA2$^2$}
+\author{Andy Adler$^{1}$,
+        John Arnold$^{2}$,
+        Richard Bayford$^{3}$,
+        Andrea Borsic$^{4}$,
+        Brian Brown$^{5}$,
+        Paul Dixon$^{6}$,
+        Theo J.C. Faes$^{7}$,
+        In\'ez Frerichs$^{8}$,
+        Herv\'e Gagnon$^{9}$,
+        Yvo G\"arber$^{10}$,
+        Bart\l{}omiej Grychtol$^{11}$, 
+        G\"unter Hahn$^{12}$,
+        William R B Lionheart$^{13}$,
+        Anjum Malik$^{14}$,
+        Janet Stocks$^{15}$,
+        Andrew Tizzard$^{3}$,
+        Norbert Weiler$^{8}$,
+        Gerhard Wolf$^{2}$%
+       }
 
-\address{$^1$ Address \#1}
-\address{$^2$ Address \#2}
-\ead{\mailto{em@il.addresses}}
+{\em {\bf TODO}: We need to clarify authors and get complete addresses}
+\address{ $^{1}$Systems and Computer Engineering,
+                Carleton University, Ottawa, Canada}
+\address{ $^{2}$Division of Critical Care Medicine,
+                Children's Hospital, Boston, USA}
+\address{ $^{3}$Middlesex University, London, UK}
+\address{ $^{4}$School of Engineering, 
+                Dartmouth College, Hanover, NH, USA}
+\address{ $^{5}$University of Sheffield, UK}
+\address{ $^{6}$Cardinal Health Care, London, UK}
+\address{ $^{7}$V.U. university medical center, Amsterdam, Netherlands}
+\address{ $^{8}$University of Kiel, Germany}
+\address{ $^{9}$\'Ecole Polytechnique de Montr\'eal, Canada}
+\address{$^{10}$Dr\"ager Medical, L\"ubeck, Germany}
+\address{$^{11}$University of Strathclyde, Glasgow, UK}
+\address{$^{12}$University of G\"ottingen, Germany}
+\address{$^{13}$University of Manchester, UK}
+\address{$^{14}$Maltron International, Rayleigh, UK}
+\address{$^{15}$Institute of Child Health, UCL, London, UK}
 
 
 
 \begin{abstract}
 Recently, Electrical Impedance Tomography (EIT) has begun to see a
 significant clinical interest for the application of monitoring
-ventilated patients. To best manage these patients, it is important
-to correctly set the many parameters of modern ventilators. This,
-in turn, requires accurate monitoring of the
-typically inhomogeneous distribution of ventilation.
-The clinical promise of EIT is because it is able to non-invasively
-provide a continuous image of the lungs of these patients in order
-to better manage ventilation.
+mechanically ventilated patients.
+EIT has clinical promise to help better manage these patients,
+because it is able to non-invasively
+provide a continuous image of the distribution of ventilation. 
 However, most clinical and physiological research in lung EIT
-being done using the backprojection image reconstruction algorithm
-developed in 1988.  While many newer and better algorithms have been
-proposed, it has not been easy to compare and evaluate them.
-To address this issue, we propose a ``best of breed'' linear
-reconstruction algorithm for lung EIT. This algorithm is named
-GREIT (the Graz consensus Reconstruction algorithm for EIT) and
-applies to EIT systems using 16 electrodes with adjacent
-current stimulation and voltage measurement applied in a single
-plane around the subject's chest.
+is done using older and proprietary algorithms; this is
+an obstacle to interpretation of EIT data because the
+reconstructed images are not well characterized.
+To address this issue, we are developing a
+consensus linear reconstruction algorithm for lung EIT,
+called GREIT (Graz consensus Reconstruction algorithm for EIT).
+This paper describes the unified approach to 
+linear image reconstruction developed for GREIT,
+and the tools and evaluation methodology for
+clinical and experimental testing of the algorithm.
+The framework for the linear reconstruction algorithm
+consists of:
+1) detailed finite element models of a representative
+ adult and neonate thorax;
+2) consensus on the performance figures of merit for
+ EIT image reconstruction, which are:
+a) uniform amplitude response,
+b) low and uniform reconstructed position error,
+c) low, uniform and circular small point spread function,
+d) good noise performance,
+e) low sensitivity to electrode and boundary movement,
+f) low artefact amplitude on clinical and experimental data;
+and
+3) A systematic approach to optimize a linear reconstruction
+ matrix to desired performance figures.
 This approach represents the consensus of a large and representative
 group of experts in EIT algorithm and clinical applications.
-All software and data to implement and test GREIT had been
+All software and data to implement and test GREIT has be
 made available under an open source license which allows free
-research and commercial use.
+research and commercial use. These tools will be used in
+the clinical and experimental validation stage of GREIT development.
 \end{abstract}
 
 \noindent{\it Keywords\/}:
@@ -64,95 +118,113 @@ Image Reconstruction,
 Electrical Impedance Tomography (EIT) measures conductivity
 changes within a body from current stimulation and voltage
 measurement on the body surface. One of the most promising
-application of EIT is for measuring the lungs, since these
+applications of EIT is for measuring the lungs, since these
 are large organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
-was the among first physiological applications of this technology
-(refs). While there are many medical imaging and instrumentation
-technologies to measure the lungs, EIT is unique in that it
-is able to non-invasively monitor the distribution of 
-ventionation. Other imaging technologies cannot (practically 
-and safely) continuously monitor patients; instrumentation
-techniques give measure of lung volumes and pressures without
-an image of the distribution of the air in the lungs. 
+was among the first physiological applications of this technology.
+(Barber and Brown 1984).
+While there are several medical imaging and instrumentation
+technologies to measure ventilation, EIT is unique in that it
+is able to non-invasively and continuously monitor the distribution of 
+ventilation. Based on these advantages, there is significant
+interest in EIT to 
+monitor patients with respiratory compromise.
 
-There is now significant interest in EIT to 
-monitor patients on mechanical ventilation. These patients
-typically have very inhomogeneous patterns of ventilation,
-due to the non-uniform patterns of tissue destruction
-in the underlying disease and due to the mechanical ventilation
-itself (refs). However, there is now considerable clinical
-evidence to show significant patient benefit can be obtained
-by proper selection of the many settings
-available on modern ventilators. EIT can provide vital 
-information to help clinical staff manage patient ventilation.
-For example, a PEEP manoeuvre may increase FRC; however, the
-EIT image may show that volume only increased in one lung, and
-that there may still be additional benefit to be gained 
-{\em can we come up with a better example}.
-
-One limitation to current EIT clinical and physiological research
-is that being done by reconstructing images with the backprojection
+One limitation is that most clinical and physiological research
+on lung EIT is being done using proprietary variants of
+older image reconstruction algorithms, such as the backprojection
 algorithm as implemented
 in the Sheffield (Brown and Seagar, 1987)
-or G\"ottingen (Hahn et al, 2001) EIT systems. This is a 
-problem because this algorithm is known to produce various
-image artefacts.
-While many newer and better algorithms have been proposed, it has
-not easy  to compare them and select the best. Thus, the
-the EIT equipment manufacturers and the clinical and physiological
-researchers have stayed with familiar algorithms, even though
-these have well known deficiencies. 
+or G\"ottingen (Hahn \etal, 2001) EIT systems.
+The algorithms, although very successful for the time,
+   do not incorporate advances that have been made over the last
+   20 years;
+This is an obstacle to clinical use of EIT because
+these algorithms have numerous specific issues, such
+   as spatial non-uniformity in image amplitude, position
+   and resolution which make interpretation of regional
+   ventilation difficult and error prone.
+One specific issue, is that 
+artefacts can be incorrectly placed (ie. movement of
+   the skin can appear as changes in the lung regions),
+   resulting in incorrect interpretations.
+Many other approaches to reconstruct EIT images have been
+proposed, incorporating many advances. Such approaches
+have not been widely used clinically and experimentally
+because there was a lack of a agreement on which
+approaches were best (and if they could be combined).
 
-To address this problem, a group of experts in EIT imaging
-algorithm and clinical applications has worked together to
-develop a ``best of breed'' EIT reconstruction algorithm
-for imaging of the lungs. This algorithm is named GREIT, 
-the Graz consensus Reconstruction algorithm for EIT (since
-preliminary discussions took place at the 2007 EIT conference
-in Graz, Austria). All developed algorithm, simulation
+To address this issue, we are developing a
+consensus linear reconstruction algorithm for lung EIT,
+called GREIT (Graz consensus Reconstruction algorithm for EIT),
+since early discussions took place at the 2007 ICEBI conference
+in Graz, Austria (ref). Our aim is to develop a standard which
+has broad agreement from experts in the mathematical,
+engineering, physiological, and clinical EIT communities.
+Such an approach is feasible because there is general
+consensus amongst experts in EIT image processing of
+the ``ingredients'' that should
+be part of a robust and high performance linear algorithm
+for 2D EIT of the lungs.
+This paper describes the unified approach to 
+linear image reconstruction developed for GREIT,
+and the tools and evaluation methodology for
+clinical and experimental testing of the algorithm.
+
+The current work is limited to the reconstruction algorithm.
+We do not propose calibration tests, data formats or phantoms, standards
+for image interpretation or EIT based lung parameters; 
+we do not feel there is sufficient experience yet to reach
+consensus in these areas.
+It is important to clarify that there is no financial
+goal to the development of this algorithm.
+All developed algorithms, software
 models and simulation and experimental test data used
-in this algorithm have been made available as part of
-the EIDORS distribution (Adler and Lionheart, 2006).
+in this algorithm have been
+made available under an open source license as part of
+the open source EIDORS distribution (Adler and Lionheart, 2006);
+this license permits
+royalty free use in both research and commercial applications.
 
-Consensus was developed as follows: 1) a specific limited
-set of goals were established, 2) experts were invited
-to participate in the project, 3) a set of simulation models
-and test criteria were established, 4) proposed algorithms
-were tested against the criteria, and 5) results were judged
-by the group to establish a consensus.
-The goals were to develop an algorithm that was:
-\begin{itemize}
-\item Designed for 16 electrode Sheffield-type EIT systems, using
+
+The goals identified for GREIT are for:
+\begin{list}{$\circ$} %{\textbullet}
+  {\leftmargin=1.0em \itemindent=-0.0em
+    \topsep=0.0\baselineskip
+    \itemsep=-0.4\baselineskip}
+\item
+ single and double ring electrode
+configurations with Sheffield-type EIT systems, using
       adjacent current injection and measurement.
-\item Uses electrodes placed in a single plane around the thorax.
-\item Linear: implemented as a matrix multiplication and suitable
-              for realtime imaging.
-\item Quantitative: given an input in transfer impedance ($\Omega$) units,
-                    the output is in impedivity change ($\Omega\cdot m$))
-\item Fixed parameters: any tunable parameters must have assigned
-                    values in the recommended algorithm.
-\item All algorithms, models and test data to be made available
-                    under an open source license which allows
-                    free commercial and non-commercial use.
-\item Reconstruction Matrices are to be developed for the
-      following shapes:
+\item
+ linear (real-time) reconstruction of a 2D conductivity
+change image, based on a 3D forward model
+\item
+ quantitative reconstructions:
+   given an input in transfer impedance ($\Omega$) units,
+                    the output is in impedivity change ($\Omega\cdot m$)
+\item
+ settings for all parameters:
+     any tunable parameters must have assigned
+     values in the recommended algorithm.
+\item
+ published reconstruction matrices for
+      a $32\times 32$ pixel array
+      for a single ring of $16$, $12$ and $8$ 
+      electrodes, for the shapes:
    a) neonate chests, 
-   b) adult chests, and 
+   b) adult chests (for perhaps several body shapes), and 
    c) cylindrical tank phantoms.
-\item Algorithms are tested against the following criteria:
-    a) quantitative output for all positions,
-    b) reconstructed position error (low and uniform),
-    c) resolution (small PSF, uniform, few artefacts),
-    d) good noise performance,
-    e) low sensitivity to electrode and boundary movement,
-    f) good performance on clinical and experimental data.
-\end{itemize}
-A notable limitation is that we only treat imaging in
-a single plane and do not consider 3D electrode placement or
-image reconstruction. These are important considerations, but
-do not yet have the level of consensus to establish a best
-practice document of this type.
+ For other shapes and electrode configurations,
+   reconstruction matrices may be calculated from the
+   provided source code.
+
+\end{list}
+These limitations represent our opinions on the limits
+to areas understood sufficiently well in the EIT community
+to reach consensus. We do not propose such limits are ideal;
+in fact, we activly encourage work to overcome them,
+such as planar placement of electrodes and the consequent 2D images. 
 
 \section{Methods}
 \subsection{Models}
@@ -166,8 +238,8 @@ the size of the electrodes.
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.4 \textwidth]{figs/forward_model_2.eps}
-  \includegraphics[width= 0.4 \textwidth]{figs/forward_model_3.eps}
+% \includegraphics[width= 0.4 \textwidth]{figs/forward_model_2.eps}
+% \includegraphics[width= 0.4 \textwidth]{figs/forward_model_3.eps}
 
 \caption{ \label{fig:fm2}
 {\em left:} FEM of the cylindrical phantom
@@ -258,7 +330,7 @@ All algorithms, models and test data have been make
 available at \verb+eidors3d.sf.net/GREIT+,
 under an open source license which allows
 free commercial and non-commercial use. Therefore,
-we licence the following aspects as follows:
+we license the following aspects as follows:
 
 {\em Algorithm and FEM models}:
    are licensed under the GNU LGPL (Free Software Foundation, 2007).
@@ -311,7 +383,7 @@ The {\em output} from the algorithm is:
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.2 \textwidth]{figs/reconstruction-detail.eps}
+% \includegraphics[width= 0.2 \textwidth]{figs/reconstruction-detail.eps}
 
 \caption{ \label{fig:reconst_detail}
 Diagram of $32\times 32$ rasterization of the output image. Black
