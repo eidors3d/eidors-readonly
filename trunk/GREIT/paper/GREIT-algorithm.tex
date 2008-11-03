@@ -4,9 +4,13 @@
 \usepackage{graphicx}
 \newcommand{\vB}{\mbox{$\mathbf{v}$}}
 \newcommand{\xB}{\mbox{$\mathbf{x}$}}
+\newcommand{\xH}{\mbox{$\mathbf{\hat x}$}}
 \newcommand{\yB}{\mbox{$\mathbf{y}$}}
-\newcommand{\JB}{\mbox{$\mathbf{J}$}}
-\newcommand{\RB}{\mbox{$\mathbf{J}$}}
+\newcommand{\wB}{\mbox{$\mathbf{w}$}}
+\newcommand{\AB}{\mbox{$\mathbf{A}$}}
+\newcommand{\BB}{\mbox{$\mathbf{B}$}}
+\newcommand{\WB}{\mbox{$\mathbf{W}$}}
+\newcommand{\RB}{\mbox{$\mathbf{R}$}}
 \newcommand{\MB}{\mbox{$\mathbf{M}$}}
 %\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
 \newcommand{\SG}{\mbox{${\boldmath \Sigma}$}}
@@ -170,6 +174,15 @@ This paper describes the unified approach to
 linear image reconstruction developed for GREIT,
 and the tools and evaluation methodology for
 clinical and experimental testing of the algorithm.
+The framework for the linear reconstruction algorithm
+consists of:
+1) detailed finite element models of a representative
+ adult and neonate thorax;
+2) consensus on the performance figures of merit for
+ EIT image reconstruction, which are:
+and
+3) A systematic approach to optimize a linear reconstruction
+ matrix to desired performance figures.
 
 The current work is limited to the reconstruction algorithm.
 We do not propose calibration tests, data formats or phantoms, standards
@@ -188,10 +201,7 @@ royalty free use in both research and commercial applications.
 
 
 The goals identified for GREIT are for:
-\begin{list}{$\circ$} %{\textbullet}
-  {\leftmargin=1.0em \itemindent=-0.0em
-    \topsep=0.0\baselineskip
-    \itemsep=-0.4\baselineskip}
+\begin{itemize}
 \item
  single and double ring electrode
 configurations with Sheffield-type EIT systems, using
@@ -218,16 +228,66 @@ change image, based on a 3D forward model
  For other shapes and electrode configurations,
    reconstruction matrices may be calculated from the
    provided source code.
+\end{itemize}
 
-\end{list}
 These limitations represent our opinions on the limits
 to areas understood sufficiently well in the EIT community
 to reach consensus. We do not propose such limits are ideal;
 in fact, we activly encourage work to overcome them,
 such as planar placement of electrodes and the consequent 2D images. 
 
-\section{Methods}
-\subsection{Models}
+\section{Methods: performance figures of merit}
+\label{sec:figmerit}
+
+In this section, we elaborate on a set of criteria which 
+characterize the performance of an ideal reconstruction
+algorithm. Clearly, there is an inherent tension between
+the measures, such that it is not possible to 
+simultaneously optimize all measures. Instead, we proceed
+as follows. After establishing the performance measures,
+we describe a unified methodology to calculate a reconstruction
+matrix which is an optimized compromize of criteria
+weighted by the consensus importance of each.  
+
+
+Each algorithm will be evaluated against the
+following criteria.
+
+\subsection{Amplitude Response}
+   \begin{itemize}
+   \item Output amplitude is correct ($\Omega \cdot m$)
+   \item the amplitude response is uniform for all radial positions.
+   \end{itemize}
+
+\subsection{Position Error}
+   \begin{itemize}
+   \item low average position error
+   \item uniform position error with radial position
+   \end{itemize}
+
+\subsection{ Resolution}
+   \begin{itemize}
+   \item small average PSF size
+   \item uniform PSF size with radial position
+   \item no (or very little) overshoot in the PSF
+  (overshoot is the negative ring around a target)
+   \item circular PSF
+   \end{itemize}
+
+\subsection{ Noise Performance}
+   \begin{itemize}
+   \item low average noise amplification
+   \end{itemize}
+
+\subsection{ Boundary shape and electrode sensitivity}
+   \begin{itemize}
+   \item low sensitivity to electrode movement
+   \item low sensitivity to boundary distortions
+         (with breathing and posture change)
+   \item low sensitivity to changes in electrode contact impedance
+   \end{itemize}
+
+\section{Methods: forward models}
 
 Finite element models (FEM) have been developed for three
 different geometries: a cylindrical phantom (useful for 
@@ -238,7 +298,8 @@ the size of the electrodes.
 
 \begin{figure}[bhtp]
 \begin{center}
-% \includegraphics[width= 0.4 \textwidth]{figs/forward_model_2.eps}
+  \includegraphics[width= 0.4 \textwidth]
+         {../../htdocs/tutorial/GREIT-evaluation/simulation_3d_test02a.png}
 % \includegraphics[width= 0.4 \textwidth]{figs/forward_model_3.eps}
 
 \caption{ \label{fig:fm2}
@@ -247,93 +308,247 @@ the size of the electrodes.
 }
 \end{center}
 \end{figure}
-\subsection{Algorithms}
-\subsection{Evaluation: model data}
 
-Each algorithm will be evaluated against the
-following criteria.
+Issues to consider for the forward modelling are:
+\begin{itemize}
+\item
+Electrodes placed at the intercostal space
+(as per discussion on electrode placement)
+\item
+Refinement of FEM mesh in electrode region
+\item
+Size of FEM in 50k elements is adequate
+\item
+3D FEM models are required
+\item
+Use of complete electrode model (ref)
+\item
+It is necessary to simulate targets at various
+\\ $-$ contrast levels
+\\ $-$ background lung conductivity levels
+\\ $-$ 3D (off plane) positioning
+\item
+\end{itemize}
 
-\subsubsection{Amplitude Response}
-   \begin{itemize}
-   \item Output amplitude is correct ($\Omega \cdot m$)
-   \item the amplitude response is uniform for all radial positions.
-   \end{itemize}
+Issues that have not been determined
+\begin{itemize}
+\item
+Is it necessary to have separate male / female models
+\item
+Is it necessary to have models for different patient sizes
+\item
+What levels of background lung conductivity should be included
+\end{itemize}
 
-\subsubsection{Position Error}
-   \begin{itemize}
-   \item low average position error
-   \item uniform position error with radial position
-   \end{itemize}
+\section{Methods: Reconstruction algorithm framework}
 
-\subsubsection{ Resolution}
-   \begin{itemize}
-   \item small average PSF size
-   \item uniform PSF size with radial position
-   \item no (or very little) overshoot in the PSF
-  (overshoot is the negative ring around a target)
-   \item regular shape (round or oval) PSF
-  (backprojection, with its streaks, does badly here)
-   \end{itemize}
+Given a set of input data $\yB_k$ ($M\times1$) which 
+represent:
+1) simulated conductivity change,
+2) noise,
+3) boundary movement,
+and
+4) conductivity change outside the plane of interest.
 
-\subsubsection{ Noise Performance}
-   \begin{itemize}
-   \item low average noise amplification
-   \end{itemize}
+We define a set of desired images $\xH_k$ ($N\times1$),
+and data weightings $\wB_k$ ($M\times1$), and an associated
+diagonal weighting matrix $WB_k$, such that 
+$\wB_k = diag(\WB_k)$.
 
-\subsubsection{ Boundary shape and electrode sensitivity}
-   \begin{itemize}
-   \item low sensitivity to electrode movement
-   \item low sensitivity to boundary distortions
-         (with breathing and posture change)
-   \item low sensitivity to changes in electrode contact impedance
-   \end{itemize}
+The reconstruction matrix $\RB$ ($N\times M$) is a linear
+map of measurements to image.
+Define an error $\epsilon$ which measures the fit
+of reconstructed images from each sample measurement to
+the desired values
+\begin{equation}
+\epsilon^2 =
+\sum_k \|\WB_k ( \xH_k - \RB \yB_k ) \|^p
+\end{equation}
+where $p$ is the error norm used; in this paper we use $p=2$
+as this allows a linear formulation for $\RB$. 
+
+{\em {\bf TODO}: add development here}
+
+The linear fit value of $\RB$ is thus
+\begin{equation}
+\RB\{:\} = \BB^t (\BB \BB^t)^{-1} \AB\{:\}
+\end{equation}
+where the notation $\{:\}$ represents column
+concatenation of a matrix, and
+\begin{equation}
+\AB = \sum_k \WB_k \xB_k \yB^t
+\end{equation}
+and $\BB$ is a vertical concatenation of $N$
+($M \times M$) blocks $\BB_k$ where
+\begin{equation}
+\BB_i = \sum_k [\wB_k]_i \xB_k \yB^t
+\end{equation}
 
 
-\subsection{Evaluation: experimental data}
 
 
- good performance on real clinical images.
-     (NB, we need to develop a small database of 
-          clinical images to do this)
+\section{Methods: Evaluation}
+
+Evalulation is performed in two stages. First algorithm performance
+is evaluated against the figures or merit in section
+\ref{sec:figmerit}.
+Next, we compare to a representative set of  clinical 
+and experimental data.
+
+\subsection{Performance figure or merit}
+
 
 \section{Results}
-\subsection{Model data}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.2 \textwidth]
+         {../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_1.png}
+  \includegraphics[width= 0.2 \textwidth]
+         {../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_2.png}
+  \includegraphics[width= 0.2 \textwidth]
+         {../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_4.png}
+\caption{ \label{fig:rimage}
+Reconstructed images. The conductivity target location is shown in green (the target is a circle, but shows as a small square in this image)
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
 \subsection{Experimental data}
-\subsection{Summary}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_11.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_21.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_41.png}
+\caption{ \label{fig:rimage}
+Noise Figure ({\em Want: small})                        
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_12.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_22.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_42.png}
+\caption{ \label{fig:rimage}
+Amplitude ({\em Want: uniform})
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_13.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_23.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_43.png}
+\caption{ \label{fig:rimage}
+Position Error ({\em Want: small, uniform})
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_14.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_24.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_44.png}
+\caption{ \label{fig:rimage}
+Point Spread Function ({\em Want: small, uniform })
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_15.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_25.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_45.png}
+\caption{ \label{fig:rimage}
+Shape Deformation ({\em Want: small, uniform})
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_16.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_26.png}
+  \includegraphics[width= 0.3 \textwidth]
+{../../htdocs/tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_46.png}
+\caption{ \label{fig:rimage}
+Ringing ({\em Want: small })
+{\em left:} Sheffield Backprojection,
+{\em center:} NOSER
+{\em right:} GREIT
+}
+\end{center}
+\end{figure}
+
 \section{Discusion}
 
-In summary, we have developed an algorithm (GREIT)
-for reconstruction of images of the thorax
-from 16 EIT electrodes placed in a single plane
-around the chest. This algorithm does not represent
-new ideas in image reconstruction, but rather represent
-a ``best of breed'' algorithm based on the experience
-of a group of experts in EIT algorithms and clinical
-applications.
+$-$ Summary
+\\
+$-$ Review of ``recipe'' for GREIT algorithm
+\\
+$-$ Recommended selection of parameters
+\\
+$-$ Discussion of remaining steps before 
+    GREIT can be released.
+    
 
-\subsection{Deliverables}
+
+\subsection{Deliverables \& Licensing}
 
 This paper makes the following contributions. All are
 available on the internet at \verb+eidors3d.sf.net/GREIT+:
+All algorithms, models and test data have been made available
+under an open source license which allows
+gratis commercial and non-commercial use.
 \begin{itemize}
 \item An algorithm (described in the section ??) for reconstruction
          of EIT images
 \item Software to implement this algorithm in the Matlab/GNU Octave
          language available as part of EIDORS (Adler and Lionheart, 2006)
-\item Reconstruction matrices for EIT image reconstruction for
-      adult and neonate chest shapes and for a cylindrical phantom.
-\end{itemize}
-
-
-\subsection{Licensing}
-All algorithms, models and test data have been make
-available at \verb+eidors3d.sf.net/GREIT+,
-under an open source license which allows
-free commercial and non-commercial use. Therefore,
-we license the following aspects as follows:
-
-{\em Algorithm and FEM models}:
-   are licensed under the GNU LGPL (Free Software Foundation, 2007).
+\\
+{\em License:}
+    GNU LGPL (Free Software Foundation, 2007).
    This license allows
    unrestricted use and allows the provided software to
    be provided with proprietary addons. The requirement is
@@ -342,56 +557,24 @@ we license the following aspects as follows:
    mean that it would be possible to review and understand any
    changes made to the software.
 
-{\em Reconstruction matrix, and the Experimental and Clinical Data}:
-   are licensed under the Creative Commons Attribution
+\item Reconstruction matrices for EIT image reconstruction for
+      adult and neonate chest shapes and for a cylindrical phantom.
+{\em License:} Creative Commons Attribution
+   License (Creative Commons, 2007). Users are permitted
+   to copy to copy, distribute, transmit and adapt the work,
+   under the conditions of attribution by citing this paper.
+
+\item Experimental and Clinical data provided for evaluation of GREIT
+{\em License:} Creative Commons Attribution
    License (Creative Commons, 2007). Users are permitted
    to copy to copy, distribute, transmit and adapt the work,
    under the conditions of attribution by citing the
    papers as indicated.
-
-\subsection{Implementation }
-This section describes the use of the reconstruction
-matrix to generate EIT images.
-The {\em input} data to the algorithm are:
-\begin{itemize}
-\item[]
-the model type (neonate, adult, cylindrical tank) 
-\item[]
-   -- one dimension parameter (the chest lateral diameter) 
-\item[]
-   -- $13\times 16=208$ measurements in transfer impedance units
-      ($\Omega = \frac{\mbox{Measured voltage}}
-                      {\mbox{Stimulation current}}$)
 \end{itemize}
 
-The {\em output} from the algorithm is:
+{\em Other items to discuss}
 \\
-   -- a pixelized image ($32\times 32$) of 
-      impedivity change ($\Omega \cdot m$)
-
-
-      This matrix consists of a mapping matrix $\MB$ (size $32\times 32$ of
-      integers) and a reconstruction matrix $\RB$ (size $104\times P$ of
-      floating point doubles).
-      Given a vector $\vB$ of difference voltage measurements, where
-      the $i^{\rm th}$ measurement on stimulation pattern $j$ is
-      $\vB_{i+16\times(j-1)}$. A 
-      The index in $\MB$ corresponding to each output pixel
-      (\Fref{fig:reconst_detail}) gives a row ind index into the
-      reconstruction matrix 
-???
-
-\begin{figure}[bhtp]
-\begin{center}
-% \includegraphics[width= 0.2 \textwidth]{figs/reconstruction-detail.eps}
-
-\caption{ \label{fig:reconst_detail}
-Diagram of $32\times 32$ rasterization of the output image. Black
-squares represent the output pixels and are numbered from top
-to bottom, left to right.
-}
-\end{center}
-\end{figure}
+$-$ use of $p<2$
 
 
 
