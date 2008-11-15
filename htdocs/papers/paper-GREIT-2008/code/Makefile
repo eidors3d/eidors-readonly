@@ -11,13 +11,13 @@ ifndef MATLAB
    CALLMATLAB= $(CMATLAB) $$fn $(CME)
 endif
 
-PRECALC= ng_tank.mat sim_targets.mat GREIT_Jacobian_cyl.mat
+PRECALC= ng_cyl_mdl.mat sim_targets.mat GREIT_Jacobian_cyl.mat
 FIGURES= simulation_3d_test02a.png
 
 all: sim_radmove_homog.mat
 
 # CREATE NETGEN TANK MODEL
-ng_tank.mat: simulation_3d_test00.m
+ng_tank.mat: make_ng_cyl_mdl.m
 	$(CALLMATLAB)
 
 # SIMULATE HOMOG MOVEMENTS

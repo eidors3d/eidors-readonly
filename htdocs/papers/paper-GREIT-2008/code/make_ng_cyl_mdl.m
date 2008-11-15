@@ -7,4 +7,4 @@ refine_electrodes= 0; finelevel=' ';
 %maxh= '-maxh=1.0'; % 124k elems
 fno_max=0;
 move_the_ball;
-save ng_tank fmdl
+save ng_cyl_mdl fmdl
