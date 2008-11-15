@@ -1,16 +1,14 @@
-function [img,map]= GREIT_Sheffield_backproj( ref_meas, reconst_meas )
+function GREIT_Sheffield_backproj( savename )
+% Reconstruct GREIT images using Sheffield Backprojection algorithm
+%
+% (C) 2008 Andy Adler. Licensed under GPL v2 or v3
+% Reconstruction Matrix is Licensed by University of Sheffield
+%   for academic use. See http://eidors3d.sf.net/data_contrib/
+% $Id$
 
    [RM,map] = calc_backproj_matrix;
-
-   % Expand ref_meas to the full size of reconst_meas
-   num_meas = size(reconst_meas,2);
-   ref_meas = ref_meas * ones(1,num_meas);
-   dv = ( reconst_meas - ref_meas ) ./ ref_meas; % CHANGE IS HERE:
-
-   % reconst image
-   ds = RM*dv;
-
-   img= reshape(ds, 32,32,num_meas);
+   normalize_flag = 1;
+   save(savename, 'RM','map','normalize_flag');
 
 function [RM,map] = calc_backproj_matrix;
    [x,y]= meshgrid(1:16,1:16); % Take a slice

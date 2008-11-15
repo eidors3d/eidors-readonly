@@ -24,6 +24,7 @@ FIGURES= $(FIGDIR)/fig_cyl_mdl_targets.png
 
 all: $(FIGURES)
 
+
 # CREATE NETGEN TANK MODEL
 ng_cyl_mdl.mat: make_ng_cyl_mdl.m
 	$(CALLMATLAB)
@@ -45,4 +46,21 @@ $(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m \
 
 # TEST DATA
 testdata.mat: make_testdata.m sim_targets.mat
+	$(CALLMATLABPARAMS)
+
+ALGS = Recon_GREIT_ndiff.mat \
+       Recon_NOSER_diff.mat \
+       Recon_NOSER_ndiff.mat \
+       Recon_Sheffield_backproj.mat \
+
+$(ALGS): $(PRECALC)
+
+$(ALGS): %.mat: %.m
+	$(CALLMATLABPARAMS)
+
+# EXAMPLE IMAGES:
+$(FIGDIR)/example_images: testdata.mat
+
+$(FIGDIR)/example_images: example_images.m $(ALGS)
+	touch $@
 	$(CALLMATLABPARAMS)

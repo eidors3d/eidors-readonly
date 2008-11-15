@@ -1,6 +1,9 @@
-% Demo algorithms $Id$
+function example_images( basename )
+% Example GREIT images $Id$
+
 
 algs= get_list_of_algs;
+load testdata.mat
 
 imb.calc_colours.ref_level = 0; % select colour output
 imb.calc_colours.greylev   = 0.01; % black backgnd
@@ -13,6 +16,7 @@ for i= 1:length(algs)
       imc= calc_colours(img, imb);
       imc(~map) = 1; % background
 
-      imwrite(imc,colormap, sprintf('demo_algs04_%d%d.png',i,k),'png')
+      imwrite(imc,colormap, sprintf([ ...
+        basename, '_%d%d.png'],i,k),'png')
     end
 end

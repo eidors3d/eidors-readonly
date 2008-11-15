@@ -1,27 +1,15 @@
-function [img,map]= GREIT_NOSER_ndiff( ref_meas, reconst_meas )
+function Recon_GREIT_ndiff( savename );
 % Reconstruct GREIT images using GREIT algorithm
 %
 % (C) 2008 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
-   [RM] = calc_RM(1, 5);
+   [RM] = calc_RM( 5);
+   normalize_flag = 1;
+   save(savename, 'RM','normalize_flag');
 
-   % Expand ref_meas to the full size of reconst_meas
-   num_meas = size(reconst_meas,2);
-   ref_meas = ref_meas * ones(1,num_meas);
-   dv = ( reconst_meas - ref_meas ) ./ ref_meas; % CHANGE IS HERE:
-
-   % reconst image
-   ds = RM*dv;
-
-   img= reshape(ds, 32,32,num_meas);
-
-function RM = calc_RM(data_file, noiselev)
-   if data_file==1
-      load sim_radmove_homog.mat
-   else
-      error('data_file not recognized');
-   end
+function RM = calc_RM( noiselev)
+   load sim_targets.mat
 
    D = desired_soln( xyzr_pt, 0.20 );
    Y = vi./(vh*ones(1,size(vi,2))) - 1; 

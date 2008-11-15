@@ -1,23 +1,15 @@
-function [img,map]= GREIT_NOSER_ndiff( ref_meas, reconst_meas )
+function Recon_NOSER_ndiff( savename );
 % Reconstruct GREIT images using NOSER algorithm
 %
 % (C) 2008 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
    [RM,map] = calc_NOSER_RM;
-
-   % Expand ref_meas to the full size of reconst_meas
-   num_meas = size(reconst_meas,2);
-   ref_meas = ref_meas * ones(1,num_meas);
-   dv = ( reconst_meas - ref_meas ) ./ ref_meas; % CHANGE IS HERE:
-
-   % reconst image
-   ds = RM*dv;
-
-   img= reshape(ds, 32,32,num_meas);
+   normalize_flag = 1;
+   save(savename, 'RM','normalize_flag');
 
 function [RM,map] = calc_NOSER_RM
-   [J,map,vbkgnd] = GREIT_Jacobian_cyl;
+   [J,map,vbkgnd] = calc_jacobian_mdl;
    J = J ./ (vbkgnd*ones(1,size(J,2))); % Normalized Jacobian
    RM = zeros(size(J'));
  
