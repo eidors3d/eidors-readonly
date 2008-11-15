@@ -5,7 +5,7 @@
 # Licensed under GNU GPL v2 or v3
 
 
-MATLAB := $(shell which matlab )
+MATLAB := $(shell which matlab 2>/dev/null)
 ifdef MATLAB
    MATLAB += -nodesktop
 else
@@ -46,8 +46,9 @@ jacobian_cyl.mat: calc_jacobian_mdl.m ng_cyl_mdl.mat
 	$(CALLMATLAB)
 
 # IMAGE OF SIMULATED TARGETS
-$(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m \
-               $(PRECALC)
+$(FIGDIR)/fig_cyl_mdl_targets.png: sim_targets.mat
+
+$(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m
 	$(CALLMATLABPARAMS)
 	$(TRIMFIG)
 
@@ -62,7 +63,8 @@ ALGS = Recon_GREIT_ndiff.mat \
        Recon_NOSER_ndiff.mat \
        Recon_Sheffield_backproj.mat
 
-$(ALGS): $(PRECALC)
+Recon_NOSER_diff.mat Recon_NOSER_ndiff.mat: jacobian_cyl.mat
+Recon_GREIT_diff.mat: sim_targets.mat
 
 $(ALGS): %.mat: %.m
 	$(CALLMATLABPARAMS)
