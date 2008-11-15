@@ -2,13 +2,33 @@
 # Usage set MATLAB 
 
 ifndef MATLAB
-   MATLAB = C:/progra~1/matlab6p5/bin/win32/matlab.exe -nosplash
+   MATLAB = C:/progra~1/matlab6p5/bin/win32/matlab.exe
    EIDORSTARTUP = run('../../../../eidors/startup.m')
-   MC1= $(EIDORSTARTUP);run('./
-   MC2= ');exit
-   
+
+   CM1= -r "$(EIDORSTARTUP);
+   CMATLAB= fn=`basename $< .m` && $(MATLAB) -nosplash $(CM1)
+   CME= ;exit"
+   CALLMATLAB= $(CMATLAB) $$fn $(CME)
 endif
+
+PRECALC= ng_tank.mat sim_targets.mat GREIT_Jacobian_cyl.mat
+FIGURES= simulation_3d_test02a.png
+
+all: sim_radmove_homog.mat
 
 # CREATE NETGEN TANK MODEL
 ng_tank.mat: simulation_3d_test00.m
-	$(MATLAB) -r "$(MC1)$<$(MC2)"
+	$(CALLMATLAB)
+
+# SIMULATE HOMOG MOVEMENTS
+sim_radmove_homog.mat: simulation_3d_test01.m ng_tank.mat
+	$(CALLMATLAB)
+
+# IMAGE OF SIMULATED TARGETS
+simulation_3d_test02a.png: simulation_3d_test02.m \
+               ng_tank.mat sim_radmove_homog.mat
+	$(CALLMATLAB)
+
+# CALCULATE JACOBIAN OF TANK
+GREIT_Jacobian_cyl.mat: GREIT_Jacobian_cyl.m ng_tank.mat
+	$(CALLMATLAB)
