@@ -1,5 +1,8 @@
 # Create Simulated data for GREIT evaluations
 # Usage set MATLAB 
+#
+# (C) Andy Adler 2008 $Id$
+# Licensed under GNU GPL v2 or v3
 
 ifndef MATLAB
    MATLAB = C:/progra~1/matlab6p5/bin/win32/matlab.exe
@@ -17,11 +20,11 @@ FIGURES= simulation_3d_test02a.png
 all: sim_radmove_homog.mat
 
 # CREATE NETGEN TANK MODEL
-ng_tank.mat: make_ng_cyl_mdl.m
+ng_cyl_mdl.mat: make_ng_cyl_mdl.m
 	$(CALLMATLAB)
 
 # SIMULATE HOMOG MOVEMENTS
-sim_radmove_homog.mat: simulation_3d_test01.m ng_tank.mat
+sim_targets.mat: sim_targets.m ng_cyl_mdl.mat
 	$(CALLMATLAB)
 
 # IMAGE OF SIMULATED TARGETS
