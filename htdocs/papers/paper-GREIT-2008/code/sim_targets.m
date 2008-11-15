@@ -1,3 +1,4 @@
+function sim_targets( savefile )
 % simulate radial movement $Id$
 
 params= [0.9,0.05,0.5,0.5]; %max_posn, targ_rad, z_0, z_t
@@ -10,7 +11,7 @@ fmdl.stimulation = stim_pat;
 %Change: mdl geometry at 90 deg; radius is 15
 xyzr_pt= xyzr_pt([2,1,3,4],:)/15;
 
-save sim_targets vh vi xyzr_pt
+save(savefile, 'vh','vi','xyzr_pt');
 
 return
 % OLD CODE FOR 2D Simulations

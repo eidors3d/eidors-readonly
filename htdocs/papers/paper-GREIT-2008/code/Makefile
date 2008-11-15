@@ -33,7 +33,7 @@ ng_cyl_mdl.mat: make_ng_cyl_mdl.m
 
 # SIMULATE HOMOG MOVEMENTS
 sim_targets.mat: sim_targets.m ng_cyl_mdl.mat
-	$(CALLMATLAB)
+	$(CALLMATLABPARAMS)
 
 
 # CALCULATE JACOBIAN OF TANK
