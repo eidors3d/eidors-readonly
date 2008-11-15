@@ -17,7 +17,7 @@ endif
 PRECALC= ng_cyl_mdl.mat sim_targets.mat GREIT_Jacobian_cyl.mat
 FIGURES= simulation_3d_test02a.png
 
-all: sim_radmove_homog.mat
+all: sim_targets.mat
 
 # CREATE NETGEN TANK MODEL
 ng_cyl_mdl.mat: make_ng_cyl_mdl.m
