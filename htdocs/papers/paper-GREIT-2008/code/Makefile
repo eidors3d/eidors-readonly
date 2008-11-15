@@ -12,15 +12,17 @@ endif
    CM1= -r "$(EIDORSTARTUP);
    CMATLAB= fn=`basename $< .m` && $(MATLAB) -nosplash $(CM1)
    CME= ;exit"
-   CALLMATLAB=       $(CMATLAB) $$fn $(CME)
-   CALLMATLABPARAMS= $(CMATLAB) $$fn('$@') $(CME)
+   CALLMATLAB=        $(CMATLAB) $$fn $(CME)
+   CALLMATLABPARAMS = $(CMATLAB) $$fn('$@') $(CME)
+   CALLMATLABPARAMS2= $(CMATLAB) $$fn('$@','$^') $(CME)
 #TRIMFIG = convert -trim $@ PNG8:$@
 
 
 FIGDIR = ../figures
 
 PRECALC= ng_cyl_mdl.mat sim_targets.mat jacobian_cyl.mat
-FIGURES= $(FIGDIR)/fig_cyl_mdl_targets.png
+FIGURES= $(FIGDIR)/fig_cyl_mdl_targets.png \
+         $(FIGDIR)/example_images
 
 all: $(FIGURES)
 
@@ -45,13 +47,15 @@ $(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m \
 	$(TRIMFIG)
 
 # TEST DATA
-testdata.mat: make_testdata.m sim_targets.mat
+testdata.mat: sim_targets.mat
+
+testdata.mat: make_testdata.m
 	$(CALLMATLABPARAMS)
 
 ALGS = Recon_GREIT_ndiff.mat \
        Recon_NOSER_diff.mat \
        Recon_NOSER_ndiff.mat \
-       Recon_Sheffield_backproj.mat \
+       Recon_Sheffield_backproj.mat
 
 $(ALGS): $(PRECALC)
 
@@ -59,8 +63,8 @@ $(ALGS): %.mat: %.m
 	$(CALLMATLABPARAMS)
 
 # EXAMPLE IMAGES:
-$(FIGDIR)/example_images: testdata.mat
+# $(FIGDIR)/example_images: testdata.mat
 
 $(FIGDIR)/example_images: example_images.m $(ALGS)
 	touch $@
-	$(CALLMATLABPARAMS)
+	$(CALLMATLABPARAMS2)

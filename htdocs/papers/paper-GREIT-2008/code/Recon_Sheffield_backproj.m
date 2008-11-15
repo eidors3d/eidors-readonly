@@ -8,7 +8,7 @@ function GREIT_Sheffield_backproj( savename )
 
    [RM,map] = calc_backproj_matrix;
    normalize_flag = 1;
-   save(savename, 'RM','map','normalize_flag');
+   save(savename, 'RM','normalize_flag');
 
 function [RM,map] = calc_backproj_matrix;
    [x,y]= meshgrid(1:16,1:16); % Take a slice
