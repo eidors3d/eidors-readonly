@@ -14,10 +14,10 @@ ifndef MATLAB
    CALLMATLAB= $(CMATLAB) $$fn $(CME)
 endif
 
-PRECALC= ng_cyl_mdl.mat sim_targets.mat GREIT_Jacobian_cyl.mat
-FIGURES= simulation_3d_test02a.png
+PRECALC= ng_cyl_mdl.mat sim_targets.mat jacobian_cyl.mat
+FIGURES= fig_cyl_mdl_targets.png
 
-all: sim_targets.mat
+all: $(FIGURES)
 
 # CREATE NETGEN TANK MODEL
 ng_cyl_mdl.mat: make_ng_cyl_mdl.m
@@ -27,11 +27,12 @@ ng_cyl_mdl.mat: make_ng_cyl_mdl.m
 sim_targets.mat: sim_targets.m ng_cyl_mdl.mat
 	$(CALLMATLAB)
 
-# IMAGE OF SIMULATED TARGETS
-simulation_3d_test02a.png: simulation_3d_test02.m \
-               ng_tank.mat sim_radmove_homog.mat
-	$(CALLMATLAB)
 
 # CALCULATE JACOBIAN OF TANK
-GREIT_Jacobian_cyl.mat: GREIT_Jacobian_cyl.m ng_tank.mat
+jacobian_cyl.mat: calc_jacobian_mdl.m ng_cyl_mdl.mat
+	$(CALLMATLAB)
+
+# IMAGE OF SIMULATED TARGETS
+fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m \
+               $(PRECALC)
 	$(CALLMATLAB)
