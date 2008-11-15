@@ -1,4 +1,7 @@
 % Show simulated positions $Id$
+load ng_mdl
+load sim_radmove_homog
+
 show_fem(fmdl)
 crop_model(gca, inline('x-z<-15','x','y','z'))
       view(-90,20)
