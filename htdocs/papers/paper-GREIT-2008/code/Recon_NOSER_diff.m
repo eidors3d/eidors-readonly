@@ -1,23 +1,15 @@
-function [img,map]= GREIT_NOSER_diff( ref_meas, reconst_meas )
-% Reconstruct GREIT images using NOSER algorithm
+function Recon_NOSER_diff( savename );
+% Reconstruct GREIT images using NOSER algorithm (difference)
 %
 % (C) 2008 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
    [RM,map] = calc_NOSER_RM;
-
-   % Expand ref_meas to the full size of reconst_meas
-   num_meas = size(reconst_meas,2);
-   ref_meas = ref_meas * ones(1,num_meas);
-   dv =  reconst_meas - ref_meas;
-
-   % reconst image
-   ds = RM*dv;
-
-   img= reshape(ds, 32,32,num_meas);
+   normalize_flag = 0;
+   save(savename, 'RM','normalize_flag');
 
 function [RM,map] = calc_NOSER_RM
-   [J,map] = GREIT_Jacobian_cyl;
+   [J,map] = calc_jacobian_mdl;
    RM = zeros(size(J'));
  
    % Remove space outside FEM model
