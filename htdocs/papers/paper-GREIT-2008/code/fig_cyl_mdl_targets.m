@@ -1,3 +1,4 @@
+function fig_cyl_mdl_targets( figname )
 % Show simulated positions $Id$
 load ng_cyl_mdl
 load sim_targets
@@ -17,4 +18,4 @@ for i=1:1:size(xyzr_pt,2);
 end
 hold off
 
-print -dpng -r100 model_and_target_image.png
+print('-dpng','-r100',figname);
