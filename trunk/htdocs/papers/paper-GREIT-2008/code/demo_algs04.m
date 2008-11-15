@@ -8,7 +8,7 @@ imb.calc_colours.backgnd   = [.5,.5,.5]; %grey
 
 for i= 1:length(algs)
    for k= 1:4
-      [img,map] = feval(algs{i}, v(k).vh, v(k).vi );
+      [img,map] = feval(algs{i}, test_v(k).vh, test_v(k).vi );
 
       imc= calc_colours(img, imb);
       imc(~map) = 1; % background

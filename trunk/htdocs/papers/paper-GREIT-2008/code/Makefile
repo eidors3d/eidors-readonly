@@ -8,19 +8,12 @@ ifndef MATLAB
    MATLAB = C:/progra~1/matlab6p5/bin/win32/matlab.exe
 endif
    EIDORSTARTUP = run('../../../../eidors/startup.m')
-   ALGSLIST = algs = { \
-          'GREIT_Sheffield_backproj', \
-          'GREIT_NOSER_ndiff', \
-          'GREIT_NOSER_diff', \
-          'GREIT_test_ndiff', \
-         };
 
    CM1= -r "$(EIDORSTARTUP);
    CMATLAB= fn=`basename $< .m` && $(MATLAB) -nosplash $(CM1)
    CME= ;exit"
    CALLMATLAB=       $(CMATLAB) $$fn $(CME)
    CALLMATLABPARAMS= $(CMATLAB) $$fn('$@') $(CME)
-   CALLMATLABALGS=   $(CMATLAB) $(ALGSLIST) $$fn $(CME)
 #TRIMFIG = convert -trim $@ PNG8:$@
 
 
