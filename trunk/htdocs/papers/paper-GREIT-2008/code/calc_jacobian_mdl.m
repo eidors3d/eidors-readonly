@@ -6,26 +6,19 @@ function [J,map,vbkgnd] = GREIT_Jacobian_cyl;
 % $Id$
 
 if exist('GREIT_Jacobian_cyl.mat','file');
-   load GREIT_Jacobian_cyl.mat J map vbkgnd
+   load jacobian_cyl.mat J map vbkgnd
 else
    [J,vbkgnd,map] = Jacobian_calc;
-   save GREIT_Jacobian_cyl.mat J map vbkgnd
+   save jacobian_cyl.mat J map vbkgnd
 end
 
 
 function [J,vbkgnd,map] = Jacobian_calc;
-use_3d_model = 1;
-if use_3d_model % This 3D model has some problems
-%  load ng_mdl_16x1_fine;  fmdl= ng_mdl_16x1_fine;
-   load ng_tank1_0; 
+   load ng_cyl_mdl.mat; 
    fmdl.solve =    @aa_fwd_solve;
    fmdl.jacobian = @aa_calc_jacobian;
    fmdl.system_mat=@aa_calc_system_mat;
    fmdl.elems = double(fmdl.elems);
-else
-   imdl = mk_common_model('f2d3c',16); fmdl= imdl.fwd_model;
-   fmdl.nodes = fmdl.nodes(:,[2,1]);
-end
 
    fmdl.nodes(:,1) = -fmdl.nodes(:,1); % yvec is reversed because image yaxis is reversed
 
@@ -36,12 +29,8 @@ end
    yvec= linspace( xyzmin(2), xyzmax(2), pixel_grid+1);
 
    % CALCULATE MODEL CORRESPONDENCES
-if use_3d_model
    zvec= [0.6*xyzmin(3)+0.4*xyzmax(3), 0.4*xyzmin(3)+0.6*xyzmax(3)];
    [rmdl,c2f] = mk_grid_model(fmdl, xvec, yvec, zvec);
-else
-   [rmdl,c2f] = mk_grid_model(fmdl, xvec, yvec);
-end
 
    img= eidors_obj('image','GREIT-ng_mdl');
    img.fwd_model= fmdl;
