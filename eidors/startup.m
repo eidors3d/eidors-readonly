@@ -65,14 +65,13 @@ calc_colours('clim',[]);             % no colour cropping
 eidors_cache('cache_size', 100e6 );
 eidors_cache('boost_priority', 0 ); % set default priority
 
-eidors_msg('Completed setting up of EIDORS Version %s', ...
-    eidors_obj('eidors_version'),1);
+eidors_msg('Complete EIDORS (Ver: %s)', eidors_obj('eidors_version'),1);
 eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
 eidors_msg('Parameter: mapped_colour=%d',calc_colours('mapped_colour'),1);
 if calc_colours('greylev')>=0
    eidors_msg('Default background colour: black');
 else
-   eidors_msg('Default background colour: write');
+   eidors_msg('Default background colour: white');
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
