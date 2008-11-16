@@ -1,6 +1,6 @@
 function example_images( basename, alg_names )
 % Example GREIT images $Id$
-[s_algs,f_algs]= regexp(alg_names,'(\S+)')
+[s_algs,f_algs]= regexp(alg_names,'(\S+)');
 
 load testdata.mat
 

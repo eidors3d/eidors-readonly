@@ -39,7 +39,7 @@ function sim_targets( savefile )
 
    vi = vh*ones(1,n_pts) + J;
 
-   xyzr_pt= xyzr_pt([2,1,3,4],:)/radius;
+   xyzr_pt= diag([-1,1,1,1])*xyzr_pt([2,1,3,4],:)/radius;
    save(savefile, 'vh','vi','xyzr_pt');
    return
 
