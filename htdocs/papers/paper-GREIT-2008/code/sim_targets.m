@@ -4,6 +4,44 @@ function sim_targets( savefile )
    load ng_cyl_mdl.mat
    stim_pat = mk_stim_patterns(16,1,'{ad}','{ad}', {'no_meas_current'}, 1);
    fmdl.stimulation = stim_pat;
+   fmdl.elems= double(fmdl.elems);
+
+   imdl= eidors_obj('inv_model','','fwd_model',fmdl);
+   imdl.jacobian_bkgnd.value = 1;
+   img =  calc_jacobian_bkgnd( imdl );
+   vh= fwd_solve( img );
+   vh= vh.meas;
+
+   mdl_pts = interp_mesh( fmdl, 2); % 10 per elem
+   x= mdl_pts(:,1,:);
+   y= mdl_pts(:,2,:);
+   z= mdl_pts(:,3,:);
+
+   radius= 0.5*( max(fmdl.nodes(:,1))- min(fmdl.nodes(:,1)) );
+   zt    =       max(fmdl.nodes(:,3));
+   z0    =       min(fmdl.nodes(:,3));
+   rp    = 0.1*radius;
+   n_pts = 800;
+   c2f    = sparse(size(fmdl.elems,1),n_pts);
+   xyzr_pt= zeros(4,n_pts);
+
+   j=1;
+   for f_frac = linspace(0,1,n_pts);
+      [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);
+      xyzr_pt(:,j) = [xp;yp;zp;rp];
+      ff=  (x-xp).^2 + (y-yp).^2 + (z-zp).^2 <= rp^2;
+   
+      c2f(:,j) =  mean(ff,3); j=j+1;
+   end
+
+   fmdl.coarse2fine = c2f;
+   J= calc_jacobian( fmdl, img);
+
+   vi = vh*ones(1,n_pts) + J;
+
+   save(savefile, 'vh','vi','xyzr_pt');
+   return
+
 
    params= [0.9,0.05,0.5,0.5]; %max_posn, targ_rad, z_0, z_t
 
@@ -16,11 +54,14 @@ function sim_targets( savefile )
 
    save(savefile, 'vh','vi','xyzr_pt');
 
+function vh= homog_sim( fmdl );
+
+
 function [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);
-   lim = (2*radius*(1-0.05-0.02))^2;
+   lim = (radius*(1-0.05-0.02))^2;
    while 1
-     xp = 2*radius*(rand(1)-0.5);
-     yp = 2*radius*(rand(1)-0.5);
+     xp = radius*(rand(1)-0.5);
+     yp = radius*(rand(1)-0.5);
      if xp^2 + yp^2 < lim; break;end
    end
    zp = mean([zt,z0]);
