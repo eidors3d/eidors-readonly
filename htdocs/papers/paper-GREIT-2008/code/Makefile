@@ -52,10 +52,11 @@ $(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m
 	$(CALLMATLABPARAMS)
 	$(TRIMFIG)
 
-# TEST DATA
-testdata.mat: sim_targets.mat
+if_data_2003.zip:
+	wget http://eidors3d.sf.net/data_contrib/if-peep-acute-lung-injury/if_data_2003.zip
 
-testdata.mat: make_testdata.m
+testdata.mat: make_testdata.m if_data_2003.zip
+	unzip -o if_data_2003.zip p1130107.get
 	$(CALLMATLABPARAMS)
 
 ALGS = Recon_GREIT_ndiff.mat \
@@ -70,7 +71,7 @@ $(ALGS): %.mat: %.m
 	$(CALLMATLABPARAMS)
 
 # EXAMPLE IMAGES:
-# $(FIGDIR)/example_images: testdata.mat
+$(FIGDIR)/example_images: testdata.mat
 
 $(FIGDIR)/example_images: example_images.m $(ALGS)
 	touch $@
