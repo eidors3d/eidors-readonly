@@ -52,11 +52,17 @@ $(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m
 	$(CALLMATLABPARAMS)
 	$(TRIMFIG)
 
-if_data_2003.zip:
-	wget http://eidors3d.sf.net/data_contrib/if-peep-acute-lung-injury/if_data_2003.zip
+EXPDATA = p1130107.get 1-control.RAW 1-injury.RAW
 
-testdata.mat: make_testdata.m if_data_2003.zip
-	unzip -o if_data_2003.zip p1130107.get
+p1130107.get:
+	wget http://eidors3d.sf.net/data_contrib/if-peep-acute-lung-injury/if_data_2003.zip
+	unzip if_data_2003.zip p1130107.get
+
+1-control.RAW 1-injury.RAW:
+	wget http://eidors3d.sf.net/data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.zip
+	unzip if-experimental-lung-injury.zip 1-control.RAW 1-injury.RAW
+
+testdata.mat: make_testdata.m $(EXPDATA)
 	$(CALLMATLABPARAMS)
 
 ALGS = Recon_GREIT_ndiff.mat \
