@@ -39,6 +39,7 @@ function sim_targets( savefile )
 
    vi = vh*ones(1,n_pts) + J;
 
+   xyzr_pt= xyzr_pt([2,1,3,4],:)/radius;
    save(savefile, 'vh','vi','xyzr_pt');
    return
 
@@ -50,7 +51,6 @@ function sim_targets( savefile )
 %        @simulation_radmove);
 
    %Change: mdl geometry at 90 deg; radius is 15
-   xyzr_pt= xyzr_pt([2,1,3,4],:)/15;
 
    save(savefile, 'vh','vi','xyzr_pt');
 
@@ -60,8 +60,8 @@ function vh= homog_sim( fmdl );
 function [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);
    lim = (radius*(1-0.05-0.02))^2;
    while 1
-     xp = radius*(rand(1)-0.5);
-     yp = radius*(rand(1)-0.5);
+     xp = radius*2*(rand(1)-0.5);
+     yp = radius*2*(rand(1)-0.5);
      if xp^2 + yp^2 < lim; break;end
    end
    zp = mean([zt,z0]);
