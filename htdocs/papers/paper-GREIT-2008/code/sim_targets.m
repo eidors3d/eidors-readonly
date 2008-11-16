@@ -58,13 +58,13 @@ function vh= homog_sim( fmdl );
 
 
 function [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);
-   lim = (radius*(1-0.05-0.02))^2;
+   lim = (radius*(1-0.05-0.05))^2;
    while 1
      xp = radius*2*(rand(1)-0.5);
      yp = radius*2*(rand(1)-0.5);
      if xp^2 + yp^2 < lim; break;end
    end
-   zp = mean([zt,z0]);
+   zp = mean([zt,z0]) + 0.05*std([zt,z0])*randn(1);
 
 function [xp,yp,zp]= simulation_radmove(f_frac, radius, z0,zt);
    rp= f_frac*radius; 
@@ -73,9 +73,3 @@ function [xp,yp,zp]= simulation_radmove(f_frac, radius, z0,zt);
    yp= rp * sin(cv);
    zp = mean([zt,z0]);
 
-return
-% OLD CODE FOR 2D Simulations
-   imdl = mk_common_model('f2d3c',16); fmdl= imdl.fwd_model;
-   fmdl.stimulation = stim_pat;
-   [vh,vi,xyzr_pt]= simulate_2d_movement(200, fmdl, params, @simulation_radmove);
-   xyzr_pt = [-1,0,0;0,1,0;0,0,0;0,0,1]*xyzr_pt;
