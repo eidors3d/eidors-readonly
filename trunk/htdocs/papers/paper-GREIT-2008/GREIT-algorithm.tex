@@ -20,8 +20,8 @@
 \newcommand{\VB}{\mbox{$\mathbf{V}$}}
 \newcommand{\WB}{\mbox{$\mathbf{W}$}}
 %\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
-\newcommand{\SG}{\mbox{${\boldmath \Sigma}$}}
-\newcommand{\sG}{\mbox{${\boldmath \sigma}$}}
+\newcommand{\SG}{\mbox{${\mathbf \Sigma}$}}
+\newcommand{\sG}{\mbox{${\mathbf \sigma}$}}
 \newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
 \newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
 \newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
@@ -402,23 +402,8 @@ Cheney et al 1990).
 They allow use of sophisticated regularized models
 of the EIT inverse problem, are able to represent this
 solution as a linear reconstruction matrix, which can then allow
-rapid, real-time imaging. The GN inverse problem seeks to
-calculate a solution, $\xH$, to the EIT inverse problem
-expressed as the minimum of a sum of quadratic norms
-\begin{equation}\label{IM}
- \|\yB-\JB\xH\|_{\Sigma_n^{-1}}^2 +
- \|\xB-\xB^\circ\|_{\Sigma_x^{-1}}^2
-\end{equation}
-where $\xB^\circ$ represents the expected value of element
-conductivity changes, which is zero for  difference EIT.
-$\SG_n\in\mathbb{R}^{n_M\times n_M}$ is
- the covariance matrix of the measurement noise $\nB$. Since
-$\nB$ is uncorrelated, $\SG_n$ is a diagonal matrix with
-$[\SG_n]_{i,i}=\sigma_i^2$, where $\sigma_i^2$ is the noise variance at
-measurement $i$. $\SG_x\in\mathbb{R}^{n_N\times
-n_N}$ is the expected image covariance.
-
- For small variations around the reference
+rapid, real-time imaging.
+For small variations around the reference
 conductivity $\sG_1$, the relationship between $\xB$ and $\yB$ can
 be linearized (giving the difference EIT forward model):
 \begin{equation}\label{FM}
@@ -434,107 +419,115 @@ $\JB_{ij}=\left.
           \right|_{\sG_1}$,
 and depends on the FEM, current injection patterns, the reference
 conductivity, and the electrode models. This system is
-underdetermined since $n_N > n_M$. This problem is commonly solved
-using regularization techniques (eg. Cheney et al 1990,
- Adler and Lionheart, 2006) in order to
- calculate a conductivity change
- estimate, $\xH$, which is both
+underdetermined since $n_N > n_M$. 
+Regularization techniques are requied
+in order to calculate a conductivity change
+estimate, $\xH$, which is both
 faithful to the measurements, $\yB$, and to
 {\em a priori} constraints on a ``reasonable'' image.
 
+The GN inverse problem seeks to
+calculate a solution, $\xH$, to the EIT inverse problem
+in terms of a generalized Tikhonov regularization 
+expressed as the minimum of a sum of quadratic norms
+\begin{equation}\label{IM}
+ \|\yB-\JB\xH\|_{\Sigma_n^{-1}}^2 +
+ \|\xB-\xB^\circ\|_{\Sigma_x^{-1}}^2
+\end{equation}
+where $\xB^\circ$ represents the expected value of element
+conductivity changes, which is zero for  difference EIT.
+$\SG_n\in\mathbb{R}^{n_M\times n_M}$ is
+ the covariance matrix of the measurement noise $\nB$. Since
+$\nB$ is uncorrelated, $\SG_n$ is a diagonal matrix with
+$[\SG_n]_{i,i}=\sigma_i^2$, where $\sigma_i^2$ is the noise variance at
+measurement $i$. $\SG_x\in\mathbb{R}^{n_N\times
+n_N}$ is the expected image covariance.
 
-Typically,  $\SG_n$ and $\SG_x$ are not calculated directly.
-Instead, their inverses,
- $\WB = \sigma_n^2\SG_n^{-1}$
+It is worth noting that many other regularized approaches
+to EIT have been used, such as the
+TSVD (truncated singular valud decomposition, REFS),
+and
+SIRT (simultaneous iterative reconstruction technique, REFS).
+All linear approaches are structurally similar; however
+the formulation in (\ref{IM}) is more general
+as it explicitly exposes the selection of image reconstruction
+parameters.
+
+
+
+Typically,  covariance matrices
+$\SG_n$ and $\SG_x$ are not calculated directly, but
+are modelled heuristically from {\em a priori}
+considerations as 
+ $\VB = \sigma_n^{2}\SG_n$
  and
- $\RB = \sigma_x^2\SG_x^{-1}$,
-are heuristically determined from {\em a priori} considerations.
-Here $\sigma_n$ is the average measurement noise amplitude and
+ $\PB = \sigma_x^{2}\SG_x$,
+where $\sigma_n$ is the average measurement noise amplitude and
 $\sigma_x$ is the {\em a priori} amplitude of conductivity change.
-$\WB$ models the measurement accuracy. For uncorrelated noise,
+$\VB$ models the measurement accuracy. For uncorrelated noise,
 each diagonal element is proportional to the signal to noise
 ratio. For difference EIT with identical channels, $\WB=\IB$. The
-regularization matrix $\RB$ may be understood to model the
-``unlikelihood" of image elements.
+regularization matrix $\VB$ may be understood to model the
+likelihood of image elements and their interactions.
 
 By solving (\ref{IM}), a linearized, one-step inverse solution is
 obtained as
-\begin{equation}\label{LMS_solution}
-\xH=\left(\JB^T\frac{1}{\sigma_n^2}\WB\JB+\frac{1}{\sigma_x^2}\RB\right)^{-1}\JB^T\frac{1}{\sigma_n^2}\WB\yB
-\end{equation}
-We define the hyperparameter $\lambda=\sigma_n/\sigma_x$,
- and rewrite (\ref{LMS_solution})
-as
 \begin{equation}\label{GN_solution}
-\xH=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}\JB^T\WB\yB=\BB\yB
+\xH=\left(
+    \JB^T \frac{\VB^{-1}}{\sigma_n^2} \JB 
+     +
+    \frac{\PB^{-1}}{\sigma_x^2} 
+    \right)^{-1}
+    \JB^T \frac{\VB^{-1}}{\sigma_n^2}\yB
+   =\left(
+    \JB^T \VB^{-1} \JB + \lambda^2 \PB^{-1}
+    \right)^{-1}
+    \JB^T \VB^{-1} \yB
 \end{equation}
-where $\BB=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}\JB^T\WB$
-is the linear, one-step inverse.
-The regularization hyperparameter $\lambda$
+where parameter  $\lambda=\sigma_n/\sigma_x$ is
+often called the ``regularization hyperparameter'' and
 controls the trade-off
 between resolution and noise attenuation in the reconstructed
 image.
+The matrix,
+$\RB=\left(\JB^T\BB^{-1}\JB+\lambda^2\PB^{-1}\right)^{-1}\JB^T\VB^{-1}$
+is the linear, one-step inverse.
+In (\ref{GN_solution}), the term in the inverse is of size
+$n_N\times n_N$. To save computational time, and improve inverse
+accuracy and stability, matrix $\RB$ may be rewritten using
+using the {\em data form}, or {\em Wiener filtering form} as:
+\begin{equation}\label{opti_sol}
+ \RB =\PB\JB^T
+    \left(
+       \JB\PB\JB^T+\lambda^2\VB
+   \right)^{-1}
+\end{equation}
+Using (\ref{opti_sol}), the size of the term in the inverse is
+reduced to $n_M\times n_M$.
 
 If image elements are assumed to be independent with identical
-expected magnitude, $\RB$ becomes an identity matrix $\IB$ and
+expected magnitude, $\PB$ becomes an identity matrix $\IB$ and
 (\ref{GN_solution}) uses zeroth-order Tikhonov regularization. For
 EIT, such solutions tend to push reconstructed noise toward the
 boundary, since the measured data are much more sensitive to
-boundary image elements. Instead, $\RB$ may be scaled with the
-sensitivity of each element, so that each diagonal element $i$ of
-$\RB$ is $\left[ \RB \right]_{i,i} = \left[ \JB^T \JB
+boundary image elements. Instead, $\PB$ may be scaled with the
+sensitivity of each element, so that each diagonal element $i$ 
+$[\PB^{-1}]_{i,i} = \left[ \JB^T \JB
 \right]_{i,i}^p$. This is the NOSER prior of Cheney et al (1990)
 for an exponent $p=1$. Many other prior matrices have been
 proposed: to model image smoothness as a penalty for non-smooth
-image regions, $\RB$ may be set to the discrete Laplacian filter
-(Vauhkonen, 1998b) or a discrete high pass Gaussian filter (Adler
-and Guardo, 1996).
+image regions, $\PB$ may be set to the discrete Laplacian filter
+(Vauhkonen, 1998b), a discrete high pass Gaussian filter (Adler
+and Guardo, 1996), or based on variance uniformization
+constraints (Cohen-Bacrie et al 1997).
 
 In this paper, the NOSER prior is used for calculating the matrix
-$\RB$ with $p=0.5$ in all tested algorithms, except for the Kalman filtering.
-Because it is diagonal, $\RB$ can be
+$\PB$ with $p=0.5$.
+Because it is diagonal, $\PB$ can be
 inverted without numerical difficulties. The choice of exponent is
 a heuristic compromise between the pushing noise to the boundary
 ($p=0$) or to the centre ($p=1$).
 
-In (\ref{GN_solution}), the term in the inverse is of size
-$n_N\times n_N$. To save computational time, and improve inverse
-accuracy and stability, we want to decrease the size of the matrix
-to be inverted.  Thus, we rewrite the matrix $\BB$ using the {\em
-data form} as:
-\begin{eqnarray}\label{opti_sol}
-=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}\JB^T\WB
-\left[
-    \left(
-      \JB\frac{1}{\lambda^2}\PB\JB^T+\VB
-   \right)
-    \left(
-      \JB\frac{1}{\lambda^2}\PB\JB^T+\VB
-   \right)^{-1}
-\right]   \nonumber\\
-=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}
-    \left(
-       \JB^T\WB\JB+\lambda^2\RB
-   \right)
-    \left(
-       \frac{1}{\lambda^2}\PB\JB^T
-   \right)
-    \left(
-       \JB\frac{1}{\lambda^2}\PB\JB^T+\VB
-   \right)^{-1}    \nonumber\\
-=\PB\JB^T
-    \left(
-       \JB\PB\JB^T+\lambda^2\VB
-   \right)^{-1}
-\end{eqnarray}
-where $\PB=\RB^{-1}=\frac{1}{\sigma_x^2}\SG_x$
-  and $\VB=\WB^{-1}=\frac{1}{\sigma_n^2}\SG_n$.
-In practice,
-$\PB$ and $\VB$ are modelled directly from the system covariances,
-rather than the inverse of $\RB$ and $\WB$.  Using
-(\ref{opti_sol}), the size of the term in the inverse is reduced
-to $n_M\times n_M$. This is especially significant for 3D EIT
-models and for the temporal inverse which we introduce below.
 
 \subsection{GREIT image reconstruction approach}
 
@@ -600,11 +593,11 @@ and experimental data.
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.2 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.2 \textwidth, bb=0 0 32 32]
          {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_1.png}
-  \includegraphics[width= 0.2 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.2 \textwidth, bb=0 0 32 32]
          {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_2.png}
-  \includegraphics[width= 0.2 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.2 \textwidth, bb=0 0 32 32]
          {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_4.png}
 \caption{ \label{fig:rimage}
 Reconstructed images. The conductivity target location is shown in green (the target is a circle, but shows as a small square in this image)
@@ -824,7 +817,16 @@ Brown B H and Seagar A D 1987
 \item[]
 Cheney M, Isaacson D, Newell J C, Simske S and Goble J C 1990
 NOSER: an algorithm for solving the inverse conductivity problem
-{\em Int.J.Imaging Syst.Technol.} {\bf 2} 66--75
+{\em Int.J.Imaging Syst.Technol.} 
+2 66--75
+
+\item[]
+Cohen-Bacrie C  Goussard Y and Guardo R
+1997
+Regularized Re construction in Electrical
+Impedance Tomography Using a Variance
+Uniformization Constraint 
+{\em IEEE Trans. Med. Imag.} 16 562-571
 
 \item[]
 Creative Commons/Science Commons 2007
@@ -843,6 +845,10 @@ and Hellige G 2001
 different electrical tomography devices''
 {\em  Biomed Tech (Berl)}
 46 91--95
+
+\item[]
+Hansen P C 1998 {\em Rank-deficient and ill-posed problems}
+SIAM Philadelphia, PA, USA
 
 \item[]
 Harris N D, Suggett A J, Barber D C and Brown B H 1988 Applied
