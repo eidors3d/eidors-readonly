@@ -58,22 +58,28 @@ GREIT: a unified approach to 2D linear EIT reconstruction of
 \address{ $^{1}$Systems and Computer Engineering,
                 Carleton University, Ottawa, Canada}
 \address{ $^{2}$Division of Critical Care Medicine, Department of Anesthesia,
-                Children's Hospital Boston, Harvard Medical School, Boston, MA, USA}
-\address{ $^{3}$Middlesex University, London, UK}
+                Children's Hospital Boston, Harvard Medical School,
+                Boston, MA, USA}
+\address{ $^{3}$School of Health and Social Sciences,
+                Middlesex University, London, UK}
 \address{ $^{4}$School of Engineering, 
                 Dartmouth College, Hanover, NH, USA}
-\address{ $^{5}$University of Sheffield, UK}
+\address{ $^{5}$Medical Physics, University of Sheffield, UK}
 \address{ $^{6}$Cardinal Health Care, London, UK}
-\address{ $^{7}$V.U. university medical center, Amsterdam, Netherlands}
-\address{ $^{8}$University of Kiel, Germany}
+\address{ $^{7}$Department of Physics and Medical Technology,
+                V.U. university medical center, Amsterdam, Netherlands}
+\address{ $^{8}$Department of Anaesthesiology and Intensive Care Medicine,
+                University of Schleswig-Holstein, Kiel, Germany}
 \address{ $^{9}$D\'epartement de g\'enie \'electrique,
                 \'Ecole Polytechnique de Montr\'eal, Canada}
 \address{$^{10}$Dr\"ager Medical, L\"ubeck, Germany}
 \address{$^{11}$University of Strathclyde, Glasgow, UK}
-\address{$^{12}$University of G\"ottingen, Germany}
-\address{$^{13}$University of Manchester, UK}
+\address{$^{12}$Department of Anaesthesiological Research,
+                University of G\"ottingen, Germany}
+\address{$^{13}$School of Mathematics, University of Manchester, UK}
 \address{$^{14}$Maltron International, Rayleigh, UK}
-\address{$^{15}$Institute of Child Health, UCL, London, UK}
+\address{$^{15}$Institute of Child Health,
+                University College London, UK}
 
 
 
@@ -472,18 +478,19 @@ likelihood of image elements and their interactions.
 
 By solving (\ref{IM}), a linearized, one-step inverse solution is
 obtained as
-\begin{equation}\label{GN_solution}
-\xH=\left(
+\begin{eqnarray}\label{GN_solution}
+\xH&=&\left(
     \JB^T \frac{\VB^{-1}}{\sigma_n^2} \JB 
      +
     \frac{\PB^{-1}}{\sigma_x^2} 
     \right)^{-1}
     \JB^T \frac{\VB^{-1}}{\sigma_n^2}\yB
-   =\left(
+\nonumber \\
+   &=&\left(
     \JB^T \VB^{-1} \JB + \lambda^2 \PB^{-1}
     \right)^{-1}
     \JB^T \VB^{-1} \yB
-\end{equation}
+\end{eqnarray}
 where parameter  $\lambda=\sigma_n/\sigma_x$ is
 often called the ``regularization hyperparameter'' and
 controls the trade-off
