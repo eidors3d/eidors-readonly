@@ -85,7 +85,11 @@ if ok==1;
    nname = name(find(name=='/')+1:find(name=='.')-1);
    gg= get(gcf,'paperposition');
    set(gcf,'paperposition',[gg(1:3),gg(3)*.3]);
-   print('-dpng','-r50',[nname,'-sig.png']); 
+   if exist('OCTAVE_VERSION'); 
+      print([nname,'-sig.png'], '-dpng','-S200,75'); 
+   else;
+      print('-dpng','-r50',[nname,'-sig.png']); 
+   end
    set(gcf,'paperposition',gg);
    return;
 end
