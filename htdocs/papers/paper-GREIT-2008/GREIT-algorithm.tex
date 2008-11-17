@@ -2,30 +2,34 @@
 % $Id$
 \documentclass[12pt]{iopart}
 \usepackage{graphicx}
+%\usepackage{amsfonts}
+%\usepackage{amsmath}
+\newcommand{\mathbb}{\mathbf}
 \newcommand{\vB}{\mbox{$\mathbf{v}$}}
 \newcommand{\xB}{\mbox{$\mathbf{x}$}}
 \newcommand{\xH}{\mbox{$\mathbf{\hat x}$}}
+\newcommand{\nB}{\mbox{$\mathbf{n}$}}
 \newcommand{\yB}{\mbox{$\mathbf{y}$}}
 \newcommand{\wB}{\mbox{$\mathbf{w}$}}
 \newcommand{\AB}{\mbox{$\mathbf{A}$}}
 \newcommand{\BB}{\mbox{$\mathbf{B}$}}
-\newcommand{\WB}{\mbox{$\mathbf{W}$}}
 \newcommand{\RB}{\mbox{$\mathbf{R}$}}
-\newcommand{\MB}{\mbox{$\mathbf{M}$}}
+\newcommand{\IB}{\mbox{$\mathbf{I}$}}
+\newcommand{\JB}{\mbox{$\mathbf{J}$}}
+\renewcommand{\PB}{\mbox{$\mathbf{P}$}}
+\newcommand{\VB}{\mbox{$\mathbf{V}$}}
+\newcommand{\WB}{\mbox{$\mathbf{W}$}}
 %\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
 \newcommand{\SG}{\mbox{${\boldmath \Sigma}$}}
+\newcommand{\sG}{\mbox{${\boldmath \sigma}$}}
 \newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
 \newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
 \newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
 \begin{document}
 
-\title[GREIT: framework for linear image reconstruction]{%
-GREIT: a framework for 2D linear image reconstruction for
-       EIT images of lungs.
-\\
-\hspace{3cm}{\em or } \\
-A unified approach to a linear EIT Reconstruction algorithm
-       for lung images
+\title[GREIT: linear EIT image reconstruction]{%
+GREIT: a unified approach to 2D linear EIT reconstruction of
+       lung images
 \\
 {\small \tt DRAFT: $Date$}
 }
@@ -62,7 +66,8 @@ A unified approach to a linear EIT Reconstruction algorithm
 \address{ $^{6}$Cardinal Health Care, London, UK}
 \address{ $^{7}$V.U. university medical center, Amsterdam, Netherlands}
 \address{ $^{8}$University of Kiel, Germany}
-\address{ $^{9}$\'Ecole Polytechnique de Montr\'eal, Canada}
+\address{ $^{9}$D\'epartement de g\'enie \'electrique,
+                \'Ecole Polytechnique de Montr\'eal, Canada}
 \address{$^{10}$Dr\"ager Medical, L\"ubeck, Germany}
 \address{$^{11}$University of Strathclyde, Glasgow, UK}
 \address{$^{12}$University of G\"ottingen, Germany}
@@ -298,9 +303,8 @@ the size of the electrodes.
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.4 \textwidth]
+  \includegraphics[width= 0.4 \textwidth, bb=0 0 444 517]
          {../../tutorial/GREIT-evaluation/simulation_3d_test02a.png}
-% \includegraphics[width= 0.4 \textwidth]{figs/forward_model_3.eps}
 
 \caption{ \label{fig:fm2}
 {\em left:} FEM of the cylindrical phantom
@@ -340,8 +344,202 @@ Is it necessary to have models for different patient sizes
 What levels of background lung conductivity should be included
 \end{itemize}
 
+
+The method presented in this section is general,
+applying for an arbitrary number of electrodes  with 
+arbitrary placement. However, the current implementation
+is designed for electrodes placed in a plane around the
+chest at the level of the ???
+
 \section{Methods: Reconstruction algorithm framework}
 
+This section represents a framework to calculate
+a linear image reconstruction matrix which is optimized
+to a set of performance requirements. This approach
+is based a experience with a large number of 
+linear regularized EIT reconstruction approaches
+(REFS??). The key difference is that this framework
+is based on a set of performance requirements, whereas
+previous reconstruction algorithms are based directly on
+the underlying mathematical models and do not express
+the performance requirements explicity.
+The value of this approach is that is allows
+performance requirements (established in our case
+via consensus) may be directly encoded into the
+reconstruction algorithm.
+
+We consider an EIT system with $n_E$ electrodes applied to a body
+using sequential current stimulation with parallel voltage
+measurement. Using these electrodes, $n_E$ current stimulation
+patterns are sequentially applied and $n_V$ differential
+measurements are made for each stimulation.  For an adjacent drive
+EIT system, voltages are typically not measured at driven
+electrodes, and $n_V = n_E - 3$.  Each data frame measures
+a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
+(some of which are redundant if the medium is not changing).
+Difference EIT calculates difference data $\yB$, ($[\yB]_i =
+[\vB_2]_i - [\vB_1]_i$; or the normalized difference data $[\yB]_i
+= ([\vB_2]_i - [\vB_1]_i)/[\vB_1]_i)$. To improve its precision,
+$\vB_1$ is typically averaged over many data frames, at a time
+when the conductivity distribution may be assumed to be stable;
+ we thus assume that $\vB_1$ is noise free.
+
+The body under investigation is modelled using a finite element
+model (FEM) which discretizes the conductivity onto $n_N$
+piecewise smooth elements, represented by a vector
+$\sG\in\mathbb{R}^{n_N}$ (In this paragraph, $\sG$ represents
+conductivity; elsewhere in this paper, $\sigma$ is the standard
+deviation). Again, difference EIT calculates a vector of
+conductivity change, $\xB = \sG_2 - \sG_1$ between the present
+conductivity distribution, $\sG_2$, and that at the reference
+measurement, $\sG_1$.
+
+\subsection{One step linear Gauss-Newton solvers}
+
+One-step Gauss-Newton (GN) EIT reconstruction approaches have been
+widely used in EIT since the late 1980's (Yorkey et al 1987,
+Cheney et al 1990).
+They allow use of sophisticated regularized models
+of the EIT inverse problem, are able to represent this
+solution as a linear reconstruction matrix, which can then allow
+rapid, real-time imaging. The GN inverse problem seeks to
+calculate a solution, $\xH$, to the EIT inverse problem
+expressed as the minimum of a sum of quadratic norms
+\begin{equation}\label{IM}
+ \|\yB-\JB\xH\|_{\Sigma_n^{-1}}^2 +
+ \|\xB-\xB^\circ\|_{\Sigma_x^{-1}}^2
+\end{equation}
+where $\xB^\circ$ represents the expected value of element
+conductivity changes, which is zero for  difference EIT.
+$\SG_n\in\mathbb{R}^{n_M\times n_M}$ is
+ the covariance matrix of the measurement noise $\nB$. Since
+$\nB$ is uncorrelated, $\SG_n$ is a diagonal matrix with
+$[\SG_n]_{i,i}=\sigma_i^2$, where $\sigma_i^2$ is the noise variance at
+measurement $i$. $\SG_x\in\mathbb{R}^{n_N\times
+n_N}$ is the expected image covariance.
+
+ For small variations around the reference
+conductivity $\sG_1$, the relationship between $\xB$ and $\yB$ can
+be linearized (giving the difference EIT forward model):
+\begin{equation}\label{FM}
+\yB=\JB\xB+\nB
+\end{equation}
+where
+$\JB\in\mathbb{R}^{n_M\times n_N}$ is the Jacobian or sensitivity
+matrix and $\nB\in\mathbb{R}^{n_M}$ is the measurement noise which is
+assumed to be uncorrelated white Gaussian. $\JB$ is calculated from
+the FEM as
+$\JB_{ij}=\left.
+     \frac{\partial\yB_i}{\partial\xB_j}
+          \right|_{\sG_1}$,
+and depends on the FEM, current injection patterns, the reference
+conductivity, and the electrode models. This system is
+underdetermined since $n_N > n_M$. This problem is commonly solved
+using regularization techniques (eg. Cheney et al 1990,
+ Adler and Lionheart, 2006) in order to
+ calculate a conductivity change
+ estimate, $\xH$, which is both
+faithful to the measurements, $\yB$, and to
+{\em a priori} constraints on a ``reasonable'' image.
+
+
+Typically,  $\SG_n$ and $\SG_x$ are not calculated directly.
+Instead, their inverses,
+ $\WB = \sigma_n^2\SG_n^{-1}$
+ and
+ $\RB = \sigma_x^2\SG_x^{-1}$,
+are heuristically determined from {\em a priori} considerations.
+Here $\sigma_n$ is the average measurement noise amplitude and
+$\sigma_x$ is the {\em a priori} amplitude of conductivity change.
+$\WB$ models the measurement accuracy. For uncorrelated noise,
+each diagonal element is proportional to the signal to noise
+ratio. For difference EIT with identical channels, $\WB=\IB$. The
+regularization matrix $\RB$ may be understood to model the
+``unlikelihood" of image elements.
+
+By solving (\ref{IM}), a linearized, one-step inverse solution is
+obtained as
+\begin{equation}\label{LMS_solution}
+\xH=\left(\JB^T\frac{1}{\sigma_n^2}\WB\JB+\frac{1}{\sigma_x^2}\RB\right)^{-1}\JB^T\frac{1}{\sigma_n^2}\WB\yB
+\end{equation}
+We define the hyperparameter $\lambda=\sigma_n/\sigma_x$,
+ and rewrite (\ref{LMS_solution})
+as
+\begin{equation}\label{GN_solution}
+\xH=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}\JB^T\WB\yB=\BB\yB
+\end{equation}
+where $\BB=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}\JB^T\WB$
+is the linear, one-step inverse.
+The regularization hyperparameter $\lambda$
+controls the trade-off
+between resolution and noise attenuation in the reconstructed
+image.
+
+If image elements are assumed to be independent with identical
+expected magnitude, $\RB$ becomes an identity matrix $\IB$ and
+(\ref{GN_solution}) uses zeroth-order Tikhonov regularization. For
+EIT, such solutions tend to push reconstructed noise toward the
+boundary, since the measured data are much more sensitive to
+boundary image elements. Instead, $\RB$ may be scaled with the
+sensitivity of each element, so that each diagonal element $i$ of
+$\RB$ is $\left[ \RB \right]_{i,i} = \left[ \JB^T \JB
+\right]_{i,i}^p$. This is the NOSER prior of Cheney et al (1990)
+for an exponent $p=1$. Many other prior matrices have been
+proposed: to model image smoothness as a penalty for non-smooth
+image regions, $\RB$ may be set to the discrete Laplacian filter
+(Vauhkonen, 1998b) or a discrete high pass Gaussian filter (Adler
+and Guardo, 1996).
+
+In this paper, the NOSER prior is used for calculating the matrix
+$\RB$ with $p=0.5$ in all tested algorithms, except for the Kalman filtering.
+Because it is diagonal, $\RB$ can be
+inverted without numerical difficulties. The choice of exponent is
+a heuristic compromise between the pushing noise to the boundary
+($p=0$) or to the centre ($p=1$).
+
+In (\ref{GN_solution}), the term in the inverse is of size
+$n_N\times n_N$. To save computational time, and improve inverse
+accuracy and stability, we want to decrease the size of the matrix
+to be inverted.  Thus, we rewrite the matrix $\BB$ using the {\em
+data form} as:
+\begin{eqnarray}\label{opti_sol}
+=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}\JB^T\WB
+\left[
+    \left(
+      \JB\frac{1}{\lambda^2}\PB\JB^T+\VB
+   \right)
+    \left(
+      \JB\frac{1}{\lambda^2}\PB\JB^T+\VB
+   \right)^{-1}
+\right]   \nonumber\\
+=\left(\JB^T\WB\JB+\lambda^2\RB\right)^{-1}
+    \left(
+       \JB^T\WB\JB+\lambda^2\RB
+   \right)
+    \left(
+       \frac{1}{\lambda^2}\PB\JB^T
+   \right)
+    \left(
+       \JB\frac{1}{\lambda^2}\PB\JB^T+\VB
+   \right)^{-1}    \nonumber\\
+=\PB\JB^T
+    \left(
+       \JB\PB\JB^T+\lambda^2\VB
+   \right)^{-1}
+\end{eqnarray}
+where $\PB=\RB^{-1}=\frac{1}{\sigma_x^2}\SG_x$
+  and $\VB=\WB^{-1}=\frac{1}{\sigma_n^2}\SG_n$.
+In practice,
+$\PB$ and $\VB$ are modelled directly from the system covariances,
+rather than the inverse of $\RB$ and $\WB$.  Using
+(\ref{opti_sol}), the size of the term in the inverse is reduced
+to $n_M\times n_M$. This is especially significant for 3D EIT
+models and for the temporal inverse which we introduce below.
+
+\subsection{GREIT image reconstruction approach}
+
+ from a FEM of imaged subject and an estimate of
+the noise level in the EIT data.
 Given a set of input data $\yB_k$ ($M\times1$) which 
 represent:
 1) simulated conductivity change,
@@ -402,11 +600,11 @@ and experimental data.
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.2 \textwidth]
+  \includegraphics[width= 0.2 \textwidth, bb=0 0 280 110]
          {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_1.png}
-  \includegraphics[width= 0.2 \textwidth]
+  \includegraphics[width= 0.2 \textwidth, bb=0 0 280 110]
          {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_2.png}
-  \includegraphics[width= 0.2 \textwidth]
+  \includegraphics[width= 0.2 \textwidth, bb=0 0 280 110]
          {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test03_4.png}
 \caption{ \label{fig:rimage}
 Reconstructed images. The conductivity target location is shown in green (the target is a circle, but shows as a small square in this image)
@@ -421,11 +619,11 @@ Reconstructed images. The conductivity target location is shown in green (the ta
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_11.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_21.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_41.png}
 \caption{ \label{fig:rimage}
 Noise Figure ({\em Want: small})                        
@@ -436,13 +634,13 @@ Noise Figure ({\em Want: small})
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp]
+\begin{figure}[bhtp, bb=0 0 280 110]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_12.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_22.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_42.png}
 \caption{ \label{fig:rimage}
 Amplitude ({\em Want: uniform})
@@ -453,13 +651,13 @@ Amplitude ({\em Want: uniform})
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp]
+\begin{figure}[bhtp, bb=0 0 280 110]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_13.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_23.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_43.png}
 \caption{ \label{fig:rimage}
 Position Error ({\em Want: small, uniform})
@@ -470,13 +668,13 @@ Position Error ({\em Want: small, uniform})
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp]
+\begin{figure}[bhtp, bb=0 0 280 110]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_14.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_24.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_44.png}
 \caption{ \label{fig:rimage}
 Point Spread Function ({\em Want: small, uniform })
@@ -487,13 +685,13 @@ Point Spread Function ({\em Want: small, uniform })
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp]
+\begin{figure}[bhtp, bb=0 0 280 110]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_15.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_25.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_45.png}
 \caption{ \label{fig:rimage}
 Shape Deformation ({\em Want: small, uniform})
@@ -504,13 +702,13 @@ Shape Deformation ({\em Want: small, uniform})
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp]
+\begin{figure}[bhtp, bb=0 0 280 110]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_16.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_26.png}
-  \includegraphics[width= 0.3 \textwidth]
+  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_46.png}
 \caption{ \label{fig:rimage}
 Ringing ({\em Want: small })
@@ -582,6 +780,17 @@ $-$ use of $p<2$
 
 \References % Harvard style references
 \item[]
+Adler A and Guardo R 1996 Electrical impedance tomography:
+regularized imaging and contrast detection {\em IEEE Trans. Med.
+Imaging} {\bf 15} 170-179
+
+\item[]
+Adler A, Guardo R and Berthiaume Y 1996 Impedance imaging of lung
+ventilation: Do we need to account for chest expansion? {\em IEEE
+Trans. Biomed. Eng.} {\bf 43}(4) 414-20
+
+
+\item[]
 Adler A and Lionheart W R B 2006
 ``Uses and abuses of EIDORS: An extensible software base for EIT''
 {\em Physiol Meas}
@@ -592,6 +801,12 @@ Barber D C and Brown B H 1984
 ``Applied potential tomography'', 
 {\em J Phys E: Sci Instrum}
  17 723--733
+
+\item[]
+Barber D C and Brown B H 1988 Errors in reconstruction of
+resistivity images using a linear reconstruction technique {\em
+Clin. Phys. Physiol. Meas.} 
+9(suppl. A) 101--4
 
 \item[]
 Barber D C 1989
@@ -605,6 +820,11 @@ Brown B H and Seagar A D 1987
 ``The Sheffield data collection system''
 {\em Clin Phys Physiol Meas}
  8(Suppl A) 91--97
+
+\item[]
+Cheney M, Isaacson D, Newell J C, Simske S and Goble J C 1990
+NOSER: an algorithm for solving the inverse conductivity problem
+{\em Int.J.Imaging Syst.Technol.} {\bf 2} 66--75
 
 \item[]
 Creative Commons/Science Commons 2007
@@ -624,12 +844,62 @@ different electrical tomography devices''
 {\em  Biomed Tech (Berl)}
 46 91--95
 
+\item[]
+Harris N D, Suggett A J, Barber D C and Brown B H 1988 Applied
+potential tomography: a new technique for monitoring pulmonary
+function {\em Clin. Phys. Physiol. Meas.} {\bf 9} 79--85
+
 
 \item[]
 Kotre C J 1988
 ``A fast approximation for the calculation of potential distributions in electrical impedance tomography''
 {\em Clin Phys Physiol Meas}
-9 353-361
+9 353--361
+
+\item[]
+Lionheart W, Polydorides N and Borsic A 2005 Why is EIT so hard,
+in {\em Electrical impedance tomography: methods, history and
+applications}, Holder D S, Ed. Bristol and Philadelphia, IOP, pp.
+3-4
+
+\item[]
+McArdle F J, Suggett A J, Brown B H, and Barber D C 1988 An
+assessment of dynamic images by applied potential tomography for
+monitoring pulmonary perfusion {\em Clin. Phys. Physiol. Meas.}
+{\bf 9}, 87-91
+
+
+\item[]
+Polydorides N and Lionheart W R B 2002 A Matlab toolkit for
+three-dimensional electrical impedance tomography: A contribution
+to the Electrical Impedance and Diffuse Optical Reconstruction
+Software project {\em Meas. Sci. Technol.} {\bf 13} 1871-83
+
+
+\item[]
+Soleimani M, Gomez-Laberge C and Adler A 2006 Imaging of
+conductivity changes and electrode movement in EIT \PM {\bf 27}
+S103--S13
+
+\item[]
+Vauhkonen M, Vad\`asz D, Karjalainen P A, Somersalo E and
+Kaipio J P 1998
+ Tikhonov regularization and prior information in
+electrical impedance tomography
+ {\em IEEE Trans Med Imaging}
+17 285--93
+
+\item[]
+Yorkey T J, Webster J G and Tompkins W J 1987
+Comparing reconstruction algorithms for electrical
+impedance tomography
+{\em IEEE Trans. Biomed. Eng}
+34 843--52
+
+\item[]
+Zhang J and Patterson R P 2005 EIT images of ventilation: what
+contributes to the resistivity changes? \PM {\bf 26} S81--S92
+
 \endrefs
 
 \end{document}
