@@ -570,10 +570,10 @@ for this proceedure.
 One other requirement for the forward problem model is
 an estimate of the amplitude of conductivity changes $\xB_k$
 encountered in the modelled EIT application. This results in
-a measurement variance $\sigma_\xB^2 = var \yB = E[ \| \yB \|^2 ]$. 
+a measurement variance $\sigma_{\xB}^2 = var \yB = E[ \| \yB \|^2 ]$. 
 The mean $\yB$ is assumed to be zero, since positive and
 negative conductivity changes are equally likely.
-For lung images, we may calculate $\sigma_\xB$ from either
+For lung images, we may calculate $\sigma_{\xB}$ from either
 a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
 in representative applications.
@@ -587,7 +587,7 @@ electronic measurement noise, and
 electrode movement artefacts. In general, for each
 source of noise $(s)$, we have noise samples $\nB_k^{(s)}$,
 and an estimate of the noise amplitude
-variance $\sigma_\nB^2 = var \nB = E[ \| \nB \|^2 ]$. 
+variance $\sigma_{\nB}^2 = var \nB = E[ \| \nB \|^2 ]$. 
 The mean noise is assumed to be zero in this formulation;
 if necessary, a non-zero noise mean should be accounted for
 by pre-processing of EIT measurements.
