@@ -21,6 +21,7 @@
 \newcommand{\WB}{\mbox{$\mathbf{W}$}}
 %\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
 \newcommand{\SG}{\mbox{${\mathbf \Sigma}$}}
+\newcommand{\TG}{\mbox{${\mathbf \Theta}$}}
 \newcommand{\sG}{\mbox{${\mathbf \sigma}$}}
 \newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
 \newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
@@ -384,11 +385,13 @@ electrodes, and $n_V = n_E - 3$.  Each data frame measures
 a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
 (some of which are redundant if the medium is not changing).
 Difference EIT calculates difference data $\yB$, ($[\yB]_i =
-[\vB_2]_i - [\vB_1]_i$; or the normalized difference data $[\yB]_i
-= ([\vB_2]_i - [\vB_1]_i)/[\vB_1]_i)$. To improve its precision,
-$\vB_1$ is typically averaged over many data frames, at a time
+[\vB]_i - [\vB_r]_i$; or the normalized difference data $[\yB]_i
+= ([\vB]_i - [\vB_r]_i)/[\vB_r]_i)$, where $\vB_r$ is a reference
+set of measurements representing the backround conductivity
+distribution, $\sG_r$. To improve its precision,
+$\vB_r$ is typically averaged over many data frames, at a time
 when the conductivity distribution may be assumed to be stable;
- we thus assume that $\vB_1$ is noise free.
+ we thus assume that $\vB_r$ is noise free.
 
 The body under investigation is modelled using a finite element
 model (FEM) which discretizes the conductivity onto $n_N$
@@ -567,50 +570,122 @@ for this proceedure.
 One other requirement for the forward problem model is
 an estimate of the amplitude of conductivity changes $\xB_k$
 encountered in the modelled EIT application. This results in
-a measurement variance $\sigma^2 = var \yB = E[ \| \yB \|^2 ]$. 
-For lung images, we may calculate $\sigma$ from either
+a measurement variance $\sigma_\xB^2 = var \yB = E[ \| \yB \|^2 ]$. 
+The mean $\yB$ is assumed to be zero, since positive and
+negative conductivity changes are equally likely.
+For lung images, we may calculate $\sigma_\xB$ from either
 a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
 in representative applications.
 
 \item[] 
 {\em Noise model:}
+A noise model allows calculation of representative 
+noise (or undesired signal) samples in EIT measurements.
+For GREIT, we consider two sources of noise:
+electronic measurement noise, and
+electrode movement artefacts. In general, for each
+source of noise $(s)$, we have noise samples $\nB_k^{(s)}$,
+and an estimate of the noise amplitude
+variance $\sigma_\nB^2 = var \nB = E[ \| \nB \|^2 ]$. 
+The mean noise is assumed to be zero in this formulation;
+if necessary, a non-zero noise mean should be accounted for
+by pre-processing of EIT measurements.
+Note that for normalized difference EIT,
+noise samples are normalized by the
+reference measurements by $[\yB]_i = [\nB ]_i / [\vB_r]_i$.
 
+{\em electronic measurement noise}
+is typically modelled to be uniform and Gaussian in EIT
+image reconstruction. This assumption is reasonable for
+a generic GREIT algorithm designed for general EIT reconstruction.
+However, for a specific EIT system, measurement noise
+varies with the details of the EIT hardware and patient
+connection. If different gain settings are used for each
+channel, these settings will alter the noise. Practical
+measurements of EIT noise show that it is non-Gaussian and
+variable (Hahn et al, 2008). We recommend GREIT algorithms
+be tuned to the hardware implementation. This may be 
+implemented using a calibration protocol before the 
+start of measurements.
 
+{\em electrode movement artefacts}
+occur when the electrodes move, either with posture change
+or with chest movements due to breathing. Several reports
+have demonstrated the serious impact of such movements on
+EIT images (Adler et al, 1996, Patterson et al, 2005,
+Coulombe et al 2005). In order to reduce the impact
+of such movement on EIT reconstruction, Soleimani et al
+(2006) showed that it is possible to create an
+augmented forward model based on both the conductivity change
+and electrode movement, which resulted in reduced movement 
+artefacts in the reconstructed images. In order
+to use this capability in GREIT, we specify that a
+set of ``noise'' measurements due to electrode movement 
+by incorportated. This is currently implemented from
+deformations of the FEM (G\'omez-Laberge and Adler, 2008),
+but may be based on a calibration protocol in an
+implemented system.
+
+ 
 \item[] 
 {\em Desired performance metrics:}
+Section \ref{perf_metrics} gives details of the 
+performance metrics selected for GREIT. Based on these
+metrics, we can create a ``desired image''
+$\xH_k$ corresponding to each conductivity change
+$\xB_k$ in the forward model. It is possible to set
+$\xH_k = \xB_k$; however, this will reduce to a standard
+GN solution without tuning the algorithm to the 
+performance metrics. Instead, $\xH_k$ is allowed to be
+a larger circular area corresponding to the known
+blurring inherent in EIT. We recommend, for a 16 electrode
+EIT system, that the $\frac{1}{4}$-max
+diameter of 20\% of the medium diameter.
+For noise samples, the ``desired image'' is clearly
+zero; we wish for noise input to produce no output.
 
-\end{itemize}
-available to begin
-in terms of the 0k
-A  from a FEM of imaged subject and an estimate of
-the noise level in the EIT data.
-Given a set of input data $\yB_k$ ($M\times1$) which 
-represent:
-1) simulated conductivity change,
-2) noise,
-3) boundary movement,
-and
-4) conductivity change outside the plane of interest.
-
-We define a set of desired images $\xH_k$ ($N\times1$),
-and data weightings $\wB_k$ ($M\times1$), and an associated
-diagonal weighting matrix $WB_k$, such that 
-$\wB_k = diag(\WB_k)$.
-
-The reconstruction matrix $\RB$ ($N\times M$) is a linear
-map of measurements to image.
-Define an error $\epsilon$ which measures the fit
-of reconstructed images from each sample measurement to
-the desired values
+Corresponding to each ``desired image'', is an image
+weighting $\wB_k$ which represents the weight given to 
+each pixel in $\xH_k$. The weighing allows ``tuning''
+of the relative importance of the  performance metrics.
+Based on the desired image and weighting, the corresponding
+reconstruction matrix which best fits the requirements
+may be expressed as minimization of an error $\epsilon^2$
 \begin{equation}
-\epsilon^2 =
-\sum_k \|\WB_k ( \xH_k - \RB \yB_k ) \|^p
+\label{GREIT_norm}
+\epsilon^2 = \sum_k \| \xH_k - \RB \yB_k \|_{\WB^2_k}^2
+    = \sum_k \| \WB^2_k (\xH_k - \RB \yB_k ) \|^2
 \end{equation}
-where $p$ is the error norm used; in this paper we use $p=2$
-as this allows a linear formulation for $\RB$. 
+where $\WB_k = diag( \wB_k)$, is a diagonal matrix representing
+each weighting. A 2-norm is used as it allows
+a linear expression for, and faster computation of, $\RB$;
+however, other norms may result in improved performance.
 
-{\em {\bf TODO}: add development here}
+{\em
+Discuss how weights correspond to requirements
+Solve notation issues y n
+}
+\end{itemize}
+
+Based on (\ref{GREIT_norm}), we develop an expression
+for $\RB = argmin \epsilon^2$, by setting the
+derivative to zero.
+\begin{equation}
+\frac{ d\epsilon^2 }{ d\RB_{ij} } =
+-2 \sum_k \xH_k^T \WB^2_k [\TG]_{i,j} \yB_k
++2 \sum_k \yB_k^T [\TG]_{i,j} \WB^2_k \RB \yB_k
+= 0
+\end{equation}
+where $[\TG]_{i,j}$ has a value of $1$ at $(i,j)$
+but is zero elsewhere. Based on this expression
+\begin{eqnarray}
+\frac{ d\epsilon^2 }{ d\RB_{ij} } & = &
+-2 \sum_k \xH_k^T \WB^2_k [\TG]_{i,j} \yB_k
++2 \sum_k \yB_k^T [\TG]_{i,j} \WB^2_k \RB \yB_k
+= 0
+\end{eqnarray}
+
 
 The linear fit value of $\RB$ is thus
 \begin{equation}
@@ -888,6 +963,13 @@ Uniformization Constraint
 {\em IEEE Trans. Med. Imag.} 16 562-571
 
 \item[]
+Coulombe N, Gagnon H, Marquis F, Skrobik Y, Guardo R, 2005
+A parametric model of the relationship between EIT and total lung volume
+{\em Physiol. Meas.}
+26 401--411
+
+
+\item[]
 Creative Commons/Science Commons 2007
 ``Creative Commons 3.0 Attribution License''
 \verb+creativecommons.org/licenses/by/3.0/+
@@ -897,6 +979,12 @@ GNU Lesser General Public License: Version 3, 29 June 2007
 {\em Free Software Foundation, Inc.}
 \verb+www.gnu.org/licenses/lgpl.html+
 
+G\'omez-Laberge C Adler A 2008
+Direct EIT Jacobian calculations for conductivity change and electrode movement
+{\em Physiol. Meas.}
+29 S89--S99
+
+
 \item[]
 Hahn G Thiel F Dudykevych T Frerichs I Gersing E
 and Hellige G 2001
@@ -904,6 +992,14 @@ and Hellige G 2001
 different electrical tomography devices''
 {\em  Biomed Tech (Berl)}
 46 91--95
+
+\item[]
+Hahn G Just A Dittmar J  Hellige G 2008
+Systematic errors of EIT systems determined by easily-scalable
+ resistive phantoms
+{\em Physiol. Meas.}
+ 29 S163--S172
+
 
 \item[]
 Hansen P C 1998 {\em Rank-deficient and ill-posed problems}
@@ -942,7 +1038,7 @@ Software project {\em Meas. Sci. Technol.} {\bf 13} 1871-83
 
 
 \item[]
-Soleimani M, Gomez-Laberge C and Adler A 2006 Imaging of
+Soleimani M, G\'omez-Laberge C and Adler A 2006 Imaging of
 conductivity changes and electrode movement in EIT \PM {\bf 27}
 S103--S13
 
