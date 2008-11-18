@@ -393,24 +393,27 @@ when the conductivity distribution may be assumed to be stable;
 The body under investigation is modelled using a finite element
 model (FEM) which discretizes the conductivity onto $n_N$
 piecewise smooth elements, represented by a vector
-$\sG\in\mathbb{R}^{n_N}$ (In this paragraph, $\sG$ represents
-conductivity; elsewhere in this paper, $\sigma$ is the standard
-deviation). Again, difference EIT calculates a vector of
-conductivity change, $\xB = \sG_2 - \sG_1$ between the present
-conductivity distribution, $\sG_2$, and that at the reference
-measurement, $\sG_1$.
+$\sG\in\mathbb{R}^{n_N}$ (To clarify symbols,
+$\sG$ represents a vector conductivity distribution, while
+$\sigma$ is the standard deviation).
+Again, difference EIT calculates a vector of
+conductivity change, $\xB = \sG - \sG_r$ between the present
+conductivity distribution, $\sG$, and that at the reference
+measurement, $\sG_r$.
 
 \subsection{One step linear Gauss-Newton solvers}
 
-One-step Gauss-Newton (GN) EIT reconstruction approaches have been
+In this section, we elaborate the
+One-step Gauss-Newton (GN) EIT reconstruction approaches,
+which have been
 widely used in EIT since the late 1980's (Yorkey et al 1987,
 Cheney et al 1990).
-They allow use of sophisticated regularized models
+This approach allows use of sophisticated regularized models
 of the EIT inverse problem, are able to represent this
 solution as a linear reconstruction matrix, which can then allow
 rapid, real-time imaging.
 For small variations around the reference
-conductivity $\sG_1$, the relationship between $\xB$ and $\yB$ can
+conductivity $\sG_r$, the relationship between $\xB$ and $\yB$ can
 be linearized (giving the difference EIT forward model):
 \begin{equation}\label{FM}
 \yB=\JB\xB+\nB
@@ -422,7 +425,7 @@ assumed to be uncorrelated white Gaussian. $\JB$ is calculated from
 the FEM as
 $\JB_{ij}=\left.
      \frac{\partial\yB_i}{\partial\xB_j}
-          \right|_{\sG_1}$,
+          \right|_{\sG_r}$,
 and depends on the FEM, current injection patterns, the reference
 conductivity, and the electrode models. This system is
 underdetermined since $n_N > n_M$. 
@@ -528,17 +531,59 @@ image regions, $\PB$ may be set to the discrete Laplacian filter
 and Guardo, 1996), or based on variance uniformization
 constraints (Cohen-Bacrie et al 1997).
 
-In this paper, the NOSER prior is used for calculating the matrix
+In this paper, we compare results from the GREIT approach
+with those of GN image reconstruction using the NOSER prior,
 $\PB$ with $p=0.5$.
 Because it is diagonal, $\PB$ can be
 inverted without numerical difficulties. The choice of exponent is
 a heuristic compromise between the pushing noise to the boundary
-($p=0$) or to the centre ($p=1$).
+($p=0$) or to the centre ($p=1$). The NOSER algorithm is 
+representative of a broad group of structurally similar 
+algorithims that have been widely implemented in EIT;
+it is generally understood to perform well.
 
 
 \subsection{GREIT image reconstruction approach}
 
- from a FEM of imaged subject and an estimate of
+In this section, we elaborate the GREIT proceedure
+from which the reconstruction matrix, $\RB$ is
+calculated.  The proceedure depends on definition
+of:
+\begin{itemize}
+\item[] 
+{\em Forward problem model:}
+A forward model allows calculation of representative EIT
+ measurement
+data $\yB_k$ from a conductivity change distribution $\xB_k$.
+The model represents the details of the body geometry,
+the electrode size and contact impedance and the reference
+conductivity, $\sG_r$, around which conductivity changes occur.
+In this paper, the forward problem is solved using a
+3D FEM using the complete electrode model
+(Cheng et al, 1989). However, it is worth noting that 
+an forward model, physical or numerical, is suitable
+for this proceedure.
+
+One other requirement for the forward problem model is
+an estimate of the amplitude of conductivity changes $\xB_k$
+encountered in the modelled EIT application. This results in
+a measurement variance $\sigma^2 = var \yB = E[ \| \yB \|^2 ]$. 
+For lung images, we may calculate $\sigma$ from either
+a model of the amplitude of conductivity changes due
+to breathing, or from a sample of EIT measurements 
+in representative applications.
+
+\item[] 
+{\em Noise model:}
+
+
+\item[] 
+{\em Desired performance metrics:}
+
+\end{itemize}
+available to begin
+in terms of the 0k
+A  from a FEM of imaged subject and an estimate of
 the noise level in the EIT data.
 Given a set of input data $\yB_k$ ($M\times1$) which 
 represent:
@@ -826,6 +871,13 @@ Cheney M, Isaacson D, Newell J C, Simske S and Goble J C 1990
 NOSER: an algorithm for solving the inverse conductivity problem
 {\em Int.J.Imaging Syst.Technol.} 
 2 66--75
+
+\item[]
+Cheng KS, Newell JC, Gisser DG, 1989
+"Electrode Models for Electric Current Computed Tomography"
+{\em IEEE Trans. in Biomedical Eng.}
+36 918--924
+
 
 \item[]
 Cohen-Bacrie C  Goussard Y and Guardo R
