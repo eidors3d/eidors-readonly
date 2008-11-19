@@ -798,9 +798,9 @@ In this case, the matrix $\RB$ which minimizes the norm is
 \RB &=& [ \XT_t, 0 ] [\YB_t, \YB_n]^T
      \left( [\YB_t, \YB_n] [\YB_t, \YB_n]^T \right)^{-1}
 \nonumber \\
-    &=& \XT_t \YB_t^T \left( \YB_t \YB_t^T + \YB_n \YB_n^T)^{-1}
+    &=& \XT_t \YB_t^T \left( \YB_t \YB_t^T + \YB_n \YB_n^T \right)^{-1}
 \nonumber \\
-    &=& \XT_t \YB_t^T \left( \JB \SG_x \JB^T + \SG_n)^{-1}
+    &=& \XT_t \YB_t^T \left( \JB \SG_x \JB^T + \SG_n \right)^{-1}
 \end{eqnarray}
 where samples $\YB_t$ may be approximated by the Jacobian
 using the linear asumption. This formulation 
