@@ -644,7 +644,7 @@ of:
 {\em Forward problem model:}
 A forward model allows calculation of representative EIT
  measurement
-data $\yB_k$ from a conductivity change distribution $\xB_k$.
+data $\yB^{(k)}$ from a conductivity change distribution $\xB^{(k)}$.
 The model represents the details of the body geometry,
 the electrode size and contact impedance and the reference
 conductivity, $\sG_r$, around which conductivity changes occur.
@@ -655,7 +655,7 @@ an forward model, physical or numerical, is suitable
 for this proceedure.
 
 One other requirement for the forward problem model is
-an estimate of the amplitude of conductivity changes $\xB_k$
+an estimate of the amplitude of conductivity changes $\xB^{(k)}$
 encountered in the modelled EIT application. This results in
 a measurement variance $\sigma_{\xB}^2 = var \yB = E[ \| \yB \|^2 ]$. 
 The mean $\yB$ is assumed to be zero, since positive and
@@ -672,7 +672,7 @@ noise (or undesired signal) samples in EIT measurements.
 For GREIT, we consider two sources of noise:
 electronic measurement noise, and
 electrode movement artefacts. In general, for each
-source of noise $(s)$, we have noise samples $\nB_k^{(s)}$,
+source of noise $n_s$, we have noise samples $\yB^{(k)}_{n_s}$,
 and an estimate of the noise amplitude
 variance $\sigma_{\nB}^2 = var \nB = E[ \| \nB \|^2 ]$. 
 The mean noise is assumed to be zero in this formulation;
@@ -720,11 +720,11 @@ implemented system.
 Section \ref{perf_metrics} gives details of the 
 performance metrics selected for GREIT. Based on these
 metrics, we can create a ``desired image''
-$\xT_k$ corresponding to each conductivity change
-$\xB_k$ in the forward model. It is possible to set
-$\xT_k = \xB_k$; however, this will reduce to a standard
+$\xT^{(k)}$ corresponding to each conductivity change
+$\xB^{(k)}$ in the forward model. It is possible to set
+$\xT^{(k)} = \xB^{(k)}$; however, this will reduce to a standard
 GN solution without tuning the algorithm to the 
-performance metrics. Instead, $\xT_k$ is allowed to be
+performance metrics. Instead, $\xT^{(k)}$ is allowed to be
 a larger circular area corresponding to the known
 blurring inherent in EIT. We recommend, for a 16 electrode
 EIT system, that the $\frac{1}{4}$-max
@@ -733,9 +733,12 @@ For noise samples, the ``desired image'' is clearly
 zero; we wish for noise input to produce no output.
 
 Corresponding to each ``desired image'', is an image
-weighting $\wB_k$ which represents the weight given to 
-each pixel in $\xT_k$. The weighing allows ``tuning''
+weighting $\wB^{(k)}$ which represents the weight given to 
+each pixel in $\xT^{(k)}$. The weighing allows ``tuning''
 of the relative importance of the  performance metrics.
+{\em
+TODO: Discuss how weights correspond to requirements
+}
 \end{itemize}
 
 \begin{figure}[bhtp]
@@ -758,61 +761,61 @@ equivalent to a generalized Tikhonov regularization
 in which the prior distributions $\SG_x$ and $\SG_n$
 corresponds to the selection strategy for
 the training data.
-
-Based on the desired image and weighting, the corresponding
+(section \ref{subsec:training_data})
+The
 reconstruction matrix $\RB_{GR}$ which best fits the requirements
 may be expressed as minimization of an error $\epsilon^2$
 \begin{equation}
 \label{GREIT_norm}
-\epsilon^2 = \sum_k \| \xT_k - \RB \yB_k \|_{\WB^2_k}^2
-    = \sum_k \| \WB^2_k (\xT_k - \RB \yB_k ) \|^2
+\epsilon^2 = \sum_k \| \xT^{(k)} - \RB \yB^{(k)} \|_{\WB^2^{(k)}}^2
+    = \sum_k \| \WB^2^{(k)} (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
 \end{equation}
-where $\WB_k = diag( \wB_k)$, is a diagonal matrix representing
+where $\WB^{(k)} = diag( \wB^{(k)})$, is a diagonal matrix representing
 each weighting. A 2-norm is used as it allows
 a linear expression for, and faster computation of, $\RB$;
 however, other norms may result in improved performance.
-
-{\em
-Discuss how weights correspond to requirements
-Solve notation issues y n
-}
 
 Based on (\ref{GREIT_norm}), we develop an expression
 for $\RB = argmin \epsilon^2$, by setting the
 derivative to zero.
 \begin{equation}
 \frac{ d\epsilon^2 }{ d\RB_{ij} } =
--2 \sum_k \xH_k^T \WB^2_k [\TG]_{i,j} \yB_k
-+2 \sum_k \yB_k^T [\TG]_{i,j} \WB^2_k \RB \yB_k
+-2 \sum_k \xH^{(k)}^T \WB^2^{(k)} [\TG]_{i,j} \yB^{(k)}
++2 \sum_k \yB^{(k)}^T [\TG]_{i,j} \WB^2^{(k)} \RB \yB_k
 = 0
 \end{equation}
 where $[\TG]_{i,j}$ has a value of $1$ at $(i,j)$
 but is zero elsewhere. Based on this expression
 \begin{eqnarray}
-\frac{ d\epsilon^2 }{ d\RB_{ij} } & = &
--2 \sum_k \xH_k^T \WB^2_k [\TG]_{i,j} \yB_k
-+2 \sum_k \yB_k^T [\TG]_{i,j} \WB^2_k \RB \yB_k
-= 0
+  \sum_k \xH^{(k)}^T \WB^2^{(k)} [\TG]_{i,j} \yB^{(k)}
+ &=&
+  \sum_k \yB^{(k)}^T [\TG]_{i,j} \WB^2^{(k)} \RB \yB^{(k)}
+\nonumber
+\\
+  \sum_k [\yB^{(k)}]_j [\wB^{(k)}]_i^2 [\xT^{(k)}]_i 
+ &=&
+  \sum_l [\RB]_{i,l} \sum_k [\yB^{(k)}]_l [\wB^{(k)}]_i^2 [\yT^{(k)}]_j 
 \end{eqnarray}
 
-
-The linear fit value of $\RB$ is thus
+This expression may be represented as a matrix equation
+by defining matrices $\AB$ and $\BB$ where
+\begin{equation}
+\AB = \sum_k (\WG^{(k)})^2 \xT^{(k)} (\yB^{(k)})^T 
+\end{equation}
+and $\BB$ is the vertical concatenation of $n_N$
+($n_M \times n_M$) block matrices $\BB^{(k)}$, where
+\begin{equation}
+\BB_l = \sum_k [\wG^{(k)}]_l^2 \yB^{(k)} (\yB^{(k)})^T 
+\end{equation}
+Based on these expressions, $\RB_{GR}$ is
 \begin{equation}
 \RB\{:\} = \BB^t (\BB \BB^t)^{-1} \AB\{:\}
 \end{equation}
 where the notation $\{:\}$ represents column
-concatenation of a matrix, and
-\begin{equation}
-\AB = \sum_k \WB_k \xB_k \yB^t
-\end{equation}
-and $\BB$ is a vertical concatenation of $N$
-($M \times M$) blocks $\BB_k$ where
-\begin{equation}
-\BB_i = \sum_k [\wB_k]_i \xB_k \yB^t
-\end{equation}
-
+concatenation of a matrix.
 
 \subsection{Selection of Training data}
+\label{subsec:training_data}
 
 Training data are selected as small, conductivity contrasting
 targets spread randomly in the plane of the 3D model
