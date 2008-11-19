@@ -249,7 +249,7 @@ change image, based on a 3D forward model
 These limitations represent our opinions on the limits
 to areas understood sufficiently well in the EIT community
 to reach consensus. We do not propose such limits are ideal;
-in fact, we activly encourage work to overcome them,
+in fact, we actively encourage work to overcome them,
 such as planar placement of electrodes and the consequent 2D images. 
 
 \section{Methods: performance figures of merit}
@@ -262,7 +262,7 @@ the measures, such that it is not possible to
 simultaneously optimize all measures. Instead, we proceed
 as follows. After establishing the performance measures,
 we describe a unified methodology to calculate a reconstruction
-matrix which is an optimized compromize of criteria
+matrix which is an optimized compromise of criteria
 weighted by the consensus importance of each.  
 
 \begin{figure}[bhtp]
@@ -392,7 +392,7 @@ linear regularized EIT reconstruction approaches
 is based on a set of performance requirements, whereas
 previous reconstruction algorithms are based directly on
 the underlying mathematical models and do not express
-the performance requirements explicity.
+the performance requirements explicitly.
 The value of this approach is that is allows
 performance requirements (established in our case
 via consensus) to be directly encoded into the
@@ -410,7 +410,7 @@ a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
 Difference EIT calculates difference data $\yB$, ($[\yB]_i =
 [\vB]_i - [\vB_r]_i$; or the normalized difference data $[\yB]_i
 = ([\vB]_i - [\vB_r]_i)/[\vB_r]_i)$, where $\vB_r$ is a reference
-set of measurements representing the backround conductivity
+set of measurements representing the background conductivity
 distribution, $\sG_r$. To improve its precision,
 $\vB_r$ is typically averaged over many data frames, at a time
 when the conductivity distribution may be assumed to be stable;
@@ -550,7 +550,7 @@ n_N}$ is the expected image covariance.
 
 It is worth noting that many other regularized approaches
 to EIT have been used, such as the
-TSVD (truncated singular valud decomposition, REFS),
+TSVD (truncated singular value decomposition, REFS),
 and
 SIRT (simultaneous iterative reconstruction technique, REFS).
 All linear approaches are structurally similar; however
@@ -635,15 +635,15 @@ inverted without numerical difficulties. The choice of exponent is
 a heuristic compromise between the pushing noise to the boundary
 ($p=0$) or to the centre ($p=1$). The NOSER algorithm is 
 representative of a broad group of structurally similar 
-algorithims that have been widely implemented in EIT;
+algorithms that have been widely implemented in EIT;
 it is generally understood to perform well.
 
 
 \subsection{GREIT image reconstruction approach}
 
-In this section, we elaborate the GREIT proceedure
+In this section, we elaborate the GREIT procedure
 from which the reconstruction matrix, $\RB$ is
-calculated.  The proceedure depends on definition
+calculated.  The procedure depends on definition
 of:
 \begin{itemize}
 \item
@@ -658,7 +658,7 @@ In this paper, the forward problem is solved using a
 3D FEM using the complete electrode model
 (Cheng et al, 1989). However, it is worth noting that 
 an forward model, physical or numerical, is suitable
-for this proceedure.
+for this procedure.
 
 One other requirement for the forward problem model is
 an estimate of the amplitude of conductivity changes $\xB^{(k)}$
@@ -718,7 +718,7 @@ and electrode movement, which resulted in reduced movement
 artefacts in the reconstructed images. In order
 to use this capability in GREIT, we specify that a
 set of ``noise'' measurements due to electrode movement 
-by incorportated. This is currently implemented from
+be incorporated. This is currently implemented from
 deformations of the FEM (G\'omez-Laberge and Adler, 2008),
 but may be based on a calibration protocol in an
 implemented system.
@@ -784,7 +784,7 @@ may be expressed as minimization of an error $\epsilon^2$
     = \sum_k \| (\WB^{(k)})^2 (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
 \end{equation}
 where $\WB^{(k)} = diag( \wB^{(k)})$, is a diagonal matrix representing
-the weighting coresponding to each measurement. A 2-norm is used as it allows
+the weighting corresponding to each measurement. A 2-norm is used as it allows
 a linear expression for, and faster computation of, $\RB$;
 however, other norms may result in improved performance.
 
@@ -854,7 +854,7 @@ system is 104).
 
 \section{Methods: Evaluation}
 
-Evalulation is performed in two stages. First algorithm performance
+Evaluation is performed in two stages. First algorithm performance
 is evaluated against the figures or merit in section
 \ref{sec:figmerit}.
 Next, we compare to a representative set of  clinical 
@@ -986,7 +986,7 @@ Ringing ({\em Want: small })
 \end{center}
 \end{figure}
 
-\section{Discusion}
+\section{Discussion}
 
 $-$ Summary
 \\
@@ -997,7 +997,7 @@ $-$ Recommended selection of parameters
 $-$ Discussion of remaining steps before 
     GREIT can be released.
     
-The calculation of the GREIT reonstruction matrix
+The calculation of the GREIT reconstruction matrix
 may be shown to be equivalent to a scaled generalized
 Tikhonov solution of the form of section \ref{subsec:OSLGNS}.
 
