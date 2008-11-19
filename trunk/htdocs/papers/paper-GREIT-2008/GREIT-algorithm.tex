@@ -8,6 +8,7 @@
 \newcommand{\vB}{\mbox{$\mathbf{v}$}}
 \newcommand{\xB}{\mbox{$\mathbf{x}$}}
 \newcommand{\xH}{\mbox{$\mathbf{\hat x}$}}
+\newcommand{\xT}{\mbox{$\mathbf{\tilde x}$}}
 \newcommand{\nB}{\mbox{$\mathbf{n}$}}
 \newcommand{\yB}{\mbox{$\mathbf{y}$}}
 \newcommand{\wB}{\mbox{$\mathbf{w}$}}
@@ -490,6 +491,7 @@ under the following license:
 
 
 \subsection{One step linear Gauss-Newton solvers}
+\label{subsec:OSLGNS}
 
 In this section, we elaborate the
 One-step Gauss-Newton (GN) EIT reconstruction approaches,
@@ -718,11 +720,11 @@ implemented system.
 Section \ref{perf_metrics} gives details of the 
 performance metrics selected for GREIT. Based on these
 metrics, we can create a ``desired image''
-$\xH_k$ corresponding to each conductivity change
+$\xT_k$ corresponding to each conductivity change
 $\xB_k$ in the forward model. It is possible to set
-$\xH_k = \xB_k$; however, this will reduce to a standard
+$\xT_k = \xB_k$; however, this will reduce to a standard
 GN solution without tuning the algorithm to the 
-performance metrics. Instead, $\xH_k$ is allowed to be
+performance metrics. Instead, $\xT_k$ is allowed to be
 a larger circular area corresponding to the known
 blurring inherent in EIT. We recommend, for a 16 electrode
 EIT system, that the $\frac{1}{4}$-max
@@ -732,25 +734,8 @@ zero; we wish for noise input to produce no output.
 
 Corresponding to each ``desired image'', is an image
 weighting $\wB_k$ which represents the weight given to 
-each pixel in $\xH_k$. The weighing allows ``tuning''
+each pixel in $\xT_k$. The weighing allows ``tuning''
 of the relative importance of the  performance metrics.
-Based on the desired image and weighting, the corresponding
-reconstruction matrix which best fits the requirements
-may be expressed as minimization of an error $\epsilon^2$
-\begin{equation}
-\label{GREIT_norm}
-\epsilon^2 = \sum_k \| \xH_k - \RB \yB_k \|_{\WB^2_k}^2
-    = \sum_k \| \WB^2_k (\xH_k - \RB \yB_k ) \|^2
-\end{equation}
-where $\WB_k = diag( \wB_k)$, is a diagonal matrix representing
-each weighting. A 2-norm is used as it allows
-a linear expression for, and faster computation of, $\RB$;
-however, other norms may result in improved performance.
-
-{\em
-Discuss how weights correspond to requirements
-Solve notation issues y n
-}
 \end{itemize}
 
 \begin{figure}[bhtp]
@@ -761,6 +746,36 @@ Desired image framework
 }
 \end{center}
 \end{figure}
+
+Based on the {\em forward model}, {\em noise model},
+and {\em desired performance metrics}. we are
+able to formulate a set of training data and
+define the GREIT reconstruction matrix $\RB_{GR}$
+in terms of these data. We can show that
+for a linear reconstruction, this approach is 
+equivalent to a generalized Tikhonov regularization
+(section \ref{subsec:OSLGNS})
+in which the prior distributions $\SG_x$ and $\SG_n$
+corresponds to the selection strategy for
+the training data.
+
+Based on the desired image and weighting, the corresponding
+reconstruction matrix $\RB_{GR}$ which best fits the requirements
+may be expressed as minimization of an error $\epsilon^2$
+\begin{equation}
+\label{GREIT_norm}
+\epsilon^2 = \sum_k \| \xT_k - \RB \yB_k \|_{\WB^2_k}^2
+    = \sum_k \| \WB^2_k (\xT_k - \RB \yB_k ) \|^2
+\end{equation}
+where $\WB_k = diag( \wB_k)$, is a diagonal matrix representing
+each weighting. A 2-norm is used as it allows
+a linear expression for, and faster computation of, $\RB$;
+however, other norms may result in improved performance.
+
+{\em
+Discuss how weights correspond to requirements
+Solve notation issues y n
+}
 
 Based on (\ref{GREIT_norm}), we develop an expression
 for $\RB = argmin \epsilon^2$, by setting the
@@ -795,6 +810,26 @@ and $\BB$ is a vertical concatenation of $N$
 \begin{equation}
 \BB_i = \sum_k [\wB_k]_i \xB_k \yB^t
 \end{equation}
+
+
+\subsection{Selection of Training data}
+
+Training data are selected as small, conductivity contrasting
+targets spread randomly in the plane of the 3D model
+between electrodes. Vertical offsets above and below the
+plane of $0.25\times$diameter of medium are allowed.
+
+The computational cost of calculating $\RB_{GR}$ does
+not change dramatically with the size of the training data
+set. The size of the matrix to be inverted is fixed at
+$n_M \times n_M$. We therefore use a large number of
+training samples (10000). The minimum training set 
+is much smaller, because, since the model is
+linear, the key requirement is that the range of 
+$\RB_{GR}$ be adequately represented. This is limited
+to the number of independent measurements,
+$\frac{1}{2} n_E \times n_V$ (which for a 16 electrode
+system is 104).
 
 
 
