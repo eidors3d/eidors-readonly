@@ -2,9 +2,8 @@
 % $Id$
 \documentclass[12pt]{iopart}
 \usepackage{graphicx}
-%\usepackage{amsfonts}
-%\usepackage{amsmath}
-\newcommand{\mathbb}{\mathbf}
+ \usepackage{amssymb}
+ \usepackage{amsbsy}
 \newcommand{\vB}{\mbox{$\mathbf{v}$}}
 \newcommand{\xB}{\mbox{$\mathbf{x}$}}
 \newcommand{\xH}{\mbox{$\mathbf{\hat x}$}}
@@ -22,10 +21,13 @@
 \newcommand{\WB}{\mbox{$\mathbf{W}$}}
 \newcommand{\XB}{\mbox{$\mathbf{X}$}}
 \newcommand{\YB}{\mbox{$\mathbf{Y}$}}
-%\newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
-\newcommand{\SG}{\mbox{${\mathbf \Sigma}$}}
-\newcommand{\TG}{\mbox{${\mathbf \Theta}$}}
-\newcommand{\sG}{\mbox{${\mathbf \sigma}$}}
+% Use boldsymbol is using amssymb
+ \newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
+ \newcommand{\TG}{\mbox{${\boldsymbol \Theta}$}}
+ \newcommand{\sG}{\mbox{${\boldsymbol \sigma}$}}
+%\newcommand{\SG}{\mbox{${\mathbf \Sigma}$}}
+%\newcommand{\TG}{\mbox{${\mathbf \Theta}$}}
+%\newcommand{\sG}{\mbox{${\mathbf \sigma}$}}
 \newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
 \newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
 \newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
@@ -381,7 +383,7 @@ chest at the level of the ???
 
 \section{Methods: Reconstruction algorithm framework}
 
-This section represents a framework to calculate
+This section describes the GREIT framework to calculate
 a linear image reconstruction matrix which is optimized
 to a set of performance requirements. This approach
 is based a experience with a large number of 
@@ -393,7 +395,7 @@ the underlying mathematical models and do not express
 the performance requirements explicity.
 The value of this approach is that is allows
 performance requirements (established in our case
-via consensus) may be directly encoded into the
+via consensus) to be directly encoded into the
 reconstruction algorithm.
 
 We consider an EIT system with $n_E$ electrodes applied to a body
@@ -426,17 +428,17 @@ conductivity distribution, $\sG$, and that at the reference
 measurement, $\sG_r$.
 
 Image reconstruction in EIT is a non-linear problem; however,
-linearized approximations have prooved to be very useful.
+linearized approximations have proved to be very useful.
 This is largely because the noise levels present in clinical
 and experimental EIT data do not typically have sufficient
 accuracy to show stable results with iterative algorithms.
 Linear algorithms also have the benefit of producing
-stable and better understood images in which the effects
+images in which the effects
 of data artefacts can be more readily be identified. Finally,
 linear reconstruction can be implemented as a fast matrix
 multiplication. We represent linear EIT image reconstruction
 as a matrix, $\RB\in\mathbb{R}^{n_N\times n_M}$ which
-maps measurements $\yB$ to a reconstructed image $\xH$,
+maps measurements $\yB$ to a reconstructed image $\xH$:
 \begin{equation} 
 \label{reconst_eqn}
    \xH = \RB \yB
@@ -447,14 +449,14 @@ maps measurements $\yB$ to a reconstructed image $\xH$,
 
 The backprojection algorithm was developed by 
 Barber and Brown (1983) for the original 
-Sheffield EIT system has seen numerous 
+Sheffield EIT system, and  has seen numerous 
 variants and improvements. While the original
 technique was based on an analogy to the backprojection
 algorithm for CT, this model was clearly inadequate, because
 diffuse electric current propagation is very different
 to that of X-ray photons. Therefore, numerous improvements
-were developed to improve the backprojection algorithm,
-(eg Barber and Brown, 1988). Such filtering strategies
+were developed to the backprojection algorithm
+(eg Barber and Brown, 1988). Such strategies
 can be shown to regularize the reconstructed images.
 A good mathematical characterization is given by
 Santosa and Vogelius (1990).
@@ -468,16 +470,18 @@ has also been widely used for such clinical and
 experimental work, and uses a very similar reconstruction
 algorithm.
 
-For this paper, it appears that the exact formulation
+This paper compares GREIT to the Sheffield Mark I
+backprojection algorithm;
+unfortunately, it appears that the exact formulation
 of the specific algorithm version of interest has been
 lost. To reconstruct it, we proceeded as follows:
 since image reconstruction is linear, there exists
 a mapping which can explain the transformation of
 measurements into images. We obtained a large set of
 measurements, $\yB_k$, and the associated
-reconstructed images, $\xB_k$, and formed matrices
-$\YB = [ \yB_1, \cdots, \yB_k, cdots]$ and 
-$\XB = [ \xH_1, \cdots, \xH_k, cdots]$ by concatenation.
+reconstructed images, $\xH_k$, and formed matrices
+$\YB = [ \yB_1, \cdots, \yB_k, \cdots]$ and 
+$\XB = [ \xH_1, \cdots, \xH_k, \cdots]$ by concatenation.
 The Sheffield backprojection matrix, was
 calculated as the least squared fit to
    $\YB \RB_{SBP} = \XB$.
@@ -486,10 +490,10 @@ this algorithm, it has been made available
 online 
 \verb$http://eidors3d.sf.net/data_contrib/db_backproj_matrix/$
 under the following license:
-``this matrix is copyright DC Barber and BH Brown at
+``This matrix is copyright DC Barber and BH Brown at
   University of Sheffield. It may be used free of charge
   for research and non-commercial purposes. Commercial
-  applications require a licence from the University of Sheffield.''
+  applications require a license from the University of Sheffield.''
 
 
 \subsection{One step linear Gauss-Newton solvers}
@@ -515,13 +519,13 @@ $\JB\in\mathbb{R}^{n_M\times n_N}$ is the Jacobian or sensitivity
 matrix and $\nB\in\mathbb{R}^{n_M}$ is the measurement noise which is
 assumed to be uncorrelated white Gaussian. $\JB$ is calculated from
 the FEM as
-$\JB_{ij}=\left.
-     \frac{\partial\yB_i}{\partial\xB_j}
+$[\JB]_{ij}=\left.
+     \frac{\partial[\yB]_i}{\partial[\xB]_j}
           \right|_{\sG_r}$,
 and depends on the FEM, current injection patterns, the reference
 conductivity, and the electrode models. This system is
 underdetermined since $n_N > n_M$. 
-Regularization techniques are requied
+Regularization techniques are required
 in order to calculate a conductivity change
 estimate, $\xH$, which is both
 faithful to the measurements, $\yB$, and to
@@ -596,7 +600,7 @@ $\RB=\left(\JB^T\BB^{-1}\JB+\lambda^2\PB^{-1}\right)^{-1}\JB^T\VB^{-1}$
 is the linear, one-step inverse.
 In (\ref{GN_solution}), the term in the inverse is of size
 $n_N\times n_N$. To save computational time, and improve inverse
-accuracy and stability, matrix $\RB$ may be rewritten using
+accuracy and stability, matrix $\RB$ may be rewritten 
 using the {\em data form}, or {\em Wiener filtering form} as:
 \begin{equation}\label{opti_sol}
  \RB =\PB\JB^T
@@ -604,8 +608,8 @@ using the {\em data form}, or {\em Wiener filtering form} as:
        \JB\PB\JB^T+\lambda^2\VB
    \right)^{-1}
 \end{equation}
-Using (\ref{opti_sol}), the size of the term in the inverse is
-reduced to $n_M\times n_M$.
+In this formulation (\ref{opti_sol}), the size of the term in the
+inverse is reduced to $n_M\times n_M$.
 
 If image elements are assumed to be independent with identical
 expected magnitude, $\PB$ becomes an identity matrix $\IB$ and
@@ -642,9 +646,9 @@ from which the reconstruction matrix, $\RB$ is
 calculated.  The proceedure depends on definition
 of:
 \begin{itemize}
-\item[] 
-{\em Forward problem model:}
-A forward model allows calculation of representative EIT
+\item
+{\em Forward model:}
+A forward model allows calculation of EIT
  measurement
 data $\yB^{(k)}$ from a conductivity change distribution $\xB^{(k)}$.
 The model represents the details of the body geometry,
@@ -659,15 +663,16 @@ for this proceedure.
 One other requirement for the forward problem model is
 an estimate of the amplitude of conductivity changes $\xB^{(k)}$
 encountered in the modelled EIT application. This results in
-a measurement variance $\sigma_{\xB}^2 = var \yB = E[ \| \yB \|^2 ]$. 
+a measurement variance
+$\sigma_{\yB}^2 = \mathrm{var}~\yB = E[ \| \yB \|^2 ]$. 
 The mean $\yB$ is assumed to be zero, since positive and
 negative conductivity changes are equally likely.
-For lung images, we may calculate $\sigma_{\xB}$ from either
+For lung images, we may calculate $\sigma_{\xB}^2$ from either
 a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
 in representative applications.
 
-\item[] 
+\item
 {\em Noise model:}
 A noise model allows calculation of representative 
 noise (or undesired signal) samples in EIT measurements.
@@ -675,8 +680,8 @@ For GREIT, we consider two sources of noise:
 electronic measurement noise, and
 electrode movement artefacts. In general, for each
 source of noise $n_s$, we have noise samples $\yB^{(k)}_{n_s}$,
-and an estimate of the noise amplitude
-variance $\sigma_{\nB}^2 = var \nB = E[ \| \nB \|^2 ]$. 
+and an estimate of the noise amplitude variance
+ $\sigma_{\nB}^2 = \mathrm{var}~\nB = E[ \| \nB \|^2 ]$. 
 The mean noise is assumed to be zero in this formulation;
 if necessary, a non-zero noise mean should be accounted for
 by pre-processing of EIT measurements.
@@ -684,7 +689,8 @@ Note that for normalized difference EIT,
 noise samples are normalized by the
 reference measurements by $[\yB]_i = [\nB ]_i / [\vB_r]_i$.
 
-{\em electronic measurement noise}
+\hspace{5mm}
+{\em Electronic measurement noise}
 is typically modelled to be uniform and Gaussian in EIT
 image reconstruction. This assumption is reasonable for
 a generic GREIT algorithm designed for general EIT reconstruction.
@@ -698,7 +704,8 @@ be tuned to the hardware implementation. This may be
 implemented using a calibration protocol before the 
 start of measurements.
 
-{\em electrode movement artefacts}
+\hspace{5mm}
+{\em Electrode movement artefacts}
 occur when the electrodes move, either with posture change
 or with chest movements due to breathing. Several reports
 have demonstrated the serious impact of such movements on
@@ -717,7 +724,7 @@ but may be based on a calibration protocol in an
 implemented system.
 
  
-\item[] 
+\item
 {\em Desired performance metrics:}
 Section \ref{perf_metrics} gives details of the 
 performance metrics selected for GREIT. Based on these
@@ -747,7 +754,11 @@ TODO: Discuss how weights correspond to requirements
 \begin{center}
 \includegraphics[width=0.6\textwidth, bb=0.0in 1.7in 10in 6.0in,page=1]{figures/fig-training-set.pdf}
 \caption{ \label{fig:desired_performance}
-Desired image framework
+Training data for GREIT. Two sets of training data are used, based on
+conductivity targets and noise or artefact sources. For each type
+data, a set of training inputs (EIT measurements) and desired
+outputs (reconstructed images) are calculated. Desired outputs
+are based on the consensus performance measures.
 }
 \end{center}
 \end{figure}
@@ -770,21 +781,20 @@ may be expressed as minimization of an error $\epsilon^2$
 \begin{equation}
 \label{GREIT_norm}
 \epsilon^2 = \sum_k \| \xT^{(k)} - \RB \yB^{(k)} \|_{(\WB^{(k)})^2}
-    = \sum_k \| (\WB^2)^{(k)} (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
+    = \sum_k \| (\WB^{(k)})^2 (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
 \end{equation}
 where $\WB^{(k)} = diag( \wB^{(k)})$, is a diagonal matrix representing
-each weighting. A 2-norm is used as it allows
+the weighting coresponding to each measurement. A 2-norm is used as it allows
 a linear expression for, and faster computation of, $\RB$;
 however, other norms may result in improved performance.
 
 Based on (\ref{GREIT_norm}), we develop an expression
-for $\RB = argmin \epsilon^2$, by setting the
-derivative to zero.
+for $\RB = argmin~\epsilon^2$, by setting the
+matrix derivative of $\epsilon^2$ to zero.
 \begin{equation}
 \frac{ d\epsilon^2 }{ d\RB_{ij} } =
--2 \sum_k (\xH^{(k)})^T (\WB^2)^{(k)} [\TG]_{i,j} \yB^{(k)}
-+2 \sum_k (\yB^{(k)})^T [\TG]_{i,j} (\WB^2)^{(k)} \RB \yB_k
-= 0
+-2 \sum_k (\xH^{(k)})^T (\WB^{(k)})^2 [\TG]_{i,j} \yB^{(k)}
++2 \sum_k (\yB^{(k)})^T [\TG]_{i,j} (\WB^{(k)})^2 \RB \yB_k
 \end{equation}
 where $[\TG]_{i,j}$ has a value of $1$ at $(i,j)$
 but is zero elsewhere. Based on this expression
@@ -805,16 +815,19 @@ by defining matrices $\AB$ and $\BB$ where
 \AB = \sum_k (\WB^{(k)})^2 \xT^{(k)} (\yB^{(k)})^T 
 \end{equation}
 and $\BB$ is the vertical concatenation of $n_N$
-($n_M \times n_M$) block matrices $\BB^{(k)}$, where
+($n_M \times n_M$) block matrices $\BB_l$, where
 \begin{equation}
 \BB_l = \sum_k [\wB^{(k)}]_l^2 \yB^{(k)} (\yB^{(k)})^T 
 \end{equation}
-Based on these expressions, $\RB_{GR}$ is
+Based on these expressions, $\RB_{GR}$ is the
+least squares minimizer of the norm 
+$\|\AB_{(:)} = \RB_{(:)} \BB\|^2$ where
+the notation $(:)$ row concatenation of a matrix,
+Thus the GREIT reconstruction matrix, $\RB_{GR}$
+is calculated
 \begin{equation}
-\RB\{:\} = \BB^t (\BB \BB^t)^{-1} \AB\{:\}
+\RB_{(:)}^T = \BB (\BB^T \BB)^{-1} \AB_{(:)}^T
 \end{equation}
-where the notation $\{:\}$ represents column
-concatenation of a matrix.
 
 \subsection{Selection of Training data}
 \label{subsec:training_data}
@@ -984,6 +997,10 @@ $-$ Recommended selection of parameters
 $-$ Discussion of remaining steps before 
     GREIT can be released.
     
+The calculation of the GREIT reonstruction matrix
+may be shown to be equivalent to a scaled generalized
+Tikhonov solution of the form of section \ref{subsec:OSLGNS}.
+
 
 
 \subsection{Deliverables \& Licensing}
