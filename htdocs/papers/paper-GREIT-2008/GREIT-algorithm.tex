@@ -422,6 +422,73 @@ conductivity change, $\xB = \sG - \sG_r$ between the present
 conductivity distribution, $\sG$, and that at the reference
 measurement, $\sG_r$.
 
+Image reconstruction in EIT is a non-linear problem; however,
+linearized approximations have prooved to be very useful.
+This is largely because the noise levels present in clinical
+and experimental EIT data do not typically have sufficient
+accuracy to show stable results with iterative algorithms.
+Linear algorithms also have the benefit of producing
+stable and better understood images in which the effects
+of data artefacts can be more readily be identified. Finally,
+linear reconstruction can be implemented as a fast matrix
+multiplication. We represent linear EIT image reconstruction
+as a matrix, $\RB\in\mathbb{R}^{n_N\times n_M}$ which
+maps measurements $\yY$ to a reconstructed image $\xH$,
+\begin{equation} 
+\label{reconst_eqn}
+   \xH = \RB \yB
+\end{equation} 
+ 
+
+\subsection{Sheffield Backprojection}
+
+The backprojection algorithm was developed by 
+Barber and Brown (1983) for the original 
+Sheffield EIT system has seen numerous 
+variants and improvements. While the original
+technique was based on an analogy to the backprojection
+algorithm for CT, this model was clearly inadequate, because
+diffuse electric current propagation is very different
+to that of X-ray photons. Therefore, numerous improvements
+were developed to improve the backprojection algorithm,
+(eg Barber and Brown, 1988). Such filtering strategies
+can be shown to regularize the reconstructed images.
+A good mathematical characterization is given by
+Santosa and Vogelius (1990).
+
+While many variants of Sheffield backprojection exist,
+clinical and experimental EIT has largely used only
+one: that which was distributed in the
+Sheffield Mark I EIT system (Brown and Seagar, 1987).
+The G\"ottingen Goe MF II EIT system (Hahn et al 2001)
+has also been widely used for such clinical and
+experimental work, and uses a very similar reconstruction
+algorithm.
+
+For this paper, it appears that the exact formulation
+of the specific algorithm version of interest has been
+lost. To reconstruct it, we proceeded as follows:
+since image reconstruction is linear, there exists
+a mapping which can explain the transformation of
+measurements into images. We obtained a large set of
+measurements, $\yB_k$, and the associated
+reconstructed images, $\xB_k$, and formed matrices
+$\YB = [ \yB_1, \cdots, \yB_k, cdots]$ and 
+$\XB = [ \xH_1, \cdots, \xH_k, cdots]$ by concatenation.
+The Sheffield backprojection matrix, was
+calculated as the least squared fit to
+   $\YB \RB_{SBP} = \XB$.
+In order to permit testing of EIT data against
+this algorithm, it has been made available
+online 
+\verb$http://eidors3d.sf.net/data_contrib/db_backproj_matrix/$
+under the following license:
+``this matrix is copyright DC Barber and BH Brown at
+  University of Sheffield. It may be used free of charge
+  for research and non-commercial purposes. Commercial
+  applications require a licence from the University of Sheffield.''
+
+
 \subsection{One step linear Gauss-Newton solvers}
 
 In this section, we elaborate the
@@ -944,6 +1011,15 @@ Adler A and Lionheart W R B 2006
 27 S25--S42
 
 \item[]
+Barber D C
+Brown B H
+Freeston I L, 1983
+Imaging spatial distributions of resistivity using applied potential tomography
+{\em Electronics Letters}
+19 933--935
+
+
+\item[]
 Barber D C and Brown B H 1984
 ``Applied potential tomography'', 
 {\em J Phys E: Sci Instrum}
@@ -1062,6 +1138,12 @@ Polydorides N and Lionheart W R B 2002 A Matlab toolkit for
 three-dimensional electrical impedance tomography: A contribution
 to the Electrical Impedance and Diffuse Optical Reconstruction
 Software project {\em Meas. Sci. Technol.} {\bf 13} 1871-83
+
+\item[]
+Santosa F Vogelius M 1990
+Backprojection algorithm for electrical impedance imaging
+{\em SIAM J. Applied Math}
+50 216--243. 
 
 
 \item[]
