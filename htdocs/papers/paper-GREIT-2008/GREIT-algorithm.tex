@@ -362,19 +362,63 @@ the FEM geometry.
 \hspace{5mm}
 {\em Desired behaviour:}
 AR should be constant for any target position. We consider
-AR to be the most important figure of merit because, without
-constant repsponse, the same volume of air in different parts
+constant
+AR to be the most important figure of merit. Without
+constant amplitude repsponse, the same volume of air in different parts
 of the lung will contribute differently to the image, introducing
 serious difficulties in image interpretation.
 
 \item
 {\bf Position Error (PE):}
+measures the extent to which reconstructed images faithfully
+represent the position of the image target. Based on the
+target position, $r_t$, and the CoG of $\xH_q$, we define:
 \begin{equation}
-\mathrm{PE} = 
+\mathrm{PE} = r_q - r_t
 \end{equation}
+where positive values of PE indicate reconstructed images
+``pushed'' to the medium centre. This measure is similar
+to that of Adler and Guardo (1996).
+
+\hspace{5mm}
+{\em Desired behaviour:}
+PE should be small and show small variability for
+targets at different radial positions. We consider
+small and constant PE to be the second most important
+figure of merit. If PE is variable, interpretation
+of a distribution of air in the lungs becomes unreliable.
+Sheffield backprojection has large PE near the
+electrodes; this has resulted in cases where changes at
+the electrodes are misinterpreted as being inside the body.
 
 \item
-{\bf Resolution (point spread function (PSF):}
+{\bf Resolution (RES):}
+measures the size of reconstructed targets as a fraction
+of the medium; this is
+equivalent to a measure of point spread function (PSF) size.
+\begin{equation}
+\mathrm{RES} = \sqrt{
+ \frac{\sum_k [\xH_q]_k}
+      { A_{\textrm{medium}} }
+ }
+\end{equation}
+where $A_{\textrm{medium}}$ is the area (in pixels) of
+the reconstructed medium. The square root is used to
+so that RES measures radius ratios rather than area ratios.
+This measure is modelled on the one proposed by
+Wheeler et al (2002).
+
+\hspace{5mm}
+{\em Desired behaviour:}
+RES should be uniform and small, in order to accurately 
+more accurately represent shape of the target conductivity
+distribution. We consider uniformity of RES to be the
+fourth most important figure of merit, but small size
+of RES to be much less important (seventh). A nonuniform
+RES can result in an incorrect reconstructed 
+position of a larger target. Low RES serves primarily
+to distinguish nearby targets. Since EIT is understood
+be a low resolution medium, this application is less important.
 
 \item
 {\bf Shape Deformation:}
@@ -1362,6 +1406,12 @@ Comparing reconstruction algorithms for electrical
 impedance tomography
 {\em IEEE Trans. Biomed. Eng}
 34 843--52
+
+\item[]
+Wheeler JL, Wang W, Tang M 2002
+A comparison of methods for measurement of spatial resolution in two-dimensional circular EIT images
+{\em Physiol. Meas.}
+23 169--176
 
 \item[]
 Zhang J and Patterson R P 2005 EIT images of ventilation: what
