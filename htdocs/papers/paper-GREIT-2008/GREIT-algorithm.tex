@@ -291,9 +291,97 @@ an EIT linear reconstruction algorithm represented as
 a matrix $\RB$. $\xH$ is a column vector representing
 the $32\times 32$ pixel grid of the images.
 
+We define figures of merit based on small ``point''
+conductivity changes, where small indicates a diameter
+of less than 5\% of the medium diameter, and are thus
+much smaller than the inherent resolution of EIT with
+16 electrodes.
+To evaluate this image, we first calculate
+a $\frac{1}{4}$--amplitude set, $\xH_q$ which
+contains all image pixels $[\xH]_i$ for
+which $[\xH]_i \geq \mathrm{max}~\xH$. For targets
+with a conductivity decrease the definition
+of the $\frac{1}{4}$--amplitude set is inverted.
+The centre of gravity (CoG) of for $\xH$ and $\xH_q$ are
+calculated; the distance from the CoG to the 
+medium centre is then calculated, as $r_t$ and $r_q$
+respectively.
 
-Each algorithm will be evaluated against the
-following criteria.
+based on images of point targets, we define the following
+figures of merit:
+amplitude response,
+position error,
+resolution,
+shape deformation, and
+ringing. 
+
+\begin{itemize}
+
+\item
+{\bf Amplitude Response (AR)}
+measures the ratio of image pixel amplitudes in the
+target to that in the reconstructed image.
+For a spherical target of volume, $V_t$, in the electrode
+plane with
+conductivity $\sigma_t$ and homogeneous reference
+conductivity $\sigma_r$
+\begin{equation}
+\mathrm{AR} =  \frac{
+    \sum_k [\xH]_k
+  }{
+    V_t \frac{\Delta\sigma}{\sigma_r}
+  }
+\end{equation}
+where $\Delta\sigma = \sigma_t - \sigma_r$,
+
+AR allows units to be assigned to the 
+reconstructed conductivities. For this, we 
+require that reconstruction matrices, $\RB$, be
+scaled such that AR$=1$ for 
+a small spherical target with $\sigma_t/\sigma_r \approx 1$
+in the centre of the medium.
+With this normalization, reconstructed EIT images have
+units as follows:
+   \begin{itemize}
+   \item {\em Normalized Difference EIT:}
+in this case, measurements $\yB$ are unitless,
+and the EIT image will be in units of fractional conductivity
+change, $\Delta\sigma/\sigma_r$.
+   \item {\em Difference EIT:}
+in this case, measurements $\yB$ must be in units of
+transfer conductance ($\Omega^{-1}$), and the EIT image
+will be in units of conductivity change (in $\Omega^{-1}\cdot$m)
+scaled by the ratio or the measurement geometry to
+the FEM geometry.
+% for a box of A, L, admittance = A sigma / L
+% if we scale it by s, admittance = s^2 sigma / sL = s admittance_0
+% so admittance scales by the model to real scale ratio.
+   \end{itemize}
+
+
+\hspace{5mm}
+{\em Desired behaviour:}
+AR should be constant for any target position. We consider
+AR to be the most important figure of merit because, without
+constant repsponse, the same volume of air in different parts
+of the lung will contribute differently to the image, introducing
+serious difficulties in image interpretation.
+
+\item
+{\bf Position Error (PE):}
+\begin{equation}
+\mathrm{PE} = 
+\end{equation}
+
+\item
+{\bf Resolution (point spread function (PSF):}
+
+\item
+{\bf Shape Deformation:}
+
+\item
+{\bf Ringing:}
+\end{itemize}
 
 \subsection{Amplitude Response}
    \begin{itemize}
