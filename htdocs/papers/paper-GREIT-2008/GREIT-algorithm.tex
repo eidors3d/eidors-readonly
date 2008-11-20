@@ -313,7 +313,7 @@ amplitude response,
 position error,
 resolution,
 shape deformation, and
-ringing. 
+overshoot. 
 
 \begin{itemize}
 
@@ -421,45 +421,56 @@ to distinguish nearby targets. Since EIT is understood
 be a low resolution medium, this application is less important.
 
 \item
-{\bf Shape Deformation:}
+{\bf Shape Deformation (SD):}
+Reconstruction algorithms typically create circular
+images for targets in the centre, but often display 
+strange shaped artefacts for targets near the medium
+boundary. Backprojection tends to show ``streak''
+artefacts in this case.
+SD measured the fraction of the reconstructed
+$\frac{1}{4}$--Amplitude set which does not
+fit within a circle.
+\begin{equation}
+\mathrm{SD} = \sum_{k\not\in C} [\xH_q]_k / 
+              \sum_{k} [\xH_q]_k
+\end{equation}
+where $C$ is a circle centred at the CoG of $\xH_q$
+with an equivalent area to $\xH_q$. This figure
+similar to that of Oh et al (2007).
+
+\hspace{5mm}
+{\em Desired behaviour:}
+SD should be low and uniform. Large SD may result in
+incorrect interpretation of images, although this
+effect is less important than other artefacts. We 
+consider SD to be the fifth most important figure 
+of merit.
 
 \item
-{\bf Ringing:}
-\end{itemize}
+{\bf Overshoot (OVS):}
+measures whether reconstructed images show
+areas of oposite sign surrounding the main 
+reconstructed target area. Fig. \ref{fig:PerfFigures}
+shows an arc of overshoot around the image centre.
+Overshoot is typical of linear filters; for second-order
+systems the effect may also be called ``ringing''.
+OVS measures the ratio of image amplitude of
+the opposite sign outside circle $C$ to image
+amplitude within $C$.
+\begin{equation}
+\mathrm{OVS} = \sum_{k\not\in C \& [\xH]_i < 0} [\xH]_k / 
+               \sum_{k\in C}                    [\xH]_k 
+\end{equation}
 
-\subsection{Amplitude Response}
-   \begin{itemize}
-   \item Output amplitude is correct ($\Omega \cdot m$)
-   \item the amplitude response is uniform for all radial positions.
-   \end{itemize}
-
-\subsection{Position Error}
-   \begin{itemize}
-   \item low average position error
-   \item uniform position error with radial position
-   \end{itemize}
-
-\subsection{ Resolution}
-   \begin{itemize}
-   \item small average PSF size
-   \item uniform PSF size with radial position
-   \item no (or very little) overshoot in the PSF
-  (overshoot is the negative ring around a target)
-   \item circular PSF
-   \end{itemize}
-
-\subsection{ Noise Performance}
-   \begin{itemize}
-   \item low average noise amplification
-   \end{itemize}
-
-\subsection{ Boundary shape and electrode sensitivity}
-   \begin{itemize}
-   \item low sensitivity to electrode movement
-   \item low sensitivity to boundary distortions
-         (with breathing and posture change)
-   \item low sensitivity to changes in electrode contact impedance
-   \end{itemize}
+\hspace{5mm}
+{\em Desired behaviour:}
+OVS should be low and uniform. Overshoot may
+easily result in incorrect interpretation. For
+example, the negative overshoot between non-conductive
+lungs will produce a conductive pattern which 
+may be misinterpreted as a heart.
+We consider OVS to be the third most important figure 
+of merit.
 
 \begin{figure}[bhtp]
 \begin{center}
@@ -472,6 +483,38 @@ parameter.
 }
 \end{center}
 \end{figure}
+
+\item
+{\bf Noise Amplification (NF):}
+measures the extent to which random
+measurement noise is amplified
+in the reconstructed images. Noise amplification
+is measured by the noise figure (NF) as
+illustrated in Fig. \ref{fig:noise_fig}; this
+definition is based on that of Adler and Guardo (1996).
+\begin{equation}
+\mathrm{OVS} = \sum_{k\not\in C \& [\xH]_k < 0} [\xH]_k / 
+               \sum_{k\in C}                    [\xH]_k 
+\end{equation}
+For regularized algorithms, the value of NF may be controlled
+a hyperparameter. For GREIT, NF is controlled by the weighting
+associated with the training noise. There is an inherent
+trade-off between good noise performance and fidelity to
+the other figures of merit.
+
+\hspace{5mm}
+{\em Desired behaviour:}
+NF should be low. Ideally NF should be tuned to the noise
+level associated with a given EIT system.
+Several studies have looked into strategies to select
+appropriate noise performance (eg. Graham and Adler, 2006).
+At this time, we do not have consensus on the best
+way to choose NF. Instead, we note that Sheffield Backprojection
+has generally satisfactory noise performance. This
+algorithm has NF$=0.5$ at the medium centre; we recommend
+this value for GREIT algorithms.
+
+\end{itemize}
 
 \section{Methods: Reconstruction algorithm framework}
 
@@ -1166,7 +1209,7 @@ Shape Deformation ({\em Want: small, uniform})
   \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_46.png}
 \caption{ \label{fig:rimage}
-Ringing ({\em Want: small })
+Overshoot ({\em Want: small })
 {\em left:} Sheffield Backprojection,
 {\em center:} NOSER
 {\em right:} GREIT
@@ -1373,6 +1416,11 @@ assessment of dynamic images by applied potential tomography for
 monitoring pulmonary perfusion {\em Clin. Phys. Physiol. Meas.}
 {\bf 9}, 87-91
 
+\item[]
+Oh S, Tang T, Sadleir R 2007
+Quantitative analysis of shape change in Electrical Impedance Tomography (EIT)
+in {\em IFMBE Proceedings}
+17 424--427
 
 \item[]
 Polydorides N and Lionheart W R B 2002 A Matlab toolkit for
