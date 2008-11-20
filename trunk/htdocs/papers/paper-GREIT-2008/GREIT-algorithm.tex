@@ -109,7 +109,7 @@ and the tools and evaluation methodology for
 clinical and experimental testing of the algorithm.
 The framework for the linear reconstruction algorithm
 consists of:
-1) detailed finite element models of a representative
+1) detailed finite element models (FEM) of a representative
  adult and neonate thorax;
 2) consensus on the performance figures of merit for
  EIT image reconstruction, which are:
@@ -268,22 +268,28 @@ weighted by the consensus importance of each.
 
 \begin{figure}[bhtp]
 \begin{center}
-\includegraphics[width=0.6\textwidth, bb=0.0in 1.7in 10in 6.0in,page=1]{figures/fig-perf-params.pdf}
-\caption{ \label{fig:noise_fig}
-Performance figures of merit for evaluation of GREIT
+\includegraphics[width=0.8\textwidth,
+                 bb=0.0in 1.7in 10in 6.0in,page=1]
+                {figures/fig-perf-params.pdf}
+\caption{ \label{fig:PerfFigures}
+Performance figures of merit for evaluation of GREIT images.
+Based on a reconstructed image ($\xH$, {\em left}),
+an image ($\xH_q$, {\em centre})
+is constructed of all image pixels which exceed
+ $\frac{1}{4}$ the maximum amplitude. From these images,
+figures of merit {\em right} are calculated as described.
 }
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp]
-\begin{center}
-\includegraphics[width=0.3\textwidth, bb=1.5in 2.0in 6.5in 5.5in,page=1]{figures/fig-noise-fig.pdf}
-\caption{ \label{fig:noise_fig}
-Schematic representation of the ``Noise Figure''
-parameter.
-}
-\end{center}
-\end{figure}
+An outline of the calculation of performance figures
+of merit is given in figure \ref{fig:PerfFigures}.
+Given a vector of EIT difference of normalized difference
+data, $\yB$ (length $N_E N_V$), we calculate a 
+reconstructed EIT image $\xH = \RB \yB$ based
+an EIT linear reconstruction algorithm represented as
+a matrix $\RB$. $\xH$ is a column vector representing
+the $32\times 32$ pixel grid of the images.
 
 
 Each algorithm will be evaluated against the
@@ -322,6 +328,18 @@ following criteria.
          (with breathing and posture change)
    \item low sensitivity to changes in electrode contact impedance
    \end{itemize}
+
+\begin{figure}[bhtp]
+\begin{center}
+\includegraphics[width=0.4\textwidth,
+                 bb=1.5in 2.0in 6.5in 6.0in,page=1]
+                {figures/fig-noise-fig.pdf}
+\caption{ \label{fig:noise_fig}
+Schematic representation of the ``Noise Figure''
+parameter.
+}
+\end{center}
+\end{figure}
 
 \section{Methods: Reconstruction algorithm framework}
 
