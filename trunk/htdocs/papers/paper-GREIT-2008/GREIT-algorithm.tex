@@ -144,10 +144,13 @@ are large organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
 was among the first physiological applications of this technology.
 (Barber and Brown 1984).
-While there are several medical imaging and instrumentation
-technologies to measure ventilation, EIT is unique in that it
+Some imaging modalities can measure ventilation,
+such as MRI (with hyperpolarized He) and PET. However, commonly
+used imaging modalities (radiography, CT, MRI) do not assess
+ventilation directly.
+EIT is unique in that it
 is able to non-invasively and continuously monitor the distribution of 
-ventilation. Based on these advantages, there is significant
+ventilation.  Based on these advantages, there is significant
 interest in EIT to 
 monitor patients with respiratory compromise.
 
@@ -166,11 +169,12 @@ these algorithms have numerous specific issues, such
    and resolution, which make interpretation of regional
    ventilation difficult and error prone.
 One specific issue, is that 
-artefacts can be incorrectly interpreted (ie. movement of
+artefacts can be incorrectly interpreted (i.e. movement of
    the skin can appear as changes in the lung regions),
    resulting in incorrect interpretations.
 Many other approaches to reconstruct EIT images have been
-proposed, incorporating many advances. Such approaches
+proposed, incorporating many advances (Lionheart, 2004).
+Such approaches
 have not been widely used clinically and experimentally
 because there was a lack of a agreement on which
 approaches were best (and whether they could be combined).
@@ -239,8 +243,8 @@ change image, based on a 3D forward model.
       a $32\times 32$ pixel array
       for a single ring of $16$, $12$ and $8$ 
       electrodes, for the shapes:
-   a) neonatal chests, 
-   b) adult chests (for perhaps several body shapes), and 
+   a) neonatal chest, 
+   b) adult chest (for perhaps several body shapes), and 
    c) cylindrical tank phantoms.
  For other shapes and electrode configurations,
    reconstruction matrices may be calculated from the
@@ -282,9 +286,9 @@ Difference EIT calculates difference data $\yB$, ($[\yB]_i =
 = ([\vB]_i - [\vB_r]_i)/[\vB_r]_i)$, where $\vB_r$ is a reference
 set of measurements representing the background conductivity
 distribution, $\sG_r$. To improve its precision,
-$\vB_r$ is typically averaged over many data frames, at a time
-when the conductivity distribution may be assumed to be stable;
- we thus assume that $\vB_r$ is noise free.
+$\vB_r$ is typically averaged over many data frames; 
+such ensemble averaging reduces random noise, and we
+ assume that $\vB_r$ is noise free.
 
 
 
@@ -404,7 +408,7 @@ measures the extent to which reconstructed images faithfully
 represent the position of the image target. Based on the
 target position, $r_t$, and the CoG of $\xH_q$, $r_q$, we define:
 \begin{equation}
-\mathrm{PE} = r_q - r_t
+\mathrm{PE} = r_t - r_q
 \end{equation}
 where positive values of PE indicate reconstructed images
 ``pushed'' to the medium centre. This measure is similar
@@ -428,12 +432,14 @@ of the medium; this is
 equivalent to a measure of point spread function (PSF) size.
 \begin{equation}
 \mathrm{RES} = \sqrt{
- \frac{\sum_k [\xH_q]_k}
-      { A_{\textrm{medium}} }
+ \frac{ A_q }
+      { A_0 }
  }
 \end{equation}
-where $A_{\textrm{medium}}$ is the area (in pixels) of
-the reconstructed medium. The square root is used 
+where $A_q =  \sum_k [\xH_q]_k$, the number
+of pixels in $\xH_q$ and 
+$A_0$ is the area (in pixels) of
+the entire reconstructed medium. The square root is used 
 so that RES measures radius ratios rather than area ratios.
 This measure is modelled on the one proposed by
 Wheeler et al (2002).
@@ -669,7 +675,7 @@ under the following license:
 \label{subsec:OSLGNS}
 
 In this section, we elaborate the
-One-step Gauss-Newton (GN) EIT reconstruction approaches,
+Gauss-Newton (GN) EIT reconstruction approaches,
 which have been
 widely used in EIT since the late 1980's (Yorkey et al 1987,
 Cheney et al 1990).
@@ -826,7 +832,7 @@ conductivity, $\sG_r$, around which conductivity changes occur.
 In this paper, the forward problem is solved using a
 3D FEM using the complete electrode model
 (Cheng et al, 1989). However, it is worth noting that 
-a forward model, physical or numerical, is suitable
+any forward model, physical or numerical, is suitable
 for this procedure.
 
 One other requirement for the forward problem model is
@@ -916,9 +922,9 @@ centre; however, since we consider uniform resolution to
 be a more important figure of merit than high resolution
 in limited zones, we create a larger circular target, $\xT$
 which can be achieved uniformly throughout the image.
- We recommend, for a 16 electrode
-EIT system, that the $\frac{1}{4}$-max
-diameter of 20\% of the medium diameter.
+We recommend, for a 16 electrode
+EIT system, that the diameter of $\xH_q$
+be 20\% of the medium diameter.
 For noise samples, the ``desired image'' is clearly
 zero; we wish for noise input to produce no output.
 
@@ -953,7 +959,7 @@ for a linear reconstruction, this approach is
 equivalent to a generalized Tikhonov regularization
 (section \ref{subsec:OSLGNS})
 in which the prior distributions $\SG_x$ and $\SG_n$
-corresponds to the selection strategy for
+correspond to the selection strategy for
 the training data.
 (section \ref{subsec:training_data})
 The
@@ -1014,7 +1020,7 @@ The calculation of the GREIT reconstruction matrix
 may be shown to be equivalent to a scaled generalized
 Tikhonov solution of the form of section \ref{subsec:OSLGNS}.
 In order to illustrate this equivalence, consider
-a GREIT reconstruction algorithm with formulated
+a GREIT reconstruction algorithm formulated
 with weighting $\WB$. For the training set,
 $N_T$ training conductivity targets, $\yB_t^{(k)}$ are drawn from
 a distribution with covariance $\SG_x$.
@@ -1047,7 +1053,7 @@ has the same generalized Tikhonov regularization as the
 of (\ref{opti_sol}).
 
 
-\subsection{Selection of Training data}
+\subsection{Selection of training data}
 \label{subsec:training_data}
 
 Training data are selected as small, conductivity contrasting
@@ -1095,6 +1101,8 @@ Issues to consider for the forward modelling are:
 \item
 Electrodes placed at the intercostal space
 (as per discussion on electrode placement)
+COMMENT FROM INEZ
+I know what you mean but as it is written now it is not correct. I would suggest e.g. "electrodes placed at a defined chest height". The reason why is that an intercostal space does not lie in one transverse plane. Let me explain: E.g.the 5th intercostal space left starts at the left edge of the sternum between the 5th and 6th rib goes down turns arounf the chest and rises up to the corrspondnign vertebrum. This means that if you want to give the exact location of a transverse plane you need to specify 1) the intercostal space and 2) the exact location (i.e. in the parasternal line (directly next to the sternum) or in the midclavicular line (vertical line drawn at the middle of the clavicular bone) or midaxillar line (vertical line down from the axillar pit). I hope I worte this so that you were able to understand me...
 \item
 Refinement of FEM mesh in electrode region
 \item
@@ -1116,7 +1124,7 @@ Issues that have not been determined
 \item
 Is it necessary to have separate male / female models
 \item
-Is it necessary to have models for different patient sizes
+Is it necessary to have models for different patient body sizes
 \item
 What levels of background lung conductivity should be included
 \end{itemize}
@@ -1459,10 +1467,17 @@ Kotre C J 1988
 9 353--361
 
 \item[]
-Lionheart W, Polydorides N and Borsic A 2005 Why is EIT so hard,
+Lionheart W R B, Polydorides N and Borsic A 2005 Why is EIT so hard,
 in {\em Electrical impedance tomography: methods, history and
 applications}, Holder D S, Ed. Bristol and Philadelphia, IOP, pp.
 3-4
+
+\item[]
+Lionheart W R B 2004
+EIT reconstruction algorithms: pitfalls, challenges
+and recent developments
+{\em Physiol. Meas.}
+25 125--142
 
 \item[]
 McArdle F J, Suggett A J, Brown B H, and Barber D C 1988 An
