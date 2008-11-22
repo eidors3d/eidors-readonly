@@ -84,6 +84,15 @@ $(FIGDIR)/example_images: example_images.m $(ALGS)
 	$(CALLMATLABPARAMS2)
 
 # male_t_mdl
-male_t_mdl.mat: HMT027.zip
-	unzip -o $< 
-	$(CALLMATLAB)
+HMT027.mat: HMT027.zip
+	unzip $< 
+
+male_t_mdl.mat: make_thorax_mdl.m HMT027.mat
+	$(CALLMATLABPARAMS)
+
+# female_t_mdl
+HFT027.mat: HFT027.zip
+	unzip $< 
+
+female_t_mdl.mat: make_thorax_mdl.m HFT027.mat
+	$(CALLMATLABPARAMS)
