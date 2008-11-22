@@ -1106,15 +1106,75 @@ models need to be adapted
 for different patient body sizes
 
 \subsection{Adult models}
+
+Adult FEM models were generated from the visible human body dataset
+(Ackerman, 1998) which provides radiological and photographic
+images.  The photographic images were used to generate the surface models
+from which the finite element meshes were generated.  The surface models
+were created using AliasStudio (Autodesk) from the
+photographic images of the thorax spaced $20~$mm apart. The method used
+is similar to that used to generate models of the human head for EIT of
+brain function (Tizzard et al 2005).  Figure 1 shows an example of the
+B-Spline curves generated for one slice of the male subject.
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.45\textwidth]
+         {figures/adult-slice.jpg}
+  \includegraphics[width= 0.35\textwidth]
+         {figures/adult-model.jpg}
+
+\caption{ \label{fig:Adultmodel}
+{\em left:} One slice of the male photographic visible body dataset showing the modelled B-Spline curves of the boundary.  There are two curves, modelling the left and right sides of the boundary, tangentially blended.
+{\em right:} The finished surface model of the male thorax ready for exporting to the Fe meshing software.
+}
+\end{center}
+\end{figure}
+
+The final set of curves are used to generate the body surfaces which are
+then capped top and bottom to form a closed volume The finished surface
+model is exported to the mesh-generating software which, in this case,
+is I-DEAS (Integrated Design Engineering Analysis Software).
+I-DEAS has the tools to define electrode geometry easily prior to meshing,
+although any meshing software could be used to achieve this,
+i.e. NETGEN (Schoberl 1997).
+The meshes generated in I-DEAS were of similar resolution.  The
+resulting FEM models are shown in Fig. \ref{fig:AdultFEM}.
+For the male, the model comprised 27,170 elements and 5,548 nodes.
+For the female, these figures were 27,073 and 5,346 respectively.
+These data show that for the male, stretch values were between 0.160
+and 0.976, with a mean and SD of 0.698 and 0.109 respectively and for
+the female stretch values were between 0.198 and 0.982, with a mean and
+SD of 0.702 and 0.101 respectively.
+
+The models generated represent a high degree of accuracy of boundary
+shape to a male and female subject.  One limitation is that the
+source dataset from the visible
+human project was generated from cryogenically frozen cadavers and
+will therefore be subject to any anatomical inconsistencies arising from
+the process.
+
+
+\begin{figure}[bhtp]
+\begin{center}
+  \includegraphics[width= 0.45\textwidth]
+         {figures/female_t_mdl.png}
+  \includegraphics[width= 0.45\textwidth]
+         {figures/male_t_mdl.png}
+\caption{ \label{fig:AdultFEM}
+Finite element models of Adult thoraces with electrodes
+rectangular electrodes. The figure shows a wire frame mesh
+of the surface finite elements. Electrodes are shown in green,
+with a lighter colour electrode \#1.
+{\em left:} Female subject
+{\em right:} Male subject
+}
+\end{center}
+\end{figure}
+
+
 \subsection{Neonate models}
 \subsection{Cylindrial models}
-
-phantom studies and experimental testing), a
-neonatal chest and an adult chest. The primary difference
-between the neonatal and adult chest shapes are due to
-the size of the electrodes.
-COMMENT FROM PAUL??:
-This is not in general true for patients - the adult is more trapezoidal, and the neonate more circular. Is it a safe assumption to make for our forward model?
 
 \begin{figure}[bhtp]
 \begin{center}
