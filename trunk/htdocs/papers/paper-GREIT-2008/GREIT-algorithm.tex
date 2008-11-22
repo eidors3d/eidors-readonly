@@ -1047,7 +1047,7 @@ In this case, the matrix $\RB$ which minimizes the norm is
     &=& \XT_t \YB_t^T \left( \YB_t \YB_t^T + \YB_n \YB_n^T \right)^{-1}
 \nonumber \\
     &=& \XT_t \YB_t^T \left( \JB \SG_x \JB^T + \SG_n \right)^{-1}
-\end{eqnarray}
+end{eqnarray}
 where samples $\YB_t$ may be approximated by the Jacobian
 using the linear assumption. This formulation 
 has the same generalized Tikhonov regularization as the
@@ -1104,6 +1104,60 @@ of the difference between given and the model
 geometry. This will allow determination of whether
 models need to be adapted 
 for different patient body sizes
+
+In the design of FEM models of the thorax. The
+following issues need to be considered.
+\begin{itemize}
+\item
+{\em Electrode placement:}
+(as per discussion on electrode placement)
+% COMMENT FROM INEZ I know what you mean but as it is written now it is
+% not correct. I would suggest e.g. "electrodes placed at a defined chest
+% height". The reason why is that an intercostal space does not lie in
+% one transverse plane. Let me explain: E.g.the 5th intercostal space
+% left starts at the left edge of the sternum between the 5th and 6th
+% rib goes down turns arounf the chest and rises up to the corrspondnign
+% vertebrum. This means that if you want to give the exact location of a
+% transverse plane you need to specify 1) the intercostal space and 2)
+% the exact location (i.e. in the parasternal line (directly next to
+% the sternum) or in the midclavicular line (vertical line drawn at the
+% middle of the clavicular bone) or midaxillar line (vertical line down
+% from the axillar pit). I hope I worte this so that you were able to
+% understand me...
+
+\item
+{\em Refinement of FEM mesh in electrode region:}
+
+\item
+{\em Size of FEM} in 50k elements is adequate
+\item
+{\em 3D FEM models are required}
+\item
+{\em Use of complete electrode model}
+(Cheng et al, 1989)
+\item
+It is necessary to simulate targets at various
+\\ $-$ contrast levels
+\\ $-$ background lung conductivity levels
+\\ $-$ 3D (off plane) positioning
+\item
+\end{itemize}
+
+Issues that have not been determined
+\begin{itemize}
+\item
+\item
+What levels of background lung conductivity should be included
+\end{itemize}
+
+
+The method presented in this section is general,
+applying for an arbitrary number of electrodes  with 
+arbitrary placement. However, the current implementation
+is designed for electrodes placed in a plane around the
+chest at the level of the ???
+
+
 
 \subsection{Adult models}
 
@@ -1187,44 +1241,6 @@ with a lighter colour electrode \#1.
 }
 \end{center}
 \end{figure}
-
-Issues to consider for the forward modelling are:
-\begin{itemize}
-\item
-Electrodes placed at the intercostal space
-(as per discussion on electrode placement)
-COMMENT FROM INEZ
-I know what you mean but as it is written now it is not correct. I would suggest e.g. "electrodes placed at a defined chest height". The reason why is that an intercostal space does not lie in one transverse plane. Let me explain: E.g.the 5th intercostal space left starts at the left edge of the sternum between the 5th and 6th rib goes down turns arounf the chest and rises up to the corrspondnign vertebrum. This means that if you want to give the exact location of a transverse plane you need to specify 1) the intercostal space and 2) the exact location (i.e. in the parasternal line (directly next to the sternum) or in the midclavicular line (vertical line drawn at the middle of the clavicular bone) or midaxillar line (vertical line down from the axillar pit). I hope I worte this so that you were able to understand me...
-\item
-Refinement of FEM mesh in electrode region
-\item
-Size of FEM in 50k elements is adequate
-\item
-3D FEM models are required
-\item
-Use of complete electrode model (ref)
-\item
-It is necessary to simulate targets at various
-\\ $-$ contrast levels
-\\ $-$ background lung conductivity levels
-\\ $-$ 3D (off plane) positioning
-\item
-\end{itemize}
-
-Issues that have not been determined
-\begin{itemize}
-\item
-\item
-What levels of background lung conductivity should be included
-\end{itemize}
-
-
-The method presented in this section is general,
-applying for an arbitrary number of electrodes  with 
-arbitrary placement. However, the current implementation
-is designed for electrodes placed in a plane around the
-chest at the level of the ???
-
 
 
 
