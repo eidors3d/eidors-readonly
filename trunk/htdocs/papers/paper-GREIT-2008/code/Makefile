@@ -85,3 +85,5 @@ $(FIGDIR)/example_images: example_images.m $(ALGS)
 
 # male_t_mdl
 male_t_mdl.mat: HMT027.zip
+	unzip -o $< 
+	$(CALLMATLAB)
