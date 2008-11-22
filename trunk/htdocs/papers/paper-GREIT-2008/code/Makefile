@@ -82,3 +82,6 @@ $(FIGDIR)/example_images: testdata.mat
 $(FIGDIR)/example_images: example_images.m $(ALGS)
 	touch $@
 	$(CALLMATLABPARAMS2)
+
+# male_t_mdl
+male_t_mdl.mat: HMT027.zip
