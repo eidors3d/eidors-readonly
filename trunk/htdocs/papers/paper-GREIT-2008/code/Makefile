@@ -27,7 +27,9 @@ FIGDIR = ../figures
 
 PRECALC= ng_cyl_mdl.mat sim_targets.mat jacobian_cyl.mat
 FIGURES= $(FIGDIR)/fig_cyl_mdl_targets.png \
-         $(FIGDIR)/example_images
+         $(FIGDIR)/example_images \
+         $(FIGDIR)/female_t_mdl.png \
+         $(FIGDIR)/male_t_mdl.png
 
 all: $(FIGURES)
 
@@ -90,9 +92,15 @@ HMT027.mat: HMT027.zip
 male_t_mdl.mat: make_thorax_mdl.m HMT027.mat
 	$(CALLMATLABPARAMS)
 
+$(FIGDIR)/male_t_mdl.png: print_thorax_model.m male_t_mdl.mat
+	$(CALLMATLABPARAMS2)
+
 # female_t_mdl
 HFT027.mat: HFT027.zip
 	unzip $< 
 
 female_t_mdl.mat: make_thorax_mdl.m HFT027.mat
 	$(CALLMATLABPARAMS)
+
+$(FIGDIR)/female_t_mdl.png: print_thorax_model.m female_t_mdl.mat
+	$(CALLMATLABPARAMS2)

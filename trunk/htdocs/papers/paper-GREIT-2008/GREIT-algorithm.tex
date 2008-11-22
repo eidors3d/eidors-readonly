@@ -1076,8 +1076,39 @@ system is 104).
 
 \section{Methods: forward models}
 
-Finite element models (FEM) have been developed for three
-different geometries: a cylindrical phantom (useful for 
+Training data for GREIT requires a forward model which
+maps conductivity contrast targets $\xB_t$ to difference
+measurements $\yB$. Forward models are built using
+the 3D first order tetrahedral finite elements, and
+solved using preconditioned linear solvers
+(Polydorides and Lionheart, 2002).
+Finite element models have been developed for four
+different geometries: 
+male and female adult chests,
+a neonatal chest, and
+a cylinder. The cylindrical form may be used
+for phantom studies, and to image a pig thorax
+(which has a roughly circular cross section).
+Clearly, it is possible to design optimized
+models for a given patient geometry, and this
+will offer improved reconstructed images (REFS
+showing improvement due to accurate models),
+with the added complexity of designing
+patient specific FEM meshes.
+Based on our experience with time-difference
+EIT, we feel that the four models provided offer
+most of the accuracy of adaptive meshing.
+We plan to perform tests to establish what 
+image artefact levels are produced as a function
+of the difference between given and the model
+geometry. This will allow determination of whether
+models need to be adapted 
+for different patient body sizes
+
+\subsection{Adult models}
+\subsection{Neonate models}
+\subsection{Cylindrial models}
+
 phantom studies and experimental testing), a
 neonatal chest and an adult chest. The primary difference
 between the neonatal and adult chest shapes are due to
@@ -1123,9 +1154,6 @@ It is necessary to simulate targets at various
 Issues that have not been determined
 \begin{itemize}
 \item
-Is it necessary to have separate male / female models
-\item
-Is it necessary to have models for different patient body sizes
 \item
 What levels of background lung conductivity should be included
 \end{itemize}
@@ -1352,6 +1380,13 @@ Adler A and Lionheart W R B 2006
 27 S25--S42
 
 \item[]
+Ackerman M J  1998  
+The Visible Human Project
+{\em Proc. IEEE}
+86 504--511
+
+
+\item[]
 Barber D C
 Brown B H
 Freeston I L, 1983
@@ -1504,11 +1539,23 @@ Backprojection algorithm for electrical impedance imaging
 {\em SIAM J. Applied Math}
 50 216--243. 
 
+\item[]
+Schoberl J 1997
+NETGEN: An advancing front 2D/3D-mesh generator based on abstract rules
+{\em Computing and Visualization in Science}
+1 41--52 
 
 \item[]
 Soleimani M, G\'omez-Laberge C and Adler A 2006 Imaging of
 conductivity changes and electrode movement in EIT \PM {\bf 27}
 S103--S13
+
+\item[]
+Tizzard A Horesh L Yerworth R J Holder D S Bayford R H 2005
+Generating accurate finite element meshes for the forward
+model of the human head in EIT
+{\em Physiol. Meas.}
+ 26 S251--61 
 
 \item[]
 Vauhkonen M, Vad\`asz D, Karjalainen P A, Somersalo E and
