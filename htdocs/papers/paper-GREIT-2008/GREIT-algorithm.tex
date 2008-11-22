@@ -110,7 +110,7 @@ clinical and experimental testing of the algorithm.
 The framework for the linear reconstruction algorithm
 consists of:
 1) detailed finite element models (FEM) of a representative
- adult and neonate thorax;
+ adult and neonatal thorax;
 2) consensus on the performance figures of merit for
  EIT image reconstruction, which are:
 a) uniform amplitude response,
@@ -159,11 +159,11 @@ in the Sheffield (Brown and Seagar, 1987)
 or G\"ottingen (Hahn \etal, 2001) EIT systems.
 The algorithms, although very successful for the time,
    do not incorporate advances that have been made over the last
-   20 years;
+   20 years.
 This is an obstacle to clinical use of EIT because
 these algorithms have numerous specific issues, such
    as spatial non-uniformity in image amplitude, position
-   and resolution which make interpretation of regional
+   and resolution, which make interpretation of regional
    ventilation difficult and error prone.
 One specific issue, is that 
 artefacts can be incorrectly interpreted (ie. movement of
@@ -173,7 +173,7 @@ Many other approaches to reconstruct EIT images have been
 proposed, incorporating many advances. Such approaches
 have not been widely used clinically and experimentally
 because there was a lack of a agreement on which
-approaches were best (and if they could be combined).
+approaches were best (and whether they could be combined).
 
 To address this issue, we are developing a
 consensus linear reconstruction algorithm for lung EIT,
@@ -194,11 +194,12 @@ clinical and experimental testing of the algorithm.
 The framework for the linear reconstruction algorithm
 consists of:
 1) detailed finite element models of a representative
- adult and neonate thorax;
+ adult and neonatal thorax;
 2) consensus on the performance figures of merit for
  EIT image reconstruction, which are:
+a) uniform amplitude response; b) low and uniform reconstructed position error; c) low, uniform and circular small point spread function; d) good noise performance; e) low sensitivity to electrode and boundary movement; f) low artefact amplitude on clinical and experimental data;
 and
-3) A systematic approach to optimize a linear reconstruction
+3) a systematic approach to optimize a linear reconstruction
  matrix to desired performance figures.
 
 The current work is limited to the reconstruction algorithm.
@@ -238,7 +239,7 @@ change image, based on a 3D forward model.
       a $32\times 32$ pixel array
       for a single ring of $16$, $12$ and $8$ 
       electrodes, for the shapes:
-   a) neonate chests, 
+   a) neonatal chests, 
    b) adult chests (for perhaps several body shapes), and 
    c) cylindrical tank phantoms.
  For other shapes and electrode configurations,
@@ -834,8 +835,11 @@ encountered in the modelled EIT application. Based on the
 forward model, conductivity chagnes $\xB$ result in
 a measurement variance
 $\sigma_{\yB}^2 = \mathrm{var}~\yB = E[ \| \yB \|^2 ]$. 
-The mean $\yB$ is assumed to be zero, since positive and
-negative conductivity changes are equally likely.
+The mean $\yB$ is assumed to be zero, which implies
+that positive and negative conductivity changes are
+equally likely. This assumption is reasonable for a 
+general purpose EIT reconstruction algorithm, although
+specific EIT applications not match it exactly.
 For lung images, we may calculate $\sigma_{\yB}^2$ from either
 a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
@@ -906,7 +910,13 @@ $\xT^{(k)} = \xB^{(k)}$; however, this will reduce to a standard
 GN solution without tuning the algorithm to the 
 performance metrics. Instead, $\xT^{(k)}$ is allowed to be
 a larger circular area corresponding to the known
-blurring inherent in EIT. We recommend, for a 16 electrode
+blurring inherent in EIT. Most EIT reconstruction algorithms
+achieve better resolution near the boundary than the medium
+centre; however, since we consider uniform resolution to
+be a more important figure of merit than high resolution
+in limited zones, we create a larger circular target, $\xT$
+which can be achieved uniformly throughout the image.
+ We recommend, for a 16 electrode
 EIT system, that the $\frac{1}{4}$-max
 diameter of 20\% of the medium diameter.
 For noise samples, the ``desired image'' is clearly
@@ -914,7 +924,7 @@ zero; we wish for noise input to produce no output.
 
 Corresponding to each ``desired image'', is an image
 weighting $\wB^{(k)}$ which represents the weight given to 
-each pixel in $\xT^{(k)}$. The weighing allows ``tuning''
+each pixel in $\xT^{(k)}$. The weighting allows ``tuning''
 of the relative importance of the  performance metrics.
 {\em
 TODO: Discuss how weights correspond to requirements
@@ -1032,7 +1042,7 @@ In this case, the matrix $\RB$ which minimizes the norm is
     &=& \XT_t \YB_t^T \left( \JB \SG_x \JB^T + \SG_n \right)^{-1}
 \end{eqnarray}
 where samples $\YB_t$ may be approximated by the Jacobian
-using the linear asumption. This formulation 
+using the linear assumption. This formulation 
 has the same generalized Tikhonov regularization as the
 of (\ref{opti_sol}).
 
@@ -1062,9 +1072,11 @@ system is 104).
 Finite element models (FEM) have been developed for three
 different geometries: a cylindrical phantom (useful for 
 phantom studies and experimental testing), a
-neonate chest and an adult chest. The primary difference
-between the neonate and adult chest shapes are due to
+neonatal chest and an adult chest. The primary difference
+between the neonatal and adult chest shapes are due to
 the size of the electrodes.
+COMMENT FROM PAUL??:
+This is not in general true for patients - the adult is more trapezoidal, and the neonate more circular. Is it a safe assumption to make for our forward model?
 
 \begin{figure}[bhtp]
 \begin{center}
