@@ -94,6 +94,7 @@ male_t_mdl.mat: make_thorax_mdl.m HMT027.mat
 
 $(FIGDIR)/male_t_mdl.png: print_thorax_model.m male_t_mdl.mat
 	$(CALLMATLABPARAMS2)
+	convert -trim $@ png8:$@
 
 # female_t_mdl
 HFT027.mat: HFT027.zip
@@ -104,3 +105,4 @@ female_t_mdl.mat: make_thorax_mdl.m HFT027.mat
 
 $(FIGDIR)/female_t_mdl.png: print_thorax_model.m female_t_mdl.mat
 	$(CALLMATLABPARAMS2)
+	convert -trim $@ png8:$@
