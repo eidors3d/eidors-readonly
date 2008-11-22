@@ -166,7 +166,7 @@ these algorithms have numerous specific issues, such
    and resolution which make interpretation of regional
    ventilation difficult and error prone.
 One specific issue, is that 
-artefacts can be incorrectly placed (ie. movement of
+artefacts can be incorrectly interpreted (ie. movement of
    the skin can appear as changes in the lung regions),
    resulting in incorrect interpretations.
 Many other approaches to reconstruct EIT images have been
@@ -183,7 +183,7 @@ in Graz, Austria (ref). Our aim is to develop a standard which
 has broad agreement from experts in the mathematical,
 engineering, physiological, and clinical EIT communities.
 Such an approach is feasible because there is general
-consensus amongst experts in EIT image processing of
+consensus amongst experts in EIT image processing on
 the ``ingredients'' that should
 be part of a robust and high performance linear algorithm
 for 2D EIT of the lungs.
@@ -217,19 +217,18 @@ this license permits
 royalty free use in both research and commercial applications.
 
 
-The goals identified for GREIT are for:
+The following specifications have been defined for GREIT:
 \begin{itemize}
 \item
- single and double ring electrode
+ single ring electrode
 configurations with Sheffield-type EIT systems, using
       adjacent current injection and measurement.
 \item
  linear (real-time) reconstruction of a 2D conductivity
-change image, based on a 3D forward model
+change image, based on a 3D forward model.
 \item
- quantitative reconstructions:
-   given an input in transfer impedance ($\Omega$) units,
-                    the output is in impedivity change ($\Omega\cdot m$)
+ quantitative reconstructions for which units can
+  be assigned to EIT images.
 \item
  settings for all parameters:
      any tunable parameters must have assigned
@@ -247,8 +246,8 @@ change image, based on a 3D forward model
    provided source code.
 \end{itemize}
 
-These limitations represent our opinions on the limits
-to areas understood sufficiently well in the EIT community
+These limitations represent, in our opinion, the limits
+to areas sufficiently well understood in the EIT community
 to reach consensus. We do not propose such limits are ideal;
 in fact, we actively encourage work to overcome them,
 such as planar placement of electrodes and the consequent 2D images. 
@@ -258,13 +257,35 @@ such as planar placement of electrodes and the consequent 2D images.
 
 In this section, we elaborate on a set of criteria which 
 characterize the performance of an ideal reconstruction
-algorithm. Clearly, there is an inherent tension between
+algorithm. Clearly, there is an inherent trade-off between
 the measures, such that it is not possible to 
 simultaneously optimize all measures. Instead, we proceed
-as follows. After establishing the performance measures,
+as follows. First, we establish the desired performance measures
+of an ideal algorithm; subsequently, 
 we describe a unified methodology to calculate a reconstruction
 matrix which is an optimized compromise of criteria
 weighted by the consensus importance of each.  
+
+We consider an EIT system using the following notation.
+$n_E$ electrodes applied are to a body, and use
+sequential current stimulation with parallel voltage
+measurement. Using these electrodes, $n_E$ current stimulation
+patterns are sequentially applied and $n_V$ differential
+measurements are made for each stimulation.  For an adjacent drive
+EIT system, voltages are typically not measured at driven
+electrodes, and $n_V = n_E - 3$.  Each data frame measures
+a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
+(some of which are redundant if the medium is not changing).
+Difference EIT calculates difference data $\yB$, ($[\yB]_i =
+[\vB]_i - [\vB_r]_i$; or the normalized difference data $[\yB]_i
+= ([\vB]_i - [\vB_r]_i)/[\vB_r]_i)$, where $\vB_r$ is a reference
+set of measurements representing the background conductivity
+distribution, $\sG_r$. To improve its precision,
+$\vB_r$ is typically averaged over many data frames, at a time
+when the conductivity distribution may be assumed to be stable;
+ we thus assume that $\vB_r$ is noise free.
+
+
 
 \begin{figure}[bhtp]
 \begin{center}
@@ -284,9 +305,9 @@ figures of merit {\em right} are calculated as described.
 
 An outline of the calculation of performance figures
 of merit is given in figure \ref{fig:PerfFigures}.
-Given a vector of EIT difference of normalized difference
-data, $\yB$ (length $N_E N_V$), we calculate a 
-reconstructed EIT image $\xH = \RB \yB$ based
+Given a vector of EIT difference or normalized difference
+data, $\yB$ (length $n_E n_V$), we calculate a 
+reconstructed EIT image $\xH = \RB \yB$ based on
 an EIT linear reconstruction algorithm represented as
 a matrix $\RB$. $\xH$ is a column vector representing
 the $32\times 32$ pixel grid of the images.
@@ -298,22 +319,29 @@ much smaller than the inherent resolution of EIT with
 16 electrodes.
 To evaluate this image, we first calculate
 a $\frac{1}{4}$--amplitude set, $\xH_q$ which
-contains all image pixels $[\xH]_i$ for
-which $[\xH]_i \geq \mathrm{max}~\xH$. For targets
-with a conductivity decrease the definition
+contains all image pixels $[\xH]_i$ greater
+than $\frac{1}{4}$ of the maximum amplitude:
+\begin{equation}
+[\xH_q]_i = \left\{ \begin{array}{ll}
+    1 & [\xH]_i  \geq \mbox{$ \frac{1}{4}\mathrm{max}~\xH$ } \\
+    0 & \mbox{otherwise}.
+\end{array} \right.
+\end{equation}
+For targets
+with a conductivity decrease, the definition
 of the $\frac{1}{4}$--amplitude set is inverted.
-The centre of gravity (CoG) of for $\xH$ and $\xH_q$ are
+The centre of gravity (CoG) of $\xH$ and $\xH_q$ are
 calculated; the distance from the CoG to the 
 medium centre is then calculated, as $r_t$ and $r_q$
 respectively.
 
-based on images of point targets, we define the following
+Based on images of point targets, we define the following
 figures of merit:
 amplitude response,
 position error,
 resolution,
 shape deformation, and
-overshoot. 
+ringing. 
 
 \begin{itemize}
 
@@ -338,7 +366,8 @@ AR allows units to be assigned to the
 reconstructed conductivities. For this, we 
 require that reconstruction matrices, $\RB$, be
 scaled such that AR$=1$ for 
-a small spherical target with $\sigma_t/\sigma_r \approx 1$
+a small spherical target with
+ $\Delta\sigma_t/\sigma_r \approx 1$
 in the centre of the medium.
 With this normalization, reconstructed EIT images have
 units as follows:
@@ -364,7 +393,7 @@ the FEM geometry.
 AR should be constant for any target position. We consider
 constant
 AR to be the most important figure of merit. Without
-constant amplitude repsponse, the same volume of air in different parts
+constant amplitude response, the same volume of air in different parts
 of the lung will contribute differently to the image, introducing
 serious difficulties in image interpretation.
 
@@ -372,7 +401,7 @@ serious difficulties in image interpretation.
 {\bf Position Error (PE):}
 measures the extent to which reconstructed images faithfully
 represent the position of the image target. Based on the
-target position, $r_t$, and the CoG of $\xH_q$, we define:
+target position, $r_t$, and the CoG of $\xH_q$, $r_q$, we define:
 \begin{equation}
 \mathrm{PE} = r_q - r_t
 \end{equation}
@@ -403,21 +432,21 @@ equivalent to a measure of point spread function (PSF) size.
  }
 \end{equation}
 where $A_{\textrm{medium}}$ is the area (in pixels) of
-the reconstructed medium. The square root is used to
+the reconstructed medium. The square root is used 
 so that RES measures radius ratios rather than area ratios.
 This measure is modelled on the one proposed by
 Wheeler et al (2002).
 
 \hspace{5mm}
 {\em Desired behaviour:}
-RES should be uniform and small, in order to accurately 
+RES should be uniform and small, in order to 
 more accurately represent shape of the target conductivity
 distribution. We consider uniformity of RES to be the
 fourth most important figure of merit, but small size
 of RES to be much less important (seventh). A nonuniform
 RES can result in an incorrect reconstructed 
 position of a larger target. Low RES serves primarily
-to distinguish nearby targets. Since EIT is understood
+to distinguish nearby targets. Since EIT is understood to
 be a low resolution medium, this application is less important.
 
 \item
@@ -447,29 +476,29 @@ consider SD to be the fifth most important figure
 of merit.
 
 \item
-{\bf Overshoot (OVS):}
+{\bf Ringing (RNG):}
 measures whether reconstructed images show
 areas of oposite sign surrounding the main 
 reconstructed target area. Fig. \ref{fig:PerfFigures}
-shows an arc of overshoot around the image centre.
+shows an arc of ringing around the image centre.
 Overshoot is typical of linear filters; for second-order
-systems the effect may also be called ``ringing''.
-OVS measures the ratio of image amplitude of
+systems the effect may also be called ``overshoot''.
+RNG measures the ratio of image amplitude of
 the opposite sign outside circle $C$ to image
 amplitude within $C$.
 \begin{equation}
-\mathrm{OVS} = \sum_{k\not\in C \& [\xH]_i < 0} [\xH]_k / 
+\mathrm{RNG} = \sum_{k\not\in C \& [\xH]_i < 0} [\xH]_k / 
                \sum_{k\in C}                    [\xH]_k 
 \end{equation}
 
 \hspace{5mm}
 {\em Desired behaviour:}
-OVS should be low and uniform. Overshoot may
+RNG should be low and uniform. Overshoot may
 easily result in incorrect interpretation. For
-example, the negative overshoot between non-conductive
+example, the negative ringing between non-conductive
 lungs will produce a conductive pattern which 
 may be misinterpreted as a heart.
-We consider OVS to be the third most important figure 
+We consider RNG to be the third most important figure 
 of merit.
 
 \begin{figure}[bhtp]
@@ -490,14 +519,35 @@ measures the extent to which random
 measurement noise is amplified
 in the reconstructed images. Noise amplification
 is measured by the noise figure (NF) as
-illustrated in Fig. \ref{fig:noise_fig}; this
-definition is based on that of Adler and Guardo (1996).
+illustrated in Fig. \ref{fig:noise_fig}, 
+based on the definition by of Adler and Guardo (1996).
+The NF is the ratio of the output to input
+ signal to noise ratio (SNR) at the for a filter.
+We define SNR=
+$\frac{
+   \mbox{mean \em signal}
+      }{
+   \mbox{std \em noise}
+     }
+$ 
+in terms of image amplitude,
+rather than in terms of image energy, since linear
+image reconstruction tends to conserve  amplitude
+rather than energy. Thus
 \begin{equation}
-\mathrm{OVS} = \sum_{k\not\in C \& [\xH]_k < 0} [\xH]_k / 
-               \sum_{k\in C}                    [\xH]_k 
+\mathrm{NF} = \frac{
+   E[ \mathrm{mean}~\xH_t ] 
+         /
+   E[ \mathrm{std}~\xH_t ]
+}{
+   E[ \mathrm{mean}~\yB_t ] 
+         /
+   E[ \mathrm{std}~\yB_t ]
+}
 \end{equation}
-For regularized algorithms, the value of NF may be controlled
-a hyperparameter. For GREIT, NF is controlled by the weighting
+For regularized algorithms, the value of NF is normally
+set by selection of the value of 
+a hyperparameter. For GREIT, the value of NF is set by the weighting
 associated with the training noise. There is an inherent
 trade-off between good noise performance and fidelity to
 the other figures of merit.
@@ -509,10 +559,11 @@ level associated with a given EIT system.
 Several studies have looked into strategies to select
 appropriate noise performance (eg. Graham and Adler, 2006).
 At this time, we do not have consensus on the best
-way to choose NF. Instead, we note that Sheffield Backprojection
-has generally satisfactory noise performance. This
-algorithm has NF$=0.5$ at the medium centre; we recommend
-this value for GREIT algorithms.
+way to choose NF. Instead, we note that noise performance
+of Sheffield Backprojection (NF=$0.5$ in the medium center)
+has generally been considered to be satisfactory.
+Therefore, as an iterim measure, we recommend NF=$0.5$
+for GREIT algorithms.
 
 \end{itemize}
 
@@ -521,35 +572,17 @@ this value for GREIT algorithms.
 This section describes the GREIT framework to calculate
 a linear image reconstruction matrix which is optimized
 to a set of performance requirements. This approach
-is based a experience with a large number of 
+is based on experience with a large number of 
 linear regularized EIT reconstruction approaches
 (REFS??). The key difference is that this framework
 is based on a set of performance requirements, whereas
 previous reconstruction algorithms are based directly on
 the underlying mathematical models and do not express
 the performance requirements explicitly.
-The value of this approach is that is allows
+The value of this approach is that it allows
 performance requirements (established in our case
 via consensus) to be directly encoded into the
 reconstruction algorithm.
-
-We consider an EIT system with $n_E$ electrodes applied to a body
-using sequential current stimulation with parallel voltage
-measurement. Using these electrodes, $n_E$ current stimulation
-patterns are sequentially applied and $n_V$ differential
-measurements are made for each stimulation.  For an adjacent drive
-EIT system, voltages are typically not measured at driven
-electrodes, and $n_V = n_E - 3$.  Each data frame measures
-a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
-(some of which are redundant if the medium is not changing).
-Difference EIT calculates difference data $\yB$, ($[\yB]_i =
-[\vB]_i - [\vB_r]_i$; or the normalized difference data $[\yB]_i
-= ([\vB]_i - [\vB_r]_i)/[\vB_r]_i)$, where $\vB_r$ is a reference
-set of measurements representing the background conductivity
-distribution, $\sG_r$. To improve its precision,
-$\vB_r$ is typically averaged over many data frames, at a time
-when the conductivity distribution may be assumed to be stable;
- we thus assume that $\vB_r$ is noise free.
 
 The body under investigation is modelled using a finite element
 model (FEM) which discretizes the conductivity onto $n_N$
@@ -558,9 +591,9 @@ $\sG\in\mathbb{R}^{n_N}$ (To clarify symbols,
 $\sG$ represents a vector conductivity distribution, while
 $\sigma$ is the standard deviation).
 Again, difference EIT calculates a vector of
-conductivity change, $\xB = \sG - \sG_r$ between the present
-conductivity distribution, $\sG$, and that at the reference
-measurement, $\sG_r$.
+conductivity change, $\xB = \sG - \sG_r$ between the present,
+$\sG$, and the reference, $\sG_r$,
+conductivity distributions.
 
 Image reconstruction in EIT is a non-linear problem; however,
 linearized approximations have proved to be very useful.
@@ -569,7 +602,7 @@ and experimental EIT data do not typically have sufficient
 accuracy to show stable results with iterative algorithms.
 Linear algorithms also have the benefit of producing
 images in which the effects
-of data artefacts can be more readily be identified. Finally,
+of data artefacts can be more readily identified. Finally,
 linear reconstruction can be implemented as a fast matrix
 multiplication. We represent linear EIT image reconstruction
 as a matrix, $\RB\in\mathbb{R}^{n_N\times n_M}$ which
@@ -640,7 +673,7 @@ which have been
 widely used in EIT since the late 1980's (Yorkey et al 1987,
 Cheney et al 1990).
 This approach allows use of sophisticated regularized models
-of the EIT inverse problem, are able to represent this
+of the EIT inverse problem, able to represent this
 solution as a linear reconstruction matrix, which can then allow
 rapid, real-time imaging.
 For small variations around the reference
@@ -706,8 +739,8 @@ where $\sigma_n$ is the average measurement noise amplitude and
 $\sigma_x$ is the {\em a priori} amplitude of conductivity change.
 $\VB$ models the measurement accuracy. For uncorrelated noise,
 each diagonal element is proportional to the signal to noise
-ratio. For difference EIT with identical channels, $\WB=\IB$. The
-regularization matrix $\VB$ may be understood to model the
+ratio. For difference EIT with identical channels, $\VB=\IB$. The
+regularization matrix $\PB$ may be understood to model the
 likelihood of image elements and their interactions.
 
 By solving (\ref{IM}), a linearized, one-step inverse solution is
@@ -731,7 +764,7 @@ controls the trade-off
 between resolution and noise attenuation in the reconstructed
 image.
 The matrix,
-$\RB=\left(\JB^T\BB^{-1}\JB+\lambda^2\PB^{-1}\right)^{-1}\JB^T\VB^{-1}$
+$\RB=\left(\JB^T\VB^{-1}\JB+\lambda^2\PB^{-1}\right)^{-1}\JB^T\VB^{-1}$
 is the linear, one-step inverse.
 In (\ref{GN_solution}), the term in the inverse is of size
 $n_N\times n_N$. To save computational time, and improve inverse
@@ -792,17 +825,18 @@ conductivity, $\sG_r$, around which conductivity changes occur.
 In this paper, the forward problem is solved using a
 3D FEM using the complete electrode model
 (Cheng et al, 1989). However, it is worth noting that 
-an forward model, physical or numerical, is suitable
+a forward model, physical or numerical, is suitable
 for this procedure.
 
 One other requirement for the forward problem model is
 an estimate of the amplitude of conductivity changes $\xB^{(k)}$
-encountered in the modelled EIT application. This results in
+encountered in the modelled EIT application. Based on the
+forward model, conductivity chagnes $\xB$ result in
 a measurement variance
 $\sigma_{\yB}^2 = \mathrm{var}~\yB = E[ \| \yB \|^2 ]$. 
 The mean $\yB$ is assumed to be zero, since positive and
 negative conductivity changes are equally likely.
-For lung images, we may calculate $\sigma_{\xB}^2$ from either
+For lung images, we may calculate $\sigma_{\yB}^2$ from either
 a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
 in representative applications.
@@ -837,7 +871,9 @@ measurements of EIT noise show that it is non-Gaussian and
 variable (Hahn et al, 2008). We recommend GREIT algorithms
 be tuned to the hardware implementation. This may be 
 implemented using a calibration protocol before the 
-start of measurements.
+start of measurements, or by integrating a model of 
+the hardware imperfections into the forward model
+(Hartinger et al, 2007).
 
 \hspace{5mm}
 {\em Electrode movement artefacts}
@@ -924,7 +960,7 @@ a linear expression for, and faster computation of, $\RB$;
 however, other norms may result in improved performance.
 
 Based on (\ref{GREIT_norm}), we develop an expression
-for $\RB = argmin~\epsilon^2$, by setting the
+for $\RB = \arg\min~\epsilon^2$, by setting the
 matrix derivative of $\epsilon^2$ to zero.
 \begin{equation}
 \frac{ d\epsilon^2 }{ d\RB_{ij} } =
@@ -1257,13 +1293,13 @@ gratis commercial and non-commercial use.
       adult and neonate chest shapes and for a cylindrical phantom.
 {\em License:} Creative Commons Attribution
    License (Creative Commons, 2007). Users are permitted
-   to copy to copy, distribute, transmit and adapt the work,
+   to copy, distribute, transmit and adapt the work,
    under the conditions of attribution by citing this paper.
 
 \item Experimental and Clinical data provided for evaluation of GREIT
 {\em License:} Creative Commons Attribution
    License (Creative Commons, 2007). Users are permitted
-   to copy to copy, distribute, transmit and adapt the work,
+   to copy, distribute, transmit and adapt the work,
    under the conditions of attribution by citing the
    papers as indicated.
 \end{itemize}
@@ -1397,7 +1433,13 @@ Harris N D, Suggett A J, Barber D C and Brown B H 1988 Applied
 potential tomography: a new technique for monitoring pulmonary
 function {\em Clin. Phys. Physiol. Meas.} {\bf 9} 79--85
 
-
+\item[]
+Hartinger A E Gagnon H Guardo R 2007
+Accounting for Hardware Imperfections in EIT Image
+Reconstruction Algorithms.
+{\em Physiol. Meas.}
+28 13--S27
+ 
 \item[]
 Kotre C J 1988
 ``A fast approximation for the calculation of potential distributions in electrical impedance tomography''
