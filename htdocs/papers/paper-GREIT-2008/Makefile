@@ -18,5 +18,5 @@ upload: $(NAME).pdf
 	&& echo $$FILEVER && \
 	perl -i -pe"s/FILEVERSION/$$FILEVER/" \
           $$HOME/htdocs/eidors/GREIT/documents.shtml
-	rsync $$HOME/htdocs/eidors/ aadler,eidors3d@web.sf.net:htdocs/
+	rsync  -avz $$HOME/htdocs/eidors/ aadler,eidors3d@web.sf.net:htdocs/
 
