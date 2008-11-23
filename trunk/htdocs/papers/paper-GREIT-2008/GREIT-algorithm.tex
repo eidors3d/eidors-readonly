@@ -966,7 +966,7 @@ as illustrated in Fig. \ref{fig:training_weighting}.
 For each desired image, $\xT^{(k)}$, there is a central
 circular zone centred at the target position
 where the amplitude is required to be
-flat to meet the AM and PE performance metrics.
+flat to meet the AR and PE performance metrics.
 There is another circular zeno outside the boundary
 of the specified contrast, where the desired image
 is zero, to meet the RNG and SD performance metrics
@@ -1347,20 +1347,6 @@ of the surface finite elements (in green).
 
 \subsection{Cylindrial models}
 
-A cylindrical FEM model was generated which is suitable for
-simulations, phantom tank experiments and is also a reasonable
-model for the thorax shape of common EIT experimental animals,
-such as pigs.  The FEM is generate using NETGEN (Schoberl, 1997),
-The medium diameter
-and height is $30$~cm with a maximum element size of $1$~cm.
-Circular electrodes are defined by the intersection of the 
-main cylinder with radial cylinders, and
-electrode mesh refinement is implemented by specifying a
-smaller maximum mesh size for each radial cylinder.
-Fig\. \ref{fig:CylMesh} shows an image of the resulting
-mesh (with 124052 tetrahedral elements) as well as the positions
-of conductivity targets.
-
 \begin{figure}[bhtp]
 \begin{center}
   \includegraphics[width= 0.4 \textwidth, bb=0 0 444 517]
@@ -1372,6 +1358,20 @@ positions of conductivity targets, $\xB_t$.
 }
 \end{center}
 \end{figure}
+
+A cylindrical FEM model was generated which is suitable for
+simulations, phantom tank experiments and is also a reasonable
+model for the thorax shape of common EIT experimental animals,
+such as pigs.  The FEM is generate using NETGEN (Schoberl, 1997),
+The medium diameter
+and height are $30$~cm with a maximum element size of $1$~cm.
+Circular electrodes are defined by the intersection of the 
+main cylinder with radial cylinders, and
+electrode mesh refinement is implemented by specifying a
+smaller maximum mesh size for each radial cylinder.
+Fig.\ \ref{fig:CylMesh} shows an image of the resulting
+mesh (with 124052 tetrahedral elements) as well as the positions
+of conductivity targets.
 
 
 
@@ -1406,109 +1406,70 @@ the position of the target as a fraction of body radius.
 \end{center}
 \end{figure}
 
-\subsection{Experimental data}
 
 \begin{figure}[bhtp]
 \begin{center}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
-{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_11.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
-{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_21.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
-{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_41.png}
-\caption{ \label{fig:rimage}
-Noise Figure ({\em Want: small})                        
-{\em left:} Sheffield Backprojection,
-{\em center:} NOSER
-{\em right:} GREIT
-}
-\end{center}
-\end{figure}
-
-\begin{figure}[bhtp, bb=0 0 280 110]
-\begin{center}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_12.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_22.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_42.png}
-\caption{ \label{fig:rimage}
-Amplitude ({\em Want: uniform})
-{\em left:} Sheffield Backprojection,
-{\em center:} NOSER
-{\em right:} GREIT
-}
-\end{center}
-\end{figure}
-
-\begin{figure}[bhtp, bb=0 0 280 110]
-\begin{center}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+\put(-420,20){\small AR}
+\\
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_13.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_23.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_43.png}
-\caption{ \label{fig:rimage}
-Position Error ({\em Want: small, uniform})
-{\em left:} Sheffield Backprojection,
-{\em center:} NOSER
-{\em right:} GREIT
-}
-\end{center}
-\end{figure}
-
-\begin{figure}[bhtp, bb=0 0 280 110]
-\begin{center}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+\put(-420,20){\small PE}
+\\
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_14.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_24.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_44.png}
-\caption{ \label{fig:rimage}
-Point Spread Function ({\em Want: small, uniform })
-{\em left:} Sheffield Backprojection,
-{\em center:} NOSER
-{\em right:} GREIT
-}
-\end{center}
-\end{figure}
-
-\begin{figure}[bhtp, bb=0 0 280 110]
-\begin{center}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+\put(-420,20){\small RES}
+\\
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_15.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_25.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
+  \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_45.png}
+\put(-420,20){\small SD}
+\\
+  \includegraphics[width= 0.32 \textwidth]
+{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_16.png}
+  \includegraphics[width= 0.32 \textwidth]
+{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_26.png}
+  \includegraphics[width= 0.32 \textwidth]
+{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_46.png}
+\put(-420,20){\small RNG}
 \caption{ \label{fig:rimage}
-Shape Deformation ({\em Want: small, uniform})
+Algorithm performance against simulated tests as a function
+of radial position. Radial position on each graph is from
+from centre ({\em left}) to the body boundary ({\em right}).
+Each column shows results from a different reconstuction
+algorithm:
 {\em left:} Sheffield Backprojection,
-{\em center:} NOSER
+{\em center:} Gauss-Newton (with NOSER regularization)
 {\em right:} GREIT
+Each row shows a different parameter. From
+top to bottom: 
+Amplitude Response (AR),
+Position Error (PE),
+Resolution (RES),
+Shape Deformation (SD) and 
+Ringing (RNG)
 }
 \end{center}
 \end{figure}
 
-\begin{figure}[bhtp, bb=0 0 280 110]
-\begin{center}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
-{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_16.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
-{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_26.png}
-  \includegraphics[width= 0.3 \textwidth, bb=0 0 280 110]
-{../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_46.png}
-\caption{ \label{fig:rimage}
-Overshoot ({\em Want: small })
-{\em left:} Sheffield Backprojection,
-{\em center:} NOSER
-{\em right:} GREIT
-}
-\end{center}
-\end{figure}
+
+\subsection{Experimental data}
 
 \section{Discussion}
 
