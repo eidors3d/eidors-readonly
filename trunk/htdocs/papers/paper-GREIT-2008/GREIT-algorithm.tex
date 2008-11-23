@@ -1163,7 +1163,7 @@ In the design of FEM models of the thorax. The
 following issues need to be considered.
 \begin{itemize}
 \item
-{\em Electrode size and placement:}
+{\em Electrode placement:}
 Several configurations of electrode types and placement
 are currently used. GREIT considers electrodes placed
 in a plane at a defined chest height perpendicular to 
@@ -1178,89 +1178,84 @@ either side of the sternum, and rotates the remaining
 electrodes accordingly (??? Can we reference any 
 publications explaining this?)
 
- For electrode
-placement in adults, a mid-thoracic electrode
-array 
+Electrodes placed at a mid-thoracic level show a 
+good approximation of the global lung behaviour
+(Yang and Patterson, 2007)
+There are two main strategies to select electrode
+level.  One practice is to place
+electrodes at a defined distance (a few centimeters 
+in adults and millimeters in infants)
+below the nipple line, although this anatomical
+marker is somewhat variable for some female and
+larger male subjects. 
+The other approach is to 
+place the electrodes at the level of the
+6$^{\rm th}$-7$^{\rm th}$ intercostal space at
+the parasternal line (which corresponds approximately
+to the nipple line). One group use a plane on
+the upper chest at the 3$^{\rm rd}$ intercostal space
+to measure lung perfusion (Smit \etal 2004).
+Placing electrodes too low may result in a large
+contribution of mediastinum or abdominal impedance
+changes in the center of the EIT image.
 
-Regarding electrode positioning to record the lung, we published (Yang
-F, Patterson R. The contribution of the lungs to thoracic impedance
-measurements: a simulation study based on a high resolution finite
-difference model.  Physiol. Meas.  28:s153-s163, 2007) a paper using
-our high resolution FD model, which showed that the lung's impedance
-contribution to the total impedance vs level follows reasonably close
-to the lung volume contribution slice by slice.   This suggest
-therefore that the entire lung is measured from a mid-thoracic
-electrode array.
-
-
-
- there are two
-main strategies. 
-One practice is to place
-electrodes at a defined  nipple line, although this works
-poorly for female and larger male patients. 
-The other 
-
-With regards to positioning, we have placed the electrodes a few
-millimeters (in babies) or centimeters below the nipple line. Placing
-electrodes too low may result in a lot of mediastinum in the center of
-the EIT image.
-
+\item
+{\em Electrode size:}
 Electrode size varies between applications. One common
 practice is to use standard Ag/AgCl ECG electrodes.
 For applications with custom EIT electrodes, it is
 common to use larger electrodes, in order to decrease
-variability in contact impedance.
+variability in contact impedance. For infants, 
+ECG type electrodes are often trimmed so that they
+can fit on the small size chest. FEM models of
+the electrodes on the neonatal thorax must be adapted
+to account for the changes in contact impedance
+due to electrode trimming.
 
-
-
-
-(as per discussion on electrode placement)
-% COMMENT FROM INEZ I know what you mean but as it is written now it is
-% not correct. I would suggest e.g. "electrodes placed at a defined chest
-% height". The reason why is that an intercostal space does not lie in
-% one transverse plane. Let me explain: E.g.the 5th intercostal space
-% left starts at the left edge of the sternum between the 5th and 6th
-% rib goes down turns arounf the chest and rises up to the corrspondnign
-% vertebrum. This means that if you want to give the exact location of a
-% transverse plane you need to specify 1) the intercostal space and 2)
-% the exact location (i.e. in the parasternal line (directly next to
-% the sternum) or in the midclavicular line (vertical line drawn at the
-% middle of the clavicular bone) or midaxillar line (vertical line down
-% from the axillar pit). I hope I worte this so that you were able to
-% understand me...
+\item 
+{\em FEM model size and refinement:}
+Increasing the density of elements in the FEM
+model increases the accuracy of simulations. However,
+the simulation accuracy is limited by the boundary
+shape accuracy. Since GREIT recommends that 
+generic subject models are adequate for time difference
+imaging, the required FEM accuracy is similarly reduced.
+We recommend that 25k elements is a minimum FEM model
+size for this application.
+The FEM mesh should be refined in the region of
+the electrodes, since the highest current densitites
+occur here. Electrode models should use the
+complete electrode model (Cheng \etal, 1989).
+We also insist that 3-dimensional FEM be used for the
+forward model. While 2-dimensional models could be
+justified for early EIT research due to the reduced
+computational requirements, such models produce
+distortions as they cannot account for the true
+distribution of current in the body.
 
 \item
-{\em Refinement of FEM mesh in electrode region:}
+{\em Conductivity simulations:}
+Simulated targets are created at random positions
+which uniformly fill the medium in the electrode axis, and
+a vertical range of $\frac{1}{4}$ of the medium
+diameter.  One important parameter is the use of
+an appropriate reference conductivity distribution
+$\sG_r$. The most common assumption for time 
+difference EIT is that the $\sG_r$ is a uniform,
+homogeneous distribution. However, in a patient,
+the non-conductive lung mean that a significantly
+lower fraction of the stimulated current penetrates
+the body centre than would be predicted by an
+homogeneous distributions. The consequence is that
+lung contrasts are reduced and ``pushed'' toward
+the medium centre. Instead, we recommend that 
+simulations be made using $\sG_r$ taken from a
+realistic model of subject conductivity distributions.
+The most important factor is the use of and $\sG_r$
+with a model of the lower lung conductivity in 
+the central region.
 
-\item
-{\em Size of FEM} in 50k elements is adequate
-\item
-{\em 3D FEM models are required}
-\item
-{\em Use of complete electrode model}
-(Cheng \etal, 1989)
-\item
-It is necessary to simulate targets at various
-\\ $-$ contrast levels
-\\ $-$ background lung conductivity levels
-\\ $-$ 3D (off plane) positioning
-\item
 \end{itemize}
-
-Issues that have not been determined
-\begin{itemize}
-\item
-\item
-What levels of background lung conductivity should be included
-\end{itemize}
-
-
-The method presented in this section is general,
-applying for an arbitrary number of electrodes  with 
-arbitrary placement. However, the current implementation
-is designed for electrodes placed in a plane around the
-chest at the level of the ???
 
 
 
@@ -1273,7 +1268,8 @@ from which the finite element meshes were generated.  The surface models
 were created using AliasStudio (Autodesk) from the
 photographic images of the thorax spaced $20~$mm apart. The method used
 is similar to that used to generate models of the human head for EIT of
-brain function (Tizzard \etal 2005).  Figure 1 shows an example of the
+brain function (Tizzard \etal 2005). 
+Fig. \ref{fig:Adultmodel} shows an example of the
 B-Spline curves generated for one slice of the male subject.
 
 \begin{figure}[bhtp]
@@ -1333,6 +1329,22 @@ with a lighter colour electrode \#1.
 
 
 \subsection{Neonate models}
+
+{\em ??? Material to be provided by Andrew Tizzard}`
+
+\begin{figure}[bhtp]
+\begin{center}
+%  \includegraphics[width= 0.45\textwidth]
+%        {figures/female_t_mdl.png}
+\caption{ \label{fig:NeonateFEM}
+Finite element models of a neonatal thorax with
+rectangular electrodes. The figure shows a wire frame mesh
+of the surface finite elements (in green).
+}
+\end{center}
+\end{figure}
+
+
 \subsection{Cylindrial models}
 
 \begin{figure}[bhtp]
@@ -1727,6 +1739,18 @@ NETGEN: An advancing front 2D/3D-mesh generator based on abstract rules
 1 41--52 
 
 \item[]
+Smit H J
+Vonk Noordegraaf A
+Marcus R
+Boonstra A
+de Vries P M 
+Postmus P E
+2004
+Determinants of pulmonary perfusion measured by electrical impedance tomography
+{\em Eur. J. Appl. Physiol.}
+92 45--49
+
+\item[]
 Soleimani M, G\'omez-Laberge C and Adler A 2006 Imaging of
 conductivity changes and electrode movement in EIT \PM {\bf 27}
 S103--S13
@@ -1747,13 +1771,6 @@ electrical impedance tomography
 17 285--93
 
 \item[]
-Yorkey T J, Webster J G and Tompkins W J 1987
-Comparing reconstruction algorithms for electrical
-impedance tomography
-{\em IEEE Trans. Biomed. Eng}
-34 843--52
-
-\item[]
 Wheeler JL, Wang W, Tang M 2002
 A comparison of methods for measurement of spatial resolution in two-dimensional circular EIT images
 {\em Physiol. Meas.}
@@ -1766,6 +1783,14 @@ measurements: a simulation study based on a high
 resolution finite difference model
 {\em Physiol. Meas.}
 28 S153--S163
+
+\item[]
+Yorkey T J, Webster J G and Tompkins W J 1987
+Comparing reconstruction algorithms for electrical
+impedance tomography
+{\em IEEE Trans. Biomed. Eng}
+34 843--52
+
 
 \item[]
 Zhang J and Patterson R P 2005 EIT images of ventilation: what
