@@ -1347,14 +1347,28 @@ of the surface finite elements (in green).
 
 \subsection{Cylindrial models}
 
+A cylindrical FEM model was generated which is suitable for
+simulations, phantom tank experiments and is also a reasonable
+model for the thorax shape of common EIT experimental animals,
+such as pigs.  The FEM is generate using NETGEN (Schoberl, 1997),
+The medium diameter
+and height is $30$~cm with a maximum element size of $1$~cm.
+Circular electrodes are defined by the intersection of the 
+main cylinder with radial cylinders, and
+electrode mesh refinement is implemented by specifying a
+smaller maximum mesh size for each radial cylinder.
+Fig\. \ref{fig:CylMesh} shows an image of the resulting
+mesh (with 124052 tetrahedral elements) as well as the positions
+of conductivity targets.
+
 \begin{figure}[bhtp]
 \begin{center}
   \includegraphics[width= 0.4 \textwidth, bb=0 0 444 517]
          {../../tutorial/GREIT-evaluation/simulation_3d_test02a.png}
-
-\caption{ \label{fig:fm2}
-{\em left:} FEM of the cylindrical phantom
-{\em right:} FEM of the neonate chest 
+\caption{ \label{fig:CylMesh}
+Cylindrical FEM used for calculation of the main stimulation
+results of this paper. The turquoise circles indicate the
+positions of conductivity targets, $\xB_t$.
 }
 \end{center}
 \end{figure}
@@ -1380,11 +1394,13 @@ and experimental data.
                  bb=0.0in 1.0in 10in 6.0in,page=1]
                 {figures/fig-reconst-examples.pdf}
 \caption{ \label{fig:rimage}
-Examples of simulated reconstructed images.
-The conductivity target $\xB_t$ is shown as 
-a small turquoise circle.
+Examples of simulated reconstructed images. Each row
+shows images reconstructed from the same small 
+conductivity target, $\xB_t$, shown as 
+a small turquoise circle. The ``Radius'' indicate
+the position of the target as a fraction of body radius.
 {\em left:} Sheffield Backprojection,
-{\em center:} GN (using NOSER regularization)
+{\em center:} Gauss-Newton (using NOSER regularization)
 {\em right:} GREIT
 }
 \end{center}
