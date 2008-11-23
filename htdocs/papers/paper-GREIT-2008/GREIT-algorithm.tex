@@ -495,8 +495,14 @@ RNG measures the ratio of image amplitude of
 the opposite sign outside circle $C$ to image
 amplitude within $C$.
 \begin{equation}
-\mathrm{RNG} = \sum_{k\not\in C \& [\xH]_i < 0} [\xH]_k / 
-               \sum_{k\in C}                    [\xH]_k 
+\mathrm{RNG} =
+\left(
+        \sum_{k\not\in C \& [\xH]_i < 0} [\xH]_k 
+\right)
+/ 
+\left(
+        \sum_{k\in C}                    [\xH]_k 
+\right)
 \end{equation}
 
 \hspace{5mm}
@@ -766,11 +772,11 @@ By solving (\ref{IM}), a linearized, one-step inverse solution is
 obtained as
 \begin{eqnarray}\label{GN_solution}
 \xH&=&\left(
-    \JB^T \frac{\VB^{-1}}{\sigma_n^2} \JB 
+    \JB^T \frac{1}{\sigma_n^2} \VB^{-1} \JB 
      +
-    \frac{\PB^{-1}}{\sigma_x^2} 
+    \frac{1}{\sigma_x^2} \PB^{-1}
     \right)^{-1}
-    \JB^T \frac{\VB^{-1}}{\sigma_n^2}\yB
+    \JB^T \frac{1}{\sigma_n^2}\VB^{-1}\yB
 \nonumber \\
    &=&\left(
     \JB^T \VB^{-1} \JB + \lambda^2 \PB^{-1}
@@ -788,7 +794,7 @@ is the linear, one-step inverse.
 In (\ref{GN_solution}), the term in the inverse is of size
 $n_N\times n_N$. To save computational time, and improve inverse
 accuracy and stability, matrix $\RB$ may be rewritten 
-using the {\em data form}, or {\em Wiener filtering form} as:
+using the {\em data form}, or {\em Wiener filter form} as:
 \begin{equation}\label{opti_sol}
  \RB =\PB\JB^T
     \left(
@@ -977,7 +983,7 @@ other specifications.
 
 \begin{figure}[bhtp]
 \begin{center}
-\includegraphics[width=0.8\textwidth, bb=0.0in 2.7in 10in 6.0in,page=1]{figures/fig-weighting.pdf}
+\includegraphics[width=0.8\textwidth, bb=0.0in 2.7in 10in 7.0in,page=1]{figures/fig-weighting.pdf}
 \caption{ \label{fig:training_weighting}
 Illustration of the training data and weighting.
 {\em left:}   Training target ($\xB_t^{(k)}$)
@@ -1106,7 +1112,7 @@ of (\ref{opti_sol}).
 \label{subsec:training_data}
 
 Training data are selected as small, conductivity contrasting
-targets spread randomly in the plane of the 3D model
+targets spread randomly and uniformly in the plane of the 3D model
 between electrodes. Vertical offsets above and below the
 plane of $0.25\times$diameter of medium are allowed.
 
@@ -1157,7 +1163,58 @@ In the design of FEM models of the thorax. The
 following issues need to be considered.
 \begin{itemize}
 \item
-{\em Electrode placement:}
+{\em Electrode size and placement:}
+Several configurations of electrode types and placement
+are currently used. GREIT considers electrodes placed
+in a plane at a defined chest height perpendicular to 
+the patient long axis. In the most common configuration,
+Electrode \#1 is placed on the sternum. Subsequent
+electrodes are placed on subject left, spaced equidistantly
+around the chest. When viewing the EIT image, electrodes
+are numbered clockwise from the top centre, and subject
+is oriented as if the feet were outward. Another
+common configuration places electrodes \#1 and \#16 on
+either side of the sternum, and rotates the remaining 
+electrodes accordingly (??? Can we reference any 
+publications explaining this?)
+
+ For electrode
+placement in adults, a mid-thoracic electrode
+array 
+
+Regarding electrode positioning to record the lung, we published (Yang
+F, Patterson R. The contribution of the lungs to thoracic impedance
+measurements: a simulation study based on a high resolution finite
+difference model.  Physiol. Meas.  28:s153-s163, 2007) a paper using
+our high resolution FD model, which showed that the lung's impedance
+contribution to the total impedance vs level follows reasonably close
+to the lung volume contribution slice by slice.   This suggest
+therefore that the entire lung is measured from a mid-thoracic
+electrode array.
+
+
+
+ there are two
+main strategies. 
+One practice is to place
+electrodes at a defined  nipple line, although this works
+poorly for female and larger male patients. 
+The other 
+
+With regards to positioning, we have placed the electrodes a few
+millimeters (in babies) or centimeters below the nipple line. Placing
+electrodes too low may result in a lot of mediastinum in the center of
+the EIT image.
+
+Electrode size varies between applications. One common
+practice is to use standard Ag/AgCl ECG electrodes.
+For applications with custom EIT electrodes, it is
+common to use larger electrodes, in order to decrease
+variability in contact impedance.
+
+
+
+
 (as per discussion on electrode placement)
 % COMMENT FROM INEZ I know what you mean but as it is written now it is
 % not correct. I would suggest e.g. "electrodes placed at a defined chest
@@ -1701,6 +1758,14 @@ Wheeler JL, Wang W, Tang M 2002
 A comparison of methods for measurement of spatial resolution in two-dimensional circular EIT images
 {\em Physiol. Meas.}
 23 169--176
+
+\item[]
+Yang F  Patterson R 2007
+The contribution of the lungs to thoracic impedance
+measurements: a simulation study based on a high
+resolution finite difference model
+{\em Physiol. Meas.}
+28 S153--S163
 
 \item[]
 Zhang J and Patterson R P 2005 EIT images of ventilation: what
