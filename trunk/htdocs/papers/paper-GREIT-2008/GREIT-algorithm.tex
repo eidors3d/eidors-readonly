@@ -22,7 +22,7 @@
 \newcommand{\WB}{\mbox{$\mathbf{W}$}}
 \newcommand{\XB}{\mbox{$\mathbf{X}$}}
 \newcommand{\YB}{\mbox{$\mathbf{Y}$}}
-% Use boldsymbol is using amssymb
+% Use boldsymbol when using amssymb
  \newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
  \newcommand{\TG}{\mbox{${\boldsymbol \Theta}$}}
  \newcommand{\sG}{\mbox{${\boldsymbol \sigma}$}}
@@ -443,7 +443,7 @@ $A_0$ is the area (in pixels) of
 the entire reconstructed medium. The square root is used 
 so that RES measures radius ratios rather than area ratios.
 This measure is modelled on the one proposed by
-Wheeler et al (2002).
+Wheeler \etal (2002).
 
 \hspace{5mm}
 {\em Desired behaviour:}
@@ -473,7 +473,7 @@ fit within a circle.
 \end{equation}
 where $C$ is a circle centred at the CoG of $\xH_q$
 with an equivalent area to $\xH_q$. This figure
-similar to that of Oh et al (2007).
+similar to that of Oh \etal (2007).
 
 \hspace{5mm}
 {\em Desired behaviour:}
@@ -515,8 +515,9 @@ of merit.
                  bb=1.5in 2.0in 6.5in 6.0in,page=1]
                 {figures/fig-noise-fig.pdf}
 \caption{ \label{fig:noise_fig}
-Schematic representation of the ``Noise Figure''
-parameter.
+Schematic representation of the Noise Figure (NF)
+parameter. NF represents the amplification of noise through
+the reconstruction process as the ratio of SNR$_x$ to SNR$_y$.
 }
 \end{center}
 \end{figure}
@@ -563,7 +564,7 @@ the other figures of merit.
 \hspace{5mm}
 {\em Desired behaviour:}
 NF should be low. Ideally NF should be tuned to the noise
-level associated with a given EIT system.
+level present in the EIT hardware used.
 Several studies have looked into strategies to select
 appropriate noise performance (eg. Graham and Adler, 2006).
 At this time, we do not have consensus on the best
@@ -582,7 +583,17 @@ a linear image reconstruction matrix which is optimized
 to a set of performance requirements. This approach
 is based on experience with a large number of 
 linear regularized EIT reconstruction approaches
-(REFS??). The key difference is that this framework
+(such as
+Adler and Guardo 1996,
+Adler and Lionheart 2006,
+Barber and Brown 1988,
+Cheney \etal 1990,
+Cohen-Bacrie \etal 1997,
+Lionheart \etal 2005,
+Polydorides and Lionheart, 2002
+Soleimani \etal 2006
+Vauhkonen \etal 1998).
+The key difference is that this framework
 is based on a set of performance requirements, whereas
 previous reconstruction algorithms are based directly on
 the underlying mathematical models and do not express
@@ -641,7 +652,7 @@ While many variants of Sheffield backprojection exist,
 clinical and experimental EIT has largely used only
 one: that which was distributed in the
 Sheffield Mark I EIT system (Brown and Seagar, 1987).
-The G\"ottingen Goe MF II EIT system (Hahn et al 2001)
+The G\"ottingen Goe MF II EIT system (Hahn \etal 2001)
 has also been widely used for such clinical and
 experimental work, and uses a very similar reconstruction
 algorithm.
@@ -678,8 +689,8 @@ under the following license:
 In this section, we elaborate the
 Gauss-Newton (GN) EIT reconstruction approaches,
 which have been
-widely used in EIT since the late 1980's (Yorkey et al 1987,
-Cheney et al 1990).
+widely used in EIT since the late 1980's (Yorkey \etal 1987,
+Cheney \etal 1990).
 This approach allows use of sophisticated regularized models
 of the EIT inverse problem, able to represent this
 solution as a linear reconstruction matrix, which can then allow
@@ -795,13 +806,13 @@ boundary, since the measured data are much more sensitive to
 boundary image elements. Instead, $\PB$ may be scaled with the
 sensitivity of each element, so that each diagonal element $i$ 
 $[\PB^{-1}]_{i,i} = \left[ \JB^T \JB
-\right]_{i,i}^p$. This is the NOSER prior of Cheney et al (1990)
+\right]_{i,i}^p$. This is the NOSER prior of Cheney \etal (1990)
 for an exponent $p=1$. Many other prior matrices have been
 proposed: to model image smoothness as a penalty for non-smooth
 image regions, $\PB$ may be set to the discrete Laplacian filter
 (Vauhkonen, 1998b), a discrete high pass Gaussian filter (Adler
 and Guardo, 1996), or based on variance uniformization
-constraints (Cohen-Bacrie et al 1997).
+constraints (Cohen-Bacrie \etal 1997).
 
 In this paper, we compare results from the GREIT approach
 with those of GN image reconstruction using the NOSER prior,
@@ -832,7 +843,7 @@ the electrode size and contact impedance and the reference
 conductivity, $\sG_r$, around which conductivity changes occur.
 In this paper, the forward problem is solved using a
 3D FEM using the complete electrode model
-(Cheng et al, 1989). However, it is worth noting that 
+(Cheng \etal, 1989). However, it is worth noting that 
 any forward model, physical or numerical, is suitable
 for this procedure.
 
@@ -879,21 +890,21 @@ varies with the details of the EIT hardware and patient
 connection. If different gain settings are used for each
 channel, these settings will alter the noise. Practical
 measurements of EIT noise show that it is non-Gaussian and
-variable (Hahn et al, 2008). We recommend GREIT algorithms
+variable (Hahn \etal, 2008). We recommend GREIT algorithms
 be tuned to the hardware implementation. This may be 
 implemented using a calibration protocol before the 
 start of measurements, or by integrating a model of 
 the hardware imperfections into the forward model
-(Hartinger et al, 2007).
+(Hartinger \etal, 2007).
 
 \hspace{5mm}
 {\em Electrode movement artefacts}
 occur when the electrodes move, either with posture change
 or with chest movements due to breathing. Several reports
 have demonstrated the serious impact of such movements on
-EIT images (Adler et al, 1996, Patterson et al, 2005,
-Coulombe et al 2005). In order to reduce the impact
-of such movement on EIT reconstruction, Soleimani et al
+EIT images (Adler \etal, 1996, Patterson \etal, 2005,
+Coulombe \etal 2005). In order to reduce the impact
+of such movement on EIT reconstruction, Soleimani \etal
 (2006) showed that it is possible to create an
 augmented forward model based on both the conductivity change
 and electrode movement, which resulted in reduced movement 
@@ -905,12 +916,25 @@ deformations of the FEM (G\'omez-Laberge and Adler, 2008),
 but may be based on a calibration protocol in an
 implemented system.
 
+\begin{figure}[bhtp]
+\begin{center}
+\includegraphics[width=0.6\textwidth, bb=0.0in 1.7in 10in 6.0in,page=1]{figures/fig-training-set.pdf}
+\caption{ \label{fig:desired_performance}
+Training data for GREIT. Two sets of training data are used, based on
+conductivity targets and noise or artefact sources. For each type
+data, a set of training inputs (EIT measurements) and desired
+outputs (reconstructed images) are calculated. Desired outputs
+are based on the consensus performance measures.
+}
+\end{center}
+\end{figure}
+
  
 \item
 {\em Desired performance metrics:}
-Section \ref{perf_metrics} gives details of the 
-performance metrics selected for GREIT. Based on these
-metrics, we can create a ``desired image''
+Based on the performance metrics defined
+in section \ref{sec:figmerit},
+we can create a ``desired image''
 $\xT^{(k)}$ corresponding to each conductivity change
 $\xB^{(k)}$ in the forward model. It is possible to set
 $\xT^{(k)} = \xB^{(k)}$; however, this will reduce to a standard
@@ -933,23 +957,33 @@ Corresponding to each ``desired image'', is an image
 weighting $\wB^{(k)}$ which represents the weight given to 
 each pixel in $\xT^{(k)}$. The weighting allows ``tuning''
 of the relative importance of the  performance metrics.
-{\em
-TODO: Discuss how weights correspond to requirements
-}
+For example, in order to require a low level of ringing
+around each contrast, the weights are scaled  
 \end{itemize}
 
 \begin{figure}[bhtp]
 \begin{center}
-\includegraphics[width=0.6\textwidth, bb=0.0in 1.7in 10in 6.0in,page=1]{figures/fig-training-set.pdf}
-\caption{ \label{fig:desired_performance}
-Training data for GREIT. Two sets of training data are used, based on
-conductivity targets and noise or artefact sources. For each type
-data, a set of training inputs (EIT measurements) and desired
-outputs (reconstructed images) are calculated. Desired outputs
-are based on the consensus performance measures.
+\includegraphics[width=0.8\textwidth, bb=0.0in 2.7in 10in 6.0in,page=1]{figures/fig-weighting.pdf}
+\caption{ \label{fig:training_weighting}
+Illustration of the training data and weighting.
+{\em left:}   Training target ($\xB_t^{(k)}$)
+{\em centre:} Reconstructed image ($\xH^{(k)}$)
+{\em right:}  Desired image ($\xT^{(k)}$)
+The bottom row shows the image while the top row plots
+the amplitude across a row through the centre of the
+simulation target. $\xT^{(k)}$ is larger than $\xB^{(k)}$
+in order to establish a uniform resolution. The weighting
+$\wB^{(k)}$ is illustrated on the image of $\xT^{(k)}$
+by two circles. Inside the inner circle and outside the
+outer circle, $\wB^{(k)}$ is larger, illustrated by the
+small error bars on the upper graph. Between the circles, in
+the ``transition zone'', $\wB^{(k)}$ is smaller,
+ illustrated by the larger error bars.
+
 }
 \end{center}
 \end{figure}
+
 
 Based on the {\em forward model}, {\em noise model},
 and {\em desired performance metrics}. we are
@@ -1134,7 +1168,7 @@ following issues need to be considered.
 {\em 3D FEM models are required}
 \item
 {\em Use of complete electrode model}
-(Cheng et al, 1989)
+(Cheng \etal, 1989)
 \item
 It is necessary to simulate targets at various
 \\ $-$ contrast levels
@@ -1168,7 +1202,7 @@ from which the finite element meshes were generated.  The surface models
 were created using AliasStudio (Autodesk) from the
 photographic images of the thorax spaced $20~$mm apart. The method used
 is similar to that used to generate models of the human head for EIT of
-brain function (Tizzard et al 2005).  Figure 1 shows an example of the
+brain function (Tizzard \etal 2005).  Figure 1 shows an example of the
 B-Spline curves generated for one slice of the male subject.
 
 \begin{figure}[bhtp]
