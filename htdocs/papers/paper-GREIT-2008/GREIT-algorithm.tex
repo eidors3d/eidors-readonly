@@ -831,10 +831,11 @@ it is generally understood to perform well.
 In this section, we elaborate the GREIT procedure
 from which the reconstruction matrix, $\RB$ is
 calculated.  The procedure depends on definition
-of:
-\begin{itemize}
-\item
-{\em Forward model:}
+of a forward model, a noise model, and
+desired performance metrics.
+
+\subsubsection{Forward model}
+
 A forward model allows calculation of EIT
  measurement
 data $\yB^{(k)}$ from a conductivity change distribution $\xB^{(k)}$.
@@ -863,8 +864,8 @@ a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
 in representative applications.
 
-\item
-{\em Noise model:}
+\subsubsection{Noise model}
+
 A noise model allows calculation of representative 
 noise (or undesired signal) samples in EIT measurements.
 For GREIT, we consider two sources of noise:
@@ -880,7 +881,6 @@ Note that for normalized difference EIT,
 noise samples are normalized by the
 reference measurements by $[\yB]_i = [\nB ]_i / [\vB_r]_i$.
 
-\hspace{5mm}
 {\em Electronic measurement noise}
 is typically modelled to be uniform and Gaussian in EIT
 image reconstruction. This assumption is reasonable for
@@ -897,7 +897,6 @@ start of measurements, or by integrating a model of
 the hardware imperfections into the forward model
 (Hartinger \etal, 2007).
 
-\hspace{5mm}
 {\em Electrode movement artefacts}
 occur when the electrodes move, either with posture change
 or with chest movements due to breathing. Several reports
@@ -930,14 +929,14 @@ are based on the consensus performance measures.
 \end{figure}
 
  
-\item
-{\em Desired performance metrics:}
+\subsubsection{Desired performance metrics}
+
 Based on the performance metrics defined
 in section \ref{sec:figmerit},
-we can create a ``desired image''
-$\xT^{(k)}$ corresponding to each conductivity change
+we can create a ``desired image'',
+$\xT^{(k)}$, corresponding to each conductivity change
 $\xB^{(k)}$ in the forward model. It is possible to set
-$\xT^{(k)} = \xB^{(k)}$; however, this will reduce to a standard
+$\xT^{(k)} = \xB_t^{(k)}$; however, this is equivalent to a standard
 GN solution without tuning the algorithm to the 
 performance metrics. Instead, $\xT^{(k)}$ is allowed to be
 a larger circular area corresponding to the known
@@ -956,10 +955,25 @@ zero; we wish for noise input to produce no output.
 Corresponding to each ``desired image'', is an image
 weighting $\wB^{(k)}$ which represents the weight given to 
 each pixel in $\xT^{(k)}$. The weighting allows ``tuning''
-of the relative importance of the  performance metrics.
-For example, in order to require a low level of ringing
-around each contrast, the weights are scaled  
-\end{itemize}
+of the relative importance of the  performance metrics,
+as illustrated in Fig. \ref{fig:training_weighting}.
+For each desired image, $\xT^{(k)}$, there is a central
+circular zone centred at the target position
+where the amplitude is required to be
+flat to meet the AM and PE performance metrics.
+There is another circular zeno outside the boundary
+of the specified contrast, where the desired image
+is zero, to meet the RNG and SD performance metrics
+(illustrated as the circles on Fig. 
+\ref{fig:training_weighting} bottom left).
+In these zones, $\wB^{(k)}$ is large in order to
+provide a substantial penalty for images outside the
+specifications. Between the circles we have a 
+``transition zone'' in which the reponse gradually
+decreases from one the specified amplitude to zero.
+In the transition zone, $\wB^{(k)}$ is small to allow 
+the reconstruction algorithm flexibility to meet the
+other specifications.
 
 \begin{figure}[bhtp]
 \begin{center}
