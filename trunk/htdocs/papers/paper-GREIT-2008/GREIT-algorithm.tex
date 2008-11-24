@@ -979,7 +979,15 @@ specifications. Between the circles we have a
 decreases from one the specified amplitude to zero.
 In the transition zone, $\wB^{(k)}$ is small to allow 
 the reconstruction algorithm flexibility to meet the
-other specifications.
+other specifications. For training data with noise,
+$\yB_n^{(k)}$, $\xT^{(k)}=0$, as mentioned above.
+For these images, the weighting, $\wB^{(k)}$ is
+uniform across the image area. The magnitude
+of $\wB^{(k)}$ controls NF and the overall noise
+performance of GREIT. A large value of $\wB^{(k)}$ 
+results in a large penalty for image noise 
+and a low NF, and vice vera.
+
 
 \begin{figure}[bhtp]
 \begin{center}
@@ -1330,7 +1338,7 @@ with a lighter colour electrode \#1.
 
 \subsection{Neonate models}
 
-{\em ??? Material to be provided by Andrew Tizzard}`
+{\em ??? Material to be provided by Andrew Tizzard}
 
 \begin{figure}[bhtp]
 \begin{center}
@@ -1353,8 +1361,10 @@ of the surface finite elements (in green).
          {../../tutorial/GREIT-evaluation/simulation_3d_test02a.png}
 \caption{ \label{fig:CylMesh}
 Cylindrical FEM used for calculation of the main stimulation
-results of this paper. The turquoise circles indicate the
-positions of conductivity targets, $\xB_t$.
+results of this paper. Image shows boundary elements below a cut plane.
+The turquoise circles indicate the
+positions of conductivity targets, $\xB_t$, used in
+sec.\ \ref{sec:perffigm}.
 }
 \end{center}
 \end{figure}
@@ -1375,29 +1385,52 @@ of conductivity targets.
 
 
 
-\section{Methods: Evaluation}
+\section{Evaluation}
 
 Evaluation is performed in two stages. First algorithm performance
 is evaluated against the figures or merit in section
 \ref{sec:figmerit}.
-Next, we compare to a representative set of  clinical 
-and experimental data.
+Next, we compare to a representative set of data
+from simulations, experimental and clinical measurements.
 
-\subsection{Performance figure or merit}
+We compare three algorithms for normalized
+difference EIT:
+1) Sheffield Backprojection
+    ($\RB_{SBP}$), 
+2) Gauss-Newton Reconstruction using a
+   NOSER prior with exponent $p=0.5$
+    ($\RB_{GN}$), 
+and
+3) GREIT ($\RB_{GR}$). 
+$\RB_{GN}$ is chosen as representative
+of typical GN difference EIT solutions.
+ In order to normalize
+noise performance, each algorithm has
+NF$=0.5$ at the medium centre. This property
+is inherent to the implemented version
+of $\RB_{SBP}$. 
+For $\RB_{GN}$, NF is set by 
+adjusting the hyperparameter $\lambda$, while
+for $\RB_{GR}$, NF is set by 
+adjusting the weighting $\wB^{(k)}$ of noise
+training data $\yB_n$. The value is chosen using
+a bisection search.
 
 
-\section{Results}
+\subsection{Evaluation: performance figures or merit}
+\label{sec:perffigm}
 
 \begin{figure}[bhtp]
 \begin{center}
 \includegraphics[width=0.8\textwidth,
-                 bb=0.0in 1.0in 10in 6.0in,page=1]
+                 bb=0.0in 1.5in 10in 8.0in,page=1]
                 {figures/fig-reconst-examples.pdf}
-\caption{ \label{fig:rimage}
+\caption{
+\label{fig:FoMimages}
 Examples of simulated reconstructed images. Each row
 shows images reconstructed from the same small 
 conductivity target, $\xB_t$, shown as 
-a small turquoise circle. The ``Radius'' indicate
+a small turquoise circle. ``Radius'' indicates
 the position of the target as a fraction of body radius.
 {\em left:} Sheffield Backprojection,
 {\em center:} Gauss-Newton (using NOSER regularization)
@@ -1405,6 +1438,36 @@ the position of the target as a fraction of body radius.
 }
 \end{center}
 \end{figure}
+
+We test each reconstruction matrix, $\RB$,
+against against each of the figures of merit 
+(sec.\ \ref{sec:figmerit}). Simulation data
+are generate from the cylindrical phantom
+as shown in Fig.\ \ref{fig:CylMesh}. 
+Two hundred 
+non-conductive targets of with a diameter of
+5\% of the medium diameter are simulated,
+ in the plane of the electrodes,
+starting at the medium centre and 
+progressing radially outward. The simulated 
+target is rotated a fixed angle around the centre
+for each sample in order to sample the entire
+FEM geometry.
+
+Fig.\ \ref{fig:FoMimages} shows representative
+images at three different radial positions.
+Several effects can be seen from these images.
+First, Sheffield Backprojection performs well
+for targets that are not too close to the 
+medium boundary; near the boundary, it produces
+smearing artefacts. GN reconstruction produces
+clear ringing artefacts, but otherwise shows
+good performance with good resolution. 
+GREIT is gives slightly lower resolution than
+GN, but gives more constant resolution with
+very little ringing artefacts.
+
+
 
 
 \begin{figure}[bhtp]
@@ -1448,15 +1511,15 @@ the position of the target as a fraction of body radius.
   \includegraphics[width= 0.32 \textwidth]
 {../../tutorial/GREIT-evaluation/simulation_test_imgs/simulation_test04_46.png}
 \put(-420,20){\small RNG}
-\caption{ \label{fig:rimage}
+\caption{ \label{fig:FoMresults}
 Algorithm performance against simulated tests as a function
 of radial position. Radial position on each graph is from
 from centre ({\em left}) to the body boundary ({\em right}).
 Each column shows results from a different reconstuction
 algorithm:
-{\em left:} Sheffield Backprojection,
-{\em center:} Gauss-Newton (with NOSER regularization)
-{\em right:} GREIT
+{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
+{\em center:} Gauss-Newton ($\RB_{GN}$)
+{\em right:} GREIT ($\RB_{GR}$)
 Each row shows a different parameter. From
 top to bottom: 
 Amplitude Response (AR),
@@ -1468,8 +1531,41 @@ Ringing (RNG)
 \end{center}
 \end{figure}
 
+Fig.\ \ref{fig:FoMresults} shows algorithm performance
+for each parameter as a function of radial position.
+The ``noise'' that appears on each line is due to the
+discreteness of the FEM mesh for simulation. However,
+for some algorithms there are larger oscillations
+near the boundary; this reflects variability in 
+performance as the target passes in front of and
+between the electrodes.
+Overall, all algorithms perform generally well
+in the centre of the medium with poorer performance
+near the boundary. GREIT shows clear advantages
+in its ability to meet most of the desired
+performance requirements.
 
-\subsection{Experimental data}
+
+\subsection{Evaluation: representative data}
+
+
+\begin{itemize}
+\item
+{\em experimental lung injury}
+Frerichs \etal  1998
+Sheffield MK I
+
+\item
+{\em air/fluid in pleural space}
+Hahn \etal  2006
+Goe MF II
+
+\item
+{\em recruitment manouvre in acute lung injury}
+Frerichs \etal  2003
+Goe MF II
+\end{itemize}
+
 
 \section{Discussion}
 
@@ -1481,6 +1577,9 @@ $-$ Recommended selection of parameters
 \\
 $-$ Discussion of remaining steps before 
     GREIT can be released.
+\\
+We only show normalized EIT, not normalized
+difference EIT.
     
 
 
@@ -1623,6 +1722,20 @@ Creative Commons/Science Commons 2007
 \verb+creativecommons.org/licenses/by/3.0/+
 
 \item[]
+Frerichs I  Hahn G Schr\"oder T Hellige G 1998
+Electrical impedance tomography in
+monitoring experimental lung injury
+{\em Intensive Care Med.}
+24 829--836
+
+\item[]
+Frerichs I Dargavillle P A Dudykevych T Rimensberger P M 2003
+Electrical Impedance Tomography - a method for monitoring
+regional lung aeration and tidal volume distribution?
+{\em  Intensive Care Med.}
+29 2312--2316
+
+\item[]
 GNU Lesser General Public License: Version 3, 29 June 2007
 {\em Free Software Foundation, Inc.}
 \verb+www.gnu.org/licenses/lgpl.html+
@@ -1640,6 +1753,13 @@ and Hellige G 2001
 different electrical tomography devices''
 {\em  Biomed Tech (Berl)}
 46 91--95
+
+\item[]
+Hahn G Just A Dudykevych T Frerichs I Hinz J  Quintel M Hellige G
+Imaging pathologic pulmonary air and fluid accumulation by
+ functional and absolute EIT
+{\em Physiol. Meas.}
+27 S187--S198
 
 \item[]
 Hahn G Just A Dittmar J  Hellige G 2008
