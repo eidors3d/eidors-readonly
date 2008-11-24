@@ -1432,9 +1432,9 @@ shows images reconstructed from the same small
 conductivity target, $\xB_t$, shown as 
 a small turquoise circle. ``Radius'' indicates
 the position of the target as a fraction of body radius.
-{\em left:} Sheffield Backprojection,
-{\em center:} Gauss-Newton (using NOSER regularization)
-{\em right:} GREIT
+{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
+{\em center:} Gauss-Newton ($\RB_{GN}$),
+{\em right:} GREIT ($\RB_{GN}$).
 }
 \end{center}
 \end{figure}
@@ -1548,22 +1548,128 @@ performance requirements.
 
 \subsection{Evaluation: representative data}
 
+In order to illustrate the EIT image reconstructions
+with these three algorithms, we calculate images using
+three algorithms
+($\RB_{SBP}, \RB_{GN}, \RB_{GR}$)
+for the following experimental cases.
 
 \begin{itemize}
 \item
-{\em experimental lung injury}
-Frerichs \etal  1998
-Sheffield MK I
+{\em Experimental lung injury:}
+These data were measured in anesthetized
+ventilated supine pigs as part of the study of
+Frerichs \etal  1998 using the 
+Sheffield MK I EIT system. EIT measurements
+were made on the initially healthy animals.
+Subsequently, oleic acid was applied 
+into the left pulmonary artery to produce
+selective unilateral lung injury, and new 
+EIT measurements were taken. 
+
+Images are reconstructed of tidal ventilation
+in a pig before and after unilateral lung
+injury. Measurements $\vB_r$ and $\vB$
+were calculated from average end-expiratory
+and end-inspiratory measurements, respectively.
+
+\begin{figure}[bhtp]
+\begin{center}
+%\includegraphics[width=0.8\textwidth,
+\caption{
+\label{fig:Frerichs98images}
+Images of ventilation in a pigs shown ({\em top row})
+before and ({\em bottom row}) after unilateral
+lung injury (data from Frerichs \etal 1998).
+Images are shown for three algorithms.
+{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
+{\em center:} Gauss-Newton ($\RB_{GN}$),
+{\em right:} GREIT ($\RB_{GN}$).
+}
+\end{center}
+\end{figure}
 
 \item
-{\em air/fluid in pleural space}
-Hahn \etal  2006
-Goe MF II
+{\em Recruitment manouvre in acute lung injury:}
+These data were measured in an anesthetized
+ventilated supine piglet as part of the study of
+Frerichs \etal  2003 using the 
+Goe MF II system. Acute lung injury
+was created by repeated
+bronchoalveolar lavage. EIT data were
+measured during a recruitment manouvre
+during which PEEP was raised and then
+lowered from 0 to 30~cmH$_2$O in steps. 
+
+Images are reconstructed of tidal ventilation
+at a PEEP of $10$~cmH$_2$O on the inflation
+and deflation segments of a recruitment manouvre.
+Measurements $\vB_r$ and $\vB$
+were calculated from average end-expiratory
+and end-inspiratory measurements at the specified
+PEEP.
+
+\begin{figure}[bhtp]
+\begin{center}
+%\includegraphics[width=0.8\textwidth,
+\caption{
+\label{fig:Frerichs98images}
+Images of ventilation in a pigs with
+acute lung injury 
+at a PEEP of $10$~cmH$_2$O shown ({\em top row})
+on the inflation and 
+and ({\em bottom row})
+deflation segment of a recruitment manouvre 
+(data from Frerichs \etal 2003).
+Images are shown for three algorithms.
+{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
+{\em center:} Gauss-Newton ($\RB_{GN}$),
+{\em right:} GREIT ($\RB_{GN}$).
+}
+\end{center}
+\end{figure}
 
 \item
-{\em recruitment manouvre in acute lung injury}
-Frerichs \etal  2003
-Goe MF II
+{\em Regional pneumothorax / pleural effusion:}
+These data were measured in anesthetized
+ventilated supine pigs as part of the
+study of Hahn \etal  2006 using the
+Goe MF II EIT system.
+Unilateral pleural effusion and pneumothorax was
+induced by injecting up to $300$~ml of air or $300$~ml of
+Ringer solution into the right side via a small incision
+made in the chest wall and a plastic canula and
+fixed by a suture and sealed by cyanoacrylate glue.
+
+Images are reconstructed of pneumothorax
+and pleural effusion.
+Measurement $\vB_r$ is calculated from an
+average signal at end-expiration before
+the intervention, while $\vB$ is calculated
+and end-expiration during injection of air
+and fluid, respectively.
+
+\begin{figure}[bhtp]
+\begin{center}
+%\includegraphics[width=0.8\textwidth,
+\caption{
+\label{fig:Frerichs98images}
+Images of localized
+({\em top row})
+pneumothorax, and
+({\em bottom row})
+pleural effusion
+in an anesthetized, ventilated pig 
+(data from Hahn \etal 2006).
+Images are shown for three algorithms.
+{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
+{\em center:} Gauss-Newton ($\RB_{GN}$),
+{\em right:} GREIT ($\RB_{GN}$).
+}
+\end{center}
+\end{figure}
+
+
 \end{itemize}
 
 
