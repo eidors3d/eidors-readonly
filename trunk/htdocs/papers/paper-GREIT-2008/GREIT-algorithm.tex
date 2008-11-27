@@ -117,11 +117,11 @@ consists of:
 2) consensus on the performance figures of merit for
  EIT image reconstruction, which are:
 a) uniform amplitude response,
-b) low and uniform reconstructed position error,
-c) low, uniform and circular small point spread function,
+b) small and uniform reconstructed position error,
+c) small, uniform and circular small point spread function,
 d) good noise performance,
-e) low sensitivity to electrode and boundary movement,
-f) low artefact amplitude on clinical and experimental data;
+e) small sensitivity to electrode and boundary movement,
+f) small artefact amplitude on clinical and experimental data;
 and
 3) A systematic approach to optimize a linear reconstruction
  matrix to desired performance figures.
@@ -255,7 +255,7 @@ change image, based on a 3D forward model.
    provided source code.
 \end{itemize}
 
-These limitations represent, in our opinion, the limits
+These specifications represent, in our opinion, the limits
 to areas sufficiently well understood in the EIT community
 to reach consensus. We do not suggest that such limits are ideal;
 in fact, we actively encourage work to overcome them,
@@ -267,8 +267,8 @@ such as planar placement of electrodes and the consequent 2D images.
 In this section, we elaborate on a set of criteria which 
 characterize the performance of an ideal reconstruction
 algorithm. Clearly, there is an inherent trade-off between
-the measures, such that it is not possible to 
-simultaneously optimize all measures. Instead, we proceed
+the criteria, such that it is not possible to 
+simultaneously optimize all criteria. Instead, we proceed
 as follows. First, we establish the desired performance measures
 of an ideal algorithm; subsequently, 
 we describe a unified methodology to calculate a reconstruction
@@ -276,11 +276,10 @@ matrix which is an optimized compromise of criteria
 weighted by the consensus importance of each.  
 
 We consider an EIT system using the following notation.
-$n_E$ electrodes applied are to a body, and use
-sequential current stimulation with parallel voltage
-measurement. Using these electrodes, $n_E$ current stimulation
+Using $n_E$ electrodes,  $n_E$ current stimulation
 patterns are sequentially applied and $n_V$ differential
-measurements are made for each stimulation.  For an adjacent drive
+measurements are made in parallel for each stimulation.
+ For an adjacent drive
 EIT system, voltages are typically not measured at driven
 electrodes, and $n_V = n_E - 3$.  Each data frame measures
 a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
@@ -288,7 +287,7 @@ a vector, $\vB\in\mathbb{R}^{n_M}$, of $n_M= n_E n_V$ data points
 Difference EIT calculates difference data $\yB$, ($[\yB]_i =
 [\vB]_i - [\vB_r]_i$; or the normalized difference data $[\yB]_i
 = ([\vB]_i - [\vB_r]_i)/[\vB_r]_i)$, where $\vB_r$ is a reference
-set of measurements representing the background conductivity
+set of measurements corresponding to the background conductivity
 distribution, $\sG_r$. To improve its precision,
 $\vB_r$ is typically averaged over many data frames; 
 such ensemble averaging reduces random noise, and we
@@ -376,7 +375,7 @@ reconstructed conductivities. For this, we
 require that reconstruction matrices, $\RB$, be
 scaled such that AR$=1$ for 
 a small spherical target with
- $\Delta\sigma_t/\sigma_r \approx 1$
+ $\Delta\sigma/\sigma_r \approx 1$
 in the centre of the medium.
 With this normalization, reconstructed EIT images have
 units as follows:
@@ -475,8 +474,8 @@ fit within a circle.
               \sum_{k} [\xH_q]_k
 \end{equation}
 where $C$ is a circle centred at the CoG of $\xH_q$
-with an equivalent area to $\xH_q$. This figure
-similar to that of Oh \etal (2007).
+with an equivalent area to $A_q$. This figure
+is similar to that of Oh \etal (2007).
 
 \hspace{5mm}
 {\em Desired behaviour:}
@@ -489,7 +488,7 @@ of merit.
 \item
 {\bf Ringing (RNG):}
 measures whether reconstructed images show
-areas of oposite sign surrounding the main 
+areas of opposite sign surrounding the main 
 reconstructed target area. Fig. \ref{fig:PerfFigures}
 shows an arc of ringing around the image centre.
 Overshoot is typical of linear filters; for second-order
@@ -538,10 +537,10 @@ measurement noise is amplified
 in the reconstructed images. Noise amplification
 is measured by the noise figure (NF) as
 illustrated in Fig. \ref{fig:noise_fig}, 
-based on the definition by of Adler and Guardo (1996).
+based on the definition by Adler and Guardo (1996).
 The NF is the ratio of the output to input
- signal to noise ratio (SNR) at the for a filter.
-We define SNR=
+ signal to noise ratio (SNR) for a filter.
+We define SNR~=~%
 $\frac{
    \mbox{mean \em signal}
       }{
@@ -556,11 +555,11 @@ rather than energy. Thus
 \mathrm{NF} = \frac{
    E[ \mathrm{mean}~\xH_t ] 
          /
-   E[ \mathrm{std}~\xH_t ]
+   E[ \mathrm{std}~\xH_n ]
 }{
    E[ \mathrm{mean}~\yB_t ] 
          /
-   E[ \mathrm{std}~\yB_t ]
+   E[ \mathrm{std}~\yB_n ]
 }
 \end{equation}
 For regularized algorithms, the value of NF is normally
@@ -860,15 +859,16 @@ for this procedure.
 One other requirement for the forward problem model is
 an estimate of the amplitude of conductivity changes $\xB^{(k)}$
 encountered in the modelled EIT application. Based on the
-forward model, conductivity chagnes $\xB$ result in
+forward model, conductivity changes, $\xB$, result in
 a measurement variance
 $\sigma_{\yB}^2 = \mathrm{var}~\yB = E[ \| \yB \|^2 ]$. 
 The mean $\yB$ is assumed to be zero, which implies
 that positive and negative conductivity changes are
 equally likely. This assumption is reasonable for a 
 general purpose EIT reconstruction algorithm, although
-specific EIT applications not match it exactly.
-For lung images, we may calculate $\sigma_{\yB}^2$ from either
+specific EIT applications may not match it exactly.
+For lung images, we may calculate $\sigma_{\yB}^2$ using
+either simulations of
 a model of the amplitude of conductivity changes due
 to breathing, or from a sample of EIT measurements 
 in representative applications.
@@ -970,7 +970,7 @@ For each desired image, $\xT^{(k)}$, there is a central
 circular zone centred at the target position
 where the amplitude is required to be
 flat to meet the AR and PE performance metrics.
-There is another circular zeno outside the boundary
+There is another circular zone outside the boundary
 of the specified contrast, where the desired image
 is zero, to meet the RNG and SD performance metrics
 (illustrated as the circles on Fig. 
@@ -1115,8 +1115,8 @@ In this case, the matrix $\RB$ which minimizes the norm is
 \end{eqnarray}
 where samples $\YB_t$ may be approximated by the Jacobian
 using the linear assumption. This formulation 
-has the same generalized Tikhonov regularization as the
-of (\ref{opti_sol}).
+has the same generalized Tikhonov regularization as that of
+of eqn.\ (\ref{opti_sol}).
 
 
 \subsection{Selection of training data}
@@ -1189,6 +1189,7 @@ either side of the sternum, and rotates the remaining
 electrodes accordingly (??? Can we reference any 
 publications explaining this?)
 
+\hspace{0.5cm}
 Electrodes placed at a mid-thoracic level show a 
 good approximation of the global lung behaviour
 (Yang and Patterson, 2007)
@@ -1198,13 +1199,15 @@ electrodes at a defined distance (a few centimeters
 in adults and millimeters in infants)
 below the nipple line, although this anatomical
 marker is somewhat variable for some female and
-larger male subjects. 
+larger or older male subjects. 
 The other approach is to 
 place the electrodes at the level of the
-6$^{\rm th}$-7$^{\rm th}$ intercostal space at
+$6^{\rm th} - 7^{\rm th}$ intercostal space at
 the parasternal line (which corresponds approximately
-to the nipple line). One group use a plane on
-the upper chest at the 3$^{\rm rd}$ intercostal space
+to the nipple line). Other vertical placements have
+been reported: the $10^{th}$ intercostal space 
+(Coulombe \etal, 2005), and  
+the upper chest at the $3^{\rm rd}$ intercostal space
 to measure lung perfusion (Smit \etal 2004).
 Placing electrodes too low may result in a large
 contribution of mediastinum or abdominal impedance
@@ -1221,7 +1224,9 @@ ECG type electrodes are often trimmed so that they
 can fit on the small size chest. FEM models of
 the electrodes on the neonatal thorax must be adapted
 to account for the changes in contact impedance
-due to electrode trimming.
+due to electrode trimming. The FEM models described
+in this paper use rectangular electrodes, but may be
+modifed for other electrode geometries.
 
 \item 
 {\em FEM model size and refinement:}
@@ -1466,7 +1471,7 @@ medium boundary; near the boundary, it produces
 smearing artefacts. GN reconstruction produces
 clear ringing artefacts, but otherwise shows
 good performance with good resolution. 
-GREIT is gives slightly lower resolution than
+GREIT gives slightly lower resolution than
 GN, but gives more constant resolution with
 very little ringing artefacts.
 
@@ -1516,7 +1521,7 @@ very little ringing artefacts.
 \put(-420,20){\small RNG}
 \caption{ \label{fig:FoMresults}
 Algorithm performance against simulated tests as a function
-of radial position. Radial position on each graph is from
+of radial position. Radial position on each graph is
 from centre ({\em left}) to the body boundary ({\em right}).
 Each column shows results from a different reconstuction
 algorithm:
@@ -1593,20 +1598,20 @@ Images are shown for three algorithms.
 \end{figure}
 
 \item
-{\em Recruitment manouvre in acute lung injury:}
+{\em Recruitment manoeuvre in acute lung injury:}
 These data were measured in an anesthetized
 ventilated supine piglet as part of the study of
 Frerichs \etal  2003 using the 
 Goe MF II system. Acute lung injury
 was created by repeated
 bronchoalveolar lavage. EIT data were
-measured during a recruitment manouvre
+measured during a recruitment manoeuvre
 during which PEEP was raised and then
 lowered from 0 to 30~cmH$_2$O in steps. 
 
 Images are reconstructed of tidal ventilation
 at a PEEP of $10$~cmH$_2$O on the inflation
-and deflation segments of a recruitment manouvre.
+and deflation segments of a recruitment manoeuvre.
 Measurements $\vB_r$ and $\vB$
 were calculated from average end-expiratory
 and end-inspiratory measurements at the specified
@@ -1622,7 +1627,7 @@ acute lung injury
 at a PEEP of $10$~cmH$_2$O shown ({\em top row})
 on the inflation and 
 and ({\em bottom row})
-deflation segment of a recruitment manouvre 
+deflation segment of a stepwise recruitment manoeuvre 
 (data from Frerichs \etal 2003).
 Images are shown for three algorithms.
 {\em left:} Sheffield Backprojection ($\RB_{SBP}$),
