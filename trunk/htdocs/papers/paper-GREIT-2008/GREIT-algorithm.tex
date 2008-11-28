@@ -101,7 +101,7 @@ because it is able to non-invasively
 provide a continuous image of the distribution of ventilation. 
 However, most clinical and physiological research in lung EIT
 is done using older and proprietary algorithms; this is
-an obstacle to interpretation of EIT data because the
+an obstacle to interpretation of EIT images because the
 reconstructed images are not well characterized.
 To address this issue, we are developing a
 consensus linear reconstruction algorithm for lung EIT,
@@ -117,7 +117,7 @@ consists of:
 2) consensus on the performance figures of merit for
  EIT image reconstruction;
 and
-3) A systematic approach to optimize a linear reconstruction
+3) a systematic approach to optimize a linear reconstruction
  matrix to desired performance figures.
 Figures of merit, in order of importance, are:
 a) uniform amplitude response,
@@ -203,16 +203,6 @@ This paper describes the unified approach to
 linear image reconstruction developed for GREIT,
 and the tools and evaluation methodology for
 clinical and experimental testing of the algorithm.
-The framework for the linear reconstruction algorithm
-consists of:
-1) detailed finite element models of a representative
- adult and neonatal thorax;
-2) consensus on the performance figures of merit for
- EIT image reconstruction, which are:
-a) uniform amplitude response; b) low and uniform reconstructed position error; c) low, uniform and circular small point spread function; d) good noise performance; e) low sensitivity to electrode and boundary movement; f) low artefact amplitude on clinical and experimental data;
-and
-3) a systematic approach to optimize a linear reconstruction
- matrix to desired performance figures.
 
 The current work is limited to the reconstruction algorithm.
 At this stage, we do not propose calibration tests, data
@@ -238,7 +228,7 @@ The following specifications have been defined for GREIT:
 configurations with Sheffield-type EIT systems, using
       adjacent current injection and measurement.
 \item
- linear (real-time) reconstruction of a 2D conductivity
+ linear (i.e. real-time) reconstruction of a 2D conductivity
 change image, based on a 3D forward model.
 \item
  quantitative reconstructions for which units can
@@ -688,7 +678,7 @@ calculated as the least squared fit to
 In order to permit testing of EIT data against
 this algorithm, it has been made available
 online 
-\verb$http://eidors3d.sf.net/data_contrib/db_backproj_matrix/$
+\verb$http://www.eidors.org/data_contrib/db_backproj_matrix/$
 under the following license:
 ``This matrix is copyright DC Barber and BH Brown at
   University of Sheffield. It may be used free of charge
@@ -1688,67 +1678,61 @@ Images are shown for three algorithms.
 
 \section{Discussion}
 
-This paper describes 
+This paper describes a unified approach to 2D linear EIT
+reconstruction of lung images, which we call GREIT.
+This approach represents
+a consensus of a large and representative
+group of experts in EIT algorithm design and clinical
+applications for pulmonary monitoring. The goal of
+this work is to address the concern that most
+clinical and physiological research in lung EIT
+is done using older and proprietary algorithms, which is
+an obstacle to interpretation of EIT images because the
+reconstructed images are not well characterized.
 
-$-$ Summary
-\\
-$-$ Review of ``recipe'' for GREIT algorithm
-\\
-$-$ Recommended selection of parameters
-\\
-$-$ Discussion of remaining steps before 
-    GREIT can be released.
-\\
-We only show normalized EIT, not normalized
-difference EIT.
-    
+The approach consists of:
+1) detailed finite element models of a representative
+ adult and neonatal thorax;
+2) consensus on the performance figures of merit for
+ EIT image reconstruction;
+and
+3) a systematic approach to optimize a linear reconstruction
+ matrix to desired performance figures.
+Figures of merit, in order of importance, are:
+a) uniform amplitude response,
+b) small and uniform position error,
+c) small ringing artefacts.
+d) uniform resolution,
+e) small shape deformation,
+f) small resolution.
+Such figures of merit are to be achieved with
+small noise amplification and
+small sensitivity to electrode and boundary movement.
+The current work leaves several parameters of the algorithm
+unspecified, including details on the selection of training
+data and required noise parameters. We are currently undertaking
+clinical and experimental validation of the GREIT algorithm
+to establish recommendations for these parameters.
 
-
-\subsection{Deliverables \& Licensing}
-
-This paper makes the following contributions. All are
-available on the internet at \verb+eidors3d.sf.net/GREIT+:
-All algorithms, models and test data have been made available
+All contributions from this work
+(algorithms, software, models and test data)
+ have been made available
+via the Internet (\verb+www.eidors.org/GREIT+) 
 under an open source license which allows
 gratis commercial and non-commercial use.
-\begin{itemize}
-\item An algorithm (described in the section ??) for reconstruction
-         of EIT images
-\item Software to implement this algorithm in the Matlab/GNU Octave
-         language available as part of EIDORS (Adler and Lionheart, 2006)
-\\
-{\em License:}
-    GNU LGPL (Free Software Foundation, 2007).
-   This license allows
-   unrestricted use and allows the provided software to
-   be provided with proprietary addons. The requirement is
-   that the source code of any modifications be provided to
-   the users. For a commercial vendor, this requirement would
-   mean that it would be possible to review and understand any
-   changes made to the software.
-
-\item Reconstruction matrices for EIT image reconstruction for
-      adult and neonate chest shapes and for a cylindrical phantom.
-{\em License:} Creative Commons Attribution
-   License (Creative Commons, 2007). Users are permitted
-   to copy, distribute, transmit and adapt the work,
-   under the conditions of attribution by citing this paper.
-
-\item Experimental and Clinical data provided for evaluation of GREIT
-{\em License:} Creative Commons Attribution
-   License (Creative Commons, 2007). Users are permitted
-   to copy, distribute, transmit and adapt the work,
-   under the conditions of attribution by citing the
-   papers as indicated.
-\end{itemize}
-
-{\em Other items to discuss}
-\\
-$-$ use of $p<2$
+Software to implement this algorithm is made
+available under the GNU LGPL (Free Software Foundation, 2007),
+which requires the source code of any distributed
+ modifications to be made available.
+FEM models, GREIT reconstruction matrices ($\RB_{GR}$) and
+experimental and clinical data provided for evaluation of GREIT,
+are made available under the Creative Commons Attribution
+License (Creative Commons, 2007). Users are permitted
+to copy, distribute, transmit and adapt the works,
+under the condition of attribution by citing the
+papers as indicated.
 
 
-
-\section*{References}
 
 \References % Harvard style references
 \item[]
