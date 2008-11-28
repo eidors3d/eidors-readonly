@@ -112,21 +112,26 @@ and the tools and evaluation methodology for
 clinical and experimental testing of the algorithm.
 The framework for the linear reconstruction algorithm
 consists of:
-1) detailed finite element models (FEM) of a representative
+1) detailed finite element models of a representative
  adult and neonatal thorax;
 2) consensus on the performance figures of merit for
- EIT image reconstruction, which are:
-a) uniform amplitude response,
-b) small and uniform reconstructed position error,
-c) small, uniform and circular small point spread function,
-d) good noise performance,
-e) small sensitivity to electrode and boundary movement,
-f) small artefact amplitude on clinical and experimental data;
+ EIT image reconstruction;
 and
 3) A systematic approach to optimize a linear reconstruction
  matrix to desired performance figures.
+Figures of merit, in order of importance, are:
+a) uniform amplitude response,
+b) small and uniform position error,
+c) small ringing artefacts.
+d) uniform resolution,
+e) small shape deformation,
+f) small resolution.
+Such figures of merit are to be achieved with
+small noise amplification and
+small sensitivity to electrode and boundary movement.
 This approach represents the consensus of a large and representative
-group of experts in EIT algorithm and clinical applications.
+group of experts in EIT algorithm design and clinical
+applications for pulmonary monitoring.
 All software and data to implement and test GREIT has be
 made available under an open source license which allows free
 research and commercial use. These tools will be used in
@@ -453,7 +458,7 @@ RES should be uniform and small, in order to
 more accurately represent shape of the target conductivity
 distribution. We consider uniformity of RES to be the
 fourth most important figure of merit, but small size
-of RES to be much less important (seventh). A nonuniform
+of RES to be much less important (sixth). A nonuniform
 RES can result in an incorrect reconstructed 
 position of a larger target. Low RES serves primarily
 to distinguish nearby targets. Since EIT is understood to
@@ -1682,6 +1687,8 @@ Images are shown for three algorithms.
 
 
 \section{Discussion}
+
+This paper describes 
 
 $-$ Summary
 \\
