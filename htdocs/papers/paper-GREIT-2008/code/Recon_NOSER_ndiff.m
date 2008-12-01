@@ -9,7 +9,8 @@ function Recon_NOSER_ndiff( savename );
    save(savename, 'RM','normalize_flag');
 
 function [RM,map] = calc_NOSER_RM
-   [J,map,vbkgnd] = calc_jacobian_mdl;
+%  [J,map,vbkgnd] = calc_jacobian_mdl;
+   load jacobian_cyl.mat J map  vbkgnd
    J = J ./ (vbkgnd*ones(1,size(J,2))); % Normalized Jacobian
    RM = zeros(size(J'));
  
