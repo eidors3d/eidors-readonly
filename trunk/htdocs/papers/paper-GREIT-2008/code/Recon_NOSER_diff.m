@@ -9,7 +9,8 @@ function Recon_NOSER_diff( savename );
    save(savename, 'RM','normalize_flag');
 
 function [RM,map] = calc_NOSER_RM
-   [J,map] = calc_jacobian_mdl;
+%  [J,map] = calc_jacobian_mdl;
+   load jacobian_cyl.mat J map
    RM = zeros(size(J'));
  
    % Remove space outside FEM model
