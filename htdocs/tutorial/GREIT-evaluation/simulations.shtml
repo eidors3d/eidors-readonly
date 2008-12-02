@@ -166,45 +166,45 @@ we calculate:
 <tr>
    <th> Amplitude
    <br><i>Want:<br>uniform</i>
-   <td> <img src="./simulation_test_imgs/simulation_test04_12.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_22.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_32.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_42.png">
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_12.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_12.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_22.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_22.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_32.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_32.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_42.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_42.png"></a>
 <tr>
    <th> Position<br>Error
    <br><i>Want:<br>small,uniform</i>
-   <td> <img src="./simulation_test_imgs/simulation_test04_13.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_23.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_33.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_43.png">
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_13.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_13.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_23.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_23.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_33.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_33.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_43.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_43.png"></a>
 <tr>
    <th> Resolution
    <br><i>Want:<br>small,uniform</i>
-   <td> <img src="./simulation_test_imgs/simulation_test04_14.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_24.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_34.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_44.png">
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_14.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_14.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_24.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_24.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_34.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_34.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_44.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_44.png"></a>
 <tr>
    <th> Shape<br>Deformation
    <br><i>Want:<br>small,uniform</i>
-   <td> <img src="./simulation_test_imgs/simulation_test04_15.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_25.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_35.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_45.png">
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_15.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_15.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_25.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_25.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_35.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_35.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_45.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_45.png"></a>
 <tr>
    <th> Ringing
    <br><i>Want:<br>small</i>
-   <td> <img src="./simulation_test_imgs/simulation_test04_16.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_26.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_36.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_46.png">
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_16.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_16.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_26.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_26.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_36.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_36.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_46.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_46.png"></a>
 <tr>
    <th> Noise<br>Figure
    <br><i>Want:<br>small</i>
-   <td> <img src="./simulation_test_imgs/simulation_test04_11.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_21.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_31.png">
-   <td> <img src="./simulation_test_imgs/simulation_test04_41.png">
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_11.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_11.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_21.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_21.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_31.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_31.png"></a>
+   <td><a border="0" href="./simulation_test_imgs/simulation_test04_41.png"><img border="0" src="./simulation_test_imgs/simulation_test04sm_41.png"></a>
 </table>
 Plots of parameters as a function of radial position
 (<i>left</i> is centre, <i>right</i> is the boundary)

@@ -17,7 +17,8 @@ for i= 1:length(algs)
       elseif j==5; set(gca,'YLim',[0,0.5]);      % Shape Deform
       elseif j==6; set(gca,'YLim',[0,1.5]);      % Ringing
       end
-      print('-dpng','-r100',sprintf('simulation_test_imgs/simulation_test04_%d%d.png',i,j));
+      print('-dpng','-r200',sprintf('simulation_test_imgs/simulation_test04_%d%d.png',i,j));
+      print('-dpng','-r100',sprintf('simulation_test_imgs/simulation_test04sm_%d%d.png',i,j));
    end
 end
 
