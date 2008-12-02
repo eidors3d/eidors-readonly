@@ -72,7 +72,8 @@ ALGS = Recon_GREIT_ndiff.mat \
        Recon_NOSER_ndiff.mat \
        Recon_Sheffield_backproj.mat
 
-Recon_NOSER_diff.mat Recon_NOSER_ndiff.mat: jacobian_cyl.mat
+Recon_NOSER_diff.mat:  jacobian_cyl.mat
+Recon_NOSER_ndiff.mat: jacobian_cyl.mat
 Recon_GREIT_ndiff.mat: sim_targets.mat
 
 $(ALGS): %.mat: %.m

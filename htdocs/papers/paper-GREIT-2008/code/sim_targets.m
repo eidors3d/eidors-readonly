@@ -27,7 +27,8 @@ function sim_targets( savefile )
 
    j=1;
    for f_frac = linspace(0,1,n_pts);
-      [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);
+%     [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);
+      [xp,yp,zp]= simulation_radmove(f_frac, radius, z0,zt);
       xyzr_pt(:,j) = [xp;yp;zp;rp];
       ff=  (x-xp).^2 + (y-yp).^2 + (z-zp).^2 <= rp^2;
    
@@ -47,14 +48,23 @@ function sim_targets( savefile )
    params= [0.9,0.05,0.5,0.5]; %max_posn, targ_rad, z_0, z_t
 
    [vh,vi,xyzr_pt]= simulate_3d_movement(200, fmdl, params, ...
-         @simulation_random);
-%        @simulation_radmove);
+         @simulation_radmove);
+%        @simulation_randctr);
+%        @simulation_random);
 
    %Change: mdl geometry at 90 deg; radius is 15
 
    save(savefile, 'vh','vi','xyzr_pt');
 
 function vh= homog_sim( fmdl );
+
+function [xp,yp,zp]= simulation_randctr(f_frac, radius, z0,zt);
+   rad= rand(1)*radius;
+   phi= 2*pi*rand(1);
+   xp = rad*sin(phi);
+   yp = rad*cos(phi);
+%  zp = mean([zt,z0]) + 0.05*std([zt,z0])*randn(1);
+   zp = mean([zt,z0]);
 
 
 function [xp,yp,zp]= simulation_random(f_frac, radius, z0,zt);

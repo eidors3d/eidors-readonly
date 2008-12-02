@@ -11,7 +11,7 @@ function Recon_GREIT_ndiff( savename );
 function RM = calc_RM( noiselev)
    load sim_targets.mat
 
-   D = desired_soln( xyzr_pt, 0.20 );
+   D = desired_soln( xyzr_pt, 0.25 );
    Y = vi./(vh*ones(1,size(vi,2))) - 1; 
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0

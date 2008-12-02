@@ -75,10 +75,12 @@ vv= eidors_readdata('p1130107.get');
 vh = mean(vv(idx,1:40),2);
 K=K+1;
 test_v(K).vh = vh;
-test_v(K).vi = vv(idx,1345); % PEEP 5 end-expi
+%test_v(K).vi = vv(idx,1345); % PEEP 5 end-expi
+test_v(K).vi = vv(idx,387); % PEEP 10 end-expi incr
 K=K+1;
 test_v(K).vh = vh;
-test_v(K).vi = vv(idx,1145); % PEEP 15 end-expi
+%test_v(K).vi = vv(idx,1145); % PEEP 15 end-expi
+test_v(K).vi = vv(idx,1257); % PEEP 10 end-expi decr
 
 % Contrib EIT data - PIG
 vv= eidors_readdata('1-control.RAW');
