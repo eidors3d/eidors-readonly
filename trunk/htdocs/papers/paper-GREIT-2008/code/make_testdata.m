@@ -61,18 +61,24 @@ K=K+1;
 test_v(K).vh = vh; % FRC
 test_v(K).vi = vi; % VT
 
+% Contrib EIT data - Pneumothroax / Pleural Effusion
+vv= eidors_readdata('goev354005.get');
+vh= mean(vv(idx,[21,60,97,134,206,241,278,316,392,430]),2);
+
+vv= eidors_readdata('goev354003_512-1560.get');
+va= mean(vv(idx,[569,605,643,680,715,753,827,866,901,940]),2);
+
+vv= eidors_readdata('goev354008_947-1559.get');
+vf= mean(vv(idx,[51, 89, 125, 163, 201, 236, 274, 311, 349, 385, 423, 461, 496, 534]),2);
+
+K=K+1;
+test_v(K).vh = vh; % FRC
+test_v(K).vi = va; % Air - FRC
+K=K+1;
+test_v(K).vh = vh; % FRC
+test_v(K).vi = vf; % Fluid - FRc
+
 
 
 save(savefile,'test_v');
-
-
-% Radial Movement - $Id$  
-function [xp,yp,zp]= simulation_radmove(f_frac, radius, z0,zt);
-   rp= f_frac*radius; 
-%  cv= 2*pi*f_frac * 73;
-   cv= 0.5;
-   xp= rp * cos(cv);
-   yp= rp * sin(cv);
-   if nargin==4; zp = mean([zt,z0]); else; zp= 0; end
-
 
