@@ -123,7 +123,7 @@ a) uniform amplitude response,
 b) small and uniform position error,
 c) small ringing artefacts.
 d) uniform resolution,
-e) limited shape deformation,
+e) limited shape deformation, and
 f) high resolution.
 Such figures of merit are to be achieved with
 small noise amplification and
@@ -220,7 +220,7 @@ royalty free use in both research and commercial applications.
 Additionally, due to space constraints in this paper, only a
 limited set of results could be included. The complete
 algorithms, results, and source data are available on the 
-internet at \verb+www.eidors.org/GREIT+.
+internet at \verb+eidors.org/GREIT+.
 
 
 
@@ -670,7 +670,7 @@ calculated as the least squared fit to
 In order to permit testing of EIT data against
 this algorithm, it has been made available
 online 
-\verb$www.eidors.org/data_contrib/db_backproj_matrix$
+\verb$eidors.org/data_contrib/db_backproj_matrix$
 under the following license:
 ``This matrix is copyright DC Barber and BH Brown at
   University of Sheffield. It may be used free of charge
@@ -916,14 +916,13 @@ implemented system.
 Training data for GREIT. Two sets of training data are used, based on
 conductivity targets and noise or artefact sources. For each type
 data, a set of training inputs (EIT measurements) and desired
-outputs (reconstructed images) are calculated. Desired outputs
-are based on the consensus performance measures.
+outputs (reconstructed images) are calculated.
 }
 \end{center}
 \end{figure}
 
  
-\subsubsection{Desired performance metrics}
+\subsubsection{Desired performance metrics.}
 
 Based on the performance metrics defined
 in section \ref{sec:figmerit},
@@ -941,7 +940,7 @@ be a more important figure of merit than high resolution
 in limited zones, we create a larger circular target, $\xT$
 which can be achieved uniformly throughout the image.
 We recommend, for a 16 electrode
-EIT system, that the diameter of $\xH_q$
+EIT system, that the diameter of $\xT_q$
 be 20\% of the medium diameter.
 For noise samples, the ``desired image'' is clearly
 zero; we wish for noise input to produce no output.
@@ -951,7 +950,7 @@ weighting $\wB^{(k)}$ which represents the weight given to
 each pixel in $\xT^{(k)}$. The weighting allows ``tuning''
 of the relative importance of the  performance metrics,
 as illustrated in Fig. \ref{fig:training_weighting}.
-For each desired image, $\xT^{(k)}$, there is a central
+For each desired image, $\xT^{(k)}$, there is an inner
 circular zone centred at the target position
 where the amplitude is required to be
 flat to meet the AR and PE performance metrics.
@@ -979,7 +978,7 @@ and a low NF, and vice vera.
 
 \begin{figure}[bhtp]
 \begin{center}
-\includegraphics[width=0.8\textwidth, bb=0.0in 2.7in 10in 7.0in,page=1]{figures/fig-weighting.pdf}
+\includegraphics[width=0.8\textwidth, bb=0.0in 2.7in 10in 7.5in,page=1]{figures/fig-weighting.pdf}
 \caption{ \label{fig:training_weighting}
 Illustration of the training data and weighting.
 {\em left:}   Training target ($\xB_t^{(k)}$)
@@ -1022,7 +1021,8 @@ may be expressed as minimization of an error $\epsilon^2$
     = \sum_k \| (\WB^{(k)})^2 (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
 \end{equation}
 where $\WB^{(k)} = diag( \wB^{(k)})$, is a diagonal matrix representing
-the weighting corresponding to each measurement. A 2-norm is used as it allows
+the weighting corresponding to each measurement.
+ The 2-norm is used as it allows
 a linear expression for, and faster computation of, $\RB$;
 however, other norms may result in improved performance.
 
@@ -1048,7 +1048,7 @@ but is zero elsewhere. Based on this expression
 \end{eqnarray}
 
 This expression may be represented as a matrix equation
-by defining matrices $\AB$ and $\BB$ where
+by defining matrices $\AB$ and $\BB$.
 \begin{equation}
 \AB = \sum_k (\WB^{(k)})^2 \xT^{(k)} (\yB^{(k)})^T 
 \end{equation}
@@ -1072,10 +1072,10 @@ may be shown to be equivalent to a scaled generalized
 Tikhonov solution of the form of section \ref{subsec:OSLGNS}.
 In order to illustrate this equivalence, consider
 a GREIT reconstruction algorithm formulated
-with weighting $\WB$. For the training set,
+with uniform weighting $\WB$ for each sample, $k$. For the training set,
 $n_T$ training conductivity targets, $\yB_t^{(k)}$ are drawn from
 a distribution with covariance $\SG_x$.
-For this example, we consider $n_{MN}$ samples of only the electronic
+For this example, we consider $n_{M_N}$ samples of only the electronic
 measurement noise, $\yB_n^{(k)}$, which is modelled as Gaussian,
 and samples are drawn from a distribution with 
 covariance $\SG_n$. The reconstruction matrix $\RB$ minimizes
@@ -1088,7 +1088,7 @@ matrix concatenation and
 $\YB_t = \frac{1}{n_T}    [ \yB_t^{(1)} \cdots \yB_t^{(n_T)} ]$,
 $\XT_t = \frac{1}{n_T}    [ \xT_t^{(1)} \cdots \xT_t^{(n_T)} ]$,
 and 
-$\YB_n = \frac{1}{n_{MN}} [ \yB_t^{(1)} \cdots \yB_t^{(n_{MN})} ]$.
+$\YB_n = \frac{1}{n_{M_N}} [ \yB_t^{(1)} \cdots \yB_t^{(n_{M_N})} ]$.
 In this case, the matrix $\RB$ which minimizes the norm is 
 \begin{eqnarray}
 \RB &=& [ \XT_t, 0 ] [\YB_t, \YB_n]^T
@@ -1098,10 +1098,10 @@ In this case, the matrix $\RB$ which minimizes the norm is
 \nonumber \\
     &=& \XT_t \YB_t^T \left( \JB \SG_x \JB^T + \SG_n \right)^{-1}
 \end{eqnarray}
-where samples $\YB_t$ may be approximated by the Jacobian
-using the linear assumption. This formulation 
+where samples $\YB_t$ may be approximated from the Jacobian
+assuming the body is linear for small targets. This formulation 
 has the same generalized Tikhonov regularization 
-term as that of
+term as that 
 of eqn.\ (\ref{opti_sol}).
 
 
@@ -1117,12 +1117,12 @@ The computational cost of calculating $\RB_{GR}$ does
 not change dramatically with the size of the training data
 set. The size of the matrix to be inverted is fixed at
 $n_M \times n_M$. We therefore use a large number of
-training samples (10000). The minimum training set 
+training samples. The minimum training set 
 is much smaller, because, since the model is
 linear, the key requirement is that the range of 
-$\RB_{GR}$ be adequately represented. This is limited
+$\RB_{GR}$ be adequately represented, and it is limited
 to the number of independent measurements,
-$\frac{1}{2} n_E \times n_V$ (which for a 16 electrode
+$\frac{1}{2} n_E \times n_V$ (which, for a 16 electrode
 system is 104).
 
 \section{Methods: forward models}
@@ -1130,7 +1130,7 @@ system is 104).
 Training data for GREIT requires a forward model which
 maps conductivity contrast targets $\xB_t$ to difference
 measurements $\yB$. Forward models are built using
-the 3D first order tetrahedral finite elements, and
+3D first order tetrahedral finite elements, and
 solved using preconditioned linear solvers
 (Polydorides and Lionheart, 2002).
 Finite element models have been developed for four
@@ -1149,10 +1149,6 @@ patient specific FEM meshes.
 Based on our experience with time-difference
 EIT, we feel that the four models provided offer
 most of the accuracy of adaptive meshing.
-We plan to perform tests to establish what 
-image artefact levels are produced as a function
-of the difference between given and the model
-geometry.
 
 In the design of FEM models of the thorax. The
 following issues need to be considered.
@@ -1166,11 +1162,11 @@ the patient long axis. In the most common configuration,
 Electrode \#1 is placed on the sternum. Subsequent
 electrodes are placed on subject left, spaced equidistantly
 around the chest. When viewing the EIT image, electrodes
-are numbered clockwise from the top centre, and subject
-is oriented as if the feet were outward. Another
+are numbered clockwise from the top centre, and the subject
+is oriented so the feet would point out of the image. Another
 common configuration places electrodes \#1 and \#16 on
-either side of the sternum, and rotate the remaining 
-electrodes accordingly
+either side of the sternum, and rotates the remaining 
+electrodes accordingly.
 %??? Can we reference any publications explaining this?
 
 \hspace{0.5cm}
@@ -1218,20 +1214,17 @@ modifed for other electrode geometries.
 Increasing the density of elements in the FEM
 model increases the accuracy of simulations. However,
 the simulation accuracy is limited by the boundary
-shape accuracy. Since GREIT recommends that 
-generic subject models are adequate for time difference
-imaging, the required FEM accuracy is similarly reduced.
+shape accuracy.
 We recommend that a minimum FEM model size of 25,0000
-elements.
+elements be used for simulation of
+GREIT training sets.
 The FEM mesh should be refined in the region of
 the electrodes, since the highest current densitites
 occur here. Electrode models should use the
 complete electrode model (Cheng \etal 1989).
 We also stress the importance of using 3D 
-forward models. While 2D models could be
-justified for early EIT research due to the reduced
-computational requirements, such models produce
-distortions as they cannot account for the true
+forward models, since 2D models
+ cannot account for the true
 distribution of current in the body.
 
 \item
@@ -1244,8 +1237,8 @@ an appropriate reference conductivity distribution
 $\sG_r$. The most common assumption for time 
 difference EIT is that the $\sG_r$ is a uniform,
 homogeneous distribution. However, in a patient,
-the non-conductive lungs make a significantly
-lower fraction of the stimulated current penetrate
+the non-conductive lungs mean
+a smaller part of the stimulated current penetrates
 the body centre than would be predicted by an
 homogeneous distribution. The consequence is that
 lung contrasts are reduced and ``pushed'' toward
@@ -1281,13 +1274,13 @@ B-Spline curves generated for one slice of the male subject.
 
 \caption{ \label{fig:Adultmodel}
 {\em left:} One slice of the male photographic visible body dataset showing the modelled B-Spline curves of the boundary.  There are two curves, modelling the left and right sides of the boundary, tangentially blended.
-{\em right:} The finished surface model of the male thorax ready for exporting to the Fe meshing software.
+{\em right:} The finished surface model of the male thorax ready for exporting to the FE meshing software.
 }
 \end{center}
 \end{figure}
 
 The final set of curves are used to generate the body surfaces which are
-then capped top and bottom to form a closed volume The finished surface
+then capped top and bottom to form a closed volume. The finished surface
 model is exported to the mesh-generating software which, in this case,
 is I-DEAS (Integrated Design Engineering Analysis Software).
 I-DEAS has the tools to define electrode geometry easily prior to meshing,
@@ -1317,9 +1310,10 @@ the process.
   \includegraphics[width= 0.45\textwidth]
          {figures/male_t_mdl.png}
 \caption{ \label{fig:AdultFEM}
-Finite element models of Adult thoraces with electrodes
-rectangular electrodes. The figure shows a wire frame mesh
-of the surface finite elements. Electrodes are shown in green,
+Finite element models of adult thoraces with
+rectangular electrodes. A wire frame mesh
+of the surface finite elements is shown.
+Electrodes are shown in green,
 with a lighter colour electrode \#1.
 {\em left:} Female subject
 {\em right:} Male subject
@@ -1334,11 +1328,11 @@ The neonatal mesh (Fig.\ \ref{fig:NeonateCyl})
  was generated with the surface modelling
 technique used for the adult models. The images 
 were from X-Ray CT, based on a 
-dataset of an infant with exomphalus. Owing to
-ethical constraints, CT data of healthy infants are not 
-available. Therefore the modelling process was subject to
-some assumptions regarding the boundary form to estimate
-the geometry of a healthy subject.  The model, which
+dataset of an infant with exomphalus. Due to the
+risks, CT data of healthy infants are not 
+available. The modelling was therefore subject to
+some assumptions regarding the boundary shape
+of a healthy subject.  The model, which
 consists of 23,747 elements and 5025 nodes was that used
 for initial algorithm evaluation in Bayford et al. (2007).
 
@@ -1427,11 +1421,14 @@ a bisection search.
                 {figures/fig-reconst-examples.pdf}
 \caption{
 \label{fig:FoMimages}
-Examples of simulated reconstructed images. Each row
+Examples of simulated reconstructed images
+({\em red} indicatives conductive, while
+ {\em blue} indicates non-conductvie changes)
+ as a function of the simulated target position
+({\em left column}, in units of radius fraction). Each row
 shows images reconstructed from the same small 
 conductivity target, $\xB_t$, shown as 
-a small turquoise circle. ``Radius'' indicates
-the position of the target as a fraction of body radius.
+a small turquoise circle.
 {\em left:} Sheffield Backprojection ($\RB_{SBP}$),
 {\em center:} Gauss-Newton ($\RB_{GN}$),
 {\em right:} GREIT ($\RB_{GN}$).
@@ -1440,11 +1437,12 @@ the position of the target as a fraction of body radius.
 \end{figure}
 
 We test each reconstruction matrix, $\RB$,
-against against each of the figures of merit 
+for normalized difference EIT
+against against the figures of merit 
 (sec.\ \ref{sec:figmerit}). Simulation data
 are generated from the cylindrical phantom
 as shown in Fig.\ \ref{fig:NeonateCyl}. 
-Two hundred 
+Five hundred 
 non-conductive targets of with a diameter of
 5\% of the medium diameter are simulated,
  in the plane of the electrodes,
@@ -1465,7 +1463,8 @@ clear ringing artefacts, but otherwise shows
 good performance with good resolution. 
 GREIT gives slightly lower resolution than
 GN, but gives more constant resolution with
-very little ringing artefacts.
+very little ringing artefacts, matching the
+consensus requirements.
 
 
 
@@ -1534,12 +1533,12 @@ Ringing (RNG)
 Fig.\ \ref{fig:FoMresults} shows algorithm performance
 for each parameter as a function of radial position.
 The ``noise'' that appears on each line is due to the
-discreteness of the FEM mesh for simulation. However,
-for some algorithms there are larger oscillations
+discreteness of the FEM mesh for simulation. 
+There are larger oscillations
 near the boundary; this reflects variability in 
 performance as the target passes in front of and
 between the electrodes.
-Overall, all algorithms perform generally well
+Overall, all algorithms perform well
 in the centre of the medium with poorer performance
 near the boundary. GREIT shows clear advantages
 in its ability to meet most of the desired
@@ -1548,46 +1547,48 @@ performance requirements.
 
 \subsection{Evaluation: representative data}
 
-In order to illustrate the EIT image reconstructions
-with these three algorithms, we calculate images using
-three algorithms
-($\RB_{SBP}, \RB_{GN}, \RB_{GR}$)
-for the following experimental cases.
+In order to illustrate EIT image reconstructions
+with these algorithms, we calculate images using
+$\RB_{SBP}, \RB_{GN}, {\rm and~}\RB_{GR}$
+for two experiments in which the physiology 
+corresponding to the EIT images is well understood.
+Due to space constraints, other tests of GREIT
+are given on the internet at \verb+eidors.org/GREIT+. 
 
 \begin{itemize}
-\item
-{\em Experimental lung injury:}
-These data were measured in anesthetized
-ventilated supine pigs as part of the study of
-Frerichs \etal  (1998) using the 
-Sheffield MK I EIT system. EIT measurements
-were made on the initially healthy animals.
-Subsequently, oleic acid was applied 
-into the left pulmonary artery to produce
-selective unilateral lung injury, and new 
-EIT measurements were taken.  
-Images are reconstructed of tidal ventilation
-in a pig before and after unilateral lung
-injury. Measurements $\vB_r$ and $\vB$
-were calculated from average end-expiratory
-and end-inspiratory measurements, respectively.
-
-\begin{figure}[bhtp]
-\begin{center}
-%\includegraphics[width=0.8\textwidth,
-\caption{
-\label{fig:Frerichs98images}
-Images of ventilation in a pigs shown ({\em top row})
-before and ({\em bottom row}) after unilateral
-lung injury (data from Frerichs \etal 1998).
-Images are shown for three algorithms.
-{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
-{\em center:} Gauss-Newton ($\RB_{GN}$),
-{\em right:} GREIT ($\RB_{GN}$).
-}
-\end{center}
-\end{figure}
-
+%\item
+%{\em Experimental lung injury:}
+%These data were measured in anesthetized
+%ventilated supine pigs as part of the study of
+%Frerichs \etal  (1998) using the 
+%Sheffield MK I EIT system. EIT measurements
+%were made on the initially healthy animals.
+%Subsequently, oleic acid was applied 
+%into the left pulmonary artery to produce
+%selective unilateral lung injury, and new 
+%EIT measurements were taken.  
+%Images are reconstructed of tidal ventilation
+%in a pig before and after unilateral lung
+%injury. Measurements $\vB_r$ and $\vB$
+%were calculated from average end-expiratory
+%and end-inspiratory measurements, respectively.
+%
+%\begin{figure}[bhtp]
+%\begin{center}
+%%\includegraphics[width=0.8\textwidth,
+%\caption{
+%\label{fig:Frerichs98images}
+%Images of ventilation in a pigs shown ({\em top row})
+%before and ({\em bottom row}) after unilateral
+%lung injury (data from Frerichs \etal 1998).
+%Images are shown for three algorithms.
+%{\em left:} Sheffield Backprojection ($\RB_{SBP}$),
+%{\em center:} Gauss-Newton ($\RB_{GN}$),
+%{\em right:} GREIT ($\RB_{GN}$).
+%}
+%\end{center}
+%\end{figure}
+%
 \item
 {\em Recruitment manoeuvre in acute lung injury:}
 These data were measured in an anesthetized
@@ -1625,7 +1626,6 @@ on the inflation and
 and ({\em bottom row})
 deflation segment of a stepwise recruitment manoeuvre 
 (data from Frerichs \etal 2003).
-Images are shown for three algorithms.
 {\em left:} Sheffield Backprojection ($\RB_{SBP}$),
 {\em center:} Gauss-Newton ($\RB_{GN}$),
 {\em right:} GREIT ($\RB_{GN}$).
@@ -1649,7 +1649,7 @@ and pleural effusion.
 Measurement $\vB_r$ is calculated from an
 average signal at end-expiration before
 the intervention, while $\vB$ is calculated
-and end-expiration during injection of air
+at end-expiration during injection of air
 and fluid, respectively.
 
 \begin{figure}[bhtp]
@@ -1670,7 +1670,6 @@ pneumothorax, and
 pleural effusion
 in an anesthetized, ventilated pig 
 (data from Hahn \etal 2006).
-Images are shown for three algorithms.
 {\em left:} Sheffield Backprojection ($\RB_{SBP}$),
 {\em center:} Gauss-Newton ($\RB_{GN}$),
 {\em right:} GREIT ($\RB_{GN}$).
@@ -1697,19 +1696,17 @@ an obstacle to interpretation of EIT images because the
 reconstructed images are not well characterized.
 
 The approach consists of:
-1) detailed finite element models of a representative
- adult and neonatal thorax;
-2) consensus on the performance figures of merit for
- EIT image reconstruction;
+1) detailed 3D finite element models of the thorax;
+2) consensus on the performance figures of merit;
 and
-3) a systematic approach to optimize a linear reconstruction
- matrix to desired performance figures.
-Figures of merit, in order of importance, are:
+3) an approach to fit the linear reconstruction
+ matrix, $\RB$, to the performance figures.
+In order of importance, figures of merit are:
 a) uniform amplitude response,
 b) small and uniform position error,
 c) small ringing artefacts.
 d) uniform resolution,
-e) limited shape deformation,
+e) limited shape deformation, and
 f) high resolution.
 Such figures of merit are to be achieved with
 small noise amplification and
@@ -1719,13 +1716,15 @@ unspecified, including details on the selection of training
 data and required noise parameters. We are currently undertaking
 clinical and experimental validation of the GREIT algorithm
 to establish recommendations for these parameters.
-
-%??? Mention limitations
+It is worth clarifying one disadvantage of the regularized
+approach presented: Sheffield backprojection tend to map
+measurement artefacts to ``streaks'', while GREIT maps the same
+artefacts to ``blobs''. It is easier for an operator to notice
+such streaks, and identify the presence of data errors.
 
 All contributions from this work
 (algorithms, software, models and test data)
- have been made available
-via the Internet (\verb+www.eidors.org/GREIT+) 
+ have been made available (\verb+eidors.org/GREIT+) 
 under an open source license which allows
 gratis commercial and non-commercial use.
 Software to implement this algorithm is made
