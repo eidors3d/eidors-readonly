@@ -2,7 +2,10 @@ function example_images( basename, alg_names )
 % Example GREIT images $Id$
 [s_algs,f_algs]= regexp(alg_names,'(\S+)');
 
-load testdata.mat
+
+std= load('sim_testdata.mat');
+rtd= load('testdata.mat');
+test_v = cat(2, std.test_v, rtd.test_v );
 
 imb.calc_colours.ref_level = 0; % select colour output
 imb.calc_colours.greylev   = 0.01; % black backgnd
