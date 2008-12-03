@@ -1,0 +1,162 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+G. Hahn, A. Just, T. Dudykevych, I. Frerichs, J. Hinz, M. Quintel and G. Hellige
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2006
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+Studies on five anaesthetized
+(Fentanyl/Midazolam) mechanically ventilated supine pigs
+(mean body weight 30.1 &plusmn; 2.3 kg). Tidal volume (15 ml/kg)
+and ventilation frequency were kept constant in
+each animal for all tomograms during the experiments. To
+cause controlled air or fluid accumulation, up to 300
+ml of air or 300 ml of Ringer solution was injected
+unilaterally at the right side into or from the pleural
+space in steps of 100 ml. The first injection was always air
+since Ringer solution could not be completely removed in
+most cases. A small incision was made in the chest wall
+and a plastic canula was fixed by a suture and
+additionally sealed by cyanoacrylate glue. Sixteen ECG
+electrodes (Blue Sensor, VL00S, Medicotest, Olstykke, DK)
+were placed around the thorax 3 cm below the axilla. The
+reference electrode was placed approximately 10 cm below
+the electrode plane.  Series of EIT measurements of 30 s
+duration were performed at a rate of 13 frames per second
+using a Goe-MF II tomography system (Hahn et al 2002). An
+adjacent current injection and measurement pattern was
+used. The frequency of the injected current was 50 kHz at
+an amplitude of 5 mArms. EIT measurements were performed
+either after complete injection of 300ml air or Ringer
+solution. In two pigs, themeasurements were performed
+during the whole period of stepwise injection. In each
+animal, air was injected first and completely removed
+before Ringer solution was injected. The whole protocol
+was approved by the State Animal Care Committee.
+
+<p>
+Data were published in 
+G Hahn, A Just, T Dudykevych, I Frerichs, J Hinz, M Quintel and G Hellige
+(2006)
+<a href="http://www.iop.org/EJ/abstract/0967-3334/27/5/S16"
+      >Imaging pathologic pulmonary air and fluid accumulation by functional and absolute EIT</a>
+<i>Physiol. Meas.</i> 27:S187&minus;S198
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attibution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+ Use or presentation of these data must acknowledge
+G&uuml;nter Hahn, and reference this publication:
+<ul>
+G Hahn, A Just, T Dudykevych, I Frerichs, J Hinz, M Quintel and G Hellige
+(2006)
+<a href="http://www.iop.org/EJ/abstract/0967-3334/27/5/S16"
+      >Imaging pathologic pulmonary air and fluid accumulation by functional and absolute EIT</a>
+<i>Physiol. Meas.</i> 27:S187&minus;S198
+</ul>
+   <tr><th valign="top"> Format:
+       <td> Data are in *get files encoded in a zip file
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Pig torso. Single plane of  
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./gh_data_2006.zip"
+            >Data (zip format)</a>
+
+<blockquote>
+<table>
+<tr><th> Description <th>File
+<tr><td>
+Reference file for all time different image reconstructions:
+<td>
+goev354005.get
+
+<tr><td>
+Inflation of 300 ml air in 3 steps into the pleural cavity:
+<br>&minus; 
+0 ml air:
+<br>&minus; 
+100 ml air:
+<br>&minus; 
+200 ml air:
+<br>&minus; 
+300 ml air:
+<td>
+<br>
+goev354003_1-186.get
+<br>
+goev354003_215-325.get
+<br>
+goev354003_361-512.get
+<br>
+goev354003_512-1560.get
+
+
+<tr><td>
+Subsequent deflation of the air in 3 steps from the pleural cavity:
+<br>&minus; 
+still 300 ml air:
+<br>&minus; 
+still 200 ml air (100 ml withdrawn):
+<br>&minus; 
+still 100 ml air (200 ml withdrawn):
+<br>&minus; 
+again 0 ml air (300 ml withdrawn):
+
+<td>
+<br>
+goev354004_1-182.get
+<br>
+goev354004_218-364.get
+<br>
+goev354004_400-554.get
+<br>
+goev354004_702-1560.get
+
+<tr><td>
+Injection of 300 ml NaCl (Ringer solution) in 3 steps into the pleural cavity:
+<br>&minus; 
+0 ml:
+<br>&minus; 
+100 ml NaCl:
+<br>&minus; 
+200 ml NaCl:
+<br>&minus; 
+300 ml NaCl:
+<td>
+<br>
+goev354008_2-270.get
+<br>
+goev354008_410-594.get
+<br>
+goev354008_727-856.get
+<br>
+goev354008_947-1559.get
+
+
+</table>
+</blockquote>
+       <hr>
+   </table>
+
+<blockquote>
+   <img src="gh-pleural-cavity-fig.png"> 
+</blockquote>
+
+<small>
+    Last Modified: $Date: 2008-07-26 11:36:27 -0400 (Sat, 26 Jul 2008) $ by $Author: aadler $
+</small>
+</body></html>
+

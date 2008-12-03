@@ -15,8 +15,12 @@ use the data</b>
 <h3>Animal Data</h3>
 <ul>
 <h4>Breathing Data</h4>
+<li> <a href="./data_contrib/gh_pleural_cavity/gh-pleural-cavity.shtml"
+      >EIT of incremental pneumothorax and pleural effusion in a pig</a>
+      By: G&uuml;nter Hahn
+
 <li> <a href="./data_contrib/if-peep-acute-lung-injury/if-peep-acute-lung-injury.shtml"
-     >EIT of incremental and decremental PEEP trial of acute lung injury in pig</a>
+     >EIT of incremental and decremental PEEP trial of acute lung injury in a pig</a>
       By: In&eacute;z Frerichs
 
 <li> <a href="./data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.shtml"
