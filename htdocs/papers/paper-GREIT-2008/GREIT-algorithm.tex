@@ -42,7 +42,7 @@ GREIT: a unified approach to 2D linear EIT reconstruction of
 }
 
 \author{Andy Adler$^{1}$,
-        John Arnold$^{2}$,
+        John H. Arnold$^{2}$,
         Richard Bayford$^{3}$,
         Andrea Borsic$^{4}$,
         Brian Brown$^{5}$,
@@ -59,7 +59,7 @@ GREIT: a unified approach to 2D linear EIT reconstruction of
         Janet Stocks$^{16}$,
         Andrew Tizzard$^{3}$,
         Norbert Weiler$^{8}$,
-        Gerhard Wolf$^{2}$%
+        Gerhard K. Wolf$^{2}$%
        }
 
 \address{ $^{1}$Systems and Computer Engineering,
@@ -93,7 +93,7 @@ GREIT: a unified approach to 2D linear EIT reconstruction of
 
 
 \begin{abstract}
-Recently, Electrical Impedance Tomography (EIT) has begun to see a
+Recently, Electrical Impedance Tomography (EIT) has attracted
 significant clinical interest for the application of monitoring
 mechanically ventilated patients.
 EIT has clinical promise to help better manage these patients,
@@ -124,8 +124,8 @@ a) uniform amplitude response,
 b) small and uniform position error,
 c) small ringing artefacts.
 d) uniform resolution,
-e) small shape deformation,
-f) small resolution.
+e) limited shape deformation,
+f) high resolution.
 Such figures of merit are to be achieved with
 small noise amplification and
 small sensitivity to electrode and boundary movement.
@@ -147,8 +147,9 @@ Image Reconstruction,
 Electrical Impedance Tomography (EIT) measures conductivity
 changes within a body from current stimulation and voltage
 measurement on the body surface. One of the most promising
-applications of EIT is for measuring the lungs, since these
-are large organs which undergo large changes in conductivity
+applications of EIT is for description of physiologic events
+in the thorax, since the thorax contains several
+organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
 was among the first physiological applications of this technology.
 (Barber and Brown 1984).
@@ -160,7 +161,8 @@ EIT is unique in that it
 is able to non-invasively and continuously monitor the distribution of 
 ventilation.  Based on these advantages, there is significant
 interest in EIT to 
-monitor patients with respiratory compromise.
+monitor patients with respiratory compromise
+(Frerichs \etal 2003, Victorino \etal 2004, Wolf \etal 2007).
 
 One limitation is that most clinical and physiological research
 on lung EIT is being done using proprietary variants of
@@ -180,7 +182,7 @@ One specific issue, is that
 artefacts can be incorrectly interpreted (i.e. movement of
    the skin can appear as changes in the lung regions),
    resulting in incorrect interpretations.
-Many other approaches to reconstruct EIT images have been
+Many other approaches to the reconstruction of EIT images have been
 proposed, incorporating many advances (Lionheart, 2004).
 Such approaches
 have not been widely used clinically and experimentally
@@ -231,7 +233,7 @@ configurations with Sheffield-type EIT systems, using
  linear (i.e. real-time) reconstruction of a 2D conductivity
 change image, based on a 3D forward model.
 \item
- quantitative reconstructions for which units can
+ quantitative difference reconstructions for which units can
   be assigned to EIT images.
 \item
  settings for all parameters:
@@ -1719,8 +1721,8 @@ a) uniform amplitude response,
 b) small and uniform position error,
 c) small ringing artefacts.
 d) uniform resolution,
-e) small shape deformation,
-f) small resolution.
+e) limited shape deformation,
+f) high resolution.
 Such figures of merit are to be achieved with
 small noise amplification and
 small sensitivity to electrode and boundary movement.
@@ -2013,10 +2015,24 @@ electrical impedance tomography
 17 285--93
 
 \item[]
+Victorino JA, Borges JB, Okamoto VN, Matos GF, Tucci MR, Caramez MP, Tanaka H, Sipmann FS, Santos DC, Barbas CS, Carvalho CR, Amato MB 2004
+Imbalances in regional lung ventilation: a validation study on
+electrical impedance tomography.
+{\em Am J Respir Crit Care Med} 169:791--800
+
+\item[]
 Wheeler JL, Wang W, Tang M 2002
 A comparison of methods for measurement of spatial resolution in two-dimensional circular EIT images
 {\em Physiol. Meas.}
 23 169--176
+
+\item[]
+Wolf GK, Grychtol B, van Genderingen H, Zurakowski D, Thompson JE, Arnold JH
+2007.
+Regional lung volume changes in children with acute respiratory distress
+syndrome during a derecruitment maneuver
+{\em Crit Care Med}
+35 1972--1978.
 
 \item[]
 Yang F  Patterson R 2007
