@@ -54,15 +54,19 @@ $(FIGDIR)/fig_cyl_mdl_targets.png: fig_cyl_mdl_targets.m
 	$(CALLMATLABPARAMS)
 	$(TRIMFIG)
 
-EXPDATA = p1130107.get 1-control.RAW 1-injury.RAW
+EXPDATA = p1130107.get 1-control.RAW 1-injury.RAW goev354005.get goev354003_512-1560.get goev354008_947-1559.get
 
 p1130107.get:
 	wget http://eidors3d.sf.net/data_contrib/if-peep-acute-lung-injury/if_data_2003.zip
-	unzip if_data_2003.zip p1130107.get
+	unzip if_data_2003.zip $@
 
 1-control.RAW 1-injury.RAW:
 	wget http://eidors3d.sf.net/data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.zip
-	unzip if-experimental-lung-injury.zip 1-control.RAW 1-injury.RAW
+	unzip if-experimental-lung-injury.zip $@
+
+goev354005.get goev354003_512-1560.get goev354008_947-1559.get:
+	wget http://eidors3d.sf.net/data_contrib/gh_pleural_cavity/gh_data_2006.zip
+	unzip -j gh_data_2006.zip $(patsubst %.get,*%.get,$@)
 
 sim_testdata.mat: make_sim_testdata.m
 	$(CALLMATLABPARAMS)
