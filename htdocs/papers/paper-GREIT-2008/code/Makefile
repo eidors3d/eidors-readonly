@@ -64,6 +64,9 @@ p1130107.get:
 	wget http://eidors3d.sf.net/data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.zip
 	unzip if-experimental-lung-injury.zip 1-control.RAW 1-injury.RAW
 
+sim_testdata.mat: make_sim_testdata.m
+	$(CALLMATLABPARAMS)
+
 testdata.mat: make_testdata.m $(EXPDATA)
 	$(CALLMATLABPARAMS)
 
@@ -80,7 +83,7 @@ $(ALGS): %.mat: %.m
 	$(CALLMATLABPARAMS)
 
 # EXAMPLE IMAGES:
-$(FIGDIR)/example_images: testdata.mat
+$(FIGDIR)/example_images: testdata.mat sim_testdata.mat
 
 $(FIGDIR)/example_images: example_images.m $(ALGS)
 	touch $@
