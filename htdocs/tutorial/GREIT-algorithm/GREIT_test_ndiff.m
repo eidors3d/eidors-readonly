@@ -1,10 +1,10 @@
-function [img,map]= GREIT_NOSER_ndiff( ref_meas, reconst_meas )
+function [img,map]= GREIT_test_ndiff( ref_meas, reconst_meas )
 % Reconstruct GREIT images using GREIT algorithm
 %
 % (C) 2008 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
-   [RM] = calc_RM(1, 5);
+   [RM] = calc_RM(1, 12);
 
    % Expand ref_meas to the full size of reconst_meas
    num_meas = size(reconst_meas,2);

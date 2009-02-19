@@ -52,7 +52,7 @@ information.
 <p><li><b>
 Browse Documents and Software in development
 </b><br>
-<a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/papers/paper-GREIT-2008"
+<a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/htdocs/papers/paper-GREIT-2008"
    >Browse SVN</a><br>
 
 <p><li><b>
@@ -60,8 +60,8 @@ Access to Developer Version
 </b><br>
 Read-only, worldwide access is available via SVN using
 <pre>
-svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/papers/paper-GREIT-2008/"
-               >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/papers/paper-GREIT-2008/</a>
+svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/htdocs/papers/paper-GREIT-2008/"
+               >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/htdocs/papers/paper-GREIT-2008/</a>
 </pre>
 Read-write access is available via SVN for registered
 developers. To become a developer, 

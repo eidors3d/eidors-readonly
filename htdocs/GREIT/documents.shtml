@@ -2,7 +2,7 @@
 
 <H3>GREIT Documents</H3>
 GREIT is a collaborative project to develop a
-consensus "best-of-breed" linear reconstucution
+consensus  linear reconstucution
 algorithm for lung EIT.
 <P>
 The following documents describe GREIT:
@@ -24,7 +24,7 @@ The following documents describe GREIT:
 
 <LI>
    <h3>
-   <a href="../papers/paper-GREIT-2008/GREIT-algorithm.pdf"
+   <a href="../papers/paper-GREIT-2008/GREIT-algorithm.pdf?ver=FILEVERSION"
       >GREIT paper</a> (version: FILEVERSION)
    <a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/htdocs/papers/paper-GREIT-2008/"
       >[version history]</a>
