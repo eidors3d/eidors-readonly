@@ -92,9 +92,10 @@ GREIT: a unified approach to 2D linear EIT reconstruction of
 
 
 \begin{abstract}
-Recently, Electrical Impedance Tomography (EIT) has attracted
-significant clinical interest for the application of monitoring
-mechanically ventilated patients.
+Electrical Impedance Tomography (EIT) is an attractive method
+for clinically monitoring patients during mechanical ventilation,
+because it can provide a non-invasive continuous image of pulmonary
+impedance which indicates aeration.
 EIT has clinical promise to help better manage these patients,
 because it is able to non-invasively
 provide a continuous image of the distribution of ventilation. 
@@ -107,8 +108,7 @@ consensus linear reconstruction algorithm for lung EIT,
 called GREIT (Graz consensus Reconstruction algorithm for EIT).
 This paper describes the unified approach to 
 linear image reconstruction developed for GREIT,
-and the tools and evaluation methodology for
-clinical and experimental testing of the algorithm.
+and methods of developing and testing the algorithm.
 The framework for the linear reconstruction algorithm
 consists of:
 1) detailed finite element models of a representative
@@ -125,7 +125,8 @@ c) small ringing artefacts.
 d) uniform resolution,
 e) limited shape deformation, and
 f) high resolution.
-Such figures of merit are to be achieved with
+Such figures of merit must be attained 
+while maintaining
 small noise amplification and
 small sensitivity to electrode and boundary movement.
 This approach represents the consensus of a large and representative
@@ -144,21 +145,27 @@ Image Reconstruction,
 
 \section{Introduction}
 Electrical Impedance Tomography (EIT) measures conductivity
-changes within a body from current stimulation and voltage
-measurement on the body surface. One of the most promising
+changes within a body, by measuring the voltages at electrodes
+on the body surface caused when a number of different
+currents are passed through the body.
+One of the most promising
 applications of EIT is for description of physiologic events
 in the thorax, since the thorax contains several
 organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
 was among the first physiological applications of this technology.
 (Barber and Brown 1984).
-Some imaging modalities can measure ventilation,
-such as MRI (with hyperpolarized He) and PET. However, commonly
-used imaging modalities (radiography, CT, MRI) do not assess
-ventilation directly.
-EIT is unique in that it
-is able to non-invasively and continuously monitor the distribution of 
-ventilation.  Based on these advantages, there is significant
+%Some imaging modalities can measure ventilation,
+%such as MRI (with hyperpolarized He) and PET. However, commonly
+%used imaging modalities (radiography, CT, MRI) do not assess
+%ventilation directly.
+%EIT is unique in that it
+%is able to non-invasively and continuously monitor the distribution of 
+%ventilation.
+EIT is unique in that it is able to non-invasively
+measure chest impedance to give a continuous
+imaging of the distribution of ventilation.
+Based on these advantages, there is significant
 interest in EIT to 
 monitor patients with respiratory compromise
 (Frerichs \etal 2003, Victorino \etal 2004, Wolf \etal 2007).
@@ -330,6 +337,10 @@ than $\frac{1}{4}$ of the maximum amplitude:
 For targets
 with a conductivity decrease, the definition
 of the $\frac{1}{4}$--amplitude set is inverted.
+A threshold of $\frac{1}{4}$ represents a compromise
+which detects most of the visually significant effects;
+however, the exact value of the threshold has little effect on
+the final algorithm parameters.
 The centre of gravity (CoG) of $\xH$ and $\xH_q$ are
 calculated, and the distance from the CoG to the 
 medium centre is then calculated, as $r_t$ and $r_q$
@@ -1386,6 +1397,8 @@ is evaluated against the figures or merit in section
 \ref{sec:figmerit}.
 Next, we compare to a representative set of data
 from simulations, experimental and clinical measurements.
+All evaluation is performed on a 16 electrode EIT configuration
+using adjacent current stimulation and voltage measurements.
 
 We compare three algorithms for normalized
 difference EIT:
@@ -1422,8 +1435,8 @@ a bisection search.
 \caption{
 \label{fig:FoMimages}
 Examples of simulated reconstructed images
-({\em red} indicatives conductive, while
- {\em blue} indicates non-conductvie changes)
+({\em red} indicates conductive, while
+ {\em blue} indicates non-conductive changes)
  as a function of the simulated target position
 ({\em left column}, in units of radius fraction). Each row
 shows images reconstructed from the same small 
@@ -1540,8 +1553,9 @@ performance as the target passes in front of and
 between the electrodes.
 Overall, all algorithms perform well
 in the centre of the medium with poorer performance
-near the boundary. GREIT shows clear advantages
-in its ability to meet most of the desired
+near the boundary. In comparison to
+SBP and GN, GREIT shows either an equivalent or an improved
+ability to meet of the desired
 performance requirements.
 
 
@@ -1594,7 +1608,8 @@ are given on the internet at \verb+eidors.org/GREIT+.
 These data were measured in an anesthetized
 ventilated supine piglet as part of the study of
 Frerichs \etal  (2003) using the 
-Goe MF II system. Acute lung injury
+Goe MF II system, and performed at the
+University of G\"ottingen, Germany. Acute lung injury
 was created by repeated
 bronchoalveolar lavage. EIT data were
 measured during a recruitment manoeuvre
@@ -1638,7 +1653,8 @@ deflation segment of a stepwise recruitment manoeuvre
 These data were measured in anesthetized
 ventilated supine pigs as part of the
 study of Hahn \etal (2006) using the
-Goe MF II EIT system.
+Goe MF II EIT system and performed at the
+University of G\"ottingen, Germany.
 Unilateral pleural effusion and pneumothorax was
 induced by injecting up to $300$~ml of air or $300$~ml of
 Ringer solution into the right side via a small incision
