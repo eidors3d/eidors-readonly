@@ -95,10 +95,7 @@ GREIT: a unified approach to 2D linear EIT reconstruction of
 Electrical Impedance Tomography (EIT) is an attractive method
 for clinically monitoring patients during mechanical ventilation,
 because it can provide a non-invasive continuous image of pulmonary
-impedance which indicates aeration.
-EIT has clinical promise to help better manage these patients,
-because it is able to non-invasively
-provide a continuous image of the distribution of ventilation. 
+impedance which indicates the distribution of ventilation. 
 However, most clinical and physiological research in lung EIT
 is done using older and proprietary algorithms; this is
 an obstacle to interpretation of EIT images because the
@@ -153,7 +150,8 @@ applications of EIT is for description of physiologic events
 in the thorax, since the thorax contains several
 organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
-was among the first physiological applications of this technology (Barber and Brown 1984).
+was among the first physiological applications of this technology
+ (Barber and Brown 1984).
 %Some imaging modalities can measure ventilation,
 %such as MRI (with hyperpolarized He) and PET. However, commonly
 %used imaging modalities (radiography, CT, MRI) do not assess
@@ -163,7 +161,7 @@ was among the first physiological applications of this technology (Barber and Br
 %ventilation.
 EIT is unique in that it is able to non-invasively
 measure chest impedance to give a continuous
-imaging of the distribution of ventilation.
+image of the distribution of ventilation.
 Based on these advantages, there is significant
 interest in EIT to 
 monitor patients with respiratory compromise
@@ -173,8 +171,8 @@ One limitation is that most clinical and physiological research
 on lung EIT is being done using proprietary variants of
 older image reconstruction algorithms, such as the backprojection
 algorithm as implemented
-in the Sheffield (Brown and Seagar, 1987)
-or G\"ottingen (Hahn \etal , 2002) EIT systems.
+in the Sheffield (Brown and Seagar 1987)
+or G\"ottingen (Hahn \etal 2002) EIT systems.
 The algorithms, although very successful for the time,
    do not incorporate advances that have been made over the last
    20 years.
@@ -185,8 +183,8 @@ The reconstructed images show
 For example, because of position errors,
 changes near the skin can appear as contrasts in the lung regions.
 Many other approaches to the reconstruction of EIT images have been
-proposed, incorporating many advances (Lionheart, 2004).
-Such approaches
+proposed, incorporating many advances (Lionheart, 2004);
+however, such approaches
 have not been widely used clinically and experimentally
 because there was a lack of an agreement on which
 approaches were best (and how they could be combined).
@@ -220,7 +218,7 @@ All developed algorithms, software
 models and simulation and experimental test data used
 in this algorithm have been
 made available under an open source license as part of
-the open source EIDORS distribution (Adler and Lionheart, 2006);
+the open source EIDORS distribution (Adler and Lionheart 2006);
 this license permits
 royalty free use in both research and commercial applications.
 Additionally, due to space constraints in this paper, only a
@@ -423,7 +421,7 @@ small and constant PE to be the second most important
 figure of merit. If PE is variable, interpretation
 of a distribution of air in the lungs becomes unreliable.
 Sheffield backprojection has large PE near the
-electrodes; this has resulted in cases where changes at
+electrodes, and this has resulted in cases where changes at
 the electrodes are misinterpreted as being inside the body.
 
 \item
@@ -451,7 +449,7 @@ RES should be uniform and small, in order to
 more accurately represent shape of the target conductivity
 distribution. We consider uniformity of RES to be the
 fourth most important figure of merit, but small size
-of RES to be less important (sixth). A nonuniform
+of RES to be less important (sixth). A non-uniform
 RES can result in an incorrect reconstructed 
 position of a larger target. Low RES serves primarily
 to distinguish nearby targets. Since EIT is understood to
@@ -466,7 +464,7 @@ boundary. Backprojection tends to show ``streak''
 artefacts in this case.
 SD measures the fraction of the reconstructed
 $\frac{1}{4}$--Amplitude set which does not
-fit within a circle.
+fit within a circle of equal area.
 \begin{equation}
 \mathrm{SD} = \sum_{k\not\in C} [\xH_q]_k / 
               \sum_{k} [\xH_q]_k
@@ -572,7 +570,7 @@ the other figures of merit.
 NF should be low, and, ideally, should be tuned to the noise
 level present in the EIT hardware used.
 Several studies have looked into strategies to select
-appropriate noise performance (eg. Graham and Adler, 2006).
+appropriate noise performance (eg. Graham and Adler 2006).
 At this time, we do not have consensus on the best
 way to choose NF. Instead, we note that noise performance
 of Sheffield Backprojection (NF=$0.5$ in the medium center)
@@ -611,7 +609,7 @@ reconstruction algorithm.
 The body under investigation is modelled using a finite element
 model (FEM) which discretizes the conductivity onto $n_N$
 piecewise smooth elements, represented by a vector
-$\sG\in\mathbb{R}^{n_N}$ (To clarify symbols,
+$\sG\in\mathbb{R}^{n_N}$ (To clarify use of symbols,
 $\sG$ represents a vector conductivity distribution, while
 $\sigma$ is the standard deviation).
 Again, difference EIT calculates a vector of
@@ -648,7 +646,7 @@ algorithm for CT, this model was clearly inadequate, because
 electric current propagates diffusely, and thus differently
 to X-ray photons. Therefore, improvements
 were developed to the backprojection algorithm
-(e.g.\ Barber and Brown, 1988). Such strategies
+(e.g.\ Barber and Brown 1988). Such strategies
 can be shown to regularize the reconstructed images.
 A good mathematical characterization is given by
 Santosa and Vogelius (1990).
@@ -656,8 +654,8 @@ Santosa and Vogelius (1990).
 While many variants of Sheffield backprojection exist,
 clinical and experimental EIT has largely used only
 one: that which was distributed in the
-Sheffield Mark I EIT system (Brown and Seagar, 1987).
-The G\"ottingen Goe MF II EIT system (Hahn \etal , 2002)
+Sheffield Mark I EIT system (Brown and Seagar 1987).
+The G\"ottingen Goe MF II EIT system (Hahn \etal 2002)
 has also been widely used for such clinical and
 experimental work, and uses a very similar reconstruction
 algorithm.
@@ -742,9 +740,9 @@ n_N}$ is the expected image covariance.
 
 It is worth noting that many other regularized approaches
 to EIT have been used, such as the
-TSVD (truncated singular value decomposition; Bayford \etal , 2008)
+TSVD (truncated singular value decomposition; Bayford \etal 2008)
 and
-SIRT (simultaneous iterative reconstruction technique; Hahn \etal , 2006).
+SIRT (simultaneous iterative reconstruction technique; Hahn \etal 2006).
 All linear approaches are structurally similar; however
 the formulation in (\ref{IM}) is more general
 as it explicitly exposes the selection of image reconstruction
@@ -815,9 +813,9 @@ $[\PB^{-1}]_{i,i} = \left[ \JB^T \JB
 for an exponent $p=1$. Many other prior matrices have been
 proposed: to model image smoothness as a penalty for non-smooth
 image regions, $\PB$ may be set to the discrete Laplacian filter
-(Vauhkonen \etal , 1998), a discrete high pass Gaussian filter (Adler
-and Guardo, 1996), or based on variance uniformization
-constraints (Cohen-Bacrie \etal , 1997).
+(Vauhkonen \etal 1998), a discrete high pass Gaussian filter (Adler
+and Guardo 1996), or based on variance uniformization
+constraints (Cohen-Bacrie \etal 1997).
 In this paper, we compare results from the GREIT approach
 with those of GN image reconstruction using the NOSER prior,
 $\PB$ with $p=1.0$.  The NOSER algorithm is 
@@ -844,7 +842,7 @@ the electrode size and contact impedance, and the reference
 conductivity, $\sG_r$, around which conductivity changes occur.
 In this paper, the forward problem is solved using a
 3D FEM using the complete electrode model
-(Cheng \etal , 1989). However, it is worth noting that 
+(Cheng \etal 1989). However, it is worth noting that 
 any forward model, physical or numerical, is suitable
 for this procedure.
 
@@ -891,19 +889,19 @@ is a function of the EIT hardware and patient
 connection. If different gain settings are used for each
 channel, these settings will alter the noise. Calibrated
 measurements of EIT noise show that it is non-Gaussian and
-varies between channels (Hahn \etal , 2008).
+varies between channels (Hahn \etal 2008).
  We suggest GREIT algorithms
 be tuned to the hardware implementation. This may be 
 implemented using a calibration protocol before the 
 start of measurements, or by integrating a model of 
 the hardware imperfections into the forward model
-(Hartinger \etal , 2007).
+(Hartinger \etal 2007).
 
 {\em Electrode movement artefacts}
 occur when the electrodes move, either with posture change
 or with chest movements due to breathing. Several reports
 have demonstrated the significant impact of such movements on
-EIT images (Adler \etal 1996, Zhang and Patterson, 2005,
+EIT images (Adler \etal 1996, Zhang and Patterson 2005,
 Coulombe \etal 2005). In order to reduce the contribution
 of such movement on EIT reconstruction, Soleimani \etal
 (2006) showed that it is possible to create an
@@ -913,7 +911,7 @@ artefacts in the reconstructed images. In order
 to use this capability in GREIT, we specify that a
 set of ``noise'' measurements due to electrode movement 
 be incorporated. This is currently implemented from
-deformations of the FEM (G\'omez-Laberge and Adler, 2008),
+deformations of the FEM (G\'omez-Laberge and Adler 2008),
 but may be based on a calibration protocol in an
 implemented system.
 
@@ -1083,7 +1081,7 @@ Tikhonov solution of the form of section \ref{subsec:OSLGNS}.
 In order to illustrate this equivalence, consider
 a GREIT reconstruction algorithm formulated
 with uniform weighting $\WB$ for each sample, $k$. For the training set,
-$n_T$ training conductivity targets, $\yB_t^{(k)}$ are drawn from
+$n_T$, training conductivity targets, $\yB_t^{(k)}$, are drawn from
 a distribution with covariance $\SG_x$.
 For this example, we consider $n_{M_N}$ samples of only the electronic
 measurement noise, $\yB_n^{(k)}$, which is modelled as Gaussian,
@@ -1138,11 +1136,11 @@ system is 104).
 \section{Methods: forward models}
 
 Training data for GREIT requires a forward model which
-maps conductivity contrast targets $\xB_t$ to difference
-measurements $\yB$. Forward models are built using
+maps conductivity contrast targets, $\xB_t$, to difference
+measurements, $\yB$. Forward models are built using
 3D first order tetrahedral finite elements, and
 solved using preconditioned linear solvers
-(Polydorides and Lionheart, 2002).
+(Polydorides and Lionheart 2002).
 Finite element models have been developed for four
 different geometries: 
 male and female adult chests,
@@ -1182,7 +1180,7 @@ electrodes accordingly.
 \hspace{0.5cm}
 Electrodes placed at a mid-thoracic level show a 
 good approximation of the global lung behaviour
-(Yang and Patterson, 2007).
+(Yang and Patterson 2007).
 There are two main strategies to select the electrode
 level.  One practice is to place
 electrodes at a defined distance (a few centimeters 
@@ -1196,9 +1194,9 @@ $6^{\rm th} - 7^{\rm th}$ intercostal space at
 the parasternal line (which corresponds approximately
 to the nipple line). Other vertical placements have
 been reported: the $10^{th}$ intercostal space 
-(Coulombe \etal , 2005), and  
+(Coulombe \etal 2005), and  
 the upper chest at the $3^{\rm rd}$ intercostal space
-to measure lung perfusion (Smit \etal , 2004).
+to measure lung perfusion (Smit \etal 2004).
 Placing electrodes too low may result in a large
 contribution of mediastinum or abdominal impedance
 changes in the center of the EIT image.
@@ -1231,7 +1229,7 @@ GREIT training sets.
 The FEM mesh should be refined in the region of
 the electrodes, since the highest current densitites
 occur here. Electrode models should use the
-complete electrode model (Cheng \etal , 1989).
+complete electrode model (Cheng \etal 1989).
 We also stress the importance of using 3D 
 forward models, since 2D models
  cannot account for the true
@@ -1271,7 +1269,8 @@ from which the finite element meshes were generated.  The surface models
 were created using AliasStudio (Autodesk) from the
 photographic images of the thorax spaced $20~$mm apart. The method used
 is similar to that used to generate models of the human head for EIT of
-brain function (Tizzard \etal , 2005). 
+brain function (Tizzard \etal 2005). 
+Rectangular electrodes of 20$\times$40~mm were specified.
 Fig. \ref{fig:Adultmodel} shows an example of the
 B-Spline curves generated for one slice of the male subject.
 
@@ -1342,7 +1341,9 @@ dataset of an infant with exomphalus. Due to the
 risks, CT data of healthy infants are not 
 available. The modelling was therefore subject to
 some assumptions regarding the boundary shape
-of a healthy subject.  The model, which
+of a healthy subject. 
+Circular electrodes of 8~mm diameter were specified.
+ The model, which
 consists of 23,747 elements and 5025 nodes was that used
 for initial algorithm evaluation in Bayford et al. (2007).
 
@@ -1395,7 +1396,7 @@ Evaluation is performed in two stages. First algorithm performance
 is evaluated against the figures or merit in section
 \ref{sec:figmerit}.
 Next, we compare to a representative set of data
-from simulations, experimental and clinical measurements.
+from simulations and experimental.
 All evaluation is performed on a 16 electrode EIT configuration
 using adjacent current stimulation and voltage measurements.
 
@@ -1419,7 +1420,7 @@ For $\RB_{GN}$, NF is set by
 adjusting the hyperparameter $\lambda$, while
 for $\RB_{GR}$, NF is set by 
 adjusting the weighting $\wB^{(k)}$ of noise
-training data $\yB_n$. The value is chosen using
+training data $\yB_n$. The value of $\lambda$ is chosen using
 a bisection search.
 
 
