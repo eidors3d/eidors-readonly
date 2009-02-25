@@ -924,7 +924,9 @@ implemented system.
 Training data for GREIT. Two sets of training data are used, based on
 conductivity targets and noise or artefact sources. For each type
 data, a set of training inputs (EIT measurements) and desired
-outputs (reconstructed images) are calculated.
+outputs (reconstructed images) are calculated. Rectangles represents
+a matrix in which each column $(k)$ represents training
+sample. The circle represents corresponding desired image pattern.
 }
 \end{center}
 \end{figure}
@@ -934,21 +936,29 @@ outputs (reconstructed images) are calculated.
 
 Based on the performance metrics defined
 in section \ref{sec:figmerit},
-we can create a ``desired image'',
-$\xT^{(k)}$, corresponding to each conductivity change
-$\xB^{(k)}$ in the forward model. It is possible to set
-$\xT^{(k)} = \xB_t^{(k)}$; however, this is equivalent to a standard
+we can create training set of ``desired images'', $\xT_t$.
+For training set member $(k)$, each image, $\xT_t^{(k)}$,
+corresponds to the position of a conductivity target,
+$\xB_t^{(k)}$, in the forward model, as illustrated
+in Fig.\ \ref{fig:desired_performance}. The desired
+image, $\xT_t$, is located at the same centre as the
+conductivity target, $\xB_t$. The difference
+is that $\xT_t$ is defined to be a circle with a circular
+area corresponding to the blurring inherent in EIT,
+while $\xB_t$ is essentially a point target. It is this
+definition of a larger ``desired image'' which allows
+GREIT to achieve a more uniform resolution.
+Since most EIT reconstruction algorithms
+achieve better resolution near the boundary than in the medium
+centre, this definition of $\xT_t$ forces a trade-off
+of boundary resolution for a lower resolution that
+can be achieved uniformly throughout the image.
+Note that it would possible to set
+$\xT_t^{(k)} = \xB_t^{(k)}$; however, this would be equivalent to a standard
 GN solution without tuning the algorithm to the 
-performance metrics. Instead, $\xT^{(k)}$ is allowed to be
-a larger circular area corresponding to the known
-blurring inherent in EIT. Most EIT reconstruction algorithms
-achieve better resolution near the boundary than the medium
-centre; however, since we consider uniform resolution to
-be a more important figure of merit than high resolution
-in limited zones, we create a larger circular target, $\xT$
-which can be achieved uniformly throughout the image.
+performance metrics.
 We recommend, for a 16 electrode
-EIT system, that the diameter of $\xT_q$
+EIT system, that the diameter of $\xT_t$
 be 20\% of the medium diameter.
 For noise samples, the ``desired image'' is clearly
 zero; we wish for noise input to produce no output.
