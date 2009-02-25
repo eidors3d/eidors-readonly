@@ -121,7 +121,7 @@ and
 Consensus figures of merit, in order of importance, are:
 a) uniform amplitude response,
 b) small and uniform position error,
-c) small ringing artefacts.
+c) small ringing artefacts,
 d) uniform resolution,
 e) limited shape deformation, and
 f) high resolution.
@@ -153,8 +153,7 @@ applications of EIT is for description of physiologic events
 in the thorax, since the thorax contains several
 organs which undergo large changes in conductivity
 during normal functioning. Indeed, lung function measurement
-was among the first physiological applications of this technology.
-(Barber and Brown 1984).
+was among the first physiological applications of this technology (Barber and Brown 1984).
 %Some imaging modalities can measure ventilation,
 %such as MRI (with hyperpolarized He) and PET. However, commonly
 %used imaging modalities (radiography, CT, MRI) do not assess
@@ -164,7 +163,7 @@ was among the first physiological applications of this technology.
 %ventilation.
 EIT is unique in that it is able to non-invasively
 measure chest impedance to give a continuous
-image of the distribution of ventilation.
+imaging of the distribution of ventilation.
 Based on these advantages, there is significant
 interest in EIT to 
 monitor patients with respiratory compromise
@@ -175,7 +174,7 @@ on lung EIT is being done using proprietary variants of
 older image reconstruction algorithms, such as the backprojection
 algorithm as implemented
 in the Sheffield (Brown and Seagar, 1987)
-or G\"ottingen (Hahn \etal 2002) EIT systems.
+or G\"ottingen (Hahn \etal , 2002) EIT systems.
 The algorithms, although very successful for the time,
    do not incorporate advances that have been made over the last
    20 years.
@@ -189,7 +188,7 @@ Many other approaches to the reconstruction of EIT images have been
 proposed, incorporating many advances (Lionheart, 2004).
 Such approaches
 have not been widely used clinically and experimentally
-because there was a lack of a agreement on which
+because there was a lack of an agreement on which
 approaches were best (and how they could be combined).
 
 To address this issue, we are developing a
@@ -256,7 +255,7 @@ change image, based on a 3D forward model.
 These specifications represent, in our opinion, the limits
 to areas sufficiently well understood in the EIT community
 to reach consensus. We do not suggest that such limits are ideal;
-in fact, we actively encourage work to overcome them.
+in fact, we actively encourage work to overcome them, 
 such as the single ring placement of electrodes and the consequent
 lack of 3D image information. 
 
@@ -276,7 +275,7 @@ weighted by the consensus importance of each.
 
 We consider an EIT system using the following notation.
 Using $n_E$ electrodes,  $n_E$ current stimulation
-patterns are sequentially applied and $n_V$ differential
+patterns are sequentially applied and $n_V$ differential voltage 
 measurements are made in parallel for each stimulation.
  For an adjacent drive
 EIT system, voltages are typically not measured at driven
@@ -355,7 +354,7 @@ figures of merit:
 {\bf Amplitude Response (AR)}
 measures the ratio of image pixel amplitudes in the
 target to that in the reconstructed image.
-For a spherical target of volume, $V_t$, in the electrode
+For a spherical target of volume $V_t$ in the electrode
 plane with
 conductivity $\sigma_t$ in a body of homogeneous reference
 conductivity $\sigma_r$
@@ -643,13 +642,13 @@ maps measurements $\yB$ to a reconstructed image $\xH$:
 The backprojection algorithm was developed by 
 Barber and Brown (1984) for the original 
 Sheffield EIT system, and  has seen numerous 
-variants and improvements (Barber 1989). While the original
+variants and improvements (Barber, 1989). While the original
 technique was based on an analogy to the backprojection
 algorithm for CT, this model was clearly inadequate, because
 electric current propagates diffusely, and thus differently
 to X-ray photons. Therefore, improvements
 were developed to the backprojection algorithm
-(e.g.\ Barber and Brown 1988). Such strategies
+(e.g.\ Barber and Brown, 1988). Such strategies
 can be shown to regularize the reconstructed images.
 A good mathematical characterization is given by
 Santosa and Vogelius (1990).
@@ -658,7 +657,7 @@ While many variants of Sheffield backprojection exist,
 clinical and experimental EIT has largely used only
 one: that which was distributed in the
 Sheffield Mark I EIT system (Brown and Seagar, 1987).
-The G\"ottingen Goe MF II EIT system (Hahn \etal 2002)
+The G\"ottingen Goe MF II EIT system (Hahn \etal , 2002)
 has also been widely used for such clinical and
 experimental work, and uses a very similar reconstruction
 algorithm.
@@ -743,9 +742,9 @@ n_N}$ is the expected image covariance.
 
 It is worth noting that many other regularized approaches
 to EIT have been used, such as the
-TSVD (truncated singular value decomposition; Bayford \etal 2008)
+TSVD (truncated singular value decomposition; Bayford \etal , 2008)
 and
-SIRT (simultaneous iterative reconstruction technique; Hahn \etal 2006).
+SIRT (simultaneous iterative reconstruction technique; Hahn \etal , 2006).
 All linear approaches are structurally similar; however
 the formulation in (\ref{IM}) is more general
 as it explicitly exposes the selection of image reconstruction
@@ -816,9 +815,9 @@ $[\PB^{-1}]_{i,i} = \left[ \JB^T \JB
 for an exponent $p=1$. Many other prior matrices have been
 proposed: to model image smoothness as a penalty for non-smooth
 image regions, $\PB$ may be set to the discrete Laplacian filter
-(Vauhkonen \etal 1998), a discrete high pass Gaussian filter (Adler
+(Vauhkonen \etal , 1998), a discrete high pass Gaussian filter (Adler
 and Guardo, 1996), or based on variance uniformization
-constraints (Cohen-Bacrie \etal 1997).
+constraints (Cohen-Bacrie \etal , 1997).
 In this paper, we compare results from the GREIT approach
 with those of GN image reconstruction using the NOSER prior,
 $\PB$ with $p=1.0$.  The NOSER algorithm is 
@@ -845,7 +844,7 @@ the electrode size and contact impedance, and the reference
 conductivity, $\sG_r$, around which conductivity changes occur.
 In this paper, the forward problem is solved using a
 3D FEM using the complete electrode model
-(Cheng \etal 1989). However, it is worth noting that 
+(Cheng \etal , 1989). However, it is worth noting that 
 any forward model, physical or numerical, is suitable
 for this procedure.
 
@@ -892,13 +891,13 @@ is a function of the EIT hardware and patient
 connection. If different gain settings are used for each
 channel, these settings will alter the noise. Calibrated
 measurements of EIT noise show that it is non-Gaussian and
-varies between channels (Hahn \etal 2008).
+varies between channels (Hahn \etal , 2008).
  We suggest GREIT algorithms
 be tuned to the hardware implementation. This may be 
 implemented using a calibration protocol before the 
 start of measurements, or by integrating a model of 
 the hardware imperfections into the forward model
-(Hartinger \etal 2007).
+(Hartinger \etal , 2007).
 
 {\em Electrode movement artefacts}
 occur when the electrodes move, either with posture change
@@ -1021,8 +1020,8 @@ equivalent to a generalized Tikhonov regularization
 (section \ref{subsec:OSLGNS})
 in which the prior distributions $\SG_x$ and $\SG_n$
 correspond to the selection strategy for
-the training data.
-(section \ref{subsec:training_data})
+the training data
+(section \ref{subsec:training_data}).
 The
 reconstruction matrix $\RB_{GR}$ which best fits the requirements
 may be expressed as minimization of an error $\epsilon^2$
@@ -1161,7 +1160,7 @@ Based on our experience with time-difference
 EIT, we feel that the four models provided offer
 most of the accuracy of adaptive meshing.
 
-In the design of FEM models of the thorax. The
+In the design of FEM models of the thorax, the
 following issues need to be considered.
 \begin{itemize}
 \item
@@ -1197,9 +1196,9 @@ $6^{\rm th} - 7^{\rm th}$ intercostal space at
 the parasternal line (which corresponds approximately
 to the nipple line). Other vertical placements have
 been reported: the $10^{th}$ intercostal space 
-(Coulombe \etal 2005), and  
+(Coulombe \etal , 2005), and  
 the upper chest at the $3^{\rm rd}$ intercostal space
-to measure lung perfusion (Smit \etal 2004).
+to measure lung perfusion (Smit \etal , 2004).
 Placing electrodes too low may result in a large
 contribution of mediastinum or abdominal impedance
 changes in the center of the EIT image.
@@ -1232,7 +1231,7 @@ GREIT training sets.
 The FEM mesh should be refined in the region of
 the electrodes, since the highest current densitites
 occur here. Electrode models should use the
-complete electrode model (Cheng \etal 1989).
+complete electrode model (Cheng \etal , 1989).
 We also stress the importance of using 3D 
 forward models, since 2D models
  cannot account for the true
@@ -1272,7 +1271,7 @@ from which the finite element meshes were generated.  The surface models
 were created using AliasStudio (Autodesk) from the
 photographic images of the thorax spaced $20~$mm apart. The method used
 is similar to that used to generate models of the human head for EIT of
-brain function (Tizzard \etal 2005). 
+brain function (Tizzard \etal , 2005). 
 Fig. \ref{fig:Adultmodel} shows an example of the
 B-Spline curves generated for one slice of the male subject.
 
@@ -1377,7 +1376,7 @@ sec.\ \ref{sec:perffigm}.
 A cylindrical FEM model was generated which is suitable for
 simulations, phantom tank experiments and is also a reasonable
 model for the thorax shape of common EIT experimental animals,
-such as pigs.  The FEM is generated using NETGEN (Schoberl, 1997),
+such as pigs.  The FEM is generated using NETGEN (Schoberl, 1997).
 The medium diameter
 and height are $30$~cm with a maximum element size of $1$~cm.
 Circular electrodes are defined by the intersection of the 
@@ -1456,7 +1455,7 @@ against against the figures of merit
 are generated from the cylindrical phantom
 as shown in Fig.\ \ref{fig:NeonateCyl}. 
 Five hundred 
-non-conductive targets of with a diameter of
+non-conductive targets with a diameter of
 5\% of the medium diameter are simulated,
  in the plane of the electrodes,
 starting at the medium centre and 
@@ -1555,7 +1554,7 @@ Overall, all algorithms perform well
 in the centre of the medium with poorer performance
 near the boundary. In comparison to
 SBP and GN, GREIT shows either an equivalent or an improved
-ability to meet of the desired
+ability to meet the desired
 performance requirements.
 
 
@@ -1634,12 +1633,11 @@ PEEP.
 \includegraphics[width=0.20\textwidth]{figures/example_images_412.png}
 \caption{
 \label{fig:Frerichs03images}
-Images of ventilation in a pigs with
+Images of ventilation in a pig with
 acute lung injury 
 at a PEEP of $10$~cmH$_2$O shown ({\em top row})
-on the inflation and 
-and ({\em bottom row})
-deflation segment of a stepwise recruitment manoeuvre 
+on the inflation and ({\em bottom row})
+deflation segment of a stepwise recruitment and derecruitment manoeuvre 
 (data from Frerichs \etal 2003).
 {\em left:} Sheffield Backprojection ($\RB_{SBP}$),
 {\em center:} Gauss-Newton ($\RB_{GN}$),
@@ -1720,7 +1718,7 @@ and
 In order of importance, figures of merit are:
 a) uniform amplitude response,
 b) small and uniform position error,
-c) small ringing artefacts.
+c) small ringing artefacts,
 d) uniform resolution,
 e) limited shape deformation, and
 f) high resolution.
