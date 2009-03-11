@@ -247,7 +247,7 @@ change image, based on a 3D forward model.
       electrodes, for the shapes:
    a) neonatal chest, 
    b) male and female adult chest, and
-   c) cylindrical tank shape.
+   c) cylindrical tank.
 \end{itemize}
 
 These specifications represent, in our opinion, the limits
@@ -327,7 +327,7 @@ contains all image pixels $[\xH]_i$ greater
 than $\frac{1}{4}$ of the maximum amplitude:
 \begin{equation}
 [\xH_q]_i = \left\{ \begin{array}{ll}
-    1 & \mbox{if~} [\xH]_i  \geq \mbox{$ \frac{1}{4}\mathop{max}(\xH)$ } \\
+    1 & \mbox{if~} [\xH]_i  \geq \mbox{$ \frac{1}{4}\mathrm{max}(\xH)$ } \\
     0 & \mbox{otherwise}.
 \end{array} \right.
 \end{equation}
@@ -538,9 +538,9 @@ The NF is the ratio of the output to input
  signal to noise ratio (SNR) for a filter.
 We define SNR~=~%
 $\frac{
-   \mbox{mean \em signal}
+   \mbox{\mathrm{mean} \em signal}
       }{
-   \mbox{std \em noise}
+   \mbox{\mathrm{std} \em noise}
      }
 $ 
 in terms of image amplitude,
@@ -549,20 +549,20 @@ image reconstruction tends to conserve  amplitude
 rather than energy. Thus
 \begin{equation}
 \mathrm{NF} = \frac{
-   E[ \mathop{mean}~\xH_t ] 
+   E[ \mathrm{mean}~\xH_t ] 
          /
-   E[ \mathop{std}~\xH_n ]
+   E[ \mathrm{std}~\xH_n ]
 }{
-   E[ \mathop{mean}~\yB_t ] 
+   E[ \mathrm{mean}~\yB_t ] 
          /
-   E[ \mathop{std}~\yB_n ]
+   E[ \mathrm{std}~\yB_n ]
 }
 \end{equation}
 For regularized algorithms, the value of NF is normally
 set by selection of the value of 
 a hyperparameter. For GREIT, the value of NF is set by the weighting
 associated with the training noise. There is an inherent
-trade-off between good noise performance and fidelity to
+trade-off betneen good noise performance and fidelity to
 the other figures of merit.
 
 \hspace{5mm}
@@ -802,7 +802,7 @@ In (\ref{opti_sol}), the size of the term in the
 inverse is reduced to $n_M\times n_M$.
 
 If image elements are assumed to be independent with identical
-expected magnitude, $\PB$ becomes an identity matrix $\IB$ and
+variance, $\PB$ becomes an identity matrix $\IB$ and
 (\ref{GN_solution}) uses zeroth-order Tikhonov regularization. For
 EIT, such solutions tend to push reconstructed noise toward the
 boundary, since the measured data are much more sensitive to
@@ -1045,7 +1045,7 @@ may be expressed as minimization of an error $\epsilon^2$
 %   = \sum_k \| (\WB^{(k)})^2 (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
 where the sum $k$ is over all training measurement and noise
 samples, and
-$\WB^{(k)} = diag( \wB^{(k)})$, is a diagonal matrix representing
+$\WB^{(k)} = \mathrm{diag}( \wB^{(k)})$, is a diagonal matrix representing
 the weighting corresponding to each measurement.
  The 2-norm is used as it allows
 a linear expression for, and faster computation of, $\RB$;
@@ -1788,7 +1788,7 @@ Trans. Biomed. Eng.} {\bf 43}(4) 414-20
 
 \item[]
 Adler A and Lionheart W R B 2006
-``Uses and abuses of EIDORS: An extensible software base for EIT''
+Uses and abuses of EIDORS: An extensible software base for EIT
 {\em Physiol Meas}
 27 S25--S42
 
@@ -1810,7 +1810,7 @@ The Visible Human Project
 
 \item[]
 Barber D C and Brown B H 1984
-``Applied potential tomography'', 
+Applied potential tomography
 {\em J Phys E: Sci Instrum}
  17 723--733
 
@@ -1822,8 +1822,8 @@ Clin. Phys. Physiol. Meas.}
 
 \item[]
 Barber D C 1989
-``A review of image reconstruction techniques for electrical
- impedance tomography''
+A review of image reconstruction techniques for electrical
+ impedance tomography
 {\em Med Phys}
 16 162--169
 
@@ -1837,13 +1837,13 @@ Development of a neonate lung reconstruction algorithm using a wavelet
 
 \item[]
 Brown B H and Seagar A D 1987 
-``The Sheffield data collection system''
+The Sheffield data collection system
 {\em Clin Phys Physiol Meas}
  8(Suppl A) 91--97
 
 \item[]
 Brown B W 2003
-``Electrical impedance tomography (EIT): a review''
+Electrical impedance tomography (EIT): a review
 {\em J Medical Eng. \& Technology}
 27 97--108
 
@@ -1851,13 +1851,13 @@ Brown B W 2003
 \item[]
 Cheney M, Isaacson D, Newell J C, Simske S and Goble J C 1990
 NOSER: an algorithm for solving the inverse conductivity problem
-{\em Int.J.Imaging Syst.Technol.} 
+{\em Int J Imaging Syst Technol} 
 2 66--75
 
 \item[]
 Cheng KS, Newell JC, Gisser DG, 1989
-"Electrode Models for Electric Current Computed Tomography"
-{\em IEEE Trans. in Biomedical Eng.}
+Electrode Models for Electric Current Computed Tomography
+{\em IEEE Trans in Biomedical Eng}
 36 918--924
 
 
@@ -1867,12 +1867,12 @@ Cohen-Bacrie C  Goussard Y and Guardo R
 Regularized Re construction in Electrical
 Impedance Tomography Using a Variance
 Uniformization Constraint 
-{\em IEEE Trans. Med. Imag.} 16 562-571
+{\em IEEE Trans Med Imag} 16 562-571
 
 \item[]
 Coulombe N, Gagnon H, Marquis F, Skrobik Y, Guardo R, 2005
 A parametric model of the relationship between EIT and total lung volume
-{\em Physiol. Meas.}
+{\em Physiol Meas}
 26 401--411
 
 
@@ -1892,7 +1892,7 @@ Creative Commons/Science Commons 2007
 Frerichs I Dargavillle P A Dudykevych T Rimensberger P M 2003
 Electrical Impedance Tomography - a method for monitoring
 regional lung aeration and tidal volume distribution?
-{\em  Intensive Care Med.}
+{\em  Intensive Care Med}
 29 2312--2316
 
 \item[]
@@ -1900,9 +1900,10 @@ GNU Lesser General Public License: Version 3, 29 June 2007
 {\em Free Software Foundation, Inc.}
 \verb+www.gnu.org/licenses/lgpl.html+
 
+\item[]
 G\'omez-Laberge C Adler A 2008
 Direct EIT Jacobian calculations for conductivity change and electrode movement
-{\em Physiol. Meas.}
+{\em Physiol Meas}
 29 S89--S99
 
 
@@ -1918,7 +1919,7 @@ Direct EIT Jacobian calculations for conductivity change and electrode movement
 Hahn G, Dudykevych T, Frerichs I, Thiel F and Hellige G 2002
 A high performance electrical impedance tomography
 (EIT) system for clinical evaluation studies and space application
-{\em Proc. Conf. 2nd European Medical and
+{\em Proc Conf 2nd European Medical and
 Biol Eng} Vienna, Austria 110--111
 
 \item[]
@@ -1926,14 +1927,14 @@ Hahn G Just A Dudykevych T Frerichs I Hinz J  Quintel M Hellige G
 2006
 Imaging pathologic pulmonary air and fluid accumulation by
  functional and absolute EIT
-{\em Physiol. Meas.}
+{\em Physiol Meas}
 27 S187--S198
 
 \item[]
 Hahn G Just A Dittmar J  Hellige G 2008
 Systematic errors of EIT systems determined by easily-scalable
  resistive phantoms
-{\em Physiol. Meas.}
+{\em Physiol Meas}
  29 S163--S172
 
 
@@ -1942,14 +1943,14 @@ Systematic errors of EIT systems determined by easily-scalable
 Hartinger A E Gagnon H Guardo R 2007
 Accounting for Hardware Imperfections in EIT Image
 Reconstruction Algorithms.
-{\em Physiol. Meas.}
+{\em Physiol Meas}
 28 13--S27
  
 \item[]
 Lionheart W R B 2004
 EIT reconstruction algorithms: pitfalls, challenges
 and recent developments
-{\em Physiol. Meas.}
+{\em Physiol Meas}
 25 125--142
 
 \item[]
@@ -1962,12 +1963,12 @@ in {\em IFMBE Proceedings}
 Polydorides N and Lionheart W R B 2002 A Matlab toolkit for
 three-dimensional electrical impedance tomography: A contribution
 to the Electrical Impedance and Diffuse Optical Reconstruction
-Software project {\em Meas. Sci. Technol.} {\bf 13} 1871-83
+Software project {\em Meas Sci Technol} {\bf 13} 1871-83
 
 \item[]
 Santosa F Vogelius M 1990
 Backprojection algorithm for electrical impedance imaging
-{\em SIAM J. Applied Math}
+{\em SIAM J Applied Math}
 50 216--243. 
 
 \item[]
@@ -1985,25 +1986,26 @@ de Vries P M
 Postmus P E
 2004
 Determinants of pulmonary perfusion measured by electrical impedance tomography
-{\em Eur. J. Appl. Physiol.}
+{\em Eur J Appl Physiol}
 92 45--49
 
 \item[]
 Soleimani M, G\'omez-Laberge C and Adler A 2006 Imaging of
-conductivity changes and electrode movement in EIT \PM {\bf 27}
+conductivity changes and electrode movement in EIT
+{\em Physiol Meas} {\bf 27}
 S103--S13
 
 \item[]
 Tizzard A Horesh L Yerworth R J Holder D S Bayford R H 2005
 Generating accurate finite element meshes for the forward
 model of the human head in EIT
-{\em Physiol. Meas.}
+{\em Physiol Meas}
  26 S251--61 
 
 \item[]
 Vauhkonen M, Vad\`asz D, Karjalainen P A, Somersalo E and
 Kaipio J P 1998
- Tikhonov regularization and prior information in
+Tikhonov regularization and prior information in
 electrical impedance tomography
  {\em IEEE Trans Med Imaging}
 17 285--93
