@@ -460,8 +460,8 @@ be a low resolution medium, this application is less important.
 Reconstruction algorithms typically create circular
 images for targets in the centre, but often display 
 strangely shaped artefacts for targets near the medium
-boundary. Backprojection tends to show ``streak''
-artefacts in this case.
+boundary. The Sheffield backprojection algorithm
+ tends to show ``streak'' artefacts in this case.
 SD measures the fraction of the reconstructed
 $\frac{1}{4}$--Amplitude set which does not
 fit within a circle of equal area.
@@ -538,9 +538,9 @@ The NF is the ratio of the output to input
  signal to noise ratio (SNR) for a filter.
 We define SNR~=~%
 $\frac{
-   \mbox{\mathrm{mean} \em signal}
+   \mbox{{\rm mean} \em signal}
       }{
-   \mbox{\mathrm{std} \em noise}
+   \mbox{{\rm std} \em noise}
      }
 $ 
 in terms of image amplitude,
@@ -744,8 +744,8 @@ TSVD (truncated singular value decomposition; Bayford \etal 2008)
 and
 SIRT (simultaneous iterative reconstruction technique; Hahn \etal 2006).
 All linear approaches are structurally similar; however
-the formulation in (\ref{IM}) is more general
-as it explicitly exposes the selection of image reconstruction
+the formulation in (\ref{IM})
+explicitly exposes the selection of the image reconstruction
 parameters.
 
 
@@ -809,8 +809,8 @@ boundary, since the measured data are much more sensitive to
 boundary image elements. Instead, $\PB$ may be scaled with the
 sensitivity of each element, so that each diagonal element $i$ 
 $[\PB^{-1}]_{i,i} = \left[ \JB^T \JB
-\right]_{i,i}^p$. This is the NOSER prior of Cheney \etal (1990)
-for an exponent $p=1$. Many other prior matrices have been
+\right]_{i,i}$. This is the NOSER prior of Cheney \etal (1990).
+Many other prior matrices have been
 proposed: to model image smoothness as a penalty for non-smooth
 image regions, $\PB$ may be set to the discrete Laplacian filter
 (Vauhkonen \etal 1998), a discrete high pass Gaussian filter (Adler
@@ -1045,7 +1045,7 @@ may be expressed as minimization of an error $\epsilon^2$
 %   = \sum_k \| (\WB^{(k)})^2 (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
 where the sum $k$ is over all training measurement and noise
 samples, and
-$\WB^{(k)} = \mathrm{diag}( \wB^{(k)})$, is a diagonal matrix representing
+$\WB^{(k)} = (\mathrm{diag}~ \wB^{(k)})^2$, is a diagonal matrix representing
 the weighting corresponding to each measurement.
  The 2-norm is used as it allows
 a linear expression for, and faster computation of, $\RB$;
@@ -1107,7 +1107,7 @@ Gaussian, and samples are drawn from a distribution with
 covariance $\SG_n$. The reconstruction matrix $\RB$ minimizes
 the norm
 \begin{equation}
-\| [ \XT_t, 0 ] - \RB [ \YB_t, \YB_n ] \|_{\WB}^2
+\| [ \XT_t| 0 ] - \RB [ \YB_t| \YB_n ] \|_{\WB}^2
 \end{equation}
 where $[\cdot,\cdot]$ represents horizontal
 matrix concatenation and
@@ -1117,8 +1117,8 @@ and
 $\YB_n = \frac{1}{n_N} [ \yB_t^{(1)} \cdots \yB_t^{(n_N)} ]$.
 In this case, the matrix $\RB$ which minimizes the norm is 
 \begin{eqnarray}
-\RB &=& [ \XT_t, 0 ] [\YB_t, \YB_n]^T
-     \left( [\YB_t, \YB_n] [\YB_t, \YB_n]^T \right)^{-1}
+\RB &=& [ \XT_t| 0 ] [\YB_t| \YB_n]^T
+     \left( [\YB_t| \YB_n] [\YB_t| \YB_n]^T \right)^{-1}
 \nonumber \\
     &=& \XT_t \YB_t^T \left( \YB_t \YB_t^T + \YB_n \YB_n^T \right)^{-1}
 \nonumber \\
