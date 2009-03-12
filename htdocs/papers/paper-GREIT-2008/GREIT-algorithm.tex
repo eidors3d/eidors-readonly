@@ -1037,12 +1037,18 @@ The GREIT
 reconstruction matrix $\RB$ (later referred to as $\RB_{GR}$)
 which best fits the requirements
 may be expressed as minimization of an error $\epsilon^2$
-\begin{equation}
+\begin{eqnarray}
 \label{GREIT_norm}
-\epsilon^2 = \sum_k \| \xT^{(k)} - \RB \yB^{(k)} \|^2_{\WB^{(k)}}
-\end{equation}
-%\epsilon^2 = \sum_k \| \xT)} - \RB_{GR} \yB^{(k)} \|^2_{\left(\WB^{(k)}\right)^2}
-%   = \sum_k \| (\WB^{(k)})^2 (\xT^{(k)} - \RB \yB^{(k)} ) \|^2
+\epsilon^2 &=& \sum_k \| \xT^{(k)} - \RB \yB^{(k)} \|^2_{\WB^{(k)}}
+\nonumber \\
+&=& \sum_k \sum_i \Bigg( 
+   [\xH^{(k)}]_{i}^2 [\wB^{(k)}]_{i}^2
+-2 [\xH^{(k)}]_{i}   [\wB^{(k)}]_{i}^2  \Big( \sum_j \RB_{ij} [\yB^{(k)}]_{j} \Big)
+\nonumber \\
+& &
++                    [\wB^{(k)}]_{i}^2  \Big( \sum_j \RB_{ij} [\yB^{(k)}]_{j} \Big)^2
+\Bigg)
+\end{eqnarray}
 where the sum $k$ is over all training measurement and noise
 samples, and
 $\WB^{(k)} = (\mathrm{diag}~ \wB^{(k)})^2$, is a diagonal matrix representing
@@ -1053,43 +1059,81 @@ however, other norms may result in improved performance.
 
 Based on (\ref{GREIT_norm}), we develop an expression
 for $\RB = \arg\min~\epsilon^2$, by setting the
-matrix derivative of $\epsilon^2$ to zero.
-\begin{equation}
-\frac{ d\epsilon^2 }{ d\RB_{ij} } =
--2 \sum_k (\xH^{(k)})^T \WB^{(k)} [\TG]_{i,j} \yB^{(k)}
-+2 \sum_k (\yB^{(k)})^T [\TG]_{i,j} \WB^{(k)} \RB \yB_k
-\end{equation}
-where $[\TG]_{i,j}$ has a value of $1$ at $(i,j)$
-but is zero elsewhere. Based on this expression
+matrix derivative 
+$\frac{\partial \epsilon^2}
+     {\partial \RB_{ij} }$ to zero.
 \begin{eqnarray}
-  \sum_k (\xH^{(k)})^T \WB^{(k)} [\TG]_{i,j} \yB^{(k)}
+-\mbox{$\frac{1}{2}$}
+\frac{ \partial \epsilon^2 }
+     { \partial \RB_{ij} }
  &=&
-  \sum_k (\yB^{(k)})^T [\TG]_{i,j} \WB^{(k)} \RB \yB^{(k)}
-\nonumber
-\\
-  \sum_k [\yB^{(k)}]_j [\wB^{(k)}]_i [\xT^{(k)}]_i 
+   \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
+  -\sum_k                  [\wB^{(k)}]_i^2
+         \Big( \sum_l \RB_{il} [\yB^{(k)}]_l \Big)
+\nonumber \\
  &=&
-  \sum_l [\RB]_{i,l} \sum_k [\yB^{(k)}]_l [\wB^{(k)}]_i [\yB^{(k)}]_j 
+   \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
+  -\sum_l \RB_{il} 
+         \Big( \sum_k [\yB^{(k)}]_l [\wB^{(k)}]_i^2 [\yB^{(k)}]_j \Big)
+\nonumber \\
+ &=& 
+   \AB_{ij}
+  -\sum_l \RB_{il} \BB_{ijl}
 \end{eqnarray}
+where matrices $\AB \in \mathbb{R}^{n_N \times n_M}$
+and            $\BB \in \mathbb{R}^{n_N \times n_M \times n_M}$
+are defined as
+$\AB = 
+   \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j $
+and 
+$\BB = 
+   \sum_k [\yB^{(k)}]_l [\wB^{(k)}]_i^2 [\yB^{(k)}]_j $.
+Based on these expressions, $\RB_{GR}$ solves
+\begin{equation}
+\label{GREITeqn}
+\AB_{ij} = \sum_l [\RB_{GR}]_{il} \BB_{ijl}
+\end{equation}
 
-This expression may be represented as a matrix equation
-by defining matrices $\AB$ and $\BB$, such that
+If the weights, $\wB$ are the same for each training
+data set, then $\BB$ does not depend on $i$, and
+(\ref{GREITeqn}) can be written in terms of
+matrices $\AB$ and $\BB$ as $\AB = \RB_{GR} \BB$;
+the reconstruction matrix is calculated
+and $\RB_{GR} = \AB \BB^{-1}$. The results for this paper
+are calculated using this expression for uniform $\wB$,
+since the best selection of weights has not been defined.
+
+If $\wB$ varies for each element, then $\RB_{GR}$ is
+solved as:
 \begin{equation}
-\AB = \sum_k \WB^{(k)} \xT^{(k)} (\yB^{(k)})^T 
-\end{equation}
-and $\BB$ is the vertical concatenation of $n_N$
-($n_M \times n_M$) block matrices $\BB_l$, where
-\begin{equation}
-\BB_l = \sum_k [\wB^{(k)}]_l \yB^{(k)} (\yB^{(k)})^T 
-\end{equation}
-Based on these expressions, $\RB_{GR}$ is the
-least squares minimizer of the norm 
-$\|\AB_{(:)} - \RB_{(:)} \BB\|^2$ where
-the notation $(:)$ indicates row concatenation of a matrix.
-Finally, $\RB_{GR}$
-is calculated
-\begin{equation}
-\RB_{(:)}^T = \BB (\BB^T \BB)^{-1} \AB_{(:)}^T
+\left[ \begin{array}{l}
+\RB_{11} \\
+\vdots \\
+\RB_{1M} \\
+\vdots \\
+\RB_{N1} \\
+\vdots \\
+\RB_{NM}
+\end{array} \right]
+ =
+\left[ \begin{array}{lllllll}
+\BB_{111} & \cdots & \BB_{11M} & \cdots & 0         & \cdots  & 0  \\
+\vdots    & \ddots & \vdots    & \ddots & \vdots    & \ddots  & \vdots \\  
+\BB_{1M1} & \cdots & \BB_{1MM} & \cdots & 0         & \cdots  & 0  \\
+\vdots    & \vdots & \vdots    & \ddots & \vdots    & \vdots  & \vdots \\  
+0         & \cdots & 0         & \cdots & \BB_{N11} & \cdots  & \BB_{N1M}  \\
+\vdots    & \ddots & \vdots    & \vdots & \vdots    & \ddots  & \vdots \\  
+0         & \cdots & 0         & \cdots & \BB_{NM1} & \cdots  & \BB_{NMM}  \\
+\end{array} \right]^{-1}
+\left[ \begin{array}{l}
+\AB_{11} \\
+\vdots \\
+\AB_{1M} \\
+\vdots \\
+\AB_{N1} \\
+\vdots \\
+\AB_{NM}
+\end{array} \right]
 \end{equation}
 
 The calculation of the GREIT reconstruction matrix
@@ -1109,7 +1153,7 @@ the norm
 \begin{equation}
 \| [ \XT_t| 0 ] - \RB [ \YB_t| \YB_n ] \|_{\WB}^2
 \end{equation}
-where $[\cdot,\cdot]$ represents horizontal
+where $[\cdot|\cdot]$ represents horizontal
 matrix concatenation and
 $\YB_t = \frac{1}{n_T}    [ \yB_t^{(1)} \cdots \yB_t^{(n_T)} ]$,
 $\XT_t = \frac{1}{n_T}    [ \xT_t^{(1)} \cdots \xT_t^{(n_T)} ]$,
