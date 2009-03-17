@@ -104,8 +104,7 @@ To address this issue, we are developing a
 consensus linear reconstruction algorithm for lung EIT,
 called GREIT (Graz consensus Reconstruction algorithm for EIT).
 This paper describes the unified approach to 
-linear image reconstruction developed for GREIT,
-and methods of developing and testing the algorithm.
+linear image reconstruction developed for GREIT.
 The framework for the linear reconstruction algorithm
 consists of:
 1) detailed finite element models of a representative
@@ -131,8 +130,7 @@ group of experts in EIT algorithm design and clinical
 applications for pulmonary monitoring.
 All software and data to implement and test the algorithm has been
 made available under an open source license which allows free
-research and commercial use. These tools will be used in
-the clinical and experimental validation stage of GREIT development.
+research and commercial use.
 \end{abstract}
 
 \noindent{\it Keywords\/}:
@@ -612,14 +610,17 @@ piecewise smooth elements, represented by a vector
 $\sG\in\mathbb{R}^{n_N}$ (To clarify use of symbols,
 $\sG$ represents a vector conductivity distribution, while
 $\sigma$ is the standard deviation).
-Again, difference EIT calculates a vector of
+Difference EIT calculates a vector of
 conductivity change, $\xB = \sG - \sG_r$ between the present,
 $\sG$, and the reference, $\sG_r$,
-conductivity distributions.
+conductivity distributions. $\xB$ may also 
+represent a parameter ${\rm log} \frac{\sG}{\sG_r}$, which
+matches the conductivity change in the linear approximation.
 
 Image reconstruction in EIT is a non-linear problem; however,
 linearized approximations have proved to be very useful.
-This is largely because the noise levels present in clinical
+This is largely because the measurement noise and
+geometric uncertainty present in clinical
 and experimental EIT data are sufficiently large
 to prevent stable results with iterative algorithms.
 Linear algorithms also have the benefit of producing
@@ -653,21 +654,20 @@ Santosa and Vogelius (1990).
 
 While many variants of Sheffield backprojection exist,
 clinical and experimental EIT has largely used only
-one: that which was distributed in the
+the one which was distributed in the
 Sheffield Mark I EIT system (Brown and Seagar 1987).
 The G\"ottingen Goe MF II EIT system (Hahn \etal 2002)
 has also been widely used for such clinical and
 experimental work, and uses a very similar reconstruction
 algorithm.
 
-This paper compares GREIT to the Sheffield Mark I
-backprojection algorithm;
-unfortunately, it appears that the exact formulation
-of the specific algorithm version of interest has been
-lost. To reconstruct it, we proceeded as follows.
+Unfortunately, it appears that the exact formulation
+of this algorithm has been
+lost. To regenerate it, we proceeded as follows.
 Since image reconstruction is linear, there exists
 a mapping which can explain the transformation of
-measurements into images. We obtained a large set of
+measurements into images. From a Sheffield Mark I device,
+we obtained a large set of
 measurements, $\yB_k$, and the associated
 reconstructed images, $\xH_k$, and formed matrices
 $\YB = [ \yB_1, \cdots, \yB_k, \cdots]$ and 
@@ -712,7 +712,7 @@ the FEM as
 $[\JB]_{ij}=\left.
      \frac{\partial[\yB]_i}{\partial[\xB]_j}
           \right|_{\sG_r}$,
-and depends on the FEM, current injection patterns, the reference
+and depends on the FEM, the current injection patterns, the reference
 conductivity, and the electrode models. This system is
 underdetermined since $n_N > n_M$. 
 Regularization techniques are required
@@ -743,7 +743,7 @@ to EIT have been used, such as the
 TSVD (truncated singular value decomposition; Bayford \etal 2008)
 and
 SIRT (simultaneous iterative reconstruction technique; Hahn \etal 2006).
-All linear approaches are structurally similar; however
+All linear approaches are structurally similar; however,
 the formulation in (\ref{IM})
 explicitly exposes the selection of the image reconstruction
 parameters.
@@ -817,11 +817,11 @@ image regions, $\PB$ may be set to the discrete Laplacian filter
 and Guardo 1996), or based on variance uniformization
 constraints (Cohen-Bacrie \etal 1997).
 In this paper, we compare results from the GREIT approach
-with those of GN image reconstruction using the NOSER prior,
-$\PB$ with $p=1.0$.  The NOSER algorithm is 
+with those of GN image reconstruction using the NOSER prior.
+This algorithm is 
 representative of a broad group of structurally similar 
 algorithms that have been widely implemented in EIT;
-it is generally understood to perform well.
+it is considered to generally perform well.
 
 
 \subsection{GREIT image reconstruction approach}
@@ -925,7 +925,7 @@ Training data for GREIT. Two sets of training data are used, based on
 conductivity targets and noise or artefact sources. For each type
 data, a set of training inputs (EIT measurements) and desired
 outputs (reconstructed images) are calculated. Rectangles represents
-a matrix in which each column $(k)$ represents training
+a matrix in which each column $(k)$ represents a training
 sample. The circle represents corresponding desired image pattern.
 }
 \end{center}
@@ -1005,7 +1005,7 @@ Illustration of the training data and weighting.
 {\em left:}   Training target ($\xB_t^{(k)}$)
 {\em centre:} Reconstructed image ($\xH^{(k)}$)
 {\em right:}  Desired image ($\xT_t^{(k)}$)
-The bottom row shows the image while the top row plots
+The bottom row shows the image, while the top row plots
 the amplitude across a row through the centre of the
 simulation target. $\xT_t^{(k)}$ is larger than $\xB_t^{(k)}$
 in order to establish a uniform resolution. The weighting
@@ -1069,7 +1069,7 @@ $\frac{\partial \epsilon^2}
  &=&
    \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
   -\sum_k                  [\wB^{(k)}]_i^2
-         \Big( \sum_l \RB_{il} [\yB^{(k)}]_l \Big)
+         \Big( \sum_l \RB_{il} [\yB^{(k)}]_l \Big) = 0
 \nonumber \\
  &=&
    \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
@@ -1080,8 +1080,8 @@ $\frac{\partial \epsilon^2}
    \AB_{ij}
   -\sum_l \RB_{il} \BB_{ijl}
 \end{eqnarray}
-where matrices $\AB \in \mathbb{R}^{n_N \times n_M}$
-and            $\BB \in \mathbb{R}^{n_N \times n_M \times n_M}$
+where matrix $\AB \in \mathbb{R}^{n_N \times n_M}$
+and tensor $\BB \in \mathbb{R}^{n_N \times n_M \times n_M}$
 are defined as
 $\AB = 
    \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j $
@@ -1094,17 +1094,17 @@ Based on these expressions, $\RB_{GR}$ solves
 \AB_{ij} = \sum_l [\RB_{GR}]_{il} \BB_{ijl}
 \end{equation}
 
-If the weights, $\wB$ are the same for each training
+If the weights, $\wB$, are the same for each training
 data set, then $\BB$ does not depend on $i$, and
 (\ref{GREITeqn}) can be written in terms of
 matrices $\AB$ and $\BB$ as $\AB = \RB_{GR} \BB$;
 the reconstruction matrix is calculated
 and $\RB_{GR} = \AB \BB^{-1}$. The results for this paper
 are calculated using this expression for uniform $\wB$,
-since the best selection of weights has not been defined.
+since the best selection of weights has not been established.
 
 If $\wB$ varies for each element, then $\RB_{GR}$ is
-solved as:
+solved using block diagonal matrix based on $\BB$:
 \begin{equation}
 \left[ \begin{array}{l}
 \RB_{11} \\
@@ -1120,9 +1120,9 @@ solved as:
 \BB_{111} & \cdots & \BB_{11M} & \cdots & 0         & \cdots  & 0  \\
 \vdots    & \ddots & \vdots    & \ddots & \vdots    & \ddots  & \vdots \\  
 \BB_{1M1} & \cdots & \BB_{1MM} & \cdots & 0         & \cdots  & 0  \\
-\vdots    & \vdots & \vdots    & \ddots & \vdots    & \vdots  & \vdots \\  
+\vdots    & \ddots & \vdots    & \ddots & \vdots    & \ddots  & \vdots \\  
 0         & \cdots & 0         & \cdots & \BB_{N11} & \cdots  & \BB_{N1M}  \\
-\vdots    & \ddots & \vdots    & \vdots & \vdots    & \ddots  & \vdots \\  
+\vdots    & \ddots & \vdots    & \ddots & \vdots    & \ddots  & \vdots \\  
 0         & \cdots & 0         & \cdots & \BB_{NM1} & \cdots  & \BB_{NMM}  \\
 \end{array} \right]^{-1}
 \left[ \begin{array}{l}
@@ -1185,9 +1185,8 @@ plane of $0.25\times$diameter of medium are allowed.
 
 The computational cost of calculating $\RB_{GR}$ does
 not change dramatically with the size of the training data
-set. The size of the matrix to be inverted is fixed at
-$n_M \times n_M$. We therefore use a large number of
-training samples. The minimum training set 
+set. We therefore use a large number of
+training samples to avoid any training bias. The minimum training set 
 is much smaller, because, since the model is
 linear, the key requirement is that the range of 
 $\RB_{GR}$ be adequately represented, and it is limited
@@ -1362,8 +1361,8 @@ resulting FEM models are shown in Fig. \ref{fig:AdultFEM}.
 For the male, the model comprised 27,170 elements and 5,548 nodes.
 For the female, these figures were 27,073 and 5,346 respectively.
 These data show that for the male, stretch values were between 0.160
-and 0.976, with a mean and SD of 0.698 and 0.109 respectively and for
-the female stretch values were between 0.198 and 0.982, with a mean and
+and 0.976, with a mean and SD of 0.698 and 0.109 respectively; for
+the female, stretch values were between 0.198 and 0.982, with a mean and
 SD of 0.702 and 0.101 respectively.
 
 The models generated represent a high degree of accuracy of boundary
@@ -1473,7 +1472,7 @@ and
 3) GREIT ($\RB_{GR}$). 
 $\RB_{GN}$ is chosen as representative
 of typical GN difference EIT solutions.
- In order to normalize
+ In order to standardize
 noise performance, each algorithm is set to
 NF$=0.5$ at the medium centre. This property
 is inherent to the implemented version
@@ -1682,7 +1681,8 @@ at a PEEP of $10$~cmH$_2$O on the inflation
 and deflation segments of a recruitment manoeuvre.
 Measurements $\vB_r$ and $\vB$
 were calculated from average end-expiratory
-and end-inspiratory measurements at the specified
+and end-inspiratory measurements, respectively,
+ at the specified
 PEEP.
 
 \begin{figure}[bhtp]
