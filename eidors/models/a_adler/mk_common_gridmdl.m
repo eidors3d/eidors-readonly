@@ -12,6 +12,9 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %   indicate location, it does not necessarily correspond to the
 %   Reconstruction Matrix RM provided. 
 %
+% GREIT V1 (GREIT matrix for reconstruction to circle, 2009)
+%   mk_common_gridmdl('GREITc1') - 32x32 with Circle shape
+%
 % Sheffield Backprojection
 %   mk_common_gridmdl('backproj') - 32x32 with Diamond shape
 %
@@ -29,6 +32,9 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 if strcmp(str,'backproj')
    str= 'b2d';
    RM= get_Sheffield_Backproj;
+elseif strcmp(str,'GREITc1');
+   str= 'b2c';
+   RM= get_GREIT_c1;
 end
 
 n_elec= 16;
@@ -86,6 +92,13 @@ function RM = resize_if_reqd(RM,inside);
 
 function RM = get_Sheffield_Backproj
    load Sheffield_Backproj_Matrix.mat
+   RM = unpack_matrix(Sheffield_Backproj_Matrix);
+
+function RM= get_GREIT_c1;
+   load GREIT_2009_circ_Matrix.mat
+   RM = double(GREITc1);
+
+function RM = unpack_matrix(packed_matrix);
 
    % Take a slice
    [x,y]= meshgrid(1:16,1:16);
@@ -99,7 +112,7 @@ function RM = get_Sheffield_Backproj
  
    % Build up
    BP  = zeros(16^2, 32^2);
-   BP(ss1,ss2) = Sheffield_Backproj_Matrix;
+   BP(ss1,ss2) = packed_matrix;
    BP  = reshape(BP, 16,16,32,32);
 
    % Reciprocity
