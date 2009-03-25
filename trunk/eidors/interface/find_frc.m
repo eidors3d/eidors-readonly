@@ -1,15 +1,19 @@
 function [eexpi,einsp]= find_frc( imgs, ROI, frate, name, ok, remove_pts)
 % FIND_FRC: find candidates for FRC
-% points= find_frc( seq, frate)
+% points= find_frc( imgs, ROI, frate, name)
 % ok ==0 (show graph - default)
 %      1 (show graph - no click) 
 %      2 no graph
+% name = name for graph ('unspecified' otherwise)
+% ROI  = Region of interest ( [] means all the image)
 %
 % Find candidates for FRC from a time seq of EIT data
 % frate is framerate (in fps units)
 
 % $Id$
 
+if isempty(ROI); ROI = ones(1,size(imgs.elem_data,1)); end
+if nargin <4; name='unspecified'; end
 if nargin <5; ok=0; end
 if nargin <6; remove_pts=[]; end
 
@@ -74,43 +78,52 @@ end
 if ok==2; return; end
   
 clf;
-axes('position',[0,.00,.3,1.0]);
-imgss= imgs; imgss.elem_data= imgs.elem_data(:,[eexpi(1),einsp(1)]);
-show_slices(imgss);
+axes('position',[0,.00,.3,0.9]);
+imgss= imgs;
+%imgss.elem_data= imgs.elem_data(:,[eexpi(1),einsp(1)]);
+%show_slices(imgss);
+ imgss.elem_data= ...
+     mean(imgs.elem_data(:,eexpi),2) - ...
+     mean(imgs.elem_data(:,einsp),2);
+ show_slices(imgss);
+ axis normal
+ text(-2,-2,name,'FontSize',16,'FontWeight','Bold', 'Interpreter','none');
 
-axes('position',[.3,.05,.7,.9]);
+
+axes('position',[.3,.08,.7,.9]);
 
 if ok==1;
-   plotpoints( seq, eexpi, einsp, name, ok);
+   plotpoints( seq, eexpi, einsp, name, ok, frate);
    nname = name(find(name=='/')+1:find(name=='.')-1);
    gg= get(gcf,'paperposition');
    set(gcf,'paperposition',[gg(1:3),gg(3)*.3]);
    if exist('OCTAVE_VERSION'); 
       print([nname,'-sig.png'], '-dpng','-S200,75'); 
    else;
-      print('-dpng','-r50',[nname,'-sig.png']); 
+      print('-dpng','-r100',[nname,'_sig.png']); 
    end
    set(gcf,'paperposition',gg);
    return;
 end
 
 while 1;
-   xpts=plotpoints( seq, eexpi, einsp, name, ok);
+   xpts=plotpoints( seq, eexpi, einsp, name, ok,frate);
      
    if isempty(xpts); return; end
    [einsp,eexpi] = remove_some_points( einsp, eexpi, xpts);
 end
 
 %plot((0:lseq-1)/frate, seq, 'k' );
-function x=plotpoints( seq, eexpi, einsp, name, ok);
-   plot( seq, 'k' );
+function x=plotpoints( seq, eexpi, einsp, name, ok, frate);
+   seq= -seq; % Air (non-conductivity is now the +ve quantity)
+   plot( (0:length(seq)-1)/frate, seq, 'k' );
    hold on;
    maxs= max(seq)*1.1;
    mins= min(seq)*1.1;
 %  plot( [1;1]*eexpi(:)', [mins;maxs]*ones(1,length(eexpi)), 'r')
 %  plot( [1;1]*einsp(:)', [mins;maxs]*ones(1,length(einsp)), 'b')
-   hh= plot( eexpi, seq(eexpi), 'bo'); set(hh,'LineWidth',4);
-   hh= plot( einsp, seq(einsp), 'ro'); set(hh,'LineWidth',4);
+   hh= plot( (eexpi-1)/frate, seq(eexpi), 'bo'); set(hh,'LineWidth',4);
+   hh= plot( (einsp-1)/frate, seq(einsp), 'ro'); set(hh,'LineWidth',4);
    hold off;
 
 if ok==0

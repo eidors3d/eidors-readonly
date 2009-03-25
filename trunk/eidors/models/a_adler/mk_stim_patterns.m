@@ -98,7 +98,6 @@ for ring = 0:v.n_rings-1
 end
 
 
-
 meas_sel= meas_select( n_elec, v.inj, v);
 
 % when not using data from current injection electrodes,
@@ -110,6 +109,28 @@ meas_sel= meas_select( n_elec, v.inj, v);
 % scenarios. Otherwise it is set to []
 %
 % This function calculates a selector matrix to remove the extra
+%
+% reshape(meas_select( 6, [0,1], v),6,6) 0 0 1 1 1 0
+%                                        0 0 0 1 1 1
+%                                        1 0 0 0 1 1
+%                                        1 1 0 0 0 1
+%                                        1 1 1 0 0 0
+%                                        0 1 1 1 0 0
+%                                        
+% reshape(meas_select( 6, [0,2], v),6,6) 0 0 1 1 0 0
+%                                        0 0 0 1 1 0
+%                                        0 0 0 0 1 1
+%                                        1 0 0 0 0 1
+%                                        1 1 0 0 0 0
+%                                        0 1 1 0 0 0
+%                                        
+% reshape(meas_select( 6, [0,3], v),6,6) 0 0 1 0 0 1
+%                                        1 0 0 1 0 0
+%                                        0 1 0 0 1 0
+%                                        0 0 1 0 0 1
+%                                        1 0 0 1 0 0
+%                                        0 1 0 0 1 0
+
 function meas_sel= meas_select( n_elec, inj, v)
   if prod(size(inj))~=2 | prod(size(v.meas))~=2
      meas_sel = [];
@@ -118,12 +139,37 @@ function meas_sel= meas_select( n_elec, inj, v)
  
   n2_elec= n_elec^2;
   e_idx= 0:n2_elec-1;
+% ELS rotates the measurement around for each stim pattern
+%  0 5 4 3 2 1
+%  1 0 5 4 3 2
+%  2 1 0 5 4 3
+%  3 2 1 0 5 4
+%  4 3 2 1 0 5
+%  5 4 3 2 1 0
   ELS=rem(   rem(e_idx,n_elec)- ...
            floor(e_idx/n_elec)+n_elec , ...
            n_elec)';
+
   injx= n_elec+[-1 0 [-1 0]+inj*[-1;1] ];
+% MEAS or STIM electrodes are equal?
+%  5 5 5 5 5 5 5 5 5 5 5   0 1 2 3 4 5 5 0 1 2 3 4
+%  0 0 0 0 0 0 0 0 0 0 0 = 0 1 2 3 4 5 5 0 1 2 3 4
+%  2 2 2 2 2 2 2 2 2 2 2   0 1 2 3 4 5 5 0 1 2 3 4
+%  3 3 3 3 3 3 3 3 3 3 3   0 1 2 3 4 5 5 0 1 2 3 4
   ELS= rem( injx ,n_elec)' * ones(1,n2_elec) ==ones(4,1)*ELS';
   inj_meas_sel= ~any( ELS )';
+
+% reshape(rem(e_idx,n_elec)- floor(e_idx/n_elec),n_elec,n_elec)
+%  0 -1 -2 -3 -4 -5
+%  1  0 -1 -2 -3 -4
+%  2  1  0 -1 -2 -3
+%  3  2  1  0 -1 -2  -> Test if >0
+%  4  3  2  1  0 -1
+%  5  4  3  2  1  0
+  if v.do_redundant==0
+     ELS = rem(e_idx,n_elec)- floor(e_idx/n_elec);
+     inj_meas_sel = inj_meas_sel & (ELS'>0);
+  end
   
   % Insert electrode indices for multiple ring measurements
   n_rings = v.n_rings;
