@@ -37,7 +37,7 @@ function [elec_nodes, refine_nodes]= mk_elec_nodes_2d( ...
 % electrodes start top and go clockwise
    refine_nodes= [];
    for i=1:ne
-      [ctr, radius] = find_ctr_rad( elec_posn(i,:), elec_posn);
+      [ctr, radius] = find_ctr_rad( i, elec_posn);
       th= (i-1)*2*pi/ne;
       th_delta = elec_width(i)/2/pi/radius;
       switch refine_level(i)
@@ -97,6 +97,7 @@ function [elec_nodes, refine_nodes]= mk_elec_nodes_2d( ...
 %  ones. This will allow fitting the electrode to the curvature
 %  locally.
 % Alg: http://www.geocities.com/kiranisingh/center.html
-function [ctr, rad] = find_ctr_rad( this_elec, elec_posn);
+function [ctr, rad] = find_ctr_rad( idx, elec_posn);
+   this_elec = elec_posn(idx,:);
    ctr= [0,0];
    rad= sqrt(sum(this_elec.^2));

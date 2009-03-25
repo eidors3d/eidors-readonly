@@ -27,7 +27,11 @@ global distmesh_do_graphics; % flag do decide if we do graphics
 maxiter = 500;
 
 dim=size(box,2);
-ptol=.01; ttol=.1; L0mult=1+.4/2^(dim-1); deltat=.03; geps=1e-1*h; deps=sqrt(eps)*h;
+ptol=.01;
+ttol=.1;
+L0mult=1+.4/2^(dim-1);
+deltat=.10; % Stimulation Time step - Speed or slow simulation
+geps=1e-1*h; deps=sqrt(eps)*h;
 
 % 1. Create initial distribution in bounding box
 if dim==1
@@ -39,6 +43,7 @@ else
   end
   pp=cell(1,dim);
   [pp{:}]=ndgrid(cbox{:});
+  for ii=1:dim; pp{ii} = pp{ii} + h/2*(rand(size(pp{ii}))-0.5); end
   p=zeros(prod(size(pp{1})),dim);
   for ii=1:dim
     p(:,ii)=pp{ii}(:);
