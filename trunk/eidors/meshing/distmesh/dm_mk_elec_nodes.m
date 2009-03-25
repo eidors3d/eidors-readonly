@@ -98,6 +98,20 @@ function [elec_nodes, refine_nodes]= mk_elec_nodes_2d( ...
 %  locally.
 % Alg: http://www.geocities.com/kiranisingh/center.html
 function [ctr, rad] = find_ctr_rad( idx, elec_posn);
-   this_elec = elec_posn(idx,:);
-   ctr= [0,0];
-   rad= sqrt(sum(this_elec.^2));
+   nelec= size(elec_posn,1);
+   idx = rem(idx+[-1,0,1]+nelec-1,nelec)+1;
+   x = elec_posn(idx,1);
+   y = elec_posn(idx,2);
+   s21= x(2)^2 + y(2)^2 - x(1)^2 - y(1)^2;
+   s31= x(3)^2 + y(3)^2 - x(1)^2 - y(1)^2;
+   x21 = x(2) - x(1);
+   x31 = x(3) - x(1);
+   y21 = y(2) - y(1);
+   y31 = y(3) - y(1);
+   n1 = det([s21,y21;s31,y31]);
+   n2 = det([x21,s21;x31,s31]);
+   D  = det([x21,y21;x31,y31]);
+   ctr= [n1,n2]/2/D;
+   rad= sqrt((x-ctr(1)).^2 + (y-ctr(2)).^2);
+   if std(rad)/mean(rad)>.001; error('PROBLEM WITH ALGORITHM');end
+   rad=mean(rad);
