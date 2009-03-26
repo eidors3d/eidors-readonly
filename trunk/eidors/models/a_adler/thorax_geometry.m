@@ -3,7 +3,7 @@
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
-function [x_coord, y_coord, z_mag ] = thorax_geometry;
+function [x_coord, y_coord, z_mag ] = thorax_geometry(level,normalize);
 
     x_coord= [ ...
       0,60,123,173,223,202,144,75,0,-75,-144,-202,-223,-173,-123,-60;
@@ -18,3 +18,15 @@ function [x_coord, y_coord, z_mag ] = thorax_geometry;
       143,130, 99,63,14,-35,- 68,- 82,- 82,- 82,- 68,-35,14,63, 99,130;
       136,128,103,68,23,-25,- 62,- 78,- 80,- 78,- 62,-25,23,68,103,128 ];
     z_mag = 150;
+
+    if nargin>=1;
+      x_coord= x_coord(level,:);
+      y_coord= y_coord(level,:);
+    end
+
+    if nargin>=2 && normalize
+      maxv= max([ abs(x_coord(:)); ...
+                  abs(y_coord(:)) ]);
+      x_coord = x_coord / maxv;
+      y_coord = y_coord / maxv;
+    end
