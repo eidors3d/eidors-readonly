@@ -45,10 +45,10 @@ function [elec_nodes, refine_nodes]= mk_elec_nodes_2d( ...
            the= th;
            thr= th;
         case 1,
-           the= th + th_delta*[-1;;0;1];
+           the= th + th_delta*[-1;0;1];
            thr= th + th_delta*[-3;-1;0;1;3];
         case 2,
-           the= th + th_delta*[-1;;0;1];
+           the= th + th_delta*[-1;0;1];
            thr= th + th_delta*[-5;-2;-1;0;1;2;5];
         case 3,
            the= th + th_delta*[-1;-.5;0;.5;1];
@@ -74,7 +74,7 @@ function [elec_nodes, refine_nodes]= mk_elec_nodes_2d( ...
         case 2,
            refine_new= [radius*csthr([1:2,6:7],:); ...
                     .98*radius*csthr([1:7],:); ...
-                    .95*radius*csthr([1:3:7],:)];
+                    .99*radius*csthr([1:3:7],:)];
         case 3,
            refine_new= [radius*csthr([1:2,8:9],:); ...
                     .98*radius*csthr([1:9],:); ...
@@ -115,3 +115,4 @@ function [ctr, rad] = find_ctr_rad( idx, elec_posn);
    rad= sqrt((x-ctr(1)).^2 + (y-ctr(2)).^2);
    if std(rad)/mean(rad)>.001; error('PROBLEM WITH ALGORITHM');end
    rad=mean(rad);
+%  disp([idx(2),ctr,rad]);
