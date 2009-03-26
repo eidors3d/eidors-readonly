@@ -44,18 +44,24 @@ n_elec= 16;
       space = linspace( -1, 1, 32+1 );
       fmdl= mk_grid_model( [], space, space);
       space_avg = conv2(space, [1,1]/2,'valid'); % average of each box
-      [x,y] = meshgrid( space_avg, space_avg);
+      [x,y] = ndgrid( space_avg, space_avg);
 switch str
    case 'b2c'
       inside=  (x(:).^2 + y(:).^2)<1.10 ;
 
    case 'b2d'
-      [x,y] = meshgrid( space_avg, space_avg);
+      inside=  (abs(x(:)) + abs(y(:)))<1.55 ;
+
+   case 'b2t1'; inside = inside_thorax(x,y,1);
+   case 'b2t2'; inside = inside_thorax(x,y,2);
+   case 'b2t3'; inside = inside_thorax(x,y,3);
+   case 'b2t4'; inside = inside_thorax(x,y,4);
+   case 'b2t5'; inside = inside_thorax(x,y,5);
+
 
    otherwise
       error(['mdl_string ',str,' not understood']);
 end
-      inside=  (abs(x(:)) + abs(y(:)))<1.55 ;
       ff = find(~inside);
       fmdl.elems([2*ff, 2*ff-1],:)= [];
       fmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
@@ -74,6 +80,10 @@ inv_mdl.solve = @solve_use_matrix;
 inv_mdl.fwd_model.normalize_measurements= 1;
 [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
 inv_mdl.fwd_model.meas_select= els;
+
+function inside = inside_thorax(x,y,level);
+   [x_bdy, y_bdy ] = thorax_geometry(level,1); % normalized
+   inside = inpolygon(x(:), y(:), x_bdy, y_bdy); 
 
 function RM = resize_if_reqd(RM,inside);
    szRM = size(RM,1);
