@@ -7,6 +7,8 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 % 2D models
 %   mk_common_gridmdl('b2c', RM)  - 32x32 circular shape, 16 elec
 %   mk_common_gridmdl('b2d', RM)  - 32x32 diamond shape, 16 elec
+%   mk_common_gridmdl('b2t?', RM) - 32x32 thorax shape, 16 elec
+%             - thorax levels 1-5 are provided
 %
 % Note that the electrodes added to the model are just to 
 %   indicate location, it does not necessarily correspond to the
@@ -39,32 +41,25 @@ end
 
 n_elec= 16;
 
+      space = linspace( -1, 1, 32+1 );
+      fmdl= mk_grid_model( [], space, space);
+      space_avg = conv2(space, [1,1]/2,'valid'); % average of each box
+      [x,y] = meshgrid( space_avg, space_avg);
 switch str
    case 'b2c'
-      space = linspace( -1, 1, 32+1 );
-      fmdl= mk_grid_model( [], space, space);
-      space_avg = conv2(space, [1,1]/2,'valid'); % average of each box
-      [x,y] = meshgrid( space_avg, space_avg);
       inside=  (x(:).^2 + y(:).^2)<1.10 ;
-      ff = find(~inside);
-      fmdl.elems([2*ff, 2*ff-1],:)= [];
-      fmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
-      fmdl.coarse2fine(:,ff)= [];
 
    case 'b2d'
-      space = linspace( -1, 1, 32+1 );
-      fmdl= mk_grid_model( [], space, space);
-      space_avg = conv2(space, [1,1]/2,'valid'); % average of each box
       [x,y] = meshgrid( space_avg, space_avg);
+
+   otherwise
+      error(['mdl_string ',str,' not understood']);
+end
       inside=  (abs(x(:)) + abs(y(:)))<1.55 ;
       ff = find(~inside);
       fmdl.elems([2*ff, 2*ff-1],:)= [];
       fmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
       fmdl.coarse2fine(:,ff)= [];
-
-   otherwise
-      error(['mdl_string ',str,' not understood']);
-end
 
 fmdl.electrode = mk_electrode_locns( fmdl.nodes, n_elec );
 
