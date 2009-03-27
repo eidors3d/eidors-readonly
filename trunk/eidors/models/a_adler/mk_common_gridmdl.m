@@ -31,12 +31,15 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+name = str;
 if strcmp(str,'backproj')
    str= 'b2d';
    RM= get_Sheffield_Backproj;
 elseif strcmp(str,'GREITc1');
    str= 'b2c';
    RM= get_GREIT_c1;
+else
+   name = str;
 end
 
 n_elec= 16;
@@ -69,7 +72,7 @@ end
 
 fmdl.electrode = mk_electrode_locns( fmdl.nodes, n_elec );
 
-inv_mdl = eidors_obj('inv_model',['mk_common_gridmdl: ',str]);
+inv_mdl = eidors_obj('inv_model',['mk_common_gridmdl: ',name]);
 inv_mdl.reconst_type= 'difference';
 inv_mdl.fwd_model= fmdl;
 inv_mdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);

@@ -28,6 +28,8 @@ rec= inv_model.solve_use_matrix.RM * dv;
 sol = rec(map,:);
 
 % create a data structure to return
-img.name= 'solved by solve_use_matrix';
+try   img.name= ['solved by ', inv_model.name];
+catch img.name= ['solved by solve_use_matrix'];
+end
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
