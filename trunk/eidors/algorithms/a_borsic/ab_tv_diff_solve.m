@@ -10,12 +10,17 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 %   alpha1
 %   alpha2
 %   want_dual_variable  (set to 1 if you want access to dual)
+% Termination parameters
+%  max_iters =  inv_model.parameters.max_iteration (default 10)
+%      Max number of iterations before stopping
+%  min change = inv_model.parameters.min_change   (default 0)
+%      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
 
 % (C) 2002-2009 Andrea Borsic and Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 
-[alpha1,alpha2,beta,maxiter,tol,keepiters]= get_params(inv_model);
+p= get_params(inv_model);
 
 dva = calc_difference_data( data1, data2, inv_model.fwd_model);
 % TEST CODE -> Put elsewhere
@@ -25,9 +30,9 @@ inv_model.jacobian_bkgnd.value= back_val;
 sol= [];
 for i=1:size(dva,2)
    [soln,dual_x]=primaldual_tvrecon_lsearch(inv_model, dva(:,i), ...
-        maxiter,alpha1,alpha2, tol, beta);
+        p.maxiter,p.alpha1,p.alpha2, p.tol, p.beta, p.min_change);
 
-   if ~keepiters
+   if ~p.keepiters
       soln=soln(:,end);
    end
 
@@ -41,32 +46,31 @@ try if inv_model.ab_tv_diff_solve.want_dual_variable
    img.dual_data = dual_x;
 end; end
 
-function [alpha1,alpha2,beta,maxiter,tol,keepiters]= ...
-          get_params(inv_model);
-   alpha1= 1e-2;
-   beta= 1e-4;
-   if isfield(inv_model,'ab_tv_diff_solve')
-      if isfield(inv_model.ab_tv_diff_solve,'alpha1')
-         alpha1= inv_model.ab_tv_diff_solve.alpha1;
-      end
-      if isfield(inv_model.ab_tv_diff_solve,'beta')
-         beta= inv_model.ab_tv_diff_solve.beta;
-      end
+function p = get_params(inv_model);
+   
+   try   p.alpha1= inv_model.ab_tv_diff_solve.alpha1;
+   catch p.alpha1= 1e-2;
    end
-   alpha2= calc_hyperparameter( inv_model);
 
-   maxiter= 10;
-   tol= 1e-4;
-   keepiters= 0;
-   try 
-      tol =     inv_model.parameters.term_tolerance;
+   try   p.beta= inv_model.ab_tv_diff_solve.beta;
+   catch p.beta= 1e-4;
    end
-   try
-      maxiter = inv_model.parameters.max_iterations;
+
+   p.alpha2= calc_hyperparameter( inv_model);
+
+   try   p.min_change = inv_model.parameters.min_change;
+   catch p.min_change = 0;
    end
-   try
-      keepiters = inv_model.parameters.keep_iterations;
+
+   try   p.maxiter = inv_model.parameters.max_iterations;
+   catch p.maxiter= 10;
    end
+
+   try   p.keepiters = inv_model.parameters.keep_iterations;
+   catch p.keepiters= 0;
+   end
+
+   p.tol = 0; % TODO
 
 function back_val = get_good_background(inv_mdl, data1);
 

@@ -54,6 +54,7 @@ for k=1:max_iter
     delta_ObjFcn = abs(Obj_Fcnk/Obj_Fcn - 1);
 %   fprintf('%d %g %g %g\n',k, Obj_Fcnk, Obj_Fcn, delta_ObjFcn);
     if delta_ObjFcn < min_change; 
+       eidors_msg('Lagged_diff: Breaking at iteration %d',k,2);
        break;
     end
     Obj_Fcn = Obj_Fcnk;
