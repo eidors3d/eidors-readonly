@@ -1,7 +1,8 @@
-function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
+function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
               maxiter,alpha1,alpha2, epsilon, beta)
-% rs=tvrecon(msh,c,vmeas,maxiter,alpha1,alpha2)
 
+% [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
+%             maxiter,alpha1,alpha2, epsilon, beta)
 % 11/02/01 By Andrea Borsic
 % 01/02/02 Modified: new steplength search on dual variable
 % function rs=tvrecon(msh,c,vmeas,maxiter,alpha1,alpha2)
@@ -15,6 +16,8 @@ function rs=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %       A good alpha11 is 2e-5, a good alpha2 is 1e-9
 %   epsilon - termination tolerance (recommend 1e-6);
 %   beta    - initial value of approx: abs ~ sqrt(sqr+beta)
+%   rs - solution
+%   x  - dual solution
 %
 % PRIMAL DUAL IMPLEMENTATION
 %
@@ -64,8 +67,8 @@ if 0 % static EIT - this code doesn't work yet
    de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
    s=s+de_s;
 else
-   s= zeros(m,1);
-   x=zeros(n,1);
+   s= zeros(m,1); % solution
+   x=zeros(n,1);  % dual variable
    J= calc_jacobian( calc_jacobian_bkgnd(inv_mdl) );
    IM.elem_data= s;
    IM.difference_rec = 1;
@@ -95,7 +98,7 @@ while (~terminate)&(iter<maxiter)
 %   J= calc_jacobian( IM );
 %   plot([vsim, vmeas]);% pause
 
-    z=A*s;	% This is the dual variable
+    z=A*s;	% This is an auxilliary variable
     
     eta=sqrt(z.^2+beta);
     

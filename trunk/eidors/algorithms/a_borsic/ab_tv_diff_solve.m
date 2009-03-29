@@ -9,8 +9,9 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 % Parameters
 %   alpha1
 %   alpha2
+%   want_dual_variable  (set to 1 if you want access to dual)
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% (C) 2002-2009 Andrea Borsic and Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 
@@ -23,7 +24,7 @@ inv_model.jacobian_bkgnd.value= back_val;
 
 sol= [];
 for i=1:size(dva,2)
-   soln=primaldual_tvrecon_lsearch(inv_model, dva(:,i), ...
+   [soln,dual_x]=primaldual_tvrecon_lsearch(inv_model, dva(:,i), ...
         maxiter,alpha1,alpha2, tol, beta);
 
    if ~keepiters
@@ -36,6 +37,9 @@ end
 img.name= 'solved by ab_tv_diff_solve';
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
+try if inv_model.ab_tv_diff_solve.want_dual_variable
+   img.dual_data = dual_x;
+end; end
 
 function [alpha1,alpha2,beta,maxiter,tol,keepiters]= ...
           get_params(inv_model);
