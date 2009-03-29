@@ -1,4 +1,4 @@
-function eidors_msg( message, varargin )
+function log_level= eidors_msg( message, varargin )
 %EIDORS_MSG: eidors progress and status messages
 %
 % USAGE: eidors_msg('mission accomplished; time to relax', 1)
@@ -54,6 +54,8 @@ fid= 2; %stderr
 % message= sprintf(message, args{:} );
 if length(message)>1 % single characters are just for progress
    string= ['EIDORS:[',message,']\n'];
+elseif strcmp( message, 'log_level');
+   log_level= eidors_objects.log_level;
 else
    string= message;
 end
