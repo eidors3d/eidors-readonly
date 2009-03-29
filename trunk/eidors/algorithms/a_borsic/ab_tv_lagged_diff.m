@@ -8,6 +8,9 @@ function img=ab_tv_lagged_diff( inv_model, data1, data2)
 %
 % Parameters:
 %  max_iters =  inv_model.parameters.max_iteration (default 10)
+%      Max number of iterations before stopping
+%  min change = inv_model.parameters.min_change   (default 0)
+%      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
 %  beta      =  inv_model.ab_tv_lagged_diff.beta   (default 1e-3)
 % beta is the parameter that smooths the TV functional
 
@@ -16,6 +19,10 @@ function img=ab_tv_lagged_diff( inv_model, data1, data2)
 
 try    max_iter = inv_model.parameters.max_iterations;
 catch  max_iter = 10;
+end
+
+try    min_change = inv_model.parameters.min_change;
+catch  min_change = 0;
 end
 
 try    beta = inv_model.ab_tv_lagged_diff.beta; 
@@ -36,11 +43,21 @@ alpha=calc_hyperparameter( inv_model );
 
 delta_sigma = zeros(size(J,2),1); % we start from no initial difference
 
+Obj_Fcn = inf; %initial value
 
 for k=1:max_iter
  
     dv =  J*delta_sigma - d;
 
+% STOP IF OBJECTIVE FCN IS NOT CHANGING by more than min_change
+    Obj_Fcnk = norm(dv)^2 + alpha*sum(abs( delta_sigma ));
+    delta_ObjFcn = abs(Obj_Fcnk/Obj_Fcn - 1);
+%   fprintf('%d %g %g %g\n',k, Obj_Fcnk, Obj_Fcn, delta_ObjFcn);
+    if delta_ObjFcn < min_change; 
+       break;
+    end
+    Obj_Fcn = Obj_Fcnk;
+    
     E= sqrt((L*delta_sigma).^2+beta);
     inv_E= spdiags( 1./E, 0, length(E), length(E));
 
@@ -50,6 +67,7 @@ for k=1:max_iter
     upd=-(phi2)\phi1;
     
     delta_sigma=delta_sigma+upd;
+
     
 end % for k
 
