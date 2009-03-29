@@ -1,5 +1,5 @@
 function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
-              maxiter,alpha1,alpha2, epsilon, beta)
+              maxiter,alpha1,alpha2, epsilon, beta, min_change)
 
 % [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %             maxiter,alpha1,alpha2, epsilon, beta)
@@ -16,6 +16,7 @@ function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...
 %       A good alpha11 is 2e-5, a good alpha2 is 1e-9
 %   epsilon - termination tolerance (recommend 1e-6);
 %   beta    - initial value of approx: abs ~ sqrt(sqr+beta)
+%   min_change - minimum change in objective fcn
 %   rs - solution
 %   x  - dual solution
 %
@@ -35,8 +36,6 @@ fwd_model= inv_mdl.fwd_model;
 
 msh.TC = fwd_model.elems';
 msh.PC = fwd_model.nodes';
-
-
 
 decay_beta=0.7;
 
@@ -89,6 +88,7 @@ iter=1;
 ind=1;
     rs(:,iter)=s;
 
+Obj_Fcn_old = inf;
 while (~terminate)&(iter<maxiter)
     
 %   u=potentials(msh,s,c);
@@ -105,13 +105,21 @@ while (~terminate)&(iter<maxiter)
     grad=J'*(vsim-vmeas);
     
     for i=1:n
-        
         grad=grad+alpha2*A(i,:)'*A(i,:)*s/eta(i);
-        
     end % for
     
     primal=sum(abs(z)); % we don't care here about 0.5*norm(de_v)
     dual=sum(x.*z);
+
+    % TERMINATE ITERATIONS IF primal is no longer decreasing
+    Obj_Fcn = norm(vsim - vmeas)^2 + alpha2*primal;
+    if abs(Obj_Fcn/Obj_Fcn_old - 1) < min_change
+       eidors_msg('PDIPM: Breaking at iteration %d',iter,2);
+       break
+    else
+       Obj_Fcn_old= Obj_Fcn;
+    end
+
     
     eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(vsim-vmeas),beta,len(ind),norm(grad),3);
         
@@ -126,7 +134,7 @@ while (~terminate)&(iter<maxiter)
     
     ang=acos((dot(de_s,-grad)/(norm(de_s)*norm(-grad))))*(360/(2*pi));
     
-    fprintf('+'); eidors_msg('PDIPM angle=%+3.1f deg',ang,3);
+    eidors_msg('PDIPM angle=%+3.1f deg',ang,3);
     
     % line search
     
