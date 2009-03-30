@@ -77,7 +77,35 @@ function s= pdipm_1_2( J,W,L,d, pp);
       x= x + dsdx(N+ (1:M));
       x( x> 1 ) = 1;
       x( x<-1 ) = -1;
-fprintf('.\n');
+fprintf('+');
+   end
+
+function s= pdipm_2_1( J,W,L,d, pp);
+   [M,N] = size(J);   % M measurements, N parameters
+   [G  ] = size(L,1); % E edges
+   s= zeros( N, 1 ); % solution - start with zeros
+   x= zeros( G, 1 ); % dual var - start with zeros
+
+   for loop = 1:pp.max_iter
+      % Define variables
+      f = L*s;                 F= spdiags(f,0,G,G);
+                               X= spdiags(x,0,G,G);
+      e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,G,G);
+
+      % Define derivatives
+      dFc_ds = (speye(G,G) - X*inv(E)*F)*L;
+      dFc_dx = -E;
+      dFf_ds = J'*J;
+      dFf_dx = L';
+
+      dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
+              [ f-E*x; J'*(J*s-d) + L'*x ];
+
+      dx = dsdx(1:N);
+      x= x + dsdx(N+ (1:G));
+      x( x> 1 ) = 1;
+      x( x<-1 ) = -1;
+fprintf('+');
    end
 
 function pp= process_parameters(imdl);
