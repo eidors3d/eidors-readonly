@@ -73,10 +73,10 @@ function s= pdipm_1_2( J,W,L,d, pp);
       dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
               [ f-E*x; J'*W*x + L'*L*s ];
 
-      s= s + dsdx(1:N);
-      x= x + dsdx(N+ (1:M));
-      x( x> 1 ) = 1;
-      x( x<-1 ) = -1;
+      ds = dsdx(1:N);
+      dx = x_update(x, dsdx(N+(1:M)));
+
+      s= s + ds; x= x + dx;
 fprintf('+');
    end
 
@@ -101,12 +101,19 @@ function s= pdipm_2_1( J,W,L,d, pp);
       dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
               [ f-E*x; J'*(J*s-d) + L'*x ];
 
-      dx = dsdx(1:N);
-      x= x + dsdx(N+ (1:G));
-      x( x> 1 ) = 1;
-      x( x<-1 ) = -1;
+      ds = dsdx(1:N);
+      dx = x_update(x, dsdx(N+(1:G)));
+
+      s= s + ds; x= x + dx;
 fprintf('+');
    end
+
+% abs(x + dx) must be <= 1
+function dx = x_update( x, dx)
+   x_upd = x + dx;
+   ff=  abs(x_upd)>1;
+   x_upd( ff ) = sign(x_upd(ff));
+   dx= x_upd - x;
 
 function pp= process_parameters(imdl);
    try    pp.max_iter = imdl.parameters.max_iterations;
