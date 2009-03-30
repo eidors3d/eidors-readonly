@@ -1,5 +1,5 @@
 function img=ab_tv_lagged_diff( inv_model, data1, data2)
-% AB_TV_LAGGED_DIFF inverse solver using approach of Adler&Guardo 1996
+% AB_TV_LAGGED_DIFF Lagged Diffusivity Inverse Solver
 % img= ab_inv_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
