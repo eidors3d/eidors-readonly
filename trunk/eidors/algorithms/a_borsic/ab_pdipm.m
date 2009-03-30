@@ -18,7 +18,7 @@ function img=ab_pdipm( inv_model, data1, data2)
 % beta is the parameter that smooths the TV functional
 
 % (C) 2008 Andrea Borsic. License: GPL version 2 or version 3
-% $Id%
+% $Id$
 
 
 pp= process_parameters(inv_model);
