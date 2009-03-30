@@ -110,10 +110,14 @@ fprintf('+');
 
 % abs(x + dx) must be <= 1
 function dx = x_update( x, dx)
-   x_upd = x + dx;
-   ff=  abs(x_upd)>1;
-   x_upd( ff ) = sign(x_upd(ff));
-   dx= x_upd - x;
+   dx(dx==0) = eps; % can't have zeros
+   sx = sign(dx);
+   % space to limits in direction of x
+   clr = sx - x;
+   % how much to multiply by to get to limits
+   fac = clr./dx;
+   % choose min amount to get to limits
+   dx = dx*min(fac);
 
 function pp= process_parameters(imdl);
    try    pp.max_iter = imdl.parameters.max_iterations;
@@ -125,7 +129,7 @@ function pp= process_parameters(imdl);
    end
 
    try    pp.beta = imdl.ab_pdipm.beta; 
-   catch  pp.beta = 1e-6;
+   catch  pp.beta = 1e-8;
    end
 
    try    pp.norm_data = imdl.ab_pdipm.norm_data;
