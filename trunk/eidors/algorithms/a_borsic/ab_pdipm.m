@@ -108,6 +108,51 @@ function s= pdipm_2_1( J,W,L,d, pp);
 fprintf('+');
    end
 
+function s= pdipm_1_1( J,W,L,d, pp);
+   [M,N] = size(J); % M measurements, N parameters
+   [D  ] = size(L,1); % E edges
+   y= zeros( D, 1 ); % dual var - start with zeros
+   s= zeros( N, 1 ); % solution - start with zeros
+   x= zeros( M, 1 ); % dual var - start with zeros
+
+   for loop = 1:pp.max_iter
+      % Define variables
+      g = L*s;                 G= spdiags(g,0,D,D);
+      r = sqrt(g.^2 + pp.beta);R= spdiags(r,0,D,D); % S in paper
+                               Y= spdiags(y,0,D,D);
+
+      f = J*s - d;             F= spdiags(f,0,M,M);
+      e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,M,M);
+                               X= spdiags(x,0,M,M);
+
+      % Define derivatives
+      As1 = sparse(N,N);
+      As2 = (speye(M,M) - X*inv(E)*F) * J;
+      As3 = (speye(D,D) - Y*inv(R)*G) * L;
+      Ax1 = J'*W;
+      Ax2 = -E;
+      Ax3 = sparse(D,M);
+      Ay1 = L';
+      Ay2 = sparse(M,D);
+      Ay3 = -R;
+      B1  = J'*W*x + L'*y;
+      B2  = f - E*x;
+      B3  = g - R*y;
+
+      DD = -[As1,Ax1,Ay1; ...
+             As2,Ax2,Ay2; ...
+             As3,Ax3,Ay3] \ [B1;B2;B3];
+
+      ds = DD(1:N);
+      dx = x_update(x, DD(N+(1:M)));
+      dy = x_update(y, DD(N+M+(1:D)));
+
+      s= s + ds;
+      x= x + dx;
+      y= y + dy;
+fprintf('+');
+   end
+
 % abs(x + dx) must be <= 1
 function dx = x_update( x, dx)
    dx(dx==0) = eps; % can't have zeros
