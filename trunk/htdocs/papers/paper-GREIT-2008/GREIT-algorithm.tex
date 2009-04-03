@@ -361,7 +361,7 @@ conductivity $\sigma_r$
     V_t \frac{\Delta\sigma}{\sigma_r}
   }
 \end{equation}
-where $\Delta\sigma = \sigma_t - \sigma_r$,
+where $\Delta\sigma = \sigma_t - \sigma_r$.
 
 \hspace{5mm}
 AR allows units to be assigned to the 
@@ -493,7 +493,7 @@ amplitude within $C$.
 \begin{equation}
 \mathrm{RNG} =
 \left(
-        \sum_{k\not\in C \& [\xH]_i < 0} [\xH]_k 
+        \sum_{k\not\in C \& [\xH]_k < 0} [\xH]_k 
 \right)
 / 
 \left(
@@ -536,7 +536,7 @@ The NF is the ratio of the output to input
  signal to noise ratio (SNR) for a filter.
 We define SNR~=~%
 $\frac{
-   \mbox{{\rm mean} \em signal}
+   \mbox{{\rm mean} $|$  \em signal $|$ }
       }{
    \mbox{{\rm std} \em noise}
      }
@@ -547,11 +547,11 @@ image reconstruction tends to conserve  amplitude
 rather than energy. Thus
 \begin{equation}
 \mathrm{NF} = \frac{
-   E[ \mathrm{mean}~\xH_t ] 
+   E[ \mathrm{mean}~|\xH_t| ] 
          /
    E[ \mathrm{std}~\xH_n ]
 }{
-   E[ \mathrm{mean}~\yB_t ] 
+   E[ \mathrm{mean}~|\yB_t| ] 
          /
    E[ \mathrm{std}~\yB_n ]
 }
@@ -807,7 +807,7 @@ variance, $\PB$ becomes an identity matrix $\IB$ and
 EIT, such solutions tend to push reconstructed noise toward the
 boundary, since the measured data are much more sensitive to
 boundary image elements. Instead, $\PB$ may be scaled with the
-sensitivity of each element, so that each diagonal element $i$ 
+sensitivity of each element, so that each diagonal element $i$,
 $[\PB^{-1}]_{i,i} = \left[ \JB^T \JB
 \right]_{i,i}$. This is the NOSER prior of Cheney \etal (1990).
 Many other prior matrices have been
@@ -1042,8 +1042,8 @@ may be expressed as minimization of an error $\epsilon^2$
 \epsilon^2 &=& \sum_k \| \xT^{(k)} - \RB \yB^{(k)} \|^2_{\WB^{(k)}}
 \nonumber \\
 &=& \sum_k \sum_i \Bigg( 
-   [\xH^{(k)}]_{i}^2 [\wB^{(k)}]_{i}^2
--2 [\xH^{(k)}]_{i}   [\wB^{(k)}]_{i}^2  \Big( \sum_j \RB_{ij} [\yB^{(k)}]_{j} \Big)
+   [\xT^{(k)}]_{i}^2 [\wB^{(k)}]_{i}^2
+-2 [\xT^{(k)}]_{i}   [\wB^{(k)}]_{i}^2  \Big( \sum_j \RB_{ij} [\yB^{(k)}]_{j} \Big)
 \nonumber \\
 & &
 +                    [\wB^{(k)}]_{i}^2  \Big( \sum_j \RB_{ij} [\yB^{(k)}]_{j} \Big)^2
@@ -1067,12 +1067,12 @@ $\frac{\partial \epsilon^2}
 \frac{ \partial \epsilon^2 }
      { \partial \RB_{ij} }
  &=&
-   \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
+   \sum_k [\xT^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
   -\sum_k                  [\wB^{(k)}]_i^2
          \Big( \sum_l \RB_{il} [\yB^{(k)}]_l \Big) = 0
 \nonumber \\
  &=&
-   \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
+   \sum_k [\xT^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j 
   -\sum_l \RB_{il} 
          \Big( \sum_k [\yB^{(k)}]_l [\wB^{(k)}]_i^2 [\yB^{(k)}]_j \Big)
 \nonumber \\
@@ -1084,7 +1084,7 @@ where matrix $\AB \in \mathbb{R}^{n_N \times n_M}$
 and tensor $\BB \in \mathbb{R}^{n_N \times n_M \times n_M}$
 are defined as
 $\AB = 
-   \sum_k [\xH^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j $
+   \sum_k [\xT^{(k)}]_{i}  [\wB^{(k)}]_i^2 [\yB^{(k)}]_j $
 and 
 $\BB = 
    \sum_k [\yB^{(k)}]_l [\wB^{(k)}]_i^2 [\yB^{(k)}]_j $.
