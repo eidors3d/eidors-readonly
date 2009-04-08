@@ -1,11 +1,16 @@
 function [eexpi,einsp]= find_frc( imgs, ROI, frate, name, ok, remove_pts)
 % FIND_FRC: find candidates for FRC
-% points= find_frc( imgs, ROI, frate, name)
-% ok ==0 (show graph - default)
-%      1 (show graph - no click) 
-%      2 no graph
-% name = name for graph ('unspecified' otherwise)
-% ROI  = Region of interest ( [] means all the image)
+%   [einsp,eexpi]= find_frc( imgs, ROI, frate, name, ok, remove_pts)
+% INPUTS:
+%      points= find_frc( imgs, ROI, frate, name)
+%      ok ==0 (show graph - default)
+%           1 (show graph - no click) 
+%           2 no graph
+%      name = name for graph ('unspecified' otherwise)
+%      ROI  = Region of interest ( [] means all the image)
+% OUTPUTS: 
+%      einsp - points corresponding to end inspiration
+%      eexpi - points corresponding to end expiration
 %
 % Find candidates for FRC from a time seq of EIT data
 % frate is framerate (in fps units)
@@ -94,7 +99,8 @@ axes('position',[.3,.08,.7,.9]);
 
 if ok==1;
    plotpoints( seq, eexpi, einsp, name, ok, frate);
-   nname = name(find(name=='/')+1:find(name=='.')-1);
+   ff= find(name=='/'); if any(ff); nname= name(ff(end)+1:end); end
+   ff= find(name=='.'); if any(ff); nname= name(1:ff(end)-1); end
    gg= get(gcf,'paperposition');
    set(gcf,'paperposition',[gg(1:3),gg(3)*.3]);
    if exist('OCTAVE_VERSION'); 
