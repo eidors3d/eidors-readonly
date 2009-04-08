@@ -99,12 +99,12 @@ axes('position',[.3,.08,.7,.9]);
 
 if ok==1;
    plotpoints( seq, eexpi, einsp, name, ok, frate);
-   ff= find(name=='/'); if any(ff); nname= name(ff(end)+1:end); end
-   ff= find(name=='.'); if any(ff); nname= name(1:ff(end)-1); end
+   ff= find( name=='/'); if any(ff); nname= name(ff(end)+1:end); end
+   ff= find(nname=='.'); if any(ff); nname=nname(1:ff(end)-1); end
    gg= get(gcf,'paperposition');
    set(gcf,'paperposition',[gg(1:3),gg(3)*.3]);
    if exist('OCTAVE_VERSION'); 
-      print([nname,'-sig.png'], '-dpng','-S200,75'); 
+      print([nname,'_sig.png'], '-dpng','-S200,75'); 
    else;
       print('-dpng','-r100',[nname,'_sig.png']); 
    end
