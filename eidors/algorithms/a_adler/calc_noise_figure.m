@@ -44,7 +44,8 @@ else
 end
 [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
 
-NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL);
+NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL) 
+NF= nf_calc_iterate( inv_model, h_data, c_data, VOL) 
 eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
 
 function [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
@@ -172,11 +173,13 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
 
    otherwise
       img0 = inv_solve( inv_model, h_data, c_data);
+      if nargin>4
       img0n= inv_solve( inv_model, h_full, c_noise);
+      end
    end
 
 % OLD CODE - iterate
-function old_code
+function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
    % calculate signal
    d_len   = size(h_data,1);
    delta   = 1e-2* mean(h_data);
@@ -186,22 +189,29 @@ function old_code
    % calculate image 
    % Note, this won't work if the algorithm output is not zero biased
 
-   VOL = pp.VOLUME';
    [img0] = get_images( inv_model, h_data, c_data);
-   sig_img= VOL*abs(img0.elem_data);
+   sig_img= mean(VOL'.*abs(img0.elem_data));
 
    % Now do noise
    var_data= 0;
    var_img = 0;
    for i=1:d_len
-      this_noise = zeros(d_len, size(c_data,2));
+      this_noise = -ones(d_len, size(c_data,2))/(d_len-1);
       this_noise(i,:) = 1;
       c_noise = c_data + this_noise;
-      var_data = var_data + sum( ...
-         calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
-                       .^2, 2); 
       [imgn] = get_images( inv_model, h_data, c_noise);
-      var_img= VOL.^2*imgn.elem_data.^2; 
+      if 0
+	 var_data = var_data + mean(sum( ...
+	    calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
+			  .^2, 2)); 
+	 var_img= var_img +  VOL.^2*imgn.elem_data.^2; 
+      else
+	 var_data = var_data + var( ...
+	    calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
+			         ); 
+	 var_img= var_img + var( VOL'.*imgn.elem_data ); 
+      end
    end
    var_data = var_data / d_len;
    var_img  = var_img  / d_len;
+   NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
