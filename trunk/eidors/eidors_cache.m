@@ -23,7 +23,7 @@ function retval=eidors_cache( command, limit )
 %  
 %   eidors_cache( 'boost_priority', value)
 %      - modify the priority of the next cached items
-%      - higher priority variables will be deleted less when memory is tight  
+%      - low priority variables will be deleted first when memory is tight  
 
 % (C) 2005 Andy Adler. Licensed under GPL version 2
 % $Id$
@@ -33,13 +33,20 @@ function retval=eidors_cache( command, limit )
 %      to clear old variables
 %      to clear specific parts of structures
 
+global eidors_objects;
 if nargin<1
-    error('eidors_cache requires at least one argument');
+   fprintf('EIDORS_CACHE: current max memory = %5.1fMB\n', ...
+         eidors_objects.max_cache_size/1e6); 
+   ww= whos('eidors_objects');
+   fprintf('EIDORS_CACHE: cache memory used = %5.1fMB\n', ...
+         ww.bytes/1e6); 
+   fprintf('EIDORS_CACHE: current priority = %d\n', ...
+         eidors_objects.cache_priority); 
+   return;
 elseif nargin>=2
    if isstr(limit); limit= str2num(limit); end
 end
 
-global eidors_objects;
 
 [objid, times, sizes, prios, priidx] = get_names_times;
 
@@ -72,12 +79,13 @@ switch command
       end
 
    case 'clear_max'
-% This will remove just in order of time.
+% This will remove just in order of priidx.
 %     remove_objids( objid, sizes,  find(cumsum(sizes) > limit) );
 % Remove in order of time + priority
-      tot= cumsum(sizes(priidx)); 
-      tot= tot(priidx);
-      remove_objids( objid, sizes,  find(tot > limit) );
+      tot=     cumsum(sizes(priidx)); 
+      remove = find(tot > limit);
+      rmidx=   priidx(remove);
+      remove_objids( objid, sizes,  rmidx);
 
    case 'clear_old'
       remove_objids( objid, sizes,  ...
@@ -104,7 +112,7 @@ function [objid, times, sizes, prios, priidx] = get_names_times;
 
          obj = getfield(eidors_objects, fn1 );
          times(idx) = obj.last_used;
-         prios(idx) =   obj.priority;
+         prios(idx) = obj.priority;
 
          ww= whos('obj');
          sizes(idx) = ww.bytes;
@@ -119,8 +127,8 @@ function [objid, times, sizes, prios, priidx] = get_names_times;
    objid= objid(idx);
    sizes= sizes(idx);
    prios= prios(idx);
-   [jnk, priidx] = sort(-(times+0.1*prios));
-   priidx(priidx)= 1:length(priidx);
+   % sort from high to low priority and recent (high) to old (low)
+   [jnk, priidx] = sortrows([-prios(:), -times(:)]);
 
 function remove_objids( objid, sizes, idx)
    global eidors_objects;
