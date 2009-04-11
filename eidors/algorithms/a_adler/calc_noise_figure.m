@@ -44,7 +44,7 @@ else
 end
 [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
 
-%NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL) 
+NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL) 
 NF= nf_calc_iterate( inv_model, h_data, c_data, VOL) 
 eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
 
@@ -115,8 +115,9 @@ function NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL)
    [img0, img0n] = get_images( inv_model, h_data, c_data, ...
                                h_full, c_noise);
 
-   sig_img= VOL*abs(img0.elem_data);
-   var_img= VOL.^2*sum(img0n.elem_data.^2 ,2);
+   i_len = length(img0.elem_data);
+   sig_img= VOL*abs(img0.elem_data) / i_len;;
+   var_img= VOL.^2*sum(img0n.elem_data.^2 ,2) / i_len;
    
    NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
 
@@ -190,7 +191,7 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
    % Note, this won't work if the algorithm output is not zero biased
 
    [img0] = get_images( inv_model, h_data, c_data);
-   sig_img= mean(VOL'.*abs(img0.elem_data));
+%  sig_img= mean(VOL'.*abs(img0.elem_data));
    sig_img= VOL*abs(img0.elem_data) / length(img0.elem_data);
 
    % Now do noise
@@ -208,6 +209,7 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
 %        var_img= var_img +  mean( (VOL'.*imgn.elem_data).^2 ); 
          var_img= var_img +  (VOL.^2)*sum(imgn.elem_data.^2,2 ) / length(imgn.elem_data); 
       else
+         % OLD APPROACH BASED ON variance, rather than matrix calcs
          var_data = var_data + var( ...
             calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
                                  ); 
