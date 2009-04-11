@@ -36,6 +36,18 @@ function NF = calc_noise_figure( inv_model, hp)
 %    SNR_x = sum(|x0|/len_x) / std(x/len_x)
 
 
+if nargin<1
+   inv_model.hyperparameter.value= hp;
+   inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func')
+else
+   try hp= inv_model.hyperparameter.value; end
+end
+[inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
+
+NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL);
+eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
+
+function [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
    pp= aa_fwd_parameters( inv_model.fwd_model );
 
    if     isfield(inv_model.hyperparameter,'tgt_elems')
@@ -50,16 +62,6 @@ function NF = calc_noise_figure( inv_model, hp)
    end
 
    % if hp is specified, then use that value
-   if nargin>1
-      inv_model= rmfield(inv_model,'hyperparameter');
-      inv_model.hyperparameter.value= hp;
-   else
-      try
-         hp = inv_model.hyperparameter.value;
-      catch
-         hp = NaN;
-      end
-   end
 
    if isfield(inv_model.hyperparameter,'func')
       funcname= inv_model.hyperparameter.func;
@@ -72,6 +74,9 @@ function NF = calc_noise_figure( inv_model, hp)
       end
    end
 
+   VOL = pp.VOLUME';
+
+function NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL)
 % To model std(z) we use z=z0+n
 % so that std(z) = sqrt(var(z)) = sqrt(1/L * E[n'*n])
 % we know a priori that the mean noise is zero, thus
@@ -109,12 +114,10 @@ function NF = calc_noise_figure( inv_model, hp)
    [img0, img0n] = get_images( inv_model, h_data, c_data, ...
                                h_full, c_noise);
 
-   VOL = pp.VOLUME';
    sig_img= VOL*abs(img0.elem_data);
    var_img= VOL.^2*sum(img0n.elem_data.^2 ,2);
    
    NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
-   eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
 
    % For the record, the expression for var_img is derived as:
    % Equiv expresssions for var_img % given: A= diag(pp.VOLUME);
