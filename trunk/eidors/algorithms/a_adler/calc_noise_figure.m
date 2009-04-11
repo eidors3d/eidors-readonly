@@ -53,7 +53,7 @@ end
 %NF= nf_calc_iterate( inv_model, h_data, c_data); 
 if nargin<3; iterations= 10; end
 [NF,SE]= nf_calc_random( inv_model, h_data, c_data, iterations);
-eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
+eidors_msg('calculating NF=%f', NF, 2);
 
 function [inv_model, h_data, c_data] = process_parameters( inv_model );
 
