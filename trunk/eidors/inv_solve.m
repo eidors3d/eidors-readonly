@@ -48,7 +48,7 @@ function img = inv_solve( inv_model, data1, data2)
 %       one-step inverse matrices, but that is not done. 
 
 inv_model= eidors_model_params( inv_model );
-eidors_msg('inv_solve: %s', inv_model.solve,1);
+eidors_msg('inv_solve: %s', inv_model.solve,2);
 
 
 if     strcmp(inv_model.reconst_type,'static') || ...

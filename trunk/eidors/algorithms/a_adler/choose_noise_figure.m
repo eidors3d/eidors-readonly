@@ -1,6 +1,6 @@
-function hparam= choose_noise_figure( inv_model );
+function HP= choose_noise_figure( inv_model );
 % CHOOSE_NOISE_FIGURE: select hyperparameter based on NF calculation
-% hparam= select_noise_figure( inv_model );
+% HP= select_noise_figure( inv_model );
 % inv_model  => inverse model struct
 %
 % In order to use this function, it is necessary to specify
@@ -20,39 +20,55 @@ function hparam= choose_noise_figure( inv_model );
 % $Id$
 
 reqNF= inv_model.hyperparameter.noise_figure;
-
-NFtable = eidors_obj('get-cache', inv_model, 'noise_figure_table');
-if ~isempty(NFtable)
-   % this would be sooo much easier if Matlab had assoc. arrays
-   idx= find( NFtable(:,1) == reqNF);
-   if any(idx)
-       hparam= 10^NFtable( idx(1), 2);
-       eidors_msg('select_noise_figure: using cached value', 2);
-       return
-   end
-else
-   NFtable= [];
+try % remove the value field
+   inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'value');
 end
 
-startpoint = [6,-15]; % works better with a bracketed search
-opts = optimset('tolX',1e-4);
-
-% We don't want to cache any of these values
-   pre_nf_timestamp = now;
-% Look at minimum NF. Is it less than possible
-if calc_log_NF( startpoint(1), reqNF, inv_model ) > 0
-   error('requested NF is less than possible with this algorithm');
+HP = eidors_obj('get-cache', inv_model, 'HP_for_NF');
+if ~isempty(HP)
+   eidors_msg('select_noise_figure: using cached value', 2);
+   return
 end
 
-hparam= 10^fzero( @calc_log_NF, startpoint, opts, reqNF, inv_model );
-   eidors_cache('clear_new', pre_nf_timestamp);
+HP = HP_for_NF_search(reqNF,inv_model);
+
    
-NFtable = [NFtable; [reqNF, hparam] ];
-eidors_obj('set-cache', inv_model, 'noise_figure_table', NFtable);
+eidors_obj('set-cache', inv_model, 'HP_for_NF', HP);
 eidors_msg('select_noise_figure: setting cached value', 2);
 
-% define a function that can be called by fzero. Also convert
-% hparameter to log space to allow better searching by fzero
-function out= calc_log_NF( log_hparam, reqNF, inv_model )
-  out = calc_noise_figure( inv_model, 10^log_hparam ) - reqNF; 
+
+function [HP,NF,SE] = HP_for_NF_search(dNF,imdl);
+   hp= search1(dNF, imdl, 1);
+
+   dx= hp-linspace(-0.7,0.7,5);
+   hp= search2(dNF, imdl, dx);
+
+   dx= hp-linspace(-0.2,0.2,5);
+   hp= search2(dNF,imdl, dx);
+
+   dx= hp-linspace(-0.1,0.1,5); 
+   hp= search2(dNF,imdl, dx);
+
+   dx= hp-linspace(-0.05,0.05,21);
+   hp= search2(dNF,imdl, dx);
+
+   HP= 10^-hp;
+  
+function hp= search1(dNF, imdl, hp)
+  [NF,SE]=calc_noise_figure( imdl, 10^(-hp));
+   if     NF+3*SE < dNF; dir = 1;
+   elseif NF-3*SE > dNF; dir = -1;
+   else   dir = 0; end
+   while  dir*NF+3*SE < dir*dNF %>
+     hp= hp+0.5*dir;
+     [NF,SE]=calc_noise_figure( imdl, 10^(-hp));
+   end
+
+function hp=search2(dNF, imdl, dx)
+   for k=1:length(dx)
+     log_nf(k)=log10( calc_noise_figure( imdl, 10^-dx(k), 10 ));
+   end
+   p= polyfit( dx, log_nf-log10(dNF), 1);
+   hp = roots(p);
+   % hp = hp( hp<max(dx) & hp>min(dx) );  %USE if poly>1
 

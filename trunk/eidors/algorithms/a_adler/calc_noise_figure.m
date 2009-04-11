@@ -1,11 +1,12 @@
-function NF = calc_noise_figure( inv_model, hp, iterations)
+function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 % CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm
-% NF = calc_noise_figure( inv_model, hp, iterations)
+% [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 %    inv_model  => inverse model object
 %    hp         => value of hyperparameter to use (if not spec
 %         then use the value of inv_model.hyperparameter.value)
 %    iterations => number of iterations (default 10)
 %       (for calculation of noise figure using random noise)
+%  NF = calculated NF. SE = standard error on NF
 %
 % hp is specified, it will be used for the hyperparameter.
 %    Otherwise the inv_model.hyperparameter will be used.
@@ -46,16 +47,15 @@ if nargin>=2
 else
    try hp= inv_model.hyperparameter.value; end
 end
-[inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
+[inv_model, h_data, c_data] = process_parameters( inv_model );
 
-%NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL);
-%NF= nf_calc_iterate( inv_model, h_data, c_data, VOL); 
-if nargin<3; N_RUNS= 10; end
-NF= nf_calc_random( inv_model, h_data, c_data, VOL, N_RUNS);
+%NF= nf_calc_use_matrix( inv_model, h_data, c_data);
+%NF= nf_calc_iterate( inv_model, h_data, c_data); 
+if nargin<3; iterations= 10; end
+[NF,SE]= nf_calc_random( inv_model, h_data, c_data, iterations);
 eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
 
-function [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
-   pp= aa_fwd_parameters( inv_model.fwd_model );
+function [inv_model, h_data, c_data] = process_parameters( inv_model );
 
    if     isfield(inv_model.hyperparameter,'tgt_elems')
       [h_data, c_data]= simulate_targets( inv_model.fwd_model, ...
@@ -81,9 +81,8 @@ function [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
       end
    end
 
-   VOL = pp.VOLUME';
 
-function NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL)
+function NF= nf_calc_use_matrix( inv_model, h_data, c_data)
 % To model std(z) we use z=z0+n
 % so that std(z) = sqrt(var(z)) = sqrt(1/L * E[n'*n])
 % we know a priori that the mean noise is zero, thus
@@ -101,6 +100,7 @@ function NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL)
 % To run efficiently mean(diag(cov_N))=mean(sum(N.^2,2))
 % The sum over X is actually weighted by the volume of
 %  each element, so VOL.^2*(sum(X.^2,2)
+   VOL = get_elem_volume(inv_model.fwd_model)';
 
    % calculate signal
    d_len   = size(h_data,1);
@@ -186,7 +186,9 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
    end
 
 % OLD CODE - iterate
-function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
+function NF= nf_calc_iterate( inv_model, h_data, c_data);
+   VOL = get_elem_volume(inv_model.fwd_model)';
+
    % calculate signal
    d_len   = size(h_data,1);
    delta   = 1e-2* mean(h_data);
@@ -226,12 +228,14 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
    var_img  = var_img  / d_len;
    NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
 
-function NF= nf_calc_random( rec, vh, vi, VOL, N_RUNS);
+function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
+   VOL = get_elem_volume(rec.fwd_model);
+
    eidors_cache('boost_priority',-2); % low priority values
 
    imgr= inv_solve(rec, vh, vi);
 
-   sig_ampl = mean( abs( VOL' .* imgr.elem_data )) / ...
+   sig_ampl = mean( abs( VOL .* imgr.elem_data )) / ...
               mean( abs( calc_difference_data( vh, vi, rec.fwd_model )));
 
 % Estimate Signal Amplitude
@@ -239,13 +243,13 @@ function NF= nf_calc_random( rec, vh, vi, VOL, N_RUNS);
       vn= addnoise(vh, vi, 1.0);
 
       imgr= inv_solve(rec, vh, vn);
-      noi_imag(i) = std( VOL' .* imgr.elem_data );
+      noi_imag(i) = std( VOL .* imgr.elem_data );
       noi_sgnl(i) = std( calc_difference_data( vh, vn, rec.fwd_model ));
    end
    noi_ampl = noi_imag./noi_sgnl;
    NF =  mean(noi_ampl/sig_ampl);
    SE =  std(noi_ampl/sig_ampl)/sqrt(N_RUNS);
-   eidors_msg('NF= %f+/-%f\n', NF, SE, 1);
+   eidors_msg('NF= %f+/-%f', NF, SE, 1);
 
    eidors_cache('boost_priority',2);
 
