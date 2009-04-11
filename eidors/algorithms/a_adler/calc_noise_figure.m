@@ -36,15 +36,15 @@ function NF = calc_noise_figure( inv_model, hp)
 %    SNR_x = sum(|x0|/len_x) / std(x/len_x)
 
 
-if nargin<1
+if nargin>=2
    inv_model.hyperparameter.value= hp;
-   inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func')
+   try; inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func'); end
 else
    try hp= inv_model.hyperparameter.value; end
 end
 [inv_model, h_data, c_data, VOL] = process_parameters( inv_model );
 
-NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL) 
+%NF= nf_calc_use_matrix( inv_model, h_data, c_data, VOL) 
 NF= nf_calc_iterate( inv_model, h_data, c_data, VOL) 
 eidors_msg('calculating NF=%f hp=%g', NF, hp, 2);
 
@@ -191,6 +191,7 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
 
    [img0] = get_images( inv_model, h_data, c_data);
    sig_img= mean(VOL'.*abs(img0.elem_data));
+   sig_img= VOL*abs(img0.elem_data) / length(img0.elem_data);
 
    % Now do noise
    var_data= 0;
@@ -200,16 +201,17 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data, VOL);
       this_noise(i,:) = 1;
       c_noise = c_data + this_noise;
       [imgn] = get_images( inv_model, h_data, c_noise);
-      if 0
-	 var_data = var_data + mean(sum( ...
-	    calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
-			  .^2, 2)); 
-	 var_img= var_img +  VOL.^2*imgn.elem_data.^2; 
+      if 1
+         var_data = var_data + mean(sum( ...
+            calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
+                          .^2, 2)); 
+%        var_img= var_img +  mean( (VOL'.*imgn.elem_data).^2 ); 
+         var_img= var_img +  (VOL.^2)*sum(imgn.elem_data.^2,2 ) / length(imgn.elem_data); 
       else
-	 var_data = var_data + var( ...
-	    calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
-			         ); 
-	 var_img= var_img + var( VOL'.*imgn.elem_data ); 
+         var_data = var_data + var( ...
+            calc_difference_data( h_data, c_noise, inv_model.fwd_model ) ...
+                                 ); 
+         var_img= var_img + var( VOL'.*imgn.elem_data ); 
       end
    end
    var_data = var_data / d_len;
