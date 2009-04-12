@@ -20,7 +20,7 @@ pp= aa_fwd_parameters( fwd_model );
 % The one_step reconstruction matrix is cached
 one_step_inv = eidors_obj('get-cache', inv_model, 'aa_inv_solve');
 if ~isempty(one_step_inv)
-    eidors_msg('aa_inv_solve: using cached value', 2);
+    eidors_msg('aa_inv_solve: using cached value', 3);
 else
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
     J = calc_jacobian( fwd_model, img_bkgnd);
@@ -39,7 +39,7 @@ else
 %   one_step_inv= spdiags(scl,0, pp.n_elem, pp.n_elem) * one_step_inv;
 
     eidors_obj('set-cache', inv_model, 'aa_inv_solve', one_step_inv);
-    eidors_msg('aa_inv_solve: setting cached value', 2);
+    eidors_msg('aa_inv_solve: setting cached value', 3);
 end
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);

@@ -48,10 +48,10 @@ elseif nargin>=2
 end
 
 
-[objid, times, sizes, prios, priidx] = get_names_times;
 
 switch command
    case {'clear_all','clear'}
+      [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  1:length(sizes) );
 
    case 'cache_size'
@@ -73,6 +73,7 @@ switch command
       eidors_objects.cache_priority = retval;
 
    case 'show_objs'
+      [objid, times, sizes, prios, priidx] = get_names_times;
       for i=1:length(times)
          fprintf('t=%9.7f b=%9.0d p=%02d, i=%03d: %s\n', rem(times(i),1), ... %today
              sizes(i), prios(i), priidx(i), objid{i} ); 
@@ -82,16 +83,19 @@ switch command
 % This will remove just in order of priidx.
 %     remove_objids( objid, sizes,  find(cumsum(sizes) > limit) );
 % Remove in order of time + priority
+      [objid, times, sizes, prios, priidx] = get_names_times;
       tot=     cumsum(sizes(priidx)); 
       remove = find(tot > limit);
       rmidx=   priidx(remove);
       remove_objids( objid, sizes,  rmidx);
 
    case 'clear_old'
+      [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  ...
         find(times < limit) );
 
    case 'clear_new'
+      [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  ...
         find(times > limit) );
    
@@ -111,8 +115,16 @@ function [objid, times, sizes, prios, priidx] = get_names_times;
          objid{idx}= fn1;
 
          obj = getfield(eidors_objects, fn1 );
-         times(idx) = obj.last_used;
-         prios(idx) = obj.priority;
+         try
+            times(idx) = obj.last_used;
+         catch
+            times(idx) = 0; % old
+         end
+         try
+            prios(idx) = obj.priority;
+         catch
+            prios(idx) = 0; % default
+         end
 
          ww= whos('obj');
          sizes(idx) = ww.bytes;

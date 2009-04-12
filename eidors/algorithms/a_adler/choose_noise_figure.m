@@ -1,11 +1,11 @@
 function HP= choose_noise_figure( inv_model );
-% CHOOSE_NOISE_FIGURE: select hyperparameter based on NF calculation
-% HP= select_noise_figure( inv_model );
+% CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation
+% HP= choose_noise_figure( inv_model );
 % inv_model  => inverse model struct
 %
 % In order to use this function, it is necessary to specify
 % inv_model.hyperparameter. has the following fields
-% hpara.func         = @select_noise_figure;
+% hpara.func         = @choose_noise_figure;
 % hpara.noise_figure = NF Value requested
 % hpara.tgt_elems    = vector of element numbers of contrast in centre
 %
@@ -26,15 +26,17 @@ end
 
 HP = eidors_obj('get-cache', inv_model, 'HP_for_NF');
 if ~isempty(HP)
-   eidors_msg('select_noise_figure: using cached value', 2);
+   eidors_msg('choose_noise_figure: using cached value', 2);
    return
 end
 
 HP = HP_for_NF_search(reqNF,inv_model);
 
    
+eidors_cache('boost_priority',2);
 eidors_obj('set-cache', inv_model, 'HP_for_NF', HP);
-eidors_msg('select_noise_figure: setting cached value', 2);
+eidors_msg('choose_noise_figure: setting cached value', 2);
+eidors_cache('boost_priority',-2);
 
 
 function [HP,NF,SE] = HP_for_NF_search(dNF,imdl);
