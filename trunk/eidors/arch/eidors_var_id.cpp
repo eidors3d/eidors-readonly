@@ -244,7 +244,8 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     // sparse variable. We need to hash the numeric data,
     // as well as the row and col index pointers
     double *pr,*pi;
-    int *irs, *jcs, nnz, cols; 
+    size_t *irs, *jcs;
+    int  nnz, cols; 
     // Don't check sparse is double since it isn't in Matlab 6
     pr  = mxGetPr( var );
     pi  = mxGetPi( var );
