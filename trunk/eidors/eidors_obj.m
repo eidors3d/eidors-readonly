@@ -97,7 +97,8 @@ function value= get_cache_obj( obj, prop, varargin );
    global eidors_objects
    value= [];
 
-   [objlist, cachename]= proc_obj_list( varargin{:} );
+% We don't do this since cache directories aren't defined (yet)
+%  [objlist, cachename]= proc_obj_list( varargin{:} );
 
    obj_id= calc_obj_id( obj ); % recalculate in case obj changed
 
@@ -110,25 +111,26 @@ function value= get_cache_obj( obj, prop, varargin );
 % if cachename is specified, then cache to that file, rather
 %  than to the standard eidors_objects location
 % TODO: fixthis - use ( ) for matlab > 6.0
-   if ~isempty( cachename )
-      test_for_cachdir;
-      filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
-      if exist( filename, 'file')
-         load(filename); %variable 'value' should be there
-      end
-   else
+%  if ~isempty( cachename )
+%     test_for_cachdir;
+%     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
+%     if exist( filename, 'file')
+%        load(filename); %variable 'value' should be there
+%     end
+%  else
       try
-%        value= eidors_objects.( obj_id ).cache.( prop );
-         value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
+         value= eidors_objects.( obj_id ).cache.( prop );
+%        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
          update_timestamp(obj_id);
       end
-   end
+%  end
 
 function set_cache_obj( obj, prop, value, varargin )
    global eidors_objects
    if ~cache_this( obj ) ; return ; end
 
-   [objlist, cachename]= proc_obj_list( varargin{:} );
+% Cache directories aren't defined, yet
+%  [objlist, cachename]= proc_obj_list( varargin{:} );
 
    obj_id = calc_obj_id( obj );
 
@@ -138,14 +140,14 @@ function set_cache_obj( obj, prop, value, varargin )
       end
    end
 
-   if isempty(cachename)
+%  if isempty(cachename)
       eidors_objects.( obj_id ).cache.( prop ) = value;
       eidors_objects.( obj_id ).priority = eidors_objects.cache_priority;
       update_timestamp(obj_id);
-   else
-      filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
-      save(filename, 'value');
-   end
+%  else
+%     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
+%     save(filename, 'value');
+%  end
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
