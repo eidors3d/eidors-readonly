@@ -24,11 +24,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <mex.h>
-// This shouldn't be necessary - bug in octave2.9.13 build for windows
+/* This shouldn't be necessary - bug in octave2.9.13 build for windows
 #ifdef OCTAVE_API
 #include <octave/config.h>
 #include <octave/oct-types.h>
 #endif
+*/
 
 /*
  * Defines to alow stat
@@ -93,6 +94,7 @@ recurse_hash( hash_context *c, const mxArray *var );
 
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
+#define sSZT sizeof(size_t)
 #undef VERBOSE 
 // #define VERBOSE
 		
@@ -245,17 +247,38 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     // as well as the row and col index pointers
     double *pr,*pi;
     size_t *irs, *jcs;
-    int  nnz, cols; 
+    int  nnz, cols;
+    int zero= 0, i; 
+    unsigned char *p_jcs, *p_irs;
     // Don't check sparse is double since it isn't in Matlab 6
     pr  = mxGetPr( var );
     pi  = mxGetPi( var );
-    irs = mxGetIr( var );
-    jcs = mxGetJc( var ); // size 
+
+    p_irs = mxGetIr( var );
+    p_jcs = mxGetJc( var );
     cols= mxGetN( var );
     nnz = *(jcs + cols ); /* after last element of jcs */
 
-    hash_process( c, (unsigned char *) jcs, sINT * cols );
-    hash_process( c, (unsigned char *) irs, sINT * nnz );
+printf("st= %d\n",sSZT);
+    if (sSZT==4) {
+       for(i=0; i<cols; i++) {
+          hash_process( c, (unsigned char *) &zero, sINT);
+          hash_process( c, p_jcs + i*sINT, sINT);
+       }
+       for(i=0; i<nnz; i++) {
+          hash_process( c, (unsigned char *) &zero, sINT);
+          hash_process( c, p_irs + i*sINT, sINT);
+       }
+    } else {
+       for(i=0; i<cols; i++) {
+          hash_process( c, p_jcs + i*sSZT, sSZT);
+       }
+       for(i=0; i<nnz; i++) {
+          hash_process( c, p_irs + i*sSZT, sINT);
+       }
+    }
+//  hash_process( c, (unsigned char *) p_jcs, sINT * cols );
+    hash_process( c, (unsigned char *) p_irs, sINT * nnz );
     hash_process( c, (unsigned char *) pr,  sDBL * nnz );
     if ( pi != NULL ) {
        hash_process( c, (unsigned char *) pi, sDBL * nnz );
