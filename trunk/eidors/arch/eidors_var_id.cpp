@@ -246,20 +246,21 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     // sparse variable. We need to hash the numeric data,
     // as well as the row and col index pointers
     double *pr,*pi;
-    size_t *irs, *jcs;
     int  nnz, cols;
     int zero= 0, i; 
     unsigned char *p_jcs, *p_irs;
-    // Don't check sparse is double since it isn't in Matlab 6
+    // WARNING: we'll have problem if sparse isn't double
     pr  = mxGetPr( var );
     pi  = mxGetPi( var );
 
     p_irs = (unsigned char *) mxGetIr( var );
     p_jcs = (unsigned char *) mxGetJc( var );
     cols= mxGetN( var );
-    nnz = *(jcs + cols ); /* after last element of jcs */
+    nnz = *(mxGetJc(var) + cols ); /* after last element of jcs */
 
-printf("st= %d\n",sSZT);
+    #ifdef VERBOSE
+      printf("st= %d nnz=%d\n",sSZT,nnz);
+    #endif
     if (sSZT==4) {
        for(i=0; i<cols; i++) {
           hash_process( c, (unsigned char *) &zero, sINT);
@@ -274,7 +275,7 @@ printf("st= %d\n",sSZT);
           hash_process( c, p_jcs + i*sSZT, sSZT);
        }
        for(i=0; i<nnz; i++) {
-          hash_process( c, p_irs + i*sSZT, sINT);
+          hash_process( c, p_irs + i*sSZT, sSZT);
        }
     }
 //  hash_process( c, (unsigned char *) p_jcs, sINT * cols );
@@ -532,11 +533,11 @@ void hash_process( hash_context * context, unsigned char * data, unsigned len )
 {
 unsigned int i, j;
 unsigned_int32 blen = ((unsigned_int32)len)<<3;
-#if 1
+#if VERBOSE
   {int i;
-   printf("HP(%d):[",len);
+   printf("%d:[",len);
    for(i=0;i<len; i++) printf("%02X",data[i]);
-   printf("]\n");}
+   printf("]  ");}
 #endif
 
     j = (context->count[0] >> 3) & 63;
