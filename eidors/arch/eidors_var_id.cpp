@@ -254,8 +254,8 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     pr  = mxGetPr( var );
     pi  = mxGetPi( var );
 
-    p_irs = mxGetIr( var );
-    p_jcs = mxGetJc( var );
+    p_irs = (unsigned char *) mxGetIr( var );
+    p_jcs = (unsigned char *) mxGetJc( var );
     cols= mxGetN( var );
     nnz = *(jcs + cols ); /* after last element of jcs */
 
@@ -278,7 +278,7 @@ printf("st= %d\n",sSZT);
        }
     }
 //  hash_process( c, (unsigned char *) p_jcs, sINT * cols );
-    hash_process( c, (unsigned char *) p_irs, sINT * nnz );
+//  hash_process( c, (unsigned char *) p_irs, sINT * nnz );
     hash_process( c, (unsigned char *) pr,  sDBL * nnz );
     if ( pi != NULL ) {
        hash_process( c, (unsigned char *) pi, sDBL * nnz );
@@ -532,6 +532,12 @@ void hash_process( hash_context * context, unsigned char * data, unsigned len )
 {
 unsigned int i, j;
 unsigned_int32 blen = ((unsigned_int32)len)<<3;
+#if 1
+  {int i;
+   printf("HP(%d):[",len);
+   for(i=0;i<len; i++) printf("%02X",data[i]);
+   printf("]\n");}
+#endif
 
     j = (context->count[0] >> 3) & 63;
     if ((context->count[0] += blen) < blen ) context->count[1]++;
