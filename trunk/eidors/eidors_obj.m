@@ -103,6 +103,7 @@ function value= get_cache_obj( obj, prop, varargin );
    obj_id= calc_obj_id( obj ); % recalculate in case obj changed
 
    if nargin==3
+      objlist = varargin;
       for dep_obj = objlist{:}
          prop= [prop,'_', calc_obj_id(dep_obj)];
       end
@@ -134,7 +135,8 @@ function set_cache_obj( obj, prop, value, varargin )
 
    obj_id = calc_obj_id( obj );
 
-   if nargin>=4 & isempty(cachename)
+   if nargin>=4 
+      objlist = varargin;
       for dep_obj = objlist{:}
          prop= [prop,'_', calc_obj_id(dep_obj)];
       end
