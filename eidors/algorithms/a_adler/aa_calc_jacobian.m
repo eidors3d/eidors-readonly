@@ -52,7 +52,7 @@ end
 % calculate normalized Jacobian
 if pp.normalize
    data= fwd_solve( img );
-   J= J ./ (data.meas(:)*ones(1,e));
+   J= J ./ (data.meas(:)*ones(1,nparam));
    
 end
 
