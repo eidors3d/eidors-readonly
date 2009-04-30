@@ -17,6 +17,7 @@ function system_mat = calc_system_mat( fwd_model, img)
 % $Id$
 
 if nargin==1
+   img = fwd_model;
    fwd_model = img.fwd_model;
 end
 
