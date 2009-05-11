@@ -1,0 +1,187 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9.5in}
+\setlength{\topmargin}{-0.7in}
+\setlength{\evensidemargin}{0in}
+\setlength{\oddsidemargin}{0in}
+\newcommand{\mysection}[1]{
+~\\ \noindent
+{\bf \normalsize #1}
+\vspace{1mm}
+}
+
+
+\begin{document}
+\renewcommand\refname{}
+
+
+\section*{%
+Parameter selections for lung imaging using GREIT
+}
+
+\begin{list}{}{\setlength\leftmargin{25mm}}
+\item[]\raggedright
+ \footnotesize
+{\bf
+        A Adler$^{1}$
+        J H Arnold$^{2}$
+        R Bayford$^{3}$
+        A Borsic$^{4}$
+        B Brown$^{5}$
+        P Dixon$^{6}$
+        T J C Faes$^{7}$
+        I Frerichs$^{8}$
+        H Gagnon$^{9}$
+        Y G\"arber$^{10}$
+        B Grychtol$^{11}$, 
+        G Hahn$^{12}$
+        W R B Lionheart$^{13}$
+        A Malik$^{14}$
+        R P Patterson$^{15}$
+        J Stocks$^{16}$
+        A Tizzard$^{3}$
+        N Weiler$^{8}$
+        G K Wolf$^{2}$
+}
+\\
+          $^{1}$Carleton University, Ottawa
+          $^{2}$Children's Hospital Boston
+          $^{3}$Middlesex University, London
+          $^{4}$Dartmouth College, Hanover, NH
+          $^{5}$University of Sheffield
+          $^{6}$Cardinal Health Care, London
+          $^{7}$VUMC, Amsterdam
+          $^{8}$University of Schleswig-Holstein
+          $^{9}$\'Ecole Polytechnique de Montr\'eal
+         $^{10}$Dr\"ager Medical, L\"ubeck
+         $^{11}$University of Strathclyde
+         $^{12}$University of G\"ottingen
+         $^{13}$University of Manchester
+         $^{14}$Maltron International, Rayleigh
+         $^{15}$University of Minnesota
+         $^{16}$University College London
+\end{list}
+
+\vspace{-5mm}
+\small
+\mysection{Introduction}
+
+One of the most promising applications of EIT is for
+monitoring the distribution of breathing in ventilated
+patients. Based on EIT images, ventilation strategies could
+be optimised to hopefully improve gas exchange and reduce
+ventilator induced lung injury. One key limitation is that
+the majority of clinical and experimental EIT research
+has been performed with the Sheffield back-projection
+reconstruction algorithm developed in the early 90's; this
+is an obstacle to interpretation of EIT images because
+the reconstructed images are not well characterised. To
+address this issue, we are developing a consensus linear
+reconstruction algorithm for lung EIT, called GREIT (Graz
+consensus Reconstruction algorithm for EIT).  The goal of
+GREIT is to develop a consensus on the desired properties
+of a linear reconstruction algorithm, and implement an
+approach to achieve a good fit to these properties.
+This paper describes the GREIT image reconstruction
+framework developed, and
+current work to select parameter values.
+
+\vspace{-3mm}
+\mysection{GREIT Image Reconstruction Framework}
+
+The framework developed\cite{GREIT09} consists of: 1)
+detailed finite element models of a representative adult
+and neonatal thorax; 2) consensus on the performance
+figures of merit for EIT image reconstruction; and 3) a
+systematic approach to optimise a linear reconstruction
+matrix to desired performance measures (Fig.\ \ref{fig:figparams} Left).
+The consensus figures of merit (Fig.\ \ref{fig:figparams} Centre)
+ in agreed order of importance,
+are: a) uniform amplitude response (AR), b) small and
+uniform position error (PE), c) small ringing artefacts (RNG),
+d) uniform resolution (RES), e) limited shape deformation (SD),
+and f) high resolution (RES). 
+As shown in Fig.\ \ref{fig:figparams} Right, GREIT is able to 
+achieve more uniform spatial resolution with low ringing at the
+expense of a decrease in spatial resolution near the boundary.
+\vspace{-4mm}
+\begin{figure}[htp]
+\centering
+\includegraphics[height=45mm]{fig-params.eps}
+\vspace{-6mm}
+\caption{%
+\small
+{\em Left:} GREIT formulation. Each training data point
+    ${\bf x}_t^{(k)}$ corresponds to a {\em desired response},
+$\tilde{\bf x}^{(k)}$, and a reconstructed image,
+  $\hat{\bf x}^{(k)}$;
+{\em Centre:} Figures of merit calculated from $\hat{\bf x}^{(k)}$;
+{\em Right:} Example reconstructed images for three different
+targets from
+Sheffield Backprojection (SBP), a NOSER type Gauss-Newton solver (GN),
+and GREIT (GR).
+}
+\label{fig:figparams}
+\end{figure}
+
+\vspace{-8mm}
+\mysection{Selection of parameter values}
+
+Several parameters in the GREIT framework need to be
+determined based on a careful
+evaluation strategy. Algorithm parameters which need to
+be determined are:
+1) training noise levels,
+2) model accuracy,
+3) parameter settings for movement compensation, and
+4) assumptions about the background (reference)
+   conductivity of the thorax.
+
+Clinical and experimental evaluation of GREIT is being
+performed in order to choose appropriate algorithm values,
+and evaluate image reconstruction performance with "real"
+data. A collection of clinical and experimental data has
+been assembled from animal, neonatal  and adult studies
+in Canada, Germany, UK and USA. Evaluation will consist
+of reconstructing images with variants of GREIT, and
+asking experts to score the images.  One concern with any
+new medical imaging algorithm is its performance in the
+presence of data artefacts. With experience, such artefacts
+can be identified in the images; but such experience needs
+to be developed for a new algorithm.  Thus, another goal
+of GREIT evaluation is to develop a set of heuristics,
+both visual and automatic, to detect such data errors.
+
+The goal of this work is to develop a well characterised 2D
+linear EIT algorithm for lung imaging which may be used
+for research and commercial applications.  All software
+and data to implement and test the algorithm have been
+made available on the internet at eidors.org/GREIT under
+an open source license which allows free research and
+commercial use.
+
+The goal of this work is to develop a well characterised 2D
+linear EIT algorithm for lung imaging which may be used
+for research and commercial applications.  All software
+and data to implement and test the algorithm have been
+made available on the internet at eidors.org/GREIT under
+an open source license which allows free research and
+commercial use.
+
+\mysection{References}
+\begin{thebibliography}{9}
+\setlength{\itemsep}{-2mm}
+\vspace{-1.8cm}
+\bibitem{GREIT09} 
+Adler A  Arnold JA Bayford R {\em etal} (2009)
+In Press {\em Physiol Meas}
+
+\bibitem{frerichs03}
+Frerichs I Dargavillle PA Dudykevych T Rimensberger PM (2003) 
+{\em Int Care Med} 29:2312-6
+
+\end{thebibliography}
+
+
+\end{document}
