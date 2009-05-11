@@ -11,7 +11,7 @@ the volume at the place of interest.
 To simulate this, we simulate a ball moving in
 a helical path on a fine netgen model
 (available
- <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x2_vfine.7z"
+ <a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x2_vfine.7z"
            >here</a>)
 <pre>
 <!--#include virtual="centre_slice01.m" -->
