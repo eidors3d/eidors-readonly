@@ -17,8 +17,10 @@ end
 
 FC= calc_system_mat_fields( fwd_model );
 
+eidors_cache('boost_priority',1); % Moderate Priority boost
 eidors_obj('set-cache', fwd_model, 'aa_system_mat_fields', FC);
 eidors_msg('aa_system_mat_fields: setting cached value', 4);
+eidors_cache('boost_priority',-1);
 
 function FC= calc_system_mat_fields( fwd_model );
    p= aa_fwd_parameters( fwd_model );
