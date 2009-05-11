@@ -33,10 +33,10 @@ end
 HP = HP_for_NF_search(reqNF,inv_model);
 
    
-eidors_cache('boost_priority',2);
+eidors_cache('boost_priority',3);
 eidors_obj('set-cache', inv_model, 'HP_for_NF', HP);
 eidors_msg('choose_noise_figure: setting cached value', 2);
-eidors_cache('boost_priority',-2);
+eidors_cache('boost_priority',-3);
 
 
 function [HP,NF,SE] = HP_for_NF_search(dNF,imdl);
