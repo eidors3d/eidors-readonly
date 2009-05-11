@@ -9,10 +9,25 @@ function make_figures(figno)
      case 2;
        imdl = mk_common_model('c2c2',16);
        imdl.fwd_model.normalize_measurements= 1;
-       imdl.hyperparameter.value = 0.05;
+       imdl.hyperparameter.value = 0.0189;
 
      case 3;
-       mdl = fmdl3d;
+       imdl = mk_common_model('c2c2',16);
+       f_mdl= fmdl3d;
+       c_mdl= imdl.fwd_model;
+       imdl.rec_model = c_mdl;
+       imdl.fwd_model = f_mdl;
+       imdl.fwd_model.stimulation = c_mdl.stimulation;
+       imdl.fwd_model.meas_select = c_mdl.meas_select;
+scl= 15;
+c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,scl];
+c_mdl.mk_coarse_fine_mapping.f2c_project = (1/scl)*speye(3);
+c_mdl.mk_coarse_fine_mapping.z_depth = inf;
+c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
+
+       imdl.fwd_model.coarse2fine = c2f;
+       imdl.fwd_model.normalize_measurements= 0;
+       imdl.hyperparameter.value = 0.00442;
 
 
      otherwise

@@ -129,14 +129,40 @@ and GREIT (GR).
 \mysection{Selection of parameter values}
 
 Several parameters in the GREIT framework need to be
-determined based on a careful
-evaluation strategy. Algorithm parameters which need to
+determined based on a careful evaluation strategy.
+The key parameters which need to
 be determined are:
 1) training noise levels,
 2) model accuracy,
-3) parameter settings for movement compensation, and
-4) assumptions about the background (reference)
+3) the use (or not) of normalized difference imaging,
+4) parameter settings for movement compensation, and
+5) assumptions about the background (reference)
    conductivity of the thorax.
+
+Current work indicates that the parameter with the most
+significant impact on reconstructed images is the
+reference conductivity used. While most difference EIT
+images of the lungs assume a homogeneous conductivity 
+distribution, this is clearly not valid for the thorax. 
+The homogeneous assumption tests to ``squeeze'' the lung
+images together. Fig.\ \ref{fig:figbackgnd} shows images
+of tidal volume in a pig lung injury model (data from 
+\cite{frerichs03}) and the effect of the background
+conductivity parameter. 
+
+\begin{figure}[htp]
+\centering
+%\includegraphics[height=45mm]{fig-params.eps}
+\vspace{-6mm}
+\caption{%
+\small
+Images of tidal volume in lung-injured piglet
+\cite{frerichs03} using different reconstruction
+training data.
+{\em A:} 
+}
+\label{fig:figbackgnd}
+\end{figure}
 
 Clinical and experimental evaluation of GREIT is being
 performed in order to choose appropriate algorithm values,
@@ -153,17 +179,18 @@ to be developed for a new algorithm.  Thus, another goal
 of GREIT evaluation is to develop a set of heuristics,
 both visual and automatic, to detect such data errors.
 
-The goal of this work is to develop a well characterised 2D
-linear EIT algorithm for lung imaging which may be used
-for research and commercial applications.  All software
-and data to implement and test the algorithm have been
-made available on the internet at eidors.org/GREIT under
-an open source license which allows free research and
-commercial use.
 
-The goal of this work is to develop a well characterised 2D
-linear EIT algorithm for lung imaging which may be used
-for research and commercial applications.  All software
+\vspace{-3mm}
+\mysection{Discussion}
+
+The goal of GREIT is to develop a well characterised 2D
+linear difference EIT algorithm for lung imaging. We seek to develop
+a robust algorithm which incorporates the key developments
+in EIT lung image reconstructon. Our experience to date
+with GREIT shows improvements in resolution of image features
+as well as reduced image artefacts over the Sheffield backprojection
+algorithm. In order to facilitate use of GREIT,
+all software
 and data to implement and test the algorithm have been
 made available on the internet at eidors.org/GREIT under
 an open source license which allows free research and
