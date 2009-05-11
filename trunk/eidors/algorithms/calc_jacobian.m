@@ -25,7 +25,8 @@ if nargin==1
    fwd_model = img.fwd_model;
 end
 
-cache_obj= {fwd_model, img.elem_data};
+cache_obj= jacobian_cache_params( fwd_model, img.elem_data );
+
 J= eidors_obj('get-cache', cache_obj, 'jacobian');
 if ~isempty(J)
    eidors_msg('calc_jacobian: using cached value', 3);
@@ -44,3 +45,8 @@ end
 
 eidors_obj('set-cache', cache_obj, 'jacobian', J);
 eidors_msg('calc_jacobian: setting cached value', 3);
+
+% Make the Jacobian only depend on 
+function cache_obj= jacobian_cache_params( fwd_model, img_elem_data );
+   cache_obj = {fwd_model, img_elem_data};
+
