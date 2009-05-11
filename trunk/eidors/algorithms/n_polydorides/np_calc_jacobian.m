@@ -23,14 +23,16 @@ if isfield(fwd_model,'coarse2fine');
    J = jacobian_3d_fields(Vfwd,s_mat.Ela,s_mat.D, p.elec, ...
                           p.vtx,p.simp, img.elem_data, v_f, p.df, ...
                           fwd_model.coarse2fine);
+   nparam= size(fwd_model.coarse2fine,2);
 else 
    J = jacobian_3d_fields(Vfwd,s_mat.Ela,s_mat.D, p.elec, ...
                           p.vtx,p.simp, img.elem_data, v_f, p.df);
+   nparam= p.n_elem;
 end
 
 % calculate normalized Jacobian if required
 if p.normalize
    data= fwd_solve( img );
-   J= J ./ (data.meas(:)*ones(1,p.n_elem));
+   J= J ./ (data.meas(:)*ones(1,nparam));
 end
 
