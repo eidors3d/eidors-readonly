@@ -45,7 +45,7 @@ if nargin>=2
    inv_model.hyperparameter.value= hp;
    try; inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func'); end
 else
-   try hp= inv_model.hyperparameter.value; end
+   hp= inv_model.hyperparameter.value;
 end
 [inv_model, h_data, c_data] = process_parameters( inv_model );
 
