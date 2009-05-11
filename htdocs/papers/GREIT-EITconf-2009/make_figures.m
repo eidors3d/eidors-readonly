@@ -13,20 +13,20 @@ function make_figures(figno)
 
      case 3;
        imdl = mk_common_model('c2c2',16);
-       f_mdl= fmdl3d;
-       c_mdl= imdl.fwd_model;
-       imdl.rec_model = c_mdl;
+       [f_mdl,c2f]= fmdl3d( imdl.fwd_model);
+       imdl.rec_model = imdl.fwd_model;
        imdl.fwd_model = f_mdl;
-       imdl.fwd_model.stimulation = c_mdl.stimulation;
-       imdl.fwd_model.meas_select = c_mdl.meas_select;
-scl= 15;
-c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,scl];
-c_mdl.mk_coarse_fine_mapping.f2c_project = (1/scl)*speye(3);
-c_mdl.mk_coarse_fine_mapping.z_depth = inf;
-c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
-
        imdl.fwd_model.coarse2fine = c2f;
        imdl.fwd_model.normalize_measurements= 0;
+       imdl.hyperparameter.value = 0.00442;
+
+     case 4;
+       imdl = mk_common_model('c2c2',16);
+       [f_mdl,c2f]= fmdl3d( imdl.fwd_model);
+       imdl.rec_model = imdl.fwd_model;
+       imdl.fwd_model = f_mdl;
+       imdl.fwd_model.coarse2fine = c2f;
+       imdl.fwd_model.normalize_measurements= 1;
        imdl.hyperparameter.value = 0.00442;
 
 
@@ -60,15 +60,23 @@ function imdl = set_tgts( imdl, nf )
  
 
 
-function mdl = fmdl3d
+function [f_mdl, c2f] = fmdl3d( c_mdl );
    if ~exist('ng_mdl_16x1_coarse.mat','file')
       !wget http://eidors3d.sf.net/data_contrib/netgen_moving_ball/ng_mdl_16x1_coarse.7z
       !C:\progra~1\7-zip\7z e ng_mdl_16x1_coarse.7z ng_mdl_16x1_coarse.mat
    end
 
    load ng_mdl_16x1_coarse;
-   mdl = ng_mdl_16x1_coarse;
+   f_mdl = ng_mdl_16x1_coarse;
 
+   f_mdl.stimulation = c_mdl.stimulation;
+   f_mdl.meas_select = c_mdl.meas_select;
+
+   scl= 15;
+   c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,scl];
+   c_mdl.mk_coarse_fine_mapping.f2c_project = (1/scl)*speye(3);
+   c_mdl.mk_coarse_fine_mapping.z_depth = inf;
+   c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
 
 function [eelv,eilv] = pig_data
    if ~exist('p1130107.get','file');
