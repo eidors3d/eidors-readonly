@@ -81,26 +81,28 @@ function c_elems = all_contained_elems( fm, cm, z_depth)
     c_elems(all(tsn==-1,2))= -1; % all points outside
 
 
-% tsn = vector of length z_depth x 1
+% tsn = vector of length size(fm_pts,1)
 % tsn(i) = elem in cm which contains point
 % tsn(i) = -1 if point is outside cm (and z_depth, if appropriate)
 function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
-    dc= size(cm.elems,2);  %coarse dim+1
-    df= size(fm_pts,2); %fine dim+1
+    dc= size(cm.elems,2)-1;  %coarse dim
+    df= size(fm_pts,2); %fine dim
 
     tsn= -ones(size(fm_pts,1),1);
     not_oor= (tsn==-1); % logical 1
 
-    if dc==3
+    if dc==2  %corse model is 2D
+
        if df==3
        % look for f_mdl z not out of range 
           not_oor= not_oor &  any( abs(fm_pts(:,3) ) <= z_depth , 2);
        end
-
        dims=1:2;
 
-    elseif dc==4 %cm is 3D
-       error('cant handle 3D coarse models (yet)'); 
+    elseif dc==3 %coarse model is 3D
+
+       dims=1:3; 
+
     else
        error('coarse model must be 2 or 3D');
     end
