@@ -1,17 +1,35 @@
-function make_figures(figno)
+function make_figures
+   clf;
+   for i=0:4
+      axes('position',[i*0.2,0.42,0.2,0.58]);
+      make_fig(i,0) 
+      axis normal
+      axes('position',[i*0.2,-0.06,0.2,0.58]);
+      make_fig(i,1) 
+      axis normal
+   end
+   ax= get(gcf,'paperposition')
+   set(gcf,'paperposition',[ax(1:3),ax(3)/2.5])
+   print -depsc2 fig2.eps
+   set(gcf,'paperposition',[ax])
+   
 
+
+function make_fig(figno,imgno)
    switch figno
-     case 1;
+     case 0;
+       imdl = mk_common_gridmdl('backproj');
+     case 3;
        imdl = mk_common_model('c2c2',16);
        imdl.fwd_model.normalize_measurements= 0;
        imdl.hyperparameter.value = 0.0439;
 
-     case 2;
+     case 4;
        imdl = mk_common_model('c2c2',16);
        imdl.fwd_model.normalize_measurements= 1;
        imdl.hyperparameter.value = 0.0189;
 
-     case 3;
+     case 1;
        imdl = mk_common_model('c2c2',16);
        [f_mdl,c2f]= fmdl3d( imdl.fwd_model);
        imdl.rec_model = imdl.fwd_model;
@@ -20,7 +38,7 @@ function make_figures(figno)
        imdl.fwd_model.normalize_measurements= 0;
        imdl.hyperparameter.value = 0.00449;
 
-     case 4;
+     case 2;
        imdl = mk_common_model('c2c2',16);
        [f_mdl,c2f]= fmdl3d( imdl.fwd_model);
        imdl.rec_model = imdl.fwd_model;
@@ -33,16 +51,21 @@ function make_figures(figno)
      otherwise
        error('huh?')
    end
-   calc_noise_figure( set_tgts( imdl ));
+
+   if figno>0
+%  calc_noise_figure( set_tgts( imdl ));
 %  fprintf('hp=%1.8g\n', choose_noise_figure( set_tgts(imdl, 0.79)) );
+   end
 
    [eelv,eilv] = pig_data;
-    vh = eelv.p20; 
-    vi = eilv.p20; 
-
+   switch imgno;
+      case 0; vh = eelv.p0;  vi = eilv.p0; 
+      case 1; vh = eelv.p20; vi = eilv.p20; 
+      otherwise; error('huh?')
+   end
 
    img= inv_solve(imdl, vh, vi);
-   show_fem(img);
+   show_slices(img);
 
    
 function imdl = set_tgts( imdl, nf )
@@ -68,6 +91,7 @@ function [f_mdl, c2f] = fmdl3d( c_mdl );
 
    load ng_mdl_16x1_coarse;
    f_mdl = ng_mdl_16x1_coarse;
+   f_mdl.nodes = f_mdl.nodes(:,[2,1,3]); % flip x,y
 
    f_mdl.stimulation = c_mdl.stimulation;
    f_mdl.meas_select = c_mdl.meas_select;
@@ -78,7 +102,7 @@ function [f_mdl, c2f] = fmdl3d( c_mdl );
    scl= 15;
    c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,scl];
    c_mdl.mk_coarse_fine_mapping.f2c_project = (1/scl)*speye(3);
-   c_mdl.mk_coarse_fine_mapping.z_depth = inf;
+   c_mdl.mk_coarse_fine_mapping.z_depth = scl/5;
    c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
 
 function [eelv,eilv] = pig_data
