@@ -17,7 +17,7 @@
 
 
 \section*{%
-Parameter selections for lung imaging using GREIT
+Validation and parameter selection of GREIT algorithm
 }
 
 \begin{list}{}{\setlength\leftmargin{25mm}}
@@ -85,7 +85,9 @@ of a linear reconstruction algorithm, and implement an
 approach to achieve a good fit to these properties.
 This paper describes the GREIT image reconstruction
 framework developed, and
-current work to select parameter values.
+current work to choose select values for
+algorithm parameter to provide stable and 
+accurate clinical images.
 
 \vspace{-3mm}
 \mysection{GREIT Image Reconstruction Framework}
@@ -95,14 +97,14 @@ detailed finite element models of a representative adult
 and neonatal thorax; 2) consensus on the performance
 figures of merit for EIT image reconstruction; and 3) a
 systematic approach to optimise a linear reconstruction
-matrix to desired performance measures (Fig.\ \ref{fig:figparams} Left).
-The consensus figures of merit (Fig.\ \ref{fig:figparams} Centre)
+matrix to desired performance measures (Fig.\ \ref{fig:figparams}, Left).
+The consensus figures of merit (Fig.\ \ref{fig:figparams}, Centre)
  in agreed order of importance,
 are: a) uniform amplitude response (AR), b) small and
 uniform position error (PE), c) small ringing artefacts (RNG),
 d) uniform resolution (RES), e) limited shape deformation (SD),
 and f) high resolution (RES). 
-As shown in Fig.\ \ref{fig:figparams} Right, GREIT is able to 
+As shown in Fig.\ \ref{fig:figparams} (Right), GREIT is able to 
 achieve more uniform spatial resolution with low ringing at the
 expense of a decrease in spatial resolution near the boundary.
 \vspace{-4mm}

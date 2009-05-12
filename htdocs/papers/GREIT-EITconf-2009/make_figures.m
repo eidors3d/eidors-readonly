@@ -18,7 +18,7 @@ function make_figures(figno)
        imdl.fwd_model = f_mdl;
        imdl.fwd_model.coarse2fine = c2f;
        imdl.fwd_model.normalize_measurements= 0;
-       imdl.hyperparameter.value = 0.00442;
+       imdl.hyperparameter.value = 0.00449;
 
      case 4;
        imdl = mk_common_model('c2c2',16);
@@ -27,14 +27,14 @@ function make_figures(figno)
        imdl.fwd_model = f_mdl;
        imdl.fwd_model.coarse2fine = c2f;
        imdl.fwd_model.normalize_measurements= 1;
-       imdl.hyperparameter.value = 0.00442;
+       imdl.hyperparameter.value = 0.00190;
 
 
      otherwise
        error('huh?')
    end
    calc_noise_figure( set_tgts( imdl ));
-   fprintf('hp=%1.8g\n', choose_noise_figure( set_tgts(imdl, 0.79)) );
+%  fprintf('hp=%1.8g\n', choose_noise_figure( set_tgts(imdl, 0.79)) );
 
    [eelv,eilv] = pig_data;
     vh = eelv.p20; 
@@ -71,6 +71,9 @@ function [f_mdl, c2f] = fmdl3d( c_mdl );
 
    f_mdl.stimulation = c_mdl.stimulation;
    f_mdl.meas_select = c_mdl.meas_select;
+   f_mdl.solve = @aa_fwd_solve;
+   f_mdl.jacobian = @aa_calc_jacobian;
+   f_mdl.system_mat = @aa_calc_system_mat;
 
    scl= 15;
    c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,scl];
