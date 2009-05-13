@@ -31,8 +31,16 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
-%  path = linspace(0,1,200); phi = 2*pi*path;
-%  xyzr = [0.9*path.*sin(phi);0.9*path.*cos(phi);0*path; 0.05 + 0*path];
+   if size(xyzr) == [1,1]
+      path = linspace(0,1,xyzr); phi = 2*pi*path;
+      meanodes= mean(    img.fwd_model.nodes  );
+      lennodes= size( img.fwd_model.nodes,1); 
+      img.fwd_model.nodes = img.fwd_model.nodes - ones(lennodes,1)*meanodes;
+      maxnodes= max(max(abs( img.fwd_model.nodes(:,1:2) )));
+      img.fwd_model.nodes = img.fwd_model.nodes / maxnodes;
+
+      xyzr = [0.9*path.*sin(phi);0.9*path.*cos(phi);0*path; 0.05 + 0*path];
+   end
 
    Nt = size(xyzr,2);
    c2f = mk_c2f_circ_mapping( img.fwd_model, xyzr);
@@ -44,3 +52,5 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
    vh=vh.meas;
 
    vi= vh*ones(1,Nt) + J;
+
+% QUESTON: what should we multiply by J? It is very small.
