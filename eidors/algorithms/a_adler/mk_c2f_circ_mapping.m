@@ -51,3 +51,21 @@ function mapping = contained_elems_2d( mdl, xyr );
      mapping(:,i) = frac;
    end
 
+function mapping = contained_elems_3d( mdl, xyr );
+   Ne = size(mdl.elems,1); % Num elems
+   Nc = size(xyr,      2); % Num circs
+   % We fill sparse by columns, due to CCS storage, this is fairly efficient
+   mapping = sparse( Ne, Nc );
+
+   % INterpolate
+   n_interp = 3; % 7-df
+   m_pts = interp_mesh( mdl, n_interp); 
+   for i=1:Nc
+     xc = m_pts(:,1,:) - xyr(1,i);
+     yc = m_pts(:,2,:) - xyr(2,i);
+     zc = m_pts(:,3,:) - xyr(3,i);
+     inr= xc.^2 + yc.^2 + zc.^2 < xyr(4,i)^2;
+     frac= mean(inr,3);
+     mapping(:,i) = frac;
+   end
+
