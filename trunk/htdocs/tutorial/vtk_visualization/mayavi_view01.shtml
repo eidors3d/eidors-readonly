@@ -1,0 +1,73 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Viewing EIDORS images with Mayavi
+</h2>
+
+Since, the Matlab graphics functions for 3D visualization are
+fairly poor, EIDORS provides the capability to work with VTK
+files, which may be viewed with Mayavi.
+
+<h3>Install Mayavi</h3>
+
+Install mayavi from 
+<a href="http://mayavi.sourceforge.net/download.html"
+               >mayavi.sourceforge.net/download.html</a>
+
+<h3>Calculate image and save to a vtk file</h3>
+
+The following code will save to a file <tt>fname.vtk</tt>
+<pre>
+img= compare_3d_algs(1);
+writevtkfile('fname',img.fwd_model,img)
+% writevtkfile('fname',img) % IN MORE RECENT VERSIONS
+</pre>
+
+
+<h3> Image display </h3>
+
+<center>
+<img src="mayavi01a-file-open.png">
+<br> 
+<b>Step 1:</b> Run Mayavi. Load file.
+Click: File -&gt; Load.
+Select <tt>fname.vtk</tt>
+</center>
+<br>
+
+<center>
+<img src="mayavi01b-close-config.png">
+<br>
+<b>Step 2:</b> Close config dialog.
+ Click on Close
+</center>
+<br>
+
+<center>
+<img src="mayavi01c-configure-surface.png">
+<br>
+<b>Step 3:</b> Visualize Surface.
+Click: Visualize -&gt; Modules -&gt; SurfaceMap.
+Decrease Opacity.
+Click: Close.
+</center>
+<br>
+
+<center>
+<img src="mayavi01d-cut-planes.png">
+<br>
+<b>Step 4:</b> Visualize Cut - Planes.
+On "Configure Surface",
+Unclick: Scalar Coloring.
+Click: Visualize -&gt; Modules -&gt; ScalarCutPlane.
+Modify Angles and Distance to suit.
+Add more CutPlanes to suit.
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
