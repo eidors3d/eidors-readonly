@@ -25,8 +25,11 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 %   vh - homogeneous measurements M x 1
 %   vi - target simulations       M x n_points
 %   xyr_pt - x y and radius of each point 3 x n_points
-
 %
+% For small targets it is more accurate and much faster to
+%  use the function: simulate_movement.m
+
+% (C) 2005-2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
 if nargin <1
