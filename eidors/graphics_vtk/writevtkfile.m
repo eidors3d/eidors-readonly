@@ -1,6 +1,10 @@
 function writevtkfile(fn,varargin)
-% Useage: writevtkfile(filename,model,image)
-% or writevtkfile(fn,vtx,simp,vals);
+% Useage: writevtkfile(filename, eidors_image );
+%      or writevtkfile(filename,model,image)
+%      or writevtkfile(fn,vtx,simp,vals);
+%
+% Example:  img= compare_3d_algs(1);
+%           writevtkfile('fname',img);
 %
 % This function writes 3D meshes and associated scalar/vector/tensor fields to a VTK (Visualization Tool Kit)(www.kitware.com) dataset file
 %
@@ -21,13 +25,19 @@ function writevtkfile(fn,varargin)
 % CAVEAT: VTK supports only symmetrix tensors. It is left to the user to ensure that the data he is exporting 
 % consists of symmetric tensors (as if such a check were performed by writeVTKfile, performance of the filter would suffer)
 
-if nargin ==3
+if nargin==2
+   img  = varargin{1};
+   fmdl = img.fwd_model;
+   writevtkfile_old(fn, fmdl.nodes, fmdl.elems, img.elem_data);
+elseif nargin ==3
 %vtx = varargin{1}.nodes;
 %simp= varargin{1}.elems;
 %vals= varargin{2}.elem_data;
-writevtkfile_old(fn,varargin{1}.nodes,varargin{1}.elems,varargin{2}.elem_data);
+   fmdl = varargin{1};
+   img  = varargin{2};
+   writevtkfile_old(fn,fmdl.nodes, fmdl.elems, img.elem_data);
 elseif nargin==4
- writevtkfile_old(fn,varargin{1},varargin{2},varargin{3})
+   writevtkfile_old(fn,varargin{1},varargin{2},varargin{3})
 else
  error('Writevtkfile: Wrong number of arguments');
 end 
