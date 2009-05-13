@@ -24,14 +24,10 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-% Mapping depends only on nodes and elems - remove the other stuff
-try; c_mdl= rmfield(c_mdl,'electrode');   end
-try; c_mdl= rmfield(c_mdl,'stimulation'); end
-try; f_mdl= rmfield(f_mdl,'electrode');   end
-try; f_mdl= rmfield(f_mdl,'stimulation'); end
+c_obj = cache_obj(c_mdl, f_mdl)
 
 f_mdl= offset_and_project( f_mdl, c_mdl);
-mapping = eidors_obj('get-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping');
+mapping = eidors_obj('get-cache', c_obj, 'coarse_fine_mapping');
 if ~isempty(mapping)
     eidors_msg('mk_coarse_fine_mapping: using cached value', 3);
 else
@@ -49,10 +45,14 @@ else
        mapping = mapping*c_mdl.coarse2fine;
     end
 
-    eidors_obj('set-cache', {f_mdl,c_mdl}, 'coarse_fine_mapping', mapping);
+    eidors_obj('set-cache', c_obj, 'coarse_fine_mapping', mapping);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
 end
 
+% Mapping depends only on nodes and elems - remove the other stuff
+function c_obj = cache_obj(c_mdl, f_mdl)
+   c_obj = {c_mdl.nodes, c_mdl.elems,  ...
+            f_mdl.nodes, f_mdl.elems};
 
 % find all elems of ff_mdl completely contained in cc_mdl
 function c_elems = all_contained_elems( fm, cm, z_depth)
