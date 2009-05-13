@@ -61,7 +61,7 @@ function obj_id= eidors_obj(type,name, varargin );
 % (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
 % Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
 
-if nargin==0 || ~isstr(type)
+if nargin==0 || ~ischar(type)
    error('cannot call eidors_obj with no arguments');
 end
 
@@ -211,7 +211,7 @@ function [objlist, cachedir]= proc_obj_list( varargin );
    cachedir= [];
    if nargin==0
       objlist= {};
-   elseif isstr(varargin{nargin})
+   elseif ischar(varargin{nargin})
       cachedir= varargin{nargin};
       objlist = varargin(1:nargin-1);
    else

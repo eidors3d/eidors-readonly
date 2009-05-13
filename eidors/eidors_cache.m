@@ -44,7 +44,7 @@ if nargin<1
          eidors_objects.cache_priority); 
    return;
 elseif nargin>=2
-   if isstr(limit); limit= str2num(limit); end
+   if ischar(limit); limit= str2num(limit); end
 end
 
 
