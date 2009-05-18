@@ -43,9 +43,8 @@ function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 
 if nargin>=2
    inv_model.hyperparameter.value= hp;
+% Remove function parameter because it will recurse
    try; inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func'); end
-else
-   hp= inv_model.hyperparameter.value;
 end
 [inv_model, h_data, c_data] = process_parameters( inv_model );
 
