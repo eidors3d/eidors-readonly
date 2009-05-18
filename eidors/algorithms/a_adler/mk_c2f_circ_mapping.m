@@ -41,7 +41,7 @@ function mapping = contained_elems_2d( mdl, xyr );
    mapping = sparse( Ne, Nc );
 
    % INterpolate
-   n_interp = 4; % 7-df
+   n_interp = 5; % 7-df
    m_pts = interp_mesh( mdl, n_interp); 
    for i=1:Nc
      xc = m_pts(:,1,:) - xyr(1,i);
@@ -58,7 +58,7 @@ function mapping = contained_elems_3d( mdl, xyr );
    mapping = sparse( Ne, Nc );
 
    % INterpolate
-   n_interp = 3; % 7-df
+   n_interp = 4; % 7-df
    m_pts = interp_mesh( mdl, n_interp); 
    for i=1:Nc
      xc = m_pts(:,1,:) - xyr(1,i);

@@ -1,6 +1,18 @@
-function RM= calc_GREIT_RM(vh,vi, xyr, weight, normalize)
+function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 % CALCULATE GREIT reconstruction matrix
-%   RM= calc_GREIT_RM(vh,vi, xyr, weight, normalize)
+%   RM= calc_GREIT_RM(vh,vi, xyc, radius weight, normalize)
+% 
+% Input:
+%   vh     = homogeneous (reference) training measurements 
+%   vi     = inhomogeneous training measurements 
+%   xyc    = x,y position of targets 2xN
+%   radius = requested weighting matrix  (recommend 0.25 for 16 electrodes)
+%   weight = weighting matrix
+%      if scalar   = weighting of noise vs signal
+%      if 32^2 x N = weighting of each image output
+%   normalize = 0 -> regular difference EIT
+%                 -> normalized difference EIT
+% 
 %
 % (C) 2009 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
@@ -11,10 +23,10 @@ function RM= calc_GREIT_RM(vh,vi, xyr, weight, normalize)
       Y = vi - (vh*ones(1,size(vi,2)));
    end
 
-   D = desired_soln( xyr, 0.25 );
+   D = desired_soln( xyc, radius );
 
-   if isempty(weight)
-       [RM] = calc_RM(Y,D, 5);
+   if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
+       [RM] = calc_RM(Y,D,weight);
    else
        error('not coded yet');
    end
