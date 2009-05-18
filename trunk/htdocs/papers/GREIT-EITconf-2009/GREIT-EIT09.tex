@@ -67,16 +67,19 @@ Validation and parameter selection of GREIT algorithm
 \small
 \mysection{Introduction}
 
-One of the most promising applications of EIT is for
-monitoring the distribution of breathing in ventilated
-patients. Based on EIT images, ventilation strategies could
-be optimised to hopefully improve gas exchange and reduce
-ventilator induced lung injury. One key limitation is that
+One of the most promising applications of EIT is to monitor the
+regional distribution of ventilation in mechanically
+ventilated patients.
+Based on EIT images, ventilation strategies could be
+optimized to hopefully improve gas exchange, recruit
+atelectatic areas, minimize regional overdistension and
+therefore reduce ventilator induced lung injury.
+One key limitation is that
 the majority of clinical and experimental EIT research
 has been performed with the Sheffield back-projection
 reconstruction algorithm developed in the early 90's; this
 is an obstacle to interpretation of EIT images because
-the reconstructed images are not well characterised. To
+the reconstructed images are not well characterized. To
 address this issue, we are developing a consensus linear
 reconstruction algorithm for lung EIT, called GREIT (Graz
 consensus Reconstruction algorithm for EIT).  The goal of
@@ -96,7 +99,7 @@ The framework developed\cite{GREIT09} consists of: 1)
 detailed finite element models of a representative adult
 and neonatal thorax; 2) consensus on the performance
 figures of merit for EIT image reconstruction; and 3) a
-systematic approach to optimise a linear reconstruction
+systematic approach to optimize a linear reconstruction
 matrix to desired performance measures (Fig.\ \ref{fig:figparams}, Left).
 The consensus figures of merit (Fig.\ \ref{fig:figparams}, Centre)
  in agreed order of importance,
@@ -143,7 +146,7 @@ be determined are:
 
 Current work indicates that the parameter with the most
 significant impact on reconstructed images is the
-reference conductivity used. While most difference EIT
+reference conductivity used. While most time-difference EIT
 images of the lungs assume a homogeneous conductivity 
 distribution, this is clearly not valid for the thorax. 
 The homogeneous assumption tests to ``squeeze'' the lung
@@ -177,10 +180,11 @@ the same noise performance as Sheffield Backprojection.
 
 Clinical and experimental evaluation of GREIT is being
 performed in order to choose appropriate algorithm values,
-and evaluate image reconstruction performance with "real"
-data. A collection of clinical and experimental data has
-been assembled from animal, neonatal  and adult studies
-in Canada, Germany, UK and USA. Evaluation will consist
+and evaluate image reconstruction performance with 
+clinical data collected from ventilated subjects.
+A collection of clinical and experimental data has been assembled from
+animal and human studies in neonates, children and adult patients in
+Canada, Germany, UK and USA.  Evaluation will consist
 of reconstructing images with variants of GREIT, and
 asking experts to score the images.  One concern with any
 new medical imaging algorithm is its performance in the
@@ -194,12 +198,13 @@ both visual and automatic, to detect such data errors.
 \vspace{-3mm}
 \mysection{Discussion}
 
-The goal of GREIT is to develop a well characterised 2D
+The goal of GREIT is to develop a well characterized 2D
 linear difference EIT algorithm for lung imaging. We seek to develop
 a robust algorithm which incorporates the key developments
-in EIT lung image reconstructon. Our experience to date
+in EIT lung image reconstruction. Our experience to date
 with GREIT shows improvements in resolution of image features
-as well as reduced image artefacts over the Sheffield backprojection
+as well as reduced image artefacts when compared with an
+implementation of the Sheffield backprojection
 algorithm. In order to facilitate use of GREIT,
 all software
 and data to implement and test the algorithm have been
