@@ -2,18 +2,23 @@ function make_figures( fig_list)
 % Make figures for EIT 2009 paper 
    if nargin==0; fig_list = 0:4; end
    
+   calc_colours('greylev',.01);
+   calc_colours('backgnd',[1,1,1]);
+   calc_colours('sat_adj',0.7);
    clf;
    for i= fig_list
       axes('position',[i*0.2,0.42,0.2,0.58]);
       make_fig(i,0) 
       axis normal
+      if i>0
       axes('position',[i*0.2,-0.06,0.2,0.58]);
       make_fig(i,1) 
       axis normal
+      end
    end
    ax= get(gcf,'paperposition')
    set(gcf,'paperposition',[ax(1:3),ax(3)/2.5])
-   print -depsc2 fig2.eps
+   print -depsc2 fig_backgnd.eps
    set(gcf,'paperposition',[ax])
    
 
@@ -21,7 +26,7 @@ function make_figures( fig_list)
 function make_fig(figno,imgno)
    switch figno
      case 0;
-       imdl = mk_common_gridmdl('backproj');
+       imdl = mk_common_gridmdl('b2c','backproj');
 
      case {1,2};
        imdl = mk_common_model('c2c2',16);
@@ -38,7 +43,7 @@ function make_fig(figno,imgno)
 
      case {3,4};
        imdl = eidors_obj('get-cache', 'paper09', 'd2d4c_model');
-       if ~isempty(imdl)
+       if isempty(imdl)
           imdl = mk_common_model('d2d4c',16);
           eidors_obj('set-cache', 'paper09', 'd2d4c_model', imdl);
        end
@@ -61,13 +66,18 @@ function make_fig(figno,imgno)
    end
 
    if figno>0
+         mdl_pts = interp_mesh( imdl.fwd_model, 5);
+         out_circ= mdl_pts(:,1,:).^2 + mdl_pts(:,2,:).^2 > 0.85^2;
+         out_circ= mean(out_circ, 3);
       if imgno == 0;
-         imdl.jacobian_bkgnd.value = 1;
+         sigma   = 2.0*(1-out_circ) + out_circ;
+         imdl.jacobian_bkgnd.value = sigma;
+%        imdl.jacobian_bkgnd.value = 1;
       else
          mdl_pts = interp_mesh( imdl.fwd_model, 5);
-         out_circ= mdl_pts(:,1,:).^2 + mdl_pts(:,2,:).^2 > 0.75^2;
+         out_circ= mdl_pts(:,1,:).^2 + mdl_pts(:,2,:).^2 > 0.85^2;
          out_circ= mean(out_circ, 3);
-         sigma   = 2.2 - 1.2*out_circ;
+         sigma   = 0.3*(1-out_circ) + out_circ;
          imdl.jacobian_bkgnd.value = sigma;
       end
 
@@ -86,8 +96,10 @@ end
 %  fprintf('hp=%1.8g\n', choose_noise_figure( set_tgts(imdl, 0.79)) );
    end
 
-   [eelv,eilv] = pig_data; vh = eelv.p0;  vi = eilv.p0; 
-%  [eelv,eilv] = pig_data; vh = eelv.p20;  vi = eilv.p20; 
+   [eelv,eilv] = pig_data;
+    vh = eelv.p20;  vi = eilv.p20; 
+    vh = eelv.p0;  vi = eilv.p0; 
+    vh = eelv.p10;  vi = eilv.p10; 
 if 0
    switch imgno;
        case 0; vh = eelv.p0;  vi = eilv.p0; 
@@ -100,17 +112,25 @@ end
    show_slices(img);
 
 function imdl = GREIT_mdl( img, noiseampl, normalize );
-   switch size(img.fwd_model.nodes,2)
-      case 3; % 3D Model
-         [xc,yc,zc]= ndgrid( linspace(-1,1,25), linspace(-1,1,25), [-.05,0,05] );
-         elim = xc.^2 + yc.^2 > 0.9.^2; xc(elim)= []; yc(elim)= []; zc(elim)= []; 
-         xyzr_pt = [xc(:),yc(:),zc(:), 0.05 + 0*zc(:)]';
-      case 2; % 3D Model
-         [xc,yc]= ndgrid( linspace(-1,1,75), linspace(-1,1,75) );
-         elim = xc.^2 + yc.^2 > 0.9.^2; xc(elim)= []; yc(elim)= [];
-         xyzr_pt = [xc(:),yc(:), 0.05 + 0*xc(:)]';
-     otherwise
-       error('huh?')
+   if 0
+      switch size(img.fwd_model.nodes,2)
+         case 3; % 3D Model
+            [xc,yc,zc]= ndgrid( linspace(-1,1,25), linspace(-1,1,25), [-.05,0,05] );
+            elim = xc.^2 + yc.^2 > 0.9.^2; xc(elim)= []; yc(elim)= []; zc(elim)= []; 
+            xyzr_pt = [xc(:),yc(:),zc(:), 0.05 + 0*zc(:)]';
+         case 2; % 3D Model
+            [xc,yc]= ndgrid( linspace(-1,1,75), linspace(-1,1,75) );
+            elim = xc.^2 + yc.^2 > 0.9.^2; xc(elim)= []; yc(elim)= [];
+            xyzr_pt = [xc(:),yc(:), 0.05 + 0*xc(:)]';
+        otherwise
+          error('huh?')
+      end
+   else
+      path = linspace(0,1,500); phi = 2*pi*path*80;
+      xyzr_pt = [0.9*path.*sin(phi);0.9*path.*cos(phi);0*path; 0.05 + 0*path];
+      if size(img.fwd_model.nodes ,2) == 2
+         xyzr_pt(3,:)= [];
+      end
    end
 
    [vh,vi] = simulate_movement(img, xyzr_pt); 
@@ -164,6 +184,7 @@ function [eelv,eilv] = pig_data
    end
    vv= eidors_readdata('p1130107.get');
    eelv.p0  = vv(:,72);  eilv.p0  = vv(:,80);
+   eelv.p10 = vv(:,362); eilv.p10 = vv(:,377);
    eelv.p20 = vv(:,554); eilv.p20 = vv(:,561);
    eelv.p30 = vv(:,795); eilv.p30 = vv(:,803);
 
