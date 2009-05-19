@@ -26,7 +26,7 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
 % Example: Simulate small object in centre:
 %    imdl = mk_common_model('b3cr',16);
 %    img  = calc_jacobian_bkgnd(imdl);
-%    [vh,vi] = simulate_movement( img, [0;0;0;0.05];
+%    [vh,vi] = simulate_movement( img, [0;0;0;0.05]);
 
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
