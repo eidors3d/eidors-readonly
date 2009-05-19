@@ -17,9 +17,11 @@
 
 
 \section*{%
-Validation and parameter selection of GREIT algorithm
+Validation and parameter selection for
+the GREIT \\ reconstruction algorithm
 }
 
+\vspace{-2mm}
 \begin{list}{}{\setlength\leftmargin{25mm}}
 \item[]\raggedright
  \footnotesize
@@ -76,7 +78,7 @@ atelectatic areas, minimize regional overdistension and
 therefore reduce ventilator induced lung injury.
 One key limitation is that
 the majority of clinical and experimental EIT research
-has been performed with the Sheffield back-projection
+has been performed with the Sheffield backprojection
 reconstruction algorithm developed in the early 90's; this
 is an obstacle to interpretation of EIT images because
 the reconstructed images are not well characterized. To
@@ -130,22 +132,20 @@ and GREIT (GR).
 \label{fig:figparams}
 \end{figure}
 
-\vspace{-8mm}
 \mysection{Selection of parameter values}
 
 Several parameters in the GREIT framework need to be
-determined based on a careful evaluation strategy.
-The key parameters which need to
-be determined are:
+determined based on a careful evaluation strategy:
 1) training noise levels,
 2) model accuracy,
 3) the use (or not) of normalized difference imaging,
 4) parameter settings for movement compensation, and
 5) assumptions about the reference conductivity of the thorax.
 
-Current work indicates that the parameter with the most
-significant impact on reconstructed images is the
-reference conductivity used. While most time-difference EIT
+In this section, we illustrate the effect of one parameter
+with a significant impact on reconstructed images: the
+reference conductivity of the thorax.
+While most time-difference EIT
 images of the lungs assume a homogeneous conductivity 
 distribution, this is clearly not valid for the thorax. 
 The homogeneous assumption tests to ``squeeze'' the lung
@@ -153,11 +153,11 @@ images together. Fig.\ \ref{fig:figbackgnd} shows images
 of tidal volume in a pig lung injury model (data from 
 \cite{frerichs03}) and the effect of the reference
 conductivity parameter. Interestingly, the effect of changing
-the reference conductivity is very different for 2D and 
+the reference conductivity is different for 2D and 
 3D models, which underlines the importance of using accurate
 FEM models.
 
-\vspace{-4mm}
+\vspace{-2mm}
 \begin{figure}[htp]
 \centering
 \includegraphics[height=50mm]{fig-backgnd.eps}
@@ -172,8 +172,8 @@ FEM models.
 \caption{%
 \small
 Images of tidal volume in lung-injured piglet during
-a recruitment manouvre at P{\footnotesize EEP=}0~cm$\rm H_{2}O$;
-\cite{frerichs03} using different reconstruction
+a recruitment manouvre at P{\footnotesize EEP=}10cm$\rm H_{2}O$
+(data from \cite{frerichs03}) using different reconstruction
 algorithm parameter values. All algorithms are normalized to have
 the same noise performance as Sheffield Backprojection.
 {\em Top Row:} Uniform reference conductivity
@@ -187,6 +187,7 @@ the same noise performance as Sheffield Backprojection.
 \label{fig:figbackgnd}
 \end{figure}
 
+\vspace{-3mm}
 Clinical and experimental evaluation of GREIT is being
 performed in order to choose appropriate algorithm values,
 and evaluate image reconstruction performance with 
@@ -198,13 +199,12 @@ of reconstructing images with variants of GREIT, and
 asking experts to score the images.  One concern with any
 new medical imaging algorithm is its performance in the
 presence of data artefacts. With experience, such artefacts
-can be identified in the images; but such experience needs
-to be developed for a new algorithm.  Thus, another goal
-of GREIT evaluation is to develop a set of heuristics,
-both visual and automatic, to detect such data errors.
+can be identified in the images;  thus, another goal
+of GREIT evaluation is to develop a set of heuristics
+ to detect such data errors.
 
 
-\vspace{-3mm}
+\vspace{-4mm}
 \mysection{Discussion}
 
 The goal of GREIT is to develop a well characterized 2D
@@ -221,6 +221,7 @@ made available on the internet at eidors.org/GREIT under
 an open source license which allows free research and
 commercial use.
 
+\vspace{-4mm}
 \mysection{References}
 \begin{thebibliography}{9}
 \setlength{\itemsep}{-2mm}
