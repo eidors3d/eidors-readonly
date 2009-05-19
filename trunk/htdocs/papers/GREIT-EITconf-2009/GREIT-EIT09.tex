@@ -141,8 +141,7 @@ be determined are:
 2) model accuracy,
 3) the use (or not) of normalized difference imaging,
 4) parameter settings for movement compensation, and
-5) assumptions about the background (reference)
-   conductivity of the thorax.
+5) assumptions about the reference conductivity of the thorax.
 
 Current work indicates that the parameter with the most
 significant impact on reconstructed images is the
@@ -152,23 +151,33 @@ distribution, this is clearly not valid for the thorax.
 The homogeneous assumption tests to ``squeeze'' the lung
 images together. Fig.\ \ref{fig:figbackgnd} shows images
 of tidal volume in a pig lung injury model (data from 
-\cite{frerichs03}) and the effect of the background
-conductivity parameter. 
+\cite{frerichs03}) and the effect of the reference
+conductivity parameter. Interestingly, the effect of changing
+the reference conductivity is very different for 2D and 
+3D models, which underlines the importance of using accurate
+FEM models.
 
-\vspace{-6mm}
+\vspace{-4mm}
 \begin{figure}[htp]
 \centering
-\includegraphics[height=60mm]{fig_backgnd.eps}
+\includegraphics[height=50mm]{fig-backgnd.eps}
+ \setlength{\unitlength}{1cm}
+ \put( -13.40, 4.50){ \framebox{\textbf{\textsf{A}}}}
+ \put( -10.80, 4.50){ \framebox{\textbf{\textsf{B}}}}
+ \put(  -8.20, 4.50){ \framebox{\textbf{\textsf{C}}}}
+ \put(  -5.60, 4.50){ \framebox{\textbf{\textsf{D}}}}
+ \put(  -3.00, 4.50){ \framebox{\textbf{\textsf{E}}}}
+
 \vspace{-4mm}
 \caption{%
 \small
-{\bf NOTE: PLACEHOLDER IMAGE}
-Images of tidal volume in lung-injured piglet
+Images of tidal volume in lung-injured piglet during
+a recruitment manouvre at P{\footnotesize EEP=}0~cm$\rm H_{2}O$;
 \cite{frerichs03} using different reconstruction
 algorithm parameter values. All algorithms are normalized to have
 the same noise performance as Sheffield Backprojection.
-{\em Top Row:} P{\footnotesize EEP=}0~cm$\rm H_{2}O$;
-{\em Bottom Row:} P{\footnotesize EEP=}20~cm$\rm H_{2}O$.
+{\em Top Row:} Uniform reference conductivity
+{\em Bottom Row:} Central region conductivity of 0.3$\times$reference.
 {\em A:} Sheffield Backprojection
 {\em B:} GREIT (3D model, normalized difference)
 {\em C:} GREIT (3D model, difference)
