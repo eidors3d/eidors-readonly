@@ -19,6 +19,7 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %
 % Sheffield Backprojection
 %   mk_common_gridmdl('backproj') - 32x32 with Diamond shape
+%   mk_common_gridmdl('b2c','backproj') - 32x32 with Diamond shape
 %
 % COPYRIGHT NOTICE FOR BACKPROJECTION MATRIX:
 %   This matrix is copyright DC Barber and BH Brown at
@@ -34,10 +35,10 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 name = str;
 if strcmp(str,'backproj')
    str= 'b2d';
-   RM= get_Sheffield_Backproj;
+   RM= 'backproj';
 elseif strcmp(str,'GREITc1');
    str= 'b2c';
-   RM= get_GREIT_c1;
+   RM= 'get_GREIT_c1';
 else
    name = str;
 end
@@ -64,6 +65,14 @@ switch str
 
    otherwise
       error(['mdl_string ',str,' not understood']);
+end
+
+if isstr(RM)
+   switch RM
+     case 'backproj'; RM= get_Sheffield_Backproj;
+     case 'GREITc1';  RM= get_GREIT_c1;
+     otherwise;       error('RM string not understood');
+   end 
 end
       ff = find(~inside);
       fmdl.elems([2*ff, 2*ff-1],:)= [];
@@ -141,7 +150,9 @@ function RM = unpack_matrix(packed_matrix);
    BP= BP(:,:,:,[32:-1:1]);
 
    RM= reshape(BP, 256, [])';
-   RM= RM(sel2,sel1);
+   RM= RM(:,sel1);
+% This creates the diamond shape, but we want to leave shape choice later
+%  RM= RM(sel2,sel1);
 
 
 function elec = mk_electrode_locns( nodes, n_elec );
