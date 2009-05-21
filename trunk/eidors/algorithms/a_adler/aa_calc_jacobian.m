@@ -1,6 +1,6 @@
 function J= aa_calc_jacobian( fwd_model, img)
 % AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)
-% Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
+% Calculate Jacobian Matrix for current stimulation EIT
 % J         = Jacobian matrix
 % fwd_model = forward model
 %
