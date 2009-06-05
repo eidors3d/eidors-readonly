@@ -132,7 +132,7 @@ meas_sel= meas_select( n_elec, v.inj, v);
 %                                        0 1 0 0 1 0
 
 function meas_sel= meas_select( n_elec, inj, v)
-  if prod(size(inj))~=2 | prod(size(v.meas))~=2
+  if prod(size(inj))~=2 || prod(size(v.meas))~=2
      meas_sel = [];
      return;
   end
@@ -172,18 +172,12 @@ function meas_sel= meas_select( n_elec, inj, v)
   end
   
   % Insert electrode indices for multiple ring measurements
-  n_rings = v.n_rings;
-  if n_rings == 1
-    meas_sel = inj_meas_sel;
-  elseif n_rings == 2
-    inj_meas_sel = reshape(inj_meas_sel,n_elec,n_elec);
-    %oth_meas_sel = ones(n_elec*(v.n_rings-1),n_elec);
-    meas_sel = blkdiag(~inj_meas_sel, ~inj_meas_sel);
-    meas_sel = ~logical(meas_sel(:));
-  else
-    warning('meas_sel() can''t handle more than 2 rings...');
-    meas_sel= [];
+  meas_sel = [];
+  inj_meas_sel = reshape(inj_meas_sel,n_elec,n_elec);
+  for i = 1:v.n_rings
+      meas_sel = blkdiag(meas_sel, ~inj_meas_sel); 
   end
+  meas_sel = ~logical(meas_sel(:));
   
 
 function stim_pat = mk_stim_pat(v, elec, ring );
