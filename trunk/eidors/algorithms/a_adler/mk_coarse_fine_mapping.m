@@ -24,7 +24,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-c_obj = cache_obj(c_mdl, f_mdl)
+c_obj = cache_obj(c_mdl, f_mdl);
 
 f_mdl= offset_and_project( f_mdl, c_mdl);
 mapping = eidors_obj('get-cache', c_obj, 'coarse_fine_mapping');
