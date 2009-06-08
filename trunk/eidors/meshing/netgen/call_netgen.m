@@ -24,6 +24,9 @@ if nargin<4
    finelevel= '';
 end
 
+% Netgen executable filename
+ng_name = 'ng';
+
 while( 1 )
    ldpath='';
    if  strfind(system_dependent('getos'),'Linux')
@@ -47,45 +50,45 @@ while( 1 )
    fclose(fid);
 
    status= system(sprintf( ...
-        '%s ng %s -batchmode -geofile=%s  -meshfile=%s ', ...
-         ldpath,finelevel,geo_file,vol_file));
+        '%s %s %s -batchmode -geofile=%s  -meshfile=%s ', ...
+         ldpath, ng_name, finelevel,geo_file,vol_file));
    if status==0; break; end
 
    if islinux
-       disp('It seems you are running Linux and netgen has not worked. Check that it is installed and on the path. Perhaps LD_LIBRARY_PATH needs to be set?');
+      disp(['It seems you are running Linux and netgen has not worked. ' ...
+           'Check that it is installed and on the path. ' ...
+           'Perhaps LD_LIBRARY_PATH needs to be set?' ]);
+      disp('Lets try different filename...');
+      ng_name = 'netgen';
    else
-
-   fprintf([ ...
-    'Netgen call failed. Is netgen installed and on the search path?\n' ...
-    'If you are running under windows, I can attempt to create\n' ...
-    'a batch file to access netgen.\n' ...
-    'Please enter the directory in which to find netgen.\n' ...
-    'If you don''t have a copy, download it from' ...
-    'http://www.hpfem.jku.at/netgen/\n\n' ...
-    'Note that you *MUST* use names without spaces. Thus\n' ...
-    'instead of C:/Program Files/ write C:/Progra~1/\n\n' ...
-    ]);
-   netgen_path = input('netgen_path? ','s');
-   if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) 
-      disp('Found netgen version 4.4');
-
+      fprintf([ ...
+       'Netgen call failed. Is netgen installed and on the search path?\n' ...
+       'If you are running under windows, I can attempt to create\n' ...
+       'a batch file to access netgen.\n' ...
+       'Please enter the directory in which to find netgen.\n' ...
+       'If you don''t have a copy, download it from' ...
+       'http://www.hpfem.jku.at/netgen/\n\n' ...
+       'Note that you *MUST* use names without spaces. Thus\n' ...
+       'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
+      netgen_path = input('netgen_path? ','s');
+      if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) 
+         disp('Found netgen version 4.4');
+         
       fid= fopen('ng.bat','w');
       fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
       fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);
       fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);
       fclose(fid);
-   elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
-      disp('Found netgen version 4.3.1');
-
-      fid= fopen('ng.bat','w');
-      fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-      fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-      fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
-      fclose(fid);
-   else
-      warning(['cannot find a version of netgen that I know about\n' ...
-               'Install netgen 4.4 or 4.3.1 or check the path\n']);
-   end
-
+      elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
+         disp('Found netgen version 4.3.1');
+         fid= fopen('ng.bat','w');
+         fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
+         fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
+         fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
+         fclose(fid);
+      else
+         warning(['cannot find a version of netgen that I know about\n' ...
+                  'Install netgen 4.4 or 4.3.1 or check the path\n']);
+      end
    end
 end
