@@ -40,7 +40,7 @@ function mapping = contained_elems_2d( mdl, xyr );
    % We fill sparse by columns, due to CCS storage, this is fairly efficient
    mapping = sparse( Ne, Nc );
 
-   % INterpolate
+   % Interpolate
    n_interp = 5; % 7-df
    m_pts = interp_mesh( mdl, n_interp); 
    for i=1:Nc
