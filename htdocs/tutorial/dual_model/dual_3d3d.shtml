@@ -1,0 +1,39 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 3D-3D Dual Models</h2>
+
+<p>Application of 3D-3D dual models has many advantages. One can easily change inverse model resolution to fit number of unknowns to the power of his computer. It very natural to limit space where the image is reconstructed only to the area of interest, and maybe the most important "inverse crime" won't be ever commited.
+</p>
+
+<p>
+This tutorial is based on classical tank problem, where forward problem is solved using fine mesh (Netgen generated)
+with 36,000 elements and inverse problem is based on very coarse mesh with 688 elements.
+</p>
+
+Source code: <a href="dual_3d3d.m">dual_3d3d.m</a>
+<pre>
+<!--#include virtual="dual_3d3d.m" -->
+</pre>
+
+<center>
+<img src="dual_3d3d01.png">
+<br><i> Figure:</i>
+Netgen generated mesh for tank problem, with a 2&times;16 electrodes. Mesh consists of 36,000 elements.
+Single spherical inclusion was applied.
+</center>
+
+<center>
+<img src="dual_3d3d02.png">
+<br><i> Figure:</i>
+Results of reconstruction. On the left results shown on coarse mesh used in inverse problem. On the right solution projected into fine, forward mesh.
+</center>
+
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+
