@@ -12,7 +12,7 @@ function cylinder_mdl = create_cylinder_mesh_ng( basename, ...
 % suitable for dual mesh reconstruction 3d-3d.
 %
 % (C) 2009,  Bartosz Sawicki
-% $Id: $
+% $Id$
 % Licenced under the GPLv2 or later
 
 % maxh not given
