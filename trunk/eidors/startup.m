@@ -15,6 +15,7 @@ addpath([HOMEDIR, '/algorithms/c_gomez']);
 %addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
 addpath([HOMEDIR, '/algorithms/n_polydorides']);
 addpath([HOMEDIR, '/algorithms/d_stephenson']);
+addpath([HOMEDIR, '/algorithms/b_sawicki']);
 addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/a_adler']);
 addpath([HOMEDIR, '/models/d_stephenson']);
