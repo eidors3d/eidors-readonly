@@ -52,7 +52,7 @@ end
 
 % 2. Remove points outside the region, apply the rejection method
 p=p(feval(fdist,p,varargin{:})<geps,:);
-r0=feval(fh,p);
+r0=feval(fh,p,varargin{:});
 p=[fix; p(rand(size(p,1),1)<min(r0)^dim./r0.^dim,:)];
 N=size(p,1);
 
@@ -99,7 +99,7 @@ while 1
   % 6. Move mesh points based on edge lengths L and forces F
   bars=p(pair(:,1),:)-p(pair(:,2),:);
   L=sqrt(sum(bars.^2,2));
-  L0=feval(fh,(p(pair(:,1),:)+p(pair(:,2),:))/2);
+  L0=feval(fh,(p(pair(:,1),:)+p(pair(:,2),:))/2,varargin{:});
   L0=L0*L0mult*(sum(L.^dim)/sum(L0.^dim))^(1/dim);
   F=max(L0-L,0);
   Fbar=[bars,-bars].*repmat(F./L,1,2*dim);
