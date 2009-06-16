@@ -30,6 +30,9 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %      0-4 => element refinement
 %      c   => circular mesh
 %
+% 2D Models using distmesh using fixed point electrodes (DEPRECATED)
+%   mk_common_model('a2d0d',16)  - 2D circ model using distmesh 
+%
 % 2D Thorax models (levels 1 - 5 from shoulders to abdomen)
 %   mk_common_model('b2t2',16)  - 2D Thorax#2 (chest) (256 elems)
 %   mk_common_model('c2t4',16)  - 2D Thorax#3 (upper abdomen) (576 elems)
@@ -100,13 +103,27 @@ if str(2:3)=='2c' | str(2:3) == '2C'
       inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
    end
 
-elseif str(2:3)=='2D'
-   global distmesh_do_graphics; distmesh_do_graphics= 1;
-   str= lower(str);
-   inv_mdl= distmesh_2d_model(str, n_elec, options);
-elseif str(2:3)=='2d'
-   global distmesh_do_graphics; distmesh_do_graphics= 0;
-   inv_mdl= distmesh_2d_model(str, n_elec, options);
+elseif lower(str(2:3))=='2d'
+   global distmesh_do_graphics;
+   if str(3)=='d'; distmesh_do_graphics= 0;
+   else          ; distmesh_do_graphics= 1;
+   end
+
+   switch str(5:end)
+      case 'd' % Deprecated circle functions
+% THIS FUNCTION IS DEPRECATED (from EIDORS 3.3)
+         inv_mdl= distmesh_2d_model_depr(str, n_elec, options);
+      case 'c' % Deprecated circle functions
+         ea = 2 *(2*pi/360); % degrees width
+         for i=1:n_elec(1); 
+           ai = (i-1)/n_elec(1) * 2*pi;
+           elec_pts{i} = [sin(ai+ea),cos(ai+ea);sin(ai-ea),cos(ai-ea)];
+         end
+         fwd_mdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.05,10,0.05] );
+         inv_mdl= add_params_2d_mdl( fwd_mdl, n_elec(1), options);
+      otherwise;
+         error(['can''t parse command string:', str]);
+   end
 elseif str(2:3)=='2s'
 % 2D square models
    if     str(1)=='a'; layers=  4;
@@ -195,7 +212,8 @@ end
 inv_mdl.name= ['EIDORS common_model_',str]; 
 inv_mdl= eidors_obj('inv_model', inv_mdl);
     
-function inv2d = distmesh_2d_model(str, n_elec, options);
+% THIS FUNCTION IS DEPRECATED (from EIDORS 3.3)
+function inv2d = distmesh_2d_model_depr(str, n_elec, options);
    if     str(1)=='a'; n_nodes=  50;
    elseif str(1)=='b'; n_nodes= 100;
    elseif str(1)=='c'; n_nodes= 200;
