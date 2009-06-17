@@ -114,13 +114,7 @@ elseif lower(str(2:3))=='2d'
 % THIS FUNCTION IS DEPRECATED (from EIDORS 3.3)
          inv_mdl= distmesh_2d_model_depr(str, n_elec, options);
       case 'c' % Deprecated circle functions
-         ea = 2 *(2*pi/360); % degrees width
-         for i=1:n_elec(1); 
-           ai = (i-1)/n_elec(1) * 2*pi;
-           elec_pts{i} = [sin(ai+ea),cos(ai+ea);sin(ai-ea),cos(ai-ea)];
-         end
-         fwd_mdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.05,10,0.05] );
-         inv_mdl= add_params_2d_mdl( fwd_mdl, n_elec(1), options);
+         inv_mdl= distmesh_2d_model(str, n_elec, options);
       otherwise;
          error(['can''t parse command string:', str]);
    end
@@ -212,15 +206,33 @@ end
 inv_mdl.name= ['EIDORS common_model_',str]; 
 inv_mdl= eidors_obj('inv_model', inv_mdl);
     
+function inv_mdl = distmesh_2d_model(str, n_elec, options);
+   Elec_width= 4; % 2 degrees - electrode width
+   switch [str(1),str(4)]
+      case 'a'; params = [0.05,10,0.05];
+      case 'b'; params = [0.05,10,0.05];
+      case 'd1'; params = [0.05,10,0.05];
+      case 'd2'; params = [0.03,15,0.03];
+      otherwise; error('don`t know what to do with option=%s',str);
+   end
+   ea = Elec_width/2 *(2*pi/360);
+   for i=1:n_elec(1); 
+     ai = (i-1)/n_elec(1) * 2*pi;
+     elec_pts{i} = [sin(ai+ea),cos(ai+ea);sin(ai-ea),cos(ai-ea)];
+   end
+   fwd_mdl= dm_2d_circ_pt_elecs( elec_pts, [], params);
+   inv_mdl= add_params_2d_mdl( fwd_mdl, n_elec(1), options);
+
 % THIS FUNCTION IS DEPRECATED (from EIDORS 3.3)
 function inv2d = distmesh_2d_model_depr(str, n_elec, options);
-   if     str(1)=='a'; n_nodes=  50;
-   elseif str(1)=='b'; n_nodes= 100;
-   elseif str(1)=='c'; n_nodes= 200;
-   elseif str(1)=='d'; n_nodes= 400;
-   elseif str(1)=='e'; n_nodes= 800;
-   elseif str(1)=='f'; n_nodes=1600;
-   else;  error('don`t know what to do with option=%s',str);
+   switch str(1)
+      case 'a'; n_nodes=  50;
+      case 'b'; n_nodes= 100;
+      case 'c'; n_nodes= 200;
+      case 'd'; n_nodes= 400;
+      case 'e'; n_nodes= 800;
+      case 'f'; n_nodes=1600;
+      otherwise; error('don`t know what to do with option=%s',str);
    end
  
    refine_level= abs(str(4))-'0';
