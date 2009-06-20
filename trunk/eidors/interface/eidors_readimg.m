@@ -14,13 +14,18 @@ function img = eidors_readimg( fname, format )
 %
 %  if format is unspecified, we attempt to autodetect
 
-% TODO:
-% Formats to implement:
-%    - Draeger "get" file format
-%        format = "GET" or "draeger"
-%    - Sheffield MK I "RAW" file format
-%        format = "RAW" or "sheffield"
-%    - ITS (International Tomography Systems)
-%        format = "ITS" or "p2k"
-%    - IIRC (Impedance Imaging Research Center, Korea)
-%        format = "txt" or "IIRC"
+% (C) 2009 by Bartek Grychtol. Licensed under GPL v2 or v3
+% $Id$ 
+
+
+img.name = 'asdf'
+img.type = 'image'
+tempmdl = mk_common_gridmdl('b2d');
+img.fwd_model = tempmdl.fwd_model;
+
+
+
+loc.name = 'Dummy vector 1:856';
+loc.elem_data = 1:856;
+loc.fwd_model = img.fwd_model;
+loc.type = 'image';
