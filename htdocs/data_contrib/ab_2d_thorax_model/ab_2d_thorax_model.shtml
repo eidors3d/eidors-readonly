@@ -7,7 +7,7 @@
    <tr><th valign="top"> Authors:
        <td>
 Andrea Borsic,
-ChrisMcLeod,
+Chris McLeod,
 William RB Lionheart,
 Nacer Kerrouche
        <hr>
@@ -23,9 +23,9 @@ INRIA’s EMC2 mesh generator.
 Data were published in:
 <p>
 Andrea Borsic,
-ChrisMcLeod,
+Chris McLeod,
 William Lionheart,
-Nacer Kerrouche1 (2001),
+Nacer Kerrouche (2001),
 <a href="http://www.iop.org/EJ/article/0967-3334/22/1/310/pm1110.pdf"
    >Realistic 2D human thorax modelling for EIT</a>
   <i>physiol. Meas.</i> 22:77&minus;83.
@@ -36,25 +36,38 @@ Nacer Kerrouche1 (2001),
    <tr><th valign="top"> Attribution Requirement:
        <td> 
  Use or presentation of these data must acknowledge
-In&eacute;z Frerichs, and reference this publication:
+Andrea Borsic, and reference this publication:
 <ul>
 Andrea Borsic,
-ChrisMcLeod,
+Chris McLeod,
 William Lionheart,
-Nacer Kerrouche1 (2001),
+Nacer Kerrouche (2001),
 <a href="http://www.iop.org/EJ/article/0967-3334/22/1/310/pm1110.pdf"
    >Realistic 2D human thorax modelling for EIT</a>
   <i>physiol. Meas.</i> 22:77&minus;83.
 </ul>
    <tr><th valign="top"> Format:
-       <td> Data are in *.mat file encoded in zip format
+       <td> Data are eidors 'fwd_model' structures in an *.mat.
+ Each file contains a fine scale model with refined electrodes
+and a coarse model of which the fine model is a strict refinement.
        <hr>
    <tr><th valign="top"> Methods:
-       <td> ???
-       <hr>
+       <td>
+<pre>
+% High Resolution model - 6274 nodes
+load borsic01mdl1
+show_fem(borsic01mdl1)
+show_fem(borsic01mdl1coarse)
+
+% High Resolution model - 799 nodes
+load borsic01mdl3
+show_fem(borsic01mdl3)
+show_fem(borsic01mdl3coarse)
+</pre>
    <tr><th valign="top"> Data:
-       <td> <a href="./if_data_2003.zip"
-            >??</a>
+       <td>
+      <a href="./borsic01mdl1.mat">High Resolution Model</a>
+      <a href="./borsic01mdl3.mat">Low Resolution Model</a>
        <hr>
    </table>
 
