@@ -342,8 +342,7 @@ function ee= get_boundary( mdl )
        ee= mdl.boundary;
    else
        % calc and cache boundary
-       pp = np_fwd_parameters( mdl );
-       ee = pp.srf;
+       ee = find_boundary( mdl.elems );
    end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
