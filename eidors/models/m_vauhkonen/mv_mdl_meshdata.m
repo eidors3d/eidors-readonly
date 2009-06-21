@@ -1,6 +1,6 @@
-function [fmdl1,fmdl2] = mv_meshdata1;
+function [fmdl1,fmdl2] = mv_mdl_meshdata;
 % MV_MESHDATA: create demo mesh for EIDORS2D
-%   [fmdl1,fmdl2] = mv_meshdata1;
+%   [fmdl1,fmdl2] = mv_mdl_meshdata;
 % http://venda.uku.fi/~mvauhkon/MatlabEIT2d.html
 
 % (C) 2000 by Marko Vauhkonen. Licensed under GPL v2 or later
