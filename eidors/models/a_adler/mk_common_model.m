@@ -7,6 +7,18 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 % Usage: 
 %      inv_mdl = mk_common_model( mdl_string, [n_elec/plane, n_planes])
 %
+% 2D Models using distmesh (D = show distmesh graphics, d= no graphics)
+%   mk_common_model('a2d0c',16)  - 2D circ model using distmesh 
+%   mk_common_model('b2d1c',16)  - 2D circ model using distmesh ~ 1300 elems
+%   mk_common_model('d2d4c',16)  - 2D circ model using distmesh ~ 3200 elems
+%      a-f => mesh density
+%      2d  => 2d Distmesh model
+%      0-4 => element refinement
+%      c   => circular mesh
+%
+% 2D Models using distmesh using fixed point electrodes (DEPRECATED)
+%   mk_common_model('a2d0d',16)  - 2D circ model using distmesh 
+%
 % 2D Models circular models:
 %   mk_common_model('a2C',16)   - 2D circ model (64 elems) with 16 elecs
 %   mk_common_model('b2C',16)   - 2D circ model (256 elems)
@@ -20,18 +32,6 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 %   models ??c or ??c0 are rotated by zero.
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
-%
-% 2D Models using distmesh (D = show distmesh graphics, d= no graphics)
-%   mk_common_model('a2d0c',16)  - 2D circ model using distmesh 
-%   mk_common_model('b2d1c',16)  - 2D circ model using distmesh ~ 1300 elems
-%   mk_common_model('d2d4c',16)  - 2D circ model using distmesh ~ 3200 elems
-%      a-f => mesh density
-%      2d  => 2d Distmesh model
-%      0-4 => element refinement
-%      c   => circular mesh
-%
-% 2D Models using distmesh using fixed point electrodes (DEPRECATED)
-%   mk_common_model('a2d0d',16)  - 2D circ model using distmesh 
 %
 % 2D Thorax models (levels 1 - 5 from shoulders to abdomen)
 %   mk_common_model('b2t2',16)  - 2D Thorax#2 (chest) (256 elems)
@@ -113,7 +113,7 @@ elseif lower(str(2:3))=='2d'
       case 'd' % Deprecated circle functions
 % THIS FUNCTION IS DEPRECATED (from EIDORS 3.3)
          inv_mdl= distmesh_2d_model_depr(str, n_elec, options);
-      case 'c' % Deprecated circle functions
+      case 'c'
          inv_mdl= distmesh_2d_model(str, n_elec, options);
       otherwise;
          error(['can''t parse command string:', str]);
@@ -211,8 +211,10 @@ function inv_mdl = distmesh_2d_model(str, n_elec, options);
    switch [str(1),str(4)]
       case 'a'; params = [0.05,10,0.05];
       case 'b'; params = [0.05,10,0.05];
-      case 'd1'; params = [0.05,10,0.05];
-      case 'd2'; params = [0.03,15,0.03];
+      case 'd1'; params = [0.15,1,0.05];
+      case 'd2'; params = [0.15,5,0.05];
+      case 'd3'; params = [0.05,10,0.05];
+      case 'd4'; params = [0.03,15,0.03];
       otherwise; error('don`t know what to do with option=%s',str);
    end
    ea = Elec_width/2 *(2*pi/360);

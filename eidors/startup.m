@@ -4,6 +4,21 @@
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+% CHECK WE HAVE THE RIGHT VERSION
+if ~exist('OCTAVE_VERSION')  % THIS IS MATLAB
+   if str2num(version('-release')) < 13
+      warning(['EIDORS REQUIRES AT LEAST MATLAB V6.5.\n' ...
+               'Several functions may not work with your version']);
+   end
+else
+   ver_str = version;
+   ver_str(ver_str== '.')= '0'; % 3.2.0 => 0.30200
+   if str2num(['0.', ver_str]) < 0.30003
+      warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.0.3\n' ...
+               'Several functions may not work with your version']);
+   end
+end
+
 HOMEDIR=pwd;
 
 addpath( HOMEDIR );
@@ -76,5 +91,5 @@ else
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
-clear HOMEDIR archdir;
+clear HOMEDIR archdir verstr;
 
