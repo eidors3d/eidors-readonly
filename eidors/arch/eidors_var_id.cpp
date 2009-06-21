@@ -24,12 +24,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <mex.h>
-/* This shouldn't be necessary - bug in octave2.9.13 build for windows
+/* This shouldn't be necessary - last tested in octave 3.2.0 */
 #ifdef OCTAVE_API
 #include <octave/config.h>
 #include <octave/oct-types.h>
 #endif
-*/
 
 /*
  * Defines to alow stat
@@ -59,6 +58,7 @@
 #ifndef unsigned_int32
 #define unsigned_int32 UINT32_T
 #endif
+
 
 typedef struct {
     unsigned_int32 state[5];
@@ -246,8 +246,8 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     // sparse variable. We need to hash the numeric data,
     // as well as the row and col index pointers
     double *pr,*pi;
-    int  nnz, cols;
-    int zero= 0, i; 
+    int  zero= 0;
+    unsigned int nnz, cols, i; 
     unsigned char *p_jcs, *p_irs;
     // WARNING: we'll have problem if sparse isn't double
     pr  = mxGetPr( var );
@@ -326,7 +326,7 @@ recurse_hash( hash_context *c, const mxArray *var ) {
   } else
   if ( mxIsCell(var) ) {
     // cell variable. Iterate through elements and recurse
-    int i;
+    unsigned int i;
     #ifdef VERBOSE
       mexPrintf("processing cell ( %d ):\n", mxGetNumberOfElements(var));
     #endif
