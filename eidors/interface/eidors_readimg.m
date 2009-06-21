@@ -7,25 +7,54 @@ function img = eidors_readimg( fname, format )
 %        format = "IGT" or "MCEIT"
 %
 % Usage
-% [vv, auxdata ]= eit_readdata( fname, format )
-%     vv      = measurements - data frames in each column
-%     auxdata = auxillary data - if provided by system 
+% img = eidors_readimg( fname, format )
+%     img   = eidors image structure
+%     img.elem_data = reconstructed image matrix NumPixels x NumFrames
 %     fname = file name
 %
-%  if format is unspecified, we attempt to autodetect
+%  If format is unspecified, we attempt to autodetect.
 
-% (C) 2009 by Bartek Grychtol. Licensed under GPL v2 or v3
+% (C) 2009 by Bartlomiej Grychtol. Licensed under GPL v2 or v3
 % $Id$ 
 
+if ~exist(fname,'file')
+   error([fname,' does not exist']);
+end
 
-img.name = 'asdf'
-img.type = 'image'
-tempmdl = mk_common_gridmdl('b2d');
+if nargin < 2
+% unspecified file format, autodetect
+   dotpos = find(fname == '.');
+   if isempty( dotpos ) 
+      error('file format unspecified, can`t autodetect');
+   else
+      dotpos= dotpos(end);
+      format= fname( dotpos+1:end );
+   end
+end
+fmt= lower(format);
+
+switch fmt
+    case {'igt','mceit'}
+        img = mceit_readimg( fname );
+    otherwise
+        error('eidors_readdata: file "%s" format unknown', fmt);
+end
+
+
+
+
+%%
+function img = mceit_readimg( fname );
+% mceit_readimg - reads in IGT files. 
+img.name = ['Read from ' fname];
+img.type = 'image';
+tempmdl = mk_common_gridmdl('backproj');
 img.fwd_model = tempmdl.fwd_model;
 
+fid = fopen(fname,'r');
+igt = fread(fid, inf,'4*float');
+fclose(fid);
 
+igt = reshape(igt, [], 912);
 
-loc.name = 'Dummy vector 1:856';
-loc.elem_data = 1:856;
-loc.fwd_model = img.fwd_model;
-loc.type = 'image';
+img.elem_data = igt';
