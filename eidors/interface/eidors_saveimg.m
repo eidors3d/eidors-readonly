@@ -1,7 +1,7 @@
 function eidors_saveimg( img, fname, format )
-% EIDORS saveimg - save reconstructed image files in formats of various EIT equipment
-%    manufacturers
-%
+% EIDORS saveimg - save reconstructed image files in formats
+%    of various EIT equipment manufacturers
+% eidors_saveimg( img, fname, format )
 %
 % Currently the list of supported file formats is:
 %    - NATIVE "e3d" file format

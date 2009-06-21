@@ -1,6 +1,7 @@
 function img = eidors_readimg( fname, format )
-% EIDORS readimg - read reconstructed image files from various EIT equipment
-%    manufacturers
+% EIDORS readimg - read reconstructed image files from
+%       various EIT equipment manufacturers
+%  img = eidors_readimg( fname, format )
 %
 % Currently the list of supported file formats is:
 %    - NATIVE "e3d" file format
@@ -70,13 +71,19 @@ function img = native_readimg( fname )
 % E3D file is a zipped matlab v6 compatible .mat file called "e3d.temp"
 % containing one eidors image struct variable named "img".
 
-files = unzip(fname);
-if numel(files) > 1
-    error(['File %s is not a proper E3D file. '...
-        'The archive contains more than one file'],fname);
+
+if 1 % COMPATIBILITY WITH Matlab 6.5 and Octave we can't use output files
+   unzip(fname);
+   tempfile = 'e3d.temp';
+else
+   files = unzip(fname);
+   if numel(files) > 1
+       error(['File %s is not a proper E3D file. '...
+           'The archive contains more than one file'],fname);
+   end
+   tempfile = files{1};
 end
 
-tempfile = files{1};
 S = load(tempfile,'-mat');
 delete(tempfile);
 if numel(fieldnames(S)) > 1
