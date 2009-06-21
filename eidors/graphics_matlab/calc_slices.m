@@ -291,8 +291,7 @@ function NODE= level_model( fwd_model, level )
 
    % Infinities tend to cause issues -> replace with realmax
    % Don't need to worry about the sign of the inf
-   % Octave returns inf for norm of realmax
-   level( isinf(level) | isnan(level) ) = 1e154; %realmax;
+   level( isinf(level) | isnan(level) ) = realmax;
    level( level==0 ) =     1e-10; %eps;
 
    % Step 1: Choose a centre point in the plane
