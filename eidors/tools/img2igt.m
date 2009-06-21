@@ -10,7 +10,7 @@ function igt = img2igt(img)
 % See also EIDORS_SAVEIMG.
 
 % (C) 2009 by Bartlomiej Grychtol. Licensed under GPL v2 or v3
-% $Id$ 
+% $Id$
 
 % render the image on a 32-by-32 grid
 img.calc_colours.npoints=32;
