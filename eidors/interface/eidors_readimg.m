@@ -51,10 +51,6 @@ end
 %%
 function img = mceit_readimg( fname )
 % mceit_readimg - reads in IGT files. 
-img.name = ['Read from ' fname];
-img.type = 'image';
-tempmdl = mk_common_gridmdl('backproj');
-img.fwd_model = tempmdl.fwd_model;
 
 fid = fopen(fname,'r');
 igt = fread(fid, inf,'4*float');
@@ -62,7 +58,9 @@ fclose(fid);
 
 igt = reshape(igt, [], 912);
 
-img.elem_data = igt';
+img = igt2img(igt);
+
+img.name = ['Read from ' fname];
 
 
 %%
