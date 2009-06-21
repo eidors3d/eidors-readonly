@@ -5,6 +5,22 @@
 % University of Kuopio, Department of Applied Physics, PO Box 1627,
 % FIN-70211 Kuopio, Finland, email: Marko.Vauhkonen@uku.fi
 
+% Refactored for EIDORS 3.4 by Andy Adler - June 2009
+% $Id$
+
+[fmdl1,fmdl2] = mv_mdl_meshdata;
+
+% Create a sample image
+Ne2= size(fmdl2.elems,1);
+elem_data = 1/400*ones(Ne2,1);
+elem_data([374,375,376,601,603,604]) = 1/200;
+img= mk_image(elem_data);
+img.fwd_model= fmdl2;
+show_fem(img,[0,1,0])
+
+
+return
+
 load meshdata % Data for two different meshes.
 
 NNode1=max(size(Node1));                      %The number of nodes
