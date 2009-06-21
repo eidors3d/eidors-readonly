@@ -35,6 +35,7 @@ addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/a_adler']);
 addpath([HOMEDIR, '/models/d_stephenson']);
 addpath([HOMEDIR, '/models/s_murphy']);
+addpath([HOMEDIR, '/models/m_vauhkonen']);
 addpath([HOMEDIR, '/meshing/netgen']);
 addpath([HOMEDIR, '/meshing/distmesh']);
 addpath([HOMEDIR, '/sample_data']);
