@@ -18,8 +18,7 @@ if nargin == 0
     error('Insufficient parameters for show_fem');
 end
 
-% clear axis unless we're axes to hold (Octave 3.0.1 doesn't have cla)
-if ~ishold & ~exist('OCTAVE_VERSION');
+if ~ishold
     cla;
 end
 
