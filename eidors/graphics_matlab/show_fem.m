@@ -48,7 +48,7 @@ if size(mdl.nodes,2)==2
    % 2D Case
    hax= gca;
    pax= get(hax,'position');
-   if exist('img');
+   if exist('img','var');
       colours= calc_colours(img, [], do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
@@ -62,7 +62,7 @@ elseif size(mdl.nodes,2)==3
    % 3D Case
    show_3d_fem( mdl );
 
-   if exist('img')
+   if exist('img','var')
        elem_data = get_img_data(img);
        show_inhomogeneities( elem_data , mdl, img);
        if do_colourbar
