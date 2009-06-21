@@ -316,9 +316,15 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     }
   } else
   if ( mxIsChar(var) ) {
-    // string variable. Each char is packed into 2 bytes
+    // string variable. Each char is packed into 2 bytes in Matlab
+#ifdef OCTAVE_API
+#define CHARBYTES 1
+#else
+#define CHARBYTES 2
+#endif
     double * pr = mxGetPr( var );
-    hash_process( c, (unsigned char *) pr, 2*mxGetNumberOfElements( var ) );
+    hash_process( c, (unsigned char *) pr,
+                  CHARBYTES*mxGetNumberOfElements( var ) );
 
     // If var is a *.m file, add it's modification time
     lookupfiletime( c, var);
