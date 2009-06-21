@@ -39,6 +39,7 @@ addpath([HOMEDIR, '/meshing/netgen']);
 addpath([HOMEDIR, '/meshing/distmesh']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
+addpath([HOMEDIR, '/tools']);
 addpath([HOMEDIR, '/graphics_matlab']);
 addpath([HOMEDIR, '/graphics_vtk']);
 %addpath([HOMEDIR, '/tests']);
