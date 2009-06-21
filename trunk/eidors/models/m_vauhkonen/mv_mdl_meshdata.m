@@ -6,20 +6,55 @@ function [fmdl1,fmdl2] = mv_mdl_meshdata;
 % (C) 2000 by Marko Vauhkonen. Licensed under GPL v2 or later
 % $Id$
 
-   [Elem1_Topology, Elem1_Coordinate] = get_geometry1;
+   [Elem1_Topology, Elem1_Coordinate,Elem1_Electrode] = get_geometry1;
    fmdl1.name = 'EIDORS2D Demo mesh #1 coarse';
    fmdl1.type = 'fwd_model';
    fmdl1.elems= Elem1_Topology;
    fmdl1.nodes= Elem1_Coordinate;
+   for i=1:size(Elem1_Electrode,1);
+      fmdl1.electrode(i).nodes = unique(Elem1_Electrode(i,:));
+      fmdl1.electrode(i).z_contact = 0.005; % From eidors2d_demo1
+   end
 
-   [Elem2_Topology, Elem2_Coordinate] = get_geometry2;
+   [Elem2_Topology, Elem2_Coordinate,Elem2_Electrode] = get_geometry2;
    fmdl2.name = 'EIDORS2D Demo mesh #2 fine';
    fmdl2.type = 'fwd_model';
    fmdl2.elems= Elem2_Topology;
    fmdl2.nodes= Elem2_Coordinate;
+   for i=1:size(Elem2_Electrode,1);
+      fmdl2.electrode(i).nodes = unique(Elem2_Electrode(i,:));
+      fmdl2.electrode(i).z_contact = 0.005; % From eidors2d_demo1
+   end
 
 
-function [Elem1_Topology, Elem1_Coordinate] = get_geometry1;
+
+function [Elem1_Topology, Elem1_Coordinate, ...
+          Elem1_Electrode] = get_geometry1;
+
+Elem1_Electrode= [
+     3     4 1     2 2     3
+     7     8 6     7 5     6
+    11    12 10    11 9    10
+    15    16 14    15 13    14
+    19    20 18    19 17    18
+    23    24 22    23 21    22
+    27    28 26    27 25    26
+    31    32 30    31 29    30
+    33    34 34    35 35    36
+    37    38 38    39 39    40
+    41    42 42    43 43    44
+    45    46 46    47 47    48
+    49    50 50    51 51    52
+    53    54 54    55 55    56
+    57    58 58    59 59    60
+    61    62 62    63 63    64];
+
+
+
+
+
+
+
 Elem1_Topology=[
     68    69   279; 69    70   279; 70    71   279; 67    68   279;
     71    72   279; 66    67   279; 72    73   279; 65    66   279;
@@ -218,7 +253,27 @@ Elem1_Coordinate= [
  11.4650, -6.1282; 12.0104, -4.9749; 12.4402, -3.7737; 12.7502, -2.5362;
  12.9374, -1.2742; 13.0000, -0.0000;       0,       0]; 
 
-function [Elem2_Topology, Elem2_Coordinate] = get_geometry2;
+function [Elem2_Topology, Elem2_Coordinate, ...
+          Elem2_Electrode] = get_geometry2;
+
+Elem2_Electrode= [
+  1040  1047 1047  1027 1035  1048 1048  1044 1044  1049 1049  1040
+  1008  1012 1012   993 1016  1019 1019  1008 1020  1023 1023  1016
+   977   980  980   961  981   984  984   977  988   991  991   981
+   945   948  948   929  949   952  952   945  953   954  954   949
+   913   916  916   897  917   918  918   913  921   922  922   917
+   880   881  881   865  885   886  886   880  889   890  890   885
+   848   849  849   831  852   853  853   848  857   858  858   852
+   815   816  816   797  819   820  820   815  823   824  824   819
+   800   802  802   794  794   804  804   805  805   808  808   809
+   813   828  828   829  829   836  836   837  837   840  840   841
+   845   863  863   860  860   868  868   869  869   872  872   873
+   878   895  895   892  892   903  903   900  900   904  904   905
+   910   927  927   924  924   935  935   932  932   940  940   937
+   942   960  960   956  956   967  967   964  964   972  972   969
+   973   992  992   985  985  1000 1000   996  996  1004 1004  1001
+  1005  1030 1030  1013 1013  1038 1038  1024 1024  1039 1039  1032];
+
 Elem2_Topology=[
    1,   2,   3;   2,   4,   5;   2,   5,   3;   3,   5,   6;
    4,   7,   5;   7,   8,   9;   7,   9,   5;   5,   9,   6;
