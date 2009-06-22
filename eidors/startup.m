@@ -93,6 +93,6 @@ else
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
-clear HOMEDIR archdir verstr;
 eidors_msg('New to EIDORS? Have a look at <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
-;
+clear HOMEDIR archdir verstr ans;
+
