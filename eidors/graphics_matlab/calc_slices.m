@@ -119,7 +119,9 @@ function rimg= calc_image_elems( elem_data, level, fwd_model, np)
 
    backgnd= NaN;
    n_images= size(elem_data,2);
-   rval= [backgnd*ones(1,n_images); elem_data];
+   rval= NaN(size(elem_data)+[1,0]);
+   rval(2:end,:) = elem_data;
+   %rval= [backgnd*ones(1,n_images); elem_data];
    rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
 
 % Search through each element and find the points which
