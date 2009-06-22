@@ -1,5 +1,5 @@
 function [srf, idx] = find_boundary(simp);
-% [srf] = find_boundary(simp);
+% [srf, idx] = find_boundary(simp);
 %
 %Caclulates the boundary faces of a given 3D volume.
 %Usefull in electrode assignment.
