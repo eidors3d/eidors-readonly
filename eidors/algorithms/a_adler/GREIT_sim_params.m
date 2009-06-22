@@ -23,7 +23,7 @@ end
 params(1,:) = params(1,:)/mean(params(1,1:10));
 
 function ampl = calc_amplitude(img)
-   ampl = sum(img(:));
+   ampl = sum(img(~isnan(img)));
 
 function pe   = calc_posn_error(qmi, xmean, ymean, xy)
    pe = sqrt(sum(xy.^2)) - sqrt( xmean^2 + ymean^2);
@@ -36,14 +36,15 @@ function sd  = calc_shape_deform(qmi, equiv_circ)
    sd = sum(not_circ(:))/sum(qmi(:));
 
 function rr = calc_ringing(img, qmi );
+   img(isnan(img)) = 0;
    ring_part =  img .* ( (img<0) & ~qmi);
    rr = -sum( ring_part(:) )/sum( img(:).*qmi(:) );
 
 function [xmean,ymean,equiv_circ,map,qmi,img] = calc_cofg(img);
 %  if abs(max(img(:))) < abs(min(img(:))); img= -img; end
    qmi = calc_hm_set( img, 0.25 );
-   if sum(img(:) & qmi(:))<0 ; keyboard ; end
    [x,y]=meshgrid(linspace(-1,1,32),linspace(-1,1,32)); map = x.^2+y.^2<1.1;
+   if sum(img(map) & qmi(map))<0 ; keyboard ; end
    qmi = qmi.*map; img = img.*map;
 
    ss_qmi = sum(qmi(:));
