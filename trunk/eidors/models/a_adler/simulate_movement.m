@@ -53,4 +53,5 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
 
    vi= vh*ones(1,Nt) + J;
 
-% QUESTON: what should we multiply by J? It is very small.
+% QUESTON: the accuracy of J will depend on how well we interpolate the
+% mesh. How important is this?
