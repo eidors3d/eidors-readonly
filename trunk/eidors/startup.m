@@ -6,11 +6,13 @@
 
 % CHECK WE HAVE THE RIGHT VERSION
 if ~exist('OCTAVE_VERSION')  % THIS IS MATLAB
+   ismatlab=1;
    if str2num(version('-release')) < 13
       warning(['EIDORS REQUIRES AT LEAST MATLAB V6.5.\n' ...
                'Several functions may not work with your version']);
    end
 else
+   ismatlab=0;
    ver_str = version;
    ver_str(ver_str== '.')= '0'; % 3.2.0 => 0.30200
    if str2num(['0.', ver_str]) < 0.30003
@@ -93,6 +95,10 @@ else
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
-eidors_msg('New to EIDORS? Have a look at <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
+if ismatlab
+ eidors_msg('New to EIDORS? Have a look at <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
+else 
+ eidors_msg('New to EIDORS? Have a look at the Tutorials at http://eidors3d.sourceforge.net/tutorial/tutorial.shtml',1);
+end
 clear HOMEDIR archdir verstr ans;
 
