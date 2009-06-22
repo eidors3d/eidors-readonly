@@ -19,7 +19,7 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %
 % Sheffield Backprojection
 %   mk_common_gridmdl('backproj') - 32x32 with Diamond shape
-%   mk_common_gridmdl('b2c','backproj') - 32x32 with Diamond shape
+%   mk_common_gridmdl('b2c','backproj') - 32x32 with Circular shape
 %
 % COPYRIGHT NOTICE FOR BACKPROJECTION MATRIX:
 %   This matrix is copyright DC Barber and BH Brown at
