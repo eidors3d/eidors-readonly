@@ -1,4 +1,4 @@
-function params = GREIT_noise_params(imdl, vh, vi )
+function params = calc_noise_params(imdl, vh, vi )
 % params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)
 %  params(1,:) = Noise Figure
 
