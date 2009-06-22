@@ -1,4 +1,4 @@
-function params = GREIT_sim_params(imgs, xyzr_pt)
+function params = calc_sim_params(imgs, xyzr_pt)
 % params = GREIT_sim_params(imgs)
 %  params(1,:) = Image Amplitude
 %  params(2,:) = Position Error => + toward centre, - toward edge
@@ -20,8 +20,9 @@ for i= 1:N_imgs
 end
 
 % TODO: Fix this when we start to care about units
-params(1,:) = params(1,:)/mean(params(1,1:10));
-
+if N_imgs > 20
+    params(1,:) = params(1,:)/mean(params(1,1:10));
+end
 function ampl = calc_amplitude(img)
    ampl = sum(img(~isnan(img)));
 
