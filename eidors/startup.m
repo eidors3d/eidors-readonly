@@ -29,7 +29,7 @@ addpath([HOMEDIR, '/algorithms/a_adler']);
 addpath([HOMEDIR, '/algorithms/a_borsic']);
 addpath([HOMEDIR, '/algorithms/b_lionheart']);
 addpath([HOMEDIR, '/algorithms/c_gomez']);
-%addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
+addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
 addpath([HOMEDIR, '/algorithms/n_polydorides']);
 addpath([HOMEDIR, '/algorithms/d_stephenson']);
 addpath([HOMEDIR, '/algorithms/b_sawicki']);
