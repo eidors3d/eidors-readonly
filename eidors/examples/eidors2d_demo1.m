@@ -8,16 +8,27 @@
 % Refactored for EIDORS 3.4 by Andy Adler - June 2009
 % $Id$
 
+
+tgt_elems= [374,375,376,601,603,604, ...
+            250,254,268,437,449,456];
+
 [fmdl1,fmdl2] = mv_mdl_meshdata;
+Ne2= size(fmdl2.elems,1);
+Ne2= size(fmdl2.elems,1);
+
+fmdl2.stimulation = mk_stim_patterns(16,1,'{trig}','{ad}',{},1);
+
 
 % Create a sample image
-Ne2= size(fmdl2.elems,1);
 elem_data = 1/400*ones(Ne2,1);
-elem_data([374,375,376,601,603,604]) = 1/200;
-img= mk_image(elem_data);
-img.fwd_model= fmdl2;
-show_fem(img,[0,1,0])
+elem_data(tgt_elems) = 1/200;
 
+tgt_img= mk_image(elem_data);
+tgt_img.fwd_model= fmdl2;
+
+show_fem(tgt_img,[0,1,0])
+
+Meas = fwd_solve( tgt_img );
 
 return
 
@@ -35,7 +46,7 @@ H2=reshape([Element2.Topology],3,NElement2)';
 
 
 disp('Choose a circular inhomogeneity. Left mouse button, center, right button, radius.')
-Ind=ChooseCircle(Node2,Element2);       % Make data for an inhomogeneity.
+Ind = tgt_elems; %Ind=ChooseCircle(Node2,Element2);  % Make data for an inhomogeneity.
 sigma=1/400*ones(NElement2,1);            % Make a conductivity vector.
 sigma(Ind)=2/400;			  % Conductivity of the inhomogeneity.
 
