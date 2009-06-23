@@ -1,6 +1,6 @@
 % simulate targets $Id$
 
-fmdl.stimulation= mk_stim_patterns(n_elec, 1, '{ad}','{ad}', {}, 1);
+fmdl.stimulation= mk_stim_patterns(length(elec_nodes), 1, '{ad}','{ad}', {}, 1);
 
 img= eidors_obj('image','fmdl','fwd_model',fmdl, ...
                 'elem_data', ones(size(fmdl.elems,1),1) );
