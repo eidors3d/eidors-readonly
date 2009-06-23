@@ -12,12 +12,18 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
 % gradient     - transition slope of refinement (eg 0.1)
 %
 % Example: = dm_2d_circ_pt_elecs( elec_pts, [], [0.15,10,0.05] );
+%
+% See also: dm_2d_pt_elecs
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+params.base_spacing = spacing(1);
+params.refine_ratio = spacing(2);
+params.gradient     = spacing(3);
+
 bbox= [-1,-1;1,1];
-fmdl= dm_2d_pt_elecs( elec_pts, [], [0.15,10,0.05], @circle, [-1,-1;1,1] );
+fmdl= dm_2d_pt_elecs( elec_pts, [], params, @circle, [-1,-1;1,1] );
 
 fmdl.name = sprintf('dm_2d_circ_pt_elec');
 
