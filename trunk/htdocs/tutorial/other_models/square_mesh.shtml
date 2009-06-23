@@ -29,7 +29,7 @@ this way</small>)
 <i>Right</i>: close up view of mesh near electrodes
 </center>
 
-<h3>t2</h3>
+<h3>Create Dual Mesh</h3>
 
 <pre>
 <!--#include virtual="square_mesh02.m" -->
@@ -42,7 +42,7 @@ this way</small>)
 <i>Right</i>: Mesh density refined going from surface to bottom
 </center>
 
-<h3>t3</h3>
+<h3>Create Simulation Pattern</h3>
 
 <pre>
 <!--#include virtual="square_mesh03.m" -->
@@ -55,7 +55,7 @@ this way</small>)
 <i>Right</i>: Mesh density refined going from surface to bottom
 </center>
 
-<h3>t4</h3>
+<h3>Inverse Solution</h3>
 
 <pre>
 <!--#include virtual="square_mesh04.m" -->
@@ -63,6 +63,48 @@ this way</small>)
 
 <center>
 <img src="square_mesh04a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+<h3>Internal Electrodes</h3>
+
+In order to place internal electrodes, we cannot use the
+complete electrode model, instead, we place point electrodes
+as follows.
+
+<pre>
+<!--#include virtual="square_mesh04.m" -->
+</pre>
+
+<center>
+<img src="square_mesh05a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+Now the code
+<tt>square_mesh02.m</tt>,
+<tt>square_mesh03.m</tt>, and
+<tt>square_mesh04.m</tt> (above) may
+be re-run.
+
+<center>
+<img src="square_mesh05b.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+<center>
+<img src="square_mesh05c.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+<center>
+<img src="square_mesh05d.png"
 <br><i>Figure:</i>
 <i>Left</i>: Uniform mesh density
 <i>Right</i>: Mesh density refined going from surface to bottom
