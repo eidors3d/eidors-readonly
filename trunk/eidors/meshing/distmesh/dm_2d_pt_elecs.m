@@ -1,4 +1,4 @@
-function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing, shapefn, bbox);
+function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);
 % DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined
 %     at points on the electrodes
 %
@@ -9,10 +9,10 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing, shapefn, bbox);
 %    eg elec_pts{1} = [-.1,1;.1,1];
 % pfix = any fixed points to provide to the model (default = [])
 %
-% spacing = [base_spacing, refine_ratio, gradient]
-%   base_spacing - edge length away from refined nodes (eg 0.1)
-%   refine_ratio - relative refinement near points (eg. 10)
-%   gradient     - transition slope of refinement (eg 0.1)
+% params is a structure with fields (you can add more as required)
+%   params.base_spacing - edge length away from refined nodes (eg 0.1)
+%   params.refine_ratio - relative refinement near points (eg. 10)
+%   params.gradient     - transition slope of refinement (eg 0.1)
 %
 % shapefn = distmesh shapefn (calculates distance to boundary)
 %
@@ -21,16 +21,15 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing, shapefn, bbox);
 % Example:
 %  elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
 %  shapefn = inline('sqrt(sum(p.^2,2))-1','p','params'); % Circle
-%  spacing = [0.15,10,0.05];
-%  fmdl= dm_2d_pt_elecs( elec_pts, [], spacing, shapefn, [-1,-1;1,1] );
+%  params.base_spacing = 0.06;
+%  params.refine_ratio = 10;
+%  params.gradient     = 0.05;
+%  fmdl= dm_2d_pt_elecs( elec_pts, [], params, shapefn, [-1,-1;1,1] );
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 
-params.base_spacing = spacing(1);
-params.refine_ratio = spacing(2);
-params.gradient     = spacing(3);
 epfix = vertcat(elec_pts{:});
 params.refine_pts   = epfix;
 
