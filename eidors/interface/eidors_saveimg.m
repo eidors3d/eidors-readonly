@@ -17,7 +17,7 @@ function eidors_saveimg( img, fname, format )
 %  If format is unspecified, we attempt to autodetect.
 
 % (C) 2009 by Bartlomiej Grychtol. Licensed under GPL v2 or v3
-% $Id: eidors_readimg.m 1842 2009-06-20 21:28:12Z nightflight84 $ 
+% $Id$ 
 
 
 switch nargin
