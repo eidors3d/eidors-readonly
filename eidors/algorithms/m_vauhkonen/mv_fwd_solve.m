@@ -18,3 +18,6 @@ A= calc_system_mat( fwd_model, img );
 data.meas= U.Electrode(:);
 data.time= -1; % unknown
 data.name= 'solved by mv_fwd_solve';
+data.U   = U;
+data.p   = p;
+data.r   = r;
