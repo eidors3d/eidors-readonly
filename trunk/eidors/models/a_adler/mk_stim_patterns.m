@@ -81,6 +81,7 @@ i=1;
 for ring = 0:v.n_rings-1
    seen_patterns= struct;
    for elec= 0:v.n_elec-1
+       if v.trig_inj && elec == v.n_elec-1 ; continue; end % No indep patterns
        s_pat= mk_stim_pat(v, elec, ring );
        m_pat= mk_meas_pat(v, elec, ring );
 
@@ -355,8 +356,6 @@ function [m_pat, seen_patterns] = elim_redundant(m_pat, s_pat, seen_patterns);
    m_pat= m_pat_new;
 
 % create trig patterns.
-% FIXME, this is inefficient,
-%  since we recalculate for each electrode
 %
 % n_elecs is total number of electrodes
 % elec    is the electrodes selected (can be multiple)
@@ -365,7 +364,8 @@ function pat= trig_pat( elec_sel, n_elecs);
     idx= linspace(0,2*pi,n_elecs+1)'; idx(end)= [];
     omega= idx*[1:n_elecs/2];
     meas_pat= [cos(omega), sin(omega) ];
-    % reorder so we get cos/sin/cos/sin
+    % reorder so we get cos|sin|cos|sin
     order = reshape(1:n_elecs,[],2)';
     meas_pat= meas_pat(:,order(:));
+    meas_pat= meas_pat(:,1:end-1); % only n_elecs-1 independent patterns
     pat  = meas_pat(:, elec_sel+1);
