@@ -45,6 +45,10 @@ show_fem(tgt_img,[0,1,0])
 
 meas = fwd_solve( tgt_img );
 
+pp= mv_fwd_parameters( fmdl2 );
+
+[Agrad,Kb,M,S,C]=FemMatrix(pp.Node,pp.Element,pp.z_contact);
+
 return
 
 load meshdata % Data for two different meshes.
