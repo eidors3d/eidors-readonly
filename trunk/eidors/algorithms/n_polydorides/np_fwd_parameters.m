@@ -24,7 +24,7 @@ function param = np_fwd_parameters( fwd_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-param = eidors_obj('get-cache', fwd_model, 'np_2003_fwd_param');
+param = eidors_obj('get-cache', fwd_model, 'np_fwd_parameters');
 
 if ~isempty(param)
    eidors_msg('np_fwd_parameters: using cached value', 3);
@@ -33,7 +33,7 @@ end
 
 param = calc_param( fwd_model );
 
-eidors_obj('set-cache', fwd_model, 'np_2003_fwd_param', param);
+eidors_obj('set-cache', fwd_model, 'np_fwd_parameters', param);
 eidors_msg('np_fwd_parameters: setting cached value', 3);
 
 % perform actual parameter calculation

@@ -1,5 +1,5 @@
-function p= mv_fwd_parameters( fmdl )
-% MV_FWD_PARAMETERS: data= np_fwd_solve( fwd_model )
+function param= mv_fwd_parameters( fwd_model )
+% MV_FWD_PARAMETERS: data= mv_fwd_solve( fwd_model )
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Marco Vauhkonen Polydorides EIDORS2D code
 %   param.n_elem   => number of elements
@@ -7,9 +7,25 @@ function p= mv_fwd_parameters( fmdl )
 %   param.n_node   => number of nodes (vertices)
 %   param.n_stim   => number of current stimulation patterns
 %   param.Element  => Element structure (with Topology and Faces)
+%   param.z_contact=> column vector of contact impedances
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+
+param = eidors_obj('get-cache', fwd_model, 'mv_fwd_parameters');
+
+if ~isempty(param)
+   eidors_msg('mv_fwd_parameters: using cached value', 3);
+   return
+end
+
+param = calc_param( fwd_model );
+
+eidors_obj('set-cache', fwd_model, 'mv_fwd_parameters', param);
+eidors_msg('mv_fwd_parameters: setting cached value', 3);
+
+function p= calc_param( fmdl );
 
 p.n_elem = size(fmdl.elems,1);
 p.n_elec = length(fmdl.electrode);
@@ -36,6 +52,8 @@ for i=1:p.n_node
    nn.NodeConnection = Nodes;
    p.Node(i)= nn;
 end
+
+p.z_contact = vertcat([fmdl.electrode(:).z_contact]);
 
 
 function eno=in_electrode(face, fmdl)
