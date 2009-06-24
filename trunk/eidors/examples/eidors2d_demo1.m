@@ -13,10 +13,25 @@ tgt_elems= [374,375,376,601,603,604, ...
             250,254,268,437,449,456];
 
 [fmdl1,fmdl2] = mv_mdl_meshdata;
-Ne2= size(fmdl2.elems,1);
-Ne2= size(fmdl2.elems,1);
+fmdl2.system_mat = @aa_calc_system_mat;
+fmdl2.solve = @aa_fwd_solve;
 
-fmdl2.stimulation = mk_stim_patterns(16,1,'{trig}','{ad}',{},1);
+% Stimulation
+stim = mk_stim_patterns(16,1,'{trig}','{ad}',{},1);
+
+% Override with MV's stim pattern
+% Trigonometric current pattern.
+[jnk,T]=Current(length(fmdl1.electrode),0,'tri');
+
+for i=1:size(T,2)
+   stim(i).stim_pattern= T(:,i);
+end
+
+fmdl2.stimulation = stim;
+fmdl1.stimulation = stim;
+
+Ne2= size(fmdl2.elems,1);
+Ne2= size(fmdl2.elems,1);
 
 
 % Create a sample image
@@ -28,7 +43,7 @@ tgt_img.fwd_model= fmdl2;
 
 show_fem(tgt_img,[0,1,0])
 
-Meas = fwd_solve( tgt_img );
+meas = fwd_solve( tgt_img );
 
 return
 
