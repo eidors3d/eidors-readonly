@@ -23,18 +23,12 @@ p= mv_fwd_parameters( fwd_model );
 sigma = img.elem_data;
 
 [Agrad,Kb,M,S,C]=FemMatrix(p.Node,p.Element,p.z_contact);
-test_meas_ok(C,fwd_model);
+if all(all( C ~= p.C ))
+   error(['The required measurement pattern is not compatible' ...
+         'with that required by eidors2d. Please refer to' ...
+         'eidors2d_demo1 for an example']);
+end
 s_mat= UpdateFemMatrix(Agrad,Kb,M,S,sigma);
 
 eidors_obj('set-cache', fwd_model, 'mv_system_mat', s_mat, img);
 eidors_msg('mv_calc_system_mat: setting cached value', 3);
-
-function test_meas_ok(C,fmdl);
-  for i=1:length(fmdl.stimulation);
-     Cok = norm(fmdl2.stimulation(i).meas_pattern' - C,'fro');
-     if Cok~=0;
-        error(['The required measurement pattern is not compatible' ...
-              'with that required by eidors2d. Please refer to' ...
-              'eidors2d_demo1 for an example']);
-     end
-  end

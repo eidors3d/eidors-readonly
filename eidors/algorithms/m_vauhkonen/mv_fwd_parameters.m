@@ -9,6 +9,8 @@ function param= mv_fwd_parameters( fwd_model )
 %   param.Element  => Element structure (with Topology and Faces)
 %   param.z_contact=> column vector of contact impedances
 %   param.sigma    => column vector of contact impedances
+%   param.T        => current into each electrode
+%   param.C        => Measurement configuration
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -55,6 +57,16 @@ for i=1:p.n_node
 end
 
 p.z_contact = vertcat([fmdl.electrode(:).z_contact]);
+
+p.T = horzcat(fmdl.stimulation(:).stim_pattern);
+
+p.C = fmdl.stimulation(1).meas_pattern';
+for i=2:length(fmdl.stimulation);
+   if all(all( p.C ~= fmdl.stimulation(i).meas_pattern'))
+      error(['Meas_patterns differ for each stimulation.' ...
+            'This is not compatible with eidors2d' ]);
+   end
+end
 
 
 function eno=in_electrode(face, fmdl)

@@ -13,8 +13,6 @@ tgt_elems= [374,375,376,601,603,604, ...
             250,254,268,437,449,456];
 
 [fmdl1,fmdl2] = mv_mdl_meshdata;
-fmdl2.system_mat = @aa_calc_system_mat;
-fmdl2.solve = @aa_fwd_solve;
 
 % Stimulation
 stim = mk_stim_patterns(16,1,'{trig}','{ad}',{},1);
@@ -44,12 +42,15 @@ tgt_img.fwd_model= fmdl2;
 
 show_fem(tgt_img,[0,1,0])
 
-meas = fwd_solve( tgt_img );
+fmdl2.system_mat = @aa_calc_system_mat;
+fmdl2.solve = @aa_fwd_solve;
+tgt_img.fwd_model= fmdl2;
+meas_aa = fwd_solve( tgt_img );
 
-A=mv_calc_system_mat(fmdl2,tgt_img);
-
-[U,p,r]=ForwardSolution(NNode2,NElement2,A,C,T,[],'real'); % Simulated data.
-Uel=U.Electrode(:);
+fmdl2.system_mat = @mv_calc_system_mat;
+fmdl2.solve = @mv_fwd_solve;
+tgt_img.fwd_model= fmdl2;
+meas_mv = fwd_solve( tgt_img );
 
 return
 
