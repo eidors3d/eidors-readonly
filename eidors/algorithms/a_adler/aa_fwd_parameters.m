@@ -18,7 +18,7 @@ function param = aa_fwd_parameters( fwd_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-param = eidors_obj('get-cache', fwd_model, 'aa_1996_fwd_param');
+param = eidors_obj('get-cache', fwd_model, 'aa_fwd_parameters');
 
 if ~isempty(param)
    eidors_msg('aa_fwd_parameters: using cached value', 3);
@@ -27,7 +27,7 @@ end
 
 param = calc_param( fwd_model );
 
-eidors_obj('set-cache', fwd_model, 'aa_1996_fwd_param', param);
+eidors_obj('set-cache', fwd_model, 'aa_fwd_parameters', param);
 eidors_msg('aa_fwd_parameters: setting cached value', 3);
 
 % perform actual parameter calculation
@@ -74,7 +74,7 @@ end
 if isfield(fwd_model,'boundary')
     bdy = fwd_model.boundary;
 else
-    bdy= find_boundary(fwd_model.elems);
+    bdy = find_boundary(fwd_model.elems);
 end
 
 % Matrix to convert Nodes to Electrodes
@@ -93,7 +93,7 @@ for i=1:n_elec
     elseif length(elec_nodes) ==0
        error('zero length electrode specified');
     else
-       bdy_idx= find_electrode_bdy( fwd_model.boundary, [], elec_nodes);
+       bdy_idx= find_electrode_bdy( bdy, [], elec_nodes);
 
        if ~isempty(bdy_idx) % CEM electrode
           cem_electrodes = cem_electrodes+1;
