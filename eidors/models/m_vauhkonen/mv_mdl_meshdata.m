@@ -20,6 +20,11 @@ function fmdl= build_model( fn_get_geometry, name);
       fmdl.electrode(i).z_contact = 0.005; % From eidors2d_demo1
    end
 
+   % Find ground node closest to centre
+   r2 = sum(fmdl.nodes.^2,2);
+   [jnk,idx] = min(r2);
+   fmdl.gnd_node = idx(1);
+
 function [Elem1_Topology, Elem1_Coordinate, ...
           Elem1_Electrode] = get_geometry1;
 
