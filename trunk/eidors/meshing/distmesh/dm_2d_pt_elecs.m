@@ -34,7 +34,7 @@ epfix = vertcat(elec_pts{:});
 params.refine_pts   = epfix;
 
 [p,t] = distmeshnd(shapefn,@dm_refine_points,params.base_spacing/2,  ...
-           bbox,[pfix,epfix],params);
+           bbox,[pfix;epfix],params);
 
 bdy = find_boundary(t);
 ubn = unique(bdy(:));
