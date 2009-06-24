@@ -25,6 +25,7 @@ stim = mk_stim_patterns(16,1,'{trig}','{ad}',{},1);
 
 for i=1:size(T,2)
    stim(i).stim_pattern= T(:,i);
+   stim(i).meas_pattern(16,:) = [];
 end
 
 fmdl2.stimulation = stim;
@@ -45,9 +46,10 @@ show_fem(tgt_img,[0,1,0])
 
 meas = fwd_solve( tgt_img );
 
-pp= mv_fwd_parameters( fmdl2 );
+A=mv_calc_system_mat(fmdl2,tgt_img);
 
-[Agrad,Kb,M,S,C]=FemMatrix(pp.Node,pp.Element,pp.z_contact);
+[U,p,r]=ForwardSolution(NNode2,NElement2,A,C,T,[],'real'); % Simulated data.
+Uel=U.Electrode(:);
 
 return
 
@@ -64,8 +66,9 @@ g2=reshape([Node2.Coordinate],2,NNode2)';
 H2=reshape([Element2.Topology],3,NElement2)';
 
 
-disp('Choose a circular inhomogeneity. Left mouse button, center, right button, radius.')
-Ind = tgt_elems; %Ind=ChooseCircle(Node2,Element2);  % Make data for an inhomogeneity.
+%disp('Choose a circular inhomogeneity. Left mouse button, center, right button, radius.')
+%Ind=ChooseCircle(Node2,Element2);  % Make data for an inhomogeneity.
+Ind = tgt_elems;
 sigma=1/400*ones(NElement2,1);            % Make a conductivity vector.
 sigma(Ind)=2/400;			  % Conductivity of the inhomogeneity.
 

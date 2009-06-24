@@ -8,6 +8,7 @@ function param= mv_fwd_parameters( fwd_model )
 %   param.n_stim   => number of current stimulation patterns
 %   param.Element  => Element structure (with Topology and Faces)
 %   param.z_contact=> column vector of contact impedances
+%   param.sigma    => column vector of contact impedances
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
