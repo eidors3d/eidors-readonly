@@ -6,27 +6,19 @@ function [fmdl1,fmdl2] = mv_mdl_meshdata;
 % (C) 2000 by Marko Vauhkonen. Licensed under GPL v2 or later
 % $Id$
 
-   [Elem1_Topology, Elem1_Coordinate,Elem1_Electrode] = get_geometry1;
-   fmdl1.name = 'EIDORS2D Demo mesh #1 coarse';
-   fmdl1.type = 'fwd_model';
-   fmdl1.elems= Elem1_Topology;
-   fmdl1.nodes= Elem1_Coordinate;
-   for i=1:size(Elem1_Electrode,1);
-      fmdl1.electrode(i).nodes = unique(Elem1_Electrode(i,:));
-      fmdl1.electrode(i).z_contact = 0.005; % From eidors2d_demo1
+   fmdl1= build_model( @get_geometry1, 'EIDORS2D Demo mesh #1 coarse');
+   fmdl2= build_model( @get_geometry2, 'EIDORS2D Demo mesh #2 fine');
+
+function fmdl= build_model( fn_get_geometry, name);
+   [Elem_Topology, Elem_Coordinate,Elem_Electrode] = feval(fn_get_geometry);
+   fmdl.name = name;
+   fmdl.type = 'fwd_model';
+   fmdl.elems= Elem_Topology;
+   fmdl.nodes= Elem_Coordinate;
+   for i=1:size(Elem_Electrode,1);
+      fmdl.electrode(i).nodes = unique(Elem_Electrode(i,:));
+      fmdl.electrode(i).z_contact = 0.005; % From eidors2d_demo1
    end
-
-   [Elem2_Topology, Elem2_Coordinate,Elem2_Electrode] = get_geometry2;
-   fmdl2.name = 'EIDORS2D Demo mesh #2 fine';
-   fmdl2.type = 'fwd_model';
-   fmdl2.elems= Elem2_Topology;
-   fmdl2.nodes= Elem2_Coordinate;
-   for i=1:size(Elem2_Electrode,1);
-      fmdl2.electrode(i).nodes = unique(Elem2_Electrode(i,:));
-      fmdl2.electrode(i).z_contact = 0.005; % From eidors2d_demo1
-   end
-
-
 
 function [Elem1_Topology, Elem1_Coordinate, ...
           Elem1_Electrode] = get_geometry1;
