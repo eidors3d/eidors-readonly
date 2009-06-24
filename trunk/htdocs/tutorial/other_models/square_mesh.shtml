@@ -75,7 +75,7 @@ complete electrode model, instead, we place point electrodes
 as follows.
 
 <pre>
-<!--#include virtual="square_mesh04.m" -->
+<!--#include virtual="square_mesh05.m" -->
 </pre>
 
 <center>
