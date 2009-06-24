@@ -1,5 +1,5 @@
 function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)
-% FIND_ELECTRODE_BDY: find the boundary index are area for electrode
+% FIND_ELECTRODE_BDY: find the boundary index area for electrode
 % Input:
 %   bdy => boundary (from fwd_model.boundary) bdy simplices x nodes index 
 %   vtx => node pts (from fwd_model.nodes)
