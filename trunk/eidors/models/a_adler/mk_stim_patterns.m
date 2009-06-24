@@ -32,6 +32,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %      '{ad}'        -> adjacent drive: equivalent to [0 1]
 %      '{op}'        -> opposite drive: equivalent to [0, n_elec/2]
 %      '{trig}'      -> trigonometric drive [sin,cos,sin,cos ...]
+%                       '{trig}' implies the 'meas_current' option.
 %      '{mono}'      -> Drive via each elec, current leaves by ground
 %      Bi-polar injection patterns:
 %        [x y]: First pattern is [x,y] next is [x+1,y+1] 
@@ -233,8 +234,15 @@ function meas = mk_meas_pat(v, elec, ring );
 
 function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
 
+% SET DEFAULTS
    v.trig_meas= 0;
    v.trig_inj = 0;
+
+   v.use_meas_current = 0;
+   v.rotate_meas = 0;
+   v.do_redundant = 1;
+   v.balance_inj = 0;
+   v.balance_meas= 1;
 
 % Stimulation (injection) pattern
 % This currently does not handle complicated injection patterns
@@ -247,6 +255,7 @@ if isstr(inj)
       rel_ampl= [-1;1];
    elseif  strcmp(inj,'{trig}')
       v.trig_inj = 1;
+      v.use_meas_current = 1; % We need to measure on the electrodes
       rel_ampl= [];
    elseif  strcmp(inj,'{mono}')
       inj= [0];
@@ -294,12 +303,6 @@ end
 
 v.meas=          meas;
 v.m_factor=      rel_ampl;
-
-v.use_meas_current = 0;
-v.rotate_meas = 0;
-v.do_redundant = 1;
-v.balance_inj = 0;
-v.balance_meas= 1;
 
 % iterate through the options cell array
 for opt = options
