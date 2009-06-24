@@ -6,19 +6,7 @@ function p= mv_fwd_parameters( fmdl )
 %   param.n_elec   => number of electrodes
 %   param.n_node   => number of nodes (vertices)
 %   param.n_stim   => number of current stimulation patterns
-%   param.n_meas   => number of measurements (total)
-%   param.vtx      => vertex matrix
-%   param.simp     => connection matrix
-%   param.srf      => boundary triangles
-%   param.df       => vector of measurements for each current pattern
-%   param.elec     => nodes attached to each electrode
-%   param.zc       => vector of contact impedances
-%   param.indH     => electrodes used for each measurement
-%   param.I        => RHS (current term) for FEM solution
-%   param.Ib       => Current for electrodes
-%   param.perm_sym => 'sym' parameter
-%   param.gnd_ind  => node attached to ground
-%   param.normalize  => difference measurements normalized?
+%   param.Element  => Element structure (with Topology and Faces)
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -39,6 +27,15 @@ for i=1:p.n_elem
    end
 end
        
+for i=1:p.n_node
+   nn.Coordinate = fmdl.nodes(i,:);
+   nn.ElementConnection = find(any( fmdl.elems == i, 2))';
+   Nodes = fmdl.elems( nn.ElementConnection,: );
+   Nodes = unique(Nodes(:))';
+   Nodes( Nodes == i ) = [];
+   nn.NodeConnection = Nodes;
+   p.Node(i)= nn;
+end
 
 
 function eno=in_electrode(face, fmdl)
