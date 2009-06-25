@@ -20,7 +20,8 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);
 %
 % Example:
 %  elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
-%  shapefn = inline('sqrt(sum(p.^2,2))-1','p','params'); % Circle
+%  shapefn = inline('sqrt(sum(p.^2,2))-params.rad','p','params'); % Circle
+%  params.rad = 1;
 %  params.base_spacing = 0.06;
 %  params.refine_ratio = 10;
 %  params.gradient     = 0.05;
@@ -53,9 +54,6 @@ fmdl.electrode = electrode;
 fmdl.gnd_node=           1;
 fmdl.np_fwd_solve.perm_sym =     '{n}';
 
-
-function d= circle(p,params);
-  d = sqrt(sum(p.^2,2)) - 1; 
 
 % Find the nodes associated with a given electrode
 %   electrode(i).nodes = get_elec_nodes(elec_pts{i}, p, ubn);
