@@ -1,3 +1,5 @@
+
+
 function data =aa_fwd_solve(fwd_model, img)
 % AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)
 % Fwd solver for Andy Adler's EIT code
@@ -38,3 +40,4 @@ end
 data.meas= vv;
 data.time= -1; % unknown
 data.name= 'solved by aa_fwd_solve';
+data.volt= v(1:pp.n_node,:);
