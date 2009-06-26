@@ -1,4 +1,4 @@
-% Difference imaging result
+% Absolute imaging result
 % $Id$
 
 % imdl is loaded from file tutorial151_model.mat
