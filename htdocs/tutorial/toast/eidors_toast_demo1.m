@@ -19,16 +19,33 @@ subplot(222); toastShowMesh(hMesh)
 write_toast_qm('a2c2_8.qm',fmdl);
 toastReadQM(hMesh,'a2c2_8.qm');
 
-mua=zeros(nel,1);
+
 qvec = toastQvec(hMesh,'Neumann','Point');
-mus=ones(nel,1);
-ref=ones(nel,1);
-S=toastSysmat(hMesh,mua,mus,ref,0,'EL');
+
+% DOT Problem is -Grad k dot Grad phi + mua phi = 0
+% EIT Problem is -Grad s dot Grad phi = 0
+% k = 1/3/(mua + mus).
+% To match EIT, set mua = 0
+% s = k = 1/3/mus. mus = s/3
+% ref is refractive index -> set to 1 for EIT
+% BUT, we need to multiply k by 0.3 (mm/ps) (speed of light)
+mua=zeros(nel,1);
+mus=1/3*ones(nel,1)*0.3;
+ref=1*ones(nel,1);
+S_old=toastSysmat(hMesh,mua,mus,ref,0,'EL','PDD');
+
+prm = ones(nel,1);
+S=toastSysmatComponent(hMesh,prm,'PDD','EL');
+
 subplot(224); spy(S)
 img= calc_jacobian_bkgnd(imdl);
 SS= calc_system_mat(img);
 subplot(223); spy( SS.E)
 
-phi=S\qvec;
+gnd_node =1;
+nnodes= size(qvec,1);
+idx= (1:nnodes)'; idx(gnd_node)=[];
+phi = zeros(nnodes,1);
+phi(idx)=S(idx,idx)\qvec(idx);
 meas= fwd_solve(img);
 vv= meas.volt;
