@@ -1,0 +1,19 @@
+<!--#include virtual="nav-sidebar.html" -->
+<h2>Bugs</h2>
+List of bug reports for EIDORS
+<table border=0>
+<th><td>Date<td>Version<td>Comments
+<tr><td>2009-06-25<td>3.3<td>
+EIDORS colourmap doesn't display correctly for
+Matlab version 7.0 +
+</table>
+
+</ul>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body>
+
+</html>
