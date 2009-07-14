@@ -1,0 +1,37 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Yvo G&auml;rber
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 8 Jul 2009
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attibution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+       <hr>
+   <tr><th valign="top"> Format:
+       <td>
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> 
+       <hr>
+   <tr><th valign="top"> Data:
+       <td>
+       <hr>
+   </table>
+
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
