@@ -30,6 +30,3 @@ function node_v= calc_all_node_voltages( himg );
 
    node_v= fwd_solve( himg );
    node_v= reshape(node_v.meas,n_nodes,n_stims);
-
-
-
