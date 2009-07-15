@@ -4,6 +4,33 @@ This page is a list of updates, discussions, and
 ideas for enhancements to the
 EIDORS package.
 <ul>
+
+<p><li><b>
+    15 July 2009:
+</b><br>
+The EIT-ventilation colourmap from 
+Draegerwerk AG &amp; Co. KGaA has been 
+contributed to EIDORS for free 
+commercial and non-commercial use.
+
+<p><li><b>
+    25&minus;26 June 2009:
+</b><br>
+Preliminary work to integrate the 
+<a href="http://web4.cs.ucl.ac.uk/research/vis/toast/">TOAST</a>
+software with EIDORS. Work by Andy Adler, 
+Martin Schweiger, Bill Lionheart and Simon Arridge
+to get a preliminary version of EIDORS and
+TOAST forward solvers working together.
+
+<p><li><b>
+    20&minus;24 June 2009:
+</b><br>
+EIDORS codefest in Whaley Bridge (UK). Bill Lionheart,
+Andy Adler, Andrea Borsic and Bartek Grychol got together
+to work on many different issues from conformal mapping and
+Total variation regularization integrating new data formats.
+
 <p><li><b>
     23 July 2008:
 </b><br>

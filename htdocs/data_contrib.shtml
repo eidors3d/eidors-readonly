@@ -61,6 +61,9 @@ use the data</b>
 <li> <a href="./data_contrib/db_backproj_matrix/db_backproj_matrix.shtml"
       >Backprojection Reconstruction Matrix for the Sheffield Mk I</a>
       By: B.H. Brown and D.C. Barber
+<li> <a href="./data_contrib/yg-ventilation-colourmap/yg-ventilation-colourmap.shtml"
+      >EIT Ventilation Colourmap</a>
+      By: Draegerwerk AG &amp; Co. KGaA),
 <li> <a href="./data_contrib/at-head-mesh/at-head-mesh.shtml"
       >Adult and Neonate head FEM meshes</a> 
       By: A. Tizzard
