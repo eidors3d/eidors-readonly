@@ -1,11 +1,13 @@
-
-
 function data =aa_fwd_solve(fwd_model, img)
 % AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)
 % Fwd solver for Andy Adler's EIT code
-% data = measurements struct
-% fwd_model = forward model
-% img = image struct
+% Input:
+%    fwd_model = forward model
+%    img       = image struct
+% Output:
+%    data = measurements struct
+% Options:
+%    img.fwd_solve.get_all_meas = 1  (return all meas as data.volt)
 
 % (C) 1995-2002 Andy Adler. License: GPL version 2 or version 3
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
@@ -40,4 +42,6 @@ end
 data.meas= vv;
 data.time= -1; % unknown
 data.name= 'solved by aa_fwd_solve';
-data.volt= v(1:pp.n_node,:);
+try; if img.fwd_solve.get_all_meas == 1
+   data.volt = v(1:pp.n_node,:); % but not on CEM nodes
+end; end
