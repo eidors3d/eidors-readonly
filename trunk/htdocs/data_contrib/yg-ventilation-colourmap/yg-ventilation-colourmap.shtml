@@ -5,31 +5,42 @@
 <H2>Contributed EIT Data:</H2>
    <table>
    <tr><th valign="top"> Authors:
-       <td> Yvo G&auml;rber
+       <td> Yvo G&auml;rber and Draegerwerk AG &amp; Co. KGaA
        <hr>
    <tr><th valign="top"> Date:
        <td> 8 Jul 2009
        <hr>
    <tr><th valign="top"> Brief Description:
        <td> 
-
+This is the colourmap developed by Draegerwerk AG &amp; Co. KGaA
+for display of EIT ventilation images.
        <hr>
    <tr><th valign="top"> License:
        <td> Creative Commons Artistic License (with Attibution)
        <hr>
    <tr><th valign="top"> Attribution Requirement:
-       <td> 
-       <hr>
-   <tr><th valign="top"> Format:
-       <td>
-       <hr>
-   <tr><th valign="top"> Methods:
-       <td> 
+       <td> Commercial users of this colour mapping should
+            credit "Draegerwerk AG &amp; Co. KGaA" in the
+            product documentation.
        <hr>
    <tr><th valign="top"> Data:
        <td>
+Colour map (with columns of Red/Green/Blue values), is available
+<a href="./cmap_lungeit.mat">here (Matlab v7 format)</a>.
+This matrix may be recreated as follows:
+<pre>
+p1= 2/3*linspace(1,0,26)'*[1,0,1];
+p2= zeros(9,3);
+p3= linspace(0,1,4)'*[0,0,1];
+p4= linspace(0,1,26)'*[1,1,0]; p4(:,3)= 1; p4(1,:)= [];
+cMap = [p1;p2;p3;p4];
+</pre>
+
        <hr>
    </table>
+Description:<br>
+<img src= "./cmap_lungeit.png">
+<hr>
 
 <small>
     Last Modified: $Date$ by $Author$
