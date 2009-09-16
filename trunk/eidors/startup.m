@@ -40,6 +40,7 @@ addpath([HOMEDIR, '/models/s_murphy']);
 addpath([HOMEDIR, '/models/m_vauhkonen']);
 addpath([HOMEDIR, '/meshing/netgen']);
 addpath([HOMEDIR, '/meshing/distmesh']);
+addpath([HOMEDIR, '/meshing/gmsh']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/tools']);
