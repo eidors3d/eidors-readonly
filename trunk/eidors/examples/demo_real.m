@@ -76,7 +76,7 @@ disp('step 7: create inverse model');
 
 % create an inv_model structure of name 'demo_inv'
 demo_inv.name= 'Nick Polydorides EIT inverse';
-demo_inv.solve=       'np_inv_solve';
+demo_inv.solve= 'np_inv_solve';
 demo_inv.hyperparameter.value = 1e-3;
 demo_inv.R_prior= 'np_calc_image_prior';
 demo_inv.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
