@@ -25,6 +25,7 @@ for i=1:size(T,2)
    stim(i).stim_pattern= T(:,i);
    stim(i).meas_pattern(16,:) = [];
 end
+%stim(2:end) = [];
 
 fmdl2.stimulation = stim;
 fmdl1.stimulation = stim;
@@ -42,15 +43,30 @@ tgt_img.fwd_model= fmdl2;
 
 show_fem(tgt_img,[0,1,0])
 
-fmdl2.system_mat = @aa_calc_system_mat;
-fmdl2.solve = @aa_fwd_solve;
-tgt_img.fwd_model= fmdl2;
-meas_aa = fwd_solve( tgt_img );
+tgt_img.fwd_model.system_mat = @aa_calc_system_mat;
+tgt_img.fwd_model.solve = @aa_fwd_solve;
+ meas_aa = fwd_solve( tgt_img );
+
+pp= aa_fwd_parameters( tgt_img.fwd_model );
+s_mat= calc_system_mat(tgt_img.fwd_model, tgt_img );
+[tgt_img.fwd_model.electrode.z_contact]= deal(50);
+v= zeros(pp.n_node,pp.n_stim);
+
+idx= 1:size(s_mat.E,1); idx( tgt_img.fwd_model.gnd_node ) = [];
+
+tol= 1e-5;
+v(idx,:)= forward_solver( s_mat.E(idx,idx), pp.QQ(idx,:), tol);
+
 
 fmdl2.system_mat = @mv_calc_system_mat;
 fmdl2.solve = @mv_fwd_solve;
 tgt_img.fwd_model= fmdl2;
 meas_mv = fwd_solve( tgt_img );
+
+for i=1:10
+plot([v(1:1049,i),meas_mv.U.MeasField(:,i)])
+pause
+end
 
 return
 
