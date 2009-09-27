@@ -12,7 +12,8 @@ p= mv_fwd_parameters( fwd_model );
 
 A= calc_system_mat( fwd_model, img );
 
-[U,p,r]=ForwardSolution(p.n_node,p.n_node,A,p.C,p.T,[],'real');
+% [U,p,r]=ForwardSolution(NNode,NElement, A,  C  ,T,MeasPattern,style,p,r);
+[U,p,r]=ForwardSolution(p.n_node,p.n_elem,A,p.C,p.T,[],'real');
 
 % create a data structure to return
 data.meas= U.Electrode(:);
