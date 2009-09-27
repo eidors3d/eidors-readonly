@@ -1,9 +1,13 @@
 function data= np_fwd_solve( fwd_model, img)
 % NP_FWD_SOLVE: data= np_fwd_solve( fwd_model, img)
 % Fwd solver for Nick Polydorides EIDORS3D code
-% data = measurements struct
-% fwd_model = forward model
-% img = image struct
+% Input:
+%    fwd_model = forward model
+%    img       = image struct
+% Output:
+%    data = measurements struct
+% Options:
+%    img.fwd_solve.get_all_meas = 1  (return all meas as data.volt)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -31,3 +35,6 @@ end
 data.meas= voltH;
 data.time= -1; % unknown
 data.name= 'solved by np_fwd_solve';
+try; if img.fwd_solve.get_all_meas == 1
+   data.volt = Vfwd(1:p.n_node,:); % but not on CEM nodes
+end; end
