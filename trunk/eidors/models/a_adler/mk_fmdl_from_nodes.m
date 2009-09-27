@@ -61,16 +61,22 @@ end
 
 
 mdl.electrode =     electrodes;
-mdl.solve=          'np_fwd_solve';
-mdl.jacobian=       'np_calc_jacobian';
-mdl.system_mat=     'np_calc_system_mat';
+mdl.solve=          @aa_fwd_solve;
+mdl.jacobian=       @aa_calc_jacobian;
+mdl.system_mat=     @aa_calc_system_mat;
 
 
 function vtx_perturb= perturb_vtx( vtx );
+if 0
    ctr= mean(vtx,1);
    v_ctr= vtx - ones(size(vtx,1),1) * ctr;
    r2 = (sum(v_ctr.^2,2)) .^ (1/4);
    vtx_perturb = vtx + .1* v_ctr ./ (r2*ones(1,size(vtx,2)));
+else
+   scl= std(vtx,1);
+   vtx_perturb = vtx + 1e-5*randn(size(vtx)).*(ones(size(vtx,1),1)*scl);
+end
+
    
 function vtx_perturb= perturb_vtx_try1( vtx );
    max_vtx = max(vtx);
