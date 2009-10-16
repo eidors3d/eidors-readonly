@@ -112,8 +112,8 @@ function RM = get_Sheffield_Backproj
    RM = unpack_matrix(Sheffield_Backproj_Matrix);
 
 function RM= get_GREIT_c1;
-   load GREIT_2009_circ_Matrix.mat
-   RM = double(GREITc1);
+   load GREIT_v10_Circ_Matrix.mat
+   RM = double(GREIT_v10_Circ_Matrix);
 
 function RM = unpack_matrix(packed_matrix);
 
