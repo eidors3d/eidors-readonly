@@ -34,11 +34,11 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 
 name = str;
 if strcmp(str,'backproj')
-   str= 'b2d';
+   str= 'b2c';
    RM= 'backproj';
 elseif strcmp(str,'GREITc1');
    str= 'b2c';
-   RM= 'get_GREIT_c1';
+   RM= 'GREITc1';
 else
    name = str;
 end
@@ -113,7 +113,7 @@ function RM = get_Sheffield_Backproj
 
 function RM= get_GREIT_c1;
    load GREIT_v10_Circ_Matrix.mat
-   RM = double(GREIT_v10_Circ_Matrix);
+   RM = unpack_matrix(GREIT_v10_Circ_Matrix);
 
 function RM = unpack_matrix(packed_matrix);
 
