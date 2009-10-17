@@ -35,8 +35,16 @@ All software and data to implement and test GREIT will be
 made available under an open source license which allows free
 research and commercial use.
 <p>
-Currently, software is in development, and has not yet
-been released.
+We have published a paper describing the GREIT
+algorithm framework
+<i>
+<a href="http://stacks.iop.org/0967-3334/30/S03">
+GREIT: a unified approach to 2D linear EIT
+reconstruction of lung images
+</a>
+</i>
+Physiol. Meas, 30:S35-S55, 2009.
+
 
 
 <H3>Getting Started</H3>

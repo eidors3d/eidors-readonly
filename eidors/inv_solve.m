@@ -38,6 +38,10 @@ function img = inv_solve( inv_model, data1, data2)
 %        Data will be selected based on fwd_model.meas_select.
 %
 % If S > 1 for both data1 and data2 then the values must be equal
+%
+% Parameters:
+%   inv_model.inv_solve.crop_parameters: indeces of parameters to return
+%                         DEFAULT: return all paramteres
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -83,6 +87,11 @@ img = eidors_obj('image', imgc );
 if isfield(inv_model,'rec_model')
    img.fwd_model= inv_model.rec_model;
 end
+
+try; if length(inv_model.inv_solve.crop_parameters)>0
+   img.elem_data = img.elem_data( ...
+               inv_model.inv_solve.crop_parameters);
+end; end
 
 try % move elem_data to nodes if required
    if inv_model.reconst_to == 'nodes'
