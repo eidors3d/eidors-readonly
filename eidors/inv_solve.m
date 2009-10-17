@@ -40,7 +40,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 %
 % Parameters:
-%   inv_model.inv_solve.crop_parameters: indeces of parameters to return
+%   inv_model.inv_solve.select_parameters: indeces of parameters to return
 %                         DEFAULT: return all paramteres
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
@@ -88,9 +88,9 @@ if isfield(inv_model,'rec_model')
    img.fwd_model= inv_model.rec_model;
 end
 
-try; if length(inv_model.inv_solve.crop_parameters)>0
+try; if length(inv_model.inv_solve.select_parameters)>0
    img.elem_data = img.elem_data( ...
-               inv_model.inv_solve.crop_parameters);
+               inv_model.inv_solve.select_parameters);
 end; end
 
 try % move elem_data to nodes if required
