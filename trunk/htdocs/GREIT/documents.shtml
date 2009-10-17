@@ -24,10 +24,18 @@ The following documents describe GREIT:
 
 <LI>
    <h3>
+<!--
    <a href="../papers/paper-GREIT-2008/GREIT-algorithm.pdf?ver=FILEVERSION"
       >GREIT paper</a> (version: FILEVERSION)
    <a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/htdocs/papers/paper-GREIT-2008/"
       >[version history]</a>
+>-->
+<a href="http://stacks.iop.org/0967-3334/30/S03">
+GREIT: a unified approach to 2D linear EIT
+reconstruction of lung images
+</a>
+</i>
+Physiol. Meas, 30:S35-S55, 2009.
    <h3>
 
 </UL>
