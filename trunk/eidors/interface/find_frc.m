@@ -116,6 +116,7 @@ while 1;
    xpts=plotpoints( seq, eexpi, einsp, name, ok,frate);
      
    if isempty(xpts); return; end
+   fprintf('Removing points: '); fprintf('%d, ',xpts); disp(' ');
    [einsp,eexpi] = remove_some_points( einsp, eexpi, xpts);
 end
 
