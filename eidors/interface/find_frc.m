@@ -135,6 +135,7 @@ function x=plotpoints( seq, eexpi, einsp, name, ok, frate);
 if ok==0
    title(['(',name,') CLICK ON LINES TO REMOVE: RETURN TO QUIT']);
    [x,jnk] = ginput;
+    x = round(x*frate) + 1;
 else 
    title(name);
 end
