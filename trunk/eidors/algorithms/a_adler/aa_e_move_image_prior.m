@@ -30,10 +30,11 @@ pp= aa_fwd_parameters( inv_model.fwd_model );
 
 % calc conductivity portion
 try
-   RegC= feval( inv_model.aa_e_move_image_prior.RegC.func, inv_model); 
+   RegCfcn = inv_model.aa_e_move_image_prior.RegC.func;
 catch
-   RegC = laplace_image_prior( inv_model );
+   RegCfcn = @laplace_image_prior;
 end
+RegC= feval( RegCfcn, inv_model); 
 
 % calc movement portion
 RegM = movement_image_prior( pp.n_dims, pp.n_elec );
