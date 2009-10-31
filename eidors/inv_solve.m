@@ -90,7 +90,7 @@ end
 
 try; if length(inv_model.inv_solve.select_parameters)>0
    img.elem_data = img.elem_data( ...
-               inv_model.inv_solve.select_parameters);
+               inv_model.inv_solve.select_parameters,:);
 end; end
 
 try % move elem_data to nodes if required
