@@ -62,6 +62,7 @@ if ~isempty(archdir)
    addpath([HOMEDIR, archdir]);
 end
 
+
 % test if eidors_var_id.cpp is a valid mexfile
 if exist('eidors_var_id')~=3
   if exist('OCTAVE_VERSION')==5
@@ -109,6 +110,20 @@ else
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
 
+% check that the compiled mex file is newer than the source file
+srcf = strcat(HOMEDIR,'/arch/eidors_var_id.cpp');
+mexf = strcat(HOMEDIR,strcat(archdir,'/eidors_var_id.mex'));
+if exist(srcf) == 2 & exist(mexf) == 2
+  srcd=dir(srcf);
+  mexd=dir(mexf);
+  if datenum(srcd.date) > datenum(mexd.date)
+     warning('eidors_var_id.mex file is older than source file and should be recompiled.');
+  end
+  clear srcd mexd;
+end
+clear srcf mexf;
+
+% helpful messages
 if ~exist('OCTAVE_VERSION');
    eidors_msg('New to EIDORS? Have a look at the <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
 else 
