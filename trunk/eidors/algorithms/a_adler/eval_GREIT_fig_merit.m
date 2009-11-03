@@ -14,6 +14,11 @@ function params = eval_GREIT_fig_merit(imgs, xyzr_pt)
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
+% TODO: make this more generic for different grids
+imgs.calc_colours.npoints = 32;  % Eval on 32x32 grid
+imgs = calc_slices(imgs);
+imgs(isnan(imgs)) = 0;
+
 N_imgs = size(imgs,3);
 for i= 1:N_imgs
    [xmean,ymean,equiv_circ,map,qmi,img] = calc_cofg(imgs(:,:,i));
