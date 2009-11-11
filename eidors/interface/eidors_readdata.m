@@ -399,7 +399,7 @@ function [stimulations,meas_select] = UCT_sequence_file( fname );
    n_inj  = size(drive_lay,1);       % every injection
    elecs_per_plane = 16; % FIXED FOR THE UCT DEVICE
    raw_index = 0;
-   meas_select = logical(zeros(n_inj*elecs_per_plane,1));
+   meas_select = [];
 
    for i=1:n_inj      % for every injection
        stimulations(i).stimulation= 'mA';
@@ -436,7 +436,7 @@ function [stimulations,meas_select] = UCT_sequence_file( fname );
 
            meas(e_meas_p) = -1;
            meas(e_meas_n) = 1;
-           meas_select(raw_index) = 1;
+           meas_select = [meas_select;raw_index];
            
            % add this measurement to the measurement pattern
            meas_pat = [meas_pat; meas];
@@ -514,88 +514,3 @@ end
 
 fclose(fid);
 % UCT_ShuffleData??
-
-function [v] = UCT_ShuffleData(v_mixed)
-% rearrange the data set, so the first sample from each injection set is
-% 1-2, not 16-1
-%
-% (c) Tim Long
-% 21 January 2005
-% University of Cape Town
-
-v = [];
-for n=1:16:length(v_mixed)
-    ss = v_mixed(n:n+15);
-    v = [v [ss(2:end) ss(1)]];
-end
-
-function [v] = UCT_RemoveCorruptedSamples(v_bad, drive_lay, drive_elec, sense_lay)
-% [v] = RemoveCorruptedSamples(v_bad, drive_lay, drive_elec,
-% sense_lay)
-%
-% removes all the samples when the measurement was taken using an electrode
-% involved in the current injection.
-% assumes   - no of electrodes per layer = 16
-%             (and thus 16 samples per injection)
-%
-% (c) Tim Long
-% 1 June 2006
-% University of Cape Town
-
-no_of_electrodes_per_layer = 16;
-
-v = [];
-
-Vss = [];
-raw_index = 0;
-[no_injections d] = size(drive_lay);
-for inj=1:no_injections         % for every injection
-
-                                % get injection electrodes
-    source_electrode = drive_lay(inj,1)*no_of_electrodes_per_layer + drive_elec(inj, 1);
-    sink_electrode = drive_lay(inj,2)*no_of_electrodes_per_layer + drive_elec(inj, 2);
-
-    for sample=0:15             % for every measurement in this injection
-
-        raw_index = raw_index+1;
-        
-        % find out what the sense electrodes are
-        % this is where we assume adjacent current protocol (saying
-        % postive
-        % input is to the electrode immediately anti-clockwise to -ve
-        % electrode)
-        pos_sense_elec = sense_lay(inj,1) * no_of_electrodes_per_layer + mod(sample+1,16);
-        neg_sense_elec = sense_lay(inj,2) * no_of_electrodes_per_layer + sample;
-        
-        % if either of the drive electrodes are equal to the sense
-        % electrodes, we must not include this sample
-        if pos_sense_elec == source_electrode
-            continue;
-        end
-        if pos_sense_elec == sink_electrode
-            continue;
-        end
-        if neg_sense_elec == source_electrode
-            continue;
-        end
-        if neg_sense_elec == sink_electrode
-            continue;
-        end
-
-        Vss = [Vss; v_bad(raw_index)];
-        
-    end
-end
-
-v = Vss;
-
-
-
-
-
-
-
-
-
-
-
