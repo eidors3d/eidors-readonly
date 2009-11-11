@@ -15,10 +15,12 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %        format = "txt" or "IIRC"
 %    - University of Cape Town formats
 %        format = "UCT_SEQ"  UCT sequence file
-%           - Output is a "stimulations" EIDORS structure
+%           - Output: [ stimulation, meas_select]= eit_readdata(fname, 'UCT_SEQ')
 %        format = "UCT_CAL"  UCT calibration file
 %           - Output: [vv, no_cur_caldata_raw ]= eit_readdata( fname, 'UCT_CAL' )
 %                 where no_cur_caldata_raw is data captured with no current
+%        format = "UCT_DATA"  UCT data frame file
+%           - Output: [vv]= eit_readdata( fname, 'UCT_DATA' )
 %
 % Usage
 % [vv, auxdata ]= eit_readdata( fname, format )
@@ -28,7 +30,7 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %
 %  if format is unspecified, we attempt to autodetect
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% (C) 2005-09 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 % TODO:
@@ -73,9 +75,11 @@ switch fmt
    case {'txt','iirc'}
       vv = iirc_readdata( fname );
    case 'uct_seq'
-      vv = UCT_sequence_file( fname );
+      [vv,auxdata] = UCT_sequence_file( fname );
    case 'uct_cal'
       [vv,auxdata] = UCT_calibration_file( fname );
+   case 'uct_data'
+      [vv] = UCT_LoadDataFrame( fname );
   
    otherwise
       error('eidors_readdata: file "%s" format unknown', fmt);
@@ -305,7 +309,9 @@ function vv = iirc_readdata( fname );
         error('eidors_readdata: data length wrong')
     end
 
-function stimulations = UCT_sequence_file( fname );
+% stimulation is the fwd_model stimulation data structure
+% meas_select indicates if data is NOT measures on current electrode
+function [stimulations,meas_select] = UCT_sequence_file( fname );
    % (c) Tim Long
    % 21 January 2005
    % University of Cape Town
@@ -390,9 +396,12 @@ function stimulations = UCT_sequence_file( fname );
    end
 
    n_elec = size(sense_lay,1);
+   n_inj  = size(drive_lay,1);       % every injection
    elecs_per_plane = 16; % FIXED FOR THE UCT DEVICE
+   raw_index = 0;
+   meas_select = logical(zeros(n_inj*elecs_per_plane,1));
 
-   for i=1:size(drive_lay,1)       % for every injection
+   for i=1:n_inj      % for every injection
        stimulations(i).stimulation= 'mA';
        
        % find the injection electrodes
@@ -410,6 +419,7 @@ function stimulations = UCT_sequence_file( fname );
        % different planes
        meas_pat = [];
        for e = 0:15
+           raw_index = raw_index + 1;
            meas = zeros(1, n_elec);   % the measurement electrodes for this sample
 
            % find the measurement electrodes for this measurement (+ve elec is
@@ -426,6 +436,7 @@ function stimulations = UCT_sequence_file( fname );
 
            meas(e_meas_p) = -1;
            meas(e_meas_n) = 1;
+           meas_select(raw_index) = 1;
            
            % add this measurement to the measurement pattern
            meas_pat = [meas_pat; meas];
@@ -450,7 +461,141 @@ function [cur_data,no_cur_data] = UCT_calibration_file( fname );
    cur_data = [];
 
    for i=1:no_of_layers
-       no_cur_data = [no_cur_data fread(fid, raw_frame_size, 'float64')'];
-       cur_data = [cur_data fread(fid, raw_frame_size, 'float64')'];
+       no_cur_data = [no_cur_data;fread(fid, raw_frame_size, 'float64')];
+       cur_data = [cur_data;fread(fid, raw_frame_size, 'float64')];
    end
    fclose(fid);
+
+%  no_cur_data = UCT_ShuffleData( no_cur_data);
+%  cur_data =    UCT_ShuffleData( cur_data);
+
+function [v_raw] = UCT_LoadDataFrame(infilename)
+% [v_raw] = LoadDataFrame(infilename)
+%
+% Loads the data from the tomography file
+%
+% (c) Tim Long
+% 21 January 2005
+% University of Cape Town
+
+
+% Open the file
+fid = fopen(infilename, 'rb');
+
+if fid == -1
+      errordlg('File not found','ERROR')  
+      return;
+end
+
+%%% new file changes
+magic_number = fread(fid, 1, 'uint32');
+
+if magic_number ~= 2290649224
+   disp('UCT File: wrong file type'); 
+end
+version = fread(fid, 1, 'uint32');
+foffset = fread(fid, 1, 'uint32');
+no_of_layers = fread(fid, 1, 'uint32');
+frame_size = fread(fid, 1, 'uint32');
+fseek(fid, foffset-8, 'cof');
+
+%%% end of new file changes
+%%% old file stuff
+% no_of_layers = fread(fid, 1, 'uint32');
+% frame_size = fread(fid, 1, 'uint32');
+
+frame_no = fread(fid, 1, 'uint32');
+
+v_raw = [];
+while feof(fid)==0
+    v_raw = [v_raw, fread(fid, frame_size*no_of_layers, 'float64')];
+    frame_no = fread(fid, 1, 'uint32');
+end
+
+fclose(fid);
+% UCT_ShuffleData??
+
+function [v] = UCT_ShuffleData(v_mixed)
+% rearrange the data set, so the first sample from each injection set is
+% 1-2, not 16-1
+%
+% (c) Tim Long
+% 21 January 2005
+% University of Cape Town
+
+v = [];
+for n=1:16:length(v_mixed)
+    ss = v_mixed(n:n+15);
+    v = [v [ss(2:end) ss(1)]];
+end
+
+function [v] = UCT_RemoveCorruptedSamples(v_bad, drive_lay, drive_elec, sense_lay)
+% [v] = RemoveCorruptedSamples(v_bad, drive_lay, drive_elec,
+% sense_lay)
+%
+% removes all the samples when the measurement was taken using an electrode
+% involved in the current injection.
+% assumes   - no of electrodes per layer = 16
+%             (and thus 16 samples per injection)
+%
+% (c) Tim Long
+% 1 June 2006
+% University of Cape Town
+
+no_of_electrodes_per_layer = 16;
+
+v = [];
+
+Vss = [];
+raw_index = 0;
+[no_injections d] = size(drive_lay);
+for inj=1:no_injections         % for every injection
+
+                                % get injection electrodes
+    source_electrode = drive_lay(inj,1)*no_of_electrodes_per_layer + drive_elec(inj, 1);
+    sink_electrode = drive_lay(inj,2)*no_of_electrodes_per_layer + drive_elec(inj, 2);
+
+    for sample=0:15             % for every measurement in this injection
+
+        raw_index = raw_index+1;
+        
+        % find out what the sense electrodes are
+        % this is where we assume adjacent current protocol (saying
+        % postive
+        % input is to the electrode immediately anti-clockwise to -ve
+        % electrode)
+        pos_sense_elec = sense_lay(inj,1) * no_of_electrodes_per_layer + mod(sample+1,16);
+        neg_sense_elec = sense_lay(inj,2) * no_of_electrodes_per_layer + sample;
+        
+        % if either of the drive electrodes are equal to the sense
+        % electrodes, we must not include this sample
+        if pos_sense_elec == source_electrode
+            continue;
+        end
+        if pos_sense_elec == sink_electrode
+            continue;
+        end
+        if neg_sense_elec == source_electrode
+            continue;
+        end
+        if neg_sense_elec == sink_electrode
+            continue;
+        end
+
+        Vss = [Vss; v_bad(raw_index)];
+        
+    end
+end
+
+v = Vss;
+
+
+
+
+
+
+
+
+
+
+
