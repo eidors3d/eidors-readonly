@@ -16,6 +16,9 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %    - University of Cape Town formats
 %        format = "UCT_SEQ"  UCT sequence file
 %           - Output is a "stimulations" EIDORS structure
+%        format = "UCT_CAL"  UCT calibration file
+%           - Output: [vv, no_cur_caldata_raw ]= eit_readdata( fname, 'UCT_CAL' )
+%                 where no_cur_caldata_raw is data captured with no current
 %
 % Usage
 % [vv, auxdata ]= eit_readdata( fname, format )
@@ -71,6 +74,8 @@ switch fmt
       vv = iirc_readdata( fname );
    case 'uct_seq'
       vv = UCT_sequence_file( fname );
+   case 'uct_cal'
+      [vv,auxdata] = UCT_calibration_file( fname );
   
    otherwise
       error('eidors_readdata: file "%s" format unknown', fmt);
@@ -428,3 +433,24 @@ function stimulations = UCT_sequence_file( fname );
        end     % for each injection there are actually only 13-16 measurements
        stimulations(i).meas_pattern = sparse(meas_pat);
    end
+
+function [cur_data,no_cur_data] = UCT_calibration_file( fname );
+   fid = fopen(fname, 'rb');
+   mag_num = fread(fid, 1, 'int32');
+   version = fread(fid, 1, 'int32');
+%  comments = fread(fid, 2048, 'char'); MATLAB CHANGED CHAR to 2 bytes
+   comments = fread(fid, 2048, 'uint8');
+   comments = setstr(comments');
+   no_of_layers = fread(fid, 1, 'int32');
+   uppa_dac = fread(fid, 1, 'float64');
+   lowa_dac = fread(fid, 1, 'float64');
+   raw_frame_size = fread(fid, 1, 'int32');
+
+   no_cur_data = [];
+   cur_data = [];
+
+   for i=1:no_of_layers
+       no_cur_data = [no_cur_data fread(fid, raw_frame_size, 'float64')'];
+       cur_data = [cur_data fread(fid, raw_frame_size, 'float64')'];
+   end
+   fclose(fid);
