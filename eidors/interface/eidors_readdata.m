@@ -5,7 +5,7 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 % Currently the list of supported file formats is:
 %    - MCEIT (Goettingen / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
-%    - Draeger "get" file format
+%    - Draeger "get" file format (older format for Draeger equipment)
 %        format = "GET" or "draeger"
 %    - Sheffield MK I "RAW" file format
 %        format = "RAW" or "sheffield"
@@ -13,6 +13,9 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %        format = "ITS" or "p2k"
 %    - IIRC (Impedance Imaging Research Center, Korea)
 %        format = "txt" or "IIRC"
+%    - University of Cape Town formats
+%        format = "UCT_SEQ"  UCT sequence file
+%           - Output is a "stimulations" EIDORS structure
 %
 % Usage
 % [vv, auxdata ]= eit_readdata( fname, format )
@@ -49,24 +52,28 @@ end
 fmt= lower(format);
 if strcmp(fmt,'get')
     if is_get_file_a_draeger_file( fname)
-       fmt= 'draeger';
+       fmt= 'draeger-get';
     else
        fmt= 'mceit';
     end
 end
 
-if     strcmp(fmt, 'mceit')  
-   [vv,curr,volt,auxdata] = mceit_readdata( fname );
-elseif strcmp(fmt, 'draeger')
-   vv = draeger_readdata( fname );
-elseif strcmp(fmt, 'raw') | strcmp(fmt, 'sheffield')
-   vv = sheffield_readdata( fname );
-elseif strcmp(fmt, 'p2k') | strcmp(fmt, 'its')
-   vv = its_readdata( fname );
-elseif strcmp(fmt,'txt') | strcmp(fmt, 'iirc')
-   vv = iirc_readdata( fname );
-else
-   error('eidors_readdata: file "%s" format unknown', fmt);
+switch fmt
+   case 'mceit';
+      [vv,curr,volt,auxdata] = mceit_readdata( fname );
+   case 'draeger-get'
+      vv = draeger_readdata( fname );
+   case {'raw', 'sheffield'}
+      vv = sheffield_readdata( fname );
+   case {'p2k', 'its'}
+      vv = its_readdata( fname );
+   case {'txt','iirc'}
+      vv = iirc_readdata( fname );
+   case 'uct_seq'
+      vv = UCT_sequence_file( fname );
+  
+   otherwise
+      error('eidors_readdata: file "%s" format unknown', fmt);
 end
    
 function df= is_get_file_a_draeger_file( fname)
@@ -292,3 +299,132 @@ function vv = iirc_readdata( fname );
     if length(vv) ~= channels^2
         error('eidors_readdata: data length wrong')
     end
+
+function stimulations = UCT_sequence_file( fname );
+   % (c) Tim Long
+   % 21 January 2005
+   % University of Cape Town
+
+
+   % open the file
+   fid = fopen(fname, 'rt');
+
+   % check to see if file opened ok
+   if fid == -1
+         errordlg('File not found','ERROR')  
+         return;
+   end
+
+
+   tline = fgetl(fid);             % get the spacer at top of text file
+
+   % the measurement and injection pattern is stored as follows:
+   % I1V1:  db #$00,#$0F,#$00,#$00,#$10,#$00,#$00,#$21,#$00 ...
+   % I2V2:  db #$11,#$0F,#$11,#$11,#$10,#$11,#$11,#$21,#$11 ...
+   % etc
+   % need to put all the bytes in a vector
+
+   % tokenlist will store the list of bytes as strings
+   tokenlist = [];
+
+
+   tline = fgetl(fid);             % get first line of data
+
+   while length(tline) ~= 0
+       
+       % the first few characters in the line are junk
+       rem = tline(11:end);            % extract only useful data
+       
+       % extract each byte
+       while length(rem) ~=0
+           [token, rem] = strtok(rem, ',');
+           tokenlist = [tokenlist; token];
+       end
+       
+       % get the next line in sequence file
+       tline = fgetl(fid);
+   end
+
+   fclose(fid);
+
+   % got everything in string form... need to covert to number format
+
+   drive_lay = [];
+   drive_elec = [];
+   sense_lay = [];
+
+   injection_no = 1;
+   % for each injection
+   for i=1:3:length(tokenlist)
+       
+       % get injection layer
+       tsource_layer = tokenlist(i,3);
+       tsink_layer = tokenlist(i,4);
+       source_layer = sscanf(tsource_layer, '%x');
+       sink_layer = sscanf(tsink_layer, '%x');
+       
+       drive_lay = [drive_lay; [source_layer sink_layer]];
+         
+       
+       % get drive pair
+       tsource_elec = tokenlist(i+1,3);
+       tsink_elec = tokenlist(i+1,4);
+       source_elec = sscanf(tsource_elec, '%x');
+       sink_elec = sscanf(tsink_elec, '%x');
+       
+       drive_elec = [drive_elec; [source_elec sink_elec]];
+       
+       
+       % get sense layer pair
+       tpos_layer = tokenlist(i+2,3);
+       tneg_layer = tokenlist(i+2,4);
+       pos_sense_layer = sscanf(tpos_layer, '%x');
+       neg_sense_layer = sscanf(tneg_layer, '%x');
+       
+       sense_lay = [sense_lay; [pos_sense_layer neg_sense_layer]];
+   end
+
+   n_elec = size(sense_lay,1);
+   elecs_per_plane = 16; % FIXED FOR THE UCT DEVICE
+
+   for i=1:size(drive_lay,1)       % for every injection
+       stimulations(i).stimulation= 'mA';
+       
+       % find the injection electrodes
+       e_inj_p = drive_lay(i, 1) * elecs_per_plane + drive_elec(i,1) + 1;
+       e_inj_n = drive_lay(i, 2) * elecs_per_plane + drive_elec(i,2) + 1;
+
+       % create the stimulation pattern for this injection
+       inj = zeros(n_elec, 1);
+       inj(e_inj_p) = 1;
+       inj(e_inj_n) = -1;
+       stimulations(i).stim_pattern = inj;
+     
+       % the UCT instrument always makes 16 measurements per injection.
+       % the +ve and -ve electrodes are always adjacent, but might be on
+       % different planes
+       meas_pat = [];
+       for e = 0:15
+           meas = zeros(1, n_elec);   % the measurement electrodes for this sample
+
+           % find the measurement electrodes for this measurement (+ve elec is
+           % next to -ve electrode)
+           e_meas_p = sense_lay(i,1) * elecs_per_plane + mod(e+1,elecs_per_plane) + 1;
+           e_meas_n = sense_lay(i,2) * elecs_per_plane + e + 1;
+
+           % if either of the drive electrodes are equal to any of the sense
+           % electrodes, we must not include this sample
+           if any( e_meas_p == [e_inj_p, e_inj_n] ) | ...
+              any( e_meas_n == [e_inj_p, e_inj_n] ) 
+               continue;
+           end
+
+           meas(e_meas_p) = -1;
+           meas(e_meas_n) = 1;
+           
+           % add this measurement to the measurement pattern
+           meas_pat = [meas_pat; meas];
+
+       end     % for each injection there are actually only 13-16 measurements
+       stimulations(i).meas_pattern = sparse(meas_pat);
+   end
