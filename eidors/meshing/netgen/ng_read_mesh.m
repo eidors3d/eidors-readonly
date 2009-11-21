@@ -37,6 +37,8 @@ while 1
 
     if     strcmp(tline,'surfaceelementsgi')
        se= get_lines_with_numbers( fid, 11);
+    elseif strcmp(tline,'surfaceelements'); % NEW NETGEN VERSION
+       se= get_lines_with_numbers( fid, 8);
     elseif strcmp(tline,'volumeelements')
        ve= get_lines_with_numbers( fid, 6);
     elseif strcmp(tline,'edgesegmentsgi2')
