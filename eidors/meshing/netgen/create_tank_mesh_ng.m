@@ -43,9 +43,6 @@ if CorR=='C'
       error('requested electrode width is larger than the plane')
    end
 else
-   if elecs_per_plane*electrode_width > 2*pi*tank_radius
-      error('requested electrode width is larger than the plane')
-   end
 end
 
 
@@ -62,72 +59,19 @@ if elec_mesh_density > 0
 end
 
 
+write_header(fid,tank_height,tank_radius);
+
 if CorR =='R'
-
-   % Rectangular case 
-   write_header(fid,tank_height,tank_radius);
-
-   if elec_mesh_density>0
-      mesh_density= (electrode_height+electrode_width)/elec_mesh_density;
-      %Density has some very funny limits. It sometimes just
-      % breaks. Try adding random jitter so that it will
-      % at least work sometimes - or after multiple attempts
-      mesh_density= mesh_density*(1+randn(1)*.01);
-   
-      % add 2 points because we duplicate the points at each corner
-      vert_points= ceil( elec_mesh_density*electrode_height / ...
-                         2 / (electrode_height + electrode_width) ) + 2;
-      vert_sides= linspace(-electrode_height/2, ...
-                            electrode_height/2, vert_points );
-
-      horz_points= ceil( elec_mesh_density*electrode_width / ...
-                         2 / (electrode_height + electrode_width) ) + 2;
-      horz_sides= linspace(-electrode_width/2, ...
-                            electrode_width/2, horz_points );
-
-      fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane* ...
-               (vert_points + horz_points)*2 );
-
-      yy= [vert_sides,vert_sides, ...
-           electrode_height/2*ones(1,horz_points), ...
-          -electrode_height/2*ones(1,horz_points)]';
-      zz= [electrode_width/2*ones(1,vert_points), ...
-          -electrode_width/2*ones(1,vert_points), ...
-           horz_sides,horz_sides]';
-      th_col= 0*yy+1;
-      xyz= [0*th_col,yy,zz];
+   if elecs_per_plane*electrode_width > 2*pi*tank_radius
+      error('requested electrode width is larger than the plane')
    end
-
-
-   kel = 0;
-   for l=1:no_of_planes
-      z = first_plane_starts + (l-1)*height_between_centres;
-      for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
-          kel=kel+1;
-          [x,y]=pol2cart(th,tank_radius);
-          centres(kel,:)= [x,y,z]; % keep the centres
-          dirn = [x,y,0];
-          dirn = dirn ./ norm(dirn);
-         
-          % Write basic electrode shape
-          writengcuboid(fid,sprintf('rod%d',kel),[x,y,z],dirn, ...
-                        electrode_height,electrode_width,0.5*tank_radius);	 	 
-          if elec_mesh_density>0
-             %write to meshsize file
-             xyz1= th_col*[x,y,z] + xyz* ...
-                       [cos(th),sin(th),0; ...
-                       -sin(th),cos(th),0; ...
-                        0      ,0      ,1];
-             fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
-%            plot3(xyz1(:,1),xyz1(:,2),xyz1(:,3),'.') % View to debug
-          end
-
-      end;
-   end;
+   [centres] = write_rectangular_elecs(fid, ...
+            elecs_per_plane, tank_radius, tank_height, ...
+            no_of_planes,first_plane_starts, height_between_centres,  ...
+            electrode_width, electrode_height,fnstem, elec_mesh_density )
 else
 
 % Circular case
-   write_header(fid,tank_height,tank_radius);
 
    if elec_mesh_density>0
       fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
@@ -221,3 +165,65 @@ function write_header(fid,tank_height,tank_radius);
                 'and  cyl;\n'],tank_height);  
 
 
+function [centres] = write_rectangular_elecs(fid, ...
+            elecs_per_plane, tank_radius, tank_height, ...
+            no_of_planes,first_plane_starts, height_between_centres,  ...
+            electrode_width, electrode_height,fnstem, elec_mesh_density )
+
+   if elec_mesh_density>0
+      mesh_density= (electrode_height+electrode_width)/elec_mesh_density;
+      %Density has some very funny limits. It sometimes just
+      % breaks. Try adding random jitter so that it will
+      % at least work sometimes - or after multiple attempts
+      mesh_density= mesh_density*(1+randn(1)*.01);
+   
+      % add 2 points because we duplicate the points at each corner
+      vert_points= ceil( elec_mesh_density*electrode_height / ...
+                         2 / (electrode_height + electrode_width) ) + 2;
+      vert_sides= linspace(-electrode_height/2, ...
+                            electrode_height/2, vert_points );
+
+      horz_points= ceil( elec_mesh_density*electrode_width / ...
+                         2 / (electrode_height + electrode_width) ) + 2;
+      horz_sides= linspace(-electrode_width/2, ...
+                            electrode_width/2, horz_points );
+
+      fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane* ...
+               (vert_points + horz_points)*2 );
+
+      yy= [vert_sides,vert_sides, ...
+           electrode_height/2*ones(1,horz_points), ...
+          -electrode_height/2*ones(1,horz_points)]';
+      zz= [electrode_width/2*ones(1,vert_points), ...
+          -electrode_width/2*ones(1,vert_points), ...
+           horz_sides,horz_sides]';
+      th_col= 0*yy+1;
+      xyz= [0*th_col,yy,zz];
+   end
+
+
+   kel = 0;
+   for l=1:no_of_planes
+      z = first_plane_starts + (l-1)*height_between_centres;
+      for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
+          kel=kel+1;
+          [x,y]=pol2cart(th,tank_radius);
+          centres(kel,:)= [x,y,z]; % keep the centres
+          dirn = [x,y,0];
+          dirn = dirn ./ norm(dirn);
+         
+          % Write basic electrode shape
+          writengcuboid(fid,sprintf('rod%d',kel),[x,y,z],dirn, ...
+                        electrode_height,electrode_width,0.5*tank_radius);	 	 
+          if elec_mesh_density>0
+             %write to meshsize file
+             xyz1= th_col*[x,y,z] + xyz* ...
+                       [cos(th),sin(th),0; ...
+                       -sin(th),cos(th),0; ...
+                        0      ,0      ,1];
+             fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+%            plot3(xyz1(:,1),xyz1(:,2),xyz1(:,3),'.') % View to debug
+          end
+
+      end;
+   end;
