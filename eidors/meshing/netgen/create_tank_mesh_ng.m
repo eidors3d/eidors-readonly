@@ -33,21 +33,12 @@ elecs_per_plane= 2^log2_electrodes_per_plane;
 
 % meshsize around electrodes
 if nargin<11
-   elec_mesh_density= 0; % points on outsize of electrode
+   elec_mesh_density= 0  % points on outsize of electrode
 end
 
 nelec = no_of_planes*elecs_per_plane;
-if CorR=='C'
-   electrode_radius=electrode_width; 
-   if elecs_per_plane*electrode_radius*2 > 2*pi*tank_radius
-      error('requested electrode width is larger than the plane')
-   end
-else
-end
-
 
 % Need some sanity checks here on the data!
-
 
 geofn= [fnstem,'.geo'];
 meshfn= [fnstem,'.vol'];
@@ -61,65 +52,27 @@ end
 
 write_header(fid,tank_height,tank_radius);
 
-if CorR =='R'
-   if elecs_per_plane*electrode_width > 2*pi*tank_radius
-      error('requested electrode width is larger than the plane')
-   end
-   [centres] = write_rectangular_elecs(fid, ...
-            elecs_per_plane, tank_radius, tank_height, ...
-            no_of_planes,first_plane_starts, height_between_centres,  ...
-            electrode_width, electrode_height,fnstem, elec_mesh_density )
-else
-
-% Circular case
-
-   if elec_mesh_density>0
-      fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
-      mesh_density= pi*electrode_radius/elec_mesh_density;
-      %Density has some very funny limits. It sometimes just
-      % breaks. Try adding random jitter so that it will
-      % at least work sometimes
-      mesh_density= mesh_density*(1+randn(1)*.01);
-   end
-
-   
-   theta= linspace(0,2*pi, elec_mesh_density+1)'; theta(1)=[];
-   th_col= ones(size(theta));
-   [xyz]= [0*th_col, ...
-           electrode_radius*sin(theta), ...
-           electrode_radius*cos(theta)];
-
-   xyz2= [];
-   jiggle= 0.01; %jiggle to avoid netgen errors
-   kel = 0;
-   for l=1:no_of_planes
-      % test effect of this
-
-      z = first_plane_starts + (l-1)*height_between_centres;
-      for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
-         kel=kel+1;
-%        modify a single electrode to see the effect
-%        if kel ==elecs_per_plane; electrode_radius=electrode_radius*0.7; end
-         [x,y]=pol2cart(th+jiggle,tank_radius); 
-         dirn = [x,y,0];
-         centres(kel,:)= [x,y,z]; % keep the centres
-         dirn = dirn ./ norm(dirn);
-         writengcylrod(fid,sprintf('rod%d',kel),[x,y,z],dirn, ....
-                       electrode_radius, 0.5*tank_radius);	 	 
-
-         if elec_mesh_density>0
-            %write to meshsize file
-            xyz1= th_col*[x,y,z] + xyz* ...
-                      [cos(th),sin(th),0; ...
-                      -sin(th),cos(th),0; ...
-                       0      ,0      ,1];
-            fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
-         end
-
-      end;
-   end;
-
-end % of circular case
+switch CorR
+   case 'R'
+      if elecs_per_plane*electrode_width > 2*pi*tank_radius
+         error('requested electrode width is larger than the plane')
+      end
+      [centres] = write_rectangular_elecs(fid, ...
+               elecs_per_plane, tank_radius, tank_height, ...
+               no_of_planes,first_plane_starts, height_between_centres,  ...
+               electrode_width, electrode_height,fnstem, elec_mesh_density )
+   case 'C'
+      electrode_radius=electrode_width; 
+      if elecs_per_plane*electrode_radius*2 > 2*pi*tank_radius
+         error('requested electrode width is larger than the plane')
+      end
+      [centres] = write_circular_elecs(fid, ...
+               elecs_per_plane, tank_radius, tank_height, ...
+               no_of_planes,first_plane_starts, height_between_centres,  ...
+               electrode_radius, fnstem, elec_mesh_density )
+   otherwise;
+      error('Specified electrode must be C or R');
+end
 
    for k= 1:nelec
      fprintf(fid,'solid cyl%d = bigcyl    and rod%d; \n',k,k);
@@ -224,6 +177,57 @@ function [centres] = write_rectangular_elecs(fid, ...
              fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
 %            plot3(xyz1(:,1),xyz1(:,2),xyz1(:,3),'.') % View to debug
           end
+
+      end;
+   end;
+
+function [centres] = write_circular_elecs(fid, ...
+            elecs_per_plane, tank_radius, tank_height, ...
+            no_of_planes,first_plane_starts, height_between_centres,  ...
+            electrode_radius, fnstem, elec_mesh_density )
+
+   if elec_mesh_density>0
+      fprintf(fsf,'%d\n', no_of_planes*elecs_per_plane*elec_mesh_density);
+      mesh_density= pi*electrode_radius/elec_mesh_density;
+      %Density has some very funny limits. It sometimes just
+      % breaks. Try adding random jitter so that it will
+      % at least work sometimes
+      mesh_density= mesh_density*(1+randn(1)*.01);
+   end
+
+   
+   theta= linspace(0,2*pi, elec_mesh_density+1)'; theta(1)=[];
+   th_col= ones(size(theta));
+   [xyz]= [0*th_col, ...
+           electrode_radius*sin(theta), ...
+           electrode_radius*cos(theta)];
+
+   xyz2= [];
+   jiggle= 0.01; %jiggle to avoid netgen errors
+   kel = 0;
+   for l=1:no_of_planes
+      % test effect of this
+
+      z = first_plane_starts + (l-1)*height_between_centres;
+      for th =0:2*pi/elecs_per_plane:2*pi*(elecs_per_plane-1)/elecs_per_plane
+         kel=kel+1;
+%        modify a single electrode to see the effect
+%        if kel ==elecs_per_plane; electrode_radius=electrode_radius*0.7; end
+         [x,y]=pol2cart(th+jiggle,tank_radius); 
+         dirn = [x,y,0];
+         centres(kel,:)= [x,y,z]; % keep the centres
+         dirn = dirn ./ norm(dirn);
+         writengcylrod(fid,sprintf('rod%d',kel),[x,y,z],dirn, ....
+                       electrode_radius, 0.5*tank_radius);	 	 
+
+         if elec_mesh_density>0
+            %write to meshsize file
+            xyz1= th_col*[x,y,z] + xyz* ...
+                      [cos(th),sin(th),0; ...
+                      -sin(th),cos(th),0; ...
+                       0      ,0      ,1];
+            fprintf(fsf,'%f %f %f %.3f\n',[xyz1,th_col*mesh_density]');
+         end
 
       end;
    end;
