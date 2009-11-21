@@ -25,8 +25,10 @@ function fmdl = ng_make_cyl_models(cyl_shape, elec_pos, ...
 %
 %
 % USAGE EXAMPLES:
-% Simple 3D cylinder. No electrodes
-%  fmdl= ng_make_cyl_models(30,{0}); 
+% Simple 3D cylinder. Radius = 1. No electrodes
+%   fmdl= ng_make_cyl_models(3,{0}); 
+% Simple 2D cylinder. Radius = 2. Set minsize to refine
+%   fmdl= ng_make_cyl_models([0,2,.2],{0}); 
 
 % (C) Andy Adler, 2009. Licenced under GPL v2 or v3
 % $Id$
@@ -36,9 +38,7 @@ geofn= [fnstem,'.geo'];
 meshfn= [fnstem,'.vol'];
 fid=fopen(geofn,'w');
 
-tank_height = cyl_shape(1);
-tank_radius = 1; if length(cyl_shape)>1; tank_radius=cyl_shape(2); end
-tank_maxh   = 0; if length(cyl_shape)>2; tank_maxh  =cyl_shape(3); end
+[tank_height, tank_radius, tank_maxh, is2D] = parse_shape(cyl_shape);
 
 write_header(fid,tank_height,tank_radius,tank_maxh);
    fprintf(fid,'tlo bigcyl;\n');
@@ -48,6 +48,27 @@ fclose(fid);
 centres=[];
 
 fmdl = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+if is2D
+   fmdl = mdl2d_from3d(fmdl);
+end
+
+function [tank_height, tank_radius, tank_maxh, is2D] = ...
+              parse_shape(cyl_shape);
+   tank_height = cyl_shape(1);
+   tank_radius = 1;
+   tank_maxh   = 0;
+   is2D = 0;
+
+   if length(cyl_shape)>1;
+      tank_radius=cyl_shape(2);
+   end
+   if length(cyl_shape)>2; 
+      tank_maxh  =cyl_shape(3);
+   end
+   if tank_height==0;
+      is2D = 1;
+      tank_height = tank_radius/5; % 5 is needed to let netgen work 
+   end
 
 function write_header(fid,tank_height,tank_radius,maxsz);
    if maxsz==0; 
@@ -63,3 +84,29 @@ function write_header(fid,tank_height,tank_radius,maxsz);
    fprintf(fid,['solid bigcyl= plane(0,0,0;0,0,-1)\n' ...
                 'and  plane(0,0,%6.2f;0,0,1)\n' ...
                 'and  cyl %s;\n'],tank_height,maxsz);  
+
+function mdl2 = mdl2d_from3d(mdl3)
+   mdl2 = eidors_obj('2D','fwd_model');
+   mdl2.gnd_node = 1;
+   bdy = find_boundary(mdl3.elems);
+   vtx = mdl3.nodes;
+   z_vtx = reshape(vtx(bdy,3), size(bdy) );
+   lay0  = find( all(z_vtx==0,2) );
+   bdy0  = bdy( lay0, :);
+   
+   vtx0  = unique(bdy0(:));
+   mdl2.nodes = vtx(vtx0,1:2);
+
+   nmap  = zeros(size(vtx,1),1); nmap(vtx0) = 1:length(vtx0);
+   bdy0  = reshape(nmap(bdy0), size(bdy0) ); % renumber to new scheme
+   mdl2.elems = bdy0;
+
+% Manage Electrodes
+   if ~isfield(mdl3,'electrode'); return; end
+
+   mdl2.electrode = mdl3.electrode;
+   for i=1:length(mdl2.electrode);
+      enodes = nmap( mdl2.electrode(i).nodes );
+      enodes(enodes==0) = []; % Remove 3D layers
+      mdl2.electrode(i).nodes = enodes;
+   end
