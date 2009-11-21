@@ -29,6 +29,8 @@ function [tank_mdl,centres] = create_tank_mesh_ng( ...
 %
 % $Id$
 
+fprintf(2,'WARNING: create_tank_mesh_ng is deprecated. Please use ng_make_cyl_models');
+
 elecs_per_plane= 2^log2_electrodes_per_plane;
 
 % meshsize around electrodes
