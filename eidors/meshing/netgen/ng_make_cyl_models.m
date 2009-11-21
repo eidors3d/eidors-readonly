@@ -67,7 +67,13 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
    end
    if tank_height==0;
       is2D = 1;
-      tank_height = tank_radius/5; % 5 is needed to let netgen work 
+
+      %Need some width to let netgen work, but not too much so
+      % that it meshes the entire region
+      tank_height = tank_radius/5; % initial extimate
+      if tank_maxh>0
+         tank_height = min(tank_height,2*tank_maxh);
+      end
    end
 
 function write_header(fid,tank_height,tank_radius,maxsz);
@@ -87,7 +93,6 @@ function write_header(fid,tank_height,tank_radius,maxsz);
 
 function mdl2 = mdl2d_from3d(mdl3)
    mdl2 = eidors_obj('2D','fwd_model');
-   mdl2.gnd_node = 1;
    bdy = find_boundary(mdl3.elems);
    vtx = mdl3.nodes;
    z_vtx = reshape(vtx(bdy,3), size(bdy) );
@@ -100,6 +105,8 @@ function mdl2 = mdl2d_from3d(mdl3)
    nmap  = zeros(size(vtx,1),1); nmap(vtx0) = 1:length(vtx0);
    bdy0  = reshape(nmap(bdy0), size(bdy0) ); % renumber to new scheme
    mdl2.elems = bdy0;
+
+   mdl2.gnd_node = nmap(mdl3.gnd_node);
 
 % Manage Electrodes
    if ~isfield(mdl3,'electrode'); return; end

@@ -41,7 +41,7 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
-mdl.gnd_node=           1;
+mdl.gnd_node=    find_centre_node(vtx);
 mdl.np_fwd_solve.perm_sym =     '{n}';
 mdl.name = name;
 
@@ -89,3 +89,8 @@ function mat_indices= mk_mat_indices( mat_ind);
      mat_indices{i}= find(mat_ind == mat_idx_i);
   end
 
+function gnd_node=    find_centre_node(vtx);
+  %distance from zero
+  d = sum( vtx.^2, 2);
+  [jnk,gnd_node] = min(d);
+  gnd_node= gnd_node(1);
