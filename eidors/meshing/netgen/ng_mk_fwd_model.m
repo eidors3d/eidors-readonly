@@ -51,19 +51,22 @@ if ~isempty(stim_pattern)
 end
 
 nelec= size(centres,1);
-% Electrodes
-[elec,sels,electrodes] = ng_tank_find_elec(srf,vtx,bc,centres);
-if size(elec,1) ~= nelec
-   error('Failed to find all the electrodes')
+if nelec>0
+   % Electrodes
+   [elec,sels,electrodes] = ng_tank_find_elec(srf,vtx,bc,centres);
+   if size(elec,1) ~= nelec
+      error('Failed to find all the electrodes')
+   end
+
+   % set the z_contact
+   z_contact= z_contact.*ones(nelec,1);
+   for i=1:nelec
+      electrodes(i).z_contact= z_contact(i);
+   end
+
+   mdl.electrode =     electrodes;
 end
 
-% set the z_contact
-z_contact= z_contact.*ones(nelec,1);
-for i=1:nelec
-   electrodes(i).z_contact= z_contact(i);
-end
-
-mdl.electrode =     electrodes;
 mdl.solve=          'np_fwd_solve';
 mdl.jacobian=       'np_calc_jacobian';
 mdl.system_mat=     'np_calc_system_mat';
