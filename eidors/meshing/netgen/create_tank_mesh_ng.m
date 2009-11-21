@@ -33,7 +33,7 @@ elecs_per_plane= 2^log2_electrodes_per_plane;
 
 % meshsize around electrodes
 if nargin<11
-   elec_mesh_density= 0  % points on outsize of electrode
+   elec_mesh_density= 0; % points on outsize of electrode
 end
 
 nelec = no_of_planes*elecs_per_plane;
@@ -60,7 +60,7 @@ switch CorR
       [centres] = write_rectangular_elecs(fid, ...
                elecs_per_plane, tank_radius, tank_height, ...
                no_of_planes,first_plane_starts, height_between_centres,  ...
-               electrode_width, electrode_height,fnstem, elec_mesh_density )
+               electrode_width, electrode_height,fnstem, elec_mesh_density );
    case 'C'
       electrode_radius=electrode_width; 
       if elecs_per_plane*electrode_radius*2 > 2*pi*tank_radius
@@ -69,7 +69,7 @@ switch CorR
       [centres] = write_circular_elecs(fid, ...
                elecs_per_plane, tank_radius, tank_height, ...
                no_of_planes,first_plane_starts, height_between_centres,  ...
-               electrode_radius, fnstem, elec_mesh_density )
+               electrode_radius, fnstem, elec_mesh_density );
    otherwise;
       error('Specified electrode must be C or R');
 end
@@ -203,7 +203,7 @@ function [centres] = write_circular_elecs(fid, ...
            electrode_radius*cos(theta)];
 
    xyz2= [];
-   jiggle= 0.01; %jiggle to avoid netgen errors
+   jiggle= 0.00; %jiggle to avoid netgen errors
    kel = 0;
    for l=1:no_of_planes
       % test effect of this
@@ -218,7 +218,7 @@ function [centres] = write_circular_elecs(fid, ...
          centres(kel,:)= [x,y,z]; % keep the centres
          dirn = dirn ./ norm(dirn);
          writengcylrod(fid,sprintf('rod%d',kel),[x,y,z],dirn, ....
-                       electrode_radius, 0.5*tank_radius);	 	 
+                       electrode_radius, 0.2*tank_radius);
 
          if elec_mesh_density>0
             %write to meshsize file
@@ -231,3 +231,40 @@ function [centres] = write_circular_elecs(fid, ...
 
       end;
    end;
+
+function writengcuboid(fid,name,c, dirn,h,w,d)
+% writes the specification for a netgen cuboid on fid, named name, centerd on c,
+% in the direction given by vector dirn, height  h width w and depth d
+% direction is in the xy plane
+dirnp = [-dirn(2),dirn(1),0];
+bl = c - (d/2)* dirn + (w/2)* dirnp -[0,0,h/2];
+tr =c + (d/2)* dirn - (w/2)* dirnp +[0,0,h/2];
+fprintf(fid,'solid %s  =plane (%6.3f,%6.3f,%6.3f;0, 0, -1 )\n ', ...
+        name,bl(1),bl(2),bl(3));
+fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', ...
+        bl(1),bl(2),bl(3),-dirn(1),-dirn(2),0);
+fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', ...
+        bl(1),bl(2),bl(3),dirnp(1),dirnp(2),0);
+fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;0, 0, 1  )\n ', ...
+        tr(1),tr(2),tr(3));
+fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', ...
+        tr(1),tr(2),tr(3),dirn(1),dirn(2),0);
+fprintf(fid,'        and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  );\n ', ...
+        tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0);
+
+function writengcylrod(fid,name,c, d,rd,ln)
+% writes the specification for a netgen cylindrical rod on fid, named name, centerd on c,
+% in the direction given by vector d, radius rd  lenght ln
+% direction is in the xy plane
+ % the direction vector
+dirn = d.*(ln/(2*norm(d)));   % normalize
+inpt = c - dirn.*(ln/2);
+outpt =c + dirn.*(ln/2);
+
+
+fprintf(fid,'solid %s  =plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', ...
+      name , inpt(1),inpt(2),inpt(3),-dirn(1),-dirn(2),-dirn(3));
+fprintf(fid,'       and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )\n ', ...
+      outpt(1),outpt(2),outpt(3),dirn(1),dirn(2),dirn(3));
+fprintf(fid,'       and cylinder(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f; %6.3f  );\n ', ...
+      inpt(1),inpt(2),inpt(3),outpt(1),outpt(2),outpt(3), rd);

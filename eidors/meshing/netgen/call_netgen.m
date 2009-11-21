@@ -24,10 +24,6 @@ if nargin<4
    finelevel= '';
 end
 
-% Netgen executable filename
-ng_name = 'ng';
-
-while( 1 )
    ldpath='';
    if  strfind(system_dependent('getos'),'Linux')
      islinux =1;
@@ -39,6 +35,15 @@ while( 1 )
    else
      islinux =0;
    end    
+
+% Netgen executable filename
+   if  islinux
+      ng_name = 'netgen';
+   else
+      ng_name = 'ng';
+   end
+
+while( 1 )
 
    fid= fopen('ng.opt','w'); %create ng.opt file in local dir
    if ~isempty(msz_file)
@@ -57,9 +62,9 @@ while( 1 )
    if islinux
       disp(['It seems you are running Linux and netgen has not worked. ' ...
            'Check that it is installed and on the path. ' ...
-           'Perhaps LD_LIBRARY_PATH needs to be set?' ]);
-      disp('Lets try different filename...');
-      ng_name = 'netgen';
+           'Perhaps LD_LIBRARY_PATH needs to be set?' ...
+           'Please enter a new netgen file name' ]);
+      ng_name = input('netgen file name (with path)? ','s');
    else
       fprintf([ ...
        'Netgen call failed. Is netgen installed and on the search path?\n' ...
