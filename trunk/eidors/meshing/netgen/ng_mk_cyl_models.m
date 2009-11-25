@@ -7,7 +7,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % cyl_shape = {height, [radius, [maxsz]]}
 %    if height = 0 -> calculate a 2D shape
 %    radius (OPT)  -> (default = 1)
-%    maxsz  (OPT)  -> max size of mesh elems (default = courase mesh)
+%    maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
@@ -18,8 +18,8 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %  elec_shape = [width,height, {maxsz}]  % Rectangular elecs
 %     OR
 %  elec_shape = [radius, {0, maxsz} ]  % Circular elecs
-%     maxsz  (OPT)  -> max size of mesh elems (default = courase mesh)
-%     maxsz  (OPT)  -> max size of mesh elems (default = courase mesh)
+%     maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
+%     maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
 %
 % Specify either a common electrode shape or for each electrode
 %
