@@ -123,7 +123,7 @@ show_fem(fmdl);
 </center>
 
 <h3>
-2D cylinder. elecs at 0 (large,refined) and 120 (small) degrees
+2D cylinder. elecs at 0 (large,refined) and 90 (small) degrees
 </h3>
 
 <pre>
