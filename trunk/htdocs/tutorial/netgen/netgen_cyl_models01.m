@@ -49,7 +49,7 @@ print -dpng -r75 netgen_cyl_models11.png
     [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
     img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
-show_fem(fmdl);
+show_fem(img);
 print -dpng -r75 netgen_cyl_models12.png
 % 3D cylinder with 8 electrodes and cube
     extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'}
@@ -66,10 +66,11 @@ show_fem(fmdl);
 print -dpng -r75 netgen_cyl_models14.png
 % 2D cylinder with 9 electrodes and inner cylinder
     extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
-    fmdl= ng_mk_cyl_models(3,[9],[0.2,0,0.05],extra); 
+    fmdl= ng_mk_cyl_models(0,[9],[0.2,0,0.05],extra); 
     img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
     img.elem_data = 1 + 0.1*(ctr<0.2^2);
-show_fem(fmdl);
+show_fem(img);
 print -dpng -r75 netgen_cyl_models15.png
 
+!for i in netgen_cyl_models*.png ; do convert -trim -depth 8 $i $i ; done
