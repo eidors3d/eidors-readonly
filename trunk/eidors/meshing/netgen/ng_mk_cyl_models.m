@@ -42,7 +42,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %   fmdl= ng_mk_cyl_models(3,[8,1,2],[0.1]); 
 % 3D cylinder. Radius = 1. 6 circ elecs with elec refinement
 %   fmdl= ng_mk_cyl_models(3,[7,1],[0.2,0,0.05]); 
-% 3D cylinder. Radius = 1. 5 rect elecs with no refinement
+% 3D cylinder. Radius = 1. 7 rect elecs with no refinement
 %   fmdl= ng_mk_cyl_models(3,[7,1],[0.2,0.3]); 
 % 2D cylinder. Radius = 1. 11 rect elecs with refinement
 %   fmdl= ng_mk_cyl_models(0,[11],[0.2,0,0.05]); 
@@ -51,7 +51,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % 2D cylinder. elecs at 0, 90 and 120 degrees
 %   fmdl= ng_mk_cyl_models(0,[0;90;120],[0.2,0,0.03]); 
 % 2D cylinder. elecs at 0 (large,refined) and 120 (small) degrees
-%   fmdl= ng_mk_cyl_models(0,[0;90],[0.4,0,0.01;0.1,0,0.1]); 
+%   fmdl= ng_mk_cyl_models(0,[0;120],[0.4,0,0.01;0.1,0,0.1]); 
 % 3D cylinder. elecs at 0, 30, 60, 90 in planes
 %   fmdl= ng_mk_cyl_models(3,[0,0.5;30,1;60,1.5;90,2.0],[0.2,0,0.1]); 
 % 3D cylinder. Various elecs at 0, 30, 60, 90 in planes
