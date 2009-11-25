@@ -30,6 +30,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % OUTPUT:
 %  fmdl    - fwd_model object
 %  mat_idx - indices of materials (if extra_ng_code is used)
+%    Note mat_idx does not work in 2D. Netgen does not provide it.
 %
 %
 % USAGE EXAMPLES:
@@ -70,10 +71,13 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %   [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
 % 2D cylinder with 8 electrodes and hole
 %   extra={'ball','solid ball = sphere(0.2,0.2,0;0.2) -maxh=0.05;'}
-%   [fmdl,mat_idx]= ng_mk_cyl_models(0,[8],[0.1,0,0.05],extra); 
+%   fmdl= ng_mk_cyl_models(0,[8],[0.1,0,0.05],extra); 
 % 2D cylinder with 9 electrodes and inner cylinder
 %   extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
-%   [fmdl,mat_idx]= ng_mk_cyl_models(3,[9],[0.2,0,0.05],extra); 
+%   fmdl= ng_mk_cyl_models(3,[9],[0.2,0,0.05],extra); 
+%   img= eidors_obj('image','ball'); img.fwd_model= fmdl;
+%   ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
+%   img.elem_data = 1 + 0.1*(ctr<0.2^2);
 
 % (C) Andy Adler, 2009. Licenced under GPL v2 or v3
 % $Id$
@@ -95,7 +99,7 @@ call_netgen( geofn, meshfn);
 
 delete(geofn); delete(meshfn); % remove temp files
 if is2D
-   fmdl = mdl2d_from3d(fmdl);
+   [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
 end
 
 function write_geo_file(geofn, tank_height, tank_radius, ...
@@ -255,7 +259,7 @@ function write_header(fid,tank_height,tank_radius,maxsz,extra);
                 'and  plane(0,0,%6.2f;0,0,1)\n' ...
                 'and  cyl %s %s;\n'],tank_height,extra{1},maxsz);  
 
-function mdl2 = mdl2d_from3d(mdl3)
+function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    mdl2 = eidors_obj('2D','fwd_model');
    bdy = find_boundary(mdl3.elems);
    vtx = mdl3.nodes;
