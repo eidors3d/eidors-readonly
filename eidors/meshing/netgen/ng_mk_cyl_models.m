@@ -1,8 +1,9 @@
-function fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, ...
+function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
                   elec_shape, extra_ng_code);
 % NG_MAKE_CYL_MODELS: create cylindrical models using netgen
-% fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, elec_shape, extra_ng_code);
-% 
+%[fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
+%                 elec_shape, extra_ng_code);
+% INPUT:
 % cyl_shape = {height, [radius, [maxsz]]}
 %    if height = 0 -> calculate a 2D shape
 %    radius (OPT)  -> (default = 1)
@@ -21,6 +22,14 @@ function fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %     maxsz  (OPT)  -> max size of mesh elems (default = courase mesh)
 %
 % Specify either a common electrode shape or for each electrode
+%
+% EXTRA_NG_CODE
+%   string of extra code to put into netgen geo file. Normally this
+%   would be to insert extra materials into the space
+%
+% OUTPUT:
+%  fmdl    - fwd_model object
+%  mat_idx - indices of materials (if extra_ng_code is used)
 %
 %
 % USAGE EXAMPLES:
@@ -50,7 +59,21 @@ function fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %   fmdl= ng_mk_cyl_models(3,el_pos,el_sz); 
 % Simple 3D cylinder with a ball
 %   extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'}
-%   fmdl= ng_mk_cyl_models(3,[0],[]); 
+%   [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
+%   img= eidors_obj('image','ball'); img.fwd_model= fmdl;
+%   img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
+% 3D cylinder with 8 electrodes and cube
+%   extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'}
+%   [fmdl,mat_idx]= ng_mk_cyl_models(2,[8,0.5,1.5],[0.1],extra); 
+% 3D cylinder with inner cylinder
+%   extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,1;1,1,2) -maxh=0.05;'}
+%   [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
+% 2D cylinder with 8 electrodes and hole
+%   extra={'ball','solid ball = sphere(0.2,0.2,0;0.2) -maxh=0.05;'}
+%   [fmdl,mat_idx]= ng_mk_cyl_models(0,[8],[0.1,0,0.05],extra); 
+% 2D cylinder with 9 electrodes and inner cylinder
+%   extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
+%   [fmdl,mat_idx]= ng_mk_cyl_models(3,[9],[0.2,0,0.05],extra); 
 
 % (C) Andy Adler, 2009. Licenced under GPL v2 or v3
 % $Id$
@@ -68,7 +91,7 @@ write_geo_file(geofn, tank_height, tank_radius, ...
                tank_maxh, elecs, extra_ng_code);
 call_netgen( geofn, meshfn);
 
-fmdl = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
 delete(geofn); delete(meshfn); % remove temp files
 if is2D
@@ -107,7 +130,7 @@ function write_geo_file(geofn, tank_height, tank_radius, ...
    end
 
    if ~isempty(extra_ng_code{1})
-      fprintf(fid,'tlo %s  -col=[0,1,0];\n',extra{1});
+      fprintf(fid,'tlo %s  -col=[0,1,0];\n',extra_ng_code{1});
    end
 
    fclose(fid);
