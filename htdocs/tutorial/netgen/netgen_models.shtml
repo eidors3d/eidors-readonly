@@ -1,0 +1,35 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Using Netgen to create cylindrical EIDORS Models
+</h2>
+
+EIDORS can use
+<a href="http://sourceforge.net/projects/netgen-mesher/"
+ Netgen to create sophisticated 2D and 3D models</a>
+
+(Older netgen software from 
+  <a href="http://www.hpfem.jku.at/netgen/">JKU</a>, will
+ work for most of these examples, but we recommend you
+ obtain the newest software).
+<p>
+The basic function is <tt>ng_mk_cyl_models</tt>
+
+
+<pre>
+<!--#include virtual="tutorial040a.m" -->
+</pre>
+
+<center>
+<img src="tutorial040a.png">
+</center>
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
