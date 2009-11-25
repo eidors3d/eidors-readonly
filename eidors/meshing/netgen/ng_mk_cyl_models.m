@@ -11,7 +11,7 @@ function fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
 %     OR
-%  elec_pos = [x,y,z] centres of each electrode (N_elecs x 3)
+%  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
 % ELECTRODE SHAPES::
 %  elec_shape = [width,height, {maxsz}]  % Rectangular elecs
@@ -37,7 +37,11 @@ function fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % 2D cylinder. Radius = 1. 11 rect elecs with refinement
 %   fmdl= ng_mk_cyl_models(0,[11],[0.2,0,0.05]); 
 % 2D cylinder. Radius = 1.5. Refined(0.1). 11 elecs with refinement
-%   fmdl= ng_mk_cyl_models([0,1,0.1],[11],[0.2,0,0.05]); 
+%   fmdl= ng_mk_cyl_models([0,1,0.1],[11],[0.2,0,0.02]); 
+% 2D cylinder. elecs at 0, 90 and 120 degrees
+%   fmdl= ng_mk_cyl_models(0,[0;90;120],[0.2,0,0.03]); 
+% 2D cylinder. elecs at 0 (large,refined) and 120 (small) degrees
+%   fmdl= ng_mk_cyl_models(0,[0;90],[0.4,0,0.01;0.1,0,0.1]); 
 
 % (C) Andy Adler, 2009. Licenced under GPL v2 or v3
 % $Id$
@@ -53,8 +57,6 @@ meshfn= [fnstem,'.vol'];
 write_geo_file(geofn, tank_height, tank_radius, tank_maxh, elecs);
 call_netgen( geofn, meshfn);
 
-centres
-tank_height
 fmdl = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
 delete(geofn); delete(meshfn); % remove temp files
@@ -137,11 +139,11 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
 function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
 
    if is2D
-     if length(elec_pos)==1;
+     if size(elec_pos,2)==1;
         elec_pos    = [elec_pos, 0*elec_pos(:,1)];
      end
 
-     if length(elec_shape)==1;
+     if size(elec_shape,2)==1;
         elec_shape  = [elec_shape, 0*elec_shape(:,1)];
      end
 
@@ -162,7 +164,8 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
         centres= [centres; [csth, on_elecs*elec_pos(i)]];
       end
    else
-      centres = elec_pos;
+      th = elec_pos(:,1)*2*pi/360;
+      centres = [rad*sin(th),rad*cos(th),elec_pos(:,2)];
    end
    n_elecs= size(centres,1);
 
@@ -171,7 +174,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
    end
    elec_shape = [elec_shape, zeros(n_elecs, 2)]; % add default zeros
 
-   elecs= struct; % empty
+   elecs= struct([]); % empty
    for i= 1:n_elecs
      row = elec_shape(i,:);
 
@@ -236,12 +239,13 @@ function mdl2 = mdl2d_from3d(mdl3)
    end
 
 
-function write_rect_elec(fid,name,c, dirn,hw,d,maxh)
+function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
 % writes the specification for a netgen cuboid on fid, named name, centerd on c,
 % in the direction given by vector dirn,
 % hw = [height, width]  and depth d
 % direction is in the xy plane
-   h = hw(1); w= hw(2);
+   w = wh(1); h= wh(2);
+   dirn(3) = 0; dirn = dirn/norm(dirn);
    dirnp = [-dirn(2),dirn(1),0];
    dirnp = dirnp/norm(dirnp);
 
