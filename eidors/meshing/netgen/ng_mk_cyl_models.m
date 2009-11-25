@@ -74,7 +74,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %   fmdl= ng_mk_cyl_models(0,[8],[0.1,0,0.05],extra); 
 % 2D cylinder with 9 electrodes and inner cylinder
 %   extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
-%   fmdl= ng_mk_cyl_models(3,[9],[0.2,0,0.05],extra); 
+%   fmdl= ng_mk_cyl_models(0,[9],[0.2,0,0.05],extra); 
 %   img= eidors_obj('image','ball'); img.fwd_model= fmdl;
 %   ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
 %   img.elem_data = 1 + 0.1*(ctr<0.2^2);
@@ -275,6 +275,8 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    mdl2.elems = bdy0;
 
    mdl2.gnd_node = nmap(mdl3.gnd_node);
+
+   idx2 = []; % Don't know how to manage edges accurately
 
 % Manage Electrodes
    if ~isfield(mdl3,'electrode'); return; end
