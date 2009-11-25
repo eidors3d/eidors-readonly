@@ -42,6 +42,12 @@ function fmdl = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %   fmdl= ng_mk_cyl_models(0,[0;90;120],[0.2,0,0.03]); 
 % 2D cylinder. elecs at 0 (large,refined) and 120 (small) degrees
 %   fmdl= ng_mk_cyl_models(0,[0;90],[0.4,0,0.01;0.1,0,0.1]); 
+% 3D cylinder. elecs at 0, 30, 60, 90 in planes
+%   fmdl= ng_mk_cyl_models(3,[0,0.5;30,1;60,1.5;90,2.0],[0.2,0,0.1]); 
+%] 3D cylinder. Various elecs at 0, 30, 60, 90 in planes
+%   el_pos = [0,0.5;30,1;60,1.5;90,2.0];
+%   el_sz  = [0.2,0,0.1;0.1,0,0.05;0.2,0.2,0.5;0.2,0.4,0.1];
+%   fmdl= ng_mk_cyl_models(3,el_pos,el_sz); 
 
 % (C) Andy Adler, 2009. Licenced under GPL v2 or v3
 % $Id$
