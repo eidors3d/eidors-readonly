@@ -4,6 +4,10 @@ function node_v= calc_all_node_voltages( himg );
 % img        => image object
 %
 % node_v     = n_nodes x n_stims voltage on each node
+%
+% NOTE THIS IS DEPRECATED. The recommended was is to do:
+%   img.fwd_solve.get_all_meas = 1; vv= fwd_solve(img);
+%   img will now have a data.volt structure
 
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
 % $Id$
