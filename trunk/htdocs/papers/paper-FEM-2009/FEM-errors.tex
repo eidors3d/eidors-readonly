@@ -77,10 +77,86 @@ between two data frames (time difference imaging). EIT thus has
 the advantage of providing tomographic information about a body
 from measurements from equipment which is non-invasive, minimally
 cumbersome and potentially inexpensive (REFS).
+ 
+Reconstruction of EIT images requires solving an ill-conditioned
+or ill-posed inverse problem (REFS).
+ EIT is ill-posed because we typically
+seek to reconstruct onto much larger image than the number of
+independent measurements.
+ The ill-conditioning is
+due to the physics of current propagation; most current stays
+close to the source electrodes on the body surface, while only
+a much smaller fraction penetrates the interior, which is typically
+the focus of interest.
+One further consequence of the current propagation is the extreme
+sensitivity to the shape of the body surface and exact electrode
+placements and properties (REFS). One technique to deal with
+shape and electrode uncertainties is the use of time difference
+imaging, in which is less sensitive to shape uncertainties which do
+not change between data frames (Adler \etal, 1996).
 
-in EIT is driven by its ability to 
-on the body surface caused when a number of different
-currents are passed through the body.
+The earliest approaches to EIT image reconstruction were
+based on 2D circular approximations of the thorax 
+(Barber and Brown, 1988; Seagar and Bates, 1985). However, since
+such analytical models cannot describe electrical propagation
+in realistic body shapes, finite element models begun to be
+used (Murai and Kagawa, 1985; Yorkey \etal 1987). Over the
+last two decades, the FEM has become the most popular approach
+to model EIT current distrubutions. Other numerical models,
+such as those based on finite differences (Yang and Patterson,
+2007) have been used, but are less popular, primarily
+because FEM mesh elements can be easily refined in regions
+of high electric field, typically near to electrodes.
+
+While the FEM literature is rich in terms of variety of
+model structure, most EIT research has used the simplest
+FEM implementations. Elements are chosen to be simplices
+shapes (trianges in 2D and tetrahedrons in 3D) and conductivity
+is modelled as piecewise constant (so that changes in conductivity
+occur only at element boundaries). Such choices are reasonable:
+all FEM meshing packages provide good support for simplex
+elements, and anatomically realistic conductivity changes
+do occur abruptly at organ boundaries. 
+
+Additionally, two further FEM approximations are typically made.
+First, first order elements are used. This means that voltages
+across each element interpolate linearly between nodes at
+the vertices. Physically, such elements may be modelled by a
+resistor network (Murai and Kagawa, 1985). This certainly
+makes such a FEM easier to understand and may be used as
+the basis for a physical resistor network model of the medium
+(Gagnon \etal 2008). On the other hand, FEM model errors decrease
+linearly with element size for first order FEMs, while the
+rate of error decrease is larger for higher order models.
+Next, the conductivity is assumed to be isotropic. While many
+tissues are (macroscopically) anisotropic, it is difficult to
+measure these properties and few published values exist. Thus,
+it can make sense to simply ignore anisotropy in a model.
+On the other hand, the anisotropic effects can be included
+into the FEM fairly straightforwardly (Abascal \etal 2007, 
+Abascal \etal 2008).
+
+Image reconstruction in EIT
+
+
+
+\section{Forward models}
+
+\subsection{Finite Element Models}
+
+FEMs are generate using the Netgen (Sch\"oberl, 1997) mesh
+generation software, which builds FEM models to arbitrary
+solid geometry constructions. An interface to Netgen is
+provided by EIDORS (Adler \etal, 2006) in which electrodes
+are specified by the intersection of the main body volume
+and cylindrical shapes normal to the boundary. Mesh refinement
+is implemented by specifying the maximum element size permissible
+in each electrode and body volumes. In order to include shapes
+into the meshed volume, a sphere within the body volume 
+is defined into the solid geometry model.
+
+\subsection{Analytic Model}
+
 
 \begin{figure}[tbh]
 \begin{center}
@@ -96,6 +172,8 @@ $z$-direction limits of the coarse model are shown in grey.
 \end{center}
 
 \end{figure}
+
+\section{Image Reconstruction}
 
 \begin{figure}[tbh]
 \begin{center}
@@ -242,6 +320,18 @@ Uses and abuses of EIDORS: An extensible software base for EIT
 {\em Physiol Meas}
 27 S25--S42
 
+\item[]
+Abascal J P J, Arridge S R, Lionheart W R B, Bayford R H, Holder D S  2007
+Validation of a finite element solution for electrical impedance tomography in an anisotropic medium
+{\em Conf. ICEBI} Graz, Austria.
+IFMBE Proc. 17:372--375
+
+\item[]
+Abascal J P J, Arridge S R, Atkinson D, Horesh R, Fabrizi L, Horesh L, Bayford R H, Holder D S  2008
+Use of anisotropic modelling in electrical impedance tomography; Description of method and preliminary assessment of utility in imaging brain function in the adult human head
+{\em NeuroImage} 43:258--268
+
+
 %\item[]
 %Barber D C
 %Brown B H
@@ -291,6 +381,12 @@ Electrode Models for Electric Current Computed Tomography
 36 918--924
 
 \item[]
+Gagnon H, Hartinger A E, Adler A, Guardo R 2008
+A phantom for assessing the performance of EIT systems
+{\em Proc.\ Conf.\ EIT}, Hannover, NH, USA
+
+
+\item[]
 G\'omez-Laberge C Adler A 2008
 Direct EIT Jacobian calculations for conductivity change and electrode movement
 {\em Physiol Meas}
@@ -312,6 +408,11 @@ and recent developments
 25 125--142
 
 \item[]
+Murai T, Kagawa Y 1985
+Electrical impedance computed tomography based on finite element model
+{\em IEEE T Biomed Eng} 32:177-184
+
+\item[]
 Oh S, Tang T, Sadleir R 2007
 Quantitative analysis of shape change in Electrical Impedance Tomography (EIT)
 in {\em IFMBE Proceedings}
@@ -324,16 +425,26 @@ to the Electrical Impedance and Diffuse Optical Reconstruction
 Software project {\em Meas Sci Technol} {\bf 13} 1871-83
 
 \item[]
-Schoberl J 1997
+Sch\"oberl J 1997
 NETGEN: An advancing front 2D/3D-mesh generator based on abstract rules
 {\em Computing and Visualization in Science}
 1 41--52 
+
+\item[]
+Seagar A D Bates R H T 1985
+Full-wave computed tomography. Part 4: Low-frequency electric current CT
+{\em IEE Proceedings A} 132: 455--466
 
 \item[]
 Soleimani M, G\'omez-Laberge C and Adler A 2006 Imaging of
 conductivity changes and electrode movement in EIT
 {\em Physiol Meas} {\bf 27}
 S103--S13
+
+\item[]
+Shaw G R  Goussard  Y Guardo R  1993 
+Linearization of the forward problem in electrical impedance tomography
+{\em Proc. Conf. IEEE EMBS} 82-83
 
 \item[]
 Tizzard A Horesh L Yerworth R J Holder D S Bayford R H 2005
@@ -349,6 +460,13 @@ impedance tomography
 {\em IEEE Trans. Biomed. Eng}
 34 843--52
 
+\item[]
+Yang F  Patterson R 2007
+The contribution of the lungs to thoracic impedance
+measurements: a simulation study based on a high
+resolution finite difference model
+{\em Physiol. Meas.}
+28 S153--S163
 
 \endrefs
 
