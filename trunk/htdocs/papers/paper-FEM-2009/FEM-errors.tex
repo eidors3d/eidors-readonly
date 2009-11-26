@@ -1,0 +1,198 @@
+% Main file for the GREIT Algorithm
+% $Id$
+\documentclass[12pt]{iopart}
+\usepackage{graphicx}
+ \usepackage{amssymb}
+ \usepackage{amsbsy}
+\newcommand{\vB}{\mbox{$\mathbf{v}$}}
+\newcommand{\xB}{\mbox{$\mathbf{x}$}}
+\newcommand{\xH}{\mbox{$\mathbf{\hat x}$}}
+\newcommand{\xT}{\mbox{$\mathbf{\tilde x}$}}
+\newcommand{\XT}{\mbox{$\mathbf{\tilde X}$}}
+\newcommand{\nB}{\mbox{$\mathbf{n}$}}
+\newcommand{\yB}{\mbox{$\mathbf{y}$}}
+\newcommand{\wB}{\mbox{$\mathbf{w}$}}
+\newcommand{\AB}{\mbox{$\mathbf{A}$}}
+\newcommand{\BB}{\mbox{$\mathbf{B}$}}
+\newcommand{\RB}{\mbox{$\mathbf{R}$}}
+\newcommand{\IB}{\mbox{$\mathbf{I}$}}
+\newcommand{\JB}{\mbox{$\mathbf{J}$}}
+\renewcommand{\PB}{\mbox{$\mathbf{P}$}}
+\newcommand{\VB}{\mbox{$\mathbf{V}$}}
+\newcommand{\WB}{\mbox{$\mathbf{W}$}}
+\newcommand{\XB}{\mbox{$\mathbf{X}$}}
+\newcommand{\YB}{\mbox{$\mathbf{Y}$}}
+% Use boldsymbol when using amssymb
+ \newcommand{\SG}{\mbox{${\boldsymbol \Sigma}$}}
+ \newcommand{\TG}{\mbox{${\boldsymbol \Theta}$}}
+ \newcommand{\sG}{\mbox{${\boldsymbol \sigma}$}}
+%\newcommand{\SG}{\mbox{${\mathbf \Sigma}$}}
+%\newcommand{\TG}{\mbox{${\mathbf \Theta}$}}
+%\newcommand{\sG}{\mbox{${\mathbf \sigma}$}}
+\newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
+\newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
+\newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
+\begin{document}
+
+\title[FEM variability and EIT images]{%
+ Compensating for EIT image reconstruction errors due to 
+   FEM variability 
+}
+%{\small \tt DRAFT: $Date$}
+
+\author{Andy Adler$^{1}$,
+        William R B Lionheart$^{2}$,
+       }
+
+\address{ $^{1}$Systems and Computer Engineering,
+                Carleton University, Ottawa, Canada}
+\address{$^{13}$School of Mathematics, University of Manchester, UK}
+
+
+
+\begin{abstract}
+Electrical Impedance Tomography (EIT)
+\end{abstract}
+
+\noindent{\it Keywords\/}:
+Electrical Impedance Tomography,
+Image Reconstruction,
+Finite Element Models
+
+\section{Introduction}
+Electrical Impedance Tomography (EIT) measures conductivity
+changes within a body, by measuring the voltages at electrodes
+on the body surface caused when a number of different
+currents are passed through the body.
+
+
+
+\References % Harvard style references
+\item[]
+Adler A and Guardo R 1996 Electrical impedance tomography:
+regularized imaging and contrast detection {\em IEEE Trans. Med.
+Imaging} {\bf 15} 170-179
+
+\item[]
+Adler A, Guardo R and Berthiaume Y 1996 Impedance imaging of lung
+ventilation: Do we need to account for chest expansion? {\em IEEE
+Trans. Biomed. Eng.} {\bf 43}(4) 414-20
+
+
+\item[]
+Adler A and Lionheart W R B 2006
+Uses and abuses of EIDORS: An extensible software base for EIT
+{\em Physiol Meas}
+27 S25--S42
+
+%\item[]
+%Barber D C
+%Brown B H
+%Freeston I L, 1983
+%Imaging spatial distributions of resistivity using applied potential tomography
+%{\em Electronics Letters}
+%19 933--935
+%
+
+\item[]
+Barber D C and Brown B H 1984
+Applied potential tomography
+{\em J Phys E: Sci Instrum}
+ 17 723--733
+
+\item[]
+Barber D C and Brown B H 1988 Errors in reconstruction of
+resistivity images using a linear reconstruction technique {\em
+Clin. Phys. Physiol. Meas.} 
+9(suppl. A) 101--4
+
+\item[]
+Barber D C 1989
+A review of image reconstruction techniques for electrical
+ impedance tomography
+{\em Med Phys}
+16 162--169
+
+
+\item[]
+Brown B W 2003
+Electrical impedance tomography (EIT): a review
+{\em J Medical Eng. \& Technology}
+27 97--108
+
+
+\item[]
+Cheney M, Isaacson D, Newell J C, Simske S and Goble J C 1990
+NOSER: an algorithm for solving the inverse conductivity problem
+{\em Int J Imaging Syst Technol} 
+2 66--75
+
+\item[]
+Cheng KS, Newell JC, Gisser DG, 1989
+Electrode Models for Electric Current Computed Tomography
+{\em IEEE Trans in Biomedical Eng}
+36 918--924
+
+\item[]
+G\'omez-Laberge C Adler A 2008
+Direct EIT Jacobian calculations for conductivity change and electrode movement
+{\em Physiol Meas}
+29 S89--S99
+
+
+\item[]
+Hahn G Just A Dittmar J  Hellige G 2008
+Systematic errors of EIT systems determined by easily-scalable
+ resistive phantoms
+{\em Physiol Meas}
+ 29 S163--S172
+ 
+\item[]
+Lionheart W R B 2004
+EIT reconstruction algorithms: pitfalls, challenges
+and recent developments
+{\em Physiol Meas}
+25 125--142
+
+\item[]
+Oh S, Tang T, Sadleir R 2007
+Quantitative analysis of shape change in Electrical Impedance Tomography (EIT)
+in {\em IFMBE Proceedings}
+17 424--427
+
+\item[]
+Polydorides N and Lionheart W R B 2002 A Matlab toolkit for
+three-dimensional electrical impedance tomography: A contribution
+to the Electrical Impedance and Diffuse Optical Reconstruction
+Software project {\em Meas Sci Technol} {\bf 13} 1871-83
+
+\item[]
+Schoberl J 1997
+NETGEN: An advancing front 2D/3D-mesh generator based on abstract rules
+{\em Computing and Visualization in Science}
+1 41--52 
+
+\item[]
+Soleimani M, G\'omez-Laberge C and Adler A 2006 Imaging of
+conductivity changes and electrode movement in EIT
+{\em Physiol Meas} {\bf 27}
+S103--S13
+
+\item[]
+Tizzard A Horesh L Yerworth R J Holder D S Bayford R H 2005
+Generating accurate finite element meshes for the forward
+model of the human head in EIT
+{\em Physiol Meas}
+ 26 S251--61 
+
+\item[]
+Yorkey T J, Webster J G and Tompkins W J 1987
+Comparing reconstruction algorithms for electrical
+impedance tomography
+{\em IEEE Trans. Biomed. Eng}
+34 843--52
+
+
+\endrefs
+
+\end{document}
