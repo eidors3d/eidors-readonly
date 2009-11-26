@@ -19,3 +19,9 @@ $(NAME).dvi: %.dvi: %.tex
 $(NAME).pdf: %.pdf: %.tex
 	pdflatex $< && pdflatex $<
 
+sizes: $(NAME).tex
+	perl -n \
+	-e'next unless /includegraphics.*\{(.*(png|jpeg|jpg))}/;' \
+	-e'$$sz = `identify -format "%[fx:w] x %[fx:h]" $$1`;' \
+	-e'printf "IMG: %50s: %11s",$$1,$$sz;'\
+       $<	

@@ -1,6 +1,6 @@
 % Main file for the GREIT Algorithm
 % $Id$
-\documentclass[12pt]{iopart}
+\documentclass[12pt,draft]{iopart}
 \usepackage{graphicx}
  \usepackage{amssymb}
  \usepackage{amsbsy}
@@ -60,10 +60,167 @@ Image Reconstruction,
 Finite Element Models
 
 \section{Introduction}
-Electrical Impedance Tomography (EIT) measures conductivity
-changes within a body, by measuring the voltages at electrodes
+In this paper, we describe the image reconstruction artefacts
+which occur in electrical impedance tomography (EIT) images
+due to limitations in the finite element models, and show
+an algorithmic approach to limit such effects.
+%
+EIT is a technology designed to measure conductivity
+changes within a body using electrical stimulations and
+measurements at electrodes on the body surface. Typically,
+a set of sinusoidal current patterns are sequentially applied to
+the electrodes and the resulting voltages measured. This
+set of measurements constitues an EIT data frame, from which
+and images may then by reconstructed of the body's internal impedance
+distribution (absolute imaging) or the change in impedance distrubution
+between two data frames (time difference imaging). EIT thus has
+the advantage of providing tomographic information about a body
+from measurements from equipment which is non-invasive, minimally
+cumbersome and potentially inexpensive (REFS).
+
+in EIT is driven by its ability to 
 on the body surface caused when a number of different
 currents are passed through the body.
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.45\textwidth, bb=0 0 466 278]{../../tutorial/dual_model/centre_slice02a.png}
+\caption{ \label{fig:dual_model}
+\small
+Netgen model of a $2\times 16$ electrode tank. The positions of the simulated
+conductive target moving in a helical path are shown in purple. The
+3D fine model is shown (cropped). The upper (blue) and lower (red)
+layers corresponding to the geometry of the coarse model are shown. The
+$z$-direction limits of the coarse model are shown in grey.
+}
+\end{center}
+
+\end{figure}
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.45\textwidth, bb=0 0 588 508]{../paper-EIT2008/figs/centre_slice04a_crop.png}
+\caption{ \label{fig:dual_model_reconst}
+\small
+Reconstructed images of a target moving in a helical pattern using
+difference reconstruction models.
+{\em Left} reconstruction model with  $z_{depth}=\infty$
+{\em Right} reconstruction model with $z_{depth}= 0.1\times \mbox{scale}$
+at lower position in Fig.~\ref{fig:dual_model}
+}
+\end{center}
+\vspace{-0.5cm}
+\end{figure}
+
+\subsection{Dual Model solvers}
+
+
+A dual reconstruction model uses a high density (fine)
+FEM to implement the forward solution (voltages
+at electrodes), and a low density (coarse) mesh
+(not necessarily FEM based) for the inverse
+solution. For example, a dual model may be used to 
+represent the conductivity change in a layer
+of a 3D plane (Fig.~\ref{fig:dual_model}).
+Given a forward model, $F$,
+which calculates a voltage measurement vector, $\vB$, from
+a forward (fine) model conductivity element vector, $\sG_f$, we
+have $\vB = F( \sG_f )$. The reconstruction (coarse)
+model is defined on square elements $\sG_r$ related by
+a coarse to fine projection matrix $\PB$, where $\sG_f = \PB \sG_r$.
+
+This is implemented in EIDORS as follows. For each
+inverse model, represented as part of the {\tt inv\_model}
+structure (Fig.~\ref{fig:invmdl}),
+there are two {\tt fwd\_model} structures:
+1) the refined forward model {\tt fwd\_model}, and
+2) the reconstruction model {\tt rec\_model}. 
+Within each forward model structure is a matrix field
+{\tt coarse2fine} which is a sparse encoding of $\PB$.
+Each element $[\PB]_{i,j}$ represents the fraction of
+fine element $i$ enclosed within coarse element $j$.
+
+The Jacobian matrix may be defined for the coarse
+($\JB_r$) and fine ($\JB_f$) models as follows:
+\begin{equation}
+\vB = \JB_f \sG_f 
+    = \JB_f \PB \sG_r
+    = \JB_r     \sG_r
+\end{equation}
+and thus $\JB_r = \JB_f \PB$. Since the matrix
+$\JB_f$ is very large, EIDORS will not calculate it
+directly. Instead, an efficient algorithm calculates
+each column of $\JB_r$ using
+\begin{equation}
+\big[ \JB_c \big]_{i,j} =
+\big[ \JB_f \PB \big]_{i,j} =
+\sum_k \frac{\partial [ \vB ]_i }
+            {\partial [ \sG_f ]_k } [\PB]_{k,j}
+= \frac{\partial [ \vB ]_i }
+       {\partial [ \sG_c ]_j }
+\end{equation}
+where the last expression is implemented in terms
+of the FEM system matrix using the adjoint field method.
+
+The need for a matrix $\PB$ on the {\tt rec\_model} is
+due to the limits of the first order FEM representation.
+If the regions in the reconstruction model are not
+triangular, then each region is constructed from triangular
+regions and the parametrization represented in $\PB$.
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.40\textwidth,bb=0 0 788 655]{../paper-EIT2008/figs/inv_model.png}
+\caption{ \label{fig:invmdl}
+\small
+Layout of the EIDORS {\tt inv\_model} object
+}
+\end{center}
+\vspace{-0.5cm}
+\end{figure}
+
+Dual meshes may be used in several applications:
+\begin{list}{$\circ$} %{\textbullet}
+  {\leftmargin=1.0em \itemindent=-0.0em
+    \topsep=0.0\baselineskip
+    \itemsep=-0.4\baselineskip}
+\item
+   Corresponding meshes: where 
+   coarse elements completely contain fine ones but do not
+   cross elements.
+\item
+   Nodal Solvers: in which the reconstruction parameterizes
+   the conductivity on each node\cite{graham2006}.
+\item
+   $2\frac{1}{2}$D Solvers: in which the $z$-dimension of the
+     3D fine model is projected onto a 2D reconstruction model.
+     This technique is widely used in geophysical appications.
+\item
+   Constraining Reconstruction Parameters:
+      this is useful for example to have one parameter
+      for out of plane conductivity (a region of low sensitivity),
+      which may prevent the algorithm from ``pushing" artefacts there.
+\item
+   Solving to a Square Pixel Grid: this is useful because the
+       reconstructed image is typically mapped to pixels, and
+       will often show artefacts based on the shapes of the elements.
+       A rasterized reconstruction grid will prevent such
+       artefacts, and allow more natural communication of the
+       underlying system resolution (via the pixel size).
+\end{list}
+
+
+%Dual meshes have been used by many EIT groups
+%\\
+%- Oxford Brookes used an interpolation method on two meshes since the early code in the Fortran code Recon started by Lionheart and continued by Kevin Paulson at Brookes. The approach used a mesh correspondence array. 
+%\\
+%- Later on the Dartmouth group also used the idea; paper by the
+%   similarly named Keith Paulsen (ref).
+%\\
+%- Marko Vauhkonen use two meshes in the original 2D EIDORS.
+%\\
+%- UCL optimal tomography group uses it for TOAST.
+%
 
 
 
