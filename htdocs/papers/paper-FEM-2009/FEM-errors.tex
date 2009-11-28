@@ -135,10 +135,48 @@ it can make sense to simply ignore anisotropy in a model.
 On the other hand, the anisotropic effects can be included
 into the FEM fairly straightforwardly (Abascal \etal 2007, 
 Abascal \etal 2008).
+The most common approach to image reconstruction in EIT
+has been to parameterize the conductivity distribution,
+$\xB$,
+based on the FEM element (or vertex) geometry. 
+The conductivity (or conductivity change) distribution,
+$\xH$ is calculated from data (or difference data), $\yB$ as
+\begin{equation} 
+%\xH = \operatorname{arg\,min}_{\xB}
+%\xH = arg\min_{\xB}
+\xH = \mathop{\rm arg\,min}_{\xB}
+    \|\yB - F(\xB)\| + R(\xB)
+\end{equation} 
+where $F(\xB)$ represents the FEM, $\|\cdot\|$ is typically
+the 2-norm, and $R(\xB)$ is regularization penalty function.
+In this way, reconstructed image is defined to be the one which best
+fits, through the FEM, the measured (or simulated) data. 
 
-Image reconstruction in EIT
+In this paper, we report that this approach to image
+reconstruction is very sensitive to any geometrical variability
+in the FEM. For example, small changes in the positions of
+internal nodes, such that the same conductivity distribution
+is represented, can result in large image reconstruction
+artefacts. This effect was unexpected, since the voltage
+distribution simulated by the FEM is very accurate even for
+moderately dense models.
+This paper expands on our previous report (Adler \etal, 2008).
+We are not aware of previous reports of this effect. However,
+this may explain a few puzzling results. For example, studies
+of electrode movement have often used FEM simulations to show that
+unacceptable artefacts occur for very small electrode
+displacements (under 1\%) (Adler \etal, 1996, OTHERS). However,
+experimentally, electrode movements an order of magnitude 
+greater still permit usable images.
 
+In the following sections, we first illustrate the effect
+for 2D and 3D FEMs. Next, we analyse the size of the effect
+as a function of FEM size and reconstruction model for
+both the forward and inverse models. Finally, we propose
+an image reconstruction strategy to address this issue, and
+propose an explanation.
 
+\section{Geometry variability example}
 
 \section{Forward models}
 
@@ -313,12 +351,17 @@ Adler A, Guardo R and Berthiaume Y 1996 Impedance imaging of lung
 ventilation: Do we need to account for chest expansion? {\em IEEE
 Trans. Biomed. Eng.} {\bf 43}(4) 414-20
 
-
 \item[]
 Adler A and Lionheart W R B 2006
 Uses and abuses of EIDORS: An extensible software base for EIT
 {\em Physiol Meas}
 27 S25--S42
+
+\item[]
+Adler A Borsic A Polydorides N Lionheart W R B 2008
+Simple FEMs aren’t as good as we thought: experiences developing EIDORS v3.3
+{\em Proc.\ Conf.\ EIT}, Hannover, NH, USA
+
 
 \item[]
 Abascal J P J, Arridge S R, Lionheart W R B, Bayford R H, Holder D S  2007
