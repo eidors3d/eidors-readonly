@@ -260,7 +260,7 @@ function write_header(fid,tank_height,tank_radius,maxsz,extra);
                 'and  cyl %s %s;\n'],tank_height,extra{1},maxsz);  
 
 function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
-   mdl2 = eidors_obj('2D','fwd_model');
+   mdl2 = eidors_obj('fwd_model','2D');
    bdy = find_boundary(mdl3.elems);
    vtx = mdl3.nodes;
    z_vtx = reshape(vtx(bdy,3), size(bdy) );

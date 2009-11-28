@@ -40,7 +40,7 @@ function img = inv_solve( inv_model, data1, data2)
 % If S > 1 for both data1 and data2 then the values must be equal
 %
 % Parameters:
-%   inv_model.inv_solve.select_parameters: indeces of parameters to return
+%   inv_model.inv_solve.select_parameters: indices of parameters to return
 %                         DEFAULT: return all paramteres
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
