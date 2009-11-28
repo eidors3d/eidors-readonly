@@ -29,6 +29,11 @@
 %\newcommand{\SG}{\mbox{${\mathbf \Sigma}$}}
 %\newcommand{\TG}{\mbox{${\mathbf \Theta}$}}
 %\newcommand{\sG}{\mbox{${\mathbf \sigma}$}}
+\newcommand{\ii}{{\rm i}}
+\newcommand{\DB}{{\bf D}}
+\newcommand{\TB}{{\bf T}}
+\newcommand{\jb}{{\vec{\bf j}}}
+\newcommand{\vb}{{\vec{\bf v}}}
 \newcommand{\SNR}{\mbox{\small $\mathrm{SNR }$}}
 \newcommand{\NF}{\mbox{\small $\mathrm{NF }$}}
 \newcommand{\EIT}{\mbox{\small $\mathit{EIT }$}}
@@ -213,6 +218,59 @@ into the meshed volume, a sphere within the body volume
 is defined into the solid geometry model.
 
 \subsection{Analytic Model}
+
+We use the analytical model of Seagar and Bates (1985)
+to solve the EIT forward problem on a circle with
+a single circular inclusion.
+Given a circle or radius $r=1$ with conductivity
+$\sigma_H$. Inside the circle, a circular region at
+of radius $a$ with conductivity $\sigma$ is at a 
+distance $b$ from the centre and angle $\alpha$.
+
+A current density $J(\theta)$ is applied to the 
+boundary and a voltage $V(\theta)$ is measured.
+These can be decomposed with a Fourier series as
+$J(\theta) = \sum_{k=1}^{N} [j^c]_k \cos k\theta +
+                            [j^s]_k \sin k\theta $ and
+$V(\theta) = \sum_{k=1}^{N} [v^c]_k \cos k\theta +
+                            [v^s]_k \sin k\theta $,
+where the model accuracy increases as $N$ increases.
+Note that no DC term ($m=0$) is used, because current must
+sum to zero, and voltage must be defined wrt a ground.
+We thus define a complex $[\jb]_k= j_k^c + \ii j_k^s$.
+Similarly, $V(\theta)$ is defined by
+                         $[\vb]_k= v_k^c + \ii v_k^s$.
+
+
+For a homogeneous medium ($\sigma_H = \sigma$).
+\begin{equation}
+   \vb = \frac{1}{\sigma_H} \DB^{-1} \jb
+\end{equation}
+Where $\DB$ is a diagonal matrix with $[\DB]_{k,k}= k$
+For an inhomogeneous medium ($\sigma_H \neq \sigma$),
+\begin{equation}
+   \vb = \frac{1}{\sigma_H} (\IB - \TB\DB)^{-1} 
+                            (\IB + \TB\DB) \DB^{-1} \jb
+\end{equation}
+where matrix of $\TB$ is defined by
+\begin{equation}
+   [\TB]_{m,n} = \frac{1}{n} \left(
+        \frac{\sigma_H - \sigma_I} {\sigma_H + \sigma_I}
+                             \right) e^{\ii(m-n)\alpha}
+    \sum_{p=1}^{min(m,n)}
+        \left( \begin{array}{c} m-1 \\ p-1 \end{array} \right)
+        \left( \begin{array}{c} n   \\ p   \end{array} \right)
+        a^{2p} b^{m+n-2p}
+\end{equation}
+where $( {}^n_p )$ represents the coefficients of the binomial
+distribution.
+
+This analytical model represents a shunt electrode model
+(Cheng \etal, 1989)
+
+\subsection{Image Reconstruction}
+
+\section{results}
 
 
 \begin{figure}[tbh]
