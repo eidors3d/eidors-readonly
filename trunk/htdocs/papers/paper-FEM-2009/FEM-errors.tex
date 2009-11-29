@@ -1,6 +1,7 @@
 % Main file for the GREIT Algorithm
 % $Id$
-\documentclass[12pt,draft]{iopart}
+%\documentclass[12pt,draft]{iopart}
+\documentclass[12pt]{iopart}
 \usepackage{graphicx}
  \usepackage{amssymb}
  \usepackage{amsbsy}
@@ -189,7 +190,7 @@ physical phantom. In this case, any errors may be explained
 by small details in the phantom which are not considered
 in the model. This means that it is difficult to use such
 a test to verify high model accuracy.
-Here, we evaluate FEM model by
+Here, we evaluate a FEM model by
 looking at small changes in the model and the
 consequences on difference EIT images.
 In time difference EIT, the image difference,
@@ -199,6 +200,66 @@ from difference measurements, $\yB = \vB - \vB_h$.
 We study difference imaging in order to use a linear
 reconstruction in order to artefacts or errors due to
 interative calculations needed for absolute imaging.
+
+The easiest (and most common) way to simulate a target
+in a medium is to use a single FEM to select and then interpolate
+which elements are part of that target. There is no change to
+the underlying FEM, and thus no model noise in the images.
+However, a more bespoke way to simulate a mesh target is
+create a target region within the FEM and to remesh around
+it. This means that the mesh changes between each
+target position, not only near the target, but throughout
+the FEM due to the propagation of changes in triangularization.
+
+
+To illustrate this process, Fig.~\ref{fig:fem1}
+shows 2D FEM element FEMs created by distmesh, with mesh
+refinement near the electrodes. Electrodes are
+simulated using a Sheffield-type adjacent stimulation and
+measurement. For each simulated target position (blue), the
+fraction of each element filled by the target is calculated
+and used to scale the simulated conductivity change in the element.
+Images are reconstructed of the three target positions
+in Fig. \ref{fig:fem1_images} using a one-step regularized
+GN image reconstruction. No noise is seen from the simulation,
+as expected, since the FEM model does not change.
+
+However, the most appropriate way to simulate a moving target is
+create a target region within the FEM and to remesh around
+it. This means that the mesh changes between each
+target position, not only near the target, but throughout
+the FEM due to the propagation of changes in triangularization.
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.8\textwidth]{figures/fig_example.eps}
+\caption{ \label{fig:fem2}
+\small
+Simulation FEM and simulated target positions in blue
+{\em Left} full scale mesh.
+{\em Right} mesh magnified near target positions 
+{\em Top} FEM with 2372 elements,
+{\em Bottom} FEM with 8909 elements,
+}
+\end{center}
+\vspace{-0.5cm}
+\end{figure}
+
+Using distmesh\cite{persson2004},
+ FEMs were created of a homogeneous phantom
+(like that of Fig. \ref{fig:fem1}), and of three phantoms
+with inset targets areas in the corresponding positions.
+Fig. \ref{fig:fem2} shows the mesh at the
+first target position. Three different levels of mesh
+refinement are shown.
+
+Based on these simulations, we reconstruct images
+using a simple 576 element reconstruction model with point electrodes
+(Fig.~\ref{fig:fem2_images}). In the coarse (2372 element)
+and to a lesser extent in the refined (8909 element) 
+mesh, there are artefacts, mostly near the electrodes, which
+dramatically disturb the image clarity.
+
 
 
 
