@@ -15,85 +15,60 @@ function mk_fig_1
   imdl = mk_common_model('c2c2',16);
   stim= imdl.fwd_model.stimulation;
   setax= [-0.4,1,-0.7,0.7];
+  th= linspace(0,2*pi,50);
+  cc= 0.2*cos(th)+0.5; ss= 0.2*sin(th);
 
   %figure;
   set(gcf,'paperposition',[0.25 2.5 6 6]); clf
+
   axes('position',[0.1,0.5,0.4,0.4]);
-  fmdl= ng_mk_cyl_models(0,[16],[0.1,0,0.02]); 
-  imdl = assign_mdl(imdl, fmdl);
-  img = calc_jacobian_bkgnd(imdl);
-  vv.vhc1 = fwd_solve(img);
-  pts = interp_mesh(fmdl, 5);
-  pts=(pts(:,1,:)-0.5).^2 + (pts(:,2,:)-0).^2;
-  img.elem_data = 1 + 0.1*mean(pts < 0.2^2,3);
-  img.calc_colours.clim = 0.2;
-  vv.vic1 = fwd_solve(img);
+  [img, vi, vh, n_en] = ng_mdl(imdl, 1, 0)
   show_fem(img); axis(setax);
   set(gca,'XTickLabel',[]);
-  nv.c1 = [size(fmdl.nodes,1), size(fmdl.elems,1)];
-
-  th= linspace(0,2*pi,50);
-  hh=line(0.2*cos(th)+0.5, 0.2*sin(th));
-  set(hh,'Color',[0,0,1],'LineWidth',2); 
+  hh=line(cc,ss); set(hh,'Color',[0,0,1],'LineWidth',2); 
 
   axes('position',[0.52,0.5,0.4,0.4]);
-  fmdl= ng_mk_cyl_models([0,1,0.05],[16],[0.1,0,0.02]); 
-  imdl = assign_mdl(imdl, fmdl);
-  img = calc_jacobian_bkgnd(imdl);
-  vv.vhf1= fwd_solve(img);
-  pts = interp_mesh(fmdl, 5);
-  pts=(pts(:,1,:)-0.5).^2 + (pts(:,2,:)-0).^2;
-  img.elem_data = 1 + 0.1*mean(pts < 0.2^2,3);
-  img.calc_colours.clim = 0.2;
-  vv.vhf1= fwd_solve(img);
+  [img, vi, vh, n_en] = ng_mdl(imdl, 0.05, 0)
   show_fem(img); axis(setax);
   set(gca,'XTickLabel',[]);
   set(gca,'YTickLabel',[]);
-  nv.f1 = [size(fmdl.nodes,1), size(fmdl.elems,1)];
-
-  th= linspace(0,2*pi,50);
-  hh=line(0.2*cos(th)+0.5, 0.2*sin(th));
-  set(hh,'Color',[0,0,1],'LineWidth',2); 
-
-% extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
-  extra={'ball','solid ball = cylinder(0.5,0,0;0.5,0,1;0.2) and orthobrick(-1,-1,0;1,1,0.05);'}
+  hh=line(cc,ss); set(hh,'Color',[0,0,1],'LineWidth',2); 
 
   axes('position',[0.1,0.08,0.4,0.4]);
-  fmdl= ng_mk_cyl_models(0,[16],[0.1,0,0.02],extra); 
-  imdl = assign_mdl(imdl, fmdl);
-  img = calc_jacobian_bkgnd(imdl);
-  vv.vhc2 = fwd_solve(img);
-
-  ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.5).^2 + (ctr(:,2)-0).^2;
-  img.elem_data = 1 + 0.1*(ctr < 0.2^2);
-  img.calc_colours.clim = 0.2;
-  vv.vic2 = fwd_solve(img);
-
+  [img, vi, vh, n_en] = ng_mdl(imdl, 1.00, 1)
   show_fem(img); axis(setax);
-  th= linspace(0,2*pi,50);
-  hh=line(0.2*cos(th)+0.5, 0.2*sin(th));
-  set(hh,'Color',[0,0,1],'LineWidth',2); 
-  nv.c2 = [size(fmdl.nodes,1), size(fmdl.elems,1)];
+  set(gca,'XTickLabel',[]);
+  hh=line(cc,ss); set(hh,'Color',[0,0,1],'LineWidth',2); 
 
   axes('position',[0.52,0.08,0.4,0.4]);
-  fmdl= ng_mk_cyl_models([0,1,0.05],[16],[0.1,0,0.02],extra); 
+  [img, vi, vh, n_en] = ng_mdl(imdl, 0.05, 1)
+  show_fem(img); axis(setax);
+  set(gca,'YTickLabel',[]);
+  hh=line(cc,ss); set(hh,'Color',[0,0,1],'LineWidth',2); 
+
+
+
+% no obj if rad = 0
+function [img, vi, vh, n_en] = ng_mdl(imdl, maxh, rad)
+  if rad ==0;
+    extra={'',''};
+  else
+     extra={'ball','solid ball = cylinder(0.5,0,0;0.5,0,1;0.2) and orthobrick(-1,-1,0;1,1,0.05);'}
+  end
+
+  fmdl= ng_mk_cyl_models([0,1,maxh],[16],[0.1,0,0.02],extra); 
   imdl = assign_mdl(imdl, fmdl);
   img = calc_jacobian_bkgnd(imdl);
-  vv.vhf2 = fwd_solve(img);
+  vh = fwd_solve(img);
 
-  ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.5).^2 + (ctr(:,2)-0).^2;
-  img.elem_data = 1 + 0.1*(ctr < 0.2^2);
+  pts = interp_mesh(fmdl, 4);
+  pts=(pts(:,1,:)-0.5).^2 + (pts(:,2,:)-0).^2;
+  img.elem_data = 1 + 0.1*mean(pts < 0.2^2,3);
   img.calc_colours.clim = 0.2;
-  vv.vif2 = fwd_solve(img);
+  vi = fwd_solve(img);
+  n_en = [size(fmdl.nodes,1), size(fmdl.elems,1)];
 
-  show_fem(img); axis(setax);
-  th= linspace(0,2*pi,50);
-  hh=line(0.2*cos(th)+0.5, 0.2*sin(th));
-  set(hh,'Color',[0,0,1],'LineWidth',2); 
-  set(gca,'YTickLabel',[]);
-  nv.f2 = [size(fmdl.nodes,1), size(fmdl.elems,1)];
 
-nv
 
 
 
