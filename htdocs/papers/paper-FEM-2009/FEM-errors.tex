@@ -212,9 +212,41 @@ target position, not only near the target, but throughout
 the FEM due to the propagation of changes in triangularization.
 
 
-To illustrate this process, Fig.~\ref{fig:fem1}
-shows 2D FEM element FEMs created by distmesh, with mesh
-refinement near the electrodes. Electrodes are
+To illustrate this process, Fig.~\ref{fig:FemExample}
+shows 2D circular FEM element with 16 electrodes with
+local refinement of the FEM near each electrode. Coarse
+and fine meshes (left and right) are shown by controlling
+the maximum permissible element size. Two different
+strategies to specify the region of a simulated conductivity
+target region are shown. On top, the mesh is not adapted to the
+target. The conductivity of each element is selected based
+on the membership in the target region (an element with 
+50\% of its area in the region will have a target conductivity
+of the average of the background and target region).
+On the bottom, the FEM is adapted to the target region, resulting
+in mesh geometry changes which propagate throughout the FEM.
+
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.8\textwidth]{figures/fig_example.eps}
+\caption{ \label{fig:FemExample}
+\small
+Simulation FEMs and simulated conductivity target positions
+in blue circle. An inner region surrounding a target is shown.
+{\em Left} Coarse meshes (no specified maximum mesh size).
+    Number of elements: 1381 (top), 1395 (bottom).
+{\em Right} Fine meshes (maximum mesh size of $0.05$)
+    Number of elements: 2997 (top), 2945 (bottom).
+{\em Top} Meshes with no adaptation around the target.
+     Element conductivity is defined by membership in target region.
+{\em Bottom} Meshes adapted to target region.
+}
+\end{center}
+\vspace{-0.5cm}
+\end{figure}
+
+Electrodes are
 simulated using a Sheffield-type adjacent stimulation and
 measurement. For each simulated target position (blue), the
 fraction of each element filled by the target is calculated
@@ -223,35 +255,8 @@ Images are reconstructed of the three target positions
 in Fig. \ref{fig:fem1_images} using a one-step regularized
 GN image reconstruction. No noise is seen from the simulation,
 as expected, since the FEM model does not change.
+Voltages are simulated from each FEM. In each case
 
-However, the most appropriate way to simulate a moving target is
-create a target region within the FEM and to remesh around
-it. This means that the mesh changes between each
-target position, not only near the target, but throughout
-the FEM due to the propagation of changes in triangularization.
-
-\begin{figure}[tbh]
-\begin{center}
- \includegraphics[width= 0.8\textwidth]{figures/fig_example.eps}
-\caption{ \label{fig:fem2}
-\small
-Simulation FEM and simulated target positions in blue
-{\em Left} full scale mesh.
-{\em Right} mesh magnified near target positions 
-{\em Top} FEM with 2372 elements,
-{\em Bottom} FEM with 8909 elements,
-}
-\end{center}
-\vspace{-0.5cm}
-\end{figure}
-
-Using distmesh\cite{persson2004},
- FEMs were created of a homogeneous phantom
-(like that of Fig. \ref{fig:fem1}), and of three phantoms
-with inset targets areas in the corresponding positions.
-Fig. \ref{fig:fem2} shows the mesh at the
-first target position. Three different levels of mesh
-refinement are shown.
 
 Based on these simulations, we reconstruct images
 using a simple 576 element reconstruction model with point electrodes
