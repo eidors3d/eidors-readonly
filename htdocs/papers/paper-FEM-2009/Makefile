@@ -4,8 +4,8 @@
 NAME= FEM-errors
 LATEXPART= iopart.cls iopart10.clo iopart12.clo
 
- all: $(NAME).pdf
-#all: $(NAME).dvi
+%all: $(NAME).pdf
+ all: $(NAME).dvi
 
 $(LATEXPART):
 	wget ftp://ftp.iop.org/pub/journals/ioplatexguidelines.zip
@@ -15,6 +15,7 @@ $(NAME).dvi: $(LATEXPART)
 
 $(NAME).dvi: %.dvi: %.tex
 	latex $< && latex $<
+	dvipdfm $@
 
 $(NAME).pdf: %.pdf: %.tex
 	pdflatex $< && pdflatex $<
