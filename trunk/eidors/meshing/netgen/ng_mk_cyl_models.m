@@ -315,6 +315,8 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
    fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )%s;\n', ...
            tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0,maxh);
 
+         write_circ_elec(fid,name, pos, pos,  ...
+               elecs(i).dims, tank_radius, elecs(i).maxh);
 function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % writes the specification for a netgen cylindrical rod on fid,
 %  named name, centerd on c,
@@ -323,13 +325,15 @@ function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % the direction vector
    dirn(3) = 0; dirn = dirn/norm(dirn);
 
-   inpt = c - dirn.*(ln/2);
-   outpt =c + dirn.*(ln/2);
+ % I would divide by 2 here (shorted tube in cyl), but ng doesn't like
+ % That - it fails for 16 (but no 15 or 17) electrodes
+   inpt = c - dirn.*(ln/1);
+   outpt =c + dirn.*(ln/1);
 
    fprintf(fid,'solid %s  = ', name);
    fprintf(fid,'  plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
          inpt(1),inpt(2),inpt(3),-dirn(1),-dirn(2),-dirn(3));
    fprintf(fid,'  plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
          outpt(1),outpt(2),outpt(3),dirn(1),dirn(2),dirn(3));
-   fprintf(fid,' cylinder(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f;%6.3f) %s;\n', ...
+   fprintf(fid,'  cylinder(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f;%6.3f) %s;\n', ...
          inpt(1),inpt(2),inpt(3),outpt(1),outpt(2),outpt(3), rd,maxh);

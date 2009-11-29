@@ -62,10 +62,11 @@ for loop1 = 1:max(fc)
     % Create a logical array (lgelfc) to determine which faces are electrodes
     lgelfc(loop1) = logical(0);
     
-    [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);
-%   size(fcsrf) % should be vertex numbers for this face
+%   [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);
+    fci  = find( fc == loop1 );
+    fcsrf= srf(fci,:); % should be vertex numbers for this face
     coordsforthisface= vtx(fcsrf,:);
-    centreofface(loop1,:)= mean(coordsforthisface);
+    centreofface(loop1,:)= mean(coordsforthisface,1);
     ttlfcsrf(loop1) = {fcsrf};
     
 end
@@ -78,6 +79,7 @@ for ielec = 1:size(centres,1)
     [d,iface] = min(dists); %iface is closest face to this electrode.
     lgelfc(iface) = logical(1);
     sels(ielec)= iface;
+%   disp([ielec, iface, d]);
 end
 
 

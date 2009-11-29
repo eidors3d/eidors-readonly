@@ -12,11 +12,16 @@ function[fcsrf,fci] = ng_extract_face(srf,vtx,fc,fcnmb)
 %
 % srf      = The boundary surfaces
 % vtx      = The vertices matrix
-% fc       = A one column matrix containing the face numbers
+% fc       = The face numbers to which each surface belong
 % fcnmb    = The number of the face to be extracted
 % fcsrf    = The indices into the vtx matrix for this face
 % fci      = The indices into the srf matrix of this face
 
+ fci  = find( fc == fcnmb );
+ fcsrf= srf(fci,:);
+
+ return 
+% OLDER, COMPLICATED CODE
 fcsrf = [];
 fci = [];
 for loop1 = 1:size(fc,1)
