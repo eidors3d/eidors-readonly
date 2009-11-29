@@ -1,7 +1,7 @@
 % Main file for the GREIT Algorithm
 % $Id$
 %\documentclass[12pt,draft]{iopart}
-\documentclass[12pt]{iopart}
+ \documentclass[12pt]{iopart}
 \usepackage{graphicx}
  \usepackage{amssymb}
  \usepackage{amsbsy}
@@ -229,11 +229,11 @@ in mesh geometry changes which propagate throughout the FEM.
 
 \begin{figure}[tbh]
 \begin{center}
- \includegraphics[width= 0.8\textwidth]{figures/fig_example.eps}
+ \includegraphics[width= 0.6\textwidth]{figures/fig_2d_fems.eps}
 \caption{ \label{fig:FemExample}
-\small
 Simulation FEMs and simulated conductivity target positions
-in blue circle. An inner region surrounding a target is shown.
+in blue circle. Electrode nodes are indicated by green circles.
+An inner region surrounding a target is shown.
 {\em Left} Coarse meshes (no specified maximum mesh size).
     Number of elements: 1381 (top), 1395 (bottom).
 {\em Right} Fine meshes (maximum mesh size of $0.05$)
@@ -243,29 +243,48 @@ in blue circle. An inner region surrounding a target is shown.
 {\em Bottom} Meshes adapted to target region.
 }
 \end{center}
-\vspace{-0.5cm}
 \end{figure}
 
-Electrodes are
-simulated using a Sheffield-type adjacent stimulation and
-measurement. For each simulated target position (blue), the
-fraction of each element filled by the target is calculated
-and used to scale the simulated conductivity change in the element.
-Images are reconstructed of the three target positions
-in Fig. \ref{fig:fem1_images} using a one-step regularized
-GN image reconstruction. No noise is seen from the simulation,
-as expected, since the FEM model does not change.
-Voltages are simulated from each FEM. In each case
+Data are simulated using a Sheffield-type adjacent stimulation and
+measurement protocol, and images are reconstructed on a 
+simple regular mesh geometry (\fref{fig:FemExReonst}).
+A one-step Gauss Newton reconstruction is used with a
+NOSER image prior (Cheney \etal, 1990), and the 
+regularization parameter is chosen such that the 
+noise figure is $1.0$ (Adler and Guardo, 1996).
+Images in which the simulation mesh geometry matched
+exactly (top) show the expected blurred form. However,
+if the mesh geometry changes between difference data simulations
+(bottom) artefacts occur throughout the images.  
 
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.5\textwidth]{figures/fig_2d_reconst.eps}
+\caption{ \label{fig:FemExReonst}
+Reconstructed difference images calculated from
+the simulation FEMs in
+\fref{fig:FemExample}, on a 576 element 2D mesh.
+In each case, the homogeneous data were simulated on the
+unadapted mesh.
+Each image position reconstructs the corresponding FEM
+in the previous figure.  The target position is indicated by the blue
+circle.
+}
+\end{center}
+\end{figure}
 
-Based on these simulations, we reconstruct images
-using a simple 576 element reconstruction model with point electrodes
-(Fig.~\ref{fig:fem2_images}). In the coarse (2372 element)
-and to a lesser extent in the refined (8909 element) 
-mesh, there are artefacts, mostly near the electrodes, which
-dramatically disturb the image clarity.
+As shown in \fref{fig:FemExReonst}, reconstruction artefacts
+reduce as the FEM density increases, 
 
-
+The same artefacts occur for 3D simulations, as shown in
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.7\textwidth]{figures/fig_3d_example.eps}
+\caption{ \label{fig:FemExample3D}
+asdf
+}
+\end{center}
+\end{figure}
 
 
 \section{Forward models}
@@ -320,16 +339,16 @@ For an inhomogeneous medium ($\sigma_H \neq \sigma$),
 \end{equation}
 where matrix of $\TB$ is defined by
 \begin{equation}
-   [\TB]_{m,n} = \frac{1}{n} \left(
-        \frac{\sigma_H - \sigma_I} {\sigma_H + \sigma_I}
-                             \right) e^{\ii(m-n)\alpha}
-    \sum_{p=1}^{min(m,n)}
+   [\TB]_{m,n} = \frac{\mu}{n} \,
+ e^{\ii(m-n)\alpha}
+    \sum_{p=1}^{\min(m,n)}
         \left( \begin{array}{c} m-1 \\ p-1 \end{array} \right)
         \left( \begin{array}{c} n   \\ p   \end{array} \right)
-        a^{2p} b^{m+n-2p}
+        a^{2p} \, b^{m+n-2p}
 \end{equation}
-where $( {}^n_p )$ represents the coefficients of the binomial
-distribution.
+where $({}^n_p )$ represents the coefficients of the binomial
+distribution, and $\mu = 
+        \frac{\sigma_H - \sigma_I} {\sigma_H + \sigma_I}.$
 
 This analytical model represents a shunt electrode model
 (Cheng \etal, 1989)
