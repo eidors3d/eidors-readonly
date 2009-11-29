@@ -285,7 +285,7 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    for i=1:length(mdl2.electrode);
       enodes = nmap( mdl2.electrode(i).nodes );
       enodes(enodes==0) = []; % Remove 3D layers
-      mdl2.electrode(i).nodes = enodes;
+      mdl2.electrode(i).nodes = enodes(:)';
    end
 
 
