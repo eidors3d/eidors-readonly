@@ -8,16 +8,50 @@ switch no
   case 1; mk_fig_1;
   case 2; mk_fig_2;
   case 3; mk_3d_fig;
+  case 4; mk_fit_table_3d;
+  case 5; mk_fit_table_2d;
   otherwise; error('huh?')
 end
 
 function c= contrast;
   c= 0.01;
 
+
 function imdl= this_mdl;
   imdl = mk_common_model('c2c2',16);
   imdl.RtR_prior = @noser_image_prior;
   imdl.hyperparameter.value = 0.17;
+
+function mk_fit_table_2d;
+
+function mk_fit_table_3d;
+  imdl= this_mdl;
+  extra={'ball','solid ball = cylinder(0.5,0,0;0.5,0,1;0.2) and orthobrick(-1,-1,0;1,1,0.05);'}
+
+  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04,0.03];
+  for i=1:length(maxh_table);
+     maxh= maxh_table(i);
+
+     fmdl= ng_mk_cyl_models([1,1,maxh],[16,0.5],[0.05,0,0.02]); 
+     imdl = assign_mdl(imdl, fmdl);
+     img = calc_jacobian_bkgnd(imdl);
+     vh1 = fwd_solve(img);
+
+     [fmdl,mat_idx]= ng_mk_cyl_models( ...
+               [1,1,maxh],[16,0.5],[0.05,0,0.02],extra); 
+     imdl = assign_mdl(imdl, fmdl);
+     img = calc_jacobian_bkgnd(imdl);
+     vh2 = fwd_solve(img);
+
+     merr(i)= mean(abs(vh1.meas - vh2.meas));
+     msig(i)= mean(abs(vh1.meas));
+     nel(i) = size(fmdl.elems,1);
+  end
+format long; format compact;
+merr
+msig
+nel
+format short
 
 function mk_3d_fig
   set(gcf,'paperposition',[0.25 2.5 6 6*(5/7)]); clf
