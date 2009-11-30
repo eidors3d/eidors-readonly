@@ -274,18 +274,56 @@ circle.
 \end{figure}
 
 As shown in \fref{fig:FemExReonst}, reconstruction artefacts
-reduce as the FEM density increases, 
+reduce as the FEM density increases. This is largely due
+to the increase in accuracy of the FEM model with decreasing
+mesh size, as shown in \tref
+
+\begin{table}
+\caption{\label{arttype}Types of article defined in the {\tt iopart.cls} 
+class file.}
+\footnotesize\rm
+\begin{tabular*}{\textwidth}{cccc
+\br
+$\max_h$ & 2D & N_{elems} & $\bar{\mathrm err}$ &
+           3D & N_{elems} & $\bar{\mathrm err}$
+\mr
+maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04,0.03];
+
+merr =
+ 0.0026 0.0020 0.0016 0.0011 0.0012 0.0006 0.0003 0.0003
+
+
+msig =
+ 0.4103 0.4107 0.4120 0.4161 0.4160 0.4158 0.4156 0.4148
+
+
+nel =
+16056 16416 18183 30839 42736 164042 199119 655714
+
+\br
+\end{tabular*}
+\end{table}
+
 
 The same artefacts occur for 3D simulations, as shown in
+\fref{fig:FemExample3D}; however, it the effect is generally
+considerably larger because many more FEM elements are required
+to achieve the same level of refinement in 3D copared to 2D.
+
 \begin{figure}[tbh]
 \begin{center}
  \includegraphics[width= 0.7\textwidth]{figures/fig_3d_example.eps}
 \caption{ \label{fig:FemExample3D}
-asdf
+3D simulated target and the image reconstruction artefacts
+due to FEM geometry changes. 
+{\em Left:} FEM model (23727 elements) with 16 circular
+electrodes. A conductive spherical target is defined in the volume.
+{\em Right:}
+Difference image between a homogeneous medium and the
+FEM with target at left.
 }
 \end{center}
 \end{figure}
-
 
 \section{Forward models}
 
