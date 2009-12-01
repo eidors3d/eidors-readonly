@@ -23,12 +23,53 @@ function imdl= this_mdl;
   imdl.hyperparameter.value = 0.17;
 
 function mk_fit_table_2d;
-
-function mk_fit_table_3d;
   imdl= this_mdl;
   extra={'ball','solid ball = cylinder(0.5,0,0;0.5,0,1;0.2) and orthobrick(-1,-1,0;1,1,0.05);'}
 
-  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04,0.03];
+  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04,0.03,0.02,0.015,0.01];
+% maxh_table=[0.3,0.2];
+  for i=1:length(maxh_table);
+     maxh= maxh_table(i);
+
+     fmdl= ng_mk_cyl_models([0,1,maxh],[16],[0.1,0,0.02]); 
+     imdl = assign_mdl(imdl, fmdl);
+     img = calc_jacobian_bkgnd(imdl);
+     vh1 = fwd_solve(img);
+
+     fmdl= ng_mk_cyl_models( ...
+               [0,1,maxh],[16],[0.1,0,0.02],extra); 
+     imdl = assign_mdl(imdl, fmdl);
+     img = calc_jacobian_bkgnd(imdl);
+     vh2 = fwd_solve(img);
+
+     pts = interp_mesh(fmdl, 1);
+     pts=(pts(:,1,:)-0.5).^2 + (pts(:,2,:)-0).^2;
+     img.elem_data = 1 + contrast*mean(pts < 0.2^2,3);
+     vi2 = fwd_solve(img);
+
+     merr(i)= mean(abs(vh1.meas - vh2.meas));
+     msig(i)= mean(abs(vh1.meas));
+     nel(i) = size(fmdl.elems,1);
+
+     data(i).maxh = maxh;
+     data(i).nel  = nel;
+     data(i).vh1  = vh1.meas;
+     data(i).vh2  = vh2.meas;
+     data(i).vi2  = vi2.meas;
+  end
+
+fprintf('%6.4f, %9.7f, %5.3f, %6d\n', ...
+         [maxh_table; merr./msig; msig; nel]);
+
+  save simdata_2d data
+
+function mk_fit_table_3d;
+  imdl= this_mdl;
+  extra={'ball','solid ball = sphere(0.5,0,0.5;0.2);'}
+
+% maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04:0.03];
+  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04:-.001:0.03] 
+% maxh_table=[0.031];
   for i=1:length(maxh_table);
      maxh= maxh_table(i);
 
@@ -47,11 +88,9 @@ function mk_fit_table_3d;
      msig(i)= mean(abs(vh1.meas));
      nel(i) = size(fmdl.elems,1);
   end
-format long; format compact;
-merr
-msig
-nel
-format short
+
+fprintf('%6.4f, %9.7f, %5.3f, %6d\n', ...
+         [maxh_table; merr./msig; msig; nel]);
 
 function mk_3d_fig
   set(gcf,'paperposition',[0.25 2.5 6 6*(5/7)]); clf
@@ -63,13 +102,13 @@ function mk_3d_fig
   vh = fwd_solve(img);
   disp([size(fmdl.elems)]);
 
-  extra={'ball','solid ball = cylinder(0.5,0,0;0.5,0,1;0.2) and orthobrick(-1,-1,0;1,1,0.05);'}
+  extra={'ball','solid ball = sphere(0.5,0,0.5;0.2);'}
 
   [fmdl,mat_idx]= ng_mk_cyl_models( ...
             [1,1,maxh],[16,0.5],[0.05,0,0.02],extra); 
   imdl = assign_mdl(imdl, fmdl);
   img = calc_jacobian_bkgnd(imdl);
-  img.elem_data(mat_idx{2}) = 1 + 100*contrast;
+  img.elem_data(mat_idx{2}) = 1 + contrast;
   vi = fwd_solve(img);
 
   axes('position',[0.1,0.5,0.4,0.4]);
