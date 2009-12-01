@@ -276,7 +276,7 @@ circle.
 As shown in \fref{fig:FemExReonst}, reconstruction artefacts
 reduce as the FEM density increases. This is largely due
 to the increase in accuracy of the FEM model with decreasing
-mesh size, as shown in \tref
+mesh size, as shown in \tref{tbl:FemErrors}
 
 \begin{table}
 \caption{\label{tbl:FemErrors}
@@ -289,11 +289,11 @@ mesh size, as shown in \tref
   target volume. Both models use a homogeneous conductivity
   distribution. 
 }
-\footnotesize\rm
-\begin{tabular*}{\textwidth}{ccccc}
+%\footnotesize\rm
+\begin{tabular*}{\textwidth}{ccccccc}
 \br
 $\max_h$ & 2D & $N_{elems}$ & $\bar{\mathrm err}$ &
-           3D & $N_{elems}$ & $\bar{\mathrm err}$
+           3D & $N_{elems}$ & $\bar{\mathrm err}$ \\
 \mr
  0.3000 & 0.0045810  &   1395 &   0.0053324 &  16292 \\
  0.2000 & 0.0036963  &   1425 &   0.0052086 &  16241 \\
