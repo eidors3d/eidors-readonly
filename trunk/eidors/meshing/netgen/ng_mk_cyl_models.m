@@ -315,8 +315,6 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
    fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )%s;\n', ...
            tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0,maxh);
 
-         write_circ_elec(fid,name, pos, pos,  ...
-               elecs(i).dims, tank_radius, elecs(i).maxh);
 function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % writes the specification for a netgen cylindrical rod on fid,
 %  named name, centerd on c,
