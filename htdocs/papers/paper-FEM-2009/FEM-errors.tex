@@ -1,7 +1,7 @@
 % Main file for the GREIT Algorithm
 % $Id$
-%\documentclass[12pt,draft]{iopart}
- \documentclass[12pt]{iopart}
+ \documentclass[12pt,draft]{iopart}
+%\documentclass[12pt]{iopart}
 \usepackage{graphicx}
  \usepackage{amssymb}
  \usepackage{amsbsy}
@@ -273,6 +273,27 @@ circle.
 \end{center}
 \end{figure}
 
+The same artefacts occur for 3D simulations, as shown in
+\fref{fig:FemExample3D}; however, it the effect is generally
+considerably larger because many more FEM elements are required
+to achieve the same level of refinement in 3D compared to 2D.
+
+\begin{figure}[tbh]
+\begin{center}
+ \includegraphics[width= 0.7\textwidth]{figures/fig_3d_example.eps}
+\caption{ \label{fig:FemExample3D}
+3D simulated target and the image reconstruction artefacts
+due to FEM geometry changes. 
+{\em Left:} FEM model (23727 elements) with 16 circular
+electrodes. A conductive spherical target is defined in the volume.
+{\em Right:}
+Difference image between a homogeneous medium and the
+FEM with target at left.
+}
+\end{center}
+\end{figure}
+
+Such 
 As shown in \fref{fig:FemExReonst}, reconstruction artefacts
 reduce as the FEM density increases. This is largely due
 to the increase in accuracy of the FEM model with decreasing
@@ -280,20 +301,23 @@ mesh size, as shown in \tref{tbl:FemErrors}
 
 \begin{table}
 \caption{\label{tbl:FemErrors}
-  Mean average error
-  ($\bar{\| \vB_{\mathrm homog} - \vB_{\mathrm target}\|} /
-    \bar{\| \vB_{\mathrm homog}                       \|}$)
+  Mean average error, ($\overline{|\rm err|} = 
+    \overline{| \vB_{\rm homog} - \vB_{\rm target}|} /
+    \overline{| \vB_{\rm homog}                   |} $)
   between simulated measurements
   from FEM with ($\vB_{\mathrm homog}$) and
         without ($\vB_{\mathrm target}$) an included
   target volume. Both models use a homogeneous conductivity
   distribution. 
 }
-%\footnotesize\rm
-\begin{tabular*}{\textwidth}{ccccccc}
+%\begin{tabular*}{0.6\textwidth}{c|cr|cr}
+%\begin{tabular*}{\textwidth}{@{}r*{15}{@{\extracolsep{0pt plus12pt}}l}}
+\begin{tabular*}{\textwidth}{@{\extracolsep{0pt plus12pt}}c|cc|cc}
 \br
-$\max_h$ & 2D & $N_{elems}$ & $\bar{\mathrm err}$ &
-           3D & $N_{elems}$ & $\bar{\mathrm err}$ \\
+         & \multicolumn{2}{c|}{2D FEM} 
+         & \multicolumn{2}{c}{3D FEM}  \\
+$\max_h$ & $\overline{|\rm err|}$ & $N_{elems}$ 
+         & $\overline{|\rm err|}$ & $N_{elems}$ \\
 \mr
  0.3000 & 0.0045810  &   1395 &   0.0053324 &  16292 \\
  0.2000 & 0.0036963  &   1425 &   0.0052086 &  16241 \\
@@ -304,7 +328,7 @@ $\max_h$ & 2D & $N_{elems}$ & $\bar{\mathrm err}$ &
  0.0400 & 0.0005284  &   4321 &   0.0009313 & 198417 \\
  0.0340 & 0.0004452  &   6058 &   0.0007966 & 255163 \\
  0.0300 & 0.0003444  &   7634 &   0.0004992 & 651267 \\
- 0.0200 & 0.0001174  &  17774  \\
+ 0.0200 & 0.0001174  &  17774 &   0.0006193 &1476818 \\
  0.0150 & 0.0001462  &  31224  \\
  0.0100 & 0.0000323  &  67458  \\
       \br
@@ -342,25 +366,6 @@ $\max_h$ & 2D & $N_{elems}$ & $\bar{\mathrm err}$ &
 %0.0150, 0.0001462, 0.328,  31224
 %0.0100, 0.0000323, 0.328,  67458
 
-The same artefacts occur for 3D simulations, as shown in
-\fref{fig:FemExample3D}; however, it the effect is generally
-considerably larger because many more FEM elements are required
-to achieve the same level of refinement in 3D copared to 2D.
-
-\begin{figure}[tbh]
-\begin{center}
- \includegraphics[width= 0.7\textwidth]{figures/fig_3d_example.eps}
-\caption{ \label{fig:FemExample3D}
-3D simulated target and the image reconstruction artefacts
-due to FEM geometry changes. 
-{\em Left:} FEM model (23727 elements) with 16 circular
-electrodes. A conductive spherical target is defined in the volume.
-{\em Right:}
-Difference image between a homogeneous medium and the
-FEM with target at left.
-}
-\end{center}
-\end{figure}
 
 \section{Forward models}
 
