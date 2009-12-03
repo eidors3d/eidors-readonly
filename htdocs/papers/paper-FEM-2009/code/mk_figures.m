@@ -17,22 +17,60 @@ function c= contrast;
   c= 0.01;
 
 
-function imdl= this_mdl;
+function [imdl, img_noise]= this_mdl;
   imdl = mk_common_model('c2c2',16);
   imdl.RtR_prior = @noser_image_prior;
   imdl.hyperparameter.value = 0.17;
 
+if nargout == 2
+     img= calc_jacobian_bkgnd( imdl );
+     vh = fwd_solve( img );
+     vh = vh.meas;
+
+     ampl = mean(abs(vh))*0.001;
+
+     Nsim = 1000;
+     vhn =  vh*ones(1,Nsim) + ampl*randn(size(vh,1),Nsim);
+     [mia,merr,msig] = mean_ampl( imdl,vh,vhn );
+     img_noise.mia = mia;
+     img_noise.merr= merr;
+     img_noise.msig= msig;
+
+end
+
+function [mia,merr,msig] = mean_ampl(imdl, vh, vn )
+  if isstruct(vh); vh= vh.meas; end
+  if isstruct(vn); vn= vn.meas; end
+
+  msig= mean(abs(vh));
+
+  merr= mean(abs(vh*ones(1,size(vn,2)) - vn));
+  if std(merr)/mean(merr) > 0.2; keyboard; end
+  merr= mean(merr);
+
+  img = inv_solve(imdl, vh, vn );
+  VOL = get_elem_volume( img.fwd_model );
+  VOL = VOL*ones(1,size(img.elem_data,2));
+  mia = mean( abs( VOL.*img.elem_data));
+
+  if std(mia)/mean(mia) > 0.2; keyboard; end
+  mia= mean(mia);
+  
+
 function mk_fit_table_2d;
-  imdl= this_mdl;
+  [imdl0,img_noise]= this_mdl;
   extra={'ball','solid ball = cylinder(0.5,0,0;0.5,0,1;0.2) and orthobrick(-1,-1,0;1,1,0.05);'}
 
-  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04,0.03,0.02,0.015,0.01];
-% maxh_table=[0.3,0.2];
+  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04,0.034,0.03,0.02,0.015,0.01];
+  maxh_table=[0.3,0.2];
+  maxh_table=[0.3];
+% maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04];
+  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04:-.002:0.028, 0.02, 0.15,0.01] ;
   for i=1:length(maxh_table);
      maxh= maxh_table(i);
 
      fmdl= ng_mk_cyl_models([0,1,maxh],[16],[0.1,0,0.02]); 
-     imdl = assign_mdl(imdl, fmdl);
+     imdl = assign_mdl(imdl0, fmdl);
      img = calc_jacobian_bkgnd(imdl);
      vh1 = fwd_solve(img);
 
@@ -47,50 +85,59 @@ function mk_fit_table_2d;
      img.elem_data = 1 + contrast*mean(pts < 0.2^2,3);
      vi2 = fwd_solve(img);
 
-     merr(i)= mean(abs(vh1.meas - vh2.meas));
-     msig(i)= mean(abs(vh1.meas));
-     nel(i) = size(fmdl.elems,1);
+     nel(i,:) = [size(fmdl.elems,1), size(fmdl.nodes,1)];
 
+     [mia(i),merr(i),msig(i)]  = mean_ampl( imdl0, vh1,vh2);
      data(i).maxh = maxh;
      data(i).nel  = nel;
      data(i).vh1  = vh1.meas;
      data(i).vh2  = vh2.meas;
      data(i).vi2  = vi2.meas;
+     data(i).mia  = mia(i);
   end
 
-fprintf('%6.4f, %9.7f, %5.3f, %6d\n', ...
-         [maxh_table; merr./msig; msig; nel]);
+fprintf('%6.4f, %9.7f, %5.3f, %9.7f, %6d\n', ...
+         [maxh_table; merr./msig; msig; mia; nel(:,1)']);
+img_noise
 
   save simdata_2d data
 
 function mk_fit_table_3d;
-  imdl= this_mdl;
+  imdl0= this_mdl;
   extra={'ball','solid ball = sphere(0.5,0,0.5;0.2);'}
 
 % maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04:0.03];
-  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04:-.001:0.03] 
-% maxh_table=[0.031];
+  maxh_table=[0.3,0.2,0.15,0.1,0.07,0.05,0.04:-.002:0.028] ;
+% maxh_table=[0.3];
   for i=1:length(maxh_table);
      maxh= maxh_table(i);
 
      fmdl= ng_mk_cyl_models([1,1,maxh],[16,0.5],[0.05,0,0.02]); 
-     imdl = assign_mdl(imdl, fmdl);
+     imdl = assign_mdl(imdl0, fmdl);
      img = calc_jacobian_bkgnd(imdl);
      vh1 = fwd_solve(img);
 
      [fmdl,mat_idx]= ng_mk_cyl_models( ...
                [1,1,maxh],[16,0.5],[0.05,0,0.02],extra); 
-     imdl = assign_mdl(imdl, fmdl);
+     imdl = assign_mdl(imdl0, fmdl);
      img = calc_jacobian_bkgnd(imdl);
      vh2 = fwd_solve(img);
 
-     merr(i)= mean(abs(vh1.meas - vh2.meas));
-     msig(i)= mean(abs(vh1.meas));
-     nel(i) = size(fmdl.elems,1);
+     nel(i,:) = [size(fmdl.elems,1), size(fmdl.nodes,1)];
+
+     [mia(i),merr(i),msig(i)]  = mean_ampl( imdl0, vh1,vh2);
+     data(i).maxh = maxh;
+     data(i).nel  = nel;
+     data(i).vh1  = vh1.meas;
+     data(i).vh2  = vh2.meas;
+%    data(i).vi2  = vi2.meas;
+     data(i).mia  = mia(i);
   end
 
-fprintf('%6.4f, %9.7f, %5.3f, %6d\n', ...
-         [maxh_table; merr./msig; msig; nel]);
+fprintf('%6.4f, %9.7f, %5.3f, %9.7f, %6d\n', ...
+         [maxh_table; merr./msig; msig; mia; nel(:,1)']);
+
+  save simdata_3d data
 
 function mk_3d_fig
   set(gcf,'paperposition',[0.25 2.5 6 6*(5/7)]); clf
