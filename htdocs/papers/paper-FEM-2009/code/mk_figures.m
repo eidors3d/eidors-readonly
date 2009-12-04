@@ -10,6 +10,7 @@ switch no
   case 3; mk_3d_fig;
   case 4; mk_fit_table_3d;
   case 5; mk_fit_table_2d;
+  case 6; mk_noise_comparison;
   otherwise; error('huh?')
 end
 
@@ -56,6 +57,28 @@ function [mia,merr,msig] = mean_ampl(imdl, vh, vn )
   if std(mia)/mean(mia) > 0.2; keyboard; end
   mia= mean(mia);
   
+function mk_noise_comparison;
+  [imdl0,img_noise]= this_mdl;
+  fprintf('GUASS            : imgn=%10.8f datn=%10.8f img/dat=%5.3f\n', ...
+     img_noise.merr, img_noise.mia, img_noise.mia/ img_noise.merr);
+  
+  load simdata_2d data
+  
+  for i=1:length(data)
+     [mia,merr,msig] = mean_ampl(imdl0, data(i).vh1, data(i).vh2 );
+     fprintf('2D(maxh=%5.4f): imgn=%10.8f datn=%10.8f img/dat=%5.3f\n', ...
+        data(i).maxh, merr, mia, mia/merr );
+  end
+
+  load simdata_3d data
+  
+  for i=1:length(data)
+     [mia,merr,msig] = mean_ampl(imdl0, data(i).vh1, data(i).vh2 );
+     fprintf('3D(maxh=%5.4f): imgn=%10.8f datn=%10.8f img/dat=%5.3f\n', ...
+        data(i).maxh, merr, mia, mia/merr );
+  end
+
+
 
 function mk_fit_table_2d;
   [imdl0,img_noise]= this_mdl;
