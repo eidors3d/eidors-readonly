@@ -72,5 +72,15 @@ print -dpng -r75 netgen_cyl_models14.png
     img.elem_data = 1 + 0.1*(ctr<0.2^2);
 show_fem(img);
 print -dpng -r75 netgen_cyl_models15.png
+% 2D cylinder with 16 electrodes and inner cylinder and box
+extra={'ballandbox', ...
+       ['solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and ' ...
+                     'orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;' ...
+        'solid box = orthobrick(-0.3,-0.3,0;-0.1,0.1,0.05) -maxh=0.1;' ...
+        'solid ballandbox = ball or box;']};
+
+fmdl= ng_mk_cyl_models(0,[16],[0.1,0,0.05],extra); 
+show_fem(fmdl);
+print -dpng -r75 netgen_cyl_models16.png
 
 !for i in netgen_cyl_models*.png ; do convert -trim -depth 8 $i $i ; done
