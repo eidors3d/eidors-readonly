@@ -285,67 +285,140 @@ ans = -10     0     0     0     0     0     0    10
 <p><li><b>
 Compiling Netgen under linux
 </b><p>
-To use netgen under linux is more complicated. I got it to work 
-on Fedora FC5 by doing:
-<ol>
-   <li> install the packages <tt>compat-gcc-32-3.2.3</tt>
-        and <tt>compat-gcc-32-c++-3.2.3</tt>
+The following script describes how to compile netgen and its
+dependencies under linux:
+<table border="1"><tr><td><pre>
+#! /bin/sh
 
-   <li> ensure <tt>tk</tt>,
-               <tt>tcl</tt>, and
-               <tt>tix</tt> are installed.
+# local install
+SRCDIR=~/netgen
+INSTDIR=~/netgen
 
-   <li> Download and install the source from
-        <a href="http://www.hpfem.jku.at/netgen/"
-                >http://www.hpfem.jku.at/netgen/</a>
-        and install it under <tt>$HOME/src/ngs44</tt>
-   <li> cd to <tt>$HOME/src/ngs44</tt>
-   <li> Edit the file <tt>./libsrc/meshing/meshtype.hpp</tt> to
-        add <tt>class Mesh;</tt> at line 957.
-   <li> Find <tt>tkInt.h</tt> in the tk includes.
-        (I found it here <tt>/usr/include/tk-private/generic/tkInt.h</tt>)
+# versions to install
+# TCL
+TCLVER=8.5.8
+# Tix
+TIXVER=8.4.3
+# Togl
+TOGLVER=1.7
+#NetGen version
+NGVER=4.9.11
 
-   <li> Get TK version (<tt>grep TK_PATCH_LEVEL /usr/include/tk.h</tt>)
-   <li> Add a line  to <tt>togl/togl.cpp</tt> (around line 143)
-        based on the TK_PATCH_LEVEL
-<pre>
-#elif TK_MAJOR_VERSION==8 &amp;&amp; TK_MINOR_VERSION==4 &amp;&amp; TK_RELEASE_SERIAL==13
-#  include "/usr/include/tk-private/generic/tkInt.h"
-</pre>
+# TK version should probably match TCL version
+TKVER=${TCLVER}
 
-   <li> Modify <tt>tcltklib</tt> and <tt>syslib</tt> in <tt>Makefile</tt>
-<pre>
-#(OLD) tcltklib = -ltix8.1.8.4 -ltk8.4  -ltcl8.4
-tcltklib = -ltix -ltk8.4  -ltcl8.4
-#(OLD) syslib = $(tcltklib) -lGL -lGLU -lX11  -lXi -lm  -ldl -lpthread $(SYSLIB2)
-syslib = $(tcltklib) -lGL -lGLU -lX11  -lm  -ldl -lpthread $(SYSLIB2)
-</pre>
+# comment this line out to skip tests before install
+# tests can be really slow!
+# TEST=1
 
-<!--
-   <li> Modify line 100 of <tt>./libsrc/gprim/transform3d.cpp</tt> to
-<pre>
-  ::netgen::CalcInverse ((const netgen::Mat&lt;3,3&gt; &amp;) a, (netgen::Mat&lt;3,3&gt; &amp;)  inva);
-</pre>
--->
+# comment this line to skip clean up (for debugging build)
+CLEANUP=1
 
-   <li> It would be nice to build using <tt>CC=gcc32 MACHINE=LINUX make</tt>,
-        but <tt>netgen</tt> hardcodes gcc. So, edit the Makefiles
-        using:
-<pre>
-find -name Makefile -exec perl -i -pe's/(\sgcc)\s/${1}32 /' \{} \;
-</pre>
+CFLAGS="-I${INSTDIR}/include"
+CPPFLAGS=${CFLAGS}
 
-   <li> Build using: <tt>MACHINE=LINUX make CC=gcc32</tt>,
+function err() {
+  echo "$(basename $0) ERROR: $1"
+  exit 1
+}
+
+# make working directories if they don't exist
+mkdir -p ${SRCDIR}
+mkdir -p ${INSTDIR}
+
+# get files
+cd ${SRCDIR}
+[ ! -f "tcl${TCLVER}-src.tar.gz" ] &amp;&amp; \
+  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tcl${TCLVER}-src.tar.gz || err "tcl download" )
+[ ! -f "tk${TKVER}-src.tar.gz" ] &amp;&amp; \
+  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tk${TKVER}-src.tar.gz || err "tk download" )
+[ ! -f "tix${TIXVER}-src.tar.gz" ] &amp;&amp; \
+  ( wget --quiet http://prdownloads.sourceforge.net/tix/files/tix/${TIXVER}/Tix${TIXVER}-src.tar.gz || err "tix download" )
+[ ! -f "togl-${TOGLVER}.tar.gz" ] &amp;&amp; \
+  ( wget --quiet http://prdownloads.sourceforge.net/togl/files/Togl/${TOGLVER}/Togl-${TOGLVER}.tar.gz || err "togl download" )
+[ ! -f "netgen-${NGVER}.tar.gz" ] &amp;&amp; \
+  ( wget --quiet http://prdownloads.sourceforge.net/netgen-mesher/files/netgen-mesher/${NGVER}/netgen-${NGVER}.tar.gz || err "netgen download" )
+
+# unpack files
+[ ! -d "tcl${TCLVER}" ] &amp;&amp; ( tar zxvf tcl${TCLVER}-src.tar.gz || err "tcl unpack" )
+[ ! -d "tk${TKVER}" ]   &amp;&amp; ( tar zxvf  tk${TKVER}-src.tar.gz  || err "tk unpack" )
+[ ! -d "Tix${TIXVER}" ]   &amp;&amp; ( tar zxvf  Tix${TIXVER}-src.tar.gz  || err "tix unpack" )
+[ ! -d "Togl-${TOGLVER}" ]   &amp;&amp; ( tar zxvf  Togl-${TOGLVER}.tar.gz  || err "togl unpack" )
+[ ! -d "netgen-${NGVER}" ]   &amp;&amp; ( tar zxvf  netgen-${NGVER}.tar.gz  || err "netgen unpack" )
+
+# build tcl
+cd ${SRCDIR}/tcl${TCLVER}/unix &amp;&amp; \
+  ./configure --prefix=${INSTDIR} --enable-threads --enable-shared --enable-64bit &amp;&amp;
+  make &amp;&amp; \
+  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
+  make install || err "install tcl-${TCLVER}"
+
+# build tk
+cd ${SRCDIR}/tk${TKVER}/unix &amp;&amp; \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --enable-threads --enable-shared --enable-64bit &amp;&amp; \
+  make &amp;&amp; \
+  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
+  make install || err "install tk-${TKVER}" 
+
+# build tix
+cd ${SRCDIR}/Tix${TIXVER} &amp;&amp; \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
+    --enable-threads --enable-shared --enable-64bit &amp;&amp; \
+  make &amp;&amp; \
+  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
+  make install || err "install tix-${TIXVER}"
 
 
+# build Togl
+cd ${SRCDIR}/Togl-${TOGLVER} &amp;&amp; \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
+    --enable-threads --enable-shared --enable-64bit &amp;&amp; \
+  make &amp;&amp; \
+  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
+  make install || err "install togl-${TOGLVER}"
 
+# TODO is this necessary?
+ln -s ${INSTDIR}/lib/Togl${TOGLVER}/libTogl${TOGLVER}.so ${INSTDIR}/lib/libTogl${TOGLVER}.so || err "ln libTogl${TOGLVER}"
 
-</ol>
-Useful information is found
-<a href="http://www.sfb013.uni-linz.ac.at/~joachim/netgen/troubles.html"
-       >here</a>, and
-<a href="http://openfoam.cfd-online.com/forum/messages/1/1271.html?1148456565"
-       >here</a>
+# build NetGen
+cd ${SRCDIR}/netgen-${NGVER} &amp;&amp; \
+  CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
+    --with-togl=${SRCDIR}/Togl-${TOGLVER} \
+    --with-tclinclude=${SRCDIR}/include &amp;&amp; \
+  make &amp;&amp; \
+  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
+  make install || err "install netgen-${TOGLVER}"
+
+echo  " ./configure --prefix=${INSTDIR} --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix --with-togl=${SRCDIR}/Togl-${TOGLVER} --with-tclinclude=${SRCDIR}/include"
+	     
+
+# clean up
+if [ -n "${CLEANUP}" ]; then
+  cd
+  rm -rf ${SRCDIR}/tcl${TCLVER} || err "clean up tcl-${TCLVER}"
+  rm -rf ${SRCDIR}/tk${TKVER} || err "clean up tk-${TKVER}"
+  rm -rf ${SRCDIR}/Tix${TIXVER} || err "clean up tix-${TIXVER}"
+  rm -rf ${SRCDIR}/Togl-${TOGLVER} || err "clean up togl-${TOGLVER}"
+  rm -rf ${SRCDIR}/netgen-${NGVER} || err "clean up netgen-${NGVER}"
+fi
+
+# fix path issues
+mv ${INSTDIR}/bin/netgen ${INSTDIR}/bin/netgen-exec
+echo "#! /bin/sh
+D=${INSTDIR}/bin
+L=${INSTDIR}/lib
+LD_LIBRARY_PATH=\$L NETGENDIR=\$D \$D/netgen-exec \$*
+" &gt; ${INSTDIR}/bin/netgen
+chmod +x ${INSTDIR}/bin/netgen
+
+echo "run netgen with '${INSTDIR}/bin/netgen'"
+</pre></table>
+
 
 </td></tr></table>
 <p>
