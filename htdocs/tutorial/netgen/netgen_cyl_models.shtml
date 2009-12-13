@@ -230,6 +230,25 @@ show_fem(img);
 <img src="netgen_cyl_models15.png">
 </center>
 
+<h3>
+2D cylinder with 9 electrodes and inner cylinder and box
+</h3>
+
+<pre>
+extra={'ballandbox', ...
+       ['solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and ' ...
+                     'orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;' ...
+        'solid box = orthobrick(-0.3,-0.3,0;-0.1,0.1,0.05) -maxh=0.1;' ...
+        'solid ballandbox = ball or box;']};
+
+fmdl= ng_mk_cyl_models(0,[9],[0.2,0,0.05],extra); 
+show_fem(fmdl);
+</pre>
+
+<center>
+<img src="netgen_cyl_models16.png">
+</center>
+
 </td></tr></table>
 <p>
 <small>
