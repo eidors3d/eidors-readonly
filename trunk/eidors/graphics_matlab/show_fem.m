@@ -102,9 +102,18 @@ for e=1:length(mdl.electrode)
     % sort nodes around the model (to avoid crossed lines)
     [jnk,idx] = sort(atan2( vy, vx ));
     ecolour = electr_colour( e );
-    line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
-         'LineWidth', 2, 'Color', ecolour, ...
-         'Marker','o','MarkerSize', 6,'MarkerEdgeColor',ecolour);
+    if(length(elec_nodes) == 1)
+       % Point Electrode Models: put a circle around the node
+       line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
+            'LineWidth', 2, 'Color', ecolour, ...
+            'Marker','o','MarkerSize', 6,'MarkerEdgeColor',ecolour);
+    else
+       % Complete/Shunt Electrode Models (multiple nodes per electrode)
+       %  put a line along the edges that form the electrode
+       line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
+            'LineWidth', 3, 'Color', ecolour, ...
+            'Marker','none','MarkerSize', 6,'MarkerEdgeColor',ecolour);
+    end
     if number_electrodes
        S= 1.05;
        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
