@@ -260,7 +260,10 @@ function write_header(fid,tank_height,tank_radius,maxsz,extra);
                 'and  cyl %s %s;\n'],tank_height,extra{1},maxsz);  
 
 function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
-   mdl2 = eidors_obj('fwd_model','2D');
+   % set name
+   mdl2 = eidors_obj('fwd_model',sprintf('%s 2D',mdl3.name));
+
+   % set nodes
    bdy = find_boundary(mdl3.elems);
    vtx = mdl3.nodes;
    z_vtx = reshape(vtx(bdy,3), size(bdy) );
@@ -270,24 +273,38 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    vtx0  = unique(bdy0(:));
    mdl2.nodes = vtx(vtx0,1:2);
 
+   % TODO set boundary
+
+   % set elems
    nmap  = zeros(size(vtx,1),1); nmap(vtx0) = 1:length(vtx0);
    bdy0  = reshape(nmap(bdy0), size(bdy0) ); % renumber to new scheme
    mdl2.elems = bdy0;
 
+   % set gnd_node
    mdl2.gnd_node = nmap(mdl3.gnd_node);
 
    idx2 = []; % Don't know how to manage edges accurately
 
-% Manage Electrodes
-   if ~isfield(mdl3,'electrode'); return; end
-
-   mdl2.electrode = mdl3.electrode;
-   for i=1:length(mdl2.electrode);
-      enodes = nmap( mdl2.electrode(i).nodes );
-      enodes(enodes==0) = []; % Remove 3D layers
-      mdl2.electrode(i).nodes = enodes(:)';
+   % set electrode
+   if isfield(mdl3,'electrode')
+     mdl2.electrode = mdl3.electrode;
+     for i=1:length(mdl2.electrode);
+        enodes = nmap( mdl2.electrode(i).nodes );
+        enodes(enodes==0) = []; % Remove 3D layers
+        mdl2.electrode(i).nodes = enodes(:)';
+     end
    end
 
+   % copy other fields
+   if isfield(mdl3,'stimulation'); mdl2.stimulation= mdl3.stimulation; end
+   %if isfield(mdl3,'solve');       mdl2.solve = mdl3.solve;            end
+   mdl2.solve = 'aa_fwd_solve'; % FIXME? can't use default np_fwd_solve
+   if isfield(mdl3,'jacobian');    mdl2.jacobian = mdl3.jacobian;      end
+   %if isfield(mdl3,'system_mat');  mdl2.system_mat = mdl3.system_mat;  end
+   mdl2.system_mat = 'aa_calc_system_mat'; % FIXME? can't use default np_calc_system_mat
+
+   % update cache
+   mdl2 = eidors_obj('fwd_model',mdl2);
 
 function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
 % writes the specification for a netgen cuboid on fid, named name, centerd on c,
