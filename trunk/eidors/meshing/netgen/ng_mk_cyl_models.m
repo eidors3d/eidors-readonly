@@ -15,11 +15,11 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
 % ELECTRODE SHAPES::
-%  elec_shape = [width,height, {maxsz}]  % Rectangular elecs
+%  elec_shape = [width,height, {maxsz, pem}]  % Rectangular elecs
 %     OR
-%  elec_shape = [radius, {0, maxsz} ]  % Circular elecs
+%  elec_shape = [radius, {0, maxsz, pem} ]  % Circular elecs
 %     maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
-%     maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
+%     pem  (OPT)  -> 1: Point Electrode Model, 0: Complete Electrode Model (default)
 %
 % Specify either a common electrode shape or for each electrode
 %
@@ -101,6 +101,11 @@ delete(geofn); delete(meshfn); % remove temp files
 if is2D
    [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
 end
+
+% convert CEM to PEM if so configured
+% TODO shunt model is unsupported
+fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
+
 
 function write_geo_file(geofn, tank_height, tank_radius, ...
                         tank_maxh, elecs, extra_ng_code);
@@ -215,7 +220,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
    if size(elec_shape,1) == 1
       elec_shape = ones(n_elecs,1) * elec_shape;
    end
-   elec_shape = [elec_shape, zeros(n_elecs, 2)]; % add default zeros
+   elec_shape = [elec_shape, zeros(n_elecs, 4)]; % add default zeros
 
    elecs= struct([]); % empty
    for i= 1:n_elecs
@@ -235,6 +240,13 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
      else
         elecs(i).maxh = sprintf('-maxh=%f', row(3));
      end
+
+     if row(4) == 0
+        elecs(i).model = 'cem'; % Complete Electrode Model (CEM)
+     else
+        elecs(i).model = 'pem'; % Point Electrode Model (PEM)
+     end
+     %TODO support Shunt Electrode Model (SEM)
    end
    
 
@@ -352,3 +364,22 @@ function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
          outpt(1),outpt(2),outpt(3),dirn(1),dirn(2),dirn(3));
    fprintf(fid,'  cylinder(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f;%6.3f) %s;\n', ...
          inpt(1),inpt(2),inpt(3),outpt(1),outpt(2),outpt(3), rd,maxh);
+
+
+function electrode = pem_from_cem(elecs, electrode, nodes)
+% elecs = electrode structure of model, from the parse_elecs function
+% electrode = the forward electrode model
+% nodes = the coordinates for the nodes
+% can only have one node per electrode so we get a Point Electrode Model
+% choose the node with the greatest angle, so we atlest pick a consistent
+% side of the electrode: NetGen seems to give a random order to the nodes
+% in the electrode listing so we can't just pick the first one
+  Ne = length(electrode);
+  for i = 1:Ne
+    if elecs(i).model == 'pem'
+      xy = nodes(electrode(i).nodes,:);
+      [jnk, ind] = max(atan2(xy(:,2),xy(:,1)));
+      electrode(i).nodes = electrode(i).nodes(ind);
+    end
+  end
+
