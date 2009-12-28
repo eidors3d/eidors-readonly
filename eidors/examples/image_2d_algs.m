@@ -32,6 +32,7 @@ mdl_2d   = eidors_obj('fwd_model', params);
 inv2d.name= 'AA mdl with excluded measurements';
 %inv2d.solve=       'aa_inv_solve';
 inv2d.solve=       'aa_inv_conj_grad';
+inv2d.jacobian_bkgnd.value = 1;
 %inv2d.hyperparameter.value = 1e-2;
 inv2d.hyperparameter.func = 'choose_noise_figure';
 inv2d.hyperparameter.noise_figure= 1;
