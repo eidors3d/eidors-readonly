@@ -374,6 +374,7 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
 % choose the node with the greatest angle, so we atlest pick a consistent
 % side of the electrode: NetGen seems to give a random order to the nodes
 % in the electrode listing so we can't just pick the first one
+% TODO FIXME: this gets it a little funny since if an electrode crosses the -pi to +pi boundary it'll choose the middle of the electrode which isn't what we're trying to do.
   Ne = length(electrode);
   for i = 1:Ne
     if elecs(i).model == 'pem'
