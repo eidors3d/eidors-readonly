@@ -104,7 +104,9 @@ end
 
 % convert CEM to PEM if so configured
 % TODO shunt model is unsupported
+if isfield(fmdl,'electrode');
 fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
+end
 
 
 function write_geo_file(geofn, tank_height, tank_radius, ...
