@@ -208,16 +208,19 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
       th = linspace(0,2*pi, n_elecs+1)'; th(end)=[];
       csth= rad*[sin(th),cos(th)]; % clockwise from TDC
 
-      centres=[];
       on_elecs = ones(n_elecs, 1);
+      el_th = []; 
+      el_z  = []; 
       for i=2:length(elec_pos)
-        centres= [centres; [csth, on_elecs*elec_pos(i)]];
+        el_th = [el_th; th];
+        el_z  = [el_z ; on_elecs*elec_pos(i)];
       end
    else
-      th = elec_pos(:,1)*2*pi/360;
-      centres = [rad*sin(th),rad*cos(th),elec_pos(:,2)];
+      el_th = elec_pos(:,1)*2*pi/360;
+      el_z  = elec_pos(:,2);
    end
-   n_elecs= size(centres,1);
+      
+   n_elecs= size(el_z,1);
 
    if size(elec_shape,1) == 1
       elec_shape = ones(n_elecs,1) * elec_shape;
@@ -228,11 +231,14 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
    for i= 1:n_elecs
      row = elec_shape(i,:);
 
-     elecs(i).pos  = centres(i,:);
-     if row(2) == 0
+     switch row(2)
+       case 0; % Circular electrodes 
         elecs(i).shape = 'C';
         elecs(i).dims  = row(1);
-     else
+       case -1; % Point electrodes
+        % Create rectangular electrodes with bottom, cw point where we want
+        
+       otherwise; % Rectangular electrodes
         elecs(i).shape = 'R';
         elecs(i).dims  = row(1:2);
      end
@@ -252,6 +258,8 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
    end
    
 
+   centres = [rad*sin(el_th),rad*cos(el_th),el_z];
+   for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
 
 function write_header(fid,tank_height,tank_radius,maxsz,extra);
    if maxsz==0; 
