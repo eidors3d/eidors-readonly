@@ -180,6 +180,22 @@ show_fem(img);
 <img src="netgen_cyl_models12.png">
 </center>
 
+<h3>
+3D cylinder with 8 electrodes and cube
+</h3>
+
+<pre>
+extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'}
+[fmdl,mat_idx]= ng_mk_cyl_models(2,[8,0.5,1.5],[0.1],extra); 
+img= eidors_obj('image','ball'); img.fwd_model= fmdl;
+img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
+show_fem(img);
+</pre>
+
+<center>
+<img src="netgen_cyl_models13.png">
+</center>
+
 
 <h3>
 3D cylinder with inner cylinder
@@ -193,7 +209,7 @@ show_fem(fmdl);
 </pre>
 
 <center>
-<img src="netgen_cyl_models13.png">
+<img src="netgen_cyl_models14.png">
 </center>
 
 <h3>
@@ -208,7 +224,7 @@ show_fem(fmdl);
 </pre>
 
 <center>
-<img src="netgen_cyl_models14.png">
+<img src="netgen_cyl_models15.png">
 </center>
 
 <h3>
@@ -227,7 +243,7 @@ show_fem(img);
 </pre>
 
 <center>
-<img src="netgen_cyl_models15.png">
+<img src="netgen_cyl_models16.png">
 </center>
 
 <h3>
@@ -246,7 +262,7 @@ show_fem(fmdl);
 </pre>
 
 <center>
-<img src="netgen_cyl_models16.png">
+<img src="netgen_cyl_models17.png">
 </center>
 
 </td></tr></table>
