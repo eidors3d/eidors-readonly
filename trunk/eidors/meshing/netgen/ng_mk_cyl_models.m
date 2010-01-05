@@ -85,19 +85,20 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 if nargin < 4; extra_ng_code = {'',''}; end
 fnstem = tempname;
 geofn= [fnstem,'.geo'];
+ptsfn= [fnstem,'.msz'];
 meshfn= [fnstem,'.vol'];
 
 [tank_height, tank_radius, tank_maxh, is2D] = parse_shape(cyl_shape);
 [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
                        tank_height, tank_radius, is2D );
 
-write_geo_file(geofn, tank_height, tank_radius, ...
+write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                tank_maxh, elecs, extra_ng_code);
-call_netgen( geofn, meshfn);
+call_netgen( geofn, meshfn, ptsfn);
 
 [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-delete(geofn); delete(meshfn); % remove temp files
+%delete(geofn); delete(meshfn); % remove temp files
 if is2D
    [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
 end
@@ -109,7 +110,7 @@ fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
 end
 
 
-function write_geo_file(geofn, tank_height, tank_radius, ...
+function write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                         tank_maxh, elecs, extra_ng_code);
    fid=fopen(geofn,'w');
    write_header(fid,tank_height,tank_radius,tank_maxh,extra_ng_code);
@@ -119,16 +120,21 @@ function write_geo_file(geofn, tank_height, tank_radius, ...
    %  elecs(i).shape = 'C' or 'R'
    %  elecs(i).dims  = [radius] or [width,height]
    %  elecs(i).maxh  = '-maxh=#' or '';
+   pts_elecs_idx = []; 
+%^keyboard
    for i=1:n_elecs
       name = sprintf('elec%04d',i);
       pos = elecs(i).pos;
-      if elecs(i).shape == 'C'
+      switch elecs(i).shape
+       case 'C'
          write_circ_elec(fid,name, pos, pos,  ...
                elecs(i).dims, tank_radius, elecs(i).maxh);
-      else
-%  write_rect_elec(fid,name,c, dirn,hw,d,maxh)
+       case 'R'
          write_rect_elec(fid,name, pos, pos,  ...
                elecs(i).dims, tank_radius, elecs(i).maxh);
+       case 'P'
+         pts_elecs_idx = [ pts_elecs_idx, i]; 
+       otherwise; error('huh? shouldnt get here');
       end
 
       fprintf(fid,'solid cyl%04d = bigcyl    and %s; \n',i,name);
@@ -144,7 +150,18 @@ function write_geo_file(geofn, tank_height, tank_radius, ...
       fprintf(fid,'tlo %s  -col=[0,1,0];\n',extra_ng_code{1});
    end
 
-   fclose(fid);
+   fclose(fid); % geofn
+% From Documentation: Syntax is
+% np
+% x1 y1 z1 h1
+% x2 y2 z2 h2
+   fid=fopen(ptsfn,'w');
+   fprintf(fid,'%d\n',length(pts_elecs_idx) );
+   for i = pts_elecs_idx;
+      pos = elecs(i).pos;
+      fprintf(fid,'%10f %10f 0 %10f\n', pos, elecs(i).dims );
+   end
+   fclose(fid); % ptsfn
 
 function [tank_height, tank_radius, tank_maxh, is2D] = ...
               parse_shape(cyl_shape);
@@ -189,7 +206,7 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
 function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
 
    if is2D
-      elec_pos(:,2) = hig/2.5;
+      elec_pos(:,2) = hig/2;
    end
 
    % It never makes sense to specify only one elec
@@ -218,41 +235,60 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
       elec_shape = ones(n_elecs,1) * elec_shape;
    end
 
-   elecs= struct([]); % empty
    for i= 1:n_elecs
-     row = elec_shape(i,:);
-
-     if     is2D
-        elecs(i).shape = 'R';
-        elecs(i).dims  = [row(1),hig];
-     elseif row(2) == 0 % Circular electrodes 
-        elecs(i).shape = 'C';
-        elecs(i).dims  = row(1);
-     elseif row(2) == -1 % Point electrodes
-        % Create rectangular electrodes with bottom, cw point where we want
-        
-     else                 % Rectangular electrodes
-        elecs(i).shape = 'R';
-        elecs(i).dims  = row(1:2);
-     end
-
-     if length(row)>=3 && row(3) > 0
-        elecs(i).maxh = sprintf('-maxh=%f', row(3));
-     else
-        elecs(i).maxh = '';
-     end
-
-     if length(row)<4 || row(4) == 0
-        elecs(i).model = 'cem'; % Complete Electrode Model (CEM)
-     else
-        elecs(i).model = 'pem'; % Point Electrode Model (PEM)
-     end
-     %TODO support Shunt Electrode Model (SEM)
+     row = elec_shape(i,:) 
+     elecs(i) = elec_spec( row, is2D, hig, rad );
    end
    
-
    centres = [rad*sin(el_th),rad*cos(el_th),el_z];
    for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
+
+function elec = elec_spec( row, is2D, hig, rad )
+  if     is2D
+     if length(row)>=2 && row(2) == -1 % Point electrodes
+        % Create rectangular electrodes with bottom, cw point where we want
+        elec.shape = 'P' 
+        if length(row)>=3 && row(3) > 0
+           elec.dims  =  row(3);
+        else
+           elec.dims  =  rad; % Make big if unspecified
+        end
+     else
+        elec.shape = 'R';
+        elec.dims  = [row(1),hig];
+     end
+  else
+     if     row(2) == 0 % Circular electrodes 
+        elec.shape = 'C';
+        elec.dims  = row(1);
+     elseif row(2) == -1 % Point electrodes
+        % Create rectangular electrodes with bottom, cw point where we want
+        elec.shape = 'P' 
+        if length(row)>=3 && row(3) > 0
+           elec.dims  =  row(3);
+        else
+           elec.dims  =  rad; % Make big if unspecified
+        end
+     elseif row(2)>0      % Rectangular electrodes
+        elec.shape = 'R';
+        elec.dims  = row(1:2);
+     else
+        error('negative electrode width');
+     end
+  end
+
+  if length(row)>=3 && row(3) > 0
+     elec.maxh = sprintf('-maxh=%f', row(3));
+  else
+     elec.maxh = '';
+  end
+
+  if length(row)<4 || row(4) == 0
+     elec.model = 'cem'; % Complete Electrode Model (CEM)
+  else
+     elec.model = 'pem'; % Point Electrode Model (PEM)
+  end
+  %TODO support Shunt Electrode Model (SEM)
 
 function write_header(fid,tank_height,tank_radius,maxsz,extra);
    if maxsz==0; 
