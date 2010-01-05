@@ -189,19 +189,11 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
 function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
 
    if is2D
-     if size(elec_pos,2)==1;
-        elec_pos    = [elec_pos, 0*elec_pos(:,1)];
-     end
-
-     if size(elec_shape,2)==1;
-        elec_shape  = [elec_shape, 0*elec_shape(:,1)];
-     end
-
-     elec_pos(:,2)   = hig/2;
-     elec_shape(:,2) = hig;
+      elec_pos(:,2) = hig/2.5;
    end
 
    % It never makes sense to specify only one elec
+   % So elec_pos means the number of electrodes in this case
    if size(elec_pos,1) == 1
        % Parse elec_pos = [n_elecs_per_plane,z_planes] 
       n_elecs= elec_pos(1); % per plane
@@ -220,36 +212,37 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
       el_z  = elec_pos(:,2);
    end
       
-   n_elecs= size(el_z,1);
+   n_elecs= size(el_z,1) 
 
    if size(elec_shape,1) == 1
       elec_shape = ones(n_elecs,1) * elec_shape;
    end
-   elec_shape = [elec_shape, zeros(n_elecs, 4)]; % add default zeros
 
    elecs= struct([]); % empty
    for i= 1:n_elecs
      row = elec_shape(i,:);
 
-     switch row(2)
-       case 0; % Circular electrodes 
+     if     is2D
+        elecs(i).shape = 'R';
+        elecs(i).dims  = [row(1),hig];
+     elseif row(2) == 0 % Circular electrodes 
         elecs(i).shape = 'C';
         elecs(i).dims  = row(1);
-       case -1; % Point electrodes
+     elseif row(2) == -1 % Point electrodes
         % Create rectangular electrodes with bottom, cw point where we want
         
-       otherwise; % Rectangular electrodes
+     else                 % Rectangular electrodes
         elecs(i).shape = 'R';
         elecs(i).dims  = row(1:2);
      end
 
-     if row(3) == 0
-        elecs(i).maxh = '';
-     else
+     if length(row)>=3 && row(3) > 0
         elecs(i).maxh = sprintf('-maxh=%f', row(3));
+     else
+        elecs(i).maxh = '';
      end
 
-     if row(4) == 0
+     if length(row)<4 || row(4) == 0
         elecs(i).model = 'cem'; % Complete Electrode Model (CEM)
      else
         elecs(i).model = 'pem'; % Point Electrode Model (PEM)
