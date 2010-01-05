@@ -96,7 +96,8 @@ write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                tank_maxh, elecs, extra_ng_code);
 call_netgen( geofn, meshfn, ptsfn);
 
-[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, [], 'ng', []);
+%[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
 %delete(geofn); delete(meshfn); % remove temp files
 if is2D
@@ -134,15 +135,17 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                elecs(i).dims, tank_radius, elecs(i).maxh);
        case 'P'
          pts_elecs_idx = [ pts_elecs_idx, i]; 
+         continue; % DON'T print solid cyl
+
        otherwise; error('huh? shouldnt get here');
       end
-
       fprintf(fid,'solid cyl%04d = bigcyl    and %s; \n',i,name);
    end
 
    % SHOULD tank_maxh go here?
    fprintf(fid,'tlo bigcyl;\n');
    for i=1:n_elecs
+      if any(i == pts_elecs_idx); continue; end
       fprintf(fid,'tlo cyl%04d cyl -col=[1,0,0];\n ',i);
    end
 
@@ -158,8 +161,8 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
    fid=fopen(ptsfn,'w');
    fprintf(fid,'%d\n',length(pts_elecs_idx) );
    for i = pts_elecs_idx;
-      pos = elecs(i).pos;
-      fprintf(fid,'%10f %10f 0 %10f\n', pos, elecs(i).dims );
+      posxy = elecs(i).pos(1:2);
+      fprintf(fid,'%10f %10f 0 %10f\n', posxy, elecs(i).dims );
    end
    fclose(fid); % ptsfn
 
@@ -243,6 +246,10 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
    centres = [rad*sin(el_th),rad*cos(el_th),el_z];
    for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
 
+   if n_elecs == 0
+      elecs= struct([]); % empty
+   end
+
 function elec = elec_spec( row, is2D, hig, rad )
   if     is2D
      if length(row)>=2 && row(2) == -1 % Point electrodes
@@ -258,7 +265,7 @@ function elec = elec_spec( row, is2D, hig, rad )
         elec.dims  = [row(1),hig];
      end
   else
-     if     row(2) == 0 % Circular electrodes 
+     if length(row)<2 || row(2) == 0 % Circular electrodes 
         elec.shape = 'C';
         elec.dims  = row(1);
      elseif row(2) == -1 % Point electrodes
