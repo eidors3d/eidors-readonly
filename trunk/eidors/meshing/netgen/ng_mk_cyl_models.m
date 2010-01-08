@@ -96,10 +96,9 @@ write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                tank_maxh, elecs, extra_ng_code);
 call_netgen( geofn, meshfn, ptsfn);
 
-[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, [], 'ng', []);
-%[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-%delete(geofn); delete(meshfn); % remove temp files
+delete(geofn); delete(meshfn); % remove temp files
 if is2D
    [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
 end
@@ -232,14 +231,14 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
       el_z  = elec_pos(:,2);
    end
       
-   n_elecs= size(el_z,1) 
+   n_elecs= size(el_z,1); 
 
    if size(elec_shape,1) == 1
       elec_shape = ones(n_elecs,1) * elec_shape;
    end
 
    for i= 1:n_elecs
-     row = elec_shape(i,:) 
+     row = elec_shape(i,:); 
      elecs(i) = elec_spec( row, is2D, hig, rad );
    end
    
@@ -416,16 +415,30 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
 % elecs = electrode structure of model, from the parse_elecs function
 % electrode = the forward electrode model
 % nodes = the coordinates for the nodes
-% can only have one node per electrode so we get a Point Electrode Model
-% choose the node with the greatest angle, so we atlest pick a consistent
+% Can only have one node per electrode so we get a Point Electrode Model.
+% Choose the node with the greatest angle, so we atlest pick a consistent
 % side of the electrode: NetGen seems to give a random order to the nodes
-% in the electrode listing so we can't just pick the first one
-% TODO FIXME: this gets it a little funny since if an electrode crosses the -pi to +pi boundary it'll choose the middle of the electrode which isn't what we're trying to do.
+% in the electrode listing so we can't just pick the first one.
+% The nodes aside from those on the edges are not garanteed to be at any
+% particular location, so won't be consistent between meshes.
+% TODO should probably also adjust contact impedance too: its found later
+% by taking the average of the edges around the PEM's node, and those
+% will vary for each mesh -- should adjust so all electrodes get a
+% consistent effective impedance later.
   Ne = length(electrode);
   for i = 1:Ne
     if elecs(i).model == 'pem'
+      % find the angles of the nodes for this electrode relative to (0,0)
       xy = nodes(electrode(i).nodes,:);
-      [jnk, ind] = max(atan2(xy(:,2),xy(:,1)));
+      ang = atan2(xy(:,2),xy(:,1));
+      % if the angles cover more than 180 degrees, must be an angle
+      % roll-over from -pi to +pi, so take all the negative angles
+      % and move them up
+      if (max(ang) - min(ang)) > pi
+        ang = ang + (ang <0)*2*pi;
+      end
+      % choose the counter-clockwise most node only
+      [jnk, ind] = max(ang);
       electrode(i).nodes = electrode(i).nodes(ind);
     end
   end
