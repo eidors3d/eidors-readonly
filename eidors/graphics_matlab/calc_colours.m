@@ -52,6 +52,9 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
 %
+%   'colourmap' Return the current EIDORS colormap. 
+%           Use as colormap(calc_colours('colourmap'))
+%
 % PARAMETERS CAN BE SPECIFIED IN TWO WAYS
 %   1. as an image parameter (ie clim in img.calc_colours.clim)
 %   2. a second parameter to ( calc_colours(data, param2 )
@@ -234,6 +237,9 @@ function pp=get_colours( img );
       end
    end
 
+function BGI= backgndidx;
+  BGI= 1;
+
 function colours=set_mapped_colour(pp, backgnd, img_data)
    % need to generate a colourmap with pp.mapped_colour+1 elements
    % background pixel will be at entry #1. Thus for
@@ -241,7 +247,6 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
    %
    % Note: ensure patch uses 'direct' CDataMapping
    ncol= pp.mapped_colour;
-   backgndidx= 1;
    [red,grn,blu] = blu_red_axis( pp, ...
           [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
@@ -250,7 +255,14 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
 
 function value= get_field(param);
     global eidors_colours;
-    value = getfield(eidors_colours, param);
+    if strcmp(param,'colourmap')
+       ncol= eidors_colours.mapped_colour;
+       [red,grn,blu] = blu_red_axis( eidors_colours, ...
+              [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
+       value= [red,grn,blu];
+    else
+       value = getfield(eidors_colours, param);
+    end
 
 function value= set_field(param, value);
     global eidors_colours;
