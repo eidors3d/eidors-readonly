@@ -51,6 +51,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %   'clim'    (DEFAULT []) crop colour display of values above clim
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
+%   'draeger_cmap'  Use the Draegerwerk colourmap (similar to that
+%           used by Amato et al. (set to 1 for use)
 %
 %   'colourmap' Return the current EIDORS colormap. 
 %           Use as colormap(calc_colours('colourmap'))
@@ -172,9 +174,31 @@ if do_colourbar
    end
 end
 
+function [red,grn,blu] = draeger_colours;
+   p1= 2/3*linspace(1,0,26)'*[1,0,1];
+   p2= zeros(9,3);
+   p3= linspace(0,1,4)'*[0,0,1];
+   p4= linspace(0,1,26)'*[1,1,0]; p4(:,3)= 1; p4(1,:)= [];
+   cMap = [p1;p2;p3;p4];
+
+   red = cMap(:,1);
+   grn = cMap(:,2);
+   blu = cMap(:,3);
+   red(backgnd) = pp.backgnd(1);
+   grn(backgnd) = pp.backgnd(2);
+   blu(backgnd) = pp.backgnd(3);
 
 %scaled data must go from -1 to 1
 function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
+   do_draeger_colours = 0;
+   try if pp.draeger_cmap == 1;
+      do_draeger_colours = 1;
+   end; end
+   if do_draeger_colours;
+      [red,grn,blu] = draeger_colours;
+      return;
+   end
+      
    % window data such that slope above w is 1/3 of that below
    % thus w is mapped to k st k/w = 3(1-k)/(1-w) -> k=3w/(1+2w)
    W= pp.window_range; K= 3*W/(1+2*W);
@@ -182,6 +206,13 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
      (  K/W*   abs(scale_data)   ) .* (abs(scale_data)<=W) + ...
      (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
 
+   [red,grn,blu]= blue_red_colours(pp,scale_data);
+
+   red(backgnd) = pp.backgnd(1);
+   grn(backgnd) = pp.backgnd(2);
+   blu(backgnd) = pp.backgnd(3);
+
+function [red,grn,blu]= blue_red_colours(pp,scale_data);
 if 0
    D= sign(pp.greylev+eps); %force 0 to 1
    glev= abs(pp.greylev);
@@ -217,10 +248,6 @@ end
       grn= grn*(1-glev);
       blu= blu*(1-glev);
    end
-
-   red(backgnd) = pp.backgnd(1);
-   grn(backgnd) = pp.backgnd(2);
-   blu(backgnd) = pp.backgnd(3);
 
 
 function pp=get_colours( img );
