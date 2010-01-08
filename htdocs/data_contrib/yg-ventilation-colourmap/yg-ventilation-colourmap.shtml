@@ -22,6 +22,11 @@ for display of EIT ventilation images.
        <td>
 Colour map (with columns of Red/Green/Blue values), is available
 <a href="./cmap_lungeit.mat">here (Matlab v7 format)</a>.
+In EIDORS, this colourmap may be accessed by setting:
+<pre>
+calc_colours('cmap_type','draeger');
+</pre>
+
 This matrix may be recreated as follows:
 <pre>
 p1= 2/3*linspace(1,0,26)'*[1,0,1];
