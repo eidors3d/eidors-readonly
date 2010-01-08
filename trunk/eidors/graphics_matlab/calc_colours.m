@@ -51,8 +51,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %   'clim'    (DEFAULT []) crop colour display of values above clim
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
-%   'draeger_cmap'  Use the Draegerwerk colourmap (similar to that
-%           used by Amato et al. (set to 1 for use)
+%   'cmap_type'  Specify special colours (Default blue-red)
+%           if 'draeger' use the Draegerwerk/Amato colourmap
 %
 %   'colourmap' Return the current EIDORS colormap. 
 %           Use as colormap(calc_colours('colourmap'))
@@ -190,14 +190,10 @@ function [red,grn,blu] = draeger_colours;
 
 %scaled data must go from -1 to 1
 function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
-   do_draeger_colours = 0;
-   try if pp.draeger_cmap == 1;
-      do_draeger_colours = 1;
-   end; end
-   if do_draeger_colours;
-      [red,grn,blu] = draeger_colours;
-      return;
-   end
+   if ~isfield(pp,'cmap_type')
+      pp.cmap_type = 'blue_red';
+   end; 
+
       
    % window data such that slope above w is 1/3 of that below
    % thus w is mapped to k st k/w = 3(1-k)/(1-w) -> k=3w/(1+2w)
@@ -206,7 +202,14 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
      (  K/W*   abs(scale_data)   ) .* (abs(scale_data)<=W) + ...
      (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
 
-   [red,grn,blu]= blue_red_colours(pp,scale_data);
+   switch pp.cmap_type
+     case 'blue_red'
+      [red,grn,blu]= blue_red_colours(pp,scale_data);
+     case 'draeger'
+      [red,grn,blu]= draeger_colours(pp.scale_data);
+     otherwise
+      error(['specified cmap_type not understood:',pp.cmap_type]);
+   end
 
    red(backgnd) = pp.backgnd(1);
    grn(backgnd) = pp.backgnd(2);
