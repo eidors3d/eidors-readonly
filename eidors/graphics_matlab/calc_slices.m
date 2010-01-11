@@ -10,6 +10,10 @@ function rimg = calc_slices( img, levels );
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
 %
+% PARAMETERS:
+%   img.calc_slices.filter % Filter to be applied to images
+%      Example:    img.calc_slices.filter = ones(3)/9
+%
 % rimg= np x np x I x L where np is 128 by default
 % np can be adjusted by calc_colours('npoints')
 
@@ -60,6 +64,14 @@ elseif isfield(img,'node_data')
    end
 else
    error('img does not have a data field');
+end
+
+% FILTER IMAGE
+try   filt = img.calc_slices.filter; 
+catch filt = []; end
+
+if ~isempty(filt)
+   rimg = filter_image(rimg, filt);
 end
 
 % Calculate an image by mapping it onto the node_ptr matrix
@@ -336,3 +348,16 @@ function  [x,y] = grid_the_space( NODE, npx, npy);
   [x y]=meshgrid( ...
       linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
       linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
+
+function  rimg = filter_image(rimg, filt);
+   [sz1,sz2,sz3,sz4] = size(rimg);
+   for j1 = 1:sz3; for j2 = 1:sz4; 
+      rsl = rimg(:,:,j1,j2);
+
+      rna = isnan(rsl);
+      rsl(rna) = 0;
+      rsl = conv2(rsl, filt, 'same');
+      rsl(rna) = NaN;
+
+      rimg(:,:,j1,j2) = rsl;
+   end; end
