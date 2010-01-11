@@ -16,20 +16,26 @@ function out_img= show_slices( img, levels )
 %
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
+%
+% Show slices is roughly equivalent to:
+%   rimg = calc_slices(img,levels); 
+%   rimg = calc_colours(rimg,img); image(rimg);
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+np = calc_colours('npoints');
 try   np = img.calc_colours.npoints;
-catch np = calc_colours('npoints');
 end
 
-dims= size(img(1).fwd_model.nodes,2);
+do_calc_slices = 0;
+try if strcmp(img.type,'image'); do_calc_slices= 1; end;end 
+
 if nargin<=1;
    levels= [];
 end
 
-if isempty(levels) && dims==2
+if isempty(levels) && do_calc_slices && size(img(1).fwd_model.nodes,2)==2
    levels= [Inf,Inf,0];
 end
 
@@ -46,7 +52,13 @@ else
    spec_position= 0;
 end
 
-rimg= calc_slices( img, levels(:,1:3) );
+if do_calc_slices
+   rimg= calc_slices( img, levels(:,1:3) );
+else
+   rimg= img;
+   np = size(rimg,1);
+end
+
 
 n_frames = size(rimg,3);
 n_levels = size(rimg,4);
