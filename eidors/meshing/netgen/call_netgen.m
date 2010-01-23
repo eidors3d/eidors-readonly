@@ -76,13 +76,19 @@ while( 1 )
        'Note that you *MUST* use names without spaces. Thus\n' ...
        'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
       netgen_path = input('netgen_path? ','s');
-      if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) 
-         disp('Found netgen version 4.4');
+      if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) || ...
+              exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
+         disp('Found netgen version 4.4 or higher');
+         netgen_exe = netgen_path;
+         if exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
+             netgen_exe = [netgen_path '/bin'];
+         end
+
          
       fid= fopen('ng.bat','w');
       fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
       fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);
-      fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);
+      fprintf(fid,'%s/netgen.exe %%*\n', netgen_exe);
       fclose(fid);
       elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
          disp('Found netgen version 4.3.1');
