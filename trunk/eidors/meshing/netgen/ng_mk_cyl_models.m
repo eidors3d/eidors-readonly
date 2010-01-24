@@ -192,7 +192,7 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
 %     OR
-%  elec_pos = [x,y,z] centres of each electrode (N_elecs x 3)
+%  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
 % ELECTRODE SHAPES::
 %  elec_shape = [width,height, {maxsz}]  % Rectangular elecs
