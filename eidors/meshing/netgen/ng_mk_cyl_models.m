@@ -98,7 +98,7 @@ call_netgen( geofn, meshfn, ptsfn);
 
 [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-delete(geofn); delete(meshfn); % remove temp files
+delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
 if is2D
    [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
 end
