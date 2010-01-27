@@ -31,8 +31,10 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %   inj: injection pattern
 %      '{ad}'        -> adjacent drive: equivalent to [0 1]
 %      '{op}'        -> opposite drive: equivalent to [0, n_elec/2]
-%      '{trig}'      -> trigonometric drive [sin,cos,sin,cos ...]
+%      '{trig}'      -> trigonometric drive [cos,sin,cos,sin ...]
 %                       '{trig}' implies the 'meas_current' option.
+%      '{trigcscs}'  -> trigonometric drive [cos,sin,cos,sin ...]
+%      '{trigccss}'  -> trigonometric drive [cos,cos, ... sin,sin, ...]
 %      '{mono}'      -> Drive via each elec, current leaves by ground
 %      Bi-polar injection patterns:
 %        [x y]: First pattern is [x,y] next is [x+1,y+1] 
@@ -187,7 +189,7 @@ function stim_pat = mk_stim_pat(v, elec, ring );
    if v.balance_inj
       stim_pat= stim_pat - sum(v.i_factor)/ (v.tn_elec-1);
    elseif v.trig_inj
-      stim_pat = trig_pat( elec, v.tn_elec);
+      stim_pat = trig_pat( elec, v.tn_elec, v.trig_inj);
       return;
    end
 
@@ -256,6 +258,14 @@ if isstr(inj)
       rel_ampl= [-1;1];
    elseif  strcmp(inj,'{trig}')
       v.trig_inj = 1;
+      v.use_meas_current = 1; % We need to measure on the electrodes
+      rel_ampl= [];
+   elseif  strcmp(inj,'{trigcscs}')
+      v.trig_inj = 1;
+      v.use_meas_current = 1; % We need to measure on the electrodes
+      rel_ampl= [];
+   elseif  strcmp(inj,'{trigccss}')
+      v.trig_inj = 2;
       v.use_meas_current = 1; % We need to measure on the electrodes
       rel_ampl= [];
    elseif  strcmp(inj,'{mono}')
@@ -360,12 +370,18 @@ function [m_pat, seen_patterns] = elim_redundant(m_pat, s_pat, seen_patterns);
 % n_elecs is total number of electrodes
 % elec    is the electrodes selected (can be multiple)
 %         (elec goes from 0 to n_elecs-1
-function pat= trig_pat( elec_sel, n_elecs);
+% if sel = 1 -> cos|sin|cos|sin (default)
+% if sel = 2 -> cos|cos|sin|sin
+% 
+function pat= trig_pat( elec_sel, n_elecs, sel);
+    if nargin<3; sel=1; end
     idx= linspace(0,2*pi,n_elecs+1)'; idx(end)= [];
     omega= idx*[1:n_elecs/2];
     meas_pat= [cos(omega), sin(omega) ];
-    % reorder so we get cos|sin|cos|sin
-    order = reshape(1:n_elecs,[],2)';
-    meas_pat= meas_pat(:,order(:));
+    if sel==1;
+       % reorder so we get cos|sin|cos|sin
+       order = reshape(1:n_elecs,[],2)';
+       meas_pat= meas_pat(:,order(:));
+    end
     meas_pat= meas_pat(:,1:end-1); % only n_elecs-1 independent patterns
     pat  = meas_pat(:, elec_sel+1);
