@@ -337,6 +337,9 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    bdy0  = reshape(nmap(bdy0), size(bdy0) ); % renumber to new scheme
    mdl2.elems = bdy0;
 
+   % set boundary
+   mdl2.boundary = find_boundary( mdl2.elems);
+
    % set gnd_node
    mdl2.gnd_node = nmap(mdl3.gnd_node);
 
