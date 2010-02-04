@@ -9,6 +9,10 @@ function data = fwd_solve( fwd_model, img)
 % in each case it will call the fwd_model.solve
 %                        or img.fwd_model.solve method
 %
+% For reconstructions on dual meshes, the interpolation matrix
+%    is defined as fwd_model.coarse2fine. If required, this takes
+%    coarse2fine * x_coarse = x_fine
+%
 % data      is a measurement data structure
 % fwd_model is a fwd_model structure
 % img       is an img structure
@@ -22,12 +26,12 @@ if nargin==1
 end
 fwd_model= eidors_model_params( fwd_model );
 
-% By default EIDORS doesn't cache images, so this doesn't normally help
-data = eidors_obj('get-cache', img, 'fwd_solve_data');
-
-if ~isempty(data)
-   eidors_msg('fwd_solve: using cached value',3);
-   return
+if isfield(fwd_model,'coarse2fine')
+   c2f= fwd_model.coarse2fine;
+   if size(img.elem_data,1)==size(c2f,2)
+%     fwd_model data is provided on coarse mesh
+      img.elem_data = c2f * img.elem_data;
+   end
 end
 
 data = feval( fwd_model.solve, fwd_model, img);
