@@ -69,10 +69,11 @@ dfact= (d-1)*(d-2); % Valid for d<=3
 
 do_c2f = ( nargin==5 );
 
+zi2E_FCt = zi2E * FC';
+FC_sv   = FC * sv;
+
 if ~do_c2f
    DE= zeros(pp.n_elec, pp.n_stim, pp.n_elem);
-   zi2E_FCt = zi2E * FC';
-   FC_sv   = FC * sv;
    for k= 1:pp.n_elem
        idx= (d-1)*(k-1)+1 : (d-1)*k;
        dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
@@ -80,19 +81,16 @@ if ~do_c2f
    end
 else
    DE= zeros(pp.n_elec, pp.n_stim, size(c2f,2) );
-   if 0 % Code is slower
-      zi2E_FCt = zi2E * FC';
-      FC_sv   = FC * sv;
+   if 1 % Code is slower
       de= pp.n_elem * (d-1);
       for k= 1:size(c2f,2);
           chg_col = kron( c2f(:,k), ones(d-1,1));
           dDD_dEj = spdiags(chg_col,0, de, de);
+keyboard
           dq= zi2E_FCt * dDD_dEj * FC_sv;
           DE(:,:,k)= dq;
       end
    else
-      zi2E_FCt = zi2E * FC';
-      FC_sv   = FC * sv;
       de= pp.n_elem * (d-1);
       for k= 1:size(c2f,2);
           ff = find( c2f(:,k) );
