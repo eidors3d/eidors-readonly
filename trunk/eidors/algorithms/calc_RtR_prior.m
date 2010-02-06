@@ -51,6 +51,7 @@ if isfield(inv_model.fwd_model,'coarse2fine')
    c2f= inv_model.fwd_model.coarse2fine;
    if size(RtR_prior,1)==size(c2f,1)
 %     we need to take into account coarse2fine - using a reasonable tol
+      eidors_msg('calc_RtR_prior: using coarse2fine to model RtR');
       f2c= c2f'; %pinv(c2f,1e-6);
       RtR_prior=c2f'*RtR_prior*c2f;
    end
