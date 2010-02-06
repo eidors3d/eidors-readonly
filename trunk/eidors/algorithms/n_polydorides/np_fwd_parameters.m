@@ -149,7 +149,7 @@ end
 % get boundary faces which match nodes
 function e_bdy  = bdy_with_nodes(bdy,  elec_nodes );
    mbdy= zeros(size(bdy));
-   for n= elec_nodes
+   for n= elec_nodes(:)'
       mbdy= mbdy + (bdy == n); 
    end 
    e_bdy = find( all(mbdy') );
