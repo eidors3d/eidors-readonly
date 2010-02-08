@@ -1,4 +1,5 @@
-function tank_shape = ng_mk_extruded_model(shape, elec_pos, elec_shape)
+function tank_shape = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
+    extra_ng_code)
 % NG_MAKE_EXTRUDED_MODELS: create extruded models using netgen
 % [fmdl,mat_idx] = ng_mk_extruded_models(cyl_shape, elec_pos, ...
 %                 elec_shape, extra_ng_code);
@@ -24,13 +25,26 @@ function tank_shape = ng_mk_extruded_model(shape, elec_pos, elec_shape)
 
 % (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
 % $Id$
+if nargin < 4; extra_ng_code = {'',''}; end
+
+fnstem = 'tmp';%tempname;
+geofn= [fnstem,'.geo'];
+ptsfn= [fnstem,'.msz'];
+meshfn= [fnstem,'.vol'];
 
 [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape);
 [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, tank_height, is2D );
+write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
+               tank_maxh, elecs, extra_ng_code);
 
 hold on
 plot(centres(:,1),centres(:,2),'sk')
+for i = 1:size(elecs,2)
+    dirn = tank_shape.edge_normals(elecs(i).edg_no,:);
+    quiver(centres(i,1),centres(i,2),dirn(1),dirn(2),'k');
+end
 hold off
+axis equal
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TANK SHAPE (struct):
@@ -40,6 +54,7 @@ hold off
 %       vertex_dir: [Nx2] direction of vertex movement when scaling
 %         centroid: [x y]
 %   vertices_polar: [Nx2] Phi, r
+%           convex: [N] boolean array indicating external angle >= 180 deg
 % 
 function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
     % parses the shape input
@@ -103,6 +118,8 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         [polar(i,1) polar(i,2)]  = cart2pol(tmp(1),tmp(2));
     end
     tank_shape.vertices_polar = polar;
+    
+    tank_shape.convex = calc_convex(tank_shape.vertices);
     
     % debug plot
     pts = edges./2 + points;
@@ -179,6 +196,23 @@ function out = calc_centroid(points)
 
     out = tmp./tot_area;
 
+function out = calc_convex(verts)
+% Returns an array of boolean values for every vertex, true if the external
+% angle at this vertex is greater or equal to 180 degrees, false otherwise.
+% This marks the vertices which upset the convexity of the polygon and
+% require special treatment.
+
+n_verts = size(verts,1);
+tmp = [verts(end,:); verts; verts(1,:)];
+verts = tmp;
+
+for i = 2:n_verts+1
+    v1 = [verts(i-1,:) - verts(i,:), 0];
+    v2 = [verts(i+1,:) - verts(i,:), 0];
+    cp = cross(v1',v2);
+    out(i-1) = cp(3) >= 0;
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
@@ -238,9 +272,10 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
    
    %centres = [rad*sin(el_th),rad*cos(el_th),el_z];
    for i= 1:n_elecs; 
-       centres(i,1:2) = calc_elec_centre(tank_shape, el_th(i));
+       [centres(i,1:2), edg_no] = calc_elec_centre(tank_shape, el_th(i));
        centres(i,3) = el_z(i);
-       elecs(i).pos  = centres(i,:); 
+       elecs(i).pos  = centres(i,:);
+       elecs(i).edg_no = edg_no;
    end
 
    if n_elecs == 0
@@ -293,12 +328,12 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
         if DAB > pi, DAB = abs( DAB - 2*pi); end; 
         DAC  = abs(vert_pol(v2,1)-th);
         if DAC > pi, DAC = abs( DAC - 2*pi); end;
-        ratio = AB * sin(DAB) / (AC * sin(DAC));
-        
-        
-        pos = vert(v1,:) + ( ratio / (1 + ratio) ) * (vert(v2,:) - vert(v1,:));
-        
-   
+        if DAC ~= 0
+            ratio = AB * sin(DAB) / (AC * sin(DAC));
+            pos = vert(v1,:) + ( ratio / (1 + ratio) ) * (vert(v2,:) - vert(v1,:));
+        else
+            pos = vert(v2,:);
+        end
    
    
    
@@ -309,7 +344,7 @@ function elec = elec_spec( row, is2D, hig, rad )
   if     is2D
      if length(row)>=2 && row(2) == -1 % Point electrodes
         % Create rectangular electrodes with bottom, cw point where we want
-        elec.shape = 'P' 
+        elec.shape = 'P' ;
         if length(row)>=3 && row(3) > 0
            elec.dims  =  row(3);
         else
@@ -352,3 +387,192 @@ function elec = elec_spec( row, is2D, hig, rad )
   end
   %TODO support Shunt Electrode Model (SEM)
 
+  
+  function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
+                        tank_maxh, elecs, extra_ng_code);
+   fid=fopen(geofn,'w');
+   write_header(fid,tank_height,tank_shape,tank_maxh,extra_ng_code);
+
+   n_verts = size(tank_shape.vertices,1);
+   n_elecs = length(elecs);
+   %  elecs(i).pos   = [x,y,z]
+   %  elecs(i).shape = 'C' or 'R'
+   %  elecs(i).dims  = [radius] or [width,height]
+   %  elecs(i).maxh  = '-maxh=#' or '';
+   %  elecs(i).edg_no = i (index of the edge on which the electrode lies)
+   pts_elecs_idx = []; 
+%^keyboard
+   for i=1:n_elecs
+      name = sprintf('elec%04d',i);
+      pos = elecs(i).pos;
+      dirn = tank_shape.edge_normals(elecs(i).edg_no,:);
+      switch elecs(i).shape
+       case 'C'
+         write_circ_elec(fid,name, pos, dirn,  ...
+               elecs(i).dims, tank_shape.centroid, elecs(i).maxh);
+%        case 'R'
+%          write_rect_elec(fid,name, pos, pos,  ...
+%                elecs(i).dims, tank_radius, elecs(i).maxh);
+%        case 'P'
+%          pts_elecs_idx = [ pts_elecs_idx, i]; 
+%          continue; % DON'T print solid cyl
+
+       otherwise; error('huh? shouldnt get here');
+      end
+      fprintf(fid,'solid cyl%04d = trunk   and %s; \n',i,name);
+   end
+% 
+%    % SHOULD tank_maxh go here?
+    fprintf(fid,'tlo trunk -transparent;\n');
+
+    
+   for i=1:n_elecs
+       if any(i == pts_elecs_idx); continue; end
+       for j = 1:n_verts
+            fprintf(fid,'tlo cyl%04d p%04d  -col=[1,0,0];\n ',i,j);
+       end
+   end
+
+   if ~isempty(extra_ng_code{1})
+      fprintf(fid,'tlo %s -col=[0,1,0];\n',extra_ng_code{1});
+   end
+
+   fclose(fid); % geofn
+
+   
+   
+   function write_header(fid,tank_height,tank_shape,maxsz,extra);
+   if maxsz==0; 
+      maxsz = '';
+   else
+      maxsz = sprintf('-maxh=%f',maxsz);
+   end
+
+   if ~isempty( extra{1} )
+      extra{1} = [' and not ',extra{1}];
+   end
+
+   
+   fprintf(fid,'#Automatically generated by ng_mk_extruded_model\n');
+   fprintf(fid,'algebraic3d\n');
+   fprintf(fid,'%s\n',extra{2}); % Define extra stuff here
+
+   write_3d_shape(fid,tank_shape,tank_height,'trunk',1);
+   write_curve(fid,tank_shape,'outer', 1.05);
+   write_curve(fid,tank_shape,'inner', 0.95);
+   
+   fprintf(fid,'curve3d extrsncurve=(2; 0,0,0; 0,0,%6.2f; 1; 2,1,2);\n', ...
+       tank_height+1);
+   
+            
+   fprintf(fid,['solid inner_bound= plane(0,0,0;0,0,-1)\n' ...
+                '      and  plane(0,0,%6.2f;0,0,1)\n' ...
+                '      and  extrusion(extrsncurve;inner;0,1,0)'...
+                '%s %s;\n'],tank_height,extra{1},maxsz);
+
+   fprintf(fid,['solid outer_bound= plane(0,0,0;0,0,-1)\n' ...
+                '      and  plane(0,0,%6.2f;0,0,1)\n' ...
+                '      and  extrusion(extrsncurve;outer;0,1,0)'...
+                '%s %s;\n'],tank_height,extra{1},maxsz);
+           
+            
+   function write_3d_shape(fid, tank_shape, tank_height, name, scale)
+        if nargin <5
+            scale = 1;
+        end
+       
+        if scale ~= 1
+            vertices = tank_shape.vertices + (scale-1)*tank_shape.size*tank_shape.vertex_dir;
+        else
+            vertices = tank_shape.vertices;
+        end
+        vertices(end+1,:) = vertices(1,:); % repeat first vertex
+        n_edges = size(tank_shape.edge_normals,1);
+        for i = 1:n_edges
+            edg_pnt = vertices(i,:); %+ (vertices(i+1,:) - vertices(i,:) ) ./ 2;
+            edg_nrm = tank_shape.edge_normals(i,:);
+            fprintf(fid, 'solid p%04d = plane(%6.2f, %6.2f, 0; %6.2f, %6.2f, 0);\n', ...
+                i, edg_pnt(1),edg_pnt(2), edg_nrm(1), edg_nrm(2));
+        end
+                
+        fprintf(fid, ['solid %s = plane(0,0,0;0,0,-1)\n' ...
+                '      and  plane(0,0,%6.2f;0,0,1)\n'], name, tank_height);
+       
+        cvx = tank_shape.convex;
+        idx = 1:n_edges;
+        
+        if ~cvx(1)
+            % the first vertex is concave, we'll rotate so that this is not
+            % the case
+            i = find(cvx==1,1);
+            idx = circshift(idx, [0, -i + 1]);
+            cvx = circshift(cvx, [0, -i + 1]);
+        end
+        cvx = [cvx cvx(1)];
+            
+        
+        for i = 1:n_edges
+
+            if cvx(i) % convex edge
+                if ~cvx(i+1) % next edge concave
+                    % need to open bracket
+                    fprintf(fid, ' and ( p%04d ', idx(i));
+                else
+                    fprintf(fid, 'and p%04d ',idx(i));
+                end
+            elseif cvx(i+1) % last concave edge, closing bracket
+                fprintf(fid, 'or p%04d ) ',idx(i));
+            else % more concave edges coming, leave bracket open
+                fprintf(fid, 'or p%04d ',idx(i));
+            end
+        end
+        fprintf(fid, ';\n');
+        
+        
+        
+        
+   function write_curve(fid, tank_shape, name, scale)
+        if nargin <4
+            scale = 1;
+        end
+       
+        if scale ~= 1
+            vertices = tank_shape.vertices + (scale-1)*tank_shape.vertex_dir;
+        else
+            vertices = tank_shape.vertices;
+        end
+       n_vert = size(tank_shape.vertices,1);
+       fprintf(fid,'curve2d %s=(%d; \n', name, n_vert);
+       for i = 1:n_vert
+           % because of the definitions of the local axis in extrusion, the
+           % x coordinate has to be multiplied by -1. This assures the
+           % object appears at the expected coordinates. To maintain
+           % clockwise order (required by netget) the vertices are printed
+           % in the opposite order.
+           fprintf(fid,'       %6.2f, %6.2f;\n',[-1 1].*vertices(n_vert-i+1,:));
+       end
+       fprintf(fid,'       %d;\n',n_vert);
+       for i = 1:n_vert-1
+           fprintf(fid,'       %d, %d, %d; \n', 2, i, i+1);
+       end
+       fprintf(fid,'       %d, %d, %d );\n\n\n', 2, n_vert, 1);
+       
+function write_circ_elec(fid,name,c, dirn, rd, centroid, maxh)
+% writes the specification for a netgen cylindrical rod on fid,
+%  named name, centerd on c,
+% in the direction given by vector dirn, radius rd 
+% direction is in the xy plane
+
+% the direction vector
+   dirn(3) = 0; dirn = dirn/norm(dirn);
+    
+
+fprintf(fid,'solid %s  = ', name);
+fprintf(fid,['  outer_bound and not inner_bound and '...
+       'cylinder(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f;%6.3f) '...
+       'and plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) %s;\n'], ...
+         c(1)-dirn(1),c(2)-dirn(2),c(3)-dirn(3),c(1)+dirn(1),c(2)+dirn(2),c(3)+dirn(3), rd, ...
+         centroid(1), centroid(2), 0, -dirn(1), -dirn(2), dirn(3),maxh);
+     
+
+     
