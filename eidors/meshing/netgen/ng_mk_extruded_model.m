@@ -1,4 +1,4 @@
-function tank_shape = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
+function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
     extra_ng_code)
 % NG_MAKE_EXTRUDED_MODELS: create extruded models using netgen
 % [fmdl,mat_idx] = ng_mk_extruded_models(cyl_shape, elec_pos, ...
@@ -36,6 +36,12 @@ meshfn= [fnstem,'.vol'];
 [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, tank_height, is2D );
 write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
                tank_maxh, elecs, extra_ng_code);
+           
+call_netgen( geofn, meshfn, ptsfn);
+
+[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+
+%delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
 
 hold on
 plot(centres(:,1),centres(:,2),'sk')
