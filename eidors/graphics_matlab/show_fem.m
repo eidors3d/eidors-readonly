@@ -56,6 +56,12 @@ if size(mdl.nodes,2)==2
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl, number_electrodes);
 
+% IN MATLAB 7 WE NEED TO RERUN THIS BECAUSE STUPID STUPID
+% MATLAB WILL RESET THE COLOURBAR EVERY TIME WE RUN PATCH!!!
+   if exist('img','var');
+      colours= calc_colours(img, [], do_colourbar);
+   end
+
    set(hax,'position', pax);
    view(0, 90); axis('xy'); grid('off');
 elseif size(mdl.nodes,2)==3
@@ -225,6 +231,8 @@ function show_2d_fem( mdl, colours )
   if size(colours) == [1,3]  % no reconstruction 
      h= patch(Xs,Ys,zeros(3,e),colours);
   elseif size(colours) == [1,e]  % defined on elems
+% THE STUPID MATLAB 7 WILL RESET THE COLOURBAR WHENEVER YOU
+% DO A PATCH. DAMN.
      h= patch(Xs,Ys,zeros(3,e),colours);
      set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
   elseif size(colours,1) == e  % multiple images
