@@ -1,0 +1,147 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> Jon Newell, David Isaacson
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2004 (Publication)
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> Measurements in 2D circular tank with chest shaped
+            conductivity targets in calibrated
+            phantom at Rensselaer Polytechnic with ACT 3 EIT system.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> 
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> Publications based on these data must reference the
+            following publication:
+<blockquote>
+ Isaacson, D.,
+J.L. Mueller, J.C. Newell and S. Siltanen. "Reconstructions of chest
+phantoms by the d-bar method for electrical impedance tomography." <i>IEEE
+Trans Med Imaging</i> 23(7): 821-828, 2004.
+</blockquote>
+       <hr>
+   <tr><th valign="top"> Format:
+       <td> Data are in *txt files encoded in a zip file
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Circular Medium. 
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./ds_data_2004.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<center> <b>
+Instructions for interpretation of EIT Data Files from the Rensselaer EIT Group
+</b> </center>
+<p>
+There are five files provided in this collection, together with these
+instructions.  They consist of one file of excitation currents, two
+voltage files of a homogeneous tank and two voltage files with agar
+targets placed in that tank shortly thereafter.  The two voltage files
+in each case consist of a set of real voltages and a set of quadrature
+voltages.  The nomenclature is <tt>ACT2006i.txt</tt>
+denotes the homogeneous tank,
+and <tt>ACT2000i.txt</tt> denotes the tank with targets. 
+I=r are real voltages,
+i=q are quadrature.
+
+<p><dt>
+The system used to produce these data is ACT 3, as described in:
+<dd> Edic, P.M., G.J. Saulnier, J.C. Newell and D. Isaacson.
+"A real-time electrical impedance tomograph."
+<i>IEEE Trans. Biomed. Eng.</i> 42(9):849-859, 1995. PMID = 7558059.
+<dt>
+It applies currents and reads voltages on 32 electrodes
+simultaneously, operating at 28.8 kHz.
+
+<p>
+The format of all five of these files is the same.  The voltage files
+have a single first line that denotes the maximum amplitude of the
+applied currents.  The next 992 lines follow the same format as the 992
+lines in the current file. The current file is called ssoout1.dat, a name
+invented by Steve Simske in the late 1980's.  The following description
+applies to the common format.  There are 992 lines (=32&times;31). There are
+32 electrodes and 31 current patterns.  The electrodes are numbered
+consecutively from the +x axis counterclockwise, 32 is on the +x axis.
+The first 32 lines in the file constitute the first current pattern, and
+they specify the currents on the 32 electrodes.  They are given by I = cos
+(&theta;). The next 32 lines are pattern 2, and may be described as I = cos
+(2&times;&theta;). What follows are current patterns up to I = cos (16&times;&theta;).
+That takes 32&times;16=512 lines. 
+ At line 513, a new pattern begins given by
+I = sin (&theta;). This continues for 15 patterns, from I = sin (&theta;) to
+I = sin (15&times;&theta;).  There are thus 31 (orthogonal) patterns of applied
+current. A more rigorous definition of the applied current patterns is
+given in Eqn. 12 in the paper cited below.
+
+<p><dt>
+The agar targets in ACT2000 resemble two lungs and a heart.  The physical
+properties of the tank and the phantom are as reported in
+<dd>
+ Isaacson, D.,
+J.L. Mueller, J.C. Newell and S. Siltanen. "Reconstructions of chest
+phantoms by the d-bar method for electrical impedance tomography." <i>IEEE
+Trans Med Imaging</i> 23(7): 821-828, 2004.
+<dt>
+ The tank is 30 cm in diameter;
+the electrodes are 1.6 cm high by 2.5 cm wide.  The saline conductivity
+was 424 mS/m.  The agar targets of the "lungs" had a conductivity of
+240 mS/m, and the "heart" was 750 mS/m.
+<p>
+
+<center> <b>Caution</b> </center>
+
+<p><dt>
+It is possible to use this data, measured with Trigonometric current
+patterns, to computationally synthesize data that could in theory result
+from other current patterns, such as the adjacent pair excitation,
+or opposite pair excitation.  In doing so, the synthesized data would
+have greater accuracy, distinguishability, and information about the
+conductivity inside the body, because it would have more digits and less
+error, than would be expected from a data acquisition system that applied
+and measured these other current patterns directly. This is because the
+trigonometric patterns have more information about the conductivity in
+their measured digits or bits than the other patterns would typically
+contain in the same number of measured digits or bits.  The synthesis
+process uses many more digits than the measuring process and thus the
+information in the trigonometric patterns can be transferred to many
+more digits of the synthesized data than would typically be able to be
+measured by systems using these other patterns of currents directly. This
+is a subtle point, since the principle of superposition does not hold
+when finite precision arithmetic is used, but it motivates our use of
+ACT type systems. For this reason caution should be used in comparing the
+results from different reconstruction algorithms and systems, recognizing
+that these synthesized data sets might have misleadingly low errors.
+A further discussion of this point may be found in
+<dd>
+Cheng, K-S., S.J. Simske, D. Isaacson, J.C. Newell and D.G. Gisser.
+"Errors
+due to measuring voltage on current-carrying electrodes in electric
+current computed tomography."
+<i>IEEE Trans. Biomed. Eng.</i> 37:60-65, 1990. PMID=2303271
+
+<p><dt>
+For a more comprehensive bibliography of our work, with further discussions of these points, visit:
+<a href="http://www.rpi.edu/~newelj/eit.html">
+   www.rpi.edu/~newelj/eit.html &minus;&gt; Publications
+                                &minus;&gt; Full Publications
+</a>
+
+
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
+
