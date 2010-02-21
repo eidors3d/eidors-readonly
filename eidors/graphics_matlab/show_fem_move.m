@@ -67,7 +67,7 @@ function hh= working_quiver( varargin )
 % versions of matlab.
 
 v = version;
-octave = exist('OCTAVE_VERSION') | str2num(v(1)) < 7;
+octave = exist('OCTAVE_VERSION') | str2num(v(1)) < 7 | str2num(v(1:3)) >= 7.8;
 if octave
     hh = quiver( varargin{:} );
 else
