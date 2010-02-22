@@ -16,7 +16,7 @@
             phantom at Rensselaer Polytechnic with ACT 3 EIT system.
        <hr>
    <tr><th valign="top"> License:
-       <td> 
+       <td> Creative Commons Artistic License (with Attribution) 
        <hr>
    <tr><th valign="top"> Attribution Requirement:
        <td> Publications based on these data must reference the
@@ -29,14 +29,21 @@ Trans Med Imaging</i> 23(7): 821-828, 2004.
 </blockquote>
        <hr>
    <tr><th valign="top"> Format:
-       <td> Data are in *txt files encoded in a zip file
+       <td> Data are in *txt files encoded this <a
+             href="./RPI_2d_chest_phantom_data.zip">zip file</a>
        <hr>
    <tr><th valign="top"> Methods:
        <td> Circular Medium. 
-            16 Electrodes numbered clockwise, with electrode #1 at the top.
+            32 Electrodes numbered counterclockwise, with electrode #1 at right
+            (just before 3 O'Clock).
+<center>
+<img src="RPI_2d_chest_phantom.jpg">
+<br>Figure: Phantom Image (from Isaacson <i>et al</i>, 2004)
+</center>
+            
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./ds_data_2004.zip"
+       <td> <a href="./RPI_2d_chest_phantom_data.zip"
             >Data (zip format)</a>
        <hr>
    </table>
@@ -56,12 +63,13 @@ and <tt>ACT2000i.txt</tt> denotes the tank with targets.
 I=r are real voltages,
 i=q are quadrature.
 
-<p><dt>
+<p>
 The system used to produce these data is ACT 3, as described in:
-<dd> Edic, P.M., G.J. Saulnier, J.C. Newell and D. Isaacson.
+<ul>
+ Edic, P.M., G.J. Saulnier, J.C. Newell and D. Isaacson.
 "A real-time electrical impedance tomograph."
 <i>IEEE Trans. Biomed. Eng.</i> 42(9):849-859, 1995. PMID = 7558059.
-<dt>
+</ul>
 It applies currents and reads voltages on 32 electrodes
 simultaneously, operating at 28.8 kHz.
 
@@ -85,15 +93,15 @@ I = sin (15&times;&theta;).  There are thus 31 (orthogonal) patterns of applied
 current. A more rigorous definition of the applied current patterns is
 given in Eqn. 12 in the paper cited below.
 
-<p><dt>
+<p>
 The agar targets in ACT2000 resemble two lungs and a heart.  The physical
 properties of the tank and the phantom are as reported in
-<dd>
+<ul>
  Isaacson, D.,
 J.L. Mueller, J.C. Newell and S. Siltanen. "Reconstructions of chest
 phantoms by the d-bar method for electrical impedance tomography." <i>IEEE
 Trans Med Imaging</i> 23(7): 821-828, 2004.
-<dt>
+</ul>
  The tank is 30 cm in diameter;
 the electrodes are 1.6 cm high by 2.5 cm wide.  The saline conductivity
 was 424 mS/m.  The agar targets of the "lungs" had a conductivity of
@@ -102,7 +110,7 @@ was 424 mS/m.  The agar targets of the "lungs" had a conductivity of
 
 <center> <b>Caution</b> </center>
 
-<p><dt>
+<p>
 It is possible to use this data, measured with Trigonometric current
 patterns, to computationally synthesize data that could in theory result
 from other current patterns, such as the adjacent pair excitation,
@@ -124,14 +132,15 @@ ACT type systems. For this reason caution should be used in comparing the
 results from different reconstruction algorithms and systems, recognizing
 that these synthesized data sets might have misleadingly low errors.
 A further discussion of this point may be found in
-<dd>
+<ul>
 Cheng, K-S., S.J. Simske, D. Isaacson, J.C. Newell and D.G. Gisser.
 "Errors
 due to measuring voltage on current-carrying electrodes in electric
 current computed tomography."
 <i>IEEE Trans. Biomed. Eng.</i> 37:60-65, 1990. PMID=2303271
+</ul>
 
-<p><dt>
+<p>
 For a more comprehensive bibliography of our work, with further discussions of these points, visit:
 <a href="http://www.rpi.edu/~newelj/eit.html">
    www.rpi.edu/~newelj/eit.html &minus;&gt; Publications
