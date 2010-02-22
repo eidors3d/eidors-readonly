@@ -46,13 +46,16 @@ use the data</b>
 <h3>Phantom Data</h3>
 
 <ul>
+<li> <a href="./data_contrib/jn_chest_phantom/jn_chest_phantom.shtml">
+      Calibrated chest shaped targets in 2D circular tank with ACT 3 EIT system</a>
+      By: J. Newell, D. Isaacson, Rensselaer Polytechnique Institute
 <li> <a href="./data_contrib/ds_tank_phantom/ds_tank_phantom.shtml">
       Calibrated targets in tank with U.Manchester LCT system</a>
-      By: D. Stephenson
+      By: D. Stephenson, U. Manchester
 <li>  Cylindrical tank phantom deformed to test electrode movement:
      <a href="./data_contrib/cg_deforming_tank_phantom/cg_deforming_tank_phantom_01.shtml">Single plane</a>,
      <a href="./data_contrib/cg_deforming_tank_phantom/cg_deforming_tank_phantom_02.shtml">Single and double plane</a>,
-      By: C. G&oacute;mez-Laberge
+      By: C. G&oacute;mez-Laberge, Carleton University
 </ul>
 
 <h3>Reconstruction Models and Simulation Data</h3>
