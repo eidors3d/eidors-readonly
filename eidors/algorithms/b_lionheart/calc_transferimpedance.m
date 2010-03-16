@@ -1,5 +1,5 @@
 function transfimp = calc_transferimpedance( img)
-% CALC_TRANSFERIMPEDANCE: Calculates transfer impedance
+% CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix
 % 
 %   transfimp = calc_transferimpedance( fwd_model, img)
 %
@@ -20,7 +20,6 @@ n_elecs= length( img.fwd_model.electrode );
  [stim_pat, meas_pat]= monopolar_even( n_elecs );
 img.fwd_model.stimulation = stim_pat;
 
-lambda= 1e-3;
 imeas_pat= pinv(meas_pat);
 
 data = fwd_solve(img);
