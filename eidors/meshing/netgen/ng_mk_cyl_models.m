@@ -92,9 +92,13 @@ meshfn= [fnstem,'.vol'];
 [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
                        tank_height, tank_radius, is2D );
 
-write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
+n_pts = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                tank_maxh, elecs, extra_ng_code);
-call_netgen( geofn, meshfn, ptsfn);
+if n_pts == 0 
+   call_netgen( geofn, meshfn);
+else
+   call_netgen( geofn, meshfn, ptsfn);
+end
 
 [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
@@ -110,7 +114,8 @@ fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
 end
 
 
-function write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
+% for the newest netgen, we can't call msz file unless there are actually points in  it
+function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                         tank_maxh, elecs, extra_ng_code);
    fid=fopen(geofn,'w');
    write_header(fid,tank_height,tank_radius,tank_maxh,extra_ng_code);
@@ -157,8 +162,9 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
 % np
 % x1 y1 z1 h1
 % x2 y2 z2 h2
+   n_pts_elecs= length(pts_elecs_idx);
    fid=fopen(ptsfn,'w');
-   fprintf(fid,'%d\n',length(pts_elecs_idx) );
+   fprintf(fid,'%d\n',n_pts_elecs);
    for i = pts_elecs_idx;
       posxy = elecs(i).pos(1:2);
       fprintf(fid,'%10f %10f 0 %10f\n', posxy, elecs(i).dims );
