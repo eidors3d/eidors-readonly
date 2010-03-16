@@ -4,15 +4,21 @@ function out_img= show_slices( img, levels )
 % img    = EIDORS image struct, or a array of structs
 % out_img= matrix in the current colormap which we can use image(out_img);
 %
-% levels = Matrix [Lx3] of L image levels
-%          each row of the matrix specifies the intercepts
-%          of the slice on the x, y, z axis. To specify a z=2 plane
-%          parallel to the x,y: use levels= [inf,inf,2]
+% PARAMETERS:
+%  levels = Matrix [Lx3] of L image levels
+%           each row of the matrix specifies the intercepts
+%           of the slice on the x, y, z axis. To specify a z=2 plane
+%           parallel to the x,y: use levels= [inf,inf,2]
+%  
+%  if levels is [L x 5] then levels= [x,y,z,h,v] where,
+%           x,y,z specify the axes intercepts, and 
+%           h,v   specify the horizontal, vertical position
+%                 of that slice in the output image
 % 
-% if levels is [L x 5] then levels= [x,y,z,h,v] where,
-%          x,y,z specify the axes intercepts, and 
-%          h,v   specify the horizontal, vertical position
-%                of that slice in the output image
+% IMAGE PARAMETERS:
+%   img.show_slices.levels (same as above);
+%   img.show_slices.img_cols = number of columns in image
+%   img.calc_colours.npoints = pixel width/height to map to
 %
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
@@ -33,6 +39,10 @@ try if strcmp(img.type,'image'); do_calc_slices= 1; end;end
 
 if nargin<=1;
    levels= [];
+end
+
+try   levels = img.show_slices.levels
+catch levels = [];
 end
 
 if isempty(levels) && do_calc_slices && size(img(1).fwd_model.nodes,2)==2
@@ -71,9 +81,11 @@ else
    % Thus,  n_frames/vert_rows ~ vert_rows*n_levels;
    % or     vert_rows^2 ~ n_frames / n_levels
    vert_rows = ceil( sqrt(n_frames / n_levels) );
-   
-   img_cols = ceil( n_frames/vert_rows );
-   img_rows = vert_rows*n_levels;
+   try   img_cols = img.show_slices.img_cols;
+   catch img_cols = ceil( n_frames/vert_rows );
+   end
+   img_rows = ceil(n_frames/img_cols);
+   img_rows = ceil(img_rows/n_levels)*n_levels; % Ensure divisible by n_levels
 end
 
 r_img = NaN*ones(img_rows*np, img_cols*np);
