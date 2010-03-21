@@ -83,35 +83,45 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % $Id$
 
 if nargin < 4; extra_ng_code = {'',''}; end
-fnstem = tempname;
-geofn= [fnstem,'.geo'];
-ptsfn= [fnstem,'.msz'];
-meshfn= [fnstem,'.vol'];
+cache_obj = { cyl_shape, elec_pos, elec_shape, extra_ng_code};
 
-[tank_height, tank_radius, tank_maxh, is2D] = parse_shape(cyl_shape);
-[elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
-                       tank_height, tank_radius, is2D );
-
-n_pts = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
-               tank_maxh, elecs, extra_ng_code);
-if n_pts == 0 
-   call_netgen( geofn, meshfn);
-else
-   call_netgen( geofn, meshfn, ptsfn);
+fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_cyl_models' );
+if isempty(fmdl);
+   fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
+   eidors_obj('set-cache', cache_obj, 'ng_mk_cyl_models', fmdl);
 end
 
-[fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+function fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
 
-delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
-if is2D
-   [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
-end
+   fnstem = tempname;
+   geofn= [fnstem,'.geo'];
+   ptsfn= [fnstem,'.msz'];
+   meshfn= [fnstem,'.vol'];
 
-% convert CEM to PEM if so configured
-% TODO shunt model is unsupported
-if isfield(fmdl,'electrode');
-fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
-end
+   [tank_height, tank_radius, tank_maxh, is2D] = parse_shape(cyl_shape);
+   [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
+                          tank_height, tank_radius, is2D );
+
+   n_pts = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
+                  tank_maxh, elecs, extra_ng_code);
+   if n_pts == 0 
+      call_netgen( geofn, meshfn);
+   else
+      call_netgen( geofn, meshfn, ptsfn);
+   end
+
+   [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+
+   delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
+   if is2D
+      [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
+   end
+
+   % convert CEM to PEM if so configured
+   % TODO shunt model is unsupported
+   if isfield(fmdl,'electrode');
+   fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
+   end
 
 
 % for the newest netgen, we can't call msz file unless there are actually points in  it
