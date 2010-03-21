@@ -88,7 +88,9 @@ cache_obj = { cyl_shape, elec_pos, elec_shape, extra_ng_code};
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_cyl_models' );
 if isempty(fmdl);
    fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
+   eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_cyl_models', fmdl);
+   eidors_cache('boost_priority', +2); % return values
 end
 
 function fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
