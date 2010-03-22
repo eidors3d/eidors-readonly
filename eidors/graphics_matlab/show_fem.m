@@ -14,6 +14,9 @@ function show_fem( mdl, options )
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+% TESTS
+if isstr(mdl) && strcmp(mdl,'TEST'); do_unit_test; return; end
+
 if nargin == 0
     error('Insufficient parameters for show_fem');
 end
@@ -88,7 +91,7 @@ function show_3d(img,mdl,opts)
        elem_data = get_img_data(img);
        show_inhomogeneities( elem_data , mdl, img);
        if opts.do_colourbar
-           calc_colours(elem_data, clim, opts.do_colourbar);
+           calc_colours(img, [], opts.do_colourbar);
        end
    end
 
@@ -364,6 +367,26 @@ function ee= get_boundary( mdl )
        % calc and cache boundary
        ee = find_boundary( mdl.elems );
    end
+
+
+% TESTS:
+function do_unit_test
+   clf
+
+   img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
+   img.elem_data=rand(64,1);
+   subplot(241); show_fem(img) 
+   subplot(242); show_fem(img,[1])
+   subplot(243); show_fem(img,[1,1])
+   subplot(244); show_fem(img,[1,1,1])
+
+   img3=calc_jacobian_bkgnd(mk_common_model('n3r2',8));
+   img3.elem_data= randn(828,1);                       
+   subplot(245); show_fem(img3) 
+   subplot(246); show_fem(img3,[1])
+   subplot(247); show_fem(img3,[1,1])
+   subplot(248); show_fem(img3,[1,1,1])
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
