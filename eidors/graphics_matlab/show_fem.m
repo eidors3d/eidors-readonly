@@ -22,17 +22,17 @@ if ~ishold
     cla;
 end
 
-do_colourbar=0;
-number_electrodes=0;
-number_elements=0;
+opts.do_colourbar=0;
+opts.number_electrodes=0;
+opts.number_elements=0;
 if nargin >=2
     % fill in default options
     optionstr= zeros(1,100);
     optionstr(1:length(options)) = options;
 
-    do_colourbar=      optionstr(1);
-    number_electrodes= optionstr(2);
-    number_elements  = optionstr(3);
+    opts.do_colourbar=      optionstr(1);
+    opts.number_electrodes= optionstr(2);
+    opts.number_elements  = optionstr(3);
 end
 
 % if we have an only img input, then define mdl
@@ -44,44 +44,13 @@ end
 
 set(gcf, 'Name', name(:)');
 
-if size(mdl.nodes,2)==2
-   % 2D Case
-   hax= gca;
-   pax= get(hax,'position');
-   if exist('img','var');
-      colours= calc_colours(img, [], do_colourbar);
-   else
-      colours= [1,1,1]; % white elements if no image
-   end
-   show_2d_fem( mdl, colours );
-   show_electrodes_2d(mdl, number_electrodes);
-
-% IN MATLAB 7 WE NEED TO RERUN THIS BECAUSE STUPID STUPID
-% MATLAB WILL RESET THE COLOURBAR EVERY TIME WE RUN PATCH!!!
-   if exist('img','var');
-      colours= calc_colours(img, [], do_colourbar);
-   end
-
-   set(hax,'position', pax);
-   view(0, 90); axis('xy'); grid('off');
-elseif size(mdl.nodes,2)==3
-   % 3D Case
-   show_3d_fem( mdl );
-
-   if exist('img','var')
-       elem_data = get_img_data(img);
-       show_inhomogeneities( elem_data , mdl, img);
-       if do_colourbar
-           calc_colours(elem_data, clim, do_colourbar);
-       end
-   end
-
-   show_electrodes_3d(mdl, number_electrodes);
-else
-   error(['model is not 2D or 3D']);
+switch size(mdl.nodes,2)
+   case 2;    show_2d(img,mdl,opts)
+   case 3;    show_3d(img,mdl,opts)
+   otherwise; error('model is not 2D or 3D');
 end
 
-if number_elements
+if opts.number_elements
    xyzc= interp_mesh(mdl);
    xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
    for i= 1:size(mdl.elems,1);
@@ -89,6 +58,41 @@ if number_elements
             'HorizontalAlignment','center','FontSize',7);
    end
 end
+
+% 2D Case
+function show_2d(img,mdl,opts)
+   hax= gca;
+   pax= get(hax,'position');
+   if exist('img','var');
+      colours= calc_colours(img, [], opts.do_colourbar);
+   else
+      colours= [1,1,1]; % white elements if no image
+   end
+   show_2d_fem( mdl, colours );
+   show_electrodes_2d(mdl, opts.number_electrodes);
+
+% IN MATLAB 7 WE NEED TO RERUN THIS BECAUSE STUPID STUPID
+% MATLAB WILL RESET THE COLOURBAR EVERY TIME WE RUN PATCH!!!
+   if exist('img','var');
+      colours= calc_colours(img, [], opts.do_colourbar);
+   end
+
+   set(hax,'position', pax);
+   view(0, 90); axis('xy'); grid('off');
+
+% 3D Case
+function show_3d(img,mdl,opts)
+   show_3d_fem( mdl );
+
+   if exist('img','var')
+       elem_data = get_img_data(img);
+       show_inhomogeneities( elem_data , mdl, img);
+       if opts.do_colourbar
+           calc_colours(elem_data, clim, opts.do_colourbar);
+       end
+   end
+
+   show_electrodes_3d(mdl, opts.number_electrodes);
 
 function show_electrodes_2d(mdl, number_electrodes)
     if ~isfield(mdl,'electrode'); return; end
