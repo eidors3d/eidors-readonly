@@ -63,6 +63,8 @@ function [img,mdl,opts] = proc_params( mdl, options );
    if strcmp( mdl(1).type , 'image' )
       img= mdl;
       mdl= img.fwd_model;
+   else 
+      img = [];
    end
 
    opts.dims = size(mdl.nodes,2);
@@ -71,7 +73,7 @@ function [img,mdl,opts] = proc_params( mdl, options );
 function show_2d(img,mdl,opts)
    hax= gca;
    pax= get(hax,'position');
-   if exist('img','var');
+   if ~isempty(img)
       colours= calc_colours(img, [], opts.do_colourbar);
    else
       colours= [1,1,1]; % white elements if no image
@@ -92,7 +94,7 @@ function show_2d(img,mdl,opts)
 function show_3d(img,mdl,opts)
    show_3d_fem( mdl );
 
-   if exist('img','var')
+   if ~isempty(img
        elem_data = get_img_data(img);
        show_inhomogeneities( elem_data , mdl, img);
        if opts.do_colourbar
@@ -385,7 +387,7 @@ function do_unit_test
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
-   subplot(3,4,1); show_fem(img) 
+   subplot(3,4,1); show_fem(img.fwd_model) 
 
    imgn = rmfield(img,'elem_data');
    imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
@@ -406,7 +408,7 @@ function do_unit_test
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',8));
    img3.elem_data= randn(828,1);                       
-   subplot(3,4,5); show_fem(img3) 
+   subplot(3,4,5); show_fem(img3.fwd_model) 
    subplot(3,4,6); show_fem(img3,[1])
    subplot(3,4,7); show_fem(img3,[1,1])
    subplot(3,4,8); show_fem(img3,[1,1,1])
