@@ -34,7 +34,7 @@ end
 ii=find( abs(scl_data) > thresh);
 this_x = simp(ii,:);
 
-colours= colours(:,ii,:);
+colours= permute(colours(ii,:,:),[2,1,3]);
 ELEM= vtx';
 
 Xs=   zeros(3,length(ii));

@@ -40,7 +40,7 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
       s_ed(isnan(s_ed)) = [];
       s_ed= sort(s_ed);
       e= length(s_ed);
-      ref_lev = mean(s_ed( ceil(.25*e):floor(.75*e) ));
+      ref_lev = mean(s_ed( ceil(.26*e):floor(.74*e) ));
    end
 
    elem_data = elem_data - ref_lev;

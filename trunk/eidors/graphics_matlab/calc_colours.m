@@ -47,6 +47,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %      colour mapping. 'auto' tries to estimate a good level.
 %   'mapped_colour' (DEFAULT 127) number of colourmap entries
 %      using mapped_colour allows matlab to print vector graphics to eps
+%      setting mapped_colour=0 means to use RGB colours
 %   'npoints' (DEFAULT 64) number of points accross the image
 %   'clim'    (DEFAULT []) crop colour display of values above clim
 %           colour limit. values more different from ref_level are cropped.
@@ -79,10 +80,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$  
 
-if nargin==0
-    error('must specify at args to calc_colours');
-    return;
-end
+if nargin==0; error('calc_colours: expecting argument'); end
+if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 if ischar(img)
     % called as calc_colours('parameter' ... )
@@ -95,7 +94,7 @@ if ischar(img)
 
 elseif isfield(img,'type')
    img_data= get_img_data( img );
-   pp=get_colours(img);
+   pp=get_colours(img(1)) ;
 else
    img_data= img;
 
@@ -119,7 +118,7 @@ end
 m= size(img_data,1); n=size(img_data,2);
 
 % We can only plot the real part of data
-% Vectorize img_data here, it get's reshaped later
+% Vectorize img_data here, it gets reshaped later
 [scl_data, ref_lev, max_scale] = ...
       scale_for_display( real(img_data(:)), pp.ref_level, pp.clim );
 
@@ -128,20 +127,10 @@ scl_data(backgnd)= mean( scl_data(~backgnd));
 
 if pp.mapped_colour
    colours=set_mapped_colour(pp, backgnd, scl_data);
-% Stupidity because matlab can't come up with consistent way to define cols
-   if n==1;
-      colours= reshape( colours, 1,[]);
-   else
-      colours= reshape( colours, m,n,[]);
-   end
+   colours= reshape( colours, m,n,[]);
 else
    [red,grn,blu] = blu_red_axis( pp, scl_data, backgnd );
-% Stupidity because matlab can't come up with consistent way to define cols
-   if n==1;
-      colours= reshape( [red,grn,blu],1,[],3);
-   else
-      colours= reshape( [red,grn,blu],m,n,3);
-   end
+   colours= reshape( [red,grn,blu],m,n,3);
 end
 
 % print colorbar if do_colourbar is specified
@@ -292,3 +281,45 @@ function value= set_field(param, value);
     eidors_colours = setfield(eidors_colours, param, value);
     value= eidors_colours;
 
+% TESTS:
+function do_unit_test
+   img = eidors_obj('image','test'); 
+
+   img.calc_colours.mapped_colour = 127;
+   img.calc_colours.ref_level = 'auto';
+   img.elem_data = [-2;0;0;0;1;3];
+   do_indiv_test('cc01', calc_colours(img), [44; 128; 128; 128; 170; 254]);
+
+   imgk(1) = img; imgk(2) = img;
+   do_indiv_test('cc01', calc_colours(imgk), [44; 128; 128; 128; 170; 254]*[1,1]);
+
+   img.calc_colours.ref_level = 1;
+   do_indiv_test('cc02', calc_colours(img), [ 2;  86;  86;  86; 128; 212]);
+
+   img.calc_colours.greylev = -.01;
+   img.calc_colours.mapped_colour = 0;
+   img.elem_data = [-2;1;3];
+   cm= reshape([ 0, 0.99, 0.7492; 0, 0.99, 0; 0.300, 0.99, 0]',[3,1,3]);
+   do_indiv_test('cc03', calc_colours(img), cm,0.01)
+
+   img.calc_colours.greylev =  .1;
+   cm= reshape([ 0.73, 1.0, 1.0; 0.1, 0.1, 0.1; 1.0, 1.0, 0.325],[3,1,3]);
+   do_indiv_test('cc03', calc_colours(img), cm,0.01)
+
+% TESTS TO WRITE
+%   'greylev'    (DEFAULT -.01)
+%   'sat_adj'    (DEFAULT .9)
+%   'window_range' (DEFAULT .9)
+%   'backgnd' ( DEFAULT [.5,.5,.15] )
+%   'ref_level' (DEFAULT 'auto')
+%   'mapped_colour' (DEFAULT 127)
+%   'npoints' (DEFAULT 64)
+%   'clim'    (DEFAULT [])
+%   'cmap_type'  (Default blue-red)
+
+function do_indiv_test(txt,a,b, tol)
+   if nargin < 4; tol = 0; end
+   fprintf('%10s = ',txt);
+   ok='fail';
+   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
+   disp(ok)

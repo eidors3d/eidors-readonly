@@ -30,6 +30,8 @@ function out_img= show_slices( img, levels )
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
 np = calc_colours('npoints');
 try   np = img.calc_colours.npoints;
 end
@@ -38,11 +40,9 @@ do_calc_slices = 0;
 try if strcmp(img.type,'image'); do_calc_slices= 1; end;end 
 
 if nargin<=1;
-   levels= [];
-end
-
-try   levels = img.show_slices.levels
-catch levels = [];
+   try   levels = img.show_slices.levels
+   catch levels = [];
+   end
 end
 
 if isempty(levels) && do_calc_slices && size(img(1).fwd_model.nodes,2)==2
@@ -84,7 +84,7 @@ else
    try   img_cols = img.show_slices.img_cols;
    catch img_cols = ceil( n_frames/vert_rows );
    end
-   img_rows = ceil(n_frames/img_cols);
+   img_rows = ceil(n_frames*n_levels/img_cols);
    img_rows = ceil(img_rows/n_levels)*n_levels; % Ensure divisible by n_levels
 end
 
@@ -103,7 +103,7 @@ for img_no = 1:n_frames
       end
 % disp([imno, vert_rows, img_cols, img_rows, img_no, lev_no, i_col, i_row]);
       r_img(i_row*np + idx, i_col*np + idx) = rimg(:,:,img_no,lev_no);
-      imno= imno + 1;
+      imno= imno + 1; 
    end
 end
 
@@ -115,3 +115,36 @@ image(out_img);
 axis('image');axis('off');axis('equal');
 
 if nargout==0; clear('out_img'); end
+
+
+function do_unit_test
+   clf
+
+   img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
+   img.elem_data=rand(size(img.fwd_model.elems,1),1);
+   subplot(3,4,1); show_slices(img) 
+
+   img.calc_colours.npoints= 128;
+   subplot(3,4,2); show_slices(img) 
+
+   img.calc_colours.npoints= 32;
+   img.elem_data=rand(size(img.fwd_model.elems,1),3);
+   subplot(3,4,3); show_slices(img) 
+
+   img.show_slices.img_cols= 1;
+   subplot(3,4,4); show_slices(img) 
+
+   imgn = rmfield(img,'elem_data');
+   imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
+   subplot(3,4,5); show_slices(imgn) 
+
+   img=calc_jacobian_bkgnd(mk_common_model('n3r2',32)); 
+   img.calc_colours.npoints= 16;
+   img.elem_data=rand(size(img.fwd_model.elems,1),1);
+   subplot(3,4,6); show_slices(img,2) 
+
+   img.elem_data=img.elem_data*[1:3];
+   subplot(3,4,7); show_slices(img,2) 
+
+   img.elem_data=img.elem_data(:,1:2);
+   subplot(3,4,8); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);

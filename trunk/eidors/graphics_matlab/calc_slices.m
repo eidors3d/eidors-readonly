@@ -20,6 +20,8 @@ function rimg = calc_slices( img, levels );
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
 try   np = img.calc_colours.npoints;
 catch np = calc_colours('npoints');
 end
@@ -361,3 +363,6 @@ function  rimg = filter_image(rimg, filt);
 
       rimg(:,:,j1,j2) = rsl;
    end; end
+
+function do_unit_test
+   warn('no tests defined yet');
