@@ -1,4 +1,4 @@
-function show_fem( mdl, options )
+function show_fem( mdl, options)
 % show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
 % mdl is a EIDORS3D 'model' or 'image' structure
@@ -15,39 +15,21 @@ function show_fem( mdl, options )
 % $Id$
 
 % TESTS
-if isstr(mdl) && strcmp(mdl,'TEST'); do_unit_test; return; end
-
-if nargin == 0
-    error('Insufficient parameters for show_fem');
+switch nargin
+   case 0;
+     error('Insufficient parameters for show_fem');
+   case 1;
+     if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+     options = [];
 end
+[img,mdl,opts] = proc_params( mdl, options );
 
 if ~ishold
     cla;
 end
 
-opts.do_colourbar=0;
-opts.number_electrodes=0;
-opts.number_elements=0;
-if nargin >=2
-    % fill in default options
-    optionstr= zeros(1,100);
-    optionstr(1:length(options)) = options;
 
-    opts.do_colourbar=      optionstr(1);
-    opts.number_electrodes= optionstr(2);
-    opts.number_elements  = optionstr(3);
-end
-
-% if we have an only img input, then define mdl
-name= mdl.name;
-if strcmp( mdl.type , 'image' )
-   img= mdl;
-   mdl= img.fwd_model;
-end
-
-set(gcf, 'Name', name(:)');
-
-switch size(mdl.nodes,2)
+switch opts.dims
    case 2;    show_2d(img,mdl,opts)
    case 3;    show_3d(img,mdl,opts)
    otherwise; error('model is not 2D or 3D');
@@ -61,6 +43,29 @@ if opts.number_elements
             'HorizontalAlignment','center','FontSize',7);
    end
 end
+
+function [img,mdl,opts] = proc_params( mdl, options );
+
+   opts.do_colourbar=0;
+   opts.number_electrodes=0;
+   opts.number_elements=0;
+   if nargin >=2
+       % fill in default options
+       optionstr= zeros(1,100);
+       optionstr(1:length(options)) = options;
+
+       opts.do_colourbar=      optionstr(1);
+       opts.number_electrodes= optionstr(2);
+       opts.number_elements  = optionstr(3);
+   end
+
+   % if we have an only img input, then define mdl
+   if strcmp( mdl(1).type , 'image' )
+      img= mdl;
+      mdl= img.fwd_model;
+   end
+
+   opts.dims = size(mdl.nodes,2);
 
 % 2D Case
 function show_2d(img,mdl,opts)
@@ -222,37 +227,42 @@ function show_3d_fem( mdl, options )
    set(gcf,'Colormap',[0 0 0]);
    hidden('off');
 
-function show_2d_fem( mdl, colours )
+function show_2d_fem( mdl, colours, imgno )
+  szcolr = size(colours);
+  if nargin<3;
+      imgno = 1;
+      if szcolr(1:2)>1;  eidors_msg('warning: show_fem only shows first image',1); end
+  end
   
 % el_pos= avg_electrode_posn( mdl );  
 % plot_2d_mesh(mdl.nodes', mdl.elems', el_pos', .95, [0,0,0]);
 
   S= 1; %.95; % shrink factor
   elem= mdl.elems'; e= size(elem,2);
+  node= mdl.nodes'; n= size(node,2);
   Xs=zeros(3,e);
   Xs(:)=mdl.nodes(elem(:),1);
   Xs= S*Xs+ (1-S)*ones(3,1)*mean(Xs);
-  Ys=zeros(3,e);
-  Ys(:)=mdl.nodes(elem(:),2);
+  Ys=zeros(3,e); Ys(:)=mdl.nodes(elem(:),2);
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
-  if size(colours) == [1,3]  % no reconstruction 
+  Zs = zeros(size(Xs));
+  if szcolr(1:2) == [1,3]  % no reconstruction  - just use white
      h= patch(Xs,Ys,zeros(3,e),colours);
-  elseif size(colours) == [1,e]  % defined on elems
-% THE STUPID MATLAB 7 WILL RESET THE COLOURBAR WHENEVER YOU
-% DO A PATCH. DAMN.
-     h= patch(Xs,Ys,zeros(3,e),colours);
-     set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
-  elseif size(colours,1) == e  % multiple images
-     eidors_msg('warning: show_fem only shows first image',1);
-     h= patch(Xs,Ys,zeros(3,e),colours(:,1)');
-     set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+  elseif size(colours,1) == e % defined on elems
+% THE STUPID MATLAB 7 WILL RESET THE COLOURBAR WHENEVER YOU DO A PATCH. DAMN.
+     colours = permute(colours(:,imgno,:),[2,1,3]);
+  elseif size(colours,1) == n  % multiple images
+     colours = colours(elem(:), imgno, :);
+     colours = reshape( colours, size(elem,1), size(elem,2), []);
   else
-     h= patch(Xs,Ys,zeros(3,e));
-     col_cols= shiftdim(colours,1); %DAMN MATLAB can't even be clear on colours
-     set(h,'Faces',col_cols);
-  %  get(h,'CDataMapping');
+    eidors_msg('warning: image elements and mesh do not match. Showing grey',1);
+    colours= [1,1,1]/2; % Grey to show we're not sure
   end
 
+  h= patch(Xs,Ys,Zs,colours);
+  set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+  % FOR NODE RGB MATLAB SCREWS UP THE COLOURS FOR US (ONCE AGAIN). THERE MUST
+  % BE SOME KIND OF SECRET FLAG@@@
 
   max_x= max(mdl.nodes(:,1)); min_x= min(mdl.nodes(:,1));
   max_y= max(mdl.nodes(:,2)); min_y= min(mdl.nodes(:,2));
@@ -374,18 +384,32 @@ function do_unit_test
    clf
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
-   img.elem_data=rand(64,1);
-   subplot(241); show_fem(img) 
-   subplot(242); show_fem(img,[1])
-   subplot(243); show_fem(img,[1,1])
-   subplot(244); show_fem(img,[1,1,1])
+   img.elem_data=rand(size(img.fwd_model.elems,1),1);
+   subplot(3,4,1); show_fem(img) 
+
+   imgn = rmfield(img,'elem_data');
+   imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
+   subplot(3,4,9); show_fem(imgn) 
+
+   img2(1) = img; img2(2) = img;
+   subplot(3,4,2); show_fem(img,[1])
+   subplot(3,4,3); show_fem(img2,[0,1])
+   img.calc_colours.mapped_colour = 0; % USE RGB colours
+   subplot(3,4,4); show_fem(img,[0,1,1])
+   subplot(3,4,4); show_fem(img);
+
+   imgn.calc_colours.mapped_colour = 0; % USE RGB colours
+   subplot(3,4,10);show_fem(imgn,[0,1]) 
+
+   imgn.node_data = [1:10];
+   subplot(3,4,11);show_fem(imgn) 
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',8));
    img3.elem_data= randn(828,1);                       
-   subplot(245); show_fem(img3) 
-   subplot(246); show_fem(img3,[1])
-   subplot(247); show_fem(img3,[1,1])
-   subplot(248); show_fem(img3,[1,1,1])
+   subplot(3,4,5); show_fem(img3) 
+   subplot(3,4,6); show_fem(img3,[1])
+   subplot(3,4,7); show_fem(img3,[1,1])
+   subplot(3,4,8); show_fem(img3,[1,1,1])
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
