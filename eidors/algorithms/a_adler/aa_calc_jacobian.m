@@ -81,12 +81,11 @@ if ~do_c2f
    end
 else
    DE= zeros(pp.n_elec, pp.n_stim, size(c2f,2) );
-   if 1 % Code is slower
+   if 0 % Code is slower
       de= pp.n_elem * (d-1);
       for k= 1:size(c2f,2);
           chg_col = kron( c2f(:,k), ones(d-1,1));
           dDD_dEj = spdiags(chg_col,0, de, de);
-keyboard
           dq= zi2E_FCt * dDD_dEj * FC_sv;
           DE(:,:,k)= dq;
       end
