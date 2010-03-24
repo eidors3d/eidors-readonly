@@ -94,7 +94,7 @@ function show_2d(img,mdl,opts)
 function show_3d(img,mdl,opts)
    show_3d_fem( mdl );
 
-   if ~isempty(img
+   if ~isempty(img)
        elem_data = get_img_data(img);
        show_inhomogeneities( elem_data , mdl, img);
        if opts.do_colourbar

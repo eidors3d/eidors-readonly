@@ -114,11 +114,10 @@ function d2= filt_data(inv_model, d0, data_width )
    if ~isnumeric( d0 )
        % we probably have a 'data' object
 
-       l_obj = length(d0);
-       d1 = zeros( length( d0(1).meas ), l_obj);
-       for i=1:l_obj
+       d1 = [];
+       for i=1:length(d0)
           if strcmp( d0(i).type, 'data' )
-              d1(:,i) = d0(i).meas;
+              d1 = [d1, d0(i).meas];
           else
               error('expecting an object of type data');
           end
