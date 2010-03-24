@@ -58,6 +58,9 @@ if isempty( levels ) % 2D
    
    if ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
+      if any(rem(idx,1) ~= 0);
+         error('The requested number of electrodes is not compatible with this FEM mesh')
+      end
       elec_nodes= point_elec_nodes( idx );
    else
       error('2D models only support scalar electrode patterns');
