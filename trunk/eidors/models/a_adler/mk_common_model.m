@@ -207,10 +207,16 @@ inv_mdl.name= ['EIDORS common_model_',str];
 inv_mdl= eidors_obj('inv_model', inv_mdl);
     
 function inv_mdl = distmesh_2d_model(str, n_elec, options);
+% This function is an interface to distmesh_2d_model for some common values
+% fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
+%  params.base_spacing = spacing(1);
+%  params.refine_ratio = spacing(2);
+%  params.gradient     = spacing(3);
    Elec_width= 4; % 2 degrees - electrode width
    switch [str(1),str(4)]
-      case 'a'; params = [0.05,10,0.05];
-      case 'b'; params = [0.05,10,0.05];
+      case 'a1'; params = [0.05,10,0.05];
+      case 'b1'; params = [0.05,10,0.05];
+      case 'b2'; params = [0.05,10,0.05];
       case 'd1'; params = [0.15,1,0.05];
       case 'd2'; params = [0.15,5,0.05];
       case 'd3'; params = [0.05,10,0.05];
