@@ -1,19 +1,29 @@
+function startup
 % Script to start EIDORS
 % Set path and variables correctly
+
+% NOTE: this is a function, so that we don't put variables into the
+% workspace
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 % CHECK WE HAVE THE RIGHT VERSION
-if ~exist('OCTAVE_VERSION')  % THIS IS MATLAB
-   if str2num(version('-release')) < 13
+% this is hard because matlab keeps on changing the format of the
+% output of the version command. It used to be R13, now it is more
+% like 2009a. Also the number of minor versions changes.
+
+ver= version; ver(ver=='.')=' ';
+ver = sscanf(ver,'%f'); ver=ver(:);
+isoctave = exist('OCTAVE_VERSION')==5;
+
+if ~isoctave
+   if [1,1e-2]*ver(1:2) < 6.05
       warning(['EIDORS REQUIRES AT LEAST MATLAB V6.5.\n' ...
                'Several functions may not work with your version']);
    end
 else
-   ver_str = version;
-   ver_str(ver_str== '.')= '0'; % 3.2.0 => 0.30200
-   if str2num(['0.', ver_str]) < 0.30003
+   if [1,1e-2,1e-4]*ver(1:3) < 3.0003
       warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.0.3\n' ...
                'Several functions may not work with your version']);
    end
@@ -47,25 +57,26 @@ addpath([HOMEDIR, '/graphics_vtk']);
 %addpath([HOMEDIR, '/tests']);
 
 % We need to add an architecture specific directory for mex files
-archdir= '';
-if exist('OCTAVE_VERSION')==5
+if isoctave 
    if findstr(computer,'x86_64-pc-');
       archdir= strcat('/arch/octave/',computer);
    elseif findstr(computer,'-pc-');
       archdir= '/arch/octave/pc';
    end
 else
-   archdir= '/arch/matlab';
+    % I don't know when matlab stopped using DLL as the extension
+    % for WIN32 mex files. I'm guessing it's around 7.5
+   if any(findstr(computer,'PCWIN')) && ( [1,1e-2]*ver(1:2) < 7.05 )
+      archdir= '/arch/matlab/dll';
+   else
+      archdir= '/arch/matlab';
+   end
 end
-% if archdir exists and is a directory
-if ~isempty(archdir)
-   addpath([HOMEDIR, archdir]);
-end
-
+addpath([HOMEDIR, archdir]);
 
 % test if eidors_var_id.cpp is a valid mexfile
 if exist('eidors_var_id')~=3
-  if exist('OCTAVE_VERSION')==5
+  if isoctave
     warning(sprintf([ ...
        'missing a required, pre-compiled mex file: eidors_var_id.\n' ...
        '  Please compile it using:\n'...
@@ -129,5 +140,5 @@ if ~exist('OCTAVE_VERSION');
 else 
    eidors_msg('New to EIDORS? Have a look at the Tutorials at http://eidors3d.sourceforge.net/tutorial/tutorial.shtml',1);
 end
-clear HOMEDIR archdir verstr ans;
+clear HOMEDIR archdir ver ans;
 
