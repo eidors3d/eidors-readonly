@@ -97,14 +97,15 @@ if exist('eidors_var_id')~=3
 end
 
 % Setup defaults in calc_colours
-calc_colours('greylev',-.001);       % background colour = white
-calc_colours('sat_adj',.9);          % saturation of red and blue
-calc_colours('window_range', .7);    % windowing of colours
-calc_colours('backgnd',[.5,.5,.15]); % background colour
-calc_colours('mapped_colour',127);   % use 127*2+1 colourmap entries
-calc_colours('ref_level','auto');    % auto set background colour
-calc_colours('npoints',64);          % 64 raster points
-calc_colours('clim',[]);             % no colour cropping
+calc_colours('greylev',-.001);          % background colour = white
+calc_colours('sat_adj',.9);             % saturation of red and blue
+calc_colours('window_range', .7);       % windowing of colours
+calc_colours('backgnd',[.5,.5,.15]);    % background colour
+calc_colours('mapped_colour',127);      % use 127*2+1 colourmap entries
+calc_colours('ref_level','auto');       % auto set background colour
+calc_colours('npoints',64);             % 64 raster points
+calc_colours('clim',[]);                % no colour cropping
+calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
 
 % Set max cache size. Not completely sure about this
 %  but 100MB should be available in most modern machines

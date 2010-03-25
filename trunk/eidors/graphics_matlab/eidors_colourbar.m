@@ -4,9 +4,12 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
 %    ref_lev:   centre of the colour scale
 %    max_scale: max difference from colour scale centre 
 %
-%  cb_shrink_move(1) = horizontal shrink (relative)
-%  cb_shrink_move(2) = vertial shrink (relative)
-%  cb_shrink_move(3) = horizontal move (absolute screen units)
+% Optional parameter:
+%    cb_shrink_move(1) = horizontal shrink (relative)
+%    cb_shrink_move(2) = vertial shrink (relative)
+%    cb_shrink_move(3) = horizontal move (absolute screen units)
+%
+% The colorbars are removed with colorbar('delete')
 
 % (C) 2005-2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
