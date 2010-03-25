@@ -103,6 +103,19 @@ of colours around the boundary
 3) 0.2,
 </center>
 
+<H3>Colours and lung images
+</H3>
+
+<pre>
+<!--#include virtual="eidors_colours06.m" -->
+</pre>
+<center>
+<img src="eidors_colours06.png">
+<br><i>Figure:</i>
+Lung images with the zero level centred (left) and
+set to an off centre value &minus; 0.1 (right)
+</center>
+
 </td></tr></table>
 <p>
 <small>
