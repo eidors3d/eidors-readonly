@@ -44,6 +44,7 @@ if opts.number_elements
    end
 end
 
+
 function [img,mdl,opts] = proc_params( mdl, options );
 
    opts.do_colourbar=0;
@@ -81,14 +82,24 @@ function show_2d(img,mdl,opts)
    show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl, opts.number_electrodes);
 
+   set(hax,'position', pax);
+   view(0, 90); axis('xy'); grid('off');
+
 % IN MATLAB 7 WE NEED TO RERUN THIS BECAUSE STUPID STUPID
 % MATLAB WILL RESET THE COLOURBAR EVERY TIME WE RUN PATCH!!!
    if exist('img','var');
       colours= calc_colours(img, [], opts.do_colourbar);
+      % Matlab is so weird. It puts the first colorbar in the wrong place
+      %   sometimes ...  (tested with 6.5 and with 7.8)
+      %   The trick is to never try to move it on the first go
+      %   OR we reset it and then replace it. STUPID STUPID
+
+     % Here's the magic trick I found. Force a drawnow, then delete and recreate
+      drawnow; colorbar('delete');
+      colours= calc_colours(img, [], opts.do_colourbar);
    end
 
-   set(hax,'position', pax);
-   view(0, 90); axis('xy'); grid('off');
+   
 
 % 3D Case
 function show_3d(img,mdl,opts)
