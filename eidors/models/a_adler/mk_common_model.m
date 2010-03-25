@@ -214,7 +214,9 @@ function inv_mdl = distmesh_2d_model(str, n_elec, options);
 %  params.gradient     = spacing(3);
    Elec_width= 4; % 2 degrees - electrode width
    switch [str(1),str(4)]
-      case 'a1'; params = [0.05,10,0.05];
+      case 'b1'; params = [0.10,5,0.05];
+      case 'b2'; params = [0.05,5,0.10];
+
       case 'b1'; params = [0.05,10,0.05];
       case 'b2'; params = [0.05,10,0.05];
       case 'd1'; params = [0.15,1,0.05];

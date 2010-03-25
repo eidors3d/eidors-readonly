@@ -14,8 +14,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %   Cs = calc_colours( img);
 %   patch(Xs,Ys,Zs,Cs);
 %
-% Cs is 1xEx1 colourmap entries (if mapped_colour>0)
-%       1xEx3 colourmap entries (if mapped_colour==0)
+% Cs is Ex1x1 colourmap entries (if mapped_colour>0)
+%       Ex1x3 colourmap entries (if mapped_colour==0)
 %
 % Usage #2 (rimg is a MxN image matrix of reconstructed pixels):
 %           img is an image structure with the image properties
@@ -54,6 +54,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           if not specified or clim==[] => no limit
 %   'cmap_type'  Specify special colours (Default blue-red)
 %           if 'draeger' use the Draegerwerk/Amato colourmap
+%   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
+%           help for details.
 %
 %   'colourmap' Return the current EIDORS colormap. 
 %           Use as colormap(calc_colours('colourmap'))
@@ -138,7 +140,7 @@ if do_colourbar
    if ~pp.mapped_colour
        warning('Colorbar not available without mapped_colour option');
    else
-       eidors_colourbar(max_scale,ref_lev)
+       eidors_colourbar(max_scale,ref_lev,pp.cb_shrink_move)
    end
 end
 
@@ -267,6 +269,10 @@ function do_unit_test
 
    img.calc_colours.mapped_colour = 127;
    img.calc_colours.ref_level = 'auto';
+   img.calc_colours.sat_adj = 0.9;
+   img.calc_colours.window_range = 0.9;
+   img.calc_colours.greylev = -0.01;
+ 
    img.elem_data = [-2;0;0;0;1;3];
    do_indiv_test('cc01', calc_colours(img), [44; 128; 128; 128; 170; 254]);
 
@@ -276,15 +282,22 @@ function do_unit_test
    img.calc_colours.ref_level = 1;
    do_indiv_test('cc02', calc_colours(img), [ 2;  86;  86;  86; 128; 212]);
 
-   img.calc_colours.greylev = -.01;
+   img.calc_colours.greylev = -.1;
    img.calc_colours.mapped_colour = 0;
    img.elem_data = [-2;1;3];
-   cm= reshape([ 0, 0.99, 0.7492; 0, 0.99, 0; 0.300, 0.99, 0]',[3,1,3]);
-   do_indiv_test('cc03', calc_colours(img), cm,0.01)
+   cm= reshape([ 0, 0.9, 0.9; 0, 0.9, 0.0643; 0.27, 0.9, 0]',[3,1,3]);
+   do_indiv_test('cc03', calc_colours(img), cm,1e-3)
 
    img.calc_colours.greylev =  .1;
-   cm= reshape([ 0.73, 1.0, 1.0; 0.1, 0.1, 0.1; 1.0, 1.0, 0.325],[3,1,3]);
-   do_indiv_test('cc03', calc_colours(img), cm,0.01)
+   cm= reshape([ 0.73, 1.0, 1.0; 0.1, 0.1, 0.1; 1.0, 0.9357, 0.1],[3,1,3]);
+   do_indiv_test('cc04', calc_colours(img), cm,1e-3)
+
+   calc_colours('greylev',0);
+   calc_colours('sat_adj',1);
+   calc_colours('mapped_colour',4);
+   calc_colours('backgnd',[0.5,0.5,0.5]);
+   cc= calc_colours('colourmap');
+   do_indiv_test('cc05',cc, [2,2,2;4,4,4;2,4,4;0,1,4;0,0,0;4,1,0;4,4,2;4,4,4]/4,1e-4);
 
 % TESTS TO WRITE
 %   'greylev'    (DEFAULT -.01)
