@@ -14,15 +14,18 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
 % (C) 2005-2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-   hh= colorbar;
+   hh= colorbar; 
    % make colourbar smaller and closer to axis
    if nargin == 3
       posn= get(hh,'Position');
-      cbsm = cb_shrink_move;
-      posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, ...
-              posn(3) * cbsm(1), posn(4) * cbsm(2)];
-     
-      set(hh,'Position', posn );
+      cbsm = cb_shrink_move  
+      if ~all(cbsm == [1,1,0]); 
+         posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, ...
+                 posn(3) * cbsm(1), posn(4) * cbsm(2)];
+        
+         set(hh,'Position', posn );
+
+      end
    end
 
    % Get colormap limits  and move bottom so we don't see the background colour 
