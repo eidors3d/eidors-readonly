@@ -116,6 +116,26 @@ Lung images with the zero level centred (left) and
 set to an off centre value &minus; 0.1 (right)
 </center>
 
+<pre>
+<!--#include virtual="eidors_colours07.m" -->
+</pre>
+<center>
+<img src="eidors_colours07a.png">
+<img src="eidors_colours07b.png">
+<img src="eidors_colours07c.png">
+<img src="eidors_colours07d.png">
+<br><i>Figure:</i>
+Lung images with various colour maps. From
+left to right:
+centre-black,
+centre-grey,
+centre-white,
+and
+the Amato/Dr&auml;ger Colourmap.
+
+set to an off centre value &minus; 0.1 (right)
+</center>
+
 </td></tr></table>
 <p>
 <small>
