@@ -139,7 +139,8 @@ function d2= filt_data(inv_model, d0, data_width )
       elseif size(d1,1) == sum(meas_select==1)
          d2= d1;
       else
-         error('data size does not match meas_select');
+         error('inconsistent difference data: (%d ~= %d). Maybe check fwd_model.meas_select',  ...
+               d2_width, data_width);
       end
    else
       d2= d1;
