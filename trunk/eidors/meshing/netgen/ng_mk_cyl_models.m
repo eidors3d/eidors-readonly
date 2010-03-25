@@ -93,7 +93,10 @@ if isempty(fmdl);
    eidors_cache('boost_priority', +2); % return values
 end
 
-function fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
+mat_idx = fmdl{2};
+fmdl = fmdl{1};
+
+function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
@@ -125,6 +128,7 @@ function fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
    fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
    end
 
+   fmdl_mat_idx = {fmdl,mat_idx};
 
 % for the newest netgen, we can't call msz file unless there are actually points in  it
 function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
