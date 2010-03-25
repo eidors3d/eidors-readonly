@@ -18,7 +18,7 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
    % make colourbar smaller and closer to axis
    if nargin == 3
       posn= get(hh,'Position');
-      cbsm = cb_shrink_move  
+      cbsm = cb_shrink_move; 
       if ~all(cbsm == [1,1,0]); 
          posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, ...
                  posn(3) * cbsm(1), posn(4) * cbsm(2)];
