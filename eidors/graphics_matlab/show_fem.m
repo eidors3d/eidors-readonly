@@ -74,7 +74,7 @@ function show_2d(img,mdl,opts)
    hax= gca;
    pax= get(hax,'position');
    if ~isempty(img)
-      colours= calc_colours(img, [], opts.do_colourbar);
+      colours= calc_colours(img, [] );
    else
       colours= [1,1,1]; % white elements if no image
    end
