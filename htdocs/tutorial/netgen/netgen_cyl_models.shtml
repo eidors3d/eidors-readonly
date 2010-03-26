@@ -4,8 +4,8 @@ Using Netgen to create cylindrical EIDORS Models
 </h2>
 
 EIDORS can use
-<a href="http://sourceforge.net/projects/netgen-mesher/"
- Netgen to create sophisticated 2D and 3D models</a>
+<a href="http://sourceforge.net/projects/netgen-mesher/">
+Netgen</a> to create sophisticated 2D and 3D models
 
 (Older netgen software from 
   <a href="http://www.hpfem.jku.at/netgen/">JKU</a>, will
