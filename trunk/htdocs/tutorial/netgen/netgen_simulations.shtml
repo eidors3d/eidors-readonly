@@ -52,6 +52,10 @@ Simulate a 2D tank with 8 electrodes with different current patterns
 Voltage pattens for two adjacent simulation patterns
 </center>
 
+<h3>
+Simulate a voltages for a change in conductivity
+</h3>
+
 <pre>
 <!--#include virtual="netgen_sims04.m" -->
 </pre>
@@ -63,6 +67,38 @@ Voltage pattens for two adjacent simulation patterns
 <br><i>Figure:</i>
 Voltage pattens without (left)  and with (middle) non-conductive target.
 Right is the difference in voltage pattern.
+</center>
+
+<h3>
+Voltage patterns for a change in conductivity
+</h3>
+
+<pre>
+<!--#include virtual="netgen_sims05.m" -->
+</pre>
+
+<center>
+<img src="netgen_sims05a.png">
+<br><i>Figure:</i>
+Voltage pattens without (green)  and with (blue) non-conductive target.
+Red is the difference in voltage pattern.
+</center>
+
+<h3>
+Simple image reconstruction
+</h3>
+
+<pre>
+<!--#include virtual="netgen_sims06.m" -->
+</pre>
+
+<center>
+<img src="netgen_sims06a.png">
+<img src="netgen_sims06b.png">
+<br><i>Figure:</i>
+Image reconstructed with large (left) and smaller (right) 
+hyperparameter value. Note that the expected resolution with
+nine electrodes isn't particularly good.
 </center>
 
 </td></tr></table>
