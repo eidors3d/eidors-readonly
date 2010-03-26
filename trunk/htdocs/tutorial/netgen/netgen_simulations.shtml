@@ -52,6 +52,19 @@ Simulate a 2D tank with 8 electrodes with different current patterns
 Voltage pattens for two adjacent simulation patterns
 </center>
 
+<pre>
+<!--#include virtual="netgen_sims04.m" -->
+</pre>
+
+<center>
+<img src="netgen_sims04a.png">
+<img src="netgen_sims04b.png">
+<img src="netgen_sims04c.png">
+<br><i>Figure:</i>
+Voltage pattens without (left)  and with (middle) non-conductive target.
+Right is the difference in voltage pattern.
+</center>
+
 </td></tr></table>
 <p>
 <small>
