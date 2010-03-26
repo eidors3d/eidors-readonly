@@ -1,7 +1,7 @@
 function transfimp = calc_transferimpedance( img)
 % CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix
 % 
-%   transfimp = calc_transferimpedance( fwd_model, img)
+%   transfimp = calc_transferimpedance( img)
 %
 % fwd_model is a fwd_model structure
 % img       is an image structure
