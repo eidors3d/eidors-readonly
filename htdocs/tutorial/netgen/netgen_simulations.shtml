@@ -9,7 +9,7 @@ EIDORS can use
 
 
 <h3>
-Simulate a 2D tank with 8 electrodes
+Model a 2D tank with 8 electrodes
 </h3>
 
 <pre>
@@ -18,6 +18,21 @@ Simulate a 2D tank with 8 electrodes
 
 <center>
 <img src="netgen_sims01a.png">
+</center>
+
+<h3>
+Simulate a 2D tank with 8 electrodes with adjacent patterns
+</h3>
+
+<pre>
+<!--#include virtual="netgen_sims02.m" -->
+</pre>
+
+<center>
+<img src="netgen_sims02a.png">
+<img src="netgen_sims02b.png">
+<br><i>Figure:</i>
+Voltage pattens for two adjacent simulation patterns
 </center>
 
 </td></tr></table>
