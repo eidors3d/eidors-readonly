@@ -67,9 +67,9 @@ if nelec>0
    mdl.electrode =     electrodes;
 end
 
-mdl.solve=          'np_fwd_solve';
-mdl.jacobian=       'np_calc_jacobian';
-mdl.system_mat=     'np_calc_system_mat';
+mdl.solve=      @aa_fwd_solve;
+mdl.jacobian=   @aa_calc_jacobian;
+mdl.system_mat= @aa_calc_system_mat;
 
 fwd_mdl= eidors_obj('fwd_model', mdl);
 
