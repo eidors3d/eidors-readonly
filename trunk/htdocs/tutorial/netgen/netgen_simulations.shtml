@@ -1,0 +1,30 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Using Netgen to simulate fwd and inverse solutions
+</h2>
+
+EIDORS can use
+<a href="http://sourceforge.net/projects/netgen-mesher/">
+ Netgen</a> to create sophisticated 2D and 3D models
+
+
+<h3>
+Simulate a 2D tank with 8 electrodes
+</h3>
+
+<pre>
+<!--#include virtual="netgen_sims01.m" -->
+</pre>
+
+<center>
+<img src="netgen_sims01a.png">
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
