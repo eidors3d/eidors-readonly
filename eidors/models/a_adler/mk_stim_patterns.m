@@ -71,6 +71,8 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
+
 if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
 v = process_args(n_elec, n_rings, inj, meas, options, amplitude );
@@ -385,3 +387,71 @@ function pat= trig_pat( elec_sel, n_elecs, sel);
     end
     meas_pat= meas_pat(:,1:end-1); % only n_elecs-1 independent patterns
     pat  = meas_pat(:, elec_sel+1);
+
+function do_unit_test
+   stim = mk_stim_patterns(4,1,[0,1],[0,1],{},1);
+   do_indiv_test('t1',stim(1).stim_pattern, [-1;1;0;0]);
+   do_indiv_test('t2',stim(4).stim_pattern, [1;0;0;-1]);
+   do_indiv_test('t3',stim(1).meas_pattern, [0,0,1,-1]);
+   do_indiv_test('t4',stim(4).meas_pattern, [0,1,-1,0]);
+
+%      'no_meas_current' / 'meas_current'
+%         -> do / don't make mesurements on current carrying electrodes
+   stim = mk_stim_patterns(4,1,[0,1],[0,1],{'meas_current'},1);
+   do_indiv_test('meas_current: t1',stim(1).meas_pattern,  ...
+         [1,-1,0,0; 0,1,-1,0; 0,0,1,-1; -1,0,0,1]);
+   do_indiv_test('meas_current: t2',stim(4).stim_pattern, [1;0;0;-1]);
+   stim = mk_stim_patterns(4,1,[0,1],[0,1],{'no_meas_current'},1);
+   do_indiv_test('meas_current: t3',stim(1).meas_pattern,  [0,0,1,-1]);
+   do_indiv_test('meas_current: t2',stim(4).stim_pattern, [1;0;0;-1]);
+
+%      'rotate_meas' / 'no_rotate_meas'
+%         -> do / don't rotate measurements with stimulation pattern
+
+   stim = mk_stim_patterns(6,1,[0,1],[0,1],{'no_rotate_meas'},1);
+   do_indiv_test('no_rotate_meas: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   do_indiv_test('no_rotate_meas: t2',stim(2).meas_pattern, ...
+         [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
+   do_indiv_test('no_rotate_meas: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   do_indiv_test('no_rotate_meas: t4',stim(3).meas_pattern, ...
+         [1,-1,0,0,0,0;0,0,0,0,1,-1; -1,0,0,0,0,1]);
+
+   stim = mk_stim_patterns(6,1,[0,1],[0,1],{'rotate_meas'},1);
+   do_indiv_test('rotate_meas: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   do_indiv_test('rotate_meas: t2',stim(2).meas_pattern, ...
+         [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
+   do_indiv_test('rotate_meas: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   do_indiv_test('rotate_meas: t4',stim(3).meas_pattern, ...
+         [0,0,0,0,1,-1; -1,0,0,0,0,1; 1,-1,0,0,0,0]);
+
+%      'do_redundant' / 'no_redundant'
+%         -> do / don't make reciprocally redundant measures
+   stim = mk_stim_patterns(6,1,[0,1],[0,1],{'do_redundant'},1);
+
+   do_indiv_test('do_redundant: t0',length(stim(2)), 6);
+   do_indiv_test('do_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   do_indiv_test('do_redundant: t2',stim(2).meas_pattern, ...
+         [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
+   do_indiv_test('do_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   do_indiv_test('do_redundant: t4',stim(3).meas_pattern, ...
+         [1,-1,0,0,0,0;0,0,0,0,1,-1; -1,0,0,0,0,1]);
+
+   stim = mk_stim_patterns(6,1,[0,1],[0,1],{'no_redundant'},1);
+   do_indiv_test('no_redundant: t0',length(stim(2)), 4);
+   do_indiv_test('no_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   do_indiv_test('no_redundant: t2',stim(2).meas_pattern, ...
+         [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
+   do_indiv_test('no_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   do_indiv_test('no_redundant: t4',stim(3).meas_pattern, ...
+         [1,-1,0,0,0,0;0,0,0,0,1,-1]);
+   do_indiv_test('no_redundant: t4',stim(4).meas_pattern, ...
+         [-1,0,0,0,0,1]);
+
+
+function do_indiv_test(txt,a,b,tol)
+   if nargin < 4; tol = 0; end
+   fprintf('%20s = ',txt);
+   ok='fail';
+   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
+   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
+   disp(ok)
