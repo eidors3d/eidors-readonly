@@ -11,7 +11,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('a2d0c',16)  - 2D circ model using distmesh 
 %   mk_common_model('b2d1c',16)  - 2D circ model using distmesh ~ 1300 elems
 %   mk_common_model('d2d4c',16)  - 2D circ model using distmesh ~ 3200 elems
-%      a-f => mesh density
+%      a-j => mesh density
 %      2d  => 2d Distmesh model
 %      0-4 => element refinement
 %      c   => circular mesh
@@ -26,6 +26,10 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('d2C',16)   - 2D circ model (1024 elems)
 %   mk_common_model('e2C',16)   - 2D circ model (1600 elems)
 %   mk_common_model('f2C',16)   - 2D circ model (2304 elems)
+%   mk_common_model('g2C',16)   - 2D circ model (3136 elems)
+%   mk_common_model('h2C',16)   - 2D circ model (4096 elems)
+%   mk_common_model('i2C',16)   - 2D circ model (5184 elems)
+%   mk_common_model('j2C',16)   - 2D circ model (6400 elems)
 %
 %   models with 'c' are point electrode models, 
 %   models with 'C' use the complete electrode model (with 2 nodes/elec)
@@ -51,7 +55,6 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %
 % 3D Models:
 %   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
-%   mk_common_model('n3z',16)   - NP's 3D model with zigzag electrodes
 %
 %   mk_common_model('b3cr',[16,3])  - cylinder with 3 rings of 16 elecs
 %   mk_common_model('b3t2r',[16,1]) - t2 thorax shape with 1 ring of 16 elecs
@@ -68,6 +71,9 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if isstr(str) && strcmp(str,'UNIT_TEST'); do_unit_test; return; end
+
 
 options = {'no_meas_current','no_rotate_meas'};
 % n_elec is number of [elec/ring n_rings]
@@ -90,6 +96,10 @@ if str(2:3)=='2c' | str(2:3) == '2C'
    elseif str(1)=='d'; layers= 16;
    elseif str(1)=='e'; layers= 20;
    elseif str(1)=='f'; layers= 24;
+   elseif str(1)=='g'; layers= 28;
+   elseif str(1)=='h'; layers= 32;
+   elseif str(1)=='i'; layers= 36;
+   elseif str(1)=='j'; layers= 40;
    else;  error(['don`t know what to do with option=%s',str]);
    end
 
@@ -141,6 +151,10 @@ elseif ( str(2:3)=='2t' | str(2:3)=='2T') & length(str)==4
    elseif str(1)=='d'; layers= 16;
    elseif str(1)=='e'; layers= 20;
    elseif str(1)=='f'; layers= 24;
+   elseif str(1)=='g'; layers= 28;
+   elseif str(1)=='h'; layers= 32;
+   elseif str(1)=='i'; layers= 36;
+   elseif str(1)=='j'; layers= 40;
    else;  error(['don`t know what to do with option(1)=',str]);
    end
 
@@ -241,7 +255,11 @@ function inv2d = distmesh_2d_model_depr(str, n_elec, options);
       case 'c'; n_nodes= 200;
       case 'd'; n_nodes= 400;
       case 'e'; n_nodes= 800;
-      case 'f'; n_nodes=1600;
+      case 'f'; n_nodes=1200;
+      case 'g'; n_nodes=1800;
+      case 'h'; n_nodes=2400;
+      case 'i'; n_nodes=3000;
+      case 'j'; n_nodes=4000;
       otherwise; error('don`t know what to do with option=%s',str);
    end
  
@@ -563,3 +581,38 @@ function inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
          ff= find( enode== bdy(:,1) );
          inv_mdl.fwd_model.electrode(i).nodes = bdy(ff,:);
       end
+
+%%%%%%%%%%%%%%%%%%%%%% TESTS %%%%%%%%%%%%%%%%%%%%%%%
+function do_unit_test
+
+% 2D Circular Models
+for j=('a'+0):('j'+0)
+    mk_common_model(sprintf('%c2C2',j),16);
+    mk_common_model(sprintf('%c2c0',j),16);
+    mk_common_model(sprintf('%c2t3',j),16);
+    mk_common_model(sprintf('%c2T4',j),16);
+end;
+
+for j=('a'+0):('f'+0)
+    mk_common_model(sprintf('%c2s',j),8);
+end;
+
+% 3D Models:
+    mk_common_model('n3r2',16);
+ %  mk_common_model('n3z',16);
+ 
+    mk_common_model('b3cr',[16,3]);
+    mk_common_model('b3t2r',[16,1]);
+    mk_common_model('b3cz2',[16,1]);
+    mk_common_model('b3cp2',16);
+ 
+    mk_common_model('a3cr',16);
+    mk_common_model('b3cr',16);
+    mk_common_model('c3cr',16);
+    mk_common_model('d3cr',16);
+
+% Distmesh models
+for i=0:4; for j=('a'+0):('j'+0)
+    mk_common_model(sprintf('%c2d%dd',j,i),16);
+end; end
+
