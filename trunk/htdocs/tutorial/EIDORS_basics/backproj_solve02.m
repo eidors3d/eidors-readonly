@@ -1,38 +1,40 @@
 % $Id$
 
+% Solve voltage for 3 different models
 for idx=1:3
-  if     idx==1; mdltype= 'b2c';
-  elseif idx==2; mdltype= 'd2c2';
-  elseif idx==3; mdltype= 'd2t2';
+  if     idx==1; mdltype= 'd2C2';
+  elseif idx==2; mdltype= 'd2C2';
+  elseif idx==3; mdltype= 'd2T2';
   end
 
-   imdl= mk_common_model(mdltype,16);
-   fmdl= imdl.fwd_model;
-   params= aa_fwd_parameters( fmdl );
+  pat = 4; % Stimulation pattern to show
 
-   homog= ones(size(fmdl.elems,1),1);
-   img= eidors_obj('image','','elem_data',homog);
-   img.fwd_model= fmdl;
-
-   node_v= calc_all_node_voltages( img );
-   elem_v= reshape(node_v( fmdl.elems',:),3,[],16);
-   elem_v= squeeze(mean(elem_v,1));
-   meas_v= params.N2E * node_v;
-
-   sel= 4;
-   ed= elem_v(:,sel);
-   img.elem_data= ed;
-   subplot(2,3,idx);
-   show_fem(img);
-
-   ej = zeros(size(ed));
-   for i=1:16
-     ej= ej + ( ed < meas_v(i,sel) );
-   end
-   img.elem_data= ej;
-   subplot(2,3,idx+3);
-   show_fem(img);
-
+  imdl= mk_common_model(mdltype,16);
+  img{idx} = calc_jacobian_bkgnd(imdl); 
+  stim = mk_stim_patterns(16,1,'{ad}','{mono}',{'meas_current','rotate_meas'},-1);
+  img{idx}.fwd_model.stimulation = stim(pat);
+  img{idx}.fwd_solve.get_all_meas = 1;
 end
 
+% Show raw voltage pattern
+for idx=1:3
+  vh = fwd_solve(img{idx});
+  imgn = rmfield(img{idx},'elem_data');
+  imgn.node_data= vh.volt;
+  subplot(2,3,idx); show_fem(imgn);
+end
 print -r125 -dpng backproj_solve02a.png;
+
+% Calculate Equipotential lines
+for idx=1:3
+  vh = fwd_solve(img{idx});
+  imgn = rmfield(img{idx},'elem_data');
+
+  imgn.node_data= zeros(size(vh.volt,1),1);
+  for v = 2:16
+     imgn.node_data(vh.volt > vh.meas(v)) = v;
+  end
+
+  subplot(2,3,idx+3); show_fem(imgn);
+end
+print -r125 -dpng backproj_solve02b.png;
