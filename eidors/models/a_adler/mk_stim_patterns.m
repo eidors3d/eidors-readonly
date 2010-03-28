@@ -45,7 +45,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %      '{ad}'        -> adjacent measurement
 %      '{op}'        -> opposite drive: equivalent to [0, n_elec/2]
 %      '{trig}'      -> trigonometric drive [sin,cos,sin,cos ...]
-%      '{mono}'      -> Meas at each elec
+%      '{mono}'      -> Meas at each elec (Reminder, you may want to set meas_current);
 %      Bi-polar measurement patterns:
 %        [x y]: First pattern is [x,y] next is [x+1,y+1] 
 %      Mono-polar measurement patterns:
@@ -302,7 +302,7 @@ if isstr(meas)
       rel_ampl= [ 1;-1];
    elseif  strcmp(meas,'{mono}')
       meas= [0];
-      rel_ampl= [-1];
+      rel_ampl= [1];
    else
       error(['parameter meas=',meas,' not understood']);
    end
@@ -466,11 +466,41 @@ function do_unit_test
    do_indiv_test('no_balance_inj: t0',length(stim), 4);
    do_indiv_test('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
 
+%      'balance_meas' / 'no_balance_meas'
+%         -> do / don't subtrant measurement from all electrodes so total
+%            average measurement is zero (useful for mono patterns)
+   stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'no_balance_meas','meas_current'},1);
+   do_indiv_test('no_balance_meas: t0',length(stim), 4);
+   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
+
+   stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'meas_current'},1);
+   do_indiv_test('no_balance_meas: t0',length(stim), 4);
+   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
+
+   stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'no_meas_current'},1);
+   do_indiv_test('no_balance_meas: t0',length(stim), 4);
+   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
+
+   stim = mk_stim_patterns(4,1,[0,1],'{mono}',{},1); % DO WE WANT THIS AS DEFAULT??
+   do_indiv_test('no_balance_meas: t0',length(stim), 4);
+   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
+
+   stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'balance_meas','meas_current'},1);
+   do_indiv_test('balance_meas: t0',length(stim), 4);
+   do_indiv_test('balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   do_indiv_test('balance_meas: t1',stim(2).meas_pattern, (4*eye(4)-ones(4))/3);
+
+   
+
 function do_indiv_test(txt,a,b,tol)
    if nargin < 4; tol = 0; end
    fprintf('%20s = ',txt);
    ok='fail';
    try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
+   try; if all(abs(a - b) <= tol);  ok='ok'; end; catch; end
    disp(ok)
    if ~strcmp(ok,'ok'); keyboard; end
