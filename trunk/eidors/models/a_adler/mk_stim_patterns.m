@@ -230,7 +230,7 @@ function meas = mk_meas_pat(v, elec, ring );
        stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
    % each column of meas is a measurement pattern
    % Test whether each col has contribution from stim
-       elim= any(meas(stim_idx,:));
+       elim= any(meas(stim_idx,:),1);
        meas(:,elim) = [];
    end
 
@@ -247,7 +247,7 @@ function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
    v.rotate_meas = 0;
    v.do_redundant = 1;
    v.balance_inj = 0;
-   v.balance_meas= 1;
+   v.balance_meas= 0;
 
 % Stimulation (injection) pattern
 % This currently does not handle complicated injection patterns
@@ -450,16 +450,17 @@ function do_unit_test
 %      'balance_inj' / 'no_balance_inj'
 %         -> do / don't draw current from all electrodes so total
 %            injection is zero (useful for mono patterns)
-   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'balance_inj'},1);
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'balance_inj','meas_current'},1);
    do_indiv_test('balance_inj: t0',length(stim), 4);
    do_indiv_test('balance_inj: t1',stim(2).stim_pattern, -[1;-3;1;1]/3);
    do_indiv_test('balance_inj: t2',stim(2).meas_pattern, ...
-         [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
-% WRONG - FIx
+         [1,-1,0,0;0,1,-1,0;0,0,1,-1;-1,0,0,1]);
 
-   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj'},1);
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj','no_meas_current'},1);
    do_indiv_test('no_balance_inj: t0',length(stim), 4);
    do_indiv_test('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
+   do_indiv_test('no_balance_inj: t2',stim(2).meas_pattern, ...
+         [0,0,1,-1;-1,0,0,1]);
 
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},1);
    do_indiv_test('no_balance_inj: t0',length(stim), 4);
