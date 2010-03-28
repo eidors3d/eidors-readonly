@@ -28,8 +28,6 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    npy  = fwd_model.mdl_slice_mapper.npy;
    level= fwd_model.mdl_slice_mapper.level;
 
-   % Get elem_ptr from cache, if available
-   % EPtable is cell array of elem_ptrs for different levels
    elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
 
    if ~isempty(elem_ptr)
@@ -45,7 +43,25 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    end
 
    eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
-   eidors_msg('show_slices: setting cached value', 3);
+   eidors_msg('mdl_slice_mapper: setting cached value', 3);
+
+function node_ptr = mdl_node_mapper(fwd_model);
+   npx  = fwd_model.mdl_slice_mapper.npx;
+   npy  = fwd_model.mdl_slice_mapper.npy;
+   level= fwd_model.mdl_slice_mapper.level;
+
+   node_ptr = eidors_obj('get-cache', fwd_model, 'node_ptr');
+
+   if ~isempty(node_ptr)
+      return;
+   end
+
+   NODE = level_model( fwd_model, level );
+   node_ptr= node_mapper( NODE, fwd_model.boundary, npx, npy);
+
+   eidors_obj('set-cache', fwd_model, 'node_ptr', node_ptr);
+   eidors_msg('mdl_slice_mapper: setting cached value', 3);
+
 
 % Search through each element and find the points which
 % are in that element

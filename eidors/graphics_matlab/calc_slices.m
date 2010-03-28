@@ -78,25 +78,10 @@ end
 
 % Calculate an image by mapping it onto the node_ptr matrix
 function rimg= calc_image_nodes( node_data, level, fwd_model, np);
-
-   % elem_ptr_table also depends on the number of mapped points
-   fwd_model.calc_slices.mapping_npoints=np;
-
-   % Get node_ptr from cache, if available
-   % NPtable is cell array of elem_ptrs for different levels
-   NPtable = eidors_obj('get-cache', fwd_model, 'node_ptr_table');
-   level_hash= eidors_var_id( level );
-
-   if isfield(NPtable, level_hash);
-      node_ptr= getfield(NPtable, level_hash);
-   else
-      NODE = level_model( fwd_model, level );
-      node_ptr= node_mapper( NODE, fwd_model.boundary, np, np);
-
-      NPtable = setfield(NPtable, level_hash, node_ptr);
-      eidors_obj('set-cache', fwd_model, 'node_ptr_table', NPtable);
-      eidors_msg('show_slices: setting cached value', 3);
-   end
+   fwd_model.mdl_slice_mapper.npx  = np;
+   fwd_model.mdl_slice_mapper.npy  = np;
+   fwd_model.mdl_slice_mapper.level= level;
+   node_ptr = mdl_slice_mapper( fwd_model, 'node' );
 
    backgnd= NaN;
    n_images= size(node_data,2);
@@ -106,7 +91,6 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np);
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image_elems( elem_data, level, fwd_model, np)
 
-   % elem_ptr_table also depends on the number of mapped points
    fwd_model.mdl_slice_mapper.npx  = np;
    fwd_model.mdl_slice_mapper.npy  = np;
    fwd_model.mdl_slice_mapper.level= level;
@@ -136,15 +120,35 @@ function do_unit_test
    img = calc_jacobian_bkgnd( mk_common_model('a2c2',8));
    img.calc_colours.npoints = 8; 
 
-   imn = calc_slices(img);
+   imc = calc_slices(img);
    imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
-   do_indiv_test('cs 2d 1', imn, imt);
+   do_indiv_test('cs 2d 1', imc, imt);
+
+   imn = rmfield(img,'elem_data');
+   imn.node_data = ones(size(imn.fwd_model.nodes,1),1);
+   imc = calc_slices(imn);
+   do_indiv_test('cs 2d 2', imc, imt);
 
    img.elem_data(1:4) = 2;
-   imn = calc_slices(img);
+   imc = calc_slices(img);
    imt(4:5,4:5) = 2; 
-   do_indiv_test('cs 2d 2', imn, imt);
+   do_indiv_test('cs 2d 3', imc, imt);
 
+   imn.node_data(1:5) = 2;
+   imc = calc_slices(imn);
+   do_indiv_test('cs 2d 4', imc, imt);
+
+   imn.node_data(1) = 4;
+   imc = calc_slices(imn);
+   do_indiv_test('cs 2d 5', imc, imt);
+
+   imn.calc_colours.npoints = 7; 
+   imc = calc_slices(imn);
+   imt = NaN*ones(7); imt(2:6,2:6) = 1; imt(4,1:7)= 1; imt(1:7,4)= 1;imt(4,4) = 4; 
+   do_indiv_test('cs 2d 6', imc, imt);
+
+
+% 3D Tests
    img = calc_jacobian_bkgnd( mk_common_model('n3r2'));
    img.calc_colours.npoints = 8; 
    imn = calc_slices(img,[inf,inf,1]);
@@ -155,6 +159,8 @@ function do_unit_test
    imn = calc_slices(img,[inf,0,inf]);
    imt = NaN*ones(8); imt(1:8,3:6) = 1; 
    do_indiv_test('cs 3d 2', imn, imt);
+
+
 
 function do_indiv_test(txt,a,b, tol)
    if nargin < 4; tol = 0; end
