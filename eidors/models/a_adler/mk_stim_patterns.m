@@ -428,7 +428,7 @@ function do_unit_test
 %         -> do / don't make reciprocally redundant measures
    stim = mk_stim_patterns(6,1,[0,1],[0,1],{'do_redundant'},1);
 
-   do_indiv_test('do_redundant: t0',length(stim(2)), 6);
+   do_indiv_test('do_redundant: t0',length(stim), 6);
    do_indiv_test('do_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
    do_indiv_test('do_redundant: t2',stim(2).meas_pattern, ...
          [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
@@ -437,16 +437,33 @@ function do_unit_test
          [1,-1,0,0,0,0;0,0,0,0,1,-1; -1,0,0,0,0,1]);
 
    stim = mk_stim_patterns(6,1,[0,1],[0,1],{'no_redundant'},1);
-   do_indiv_test('no_redundant: t0',length(stim(2)), 4);
+   do_indiv_test('no_redundant: t0',length(stim), 4);
    do_indiv_test('no_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
    do_indiv_test('no_redundant: t2',stim(2).meas_pattern, ...
          [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
    do_indiv_test('no_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
    do_indiv_test('no_redundant: t4',stim(3).meas_pattern, ...
-         [1,-1,0,0,0,0;0,0,0,0,1,-1]);
-   do_indiv_test('no_redundant: t4',stim(4).meas_pattern, ...
+         [0,0,0,0,1,-1;-1,0,0,0,0,1]);
+   do_indiv_test('no_redundant: t5',stim(4).meas_pattern, ...
          [-1,0,0,0,0,1]);
 
+%      'balance_inj' / 'no_balance_inj'
+%         -> do / don't draw current from all electrodes so total
+%            injection is zero (useful for mono patterns)
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'balance_inj'},1);
+   do_indiv_test('balance_inj: t0',length(stim), 4);
+   do_indiv_test('balance_inj: t1',stim(2).stim_pattern, -[1;-3;1;1]/3);
+   do_indiv_test('balance_inj: t2',stim(2).meas_pattern, ...
+         [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
+% WRONG - FIx
+
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj'},1);
+   do_indiv_test('no_balance_inj: t0',length(stim), 4);
+   do_indiv_test('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
+
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},1);
+   do_indiv_test('no_balance_inj: t0',length(stim), 4);
+   do_indiv_test('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
 
 function do_indiv_test(txt,a,b,tol)
    if nargin < 4; tol = 0; end
@@ -455,3 +472,4 @@ function do_indiv_test(txt,a,b,tol)
    try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
    try; if all(abs(a - b) <= tol);  ok='ok'; end; end
    disp(ok)
+   if ~strcmp(ok,'ok'); keyboard; end
