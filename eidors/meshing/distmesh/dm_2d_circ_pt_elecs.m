@@ -31,6 +31,9 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+
+if isstr(elec_pts) && strcmp(elec_pts,'UNIT_TEST'); do_unit_test; return; end
+
 cache_obj = {elec_pts, spacing};
 fmdl= eidors_obj('get-cache',cache_obj, 'dm_2d_circ_pt_elecs');
 if ~isempty(fmdl); return; end % Object is cached
@@ -47,3 +50,39 @@ eidors_obj('set-cache',cache_obj, 'dm_2d_circ_pt_elecs', fmdl);
 
 function d= circle(p,params);
   d = sqrt(sum(p.^2,2)) - 1; 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% TESTING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function do_unit_test
+   elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
+   fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.15,10,0.05] );
+
+% Example:
+   n_elecs= 14; elec_width= 0.1; hw= elec_width/2;
+   th = linspace(0,2*pi,n_elecs+1); th(end)=[];
+   for i=1:n_elecs;
+      ti = th(i) + [hw;-hw];
+      elec_pts{i} = [sin(ti),cos(ti)];
+   end
+   fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
+
+function find_values
+  n_elecs= 8; elec_width= 0.1; hw= elec_width/2;
+  th = linspace(0,2*pi,n_elecs+1); th(end)=[];
+  for i=1:n_elecs;
+     ti = th(i) + [hw;-hw];
+     elec_pts{i} = [sin(ti),cos(ti)];
+  end
+
+     fid = fopen('distmesh_data.txt','w');
+  for p1 = 0.02:0.01:0.2; %[0.2,0.1,0.05,0.02];
+  for p2 = [5, 10,20];
+  for p = 0.01:0.01:0.1; %[0.1,0.05,0.02,0.01];
+     fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [p1,p2,p3]);
+     nd= fmdl.nodes; nn= size(nd,1);
+     ne= size(fmdl.elems,1);
+     nc= sum( nd(:,1).^2 + nd(:,2).^2 < 0.4^2);
+     nl= sum( (nd(:,1)-1).^2 + nd(:,2).^2 < 0.2^2);
+     fprintf(fid,'p1=%f p2=%f p3=%f nn=%d ne=%d nc=%d nl=%d\n',p1,p2,p3,nn,ne,nc,nl);   
+  end; end ; end
+     fclose(fid);
