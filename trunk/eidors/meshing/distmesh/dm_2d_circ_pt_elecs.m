@@ -24,7 +24,6 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
 %     elec_pts{i} = [sin(ti),cos(ti)];
 %  end
 %  fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
-
 %
 % See also: dm_2d_pt_elecs
 
@@ -33,6 +32,7 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
 
 
 if isstr(elec_pts) && strcmp(elec_pts,'UNIT_TEST'); do_unit_test; return; end
+if isstr(elec_pts) && strcmp(elec_pts,'CALIBRATE'); do_calibrate; return; end
 
 cache_obj = {elec_pts, spacing};
 fmdl= eidors_obj('get-cache',cache_obj, 'dm_2d_circ_pt_elecs');
@@ -66,7 +66,8 @@ function do_unit_test
    end
    fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
 
-function find_values
+% find example models that work well with the values defined in mk_common_model
+function do_calibrate
   n_elecs= 8; elec_width= 0.1; hw= elec_width/2;
   th = linspace(0,2*pi,n_elecs+1); th(end)=[];
   for i=1:n_elecs;
@@ -74,15 +75,18 @@ function find_values
      elec_pts{i} = [sin(ti),cos(ti)];
   end
 
-     fid = fopen('distmesh_data.txt','w');
-  for p1 = 0.02:0.01:0.2; %[0.2,0.1,0.05,0.02];
-  for p2 = [5, 10,20];
-  for p = 0.01:0.01:0.1; %[0.1,0.05,0.02,0.01];
+ % As a start, set p2 = 1. This is uniform, and we can choose the
+ % target refinement levels, and calculate the centre mesh density
+ % OR setting p3=1 also gives uniform
+
+  eidors_msg('log_level',1);
+  p2 = 5; p3 = 1;
+  for p1 = 0.01:0.01:0.1; %[0.1,0.05,0.02,0.01];
      fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [p1,p2,p3]);
      nd= fmdl.nodes; nn= size(nd,1);
      ne= size(fmdl.elems,1);
      nc= sum( nd(:,1).^2 + nd(:,2).^2 < 0.4^2);
      nl= sum( (nd(:,1)-1).^2 + nd(:,2).^2 < 0.2^2);
-     fprintf(fid,'p1=%f p2=%f p3=%f nn=%d ne=%d nc=%d nl=%d\n',p1,p2,p3,nn,ne,nc,nl);   
-  end; end ; end
-     fclose(fid);
+     disp([1e3*p1,p2,nn,ne,nl,nc]);
+  end;
+  eidors_msg('log_level',2);
