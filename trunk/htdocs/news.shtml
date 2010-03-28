@@ -6,6 +6,27 @@ EIDORS package.
 <ul>
 
 <p><li><b>
+    28 Mar 2010:
+</b><br>
+Added lots of new tutorials. Including for
+nodal solvers, current patterns visualization, absolute solvers.
+
+<p><li><b>
+    23 Mar 2010:
+</b><br>
+Added a new test infrastructure. Now each function (for which
+it has been implemented) has a 'UNIT_TEST' input. For example
+<tt>show_fem('UNIT_TEST');</tt>
+
+<p><li><b>
+    20 Feb 2010:
+</b><br>
+Added data for
+<a href="./data_contrib/jn_chest_phantom/jn_chest_phantom.shtml"
+>Calibrated chest shaped targets</a> in 2D circular tank with ACT 3 EIT system.
+Thanks to Jon Newell at Rensselaer Polytechnique Institute 
+
+<p><li><b>
     15 July 2009:
 </b><br>
 The EIT-ventilation colourmap from 
