@@ -46,11 +46,13 @@ Calculate Equipotential lines
 
 <center>
 <img src="backproj_solve02a.png">
+<br>
+<img src="backproj_solve02b.png">
 <br><i> Figure:</i>
 Equipotential lines for adjacent stimulation
 <i>From Left to right:</i>
-256 element circular mesh,
 1024 element circular mesh,
+6746 element electrode refined element circular mesh,
 1024 element mesh of human upper thorax
 </center>
 
