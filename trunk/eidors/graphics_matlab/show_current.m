@@ -42,7 +42,7 @@ del2 = del'*del;
 for i=1:Nel
   idx = img.fwd_model.elems(i,:);
   nod = img.fwd_model.nodes(idx,:);
-  elemcur(i+1,:) = vv(idx)'*del2*nod;
+  elemcur(i+1,:) = img.elem_data(i)*vv(idx)'*del2*nod;
 end
 
 [xp,yp] = grid_the_space( img.fwd_model);
