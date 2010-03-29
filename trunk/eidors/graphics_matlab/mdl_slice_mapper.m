@@ -37,9 +37,11 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    NODE = level_model( fwd_model, level );
    ELEM= fwd_model.elems';
    if size(NODE,1) ==2 %2D
-      elem_ptr= img_mapper2( NODE, ELEM, npx, npy);
+      [x,y] = grid_the_space( NODE, npx, npy);
+      elem_ptr= img_mapper2( NODE, ELEM, x, y);
    else
-      elem_ptr= img_mapper3( NODE, ELEM, npx, npy);
+      [x,y] = grid_the_space( NODE, npx, npy);
+      elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
 
    eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
@@ -57,7 +59,8 @@ function node_ptr = mdl_node_mapper(fwd_model);
    end
 
    NODE = level_model( fwd_model, level );
-   node_ptr= node_mapper( NODE, fwd_model.boundary, npx, npy);
+   [x,y] = grid_the_space( NODE, npx, npy);
+   node_ptr= node_mapper( NODE, fwd_model.boundary, x, y);
 
    eidors_obj('set-cache', fwd_model, 'node_ptr', node_ptr);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
@@ -67,8 +70,9 @@ function node_ptr = mdl_node_mapper(fwd_model);
 % are in that element
 % NPTR is matrix npx x npy with a pointer to the
 % node closest to it.
-function NPTR= node_mapper( NODE, bdy, npx, npy);
-  [x,y] = grid_the_space( NODE, npx, npy);
+function NPTR= node_mapper( NODE, bdy, x, y);
+  [npy,npx] = size(x);
+
   NODEx= NODE(1,:);
   NODEy= NODE(2,:);
   if size(NODE,1) == 2
@@ -99,8 +103,8 @@ function NPTR= node_mapper( NODE, bdy, npx, npy);
 % are in that element
 % EPTR is matrix npx x npy with a pointer to the
 % element which contains it.
-function EPTR= img_mapper2(NODE, ELEM, npx, npy );
-  [x,y] = grid_the_space( NODE, npx, npy);
+function EPTR= img_mapper2(NODE, ELEM, x, y );
+  [npy,npx] = size(x);
   v_yx= [-y(:) x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
@@ -172,8 +176,8 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 % The vertex geometry (NODE) has been rotated and translated
 % so that the imaging plane is on the z-axis. Then we iterate
 % through elements to find the containing each pixel
-function EPTR= img_mapper3(NODE, ELEM, npx, npy );
-  [x,y] = grid_the_space( NODE, npx, npy);
+function EPTR= img_mapper3(NODE, ELEM, x, y );
+  [npy,npx] = size(x);
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
