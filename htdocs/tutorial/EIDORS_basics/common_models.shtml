@@ -1,0 +1,43 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<H2>FEM Models Prepackaged with EIDORS</H2>
+
+EIDORS provides a number of prepackaged FEM models
+that can be used to easily set up common tasks.
+The main  function to make these available is
+<tt>mk_common_models</tt>.
+
+<H2>2D FEM Models</H2>
+
+
+Using <tt>mk_common_models</tt>, the basic function
+is a string such as 'c2d0c', where
+<ul>
+   <table border="1">
+   <tr><th>c<td>Vertex density (a=low, j=high)
+   <tr><th>2<td>Two dimentional
+   <tr><th>d<td>Use the "distmesh" generator
+   <tr><th>0<td>Electrode refinement level is 0 (no refinement)
+   <tr><th>c<td>Circular model
+   </table>
+</ul>
+Use <tt>help mk_common_models</tt> for more details
+
+<pre>
+<!--#include virtual="common_models01.m" -->
+</pre>
+
+<center>
+<img src="common_models01a.png">
+<br><i> Figure:</i>
+Model c2d0c (left) and d2d3c (right)
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
