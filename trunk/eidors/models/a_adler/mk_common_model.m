@@ -228,15 +228,62 @@ function inv_mdl = distmesh_2d_model(str, n_elec, options);
 %  params.gradient     = spacing(3);
    Elec_width= 4; % 2 degrees - electrode width
    switch [str(1),str(4)]
-      case 'b1'; params = [0.10,5,0.05];
-      case 'b2'; params = [0.05,5,0.10];
+      case 'j0'; params = [ 55,0,100]./[1000,1,100];
+      case 'i0'; params = [ 67,0,100]./[1000,1,100];
+      case 'h0'; params = [ 77,0,100]./[1000,1,100];
+      case 'g0'; params = [ 87,0,100]./[1000,1,100];
+      case 'f0'; params = [100,0,100]./[1000,1,100];
+      case 'e0'; params = [120,0,100]./[1000,1,100];
+      case 'd0'; params = [150,0,100]./[1000,1,100];
+      case 'c0'; params = [200,0,100]./[1000,1,100];
+      case 'b0'; params = [270,0,100]./[1000,1,100];
+      case 'a0'; params = [500,0,100]./[1000,1,100];
 
-      case 'b1'; params = [0.05,10,0.05];
-      case 'b2'; params = [0.05,10,0.05];
-      case 'd1'; params = [0.15,1,0.05];
-      case 'd2'; params = [0.15,5,0.05];
-      case 'd3'; params = [0.05,10,0.05];
-      case 'd4'; params = [0.03,15,0.03];
+      case 'j1'; params = [ 21,3,5]./[1000,1,100];
+      case 'i1'; params = [ 23,3,5]./[1000,1,100];
+      case 'h1'; params = [ 26,3,5]./[1000,1,100];
+      case 'g1'; params = [ 30,3,5]./[1000,1,100];
+      case 'f1'; params = [ 35,3,5]./[1000,1,100];
+      case 'e1'; params = [ 39,3,5]./[1000,1,100];
+      case 'd1'; params = [ 54,3,5]./[1000,1,100];
+      case 'c1'; params = [100,3,5]./[1000,1,100];
+      case 'b1'; params = [180,3,5]./[1000,1,100];
+      case 'a1'; params = [400,3,5]./[1000,1,100];
+
+      case 'j2'; params = [ 12,5,3]./[1000,1,100];
+      case 'i2'; params = [ 14,5,3]./[1000,1,100];
+      case 'h2'; params = [ 16,5,3]./[1000,1,100];
+      case 'g2'; params = [ 19,5,3]./[1000,1,100];
+      case 'f2'; params = [ 21,5,3]./[1000,1,100];
+      case 'e2'; params = [ 39,5,3]./[1000,1,100];
+      case 'd2'; params = [ 50,5,3]./[1000,1,100];
+      case 'c2'; params = [100,5,3]./[1000,1,100];
+      case 'b2'; params = [200,5,3]./[1000,1,100];
+      case 'a2'; params = [500,5,3]./[1000,1,100];
+
+      case 'j3'; params = [  6,10,2]./[1000,1,100];
+      case 'i3'; params = [  7,10,2]./[1000,1,100];
+      case 'h3'; params = [  8,10,2]./[1000,1,100];
+      case 'g3'; params = [  9,10,2]./[1000,1,100];
+      case 'f3'; params = [ 10,10,2]./[1000,1,100];
+      case 'e3'; params = [ 13,10,2]./[1000,1,100];
+      case 'd3'; params = [ 20,10,2]./[1000,1,100];
+      case 'c3'; params = [ 70,10,2]./[1000,1,100];
+      case 'b3'; params = [150,10,2]./[1000,1,100];
+      case 'a3'; params = [250,10,2]./[1000,1,100];
+
+% We set refinement 4==3. This is OK for this mdl density
+      case 'j4'; params = [  6,10,2]./[4000,1,100];
+      case 'i4'; params = [  7,10,2]./[4000,1,100];
+      case 'h4'; params = [  8,10,2]./[4000,1,100];
+      case 'g4'; params = [  9,10,2]./[4000,1,100];
+      case 'f4'; params = [ 10,10,2]./[4000,1,100];
+      case 'e4'; params = [ 13,10,2]./[4000,1,100];
+      case 'd4'; params = [ 20,10,2]./[4000,1,100];
+      case 'c4'; params = [ 70,10,2]./[4000,1,100];
+      case 'b4'; params = [150,10,2]./[4000,1,100];
+      case 'a4'; params = [250,10,2]./[4000,1,100];
+
       otherwise; error('don`t know what to do with option=%s',str);
    end
    ea = Elec_width/2 *(2*pi/360);

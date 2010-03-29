@@ -68,6 +68,18 @@ function do_unit_test
 
 % find example models that work well with the values defined in mk_common_model
 function do_calibrate
+
+% meas = calc_range(0.05*([1,1.1,1.2,1.4,1.6,2.0,2.5,3,4,5,7,10,15,20]),0,1) 
+  meas = calc_range(0.02,3,0.10),%- level 1
+% meas = calc_range(0.03,10,0.05),%- level 3
+
+% meas = calc_range(0.02,10,0.05),%- level 3
+% meas = calc_range(0.02,20,0.05),%- level 3
+ % As a start, set p2 = 1. This is uniform, and we can choose the
+ % target refinement levels, and calculate the centre mesh density
+ % OR setting p3=1 also gives uniform
+
+function meas = calc_range(p1range,p2,p3)
   n_elecs= 8; elec_width= 0.1; hw= elec_width/2;
   th = linspace(0,2*pi,n_elecs+1); th(end)=[];
   for i=1:n_elecs;
@@ -75,18 +87,17 @@ function do_calibrate
      elec_pts{i} = [sin(ti),cos(ti)];
   end
 
- % As a start, set p2 = 1. This is uniform, and we can choose the
- % target refinement levels, and calculate the centre mesh density
- % OR setting p3=1 also gives uniform
-
   eidors_msg('log_level',1);
-  p2 = 5; p3 = 1;
-  for p1 = 0.01:0.01:0.1; %[0.1,0.05,0.02,0.01];
+  for i = 1:length(p1range)
+     p1 = p1range(i);
      fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [p1,p2,p3]);
      nd= fmdl.nodes; nn= size(nd,1);
      ne= size(fmdl.elems,1);
-     nc= sum( nd(:,1).^2 + nd(:,2).^2 < 0.4^2);
+     nc= sum( nd(:,1).^2 + nd(:,2).^2 < 0.5^2);
      nl= sum( (nd(:,1)-1).^2 + nd(:,2).^2 < 0.2^2);
-     disp([1e3*p1,p2,nn,ne,nl,nc]);
+     meas(i,:) = [p1,p2,p3,[nn,ne,nc,nl]/1000];
+
   end;
   eidors_msg('log_level',2);
+show_fem(fmdl)
+
