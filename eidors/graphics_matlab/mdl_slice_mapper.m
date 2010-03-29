@@ -5,8 +5,12 @@ function map = mdl_slice_mapper( fmdl, maptype );
 % USAGE:
 % fmdl = fwd_model object
 %     required fields
-%   fmdl.mdl_slice_mapper.x_idx
-%   fmdl.mdl_slice_mapper.y_idx
+%   fmdl.mdl_slice_mapper.npx   - number of points in horizontal direction
+%   fmdl.mdl_slice_mapper.npy   - number of points in vertical 
+%    or
+%   fmdl.mdl_slice_mapper.x_pts - vector of points in horizontal direction
+%   fmdl.mdl_slice_mapper.y_pts - vector of points in vertical
+%
 %   fmdl.mdl_slice_mapper.level = Vector [1x3] of intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
 %          parallel to the x,y: use levels= [inf,inf,2]
@@ -26,8 +30,6 @@ switch maptype
 end
 
 function elem_ptr = mdl_elem_mapper(fwd_model);
-   npx  = fwd_model.mdl_slice_mapper.npx;
-   npy  = fwd_model.mdl_slice_mapper.npy;
    level= fwd_model.mdl_slice_mapper.level;
 
    elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
@@ -39,10 +41,10 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    NODE = level_model( fwd_model, level );
    ELEM= fwd_model.elems';
    if size(NODE,1) ==2 %2D
-      [x,y] = grid_the_space( NODE, npx, npy);
+      [x,y] = grid_the_space( NODE, fwd_model);
       elem_ptr= img_mapper2( NODE, ELEM, x, y);
    else
-      [x,y] = grid_the_space( NODE, npx, npy);
+      [x,y] = grid_the_space( NODE, fwd_model);
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
 
@@ -50,8 +52,6 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 function node_ptr = mdl_node_mapper(fwd_model);
-   npx  = fwd_model.mdl_slice_mapper.npx;
-   npy  = fwd_model.mdl_slice_mapper.npy;
    level= fwd_model.mdl_slice_mapper.level;
 
    node_ptr = eidors_obj('get-cache', fwd_model, 'node_ptr');
@@ -61,7 +61,7 @@ function node_ptr = mdl_node_mapper(fwd_model);
    end
 
    NODE = level_model( fwd_model, level );
-   [x,y] = grid_the_space( NODE, npx, npy);
+   [x,y] = grid_the_space( NODE, fwd_model);
    node_ptr= node_mapper( NODE, fwd_model.boundary, x, y);
 
    eidors_obj('set-cache', fwd_model, 'node_ptr', node_ptr);
@@ -270,19 +270,33 @@ function NODE= level_model( fwd_model, level )
    NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
 
 % Create matrices x y which grid the space of NODE
-function  [x,y] = grid_the_space( NODE, npx, npy);
-  xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
-  xmean= mean([xmin,xmax]); xrange= xmax-xmin;
+function  [x,y] = grid_the_space( NODE, fmdl);
 
-  ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
-  ymean= mean([ymin,ymax]); yrange= ymax-ymin;
+  xspace = []; yspace = [];
+  try 
+     xspace = fmdl.mdl_slice_mapper.x_pts;
+     yspace = fmdl.mdl_slice_mapper.y_pts;
+  end
 
-  range= max([xrange, yrange]);
-  [x y]=meshgrid( ...
-      linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
-      linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
+  if isempty(xspace)
+     npx  = fmdl.mdl_slice_mapper.npx;
+     npy  = fmdl.mdl_slice_mapper.npy;
+
+     xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
+     xmean= mean([xmin,xmax]); xrange= xmax-xmin;
+
+     ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
+     ymean= mean([ymin,ymax]); yrange= ymax-ymin;
+
+     range= max([xrange, yrange]);
+     xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
+     yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
+  end
+
+  [x,y]=meshgrid( xspace, yspace );
 
 function do_unit_test
+% 2D NUMBER OF POINTS
    imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
    fmdl.mdl_slice_mapper.level = [inf,inf,0];
    fmdl.mdl_slice_mapper.npx = 5;
@@ -303,7 +317,34 @@ function do_unit_test
    nptr = mdl_slice_mapper(fmdl,'node');
    do_indiv_test('nptr02',nptr,[ 0 0 28 0 0; 40 13 1 9 32; 0 0 36 0 0 ]);
 
-   
+% DIRECT POINT TESTS
+   imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
+   fmdl.mdl_slice_mapper.level = [inf,inf,0];
+   fmdl.mdl_slice_mapper.x_pts = linspace(-1,1,5);
+   fmdl.mdl_slice_mapper.y_pts = [0,0.5];
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   do_indiv_test('eptr03',eptr,[ 62 35 4 29 55; 0 34 26 30 0]);
+
+   nptr = mdl_slice_mapper(fmdl,'node');
+   do_indiv_test('nptr03',nptr,[ 40 13 1 9 32; 0 14 7 17 0]);
+
+% 3D NPOINTS
+   imdl = mk_common_model('n3r2',8); fmdl = imdl.fwd_model;
+   fmdl.mdl_slice_mapper.level = [inf,inf,1];
+   fmdl.mdl_slice_mapper.npx = 4;
+   fmdl.mdl_slice_mapper.npy = 4;
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   test = zeros(4); test(2:3,2:3) = [512 228;524 533];
+   do_indiv_test('eptr04',eptr, test);
+%  nptr = mdl_slice_mapper(fmdl,'node'); FAIL
+
+   fmdl.mdl_slice_mapper.level = [inf,0,inf];
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   test = zeros(4); test(1:4,2:3) = [ 792 777; 791 776; 515 500; 239 224];
+   do_indiv_test('eptr05',eptr,test);
+%  nptr = mdl_slice_mapper(fmdl,'node'); % EXPECTED FAIL
+
+
 
 
 function do_indiv_test(txt,a,b, tol)
