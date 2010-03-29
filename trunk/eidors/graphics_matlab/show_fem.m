@@ -1,6 +1,6 @@
 function show_fem( mdl, options)
-% show_fem( mdl, options )
 % SHOW_FEM: show the EIDORS3D finite element model
+% show_fem( mdl, options )
 % mdl is a EIDORS3D 'model' or 'image' structure
 %
 % options specifies a set of options

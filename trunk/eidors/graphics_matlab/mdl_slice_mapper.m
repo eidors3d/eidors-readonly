@@ -41,10 +41,10 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    NODE = level_model( fwd_model, level );
    ELEM= fwd_model.elems';
    if size(NODE,1) ==2 %2D
-      [x,y] = grid_the_space( NODE, fwd_model);
+      [x,y] = grid_the_space( fwd_model);
       elem_ptr= img_mapper2( NODE, ELEM, x, y);
    else
-      [x,y] = grid_the_space( NODE, fwd_model);
+      [x,y] = grid_the_space( fwd_model);
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
 
@@ -61,7 +61,7 @@ function node_ptr = mdl_node_mapper(fwd_model);
    end
 
    NODE = level_model( fwd_model, level );
-   [x,y] = grid_the_space( NODE, fwd_model);
+   [x,y] = grid_the_space( fwd_model);
    node_ptr= node_mapper( NODE, fwd_model.boundary, x, y);
 
    eidors_obj('set-cache', fwd_model, 'node_ptr', node_ptr);
@@ -136,7 +136,7 @@ function EPTR= img_mapper2(NODE, ELEM, x, y );
 % so that the imaging plane is on the z-axis. Then we iterate
 % through elements to find the containing each pixel
 function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
-  [x,y] = grid_the_space( NODE, npx, npy);
+  [x,y] = grid_the_space(npx, npy);
 
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -270,7 +270,7 @@ function NODE= level_model( fwd_model, level )
    NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
 
 % Create matrices x y which grid the space of NODE
-function  [x,y] = grid_the_space( NODE, fmdl);
+function  [x,y] = grid_the_space( fmdl);
 
   xspace = []; yspace = [];
   try 
@@ -282,10 +282,10 @@ function  [x,y] = grid_the_space( NODE, fmdl);
      npx  = fmdl.mdl_slice_mapper.npx;
      npy  = fmdl.mdl_slice_mapper.npy;
 
-     xmin = min(NODE(1,:));    xmax = max(NODE(1,:));
+     xmin = min(fmdl.nodes(:,1));    xmax = max(fmdl.nodes(:,1));
      xmean= mean([xmin,xmax]); xrange= xmax-xmin;
 
-     ymin = min(NODE(2,:));    ymax = max(NODE(2,:));
+     ymin = min(fmdl.nodes(:,2));    ymax = max(fmdl.nodes(:,2));
      ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
      range= max([xrange, yrange]);
