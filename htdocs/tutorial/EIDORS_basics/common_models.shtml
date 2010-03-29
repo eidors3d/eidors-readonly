@@ -58,6 +58,25 @@ Note that complete electrodes are indicated by
 green lines and point electrods by green circles
 </center>
 
+<pre>
+<!--#include virtual="common_models04.m" -->
+</pre>
+
+<table>
+<TR> <TD><img src="common_models04_a2c2.png"><br><b>model=a2c2</b> <TD><img src="common_models04_a2d0c.png"><br><b>model=a2d0c</b> <TD><img src="common_models04_a2d1c.png"><br><b>model=a2d1c</b> <TD><img src="common_models04_a2d2c.png"><br><b>model=a2d2c</b> <TD><img src="common_models04_a2d4c.png"><br><b>model=a2d4c</b>
+<TR> <TD><img src="common_models04_b2c2.png"><br><b>model=b2c2</b> <TD><img src="common_models04_b2d0c.png"><br><b>model=b2d0c</b> <TD><img src="common_models04_b2d1c.png"><br><b>model=b2d1c</b> <TD><img src="common_models04_b2d2c.png"><br><b>model=b2d2c</b> <TD><img src="common_models04_b2d4c.png"><br><b>model=b2d4c</b>
+<TR> <TD><img src="common_models04_c2c2.png"><br><b>model=c2c2</b> <TD><img src="common_models04_c2d0c.png"><br><b>model=c2d0c</b> <TD><img src="common_models04_c2d1c.png"><br><b>model=c2d1c</b> <TD><img src="common_models04_c2d2c.png"><br><b>model=c2d2c</b> <TD><img src="common_models04_c2d4c.png"><br><b>model=c2d4c</b>
+<TR> <TD><img src="common_models04_d2c2.png"><br><b>model=d2c2</b> <TD><img src="common_models04_d2d0c.png"><br><b>model=d2d0c</b> <TD><img src="common_models04_d2d1c.png"><br><b>model=d2d1c</b> <TD><img src="common_models04_d2d2c.png"><br><b>model=d2d2c</b> <TD><img src="common_models04_d2d4c.png"><br><b>model=d2d4c</b>
+<TR> <TD><img src="common_models04_e2c2.png"><br><b>model=e2c2</b> <TD><img src="common_models04_e2d0c.png"><br><b>model=e2d0c</b> <TD><img src="common_models04_e2d1c.png"><br><b>model=e2d1c</b> <TD><img src="common_models04_e2d2c.png"><br><b>model=e2d2c</b> <TD><img src="common_models04_e2d4c.png"><br><b>model=e2d4c</b>
+<TR> <TD><img src="common_models04_f2c2.png"><br><b>model=f2c2</b> <TD><img src="common_models04_f2d0c.png"><br><b>model=f2d0c</b> <TD><img src="common_models04_f2d1c.png"><br><b>model=f2d1c</b> <TD><img src="common_models04_f2d2c.png"><br><b>model=f2d2c</b> <TD><img src="common_models04_f2d4c.png"><br><b>model=f2d4c</b>
+<TR> <TD><img src="common_models04_g2c2.png"><br><b>model=g2c2</b> <TD><img src="common_models04_g2d0c.png"><br><b>model=g2d0c</b> <TD><img src="common_models04_g2d1c.png"><br><b>model=g2d1c</b> <TD><img src="common_models04_g2d2c.png"><br><b>model=g2d2c</b> <TD><img src="common_models04_g2d4c.png"><br><b>model=g2d4c</b>
+<TR> <TD><img src="common_models04_h2c2.png"><br><b>model=h2c2</b> <TD><img src="common_models04_h2d0c.png"><br><b>model=h2d0c</b> <TD><img src="common_models04_h2d1c.png"><br><b>model=h2d1c</b> <TD><img src="common_models04_h2d2c.png"><br><b>model=h2d2c</b> <TD><img src="common_models04_h2d4c.png"><br><b>model=h2d4c</b>
+<TR> <TD><img src="common_models04_i2c2.png"><br><b>model=i2c2</b> <TD><img src="common_models04_i2d0c.png"><br><b>model=i2d0c</b> <TD><img src="common_models04_i2d1c.png"><br><b>model=i2d1c</b> <TD><img src="common_models04_i2d2c.png"><br><b>model=i2d2c</b> <TD><img src="common_models04_i2d4c.png"><br><b>model=i2d4c</b>
+<TR> <TD><img src="common_models04_j2c2.png"><br><b>model=j2c2</b> <TD><img src="common_models04_j2d0c.png"><br><b>model=j2d0c</b> <TD><img src="common_models04_j2d1c.png"><br><b>model=j2d1c</b> <TD><img src="common_models04_j2d2c.png"><br><b>model=j2d2c</b> <TD><img src="common_models04_j2d4c.png"><br><b>model=j2d4c</b>
+<br><i> Figure:</i>
+Overview of models available from mk_common_model
+</center>
+
 </td></tr></table>
 <p>
 <small>
