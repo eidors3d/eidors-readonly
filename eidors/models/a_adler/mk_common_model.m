@@ -167,7 +167,7 @@ elseif ( str(2:3)=='2t' | str(2:3)=='2T') & length(str)==4
       inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
    end
       
-   inv_mdl = deform_cylinder( inv_mdl, str2num(str(4)), 1 );
+   inv_mdl.fwd_model = thorax_geometry( inv_mdl.fwd_model, str2num(str(4)));
 
 elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
@@ -211,7 +211,7 @@ elseif str(2:3)=='3c' | str(2:3) =='3t'
 
    if str(3) == 't' % thorax models
       inv_mdl = rotate_model( inv_mdl, 2); % 45 degrees
-      inv_mdl = deform_cylinder( inv_mdl, str2num(str(4)), 1 );
+      inv_mdl.fwd_model = thorax_geometry( inv_mdl.fwd_model, str2num(str(4)));
    end
 else
     error(['Don`t know what to do with option=',str]);
@@ -504,34 +504,6 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    inv_mdl.reconst_type= 'difference';
    inv_mdl.jacobian_bkgnd.value= 1;
    inv_mdl.fwd_model= fmdl;
-
-% Deform the boundary of the cylinder to make it like a torso
-% niv= 1.. 5 => Torso shape from T5 - T12
-% xyz_expand - rescale xyz - default should be [1];
-function inv_mdl = deform_cylinder( inv_mdl, niv, xyz_expand );
-    NODE= inv_mdl.fwd_model.nodes';
-    [x_coord, y_coord, z_mag ] = thorax_geometry;
-
-    reidx= [13:16, 1:12];
-    geo= [x_coord(niv,reidx)',  ...
-          y_coord(niv,reidx)'];
-    a_max= size(geo,1);
-    ab_geo=sqrt(sum(([ geo; geo(1,:) ]').^2)');
-    nn= zeros(size(NODE));
-    for i=1:size(NODE,2);
-      angle = rem(a_max*atan2( NODE(2,i), ...
-            NODE(1,i) )/2/pi+a_max,a_max)+1;
-      fac=(  (floor(angle+1.001)- angle)* ...
-              ab_geo(floor(angle+.001)) + ...
-             (angle-floor(angle+.001))* ...
-              ab_geo(floor(angle+1.001))  );
-      nn(1:2,i)= NODE(1:2,i)* fac;
-    end  %for i=1:size
-    if size(nn,1) == 3; 
-       nn(3,:) = NODE(3,:)*z_mag;
-    end
-
-    inv_mdl.fwd_model.nodes = nn'*eye(xyz_expand);
 
 
 function inv3d= mk_b3r1_model( n_elec, options )

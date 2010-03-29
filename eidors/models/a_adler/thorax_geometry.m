@@ -1,9 +1,60 @@
+function [out1, out2, out3 ] = thorax_geometry(in1,in2);
+% THORAX_GEOMETRY: deform mesh to have a human thorax like shape
 % Definition of thorax geometry for adult male (from CT)
 % at five levels (values in mm)
+%
+% Calling: 
+%   [x_coord, y_coord, z_mag ] = thorax_geometry(level,normalize);
+% OR
+%   fwd_model_new = thorax_geometry( fwd_model, level)
+% where level is 1..5 for T1 .. T5
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
-function [x_coord, y_coord, z_mag ] = thorax_geometry(level,normalize);
+
+call_thorax_geom = 1;
+try if strcmp(in1.type, 'fwd_model')
+   call_thorax_geom = 0;
+end; end
+
+if call_thorax_geom
+   [out1, out2, out3 ] = thorax_geometry_defs(in1,in2);
+else
+   [out1]              = deform_cylinder(in1,in2);
+end
+
+
+% Deform the boundary of the cylinder to make it like a torso
+% niv= 1.. 5 => Torso shape from T5 - T12
+% xyz_expand - rescale xyz - default should be [1];
+function fwd_mdl = deform_cylinder( fwd_mdl, niv);
+    NODE= fwd_mdl.nodes';
+    [x_coord, y_coord, z_mag ] = thorax_geometry_defs;
+
+    reidx= [13:16, 1:12];
+    geo= [x_coord(niv,reidx)',  ...
+          y_coord(niv,reidx)'];
+    a_max= size(geo,1);
+    ab_geo=sqrt(sum(([ geo; geo(1,:) ]').^2)');
+    nn= zeros(size(NODE));
+    for i=1:size(NODE,2);
+      angle = rem(a_max*atan2( NODE(2,i), ...
+            NODE(1,i) )/2/pi+a_max,a_max)+1;
+      fac=(  (floor(angle+1.001)- angle)* ...
+              ab_geo(floor(angle+.001)) + ...
+             (angle-floor(angle+.001))* ...
+              ab_geo(floor(angle+1.001))  );
+      nn(1:2,i)= NODE(1:2,i)* fac;
+    end  %for i=1:size
+    if size(nn,1) == 3;
+       nn(3,:) = NODE(3,:)*z_mag;
+    end
+
+    xyz_expand = 1;
+    fwd_mdl.nodes = nn'*eye(xyz_expand);
+
+
+function [x_coord, y_coord, z_mag ] = thorax_geometry_defs(level,normalize);
 
     x_coord= [ ...
       0,60,123,173,223,202,144,75,0,-75,-144,-202,-223,-173,-123,-60;
