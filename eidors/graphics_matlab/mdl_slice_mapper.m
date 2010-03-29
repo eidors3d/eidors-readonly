@@ -17,6 +17,8 @@ function map = mdl_slice_mapper( fmdl, maptype );
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+
 switch maptype
   case 'elem'; map = mdl_elem_mapper(fmdl);
   case 'node'; map = mdl_node_mapper(fmdl);
@@ -279,3 +281,35 @@ function  [x,y] = grid_the_space( NODE, npx, npy);
   [x y]=meshgrid( ...
       linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
       linspace( ymean + range*0.5, ymean - range*0.5, npy ) );
+
+function do_unit_test
+   imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
+   fmdl.mdl_slice_mapper.level = [inf,inf,0];
+   fmdl.mdl_slice_mapper.npx = 5;
+   fmdl.mdl_slice_mapper.npy = 5;
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   do_indiv_test('eptr01',eptr,[ 0  0 51  0  0; 0 34 26 30  0;
+                 62 35  4 29 55; 0 36 32 31  0; 0  0 59  0  0]);
+
+   nptr = mdl_slice_mapper(fmdl,'node');
+   do_indiv_test('nptr01',nptr,[ 0  0 28  0  0; 0 14  7 17  0;
+                 40 13  1  9 32; 0 23 11 20  0; 0  0 36  0  0]);
+
+   fmdl.mdl_slice_mapper.npx = 5;
+   fmdl.mdl_slice_mapper.npy = 3;
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   do_indiv_test('eptr02',eptr,[  0  0 51 0  0;62 35  4 29 55; 0 0 59 0 0]);
+
+   nptr = mdl_slice_mapper(fmdl,'node');
+   do_indiv_test('nptr02',nptr,[ 0 0 28 0 0; 40 13 1 9 32; 0 0 36 0 0 ]);
+
+   
+
+
+function do_indiv_test(txt,a,b, tol)
+   if nargin < 4; tol = 0; end
+   fprintf('%10s = ',txt);
+   ok='fail';
+   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
+   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
+   disp(ok)
