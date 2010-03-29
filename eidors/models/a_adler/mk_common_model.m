@@ -15,8 +15,10 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %      2d  => 2d Distmesh model
 %      0-4 => element refinement
 %      c   => circular mesh
+%   mk_common_model('b2d1t2',16)  - 2D circ model using distmesh ~ 1300 elems
+%       deformed to T2 thorax shape
 %
-% 2D Models using distmesh using fixed point electrodes (DEPRECATED)
+% 2D Models using distmesh using fixed point electrodes (faster but worse refinement)
 %   mk_common_model('a2d0d',16)  - 2D circ model using distmesh 
 %
 % 2D Models circular models:
@@ -119,12 +121,14 @@ elseif lower(str(2:3))=='2d'
    else          ; distmesh_do_graphics= 1;
    end
 
-   switch str(5:end)
+   switch str(5)
       case 'd' % Deprecated circle functions
-% THIS FUNCTION IS DEPRECATED (from EIDORS 3.3)
          inv_mdl= distmesh_2d_model_depr(str, n_elec, options);
       case 'c'
          inv_mdl= distmesh_2d_model(str, n_elec, options);
+      case 't'
+         inv_mdl= distmesh_2d_model(str, n_elec, options);
+         inv_mdl.fwd_model = thorax_geometry( inv_mdl.fwd_model, str2num(str(6)));
       otherwise;
          error(['can''t parse command string:', str]);
    end
