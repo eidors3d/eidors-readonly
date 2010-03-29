@@ -8,8 +8,11 @@ function show_fem( mdl, options)
 %   options(2) => show numbering on electrodes
 %   options(3) => number elements
 %
-% control colours using 
-%    calc_colours('param', value)
+% for detailed control of colours, use
+%    img.calc_colours."parameter" = value
+% see help for calc_colours.
+%
+% for control of colourbar, use img.calc_colours.cb_shrink_move
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
