@@ -32,6 +32,31 @@ Use <tt>help mk_common_models</tt> for more details
 Model c2d0c (left) and d2d3c (right)
 </center>
 
+<pre>
+<!--#include virtual="common_models02.m" -->
+</pre>
+
+<center>
+<img src="common_models02a.png">
+<br><i> Figure:</i>
+Model c2d0d (left) and d2d3d (right)
+</center>
+
+<pre>
+<!--#include virtual="common_models03.m" -->
+</pre>
+
+Come rough 2D models of thorax shapes are available
+as <tt><i>x</i>2t<i>x</i></tt> and 
+as <tt><i>x</i>2T<i>x</i></tt> and 
+models
+<center>
+<img src="common_models03a.png">
+<br><i> Figure:</i>
+Model c2C1 (left) and d2t3 (right). 
+Note that complete electrodes are indicated by
+green lines and point electrods by green circles
+</center>
 
 </td></tr></table>
 <p>
