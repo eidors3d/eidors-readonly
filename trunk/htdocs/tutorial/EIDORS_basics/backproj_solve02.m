@@ -3,7 +3,7 @@
 % Solve voltage for 3 different models
 for idx=1:3
   if     idx==1; mdltype= 'd2C2';
-  elseif idx==2; mdltype= 'd2C2';
+  elseif idx==2; mdltype= 'd2d3c';
   elseif idx==3; mdltype= 'd2T2';
   end
 
@@ -35,6 +35,6 @@ for idx=1:3
      imgn.node_data(vh.volt > vh.meas(v)) = v;
   end
 
-  subplot(2,3,idx+3); show_fem(imgn);
+  subplot(2,3,idx); show_fem(imgn);
 end
 print -r125 -dpng backproj_solve02b.png;
