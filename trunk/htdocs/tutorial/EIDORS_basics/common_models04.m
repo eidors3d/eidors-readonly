@@ -9,11 +9,18 @@ models = {'a2c2', 'a2d0c', 'a2d1c', 'a2d2c', 'a2d4c',  ...
           'h2c2', 'h2d0c', 'h2d1c', 'h2d2c', 'h2d4c',  ...
           'i2c2', 'i2d0c', 'i2d1c', 'i2d2c', 'i2d4c',  ...
           'j2c2', 'j2d0c', 'j2d1c', 'j2d2c', 'j2d4c'};
-for i= 31:length(models);
+
+for i= 1:length(models);
    imdl=mk_common_model(models{i},8);
-%  subplot(221); show_fem(imdl.fwd_model);
-%  axis image
-%  axis([0,1.05,-0.15,0.15]);
-%  print('-dpng','-r75',sprintf('common_models04_%s.png',models{i}));
+   save(['sav_',models{i}],'imdl');
 end
+
+for i= 1:length(models);
+   load(['sav_',models{i}]);
+   subplot(221); show_fem(imdl.fwd_model);
+   axis image
+   axis([0,1.05,-0.15,0.15]);
+   print('-dpng','-r75',sprintf('common_models04_%s.png',models{i}));
+end
+
 
