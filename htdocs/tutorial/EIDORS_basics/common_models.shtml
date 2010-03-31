@@ -26,21 +26,21 @@ Use <tt>help mk_common_models</tt> for more details
 <!--#include virtual="common_models01.m" -->
 </pre>
 
-<center>
+<blockquote>
 <img src="common_models01a.png">
 <br><i> Figure:</i>
 Model c2d0c (left) and d2d3c (right)
-</center>
+</blockquote>
 
 <pre>
 <!--#include virtual="common_models02.m" -->
 </pre>
 
-<center>
+<blockquote>
 <img src="common_models02a.png">
 <br><i> Figure:</i>
 Model c2d0d (left) and d2d3d (right)
-</center>
+</blockquote>
 
 <pre>
 <!--#include virtual="common_models03.m" -->
@@ -50,13 +50,13 @@ Come rough 2D models of thorax shapes are available
 as <tt><i>x</i>2t<i>x</i></tt> and 
 as <tt><i>x</i>2T<i>x</i></tt> and 
 models
-<center>
+<blockquote>
 <img src="common_models03a.png">
 <br><i> Figure:</i>
 Model c2C1 (left) and d2t3 (right). 
 Note that complete electrodes are indicated by
 green lines and point electrods by green circles
-</center>
+</blockquote>
 
 <pre>
 <!--#include virtual="common_models04.m" -->
@@ -73,9 +73,9 @@ green lines and point electrods by green circles
 <TR> <TD><img src="common_models04_h2c2.png"><br><b>model=h2c2</b> <TD><img src="common_models04_h2d0c.png"><br><b>model=h2d0c</b> <TD><img src="common_models04_h2d1c.png"><br><b>model=h2d1c</b> <TD><img src="common_models04_h2d2c.png"><br><b>model=h2d2c</b> <TD><img src="common_models04_h2d4c.png"><br><b>model=h2d4c</b>
 <TR> <TD><img src="common_models04_i2c2.png"><br><b>model=i2c2</b> <TD><img src="common_models04_i2d0c.png"><br><b>model=i2d0c</b> <TD><img src="common_models04_i2d1c.png"><br><b>model=i2d1c</b> <TD><img src="common_models04_i2d2c.png"><br><b>model=i2d2c</b> <TD><img src="common_models04_i2d4c.png"><br><b>model=i2d4c</b>
 <TR> <TD><img src="common_models04_j2c2.png"><br><b>model=j2c2</b> <TD><img src="common_models04_j2d0c.png"><br><b>model=j2d0c</b> <TD><img src="common_models04_j2d1c.png"><br><b>model=j2d1c</b> <TD><img src="common_models04_j2d2c.png"><br><b>model=j2d2c</b> <TD><img src="common_models04_j2d4c.png"><br><b>model=j2d4c</b>
+</table>
 <br><i> Figure:</i>
 Overview of models available from mk_common_model
-</center>
 
 </td></tr></table>
 <p>

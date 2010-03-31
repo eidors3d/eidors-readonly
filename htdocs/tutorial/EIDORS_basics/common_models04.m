@@ -12,15 +12,10 @@ models = {'a2c2', 'a2d0c', 'a2d1c', 'a2d2c', 'a2d4c',  ...
 
 for i= 1:length(models);
    imdl=mk_common_model(models{i},8);
-   save(['sav_',models{i}],'imdl');
-end
-
-for i= 1:length(models);
-   load(['sav_',models{i}]);
-   subplot(221); show_fem(imdl.fwd_model);
+   clf; show_fem(imdl.fwd_model);
    axis image
    axis([0,1.05,-0.15,0.15]);
-   print('-dpng','-r75',sprintf('common_models04_%s.png',models{i}));
+   print('-dpng','-r50',sprintf('common_models04_%s.png',models{i}));
 end
 
 
