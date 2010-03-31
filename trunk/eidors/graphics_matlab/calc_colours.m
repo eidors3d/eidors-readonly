@@ -52,7 +52,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %   'clim'    (DEFAULT []) crop colour display of values above clim
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
-%   'cmap_type'  Specify special colours (Default blue-red)
+%   'cmap_type'  Specify special colours (Default 'blue_red')
 %           if 'draeger' use the Draegerwerk/Amato colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
@@ -215,6 +215,11 @@ function [red,grn,blu] = draeger_colours(pp,scale_data);
    blu=      (-scale_data>0.1) .* (-scale_data - 0.1)/0.1;
    blu(-scale_data>0.2) = 1;
    blu=blu + ( scale_data>0.2) .* ( scale_data - 0.2)/0.8*2/3;
+
+% Sometimes this is just slightly > 1
+   red(red>1) = 1;
+   grn(grn>1) = 1;
+   blu(blu>1) = 1;
 
 
 function pp=get_colours( img );
