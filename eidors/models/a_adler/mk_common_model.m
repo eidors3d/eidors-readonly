@@ -277,16 +277,16 @@ function inv_mdl = distmesh_2d_model(str, n_elec, options);
       case 'a3'; params = [250,10,2]./[1000,1,100];
 
 % We set refinement 4==3. This is OK for this mdl density
-      case 'j4'; params = [  6,10,2]./[4000,1,100];
-      case 'i4'; params = [  7,10,2]./[4000,1,100];
-      case 'h4'; params = [  8,10,2]./[4000,1,100];
-      case 'g4'; params = [  9,10,2]./[4000,1,100];
-      case 'f4'; params = [ 10,10,2]./[4000,1,100];
-      case 'e4'; params = [ 13,10,2]./[4000,1,100];
-      case 'd4'; params = [ 20,10,2]./[4000,1,100];
-      case 'c4'; params = [ 70,10,2]./[4000,1,100];
-      case 'b4'; params = [150,10,2]./[4000,1,100];
-      case 'a4'; params = [250,10,2]./[4000,1,100];
+      case 'j4'; params = [  6,10,2]./[1000,1,100];
+      case 'i4'; params = [  7,10,2]./[1000,1,100];
+      case 'h4'; params = [  8,10,2]./[1000,1,100];
+      case 'g4'; params = [  9,10,2]./[1000,1,100];
+      case 'f4'; params = [ 10,10,2]./[1000,1,100];
+      case 'e4'; params = [ 13,10,2]./[1000,1,100];
+      case 'd4'; params = [ 20,10,2]./[1000,1,100];
+      case 'c4'; params = [ 70,10,2]./[1000,1,100];
+      case 'b4'; params = [150,10,2]./[1000,1,100];
+      case 'a4'; params = [250,10,2]./[1000,1,100];
 
       otherwise; error('don`t know what to do with option=%s',str);
    end
