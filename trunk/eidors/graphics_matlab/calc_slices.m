@@ -73,6 +73,7 @@ try   filt = img.calc_slices.filter;
 catch filt = []; end
 
 if ~isempty(filt)
+   filt = filt/sum(filt(:));
    rimg = filter_image(rimg, filt);
 end
 
