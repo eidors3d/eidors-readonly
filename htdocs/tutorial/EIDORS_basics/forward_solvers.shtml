@@ -14,9 +14,18 @@ EIDORS has functions to create common FEM models.
 <center>
 <img src="forward_solvers01a.png">
 <br><i> Figure:</i>
-output image showing 2D and 3D EIT finite element
-models. Electrodes are shown in green. Electrode #1
-is light green.
+A 2D finite element model (left) and an
+conductivity contrasting inclusion (right)
+</center>
+
+<pre>
+<!--#include virtual="forward_solvers02.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers02a.png">
+<br><i> Figure:</i>
+The voltage pattern from adjacent stimulation
 </center>
 
 </td></tr></table>
