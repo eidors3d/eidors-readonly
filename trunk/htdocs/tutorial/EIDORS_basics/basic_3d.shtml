@@ -36,6 +36,37 @@ Show in a different way with cut planes
 and a circular inclusion shown with two cut planes.
 </center>
 
+<h4>Simulate Voltages</h4>
+<pre>
+<!--#include virtual="basic_3d_04.m" -->
+</pre>
+
+<center>
+<img src="basic_3d_04a.png">
+<br><i>Figure:</i>
+Simulated difference voltages
+</center>
+
+<h3> 
+Reconstruction
+</h3>
+Make a reconstruction matrix
+<pre>
+<!--#include virtual="basic_3d_05.m" -->
+</pre>
+
+Reconstruct the images
+<pre>
+<!--#include virtual="basic_3d_06.m" -->
+</pre>
+<center>
+<img src="basic_3d_06a.png"><img src="basic_3d_06b.png">
+<br><i>Figure:</i>
+Reconstructed 3D images. The vertical extent of the object
+is expected, since the simulated target is outside the
+imaging plane.
+</center>
+
 
 </td></tr></table>
 <p>

@@ -4,5 +4,7 @@
 vh= fwd_solve(img1);
 vi= fwd_solve(img2);
 
+subplot(211)
 plot([vh.meas, vi.meas]);
-print -dpng -r125 basic_3d_04a.png
+axis tight
+print -dpng -r100 basic_3d_04a.png
