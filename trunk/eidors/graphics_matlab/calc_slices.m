@@ -157,9 +157,15 @@ function do_unit_test
    imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
    do_indiv_test('cs 3d 1', imn, imt);
 
-   imn = calc_slices(img,[inf,0,inf]);
+   imn = calc_slices(img,[inf,0,inf]) 
    imt = NaN*ones(8); imt(1:8,3:6) = 1; 
    do_indiv_test('cs 3d 2', imn, imt);
+
+   % Should have no effect
+   img.fwd_model.nodes(:,3) = img.fwd_model.nodes(:,3)-1;
+   imn = calc_slices(img,[inf,0,inf]) 
+   imt = NaN*ones(8); imt(1:8,3:6) = 1; 
+   do_indiv_test('cs 3d 3', imn, imt);
 
 
 
