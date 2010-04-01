@@ -2,60 +2,21 @@
 <h2>EIDORS fwd_models</h2>
 
 <h3> 
-Create a simple 3D fwd_model structure
+Creating an FEM and solving the forward problem
 </h3>
 
 EIDORS has functions to create common FEM models.
 
 <pre>
-<!--#include virtual="tutorial010a.m" -->
+<!--#include virtual="forward_solvers01.m" -->
 </pre>
 
 <center>
-<img src="tutorial010a.png">
+<img src="forward_solvers01a.png">
 <br><i> Figure:</i>
 output image showing 2D and 3D EIT finite element
 models. Electrodes are shown in green. Electrode #1
 is light green.
-</center>
-
-<h3> 
-Create a simple 3D fwd_model structure
-</h3>
-
-Based on these FEM models, we can simulate
-data. This code simulates difference data
-for a pattern with two inhomogeneities.
-
-<pre>
-<!--#include virtual="tutorial010b.m" -->
-</pre>
-
-<center>
-<img src="tutorial010b.png">
-<br><i> Figure:</i>
-Simulated voltages from 3D EIT mesh. Right
-axis (left) shows the difference signal due
-to an inhomogeneity.
-</center>
-
-<h3> 
-Reconstruct images
-</h3>
-
-Using these difference data sets, an
-image may be reconstructed.
-
-<pre>
-<!--#include virtual="tutorial010c.m" -->
-</pre>
-
-<center>
-<img src="tutorial010c.png">
-<br><i> Figure:</i>
-<i>Left</i>: Simulation image;
-<i>Middle</i>: Reconstructed image (as mesh);
-<i>Right</i>: Reconstructed image slices at <i>z=1.0</i> and <i>z=2.0</i>.
 </center>
 
 </td></tr></table>
