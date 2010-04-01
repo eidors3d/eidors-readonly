@@ -1,6 +1,5 @@
 % Forward solvers $Id$
 
-
 % 2D Model
 imdl_2d= mk_common_model('d2d1c',19);
 
@@ -16,7 +15,7 @@ dist = (pts(:,1,:)-xctr).^2 + (pts(:,2,:)-yctr).^2;
 member = mean( dist < rad^2 ,3);
 img_2d.elem_data = 1 + member;
 
-img.calc_colours.cb_shrink_move = [0.5,0.8,0];
+img_2d.calc_colours.cb_shrink_move = [0.3,0.6,+0.03];
 subplot(222); show_fem(img_2d,1);
 
 print -dpng -r125 forward_solvers01a.png
