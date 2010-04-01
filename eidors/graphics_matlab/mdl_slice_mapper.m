@@ -44,7 +44,8 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
       [x,y] = grid_the_space( fwd_model);
       elem_ptr= img_mapper2( NODE, ELEM, x, y);
    else
-      [x,y] = grid_the_space( fwd_model);
+      fmdl3 = fwd_model; fmdl3.nodes = NODE'; 
+      [x,y] = grid_the_space( fmdl3 );
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
 
