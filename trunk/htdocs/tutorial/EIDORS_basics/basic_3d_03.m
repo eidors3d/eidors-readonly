@@ -1,9 +1,18 @@
 % Basic 3d model $Id$
 
-% Add a circular object at 0.2, 0.5
-% Calculate element membership in object
+clf
+% Show 3D object as slices
+img2.calc_colours.greylev = -0.05;
+img2.calc_colours.npoints = 128;
+subplot(221);
+show_3d_slices(img2, [0.5,1.5,1.8,2.1]);
+view(-14,13); axis tight; axis equal; zlim([0,3]);
 
-img2.calc_colours.cb_shrink_move = [0.3,0.6, 0];
-subplot(221); show_fem(img2,1);
+% Show 3D object as slices
+print -dpng -r125 basic_3d_03a.png
 
-print -dpng -r125 basic_3d_02a.png
+subplot(221);
+show_3d_slices(img2, [1,1.9], [0.5],[0.5]);
+view(-14,13); axis tight; axis equal;
+
+print -dpng -r125 basic_3d_03b.png

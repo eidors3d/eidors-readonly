@@ -3,7 +3,7 @@
 % Add a circular object at 0.2, 0.5
 % Calculate element membership in object
 img2 = img1;
-xctr = 0.2; yctr = 0.5; zctr = 2; rad = 0.1;
+xctr = 0.2; yctr = 0.5; zctr = 2; rad = 0.3;
 pts = interp_mesh( img2.fwd_model, 3);
 dist = (pts(:,1,:)-xctr).^2 + (pts(:,2,:)-yctr).^2 + (pts(:,3,:)-zctr).^2;
 member = mean( dist < rad^2 ,3);
