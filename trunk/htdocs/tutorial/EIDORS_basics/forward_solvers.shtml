@@ -28,6 +28,16 @@ conductivity contrasting inclusion (right)
 The voltage pattern from adjacent stimulation
 </center>
 
+<pre>
+<!--#include virtual="forward_solvers03.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers03a.png">
+<br><i> Figure:</i>
+The voltage pattern from opposite (nearly) stimulation
+</center>
+
 </td></tr></table>
 <p>
 <small>
