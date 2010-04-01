@@ -70,10 +70,10 @@ function [xyz_max, xyz_min, rimg, cimg, ...
             x_cuts(:)*[1  ,inf,inf]; ...
             y_cuts(:)*[inf,1  ,inf]];
 
-   np= calc_colours('npoints');
+   rimg0= calc_slices( img, limts);
 % SURF DOESN'T SHOW THE BLOODY OUTER BOUNDARY, WE NEED TO ADD 4 POINTS
-   rimg= NaN*ones(np+4,np+4,size(limts,1));
-   rimg(3:end-2,3:end-2,:)= calc_slices( img, limts);
+   rimg= NaN*ones(size(rimg0,1)+4,size(rimg0,2)+4,size(limts,1));
+   rimg(3:end-2,3:end-2,:)= rimg0;
    cimg = calc_colours( rimg, img);
 
 function xyz= linspace_plus4(lim_min, lim_max, np);
@@ -87,7 +87,7 @@ function xyz= linspace_plus4(lim_min, lim_max, np);
 %       delta/(np-1)*[-(np-1)/2:(np-1)/2]; % for plus0
 
 function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
-   np= calc_colours('npoints');
+   np= size(rimg,1)-4;
    lim_min= xyz_min*M_trans;
    lim_max= xyz_max*M_trans;
    xyz= linspace_plus4( lim_min, lim_max, np);
