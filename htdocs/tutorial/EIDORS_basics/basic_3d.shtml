@@ -1,0 +1,35 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>EIDORS image reconstructions</h2>
+
+<h3> 
+Construcxtion of a simple 3D model and image reconstruction
+</h3>
+
+The EIDORS inv_model describes all the
+parameters as part of image reconstruction
+
+<pre>
+<!--#include virtual="basic_3d_01.m" -->
+</pre>
+
+Add circular inclusion
+<pre>
+<!--#include virtual="basic_3d_02.m" -->
+</pre>
+
+<center>
+<img src="basic_3d_01a.png"><img src="basic_3d_02a.png">
+<br><i>Figure:</i>
+3D model with 3 layers of 15 electrodes
+(left) with a circular inclusion.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
