@@ -24,6 +24,18 @@ Add circular inclusion
 (left) with a circular inclusion.
 </center>
 
+Show in a different way with cut planes
+<pre>
+<!--#include virtual="basic_3d_03.m" -->
+</pre>
+
+<center>
+<img src="basic_3d_03a.png"><img src="basic_3d_03b.png">
+<br><i>Figure:</i>
+3D model with 3 layers of 15 electrodes 
+and a circular inclusion shown with two cut planes.
+</center>
+
 
 </td></tr></table>
 <p>
