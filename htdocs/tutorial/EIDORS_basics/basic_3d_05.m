@@ -6,8 +6,3 @@ iRN = hp^2 * speye(size(J,1));
 RM = iRtR*J'/(J*iRtR*J' + iRN);
 imdl.solve = @solve_use_matrix; 
 imdl.solve_use_matrix.RM  = RM;
-
-% reconstruct
-imgr = inv_solve(imdl, vh, vi);
-
-print -dpng -r125 basic_3d_04a.png
