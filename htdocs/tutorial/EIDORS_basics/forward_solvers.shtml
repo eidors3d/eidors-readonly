@@ -38,6 +38,16 @@ The voltage pattern from adjacent stimulation
 The voltage pattern from opposite (nearly) stimulation
 </center>
 
+<pre>
+<!--#include virtual="forward_solvers04.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers04a.png">
+<br><i> Figure:</i>
+The voltage pattern from a change in conductivity
+</center>
+
 </td></tr></table>
 <p>
 <small>

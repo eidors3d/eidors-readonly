@@ -1,7 +1,7 @@
 % Forward solvers $Id$
 
 % Calculate a stimulation pattern
-stim = mk_stim_patterns(19,1,[0,1],[0,1],{},1);
+stim = mk_stim_patterns(19,1,[0,9],[0,1],{},1);
 
 % Solve all voltage patterns
 img_2.fwd_model.stimulation = stim;
@@ -21,4 +21,4 @@ img_v.node_data = vh.volt(:,7);
 img_v.calc_colours.cb_shrink_move = [0.3,0.6,+0.03];
 show_fem(img_v,1);
 
-print -dpng -r125 forward_solvers02a.png
+print -dpng -r125 forward_solvers03a.png
