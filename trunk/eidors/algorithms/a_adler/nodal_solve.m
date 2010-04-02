@@ -14,16 +14,15 @@ function img= nodal_solve( inv_model, data1, data2)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-RM = get_RM( inv_model );
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 
-sol = one_step_inv * dv;
+sol = get_RM( inv_model ) * dv;
 
 % create a data structure to return
 img.name= 'solved by nodal_solve';
 img.node_data = sol;
-img.fwd_model= imdl.fwd_model;
+img.fwd_model= inv_model.fwd_model;
 
 function one_step_inv = get_RM( inv_model );
    fwd_model= inv_model.fwd_model;
@@ -42,7 +41,22 @@ function one_step_inv = get_RM( inv_model );
    W   = calc_meas_icov( inv_model );
    hp  = calc_hyperparameter( inv_model );
 
+   [e2n,Ne, Nn] = elem2node( fwd_model.elems );
+   if size(J,2) == Ne;
+      J= J*e2n;
+   end
+   if size(RtR,2) == Ne;
+      RtR = e2n'*RtR*e2n;
+      RtR = RtR +  1e-4*spdiags(diag(RtR),0,Nn,Nn); %Need just a little regularization
+   end
+
    one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
 
    eidors_obj('set-cache', inv_model, 'nodal_solve', one_step_inv);
    eidors_msg('nodal_solve: setting cached value', 3);
+
+function [e2n, Ne, Nn] = elem2node( elems )
+   [Ne,d] = size(elems);
+   elemo = (1:Ne)'*ones(1,d);
+   e2n = sparse(elemo,elems,1/d); 
+   Nn = size(e2n,2);
