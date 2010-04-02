@@ -46,8 +46,8 @@ Reconstructing onto nodes
 <img src="nodal_solve02a.png"><img src="nodal_solve02b.png">
 <img src="nodal_solve03a.png"><img src="nodal_solve03b.png">
 <br><i>Figure:</i>
-Reconstructed conductivity reconstructed to elements (Left) and
-                                            nodes (right)
+Reconstructed conductivity reconstructed to elements (top) and
+                                            nodes (bottom)
 </center>
 
 </td></tr></table>
