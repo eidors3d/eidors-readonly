@@ -80,6 +80,21 @@ for absolute imaging
 Difference (right) and one step absolute (left) images
 </center>
 
+<h3> 
+Absolute solvers as a function of iteration
+</h3>
+
+<pre>
+<!--#include virtual="rpi_data06.m" -->
+</pre>
+<center>
+<img src="rpi_data06a.png">
+<img src="rpi_data06b.png">
+<img src="rpi_data06c.png">
+<img src="rpi_data06e.png">
+<br><i> Figure:</i>
+Absolute solver at iterations (from right to left): 1, 2, 3, 5
+</center>
 
 </td></tr></table>
 <p>
