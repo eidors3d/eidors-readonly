@@ -8,7 +8,7 @@ imdl.fwd_model.electrode = imdl.fwd_model.electrode([8:-1:1, 32:-1:9]);
 
 imdl.fwd_model = rmfield(imdl.fwd_model,'meas_select');
 imdl.fwd_model.stimulation = stim;
-imdl.hyperparameter.value = .08;
+imdl.hyperparameter.value = 1;
 
 
 load Rensselaer_EIT_Phantom;
