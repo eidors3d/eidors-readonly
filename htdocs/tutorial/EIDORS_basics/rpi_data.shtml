@@ -1,0 +1,80 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>Absolute and Difference solvers</h2>
+
+<h3> 
+Get data from the RPI tank phantom
+</h3>
+
+This tutorial is based on the
+<a href="../../data_contrib/jn_chest_phantom/jn_chest_phantom.shtml">
+tank phantom data</a> contributed by Jon Newell. Data were measured
+on a cylindrical tank shown below. The data can by assumed to
+be 2D because the vertical dimension is constant.
+
+<center>
+<img src="../../data_contrib/jn_chest_phantom/RPI_2d_chest_phantom.jpg">
+<br><i> Figure:</i>
+Figure: Phantom Image (from Isaacson
+Mueller Newell and Siltanen,
+ IEEE Trans Med Imaging 23(7): 821-828, 2004) 
+</center>
+
+<h3> 
+Build a good FEM of the phantom
+</h3>
+
+It is important to correctly model the size of the electrodes
+and their position to get absolute imaging to work.
+
+<pre>
+<!--#include virtual="rpi_data01.m" -->
+</pre>
+
+
+<h3> 
+Create a simple 3D fwd_model structure
+</h3>
+
+Based on these FEM models, we can simulate
+data. This code simulates difference data
+for a pattern with two inhomogeneities.
+
+<pre>
+<!--#include virtual="tutorial010b.m" -->
+</pre>
+
+<center>
+<img src="tutorial010b.png">
+<br><i> Figure:</i>
+Simulated voltages from 3D EIT mesh. Right
+axis (left) shows the difference signal due
+to an inhomogeneity.
+</center>
+
+<h3> 
+Reconstruct images
+</h3>
+
+Using these difference data sets, an
+image may be reconstructed.
+
+<pre>
+<!--#include virtual="tutorial010c.m" -->
+</pre>
+
+<center>
+<img src="tutorial010c.png">
+<br><i> Figure:</i>
+<i>Left</i>: Simulation image;
+<i>Middle</i>: Reconstructed image (as mesh);
+<i>Right</i>: Reconstructed image slices at <i>z=1.0</i> and <i>z=2.0</i>.
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
