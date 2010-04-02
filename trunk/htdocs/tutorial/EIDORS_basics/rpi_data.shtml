@@ -40,14 +40,21 @@ Figure: FEM phantom
 Difference imaging
 </h3>
 
+Using a very simple model
 <pre>
 <!--#include virtual="rpi_data02.m" -->
+</pre>
+Using a the accurate electrode model
+<pre>
+<!--#include virtual="rpi_data03.m" -->
 </pre>
 
 <center>
 <img src="rpi_data02a.png">
+<img src="rpi_data03a.png">
 <br><i> Figure:</i>
-Figure: FEM phantom
+Figure: Differences images reconstructed of the phantom. For difference
+imaging, the simple model works surprisingly well.
 </center>
 
 </td></tr></table>
