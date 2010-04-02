@@ -57,6 +57,30 @@ Figure: Differences images reconstructed of the phantom. For difference
 imaging, the simple model works surprisingly well.
 </center>
 
+<h3> 
+Estimating actual conductivities
+</h3>
+
+In order to estimate the actual conductivity values, we need
+to scale for the applied voltage, tank size (in 3D) and
+background conductivity
+<pre>
+<!--#include virtual="rpi_data04.m" -->
+</pre>
+
+This can even be a quick way to use a difference solver
+for absolute imaging
+<pre>
+<!--#include virtual="rpi_data05.m" -->
+</pre>
+<center>
+<img src="rpi_data04a.png">
+<img src="rpi_data05a.png">
+<br><i> Figure:</i>
+Difference (right) and one step absolute (left) images
+</center>
+
+
 </td></tr></table>
 <p>
 <small>
