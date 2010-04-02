@@ -91,7 +91,7 @@ c_img = calc_colours( sol2D(:), [], 1 );
 for q=1:size(tri)
    tri_q= tri(q,:);
 % need 'direct' otherwise colourmap is screwed up
-   patch(vtxp(tri_q,1),vtxp(tri_q,2),c_img(:,q), ...
+   patch(vtxp(tri_q,1),vtxp(tri_q,2),squeeze(c_img(q,:,:)), ...
          'CDataMapping','direct','EdgeColor','none');
 end %for q 
 % colorbar;
