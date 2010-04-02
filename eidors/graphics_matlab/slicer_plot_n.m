@@ -2,8 +2,6 @@ function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);
 %function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);
 %
 %This function plots a 2D slice of the 3D solution vector BB at z=h.
-%Requires Matlab version 6.1 or upgrate (R12 or newer). 
-%
 %
 %h    = The height of the desired solution, max(vtx(:,3))>= h >= min(vtx(:,3)).
 %sol  = The caclulated inverse solution
@@ -14,11 +12,7 @@ function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);
 %       it thereafter. Initially use [fc] = slicer_plot(h,BB,vtx,simp); to plot the slide 
 %       and calculate fc.
 
-
-v = version;
-if str2num(v(1)) < 6
-   error('Sorry Matlab version 6.1 R(12) or update is required for the function')
-end
+% $Id$
 
 if nargin < 5
 fc = [];
@@ -86,8 +80,8 @@ sol2D = zeros(size(gCts,1),1);
 %(5) Plot the planar solution sol2D with patches
 % Autoscale each axes to its own scale
 % c_img = calc_colours( sol2D(:), [], 1 );
-
 c_img = calc_colours( sol2D(:), [], 1 );
+
 for q=1:size(tri)
    tri_q= tri(q,:);
 % need 'direct' otherwise colourmap is screwed up
