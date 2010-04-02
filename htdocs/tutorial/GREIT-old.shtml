@@ -1,0 +1,30 @@
+<!--#include virtual="nav-sidebar.shtml" -->
+<h2>GREIT Software</h2>
+
+These tutorials show how to implement and test
+GREIT software with EIDORS.
+To run these tutorials, you need to 
+<a href="../download.shtml">download and install</a>
+EIDORS and then run this command in a matlab
+(or octave) session.
+<pre width="40">
+&gt;&gt;run /path/to/eidors3d/startup.m
+</pre>
+
+<!--#include virtual="./GREIT-old.html" -->
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->
