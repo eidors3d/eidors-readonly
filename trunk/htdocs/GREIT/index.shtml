@@ -49,17 +49,18 @@ Physiol. Meas, 30:S35-S55, 2009.
 
 <H3>Getting Started</H3>
 
-GREIT is in active development. Please see the 
-<a href="./documents.shtml"
-   >released documents</a> or
-<a href="../tutorial/GREIT.shtml"
-   >Software Framework</a> for more detailed
-information.
-
 <ul>
 <p><li><b>
 Browse Documents and Software in development
 </b><br>
+<p><li><b>Paper:</b>
+<a href="http://www.iop.org/EJ/abstract/0967-3334/30/6/S03"
+   >GREIT: a unified approach to 2D linear EIT reconstruction of lung images</a>
+   and 
+<a href="http://www.sce.carleton.ca/faculty/adler/publications/2009/GREIT-2009-algorithm.pdf"
+   >Final Draft</a>
+
+<p><li><b>Source code and Latex for the paper:</b>
 <a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk/htdocs/papers/paper-GREIT-2008"
    >Browse SVN</a><br>
 
