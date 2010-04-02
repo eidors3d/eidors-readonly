@@ -1,0 +1,33 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>EIDORS image reconstructions</h2>
+
+<h3> 
+Solving onto Nodes vs Elements
+</h3>
+
+EIDORS noramlly reconstructs an image onto the
+image FEM triangles, represented by the <tt>img.elem_data</tt>.
+However, if images reconstruct onto     <tt>img.node_data</tt>,
+then the results are shown on nodes.
+
+<pre>
+<!--#include virtual="tutorial110a.m" -->
+</pre>
+
+<center>
+<img src="tutorial110a.png">
+<br><i>Figure:</i>
+Image reconstructions shown as images
+(<i>top</i>) or meshes (<i>bottom</i>)
+for different hyperparameter values.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
