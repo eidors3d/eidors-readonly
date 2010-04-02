@@ -28,6 +28,13 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
       end
    end
 
+   % Stop scale from being too small
+   if max_scale<abs(ref_lev)
+      if max_scale < 1e-10; max_scale = 1e-10; end
+   else
+      if max_scale/ref_lev < 1e-4; max_scale = ref_lev*1e-4; end 
+   end
+
    % Get colormap limits  and move bottom so we don't see the background colour 
    ylim = get(hh,'Ylim');
    ylim(1)= ylim(1)+1;
@@ -40,7 +47,7 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
    OrdOfMag = 10^floor(log10(max_scale));
    scale_r  = OrdOfMag * floor( max_scale / OrdOfMag );
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
-
+   
    tick_vals = [-1:0.5:1]*scale_r + ref_r;
    % ref_lev goes to c_ctr. max_scale goes to c_max
    tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;

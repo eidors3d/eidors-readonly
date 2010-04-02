@@ -100,6 +100,7 @@ else
 end
 
 demo_img.name= 'Reconstructed conductivity distribution';
+demo_img.calc_colours.ref_level = 0;
 if ~exist('OCTAVE_VERSION');
    figure; image_levels( demo_img, levels );
 else
