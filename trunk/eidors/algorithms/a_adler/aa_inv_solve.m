@@ -23,22 +23,22 @@ img.fwd_model= inv_model.fwd_model;
 
 function one_step_inv = get_RM( inv_model );
    fwd_model= inv_model.fwd_model;
-   pp= aa_fwd_parameters( fwd_model );
 
    % The one_step reconstruction matrix is cached
    one_step_inv = eidors_obj('get-cache', inv_model, 'nodal_solve');
    if ~isempty(one_step_inv)
        eidors_msg('nodal_solve: using cached value', 3);
-   else
-       img_bkgnd= calc_jacobian_bkgnd( inv_model );
-       J = calc_jacobian( fwd_model, img_bkgnd);
-
-       RtR = calc_RtR_prior( inv_model );
-       W   = calc_meas_icov( inv_model );
-       hp  = calc_hyperparameter( inv_model );
-
-       one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
-
-       eidors_obj('set-cache', inv_model, 'nodal_solve', one_step_inv);
-       eidors_msg('nodal_solve: setting cached value', 3);
+       return;
    end
+
+   img_bkgnd= calc_jacobian_bkgnd( inv_model );
+   J = calc_jacobian( fwd_model, img_bkgnd);
+
+   RtR = calc_RtR_prior( inv_model );
+   W   = calc_meas_icov( inv_model );
+   hp  = calc_hyperparameter( inv_model );
+
+   one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
+
+   eidors_obj('set-cache', inv_model, 'nodal_solve', one_step_inv);
+   eidors_msg('nodal_solve: setting cached value', 3);
