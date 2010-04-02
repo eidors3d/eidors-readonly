@@ -32,7 +32,7 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
    if max_scale<abs(ref_lev)
       if max_scale < 1e-10; max_scale = 1e-10; end
    else
-      if max_scale/ref_lev < 1e-4; max_scale = ref_lev*1e-4; end 
+      if max_scale/abs(ref_lev) < 1e-4; max_scale = ref_lev*1e-4; end 
    end
 
    % Get colormap limits  and move bottom so we don't see the background colour 

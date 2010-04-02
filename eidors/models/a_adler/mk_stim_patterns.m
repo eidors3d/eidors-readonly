@@ -191,7 +191,7 @@ function stim_pat = mk_stim_pat(v, elec, ring );
    if v.balance_inj
       stim_pat= stim_pat - sum(v.i_factor)/ (v.tn_elec-1);
    elseif v.trig_inj
-      stim_pat = trig_pat( elec, v.tn_elec, v.trig_inj);
+      stim_pat = trig_pat( elec, v.tn_elec, v.trig_inj) * v.amplitude;
       return;
    end
 
@@ -494,6 +494,17 @@ function do_unit_test
    do_indiv_test('balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
    do_indiv_test('balance_meas: t1',stim(2).meas_pattern, (4*eye(4)-ones(4))/3);
 
+   stim = mk_stim_patterns(4,1,[0,1],[0,1],{},2);
+   do_indiv_test('amplitude: t1',stim(2).stim_pattern, [0;-2;2;0]);
+   stim = mk_stim_patterns(4,1,'{ad}',[0,1],{},2);
+   do_indiv_test('amplitude: t2',stim(2).stim_pattern, [0;-2;2;0]);
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj'},2);
+   do_indiv_test('amplitude: t3',stim(2).stim_pattern, [0;2;0;0]);
+   stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},2);
+   do_indiv_test('amplitude: t4',stim(2).stim_pattern, [0;2;0;0]);
+   stim = mk_stim_patterns(4,1,'{trig}',[0,1],{},2);
+   do_indiv_test('amplitude: t5',stim(2).stim_pattern, [0;2;0;-2],1e-5);
+  
    
 
 function do_indiv_test(txt,a,b,tol)
