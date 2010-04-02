@@ -1,27 +1,54 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
-<h2>EIDORS image reconstructions</h2>
 
-<h3> 
+<h2> 
 Solving onto Nodes vs Elements
-</h3>
+</h2>
 
 EIDORS noramlly reconstructs an image onto the
 image FEM triangles, represented by the <tt>img.elem_data</tt>.
 However, if images reconstruct onto     <tt>img.node_data</tt>,
 then the results are shown on nodes.
 
+<h3> 
+Solving onto Nodes vs Elements
+</h3>
+
+Simulate a model
+
 <pre>
-<!--#include virtual="tutorial110a.m" -->
+<!--#include virtual="nodal_solve01.m" -->
 </pre>
 
 <center>
-<img src="tutorial110a.png">
+<img src="nodal_solve01a.png">
+<img src="nodal_solve01b.png">
 <br><i>Figure:</i>
-Image reconstructions shown as images
-(<i>top</i>) or meshes (<i>bottom</i>)
-for different hyperparameter values.
+Simulation mesh (left)) and simulated voltages (right)
 </center>
 
+<h3> 
+Reconstructing onto elements
+</h3>
+
+<pre>
+<!--#include virtual="nodal_solve02.m" -->
+</pre>
+
+<h3> 
+Reconstructing onto nodes
+</h3>
+
+<pre>
+<!--#include virtual="nodal_solve03.m" -->
+</pre>
+
+<center>
+<img src="nodal_solve02a.png"><img src="nodal_solve02b.png">
+<img src="nodal_solve03a.png"><img src="nodal_solve03b.png">
+<br><i>Figure:</i>
+Reconstructed conductivity reconstructed to elements (Left) and
+                                            nodes (right)
+</center>
 
 </td></tr></table>
 <p>
