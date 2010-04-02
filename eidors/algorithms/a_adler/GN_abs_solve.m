@@ -36,9 +36,10 @@ for i = 1:iters;
   img = line_optimize(img, dx, data1);
 end
 
+% Fit a parabola to the linefit and pick the best point
+% This is better than doing an exhaustive search
 function  img = line_optimize(imgk, dx, data1);
-% TODO, we can do a parabloic fit
-  flist = [0.03, 0.1, 0.3,  0.5, 0.9];
+  flist = [ 0.1,  0.5, 0.9];
   clim = mean(imgk.elem_data)/10; % prevent zero and negative conductivity
   img = imgk;
   for i = 1:length(flist);
@@ -48,8 +49,10 @@ function  img = line_optimize(imgk, dx, data1);
      dv = calc_difference_data( vsim , data1, img.fwd_model);
      mlist(i) = norm(dv);
   end
+  pf = polyfit(flist, mlist, 2);
+  fmin = -pf(2)/pf(1)/2; % poly minimum
+  fmin(fmin>1) = 1; fmin(fmin<0) = 0;
 
-  [jnk, i] = min(mlist)
   img.elem_data = imgk.elem_data + flist(i)*dx;
   img.elem_data(img.elem_data <= clim ) = clim;
 
