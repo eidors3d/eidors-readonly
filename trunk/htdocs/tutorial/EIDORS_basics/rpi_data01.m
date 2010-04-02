@@ -1,7 +1,8 @@
 % RPI tank model $Id$
 
 Nel= 32; %Number of elecs
-Zc = .001; % Contact impedance
+Zc = .0001; % Contact impedance
+curr = 20; % applied current mA
 
 
 th= linspace(0,360,Nel+1)';th(1)=[];
@@ -15,7 +16,7 @@ end
 
 % Trig stim patterns
 stim = mk_stim_patterns(Nel,1,'{trigccss}','{mono}', ...
-       {'meas_current', 'no_balance_meas'},1);
+       {'meas_current', 'no_balance_meas'},curr);
 fmdl.stimulation = stim;
 
 subplot(221); show_fem(fmdl,[0,1])
