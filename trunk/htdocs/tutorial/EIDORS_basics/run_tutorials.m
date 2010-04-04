@@ -28,6 +28,43 @@ backproj_solve02
 clear; clf; close all; 
 tutorial120a
 backproj_solve03
+backproj_solve04
 
-% Find and trim all output images
-!find -name '*.png' -exec convert -trim '{}' '{}' ';'
+clear; clf; close all; 
+disp 'basic 3d'
+basic_3d_01
+basic_3d_02
+basic_3d_03
+basic_3d_04
+basic_3d_05
+basic_3d_06
+
+clear; clf; close all; 
+disp 'forward solver'
+forward_solvers01
+forward_solvers02
+forward_solvers03
+forward_solvers04
+forward_solvers05
+
+clear; clf; close all; 
+disp 'nodal solver'
+nodal_solve01
+nodal_solve02
+nodal_solve03
+
+clear; clf; close all; 
+disp 'rpi data'
+rpi_data01
+rpi_data02
+rpi_data03
+rpi_data04
+rpi_data05
+rpi_data06
+
+clear; clf; close all; 
+disp 'common models'
+common_models01
+common_models02
+common_models03
+common_models04

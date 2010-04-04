@@ -31,4 +31,4 @@ subplot(122);
 show_fem(img); axis square;
 crop_model([],  inline('y<0','x','y','z'))
 view(-51,14);
-print -r100 -dpng tutorial130a.png;
+print_convert('tutorial130a.png', '-density 100')

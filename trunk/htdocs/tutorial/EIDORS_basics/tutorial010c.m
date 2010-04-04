@@ -17,10 +17,8 @@ subplot(132)
 show_fem(rec_img)
 
 subplot(133)
+rec_img.calc_colours.npoints = 128;
 show_slices(rec_img,[inf,inf,2.0,1,1; ...
                      inf,inf,1.0,1,2]);
 
-pp=get(gcf,'paperposition');
-set(gcf,'paperposition',pp.*[1,1,1.4,1]);
-print -r75 -dpng tutorial010c.png
-set(gcf,'paperposition',pp.*[1,1,1,1]);
+print_convert('tutorial010c.png', '-density 100', 0.5);

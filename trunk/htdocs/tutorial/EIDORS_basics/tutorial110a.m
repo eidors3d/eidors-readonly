@@ -27,17 +27,18 @@ for idx= 1:3
       imdl.hyperparameter.value= 1e-2;
    end
    img= inv_solve(imdl, vh, vi);
+   img.calc_colours.greylev = -.3;
 
    subplot(2,3,idx);
    show_slices(img);
 
    subplot(2,3,idx+3);
    z=calc_slices(img);
-   c=calc_colours(z);
+   c=calc_colours(z,img);
    h=mesh(z,c); view(-11,44);
    set(h,'CDataMapping','Direct');
    set(gca,{'XLim','YLim','ZLim','XTickLabel','YTickLabel'}, ...
         {[1 64],[1 64],[-3.3,0.5],[],[]})
 end
 
-print -r100 -dpng tutorial110a.png;
+print_convert tutorial110a.png

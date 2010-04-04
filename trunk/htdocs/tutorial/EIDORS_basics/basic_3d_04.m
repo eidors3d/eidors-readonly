@@ -7,4 +7,4 @@ vi= fwd_solve(img2);
 subplot(211)
 plot([vh.meas, vi.meas]);
 axis tight
-print -dpng -r100 basic_3d_04a.png
+print_convert basic_3d_04a.png

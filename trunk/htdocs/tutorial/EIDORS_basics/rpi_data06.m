@@ -14,6 +14,5 @@ for iter = [1,2,3];
    img.calc_colours.cb_shrink_move = [0.5,0.8,0];
    show_fem(img,[1,1]); axis off; axis image
 
-   %print -dpng -r125 rpi_data01a.png
-   print -depsc2  jnk.eps; system(sprintf('LD_LIBRARY_PATH="" convert -density 125 jnk.eps rpi_data06%c.png', 'a'-1+iter));
+   print_convert(sprintf('rpi_data06%c.png', 'a'-1+iter));
 end

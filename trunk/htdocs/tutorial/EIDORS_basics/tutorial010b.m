@@ -24,4 +24,4 @@ hh= plotyy(xax,[homg_data.meas, inh_data.meas], ...
            xax, homg_data.meas- inh_data.meas );
 
 set(hh,'Xlim',[1,max(xax)]);
-print -r75 -dpng tutorial010b.png
+print_convert('tutorial010b.png','-density 75');

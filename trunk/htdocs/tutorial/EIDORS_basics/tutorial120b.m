@@ -55,7 +55,7 @@ imgn(5)= inv_solve( inv2d, vh, vi_n);
 
 % Output image
 show_slices(imgr, [inf,inf,0,1,1]);
-print -r125 -dpng tutorial120b.png;
+print_convert tutorial120b.png;
 show_slices(imgn, [inf,inf,0,1,1]);
-print -r125 -dpng tutorial120c.png;
+print_convert tutorial120c.png;
 

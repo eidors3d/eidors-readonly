@@ -37,6 +37,6 @@ imgn(3)= inv_solve( inv3d, vh, vi_n);
 posn= [inf,inf,2.5,1,1;inf,inf,1.5,1,2;inf,inf,0.5,1,3];
 clf;
 show_slices(imgr, posn);
-print -r100 -dpng tutorial130b.png;
+print_convert('tutorial130b.png', '-density 100')
 show_slices(imgn, posn);
-print -r100 -dpng tutorial130c.png;
+print_convert('tutorial130c.png', '-density 100')

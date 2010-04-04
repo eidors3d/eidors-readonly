@@ -22,4 +22,4 @@ vh = fwd_solve(img_2);
 show_current(img_2,vh.volt(:,3));
 axis([-1,1,-1,1]);
 
-print -dpng -r125 forward_solvers05a.png
+print_convert forward_solvers05a.png

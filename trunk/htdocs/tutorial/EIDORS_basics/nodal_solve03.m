@@ -8,7 +8,7 @@ imdl1.hyperparameter.value = 0.01;
 
 img1 = inv_solve(imdl1, vh, vi);
 show_fem(img1);
-print -dpng -r125 nodal_solve03a.png
+print_convert nodal_solve03a.png
 
 % Fine model
 imdl2= mk_common_model('c2c0',16);
@@ -18,4 +18,4 @@ imdl2.hyperparameter.value = 0.01;
 
 img2 = inv_solve(imdl2, vh, vi);
 show_fem(img2);
-print -dpng -r125 nodal_solve03b.png
+print_convert nodal_solve03b.png

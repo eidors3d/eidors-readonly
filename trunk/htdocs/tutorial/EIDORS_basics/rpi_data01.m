@@ -21,5 +21,4 @@ fmdl.stimulation = stim;
 
 subplot(221); show_fem(fmdl,[0,1])
 
-%print -dpng -r125 rpi_data01a.png
-print -depsc2  jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps rpi_data01a.png
+print_convert rpi_data01a.png

@@ -15,4 +15,4 @@ imdl_3d= mk_common_model('n3r2',16);
 show_fem(imdl_3d.fwd_model);
 
 axis square; view(-35,14);
-%print -r75 -dpng tutorial010a.png;
+print_convert('tutorial010a.png','-density 100')

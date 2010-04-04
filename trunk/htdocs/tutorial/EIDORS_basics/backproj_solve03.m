@@ -31,4 +31,4 @@ imgr.calc_colours.ref_level=0;
 subplot(133); show_fem(imgr);
 axis equal; axis off
 
-print -r125 -dpng backproj_solve03a.png;
+print_convert backproj_solve03a.png
