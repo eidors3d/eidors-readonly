@@ -26,7 +26,6 @@ for model = 1:3
 
    subplot(2,3, model)
    show_fem(mdl_fine.fwd_model);
-
 end
 
-print -r125 -dpng dual_model04a.png;
+print_convert dual_model04a.png

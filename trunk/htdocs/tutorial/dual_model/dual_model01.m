@@ -6,6 +6,5 @@ idx=[365,328,292,259,227,198,170,145,121];
 img.elem_data([idx,idx+1,101,81])=1.1;
 vi=fwd_solve(img);
 
-subplot(221)
 show_fem(img);
-print -r125 -dpng dual_model01a.png;
+print_convert('dual_model01a.png', '-density 60');
