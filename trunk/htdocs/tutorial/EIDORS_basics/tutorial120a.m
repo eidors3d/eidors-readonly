@@ -22,7 +22,6 @@ vi_n= vi;
 nampl= std(vi.meas - vh.meas)*10^(-18/20);
 vi_n.meas = vi.meas + nampl *randn(size(vi.meas));
 
-subplot(221)
 show_fem(img);
 axis square; axis off
-print_convert('tutorial120a.png', '-density 100')
+print_convert('tutorial120a.png', '-density 60')

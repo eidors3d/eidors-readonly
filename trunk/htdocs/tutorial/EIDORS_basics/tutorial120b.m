@@ -54,8 +54,12 @@ imgr(5)= inv_solve( inv2d, vh, vi);
 imgn(5)= inv_solve( inv2d, vh, vi_n);
 
 % Output image
+imgn(1).calc_colours.npoints= 128;
+imgr(1).calc_colours.npoints= 128;
+
 show_slices(imgr, [inf,inf,0,1,1]);
 print_convert tutorial120b.png;
+
 show_slices(imgn, [inf,inf,0,1,1]);
 print_convert tutorial120c.png;
 
