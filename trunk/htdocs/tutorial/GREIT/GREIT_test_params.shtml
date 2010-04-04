@@ -1,0 +1,121 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Test Parameters</h2>
+
+During the GREIT development process, we developed a 
+set of figures of merit to characterize the performance
+of an algorithm.
+
+<center>
+<img src="../GREIT-evaluation/reconstruction_parameters.png">
+<br><i>Figure:</i>
+GREIT test parameters:
+Amplitude (AR),
+Position Error (PE),
+Resolution (RES),
+Shape Deformation (SD),
+Ringing (RNG)
+</center>
+
+EIDORS code to run the GREIT evaluation is shown
+
+<h3> 
+Simulate 3D object
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params01.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params01a.png">
+<img src="GREIT_test_params01b.png">
+<br><i>Figure:</i>
+Simulation Mesh (right) and close-up of the electrodes (left)
+</center>
+
+<h3> 
+Simulate Sequence of Targets
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params02.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params02a.png">
+<br><i>Figure:</i>
+Illustration of the object locations in the simulation
+</center>
+
+<h3> 
+Calculate the parameters
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params03.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params03_ar.png"> <img src="GREIT_test_params04_ar.png"> <br>
+<img src="GREIT_test_params03_pe.png"> <img src="GREIT_test_params04_pe.png"> <br>
+<img src="GREIT_test_params03_res.png"><img src="GREIT_test_params04_res.png"><br>
+<img src="GREIT_test_params03_sd.png"> <img src="GREIT_test_params04_sd.png"> <br>
+<img src="GREIT_test_params03_rng.png"><img src="GREIT_test_params04_rng.png"><br>
+<br><i>Figure:</i>
+Evaluation of GREIT (right), and Sheffield Backprojection (left)
+GREIT parameters AR, PE, RES, SD, and RNG as a function 
+of point radial position
+</center>
+
+<h3>
+Comment
+</h3>
+
+There are several issues with this measurement, that should
+be kept in mind. This is an example of the use of the function, 
+not a specification.
+<ul>
+<LI> The object is just in one <i>x</i> position in the plane. It should
+     be rotated to all <i>x</i>,<i>y</i> positions.
+<LI> The various parameters are defined for a set of test positions for
+     a given distance above and below the electrode plane, yet here we
+     just test on the electrode plane.
+</ul>
+
+<h3> 
+Simulate Sequence of Targets above the plane (&times;25%)
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params05.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params05a.png">
+<br><i>Figure:</i>
+Illustration of the object locations in the simulation
+</center>
+
+<h3> 
+Calculate the parameters
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params03.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params06a_ar.png"> <img src="GREIT_test_params06b_ar.png"> <br>
+<img src="GREIT_test_params06a_pe.png"> <img src="GREIT_test_params06b_pe.png"> <br>
+<img src="GREIT_test_params06a_res.png"><img src="GREIT_test_params06b_res.png"><br>
+<img src="GREIT_test_params06a_sd.png"> <img src="GREIT_test_params06b_sd.png"> <br>
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->

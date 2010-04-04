@@ -1,0 +1,63 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction Examples</h2>
+
+This tutorial shows how EIDORS gives access to the
+GREIT v1.0 reconstruction matrix. (The v1.0 matrix
+is for circular tanks defined in the 2008 publication).
+
+<h3> 
+Simulate 3D object
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_examples01.m" -->
+</pre>
+
+<center>
+<img src="GREIT_examples01a.png">
+<br><i>Figure:</i>
+Simulation Mesh and object
+</center>
+
+<h3> 
+Reconstruct (no noise)
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_examples02.m" -->
+</pre>
+
+<center>
+<img src="GREIT_examples02a.png">
+<img src="GREIT_examples02b.png">
+<img src="GREIT_examples02c.png">
+<br><i>Figure:</i>
+Reconstruction (no noise) with (from left to right)
+GREIT v1, Sheffield Backprojection, Gauss Newton Inverse
+</center>
+
+<h3> 
+Reconstruct (added noise)
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_examples03.m" -->
+</pre>
+
+<center>
+<img src="GREIT_examples03a.png">
+<img src="GREIT_examples03b.png">
+<img src="GREIT_examples03c.png">
+<br><i>Figure:</i>
+Reconstruction (SNR=0.5 noise) with (from left to right)
+GREIT v1, Sheffield Backprojection, Gauss Newton Inverse
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->

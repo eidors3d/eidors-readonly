@@ -1,0 +1,30 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction Matrix</h2>
+
+The GREIT reconstruction matrix is defined based on a
+simulation model and a set of test measuremnts
+
+
+<h3> 
+Simulation model
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params01.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params01a.png">
+<img src="GREIT_test_params01b.png">
+<br><i>Figure:</i>
+Simulation Mesh (right) and close-up of the electrodes (left)
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
