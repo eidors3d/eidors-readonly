@@ -38,8 +38,7 @@ Ne2= size(fmdl2.elems,1);
 elem_data = 1/400*ones(Ne2,1);
 elem_data(tgt_elems) = 1/200;
 
-tgt_img= mk_image(elem_data);
-tgt_img.fwd_model= fmdl2;
+tgt_img= mk_image(fmdl2,elem_data);
 
 show_fem(tgt_img,[0,1,0])
 

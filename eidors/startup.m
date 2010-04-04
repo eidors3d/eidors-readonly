@@ -62,6 +62,8 @@ if isoctave
       archdir= strcat('/arch/octave/',computer);
    elseif findstr(computer,'-pc-');
       archdir= '/arch/octave/pc';
+   else
+      archdir= strcat('/arch/octave/',computer);
    end
 else
     % I don't know when matlab stopped using DLL as the extension

@@ -14,8 +14,6 @@ function params = eval_GREIT_fig_merit(imgs, xyzr_pt)
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
-% TODO: make this more generic for different grids
-imgs.calc_colours.npoints = 32;  % Eval on 32x32 grid
 imgs = calc_slices(imgs);
 imgs(isnan(imgs)) = 0;
 
@@ -51,9 +49,10 @@ function rr = calc_ringing(img, qmi );
 
 function [xmean,ymean,equiv_circ,map,qmi,img] = calc_cofg(img);
 %  if abs(max(img(:))) < abs(min(img(:))); img= -img; end
+   sz = size(img,1);
    qmi = calc_hm_set( img, 0.25 );
    if sum(img(:) & qmi(:))<0 ; keyboard ; end
-   [x,y]=meshgrid(linspace(-1,1,32),linspace(-1,1,32)); map = x.^2+y.^2<1.1;
+   [x,y]=meshgrid(linspace(-1,1,sz),linspace(-1,1,sz)); map = x.^2+y.^2<1.1;
    qmi = qmi.*map; img = img.*map;
 
    ss_qmi = sum(qmi(:));

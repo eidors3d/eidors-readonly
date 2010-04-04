@@ -37,7 +37,7 @@ try   np = img.calc_colours.npoints;
 end
 
 do_calc_slices = 0;
-try if strcmp(img.type,'image'); do_calc_slices= 1; end;end 
+try if strcmp(img(1).type,'image'); do_calc_slices= 1; end;end 
 
 if nargin<=1;
    try   levels = img.show_slices.levels

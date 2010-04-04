@@ -1,25 +1,60 @@
-function img= mk_image( elem_data, varargin)
-% MK_IMAGE: create eidors_image object
-% Utility function to create an eidors_image object:
-%   img= mk_image( elem_data, param1, value1, ...)
-% Usage: Default, create image with just elem_data
-%  img = mk_image( elem_data );
-% 
-% Usage: create image with other field values
-%  img = mk_image( elem_data, 'name', 'image name', 'param2', 'value' );
+function img= mk_image(mdl, elem_data, name)
+% MK_IMAGE: create eidors image object
+%   img= mk_image(mdl, elem_data, name)
 %
-% Usage: create image from previous image, override fields
-%  img = mk_image( other_image, 'name', 'image name', 'param2', 'value' );
+% Utility function to create an eidors_image object:
+% Usage 1:
+%   img = mk_image( inv_model )  -> uses jacobian backgnd for conductivity
+%
+% Usage 2: mdl can be a fwd_model or inv_model
+%   img = mk_image( mdl, 1 ) -> uniform image with conductivity 1
+%   img = mk_image( mdl, 2*ones(n_elems,1) ) -> uniform with c=2
+%   img = mk_image( mdl, 1, 'This name') -> Specify a 'name' attribute
+% 
+% Usage 3: create image from previous image, override conductity
+%  img = mk_image( other_image, 2 ) -> image with c=2
 
-% (C) 2008 Andy Adler. Licenced under GPL version 2 or 3
+% (C) 2008-10 Andy Adler. Licenced under GPL version 2 or 3
 % $Id$
 
-if isstruct(elem_data)
-   img= elem_data;
-else
-   img= eidors_obj('image','unnamed','elem_data',elem_data);
+if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+
+if nargin<3; name = 'Created by mk_image'; end
+if nargin<2; 
+   try
+     elem_data = mdl.jacobian_bkgnd.value;
+   catch
+     error('mk_image: for one parameter, needs a mdl.jacobian_bkgnd field');
+   end
 end
 
-for i=1:2:length(varargin)
-   img.( varargin{i} ) = varargin{i+1};
+switch mdl.type
+   case 'inv_model'; mdl = mdl.fwd_model;
+   case 'fwd_model'; mdl = mdl; % keep model
+   case 'image';     mdl = mdl.fwd_model;
+   otherwise; error('mk_image: no inv_model, fwd_model or image object');
 end
+
+img = eidors_obj('image',name);
+img.fwd_model = mdl;
+img.elem_data = NaN*ones(size(mdl.elems,1),1);
+img.elem_data(:) = elem_data;
+
+% TESTS:
+function do_unit_test
+   imdl = mk_common_model('a2c2',8);
+   im0 = mk_image( imdl );
+   do_indiv_test('im1',im0.elem_data, ones(64,1) );
+
+   im0 = mk_image( imdl, 2 );
+   do_indiv_test('im2',im0.elem_data, 2*ones(64,1) );
+
+   im0 = mk_image( imdl.fwd_model, 3*ones(64,1) );
+   do_indiv_test('im3',im0.elem_data, 3*ones(64,1) );
+
+function do_indiv_test(txt,a,b, tol)
+   if nargin < 4; tol = 0; end
+   fprintf('%10s = ',txt);
+   ok='fail';
+   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
+   disp(ok)
