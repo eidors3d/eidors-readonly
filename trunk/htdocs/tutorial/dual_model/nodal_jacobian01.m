@@ -12,7 +12,7 @@ imdl_n.RtR_prior_elem2nodes.RtR_prior = @laplace_image_prior;
 imdl_n.RtR_prior_elem2nodes.fwd_model = fmdl;
 imdl_n.reconst_to = 'nodes';
 
-img_e= calc_jacobian_bkgnd( imdl_e );
+img_e= mk_image( imdl_e );
 img_n= img_e;
 img_n.fwd_model= imdl_n.fwd_model;
 img_n= rmfield(img_n,'elem_data');

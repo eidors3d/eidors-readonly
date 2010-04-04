@@ -1,25 +1,22 @@
+% Voltage distribution $Id$
+
+img.fwd_solve.get_all_meas = 1;
 vv = fwd_solve(img);
-node_v= vv.volt;
 
-ee= img.fwd_model.elems';
-xx= reshape( img.fwd_model.nodes(ee,1),3, []); 
-yy= reshape( img.fwd_model.nodes(ee,2),3, []); 
+imgv = rmfield(img,'elem_data');
+imgv.node_data = vv.volt;
 
-subplot(222); cla;
-   % show voltages at measurement 2
-   zz= reshape(     node_v(ee,1),3, []); 
-   patch(xx,yy,zz,zz); view(0, 90); axis image
-%  subplot(2,4,i+4); cla
-%  patch(xx,yy,zz,zz); view(0,34); axis off
+show_fem( imgv ); axis image
 
+%print -dpng -r125 rpi_data01a.png
+print -depsc2 jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps conformal1_02a.png
+
+img2.fwd_solve.get_all_meas = 1;
 vv = fwd_solve(img2);
-node_v= vv.volt;
 
-ee= img2.fwd_model.elems';
-xx= reshape( img2.fwd_model.nodes(ee,1),3, []); 
-yy= reshape( img2.fwd_model.nodes(ee,2),3, []); 
+imgv = rmfield(img2,'elem_data');
+imgv.node_data = vv.volt;
 
-subplot(224); cla;
-   % show voltages at measurement 2
-   zz= reshape(     node_v(ee,1),3, []); 
-   patch(xx,yy,zz,zz); view(0, 90); axis image
+show_fem( imgv ); axis image
+%print -dpng -r125 rpi_data01a.png
+print -depsc2 jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps conformal1_02b.png
