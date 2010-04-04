@@ -22,8 +22,8 @@ function rimg = calc_slices( img, levels );
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
-try   np = img.calc_colours.npoints;
-catch np = calc_colours('npoints');
+np = calc_colours('npoints');
+try   np = img(1).calc_colours.npoints;
 end
 
 fwd_model= img(1).fwd_model; % Assume all fwd_models are same
