@@ -15,4 +15,4 @@ imgr = inv_solve(i_gr, vh, vi(:,1:5:100));
 imgr.show_slices.img_cols = 5;
 show_slices(imgr);
 
-print_convert 'GREIT_test_params02a.png'
+print_convert('GREIT_test_params02a.png','-density 60');
