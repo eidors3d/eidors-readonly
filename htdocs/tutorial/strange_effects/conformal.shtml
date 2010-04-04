@@ -1,0 +1,66 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<H2>Strange Effect: Conformal deformations of boundary shape</H2>
+
+If the medium boundary shape is deformed via a conformal
+deformation (in 2D) then the same current pattern
+results in the same voltage distribution as before
+the deformation
+
+<H3>
+   Create a simple model and deform it
+</H3>
+
+<pre>
+<!--#include virtual="conformal1_01.m" -->
+</pre>
+
+<center>
+<img src="conformal1_01a.png">
+<img src="conformal1_01b.png">
+<br><i> Figure:</i>
+Rectangular model (Right) and the same
+model with a conformal deformation
+z<sub>new</sub>= e<sup>.01(z-20-80i )</sup>(z+20i)(z-10i)
+(left)
+</center>
+
+<H3>
+   Solve the fwd problem on the flat and deformed model
+</H3>
+
+<pre>
+<!--#include virtual="conformal1_02.m" -->
+</pre>
+
+<center>
+<img src="conformal1_02a.png">
+<img src="conformal1_02b.png">
+<br><i> Figure:</i>
+Voltage distribution in model (Right) and the same
+model with a conformal deformation
+z<sub>new</sub>= e<sup>.01(z-20-80i )</sup>(z+20i)(z-10i)
+(left)
+</center>
+
+<pre>
+<!--#include virtual="conformal1_03.m" -->
+</pre>
+
+<center>
+<img src="conformal1_03a.png">
+<img src="conformal1_03b.png">
+<br><i> Figure:</i>
+Current distribution in model (Right) and the same
+model with a conformal deformation
+z<sub>new</sub>= e<sup>.01(z-20-80i )</sup>(z+20i)(z-10i)
+(left)
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
