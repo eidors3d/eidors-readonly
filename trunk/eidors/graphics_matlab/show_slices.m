@@ -33,7 +33,7 @@ function out_img= show_slices( img, levels )
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 np = calc_colours('npoints');
-try   np = img.calc_colours.npoints;
+try   np = img(1).calc_colours.npoints;
 end
 
 do_calc_slices = 0;
