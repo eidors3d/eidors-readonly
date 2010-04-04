@@ -40,4 +40,4 @@ for model = 1:3
 
 end
 
-print -r125 -dpng dual_model02a.png;
+print_convert dual_model02a.png

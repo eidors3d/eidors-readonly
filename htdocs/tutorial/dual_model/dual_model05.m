@@ -11,7 +11,7 @@ for model= 1:3
    show_fem(img(model));
 end
 
-print -r125 -dpng dual_model05b.png;
+print_convert dual_model05b.png;
 
 % Show image mapped to coarse model
 for model= 1:3
@@ -20,4 +20,4 @@ for model= 1:3
    show_fem(img(model));
 end
 
-print -r125 -dpng dual_model05a.png;
+print_convert dual_model05a.png;

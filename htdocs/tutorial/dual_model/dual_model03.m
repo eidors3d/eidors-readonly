@@ -6,4 +6,4 @@ for model= 1:3
    show_fem(img);
 end
 
-print -r125 -dpng dual_model03a.png;
+print_convert dual_model03a.png;
