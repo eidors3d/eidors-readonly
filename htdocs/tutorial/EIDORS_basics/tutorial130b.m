@@ -36,7 +36,10 @@ imgn(3)= inv_solve( inv3d, vh, vi_n);
 % Output image
 posn= [inf,inf,2.5,1,1;inf,inf,1.5,1,2;inf,inf,0.5,1,3];
 clf;
+imgr(1).calc_colours.npoints= 128;
 show_slices(imgr, posn);
 print_convert('tutorial130b.png', '-density 100')
+
+imgn(1).calc_colours.npoints= 128;
 show_slices(imgn, posn);
 print_convert('tutorial130c.png', '-density 100')

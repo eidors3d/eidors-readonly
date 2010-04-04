@@ -19,6 +19,6 @@ stim = mk_stim_patterns(Nel,1,'{trigccss}','{mono}', ...
        {'meas_current', 'no_balance_meas'},curr);
 fmdl.stimulation = stim;
 
-subplot(221); show_fem(fmdl,[0,1])
+show_fem(fmdl,[0,1])
 
-print_convert rpi_data01a.png
+print_convert('rpi_data01a.png','-density 60');

@@ -11,4 +11,4 @@ img.elem_data = pf(1) + img.elem_data*0.5;
 img.calc_colours.cb_shrink_move = [0.5,0.8,0];
 show_fem(img,[1,1]); axis off; axis image
 
-print_convert rpi_data05a.png
+print_convert('rpi_data05a.png','-density 60');

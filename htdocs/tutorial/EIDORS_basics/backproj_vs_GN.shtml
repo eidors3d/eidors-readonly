@@ -27,6 +27,8 @@ Calculate the nodal voltage field
 
 <center>
 <img src="backproj_solve01a.png">
+<br>
+<img src="backproj_solve01b.png">
 <br><i> Figure:</i>
 Nodal voltages in a mesh with different stimulation patterns.
 <i>From Left to right:</i>

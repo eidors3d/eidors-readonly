@@ -14,9 +14,8 @@ imdl.hyperparameter.value = 1;
 load Rensselaer_EIT_Phantom;
 vh =  real(ACT2006_homog); vi = real(ACT2000_phant);
 
-subplot(221);
 img = inv_solve(imdl, vh, vi);
 img.calc_colours.cb_shrink_move = [0.5,0.8,0];
 show_fem(img,[1,1]); axis off; axis image
 
-print_convert rpi_data02a.png
+print_convert('rpi_data02a.png','-density 60');

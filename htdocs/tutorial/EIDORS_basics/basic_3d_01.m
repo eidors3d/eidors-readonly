@@ -8,6 +8,6 @@ imdl.fwd_model = fmdl;
 imdl.fwd_model.stimulation = mk_stim_patterns(45,1,[0,3],[0,1],{},1);
 img1 = mk_image(imdl);
 
-subplot(221); show_fem(img1);
+show_fem(img1);
 
-print_convert basic_3d_01a.png
+print_convert('basic_3d_01a.png','-density 60')
