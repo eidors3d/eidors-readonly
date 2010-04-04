@@ -54,7 +54,7 @@ end
 %% 3. reconstruct the images
 % create a homegenous image
    elem_data = ones(size(fmdl.elems,1),1);
-   img = mk_image(elem_data,'name', 'image name', 'fwd_model', fmdl);
+   img = mk_image(fmdl, elem_data);
    disp('Calculating Jacobian. This may take a (long) while.');
    J = calc_jacobian( img );
    disp('Done.');
