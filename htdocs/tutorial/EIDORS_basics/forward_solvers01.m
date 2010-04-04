@@ -4,7 +4,7 @@
 imdl= mk_common_model('d2d1c',19);
 
 % Create an homogeneous image
-img_1 = calc_jacobian_bkgnd(imdl);
+img_1 = mk_image(imdl);
 subplot(221); show_fem(img_1);
 
 % Add a circular object at 0.2, 0.5
@@ -16,4 +16,4 @@ img_2.elem_data = 1 + elem_select(img_2.fwd_model, select_fcn);
 img_2.calc_colours.cb_shrink_move = [0.3,0.6,+0.03];
 subplot(222); show_fem(img_2,1);
 
-print -dpng -r125 forward_solvers01a.png
+print_convert forward_solvers01a.png

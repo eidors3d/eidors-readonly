@@ -2,14 +2,11 @@
 
 % Add a circular object at 0.2, 0.5
 % Calculate element membership in object
-img2 = img1;
-xctr = 0.2; yctr = 0.5; zctr = 2; rad = 0.3;
-pts = interp_mesh( img2.fwd_model, 3);
-dist = (pts(:,1,:)-xctr).^2 + (pts(:,2,:)-yctr).^2 + (pts(:,3,:)-zctr).^2;
-member = mean( dist < rad^2 ,3);
-img2.elem_data = 1 + member;
+select_fcn = inline('(x-0.2).^2 + (y-0.5).^2 + (z-2).^2 < 0.3^2','x','y','z');
+memb_frac = elem_select( img1.fwd_model, select_fcn);
+img2 = mk_image(img1, 1 + memb_frac );
 
 img2.calc_colours.cb_shrink_move = [0.3,0.6, 0];
 subplot(221); show_fem(img2,1);
 
-print -dpng -r125 basic_3d_02a.png
+print_convert basic_3d_02a.png

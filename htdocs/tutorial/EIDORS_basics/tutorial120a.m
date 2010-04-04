@@ -25,4 +25,4 @@ vi_n.meas = vi.meas + nampl *randn(size(vi.meas));
 subplot(221)
 show_fem(img);
 axis square; axis off
-print -r100 -dpng tutorial120a.png;
+print_convert('tutorial120a.png', '-density 100')

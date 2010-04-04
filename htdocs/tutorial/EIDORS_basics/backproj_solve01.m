@@ -31,4 +31,4 @@ for i=1:4
    patch(xx,yy,zz,zz); view(0,34); axis off
 end
 
-print -r125 -dpng backproj_solve01a.png;
+print_convert backproj_solve01a.png

@@ -15,7 +15,7 @@ for i= 1:length(models);
    clf; show_fem(imdl.fwd_model);
    axis image
    axis([0,1.05,-0.15,0.15]);
-   print('-dpng','-r50',sprintf('common_models04_%s.png',models{i}));
+   print_convert(sprintf('common_models04_%s.png',models{i}), '-density 50');
 end
 
 
