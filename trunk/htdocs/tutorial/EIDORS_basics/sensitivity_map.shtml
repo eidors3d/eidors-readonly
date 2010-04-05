@@ -1,0 +1,37 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>Sensitivity of EIT and Reconstruction</h2>
+
+<h3> 
+Sensitivity of EIT in 2D
+</h3>
+
+The regional sensitivity of EIT for a particular current pattern can be shown
+
+<pre>
+<!--#include virtual="sensitivity_map01.m" -->
+</pre>
+
+<center>
+<img src="sensitivity_map01a.png">
+<img src="sensitivity_map01b.png">
+<br><i>Figure:</i>
+Sensitivity field of EIT to a single simulation ([1-2]) and
+measurement [7-8] pattern
+</center>
+
+<h3> 
+Reconstruction from each component
+</h3>
+
+<pre>
+<!--#include virtual="sensitivity_map02.m" -->
+</pre>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
