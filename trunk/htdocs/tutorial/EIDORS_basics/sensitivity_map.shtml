@@ -15,7 +15,7 @@ The regional sensitivity of EIT for a particular current pattern can be shown
 <img src="sensitivity_map01a.png">
 <img src="sensitivity_map01b.png">
 <br><i>Figure:</i>
-Sensitivity field of EIT to a single simulation ([1-2]) and
+Sensitivity field of 2D EIT to a single simulation ([1-2]) and
 measurement [7-8] pattern
 </center>
 
@@ -26,6 +26,15 @@ Reconstruction from each component
 <pre>
 <!--#include virtual="sensitivity_map02.m" -->
 </pre>
+
+<center>
+<img src="sensitivity_map02a.png">
+<img src="sensitivity_map02b.png">
+<img src="sensitivity_map02c.png">
+<br><i>Figure:</i>
+Sensitivity field of 3D EIT to a single simulation ([1-2]) and
+measurement [7-8] pattern
+</center>
 
 </td></tr></table>
 <p>
