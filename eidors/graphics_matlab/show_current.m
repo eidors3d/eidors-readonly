@@ -1,4 +1,4 @@
-function show_current( img, vv )
+function quiv = show_current( img, vv )
 % SHOW_CURRENT: show current or other quantity defined
 %  on nodes onto the image
 %
@@ -7,6 +7,8 @@ function show_current( img, vv )
 %   volt-> voltage on nodes (if not specified, img is solved
 %      via fwd_solve, or the value on node_data is used)
 %
+% Without specified values, show_current will
+%   create one current vector for each element
 % The points are specified as either
 %   img.fwd_model.mdl_slice_mapper.npx   - number of points in horizontal direction
 %   img.fwd_model.mdl_slice_mapper.npy   - number of points in vertical 
@@ -16,6 +18,22 @@ function show_current( img, vv )
 %
 % For 3D models, the slice may be specified as (see calc_slices for information)
 %   img.fwd_model.mdl_slice_mapper.level 
+% 
+% If an output is specified, then no image is draws
+% 
+% Examples:
+%   img = mk_image( mk_common_model('b2c2',8));
+%   show_current(img); 
+% OR
+%   img = mk_image( mk_common_model('b2c2',8));
+%   img.fwd_model.mdl_slice_mapper.npx  = 64;
+%   img.fwd_model.mdl_slice_mapper.npy  = 32;
+%   show_current(img); 
+% OR
+%   img = mk_image( mk_common_model('b2c2',8));
+%   q = show_current(img); 
+%   quiver(q.xp,q.yp, q.xc,q.yc, 2,'b','LineWidth',2);
+
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -23,9 +41,6 @@ function show_current( img, vv )
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 dims = size(img.fwd_model.nodes,2);
-if dims == 2;
-   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-end
 
 if nargin==1; % We need to calculate
    if isfield(img,'elem_data')
@@ -39,9 +54,6 @@ if nargin==1; % We need to calculate
       error('show_current: one parameter provided, and cannot solve for node voltages');
    end
 end 
-
-elem_ptr = mdl_slice_mapper( img.fwd_model, 'elem' );
-szep = size(elem_ptr);
 
 Nel = size(img.fwd_model.elems,1);
 elemcur = zeros(Nel+1,dims);
@@ -58,11 +70,29 @@ for i=1:Nel
   elemcur(i+1,:) = img.elem_data(i)*VE(2:end)';
 end
 
-[xp,yp] = grid_the_space( img.fwd_model);
+if isfield(img.fwd_model, 'mdl_slice_mapper');
+   if dims == 2;
+      img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
+   end
+   elem_ptr = mdl_slice_mapper( img.fwd_model, 'elem' );
+   szep = size(elem_ptr);
 
-xc = reshape( elemcur(elem_ptr+1,1), szep);
-yc = reshape( elemcur(elem_ptr+1,2), szep);
+   [xp,yp] = grid_the_space( img.fwd_model);
 
+   xc = reshape( elemcur(elem_ptr+1,1), szep);
+   yc = reshape( elemcur(elem_ptr+1,2), szep);
+else 
+   pp = interp_mesh( img.fwd_model);
+   xp = pp(:,1);
+   yp= pp(:,2);
+   xc = elemcur(2:end,1);
+   yc = elemcur(2:end,2);
+end
+
+quiv.xp = xp; 
+quiv.yp = yp; 
+quiv.xc = xc; 
+quiv.yc = yc; 
 quiver(xp,yp,xc,yc,2,'k');
 
 function  [x,y] = grid_the_space( fmdl);
