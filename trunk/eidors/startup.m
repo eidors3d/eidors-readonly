@@ -13,17 +13,15 @@ function startup
 % output of the version command. It used to be R13, now it is more
 % like 2009a. Also the number of minor versions changes.
 
-ver= version; ver(ver=='.')=' ';
-ver = sscanf(ver,'%f'); ver=ver(:);
-isoctave = exist('OCTAVE_VERSION')==5;
+ver= eidors_obj('interpreter_version');
 
-if ~isoctave
-   if [1,1e-2]*ver(1:2) < 6.05
+if ver.isoctave
+   if ver.ver < 6.005
       warning(['EIDORS REQUIRES AT LEAST MATLAB V6.5.\n' ...
                'Several functions may not work with your version']);
    end
 else
-   if [1,1e-2,1e-4]*ver(1:3) < 3.0003
+   if ver.ver < 3.000003
       warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.0.3\n' ...
                'Several functions may not work with your version']);
    end
@@ -57,7 +55,7 @@ addpath([HOMEDIR, '/graphics_vtk']);
 %addpath([HOMEDIR, '/tests']);
 
 % We need to add an architecture specific directory for mex files
-if isoctave 
+if ver.isoctave 
    if findstr(computer,'x86_64-pc-');
       archdir= strcat('/arch/octave/',computer);
    elseif findstr(computer,'-pc-');
@@ -68,7 +66,7 @@ if isoctave
 else
     % I don't know when matlab stopped using DLL as the extension
     % for WIN32 mex files. I'm guessing it's around 7.5
-   if any(findstr(computer,'PCWIN')) && ( [1,1e-2]*ver(1:2) < 7.05 )
+   if any(findstr(computer,'PCWIN')) && ( ver.ver < 7.005 )
       archdir= '/arch/matlab/dll';
    else
       archdir= '/arch/matlab';
@@ -78,7 +76,7 @@ addpath([HOMEDIR, archdir]);
 
 % test if eidors_var_id.cpp is a valid mexfile
 if exist('eidors_var_id')~=3
-  if isoctave
+  if ver.isoctave
     warning(sprintf([ ...
        'missing a required, pre-compiled mex file: eidors_var_id.\n' ...
        '  Please compile it using:\n'...
@@ -143,5 +141,4 @@ if ~exist('OCTAVE_VERSION');
 else 
    eidors_msg('New to EIDORS? Have a look at the Tutorials at http://eidors3d.sourceforge.net/tutorial/tutorial.shtml',1);
 end
-clear HOMEDIR archdir ver ans;
 

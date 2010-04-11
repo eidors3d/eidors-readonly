@@ -74,10 +74,32 @@ switch type
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
-      obj_id= '3.3+ ($Date$)'; % Update for New eidors version
+      obj_id= '3.4rc ($Date$)'; % Update for New eidors version
+   case 'interpreter_version'
+      obj_id= test_versions;
    otherwise
       obj_id= new_obj( type, name, varargin{:} );
 end
+
+function verstr = test_versions;
+      ver= version; ver(ver=='.')=' ';
+      ver = sscanf(ver,'%f'); ver=ver(:);
+
+      % Convert 7.8.1 to 7.008001
+      verstr.ver = 1e-3.^(0:length(ver)-1) * ver(:); 
+
+      if exist('OCTAVE_VERSION') == 5
+         verstr.isoctave = 1;
+      else
+         verstr.isoctave = 0;
+      end
+
+      cptr = computer;
+      if strcmp(cptr(end+(-1:0)), '64')
+         verstr.is64bit = 1;
+      else
+         verstr.is64bit = 0;
+      end
 
 function obj = set_obj( obj, varargin );
    global eidors_objects
