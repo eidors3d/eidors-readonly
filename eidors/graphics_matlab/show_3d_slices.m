@@ -9,6 +9,8 @@ function show_3d_slices(img, varargin);
 % (C) 2007 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
 cla;
 hold on
 
@@ -97,16 +99,23 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    ff=isnan(rimg);
    bdr= (conv2(double(~ff),ones(3),'same')>0) & ff;
    outbdr = ff & ~bdr;
-   cimg(outbdr)= NaN;
 
+   warning(['Poor you. You''re using matlab>7.8 on a 64 bit machine. Unfortunately, ' ...
+            'these versions have serious graphics bugs and we can''t show a nice image.' ...
+            'Sorry. Please bug Mathworks for a fix.']);
+%  cimg(outbdr)= NaN;
 
    if show_surf
       hh=surf(xyz(:,:,1)+M_add(1), ...
               xyz(:,:,2)+M_add(2), ...
               xyz(:,:,3)+M_add(3), flipud(cimg));
-      % WHY WOULD IT BE ANYTHING ELSE  - STUPID MATLAB !!!
-      set(hh,'CDataMapping','direct', ...
-             'EdgeAlpha',0);
+
+      set(hh,'EdgeAlpha',0); % Remove background grid
+
+      % WHY WOULD CDataMapping BE ANYTHING ELSE  - STUPID MATLAB !!!
+      % In Version >= 7.8, doing CDataMapping direct on a matrix with
+      %   NaN's will crash matlab. Damn.
+      set(hh,'CDataMapping','direct');
    end
 
 %  draw_line_around(cimg, rimg, x,y, M_trans, M_add);
@@ -127,3 +136,7 @@ function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
           'Xdata', Contour_paths(1,:) + M_add(1), ...
           'Ydata', Contour_paths(2,:) + M_add(2), ...
           'Zdata', Contour_paths(3,:) + M_add(3));
+
+function do_unit_test
+   img = mk_image(mk_common_model('n3r2',16),1);
+   show_3d_slices(img,[1,2])
