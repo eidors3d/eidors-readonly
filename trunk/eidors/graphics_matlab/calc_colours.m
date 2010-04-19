@@ -54,6 +54,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           if not specified or clim==[] => no limit
 %   'cmap_type'  Specify special colours (Default 'blue_red')
 %           if 'draeger' use the Draegerwerk/Amato colourmap
+%           if 'jet' use the matlab jet colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
 %
@@ -163,6 +164,8 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= blue_red_colours(pp,scale_data);
      case 'draeger'
       [red,grn,blu]= draeger_colours(pp,scale_data);
+     case 'jet'
+      [red,grn,blu]= jet_colours(pp,scale_data);
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
    end
@@ -221,6 +224,15 @@ function [red,grn,blu] = draeger_colours(pp,scale_data);
    grn(grn>1) = 1;
    blu(blu>1) = 1;
 
+function [red,grn,blu] = jet_colours(pp,scale_data);
+   grn = 2*(3/4 - abs(scale_data));
+   grn(grn>1) = 1; grn(grn<0) = 0;
+
+   red = 1.5 - 2*abs(scale_data + 0.5);
+   red(red>1) = 1; red(red<0) = 0;
+
+   blu = 1.5 - 2*abs(scale_data - 0.5);
+   blu(blu>1) = 1; blu(blu<0) = 0;
 
 function pp=get_colours( img );
    global eidors_colours;
