@@ -166,6 +166,10 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= draeger_colours(pp,scale_data);
      case 'jet'
       [red,grn,blu]= jet_colours(pp,scale_data);
+     case 'jetair'
+      % Make most of the range for air -ve
+      scd = (scale_data + 0.5)/0.6;
+      [red,grn,blu]= jet_colours(pp,scd);
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
    end
