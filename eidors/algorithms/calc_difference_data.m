@@ -70,7 +70,8 @@ function d2= filt_data(fwd_model, d0, data_width )
 
    d1= double(d1); % ensure we can do math on our object
 
-   if isfield(fwd_model,'meas_select');
+   if isfield(fwd_model,'meas_select') && ...
+     ~isempty(fwd_model.meas_select);
       % we have a meas_select parameter
 
       meas_select= fwd_model.meas_select;
