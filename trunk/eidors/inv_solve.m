@@ -130,8 +130,9 @@ function d2= filt_data(inv_model, d0, data_width )
 
    d1= double(d1); % ensure we can do math on our object
 
-   if isfield(inv_model.fwd_model,'meas_select');
-      % we have a meas_select parameter
+   if isfield(inv_model.fwd_model,'meas_select') && ...
+     ~isempty(inv_model.fwd_model.meas_select)
+      % we have a meas_select parameter that isn []
 
       meas_select= inv_model.fwd_model.meas_select;
       if     size(d1,1) == length(meas_select)
