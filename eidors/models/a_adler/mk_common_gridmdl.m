@@ -115,44 +115,9 @@ function RM= get_GREIT_c1;
    load GREIT_v10_Circ_Matrix.mat
    RM = unpack_matrix(GREIT_v10_Circ_Matrix);
 
-function RM = unpack_matrix(packed_matrix);
 
-   % Take a slice
-   [x,y]= meshgrid(1:16,1:16);
-   ss1 = (y-x)>1 & (y-x)<15;
-   sel1 = abs(x-y)>1 & abs(x-y)<15;
-   
-   [x,y]= meshgrid(-15.5:15.5,-15.5:15.5);
-   ss2 = abs(x-y)<25 & abs(x+y)<25 ...
-       & x<0 & y<0 & x>=y ;
-   sel2 = abs(x-y)<25 & abs(x+y)<25;
- 
-   % Build up
-   BP  = zeros(16^2, 32^2);
-   BP(ss1,ss2) = packed_matrix;
-   BP  = reshape(BP, 16,16,32,32);
-
-   % Reciprocity
-   BP  = BP + permute(BP, [2,1,3,4]);
-
-   % FLIP LR
-   el= 16:-1:1;
-   BP= BP + BP(el,el,[32:-1:1],:);
-   % FLIP UD
-   el= [8:-1:1,16:-1:9];
-   BP= BP + BP(el,el,:,[32:-1:1]);
-   % Transpose
-   el= [12:-1:1,16:-1:13];
-   BP= BP + permute(BP(el,el,:,:), [1,2,4,3]);
-
-   % Final UD flip to match radiological view (upward toward patient)
-   % Here electrodes are connected CW starting from TDC
-   BP= BP(:,:,:,[32:-1:1]);
-
-   RM= reshape(BP, 256, [])';
-   RM= RM(:,sel1);
-% This creates the diamond shape, but we want to leave shape choice later
-%  RM= RM(sel2,sel1);
+function RM= unpack_matrix(MM)
+   RM = unpack_reconst_matrix(MM, 16, 32);
 
 
 function elec = mk_electrode_locns( nodes, n_elec );
