@@ -9,6 +9,8 @@ function RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid, options);
 %   Nelec = number of electrodes
 %   Ngrid = number of grid points
 %
+% options = {'circ'} or {'octagon'} => region shape
+%
 % Example:
 %  load GREIT_v10_Circ_Matrix.mat
 %  RM = unpack_reconst_matrix(GREIT_v10_Circ_Matrix, 16, 32);
@@ -17,10 +19,27 @@ function RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid, options);
 % (C) 2008-2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-elec_idx = 1:Nelec;
-grid_idx = 1:Ngrid; grid_idx = grid_idx - mean(grid_idx);
-Nelec2 = Nelec/2;
-Nelec34= Nelec*3/4;
+[RM,sel1,sel2] = unpack_matrix(packed_matrix, Nelec, Ngrid);
+if nargin>=4; for i=1:length(options)
+   if strcmp(options{i},'octagon')
+size(RM)
+size(sel1)
+size(sel2)
+      RM= RM(sel2,:);
+   elseif strcmp(options{i},'flipud')
+      RM = reshape(RM, Ngrid,Ngrid, []);
+      RM = RM(:,Ngrid:-1:1,:);
+      RM = reshape(RM, Ngrid*Ngrid, []);
+   else
+      error(['Huh? Option=(',options{i},') not understood']);
+   end
+end; end
+
+function [RM,sel1,sel2] = unpack_matrix(PM, Nelec, Ngrid);
+   elec_idx = 1:Nelec;
+   grid_idx = 1:Ngrid; grid_idx = grid_idx - mean(grid_idx);
+   Nelec2 = Nelec/2;
+   Nelec34= Nelec*3/4;
 
    % Take a slice
    [x,y]= meshgrid( elec_idx, elec_idx);
@@ -34,7 +53,7 @@ Nelec34= Nelec*3/4;
  
    % Build up
    BP  = zeros(Nelec^2, Ngrid^2);
-   BP(ss1,ss2) = packed_matrix;
+   BP(ss1,ss2) = PM;
    BP  = reshape(BP, Nelec,Nelec,Ngrid,Ngrid);
 
    % Reciprocity
