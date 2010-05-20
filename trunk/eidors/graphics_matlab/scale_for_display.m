@@ -40,6 +40,9 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
       s_ed(isnan(s_ed)) = [];
       s_ed= sort(s_ed);
       e= length(s_ed);
+      if e==0;
+         error('Can''t display. All values NaN. Is raw data 0?')
+      end
       ref_lev = mean(s_ed( ceil(.26*e):floor(.74*e) ));
    end
 
