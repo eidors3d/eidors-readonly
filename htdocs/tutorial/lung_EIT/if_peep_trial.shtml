@@ -91,7 +91,7 @@ Normalized &Delta;Z time course for different lung ROIs.
 
 This function creates a video of the sample sequences.
 <pre>
-<!--#include virtual="if_peep_trial04.m" -->
+<!--#include virtual="if_peep_trial05.m" -->
 </pre>
 
 <center>
