@@ -18,7 +18,7 @@ if nargin<=2; pagehwr = 6/8; end
 
 tmpnam = [tempname,'.eps'];
 posn = get(gcf,'PaperPosition');
-% I wish matlab gave us unwind protect - like octave doew!
+% I wish matlab gave us unwind protect - like octave does!
 set(gcf,'PaperPosition',[posn(1:3), posn(3)*pagehwr]);
 print('-depsc2',tmpnam);
 set(gcf,'PaperPosition',[posn(1:4)]);
@@ -28,7 +28,9 @@ if isunix && ~exist('OCTAVE_VERSION','var');
    ld= 'LD_LIBRARY_PATH=""';
 end
 cmd = sprintf('%s convert -density 125 %s -trim  %s %s', ld, options, tmpnam, filename);
+cmd = sprintf('%s gs -r125 -dEPSCrop -sDEVICE=png16m -sOutputFile=%s -dBATCH -dNOPAUSE %s', ld, filename, tmpnam) 
+
 flag = system(cmd);
 if flag~=0
-   warning('system command failed. Is imagemagick installed and on your path?');
+   warning('Failed to call imagemagick to crop image?');
 end
