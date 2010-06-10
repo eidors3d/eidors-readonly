@@ -1,0 +1,151 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Model of a 2&frac12;D cross-section of a pipe
+</h2>
+
+2&frac12;D models of a cylidrical cross section are 
+<p>
+To simulate this, we simulate a ball moving in
+a helical path on a circular model from netgen
+<pre>
+<!--#include virtual="pipe01.m" -->
+</pre>
+
+(available
+ <a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x2_vfine.7z"
+           >here</a>)
+<pre>
+<!--#include virtual="centre_slice01.m" -->
+</pre>
+
+<b>Note:</b> this stimulation requires at least 4GB memory
+and many minutes of CPU time to run. The calculated data
+are available 
+<a href="./centre_slice01_output.mat">here</a>
+
+<center>
+<img src="centre_slice01a.png">
+<br><i> Figure:</i>
+Netgen model of a 2&times;16 electrode tank. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple.
+</center>
+
+<h3> Create reconstruction model </h3>
+
+In order to reconstruct the image, we use a dual
+model where the 2D coarse model is mapped to only
+a layer of elements in the fine model.
+(available
+ <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x2_coarse.7z"
+           >here</a>)
+
+<pre>
+<!--#include virtual="centre_slice02.m" -->
+</pre>
+
+<center>
+<img src="centre_slice02a.png">
+<br><i> Figure:</i>
+Netgen model of a 2&times;16 electrode tank. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple.
+The 3D fine model is shown (cropped). The upper (blue) 
+and lower (red) layers corresponding to the 
+geometry of the coarse model are shown. The <i>z</i>
+direction limits of the coarse model are shown in grey.
+</center>
+
+<h3> Image reconstructions </h3>
+
+First, we create a coarse model which represents
+the entire depth in <i>z</i> (ie. like the 2&frac12;D model).
+Images reconstructed with this model have more artefacts,
+but show the reconstructed target at all depths.
+
+<pre>
+<!--#include virtual="centre_slice03.m" -->
+</pre>
+
+Next, we create coarse models which represent
+the a thin <i>0.1&times;scale</i> slice in <i>z</i>.
+These images display a targets in the space
+from the original volume.
+
+<pre>
+<!--#include virtual="centre_slice04.m" -->
+</pre>
+
+
+
+<center>
+<img src="centre_slice04a.png">
+<br><i> Figure:</i>
+Reconstructed images of a target moving in a helical
+pattern using difference coarse models
+<i>Left</i>  coarse model with z<sub>depth</sub>=&infin;
+<i>Centre</i>coarse model with z<sub>depth</sub>=0.1&times;scale at upper position
+<i>Right</i> coarse model with z<sub>depth</sub>=0.1&times;scale at lower positions
+</center>
+
+<h3> Simpler reconstruction model </h3>
+
+The previous model requires lots of time an memory
+to calculate the Jacobian for the reconstruction,
+because of the large number of FEMs.
+To speed up the calcualion, we use a simpler 
+fine model.
+
+<pre>
+<!--#include virtual="centre_slice05.m" -->
+</pre>
+
+<center>
+<img src="centre_slice05a.png">
+<br><i> Figure:</i>
+Simple extruded model of a 2&times;16 electrode tank. The
+positions of the simulated conductive target moving in
+a helical path are shown in purple.
+The 3D fine model is shown (cropped). The upper (blue) 
+and lower (red) layers corresponding to the 
+geometry of the coarse model are shown. The <i>z</i>
+direction limits of the coarse model are shown in grey.
+</center>
+
+<h3> Image reconstructions </h3>
+
+We reconstruct with coarse models with
+a) the entire depth in <i>z</i> (ie. like the 2&frac12;D model).
+Images reconstructed with this model have more artefacts,
+b) we create coarse models which represent
+the a thin <i>0.1&times;scale</i> slice in <i>z</i>.
+These images display a targets in the space
+from the original volume.
+
+<pre>
+<!--#include virtual="centre_slice06.m" -->
+</pre>
+
+
+<center>
+<img src="centre_slice06a.png">
+<br><i> Figure:</i>
+Reconstructed images of a target moving in a helical
+pattern using difference coarse models
+<i>Left</i>  coarse model with z<sub>depth</sub>=&infin;
+<i>Centre</i>coarse model with z<sub>depth</sub>=0.1&times;scale at upper position
+<i>Right</i> coarse model with z<sub>depth</sub>=0.1&times;scale at lower positions
+</center>
+
+
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
