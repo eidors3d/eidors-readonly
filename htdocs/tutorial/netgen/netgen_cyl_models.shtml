@@ -265,6 +265,24 @@ show_fem(fmdl);
 <img src="netgen_cyl_models17.png">
 </center>
 
+<h3>
+3D cylinder with two rows of electrodes and ellipse
+</h3>
+
+<pre>
+    ob= 'orthobrick(-1,-1,0;1,1,1.5)';
+    el= 'ellipsoid(0,0,1.5; 0,0,1.25; 0.8,0,0; 0,0.8,0)';
+    extra={'obj',['solid obj = ',ob,' and ',el,';']}
+    [fmdl,mat_idx]= ng_mk_cyl_models(1.5,[8,0.5,1.0],[0.1],extra); 
+    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
+    img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
+show_fem(img);
+</pre>
+
+<center>
+<img src="netgen_cyl_models18.png">
+</center>
+
 </td></tr></table>
 <p>
 <small>

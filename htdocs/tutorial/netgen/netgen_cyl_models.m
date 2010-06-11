@@ -1,6 +1,6 @@
 function netgen_cyl_models( numbers )
 
-if nargin==0; numbers = 1:17; end
+if nargin==0; numbers = 1:18; end
 for i=numbers(:)';
    do_sim(i);
 end
@@ -112,6 +112,17 @@ extra={'ballandbox', ...
 
 fmdl= ng_mk_cyl_models(0,[16],[0.1,0,0.05],extra); 
 show_fem(fmdl);
+
+% 3D cylinder with 8 electrodes and cube
+case 18;
+    ob= 'orthobrick(-1,-1,0;1,1,1.5)';
+    el= 'ellipsoid(0,0,1.5; 0,0,1.25; 0.8,0,0; 0,0.8,0)';
+%   sp= 'sphere(0, 0, 1.5; 0.8)';
+    extra={'obj',['solid obj = ',ob,' and ',el,';']}
+    [fmdl,mat_idx]= ng_mk_cyl_models(1.5,[8,0.5,1.0],[0.1],extra); 
+    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
+    img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
+show_fem(img);
 end
 
 print('-dpng','-r75', ...
