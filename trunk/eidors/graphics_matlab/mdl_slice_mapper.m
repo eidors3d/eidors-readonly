@@ -113,7 +113,7 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
      bdy= unique(bdy(:));
      in = inpolygon(x(:),y(:),NODE(1,bdy)',NODE(2,bdy)');
   else
-     NODEz2= 0; %NODE(3,:).^2; NODEs are mapped onto the z=0 plane
+     NODEz2= NODE(3,:).^2;
      % This is a slow way to get the elems outside the space, but I don't see another
      EPTR= img_mapper3(NODE, ELEM, x, y );
      in = EPTR>0;
