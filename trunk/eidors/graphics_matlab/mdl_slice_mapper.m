@@ -63,7 +63,7 @@ function node_ptr = mdl_node_mapper(fwd_model);
 
    NODE = level_model( fwd_model, level );
    [x,y] = grid_the_space( fwd_model);
-   node_ptr= node_mapper( NODE, fwd_model.boundary, x, y);
+   node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
 
    eidors_obj('set-cache', fwd_model, 'node_ptr', node_ptr);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
@@ -73,7 +73,7 @@ function node_ptr = mdl_node_mapper(fwd_model);
 % are in that element
 % NPTR is matrix npx x npy with a pointer to the
 % node closest to it.
-function NPTR= node_mapper( NODE, bdy, x, y);
+function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
   [npy,npx] = size(x);
 
   NODEx= NODE(1,:);
@@ -84,9 +84,9 @@ function NPTR= node_mapper( NODE, bdy, x, y);
      in = inpolygon(x(:),y(:),NODE(1,bdy)',NODE(2,bdy)');
   else
      NODEz2= NODE(3,:).^2;
-%     ELEM= fwd_model.elems';
-%        elem_ptr= img_mapper3( NODE, ELEM, np, np);
-%        node_ptr=  0% FIXME how to get boundary in 3D?
+     % This is a slow way to get the elems outside the space, but I don't see another
+     EPTR= img_mapper3(NODE, ELEM, x, y );
+     in = EPTR>0;
   end
   NPTR=zeros(npy,npx);
 
