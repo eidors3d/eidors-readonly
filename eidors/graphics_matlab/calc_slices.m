@@ -97,17 +97,20 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np)
    fwd_model.mdl_slice_mapper.npy  = np;
    fwd_model.mdl_slice_mapper.level= level;
 
-   elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
    nd_interp= mdl_slice_mapper( fwd_model, 'nodeinterp' );
+   elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
+   [sx,sy]= size(elem_ptr);
+
+   node_ptr = fwd_model.elems; node_ptr = [0*node_ptr(1,:);node_ptr];
+   node_ptr = reshape( node_ptr( elem_ptr+1, :), sx, sy, []);
 
    n_images = size(node_data,2);
+   rimg= zeros(sx, sy, n_images);
    backgnd= NaN;
-%  rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
-%  rval= backgnd*ones(size(elem_data)+[1,0]);
+   
    for ni = 1:n_images
-     elem_node_data = node_data( fwd_model.elems , ni)
-keyboard
-     rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
+     znd = [backgnd;node_data(:,ni)]; % add NaN for background
+     rimg(:,:,ni) = sum( znd(node_ptr+1) .* nd_interp, 3); 
    end
 
 
