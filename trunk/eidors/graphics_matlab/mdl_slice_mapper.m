@@ -17,6 +17,8 @@ function map = mdl_slice_mapper( fmdl, maptype );
 % maptype
 %    for 'elem' map is FEM element nearest the point
 %    for 'node' map is FEM vertex nearest the point
+%    for 'nodeinterp' map a npx x npy x (Nd+1) matrix such that for each point i,j
+%       the nearby nodes are weighted with the corresponding element in the map(i,j).
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -24,8 +26,9 @@ function map = mdl_slice_mapper( fmdl, maptype );
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 switch maptype
-  case 'elem'; map = mdl_elem_mapper(fmdl);
-  case 'node'; map = mdl_node_mapper(fmdl);
+  case 'elem';       map = mdl_elem_mapper(fmdl);
+  case 'node';       map = mdl_node_mapper(fmdl);
+  case 'nodeinterp'; map = mdl_nodeinterp_mapper(fmdl);
   otherwise;   error('expecting maptype = elem or node');
 end
 
@@ -50,6 +53,31 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    end
 
    eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
+   eidors_msg('mdl_slice_mapper: setting cached value', 3);
+
+function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
+   level= fwd_model.mdl_slice_mapper.level;
+
+   ninterp_ptr = eidors_obj('get-cache', fwd_model, 'ninterp_ptr');
+   if ~isempty(ninterp_ptr); return; end
+
+   dims1 = size(NODE,1)+1;
+
+   elem_ptr = mdl_elem_mapper(fwd_model);
+   NODE = level_model( fwd_model, level );
+   NODEz2= NODE(3,:).^2;
+   fwd_model.nodes = NODE';
+   [x,y] = grid_the_space( fwd_model);
+   for i= 1:length(x(:));
+     nodes_i = fwd_model.elems(i,:);
+     dist = sqrt( (x(i) - NODE(1,nodes_i)).^2 + ...
+                  (y(i) - NODE(2,nodes_i)).^2 + NODEz2 );
+keyboard
+   end
+   ELEM= fwd_model.elems';
+
+
+   eidors_obj('set-cache', fwd_model, 'ninterp_ptr', elem_ptr);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 function node_ptr = mdl_node_mapper(fwd_model);
@@ -337,13 +365,19 @@ function do_unit_test
    eptr = mdl_slice_mapper(fmdl,'elem');
    test = zeros(4); test(2:3,2:3) = [512 228;524 533];
    do_indiv_test('eptr04',eptr, test);
-%  nptr = mdl_slice_mapper(fmdl,'node'); FAIL
+   nptr = mdl_slice_mapper(fmdl,'node');
+   test = zeros(4); test(2:3,2:3) = [116 113;118 121];
+   do_indiv_test('nptr04',nptr, test);
 
    fmdl.mdl_slice_mapper.level = [inf,0,inf];
    eptr = mdl_slice_mapper(fmdl,'elem');
    test = zeros(4); test(1:4,2:3) = [ 792 777; 791 776; 515 500; 239 224];
    do_indiv_test('eptr05',eptr,test);
-%  nptr = mdl_slice_mapper(fmdl,'node'); % EXPECTED FAIL
+
+   nptr = mdl_slice_mapper(fmdl,'node');
+   test = zeros(4); test(1:2,:) = [ 80, 124, 122, 64; 17, 61, 59, 1];
+   do_indiv_test('nptr05',nptr,test);
+
 
 
 
