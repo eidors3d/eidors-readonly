@@ -61,23 +61,25 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    ninterp_ptr = eidors_obj('get-cache', fwd_model, 'ninterp_ptr');
    if ~isempty(ninterp_ptr); return; end
 
-   dims1 = size(NODE,1)+1;
 
    elem_ptr = mdl_elem_mapper(fwd_model);
    NODE = level_model( fwd_model, level );
-   NODEz2= NODE(3,:).^2;
    fwd_model.nodes = NODE';
    [x,y] = grid_the_space( fwd_model);
-   for i= 1:length(x(:));
-     nodes_i = fwd_model.elems(i,:);
-     dist = sqrt( (x(i) - NODE(1,nodes_i)).^2 + ...
-                  (y(i) - NODE(2,nodes_i)).^2 + NODEz2 );
-keyboard
+
+   ndims = size(NODE,1);
+   if  ndims == 2;  NODEz = []; else; NODEz= 0; end
+   ninterp_ptr = zeros(length(x(:)),ndims+1); % reshape later
+
+   for i= find( elem_ptr(:)>0 )'; % look for all x,y inside elements
+     nodes_i = fwd_model.elems(elem_ptr(i),:);
+     int_fcn = inv( [ones(1,ndims+1);NODE(:,nodes_i)] );
+     ninterp_ptr(i,:) = int_fcn *[1;x(i);y(i);NODEz];
    end
-   ELEM= fwd_model.elems';
+   ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
 
 
-   eidors_obj('set-cache', fwd_model, 'ninterp_ptr', elem_ptr);
+   eidors_obj('set-cache', fwd_model, 'ninterp_ptr', ninterp_ptr);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 function node_ptr = mdl_node_mapper(fwd_model);
@@ -111,7 +113,7 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
      bdy= unique(bdy(:));
      in = inpolygon(x(:),y(:),NODE(1,bdy)',NODE(2,bdy)');
   else
-     NODEz2= NODE(3,:).^2;
+     NODEz2= 0; %NODE(3,:).^2; NODEs are mapped onto the z=0 plane
      % This is a slow way to get the elems outside the space, but I don't see another
      EPTR= img_mapper3(NODE, ELEM, x, y );
      in = EPTR>0;
@@ -338,6 +340,9 @@ function do_unit_test
    do_indiv_test('nptr01',nptr,[ 0  0 28  0  0; 0 14  7 17  0;
                  40 13  1  9 32; 0 23 11 20  0; 0  0 36  0  0]);
 
+   nint = mdl_slice_mapper(fmdl,'nodeinterp');
+   do_indiv_test('nint01a',nint(2:4,2:4,1),[ 0.8284, 1, 0.8284;1,1,1; 0.8284, 1, 0.8284], 1e-3);
+
    fmdl.mdl_slice_mapper.npx = 5;
    fmdl.mdl_slice_mapper.npy = 3;
    eptr = mdl_slice_mapper(fmdl,'elem');
@@ -378,6 +383,8 @@ function do_unit_test
    test = zeros(4); test(1:2,:) = [ 80, 124, 122, 64; 17, 61, 59, 1];
    do_indiv_test('nptr05',nptr,test);
 
+   nint = mdl_slice_mapper(fmdl,'nodeinterp');
+   do_indiv_test('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
 
 
 
