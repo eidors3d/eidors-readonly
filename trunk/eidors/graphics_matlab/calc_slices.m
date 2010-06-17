@@ -78,7 +78,8 @@ if ~isempty(filt)
 end
 
 % Calculate an image by mapping it onto the node_ptr matrix
-function rimg= calc_image_nodes( node_data, level, fwd_model, np);
+% This makes a blocky image to nearest node -> no longer used
+function rimg= calc_image_nearestnodes( node_data, level, fwd_model, np);
    fwd_model.mdl_slice_mapper.npx  = np;
    fwd_model.mdl_slice_mapper.npy  = np;
    fwd_model.mdl_slice_mapper.level= level;
@@ -88,6 +89,27 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np);
    n_images= size(node_data,2);
    rval= [backgnd*ones(1,n_images); node_data];
    rimg= reshape( rval(node_ptr+1,:), np,np, n_images );
+
+% Calculate an image by interpolating it onto the elem_ptr matrix
+function rimg= calc_image_nodes( node_data, level, fwd_model, np)
+
+   fwd_model.mdl_slice_mapper.npx  = np;
+   fwd_model.mdl_slice_mapper.npy  = np;
+   fwd_model.mdl_slice_mapper.level= level;
+
+   elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
+   nd_interp= mdl_slice_mapper( fwd_model, 'nodeinterp' );
+
+   n_images = size(node_data,2);
+   backgnd= NaN;
+%  rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
+%  rval= backgnd*ones(size(elem_data)+[1,0]);
+   for ni = 1:n_images
+     elem_node_data = node_data( fwd_model.elems , ni)
+keyboard
+     rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
+   end
+
 
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image_elems( elem_data, level, fwd_model, np)
