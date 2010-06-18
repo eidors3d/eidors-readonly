@@ -28,40 +28,34 @@ Solving voltage pattern with and without inclusion
 </pre>
 
 <center>
-<img src="forward_solvers02a.png">
+<img src="forward_solver_3d_03a.png">
 <br><i> Figure:</i>
-The voltage pattern from adjacent stimulation
+Measured voltages pattern from adjacent stimulation
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers03.m" -->
+<!--#include virtual="forward_solver_3d_04.m" -->
 </pre>
 
 <center>
-<img src="forward_solvers03a.png">
+<img src="forward_solver_3d_04a.png">
+<img src="forward_solver_3d_04b.png">
 <br><i> Figure:</i>
-The voltage pattern from opposite (nearly) stimulation
-</center>
+The voltage pattern in three vertical slices of medium from 
+adjacent stimulation. (left) voltage pattern. (right) pattern due
+to a change in conductivity.
 
 <pre>
-<!--#include virtual="forward_solvers04.m" -->
+<!--#include virtual="forward_solver_3d_05.m" -->
 </pre>
 
 <center>
-<img src="forward_solvers04a.png">
+<img src="forward_solver_3d_05a.png">
+<img src="forward_solver_3d_05b.png">
 <br><i> Figure:</i>
-The voltage pattern from a change in conductivity
-</center>
-
-<pre>
-<!--#include virtual="forward_solvers05.m" -->
-</pre>
-
-<center>
-<img src="forward_solvers05a.png">
-<br><i> Figure:</i>
-The current pattern for various stimulation patterns
-</center>
+The voltage pattern in three vertical slices of medium from 
+opposity stimulation (across two electrode rings). (left) voltage pattern. (right) pattern due
+to a change in conductivity.
 
 </td></tr></table>
 <p>
