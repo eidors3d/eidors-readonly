@@ -44,6 +44,7 @@ Measured voltages pattern from adjacent stimulation
 The voltage pattern in three vertical slices of medium from 
 adjacent stimulation. (left) voltage pattern. (right) pattern due
 to a change in conductivity.
+</center>
 
 <pre>
 <!--#include virtual="forward_solver_3d_05.m" -->
@@ -56,6 +57,7 @@ to a change in conductivity.
 The voltage pattern in three vertical slices of medium from 
 opposity stimulation (across two electrode rings). (left) voltage pattern. (right) pattern due
 to a change in conductivity.
+</center>
 
 </td></tr></table>
 <p>
