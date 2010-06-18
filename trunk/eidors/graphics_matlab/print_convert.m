@@ -27,8 +27,16 @@ ld = ''; % OVERRIDE STUPID MATLAB LD_LIBRARY_PATH
 if isunix && ~exist('OCTAVE_VERSION','var');
    ld= 'LD_LIBRARY_PATH=""';
 end
+
+% this isn't working for old versions of vnc
 cmd = sprintf('%s convert -density 125 %s -trim  %s %s', ld, options, tmpnam, filename);
-cmd = sprintf('%s gs -r125 -dEPSCrop -sDEVICE=png16m -sOutputFile=%s -dBATCH -dNOPAUSE %s', ld, filename, tmpnam) 
+
+% Code to try to use gs to get around imagemagick bugs
+if 0
+options = regexprep(options, '\-density (\d+)','-r$1');
+cmd = sprintf('%s gs -r125 %s -dEPSCrop -sDEVICE=png16m -sOutputFile=%s -dBATCH -dNOPAUSE %s', ...
+    ld, options, filename, tmpnam) 
+end
 
 flag = system(cmd);
 if flag~=0
