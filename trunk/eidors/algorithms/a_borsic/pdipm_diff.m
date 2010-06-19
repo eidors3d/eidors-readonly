@@ -1,14 +1,14 @@
-function img=ab_pdipm( inv_model, data1, data2)
-% AB_PDIPM inverse solver using Primal/Dual interior point method
+function img=pdipm_diff( inv_model, data1, data2)
+% PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method
 % img= ab_pdipm( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 %
-%  inv_model.ab_pdipm.norm_data  1 or 2 (DEFAULT 2)
-%  inv_model.ab_pdipm.norm_prior 1 or 2 (DEFAULT 2)
-%  inv_model.ab_pdipm.beta     (default 1e-6)
+%  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)
+%  inv_model.pdipm_diff.norm_prior 1 or 2 (DEFAULT 2)
+%  inv_model.pdipm_diff.beta     (default 1e-6)
 %
 % Parameters:
 %  max_iters =  inv_model.parameters.max_iteration (default 10)
@@ -36,17 +36,17 @@ W= calc_meas_icov( inv_model );
 
 
 if     pp.norm_data==2 && pp.norm_image==2
-  x= pdipm_2_2( J,W,alpha*L,d, pp);;
+  x= pdipm_2_2( J,W,alpha*L,d, pp);
 elseif pp.norm_data==2 && pp.norm_image==1
-  x= pdipm_2_1( J,W,alpha*L,d, pp);;
+  x= pdipm_2_1( J,W,alpha*L,d, pp);
 elseif pp.norm_data==1 && pp.norm_image==2
-  x= pdipm_1_2( J,W,alpha*L,d, pp);;
+  x= pdipm_1_2( J,W,alpha*L,d, pp);
 elseif pp.norm_data==1 && pp.norm_image==1
-  x= pdipm_1_1( J,W,alpha*L,d, pp);;
+  x= pdipm_1_1( J,W,alpha*L,d, pp);
 end
 
 % create a data structure to return
-img.name = 'ab_pdipm';
+img.name = 'pdipm_diff';
 img.elem_data = x;
 img.fwd_model = fwd_model;
 
@@ -173,16 +173,14 @@ function pp= process_parameters(imdl);
    catch  pp.min_change = 0;
    end
 
-   try    pp.beta = imdl.ab_pdipm.beta; 
+   try    pp.beta = imdl.pdipm_diff.beta; 
    catch  pp.beta = 1e-8;
    end
 
-   try    pp.norm_data = imdl.ab_pdipm.norm_data;
+   try    pp.norm_data = imdl.pdipm_diff.norm_data;
    catch  pp.norm_data = 2;
    end
 
-   try    pp.norm_image = imdl.ab_pdipm.norm_image;
+   try    pp.norm_image = imdl.pdipm_diff.norm_image;
    catch  pp.norm_image = 2;
    end
-
-
