@@ -33,7 +33,9 @@ J=calc_jacobian( fwd_model, img_bkgnd);
 alpha=calc_hyperparameter( inv_model );
 L=calc_R_prior( inv_model );
 W= calc_meas_icov( inv_model );
-
+if pp.norm_data==1
+  W = sqrt(W); % sW is in units of volts
+end
 
 if     pp.norm_data==2 && pp.norm_image==2
   x= pdipm_2_2( J,W,alpha*L,d, pp);
