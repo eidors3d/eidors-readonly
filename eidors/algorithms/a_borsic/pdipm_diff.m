@@ -53,26 +53,24 @@ img.elem_data = x;
 img.fwd_model = fwd_model;
 
 function s= pdipm_2_2( J,W,L,d, pp);
-   [M,N] = size(J); % M measurements, N parameters
-   s= zeros( N, 1 ); % solution - start with zeros
+   [s]= initial_values( J, L, pp);
 
    R = L'*L;
    ds= (J'*W*J + R)\(J'*W*(d - J*s) - R*s);
    s= s + ds;
 
 function s= pdipm_1_2( J,W,L,d, pp);
-   [M,N] = size(J); % M measurements, N parameters
-   s= zeros( N, 1 ); % solution - start with zeros
-   x= zeros( M, 1 ); % dual var - start with zeros
+   [s,x,jnk,sz]= initial_values( J, L, pp);
 
+   I_M = speye(sz.M, sz.M);
    for loop = 1:pp.max_iter
       % Define variables
-      f = J*s - d;             F= spdiags(f,0,M,M);
-                               X= spdiags(x,0,M,M);
-      e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,M,M);
+      f = J*s - d;             F= spdiag(f);
+                               X= spdiag(x);
+      e = sqrt(f.^2 + pp.beta);E= spdiag(e);
 
       % Define derivatives
-      dFc_ds = (speye(M,M) - X*inv(E)*F)*J;
+      dFc_ds = (I_M - X*inv(E)*F)*J;
       dFc_dx = -E;
       dFf_ds = L'*L;
       dFf_dx = J'*W;
@@ -80,8 +78,8 @@ function s= pdipm_1_2( J,W,L,d, pp);
       dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
               [ f-E*x; J'*W*x + L'*L*s ];
 
-      ds = dsdx(1:N);
-      dx = x_update(x, dsdx(N+(1:M)));
+      ds =             dsdx(      1:sz.N);
+      dx = x_update(x, dsdx(sz.N+(1:sz.M)));
 
       s= s + ds; x= x + dx;
 fprintf('+');
