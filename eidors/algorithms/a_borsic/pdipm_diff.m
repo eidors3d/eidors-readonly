@@ -53,7 +53,12 @@ img.elem_data = x;
 img.fwd_model = fwd_model;
 
 function s= pdipm_2_2( J,W,L,d, pp);
-   s= (J'*W*J + L'*L)\J'*W*d;
+   [M,N] = size(J); % M measurements, N parameters
+   s= zeros( N, 1 ); % solution - start with zeros
+
+   R = L'*L;
+   ds= (J'*W*J + R)\(J'*W*(d - J*s) - R*s);
+   s= s + ds;
 
 function s= pdipm_1_2( J,W,L,d, pp);
    [M,N] = size(J); % M measurements, N parameters
@@ -83,59 +88,59 @@ fprintf('+');
    end
 
 function s= pdipm_2_1( J,W,L,d, pp);
-   [M,N] = size(J);   % M measurements, N parameters
-   [G  ] = size(L,1); % E edges
-   s= zeros( N, 1 ); % solution - start with zeros
-   x= zeros( G, 1 ); % dual var - start with zeros
+   [s,jnk,x,sz]= initial_values( J, L, pp);
 
+   I_D = speye(sz.D, sz.D);
    for loop = 1:pp.max_iter
       % Define variables
-      f = L*s;                 F= spdiags(f,0,G,G);
-                               X= spdiags(x,0,G,G);
-      e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,G,G);
+      f = L*s;                 F= spdiag(f);
+                               X= spdiag(x);
+      e = sqrt(f.^2 + pp.beta);E= spdiag(e);
 
       % Define derivatives
-      dFc_ds = (speye(G,G) - X*inv(E)*F)*L;
+      dFc_ds = (I_D - X*inv(E)*F)*L;
       dFc_dx = -E;
-      dFf_ds = J'*J;
+%     dFf_ds = J'*J;
+      dFf_ds = J'*W*J;
       dFf_dx = L';
 
       dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
-              [ f-E*x; J'*(J*s-d) + L'*x ];
+              [ f-E*x; J'*W*(J*s-d) + L'*x ];
+%             [ f-E*x; J'*(J*s-d) + L'*x ];
 
-      ds = dsdx(1:N);
-      dx = x_update(x, dsdx(N+(1:G)));
+      ds =             dsdx(      1:sz.N );
+      dx = x_update(x, dsdx(sz.N+(1:sz.D)));
 
       s= s + ds; x= x + dx;
 fprintf('+');
    end
 
 function s= pdipm_1_1( J,W,L,d, pp);
-   [M,N] = size(J); % M measurements, N parameters
-   [D  ] = size(L,1); % E edges
-   y= zeros( D, 1 ); % dual var - start with zeros
-   s= zeros( N, 1 ); % solution - start with zeros
-   x= zeros( M, 1 ); % dual var - start with zeros
+   [s,x,y,sz]= initial_values( J, L, pp);
 
+   I_M = speye(sz.M,sz.M); 
+   I_D = speye(sz.D,sz.D); 
+   Z_N = sparse(sz.N,sz.N);
+   Z_DM= sparse(sz.D,sz.M);
    for loop = 1:pp.max_iter
       % Define variables
-      g = L*s;                 G= spdiags(g,0,D,D);
-      r = sqrt(g.^2 + pp.beta);R= spdiags(r,0,D,D); % S in paper
-                               Y= spdiags(y,0,D,D);
+      g = L*s;                 G= spdiag(g);
+      r = sqrt(g.^2 + pp.beta);R= spdiag(r); % S in paper
+                               Y= spdiag(y);
 
-      f = J*s - d;             F= spdiags(f,0,M,M);
-      e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,M,M);
-                               X= spdiags(x,0,M,M);
+      f = J*s - d;             F= spdiag(f);
+      e = sqrt(f.^2 + pp.beta);E= spdiag(e);
+                               X= spdiag(x);
 
       % Define derivatives
-      As1 = sparse(N,N);
-      As2 = (speye(M,M) - X*inv(E)*F) * J;
-      As3 = (speye(D,D) - Y*inv(R)*G) * L;
+      As1 = Z_N;
+      As2 = (I_M - X*inv(E)*F) * J;
+      As3 = (I_D - Y*inv(R)*G) * L;
       Ax1 = J'*W;
       Ax2 = -E;
-      Ax3 = sparse(D,M);
+      Ax3 = Z_DM;
       Ay1 = L';
-      Ay2 = sparse(M,D);
+      Ay2 = Z_DM';
       Ay3 = -R;
       B1  = J'*W*x + L'*y;
       B2  = f - E*x;
@@ -145,15 +150,27 @@ function s= pdipm_1_1( J,W,L,d, pp);
              As2,Ax2,Ay2; ...
              As3,Ax3,Ay3] \ [B1;B2;B3];
 
-      ds = DD(1:N);
-      dx = x_update(x, DD(N+(1:M)));
-      dy = x_update(y, DD(N+M+(1:D)));
+      ds = DD(1:sz.N);
+      dx = x_update(x, DD(sz.N +        (1:sz.M)) );
+      dy = x_update(y, DD(sz.N + sz.M + (1:sz.D)) );
 
       s= s + ds;
       x= x + dx;
       y= y + dy;
 fprintf('+');
    end
+
+% fix matlab's stupid verbose spdiags function
+function sM = spdiag(V)
+   lV = length(V);
+   sM = spdiags(V,0,lV,lV);
+
+function [s,x,y,sz]= initial_values( J, L, pp);
+   [sz.M,sz.N] = size(J); % M measurements, N parameters
+   [sz.D  ] = size(L,1); % E edges
+   y= zeros( sz.D, 1 ); % dual var - start with zeros
+   s= zeros( sz.N, 1 ); % solution - start with zeros
+   x= zeros( sz.M, 1 ); % dual var - start with zeros
 
 % abs(x + dx) must be <= 1
 function dx = x_update( x, dx)
