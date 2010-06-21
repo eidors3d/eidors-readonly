@@ -16,13 +16,13 @@ function startup
 ver= eidors_obj('interpreter_version');
 
 if ver.isoctave
-   if ver.ver < 6.005
-      warning(['EIDORS REQUIRES AT LEAST MATLAB V6.5.\n' ...
+   if ver.ver < 3.000003
+      warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.0.3\n' ...
                'Several functions may not work with your version']);
    end
 else
-   if ver.ver < 3.000003
-      warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.0.3\n' ...
+   if ver.ver < 6.005
+      warning(['EIDORS REQUIRES AT LEAST MATLAB V6.5.\n' ...
                'Several functions may not work with your version']);
    end
 end
