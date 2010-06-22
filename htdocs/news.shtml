@@ -8,9 +8,16 @@ EIDORS package.
 <p><li><b>
     20 Jun 2010:
 </b><br>
-<img src="news_pics/10-06-20-EIDORS-N900-1.jpg">
-<img src="news_pics/10-06-20-EIDORS-N900-2.jpg">
-You can now take EIDORS with you on your N900 phone. Andrea Borsic and 
+<a border="0" href="news_pics/10-06-20-EIDORS-N900-1.jpg"
+     ><img border="0" width="100" SRC="news_pics/10-06-20-EIDORS-N900-1.jpg"
+></a>
+<a border="0" href="news_pics/10-06-20-EIDORS-N900-2.jpg"
+     ><img border="0" width="100" SRC="news_pics/10-06-20-EIDORS-N900-2.jpg"
+></a>
+<a border="0" href="news_pics/10-06-20-EIDORS-N900-3.jpg"
+     ><img border="0" width="100" SRC="news_pics/10-06-20-EIDORS-N900-3.jpg"
+></a>
+You can now take EIDORS with you on your N900 phone! Andrea Borsic and 
 Andy Adler got EIDORS to work on this phone by 
 installing Octave, Gnuplot, texinfo, and EIDORS to the phone. It is OK
 for 2D solvers (576 element inverse solutions in about 25 sec), but would
