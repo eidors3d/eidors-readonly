@@ -119,7 +119,7 @@ function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_n
 
    delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
    if is2D
-      [fmdl,max_idx] = mdl2d_from3d(fmdl,mat_idx);
+      [fmdl,mat_idx] = mdl2d_from3d(fmdl,mat_idx);
    end
 
    % convert CEM to PEM if so configured
