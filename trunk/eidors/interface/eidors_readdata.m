@@ -56,9 +56,8 @@ if nargin < 2
    end
 end
 
-fmt = pre_proc_spec_fmt( fmt );
 
-switch fmt
+switch pre_proc_spec_fmt( format, fname );
    case 'mceit';
       [vv,curr,volt,auxdata] = mceit_readdata( fname );
    case 'draeger-get'
@@ -75,12 +74,14 @@ switch fmt
       [vv,auxdata] = UCT_calibration_file( fname );
    case 'uct_data'
       [vv] = UCT_LoadDataFrame( fname );
+   case 'carefusion'
+      [vv] = carefusion_eit_readdata( fname );
   
    otherwise
       error('eidors_readdata: file "%s" format unknown', fmt);
 end
 
-function fmt = pre_proc_spec_fmt( fmt );
+function fmt = pre_proc_spec_fmt( format, fname );
    fmt= lower(format);
    if strcmp(fmt,'get')
       if is_get_file_a_draeger_file( fname)
@@ -100,9 +101,47 @@ function fmt = pre_proc_spec_fmt( fmt );
 
 function df= is_get_file_a_draeger_file( fname)
    fid= fopen(fname,'rb');
-   d= fread(fid,[1 26],'char');
+   d= fread(fid,[1 26],'uchar');
    fclose(fid);
    df = all(d == '---Draeger EIT-Software---');
+
+function df = is_eit_file_a_carefusion_file( fname )
+   fid= fopen(fname,'rb');
+   d= fread(fid,[1 80],'uchar');
+   fclose(fid);
+   df = 0;
+   if d(1:2) ~= [255,254]; return; end
+   if d(4:2:end) ~= 0; return; end
+   str= setstr(d(3:2:end));
+   tests1= '<?xml version="1.0" ?>';
+   tests2= '<EIT_File>';
+   if ~any(findstr(str,tests1)); return; end
+   if ~any(findstr(str,tests2)); return; end
+   
+   df= 1;
+   return
+
+function [vv] = carefusion_eit_readdata( fname );
+   fid= fopen(fname,'rb');
+   d= fread(fid,[1 180],'uchar');
+   str= setstr(d(3:2:end));
+   outv = regexp(str,'<Header>(\d+) bytes</Header>','tokens');
+   if length(outv) ~=1; 
+      error('format problem reading carefusion eit files');
+   end
+   header = str2num(outv{1}{1});
+
+% NOTE: we're throwing away the header completely. This isn't
+% the 'right' way to read a file.
+   fseek(fid, header, -1); % From origin
+   d= fread(fid,[inf],'float32');
+   fclose(fid);
+
+%  Data records are 262 long
+   endpt = floor(length(d)/262)*262;
+   vv= reshape(d(1:endpt),262,[]);
+   vv= vv(36+[1:208],:);
+   
 
 function [vv,curr,volt,auxdata] = draeger_readdata( fname );
    fid= fopen(fname,'rb');
