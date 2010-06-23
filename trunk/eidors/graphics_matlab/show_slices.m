@@ -52,12 +52,18 @@ end
 if size(levels,2) == 5
    spec_position= 1;
 elseif size(levels)== [1,1]
-   zmax= max(img(1).fwd_model.nodes(:,3));
-   zmin= min(img(1).fwd_model.nodes(:,3));
-   levels = linspace(zmax,zmin, levels+2);
-   levels = levels(2:end-1)';
-   levels = [(1+0*levels)*[Inf,Inf], levels];
-   spec_position= 0;
+   if size(img(1).fwd_model.nodes,2) == 2 % Can't do horiz slices for 2D model
+      eidors_msg('Can''t do horizontal slices for 2D model. Showing 2D slice');
+      levels= [Inf,Inf,0];
+      spec_position= 0;
+   else
+      zmax= max(img(1).fwd_model.nodes(:,3));
+      zmin= min(img(1).fwd_model.nodes(:,3));
+      levels = linspace(zmax,zmin, levels+2);
+      levels = levels(2:end-1)';
+      levels = [(1+0*levels)*[Inf,Inf], levels];
+      spec_position= 0;
+   end
 else
    spec_position= 0;
 end
