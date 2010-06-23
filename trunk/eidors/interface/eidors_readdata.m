@@ -7,6 +7,8 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %        format = "GET" or "MCEIT"
 %    - Draeger "get" file format (older format for Draeger equipment)
 %        format = "GET" or "draeger"
+%    - New Carefusion "EIT" file format
+%        format = "EIT" or "carefusion"
 %    - Sheffield MK I "RAW" file format
 %        format = "RAW" or "sheffield"
 %    - ITS (International Tomography Systems)
@@ -54,14 +56,7 @@ if nargin < 2
    end
 end
 
-fmt= lower(format);
-if strcmp(fmt,'get')
-    if is_get_file_a_draeger_file( fname)
-       fmt= 'draeger-get';
-    else
-       fmt= 'mceit';
-    end
-end
+fmt = pre_proc_spec_fmt( fmt );
 
 switch fmt
    case 'mceit';
@@ -84,7 +79,25 @@ switch fmt
    otherwise
       error('eidors_readdata: file "%s" format unknown', fmt);
 end
-   
+
+function fmt = pre_proc_spec_fmt( fmt );
+   fmt= lower(format);
+   if strcmp(fmt,'get')
+      if is_get_file_a_draeger_file( fname)
+         fmt= 'draeger-get';
+      else
+         fmt= 'mceit';
+      end
+   end
+
+   if strcmp(fmt,'eit')
+      if is_eit_file_a_carefusion_file( fname )
+         fmt= 'carefusion';
+      else
+         error('EIT file specified, but it doesn''t seem to be a Carefusion file')
+      end
+   end
+
 function df= is_get_file_a_draeger_file( fname)
    fid= fopen(fname,'rb');
    d= fread(fid,[1 26],'char');
