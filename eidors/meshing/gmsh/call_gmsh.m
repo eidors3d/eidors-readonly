@@ -1,5 +1,5 @@
 function status= call_gmsh(geo_file)
-% CALL_NETGEN: call netgen to create a vol_file from a geo_file
+% call_gmsh: call Gmsh to create a vol_file from a geo_file
 % status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 %  staus = 0 -> success , negative -> failure
 %

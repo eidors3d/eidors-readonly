@@ -1,11 +1,11 @@
 function [fwd_mdl, mat_indices]= ...
              gmsh_mk_fwd_model( vol_filename, name, centres, z_contact)
-% GMSH_MK_FWD_MODEL: create a fwd_model object from a netgen vol file
+% GMSH_MK_FWD_MODEL: create a fwd_model object from a Gmsh file
 % [fwd_mdl, mat_indices]= ...
 %      gmsh_mk_fwd_model( vol_filename, centres, ...
 %                       name, stim_pattern, z_contact)
 %
-%  vol_filename:      filename output from Gmsj
+%  vol_filename:      filename output from Gmsh
 %  name:              name for object (if [] use vol_filename)
 %  centres:           matrix of N x [x,y,z] electrode centres
 %                     centres can also be a Nx1 cell matrix of
@@ -16,9 +16,9 @@ function [fwd_mdl, mat_indices]= ...
 %
 %  fwd_mdl:           eidors format fwd_model
 %  mat_indices:       cell array of material indices from eidors 
- 
+
+% Gmsh mesher for EIRODS was based on Netgen interface.
 % (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
-% $Id: ng_mk_fwd_model.m 1535 2008-07-26 15:36:27Z aadler $
 
 if isempty(name); 
    name = ['fwd_mdl based on ', vol_filename];
