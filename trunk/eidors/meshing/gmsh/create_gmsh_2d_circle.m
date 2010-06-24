@@ -5,7 +5,7 @@ function mdl= create_gmsh_2d_circle(rad, n_elec)
 % mdl - EIDORS forward model
 % rad - model radius
 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% License: GPL version 2 or version 3
 % $Id$
 
 p=[];
@@ -21,7 +21,6 @@ for th=theta
   p=gmfn(p,'Point(%d) = {%f,%f,%f,es};', x,y,z);
 end
   
-
 
 fclose(p.fid);
 
