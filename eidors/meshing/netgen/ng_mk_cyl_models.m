@@ -343,7 +343,7 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    mdl2 = eidors_obj('fwd_model',sprintf('%s 2D',mdl3.name));
 
    % set nodes
-   bdy = find_boundary(mdl3.elems);
+   [bdy,idx] = find_boundary(mdl3.elems);
    vtx = mdl3.nodes;
    z_vtx = reshape(vtx(bdy,3), size(bdy) );
    lay0  = find( all(z_vtx==0,2) );
@@ -351,8 +351,6 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    
    vtx0  = unique(bdy0(:));
    mdl2.nodes = vtx(vtx0,1:2);
-
-   % TODO set boundary
 
    % set elems
    nmap  = zeros(size(vtx,1),1); nmap(vtx0) = 1:length(vtx0);
@@ -365,8 +363,22 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    % set gnd_node
    mdl2.gnd_node = nmap(mdl3.gnd_node);
 
-   idx2 = []; % Don't know how to manage edges accurately
-
+   % set material indices
+   % TODO: vectorize code
+   idx2 = {};
+   idx0  = idx( lay0, :);
+   for i=1:size(idx3,2)
+     idx2{i} = [];
+     ii = 1;
+     for j=1:size(idx3{i},1)
+         idx_tmp = find( idx0==idx3{i}(j) );
+         if not(isempty(idx_tmp))
+           idx2{i}(ii,1) = idx_tmp(1,1);
+           ii = ii + 1;
+         end
+     end
+   end
+   
    % set electrode
    if isfield(mdl3,'electrode')
      mdl2.electrode = mdl3.electrode;
