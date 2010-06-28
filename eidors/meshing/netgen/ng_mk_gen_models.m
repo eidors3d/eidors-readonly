@@ -17,8 +17,8 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape);
 %     OR
 %  elec_shape = [radius, 0, maxsz ]    % Circular elecs
 %     OR 
-%  elec_shape = [0, 0, maxsz ]         % Point electrodes
-%    (point elecs does some tricks with netgen, so the elecs aren't exactly where you ask)
+%  elec_shape = [0, sz, maxsz ]         % Point electrodes
+%    (point elecs does some tricks with netgen, using sz square, so the elecs aren't exactly where you ask)
 %
 % Specify either a common electrode shape or for each electrode
 %
@@ -34,11 +34,11 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape);
 if isstr(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4; extra_ng_code = {'',''}; end
-cache_obj = { shape_str, elec_pos, elec_shape, extra_ng_code};
+cache_obj = { shape_str, elec_pos, elec_shape };
 
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_gen_models' );
 if isempty(fmdl);
-   fmdl = mk_ellip_model( shape_str, elec_pos, elec_shape, extra_ng_code );
+   fmdl = mk_ellip_model( shape_str, elec_pos, elec_shape);
    eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_gen_models', fmdl);
    eidors_cache('boost_priority', +2); % return values
@@ -51,12 +51,11 @@ function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape);
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
-%  ptsfn= [fnstem,'.msz'];
+   ptsfn= [fnstem,'.msz'];
    meshfn= [fnstem,'.vol'];
 
    is2D = 0;
-   [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
-                          tank_height, tank_radius, is2D );
+   [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D );
 
    n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs);
    if n_pts == 0 
@@ -81,24 +80,22 @@ function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape);
    fmdl_mat_idx = {fmdl,mat_idx};
 
 % for the newest netgen, we can't call msz file unless there are actually points in  it
-function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
-                        tank_maxh, elecs, extra_ng_code);
+function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
    fid=fopen(geofn,'w');
-   write_header(fid,tank_height,tank_radius,tank_maxh,extra_ng_code);
+   write_header(fid, shape_str);
 
    n_elecs = length(elecs);
    %  elecs(i).pos   = [x,y,z]
-   %  elecs(i).shape = 'C' or 'R'
+   %  elecs(i).shape = 'C' or 'R' or 'P'
    %  elecs(i).dims  = [radius] or [width,height]
    %  elecs(i).maxh  = '-maxh=#' or '';
    pts_elecs_idx = []; 
 
+   tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
    for i=1:n_elecs
       name = sprintf('elec%04d',i);
       pos = elecs(i).pos;
-      % calculate the normal vector to the shape
-      ab = tank_radius(1)/tank_radius(2);
-      dirn= pos.*[inv(ab), ab, 0 ];
+      dirn= elecs(i).dirn;
       switch elecs(i).shape
        case 'C'
          write_circ_elec(fid,name, pos, dirn,  ...
@@ -126,9 +123,9 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ..
       fprintf(fid,'tlo cyl%04d cyl -col=[1,0,0];\n ',i);
    end
 
-   if ~isempty(extra_ng_code{1})
-      fprintf(fid,'tlo %s  -col=[0,1,0];\n',extra_ng_code{1});
-   end
+%  if ~isempty(extra_ng_code{1})
+%     fprintf(fid,'tlo %s  -col=[0,1,0];\n',extra_ng_code{1});
+%  end
 
    fclose(fid); % geofn
 % From Documentation: Syntax is
@@ -144,32 +141,6 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ..
    end
    fclose(fid); % ptsfn
 
-function [tank_height, tank_radius, tank_maxh, is2D] = ...
-              parse_shape(cyl_shape);
-   tank_height = cyl_shape(1);
-   tank_radius = [1,1];
-   tank_maxh   = 0;
-   is2D = 0;
-   lcs = length(cyl_shape);
-
-   if lcs == 2
-      tank_radius(1)=cyl_shape(2);
-   elseif lcs >= 3
-      tank_radius=cyl_shape(2:3);
-   end
-   if length(cyl_shape)>=4; 
-      tank_maxh  =cyl_shape(4);
-   end
-   if tank_height==0;
-      is2D = 1;
-
-      %Need some width to let netgen work, but not too much so
-      % that it meshes the entire region
-      tank_height = min(tank_radius)/5; % initial extimate
-      if tank_maxh>0
-         tank_height = min(tank_height,2*tank_maxh);
-      end
-   end
 
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
@@ -187,89 +158,41 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
 %  elecs(i).shape = 'C' or 'R'
 %  elecs(i).dims  = [radius] or [width,height]
 %  elecs(i).maxh  = '-maxh=#' or '';
-function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
+function [elecs, centres] = parse_elecs(elec_pos, elec_shape, is2D );
 
-   if is2D
-      elec_pos(:,2) = hig/2;
+   n_elecs= size(elec_pos,1); 
+   if n_elecs == 0
+      elecs= struct([]); % empty
+      centres= [];
+      return;
    end
 
-   % It never makes sense to specify only one elec
-   % So elec_pos means the number of electrodes in this case
-   if size(elec_pos,1) == 1
-       % Parse elec_pos = [n_elecs_per_plane,z_planes] 
-      n_elecs= elec_pos(1); % per plane
-      th = ellip_space_elecs( n_elecs, rad )
-
-      on_elecs = ones(n_elecs, 1);
-      el_th = []; 
-      el_z  = []; 
-      for i=2:length(elec_pos)
-        el_th = [el_th; th];
-        el_z  = [el_z ; on_elecs*elec_pos(i)];
-      end
-   else
-      el_th = elec_pos(:,1)*2*pi/360;
-      el_z  = elec_pos(:,2);
-   end
-      
-   n_elecs= size(el_z,1); 
 
    if size(elec_shape,1) == 1
       elec_shape = ones(n_elecs,1) * elec_shape;
    end
 
    for i= 1:n_elecs
-     row = elec_shape(i,:); 
-     elecs(i) = elec_spec( row, is2D, hig, rad );
+     elecs(i) = elec_spec( elec_shape(i,:), elec_pos(i,:) );
    end
    
-   centres = [rad(1)*sin(el_th),rad(2)*cos(el_th),el_z];
-   for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
+   centres = elec_pos(:,1:3);
 
-   if n_elecs == 0
-      elecs= struct([]); % empty
-   end
+function elec = elec_spec( row, posrow );
+  elec.pos = posrow(1:3);
+  elec.dirn= posrow(4:6);
 
-% equally space n_elecs around an ellipse of outer radius rad(1),rad(2)
-function th = ellip_space_elecs( n_elecs, rad )
-   % The radius is the integral of sqrt((r1*sin(th))^2 + (r2*cos(th))^2)
-   %  I'm sure there's an analytic expression for it, but I can't find it now
-   if n_elecs==0; th=[]; return; end
-   
-   th = linspace(0,2*pi, 10*(n_elecs)); % Accuracy to 10x spacing
-   len = cumsum( sqrt( rad(1)*cos(th).^2 + rad(2)*sin(th).^2 ) );
-%  len = cumsum(        cos(th).^2 +        sin(th).^2 );
-   len = len/max(len);
-   xi = linspace(0,1,n_elecs+1); xi(1)= []; xi(end)=[];
-   yi = interp1(len,th,xi);
-
-   th= [0;yi(:)];
-
-function elec = elec_spec( row, is2D, hig, rad )
-  if     is2D
-     if row(1) == 0;
-        elec.shape = 'P';
-% To create a PEM, we make a square and take the corner. This isn't perfect, since
-% the elec isn't quite where we asked for it, but that's as good is I can do. I tried
-% asking for two rectangles to touch, but that freaks netgen out.
-        elec.dims  =  [min(rad)/20, hig]; 
-     else
-        elec.shape = 'R';
-        elec.dims  = [row(1),hig];
-     end
+  if row(1) == 0
+     elec.shape = 'P' 
+     elec.dims  = row(2)*[1,1];
+  elseif length(row)<2 || row(2) == 0 % Circular electrodes 
+     elec.shape = 'C';
+     elec.dims  = row(1);
+  elseif row(2)>0      % Rectangular electrodes
+     elec.shape = 'R';
+     elec.dims  = row(1:2);
   else
-     if row(1) == 0
-        elec.shape = 'P' 
-        elec.dims  = [min(rad)/20, hig/10];
-     elseif length(row)<2 || row(2) == 0 % Circular electrodes 
-        elec.shape = 'C';
-        elec.dims  = row(1);
-     elseif row(2)>0      % Rectangular electrodes
-        elec.shape = 'R';
-        elec.dims  = row(1:2);
-     else
-        error('negative electrode width');
-     end
+     error('negative electrode width');
   end
 
   if length(row)>=3 && row(3) > 0
@@ -279,25 +202,10 @@ function elec = elec_spec( row, is2D, hig, rad )
   end
 
 
-function write_header(fid,tank_height,tank_radius,maxsz,extra);
-   if maxsz==0; 
-      maxsz = '';
-   else
-      maxsz = sprintf('-maxh=%f',maxsz);
-   end
-
-   if ~isempty( extra{1} )
-      extra{1} = [' and not ',extra{1}];
-   end
-
+function write_header(fid, shape_str);
    fprintf(fid,'#Automatically generated by ng_mk_gen_models\n');
    fprintf(fid,'algebraic3d\n');
-   fprintf(fid,'%s\n',extra{2}); % Define extra stuff here
-   fprintf(fid,'solid cyl=ellipticcylinder (0,0,0;%.4f,0,0;0,%.4f,0); \n', ...
-            tank_radius);
-   fprintf(fid,['solid mainobj= plane(0,0,0;0,0,-1)\n' ...
-                'and  plane(0,0,%.4f;0,0,1)\n' ...
-                'and  cyl %s %s;\n'],tank_height,extra{1},maxsz);  
+   fprintf(fid,shape_str);
 
 function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    % set name
