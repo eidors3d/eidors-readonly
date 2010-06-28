@@ -67,7 +67,7 @@ show_fem(fmdl);
 
 % Simple 3D cylinder with a ball
 case 12;
-    extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'}
+    extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'};
     [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
     img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
@@ -75,7 +75,7 @@ show_fem(img);
 
 % 3D cylinder with 8 electrodes and cube
 case 13;
-    extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'}
+    extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'};
     [fmdl,mat_idx]= ng_mk_cyl_models(2,[8,0.5,1.5],[0.1],extra); 
     img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
@@ -83,19 +83,19 @@ show_fem(img);
 
 % 3D cylinder with inner cylinder
 case 14;
-    extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,1;1,1,2) -maxh=0.05;'}
+    extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,1;1,1,2) -maxh=0.05;'};
     [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
 show_fem(fmdl);
 
 % 2D cylinder with 8 electrodes and hole
 case 15;
-    extra={'ball','solid ball = sphere(0.2,0.2,0;0.2) -maxh=0.05;'}
+    extra={'ball','solid ball = sphere(0.2,0.2,0;0.2) -maxh=0.05;'};
     fmdl= ng_mk_cyl_models(0,[8],[0.1,0,0.05],extra); 
 show_fem(fmdl);
 
 % 2D cylinder with 9 electrodes and inner cylinder
 case 16;
-    extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
+    extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'};
     fmdl= ng_mk_cyl_models(0,[9],[0.2,0,0.05],extra); 
     img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
@@ -118,7 +118,7 @@ case 18;
     ob= 'orthobrick(-1,-1,0;1,1,1.5)';
     el= 'ellipsoid(0,0,1.5; 0,0,1.25; 0.8,0,0; 0,0.8,0)';
 %   sp= 'sphere(0, 0, 1.5; 0.8)';
-    extra={'obj',['solid obj = ',ob,' and ',el,';']}
+    extra={'obj',['solid obj = ',ob,' and ',el,';']};
     [fmdl,mat_idx]= ng_mk_cyl_models(1.5,[8,0.5,1.0],[0.1],extra); 
     img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
