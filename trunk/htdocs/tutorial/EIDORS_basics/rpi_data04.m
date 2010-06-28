@@ -13,7 +13,7 @@ imdl.jacobian_bkgnd.value = pf(1)*imdl.jacobian_bkgnd.value;
 imdl.hyperparameter.value = imdl.hyperparameter.value/pf(1)^2;
 
 img = inv_solve(imdl, vh, vi);
-img.calc_colours.cb_shrink_move = [0.5,0.8,0];
+img.calc_colours.cb_shrink_move = [0.5,0.8,0.05];
 show_fem(img,[1,1]); axis off; axis image
 
 print_convert('rpi_data04a.png','-density 60');

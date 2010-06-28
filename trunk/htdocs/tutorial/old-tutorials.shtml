@@ -1,6 +1,11 @@
 <!--#include virtual="nav-sidebar.shtml" -->
-<h2>EIDORS Examples</h2>
+<h2>Older EIDORS tutorials</h2>
 
+These are older tutorials for EIDORS. They still work (we try hard to
+keep backwards compatibility), but they are no longer the recommended
+way to write EIDORS software (we've come up with cleaner functions to
+do the same thing).
+<br>
 To run these tutorials, you need to 
 <a href="../download.shtml">download and install</a>
 EIDORS and then run this command in a matlab
@@ -9,14 +14,10 @@ EIDORS and then run this command in a matlab
 &gt;&gt;run /path/to/eidors3d/startup.m
 </pre>
 
-<!--#include virtual="./image_reconst.html" -->
-<!--#include virtual="./data_structures.html" -->
-<!--#include virtual="./application_examples.html" -->
-<!--#include virtual="./netgen.html" -->
-<!--#include virtual="./GREIT.html" -->
+<!--#include virtual="./old-tutorials.html" -->
 
+<!--#include virtual="./GREIT-old.html" -->
 
-</ul>
 
 </td></tr></table>
 <p>
@@ -31,8 +32,5 @@ EIDORS and then run this command in a matlab
       </ul>
       <i>Questions</i>:
       <br>&minus;
-
-Instructions to trim graphics from matlab
-    find -name \*.png -exec convert -trim \{} \{} \;
 
       -->
