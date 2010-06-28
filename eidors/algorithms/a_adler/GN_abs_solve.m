@@ -31,7 +31,7 @@ for i = 1:iters;
   J = calc_jacobian( img );
 
   RDx = hp2RtR*(img0.elem_data - img.elem_data);
-  dx = (J'*W*J + hp2RtR)\(J'*dv - RDx);
+  dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
 
   img = line_optimize(img, dx, data1);
 end
@@ -39,7 +39,7 @@ end
 % Fit a parabola to the linefit and pick the best point
 % This is better than doing an exhaustive search
 function  img = line_optimize(imgk, dx, data1);
-  flist = [ 0.1,  0.5, 0.9];
+  flist = [ 0.1,  0.5, 1.0];
   clim = mean(imgk.elem_data)/10; % prevent zero and negative conductivity
   img = imgk;
   for i = 1:length(flist);
