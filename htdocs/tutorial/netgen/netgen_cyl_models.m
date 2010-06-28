@@ -125,5 +125,7 @@ case 18;
 show_fem(img);
 end
 
-print('-dpng','-r75', ...
-   sprintf('netgen_cyl_models%02d.png',number));
+%print('-dpng','-r75', ...
+%   sprintf('netgen_cyl_models%02d.png',number));
+print_convert(  ...
+    sprintf('netgen_cyl_models%02d.png',number), '-density 75');
