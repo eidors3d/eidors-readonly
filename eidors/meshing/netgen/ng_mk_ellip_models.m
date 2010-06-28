@@ -1,12 +1,12 @@
-function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
+function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, ...
                   elec_shape, extra_ng_code);
-% NG_MAKE_CYL_MODELS: create cylindrical models using netgen
-%[fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
+% NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
+%[fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, ...
 %                 elec_shape, extra_ng_code);
 % INPUT:
-% cyl_shape = {height, [radius, [maxsz]]}
+% ellip_shape = {height, [x_radius, y_radius, [maxsz]]}
 %    if height = 0 -> calculate a 2D shape
-%    radius (OPT)  -> (default = 1)
+%    x_radius, y_radius (OPT)  -> elliptical eccentricity in x,y directions(default = 1)
 %    maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
@@ -18,8 +18,8 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %  elec_shape = [width,height, maxsz]  % Rectangular elecs
 %     OR
 %  elec_shape = [radius, 0, maxsz ]    % Circular elecs
-%     OR
-%  elec_shape = [0, 0, maxsz ]         % Point elecs
+%     OR 
+%  elec_shape = [0, 0, maxsz ]         % Point electrodes
 %    (point elecs does some tricks with netgen, so the elecs aren't exactly where you ask)
 %
 % Specify either a common electrode shape or for each electrode
@@ -35,76 +35,32 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %
 %
 % USAGE EXAMPLES:
-% Simple 3D cylinder. Radius = 1. No electrodes
-%   fmdl= ng_mk_cyl_models(3,[0],[]); 
-% Simple 2D cylinder. Radius = 2. Set minsize to refine
-%   fmdl= ng_mk_cyl_models([0,2,.2],[0],[]); 
-% 3D cylinder. Radius = 1. 2 planes of 8 elecs with radius 0.1
-%   fmdl= ng_mk_cyl_models(3,[8,1,2],[0.1]); 
-% 3D cylinder. Radius = 1. 6 circ elecs with elec refinement
-%   fmdl= ng_mk_cyl_models(3,[7,1],[0.2,0,0.05]); 
-% 3D cylinder. Radius = 1. 7 rect elecs with no refinement
-%   fmdl= ng_mk_cyl_models(3,[7,1],[0.2,0.3]); 
-% 2D cylinder. Radius = 1. 11 rect elecs with refinement
-%   fmdl= ng_mk_cyl_models(0,[11],[0.2,0,0.05]); 
-% 2D cylinder. Radius = 1.5. Refined(0.1). 11 elecs with refinement
-%   fmdl= ng_mk_cyl_models([0,1,0.1],[11],[0.2,0,0.02]); 
-% 2D cylinder. elecs at 0, 90 and 120 degrees
-%   fmdl= ng_mk_cyl_models(0,[0;90;120],[0.2,0,0.03]); 
-% 2D cylinder. elecs at 0 (large,refined) and 120 (small) degrees
-%   fmdl= ng_mk_cyl_models(0,[0;120],[0.4,0,0.01;0.1,0,0.1]); 
-% 3D cylinder. elecs at 0, 30, 60, 90 in planes
-%   fmdl= ng_mk_cyl_models(3,[0,0.5;30,1;60,1.5;90,2.0],[0.2,0,0.1]); 
-% 3D cylinder. Various elecs at 0, 30, 60, 90 in planes
-%   el_pos = [0,0.5;30,1;60,1.5;90,2.0];
-%   el_sz  = [0.2,0,0.1;0.1,0,0.05;0.2,0.2,0.02;0.2,0.4,0.5];
-%   fmdl= ng_mk_cyl_models(3,el_pos,el_sz); 
-% Simple 3D cylinder with a ball
-%   extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'}
-%   [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
-%   img= eidors_obj('image','ball'); img.fwd_model= fmdl;
-%   img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
-% 3D cylinder with 8 electrodes and cube
-%   extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'}
-%   [fmdl,mat_idx]= ng_mk_cyl_models(2,[8,0.5,1.5],[0.1],extra); 
-% 3D cylinder with inner cylinder
-%   extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,1;1,1,2) -maxh=0.05;'}
-%   [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
-% 2D cylinder with 8 electrodes and hole
-%   extra={'ball','solid ball = sphere(0.2,0.2,0;0.2) -maxh=0.05;'}
-%   fmdl= ng_mk_cyl_models(0,[8],[0.1,0,0.05],extra); 
-% 2D cylinder with 9 electrodes and inner cylinder
-%   extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'}
-%   fmdl= ng_mk_cyl_models(0,[9],[0.2,0,0.05],extra); 
-%   img= eidors_obj('image','ball'); img.fwd_model= fmdl;
-%   ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
-%   img.elem_data = 1 + 0.1*(ctr<0.2^2);
 
-% (C) Andy Adler, 2009. Licenced under GPL v2 or v3
+% (C) Andy Adler, 2010. Licenced under GPL v2 or v3
 % $Id$
 
 if nargin < 4; extra_ng_code = {'',''}; end
-cache_obj = { cyl_shape, elec_pos, elec_shape, extra_ng_code};
+cache_obj = { ellip_shape, elec_pos, elec_shape, extra_ng_code};
 
-fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_cyl_models' );
+fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_ellip_models' );
 if isempty(fmdl);
-   fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
+   fmdl = mk_ellip_model( ellip_shape, elec_pos, elec_shape, extra_ng_code );
    eidors_cache('boost_priority', -2); % netgen objs are low priority
-   eidors_obj('set-cache', cache_obj, 'ng_mk_cyl_models', fmdl);
+   eidors_obj('set-cache', cache_obj, 'ng_mk_ellip_models', fmdl);
    eidors_cache('boost_priority', +2); % return values
 end
 
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
 
-function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
+function [fmdl_mat_idx] = mk_ellip_model( ellip_shape, elec_pos, elec_shape, extra_ng_code );
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
    ptsfn= [fnstem,'.msz'];
    meshfn= [fnstem,'.vol'];
 
-   [tank_height, tank_radius, tank_maxh, is2D] = parse_shape(cyl_shape);
+   [tank_height, tank_radius, tank_maxh, is2D] = parse_shape(ellip_shape);
    [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
                           tank_height, tank_radius, is2D );
 
@@ -118,7 +74,7 @@ function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_n
 
    [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-   delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
+%  delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
    if is2D
       [fmdl,mat_idx] = mdl2d_from3d(fmdl,mat_idx);
    end
@@ -147,31 +103,30 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ..
    for i=1:n_elecs
       name = sprintf('elec%04d',i);
       pos = elecs(i).pos;
+      % calculate the normal vector to the shape
+      ab = tank_radius(1)/tank_radius(2);
+      dirn= pos.*[inv(ab), ab, 0 ];
       switch elecs(i).shape
        case 'C'
-         write_circ_elec(fid,name, pos, pos,  ...
+         write_circ_elec(fid,name, pos, dirn,  ...
                elecs(i).dims, tank_radius, elecs(i).maxh);
        case 'R'
-         write_rect_elec(fid,name, pos, pos,  ...
+         write_rect_elec(fid,name, pos, dirn,  ...
                elecs(i).dims, tank_radius, elecs(i).maxh);
        case 'P'
-         % I had the good idea of trying to specify points for the point electrodes,
-         % but netgen doesn't really listen to this. So instead, it only puts points
-         % close to where you ask. Instead, specifc a rectangular elec where you want it.
-         if 0 % OLD technique - keep in case we can figure out netgen better
+         if 0 % Netgen doesn't put elecs where you ask
             pts_elecs_idx = [ pts_elecs_idx, i]; 
             continue; % DON'T print solid cyl
-         else
-            write_rect_elec(fid,name, pos, pos,  ...
-                  elecs(i).dims, tank_radius, elecs(i).maxh);
          end
+         write_rect_elec(fid,name, pos, dirn,  ...
+               elecs(i).dims, tank_radius, elecs(i).maxh);
 
        otherwise; error('huh? shouldnt get here');
       end
       fprintf(fid,'solid cyl%04d = bigcyl    and %s; \n',i,name);
    end
 
-   % SHOULD tank_maxh go here? - right now it seems to make the whole model refined
+   % SHOULD tank_maxh go here?
    fprintf(fid,'tlo bigcyl;\n');
    for i=1:n_elecs
       if any(i == pts_elecs_idx); continue; end
@@ -199,22 +154,25 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ..
 function [tank_height, tank_radius, tank_maxh, is2D] = ...
               parse_shape(cyl_shape);
    tank_height = cyl_shape(1);
-   tank_radius = 1;
+   tank_radius = [1,1];
    tank_maxh   = 0;
    is2D = 0;
+   lcs = length(cyl_shape);
 
-   if length(cyl_shape)>1;
-      tank_radius=cyl_shape(2);
+   if lcs == 2
+      tank_radius(1)=cyl_shape(2);
+   elseif lcs >= 3
+      tank_radius=cyl_shape(2:3);
    end
-   if length(cyl_shape)>2; 
-      tank_maxh  =cyl_shape(3);
+   if length(cyl_shape)>=4; 
+      tank_maxh  =cyl_shape(4);
    end
    if tank_height==0;
       is2D = 1;
 
       %Need some width to let netgen work, but not too much so
       % that it meshes the entire region
-      tank_height = tank_radius/5; % initial extimate
+      tank_height = min(tank_radius)/5; % initial extimate
       if tank_maxh>0
          tank_height = min(tank_height,2*tank_maxh);
       end
@@ -247,7 +205,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
    if size(elec_pos,1) == 1
        % Parse elec_pos = [n_elecs_per_plane,z_planes] 
       n_elecs= elec_pos(1); % per plane
-      th = linspace(0,2*pi, n_elecs+1)'; th(end)=[];
+      th = ellip_space_elecs( n_elecs, rad )
 
       on_elecs = ones(n_elecs, 1);
       el_th = []; 
@@ -272,12 +230,27 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
      elecs(i) = elec_spec( row, is2D, hig, rad );
    end
    
-   centres = [rad*sin(el_th),rad*cos(el_th),el_z];
+   centres = [rad(1)*sin(el_th),rad(2)*cos(el_th),el_z];
    for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
 
    if n_elecs == 0
       elecs= struct([]); % empty
    end
+
+% equally space n_elecs around an ellipse of outer radius rad(1),rad(2)
+function th = ellip_space_elecs( n_elecs, rad )
+   % The radius is the integral of sqrt((r1*sin(th))^2 + (r2*cos(th))^2)
+   %  I'm sure there's an analytic expression for it, but I can't find it now
+   if n_elecs==0; th=[]; return; end
+   
+   th = linspace(0,2*pi, 10*(n_elecs)); % Accuracy to 10x spacing
+   len = cumsum( sqrt( rad(1)*cos(th).^2 + rad(2)*sin(th).^2 ) );
+%  len = cumsum(        cos(th).^2 +        sin(th).^2 );
+   len = len/max(len);
+   xi = linspace(0,1,n_elecs+1); xi(1)= []; xi(end)=[];
+   yi = interp1(len,th,xi);
+
+   th= [0;yi(:)];
 
 function elec = elec_spec( row, is2D, hig, rad )
   if     is2D
@@ -286,7 +259,7 @@ function elec = elec_spec( row, is2D, hig, rad )
 % To create a PEM, we make a square and take the corner. This isn't perfect, since
 % the elec isn't quite where we asked for it, but that's as good is I can do. I tried
 % asking for two rectangles to touch, but that freaks netgen out.
-        elec.dims  =  [rad/20, hig]; 
+        elec.dims  =  [min(rad)/20, hig]; 
      else
         elec.shape = 'R';
         elec.dims  = [row(1),hig];
@@ -294,7 +267,7 @@ function elec = elec_spec( row, is2D, hig, rad )
   else
      if row(1) == 0
         elec.shape = 'P' 
-        elec.dims  = [rad/20, hig/10];
+        elec.dims  = [min(rad)/20, hig/10];
      elseif length(row)<2 || row(2) == 0 % Circular electrodes 
         elec.shape = 'C';
         elec.dims  = row(1);
@@ -312,6 +285,7 @@ function elec = elec_spec( row, is2D, hig, rad )
      elec.maxh = '';
   end
 
+
 function write_header(fid,tank_height,tank_radius,maxsz,extra);
    if maxsz==0; 
       maxsz = '';
@@ -323,13 +297,13 @@ function write_header(fid,tank_height,tank_radius,maxsz,extra);
       extra{1} = [' and not ',extra{1}];
    end
 
-   fprintf(fid,'#Automatically generated by ng_mk_cyl_models\n');
+   fprintf(fid,'#Automatically generated by ng_mk_ellip_models\n');
    fprintf(fid,'algebraic3d\n');
    fprintf(fid,'%s\n',extra{2}); % Define extra stuff here
-   fprintf(fid,'solid cyl=cylinder (0,0,0;0,0,%6.2f;%6.2f); \n', ...
-           tank_height, tank_radius);
+   fprintf(fid,'solid cyl=ellipticcylinder (0,0,0;%.4f,0,0;0,%.4f,0); \n', ...
+            tank_radius);
    fprintf(fid,['solid bigcyl= plane(0,0,0;0,0,-1)\n' ...
-                'and  plane(0,0,%6.2f;0,0,1)\n' ...
+                'and  plane(0,0,%.4f;0,0,1)\n' ...
                 'and  cyl %s %s;\n'],tank_height,extra{1},maxsz);  
 
 function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
@@ -399,6 +373,7 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
 % in the direction given by vector dirn,
 % hw = [height, width]  and depth d
 % direction is in the xy plane
+   d= min(d);
    w = wh(1); h= wh(2);
    dirn(3) = 0; dirn = dirn/norm(dirn);
    dirnp = [-dirn(2),dirn(1),0];
@@ -428,6 +403,7 @@ function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % the direction vector
    dirn(3) = 0; dirn = dirn/norm(dirn);
 
+   ln = min(ln);
  % I would divide by 2 here (shorted tube in cyl), but ng doesn't like
  % That - it fails for 16 (but no 15 or 17) electrodes
    inpt = c - dirn.*(ln/1);
@@ -469,7 +445,6 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
         ang = ang + (ang <0)*2*pi;
       end
       % choose the counter-clockwise most node only
-      % subtract the height so we get bottom left. This is OK, since we have rect elecs
       if size(xy,2) == 3 ; ang = ang - xy(:,3); end
       [jnk, ind] = max(ang);
       electrode(i).nodes = electrode(i).nodes(ind);
