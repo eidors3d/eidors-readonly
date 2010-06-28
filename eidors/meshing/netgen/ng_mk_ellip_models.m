@@ -106,7 +106,7 @@ function [fmdl_mat_idx] = mk_ellip_model( ellip_shape, elec_pos, elec_shape, ext
 
    [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-%  delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
+   delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
    if is2D
       [fmdl,mat_idx] = mdl2d_from3d(fmdl,mat_idx);
    end

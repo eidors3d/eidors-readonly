@@ -41,7 +41,7 @@ call_netgen( geofn, meshfn, ptsfn);
 
 [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-%delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
+ delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
 
 hold on
 plot(centres(:,1),centres(:,2),'sk')
