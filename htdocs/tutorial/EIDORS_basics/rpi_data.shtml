@@ -37,6 +37,16 @@ Figure: FEM phantom
 </center>
 
 <h3> 
+Load and preprocess data
+</h3>
+
+One can improve the equality of the images by ensuring that all channels
+have a mean voltage of zero before beginning.
+<pre>
+<!--#include virtual="rpi_data02a.m" -->
+</pre>
+
+<h3> 
 Difference imaging
 </h3>
 
