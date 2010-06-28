@@ -1,8 +1,7 @@
-function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, ...
-                  elec_shape, extra_ng_code);
+function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape);
 % NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
-%[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, ...
-%                 elec_shape, extra_ng_code);
+%[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);
+%
 % INPUT:
 % shape_str = {height, [x_radius, y_radius, [maxsz]]}
 %    if height = 0 -> calculate a 2D shape
@@ -10,7 +9,8 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, ...
 %    maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
-%  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
+%  elec_pos = [x,y,z,nx,ny,nz] centres of each electrode (N_elecs x 6)
+%   [x,y,z] is the position, and [nx,ny,nz] is the surface normal
 %
 % ELECTRODE SHAPES::
 %  elec_shape = [width,height, maxsz]  % Rectangular elecs
@@ -22,15 +22,9 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, ...
 %
 % Specify either a common electrode shape or for each electrode
 %
-% EXTRA_NG_CODE
-%   string of extra code to put into netgen geo file. Normally this
-%   would be to insert extra materials into the space
-%
 % OUTPUT:
 %  fmdl    - fwd_model object
-%  mat_idx - indices of materials (if extra_ng_code is used)
-%    Note mat_idx does not work in 2D. Netgen does not provide it.
-%
+%  mat_idx - indices of materials
 %
 % USAGE EXAMPLES:
 
@@ -53,19 +47,18 @@ end
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
 
-function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape, extra_ng_code );
+function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape);
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
-   ptsfn= [fnstem,'.msz'];
+%  ptsfn= [fnstem,'.msz'];
    meshfn= [fnstem,'.vol'];
 
-   [tank_height, tank_radius, tank_maxh, is2D] = parse_shape(shape_str);
+   is2D = 0;
    [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
                           tank_height, tank_radius, is2D );
 
-   n_pts = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
-                  tank_maxh, elecs, extra_ng_code);
+   n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs);
    if n_pts == 0 
       call_netgen( geofn, meshfn);
    else
@@ -74,7 +67,7 @@ function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape, extra
 
    [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
-%  delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
+   delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
    if is2D
       [fmdl,mat_idx] = mdl2d_from3d(fmdl,mat_idx);
    end
@@ -123,11 +116,11 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ..
 
        otherwise; error('huh? shouldnt get here');
       end
-      fprintf(fid,'solid cyl%04d = bigcyl    and %s; \n',i,name);
+      fprintf(fid,'solid cyl%04d = mainobj    and %s; \n',i,name);
    end
 
    % SHOULD tank_maxh go here?
-   fprintf(fid,'tlo bigcyl;\n');
+   fprintf(fid,'tlo mainobj;\n');
    for i=1:n_elecs
       if any(i == pts_elecs_idx); continue; end
       fprintf(fid,'tlo cyl%04d cyl -col=[1,0,0];\n ',i);
@@ -302,7 +295,7 @@ function write_header(fid,tank_height,tank_radius,maxsz,extra);
    fprintf(fid,'%s\n',extra{2}); % Define extra stuff here
    fprintf(fid,'solid cyl=ellipticcylinder (0,0,0;%.4f,0,0;0,%.4f,0); \n', ...
             tank_radius);
-   fprintf(fid,['solid bigcyl= plane(0,0,0;0,0,-1)\n' ...
+   fprintf(fid,['solid mainobj= plane(0,0,0;0,0,-1)\n' ...
                 'and  plane(0,0,%.4f;0,0,1)\n' ...
                 'and  cyl %s %s;\n'],tank_height,extra{1},maxsz);  
 
@@ -453,4 +446,12 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
 
 
 function do_unit_test
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+              'solid mainobj= plane(0,0,0;0,0,-1)\n' ...
+                        'and  plane(0,0,2;0,0,1)\n' ...
+                        'and  cyl -maxh=0.2;\n'];
+ elec_pos = [  1,  0,  1,   1,  0,  0;
+               0,  1,1.2,   0,  1,  0]; 
+ elec_shape=[0.1];
+ ng_mk_gen_models(shape_str, elec_pos, elec_shape)
 
