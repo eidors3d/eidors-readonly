@@ -31,6 +31,16 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, ele
 %  mat_idx - indices of materials
 %
 % USAGE EXAMPLES:
+%shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+%             'solid bottom = plane(0,0,0;0,0,-1);\n' ...
+%             'solid top    = plane(0,0,2;0,0,1);\n' ...
+%             'solid mainobj= top and bottom and cyl -maxh=0.3;\n'];
+%elec_pos = [  1,  0,  1,   1,  0,  0;
+%              0,  1,1.2,   0,  1,  0;
+%              0.8,  0,  0, 0,  0, -1]; 
+%elec_shape=[0.1];
+%elec_obj = {'cyl','cyl','bottom'};
+%fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
 % (C) Andy Adler, 2010. Licenced under GPL v2 or v3
 % $Id$
@@ -440,6 +450,20 @@ switch tn
               -1,  0,  0,   0,  0,  1];
  elec_shape=[0.1];
  elec_obj = 'top';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 8;
+ shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
+              'solid cyl    = ellipticcylinder(0,0,0;2.5,0,0;0,1,0);\n' ...
+              'solid mainobj= top and cyl and orthobrick(-2,-2,-2;2,2,0);\n'];
+ elec_pos = [  1,  0,  0,   0,  0,  1;
+               0,  0,  0,   0,  0,  1;
+              -1,  0,  0,   0,  0,  1;
+               1, -1,-1.2,  0, -1,  0;
+               0, -1,-1.0,  0, -1,  0;
+              -1, -1,-0.8,  0, -1,  0];
+ elec_shape=[0.1];
+ elec_obj = {'top','top','top','cyl','cyl','cyl'};
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
    otherwise;
      error('huh?')
