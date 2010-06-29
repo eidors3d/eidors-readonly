@@ -77,10 +77,14 @@ if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
 v = process_args(n_elec, n_rings, inj, meas, options, amplitude );
 
-stim = calc_stim(v, n_elec, n_rings);
+[stim,mpat ] = calc_stim(v, n_elec, n_rings);
 
-meas_sel= meas_select_old( n_elec, v.inj, v);
-%meas_sel= meas_select( stim, v);
+% Meas_sel selects meas which would exist if we measured all of them
+v.do_redundant = 1; v.use_meas_current = 1; 
+[jnk ,mpat0] = calc_stim(v, n_elec, n_rings);
+
+%meas_sel= meas_select_old( n_elec, v.inj, v);
+ meas_sel= meas_select( mpat, mpat0);
 
 function [stim,mpat] = calc_stim(v, n_elec, n_rings)
    curr_pat = v.inj(:) * ones(1,n_elec);
@@ -112,15 +116,10 @@ function [stim,mpat] = calc_stim(v, n_elec, n_rings)
       end
    end
 
-
 % when not using data from current injection electrodes,
 % it is common to be given a full measurement set.
 % For example 16 electrodes gives 208 measures, but 256
 % measure sets are common.
-% 
-% meas_select only makes sense for bipolar drive and measurement
-% scenarios. Otherwise it is set to []
-%
 % This function calculates a selector matrix to remove the extra
 %
 % reshape(meas_select( 6, [0,1], v),6,6) 0 0 1 1 1 0
@@ -143,7 +142,28 @@ function [stim,mpat] = calc_stim(v, n_elec, n_rings)
 %                                        0 0 1 0 0 1
 %                                        1 0 0 1 0 0
 %                                        0 1 0 0 1 0
+function meas_sel= meas_select( mpat, mpat0);
+   meas_sel = [];
+   for i=1:length(mpat);
+      [mset,  err ] = mk_meas_set( mpat(i).meas_pattern );
+      [mset0, err0] = mk_meas_set( mpat0(i).meas_pattern );
+      if err | err0; msel_i = 1 + 0*mset; % Set to 1 for error
+      else           msel_i = ismember(mset0,mset);
+      end
+      meas_sel = [meas_sel; msel_i];
+   end
 
+function [mset,err] = mk_meas_set( meas_pat )
+   mpats= size(meas_pat,1);
+   mset = zeros(mpats,1);
+   err=0;
+   for i=1:size(meas_pat,1);
+      mpat = meas_pat(i,:);
+      fp = find(mpat>0);
+      fn = find(mpat<0);
+      if length(fp)>1 || length(fn)>1 ; err=1; return; end
+      mset(i) =  fp*1e7 + fn;
+   end
 
 function meas_sel= meas_select_old( n_elec, inj, v)
   if prod(size(inj))~=2 || prod(size(v.meas))~=2
