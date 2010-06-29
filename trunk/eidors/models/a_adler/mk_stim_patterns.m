@@ -77,34 +77,41 @@ if nargin<6; amplitude= 1; end
 if nargin<5; options= {};  end
 v = process_args(n_elec, n_rings, inj, meas, options, amplitude );
 
-curr_pat = v.inj(:) * ones(1,n_elec);
-meas_pat = v.meas(:) * ones(1,n_elec);
-offset   = [1;1]*(0:n_elec-1);
+stim = calc_stim(v, n_elec, n_rings);
 
-i=1;
-for ring = 0:v.n_rings-1
-   seen_patterns= struct;
-   for elec= 0:v.n_elec-1
-       if v.trig_inj && elec == v.n_elec-1 ; continue; end % No indep patterns
-       s_pat= mk_stim_pat(v, elec, ring );
-       m_pat= mk_meas_pat(v, elec, ring );
+meas_sel= meas_select_old( n_elec, v.inj, v);
+%meas_sel= meas_select( stim, v);
 
-       if v.do_redundant == 0 % elim redudant
-          [m_pat, seen_patterns] = elim_redundant(m_pat, s_pat, seen_patterns);
-       end
+function [stim,mpat] = calc_stim(v, n_elec, n_rings)
+   curr_pat = v.inj(:) * ones(1,n_elec);
+   meas_pat = v.meas(:) * ones(1,n_elec);
+   offset   = [1;1]*(0:n_elec-1);
 
-       if ~isempty(m_pat) 
-           stim(i).stimulation = 'mA';
-           stim(i).stim_pattern= sparse(s_pat);
-           stim(i).meas_pattern= sparse(m_pat);
-           i=i+1;
-       end
+   stim= struct([]);
+   mpat= struct([]);
+   i=1; j=1;
+   for ring = 0:v.n_rings-1
+      seen_patterns= struct;
+      for elec= 0:v.n_elec-1
+          if v.trig_inj && elec == v.n_elec-1 ; continue; end % No indep patterns
+          s_pat= mk_stim_pat(v, elec, ring );
+          m_pat= mk_meas_pat(v, elec, ring );
 
+          if v.do_redundant == 0 % elim redudant
+             [m_pat, seen_patterns] = elim_redundant(m_pat, s_pat, seen_patterns);
+          end
+
+          if ~isempty(m_pat) 
+              stim(i).stimulation = 'mA';
+              stim(i).stim_pattern= sparse(s_pat);
+              stim(i).meas_pattern= sparse(m_pat);
+              i=i+1;
+          end
+              mpat(j).meas_pattern= sparse(m_pat);
+              j=j+1;
+      end
    end
-end
 
-
-meas_sel= meas_select( n_elec, v.inj, v);
 
 % when not using data from current injection electrodes,
 % it is common to be given a full measurement set.
@@ -137,7 +144,8 @@ meas_sel= meas_select( n_elec, v.inj, v);
 %                                        1 0 0 1 0 0
 %                                        0 1 0 0 1 0
 
-function meas_sel= meas_select( n_elec, inj, v)
+
+function meas_sel= meas_select_old( n_elec, inj, v)
   if prod(size(inj))~=2 || prod(size(v.meas))~=2
      meas_sel = [];
      return;
@@ -184,8 +192,10 @@ function meas_sel= meas_select( n_elec, inj, v)
       meas_sel = blkdiag(meas_sel, ~inj_meas_sel); 
   end
   meas_sel = ~logical(meas_sel(:));
- keyboard
   
+  if v.use_meas_current
+     meas_sel = (meas_sel >=0); % Set all values to 1 (we're using measurements)
+  end
 
 function stim_pat = mk_stim_pat(v, elec, ring );
    stim_pat = sparse(v.tn_elec, 1);
