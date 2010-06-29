@@ -159,8 +159,8 @@ function [mset,err] = mk_meas_set( meas_pat )
    err=0;
    for i=1:size(meas_pat,1);
       mpat = meas_pat(i,:);
-      fp = find(mpat>0);
-      fn = find(mpat<0);
+      fp = find(mpat>0); if length(fp)==0; fp = 0; end
+      fn = find(mpat<0); if length(fn)==0; fn = 0; end
       if length(fp)>1 || length(fn)>1 ; err=1; return; end
       mset(i) =  fp*1e7 + fn;
    end
@@ -571,16 +571,35 @@ end
 
    [stim,msel] = mk_stim_patterns(6,1,[1,2],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp12',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
+   do_indiv_test('meas_sel: nnp12',msel(:,[4,5]), [1,0;1,1;1,1;0,1;0,0;0,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[2,4],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp24',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
+   do_indiv_test('meas_sel: nnp24',msel(:,[4,5]), [0,0;0,0;1,0;1,1;0,1;0,0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[2,4],[3,6],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp2436',msel(:,[4,5]), [1,0;0,1;0,0;1,0;0,1;0,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','rotate_meas'},2);
-   msel = reshape(msel, 6, 6) 
-keyboard
+   msel = reshape(msel, 6, 6);
    do_indiv_test('meas_sel: nrp01',msel(:,6), [0;0;1;1;1;0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'no_meas_current','rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nrp02',msel(:,6), [0;0;0;1;1;0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],[3,4],{'no_meas_current','rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nrp0234',msel(:,6), [1;1;0;0;0;0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas','no_redundant'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp01',msel(:,[2,5]), [0,0;0,0;0,0;1,0;1,0;1,0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],'{mono}',{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp2436',msel(:,[4,5]), [1,0;1,1;1,1;0,1;1,0;0,1]);
    
 
 function do_indiv_test(txt,a,b,tol)
