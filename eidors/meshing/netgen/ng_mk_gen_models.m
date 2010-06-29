@@ -1,4 +1,4 @@
-function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape);
+function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);
 % NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
 %[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);
 %
@@ -22,6 +22,10 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape);
 %
 % Specify either a common electrode shape or for each electrode
 %
+% ELECTRODE DEFITIONS:
+%  elec_obj = 'obj_name' or {'name','for','each','elec'} where
+%    the name is the primitive netgen object (cylinder, plane, etc) which the electrode intersects
+%
 % OUTPUT:
 %  fmdl    - fwd_model object
 %  mat_idx - indices of materials
@@ -34,11 +38,11 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape);
 if isstr(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4; extra_ng_code = {'',''}; end
-cache_obj = { shape_str, elec_pos, elec_shape };
+cache_obj = { shape_str, elec_pos, elec_shape, elec_obj };
 
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_gen_models' );
 if isempty(fmdl);
-   fmdl = mk_ellip_model( shape_str, elec_pos, elec_shape);
+   fmdl = mk_ellip_model( shape_str, elec_pos, elec_shape, elec_obj);
    eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_gen_models', fmdl);
    eidors_cache('boost_priority', +2); % return values
@@ -47,7 +51,7 @@ end
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
 
-function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape);
+function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape, elec_obj);
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
@@ -55,7 +59,7 @@ function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape);
    meshfn= [fnstem,'.vol'];
 
    is2D = 0;
-   [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D );
+   [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );
 
    n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs);
    if n_pts == 0 
@@ -91,7 +95,9 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
    %  elecs(i).maxh  = '-maxh=#' or '';
    pts_elecs_idx = []; 
 
-   tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
+   if n_elecs > 1
+      tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
+   end
    for i=1:n_elecs
       name = sprintf('elec%04d',i);
       pos = elecs(i).pos;
@@ -99,10 +105,10 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
       switch elecs(i).shape
        case 'C'
          write_circ_elec(fid,name, pos, dirn,  ...
-               elecs(i).dims, tank_radius, elecs(i).maxh);
+               elecs(i).dims, tank_radius/4, elecs(i).maxh);
        case 'R'
          write_rect_elec(fid,name, pos, dirn,  ...
-               elecs(i).dims, tank_radius, elecs(i).maxh);
+               elecs(i).dims, tank_radius/4, elecs(i).maxh);
        case 'P'
          if 0 % Netgen doesn't put elecs where you ask
             pts_elecs_idx = [ pts_elecs_idx, i]; 
@@ -120,7 +126,7 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
    fprintf(fid,'tlo mainobj;\n');
    for i=1:n_elecs
       if any(i == pts_elecs_idx); continue; end
-      fprintf(fid,'tlo cyl%04d cyl -col=[1,0,0];\n ',i);
+      fprintf(fid,'tlo cyl%04d %s -col=[1,0,0];\n',i, elecs(i).ngobj);
    end
 
 %  if ~isempty(extra_ng_code{1})
@@ -158,7 +164,7 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
 %  elecs(i).shape = 'C' or 'R'
 %  elecs(i).dims  = [radius] or [width,height]
 %  elecs(i).maxh  = '-maxh=#' or '';
-function [elecs, centres] = parse_elecs(elec_pos, elec_shape, is2D );
+function [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );
 
    n_elecs= size(elec_pos,1); 
    if n_elecs == 0
@@ -173,14 +179,19 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, is2D );
    end
 
    for i= 1:n_elecs
-     elecs(i) = elec_spec( elec_shape(i,:), elec_pos(i,:) );
+     if isstr(elec_obj); 
+        elecs(i) = elec_spec( elec_shape(i,:), elec_pos(i,:), elec_obj );
+     else
+        elecs(i) = elec_spec( elec_shape(i,:), elec_pos(i,:), elec_obj{i}  );
+     end
    end
    
    centres = elec_pos(:,1:3);
 
-function elec = elec_spec( row, posrow );
-  elec.pos = posrow(1:3);
-  elec.dirn= posrow(4:6);
+function elec = elec_spec( row, posrow, elec_obj );
+  elec.pos =  posrow(1:3);
+  elec.dirn=  posrow(4:6);
+  elec.ngobj= elec_obj;
 
   if row(1) == 0
      elec.shape = 'P' 
@@ -276,7 +287,7 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
 % direction is in the xy plane
    d= min(d);
    w = wh(1); h= wh(2);
-   dirn(3) = 0; dirn = dirn/norm(dirn);
+   dirn = dirn/norm(dirn);
    dirnp = [-dirn(2),dirn(1),0];
    dirnp = dirnp/norm(dirnp);
 
@@ -302,7 +313,7 @@ function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % in the direction given by vector d, radius rd  lenght ln
 % direction is in the xy plane
 % the direction vector
-   dirn(3) = 0; dirn = dirn/norm(dirn);
+   dirn = dirn/norm(dirn);
 
    ln = min(ln);
  % I would divide by 2 here (shorted tube in cyl), but ng doesn't like
@@ -354,12 +365,82 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
 
 
 function do_unit_test
+  for tn = 8
+     fmdl= do_test_number(tn);
+     show_fem(fmdl);
+  end
+
+function fmdl= do_test_number(tn)
+switch tn
+   case 1;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+              'solid mainobj= orthobrick(-2,-2,0;2,2,2) and cyl -maxh=0.3;\n'];
+ elec_pos = []; elec_shape = []; elec_obj = {};
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 2;
  shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
               'solid mainobj= plane(0,0,0;0,0,-1)\n' ...
                         'and  plane(0,0,2;0,0,1)\n' ...
-                        'and  cyl -maxh=0.2;\n'];
+                        'and  cyl -maxh=0.3;\n'];
  elec_pos = [  1,  0,  1,   1,  0,  0;
                0,  1,1.2,   0,  1,  0]; 
  elec_shape=[0.1];
- ng_mk_gen_models(shape_str, elec_pos, elec_shape)
+ elec_obj = 'cyl';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
+   case 3;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+              'solid mainobj= orthobrick(-2,-2,0;2,2,2) and cyl -maxh=0.3;\n'];
+ th = linspace(0,2*pi,15)'; th(end) = [];
+ cs = [cos(th), sin(th)];
+ elec_pos = [  cs, th/2/pi + 0.5, cs, 0*th];
+ elec_shape=[0.1];
+ elec_obj = 'cyl';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 4;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+              'solid mainobj= orthobrick(-2,-2,0;2,2,2) and cyl -maxh=0.3;\n'];
+ th = linspace(0,2*pi,15)'; th(end) = [];
+ cs = [cos(th), sin(th)];
+ elec_pos = [  cs, th/2/pi + 0.5, cs, 0*th];
+ elec_shape=[0.1*th/2/pi + 0.05];
+ elec_obj = 'cyl';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 5;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 1,0,0; 1); \n', ...
+              'solid mainobj= plane(0,0,0;-1,0,0)\n' ...
+                        'and  plane(2,0,0;1,0,0)\n' ...
+                        'and  cyl -maxh=0.3;\n'];
+ elec_pos = [  1,  0,  1,   0,  0,  1;
+             1.2,  1,  0,   0,  1,  0]; 
+ elec_shape=[0.1];
+ elec_obj = 'cyl';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 6;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+              'solid bottom = plane(0,0,0;0,0,-1);\n' ...
+              'solid top    = plane(0,0,2;0,0,1);\n' ...
+              'solid mainobj= top and bottom and cyl -maxh=0.3;\n'];
+ elec_pos = [  1,  0,  1,   1,  0,  0;
+               0,  1,1.2,   0,  1,  0;
+               0.8,  0,  0, 0,  0, -1]; 
+ elec_shape=[0.1];
+ elec_obj = {'cyl','cyl','bottom'};
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 7;
+ shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
+              'solid mainobj= top and orthobrick(-2,-2,-2;2,2,0);\n'];
+ elec_pos = [  1,  0,  0,   0,  0,  1;
+               0,  0,  0,   0,  0,  1;
+              -1,  0,  0,   0,  0,  1];
+ elec_shape=[0.1];
+ elec_obj = 'top';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+   otherwise;
+     error('huh?')
+end
