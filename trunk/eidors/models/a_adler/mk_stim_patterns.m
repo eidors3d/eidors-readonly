@@ -184,6 +184,7 @@ function meas_sel= meas_select( n_elec, inj, v)
       meas_sel = blkdiag(meas_sel, ~inj_meas_sel); 
   end
   meas_sel = ~logical(meas_sel(:));
+ keyboard
   
 
 function stim_pat = mk_stim_pat(v, elec, ring );
@@ -317,6 +318,14 @@ end
 v.meas=          meas;
 v.m_factor=      rel_ampl;
 
+v.n_elec = n_elec;
+v.n_rings= n_rings;
+v.tn_elec= n_rings * n_elec;
+v.amplitude = amplitude;
+
+v= parse_options(v, options);
+
+function v= parse_options(v, options);
 % iterate through the options cell array
 for opt = options
    if     strcmp(opt, 'no_meas_current')
@@ -343,11 +352,6 @@ for opt = options
       error(['option parameter opt=',opt,' not understood']);
    end
 end
-
-v.n_elec = n_elec;
-v.n_rings= n_rings;
-v.tn_elec= n_rings * n_elec;
-v.amplitude = amplitude;
 
 function [m_pat, seen_patterns] = elim_redundant(m_pat, s_pat, seen_patterns);
    m_pat_new= sparse([]);
@@ -505,6 +509,48 @@ function do_unit_test
    stim = mk_stim_patterns(4,1,'{trig}',[0,1],{},2);
    do_indiv_test('amplitude: t5',stim(2).stim_pattern, [0;2;0;-2],1e-5);
   
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
+
+if 0
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]); %%%
+end
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp01',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp02',msel(:,[4,5]), [1,0;1,1;0,1;0,0;0,0;0,0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,3],[0,1],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp03',msel(:,[4,5]), [0,0;1,0;0,1;0,0;1,0;0,1]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[1,2],[0,1],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp12',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[2,4],[0,1],{'no_meas_current','no_rotate_meas'},2);
+   msel = reshape(msel, 6, 6);
+   do_indiv_test('meas_sel: nnp24',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
+
+   [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','rotate_meas'},2);
+   msel = reshape(msel, 6, 6) 
+keyboard
+   do_indiv_test('meas_sel: nrp01',msel(:,6), [0;0;1;1;1;0]);
    
 
 function do_indiv_test(txt,a,b,tol)
