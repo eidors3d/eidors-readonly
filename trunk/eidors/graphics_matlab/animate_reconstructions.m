@@ -9,6 +9,8 @@ function fname_out= animate_reconstructions(fname, imgs);
 %
 % if imgs.animate_reconstructions.show_times = 1
 %   then a timescale is shown on the bottom
+% if imgs.animate_reconstructions.make_avi = 1
+%   then use ffmpeg to write an avi
 %
 % OUTPUT: fname_out
 %     Name of animated file written to.
@@ -64,6 +66,16 @@ function mk_movie2(fname, imgs);
      show_times = 0;
    end
 
+   try 
+     make_avi = imgs.animate_reconstructions.make_avi;
+   catch 
+     make_avi = 0;
+   end
+
+   if make_avi == 1; itp = 'jpg';
+   else              itp = 'png';
+   end
+
    r_img= calc_slices(imgs);
    c_img = calc_colours( r_img, imgs);
    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
@@ -77,14 +89,14 @@ function mk_movie2(fname, imgs);
         add_bar = mk_add_bar( (i-1)/(len_oi-1), len_hi );
         this_img= [this_img; add_bar];
      end
-     this_name = sprintf('%s/img%06d.png',dirname, i);
-     imwrite(this_img, cmap, this_name, 'png');
+     this_name = sprintf('%s/img%06d.%s',dirname, i, itp);
+     imwrite(this_img, cmap, this_name, itp);
    end
 
    ld_lib_path= sys_dep;
 
    if 0 % enumerate each file
-      files= dir(sprintf('%s/img*.png', dirname ));
+      files= dir(sprintf('%s/img*.%s', dirname,itp ));
       % font selected is a windows font - how to make os-neutral?
       for ff= files(:)'
          fn= [dirname,'/',ff.name];
@@ -96,14 +108,25 @@ function mk_movie2(fname, imgs);
 
    end
       
-   retval= system(sprintf( ...
-       '%s convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
-       ld_lib_path, dirname, fname ));
+   if make_avi == 0
+      retval= system(sprintf( ...
+          '%s convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
+          ld_lib_path, dirname, fname ));
+   else
+      retval= system(sprintf( ...
+          '%s ffmpeg -qscale 2 -r 25 -i %s/img*.jpg -vcodec msmpeg4v2 -y -an %s.avi', ...
+          ld_lib_path, dirname, fname ));
+   end
+
    if retval~=0
        error('please ensure the imagemagick convert program is in your path. Under windows the easist is to download from www.imagemagick.org/script/binary-releases.php');
    end
    rm_rf(dirname);
+   if make_avi == 0
    fprintf('file %s.gif created (in current directory)\n',fname);
+   else
+   fprintf('file %s.avi created (in current directory)\n',fname);
+   end
 
 function rm_rf(dirname)
    if isdir(dirname)==0
