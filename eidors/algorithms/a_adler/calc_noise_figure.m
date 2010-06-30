@@ -120,9 +120,9 @@ function NF= nf_calc_use_matrix( inv_model, h_data, c_data)
    [img0, img0n] = get_images( inv_model, h_data, c_data, ...
                                h_full, c_noise);
 
-   i_len = length(img0.elem_data);
-   sig_img= VOL*abs(img0.elem_data) / i_len;;
-   var_img= VOL.^2*sum(img0n.elem_data.^2 ,2) / i_len;
+   i_len = length(img0);
+   sig_img= VOL*abs(img0) / i_len;;
+   var_img= VOL.^2*sum(img0n.^2 ,2) / i_len;
    
    NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
 
@@ -184,6 +184,19 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
       end
    end
 
+   % Need elem or nodal data
+   if isfield(img0,'node_data');
+      img0 = img0.node_data;
+   else
+      img0 = img0.elem_data;
+   end
+
+   if isfield(img0n,'node_data');
+      img0n = img0n.node_data;
+   else
+      img0n = img0n.elem_data;
+   end
+
 % OLD CODE - iterate
 function NF= nf_calc_iterate( inv_model, h_data, c_data);
    VOL = get_elem_volume(inv_model.fwd_model)';
@@ -199,7 +212,7 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data);
 
    [img0] = get_images( inv_model, h_data, c_data);
 %  sig_img= mean(VOL'.*abs(img0.elem_data));
-   sig_img= VOL*abs(img0.elem_data) / length(img0.elem_data);
+   sig_img= VOL*abs(img0) / length(img0);
 
    % Now do noise
    var_data= 0;
@@ -228,13 +241,19 @@ function NF= nf_calc_iterate( inv_model, h_data, c_data);
    NF = ( sig_data/ sqrt(var_data) ) / ( sig_img / sqrt(var_img)  );
 
 function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
-   VOL = get_elem_volume(rec.fwd_model);
-
    eidors_cache('boost_priority',-2); % low priority values
 
    imgr= inv_solve(rec, vh, vi);
 
-   sig_ampl = mean( abs( VOL .* imgr.elem_data )) / ...
+   if isfield(imgr,'node_data');
+      img0 = imgr.node_data;
+      VOL = get_elem_volume(rec.fwd_model, 1);
+   else
+      img0 = imgr.elem_data;
+      VOL = get_elem_volume(rec.fwd_model, 0);
+   end
+
+   sig_ampl = mean( abs( VOL .* img0 )) / ...
               mean( abs( calc_difference_data( vh, vi, rec.fwd_model )));
 
 % Estimate Signal Amplitude
@@ -242,9 +261,15 @@ function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
       vn= addnoise(vh, vi, 1.0);
 
       imgr= inv_solve(rec, vh, vn);
-      noi_imag(i) = std( VOL .* imgr.elem_data );
+
+      if isfield(imgr,'node_data'); img0 = imgr.node_data;
+      else;                         img0 = imgr.elem_data;
+      end
+
+      noi_imag(i) = std( VOL .* img0 );
       noi_sgnl(i) = std( calc_difference_data( vh, vn, rec.fwd_model ));
    end
+
    noi_ampl = noi_imag./noi_sgnl;
    NF =  mean(noi_ampl/sig_ampl);
    SE =  std(noi_ampl/sig_ampl)/sqrt(N_RUNS);

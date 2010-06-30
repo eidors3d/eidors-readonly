@@ -1,12 +1,16 @@
-function VOL = get_elem_volume( fwd_model )
-% GET_ELEM_VOLUME: VOL = get_elem_volume(fwd_model)
+function VOL = get_elem_volume( fwd_model, map_node )
+% GET_ELEM_VOLUME: VOL = get_elem_volume(fwd_model, map_node )
 % Calculate volume (or area) of each element in model
 %
 % If the model has a 'coarse2fine' element, then the
 % returned VOL applies to the coarse matrix
+%
+% if map_node == 1, then calculated volumes are the volume fraction for each node
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if nargin==1; map_node= 0; end
 
 % calculate element volume and surface area
 NODE = fwd_model.nodes';
@@ -43,4 +47,11 @@ end
 
 if isfield(fwd_model,'coarse2fine')
    VOL= fwd_model.coarse2fine' * VOL;
+end
+
+% Calculate the mapping of each element onto the associated node
+% Map(i,j) = 1/Ne if elem j has node i
+if map_node
+   map = sparse( ELEM, ones(d,1)*(1:e), 1/d, size(NODE,2),e);
+   VOL = map * VOL;
 end
