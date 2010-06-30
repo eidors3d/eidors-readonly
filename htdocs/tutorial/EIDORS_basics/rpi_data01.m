@@ -16,7 +16,20 @@ end
 
 % Trig stim patterns
 stim = mk_stim_patterns(Nel,1,'{trigccss}','{mono}', ...
-       {'meas_current', 'no_balance_meas'},curr);
+       {'meas_current', 'balance_meas'},curr);
+if 0
+   Nel=32; th= linspace(0,2*pi,Nel+1)';th(1)=[];
+   for i=1:Nel-1;
+     stim(i).meas_pattern= eye(Nel)-ones(Nel)/Nel;
+     if i<=Nel/2;
+        k=i;
+        stim(i).stim_pattern = cos(th*k);
+     else;
+        k=i-Nel/2;
+        stim(i).stim_pattern = sin(th*k);
+     end
+   end
+end
 fmdl.stimulation = stim;
 
 show_fem(fmdl,[0,1])
