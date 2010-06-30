@@ -6,8 +6,15 @@ function inv_mdl= select_imdl( mdl, options )
 %    OR
 %   mdl - fwd_model - a basic GN difference model is created, and parameters replaced
 %
-% OPTIONS
-%   options - {'opt1','opt2'} etc
+% OPTIONS => {'opt1','opt2'} options are processed in the order specified
+%
+% Available options are:
+%
+% 'Basic GN dif';   Basic GN one step difference solver with Laplace solver
+% 'NOSER dif';      Basic GN one step difference solver with NOSER prior 
+% 'TV solve dif';   Total Variation PDIPM difference solver 
+% 'Elec Move GN';   One step GN difference solver with compensation for electrode movement
+% 'Choose NF=1.0';  Choose hyperparameter value appropriate for specified noise figure (NF)
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -23,9 +30,15 @@ switch mdl.type
 end
 
 for i=1:length(options);
-  switch options{i}
+  % split the option on an equals sign
+  opt= regexp(options{i},'(.[^=]*)=?(.*)','tokens'); opt= opt{1};
+  switch opt{1}
     case 'NOSER dif';       inv_mdl = NOSER_dif( inv_mdl );
     case 'Basic GN dif';    inv_mdl = Basic_GN_Diff( inv_mdl );
+    case 'Nodal GN dif';    inv_mdl = Nodal_GN_Diff( inv_mdl );
+    case 'TV solve dif';    inv_mdl = TV_solve_Diff( inv_mdl );
+    case 'Elec Move GN';    inv_mdl = Elec_Move_GN( inv_mdl );
+    case 'Choose NF';       inv_mdl = Choose_NF( inv_mdl, str2num(opt{2}) );
     
     otherwise; error('option {%s} not understood', options{i});
   end
@@ -35,18 +48,110 @@ function imdl = basic_imdl( fmdl );
    imdl.name= 'Basic imdl from select_imdl';
    imdl.type= 'inv_model';
 
-   imdl.solve= 'aa_inv_solve'
+   imdl.solve= @aa_inv_solve;
    imdl.hyperparameter.value = .01;
    imdl.RtR_prior = @laplace_image_prior;
    imdl.jacobian_bkgnd.value = 1;
-   imdl.reconst_type= 'difference'
+   imdl.reconst_type= 'difference';
    imdl.fwd_model = fmdl;
 
+function imdl = NOSER_dif( imdl );
+   imdl.RtR_prior = @noser_image_prior;
+   try; imdl = rmfield(imdl,'R_prior'); end
+   imdl.hyperparameter.value = .03;
+   imdl.solve= @aa_inv_solve;
+   imdl.reconst_type= 'difference';
 
+function imdl = Basic_GN_Diff( imdl );
+   imdl.RtR_prior = @laplace_image_prior;
+   try; imdl = rmfield(imdl,'R_prior'); end
+   imdl.solve= @aa_inv_solve;
+   imdl.reconst_type= 'difference';
+
+function imdl = TV_solve_Diff( imdl );
+   imdl.R_prior = @ab_calc_tv_prior;
+   try; imdl = rmfield(imdl,'RtR_prior'); end
+   imdl.solve= @ab_tv_diff_solve;
+   imdl.reconst_type= 'difference';
+   imdl.parameters.max_iterations= 15;
+   imdl.hyperparameter.value = 1e-1;
+   imdl.parameters.term_tolerance = 1e-3;
+
+function imdl = Elec_Move_GN( imdl );
+   imdl.fwd_model.jacobian = @calc_move_jacobian;
+   imdl.RtR_prior =          @aa_e_move_image_prior;
+   imdl.solve= @aa_inv_solve;
+
+   MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
+   imdl.aa_e_move_image_prior.parameters = MV_prior;
+   imdl.aa_e_move_image_prior.RegC.func = @gaussian_HPF_prior;
+   imdl.hyperparameter.value = .03;
+
+   n_elems = size(imdl.fwd_model.elems,1);
+   imdl.inv_solve.select_parameters = 1:n_elems;
+
+function imdl = Nodal_GN_Diff( imdl );
+   imdl.solve = @nodal_solve;
+
+
+function imdl = Choose_NF( imdl, NF_req );
+   if ~strcmp(imdl.reconst_type, 'difference');
+      error('Choose NF only works for difference solvers right now');
+   end
+
+% Find 4 elems in mesh ctr to be the NF target elems
+   xyz_elems = interp_mesh( imdl.fwd_model );
+   ctr_elems = mean(xyz_elems, 1);
+   xyz_elems = xyz_elems - ones(size(xyz_elems,1),1)*ctr_elems;
+   d_elems   = sqrt( sum( xyz_elems.^2, 2 ));
+   [jnk, e_idx] = sort(d_elems);
+
+   imdl.hyperparameter.tgt_elems = e_idx(1:4);
+   imdl.hyperparameter.noise_figure = NF_req;
+
+   sv_log = eidors_msg('log_level'); eidors_msg('log_level', 1);
+   HP = choose_noise_figure( imdl );
+   eidors_msg('log_level', sv_log);
+
+   imdl.hyperparameter.value = HP;
 
 
 function do_unit_test
-   imdl = mk_common_model('a2c2',16); 
-   imdl = select_imdl( imdl );
-   imdl = select_imdl( imdl.fwd_model );
+% Test difference solvers on lung images
+   load montreal_data_1995; vh = zc_resp(:,1); vi= zc_resp(:,23);
+   imdl = mk_common_model('c2t3',16); 
 
+   i=0; while(1); i=i+1;
+i
+      switch i
+         case 01;
+            imdl0 = select_imdl( imdl );
+         case 02;
+            imdl0 = select_imdl( imdl.fwd_model );
+         case 03;
+            imdl0 = select_imdl( imdl, {'NOSER dif'} );
+         case 04;
+            imdl0 = select_imdl( imdl, {'NOSER dif','Choose NF=1.1'});
+         case 05;
+            imdl0 = select_imdl( imdl, {'Basic GN dif'} );
+         case 06;
+            imdl0 = select_imdl( imdl, {'TV solve dif'} );
+         case 07;
+            imdl0 = select_imdl( imdl.fwd_model, {'Basic GN dif','Elec Move GN','Choose NF=0.5'} );
+         case 08;
+            imdl0 = select_imdl( imdl, {'Elec Move GN'} );
+         case 09;
+            imdl0 = select_imdl( imdl, {'TV solve dif'} );
+            imdl0.parameters.max_iterations= 4;
+            imdl0 = select_imdl( imdl0, {'Choose NF=1'} );
+         case 10;
+            imdl0 = select_imdl( imdl, {'Nodal GN dif'} );
+         case 11;
+            imdl0 = select_imdl( imdl, {'Nodal GN dif', 'Choose NF=0.50'} );
+         case 12; break
+      end;
+
+      imgr = inv_solve( imdl0, vh, vi);
+      imgr.calc_colours.ref_level = 0;
+      subplot(4,3,i); show_slices( imgr );
+   end
