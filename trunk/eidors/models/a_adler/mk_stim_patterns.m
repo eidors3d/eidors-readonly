@@ -153,8 +153,10 @@ function meas_sel= meas_select( mpat, mpat0);
       meas_sel = [meas_sel; msel_i];
    end
 
+   meas_sel = logical(meas_sel(:));
+
 function [mset,err] = mk_meas_set( meas_pat )
-   mpats= size(meas_pat,1);
+   mpats= size(~meas_pat,1);
    mset = zeros(mpats,1);
    err=0;
    for i=1:size(meas_pat,1);
@@ -164,58 +166,6 @@ function [mset,err] = mk_meas_set( meas_pat )
       if length(fp)>1 || length(fn)>1 ; err=1; return; end
       mset(i) =  fp*1e7 + fn;
    end
-
-function meas_sel= meas_select_old( n_elec, inj, v)
-  if prod(size(inj))~=2 || prod(size(v.meas))~=2
-     meas_sel = [];
-     return;
-  end
- 
-  n2_elec= n_elec^2;
-  e_idx= 0:n2_elec-1;
-% ELS rotates the measurement around for each stim pattern
-%  0 5 4 3 2 1
-%  1 0 5 4 3 2
-%  2 1 0 5 4 3
-%  3 2 1 0 5 4
-%  4 3 2 1 0 5
-%  5 4 3 2 1 0
-  ELS=rem(   rem(e_idx,n_elec)- ...
-           floor(e_idx/n_elec)+n_elec , ...
-           n_elec)';
-
-  injx= n_elec+[-1 0 [-1 0]+inj*[-1;1] ];
-% MEAS or STIM electrodes are equal?
-%  5 5 5 5 5 5 5 5 5 5 5   0 1 2 3 4 5 5 0 1 2 3 4
-%  0 0 0 0 0 0 0 0 0 0 0 = 0 1 2 3 4 5 5 0 1 2 3 4
-%  2 2 2 2 2 2 2 2 2 2 2   0 1 2 3 4 5 5 0 1 2 3 4
-%  3 3 3 3 3 3 3 3 3 3 3   0 1 2 3 4 5 5 0 1 2 3 4
-  ELS= rem( injx ,n_elec)' * ones(1,n2_elec) ==ones(4,1)*ELS';
-  inj_meas_sel= ~any( ELS )';
-
-% reshape(rem(e_idx,n_elec)- floor(e_idx/n_elec),n_elec,n_elec)
-%  0 -1 -2 -3 -4 -5
-%  1  0 -1 -2 -3 -4
-%  2  1  0 -1 -2 -3
-%  3  2  1  0 -1 -2  -> Test if >0
-%  4  3  2  1  0 -1
-%  5  4  3  2  1  0
-  if v.do_redundant==0
-     ELS = rem(e_idx,n_elec)- floor(e_idx/n_elec);
-     inj_meas_sel = inj_meas_sel & (ELS'>0);
-  end
-  
-  % Insert electrode indices for multiple ring measurements
-  meas_sel = [];
-  inj_meas_sel = reshape(inj_meas_sel,n_elec,n_elec);
-  for i = 1:v.n_rings
-      meas_sel = blkdiag(meas_sel, ~inj_meas_sel); 
-  end
-  meas_sel = ~logical(meas_sel(:));
-  
-  if v.use_meas_current
-     meas_sel = (meas_sel >=0); % Set all values to 1 (we're using measurements)
-  end
 
 function stim_pat = mk_stim_pat(v, elec, ring );
    stim_pat = sparse(v.tn_elec, 1);
