@@ -23,10 +23,14 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
 %   vi - target simulations       M x n_points
 %   xyr_pt - x y and radius of each point 3 x n_points
 %
-% Example: Simulate small object in centre:
-%    imdl = mk_common_model('b3cr',16);
-%    img  = calc_jacobian_bkgnd(imdl);
+% Example: Simulate small 3D object in centre:
+%    img = mk_image( mk_common_model('b3cr',16) ); % 2D Image
 %    [vh,vi] = simulate_movement( img, [0;0;0;0.05]);
+% Example: Simulate small 2D object in at x near side:
+%    img = mk_image( mk_common_model('d2d3c',16) ); % 2D Image
+%    [vh,vi] = simulate_movement( img, [0.9;0;0.05]);
+%    show_fem(inv_solve(mk_common_model('c2c2',16),vh,vi)) % Reconst (new mesh)
+% 
 
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$

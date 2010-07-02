@@ -1,7 +1,6 @@
 function J = calc_move_jacobian(fwd_model, img_bkgd)
-% CG_CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and
+% CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and
 % electrode movement variables in 3D EIT.
-% Note: this Jacobian is NOT normalized
 % Args:     fwd_model - the EIDORS object forward model
 %            img_bkgd - the image background conductivity
 % Returns:          J - the Jacobian matrix [Jc, Jm]
