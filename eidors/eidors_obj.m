@@ -55,11 +55,8 @@ function obj_id= eidors_obj(type,name, varargin );
 %        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
  
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% (C) 2005-10 Andy Adler. License: GPL version 2 or version 3
 % $Id$
-
-% (Short circuit boolean removed for compatibility with Matlab 6.1 (R12.1) WRBL 22/02/2004)
-% Converted eidors_objects.(x) to getfield or setfield WRBL 22/02/2004
 
 if nargin==0 || ~ischar(type)
    error('cannot call eidors_obj with no arguments');
@@ -74,7 +71,7 @@ switch type
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
-      obj_id= '3.4rc ($Date$)'; % Update for New eidors version
+      obj_id= '3.4 ($Date$)'; % Update for New eidors version
    case 'interpreter_version'
       obj_id= test_versions;
    otherwise

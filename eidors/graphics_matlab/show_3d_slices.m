@@ -100,10 +100,15 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    bdr= (conv2(double(~ff),ones(3),'same')>0) & ff;
    outbdr = ff & ~bdr;
 
-   warning(['Poor you. You''re using matlab>7.8 on a 64 bit machine. Unfortunately, ' ...
-            'these versions have serious graphics bugs and we can''t show a nice image.' ...
-            'Sorry. Please bug Mathworks for a fix.']);
-%  cimg(outbdr)= NaN;
+   ver= eidors_obj('interpreter_version');
+   if ver.isoctave == 0 && ver.ver > 7.08 && ver.is64bit == 1
+      warning([ ...
+        'Poor you. You''re using matlab>7.8 on a 64 bit machine. Unfortunately, ' ...
+        'these versions have serious graphics bugs and we can''t show a nice image.' ...
+        'Sorry. Please bug Mathworks for a fix.']);
+   else
+      cimg(outbdr)= NaN;
+   end
 
    if show_surf
       hh=surf(xyz(:,:,1)+M_add(1), ...

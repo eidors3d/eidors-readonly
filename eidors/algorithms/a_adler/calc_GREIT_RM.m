@@ -1,6 +1,6 @@
 function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 % CALCULATE GREIT reconstruction matrix
-%   RM= calc_GREIT_RM(vh,vi, xyc, radius weight, normalize)
+%   RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 % 
 % Input:
 %   vh     = homogeneous (reference) training measurements 

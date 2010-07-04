@@ -1,4 +1,89 @@
-function [vh,vi,param]=test_performance(fmdl,imdl,r,N)
+function [r, params] =  test_performance( imdls, fmdl );
+% TEST_PERFORMANCE: test of difference reconstruction algorithms
+%   in terms of the performance parameters defined in GREIT
+%
+% Input:
+%   imdls = cell array of inverse models to test on
+%   fmdl  = fmdl of the shape to test on (default is 16 electrode tank).
+%
+% Model assumes the tank is elliptical with an x,y centre at 0,0
+%
+% [r, params] =  test_performance( imdls );
+%  r =  radii of test objects
+%  param = [AR, PE, RES, SD, RNG, NOI]
+%
+% Example
+%   i_bp = mk_common_gridmdl('backproj');
+%   i_gp = mk_common_gridmdl('GREITc1');
+%   test_performance( { i_gp, i_gr })
+
+% (c) 2010 Andy Adler. Licenced under GPL v2 or v3
+% $Id$
+
+if isstr(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
+
+if nargin==1
+   fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 
+   fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
+   imgs= mk_image( fmdl, 1);
+end
+
+Nsim = 100;
+r =  linspace(0,0.9,Nsim);
+ctr = [0,0, mean(fmdl.nodes(:,3))];  % Assume x,y centre is zero
+maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
+maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
+
+th=  r*4321; % want object to jump around in radius
+xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim); 
+        0.05/mean([maxx,maxy])*ones(1, Nsim)];
+
+[vh,vi] = simulate_movement(imgs, xyzr);
+
+for i= 1:length(imdls);
+   imgr = inv_solve(imdls{i}, vh, vi);
+   imgr.calc_colours.npoints = 64;
+   param_GR = eval_GREIT_fig_merit(imgr, xyzr);
+   pnoise = calc_noise_params( imdls{i}, vh, vi );
+   params{i} = [param_GR; pnoise];
+end
+
+clf; Nparams = 6;
+for j=1:Nparams;
+   p = [];
+   for i= 1:length(params);
+      p = [p, params{i}(j,:)'];
+   end
+
+%   subplot(5,1,j);
+   hig = 0.95/Nparams;
+   axes('position',[0.1,0.05 + hig*(Nparams-j),.88, hig]);
+   plot(r, p);
+   if j==1;     axis([0,0.9,0,2.1]);        ylabel('AR');
+   elseif j==2; axis([0,0.9,-0.16,0.16]);   ylabel('PE');
+   elseif j==3; axis([0,0.9,0,0.41]);       ylabel('RES');
+   elseif j==4; axis([0,0.9,0,0.31]);       ylabel('SD');
+   elseif j==5; axis([0,0.9,0,0.61]);       ylabel('RNG');
+   elseif j==6;                             ylabel('NF');
+   end
+   if j<Nparams; set(gca,'XTickLabel',[]);end
+end
+
+function do_unit_test;
+% Reconstruct GREIT Images
+imdl_gr = mk_common_gridmdl('GREITc1');
+
+% Reconstruct backprojection Images
+imdl_bp = mk_common_gridmdl('backproj');
+
+% Reconstruct GN Images
+imdl_gn = select_imdl( mk_common_model('d2c2', 16), {'Basic GN dif','Choose NF=0.5'});
+
+test_performance( { imdl_gr, imdl_bp, imdl_gn } );
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [vh,vi,param]=test_performance_old(fmdl,imdl,r,N)
 
 debug = false;
 
