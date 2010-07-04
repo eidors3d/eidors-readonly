@@ -52,4 +52,3 @@ TV_hyperparams04
 
 % Find and trim all output images
 !find -name '*.png' -exec convert -trim '{}' '{}' ';'
-

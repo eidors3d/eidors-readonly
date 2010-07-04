@@ -48,6 +48,13 @@ forward_solvers04
 forward_solvers05
 
 clear; clf; close all; 
+forward_solver_3d_01
+forward_solver_3d_02
+forward_solver_3d_03
+forward_solver_3d_04
+forward_solver_3d_05
+
+clear; clf; close all; 
 disp 'nodal solver'
 nodal_solve01
 nodal_solve02
@@ -56,6 +63,7 @@ nodal_solve03
 clear; clf; close all; 
 disp 'rpi data'
 rpi_data01
+rpi_data02a
 rpi_data02
 rpi_data03
 rpi_data04
@@ -68,3 +76,8 @@ common_models01
 common_models02
 common_models03
 common_models04
+
+clear; clf; close all; 
+disp 'common models'
+sensitivity_map01
+sensitivity_map02
