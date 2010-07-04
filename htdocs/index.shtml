@@ -14,12 +14,12 @@ To try the EIDORS software, follow these steps:
 <ol>
 <li> Download the software (release or developer version):
     <br>&minus; <i>Release Version:</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.3.zip"
-             >EIDORS 3.3</a> (23 Jul 2008)
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.4.zip"
+             >EIDORS 3.4</a> (6 Jul 2010)
     <br>&minus; <a href="./download.shtml">
                   <i>Developer Version:</i></a>
 
-<li> Unzip the software in a directory <tt>/path/to/eidors</tt>
+<li> Unzip the software in a directory <tt>/path/to/eidors</tt> or <tt>C:/path/to/eidors</tt>
 
 <li> Start Matlab (or Octave).
 
@@ -31,7 +31,6 @@ To try the EIDORS software, follow these steps:
     <tt>/path/to/eidors/examples</tt>
      directory (such as <tt>demo_real.m</tt>)
 </ol>
-
 
 
 
