@@ -1,0 +1,34 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>Algorithm Performance</h2>
+
+EIDORS provides an interface to test algorithm performance
+against the 
+<a href="../GREIT-evaluation/reconstruction_parameters.png"
+>parameters defined for the GREIT algorithm:</a>
+Amplitude (AR),
+Position Error (PE),
+Resolution (RES),
+Shape Deformation (SD), and
+Ringing (RNG)
+
+<pre>
+<!--#include virtual="algorithm_performance01.m" -->
+</pre>
+
+<center>
+<img src="algorithm_performance01a.png">
+<br><i>Figure:</i>
+Performance of algorithms:
+<i>blue:</i> GREIT (v1)
+<i>green:</i> Sheffield backprojection 
+<i>red:</i> One step Gauss Newton
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->

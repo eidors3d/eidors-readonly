@@ -51,16 +51,22 @@ Illustration of the object locations in the simulation
 Calculate the parameters
 </h3>
 
+Image Reconstruction
 <pre>
 <!--#include virtual="GREIT_test_params03.m" -->
 </pre>
 
+Calculate performance
+<pre>
+<!--#include virtual="GREIT_test_params04.m" -->
+</pre>
+
 <center>
-<img src="GREIT_test_params03_ar.png"> <img src="GREIT_test_params04_ar.png"> <br>
-<img src="GREIT_test_params03_pe.png"> <img src="GREIT_test_params04_pe.png"> <br>
-<img src="GREIT_test_params03_res.png"><img src="GREIT_test_params04_res.png"><br>
-<img src="GREIT_test_params03_sd.png"> <img src="GREIT_test_params04_sd.png"> <br>
-<img src="GREIT_test_params03_rng.png"><img src="GREIT_test_params04_rng.png"><br>
+<img src="GREIT_test_params04a_ar.png"> <img src="GREIT_test_params04b_ar.png"> <br>
+<img src="GREIT_test_params04a_pe.png"> <img src="GREIT_test_params04b_pe.png"> <br>
+<img src="GREIT_test_params04a_res.png"><img src="GREIT_test_params04b_res.png"><br>
+<img src="GREIT_test_params04a_sd.png"> <img src="GREIT_test_params04b_sd.png"> <br>
+<img src="GREIT_test_params04a_rng.png"><img src="GREIT_test_params04b_rng.png"><br>
 <br><i>Figure:</i>
 Evaluation of GREIT (right), and Sheffield Backprojection (left)
 GREIT parameters AR, PE, RES, SD, and RNG as a function 
@@ -101,7 +107,10 @@ Calculate the parameters
 </h3>
 
 <pre>
-<!--#include virtual="GREIT_test_params03.m" -->
+<!--#include virtual="GREIT_test_params06.m" -->
+</pre>
+<pre>
+<!--#include virtual="GREIT_test_params04.m" -->
 </pre>
 
 <center>
