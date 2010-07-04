@@ -46,8 +46,8 @@ pipe04
 
 clear; clf; close all; 
 disp('square_mesh');
-!7za x ~/docs/eidors/htdocs/data_contrib/netgen_moving_ball/ng_mdl_16x1_coarse.7z
-!7za x ~/docs/eidors/htdocs/data_contrib/netgen_moving_ball/ng_mdl_16x1_vfine.7z
+!7za x ../../data_contrib/netgen_moving_ball/ng_mdl_16x1_coarse.7z
+!7za x ../../data_contrib/netgen_moving_ball/ng_mdl_16x1_vfine.7z
 square_mesh01
 square_mesh02
 square_mesh03
@@ -56,6 +56,28 @@ square_mesh05
 square_mesh06
 
 clear; clf; close all; 
+disp 'nodal solver'
+nodal_solve01
+nodal_solve02
+nodal_solve03
+
+clear; clf; close all; 
+disp 'rpi data'
+rpi_data01
+rpi_data02a
+rpi_data02
+rpi_data03
+rpi_data04
+rpi_data05
+rpi_data06
+
+clear; clf; close all; 
+disp 'common models'
+common_models01
+common_models02
+common_models03
+common_models04
+
 disp('two_and_half');
 two_and_half_d01
 two_and_half_d02
