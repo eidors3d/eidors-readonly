@@ -6,6 +6,18 @@ EIDORS package.
 <ul>
 
 <p><li><b>
+    7 July 2010:
+</b><br>
+Blobby the walrus is happy to releasing EIDORS version 3.4,
+available at www.eidors.org. This version incorporates
+bug fixes, automated tests and code speedups.
+New features since v3.3 include:
+a) new algorithms (PDIPM, GREIT, absolute solvers),
+b) improved interfaces to FEM generation (distmesh, netgen)
+c) improved repository with in vivo and phantom data,
+d) improved graphics and tutorials.
+
+<p><li><b>
     20 Jun 2010:
 </b><br>
 <a href="news_pics/10-06-20-EIDORS-N900-1.jpg"
