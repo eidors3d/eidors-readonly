@@ -2,9 +2,7 @@
 
 % Specify positions to simulate (only x-axis here)
 r =  linspace(0,0.9,100);
-xyzr = [r;
-        zeros(1,100);
-        ones(1,100);
+xyzr = [r; zeros(1,100); ones(1,100);
      0.05*ones(1,100)];
 
 [vh,vi] = simulate_movement(imgs, xyzr);
