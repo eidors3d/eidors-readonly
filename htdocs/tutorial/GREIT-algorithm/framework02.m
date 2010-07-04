@@ -1,4 +1,4 @@
-% fwd_model $Id:$
+% fwd_model $Id$
 
 % CALCULATE JACOBIAN AND SAVE IT
 
