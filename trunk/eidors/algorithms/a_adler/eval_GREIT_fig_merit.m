@@ -58,4 +58,4 @@ function [xmean,ymean,equiv_circ,map,qmi,img] = calc_cofg(img);
    ss_qmi = sum(qmi(:));
    xmean =  sum(sum( (qmi.*x) ))/ss_qmi; % centre of gravity
    ymean =  sum(sum( (qmi.*y) ))/ss_qmi;
-   equiv_circ = (x-xmean).^2 + (y-ymean).^2 < ss_qmi/pi/(32/2)^2;
+   equiv_circ = (x-xmean).^2 + (y-ymean).^2 < ss_qmi/pi/(sz/2)^2;

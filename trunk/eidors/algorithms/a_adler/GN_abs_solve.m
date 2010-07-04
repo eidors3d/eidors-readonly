@@ -21,11 +21,11 @@ hp2RtR= hp*RtR;
 
 iters = 1;
 try 
-   iters = inv_model.parameters.max_iteration;
+   iters = inv_model.parameters.max_iterations; 
 end
 
 img0 = img;
-for i = 1:iters; 
+for i = 1:iters  
   vsim = fwd_solve( img ); 
   dv = calc_difference_data( vsim , data1, img.fwd_model);
   J = calc_jacobian( img );

@@ -10,8 +10,10 @@ function inv_mdl= select_imdl( mdl, options )
 %
 % Available options are:
 %
-% 'Basic GN dif';   Basic GN one step difference solver with Laplace solver
+% 'Basic GN dif';   Basic GN one step difference solver with Laplace prior
+% 'Basic GN abs';   Basic Gauss-Newton absolute solver with Laplace prior
 % 'NOSER dif';      Basic GN one step difference solver with NOSER prior 
+% 'Nodal GN dif';   Basic GN solver, solves onto nodes
 % 'TV solve dif';   Total Variation PDIPM difference solver 
 % 'Elec Move GN';   One step GN difference solver with compensation for electrode movement
 % 'Choose NF=1.0';  Choose hyperparameter value appropriate for specified noise figure (NF)
@@ -34,9 +36,10 @@ for i=1:length(options);
   opt= regexp(options{i},'(.[^=]*)=?(.*)','tokens'); opt= opt{1};
   switch opt{1}
     case 'NOSER dif';       inv_mdl = NOSER_dif( inv_mdl );
-    case 'Basic GN dif';    inv_mdl = Basic_GN_Diff( inv_mdl );
-    case 'Nodal GN dif';    inv_mdl = Nodal_GN_Diff( inv_mdl );
-    case 'TV solve dif';    inv_mdl = TV_solve_Diff( inv_mdl );
+    case 'Basic GN dif';    inv_mdl = Basic_GN_Dif( inv_mdl );
+    case 'Basic GN abs';    inv_mdl = Basic_GN_Abs( inv_mdl );
+    case 'Nodal GN dif';    inv_mdl = Nodal_GN_Dif( inv_mdl );
+    case 'TV solve dif';    inv_mdl = TV_solve_Dif( inv_mdl );
     case 'Elec Move GN';    inv_mdl = Elec_Move_GN( inv_mdl );
     case 'Choose NF';       inv_mdl = Choose_NF( inv_mdl, str2num(opt{2}) );
     
@@ -62,13 +65,20 @@ function imdl = NOSER_dif( imdl );
    imdl.solve= @aa_inv_solve;
    imdl.reconst_type= 'difference';
 
-function imdl = Basic_GN_Diff( imdl );
+function imdl = Basic_GN_Dif( imdl );
    imdl.RtR_prior = @laplace_image_prior;
    try; imdl = rmfield(imdl,'R_prior'); end
    imdl.solve= @aa_inv_solve;
    imdl.reconst_type= 'difference';
 
-function imdl = TV_solve_Diff( imdl );
+function imdl = Basic_GN_Abs( imdl );
+   imdl.RtR_prior = @laplace_image_prior;
+   try; imdl = rmfield(imdl,'R_prior'); end
+   imdl.solve= @GN_abs_solve;
+   imdl.parameters.max_iterations= 10;
+   imdl.reconst_type= 'absolute';
+
+function imdl = TV_solve_Dif( imdl );
    imdl.R_prior = @ab_calc_tv_prior;
    try; imdl = rmfield(imdl,'RtR_prior'); end
    imdl.solve= @ab_tv_diff_solve;
@@ -78,7 +88,9 @@ function imdl = TV_solve_Diff( imdl );
    imdl.parameters.term_tolerance = 1e-3;
 
 function imdl = Elec_Move_GN( imdl );
-   imdl.fwd_model.jacobian = @calc_move_jacobian;
+   % keep previous model as conductivity jacobian, so it should be ok
+   imdl.fwd_model.conductivity_jacobian = imdl.fwd_model.jacobian; 
+   imdl.fwd_model.jacobian = @aa_e_move_jacobian;
    imdl.RtR_prior =          @aa_e_move_image_prior;
    imdl.solve= @aa_inv_solve;
 
@@ -90,7 +102,7 @@ function imdl = Elec_Move_GN( imdl );
    n_elems = size(imdl.fwd_model.elems,1);
    imdl.inv_solve.select_parameters = 1:n_elems;
 
-function imdl = Nodal_GN_Diff( imdl );
+function imdl = Nodal_GN_Dif( imdl );
    imdl.solve = @nodal_solve;
 
 
@@ -118,11 +130,11 @@ function imdl = Choose_NF( imdl, NF_req );
 
 function do_unit_test
 % Test difference solvers on lung images
-   load montreal_data_1995; vh = zc_resp(:,1); vi= zc_resp(:,23);
-   imdl = mk_common_model('c2t3',16); 
+   load montreal_data_1995;
+   imdl = mk_common_model('b2t3',16); 
 
-   i=0; while(1); i=i+1;
-i
+   for i=1:100; % Break when finished
+      vh = zc_resp(:,1); vi= zc_resp(:,23);
       switch i
          case 01;
             imdl0 = select_imdl( imdl );
@@ -141,17 +153,34 @@ i
          case 08;
             imdl0 = select_imdl( imdl, {'Elec Move GN'} );
          case 09;
-            imdl0 = select_imdl( imdl, {'TV solve dif'} );
-            imdl0.parameters.max_iterations= 4;
-            imdl0 = select_imdl( imdl0, {'Choose NF=1'} );
+            imdl0 = mk_common_model('b2C2',16); 
+            imdl0 = select_imdl( imdl0, {'Elec Move GN'} );
          case 10;
             imdl0 = select_imdl( imdl, {'Nodal GN dif'} );
          case 11;
             imdl0 = select_imdl( imdl, {'Nodal GN dif', 'Choose NF=0.50'} );
-         case 12; break
+         case 12;
+            imdl0 = mk_common_model('b2C2',16); 
+            imdl0 = select_imdl( imdl0, {'Basic GN dif', 'TV solve dif'} );
+            imdl0.parameters.max_iterations= 2;
+            imdl0 = select_imdl( imdl0, {'Choose NF=0.8'} );
+            [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.35]);
+         case 13;
+            imdl0 = mk_common_model('b2C2',16); 
+            imdl0 = select_imdl( imdl0, {'Nodal GN dif', 'Choose NF=0.50'} );
+            [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.05]);
+         case 14;
+            imdl0 = mk_common_model('b2C2',16); 
+            imdl0 = select_imdl( imdl0, {'Basic GN abs'} );
+            [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.05]);
+         case 15; break
       end;
 
-      imgr = inv_solve( imdl0, vh, vi);
-      imgr.calc_colours.ref_level = 0;
-      subplot(4,3,i); show_slices( imgr );
+%     disp([i,imdl0.hyperparameter.value]);
+      if strcmp( imdl0.reconst_type, 'absolute')
+         imgr = inv_solve( imdl0, vi);
+      else
+         imgr = inv_solve( imdl0, vh, vi);
+      end
+      subplot(4,4,i); show_slices( imgr );
    end

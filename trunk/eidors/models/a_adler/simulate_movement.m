@@ -1,9 +1,9 @@
-function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
+function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );
 % SIMULATE_MOVEMENT simulate small conductivity perturbations
-% [vh,vi]= simulate_movement( img, xyzr );
+% [vh,vi,xyzr, c2f]= simulate_movement( img, xyzr );
 %
 % Simulate small conductivity perturbations (using the 
-%  Jacobian calculation to be accurate and fast).
+%  Jacobian calculation to be fast).
 %
 % INPUT:
 %   2D Models: specify xyzr = matrix of 3xN.
@@ -21,7 +21,8 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
 % OUTPUT:
 %   vh - homogeneous measurements M x 1
 %   vi - target simulations       M x n_points
-%   xyr_pt - x y and radius of each point 3 x n_points
+%   xyzr - x y and radius of each point 3 x n_points
+%   c2f - image representation of the simulations
 %
 % Example: Simulate small 3D object in centre:
 %    img = mk_image( mk_common_model('b3cr',16) ); % 2D Image
@@ -51,11 +52,27 @@ function [vh,vi,xyr_pt]= simulate_movement( img, xyzr );
 
    img.fwd_model.coarse2fine = c2f;
    J= calc_jacobian( img );
+   J= move_jacobian_postprocess( J, img, Nt);
 
    vh= fwd_solve(img);
    vh=vh.meas;
 
    vi= vh*ones(1,Nt) + J;
+
+function J= move_jacobian_postprocess( J, img, Nt)
+   if size(J,2) == Nt; % No problem
+       return ;
+   % Check if movement jacobian introduced electrode movements (elecs * dims)
+   elseif size(J,2) == Nt + ...
+        length(img.fwd_model.electrode) * size(img.fwd_model.nodes,2)
+      J = J(:,1:Nt);
+   else
+      error('Jacobian calculator is not doing the coarse2fine mapping. This is a bug.');
+   end
+
+
+
+
 
 % QUESTON: the accuracy of J will depend on how well we interpolate the
 % mesh. How important is this?

@@ -34,9 +34,9 @@ fdata1 = filt_data( fwd_model, data1, data_width );
 fdata2 = filt_data( fwd_model, data2, data_width );
 
 if fwd_model.normalize_measurements
-   dva= data2 ./ data1 - 1;
+   dva= fdata2 ./ fdata1 - 1;
 else   
-   dva= data2 - data1;
+   dva= fdata2 - fdata1;
 end
 
 function nf= num_frames(d0)
