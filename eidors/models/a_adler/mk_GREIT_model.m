@@ -1,10 +1,31 @@
-function imdl= mk_GREIT_model( fmdl, radius, weight )
+function imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
 % MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach
+%   imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
+%
+% Parameters
+%   fmdl   - fwd model on which to do simulations, or
+%          - string specifying prepackaged models
+%
+%   radius - requested weighting matrix  (recommend 0.25 for 16 electrodes)
+%   weight - weighting matrix (weighting of noise vs signal)
+%
+%   extra_noise - extra noise samples (such as electrode movement)
+%
+% NOTE
+%   currently extra_noise is not supported
+%   currently weighting matrix must be scalar
+              
+% Example
+%   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+
+if nargin==4;
+  error('mk_GREIT_model: doesn''t currently support extra_noise');
+end
 
 if isstr(fmdl)
   imgs = get_prepackaged_fmdls( fmdl );
