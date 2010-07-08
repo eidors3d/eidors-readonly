@@ -68,7 +68,7 @@ $(REL)/htdocs: $(REL) Makefile
          done
 	find $@ -name \*.html -exec \
 	 perl -i -pe's{\.shtml\s*"}{-s.html"}' \{} \;
-	find $@ -name \*-s.html.bak | xargs rm
+	find $@ -name \*-s.html.bak | xargs rm -f
 	cp $@/index-s.html $@/EIDORS-docs.html
 	bigfiles=`find $@ -size +$(SZLIM)` ; \
 	find $@ -name \*-s.html -exec \
@@ -84,8 +84,8 @@ $(REL)/htdocs: $(REL) Makefile
           -e's{(href|src) \s* = \s* ($$q)(.*/)?([^\2]*?)(\2) }' \
           -e '{$$1 = "$$m{$$4}"}x;' \
         \{} \;
-	find $@ -size +$(SZLIM) | xargs rm 
-	find $@ -name \*-s.html.bak | xargs rm
+	find $@ -size +$(SZLIM) | xargs rm -f 
+	find $@ -name \*-s.html.bak | xargs rm -f
 
 
 # FIX adv hyperparams in build
