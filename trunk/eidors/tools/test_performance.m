@@ -64,7 +64,7 @@ for j=1:Nparams;
    elseif j==3; axis([0,0.9,0,0.41]);       ylabel('RES');
    elseif j==4; axis([0,0.9,0,0.31]);       ylabel('SD');
    elseif j==5; axis([0,0.9,0,0.61]);       ylabel('RNG');
-   elseif j==6;                             ylabel('NF');
+   elseif j==6; set(gca,'YScale','log');    ylabel('NF');
    end
    if j<Nparams; set(gca,'XTickLabel',[]);end
 end
