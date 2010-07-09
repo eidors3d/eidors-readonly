@@ -2,19 +2,19 @@
 
 # Need to have a local apache pointing to eidors
 
-SZLIM= 100k
+SZLIM= 30k
 WKDIR = cd ..
-REL= ../../release/
+REL= ../../../release/
 INCLDIRS =  data_contrib \
             examples \
             paper-cheating \
             programming \
             tutorial 
 WEBLINK= http://eidors3d.sourceforge.net/
- EIDORSDL=http://localhost:80/eidors/index.shtml
- CUTDL=1
+ EIDORSDL=http://localhost:80/~adler/eidors/index.shtml
+#CUTDL=1
 #EIDORSDL=http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml
-#CUTDL=3
+ CUTDL=2
 
 #all: $(REL) shtml other
 all: $(REL)/htdocs
@@ -60,22 +60,26 @@ jnk:
 #         -e'if (my $$r= $$m{$$4}) {s/$$2$$3$$4$$5/"$$r"/g};' \
 
 $(REL)/htdocs: $(REL) Makefile
-	mkdir -p $@ && cd $@ && \
-        wget -r -nH --cut-dirs=$(CUTDL) $(EIDORSDL)
+	( mkdir -p $@ && cd $@ && \
+        wget -r -nH --cut-dirs=$(CUTDL) $(EIDORSDL) && \
+	echo "################### 1 ####################" )
 	find $@ -name \*.shtml -print \
          | while read a ; do \
            mv $$a `dirname $$a`/`basename $$a .shtml`-s.html; \
          done
+	echo "################### 2 ####################"
 	find $@ -name \*.html -exec \
 	 perl -i -pe's{\.shtml\s*"}{-s.html"}' \{} \;
+	echo "################### 3 ####################"
 	find $@ -name \*-s.html.bak | xargs rm -f
+	echo "################### 3 ####################"
 	cp $@/index-s.html $@/EIDORS-docs.html
-	bigfiles=`find $@ -size +$(SZLIM)` ; \
+	bigfiles=`find $@ -size +$(SZLIM) -and -not -iname \*html` ; \
 	find $@ -name \*-s.html -exec \
 	perl -i -pe'BEGIN{' -e'print STDERR "PROC: $$ARGV[0]\n";' \
              -e"@bigf = qw{$$bigfiles};" \
              -e'for (@bigf) {s{%5C}{/}g; $$s=$$t= $$_;' \
-             -e  '$$t=~ s{^.*(data_contrib|tutorial|examples)(/.*)}{$(WEBLINK)$$1$$2};'\
+             -e  '$$t=~ s{^.*(data_contrib|tutorial|news_pics|examples)(/.*)}{$(WEBLINK)$$1$$2};'\
              -e  '$$s=~ s{^.*/(.*)}{$$1};'\
              -e  '$$m{$$s}= $$t;'\
           -e'} } my $$q= q{['\''"]}; $$n= q{^['\''"]};' \
@@ -84,7 +88,7 @@ $(REL)/htdocs: $(REL) Makefile
           -e's{(href|src) \s* = \s* ($$q)(.*/)?([^\2]*?)(\2) }' \
           -e '{$$1 = "$$m{$$4}"}x;' \
         \{} \;
-	find $@ -size +$(SZLIM) | xargs rm -f 
+	find $@ -size +$(SZLIM) -and -not -iname \*html | xargs rm -f
 	find $@ -name \*-s.html.bak | xargs rm -f
 
 
