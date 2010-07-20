@@ -30,8 +30,12 @@ if isfield(fwd_model,'coarse2fine')
    c2f= fwd_model.coarse2fine;
    if size(img.elem_data,1)==size(c2f,2)
 %     fwd_model data is provided on coarse mesh
-      img.elem_data = c2f * img.elem_data;
+      img.elem_data = c2f * img.elem_data; 
    end
+end
+
+if isfield(fwd_model,'background')
+    img.elem_data = img.elem_data + fwd_model.background; 
 end
 
 data = feval( fwd_model.solve, fwd_model, img);
