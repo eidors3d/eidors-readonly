@@ -100,12 +100,12 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    bdr= (conv2(double(~ff),ones(3),'same')>0) & ff;
    outbdr = ff & ~bdr;
 
-   ver= eidors_obj('interpreter_version');
-   if ver.isoctave == 0 && ver.ver > 7.08 && ver.is64bit == 1
-      warning([ ...
-        'Poor you. You''re using matlab>7.8 on a 64 bit machine. Unfortunately, ' ...
-        'these versions have serious graphics bugs and we can''t show a nice image.' ...
-        'Sorry. Please bug Mathworks for a fix.']);
+   ver = eidors_obj('interpreter_version');
+   if ver.isoctave ==0 && ver.is64bit
+      eidors_msg(['Poor you. You''re using matlab on a 64 bit machine. ' ...
+                  'Unfortunately, these versions have serious graphics ' ...
+                  'bugs and we can''t show a nice image. Sorry. ' ...
+                  'Please bug Mathworks for a fix (good luck!).'],0);
    else
       cimg(outbdr)= NaN;
    end
@@ -118,7 +118,7 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
       set(hh,'EdgeAlpha',0); % Remove background grid
 
       % WHY WOULD CDataMapping BE ANYTHING ELSE  - STUPID MATLAB !!!
-      % In Version >= 7.8, doing CDataMapping direct on a matrix with
+      % In 64 bit matlab, doing CDataMapping direct on a matrix with
       %   NaN's will crash matlab. Damn.
       set(hh,'CDataMapping','direct');
    end
