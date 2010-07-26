@@ -16,12 +16,30 @@ function print_convert(filename, options, pagehwr)
 if nargin<=1; options = '';  end
 if nargin<=2; pagehwr = 6/8; end
 
+% Test if we have imagemagick convert
+[ret1,ret2] =system('convert -version');
+if ret1 == 1 || ~any(findstr(ret2, 'ImageMagick'))
+   eidors_msg(['This function requires the ImageMagick convert program ' ...
+               ' be installed and on the path.' ...
+               ' On windows, we recommend you install it as part of ' ...
+               ' cygwin (www.cygwin.com)']);
+   return
+end
+
 tmpnam = [tempname,'.eps'];
+
 posn = get(gcf,'PaperPosition');
 % I wish matlab gave us unwind protect - like octave does!
 set(gcf,'PaperPosition',[posn(1:3), posn(3)*pagehwr]);
 print('-depsc2',tmpnam);
 set(gcf,'PaperPosition',[posn(1:4)]);
+
+% Fix cygwin bugs
+slash = find(tmpnam=='\');
+if any(slash)
+   tmpnam(slash) = '/'; % Works for all oses
+%  tmpnam = ['/cygdrive/', tmpnam([1,3:end])]; - find a way to generalize
+end
 
 ld = ''; % OVERRIDE STUPID MATLAB LD_LIBRARY_PATH
 if isunix && ~exist('OCTAVE_VERSION','var');
