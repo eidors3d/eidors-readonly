@@ -22,6 +22,7 @@ Shape 1
               'solid mainobj= p1 and p2 and cyl -maxh=0.3;\n'];
  elec_pos = []; elec_shape = []; elec_obj = {};
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models01.png">
@@ -40,6 +41,7 @@ Shape 2
  elec_shape=[0.1,0,0;0.2,0.3,0.02];
  elec_obj = 'cyl';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models02.png">
@@ -57,6 +59,7 @@ Shape 3
  elec_shape=[0.1];
  elec_obj = 'cyl';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models03.png">
@@ -74,6 +77,7 @@ Shape 4
  elec_shape=[0.1*th/2/pi + 0.05];
  elec_obj = 'cyl';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models04.png">
@@ -93,6 +97,7 @@ Shape 5
  elec_shape=[0.1];
  elec_obj = 'cyl';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models05.png">
@@ -112,6 +117,7 @@ Shape 6
  elec_shape=[0.1];
  elec_obj = {'cyl','cyl','bottom'};
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models06.png">
@@ -129,6 +135,7 @@ Shape 7
  elec_shape=[0.1];
  elec_obj = 'top';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models07.png">
@@ -150,9 +157,31 @@ Shape 8
  elec_shape=[0.1];
  elec_obj = {'top','top','top','cyl','cyl','cyl'};
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ show_fem( fmdl );
 </pre>
 <center>
 <img src="netgen_gen_models08.png">
+</center>
+
+<h3>
+Shape 9
+</h3>
+<pre>
+ shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
+              'solid ball   = sphere(-1.25,0,-1;0.5); tlo ball;\n' ...
+              'solid mainobj= top and orthobrick(-2,-1,-2;2,1,0) and not ball -maxh=0.5;\n'];
+ elec_pos = linspace( -1.5,1.5,5)';
+ elec_pos = [  elec_pos, elec_pos*[0,0,0,0], elec_pos*0+1];
+ elec_shape=[0.3];
+ elec_obj = 'top';
+ [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+ img = mk_image( fmdl, 1);
+ img.elem_data(mat_idx{2}) = 1.1; 
+ show_fem( img );
+</pre>
+<center>
+<img src="netgen_gen_models09.png">
 </center>
 
 </td></tr></table>
