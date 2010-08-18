@@ -94,6 +94,19 @@ switch number
  elec_obj = {'top','top','top','cyl','cyl','cyl'};
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
+   case 9;
+ shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
+              'solid ball   = sphere(-1.25,0,-1;0.5); tlo ball;\n' ...
+              'solid mainobj= top and orthobrick(-2,-1,-2;2,1,0) and not ball -maxh=0.5;\n'];
+ elec_pos = linspace( -1.5,1.5,5)';
+ elec_pos = [  elec_pos, elec_pos*[0,0,0,0], elec_pos*0+1];
+ elec_shape=[0.3];
+ elec_obj = 'top';
+ [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ img = mk_image( fmdl, 1);
+ img.elem_data(mat_idx{2}) = 1.1; 
+ 
+ fmdl = img; % so that the code shows the image
 
 end
 
