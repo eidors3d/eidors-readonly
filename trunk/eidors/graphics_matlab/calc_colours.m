@@ -265,7 +265,11 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
    [red,grn,blu] = blu_red_axis( pp, ...
           [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
-   colours = fix( img_data * (ncol-1))' + ncol + 1;
+% This is the line I wan't to write. However, matlab seems to waste
+%  lots of memory to do it. Instead we break it into pieces
+%  colours = fix( img_data * (ncol-1))' + ncol + 1;
+   colours = img_data'; colours = colours * (ncol-1);
+   colours = fix ( colours ); colours = colours + ncol + 1;
    colours(backgnd)= backgndidx;
 
 function value= get_field(param);
