@@ -1,4 +1,4 @@
-function [V] = forward_solver(E,I,tol,pp,V);
+function [V] = forward_solver(E,I,tol,pp,V, compat_param);
 %[V] = forward_solver(E,I,tol,pp,V);
 %
 %This function solves the forward problem using matlab's \ sovler, or
@@ -12,6 +12,16 @@ function [V] = forward_solver(E,I,tol,pp,V);
 
 % (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL
 % $Id$
+
+% The EIDORS3D V2 was [V] = forward_solver(vtx,E,I,tol,pp,V);
+% but vtx not used, so it's forward_solver(E,I,tol,pp,V, compat_param);
+if size(E,2) == 3; % E is actually vtx
+  if nargin>=2; E= I;             end
+  if nargin>=3; I= tol;           end
+  if nargin>=4; tol= pp;          end
+  if nargin>=5; pp= V;            end
+  if nargin>=6; V =compat_param;  end
+end 
 
 [n_nodes,n_stims] = size(I);
 
