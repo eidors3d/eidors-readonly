@@ -16,6 +16,10 @@ function data = fwd_solve( fwd_model, img)
 % data      is a measurement data structure
 % fwd_model is a fwd_model structure
 % img       is an img structure
+%
+% Options: (not available on all solvers)
+%    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
+%    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$

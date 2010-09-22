@@ -6,8 +6,9 @@ function data =aa_fwd_solve(fwd_model, img)
 %    img       = image struct
 % Output:
 %    data = measurements struct
-% Options:
-%    img.fwd_solve.get_all_meas = 1  (return all meas as data.volt)
+% Options: (to return internal FEM information)
+%    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
+%    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
 
 % (C) 1995-2002 Andy Adler. License: GPL version 2 or version 3
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
@@ -44,4 +45,7 @@ data.time= -1; % unknown
 data.name= 'solved by aa_fwd_solve';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = v(1:pp.n_node,:); % but not on CEM nodes
+end; end
+try; if img.fwd_solve.get_all_nodes== 1
+   data.volt = v;                % all, including CEM nodes
 end; end

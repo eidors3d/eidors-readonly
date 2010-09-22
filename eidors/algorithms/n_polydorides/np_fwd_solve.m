@@ -6,8 +6,9 @@ function data= np_fwd_solve( fwd_model, img)
 %    img       = image struct
 % Output:
 %    data = measurements struct
-% Options:
-%    img.fwd_solve.get_all_meas = 1  (return all meas as data.volt)
+% Options: (to return internal FEM information)
+%    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
+%    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -37,4 +38,7 @@ data.time= -1; % unknown
 data.name= 'solved by np_fwd_solve';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = Vfwd(1:p.n_node,:); % but not on CEM nodes
+end; end
+try; if img.fwd_solve.get_all_nodes== 1
+   data.volt = Vfwd;               % all, including CEM nodes
 end; end
