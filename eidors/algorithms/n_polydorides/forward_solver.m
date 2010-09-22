@@ -32,7 +32,7 @@ try
 
 catch 
    [lasterr_str,lasterr_id]= lasterr;
-   if lasterr_id ~= 'MATLAB:nomem'
+   if ~strcmp(lasterr_id , 'MATLAB:nomem')
       error(lasterr_str); % rethrow error
    end
 
