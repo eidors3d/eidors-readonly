@@ -52,14 +52,10 @@ function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, ...
 if nargin < 4; extra_ng_code = {'',''}; end
 % Caching should be done in the ng_mk_ellip_models
 
-[ellip_shape,params] = analyse_shape(ellip_shape);
+[ellip_shape,params] = analyse_shape(ellip_shape) 
 [fmdl, mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, ...
                   elec_shape, extra_ng_code);
-
-% Rotate and move the objects
-fmdl.nodes(:,1:2) = fmdl.nodes(:,1:2)*params.rot;
-fmdl.nodes(:,1) = fmdl.nodes(:,1) + params.xy_mean(1);
-fmdl.nodes(:,2) = fmdl.nodes(:,2) + params.xy_mean(2);
+fmdl = fit_to_shape( fmdl, params );
 
 function [ellip_shape,params] = analyse_shape(ellip_shape);
   height = ellip_shape{1}; 
@@ -78,7 +74,13 @@ function [ellip_shape,params] = analyse_shape(ellip_shape);
   ellip_shape= [height, ellip_ax, maxh];
 
   N = ceil( size(xy_shape,1) / 3 ); % can't fit too many components
-  paramc.fourier_fit = fourier_fit(xy_shape, N);
+  params.f_fit_point = fourier_fit(xy_shape, N);
+
+% Now, fit the ellipse to the point
+  th = linspace(0,2*pi,4*N)';
+  ellip_pts = [cos(th),sin(th)]*sqrt(2*d)*params.rot;
+  params.f_fit_ellip = fourier_fit(ellip_pts, N);
+%plot(ellip_pts(:,1),ellip_pts(:,2),'b-*',xy_shape(:,1),xy_shape(:,2),'r-*')
 
 function C = fourier_fit(xy_shape,N);
 % Fourier Fit
@@ -98,18 +100,25 @@ function C = fourier_fit(xy_shape,N);
    end
    C = A\rad;
 
-function ff2
+function fmdl = fit_to_shape( fmdl, params );
+   % Rotate and move the objects
+   xnodes = fmdl.nodes(:,1:2)*params.rot(:,1);
+   ynodes = fmdl.nodes(:,1:2)*params.rot(:,2);
 
-   ang = linspace(0,2*pi,50)';
+   N = (length(params.f_fit_point)-1)/2;
+   [ang,rad] = cart2pol(xnodes,ynodes);
    A = ones(length(ang), 2*N+1);
    for i=1:N
      A(:,i+1  ) = cos(i*ang);
      A(:,i+1+N) = sin(i*ang);
    end
-   rad = A*C;
-   xf = rad.*cos(ang) + xm;
-   yf = rad.*sin(ang) + ym;
 
-   if doplot
-      hold on;plot(xf,yf,'r-*'); hold off;
-   end
+   r_ellip = A*params.f_fit_ellip;
+   r_point = A*params.f_fit_point;
+   rad = rad.* (r_point ./ r_ellip);
+   xnodes = rad.*cos(ang) + params.xy_mean(1);
+   ynodes = rad.*sin(ang) + params.xy_mean(2);
+
+   fmdl.nodes(:,1) = xnodes;
+   fmdl.nodes(:,2) = ynodes;
+
