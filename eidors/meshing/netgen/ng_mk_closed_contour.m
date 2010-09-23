@@ -73,7 +73,7 @@ function [ellip_shape,params] = analyse_shape(ellip_shape);
   ellip_ax = sqrt(2*[d(1,1),d(2,2)])  
   ellip_shape= [height, ellip_ax, maxh];
 
-  N = ceil( size(xy_shape,1) / 3 ); % can't fit too many components
+  N = min(15, ceil( size(xy_shape,1) / 3 )); % can't fit too many components
   params.f_fit_point = fourier_fit(xy_shape, N);
 
 % Now, fit the ellipse to the point
