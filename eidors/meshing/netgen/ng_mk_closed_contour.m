@@ -52,14 +52,16 @@ function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, ...
 if nargin < 4; extra_ng_code = {'',''}; end
 % Caching should be done in the ng_mk_ellip_models
 
-[ellip_shape,params] = proc_shape(ellip_shape);
+[ellip_shape,params] = analyse_shape(ellip_shape);
 [fmdl, mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, ...
                   elec_shape, extra_ng_code);
+
+% Rotate and move the objects
 fmdl.nodes(:,1:2) = fmdl.nodes(:,1:2)*params.rot;
 fmdl.nodes(:,1) = fmdl.nodes(:,1) + params.xy_mean(1);
 fmdl.nodes(:,2) = fmdl.nodes(:,2) + params.xy_mean(2);
 
-function [ellip_shape,params] = proc_shape(ellip_shape);
+function [ellip_shape,params] = analyse_shape(ellip_shape);
   height = ellip_shape{1}; 
   xy_shape=ellip_shape{2};
   if length(ellip_shape)>=3
@@ -72,35 +74,31 @@ function [ellip_shape,params] = proc_shape(ellip_shape);
   params.rot = [1,0;0,-1]*u;
   params.xy_mean = mean(xy_shape,1);
 
-  ellip_ax = sqrt(2*[d(1,1),d(2,2)]); 
+  ellip_ax = sqrt(2*[d(1,1),d(2,2)])  
   ellip_shape= [height, ellip_ax, maxh];
 
-function [C, xf, yf] = fourier_fit(xc,yc,Nlist, doplot);
+  N = ceil( size(xy_shape,1) / 3 ); % can't fit too many components
+  paramc.fourier_fit = fourier_fit(xy_shape, N);
+
+function C = fourier_fit(xy_shape,N);
 % Fourier Fit
-% [1, sin(t1), sin(2*t1), ... cos(t1) ] * [A1] = [R1]
-%            ...
-% [1, sin(tN), sin(2*tN), ... cos(tN) ] * [AM] = [R2]
-if nargin<4; doplot=0;end
+% [1, cos(t1), cos(2*t1), ... sin(t1) ...] * [C1] = [R1]
+%            ...                         
+% [1, cos(tN), cos(2*tN), ... sin(tN) ...] * [CN] = [RM]
 
-xm= mean(xc);
-ym= mean(yc);
+   xc = xy_shape(:,1); xm= mean(xc);   xc= xc-xm;
+   yc = xy_shape(:,2); ym= mean(yc);   yc= yc-ym;
 
-if doplot
-   plot(xc,yc,'b-*');
-end
-
-yc= yc-ym;
-xc= xc-xm;
-
-for N= Nlist
-   ang = atan2(yc(:),xc(:));
-   rad = sqrt(yc(:).^2 + xc(:).^2);
+   ang = atan2(yc,xc);
+   rad = sqrt(yc.^2 + xc.^2);
    A = ones(length(ang), 2*N+1);
    for i=1:N
      A(:,i+1  ) = cos(i*ang);
      A(:,i+1+N) = sin(i*ang);
    end
    C = A\rad;
+
+function ff2
 
    ang = linspace(0,2*pi,50)';
    A = ones(length(ang), 2*N+1);
@@ -115,4 +113,3 @@ for N= Nlist
    if doplot
       hold on;plot(xf,yf,'r-*'); hold off;
    end
-end
