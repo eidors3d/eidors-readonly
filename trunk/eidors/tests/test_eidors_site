@@ -8,7 +8,10 @@ URL=eidors3d.sourceforge.net
 
 echo "Spidering ${URL}, checking for dead links..."
 echo "  (This will take a little while.)"
-wget --recursive --no-directories --output-file=links.txt --spider http://${URL}
+# --recursive gets all files at ${URL}
+# --page-requisite checks all external links that would be displayed from ${URL} (i.e. foreign images, etc)
+# --spider means no files are left behind
+wget --recursive --page-requisites --output-file=links.txt --no-directories --spider http://${URL}
 E=$?
 ( [ "${E}" == "0" ] && echo "PASS" && rm links.txt ) || echo "FAIL -- look in ./links.txt for details"
 exit ${E}
