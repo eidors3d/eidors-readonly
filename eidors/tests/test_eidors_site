@@ -1,0 +1,15 @@
+#! /bin/sh
+# script to spider a site, looking for dead links
+
+# (C) Alistair Boyle 2010
+# licensed under GPL3
+
+URL=eidors3d.sourceforge.net
+
+echo "Spidering ${URL}, checking for dead links..."
+echo "  (This will take a little while.)"
+wget --recursive --no-directories --output-file=links.txt--spider http://${URL}
+E=$?
+( [ "${E}" == "0" ] && echo "PASS" && rm links.txt ) || echo "FAIL -- look in ./links.txt for details"
+exit ${E}
+
