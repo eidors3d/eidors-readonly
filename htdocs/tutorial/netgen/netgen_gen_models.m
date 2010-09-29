@@ -108,6 +108,15 @@ switch number
  
  fmdl = img; % so that the code shows the image
 
+  case 10;
+ shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
+              'solid mainobj= top and orthobrick(-3,-3,-2;3,3,0) -maxh=0.5;\n'];
+ [elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,5),linspace(-2,2,7));
+ elec_pos = [  elec_pos_x(:), elec_pos_y(:), ones(size(elec_pos_x(:)))*[0,0,0,1] ];
+ elec_shape=[0.2];
+ elec_obj = 'top';
+ [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
 end
 
 show_fem(fmdl);
