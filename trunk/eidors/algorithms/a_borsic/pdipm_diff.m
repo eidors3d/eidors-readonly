@@ -7,7 +7,7 @@ function img=pdipm_diff( inv_model, data1, data2)
 % data2      => differential data at later time
 %
 %  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_diff.norm_prior 1 or 2 (DEFAULT 2)
+%  inv_model.pdipm_diff.norm_image 1 or 2 (DEFAULT 2)
 %  inv_model.pdipm_diff.beta     (default 1e-6)
 %
 % Parameters:
