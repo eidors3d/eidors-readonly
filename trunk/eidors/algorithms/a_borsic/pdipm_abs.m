@@ -1,57 +1,55 @@
-function img=pdipm_diff( inv_model, data1, data2)
-% PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method
-% img= ab_pdipm( inv_model, data1, data2)
+function img=pdipm_abs( inv_model, data);
+% PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method
+% img= pdipm_abs( inv_model, data);
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
-% data1      => differential data at earlier time
-% data2      => differential data at later time
+% data       => vector of eit data
 %
-%  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_diff.norm_prior 1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_diff.beta     (default 1e-6)
+%  inv_model.pdipm_abs.norm_data  1 or 2 (DEFAULT 2)
+%  inv_model.pdipm_abs.norm_prior 1 or 2 (DEFAULT 2)
+%  inv_model.pdipm_abs.beta     (default 1e-6)
 %
 % Parameters:
-%  max_iters =  inv_model.parameters.max_iteration (default 10)
+%  max_iter =  inv_model.parameters.max_iteration (default 10)
 %      Max number of iterations before stopping
 %  min change = inv_model.parameters.min_change   (default 0)
 %      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
 % beta is the parameter that smooths the TV functional
 
-% (C) 2008 Andrea Borsic. License: GPL version 2 or version 3
+% (C) 2010 Andrea Borsic + Andy Adler. License: GPL v2 or v3
 % $Id$
 
 
 pp= process_parameters(inv_model);
 
-fwd_model= inv_model.fwd_model;
-
-d=calc_difference_data( data1, data2, fwd_model);
-
-img_bkgnd=calc_jacobian_bkgnd( inv_model );
-J=calc_jacobian( fwd_model, img_bkgnd);
+img_bkgnd = homogeneous_estimate( inv_model, data );
 
 alpha=calc_hyperparameter( inv_model );
-L=calc_R_prior( inv_model );
+L= calc_R_prior( inv_model );
 W= calc_meas_icov( inv_model );
 
-
-if     pp.norm_data==2 && pp.norm_image==2
-  x= pdipm_2_2( J,W,alpha*L,d, pp);
-elseif pp.norm_data==2 && pp.norm_image==1
-  x= pdipm_2_1( J,W,alpha*L,d, pp);
-elseif pp.norm_data==1 && pp.norm_image==2
-  x= pdipm_1_2( J,W,alpha*L,d, pp);
-elseif pp.norm_data==1 && pp.norm_image==1
-  x= pdipm_1_1( J,W,alpha*L,d, pp);
-end
+img= feval(pp.fn, img_bkgnd, W,alpha*L,data, pp);
 
 % create a data structure to return
-img.name = 'pdipm_diff';
-img.elem_data = x;
-img.fwd_model = fwd_model;
+img.name = 'pdipm_abs';
 
-function s= pdipm_2_2( J,W,L,d, pp);
-   s= (J'*W*J + L'*L)\J'*W*d;
+% This is the Gauss-Newton algorithm
+%   for the linear case it is: s= (J'*W*J + L'*L)\J'*W*d;
+function img= pdipm_2_2(  img,W,L,d, pp);
+   img0 = img;
+   hp2RtR = L'*L;
+   for i = 1:pp.max_iter
+     vsim = fwd_solve( img ); 
+     dv = calc_difference_data( vsim , d, img.fwd_model);
+     J = calc_jacobian( img );
+
+     RDx = hp2RtR*(img0.elem_data - img.elem_data);
+     dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
+
+     img = line_optimize(img, dx, d);
+
+     loop_display(i)
+   end
 
 function s= pdipm_1_2( J,W,L,d, pp);
    [M,N] = size(J); % M measurements, N parameters
@@ -77,7 +75,8 @@ function s= pdipm_1_2( J,W,L,d, pp);
       dx = x_update(x, dsdx(N+(1:M)));
 
       s= s + ds; x= x + dx;
-fprintf('+');
+
+      loop_display(i)
    end
 
 function s= pdipm_2_1( J,W,L,d, pp);
@@ -105,17 +104,38 @@ function s= pdipm_2_1( J,W,L,d, pp);
       dx = x_update(x, dsdx(N+(1:G)));
 
       s= s + ds; x= x + dx;
-fprintf('+');
+
+      loop_display(i)
    end
 
-function s= pdipm_1_1( J,W,L,d, pp);
-   [M,N] = size(J); % M measurements, N parameters
-   [D  ] = size(L,1); % E edges
+%   img0 = img;
+%   hp2RtR = L'*L;
+%   for i = 1:pp.max_iter
+%     vsim = fwd_solve( img ); 
+%     dv = calc_difference_data( vsim , d, img.fwd_model);
+%     J = calc_jacobian( img );
+%
+%     RDx = hp2RtR*(img0.elem_data - img.elem_data);
+%     dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
+%
+%     img = line_optimize(img, dx, d);
+%
+%     loop_display(i)
+%   end
+
+function img= pdipm_1_1( img,W,L,d, pp);
+   [M]   = size(W,1); % M measurements
+   [D,N] = size(L); % E edges, N parameters
+%  s= zeros( N, 1 ); % solution - start with zeros
+   s= img.elem_data;
    y= zeros( D, 1 ); % dual var - start with zeros
-   s= zeros( N, 1 ); % solution - start with zeros
    x= zeros( M, 1 ); % dual var - start with zeros
 
    for loop = 1:pp.max_iter
+      % Jacobian
+      J = calc_jacobian( img );
+      disp(mean(img.elem_data));
+
       % Define variables
       g = L*s;                 G= spdiags(g,0,D,D);
       r = sqrt(g.^2 + pp.beta);R= spdiags(r,0,D,D); % S in paper
@@ -147,10 +167,11 @@ function s= pdipm_1_1( J,W,L,d, pp);
       dx = x_update(x, DD(N+(1:M)));
       dy = x_update(y, DD(N+M+(1:D)));
 
-      s= s + ds;
-      x= x + dx;
-      y= y + dy;
-fprintf('+');
+      s= s + 0.1*ds; img.elem_data = s;
+      x= x + 0.1*dx;
+      y= y + 0.1*dy;
+
+      loop_display(i)
    end
 
 % abs(x + dx) must be <= 1
@@ -184,3 +205,63 @@ function pp= process_parameters(imdl);
    try    pp.norm_image = imdl.pdipm_diff.norm_image;
    catch  pp.norm_image = 2;
    end
+
+   if     pp.norm_data==2 && pp.norm_image==2;
+      pp.fn = @pdipm_2_2;
+   elseif pp.norm_data==2 && pp.norm_image==1;
+      pp.fn = @pdipm_2_1;
+   elseif pp.norm_data==1 && pp.norm_image==2;
+      pp.fn = @pdipm_1_2;
+   elseif pp.norm_data==1 && pp.norm_image==1;
+      pp.fn = @pdipm_1_1;
+   else
+      error('norm_data and norm_image should be 1 or 2');
+   end
+
+
+
+% Fit a parabola to the linefit and pick the best point
+% This is faster than doing an exhaustive search
+function  img = line_optimize(imgk, dx, data1);
+  flist = [ 0.1,  0.5, 1.0];
+  clim = mean(imgk.elem_data)/10; % prevent zero and negative conductivity
+  img = imgk;
+  for i = 1:length(flist);
+     img.elem_data = imgk.elem_data + flist(i)*dx;
+     img.elem_data(img.elem_data <= clim ) = clim;
+     vsim = fwd_solve( img );
+     dv = calc_difference_data( vsim , data1, img.fwd_model);
+     mlist(i) = norm(dv);
+  end
+  pf = polyfit(flist, mlist, 2);
+  fmin = -pf(2)/pf(1)/2; % poly minimum
+  fmin(fmin>1) = 1; fmin(fmin<0) = 0;
+
+  img.elem_data = imgk.elem_data + flist(i)*dx;
+  img.elem_data(img.elem_data <= clim ) = clim;
+
+function img = homogeneous_estimate( imdl, data );
+   img = calc_jacobian_bkgnd( imdl );
+   vs = fwd_solve(img);
+   data = data_vector( data, imdl );
+
+   pf = polyfit(data,vs.meas,1);
+
+   img.elem_data = img.elem_data*pf(1);
+
+function data = data_vector( data, imdl );
+   if isstruct(data)
+      data = data.meas;
+   else
+     meas_select = [];
+     try
+        meas_select = imdl.fwd_model.meas_select;
+     end
+     if length(data) == length(meas_select)
+        data = data(meas_select);
+     end
+   end
+
+
+function loop_display(i)
+   fprintf('+');
