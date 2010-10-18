@@ -33,8 +33,10 @@ end
 
 for i=1:length(options);
   % split the option on an equals sign
-  opt= regexp(options{i},'(.[^=]*)=?(.*)','tokens'); opt= opt{1};
-  switch opt{1}
+  [s,f]= regexp(options{i},'(.[^=]*)=?(.*)');
+  opt = options{i}; opt= opt([s(1):f(1)]);
+% opt= regexp(options{i},'(.[^=]*)=?(.*)','tokens'); opt= opt{1};
+  switch opt
     case 'NOSER dif';       inv_mdl = NOSER_dif( inv_mdl );
     case 'Basic GN dif';    inv_mdl = Basic_GN_Dif( inv_mdl );
     case 'Basic GN abs';    inv_mdl = Basic_GN_Abs( inv_mdl );
