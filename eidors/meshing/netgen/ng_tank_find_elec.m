@@ -33,6 +33,9 @@ function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres)
 %          
 % electrodes = EIDORS V3.x electrodes structure
 
+% WARNING! the 'fc' variable in this function is what everywhere else is
+% called 'bc', and that's how it should be used.
+
 % (C) 2002-2006. Licenced under the GPL
 % $Id$
 
