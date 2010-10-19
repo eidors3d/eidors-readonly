@@ -31,6 +31,8 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 
 % (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
 % $Id$
+if isstr(shape) && strcmp(shape,'UNIT_TEST'); do_unit_test; return; end
+
 if nargin < 4; extra_ng_code = {'',''}; end
 
 fnstem = 'new';%tempname;
@@ -978,6 +980,10 @@ for i = 1: length(vtx)
 end
 vtx(unused_v,:) = [];
 
+function do_unit_test
 
+    a = [
+   -0.8981   -0.7492   -0.2146    0.3162    0.7935    0.9615    0.6751    0.0565   -0.3635   -0.9745
+    0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ];
 
-     
+     ng_mk_extruded_model({2,a',1},[8,1],[0.01]);
