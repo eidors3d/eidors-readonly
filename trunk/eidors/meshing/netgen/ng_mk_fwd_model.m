@@ -1,6 +1,6 @@
 function [fwd_mdl, mat_indices]= ...
              ng_mk_fwd_model( ng_vol_filename, centres, ...
-                              name, stim_pattern, z_contact)
+                              name, stim_pattern, z_contact, postprocmesh)
 % NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file
 % [fwd_mdl, mat_indices]= ...
 %      ng_mk_fwd_model( ng_vol_filename, centres, ...
@@ -31,6 +31,11 @@ end
 
 % Model Geometry
 [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(ng_vol_filename);
+if nargin>=6
+    N_elec = max(size(centres));
+    [srf,vtx,fc,bc,simp,edg,mat_ind] = feval(postprocmesh,...
+        srf,vtx,fc,bc,simp,edg,mat_ind, N_elec);
+end
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                              stim_pattern, centres, z_contact);
 mat_indices= mk_mat_indices( mat_ind);
