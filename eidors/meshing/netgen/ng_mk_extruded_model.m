@@ -9,10 +9,12 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 % trunk_shape = { height,[x,y],curve_type,maxsz}
 %   height (OPT)-> if height = 0 calculate a 2D model
 %   [x,y]       -> N-by-2 CLOCKWISE list of points defining the 2D shape
-%   curve_type  -> (default = 1) 1 - interpret as vertices 
-%                                2 - interpret as splines with de Boor
-%                                points at even indices
-%                                3 - create a smooth shape from points
+%   curve_type  -> 1 - interpret as vertices (default)
+%                  2 - interpret as splines with de Boor points at even 
+%                  indices (legacy)
+%                  3 - interpolate points (piecewise polynomial
+%                  interpolation). Syntax [3, N] also specifies the number
+%                  of samples to create.
 %   maxsz       -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
@@ -31,7 +33,7 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 
 % (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
 % $Id$
-if isstr(shape) && strcmp(shape,'UNIT_TEST'); do_unit_test; return; end
+if isstr(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
 
 if nargin < 4; extra_ng_code = {'',''}; end
 
@@ -83,11 +85,16 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
     tank_maxh = 0;
     tank_shape = [];
     tank_shape.curve_type = 1;
+    curve_info = [];
 
     if iscell(shape) && length(shape)>2
         tank_height = shape{1};
         points = shape{2};
         tank_shape.curve_type = shape{3};
+        if max(size(tank_shape.curve_type)) > 1
+            curve_info = tank_shape.curve_type;
+            tank_shape.curve_type = curve_info(1);
+        end
 %         if length(shape) > 2
 %             tank_height = shape{1};
 %         end
@@ -98,18 +105,25 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         points = shape;
     end
     
-    tank_shape.centroid = calc_centroid(points);
+
     
     
     spln_sgmnts = zeros(size(points)); %default
     if tank_shape.curve_type == 2
         [points, spln_sgmnts] = remove_linear_control_points(points);
-    end 
-    
-    if tank_shape.curve_type == 3
-        points = calc_spline_from_shape(points,tank_shape.centroid);
     end
     
+    if tank_shape.curve_type == 3 
+        if ~isempty(curve_info)
+            n_samples = curve_info(2);
+        else
+            n_samples = 50;
+        end
+        points = interpolate_shape(points, n_samples);
+        spln_sgmnts = zeros(size(points)); % now needs to be bigger
+    end
+    
+    tank_shape.centroid = calc_centroid(points);
     tank_shape.spln_sgmnts = spln_sgmnts;
 
     tank_shape.vertices = points;
@@ -196,185 +210,18 @@ points(end,:) = [];
 % points - [N x 2] defined vertices
 % OUTPUT:
 % out    - [2N x 2] vertices (odd) and control points (even)    
-function out = calc_spline_from_shape(points, centroid)
+function out = interpolate_shape(points, n_points)
 % Quadratic spline interpolation of the points provided.
 
-% The problem is to obtain control points for the spline segments, such
-% that Netgen can draw a smooth curve.
-% Every spline segment S_i(t) can be expressed us:
-%   S_i(t) = (1-t^2)*P_i + 2t(1-t)*C_i + t^2*P_(i+1)
-% OR
-%   S_i(t) = (P_(i+1) - 2C_1 + P_i)t^2 + 2(C_i - P_i)t + P_i
-% where Pi is the i-th defined vertex, and Ci is the control point of
-% the i-th spline segment.
-% The first derivative can be expressed as:
-%   S'_i(t) = 2t*P_(i+1) + 2(t-1)*P_i + 2(1-2t)*C_i
-%           = 2(P_(i+1) - 2C_1 + P_i)t + 2(C_i - P_i)
 
-% New approach:
-% 0. Subtract the centroid and convert to polar coords
-% 1. Calculate a cubic spline interpolation
-% 2. Find inflection points of the spline segments
-% 3. If inflection point is found within the segment, put a new node there
-% 4. Use the gradients at each node to find the control points for
-% quadratic splines
+[pp m] = piece_poly_fit(points);
+p = linspace(0,1,n_points+1)'; p(end) = [];
+[th xy] = piece_poly_fit(pp,0,p);
+tmp = [th xy];
+tmp = sortrows(tmp,-1);% ensure clockwise direction
+xy = tmp(:,2:3);
 
-% 0. Subtract the centroid and convert to polar coords
-% 1. Calculate a cubic spline interpolation
-% 2. Find inflection points of the spline segments
-% 3. If inflection point is found within the segment, put a new node there
-% 4. Use the gradients at each node to find the control points for
-% quadratic splines
-
-    if nargin < 2
-        centroid = [0 , 0];
-    end
-
-    % 0. Subtract the centroid and convert to polar coords
-    n_points = size(points,1);
-    points = points - repmat(centroid, [n_points,1]);
-    [ppoints(:,1), ppoints(:,2)] = cart2pol(points(:,1), points(:,2));
-
-    % 1. Calculate a cubic spline interpolation
-    % First, close the loop:
-    ppoints = sortrows(ppoints,1);
-    r = [ppoints(:,2); ppoints(1,2)];
-    rho = [ppoints(:,1) ; 2*pi+ppoints(1,1)];
-    df = (r(2) - r(end-1)) / ( (2*pi - rho(2)) - rho(end-1));
-    pp=spline(rho,[df; r; df]);
-
-    % 2. Find inflection points of the spline segments
-    % For a polynomial ax^3 + bx^2 + cx + d, the second derivative is
-    % 6ax + 2b.
-    % thus, to find if an inflection point occurs within any of the spline
-    % segments, we will check if x = -b/3a belongs to that segment
-
-    count = 1;
-    newrho = [];
-    newr = [];
-    newgradients = [];
-    for i = 1:n_points
-
-        df = @(z) 3*pp.coefs(i,1)*z^2 + 2*pp.coefs(i,2)*z + pp.coefs(i,3);
-        ddf = @(z) 6*pp.coefs(i,1)*z + 2*pp.coefs(i,2);
-
-        gradients(i) = df(0);
-
-        if pp.coefs(i,1) == 0,
-            continue; %cannot have an inflection point
-        end
-        x = -pp.coefs(i,2)/(3* pp.coefs(i,1));
-        if x > 0 && x < (pp.breaks(i+1) - pp.breaks(i))
-
-            %check if the second derivative changes sign
-            if sign(ddf(x-0.001)) ~= sign(ddf(x+0.001))
-    %             disp(['Inflection point in segment ' num2str(i)]);
-                newrho(count) = pp.breaks(i)+x;
-                newr(count) = ppval(pp,newrho(count));
-                newgradients(count) = df(x);
-                count = count+1;
-    %         else
-    %             disp(['Non-Inflection point in segment ' num2str(i)]);
-            end
-
-        end
-    end
-    % figure
-    % plot(ppoints(:,1), ppoints(:,2), 'p');
-    % hold on
-
-    % 3. If inflection point is found within the segment, put a new node there
-    if ~isempty(newrho)
-        ppoints = [ppoints; newrho' newr'];
-        ppoints = [ppoints [gradients newgradients]'];
-    else 
-        ppoints = [ppoints gradients'];
-    end
-    ppoints = sortrows(ppoints,1);
-
-    % 4. Using the gradients at each node, compute the control points
-
-    % figure
-    % polar(ppoints(:,1), ppoints(:,2), 'o');
-    % hold on
-
-    ppoints(end+1,:) = ppoints(1,:);
-    for i = 1: size(ppoints,1)-1
-        % gradinent in polar coordinates:
-        a1 = ppoints(i,3);
-        % offset:
-        b1 = ppoints(i,2) - a1*ppoints(i,1);
-        rho1 = ppoints(i,1);
-        r1   = ppoints(i,2);
-        % the function r = a1 * Phi + b1 in polar coordinates is a curve in
-        % cartesian coordinates. Find a tangent at a vertex (b1):
-        % dy = (a*rho + b)cos(rho) + a*sin(rho)
-        dy1 = ( a1*rho1 + b1) * cos(rho1) + a1*sin(rho1);
-        % dx = (a*rho +b)(-sin(rho)) + a*cos(rho)
-        dx1 = ( a1*rho1 + b1) * (- sin(rho1)) + a1*cos(rho1);
-        % the vertex in cartesian coords
-        [x1, y1] = pol2cart(rho1,r1);
-
-
-        % the same for the next vertex:
-        a2 = ppoints(i+1,3);
-        b2 = ppoints(i+1,2) - a2*ppoints(i+1,1);
-        rho2 = ppoints(i+1,1);
-        r2   = ppoints(i+1,2);
-        dy2 = ( a2*rho2 + b2) * cos(rho2) + a2*sin(rho2);
-        dx2 = ( a2*rho2 + b2) * (- sin(rho2)) + a2*cos(rho2);
-        [x2, y2] = pol2cart(rho2,r2);
-
-        A = [dx1, -dx2; dy1, -dy2];
-        u = [x2 - x1 ; y2 - y1];
-        t = A\u;
-
-    %     x = ppoints(i,1):0.01:ppoints(i+1,1);
-    %     yl = a1*x+b1;
-    %     yr = a2*x+b2;
-    %     polar(x, yl, '-b')
-    %     polar(x, yr, '-k');
-    %     
-    %     v = 0: 0.01 : 1;
-    %     ylc = dy1*v + y1;
-    %     xlc = dx1*v + x1;
-    %     plot(xlc, ylc);
-
-    %     control(i,1) = x1 + t(1)*dx1;
-    %     control(i,2) = y1 + t(2)*dy1;
-        % store as polar coords (for sorting later on)
-        [control(i,1) , control(i,2)] = cart2pol(x1 + t(1)*dx1, y1 + t(1)*dy1);
-    end
-
-    %  polar(control(:,1), control(:,2), 'ro');
-
-    ppoints(end,:) = [];
-
-    % a1 = ppoints(end,3);
-    % b1 = ppoints(end,2) - a1*(ppoints(end,1));
-    % a2 = ppoints(1,3);
-    % b2 = ppoints(1,2) - a2*(2*pi + ppoints(1,1));
-    % 
-    % i = size(ppoints,1);
-    % control(i,1) = (b2 - b1 ) / (a1 - a2);
-    % control(i,2) = a1 * control(i,1) + b1;
-
-
-    % integrate the control points between the defined vertices:
-    n = 2*size(ppoints,1);
-    new = zeros(n,2);
-    new(1:2:end,:) = ppoints(:,1:2);
-    new(2:2:end,:) = control;
-    new = flipud(new);
-    %move first point to the end
-    new = circshift(new,[-1 0]);
-
-    % convert to cartesian coords:
-    [out(:,1), out(:,2)] = pol2cart(new(:,1),new(:,2));
-    % shift back to centroid
-    out = out + repmat(centroid, [n,1]);
-
-
+out = xy + repmat(m, [n_points,1]);
 
 
 function out = calc_vertex_dir(points, edges, edgnrm)
@@ -465,7 +312,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 % ELECTRODE POSITIONS:
-%  elec_pos = [n_elecs_per_plane,z_planes] 
+%  elec_pos = [n_elecs_per_plane,(0=equal angles,1=equal dist),z_planes] 
 %     OR
 %  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
@@ -494,12 +341,19 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
    if size(elec_pos,1) == 1
        % Parse elec_pos = [n_elecs_per_plane,z_planes] 
       n_elecs= elec_pos(1); % per plane
-      th = linspace(0,2*pi, n_elecs+1)'; th(end)=[];
+      switch elec_pos(2)
+          case 0
+              th = linspace(0,2*pi, n_elecs+1)'; th(end)=[];
+          case 1
+              pp= piece_poly_fit(tank_shape.vertices);
+              p = linspace(0,1,n_elecs+1)'; p(end) = [];
+              th = piece_poly_fit(pp,0,p);
+      end
 
       on_elecs = ones(n_elecs, 1);
       el_th = []; 
       el_z  = []; 
-      for i=2:length(elec_pos)
+      for i=3:length(elec_pos)
         el_th = [el_th; th];
         el_z  = [el_z ; on_elecs*elec_pos(i)];
       end
@@ -522,14 +376,14 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
    
    %centres = [rad*sin(el_th),rad*cos(el_th),el_z];
    for i= 1:n_elecs; 
-       switch tank_shape.curve_type
-           case 1
+%        switch tank_shape.curve_type
+%            case 1
                [centres(i,1:2), normal] = calc_elec_centre(tank_shape, el_th(i));
-           case{2, 3}
-               [centres(i,1:2), normal] = calc_elec_centre_spline(tank_shape, el_th(i));
-           otherwise
-               error('Unknown curve type');
-       end
+%            case{2, 3}
+%                [centres(i,1:2), normal] = calc_elec_centre_spline(tank_shape, el_th(i));
+%            otherwise
+%                error('Unknown curve type');
+%        end
        centres(i,3) = el_z(i);
        elecs(i).pos  = centres(i,:);
        elecs(i).normal = normal;
@@ -883,7 +737,7 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
            % object appears at the expected coordinates. To maintain
            % clockwise order (required by netget) the vertices are printed
            % in the opposite order.
-           fprintf(fid,'       %6.2f, %6.2f;\n',[-1 1].*vertices(n_vert-i+1,:));
+           fprintf(fid,'       %6.4f, %6.4f;\n',[-1 1].*vertices(n_vert-i+1,:));
            %             fprintf(fid,'       %6.2f, %6.2f;\n',vertices(i,:));
        end
        spln_sgmnts = tank_shape.spln_sgmnts;
@@ -936,8 +790,7 @@ function [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_remove_electrodes...
 % Used to clean up external objects used to force electrode meshing in
 % ng_mk_extruded_model.
 %
-% (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
-% $Id$
+
 
 % total objects:
 N_obj = max(mat_ind);
@@ -980,10 +833,40 @@ for i = 1: length(vtx)
 end
 vtx(unused_v,:) = [];
 
-function do_unit_test
-
+function fmdl = do_unit_test
+fmdl = [];
     a = [
    -0.8981   -0.7492   -0.2146    0.3162    0.7935    0.9615    0.6751    0.0565   -0.3635   -0.9745
-    0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ];
+    0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ]';
+fmdl = ng_mk_extruded_model({2,a,[3,50]},[6,1,1],[0.01]);
+xx=[
+  -88.5777  -11.4887    4.6893   49.8963  122.7033  150.3033  195.5103 249.7573 ...
+  258.8013  279.7393  304.9623  309.2443  322.0923  337.7963  340.6503 348.2633 ...
+  357.3043  358.7333  361.5873  364.9183  365.3943  366.3453  366.3453 365.3943 ...
+  362.5393  351.5943  343.5053  326.8513  299.2503  288.3073  264.9923 224.0703 ...
+  206.4633  162.6833  106.5313   92.2543   57.5153    7.0733   -8.6297 -42.4167 ...
+  -90.9547 -105.7057 -134.2577 -178.0367 -193.2647 -222.7687 -265.5957 -278.9197 ...
+ -313.1817 -355.5337 -363.6237 -379.3267 -397.8857 -400.7407 -401.6927 -398.8377 ...
+ -395.0307 -384.0867 -368.3837 -363.6247 -351.7277 -334.1217 -328.4117 -314.1357 ...
+ -291.2947 -282.7297 -267.0257 -236.5707 -221.8187 -196.5977 -159.4807 -147.5837];
 
-     ng_mk_extruded_model({2,a',1},[8,1],[0.01]);
+yy=[
+ -385.8513 -386.8033 -386.3273 -384.8993 -368.7193 -353.9673 -323.0363 -283.5403 ...
+ -274.9743 -254.0363 -225.4843 -217.8703 -187.4153 -140.7813 -124.6013  -86.0573 ...
+  -38.4703  -29.4273   -9.9173   21.0137   32.4347   53.3727   83.8257   93.3437 ...
+  114.7587  149.0237  161.8717  187.5677  222.3037  231.3447  247.5237  267.5087 ...
+  271.3177  277.0297  281.3127  279.4097  274.6507  273.2227  276.5547  284.6447 ...
+  295.1127  297.4927  301.7757  304.1557  302.2537  297.4947  287.5017  282.2667 ...
+  259.9017  225.6387  213.7427  185.6677  141.4127  125.2337   88.5917   34.8187 ...
+   17.6897  -22.2803  -73.6723  -85.0923 -117.9263 -163.6083 -176.4573 -205.9613 ...
+ -245.9343 -256.4023 -275.4373 -304.9403 -315.4083 -332.0623 -352.0473 -355.3783];
+
+a = [xx; yy]';
+a = flipud(a);
+th=linspace(0,2*pi,33)'; th(end)=[];
+%a=[sin(th)*0.3,cos(th)];
+
+
+%      fmdl = ng_mk_extruded_model({300,a,[3,50]},[16,150,1],[0.01]);
+     figure
+     show_fem(fmdl);
