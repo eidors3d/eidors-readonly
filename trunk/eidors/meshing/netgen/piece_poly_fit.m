@@ -22,13 +22,13 @@ function [pp, m] = piece_poly_fit(points, fstr, linear_frac)
 if isstr(points) && strcmp(points,'UNIT_TEST'); do_unit_test; return ; end
 
 if nargin < 2
-    fhandle = 'pchip';
+    fstr = 'pchip';
 end
 m = [];
 if isstruct(points)
     pts = max(100,length(linear_frac)*3);
     start_th = fstr;
-    [pp m] = path_len(points, pts, star_th, linear_frac );
+    [pp m] = path_len(points, pts, start_th, linear_frac );
 else
     [pp m] = fit_to_pp(points, fstr);
 end
