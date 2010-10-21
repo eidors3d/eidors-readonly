@@ -37,7 +37,7 @@ if isstr(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
 
 if nargin < 4; extra_ng_code = {'',''}; end
 
-fnstem = 'new';%tempname;
+fnstem = 'tmp';%tempname;
 geofn= [fnstem,'.geo'];
 ptsfn= [fnstem,'.msz'];
 meshfn= [fnstem,'.vol'];
@@ -89,7 +89,13 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
 
     if iscell(shape) && length(shape)>2
         tank_height = shape{1};
-        points = shape{2};
+        if ~iscell(shape{2})
+            points = shape{2};
+        else
+            c = shape{2};
+            points = c{1};
+            tank_shape.additional_shapes = c(2:end);
+        end
         tank_shape.curve_type = shape{3};
         if max(size(tank_shape.curve_type)) > 1
             curve_info = tank_shape.curve_type;
@@ -656,13 +662,37 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
         end
         %       fprintf(fid,'solid cyl%04d = trunk   and %s; \n',i,name);
     end
-    %
+    fprintf(fid,'solid trunk = bound');
+    if isfield(tank_shape,'additional_shapes')
+         for i = 1:length(tank_shape.additional_shapes)
+             fprintf(fid,' and not add_obj%04d',i);
+         end
+    end
+    fprintf(fid,';\n');
+    
+    if isfield(tank_shape,'additional_shapes')
+        for i = 1:length(tank_shape.additional_shapes)
+            fprintf(fid,'solid add_obj%04dc = add_obj%04d',i,i);
+            for j = (i+1):length(tank_shape.additional_shapes)
+                fprintf(fid,' and not add_obj%04d',j);
+            end
+            fprintf(fid,[' and plane(0,0,0;0,0,-1)\n' ...
+                '      and  plane(0,0,%6.2f;0,0,1)'],tank_height);
+            fprintf(fid,';\n');
+        end
+    end
+    
     if tank_maxh ~= 0
-        fprintf(fid,'tlo bound -transparent -maxh=%f;\n',tank_maxh);
+        fprintf(fid,'tlo trunk -transparent -maxh=%f;\n',tank_maxh);
     else
-        fprintf(fid,'tlo bound -transparent;\n');
+        fprintf(fid,'tlo trunk -transparent;\n');
     end
 
+    if isfield(tank_shape,'additional_shapes')
+         for i = 1:length(tank_shape.additional_shapes)
+             fprintf(fid,'tlo add_obj%04dc -col=[0,1,0];\n',i);
+         end
+    end
 
     for i=1:n_elecs
         if any(i == pts_elecs_idx); continue; end
@@ -716,6 +746,18 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
                 '      and  extrusion(extrsncurve;outer;0,1,0)'...
                 '%s %s;\n'],tank_height,extra{1},maxsz);
            
+   % EVERYTHING below this line assumes additional shapes are defined
+   if ~isfield(tank_shape, 'additional_shapes'), return, end
+   
+   for i = 1:length(tank_shape.additional_shapes)
+       name_curve = sprintf('add_curve%04d',i); 
+       write_curve(fid,tank_shape.additional_shapes{i},name_curve);
+       name_obj = sprintf('add_obj%04d',i); 
+       fprintf(fid,['solid %s= plane(0,0,%6.2f;0,0,-1)\n' ...
+           '      and  plane(0,0,%6.2f;0,0,1)\n' ...
+           '      and  extrusion(extrsncurve;%s;0,1,0)'...
+           '%s %s;\n'],name_obj,-i,tank_height+i,name_curve,extra{1},maxsz);
+   end
                    
         
    function write_curve(fid, tank_shape, name, scale)
@@ -723,12 +765,21 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
             scale = 1;
         end
        
-        if scale ~= 1
+        is_struct = isstruct(tank_shape);
+        if ~is_struct
+            vertices = tank_shape;
+            STRUCT = false;
+            if scale ~= 1
+                warning('Scale is ignored when second input is an array');
+                scale = 1;
+            end
+        elseif scale ~= 1
             vertices = tank_shape.vertices + (scale-1)*tank_shape.vertex_dir;
         else
             vertices = tank_shape.vertices;
         end
-       n_vert = size(tank_shape.vertices,1);
+       n_vert = size(vertices,1);
+       
        fprintf(fid,'curve2d %s=(%d; \n', name, n_vert);
        
        for i = 1:n_vert
@@ -740,7 +791,11 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
            fprintf(fid,'       %6.4f, %6.4f;\n',[-1 1].*vertices(n_vert-i+1,:));
            %             fprintf(fid,'       %6.2f, %6.2f;\n',vertices(i,:));
        end
-       spln_sgmnts = tank_shape.spln_sgmnts;
+       if is_struct
+           spln_sgmnts = tank_shape.spln_sgmnts;
+       else
+           spln_sgmnts = zeros(max(size(vertices)));
+       end
        n_sgmnts = length(spln_sgmnts);
        fprintf(fid,'       %d;\n',n_sgmnts);
        cv = 1; %current vertex
@@ -833,12 +888,25 @@ for i = 1: length(vtx)
 end
 vtx(unused_v,:) = [];
 
-function fmdl = do_unit_test
+function [fmdl, mat_idx] = do_unit_test
 fmdl = [];
+mat_idx = [];
     a = [
    -0.8981   -0.7492   -0.2146    0.3162    0.7935    0.9615    0.6751    0.0565   -0.3635   -0.9745
     0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ]';
-fmdl = ng_mk_extruded_model({2,a,[3,50]},[6,1,1],[0.01]);
+% [fmdl, mat_idx] = ng_mk_extruded_model({2,{a,0.5*a,0.2*a},1},[16,0,1],[0.01]);
+load CT2
+
+% [fmdl, mat_idx] = ng_mk_extruded_model({150,flipud(trunk),1},[16,0,75],[0.01]);
+
+[fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk/100, lung_heart_dep/100, flipud(heart)/100,},[3, 100]},[16,1,1],[0.1]);
+% img = mk_image( fmdl, 1);
+%  img.elem_data(mat_idx{2}) = 1.1; 
+figure, show_fem( fmdl );
+
+ 
+ 
+%%
 xx=[
   -88.5777  -11.4887    4.6893   49.8963  122.7033  150.3033  195.5103 249.7573 ...
   258.8013  279.7393  304.9623  309.2443  322.0923  337.7963  340.6503 348.2633 ...
@@ -868,5 +936,5 @@ th=linspace(0,2*pi,33)'; th(end)=[];
 
 
 %      fmdl = ng_mk_extruded_model({300,a,[3,50]},[16,150,1],[0.01]);
-     figure
-     show_fem(fmdl);
+%      figure
+%      show_fem(fmdl);
