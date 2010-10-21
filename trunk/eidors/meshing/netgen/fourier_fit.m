@@ -1,13 +1,9 @@
 function C = fourier_fit(points,N);
-% FOURIER_FIT: fit fourier descriptors to a contour
+% FOURIER_FIT: use fourier series to interpolate onto a boundary
+% 
 
 % (C) Andy Adler, 2010. Licenced under GPL v2 or v3
 % $Id$
-
-% Fourier Fit
-% [1, cos(t1), cos(2*t1), ... sin(t1) ...] * [C1] = [R1]
-%            ...                         
-% [1, cos(tN), cos(2*tN), ... sin(tN) ...] * [CN] = [RM]
 
 if isstr(points) && strcmp(points,'UNIT_TEST'); do_unit_test; return ; end
 
