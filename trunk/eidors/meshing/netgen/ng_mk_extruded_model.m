@@ -384,9 +384,15 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
           case 0
               th = linspace(0,2*pi, n_elecs+1)'; th(end)=[];
           case 1
-              pp= piece_poly_fit(tank_shape.vertices);
-              p = linspace(0,1,n_elecs+1)'; p(end) = [];
-              th = piece_poly_fit(pp,0,p);
+              if tank_shape.curve_type == 4
+                  pp = fourier_fit(tank_shape.vertices);
+                  p = linspace(0,1,n_elecs+1)'; p(end) = [];
+                  th = fourier_fit(pp,p);
+              else
+                  pp= piece_poly_fit(tank_shape.vertices);
+                  p = linspace(0,1,n_elecs+1)'; p(end) = [];
+                  th = piece_poly_fit(pp,0,p);
+              end
       end
 
       on_elecs = ones(n_elecs, 1);
