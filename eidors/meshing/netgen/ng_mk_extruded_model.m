@@ -369,7 +369,7 @@ end
 function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, is2D )
 
    if is2D
-      elec_pos(:,2) = hig/2;
+      elec_pos(:,3) = hig/2;
    end
    
    % temp fix
@@ -612,6 +612,9 @@ function elec = elec_spec( row, is2D, hig, rad )
            elec.dims  =  rad; % Make big if unspecified
         end
      else
+        % create circular electrodes for now, rectangular not yet supported
+%         elec.shape = 'C';
+%         elec.dims = row(1);
         elec.shape = 'R';
         elec.dims  = [row(1),hig];
      end
@@ -684,14 +687,14 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
             case 'C'
                 write_circ_elec(fid,name, pos, dirn,  ...
                     elecs(i).dims, tank_shape.centroid, elecs(i).maxh);
-                %        case 'R'
-                %          write_rect_elec(fid,name, pos, pos,  ...
-                %                elecs(i).dims, tank_radius, elecs(i).maxh);
+            case 'R'
+                write_rect_elec(fid,name, pos, dirn,  ...
+                    elecs(i).dims, tank_shape.size/10, elecs(i).maxh);
                 %        case 'P'
                 %          pts_elecs_idx = [ pts_elecs_idx, i];
                 %          continue; % DON'T print solid cyl
 
-            otherwise; error('huh? shouldn`t get here');
+            otherwise; error('unknown electorde shape');
         end
         %       fprintf(fid,'solid cyl%04d = trunk   and %s; \n',i,name);
     end
@@ -807,7 +810,8 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
                 scale = 1;
             end
         elseif scale ~= 1
-            vertices = tank_shape.vertices + (scale-1)*tank_shape.vertex_dir;
+            vertices = tank_shape.vertices + ...
+                (scale-1)*tank_shape.vertex_dir*tank_shape.size;
         else
             vertices = tank_shape.vertices;
         end
@@ -868,7 +872,34 @@ function write_circ_elec(fid,name,c, dirn, rd, centroid, maxh)
         c(1)-dirn(1),c(2)-dirn(2),c(3)-dirn(3),...
         c(1)+dirn(1),c(2)+dirn(2),c(3)+dirn(3), rd, ...
         centroid(1), centroid(2), 0, -dirn(1), -dirn(2), dirn(3),maxh);
-     
+
+function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
+% writes the specification for a netgen cuboid on fid, named name, centerd on c,
+% in the direction given by vector dirn,
+% hw = [height, width]  and depth d
+% direction is in the xy plane
+   w = wh(1); h= wh(2);
+   dirn(3) = 0; dirn = dirn/norm(dirn);
+   dirnp = [-dirn(2),dirn(1),0];
+   dirnp = dirnp/norm(dirnp);
+
+   bl = c - (d/2)* dirn + (w/2)*dirnp - [0,0,h/2];
+   tr = c + (d/2)* dirn - (w/2)*dirnp + [0,0,h/2];
+   fprintf(fid,'solid %s  = outer_bound and not inner_bound and', name);
+   fprintf(fid,' plane (%6.3f,%6.3f,%6.3f;0, 0, -1) and\n', ...
+           bl(1),bl(2),bl(3));
+   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
+           bl(1),bl(2),bl(3),-dirn(1),-dirn(2),0);
+   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
+           bl(1),bl(2),bl(3),dirnp(1),dirnp(2),0);
+   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;0, 0, 1) and\n', ...
+           tr(1),tr(2),tr(3));
+   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
+           tr(1),tr(2),tr(3),dirn(1),dirn(2),0);
+   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )%s;\n', ...
+           tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0,maxh);
+   fprintf(fid,' and not bound;\n');
+    
 function [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_remove_electrodes...
     (srf,vtx,fc,bc,simp,edg,mat_ind, N_elec)
 % NG_REMOVE_ELECTRODES: cleans up matrices read from a *.vol file
