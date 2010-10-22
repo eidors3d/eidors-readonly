@@ -729,6 +729,9 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
     else
         fprintf(fid,'tlo trunk -transparent;\n');
     end
+    if ~isempty(extra_ng_code{1})
+        fprintf(fid,'tlo %s -col=[0,1,0];\n',extra_ng_code{1});
+    end
 
     if isfield(tank_shape,'additional_shapes')
          for i = 1:length(tank_shape.additional_shapes)
@@ -741,9 +744,6 @@ function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
         fprintf(fid,'tlo elec%04d -col=[1,0,0];\n',i);
     end
 
-    if ~isempty(extra_ng_code{1})
-        fprintf(fid,'tlo %s -col=[0,1,0];\n',extra_ng_code{1});
-    end
 
     fclose(fid); % geofn
 
