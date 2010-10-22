@@ -387,11 +387,16 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
               if tank_shape.curve_type == 4
                   pp = fourier_fit(tank_shape.vertices);
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
-                  th = fourier_fit(pp,p);
-              else
+                  xy = fourier_fit(pp,p);
+                 % NOTE, THIS IS A HACK. Some complicated shapes can't be described by angle alone
+                  th = atan2(xy(:,2) - tank_shape.centroid(2), ...
+                             xy(:,1) - tank_shape.centroid(1));
+              elseif any( tank_shape.curve_type == [1,2,3] )
                   pp= piece_poly_fit(tank_shape.vertices);
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
                   th = piece_poly_fit(pp,0,p);
+              else
+                  error('curve_type unrecognized');
               end
       end
 
