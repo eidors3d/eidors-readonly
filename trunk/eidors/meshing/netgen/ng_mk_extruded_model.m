@@ -7,7 +7,7 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %                 elec_shape, extra_ng_code);
 % INPUT:
 % trunk_shape = { height,[x,y],curve_type,maxsz}
-%   height (OPT)-> if height = 0 calculate a 2D model
+%   height      -> if height = 0 calculate a 2D model
 %   [x,y]       -> N-by-2 CLOCKWISE list of points defining the 2D shape
 %   curve_type  -> 1 - interpret as vertices (default)
 %                  2 - interpret as splines with de Boor points at even 
@@ -15,6 +15,8 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %                  3 - interpolate points (piecewise polynomial
 %                  interpolation). Syntax [3, N] also specifies the number
 %                  of samples to create.
+%                  4 - interpolate points with Fourier descriptor. Syntax 
+%                  [4, N] also specifies the number of samples to create.
 %   maxsz       -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
@@ -89,7 +91,7 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
 
     if iscell(shape) && length(shape)>2
         tank_height = shape{1};
-        if ~iscell(shape{2})
+        if ~iscell(shape{2}) || numel(shape{2}) == 1
             points = shape{2};
         else
             c = shape{2};
@@ -119,6 +121,7 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         [points, spln_sgmnts] = remove_linear_control_points(points);
     end
     
+    % piecewise polynomial interpolation
     if tank_shape.curve_type == 3 
         if ~isempty(curve_info)
             n_samples = curve_info(2);
@@ -126,6 +129,17 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
             n_samples = 50;
         end
         points = interpolate_shape(points, n_samples);
+        spln_sgmnts = zeros(size(points)); % now needs to be bigger
+    end
+    
+    % Fourier descriptor interpolation
+    if tank_shape.curve_type == 4
+        if ~isempty(curve_info)
+            n_samples = curve_info(2);
+        else
+            n_samples = 50;
+        end
+        points = fourier_interpolate_shape(points, n_samples);
         spln_sgmnts = zeros(size(points)); % now needs to be bigger
     end
     
@@ -215,7 +229,7 @@ points(end,:) = [];
 % INPUT:
 % points - [N x 2] defined vertices
 % OUTPUT:
-% out    - [2N x 2] vertices (odd) and control points (even)    
+% out    - interpolated vertices    
 function out = interpolate_shape(points, n_points)
 % Quadratic spline interpolation of the points provided.
 
@@ -228,6 +242,25 @@ tmp = sortrows(tmp,-1);% ensure clockwise direction
 xy = tmp(:,2:3);
 
 out = xy + repmat(m, [n_points,1]);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% INPUT:
+% points - [N x 2] defined vertices
+% OUTPUT:
+% out    - interpolated vertices    
+function out = fourier_interpolate_shape(points, n_points)
+% Quadratic spline interpolation of the points provided.
+
+
+pp = fourier_fit(points);
+p = linspace(0,1,n_points+1)'; p(end) = [];
+xy = fourier_fit(pp,p);
+% [th r] = cart2pol(xy);
+% tmp = [th xy];
+% tmp = sortrows(tmp,-1);% ensure clockwise direction
+% xy = tmp(:,2:3);
+
+out = xy;% + repmat(m, [n_points,1]);
 
 
 function out = calc_vertex_dir(points, edges, edgnrm)
@@ -899,12 +932,20 @@ load CT2
 
 % [fmdl, mat_idx] = ng_mk_extruded_model({150,flipud(trunk),1},[16,0,75],[0.01]);
 
-[fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk/100, lung_heart_dep/100, flipud(heart)/100,},[3, 100]},[16,1,1],[0.1]);
+[fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk/100, lung_heart_dep/100, heart/100},1},[16,1,1],[0.1]);
 % img = mk_image( fmdl, 1);
 %  img.elem_data(mat_idx{2}) = 1.1; 
-figure, show_fem( fmdl );
 
- 
+% trunk = [    -4    -2     2     4     4     2    -2    -4
+%               2     4     4     2    -2    -4    -4    -2]';
+% heart_lung = [    -2    -1    -0.8  0.8  1     2     2    -2
+%                    1     2     1.8  1.8  2     1    -2    -2]';    
+% heart = [    -1    -1     1     1
+%               0     2     2     0]';
+
+% [fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk, heart_lung, heart},1},[16,1,1],[0.1]);
+
+ figure, show_fem( fmdl );
  
 %%
 xx=[
