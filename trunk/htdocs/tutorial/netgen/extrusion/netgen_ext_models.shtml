@@ -1,0 +1,40 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Using Netgen to create extruded EIDORS Models
+</h2>
+
+EIDORS can use
+<a href="http://sourceforge.net/projects/netgen-mesher/">
+Netgen</a> to create sophisticated 2D and 3D models/. For
+these examples, you need at least Netgen version 4.9.13.
+
+<p>
+Here are some examples of the varity of models which
+can be generated using the function: <tt>ng_mk_extruded_model</tt>.
+<p>
+
+<h3>
+Simple 3D cylinder with a ball
+</h3>
+
+<pre>
+    extra={'ball','solid ball = sphere(0.5,0.5,1;0.4);'};
+    [fmdl,mat_idx]= ng_mk_ellip_models([2,1.2,0.8],[8,1],[0.1],extra); 
+    img= mk_image(fmdl, 1);
+    img.elem_data(mat_idx{2}) = 2;
+show_fem(img);
+</pre>
+
+<center>
+<img src="netgen_ellip_models08.png">
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
