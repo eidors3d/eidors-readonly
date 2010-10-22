@@ -1,4 +1,4 @@
-<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<!--#include virtual="../../nav-sidebar-tut2.shtml" -->
 <h2> 
 Using Netgen to create extruded EIDORS Models
 </h2>
