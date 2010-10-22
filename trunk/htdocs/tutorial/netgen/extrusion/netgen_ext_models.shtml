@@ -5,8 +5,8 @@ Using Netgen to create extruded EIDORS Models
 
 EIDORS can use
 <a href="http://sourceforge.net/projects/netgen-mesher/">
-Netgen</a> to create sophisticated 2D and 3D models/. For
-these examples, you need at least Netgen version 4.9.13.
+Netgen</a> to create sophisticated 2D and 3D models/. <b>For
+these examples, you need at least Netgen version 4.9.13.</b>
 
 <p>
 Here are some examples of the varity of models which
@@ -14,21 +14,87 @@ can be generated using the function: <tt>ng_mk_extruded_model</tt>.
 <p>
 
 <h3>
-Simple 3D cylinder with a ball
+Extruded 3D shape with 9 electrodes
 </h3>
 
 <pre>
-    extra={'ball','solid ball = sphere(0.5,0.5,1;0.4);'};
-    [fmdl,mat_idx]= ng_mk_ellip_models([2,1.2,0.8],[8,1],[0.1],extra); 
-    img= mk_image(fmdl, 1);
-    img.elem_data(mat_idx{2}) = 2;
-show_fem(img);
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1},[9,0,1],[0.02]);
 </pre>
 
 <center>
-<img src="netgen_ellip_models08.png">
+<img src="netgen_ext_models01_1.png"><img src="netgen_ext_models01_2.png">
 </center>
 
+
+<h3>
+Extruded 3D shape mesh refinement and 5 electrodes
+</h3>
+
+<pre>
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1,0.1},[5,0,1],[0.10]);
+</pre>
+
+<center>
+<img src="netgen_ext_models02_1.png"><img src="netgen_ext_models02_2.png">
+</center>
+
+
+<h3>
+Extruded 3D shape mesh boundary interpolation
+</h3>
+
+<pre>
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+</pre>
+
+<center>
+<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+</center>
+
+<h3>
+</h3>
+
+<pre>
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+</pre>
+
+<center>
+<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+</center>
+
+<h3>
+</h3>
+
+<pre>
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+</pre>
+
+<center>
+<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+</center>
+
+<h3>
+</h3>
+
+<pre>
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+</pre>
+
+<center>
+<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+</center>
 
 </td></tr></table>
 <p>
