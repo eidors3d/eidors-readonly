@@ -9,6 +9,8 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 % trunk_shape = { height,[x,y],curve_type,maxsz}
 %   height      -> if height = 0 calculate a 2D model
 %   [x,y]       -> N-by-2 CLOCKWISE list of points defining the 2D shape
+%                  NOTE: Use a cell array to specify additional curves for
+%                  internal objects
 %   curve_type  -> 1 - interpret as vertices (default)
 %                  2 - interpret as splines with de Boor points at even 
 %                  indices (legacy)
@@ -17,6 +19,9 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %                  of samples to create.
 %                  4 - interpolate points with Fourier descriptor. Syntax 
 %                  [4, N] also specifies the number of samples to create.
+%                  NOTE: If additional curves are specified, curve_type can
+%                  also be a cell array. Otherwise, curve_type defaults to
+%                  1 for internal shapes.
 %   maxsz       -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
@@ -98,7 +103,18 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
             points = c{1};
             tank_shape.additional_shapes = c(2:end);
         end
-        tank_shape.curve_type = shape{3};
+        
+        if ~iscell(shape{3}) || numel(shape{3}) == 1
+            tank_shape.curve_type = shape{3};
+            if iscell(tank_shape.curve_type)
+                tank_shape.curve_type = tank_shape.curve_type{1};
+            end
+        else
+            c = shape{3};
+            tank_shape.curve_type = c{1};
+            tank_shape.additional_curve_type = c(2:end);
+        end
+        
         if max(size(tank_shape.curve_type)) > 1
             curve_info = tank_shape.curve_type;
             tank_shape.curve_type = curve_info(1);
@@ -113,12 +129,29 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         points = shape;
     end
     
-
-    
-    
     spln_sgmnts = zeros(size(points)); %default
     if tank_shape.curve_type == 2
         [points, spln_sgmnts] = remove_linear_control_points(points);
+    end
+    
+    if ~isempty(curve_info)
+        N = curve_info(2);
+    else
+        N = 50;
+    end
+    points = interpolate(points,N, tank_shape.curve_type);
+    spln_sgmnts = zeros(size(points));
+    
+    if isfield(tank_shape, 'additional_curve_type')
+        for i = 1:numel(tank_shape.additional_curve_type)
+            if numel(tank_shape.additional_curve_type{i}) == 1
+                N = 50;
+            else
+                N = tank_shape.additional_curve_type{i}(2);
+            end
+            tank_shape.additional_shapes{i} = interpolate(...
+                tank_shape.additional_shapes{i},N, tank_shape.additional_curve_type{i}(1));
+        end
     end
     
     % piecewise polynomial interpolation
@@ -131,7 +164,7 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         points = interpolate_shape(points, n_samples);
         spln_sgmnts = zeros(size(points)); % now needs to be bigger
     end
-    
+
     % Fourier descriptor interpolation
     if tank_shape.curve_type == 4
         if ~isempty(curve_info)
@@ -200,6 +233,18 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         tank_shape.vertices(:,2)+0.05*tank_shape.vertex_dir(:,2),'ro-')
     quiver(pts(:,1),pts(:,2),tank_shape.edge_normals(:,1),tank_shape.edge_normals(:,2));
     hold off
+    
+    
+function new_points = interpolate(points, N, curve_type)
+switch curve_type
+    case 3 
+        % piecewise polynomial interpolation
+        new_points = interpolate_shape(points, N);
+    case 4
+        % Fourier descriptor interpolation
+        new_points = fourier_interpolate_shape(points, N);
+end  
+    
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % INPUT:
@@ -982,6 +1027,8 @@ load CT2
 %               2     4     4     2    -2    -4    -4    -2]';
 % heart_lung = [    -2    -1    -0.8  0.8  1     2     2    -2
 %                    1     2     1.8  1.8  2     1    -2    -2]';    
+% lung = [    -2    -1    -1  -1  1     2     2    -2
+%             1     2     0   0  2     1    -2    -2]';   
 % heart = [    -1    -1     1     1
 %               0     2     2     0]';
 
