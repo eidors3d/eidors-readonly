@@ -11,6 +11,8 @@ function [srf, idx] = find_boundary(simp);
 
 % $Id$
 
+if isstruct(simp) && strcmp(simp.type,'fwd_model'); simp= simp.elems; end
+
 wew = size(simp,2) - 1;
 
 if wew==3 || wew==2
