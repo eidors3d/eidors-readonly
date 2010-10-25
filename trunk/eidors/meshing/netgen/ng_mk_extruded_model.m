@@ -963,8 +963,6 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
            tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0);
    fprintf(fid,' and not bound %s;\n', maxh);
     
-function [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_remove_electrodes...
-    (srf,vtx,fc,bc,simp,edg,mat_ind, N_elec)
 % NG_REMOVE_ELECTRODES: cleans up matrices read from a *.vol file
 % [srf,vtx,fc,bc,simp,edg,mat_ind]= ng_remove_electrodes...
 %     (srf,vtx,fc,bc,simp,edg,mat_ind, N_elec)
@@ -972,12 +970,68 @@ function [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_remove_electrodes...
 % Used to clean up external objects used to force electrode meshing in
 % ng_mk_extruded_model.
 %
+function [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_remove_electrodes...
+    (srf,vtx,fc,bc,simp,edg,mat_ind, N_elec)
 
+fc = []; % Unused, and we're not sure what it is;
 
 % total objects:
 N_obj = max(mat_ind);
 
-% electrode simps:
+% The electodes are the last N_elec simps
+elec_ind = mat_ind > (N_obj - N_elec);
+
+in = unique(simp(~elec_ind,:)); % nodes in real object
+out = unique(simp(elec_ind,:)); % nodes in electrodes
+boundary = intersect(in,out);   % nodes shared obj/electrodes
+out = setdiff(out,boundary);    % nodes only in electrodes
+
+% remove simps which contain nodes in the "out" list
+remove_simp = any( ismember(simp,out), 2);
+simp0 = simp;
+simp( remove_simp,:) = [];
+
+% Choose which vertices to keep
+vtx_renum = logical( zeros(size(vtx,1),1) );
+vtx_renum( in ) = logical(1);
+vtx_renum = cumsum(vtx_renum);
+
+vtx(out,:) = [];
+simp =  reshape( vtx_renum(simp), size(simp));
+
+% recalculate surface
+% STUPID MATLAB BUGS MEAN WE CANT allow int32 here
+srf= double( find_boundary(simp) );
+bc = ones(size(srf,1),1); % Add srf for the electrodes
+
+% Iterate over electrodes
+for i=1:N_elec;
+  eleci_obj = mat_ind == (N_obj - N_elec + i);
+  this_elec = unique( simp0( eleci_obj, : ));
+  eleci_nodes = vtx_renum( intersect( this_elec, in )); 
+
+% This is the direct way to get electrodes. Instead we need to call the
+%   electrode finder function
+% elec(i).nodes = eleci_nodes;
+  
+  eleci_srf = all( ismember(srf, eleci_nodes), 2);
+  bc( eleci_srf ) = i+1; % give this elec a surface
+end
+
+mat_ind( remove_simp) = [];
+
+% Test code:
+% fmdl.type='fwd_model'; fmdl.nodes = vtx; fmdl.elems =  simp_obj; fmdl.electrode= elec;
+
+
+
+function [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_remove_electrodes_old...
+    (srf,vtx,fc,bc,simp,edg,mat_ind, N_elec)
+
+% total objects:
+N_obj = max(mat_ind);
+
+% The electodes are the last N_elec simps
 e_simp_ind = mat_ind > (N_obj - N_elec);
 
 in = unique(simp(~e_simp_ind,:));
@@ -998,15 +1052,16 @@ mat_ind = mat_ind(~e_simp_ind);
 n_unique = numel(unique(bc));
 missing = setdiff(1:n_unique, unique(bc));
 spare = setdiff(unique(bc), 1:n_unique); 
+
 for i = 1:length(missing)
     bc( bc==spare(i) ) = missing(i);
 end
 
-% fic vtx:
+% fix vtx:
 v = 1:size(vtx,1);
 unused_v = setdiff(v, union(unique(simp),unique(srf))); 
 v(unused_v) = [];
-for i = 1: length(vtx)
+for i = 1:size(vtx,1);
 %     simp_ind = find(simp == i);
 %     srf_ind = find( srf == i);
     new_v_ind = find(v == i);
