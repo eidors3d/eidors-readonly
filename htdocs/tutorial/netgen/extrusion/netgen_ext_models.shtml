@@ -7,6 +7,8 @@ EIDORS can use
 <a href="http://sourceforge.net/projects/netgen-mesher/">
 Netgen</a> to create sophisticated 2D and 3D models/. <b>For
 these examples, you need at least Netgen version 4.9.13.</b>
+Please note that netgen takes <i>much</i> longer to calculate
+
 
 <p>
 Here are some examples of the varity of models which
