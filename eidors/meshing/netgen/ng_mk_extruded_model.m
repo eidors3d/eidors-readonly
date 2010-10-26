@@ -1,5 +1,3 @@
-% TODO: Implement control segments in the bit that writes the file.
-
 function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
     extra_ng_code)
 % NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen
@@ -40,39 +38,61 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 
 % (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
 % $Id$
+
+% TODO: Implement control segments in the bit that writes the file.
+
 if isstr(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
 
 if nargin < 4; extra_ng_code = {'',''}; end
+cache_obj = { shape, elec_pos, elec_shape, extra_ng_code};
 
-fnstem = 'tmp';%tempname;
+fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_extruded_models' );
+if isempty(fmdl);
+   fmdl = mk_extruded_model( shape, elec_pos, elec_shape, extra_ng_code );
+   eidors_cache('boost_priority', -2); % netgen objs are low priority
+   eidors_obj('set-cache', cache_obj, 'ng_mk_extruded_models', fmdl);
+   eidors_cache('boost_priority', +2); % return values
+end
+
+mat_idx = fmdl{2};
+fmdl = fmdl{1};
+
+
+function [fmdl_mat_idx] = mk_extruded_model(shape, elec_pos, elec_shape, ...
+    extra_ng_code)
+
+fnstem = tempname;
 geofn= [fnstem,'.geo'];
-ptsfn= [fnstem,'.msz'];
 meshfn= [fnstem,'.vol'];
 
 [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape);
 [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, tank_height, is2D );
-write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
+write_geo_file(geofn, tank_height, tank_shape, ...
                tank_maxh, elecs, extra_ng_code);
            
-call_netgen( geofn, meshfn, ptsfn);
+call_netgen( geofn, meshfn );
 
 [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', [],0.01,...
     @ng_remove_electrodes);
 
-%delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
+delete(geofn); delete(meshfn); % remove temp files
 
 if is2D
     [fmdl,mat_idx] = mdl2d_from3d(fmdl,mat_idx);
 end
 
-hold on
-plot(centres(:,1),centres(:,2),'sk')
-for i = 1:size(elecs,2)
-    dirn = elecs(i).normal;
-    quiver(centres(i,1),centres(i,2),dirn(1),dirn(2),'k');
+fmdl_mat_idx = {fmdl,mat_idx};
+
+if 0 % DEBUG SHAPE
+   hold on
+   plot(centres(:,1),centres(:,2),'sk')
+   for i = 1:size(elecs,2)
+       dirn = elecs(i).normal;
+       quiver(centres(i,1),centres(i,2),dirn(1),dirn(2),'k');
+   end
+   hold off
+   axis equal
 end
-hold off
-axis equal
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TANK SHAPE (struct):
@@ -728,7 +748,7 @@ function elec = elec_spec( row, is2D, hig, rad )
   
   
   
-function write_geo_file(geofn, ptsfn, tank_height, tank_shape, ...
+function write_geo_file(geofn, tank_height, tank_shape, ...
                         tank_maxh, elecs, extra_ng_code)
     fid=fopen(geofn,'w');
     write_header(fid,tank_height,tank_shape,tank_maxh,extra_ng_code);
