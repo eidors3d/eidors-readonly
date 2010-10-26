@@ -8,6 +8,8 @@ EIDORS can use
 Netgen</a> to create sophisticated 2D and 3D models/. <b>For
 these examples, you need at least Netgen version 4.9.13.</b>
 Please note that netgen takes <i>much</i> longer to calculate
+these complicated shapes (especially those with inner shapes)
+than some simpler examples.
 
 
 <p>
@@ -15,88 +17,142 @@ Here are some examples of the varity of models which
 can be generated using the function: <tt>ng_mk_extruded_model</tt>.
 <p>
 
-<h3>
-Extruded 3D shape with 9 electrodes
-</h3>
-
+<H3>
+ Extruded 3D shape with 9 rectuangular electrodes
+</H3>
 <pre>
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1},[9,0,1],[0.02]);
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1},[9,0,1],[0.05,0.4]);
 </pre>
-
 <center>
 <img src="netgen_ext_models01_1.png"><img src="netgen_ext_models01_2.png">
 </center>
 
-
-<h3>
-Extruded 3D shape mesh refinement and 5 electrodes
-</h3>
-
+<H3>
+ Extruded 3D shape with mesh refinement and 5 large circular electrodes
+</H3>
 <pre>
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1,0.1},[5,0,1],[0.10]);
+[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1,0.1},[5,0,1,2],[0.10]);
 </pre>
-
 <center>
 <img src="netgen_ext_models02_1.png"><img src="netgen_ext_models02_2.png">
 </center>
 
-
-<h3>
-Extruded 3D shape mesh boundary interpolation
-</h3>
-
+<H3>
+ Extruded 3D shape mesh with boundary interpolation
+</H3>
 <pre>
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,50]},[8,0,0.3,0.6],[0.08]);
 </pre>
-
 <center>
 <img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
 </center>
 
-<h3>
-</h3>
-
+<H3>
+ 2D shape mesh boundary interpolation
+</H3>
 <pre>
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,50]},[16,0],[0.1]);
 </pre>
-
 <center>
-<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+<img src="netgen_ext_models04_1.png"><img src="netgen_ext_models04_2.png">
 </center>
 
-<h3>
-</h3>
-
+<H3>
+ 2D shape with object and specific electrode positions
+</H3>
 <pre>
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.05;'};
+elec_pos = [0, 0; 30,0;60,0;90,0];
+[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,50]},elec_pos,[0.1],extra);
+img = mk_image(fmdl,1);
+img.elem_data( mat_idx{2} ) = 1.1;
 </pre>
-
 <center>
-<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+<img src="netgen_ext_models05_1.png"><img src="netgen_ext_models05_2.png">
 </center>
 
-<h3>
-</h3>
-
+<H3>
+ 3D shape with two objects and no electrodes
+</H3>
 <pre>
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,[3,50]},[9,0,1],[0.05]);
+extra={'twoball','solid twoball = sphere(0.2,0.2,.7;0.2) or sphere(-0.2,-0.2,.4;0.3);'};
+[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,20]},[0,0],[0.05],extra);
+img = mk_image(fmdl,1);
+img.elem_data( mat_idx{2} ) = 1.1;
 </pre>
-
 <center>
-<img src="netgen_ext_models03_1.png"><img src="netgen_ext_models03_2.png">
+<img src="netgen_ext_models06_1.png"><img src="netgen_ext_models06_2.png">
 </center>
+
+<H3>
+ 3D shape with custom electrodes
+</H3>
+<pre>
+xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+       0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+elec_pos = [0, 0.1; 30,0.2; 60,0.3; 90,0.4;120,0.5];
+extra={'cyl','solid cyl = cylinder(0.2,-0.2,0;0.2,-0.2,1;0.2) and orthobrick(-1,-1,0;1,1,1);'};
+[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,40]},elec_pos,[0.05,0.2],extra);
+img = mk_image(fmdl,1);
+img.elem_data( mat_idx{2} ) = 1.1;
+</pre>
+<center>
+<img src="netgen_ext_models07_1.png"><img src="netgen_ext_models07_2.png">
+</center>
+
+<H3>
+ Thorax with two layers of electrodes
+</H3>
+This example requires the coordinates from <a href="CT2.mat">CT2.mat</a> here.
+<pre>
+load CT2.mat;
+[fmdl, mat_idx] = ng_mk_extruded_model({2,trunk/100 ,[4,50]},[6,0,0.5,1.5],[0.1,0.2]);
+</pre>
+<center>
+<img src="netgen_ext_models08_1.png"><img src="netgen_ext_models08_2.png">
+</center>
+
+
+<H3>
+ Thorax with lung with 16 circular electrodes
+</H3>
+This example requires the coordinates from <a href="CT2.mat">CT2.mat</a> here.
+<pre>
+load CT2.mat; lung = flipud(lung(1:3:end,:));
+[fmdl, mat_idx] = ng_mk_extruded_model({1,{trunk/100, lung/100} ,[4,50]},[16,0.5],[0.1]);
+img = mk_image(fmdl,1);
+img.elem_data( mat_idx{2} ) = 0.9;
+fmdl= img;
+</pre>
+<center>
+<img src="netgen_ext_models09_1.png"><img src="netgen_ext_models09_2.png">
+</center>
+<!--
+<center>
+<img src="netgen_ext_models10_1.png"><img src="netgen_ext_models10_2.png">
+</center>
+<center>
+<img src="netgen_ext_models11_1.png"><img src="netgen_ext_models11_2.png">
+</center>
+<center>
+<img src="netgen_ext_models12_1.png"><img src="netgen_ext_models12_2.png">
+</center>
+<center>
+<img src="netgen_ext_models13_1.png"><img src="netgen_ext_models13_2.png">
+</center>
+-->
 
 </td></tr></table>
 <p>
