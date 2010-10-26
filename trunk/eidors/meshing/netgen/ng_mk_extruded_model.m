@@ -250,6 +250,7 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
     tank_shape.convex = calc_convex(tank_shape.vertices);
     
     % debug plot
+if 0
     pts = edges./2 + points;
     plot(tank_shape.vertices(:,1),tank_shape.vertices(:,2),'-o'); hold on;
     plot(tank_shape.centroid(:,1),tank_shape.centroid(:,2),'+');
@@ -257,6 +258,7 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         tank_shape.vertices(:,2)+0.05*tank_shape.vertex_dir(:,2),'ro-')
     quiver(pts(:,1),pts(:,2),tank_shape.edge_normals(:,1),tank_shape.edge_normals(:,2));
     hold off
+end
     
     
 function new_points = interpolate(points, N, curve_type)
@@ -513,6 +515,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
 
    if n_elecs == 0
       elecs= struct([]); % empty
+      centres= []; 
    end
 
    
