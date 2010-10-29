@@ -69,6 +69,18 @@ Current looks larger at <i>z</i>= 0.8, because each slice
 is individually normalized to the maximum
 </center>
 
+<H3>
+Current distribution
+</H3>
+<pre>
+<!--#include virtual="pig_body05.m" -->
+</pre>
+<center>
+<img src="pig_body05a.jpg">
+<br>
+Stream lines through <i>z</i>= 1.0.
+</center>
+
 
 
 
