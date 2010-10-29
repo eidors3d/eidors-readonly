@@ -17,13 +17,17 @@ can be generated using the function: <tt>ng_mk_extruded_model</tt>.
 <p>
 
 <H3>
-Load thorax shape
+Load thorax shape and identify contours
 </H3>
 This image is from a CT of a piglet with EIT electrodes,
 courtesy of Marc Bodenstein, Universit&auml;t Mainz.
+Hand registered contours are available in 
+<a href="CT2.mat">this file [CT2.mat]</a>.
 <pre>
+<!--#include virtual="pig_body01.m" -->
 </pre>
 <center>
+<a href="pig-thorax.jpg"><img width="256" src="pig-thorax.jpg"></a> <img src="pig_body01.jpg">
 </center>
 </td></tr></table>
 <p>
