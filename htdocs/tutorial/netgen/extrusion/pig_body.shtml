@@ -54,6 +54,21 @@ Simulate Voltage Distribution
  <i>z</i>= 0.8, <i>z</i>= 1.0, <i>z</i>= 1.2.
 </center>
 
+<H3>
+Current distribution
+</H3>
+<pre>
+<!--#include virtual="pig_body04.m" -->
+</pre>
+<center>
+<img src="pig_body04a.jpg"> <img src="pig_body04b.jpg">
+<br>
+<i>Left to Right</i> Current distribution in slices at
+ <i>z</i>= 0.8, <i>z</i>= 1.0.
+Current looks larger at <i>z</i>= 0.8, because each slice
+is individually normalized to the maximum
+</center>
+
 
 
 
