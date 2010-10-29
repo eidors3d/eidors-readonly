@@ -13,3 +13,8 @@ hold off
 
 axis off; axis equal
 print_convert pig_body01.jpg
+
+% Shrink the model  for the next step
+trunk = trunk*.01;
+lung  = lung*.01; lung = flipud(lung(1:3:end,:)); % need counterclockwise shapes
+elec_pos = elec_pos*.01;
