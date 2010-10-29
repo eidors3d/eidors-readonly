@@ -29,6 +29,21 @@ Hand registered contours are available in
 <center>
 <a href="pig-thorax.jpg"><img width="256" src="pig-thorax.jpg"></a> <img src="pig_body01.jpg">
 </center>
+
+
+<H3>
+Use Netgen to build a FEM model of the pig thorax
+</H3>
+<pre>
+<!--#include virtual="pig_body02.m" -->
+</pre>
+<center>
+<img src="pig_body02.jpg">
+</center>
+
+
+
+
 </td></tr></table>
 <p>
 <small>
