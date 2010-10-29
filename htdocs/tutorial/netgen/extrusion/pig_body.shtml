@@ -103,6 +103,18 @@ Stream lines through <i>z</i>= 1.0.
 <img src="pig_body07.jpg">
 </center>
 
+<H3>
+Simulated conductivity change and simulated voltages (with noise)
+</H3>
+<pre>
+<!--#include virtual="pig_body08.m" -->
+</pre>
+<center>
+<img src="pig_body08a.jpg"> <img src="pig_body08b.jpg">
+<br>
+<i>Left</i>  Simulated conductivity change region
+<i>Right</i> Simulated voltage signals
+</center>
 
 
 </td></tr></table>
