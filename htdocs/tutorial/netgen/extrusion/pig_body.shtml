@@ -41,6 +41,19 @@ Use Netgen to build a FEM model of the pig thorax
 <img src="pig_body02.jpg">
 </center>
 
+<H3>
+Simulate Voltage Distribution
+</H3>
+<pre>
+<!--#include virtual="pig_body03.m" -->
+</pre>
+<center>
+<img src="pig_body03a.jpg"> <img src="pig_body03b.jpg"> <img src="pig_body03c.jpg">
+<br>
+<i>Left to Right</i> Voltage distribution in slices at
+ <i>z</i>= 0.8, <i>z</i>= 1.0, <i>z</i>= 1.2.
+</center>
+
 
 
 
