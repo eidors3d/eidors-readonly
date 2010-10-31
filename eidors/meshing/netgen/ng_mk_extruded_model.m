@@ -23,7 +23,7 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %   maxsz       -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
-%  elec_pos = [n_elecs_per_plane,z_planes] 
+%  elec_pos = [n_elecs_per_plane,(0=even angles,1=even spacing),z_planes] 
 %     OR
 %  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
