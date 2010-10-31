@@ -39,8 +39,16 @@ pp.ELEM= fwd_model.elems';
 n= size(pp.NODE,2);        %NODEs
 d= size(pp.ELEM,1);        %dimentions+1
 e= size(pp.ELEM,2);        %ELEMents
-p = length(fwd_model.stimulation );
-n_elec= length( fwd_model.electrode );
+try
+   p = length(fwd_model.stimulation );
+catch 
+   p = 0;
+end
+try
+   n_elec= length( fwd_model.electrode );
+catch
+   n_elec= 0;
+end
 
 % calculate element volume and surface area
 pp.VOLUME=zeros(e,1);
