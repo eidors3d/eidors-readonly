@@ -16,7 +16,7 @@ function quiv = show_current( img, vv )
 %   img.fwd_model.mdl_slice_mapper.x_pts - vector of points in horizontal direction
 %   img.fwd_model.mdl_slice_mapper.y_pts - vector of points in vertical
 %
-% For 3D models, the slice may be specified as (see calc_slices for information)
+% For 3D models, the slice may be specified as (see mdl_slice_mapper for information)
 %   img.fwd_model.mdl_slice_mapper.level 
 % 
 % If an output is specified, then no image is draws
