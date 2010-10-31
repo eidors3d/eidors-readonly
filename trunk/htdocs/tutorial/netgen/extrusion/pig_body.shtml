@@ -116,6 +116,25 @@ Simulated conductivity change and simulated voltages (with noise)
 <i>Right</i> Simulated voltage signals
 </center>
 
+<H3>
+Reconstructions with simple and conforming models
+</H3>
+Simple 2D circular model reconstruction
+<pre>
+<!--#include virtual="pig_body09.m" -->
+</pre>
+Conforming model: 2D reconstructon with 3D forward model
+<pre>
+<!--#include virtual="pig_body10.m" -->
+</pre>
+
+<center>
+<img src="pig_body09a.jpg"> <img src="pig_body10a.jpg">
+<br>
+<i>Left</i>  Simulated conductivity change region
+<i>Right</i> Simulated voltage signals
+</center>
+
 
 </td></tr></table>
 <p>
