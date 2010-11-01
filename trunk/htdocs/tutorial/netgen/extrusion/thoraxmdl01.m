@@ -1,6 +1,6 @@
 subplot(221);
 
-load CT2.mat
+load ~/docs/eidors/htdocs/tutorial/netgen/extrusion/CT2.mat
 img = imread('pig-thorax.jpg');
 colormap(gray(256));
 imagesc(-67+[1:371],25+[1:371],img);
