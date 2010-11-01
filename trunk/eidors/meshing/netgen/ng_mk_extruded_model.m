@@ -23,7 +23,13 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %   maxsz       -> max size of mesh elems (default = course mesh)
 %
 % ELECTRODE POSITIONS:
-%  elec_pos = [n_elecs_per_plane,(0=even angles,1=even spacing),z_planes] 
+%  elec_pos = [n_elecs_per_plane,spacing,z_planes] where spacing is either
+%             0 for even spacing w.r.t angular positions (0,15,30... deg)
+%             or
+%             1 for equal distances between electrodes
+%             Any fractional part (e.g. 0.15) is interpreted as a starting
+%             position -- fraction of 2*pi for values spacing < 1 and
+%             fraction of total perimeter for spacing > 1.
 %     OR
 %  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
@@ -452,15 +458,20 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
    % It never makes sense to specify only one elec
    % So elec_pos means the number of electrodes in this case
    if size(elec_pos,1) == 1
-       % Parse elec_pos = [n_elecs_per_plane,z_planes] 
+       % Parse elec_pos = [n_elecs_per_plane,(0=equal angles,1=equal dist),z_planes] 
       n_elecs= elec_pos(1); % per plane
-      switch elec_pos(2)
+      offset = elec_pos(2) - floor(elec_pos(2));
+      switch floor(elec_pos(2))
           case 0
               th = linspace(0,2*pi, n_elecs+1)'; th(end)=[];
+              th = th + offset*2*pi;
+              ind = th >= 2*pi;
+              th(ind) = th(ind) - 2*pi;
           case 1
               if tank_shape.curve_type == 4
                   pp = fourier_fit(tank_shape.vertices);
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
+                  p = p + offset;
                   xy = fourier_fit(pp,p);
                  % NOTE, THIS IS A HACK. Some complicated shapes can't be described by angle alone
                   th = atan2(xy(:,2) - tank_shape.centroid(2), ...
@@ -468,7 +479,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
               elseif any( tank_shape.curve_type == [1,2,3] )
                   pp= piece_poly_fit(tank_shape.vertices);
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
-                  th = piece_poly_fit(pp,0,p);
+                  th = piece_poly_fit(pp,offset*2*pi,p);
               else
                   error('curve_type unrecognized');
               end
@@ -1170,11 +1181,11 @@ mat_idx = [];
    -0.8981   -0.7492   -0.2146    0.3162    0.7935    0.9615    0.6751    0.0565   -0.3635   -0.9745
     0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ]';
 % [fmdl, mat_idx] = ng_mk_extruded_model({2,{a,0.5*a,0.2*a},1},[16,0,1],[0.01]);
-load CT2
+% load CT2
 
 % [fmdl, mat_idx] = ng_mk_extruded_model({150,flipud(trunk),1},[16,0,75],[0.01]);
 
-[fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk/100, lung_heart_dep/100, heart/100},1},[16,1,1],[0.1]);
+% [fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk/100, lung_heart_dep/100, heart/100},1},[16,1,1],[0.1]);
 % img = mk_image( fmdl, 1);
 %  img.elem_data(mat_idx{2}) = 1.1; 
 
@@ -1189,7 +1200,7 @@ load CT2
 
 % [fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk, heart_lung, heart},1},[16,1,1],[0.1]);
 
- figure, show_fem( fmdl );
+%  figure, show_fem( fmdl );
  
 %%
 xx=[
@@ -1216,10 +1227,10 @@ yy=[
 
 a = [xx; yy]';
 a = flipud(a);
-th=linspace(0,2*pi,33)'; th(end)=[];
-%a=[sin(th)*0.3,cos(th)];
+% th=linspace(0,2*pi,33)'; th(end)=[];
+% a=[sin(th)*0.3,cos(th)];
 
 
-%      fmdl = ng_mk_extruded_model({300,a,[3,50]},[16,150,1],[0.01]);
-%      figure
-%      show_fem(fmdl);
+     fmdl = ng_mk_extruded_model({300,a,[3,50]},[16,1.11,150],[1]);
+     figure
+     show_fem(fmdl);
