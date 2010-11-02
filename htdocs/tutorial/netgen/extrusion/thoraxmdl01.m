@@ -1,18 +1,28 @@
 subplot(221);
 
-load ~/docs/eidors/htdocs/tutorial/netgen/extrusion/CT2.mat
-img = imread('pig-thorax.jpg');
+load CT1.mat
+img = flipdim(imread('thorax-mdl.jpg'),1); %Keep up direction
 colormap(gray(256));
-imagesc(-67+[1:371],25+[1:371],img);
+imagesc(img);
+ set(gca,'YDir','normal');
+
+thorax = thorax*100;
+thorax(:,2) = 512 - thorax(:,2);
+rlung = rlung*100;
+rlung(:,2) = 512 - rlung(:,2);
+llung = llung*100;
+llung(:,2) = 512 - llung(:,2);
+llung = [llung; 340,375;345,360];
 
 hold on;
-plot(372-trunk(:,1),trunk(:,2),'m*-');
-plot(372-lung(:,1),lung(:,2),'r*-');
-hh=plot(372-elec_pos(:,1),elec_pos(:,2), 'b.'); set(hh,'MarkerSize',20);
+plot(thorax(:,1),thorax(:,2),'b','LineWidth',2);
+plot(rlung(:,1),rlung(:,2),'b','LineWidth',2);
+plot(llung(:,1),llung(:,2),'b','LineWidth',2);
 hold off
 
 axis off; axis equal
-print_convert pig_body01.jpg
+print_convert thoraxmdl01a.jpg
+return
 
 % Shrink the model  for the next step
 trunk = trunk*.01;
