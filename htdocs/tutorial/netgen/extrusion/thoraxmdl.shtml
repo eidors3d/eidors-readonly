@@ -1,0 +1,142 @@
+<!--#include virtual="../../nav-sidebar-tut2.shtml" -->
+<h2> 
+Modeling EIT current flow in a human thorax model
+</h2>
+
+This example shows how EIDORS can by use 
+<a href="http://sourceforge.net/projects/netgen-mesher/">
+Netgen</a> to model the body shape of a human and then
+use it to build a reconstruction algorithm and see
+the current flow in the body.
+<b>For this exmample, you need at least Netgen version 4.9.13.</b>
+
+
+
+<H3>
+Load thorax shape and identify contours
+</H3>
+This image is from a human CT of a healthy man,
+provided with permission.
+Hand registered contours are available in 
+<a href="CT2.mat">this file [CT2.mat]</a>.
+<pre>
+<!--#include virtual="thoraxmdl01.m" -->
+</pre>
+<center>
+<a href="thorax-mdl.jpg"><img width="256" src="pig-thorax.jpg"></a> <img src="thoraxmdl01a.jpg">
+</center>
+
+
+<H3>
+Use Netgen to build a FEM model of the pig thorax
+</H3>
+<pre>
+<!--#include virtual="pig_body02.m" -->
+</pre>
+<center>
+<img src="pig_body02.jpg">
+</center>
+
+<H3>
+Simulate Voltage Distribution
+</H3>
+<pre>
+<!--#include virtual="pig_body03.m" -->
+</pre>
+<center>
+<img src="pig_body03a.jpg"> <img src="pig_body03b.jpg"> <img src="pig_body03c.jpg">
+<br>
+<i>Left to Right</i> Voltage distribution in slices at
+ <i>z</i>= 0.8, <i>z</i>= 1.0, <i>z</i>= 1.2.
+</center>
+
+<H3>
+Current distribution
+</H3>
+<pre>
+<!--#include virtual="pig_body04.m" -->
+</pre>
+<center>
+<img src="pig_body04a.jpg"> <img src="pig_body04b.jpg">
+<br>
+<i>Left to Right</i> Current distribution in slices at
+ <i>z</i>= 0.8, <i>z</i>= 1.0.
+Current looks larger at <i>z</i>= 0.8, because each slice
+is individually normalized to the maximum
+</center>
+
+<H3>
+Current distribution and streamlines
+</H3>
+<pre>
+<!--#include virtual="pig_body05.m" -->
+</pre>
+<center>
+<img src="pig_body05a.jpg">
+<br>
+Stream lines through <i>z</i>= 1.0.
+</center>
+
+<H3>
+Streamlines and the original image
+</H3>
+<pre>
+<!--#include virtual="pig_body06.m" -->
+</pre>
+<center>
+<img src="pig_body06a.jpg">
+<br>
+Stream lines through <i>z</i>= 1.0.
+</center>
+
+<H3>
+2D FEM model for image reconstruction
+</H3>
+<pre>
+<!--#include virtual="pig_body07.m" -->
+</pre>
+<center>
+<img src="pig_body07.jpg">
+</center>
+
+<H3>
+Simulated conductivity change and simulated voltages (with noise)
+</H3>
+<pre>
+<!--#include virtual="pig_body08.m" -->
+</pre>
+<center>
+<img src="pig_body08a.jpg"> <img src="pig_body08b.jpg">
+<br>
+<i>Left</i>  Simulated conductivity change region
+<i>Right</i> Simulated voltage signals
+</center>
+
+<H3>
+Reconstructions with simple and conforming models
+</H3>
+Simple 2D circular model reconstruction
+<pre>
+<!--#include virtual="pig_body09.m" -->
+</pre>
+Conforming model: 2D reconstructon with 3D forward model
+<pre>
+<!--#include virtual="pig_body10.m" -->
+</pre>
+
+<center>
+<img src="pig_body09a.jpg"> <img src="pig_body10a.jpg">
+<br>
+<i>Left</i>  Simulated conductivity change region
+<i>Right</i> Simulated voltage signals
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
