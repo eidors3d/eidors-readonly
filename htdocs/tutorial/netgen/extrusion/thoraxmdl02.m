@@ -1,5 +1,5 @@
 f = 100;
-[fmdl, mat_idx] = ng_mk_extruded_model({2,{thorax/f,rlung/f,llung/f},[4,50]},[16,1.00,1],[.1,0]);
+[fmdl, mat_idx] = ng_mk_extruded_model({2,{thorax/f,rlung/f,llung/f},[4,50],.1},[16,1.00,1],[.1,0,.05]);
 fmdl.nodes = fmdl.nodes*f;
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 fmdl.stimulation = stim;
