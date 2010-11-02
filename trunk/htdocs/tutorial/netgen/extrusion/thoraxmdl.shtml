@@ -63,9 +63,26 @@ Current streamlines and the original image
 <!--#include virtual="thoraxmdl05.m" -->
 </pre>
 <center>
-<img src="pig_body05a.jpg">
+<img src="thoraxmdl05a.jpg">
 <br>
 Stream lines through <i>z</i>= 1.0.
+
+The path of the streamslines is limited by the density of the underlying FEM.
+With a finer mesh FEM, it would be possible to calculate streamlines that
+do not display path irregularities.
+</center>
+
+
+<H3>
+Add Equipotential lines to the original image
+</H3>
+<pre>
+<!--#include virtual="thoraxmdl06.m" -->
+</pre>
+<center>
+<img src="thoraxmdl06a.jpg">
+<br>
+Stream lines and equipotiential through <i>z</i>= 1.0.
 </center>
 
 

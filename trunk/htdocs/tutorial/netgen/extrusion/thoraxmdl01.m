@@ -1,4 +1,3 @@
-
 load CT1.mat
 img = flipdim(imread('thorax-mdl.jpg'),1); %Keep up direction
 imagesc(img);
