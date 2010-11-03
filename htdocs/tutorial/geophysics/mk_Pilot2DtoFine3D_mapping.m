@@ -39,7 +39,6 @@ img.params_mapping.data = c2f;
 img.params_mapping.perturb= log(2)*ones(size(img.params_mapping.params,1),1);
 disp(['3D FEM model of gallery created | number of elements = ' num2str(n_fine_elems3D)]);
 disp(['                 Number of parameters to be inverted = ' num2str(n_sparse_bary2D)]);
-end
 
 function ms2d= sparse2Dtodense2D_mapping(sparseXY,denseXY)
 %% merge = n -> coarse elements are obtained by merging n contiguous fine elements
