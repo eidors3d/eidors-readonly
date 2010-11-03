@@ -14,6 +14,12 @@ function data =aa_fwd_solve(fwd_model, img)
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
 % $Id$
 
+% correct input paralemeters if function was called with only img
+if nargin==1 && strcmp(fwd_model.type, 'image');
+    img = fwd_model;
+    fwd_model= img.fwd_model;
+end
+
 pp= aa_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
