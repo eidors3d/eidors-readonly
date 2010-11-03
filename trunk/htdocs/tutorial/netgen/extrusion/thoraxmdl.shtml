@@ -9,7 +9,11 @@ Netgen</a> to model the body shape of a human and then
 use it to build a reconstruction algorithm and see
 the current flow in the body.
 <b>For this exmample, you need at least Netgen version 4.9.13.</b>
-
+These images are designed to be used on the
+<a href="http://en.wikipedia.org/wiki/Electrical_impedance_tomography"
+>Wikipedia EIT page</a>. All images on this page are licenced under the
+<a rel="license" href="http://creativecommons.org/licenses/by/3.0/"
+>Creative Commons Attribution License</a>.
 
 
 <H3>
