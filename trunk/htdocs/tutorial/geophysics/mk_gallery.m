@@ -125,21 +125,26 @@ function param= mk_geom_gallery(n_contours,levels,cross_section,factor)
 %
 %%
 n_elec= size(cross_section,1);
-[elem,node,bdy,point_elec_nodes]= mk_2D_gallery(cross_section,n_contours,factor);
+[elem2,node2,bdy,point_elec_nodes]= mk_2D_gallery(cross_section,n_contours,factor);
 if isempty(levels) % 2D
     idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
     elec_nodes= point_elec_nodes(idx);
+    param.nodes = node2';
+    param.elems = elem2';
 else  %3D
-    [elem,node,bdy,point_elec_nodes] = mk_3D_gallery(elem,node,levels,bdy,point_elec_nodes);
+    [elem3,node3,bdy,point_elec_nodes] = mk_3D_gallery(elem2,node2,levels,bdy,point_elec_nodes);
     idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
     half_lev= ceil( length(levels)/2 );
     elec_nodes= point_elec_nodes( half_lev, idx );
+    param.nodes = node3';
+    param.elems = elem3';
+    param.misc.model2d.nodes = node2';
+    param.misc.model2d.elems = elem2';
 end
 param.name= sprintf('EIT FEM by mk_gallery with N=%d levs=%d',n_contours,length(levels));
-param.nodes = node';
-param.elems = elem';
+
 param.boundary = bdy';
-param.gnd_node = size(node,2); % ground node placed somewhere on outer boundary
+param.gnd_node = size(param.nodes,1); % ground node placed somewhere on outer boundary
 param.electrode =  mk_electrodes(elec_nodes);
 end
 
