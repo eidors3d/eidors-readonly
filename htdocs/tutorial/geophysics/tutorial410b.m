@@ -12,11 +12,18 @@ gallery_3D_img.elem_data= background_conductivity * ...
 
 % build the parameter-to-elements mapping
 %USE: sparse pilot-point parameterization
-sparsity = 13;
-gallery_3D_img= mk_Pilot2DtoFine3D_mapping(gallery_3D_img,sparsity);
+sparsity = 1;
+%gallery_3D_img= mk_Pilot2DtoFine3D_mapping(gallery_3D_img,sparsity);
+gallery_3D_img.fwd_model.coarse2fine = kron(ones(42,1), speye(1024));
 
-disp(['Computing the CC and SS matrices = ' gallery_3D_img.fwd_model.misc.compute_CCandSS]);
-[ref_data,gallery_3D_img]= dg_fwd_solve(gallery_3D_img);
+gallery_3D_img.rec_model.type = 'fwd_model';
+gallery_3D_img.rec_model.name = '2d';
+gallery_3D_img.rec_model.elems = gallery_3D_img.fwd_model.misc.model2d.elems;
+gallery_3D_img.rec_model.nodes = gallery_3D_img.fwd_model.misc.model2d.nodes;
+
+%disp(['Computing the CC and SS matrices = ' gallery_3D_img.fwd_model.misc.compute_CCandSS]);
+%[ref_data,gallery_3D_img]= aa_fwd_solve(gallery_3D_img);
+[ref_data]= fwd_solve(gallery_3D_img);
 residuals= real_data.meas-ref_data.meas;
 
 %% plot the data
