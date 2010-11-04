@@ -1,3 +1,5 @@
+
+
 function param = dg_fwd_parameters(fwd_model)
 % AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
 % Extract parameters from a 'fwd_model' struct which are 

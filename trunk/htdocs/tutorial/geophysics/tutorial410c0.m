@@ -1,4 +1,3 @@
-imdl = mk_common_model('b2c2',32); 
 imdl = eidors_obj('inv_solve','test');
 
 imdl.hyperparameter.value = .1;
