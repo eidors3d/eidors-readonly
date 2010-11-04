@@ -54,12 +54,12 @@ IM= eidors_obj('image','');
 IM.fwd_model= fwd_model;
 
 if 0 % static EIT - this code doesn't work yet
-   scaling=vmeas\vsim;
+   scaling=vmeas\v_sim;
    s=s*scaling;
    %u=potentials(msh,s,c);
-   %vsim=measures(msh,u);
-   vsim= sim_measures( IM, s);
-   de_v=vmeas-vsim;
+   %v_sim=measures(msh,u);
+   v_sim= sim_measures( IM, s);
+   de_v=vmeas-v_sim;
    %J=jacobian(msh,u);
    IM.s= s;
    J= calc_jacobian( IM );
@@ -72,8 +72,8 @@ else
    IM.elem_data= s;
    IM.difference_rec = 1;
    IM.J = J;
-   vsim= sim_measures( IM, s);
-   de_v=vmeas-vsim;
+   v_sim= sim_measures( IM, s);
+   de_v=vmeas-v_sim;
    de_s=[J;alpha1*A]\[de_v;zeros(n,1)];
    s=s+de_s;
    scaling= 1;
@@ -92,17 +92,17 @@ Obj_Fcn_old = inf;
 while (~terminate)&(iter<maxiter)
     
 %   u=potentials(msh,s,c);
-%   vsim=measures(msh,u); 
+%   v_sim=measures(msh,u); 
 %   J=jacobian(msh,u);  - Jacobian is same in difference EIT
-    vsim= sim_measures( IM, s);
+    v_sim= sim_measures( IM, s);
 %   J= calc_jacobian( IM );
-%   plot([vsim, vmeas]);% pause
+%   plot([v_sim, vmeas]);% pause
 
     z=A*s;	% This is an auxilliary variable
     
     eta=sqrt(z.^2+beta);
     
-    grad=J'*(vsim-vmeas);
+    grad=J'*(v_sim-vmeas);
     
     for i=1:n
         grad=grad+alpha2*A(i,:)'*A(i,:)*s/eta(i);
@@ -112,7 +112,7 @@ while (~terminate)&(iter<maxiter)
     dual=sum(x.*z);
 
     % TERMINATE ITERATIONS IF primal is no longer decreasing
-    Obj_Fcn = norm(vsim - vmeas)^2 + alpha2*primal;
+    Obj_Fcn = norm(v_sim - vmeas)^2 + alpha2*primal;
     if abs(Obj_Fcn/Obj_Fcn_old - 1) < min_change
        eidors_msg('PDIPM: Breaking at iteration %d',iter,2);
        break
@@ -121,7 +121,7 @@ while (~terminate)&(iter<maxiter)
     end
 
     
-    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(vsim-vmeas),beta,len(ind),norm(grad),3);
+    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(v_sim-vmeas),beta,len(ind),norm(grad),3);
         
     E=spdiags(eta,0,n,n);
     F=spdiags(ones(n,1)-(1./eta).*x.*z,0,n,n);
@@ -130,7 +130,7 @@ while (~terminate)&(iter<maxiter)
     
     %B=0.5*(B+B');
     
-    de_s=-B\(alpha2*A'*inv(E)*z+J'*(vsim-vmeas));
+    de_s=-B\(alpha2*A'*inv(E)*z+J'*(v_sim-vmeas));
     
     ang=acos((dot(de_s,-grad)/(norm(de_s)*norm(-grad))))*(360/(2*pi));
     
@@ -188,7 +188,7 @@ while (~terminate)&(iter<maxiter)
 %    if norm(A*x)>gap(x,z) error('Rounding errors are spoiling the calculation, stopping.'); end % if
     
     % The primal-dual gap has been reduced and measures match
-    if (sum(abs(z)-x.*z)<epsilon)&(norm(vsim-vmeas)<epsilon)
+    if (sum(abs(z)-x.*z)<epsilon)&(norm(v_sim-vmeas)<epsilon)
         terminate=1;
     end % if
     
@@ -201,13 +201,13 @@ end % while
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function vsim= sim_measures( IM, s);
+function v_sim= sim_measures( IM, s);
    if IM.difference_rec == 1
-      vsim = IM.J*s;
+      v_sim = IM.J*s;
    else
       vh= fwd_solve( IM );
       IM.elem_data= s;
       vi= fwd_solve( IM );
 
-      vsim = calc_difference_data( vh, vi, IM.fwd_model);
+      v_sim = calc_difference_data( vh, vi, IM.fwd_model);
    end
