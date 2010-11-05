@@ -26,7 +26,19 @@ end
 [n_nodes,n_stims] = size(I);
 
 try
-   V= E\I;
+% V= E\I;
+% This takes MUCH longer when you have  more vectors in I,
+%  even if they are repeated. There must be some way to simplify
+%  this to speed it up. Matlab's sparse operators really should
+%  do this for you.
+
+% TODO, Q&R should be cached somewhere
+   [Q,R] = qr(I,0);
+   rnotzeros = any(R~=0,2);
+   Q= Q(:,rnotzeros);
+   R= R(rnotzeros,:);
+   V= (E \ Q)*R;
+
 % TODO: Iteratively refine
 %  From GH Scott: "once we have
 %   computed the approximate solution x, we perform one step
