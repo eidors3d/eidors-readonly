@@ -74,4 +74,9 @@ function img = homogeneous_estimate( imdl, data );
 
    pf = polyfit(data,vs.meas,1);
 
-   img.elem_data = img.elem_data*pf(1);
+   if isfield(img.fwd_model,'coarse2fine');
+      nc = size(img.fwd_model.coarse2fine,2);
+      img.elem_data = ones(nc,1)*pf(1);
+   else
+      img.elem_data = img.elem_data*pf(1);
+   end
