@@ -20,37 +20,13 @@ end; end
 if call_thorax_geom
    [out1, out2, out3 ] = thorax_geometry_defs(in1,in2);
 else
-   [out1]              = deform_cylinder(in1,in2);
+   [x_coord, y_coord, z_mag ] = thorax_geometry_defs;
+   reidx= [13:16, 1:12];
+   geo.z_mag = z_mag;
+   geo.xy= [x_coord(in2,reidx); y_coord(in2,reidx)]';
+   
+   [out1]              = deform_cylinder(in1, geo );
 end
-
-
-% Deform the boundary of the cylinder to make it like a torso
-% niv= 1.. 5 => Torso shape from T5 - T12
-% xyz_expand - rescale xyz - default should be [1];
-function fwd_mdl = deform_cylinder( fwd_mdl, niv);
-    NODE= fwd_mdl.nodes';
-    [x_coord, y_coord, z_mag ] = thorax_geometry_defs;
-
-    reidx= [13:16, 1:12];
-    geo= [x_coord(niv,reidx)',  ...
-          y_coord(niv,reidx)'];
-    a_max= size(geo,1);
-    ab_geo=sqrt(sum(([ geo; geo(1,:) ]').^2)');
-    nn= zeros(size(NODE));
-    for i=1:size(NODE,2);
-      angle = rem(a_max*atan2( NODE(2,i), ...
-            NODE(1,i) )/2/pi+a_max,a_max)+1;
-      fl_angl = floor(angle + eps );
-      fac=(  (fl_angl + 1 - angle) * ab_geo(fl_angl) + ...
-             (angle - fl_angl)     * ab_geo(fl_angl + 1)  );
-      nn(1:2,i)= NODE(1:2,i)* fac;
-    end  %for i=1:size
-    if size(nn,1) == 3;
-       nn(3,:) = NODE(3,:)*z_mag;
-    end
-
-    xyz_expand = 1;
-    fwd_mdl.nodes = nn'*eye(xyz_expand);
 
 
 function [x_coord, y_coord, z_mag ] = thorax_geometry_defs(level,normalize);
