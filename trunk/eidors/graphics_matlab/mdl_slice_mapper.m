@@ -74,7 +74,7 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    for i= find( elem_ptr(:)>0 )'; % look for all x,y inside elements
      nodes_i = fwd_model.elems(elem_ptr(i),:);
      int_fcn = inv( [ones(1,ndims+1);NODE(:,nodes_i)] );
-     ninterp_ptr(i,:) = int_fcn *[1;x(i);y(i);NODEz];
+     ninterp_ptr(i,:) = ( int_fcn *[1;x(i);y(i);NODEz] )';
    end
    ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
 
