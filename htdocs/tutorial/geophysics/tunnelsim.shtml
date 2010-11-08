@@ -1,0 +1,32 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+
+<h2> 
+Simulating Geophysical measurements around a borehole
+</h2>
+
+
+<h3>
+Create 3D FEM model of the gallery
+</h3>
+<pre>
+<!--#include virtual="tunnelsim01.m" -->
+</pre>
+
+<center>
+<img src="tunnelsim01a.png">
+<img src="tunnelsim01b.png">
+<img src="tunnelsim01c.png">
+<br><i> Figure:</i>
+3D FEM of gallery from two viewing angles, and a cropped model showing the electrodes
+</center>
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->

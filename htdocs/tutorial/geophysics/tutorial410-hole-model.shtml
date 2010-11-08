@@ -7,7 +7,6 @@ Borehole model
 
 Files needed for this tutorial are here:
 <ul>
-   <li>
 <li> <a href="./Anneau1_Decembre2004_wen32_1.m">Anneau1_Decembre2004_wen32_1.m</a>
 <li> <a href="./Anneau1_Janvier2005_wen64_1.m">Anneau1_Janvier2005_wen64_1.m</a>
 <li> <a href="./Anneau1_Juillet2004_wen32_1.m">Anneau1_Juillet2004_wen32_1.m</a>
@@ -24,7 +23,6 @@ Files needed for this tutorial are here:
 <li> <a href="./lance_inversions_MontTerri.m">lance_inversions_MontTerri.m</a>
 <li> <a href="./mk_2Dto3D_mapping.m">mk_2Dto3D_mapping.m</a>
 <li> <a href="./mk_Coarse2DtoFine3D_mapping.m">mk_Coarse2DtoFine3D_mapping.m</a>
-<li> <a href="./mk_coarse_fine_mapping.m">mk_coarse_fine_mapping.m</a>
 <li> <a href="./mk_data_tomel.m">mk_data_tomel.m</a>
 <li> <a href="./mk_gallery.m">mk_gallery.m</a>
 <li> <a href="./mk_Pilot2DtoFine3D_mapping.m">mk_Pilot2DtoFine3D_mapping.m</a>
