@@ -66,8 +66,10 @@ switch type
    case 'set'
       obj_id= set_obj( name, varargin{:} );
    case 'get-cache'
+      test_install
       obj_id= get_cache_obj( name, varargin{:} );
    case 'set-cache'
+      test_install
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
@@ -75,8 +77,14 @@ switch type
    case 'interpreter_version'
       obj_id= test_versions;
    otherwise
+      test_install
       obj_id= new_obj( type, name, varargin{:} );
 end
+
+function test_install
+  global eidors_objects;
+  if isfield(eidors_objects,'max_cache_size'); return; end % OK
+  error('EIDORS not correctly started. Did you do ">>run /path/to/eidors/startup"');
 
 function verstr = test_versions;
       ver= version; ver(ver=='.')=' ';
