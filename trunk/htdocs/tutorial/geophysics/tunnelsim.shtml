@@ -55,9 +55,13 @@ Slices Reconstructed at <i>x</i>=0.0,
 </center>
 
 <h3>
-Reconstruct images (on a 2D slice)
+Reconstruct images (on a 2D simple slice)
 </h3>
 
+Here we use a slice from a filled 2D circular model.
+This means that the smoothing prior will be allowed to
+"fill" through the centre, resulting in image content
+where we don't expect it to be.
 <pre>
 <!--#include virtual="tunnelsim04.m" -->
 </pre>
@@ -66,6 +70,22 @@ Reconstruct images (on a 2D slice)
 <img src="tunnelsim04a.png"> <img src="tunnelsim04b.png">
 <br><i> Figure:</i>
 Slices 2D slices shown in two configurations
+</center>
+
+<h3>
+Reconstruct images (on a 2D conforming geometry)
+</h3>
+
+Here we use a slice created to conform to the
+specified geometry.
+<pre>
+<!--#include virtual="tunnelsim05.m" -->
+</pre>
+
+<center>
+<img src="tunnelsim05a.png"> <img src="tunnelsim05b.png">
+<br><i> Figure:</i>
+2D FEM model for reconstruction and zoom
 </center>
 
 
