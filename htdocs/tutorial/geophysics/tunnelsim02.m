@@ -13,3 +13,4 @@ vs_i = fwd_solve( img);
 show_fem(img); ylim(2*[-1,1]); zlim(2*[-1,1]);
 
 view(90,0); print_convert tunnelsim02a.png
+view( 0,0); print_convert tunnelsim02b.png
