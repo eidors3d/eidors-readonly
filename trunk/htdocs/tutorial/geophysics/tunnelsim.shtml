@@ -88,6 +88,15 @@ specified geometry.
 2D FEM model for reconstruction and zoom
 </center>
 
+<pre>
+<!--#include virtual="tunnelsim06.m" -->
+</pre>
+
+<center>
+<img src="tunnelsim06a.png"> <img src="tunnelsim06b.png"> <img src="tunnelsim06c.png">
+<br><i> Figure:</i>
+Reconstructed images
+</center>
 
 </td></tr></table>
 <p>
