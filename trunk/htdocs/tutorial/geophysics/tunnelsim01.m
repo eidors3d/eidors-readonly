@@ -15,7 +15,7 @@ cth= cos(th); sth=sin(th); zth= zeros(size(th));
 subplot(221); show_fem( fmdl );
 
 view(90,0); print_convert tunnelsim01a.png
-view(0,0); print_convert tunnelsim01b.png
+view( 0,0); print_convert tunnelsim01b.png
 
 crop_model([],  inline('x>=0.5','x','y','z'))
 crop_model([],  inline('x<=-0.5','x','y','z'))

@@ -20,6 +20,34 @@ Create 3D FEM model of the gallery
 3D FEM of gallery from two viewing angles, and a cropped model showing the electrodes
 </center>
 
+<h3>
+Place a simulated contrast
+</h3>
+<pre>
+<!--#include virtual="tunnelsim02.m" -->
+</pre>
+
+<center>
+<img src="tunnelsim02a.png">
+<img src="tunnelsim02b.png">
+<br><i> Figure:</i>
+3D FEM of gallery and contrast from two viewing angles.
+</center>
+
+<h3>
+Reconstruct images (using full 3D reconstruction)
+</h3>
+<pre>
+<!--#include virtual="tunnelsim03.m" -->
+</pre>
+
+<center>
+<img src="tunnelsim02a.png">
+<img src="tunnelsim02b.png">
+<br><i> Figure:</i>
+3D FEM of gallery and contrast from two viewing angles.
+</center>
+
 
 
 </td></tr></table>
