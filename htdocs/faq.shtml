@@ -237,8 +237,8 @@ See the <a href="./examples/">examples</a>.
 Netgen usage with EIDORS is fairly easy under windows. You need to
 <ol>
    <li> Download and install the windows binary from
-        <a href="http://www.hpfem.jku.at/netgen/"
-                >http://www.hpfem.jku.at/netgen/</a>
+        <a href="http://sourceforge.net/projects/netgen-mesher/"
+                >http://sourceforge.net/projects/netgen-mesher/</a>
    <li> Run an example which calls netgen (ie <tt>call_netgen.m</tt>)
    <li> Enter a path to the netgen binary <u>without spaces</u>
         (ie for C:\Program Files\netgen write C:/Progra~1/netgen)
