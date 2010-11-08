@@ -1,7 +1,6 @@
 % Create 3D model of a tunnel $Id$ 
 
 % Reconstruct entire image (slow)
-% Simulation protocol. TODO: we need a geophysical stim protocol
 imdl = mk_common_model('d2c2',N_elec);
 imdl.fwd_model = fmdl;
 imdl.jacobian_bkgnd.value = cond_mdl;
