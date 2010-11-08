@@ -37,15 +37,21 @@ Place a simulated contrast
 <h3>
 Reconstruct images (using full 3D reconstruction)
 </h3>
+
+Using the full 3D model, this is an extremely slow
+reconstruction process; it is also not really 
+recommended since the model size is much too small
+near the electrodes.
 <pre>
 <!--#include virtual="tunnelsim03.m" -->
 </pre>
 
 <center>
-<img src="tunnelsim02a.png">
-<img src="tunnelsim02b.png">
+<img src="tunnelsim03a.png">
 <br><i> Figure:</i>
-3D FEM of gallery and contrast from two viewing angles.
+Slices Reconstructed at <i>x</i>=0.0, 
+                        <i>x</i>=0.5,  and
+                        <i>x</i>=1.0. 
 </center>
 
 
