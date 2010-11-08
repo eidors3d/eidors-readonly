@@ -99,6 +99,9 @@ Yes. Look in the <tt>sample_data</tt> directory.
 We would love to have additional contributions of
 sample data from various experimental and clinical
 settings.
+<p>
+There are also many data sets provided in <a href="data_contrib.shtml">data_contrib</a>,
+covering many important studies in EIT.
 
 <p><li><b>
     May I use EIDORS sample data to test my algorithm
@@ -203,8 +206,7 @@ This is a limitation of Matlab. RGB data cannot be exported to postscript
 files. This can be solved by using colourmaps instead. 
 Try this:
 <pre>
-  &gt;&gt;global eidors_colours;
-  &gt;&gt;eidors_colours.mapped_colour= 256;
+  &gt;&gt;calc_colours('mapped_colour',256);
 </pre>
 
 <p><li><b>
@@ -279,6 +281,25 @@ ans = -10     0     0     0     0     0     0    10
         0     0     0     0     0     0    10   -10
 </pre>
 
+<p><li><b>
+<tt>Errors with <tt>print_convert</tt>
+</b><p>
+<tt>print_convert</tt> gives the error:
+<pre>
+ EIDORS:[This function requires the ImageMagick convert program  be
+ installed and on the path. On windows, we recommend you install it as
+ part of cygwin (www.cygwin.com)]
+</pre>
+
+This may be a path issue. Try
+<pre>
+&gt;&gt; !convert -help
+</pre>
+if you get <tt>Invalid drive specification.</tt>, then you need
+to edit the path so that <tt>C:\cygwin\bin</tt> is before
+<tt>C:\windows\system32</tt>.
+
+
 
 
 
@@ -287,136 +308,38 @@ Compiling Netgen under linux
 </b><p>
 The following script describes how to compile netgen and its
 dependencies under linux:
+
 <table border="1"><tr><td><pre>
-#! /bin/sh
+# Ubuntu/Debian
+   apt-get install tk-dev
+   apt-get install tix-dev
+# Redhat / Fedora / SuSE
+   yum install tk-devel
+   yum install tix-devel
 
-# local install
-SRCDIR=~/netgen
-INSTDIR=~/netgen
+# Download and install Togl-1.7
+   wget <a href="http://sourceforge.net/projects/togl/files/Togl/1.7/Togl-1.7.zip">http://sourceforge.net/projects/togl/files/Togl/1.7/Togl-1.7.zip</a>
+   unzip Togl-1.7.zip
+   cd Togl-1.7
+   ./configure --prefix=/usr/local
+   make && make install
 
-# versions to install
-# TCL
-TCLVER=8.5.8
-# Tix
-TIXVER=8.4.3
-# Togl
-TOGLVER=1.7
-#NetGen version
-NGVER=4.9.11
+# Download and install netgen-mesher
+   # Download from http://sourceforge.net/projects/netgen-mesher/files/
+   # unzip and cd
+   ./configure --prefix=/usr/local
+   make && make install
 
-# TK version should probably match TCL version
-TKVER=${TCLVER}
-
-# comment this line out to skip tests before install
-# tests can be really slow!
-# TEST=1
-
-# comment this line to skip clean up (for debugging build)
-CLEANUP=1
-
-CFLAGS="-I${INSTDIR}/include"
-CPPFLAGS=${CFLAGS}
-
-function err() {
-  echo "$(basename $0) ERROR: $1"
-  exit 1
-}
-
-# make working directories if they don't exist
-mkdir -p ${SRCDIR}
-mkdir -p ${INSTDIR}
-
-# get files
-cd ${SRCDIR}
-[ ! -f "tcl${TCLVER}-src.tar.gz" ] &amp;&amp; \
-  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tcl${TCLVER}-src.tar.gz || err "tcl download" )
-[ ! -f "tk${TKVER}-src.tar.gz" ] &amp;&amp; \
-  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tk${TKVER}-src.tar.gz || err "tk download" )
-[ ! -f "tix${TIXVER}-src.tar.gz" ] &amp;&amp; \
-  ( wget --quiet http://prdownloads.sourceforge.net/tix/files/tix/${TIXVER}/Tix${TIXVER}-src.tar.gz || err "tix download" )
-[ ! -f "togl-${TOGLVER}.tar.gz" ] &amp;&amp; \
-  ( wget --quiet http://prdownloads.sourceforge.net/togl/files/Togl/${TOGLVER}/Togl-${TOGLVER}.tar.gz || err "togl download" )
-[ ! -f "netgen-${NGVER}.tar.gz" ] &amp;&amp; \
-  ( wget --quiet http://prdownloads.sourceforge.net/netgen-mesher/files/netgen-mesher/${NGVER}/netgen-${NGVER}.tar.gz || err "netgen download" )
-
-# unpack files
-[ ! -d "tcl${TCLVER}" ] &amp;&amp; ( tar zxvf tcl${TCLVER}-src.tar.gz || err "tcl unpack" )
-[ ! -d "tk${TKVER}" ]   &amp;&amp; ( tar zxvf  tk${TKVER}-src.tar.gz  || err "tk unpack" )
-[ ! -d "Tix${TIXVER}" ]   &amp;&amp; ( tar zxvf  Tix${TIXVER}-src.tar.gz  || err "tix unpack" )
-[ ! -d "Togl-${TOGLVER}" ]   &amp;&amp; ( tar zxvf  Togl-${TOGLVER}.tar.gz  || err "togl unpack" )
-[ ! -d "netgen-${NGVER}" ]   &amp;&amp; ( tar zxvf  netgen-${NGVER}.tar.gz  || err "netgen unpack" )
-
-# build tcl
-cd ${SRCDIR}/tcl${TCLVER}/unix &amp;&amp; \
-  ./configure --prefix=${INSTDIR} --enable-threads --enable-shared --enable-64bit &amp;&amp;
-  make &amp;&amp; \
-  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
-  make install || err "install tcl-${TCLVER}"
-
-# build tk
-cd ${SRCDIR}/tk${TKVER}/unix &amp;&amp; \
-  ./configure --prefix=${INSTDIR} \
-    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --enable-threads --enable-shared --enable-64bit &amp;&amp; \
-  make &amp;&amp; \
-  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
-  make install || err "install tk-${TKVER}" 
-
-# build tix
-cd ${SRCDIR}/Tix${TIXVER} &amp;&amp; \
-  ./configure --prefix=${INSTDIR} \
-    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
-    --enable-threads --enable-shared --enable-64bit &amp;&amp; \
-  make &amp;&amp; \
-  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
-  make install || err "install tix-${TIXVER}"
-
-
-# build Togl
-cd ${SRCDIR}/Togl-${TOGLVER} &amp;&amp; \
-  ./configure --prefix=${INSTDIR} \
-    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
-    --enable-threads --enable-shared --enable-64bit &amp;&amp; \
-  make &amp;&amp; \
-  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
-  make install || err "install togl-${TOGLVER}"
-
-# TODO is this necessary?
-ln -s ${INSTDIR}/lib/Togl${TOGLVER}/libTogl${TOGLVER}.so ${INSTDIR}/lib/libTogl${TOGLVER}.so || err "ln libTogl${TOGLVER}"
-
-# build NetGen
-cd ${SRCDIR}/netgen-${NGVER} &amp;&amp; \
-  CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} \
-  ./configure --prefix=${INSTDIR} \
-    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
-    --with-togl=${SRCDIR}/Togl-${TOGLVER} \
-    --with-tclinclude=${SRCDIR}/include &amp;&amp; \
-  make &amp;&amp; \
-  ( ( [ -n "${TEST}" ] &amp;&amp; make test ) || [ -z "${TEST}" ] ) &amp;&amp; \
-  make install || err "install netgen-${TOGLVER}"
-
-echo  " ./configure --prefix=${INSTDIR} --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix --with-togl=${SRCDIR}/Togl-${TOGLVER} --with-tclinclude=${SRCDIR}/include"
-	     
-
-# clean up
-if [ -n "${CLEANUP}" ]; then
-  cd
-  rm -rf ${SRCDIR}/tcl${TCLVER} || err "clean up tcl-${TCLVER}"
-  rm -rf ${SRCDIR}/tk${TKVER} || err "clean up tk-${TKVER}"
-  rm -rf ${SRCDIR}/Tix${TIXVER} || err "clean up tix-${TIXVER}"
-  rm -rf ${SRCDIR}/Togl-${TOGLVER} || err "clean up togl-${TOGLVER}"
-  rm -rf ${SRCDIR}/netgen-${NGVER} || err "clean up netgen-${NGVER}"
-fi
-
-# fix path issues
-mv ${INSTDIR}/bin/netgen ${INSTDIR}/bin/netgen-exec
-echo "#! /bin/sh
-D=${INSTDIR}/bin
-L=${INSTDIR}/lib
-LD_LIBRARY_PATH=\$L NETGENDIR=\$D \$D/netgen-exec \$*
-" &gt; ${INSTDIR}/bin/netgen
-chmod +x ${INSTDIR}/bin/netgen
-
-echo "run netgen with '${INSTDIR}/bin/netgen'"
+# Now netgen requires a script to make it work.
+   cd /usr/local
+   mv netgen netgen.bin
+   cat > netgen
+#!/bin/sh
+NETGENDIR=/home/adler/local/bin/  \
+LD_LIBRARY_PATH=/usr/local/lib/Togl1.7/  \
+netgen.bin $1 $2 $3
+^D
+   chmod a+x netgen
 </pre></table>
 
 
