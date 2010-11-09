@@ -6,7 +6,8 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 %   vh     = homogeneous (reference) training measurements 
 %   vi     = inhomogeneous training measurements 
 %   xyc    = x,y position of targets 2xN
-%   radius = requested weighting matrix  (recommend 0.25 for 16 electrodes)
+%   radius = requested resolution matrix
+%      if scalar - apply resolution to all images:  recommend 0.25 for 16 elecs
 %   weight = weighting matrix
 %      if scalar   = weighting of noise vs signal
 %      if 32^2 x N = weighting of each image output

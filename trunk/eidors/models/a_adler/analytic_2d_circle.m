@@ -1,11 +1,13 @@
 function V = analytic_2d_circle(I, params)
-% V = analytic_2d_circle(I, [s_h, s_i, b, a, angl])
+% V = analytic_2d_circle(J, [s_h, s_i, b, a, angl])
 % Voltage around a 2D circle with properties
 %   conductivities: tank(s_h), inclusion(s_i)
 %   tank radius = 1
 %   inclusion: radius(a), distance(b) at angle(angl)
 %
-% I = current at a regular sample of nodes on the boundary
+% J = current density at a regular sample of nodes on the boundary
+%    because analytic_2d_circle works on current density, it needs
+%    to be scaled with the number of sample points, to get I
 %
 % Based on eqn 21 in Seagar and Bates (1985).
 %
