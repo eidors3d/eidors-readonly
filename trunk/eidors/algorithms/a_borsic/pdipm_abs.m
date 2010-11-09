@@ -128,6 +128,10 @@ function img= pdipm_1_1( img,W,L,d, pp);
    [D,N] = size(L); % E edges, N parameters
 %  s= zeros( N, 1 ); % solution - start with zeros
    s= img.elem_data;
+% initializing dual vars: 
+%   simple approach: initalize to zero
+%   or: inialize as 0.5*sign(L*s);
+%   or:             0.5*sign(Delta v);
    y= zeros( D, 1 ); % dual var - start with zeros
    x= zeros( M, 1 ); % dual var - start with zeros
 
@@ -164,12 +168,16 @@ function img= pdipm_1_1( img,W,L,d, pp);
              As3,Ax3,Ay3] \ [B1;B2;B3];
 
       ds = DD(1:N);
+      % Line_search - not really, but stablize the solution for now.
+%     ds = 0.1*ds;
+
       dx = x_update(x, DD(N+(1:M)));
       dy = x_update(y, DD(N+M+(1:D)));
 
-      s= s + 0.1*ds; img.elem_data = s;
-      x= x + 0.1*dx;
-      y= y + 0.1*dy;
+      ff = .05;
+      s= s + ff*ds; img.elem_data = s;
+      x= x + 1*dx;
+      y= y + 1*dy;
 
       loop_display(i)
    end
@@ -194,15 +202,15 @@ function pp= process_parameters(imdl);
    catch  pp.min_change = 0;
    end
 
-   try    pp.beta = imdl.pdipm_diff.beta; 
+   try    pp.beta = imdl.pdipm_abs.beta; 
    catch  pp.beta = 1e-8;
    end
 
-   try    pp.norm_data = imdl.pdipm_diff.norm_data;
+   try    pp.norm_data = imdl.pdipm_abs.norm_data;
    catch  pp.norm_data = 2;
    end
 
-   try    pp.norm_image = imdl.pdipm_diff.norm_image;
+   try    pp.norm_image = imdl.pdipm_abs.norm_image;
    catch  pp.norm_image = 2;
    end
 
