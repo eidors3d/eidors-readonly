@@ -28,9 +28,17 @@ if nargin==4;
 end
 
 if isstr(fmdl)
-  imgs = get_prepackaged_fmdls( fmdl );
+   imgs = get_prepackaged_fmdls( fmdl );
+elseif isfield(fmdl,'type');
+  switch fmdl.type
+%  if we get a fwd_model, assume uniform conductivity backgnd of 1
+    case 'fwd_model'; imgs = mk_image( fmdl, 1);
+%  if we get an image, use it. It may have a non-uniform backgnd
+    case 'image';     imgs = fmdl; % fmdl was an image
+    otherwise; error('unrecognized eidors object');
+  end
 else
-  imgs = mk_image( fmdl, 1);
+   error('specified parameter must be an object or a string');
 end
 
 Nsim = 1000;
@@ -66,6 +74,18 @@ function [vi,vh,xy]= stim_targets(imgs, Nsim );
 
    [vh,vi] = simulate_movement(imgs, xyzr);
    xy = xyzr(1:2,:);
+
+
+% TODO: stim_targets will need to figure out the shape of the imgs.fwd_model
+% Calculate the position of the electrodes
+   Nelecs = length(imgs.fwd_model.electrode);
+   for i=1:Nelecs
+     enodesi =     imgs.fwd_model.electrode(:).nodes; 
+     elec_loc(i,:) = mean( imgs.fwd_model.nodes( enodesi,:),1 );
+   end
+
+% Now, use elec_loc to figure out the shape. We can assume the obj is extruded in z
+
 
 
 function do_unit_test
