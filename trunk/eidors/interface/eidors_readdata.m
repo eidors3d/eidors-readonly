@@ -1,4 +1,4 @@
-function [vv, auxdata ]= eidors_readdata( fname, format )
+function [vv, auxdata, stim ]= eidors_readdata( fname, format )
 % EIDORS readdata - read data files from various EIT equipment
 %    manufacturers
 %
@@ -6,7 +6,7 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %    - MCEIT (Goettingen / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
 %    - Draeger "get" file format (older format for Draeger equipment)
-%        format = "GET" or "draeger"
+%        format = "GET" or "draeger-get"
 %    - New Carefusion "EIT" file format
 %        format = "EIT" or "carefusion"
 %    - Sheffield MK I "RAW" file format
@@ -25,9 +25,11 @@ function [vv, auxdata ]= eidors_readdata( fname, format )
 %           - Output: [vv]= eit_readdata( fname, 'UCT_DATA' )
 %
 % Usage
-% [vv, auxdata ]= eit_readdata( fname, format )
+% [vv, auxdata, stim ]= eit_readdata( fname, format )
 %     vv      = measurements - data frames in each column
 %     auxdata = auxillary data - if provided by system 
+%     stim    = stimulation structure, to be used with
+%                fwd_model.stimulation. 
 %     fname = file name
 %
 %  if format is unspecified, we attempt to autodetect
@@ -59,27 +61,51 @@ end
 
 switch pre_proc_spec_fmt( format, fname );
    case 'mceit';
-      [vv,curr,volt,auxdata] = mceit_readdata( fname );
+      [vv,curr,volt,auxdata_out] = mceit_readdata( fname );
+      auxdata.auxdata = auxdata_out;
+      auxdata.curr    = curr;
+      auxdata.volt    = volt;
+
+      stim = basic_stim(N_el);
    case 'draeger-get'
-      vv = draeger_readdata( fname );
+      vv = draeger_get_readdata( fname );
+
+      stim = basic_stim(N_el);
    case {'raw', 'sheffield'}
       vv = sheffield_readdata( fname );
+
+      stim = basic_stim(N_el);
    case {'p2k', 'its'}
       vv = its_readdata( fname );
+
+      stim = 'UNKNOWN';
    case {'txt','iirc'}
       vv = iirc_readdata( fname );
+
+      stim = basic_stim(N_el);
    case 'uct_seq'
       [vv,auxdata] = UCT_sequence_file( fname );
+
+      stim = 'UNKNOWN';
    case 'uct_cal'
       [vv,auxdata] = UCT_calibration_file( fname );
+
+      stim = 'UNKNOWN';
    case 'uct_data'
       [vv] = UCT_LoadDataFrame( fname );
+
+      stim = 'UNKNOWN';
    case 'carefusion'
       [vv] = carefusion_eit_readdata( fname );
   
+      stim = basic_stim(N_el);
    otherwise
       error('eidors_readdata: file "%s" format unknown', fmt);
 end
+
+function stim = basic_stim(N_el);
+   stim= mk_stim_patterns(16,1,[0,1],[0,1], ... \
+          {'no_meas_current','no_rotate_meas'}, 1);
 
 function fmt = pre_proc_spec_fmt( format, fname );
    fmt= lower(format);
@@ -143,7 +169,8 @@ function [vv] = carefusion_eit_readdata( fname );
    vv= vv(36+[1:208],:);
    
 
-function [vv,curr,volt,auxdata] = draeger_readdata( fname );
+% Read the old <2006 Draeger "get" file format
+function [vv,curr,volt,auxdata] = draeger_get_readdata( fname );
    fid= fopen(fname,'rb');
    emptyctr=0;
    while emptyctr<2
