@@ -46,7 +46,7 @@ VF= zeros(size(I));
 VF(1+[ll2, ll-ll2],:)= [VF2;conj(VF2)];
 V = ifft(VF);
 
-if norm(imag(V))>1e-10; error('Unexpected Imaginary output - probably a bug'); end
+if norm(imag(V))>1e-9; error('Unexpected Imaginary output - probably a bug'); end
 V= real(V);
 
 
