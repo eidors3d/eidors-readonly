@@ -22,7 +22,7 @@ Load thorax shape and identify contours
 This image is from a human CT of a healthy man,
 provided with permission.
 Hand registered contours are available in 
-<a href="CT2.mat">this file [CT2.mat]</a>.
+<a href="CT1.mat">this file [CT1.mat]</a>.
 <pre>
 <!--#include virtual="thoraxmdl01.m" -->
 </pre>
