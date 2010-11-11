@@ -23,6 +23,8 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format )
 %                 where no_cur_caldata_raw is data captured with no current
 %        format = "UCT_DATA"  UCT data frame file
 %           - Output: [vv]= eit_readdata( fname, 'UCT_DATA' )
+%    - Landquart, Switzerland EIT equipment 'LQ1'
+%        files are 'EIT' files, but are not autodetected
 %
 % Usage
 % [vv, auxdata, stim ]= eit_readdata( fname, format )
@@ -99,6 +101,11 @@ switch pre_proc_spec_fmt( format, fname );
       [vv] = carefusion_eit_readdata( fname );
   
       stim = basic_stim(N_el);
+
+   case 'lq1'
+      [vv] = landquart1_readdata( fname );
+
+      stim = 'UNKNOWN';
    otherwise
       error('eidors_readdata: file "%s" format unknown', fmt);
 end
@@ -593,3 +600,42 @@ end
 
 fclose(fid);
 % UCT_ShuffleData??
+
+% Read data from the file format develped by Pascal
+% Gaggero at CSEM Landquart in Switzerland.
+function [vv] = landquart1_readdata( fname );
+   FrameSize = 1024;
+
+   enableCounter=1;
+   counter=0;
+
+   fid=fopen(fname);
+
+   codec=fread(fid,1,'int'); %read codec
+   if codec~=1; error('Codec unexpected value'); end
+
+   nbFileInHeader=fread(fid,1,'int'); %read codec
+   
+   for i=1:nbFileInHeader
+       lenghtFile = fread(fid,1,'int64'); 
+       jnk= fread(fid,lenghtFile,'int8');% discard the file 
+   end
+   
+   
+   vv= []; 
+   while 1; 
+       type=fread(fid,1,'int'); %check if not End of file
+       if type == -1; break ; end
+       
+       nel= fread(fid,1,'int');
+       sz= fread(fid,1,'int');
+       iq=fread(fid,[2,sz/8],'int')';
+
+       vv = [vv, iq*[1;1j]]; %I+ 1j*Q vectors
+       
+       for j=1:nel-1
+           sz= fread(fid,1,'int');
+           jnk = fread(fid,sz/4,'int');
+       end
+       
+   end
