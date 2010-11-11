@@ -17,7 +17,7 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %  by default T= [0,0,0] and M=eye(3)
 %
 % if c_mdl is 2D and f_mdl is 3D, then parameter
-%     c_mdl.mk_coarse_fine_mapping.z_depth (default = inf)
+%     c_mdl.mk_coarse_fine_mapping.z_depth
 %     indicates the +/- z_depth which elements in 2D are
 %     considered to be extruded in 3D
 
@@ -32,11 +32,7 @@ if ~isempty(mapping)
     eidors_msg('mk_coarse_fine_mapping: using cached value', 3);
 else
 
-    try
-       z_depth = c_mdl.mk_coarse_fine_mapping.z_depth;
-    catch
-       z_depth = inf;
-    end
+    z_depth = c_mdl.mk_coarse_fine_mapping.z_depth;
 
     f_elems = all_contained_elems( f_mdl, c_mdl, z_depth);
     mapping = contained_elems_i( f_mdl, c_mdl, f_elems, z_depth);
@@ -51,7 +47,7 @@ end
 
 % Mapping depends only on nodes and elems - remove the other stuff
 function c_obj = cache_obj(c_mdl, f_mdl)
-   c_obj = {c_mdl.nodes, c_mdl.elems,  ...
+   c_obj = {c_mdl.nodes, c_mdl.elems, c_mdl.mk_coarse_fine_mapping, ...
             f_mdl.nodes, f_mdl.elems};
 
 % find all elems of ff_mdl completely contained in cc_mdl
