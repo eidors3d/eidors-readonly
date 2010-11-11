@@ -109,6 +109,8 @@ function imdl = Elec_Move_GN( imdl );
    n_elems = size(imdl.fwd_model.elems,1);
    imdl.inv_solve.select_parameters = 1:n_elems;
 
+   imdl.prior_use_fwd_not_rec = 1; % for c2f mapping
+
 function imdl = Nodal_GN_Dif( imdl );
    imdl.solve = @nodal_solve;
 
