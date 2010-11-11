@@ -15,6 +15,9 @@ function Reg= aa_e_move_image_prior( inv_model );
 %
 % For the movmenent portion, we define a smoothness
 % constraint, such that Rij = -1 for adjacent electrodes
+%
+% If used with a dual model (ie coarse2fine mapping), ensure
+%    imdl.prior_use_fwd_not_rec = 1;
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -27,6 +30,7 @@ else
 end
 
 pp= aa_fwd_parameters( inv_model.fwd_model );
+n_elec = pp.n_elec;
 
 % calc conductivity portion
 try
@@ -34,19 +38,30 @@ try
 catch
    RegCfcn = @laplace_image_prior;
 end
-RegC= feval( RegCfcn, inv_model); 
+try; inv_model = rmfield(inv_model, 'R_prior'); end
+try; inv_model = rmfield(inv_model, 'prior_use_fwd_not_rec'); end
+inv_model.RtR_prior = RegCfcn;
+
+pp= aa_fwd_parameters( inv_model.fwd_model );
+
+
+RegC= calc_RtR_prior( inv_model); 
+szC = size(RegC,1);
 
 % calc movement portion
 RegM = movement_image_prior( pp.n_dims, pp.n_elec );
 
 % zero blocks
-RegCM= sparse( pp.n_elem, pp.n_dims*pp.n_elec );
+RegCM= sparse( szC, pp.n_dims*pp.n_elec );
 
 Reg= [RegC,           RegCM;
       RegCM', hp_move^2*RegM ];
 
 % For the movmenent portion, we define a smoothness
 % constraint, such that Rij = -1 for adjacent electrodes
+%
+% TODO: this approach assumes that electrodes close in number
+%   are close to each other. This isn't necessarily right.
 function RegM = movement_image_prior( dims, elecs );
 
    % movement constraint in each dimention
