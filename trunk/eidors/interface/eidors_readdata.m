@@ -1,4 +1,4 @@
-function [vv, auxdata, stim ]= eidors_readdata( fname, format )
+function [vv, auxdata, stim ]= eidors_readdata( fname, format, extra )
 % EIDORS readdata - read data files from various EIT equipment
 %    manufacturers
 %
@@ -17,17 +17,23 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format )
 %        format = "txt" or "IIRC"
 %    - University of Cape Town formats
 %        format = "UCT_SEQ"  UCT sequence file
-%           - Output: [ stimulation, meas_select]= eit_readdata(fname, 'UCT_SEQ')
+%           - Output: [ stimulation, meas_select]= eidors_readdata(fname, 'UCT_SEQ')
 %        format = "UCT_CAL"  UCT calibration file
-%           - Output: [vv, no_cur_caldata_raw ]= eit_readdata( fname, 'UCT_CAL' )
+%           - Output: [vv, no_cur_caldata_raw ]= eidors_readdata( fname, 'UCT_CAL' )
 %                 where no_cur_caldata_raw is data captured with no current
 %        format = "UCT_DATA"  UCT data frame file
-%           - Output: [vv]= eit_readdata( fname, 'UCT_DATA' )
+%           - Output: [vv]= eidors_readdata( fname, 'UCT_DATA' )
 %    - Landquart, Switzerland EIT equipment 'LQ1'
 %        files are 'EIT' files, but are not autodetected
+%    - Dixtal file format, from Dixtal inc, Brazil
+%        format = 'DIXTAL_encode' extract encoder from provided Dll
+%           - Output: [encodepage] = eidors_readdata( path,'DIXTAL_encode');
+%              where path= '/path/to/Criptografa_New.dll' (provided with system)
+%        format = 'DIXTAL'
+%           - output: [vv] = eidors_readdata( fname, 'DIXTAL', encodepage );
 %
 % Usage
-% [vv, auxdata, stim ]= eit_readdata( fname, format )
+% [vv, auxdata, stim ]= eidors_readdata( fname, format )
 %     vv      = measurements - data frames in each column
 %     auxdata = auxillary data - if provided by system 
 %     stim    = stimulation structure, to be used with
@@ -106,8 +112,17 @@ switch pre_proc_spec_fmt( format, fname );
       [vv] = landquart1_readdata( fname );
 
       stim = 'UNKNOWN';
+
+   case 'dixtal_encode'
+      [vv] = dixtal_read_codepage( fname );
+      stim = 'N/A';
+
+   case 'dixtal'
+      [vv] = dixtal_read_data( fname, extra );
+      stim = 'UNKNOWN';
+
    otherwise
-      error('eidors_readdata: file "%s" format unknown', fmt);
+      error('eidors_readdata: file "%s" format unknown', format);
 end
 
 function stim = basic_stim(N_el);
@@ -639,3 +654,53 @@ function [vv] = landquart1_readdata( fname );
        end
        
    end
+
+%  Output: [encodepage] = eidors_readdata( path,'DIX_encode');
+%   where path= '/path/to/Criptografa_New.dll' (provided with system)
+function [vv] = dixtal_read_codepage( fname );
+   %Fname must be the Criptografa_New dll
+   fid = fopen(fname,'rb');
+   b1234= fread(fid, [1,4], 'uint8');
+   if b1234~= [77, 90, 144, 0];
+      error('This does not appear to be the correct Dll');
+   end
+   fseek(fid, hex2dec('e00'), 'bof');
+   encodepage1 = fread(fid, hex2dec('1200'), 'uint8');
+   fclose(fid);
+   encodepage1 = flipud(reshape(encodepage1,4,[]));
+   vv = encodepage1(:);
+
+%        format = 'DIXTAL'
+%           - output: [vv] = eidors_readdata( fname, 'DIXTAL', encodepage );
+function [vv] = dixtal_read_data( file_name, encodepage1 );
+
+   % Get encodepage from the file
+   fid=fopen(file_name,'rb');
+   fseek(fid, hex2dec('800'), 'bof');
+   encodepage2 = fread(fid, hex2dec('1200'), 'uint8');
+   fclose(fid);
+
+   encodepage = bitxor(encodepage1, encodepage2);
+
+   % Read the file
+   dplen = hex2dec('1090');
+   start = hex2dec('2800');
+   fid=fopen(file_name,'rb');
+   vv= [];
+   for framenum = 1:10
+      status= fseek(fid, start + (framenum-1)*dplen, 'bof');
+      datapage = fread(fid, dplen, 'uint8');
+      vv = [vv, proc_dixtal_data( datapage, encodepage )];
+   end
+   fclose(fid);
+
+
+function  data = proc_dixtal_data( b, encodepage );
+
+   cryptolen = 1024*4;
+   b(1:cryptolen) = bitxor(b(1:cryptolen), encodepage(1:cryptolen));
+   b1 = b(1:4:end,:); %b1 = bitand(b1,127);
+   b2 = b(2:4:end,:);
+   b3 = b(3:4:end,:);
+   b4 = b(4:4:end,:);
+   data = [b1,b2,b3,b4]*(256.^[3;2;1;0]);
