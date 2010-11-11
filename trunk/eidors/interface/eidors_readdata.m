@@ -699,8 +699,18 @@ function  data = proc_dixtal_data( b, encodepage );
 
    cryptolen = 1024*4;
    b(1:cryptolen) = bitxor(b(1:cryptolen), encodepage(1:cryptolen));
+
    b1 = b(1:4:end,:); %b1 = bitand(b1,127);
    b2 = b(2:4:end,:);
    b3 = b(3:4:end,:);
    b4 = b(4:4:end,:);
-   data = [b1,b2,b3,b4]*(256.^[3;2;1;0]);
+   bb  = [b1,b2,b3,b4]*(256.^[3;2;1;0]);
+
+   sgnbit = bitand( bb,  2^31);
+   sgnbit = +1*(sgnbit == 0) - 1*(sgnbit == 2^31);
+
+   expbit = bitand( bb, 255*2^23 ) /2^23; 
+   expbit = 2.^(expbit - 127);
+
+   fracbt = bitand( bb, 2^23-1)/2^23 + 1;
+   data = sgnbit .* expbit .* fracbt;
