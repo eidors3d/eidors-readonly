@@ -74,15 +74,15 @@ switch pre_proc_spec_fmt( format, fname );
       auxdata.curr    = curr;
       auxdata.volt    = volt;
 
-      stim = basic_stim(N_el);
+      stim = basic_stim(16);
    case 'draeger-get'
       vv = draeger_get_readdata( fname );
 
-      stim = basic_stim(N_el);
+      stim = basic_stim(16);
    case {'raw', 'sheffield'}
       vv = sheffield_readdata( fname );
 
-      stim = basic_stim(N_el);
+      stim = basic_stim(16);
    case {'p2k', 'its'}
       vv = its_readdata( fname );
 
@@ -90,7 +90,7 @@ switch pre_proc_spec_fmt( format, fname );
    case {'txt','iirc'}
       vv = iirc_readdata( fname );
 
-      stim = basic_stim(N_el);
+      stim = basic_stim(16);
    case 'uct_seq'
       [vv,auxdata] = UCT_sequence_file( fname );
 
@@ -106,7 +106,7 @@ switch pre_proc_spec_fmt( format, fname );
    case 'carefusion'
       [vv] = carefusion_eit_readdata( fname );
   
-      stim = basic_stim(N_el);
+      stim = basic_stim(16);
 
    case 'lq1'
       [vv] = landquart1_readdata( fname );
