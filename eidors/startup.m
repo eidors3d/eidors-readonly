@@ -128,17 +128,15 @@ mexf = strcat(HOMEDIR,strcat(archdir,'/eidors_var_id.mex'));
 if exist(srcf) == 2 & exist(mexf) == 2
   srcd=dir(srcf);
   mexd=dir(mexf);
-  if datenum(srcd.date) > datenum(mexd.date)
+  if srcd.datenum > mexd.datenum
      warning('eidors_var_id.mex file is older than source file and should be recompiled.');
   end
-  clear srcd mexd;
 end
-clear srcf mexf;
 
 % helpful messages
 if ~exist('OCTAVE_VERSION');
-   eidors_msg('New to EIDORS? Have a look at the <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
+   eidors_msg('New to EIDORS? Have a look at the <a href="http://eidors3d.sf.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
 else 
-   eidors_msg('New to EIDORS? Have a look at the Tutorials at http://eidors3d.sourceforge.net/tutorial/tutorial.shtml',1);
+   eidors_msg('New to EIDORS? Have a look at the Tutorials at http://eidors3d.sf.net/tutorial/tutorial.shtml',1);
 end
 
