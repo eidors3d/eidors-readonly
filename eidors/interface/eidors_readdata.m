@@ -119,7 +119,10 @@ switch pre_proc_spec_fmt( format, fname );
 
    case 'dixtal'
       [vv] = dixtal_read_data( fname, extra );
-      stim = 'UNKNOWN';
+      auxdata = vv(1025:end,:);
+      vv      = vv([1:1024],:);
+      stim= mk_stim_patterns(32,1,[0,4],[0,4], ... \
+              {'meas_current','no_rotate_meas'}, 1);
 
    otherwise
       error('eidors_readdata: file "%s" format unknown', format);
@@ -665,7 +668,7 @@ function [vv] = dixtal_read_codepage( fname );
       error('This does not appear to be the correct Dll');
    end
    fseek(fid, hex2dec('e00'), 'bof');
-   encodepage1 = fread(fid, hex2dec('1200'), 'uint8');
+   encodepage1 = fread(fid, hex2dec('1000'), 'uint8');
    fclose(fid);
    encodepage1 = flipud(reshape(encodepage1,4,[]));
    vv = encodepage1(:);
@@ -676,8 +679,13 @@ function [vv] = dixtal_read_data( file_name, encodepage1 );
 
    % Get encodepage from the file
    fid=fopen(file_name,'rb');
+   n1 = fgetl(fid);
+   n2 = fgetl(fid);
+   n3 = fgetl(fid); 
+   nframes = str2num( n3 );
+   
    fseek(fid, hex2dec('800'), 'bof');
-   encodepage2 = fread(fid, hex2dec('1200'), 'uint8');
+   encodepage2 = fread(fid, hex2dec('1000'), 'uint8');
    fclose(fid);
 
    encodepage = bitxor(encodepage1, encodepage2);
@@ -686,11 +694,12 @@ function [vv] = dixtal_read_data( file_name, encodepage1 );
    dplen = hex2dec('1090');
    start = hex2dec('2800');
    fid=fopen(file_name,'rb');
-   vv= [];
-   for framenum = 1:10
-      status= fseek(fid, start + (framenum-1)*dplen, 'bof');
+   vv= zeros(dplen/4, nframes);
+   for i = 0:nframes
+      status= fseek(fid, start + i*dplen, 'bof');
+      if status~=0; break; end
       datapage = fread(fid, dplen, 'uint8');
-      vv = [vv, proc_dixtal_data( datapage, encodepage )];
+      vv(:,i+1) = proc_dixtal_data( datapage, encodepage );
    end
    fclose(fid);
 
@@ -698,7 +707,7 @@ function [vv] = dixtal_read_data( file_name, encodepage1 );
 function  data = proc_dixtal_data( b, encodepage );
 
    cryptolen = 1024*4;
-   b(1:cryptolen) = bitxor(b(1:cryptolen), encodepage(1:cryptolen));
+   b(1:cryptolen) = bitxor(b(1:cryptolen), encodepage);
 
    b1 = b(1:4:end,:); %b1 = bitand(b1,127);
    b2 = b(2:4:end,:);
