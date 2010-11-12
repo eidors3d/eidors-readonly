@@ -24,3 +24,6 @@ for stim = imdl.fwd_model.stimulation(:)'
 
    meas_icov = [meas_icov; icovi];
 end
+
+n = length(meas_icov);
+meas_icov = spdiags( meas_icov, 0, n,n );
