@@ -5,6 +5,7 @@ function transfimp = calc_transferimpedance( img)
 %
 % fwd_model is a fwd_model structure
 % img       is an image structure
+
 % (C) 2006 Bill Lionheart. License: GPL version 2 or version 3
 % $Id$
 
@@ -12,21 +13,35 @@ function transfimp = calc_transferimpedance( img)
 % stimulate with one ref electrode and then each in turn
 % make an equiv set of measurements
 
-n_elecs= length( img.fwd_model.electrode );
+cacheobj = {img.fwd_model, img.elem_data};
+transfimp = eidors_obj('get-cache', cacheobj, 'calc_transferimpedance');
 
-%[stim_pat, meas_pat]= trigonometric( n_elecs );
-%[stim_pat, meas_pat]= electrode_wise( n_elecs );
-%[stim_pat, meas_pat]= monopolar( n_elecs );
- [stim_pat, meas_pat]= monopolar_even( n_elecs );
-img.fwd_model.stimulation = stim_pat;
+if ~isempty(transfimp)
+   eidors_msg('calc_transferimpedance: using cached value', 3);
+   return
+end
 
-imeas_pat= pinv(meas_pat);
+transfimp = calc_T( img );
 
-data = fwd_solve(img);
+eidors_obj('set-cache', cacheobj, 'calc_transferimpedance', transfimp);
+eidors_msg('calc_transferimpedance: setting cached value', 3);
 
-sz= length(img.fwd_model.stimulation);
-transfimp = reshape( data.meas, sz, sz);
-transfimp = imeas_pat * transfimp * imeas_pat';
+function transfimp = calc_T( img);
+   n_elecs= length( img.fwd_model.electrode );
+
+   %[stim_pat, meas_pat]= trigonometric( n_elecs );
+   %[stim_pat, meas_pat]= electrode_wise( n_elecs );
+   %[stim_pat, meas_pat]= monopolar( n_elecs );
+    [stim_pat, meas_pat]= monopolar_even( n_elecs );
+   img.fwd_model.stimulation = stim_pat;
+
+   imeas_pat= pinv(meas_pat);
+
+   data = fwd_solve(img);
+
+   sz= length(img.fwd_model.stimulation);
+   transfimp = reshape( data.meas, sz, sz);
+   transfimp = imeas_pat * transfimp * imeas_pat';
 
 function [stim_pat, meas_pat] = trigonometric( n_elecs )
     stim_pat = struct;
