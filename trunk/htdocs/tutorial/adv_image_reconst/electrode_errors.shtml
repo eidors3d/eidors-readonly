@@ -1,0 +1,96 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+
+<h2>
+Reconstructing with electrode errors
+</H2>
+
+The main idea used to reconstruct with electrode errors, is to
+model errors as low SNR, and thus high noise, on measurements
+which use the affected electrodes.
+
+
+
+<h3>
+Sample Data and clean reconstruction
+</H3>
+
+<pre>
+<!--#include virtual="electrode_errors01.m" -->
+</pre>
+
+<center>
+<img src="electrode_errors01a.png">
+<img src="electrode_errors01b.png">
+<br><i>Figure:</i>
+Reconstructions of breathing data, illustrating that
+a small amount of electrode error occurs at electrodes
+13 and 5.
+</center>
+
+<h3>
+Eliminating Electrodes
+</H3>
+
+These results are taken from the paper:
+<ul>
+Andy Adler
+<i>
+  Reference Accounting for erroneous electrode data in EIT
+</i>
+ Physiol Meas, 25(1):227-238, 2004. 
+</ul>
+
+<pre>
+<!--#include virtual="electrode_errors02.m" -->
+</pre>
+
+<center>
+<img src="electrode_errors02a.png">
+<img src="electrode_errors02b.png">
+<br><i>Figure:</i>
+Reconstructions removing 
+<i>Left</i>: Electrode 13, and
+<i>Right</i>: Electrodes 5 and 13
+</center>
+
+<h3>
+Detecting and automatically eliminating electrodes
+</H3>
+
+The idea here is to compare the reciprocity match between
+measurements and scale the weighting of those which do not 
+match via reciprocity.
+These results are taken from the paper:
+<ul>
+ AE Hartinger, R Guardo, A Adler, H Gagnon.
+<i>
+Real-time management of faulty electrodes in EIT
+</i>
+ IEEE T BME 2008.
+</ul>
+
+<pre>
+<!--#include virtual="electrode_errors03.m" -->
+</pre>
+
+<center>
+<img src="electrode_errors03a.png">
+<img src="electrode_errors03b.png">
+<br><i>Figure:</i>
+Reconstructions removing 
+<i>Left</i>:  Parameter <i>&tau;</i>=0.003
+<i>Right</i>: Parameter <i>&tau;</i>=0.03
+</center>
+
+
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
