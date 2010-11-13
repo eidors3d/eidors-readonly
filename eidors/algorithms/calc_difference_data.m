@@ -8,6 +8,8 @@ function dva = calc_difference_data( data1, data2, fwd_model)
 %  meas2 = measurement object (or matrix) at time2 (inhomogeneous)
 %  fwd_model (optional, if provided in meas1 and meas2)
 %
+%  if data1==0, then just process data2 like absolute data
+%
 % This code appears simple, but there are a number of tricks
 %  to remember, so it is best to factor it out. Issues are
 %  1) normalize_data, 2) remove zero meas from adjacent systems,
@@ -25,6 +27,11 @@ end; end
 try if data2.type == 'data'
    data2= data2.meas;
 end; end
+
+if all(size(data1) == [1,1]) && (data1 == 0)
+   dva =  filt_data( fwd_model, data2, data_width );
+   return;
+end
 
 if ~isfield(fwd_model,'normalize_measurements')
    fwd_model.normalize_measurements = 0;
