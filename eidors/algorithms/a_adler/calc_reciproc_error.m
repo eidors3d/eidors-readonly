@@ -14,12 +14,27 @@ function meas_icov = calc_reciproc_error(inv_model, data )
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-try
-   tau == inv_model.calc_reciproc_error.tau;
-catch
-   tau = 2.5e-6;
+try;    tau = inv_model.calc_reciproc_error.tau;
+catch;  tau = 2.5e-6;                            end
+
+fmdl = inv_model.fwd_model;
+
+data = calc_difference_data( 0, data, fmdl);
+
+idx = reciprocity_idx( fmdl );
+if any(isnan(idx));
+   error('not all meas have reciprocity for this stim_pattern');
 end
 
+data = data/max(abs(data));
+recerr=  data - data(idx,:);
+recerr= mean( abs(recerr), 2);
+s2  = exp(-recerr.^2/tau); % eqn 8 from paper
+
+nmeas = length(idx);
+meas_icov= spdiags(s2(:),0,nmeas,nmeas);
+
+function oldcode
 % Use only with no_rotate
 Nel = length(inv_model.fwd_model.electrode);
 nframes= size(data,2);
@@ -38,7 +53,7 @@ ndata2r= permute(ndata2, [2,1,3]); % Transpose
 recerr= mean( ndata2 - ndata2r, 3);
 e2    = recerr.^2; % eqn 8 from paper
 
-s2  = exp(e2/tau);
+s2  = exp(-e2/tau);
 
 if isfield(inv_model.fwd_model,'meas_select')
    mselect = inv_model.fwd_model.meas_select;
@@ -46,4 +61,4 @@ if isfield(inv_model.fwd_model,'meas_select')
    nmeas = length(find(mselect));
 end
 
-meas_icov= spdiags(1./s2(:),0,nmeas,nmeas);
+meas_icov= spdiags(s2(:),0,nmeas,nmeas);
