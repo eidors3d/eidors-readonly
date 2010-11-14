@@ -10,6 +10,7 @@ imdl = mk_common_model('c2t2',16);
 imdl.hyperparameter.value = .1;
 
 img = inv_solve(imdl, vh, vi);
+subplot(221)
 show_slices(img);
 print_convert electrode_errors01a.jpg
 

@@ -19,8 +19,8 @@ Sample Data and clean reconstruction
 </pre>
 
 <center>
-<img src="electrode_errors01a.png">
-<img src="electrode_errors01b.png">
+<img src="electrode_errors01a.jpg">
+<img src="electrode_errors01b.jpg">
 <br><i>Figure:</i>
 Reconstructions of breathing data, illustrating that
 a small amount of electrode error occurs at electrodes
@@ -45,8 +45,8 @@ Andy Adler
 </pre>
 
 <center>
-<img src="electrode_errors02a.png">
-<img src="electrode_errors02b.png">
+<img src="electrode_errors02a.jpg">
+<img src="electrode_errors02b.jpg">
 <br><i>Figure:</i>
 Reconstructions removing 
 <i>Left</i>: Electrode 13, and
@@ -74,11 +74,11 @@ Real-time management of faulty electrodes in EIT
 </pre>
 
 <center>
-<img src="electrode_errors03a.png">
-<img src="electrode_errors03b.png">
+<img src="electrode_errors03a.jpg">
+<img src="electrode_errors03b.jpg">
 <br><i>Figure:</i>
 Reconstructions removing 
-<i>Left</i>:  Parameter <i>&tau;</i>=0.003
+<i>Left</i>:  Parameter <i>&tau;</i>=0.0003
 <i>Right</i>: Parameter <i>&tau;</i>=0.03
 </center>
 
