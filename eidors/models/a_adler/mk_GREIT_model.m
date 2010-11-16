@@ -43,7 +43,6 @@ end
 
 Nsim = 1000;
 [vi,vh,xy]= stim_targets(imgs, Nsim );
-
 RM= calc_GREIT_RM(vh,vi, xy, radius, weight, imgs.fwd_model.normalize_measurements );
 imdl = mk_common_gridmdl('b2c', RM);
 imdl.fwd_model.normalize_measurements= imgs.fwd_model.normalize_measurements;
@@ -63,28 +62,55 @@ function  imgs = get_prepackaged_fmdls( fmdl );
 
 function [vi,vh,xy]= stim_targets(imgs, Nsim );
    fmdl = imgs.fwd_model;
-   r =  linspace(0,0.9,Nsim);
    ctr = [0,0, mean(fmdl.nodes(:,3))];  % Assume x,y centre is zero
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
    maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
 
-   th=  r*4321; % want object to jump around in radius
-   xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim); 
-           0.05/mean([maxx,maxy])*ones(1, Nsim)];
+   % Calculate the position of the electrodes
+   Nelecs = length(imgs.fwd_model.electrode);
+   for i=1:Nelecs
+       enodesi =     imgs.fwd_model.electrode(i).nodes;
+       elec_loc(i,:) = mean( imgs.fwd_model.nodes( enodesi,:),1 );
+   end
+   distr = 1;
+   switch distr 
+       case 0 % original
+           r = linspace(0,0.9, Nsim);
+           th = r*4321; % want object to jump around in radius
+           xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim);
+               0.05/mean([maxx,maxy])*ones(1,Nsim)];
+       
+       case 1 %centre-heavy
+           % Now, use elec_loc to figure out the shape. We can assume the obj is
+           % extruded in z
+           F = fourier_fit(elec_loc(:,1:2));
+           v = linspace(0,1,Nsim*100+1); v(end)=[];
+           pts = fourier_fit(F,v);        
+           idx_p = floor(rand(Nsim,1)*Nsim*100);
+           xyzr = pts(idx_p,:)'.*repmat(rand(Nsim,1),[1 2])';
+           xyzr(3,:) = ctr(3); %for the time being
+           % TODO: What size is good here and how to figure it out?
+           xyzr(4,:) = 0.02*mean([maxx,maxy]);
+       case 2 %uniform
+           F = fourier_fit(elec_loc(:,1:2));
+           v = linspace(0,1,101); v(end)=[];
+           pts = fourier_fit(F,v);
+           x = (rand(Nsim*10,1)-0.5)*2*maxx;
+           y = (rand(Nsim*10,1)-0.5)*2*maxy;
+           IN = inpolygon(x,y,pts(:,1),pts(:,2));
+           xyzr(1,:) = x(find(IN,Nsim));
+           xyzr(2,:) = y(find(IN,Nsim));
+           xyzr(3,:) = ctr(3); %for the time being
+           % TODO: What size is good here and how to figure it out?
+           xyzr(4,:) = 0.02*mean([maxx,maxy]);
+   end
+
 
    [vh,vi] = simulate_movement(imgs, xyzr);
    xy = xyzr(1:2,:);
 
 
-% TODO: stim_targets will need to figure out the shape of the imgs.fwd_model
-% Calculate the position of the electrodes
-   Nelecs = length(imgs.fwd_model.electrode);
-   for i=1:Nelecs
-     enodesi =     imgs.fwd_model.electrode(:).nodes; 
-     elec_loc(i,:) = mean( imgs.fwd_model.nodes( enodesi,:),1 );
-   end
 
-% Now, use elec_loc to figure out the shape. We can assume the obj is extruded in z
 
 
 
