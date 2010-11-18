@@ -45,7 +45,12 @@ for i= 1:length(args)
    end
 end
 
-fid= 2; %stderr
+% It makes sense to print to stderr, but matlab>7 prints this in red
+ver= eidors_obj('interpreter_version');
+if ver.ver>=7; fid= 0;
+else ;         fid= 2; end
+
+
 %try, lms= eidors_objects.last_message_size;
 %  if lms>0; fprintf(fid,'%c', 8*ones(lms,1)); end
 %end
