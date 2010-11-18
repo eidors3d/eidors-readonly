@@ -14,6 +14,9 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.VOLUME     => Volume (or area) of each element
 %   param.normalize  => difference measurements normalized?
 %   param.N2E        => Node to electrode converter
+%
+% If the stimulation patterns has a 'interior_sources' field,
+%   the node current QQ, is set to this value for this stimulation.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -120,9 +123,16 @@ pp.QQ= pp.QQ(1:(n+cem_electrodes),:);
 
 n_meas= 0; % sum total number of measurements
 
+stim = fwd_model.stimulation;
 for i=1:p
-    pp.QQ(:,i) = N2E'* fwd_model.stimulation(i).stim_pattern;
-    n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,1);
+    try 
+       src = N2E'* stim(i).stim_pattern;
+    catch
+       src = stim(i).interior_sources;
+    end
+    
+    pp.QQ(:,i) = src;
+    n_meas = n_meas + size(stim(i).meas_pattern,1);
 end
 
 
