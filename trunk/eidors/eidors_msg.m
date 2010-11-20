@@ -45,9 +45,9 @@ for i= 1:length(args)
    end
 end
 
-% It makes sense to print to stderr, but matlab>7 prints this in red
+% It makes sense to print to stderr (fid=2), but matlab>7 prints this in red
 ver= eidors_obj('interpreter_version');
-if ver.ver>=7; fid= 0;
+if ver.ver>=7; fid= 1;
 else ;         fid= 2; end
 
 
