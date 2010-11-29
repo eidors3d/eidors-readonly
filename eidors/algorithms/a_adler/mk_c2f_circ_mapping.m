@@ -9,6 +9,9 @@ function mapping = mk_c2f_circ_mapping( mdl, xyzr );
 % xyzr is the 3xN matrix (2D) or 4xN matrix (3D) of
 %      circle centres and radii
 %
+% if a 3xN matrix is specified for a 3D model, then cylindrical
+%  shapes (circle extruded in z) are selected
+%
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -41,7 +44,7 @@ function mapping = contained_elems_2d( mdl, xyr );
    mapping = sparse( Ne, Nc );
 
    % Interpolate
-   n_interp = 5; % 7-df
+   n_interp =  7-size(mdl.nodes,2);
    m_pts = interp_mesh( mdl, n_interp); 
    for i=1:Nc
      xc = m_pts(:,1,:) - xyr(1,i);
