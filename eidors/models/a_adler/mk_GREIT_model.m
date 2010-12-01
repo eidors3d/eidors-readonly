@@ -42,10 +42,17 @@ else
 end
 
 Nsim = 1000;
-[vi,vh,xy]= stim_targets(imgs, Nsim );
+[vi,vh,xy,bound]= stim_targets(imgs, Nsim );
 RM= calc_GREIT_RM(vh,vi, xy, radius, weight, imgs.fwd_model.normalize_measurements );
-imdl = mk_common_gridmdl('b2c', RM);
+%imdl = mk_common_gridmdl('b2c', RM);
+imdl = mk_grid_model(fmdl.fwd_model,bound(:,1),bound(:,2));
+imdl.fwd_model = fmdl;
+imdl.solve_use_matrix.RM = RM;
 imdl.fwd_model.normalize_measurements= imgs.fwd_model.normalize_measurements;
+imdl.solve = @solve_use_matrix;
+[st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
+inv_mdl.fwd_model.meas_select= els;
+imdl.recons_type = 'difference';
 
 %RM= calc_GREIT_RM(vh,vi, xyc, radius weight, normalize)
 
@@ -60,8 +67,8 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy]= stim_targets(imgs, Nsim );
-   fmdl = imgs.fwd_model;
+function [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
+    fmdl = imgs.fwd_model;
    ctr = [0,0, mean(fmdl.nodes(:,3))];  % Assume x,y centre is zero
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
    maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
@@ -72,6 +79,12 @@ function [vi,vh,xy]= stim_targets(imgs, Nsim );
        enodesi =     imgs.fwd_model.electrode(i).nodes;
        elec_loc(i,:) = mean( imgs.fwd_model.nodes( enodesi,:),1 );
    end
+   % calculate the boundary (for external use)
+   F = fourier_fit(elec_loc(:,1:2));
+   v = linspace(0,1,100+1); v(end)=[];
+   bound = fourier_fit(F,v);
+
+   
    distr = 1;
    switch distr 
        case 0 % original
@@ -85,7 +98,7 @@ function [vi,vh,xy]= stim_targets(imgs, Nsim );
            % extruded in z
            F = fourier_fit(elec_loc(:,1:2));
            v = linspace(0,1,Nsim*100+1); v(end)=[];
-           pts = fourier_fit(F,v);        
+           pts = fourier_fit(F,v);
            idx_p = floor(rand(Nsim,1)*Nsim*100);
            xyzr = pts(idx_p,:)'.*repmat(rand(Nsim,1),[1 2])';
            xyzr(3,:) = ctr(3); %for the time being
