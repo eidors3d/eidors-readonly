@@ -11,6 +11,8 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 %  xvec - x edges
 %  yvec - y edges
 %  zvec - z edges (optional - to create 3D model)
+%
+% if fmdl == [], then just create the grid model without c2f
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
