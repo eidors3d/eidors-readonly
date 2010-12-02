@@ -41,14 +41,16 @@ vi=fwd_solve(img);
 show_fem(img);
 print -dpng model.png
 figure
-show_fem(inv_solve(imdl,vh,vi))
+imgr= inv_solve(imdl,vh,vi);
+show_fem(imgr);
 print -dpng sln.png
 
 %%
 imdl= mk_common_model('c2c2',16);
 img=mk_image(imdl); vh=fwd_solve(img); 
 img.elem_data(50)=1.1; vi=fwd_solve(img);
-show_fem(inv_solve(imdl,vh,vi))
+imgr = inv_solve(imdl,vh,vi);
+show_fem(imgr);
 %%
 im_gr = mk_common_gridmdl('GREITc1');
 show_fem(inv_solve(im_gr,vh,vi))

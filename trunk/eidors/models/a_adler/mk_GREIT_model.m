@@ -35,6 +35,7 @@ elseif isfield(fmdl,'type');
     case 'fwd_model'; imgs = mk_image( fmdl, 1);
 %  if we get an image, use it. It may have a non-uniform backgnd
     case 'image';     imgs = fmdl; % fmdl was an image
+                      fmdl = imgs.fwd_model; % now it's a fmdl
     otherwise; error('unrecognized eidors object');
   end
 else
@@ -45,16 +46,22 @@ Nsim = 1000;
 [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
 RM= calc_GREIT_RM(vh,vi, xy, radius, weight, imgs.fwd_model.normalize_measurements );
 %imdl = mk_common_gridmdl('b2c', RM);
-imdl = mk_grid_model(fmdl.fwd_model,bound(:,1),bound(:,2));
-imdl.fwd_model = fmdl;
+ maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
+ Ngrid = 32;
+ xgrid = linspace(minnode(1),maxnode(1),Ngrid+1);
+ ygrid = linspace(minnode(2),maxnode(2),Ngrid+1);
+ rmdl = mk_grid_model([],xgrid,ygrid);
+
+imdl = select_imdl( fmdl,{'Basic GN dif'});
 imdl.solve_use_matrix.RM = RM;
-imdl.fwd_model.normalize_measurements= imgs.fwd_model.normalize_measurements;
 imdl.solve = @solve_use_matrix;
-[st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
-inv_mdl.fwd_model.meas_select= els;
-imdl.recons_type = 'difference';
+imdl.rec_model = rmdl;
 
 %RM= calc_GREIT_RM(vh,vi, xyc, radius weight, normalize)
+imdl = select_imdl( fmdl,{'Basic GN dif'});
+imdl.solve_use_matrix.RM = RM;
+imdl.solve = @solve_use_matrix;
+imdl.rec_model = rmdl;
 
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
