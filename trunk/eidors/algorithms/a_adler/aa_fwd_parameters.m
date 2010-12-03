@@ -125,10 +125,10 @@ n_meas= 0; % sum total number of measurements
 
 stim = fwd_model.stimulation;
 for i=1:p
-    src= [];
+    src= 0;
     try;  src = src +  N2E'* stim(i).stim_pattern; end
     try;  src = src +  stim(i).interior_sources;   end
-    if isempty(src);
+    if all(size(src) == [1,1]) && src==0
        error('no stim_patterns or interior_sources provided for pattern #%d',i);
     end
     
