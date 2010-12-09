@@ -2,6 +2,8 @@ function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value
 % INCYL: calculate elements in infinite cylinder
 % [index_incyl,mat]=incyl(center_simp,origin,radius,mat,value);
 %
+% See also: mk_c2f_circ_mapping (this is the recommended function)
+ 
 % (C) 2005 David Stephenson. Licenced under GPL
 % $Id$
 

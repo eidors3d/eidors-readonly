@@ -10,11 +10,14 @@ function memb_frac = elem_select( fmdl, select_fcn );
 %   fwd_model.elem_select.interp_no  - interpolation density
 %
 % Example:
-%   img = calc_jacobian_bkgnd(mk_common_model('b2d1c',8));
+%   img = mk_image(mk_common_model('b2d1c',8));
 %   select_fcn = inline('(x-0.2).^2+(y-0.5).^2<0.2^2','x','y','z');
 %   memb_frac = elem_select( img.fwd_model, select_fcn)
 %   img.elem_data = 1 + memb_frac*0.1;
 %   show_fem(img);
+%
+% See Also:
+%   mk_c2f_circ_mapping
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
