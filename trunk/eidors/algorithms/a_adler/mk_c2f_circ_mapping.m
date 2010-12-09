@@ -64,11 +64,19 @@ function mapping = contained_elems_3d( mdl, xyr );
    n_interp = 4; % 7-df
    m_pts = interp_mesh( mdl, n_interp); 
    for i=1:Nc
-     xc = m_pts(:,1,:) - xyr(1,i);
-     yc = m_pts(:,2,:) - xyr(2,i);
-     zc = m_pts(:,3,:) - xyr(3,i);
-     inr= xc.^2 + yc.^2 + zc.^2 < xyr(4,i)^2;
-     frac= mean(inr,3);
-     mapping(:,i) = frac;
+     frac= contained_elem_pts(m_pts, xyr(:,i));
+     mapping(:,i) = mean(frac,3);
    end
 
+function frac= contained_elem_pts(m_pts, xyr);
+% This is more clear
+%    xc = m_pts(:,1,:) - xyr(1);
+%    yc = m_pts(:,2,:) - xyr(2);
+%    zc = m_pts(:,3,:) - xyr(3);
+%    inr= xc.^2 + yc.^2 + zc.^2 < xyr(4)^2;
+
+% But this is how to stop matlab from wasting memory
+     inr = (m_pts(:,1,:) - xyr(1)).^2 + ...% xc =
+           (m_pts(:,2,:) - xyr(2)).^2 + ...% yc =
+           (m_pts(:,3,:) - xyr(3)).^2;     % zc =
+     inr= sparse( inr < xyr(4)^2 );
