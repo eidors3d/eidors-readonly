@@ -83,10 +83,11 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    sidx= d0*pp.n_elem;
    cidx= (d0+1)*pp.n_elem;
    for i= 1:pp.n_elec
-      zc=  fwd_model.electrode(i).z_contact;
+      eleci = fwd_model.electrode(i);
+      zc=  eleci.z_contact;
 %     ffb = find_bdy_idx( bdy, fwd_model.electrode(i).nodes);
-      [bdy_idx, bdy_area] = find_electrode_bdy( bdy, fwd_model.nodes, ...
-                               fwd_model.electrode(i).nodes);
+      [bdy_idx, bdy_area] = find_electrode_bdy( ...
+          pp.boundary, fwd_model.nodes, eleci.nodes );
 
       for j= 1:length(bdy_idx);
          bdy_nds= pp.boundary(bdy_idx(j),:);
