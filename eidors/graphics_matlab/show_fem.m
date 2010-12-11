@@ -90,16 +90,19 @@ function show_2d(img,mdl,opts)
 
 % IN MATLAB 7 WE NEED TO RERUN THIS BECAUSE STUPID STUPID
 % MATLAB WILL RESET THE COLOURBAR EVERY TIME WE RUN PATCH!!!
-   if exist('img','var');
+   if exist('img','var') && opts.do_colourbar;
       colours= calc_colours(img, [], opts.do_colourbar);
       % Matlab is so weird. It puts the first colorbar in the wrong place
       %   sometimes ...  (tested with 6.5 and with 7.8)
       %   The trick is to never try to move it on the first go
       %   OR we reset it and then replace it. STUPID STUPID
 
-     % Here's the magic trick I found. Force a drawnow, then delete and recreate
-      drawnow; colorbar('delete');
-      colours= calc_colours(img, [], opts.do_colourbar);
+     % Here's the magic trick I found. Force a drawnow,
+     %     then delete and recreate
+      if ~exist('OCTAVE_VERSION')
+         drawnow; colorbar('delete');
+         colours= calc_colours(img, [], opts.do_colourbar);
+      end
    end
 
    
