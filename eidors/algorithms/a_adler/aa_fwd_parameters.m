@@ -6,8 +6,10 @@ function param = aa_fwd_parameters( fwd_model )
 %   param.n_elec     => number of electrodes
 %   param.n_node     => number of nodes (vertices)
 %   param.n_stim     => number of current stimulation patterns
+%   param.n_elec     => number of electrodes
 %   param.n_dims     => dimentions (2= 2D, 3=3D)
 %   param.n_meas     => number of measurements (total)
+%   param.boundary   => FEM boundary
 %   param.NODE       => vertex matrix
 %   param.ELEM       => connection matrix
 %   param.QQ         => Current into each NODE
@@ -83,7 +85,7 @@ else
 end
 
 if isfield(fwd_model,'boundary')
-    bdy = fwd_model.boundary;
+    bdy = double( fwd_model.boundary ); % double because of stupid matlab bugs
 else
     bdy = find_boundary(fwd_model.elems);
 end
@@ -123,7 +125,10 @@ pp.QQ= pp.QQ(1:(n+cem_electrodes),:);
 
 n_meas= 0; % sum total number of measurements
 
-stim = fwd_model.stimulation;
+if p>0
+   stim = fwd_model.stimulation;
+end
+
 for i=1:p
     src= 0;
     try;  src = src +  N2E'* stim(i).stim_pattern; end
@@ -145,6 +150,7 @@ pp.n_stim   = p;
 pp.n_dims   = d-1;
 pp.n_meas   = n_meas;
 pp.N2E      = N2E;
+pp.boundary = bdy;
 
 if isfield(fwd_model,'normalize_measurements')
    pp.normalize = fwd_model.normalize_measurements;

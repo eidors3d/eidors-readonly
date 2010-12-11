@@ -27,7 +27,9 @@ eidors_cache('boost_priority',-1);
 function cache_obj = mk_cache_obj(fwd_model);
    cache_obj.elems       = fwd_model.elems;
    cache_obj.nodes       = fwd_model.nodes;
-   cache_obj.electrode   = fwd_model.electrode;
+   try
+   cache_obj.electrode   = fwd_model.electrode; % if we have it
+   end
    cache_obj.type        = 'fwd_model';
    cache_obj.name        = ''; % it has to have one
 
@@ -78,17 +80,16 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    CCiidx= zeros(0,d0);
    CCjidx= zeros(0,d0);
   
-   bdy = double( fwd_model.boundary ); % double if for matlab bugs
    sidx= d0*pp.n_elem;
    cidx= (d0+1)*pp.n_elem;
-   for i= 1:length(fwd_model.electrode);
+   for i= 1:pp.n_elec
       zc=  fwd_model.electrode(i).z_contact;
 %     ffb = find_bdy_idx( bdy, fwd_model.electrode(i).nodes);
       [bdy_idx, bdy_area] = find_electrode_bdy( bdy, fwd_model.nodes, ...
                                fwd_model.electrode(i).nodes);
 
       for j= 1:length(bdy_idx);
-         bdy_nds= bdy(bdy_idx(j),:);
+         bdy_nds= pp.boundary(bdy_idx(j),:);
 
          FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
          FFiidx= [FFiidx; FFi_block' + sidx];
