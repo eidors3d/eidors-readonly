@@ -30,8 +30,7 @@ W= calc_meas_icov( inv_model );
 
 img= feval(pp.fn, img_bkgnd, W,alpha*L,data, pp);
 
-% create a data structure to return
-img.name = 'pdipm_abs';
+img.name = sprintf('pdipm_abs-nd%d-ni%d',pp.norm_data,pp.norm_image);
 
 % This is the Gauss-Newton algorithm
 %   for the linear case it is: s= (J'*W*J + L'*L)\J'*W*d;
@@ -39,26 +38,30 @@ function img= pdipm_2_2(  img,W,L,d, pp);
    img0 = img;
    hp2RtR = L'*L;
    for i = 1:pp.max_iter
-     vsim = fwd_solve( img ); 
-     dv = calc_difference_data( vsim , d, img.fwd_model);
+     dv = sim_diff( img, d);
      J = calc_jacobian( img );
 
-     RDx = hp2RtR*(img0.elem_data - img.elem_data);
-     dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
+     RDs = hp2RtR*(img0.elem_data - img.elem_data);
+     ds = (J'*W*J + hp2RtR)\(J'*dv + RDs);
 
-     img = line_optimize(img, dx, d);
+     img = line_optimize(img, ds, d);
 
      loop_display(i)
    end
 
-function s= pdipm_1_2( J,W,L,d, pp);
-   [M,N] = size(J); % M measurements, N parameters
-   s= zeros( N, 1 ); % solution - start with zeros
+function img= pdipm_1_2( img,W,L,d, pp);
+   [M]   = size(W,1); % M measurements
+   [jnk,N] = size(L); % E edges, N parameters
    x= zeros( M, 1 ); % dual var - start with zeros
 
    for loop = 1:pp.max_iter
+      % Jacobian
+      J = calc_jacobian( img );
+      dv = -sim_diff(img, d);
+      s = img.elem_data;
+
       % Define variables
-      f = J*s - d;             F= spdiags(f,0,M,M);
+      f = dv;                  F= spdiags(f,0,M,M);
                                X= spdiags(x,0,M,M);
       e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,M,M);
 
@@ -72,22 +75,26 @@ function s= pdipm_1_2( J,W,L,d, pp);
               [ f-E*x; J'*W*x + L'*L*s ];
 
       ds = dsdx(1:N);
-      dx = x_update(x, dsdx(N+(1:M)));
+      img = line_optimize(img, ds, d);
 
-      s= s + ds; x= x + dx;
+      dx = x_update(x, dsdx(N+(1:M)));
+      x= x + dx;
 
       loop_display(i)
    end
 
-function s= pdipm_2_1( J,W,L,d, pp);
-   [M,N] = size(J);   % M measurements, N parameters
-   [G  ] = size(L,1); % E edges
-   s= zeros( N, 1 ); % solution - start with zeros
+function img= pdipm_2_1(img,W,L,d, pp);
+   [M]   = size(W,1); % M measurements
+   [G,N] = size(L); % E edges, N parameters
    x= zeros( G, 1 ); % dual var - start with zeros
 
    for loop = 1:pp.max_iter
+      % Jacobian
+      J = calc_jacobian( img );
+      dv = -sim_diff(img, d);
+      
       % Define variables
-      f = L*s;                 F= spdiags(f,0,G,G);
+      f = L*img.elem_data;     F= spdiags(f,0,G,G);
                                X= spdiags(x,0,G,G);
       e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,G,G);
 
@@ -98,12 +105,13 @@ function s= pdipm_2_1( J,W,L,d, pp);
       dFf_dx = L';
 
       dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
-              [ f-E*x; J'*(J*s-d) + L'*x ];
+              [ f-E*x; J'*dv + L'*x ];
 
       ds = dsdx(1:N);
-      dx = x_update(x, dsdx(N+(1:G)));
+      img = line_optimize(img, ds, d);
 
-      s= s + ds; x= x + dx;
+      dx = x_update(x, dsdx(N+(1:G)));
+      x= x + dx;
 
       loop_display(i)
    end
@@ -126,26 +134,21 @@ function s= pdipm_2_1( J,W,L,d, pp);
 function img= pdipm_1_1( img,W,L,d, pp);
    [M]   = size(W,1); % M measurements
    [D,N] = size(L); % E edges, N parameters
-%  s= zeros( N, 1 ); % solution - start with zeros
    s= img.elem_data;
-% initializing dual vars: 
-%   simple approach: initalize to zero
-%   or: inialize as 0.5*sign(L*s);
-%   or:             0.5*sign(Delta v);
    y= zeros( D, 1 ); % dual var - start with zeros
    x= zeros( M, 1 ); % dual var - start with zeros
 
    for loop = 1:pp.max_iter
       % Jacobian
       J = calc_jacobian( img );
-      disp(mean(img.elem_data));
+      dv = -sim_diff(img, d);
 
       % Define variables
-      g = L*s;                 G= spdiags(g,0,D,D);
+      g = L*img.elem_data;     G= spdiags(g,0,D,D);
       r = sqrt(g.^2 + pp.beta);R= spdiags(r,0,D,D); % S in paper
                                Y= spdiags(y,0,D,D);
 
-      f = J*s - d;             F= spdiags(f,0,M,M);
+      f = dv;                  F= spdiags(f,0,M,M);
       e = sqrt(f.^2 + pp.beta);E= spdiags(e,0,M,M);
                                X= spdiags(x,0,M,M);
 
@@ -168,16 +171,13 @@ function img= pdipm_1_1( img,W,L,d, pp);
              As3,Ax3,Ay3] \ [B1;B2;B3];
 
       ds = DD(1:N);
-      % Line_search - not really, but stablize the solution for now.
-%     ds = 0.1*ds;
+      img = line_optimize(img, ds, d);
 
       dx = x_update(x, DD(N+(1:M)));
-      dy = x_update(y, DD(N+M+(1:D)));
+      x= x + dx;
 
-      ff = .05;
-      s= s + ff*ds; img.elem_data = s;
-      x= x + 1*dx;
-      y= y + 1*dy;
+      dy = x_update(y, DD(N+M+(1:D)));
+      y= y + dy;
 
       loop_display(i)
    end
@@ -237,8 +237,7 @@ function  img = line_optimize(imgk, dx, data1);
   for i = 1:length(flist);
      img.elem_data = imgk.elem_data + flist(i)*dx;
      img.elem_data(img.elem_data <= clim ) = clim;
-     vsim = fwd_solve( img );
-     dv = calc_difference_data( vsim , data1, img.fwd_model);
+     dv = sim_diff( img, data1);
      mlist(i) = norm(dv);
   end
   pf = polyfit(flist, mlist, 2);
@@ -270,6 +269,9 @@ function data = data_vector( data, imdl );
      end
    end
 
+function dv = sim_diff( img, data1);
+  vsim = fwd_solve( img );
+  dv = calc_difference_data( vsim , data1, img.fwd_model);
 
 function loop_display(i)
    fprintf('+');
