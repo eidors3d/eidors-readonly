@@ -16,6 +16,8 @@ function mapping = mk_c2f_circ_mapping( mdl, xyzr );
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+
 c_obj = cache_obj(mdl, xyzr);
 
 mapping = eidors_obj('get-cache', c_obj, 'circle_mapping');
@@ -64,8 +66,7 @@ function mapping = contained_elems_3d( mdl, xyr );
    n_interp = 4; % 7-df
    m_pts = interp_mesh( mdl, n_interp); 
    for i=1:Nc
-     frac= contained_elem_pts(m_pts, xyr(:,i));
-     mapping(:,i) = mean(frac,3);
+     mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
    end
 
 function frac= contained_elem_pts(m_pts, xyr);
@@ -79,4 +80,27 @@ function frac= contained_elem_pts(m_pts, xyr);
      inr = (m_pts(:,1,:) - xyr(1)).^2 + ...% xc =
            (m_pts(:,2,:) - xyr(2)).^2 + ...% yc =
            (m_pts(:,3,:) - xyr(3)).^2;     % zc =
-     inr= sparse( inr < xyr(4)^2 );
+     frac= mean( inr < xyr(4)^2 ,3);
+
+function do_unit_test
+   %2D example
+   imdl = mk_common_model('a2c2',16); fmdl=imdl.fwd_model;
+   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0.1]); 
+   t1= all( abs(c2f(1:4)-0.2857)<.001 ) & all( c2f(5:end)==0 );
+   fprintf('2D ex 1: [%d]\n',full(t1));
+
+   c2f= mk_c2f_circ_mapping( fmdl, [.0;.05;0.03]); 
+   t2= abs( c2f(1) - 0.1429) < .001 & all( c2f(2:end)==0 );
+   fprintf('2D ex 2: [%d]\n',full(t2));
+      
+   %3D example - cylinder
+   imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
+   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0.1]); 
+   t3= all( abs(c2f(1:4)-0.1714)<.001 ) & all( c2f(5:64)==0 );
+   fprintf('3D ex 1: [%d]\n',full(t3));
+
+   %3D example - cylinder
+   imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
+   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0;0.1]); 
+   t4= all( abs(c2f(193:196)-0.0571)<.001 ) & all( c2f(1:64)==0 );
+   fprintf('3D ex 2: [%d]\n',full(t4));
