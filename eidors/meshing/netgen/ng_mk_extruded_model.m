@@ -809,6 +809,13 @@ function write_geo_file(geofn, tank_height, tank_shape, ...
             for j = (i+1):length(tank_shape.additional_shapes)
                 fprintf(fid,' and not add_obj%04d',j);
             end
+
+% This code was added while trying to debug mixed shapes
+%   with solid geometry and extruded shapes. It didn't help
+%           if ~isempty(extra_ng_code{1})
+%                fprintf(fid,' and not %s',extra_ng_code{1});
+%           end
+
             fprintf(fid,[' and plane(0,0,0;0,0,-1)\n' ...
                 '      and  plane(0,0,%6.2f;0,0,1)'],tank_height);
             fprintf(fid,';\n');
