@@ -51,17 +51,28 @@ RM= calc_GREIT_RM(vh,vi, xy, radius, weight, imgs.fwd_model.normalize_measuremen
  xgrid = linspace(minnode(1),maxnode(1),Ngrid+1);
  ygrid = linspace(minnode(2),maxnode(2),Ngrid+1);
  rmdl = mk_grid_model([],xgrid,ygrid);
-
+ x_avg = conv2(xgrid, [1,1]/2,'valid');
+ y_avg = conv2(ygrid, [1,1]/2,'valid');
+ [x,y] = ndgrid( x_avg, y_avg);
+ inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
+ 
+ ff = find(~inside);
+ rmdl.elems([2*ff, 2*ff-1],:)= [];
+ rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
+ rmdl.coarse2fine(:,ff)= [];
+ 
 imdl = select_imdl( fmdl,{'Basic GN dif'});
 imdl.solve_use_matrix.RM = RM;
+imdl.solve_use_matrix.map = inside;
 imdl.solve = @solve_use_matrix;
 imdl.rec_model = rmdl;
+
 
 %RM= calc_GREIT_RM(vh,vi, xyc, radius weight, normalize)
-imdl = select_imdl( fmdl,{'Basic GN dif'});
-imdl.solve_use_matrix.RM = RM;
-imdl.solve = @solve_use_matrix;
-imdl.rec_model = rmdl;
+% imdl = select_imdl( fmdl,{'Basic GN dif'});
+% imdl.solve_use_matrix.RM = RM;
+% imdl.solve = @solve_use_matrix;
+% imdl.rec_model = rmdl;
 
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
