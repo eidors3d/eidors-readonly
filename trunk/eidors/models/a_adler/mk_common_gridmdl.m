@@ -85,9 +85,9 @@ inv_mdl = eidors_obj('inv_model',['mk_common_gridmdl: ',name]);
 inv_mdl.reconst_type= 'difference';
 inv_mdl.fwd_model= fmdl;
 inv_mdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
-if exist('map','var')
-   inv_mdl.solve_use_matrix.map = map;
-end
+% solve_use_matrix has a c2f mapping field map, which
+% it may be useful to populate in this case
+%  inv_mdl.solve_use_matrix.map = map;
 inv_mdl.solve = @solve_use_matrix;
 inv_mdl.fwd_model.normalize_measurements= 1;
 [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
