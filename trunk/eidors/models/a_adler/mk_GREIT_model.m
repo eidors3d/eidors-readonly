@@ -49,7 +49,7 @@ else
 end
 
 Nsim = opt.Nsim;
-[vi,vh,xy,bound]= stim_targets(imgs, Nsim );
+[vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt.distr );
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
 opt.normalize = imgs.fwd_model.normalize_measurements;
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
@@ -89,7 +89,7 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
+function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, distr );
     fmdl = imgs.fwd_model;
    ctr = [0,0, mean(fmdl.nodes(:,3))];  % Assume x,y centre is zero
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
@@ -107,7 +107,7 @@ function [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
    bound = fourier_fit(F,v);
 
    
-   distr = 3;
+   
 
    switch distr 
        case 0 % original
