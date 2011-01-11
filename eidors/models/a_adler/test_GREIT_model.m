@@ -51,7 +51,7 @@ show_fem(img);
 figure
 imgr= inv_solve(imdl,vh,vi);
 show_fem(imgr);
-exis equal
+axis equal
 % print -dpng sln.png
 
 %%
