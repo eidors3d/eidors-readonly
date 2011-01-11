@@ -1,4 +1,4 @@
-function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
+function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 % CALCULATE GREIT reconstruction matrix
 %   RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 % 
@@ -11,20 +11,29 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 %   weight = weighting matrix
 %      if scalar   = weighting of noise vs signal
 %      if 32^2 x N = weighting of each image output
-%   normalize = 0 -> regular difference EIT
-%                 -> normalized difference EIT
+%   options.normalize = 
+%            0 -> regular difference EIT
+%            1 -> normalized difference EIT
+%   options.meshsz = [xmin xmax ymin ymax] size of mesh
+%      defaults to [-1 1 -1 1]
+%   options.imgsz  = [xsz ysz] size of the reconstructed image in pixels
 % 
 %
 % (C) 2009 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
-   if normalize
+   if ~isstruct(options)
+       options.normalize = options;
+   end
+   opt = parse_options(options);
+
+   if opt.normalize
       Y = vi./(vh*ones(1,size(vi,2))) - 1; 
    else
       Y = vi - (vh*ones(1,size(vi,2)));
    end
 
-   D = desired_soln( xyc, radius );
+   D = desired_soln( xyc, radius, opt);
 
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
        [RM] = calc_RM(Y,D,weight);
@@ -37,19 +46,24 @@ function RM = calc_RM(Y, D, noiselev)
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0
    Y = [Y, noiselev*eye(208)];
-   D = [D,          zeros(32^2,208)];
+   D = [D,          zeros(size(D,1),208)];
 
    RM = D*Y'/(Y*Y');
 
-function PSF= desired_soln(xyc, radius)
-   xsz= 32; ysz= 32; sz= xsz * ysz;
-   lim= 1.00;
-   [x,y]= ndgrid(linspace(-lim,lim,xsz), linspace(-lim,lim,ysz));
-   spc = 2*lim/(xsz-1) * 0.5;
+function PSF= desired_soln(xyc, radius, opt)
+   xsz = opt.imgsz(1); ysz = opt.imgsz(2);
+   sz= xsz * ysz;
+   xmin = opt.meshsz(1); xmax = opt.meshsz(2);
+   ymin = opt.meshsz(3); ymax = opt.meshsz(4);
+   % scale radius to half the greater dimension
+   radius = radius * 0.5 * max(xmax-xmin, ymax-ymin);
+   [x,y]= ndgrid(linspace(xmin,xmax,xsz), linspace(ymin,ymax,ysz));
+   x_spc = (xmax-xmin)/(xsz-1) * 0.5;
+   y_spc = (ymax-ymin)/(ysz-1) * 0.5;
    PSF = zeros(sz,size(xyc,2));
    for i=1:size(xyc,2);
-      for dx = linspace(-spc, spc, 5)
-         for dy = linspace(-spc, spc, 5)
+      for dx = linspace(-x_spc, x_spc, 5)
+         for dy = linspace(-y_spc, y_spc, 5)
             PSF(:,i) = PSF(:,i) +  1/25*( ...
                (dx+x(:)-xyc(1,i)).^2 + (dy+y(:)-xyc(2,i)).^2 ...
                         < radius^2 );
@@ -58,3 +72,8 @@ function PSF= desired_soln(xyc, radius)
 %     PSF(:,i) = PSF(:,i)/sum(PSF(:,i));
    end
 
+
+   function opt = parse_options(opt)
+       if ~isfield(opt, 'normalize'), opt.normalize = 1; end
+       if ~isfield(opt, 'meshsz'),    opt.meshsz = [-1 1 -1 1]; end
+       if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end

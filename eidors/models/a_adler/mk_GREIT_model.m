@@ -1,4 +1,4 @@
-function imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
+function imdl= mk_GREIT_model( fmdl, radius, weight, options )
 % MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach
 %   imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
 %
@@ -8,8 +8,16 @@ function imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
 %
 %   radius - requested weighting matrix  (recommend 0.25 for 16 electrodes)
 %   weight - weighting matrix (weighting of noise vs signal)
-%
-%   extra_noise - extra noise samples (such as electrode movement)
+%   options- structure with fields:
+%     imgsz       - [xsz ysz] reconstructed image size in pixels 
+%                   (default: [32 32])
+%     Nsim        - number of training points (default: 1000)
+%     distr       - distribution of training points:
+%         0 -> original (as per GREITv1, default)
+%         1 -> random, centre-heavy 
+%         2 -> random, uniform
+%         3 -> fixed, uniform (debug)
+%     extra_noise - extra noise samples (such as electrode movement)
 %
 % NOTE
 %   currently extra_noise is not supported
@@ -23,9 +31,7 @@ function imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin==4;
-  error('mk_GREIT_model: doesn''t currently support extra_noise');
-end
+opt = parse_options(options);
 
 if isstr(fmdl)
    imgs = get_prepackaged_fmdls( fmdl );
@@ -42,14 +48,17 @@ else
    error('specified parameter must be an object or a string');
 end
 
-Nsim = 1000;
+Nsim = opt.Nsim;
 [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
-RM= calc_GREIT_RM(vh,vi, xy, radius, weight, imgs.fwd_model.normalize_measurements );
+maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
+opt.normalize = imgs.fwd_model.normalize_measurements;
+opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
+
+RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
 %imdl = mk_common_gridmdl('b2c', RM);
- maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
- Ngrid = 32;
- xgrid = linspace(minnode(1),maxnode(1),Ngrid+1);
- ygrid = linspace(minnode(2),maxnode(2),Ngrid+1);
+ 
+ xgrid = linspace(minnode(1),maxnode(1),opt.imgsz(1)+1);
+ ygrid = linspace(minnode(2),maxnode(2),opt.imgsz(2)+1);
  rmdl = mk_grid_model([],xgrid,ygrid);
  x_avg = conv2(xgrid, [1,1]/2,'valid');
  y_avg = conv2(ygrid, [1,1]/2,'valid');
@@ -61,18 +70,13 @@ RM= calc_GREIT_RM(vh,vi, xy, radius, weight, imgs.fwd_model.normalize_measuremen
  rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
  rmdl.coarse2fine(:,ff)= [];
  
+  
 imdl = select_imdl( fmdl,{'Basic GN dif'});
-imdl.solve_use_matrix.RM = RM;
-imdl.solve_use_matrix.map = inside;
+imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
+%imdl.solve_use_matrix.map = inside;
 imdl.solve = @solve_use_matrix;
 imdl.rec_model = rmdl;
 
-
-%RM= calc_GREIT_RM(vh,vi, xyc, radius weight, normalize)
-% imdl = select_imdl( fmdl,{'Basic GN dif'});
-% imdl.solve_use_matrix.RM = RM;
-% imdl.solve = @solve_use_matrix;
-% imdl.rec_model = rmdl;
 
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
@@ -103,7 +107,8 @@ function [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
    bound = fourier_fit(F,v);
 
    
-   distr = 1;
+   distr = 3;
+
    switch distr 
        case 0 % original
            r = linspace(0,0.9, Nsim);
@@ -134,16 +139,43 @@ function [vi,vh,xy,bound]= stim_targets(imgs, Nsim );
            xyzr(3,:) = ctr(3); %for the time being
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = 0.02*mean([maxx,maxy]);
+       case 3 % uniform, non-random
+           F = fourier_fit(elec_loc(:,1:2));
+           v = linspace(0,1,101); v(end)=[];
+           pts = fourier_fit(F,v);
+           [x,y] = ndgrid( linspace(-maxx,maxx,ceil(sqrt(Nsim))), ...
+                           linspace(-maxx,maxx,ceil(sqrt(Nsim))));
+                       IN = inpolygon(x,y,pts(:,1),pts(:,2));
+           xyzr(1,:) = x(find(IN,Nsim));
+           xyzr(2,:) = y(find(IN,Nsim));
+           xyzr(3,:) = ctr(3); %for the time being
+           % TODO: What size is good here and how to figure it out?
+           xyzr(4,:) = 0.02*mean([maxx,maxy]);
    end
-
 
    [vh,vi] = simulate_movement(imgs, xyzr);
    xy = xyzr(1:2,:);
 
 
+function RM = resize_if_reqd(RM,inside);
+   szRM = size(RM,1);
+   if sum(inside) == szRM
+      % RM is fine
+   elseif size(inside,1) == szRM
+      RM = RM(inside,:);
+   else
+      error('mismatch in size of provided RecMatrix');
+   end
 
+function opt = parse_options(opt);
+    if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
+    if ~isfield(opt, 'distr'),     opt.distr = 0; end 
+    if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000; end
+    if isfield(opt,'extra_noise')
+      error('mk_GREIT_model: doesn''t currently support extra_noise');
+    end
 
-
+   
 
 function do_unit_test
    imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);

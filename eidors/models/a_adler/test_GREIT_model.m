@@ -24,25 +24,26 @@ a = [xx; yy]';
 a = flipud(a);
 a = a - repmat(mean(a),[72 1]); %mk_GREIT_model::stim_targets assumes this
 fmdl = ng_mk_extruded_model({300,a,[3,10],25},[16,1.11,150],[1]);
-maxx = max(abs(fmdl.nodes(:,1)));
-maxy = max(abs(fmdl.nodes(:,2)));
-scale = max(maxx,maxy);
-fmdl.nodes = fmdl.nodes/scale;
-fmdl.nodes(:,3) = fmdl.nodes(:,3) - mean(fmdl.nodes(:,3));
+% maxx = max(abs(fmdl.nodes(:,1)));
+% maxy = max(abs(fmdl.nodes(:,2)));
+% scale = max(maxx,maxy);
+% fmdl.nodes = fmdl.nodes/scale;
+% fmdl.nodes(:,3) = fmdl.nodes(:,3) - mean(fmdl.nodes(:,3));
 fmdl.normalize_measurements = 1;
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 fmdl.stimulation = stim;
 %%
 img = mk_image(fmdl,1);
-imdl = mk_GREIT_model(img, 0.25, 0.2);
-%reconstr tpe
+opt.imgsz = [32 64];
+opt.distr = 1; % random, centre-heavy
+imdl = mk_GREIT_model(img, 0.25, 0.2, opt);
 
 vh=fwd_solve(img);
-figure
-show_fem(img)
-select_fcn = inline('(x-0.20).^2+(y-0.30).^2+(z).^2<10^-2','x','y','z');
+% figure
+% show_fem(img)
+select_fcn = inline('(x-20).^2+(y-30).^2+(z-150).^2<10^2','x','y','z');
 img.elem_data = 1 + 0.1*elem_select(img.fwd_model, select_fcn);
-% img.elem_data(2000)=1.1;
+
 vi=fwd_solve(img);
 figure
 show_fem(img);
@@ -50,6 +51,7 @@ show_fem(img);
 figure
 imgr= inv_solve(imdl,vh,vi);
 show_fem(imgr);
+exis equal
 % print -dpng sln.png
 
 %%
