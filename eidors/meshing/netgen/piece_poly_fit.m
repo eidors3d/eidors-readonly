@@ -94,6 +94,7 @@ function [th_frac xy]  = path_len( pp, pts, start_th, linear_frac )
    lrad = fit_from_pp(pp,th_frac);
    [xe,ye]= pol2cart( th_frac, lrad);
    xy = [xe ye];
+   
 %%
 function do_unit_test
 %     a = [
