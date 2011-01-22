@@ -1,6 +1,6 @@
 function imdl= mk_GREIT_model( fmdl, radius, weight, options )
 % MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach
-%   imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )
+%   imdl= mk_GREIT_model( fmdl, radius, weight, options )
 %
 % Parameters
 %   fmdl   - fwd model on which to do simulations, or
@@ -17,6 +17,12 @@ function imdl= mk_GREIT_model( fmdl, radius, weight, options )
 %         1 -> random, centre-heavy 
 %         2 -> random, uniform
 %         3 -> fixed, uniform (debug)
+%     target_size - size of simulated targets as proportion of mesh radius
+%         (default: 0.02). Can be specified as [min_size max_size] for 
+%         random variation
+%     target_offset - maximum allowed vertical displacement from the plane
+%         of electrodes (default: 0). Can be specified as 
+%         [down_offset up_offset]. 
 %     extra_noise - extra noise samples (such as electrode movement)
 %
 % NOTE
@@ -48,8 +54,9 @@ else
    error('specified parameter must be an object or a string');
 end
 
+
 Nsim = opt.Nsim;
-[vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt.distr );
+[vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt );
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
 opt.normalize = imgs.fwd_model.normalize_measurements;
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
@@ -89,9 +96,9 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, distr );
+function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
-   ctr = [0,0, mean(fmdl.nodes(:,3))];  % Assume x,y centre is zero
+   ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
    maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
 
@@ -107,9 +114,7 @@ function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, distr );
    bound = fourier_fit(F,v);
 
    
-   
-
-   switch distr 
+   switch opt.distr 
        case 0 % original
            r = linspace(0,0.9, Nsim);
            th = r*4321; % want object to jump around in radius
@@ -124,39 +129,66 @@ function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, distr );
            pts = fourier_fit(F,v);
            idx_p = floor(rand(Nsim,1)*Nsim*100);
            xyzr = pts(idx_p,:)'.*repmat(rand(Nsim,1),[1 2])';
-           xyzr(3,:) = ctr(3); %for the time being
+           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,Nsim);
+           
            % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = 0.02*mean([maxx,maxy]);
+           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 2 %uniform
            F = fourier_fit(elec_loc(:,1:2));
            v = linspace(0,1,101); v(end)=[];
            pts = fourier_fit(F,v);
-           x = (rand(Nsim*10,1)-0.5)*2*maxx;
-           y = (rand(Nsim*10,1)-0.5)*2*maxy;
+           % avoid edges 
+           pts = 0.9*( pts - repmat(ctr(1:2),length(pts),1) ) + repmat(ctr(1:2),length(pts),1);
+           % using maxx and maxy below would in general not produce a
+           % uniform distribution
+           lim = max(maxx, maxy);
+           x = ctr(1) + (rand(Nsim*10,1)-0.5)*2*lim;
+           y = ctr(2) + (rand(Nsim*10,1)-0.5)*2*lim;
            IN = inpolygon(x,y,pts(:,1),pts(:,2));
            xyzr(1,:) = x(find(IN,Nsim));
            xyzr(2,:) = y(find(IN,Nsim));
-           xyzr(3,:) = ctr(3); %for the time being
+           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,Nsim);
            % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = 0.02*mean([maxx,maxy]);
+           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 3 % uniform, non-random
            F = fourier_fit(elec_loc(:,1:2));
            v = linspace(0,1,101); v(end)=[];
            pts = fourier_fit(F,v);
-           [x,y] = ndgrid( linspace(-maxx,maxx,ceil(sqrt(Nsim))), ...
-                           linspace(-maxx,maxx,ceil(sqrt(Nsim))));
+           lim = max(maxx, maxy);
+           [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim))), ...
+                           linspace(-lim,lim,ceil(sqrt(Nsim))));
                        IN = inpolygon(x,y,pts(:,1),pts(:,2));
            xyzr(1,:) = x(find(IN,Nsim));
            xyzr(2,:) = y(find(IN,Nsim));
-           xyzr(3,:) = ctr(3); %for the time being
+           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,Nsim);
            % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = 0.02*mean([maxx,maxy]);
+           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
    end
 
    [vh,vi] = simulate_movement(imgs, xyzr);
    xy = xyzr(1:2,:);
 
+function z = calc_offset(z0,opt,Nsim)
+    if opt.random_offset
+        l_bnd = opt.target_offset(1);
+        width = sum(opt.target_offset(1:2));
+        z = z0 - l_bnd + rand(Nsim,1)*width;
+    else
+        z = z0*ones(Nsim,1);
+    end
 
+function r = calc_radius(R,opt,Nsim)
+   if opt.random_size
+       min_sz = opt.target_size(1);
+       max_sz = opt.target_size(2);
+       range = max_sz - min_sz;
+       r = (min_sz + rand(Nsim,1)*range)*R;
+   else
+       r = opt.target_size(1)*ones(Nsim,1)*R;
+   end
+           
+   
+   
 function RM = resize_if_reqd(RM,inside);
    szRM = size(RM,1);
    if sum(inside) == szRM
@@ -174,8 +206,32 @@ function opt = parse_options(opt);
     if isfield(opt,'extra_noise')
       error('mk_GREIT_model: doesn''t currently support extra_noise');
     end
+    if ~isfield(opt, 'target_size')
+        opt.target_size = 0.02;
+    end
+    if sum(size(opt.target_size)) > 2
+        if opt.target_size(1) == opt.target_size(2);
+            opt.random_size = false;
+        else
+            opt.random_size = true;
+        end
+    end
+    if sum(size(opt.target_size)) == 2
+            opt.random_size = false;
+    end
 
-   
+    if ~isfield(opt, 'target_offset')
+        opt.target_offset = 0;
+    end
+    if sum(size(opt.target_offset)) == 2
+        if opt.target_offset < 0, opt.target_offset = 0; end
+        opt.target_offset(2) = opt.target_offset(1);
+    end
+    if any(opt.target_offset > 0)
+        opt.random_offset = true;
+    else
+        opt.random_offset = false;
+    end
 
 function do_unit_test
    imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
