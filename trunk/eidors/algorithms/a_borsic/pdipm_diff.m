@@ -59,62 +59,64 @@ function s= pdipm_2_2( J,W,L,d, pp);
    ds= (J'*W*J + R)\(J'*W*(d - J*s) - R*s);
    s= s + ds;
 
-function s= pdipm_1_2( J,W,L,d, pp);
-   [s,x,jnk,sz]= initial_values( J, L, pp);
+function m= pdipm_1_2( J,W,L,d, pp);
+   [m,x,jnk,sz]= initial_values( J, L, pp);
 
    I_M = speye(sz.M, sz.M);
    for loop = 1:pp.max_iter
       % Define variables
-      f = J*s - d;             F= spdiag(f);
+      f = J*m - d;             F= spdiag(f);
                                X= spdiag(x);
       e = sqrt(f.^2 + pp.beta);E= spdiag(e);
 
       % Define derivatives
-      dFc_ds = (I_M - X*inv(E)*F)*J;
+      dFc_dm = (I_M - X*inv(E)*F)*J;
       dFc_dx = -E;
-      dFf_ds = L'*L;
+      dFf_dm = L'*L;
       dFf_dx = J'*W;
 
-      dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
-              [ f-E*x; J'*W*x + L'*L*s ];
+      dmdx = -[dFc_dm, dFc_dx; dFf_dm, dFf_dx] \ ...
+              [ f-E*x; J'*W*x + L'*L*m ];
 
-      ds =             dsdx(      1:sz.N);
-      dx = x_update(x, dsdx(sz.N+(1:sz.M)));
+      dm =             dmdx(      1:sz.N);
+      dx = x_update(x, dmdx(sz.N+(1:sz.M)));
 
-      s= s + ds; x= x + dx;
+      m= m + dm; x= x + dx;
 fprintf('+');
+debug([mean(abs([m,dm])) mean(abs([x,dx]))])
+      pp = manage_beta(pp);
    end
 
-function s= pdipm_2_1( J,W,L,d, pp);
-   [s,jnk,x,sz]= initial_values( J, L, pp);
+function m= pdipm_2_1( J,W,L,d, pp);
+   [m,jnk,y,sz]= initial_values( J, L, pp);
 
    I_D = speye(sz.D, sz.D);
    for loop = 1:pp.max_iter
       % Define variables
-      f = L*s;                 F= spdiag(f);
-                               X= spdiag(x);
-      e = sqrt(f.^2 + pp.beta);E= spdiag(e);
+      g = L*m;                 G= spdiag(g);
+                               Y= spdiag(y);
+      s = sqrt(g.^2 + pp.beta);S= spdiag(s);
 
       % Define derivatives
-      dFc_ds = (I_D - X*inv(E)*F)*L;
-      dFc_dx = -E;
-%     dFf_ds = J'*J;
-      dFf_ds = J'*W*J;
-      dFf_dx = L';
+      dFf_dm = 2*J'*W*J;
+      dFf_dy = L';
+      dFc_dm = (I_D - Y*inv(S)*G)*L;
+      dFc_dy = -S;
 
-      dsdx = -[dFc_ds, dFc_dx; dFf_ds, dFf_dx] \ ...
-              [ f-E*x; J'*W*(J*s-d) + L'*x ];
-%             [ f-E*x; J'*(J*s-d) + L'*x ];
+      dmdy = -[dFf_dm, dFf_dy; dFc_dm, dFc_dy] \ ...
+              [ J'*W*(J*m-d) + L'*y; g-S*y ];
 
-      ds =             dsdx(      1:sz.N );
-      dx = x_update(x, dsdx(sz.N+(1:sz.D)));
+      dm =             dmdy(      1:sz.N );
+      dy = x_update(y, dmdy(sz.N+(1:sz.D)));
 
-      s= s + ds; x= x + dx;
-fprintf('+');
+      m= m + dm; y= y + dy;
+fprintf('.');
+debug([mean(abs([m,dm])), mean(abs([y,dy]))]);
+      pp = manage_beta(pp);
    end
 
-function s= pdipm_1_1( J,W,L,d, pp);
-   [s,x,y,sz]= initial_values( J, L, pp);
+function m= pdipm_1_1( J,W,L,d, pp);
+   [m,x,y,sz]= initial_values( J, L, pp);
 
    I_M = speye(sz.M,sz.M); 
    I_D = speye(sz.D,sz.D); 
@@ -122,11 +124,11 @@ function s= pdipm_1_1( J,W,L,d, pp);
    Z_DM= sparse(sz.D,sz.M);
    for loop = 1:pp.max_iter
       % Define variables
-      g = L*s;                 G= spdiag(g);
+      g = L*m;                 G= spdiag(g);
       r = sqrt(g.^2 + pp.beta);R= spdiag(r); % S in paper
                                Y= spdiag(y);
 
-      f = J*s - d;             F= spdiag(f);
+      f = J*m - d;             F= spdiag(f);
       e = sqrt(f.^2 + pp.beta);E= spdiag(e);
                                X= spdiag(x);
 
@@ -148,14 +150,16 @@ function s= pdipm_1_1( J,W,L,d, pp);
              As2,Ax2,Ay2; ...
              As3,Ax3,Ay3] \ [B1;B2;B3];
 
-      ds = DD(1:sz.N);
+      dm = DD(1:sz.N);
       dx = x_update(x, DD(sz.N +        (1:sz.M)) );
       dy = x_update(y, DD(sz.N + sz.M + (1:sz.D)) );
 
-      s= s + ds;
+      m= m + dm;
       x= x + dx;
       y= y + dy;
 fprintf('+');
+debug([mean(abs([m,dm])), mean(abs([x,dx])), mean(abs([y,dy]))]);
+      pp = manage_beta(pp);
    end
 
 % fix matlab's stupid verbose spdiags function
@@ -172,14 +176,25 @@ function [s,x,y,sz]= initial_values( J, L, pp);
 
 % abs(x + dx) must be <= 1
 function dx = x_update( x, dx)
-   dx(dx==0) = eps; % can't have zeros
+ % can't have zeros
+   dx(dx==0) = eps;
+ % space to limits in direction of dx
    sx = sign(dx);
-   % space to limits in direction of x
    clr = sx - x;
    % how much to multiply by to get to limits
    fac = clr./dx;
    % choose min amount to get to limits
-   dx = dx*min(fac);
+   dx = dx*min(abs(fac));
+%  dx = dx*0.9;
+
+function debug(vals)
+%  disp(vals)
+
+function pp = manage_beta(pp);
+   pp.beta = pp.beta * pp.beta_reduce;
+   if pp.beta < pp.beta_minimum;
+      pp.beta = pp.beta_minimum;
+   end
 
 function pp= process_parameters(imdl);
    try    pp.max_iter = imdl.parameters.max_iterations;
@@ -191,8 +206,11 @@ function pp= process_parameters(imdl);
    end
 
    try    pp.beta = imdl.pdipm_diff.beta; 
-   catch  pp.beta = 1e-8;
+   catch  pp.beta = 1e-6;
    end
+
+   pp.beta_reduce = 0.2;
+   pp.beta_minimum= 1e-16;
 
    try    pp.norm_data = imdl.pdipm_diff.norm_data;
    catch  pp.norm_data = 2;

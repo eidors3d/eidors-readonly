@@ -1,11 +1,11 @@
 function vv = add_noise( SNR, v1, v2, options)
 % ADD_NOISE: Add a given SNR to EIDORS data
-% vv = add_noise( SNR, v1, v2, options)
+% v1_w_noise = add_noise( SNR, v1, v2, options)
 %
 % Usage:
-%  add_noise( SNR, v1 )           - add noise to vv where signal = vv
-%  add_noise( SNR, v1, v2)        - add noise to vv where signal = v1 - v2
-%  add_noise( SNR, v1, v2,'norm') - add noise to vv where signal = (v1-v2)/v2
+%  add_noise( SNR, v1 )           - add noise to v1 where signal = vv
+%  add_noise( SNR, v1, v2)        - add noise to v1 where signal = v1 - v2
+%  add_noise( SNR, v1, v2,'norm') - add noise to v1 where signal = (v1-v2)/v2
 %
 % SNR is defined in terms of power SNR =  || signal || / || noise ||
 
