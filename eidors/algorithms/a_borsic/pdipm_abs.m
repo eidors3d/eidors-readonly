@@ -203,7 +203,7 @@ function pp= process_parameters(imdl);
    end
 
    try    pp.beta = imdl.pdipm_abs.beta; 
-   catch  pp.beta = 1e-8;
+   catch  pp.beta = 1e-6;
    end
 
    try    pp.norm_data = imdl.pdipm_abs.norm_data;
