@@ -82,7 +82,7 @@ function m= pdipm_1_2( J,W,L,d, pp);
       dx = x_update(x, dmdx(sz.N+(1:sz.M)));
 
       m= m + dm; x= x + dx;
-fprintf('+');
+      loop_display(i)
 debug([mean(abs([m,dm])) mean(abs([x,dx]))])
       pp = manage_beta(pp);
    end
@@ -110,7 +110,7 @@ function m= pdipm_2_1( J,W,L,d, pp);
       dy = x_update(y, dmdy(sz.N+(1:sz.D)));
 
       m= m + dm; y= y + dy;
-fprintf('.');
+      loop_display(i)
 debug([mean(abs([m,dm])), mean(abs([y,dy]))]);
       pp = manage_beta(pp);
    end
@@ -157,7 +157,7 @@ function m= pdipm_1_1( J,W,L,d, pp);
       m= m + dm;
       x= x + dx;
       y= y + dy;
-fprintf('+');
+      loop_display(i)
 debug([mean(abs([m,dm])), mean(abs([x,dx])), mean(abs([y,dy]))]);
       pp = manage_beta(pp);
    end
@@ -219,3 +219,6 @@ function pp= process_parameters(imdl);
    try    pp.norm_image = imdl.pdipm_diff.norm_image;
    catch  pp.norm_image = 2;
    end
+
+function loop_display(i)
+   fprintf('+');
