@@ -46,6 +46,7 @@ function img= pdipm_2_2(  img,W,L,d, pp);
 
      img = line_optimize(img, ds, d);
 
+     pp = manage_beta(pp);
      loop_display(i)
    end
 
@@ -79,7 +80,8 @@ function img= pdipm_1_2( img,W,L,d, pp);
 
       dx = x_update(x, dsdx(N+(1:M)));
       x= x + dx;
-
+ 
+      pp = manage_beta(pp);
       loop_display(i)
    end
 
@@ -113,6 +115,7 @@ function img= pdipm_2_1(img,W,L,d, pp);
       dx = x_update(x, dsdx(N+(1:G)));
       x= x + dx;
 
+      pp = manage_beta(pp);
       loop_display(i)
    end
 
@@ -180,6 +183,7 @@ function img= pdipm_1_1( img,W,L,d, pp);
       y= y + dy;
 
       loop_display(i)
+      pp = manage_beta(pp);
    end
 
 % abs(x + dx) must be <= 1
@@ -193,6 +197,12 @@ function dx = x_update( x, dx)
    % choose min amount to get to limits
    dx = dx*min(fac);
 
+function pp = manage_beta(pp);
+   pp.beta = pp.beta * pp.beta_reduce;
+   if pp.beta < pp.beta_minimum;
+      pp.beta = pp.beta_minimum;
+   end
+
 function pp= process_parameters(imdl);
    try    pp.max_iter = imdl.parameters.max_iterations;
    catch  pp.max_iter = 10;
@@ -205,6 +215,9 @@ function pp= process_parameters(imdl);
    try    pp.beta = imdl.pdipm_abs.beta; 
    catch  pp.beta = 1e-6;
    end
+
+   pp.beta_reduce = 0.2;
+   pp.beta_minimum= 1e-16;
 
    try    pp.norm_data = imdl.pdipm_abs.norm_data;
    catch  pp.norm_data = 2;
