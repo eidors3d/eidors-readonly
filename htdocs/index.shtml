@@ -33,6 +33,21 @@ To try the EIDORS software, follow these steps:
 </ol>
 
 
+<H3>Getting Help</H3>
+
+For questions or help, check out the
+<a href="https://sourceforge.net/mailarchive/forum.php?forum_name=eidors3d-help"
+   >[EIDORS-help] Mailing list</a>.
+Email requests for help should be sent to 
+<a href="mailto:eidors3d-help@lists.sourceforge.net"><tt>
+                eidors3d-help@lists.sourceforge.net</tt></a>.
+Make sure your request answers the questions:
+<br>&minus; What specifically did you do (so that it can be repeated)?
+<br>&minus; What version of EIDORS are you using?
+<br>&minus; What OS/Matlab version are you using?
+<br>&minus; What did you want EIDORS to do that it didn't do? or,
+<br>&minus; What did EIDORS do that you didn't what it to?
+
 
 <H2>License</H2>
 EIDORS is licenced under the GNU 
