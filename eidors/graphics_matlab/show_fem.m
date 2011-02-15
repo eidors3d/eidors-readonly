@@ -6,7 +6,7 @@ function show_fem( mdl, options)
 % options specifies a set of options
 %   options(1) => show colourbar
 %   options(2) => show numbering on electrodes
-%   options(3) => number elements
+%   options(3) => number elements (==1) or nodes (==2);
 %
 % for detailed control of colours, use
 %    img.calc_colours."parameter" = value
@@ -38,10 +38,16 @@ switch opts.dims
    otherwise; error('model is not 2D or 3D');
 end
 
-if opts.number_elements
-   xyzc= interp_mesh(mdl);
+if opts.show_numbering
+   if     bitand( opts.show_numbering, 1 )
+      xyzc= interp_mesh(mdl);
+   elseif bitand( opts.show_numbering, 2 )
+      xyzc= mdl.nodes;
+   else
+      error('don''t understand show_numbering value of %d', opts.show_numbering);
+   end
    xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
-   for i= 1:size(mdl.elems,1);
+   for i= 1:size(xyzc,1)
       text(xyzc(i,1),xyzc(i,2), xyzc(i,3), num2str(i), ...
             'HorizontalAlignment','center','FontSize',7);
    end
@@ -52,7 +58,7 @@ function [img,mdl,opts] = proc_params( mdl, options );
 
    opts.do_colourbar=0;
    opts.number_electrodes=0;
-   opts.number_elements=0;
+   opts.show_numbering  =0;
    if nargin >=2
        % fill in default options
        optionstr= zeros(1,100);
@@ -60,7 +66,7 @@ function [img,mdl,opts] = proc_params( mdl, options );
 
        opts.do_colourbar=      optionstr(1);
        opts.number_electrodes= optionstr(2);
-       opts.number_elements  = optionstr(3);
+       opts.show_numbering   =  optionstr(3);
    end
 
    % if we have an only img input, then define mdl
