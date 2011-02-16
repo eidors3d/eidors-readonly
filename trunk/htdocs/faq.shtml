@@ -8,6 +8,44 @@ The goal of EIDORS is to promote collaboration between
 groups working on Electrical Impedance Tomography (EIT) and Diffusion based
 Optical Tomography, in medical and industrial settings.
 
+<p><li id="maintainers"><b>
+    Where do I get help?
+<i>OR</i>
+I have an issue/bug/problem with doing xxx in EIDORS.
+</b><p>
+
+We're happy to help. To do that we need a bit of information and the
+context in which you are trying to solve your problem.
+First, please have a look through the
+<tt>eidors3d-help@lists.sourceforge.net</tt> 
+<a href="http://sourceforge.net/search/?group_id=100454&type_of_search=mlists"
+>mailing list archive</a>.
+Has your problem been observed before and solved. If this
+solves your problem, great.
+<p>
+If not, you may write an email to the mailing list.
+<a href="mailto:eidors3d-help@lists.sourceforge.net"><tt
+               >eidors3d-help@lists.sourceforge.net</tt></a>.
+This way the broader EIDORS
+community will be able to help you resolve your issue,
+and when or if others run into the same issue, they'll be able
+to find your solution.
+In your email, you must provide
+<br>&minus;
+1. Background: What are you trying to achieve? What problem are you working on?
+<br>&minus;
+2. A clearly worded question or issue: What is the exact error
+message? What do you expect versus what you actually see occurring.
+<br>&minus;
+3. A script that will reproduce the issue. (file attached) (Is this
+script based on a tutorial from the EIDORS site? If so which one?)
+<br>&minus;
+4. A log of the output from EIDORS. (file attached)
+<br>&minus; 
+5. What version of EIDORS are you using, and what OS/Matlab version are you using?
+
+
+
 <p><li><b>
 How is EIDORS pronounced?
 </b><p>
@@ -25,22 +63,6 @@ NOAA. See <a href="http://www.photolib.noaa.gov/animals/anim0030.htm"
 >www.photolib.noaa.gov/animals/anim0030.htm</a>. For another
 great picture of fat waruses see this
 <a href="http://www.msn.co.uk/img/en/en-gb/portal/creaturecomforts/wallpaper_800x600_01.jpg">image</a>.
-
-<p><li id="maintainers"><b>
-    Where do I get help?
-</b><p>
-Please check out the
-<a href="https://sourceforge.net/mailarchive/forum.php?forum_name=eidors3d-help"
-   >[EIDORS-help] Mailing list</a>.
-Email requests for help should be sent to 
-<a href="mailto:eidors3d-help@lists.sourceforge.net"><tt>
-                eidors3d-help@lists.sourceforge.net</tt></a>.
-Make sure your request answers the questions:
-<br>&minus; What specifically did you do (so that it can be repeated)?
-<br>&minus; What version of EIDORS are you using?
-<br>&minus; What OS/Matlab version are you using?
-<br>&minus; What did you want EIDORS to do that it didn't do? or,
-<br>&minus; What did EIDORS do that you didn't what it to?
 
 
 <p><li id="maintainers"><b>
