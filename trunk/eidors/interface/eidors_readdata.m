@@ -1,6 +1,11 @@
-function [vv, auxdata, stim ]= eidors_readdata( fname, format, extra )
+function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extra )
 % EIDORS readdata - read data files from various EIT equipment
 %    manufacturers
+%
+% [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extra )
+%    frame_range is the list of frames to load from the file (ie. 1:100).
+%    if the frames are beyond the number in the file, no data is returned
+%    to get all frames, use frame_range= []
 %
 % Currently the list of supported file formats is:
 %    - MCEIT (Goettingen / Viasys) "get" file format 
@@ -118,7 +123,7 @@ switch pre_proc_spec_fmt( format, fname );
       stim = 'N/A';
 
    case 'dixtal'
-      [vv] = dixtal_read_data( fname, extra );
+      [vv] = dixtal_read_data( fname, frame_range, extra );
       auxdata = vv(1025:end,:);
       vv      = vv([1:1024],:);
       stim= mk_stim_patterns(32,1,[0,4],[0,4], ... \
@@ -675,7 +680,7 @@ function [vv] = dixtal_read_codepage( fname );
 
 %        format = 'DIXTAL'
 %           - output: [vv] = eidors_readdata( fname, 'DIXTAL', encodepage );
-function [vv] = dixtal_read_data( file_name, encodepage1 );
+function [vv] = dixtal_read_data( file_name, frame_range, encodepage1 );
 
    % Get encodepage from the file
    fid=fopen(file_name,'rb');
@@ -694,12 +699,20 @@ function [vv] = dixtal_read_data( file_name, encodepage1 );
    dplen = hex2dec('1090');
    start = hex2dec('2800');
    fid=fopen(file_name,'rb');
-   vv= zeros(dplen/4, nframes);
-   for i = 0:nframes
+   if isempty(frame_range)
+      frame_range = 0:nframes;
+   else
+      frame_range = frame_range - 1;
+      frame_range(frame_range>nframes) = [];
+   end	  
+   vv= zeros(dplen/4, length(frame_range));
+   k= 1;
+   for i = frame_range
       status= fseek(fid, start + i*dplen, 'bof');
       if status~=0; break; end
       datapage = fread(fid, dplen, 'uint8');
-      vv(:,i+1) = proc_dixtal_data( datapage, encodepage );
+      vv(:,k) = proc_dixtal_data( datapage, encodepage );
+	  k=k+1;
    end
    fclose(fid);
 
