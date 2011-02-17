@@ -6,40 +6,32 @@
 
 <li><b>Windows</b>:
 <br>&minus;
-    Download and install <a href="http://www.tortoisecvs.org">Tortoise CVS</a>
+    Download and install <a href="http://www.tortoisesvn.org">Tortoise SVN</a>
 <br>&minus;
-    Right click in the directory you would like to download to, and type
-    in the value of <tt>CVSROOT</tt> below.
-<br>&minus;
-    In the box <tt>Module</tt> enter <b>eidors3d</b>
+    Right click in the directory you would like to download to, and type in 
+    <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/"
+               >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/</a>
     <br>
 
 <li><b>Unix / Linux</b>:
 Type
-<br><tt>export CVS_RSH=ssh</tt>
-<br><tt>cvs -d$CVSROOT checkout eidors3d</tt>
-    </ul>
-
-Use the following values for <tt>CVSROOT</tt>
-    <ul>
-<li><b>Anonymous Access</b>: <i>Available to everyone</i>
-<br><tt>CVSROOT=:pserver:anonymous@eidors3d.cvs.sf.net:/cvsroot/eidors3d</tt>
-<li><b>Developer Access</b>: <i>Available to registered eidors3d developers</i>
-<br><tt>CVSROOT=:ext:<b>DEVELOPERNAME</b>@eidors3d.cvs.sf.net:/cvsroot/eidors3d</tt>
+<br><tt>
+svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/"
+               >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/</a>
+</tt>
     </ul>
 
     <H3>EIDORS Mailing List</H3>
     <ul>
-<li> Send message to the mailing list at
-<a href="mailto:EIDORS3D@listserv.umist.ac.uk"
-               >EIDORS3D@listserv.umist.ac.uk</a>
-<li> To subscribe, send mail to
-<a href="mailto:EIDORS3D-request@LISTSERV.UMIST.AC.UK"
-               >EIDORS3D-request@LISTSERV.UMIST.AC.UK</a>
-with the body text <tt> SUBSCRIBE EIDORS3D <i>your name</i></tt>
-<li> Mailing list archive is:
-<a href="http://listserv.umist.ac.uk/archives/eidors3d.html"
-        >http://listserv.umist.ac.uk/archives/eidors3d.html</a>
+<li> All EIDORS questions should go to the 
+<a href="mailto:eidors3d-help@lists.sourceforge.net"><tt>
+[EIDORS-help] mailing list: eidors3d-help@lists.sourceforge.net</tt></a>.
+<li> To subscribe:
+<a href="https://lists.sourceforge.net/lists/listinfo/eidors3d-help"
+        >https://lists.sourceforge.net/lists/listinfo/eidors3d-help"</a>
+<li> The mailing list can be searched here:
+<a href="http://sourceforge.net/search/?group_id=100454&type_of_search=mlists"
+        >http://sourceforge.net/search/?group_id=100454&type_of_search=mlists</a>
     </ul>
 
 
