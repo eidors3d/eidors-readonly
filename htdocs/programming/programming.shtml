@@ -41,7 +41,7 @@ svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/"
 <li>Go the the <a href="http://sourceforge.net/cvs/?group_id=100454">EIDORS project page</a>
 <li>Click on the link for <i>New User via SSL</i>. Register your username
 <li>Send a request for membership to the
-    <a href="http://eidors3d.sourceforge.net/faq.html#maintainers">maintainers</a>
+    <a href="http://eidors3d.sourceforge.net/faq.shtml#maintainers">maintainers</a>
     </ol>
 
     <H3>Developer information</H3>
