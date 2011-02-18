@@ -8,7 +8,9 @@ function [fwd_model] = linear_reorder(fwd_model,ccw)
 %         No. of nodes/element = No. spatial dimensions + 1
 
 % (C) 2011 Michael Crabb. License: GPL version 2 or version 3
-% $Id:$
+% $Id$
+
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 if (nargin==1) 
     ccw=-1; %Default specify counter-clockwise nodes
@@ -42,4 +44,42 @@ for e=1:eletotal; %Loop over all elements
 end
 fwd_model.elems=elementnodes; %Reassign fwd_model.elems
 
-end %End LinearReorder function
+%End LinearReorder function
+
+function do_unit_test
+   imdl = mk_common_model('n3r2',32); fmdl = imdl.fwd_model;
+   fm1 = linear_reorder(fmdl);
+   vol1= test_linear_reorder( fm1 );
+   ok = all(vol1>0);
+   fprintf('test1 3d: OK=%d\n',ok);
+
+   fm1 = linear_reorder(fmdl, 1);
+   vol1= test_linear_reorder( fm1 );
+   ok = all(vol1<0);
+   fprintf('test2 3d: OK=%d\n',ok);
+
+   imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
+   fm1 = linear_reorder(fmdl);
+   vol1= test_linear_reorder( fm1 );
+   ok = all(vol1>0);
+   fprintf('test1 2d: OK=%d\n',ok);
+
+   fm1 = linear_reorder(fmdl, 1);
+   vol1= test_linear_reorder( fm1 );
+   ok = all(vol1<0);
+   fprintf('test2 2d: OK=%d\n',ok);
+
+   
+
+function vol = test_linear_reorder(fwd_model)
+
+dim=size(fwd_model.nodes,2); elee=size(fwd_model.elems,1);
+
+for e=1:elee
+    b=fwd_model.elems(e,:);  [v]=fwd_model.nodes(b,:);
+        for i=1:dim
+            vv1(i,:)=v(i+1,:)-v(1,:);
+        end
+    vol(e)=det([vv1]);
+end
+
