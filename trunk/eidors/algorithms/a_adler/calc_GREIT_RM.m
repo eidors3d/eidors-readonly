@@ -51,6 +51,12 @@ function RM = calc_RM(Y, D, noiselev)
    RM = D*Y'/(Y*Y');
 
 function PSF= desired_soln(xyc, radius, opt)
+   c_obj = {xyc, radius, opt};
+   PSF = eidors_obj('get-cache', c_obj, 'desired_solution');
+   if ~isempty(PSF)
+       return
+   end
+        
    xsz = opt.imgsz(1); ysz = opt.imgsz(2);
    sz= xsz * ysz;
    xmin = opt.meshsz(1); xmax = opt.meshsz(2);
@@ -71,7 +77,7 @@ function PSF= desired_soln(xyc, radius, opt)
       end
 %     PSF(:,i) = PSF(:,i)/sum(PSF(:,i));
    end
-
+   eidors_obj('set-cache', c_obj, 'desired_solution', PSF);
 
    function opt = parse_options(opt)
        if ~isfield(opt, 'normalize'), opt.normalize = 1; end
