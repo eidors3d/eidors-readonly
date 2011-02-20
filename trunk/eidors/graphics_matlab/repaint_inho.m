@@ -40,10 +40,16 @@ ELEM= vtx';
 Xs=   zeros(3,length(ii));
 Ys=   zeros(3,length(ii));
 Zs=   zeros(3,length(ii));
-for idx=[[1;2;3], ...
+switch(size(this_x,2))
+    case 3
+        idx_ = [1;2;3];
+    case 4
+        idx_ = [[1;2;3], ...
          [1;2;4], ...
          [1;3;4], ...
          [2;3;4]];
+end
+for idx=idx_
    Xs(:)=vtx(this_x(:,idx)',1);
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
