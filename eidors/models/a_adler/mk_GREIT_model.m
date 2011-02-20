@@ -1,13 +1,19 @@
-function imdl= mk_GREIT_model( fmdl, radius, weight, options )
+function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach
-%   imdl= mk_GREIT_model( fmdl, radius, weight, options )
+%   [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %
-% Parameters
+% Output: 
+%   imdl   - GREIT inverse model
+%   weight - value of the weight paramater chosed to satisfy the prescribed
+%            noise figure (NF). See options.noise_figure below.
+%
+% Parameters:
 %   fmdl   - fwd model on which to do simulations, or
 %          - string specifying prepackaged models
 %
 %   radius - requested weighting matrix  (recommend 0.25 for 16 electrodes)
-%   weight - weighting matrix (weighting of noise vs signal)
+%   weight - weighting matrix (weighting of noise vs signal). Can be empty
+%            options.noise_figure is specified
 %   options- structure with fields:
 %     imgsz       - [xsz ysz] reconstructed image size in pixels 
 %                   (default: [32 32])
@@ -22,7 +28,9 @@ function imdl= mk_GREIT_model( fmdl, radius, weight, options )
 %         random variation
 %     target_offset - maximum allowed vertical displacement from the plane
 %         of electrodes (default: 0). Can be specified as 
-%         [down_offset up_offset]. 
+%         [down_offset up_offset].
+%     noise_figure - the noise figure (NF) to achieve. Overwrites weight 
+%         which will be optimised to achieve the target NF.
 %     extra_noise - extra noise samples (such as electrode movement)
 %
 % NOTE
@@ -56,14 +64,15 @@ end
 
 
 Nsim = opt.Nsim;
-[vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt );
+[vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
 opt.normalize = imgs.fwd_model.normalize_measurements;
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 
-RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
+
 %imdl = mk_common_gridmdl('b2c', RM);
  
+% Prepare model
  xgrid = linspace(minnode(1),maxnode(1),opt.imgsz(1)+1);
  ygrid = linspace(minnode(2),maxnode(2),opt.imgsz(2)+1);
  rmdl = mk_grid_model([],xgrid,ygrid);
@@ -77,14 +86,42 @@ RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
  rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
  rmdl.coarse2fine(:,ff)= [];
  
-  
 imdl = select_imdl( fmdl,{'Basic GN dif'});
-imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
-%imdl.solve_use_matrix.map = inside;
 imdl.solve = @solve_use_matrix;
 imdl.rec_model = rmdl;
 
+if ~isempty(opt.noise_figure)
+    if ~isempty(weight)
+        eidors_warning('mk_GREIT_model: Ignoring weight parameter, options.noise_figure is non-empty')
+    end
+    target = opt.noise_figure;
+    xyzr = mean(fmdl.nodes);
+    xyzr(3) = mean(elec_loc(:,3));
+    xyzr(4) = opt.target_size;
+    [jnk,vi_NF] = simulate_movement(imgs,xyzr');
+    eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure');
+    eidors_msg('mk_GREIT_model: This will take a while...');
+    f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
+    fms_opts.TolFun = 0.01*target; %don't need higher accuracy
+    [weight, NF] = fminsearch(f, target);
+    eidors_msg(['mk_GREIT_model: Optimal solution gives NF=' ... 
+        num2str(NF+target) ' with weight=' num2str(weight)]);
+end
 
+RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
+imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
+%imdl.solve_use_matrix.map = inside;
+
+function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
+    target,vi_NF)
+
+   % calculate GREIT matrix as usual
+   RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
+   imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
+   NF = calc_noise_params(imdl,vh, vi_NF);
+   out = (NF - target)^2;
+%    out = (mean(NF) - target)^2 + std(NF);
+   
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
     case 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd'
@@ -96,7 +133,7 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt );
+function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
    ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
@@ -155,14 +192,18 @@ function [vi,vh,xy,bound]= stim_targets(imgs, Nsim, opt );
            v = linspace(0,1,101); v(end)=[];
            pts = fourier_fit(F,v);
            lim = max(maxx, maxy);
-           [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim))), ...
-                           linspace(-lim,lim,ceil(sqrt(Nsim))));
-                       IN = inpolygon(x,y,pts(:,1),pts(:,2));
-           xyzr(1,:) = x(find(IN,Nsim));
-           xyzr(2,:) = y(find(IN,Nsim));
-           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,Nsim);
+           frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
+           [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
+                           linspace(-lim,lim,ceil(sqrt(Nsim/frac))));
+                      
+           x = x+ctr(1); y = y + ctr(2);    
+           IN = inpolygon(x,y,pts(:,1),pts(:,2));
+           xyzr(1,:) = x(find(IN));
+           xyzr(2,:) = y(find(IN));
+           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,size(xyzr,2));
            % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
+           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
+           eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
    end
 
    [vh,vi] = simulate_movement(imgs, xyzr);
@@ -203,6 +244,7 @@ function opt = parse_options(opt);
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'distr'),     opt.distr = 0; end 
     if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000; end
+    if ~isfield(opt, 'noise_figure'), opt.noise_figure = []; end
     if isfield(opt,'extra_noise')
       error('mk_GREIT_model: doesn''t currently support extra_noise');
     end
