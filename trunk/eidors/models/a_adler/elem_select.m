@@ -1,10 +1,12 @@
-function memb_frac = elem_select( fmdl, select_fcn );
+function memb_frac = elem_select( fmdl, select_fcn )
 % ELEM_SELECT: select element fractions inside a function
 %   memb_frac = elem_select( fmdl, select_fcn )
 %
 %  memb_frac = fraction of each element within the fcn
 %  fmdl =      fwd_model structure
-%  select_fcn = function to describe membership
+%  select_fcn = function to describe membership, 
+%              can also be a cell array of functions, but all must accept
+%              x, y, and z
 %
 % parameters
 %   fwd_model.elem_select.interp_no  - interpolation density
@@ -37,8 +39,18 @@ if dims ==2;
 else
   z = squeeze(pts(:,3,:));
 end
+if ~iscell(select_fcn) 
+    % the normal case  
+    memb_frac = mean( feval(select_fcn,x,y,z), 2);
+else
+    % many functions case
+    memb_val = ones(size(x));
+    for i = 1:numel(select_fcn)
+        memb_val = memb_val .* feval(select_fcn{i},x,y,z);
+    end
+    memb_frac = mean(memb_val,2);
+end
 
-memb_frac = mean( feval(select_fcn,x,y,z), 2);
 
 function do_unit_test;
     imdl = mk_common_model('a2c2',8);
