@@ -29,6 +29,16 @@ function mdl_pts = interp_mesh( mdl, n_interp)
 % $Id$
 
 if nargin<2; n_interp=0; end
+
+% cashing
+   
+   c_obj = {mdl.elems, mdl.nodes, n_interp};
+   mdl_pts = eidors_obj('get-cache', c_obj, 'interpolation');
+   if ~isempty(mdl_pts)
+       return
+   end
+
+
 [n_elems, n_dims_1]= size(mdl.elems);
 
 % Get element nodes, and reshape
@@ -44,6 +54,13 @@ mdl_pts = interp*el_nodes;
 mdl_pts = reshape(mdl_pts, l_interp, n_elems, n_dims_1-1);
 
 mdl_pts = permute(mdl_pts, [2,3,1]);
+
+% caching
+eidors_cache('boost_priority', -2); % low priority
+c_obj = {mdl.elems, mdl.nodes, n_interp};
+eidors_obj('set-cache', c_obj, 'interpolation', mdl_pts);
+eidors_cache('boost_priority', +2); % restore priority
+
 
 % interpolate over a triangle with n_interp points
 % generate a set of points to fairly cover the triangle
