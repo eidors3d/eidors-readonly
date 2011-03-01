@@ -26,23 +26,27 @@ np = calc_colours('npoints');
 try   np = img(1).calc_colours.npoints;
 end
 
-fwd_model= img(1).fwd_model; % Assume all fwd_models are same
-dims= size(fwd_model.nodes,2);
-if nargin<=1;
-   levels= [];
-end
-
-if isempty(levels) && dims==2
+% Assume all fwd_models are same dimension (all 3D or 2D no mixed dims)
+if n_dims(img(1))==2
    levels= [Inf,Inf,0];
+   if nargin>1 && ~isempty(levels);
+       warning('specified levels ignored for 2D FEM');
+   end
 end
 
+
+
+rimg = calc_this_slice( img(1), levels, np);
+
+function rimg = calc_this_slice( img, levels, np)
+% If scalar levels then we just create that many cut planes on z-dimension
+fwd_model = img.fwd_model;
 if size(levels)== [1,1]
    zmax= max(fwd_model.nodes(:,3));
    zmin= min(fwd_model.nodes(:,3));
    levels = linspace(zmin,zmax, levels+2);
    levels = levels(2:end-1)'*[Inf,Inf,1];
 end
-
 num_levs= size(levels,1);
 if isfield(img,'elem_data')
    [elem_data, n_images] = get_img_data(img);
