@@ -8,6 +8,9 @@ function mdl_pts = interp_mesh( mdl, n_interp)
 %      n_interp >=1 - output multiple points per elem
 %           in 2D: (n_int+1)*(n_int+2)/2 points per elem
 %           in 3D: (n_int+1)*(n_int+2)*(n_int+3)/6 points per elem
+%   n_interp may be specified as:
+%      fwd_model.interp_mesh.n_interp (This overrides the above)
+%
 % OUTPUT:
 %    mdl_pts = N_elems x N_dims x N_points
 %   example: for mdl_pts= interp_mesh( mdl, 0);
@@ -29,7 +32,7 @@ function mdl_pts = interp_mesh( mdl, n_interp)
 % $Id$
 
 if nargin<2; n_interp=0; end
-
+try n_interp = mdl.interp_mesh.n_interp; end % Override if provided
 % cashing
    
    c_obj = {mdl.elems, mdl.nodes, n_interp};

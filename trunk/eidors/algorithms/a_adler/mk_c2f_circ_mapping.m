@@ -9,6 +9,9 @@ function mapping = mk_c2f_circ_mapping( mdl, xyzr );
 % xyzr is the 3xN matrix (2D) or 4xN matrix (3D) of
 %      circle centres and radii
 %
+% this function approximates using points interpolated into elements
+%   use mdl.interp_mesh.n_points to control interpolation density  
+%
 % if a 3xN matrix is specified for a 3D model, then cylindrical
 %  shapes (circle extruded in z) are selected
 %
@@ -80,7 +83,12 @@ function frac= contained_elem_pts(m_pts, xyr);
      inr = (m_pts(:,1,:) - xyr(1)).^2 + ...% xc =
            (m_pts(:,2,:) - xyr(2)).^2 + ...% yc =
            (m_pts(:,3,:) - xyr(3)).^2;     % zc =
-     frac= mean( inr < xyr(4)^2 ,3);
+     inpts = inr < xyr(4)^2;
+     frac= mean( inpts ,3);
+     if sum(inpts(:))==0
+         eidors_msg(['mk_c2f_circ_mapping: Interpolation failed: increase ', ...
+                         'fwd_model.interp_mesh.n_interp']);
+     end
 
 function do_unit_test
    %2D example
