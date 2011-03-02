@@ -28,7 +28,7 @@ try   np = img(1).calc_colours.npoints;
 end
 
 % Assume all fwd_models are same dimension (all 3D or 2D no mixed dims)
-if n_dims(img(1))==2 
+if mdl_dim(img(1))==2 
    if nargin>1 && ~isempty(levels);
        if ~all(levels(1,:) == [inf,inf,0])
           warning('specified levels ignored for 2D FEM');
