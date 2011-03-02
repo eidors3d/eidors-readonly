@@ -15,9 +15,10 @@ function [mdl] = fix_model(mdl,options)
 %       .faces
 %       .face2elem
 %       .elem2face
+%       .elem_centre
 %
 % The elems will be reordered so that all faces are counter-clockwise.
-%
+
 % (C) 2011 Bartlomiej Grychtol. Licensed under GPL v2 or v3
 % $Id$
 
@@ -30,19 +31,28 @@ if ~isfield(mdl,'boundary')
 end
 [mdl.faces mdl.face2elem mdl.elem2face] = calc_faces(mdl);
 mdl.boundary_face = mdl.face2elem(:,2)==0;
+mdl.elem_centre = interp_mesh(mdl, 0);
+tmp = mdl;
+tmp.elems = tmp.faces;
+%mdl.face_centre = interp_mesh(tmp,0);
+mdl.normals = calc_normals(mdl);
+
+
+
+
 
 % decrease memory footprint
 mdl.elems = uint32(mdl.elems);
 mdl.faces = uint32(mdl.faces);
 mdl.elem2face = uint32(mdl.elem2face);
 mdl.face2elem = uint32(mdl.face2elem);
-%mdl.normals = calc_normals(mdl);
+
 
 function [faces face2elem elem2face] = calc_faces(mdl)
 
 faces = [];
-n_elem = n_elems(mdl);
-e_dim = n_dims(mdl);
+n_elem = num_elems(mdl);
+e_dim = mdl_dim(mdl);
 f_dim = e_dim-1;
 n_face = e_dim+1; 
 
@@ -57,41 +67,7 @@ elem_sorted = sort(mdl.elems,2);
 [faces ib ia] = unique(reshape(elem_sorted(:,idx),[],e_dim),'rows');
 elem2face = reshape(ia,[],e_dim+1);
 face2elem = calc_face2elem(elem2face);
-% n_face = size(faces,1);
-% face2elem = zeros(n_face,2);
-% for i = 1:n_face
-%    switch e_dim
-%        case 2
-%            test = (elem_sorted==faces(i,1)) | (elem_sorted==faces(i,2));
-%        case 3
-%            test = (elem_sorted==faces(i,1)) | (elem_sorted==faces(i,2)) | ...
-%                (elem_sorted==faces(i,3));
-%    end
-%    tmp = sum(double(test),2);
-%    idx = find(tmp == e_dim);
-%    if numel(idx) == 1; idx(2) = 0; end;
-%    face2elem(i,:) = idx;
-% end
 
-%elem2face = calc_elem2face(face2elem,e_dim+1);
-
-% for e = 1:n_elem
-%     nodes = reshape(elem_sorted(e,idx), size(idx));
-%     [faces id] = add_face(faces, nodes);
-%     elem2face(e,:) = id;
-% end
-
-% function [faces, id] = add_face(faces, nodes)
-%     %nodes = sort(nodes,2); assume sorted!
-%     if isempty(faces)
-%         faces = nodes; %faces of one element should be uniqe, not checking
-%         id = 1:size(faces,1);
-%     else
-%         [tf id] = ismember(nodes,faces,'rows');
-%         id(~tf)= (1:sum(~tf)) + size(faces,1);
-%         faces = [faces; nodes(~tf,:)];
-%     end
-%     
 function face2elem = calc_face2elem(elem2face)
 %     n_face = max(elem2face(:));
 %     face2elem = zeros(n_face,2);
@@ -118,8 +94,31 @@ function elem2face = calc_elem2face(face2elem, face_per_elem)
         [f jnk] = find(face2elem==i);
         elem2face(i,:) = f;
     end
-% function normals = calc_normals(mdl)
-%     normals = [];
+function normals = calc_normals(mdl)
+    [n_faces face_dim] = size(mdl.faces);
+    switch face_dim
+        case 2
+            A = mdl.nodes(mdl.faces(:,1),:);
+            B = mdl.nodes(mdl.faces(:,2),:);
+            normals = (B-A)*[0 1; -1 0];
+        case 3
+            x1 = mdl.nodes(mdl.faces(:,2),1) - mdl.nodes(mdl.faces(:,1),1);
+            y1 = mdl.nodes(mdl.faces(:,2),2) - mdl.nodes(mdl.faces(:,1),2);
+            z1 = mdl.nodes(mdl.faces(:,2),3) - mdl.nodes(mdl.faces(:,1),3);
+            x2 = mdl.nodes(mdl.faces(:,3),1) - mdl.nodes(mdl.faces(:,1),1);
+            y2 = mdl.nodes(mdl.faces(:,3),2) - mdl.nodes(mdl.faces(:,1),2);
+            z2 = mdl.nodes(mdl.faces(:,3),3) - mdl.nodes(mdl.faces(:,1),3);
+            %(a2b3 ? a3b2, a3b1 ? a1b3, a1b2 ? a2b1).
+            normals = zeros(n_faces,3);
+            normals(:,1) = y1.*z2 - z1.*y2;
+            normals(:,2) = z1.*x2 - x1.*z2;
+            normals(:,3) = x1.*y2 - y1.*x2;
+    end
+    normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,[])';
+    
+    
+    
+    
     
 function do_unit_test
     % square
@@ -139,4 +138,8 @@ function do_unit_test
     out = fix_model(mdl);
     out.faces
     out.elem2face
-    out.face2elem         
+    out.face2elem    
+    
+    mdl = mk_common_model('n3r2',16); mdl= mdl.fwd_model;
+    out = fix_model(mdl);
+    
