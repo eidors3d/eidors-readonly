@@ -8,6 +8,10 @@ function num = mdl_dim( mdl );
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
+if ~isfield(mdl,'type') && isfield(mdl,'nodes') % Set default for this case
+   mdl.type = 'fwd_model';
+end
+
 switch mdl.type
   case 'image';      fmdl = mdl.fwd_model;
   case 'inv_model';  fmdl = mdl.fwd_model;

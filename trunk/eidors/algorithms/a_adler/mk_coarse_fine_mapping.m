@@ -19,11 +19,12 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % if c_mdl is 2D and f_mdl is 3D, then parameter
 %     c_mdl.mk_coarse_fine_mapping.z_depth
 %     indicates the +/- z_depth which elements in 2D are
-%     considered to be extruded in 3D
+%     considered to be extruded in 3D (default inf)
 
 % (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+c_mdl = assign_defaults( c_mdl, f_mdl );
 c_obj = cache_obj(c_mdl, f_mdl);
 
 f_mdl= offset_and_project( f_mdl, c_mdl);
@@ -164,15 +165,19 @@ function xyz = interpxyz( xyzmin, xyzmax, n_interp);
 % Offset and project f_mdl as required
 function f_mdl= offset_and_project( f_mdl, c_mdl);
     [fn,fd]= size(f_mdl.nodes);
-    try
-       T= c_mdl.mk_coarse_fine_mapping.f2c_offset;
-    catch
-       T= zeros(1,fd);
-    end
-    try
-       M= c_mdl.mk_coarse_fine_mapping.f2c_project;
-    catch
-       M= speye(fd);
-    end
+    T= c_mdl.mk_coarse_fine_mapping.f2c_offset;
+    M= c_mdl.mk_coarse_fine_mapping.f2c_project;
 
     f_mdl.nodes= ( f_mdl.nodes - ones(fn,1)*T )*M;
+
+function c_mdl = assign_defaults( c_mdl, f_mdl );
+    [fn,fd]= size(f_mdl.nodes);
+    try    c_mdl.mk_coarse_fine_mapping.f2c_offset; % test exist
+    catch  c_mdl.mk_coarse_fine_mapping.f2c_offset= zeros(1,fd);
+    end
+    try    c_mdl.mk_coarse_fine_mapping.f2c_project;
+    catch  c_mdl.mk_coarse_fine_mapping.f2c_project= speye(fd);
+    end
+    try    c_mdl.mk_coarse_fine_mapping.z_depth;
+    catch  c_mdl.mk_coarse_fine_mapping.z_depth= inf;
+    end
