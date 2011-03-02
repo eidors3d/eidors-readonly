@@ -45,8 +45,9 @@ function RM = calc_RM(Y, D, noiselev)
 
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0
-   Y = [Y, noiselev*eye(208)];
-   D = [D,          zeros(size(D,1),208)];
+   N_meas = size(Y,1);
+   Y = [Y, noiselev*eye(N_meas)];
+   D = [D,          zeros(size(D,1),N_meas)];
 
    RM = D*Y'/(Y*Y');
 

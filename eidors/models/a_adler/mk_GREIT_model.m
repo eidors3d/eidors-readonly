@@ -92,7 +92,7 @@ imdl.rec_model = rmdl;
 
 if ~isempty(opt.noise_figure)
     if ~isempty(weight)
-        eidors_warning('mk_GREIT_model: Ignoring weight parameter, options.noise_figure is non-empty')
+        eidors_msg('mk_GREIT_model: Ignoring weight parameter, options.noise_figure is non-empty')
     end
     target = opt.noise_figure;
     xyzr = mean(fmdl.nodes);
