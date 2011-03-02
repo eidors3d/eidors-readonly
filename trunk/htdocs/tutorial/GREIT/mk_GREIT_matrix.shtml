@@ -34,19 +34,29 @@ Reconstruction Model (Circular model)
 </pre>
 
 <center>
-<img src="GREIT_examples01a.png">
+<img src="mk_GREIT_matrix01a.png">
 <br><i>Figure:</i>
 Reconstruction (no noise) with (from left to right)
 GREIT v1, Sheffield Backprojection, Gauss Newton Inverse
 </center>
 
+<h3> 
+Calculate GREIT reconstruction matrix
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_matrix02.m" -->
+</pre>
+
+The resulting matrix will be in the <tt>imdl</tt>
+structure under <tt>imdl.solve_use_matrix.RM</tt>.
 
 <h3> 
 Simulate 3D object on cylinder
 </h3>
 
 <pre>
-<!--#include virtual="GREIT_examples01.m" -->
+<!--#include virtual="mk_GREIT_matrix03.m" -->
 </pre>
 
 <h3> 
