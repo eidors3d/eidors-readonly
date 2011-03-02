@@ -19,12 +19,6 @@ position of electrodes, etc). This tutorial shows
 examples of this calculation.
 
 
-<center>
-<img src="GREIT_examples01a.png">
-<br><i>Figure:</i>
-Simulation Mesh and object
-</center>
-
 <h3> 
 Reconstruction Model (Circular model)
 </h3>
@@ -68,8 +62,8 @@ Reconstruct
 </pre>
 
 <center>
-<img src="GREIT_examples03a.png">
-<img src="GREIT_examples04a.png">
+<img src="mk_GREIT_matrix03a.png">
+<img src="mk_GREIT_matrix04a.png">
 <br><i>Figure:</i>
 <i>Left:</i> Simulated target
 <i>Right:</i> Reconstructed image (using GREIT)
