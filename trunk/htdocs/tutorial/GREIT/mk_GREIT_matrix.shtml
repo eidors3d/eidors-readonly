@@ -1,0 +1,76 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction Examples</h2>
+
+GREIT calculates a linear reconstruction matrix: <b>R</b><sub>GR</sub>
+which is used to calculate the reconstructed image <b>x</b> from
+difference measurements <b>y</b>:
+<ul>
+<b>x</b> =
+<b>R</b><sub>GR</sub>
+<b>y</b>.
+</ul>
+Here <b>y</b> are the time difference (TD-EIT) measurements
+(<b>y</b> = <b>v</b>&minus;<b>v</b><sub>r</sub>)
+or normalized TD-EIT measurements.
+<p>
+<b>R</b><sub>GR</sub> is calculated for a particular
+system (ie the stimulation pattern, number and 
+position of electrodes, etc). This tutorial shows
+examples of this calculation.
+
+
+<center>
+<img src="GREIT_examples01a.png">
+<br><i>Figure:</i>
+Simulation Mesh and object
+</center>
+
+<h3> 
+Reconstruction Model (Circular model)
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_matrix01.m" -->
+</pre>
+
+<center>
+<img src="GREIT_examples01a.png">
+<br><i>Figure:</i>
+Reconstruction (no noise) with (from left to right)
+GREIT v1, Sheffield Backprojection, Gauss Newton Inverse
+</center>
+
+
+<h3> 
+Simulate 3D object on cylinder
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_examples01.m" -->
+</pre>
+
+<h3> 
+Reconstruct 
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_examples03.m" -->
+</pre>
+
+<center>
+<img src="GREIT_examples03a.png">
+<img src="GREIT_examples03b.png">
+<img src="GREIT_examples03c.png">
+<br><i>Figure:</i>
+Reconstruction (SNR=0.5 noise) with (from left to right)
+GREIT v1, Sheffield Backprojection, Gauss Newton Inverse
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
