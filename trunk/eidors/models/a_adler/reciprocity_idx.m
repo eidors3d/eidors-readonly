@@ -55,12 +55,12 @@ function do_unit_test
 % [70] X    10   14   18   22   26  X    X
 tst.stimulation = mk_stim_patterns(8,1,[0,1],[0,1],{'rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,5,8);
-do_indiv_test('8-[01]-[01]-rotate',idx(:,[1,5]), ...
+unit_test_cmp('8-[01]-[01]-rotate',idx(:,[1,5]), ...
     [15,19,23,27,31;35,39,3,7,11]');
 
 tst.stimulation = mk_stim_patterns(8,1,[0,1],[0,1],{'rotate_meas'},10);
 idx = reciprocity_idx( tst ); idx = reshape(idx,5,8);
-do_indiv_test('8(10)-[01]-[01]-rotate',idx(:,[1,5]), ...
+unit_test_cmp('8(10)-[01]-[01]-rotate',idx(:,[1,5]), ...
     [15,19,23,27,31;35,39,3,7,11]');
 
 %     [01]   [12]   [23]   [34]   [45]   [50] 
@@ -72,11 +72,11 @@ do_indiv_test('8(10)-[01]-[01]-rotate',idx(:,[1,5]), ...
 % [50] X      6  6   9  8   12 10  X      X   
 tst.stimulation = mk_stim_patterns(6,1,[0,1],[0,1],{'rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6); 
-do_indiv_test('6-[01]-[01]-rotate',idx(:,[1,4]), [9,11,13;18 2 4]');
+unit_test_cmp('6-[01]-[01]-rotate',idx(:,[1,4]), [9,11,13;18 2 4]');
 
 tst.stimulation = mk_stim_patterns(6,1,[0,1],[0,1],{'no_rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6); 
-do_indiv_test('6-[01]-[01]-no_rotate',idx(:,[1,4]), [7,10,13;2 4 18]');
+unit_test_cmp('6-[01]-[01]-no_rotate',idx(:,[1,4]), [7,10,13;2 4 18]');
     
 %     [02]   [13]   [24]   [35]   [40]   [51] 
 % [02] X      4   6  X      10 11  X      16 16
@@ -87,11 +87,11 @@ do_indiv_test('6-[01]-[01]-no_rotate',idx(:,[1,4]), [7,10,13;2 4 18]');
 % [51] 3  3   X      9  8   X      15 13  X
 tst.stimulation = mk_stim_patterns(6,1,[0,2],[0,2],{'rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6);
-do_indiv_test('6-[02]-[02]-rotate',idx(:,[1,4]), [6,11,16;15,2,7]');
+unit_test_cmp('6-[02]-[02]-rotate',idx(:,[1,4]), [6,11,16;15,2,7]');
 
 tst.stimulation = mk_stim_patterns(6,1,[0,2],[0,2],{'no_rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6); 
-do_indiv_test('6-[02]-[02]-no_rotate',idx(:,[1,4]), [4,10,16;2,8,14]');
+unit_test_cmp('6-[02]-[02]-no_rotate',idx(:,[1,4]), [4,10,16;2,8,14]');
 
 %     [02]   [13]   [24]   [35]   [40]   [51] 
 % [02] 1  1   7  12  13 17  19 22  25 27  31 32
@@ -102,25 +102,15 @@ do_indiv_test('6-[02]-[02]-no_rotate',idx(:,[1,4]), [4,10,16;2,8,14]');
 % [51] 6  6   12 11  18 16  24 21  30 26  36 31
 tst.stimulation = mk_stim_patterns(6,1,[0,2],[0,2],{'meas_current','rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,6,6);
-do_indiv_test('6-[02]-[02]-mc-rotate',idx(:,[1,4]),  ...
+unit_test_cmp('6-[02]-[02]-mc-rotate',idx(:,[1,4]),  ...
             [ 1,12,17,22,27,32;19,30,35,4,9,14]');
 
 tst.stimulation = mk_stim_patterns(6,1,[0,2],[0,2],{'meas_current','no_rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,6,6); 
-do_indiv_test('6-[02]-[02]-mc-no_rotate',idx(:,[1,4]),  ...
+unit_test_cmp('6-[02]-[02]-mc-no_rotate',idx(:,[1,4]),  ...
             [ 1,7,13,19,25,31; 4,10,16,22,28,34]');
 
 tst.stimulation = mk_stim_patterns(6,1,[0,4],[0,4],{'meas_current','no_rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,6,6); 
-do_indiv_test('6-[04]-[04]-mc-no_rotate',idx(:,[1,4]),  ...
+unit_test_cmp('6-[04]-[04]-mc-no_rotate',idx(:,[1,4]),  ...
             [ 1,7,13,19,25,31; 4,10,16,22,28,34]');
-
-
-function do_indiv_test(txt,a,b,tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%25s = ',txt);
-   ok='fail';
-   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; catch; end
-   disp(ok)
-   if ~strcmp(ok,'ok'); keyboard; end

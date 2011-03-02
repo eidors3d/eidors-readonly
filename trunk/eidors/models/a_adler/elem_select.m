@@ -56,17 +56,10 @@ function do_unit_test;
     imdl = mk_common_model('a2c2',8);
     select_fcn = inline('(x-0.2).^2+(y-0.5).^2<0.2^2','x','y','z');
     memb_frac = elem_select( imdl.fwd_model, select_fcn);
-    do_indiv_test('a2c2',find(memb_frac), [5, 10,18,26,27]);
+    unit_test_cmp('a2c2',find(memb_frac), [5, 10,18,26,27]);
 
     imdl = mk_common_model('n3r2',8);
     select_fcn = inline('(x-0.2).^2+(y-0.5).^2 + (z-1).^2<0.1^2','x','y','z');
     memb_frac = elem_select( imdl.fwd_model, select_fcn);
-    do_indiv_test('n3r2',find(memb_frac), [156 159 162 168 431 434 437 503]);
+    unit_test_cmp('n3r2',find(memb_frac), [156 159 162 168 431 434 437 503]);
 
-
-function do_indiv_test(txt,a,b, tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%10s = ',txt);
-   ok='fail';
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
-   disp(ok)
