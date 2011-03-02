@@ -11,4 +11,4 @@ function unit_test_cmp(txt,a,b,tol)
    try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
    try; if all(abs(a - b) <= tol);  ok='ok'; end; catch; end
    disp(ok)
-   if ~strcmp(ok,'ok'); keyboard; end
+%  if ~strcmp(ok,'ok'); keyboard; end

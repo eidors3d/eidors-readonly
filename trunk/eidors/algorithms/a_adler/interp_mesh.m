@@ -49,7 +49,7 @@ try n_interp = mdl.interp_mesh.n_interp; end % Override if provided
 % Get element nodes, and reshape
 % need to be of size n_dims_1 x (n_elems*n_dims) for reshape
 el_nodes= mdl.nodes(mdl.elems',:);
-el_nodes= reshape(el_nodes, mdl_dim(mdl), []);
+el_nodes= reshape(el_nodes, elem_dim(mdl)+1, []);
 
 % Get interpolation matrix
 interp= triangle_interpolation( n_interp, elem_dim(mdl) );
@@ -99,9 +99,19 @@ function do_unit_test
     mdl.elems=[1,2,4;2,4,5;2,3,5;3,5,6];
     mdl.type='fwd_model';mdl.name='jnk';
     pp=interp_mesh(mdl,0);
-pp
+    unit_test_cmp('2D/2D (#1): ',pp,[14 9;16 12; 20 9;22 12]);
+
+    pp=interp_mesh(mdl,3);
+    unit_test_cmp('2D/2D (#2): ',pp(:,:,6),[14 9;16 12; 20 9;22 12]);
 
     mdl.nodes = [mdl.nodes, 0*mdl.nodes(:,1)+3];
     pp=interp_mesh(mdl,0);
-pp
+    unit_test_cmp('2D/3D (#1): ',pp,[14 9 3;16 12 3; 20 9 3;22 12 3]);
+
+    mdl = mk_common_model('n3r2',16); mdl= mdl.fwd_model;
+    pp=interp_mesh(mdl,0);
+    unit_test_cmp('3D/3D (#1): ',pp(1,:),[0.920196320100808   0.048772580504032   0.5],1e-14);
+
+    pp=interp_mesh(mdl,4);
+    unit_test_cmp('3D/3D (#2a):',pp(1,:,21),[0.920196320100808   0.048772580504032   0.5],1e-14);
 
