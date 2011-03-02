@@ -31,8 +31,12 @@ function mdl_pts = interp_mesh( mdl, n_interp)
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test;return; end
+
 if nargin<2; n_interp=0; end
 try n_interp = mdl.interp_mesh.n_interp; end % Override if provided
+
+
 % cashing
    
    c_obj = {mdl.elems, mdl.nodes, n_interp};
