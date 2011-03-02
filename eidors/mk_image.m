@@ -44,17 +44,10 @@ img.elem_data(:) = elem_data;
 function do_unit_test
    imdl = mk_common_model('a2c2',8);
    im0 = mk_image( imdl );
-   do_indiv_test('im1',im0.elem_data, ones(64,1) );
+   unit_test_cmp('im1',im0.elem_data, ones(64,1) );
 
    im0 = mk_image( imdl, 2 );
-   do_indiv_test('im2',im0.elem_data, 2*ones(64,1) );
+   unit_test_cmp('im2',im0.elem_data, 2*ones(64,1) );
 
    im0 = mk_image( imdl.fwd_model, 3*ones(64,1) );
-   do_indiv_test('im3',im0.elem_data, 3*ones(64,1) );
-
-function do_indiv_test(txt,a,b, tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%10s = ',txt);
-   ok='fail';
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
-   disp(ok)
+   unit_test_cmp('im3',im0.elem_data, 3*ones(64,1) );

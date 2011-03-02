@@ -299,30 +299,30 @@ function do_unit_test
    img.calc_colours.greylev = -0.01;
  
    img.elem_data = [-2;0;0;0;1;3];
-   do_indiv_test('cc01', calc_colours(img), [44; 128; 128; 128; 170; 254]);
+   unit_test_cmp('cc01', calc_colours(img), [44; 128; 128; 128; 170; 254]);
 
    imgk(1) = img; imgk(2) = img;
-   do_indiv_test('cc01', calc_colours(imgk), [44; 128; 128; 128; 170; 254]*[1,1]);
+   unit_test_cmp('cc01', calc_colours(imgk), [44; 128; 128; 128; 170; 254]*[1,1]);
 
    img.calc_colours.ref_level = 1;
-   do_indiv_test('cc02', calc_colours(img), [ 2;  86;  86;  86; 128; 212]);
+   unit_test_cmp('cc02', calc_colours(img), [ 2;  86;  86;  86; 128; 212]);
 
    img.calc_colours.greylev = -.1;
    img.calc_colours.mapped_colour = 0;
    img.elem_data = [-2;1;3];
    cm= reshape([ 0, 0.9, 0.9; 0, 0.9, 0.0643; 0.27, 0.9, 0]',[3,1,3]);
-   do_indiv_test('cc03', calc_colours(img), cm,1e-3)
+   unit_test_cmp('cc03', calc_colours(img), cm,1e-3)
 
    img.calc_colours.greylev =  .1;
    cm= reshape([ 0.73, 1.0, 1.0; 0.1, 0.1, 0.1; 1.0, 0.9357, 0.1],[3,1,3]);
-   do_indiv_test('cc04', calc_colours(img), cm,1e-3)
+   unit_test_cmp('cc04', calc_colours(img), cm,1e-3)
 
    calc_colours('greylev',0);
    calc_colours('sat_adj',1);
    calc_colours('mapped_colour',4);
    calc_colours('backgnd',[0.5,0.5,0.5]);
    cc= calc_colours('colourmap');
-   do_indiv_test('cc05',cc, [2,2,2;4,4,4;2,4,4;0,1,4;0,0,0;4,1,0;4,4,2;4,4,4]/4,1e-4);
+   unit_test_cmp('cc05',cc, [2,2,2;4,4,4;2,4,4;0,1,4;0,0,0;4,1,0;4,4,2;4,4,4]/4,1e-4);
 
 % TESTS TO WRITE
 %   'greylev'    (DEFAULT -.01)
@@ -335,9 +335,3 @@ function do_unit_test
 %   'clim'    (DEFAULT [])
 %   'cmap_type'  (Default blue-red)
 
-function do_indiv_test(txt,a,b, tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%10s = ',txt);
-   ok='fail';
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
-   disp(ok)

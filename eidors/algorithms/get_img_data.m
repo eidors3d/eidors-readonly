@@ -45,35 +45,28 @@ end
 % TESTS:
 function do_unit_test
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
-   do_indiv_test('elem_01', get_img_data(img), ones(64,1) )
+   unit_test_cmp('elem_01', get_img_data(img), ones(64,1) )
 
    imgk = img; imgk.elem_data = img.elem_data';
-   do_indiv_test('elem_02', get_img_data(imgk), ones(64,2) )
+   unit_test_cmp('elem_02', get_img_data(imgk), ones(64,2) )
 
    imgk = img; imgk(2) = img;
-   do_indiv_test('elem_03', get_img_data(imgk), ones(64,2) )
+   unit_test_cmp('elem_03', get_img_data(imgk), ones(64,2) )
 
    % EXPECTED FAIL
    % imgk(2).elem_data = imgk(2).elem_data';
 
    imgk(1).elem_data = imgk(1).elem_data*[1,2];
-   do_indiv_test('elem_04', get_img_data(imgk(1)), ones(64,1)*[1,2] )
-   do_indiv_test('elem_05', get_img_data(imgk), ones(64,1)*[1,2,1] )
+   unit_test_cmp('elem_04', get_img_data(imgk(1)), ones(64,1)*[1,2] )
+   unit_test_cmp('elem_05', get_img_data(imgk), ones(64,1)*[1,2,1] )
 
    nd =ones(size(img.fwd_model.nodes,1),1);
    imgn = rmfield(img,'elem_data'); imgn.node_data=nd;
-   do_indiv_test('node_01', get_img_data(imgn), nd)
+   unit_test_cmp('node_01', get_img_data(imgn), nd)
 
    i2 = mk_common_model('b2c0',8); fmdl2= i2.fwd_model;
    c2f = mk_coarse_fine_mapping(fmdl2, img.fwd_model);
    img.fwd_model.coarse2fine = c2f;
-   do_indiv_test('c2f_01', get_img_data(img), c2f*ones(64,1))
+   unit_test_cmp('c2f_01', get_img_data(img), c2f*ones(64,1))
     
    % TODO ADD TESTS WHICH GIVE C2F ON NODE_DATA
-
-function do_indiv_test(txt,a,b)
-   fprintf('%10s = ',txt);
-   ok='fail'; try; if all(a == b);  ok='ok';
-   end; end
-   disp(ok)
-   

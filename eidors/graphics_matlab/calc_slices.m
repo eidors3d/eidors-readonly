@@ -160,33 +160,33 @@ function do_unit_test
 
    imc = calc_slices(img);
    imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
-   do_indiv_test('cs 2d 1', imc, imt);
+   unit_test_cmp('cs 2d 1', imc, imt);
 
    imn = rmfield(img,'elem_data');
    imn.node_data = ones(size(imn.fwd_model.nodes,1),1);
    imc = calc_slices(imn);
-   do_indiv_test('cs 2d 2', imc, imt, 1e-14);
+   unit_test_cmp('cs 2d 2', imc, imt, 1e-14);
 
    img.elem_data(1:4) = 2;
    imc = calc_slices(img);
    imt(3:6,3:6) = 1; imt(4:5,4:5) = 2; 
-   do_indiv_test('cs 2d 3', imc, imt);
+   unit_test_cmp('cs 2d 3', imc, imt);
 
    imn.node_data(1:5) = 2;
    imc = calc_slices(imn);
    imt(3:6,3:6) = 1; imt(4:5,3:6) = 1.049020821501088;
    imt(3:6,4:5) = 1.049020821501088; imt(4:5,4:5) = 2;
-   do_indiv_test('cs 2d 4', imc, imt, 1e-14);
+   unit_test_cmp('cs 2d 4', imc, imt, 1e-14);
 
    imn.node_data(:) = 1; imn.node_data(1) = 4;
    imc = calc_slices(imn);
    imt(3:6,3:6) = 1; imt(4:5,4:5) = 1.575633893074693; 
-   do_indiv_test('cs 2d 5', imc, imt, 1e-14);
+   unit_test_cmp('cs 2d 5', imc, imt, 1e-14);
 
    imn.calc_colours.npoints = 7; 
    imc = calc_slices(imn);
    imt = NaN*ones(7); imt(2:6,2:6) = 1; imt(4,1:7)= 1; imt(1:7,4)= 1;imt(4,4) = 4; 
-   do_indiv_test('cs 2d 6', imc, imt, 1e-14);
+   unit_test_cmp('cs 2d 6', imc, imt, 1e-14);
 
 
 % 3D Tests
@@ -195,17 +195,17 @@ function do_unit_test
    imn = calc_slices(img,[inf,inf,1]);
 
    imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
-   do_indiv_test('cs 3d 1', imn, imt);
+   unit_test_cmp('cs 3d 1', imn, imt);
 
    imn = calc_slices(img,[inf,0,inf]);
    imt = NaN*ones(8); imt(1:8,3:6) = 1; 
-   do_indiv_test('cs 3d 2', imn, imt);
+   unit_test_cmp('cs 3d 2', imn, imt);
 
    % Should have no effect
    img.fwd_model.nodes(:,3) = img.fwd_model.nodes(:,3)-1;
    imn = calc_slices(img,[inf,0,inf]); 
    imt = NaN*ones(8); imt(1:8,3:6) = 1; 
-   do_indiv_test('cs 3d 3', imn, imt);
+   unit_test_cmp('cs 3d 3', imn, imt);
 
 
 % multi image struct
@@ -214,19 +214,11 @@ function do_unit_test
    img(2) = img;
    imc = calc_slices(img); 
    imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
-   do_indiv_test('cs mult 1', imc, cat(3,imt,imt));
+   unit_test_cmp('cs mult 1', imc, cat(3,imt,imt));
 
    imgb = mk_image( mk_common_model('b2c2',8));
    imgb.calc_colours.npoints = 8; 
    img(3)=imgb;
    imc = calc_slices(img); 
-   do_indiv_test('cs mult 2', imc, cat(3,imt,imt,imt));
+   unit_test_cmp('cs mult 2', imc, cat(3,imt,imt,imt));
 
-   
-function do_indiv_test(txt,a,b, tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%10s = ',txt);
-   ok='fail';
-   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
-   disp(ok)

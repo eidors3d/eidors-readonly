@@ -333,23 +333,23 @@ function do_unit_test
    fmdl.mdl_slice_mapper.npx = 5;
    fmdl.mdl_slice_mapper.npy = 5;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   do_indiv_test('eptr01',eptr,[ 0  0 51  0  0; 0 34 26 30  0;
+   unit_test_cmp('eptr01',eptr,[ 0  0 51  0  0; 0 34 26 30  0;
                  62 35  4 29 55; 0 36 32 31  0; 0  0 59  0  0]);
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   do_indiv_test('nptr01',nptr,[ 0  0 28  0  0; 0 14  7 17  0;
+   unit_test_cmp('nptr01',nptr,[ 0  0 28  0  0; 0 14  7 17  0;
                  40 13  1  9 32; 0 23 11 20  0; 0  0 36  0  0]);
 
    nint = mdl_slice_mapper(fmdl,'nodeinterp');
-   do_indiv_test('nint01a',nint(2:4,2:4,1),[ 0.8284, 1, 0.8284;1,1,1; 0.8284, 1, 0.8284], 1e-3);
+   unit_test_cmp('nint01a',nint(2:4,2:4,1),[ 0.8284, 1, 0.8284;1,1,1; 0.8284, 1, 0.8284], 1e-3);
 
    fmdl.mdl_slice_mapper.npx = 5;
    fmdl.mdl_slice_mapper.npy = 3;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   do_indiv_test('eptr02',eptr,[  0  0 51 0  0;62 35  4 29 55; 0 0 59 0 0]);
+   unit_test_cmp('eptr02',eptr,[  0  0 51 0  0;62 35  4 29 55; 0 0 59 0 0]);
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   do_indiv_test('nptr02',nptr,[ 0 0 28 0 0; 40 13 1 9 32; 0 0 36 0 0 ]);
+   unit_test_cmp('nptr02',nptr,[ 0 0 28 0 0; 40 13 1 9 32; 0 0 36 0 0 ]);
 
 % DIRECT POINT TESTS
    imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
@@ -357,10 +357,10 @@ function do_unit_test
    fmdl.mdl_slice_mapper.x_pts = linspace(-1,1,5);
    fmdl.mdl_slice_mapper.y_pts = [0,0.5];
    eptr = mdl_slice_mapper(fmdl,'elem');
-   do_indiv_test('eptr03',eptr,[ 62 35 4 29 55; 0 34 26 30 0]);
+   unit_test_cmp('eptr03',eptr,[ 62 35 4 29 55; 0 34 26 30 0]);
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   do_indiv_test('nptr03',nptr,[ 40 13 1 9 32; 0 14 7 17 0]);
+   unit_test_cmp('nptr03',nptr,[ 40 13 1 9 32; 0 14 7 17 0]);
 
 % 3D NPOINTS
    imdl = mk_common_model('n3r2',8); fmdl = imdl.fwd_model;
@@ -369,30 +369,21 @@ function do_unit_test
    fmdl.mdl_slice_mapper.npy = 4;
    eptr = mdl_slice_mapper(fmdl,'elem');
    test = zeros(4); test(2:3,2:3) = [512 228;524 533];
-   do_indiv_test('eptr04',eptr, test);
+   unit_test_cmp('eptr04',eptr, test);
    nptr = mdl_slice_mapper(fmdl,'node');
    test = zeros(4); test(2:3,2:3) = [116 113;118 121];
-   do_indiv_test('nptr04',nptr, test);
+   unit_test_cmp('nptr04',nptr, test);
 
    fmdl.mdl_slice_mapper.level = [inf,0,inf];
    eptr = mdl_slice_mapper(fmdl,'elem');
    test = zeros(4); test(1:4,2:3) = [ 792 777; 791 776; 515 500; 239 224];
-   do_indiv_test('eptr05',eptr,test);
+   unit_test_cmp('eptr05',eptr,test);
 
    nptr = mdl_slice_mapper(fmdl,'node');
    test = zeros(4); test(1:2,:) = [ 80, 124, 122, 64; 17, 61, 59, 1];
-   do_indiv_test('nptr05',nptr,test);
+   unit_test_cmp('nptr05',nptr,test);
 
    nint = mdl_slice_mapper(fmdl,'nodeinterp');
-   do_indiv_test('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
+   unit_test_cmp('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
 
 
-
-
-function do_indiv_test(txt,a,b, tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%10s = ',txt);
-   ok='fail';
-   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; end
-   disp(ok)

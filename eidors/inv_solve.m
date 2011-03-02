@@ -197,51 +197,51 @@ function do_unit_test
 
    img= inv_solve(imdl,vh,vi); img.show_slices.img_cols = 5;
    k=k+1; subplot(N,1,k); show_slices(img);
-   do_indiv_test('inv_solve: 1a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 1b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 1a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 1b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    vhm= eidors_obj('data','nn','meas',vh);
    img= inv_solve(imdl,vhm,vi);
-   do_indiv_test('inv_solve: 2a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 2b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 2a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 2b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    img= inv_solve(imdl,vh*ones(1,nd),vi);
-   do_indiv_test('inv_solve: 3a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 3b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 3a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 3b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    vim= eidors_obj('data','nn','meas',vi);
    img= inv_solve(imdl,vhm,vim);
-   do_indiv_test('inv_solve: 4a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 4b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 4a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 4b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    vhm= eidors_obj('data','nn','meas',vh*ones(1,nd));
    img= inv_solve(imdl,vhm,vi);
-   do_indiv_test('inv_solve: 5a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 5b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 5a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 5b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    vhm(1)= eidors_obj('data','nn','meas',vh*ones(1,2));
    vhm(2)= eidors_obj('data','nn','meas',vh*ones(1,nd-2));
    img= inv_solve(imdl,vhm,vi);
-   do_indiv_test('inv_solve: 6a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 6b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 6a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 6b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    vim(1)= eidors_obj('data','nn','meas',vi(:,1:3));
    vim(2)= eidors_obj('data','nn','meas',vi(:,4:end));
    img= inv_solve(imdl,vhm,vim);
-   do_indiv_test('inv_solve: 7a', mean(img.elem_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 7b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 7a', mean(img.elem_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 7b',  std(img.elem_data), 1.5e-2, 1e-2);
 
    im2 = imdl; im2.inv_solve.select_parameters = 1:5;
    img= inv_solve(im2,vh,vi);
-   do_indiv_test('inv_solve: 10', size(img.elem_data), [5,nd]);
+   unit_test_cmp('inv_solve: 10', size(img.elem_data), [5,nd]);
 
 
    im2 = imdl;
    im2.inv_solve.scale_solution.offset = 1;
    im2.inv_solve.scale_solution.scale = 2;
    img= inv_solve(im2,vh,vi); img.show_slices.img_cols = 5;
-   do_indiv_test('inv_solve: 20a', mean(img.elem_data), 1.006, 2e-3);
-   do_indiv_test('inv_solve: 20b',  std(img.elem_data), 3e-2, 1e-2);
+   unit_test_cmp('inv_solve: 20a', mean(img.elem_data), 1.006, 2e-3);
+   unit_test_cmp('inv_solve: 20b',  std(img.elem_data), 3e-2, 1e-2);
    
    im2.inv_solve.scale_solution.offset = 0;
    d = interp_mesh( imdl.fwd_model); d= sqrt(sum(d.^2,2));
@@ -251,28 +251,18 @@ function do_unit_test
 
    im2 = select_imdl(imdl, {'Nodal GN dif'} );
    img= inv_solve(im2,vh,vi);
-   do_indiv_test('inv_solve: 30a', mean(img.node_data), 3e-3, 1e-3);
-   do_indiv_test('inv_solve: 30b',  std(img.node_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 30a', mean(img.node_data), 3e-3, 1e-3);
+   unit_test_cmp('inv_solve: 30b',  std(img.node_data), 1.5e-2, 1e-2);
 
    im2.inv_solve.scale_solution.offset = 1;
    im2.inv_solve.scale_solution.scale = 2;
    img= inv_solve(im2,vh,vi); img.show_slices.img_cols = 5;
-   do_indiv_test('inv_solve: 31a', mean(img.node_data), 1.006, 2e-3);
-   do_indiv_test('inv_solve: 31b',  std(img.node_data), 3e-2, 1.5e-2);
+   unit_test_cmp('inv_solve: 31a', mean(img.node_data), 1.006, 2e-3);
+   unit_test_cmp('inv_solve: 31b',  std(img.node_data), 3e-2, 1.5e-2);
 
    im2 = select_imdl(imdl, {'Basic GN abs'} );
    img= inv_solve(im2,vi(:,1));
-   do_indiv_test('inv_solve: 40a', mean(img.elem_data), 1.004, 1e-3);
-   do_indiv_test('inv_solve: 40b',  std(img.elem_data), 1.5e-2, 1e-2);
+   unit_test_cmp('inv_solve: 40a', mean(img.elem_data), 1.004, 1e-3);
+   unit_test_cmp('inv_solve: 40b',  std(img.elem_data), 1.5e-2, 1e-2);
 
 
-   
-
-function do_indiv_test(txt,a,b,tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%20s = ',txt);
-   ok='fail';
-   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; catch; end
-   disp(ok)
-   if ~strcmp(ok,'ok'); keyboard; end
