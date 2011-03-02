@@ -73,13 +73,18 @@ eidors_cache('boost_priority', +2); % restore priority
 function interp= triangle_interpolation(n_interp, el_dim)
     interp= zeros(0,el_dim+1);
 
-    if el_dim==2
+    switch el_dim
+     case 1;
+       for i=0:n_interp
+             interp= [interp;i,n_interp-i];
+       end
+     case 2;
        for i=0:n_interp
           for j=0:n_interp-i
              interp= [interp;i,j,n_interp-i-j];
           end
        end
-    elseif el_dim==3
+     case 3;
        for i=0:n_interp
           for j=0:n_interp-i
              for k=0:n_interp-i-j
@@ -87,17 +92,26 @@ function interp= triangle_interpolation(n_interp, el_dim)
              end
           end
        end
-    else
-       error('Element is not 2D (triangle) or 3D (tetrahedron)');
+     otherwise;
+       error('Element is not 1D (line), 2D (triangle) or 3D (tetrahedron)');
     end
 
     interp= (interp + 1/(el_dim+1) )/(n_interp+1);
 
 
 function do_unit_test
+    mdl.type='fwd_model';mdl.name='jnk';
+    mdl.nodes= [4,6,8,4]';
+    mdl.elems=[1,2;2,4;2,3;4,4];
+    pp=interp_mesh(mdl,0);
+    unit_test_cmp('1D/1D (#1): ',pp,[5;5;7;4]);
+
+    mdl.nodes= [4,6,8,4;2,2,2,6]';
+    pp=interp_mesh(mdl,0);
+    unit_test_cmp('1D/2D (#1): ',pp,[5 2;5 4;7 2;4 6]);
+
     mdl.nodes= 3*[4,6,8,4,6,8;2,2,2,5,5,5]';
     mdl.elems=[1,2,4;2,4,5;2,3,5;3,5,6];
-    mdl.type='fwd_model';mdl.name='jnk';
     pp=interp_mesh(mdl,0);
     unit_test_cmp('2D/2D (#1): ',pp,[14 9;16 12; 20 9;22 12]);
 
