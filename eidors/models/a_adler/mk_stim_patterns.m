@@ -374,189 +374,179 @@ function pat= trig_pat( elec_sel, n_elecs, sel);
 
 function do_unit_test
    stim = mk_stim_patterns(4,1,[0,1],[0,1],{},1);
-   do_indiv_test('t1',stim(1).stim_pattern, [-1;1;0;0]);
-   do_indiv_test('t2',stim(4).stim_pattern, [1;0;0;-1]);
-   do_indiv_test('t3',stim(1).meas_pattern, [0,0,1,-1]);
-   do_indiv_test('t4',stim(4).meas_pattern, [0,1,-1,0]);
+   unit_test_cmp('t1',stim(1).stim_pattern, [-1;1;0;0]);
+   unit_test_cmp('t2',stim(4).stim_pattern, [1;0;0;-1]);
+   unit_test_cmp('t3',stim(1).meas_pattern, [0,0,1,-1]);
+   unit_test_cmp('t4',stim(4).meas_pattern, [0,1,-1,0]);
 
 %      'no_meas_current' / 'meas_current'
 %         -> do / don't make mesurements on current carrying electrodes
    stim = mk_stim_patterns(4,1,[0,1],[0,1],{'meas_current'},1);
-   do_indiv_test('meas_current: t1',stim(1).meas_pattern,  ...
+   unit_test_cmp('meas_current: t1',stim(1).meas_pattern,  ...
          [1,-1,0,0; 0,1,-1,0; 0,0,1,-1; -1,0,0,1]);
-   do_indiv_test('meas_current: t2',stim(4).stim_pattern, [1;0;0;-1]);
+   unit_test_cmp('meas_current: t2',stim(4).stim_pattern, [1;0;0;-1]);
    stim = mk_stim_patterns(4,1,[0,1],[0,1],{'no_meas_current'},1);
-   do_indiv_test('meas_current: t3',stim(1).meas_pattern,  [0,0,1,-1]);
-   do_indiv_test('meas_current: t2',stim(4).stim_pattern, [1;0;0;-1]);
+   unit_test_cmp('meas_current: t3',stim(1).meas_pattern,  [0,0,1,-1]);
+   unit_test_cmp('meas_current: t2',stim(4).stim_pattern, [1;0;0;-1]);
 
 %      'rotate_meas' / 'no_rotate_meas'
 %         -> do / don't rotate measurements with stimulation pattern
 
    stim = mk_stim_patterns(6,1,[0,1],[0,1],{'no_rotate_meas'},1);
-   do_indiv_test('no_rotate_meas: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
-   do_indiv_test('no_rotate_meas: t2',stim(2).meas_pattern, ...
+   unit_test_cmp('no_rotate_meas: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   unit_test_cmp('no_rotate_meas: t2',stim(2).meas_pattern, ...
          [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
-   do_indiv_test('no_rotate_meas: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
-   do_indiv_test('no_rotate_meas: t4',stim(3).meas_pattern, ...
+   unit_test_cmp('no_rotate_meas: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   unit_test_cmp('no_rotate_meas: t4',stim(3).meas_pattern, ...
          [1,-1,0,0,0,0;0,0,0,0,1,-1; -1,0,0,0,0,1]);
 
    stim = mk_stim_patterns(6,1,[0,1],[0,1],{'rotate_meas'},1);
-   do_indiv_test('rotate_meas: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
-   do_indiv_test('rotate_meas: t2',stim(2).meas_pattern, ...
+   unit_test_cmp('rotate_meas: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   unit_test_cmp('rotate_meas: t2',stim(2).meas_pattern, ...
          [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
-   do_indiv_test('rotate_meas: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
-   do_indiv_test('rotate_meas: t4',stim(3).meas_pattern, ...
+   unit_test_cmp('rotate_meas: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   unit_test_cmp('rotate_meas: t4',stim(3).meas_pattern, ...
          [0,0,0,0,1,-1; -1,0,0,0,0,1; 1,-1,0,0,0,0]);
 
 %      'do_redundant' / 'no_redundant'
 %         -> do / don't make reciprocally redundant measures
    stim = mk_stim_patterns(6,1,[0,1],[0,1],{'do_redundant'},1);
 
-   do_indiv_test('do_redundant: t0',length(stim), 6);
-   do_indiv_test('do_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
-   do_indiv_test('do_redundant: t2',stim(2).meas_pattern, ...
+   unit_test_cmp('do_redundant: t0',length(stim), 6);
+   unit_test_cmp('do_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   unit_test_cmp('do_redundant: t2',stim(2).meas_pattern, ...
          [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
-   do_indiv_test('do_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
-   do_indiv_test('do_redundant: t4',stim(3).meas_pattern, ...
+   unit_test_cmp('do_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   unit_test_cmp('do_redundant: t4',stim(3).meas_pattern, ...
          [1,-1,0,0,0,0;0,0,0,0,1,-1; -1,0,0,0,0,1]);
 
    stim = mk_stim_patterns(6,1,[0,1],[0,1],{'no_redundant'},1);
-   do_indiv_test('no_redundant: t0',length(stim), 4);
-   do_indiv_test('no_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
-   do_indiv_test('no_redundant: t2',stim(2).meas_pattern, ...
+   unit_test_cmp('no_redundant: t0',length(stim), 4);
+   unit_test_cmp('no_redundant: t1',stim(2).stim_pattern, [0;-1;1;0;0;0]);
+   unit_test_cmp('no_redundant: t2',stim(2).meas_pattern, ...
          [0,0,0,1,-1,0; 0,0,0,0,1,-1; -1,0,0,0,0,1]);
-   do_indiv_test('no_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
-   do_indiv_test('no_redundant: t4',stim(3).meas_pattern, ...
+   unit_test_cmp('no_redundant: t3',stim(3).stim_pattern, [0;0;-1;1;0;0]);
+   unit_test_cmp('no_redundant: t4',stim(3).meas_pattern, ...
          [0,0,0,0,1,-1;-1,0,0,0,0,1]);
-   do_indiv_test('no_redundant: t5',stim(4).meas_pattern, ...
+   unit_test_cmp('no_redundant: t5',stim(4).meas_pattern, ...
          [-1,0,0,0,0,1]);
 
 %      'balance_inj' / 'no_balance_inj'
 %         -> do / don't draw current from all electrodes so total
 %            injection is zero (useful for mono patterns)
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'balance_inj','meas_current'},1);
-   do_indiv_test('balance_inj: t0',length(stim), 4);
-   do_indiv_test('balance_inj: t1',stim(2).stim_pattern, -[1;-3;1;1]/3);
-   do_indiv_test('balance_inj: t2',stim(2).meas_pattern, ...
+   unit_test_cmp('balance_inj: t0',length(stim), 4);
+   unit_test_cmp('balance_inj: t1',stim(2).stim_pattern, -[1;-3;1;1]/3);
+   unit_test_cmp('balance_inj: t2',stim(2).meas_pattern, ...
          [1,-1,0,0;0,1,-1,0;0,0,1,-1;-1,0,0,1]);
 
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj','no_meas_current'},1);
-   do_indiv_test('no_balance_inj: t0',length(stim), 4);
-   do_indiv_test('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
-   do_indiv_test('no_balance_inj: t2',stim(2).meas_pattern, ...
+   unit_test_cmp('no_balance_inj: t0',length(stim), 4);
+   unit_test_cmp('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
+   unit_test_cmp('no_balance_inj: t2',stim(2).meas_pattern, ...
          [0,0,1,-1;-1,0,0,1]);
 
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},1);
-   do_indiv_test('no_balance_inj: t0',length(stim), 4);
-   do_indiv_test('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
+   unit_test_cmp('no_balance_inj: t0',length(stim), 4);
+   unit_test_cmp('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
 
 %      'balance_meas' / 'no_balance_meas'
 %         -> do / don't subtrant measurement from all electrodes so total
 %            average measurement is zero (useful for mono patterns)
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'no_balance_meas','meas_current'},1);
-   do_indiv_test('no_balance_meas: t0',length(stim), 4);
-   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
-   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'meas_current'},1);
-   do_indiv_test('no_balance_meas: t0',length(stim), 4);
-   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
-   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'no_meas_current'},1);
-   do_indiv_test('no_balance_meas: t0',length(stim), 4);
-   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
-   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{},1); % DO WE WANT THIS AS DEFAULT??
-   do_indiv_test('no_balance_meas: t0',length(stim), 4);
-   do_indiv_test('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
-   do_indiv_test('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'balance_meas','meas_current'},1);
-   do_indiv_test('balance_meas: t0',length(stim), 4);
-   do_indiv_test('balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
-   do_indiv_test('balance_meas: t1',stim(2).meas_pattern, (4*eye(4)-ones(4))/3);
+   unit_test_cmp('balance_meas: t0',length(stim), 4);
+   unit_test_cmp('balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
+   unit_test_cmp('balance_meas: t1',stim(2).meas_pattern, (4*eye(4)-ones(4))/3);
 
    stim = mk_stim_patterns(4,1,[0,1],[0,1],{},2);
-   do_indiv_test('amplitude: t1',stim(2).stim_pattern, [0;-2;2;0]);
+   unit_test_cmp('amplitude: t1',stim(2).stim_pattern, [0;-2;2;0]);
    stim = mk_stim_patterns(4,1,'{ad}',[0,1],{},2);
-   do_indiv_test('amplitude: t2',stim(2).stim_pattern, [0;-2;2;0]);
+   unit_test_cmp('amplitude: t2',stim(2).stim_pattern, [0;-2;2;0]);
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj'},2);
-   do_indiv_test('amplitude: t3',stim(2).stim_pattern, [0;2;0;0]);
+   unit_test_cmp('amplitude: t3',stim(2).stim_pattern, [0;2;0;0]);
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},2);
-   do_indiv_test('amplitude: t4',stim(2).stim_pattern, [0;2;0;0]);
+   unit_test_cmp('amplitude: t4',stim(2).stim_pattern, [0;2;0;0]);
    stim = mk_stim_patterns(4,1,'{trig}',[0,1],{},2);
-   do_indiv_test('amplitude: t5',stim(2).stim_pattern, [0;2;0;-2],1e-5);
+   unit_test_cmp('amplitude: t5',stim(2).stim_pattern, [0;2;0;-2],1e-5);
   
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
+   unit_test_cmp('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
 
 if 0
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
+   unit_test_cmp('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]);
+   unit_test_cmp('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]); %%%
+   unit_test_cmp('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]); %%%
 end
 
    [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp01',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
+   unit_test_cmp('meas_sel: nnp01',msel(:,[4,5]), [1,1;1,1;0,1;0,0;0,0;1,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp02',msel(:,[4,5]), [1,0;1,1;0,1;0,0;0,0;0,0]);
+   unit_test_cmp('meas_sel: nnp02',msel(:,[4,5]), [1,0;1,1;0,1;0,0;0,0;0,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,3],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp03',msel(:,[4,5]), [0,0;1,0;0,1;0,0;1,0;0,1]);
+   unit_test_cmp('meas_sel: nnp03',msel(:,[4,5]), [0,0;1,0;0,1;0,0;1,0;0,1]);
 
    [stim,msel] = mk_stim_patterns(6,1,[1,2],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp12',msel(:,[4,5]), [1,0;1,1;1,1;0,1;0,0;0,0]);
+   unit_test_cmp('meas_sel: nnp12',msel(:,[4,5]), [1,0;1,1;1,1;0,1;0,0;0,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[2,4],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp24',msel(:,[4,5]), [0,0;0,0;1,0;1,1;0,1;0,0]);
+   unit_test_cmp('meas_sel: nnp24',msel(:,[4,5]), [0,0;0,0;1,0;1,1;0,1;0,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[2,4],[3,6],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp2436',msel(:,[4,5]), [1,0;0,1;0,0;1,0;0,1;0,0]);
+   unit_test_cmp('meas_sel: nnp2436',msel(:,[4,5]), [1,0;0,1;0,0;1,0;0,1;0,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nrp01',msel(:,6), [0;0;1;1;1;0]);
+   unit_test_cmp('meas_sel: nrp01',msel(:,6), [0;0;1;1;1;0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'no_meas_current','rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nrp02',msel(:,6), [0;0;0;1;1;0]);
+   unit_test_cmp('meas_sel: nrp02',msel(:,6), [0;0;0;1;1;0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[3,4],{'no_meas_current','rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nrp0234',msel(:,6), [1;1;0;0;0;0]);
+   unit_test_cmp('meas_sel: nrp0234',msel(:,6), [1;1;0;0;0;0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas','no_redundant'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp01',msel(:,[2,5]), [0,0;0,0;0,0;1,0;1,0;1,0]);
+   unit_test_cmp('meas_sel: nnp01',msel(:,[2,5]), [0,0;0,0;0,0;1,0;1,0;1,0]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,2],'{mono}',{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   do_indiv_test('meas_sel: nnp2436',msel(:,[4,5]), [1,0;1,1;1,1;0,1;1,0;0,1]);
-   
-
-function do_indiv_test(txt,a,b,tol)
-   if nargin < 4; tol = 0; end
-   fprintf('%20s = ',txt);
-   ok='fail';
-   try; if isnan(a) == isnan(b); a(isnan(a))=0; b(isnan(b))=0; end; end
-   try; if all(abs(a - b) <= tol);  ok='ok'; end; catch; end
-   disp(ok)
-   if ~strcmp(ok,'ok'); keyboard; end
+   unit_test_cmp('meas_sel: nnp2436',msel(:,[4,5]), [1,0;1,1;1,1;0,1;1,0;0,1]);
