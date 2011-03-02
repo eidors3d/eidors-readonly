@@ -142,5 +142,5 @@ if ~ver.isoctave
 else
    tutorials = 'Tutorials';
 end
-eidors_msg(['New to EIDORS? Have a look at the ',tutorial,'.'],1);
+eidors_msg(['New to EIDORS? Have a look at the ',tutorials,'.'],1);
 
