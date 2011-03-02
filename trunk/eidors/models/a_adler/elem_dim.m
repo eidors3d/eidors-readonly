@@ -16,13 +16,13 @@ switch mdl.type
       error('can''t process model of type %s', mdl.type );
 end
 
-num = size(fmdl.nodes,2);
+num = size(fmdl.elem,2)-1;
 
 function do_unit_test
    mdl = mk_common_model('a2c2',8);
    ne = elem_dim( mdl );
    ok='fail'; if ne==2; ok='ok'; end; fprintf('test1: %10s\n',ok);
 
-   elem = mk_common_model('n3r2',16);
+   mdl = mk_common_model('n3r2',16);
    ne = elem_dim( mk_image( mdl )) 
    ok='fail'; if ne==3; ok='ok'; end; fprintf('test2: %10s\n',ok);
