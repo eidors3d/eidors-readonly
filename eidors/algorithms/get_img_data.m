@@ -48,7 +48,7 @@ function do_unit_test
    unit_test_cmp('elem_01', get_img_data(img), ones(64,1) )
 
    imgk = img; imgk.elem_data = img.elem_data';
-   unit_test_cmp('elem_02', get_img_data(imgk), ones(64,2) )
+   unit_test_cmp('elem_02', get_img_data(imgk), ones(64,1) )
 
    imgk = img; imgk(2) = img;
    unit_test_cmp('elem_03', get_img_data(imgk), ones(64,2) )

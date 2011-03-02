@@ -6,6 +6,10 @@ function num = num_elems( mdl );
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
+if ~isfield(mdl,'type') && isfield(mdl,'elems') % Set default for this case
+   mdl.type = 'fwd_model';
+end
+
 switch mdl.type
   case 'image';      fmdl = mdl.fwd_model;
   case 'inv_model';  fmdl = mdl.fwd_model;
