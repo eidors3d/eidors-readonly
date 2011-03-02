@@ -65,13 +65,47 @@ function mapping = contained_elems_3d( mdl, xyr );
    % We fill sparse by columns, due to CCS storage, this is fairly efficient
    mapping = sparse( Ne, Nc );
 
-   % INterpolate
-   n_interp = 4; % 7-df
-   m_pts = interp_mesh( mdl, n_interp); 
+%    % INterpolate
+%    n_interp = 4; % 7-df
+%    m_pts = interp_mesh( mdl, n_interp); 
+%    for i=1:Nc
+%      mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
+%    end
+   % 1. Get furthest node in each element
+   % 2. Get the max edge length of each elem
+   % 3. Find elems that are too far
+   % 4. Make a tmp model with only the remaining elems
+   % 5. Interpolate
+   % 6. Merge
+   tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
+   tmp = fix_model(tmp);
+   nodes = repmat(mdl.nodes,[1,1,Nc]);
+   targets = repmat(xyr(1:3,:),[1,1,size(mdl.nodes,1)]);
+   targets = shiftdim(targets,2);
+   dist = nodes - targets;
+   dist = sqrt(sum(dist.^2,2));
+   node_target_dist = squeeze(dist);
+   furthest_elem_node_dist = node_target_dist(mdl.elems,:);
+   furthest_elem_node_dist = reshape(furthest_elem_node_dist,Ne,4,Nc);
+   [furthest_elem_node_dist furthest_elem_node]= max(furthest_elem_node_dist,[],2);
+   furthest_elem_node_dist = squeeze(furthest_elem_node_dist);
+   furthest_elem_node = squeeze(furthest_elem_node);
+   
+   max_edge_len =  repmat(tmp.max_edge_len,1,Nc);
+   radius = ones(Ne,1)*xyr(4,:);
+   too_far = (furthest_elem_node_dist - max_edge_len) > radius;
+   
+   mapping = sparse( Ne, Nc );
+   n_interp = 6;
    for i=1:Nc
-     mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
+       good = ~too_far(:,i);
+       tmp.elems = mdl.elems(good,:);
+       m_pts = interp_mesh( tmp, n_interp);
+       mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
    end
-
+   
+   
+   
 function frac= contained_elem_pts(m_pts, xyr);
 % This is more clear
 %    xc = m_pts(:,1,:) - xyr(1);
@@ -110,5 +144,11 @@ function do_unit_test
    %3D example - cylinder
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
    c2f= mk_c2f_circ_mapping( fmdl, [0;0;0;0.1]); 
-   t4= all( abs(c2f(193:196)-0.0571)<.001 ) & all( c2f(1:64)==0 );
+   t4= all( abs(c2f(193:196)-0.0595)<.001 ) & all( c2f(1:64)==0 );
    fprintf('3D ex 2: [%d]\n',full(t4));
+   
+   %3D example - cylinder - 2 pts
+   imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
+   c2f= mk_c2f_circ_mapping( fmdl, [0 0;0 0;0 0;0.1 0.2]); 
+   t4= all( abs(c2f(193:196,1)-0.0595)<.001 ) & all( c2f(1:64)==0 );
+   fprintf('3D ex 3: [%d]\n',full(t4));
