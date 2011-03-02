@@ -24,5 +24,5 @@ function do_unit_test
    ok='fail'; if ne==2; ok='ok'; end; fprintf('test1: %10s\n',ok);
 
    mdl = mk_common_model('n3r2',16);
-   ne = num_elems( mk_image( mdl )) 
+   ne = mdl_dims( mk_image( mdl ));
    ok='fail'; if ne==3; ok='ok'; end; fprintf('test2: %10s\n',ok);
