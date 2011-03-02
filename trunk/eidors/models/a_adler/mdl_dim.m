@@ -1,8 +1,8 @@
-function num = mdl_dims( mdl );
-% MDL_DIMS: dimension of model space (are nodes in 2D or 3D space)
+function num = mdl_dim( mdl );
+% MDL_DIM: dimension of model space (are nodes in 2D or 3D space)
 %  Note, mdl_dims is not the same as the element dimentions
-% num_dims = n_dims( mdl );
-% num_dims = 2 if 2D, 3 if 3D
+% num_dim = mdl_dim( mdl );
+%    = 2 if 2D, 3 if 3D
 
 % $Id$
 
@@ -20,9 +20,9 @@ num = size(fmdl.nodes,2);
 
 function do_unit_test
    mdl = mk_common_model('a2c2',8);
-   ne = mdl_dims( mdl );
+   ne = mdl_dim( mdl );
    ok='fail'; if ne==2; ok='ok'; end; fprintf('test1: %10s\n',ok);
 
    mdl = mk_common_model('n3r2',16);
-   ne = mdl_dims( mk_image( mdl ));
+   ne = mdl_dim( mk_image( mdl ));
    ok='fail'; if ne==3; ok='ok'; end; fprintf('test2: %10s\n',ok);
