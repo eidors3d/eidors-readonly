@@ -1,6 +1,6 @@
 function num = num_elems( mdl );
 % NUM_ELEMS: number of elemnts in a (fwd or inv model or image)
-% num_elems = n_elems( mdl );
+% num_elems = num_elems( mdl );
 
 % $Id$
 
