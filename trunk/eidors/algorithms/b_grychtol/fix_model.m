@@ -50,11 +50,9 @@ mdl.face2elem = uint32(mdl.face2elem);
 
 function [faces face2elem elem2face] = calc_faces(mdl)
 
-faces = [];
-n_elem = num_elems(mdl);
+
 e_dim = mdl_dim(mdl);
-f_dim = e_dim-1;
-n_face = e_dim+1; 
+
 
 %elem2face = zeros(size(mdl.elems));
 switch e_dim
@@ -69,6 +67,7 @@ elem2face = reshape(ia,[],e_dim+1);
 face2elem = calc_face2elem(elem2face);
 
 function face2elem = calc_face2elem(elem2face)
+% This is easier to understand but very slow
 %     n_face = max(elem2face(:));
 %     face2elem = zeros(n_face,2);
 %     for i= 1:n_face
@@ -82,11 +81,14 @@ function face2elem = calc_face2elem(elem2face)
     elem2faceno = elem2faceno(:);
     elem2face   = elem2face(:);
     face2elem(elem2face,2) = elem2faceno;
+    % flipping will give us the other element for shared faces
     elem2faceno = flipud(elem2faceno);
     elem2face   = flipud(elem2face);
     face2elem(elem2face,1) = elem2faceno;
+    % replace with zeros repeated entries (boundary faces)
     face2elem( face2elem(:,1) == face2elem(:,2), 2) = 0;
 
+% This function is obsolete 
 function elem2face = calc_elem2face(face2elem, face_per_elem)
     n_elem = max(face2elem(:));
     elem2face = zeros(n_elem,face_per_elem);
@@ -94,6 +96,7 @@ function elem2face = calc_elem2face(face2elem, face_per_elem)
         [f jnk] = find(face2elem==i);
         elem2face(i,:) = f;
     end
+    
 function normals = calc_normals(mdl)
     [n_faces face_dim] = size(mdl.faces);
     switch face_dim
@@ -102,6 +105,7 @@ function normals = calc_normals(mdl)
             B = mdl.nodes(mdl.faces(:,2),:);
             normals = (B-A)*[0 1; -1 0];
         case 3
+            % vectorise cross product
             x1 = mdl.nodes(mdl.faces(:,2),1) - mdl.nodes(mdl.faces(:,1),1);
             y1 = mdl.nodes(mdl.faces(:,2),2) - mdl.nodes(mdl.faces(:,1),2);
             z1 = mdl.nodes(mdl.faces(:,2),3) - mdl.nodes(mdl.faces(:,1),3);
@@ -115,9 +119,6 @@ function normals = calc_normals(mdl)
             normals(:,3) = x1.*y2 - y1.*x2;
     end
     normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,[])';
-    
-    
-    
     
     
 function do_unit_test
