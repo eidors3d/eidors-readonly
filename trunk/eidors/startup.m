@@ -33,12 +33,15 @@ addpath( HOMEDIR );
 addpath([HOMEDIR, '/algorithms']);
 addpath([HOMEDIR, '/algorithms/a_adler']);
 addpath([HOMEDIR, '/algorithms/a_borsic']);
+addpath([HOMEDIR, '/algorithms/b_graham']);
+addpath([HOMEDIR, '/algorithms/b_grychtol']);
 addpath([HOMEDIR, '/algorithms/b_lionheart']);
+addpath([HOMEDIR, '/algorithms/b_sawicki']);
 addpath([HOMEDIR, '/algorithms/c_gomez']);
+addpath([HOMEDIR, '/algorithms/d_stephenson']);
+addpath([HOMEDIR, '/algorithms/m_crabb']);
 addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
 addpath([HOMEDIR, '/algorithms/n_polydorides']);
-addpath([HOMEDIR, '/algorithms/d_stephenson']);
-addpath([HOMEDIR, '/algorithms/b_sawicki']);
 addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/a_adler']);
 addpath([HOMEDIR, '/models/d_stephenson']);
@@ -108,8 +111,8 @@ calc_colours('clim',[]);                % no colour cropping
 calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
 
 % Set max cache size. Not completely sure about this
-%  but 100MB should be available in most modern machines
-eidors_cache('cache_size', 100e6 );
+%  but 250MB should be available in most modern machines
+eidors_cache('cache_size', 250e6 );
 eidors_cache('boost_priority', 0 ); % set default priority
 
 eidors_msg('Complete EIDORS (Ver: %s)', eidors_obj('eidors_version'),1);
