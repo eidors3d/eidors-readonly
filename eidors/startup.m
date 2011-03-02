@@ -16,8 +16,8 @@ function startup
 ver= eidors_obj('interpreter_version');
 
 if ver.isoctave
-   if ver.ver < 3.000003
-      warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.0.3\n' ...
+   if ver.ver < 3.002
+      warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.2.0\n' ...
                'Several functions may not work with your version']);
    end
 else
@@ -115,7 +115,7 @@ calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
 eidors_cache('cache_size', 250e6 );
 eidors_cache('boost_priority', 0 ); % set default priority
 
-eidors_msg('Complete EIDORS (Ver: %s)', eidors_obj('eidors_version'),1);
+eidors_msg('Installed EIDORS (Ver: %s)', eidors_obj('eidors_version'),1);
 eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
 eidors_msg('Parameter: mapped_colour=%d',calc_colours('mapped_colour'),1);
 if calc_colours('greylev')>=0
@@ -137,9 +137,10 @@ if exist(srcf) == 2 & exist(mexf) == 2
 end
 
 % helpful messages
-if ~exist('OCTAVE_VERSION');
-   eidors_msg('New to EIDORS? Have a look at the <a href="http://eidors3d.sf.net/tutorial/tutorial.shtml">Tutorials</a>.',1);
-else 
-   eidors_msg('New to EIDORS? Have a look at the Tutorials at http://eidors3d.sf.net/tutorial/tutorial.shtml',1);
+if ~ver.isoctave
+   tutorials = '<a href="http://eidors3d.sf.net/tutorial/tutorial.shtml">Tutorials</a>';
+else ,1);
+   tutorials = 'Tutorials';
 end
+eidors_msg(['New to EIDORS? Have a look at the ',tutorial,'.',1);
 
