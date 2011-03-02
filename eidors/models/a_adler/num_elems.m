@@ -29,5 +29,5 @@ function do_unit_test
    ok='fail'; if ne==64; ok='ok'; end; fprintf('test3: %10s\n',ok);
 
    mdl = mk_common_model('n3r2',16);
-   ne = num_elems( mk_image( mdl )) 
+   ne = num_elems( mk_image( mdl ));
    ok='fail'; if ne==828; ok='ok'; end; fprintf('test4: %10s\n',ok);
