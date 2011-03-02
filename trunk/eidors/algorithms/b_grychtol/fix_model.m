@@ -16,6 +16,9 @@ function [mdl] = fix_model(mdl,options)
 %       .face2elem
 %       .elem2face
 %       .elem_centre
+%       .face_centre
+%       .normals
+%       .max_edge_len (per elem)
 %
 % The elems will be reordered so that all faces are counter-clockwise.
 
@@ -34,9 +37,9 @@ mdl.boundary_face = mdl.face2elem(:,2)==0;
 mdl.elem_centre = interp_mesh(mdl, 0);
 tmp = mdl;
 tmp.elems = tmp.faces;
-%mdl.face_centre = interp_mesh(tmp,0);
+mdl.face_centre = interp_mesh(tmp,0);
 mdl.normals = calc_normals(mdl);
-
+mdl.max_edge_len = calc_longest_edge(mdl.elems,mdl.nodes);
 
 
 
@@ -120,6 +123,18 @@ function normals = calc_normals(mdl)
     end
     normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,[])';
     
+    
+function len = calc_longest_edge(elems,nodes)
+    [E_num E_dim] = size(elems);
+
+    pairs = nchoosek(1:E_dim,2);
+    len = zeros(E_num,1);
+    for i = 1:size(pairs,1)
+        a = nodes(elems(:,pairs(i,1)),:);
+        b = nodes(elems(:,pairs(i,2)),:);
+        tmp = sqrt(sum((a-b).^2,2));
+        len = max(len,tmp);  
+    end
     
 function do_unit_test
     % square
