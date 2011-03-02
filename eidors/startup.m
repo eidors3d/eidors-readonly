@@ -139,8 +139,8 @@ end
 % helpful messages
 if ~ver.isoctave
    tutorials = '<a href="http://eidors3d.sf.net/tutorial/tutorial.shtml">Tutorials</a>';
-else ,1);
+else
    tutorials = 'Tutorials';
 end
-eidors_msg(['New to EIDORS? Have a look at the ',tutorial,'.',1);
+eidors_msg(['New to EIDORS? Have a look at the ',tutorial,'.'],1);
 

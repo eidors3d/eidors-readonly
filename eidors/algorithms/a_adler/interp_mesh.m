@@ -46,19 +46,17 @@ try n_interp = mdl.interp_mesh.n_interp; end % Override if provided
    end
 
 
-[n_elems, n_dims_1]= size(mdl.elems);
-
 % Get element nodes, and reshape
 % need to be of size n_dims_1 x (n_elems*n_dims) for reshape
 el_nodes= mdl.nodes(mdl.elems',:);
-el_nodes= reshape(el_nodes, n_dims_1, []);
+el_nodes= reshape(el_nodes, mdl_dim(mdl), []);
 
 % Get interpolation matrix
-interp= triangle_interpolation( n_interp, n_dims_1 );
+interp= triangle_interpolation( n_interp, elem_dim(mdl) );
 l_interp = size(interp,1);
 
 mdl_pts = interp*el_nodes;
-mdl_pts = reshape(mdl_pts, l_interp, n_elems, n_dims_1-1);
+mdl_pts = reshape(mdl_pts, l_interp, num_elems(mdl), mdl_dim(mdl));
 
 mdl_pts = permute(mdl_pts, [2,3,1]);
 
@@ -72,16 +70,16 @@ eidors_cache('boost_priority', +2); % restore priority
 % interpolate over a triangle with n_interp points
 % generate a set of points to fairly cover the triangle
 % dim_coarse is dimensions + 1 of coarse model
-function interp= triangle_interpolation(n_interp, n_dims_1)
-    interp= zeros(0,n_dims_1);
+function interp= triangle_interpolation(n_interp, el_dim)
+    interp= zeros(0,el_dim+1);
 
-    if n_dims_1==3
+    if el_dim==2
        for i=0:n_interp
           for j=0:n_interp-i
              interp= [interp;i,j,n_interp-i-j];
           end
        end
-    elseif n_dims_1==4
+    elseif el_dim==3
        for i=0:n_interp
           for j=0:n_interp-i
              for k=0:n_interp-i-j
@@ -90,7 +88,20 @@ function interp= triangle_interpolation(n_interp, n_dims_1)
           end
        end
     else
-       error('cant handle n_dims_1!=2');
+       error('Element is not 2D (triangle) or 3D (tetrahedron)');
     end
 
-    interp= (interp + 1/n_dims_1 )/(n_interp+1);
+    interp= (interp + 1/(el_dim+1) )/(n_interp+1);
+
+
+function do_unit_test
+    mdl.nodes= 3*[4,6,8,4,6,8;2,2,2,5,5,5]';
+    mdl.elems=[1,2,4;2,4,5;2,3,5;3,5,6];
+    mdl.type='fwd_model';mdl.name='jnk';
+    pp=interp_mesh(mdl,0);
+pp
+
+    mdl.nodes = [mdl.nodes, 0*mdl.nodes(:,1)+3];
+    pp=interp_mesh(mdl,0);
+pp
+
