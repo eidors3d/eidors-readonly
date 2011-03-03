@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dm_mk_fwd_model</title>
+  <meta name="keywords" content="dm_mk_fwd_model">
+  <meta name="description" content="DM_MK_FWD_MODEL: create a fwd_model object using distmesh">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">distmesh</a> &gt; dm_mk_fwd_model.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\distmesh&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>dm_mk_fwd_model
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DM_MK_FWD_MODEL: create a fwd_model object using distmesh</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes,refine_nodes, z_contact, name) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DM_MK_FWD_MODEL: create a fwd_model object using distmesh
+ fwd_mdl= dm_mk_fwd_model( fd, fh, h0, bbox,...
+                          elec_nodes, stim_pattern, z_contact, name);
+
+  fd:        Shape function - +ve for space inside area, -ve outside
+  fh:        Mesh refinement function - use [] for uniform
+  nnodes:    Estimate of number of nodes in model
+  bbox:      Bounding box [xmin,ymin, {zmin}; xmax,ymax,{zmax}]
+
+  elec_nodes:        cell of matrix N x [x,y,{z}] for each electrode
+  refine_nodes:      vector of fixed nodes to add to model to refine it
+  z_contact:         vector or scalar electrode contact impedance
+  name:              name for eidors object
+
+  fwd_mdl:           eidors format fwd_model</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="distmeshnd.html" class="code" title="function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)">distmeshnd</a>	DISTMESHND N-D Mesh Generator using Distance Functions.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

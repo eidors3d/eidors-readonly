@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of laplace_image_prior</title>
+  <meta name="keywords" content="laplace_image_prior">
+  <meta name="description" content="LAPLACE_IMAGE_PRIOR calculate image prior">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">a_adler</a> &gt; laplace_image_prior.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>laplace_image_prior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>LAPLACE_IMAGE_PRIOR calculate image prior</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function Reg= laplace_image_prior( inv_model ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> LAPLACE_IMAGE_PRIOR calculate image prior
+ Reg= laplace_image_prior( inv_model )
+ Reg        =&gt; output regularization term
+ inv_model  =&gt; inverse model struct
+
+ This image prior is intended to be used as
+  R'*R, but may be used as R for as well.
+
+ The Laplace prior is a 2nd order high pass filter.
+ On a rectangular mesh, it is a convolution with
+   [-1,-1,-1;      [ 0;-1; 0
+    -1, 8,-1    or  -1; 4;-1
+    -1,-1,-1]        0;-1; 0]
+
+ On a finite element mesh, we define the it as 
+ -1 for each adjacent element, and 3 (in 2D) or 4 (in 3D)
+ for the element itself</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_e_move_image_prior.html" class="code" title="function Reg= aa_e_move_image_prior( inv_model );">aa_e_move_image_prior</a>	AA_E_MOVE_IMAGE_PRIOR calculate image prior</li><li><a href="../../../eidors/examples/compare_2d_algs.html" class="code" title="function [imgr, img]= compare_2d_algs(option,shape);">compare_2d_algs</a>	Compare different 2D reconstructions</li><li><a href="../../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li><li><a href="../../../eidors/tests/calc_model_prior_test.html" class="code" title="function ok= calc_model_prior_test;">calc_model_prior_test</a>	Verify model prior calcs</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

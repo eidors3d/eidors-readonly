@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of slicer_plot_n</title>
+  <meta name="keywords" content="slicer_plot_n">
+  <meta name="description" content="function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">graphics_matlab</a> &gt; slicer_plot_n.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\graphics_matlab&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>slicer_plot_n
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [fc] = slicer_plot_n(h,sol,vtx,simp,fc); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);
+
+This function plots a 2D slice of the 3D solution vector BB at z=h.
+
+h    = The height of the desired solution, max(vtx(:,3))&gt;= h &gt;= min(vtx(:,3)).
+sol  = The caclulated inverse solution
+vtx  = The vertices matrix
+simp = The simplices matrix
+fc   = The edges of the mesh. This is a 2 column matrix required for the 3D plotting. 
+       fc may take some time to be calculated so it is a good idea to save it and use 
+       it thereafter. Initially use [fc] = slicer_plot(h,BB,vtx,simp); to plot the slide 
+       and calculate fc.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/n_polydorides/delfix.html" class="code" title="function [vtx_n,simp_n] = delfix(vtx,simp)">delfix</a>	function [vtx_n,simp_n] = delfix(vtx,simp)</li><li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/n_polydorides/inverse_solver.html" class="code" title="function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);">inverse_solver</a>	function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);</li><li><a href="../../eidors/examples/demo_complex.html" class="code" title="">demo_complex</a>	This demo function shows how the EIT problem can be formulated in a complex</li><li><a href="figaro3d.html" class="code" title="function [fc] = figaro3d(srf,vtx,simp,fc,BB,h);">figaro3d</a>	function [fc] = figaro3d(srf,vtx,simp,fc,BB,h);</li><li><a href="image_levels.html" class="code" title="function image_levels(img, levels, clim )">image_levels</a>	IMAGE_LEVELS(img, levels, clim  ) show slices at levels of an image</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

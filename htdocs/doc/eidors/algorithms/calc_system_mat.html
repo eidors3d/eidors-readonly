@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_system_mat</title>
+  <meta name="keywords" content="calc_system_mat">
+  <meta name="description" content="CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">algorithms</a> &gt; calc_system_mat.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calc_system_mat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function system_mat = calc_system_mat( fwd_model, img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image
+ 
+    system_mat= calc_system_mat( fwd_model, image)
+ OR
+    system_mat= calc_system_mat( image)
+
+ it will call the fwd_model.solve
+
+ system_mat  
+   system_mat.E    is FEM system_matrix
+   system_mat.perm is permutation of E  i.e. E(perm,perm)
+ fwd_model is a fwd_model structure
+ image     is an image structure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/c_gomez/calc_move_jacobian.html" class="code" title="function J = calc_move_jacobian(fwd_model, img_bkgd)">calc_move_jacobian</a>	CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and</li><li><a href="../../eidors/algorithms/m_vauhkonen/mv_fwd_solve.html" class="code" title="function data= mv_fwd_solve( fwd_model, img)">mv_fwd_solve</a>	MV_FWD_SOLVE: data= mv_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/n_polydorides/np_calc_3d_fields.html" class="code" title="function v_f= np_calc_3d_fields( fwd_model, img)">np_calc_3d_fields</a>	NP_CALC_3D_FIELDS: J= np_calc_3d_fields( fwd_model, img)</li><li><a href="../../eidors/algorithms/n_polydorides/np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>	NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</li><li><a href="../../eidors/algorithms/n_polydorides/np_fwd_solve.html" class="code" title="function data= np_fwd_solve( fwd_model, img)">np_fwd_solve</a>	NP_FWD_SOLVE: data= np_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

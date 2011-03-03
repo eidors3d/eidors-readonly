@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dm_2d_circ_pt_elecs</title>
+  <meta name="keywords" content="dm_2d_circ_pt_elecs">
+  <meta name="description" content="DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">distmesh</a> &gt; dm_2d_circ_pt_elecs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\distmesh&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>dm_2d_circ_pt_elecs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes
+ fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
+     at points on the electrodes
+ fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, ...
+               [base_spacing, refine_ratio, gradient]);
+ elec_pts = cell fcn of N x [x,y,{z}] for each electrode
+    normally only two points are specified (at start and end of electrode)
+    eg elec_pts{1} = [-.1,1;.1,1];
+ pfix = any fixed points to provide to the model (default = [])
+ param(1) = base_spacing - edge length away from refined nodes (eg 0.1)
+ param(2) = refine_ratio - relative refinement near points (eg. 10)
+ param(3) = gradient     - transition slope of refinement (eg 0.1)
+
+ Example: Three electrodes 2 on boundary and one internal
+  elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
+  fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.15,10,0.05] );
+
+ Example:
+  n_elecs= 14; elec_width= 0.1; hw= elec_width/2;
+  th = linspace(0,2*pi,n_elecs+1); th(end)=[];
+  for i=1:n_elecs;
+     ti = th(i) + [hw;-hw];
+     elec_pts{i} = [sin(ti),cos(ti)];
+  end
+  fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
+
+ See also: <a href="dm_2d_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);">dm_2d_pt_elecs</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../../eidors/graphics_matlab/show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="dm_2d_circ_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);">dm_2d_circ_pt_elecs</a>	DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes</li><li><a href="dm_2d_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);">dm_2d_pt_elecs</a>	DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="dm_2d_circ_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);">dm_2d_circ_pt_elecs</a>	DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes</li><li><a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

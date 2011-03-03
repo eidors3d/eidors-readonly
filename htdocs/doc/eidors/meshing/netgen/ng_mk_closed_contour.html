@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_mk_closed_contour</title>
+  <meta name="keywords" content="ng_mk_closed_contour">
+  <meta name="description" content="NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">netgen</a> &gt; ng_mk_closed_contour.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\netgen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>ng_mk_closed_contour
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour
+[fmdl,mat_idx] = ng_mk_closed_contour(shape, elec_pos, ...
+                 elec_shape, extra_ng_code);
+
+ This function creates netgen models of a closed contour in x,y.
+   An elliptical FEM is created and then perturbed using Fourier 
+   descriptors into the final model.
+ It should work well for cases where the contour is roughtly elliptical
+
+ INPUT:
+ ellip_shape = cell{height, xy_points, [maxsz]]}
+    if height = 0 -&gt; calculate a 2D shape
+    xy_points     -&gt; Npoints x 2. points on the object boundary
+    maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)
+
+ ELECTRODE POSITIONS:
+  elec_pos = [n_elecs_per_plane,z_planes] 
+     OR
+  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
+ Note that electrode positions are in the ellipse before fitting
+
+ ELECTRODE SHAPES::
+  elec_shape = [width,height, maxsz]  % Rectangular elecs
+     OR
+  elec_shape = [radius, 0, maxsz ]    % Circular elecs
+     OR 
+  elec_shape = [0, 0, maxsz ]         % Point electrodes
+    (point elecs does some tricks with netgen, so the elecs aren't exactly where you ask)
+
+ Specify either a common electrode shape or for each electrode
+
+ EXTRA_NG_CODE
+   string of extra code to put into netgen geo file. Normally this
+   would be to insert extra materials into the space
+
+ OUTPUT:
+  fmdl    - fwd_model object
+  mat_idx - indices of materials (if extra_ng_code is used)
+    Note mat_idx does not work in 2D. Netgen does not provide it.
+
+
+ USAGE EXAMPLES:
+ Simple 3D ellipse. Major, minor axes = [1.5, 0.8]. No electrodes
+     fmdl= ng_mk_ellip_models([1,1.5,0.8],[0],[]);  show_fem(fmdl);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li><li><a href="ng_mk_ellip_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_ellip_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

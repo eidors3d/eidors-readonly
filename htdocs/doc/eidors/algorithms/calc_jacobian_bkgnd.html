@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_jacobian_bkgnd</title>
+  <meta name="keywords" content="calc_jacobian_bkgnd">
+  <meta name="description" content="CALC_JACOBIAN_BKGND: calculate background image around">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">algorithms</a> &gt; calc_jacobian_bkgnd.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calc_jacobian_bkgnd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>CALC_JACOBIAN_BKGND: calculate background image around</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function img_bkgnd = calc_jacobian_bkgnd( inv_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_JACOBIAN_BKGND: calculate background image around
+    which initial estimate of jacobian is calculated
+ 
+ img_bkgnd = calc_jacobian_bkgnd( inv_model )
+ inv_model   is an EIDORS fwd_model 
+ img_bkgnd   is an EIDORS struct
+
+ Usage: 
+      The background for calc_jacobian may be specified
+      as an estimated value
+  inv_model.jacobian_bkgnd.value;  % scalar OR
+                                   % vector of Nx1
+
+ Usage:
+      The background may be calculated by a function
+  inv_model.jacobian_bkgnd.func;</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_conj_grad.html" class="code" title="function img= aa_inv_conj_grad( inv_model, data1, data2)">aa_inv_conj_grad</a>	AA_INV_CONJ_GRAD inverse solver based on the CG</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_total_var.html" class="code" title="function img= aa_inv_total_var( inv_model, data1, data2)">aa_inv_total_var</a>	AA_INV_TOTAL_VARIANCE inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/exponential_covar_prior.html" class="code" title="function Reg= exponential_covar_prior( inv_model );">exponential_covar_prior</a>	EXPONENTIAL_COVAR_PRIOR image prior with exponential</li><li><a href="../../eidors/algorithms/a_adler/inv_kalman_diff.html" class="code" title="function img= inv_kalman_diff( inv_model, data1, data2)">inv_kalman_diff</a>	INV_KALMAN_DIFF inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/noser_image_prior.html" class="code" title="function Reg= noser_image_prior( inv_model );">noser_image_prior</a>	NOSER_IMAGE_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../../eidors/algorithms/a_borsic/ab_tv_lagged_diff.html" class="code" title="function img=ab_tv_lagged_diff( inv_model, data1, data2)">ab_tv_lagged_diff</a>	AB_TV_LAGGED_DIFF Lagged Diffusivity Inverse Solver</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_abs.html" class="code" title="function img=pdipm_abs( inv_model, data);">pdipm_abs</a>	PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_diff.html" class="code" title="function img=pdipm_diff( inv_model, data1, data2)">pdipm_diff</a>	PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/primaldual_tvrecon_lsearch.html" class="code" title="function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2, epsilon, beta, min_change)">primaldual_tvrecon_lsearch</a>	[rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...</li><li><a href="calc_JiRtRJt.html" class="code" title="function [JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )">calc_JiRtRJt</a>	[JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )</li><li><a href="../../eidors/algorithms/d_stephenson/inv_solve_trunc_iterative.html" class="code" title="function img= inv_solve_trunc_iterative( inv_model, data1, data2)">inv_solve_trunc_iterative</a>	INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration</li><li><a href="get_img_data.html" class="code" title="function [img_data, n_images]= get_img_data(img)">get_img_data</a>	GET_IMG_DATA: get parameter data from eidors image object</li><li><a href="../../eidors/algorithms/n_polydorides/mcmc_solve.html" class="code" title="function img= mcmc_solve( inv_model, data1, data2)">mcmc_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/algorithms/t_dai/fourD_prior_solve.html" class="code" title="function img= fourD_prior_solve( inv_model, data1, data2)">fourD_prior_solve</a>	fourD_prior_solve-- inverse solver to account for temporal</li><li><a href="../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li><li><a href="../../eidors/graphics_matlab/show_current.html" class="code" title="function quiv = show_current( img, vv )">show_current</a>	SHOW_CURRENT: show current or other quantity defined</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li><li><a href="../../eidors/tests/perturb_jacobian_test.html" class="code" title="">perturb_jacobian_test</a>	Perturbation Jacobians</li><li><a href="../../eidors/tests/test_c2f_jacobian.html" class="code" title="function test_c2f_jacobian">test_c2f_jacobian</a>	Test calc of jacobian given coarse to fine mapping</li><li><a href="../../eidors/tests/test_compl_elec_mdl.html" class="code" title="">test_compl_elec_mdl</a>	Test formation of complete electrode model</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

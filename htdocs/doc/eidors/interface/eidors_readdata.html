@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of eidors_readdata</title>
+  <meta name="keywords" content="eidors_readdata">
+  <meta name="description" content="EIDORS readdata - read data files from various EIT equipment">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">interface</a> &gt; eidors_readdata.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\interface&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>eidors_readdata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>EIDORS readdata - read data files from various EIT equipment</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extra ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> EIDORS readdata - read data files from various EIT equipment
+    manufacturers
+
+ [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extra )
+    frame_range is the list of frames to load from the file (ie. 1:100).
+    if the frames are beyond the number in the file, no data is returned
+    to get all frames, use frame_range= []
+
+ Currently the list of supported file formats is:
+    - MCEIT (Goettingen / Viasys) &quot;get&quot; file format 
+        format = &quot;GET&quot; or &quot;MCEIT&quot;
+    - Draeger &quot;get&quot; file format (older format for Draeger equipment)
+        format = &quot;GET&quot; or &quot;draeger-get&quot;
+    - New Carefusion &quot;EIT&quot; file format
+        format = &quot;EIT&quot; or &quot;carefusion&quot;
+    - Sheffield MK I &quot;RAW&quot; file format
+        format = &quot;RAW&quot; or &quot;sheffield&quot;
+    - ITS (International Tomography Systems)
+        format = &quot;ITS&quot; or &quot;p2k&quot;
+    - IIRC (Impedance Imaging Research Center, Korea)
+        format = &quot;txt&quot; or &quot;IIRC&quot;
+    - University of Cape Town formats
+        format = &quot;UCT_SEQ&quot;  UCT sequence file
+           - Output: [ stimulation, meas_select]= eidors_readdata(fname, 'UCT_SEQ')
+        format = &quot;UCT_CAL&quot;  UCT calibration file
+           - Output: [vv, no_cur_caldata_raw ]= eidors_readdata( fname, 'UCT_CAL' )
+                 where no_cur_caldata_raw is data captured with no current
+        format = &quot;UCT_DATA&quot;  UCT data frame file
+           - Output: [vv]= eidors_readdata( fname, 'UCT_DATA' )
+    - Landquart, Switzerland EIT equipment 'LQ1'
+        files are 'EIT' files, but are not autodetected
+    - Dixtal file format, from Dixtal inc, Brazil
+        format = 'DIXTAL_encode' extract encoder from provided Dll
+           - Output: [encodepage] = eidors_readdata( path,'DIXTAL_encode');
+              where path= '/path/to/Criptografa_New.dll' (provided with system)
+        format = 'DIXTAL'
+           - output: [vv] = eidors_readdata( fname, 'DIXTAL', encodepage );
+
+ Usage
+ [vv, auxdata, stim ]= eidors_readdata( fname, format )
+     vv      = measurements - data frames in each column
+     auxdata = auxillary data - if provided by system 
+     stim    = stimulation structure, to be used with
+                fwd_model.stimulation. 
+     fname = file name
+
+  if format is unspecified, we attempt to autodetect</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

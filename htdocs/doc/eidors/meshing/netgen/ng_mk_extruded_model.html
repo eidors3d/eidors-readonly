@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_mk_extruded_model</title>
+  <meta name="keywords" content="ng_mk_extruded_model">
+  <meta name="description" content="NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">netgen</a> &gt; ng_mk_extruded_model.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\netgen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>ng_mk_extruded_model
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen
+ [fmdl,mat_idx] = ng_mk_extruded_models(trunk_shape, elec_pos, ...
+                 elec_shape, extra_ng_code);
+ INPUT:
+ trunk_shape = { height,[x,y],curve_type,maxsz}
+   height      -&gt; if height = 0 calculate a 2D model
+   [x,y]       -&gt; N-by-2 CLOCKWISE list of points defining the 2D shape
+                  NOTE: Use a cell array to specify additional curves for
+                  internal objects
+   curve_type  -&gt; 1 - interpret as vertices (default)
+                  2 - interpret as splines with de Boor points at even 
+                  indices (legacy)
+                  3 - interpolate points (piecewise polynomial
+                  interpolation). Syntax [3, N] also specifies the number
+                  of samples to create.
+                  4 - interpolate points with Fourier descriptor. Syntax 
+                  [4, N] also specifies the number of samples to create.
+                  NOTE: If additional curves are specified, curve_type can
+                  also be a cell array. Otherwise, curve_type defaults to
+                  1 for internal shapes.
+   maxsz       -&gt; max size of mesh elems (default = course mesh)
+
+ ELECTRODE POSITIONS:
+  elec_pos = [n_elecs_per_plane,spacing,z_planes] where spacing is either
+             0 for even spacing w.r.t angular positions (0,15,30... deg)
+             or
+             1 for equal distances between electrodes
+             Any fractional part (e.g. 0.15) is interpreted as a starting
+             position -- fraction of 2*pi for values spacing &lt; 1 and
+             fraction of total perimeter for spacing &gt; 1.
+     OR
+  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
+
+ ELECTRODE SHAPES::
+  elec_shape = [width,height, {maxsz, pem}]  % Rectangular elecs
+     OR
+  elec_shape = [radius, {0, maxsz, pem} ]  % Circular elecs
+     maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)
+     pem  (OPT)  -&gt; 1: Point Electrode Model, 0: Complete Electrode Model (default)
+
+ Specify either a common electrode shape or for each electrode</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../../eidors/graphics_matlab/show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="call_netgen.html" class="code" title="function status= call_netgen(geo_file, vol_file, msz_file, finelevel)">call_netgen</a>	CALL_NETGEN: call netgen to create a vol_file from a geo_file</li><li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li><li><a href="ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li><li><a href="piece_poly_fit.html" class="code" title="function [pp, m] = piece_poly_fit(points, fstr, linear_frac)">piece_poly_fit</a>	PIECE_POLY_FIT: piecewise polynomial fitting toolset</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="clicking.html" class="code" title="">clicking</a>	</li><li><a href="ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="scrapbook.html" class="code" title="">scrapbook</a>	</li><li><a href="shape_scrapbook.html" class="code" title="">shape_scrapbook</a>	</li><li><a href="../../../eidors/models/a_adler/test_GREIT_model.html" class="code" title="">test_GREIT_model</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

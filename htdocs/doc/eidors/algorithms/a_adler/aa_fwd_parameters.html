@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aa_fwd_parameters</title>
+  <meta name="keywords" content="aa_fwd_parameters">
+  <meta name="description" content="AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">a_adler</a> &gt; aa_fwd_parameters.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>aa_fwd_parameters
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function param = aa_fwd_parameters( fwd_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
+ Extract parameters from a 'fwd_model' struct which are 
+ appropriate for Andy Adler's EIT code
+   param.n_elem     =&gt; number of elements
+   param.n_elec     =&gt; number of electrodes
+   param.n_node     =&gt; number of nodes (vertices)
+   param.n_stim     =&gt; number of current stimulation patterns
+   param.n_elec     =&gt; number of electrodes
+   param.n_dims     =&gt; dimentions (2= 2D, 3=3D)
+   param.n_meas     =&gt; number of measurements (total)
+   param.boundary   =&gt; FEM boundary
+   param.NODE       =&gt; vertex matrix
+   param.ELEM       =&gt; connection matrix
+   param.QQ         =&gt; Current into each NODE
+   param.VOLUME     =&gt; Volume (or area) of each element
+   param.normalize  =&gt; difference measurements normalized?
+   param.N2E        =&gt; Node to electrode converter
+
+ If the stimulation patterns has a 'interior_sources' field,
+   the node current QQ, is set to this value for this stimulation.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="find_electrode_bdy.html" class="code" title="function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)">find_electrode_bdy</a>	FIND_ELECTRODE_BDY: find the boundary index area for electrode</li><li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="aa_e_move_image_prior.html" class="code" title="function Reg= aa_e_move_image_prior( inv_model );">aa_e_move_image_prior</a>	AA_E_MOVE_IMAGE_PRIOR calculate image prior</li><li><a href="aa_e_move_jacobian.html" class="code" title="function J= aa_e_move_jacobian( fwd_model, img)">aa_e_move_jacobian</a>	AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)</li><li><a href="aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="aa_inv_conj_grad.html" class="code" title="function img= aa_inv_conj_grad( inv_model, data1, data2)">aa_inv_conj_grad</a>	AA_INV_CONJ_GRAD inverse solver based on the CG</li><li><a href="aa_inv_total_var.html" class="code" title="function img= aa_inv_total_var( inv_model, data1, data2)">aa_inv_total_var</a>	AA_INV_TOTAL_VARIANCE inverse solver for difference EIT</li><li><a href="aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>	AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</li><li><a href="backproj_solve.html" class="code" title="function img= backproj_solve( inv_model, data1, data2)">backproj_solve</a>	BACKPROJ_SOLVE inverse solver using backprojection</li><li><a href="exponential_covar_prior.html" class="code" title="function Reg= exponential_covar_prior( inv_model );">exponential_covar_prior</a>	EXPONENTIAL_COVAR_PRIOR image prior with exponential</li><li><a href="inv_kalman_diff.html" class="code" title="function img= inv_kalman_diff( inv_model, data1, data2)">inv_kalman_diff</a>	INV_KALMAN_DIFF inverse solver for difference EIT</li><li><a href="laplace_image_prior.html" class="code" title="function Reg= laplace_image_prior( inv_model );">laplace_image_prior</a>	LAPLACE_IMAGE_PRIOR calculate image prior</li><li><a href="time_smooth_prior.html" class="code" title="function Reg= time_smooth_prior( inv_model );">time_smooth_prior</a>	TIME_SMOOTH_PRIOR calculate image prior</li><li><a href="../../../eidors/algorithms/b_sawicki/bs_calc_system_mat.html" class="code" title="function s_mat= bs_calc_system_mat( fwd_model, img)">bs_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="../../../eidors/algorithms/c_gomez/calc_move_jacobian.html" class="code" title="function J = calc_move_jacobian(fwd_model, img_bkgd)">calc_move_jacobian</a>	CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and</li><li><a href="../../../eidors/examples/cheating_2d.html" class="code" title="function out=cheating_2d( figno, rand_seed )">cheating_2d</a>	code to simulate inverse crimes in EIT</li><li><a href="../../../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li><li><a href="../../../eidors/graphics_matlab/show_fem_move.html" class="code" title="function show_fem_move( img, move, scale, options )">show_fem_move</a>	SHOW_FEM_MOVE   Plot EIT finite element model (FEM) and movement</li><li><a href="../../../eidors/graphics_matlab/show_slices_move.html" class="code" title="function show_slices_move( img, move, move_scale )">show_slices_move</a>	SHOW_SLICES_MOVE   Shows planar slices of a 3D FEM with movement vectors</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

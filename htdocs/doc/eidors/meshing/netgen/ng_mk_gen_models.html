@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_mk_gen_models</title>
+  <meta name="keywords" content="ng_mk_gen_models">
+  <meta name="description" content="NG_MAKE_ELLIP_MODELS: create elliptical models using netgen">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">netgen</a> &gt; ng_mk_gen_models.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\netgen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>ng_mk_gen_models
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
+[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);
+
+ INPUT:
+ shape_str = {height, [x_radius, y_radius, [maxsz]]}
+    if height = 0 -&gt; calculate a 2D shape
+    x_radius, y_radius (OPT)  -&gt; elliptical eccentricity in x,y directions(default = 1)
+    maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)
+
+ ELECTRODE POSITIONS:
+  elec_pos = [x,y,z,nx,ny,nz] centres of each electrode (N_elecs x 6)
+   [x,y,z] is the position, and [nx,ny,nz] is the surface normal
+
+ ELECTRODE SHAPES::
+  elec_shape = [width,height, maxsz]  % Rectangular elecs
+     OR
+  elec_shape = [radius, 0, maxsz ]    % Circular elecs
+     OR 
+  elec_shape = [0, sz, maxsz ]         % Point electrodes
+    (point elecs does some tricks with netgen, using sz square, so the elecs aren't exactly where you ask)
+
+ Specify either a common electrode shape or for each electrode
+
+ ELECTRODE DEFITIONS:
+  elec_obj = 'obj_name' or {'name','for','each','elec'} where
+    the name is the primitive netgen object (cylinder, plane, etc) which the electrode intersects
+
+ OUTPUT:
+  fmdl    - fwd_model object
+  mat_idx - indices of materials
+
+ USAGE EXAMPLES:
+shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+             'solid bottom = plane(0,0,0;0,0,-1);\n' ...
+             'solid top    = plane(0,0,2;0,0,1);\n' ...
+             'solid mainobj= top and bottom and cyl -maxh=0.3;\n'];
+elec_pos = [  1,  0,  1,   1,  0,  0;
+              0,  1,1.2,   0,  1,  0;
+              0.8,  0,  0, 0,  0, -1]; 
+elec_shape=[0.1];
+elec_obj = {'cyl','cyl','bottom'};
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../../eidors/graphics_matlab/show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="call_netgen.html" class="code" title="function status= call_netgen(geo_file, vol_file, msz_file, finelevel)">call_netgen</a>	CALL_NETGEN: call netgen to create a vol_file from a geo_file</li><li><a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li><li><a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

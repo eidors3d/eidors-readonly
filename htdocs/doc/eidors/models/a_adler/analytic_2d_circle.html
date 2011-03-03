@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of analytic_2d_circle</title>
+  <meta name="keywords" content="analytic_2d_circle">
+  <meta name="description" content="V = analytic_2d_circle(J, [s_h, s_i, b, a, angl])">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">models</a> &gt; <a href="index.html">a_adler</a> &gt; analytic_2d_circle.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\models\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>analytic_2d_circle
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>V = analytic_2d_circle(J, [s_h, s_i, b, a, angl])</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function V = analytic_2d_circle(I, params) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> V = analytic_2d_circle(J, [s_h, s_i, b, a, angl])
+ Voltage around a 2D circle with properties
+   conductivities: tank(s_h), inclusion(s_i)
+   tank radius = 1
+   inclusion: radius(a), distance(b) at angle(angl)
+
+ J = current density at a regular sample of nodes on the boundary
+    because analytic_2d_circle works on current density, it needs
+    to be scaled with the number of sample points, to get I
+
+ Based on eqn 21 in Seagar and Bates (1985).
+
+ (C) Andy Adler 2009. License: GPL V2 or V3
+ $Id: analytic_2d_circle.m 2373 2010-11-11 08:24:49Z aadler $
+
+ USAGE EXAMPLE: compare FEM to analytic model
+
+  imdl= mk_common_model('c2c0',16);
+ img = calc_jacobian_bkgnd(imdl);
+ img.fwd_solve.get_all_meas = 1;
+ img.elem_data(1:256)= 0.1;
+ vi= fwd_solve(img);
+ 
+ [jnk,maxl] = min(vi.volt(:,1));
+ vi= vi.volt(maxl:end,1);
+ lv= length(vi);
+ 
+ vol = get_elem_volume(img.fwd_model);
+ vt= sum(vol); va= sum(vol(img.elem_data ~=1));
+ rad = sqrt(va/vt);
+ 
+ I =  zeros(lv,1); I(1+[0,lv/16]) = [-25,25]*lv/16;
+ vsi= analytic_2d_circle(I, [1, 0.1, 0.0, rad, 0]);
+ 
+ plot([vi,vsi]);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

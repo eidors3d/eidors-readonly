@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of writevtkfile_old</title>
+  <meta name="keywords" content="writevtkfile_old">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">graphics_vtk</a> &gt; writevtkfile_old.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\graphics_vtk&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>writevtkfile_old
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function writevtkfile_old(filename,vtx,elem,val) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ Copyright (c) 2002-2003 Andrea Borsic, SC-AIP s.a.s.
+ Scientific Computing &amp; Applied Inverse Problems
+ www.sc-aip.com
+ Revision 1.2 Original Date 12/08/02
+ Modified 11/06/03, exports vectors
+ Modified 31/08/03, exports tensors, fixes some problems regarding number rapresentation
+ Modified 26/03/03 in order to support both triangular and tetrahedral meshes
+ 25/06/2005 Changed name, writevtkfile is now overloaded to handle objects as data WRBL 
+ This function writes 3D meshes and associated scalar/vector/tensor fields to a VTK (Visualization Tool Kit)(www.kitware.com) dataset file
+
+ Use: writevtkfile_old('filename',vtx,elem,val)
+
+ 'filename' = name of the vtk file, the &quot;.vtk&quot; extension will be addedd automatically 
+ vtx = matrix of the verticies
+ elem = matrix desribing the simplecies
+ val = matrix holding the field values (scalars/vectros/tensors)
+ 
+ Depending wether the field is piecewise linear or piecewise constant and if it it scalar, vector or tensor, val can assume different valid sizes:
+
+ val should have a number of rows equal to the number of simplecies or to the number of nodes in the mesh (piecewise constant/piecewise linear dataset)
+ val should have a number of columns equal to 1,3 or 9 (scalar field / vector field / tensor field)
+
+ The generated VTK file can then be displayed with MaiaVi (http://mayavi.sourceforge.net/)
+ which has lots of nice features and is generally faster than MATALB 3D graphics
+
+ CAVEAT: VTK supports only symmetrix tensors. It is left to the user to ensure that the data he is exporting 
+ consists of symmetric tensors (as if such a check were performed by writeVTKfile, performance of the filter would suffer)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="writevtkfile.html" class="code" title="function writevtkfile(fn,varargin)">writevtkfile</a>	Useage: writevtkfile(filename, eidors_image );</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
