@@ -1,0 +1,59 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction for a pig thorax geometry</h2>
+
+Reconstruction of experimental data onto a pig thorax shape. 
+
+<a href="/data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.shtml">
+Data used</a> are from the study:
+<ul>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65/"
+   >Electrical impedance tomography in
+    monitoring experimental lung injury </a>
+  <i>Intensive Care Med.</i> 24:829-836, 1998.
+</ul>
+
+
+<h3> 
+Forward Model
+</h3>
+
+<pre>
+<!--#include virtual="pig_ex01.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_mat_ellip01a.png">
+<br><i>Figure:</i>
+Simulation of data on an elliptical model with
+lung shaped contrasting regions
+</center>
+
+<h3> 
+Training GREIT
+</h3>
+
+<pre>
+<!--#include virtual="pig_ex02.m" -->
+</pre>
+
+<h3> 
+Reconstruct Images
+</h3>
+
+<pre>
+<!--#include virtual="pig_ex03.m" -->
+</pre>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
