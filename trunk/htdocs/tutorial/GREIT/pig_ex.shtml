@@ -26,9 +26,9 @@ Forward Model
 </pre>
 
 <center>
-<img src="mk_GREIT_mat_ellip01a.png">
+<img src="pig_ex_fmdl.png">
 <br><i>Figure:</i>
-Simulation of data on an elliptical model with
+Forward model used for training GREIT using
 lung shaped contrasting regions
 </center>
 
@@ -48,6 +48,13 @@ Reconstruct Images
 <!--#include virtual="pig_ex03.m" -->
 </pre>
 
+<center>
+<img src="pig_control.png">
+<img src="pig_injury.png">
+<br><i>Figure:</i>
+<i>Left</i> Ventilation image of control animal
+<i>Right</i> Ventilation image of animal after left lung injury
+</center>
 
 </td></tr></table>
 <p>
