@@ -176,6 +176,40 @@ and claim that your code is vastly superior than EIDORS' best shot
 This is a toolkit of routines for you to build a code which suits your
 application.
 
+<p><li><b>
+    I'm struggling to use the EIDORS Netgen functions?
+</b><p>
+Netgen is a lovely tool, but it can be sensitive to many of
+it's parameters, especially those related to the placement of
+many electrodes. If you're having troubles, try these ideas:
+<ul>
+   <li> Try building a model without electrodes
+         (for example, instead of
+		 <tt>ng_mk_extruded_model({300,a,[3,10],25},<u>[16,1,150]</u>,[1]);</tt>,
+		 set the underlined field to <tt>[0 0]</tt> (0 electrodes and 0 planes) ).
+   <li> If building without electrodes works, try modifying the placement parameter
+		(e.g. set the underlined field to <tt>[16,1.05,150]</tt>). This will move 
+		the electrodes slightly.
+   <li> Alternatively, you can make the boundary smoother/nicer by interpolating, e.g.
+		<pre>
+		trunk = [x1 y1; ...; xn yn];
+		pp= fourier_fit(trunk); 
+		sp = linspace(0,1,51);sp(end)=[]; 
+		smoother_trunk = fourier_fit(pp, sp);</pre>
+		Changing the starting point (0) in the linspace call will shift the points along
+		the contour, worth trying.
+   <li> Try building your model without internal structures, e.g.<br>
+		<tt>[fmdl, mat_idx] = ng_mk_extruded_model({2,trunk ,[4,50],.1},[electh,1+0*electh],[0.1 0 0.05]);</tt><br>
+		instead of <br>
+		<tt>[fmdl, mat_idx] = ng_mk_extruded_model(<u>{2,{trunk,lung} ,[4,50],.1}</u>,[electh,1+0*electh],[0.1 0 0.05]);</tt>
+		If that works, refine the internal shapes.
+   <li> Try a smaller mesh density (larger last parameter in the underlined field above).
+   <li> Try a smaller electrode density (larger, or none, last parameter in the [0.1 0 0.05] electrode shape field above)
+   <li> If all else fails, locate the .geo file created by the function you called and examine it with Netgen GUI.
+		Location of the .geo file is one of the first things Netgen prints out. On Windows, this will be something like:<br>
+		<tt> Load geometry file C:\DOCUME~1\Username\LOCALS~1\Temp\tp054957.geo</tt><br>
+		Corresponding to the path C:\Documents and Settings\Username\Local Settings\Temp\tp054957.geo	
+</ul>
 <!--
 <p><li><b>
     How do I use EIDORS as a framework to develop my
