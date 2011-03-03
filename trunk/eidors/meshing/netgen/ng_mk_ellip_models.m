@@ -155,7 +155,7 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ..
 
        otherwise; error('huh? shouldnt get here');
       end
-      fprintf(fid,'solid cyl%04d = bigcyl    and %s; \n',i,name);
+      fprintf(fid,'solid cyl%04d = %s and not bigcyl; \n',i,name);
    end
 
    % SHOULD tank_maxh go here?
@@ -195,6 +195,10 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
       tank_radius(1)=cyl_shape(2);
    elseif lcs >= 3
       tank_radius=cyl_shape(2:3);
+      if diff(tank_radius) == 0;
+         warning(['Using ng_mk_ellip_models to create cylinder. This may fail for '...
+                  'even electrode numbers. Recommend use ng_mk_cyl_models']);
+      end
    end
    if length(cyl_shape)>=4; 
       tank_maxh  =cyl_shape(4);
@@ -284,6 +288,11 @@ function th = ellip_space_elecs( n_elecs, rad )
    yi = interp1(len,th,xi);
 
    th= [0;yi(:)];
+   for exact = 0:3;
+      eth = exact/2*pi;
+      ff = abs(th-eth)<1e-3;
+      th(ff) = eth;
+   end
 
 function elec = elec_spec( row, is2D, hig, rad )
   if     is2D
@@ -437,10 +446,11 @@ function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
    dirn(3) = 0; dirn = dirn/norm(dirn);
 
    ln = min(ln);
- % I would divide by 2 here (shorted tube in cyl), but ng doesn't like
- % That - it fails for 16 (but no 15 or 17) electrodes
-   inpt = c - dirn.*(ln/1);
-   outpt =c + dirn.*(ln/1);
+ % This is hard to debug here, why does netgen sometime just fail
+ % fails for 16 (but no 15 or 17) electrodes
+ % The 'exact' fix seems to fix this, now. Leave comment above to test
+   inpt = c - dirn.*(ln/6);
+   outpt =c + dirn.*(ln/6);
 
    fprintf(fid,'solid %s  = ', name);
    fprintf(fid,'  plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
