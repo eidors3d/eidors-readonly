@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dm_2d_pt_elecs</title>
+  <meta name="keywords" content="dm_2d_pt_elecs">
+  <meta name="description" content="DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">distmesh</a> &gt; dm_2d_pt_elecs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\distmesh&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>dm_2d_pt_elecs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined
+     at points on the electrodes
+
+ fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacinf, shapefn, bbox)
+
+ elec_pts = cell fcn of N x [x,y,{z}] for each electrode
+    normally one or two points are specified (at start and end of electrode)
+    eg elec_pts{1} = [-.1,1;.1,1];
+ pfix = any fixed points to provide to the model (default = [])
+
+ params is a structure with fields (you can add more as required)
+   params.base_spacing - edge length away from refined nodes (eg 0.1)
+   params.refine_ratio - relative refinement near points (eg. 10)
+   params.gradient     - transition slope of refinement (eg 0.1)
+
+ shapefn = distmesh shapefn (calculates distance to boundary)
+
+ bbox = bounding box of the space
+
+ Example:
+  elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
+  shapefn = inline('sqrt(sum(p.^2,2))-params.rad','p','params'); % Circle
+  params.rad = 1;
+  params.base_spacing = 0.06;
+  params.refine_ratio = 10;
+  params.gradient     = 0.05;
+  fmdl= dm_2d_pt_elecs( elec_pts, [], params, shapefn, [-1,-1;1,1] );</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="distmeshnd.html" class="code" title="function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)">distmeshnd</a>	DISTMESHND N-D Mesh Generator using Distance Functions.</li><li><a href="dm_refine_points.html" class="code" title="function h = dm_refine_points( pts, params );">dm_refine_points</a>	DM_REFINE_POINTS: refine distmesh volume at point locations:</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="dm_2d_circ_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);">dm_2d_circ_pt_elecs</a>	DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

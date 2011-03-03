@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_RtR_prior</title>
+  <meta name="keywords" content="calc_RtR_prior">
+  <meta name="description" content="RtR = calc_RtR_prior( inv_model )">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">algorithms</a> &gt; calc_RtR_prior.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calc_RtR_prior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>RtR = calc_RtR_prior( inv_model )</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function RtR_prior = calc_RtR_prior( inv_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> RtR = calc_RtR_prior( inv_model )
+ CALC_RtR_PRIOR: calculate image regularization prior
+   R'*R (which is an estimate of the inverse of the covariance)
+
+   Typically, the image prior is matrix n_elem x n_elem of the
+   normalized a priori crosscorrelation FEM element values
+ 
+ calc_RtR_prior can be called as
+    RtR_prior= calc_RtR_prior( inv_model, ... )
+
+ and will call the function inv_model.RtR_prior
+ parameters to RtR_prior should be passed in the field
+ inv_model.RtR_prior_function_name.parameters
+
+ if there exists a field inv_model.rec_model, then
+   the prior is calculated on the rec_model rather than
+   the fwd_model. This will not be done if 
+ inv_model.prior_use_fwd_not_rec= 1;
+
+ RtR_prior    the calculated RtR regularization prior
+ inv_model    is an inv_model structure
+
+ If a function to calculate RtR_prior is not provided,
+ RtR = R_prior' * R_prior;</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../../eidors/algorithms/a_adler/aa_e_move_image_prior.html" class="code" title="function Reg= aa_e_move_image_prior( inv_model );">aa_e_move_image_prior</a>	AA_E_MOVE_IMAGE_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_conj_grad.html" class="code" title="function img= aa_inv_conj_grad( inv_model, data1, data2)">aa_inv_conj_grad</a>	AA_INV_CONJ_GRAD inverse solver based on the CG</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/inv_kalman_diff.html" class="code" title="function img= inv_kalman_diff( inv_model, data1, data2)">inv_kalman_diff</a>	INV_KALMAN_DIFF inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../../eidors/algorithms/b_sawicki/bs_nonlinearGN.html" class="code" title="function img= bs_nonlinearGN( inv_model, data )">bs_nonlinearGN</a>	NONLINEARGN Non-Linear EIT Inverse</li><li><a href="../../eidors/algorithms/d_stephenson/inv_solve_dual_mesh.html" class="code" title="function img= inv_solve_dual_mesh( inv_model, voltage)">inv_solve_dual_mesh</a>	INV_SOLVE_DUAL_MESH using a coarse and fine mesh</li><li><a href="../../eidors/algorithms/n_polydorides/mcmc_solve.html" class="code" title="function img= mcmc_solve( inv_model, data1, data2)">mcmc_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/tests/calc_model_prior_test.html" class="code" title="function ok= calc_model_prior_test;">calc_model_prior_test</a>	Verify model prior calcs</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

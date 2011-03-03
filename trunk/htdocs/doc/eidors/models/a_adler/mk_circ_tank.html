@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mk_circ_tank</title>
+  <meta name="keywords" content="mk_circ_tank">
+  <meta name="description" content="MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">models</a> &gt; <a href="index.html">a_adler</a> &gt; mk_circ_tank.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\models\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>mk_circ_tank
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function param= mk_circ_tank(rings, levels, elec_spec ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D
+ param= mk_circ_tank(rings, levels, elec_spec );
+ 
+ rings:  number of horizontal plane rings (divisible by 4)
+ levels: vector of vertical placement of levels
+     for 2D mesh, levels = []
+ 
+ elec_spec: parameter to specify number of electrodes
+        specified as { 'opt1', val11, val12 , 'opt2', val21, val22 }
+
+ elec_spec = scalar (divisible by 4)
+      - puts a single plane of electrodes in centre of cylinder
+ eg. elec_spec  = 16
+
+ elec_spec = { 'planes', n_elecs, elec_planes }
+      - puts plane each of n_elecs at planes specified by elec_planes
+ eg. elec_spec  =  {'planes', 16, [2,6,8]}
+
+ elec_spec = { 'zigzag', n_elecs, elec_planes }
+      - puts plane of n_elecs 'zigzagged' electrodes onto planes specified
+        1st elec on plane 2, 2nd elec on plane 6, 3rd on plane 2, etc 
+ eg. elec_spec  =  {'zigzag', 16, [2,6]}
+      - Note, based on the restults of Graham et al (2006), zigzag
+        electrode placement is not recommended
+      - In order to implement the 'planar3d' pattern from this paper,
+        puts 2d electrodes onto rings ie [ ...  7  8  1  2  ...
+                                           ... 15 16  9 10  ... ]
+      -&gt;use  elec_spec = { 'planes', n_elecs/2, elec_planes }
+
+ mk_circ_tank creates simple, point electrodes. Improved models
+  may be created with create_tank_mesh_ng
+
+ output:
+  param.name        Model name (if known) 
+  param.nodes       position of FEM nodes (Nodes x Dims) 
+  param.elems       definition of FEM elements (Elems x Dims+1) 
+  param.boundary    nodes of element faces on the medium surface 
+  param.gnd_node    Number of node connected to ground 
+  param.electrode   Vector (Num_elecs x 1) of electrode models (elec_model)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/cheating_2d.html" class="code" title="function out=cheating_2d( figno, rand_seed )">cheating_2d</a>	code to simulate inverse crimes in EIT</li><li><a href="../../../eidors/examples/demo_2d_simdata.html" class="code" title="">demo_2d_simdata</a>	Example of using EIDORS to simulate 2D data and to</li><li><a href="../../../eidors/examples/demo_3d_simdata.html" class="code" title="">demo_3d_simdata</a>	How to make simulation data using EIDORS3D</li><li><a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="simulate_2d_movement.html" class="code" title="function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )">simulate_2d_movement</a>	SIMULATE_2D_MOVEMENT simulate rotational movement in 2D</li><li><a href="../../../eidors/tests/calc_data_prior_test.html" class="code" title="function ok= calc_data_prior_test">calc_data_prior_test</a>	Verify dataprior:</li><li><a href="../../../eidors/tests/calc_jacobian_test.html" class="code" title="function ok= calc_jacobian_test">calc_jacobian_test</a>	Verify Jacobian Calculation by small derivative from forward problem</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

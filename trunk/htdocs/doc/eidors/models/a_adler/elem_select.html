@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of elem_select</title>
+  <meta name="keywords" content="elem_select">
+  <meta name="description" content="ELEM_SELECT: select element fractions inside a function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">models</a> &gt; <a href="index.html">a_adler</a> &gt; elem_select.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\models\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>elem_select
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>ELEM_SELECT: select element fractions inside a function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function memb_frac = elem_select( fmdl, select_fcn ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ELEM_SELECT: select element fractions inside a function
+   memb_frac = elem_select( fmdl, select_fcn )
+
+  memb_frac = fraction of each element within the fcn
+  fmdl =      fwd_model structure
+  select_fcn = function to describe membership, 
+              can also be a cell array of functions, but all must accept
+              x, y, and z
+
+ parameters
+   fwd_model.elem_select.interp_no  - interpolation density
+
+ Example:
+   img = mk_image(mk_common_model('b2d1c',8));
+   select_fcn = inline('(x-0.2).^2+(y-0.5).^2&lt;0.2^2','x','y','z');
+   memb_frac = elem_select( img.fwd_model, select_fcn)
+   img.elem_data = 1 + memb_frac*0.1;
+   show_fem(img);
+
+ See Also:
+   mk_c2f_circ_mapping</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/interp_mesh.html" class="code" title="function mdl_pts = interp_mesh( mdl, n_interp)">interp_mesh</a>	INTERP_MESH: calculate interpolation points onto mdl elements</li><li><a href="elem_select.html" class="code" title="function memb_frac = elem_select( fmdl, select_fcn )">elem_select</a>	ELEM_SELECT: select element fractions inside a function</li><li><a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="elem_select.html" class="code" title="function memb_frac = elem_select( fmdl, select_fcn )">elem_select</a>	ELEM_SELECT: select element fractions inside a function</li><li><a href="test_GREIT_model.html" class="code" title="">test_GREIT_model</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

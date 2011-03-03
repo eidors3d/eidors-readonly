@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_colours</title>
+  <meta name="keywords" content="calc_colours">
+  <meta name="description" content="[colours,scl_data]= calc_colours(img, set_value, do_colourbar)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">graphics_matlab</a> &gt; calc_colours.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\graphics_matlab&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calc_colours
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [colours,scl_data]= calc_colours(img, set_value, do_colourbar) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
+ Calculate a colour for each image element 
+
+ Conductive (positive) areas are shown in red
+ Non-Conductive (negative) areas are shown in blue
+
+ PARAMETERS: img
+     - 1) an EIDORS image object, or a Ex1 vector
+     - 2) a 2D image matrix
+
+ Usage #1 (img is a Ex1 vector of element conductivities)
+
+   Cs = calc_colours( img);
+   patch(Xs,Ys,Zs,Cs);
+
+ Cs is Ex1x1 colourmap entries (if mapped_colour&gt;0)
+       Ex1x3 colourmap entries (if mapped_colour==0)
+
+ Usage #2 (rimg is a MxN image matrix of reconstructed pixels):
+           img is an image structure with the image properties
+  
+   c_img = calc_colours( rimg, img);
+   image( c_img );
+
+ c_img is MxN colourmap entries (if mapped_colour&gt;0)
+          MxNx3 colourmap entries (if mapped_colour==0)
+
+ Usage #3 (img is string parameter value)
+  
+   value = calc_colours( 'param' );
+   calc_colours( 'param', value );
+    eg. calc_colours('mapped_colour',127)
+         Use this to allow printing vector eps files to get around
+         a matlab bug with warning 'RGB color data not ...'
+
+   The following parameters are accepted
+
+   'greylev'    (DEFAULT -.01): the colour of the ref_level.
+      Negative values indicate white background
+      For almost white, greylev=-.01; Black=&gt; greylev=.01
+   'sat_adj'    (DEFAULT .9): max G,B when R=1
+   'window_range' (DEFAULT .9); window colour range
+      Colour slope outside range is 1/3 of centre slope
+   'backgnd' ( DEFAULT [.5,.5,.15] ): image border colour 
+   'ref_level' (DEFAULT 'auto') conductivity of centre of
+      colour mapping. 'auto' tries to estimate a good level.
+   'mapped_colour' (DEFAULT 127) number of colourmap entries
+      using mapped_colour allows matlab to print vector graphics to eps
+      setting mapped_colour=0 means to use RGB colours
+   'npoints' (DEFAULT 64) number of points accross the image
+   'clim'    (DEFAULT []) crop colour display of values above clim
+           colour limit. values more different from ref_level are cropped.
+           if not specified or clim==[] =&gt; no limit
+   'cmap_type'  Specify special colours (Default 'blue_red')
+           if 'draeger' use the Draegerwerk/Amato colourmap
+           if 'jet' use the matlab jet colourmap
+   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
+           help for details.
+
+   'colourmap' Return the current EIDORS colormap. 
+           Use as colormap(calc_colours('colourmap'))
+
+ PARAMETERS CAN BE SPECIFIED IN TWO WAYS
+   1. as an image parameter (ie clim in img.calc_colours.clim)
+   2. a second parameter to ( calc_colours(data, param2 )
+          where param2.calc_colours.clim= ... etc
+   3. parameter to calc_colours('clim')
+
+ Parameters specified as (1) will override (2)
+
+ PARAMETERS: do_colourbar
+    - show a Matlab colorbar with appropriate scaling
+
+  usage: c_img= calc_colours( img, clim );
+         image( c_img );
+         calc_colours( img, clim, 1); %now do colorbar 
+
+ PARAMETERS: ref_lev
+     - if specified, override the global ref_level parameter</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/get_img_data.html" class="code" title="function [img_data, n_images]= get_img_data(img)">get_img_data</a>	GET_IMG_DATA: get parameter data from eidors image object</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li><li><a href="eidors_colourbar.html" class="code" title="function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)">eidors_colourbar</a>	EIDORS_COLOURBAR - create an eidors colourbar with scaling to image</li><li><a href="scale_for_display.html" class="code" title="function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, clim )">scale_for_display</a>	[elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, clim )</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/calc_posn_resolution.html" class="code" title="function [br,pos]= calc_posn_resolution( img, fwd_model)">calc_posn_resolution</a>	CALC_POSN_RESOLUTION: calculate posn and resolution of a target</li><li><a href="../../eidors/examples/compare_2d_algs.html" class="code" title="function [imgr, img]= compare_2d_algs(option,shape);">compare_2d_algs</a>	Compare different 2D reconstructions</li><li><a href="../../eidors/examples/compare_3d_algs.html" class="code" title="function imgr= compare_3d_algs( algno )">compare_3d_algs</a>	Compare different 3D reconstructions</li><li><a href="animate_reconstructions.html" class="code" title="function fname_out= animate_reconstructions(fname, imgs);">animate_reconstructions</a>	animate_reconstructions(fname, imgs);</li><li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li><li><a href="calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li><li><a href="repaint_inho.html" class="code" title="function repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);">repaint_inho</a>	function repaint_inho(mat,mat_ref,vtx,simp, thresh);</li><li><a href="show_3d_slices.html" class="code" title="function show_3d_slices(img, varargin);">show_3d_slices</a>	show_3d_slices(img, z_cuts, x_cuts, y_cuts)</li><li><a href="show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li><li><a href="show_slices_move.html" class="code" title="function show_slices_move( img, move, move_scale )">show_slices_move</a>	SHOW_SLICES_MOVE   Shows planar slices of a 3D FEM with movement vectors</li><li><a href="slicer_plot_n.html" class="code" title="function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);">slicer_plot_n</a>	function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);</li><li><a href="../../eidors/startup.html" class="code" title="function startup">startup</a>	Script to start EIDORS</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

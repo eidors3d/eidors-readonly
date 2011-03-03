@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dm_refine_points</title>
+  <meta name="keywords" content="dm_refine_points">
+  <meta name="description" content="DM_REFINE_POINTS: refine distmesh volume at point locations:">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">distmesh</a> &gt; dm_refine_points.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\distmesh&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>dm_refine_points
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DM_REFINE_POINTS: refine distmesh volume at point locations:</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function h = dm_refine_points( pts, params ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DM_REFINE_POINTS: refine distmesh volume at point locations:
+ h= dm_refine_points( pts, params );
+   pts is an array NxDims of node positions
+ params.refine_pts   - points at which to refine mesh (NxNdims)
+ params.base_spacing - edge length away from refined nodes (eg 0.1)
+ params.refine_ratio - relative refinement near points (eg. 10)
+ params.gradient     - transition slope of refinement (eg 0.1)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="dm_2d_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);">dm_2d_pt_elecs</a>	DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

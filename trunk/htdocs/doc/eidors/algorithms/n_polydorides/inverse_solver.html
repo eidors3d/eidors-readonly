@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of inverse_solver</title>
+  <meta name="keywords" content="inverse_solver">
+  <meta name="description" content="function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">n_polydorides</a> &gt; inverse_solver.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\n_polydorides&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>inverse_solver
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);
+
+Calculates a Newton non-linear inverse solution by iteration.
+
+
+
+solf    = The non-linear inverse solution
+mat_ref = Initial guess on the solution
+I       = The current patterns 
+elec    = The electrode faces
+zc      = The contact impedance vector
+voltage = The measurements
+tfac    = The regularisation parameter
+Reg     = The regularisation matrix 
+it      = Number of iterations
+vtx     = The vertices matrix
+simp    = The simplices matrix
+gnd_ind = The ground index (node/electrode)
+no_pl   = The number of planes</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>	function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);</li><li><a href="forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>	GET_3D_MEAS: extracts multiplane voltage measurements from a calculated</li><li><a href="jacobian_3d.html" class="code" title="function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);">jacobian_3d</a>	function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);</li><li><a href="m_3d_fields.html" class="code" title="function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);">m_3d_fields</a>	function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);</li><li><a href="../../../eidors/graphics_matlab/slicer_plot_n.html" class="code" title="function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);">slicer_plot_n</a>	function [fc] = slicer_plot_n(h,sol,vtx,simp,fc);</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

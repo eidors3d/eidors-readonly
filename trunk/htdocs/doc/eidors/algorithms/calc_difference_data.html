@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_difference_data</title>
+  <meta name="keywords" content="calc_difference_data">
+  <meta name="description" content="CALC_DIFFERENCE_DATA: calculate difference data between">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">algorithms</a> &gt; calc_difference_data.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>calc_difference_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>CALC_DIFFERENCE_DATA: calculate difference data between</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function dva = calc_difference_data( data1, data2, fwd_model) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_DIFFERENCE_DATA: calculate difference data between
+   two eidors data vectors
+ dva = calc_difference_data( meas1, meas2, fwd_model)
+   
+  dva   = Matrix n_meas x n_time_steps of difference meas
+  meas1 = measurement object (or matrix) at time1 (homogeneous)
+  meas2 = measurement object (or matrix) at time2 (inhomogeneous)
+  fwd_model (optional, if provided in meas1 and meas2)
+
+  if data1==0, then just process data2 like absolute data
+
+ This code appears simple, but there are a number of tricks
+  to remember, so it is best to factor it out. Issues are
+  1) normalize_data, 2) remove zero meas from adjacent systems,
+  3) allow both raw data and eidors_obj formats for data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_total_var.html" class="code" title="function img= aa_inv_total_var( inv_model, data1, data2)">aa_inv_total_var</a>	AA_INV_TOTAL_VARIANCE inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/backproj_solve.html" class="code" title="function img= backproj_solve( inv_model, data1, data2)">backproj_solve</a>	BACKPROJ_SOLVE inverse solver using backprojection</li><li><a href="../../eidors/algorithms/a_adler/calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>	CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm</li><li><a href="../../eidors/algorithms/a_adler/calc_noise_params.html" class="code" title="function params = calc_noise_params(imdl, vh, vi )">calc_noise_params</a>	params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)</li><li><a href="../../eidors/algorithms/a_adler/calc_reciproc_error.html" class="code" title="function meas_icov = calc_reciproc_error(inv_model, data )">calc_reciproc_error</a>	CALC_RECIPROC_ERROR: CALCULATE RECIPROCITY ERROR MATRIX</li><li><a href="../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/solve_use_matrix.html" class="code" title="function img= solve_use_matrix( inv_model, data1, data2)">solve_use_matrix</a>	SOLVE_USE_MATRIX solve using reconstruction matrix</li><li><a href="../../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../../eidors/algorithms/a_borsic/ab_tv_diff_solve.html" class="code" title="function img= ab_tv_diff_solve( inv_model, data1, data2)">ab_tv_diff_solve</a>	AB_TV_DIFF_SOLVE inverse solver for Andrea Borsic's</li><li><a href="../../eidors/algorithms/a_borsic/ab_tv_lagged_diff.html" class="code" title="function img=ab_tv_lagged_diff( inv_model, data1, data2)">ab_tv_lagged_diff</a>	AB_TV_LAGGED_DIFF Lagged Diffusivity Inverse Solver</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_abs.html" class="code" title="function img=pdipm_abs( inv_model, data);">pdipm_abs</a>	PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_diff.html" class="code" title="function img=pdipm_diff( inv_model, data1, data2)">pdipm_diff</a>	PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/primaldual_tvrecon_lsearch.html" class="code" title="function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2, epsilon, beta, min_change)">primaldual_tvrecon_lsearch</a>	[rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...</li><li><a href="../../eidors/algorithms/d_stephenson/inv_solve_trunc_iterative.html" class="code" title="function img= inv_solve_trunc_iterative( inv_model, data1, data2)">inv_solve_trunc_iterative</a>	INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration</li><li><a href="../../eidors/algorithms/n_polydorides/mcmc_solve.html" class="code" title="function img= mcmc_solve( inv_model, data1, data2)">mcmc_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

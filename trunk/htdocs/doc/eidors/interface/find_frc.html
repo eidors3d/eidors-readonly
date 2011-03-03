@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of find_frc</title>
+  <meta name="keywords" content="find_frc">
+  <meta name="description" content="FIND_FRC: find candidates for FRC">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">interface</a> &gt; find_frc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\interface&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>find_frc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>FIND_FRC: find candidates for FRC</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [eexpi,einsp]= find_frc( imgs, ROI, frate, name, ok, remove_pts) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> FIND_FRC: find candidates for FRC
+   [einsp,eexpi]= find_frc( imgs, ROI, frate, name, ok, remove_pts)
+ INPUTS:
+      points= find_frc( imgs, ROI, frate, name)
+      ok ==0 (show graph - default)
+           1 (show graph - no click) 
+           2 no graph
+      name = name for graph ('unspecified' otherwise)
+      ROI  = Region of interest ( [] means all the image)
+ OUTPUTS: 
+      einsp - points corresponding to end inspiration
+      eexpi - points corresponding to end expiration
+
+ Find candidates for FRC from a time seq of EIT data
+ frate is framerate (in fps units)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

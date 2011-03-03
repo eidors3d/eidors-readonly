@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fwd_solve</title>
+  <meta name="keywords" content="fwd_solve">
+  <meta name="description" content="FWD_SOLVE: calculate data from a fwd_model object and an image">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">eidors</a> &gt; fwd_solve.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>fwd_solve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>FWD_SOLVE: calculate data from a fwd_model object and an image</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function data = fwd_solve( fwd_model, img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> FWD_SOLVE: calculate data from a fwd_model object and an image
+ 
+ fwd_solve can be called as
+    data= fwd_solve( fwd_model, img)
+ or
+    data= fwd_solve( img)
+
+ in each case it will call the fwd_model.solve
+                        or img.fwd_model.solve method
+
+ For reconstructions on dual meshes, the interpolation matrix
+    is defined as fwd_model.coarse2fine. If required, this takes
+    coarse2fine * x_coarse = x_fine
+
+ data      is a measurement data structure
+ fwd_model is a fwd_model structure
+ img       is an img structure
+
+ Options: (not available on all solvers)
+    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
+    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../eidors/algorithms/eidors_model_params.html" class="code" title="function mdl = eidors_model_params( mdl );">eidors_model_params</a>	mdl = eidors_model_params( mdl );</li><li><a href="eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="../eidors/algorithms/a_adler/aa_e_move_jacobian.html" class="code" title="function J= aa_e_move_jacobian( fwd_model, img)">aa_e_move_jacobian</a>	AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)</li><li><a href="../eidors/algorithms/a_adler/calc_all_node_voltages.html" class="code" title="function node_v= calc_all_node_voltages( himg );">calc_all_node_voltages</a>	CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes</li><li><a href="../eidors/algorithms/a_adler/calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>	CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm</li><li><a href="../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>	PERTURB_JACOBIAN: J= perturb_jacobian( fwd_model, img)</li><li><a href="../eidors/algorithms/a_borsic/ab_tv_diff_solve.html" class="code" title="function img= ab_tv_diff_solve( inv_model, data1, data2)">ab_tv_diff_solve</a>	AB_TV_DIFF_SOLVE inverse solver for Andrea Borsic's</li><li><a href="../eidors/algorithms/a_borsic/pdipm_abs.html" class="code" title="function img=pdipm_abs( inv_model, data);">pdipm_abs</a>	PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method</li><li><a href="../eidors/algorithms/a_borsic/primaldual_tvrecon_lsearch.html" class="code" title="function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2, epsilon, beta, min_change)">primaldual_tvrecon_lsearch</a>	[rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...</li><li><a href="../eidors/algorithms/b_lionheart/calc_transferimpedance.html" class="code" title="function transfimp = calc_transferimpedance( img)">calc_transferimpedance</a>	CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix</li><li><a href="../eidors/algorithms/b_sawicki/bs_nonlinearGN.html" class="code" title="function img= bs_nonlinearGN( inv_model, data )">bs_nonlinearGN</a>	NONLINEARGN Non-Linear EIT Inverse</li><li><a href="../eidors/algorithms/c_gomez/calc_move_jacobian.html" class="code" title="function J = calc_move_jacobian(fwd_model, img_bkgd)">calc_move_jacobian</a>	CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and</li><li><a href="../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>	meas_icov = calc_meas_icov( inv_model )</li><li><a href="../eidors/algorithms/n_polydorides/np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>	NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</li><li><a href="../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../eidors/examples/cheating_2d.html" class="code" title="function out=cheating_2d( figno, rand_seed )">cheating_2d</a>	code to simulate inverse crimes in EIT</li><li><a href="../eidors/examples/compare_2d_algs.html" class="code" title="function [imgr, img]= compare_2d_algs(option,shape);">compare_2d_algs</a>	Compare different 2D reconstructions</li><li><a href="../eidors/examples/compare_3d_algs.html" class="code" title="function imgr= compare_3d_algs( algno )">compare_3d_algs</a>	Compare different 3D reconstructions</li><li><a href="../eidors/examples/demo_2d_simdata.html" class="code" title="">demo_2d_simdata</a>	Example of using EIDORS to simulate 2D data and to</li><li><a href="../eidors/examples/demo_3d_simdata.html" class="code" title="">demo_3d_simdata</a>	How to make simulation data using EIDORS3D</li><li><a href="../eidors/examples/demo_real.html" class="code" title="function [inhomg_img, demo_img] = demo_real;">demo_real</a>	[inhomg_img, demo_img] = demo_real;</li><li><a href="../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li><li><a href="../eidors/examples/manchester_tomography.html" class="code" title="function manchester_tomography( example_no)">manchester_tomography</a>	Example to show reconstructions from</li><li><a href="../eidors/examples/object_in_tank_2d.html" class="code" title="">object_in_tank_2d</a>	2D demo example for reconstruction of object floating inside tank with</li><li><a href="../eidors/examples/resistor_model.html" class="code" title="function resistor_model;">resistor_model</a>	DEMO to show really simple application of EIDORS framework</li><li><a href="../eidors/graphics_matlab/show_current.html" class="code" title="function quiv = show_current( img, vv )">show_current</a>	SHOW_CURRENT: show current or other quantity defined</li><li><a href="../eidors/meshing/netgen/move_the_ball.html" class="code" title="">move_the_ball</a>	Takes a netgen geo file with a ball in and moves it around</li><li><a href="../eidors/models/a_adler/simulate_2d_movement.html" class="code" title="function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )">simulate_2d_movement</a>	SIMULATE_2D_MOVEMENT simulate rotational movement in 2D</li><li><a href="../eidors/models/a_adler/simulate_3d_movement.html" class="code" title="function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )">simulate_3d_movement</a>	SIMULATE_3D_MOVEMENT simulate rotational movement in 2D</li><li><a href="../eidors/models/a_adler/simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>	SIMULATE_MOVEMENT simulate small conductivity perturbations</li><li><a href="../eidors/models/a_adler/stim_meas_list.html" class="code" title="function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);">stim_meas_list</a>	STIM_MEAS_LIST: mk stimulation pattern from list of electrodes</li><li><a href="../eidors/models/a_adler/test_GREIT_model.html" class="code" title="">test_GREIT_model</a>	</li><li><a href="../eidors/tests/calc_data_prior_test.html" class="code" title="function ok= calc_data_prior_test">calc_data_prior_test</a>	Verify dataprior:</li><li><a href="../eidors/tests/calc_jacobian_test.html" class="code" title="function ok= calc_jacobian_test">calc_jacobian_test</a>	Verify Jacobian Calculation by small derivative from forward problem</li><li><a href="../eidors/tests/demo_real_test2.html" class="code" title="function ok= demo_real_test2">demo_real_test2</a>	Perform tests based on the demo_real function with new structs</li><li><a href="../eidors/tests/demo_real_test3.html" class="code" title="function ok= demo_real_test3">demo_real_test3</a>	Perform tests based on the demo_real function with new structs</li><li><a href="../eidors/tests/perturb_jacobian_test.html" class="code" title="">perturb_jacobian_test</a>	Perturbation Jacobians</li><li><a href="../eidors/tests/test_2d_resistor.html" class="code" title="">test_2d_resistor</a>	Create 2D model of a cylindrical resistor</li><li><a href="../eidors/tests/test_3d_resistor.html" class="code" title="">test_3d_resistor</a>	Create 3D model of a Rectangular resistor</li><li><a href="../eidors/tests/test_colour_direction.html" class="code" title="">test_colour_direction</a>	Test colour mapping</li><li><a href="../eidors/tools/test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

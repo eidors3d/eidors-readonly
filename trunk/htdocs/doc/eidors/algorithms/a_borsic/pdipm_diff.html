@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pdipm_diff</title>
+  <meta name="keywords" content="pdipm_diff">
+  <meta name="description" content="PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">a_borsic</a> &gt; pdipm_diff.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\a_borsic&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>pdipm_diff
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img=pdipm_diff( inv_model, data1, data2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method
+ img= ab_pdipm( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ inv_model  =&gt; inverse model struct
+ data1      =&gt; differential data at earlier time
+ data2      =&gt; differential data at later time
+
+  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)
+  inv_model.pdipm_diff.norm_image 1 or 2 (DEFAULT 2)
+  inv_model.pdipm_diff.beta     (default 1e-6)
+
+ Parameters:
+  max_iters =  inv_model.parameters.max_iteration (default 10)
+      Max number of iterations before stopping
+  min change = inv_model.parameters.min_change   (default 0)
+      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
+ beta is the parameter that smooths the TV functional</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_R_prior.html" class="code" title="function R_prior = calc_R_prior( inv_model, varargin )">calc_R_prior</a>	R = calc_R_prior( inv_model, varargin )</li><li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>	CALC_HYPERPARAMETER: calculate hyperparameter value</li><li><a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../../../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>	meas_icov = calc_meas_icov( inv_model )</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

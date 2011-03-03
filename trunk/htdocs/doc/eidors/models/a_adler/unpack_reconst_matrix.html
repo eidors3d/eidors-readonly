@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of unpack_reconst_matrix</title>
+  <meta name="keywords" content="unpack_reconst_matrix">
+  <meta name="description" content="UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">models</a> &gt; <a href="index.html">a_adler</a> &gt; unpack_reconst_matrix.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\models\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>unpack_reconst_matrix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid, options); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix
+ Reconstruction matrices, especially on a circular body, have many
+  symmetries (left-right, up-down, flip, and recoprocity = 16x).
+ To save space, a matrix can be stored in this format, and then
+  used to save space. This function is used to rebuild the matrix
+
+ RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid);
+   Nelec = number of electrodes
+   Ngrid = number of grid points
+
+ options = {'circ'} or {'octagon'} =&gt; region shape
+
+ Example:
+  load GREIT_v10_Circ_Matrix.mat
+  RM = unpack_reconst_matrix(GREIT_v10_Circ_Matrix, 16, 32);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>	MK_COMMON_MODEL: make EIT on reconstruction grids (GREIT)</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

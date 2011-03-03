@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of call_netgen</title>
+  <meta name="keywords" content="call_netgen">
+  <meta name="description" content="CALL_NETGEN: call netgen to create a vol_file from a geo_file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">netgen</a> &gt; call_netgen.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\netgen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>call_netgen
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CALL_NETGEN: call netgen to create a vol_file from a geo_file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function status= call_netgen(geo_file, vol_file, msz_file, finelevel) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALL_NETGEN: call netgen to create a vol_file from a geo_file
+ status= call_netgen(geo_file, vol_file, msz_file, finelevel)
+  staus = 0 -&gt; success , negative -&gt; failure
+
+ geo_file = geometry file (input)
+ vol_file = FEM mesh file (output)
+ msz_file = Meshsize file in netgen format
+
+ Finelevel controls the fineness of the mesh
+   default is '' -&gt; coarse
+   valid values are 'fine' or 'veryfine'
+
+ $Id: call_netgen.m 2364 2010-11-08 11:37:31Z aadler $
+ (C) 2006 Andy Adler. Licensed under GPL V2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="create_cylinder_mesh_ng.html" class="code" title="function cylinder_mdl = create_cylinder_mesh_ng( basename,cylinder_radius, cylinder_height, maxh )">create_cylinder_mesh_ng</a>	USAGE: cylinder_mdl = create_cylinder_mesh_ng( basename ...</li><li><a href="create_tank_mesh_ng.html" class="code" title="function [tank_mdl,centres] = create_tank_mesh_ng(tank_radius, tank_height,CorR, log2_electrodes_per_plane,no_of_planes,first_plane_starts, height_between_centres,electrode_width, electrode_height,fnstem, elec_mesh_density )">create_tank_mesh_ng</a>	USAGE: [tank_mdl,centres] = create_tank_mesh_ng( ...</li><li><a href="move_the_ball.html" class="code" title="">move_the_ball</a>	Takes a netgen geo file with a ball in and moves it around</li><li><a href="ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>	NG_MAKE_CYL_MODELS: create cylindrical models using netgen</li><li><a href="ng_mk_ellip_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_ellip_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li><li><a href="ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

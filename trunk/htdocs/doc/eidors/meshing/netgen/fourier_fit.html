@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fourier_fit</title>
+  <meta name="keywords" content="fourier_fit">
+  <meta name="description" content="FOURIER_FIT: use fourier series to interpolate onto a boundary">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">netgen</a> &gt; fourier_fit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\netgen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>fourier_fit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>FOURIER_FIT: use fourier series to interpolate onto a boundary</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function C = fourier_fit(points,N); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> FOURIER_FIT: use fourier series to interpolate onto a boundary
+
+ [pp] = fourier_fit(points) fits a Fourier series
+    points - [x y] contour to be fitted
+ [pp] = fourier_fit(points,N) fits a Fourier series and downsamples
+    N is the number of Fourier components to fit to.
+
+ [xy] = fourier_fit(pp,  linear_frac) returns points at linear_frac
+ distance along the contour
+    pp          - piecewise polynomial structure
+    linear_frac - vector of length fractions (0 to 1) to calculate points
+    xy          - cartesian coordinates of the points</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourier_fit-2284.html" class="code" title="function C = fourier_fit(points,N);">fourier_fit-2284</a>	FOURIER_FIT: fit fourier descriptors to a contour</li><li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li><li><a href="ng_mk_closed_contour.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_closed_contour</a>	NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour</li><li><a href="ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="shape_scrapbook.html" class="code" title="">shape_scrapbook</a>	</li><li><a href="../../../eidors/models/a_adler/mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li><li><a href="../../../eidors/models/a_adler/mk_GREIT_model_mine.html" class="code" title="function imdl= mk_GREIT_model( fmdl, radius, weight, extra_noise )">mk_GREIT_model_mine</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

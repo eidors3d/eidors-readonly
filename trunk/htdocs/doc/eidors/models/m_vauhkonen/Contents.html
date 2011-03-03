@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="These functions are from the EIDORS2D suite, downloaded from">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">models</a> &gt; <a href="index.html">m_vauhkonen</a> &gt; Contents.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\models\m_vauhkonen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>These functions are from the EIDORS2D suite, downloaded from</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> These functions are from the EIDORS2D suite, downloaded from 
+ http://venda.uku.fi/~mvauhkon/MatlabEIT2d.html on 14 Sept 2005.
+ Code is licensed under the GPL, as per the COPYING.TXT file.
+    - Andy Adler
+
+ Functions for solving the EIT forward problem in 2D
+
+ FEM integrals for the linear triangular elements
+
+  grinprodgaus     - Computes the integral of the product of the gradients in 2D FEM
+  bound1           - Computes the boundary integral of one linear basis function in 2D FEM
+  bound2           - Computes the boundary integral of the product of two linear basis functions in 2D FEM
+
+ FEM integrals for the isoparametric quadratic triangular elements
+
+  grinprodgausquad - Computes the integral of the product of the gradients in 2D FEM for quadratic
+                     isoparametric triangular elements
+  grinprodgausnode - Computes the gradient part of the system matrix
+                     in the linear basis case. The conductivity  is also in the linear basis.
+  grinprodgausnodequad  - Computes the gradient part of the system matrix
+                         in the quadratic basis case. The conductivity  is in the linear basis.
+  boundquad1       - Computes the boundary integral of one quadratic basis function 
+  boundquad2       - Computes the boundary integral of the product of two quadratic basis functions 
+  electrlen        - Computes the length of the electrode in the case of isoparametric (quadratic) triangular element
+
+ Functions for forward computations
+
+  Current          - Supplies some current patterns for 2D EIT
+  FemMatrix        - Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis 
+  FemMatrixNode    - Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. 
+                     Conductivity in linear basis.
+  ForwardSolution  - Solves the potential distribution in 2D EIT
+  RemoveVolt       - Removes all the voltages measured on the current carrying electrodes
+  UpdateFemMatrix  - Assembles the system matrix for EIT
+
+ Sparse trick
+
+  SparseCrush      -  Minimise memory requirement of sparse matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

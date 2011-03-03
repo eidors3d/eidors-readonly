@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of jacobian_3d_fields</title>
+  <meta name="keywords" content="jacobian_3d_fields">
+  <meta name="description" content="[J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">n_polydorides</a> &gt; jacobian_3d_fields.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\n_polydorides&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>jacobian_3d_fields
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);
+
+calculates the Jacobian (sensitivity) matrix from V fwd
+
+J        = The Jacobian (sensitivity) matrix with respect to conductivity
+
+V        = forward solver voltage
+D,Ela    = parameters from the fem_master_full
+elec     = the electrodes matrix
+vtx      = The vertices matrix
+simp     = The simplices matrix
+mat_ref  = The reference conductivity vector
+v_f      = The measurement fields
+df       = Measurements per current pattern as used in v_f 
+c2f      = Coarse to fine map between fine and coarse model (optional)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="jacobian_3d.html" class="code" title="function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);">jacobian_3d</a>	function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);</li><li><a href="np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>	NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of adjoint_spin</title>
+  <meta name="keywords" content="adjoint_spin">
+  <meta name="description" content="function [JTb] = adjoint_spin(vtx,simp,elec,x,gnd_ind,zc,I,no_pl,Vmes);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">n_polydorides</a> &gt; adjoint_spin.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\n_polydorides&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>adjoint_spin
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [JTb] = adjoint_spin(vtx,simp,elec,x,gnd_ind,zc,I,no_pl,Vmes);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [JTb] = adjoint_spin(vtx,simp,elec,x,gnd_ind,zc,I,no_pl,Vmes); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [JTb] = adjoint_spin(vtx,simp,elec,x,gnd_ind,zc,I,no_pl,Vmes);
+
+The function calculates the product J'*b, i.e. Jacobian transpose times 
+a (measurements Vmes) vector b, using the adjoint sources formulation.
+ 
+
+
+JTb     = J'*Vmes
+vtx     = The vertices matrix
+simp    = The simplices matrix
+elec    = The electrodes matrix
+x       = The solution estimate based on which J is supposed to be caclulated
+gnd_ind = The grounf index
+zc      = The electrode contact impedance
+I       = The current patterns
+no_pl   = Number of electrode planes
+Vmes    = The measurements vector</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>	function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);</li><li><a href="get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>	GET_3D_MEAS: extracts multiplane voltage measurements from a calculated</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

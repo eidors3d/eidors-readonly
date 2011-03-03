@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of eidors2d_demo1</title>
+  <meta name="keywords" content="eidors2d_demo1">
+  <meta name="description" content="EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">examples</a> &gt; eidors2d_demo1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\examples&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>eidors2d_demo1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis
+ EidorsDemo1 Demonstrates the use of 2D EIT Package for simulations with linear approksimation basis</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="../../eidors/algorithms/a_adler/aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>	CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image</li><li><a href="../../eidors/algorithms/m_vauhkonen/FemMatrix.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrix(Node,Element,z);">FemMatrix</a>	FemMatrix Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis</li><li><a href="../../eidors/algorithms/m_vauhkonen/ForwardSolution.html" class="code" title="function [U,p,r]=ForwardSolution(NNode,NElement,A,C,T,MeasPattern,style,p,r);">ForwardSolution</a>	ForwardSolution Solves the potential distribution in 2D EIT</li><li><a href="../../eidors/algorithms/m_vauhkonen/Jacobian.html" class="code" title="function [J]=Jacobian(Node,Element,Agrad,U,U0,rho,style);">Jacobian</a>	Jacobian Computes the Jacobian for 2D EIT when elementwise basis is used</li><li><a href="../../eidors/algorithms/m_vauhkonen/MakeRegmatrix.html" class="code" title="function R=MakeRegmatrix(Element);">MakeRegmatrix</a>	MakeRegmatrix Computes a regularisation matrix which includes smoothness assumptions</li><li><a href="../../eidors/algorithms/m_vauhkonen/mv_calc_system_mat.html" class="code" title="function s_mat= mv_calc_system_mat( fwd_model, img)">mv_calc_system_mat</a>	MV_CALC_SYSTEM_MAT: s_mat= mv_calc_system_mat( fwd_model, img)</li><li><a href="../../eidors/algorithms/m_vauhkonen/mv_fwd_solve.html" class="code" title="function data= mv_fwd_solve( fwd_model, img)">mv_fwd_solve</a>	MV_FWD_SOLVE: data= mv_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>	MK_IMAGE: create eidors image object</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li><li><a href="../../eidors/models/m_vauhkonen/Current.html" class="code" title="function [I,T]=Current(L,lg,style,rms,numpat);">Current</a>	Current Supplies some current patterns for 2D EIT</li><li><a href="../../eidors/models/m_vauhkonen/UpdateFemMatrix.html" class="code" title="function [A]=UpdateFemMatrix(Agrad,Kb,M,S,sigma);">UpdateFemMatrix</a>	UpdateFemMatrix Assembles the system matrix for EIT</li><li><a href="../../eidors/models/m_vauhkonen/mv_mdl_meshdata.html" class="code" title="function [fmdl1,fmdl2] = mv_mdl_meshdata;">mv_mdl_meshdata</a>	MV_MESHDATA: create demo mesh for EIDORS2D</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

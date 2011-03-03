@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_read_mesh</title>
+  <meta name="keywords" content="ng_read_mesh">
+  <meta name="description" content="[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">meshing</a> &gt; <a href="index.html">netgen</a> &gt; ng_read_mesh.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\meshing\netgen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>ng_read_mesh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
+ Function to read in a mesh model from NetGen and saves it in
+ five arrays; surface (srf), veritices (vtx), face no. (fc)
+ volume (simp) and edges (edg)
+ 
+ Version 4.0
+ B.D.Grieve - 27/01/2002 + modifications by lmazurk
+ A.Adler - 2006 mods to run quicker
+
+ EIDORS's srf array is a subset of NetGen's surface element data
+ (columns 6:8). The first column of the surface element data also
+ ascribes a face number to each surface which is saved as the fc
+ array. Each line of the srf array contains 3 indices to define
+ a triangle mapped on to the three dimensional vtx array.
+ EIDORS's vtx array is a direct equivalent to NetGen's pointer data.
+
+
+ srf      = The surfaces indices into vtx
+ simp     = The volume indices into vtx
+ vtx      = The vertices matrix
+ fc       = A one column matrix containing the face numbers
+ edg      = Edge segment information
+ filename = Name of file containing NetGen .vol information
+ mat_ind  = Material index</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="create_cylinder_mesh_ng.html" class="code" title="function cylinder_mdl = create_cylinder_mesh_ng( basename,cylinder_radius, cylinder_height, maxh )">create_cylinder_mesh_ng</a>	USAGE: cylinder_mdl = create_cylinder_mesh_ng( basename ...</li><li><a href="ng_mk_ext_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact)">ng_mk_ext_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li><li><a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

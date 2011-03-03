@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bld_master_full</title>
+  <meta name="keywords" content="bld_master_full">
+  <meta name="description" content="function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">n_polydorides</a> &gt; bld_master_full.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\n_polydorides&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>bld_master_full
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);
+
+System matrix assembling based on the complete electrode model. 
+This function is called within fem_master_full.
+
+
+
+Ef   = The UNreferenced system matrix.
+D    = The sgradients of the shape functions over each element.
+Ela  = Normalised volums of the elements
+vtx  = The vertices matrix. The coordinates of the nodes in 3D.
+simp = The simplices matrix. Unstructured tetrahedral.
+mat  = As for MATerial information. The conductivity vector.(isotropic)
+elec = The matrix that holds the boundary faces assigned as electrodes. Its typical
+       dimensions are [number of electrodes x 3*number of faces per electrode].
+zc   = The array of electrode contact impedances.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="bld_master.html" class="code" title="function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);">bld_master</a>	function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);</li><li><a href="triarea3d.html" class="code" title="function [ta] = triarea3d(V);">triarea3d</a>	[ta] = triarea3d(V);</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>	function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

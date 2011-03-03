@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of object_in_tank_2d</title>
+  <meta name="keywords" content="object_in_tank_2d">
+  <meta name="description" content="2D demo example for reconstruction of object floating inside tank with">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">examples</a> &gt; object_in_tank_2d.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\examples&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>object_in_tank_2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>2D demo example for reconstruction of object floating inside tank with</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> 2D demo example for reconstruction of object floating inside tank with
+ ambient fluid. Only internat structure of the object is reconstruted.
+ External shape od object, and parameters of fluid is treated as a known.
+ Dual meshing for inverse problem has been deployed.
+ 
+ (C) 2010 Bartosz Sawicki. License: GPL v.3</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>	MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM</li><li><a href="../../eidors/algorithms/a_adler/tikhonov_image_prior.html" class="code" title="function Reg= tikhonov_image_prior( inv_model );">tikhonov_image_prior</a>	TIKHONOV_IMAGE_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/b_sawicki/bs_nonlinearGN.html" class="code" title="function img= bs_nonlinearGN( inv_model, data )">bs_nonlinearGN</a>	NONLINEARGN Non-Linear EIT Inverse</li><li><a href="../../eidors/algorithms/b_sawicki/create_inclusion.html" class="code" title="function inhomg_img = create_inclusion( homg_img, center, r, inclusion_mat, order)">create_inclusion</a>	USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../eidors/meshing/gmsh/create_circle_mesh_gmsh.html" class="code" title="function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )">create_circle_mesh_gmsh</a>	Create a 2D Circular FEM using GMSH</li><li><a href="../../eidors/meshing/netgen/ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>	NG_MAKE_CYL_MODELS: create cylindrical models using netgen</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

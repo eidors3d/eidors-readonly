@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Current</title>
+  <meta name="keywords" content="Current">
+  <meta name="description" content="Current Supplies some current patterns for 2D EIT">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="#">models</a> &gt; <a href="index.html">m_vauhkonen</a> &gt; Current.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\models\m_vauhkonen&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>Current
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Current Supplies some current patterns for 2D EIT</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [I,T]=Current(L,lg,style,rms,numpat); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Current Supplies some current patterns for 2D EIT
+ Function [I,T]=Current(L,lg,style,rms,numpat) calculates 
+ different current patterns. The 'style' can be 'tri' (trigonometric), 
+ 'adj' (adjacent), 'opp' (opposite) or 'ref' (one reference). 
+
+ INPUT
+
+ L = the number of electrodes
+ lg = the number of nodes
+ style = 'tri' (trigonometric), 'adj' (adjacent), 'opp' (opposite) or 'ref' (one reference)
+ rms = the root mean square value of the injected current. Default=1 (optional).
+ numpat = the number of patterns (optional, in certain cases forced to be L-1)
+
+ OUTPUT
+
+ I = the total current matrix, internal and on the electrodes 
+ T = currents on the electrodes</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/m_vauhkonen/FemMatrix.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrix(Node,Element,z);">FemMatrix</a>	FemMatrix Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis</li><li><a href="../../../eidors/algorithms/m_vauhkonen/FemMatrixNode.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrixNode(Node,Element,z);">FemMatrixNode</a>	FemMatrixNode Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. Conductivity in linear basis.</li><li><a href="../../../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

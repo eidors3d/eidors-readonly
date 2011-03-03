@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of display_meas</title>
+  <meta name="keywords" content="display_meas">
+  <meta name="description" content="DISPLAY_MEAS: display measurements on mesh">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">graphics_matlab</a> &gt; display_meas.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\graphics_matlab&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>display_meas
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>DISPLAY_MEAS: display measurements on mesh</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function display_meas(fwd_model,disp_meas,offset,elec_pp); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DISPLAY_MEAS: display measurements on mesh
+ usage: display_meas(fwd_model,disp_meas,offset,elec_pp);
+
+ Function that displays the electrodes utilised for each measurement.
+ Each electrode is colour-coded depending on its operation
+ 
+ Current Drive - Red
+ Current Sink - Black
+ Positive Potential Measurement - Green
+ Negative Potential Measurement - Yellow
+
+ Pressing any key changes the display to the next measurement
+
+ Advanced Options
+ &quot;disp_meas&quot; - 'y' or 'n' - selects whether the measuring electrodes are
+                            displayed or not
+ &quot;disp_meas&quot; - 'ya' or 'na' - animate the patterns
+ &quot;offset&quot; - integer (1 to number of electrodes per plane), default=0
+          - rotates the display by number of electrodes selected
+ &quot;elec_pp&quot; - number of electrodes per plane
+
+ (C) 2005 by Stephen Murphy. Licensed under GPL version 2.
+ $Id: display_meas.m 1535 2008-07-26 15:36:27Z aadler $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/n_polydorides/np_fwd_parameters.html" class="code" title="function param = np_fwd_parameters( fwd_model )">np_fwd_parameters</a>	NP_FWD_PARAMETERS: data= np_fwd_solve( fwd_model )</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

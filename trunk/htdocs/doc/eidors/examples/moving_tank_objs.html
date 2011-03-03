@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of moving_tank_objs</title>
+  <meta name="keywords" content="moving_tank_objs">
+  <meta name="description" content="MOVING_TANK_OBJS: create movies of objects moving in tanks">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../index.html">Home</a> &gt;  <a href="../index.html">eidors</a> &gt; <a href="index.html">examples</a> &gt; moving_tank_objs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../index.html"><img alt="<" border="0" src="../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\examples&nbsp;<img alt=">" border="0" src="../../right.png"></a></td></tr></table>-->
+
+<h1>moving_tank_objs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>MOVING_TANK_OBJS: create movies of objects moving in tanks</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function imgs= moving_tank_objs(data_sel, inv_sel, options) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MOVING_TANK_OBJS: create movies of objects moving in tanks
+ Usage:
+ imgs= moving_tank_objs(data_sel, inv_sel, options)
+
+ imgs = reconstructed images
+
+ data_sel select data_sel to use
+   data_sel: 10 =&gt; target across tank data
+             20 =&gt; target around tank data
+             21 =&gt; target around tank data (10 positions)
+             30 =&gt; from netgen simulations (spiral)
+             32 =&gt; from netgen simulations (spirograph)
+             40 =&gt; show netgen FEM simulation
+
+   if data_sel is a vector of EIT data, then it will
+      be used for the reconstruction. The first measurement
+      is the homogeneous, and the next are the data
+
+ inv_sel
+  2D reconstructions
+   inv_sel = 1   =&gt; aa_inv_solve
+   inv_sel = 1.1 =&gt; aa_inv_solve (576 elems)
+   inv_sel = 2   =&gt; inv_kalman_diff
+
+   if inv_sel is a inv_model structure, then use it to
+   do reconstructions.
+
+ options (not changed if value is NaN);
+   options(1) - noise figure
+   options(2) - time_steps
+   options(3) - time_weight
+ 
+ Create moving objects and tanks
+ $Id: moving_tank_objs.m 1535 2008-07-26 15:36:27Z aadler $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/aa_inv_conj_grad.html" class="code" title="function img= aa_inv_conj_grad( inv_model, data1, data2)">aa_inv_conj_grad</a>	AA_INV_CONJ_GRAD inverse solver based on the CG</li><li><a href="../../eidors/algorithms/a_adler/choose_noise_figure.html" class="code" title="function HP= choose_noise_figure( inv_model );">choose_noise_figure</a>	CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation</li><li><a href="../../eidors/algorithms/a_adler/inv_kalman_diff.html" class="code" title="function img= inv_kalman_diff( inv_model, data1, data2)">inv_kalman_diff</a>	INV_KALMAN_DIFF inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/noser_image_prior.html" class="code" title="function Reg= noser_image_prior( inv_model );">noser_image_prior</a>	NOSER_IMAGE_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../../eidors/algorithms/a_adler/time_smooth_prior.html" class="code" title="function Reg= time_smooth_prior( inv_model );">time_smooth_prior</a>	TIME_SMOOTH_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/graphics_matlab/animate_reconstructions.html" class="code" title="function fname_out= animate_reconstructions(fname, imgs);">animate_reconstructions</a>	animate_reconstructions(fname, imgs);</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../eidors/models/a_adler/add_noise.html" class="code" title="function vv = add_noise( SNR, v1, v2, options)">add_noise</a>	ADD_NOISE: Add a given SNR to EIDORS data</li><li><a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aa_inv_solve</title>
+  <meta name="keywords" content="aa_inv_solve">
+  <meta name="description" content="AA_INV_SOLVE inverse solver using approach of Adler&amp;Guardo 1996">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../../../index.html">Home</a> &gt;  <a href="../../index.html">eidors</a> &gt; <a href="../index.html">algorithms</a> &gt; <a href="index.html">a_adler</a> &gt; aa_inv_solve.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../../../index.html"><img alt="<" border="0" src="../../../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for eidors\algorithms\a_adler&nbsp;<img alt=">" border="0" src="../../../right.png"></a></td></tr></table>-->
+
+<h1>aa_inv_solve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_INV_SOLVE inverse solver using approach of Adler&amp;Guardo 1996</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img= aa_inv_solve( inv_model, data1, data2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_INV_SOLVE inverse solver using approach of Adler&amp;Guardo 1996
+ img= aa_inv_solve( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ inv_model  =&gt; inverse model struct
+ data1      =&gt; differential data at earlier time
+ data2      =&gt; differential data at later time
+
+ both data1 and data2 may be matrices (MxT) each of
+  M measurements at T times
+ if either data1 or data2 is a vector, then it is expanded
+  to be the same size matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_RtR_prior.html" class="code" title="function RtR_prior = calc_RtR_prior( inv_model )">calc_RtR_prior</a>	RtR = calc_RtR_prior( inv_model )</li><li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>	CALC_HYPERPARAMETER: calculate hyperparameter value</li><li><a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../../../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>	meas_icov = calc_meas_icov( inv_model )</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li></ul>
+<!-- crossreference -->
+
+
+
+
+<hr><address>Generated on Thu 03-Mar-2011 21:36:03 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
