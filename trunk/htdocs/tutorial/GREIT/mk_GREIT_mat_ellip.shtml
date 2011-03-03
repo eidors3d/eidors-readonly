@@ -1,0 +1,63 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction For different Model Geometries</h2>
+
+Reconstructing on a correct model domain is important for 
+acurate image reconstructions. Here we consider lung shapes
+images in an ellipse, and their reconstruction onto 
+shapes from a circle to an ellipse.
+
+
+<h3> 
+Simulation model
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_mat_ellip01.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_mat_ellip01a.png">
+<br><i>Figure:</i>
+Simulation of data on an elliptical model with
+lung shaped contrasting regions
+</center>
+
+<h3> 
+Calculate GREIT reconstruction matrices for various model shapes
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_mat_ellip02.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_mat_ellip02.png">
+<br><i>Figure:</i>
+Four different elliptic reconstruction models with different
+elliptical parameters densities. The second from the left
+fits closest with the simulation data.
+</center>
+
+<h3> 
+Reconstruct Images on each model
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_mat_ellip03.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_matrix03.png">
+<br><i>Figure:</i>
+Four different elliptic reconstruction models with different
+densities.
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
