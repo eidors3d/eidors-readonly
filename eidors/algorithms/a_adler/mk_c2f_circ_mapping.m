@@ -218,10 +218,10 @@ function frac= contained_elem_pts(m_pts, xyr);
 function do_unit_test
    %2D example
    imdl = mk_common_model('a2c2',16); fmdl=imdl.fwd_model;
-   xyc = [0;0.1;0.2];
-   th=linspace(0,2*pi,20);
-   xx=xyc(1)+xyc(3)*sin(th);
-   yy=xyc(2)+xyc(3)*cos(th);
+   xyc = [0,0.27,0.18;0,-0.1,0.03;0,0.1,0.2;0.1,0.37,0.1]';
+   th=linspace(0,2*pi,20)';
+   xx=[0*th+1]*xyc(1,:)+sin(th)*xyc(3,:);
+   yy=[0*th+1]*xyc(2,:)+cos(th)*xyc(3,:);
    show_fem(fmdl,[0,0,1]); set(line(xx,yy),'Color',[1,0,0],'LineWidth',2);
 
    c2f= mk_c2f_circ_mapping( fmdl, xyc );
