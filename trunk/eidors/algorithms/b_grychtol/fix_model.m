@@ -39,9 +39,9 @@ tmp = mdl;
 tmp.elems = tmp.faces;
 mdl.face_centre = interp_mesh(tmp,0);
 mdl.normals = calc_normals(mdl);
+mdl.inner_normal = test_inner_normal( mdl );
 mdl.max_edge_len = calc_longest_edge(mdl.elems,mdl.nodes);
-
-
+mdl.elem_volume = get_elem_volume(mdl);
 
 
 % decrease memory footprint
@@ -50,8 +50,21 @@ mdl.faces = uint32(mdl.faces);
 mdl.elem2face = uint32(mdl.elem2face);
 mdl.face2elem = uint32(mdl.face2elem);
 
+% Test whether normal points into or outsize
+% mdl.inner_normal(i,j) = 1 if face i of elem j points in
+function inner_normal = test_inner_normal( mdl );
+   inner_normal = logical(zeros(size(mdl.elem2face)));
+   d = elem_dim(mdl) + 1;
+   for i=1:num_elems(mdl);
+      el_faces = mdl.elem2face(i,:);
+      el_ctr   = repmat( mdl.elem_centre(i,:), d, 1);
+      vec_fa_el= el_ctr -  mdl.face_centre(el_faces,:);
+      normal_i  = mdl.normals(el_faces,:);
+      dot_prod = sum( normal_i.*vec_fa_el, 2 );
+      inner_normal(i,:) = dot_prod' > 0;
+   end
 
-function [faces face2elem elem2face] = calc_faces(mdl)
+function [faces, face2elem, elem2face] = calc_faces(mdl)
 
 
 e_dim = mdl_dim(mdl);
@@ -120,6 +133,8 @@ function normals = calc_normals(mdl)
             normals(:,1) = y1.*z2 - z1.*y2;
             normals(:,2) = z1.*x2 - x1.*z2;
             normals(:,3) = x1.*y2 - y1.*x2;
+        otherwise;
+            error('not 2D or 3D')
     end
     normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,[])';
     
