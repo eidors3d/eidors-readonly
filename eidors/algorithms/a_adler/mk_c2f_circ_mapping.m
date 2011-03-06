@@ -43,6 +43,11 @@ end
 function c_obj = cache_obj(mdl, xyzr)
    c_obj = {mdl.nodes, mdl.elems, xyzr};
 
+% Redirector during test code dev
+function mapping = contained_elems_2d( mdl, xyr );
+%mapping = contained_elems_2d_new( mdl, xyr );
+ mapping = contained_elems_2d_old( mdl, xyr );
+
 function mapping = contained_elems_2d_new( mdl, xyr );
    % We fill sparse by columns, (ie adding in CCS storage)
    Nc = size(xyr,      2); % Num circs
@@ -109,24 +114,40 @@ function mapping = circ_in_elem_2d( mdl, look, xc, yc, rc);
    % those fractions
    mapping(look) = pirc2 / mdl.elem_volume(look);
 
+   %TODO: rewrite loop to avoid case 0.
    k=1; for i= look(:)';
       vol = pi*rc^2 / mdl.elem_volume(i);
       switch sum(n_in(k,:))
-         case 0; % already do
+         case 0; % already do this
    
          case 1; 
+            nd = mdl.elems(k, n_in(k,:));
+   keyboard
+            vol = vol + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd,:),rc));
 
          case 2; 
+            nd = mdl.elems(k, n_in(k,:));
+            vol = vol ...
+             + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd(1),:),rc)) ...
+             + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd(2),:),rc));
 
          otherwise; error('cant get here'); 
       end
    k=k+1; end
    
-   keyboard
+
+% Calculate the area of a slice
+function a = pi_slice(p1,p2,c,p,r)
+  a_p12 = 0.5*abs(det([1,p1;1,p2;1,p]));
+
+  a_c12 = 0.5*abs(det([1,p1;1,p2;1,c]));
+  np1c  = p1-c; np1c = np1c / norm(np1c);
+  np2c  = p2-c; np2c = np2c / norm(np2c);
+  ang   = acos( dot(np1c,np2c) );
+  area  = ang*r^2/2 - a_c12 + a_p12;
      
 
-%function mapping = contained_elems_2d_old( mdl, xyr );
- function mapping = contained_elems_2d( mdl, xyr );
+function mapping = contained_elems_2d_old( mdl, xyr );
    Ne = size(mdl.elems,1); % Num elems
    Nc = size(xyr,      2); % Num circs
    % We fill sparse by columns, due to CCS storage, this is fairly efficient
