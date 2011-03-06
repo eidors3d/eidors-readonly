@@ -200,6 +200,34 @@ Shape 10
 <img src="netgen_gen_models10.png">
 </center>
 
+<h3>
+Shape 11
+</h3>
+
+This shape could represent an elliptical fish or submarine
+generating electrical signals in a tank with electrodes
+on the tank boundary.
+<pre>
+shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1.0); \n', ...
+             'solid tank   = orthobrick(-2,-2,0;2,2,0.4) and cyl; \n', ...
+             'solid fish   = ellipsoid(0.2,0.2,0.2;0.2,0,0;0,0.1,0;0,0,0.1); tlo fish;\n', ...
+             'solid mainobj= tank and not fish -maxh=0.3;\n'];
+n_elec = 7;
+th = linspace(0,2*pi,n_elec+1)'; th(end) = [];
+cs = [cos(th), sin(th)];
+elec_pos = [  cs, 0.2+0*th, cs, 0*th];
+elec_shape=[0.05];
+for i=1:n_elec; elec_obj{i} = 'cyl'; end
+i=i+1;elec_pos(i,:) = [ 0  ,0.2,0.2,-1,0,0]; elec_obj{i} = 'fish';
+i=i+1;elec_pos(i,:) = [ 0.4,0.2,0.2, 1,0,0]; elec_obj{i} = 'fish';
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+</pre>
+<center>
+<img src="netgen_gen_models11.png">
+<br>Tank with 7 electrodes on the boundary an two electrodes
+on the inclusion.
+</center>
+
 </td></tr></table>
 <p>
 <small>

@@ -1,6 +1,6 @@
-function netgen_ellip_models( numbers )
+function netgen_gen_models( numbers )
 
-if nargin==0; numbers = 1:8; end
+if nargin==0; numbers = 1:20; end
 for i=numbers(:)';
    do_sim(i);
 end
@@ -117,9 +117,27 @@ switch number
  elec_obj = 'top';
  [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
+   case 11;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1.0); \n', ...
+              'solid tank   = orthobrick(-2,-2,0;2,2,0.4) and cyl; \n', ...
+              'solid fish   = ellipsoid(0.2,0.2,0.2;0.2,0,0;0,0.1,0;0,0,0.1); tlo fish;\n', ...
+              'solid mainobj= tank and not fish -maxh=0.3;\n'];
+ n_elec = 7;
+ th = linspace(0,2*pi,n_elec+1)'; th(end) = [];
+ cs = [cos(th), sin(th)];
+ elec_pos = [  cs, 0.2+0*th, cs, 0*th];
+ elec_shape=[0.05];
+ for i=1:n_elec; elec_obj{i} = 'cyl'; end
+ i=i+1;elec_pos(i,:) = [ 0  ,0.2,0.2,-1,0,0]; elec_obj{i} = 'fish';
+ i=i+1;elec_pos(i,:) = [ 0.4,0.2,0.2, 1,0,0]; elec_obj{i} = 'fish';
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
 end
 
+if ~exist('fmdl'); return; end
+
 show_fem(fmdl);
+if any(number==[11]); view(270,60); end
 
 print_convert( ...
    sprintf('netgen_gen_models%02d.png',number), '-density 75');
