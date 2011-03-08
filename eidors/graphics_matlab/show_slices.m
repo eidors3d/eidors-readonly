@@ -18,6 +18,7 @@ function out_img= show_slices( img, levels )
 % IMAGE PARAMETERS:
 %   img.show_slices.levels (same as above);
 %   img.show_slices.img_cols = number of columns in image
+%   img.show_slices.sep = number of pixels between the individual images
 %   img.calc_colours.npoints = pixel width/height to map to
 %
 % if levels is scalar, then make levels equispaced horizontal
@@ -36,11 +37,16 @@ np = calc_colours('npoints');
 try   np = img(1).calc_colours.npoints;
 end
 
+sep = 0;
+try sep = img(1).show_slices.sep;
+end
+
+
 do_calc_slices = 0;
 try if strcmp(img(1).type,'image'); do_calc_slices= 1; end;end 
 
 if nargin<=1;
-   try   levels = img.show_slices.levels
+   try   levels = img(1).show_slices.levels
    catch levels = [];
    end
 end
@@ -87,14 +93,15 @@ else
    % Thus,  n_frames/vert_rows ~ vert_rows*n_levels;
    % or     vert_rows^2 ~ n_frames / n_levels
    vert_rows = ceil( sqrt(n_frames / n_levels) );
-   try   img_cols = img.show_slices.img_cols;
+   try   img_cols = img(1).show_slices.img_cols;
    catch img_cols = ceil( n_frames/vert_rows );
    end
    img_rows = ceil(n_frames*n_levels/img_cols);
    img_rows = ceil(img_rows/n_levels)*n_levels; % Ensure divisible by n_levels
 end
-
-r_img = NaN*ones(img_rows*np, img_cols*np);
+% here include the separation
+r_img = NaN*ones(img_rows*np + (img_rows-1)*sep, ...
+    img_cols*np + (img_cols-1)*sep );
 
 idx= (-np:-1)+1;
 imno= 1;
@@ -108,7 +115,7 @@ for img_no = 1:n_frames
          i_row= (ceil( img_no / img_cols) -1) * n_levels + lev_no ;
       end
 % disp([imno, vert_rows, img_cols, img_rows, img_no, lev_no, i_col, i_row]);
-      r_img(i_row*np + idx, i_col*np + idx) = rimg(:,:,img_no,lev_no);
+      r_img(i_row*np + idx + sep*(i_row-1), i_col*np + idx +sep*(i_col-1)) = rimg(:,:,img_no,lev_no);
       imno= imno + 1; 
    end
 end

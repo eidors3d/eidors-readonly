@@ -245,10 +245,10 @@ function pp=get_colours( img );
 % override global if calc.colours specified
    try
 % DAMN Matlab should have syntax for this loop
-      fds= fieldnames(img.calc_colours);
+      fds= fieldnames(img(1).calc_colours);%assume all are the same!
       for fdn= fds(:)';
          fdn= fdn{1};
-         pp.( fdn ) = img.calc_colours.(fdn);
+         pp.( fdn ) = img(1).calc_colours.(fdn);
       end
    end
 
