@@ -1,0 +1,69 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+View of an electric fish in a tank
+</h2>
+
+Weakly electric fish use EIT to see their environment.
+Since they generate current (from head to tail) we can
+view them with other electrodes.
+The idea of this tutorial is to simulate a fish in tank,
+and then to see the world from their perspective (ie
+the voltage distribution on the body of the fish. 
+
+
+<h3>
+Model a 3D tank with 8 electrodes and an elliptical fish
+</h3>
+
+<pre>
+<!--#include virtual="fish_tank01.m" -->
+</pre>
+
+<center>
+<img src="fish_tank01a.png">
+<img src="fish_tank01b.png">
+</center>
+
+<h3>
+Create stim_patterns and meas_patterns for the fish
+</h3>
+
+<pre>
+<!--#include virtual="fish_tank02.m" -->
+</pre>
+
+<h3>
+Solve for the voltage distribution in the tank
+</h3>
+
+<pre>
+<!--#include virtual="fish_tank03.m" -->
+</pre>
+
+
+<center>
+<img src="fish_tank03a.png">
+<img src="fish_tank03b.png">
+</center>
+
+<h3>
+Solve for the voltage distribution near the fish's head
+</h3>
+
+<pre>
+<!--#include virtual="fish_tank04.m" -->
+</pre>
+
+
+<center>
+<img src="fish_tank04a.png">
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
