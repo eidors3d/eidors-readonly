@@ -22,6 +22,7 @@ Model a 3D tank with 8 electrodes and an elliptical fish
 <center>
 <img src="fish_tank01a.png">
 <img src="fish_tank01b.png">
+<img src="fish_tank01c.png">
 </center>
 
 <h3>
@@ -53,7 +54,6 @@ Solve for the voltage distribution near the fish's head
 <pre>
 <!--#include virtual="fish_tank04.m" -->
 </pre>
-
 
 <center>
 <img src="fish_tank04a.png">
