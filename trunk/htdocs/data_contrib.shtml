@@ -8,7 +8,7 @@ for those who wish to make data available to the community.
 <b>Note that each contributor may specify a different
 license for their data. Typically, attribution is required,
 normally making a specific reference in publications which
-use the data</b>
+use the data.</b>
 
 <h2>Data Repository</h2>
 
@@ -114,7 +114,7 @@ Fill out the following table
        <hr>
    <tr><th valign="top"> Brief Description:
        <td> Describe what the data is and what (briefly) it was
-            used for. If it is used in a paper, give a referene.
+            used for. If it is used in a paper, give a reference.
        <hr>
    <tr><th valign="top"> License:
        <td> The default license is the Creative Commons
