@@ -52,7 +52,7 @@ cache_obj = { shape_str, elec_pos, elec_shape, elec_obj };
 
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_gen_models' );
 if isempty(fmdl);
-   fmdl = mk_ellip_model( shape_str, elec_pos, elec_shape, elec_obj);
+   fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);
    eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_gen_models', fmdl);
    eidors_cache('boost_priority', +2); % return values
@@ -61,7 +61,7 @@ end
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
 
-function [fmdl_mat_idx] = mk_ellip_model( shape_str, elec_pos, elec_shape, elec_obj);
+function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
