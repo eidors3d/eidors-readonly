@@ -58,6 +58,14 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );
    vh=vh.meas;
 
    vi= vh*ones(1,Nt) + J;
+   
+   % Would this be the slow approach?:
+%    vi = vh*zeros(1,Nt);
+%    for i = 1: Nt
+%        img.elem_data = 1 - c2f(:,i);
+%        jnk = fwd_solve(img);
+%        vi(:,i) = jnk.meas;
+%    end
 
 function J= move_jacobian_postprocess( J, img, Nt)
    if size(J,2) == Nt; % No problem
