@@ -25,23 +25,39 @@ function out = shape_library(action, shape, varargin)
 % shape_library('get','pig_32kg','trunk','lungs')
 
 % (C) Bartlomiej Grychtol, 2011. License: GPL version 2 or version 3
-% $Id:$
+% $Id$
 
+n_IN = nargin;
 
 switch action
     case 'UNIT_TEST'
         do_unit_test;
         return
     case 'list'
-        list_shapes;
+        if n_IN>1
+            out = list_shapes(shape);
+        else
+            out = list_shapes('');
+        end
     case 'show'
         show_shape;
     case 'get'
         get_shape;
 end
 
-function list_shapes
-disp('list_shapes');
+function out = list_shapes(shape)
+out = '';
+if isempty(shape)
+    out = who('*','-file','shape_library.mat');
+    disp('Available shapes:');
+else
+    s = load('shape_library.mat',shape);
+    try
+       out = fieldnames(s.(shape)); 
+    catch, not_found(shape);end
+    disp(['Shape ' shape ' contains:']);     
+end
+disp(out);
 
 function show_shape
 disp('show_shape');
@@ -49,8 +65,13 @@ disp('show_shape');
 function get_shape
 disp('get_shape');
 
+function not_found(shape)
+eidors_msg(['SHAPE_LIBRARY: Didn''t find shape ' shape]);
+
+
 function do_unit_test
     shape_library('list');
-    shape_library('list','pig_32kg');
-    shape_library('show','pig32kg');
-    shape_library('get','pig_32kg','trunk','lungs')
+    shape_library('list','a-shape-we-dont-have');% give error
+    shape_library('list','pig_23kg');
+    shape_library('show','pig_23kg');
+    shape_library('get','pig_23kg','trunk','lungs')
