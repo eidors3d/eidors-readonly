@@ -4,6 +4,9 @@ function out = shape_library(action, shape, varargin)
 %  
 %  SHAPE_LIBRARY('list',SHAPE) lists available outlines for the given shape
 %  
+%  SHAPE_LIBRARY('show', SHAPE) plots available outlines for the given shape
+%  overlayed on the image from which they were segmented
+%
 %  SHAPE_LIBRARY('get',SHAPE) returns a struct with all the information for 
 %  the given shape, including at least the fields:
 %     .boundary  - a set of [x y] points defining the boundary
@@ -18,11 +21,13 @@ function out = shape_library(action, shape, varargin)
 %  SHAPE_LIBRARY('get', SHAPE, {FIELD [,FIELD2,...]})
 %  returns a requested outline FIELD from SHAPE. If more than one FIELD is 
 %  requested, a cell array of [x y] matries is returned
+% 
+%  SHAPE_LIBRARY('add') displays information on adding new shapes
 %
 %EXAMPLES:
 % shape_library('list');
 % shape_library('list','pig_23kg');
-% shape_library('get','pig_23kg','trunk','lungs')
+% shape_library('get','pig_23kg','boundary','lungs')
 
 % (C) 2011 Bartlomiej Grychtol. License: GPL version 2 or version 3
 % $Id$
@@ -41,7 +46,9 @@ switch action
     case 'show'
         show_shape(shape);
     case 'get'
-        get_shape;
+        out = get_shape(shape,varargin);
+    case 'add'
+	add_shape;
 end
 
 function out = list_shapes(shape)
@@ -97,8 +104,34 @@ axis tight
 title(shape,'Interpreter','none')
 xlabel(s.copyright)
 hold off
-function get_shape
-disp('get_shape');
+
+
+
+function out = get_shape(shape,fields)
+out = {};
+if isempty(shape)
+    eidors_msg('SHAPE_LIBRARY: you must specify a shape to get');
+    return
+end
+
+s = load('shape_library.mat',shape);
+if ~isfield(s,shape),not_found(shape); return; end
+if isempty(fields)
+    out =s.(shape); 
+else
+    if iscell(fields{1}) fields = fields{1}; end
+    s = s.(shape);
+    for i = 1:numel(fields)
+	out(i) = {s.(fields{i})};
+    end
+    if i == 1, out = out{1}; end
+end
+
+
+function add_shape
+eidors_msg(['SHAPE_LIBRARY: To contribute a shape send an email to \n' ...
+	    'eidors3d-help@lists.sourceforge.net']);
+
 
 function not_found(shape)
 eidors_msg(['SHAPE_LIBRARY: Didn''t find shape ' shape]);
@@ -110,4 +143,10 @@ function do_unit_test
     shape_library('list','pig_23kg');
     shape_library('show'); % fail gracefully
     shape_library('show','pig_23kg');
-    shape_library('get','pig_23kg','trunk','lungs')
+    shape_library('get'); %fail gracefully
+    shape_library('get','a-shape-we-dont-have');% give error
+    shape_library('get','pig_23kg') % give a struct
+    shape_library('get','pig_23kg','heart') % give array
+    shape_library('get','pig_23kg','boundary','lungs') % give cell array
+    shape_library('get','pig_23kg',{'boundary','lungs'}) % give cell array
+    shape_library('add');
