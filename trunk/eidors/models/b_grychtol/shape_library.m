@@ -21,26 +21,25 @@ function out = shape_library(action, shape, varargin)
 %
 %EXAMPLES:
 % shape_library('list');
-% shape_library('list','pig_32kg');
-% shape_library('get','pig_32kg','trunk','lungs')
+% shape_library('list','pig_23kg');
+% shape_library('get','pig_23kg','trunk','lungs')
 
-% (C) Bartlomiej Grychtol, 2011. License: GPL version 2 or version 3
+% (C) 2011 Bartlomiej Grychtol. License: GPL version 2 or version 3
 % $Id$
 
 n_IN = nargin;
+if n_IN < 2
+    shape = '';
+end
 
 switch action
     case 'UNIT_TEST'
         do_unit_test;
         return
     case 'list'
-        if n_IN>1
-            out = list_shapes(shape);
-        else
-            out = list_shapes('');
-        end
+        out = list_shapes(shape);
     case 'show'
-        show_shape;
+        show_shape(shape);
     case 'get'
         get_shape;
 end
@@ -54,14 +53,50 @@ else
     s = load('shape_library.mat',shape);
     try
        out = fieldnames(s.(shape)); 
-    catch, not_found(shape);end
+    catch, not_found(shape); return; end
     disp(['Shape ' shape ' contains:']);     
 end
 disp(out);
 
-function show_shape
-disp('show_shape');
+function show_shape(shape)
 
+if isempty(shape)
+    eidors_msg('SHAPE_LIBRARY: you must specify a shape to show');
+    return
+end
+s = load('shape_library.mat',shape);
+try
+    fields = fieldnames(s.(shape)); 
+catch, not_found(shape); return; end
+s = s.(shape);
+%figure 
+colormap gray
+imagesc(s.pic.X, s.pic.Y, s.pic.img);
+hold all
+str = {};
+for i = 1:numel(fields)
+    if strcmp(fields{i},'electrodes'), continue, end
+    if ismatrix(s.(fields{i})) && size(s.(fields{i}),2)==2
+        plot(s.(fields{i})(:,1),s.(fields{i})(:,2),'-o','LineWidth',2)
+	str =[str fields(i)];
+    end
+end
+if isfield(s,'electrodes')
+   el = s.electrodes;
+   h = plot(el(:,1),el(:,2),'*');
+   c = get(h, 'Color');
+   str = [str {'electrodes'}];
+   for i = 1:length(el)
+   	text(1.1*el(i,1),1.1*el(i,2),num2str(i),...
+	   'HorizontalAlignment','Center','Color',c);
+   end
+end
+legend(str,'Location','NorthEastOutside','Interpreter','none');
+axis equal
+axis tight
+title(shape,'Interpreter','none')
+xlabel(s.copyright)
+hold off
 function get_shape
 disp('get_shape');
 
@@ -73,5 +108,6 @@ function do_unit_test
     shape_library('list');
     shape_library('list','a-shape-we-dont-have');% give error
     shape_library('list','pig_23kg');
+    shape_library('show'); % fail gracefully
     shape_library('show','pig_23kg');
     shape_library('get','pig_23kg','trunk','lungs')
