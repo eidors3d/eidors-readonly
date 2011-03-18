@@ -192,13 +192,14 @@ function mapping = contained_elems_3d( mdl, xyr );
    Nc = size(xyr,      2); % Num circs
    % We fill sparse by columns, due to CCS storage, this is fairly efficient
    mapping = sparse( Ne, Nc );
-
-%    % INterpolate
-%    n_interp = 4; % 7-df
-%    m_pts = interp_mesh( mdl, n_interp); 
-%    for i=1:Nc
-%      mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
-%    end
+    if 0
+   % INterpolate
+   n_interp = 4; % 7-df
+   m_pts = interp_mesh( mdl, n_interp); 
+   for i=1:Nc
+     mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
+   end
+    else
 
    % 4. Make a tmp model with only the remaining elems
    % 5. Interpolate
@@ -215,7 +216,7 @@ function mapping = contained_elems_3d( mdl, xyr );
        m_pts = interp_mesh( tmp, n_interp);
        mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
    end
-   
+    end
    
    
 function frac= contained_elem_pts(m_pts, xyr);
