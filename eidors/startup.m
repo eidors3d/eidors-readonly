@@ -44,6 +44,7 @@ addpath([HOMEDIR, '/algorithms/m_vauhkonen']);
 addpath([HOMEDIR, '/algorithms/n_polydorides']);
 addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models/a_adler']);
+addpath([HOMEDIR, '/models/b_grychtol']);
 addpath([HOMEDIR, '/models/d_stephenson']);
 addpath([HOMEDIR, '/models/s_murphy']);
 addpath([HOMEDIR, '/models/m_vauhkonen']);
