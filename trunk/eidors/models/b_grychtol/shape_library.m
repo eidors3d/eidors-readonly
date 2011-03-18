@@ -79,11 +79,12 @@ s = s.(shape);
 %figure 
 colormap gray
 imagesc(s.pic.X, s.pic.Y, s.pic.img);
+set(gca,'YDir','normal');
 hold all
 str = {};
 for i = 1:numel(fields)
     if strcmp(fields{i},'electrodes'), continue, end
-    if ismatrix(s.(fields{i})) && size(s.(fields{i}),2)==2
+    if isnumeric(s.(fields{i})) && size(s.(fields{i}),2)==2
         plot(s.(fields{i})(:,1),s.(fields{i})(:,2),'-o','LineWidth',2)
 	str =[str fields(i)];
     end
@@ -130,7 +131,7 @@ end
 
 function add_shape
 eidors_msg(['SHAPE_LIBRARY: To contribute a shape contact  \n' ...
-	'<a href="http://eidors3d.sourceforge.net/faq.shtml#maintainers">'
+	'<a href="http://eidors3d.sourceforge.net/faq.shtml#maintainers">' ...
  	'EIDORS maintainers</a>']);
 
 
