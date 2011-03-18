@@ -129,8 +129,9 @@ end
 
 
 function add_shape
-eidors_msg(['SHAPE_LIBRARY: To contribute a shape send an email to \n' ...
-	    'eidors3d-help@lists.sourceforge.net']);
+eidors_msg(['SHAPE_LIBRARY: To contribute a shape contact  \n' ...
+	'<a href="http://eidors3d.sourceforge.net/faq.shtml#maintainers">'
+ 	'EIDORS maintainers</a>']);
 
 
 function not_found(shape)
