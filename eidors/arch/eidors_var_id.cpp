@@ -96,7 +96,7 @@ recurse_hash( hash_context *c, const mxArray *var );
 #define sINT sizeof(int)
 #define sSZT sizeof(size_t)
 #undef VERBOSE 
-// #define VERBOSE
+   #define VERBOSE 1
 		
 // check to see if a given string points to an function
 //   on disk *.m file.  If it does -> get the file modification
@@ -285,12 +285,24 @@ recurse_hash( hash_context *c, const mxArray *var ) {
        hash_process( c, (unsigned char *) pi, sDBL * nnz );
     }
   } else
+  if ( mxIsLogical(var) ) {
+    int len= mxGetNumberOfElements( var );
+        #ifdef VERBOSE    
+          mexPrintf("Logical ClassID ( %d [%d]):", mxGetClassID( var ), len );
+        #endif
+    mxLogical *pl =  mxGetLogicals( var );
+//  hash_process( c, (unsigned char *) pr, len );
+  } else
   if ( mxIsNumeric(var) ) {
     // full numeric variable. ) We need to hash the numeric data.
     double *pr,*pi;
     int len= mxGetNumberOfElements( var );
+        #ifdef VERBOSE    
+          mexPrintf("Numeric ClassID ( %d [%d] ):", mxGetClassID( var ), len );
+        #endif
     if( mxIsDouble(var) ) {
         #ifdef VERBOSE    
+          if (len>0)
           mexPrintf("DBL len=%d, first=%5.3g\n:", len, *mxGetPr( var ) );
         #endif
         len= sDBL * len;
@@ -316,6 +328,9 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     }
   } else
   if ( mxIsChar(var) ) {
+        #ifdef VERBOSE    
+          mexPrintf("Char ClassID ( %d ):", mxGetClassID( var ) );
+        #endif
     // string variable. Each char is packed into 2 bytes in Matlab
 #ifdef OCTAVE_API
 #define CHARBYTES 1
@@ -344,6 +359,9 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     }
   } else
   if ( mxIsStruct(var) ) {
+    #ifdef VERBOSE
+      mexPrintf("processing struct\n");
+    #endif
     hash_struct( c, var);
   } else
 #ifndef OCTAVE_API // Octave can't do this yet
@@ -375,9 +393,7 @@ recurse_hash( hash_context *c, const mxArray *var ) {
 
 
 }
-
-// Calculate a variable_id, which represents the
-// content. This can be used to test whether a 
+// Calculate a variable_id, which represents the // content. This can be used to test whether a 
 // particular calculation has been done before.
 //
 // usage: eidors_var_id( var1, var2)
@@ -533,7 +549,10 @@ void hash_initial(hash_context* context)
 }
 
 
-/* Run your data through this. */
+/* Run your data through this.
+   We do nothing for empty vectors.
+   Thus [] is the same as not having the variable
+ */
 static
 void hash_process( hash_context * context, unsigned char * data, unsigned len )
 {
@@ -545,6 +564,7 @@ unsigned_int32 blen = ((unsigned_int32)len)<<3;
    for(i=0;i<len; i++) printf("%02X",data[i]);
    printf("]  ");}
 #endif
+    if(len==0) return;
 
     j = (context->count[0] >> 3) & 63;
     if ((context->count[0] += blen) < blen ) context->count[1]++;
