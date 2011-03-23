@@ -55,8 +55,19 @@
 // This would be nice but doesn't work for the default matlab compiler
 //  mexErrMsgTxt(__FILE__  __LINE__  "syscall returned bad status",
 
-#ifndef unsigned_int32
-#define unsigned_int32 UINT32_T
+
+#include <stdint.h>
+
+#define unsigned_int32 uint32_t
+
+#include <limits.h>
+#if ULONG_MAX == 0xffffffff
+/* OK 32-bit */
+#elif ULONG_MAX == 0xffffffffffffffff
+   #warning "Compile with: mex -largeArrayDims flag."
+   #warning "otherwise matlab gives a stupid runtime error"
+#else
+   #warning "System does not appear to be 32 or 64 bit"
 #endif
 
 
@@ -96,7 +107,7 @@ recurse_hash( hash_context *c, const mxArray *var );
 #define sINT sizeof(int)
 #define sSZT sizeof(size_t)
 #undef VERBOSE 
-   #define VERBOSE 1
+// #define VERBOSE 1
 		
 // check to see if a given string points to an function
 //   on disk *.m file.  If it does -> get the file modification
@@ -291,7 +302,7 @@ recurse_hash( hash_context *c, const mxArray *var ) {
           mexPrintf("Logical ClassID ( %d [%d]):", mxGetClassID( var ), len );
         #endif
     mxLogical *pl =  mxGetLogicals( var );
-//  hash_process( c, (unsigned char *) pr, len );
+    hash_process( c, (unsigned char *) pl, len );
   } else
   if ( mxIsNumeric(var) ) {
     // full numeric variable. ) We need to hash the numeric data.
