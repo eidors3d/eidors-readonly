@@ -189,14 +189,28 @@ function [vv] = carefusion_eit_readdata( fname );
 
 % NOTE: we're throwing away the header completely. This isn't
 % the 'right' way to read a file.
-   fseek(fid, header, -1); % From origin
-   d= fread(fid,[inf],'float32');
-   fclose(fid);
 
-%  Data records are 262 long
-   endpt = floor(length(d)/262)*262;
-   vv= reshape(d(1:endpt),262,[]);
-   vv= vv(36+[1:208],:);
+   fseek(fid, header, -1); % From the beginning
+   d_EIT= fread(fid,[inf],'float32');
+
+   fseek(fid, header, -1); % From the beginning
+   d_struct= fread(fid,[inf],'int32');  % In the struct, meaning of every int: 1 Type, 3 sequence No., 4 size in byte, 5 count
+   fclose(fid);
+   pt_EIT=1;               % pointer of the EIT data
+   vv=[];
+   while (pt_EIT<=length(d_struct))
+       if d_struct(pt_EIT)==3,     % type=3,  EIT transimpedance measurement
+           vv(1:256,1+d_struct(pt_EIT+2))= d_EIT(pt_EIT+6:pt_EIT+6+255);% d_struct(pt_EIT+2), Sequence No., start from 0
+           pt_EIT=pt_EIT+6+256;
+       elseif d_struct(pt_EIT)==7, %type=7, EIT image vector
+           pt_EIT=pt_EIT+912+6;        % drop the image           
+       elseif d_struct(pt_EIT)==8, %type=8, Waveform data
+           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);    %drop  
+       else                        % type = 10, unknown type
+           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);    %drop
+       end
+   end
+   vv=vv(47+[1:208],:);
    
 
 % Read the old <2006 Draeger "get" file format
