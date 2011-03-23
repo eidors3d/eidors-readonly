@@ -199,15 +199,22 @@ function [vv] = carefusion_eit_readdata( fname );
    pt_EIT=1;               % pointer of the EIT data
    vv=[];
    while (pt_EIT<=length(d_struct))
-       if d_struct(pt_EIT)==3,     % type=3,  EIT transimpedance measurement
-           vv(1:256,1+d_struct(pt_EIT+2))= d_EIT(pt_EIT+6:pt_EIT+6+255);% d_struct(pt_EIT+2), Sequence No., start from 0
+      switch d_struct(pt_EIT)
+         case 3, % type=3,  EIT transimpedance measurement
+           % d_struct(pt_EIT+2), Sequence No., start from 0
+           vv(1:256,1+d_struct(pt_EIT+2))= d_EIT(pt_EIT+6:pt_EIT+6+255);
            pt_EIT=pt_EIT+6+256;
-       elseif d_struct(pt_EIT)==7, %type=7, EIT image vector
+         case 7, %type=7, EIT image vector
            pt_EIT=pt_EIT+912+6;        % drop the image           
-       elseif d_struct(pt_EIT)==8, %type=8, Waveform data
-           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);    %drop  
-       else                        % type = 10, unknown type
-           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);    %drop
+         case 8, %type=8, Waveform data
+           %drop  
+           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);
+         case 10,% type = 10, unknown type
+           %drop
+           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);
+         otherwise,
+           eidors_msg('WARNING: unknown type in carefusion file type');
+           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);
        end
    end
    vv=vv(47+[1:208],:);
