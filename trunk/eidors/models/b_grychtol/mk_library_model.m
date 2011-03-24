@@ -12,7 +12,7 @@ function out = mk_library_model(shape,elec_pos,elec_shape,maxsz)
 %     NG_MK_EXTRUDED_MODEL for details. To use the electrode positions
 %     stored in the 'electrode' field in the shape_libary, specify elec_pos
 %     as 'original'
-%   elec_shape - a vector specifying electrode positions. See
+%   elec_shape - a vector specifying electrode shapes. See
 %     NG_MK_EXTRUDED_MODEL for details.
 %   maxsz - maximum FEM size (default: course mesh)
 %
