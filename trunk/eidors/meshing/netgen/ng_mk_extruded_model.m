@@ -126,15 +126,17 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
 
     if iscell(shape) && length(shape)>2
         tank_height = shape{1};
-        if ~iscell(shape{2}) || numel(shape{2}) == 1
+        if ~iscell(shape{2})
             points = shape{2};
         else
             c = shape{2};
             points = c{1};
-            tank_shape.additional_shapes = c(2:end);
+            if numel(shape{2}) > 1
+                tank_shape.additional_shapes = c(2:end);
+            end
         end
         
-        if ~iscell(shape{3}) || numel(shape{3}) == 1
+        if ~iscell(shape{3})
             tank_shape.curve_type = shape{3};
             if iscell(tank_shape.curve_type)
                 tank_shape.curve_type = tank_shape.curve_type{1};
@@ -142,7 +144,9 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         else
             c = shape{3};
             tank_shape.curve_type = c{1};
-            tank_shape.additional_curve_type = c(2:end);
+            if numel(shape{3}) > 1
+                tank_shape.additional_curve_type = c(2:end);
+            end
         end
         
         if max(size(tank_shape.curve_type)) > 1
