@@ -113,8 +113,11 @@ calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
 
 % Set max cache size. Not completely sure about this
 %  but 250MB should be available in most modern machines
-eidors_cache('cache_size', 250e6 );
+eidors_cache('cache_size', 300e6 );
 eidors_cache('boost_priority', 0 ); % set default priority
+
+% Set default model cache location
+mk_library_model('LIBRARY_PATH',[HOMEDIR, '/models/cache']);
 
 eidors_msg('Installed EIDORS (Ver: %s)', eidors_obj('eidors_version'),1);
 eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
@@ -125,6 +128,7 @@ else
    eidors_msg('Default background colour: white');
 end
 eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
+eidors_msg('EIDORS model cache: %s', mk_library_model('LIBRARY_PATH'),1);
 
 % check that the compiled mex file is newer than the source file
 srcf = strcat(HOMEDIR,'/arch/eidors_var_id.cpp');
