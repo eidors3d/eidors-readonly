@@ -86,7 +86,7 @@ function out = predef_model(str)
 switch str
     case 'pig_23kg_16el'
         out = mk_library_model({'pig_23kg','boundary'},...
-            [16 0 0.5],[0.05],0.1);
+            [16 1.46 0.5],[0.05],0.08);
     case 'pig_23kg_32el'
         out = mk_library_model({'pig_23kg','boundary'},...
             [32 0 0.5],[0.05],0.1);
