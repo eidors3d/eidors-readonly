@@ -477,9 +477,18 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
                   p = p + offset;
                   xy = fourier_fit(pp,p);
-                 % NOTE, THIS IS A HACK. Some complicated shapes can't be described by angle alone
+                 % NOTE, THIS IS A HACK. Some complicated shapes can't be 
+                 % described by angle alone
                   th = atan2(xy(:,2) - tank_shape.centroid(2), ...
                              xy(:,1) - tank_shape.centroid(1));
+                 % netgen chokes on opposing electrodes that are slightly
+                 % misallinged
+                    for exact = 0:3;
+                        eth = exact/2*pi;
+                        ff = abs(th-eth)<1e-2;
+                        th(ff) = eth;
+                    end
+
               elseif any( tank_shape.curve_type == [1,2,3] )
                   pp= piece_poly_fit(tank_shape.vertices);
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
