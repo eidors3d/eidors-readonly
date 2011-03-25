@@ -20,6 +20,11 @@ function retval=eidors_cache( command, limit )
 %   eidors_cache( 'cache_size', memory_in_bytes );
 %      - set max cache size to be memory_in_bytes
 %      - without 2nd arg will return current cache_size
+%
+%   eidors_cache( 'clear_model_library' );
+%      - clear the eidors model library directory
+%      - NOTE: this function is experimental. 
+%      - TODO: add a way to specify what to clear
 %  
 %   eidors_cache( 'boost_priority', value)
 %      - modify the priority of the next cached items
@@ -98,6 +103,10 @@ switch command
       [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  ...
         find(times > limit) );
+
+   case 'clear_model_library'
+      %TODO: add ways to select what to delete
+      delete([eidors_objects.model_cache,'/*.mat']);
    
    otherwise
       error('command %s not understood',command);
