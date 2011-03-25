@@ -86,16 +86,16 @@ function out = predef_model(str)
 switch str
     case 'pig_23kg_16el'
         out = mk_library_model({'pig_23kg','boundary'},...
-            [16 1.46 0.5],[0.05],0.08);
+            [16 1 0.5],[0.05],0.08);
     case 'pig_23kg_32el'
         out = mk_library_model({'pig_23kg','boundary'},...
-            [32 0 0.5],[0.05],0.1);
+            [32 1 0.5],[0.05],0.08);
     case 'pig_23kg_16el_lungs'
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [16 0 0.5],[0.05],0.1);
+            [16 1 0.5],[0.05],0.08);
     case 'pig_23kg_32el_lungs'
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [32 0 0.5],[0.05],0.1);
+            [32 1 0.5],[0.05],0.08);
     otherwise
         error('No such model');
 end
@@ -156,7 +156,7 @@ for i = 1:numel(models)
         img.elem_data(mdl.mat_idx{2:end}) = 0.25;
     end
     figure
-    show_fem(img);
+    show_fem(img,[0,1,0]);
     title(models{i},'Interpreter','none');
 end
 
