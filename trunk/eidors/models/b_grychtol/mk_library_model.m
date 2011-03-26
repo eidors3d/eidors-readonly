@@ -78,7 +78,11 @@ function out = list_predef_model_strings
 out = {'pig_23kg_16el';
     'pig_23kg_32el';
     'pig_23kg_16el_lungs';
-    'pig_23kg_32el_lungs'};
+    'pig_23kg_32el_lungs';
+    'adult_male_16el';
+    'adult_male_32el';
+    'adult_male_16el_lungs';
+    'adult_male_32el_lungs'};
 
 %%%%%
 % Use predefined model
@@ -95,6 +99,18 @@ switch str
             [16 1 0.5],[0.05],0.08);
     case 'pig_23kg_32el_lungs'
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
+            [32 1 0.5],[0.05],0.08);
+    case 'adult_male_16el'
+        out = mk_library_model({'adult_male','boundary'},...
+            [16 1 0.5],[0.05],0.08);
+    case 'adult_male_32el'
+        out = mk_library_model({'adult_male','boundary'},...
+            [32 1 0.5],[0.05],0.08);
+    case 'adult_male_16el_lungs'
+        out = mk_library_model({'adult_male','boundary','left_lung','right_lung'},...
+            [16 1 0.5],[0.05],0.08);
+    case 'adult_male_32el_lungs'
+        out = mk_library_model({'adult_male','boundary','left_lung','right_lung'},...
             [32 1 0.5],[0.05],0.08);
     otherwise
         error('No such model');
