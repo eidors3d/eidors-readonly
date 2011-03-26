@@ -168,8 +168,11 @@ models = mk_library_model('list');
 for i = 1:numel(models)
     mdl = mk_library_model(models{i});
     img = mk_image(mdl,1);
-    if numel(mdl.mat_idx) >1
-        img.elem_data(mdl.mat_idx{2:end}) = 0.25;
+    n = numel(mdl.mat_idx);
+    if n >1
+        for j = 2:n
+            img.elem_data(mdl.mat_idx{j}) = 0.25;
+        end
     end
     figure
     show_fem(img,[0,1,0]);
@@ -177,5 +180,5 @@ for i = 1:numel(models)
 end
 
 
-out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},[32 0 0.5],[0.05],0.1);
+out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},[32 1 0.5],[0.05],0.08);
 
