@@ -25,7 +25,11 @@ if isstr(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
 if nargin==1
    fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 
    fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
-   imgs= mk_image( fmdl, 1);
+end
+imgs= mk_image( fmdl, 1);
+
+if ~iscell(imdls)
+    imdls = {imdls};
 end
 
 Nsim = 100;
