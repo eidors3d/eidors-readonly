@@ -123,13 +123,13 @@ function mapping = circ_in_elem_2d( mdl, look, xc, yc, rc);
          case 1; 
             nd = mdl.elems(k, n_in(k,:));
    keyboard
-            vol = vol + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd,:),rc));
+            vol = vol + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd,:),rc);
 
          case 2; 
             nd = mdl.elems(k, n_in(k,:));
             vol = vol ...
-             + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd(1),:),rc)) ...
-             + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd(2),:),rc));
+             + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd(1),:),rc) ...
+             + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd(2),:),rc);
 
          otherwise; error('cant get here'); 
       end
@@ -208,10 +208,11 @@ function mapping = contained_elems_3d( mdl, xyr );
    too_far = elems_too_far( mdl, xyr );
    
    tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
-   mapping = sparse( Ne, Nc );
+   %mapping = sparse( Ne, Nc );
    n_interp = 6;
    for i=1:Nc
        good = ~too_far(:,i);
+       if ~any(good), continue, end %point outside the mesh
        tmp.elems = mdl.elems(good,:);
        m_pts = interp_mesh( tmp, n_interp);
        mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
