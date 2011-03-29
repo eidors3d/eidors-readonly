@@ -115,7 +115,8 @@ switch str
     otherwise
         error('No such model');
 end
-
+%give the model a name
+out.name = str;
 
 
 function str = make_filename(shape, elec_pos, elec_shape, maxsz)
