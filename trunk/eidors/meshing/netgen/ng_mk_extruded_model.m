@@ -90,6 +90,7 @@ end
 fmdl_mat_idx = {fmdl,mat_idx};
 
 if 0 % DEBUG SHAPE
+   plot(tank_shape.vertices(:,1),tank_shape.vertices(:,2));
    hold on
    plot(centres(:,1),centres(:,2),'sk')
    for i = 1:size(elecs,2)
@@ -481,18 +482,12 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
                  % described by angle alone
                   th = atan2(xy(:,2) - tank_shape.centroid(2), ...
                              xy(:,1) - tank_shape.centroid(1));
-                 % netgen chokes on opposing electrodes that are slightly
-                 % misallinged
-                    for exact = 0:3;
-                        eth = exact/2*pi;
-                        ff = abs(th-eth)<1e-2;
-                        th(ff) = eth;
-                    end
 
               elseif any( tank_shape.curve_type == [1,2,3] )
                   pp= piece_poly_fit(tank_shape.vertices);
-                  p = linspace(0,1,n_elecs+1)'; p(end) = [];
-                  th = piece_poly_fit(pp,offset*2*pi,p);
+                  p = linspace(1,0,n_elecs+1)'; p(end) = [];
+                  off = offset*2*pi + tank_shape.vertices_polar(1,1);
+                  th = piece_poly_fit(pp,off,p);
               else
                   error('curve_type unrecognized');
               end
@@ -571,9 +566,9 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
         if isempty(idx); idx = 1; end
         edg_no = vert_pol(idx,3);
         
+        
         normal = tank_shape.edge_normals(edg_no,:);
-        
-        
+              
         v1 = edg_no;
         if edg_no == n_vert % between the last and first vertex    
             v2 = 1;
@@ -600,7 +595,14 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
             pos = vert(v2,:);
         end
    
-   
+        % this bit is to prevent netgen choking on slightly misalligned
+        % electrods
+        th = cart2pol(normal(1),normal(2));
+        frac = 2*pi / 64;
+        th = frac * round( th / frac);
+        [normal(1) normal(2)] = pol2cart(th,1);
+        
+        
    function [pos, normal] = calc_elec_centre_spline(tank_shape, th)
         % The calculation proceeds by finding a common point between a line
         % from the centroid outwards and the equation of the relevant
