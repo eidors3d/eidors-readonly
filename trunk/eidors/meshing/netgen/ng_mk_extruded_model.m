@@ -76,6 +76,18 @@ meshfn= [fnstem,'.vol'];
 write_geo_file(geofn, tank_height, tank_shape, ...
                tank_maxh, elecs, extra_ng_code);
            
+if 0% DEBUG SHAPE
+   plot(tank_shape.vertices(:,1),tank_shape.vertices(:,2));
+   hold on
+   plot(centres(:,1),centres(:,2),'sk')
+   for i = 1:size(elecs,2)
+       dirn = elecs(i).normal;
+       quiver(centres(i,1),centres(i,2),dirn(1),dirn(2),'k');
+   end
+   hold off
+   axis equal
+end
+           
 call_netgen( geofn, meshfn );
 
 [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', [],0.01,...
@@ -89,17 +101,7 @@ end
 
 fmdl_mat_idx = {fmdl,mat_idx};
 
-if 0 % DEBUG SHAPE
-   plot(tank_shape.vertices(:,1),tank_shape.vertices(:,2));
-   hold on
-   plot(centres(:,1),centres(:,2),'sk')
-   for i = 1:size(elecs,2)
-       dirn = elecs(i).normal;
-       quiver(centres(i,1),centres(i,2),dirn(1),dirn(2),'k');
-   end
-   hold off
-   axis equal
-end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TANK SHAPE (struct):
@@ -337,7 +339,7 @@ function out = fourier_interpolate_shape(points, n_points)
 % Quadratic spline interpolation of the points provided.
 
 
-pp = fourier_fit(points);
+pp = fourier_fit(points, size(points,1)-1); % don't want to overfit
 p = linspace(0,1,n_points+1)'; p(end) = [];
 xy = fourier_fit(pp,p);
 % [th r] = cart2pol(xy);
@@ -473,8 +475,10 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
               ind = th >= 2*pi;
               th(ind) = th(ind) - 2*pi;
           case 1
-              if tank_shape.curve_type == 4
-                  pp = fourier_fit(tank_shape.vertices);
+              % piece_poly_fit doesn't seem to work very well
+              if 1%tank_shape.curve_type == 4
+                  pp = fourier_fit(tank_shape.vertices,...
+                      size(tank_shape.vertices,1) - 1);
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
                   p = p + offset;
                   xy = fourier_fit(pp,p);
@@ -484,6 +488,8 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
                              xy(:,1) - tank_shape.centroid(1));
 
               elseif any( tank_shape.curve_type == [1,2,3] )
+                  % I can't seem able to get the first electrode exactly on
+                  % the first vertex
                   pp= piece_poly_fit(tank_shape.vertices);
                   p = linspace(1,0,n_elecs+1)'; p(end) = [];
                   off = offset*2*pi + tank_shape.vertices_polar(1,1);
@@ -598,7 +604,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
         % this bit is to prevent netgen choking on slightly misalligned
         % electrods
         th = cart2pol(normal(1),normal(2));
-        frac = 2*pi / 64;
+        frac = 2*pi / 61;
         th = frac * round( th / frac);
         [normal(1) normal(2)] = pol2cart(th,1);
         
