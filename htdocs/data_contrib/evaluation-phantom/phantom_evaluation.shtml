@@ -1,0 +1,56 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> 
+Yasheng Maimaitijiang,
+Stephan B&ouml;hm,
+Pascal O. Gaggero,
+Andy Adler
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2011
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+<p>
+Data were published in 
+     <i>paper submitted</i>
+       <hr>
+   <tr><th valign="top"> License:
+       <td> GNU GPL version 2 or version 3 at your choice.
+          
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+Users of this system are requested to acknowledge
+Maimaitijiang Yasheng, and reference this publication:
+<ul>
+     <i>paper submitted</i>
+</ul>
+   <tr><th valign="top"> Contributed Files:
+       <td> 
+      <table>
+      <tr><th valign="top"> Files:
+          <th> Description
+      <tr><td> <a href="file1.m"     >file1.m</a>
+          <td> write description
+      <tr><td> <a href="file2.m"     >file2.m</a>
+          <td> write description
+      </table>
+   </table>
+
+<H3>Description</H3>
+
+Text to be continued.
+
+<p>
+
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
