@@ -1,0 +1,154 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> 
+Sascha Reidt
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2009
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+<p>
+To precisely and reproducibly position test objects within
+the saline tank a position controller was constructed
+from standard LEGO parts in connection with a set of
+motors and two controllers (LEGO NXT Mindstorm). Two test
+objects could be positioned independently by a total of
+six position controllers, two for each of the X, Y and Z
+directions. In order to overcome the limitations in the
+range of motion imposed by the physical size of the LEGO
+parts the entire control unit rotates 360&deg; on a plastic
+support placed on top of a cylindrical tank. The movement
+protocol was stored on a computer and transmitted to the
+position controllers via Bluetooth. A control program
+stores the coordinates and the position controller
+automatically moves the object to the desired locations.
+       <hr>
+   <tr><th valign="top"> License:
+       <td>  Creative Commons Artistic License (with Attribution) 
+          
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+Users of this system are requested to acknowledge
+Sascha Reidt, and reference this publication:
+<ul>
+     Y. Maimaitijiang, P.O. Gaggero, S. B&ouml;hm, and A. Adler, "Evaluation of EIT 
+      system performance," submitted for Physiol. Meas. Dec. 2010.
+</ul>
+       <hr>
+   <tr><th valign="top"> Requirements:
+       <td> 
+In order to use the provided software you will need:
+<ul>
+   <li> A PC running Windows XP/Vista/7 with bluetooth connection
+   <li> The lego&trade; pieces described in the construction documentation
+   <li> 2&times;Lego&trade; Mindstorms NXT controllers
+</ul>
+       <hr>
+   <tr><th valign="top"> Contributed Files:
+       <td> 
+      <table>
+      <tr><th valign="top"> Files:
+          <th> Description
+      <tr><td> <a href="documents/Robot_Construction_Manual_EIT.pdf"
+                       >Robot_Construction_Manual_EIT.pdf</a>
+          <td> Lego&trade; NXT based position controller construction manual
+      <tr><td> <a href="documents/Phantom-Positioning-System_User_Guide.pdf"
+                       >Phantom-Positioning-System_User_Guide.pdf</a>
+          <td> Software installation and tutorials
+      <tr><td> <a href="documents/Position-Controller-PC-exe.zip"
+                       >Position-Controller-PC-exe.zip</a>
+          <td> Position controller software (PC) &minus; executable (Win32)
+      <tr><td> <a href="documents/Position-Controller-PC-src.zip"
+                       >Position-Controller-PC-src.zip</a>
+          <td> Position controller software (PC) &minus; source code
+      <tr><td> <a href="documents/Position-Controller-NXT.zip"
+                       >Position-Controller-NXT.zip</a>
+          <td> Position controller software (NXT)
+      </table>
+
+       <hr>
+   <tr><th valign="top"> Description
+
+      <td>
+For the position 
+controller, we have to set parameters based on target volume type, single or 
+double objects, specific positions and PC port number to establish a connection 
+between a PC and the controller (a separate tutorial is provided on EIDORS 
+website on how to operate it). The position controller moves the target to the 
+specified position and gives an indication to the user to take EIT measurement 
+after certain delay for each protocol.
+<p>
+<center>
+<a href="figures/Phantom.jpg"><img width="300" src="figures/Phantom.jpg" ></a>
+</center>
+      
+<p>
+       <hr>
+   <tr><th valign="top"> Drivers and Downloads
+      <td>
+   <ul>
+   <li> Download the driver from
+        <a href="http://mindstorms.lego.com/en-us/support/files/default.aspx#Driver"
+                >http://mindstorms.lego.com/en-us/support/files/default.aspx#Driver</a>
+
+      <li> If you need to change, reset or update the firmware, follow:
+        <a href="http://mindstorms.lego.com/en-us/support/files/default.aspx#Firmware"
+                >http://mindstorms.lego.com/en-us/support/files/default.aspx#Firmware</a>
+      <li> This compiler is not compatible with the new 1.29 firmware follow instructions:
+        <a href="http://www.educatec.ch/doc/FAQ/FAQ.LEGO.M/NXT_Firmware_download?set_language=en&cl=en"
+                >http://www.educatec.ch/doc/FAQ/FAQ.LEGO.M/NXT_Firmware_download?set_language=en&amp;cl=en</a>
+   </ul>
+
+Some instructions for debugging the setup
+<ol>
+
+<li> Open an explore window
+<li> Go to the folder called <tt>WINNT</tt> or <tt>windows</tt>
+<li> Go to the folder called <tt>system32</tt>
+<li> Find the file called <tt>fantom.dll</tt>
+<li> Right click on file and select properties
+<li> Under the version tap, the 
+file should have the following version number: 1.0.2.49152. If it has version 
+number 1.0.1.49152 you need to update the USB driver.
+</ol>
+
+      <hr>
+   <tr><th valign="top"> Usage examples
+      <td>
+This section provides some quick examples of how to chose
+single or multiple objects and set the timing and other 
+control parameters. Refer to the software documentation for
+full instructions.
+
+<p>
+<b>Note:</b> We recommend that the  position
+   controller be calibrated (initialized)
+<p>
+   <b>How to use the software 
+   to move the cubic object to a certain position</b>
+<p>
+<center>
+   <img border="0" src="figures/Controller1.png">
+   <br> <b>Figure: </b>one-object protocol,</p>
+   <p>
+   <img border="0" src="figures/Controller2.png">
+   <br> <b>Figure:</b> two-object protocol</p>
+   <p>
+   <img border="0" src="figures/Controller3.png">
+   <br> <b>Figure:</b> Setting of COM port 
+   number and time delay
+</center>
+
+</table>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
