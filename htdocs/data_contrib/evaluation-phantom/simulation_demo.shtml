@@ -1,0 +1,107 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+<h1>Simulation demo</h1>
+Simulated 
+tutorial is given below for the image analysis part: detectability and GREIT.
+<ul>
+  <li> <a href="#2D">2D demo</a>
+  <li><a href="#3D">3D demo</a>
+</ul>
+<p>
+Here are 
+several simulated examples for the detectability of a single object. Simulations 
+are shown below for detectability analysis in 2D and 3D (sim_2D_params.m, 
+sim_Det_3D.m) beside GREIT parameters for a single object in 2D
+
+<h3>
+<a name="2D">Detectability and GREIT parameters for a single object (2D)
+</a>
+</h3>
+
+2D model created using Netgen:
+<pre>
+<!--#include virtual="code/sim_2D_params.m" -->
+</pre>
+
+<center>
+<img src="figures/FEM_2D.png" >
+<br><i> Figure:</i>
+2D model with 16 electrodes 
+</center>
+
+2D simulation is 
+performed below for a target moving from center to the edge. This code includes 3 sub-functions: (i) Simulated voltages 
+and image reconstruction, (ii) GREIT analysis, (iii) detectability for a target 
+moving from center to the edge.
+<p>
+GREIT analysis includes the 
+figures of merit based on the GREIT algorithm (Adler et al 2009) such as (1) 
+amplitude response (AR), (2) position error (PE), (3) resolution (RES), (4) 
+spatial distortion (SD) and (5) ringing (RNG).
+
+<center>
+<img src="figures/Recons_2D.png">
+<img border="0" src="figures/GREIT_2D.png">
+<img border="0" src="figures/DET_2D.png">
+<br><i> Figure:</i>
+<i>Left:</i>
+Reconstructed images for the object moved from center to the edge of the tank
+<i>Mid:</i>
+figures of merits - GREIT
+<i>Right:</i>
+Detectability values for the object moved from center to the edge of the tank</font></p>
+</center>
+
+For better performance, it is 
+desirable for AR, PE and RES to be constant, while PE, RES and RNG should be as 
+small as possible for any target position. With real-measurements, these 
+parameters are calculated from an average of multiple measurements for each 
+position.
+
+<h3>
+<a name="3D">Detectability of a single object (3D)
+</a>
+</h3>
+
+3D model created using 
+Netgen. A cubic target was moved in the saline solution according to the 
+predefined movement protocols horizontally in central-plane (z=0) and off-plane. </font></p>
+
+<pre>
+<!--#include virtual="code/sim_Det_3D.m" -->
+</pre>
+
+<center>
+<img src="figures/FEM_3D.png">
+<br><i> Figure:</i>
+3D model with 16 electrodes with a cubic object moved horizontally at 7 positions in the 
+central plane.
+</center>
+
+<h4>
+Detectability 
+analysis for a 3D object moved from center to the edge of the tank:
+</h4>
+<br>
+Set 0 or 1 to the parameter <tt>in_plane_Def=1; % 1 for in-plane or 0 for off-plane</tt>
+
+<center>
+<img src="figures/DET_3D_cntrl.png">
+<img src="figures/DET_3D_Off.png">
+<br><i> Figure:</i>
+<i>Left:</i>
+ normalized 
+detectability value for a cubic object moved horizontally at 7 positions in the
+<i>Right:</i>
+Figure: In-plane: 
+normalized detectability value for a cubic object moved horizontally at 7 
+positions at the <b>off-plane</b> of h=1.5
+</center>
+
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
