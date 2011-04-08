@@ -16,9 +16,12 @@ Andy Adler
        <hr>
    <tr><th valign="top"> Brief Description:
        <td> 
-<p>
-Data were published in 
-     <i>paper submitted</i>
+<p>We aim to produce a standard 
+test methodology to evaluate and compare the performance of an EIT hardware 
+system and image reconstruction. To be part of our collaborative project, 
+suggestions regarding efficiently evaluate system performance are all welcome. The tutorial includes overview of phantom based EIT 
+performance evaluation, code, data and image analysis. </p>
+
        <hr>
    <tr><th valign="top"> License:
        <td> GNU GPL version 2 or version 3 at your choice.
@@ -29,26 +32,136 @@ Data were published in
 Users of this system are requested to acknowledge
 Maimaitijiang Yasheng, and reference this publication:
 <ul>
-     <i>paper submitted</i>
+Yasheng Maimaitijiang, Stephan B&ouml;hm, Obaydah Jaber, Andy Adler,
+ "A phantom based system to evaluate EIT performance"
+Int. Conf. Electrical Bio-Impedance &amp; Electrical Impedance Tomography Gainville, Fl, USA, 4-8 April 2010
+<!--
+     Y. Mamatjan, P.O. Gaggero, S. B&ouml;hm, and A. Adler, "Evaluation of EIT 
+		system performance," submitted for Physiol. Meas. Dec. 2010.
+-->
 </ul>
+		<hr>
    <tr><th valign="top"> Contributed Files:
        <td> 
       <table>
-      <tr><th valign="top"> Files:
-          <th> Description
-      <tr><td> <a href="file1.m"     >file1.m</a>
-          <td> write description
-      <tr><td> <a href="file2.m"     >file2.m</a>
-          <td> write description
-      </table>
+            <tr><th valign="top"> Files: <th> Description
+            <tr><td> <a href=""
+                        >Evaluation software</a>
+                <td> Algorithms to evaluate EIT system 
+				performance
+            <tr><td> <a href=""
+                       >Simulation demo</a>
+                <td> Software simulation
+        </table>
+
+		<hr>
+   <tr><th valign="top"> Usage Examples
+       <td> 
+<ul>
+<li><a href="evaluation_components.shtml"><font size="3"> Evaluation Components</font></a>
+<li><a href="parameters_list.shtml"><font size="3"> Parameters List</font></a>
+<li><a href="simulation_demo.shtml"><font size="3"> Simulation Demo</font></a>
+<li><a href="code_guide.shtml"><font size="3"> Code Guide</font></a>
+
+
+</ul>
+      <hr>
+   <tr><th valign="top"> Related Publications:
+       <td> 
+            <ul>
+                <li>
+Yasheng Maimaitijiang, Stephan B&ouml;hm, Obaydah Jaber, Andy Adler
+<a href="http://www.sce.carleton.ca/faculty/adler/publications/2010/mamatjan-EIT10-phantom.pdf"
+  >A phantom based system to evaluate EIT performance</a>
+Int. Conf. Electrical Bio-Impedance &amp; Electrical Impedance Tomography Gainville, Fl, USA, 4-8 April 2010
+                <li>
+Yasheng Maimaitijiang, Stephan B&ouml;hm, Obaydah Jaber, Andy Adler
+<a href="http://www.sce.carleton.ca/faculty/adler/talks/2010/maimaitijiang-EIT10-phantom.pdf"
+  >A phantom based system to evaluate EIT performance (Poster)</a>
+Int. Conf. Electrical Bio-Impedance &amp; Electrical Impedance Tomography Gainville, Fl, USA, 4-8 April 2010
+
+
+<!--
+     Y. Mamatjan, P.O. Gaggero, S. B&ouml;hm, and A. Adler, "Evaluation of EIT 
+		system performance," submitted for Physiol. Meas. Dec. 2010.
+-->
+            </ul>
+    
+         <hr>
+     <tr><th valign="top"> Description
+
+      <td>
+<p>All software components are made publicly available and short tutorials are 
+provided regarding evaluation and algorithm. In order to run the code, users are 
+required to
+<a href="http://eidors3d.sourceforge.net/download.shtml">install</a> and start the EIDORS. 
+There are two separate systems namely the position controller and the EIT 
+measurement system evaluation. Position controller is placed under 
+part of contrib_data section under eidors. This section is a guide to performance evaluation algorithm.</p>
+
+1.Test requirement:
+<ul>
+<li> The test methodology and tests should be reproducible
+<li> Phantom should represent a 3D tank
+<li> Full cables to be used during the evaluation
+<li> Electrical layouts and analysis software should be publicly 
+	available
+</ul>
+	
+2.Intended users:
+<ul>
+<li> EIT system users to check EIT system degradation/improvements or compare different systems 
+<li> Hardware developers to test hardware improvement
+<li> Software developers to test their new algorithms 
+</ul>
+
+3.Test phantoms: A test phantom is essential to be able to 
+	evaluate and compare the performance of a system
+<ul>
+<li> Physical phantom (cubic conductive or non-conductive test targets) with size of (50 ml and 100 ml)
+<li> 3D tank filled with saline water
+</ul>
+
+4.Test protocol
+	
+<ul>
+<li> Empty tank measurement used for analyzing noise characteristics of an EIT system.
+<li> Single-object measurement: Horizontal movement in central and off plane,
+<li> Two-object measurement: 2 objects moving away each other from the centre of the tank - 
+	horizontal movement in central plane
+</ul>
+
+5.Performance parameters 
+<ul>
+<li> data analysis for Noise performance test
+	<ul>
+	 <li> SNR
+	 <li> Accuracy
+	 <li> Drift 
+	 <li> Errors associated with symmetric measurement electrodes
+	</ul>
+
+<li> image analysis for tests of imaging accuracy 
+
+	<ul>
+	 <li> Amplitude response (AR)
+	 <li> Position error (PE)
+	 <li> Resolution (RES)
+	 <li> Shape deformation (SD) 
+	 <li> Ringing (RNG)
+	</ul>
+<li> Tests of detectability and distinguishability 
+</ul>
+6. Image of system (including a
+   <a href="robot_controller.shtml"
+      >lego&trade; robot position controller</a>)
+<center>
+<a href="figures/Phantom.jpg"><img width="300" src="figures/Phantom.jpg" ></a>
+</center>
+
    </table>
 
-<H3>Description</H3>
-
-Text to be continued.
-
 <p>
-
 <small>
     Last Modified: $Date$ by $Author$
 </small>

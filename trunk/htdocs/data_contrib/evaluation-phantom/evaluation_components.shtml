@@ -1,0 +1,125 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<h1>Components of evaluation:</h1>
+<ul>
+  <li>Test Overview
+  <li>Evaluation procedure
+  <li>Performance parameters
+</ul>
+
+<h2>
+Test Overview:
+</h2>
+<p>To evaluate 
+and compare the performance of a complete EIT system, we proposed a test 
+methodology and phantom system design based on reproducible procedures with 
+completely characterized and traceable test objects. Components of system 
+performance evaluation are shown in figure 1: </p>
+
+<center>
+<a href="figures/Robot_Sys.jpg"><img width="500" src="figures/Robot_Sys.jpg" ></a>
+<p>
+Figure: Schematic diagram of 
+proposed test setup and procedure to evaluate EIT system performance
+</center>
+
+<p>
+An EIT system consists of an electrode 
+interface, EIT stimulation and measurement hardware and an image reconstruction 
+algorithm. Measurements are performed using a specified 
+measurement protocol and characterized traceable test objects.The data and images are systematically 
+analysed by performance analysis algorithm. 
+
+<p>
+Evaluation procedure:
+<p>
+Three important components for 
+this test are test phantoms, a test protocol, and evaluation 
+methodology/software. The EIT system is connected to the 
+phantom, and three sets of measurements are performed:
+
+<ol>
+<li> Homogeneous tank measurements, designed to evaluate system noise, 
+accuracy, drift and symmetric measurement electrodes.
+<li> Measurements with one conductivity contrast which is moved horizontally 
+at several vertical offsets from the electrode plane, designed to measure 
+amplitude response, position accuracy, resolution, and detectability limits;
+<li>
+Measurements with two conductivity contrasts, designed to measure limits 
+of distinguishability of contrasts.The position of two objects highly 
+affected the image reconstruction where two closely positioned objects look like 
+a bigger single object.
+</ul>
+
+<p>
+<center>
+  <table border="0">
+    <tr>
+      <td align="center">
+      <img border="0" src="figures/Phantom.jpg" height="351">
+<br><b>(a)</b>
+      <td align="center">
+      <img border="0" src="figures/1obj_protocol.jpg" width="226" height="351"></p>
+<br><b>(b)</b>
+      <td align="center">
+      <img border="0" src="figures/2obj_MV.jpg" width="167" height="346"></p>
+<br><b>(c)</b>
+    </tr>
+<tr>
+  </table>
+<b>Figure :</b> Photo of 
+the phantom and position controller; (b) Schematic drawing of movement protocols 
+- a horizontal movement of a single object in two planes separately (3D view); 
+(c) horizontal movement of two cubes of 50&nbsp;ml (top) away from the center to 
+the edge and a cube of 100&nbsp;ml (bottom) fixed in the center of the tank (2D 
+view).
+</center>
+
+<h2>
+Performance parameters:
+</h2>
+A set of parameters is proposed:
+<ul><table>
+   <tr><th>A.
+       <td> data and image noise, and data accuracy,
+   <tr><th>B.
+       <td>
+detectability and distinguishability of single and multiple contrasts, 
+and
+   <tr><th>C.
+       <td>
+Accuracy of reconstructed images.
+</table></ul>
+which correspond to the block diagram:
+<br><center>
+<img border="0" src="figures/eval_doc.jpg" width="648" height="337">
+<br>
+<b>Figure:</b> Concept diagram of 
+evaluation of EIT system performance, where A block is for noise and accuracy: B 
+block is for detectability of a single target and distinguishability of two 
+targets: C block is image reconstruction accuracy.
+</center>
+<p>
+The calculation of these figures of 
+merit is illustrated in figure below:
+<br><Center>
+<img border="0" src="figures/sys_perf_params.jpg" width="618" height="350">
+<br>
+<b>Figure:</b>Procedures for analyzing image data: first row- phantom system, EIT 
+measurement system and reconstruction algorithm, and N frames of the 
+reconstructed images; second row: calculation of ROI over one-fourth amplitude 
+set; third row: calculation of <i>z</i> and GREIT parameters (Adler etal 2009).
+</center>
+<p>
+For better performance, it is 
+desirable for AR, PE and RES to be constant, while PE, RES and RNG should be as 
+small as possible for any target position.
+
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
