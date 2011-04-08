@@ -1,0 +1,125 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+<body>
+<h1>List of parameters:</h1>
+
+<p>Various
+parameters were described in different parts of the paper to evaluate the 
+performance of EIT system. For the consistency of comparing the performance of 
+different EIT systems in different places or in different times, the parameters 
+used in the paper are listed as a reference.
+
+
+<p>
+<b>Table 1: Test parameters</b>
+<center>
+<table border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none;">
+<tr> 
+  <th style="background: #8DB3E2" colspan="2"> Phantom system
+  <th style="background: #8DB3E2" colspan="2"> Measurement system
+  <th style="background: #8DB3E2" colspan="2"> Software model
+</tr>
+<tr>
+  <th style="background: #B8CCE4"> Parameter
+  <th style="background: #B8CCE4"> Value
+  <th style="background: #B8CCE4"> Parameter
+  <th style="background: #B8CCE4"> Value
+  <th style="background: #B8CCE4"> Parameter
+  <th style="background: #B8CCE4"> Value
+</tr>
+<tr>
+   <td align="center"> Tank height
+   <td align="center"> 36 cm
+   <td align="center"> Frequency
+   <td align="center"> 50 kHz
+   <td align="center"> elements
+   <td align="center"> 111 800
+</tr>
+<tr>
+   <td align="center"> Tank diameter
+   <td align="center"> 28 cm
+   <td align="center"> Saline conductivity
+   <td align="center"> 0.8 S/m
+   <td align="center"> Nodes
+   <td align="center"> 18,084
+</tr>
+<tr>
+   <td align="center"> height of saline-filled tank
+   <td align="center"> 30 cm
+   <td align="center"> Number of frames
+   <td align="center"> 10
+   <td align="center"> regularization parameter
+   <td align="center"> 0.15
+</tr>
+<tr>
+   <td align="center"> Test object 1
+   <td align="center"> 50 ml 
+   <td align="center"> Delay between 2 measurements
+   <td align="center"> 15 s
+   <td align="center"> ROI
+   <td align="center"> &frac14; of max
+</tr>
+<tr>
+   <td align="center"> Test object 2
+   <td align="center"> 100 ml<br> (d=4.3 cm)
+   <td align="center"> Drift data frame
+   <td align="center"> 300
+   <td align="center"> Reconstruction
+   <td align="center"> GN
+</tr>
+<tr>
+   <td align="center"> Resistivity of the test objects
+   <td align="center"> 1 M&Omega;/cm
+   <td align="center"> Drift measurement delay
+   <td align="center"> 5 minutes
+   <td align="center"> model
+   <td align="center"> 3D FEM <br> (Netgen)
+</tr>
+<tr>
+   <td align="center"> Number of electrodes
+   <td align="center"> 16
+   <td align="center"> Total measurement time
+   <td align="center"> 2 hours
+   <td align="center"> &nbsp;
+   <td align="center"> &nbsp;
+</tr>
+	</table>
+<p>
+The electrodes are gold plated with a diameter of 2.8 mm and a length of 24 mm. 
+</center>
+
+
+
+<p>
+<b>Table 2: Some devices used for measuring phantom conductivity</b>
+<center>
+<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none; margin-left: -36.85pt" width="585">
+<tr>
+   <td align="center">
+conductivity meter
+   <td align="center">
+ECTestr <br> (Oakton Instruments, USA)
+</tr>
+<tr>
+   <td align="center">
+Measurement of Resistivity of test objects
+   <td align="center">
+Precision LCR Meter LCR-821 <br>
+(GW Instek, Korea)
+</tr>
+<tr style="height: 18.3pt">
+   <td align="center">
+Position controller
+   <td align="center">
+LEGO&trade; NXT Mindstorms
+</tr>
+	</table>
+</center>
+
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
