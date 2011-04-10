@@ -34,11 +34,16 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
 %
 % ELECTRODE SHAPES::
-%  elec_shape = [width,height, {maxsz, pem}]  % Rectangular elecs
+%  elec_shape = [width,height, [maxsz, pem, discr]]  % Rectangular elecs
 %     OR
-%  elec_shape = [radius, {0, maxsz, pem} ]  % Circular elecs
-%     maxsz  (OPT)  -> max size of mesh elems (default = course mesh)
+%  elec_shape = [radius, [0, maxsz, pem, discr] ]  % Circular elecs
+%     radius      -> specify -1 for point electrodes
+%     maxsz (OPT) -> max size of mesh elems (default = course mesh),
+%                    ignored if <= 0 
 %     pem  (OPT)  -> 1: Point Electrode Model, 0: Complete Electrode Model (default)
+%     discr (OPT) -> discretize electrode normals (0 = ignore = default)
+%                    Adjusting this value helps Netgen problems with
+%                    electrodes facing each other.
 %
 % Specify either a common electrode shape or for each electrode
 
@@ -535,7 +540,16 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
 %        end
        centres(i,3) = el_z(i);
        elecs(i).pos  = centres(i,:);
+       if elecs(i).discretize > 0
+        % this bit is to prevent netgen choking on slightly misalligned
+        % electrods
+        th = cart2pol(normal(1),normal(2));
+        frac = 2*pi /elecs(i).discretize ;
+        th = frac * round( th / frac);
+        [normal(1) normal(2)] = pol2cart(th,1);
+       end
        elecs(i).normal = normal;
+       
    end
 
    if n_elecs == 0
@@ -600,13 +614,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
         else
             pos = vert(v2,:);
         end
-   
-        % this bit is to prevent netgen choking on slightly misalligned
-        % electrods
-        th = cart2pol(normal(1),normal(2));
-        frac = 2*pi / 61;
-        th = frac * round( th / frac);
-        [normal(1) normal(2)] = pol2cart(th,1);
+
         
         
    function [pos, normal] = calc_elec_centre_spline(tank_shape, th)
@@ -769,7 +777,11 @@ function elec = elec_spec( row, is2D, hig, rad )
   end
   %TODO support Shunt Electrode Model (SEM)
 
-  
+  if length(row) < 5 || row(5) == 0
+      elec.discretize = 0;
+  else
+      elec.discretize = row(5);
+  end
   
   
   
