@@ -94,7 +94,7 @@ Accuracy of reconstructed images.
 </table></ul>
 which correspond to the block diagram:
 <br><center>
-<img border="0" src="figures/eval_doc.jpg" width="648" height="337">
+<img border="0" src="figures/eval_doc.jpg" width="648" >
 <br>
 <b>Figure:</b> Concept diagram of 
 evaluation of EIT system performance, where A block is for noise and accuracy: B 

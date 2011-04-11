@@ -14,8 +14,7 @@ used in the paper are listed as a reference.
 <p>
 <b>Table 1: Test parameters</b>
 <center>
-<table border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none;">
-<tr> 
+<table border="2" cellspacing="0" cellpadding="0" style="border: medium none;"> <tr> 
   <th style="background: #8DB3E2" colspan="2"> Phantom system
   <th style="background: #8DB3E2" colspan="2"> Measurement system
   <th style="background: #8DB3E2" colspan="2"> Software model
@@ -94,7 +93,7 @@ The electrodes are gold plated with a diameter of 2.8 mm and a length of 24 mm.
 <p>
 <b>Table 2: Some devices used for measuring phantom conductivity</b>
 <center>
-<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none; margin-left: -36.85pt" width="585">
+<table border="1" cellspacing="0" cellpadding="0" style="border: medium none;">
 <tr>
    <td align="center">
 conductivity meter
