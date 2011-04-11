@@ -1,0 +1,142 @@
+<html>
+<!--#include virtual="../../header.html" -->
+
+<body>
+<h2>A guide to performance evaluation algorithm (real measurement)</h2>
+<ul>
+	<li><a href="#Guide">Guide</a></li>
+	<li><a href="#data_analysis">data analysis</a></li>
+	<li><a href="#drift analysis">drift analysis</a></li>
+	<li><a href="#image_analysis">image analysis</a></li>
+</ul>
+<p>
+The examples 
+and demos show how the algorithms for the evaluation of EIT performance based on 
+pre-measured data. Simulated demo is also provided for image analysis in 2D and 
+3D (Detectability and GREIT parameters) in next section. To evaluate any EIT 
+system, the user can define what type of evaluation they want to do after 
+placing the measured data to a proper directory or modifying the directory 
+locations in the code. Simulated tutorial for image analysis is provided in next 
+section.
+
+<p>Download the algorithms in a zip file and then unzip it.
+<p>Main folders: EIT_system_evaluation consists of following 4 
+subfolders: code, data, documents and figures.
+Data repository: We created folders to store the data under 
+the data folder which include accuracy, drift, detectability (1 object) and 
+distinguishability (2 objects) subfolders.
+
+<p>
+<a name="Guide"><H3>Guide to evaluation algorithm:</H3></a>
+The main 
+evaluation algorithm consists of following 3 sub-algorithms:
+
+<ol>
+	<li>data_analysis.m
+	<li>drift_analysis.m
+	<li>image_analysis.m
+</ol>
+
+<p>Note:drift analyses 
+takes long time to to be processed (~20-30 min depending on the PC specification) so a separate 
+sub-function is provided out of data analysis algorithm. 
+
+The algorithm is provided for 
+data and drift analysis below with pre-measured data. The measures for the 
+accuracy and symmetric 
+electrode measurement calculated based on mean values of multiple measurements 
+for each position.
+
+<ol>
+<h4>
+<li><a name="data_analysis">data_analysis.m includes 
+</h4>
+	<ul>
+		<li>SNR
+		<li>Accuracy
+		<li>Reciprocity Accuracy
+		<li><b>File name:</b>data_analysis.m<li>
+		<b>Usage:</b>[snr, accuracy,sym_err]= data_analysis(Reshape);&nbsp; 
+		For example,<i>[snr, accuracy,sym_err]= data_analysis(0)</i>
+	</ul>
+	
+<p>Reshape is a status/input parameter used 
+to check if reshape of signal from U-shape to plateau signal shape is needed or not 
+- 0 not needed, 1 needed. To perform data 
+analysis, the measurement sequence may need to be rearranged to be consistent 
+with the presentation of the results. Measured and simulated voltages need to 
+have plateau signal shape form for ease of analysis as figure (A) (<a href="#Formation_of_plateau_signal_shape">to 
+get plateau signal shape</a>). If the voltage sequence is based on U-shape 
+signal (the Sheffield 
+measurement sequence or the sequence of measurement followed by the injecting 
+electrodes) as figure (B) or&nbsp; , the algorithm will reshape the signal using
+<i><a href="#sin2plateau.m">U2plateau.m</a></i>.
+
+<p>
+<center>
+<img  src="figures/voltage_Platue_shape.png" width="370" height="303">&nbsp;<img src="figures/voltage_sine_shape.png" width="350" height="278">
+<p>
+Figure (A): Plateau shaped signal,(B) U-shape signal
+</center>
+
+<p> 
+<center>
+<img src="figures/result_data.png" >
+<p>
+Figure: (A) SNR values, (B) Accuracy, (C) symmetric measurement error
+</center>
+
+<h4>
+<li>
+<a name="drift analysis">Test of drift</a>
+</h4>
+
+	<ul>
+		<li> File name:</b> <i>drift_analysis.m</i>
+		<li> Usage:[Df]=drift_analysis
+	</ul>
+<p> Users have to check several parameters if it matches what they measured to the default values 
+that are defined in the code like number of frames, number of data points for 
+each frame, and measurement sequences. <b>Input:</b> <i>nframes</i> is the 
+number of frames for drift measurement; <i>nmeas</i> is number of measurements 
+for each frame (mostly 208, in some cases 416). The output value is the values of Allan 
+variance.
+
+<h4>
+<li> <a name="image_analysis">Image analysis</a>
+</h4>
+
+<ul>
+<li>File name : <i>image_analysis.m</i>
+<li>Usage: <i>[DET, greit_para] = image_analysis</i>, this function computes and plots following measures as output:
+
+	<ul>
+		<li> Detectability
+		<li> Distinguishability
+		<li> Amplitude response (AR)
+		<li> Position error (PE)
+		<li> Resolution (RES)
+		<li> Shape deformation (SD)
+		<li> Ringing (RNG)
+	</ul>
+</ul>
+	
+<p> To have a measurement sequence with a <b> plateau signal shape </b> please look at Figure 10 
+of&nbsp; paper <b>source:</b> Gagnon H, Cousineau M, Adler A, Hartinger A 
+2010 A resistive mesh phantom for assessing the performance of EIT systems {\em 
+IEEE T Biomed. Eng.} 57 (9):2257--2266, 2010.
+
+	<ul>
+		<li> U2plateau.m </i>converts Sheffield voltage measurement sequence (input) to plateau shape (output) described above.
+		<li> Usage: <i>[Vp]= U2plateau(V)</i>
+		<li> V should be based on U-shape (Sheffield voltage measurement sequence 
+		or the measurement sequence followed by the injecting electrodes), 
+		produce plateau shaped wave form (Vp)
+	</ul>
+</ol>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
