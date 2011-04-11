@@ -4,9 +4,11 @@ function [snr,accuracy,sym_err]=data_analysis(Reshape)
 % Name:data_analysis.m
 % input: Reshape (0/1) is a status parameter used to check if reshape of 
 % signal from sin to plateau data shape is needed (1) or not (0)
-
+%
 % output: snr, accuracy,sym_err
 % sym_err: calculate symmetrical measurement electrode errors
+
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
 
 % example: [snr, accuracy,sym_err]= data_analysis(0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

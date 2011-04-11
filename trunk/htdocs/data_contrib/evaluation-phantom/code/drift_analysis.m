@@ -9,6 +9,9 @@ function [drift] = drift_analysis
 % recommend 208 for the consistency of preseting results
 % output: sig is the values of Allan variance
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
+
 nmeas = 208; %mnumber of easurements for each frame (mostly 208)
 nframes=300; % number of frames for drift measurement
 Nseq = 1;   % number of sequence that taken

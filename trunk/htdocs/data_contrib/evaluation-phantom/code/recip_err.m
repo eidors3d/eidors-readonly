@@ -1,17 +1,10 @@
-function RERi = recip_err
+function RERi = recip_err(D1, D2)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Name:recip_err.m
 % RER --> Reciprocity Error calculation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% The data is rearranged to match them for different current patterns
-datapath =  ('.././data/reciprocity/');
-D1 = load([datapath,'D11O.mat']);
-D1 =mean(abs([D1.Eit_Data{:}]),2);
-
-datapath =  ('.././data/reciprocity/');
-D2 = load([datapath,'D11R.mat']);
-D2 =mean(abs([D2.Eit_Data{:}]),2);
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
 
 Max1=find(D1==max(D1));
 Max2=find(D2==max(D2));

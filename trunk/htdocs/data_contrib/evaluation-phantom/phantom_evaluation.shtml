@@ -42,16 +42,31 @@ Int. Conf. Electrical Bio-Impedance &amp; Electrical Impedance Tomography Gainvi
 </ul>
 		<hr>
    <tr><th valign="top"> Contributed Files:
-       <td> 
+       <td valign="top"> 
       <table>
-            <tr><th valign="top"> Files: <th> Description
-            <tr><td> <a href=""
-                        >Evaluation software</a>
-                <td> Algorithms to evaluate EIT system 
-				performance
-            <tr><td> <a href=""
-                       >Simulation demo</a>
-                <td> Software simulation
+            <tr><td>&nbsp;&nbsp;<th valign="top"> Files: <th> Description
+            <tr><td><td><a href="code/avar.m"            >avar.m</a>
+              <td>Calculate Allan Variance (code available from 
+                   <a href="http://www.alamath.com/index.php?option=com_content&task=view&id=19&Itemid=9">here</a>)
+            <tr><td><td><a href="code/data_analysis.m"  >data_analysis.m</a>
+              <td>Analyse data for SNR and Accuracy
+            <tr><td><td><a href="code/drift_analysis.m" >drift_analysis.m</a>
+              <td>Analyse data for drift 
+            <tr><td><td><a href="code/image_analysis.m" >image_analysis.m</a>
+              <td>Analyse data for image reconstruction performance
+            <tr><td><td><a href="code/recip_err.m"      >recip_err.m</a>
+              <td>Calculate reciprocity error
+            <tr><td><td><a href="code/U2plateau.m"      >U2plateau.m</a>
+              <td>Convert from "U-shape" to "plateau" data ordering
+            <tr><td><td><a href="code/main.m"           >main.m</a>
+              <td>Main function to call others and plot data
+            <tr><td><td><a href="code/sim_2D_params.m"  >sim_2D_params.m</a>
+              <td>Example in 2D
+            <tr><td><td><a href="code/sim_Det_3D.m"     >sim_Det_3D.m</a>
+              <td>Example in 3D
+            <tr><td><td> <a href="code/code.zip"
+                       >code.zip</a>
+                <td> Zip file (containing all above files)
         </table>
 
 		<hr>
