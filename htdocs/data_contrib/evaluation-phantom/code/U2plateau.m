@@ -3,6 +3,8 @@ function Vp = U2plateau(V, Sheffield_sequence)
 % or other sequence like measuring followed by injecting electrodes
 %reshape sinusoidal wave form (Vs) to plateau shaped wave form (Vp)
 
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
+
 for j=1:size(V,2)
     if Sheffield_sequence
         Vs = V(:,j);

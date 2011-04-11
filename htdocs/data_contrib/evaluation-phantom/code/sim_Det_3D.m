@@ -1,3 +1,5 @@
+% 3D Simulatulation example of system evaluation
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
 function [DET] = sim_Det_3D
 
 in_plane_Def=0; % in plane or off-plane

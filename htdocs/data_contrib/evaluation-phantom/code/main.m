@@ -1,9 +1,15 @@
+% Main code to perform analysis of system performance, as documented
+%  in  the paper:  
+% eidors3d.sf.net/data_contrib/evaluation-phantom/phantom_evaluation.shtml
+
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
 
 [snr,accuracy,sym_err]=data_analysis(0);
 
 RERi = recip_err;
 
-%[drift] = drift_analysis
+% This line takes longer, so comment it to speed up
+[drift] = drift_analysis
 
 [DET, greit_para] = image_analysis;
 
@@ -113,4 +119,3 @@ for i=1:4; %subplot(1,4,i);
         case 4; axis( [ 0 1 2.5 4 ] );
     end
 end
-         

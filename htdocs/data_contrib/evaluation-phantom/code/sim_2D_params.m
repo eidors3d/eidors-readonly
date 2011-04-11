@@ -1,9 +1,10 @@
-
 function [DET, greit_para]= sim_2D_params
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sim_2D_params calculates detectability values and GREIT measures
 % for a single object moving from center to edge of the tank
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
 
 XPos = [0:0.2:0.8]; idx=0;
 for ctrx= XPos; idx=idx+1;

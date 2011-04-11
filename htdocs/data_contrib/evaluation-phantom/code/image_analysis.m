@@ -9,6 +9,8 @@ function [DET, greit_para] = image_analysis
 % 2 for distinguishability
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% (C) 2011 Mamatjan Yasheng. License: GPL v2 or v3
+
 % initialization
 description = {'Detectability vlaue','Distinguishability vlaue'};
 Dist =[1,2];   % 1for both detectability;  2 for distinguishability
