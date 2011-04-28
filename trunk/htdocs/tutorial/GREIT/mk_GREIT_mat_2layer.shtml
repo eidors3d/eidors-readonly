@@ -1,0 +1,61 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction For different Model Geometries</h2>
+
+The GREIT formulation can be directly used to 
+reconstruct a single plane in the centre of an
+EIT configuration in which two (or more) planes
+of electrodes are used.
+
+<h3> 
+Simulation model
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_mat_2layer01.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_mat_2layer01a.png">
+<img src="mk_GREIT_mat_2layer01b.png">
+<br><i>Figure:</i>
+Simulation of data on an elliptical model with
+lung shaped contrasting regions
+</center>
+
+<h3> 
+Calculate GREIT reconstruction matrix
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_mat_2layer02.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_mat_2layer02a.png">
+<br><i>Figure:</i>
+Simulation of data on an elliptical model with
+lung shaped contrasting regions
+</center>
+
+<h3> 
+Reconstruct Images
+</h3>
+
+<pre>
+<!--#include virtual="mk_GREIT_mat_ellip03.m" -->
+</pre>
+
+<center>
+<img src="mk_GREIT_mat_2layer03a.png">
+<br><i>Figure:</i>
+Reconstructed images
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
