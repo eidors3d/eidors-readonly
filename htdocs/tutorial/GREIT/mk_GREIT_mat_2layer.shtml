@@ -1,5 +1,5 @@
 <!--#include virtual="../nav-sidebar-tut.shtml" -->
-<h2>GREIT Reconstruction For different Model Geometries</h2>
+<h2>GREIT Reconstruction for multiple electrode layers</h2>
 
 The GREIT formulation can be directly used to 
 reconstruct a single plane in the centre of an
