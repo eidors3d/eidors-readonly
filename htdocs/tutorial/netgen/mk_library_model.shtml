@@ -1,0 +1,57 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2> 
+Pre-packaged models
+</h2>
+
+
+Many pre-compiled shapes have been put into the function
+<tt>mk_library_model.m</tt>. This may be used to give easy
+access to thorax shapes. <i>We indend to add more shapes
+to this model. Contributions are welcome</i>
+
+<p>
+To see what shapes are available, run:
+<pre>
+&gt;&gt; mk_library_model('list')
+ans =
+    'pig_23kg_16el'
+    'pig_23kg_32el'
+    'pig_23kg_16el_lungs'
+    'pig_23kg_32el_lungs'
+    'adult_male_16el'
+    'adult_male_32el'
+    'adult_male_16el_lungs'
+    'adult_male_32el_lungs'
+</pre>
+
+<h3>Pig thorax model</h3>
+
+<pre>
+<!--#include virtual="mk_library_model01.m" -->
+</pre>
+
+<center>
+<img src="mk_library_model01a.png">
+<img src="mk_library_model01b.png">
+</center>
+
+
+<h3>Human thorax model with lungs</h3>
+
+<pre>
+<!--#include virtual="mk_library_model02.m" -->
+</pre>
+
+<center>
+<img src="mk_library_model02a.png">
+<img src="mk_library_model02b.png">
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
