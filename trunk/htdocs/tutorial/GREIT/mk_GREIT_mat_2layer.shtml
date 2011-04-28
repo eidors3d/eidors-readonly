@@ -42,7 +42,7 @@ Reconstruct Images
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_mat_ellip03.m" -->
+<!--#include virtual="mk_GREIT_mat_2layer03.m" -->
 </pre>
 
 <center>
