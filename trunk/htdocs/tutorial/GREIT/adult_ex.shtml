@@ -1,0 +1,62 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction for an adult human thorax geometry</h2>
+
+Reconstruction of experimental data onto an adult human thorax shape. 
+
+
+<h3> 
+Forward Model
+</h3>
+
+<pre>
+<!--#include virtual="adult_ex01.m" -->
+</pre>
+
+<center>
+<img src="../netgen/mk_library_model02a.png">
+<img src="../netgen/mk_library_model02b.png">
+<br><i>Figure:</i>
+Forward model used for training GREIT using
+contrasting lung regions
+</center>
+
+<h3> 
+Training GREIT
+</h3>
+
+<pre>
+<!--#include virtual="adult_ex02.m" -->
+</pre>
+
+<h3> 
+Show some images
+</h3>
+
+Data used are of tidal breathing of the author using the EIT equipment
+<ul>
+Guardo R Boulay C   Murray B   Bertrand M
+<a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=83560"
+   >An experimental study in electrical impedance tomography using backprojection reconstruction</a>
+  <i>IEEE T Biomed Eng</i> 38: 617&minus;627, 1991
+</ul>
+<pre>
+<!--#include virtual="adult_ex03.m" -->
+</pre>
+
+
+<center>
+<img src="adult_ex03a.png">
+<img src="adult_ex03b.png">
+<br><i>Figure:</i>
+Forward model used for training GREIT using
+contrasting lung regions
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
