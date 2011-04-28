@@ -14,7 +14,7 @@ Forward Model
 
 <center>
 <img src="../netgen/mk_library_model02a.png">
-<img src="../netgen/mk_library_model02b.png">
+<img src="adult_ex01b.png">
 <br><i>Figure:</i>
 Forward model used for training GREIT using
 contrasting lung regions
