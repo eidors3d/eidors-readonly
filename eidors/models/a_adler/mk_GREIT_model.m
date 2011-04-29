@@ -67,13 +67,11 @@ end
 
 
 Nsim = opt.Nsim;
-[vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
+[vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
 opt.normalize = imgs.fwd_model.normalize_measurements;
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
-if opt.target_plane == 1i
-    opt.target_plane = mean(elec_loc(:,3));
-end
+
 
 %imdl = mk_common_gridmdl('b2c', RM);
  
@@ -138,7 +136,7 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
+function [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
    ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
@@ -150,6 +148,11 @@ function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
        enodesi =     imgs.fwd_model.electrode(i).nodes;
        elec_loc(i,:) = mean( imgs.fwd_model.nodes( enodesi,:),1 );
    end
+   
+   if opt.target_plane == 1i
+       opt.target_plane = mean(elec_loc(:,3));
+   end
+   
    % calculate the boundary (for external use)
    F = fourier_fit(elec_loc(:,1:2));
    v = linspace(0,1,100+1); v(end)=[];
