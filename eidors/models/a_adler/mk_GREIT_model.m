@@ -26,8 +26,11 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     target_size - size of simulated targets as proportion of mesh radius
 %         (default: 0.02). Can be specified as [min_size max_size] for 
 %         random variation
-%     target_offset - maximum allowed vertical displacement from the plane
-%         of electrodes (default: 0). Can be specified as 
+%     target_plane - the (mean) height z at which simulation targets are
+%         placed. This controls the image plane. Default: mean electrode
+%         height
+%     target_offset - maximum allowed vertical displacement from the
+%         target_plane (default: 0). Can be specified as
 %         [down_offset up_offset].
 %     noise_figure - the noise figure (NF) to achieve. Overwrites weight 
 %         which will be optimised to achieve the target NF.
@@ -68,7 +71,9 @@ Nsim = opt.Nsim;
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
 opt.normalize = imgs.fwd_model.normalize_measurements;
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
-
+if opt.target_plane == 1i
+    opt.target_plane = mean(elec_loc(:,3));
+end
 
 %imdl = mk_common_gridmdl('b2c', RM);
  
@@ -96,7 +101,7 @@ if ~isempty(opt.noise_figure)
     end
     target = opt.noise_figure;
     xyzr = mean(fmdl.nodes);
-    xyzr(3) = mean(elec_loc(:,3));
+    xyzr(3) = opt.target_plane;
     xyzr(4) = opt.target_size;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure');
@@ -155,7 +160,8 @@ function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
        case 0 % original
            r = linspace(0,0.9, Nsim);
            th = r*4321; % want object to jump around in radius
-           xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim);
+           xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); 
+               opt.target_plane*ones(1,Nsim);
                0.05/mean([maxx,maxy])*ones(1,Nsim)];
        
        case 1 %centre-heavy
@@ -166,7 +172,7 @@ function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
            pts = fourier_fit(F,v);
            idx_p = floor(rand(Nsim,1)*Nsim*100);
            xyzr = pts(idx_p,:)'.*repmat(rand(Nsim,1),[1 2])';
-           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,Nsim);
+           xyzr(3,:) = calc_offset(opt.target_plane,opt,Nsim);
            
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
@@ -184,7 +190,7 @@ function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
            IN = inpolygon(x,y,pts(:,1),pts(:,2));
            xyzr(1,:) = x(find(IN,Nsim));
            xyzr(2,:) = y(find(IN,Nsim));
-           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,Nsim);
+           xyzr(3,:) = calc_offset(opt.target_plane,opt,Nsim);
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 3 % uniform, non-random
@@ -200,7 +206,7 @@ function [vi,vh,xy,bound,elec_loc]= stim_targets(imgs, Nsim, opt );
            IN = inpolygon(x,y,pts(:,1),pts(:,2));
            xyzr(1,:) = x(find(IN));
            xyzr(2,:) = y(find(IN));
-           xyzr(3,:) = calc_offset(mean(elec_loc(:,3)),opt,size(xyzr,2));
+           xyzr(3,:) = calc_offset(opt.target_plane,opt,size(xyzr,2));
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
@@ -261,7 +267,10 @@ function opt = parse_options(opt);
     if sum(size(opt.target_size)) == 2
             opt.random_size = false;
     end
-
+    
+    if ~isfield(opt, 'target_plane')
+        opt.target_plane = 1i;
+    end
     if ~isfield(opt, 'target_offset')
         opt.target_offset = 0;
     end
