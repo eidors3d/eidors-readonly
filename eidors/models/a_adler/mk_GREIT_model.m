@@ -48,8 +48,6 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
-opt = parse_options(options);
-
 if isstr(fmdl)
    imgs = get_prepackaged_fmdls( fmdl );
 elseif isfield(fmdl,'type');
@@ -65,7 +63,7 @@ else
    error('specified parameter must be an object or a string');
 end
 
-
+opt = parse_options(options,fmdl);
 Nsim = opt.Nsim;
 [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
@@ -249,7 +247,10 @@ function RM = resize_if_reqd(RM,inside);
       error('mismatch in size of provided RecMatrix');
    end
 
-function opt = parse_options(opt);
+function opt = parse_options(opt,fmdl);
+    
+    maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
+    
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'distr'),     opt.distr = 0; end 
     if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000; end
@@ -273,6 +274,13 @@ function opt = parse_options(opt);
     
     if ~isfield(opt, 'target_plane')
         opt.target_plane = 1i;
+    else
+        t = opt.target_plane;
+        if t<minnode(3) || t>maxnode(3)
+            warning('options.target_plane is outside the model!');
+            eidors_msg('mk_GREIT_model: Resorting to default target_plane');
+            opt.target_plane = 1i;
+        end
     end
     if ~isfield(opt, 'target_offset')
         opt.target_offset = 0;
