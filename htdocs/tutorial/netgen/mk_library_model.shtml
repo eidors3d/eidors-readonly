@@ -47,6 +47,26 @@ ans =
 <img src="mk_library_model02b.png">
 </center>
 
+<h3>Customized library model</h3>
+
+To see what shapes are available, run:
+<pre>
+&gt;&gt; shape_library('list');
+Available shapes:
+    'adult_male'
+    'pig_23kg'
+</pre>
+
+<pre>
+<!--#include virtual="mk_library_model03.m" -->
+</pre>
+
+<center>
+<img src="mk_library_model03a.png">
+<img src="mk_library_model03b.png">
+</center>
+
+
 </td></tr></table>
 <p>
 <small>

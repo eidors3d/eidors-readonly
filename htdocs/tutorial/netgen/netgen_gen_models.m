@@ -132,6 +132,17 @@ switch number
  i=i+1;elec_pos(i,:) = [ 0.4,0.2,0.2, 1,0,0]; elec_obj{i} = 'fish';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
+   case 12;
+shape_str = ['solid top     = ellipsoid(0,0,0; 0,0,1; 1,0,0; 0,1,0); \n' ...
+    'solid mainobj= top and orthobrick(-2,-2,0;2,2,2) -maxh=0.1;\n'];
+deg2rad = pi/180;
+th = (-70:20:70)'*deg2rad;
+ elec_pos = [0*th,sin(th),cos(th),0*th,sin(th),cos(th); ...
+             sin(th),0*th,cos(th),sin(th),0*th,cos(th)];
+ elec_shape=[0.05];
+ elec_obj = 'top';
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
 end
 
 if ~exist('fmdl'); return; end
