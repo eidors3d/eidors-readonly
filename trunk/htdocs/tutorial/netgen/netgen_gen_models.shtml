@@ -228,6 +228,26 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 on the inclusion.
 </center>
 
+<h3>
+Shape 12
+</h3>
+
+<pre>
+shape_str = ['solid top     = ellipsoid(0,0,0; 0,0,1; 1,0,0; 0,1,0); \n' ...
+    'solid mainobj= top and orthobrick(-2,-2,0;2,2,2) -maxh=0.1;\n'];
+deg2rad = pi/180;
+th = (-70:20:70)'*deg2rad;
+elec_pos = [0*th,sin(th),cos(th),0*th,sin(th),cos(th); ...
+            sin(th),0*th,cos(th),sin(th),0*th,cos(th)];
+elec_shape=[0.05];
+elec_obj = 'top';
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+</pre>
+<center>
+<img src="netgen_gen_models12.png">
+<br>Half sphere with top surface electrodes
+</center>
+
 </td></tr></table>
 <p>
 <small>
