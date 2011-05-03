@@ -3,8 +3,8 @@ function out = mk_library_model(shape,elec_pos,elec_shape,maxsz)
 %
 % MK_LIBRARY_MODEL(shape,elec_pos,elec_shape,maxsz) where:
 %   shape -  a cell array of strings and
-%     shape{1} is the shape_library model used (run shape_libary('list') to
-%     get a list
+%     shape{1} is the shape_library model used
+%          (run shape_libary('list') to get a list
 %     shape{2} is the the boundary. If absent, 'boundary' is assumed.
 %     shape{3..} are strings specifying additional inclusions (such as
 %     lungs)
