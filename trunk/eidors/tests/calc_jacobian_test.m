@@ -8,7 +8,7 @@ function ok= calc_jacobian_test
 % $Id$
 
 ok= 1;
-delta = 1e-4;
+delta = 1e-5;
 testvec= [5,20,40,130];
 
 mdl= make_aa_mdl2;

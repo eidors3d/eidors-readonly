@@ -57,10 +57,10 @@ function ok= test_adj(pat)
    if any( size(meas)~= [13 16] )
       ok=0; eidors_msg('Fail at pt#04',1); return; end
 
-   if any( meas(1,:)~= [0,0,-1,1,zeros(1,12)] )
+   if any( meas(1,:)~= [0,0,1,-1,zeros(1,12)] )
       ok=0; eidors_msg('Fail at pt#05',1); return; end
 
-   if any( meas(13,:)~= [zeros(1,14),-1,1] )
+   if any( meas(13,:)~= [zeros(1,14),1,-1] )
       ok=0; eidors_msg('Fail at pt#06',1); return; end
 
    % Stim pattern # 10
@@ -72,10 +72,10 @@ function ok= test_adj(pat)
    if any( size(meas)~= [13 16] )
       ok=0; eidors_msg('Fail at pt#08',1); return; end
 
-   if any( meas(1,:)~= [-1,1,zeros(1,14)] )
+   if any( meas(1,:)~= [1,-1,zeros(1,14)] )
       ok=0; eidors_msg('Fail at pt#09',1); return; end
 
-   if any( meas(13,:)~= [1,zeros(1,14),-1] )
+   if any( meas(13,:)~= [-1,zeros(1,14),1] )
       ok=0; eidors_msg('Fail at pt#10',1); return; end
 
 function ok= test_adj_full(pat)
@@ -97,10 +97,10 @@ function ok= test_adj_full(pat)
    if any( size(meas)~= [16 16] )
       ok=0; eidors_msg('Fail at pt#14',1); return; end
 
-   if any( meas(1,:)~= [-1,1,zeros(1,14)] )
+   if any( meas(1,:)~= [1,-1,zeros(1,14)] )
       ok=0; eidors_msg('Fail at pt#15',1); return; end
 
-   if any( meas(13,:)~= [zeros(1,12),-1,1,0,0] )
+   if any( meas(13,:)~= [zeros(1,12),1,-1,0,0] )
       ok=0; eidors_msg('Fail at pt#16',1); return; end
 
    % Stim pattern # 10
@@ -112,10 +112,10 @@ function ok= test_adj_full(pat)
    if any( size(meas)~= [16 16] )
       ok=0; eidors_msg('Fail at pt#18',1); return; end
 
-   if any( meas(1,:)~= [-1,1,zeros(1,14)] )
+   if any( meas(1,:)~= [1,-1,zeros(1,14)] )
       ok=0; eidors_msg('Fail at pt#19',1); return; end
 
-   if any( meas(13,:)~= [zeros(1,12),-1,1,0,0] )
+   if any( meas(13,:)~= [zeros(1,12),1,-1,0,0] )
       ok=0; eidors_msg('Fail at pt#20',1); return; end
 
 
@@ -138,10 +138,10 @@ function ok= test_adj_rotate(pat)
    if any( size(meas)~= [13 16] )
       ok=0; eidors_msg('Fail at pt#24',1); return; end
 
-   if any( meas(1,:)~= [0,0,-1,1,zeros(1,12)] )
+   if any( meas(1,:)~= [0,0,1,-1,zeros(1,12)] )
       ok=0; eidors_msg('Fail at pt#25',1); return; end
 
-   if any( meas(13,:)~= [zeros(1,14),-1,1] )
+   if any( meas(13,:)~= [zeros(1,14),1,-1] )
       ok=0; eidors_msg('Fail at pt#26',1); return; end
 
    % Stim pattern # 10
@@ -153,10 +153,10 @@ function ok= test_adj_rotate(pat)
    if any( size(meas)~= [13 16] )
       ok=0; eidors_msg('Fail at pt#28',1); return; end
 
-   if any( meas(1,:)~= [zeros(1,11),-1,1,zeros(1,3)] )
+   if any( meas(1,:)~= [zeros(1,11),1,-1,zeros(1,3)] )
       ok=0; eidors_msg('Fail at pt#29',1); return; end
 
-   if any( meas(13,:)~= [zeros(1,7),-1,1,zeros(1,7)] )
+   if any( meas(13,:)~= [zeros(1,7),1,-1,zeros(1,7)] )
       ok=0; eidors_msg('Fail at pt#30',1); return; end
 
 function ok= test_adj_no_redund(pat)
@@ -178,10 +178,10 @@ function ok= test_adj_no_redund(pat)
    if any( size(meas)~= [13 16] )
       ok=0; eidors_msg('Fail at pt#34',1); return; end
 
-   if any( meas(1,:)~= [0,0,-1,1,zeros(1,12)] )
+   if any( meas(1,:)~= [0,0,1,-1,zeros(1,12)] )
       ok=0; eidors_msg('Fail at pt#35',1); return; end
 
-   if any( meas(13,:)~= [zeros(1,14),-1,1] )
+   if any( meas(13,:)~= [zeros(1,14),1,-1] )
       ok=0; eidors_msg('Fail at pt#36',1); return; end
 
    % Stim pattern # 10
@@ -193,9 +193,9 @@ function ok= test_adj_no_redund(pat)
    if any( size(meas)~= [5 16] )
       ok=0; eidors_msg('Fail at pt#38',1); return; end
 
-   if any( meas(1,:)~= [zeros(1,11),-1,1,zeros(1,3)] )
+   if any( meas(1,:)~= [zeros(1,11),1,-1,zeros(1,3)] )
       ok=0; eidors_msg('Fail at pt#39',1); return; end
 
-   if any( meas(5,:)~= [1,zeros(1,14),-1] )
+   if any( meas(5,:)~= [-1,zeros(1,14),1] )
       ok=0; eidors_msg('Fail at pt#40',1); return; end
 

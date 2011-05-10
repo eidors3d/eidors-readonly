@@ -550,3 +550,109 @@ end
    [stim,msel] = mk_stim_patterns(6,1,[0,2],'{mono}',{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
    unit_test_cmp('meas_sel: nnp2436',msel(:,[4,5]), [1,0;1,1;1,1;0,1;1,0;0,1]);
+
+% TESTS FROM OLD mk_stim_patterns_test CODE
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}');
+   test_adj(pat);
+
+   options= {'no_rotate_meas'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj(pat);
+
+   options= {'no_rotate_meas', 'no_meas_current'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj(pat);
+
+   options= {'no_rotate_meas', 'meas_current'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj_full(pat);
+
+   options= {'meas_current'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj_full(pat);
+
+   options= {'rotate_meas'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj_rotate(pat);
+
+   options= {'rotate_meas', 'no_meas_current'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj_rotate(pat);
+
+   options= {'rotate_meas','no_redundant', 'no_meas_current'};
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   test_adj_no_redund(pat);
+
+function ok= test_adj(pat)
+   %%%  test adjacent current pattern
+
+   unit_test_cmp('pt#01', length(pat), 16);
+   unit_test_cmp('pt#02', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#03', pat(1).stim_pattern, [-1;1;zeros(14,1)]); % Stim pattern # 1
+
+   meas= pat(1).meas_pattern;
+   unit_test_cmp('pt#04', size(meas), [13 16] );
+   unit_test_cmp('pt#05', meas(1,:), [0,0,1,-1,zeros(1,12)] );
+   unit_test_cmp('pt#06', meas(13,:), [zeros(1,14),1,-1] );
+   unit_test_cmp('pt#07', pat(10).stim_pattern , [zeros(9,1);-1;1;zeros(5,1)] );
+
+   meas= pat(10).meas_pattern;
+   unit_test_cmp('pt#08', size(meas), [13 16] );
+   unit_test_cmp('pt#09', meas(1,:), [1,-1,zeros(1,14)] );
+   unit_test_cmp('pt#10', meas(13,:), [-1,zeros(1,14),1] );
+
+function ok= test_adj_full(pat)
+   %%% test adjacent current pattern (full)
+
+   unit_test_cmp('pt#11', length(pat), 16);
+   unit_test_cmp('pt#12', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#13', pat(1).stim_pattern, [-1;1;zeros(14,1)]);
+
+   meas= pat(1).meas_pattern;
+   unit_test_cmp('pt#14', size(meas), [16 16] );
+   unit_test_cmp('pt#15', meas(1,:), [1,-1,zeros(1,14)] );
+   unit_test_cmp('pt#16', meas(13,:), [zeros(1,12),1,-1,0,0] );
+   unit_test_cmp('pt#17', pat(10).stim_pattern, [zeros(9,1);-1;1;zeros(5,1)] );
+
+   meas= pat(10).meas_pattern;
+   unit_test_cmp('pt#18', size(meas), [16 16] );
+   unit_test_cmp('pt#19', meas(1,:), [1,-1,zeros(1,14)] );
+   unit_test_cmp('pt#20', meas(13,:), [zeros(1,12),1,-1,0,0] );
+
+
+function ok= test_adj_rotate(pat)
+   %%%% test adjacent current pattern (rotate)
+
+   unit_test_cmp('pt#21', length(pat), 16);
+   unit_test_cmp('pt#22', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#23', pat(1).stim_pattern, [-1;1;zeros(14,1)]);
+
+   meas= pat(1).meas_pattern;
+   unit_test_cmp('pt#24', size(meas), [13 16] );
+   unit_test_cmp('pt#25', meas(1,:), [0,0,1,-1,zeros(1,12)] );
+   unit_test_cmp('pt#26', meas(13,:), [zeros(1,14),1,-1] );
+   unit_test_cmp('pt#27', pat(10).stim_pattern, [zeros(9,1);-1;1;zeros(5,1)] );
+
+   meas= pat(10).meas_pattern;
+   unit_test_cmp('pt#28', size(meas), [13 16] );
+   unit_test_cmp('pt#29', meas(1,:), [zeros(1,11),1,-1,zeros(1,3)] );
+   unit_test_cmp('pt#30', meas(13,:), [zeros(1,7),1,-1,zeros(1,7)] );
+
+function ok= test_adj_no_redund(pat)
+   %%% test adjacent current pattern (rotate)
+
+   unit_test_cmp('pt#31', length(pat), 14);
+   unit_test_cmp('pt#32', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#33', pat(1).stim_pattern, [-1;1;zeros(14,1)]);
+
+   meas= pat(1).meas_pattern;
+   unit_test_cmp('pt#34', size(meas), [13 16] );
+   unit_test_cmp('pt#35', meas(1,:), [0,0,1,-1,zeros(1,12)] );
+   unit_test_cmp('pt#36', meas(13,:), [zeros(1,14),1,-1] );
+   unit_test_cmp('pt#37', pat(10).stim_pattern, [zeros(9,1);-1;1;zeros(5,1)] );
+
+   meas= pat(10).meas_pattern;
+   unit_test_cmp('pt#38', size(meas), [5 16] );
+   unit_test_cmp('pt#39', meas(1,:), [zeros(1,11),1,-1,zeros(1,3)] );
+   unit_test_cmp('pt#40', meas(5,:), [-1,zeros(1,14),1] );
+

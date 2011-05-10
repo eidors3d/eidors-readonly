@@ -10,7 +10,7 @@ try; imdl= rmfield(imdl,'R_prior');   end
 
 any_priors= {@tikhonov_image_prior, ...
              @noser_image_prior, ...
-             @Gaussian_HPF_prior, ...
+             @gaussian_HPF_prior, ...
              @laplace_image_prior};
 
 R_priors=   {any_priors{:}, ...
@@ -18,7 +18,7 @@ R_priors=   {any_priors{:}, ...
 
 % Call R_priors as R_priors
 eidors_cache clear
-for p = [R_priors{:}]
+for i = 1:length(R_priors); p = R_priors{i};
    inv_mdl= imdl;
    inv_mdl.R_prior= p;
    R= calc_R_prior(inv_mdl);
@@ -27,7 +27,7 @@ end
    
 % Call R_priors as RtR_priors
 eidors_cache clear
-for p = [R_priors{:}]
+for i = 1:length(R_priors); p = R_priors{i};
    inv_mdl= imdl;
    inv_mdl.R_prior= p;
    RtR= calc_RtR_prior(inv_mdl);
@@ -36,18 +36,25 @@ end
    
 % Call RtR_priors as RtR_priors
 eidors_cache clear
-for p = [any_priors{:}]
+for i = 1:length(R_priors); p = R_priors{i};
    inv_mdl= imdl;
    inv_mdl.RtR_prior= p;
    RtR= calc_RtR_prior(inv_mdl);
-   fprintf('RtR_prior: %20s  RtR_condest= %5.4g\n', func2str(p), condest(RtR));
+   if diff(size(RtR))~=0  % non-square
+      fprintf('RtR_prior: %20s  RtR_condest= NON-SQUARE\n', func2str(p) );
+   else
+      fprintf('RtR_prior: %20s  RtR_condest= %5.4g\n', func2str(p), condest(RtR));
+   end
 end
 
 % Call RtR_priors as R_priors
 eidors_cache clear
-for p = [any_priors{:}]
+for i = 1:length(R_priors); p = R_priors{i};
    inv_mdl= imdl;
    inv_mdl.RtR_prior= p;
+   if strcmp(func2str(p), 'ab_calc_tv_prior')
+      continue; % not fair to ask it to ichol a non-square matrix
+   end
    R= calc_R_prior(inv_mdl);
    fprintf('RtR_prior: %20s  R_condest= %5.4g\n', func2str(p), condest(R'*R));
 end
