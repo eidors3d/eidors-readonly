@@ -44,12 +44,22 @@ maxiter=10000; % This should be high enough, but it may maybe this should
 
 if isreal(E)==1
 
-   %Preconditioner
-   % OCtave doesn't have Cholinc yet (as of 2.9.13)
-    if exist('OCTAVE_VERSION')
+    ver = eidors_obj('interpreter_version');
+
+    if ver.isoctave % OCtave doesn't have Cholinc yet (as of 2.9.13)
        M= [];
     else
-       M = cholinc(E,tol/10);
+       opts.droptol = tol/10;
+       if ver.ver < 7.012
+          M = cholinc(E,opts.droptol);
+       else
+          opts.droptol = 1e-6;
+          opts.type = 'ict'; %otherwise droptol is ignored opts.type = 'nofill';
+
+%         M = ichol(E,opts);
+% ichol makes pcg even slower. It's better to use no pre-conditioner
+          M = [];
+       end
     end
 
     for y=1:size(MC,2)
@@ -58,6 +68,7 @@ if isreal(E)==1
     [v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y), ...
             tol*norm(I(:,y)),maxiter,M',M,v_f(:,y)); 
     end
+
 else  %is real
 
    %Preconditioner

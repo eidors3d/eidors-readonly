@@ -39,7 +39,14 @@ elseif isfield(inv_model,'RtR_prior')
    % Instead we calculate cholinc with a droptol of 1e-5.
    %  For priors, this should be fine, since exact values
    %  especially far away, are not necessary
-   R_prior = cholinc(RtR_prior,1e-5);
+   ver = eidors_obj('interpreter_version');
+   opts.droptol = 1e-5; 
+   
+   if ver.isoctave  || ver.ver < 7.012
+      R_prior = cholinc(RtR_prior,opts.droptol);
+   else
+      R_prior = ichol(RtR_prior);
+   end
 else
    error('calc_R_prior: neither R_prior or RtR_prior func provided');
 end
