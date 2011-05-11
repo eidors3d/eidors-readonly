@@ -91,24 +91,27 @@ imdl = select_imdl( fmdl,{'Basic GN dif'});
 imdl.solve = @solve_use_matrix;
 imdl.rec_model = rmdl;
 
+log_level = eidors_msg( 'log_level');
+eidors_msg( 'log_level', 1);
+
 if ~isempty(opt.noise_figure)
     if ~isempty(weight)
-        eidors_msg('mk_GREIT_model: Ignoring weight parameter, options.noise_figure is non-empty')
+        eidors_msg('mk_GREIT_model: Ignoring weight parameter, options.noise_figure is non-empty');
     end
     target = opt.noise_figure;
     xyzr = mean(fmdl.nodes);
     xyzr(3) = opt.target_plane;
     xyzr(4) = opt.target_size;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
-    eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure');
-    eidors_msg('mk_GREIT_model: This will take a while...');
+    eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
+    eidors_msg('mk_GREIT_model: This will take a while...',1);
     f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
     [weight, NF] = fminsearch(f, target);
     eidors_msg(['mk_GREIT_model: Optimal solution gives NF=' ... 
-        num2str(NF+target) ' with weight=' num2str(weight)]);
+        num2str(NF+target) ' with weight=' num2str(weight)],1);
 end
-
+eidors_msg( 'log_level', log_level);
 RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
 imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
 %imdl.solve_use_matrix.map = inside;
@@ -120,6 +123,7 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
    RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
    imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
    NF = calc_noise_params(imdl,vh, vi_NF);
+   eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
    out = (NF - target)^2;
 %    out = (mean(NF) - target)^2 + std(NF);
    
@@ -212,7 +216,6 @@ function [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
    end
-
    [vh,vi] = simulate_movement(imgs, xyzr);
    xy = xyzr(1:2,:);
 
