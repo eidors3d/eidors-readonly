@@ -209,13 +209,24 @@ function mapping = contained_elems_3d( mdl, xyr );
    
    tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
    %mapping = sparse( Ne, Nc );
-   n_interp = 6;
+   n_interp_min = 6;
+   n_interp_max = 10;
    for i=1:Nc
        good = ~too_far(:,i);
        if ~any(good), continue, end %point outside the mesh
        tmp.elems = mdl.elems(good,:);
-       m_pts = interp_mesh( tmp, n_interp);
-       mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
+       n_interp = n_interp_min-1;
+       log_level = eidors_msg('log_level');
+       eidors_msg('log_level',1);
+       while(sum(mapping(good,i))==0 && n_interp < n_interp_max-1)
+           n_interp = n_interp+1;
+           m_pts = interp_mesh( tmp, n_interp);
+           mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
+       end
+       eidors_msg('log_level', log_level);
+       if (sum(mapping(good,i)) == 0)
+           eidors_message(['Interpolation failed for point ' num2str(i)],1);
+       end
    end
     end
    
@@ -234,6 +245,7 @@ function frac= contained_elem_pts(m_pts, xyr);
      inpts = inr < xyr(4)^2;
      frac= mean( inpts ,3);
      if sum(inpts(:))==0
+         % TODO: This message is outdated
          eidors_msg(['mk_c2f_circ_mapping: Interpolation failed: increase ', ...
                          'fwd_model.interp_mesh.n_interp']);
      end
