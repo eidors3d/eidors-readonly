@@ -51,6 +51,10 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );
    c2f = mk_c2f_circ_mapping( img.fwd_model, xyzr);
 
    img.fwd_model.coarse2fine = c2f;
+
+   % We don't want a normalized jacobian here
+   img.fwd_model.normalize_measurements = 0;
+
    J= calc_jacobian( img );
    J= move_jacobian_postprocess( J, img, Nt);
 
