@@ -91,8 +91,7 @@ imdl = select_imdl( fmdl,{'Basic GN dif'});
 imdl.solve = @solve_use_matrix;
 imdl.rec_model = rmdl;
 
-log_level = eidors_msg( 'log_level');
-eidors_msg( 'log_level', 1);
+log_level = eidors_msg( 'log_level', 1);
 
 if ~isempty(opt.noise_figure)
     if ~isempty(weight)
@@ -216,7 +215,12 @@ function [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
    end
-   [vh,vi] = simulate_movement(imgs, xyzr);
+   before = size(xyzr,2);
+   [vh,vi,xyzr] = simulate_movement(imgs, xyzr);
+   after = size(xyzr,2);
+   if(after~=before)
+       eidors_msg(['mk_GREIT_model: Now using ' num2str(after) ' points']);
+   end
    xy = xyzr(1:2,:);
 
 function z = calc_offset(z0,opt,Nsim)

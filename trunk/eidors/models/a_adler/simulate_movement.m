@@ -48,8 +48,10 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );
    end
 
    Nt = size(xyzr,2);
-   c2f = mk_c2f_circ_mapping( img.fwd_model, xyzr);
-
+   [c2f failed] = mk_c2f_circ_mapping( img.fwd_model, xyzr);
+   xyzr(:,failed) = [];
+   c2f(:,failed) = [];
+   Nt = Nt - nnz(failed);
    img.fwd_model.coarse2fine = c2f;
 
    % We don't want a normalized jacobian here
