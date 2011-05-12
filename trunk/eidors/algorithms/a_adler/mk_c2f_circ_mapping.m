@@ -1,4 +1,4 @@
-function mapping = mk_c2f_circ_mapping( mdl, xyzr );
+function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );
 % MK_C2F_CIRC_MAPPING: create a mapping matrix from circles/spheres to FEM
 % mapping= mk_c2f_circ_mapping( mdl, xyzr );
 %
@@ -21,9 +21,12 @@ function mapping = mk_c2f_circ_mapping( mdl, xyzr );
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
+failed = false;% not all subfunctions set this
+
 c_obj = cache_obj(mdl, xyzr);
 
 mapping = eidors_obj('get-cache', c_obj, 'circle_mapping');
+failed = eidors_obj('get-cache', c_obj, 'failed_circle_mapping');
 if ~isempty(mapping)
     eidors_msg('mk_c2f_circ_mapping: using cached value', 3);
 else
@@ -31,11 +34,12 @@ else
     mdl = fix_model(mdl);
     switch size(xyzr,1)
       case 3; mapping = contained_elems_2d( mdl, xyzr );
-      case 4; mapping = contained_elems_3d( mdl, xyzr );
+      case 4; [mapping failed] = contained_elems_3d( mdl, xyzr );
       case 5: error('size of xyzr incorrect');
     end
 
     eidors_obj('set-cache', c_obj, 'circle_mapping', mapping);
+    eidors_obj('set-cache', c_obj, 'failed_circle_mapping', failed);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
 end
 
@@ -187,9 +191,10 @@ function too_far = elems_too_far( mdl, xyr );
    radius = ones(Ne,1)*xyr(Nt,:);
    too_far = (furthest_elem_node_dist - max_edge_len) > radius;
 
-function mapping = contained_elems_3d( mdl, xyr );
+function [mapping failed] = contained_elems_3d( mdl, xyr );
    Ne = size(mdl.elems,1); % Num elems
    Nc = size(xyr,      2); % Num circs
+   failed(1:Nc) = false;
    % We fill sparse by columns, due to CCS storage, this is fairly efficient
    mapping = sparse( Ne, Nc );
     if 0
@@ -216,8 +221,7 @@ function mapping = contained_elems_3d( mdl, xyr );
        if ~any(good), continue, end %point outside the mesh
        tmp.elems = mdl.elems(good,:);
        n_interp = n_interp_min-1;
-       log_level = eidors_msg('log_level');
-       eidors_msg('log_level',1);
+       log_level = eidors_msg('log_level',1);
        while(sum(mapping(good,i))==0 && n_interp < n_interp_max-1)
            n_interp = n_interp+1;
            m_pts = interp_mesh( tmp, n_interp);
@@ -225,7 +229,8 @@ function mapping = contained_elems_3d( mdl, xyr );
        end
        eidors_msg('log_level', log_level);
        if (sum(mapping(good,i)) == 0)
-           eidors_msg(['Interpolation failed for point ' num2str(i)],1);
+           failed(i) = true;
+           eidors_msg(['mk_c2f_circ_mapping: Interpolation failed for point ' num2str(i)]);
        end
    end
     end
