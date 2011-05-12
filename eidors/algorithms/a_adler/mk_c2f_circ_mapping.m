@@ -225,7 +225,7 @@ function mapping = contained_elems_3d( mdl, xyr );
        end
        eidors_msg('log_level', log_level);
        if (sum(mapping(good,i)) == 0)
-           eidors_message(['Interpolation failed for point ' num2str(i)],1);
+           eidors_msg(['Interpolation failed for point ' num2str(i)],1);
        end
    end
     end
