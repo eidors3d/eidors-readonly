@@ -25,17 +25,26 @@ global my_dir; my_dir = cd;
 cd(directory);
 global tut_dir; tut_dir = cd;
 global D; D = genpath('.');
+global d;
 
 warning off all
 eidors_msg('log_level',0);
 pause off
 
-    
+% a little consistency would have been nice!
+global tut_dlm;
+if strcmp(computer,'PCWIN')
+    tut_dlm = ';';
+else
+    tut_dlm = ':';
+end
 
-
-[d,D]= strtok(D,';');
+[d,D]= strtok(D,tut_dlm);
 while ~isempty(d)
-    if ~isempty(strfind(d,'.svn')); [d,D]= strtok(D,';'); continue; end;
+    if ~isempty(strfind(d,'.svn')); 
+        [d,D]= strtok(D,tut_dlm); 
+        continue; 
+    end;
     cd(d);
     global F;F = dir('*.m');
     F = struct2cell(F); F = sortrows(F(1,:));% assume sorted by name
@@ -60,7 +69,7 @@ while ~isempty(d)
             fprintf([strrep(d,'\','\\') '\\' name]);
             lastwarn('');
             try
-               % evalc(name);
+                evalc(name);
                 if ~isempty(lastwarn)
                     fprintf(' WARNING(S)\n');
                     warnings{w_count,1} = T(1).name;
@@ -81,11 +90,11 @@ while ~isempty(d)
             F(1) = [];
             tut_count = tut_count +1;
         end
-        clear; clf; close all;
-        global F tut_count e_count errors warnings w_count d D my_dir tut_dir
+        clear; clf; %close all; %close all crashes vnc :(
+        global F tut_count e_count errors warnings w_count d D my_dir tut_dir tut_dlm
     end
     cd(tut_dir);
-    [d,D]= strtok(D,';');
+    [d,D]= strtok(D,tut_dlm);
 end
 % if numel(errors)>0
 %     errors
