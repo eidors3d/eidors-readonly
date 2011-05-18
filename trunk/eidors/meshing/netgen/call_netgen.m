@@ -46,6 +46,10 @@ end
 while( 1 )
 
    fid= fopen('ng.opt','w'); %create ng.opt file in local dir
+   if fid==-1
+      error(['Netgen requires writing files in the current directory(%s).', ...
+             'Unfortunately, you don''t have permission'], pwd);
+   end
    if ~isempty(msz_file)
 %     fprintf(fid,'options.segmentsperedge 5\n'); % Another
 %                                                   potentially useful parameter
