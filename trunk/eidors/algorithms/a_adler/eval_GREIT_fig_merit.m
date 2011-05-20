@@ -33,9 +33,16 @@ end
 % TODO: Fix this when we start to care about units
 ctr = bb_min + 0.5*(bb_max-bb_min);
 r = max(0.5*(bb_max-bb_min));
-ctr_pts = sum((xyzr_pt(1:2,:)-repmat(ctr',1,size(xyzr_pt,2))).^2) < (0.05*r)^2;
-%params(1,:) = params(1,:)/mean(params(1,1:10));  
-params(1,:) = params(1,:)/mean(params(1,ctr_pts));
+if N_imgs > 10 % doesn't make sense to normalize otherwise
+    ctr_pts = sum((xyzr_pt(1:end-1,:)-repmat(ctr',1,size(xyzr_pt,2))).^2) < (0.05*r)^2;
+    if any(ctr_pts)
+        params(1,:) = params(1,:)/mean(params(1,ctr_pts));
+    else
+        eidors_msg('eval_GREIT_fig_merit: no centre points found to normalize',1);
+    end
+end
+
+
 
 
 
@@ -70,7 +77,7 @@ function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
    qmi = calc_hm_set( img, 0.25 );
    if sum(img(:) & qmi(:))<0 ; keyboard ; end
    
-   
+   pix_sz = range(x(:))*range(y(:))/numel(img);
 
    %map = x.^2+y.^2<1.1;
    qmi = qmi.*map; img = img.*map;
@@ -78,4 +85,4 @@ function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
    ss_qmi = sum(qmi(:));
    xmean =  sum(sum( (qmi.*x) ))/ss_qmi; % centre of gravity
    ymean =  sum(sum( (qmi.*y) ))/ss_qmi;
-   equiv_circ = (x-xmean).^2 + (y-ymean).^2 < ss_qmi/pi/(sz/2)^2;
+   equiv_circ = (x-xmean).^2 + (y-ymean).^2 < pix_sz*ss_qmi/pi;
