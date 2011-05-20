@@ -6,6 +6,132 @@ EIDORS package.
 <ul>
 
 <p><li><b>
+    4 May 2011:
+</b><br>
+EIDORS Tutorial @ EIT 2011 Conf
+<BR>
+<tt>www.sce.carleton.ca/~adler/eidors-tut/</tt>
+
+<table border=1><tr><td>
+<table><tr>
+<td valign=top>
+
+<OL>
+<LI> Create a directory <tt>H:\tutorial</tt>
+<LI> Download these files and unzip into the directory
+<UL>
+<LI> <a href="http://www.sce.carleton.ca/~adler/eidors-tut/eidors3.5rc1.zip"
+             >eidors3.5rc1.zip</a>
+<LI> <a href="http://www.sce.carleton.ca/~adler/eidors-tut/ngs44_rel.zip"
+             >ngs44_rel.zip</a>
+</UL>
+<LI> Start Matlab
+<LI> In matlab, do
+<ul>
+<LI> <tt>
+cd H:/tutorial/eidors35rc1
+</tt>
+<LI> <tt>
+startup
+</tt>
+<LI> <tt>
+compare_2d_algs(1)
+</tt> <br>(this tests if eidors is working)
+<LI> <tt>
+show_fem(ng_mk_cyl_models(3,[0],[]))
+</tt> (this tests if netgen is working)
+<br>
+You will need to add the path <tt>H:/tutorial/ngs44</tt>
+
+</ul>
+
+</OL>
+
+<td valign=top>
+Go to the EIDORS tutorials
+ <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml"
+                          >eidors3d.sourceforge.net/tutorial/tutorial.shtml</a>
+<p>
+
+Try a few tutorials to see how eidors works.
+I recommend:
+<ol>
+<li>
+<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml"
+     >EIDORS Basics</a>
+<li>
+<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"
+     >Absolute and difference solvers</a>
+<li>
+<a href="http://eidors3d.sourceforge.net/tutorial/lung_EIT/if_peep_trial.shtml"
+     >Lung injury images</a>
+<li>
+<a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml"
+     >Netgen FEM models</a>
+<li>
+<a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml"
+     >GREIT</a>
+</ol>
+</table>
+
+Challenge problem:
+<ol>
+<li>Create a 3D elliptical cylinder with 16 circular electrodes
+    (see <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_ellip_models.shtml">here</a>)
+<br><tt>fmdl= <font color=#E0F0FE
+>ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]);
+</font> show_fem(fmdl); </tt>
+
+<li>Put a ball into the elliptical cylinder
+<br><tt><font color=#E0F0FE
+>   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1);'};
+<br>[fmdl,mat_idx]= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+</font> show_fem(fmdl); </tt>
+
+<li>Put two balls into the elliptical cylinder
+<br><tt><font color=#E0F0FE
+>   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
+<br>[fmdl,mat_idx]= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+</font> show_fem(fmdl); </tt>
+
+<li>Set the model to use adjacent current patterns
+<br><tt><font color=#E0F0FE
+>   stim = mk_stim_patterns(16,1,[0,1],[0,1],{});
+</font> fmdl.stimulation = stim;</tt>
+
+<li>Simulate homogeneous voltages  (background conductivity = 0.5);
+<br><tt><font color=#E0F0FE
+>   img = mk_image(fmdl, 0.5); vh = fwd_solve(img);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Simulate inhomogeneous voltages  (ball conductivity = 1.0);
+<br><tt><font color=#E0F0FE
+>   img.elem_data(mat_idx{2})= 1.0; vi = fwd_solve(img);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Reconstruct the image using GREITv1
+<br><tt><font color=#E0F0FE
+>  imdl= mk_common_gridmdl('GREITc1'); 
+   img= inv_solve(imdl,vh,vi);
+<br>
+</font> show_fem(img); </tt>
+<li>Create a GREIT model for the ellipse
+    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
+<br><tt><font color=#E0F0FE
+> opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
+<br>fmdl.normalize_measurements = 0;
+<br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
+<br>img= inv_solve(imdl,vh,vi);
+</font> show_fem(img); </tt>
+<li>Compare images for different stimulation patterns
+    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/GREIT_test_params.shtml">here</a>)
+</ol>
+</table>
+
+
+<p><li><b>
     7 July 2010:
 </b><br>
 Blobby the walrus is proud to release EIDORS version 3.4,

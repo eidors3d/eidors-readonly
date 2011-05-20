@@ -87,6 +87,17 @@ use the data.</b>
       By: A. Adler
 </ul>
 
+<h3>EIT Test and Evaluation systems</h3>
+<ul>
+<li> <a href="./data_contrib/evaluation-phantom/phantom_evaluation.shtml"
+      >Phantom based EIT Evaluation system and software</a>
+      By: Y. Maimaitijiang, S. B&ouml;hm, P.O. Gaggero, A. Adler
+
+<li> <a href="./data_contrib/evaluation-phantom/robot_controller.shtml"
+      >Phantom Robot Controller (made of Lego&trade;)</a>
+      By: S. Reidt
+</ul>
+
 <h2>Contributing Your Data</h2>
 
 We very much welcome anyone to contribute. The goal of this
