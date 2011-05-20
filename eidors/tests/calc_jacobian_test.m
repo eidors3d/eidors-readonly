@@ -112,9 +112,10 @@ function ok= run_dataprior_test( mdl )
        end
     end
 
-    if max(abs(diff( testvec ))) > 1e-12 
+    mdiff = full(max(abs(diff( testvec ))));
+    if mdiff > 1e-12 
        ok=0;
-       eidors_msg('Dataprior calculation error (%s)', mdl.name, 1);
+       eidors_msg('Dataprior calculation error (%s) = %f', mdl.name, mdiff, 1);
     else
        ok=1;
     end
