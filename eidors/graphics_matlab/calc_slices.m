@@ -14,6 +14,7 @@ function rimg = calc_slices( img, levels );
 %   img.calc_slices.filter % Filter to be applied to images
 %      Example:    img.calc_slices.filter = ones(3)/9
 %   img.calc_slices.scale  % Scaling to apply to images
+%   img.calc_slices.levels % an alternative way to specify levels
 %
 % rimg= np x np x I x L where np is 128 by default
 % np can be adjusted by calc_colours('npoints')
@@ -27,6 +28,10 @@ np = calc_colours('npoints');
 try   np = img(1).calc_colours.npoints;
 end
 
+if nargin < 2 || isempty(levels)
+    try levels = img.calc_slices.levels; end
+end
+
 % Assume all fwd_models are same dimension (all 3D or 2D no mixed dims)
 if mdl_dim(img(1))==2 
    if nargin>1 && ~isempty(levels);
@@ -35,6 +40,8 @@ if mdl_dim(img(1))==2
        end
    end
    levels= [Inf,Inf,0];
+elseif mdl_dim(img(1))==3 && (nargin < 2 || isempty(levels))
+   levels = [Inf Inf mean(img.fwd_model.nodes(:,3))];
 end
 
 
