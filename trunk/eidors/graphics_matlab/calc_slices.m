@@ -42,6 +42,7 @@ if mdl_dim(img(1))==2
    levels= [Inf,Inf,0];
 elseif mdl_dim(img(1))==3 && (nargin < 2 || isempty(levels))
    levels = [Inf Inf mean(img.fwd_model.nodes(:,3))];
+   eidors_msg('calc_slices: no levels specified, assuming an xy plane',2);
 end
 
 
