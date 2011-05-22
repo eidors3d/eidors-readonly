@@ -28,8 +28,12 @@ np = calc_colours('npoints');
 try   np = img(1).calc_colours.npoints;
 end
 
-if nargin < 2 || isempty(levels)
-    try levels = img.calc_slices.levels; end
+if nargin < 2
+    try 
+        levels = img.calc_slices.levels; 
+    catch
+        levels = [];
+    end
 end
 
 % Assume all fwd_models are same dimension (all 3D or 2D no mixed dims)
@@ -40,7 +44,7 @@ if mdl_dim(img(1))==2
        end
    end
    levels= [Inf,Inf,0];
-elseif mdl_dim(img(1))==3 && (nargin < 2 || isempty(levels))
+elseif mdl_dim(img(1))==3 && isempty(levels)
    levels = [Inf Inf mean(img.fwd_model.nodes(:,3))];
    eidors_msg('calc_slices: no levels specified, assuming an xy plane',2);
 end
