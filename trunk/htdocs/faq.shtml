@@ -179,7 +179,7 @@ and claim that your code is vastly superior than EIDORS' best shot
 This is a toolkit of routines for you to build a code which suits your
 application.
 
-<p><li><b>
+<p><li id="netgen"><b>
     I'm struggling to use the EIDORS Netgen functions?
 </b><p>
 Netgen is a lovely tool, but it can be sensitive to many of
