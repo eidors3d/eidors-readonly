@@ -18,6 +18,10 @@ if nargin<3
    msz_file= '';
 end
 
+if ~isempty(msz_file)
+    eidors_msg('call_netgen: Warning. Using an *.msz file. This often fails.');
+end
+
 if nargin<4
 %  finelevel= '-veryfine';
 %  finelevel= '-fine';
@@ -69,8 +73,9 @@ while( 1 )
            'Perhaps LD_LIBRARY_PATH needs to be set?' ...
            'For newer versions of netgen, you need to set the environment variable NETGENDIR.', ...
            'Please enter a new netgen file name' ]);
-      ng_name = input('netgen file name (with path)? ','s');
-      if strcmp(ng_name,'skip'); break;end
+      ng_name = input('netgen file name (with path)? [or i=ignore, e=error] ','s');
+      if strcmp(ng_name,'i'); break;end
+      if strcmp(ng_name,'e'); error('user requested'),end;
    else
       fprintf([ ...
        'Netgen call failed. Is netgen installed and on the search path?\n' ...
@@ -81,7 +86,9 @@ while( 1 )
        'http://sourceforge.net/projects/netgen-mesher/ \n\n' ...
        'Note that you *MUST* use names without spaces. Thus\n' ...
        'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
-      netgen_path = input('netgen_path? ','s');
+      netgen_path = input('netgen_path? [or i=ignore, e=error] ','s');
+      if strcmp(ng_name,'i'); break;end
+      if strcmp(ng_name,'e'); error('user requested'),end;
       if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) || ...
               exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
          disp('Found netgen version 4.4 or higher');
