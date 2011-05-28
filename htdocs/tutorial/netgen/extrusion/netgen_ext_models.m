@@ -2,6 +2,7 @@ function netgen_ext_models( numbers )
 
 if nargin==0; numbers = 1:8; end
 for i=numbers(:)';
+    i
    do_sim(i);
 end
 
@@ -29,9 +30,11 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
 
 % 2D shape mesh boundary interpolation
    case 4;
+   % had to change number of interpolation points from 50 to 47 and
+   % electrodes to equidistant to avoid netgen playing up.
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,50]},[16,0],[0.1]);
+[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,47]},[16,1],[0.1]);
 
 % 2D shape with object and specific electrode positions
    case 5;
@@ -39,7 +42,7 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
 extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.05;'};
 elec_pos = [0, 0; 30,0;60,0;90,0];
-[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,50]},elec_pos,[0.1],extra);
+[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,49]},elec_pos,[0.1],extra);
 img = mk_image(fmdl,1);
 img.elem_data( mat_idx{2} ) = 1.1;
 fmdl= img;
@@ -60,7 +63,7 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
 elec_pos = [0, 0.1; 30,0.2; 60,0.3; 90,0.4;120,0.5];
 extra={'cyl','solid cyl = cylinder(0.2,-0.2,0;0.2,-0.2,1;0.2) and orthobrick(-1,-1,0;1,1,1);'};
-[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,40]},elec_pos,[0.05,0.2],extra);
+[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,47]},elec_pos,[0.05,0.2],extra);
 img = mk_image(fmdl,1);
 img.elem_data( mat_idx{2} ) = 1.1;
 fmdl= img;
