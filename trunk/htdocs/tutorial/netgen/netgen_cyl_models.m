@@ -122,8 +122,17 @@ case 18;
 %   sp= 'sphere(0, 0, 1.5; 0.8)';
     extra={'obj',['solid obj = ',ob,' and ',el,';']};
     [fmdl,mat_idx]= ng_mk_cyl_models(1.5,[8,0.5,1.0],[0.1],extra); 
-    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
-    img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
+    img= mk_image(fmdl,1); img.elem_data(mat_idx{2}) = 2;
+show_fem(img);
+
+case 19;
+    t1= 'solid obj1 = torus( 0, 0,  .8; 1, 0, 0; .4 ; .1 );';
+    t2= 'solid obj2 = torus( 0, 0, 1.2; 0, 1, 0; .4 ; .1 );';
+    extra={'obj1','obj2',[t1,t2]};
+    [fmdl,mat_idx]= ng_mk_cyl_models(2,[6,.5],[0.3,0.2],extra);
+    img= mk_image(fmdl,1);
+    img.elem_data(mat_idx{2}) = 1.5;
+    img.elem_data(mat_idx{3}) = 0.5;
 show_fem(img);
 end
 
