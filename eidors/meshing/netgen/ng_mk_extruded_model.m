@@ -488,7 +488,7 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
               % piece_poly_fit doesn't seem to work very well
               if 1%tank_shape.curve_type == 4
                   pp = fourier_fit(tank_shape.vertices,...
-                      size(tank_shape.vertices,1) - 1);
+                      size(tank_shape.vertices,1) - 1,tank_shape.vertices(1,:));
                   p = linspace(0,1,n_elecs+1)'; p(end) = [];
                   p = p + offset;
                   xy = fourier_fit(pp,p);
