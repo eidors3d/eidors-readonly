@@ -459,7 +459,12 @@ end
 %  elecs(i).dims  = [radius] or [width,height]
 %  elecs(i).maxh  = '-maxh=#' or '';
 function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, is2D )
-
+    elecs = [];
+    centres = [];
+    if isempty(elec_pos)
+        return; % no electrodes, nothing to do
+    end
+    
    if is2D
       elec_pos(:,3) = hig/2;
    end
