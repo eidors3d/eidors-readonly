@@ -1,6 +1,6 @@
 function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach
-%   [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
+%   [imdl, weight]= mk_GREIT_model( mdl, radius, weight, options )
 %
 % Output: 
 %   imdl   - GREIT inverse model
@@ -8,7 +8,8 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %            noise figure (NF). See options.noise_figure below.
 %
 % Parameters:
-%   fmdl   - fwd model on which to do simulations, or
+%   mdl    - fwd model on which to do simulations, or
+%          - inv model (experimental), or
 %          - string specifying prepackaged models
 %
 %   radius - requested weighting matrix  (recommend 0.25 for 16 electrodes)
@@ -47,7 +48,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % $Id$
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
-
+imdl = []; 
 if isstr(fmdl)
    imgs = get_prepackaged_fmdls( fmdl );
 elseif isfield(fmdl,'type');
@@ -57,29 +58,47 @@ elseif isfield(fmdl,'type');
 %  if we get an image, use it. It may have a non-uniform backgnd
     case 'image';     imgs = fmdl; % fmdl was an image
                       fmdl = imgs.fwd_model; % now it's a fmdl
+    case 'inv_model'; imdl = fmdl;
+                      fmdl = imdl.fwd_model;
+                      imgs = mk_image( fmdl, 1);
     otherwise; error('unrecognized eidors object');
   end
 else
    error('specified parameter must be an object or a string');
 end
 
+if nargin < 4, options = [];end
 opt = parse_options(options,fmdl);
 Nsim = opt.Nsim;
 [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
 maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
-opt.normalize = imgs.fwd_model.normalize_measurements;
+try, opt.normalize = imgs.fwd_model.normalize_measurements;
+catch, 
+    opt.normlize = 0;
+    eidors_msg('mk_GREIT_model: fmdl.normalize_measurement not specified, assuming 0');
+end
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 
 
 %imdl = mk_common_gridmdl('b2c', RM);
  
 % Prepare model
+if isempty(imdl)
+   imdl = select_imdl( fmdl,{'Basic GN dif'});
+end
+if ~isempty(imdl.rec_model)
+    % this assumes rec_model is a rectangular grid, as it should
+    opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
+    opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
+end  
+
  xgrid = linspace(minnode(1),maxnode(1),opt.imgsz(1)+1);
  ygrid = linspace(minnode(2),maxnode(2),opt.imgsz(2)+1);
  rmdl = mk_grid_model([],xgrid,ygrid);
  x_avg = conv2(xgrid, [1,1]/2,'valid');
  y_avg = conv2(ygrid, [1,1]/2,'valid');
  [x,y] = ndgrid( x_avg, y_avg);
+if isempty(imdl.rec_model)
  inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
  
  ff = find(~inside);
@@ -87,17 +106,24 @@ opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
  rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
  rmdl.coarse2fine(:,ff)= [];
  
-imdl = select_imdl( fmdl,{'Basic GN dif'});
-imdl.solve = @solve_use_matrix;
-imdl.rec_model = rmdl;
+ imdl.rec_model = rmdl;
+else
+ % again, this assumes the original grid model was created the same way 
+ inside = ismember(rmdl.elems,imdl.rec_model.elems,'rows');
+ inside = inside(1:2:end);
+end
 
+imdl.solve = @solve_use_matrix;
 log_level = eidors_msg( 'log_level', 1);
 
 if ~isempty(opt.noise_figure)
-    if ~isempty(weight)
-        eidors_msg('mk_GREIT_model: Ignoring weight parameter, options.noise_figure is non-empty');
-    end
     target = opt.noise_figure;
+    if ~isempty(weight)
+        eidors_msg('mk_GREIT_model: Using weight parameter as a guess, options.noise_figure is non-empty');
+    else
+        weight = target;
+    end
+
     xyzr = mean(fmdl.nodes);
     xyzr(3) = opt.target_plane;
     xyzr(4) = opt.target_size;
@@ -106,7 +132,7 @@ if ~isempty(opt.noise_figure)
     eidors_msg('mk_GREIT_model: This will take a while...',1);
     f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
-    [weight, NF] = fminsearch(f, target);
+    [weight, NF] = fminsearch(f, weight);
     eidors_msg(['mk_GREIT_model: Optimal solution gives NF=' ... 
         num2str(NF+target) ' with weight=' num2str(weight)],1);
 end
