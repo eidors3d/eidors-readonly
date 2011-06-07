@@ -67,10 +67,22 @@ function hp= search1(dNF, imdl, hp)
    end
 
 function hp=search2(dNF, imdl, dx)
-   for k=1:length(dx)
-     log_nf(k)=log10( calc_noise_figure( imdl, 10^-dx(k), 10 ));
+   hp = [];
+   it = 0;
+   nf = zeros(1,length(dx));
+   while isempty(hp) && it < 2
+       it = it+1;
+       %if it > 1 keyboard, end
+       for k=1:length(dx)
+           nf(k)=nf(k)+calc_noise_figure( imdl, 10^-dx(k), 10 );
+       end
+       log_nf = log10(nf/it);
+       p= polyfit( dx, log_nf-log10(dNF), 1);
+       hp = roots(p);
+       hp = hp( hp<max(dx) & hp>min(dx) );  %USE if poly>1
    end
-   p= polyfit( dx, log_nf-log10(dNF), 1);
-   hp = roots(p);
-   % hp = hp( hp<max(dx) & hp>min(dx) );  %USE if poly>1
-
+   if isempty(hp)
+       %fallback
+       [jnk,idx] = min(abs(log_nf-log10(dNF)));
+       hp = dx(idx);
+   end
