@@ -37,15 +37,16 @@ if nargin>=6
         srf,vtx,fc,bc,simp,edg,mat_ind, N_elec);
 end
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
-                             stim_pattern, centres, z_contact);
+                             stim_pattern, centres, z_contact,fc);
 mat_indices= mk_mat_indices( mat_ind);
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
-                       stim_pattern, centres, z_contact)
+                       stim_pattern, centres, z_contact,fc)
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
+mdl.boundary_numbers=fc;    
 mdl.gnd_node=    find_centre_node(vtx);
 mdl.np_fwd_solve.perm_sym =     '{n}';
 mdl.name = name;
