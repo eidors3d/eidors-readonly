@@ -39,8 +39,12 @@ catch
 end
 
 if noser_exp>0
-    img_bkgnd= calc_jacobian_bkgnd( inv_model );
-    J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+    
+    J = calc_jacobian( mk_image( inv_model ));
+% If J is too big, then the jacobian includes other terms (like movement) remove them
+% TODO: cruft code
+    n_elem = size(inv_model.fwd_model.elems,1);
+    if size(J,2) > n_elem; J = J(:,1:n_elem); end
     l_prior= size(J,2);
 
     % Reg is spdiags(diag(J'*J),0, l_prior, l_prior);
