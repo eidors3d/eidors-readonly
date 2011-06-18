@@ -6,7 +6,7 @@ function img= GN_abs_solve( inv_model, data1);
 % data1      => EIT data
 %
 % Parameters:
-%   inv_model.parameters.max_iteration = N_max iter
+%   inv_model.parameters.max_iterations = N_max iter
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -75,8 +75,10 @@ function img = homogeneous_estimate( imdl, data );
    pf = polyfit(data,vs.meas,1);
 
    if isfield(img.fwd_model,'coarse2fine');
+% TODO: the whole coarse2fine needs work here.
+%   what happens if c2f doesn't cover the whole region
       nc = size(img.fwd_model.coarse2fine,2);
-      img.elem_data = ones(nc,1)*pf(1);
+      img.elem_data = mean(img.elem_data)*ones(nc,1)*pf(1);
    else
       img.elem_data = img.elem_data*pf(1);
    end
