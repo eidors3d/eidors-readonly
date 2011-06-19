@@ -80,6 +80,7 @@ The following data are available (with the format described for each
     <td>
 Data of Dipole-Dipole array with 64 electrodes
 (.file format documented in file, source pair A,B and meas pair M,N)
+<p>
 The <a href="Mine_07Apr1999_DipDip.jpg">Image</a> shows
 a apparent resistivity section (not a reconstruction!)
 <tr><td>2  <td>2004-02-20<td>
