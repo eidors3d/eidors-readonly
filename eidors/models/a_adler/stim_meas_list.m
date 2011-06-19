@@ -1,6 +1,6 @@
 function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);
 %STIM_MEAS_LIST: mk stimulation pattern from list of electrodes
-% [stim, meas_sel]= stim_meas_list( sp_mp , amplitude, gain);
+% [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, amplitude, gain);
 %
 % stim =    EIDORS stimulation structure
 %     use: fwd_model.stimulation = stim;
