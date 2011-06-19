@@ -74,10 +74,18 @@ square wave current waveform).
 The following data are available (with the format described for each
       <table border=1>
 <tr><th>No.<th>Date<th>Link<th>Format
-<tr><td>1  <td>1999<td>
+<tr><td>1  <td>2000<td>
     <td>
 <tr><td>2  <td>2004<td>
+    <a href="Mine_20FEV2004.zip">Data</a>
+<br><a href="Mine_20FEV2004_LI_i.jpg">Image</a>
     <td>
+Data contains files (file format documeted in each file):
+<br>&minus;Mine_20FEV2004.gps: Electrode positions
+<br>&minus;Mine_20FEV2004_LI.tomel: EIT data
+<p>
+The <a href="Mine_20FEV2004_LI_i.jpg">Image</a> shows
+a apparent resistivity section (not a reconstruction!)
       </table>
        <hr>
    </table>
