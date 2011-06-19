@@ -55,7 +55,9 @@ Marc Pessel &amp; Dominique Gibert, and cite this publication:
 M Pessel and D Gibert,
 <a href="http://www.ipgp.fr/~gibert/PDF_Files/38.pdf"
  >Multiscale electrical impedance tomography</a>,
+ Journal of Geophysical Research, Vol. 108, doi: 10.1029/2001JB000233, 2003.
 </ul>
+       <hr>
    <tr><th valign="top"> Methods:
        <td>
 EIT data were acquired with the a ABEM SAS 4000 Resistivity Meter, and
@@ -70,13 +72,14 @@ square wave current waveform).
    <tr><th valign="top"> Data and Format:
        <td>
 The following data are available (with the format described for each
-      <table>
+      <table border=1>
 <tr><th>No.<th>Date<th>Link<th>Format
 <tr><td>1  <td>1999<td>
     <td>
-<tr><td>1  <td>2004<td>
+<tr><td>2  <td>2004<td>
     <td>
       </table>
+       <hr>
    </table>
 
 <center>
