@@ -299,6 +299,9 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
    w = wh(1); h= wh(2);
    dirn = dirn/norm(dirn);
    dirnp = [-dirn(2),dirn(1),0];
+if any(isnan(dirnp));
+   error('ng_mk_gen_models: how to define width and height for vertical electrodes?')
+end
    dirnp = dirnp/norm(dirnp);
 
    bl = c - (d/2)* dirn + (w/2)*dirnp - [0,0,h/2];
