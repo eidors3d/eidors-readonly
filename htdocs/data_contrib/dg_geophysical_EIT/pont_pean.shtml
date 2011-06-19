@@ -74,9 +74,12 @@ square wave current waveform).
 The following data are available (with the format described for each
       <table border=1>
 <tr><th>No.<th>Date<th>Link<th>Format
-<tr><td>1  <td>2000<td>
+<tr><td>1  <td>1999-04-07<td>
+    <a href="Mine_07APR1999.tomel">Data</a>
     <td>
-<tr><td>2  <td>2004<td>
+Data of Dipole-Dipole array with 64 electrodes
+(file format documented in file, source pair A,B and meas pair M,N)
+<tr><td>2  <td>2004-02-20<td>
     <a href="Mine_20FEV2004.zip">Data</a>
 <br><a href="Mine_20FEV2004_LI_i.jpg">Image</a>
     <td>
