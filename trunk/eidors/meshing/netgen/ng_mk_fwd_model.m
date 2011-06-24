@@ -80,20 +80,23 @@ mdl.system_mat= @aa_calc_system_mat;
 fwd_mdl= eidors_obj('fwd_model', mdl);
 
 % Output cell array of indices into each material type
-%   array order is sorted by length of material type
-function mat_indices= mk_mat_indices( mat_ind);
+%   array order is the order of the specified material,
+%   except that the largest material (background) is placed
+%   first.
+function mat_idx= mk_mat_indices( mat_ind);
   % find length of mat_indices 
   % test example: mat_ind=[10 12 14 14 12 12 14 12];
-  sort_mi= sort(mat_ind(:));
-  find_mi= find( diff([-1e8;sort_mi]) );
-  len_mi = diff([find_mi;length(sort_mi)+1]);
-  [jnk,idxs]= sort(-len_mi); %reverse sort
-  l_idxs= length(idxs);
-  mat_indices= cell(1, l_idxs);
-  for i= 1:l_idxs;
-     mat_idx_i= sort_mi(find_mi(idxs(i)));
-     mat_indices{i}= find(mat_ind == mat_idx_i);
+
+  mat_indices = unique( mat_ind );
+  for i= 1:length(mat_indices);
+     mat_idx{i}= find(mat_ind == mat_indices(i));
+     mat_idx_l(i) = length( mat_idx{i} );
   end
+  % put the largest material first
+  [jnk, max_l] = max(mat_idx_l);
+  new_idx = 1:length(mat_indices); new_idx(max_l) = [];
+  [mat_idx{:}] = mat_idx{[max_l, new_idx]};
+
 
 function gnd_node=    find_centre_node(vtx);
   %distance from zero
