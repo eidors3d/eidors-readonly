@@ -86,7 +86,7 @@ opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 if isempty(imdl)
    imdl = select_imdl( fmdl,{'Basic GN dif'});
 end
-if ~isempty(imdl.rec_model)
+if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
     % this assumes rec_model is a rectangular grid, as it should
     opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
     opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
@@ -98,7 +98,7 @@ end
  x_avg = conv2(xgrid, [1,1]/2,'valid');
  y_avg = conv2(ygrid, [1,1]/2,'valid');
  [x,y] = ndgrid( x_avg, y_avg);
-if isempty(imdl.rec_model)
+if ~isfield(imdl,'rec_model'); %%isempty(imdl.rec_model)
  inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
  
  ff = find(~inside);
