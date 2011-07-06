@@ -1,0 +1,64 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td> S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2006
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+10-day old spontaneously breathing neonate lying in the prone position with the head turned to the left.
+Data were published in 
+
+S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs,
+<a href="http://www.springerlink.com/content/h68313183p54711j/">
+ Body and head position effects on regional lung ventilation in infants: an electrical impedance tomography study.</a>
+ Intensive Care Med., 32:1392-1398, 2006.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attribution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+ Use or presentation of these data must acknowledge
+In&eacute;z Frerichs, and reference this publication:
+<ul>
+S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs,
+<a href="http://www.springerlink.com/content/h68313183p54711j/">
+ Body and head position effects on regional lung ventilation in infants: an electrical impedance tomography study.</a>
+ Intensive Care Med., 32:1392-1398, 2006.
+</ul>
+   <tr><th valign="top"> Format:
+       <td> EIT data were acquired with the G&ouml;ttingen Goe-MF II device, 220 frames, 13 frames/s. Data are in the .GET file format.
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Neonate in prone position. Single plane of  
+            16 Electrodes numbered clockwise, with electrode #1 at the top.
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./if-neonate-spontaneous.zip" 
+            >Data (zip format)</a>
+       <hr>
+
+   <tr><th valign="top"> Image of Experimental Configuration:
+       <td>
+<a href="if-neonate-spontaneous-image.jpeg"
+   ><img src="if-neonate-spontaneous-image.jpeg" width="25%"></a>
+
+       <hr>
+   <tr><th valign="top"> Sample Published Results:
+       <td>
+<a href="http://www.springerlink.com/content/h68313183p54711j/"
+   ><img src="heinrich-2006-ventilation-infants-fig1.png" alt="figure 1"></a>
+   </table>
+
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
