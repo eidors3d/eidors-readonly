@@ -52,7 +52,18 @@ if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 if nargin < 4, options = [];end
 [imdl,fmdl,imgs] = parse_fmdl(fmdl);
 options = parse_options(options,fmdl);
+
+cache_obj= { fmdl, imdl, imgs, radius, weight, options};
+
+out= eidors_obj('get-cache', cache_obj, 'mk_GREIT_model');
+if ~isempty(out)
+   eidors_msg('mk_GREIT_model: using cached value', 3);
+   imdl= out{1}; weight=out{2}; return
+end
 [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, options)
+
+eidors_obj('set-cache', cache_obj, 'mk_GREIT_model', {imdl,weight});
+eidors_msg('mk_GREIT_model: setting cached value', 3);
 
 function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
 
