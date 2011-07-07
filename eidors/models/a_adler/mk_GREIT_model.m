@@ -48,52 +48,26 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % $Id$
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
-imdl = []; 
-if isstr(fmdl)
-   imgs = get_prepackaged_fmdls( fmdl );
-elseif isfield(fmdl,'type');
-  switch fmdl.type
-%  if we get a fwd_model, assume uniform conductivity backgnd of 1
-    case 'fwd_model'; imgs = mk_image( fmdl, 1);
-%  if we get an image, use it. It may have a non-uniform backgnd
-    case 'image';     imgs = fmdl; % fmdl was an image
-                      fmdl = imgs.fwd_model; % now it's a fmdl
-    case 'inv_model'; imdl = fmdl;
-                      fmdl = imdl.fwd_model;
-                      imgs = mk_image( fmdl, 1);
-    otherwise; error('unrecognized eidors object');
-  end
-else
-   error('specified parameter must be an object or a string');
-end
 
 if nargin < 4, options = [];end
-opt = parse_options(options,fmdl);
+[imdl,fmdl,imgs] = parse_fmdl(fmdl);
+options = parse_options(options,fmdl);
+[imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, options)
+
+function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
+
 Nsim = opt.Nsim;
 [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
-maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
-try, opt.normalize = imgs.fwd_model.normalize_measurements;
-catch, 
-    opt.normlize = 0;
-    eidors_msg('mk_GREIT_model: fmdl.normalize_measurement not specified, assuming 0');
-end
-opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 
-
-%imdl = mk_common_gridmdl('b2c', RM);
  
-% Prepare model
-if isempty(imdl)
-   imdl = select_imdl( fmdl,{'Basic GN dif'});
-end
 if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
     % this assumes rec_model is a rectangular grid, as it should
     opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
     opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
 end  
 
- xgrid = linspace(minnode(1),maxnode(1),opt.imgsz(1)+1);
- ygrid = linspace(minnode(2),maxnode(2),opt.imgsz(2)+1);
+ xgrid = linspace(opt.minnode(1),opt.maxnode(1),opt.imgsz(1)+1);
+ ygrid = linspace(opt.minnode(2),opt.maxnode(2),opt.imgsz(2)+1);
  rmdl = mk_grid_model([],xgrid,ygrid);
  x_avg = conv2(xgrid, [1,1]/2,'valid');
  y_avg = conv2(ygrid, [1,1]/2,'valid');
@@ -280,9 +254,35 @@ function RM = resize_if_reqd(RM,inside);
       error('mismatch in size of provided RecMatrix');
    end
 
+
+function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
+   imdl = []; 
+   if isstr(fmdl)
+      imgs = get_prepackaged_fmdls( fmdl );
+   elseif isfield(fmdl,'type');
+     switch fmdl.type
+   %  if we get a fwd_model, assume uniform conductivity backgnd of 1
+       case 'fwd_model'; imgs = mk_image( fmdl, 1);
+   %  if we get an image, use it. It may have a non-uniform backgnd
+       case 'image';     imgs = fmdl; % fmdl was an image
+                         fmdl = imgs.fwd_model; % now it's a fmdl
+       case 'inv_model'; imdl = fmdl;
+                         fmdl = imdl.fwd_model;
+                         imgs = mk_image( fmdl, 1);
+       otherwise; error('unrecognized eidors object');
+     end
+   else
+      error('specified parameter must be an object or a string');
+   end
+   % Prepare model
+   if isempty(imdl)
+      imdl = select_imdl( fmdl,{'Basic GN dif'});
+   end
+
 function opt = parse_options(opt,fmdl);
     
     maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
+    opt.maxnode = maxnode;     opt.minnode = minnode; 
     
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'distr'),     opt.distr = 0; end 
@@ -327,6 +327,13 @@ function opt = parse_options(opt,fmdl);
     else
         opt.random_offset = false;
     end
+
+    try, opt.normalize = imgs.fwd_model.normalize_measurements;
+    catch, 
+        opt.normlize = 0;
+        eidors_msg('mk_GREIT_model: fmdl.normalize_measurement not specified, assuming 0');
+    end
+    opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 
 function do_unit_test
    imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
