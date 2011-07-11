@@ -296,8 +296,8 @@ function opt = parse_options(opt,fmdl);
     opt.maxnode = maxnode;     opt.minnode = minnode; 
     
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
-    if ~isfield(opt, 'distr'),     opt.distr = 0; end 
-    if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000; end
+    if ~isfield(opt, 'distr'),     opt.distr = 3;       end 
+    if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000;    end
     if ~isfield(opt, 'noise_figure'), opt.noise_figure = []; end
     if isfield(opt,'extra_noise')
       error('mk_GREIT_model: doesn''t currently support extra_noise');
@@ -339,10 +339,10 @@ function opt = parse_options(opt,fmdl);
         opt.random_offset = false;
     end
 
-    try, opt.normalize = imgs.fwd_model.normalize_measurements;
+    try, opt.normalize = fmdl.normalize_measurements;
     catch, 
-        opt.normlize = 0;
-        eidors_msg('mk_GREIT_model: fmdl.normalize_measurement not specified, assuming 0');
+        opt.normalize = 0;
+        eidors_msg('mk_GREIT_model: fmdl.normalize_measurements not specified, assuming 0');
     end
     opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 
