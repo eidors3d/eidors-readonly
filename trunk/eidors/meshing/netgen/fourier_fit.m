@@ -1,4 +1,4 @@
-function C = fourier_fit(points,N);
+function C = fourier_fit(points,N,start);
 % FOURIER_FIT: use fourier series to interpolate onto a boundary
 %
 % [pp] = fourier_fit(points) fits a Fourier series
@@ -10,6 +10,7 @@ function C = fourier_fit(points,N);
 % distance along the contour
 %    pp          - piecewise polynomial structure
 %    linear_frac - vector of length fractions (0 to 1) to calculate points
+%    start       - (optional) a seed for the first point
 %    xy          - cartesian coordinates of the points
 
 % (C) Andy Adler, 2010. Licenced under GPL v2 or v3
@@ -21,7 +22,8 @@ if size(points,2)==2 % calling analysis function
    if nargin<2; N= size(points,1); end
    C = fit_to_fourier(points,N);
 elseif size(points,2)==1 % calling synthesis function
-   C = fit_from_fourier(points,N);
+   if nargin<3; start = []; end
+   C = fit_from_fourier(points,N,start);
 else
    error('size of first parameter to fourier_fit not undersood');
 end
@@ -40,7 +42,7 @@ function C = fit_to_fourier(points,N);
    end
    C = length(Zlp)/length(Z)*Zlp; % Amplitude scaling
     
-function xy = fit_from_fourier(C,linear_frac);
+function xy = fit_from_fourier(C,linear_frac,start);
    % Step 1: oversample
    N = length(C);
    n2 = ceil(N/2);
@@ -53,7 +55,16 @@ function xy = fit_from_fourier(C,linear_frac);
    end
    Zos = length(Zos)/length(C)*Zos;
    zos = ifft(Zos);
-
+   % rearrange the points such that they start as close as possible to the
+   % seed
+   if ~isempty(start)
+       if size(start,2) == 1; start = start'; end
+       start = start*[1; 1i];
+       dist = abs(zos-start);
+       [jnk,p] = min(dist);
+       zos = circshift(zos,-p+1);
+   end
+   
    % Step 2:
    dpath= abs(diff(zos));
    pathlen = [0;cumsum(dpath)];
