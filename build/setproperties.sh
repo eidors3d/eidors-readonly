@@ -1,6 +1,6 @@
 #!/bin/sh
 
-find ../..  \
+find ..  \
         -name \*.m \
      -o -name \*.cpp \
      -o -name \*.html \

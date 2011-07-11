@@ -11,7 +11,7 @@ function status= call_gmsh(geo_file)
 %   default is '' -> coarse
 %   valid values are 'fine' or 'veryfine'
 %
-% $Id: call_netgen.m 1829 2009-06-08 21:30:00Z sawickib $
+% $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
 
 

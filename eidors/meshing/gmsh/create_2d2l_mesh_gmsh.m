@@ -6,7 +6,7 @@ function [mdl, mat_indices] = create_2d2l_mesh_gmsh(basename, in_rad, ext_rad, n
 % rad - model radius
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: create_gmsh_2d_circle.m 1535 2008-07-26 15:36:27Z aadler $
+% $Id$
 
 
 geo_filename = sprintf('%s.geo', basename);

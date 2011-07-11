@@ -3,7 +3,7 @@ function img= bs_nonlinearGN( inv_model, data )
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data       => measurement data
-% $Id: nonlinearGN.m 1535 2008-07-26 15:36:27Z aadler $
+% $Id$
 % Modified by Bartosz Sawicki
 
 fwd_model= inv_model.fwd_model;
