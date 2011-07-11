@@ -8,7 +8,7 @@ function [J,map,vbkgnd] = GREIT_Jacobian_cyl;
 if exist('GREIT_Jacobian_cyl.mat','file');
    load GREIT_Jacobian_cyl.mat J map vbkgnd
 else
-   [J,vbkgnd,map] = Jacobian_calc;
+   [j,VBKGND,MAP] = Jacobian_calc;
    save GREIT_Jacobian_cyl.mat J map vbkgnd
 end
 
@@ -17,7 +17,8 @@ function [J,vbkgnd,map] = Jacobian_calc;
 use_3d_model = 1;
 if use_3d_model % This 3D model has some problems
 %  load ng_mdl_16x1_fine;  fmdl= ng_mdl_16x1_fine;
-   load ng_tank1_0; 
+%  load ng_tank1_0;  - old model developed in initial GREIT calcs
+   fmdl = ng_mk_cyl_models([10,15,1.2],[16,5],[.5,0,.15]);
    fmdl.solve =    @aa_fwd_solve;
    fmdl.jacobian = @aa_calc_jacobian;
    fmdl.system_mat=@aa_calc_system_mat;
