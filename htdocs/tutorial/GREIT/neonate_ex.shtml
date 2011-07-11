@@ -38,6 +38,11 @@ Reconstruct images
 <pre>
 <!--#include virtual="neonate_ex02.m" -->
 </pre>
+<center>
+<img src="neonate_ex02a.png">
+<br><i>Figure:</i>
+Images of three different breaths (end inspiration)
+</center>
 
 Reconstruct temporal signals
 <pre>
@@ -45,58 +50,29 @@ Reconstruct temporal signals
 </pre>
 
 <center>
-<img src="neonate_ex02a.png">
-<br>
 <img src="neonate_ex03a.png">
 <br><i>Figure:</i>
-(top) Images of three different breaths (end inspiration),
-(bottom) time course
+(bottom) time course of several lung pixels
 </center>
 
 <h3> 
-Use Circular GREIT v1.0 model
+Use Elliptic GREIT model
 </h3>
 
-
-<center>
-<img src="../netgen/mk_library_model02a.png">
-<img src="adult_ex01b.png">
-<br><i>Figure:</i>
-Forward model used for training GREIT using
-contrasting lung regions
-</center>
-
-<h3> 
-Training GREIT
-</h3>
+The shape of a neonate is roughly elliptical. Based on the neonate CT
+<a href="http://eradiology.bidmc.harvard.edu/LearningLab/respiratory/Shaw.pdf">
+here</a>, the elliptical ration is about 1:1.14.
 
 <pre>
-<!--#include virtual="adult_ex02.m" -->
+<!--#include virtual="neonate_ex04.m" -->
 </pre>
-
-<h3> 
-Show some images
-</h3>
-
-Data used are of tidal breathing of the author using the EIT equipment
-<ul>
-Guardo R Boulay C   Murray B   Bertrand M
-<a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=83560"
-   >An experimental study in electrical impedance tomography using backprojection reconstruction</a>
-  <i>IEEE T Biomed Eng</i> 38: 617&minus;627, 1991
-</ul>
-<pre>
-<!--#include virtual="adult_ex03.m" -->
-</pre>
-
 
 <center>
-<img src="adult_ex03a.png">
-<img src="adult_ex03b.png">
+<img src="adult_ex04a.png">
 <br><i>Figure:</i>
-Forward model used for training GREIT using
-contrasting lung regions
+Images of lungs using ellipcal GREIT reconstruction
 </center>
+
 
 </td></tr></table>
 <p>
