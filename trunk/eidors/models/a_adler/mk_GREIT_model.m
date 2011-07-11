@@ -51,7 +51,7 @@ if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4, options = [];end
 [imdl,fmdl,imgs] = parse_fmdl(fmdl);
-options = parse_options(options,fmdl);
+options = parse_options(options,fmdl,imdl);
 
 cache_obj= { fmdl, imdl, imgs, radius, weight, options};
 
@@ -70,19 +70,15 @@ function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, 
 Nsim = opt.Nsim;
 [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
 
- 
-if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
-    % this assumes rec_model is a rectangular grid, as it should
-    opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
-    opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
-end  
 
- xgrid = linspace(opt.minnode(1),opt.maxnode(1),opt.imgsz(1)+1);
- ygrid = linspace(opt.minnode(2),opt.maxnode(2),opt.imgsz(2)+1);
- rmdl = mk_grid_model([],xgrid,ygrid);
- x_avg = conv2(xgrid, [1,1]/2,'valid');
- y_avg = conv2(ygrid, [1,1]/2,'valid');
- [x,y] = ndgrid( x_avg, y_avg);
+xgrid = linspace(opt.minnode(1),opt.maxnode(1),opt.imgsz(1)+1);
+ygrid = linspace(opt.minnode(2),opt.maxnode(2),opt.imgsz(2)+1);
+rmdl = mk_grid_model([],xgrid,ygrid);
+x_avg = conv2(xgrid, [1,1]/2,'valid');
+y_avg = conv2(ygrid, [1,1]/2,'valid');
+[x,y] = ndgrid( x_avg, y_avg);
+
+%Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model'); %%isempty(imdl.rec_model)
  inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
  
@@ -93,7 +89,7 @@ if ~isfield(imdl,'rec_model'); %%isempty(imdl.rec_model)
  
  imdl.rec_model = rmdl;
 else
- % again, this assumes the original grid model was created the same way 
+ % this assumes the original grid model was created the same way 
  inside = ismember(rmdl.elems,imdl.rec_model.elems,'rows');
  inside = inside(1:2:end);
 end
@@ -290,12 +286,19 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
       imdl = select_imdl( fmdl,{'Basic GN dif'});
    end
 
-function opt = parse_options(opt,fmdl);
+function opt = parse_options(opt,fmdl,imdl);
     
     maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
     opt.maxnode = maxnode;     opt.minnode = minnode; 
     
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
+    % Allow imdl.rec_model to overwrite options.imgsz
+    if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
+        % this assumes rec_model is a rectangular grid, as it should
+        opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
+        opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
+    end  
+    
     if ~isfield(opt, 'distr'),     opt.distr = 3;       end 
     if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000;    end
     if ~isfield(opt, 'noise_figure'), opt.noise_figure = []; end
