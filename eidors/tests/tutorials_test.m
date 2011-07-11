@@ -72,7 +72,7 @@ while ~isempty(d)
             end
             name = T(1).name(1:end-2);
             tut_count = tut_count +1;
-            if tut_count < last_tut
+            if tut_count < last_tut || isfunction(name)
                 T(1) = [];
                 F(1) = [];
                 continue
@@ -116,3 +116,12 @@ pause on
 clear global F tut_count e_count errors warnings w_count
 cd(my_dir)
 diary off
+
+
+function flag = isfunction(fname)
+fid = fopen([fname '.m']);
+l = fgetl(fid);
+fclose(fid);
+t = strtok(l);
+flag = strcmp(t,'function');
+
