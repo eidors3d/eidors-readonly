@@ -18,7 +18,7 @@ function [img,map]= GREIT_test_ndiff( ref_meas, reconst_meas )
 
 function RM = calc_RM(data_file, noiselev)
    if data_file==1
-      load sim_radmove_homog.mat
+      load ../GREIT-evaluation/sim_radmove_homog.mat
    else
       error('data_file not recognized');
    end
