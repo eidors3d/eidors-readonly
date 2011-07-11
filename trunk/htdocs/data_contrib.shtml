@@ -12,13 +12,28 @@ use the data.</b>
 
 <h2>Data Repository</h2>
 
-<h3>Animal Data</h3>
+<h3>Human Data</h3>
+<ul>
+<h4>Human Arm</h4>
+<li> <a href="./data_contrib/bb-human-arm/bb-human-arm.shtml"
+      >Earliest published EIT image data: 1981 measuring Rod Smallwood's arm</a>
+      By: Brian Brown
+</ul>
+
 <ul>
 <h4>Breathing Data</h4>
-
 <li> <a href="./data_contrib/if-neonate-spontaneous/index.shtml"
       >EIT images of spontaneously breathing neonate</a> 
       By: In&eacute;z Frerichs
+
+<li> <a href="./data_contrib/cg_normal_breathing_2006/cg_normal_breathing_2006.shtml">
+      EIT measurements of normal and paradoxical breathing on healthy subject</a>
+      By: C. G&oacute;mez-Laberge
+</ul>
+
+<h3>Animal Data</h3>
+<ul>
+<h4>Breathing Data</h4>
 
 <li> <a href="./data_contrib/gh_pleural_cavity/gh-pleural-cavity.shtml"
       >EIT of incremental pneumothorax and pleural effusion in a pig</a>
@@ -34,20 +49,6 @@ index.shtml
       By: In&eacute;z Frerichs
 </ul>
 
-<h3>Human Data</h3>
-<ul>
-<h4>Human Arm</h4>
-<li> <a href="./data_contrib/bb-human-arm/bb-human-arm.shtml"
-      >Earliest published EIT image data: 1981 measuring Rod Smallwood's arm</a>
-      By: Brian Brown
-</ul>
-
-<ul>
-<h4>Breathing Data</h4>
-<li> <a href="./data_contrib/cg_normal_breathing_2006/cg_normal_breathing_2006.shtml">
-      EIT measurements of normal and paradoxical breathing on healthy subject</a>
-      By: C. G&oacute;mez-Laberge
-</ul>
 
 <h3>Geophysical Data</h3>
 <ul>
