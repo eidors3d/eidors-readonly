@@ -8,7 +8,7 @@ function [J,map,vbkgnd] = GREIT_Jacobian_cyl;
 if exist('GREIT_Jacobian_cyl.mat','file');
    load GREIT_Jacobian_cyl.mat J map vbkgnd
 else
-   [j,VBKGND,MAP] = Jacobian_calc;
+   [J,vbkgnd,map] = Jacobian_calc;
    save GREIT_Jacobian_cyl.mat J map vbkgnd
 end
 
