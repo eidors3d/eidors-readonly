@@ -41,8 +41,14 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   currently extra_noise is not supported
 %   currently weighting matrix must be scalar
               
-% Example
+% Examples
 %   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
+% OR
+%   fmdl = mk_library_model('adult_male_16el');
+%   fmdl.stimulation = stim;
+%   fmdl.normalize_measurements = 1;
+%   opt.noise_figure = 0.5; 
+%   imdl = mk_GREIT_model(fmdl,0.25,5,opt);
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -60,7 +66,7 @@ if ~isempty(out)
    eidors_msg('mk_GREIT_model: using cached value', 3);
    imdl= out{1}; weight=out{2}; return
 end
-[imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, options)
+[imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, options);
 
 eidors_obj('set-cache', cache_obj, 'mk_GREIT_model', {imdl,weight});
 eidors_msg('mk_GREIT_model: setting cached value', 3);
@@ -351,8 +357,71 @@ function opt = parse_options(opt,fmdl,imdl);
     opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
 
 function do_unit_test
-   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
-   i2 =  mk_common_model('d2c2', 16);
-   i2.fwd_model.normalize_measurements= 1;
-   i2 = select_imdl( i2, {'Basic GN dif','Choose NF=1.0'});
-   test_performance({mk_common_gridmdl('GREITc1'), imdl, i2});
+% Create a 3D elliptical cylinder with 16 circular electrodes 
+fmdl_1= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]); %show_fem(fmdl);
+% Put two balls into the elliptical cylinder
+extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
+[fmdl_2,mat_idx]= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra); 
+% Set the model to use adjacent current patterns
+stim = mk_stim_patterns(16,1,[0,1],[0,1],{}); 
+fmdl_1.stimulation = stim;
+fmdl_2.stimulation = stim;
+% Simulate homogeneous voltages (background conductivity = 0.5);
+img = mk_image(fmdl_2, 0.5); vh = fwd_solve(img); %show_fem(img);
+% Simulate inhomogeneous voltages (ball conductivity = 1.0);
+img.elem_data(mat_idx{2})= 1.0; vi = fwd_solve(img); 
+show_fem(img);
+% Reconstruct the image using GREITv1
+imdl= mk_common_gridmdl('GREITc1'); 
+img= inv_solve(imdl,vh,vi);
+figure, show_slices(img)
+
+% Create a GREIT model for the ellipse
+opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
+fmdl_2.normalize_measurements = 0;
+% use the true model (inverse crime)
+imdl1 = mk_GREIT_model(mk_image(fmdl_2,0.5), 0.25, [], opt);
+img1= inv_solve(imdl1,vh,vi); 
+
+% use honogenous model 
+fmdl_1.normalize_measurements = 0;
+imdl2 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
+img2= inv_solve(imdl2,vh,vi); 
+
+%% repeat with normalized data
+fmdl_2.normalize_measurements = 1;
+% use the true model (inverse crime)
+imdl3 = mk_GREIT_model(mk_image(fmdl_2,0.5), 0.25, [], opt);
+img3= inv_solve(imdl3,vh,vi); 
+
+% use honogenous model 
+fmdl_1.normalize_measurements = 1;
+imdl4 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
+img4= inv_solve(imdl4,vh,vi); 
+
+figure
+show_slices([img1 img2 img3 img4])
+
+
+%% Use a prepackaged model
+fmdl = mk_library_model('adult_male_16el_lungs');
+fmdl.stimulation = stim;
+fmdl.normalize_measurements = 1;
+img = mk_image(fmdl,1);
+img.elem_data([fmdl.mat_idx{2}; fmdl.mat_idx{3}],1) = 0.3;
+vh = fwd_solve(img);
+img.elem_data([fmdl.mat_idx{2}; fmdl.mat_idx{3}],1) = 0.4;
+vi = fwd_solve(img);
+
+
+fmdl2 = mk_library_model('adult_male_16el');
+fmdl2.stimulation = stim;
+fmdl2.normalize_measurements = 1;
+imdl = mk_GREIT_model(fmdl2,0.25,3,opt);
+
+img = inv_solve(imdl,vh, vi);
+figure
+show_slices(img);
+
+
+
