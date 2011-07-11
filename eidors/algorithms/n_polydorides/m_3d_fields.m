@@ -13,6 +13,12 @@ function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);
 %gnd_ind = The ground index
 %v_f     = The measurements fields
 
+%FIXME: This code should call forward_solver, it can then decide
+%what the best solver strategy is. Right now cgls is slower than \
+
+% (C) Nick Polydorides GPL v2 or v3. $Id$
+
+
 [vr,vc] = size(vtx);
 
 Is_supl = zeros(vr,size(m_ind,1)); 
