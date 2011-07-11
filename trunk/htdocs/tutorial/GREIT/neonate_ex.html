@@ -1,0 +1,95 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction for an neonate human thorax geometry</h2>
+
+<h3> 
+Data
+</h3>
+
+Data are available
+<a href="../../data_contrib/if-neonate-spontaneous/index.shtml">Here</a>.
+Data were recorded from a 
+        10-day old spontaneously breathing neonate lying in the
+        prone position with the head turned to the left, as
+        documented in:
+S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs,
+<a href="http://www.springerlink.com/content/h68313183p54711j/">
+ Body and head position effects on regional lung ventilation in infants: an electrical impedance tomography study.</a>
+ Intensive Care Med., 32:1392-1398, 2006.
+
+
+<p><center>
+<b>Subject Image:</b><br>
+<a href="../../data_contrib/if-neonate-spontaneous/if-neonate-spontaneous-image.jpeg"
+   ><img src="../../data_contrib/if-neonate-spontaneous/if-neonate-spontaneous-image.jpeg"
+ width="15%"></a>
+</center>
+
+
+<h3> 
+Use Circular GREIT v1.0 model
+</h3>
+
+<pre>
+<!--#include virtual="neonate_ex01.m" -->
+</pre>
+
+<center>
+<img src="adult_ex01b.png">
+<br><i>Figure:</i>
+Forward model used for training GREIT using
+contrasting lung regions
+</center>
+
+<h3> 
+Use Circular GREIT v1.0 model
+</h3>
+
+
+<center>
+<img src="../netgen/mk_library_model02a.png">
+<img src="adult_ex01b.png">
+<br><i>Figure:</i>
+Forward model used for training GREIT using
+contrasting lung regions
+</center>
+
+<h3> 
+Training GREIT
+</h3>
+
+<pre>
+<!--#include virtual="adult_ex02.m" -->
+</pre>
+
+<h3> 
+Show some images
+</h3>
+
+Data used are of tidal breathing of the author using the EIT equipment
+<ul>
+Guardo R Boulay C   Murray B   Bertrand M
+<a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=83560"
+   >An experimental study in electrical impedance tomography using backprojection reconstruction</a>
+  <i>IEEE T Biomed Eng</i> 38: 617&minus;627, 1991
+</ul>
+<pre>
+<!--#include virtual="adult_ex03.m" -->
+</pre>
+
+
+<center>
+<img src="adult_ex03a.png">
+<img src="adult_ex03b.png">
+<br><i>Figure:</i>
+Forward model used for training GREIT using
+contrasting lung regions
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
