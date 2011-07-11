@@ -19,7 +19,8 @@ imgs = calc_slices(img);
 axes('position',[0.30,0.6,0.65,0.25]);
 
 imgs = permute(imgs,[3,1,2]);
-plot(imgs(:,yposns,10),'LineWidth',2);
+taxis =  (0:size(imgs,1)-1)/13; % frame rate = 13
+plot(taxis,imgs(:,yposns,10),'LineWidth',2);
 axis tight
 
 print_convert neonate_ex03a.png
