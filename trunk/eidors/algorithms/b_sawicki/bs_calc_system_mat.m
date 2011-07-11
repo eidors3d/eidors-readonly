@@ -10,7 +10,7 @@ function s_mat= bs_calc_system_mat( fwd_model, img)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % Modified by Bartosz Sawicki
-% $Id: bs_calc_system_mat.m 1535 2008-07-26 15:36:27Z aadler $
+% $Id$
 
 FC= aa_system_mat_fields( fwd_model);
 lFC= size(FC,1);
