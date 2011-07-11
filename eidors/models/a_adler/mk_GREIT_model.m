@@ -79,7 +79,7 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 [x,y] = ndgrid( x_avg, y_avg);
 
 %Calculate rec_model (if absent) and find the inside array
-if ~isfield(imdl,'rec_model'); %%isempty(imdl.rec_model)
+if ~isfield(imdl,'rec_model');
  inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
  
  ff = find(~inside);
@@ -136,7 +136,7 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
     case 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd'
-      fmdl = ng_mk_cyl_models([2,1,0.08],[16,1],[0.05]); 
+      fmdl = ng_mk_cyl_models([2,1,0.18],[16,1],[0.05]); 
       fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
       fmdl.normalize_measurements = 1;
       imgs= mk_image( fmdl, 1);
@@ -266,6 +266,7 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
    imdl = []; 
    if isstr(fmdl)
       imgs = get_prepackaged_fmdls( fmdl );
+      fmdl = imgs.fwd_model;
    elseif isfield(fmdl,'type');
      switch fmdl.type
    %  if we get a fwd_model, assume uniform conductivity backgnd of 1
