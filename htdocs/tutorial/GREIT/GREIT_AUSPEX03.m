@@ -4,11 +4,6 @@ imdl.fwd_model.stimulation =  ...
 img = mk_image(imdl);     vh = fwd_solve( img );
 img.elem_data(290) = 1.1; vi = fwd_solve( img );
 
-fname = 'ReconstrMatrixGREITc.mat';
-load(fname);
-
-imdl = mk_common_gridmdl('b2d',ReconstrMatrix');
-
-imgr= inv_solve(imdl, vh, vi);
-show_fem(imgr);
-
+clf;subplot(221);
+show_fem(img); title('Test Object');
+print_convert GREIT_AUSPEX03a.png
