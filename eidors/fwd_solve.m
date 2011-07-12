@@ -42,6 +42,13 @@ if isfield(fwd_model,'background')
     img.elem_data = img.elem_data + fwd_model.background; 
 end
 
+if ~isfield(fwd_model, 'electrode')
+   error('EIDORS: attempting to solve on model without electrodes');
+end
+if ~isfield(fwd_model, 'stimulation')
+   error('EIDORS: attempting to solve on model without stimulation patterns');
+end
+
 data = feval( fwd_model.solve, fwd_model, img);
 data= eidors_obj('data',data);  % create data object
 
