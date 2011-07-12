@@ -28,7 +28,7 @@ else
    if  strfind(system_dependent('getos'),'Windows')
       system(sprintf('explorer "%s.html"',fname));
    else % we hope this is here - under linux etc
-      system(sprintf('mozilla "./%s.html"',fname));
+      system(sprintf('firefox "./%s.html" &',fname));
    end
 end
 
