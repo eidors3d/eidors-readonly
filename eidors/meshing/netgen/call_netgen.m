@@ -58,7 +58,7 @@ while( 1 )
 %     fprintf(fid,'options.segmentsperedge 5\n'); % Another
 %                                                   potentially useful parameter
 %                                                   except netgen ignores it
-      fprintf(fid,'options.meshsizefilename  %s\n',msz_file);
+      fprintf(fid,'options.meshsizefilename= %s\n',msz_file);
    end
    fclose(fid);
 
