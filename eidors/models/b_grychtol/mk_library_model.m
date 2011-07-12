@@ -1,5 +1,5 @@
 function out = mk_library_model(shape,elec_pos,elec_shape,maxsz,nfft)
-%MK_LIBRARY_MODEL [Experimental] FEM models based on library shapes 
+%MK_LIBRARY_MODEL - FEM models based on library shapes 
 %
 % MK_LIBRARY_MODEL(shape,elec_pos,elec_shape,maxsz,nfft) where:
 %   shape -  a cell array of strings and
