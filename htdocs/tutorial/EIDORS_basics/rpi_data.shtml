@@ -52,7 +52,7 @@ Difference imaging
 
 Using a very simple model
 <pre>
-<!--#include virtual="rpi_data02.m" -->
+<!--#include virtual="rpi_data02b.m" -->
 </pre>
 Using a the accurate electrode model
 <pre>
