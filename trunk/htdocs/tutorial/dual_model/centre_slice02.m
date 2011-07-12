@@ -4,6 +4,7 @@
 imdl = mk_common_model('b3cr',[16,2]);
 
 f_mdl = mk_library_model('cylinder_16x2el_coarse');
+f_mdl.stimulation = stim;
 imdl.fwd_model = f_mdl;
 
 % Create coarse model

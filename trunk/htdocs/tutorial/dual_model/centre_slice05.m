@@ -9,7 +9,7 @@ imdl2d= mk_common_model('b2c2',16);
 c_mdl= imdl2d.fwd_model;
 
 % Show fine model
-show_fem(f_mdl);
+clf;show_fem(f_mdl);
 crop_model(gca, inline('x-z<-.5','x','y','z'))
 view(-23,10)
 
@@ -48,4 +48,4 @@ end
 
 hold off;
 
-print -r100 -dpng centre_slice05a.png;
+print_convert centre_slice05a.png;

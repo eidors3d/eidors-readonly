@@ -2,8 +2,9 @@
 
 % get ng_mdl_16x2_vfine from data_contrib section of web page
 n_sims= 20;
+stim = mk_stim_patterns(16,2,'{ad}','{ad}',{},1);
 fmdl = mk_library_model('cylinder_16x2el_vfine');
-fmdl.stimulation = mk_stim_patterns(16,2,'{ad}','{ad}',{},1);
+fmdl.stimulation = stim;
 [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl);
 
 clf; show_fem(fmdl)
