@@ -84,6 +84,12 @@ out = {
     'adult_male_32el';
     'adult_male_16el_lungs';
     'adult_male_32el_lungs';
+    'cylinder_16x1el_coarse';
+    'cylinder_16x1el_fine';
+    'cylinder_16x1el_vfine';   
+    'cylinder_16x2el_coarse';
+    'cylinder_16x2el_fine';
+    'cylinder_16x2el_vfine';
     'neonate_16el';
     'neonate_32el';
     'neonate_16el_lungs';
@@ -110,6 +116,20 @@ switch str
     case 'adult_male_32el_lungs'
         out = mk_library_model({'adult_male','boundary','left_lung','right_lung'},...
             [32 1 0.5],[0.05],0.08);
+        
+    case 'cylinder_16x1el_coarse'
+        out = ng_mk_cyl_models([10,15],[16,5],[0.5,0,0.18]);
+    case 'cylinder_16x1el_fine'  
+        out = ng_mk_cyl_models([10,15,1.1],[16,5],[0.5,0,0.15]);
+    case 'cylinder_16x1el_vfine' 
+        out = ng_mk_cyl_models([10,15,0.8],[16,5],[0.5,0,0.08]);
+    case 'cylinder_16x2el_coarse' 
+        out = ng_mk_cyl_models([30,15],[16,10,20],[0.5,0,0.18]);
+    case 'cylinder_16x2el_fine'  
+        out = ng_mk_cyl_models([30,15,1.5],[16,10,20],[0.5,0,0.15]);
+    case 'cylinder_16x2el_vfine' 
+        out = ng_mk_cyl_models([30,15,0.8],[16,10,20],[0.5,0,0.08]);
+        
         
     case 'neonate_16el'
         out = mk_library_model({'neonate','boundary'},[16 1 0.5],0.1,0.08,49);
@@ -200,7 +220,7 @@ models = mk_library_model('list');
 for i = 1:numel(models)
     mdl = mk_library_model(models{i});
     img = mk_image(mdl,1);
-    n = numel(mdl.mat_idx);
+    try   n = numel(mdl.mat_idx); catch n =1; end
     if n >1
         for j = 2:n
             img.elem_data(mdl.mat_idx{j}) = 0.25;
