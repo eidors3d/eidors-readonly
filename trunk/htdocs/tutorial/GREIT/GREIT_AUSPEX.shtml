@@ -17,14 +17,44 @@ Circular GREIT model
 </h3>
 
 <pre>
-<!--#include virtual="GREIT_test_params01.m" -->
+<!--#include virtual="GREIT_AUSPEX01.m"-->
+</pre>
+
+<h3> 
+Adult human GREIT model
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_AUSPEX02.m"-->
+</pre>
+
+<h3> 
+Test Simulations
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_AUSPEX03.m"-->
 </pre>
 
 <center>
-<img src="GREIT_test_params01a.png">
-<img src="GREIT_test_params01b.png">
+<img src="GREIT_AUSPEX03a.png">
 <br><i>Figure:</i>
-Simulation Mesh (right) and close-up of the electrodes (left)
+Simulation with target to test AUSPEX matrix
+</center>
+
+<h3> 
+Test of GREIT/AUSPEX matrices
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_AUSPEX04.m"-->
+</pre>
+
+<center>
+<img src="GREIT_AUSPEX04a.png">
+<br><i>Figure:</i>
+<i>Left</i>Reconstructions.
+<i>Right</i>Reconstruction Domain
 </center>
 
 </td></tr></table>
