@@ -1,5 +1,7 @@
 % $Id$
 
+tutorial120a; % get the model from a related tutorial
+
 % Gauss Newton Solver
 inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);
 inv_GN.reconst_type= 'difference';
