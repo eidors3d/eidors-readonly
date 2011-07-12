@@ -23,5 +23,6 @@ im_st(3)= inv_solve(lmdl, vh, vi);
 lmdl.tutorial210_cheat_tikhonov.cheat_elements=  ...
      large_face.halfy;
 im_st(4)= inv_solve(lmdl, vh, vi);
-
-show_slices( im_st, levels);
+im_st(1).calc_colours.greylev = .01;
+im_st(1).show_slices.img_cols = 4;
+show_slices( im_st);
