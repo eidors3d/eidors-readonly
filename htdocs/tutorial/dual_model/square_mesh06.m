@@ -13,9 +13,9 @@ imgc= inv_solve(imdl, vh, vi);
 % Show on the mesh
 subplot(121); show_fem(imgs);
 subplot(122); show_fem(imgc);
-print -r150 -dpng square_mesh06a.png
+print_convert square_mesh06a.png
 
 % Show on a grid 
 subplot(121); show_slices(imgs);
 subplot(122); show_slices(imgc);
-print -r150 -dpng square_mesh06b.png
+print_convert square_mesh06b.png

@@ -45,10 +45,7 @@ This can be shown as follows:
 
 Next, we show the coarse and fine models
 and their relationship. 
-(The fine model is generated using netgen, and
-is available
- <a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_vfine.7z"
-           >here</a>)
+
 <pre>
 <!--#include virtual="square_mesh03.m" -->
 </pre>
@@ -65,10 +62,7 @@ Simulation Data
 </h3>
 
 We simulate a ball moving in
-a helical path on a fine netgen model (249891 elems)
-(available
- <a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_vfine.7z"
-           >here</a>)
+a helical path on a fine netgen model.
 <pre>
 <!--#include virtual="square_mesh04.m" -->
 </pre>

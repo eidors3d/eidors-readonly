@@ -15,4 +15,4 @@ hold off
 axis(15*[-1.1,+1.1,-1.1,+1.1,zofs-0.4,zofs+0.4]);
 view(-47,28); axis square
 
-print -r150 -dpng square_mesh03a.png
+print_convert square_mesh03a.png '-density 100'
