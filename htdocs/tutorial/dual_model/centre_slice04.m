@@ -21,4 +21,4 @@ imgc1= inv_solve(imdl, vh, vi);
 subplot(133)
 show_slices(imgc1);
 
-print -r150 -dpng centre_slice04a.png;
+print_convert centre_slice04a.png;
