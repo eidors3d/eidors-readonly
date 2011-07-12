@@ -1,3 +1,4 @@
+function data =tutorial020_f_solve( f_mdl, img )
 % Forward Model for a resistor
 % For each stimulation there is I1 into Node1
 %  Node2 is connected to gnd with Zcontact
@@ -8,7 +9,7 @@
 %
 % Thus
 %  V= IR    => [V1;V2;V3] = [I1;I2*I3]*(R + 2*Zcontact)
-function data =tutorial020_f_solve( f_mdl, img )
+
   R= img.elem_data;
 
   n_stim= length( f_mdl.stimulation );
