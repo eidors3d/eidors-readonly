@@ -21,7 +21,7 @@ demo_real;
 
 %And for complex admittivity reconstruction,
 
-demo_comp;
+demo_complex;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,7 +261,7 @@ s = svd(J);
 figure; semilogy(s,'.');
 
 %Check that
-cond(J) >> condest(Eref)
+cond(J) > condest(Eref)
 
 %Are the measurements linearly independent?
 rank(J)
