@@ -4,6 +4,7 @@ fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
 imgs= mk_image( fmdl, 1);
 
 show_fem(imgs);
+print_convert test_params01a.png '-density 50'
 
 r = 0.05; % target radius
 Npos = 20; % number of positions
@@ -37,8 +38,8 @@ imgr.calc_colours.npoints = 128;
 imgr.calc_slices.levels=levels;
 params = eval_GREIT_fig_merit(imgr, xyzr);
 
-figure
 p_names = {'AR','PE','RES','SD','RNG'};
 for i=1:5; subplot(5,1,i);
     plot(params(i,:)); ylabel(p_names{i});
 end
+print_convert test_params04a.png '-density 100'
