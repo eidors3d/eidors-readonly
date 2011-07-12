@@ -21,7 +21,7 @@ end
 if nargin<6
     clr_def = [];
 end
-if mat_ref ~= 'use_global'
+if strcmp(mat_ref, 'use_global')
    img.calc_colours.ref_level = mat_ref;
 end
 

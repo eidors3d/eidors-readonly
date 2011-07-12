@@ -24,10 +24,11 @@ disp(sprintf('\n'))
 pause(2);
 
 load datacom sels;
+% FIXME: this needs to use the new show_fem functions
 %sels :Index in srf matrix denoting the faces to be assigned as electrodes
-  for u=1:size(sels)
-      paint_electrodes(sels(u),srf,vtx);
-  end
+% for u=1:size(sels)
+%     paint_electrodes(sels(u),srf,vtx);
+% end
 hidden off;
   
 load datacom gnd_ind elec no_pl protocol zc sym;
