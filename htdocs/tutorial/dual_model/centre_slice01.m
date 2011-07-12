@@ -2,10 +2,11 @@
 
 % get ng_mdl_16x2_vfine from data_contrib section of web page
 n_sims= 20;
-load ng_mdl_16x2_vfine.mat; fmdl= ng_mdl_16x2_vfine;
+fmdl = mk_library_model('cylinder_16x2el_vfine');
+fmdl.stimulation = mk_stim_patterns(16,2,'{ad}','{ad}',{},1);
 [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl);
 
-show_fem(fmdl)
+clf; show_fem(fmdl)
 crop_model(gca, inline('x-z<-15','x','y','z'))
 view(-23,14)
 
@@ -19,4 +20,4 @@ for i=1:n_sims
 end
 hold off
 
-print -r100 -dpng centre_slice01a.png;
+print_convert centre_slice01a.png '-density 100'

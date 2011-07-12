@@ -3,8 +3,7 @@
 % Create and show inverse solver
 imdl = mk_common_model('b3cr',[16,2]);
 
-load ng_mdl_16x2_coarse; f_mdl = ng_mdl_16x2_coarse;
-
+f_mdl = mk_library_model('cylinder_16x2el_coarse');
 imdl.fwd_model = f_mdl;
 
 % Create coarse model
@@ -50,4 +49,4 @@ end
 
 hold off;
 
-print -r100 -dpng centre_slice02a.png;
+print_convert centre_slice02a.png '-density 100'
