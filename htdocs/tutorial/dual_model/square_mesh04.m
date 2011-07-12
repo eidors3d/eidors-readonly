@@ -1,13 +1,12 @@
 % Simulate Moving Ball $Id$
 
-% get ng_mdl_16x1_vfine from data_contrib section of web page
 n_sims= 20;
- load ng_mdl_16x1_vfine.mat; fmdl= ng_mdl_16x1_vfine;
-%load ng_mdl_16x1_coarse.mat; fmdl= ng_mdl_16x1_coarse;
-[vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl);
+f_mdl = mk_library_model('cylinder_16x1el_vfine');
+f_mdl.stimulation = mk_stim_patterns(16,1,'{ad}','{ad}',{},1);
+[vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, f_mdl);
 
 clf;
-show_fem(fmdl)
+show_fem(f_mdl)
 crop_model(gca, inline('x-z<-8','x','y','z'))
 
 hold on

@@ -87,18 +87,6 @@ index.shtml
 <li> <a href="./data_contrib/ab_2d_thorax_model/ab_2d_thorax_model.shtml"
       >Human Thorax 2D FEM mesh</a>
       By: A. Borsic, C. McLeod, W.R.B. Lionheart, N. Kerrouche
-<li> <a href="./data_contrib/aa_simulate_2d_movement/aa_simulate_2d_movement.shtml"
-     >Circular movement of small object in circular tank</a>
-      By: A. Adler
-<li> <a href="./data_contrib/netgen_moving_ball/netgen_moving_ball.shtml"
-     >Netgen simulations of object moving in circular tank</a>
-      By: A. Adler, W.R.B. Lionheart
-<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x2_models.shtml"
-     >Netgen FEM model of a 16 electrode&times;2 layer cylindrical tank</a>
-      By: A. Adler
-<li> <a href="./data_contrib/netgen_moving_ball/netgen_16x1_models.shtml"
-     >Netgen FEM model of a 16 electrode&times;1 layer cylindrical tank</a>
-      By: A. Adler
 </ul>
 
 <h3>EIT Test and Evaluation systems</h3>
