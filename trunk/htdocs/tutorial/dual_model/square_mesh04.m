@@ -23,7 +23,7 @@ hold off
 
 axis equal
 view(-23,44)
-print -r100 -dpng square_mesh04a.png;
+print_convert square_mesh04a.png '-density 75'
 view(-12,4)
-print -r100 -dpng square_mesh04b.png;
+print_convert square_mesh04b.png '-density 75'
 

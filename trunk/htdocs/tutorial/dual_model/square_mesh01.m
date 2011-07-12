@@ -18,4 +18,4 @@ show_fem(s_mdl)
    text(xc,yc,numeros,'FontSize',7, ...
             'HorizontalAlignment','center');
 
-print -r100 -dpng square_mesh01a.png;
+print_convert square_mesh01a.png '-density 75'
