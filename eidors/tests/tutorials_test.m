@@ -39,6 +39,12 @@ else
     tut_dlm = ':';
 end
 
+global tut_count; tut_count = 0;
+global last_tut;
+if nargin >1,
+    last_tut = tcount;
+else last_tut = 0;
+end
 [d,D]= strtok(D,tut_dlm);
 while ~isempty(d)
     if ~isempty(strfind(d,'.svn')); 
@@ -48,12 +54,6 @@ while ~isempty(d)
     cd(d);
     global F;F = dir('*.m');
     F = struct2cell(F); F = sortrows(F(1,:));% assume sorted by name
-    global tut_count; tut_count = 0;
-    global last_tut; 
-    if nargin >1, 
-        last_tut = tcount; 
-    else last_tut = 0; 
-    end
     global errors; errors={};
     global e_count; e_count = 1;
     global w_count; w_count = 1;
@@ -71,8 +71,13 @@ while ~isempty(d)
                 continue
             end
             name = T(1).name(1:end-2);
-            tut_count = tut_count +1;
-            if tut_count < last_tut || isfunction(name)
+            skip = 0;
+            if isfunction(name)
+                skip = 1;
+            else
+                tut_count = tut_count +1;
+            end
+            if skip || tut_count < last_tut 
                 T(1) = [];
                 F(1) = [];
                 continue
