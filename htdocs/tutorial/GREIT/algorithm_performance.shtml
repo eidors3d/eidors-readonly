@@ -24,7 +24,6 @@ Performance of algorithms:
 <i>red:</i> One step Gauss Newton
 </center>
 
-<!--#include virtual="../nav-sidebar-tut.shtml" -->
 <h2>GREIT Test Parameters for different algorithms</h2>
 
 The GREIT figure of merit parameters to evaluate the
@@ -70,7 +69,7 @@ Calculate and show GREIT parameters
 </pre>
 
 <center>
-<img src="GREIT_test_params04a.png">
+<img src="test_params04a.png">
 <br><i>Figure:</i>
 GREIT figure of merit parameters for
 GN algorithm
