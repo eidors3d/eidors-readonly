@@ -9,6 +9,7 @@ fmdle.normalize_measurements = 1;
 
 % GREIT Ellip - circ objects
 opt.distr = 0; % central
+opt.noise_figure = 0.5;
 imdl = mk_GREIT_model(mk_image(fmdle,1), 0.25, [], opt);
 
 vh = mean(vv,2);        % reference is average
