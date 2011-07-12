@@ -1,0 +1,37 @@
+<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<h2>GREIT Reconstruction Matrix</h2>
+
+The AUSPEX Software is an EIT evaluate and analysis
+software from Carefusion. AUSPEX is designed to analyse
+data collected from the Geo II MF EIT system. It uses
+a reconstruction algorithm based on Sheffield
+backprojection. 
+
+<p>
+To replace this algorithm with GREIT algorithm, one
+needs to replace the file <tt>ReconstructionMatrixF.mat</tt>
+with another one calculated by this tutorial.
+
+<h3> 
+Circular GREIT model
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_test_params01.m" -->
+</pre>
+
+<center>
+<img src="GREIT_test_params01a.png">
+<img src="GREIT_test_params01b.png">
+<br><i>Figure:</i>
+Simulation Mesh (right) and close-up of the electrodes (left)
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
