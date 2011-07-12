@@ -1,14 +1,14 @@
 % Test image for different noise
 % $Id$
 
-il_g= mk_common_model('c2c');
+il_g= mk_common_model('c2c2',16);
 
 num_tries=6;
-vi_n(1:num_tries) = vi;
-for i= 1:num_tries % matlab can't vectorize
-   noise = .002*randn(size(vi.meas));
-   vi_n(i).meas = vi_n(i).meas + noise;
+for i= 1:num_tries 
+   vi_n(:,i) = add_noise(2, vi, vh);
 end
 
-levels= [0,0,0,1,1];
-show_slices( inv_solve( il_g, vh, vi_n ), levels);
+img = inv_solve( il_g, vh, vi_n );
+img.calc_colours.greylev = .01;
+img.show_slices.img_cols = num_tries;
+show_slices( img );
