@@ -32,9 +32,9 @@ imgM = inv_solve(mdlM, vvRef, vvAvg1);     % solved with movement algorithms
 % img2dim_scl= img2dim;
 % img2dim_scl.elem_data= ed;
 
-mysubplot(1,2,1)
+subplot(1,2,1)
 show_fem_move(img2dim);
-mysubplot(1,2,2)
+subplot(1,2,2)
 show_fem_move(imgM, [], 10);
 
 %         % Calculate artefact for each reconstruction
