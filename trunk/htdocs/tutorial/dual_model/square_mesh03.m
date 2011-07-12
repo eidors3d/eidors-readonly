@@ -1,6 +1,6 @@
 % Dual models $Id$
 
-load ng_mdl_16x1_coarse; f_mdl= ng_mdl_16x1_coarse;
+f_mdl = mk_library_model('cylinder_16x1el_coarse');
 
 subplot(122)
 show_fem(f_mdl);  % fine model
