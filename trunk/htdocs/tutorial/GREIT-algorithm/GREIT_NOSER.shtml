@@ -30,10 +30,7 @@ Int. J. Imaging Systems and Technology,
 <H3>Jacobian Calculation</H3>
 
 The previous code depends on this function to
-calculate and cache the Jacobian matrix,
-based on the 62465 element FEM model available
-<a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x1_fine.7z"
-             >here</a>:
+calculate and cache the Jacobian matrix.
 
 <pre>
 <!--#include virtual="GREIT_Jacobian_cyl.m" -->
