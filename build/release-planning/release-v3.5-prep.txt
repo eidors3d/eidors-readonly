@@ -106,7 +106,7 @@ TUTORIAL STATUS:
         0103  ./GREIT-evaluation\simulation_3d_test00 ERROR -> DELETE
         0104  ./GREIT-evaluation\simulation_3d_test01 OK -> FIXED
         0105  ./GREIT-evaluation\simulation_3d_test02 ERROR -> FIXED
-0106  ./GREIT-evaluation\simulation_radmove ERROR -> create_tank_mesh_ng
+        0106  ./GREIT-evaluation\simulation_radmove ERROR -> FIXED (function)
         0107  ./GREIT-evaluation\simulation_test03 ERROR -> FIXED (simulation_test00)
         0108  ./GREIT-evaluation\simulation_test04 ERROR -> FIXED (simulation_test00)
         0109  ./absolute_reconst\tutorial151a OK
@@ -160,7 +160,7 @@ TUTORIAL STATUS:
         0157  ./data_structures\tutorial020b OK
         0158  ./data_structures\tutorial020c OK
         0159  ./data_structures\tutorial022a OK
-0160  ./data_structures\tutorial022b WARNING(S) -> DECIDE
+        0160  ./data_structures\tutorial022b WARNING(S) -> FIXED
         0161  ./data_structures\tutorial030a OK
         0162  ./data_structures\tutorial030b OK
         0163  ./data_structures\tutorial030c OK
@@ -170,7 +170,7 @@ TUTORIAL STATUS:
         0167  ./distmesh\dm_geophys01 OK
         0168  ./distmesh\dm_geophys02 OK
         0169  ./distmesh\dm_geophys03 OK
-        0170  ./distmesh\dm_geophys04 WARNING(S) -> fixed
+        0170  ./distmesh\dm_geophys04 WARNING(S) -> FIXED
         0171  ./distmesh\simple_2d_model01 OK
         0172  ./distmesh\simple_2d_model02 OK
         0173  ./distmesh\simulate_move1_01 OK
