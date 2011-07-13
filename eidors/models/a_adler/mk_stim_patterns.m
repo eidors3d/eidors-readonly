@@ -147,8 +147,8 @@ function meas_sel= meas_select( mpat, mpat0);
    for i=1:length(mpat);
       [mset,  err ] = mk_meas_set( mpat(i).meas_pattern );
       [mset0, err0] = mk_meas_set( mpat0(i).meas_pattern );
-      if err | err0; msel_i = 1 + 0*mset; % Set to 1 for error
-      else           msel_i = ismember(mset0,mset);
+      if err || err0; msel_i = 1 + 0*mset; % Set to 1 for error
+      else            msel_i = ismember(mset0,mset);
       end
       meas_sel = [meas_sel; msel_i];
    end
