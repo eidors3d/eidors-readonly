@@ -351,7 +351,7 @@ OK	models/a_adler/elem_dim.m
 OK	models/a_adler/elem_select.m
 OK	models/b_grychtol/mk_library_model.m
 OK	models/b_grychtol/shape_library.m
-MEMORY	tools/test_performance_img.m
-MEMORY	tools/test_performance.m
+MEMORY	tools/test_performance_img.m - OK in recent test
+MEMORY	tools/test_performance.m - OK in recent test
 OK  	tools/unit_test_cmp.m - fixed
 
