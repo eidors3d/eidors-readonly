@@ -5,6 +5,10 @@ function unit_test_cmp(txt,a,b,tol)
 
 % License GPL v2 or v3: $Id$
 
+   if nargin==1 && strcmp(txt,'UNIT_TEST');
+         unit_test_cmp('UNIT_TEST_CMP: OK',1,.99,.02); return;
+   end
+
    if nargin < 4; tol = 0; end
    fprintf('TEST: %20s = ',txt);
    ok='fail';
