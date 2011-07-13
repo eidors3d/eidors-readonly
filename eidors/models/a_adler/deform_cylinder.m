@@ -1,8 +1,11 @@
+function fwd_mdl = deform_cylinder( fwd_mdl, geo);
 % fwd_mdl = deform_cylinder( fwd_mdl, niv);
 % Deform the boundary of the cylinder to make it like a torso
 % niv= 1.. 5 => Torso shape from T5 - T12
 % xyz_expand - rescale xyz - default should be [1];
-function fwd_mdl = deform_cylinder( fwd_mdl, geo);
+
+if isstr(fwd_mdl) && strcmp(fwd_mdl,'UNIT_TEST'); do_unit_test; return; end
+
     NODE= fwd_mdl.nodes';
     a_max= size(geo.xy,1);
     ab_geo=sqrt(sum(([ geo.xy; geo.xy(1,:) ]').^2)');
@@ -121,3 +124,9 @@ show_fem(f1ml);
 hold off;
 
 function do_unit_test
+   fmdl= ng_mk_cyl_models(1,0,[]);
+   th = linspace(0,2*pi,50)';
+   geo.xy=[sin(th),2*cos(th)];
+   geo.z_mag = 10;
+   show_fem(deform_cylinder(fmdl,geo));
+   view(2);
