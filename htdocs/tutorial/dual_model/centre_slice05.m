@@ -48,4 +48,4 @@ end
 
 hold off;
 
-print_convert centre_slice05a.png;
+print_convert centre_slice05a.png '-density 100';

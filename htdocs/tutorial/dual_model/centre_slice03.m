@@ -14,5 +14,5 @@ imdl.hyperparameter.value= 0.01;
 
 imgc= inv_solve(imdl, vh, vi);
 
-subplot(131)
-show_slices(imgc);
+clf; show_slices(imgc);
+print_convert centre_slice04a.png '-density 75';
