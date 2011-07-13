@@ -102,7 +102,7 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
 
    ver = eidors_obj('interpreter_version');
    if ver.isoctave ==0 && ver.is64bit
-      eidors_msg(['Poor you. You''re using matlab on a 64 bit machine. ' ...
+      eidors_msg(['Poor you. You''re using a 64 bit version of matlab. ' ...
                   'Unfortunately, these versions have serious graphics ' ...
                   'bugs and we can''t show a nice image. Sorry. ' ...
                   'Please bug Mathworks for a fix (good luck!).'],0);
@@ -144,4 +144,5 @@ function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
 
 function do_unit_test
    img = mk_image(mk_common_model('n3r2',16),1);
-   show_3d_slices(img,[1,2])
+   show_3d_slices(img,[1,2],0,0.5);
+   view(10,18);
