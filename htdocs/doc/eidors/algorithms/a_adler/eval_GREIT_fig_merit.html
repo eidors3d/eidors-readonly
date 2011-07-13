@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of eval_GREIT_fig_merit</title>
+  <meta name="keywords" content="eval_GREIT_fig_merit">
+  <meta name="description" content="EVAL_GREIT_FIG_MERIT: calculate GREIT figures of merit for images">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>eval_GREIT_fig_merit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>EVAL_GREIT_FIG_MERIT: calculate GREIT figures of merit for images</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function params = eval_GREIT_fig_merit(imgs, xyzr_pt) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> EVAL_GREIT_FIG_MERIT: calculate GREIT figures of merit for images
+ USAGE:
+ params = eval_GREIT_fig_merit(imgs, xyzr_pt)
+  params(1,:) = Image Amplitude
+  params(2,:) = Position Error =&gt; + toward centre, - toward edge
+  params(3,:) = Resolution
+  params(4,:) = Shape Deformation
+  params(5,:) = Ringing
+
+  imgs:    a sequence of eidors images of single point targets
+  xyzr_pt: [x;y;z;radius] of each images point</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="calc_hm_set.html" class="code" title="function hm_img = calc_hm_set(img,frac)">calc_hm_set</a>	hm_img= CALC_HA_SET(img)</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li><li><a href="../../../eidors/models/a_adler/mdl_dim.html" class="code" title="function num = mdl_dim( mdl );">mdl_dim</a>	MDL_DIM: dimension of model space (are nodes in 2D or 3D space)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/tools/test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li><li><a href="../../../eidors/tools/test_performance_img.html" class="code" title="function [params_img] =  test_performance_img( imdls, fmdl );">test_performance_img</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function ampl = calc_amplitude(img)</a></li><li><a href="#_sub2" class="code">function pe   = calc_posn_error(qmi, xmean, ymean, xy)</a></li><li><a href="#_sub3" class="code">function res  = calc_resolution(qmi, map)</a></li><li><a href="#_sub4" class="code">function sd  = calc_shape_deform(qmi, equiv_circ)</a></li><li><a href="#_sub5" class="code">function rr = calc_ringing(img, qmi );</a></li><li><a href="#_sub6" class="code">function [x,y,bb_min,bb_max]=prepare_grid(sz,mdl)</a></li><li><a href="#_sub7" class="code">function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function params = eval_GREIT_fig_merit(imgs, xyzr_pt)</a>
+0002 <span class="comment">% EVAL_GREIT_FIG_MERIT: calculate GREIT figures of merit for images</span>
+0003 <span class="comment">% USAGE:</span>
+0004 <span class="comment">% params = eval_GREIT_fig_merit(imgs, xyzr_pt)</span>
+0005 <span class="comment">%  params(1,:) = Image Amplitude</span>
+0006 <span class="comment">%  params(2,:) = Position Error =&gt; + toward centre, - toward edge</span>
+0007 <span class="comment">%  params(3,:) = Resolution</span>
+0008 <span class="comment">%  params(4,:) = Shape Deformation</span>
+0009 <span class="comment">%  params(5,:) = Ringing</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%  imgs:    a sequence of eidors images of single point targets</span>
+0012 <span class="comment">%  xyzr_pt: [x;y;z;radius] of each images point</span>
+0013 
+0014 <span class="comment">% (C) 2009 Andy Adler. Licensed under GPL v2 or v3</span>
+0015 <span class="comment">% $Id$</span>
+0016 mdl = imgs.fwd_model;
+0017 imgs = <a href="../../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>(imgs);
+0018 map = ~isnan(squeeze(imgs(:,:,1))); <span class="comment">%assume all imgs are the same shape</span>
+0019 imgs(isnan(imgs)) = 0;
+0020 sz = size(imgs,1);
+0021 [x,y,bb_min,bb_max]=<a href="#_sub6" class="code" title="subfunction [x,y,bb_min,bb_max]=prepare_grid(sz,mdl)">prepare_grid</a>(sz,mdl);
+0022 
+0023 N_imgs = size(imgs,3);
+0024 <span class="keyword">for</span> i= 1:N_imgs
+0025    [xmean,ymean,equiv_circ,qmi,img] = <a href="#_sub7" class="code" title="subfunction [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);">calc_cofg</a>(imgs(:,:,i),map,x,y);
+0026    params(1,i) = <a href="#_sub1" class="code" title="subfunction ampl = calc_amplitude(img)">calc_amplitude</a>( img );
+0027    params(2,i) = <a href="#_sub2" class="code" title="subfunction pe   = calc_posn_error(qmi, xmean, ymean, xy)">calc_posn_error</a>( qmi, xmean, ymean, xyzr_pt(1:2,i) );
+0028    params(3,i) = <a href="#_sub3" class="code" title="subfunction res  = calc_resolution(qmi, map)">calc_resolution</a>( qmi, map );
+0029    params(4,i) = <a href="#_sub4" class="code" title="subfunction sd  = calc_shape_deform(qmi, equiv_circ)">calc_shape_deform</a>( qmi, equiv_circ );
+0030    params(5,i) = <a href="#_sub5" class="code" title="subfunction rr = calc_ringing(img, qmi );">calc_ringing</a>( img, qmi );
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="comment">% TODO: Fix this when we start to care about units</span>
+0034 ctr = bb_min + 0.5*(bb_max-bb_min);
+0035 r = max(0.5*(bb_max-bb_min));
+0036 <span class="keyword">if</span> N_imgs &gt; 10 <span class="comment">% doesn't make sense to normalize otherwise</span>
+0037     ctr_pts = sum((xyzr_pt(1:<a href="../../../eidors/models/a_adler/mdl_dim.html" class="code" title="function num = mdl_dim( mdl );">mdl_dim</a>(mdl(1)),:)-repmat(ctr',1,size(xyzr_pt,2))).^2) &lt; (0.05*r)^2;
+0038     <span class="keyword">if</span> any(ctr_pts)
+0039         params(1,:) = params(1,:)/mean(params(1,ctr_pts));
+0040     <span class="keyword">else</span>
+0041         <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'eval_GREIT_fig_merit: no centre points found to normalize'</span>,1);
+0042     <span class="keyword">end</span>
+0043 <span class="keyword">end</span>
+0044 
+0045 
+0046 
+0047 
+0048 
+0049 <a name="_sub1" href="#_subfunctions" class="code">function ampl = calc_amplitude(img)</a>
+0050    ampl = sum(img(:));
+0051 
+0052 <a name="_sub2" href="#_subfunctions" class="code">function pe   = calc_posn_error(qmi, xmean, ymean, xy)</a>
+0053    pe = sqrt(sum(xy.^2)) - sqrt( xmean^2 + ymean^2);
+0054 
+0055 <a name="_sub3" href="#_subfunctions" class="code">function res  = calc_resolution(qmi, map)</a>
+0056    res = sqrt( sum(qmi(:)) / sum(map(:)));
+0057 
+0058 <a name="_sub4" href="#_subfunctions" class="code">function sd  = calc_shape_deform(qmi, equiv_circ)</a>
+0059    not_circ= qmi &amp; ~equiv_circ;
+0060    sd = sum(not_circ(:))/sum(qmi(:));
+0061 
+0062 <a name="_sub5" href="#_subfunctions" class="code">function rr = calc_ringing(img, qmi );</a>
+0063    ring_part =  img .* ( (img&lt;0) &amp; ~qmi);
+0064    rr = -sum( ring_part(:) )/sum( img(:).*qmi(:) );
+0065    
+0066 <a name="_sub6" href="#_subfunctions" class="code">function [x,y,bb_min,bb_max]=prepare_grid(sz,mdl)</a>
+0067       <span class="comment">% bounding box</span>
+0068    bnd = unique(mdl.boundary);
+0069    bb_min = min(mdl.nodes(bnd,:));
+0070    bb_max = max(mdl.nodes(bnd,:));
+0071    
+0072    [x,y]=meshgrid(linspace(bb_min(1),bb_max(1),sz),linspace(bb_min(2),bb_max(2),sz)); 
+0073    
+0074 <a name="_sub7" href="#_subfunctions" class="code">function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);</a>
+0075 <span class="comment">%  if abs(max(img(:))) &lt; abs(min(img(:))); img= -img; end</span>
+0076    sz = size(img,1);
+0077    qmi = <a href="calc_hm_set.html" class="code" title="function hm_img = calc_hm_set(img,frac)">calc_hm_set</a>( img, 0.25 );
+0078    <span class="keyword">if</span> sum(img(:) &amp; qmi(:))&lt;0 ; keyboard ; <span class="keyword">end</span>
+0079    
+0080    pix_sz = range(x(:))*range(y(:))/numel(img);
+0081 
+0082    <span class="comment">%map = x.^2+y.^2&lt;1.1;</span>
+0083    qmi = qmi.*map; img = img.*map;
+0084 
+0085    ss_qmi = sum(qmi(:));
+0086    xmean =  sum(sum( (qmi.*x) ))/ss_qmi; <span class="comment">% centre of gravity</span>
+0087    ymean =  sum(sum( (qmi.*y) ))/ss_qmi;
+0088    equiv_circ = (x-xmean).^2 + (y-ymean).^2 &lt; pix_sz*ss_qmi/pi;</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

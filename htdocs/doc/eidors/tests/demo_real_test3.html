@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of demo_real_test3</title>
+  <meta name="keywords" content="demo_real_test3">
+  <meta name="description" content="Perform tests based on the demo_real function with new structs">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html tests -->
+<h1>demo_real_test3
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Perform tests based on the demo_real function with new structs</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function ok= demo_real_test3 </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Perform tests based on the demo_real function with new structs</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../eidors/algorithms/n_polydorides/get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>	GET_3D_MEAS: extracts multiplane voltage measurements from a calculated</li><li><a href="../../eidors/algorithms/n_polydorides/set_3d_currents.html" class="code" title="function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);">set_3d_currents</a>	function [I,Ib]=set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);</li><li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function compare_tol( cmp1, cmp2, errtext )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ok= demo_real_test3</a>
+0002 <span class="comment">% Perform tests based on the demo_real function with new structs</span>
+0003 
+0004 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0005 <span class="comment">% $Id$</span>
+0006 
+0007 isOctave= exist(<span class="string">'OCTAVE_VERSION'</span>);
+0008 
+0009 datareal= <span class="string">'datareal.mat'</span>;
+0010 datacom=  <span class="string">'datacom.mat'</span>;
+0011 drt=      <span class="string">'demo_real_test.mat'</span>;
+0012 <span class="keyword">if</span> isOctave
+0013     datareal= file_in_loadpath(datareal);
+0014     datacom=  file_in_loadpath(datacom);
+0015     drt    =  file_in_loadpath(drt);
+0016     page_screen_output= 0;
+0017 <span class="keyword">end</span>
+0018 
+0019 <span class="comment">% create FEM model structure</span>
+0020 
+0021 load(datareal,<span class="string">'vtx'</span>,<span class="string">'simp'</span>);
+0022 
+0023 demo_mdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'model'</span>, <span class="string">'Demo real model'</span>, <span class="keyword">...</span>
+0024                      <span class="string">'nodes'</span>, vtx, <span class="keyword">...</span>
+0025                      <span class="string">'elems'</span>, simp, <span class="keyword">...</span>
+0026                      <span class="string">'boundary'</span>, <a href="../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>( simp ), <span class="keyword">...</span>
+0027                      <span class="string">'solve'</span>,      <span class="string">'np_fwd_solve'</span>, <span class="keyword">...</span>
+0028                      <span class="string">'jacobian'</span>,   <span class="string">'np_calc_jacobian'</span>, <span class="keyword">...</span>
+0029                      <span class="string">'system_mat'</span>, <span class="string">'np_calc_system_mat'</span> );
+0030 
+0031 clear vtx simp
+0032 
+0033 <span class="comment">% create FEM model electrodes definitions</span>
+0034 
+0035 load(datareal,<span class="string">'gnd_ind'</span>,<span class="string">'elec'</span>,<span class="string">'zc'</span>,<span class="string">'protocol'</span>,<span class="string">'no_pl'</span>);
+0036 perm_sym= <span class="string">'{y}'</span>;
+0037 
+0038 demo_mdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set'</span>, demo_mdl, <span class="string">'gnd_node'</span>, gnd_ind);
+0039 
+0040 <span class="keyword">for</span> i=1:length(zc)
+0041     demo_mdl.electrode(i).z_contact= zc(i);
+0042     demo_mdl.electrode(i).nodes=     elec(i,:);
+0043 <span class="keyword">end</span>
+0044 demo_mdl.np_fwd_solve.perm_sym     = perm_sym;
+0045 
+0046 demo_mdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set'</span>, demo_mdl);
+0047 
+0048 <span class="comment">% create FEM model stimulation and measurement patterns</span>
+0049 
+0050 <span class="comment">% get the current stimulation patterns</span>
+0051 [I,Ib] = <a href="../../eidors/algorithms/n_polydorides/set_3d_currents.html" class="code" title="function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);">set_3d_currents</a>(protocol, <span class="keyword">...</span>
+0052                          elec, <span class="keyword">...</span>
+0053                          demo_mdl.nodes, <span class="keyword">...</span>
+0054                          demo_mdl.gnd_node, <span class="keyword">...</span>
+0055                          no_pl);
+0056 <span class="comment">% get the measurement patterns, only indH is used in this model</span>
+0057 <span class="comment">%   here we only want to get the meas pattern from 'get_3d_meas',</span>
+0058 <span class="comment">%   not the voltages, so we enter zeros</span>
+0059 [jnk,jnk,indH,indV,jnk] = <a href="../../eidors/algorithms/n_polydorides/get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>( <span class="keyword">...</span>
+0060                   elec, demo_mdl.nodes, <span class="keyword">...</span>
+0061                   zeros(size(I)), <span class="keyword">...</span><span class="comment"> % Vfwd</span>
+0062                   Ib, no_pl );
+0063 n_elec= size(elec,1);
+0064 n_meas= size(indH,1) / size(Ib,2);
+0065 <span class="keyword">for</span> i=1:size(Ib,2)
+0066     demo_mdl.stimulation(i).stimulation= <span class="string">'mA'</span>;
+0067     demo_mdl.stimulation(i).stim_pattern= Ib(:,i);
+0068     idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
+0069     meas_pat = sparse( (1:n_meas)'*[1,1], <span class="keyword">...</span>
+0070                        indH( idx, : ), <span class="keyword">...</span>
+0071                        ones(n_meas,2)*[1,0;0,-1], <span class="keyword">...</span>
+0072                        n_meas, n_elec );
+0073     demo_mdl.stimulation(i).meas_pattern= meas_pat;
+0074 <span class="keyword">end</span>
+0075 
+0076 clear gnd_ind elec zc protocol no_pl I Ib
+0077 clear indH indV indH_sz meas_pat idx jnk
+0078 
+0079 demo_mdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>, demo_mdl);
+0080 
+0081 <span class="comment">% simulate data for homogeneous medium</span>
+0082 
+0083 mat= ones( size(demo_mdl.elems,1) ,1);
+0084 
+0085 homg_img= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, <span class="string">'homogeneous image'</span>, <span class="keyword">...</span>
+0086                      <span class="string">'elem_data'</span>, mat, <span class="keyword">...</span>
+0087                      <span class="string">'fwd_model'</span>, demo_mdl );
+0088 
+0089 homg_data=<a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( demo_mdl, homg_img);
+0090 
+0091 <span class="comment">% simulate data for inhomogeneous medium</span>
+0092 
+0093 load( datacom ,<span class="string">'A'</span>,<span class="string">'B'</span>) <span class="comment">%Indices of the elements to represent the inhomogeneity</span>
+0094 mat(A)= mat(A)+0.15;
+0095 mat(B)= mat(B)-0.20;
+0096 
+0097 inhomg_img= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, <span class="string">'inhomogeneous image'</span>, <span class="keyword">...</span>
+0098                        <span class="string">'elem_data'</span>, mat, <span class="keyword">...</span>
+0099                        <span class="string">'fwd_model'</span>, demo_mdl );
+0100 clear A B mat
+0101 inhomg_img = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, inhomg_img );
+0102 
+0103 inhomg_data=<a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( demo_mdl, inhomg_img);
+0104 
+0105 <span class="comment">% create inverse model</span>
+0106 
+0107 <span class="comment">% create an inv_model structure of name 'demo_inv'</span>
+0108 demo_inv= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>, <span class="string">'Nick Polydorides EIT inverse'</span>, <span class="keyword">...</span>
+0109 <span class="string">'solve'</span>,                  <span class="string">'np_inv_solve'</span>, <span class="keyword">...</span>
+0110 <span class="string">'reconst_type'</span>,           <span class="string">'difference'</span>, <span class="keyword">...</span>
+0111 <span class="string">'fwd_model'</span>,               demo_mdl);
+0112 
+0113 demo_inv.hyperparameter.value= 1e-4; <span class="comment">%what value to use?</span>
+0114 demo_inv.R_prior= <span class="string">'np_calc_image_prior'</span>;
+0115 demo_inv.np_calc_image_prior.parameters= [3 1];
+0116 demo_inv.jacobian_bkgnd.value= 1;
+0117 demo_inv= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set'</span>, demo_inv);
+0118 
+0119 <span class="comment">% solve inverse model</span>
+0120 
+0121 demo_img= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>( demo_inv, homg_data, inhomg_data);
+0122 
+0123 <span class="comment">% verifications</span>
+0124 
+0125 load(drt);
+0126 
+0127 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.voltageH, inhomg_data.meas, <span class="string">'voltageH'</span> )
+0128 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.sol, demo_img.elem_data, <span class="string">'sol'</span> )
+0129 
+0130 J= <a href="../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>( demo_mdl, homg_img );
+0131 Jcolsby100=J(:,1:100:size(J,2));
+0132 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.Jcolsby100, Jcolsby100, <span class="string">'Jcolsby100'</span> )
+0133 
+0134 <span class="comment">%Diag_Reg_012= [diag(Reg,0),[diag(Reg,1);0],[diag(Reg,2);0;0]];</span>
+0135 <span class="comment">%compare_tol( drt.Diag_Reg_012, Diag_Reg_012, 'Diag_Reg_012' )</span>
+0136 
+0137 ok=1;
+0138 
+0139 
+0140 <a name="_sub1" href="#_subfunctions" class="code">function compare_tol( cmp1, cmp2, errtext )</a>
+0141 <span class="comment">% compare matrices and give error if not equal</span>
+0142 fprintf(2,<span class="string">'testing parameter: %s ...\n'</span>,errtext);
+0143 
+0144 tol= 2e-4;
+0145 
+0146 vd= mean(mean( abs(cmp1 - cmp2) ));
+0147 vs= mean(mean( abs(cmp1) + abs(cmp2) ));
+0148 <span class="keyword">if</span> vd/vs &gt; tol
+0149    <a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>( <span class="keyword">...</span>
+0150      <span class="string">'parameter %s exceeds tolerance %g (=%g)'</span>, errtext, tol, vd/vs, 1 );
+0151 <span class="keyword">end</span>
+0152</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

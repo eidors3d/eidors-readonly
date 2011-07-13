@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dm_refine_points</title>
+  <meta name="keywords" content="dm_refine_points">
+  <meta name="description" content="DM_REFINE_POINTS: refine distmesh volume at point locations:">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html distmesh -->
+<h1>dm_refine_points
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DM_REFINE_POINTS: refine distmesh volume at point locations:</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function h = dm_refine_points( pts, params ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DM_REFINE_POINTS: refine distmesh volume at point locations:
+ h= dm_refine_points( pts, params );
+   pts is an array NxDims of node positions
+ params.refine_pts   - points at which to refine mesh (NxNdims)
+ params.base_spacing - edge length away from refined nodes (eg 0.1)
+ params.refine_ratio - relative refinement near points (eg. 10)
+ params.gradient     - transition slope of refinement (eg 0.1)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="dm_2d_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);">dm_2d_pt_elecs</a>	DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function h = dm_refine_points( pts, params );</a>
+0002 <span class="comment">% DM_REFINE_POINTS: refine distmesh volume at point locations:</span>
+0003 <span class="comment">% h= dm_refine_points( pts, params );</span>
+0004 <span class="comment">%   pts is an array NxDims of node positions</span>
+0005 <span class="comment">% params.refine_pts   - points at which to refine mesh (NxNdims)</span>
+0006 <span class="comment">% params.base_spacing - edge length away from refined nodes (eg 0.1)</span>
+0007 <span class="comment">% params.refine_ratio - relative refinement near points (eg. 10)</span>
+0008 <span class="comment">% params.gradient     - transition slope of refinement (eg 0.1)</span>
+0009 
+0010 <span class="comment">% (C) 2009 Andy Adler. License: GPL version 2 or version 3</span>
+0011 <span class="comment">% $Id$</span>
+0012 
+0013 ep     = params.refine_pts;
+0014 maxsize= params.base_spacing;
+0015 minsize= params.base_spacing / params.refine_ratio;
+0016 grad   = params.gradient;
+0017 
+0018 op =  ones(size(pts,1),1);
+0019 <span class="keyword">for</span> i=1:size(ep,1);
+0020    de = sqrt( sum( (pts - op*ep(i,:)).^2 ,2) );
+0021    h_i = min(minsize+grad*de,maxsize);
+0022    <span class="keyword">if</span> i==1;   h=h_i;
+0023    <span class="keyword">else</span>       h = min(h,h_i);
+0024    <span class="keyword">end</span>
+0025 <span class="keyword">end</span>
+0026</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

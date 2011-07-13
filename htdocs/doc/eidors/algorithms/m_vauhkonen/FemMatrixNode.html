@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FemMatrixNode</title>
+  <meta name="keywords" content="FemMatrixNode">
+  <meta name="description" content="FemMatrixNode Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. Conductivity in linear basis.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html m_vauhkonen -->
+<h1>FemMatrixNode
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>FemMatrixNode Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. Conductivity in linear basis.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Agrad,Kb,M,S,C]=FemMatrixNode(Node,Element,z); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">FemMatrixNode Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. Conductivity in linear basis.
+ Function [Agrad,Kb,M,S,C]=FemMatrixNode(Node,Element,z);
+ computes the matrices needed in the finite element
+ approximation of the 2D EIT forward problem. Conductivity in linear basis.
+
+ INPUT
+
+ Node = nodal data structure
+ Element = element data structure
+ z = a vector of (complex) contact impedances
+
+ OUTPUT
+
+ Agrad = the gradient part of the system matrix
+ Kb,M and S = other blocks of the system matrix
+ C = voltage reference matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/m_vauhkonen/Current.html" class="code" title="function [I,T]=Current(L,lg,style,rms,numpat);">Current</a>	Current Supplies some current patterns for 2D EIT</li><li><a href="../../../eidors/models/m_vauhkonen/bound1.html" class="code" title="function int=bound1(g);">bound1</a>	bound1 Computes the boundary integral of one linear basis function in 2D FEM</li><li><a href="../../../eidors/models/m_vauhkonen/bound2.html" class="code" title="function int=bound2(g);">bound2</a>	bound2 Computes the boundary integral of the product of two linear basis function in 2D FEM</li><li><a href="../../../eidors/models/m_vauhkonen/boundquad1.html" class="code" title="function int=boundquad1(g);">boundquad1</a>	boundquad1 Computes the boundary integral of one quadratic basis functions</li><li><a href="../../../eidors/models/m_vauhkonen/boundquad2.html" class="code" title="function int=boundquad2(g);">boundquad2</a>	boundquad2 Computes the boundary integral of the product of two quadratic basis functions</li><li><a href="../../../eidors/models/m_vauhkonen/electrlen.html" class="code" title="function int=electrlen(g);">electrlen</a>	electrlen Computes the length of the electrode in the case of isoparametric (quadratic) triangular element</li><li><a href="../../../eidors/models/m_vauhkonen/grinprodgausnode.html" class="code" title="function int=grinprodgausnode(g,I);">grinprodgausnode</a>	grinprodgausnode Computes the gradient part of the system matrix</li><li><a href="../../../eidors/models/m_vauhkonen/grinprodgausnodequad.html" class="code" title="function int=grinprodgausnodequad(g,I);">grinprodgausnodequad</a>	grinprodgausnodequad Computes the gradient part of the system matrix</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Agrad,Kb,M,S,C]=FemMatrixNode(Node,Element,z);</a>
+0002 
+0003 <span class="comment">%FemMatrixNode Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. Conductivity in linear basis.</span>
+0004 <span class="comment">% Function [Agrad,Kb,M,S,C]=FemMatrixNode(Node,Element,z);</span>
+0005 <span class="comment">% computes the matrices needed in the finite element</span>
+0006 <span class="comment">% approximation of the 2D EIT forward problem. Conductivity in linear basis.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% INPUT</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Node = nodal data structure</span>
+0011 <span class="comment">% Element = element data structure</span>
+0012 <span class="comment">% z = a vector of (complex) contact impedances</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% OUTPUT</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Agrad = the gradient part of the system matrix</span>
+0017 <span class="comment">% Kb,M and S = other blocks of the system matrix</span>
+0018 <span class="comment">% C = voltage reference matrix</span>
+0019 
+0020 <span class="comment">% M. Vauhkonen 11.5.1994, modified from the version of J. Kaipio</span>
+0021 <span class="comment">% 25.4.1994. Modified 5.9.1994 by M. Vauhkonen for EIT.</span>
+0022 <span class="comment">% Modified for EIDORS by M. Vauhkonen 11.5.2000</span>
+0023 <span class="comment">% University of Kuopio, Department of Applied Physics, PO Box 1627,</span>
+0024 <span class="comment">% FIN-70211 Kuopio, Finland, email: Marko.Vauhkonen@uku.fi</span>
+0025 
+0026 
+0027 Nel=max(size(z));                           <span class="comment">%The number of electrodes.</span>
+0028 NNode=max(size(Node));                      <span class="comment">%The number of nodes</span>
+0029 NElement=max(size(Element));                <span class="comment">%The number of elements</span>
+0030 M=sparse(NNode,Nel);
+0031 Kb=sparse(NNode,NNode);
+0032 s=zeros(Nel,1);
+0033 mE=max(size(Element(1).Topology));
+0034 <span class="keyword">if</span> mE==3
+0035  Agrad=sparse(NNode^2,NNode);
+0036  H=reshape([Element.Topology],3,NElement)';
+0037  mH=max(max(H));
+0038 <span class="keyword">else</span>
+0039  H=reshape([Element.Topology],6,NElement)';
+0040  mH=max(max(H(:,1:2:6)));
+0041  Agrad=sparse(NNode^2,mH);
+0042  clear H
+0043 <span class="keyword">end</span>
+0044 g=reshape([Node.Coordinate],2,NNode)';      <span class="comment">%Nodes</span>
+0045 
+0046 <span class="keyword">for</span> jj=1:mH
+0047 Aa=sparse(NNode,NNode);
+0048 El=Node(jj).ElementConnection;
+0049  <span class="keyword">for</span> ii=1:max(size(El))
+0050    ind=Element(El(ii)).Topology; <span class="comment">% Indices of the element</span>
+0051    gg=g(ind,:);
+0052    <span class="keyword">if</span> max(size(gg))==3
+0053     indsig=ind;
+0054     I=find(jj==indsig);
+0055     anis=<a href="../../../eidors/models/m_vauhkonen/grinprodgausnode.html" class="code" title="function int=grinprodgausnode(g,I);">grinprodgausnode</a>(gg,I);
+0056     Aa(ind,ind)=Aa(ind,ind)+anis;
+0057    <span class="keyword">else</span>
+0058     indsig=ind(1:2:6);
+0059     I=find(jj==indsig);
+0060     anis=<a href="../../../eidors/models/m_vauhkonen/grinprodgausnodequad.html" class="code" title="function int=grinprodgausnodequad(g,I);">grinprodgausnodequad</a>(gg,I);
+0061     Aa(ind,ind)=Aa(ind,ind)+anis;
+0062    <span class="keyword">end</span>
+0063  <span class="keyword">end</span>
+0064  Agrad(:,jj)=Aa(:);
+0065 <span class="keyword">end</span>
+0066 
+0067 <span class="keyword">for</span> ii=1:NElement
+0068   ind=(Element(ii).Topology);               <span class="comment">% The indices to g of the ii'th triangle.</span>
+0069   gg=g(ind,:);                              <span class="comment">% A 3x2 or 6x2 matrix of triangle nodes in (x,y) coord.</span>
+0070   
+0071  <span class="keyword">if</span> any([Element(ii).Face{:,3}]),           <span class="comment">%Checks if the triangle ii is the triangle that is</span>
+0072                                             <span class="comment">% under the electrode.</span>
+0073     [In,Jn,InE]=find([Element(ii).Face{:,3}]);
+0074     bind=Element(ii).Face{Jn,1};            <span class="comment">% Nodes on the boundary</span>
+0075     ab=g(bind(:),:);
+0076 
+0077     <span class="keyword">if</span> max(size(bind))==2                   <span class="comment">% First order basis</span>
+0078      bb1=<a href="../../../eidors/models/m_vauhkonen/bound1.html" class="code" title="function int=bound1(g);">bound1</a>([ab]);Bb1=zeros(max(size(ind)),1);
+0079      bb2=<a href="../../../eidors/models/m_vauhkonen/bound2.html" class="code" title="function int=bound2(g);">bound2</a>([ab]);Bb2=zeros(max(size(ind)));
+0080 
+0081      s(InE)=s(InE)+1/z(InE)*2*bb1; <span class="comment">% 2*bb1 = length of the electrode.</span>
+0082 
+0083      eind=[find(bind(1)==ind),find(bind(2)==ind)];
+0084     <span class="keyword">else</span>                                    <span class="comment">% Second order basis</span>
+0085       bb1=<a href="../../../eidors/models/m_vauhkonen/boundquad1.html" class="code" title="function int=boundquad1(g);">boundquad1</a>([ab]);Bb1=zeros(max(size(ind)),1);
+0086       bb2=<a href="../../../eidors/models/m_vauhkonen/boundquad2.html" class="code" title="function int=boundquad2(g);">boundquad2</a>([ab]);Bb2=zeros(max(size(ind)));
+0087 
+0088       s(InE)=s(InE)+1/z(InE)*<a href="../../../eidors/models/m_vauhkonen/electrlen.html" class="code" title="function int=electrlen(g);">electrlen</a>([ab]);
+0089 
+0090       eind=[find(bind(1)==ind),find(bind(2)==ind),find(bind(3)==ind)];
+0091     <span class="keyword">end</span>
+0092 
+0093     Bb1(eind)=bb1;
+0094     M(ind,InE)=M(ind,InE)-1/z(InE)*Bb1;
+0095 
+0096     Bb2(eind,eind)=bb2;
+0097     Kb(ind,ind)=Kb(ind,ind)+1/z(InE)*Bb2;
+0098   <span class="keyword">else</span>                                      <span class="comment">%The triangle isn't under the electrode.</span>
+0099   <span class="keyword">end</span>
+0100 <span class="keyword">end</span>  
+0101 
+0102 S=sparse(diag(s));
+0103 
+0104 [II1,C]=<a href="../../../eidors/models/m_vauhkonen/Current.html" class="code" title="function [I,T]=Current(L,lg,style,rms,numpat);">Current</a>(Nel,NNode,<span class="string">'adj'</span>);
+0105 C=C(:,1:Nel-1);                             <span class="comment">% For the voltage reference</span>
+0106 C=sparse(C(:,1:Nel-1));                             
+0107 
+0108 S=C'*S*C;
+0109 M=M*C;
+0110 
+0111 
+0112 
+0113 
+0114 
+0115 
+0116</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

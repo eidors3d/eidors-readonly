@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of animate_reconstructions</title>
+  <meta name="keywords" content="animate_reconstructions">
+  <meta name="description" content="animate_reconstructions(fname, imgs);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html graphics_matlab -->
+<h1>animate_reconstructions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>animate_reconstructions(fname, imgs);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function fname_out= animate_reconstructions(fname, imgs); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> animate_reconstructions(fname, imgs);
+ animate a sequence of reconstructed images
+
+ PARAMETER:  fname
+     filename to save to (extension is added)
+ PARAMETER:  imgs
+     is array of eidors images
+
+ if imgs.animate_reconstructions.show_times = 1
+   then a timescale is shown on the bottom
+ if imgs.animate_reconstructions.make_avi = 1
+   then use ffmpeg to write an avi
+
+ OUTPUT: fname_out
+     Name of animated file written to.
+     An animated window will not pop up if output requested</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li><li><a href="calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li><li><a href="show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/examples/moving_tank_objs.html" class="code" title="function imgs= moving_tank_objs(data_sel, inv_sel, options)">moving_tank_objs</a>	MOVING_TANK_OBJS: create movies of objects moving in tanks</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function mk_movie(fname, imgs, clim, ref_lev)</a></li><li><a href="#_sub2" class="code">function mk_movie2(fname, imgs);</a></li><li><a href="#_sub3" class="code">function rm_rf(dirname)</a></li><li><a href="#_sub4" class="code">function ld_lib_path= sys_dep;</a></li><li><a href="#_sub5" class="code">function add_bar = mk_add_bar(frac, len)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function fname_out= animate_reconstructions(fname, imgs);</a>
+0002 <span class="comment">% animate_reconstructions(fname, imgs);</span>
+0003 <span class="comment">% animate a sequence of reconstructed images</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% PARAMETER:  fname</span>
+0006 <span class="comment">%     filename to save to (extension is added)</span>
+0007 <span class="comment">% PARAMETER:  imgs</span>
+0008 <span class="comment">%     is array of eidors images</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% if imgs.animate_reconstructions.show_times = 1</span>
+0011 <span class="comment">%   then a timescale is shown on the bottom</span>
+0012 <span class="comment">% if imgs.animate_reconstructions.make_avi = 1</span>
+0013 <span class="comment">%   then use ffmpeg to write an avi</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% OUTPUT: fname_out</span>
+0016 <span class="comment">%     Name of animated file written to.</span>
+0017 <span class="comment">%     An animated window will not pop up if output requested</span>
+0018 
+0019 <a href="#_sub2" class="code" title="subfunction mk_movie2(fname, imgs);">mk_movie2</a>(fname,imgs)
+0020 
+0021 <span class="keyword">if</span> nargout&gt;0
+0022    fname_out= [fname, <span class="string">'.gif'</span>];
+0023 <span class="keyword">else</span>
+0024    fid= fopen([fname ,<span class="string">'.html'</span>],<span class="string">'w'</span>);
+0025    fprintf(fid,<span class="string">'&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;%s&lt;/TITLE&gt;&lt;BODY&gt;\n'</span>,fname);
+0026    fprintf(fid,<span class="string">'&lt;img src=&quot;%s.gif&quot; width=&quot;256&quot;&gt;&lt;/BODY&gt;&lt;/HTML&gt;'</span>,fname);
+0027    fclose(fid);
+0028    <span class="keyword">if</span>  strfind(system_dependent(<span class="string">'getos'</span>),<span class="string">'Windows'</span>)
+0029       system(sprintf(<span class="string">'explorer &quot;%s.html&quot;'</span>,fname));
+0030    <span class="keyword">else</span> <span class="comment">% we hope this is here - under linux etc</span>
+0031       system(sprintf(<span class="string">'firefox &quot;./%s.html&quot; &amp;'</span>,fname));
+0032    <span class="keyword">end</span>
+0033 <span class="keyword">end</span>
+0034 
+0035 <span class="comment">% create avi movie fname</span>
+0036 <span class="comment">% imds is array of eidors images</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% This results in really poor images with lots</span>
+0039 <span class="comment">%  of compression artefacts. NO really good reason to use</span>
+0040 <a name="_sub1" href="#_subfunctions" class="code">function mk_movie(fname, imgs, clim, ref_lev)</a>
+0041    fig=figure;
+0042    set(fig,<span class="string">'DoubleBuffer'</span>,<span class="string">'on'</span>);
+0043    mov = avifile( [fname ,<span class="string">'.avi'</span>] );<span class="comment">%, 'Compression', 'RLE' );</span>
+0044 
+0045    <span class="keyword">for</span> i=1:length(imgs)
+0046      <a href="show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>(imgs(i),1,clim,ref_lev);
+0047      F = getframe(gca);
+0048      mov = addframe(mov,F);
+0049    <span class="keyword">end</span>
+0050    mov = close(mov);
+0051    close(fig);
+0052 
+0053 <span class="comment">% create gif movie fname</span>
+0054 <span class="comment">% imgs is array of eidors images</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">% This requires imagemagick convert program.</span>
+0057 <a name="_sub2" href="#_subfunctions" class="code">function mk_movie2(fname, imgs);</a>
+0058    <a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>(<span class="string">'mapped_colour'</span>, 127);
+0059    dirname= <span class="string">'tmp_mk_movie2'</span>;
+0060    <a href="#_sub3" class="code" title="subfunction rm_rf(dirname)">rm_rf</a>( dirname );
+0061    mkdir( dirname );
+0062 
+0063    <span class="keyword">try</span>
+0064      show_times = imgs.animate_reconstructions.show_times;
+0065    <span class="keyword">catch</span> 
+0066      show_times = 0;
+0067    <span class="keyword">end</span>
+0068 
+0069    <span class="keyword">try</span> 
+0070      make_avi = imgs.animate_reconstructions.make_avi;
+0071    <span class="keyword">catch</span> 
+0072      make_avi = 0;
+0073    <span class="keyword">end</span>
+0074 
+0075    <span class="keyword">if</span> make_avi == 1; itp = <span class="string">'jpg'</span>;
+0076    <span class="keyword">else</span>              itp = <span class="string">'png'</span>;
+0077    <span class="keyword">end</span>
+0078 
+0079    r_img= <a href="calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>(imgs);
+0080    c_img = <a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>( r_img, imgs);
+0081    out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
+0082    cmap= colormap;
+0083 
+0084    [len_vi, len_hi, len_oi] = size(out_img);
+0085 
+0086    <span class="keyword">for</span> i=1:len_oi
+0087      this_img  = out_img(:,:,i);
+0088      <span class="keyword">if</span> show_times <span class="comment">% add scrollbar on bottom</span>
+0089         add_bar = <a href="#_sub5" class="code" title="subfunction add_bar = mk_add_bar(frac, len)">mk_add_bar</a>( (i-1)/(len_oi-1), len_hi );
+0090         this_img= [this_img; add_bar];
+0091      <span class="keyword">end</span>
+0092      this_name = sprintf(<span class="string">'%s/img%06d.%s'</span>,dirname, i, itp);
+0093      imwrite(this_img, cmap, this_name, itp);
+0094    <span class="keyword">end</span>
+0095 
+0096    ld_lib_path= sys_dep;
+0097 
+0098    <span class="keyword">if</span> 0 <span class="comment">% enumerate each file</span>
+0099       files= dir(sprintf(<span class="string">'%s/img*.%s'</span>, dirname,itp ));
+0100       <span class="comment">% font selected is a windows font - how to make os-neutral?</span>
+0101       <span class="keyword">for</span> ff= files(:)'
+0102          fn= [dirname,<span class="string">'/'</span>,ff.name];
+0103          fno= ff.name(4:8);
+0104          retval= system(sprintf( <span class="keyword">...</span>
+0105           <span class="string">'%s convert -font 6x8 -draw &quot;text 0,10 ''%s''&quot; %s %s'</span>, <span class="keyword">...</span>
+0106           ld_lib_path, fno, fn, fn ));
+0107       <span class="keyword">end</span>
+0108 
+0109    <span class="keyword">end</span>
+0110       
+0111    <span class="keyword">if</span> make_avi == 0
+0112       retval= system(sprintf( <span class="keyword">...</span>
+0113           <span class="string">'%s convert -delay 5 %s/img*.png -loop 0 %s.gif'</span>, <span class="keyword">...</span>
+0114           ld_lib_path, dirname, fname ));
+0115    <span class="keyword">else</span>
+0116       retval= system(sprintf( <span class="keyword">...</span>
+0117           <span class="string">'%s ffmpeg -qscale 2 -r 25 -i %s/img*.jpg -vcodec msmpeg4v2 -y -an %s.avi'</span>, <span class="keyword">...</span>
+0118           ld_lib_path, dirname, fname ));
+0119    <span class="keyword">end</span>
+0120 
+0121    <span class="keyword">if</span> retval~=0
+0122        error(<span class="string">'please ensure the imagemagick convert program is in your path. Under windows the easist is to download from www.imagemagick.org/script/binary-releases.php'</span>);
+0123    <span class="keyword">end</span>
+0124    <a href="#_sub3" class="code" title="subfunction rm_rf(dirname)">rm_rf</a>(dirname);
+0125    <span class="keyword">if</span> make_avi == 0
+0126    fprintf(<span class="string">'file %s.gif created (in current directory)\n'</span>,fname);
+0127    <span class="keyword">else</span>
+0128    fprintf(<span class="string">'file %s.avi created (in current directory)\n'</span>,fname);
+0129    <span class="keyword">end</span>
+0130 
+0131 <a name="_sub3" href="#_subfunctions" class="code">function rm_rf(dirname)</a>
+0132    <span class="keyword">if</span> isdir(dirname)==0
+0133        <span class="keyword">return</span>
+0134    <span class="keyword">end</span>
+0135 
+0136    <span class="keyword">if</span> isunix
+0137        system([<span class="string">'rm -rf &quot;'</span>,dirname,<span class="string">'&quot;'</span>]);
+0138    <span class="keyword">else</span>
+0139        system([<span class="string">'rmdir /s /q &quot;'</span>,dirname,<span class="string">'&quot;'</span>]);
+0140    <span class="keyword">end</span>
+0141 
+0142 <span class="comment">% work around stupid matlab bugs</span>
+0143 <a name="_sub4" href="#_subfunctions" class="code">function ld_lib_path= sys_dep;</a>
+0144    ld_lib_path=<span class="string">''</span>;
+0145    <span class="keyword">if</span>  strfind(system_dependent(<span class="string">'getos'</span>),<span class="string">'Linux'</span>)
+0146      vv=version; 
+0147      ff=find(vv == <span class="string">' '</span>); 
+0148      <span class="keyword">if</span> length(ff)&gt;0;vv=vv(1:ff(1)-1);<span class="keyword">end</span>
+0149      ff=find(vv == <span class="string">'.'</span>);
+0150      <span class="keyword">if</span> length(ff)&gt;1;vv=vv(1:ff(2)-1);<span class="keyword">end</span>     
+0151      <span class="keyword">if</span> str2num(vv)&gt;=7
+0152         <span class="comment">%Version 7 under linux sets the LD_LIBRARY_PATH and that breaks external progs</span>
+0153           ld_lib_path=<span class="string">'LD_LIBRARY_PATH=;'</span>;
+0154       <span class="keyword">end</span>      
+0155    <span class="keyword">end</span>    
+0156 
+0157 <a name="_sub5" href="#_subfunctions" class="code">function add_bar = mk_add_bar(frac, len) </a>
+0158    sz_bar = 3/len;
+0159    ind_val = 90;
+0160    xax= linspace(0,1,len) - frac;
+0161    yax= 1-abs( xax/sz_bar);
+0162    yax= yax.*(yax&gt;0);
+0163 
+0164    add_bar = round(ind_val * yax);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

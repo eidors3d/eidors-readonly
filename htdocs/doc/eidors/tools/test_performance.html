@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of test_performance</title>
+  <meta name="keywords" content="test_performance">
+  <meta name="description" content="TEST_PERFORMANCE: test of difference reconstruction algorithms">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html tools -->
+<h1>test_performance
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>TEST_PERFORMANCE: test of difference reconstruction algorithms</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [r, params] =  test_performance( imdls, fmdl ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> TEST_PERFORMANCE: test of difference reconstruction algorithms
+   in terms of the performance parameters defined in GREIT
+
+ Input:
+   imdls = cell array of inverse models to test on
+   fmdl  = fmdl of the shape to test on (default is 16 electrode tank).
+
+ Model assumes the tank is elliptical with an x,y centre at 0,0
+
+ [r, params] =  test_performance( imdls );
+  r =  radii of test objects
+  param = [AR, PE, RES, SD, RNG, NOI]
+
+ Example
+   i_bp = mk_common_gridmdl('backproj');
+   i_gp = mk_common_gridmdl('GREITc1');
+   test_performance( { i_gp, i_gr })</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/calc_noise_params.html" class="code" title="function params = calc_noise_params(imdl, vh, vi )">calc_noise_params</a>	params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)</li><li><a href="../../eidors/algorithms/a_adler/eval_GREIT_fig_merit.html" class="code" title="function params = eval_GREIT_fig_merit(imgs, xyzr_pt)">eval_GREIT_fig_merit</a>	EVAL_GREIT_FIG_MERIT: calculate GREIT figures of merit for images</li><li><a href="../../eidors/algorithms/a_adler/get_elem_volume.html" class="code" title="function VOL = get_elem_volume( fwd_model, map_node )">get_elem_volume</a>	GET_ELEM_VOLUME: VOL = get_elem_volume(fwd_model, map_node )</li><li><a href="../../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>	MK_C2F_CIRC_MAPPING: create a mapping matrix from circles/spheres to FEM</li><li><a href="../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../eidors/meshing/netgen/ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>	NG_MAKE_CYL_MODELS: create cylindrical models using netgen</li><li><a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>	MK_IMAGE: create eidors image object</li><li><a href="../../eidors/models/a_adler/mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>	MK_COMMON_MODEL: make EIT on reconstruction grids (GREIT)</li><li><a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li><li><a href="../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li><li><a href="../../eidors/models/a_adler/simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>	SIMULATE_MOVEMENT simulate small conductivity perturbations</li><li><a href="test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li><li><a href="test_performance_img.html" class="code" title="function [params_img] =  test_performance_img( imdls, fmdl );">test_performance_img</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function do_unit_test;</a></li><li><a href="#_sub2" class="code">function [vh,vi,param]=test_performance_old(fmdl,imdl,r,N)</a></li><li><a href="#_sub3" class="code">function x = rand_pt(x_min, x_max)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [r, params] =  test_performance( imdls, fmdl );</a>
+0002 <span class="comment">% TEST_PERFORMANCE: test of difference reconstruction algorithms</span>
+0003 <span class="comment">%   in terms of the performance parameters defined in GREIT</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Input:</span>
+0006 <span class="comment">%   imdls = cell array of inverse models to test on</span>
+0007 <span class="comment">%   fmdl  = fmdl of the shape to test on (default is 16 electrode tank).</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Model assumes the tank is elliptical with an x,y centre at 0,0</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% [r, params] =  test_performance( imdls );</span>
+0012 <span class="comment">%  r =  radii of test objects</span>
+0013 <span class="comment">%  param = [AR, PE, RES, SD, RNG, NOI]</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Example</span>
+0016 <span class="comment">%   i_bp = mk_common_gridmdl('backproj');</span>
+0017 <span class="comment">%   i_gp = mk_common_gridmdl('GREITc1');</span>
+0018 <span class="comment">%   test_performance( { i_gp, i_gr })</span>
+0019 
+0020 <span class="comment">% (c) 2010 Andy Adler. Licenced under GPL v2 or v3</span>
+0021 <span class="comment">% $Id$</span>
+0022 
+0023 <span class="keyword">if</span> isstr(imdls) &amp;&amp; strcmp(imdls,<span class="string">'UNIT_TEST'</span>); do_unit_test; <span class="keyword">return</span>; <span class="keyword">end</span>
+0024 
+0025 <span class="keyword">if</span> nargin==1
+0026    fmdl = <a href="../../eidors/meshing/netgen/ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>([2,1,0.05],[16,1],[0.05]); 
+0027    fmdl.stimulation = <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(16,1,[0,1],[0,1],{},1);
+0028 <span class="keyword">end</span>
+0029 imgs= <a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>( fmdl, 1);
+0030 
+0031 <span class="keyword">if</span> ~iscell(imdls)
+0032     imdls = {imdls};
+0033 <span class="keyword">end</span>
+0034 
+0035 Nsim = 100;
+0036 r =  linspace(0,0.9,Nsim);
+0037 ctr = [0,0, mean(fmdl.nodes(:,3))];  <span class="comment">% Assume x,y centre is zero</span>
+0038 maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
+0039 maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
+0040 
+0041 th=  r*4321; <span class="comment">% want object to jump around in radius</span>
+0042 xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim); 
+0043         0.05/mean([maxx,maxy])*ones(1, Nsim)];
+0044 
+0045 [vh,vi] = <a href="../../eidors/models/a_adler/simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>(imgs, xyzr);
+0046 
+0047 <span class="keyword">for</span> i= 1:length(imdls);
+0048    imgr = <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdls{i}, vh, vi);
+0049    imgr.calc_colours.npoints = 64;
+0050    param_GR = <a href="../../eidors/algorithms/a_adler/eval_GREIT_fig_merit.html" class="code" title="function params = eval_GREIT_fig_merit(imgs, xyzr_pt)">eval_GREIT_fig_merit</a>(imgr, xyzr);
+0051    pnoise = <a href="../../eidors/algorithms/a_adler/calc_noise_params.html" class="code" title="function params = calc_noise_params(imdl, vh, vi )">calc_noise_params</a>( imdls{i}, vh, vi );
+0052    params{i} = [param_GR; pnoise];
+0053 <span class="keyword">end</span>
+0054 
+0055 clf; Nparams = 6;
+0056 <span class="keyword">for</span> j=1:Nparams;
+0057    p = [];
+0058    <span class="keyword">for</span> i= 1:length(params);
+0059       p = [p, params{i}(j,:)'];
+0060    <span class="keyword">end</span>
+0061 
+0062 <span class="comment">%   subplot(5,1,j);</span>
+0063    hig = 0.95/Nparams;
+0064    axes(<span class="string">'position'</span>,[0.1,0.05 + hig*(Nparams-j),.88, hig]);
+0065    plot(r, p);
+0066    <span class="keyword">if</span> j==1;     axis([0,0.9,0,2.1]);        ylabel(<span class="string">'AR'</span>);
+0067    <span class="keyword">elseif</span> j==2; axis([0,0.9,-0.16,0.16]);   ylabel(<span class="string">'PE'</span>);
+0068    <span class="keyword">elseif</span> j==3; axis([0,0.9,0,0.41]);       ylabel(<span class="string">'RES'</span>);
+0069    <span class="keyword">elseif</span> j==4; axis([0,0.9,0,0.31]);       ylabel(<span class="string">'SD'</span>);
+0070    <span class="keyword">elseif</span> j==5; axis([0,0.9,0,0.61]);       ylabel(<span class="string">'RNG'</span>);
+0071    <span class="keyword">elseif</span> j==6; set(gca,<span class="string">'YScale'</span>,<span class="string">'log'</span>);    ylabel(<span class="string">'NF'</span>);
+0072    <span class="keyword">end</span>
+0073    <span class="keyword">if</span> j&lt;Nparams; set(gca,<span class="string">'XTickLabel'</span>,[]);<span class="keyword">end</span>
+0074 <span class="keyword">end</span>
+0075 
+0076 <a name="_sub1" href="#_subfunctions" class="code">function do_unit_test;</a>
+0077 <span class="comment">% Reconstruct GREIT Images</span>
+0078 imdl_gr = <a href="../../eidors/models/a_adler/mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>(<span class="string">'GREITc1'</span>);
+0079 
+0080 <span class="comment">% Reconstruct backprojection Images</span>
+0081 imdl_bp = <a href="../../eidors/models/a_adler/mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>(<span class="string">'backproj'</span>);
+0082 
+0083 <span class="comment">% Reconstruct GN Images</span>
+0084 imdl_gn = <a href="../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'d2c2'</span>, 16), {<span class="string">'Basic GN dif'</span>,<span class="string">'Choose NF=0.5'</span>});
+0085 
+0086 <a href="test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>( { imdl_gr, imdl_bp, imdl_gn } );
+0087 
+0088 
+0089 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0090 <a name="_sub2" href="#_subfunctions" class="code">function [vh,vi,param]=test_performance_old(fmdl,imdl,r,N)</a>
+0091 
+0092 debug = false;
+0093 
+0094 <span class="comment">%% 1. Figure out the limits of fmdl</span>
+0095 boundary = fmdl.boundary;
+0096 b_ver = unique(boundary);
+0097 boundary = fmdl.nodes(b_ver,:);
+0098 min_b = min(boundary)+repmat(0.5*r,1,3);
+0099 max_b = max(boundary)-repmat(0.5*r,1,3);
+0100 vol = <a href="../../eidors/algorithms/a_adler/get_elem_volume.html" class="code" title="function VOL = get_elem_volume( fwd_model, map_node )">get_elem_volume</a>(fmdl);
+0101 
+0102 <span class="comment">%% 2. create N samples within the volume</span>
+0103 rand(<span class="string">'state'</span>, sum(100*clock));
+0104 
+0105 n_elems = size(fmdl.elems,1);
+0106 
+0107 
+0108 c2f = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, {fmdl, N, r}, <span class="string">'samples'</span>);
+0109 xyzr_pt = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, {fmdl, N, r}, <span class="string">'points'</span>);
+0110 
+0111 count = 0; <span class="comment">%count points already created</span>
+0112 
+0113 <span class="keyword">if</span> isempty(c2f) || isempty(xyzr_pt);
+0114     disp(<span class="string">'Generating sample points.'</span>);
+0115     c2f = sparse(n_elems,N);
+0116     <span class="keyword">while</span> count &lt; N
+0117         n_pts = ceil(1.5 * (N - count) ); <span class="comment">% more than needed to limit iterations</span>
+0118         vec = <a href="#_sub3" class="code" title="subfunction x = rand_pt(x_min, x_max)">rand_pt</a> ( repmat(min_b,n_pts,1), repmat(max_b,n_pts,1) );
+0119         map = <a href="../../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>(fmdl, [vec repmat(r,n_pts,1)]');
+0120         frac = vol'*map/(4/3*pi*r^3);
+0121         idx = find(frac &gt; 0.9, N - count, <span class="string">'first'</span>);
+0122         
+0123         xyzr_pt = [xyzr_pt, vec(idx,:)'];
+0124         newcount = count + length(idx);
+0125         c2f(:, (count+1):newcount ) = map(:,idx);
+0126         count = newcount;
+0127     <span class="keyword">end</span>
+0128     <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, {fmdl, N, r}, <span class="string">'samples'</span>, c2f);
+0129     <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, {fmdl, N, r}, <span class="string">'points'</span>, xyzr_pt );
+0130     disp(<span class="string">'Done.'</span>);
+0131 <span class="keyword">end</span>
+0132  
+0133 
+0134 
+0135 <span class="comment">% x=110;y=150;r=20;</span>
+0136 <span class="comment">% x=110;y=80;r=20;</span>
+0137 <span class="comment">% map = mk_c2f_circ_mapping(fmdl, [x,y,r]');</span>
+0138 <span class="comment">% img= mk_image(map);img.fwd_model = fmdl;</span>
+0139 <span class="comment">% phi= linspace(0,2*pi,20);xr=r*cos(phi)+x; yr=r*sin(phi)+y;</span>
+0140 <span class="comment">% show_fem(img,[0,1,1]); hold on; plot(xr,yr,'r');hold off</span>
+0141 <span class="comment">% vol = get_elem_volume(fmdl); vol'*map/(pi*r^2)</span>
+0142 
+0143 <span class="comment">%% 3. reconstruct the images</span>
+0144 <span class="comment">% create a homegenous image</span>
+0145    elem_data = ones(size(fmdl.elems,1),1);
+0146    img = <a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>(fmdl, elem_data);
+0147    disp(<span class="string">'Calculating Jacobian. This may take a (long) while.'</span>);
+0148    J = <a href="../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>( img );
+0149    disp(<span class="string">'Done.'</span>);
+0150    vh= <a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>(img);
+0151    vh = vh.meas;
+0152    vi= vh*ones(1,N) + J*c2f;
+0153 
+0154 <span class="comment">%% 4. calculate parameters</span>
+0155 
+0156 
+0157    
+0158    img = <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl,vh,vi);
+0159    img.calc_colours.npoints=32;
+0160    imgs = <a href="../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>(img);
+0161 
+0162        param= [<a href="../../eidors/algorithms/a_adler/calc_noise_params.html" class="code" title="function params = calc_noise_params(imdl, vh, vi )">calc_noise_params</a>(imdl, vh, vi); <span class="keyword">...</span><span class="comment"> % noise parameters</span>
+0163            GREIT_sim_params(  imgs, xyzr_pt)];            <span class="comment">% image parameters</span>
+0164        
+0165        r = sqrt(sum(xyzr_pt(1:2,:).^2));
+0166        
+0167        names = {<span class="string">'Noise'</span>,<span class="string">'Amplitude'</span>,<span class="string">'Position Error'</span>,<span class="string">'Resolution'</span>, <span class="keyword">...</span>
+0168            <span class="string">'Shape Deformation'</span>, <span class="string">'Ringing'</span>};
+0169        <span class="keyword">for</span> j=1:size(param,1)
+0170            figure
+0171            scatter(r, param(j,:));
+0172            title(names{j});
+0173        <span class="keyword">end</span>
+0174 
+0175        
+0176        
+0177        
+0178 <a name="_sub3" href="#_subfunctions" class="code">function x = rand_pt(x_min, x_max)</a>
+0179 x = rand(size(x_min)) .* (x_max - x_min) + x_min;</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

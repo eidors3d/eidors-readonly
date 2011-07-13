@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_mk_closed_contour</title>
+  <meta name="keywords" content="ng_mk_closed_contour">
+  <meta name="description" content="NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>ng_mk_closed_contour
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour
+[fmdl,mat_idx] = ng_mk_closed_contour(shape, elec_pos, ...
+                 elec_shape, extra_ng_code);
+
+ This function creates netgen models of a closed contour in x,y.
+   An elliptical FEM is created and then perturbed using Fourier 
+   descriptors into the final model.
+ It should work well for cases where the contour is roughtly elliptical
+
+ INPUT:
+ ellip_shape = cell{height, xy_points, [maxsz]]}
+    if height = 0 -&gt; calculate a 2D shape
+    xy_points     -&gt; Npoints x 2. points on the object boundary
+    maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)
+
+ ELECTRODE POSITIONS:
+  elec_pos = [n_elecs_per_plane,z_planes] 
+     OR
+  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
+ Note that electrode positions are in the ellipse before fitting
+
+ ELECTRODE SHAPES::
+  elec_shape = [width,height, maxsz]  % Rectangular elecs
+     OR
+  elec_shape = [radius, 0, maxsz ]    % Circular elecs
+     OR 
+  elec_shape = [0, 0, maxsz ]         % Point electrodes
+    (point elecs does some tricks with netgen, so the elecs aren't exactly where you ask)
+
+ Specify either a common electrode shape or for each electrode
+
+ EXTRA_NG_CODE
+   string of extra code to put into netgen geo file. Normally this
+   would be to insert extra materials into the space
+
+ OUTPUT:
+  fmdl    - fwd_model object
+  mat_idx - indices of materials (if extra_ng_code is used)
+    Note mat_idx does not work in 2D. Netgen does not provide it.
+
+
+ USAGE EXAMPLES:
+ Simple 3D ellipse. Major, minor axes = [1.5, 0.8]. No electrodes
+     fmdl= ng_mk_ellip_models([1,1.5,0.8],[0],[]);  show_fem(fmdl);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li><li><a href="ng_mk_ellip_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_ellip_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [ellip_shape,params] = analyse_shape(ellip_shape);</a></li><li><a href="#_sub2" class="code">function C = fourier_fit(xy_shape,N);</a></li><li><a href="#_sub3" class="code">function fmdl = fit_to_shape( fmdl, params );</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos, </a><span class="keyword">...</span>
+0002                   elec_shape, extra_ng_code);
+0003 <span class="comment">% NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour</span>
+0004 <span class="comment">%[fmdl,mat_idx] = ng_mk_closed_contour(shape, elec_pos, ...</span>
+0005 <span class="comment">%                 elec_shape, extra_ng_code);</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% This function creates netgen models of a closed contour in x,y.</span>
+0008 <span class="comment">%   An elliptical FEM is created and then perturbed using Fourier</span>
+0009 <span class="comment">%   descriptors into the final model.</span>
+0010 <span class="comment">% It should work well for cases where the contour is roughtly elliptical</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% INPUT:</span>
+0013 <span class="comment">% ellip_shape = cell{height, xy_points, [maxsz]]}</span>
+0014 <span class="comment">%    if height = 0 -&gt; calculate a 2D shape</span>
+0015 <span class="comment">%    xy_points     -&gt; Npoints x 2. points on the object boundary</span>
+0016 <span class="comment">%    maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% ELECTRODE POSITIONS:</span>
+0019 <span class="comment">%  elec_pos = [n_elecs_per_plane,z_planes]</span>
+0020 <span class="comment">%     OR</span>
+0021 <span class="comment">%  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)</span>
+0022 <span class="comment">% Note that electrode positions are in the ellipse before fitting</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% ELECTRODE SHAPES::</span>
+0025 <span class="comment">%  elec_shape = [width,height, maxsz]  % Rectangular elecs</span>
+0026 <span class="comment">%     OR</span>
+0027 <span class="comment">%  elec_shape = [radius, 0, maxsz ]    % Circular elecs</span>
+0028 <span class="comment">%     OR</span>
+0029 <span class="comment">%  elec_shape = [0, 0, maxsz ]         % Point electrodes</span>
+0030 <span class="comment">%    (point elecs does some tricks with netgen, so the elecs aren't exactly where you ask)</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% Specify either a common electrode shape or for each electrode</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% EXTRA_NG_CODE</span>
+0035 <span class="comment">%   string of extra code to put into netgen geo file. Normally this</span>
+0036 <span class="comment">%   would be to insert extra materials into the space</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% OUTPUT:</span>
+0039 <span class="comment">%  fmdl    - fwd_model object</span>
+0040 <span class="comment">%  mat_idx - indices of materials (if extra_ng_code is used)</span>
+0041 <span class="comment">%    Note mat_idx does not work in 2D. Netgen does not provide it.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% USAGE EXAMPLES:</span>
+0045 <span class="comment">% Simple 3D ellipse. Major, minor axes = [1.5, 0.8]. No electrodes</span>
+0046 <span class="comment">%     fmdl= ng_mk_ellip_models([1,1.5,0.8],[0],[]);  show_fem(fmdl);</span>
+0047 <span class="comment">%</span>
+0048 
+0049 <span class="comment">% (C) Andy Adler, 2010. Licenced under GPL v2 or v3</span>
+0050 <span class="comment">% $Id$</span>
+0051 
+0052 <span class="keyword">if</span> nargin &lt; 4; extra_ng_code = {<span class="string">''</span>,<span class="string">''</span>}; <span class="keyword">end</span>
+0053 <span class="comment">% Caching should be done in the ng_mk_ellip_models</span>
+0054 
+0055 [ellip_shape,params] = <a href="#_sub1" class="code" title="subfunction [ellip_shape,params] = analyse_shape(ellip_shape);">analyse_shape</a>(ellip_shape) 
+0056 [fmdl, mat_idx] = <a href="ng_mk_ellip_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_ellip_models</a>(ellip_shape, elec_pos, <span class="keyword">...</span>
+0057                   elec_shape, extra_ng_code);
+0058 fmdl = <a href="#_sub3" class="code" title="subfunction fmdl = fit_to_shape( fmdl, params );">fit_to_shape</a>( fmdl, params );
+0059 
+0060 <a name="_sub1" href="#_subfunctions" class="code">function [ellip_shape,params] = analyse_shape(ellip_shape);</a>
+0061   height = ellip_shape{1}; 
+0062   xy_shape=ellip_shape{2};
+0063   <span class="keyword">if</span> length(ellip_shape)&gt;=3
+0064     maxh= ellip_shape{3};
+0065   <span class="keyword">else</span>
+0066     maxh= [];
+0067   <span class="keyword">end</span>
+0068 
+0069   [u,d,v]= svd(cov(xy_shape));
+0070   params.rot = [1,0;0,-1]*u;
+0071   params.xy_mean = mean(xy_shape,1);
+0072 
+0073   ellip_ax = sqrt(2*[d(1,1),d(2,2)])  
+0074   ellip_shape= [height, ellip_ax, maxh];
+0075 
+0076   N = min(15, ceil( size(xy_shape,1) / 3 )); <span class="comment">% can't fit too many components</span>
+0077   params.f_fit_point = <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(xy_shape, N);
+0078 
+0079 <span class="comment">% Now, fit the ellipse to the point</span>
+0080   th = linspace(0,2*pi,4*N)';
+0081   ellip_pts = [cos(th),sin(th)]*sqrt(2*d)*params.rot;
+0082   params.f_fit_ellip = <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(ellip_pts, N);
+0083 <span class="comment">%plot(ellip_pts(:,1),ellip_pts(:,2),'b-*',xy_shape(:,1),xy_shape(:,2),'r-*')</span>
+0084 
+0085 <a name="_sub2" href="#_subfunctions" class="code">function C = fourier_fit(xy_shape,N);</a>
+0086 <span class="comment">% Fourier Fit</span>
+0087 <span class="comment">% [1, cos(t1), cos(2*t1), ... sin(t1) ...] * [C1] = [R1]</span>
+0088 <span class="comment">%            ...</span>
+0089 <span class="comment">% [1, cos(tN), cos(2*tN), ... sin(tN) ...] * [CN] = [RM]</span>
+0090 
+0091    xc = xy_shape(:,1); xm= mean(xc);   xc= xc-xm;
+0092    yc = xy_shape(:,2); ym= mean(yc);   yc= yc-ym;
+0093 
+0094    ang = atan2(yc,xc);
+0095    rad = sqrt(yc.^2 + xc.^2);
+0096    A = ones(length(ang), 2*N+1);
+0097    <span class="keyword">for</span> i=1:N
+0098      A(:,i+1  ) = cos(i*ang);
+0099      A(:,i+1+N) = sin(i*ang);
+0100    <span class="keyword">end</span>
+0101    C = A\rad;
+0102 
+0103 <a name="_sub3" href="#_subfunctions" class="code">function fmdl = fit_to_shape( fmdl, params );</a>
+0104    <span class="comment">% Rotate and move the objects</span>
+0105    xnodes = fmdl.nodes(:,1:2)*params.rot(:,1);
+0106    ynodes = fmdl.nodes(:,1:2)*params.rot(:,2);
+0107 
+0108    N = (length(params.f_fit_point)-1)/2;
+0109    [ang,rad] = cart2pol(xnodes,ynodes);
+0110    A = ones(length(ang), 2*N+1);
+0111    <span class="keyword">for</span> i=1:N
+0112      A(:,i+1  ) = cos(i*ang);
+0113      A(:,i+1+N) = sin(i*ang);
+0114    <span class="keyword">end</span>
+0115 
+0116    r_ellip = A*params.f_fit_ellip;
+0117    r_point = A*params.f_fit_point;
+0118    rad = rad.* (r_point ./ r_ellip);
+0119    xnodes = rad.*cos(ang) + params.xy_mean(1);
+0120    ynodes = rad.*sin(ang) + params.xy_mean(2);
+0121 
+0122    fmdl.nodes(:,1) = xnodes;
+0123    fmdl.nodes(:,2) = ynodes;
+0124</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

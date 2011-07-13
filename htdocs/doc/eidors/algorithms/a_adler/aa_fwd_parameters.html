@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aa_fwd_parameters</title>
+  <meta name="keywords" content="aa_fwd_parameters">
+  <meta name="description" content="AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>aa_fwd_parameters
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function param = aa_fwd_parameters( fwd_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
+ Extract parameters from a 'fwd_model' struct which are 
+ appropriate for Andy Adler's EIT code
+   param.n_elem     =&gt; number of elements
+   param.n_elec     =&gt; number of electrodes
+   param.n_node     =&gt; number of nodes (vertices)
+   param.n_stim     =&gt; number of current stimulation patterns
+   param.n_elec     =&gt; number of electrodes
+   param.n_dims     =&gt; dimentions (2= 2D, 3=3D)
+   param.n_meas     =&gt; number of measurements (total)
+   param.boundary   =&gt; FEM boundary
+   param.NODE       =&gt; vertex matrix
+   param.ELEM       =&gt; connection matrix
+   param.QQ         =&gt; Current into each NODE
+   param.VOLUME     =&gt; Volume (or area) of each element
+   param.normalize  =&gt; difference measurements normalized?
+   param.N2E        =&gt; Node to electrode converter
+
+ If the stimulation patterns has a 'interior_sources' field,
+   the node current QQ, is set to this value for this stimulation.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="find_electrode_bdy.html" class="code" title="function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)">find_electrode_bdy</a>	FIND_ELECTRODE_BDY: find the boundary index area for electrode</li><li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="aa_e_move_image_prior.html" class="code" title="function Reg= aa_e_move_image_prior( inv_model );">aa_e_move_image_prior</a>	AA_E_MOVE_IMAGE_PRIOR calculate image prior</li><li><a href="aa_e_move_jacobian.html" class="code" title="function J= aa_e_move_jacobian( fwd_model, img)">aa_e_move_jacobian</a>	AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)</li><li><a href="aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="aa_inv_conj_grad.html" class="code" title="function img= aa_inv_conj_grad( inv_model, data1, data2)">aa_inv_conj_grad</a>	AA_INV_CONJ_GRAD inverse solver based on the CG</li><li><a href="aa_inv_total_var.html" class="code" title="function img= aa_inv_total_var( inv_model, data1, data2)">aa_inv_total_var</a>	AA_INV_TOTAL_VARIANCE inverse solver for difference EIT</li><li><a href="aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>	AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</li><li><a href="backproj_solve.html" class="code" title="function img= backproj_solve( inv_model, data1, data2)">backproj_solve</a>	BACKPROJ_SOLVE inverse solver using backprojection</li><li><a href="exponential_covar_prior.html" class="code" title="function Reg= exponential_covar_prior( inv_model );">exponential_covar_prior</a>	EXPONENTIAL_COVAR_PRIOR image prior with exponential</li><li><a href="inv_kalman_diff.html" class="code" title="function img= inv_kalman_diff( inv_model, data1, data2)">inv_kalman_diff</a>	INV_KALMAN_DIFF inverse solver for difference EIT</li><li><a href="laplace_image_prior.html" class="code" title="function Reg= laplace_image_prior( inv_model );">laplace_image_prior</a>	LAPLACE_IMAGE_PRIOR calculate image prior</li><li><a href="time_smooth_prior.html" class="code" title="function Reg= time_smooth_prior( inv_model );">time_smooth_prior</a>	TIME_SMOOTH_PRIOR calculate image prior</li><li><a href="../../../eidors/algorithms/b_sawicki/bs_calc_system_mat.html" class="code" title="function s_mat= bs_calc_system_mat( fwd_model, img)">bs_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="../../../eidors/algorithms/c_gomez/calc_move_jacobian.html" class="code" title="function J = calc_move_jacobian(fwd_model, img_bkgd)">calc_move_jacobian</a>	CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and</li><li><a href="../../../eidors/examples/cheating_2d.html" class="code" title="function out=cheating_2d( figno, rand_seed )">cheating_2d</a>	code to simulate inverse crimes in EIT</li><li><a href="../../../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li><li><a href="../../../eidors/graphics_matlab/show_fem_move.html" class="code" title="function show_fem_move( img, move, scale, options )">show_fem_move</a>	SHOW_FEM_MOVE   Plot EIT finite element model (FEM) and movement</li><li><a href="../../../eidors/graphics_matlab/show_slices_move.html" class="code" title="function show_slices_move( img, move, move_scale )">show_slices_move</a>	SHOW_SLICES_MOVE   Shows planar slices of a 3D FEM with movement vectors</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function pp= calc_param( fwd_model );</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function param = aa_fwd_parameters( fwd_model )</a>
+0002 <span class="comment">% AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</span>
+0003 <span class="comment">% Extract parameters from a 'fwd_model' struct which are</span>
+0004 <span class="comment">% appropriate for Andy Adler's EIT code</span>
+0005 <span class="comment">%   param.n_elem     =&gt; number of elements</span>
+0006 <span class="comment">%   param.n_elec     =&gt; number of electrodes</span>
+0007 <span class="comment">%   param.n_node     =&gt; number of nodes (vertices)</span>
+0008 <span class="comment">%   param.n_stim     =&gt; number of current stimulation patterns</span>
+0009 <span class="comment">%   param.n_elec     =&gt; number of electrodes</span>
+0010 <span class="comment">%   param.n_dims     =&gt; dimentions (2= 2D, 3=3D)</span>
+0011 <span class="comment">%   param.n_meas     =&gt; number of measurements (total)</span>
+0012 <span class="comment">%   param.boundary   =&gt; FEM boundary</span>
+0013 <span class="comment">%   param.NODE       =&gt; vertex matrix</span>
+0014 <span class="comment">%   param.ELEM       =&gt; connection matrix</span>
+0015 <span class="comment">%   param.QQ         =&gt; Current into each NODE</span>
+0016 <span class="comment">%   param.VOLUME     =&gt; Volume (or area) of each element</span>
+0017 <span class="comment">%   param.normalize  =&gt; difference measurements normalized?</span>
+0018 <span class="comment">%   param.N2E        =&gt; Node to electrode converter</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% If the stimulation patterns has a 'interior_sources' field,</span>
+0021 <span class="comment">%   the node current QQ, is set to this value for this stimulation.</span>
+0022 
+0023 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0024 <span class="comment">% $Id$</span>
+0025 
+0026 param = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, fwd_model, <span class="string">'aa_fwd_parameters'</span>);
+0027 
+0028 <span class="keyword">if</span> ~isempty(param)
+0029    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'aa_fwd_parameters: using cached value'</span>, 3);
+0030    <span class="keyword">return</span>
+0031 <span class="keyword">end</span>
+0032 
+0033 param = <a href="#_sub1" class="code" title="subfunction pp= calc_param( fwd_model );">calc_param</a>( fwd_model );
+0034 
+0035 <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, fwd_model, <span class="string">'aa_fwd_parameters'</span>, param);
+0036 <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'aa_fwd_parameters: setting cached value'</span>, 3);
+0037 
+0038 <span class="comment">% perform actual parameter calculation</span>
+0039 <a name="_sub1" href="#_subfunctions" class="code">function pp= calc_param( fwd_model );</a>
+0040 
+0041 pp.NODE= fwd_model.nodes';
+0042 pp.ELEM= fwd_model.elems';
+0043 
+0044 n= size(pp.NODE,2);        <span class="comment">%NODEs</span>
+0045 d= size(pp.ELEM,1);        <span class="comment">%dimentions+1</span>
+0046 e= size(pp.ELEM,2);        <span class="comment">%ELEMents</span>
+0047 <span class="keyword">try</span>
+0048    p = length(fwd_model.stimulation );
+0049 <span class="keyword">catch</span> 
+0050    p = 0;
+0051 <span class="keyword">end</span>
+0052 <span class="keyword">try</span>
+0053    n_elec= length( fwd_model.electrode );
+0054 <span class="keyword">catch</span>
+0055    n_elec= 0;
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="comment">% calculate element volume and surface area</span>
+0059 pp.VOLUME=zeros(e,1);
+0060 ones_d = ones(1,d);
+0061 d1fac = prod( 1:d-1 );
+0062 <span class="keyword">if</span> d &gt; size(pp.NODE,1)
+0063    <span class="keyword">for</span> i=1:e
+0064        this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+0065        pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+0066    <span class="keyword">end</span>
+0067 <span class="keyword">elseif</span> d == 3 <span class="comment">% 3D nodes in 2D mesh</span>
+0068    <span class="keyword">for</span> i=1:e
+0069        this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+0070        d12= det([ones_d;this_elem([1,2],:)])^2;
+0071        d13= det([ones_d;this_elem([1,3],:)])^2;
+0072        d23= det([ones_d;this_elem([2,3],:)])^2;
+0073        pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+0074    <span class="keyword">end</span>
+0075 <span class="keyword">elseif</span> d == 2 <span class="comment">% 3D nodes in 1D mesh (ie resistor mesh)</span>
+0076    <span class="keyword">for</span> i=1:e
+0077        this_elem = pp.NODE(:,pp.ELEM(:,i)); 
+0078        d12= det([ones_d;this_elem([1],:)])^2;
+0079        d13= det([ones_d;this_elem([2],:)])^2;
+0080        d23= det([ones_d;this_elem([3],:)])^2;
+0081        pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+0082    <span class="keyword">end</span>
+0083 <span class="keyword">else</span>
+0084    error(<span class="string">'mesh size not understood when calculating volumes'</span>)
+0085 <span class="keyword">end</span>
+0086 
+0087 <span class="keyword">if</span> isfield(fwd_model,<span class="string">'boundary'</span>)
+0088     bdy = double( fwd_model.boundary ); <span class="comment">% double because of stupid matlab bugs</span>
+0089 <span class="keyword">else</span>
+0090     bdy = <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>(fwd_model.elems);
+0091 <span class="keyword">end</span>
+0092 
+0093 <span class="comment">% Matrix to convert Nodes to Electrodes</span>
+0094 <span class="comment">% Complete electrode model for all electrodes</span>
+0095 <span class="comment">%  N2E = sparse(1:n_elec, n+ (1:n_elec), 1, n_elec, n+n_elec);</span>
+0096 <span class="comment">%  pp.QQ= sparse(n+n_elec,p);</span>
+0097 
+0098 cem_electrodes= 0; <span class="comment">% num electrodes part of Compl. Elec Model</span>
+0099 N2E = sparse(n_elec, n+n_elec);
+0100 pp.QQ= sparse(n+n_elec,p);
+0101 
+0102 <span class="keyword">for</span> i=1:n_elec
+0103     elec_nodes = fwd_model.electrode(i).nodes;
+0104     <span class="keyword">if</span> length(elec_nodes) ==1 <span class="comment">% point electrode (maybe inside body)</span>
+0105        N2E(i, elec_nodes) = 1;
+0106     <span class="keyword">elseif</span> length(elec_nodes) ==0
+0107        error(<span class="string">'zero length electrode specified'</span>);
+0108     <span class="keyword">else</span>
+0109        bdy_idx= <a href="find_electrode_bdy.html" class="code" title="function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)">find_electrode_bdy</a>( bdy, [], elec_nodes);
+0110 
+0111        <span class="keyword">if</span> ~isempty(bdy_idx) <span class="comment">% CEM electrode</span>
+0112           cem_electrodes = cem_electrodes+1;
+0113           N2E(i, n+cem_electrodes) =1;
+0114        <span class="keyword">else</span> <span class="comment">% point electrodes</span>
+0115             <span class="comment">% FIXME: make current defs between point electrodes and CEMs compatible</span>
+0116           [bdy_idx,srf_area]= <a href="find_electrode_bdy.html" class="code" title="function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)">find_electrode_bdy</a>( fwd_model.boundary, <span class="keyword">...</span>
+0117                          fwd_model.nodes, elec_nodes);
+0118           N2E(i, elec_nodes) = srf_area/sum(srf_area);
+0119        <span class="keyword">end</span>
+0120     <span class="keyword">end</span>
+0121 <span class="keyword">end</span>
+0122 N2E = N2E(:, 1:(n+cem_electrodes));
+0123 pp.QQ= pp.QQ(1:(n+cem_electrodes),:);
+0124 
+0125 
+0126 n_meas= 0; <span class="comment">% sum total number of measurements</span>
+0127 
+0128 <span class="keyword">if</span> p&gt;0
+0129    stim = fwd_model.stimulation;
+0130 <span class="keyword">end</span>
+0131 
+0132 <span class="keyword">for</span> i=1:p
+0133     src= 0;
+0134     <span class="keyword">try</span>;  src = src +  N2E'* stim(i).stim_pattern; <span class="keyword">end</span>
+0135     <span class="keyword">try</span>;  src = src +  stim(i).interior_sources;   <span class="keyword">end</span>
+0136     <span class="keyword">if</span> all(size(src) == [1,1]) &amp;&amp; src==0
+0137        error(<span class="string">'no stim_patterns or interior_sources provided for pattern #%d'</span>,i);
+0138     <span class="keyword">end</span>
+0139     
+0140     pp.QQ(:,i) = src;
+0141     n_meas = n_meas + size(stim(i).meas_pattern,1);
+0142 <span class="keyword">end</span>
+0143 
+0144 
+0145 <span class="comment">% pack into a parameter return list</span>
+0146 pp.n_elem   = e;
+0147 pp.n_elec   = n_elec;
+0148 pp.n_node   = n;
+0149 pp.n_stim   = p;
+0150 pp.n_dims   = d-1;
+0151 pp.n_meas   = n_meas;
+0152 pp.N2E      = N2E;
+0153 pp.boundary = bdy;
+0154 
+0155 <span class="keyword">if</span> isfield(fwd_model,<span class="string">'normalize_measurements'</span>)
+0156    pp.normalize = fwd_model.normalize_measurements;
+0157 <span class="keyword">else</span>
+0158    pp.normalize = 0;
+0159 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

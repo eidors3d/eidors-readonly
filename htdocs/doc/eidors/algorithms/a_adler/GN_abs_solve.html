@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GN_abs_solve</title>
+  <meta name="keywords" content="GN_abs_solve">
+  <meta name="description" content="GN_ABS_SOLVER absolute solver using Gauss Newton approximation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>GN_abs_solve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>GN_ABS_SOLVER absolute solver using Gauss Newton approximation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img= GN_abs_solve( inv_model, data1); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GN_ABS_SOLVER absolute solver using Gauss Newton approximation
+ img= gn_abs_solve( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ inv_model  =&gt; inverse model struct
+ data1      =&gt; EIT data
+
+ Parameters:
+   inv_model.parameters.max_iterations = N_max iter</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_RtR_prior.html" class="code" title="function RtR_prior = calc_RtR_prior( inv_model )">calc_RtR_prior</a>	RtR = calc_RtR_prior( inv_model )</li><li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>	CALC_HYPERPARAMETER: calculate hyperparameter value</li><li><a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../../../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>	meas_icov = calc_meas_icov( inv_model )</li><li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function  img = line_optimize(imgk, dx, data1);</a></li><li><a href="#_sub2" class="code">function img = homogeneous_estimate( imdl, data );</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img= GN_abs_solve( inv_model, data1);</a>
+0002 <span class="comment">% GN_ABS_SOLVER absolute solver using Gauss Newton approximation</span>
+0003 <span class="comment">% img= gn_abs_solve( inv_model, data1, data2)</span>
+0004 <span class="comment">% img        =&gt; output image (or vector of images)</span>
+0005 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0006 <span class="comment">% data1      =&gt; EIT data</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Parameters:</span>
+0009 <span class="comment">%   inv_model.parameters.max_iterations = N_max iter</span>
+0010 
+0011 <span class="comment">% (C) 2010 Andy Adler. License: GPL version 2 or version 3</span>
+0012 <span class="comment">% $Id$</span>
+0013 
+0014 <span class="comment">% Step 1: fit to background</span>
+0015 img = <a href="#_sub2" class="code" title="subfunction img = homogeneous_estimate( imdl, data );">homogeneous_estimate</a>( inv_model, data1 );
+0016 
+0017 hp  = <a href="../../../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>( inv_model );
+0018 RtR = <a href="../../../eidors/algorithms/calc_RtR_prior.html" class="code" title="function RtR_prior = calc_RtR_prior( inv_model )">calc_RtR_prior</a>( inv_model );
+0019 W   = <a href="../../../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>( inv_model );
+0020 hp2RtR= hp*RtR;
+0021 
+0022 iters = 1;
+0023 <span class="keyword">try</span> 
+0024    iters = inv_model.parameters.max_iterations; 
+0025 <span class="keyword">end</span>
+0026 
+0027 img0 = img;
+0028 <span class="keyword">for</span> i = 1:iters  
+0029   vsim = <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img ); 
+0030   dv = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( vsim , data1, img.fwd_model);
+0031   J = <a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>( img );
+0032 
+0033   RDx = hp2RtR*(img0.elem_data - img.elem_data);
+0034   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
+0035 
+0036   img = <a href="#_sub1" class="code" title="subfunction  img = line_optimize(imgk, dx, data1);">line_optimize</a>(img, dx, data1);
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">% Fit a parabola to the linefit and pick the best point</span>
+0040 <span class="comment">% This is better than doing an exhaustive search</span>
+0041 <a name="_sub1" href="#_subfunctions" class="code">function  img = line_optimize(imgk, dx, data1);</a>
+0042   flist = [ 0.1,  0.5, 1.0];
+0043   clim = mean(imgk.elem_data)/10; <span class="comment">% prevent zero and negative conductivity</span>
+0044   img = imgk;
+0045   <span class="keyword">for</span> i = 1:length(flist);
+0046      img.elem_data = imgk.elem_data + flist(i)*dx;
+0047      img.elem_data(img.elem_data &lt;= clim ) = clim;
+0048      vsim = <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0049      dv = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( vsim , data1, img.fwd_model);
+0050      mlist(i) = norm(dv);
+0051   <span class="keyword">end</span>
+0052   pf = polyfit(flist, mlist, 2);
+0053   fmin = -pf(2)/pf(1)/2; <span class="comment">% poly minimum</span>
+0054   fmin(fmin&gt;1) = 1; fmin(fmin&lt;0) = 0;
+0055 
+0056   img.elem_data = imgk.elem_data + flist(i)*dx;
+0057   img.elem_data(img.elem_data &lt;= clim ) = clim;
+0058 
+0059 <a name="_sub2" href="#_subfunctions" class="code">function img = homogeneous_estimate( imdl, data );</a>
+0060    img = <a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>( imdl );
+0061    vs = <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>(img);
+0062 
+0063    <span class="keyword">if</span> isstruct(data)
+0064       data = data.meas;
+0065    <span class="keyword">else</span>
+0066      meas_select = [];
+0067      <span class="keyword">try</span>
+0068         meas_select = imdl.fwd_model.meas_select;
+0069      <span class="keyword">end</span>
+0070      <span class="keyword">if</span> length(data) == length(meas_select)
+0071         data = data(meas_select);
+0072      <span class="keyword">end</span>
+0073    <span class="keyword">end</span>
+0074 
+0075    pf = polyfit(data,vs.meas,1);
+0076 
+0077    <span class="keyword">if</span> isfield(img.fwd_model,<span class="string">'coarse2fine'</span>);
+0078 <span class="comment">% TODO: the whole coarse2fine needs work here.</span>
+0079 <span class="comment">%   what happens if c2f doesn't cover the whole region</span>
+0080       nc = size(img.fwd_model.coarse2fine,2);
+0081       img.elem_data = mean(img.elem_data)*ones(nc,1)*pf(1);
+0082    <span class="keyword">else</span>
+0083       img.elem_data = img.elem_data*pf(1);
+0084    <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

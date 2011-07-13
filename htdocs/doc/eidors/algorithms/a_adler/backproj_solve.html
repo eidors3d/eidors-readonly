@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of backproj_solve</title>
+  <meta name="keywords" content="backproj_solve">
+  <meta name="description" content="BACKPROJ_SOLVE inverse solver using backprojection">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>backproj_solve
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>BACKPROJ_SOLVE inverse solver using backprojection</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img= backproj_solve( inv_model, data1, data2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BACKPROJ_SOLVE inverse solver using backprojection
+ NOTE: This is the beginnings of an attempt to reproduce
+  the backprojection algorithm implemented in the
+  Sheffield MKI EIT system. It is far from complete.
+
+ If you wish to use the actual algorithm, use the
+  function &quot;mk_common_gridmdl('backproj')&quot;
+
+ img= backproj_solve( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ inv_model  =&gt; inverse model struct
+ data1      =&gt; differential data at earlier time
+ data2      =&gt; differential data at later time
+
+ inv_model.backproj_solve.type = 'naive' (DEFAULT)
+    use naive (unfiltered algorithm)
+ inv_model.backproj_solve.type = 'filtered' (NOT IMPLEMENTED YET)
+    ref: Barber DC Brown BH, &quot;fast reconstruction of resistance
+         images&quot;, clin Phys Physiol Mes, pp 47-54, vol 8,sup A,1987
+
+ both data1 and data2 may be matrices (MxT) each of
+  M measurements at T times
+ if either data1 or data2 is a vector, then it is expanded
+  to be the same size matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="calc_all_node_voltages.html" class="code" title="function node_v= calc_all_node_voltages( himg );">calc_all_node_voltages</a>	CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes</li><li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function Jbp = calc_backprojection_mask( fmdl , type);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img= backproj_solve( inv_model, data1, data2)</a>
+0002 <span class="comment">% BACKPROJ_SOLVE inverse solver using backprojection</span>
+0003 <span class="comment">% NOTE: This is the beginnings of an attempt to reproduce</span>
+0004 <span class="comment">%  the backprojection algorithm implemented in the</span>
+0005 <span class="comment">%  Sheffield MKI EIT system. It is far from complete.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% If you wish to use the actual algorithm, use the</span>
+0008 <span class="comment">%  function &quot;mk_common_gridmdl('backproj')&quot;</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% img= backproj_solve( inv_model, data1, data2)</span>
+0011 <span class="comment">% img        =&gt; output image (or vector of images)</span>
+0012 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0013 <span class="comment">% data1      =&gt; differential data at earlier time</span>
+0014 <span class="comment">% data2      =&gt; differential data at later time</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% inv_model.backproj_solve.type = 'naive' (DEFAULT)</span>
+0017 <span class="comment">%    use naive (unfiltered algorithm)</span>
+0018 <span class="comment">% inv_model.backproj_solve.type = 'filtered' (NOT IMPLEMENTED YET)</span>
+0019 <span class="comment">%    ref: Barber DC Brown BH, &quot;fast reconstruction of resistance</span>
+0020 <span class="comment">%         images&quot;, clin Phys Physiol Mes, pp 47-54, vol 8,sup A,1987</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% both data1 and data2 may be matrices (MxT) each of</span>
+0023 <span class="comment">%  M measurements at T times</span>
+0024 <span class="comment">% if either data1 or data2 is a vector, then it is expanded</span>
+0025 <span class="comment">%  to be the same size matrix</span>
+0026 
+0027 <span class="comment">% (C) 2007 Andy Adler. License: GPL version 2 or version 3</span>
+0028 <span class="comment">% $Id$</span>
+0029 
+0030 <span class="keyword">try</span>
+0031    type= inv_model.backproj_solve.type;
+0032 <span class="keyword">catch</span>
+0033    type= <span class="string">'naive'</span>;
+0034 <span class="keyword">end</span>
+0035 
+0036 fwd_model= inv_model.fwd_model;
+0037 
+0038 <span class="comment">% The one_step reconstruction matrix is cached</span>
+0039 one_step_inv = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, inv_model, <span class="string">'backproj_solve'</span>);
+0040 <span class="keyword">if</span> ~isempty(one_step_inv)
+0041     <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'backproj_solve: using cached value'</span>, 2);
+0042 <span class="keyword">else</span>
+0043     Jbp = <a href="#_sub1" class="code" title="subfunction Jbp = calc_backprojection_mask( fmdl , type);">calc_backprojection_mask</a>( fwd_model, type );
+0044 
+0045     one_step_inv= Jbp;
+0046 
+0047     <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, inv_model, <span class="string">'backproj_solve'</span>, one_step_inv);
+0048     <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'backproj_solve: setting cached value'</span>, 2);
+0049 <span class="keyword">end</span>
+0050 
+0051 dv = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( data1, data2, inv_model.fwd_model);
+0052 
+0053 sol = one_step_inv * dv;
+0054 
+0055 <span class="comment">% create a data structure to return</span>
+0056 img.name= <span class="string">'solved by backproj_solve'</span>;
+0057 img.elem_data = sol;
+0058 img.fwd_model= fwd_model;
+0059 
+0060 <a name="_sub1" href="#_subfunctions" class="code">function Jbp = calc_backprojection_mask( fmdl , type);</a>
+0061    <span class="comment">% create homog image</span>
+0062    himg= <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>,<span class="string">''</span>, <span class="string">'fwd_model'</span>,fmdl, <span class="keyword">...</span>
+0063                     <span class="string">'elem_data'</span>,ones(size(fmdl.elems,1),1) );
+0064    node_v= <a href="calc_all_node_voltages.html" class="code" title="function node_v= calc_all_node_voltages( himg );">calc_all_node_voltages</a>( himg );
+0065 
+0066    pp= <a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>( fmdl );
+0067 
+0068    elem_v= reshape(node_v( fmdl.elems',:),pp.n_dims+1,[],pp.n_elec);
+0069    elem_v= squeeze(mean(elem_v,1));
+0070 
+0071    meas_v= pp.N2E * node_v;
+0072 
+0073    Jbp = zeros(pp.n_elem, sum(fmdl.meas_select) );
+0074 
+0075    idx= 1;
+0076    <span class="comment">% This will only work for stim_patterns with bipolar injection</span>
+0077    <span class="keyword">for</span> i = 1:pp.n_stim;
+0078      meas_pat_i= fmdl.stimulation(i).meas_pattern;
+0079      elem_vi= elem_v(:,i);
+0080      <span class="keyword">for</span> j= 1:size(meas_pat_i,1); 
+0081         idx_pl= find(meas_pat_i(j,:)&gt;0);
+0082         idx_mi= find(meas_pat_i(j,:)&lt;0);
+0083         Jbp_idx  = (elem_vi &lt;= meas_v(idx_pl,i)) &amp; <span class="keyword">...</span>
+0084                    (elem_vi &gt;  meas_v(idx_mi,i));
+0085         Jbp(:,idx) = - Jbp_idx;
+0086         idx= idx+1;
+0087      <span class="keyword">end</span>
+0088    <span class="keyword">end</span>
+0089 
+0090    <span class="keyword">if</span> strcmp(type,<span class="string">'naive'</span>)
+0091 <span class="comment">% do nothing</span>
+0092    <span class="keyword">elseif</span> strcmp(type,<span class="string">'simple_filter'</span>)
+0093       xe=mean(reshape(fmdl.nodes(fmdl.elems',1),pp.n_dims+1,pp.n_elem));
+0094       ye=mean(reshape(fmdl.nodes(fmdl.elems',2),pp.n_dims+1,pp.n_elem));
+0095       filt=sqrt(1-xe.^2-ye.^2);
+0096       Jbp= Jbp.*( filt'*ones(1,size(Jbp,2)) );
+0097    <span class="keyword">else</span>
+0098       error([<span class="string">'dont know what to do with filter type='</span>,type]);
+0099    <span class="keyword">end</span>
+0100</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of elems_in_cylinder</title>
+  <meta name="keywords" content="elems_in_cylinder">
+  <meta name="description" content="INCYL: calculate elements in infinite cylinder">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html d_stephenson -->
+<h1>elems_in_cylinder
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>INCYL: calculate elements in infinite cylinder</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> INCYL: calculate elements in infinite cylinder
+ [index_incyl,mat]=incyl(center_simp,origin,radius,mat,value);
+
+ See also: mk_c2f_circ_mapping (this is the recommended function)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/manchester_tomography.html" class="code" title="function manchester_tomography( example_no)">manchester_tomography</a>	Example to show reconstructions from</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value);</a>
+0002 <span class="comment">% INCYL: calculate elements in infinite cylinder</span>
+0003 <span class="comment">% [index_incyl,mat]=incyl(center_simp,origin,radius,mat,value);</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% See also: mk_c2f_circ_mapping (this is the recommended function)</span>
+0006  
+0007 <span class="comment">% (C) 2005 David Stephenson. Licenced under GPL</span>
+0008 <span class="comment">% $Id$</span>
+0009 
+0010 index_incyl=[];
+0011 a=origin(1);
+0012 b=origin(2);
+0013 r=radius;
+0014 
+0015 <span class="keyword">for</span> i=1:size(center_simp,1);
+0016     
+0017     x=center_simp(i,1);
+0018     y=center_simp(i,2);     
+0019     r_squared_calc=((x-a)^2)+((y-b)^2);
+0020     
+0021     <span class="keyword">if</span> r_squared_calc &lt;= r^2
+0022         index_incyl(i,1)=1;
+0023     <span class="keyword">else</span>
+0024         index_incyl(i,1)=0;
+0025     <span class="keyword">end</span>    
+0026        
+0027     i=i+1;
+0028     
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="keyword">for</span> i=1:size(center_simp);
+0032         
+0033     <span class="keyword">if</span> index_incyl(i,1)==1;
+0034         
+0035         mat(i,1)=value;
+0036         
+0037         i=i+1;
+0038         
+0039     <span class="keyword">end</span>
+0040     
+0041 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

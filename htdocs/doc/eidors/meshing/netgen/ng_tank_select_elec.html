@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_tank_select_elec</title>
+  <meta name="keywords" content="ng_tank_select_elec">
+  <meta name="description" content="function[elec,sels] = ng_tank_select_elec(srf,vtx,fc,mshaxs);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>ng_tank_select_elec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function[elec,sels] = ng_tank_select_elec(srf,vtx,fc,mshaxs);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function[elec,sels] = ng_tank_select_elec(srf,vtx,fc,mshaxs); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function[elec,sels] = ng_tank_select_elec(srf,vtx,fc,mshaxs);
+
+ This function takes the wire frame model and the face
+ data and sequentially requests if each face is an
+ electrode or earth. From this the indices matrices (sels &amp; sgnd)
+ are concatenated so as to map all the selected electrodes and 
+ grounded planes into the srf matrix. In addition the cell array
+ (elsrf) is created containing the electrode surfaces and ground
+ plane indices matrices which map directly into vtx.
+
+ Version 5.0
+ B.D.Grieve - 13/02/2002 + modyfication by lmazurk
+ WRBL added default as prevous choice 20/1/2004
+ WRBL deleted ground plane 05/12/2005
+
+ srf      = The boundary surfaces
+ vtx      = The vertices matrix
+ fc       = A one column matrix containing the face numbers
+ mshaxs   = Axes details for plotting wire frame
+ elsrf    = Cell array of indices matrices mapping into vtx each electrode face
+ sels     = The indices into the srf matrix of the selected electrode faces
+ elec  = The EIDORS-3D electrode matrix of dimensions NxM, where 
+            where N: no. of electrodes, M: 3 * max no. of faces per electrode</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ng_extract_face.html" class="code" title="function[fcsrf,fci] = ng_extract_face(srf,vtx,fc,fcnmb)">ng_extract_face</a>	This function takes the wireframe model created by readmesh</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function[elec,sels] = ng_tank_select_elec(srf,vtx,fc,mshaxs);</a>
+0002 <span class="comment">%function[elec,sels] = ng_tank_select_elec(srf,vtx,fc,mshaxs);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% This function takes the wire frame model and the face</span>
+0005 <span class="comment">% data and sequentially requests if each face is an</span>
+0006 <span class="comment">% electrode or earth. From this the indices matrices (sels &amp; sgnd)</span>
+0007 <span class="comment">% are concatenated so as to map all the selected electrodes and</span>
+0008 <span class="comment">% grounded planes into the srf matrix. In addition the cell array</span>
+0009 <span class="comment">% (elsrf) is created containing the electrode surfaces and ground</span>
+0010 <span class="comment">% plane indices matrices which map directly into vtx.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Version 5.0</span>
+0013 <span class="comment">% B.D.Grieve - 13/02/2002 + modyfication by lmazurk</span>
+0014 <span class="comment">% WRBL added default as prevous choice 20/1/2004</span>
+0015 <span class="comment">% WRBL deleted ground plane 05/12/2005</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% srf      = The boundary surfaces</span>
+0018 <span class="comment">% vtx      = The vertices matrix</span>
+0019 <span class="comment">% fc       = A one column matrix containing the face numbers</span>
+0020 <span class="comment">% mshaxs   = Axes details for plotting wire frame</span>
+0021 <span class="comment">% elsrf    = Cell array of indices matrices mapping into vtx each electrode face</span>
+0022 <span class="comment">% sels     = The indices into the srf matrix of the selected electrode faces</span>
+0023 <span class="comment">% elec  = The EIDORS-3D electrode matrix of dimensions NxM, where</span>
+0024 <span class="comment">%            where N: no. of electrodes, M: 3 * max no. of faces per electrode</span>
+0025 <span class="comment">%</span>
+0026 
+0027 
+0028 sels = [];
+0029 
+0030 
+0031 figure
+0032 set(gcf,<span class="string">'Name'</span>,<span class="string">'Object Faces'</span>,<span class="string">'Colormap'</span>,[0 0 0])
+0033 elfc_prev = <span class="string">'N'</span>;
+0034 max(fc)
+0035 
+0036 <span class="keyword">for</span> loop1 = 1:max(fc)
+0037     <span class="comment">% Create a logical array (lgelfc) to determine which faces are electrodes</span>
+0038     lgelfc(loop1) = logical(0);
+0039     
+0040     [fcsrf,fci] = <a href="ng_extract_face.html" class="code" title="function[fcsrf,fci] = ng_extract_face(srf,vtx,fc,fcnmb)">ng_extract_face</a>(srf,vtx,fc,loop1);
+0041     <span class="keyword">if</span> ~isempty(fcsrf)
+0042         <span class="comment">% Add this face's vtx indices matrix to the cell array ttlfcsrf</span>
+0043         ttlfcsrf(loop1) = {fcsrf};
+0044         <span class="comment">% Plot this face</span>
+0045         trimesh(fcsrf,vtx(:,1),vtx(:,2),vtx(:,3))
+0046         title([<span class="string">'Face number: '</span> num2str(loop1) <span class="string">' of '</span> num2str(max(fc))])
+0047         axis equal
+0048         axis(mshaxs)
+0049         view(45,10)
+0050     qstr =sprintf(<span class="string">'Is this face an electrode? Y/N [%s] '</span>,elfc_prev);
+0051         elfc = input(qstr,<span class="string">'s'</span>);
+0052     <span class="keyword">if</span> isempty(elfc)
+0053        elfc = elfc_prev;
+0054     <span class="keyword">else</span>
+0055        elfc_prev=elfc;
+0056     <span class="keyword">end</span>
+0057         <span class="keyword">if</span>  (elfc==<span class="string">'y'</span> | elfc==<span class="string">'Y'</span>)
+0058             lgelfc(loop1) = logical(1);
+0059             sels = [sels; fci]; <span class="comment">% Concatenate indices into sels for this face</span>
+0060         <span class="keyword">end</span>
+0061     <span class="keyword">end</span>
+0062 <span class="keyword">end</span>
+0063 
+0064 
+0065 <span class="comment">% Extract from the total face indices matrix (ttlfcsrf) the</span>
+0066 <span class="comment">% faces which are electrodes and store them in the cell</span>
+0067 <span class="comment">% array (elsrf)</span>
+0068 elsrf = ttlfcsrf(lgelfc);
+0069 
+0070 close(gcf)
+0071 <span class="comment">% Display each electrode in turn as a wire mesh</span>
+0072 figure
+0073 set(gcf,<span class="string">'Name'</span>,<span class="string">'Wire Mesh Electrode Faces'</span>)
+0074 <span class="keyword">for</span> loop1 = 1:size(elsrf,2)-1
+0075     trimesh(elsrf{loop1},vtx(:,1),vtx(:,2),vtx(:,3),<span class="string">'EdgeColor'</span>,<span class="string">'red'</span>)
+0076     title([<span class="string">'Electrode '</span> num2str(loop1) <span class="string">': red'</span>])
+0077     axis equal
+0078     axis(mshaxs)
+0079     view(45,10)
+0080     hidden off
+0081     hold on
+0082     pause(0.75)
+0083 <span class="keyword">end</span>
+0084 title(<span class="string">'Electrodes: red,'</span>)
+0085 hidden off
+0086 pause(2)
+0087 
+0088 <span class="comment">% Convert elsrf into the EIDORS-3D matrix electrode matrix format</span>
+0089 
+0090 nmel = size(elsrf,2);
+0091 <span class="keyword">for</span> loop1 = 1:nmel
+0092     nmfc(loop1) = size(elsrf{loop1},1);
+0093 <span class="keyword">end</span>
+0094 <span class="comment">% Initiate electrode matrix (elec) &amp; pad with zeros</span>
+0095 elec = zeros(nmel,3*max(nmfc));
+0096 <span class="comment">% Put electrode surface information into elec</span>
+0097 <span class="keyword">for</span> loop1 = 1:nmel
+0098     <span class="keyword">for</span> loop2 = 1:size(elsrf{loop1},1)
+0099         elec(loop1,loop2*3-2:loop2*3)=elsrf{loop1}(loop2,:);
+0100     <span class="keyword">end</span>
+0101 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_covar_prior</title>
+  <meta name="keywords" content="calc_covar_prior">
+  <meta name="description" content="CALC_COVAR_PRIOR image prior with distance-based interelement covar">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html t_dai -->
+<h1>calc_covar_prior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CALC_COVAR_PRIOR image prior with distance-based interelement covar</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function Reg= calc_covar_prior( inv_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_COVAR_PRIOR image prior with distance-based interelement covar
+ This is a simplification of exponential_covar_prior.m
+ Reg= calc_covar_prior( inv_model )
+ Reg        =&gt; output regularization 
+ inv_model  =&gt; inverse model struct
+ P_type--prior type
+ 1: elements are globally correlated
+ 2: elements within/without electrode rings are correlated to elements in same region.
+ 3: only elements within electrode rings are correlated.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourD_prior_solve.html" class="code" title="function img= fourD_prior_solve( inv_model, data1, data2)">fourD_prior_solve</a>	fourD_prior_solve-- inverse solver to account for temporal</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Reg= calc_covar_prior( inv_model )</a>
+0002 <span class="comment">% CALC_COVAR_PRIOR image prior with distance-based interelement covar</span>
+0003 <span class="comment">% This is a simplification of exponential_covar_prior.m</span>
+0004 <span class="comment">% Reg= calc_covar_prior( inv_model )</span>
+0005 <span class="comment">% Reg        =&gt; output regularization</span>
+0006 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0007 <span class="comment">% P_type--prior type</span>
+0008 <span class="comment">% 1: elements are globally correlated</span>
+0009 <span class="comment">% 2: elements within/without electrode rings are correlated to elements in same region.</span>
+0010 <span class="comment">% 3: only elements within electrode rings are correlated.</span>
+0011 
+0012 <span class="comment">% (C) 2007, Tao Dai and Andy Adler. Licenced under the GPL Version 2</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015 <span class="comment">% get average x,y,z of each element</span>
+0016 ff = inv_model.fwd_model;
+0017 nel = size(ff.elems,1);
+0018 eta = .1;<span class="comment">%attenuation factor. eta is large when elems're spatially highly correlated</span>
+0019 
+0020 dist = zeros(nel);
+0021 
+0022 z1 = ff.nodes(ff.electrode(1).nodes,3);<span class="comment">%upper electrode ring</span>
+0023 z2 = ff.nodes(ff.electrode(end).nodes,3);<span class="comment">%lower electrode ring</span>
+0024 
+0025 <span class="keyword">for</span> dim = 1: size(ff.nodes,2);
+0026     coords = reshape(ff.nodes(ff.elems,dim),[size(ff.elems)]);<span class="comment">%coord of four vertex of each elem</span>
+0027     m_coords = mean( coords,2);<span class="comment">%calc center coord</span>
+0028     <span class="keyword">if</span> dim == 3
+0029         temp = double((m_coords&lt;max(z1,z2))&amp;(m_coords&gt;min(z1,z2)));<span class="comment">%regions of interests</span>
+0030         H = temp*temp';
+0031         <span class="keyword">switch</span> inv_model.fourD_prior.P_type <span class="comment">%Prior type</span>
+0032             <span class="keyword">case</span> 1 <span class="comment">% all elements are correlated</span>
+0033                 H = eta*(ones(size(H)));
+0034             <span class="keyword">case</span> 2 <span class="comment">% elements of ROI are not correlated with elements of non_ROI</span>
+0035                 temp = double(m_coords&gt;max(z1,z2));
+0036                 H = H + temp*temp';
+0037                 temp = double(m_coords&lt;min(z1,z2));
+0038                 H = H + temp*temp';
+0039                 H = eta*(H+1e-6);
+0040             <span class="keyword">case</span> 3 <span class="comment">% elements are only correlated within ROI, non-ROI elements are highly attenuated</span>
+0041                 H = eta*(H+1e-6);
+0042             <span class="keyword">otherwise</span>
+0043                 error(<span class="string">'no such a 3-D prior type'</span>);
+0044         <span class="keyword">end</span>
+0045     <span class="keyword">end</span>
+0046     difm = m_coords*ones(1,nel);
+0047     difm = difm - difm';
+0048     dist= dist + difm.^2;<span class="comment">%</span>
+0049 <span class="keyword">end</span>
+0050 dist = sqrt(dist);<span class="comment">%elements distance matrix</span>
+0051 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0052 dist = dist/max(dist(:));
+0053 
+0054 Reg = exp(-dist ./ H);<span class="comment">% 3-D elements correlations matrix.</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

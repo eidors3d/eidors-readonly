@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MakeRegmatrixFace</title>
+  <meta name="keywords" content="MakeRegmatrixFace">
+  <meta name="description" content="Function R=MakeRegmatrixFace(Element);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html m_vauhkonen -->
+<h1>MakeRegmatrixFace
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Function R=MakeRegmatrixFace(Element);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function R=MakeRegmatrixFace(Element); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Function R=MakeRegmatrixFace(Element);
+ computes a regularization matrix R which is a
+ version of 2D difference. 
+
+ INPUT
+
+ Element = element structure
+
+ OUTPUT
+
+ R = regularisation matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function R=MakeRegmatrixFace(Element);</a>
+0002 
+0003 <span class="comment">% Function R=MakeRegmatrixFace(Element);</span>
+0004 <span class="comment">% computes a regularization matrix R which is a</span>
+0005 <span class="comment">% version of 2D difference.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% INPUT</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Element = element structure</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% OUTPUT</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% R = regularisation matrix</span>
+0014 
+0015 <span class="comment">% M. Vauhkonen 13.8.1999, Univeristy of Kuopio, Finland</span>
+0016 
+0017 Facelist=[];
+0018 <span class="keyword">for</span> ii=1:max(size(Element))
+0019  Fl=[Element(ii).Face{:,2}]';
+0020  fFl=find(Fl);
+0021  add=[ones(max(size(fFl)),1)*ii,Fl(fFl)];
+0022  Facelist=[Facelist;add];
+0023 <span class="keyword">end</span>
+0024 Facelist=sort(Facelist')';
+0025 Facelist=unique(Facelist,<span class="string">'rows'</span>);
+0026 [rN,cN]=size(Facelist);
+0027 R=sparse(rN,max(max(Facelist)));
+0028 <span class="keyword">for</span> ii=1:rN
+0029  R(ii,Facelist(ii,:))=[1,-1];
+0030 <span class="keyword">end</span>
+0031</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

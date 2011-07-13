@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of jacobian_3d_with_fields</title>
+  <meta name="keywords" content="jacobian_3d_with_fields">
+  <meta name="description" content="JACOBIAN_3D_WITH_FIELDS: calculate jacobian_3d, but accept V fields as">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html d_stephenson -->
+<h1>jacobian_3d_with_fields
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>JACOBIAN_3D_WITH_FIELDS: calculate jacobian_3d, but accept V fields as</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [J] = jacobian_3d_with_fields(V,Ela,D,I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,sym); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> JACOBIAN_3D_WITH_FIELDS: calculate jacobian_3d, but accept V fields as
+    parameters. Differs from jacobian_3d in that V is not calculated inside.
+
+I        = The currents used
+elec     = the electrodes matrix
+vtx      = The vertices matrix
+simp     = The simplices matrix
+gnd_ind  = The ground index (node)
+mat_ref  = The reference conductivity vector
+zc       = The electrode contact impedance vector
+IntGrad  = The integrals of the gradients
+v_f      = The measurement fields
+df       = Measurements per current pattern as used in v_f 
+tol      = Tolerance 
+J        = The Jacobian (sensitivity) matrix with respect to conductivity
+
+ (C) 2003-2005 Nick Polydorides and David Stephenson. Licensed under GPL
+ $Id$</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="inv_solve_dual_mesh.html" class="code" title="function img= inv_solve_dual_mesh( inv_model, voltage)">inv_solve_dual_mesh</a>	INV_SOLVE_DUAL_MESH using a coarse and fine mesh</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [J] = jacobian_3d_with_fields(V,Ela,D,I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,sym);</a>
+0002 <span class="comment">% JACOBIAN_3D_WITH_FIELDS: calculate jacobian_3d, but accept V fields as</span>
+0003 <span class="comment">%    parameters. Differs from jacobian_3d in that V is not calculated inside.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%I        = The currents used</span>
+0006 <span class="comment">%elec     = the electrodes matrix</span>
+0007 <span class="comment">%vtx      = The vertices matrix</span>
+0008 <span class="comment">%simp     = The simplices matrix</span>
+0009 <span class="comment">%gnd_ind  = The ground index (node)</span>
+0010 <span class="comment">%mat_ref  = The reference conductivity vector</span>
+0011 <span class="comment">%zc       = The electrode contact impedance vector</span>
+0012 <span class="comment">%IntGrad  = The integrals of the gradients</span>
+0013 <span class="comment">%v_f      = The measurement fields</span>
+0014 <span class="comment">%df       = Measurements per current pattern as used in v_f</span>
+0015 <span class="comment">%tol      = Tolerance</span>
+0016 <span class="comment">%J        = The Jacobian (sensitivity) matrix with respect to conductivity</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% (C) 2003-2005 Nick Polydorides and David Stephenson. Licensed under GPL</span>
+0019 <span class="comment">% $Id$</span>
+0020 
+0021 [vr,vc] = size(vtx);
+0022 [sr,sc] = size(simp);
+0023 
+0024 el_no = size(elec,1);
+0025 
+0026 <span class="keyword">if</span> sum(df)~= size(v_f,2);
+0027    error(<span class="string">'Mismatched data input'</span>);
+0028 <span class="keyword">end</span>
+0029 
+0030 <span class="comment">%Select the part referring to the interior nodes</span>
+0031 V = V(1:vr,:);
+0032 v_f = v_f(1:vr,:);
+0033    
+0034 J = zeros(sum(df),size(simp,1)); 
+0035 Jrow = zeros(1,size(simp,1));
+0036 cnt = 0;
+0037 
+0038 h = waitbar(0,<span class="string">'Calculating Jacobian Matrix'</span>);
+0039 
+0040    <span class="keyword">for</span> p=1:size(V,2) 
+0041        
+0042        waitbar(p/(size(V,2)))
+0043      
+0044       DV =  D*V(:,p); <span class="comment">%Gradient of the current fields</span>
+0045        
+0046       <span class="keyword">for</span> m=1:df(p) 
+0047         
+0048       
+0049         Dvf = D*v_f(:,sum(df(1:p-1))+m); <span class="comment">%Gradient of the measurement fields</span>
+0050               
+0051         Jrow_x3 = Dvf .* DV ;  
+0052         Jrow_u = Jrow_x3(1:3:end) + Jrow_x3(2:3:end) + Jrow_x3(3:3:end);
+0053         
+0054         Jrow = Jrow_u .* diag(Ela(1:3:<span class="keyword">end</span>,1:3:end));
+0055         
+0056         cnt = cnt+1;
+0057         J(cnt,:) = -Jrow.';
+0058         Jrow = zeros(1,size(simp,1));
+0059         
+0060     <span class="keyword">end</span> <span class="comment">%m</span>
+0061        
+0062    <span class="keyword">end</span> <span class="comment">%p</span>
+0063   
+0064 close(h)</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

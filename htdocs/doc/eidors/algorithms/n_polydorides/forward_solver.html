@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of forward_solver</title>
+  <meta name="keywords" content="forward_solver">
+  <meta name="description" content="[V] = forward_solver(E,I,tol,pp,V);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>forward_solver
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[V] = forward_solver(E,I,tol,pp,V);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [V] = forward_solver(E,I,tol,pp,V, compat_param); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">[V] = forward_solver(E,I,tol,pp,V);
+
+This function solves the forward problem using matlab's \ sovler, or
+conjugate gradients (for large problems). 
+
+E   = The full rank system matrix 
+I   = The currents matrix (RHS) 
+tol = The tolerance in the forward solution, e.g. 1e-5
+pp  = UNUSED
+V   = The approximated nodal potential distribution (USED FOR PCG SOLN)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="../../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="../../../eidors/algorithms/d_stephenson/inv_solve_dual_mesh.html" class="code" title="function img= inv_solve_dual_mesh( inv_model, voltage)">inv_solve_dual_mesh</a>	INV_SOLVE_DUAL_MESH using a coarse and fine mesh</li><li><a href="inverse_solver.html" class="code" title="function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);">inverse_solver</a>	function [solf,solp] = inverse_solver(I,voltage,tol,mat_ref,vtx,simp,elec,no_pl,zc,perm_sym,gnd_ind,tfac,Reg,it);</li><li><a href="jacobian_3d.html" class="code" title="function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);">jacobian_3d</a>	function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);</li><li><a href="np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>	NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</li><li><a href="np_fwd_solve.html" class="code" title="function data= np_fwd_solve( fwd_model, img)">np_fwd_solve</a>	NP_FWD_SOLVE: data= np_fwd_solve( fwd_model, img)</li><li><a href="../../../eidors/examples/demo_complex.html" class="code" title="">demo_complex</a>	This demo function shows how the EIT problem can be formulated in a complex</li><li><a href="../../../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li><li><a href="../../../eidors/tests/demo_real_test.html" class="code" title="function ok= demo_real_test">demo_real_test</a>	Perform tests based on the demo_real function</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [V] = forward_solver(E,I,tol,pp,V, compat_param);</a>
+0002 <span class="comment">%[V] = forward_solver(E,I,tol,pp,V);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%This function solves the forward problem using matlab's \ sovler, or</span>
+0005 <span class="comment">%conjugate gradients (for large problems).</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%E   = The full rank system matrix</span>
+0008 <span class="comment">%I   = The currents matrix (RHS)</span>
+0009 <span class="comment">%tol = The tolerance in the forward solution, e.g. 1e-5</span>
+0010 <span class="comment">%pp  = UNUSED</span>
+0011 <span class="comment">%V   = The approximated nodal potential distribution (USED FOR PCG SOLN)</span>
+0012 
+0013 <span class="comment">% (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL</span>
+0014 <span class="comment">% $Id$</span>
+0015 
+0016 <span class="comment">% The EIDORS3D V2 was [V] = forward_solver(vtx,E,I,tol,pp,V);</span>
+0017 <span class="comment">% but vtx not used, so it's forward_solver(E,I,tol,pp,V, compat_param);</span>
+0018 <span class="keyword">if</span> size(E,2) == 3; <span class="comment">% E is actually vtx</span>
+0019   <span class="keyword">if</span> nargin&gt;=2; E= I;             <span class="keyword">end</span>
+0020   <span class="keyword">if</span> nargin&gt;=3; I= tol;           <span class="keyword">end</span>
+0021   <span class="keyword">if</span> nargin&gt;=4; tol= pp;          <span class="keyword">end</span>
+0022   <span class="keyword">if</span> nargin&gt;=5; pp= V;            <span class="keyword">end</span>
+0023   <span class="keyword">if</span> nargin&gt;=6; V =compat_param;  <span class="keyword">end</span>
+0024 <span class="keyword">end</span> 
+0025 
+0026 [n_nodes,n_stims] = size(I);
+0027 
+0028 <span class="keyword">try</span>
+0029 <span class="comment">% V= E\I;</span>
+0030 <span class="comment">% This takes MUCH longer when you have  more vectors in I,</span>
+0031 <span class="comment">%  even if they are repeated. There must be some way to simplify</span>
+0032 <span class="comment">%  this to speed it up. Matlab's sparse operators really should</span>
+0033 <span class="comment">%  do this for you.</span>
+0034 
+0035 <span class="comment">% TODO, Q&amp;R should be cached somewhere</span>
+0036    [Q,R] = qr(I,0);
+0037    rnotzeros = any(R~=0,2);
+0038    Q= Q(:,rnotzeros);
+0039    R= R(rnotzeros,:);
+0040    V= (E \ Q)*R;
+0041 
+0042 <span class="comment">% TODO: Iteratively refine</span>
+0043 <span class="comment">%  From GH Scott: &quot;once we have</span>
+0044 <span class="comment">%   computed the approximate solution x, we perform one step</span>
+0045 <span class="comment">%   of iterative refinement by computing the residual: r = Ax - b</span>
+0046 <span class="comment">%   and then recalling the solve routine to solve</span>
+0047 <span class="comment">%   Adx = r for the correction dx.</span>
+0048 <span class="comment">% However, we don't want to repeat the '\', so we implement</span>
+0049 <span class="comment">%   the underlying algorithm:</span>
+0050 <span class="comment">%   If A is sparse, then MATLAB software uses CHOLMOD (after 7.2) to compute X.</span>
+0051 <span class="comment">%    The computations result in  P'*A*P = R'*R</span>
+0052 <span class="comment">%   where P is a permutation matrix generated by amd, and R is</span>
+0053 <span class="comment">%   an upper triangular matrix. In this case, X = P*(R\(R'\(P'*B)))</span>
+0054 
+0055 <span class="keyword">catch</span> 
+0056    [lasterr_str,lasterr_id]= lasterr;
+0057    <span class="keyword">if</span> ~strcmp(lasterr_id , <span class="string">'MATLAB:nomem'</span>)
+0058       error(lasterr_str); <span class="comment">% rethrow error</span>
+0059    <span class="keyword">end</span>
+0060 
+0061    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'Memory exhausted for inverse. Trying PCG'</span>,2);
+0062 
+0063    <span class="keyword">if</span> nargin &lt; 5
+0064       sz= [size(E,1),n_stims];
+0065       V = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, sz, <span class="string">'forward_solver_V'</span>);
+0066       <span class="keyword">if</span> isempty(V); V= zeros(sz); <span class="keyword">end</span>
+0067    <span class="keyword">end</span>
+0068 
+0069    <span class="keyword">if</span> isreal(E)
+0070       U = cholinc(E,tol*100); L = U'; 
+0071       cgsolver = @pcg;
+0072    <span class="keyword">else</span> <span class="comment">%Complex</span>
+0073       [L,U] = luinc(E,tol/10);
+0074       cgsolver = @bicgstab;
+0075    <span class="keyword">end</span>
+0076 
+0077    <span class="keyword">for</span> i=1:n_stims
+0078       [V(:,i),flag] = feval( cgsolver, E,I(:,i), <span class="keyword">...</span>
+0079                tol*norm(I(:,i)),n_nodes,L,U,V(:,i));
+0080    <span class="keyword">end</span> 
+0081       <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, sz, <span class="string">'forward_solver_V'</span>, V);
+0082 <span class="keyword">end</span>
+0083 
+0084 
+0085 
+0086 <span class="comment">%%% OLD CODE</span>
+0087    <span class="comment">% Cholesky solver. Gives poor results matching others</span>
+0088    <span class="comment">% so we no longer use it</span>
+0089    <span class="keyword">if</span> 0 
+0090        <span class="comment">%Permute the rows and columns to make the factors sparser</span>
+0091        E = E(pp,pp);
+0092        In = I(pp,:);
+0093        rr(pp)=1:max(size(pp));  <span class="comment">% this should be done only Once!</span>
+0094                                 <span class="comment">% actually much better just to do the</span>
+0095                                 <span class="comment">% renumbering when the mesh is generated!</span>
+0096        U = chol(E);
+0097        q_c =  U' \ In;  
+0098        Vn = U \ q_c;
+0099        <span class="comment">%De-permute the result for Cholesky</span>
+0100        V = Vn(rr,:);
+0101    <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

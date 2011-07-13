@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of solve_use_matrix</title>
+  <meta name="keywords" content="solve_use_matrix">
+  <meta name="description" content="SOLVE_USE_MATRIX solve using reconstruction matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>solve_use_matrix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>SOLVE_USE_MATRIX solve using reconstruction matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img= solve_use_matrix( inv_model, data1, data2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> SOLVE_USE_MATRIX solve using reconstruction matrix
+ img= solve_use_matrix( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ data1      =&gt; differential data at earlier time
+ data2      =&gt; differential data at later time
+ inv_model  =&gt; inverse model struct
+ inv_model.solve_use_matrix.RM  = rec_matrix
+ inv_model.solve_use_matrix.map = map to elements (optional)
+    map is the size of the reconst model. contains
+    zero if elem is unfilled, otherwise pointer to matrix row
+ inv_model.solve_use_matrix.solve_nodes (default to elements)
+    if 1, then solution goes to the img.node_data value</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/b_grychtol/calc_TSVD_RM.html" class="code" title="function RM= calc_TSVD_RM(mdl,hp)">calc_TSVD_RM</a>	CALC_TSVD_RM: Calculated truncated Jacobian SVD reconstruction matrix</li><li><a href="../../../eidors/algorithms/b_grychtol/inv_solve_TSVD.html" class="code" title="function sol = inv_solve_TSVD(inv_model, data1, data2)">inv_solve_TSVD</a>	INV_SOLVE_TSVD: inverse solver based on truncatated SVD</li><li><a href="../../../eidors/models/a_adler/mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li><li><a href="../../../eidors/models/a_adler/mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>	MK_COMMON_MODEL: make EIT on reconstruction grids (GREIT)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img= solve_use_matrix( inv_model, data1, data2)</a>
+0002 <span class="comment">% SOLVE_USE_MATRIX solve using reconstruction matrix</span>
+0003 <span class="comment">% img= solve_use_matrix( inv_model, data1, data2)</span>
+0004 <span class="comment">% img        =&gt; output image (or vector of images)</span>
+0005 <span class="comment">% data1      =&gt; differential data at earlier time</span>
+0006 <span class="comment">% data2      =&gt; differential data at later time</span>
+0007 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0008 <span class="comment">% inv_model.solve_use_matrix.RM  = rec_matrix</span>
+0009 <span class="comment">% inv_model.solve_use_matrix.map = map to elements (optional)</span>
+0010 <span class="comment">%    map is the size of the reconst model. contains</span>
+0011 <span class="comment">%    zero if elem is unfilled, otherwise pointer to matrix row</span>
+0012 <span class="comment">% inv_model.solve_use_matrix.solve_nodes (default to elements)</span>
+0013 <span class="comment">%    if 1, then solution goes to the img.node_data value</span>
+0014 
+0015 <span class="comment">% (C) 2008 Andy Adler. License: GPL version 2 or version 3</span>
+0016 <span class="comment">% $Id$</span>
+0017 
+0018 dv = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( data1, data2, inv_model.fwd_model);
+0019 
+0020 RM = inv_model.solve_use_matrix.RM;
+0021 
+0022 <span class="keyword">if</span> isfield(inv_model.solve_use_matrix,<span class="string">'map'</span>)
+0023    map = inv_model.solve_use_matrix.map;
+0024 <span class="keyword">else</span>
+0025    map = 1:size(RM,1);
+0026 <span class="keyword">end</span>
+0027 
+0028 
+0029 rec= inv_model.solve_use_matrix.RM * dv;
+0030 sol = rec(map,:);
+0031 
+0032 <span class="comment">% create a data structure to return</span>
+0033 <span class="keyword">try</span>   img.name= [<span class="string">'solved by '</span>, inv_model.name];
+0034 <span class="keyword">catch</span> img.name= [<span class="string">'solved by solve_use_matrix'</span>];
+0035 <span class="keyword">end</span>
+0036 
+0037 solve_to = <span class="string">'elem_data'</span>;
+0038 <span class="keyword">try</span> <span class="keyword">if</span> inv_model.solve_use_matrix.solve_nodes == 1
+0039    solve_to = <span class="string">'node_data'</span>;
+0040 <span class="keyword">end</span>; <span class="keyword">end</span>
+0041 
+0042 img.(solve_to) = sol;
+0043 img.fwd_model= inv_model.fwd_model;</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

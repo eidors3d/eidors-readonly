@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of electrlen</title>
+  <meta name="keywords" content="electrlen">
+  <meta name="description" content="electrlen Computes the length of the electrode in the case of isoparametric (quadratic) triangular element">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html m_vauhkonen -->
+<h1>electrlen
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>electrlen Computes the length of the electrode in the case of isoparametric (quadratic) triangular element</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function int=electrlen(g); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">electrlen Computes the length of the electrode in the case of isoparametric (quadratic) triangular element 
+ Function int=electrlen(g) computes the length of the electrode in the case of isoparametric triangular element
+ The electrode is the curve defined by the coordinates in g.
+
+ INPUT
+
+ g = global coordinates of the integration curve
+
+ OUTPUT
+
+ int = value of the integral</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/m_vauhkonen/FemMatrix.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrix(Node,Element,z);">FemMatrix</a>	FemMatrix Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis</li><li><a href="../../../eidors/algorithms/m_vauhkonen/FemMatrixNode.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrixNode(Node,Element,z);">FemMatrixNode</a>	FemMatrixNode Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis. Conductivity in linear basis.</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function int=electrlen(g);</a>
+0002 
+0003 <span class="comment">%electrlen Computes the length of the electrode in the case of isoparametric (quadratic) triangular element</span>
+0004 <span class="comment">% Function int=electrlen(g) computes the length of the electrode in the case of isoparametric triangular element</span>
+0005 <span class="comment">% The electrode is the curve defined by the coordinates in g.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% INPUT</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% g = global coordinates of the integration curve</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% OUTPUT</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% int = value of the integral</span>
+0014 
+0015 <span class="comment">% 10.5. 1996 P. Ronkanen and M. Vauhkonen</span>
+0016 <span class="comment">% University of Kuopio, Department of Applied Physics, PO Box 1627,</span>
+0017 <span class="comment">% FIN-70211 Kuopio, Finland, email: Marko.Vauhkonen@uku.fi</span>
+0018 
+0019 
+0020 w=[1/2,1/2];
+0021 ip=[1/2-1/6*sqrt(3),1/2+1/6*sqrt(3)];
+0022 int=0;
+0023  <span class="keyword">for</span> ii=1:2
+0024   dJt=sqrt((g(1,1)*(4*ip(ii)-3)+g(2,1)*(4-8*ip(ii))+g(3,1)*(4*ip(ii)-1))^2+ <span class="keyword">...</span>
+0025             (g(1,2)*(4*ip(ii)-3)+g(2,2)*(4-8*ip(ii))+g(3,2)*(4*ip(ii)-1))^2);
+0026   int=int+w(ii)*dJt;
+0027  <span class="keyword">end</span>
+0028 
+0029 
+0030 
+0031 
+0032 
+0033 
+0034 
+0035 
+0036 
+0037</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

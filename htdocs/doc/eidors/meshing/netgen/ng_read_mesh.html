@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_read_mesh</title>
+  <meta name="keywords" content="ng_read_mesh">
+  <meta name="description" content="[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>ng_read_mesh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
+ Function to read in a mesh model from NetGen and saves it in
+ five arrays; surface (srf), veritices (vtx), face no. (fc)
+ volume (simp) and edges (edg)
+ 
+ Version 4.0
+ B.D.Grieve - 27/01/2002 + modifications by lmazurk
+ A.Adler - 2006 mods to run quicker
+
+ EIDORS's srf array is a subset of NetGen's surface element data
+ (columns 6:8). The first column of the surface element data also
+ ascribes a face number to each surface which is saved as the fc
+ array. Each line of the srf array contains 3 indices to define
+ a triangle mapped on to the three dimensional vtx array.
+ EIDORS's vtx array is a direct equivalent to NetGen's pointer data.
+
+
+ srf      = The surfaces indices into vtx
+ simp     = The volume indices into vtx
+ vtx      = The vertices matrix
+ fc       = A one column matrix containing the face numbers
+ edg      = Edge segment information
+ filename = Name of file containing NetGen .vol information
+ mat_ind  = Material index</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function mat= get_lines_with_numbers( fid, n_cols);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)</a>
+0002 <span class="comment">%[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)</span>
+0003 <span class="comment">% Function to read in a mesh model from NetGen and saves it in</span>
+0004 <span class="comment">% five arrays; surface (srf), veritices (vtx), face no. (fc)</span>
+0005 <span class="comment">% volume (simp) and edges (edg)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Version 4.0</span>
+0008 <span class="comment">% B.D.Grieve - 27/01/2002 + modifications by lmazurk</span>
+0009 <span class="comment">% A.Adler - 2006 mods to run quicker</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% EIDORS's srf array is a subset of NetGen's surface element data</span>
+0012 <span class="comment">% (columns 6:8). The first column of the surface element data also</span>
+0013 <span class="comment">% ascribes a face number to each surface which is saved as the fc</span>
+0014 <span class="comment">% array. Each line of the srf array contains 3 indices to define</span>
+0015 <span class="comment">% a triangle mapped on to the three dimensional vtx array.</span>
+0016 <span class="comment">% EIDORS's vtx array is a direct equivalent to NetGen's pointer data.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% srf      = The surfaces indices into vtx</span>
+0020 <span class="comment">% simp     = The volume indices into vtx</span>
+0021 <span class="comment">% vtx      = The vertices matrix</span>
+0022 <span class="comment">% fc       = A one column matrix containing the face numbers</span>
+0023 <span class="comment">% edg      = Edge segment information</span>
+0024 <span class="comment">% filename = Name of file containing NetGen .vol information</span>
+0025 <span class="comment">% mat_ind  = Material index</span>
+0026 
+0027 <span class="comment">% $Id$</span>
+0028 <span class="comment">% (C) 2002-2006 (C) Licenced under the GPL</span>
+0029 
+0030 <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'ng_read_mesh'</span>,3);
+0031 
+0032 
+0033 fid = fopen(filename,<span class="string">'r'</span>);
+0034 <span class="keyword">while</span> 1
+0035     tline = fgetl(fid);
+0036     <span class="keyword">if</span> ~ischar(tline); fclose(fid); <span class="keyword">break</span>; <span class="keyword">end</span>
+0037 
+0038     <span class="keyword">if</span>     strcmp(tline,<span class="string">'surfaceelementsgi'</span>)
+0039        se= <a href="#_sub1" class="code" title="subfunction mat= get_lines_with_numbers( fid, n_cols);">get_lines_with_numbers</a>( fid, 11);
+0040     <span class="keyword">elseif</span> strcmp(tline,<span class="string">'surfaceelements'</span>); <span class="comment">% NEW NETGEN VERSION</span>
+0041        se= <a href="#_sub1" class="code" title="subfunction mat= get_lines_with_numbers( fid, n_cols);">get_lines_with_numbers</a>( fid, 8);
+0042     <span class="keyword">elseif</span> strcmp(tline,<span class="string">'volumeelements'</span>)
+0043        ve= <a href="#_sub1" class="code" title="subfunction mat= get_lines_with_numbers( fid, n_cols);">get_lines_with_numbers</a>( fid, 6);
+0044     <span class="keyword">elseif</span> strcmp(tline,<span class="string">'edgesegmentsgi2'</span>)
+0045        es= <a href="#_sub1" class="code" title="subfunction mat= get_lines_with_numbers( fid, n_cols);">get_lines_with_numbers</a>( fid, 12);
+0046     <span class="keyword">elseif</span> strcmp(tline,<span class="string">'points'</span>)
+0047        vtx= <a href="#_sub1" class="code" title="subfunction mat= get_lines_with_numbers( fid, n_cols);">get_lines_with_numbers</a>( fid, 3);
+0048     <span class="keyword">end</span>
+0049 <span class="keyword">end</span>
+0050 
+0051 
+0052 srf = se(:,6:8);
+0053 fc = se(:,1);
+0054 simp = ve(:,3:6);
+0055 edg = es;
+0056 mat_ind=ve(:,1);
+0057 bc = se(:,2);
+0058 
+0059 <a name="_sub1" href="#_subfunctions" class="code">function mat= get_lines_with_numbers( fid, n_cols);</a>
+0060    tline = fgetl(fid);
+0061    n_rows = sscanf(tline,<span class="string">'%d'</span>);
+0062    mat= fscanf(fid,<span class="string">'%f'</span>,[n_cols,n_rows])';
+0063 
+0064</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of simulate_movement</title>
+  <meta name="keywords" content="simulate_movement">
+  <meta name="description" content="SIMULATE_MOVEMENT simulate small conductivity perturbations">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html a_adler -->
+<h1>simulate_movement
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>SIMULATE_MOVEMENT simulate small conductivity perturbations</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> SIMULATE_MOVEMENT simulate small conductivity perturbations
+ [vh,vi,xyzr, c2f]= simulate_movement( img, xyzr );
+
+ Simulate small conductivity perturbations (using the 
+  Jacobian calculation to be fast).
+
+ INPUT:
+   2D Models: specify xyzr = matrix of 3xN.
+      Each perturbation (i) is at (x,y) = xyzr(1:2,i)
+      with radius xyzr(3,i). 
+  
+   3D Models: specify xyzr = matrix of 4xN.
+      Each perturbation (i) is at (x,y,z) = xyzr(1:3,i)
+      with radius xyzr(4,i). 
+
+   xyzr = scalar =N - single spiral of N in medium centre
+  
+   img = eidors image object (with img.fwd_model FEM model).
+
+ OUTPUT:
+   vh - homogeneous measurements M x 1
+   vi - target simulations       M x n_points
+   xyzr - x y and radius of each point 3 x n_points
+   c2f - image representation of the simulations
+
+ Example: Simulate small 3D object in centre:
+    img = mk_image( mk_common_model('b3cr',16) ); % 2D Image
+    [vh,vi] = simulate_movement( img, [0;0;0;0.05]);
+ Example: Simulate small 2D object in at x near side:
+    img = mk_image( mk_common_model('d2d3c',16) ); % 2D Image
+    [vh,vi] = simulate_movement( img, [0.9;0;0.05]);
+    show_fem(inv_solve(mk_common_model('c2c2',16),vh,vi)) % Reconst (new mesh)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>	MK_C2F_CIRC_MAPPING: create a mapping matrix from circles/spheres to FEM</li><li><a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li><li><a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li><li><a href="../../../eidors/tools/test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li><li><a href="../../../eidors/tools/test_performance_img.html" class="code" title="function [params_img] =  test_performance_img( imdls, fmdl );">test_performance_img</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function J= move_jacobian_postprocess( J, img, Nt)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );</a>
+0002 <span class="comment">% SIMULATE_MOVEMENT simulate small conductivity perturbations</span>
+0003 <span class="comment">% [vh,vi,xyzr, c2f]= simulate_movement( img, xyzr );</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Simulate small conductivity perturbations (using the</span>
+0006 <span class="comment">%  Jacobian calculation to be fast).</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% INPUT:</span>
+0009 <span class="comment">%   2D Models: specify xyzr = matrix of 3xN.</span>
+0010 <span class="comment">%      Each perturbation (i) is at (x,y) = xyzr(1:2,i)</span>
+0011 <span class="comment">%      with radius xyzr(3,i).</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%   3D Models: specify xyzr = matrix of 4xN.</span>
+0014 <span class="comment">%      Each perturbation (i) is at (x,y,z) = xyzr(1:3,i)</span>
+0015 <span class="comment">%      with radius xyzr(4,i).</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%   xyzr = scalar =N - single spiral of N in medium centre</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   img = eidors image object (with img.fwd_model FEM model).</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% OUTPUT:</span>
+0022 <span class="comment">%   vh - homogeneous measurements M x 1</span>
+0023 <span class="comment">%   vi - target simulations       M x n_points</span>
+0024 <span class="comment">%   xyzr - x y and radius of each point 3 x n_points</span>
+0025 <span class="comment">%   c2f - image representation of the simulations</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Example: Simulate small 3D object in centre:</span>
+0028 <span class="comment">%    img = mk_image( mk_common_model('b3cr',16) ); % 2D Image</span>
+0029 <span class="comment">%    [vh,vi] = simulate_movement( img, [0;0;0;0.05]);</span>
+0030 <span class="comment">% Example: Simulate small 2D object in at x near side:</span>
+0031 <span class="comment">%    img = mk_image( mk_common_model('d2d3c',16) ); % 2D Image</span>
+0032 <span class="comment">%    [vh,vi] = simulate_movement( img, [0.9;0;0.05]);</span>
+0033 <span class="comment">%    show_fem(inv_solve(mk_common_model('c2c2',16),vh,vi)) % Reconst (new mesh)</span>
+0034 <span class="comment">%</span>
+0035 
+0036 <span class="comment">% (C) 2009 Andy Adler. Licensed under GPL v2 or v3</span>
+0037 <span class="comment">% $Id$</span>
+0038 
+0039    <span class="keyword">if</span> size(xyzr) == [1,1]
+0040       path = linspace(0,1,xyzr); phi = 2*pi*path;
+0041       meanodes= mean(    img.fwd_model.nodes  );
+0042       lennodes= size( img.fwd_model.nodes,1); 
+0043       img.fwd_model.nodes = img.fwd_model.nodes - ones(lennodes,1)*meanodes;
+0044       maxnodes= max(max(abs( img.fwd_model.nodes(:,1:2) )));
+0045       img.fwd_model.nodes = img.fwd_model.nodes / maxnodes;
+0046 
+0047       xyzr = [0.9*path.*sin(phi);0.9*path.*cos(phi);0*path; 0.05 + 0*path];
+0048    <span class="keyword">end</span>
+0049 
+0050    Nt = size(xyzr,2);
+0051    [c2f failed] = <a href="../../../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>( img.fwd_model, xyzr);
+0052    xyzr(:,failed) = [];
+0053    c2f(:,failed) = [];
+0054    Nt = Nt - nnz(failed);
+0055    img.fwd_model.coarse2fine = c2f;
+0056 
+0057    <span class="comment">% We don't want a normalized jacobian here</span>
+0058    img.fwd_model.normalize_measurements = 0;
+0059 
+0060    J= <a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>( img );
+0061    J= <a href="#_sub1" class="code" title="subfunction J= move_jacobian_postprocess( J, img, Nt)">move_jacobian_postprocess</a>( J, img, Nt);
+0062 
+0063    vh= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>(img);
+0064    vh=vh.meas;
+0065 
+0066    vi= vh*ones(1,Nt) + J;
+0067    
+0068    <span class="comment">% Would this be the slow approach?:</span>
+0069 <span class="comment">%    vi = vh*zeros(1,Nt);</span>
+0070 <span class="comment">%    for i = 1: Nt</span>
+0071 <span class="comment">%        img.elem_data = 1 - c2f(:,i);</span>
+0072 <span class="comment">%        jnk = fwd_solve(img);</span>
+0073 <span class="comment">%        vi(:,i) = jnk.meas;</span>
+0074 <span class="comment">%    end</span>
+0075 
+0076 <a name="_sub1" href="#_subfunctions" class="code">function J= move_jacobian_postprocess( J, img, Nt)</a>
+0077    <span class="keyword">if</span> size(J,2) == Nt; <span class="comment">% No problem</span>
+0078        <span class="keyword">return</span> ;
+0079    <span class="comment">% Check if movement jacobian introduced electrode movements (elecs * dims)</span>
+0080    <span class="keyword">elseif</span> size(J,2) == Nt + <span class="keyword">...</span>
+0081         length(img.fwd_model.electrode) * size(img.fwd_model.nodes,2)
+0082       J = J(:,1:Nt);
+0083    <span class="keyword">else</span>
+0084       error(<span class="string">'Jacobian calculator is not doing the coarse2fine mapping. This is a bug.'</span>);
+0085    <span class="keyword">end</span>
+0086 
+0087 
+0088 
+0089 
+0090 
+0091 <span class="comment">% QUESTON: the accuracy of J will depend on how well we interpolate the</span>
+0092 <span class="comment">% mesh. How important is this?</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

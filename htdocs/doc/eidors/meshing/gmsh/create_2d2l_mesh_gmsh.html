@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of create_2d2l_mesh_gmsh</title>
+  <meta name="keywords" content="create_2d2l_mesh_gmsh">
+  <meta name="description" content="Create a 2D Circular FEM using GMSH">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html gmsh -->
+<h1>create_2d2l_mesh_gmsh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Create a 2D Circular FEM using GMSH</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [mdl, mat_indices] = create_2d2l_mesh_gmsh(basename, in_rad, ext_rad, no_elec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Create a 2D Circular FEM using GMSH
+ mdl= CREATE_GMSH_2D_CIRCLE(rad, n_elec)
+
+ mdl - EIDORS forward model
+ rad - model radius</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="call_gmsh.html" class="code" title="function status= call_gmsh(geo_file)">call_gmsh</a>	call_gmsh: call Gmsh to create a vol_file from a geo_file</li><li><a href="gmsh_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=gmsh_mk_fwd_model( vol_filename, name, centres, z_contact)">gmsh_mk_fwd_model</a>	GMSH_MK_FWD_MODEL: create a fwd_model object from a Gmsh file</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [mdl, mat_indices] = create_2d2l_mesh_gmsh(basename, in_rad, ext_rad, no_elec)</a>
+0002 <span class="comment">% Create a 2D Circular FEM using GMSH</span>
+0003 <span class="comment">% mdl= CREATE_GMSH_2D_CIRCLE(rad, n_elec)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% mdl - EIDORS forward model</span>
+0006 <span class="comment">% rad - model radius</span>
+0007 
+0008 <span class="comment">% (C) 2006 Andy Adler. License: GPL version 2 or version 3</span>
+0009 <span class="comment">% $Id$</span>
+0010 
+0011 
+0012 geo_filename = sprintf(<span class="string">'%s.geo'</span>, basename);
+0013 geo_fid= fopen(geo_filename,<span class="string">'w'</span>);
+0014 
+0015 <span class="comment">% Electrodes points on external boundary</span>
+0016 theta= linspace(0,2*pi, no_elec+1); theta(end)=[];
+0017 point_no = 1;
+0018 <span class="keyword">for</span> th=theta
+0019     x=ext_rad*sin(th);
+0020     y=ext_rad*cos(th);
+0021     z=0;
+0022     fprintf(geo_fid,<span class="string">'Point(%d) = {%f,%f,%f,%f};\n'</span>,point_no, x,y,z, ext_rad/100);
+0023     point_no = point_no + 1;
+0024 <span class="keyword">end</span>
+0025 
+0026 <span class="comment">% Points to define internal layer</span>
+0027 center_no = point_no;
+0028 fprintf(geo_fid,<span class="string">'Point(%d) = {%f,%f,%f,%f};\n'</span>,center_no, 0, 0, 0, 1);
+0029 point_no = point_no + 1;
+0030 inpoint1_no = point_no;
+0031 fprintf(geo_fid,<span class="string">'Point(%d) = {%f,%f,%f,%f};\n'</span>,inpoint1_no, in_rad, 0,0, ext_rad/30);
+0032 point_no = point_no + 1;
+0033 inpoint2_no = point_no;
+0034 fprintf(geo_fid,<span class="string">'Point(%d) = {%f,%f,%f,%f};\n'</span>,inpoint2_no, -in_rad, 0,0, ext_rad/30);
+0035 point_no = point_no + 1;
+0036 
+0037 <span class="comment">% External lines / electrodes</span>
+0038 line_no = 1;
+0039 <span class="keyword">for</span> i = 1:no_elec
+0040     start_point = i;
+0041     end_point= i+1;
+0042     <span class="keyword">if</span> end_point &gt; no_elec
+0043         end_point = 1;
+0044     <span class="keyword">end</span>
+0045     fprintf(geo_fid,<span class="string">'Line(%d) = {%d, %d};\n'</span>, line_no, start_point, end_point);
+0046     line_no = line_no + 1;
+0047 <span class="keyword">end</span>
+0048 
+0049 extloop_no = line_no;
+0050 line_no = line_no + 1;
+0051 fprintf(geo_fid,<span class="string">'Line Loop(%d) = {'</span>, extloop_no);
+0052 <span class="keyword">for</span> i = 1:(no_elec-1)
+0053     fprintf(geo_fid,<span class="string">'%d,'</span>, i);
+0054 <span class="keyword">end</span>
+0055 fprintf(geo_fid, <span class="string">'%d};\n'</span>, no_elec);
+0056 
+0057 <span class="comment">% Internal circle and loop</span>
+0058 circle1_no = line_no;
+0059 line_no = line_no + 1;
+0060 fprintf(geo_fid,<span class="string">'Circle(%d) = {%d, %d, %d};\n'</span>, circle1_no, inpoint1_no, <span class="keyword">...</span>
+0061     center_no, inpoint2_no);
+0062 circle2_no = line_no;
+0063 line_no = line_no + 1;
+0064 fprintf(geo_fid,<span class="string">'Circle(%d) = {%d, %d, %d};\n'</span>, circle2_no, inpoint2_no, <span class="keyword">...</span>
+0065     center_no, inpoint1_no);
+0066 
+0067 inloop_no = line_no;
+0068 line_no = line_no + 1;
+0069 fprintf(geo_fid,<span class="string">'Line Loop(%d) = {%d,%d};\n'</span>, inloop_no, circle1_no, <span class="keyword">...</span>
+0070     circle2_no);
+0071 
+0072 fprintf(geo_fid, <span class="string">'Plane Surface(%d) = {%d, %d};\n'</span>, line_no, extloop_no, <span class="keyword">...</span>
+0073     inloop_no);
+0074 line_no = line_no + 1;
+0075 
+0076 fprintf(geo_fid, <span class="string">'Plane Surface(%d) = {%d};\n'</span>, line_no, inloop_no);
+0077 line_no = line_no + 1;
+0078 
+0079 fclose(geo_fid);
+0080 
+0081 <span class="comment">% Call Gmsh</span>
+0082 disp(<span class="string">'Calling Gmsh. Please wait ...'</span>);
+0083 <a href="call_gmsh.html" class="code" title="function status= call_gmsh(geo_file)">call_gmsh</a>( geo_filename);
+0084 
+0085 msh_filename = sprintf(<span class="string">'%s.msh'</span>, basename);
+0086 
+0087 disp([<span class="string">'Now reading back data from file: '</span> msh_filename])
+0088 [mdl, mat_indices]= <a href="gmsh_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=gmsh_mk_fwd_model( vol_filename, name, centres, z_contact)">gmsh_mk_fwd_model</a>( msh_filename, <span class="keyword">...</span>
+0089     <span class="string">'Gmsh based 2 layer circural model'</span>, ones(no_elec,3) );
+0090 
+0091</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

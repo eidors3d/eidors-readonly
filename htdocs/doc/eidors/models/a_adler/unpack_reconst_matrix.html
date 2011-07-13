@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of unpack_reconst_matrix</title>
+  <meta name="keywords" content="unpack_reconst_matrix">
+  <meta name="description" content="UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html a_adler -->
+<h1>unpack_reconst_matrix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid, options); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix
+ Reconstruction matrices, especially on a circular body, have many
+  symmetries (left-right, up-down, flip, and recoprocity = 16x).
+ To save space, a matrix can be stored in this format, and then
+  used to save space. This function is used to rebuild the matrix
+
+ RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid);
+   Nelec = number of electrodes
+   Ngrid = number of grid points
+
+ options = {'circ'} or {'octagon'} =&gt; region shape
+
+ Example:
+  load GREIT_v10_Circ_Matrix.mat
+  RM = unpack_reconst_matrix(GREIT_v10_Circ_Matrix, 16, 32);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>	MK_COMMON_MODEL: make EIT on reconstruction grids (GREIT)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [RM,sel1,sel2] = unpack_matrix(PM, Nelec, Ngrid);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid, options);</a>
+0002 <span class="comment">% UNPACK_RECONST_MATRIX: unpack a compressed, stored reconstruction matrix</span>
+0003 <span class="comment">% Reconstruction matrices, especially on a circular body, have many</span>
+0004 <span class="comment">%  symmetries (left-right, up-down, flip, and recoprocity = 16x).</span>
+0005 <span class="comment">% To save space, a matrix can be stored in this format, and then</span>
+0006 <span class="comment">%  used to save space. This function is used to rebuild the matrix</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% RM = unpack_reconst_matrix(packed_matrix, Nelec, Ngrid);</span>
+0009 <span class="comment">%   Nelec = number of electrodes</span>
+0010 <span class="comment">%   Ngrid = number of grid points</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% options = {'circ'} or {'octagon'} =&gt; region shape</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Example:</span>
+0015 <span class="comment">%  load GREIT_v10_Circ_Matrix.mat</span>
+0016 <span class="comment">%  RM = unpack_reconst_matrix(GREIT_v10_Circ_Matrix, 16, 32);</span>
+0017 
+0018 
+0019 <span class="comment">% (C) 2008-2010 Andy Adler. License: GPL version 2 or version 3</span>
+0020 <span class="comment">% $Id$</span>
+0021 
+0022 [RM,sel1,sel2] = <a href="#_sub1" class="code" title="subfunction [RM,sel1,sel2] = unpack_matrix(PM, Nelec, Ngrid);">unpack_matrix</a>(packed_matrix, Nelec, Ngrid);
+0023 <span class="keyword">if</span> nargin&gt;=4; <span class="keyword">for</span> i=1:length(options)
+0024    <span class="keyword">if</span> strcmp(options{i},<span class="string">'octagon'</span>)
+0025 size(RM)
+0026 size(sel1)
+0027 size(sel2)
+0028       RM= RM(sel2,:);
+0029    <span class="keyword">elseif</span> strcmp(options{i},<span class="string">'flipud'</span>)
+0030       RM = reshape(RM, Ngrid,Ngrid, []);
+0031       RM = RM(:,Ngrid:-1:1,:);
+0032       RM = reshape(RM, Ngrid*Ngrid, []);
+0033    <span class="keyword">else</span>
+0034       error([<span class="string">'Huh? Option=('</span>,options{i},<span class="string">') not understood'</span>]);
+0035    <span class="keyword">end</span>
+0036 <span class="keyword">end</span>; <span class="keyword">end</span>
+0037 
+0038 <a name="_sub1" href="#_subfunctions" class="code">function [RM,sel1,sel2] = unpack_matrix(PM, Nelec, Ngrid);</a>
+0039    elec_idx = 1:Nelec;
+0040    grid_idx = 1:Ngrid; grid_idx = grid_idx - mean(grid_idx);
+0041    Nelec2 = Nelec/2;
+0042    Nelec34= Nelec*3/4;
+0043 
+0044    <span class="comment">% Take a slice</span>
+0045    [x,y]= meshgrid( elec_idx, elec_idx);
+0046    ss1 = (y-x)&gt;1 &amp; (y-x)&lt;15;
+0047    sel1 = abs(x-y)&gt;1 &amp; abs(x-y)&lt;15;
+0048    
+0049    [x,y]= meshgrid( grid_idx, grid_idx);
+0050    ss2 = abs(x-y)&lt;25 &amp; abs(x+y)&lt;25 <span class="keyword">...</span>
+0051        &amp; x&lt;0 &amp; y&lt;0 &amp; x&gt;=y ;
+0052    sel2 = abs(x-y)&lt;25 &amp; abs(x+y)&lt;25;
+0053  
+0054    <span class="comment">% Build up</span>
+0055    BP  = zeros(Nelec^2, Ngrid^2);
+0056    BP(ss1,ss2) = PM;
+0057    BP  = reshape(BP, Nelec,Nelec,Ngrid,Ngrid);
+0058 
+0059    <span class="comment">% Reciprocity</span>
+0060    BP  = BP + permute(BP, [2,1,3,4]);
+0061 
+0062    <span class="comment">% FLIP LR</span>
+0063    el= Nelec:-1:1;
+0064    BP= BP + BP(el,el,[Ngrid:-1:1],:);
+0065    <span class="comment">% FLIP UD</span>
+0066    el= [Nelec2:-1:1,Nelec:-1:Nelec2+1];
+0067    BP= BP + BP(el,el,:,[Ngrid:-1:1]);
+0068    <span class="comment">% Transpose</span>
+0069    el= [Nelec34:-1:1,Nelec:-1:Nelec34+1];
+0070    BP= BP + permute(BP(el,el,:,:), [1,2,4,3]);
+0071 
+0072    <span class="comment">% Final UD flip to match radiological view (upward toward patient)</span>
+0073    <span class="comment">% Here electrodes are connected CW starting from TDC</span>
+0074    BP= BP(:,:,:,[Ngrid:-1:1]);
+0075 
+0076    RM= reshape(BP, Nelec^2, [])';
+0077    RM= RM(:,sel1);
+0078 <span class="comment">% This creates the diamond shape, but we want to leave shape choice later</span>
+0079 <span class="comment">%  RM= RM(sel2,sel1);</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

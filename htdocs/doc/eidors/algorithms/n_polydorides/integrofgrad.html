@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of integrofgrad</title>
+  <meta name="keywords" content="integrofgrad">
+  <meta name="description" content="function [IntGrad] = integrofgrad(vtx,simp,mat_ref);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>integrofgrad
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [IntGrad] = integrofgrad(vtx,simp,mat_ref);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [IntGrad] = integrofgrad(vtx,simp,mat_ref); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [IntGrad] = integrofgrad(vtx,simp,mat_ref);
+
+function that calculates the integral of the gradients for first order 
+tetrahedral elements. Required for the calculation of the Jacobian. 
+
+
+
+vtx     = The vertices matrix
+simp    = The simplices matrix
+mat_ref = The reference conductivity vector
+IntGrad = The intgral of the gradients</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [IntGrad] = integrofgrad(vtx,simp,mat_ref);</a>
+0002 <span class="comment">%function [IntGrad] = integrofgrad(vtx,simp,mat_ref);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%function that calculates the integral of the gradients for first order</span>
+0005 <span class="comment">%tetrahedral elements. Required for the calculation of the Jacobian.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%vtx     = The vertices matrix</span>
+0010 <span class="comment">%simp    = The simplices matrix</span>
+0011 <span class="comment">%mat_ref = The reference conductivity vector</span>
+0012 <span class="comment">%IntGrad = The intgral of the gradients</span>
+0013 
+0014 
+0015 
+0016 [vr,vc] = size(vtx);
+0017 [sr,sc] = size(simp);
+0018 
+0019 <span class="keyword">if</span> sr ~= length(mat_ref)
+0020    error(<span class="string">'Mismatched data entered'</span>)
+0021 <span class="keyword">end</span>
+0022 
+0023 <span class="keyword">if</span> sc ~= 4
+0024    error(<span class="string">'Only first order tetrahedral elements supported'</span>);
+0025 <span class="keyword">end</span>
+0026 
+0027 
+0028 <span class="comment">%w = [1/24*ones(4,1)];</span>
+0029 
+0030 IntGrad = sparse(vr^2,sr);
+0031    
+0032    <span class="keyword">for</span> i=1:size(simp,1)
+0033       
+0034       vv = [];
+0035        
+0036       <span class="keyword">for</span> j=1:size(simp,2)
+0037       vv = [vv;vtx(simp(i,j),:)];
+0038       <span class="keyword">end</span>
+0039       
+0040       interp_fun = [-1 1 0 0; -1 0 1 0; -1 0 0 1];
+0041       
+0042       Jts = interp_fun*vv;
+0043       inv_Jts = inv(Jts);
+0044       det_Jts = abs(det(Jts));
+0045       
+0046       Gs = inv_Jts*interp_fun;
+0047       
+0048       <span class="comment">%int = 0;</span>
+0049       <span class="comment">%for q=1:4</span>
+0050        <span class="comment">%  int = int + w(q)*Gs'*Gs;</span>
+0051       <span class="comment">%end</span>
+0052       <span class="comment">%Inte = int*det_Jts; % or simplified</span>
+0053       <span class="comment">% Citation: The FEM displayed G.Dhatt &amp; G. Touzot</span>
+0054       
+0055       Inte = (1/6)*Gs'*Gs*det_Jts;
+0056             
+0057       Local = sparse(vr,vr);
+0058       Local(simp(i,:),simp(i,:))= Inte;
+0059       IntGrad(:,i) = Local(:);
+0060    <span class="keyword">end</span>
+0061  
+0062    
+0063 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0064 <span class="comment">% This is part of the EIDORS suite.</span>
+0065 <span class="comment">% Copyright (c) N. Polydorides 2003</span>
+0066 <span class="comment">% Copying permitted under terms of GNU GPL</span>
+0067 <span class="comment">% See enclosed file gpl.html for details.</span>
+0068 <span class="comment">% EIDORS 3D version 2.0</span>
+0069 <span class="comment">% MATLAB version 5.3 R11</span>
+0070 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

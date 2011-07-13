@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of select_imdl</title>
+  <meta name="keywords" content="select_imdl">
+  <meta name="description" content="SELECT_IMDL: select pre-packaged inverse model features">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html a_adler -->
+<h1>select_imdl
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>SELECT_IMDL: select pre-packaged inverse model features</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function inv_mdl= select_imdl( mdl, options ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> SELECT_IMDL: select pre-packaged inverse model features
+ inv_mdl= select_imdl( mdl, options )
+
+   mdl - inv_model structure - parameters are replaced as specified
+    OR
+   mdl - fwd_model - a basic GN difference model is created, and parameters replaced
+
+ OPTIONS =&gt; {'opt1','opt2'} options are processed in the order specified
+
+ Available options are:
+
+ 'Basic GN dif';   Basic GN one step difference solver with Laplace prior
+ 'Basic GN abs';   Basic Gauss-Newton absolute solver with Laplace prior
+ 'NOSER dif';      Basic GN one step difference solver with NOSER prior 
+ 'Nodal GN dif';   Basic GN solver, solves onto nodes
+ 'TV solve dif';   Total Variation PDIPM difference solver 
+ 'Elec Move GN';   One step GN difference solver with compensation for electrode movement
+ 'Choose NF=1.0';  Choose hyperparameter value appropriate for specified noise figure (NF)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../../../eidors/algorithms/a_adler/aa_e_move_image_prior.html" class="code" title="function Reg= aa_e_move_image_prior( inv_model );">aa_e_move_image_prior</a>	AA_E_MOVE_IMAGE_PRIOR calculate image prior</li><li><a href="../../../eidors/algorithms/a_adler/aa_e_move_jacobian.html" class="code" title="function J= aa_e_move_jacobian( fwd_model, img)">aa_e_move_jacobian</a>	AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)</li><li><a href="../../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../../eidors/algorithms/a_adler/choose_noise_figure.html" class="code" title="function HP= choose_noise_figure( inv_model );">choose_noise_figure</a>	CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation</li><li><a href="../../../eidors/algorithms/a_adler/gaussian_HPF_prior.html" class="code" title="function Reg= gaussian_HPF_prior( inv_model );">gaussian_HPF_prior</a>	GAUSSIAN_HPF_PRIOR calculate image prior</li><li><a href="../../../eidors/algorithms/a_adler/interp_mesh.html" class="code" title="function mdl_pts = interp_mesh( mdl, n_interp)">interp_mesh</a>	INTERP_MESH: calculate interpolation points onto mdl elements</li><li><a href="../../../eidors/algorithms/a_adler/laplace_image_prior.html" class="code" title="function Reg= laplace_image_prior( inv_model );">laplace_image_prior</a>	LAPLACE_IMAGE_PRIOR calculate image prior</li><li><a href="../../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../../eidors/algorithms/a_adler/noser_image_prior.html" class="code" title="function Reg= noser_image_prior( inv_model );">noser_image_prior</a>	NOSER_IMAGE_PRIOR calculate image prior</li><li><a href="../../../eidors/algorithms/a_borsic/ab_calc_tv_prior.html" class="code" title="function Reg= ab_calc_tv_prior( inv_model );">ab_calc_tv_prior</a>	AB_CALC_TV_PRIOR calculate Total Variation image prior</li><li><a href="../../../eidors/algorithms/a_borsic/ab_tv_diff_solve.html" class="code" title="function img= ab_tv_diff_solve( inv_model, data1, data2)">ab_tv_diff_solve</a>	AB_TV_DIFF_SOLVE inverse solver for Andrea Borsic's</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li><li><a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>	MK_IMAGE: create eidors image object</li><li><a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li><li><a href="simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>	SIMULATE_MOVEMENT simulate small conductivity perturbations</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li><li><a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li><li><a href="../../../eidors/tools/test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li><li><a href="../../../eidors/tools/test_performance_img.html" class="code" title="function [params_img] =  test_performance_img( imdls, fmdl );">test_performance_img</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function imdl = basic_imdl( fmdl );</a></li><li><a href="#_sub2" class="code">function imdl = NOSER_dif( imdl );</a></li><li><a href="#_sub3" class="code">function imdl = Basic_GN_Dif( imdl );</a></li><li><a href="#_sub4" class="code">function imdl = Basic_GN_Abs( imdl );</a></li><li><a href="#_sub5" class="code">function imdl = TV_solve_Dif( imdl );</a></li><li><a href="#_sub6" class="code">function imdl = Elec_Move_GN( imdl );</a></li><li><a href="#_sub7" class="code">function imdl = Nodal_GN_Dif( imdl );</a></li><li><a href="#_sub8" class="code">function imdl = Choose_NF( imdl, NF_req );</a></li><li><a href="#_sub9" class="code">function do_unit_test</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function inv_mdl= select_imdl( mdl, options )</a>
+0002 <span class="comment">% SELECT_IMDL: select pre-packaged inverse model features</span>
+0003 <span class="comment">% inv_mdl= select_imdl( mdl, options )</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%   mdl - inv_model structure - parameters are replaced as specified</span>
+0006 <span class="comment">%    OR</span>
+0007 <span class="comment">%   mdl - fwd_model - a basic GN difference model is created, and parameters replaced</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% OPTIONS =&gt; {'opt1','opt2'} options are processed in the order specified</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Available options are:</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% 'Basic GN dif';   Basic GN one step difference solver with Laplace prior</span>
+0014 <span class="comment">% 'Basic GN abs';   Basic Gauss-Newton absolute solver with Laplace prior</span>
+0015 <span class="comment">% 'NOSER dif';      Basic GN one step difference solver with NOSER prior</span>
+0016 <span class="comment">% 'Nodal GN dif';   Basic GN solver, solves onto nodes</span>
+0017 <span class="comment">% 'TV solve dif';   Total Variation PDIPM difference solver</span>
+0018 <span class="comment">% 'Elec Move GN';   One step GN difference solver with compensation for electrode movement</span>
+0019 <span class="comment">% 'Choose NF=1.0';  Choose hyperparameter value appropriate for specified noise figure (NF)</span>
+0020 
+0021 <span class="comment">% (C) 2010 Andy Adler. License: GPL version 2 or version 3</span>
+0022 <span class="comment">% $Id$</span>
+0023 
+0024 <span class="keyword">if</span> isstr(mdl) &amp;&amp; strcmp(mdl,<span class="string">'UNIT_TEST'</span>); <a href="#_sub9" class="code" title="subfunction do_unit_test">do_unit_test</a>; <span class="keyword">return</span>; <span class="keyword">end</span>
+0025 
+0026 <span class="keyword">if</span> nargin == 1; options = {}; <span class="keyword">end</span>
+0027 
+0028 <span class="keyword">switch</span> mdl.type
+0029   <span class="keyword">case</span> <span class="string">'inv_model'</span>; inv_mdl = mdl;
+0030   <span class="keyword">case</span> <span class="string">'fwd_model'</span>; inv_mdl = <a href="#_sub1" class="code" title="subfunction imdl = basic_imdl( fmdl );">basic_imdl</a>( mdl );
+0031   <span class="keyword">otherwise</span>;        error(<span class="string">'select_imdl: expects inv_model or fwd_model input'</span>);
+0032 <span class="keyword">end</span>
+0033 
+0034 <span class="keyword">for</span> i=1:length(options);
+0035   <span class="comment">% split the option on an equals sign</span>
+0036   [s,f,tok]= regexp(options{i},<span class="string">'(.[^=]*)=?(.*)'</span>);
+0037   tok = tok{1};
+0038   <span class="keyword">for</span> t=1:size(tok,1);
+0039      opt{t} = options{i}(tok(t,1):tok(t,2));
+0040   <span class="keyword">end</span>
+0041 <span class="comment">% This is the Mat7 only code:</span>
+0042 <span class="comment">%   opt= regexp(options{i},'(.[^=]*)=?(.*)','tokens');</span>
+0043 <span class="comment">%   opt= opt{1};</span>
+0044   <span class="keyword">switch</span> opt{1}
+0045     <span class="keyword">case</span> <span class="string">'NOSER dif'</span>;       inv_mdl = <a href="#_sub2" class="code" title="subfunction imdl = NOSER_dif( imdl );">NOSER_dif</a>( inv_mdl );
+0046     <span class="keyword">case</span> <span class="string">'Basic GN dif'</span>;    inv_mdl = <a href="#_sub3" class="code" title="subfunction imdl = Basic_GN_Dif( imdl );">Basic_GN_Dif</a>( inv_mdl );
+0047     <span class="keyword">case</span> <span class="string">'Basic GN abs'</span>;    inv_mdl = <a href="#_sub4" class="code" title="subfunction imdl = Basic_GN_Abs( imdl );">Basic_GN_Abs</a>( inv_mdl );
+0048     <span class="keyword">case</span> <span class="string">'Nodal GN dif'</span>;    inv_mdl = <a href="#_sub7" class="code" title="subfunction imdl = Nodal_GN_Dif( imdl );">Nodal_GN_Dif</a>( inv_mdl );
+0049     <span class="keyword">case</span> <span class="string">'TV solve dif'</span>;    inv_mdl = <a href="#_sub5" class="code" title="subfunction imdl = TV_solve_Dif( imdl );">TV_solve_Dif</a>( inv_mdl );
+0050     <span class="keyword">case</span> <span class="string">'Elec Move GN'</span>;    inv_mdl = <a href="#_sub6" class="code" title="subfunction imdl = Elec_Move_GN( imdl );">Elec_Move_GN</a>( inv_mdl );
+0051     <span class="keyword">case</span> <span class="string">'Choose NF'</span>;       inv_mdl = <a href="#_sub8" class="code" title="subfunction imdl = Choose_NF( imdl, NF_req );">Choose_NF</a>( inv_mdl, str2num(opt{2}) );
+0052     
+0053     <span class="keyword">otherwise</span>; error(<span class="string">'option {%s} not understood'</span>, options{i});
+0054   <span class="keyword">end</span>
+0055 <span class="keyword">end</span>
+0056 
+0057 <a name="_sub1" href="#_subfunctions" class="code">function imdl = basic_imdl( fmdl );</a>
+0058    imdl.name= <span class="string">'Basic imdl from select_imdl'</span>;
+0059    imdl.type= <span class="string">'inv_model'</span>;
+0060 
+0061    imdl.solve= @<a href="../../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>;
+0062    imdl.hyperparameter.value = .01;
+0063    imdl.RtR_prior = @<a href="../../../eidors/algorithms/a_adler/laplace_image_prior.html" class="code" title="function Reg= laplace_image_prior( inv_model );">laplace_image_prior</a>;
+0064    imdl.jacobian_bkgnd.value = 1;
+0065    imdl.reconst_type= <span class="string">'difference'</span>;
+0066    imdl.fwd_model = fmdl;
+0067 
+0068 <a name="_sub2" href="#_subfunctions" class="code">function imdl = NOSER_dif( imdl );</a>
+0069    imdl.RtR_prior = @<a href="../../../eidors/algorithms/a_adler/noser_image_prior.html" class="code" title="function Reg= noser_image_prior( inv_model );">noser_image_prior</a>;
+0070    <span class="keyword">try</span>; imdl = rmfield(imdl,<span class="string">'R_prior'</span>); <span class="keyword">end</span>
+0071    imdl.hyperparameter.value = .03;
+0072    imdl.solve= @<a href="../../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>;
+0073    imdl.reconst_type= <span class="string">'difference'</span>;
+0074 
+0075 <a name="_sub3" href="#_subfunctions" class="code">function imdl = Basic_GN_Dif( imdl );</a>
+0076    imdl.RtR_prior = @<a href="../../../eidors/algorithms/a_adler/laplace_image_prior.html" class="code" title="function Reg= laplace_image_prior( inv_model );">laplace_image_prior</a>;
+0077    <span class="keyword">try</span>; imdl = rmfield(imdl,<span class="string">'R_prior'</span>); <span class="keyword">end</span>
+0078    imdl.solve= @<a href="../../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>;
+0079    imdl.reconst_type= <span class="string">'difference'</span>;
+0080 
+0081 <a name="_sub4" href="#_subfunctions" class="code">function imdl = Basic_GN_Abs( imdl );</a>
+0082    imdl.RtR_prior = @<a href="../../../eidors/algorithms/a_adler/laplace_image_prior.html" class="code" title="function Reg= laplace_image_prior( inv_model );">laplace_image_prior</a>;
+0083    <span class="keyword">try</span>; imdl = rmfield(imdl,<span class="string">'R_prior'</span>); <span class="keyword">end</span>
+0084    imdl.solve= @<a href="../../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>;
+0085    imdl.parameters.max_iterations= 10;
+0086    imdl.reconst_type= <span class="string">'absolute'</span>;
+0087 
+0088 <a name="_sub5" href="#_subfunctions" class="code">function imdl = TV_solve_Dif( imdl );</a>
+0089    imdl.R_prior = @<a href="../../../eidors/algorithms/a_borsic/ab_calc_tv_prior.html" class="code" title="function Reg= ab_calc_tv_prior( inv_model );">ab_calc_tv_prior</a>;
+0090    <span class="keyword">try</span>; imdl = rmfield(imdl,<span class="string">'RtR_prior'</span>); <span class="keyword">end</span>
+0091    imdl.solve= @<a href="../../../eidors/algorithms/a_borsic/ab_tv_diff_solve.html" class="code" title="function img= ab_tv_diff_solve( inv_model, data1, data2)">ab_tv_diff_solve</a>;
+0092    imdl.reconst_type= <span class="string">'difference'</span>;
+0093    imdl.parameters.max_iterations= 15;
+0094    imdl.hyperparameter.value = 1e-1;
+0095    imdl.parameters.term_tolerance = 1e-3;
+0096 
+0097 <a name="_sub6" href="#_subfunctions" class="code">function imdl = Elec_Move_GN( imdl );</a>
+0098    <span class="comment">% keep previous model as conductivity jacobian, so it should be ok</span>
+0099    imdl.fwd_model.conductivity_jacobian = imdl.fwd_model.jacobian; 
+0100    imdl.fwd_model.jacobian = @<a href="../../../eidors/algorithms/a_adler/aa_e_move_jacobian.html" class="code" title="function J= aa_e_move_jacobian( fwd_model, img)">aa_e_move_jacobian</a>;
+0101    imdl.RtR_prior =          @<a href="../../../eidors/algorithms/a_adler/aa_e_move_image_prior.html" class="code" title="function Reg= aa_e_move_image_prior( inv_model );">aa_e_move_image_prior</a>;
+0102    imdl.solve= @<a href="../../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>;
+0103 
+0104    MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
+0105    imdl.aa_e_move_image_prior.parameters = MV_prior;
+0106    imdl.aa_e_move_image_prior.RegC.func = @<a href="../../../eidors/algorithms/a_adler/gaussian_HPF_prior.html" class="code" title="function Reg= gaussian_HPF_prior( inv_model );">gaussian_HPF_prior</a>;
+0107    imdl.hyperparameter.value = .03;
+0108 
+0109    n_elems = size(imdl.fwd_model.elems,1);
+0110    imdl.inv_solve.select_parameters = 1:n_elems;
+0111 
+0112    imdl.prior_use_fwd_not_rec = 1; <span class="comment">% for c2f mapping</span>
+0113 
+0114 <a name="_sub7" href="#_subfunctions" class="code">function imdl = Nodal_GN_Dif( imdl );</a>
+0115    imdl.solve = @<a href="../../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>;
+0116 
+0117 
+0118 <a name="_sub8" href="#_subfunctions" class="code">function imdl = Choose_NF( imdl, NF_req );</a>
+0119    <span class="keyword">if</span> ~strcmp(imdl.reconst_type, <span class="string">'difference'</span>);
+0120       error(<span class="string">'Choose NF only works for difference solvers right now'</span>);
+0121    <span class="keyword">end</span>
+0122 
+0123 <span class="comment">% Find 4 elems in mesh ctr to be the NF target elems</span>
+0124    xyz_elems = <a href="../../../eidors/algorithms/a_adler/interp_mesh.html" class="code" title="function mdl_pts = interp_mesh( mdl, n_interp)">interp_mesh</a>( imdl.fwd_model );
+0125    ctr_elems = mean(xyz_elems, 1);
+0126    xyz_elems = xyz_elems - ones(size(xyz_elems,1),1)*ctr_elems;
+0127    d_elems   = sqrt( sum( xyz_elems.^2, 2 ));
+0128    [jnk, e_idx] = sort(d_elems);
+0129 
+0130    imdl.hyperparameter.tgt_elems = e_idx(1:4);
+0131    imdl.hyperparameter.noise_figure = NF_req;
+0132 
+0133    sv_log = <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'log_level'</span>); <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'log_level'</span>, 1);
+0134    HP = <a href="../../../eidors/algorithms/a_adler/choose_noise_figure.html" class="code" title="function HP= choose_noise_figure( inv_model );">choose_noise_figure</a>( imdl );
+0135    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'log_level'</span>, sv_log);
+0136 
+0137    imdl.hyperparameter.value = HP;
+0138 
+0139 
+0140 <a name="_sub9" href="#_subfunctions" class="code">function do_unit_test</a>
+0141 <span class="comment">% Test difference solvers on lung images</span>
+0142    load montreal_data_1995;
+0143    imdl = <a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'b2t3'</span>,16); 
+0144 
+0145    <span class="keyword">for</span> i=1:100; <span class="comment">% Break when finished</span>
+0146       vh = zc_resp(:,1); vi= zc_resp(:,23);
+0147       <span class="keyword">switch</span> i
+0148          <span class="keyword">case</span> 01;
+0149             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl );
+0150          <span class="keyword">case</span> 02;
+0151             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl.fwd_model );
+0152          <span class="keyword">case</span> 03;
+0153             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'NOSER dif'</span>} );
+0154          <span class="keyword">case</span> 04;
+0155             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'NOSER dif'</span>,<span class="string">'Choose NF=1.1'</span>});
+0156          <span class="keyword">case</span> 05;
+0157             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'Basic GN dif'</span>} );
+0158          <span class="keyword">case</span> 06;
+0159             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'TV solve dif'</span>} );
+0160          <span class="keyword">case</span> 07;
+0161             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl.fwd_model, {<span class="string">'Basic GN dif'</span>,<span class="string">'Elec Move GN'</span>,<span class="string">'Choose NF=0.5'</span>} );
+0162          <span class="keyword">case</span> 08;
+0163             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'Elec Move GN'</span>} );
+0164          <span class="keyword">case</span> 09;
+0165             imdl0 = <a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'b2C2'</span>,16); 
+0166             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl0, {<span class="string">'Elec Move GN'</span>} );
+0167          <span class="keyword">case</span> 10;
+0168             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'Nodal GN dif'</span>} );
+0169          <span class="keyword">case</span> 11;
+0170             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl, {<span class="string">'Nodal GN dif'</span>, <span class="string">'Choose NF=0.50'</span>} );
+0171          <span class="keyword">case</span> 12;
+0172             imdl0 = <a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'b2C2'</span>,16); 
+0173             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl0, {<span class="string">'Basic GN dif'</span>, <span class="string">'TV solve dif'</span>} );
+0174             imdl0.parameters.max_iterations= 2;
+0175             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl0, {<span class="string">'Choose NF=0.8'</span>} );
+0176             [vh,vi] = <a href="simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>(<a href="../../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>(imdl0), [0;0.5;0.35]);
+0177          <span class="keyword">case</span> 13;
+0178             imdl0 = <a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'b2C2'</span>,16); 
+0179             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl0, {<span class="string">'Nodal GN dif'</span>, <span class="string">'Choose NF=0.50'</span>} );
+0180             [vh,vi] = <a href="simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>(<a href="../../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>(imdl0), [0;0.5;0.05]);
+0181          <span class="keyword">case</span> 14;
+0182             imdl0 = <a href="mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'b2C2'</span>,16); 
+0183             imdl0 = <a href="select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>( imdl0, {<span class="string">'Basic GN abs'</span>} );
+0184             [vh,vi] = <a href="simulate_movement.html" class="code" title="function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );">simulate_movement</a>(<a href="../../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>(imdl0), [0;0.5;0.05]);
+0185          <span class="keyword">case</span> 15; <span class="keyword">break</span>
+0186       <span class="keyword">end</span>;
+0187 
+0188 <span class="comment">%     disp([i,imdl0.hyperparameter.value]);</span>
+0189       <span class="keyword">if</span> strcmp( imdl0.reconst_type, <span class="string">'absolute'</span>)
+0190          imgr = <a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>( imdl0, vi);
+0191       <span class="keyword">else</span>
+0192          imgr = <a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>( imdl0, vh, vi);
+0193       <span class="keyword">end</span>
+0194       subplot(4,4,i); <a href="../../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>( imgr );
+0195    <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

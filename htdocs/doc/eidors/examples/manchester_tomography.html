@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of manchester_tomography</title>
+  <meta name="keywords" content="manchester_tomography">
+  <meta name="description" content="Example to show reconstructions from">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html examples -->
+<h1>manchester_tomography
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Example to show reconstructions from</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function manchester_tomography( example_no) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Example to show reconstructions from
+ the Process Tomography 
+ group from U.Manchester, UK
+
+ manchester_tomography( example_no)
+
+ example_no == 1
+    show reconstructions from 2planes / 2rods
+    Reconstruction = inv_solve_trunc_iterative
+
+ example_no == 2
+    show reconstructions from 2planes / 2rods
+    Reconstruction = np_inv_solve
+
+ (C) 2005 by Stephen Murphy.  License: GPL version 2 or version 3
+ $Id$</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/d_stephenson/center_of_simps.html" class="code" title="function [center_simp]=center_of_simps(fwd_model, extraparam)">center_of_simps</a>	CENTER_OF_SIMPS: Calculates the Center of Mass of the Simplicies.</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li><li><a href="../../eidors/models/d_stephenson/elems_in_cylinder.html" class="code" title="function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value);">elems_in_cylinder</a>	INCYL: calculate elements in infinite cylinder</li><li><a href="../../eidors/models/s_murphy/set_fwd_model.html" class="code" title="function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);">set_fwd_model</a>	SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [fwd_m1,meas_2rod,meas_ref]= twoplane_mdl;</a></li><li><a href="#_sub2" class="code">function [DS_coarse, DS_dense]= coarse_dense_mdl</a></li><li><a href="#_sub3" class="code">function example_diff_morozov_reconst</a></li><li><a href="#_sub4" class="code">function example_diff_np_reconst</a></li><li><a href="#_sub5" class="code">function example_diff_tv_reconst_sim</a></li><li><a href="#_sub6" class="code">function example_diff_tv_reconst</a></li><li><a href="#_sub7" class="code">function example_diff_sim_reconst</a></li><li><a href="#_sub8" class="code">function [vi,vh] = sim_inhomg( mdl);</a></li><li><a href="#_sub9" class="code">function mdl_z= zig_zag_from_2rings(mdl_2r)</a></li><li><a href="#_sub10" class="code">function example2( M_coarse, M_dense)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Example to show reconstructions from</span>
+0002 <span class="comment">% the Process Tomography</span>
+0003 <span class="comment">% group from U.Manchester, UK</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% manchester_tomography( example_no)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% example_no == 1</span>
+0008 <span class="comment">%    show reconstructions from 2planes / 2rods</span>
+0009 <span class="comment">%    Reconstruction = inv_solve_trunc_iterative</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% example_no == 2</span>
+0012 <span class="comment">%    show reconstructions from 2planes / 2rods</span>
+0013 <span class="comment">%    Reconstruction = np_inv_solve</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% (C) 2005 by Stephen Murphy.  License: GPL version 2 or version 3</span>
+0016 <span class="comment">% $Id$</span>
+0017 <a name="_sub0" href="#_subfunctions" class="code">function manchester_tomography( example_no)</a>
+0018 
+0019 <span class="keyword">switch</span> example_no
+0020     <span class="keyword">case</span> 1,
+0021         <a href="#_sub3" class="code" title="subfunction example_diff_morozov_reconst">example_diff_morozov_reconst</a>;
+0022 
+0023     <span class="keyword">case</span> 2,
+0024         <a href="#_sub4" class="code" title="subfunction example_diff_np_reconst">example_diff_np_reconst</a>;
+0025 
+0026     <span class="keyword">case</span> 3,
+0027         <a href="#_sub5" class="code" title="subfunction example_diff_tv_reconst_sim">example_diff_tv_reconst_sim</a>
+0028 
+0029     <span class="keyword">case</span> 4,
+0030         <a href="#_sub6" class="code" title="subfunction example_diff_tv_reconst">example_diff_tv_reconst</a>
+0031 
+0032     <span class="keyword">case</span> 10,
+0033         <a href="#_sub10" class="code" title="subfunction example2( M_coarse, M_dense)">example2</a>
+0034 
+0035 <span class="keyword">end</span>
+0036 
+0037 <span class="comment">% output fwd_model, vinh, vhom</span>
+0038 <a name="_sub1" href="#_subfunctions" class="code">function [fwd_m1,meas_2rod,meas_ref]= twoplane_mdl;</a>
+0039     load 2planes_Op_drive;
+0040     fwd_m1=<a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,mdl_2plane);
+0041     fwd_m1.np_fwd_solve.perm_sym = <span class="string">'{y}'</span>;
+0042     fwd_m1.solve=    <span class="string">'np_fwd_solve'</span>;
+0043     fwd_m1.jacobian= <span class="string">'np_calc_jacobian'</span>;
+0044     fwd_m1.system_mat= <span class="string">'np_calc_system_mat'</span>;
+0045     meas_ref.type=<span class="string">'data'</span>;
+0046     meas_2rod.type=<span class="string">'data'</span>;
+0047 
+0048 <a name="_sub2" href="#_subfunctions" class="code">function [DS_coarse, DS_dense]= coarse_dense_mdl</a>
+0049     load dual_mesh;
+0050     DS_coarse= <a href="../../eidors/models/s_murphy/set_fwd_model.html" class="code" title="function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);">set_fwd_model</a>(vtx_coarse,simp_coarse,[], <span class="keyword">...</span>
+0051               elec_coarse,zc,gnd_ind_coarse,Ib_coarse, [], []);
+0052     DS_dense= <a href="../../eidors/models/s_murphy/set_fwd_model.html" class="code" title="function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);">set_fwd_model</a>(vtx_dense,simp_dense,[], <span class="keyword">...</span>
+0053               elec_dense,zc,gnd_ind_dense,Ib_dense, [], []);
+0054     stim= <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(16,1,<span class="string">'{ad}'</span>,<span class="string">'{ad}'</span>,[],1);
+0055     M_coarse.stimulation= stim;
+0056     M_dense.stimulation= stim;
+0057 
+0058 
+0059 <a name="_sub3" href="#_subfunctions" class="code">function example_diff_morozov_reconst</a>
+0060     [fwd_m1,vi,vh]= twoplane_mdl;
+0061 
+0062     imdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>,<span class="string">'Morozov mdl'</span>);
+0063     imdl.solve= <span class="string">'np_inv_solve'</span>;
+0064     imdl.solve= <span class="string">'inv_solve_trunc_iterative'</span>;
+0065     imdl.R_prior= <span class="string">'np_calc_image_prior'</span>;
+0066     imdl.jacobian_bkgnd.value = .01;
+0067     imdl.np_calc_image_prior.parameters= [3 1];
+0068     imdl.reconst_type= <span class="string">'difference'</span>;
+0069     imdl.fwd_model= fwd_m1;
+0070 
+0071     imr= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh, vi);
+0072     <a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>(imr, linspace(.01,.09,4)'*[inf,inf,1])
+0073 
+0074 <a name="_sub4" href="#_subfunctions" class="code">function example_diff_np_reconst</a>
+0075     [fwd_m1,vi,vh]= twoplane_mdl;
+0076 
+0077     imdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>,<span class="string">'NP mdl'</span>);
+0078     imdl.solve= <span class="string">'np_inv_solve'</span>;
+0079     imdl.R_prior= <span class="string">'np_calc_image_prior'</span>;
+0080     imdl.hyperparameter.value = 1e-2;
+0081 
+0082     imdl.jacobian_bkgnd.value = .01;
+0083     imdl.np_calc_image_prior.parameters= [3 1];
+0084     imdl.reconst_type= <span class="string">'difference'</span>;
+0085     imdl.fwd_model= fwd_m1;
+0086 
+0087     imr= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh, vi);
+0088     <a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>(imr, linspace(.01,.09,4)'*[inf,inf,1])
+0089 
+0090 <a name="_sub5" href="#_subfunctions" class="code">function example_diff_tv_reconst_sim</a>
+0091     [fwd_m1,vi,vh]= twoplane_mdl;
+0092 
+0093     imdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>,<span class="string">'TV mdl'</span>);
+0094     imdl.solve= <span class="string">'ab_tv_diff_solve'</span>;
+0095     imdl.R_prior= <span class="string">'ab_calc_tv_prior'</span>;
+0096     imdl.parameters.max_iterations= 5;
+0097     imdl.hyperparameter.value = 1e-4;
+0098 
+0099     imdl.jacobian_bkgnd.value = 1;
+0100     imdl.reconst_type= <span class="string">'difference'</span>;
+0101     imdl.fwd_model= fwd_m1;
+0102     [vi,vh] = <a href="#_sub8" class="code" title="subfunction [vi,vh] = sim_inhomg( mdl);">sim_inhomg</a>(fwd_m1);
+0103 
+0104     imr= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh, vi);
+0105     <a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>(imr, linspace(.01,.09,4)'*[inf,inf,1])
+0106 
+0107 <a name="_sub6" href="#_subfunctions" class="code">function example_diff_tv_reconst</a>
+0108     [fwd_m1,vi,vh]= twoplane_mdl;
+0109 
+0110     imdl= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>,<span class="string">'TV mdl'</span>);
+0111     imdl.solve= <span class="string">'ab_tv_diff_solve'</span>;
+0112     imdl.R_prior= <span class="string">'ab_calc_tv_prior'</span>;
+0113     imdl.parameters.max_iterations= 3;
+0114     imdl.hyperparameter.value = 1e-4;
+0115 
+0116     imdl.jacobian_bkgnd.value = .01;
+0117     imdl.reconst_type= <span class="string">'difference'</span>;
+0118     imdl.fwd_model= fwd_m1;
+0119     [vi,vh] = <a href="#_sub8" class="code" title="subfunction [vi,vh] = sim_inhomg( mdl);">sim_inhomg</a>(fwd_m1);
+0120 
+0121     imr= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh, vi);
+0122     <a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>(imr, linspace(.01,.09,4)'*[inf,inf,1])
+0123 
+0124 
+0125 
+0126 <a name="_sub7" href="#_subfunctions" class="code">function example_diff_sim_reconst</a>
+0127     load 2planes_Op_drive;
+0128     fwd_m1=<a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,mdl_2plane);
+0129     fwd_m1.np_fwd_solve.perm_sym = <span class="string">'{y}'</span>;
+0130     fwd_m1.solve=    <span class="string">'np_fwd_solve'</span>;
+0131     fwd_m1.jacobian= <span class="string">'np_calc_jacobian'</span>;
+0132     fwd_m1.system_mat= <span class="string">'np_calc_system_mat'</span>;
+0133 
+0134 <a name="_sub8" href="#_subfunctions" class="code">function [vi,vh] = sim_inhomg( mdl);</a>
+0135     n= size(mdl.elems,1);
+0136     img2=<a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>,<span class="string">'homog'</span>);
+0137     img2.elem_data= ones(n,1);
+0138     img2.fwd_model= mdl;
+0139     vh= <a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>(img2);
+0140 
+0141     cc= <a href="../../eidors/algorithms/d_stephenson/center_of_simps.html" class="code" title="function [center_simp]=center_of_simps(fwd_model, extraparam)">center_of_simps</a>( mdl);
+0142     [jnk,mat]= <a href="../../eidors/models/d_stephenson/elems_in_cylinder.html" class="code" title="function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value);">elems_in_cylinder</a>(cc,[0,.03,.02],.01,ones(n,1),1.2);
+0143     [jnk,mat]= <a href="../../eidors/models/d_stephenson/elems_in_cylinder.html" class="code" title="function [index_incyl,mat]=elems_in_cylinder(center_simp,origin,radius,mat,value);">elems_in_cylinder</a>(cc,[0,-.03,-.02],.01,mat,0.8);
+0144     img2.elem_data= mat;
+0145 
+0146 <span class="comment">%   show_fem(img2);</span>
+0147     vi= <a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>(img2);
+0148 
+0149 <a name="_sub9" href="#_subfunctions" class="code">function mdl_z= zig_zag_from_2rings(mdl_2r)</a>
+0150     mdl_z= mdl_2r;
+0151     renumber=[1:2:16;18:2:32];
+0152     renumber=renumber(:);
+0153     mdl_z.electrode= mdl_2r.electrode(renumber);
+0154     mdl_z.stimulation= <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(16,1,<span class="string">'{ad}'</span>,<span class="string">'{ad}'</span>,[],1);
+0155 
+0156 
+0157 <a name="_sub10" href="#_subfunctions" class="code">function example2( M_coarse, M_dense)</a>
+0158     [M_coarse, M_dense]= <a href="#_sub2" class="code" title="subfunction [DS_coarse, DS_dense]= coarse_dense_mdl">coarse_dense_mdl</a>;
+0159 
+0160 imdl= <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'b2c'</span>,16);
+0161 imdl.hyperparameter.value= 1e-2;
+0162 imgr= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh,vi);
+0163 <a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>(imgr);
+0164 
+0165 
+0166 imdl2= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>, <span class="string">'DS dual mesh'</span>);
+0167 imdl2.solve= <span class="string">'inv_solve_dual_mesh'</span>;
+0168 imdl2.hyperparameter.value = 1e-4;
+0169 imdl2.R_prior= <span class="string">'np_calc_image_prior'</span>;
+0170 imdl2.np_calc_image_prior.parameters= [3 1]; <span class="comment">% see iso_f_smooth: deg=1, w=1</span>
+0171 imdl2.jacobian_bkgnd.value= 1;
+0172 imdl2.reconst_type= <span class="string">'static'</span>;
+0173 imdl2.fwd_model= M_dense;
+0174 imdl2.parameters.max_iterations= 5;
+0175 
+0176 imdl2.inv_solve_dual_mesh.coarse_mdl= M_coarse;
+0177 imdl2.inv_solve_dual_mesh.mapper_func= <span class="string">'edge_refined_elem_mapper'</span>;
+0178 
+0179 imgr= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl2, vi);
+0180 keyboard</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

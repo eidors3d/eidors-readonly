@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of eidors_obj</title>
+  <meta name="keywords" content="eidors_obj">
+  <meta name="description" content="EIDORS_OBJ: 'constructor' to create a eidors structure">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html eidors -->
+<h1>eidors_obj
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>EIDORS_OBJ: 'constructor' to create a eidors structure</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function obj_id= eidors_obj(type,name, varargin ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> EIDORS_OBJ: 'constructor' to create a eidors structure
+ USAGE: to get eidors_version
+     version = eidors_obj('eidors_version')
+
+ USAGE: as a constructor
+     obj  = eidors_obj(type,name,prop1,value1, prop1, value2, ...)
+
+     type:  obj type: fwd_model, inv_model, data, image
+     name:  text string identifier for model (may be '')
+     prop1, value1, etc: properites and values for object
+
+    example: fwd_mdl = ...
+        eidors_obj('fwd_model','My FWD MODEL', ...
+                    'nodes', NODES, 'elems', ELEMS, ...
+
+ OR construct from structure
+     obj  = eidors_obj(type,obj);
+
+     example: fwd_mdl.nodes = NODES; .... %etc
+              fwd_mdl = eidors_obj('fwd_model',fwd_mdl);
+
+ All constructors will set the appropriate default
+   values for each type: image, fwd_model, inv_model, data
+
+ USAGE: to set values
+     obj  = eidors_obj('set',obj,prop1,value1, prop1, value2, ...)
+
+ this will set the values of properties of the object. At the
+ same time, any cached values will be erased (because they may
+ depend on older properties of the model)
+   
+    example:
+        eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
+
+ USAGE: to cache values
+          eidors_obj('set-cache',obj, cachename,value1, dep_objs, ...)
+     obj= eidors_obj('get-cache',obj, cachename, dep_objs, ...)
+
+ this will get or set the values of cached properties of the object.
+
+    example: % set jacobian
+        eidors_obj('set-cache',fwd_mdl, 'jacobian', J):
+
+    example: % get jacobian or '[]' if not set
+        J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):
+
+ However, in some cases, such as the Jacobian, the value depends
+ on other objects, such as the image background. In this case, use
+
+    example: % set jacobian
+        eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):
+
+    example: % get jacobian or '[]' if not set
+        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../eidors/algorithms/a_adler/aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../eidors/algorithms/a_adler/aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>	AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</li><li><a href="../eidors/algorithms/a_adler/backproj_solve.html" class="code" title="function img= backproj_solve( inv_model, data1, data2)">backproj_solve</a>	BACKPROJ_SOLVE inverse solver using backprojection</li><li><a href="../eidors/algorithms/a_adler/calc_GREIT_RM.html" class="code" title="function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)">calc_GREIT_RM</a>	CALCULATE GREIT reconstruction matrix</li><li><a href="../eidors/algorithms/a_adler/calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>	CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm</li><li><a href="../eidors/algorithms/a_adler/choose_noise_figure.html" class="code" title="function HP= choose_noise_figure( inv_model );">choose_noise_figure</a>	CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation</li><li><a href="../eidors/algorithms/a_adler/gaussian_HPF_prior.html" class="code" title="function Reg= gaussian_HPF_prior( inv_model );">gaussian_HPF_prior</a>	GAUSSIAN_HPF_PRIOR calculate image prior</li><li><a href="../eidors/algorithms/a_adler/interp_mesh.html" class="code" title="function mdl_pts = interp_mesh( mdl, n_interp)">interp_mesh</a>	INTERP_MESH: calculate interpolation points onto mdl elements</li><li><a href="../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>	MK_C2F_CIRC_MAPPING: create a mapping matrix from circles/spheres to FEM</li><li><a href="../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>	MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM</li><li><a href="../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../eidors/algorithms/a_borsic/ab_tv_diff_solve.html" class="code" title="function img= ab_tv_diff_solve( inv_model, data1, data2)">ab_tv_diff_solve</a>	AB_TV_DIFF_SOLVE inverse solver for Andrea Borsic's</li><li><a href="../eidors/algorithms/a_borsic/primaldual_tvrecon_lsearch.html" class="code" title="function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2, epsilon, beta, min_change)">primaldual_tvrecon_lsearch</a>	[rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...</li><li><a href="../eidors/algorithms/b_grychtol/calc_TSVD_RM.html" class="code" title="function RM= calc_TSVD_RM(mdl,hp)">calc_TSVD_RM</a>	CALC_TSVD_RM: Calculated truncated Jacobian SVD reconstruction matrix</li><li><a href="../eidors/algorithms/b_grychtol/fix_model.html" class="code" title="function [mdl] = fix_model(mdl,options)">fix_model</a>	FIX_MODEL: Add useful fields to a model</li><li><a href="../eidors/algorithms/b_lionheart/calc_transferimpedance.html" class="code" title="function transfimp = calc_transferimpedance( img)">calc_transferimpedance</a>	CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix</li><li><a href="../eidors/algorithms/b_sawicki/bs_nonlinearGN.html" class="code" title="function img= bs_nonlinearGN( inv_model, data )">bs_nonlinearGN</a>	NONLINEARGN Non-Linear EIT Inverse</li><li><a href="../eidors/algorithms/b_sawicki/create_inclusion.html" class="code" title="function inhomg_img = create_inclusion( homg_img, center, r, inclusion_mat, order)">create_inclusion</a>	USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...</li><li><a href="../eidors/algorithms/calc_JiRtRJt.html" class="code" title="function [JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )">calc_JiRtRJt</a>	[JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )</li><li><a href="../eidors/algorithms/calc_R_prior.html" class="code" title="function R_prior = calc_R_prior( inv_model, varargin )">calc_R_prior</a>	R = calc_R_prior( inv_model, varargin )</li><li><a href="../eidors/algorithms/calc_RtR_prior.html" class="code" title="function RtR_prior = calc_RtR_prior( inv_model )">calc_RtR_prior</a>	RtR = calc_RtR_prior( inv_model )</li><li><a href="../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>	CALC_HYPERPARAMETER: calculate hyperparameter value</li><li><a href="../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>	meas_icov = calc_meas_icov( inv_model )</li><li><a href="../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>	CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image</li><li><a href="../eidors/algorithms/d_stephenson/edge_refined_elem_mapper.html" class="code" title="function [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)">edge_refined_elem_mapper</a>	EDGE_REFINED_ELEM_MAPPER: map elements from coarse to dense model</li><li><a href="../eidors/algorithms/d_stephenson/edge_refined_node_mapper.html" class="code" title="function [index_vtx] = edge_refined_node_mapper(mdl_coarse, mdl_dense);">edge_refined_node_mapper</a>	EDGE_REFINED_NODE_MAPPER:</li><li><a href="../eidors/algorithms/d_stephenson/inv_solve_dual_mesh.html" class="code" title="function img= inv_solve_dual_mesh( inv_model, voltage)">inv_solve_dual_mesh</a>	INV_SOLVE_DUAL_MESH using a coarse and fine mesh</li><li><a href="../eidors/algorithms/d_stephenson/inv_solve_trunc_iterative.html" class="code" title="function img= inv_solve_trunc_iterative( inv_model, data1, data2)">inv_solve_trunc_iterative</a>	INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration</li><li><a href="../eidors/algorithms/m_vauhkonen/mv_calc_system_mat.html" class="code" title="function s_mat= mv_calc_system_mat( fwd_model, img)">mv_calc_system_mat</a>	MV_CALC_SYSTEM_MAT: s_mat= mv_calc_system_mat( fwd_model, img)</li><li><a href="../eidors/algorithms/m_vauhkonen/mv_fwd_parameters.html" class="code" title="function param= mv_fwd_parameters( fwd_model )">mv_fwd_parameters</a>	MV_FWD_PARAMETERS: data= mv_fwd_solve( fwd_model )</li><li><a href="../eidors/algorithms/n_polydorides/fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>	function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);</li><li><a href="../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="../eidors/algorithms/n_polydorides/m_3d_fields.html" class="code" title="function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);">m_3d_fields</a>	function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);</li><li><a href="../eidors/algorithms/n_polydorides/np_calc_3d_fields.html" class="code" title="function v_f= np_calc_3d_fields( fwd_model, img)">np_calc_3d_fields</a>	NP_CALC_3D_FIELDS: J= np_calc_3d_fields( fwd_model, img)</li><li><a href="../eidors/algorithms/n_polydorides/np_calc_image_prior.html" class="code" title="function Reg= np_calc_image_prior( inv_model );">np_calc_image_prior</a>	NP_CALC_IMAGE_PRIOR calculate image prior</li><li><a href="../eidors/algorithms/n_polydorides/np_calc_system_mat.html" class="code" title="function s_mat= np_calc_system_mat( fwd_model, img)">np_calc_system_mat</a>	NP_CALC_SYSTEM_MAT: s_mat= np_calc_system_mat( fwd_model, img)</li><li><a href="../eidors/algorithms/n_polydorides/np_fwd_parameters.html" class="code" title="function param = np_fwd_parameters( fwd_model )">np_fwd_parameters</a>	NP_FWD_PARAMETERS: data= np_fwd_solve( fwd_model )</li><li><a href="../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../eidors/algorithms/t_dai/fourD_prior_solve.html" class="code" title="function img= fourD_prior_solve( inv_model, data1, data2)">fourD_prior_solve</a>	fourD_prior_solve-- inverse solver to account for temporal</li><li><a href="eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../eidors/examples/cheating_2d.html" class="code" title="function out=cheating_2d( figno, rand_seed )">cheating_2d</a>	code to simulate inverse crimes in EIT</li><li><a href="../eidors/examples/compare_2d_algs.html" class="code" title="function [imgr, img]= compare_2d_algs(option,shape);">compare_2d_algs</a>	Compare different 2D reconstructions</li><li><a href="../eidors/examples/compare_3d_algs.html" class="code" title="function imgr= compare_3d_algs( algno )">compare_3d_algs</a>	Compare different 3D reconstructions</li><li><a href="../eidors/examples/demo_2d_simdata.html" class="code" title="">demo_2d_simdata</a>	Example of using EIDORS to simulate 2D data and to</li><li><a href="../eidors/examples/demo_3d_simdata.html" class="code" title="">demo_3d_simdata</a>	How to make simulation data using EIDORS3D</li><li><a href="../eidors/examples/demo_real.html" class="code" title="function [inhomg_img, demo_img] = demo_real;">demo_real</a>	[inhomg_img, demo_img] = demo_real;</li><li><a href="../eidors/examples/manchester_tomography.html" class="code" title="function manchester_tomography( example_no)">manchester_tomography</a>	Example to show reconstructions from</li><li><a href="../eidors/examples/object_in_tank_2d.html" class="code" title="">object_in_tank_2d</a>	2D demo example for reconstruction of object floating inside tank with</li><li><a href="../eidors/examples/resistor_model.html" class="code" title="function resistor_model;">resistor_model</a>	DEMO to show really simple application of EIDORS framework</li><li><a href="fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../eidors/graphics_matlab/calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li><li><a href="../eidors/graphics_matlab/image_levels.html" class="code" title="function image_levels(img, levels, clim )">image_levels</a>	IMAGE_LEVELS(img, levels, clim  ) show slices at levels of an image</li><li><a href="../eidors/graphics_matlab/mdl_slice_mapper.html" class="code" title="function map = mdl_slice_mapper( fmdl, maptype );">mdl_slice_mapper</a>	MDL_SLICE_MAPPER: map pixels to FEM elements or nodes</li><li><a href="../eidors/graphics_matlab/show_3d_slices.html" class="code" title="function show_3d_slices(img, varargin);">show_3d_slices</a>	show_3d_slices(img, z_cuts, x_cuts, y_cuts)</li><li><a href="inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../eidors/meshing/distmesh/dm_2d_circ_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);">dm_2d_circ_pt_elecs</a>	DM_2D_CIRC_PT_ELECS: Create circle mesh (or radius 1) refined with electrodes</li><li><a href="../eidors/meshing/distmesh/dm_mk_fwd_model.html" class="code" title="function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes,refine_nodes, z_contact, name)">dm_mk_fwd_model</a>	DM_MK_FWD_MODEL: create a fwd_model object using distmesh</li><li><a href="../eidors/meshing/gmsh/create_circle_mesh_gmsh.html" class="code" title="function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )">create_circle_mesh_gmsh</a>	Create a 2D Circular FEM using GMSH</li><li><a href="../eidors/meshing/gmsh/create_poly_mesh_gmsh.html" class="code" title="function mdl = create_poly_mesh_gmsh(basename, vertices, elem_size )">create_poly_mesh_gmsh</a>	Create a 2D Polygon FEM using GMSH</li><li><a href="../eidors/meshing/gmsh/gmsh_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=gmsh_mk_fwd_model( vol_filename, name, centres, z_contact)">gmsh_mk_fwd_model</a>	GMSH_MK_FWD_MODEL: create a fwd_model object from a Gmsh file</li><li><a href="../eidors/meshing/netgen/ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>	NG_MAKE_CYL_MODELS: create cylindrical models using netgen</li><li><a href="../eidors/meshing/netgen/ng_mk_ellip_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_ellip_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li><li><a href="../eidors/meshing/netgen/ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="../eidors/meshing/netgen/ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li><li><a href="../eidors/meshing/netgen/ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li><li><a href="mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>	MK_IMAGE: create eidors image object</li><li><a href="../eidors/models/a_adler/add_noise.html" class="code" title="function vv = add_noise( SNR, v1, v2, options)">add_noise</a>	ADD_NOISE: Add a given SNR to EIDORS data</li><li><a href="../eidors/models/a_adler/analytic_2d_circle.html" class="code" title="function V = analytic_2d_circle(I, params)">analytic_2d_circle</a>	V = analytic_2d_circle(J, [s_h, s_i, b, a, angl])</li><li><a href="../eidors/models/a_adler/mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li><li><a href="../eidors/models/a_adler/mk_common_gridmdl.html" class="code" title="function inv_mdl= mk_common_gridmdl( str, RM)">mk_common_gridmdl</a>	MK_COMMON_MODEL: make EIT on reconstruction grids (GREIT)</li><li><a href="../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="../eidors/models/a_adler/mk_fmdl_from_nodes.html" class="code" title="function mdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, name)">mk_fmdl_from_nodes</a>	MK_FMDL_FROM_NODES: create fmdl from nodes</li><li><a href="../eidors/models/a_adler/mk_grid_model.html" class="code" title="function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);">mk_grid_model</a>	MK_GRID_MODEL: Create reconstruction model on pixelated grid</li><li><a href="../eidors/models/a_adler/simulate_2d_movement.html" class="code" title="function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )">simulate_2d_movement</a>	SIMULATE_2D_MOVEMENT simulate rotational movement in 2D</li><li><a href="../eidors/models/a_adler/simulate_3d_movement.html" class="code" title="function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )">simulate_3d_movement</a>	SIMULATE_3D_MOVEMENT simulate rotational movement in 2D</li><li><a href="../eidors/models/s_murphy/set_fwd_model.html" class="code" title="function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);">set_fwd_model</a>	SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters</li><li><a href="startup.html" class="code" title="function startup">startup</a>	Script to start EIDORS</li><li><a href="../eidors/tests/cache_limit_test.html" class="code" title="function cache_limit_test">cache_limit_test</a>	Test cache deletes in the right order</li><li><a href="../eidors/tests/calc_data_prior_test.html" class="code" title="function ok= calc_data_prior_test">calc_data_prior_test</a>	Verify dataprior:</li><li><a href="../eidors/tests/calc_jacobian_test.html" class="code" title="function ok= calc_jacobian_test">calc_jacobian_test</a>	Verify Jacobian Calculation by small derivative from forward problem</li><li><a href="../eidors/tests/demo_real_test2.html" class="code" title="function ok= demo_real_test2">demo_real_test2</a>	Perform tests based on the demo_real function with new structs</li><li><a href="../eidors/tests/demo_real_test3.html" class="code" title="function ok= demo_real_test3">demo_real_test3</a>	Perform tests based on the demo_real function with new structs</li><li><a href="../eidors/tests/test_2d_resistor.html" class="code" title="">test_2d_resistor</a>	Create 2D model of a cylindrical resistor</li><li><a href="../eidors/tests/test_3d_resistor.html" class="code" title="">test_3d_resistor</a>	Create 3D model of a Rectangular resistor</li><li><a href="../eidors/tests/test_c2f_jacobian.html" class="code" title="function test_c2f_jacobian">test_c2f_jacobian</a>	Test calc of jacobian given coarse to fine mapping</li><li><a href="../eidors/tests/test_colour_direction.html" class="code" title="">test_colour_direction</a>	Test colour mapping</li><li><a href="../eidors/tools/test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li><li><a href="../eidors/tools/test_performance_img.html" class="code" title="function [params_img] =  test_performance_img( imdls, fmdl );">test_performance_img</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function test_install</a></li><li><a href="#_sub2" class="code">function verstr = test_versions;</a></li><li><a href="#_sub3" class="code">function obj = set_obj( obj, varargin );</a></li><li><a href="#_sub4" class="code">function value= get_cache_obj( obj, prop, varargin );</a></li><li><a href="#_sub5" class="code">function set_cache_obj( obj, prop, value, varargin )</a></li><li><a href="#_sub6" class="code">function obj= new_obj( type, name, varargin );</a></li><li><a href="#_sub7" class="code">function obj_id= calc_obj_id( var )</a></li><li><a href="#_sub8" class="code">function test_for_cachdir</a></li><li><a href="#_sub9" class="code">function [objlist, cachedir]= proc_obj_list( varargin );</a></li><li><a href="#_sub10" class="code">function retval= cache_this( obj )</a></li><li><a href="#_sub11" class="code">function update_timestamp( obj_id )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function obj_id= eidors_obj(type,name, varargin );</a>
+0002 <span class="comment">% EIDORS_OBJ: 'constructor' to create a eidors structure</span>
+0003 <span class="comment">% USAGE: to get eidors_version</span>
+0004 <span class="comment">%     version = eidors_obj('eidors_version')</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% USAGE: as a constructor</span>
+0007 <span class="comment">%     obj  = eidors_obj(type,name,prop1,value1, prop1, value2, ...)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%     type:  obj type: fwd_model, inv_model, data, image</span>
+0010 <span class="comment">%     name:  text string identifier for model (may be '')</span>
+0011 <span class="comment">%     prop1, value1, etc: properites and values for object</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%    example: fwd_mdl = ...</span>
+0014 <span class="comment">%        eidors_obj('fwd_model','My FWD MODEL', ...</span>
+0015 <span class="comment">%                    'nodes', NODES, 'elems', ELEMS, ...</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% OR construct from structure</span>
+0018 <span class="comment">%     obj  = eidors_obj(type,obj);</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%     example: fwd_mdl.nodes = NODES; .... %etc</span>
+0021 <span class="comment">%              fwd_mdl = eidors_obj('fwd_model',fwd_mdl);</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% All constructors will set the appropriate default</span>
+0024 <span class="comment">%   values for each type: image, fwd_model, inv_model, data</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% USAGE: to set values</span>
+0027 <span class="comment">%     obj  = eidors_obj('set',obj,prop1,value1, prop1, value2, ...)</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% this will set the values of properties of the object. At the</span>
+0030 <span class="comment">% same time, any cached values will be erased (because they may</span>
+0031 <span class="comment">% depend on older properties of the model)</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%    example:</span>
+0034 <span class="comment">%        eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% USAGE: to cache values</span>
+0037 <span class="comment">%          eidors_obj('set-cache',obj, cachename,value1, dep_objs, ...)</span>
+0038 <span class="comment">%     obj= eidors_obj('get-cache',obj, cachename, dep_objs, ...)</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% this will get or set the values of cached properties of the object.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%    example: % set jacobian</span>
+0043 <span class="comment">%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J):</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%    example: % get jacobian or '[]' if not set</span>
+0046 <span class="comment">%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% However, in some cases, such as the Jacobian, the value depends</span>
+0049 <span class="comment">% on other objects, such as the image background. In this case, use</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%    example: % set jacobian</span>
+0052 <span class="comment">%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">%    example: % get jacobian or '[]' if not set</span>
+0055 <span class="comment">%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):</span>
+0056  
+0057 
+0058 <span class="comment">% (C) 2005-10 Andy Adler. License: GPL version 2 or version 3</span>
+0059 <span class="comment">% $Id$</span>
+0060 
+0061 <span class="keyword">if</span> nargin==0 || ~ischar(type)
+0062    error(<span class="string">'cannot call eidors_obj with no arguments'</span>);
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="keyword">switch</span> type
+0066    <span class="keyword">case</span> <span class="string">'set'</span>
+0067       obj_id= <a href="#_sub3" class="code" title="subfunction obj = set_obj( obj, varargin );">set_obj</a>( name, varargin{:} );
+0068    <span class="keyword">case</span> <span class="string">'get-cache'</span>
+0069       <a href="#_sub1" class="code" title="subfunction test_install">test_install</a>
+0070       obj_id= <a href="#_sub4" class="code" title="subfunction value= get_cache_obj( obj, prop, varargin );">get_cache_obj</a>( name, varargin{:} );
+0071    <span class="keyword">case</span> <span class="string">'set-cache'</span>
+0072       <a href="#_sub1" class="code" title="subfunction test_install">test_install</a>
+0073       <a href="#_sub5" class="code" title="subfunction set_cache_obj( obj, prop, value, varargin )">set_cache_obj</a>( name, varargin{:} );
+0074       obj_id= []; <span class="comment">% quiet matlab errors</span>
+0075    <span class="keyword">case</span> <span class="string">'eidors_version'</span>
+0076       obj_id= <span class="string">'3.5 ($Date$)'</span>;  <span class="comment">% Update for New eidors version</span>
+0077    <span class="keyword">case</span> <span class="string">'interpreter_version'</span>
+0078       obj_id= test_versions;
+0079    <span class="keyword">otherwise</span>
+0080       <a href="#_sub1" class="code" title="subfunction test_install">test_install</a>
+0081       obj_id= <a href="#_sub6" class="code" title="subfunction obj= new_obj( type, name, varargin );">new_obj</a>( type, name, varargin{:} );
+0082 <span class="keyword">end</span>
+0083 
+0084 <a name="_sub1" href="#_subfunctions" class="code">function test_install</a>
+0085   <span class="keyword">global</span> eidors_objects;
+0086   <span class="keyword">if</span> isfield(eidors_objects,<span class="string">'max_cache_size'</span>); <span class="keyword">return</span>; <span class="keyword">end</span> <span class="comment">% OK</span>
+0087   error(<span class="string">'EIDORS not correctly started. Did you do &quot;&gt;&gt;run /path/to/eidors/startup&quot;'</span>);
+0088 
+0089 <a name="_sub2" href="#_subfunctions" class="code">function verstr = test_versions;</a>
+0090       ver= version; ver(ver==<span class="string">'.'</span>)=<span class="string">' '</span>;
+0091       ver = sscanf(ver,<span class="string">'%f'</span>); ver=ver(:);
+0092 
+0093       <span class="comment">% Convert 7.8.1 to 7.008001</span>
+0094       verstr.ver = 1e-3.^(0:length(ver)-1) * ver(:); 
+0095 
+0096       <span class="keyword">if</span> exist(<span class="string">'OCTAVE_VERSION'</span>) == 5
+0097          verstr.isoctave = 1;
+0098       <span class="keyword">else</span>
+0099          verstr.isoctave = 0;
+0100       <span class="keyword">end</span>
+0101 
+0102       cptr = computer;
+0103       <span class="keyword">if</span> strcmp(cptr(end+(-1:0)), <span class="string">'64'</span>)
+0104          verstr.is64bit = 1;
+0105       <span class="keyword">else</span>
+0106          verstr.is64bit = 0;
+0107       <span class="keyword">end</span>
+0108 
+0109 <a name="_sub3" href="#_subfunctions" class="code">function obj = set_obj( obj, varargin );</a>
+0110    <span class="keyword">global</span> eidors_objects
+0111 
+0112 <span class="comment">%  eidors_objects.( obj_id ) = obj;</span>
+0113 <span class="comment">%  eidors_objects.( obj_id ).cache= []; %clear cache</span>
+0114 <span class="comment">%</span>
+0115 
+0116    <span class="keyword">for</span> idx= 1:2:nargin-1
+0117 <span class="comment">%     obj.( obj_id ).( varargin{idx} )= varargin{idx+1};</span>
+0118 <span class="comment">% for matlab 6.1 compatibility</span>
+0119       eval(sprintf(<span class="string">'obj.%s=varargin{%d};'</span>, varargin{idx},idx+1 ));
+0120    <span class="keyword">end</span>
+0121 
+0122 <span class="comment">% val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );</span>
+0123 <a name="_sub4" href="#_subfunctions" class="code">function value= get_cache_obj( obj, prop, varargin );</a>
+0124    <span class="keyword">global</span> eidors_objects
+0125    value= [];
+0126 
+0127 <span class="comment">% We don't do this since cache directories aren't defined (yet)</span>
+0128 <span class="comment">%  [objlist, cachename]= proc_obj_list( varargin{:} );</span>
+0129 
+0130    obj_id= <a href="#_sub7" class="code" title="subfunction obj_id= calc_obj_id( var )">calc_obj_id</a>( obj ); <span class="comment">% recalculate in case obj changed</span>
+0131 
+0132    <span class="keyword">if</span> nargin==3
+0133       objlist = varargin;
+0134       <span class="keyword">for</span> dep_obj = objlist{:}
+0135          prop= [prop,<span class="string">'_'</span>, <a href="#_sub7" class="code" title="subfunction obj_id= calc_obj_id( var )">calc_obj_id</a>(dep_obj)];
+0136       <span class="keyword">end</span>
+0137    <span class="keyword">end</span>
+0138 
+0139 <span class="comment">% if cachename is specified, then cache to that file, rather</span>
+0140 <span class="comment">%  than to the standard eidors_objects location</span>
+0141 <span class="comment">% TODO: fixthis - use ( ) for matlab &gt; 6.0</span>
+0142 <span class="comment">%  if ~isempty( cachename )</span>
+0143 <span class="comment">%     test_for_cachdir;</span>
+0144 <span class="comment">%     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];</span>
+0145 <span class="comment">%     if exist( filename, 'file')</span>
+0146 <span class="comment">%        load(filename); %variable 'value' should be there</span>
+0147 <span class="comment">%     end</span>
+0148 <span class="comment">%  else</span>
+0149       <span class="keyword">try</span>
+0150          value= eidors_objects.( obj_id ).cache.( prop );
+0151 <span class="comment">%        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));</span>
+0152          <a href="#_sub11" class="code" title="subfunction update_timestamp( obj_id )">update_timestamp</a>(obj_id);
+0153       <span class="keyword">end</span>
+0154 <span class="comment">%  end</span>
+0155 
+0156 <a name="_sub5" href="#_subfunctions" class="code">function set_cache_obj( obj, prop, value, varargin )</a>
+0157    <span class="keyword">global</span> eidors_objects
+0158    <span class="keyword">if</span> ~<a href="#_sub10" class="code" title="subfunction retval= cache_this( obj )">cache_this</a>( obj ) ; <span class="keyword">return</span> ; <span class="keyword">end</span>
+0159 
+0160 <span class="comment">% Cache directories aren't defined, yet</span>
+0161 <span class="comment">%  [objlist, cachename]= proc_obj_list( varargin{:} );</span>
+0162 
+0163    obj_id = <a href="#_sub7" class="code" title="subfunction obj_id= calc_obj_id( var )">calc_obj_id</a>( obj );
+0164 
+0165    <span class="keyword">if</span> nargin&gt;=4 
+0166       objlist = varargin;
+0167       <span class="keyword">for</span> dep_obj = objlist{:}
+0168          prop= [prop,<span class="string">'_'</span>, <a href="#_sub7" class="code" title="subfunction obj_id= calc_obj_id( var )">calc_obj_id</a>(dep_obj)];
+0169       <span class="keyword">end</span>
+0170    <span class="keyword">end</span>
+0171 
+0172 <span class="comment">%  if isempty(cachename)</span>
+0173       eidors_objects.( obj_id ).cache.( prop ) = value;
+0174       eidors_objects.( obj_id ).priority = eidors_objects.cache_priority;
+0175       <a href="#_sub11" class="code" title="subfunction update_timestamp( obj_id )">update_timestamp</a>(obj_id);
+0176 <span class="comment">%  else</span>
+0177 <span class="comment">%     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];</span>
+0178 <span class="comment">%     save(filename, 'value');</span>
+0179 <span class="comment">%  end</span>
+0180 
+0181 <a name="_sub6" href="#_subfunctions" class="code">function obj= new_obj( type, name, varargin );</a>
+0182    <span class="keyword">global</span> eidors_objects
+0183 
+0184    <span class="keyword">if</span> isstruct(name)
+0185       obj= name;
+0186       <span class="keyword">try</span>
+0187          name= obj.name;
+0188       <span class="keyword">catch</span>
+0189          name= <span class="string">'unknown'</span>;
+0190       <span class="keyword">end</span>
+0191    <span class="keyword">end</span>
+0192 
+0193    obj.type = type;
+0194    obj.name = name;
+0195    obj= <a href="#_sub3" class="code" title="subfunction obj = set_obj( obj, varargin );">set_obj</a>(obj, varargin{:} );
+0196 
+0197 <span class="comment">% This function hashes the value of the variable var</span>
+0198 <span class="comment">% to create an obj_id. The goal is to allow proper caching</span>
+0199 <span class="comment">% of calculated matrices, by detecting when a previous</span>
+0200 <span class="comment">% calculation with same parameters has been made</span>
+0201 <a name="_sub7" href="#_subfunctions" class="code">function obj_id= calc_obj_id( var )</a>
+0202    <span class="keyword">try</span> 
+0203       obj_id= eidors_var_id( var );
+0204    <span class="keyword">catch</span>
+0205       <span class="keyword">global</span> eidors_objects;
+0206       <span class="keyword">if</span> ~isfield(eidors_objects,<span class="string">'hash_type'</span>)
+0207          eidors_objects.hash_type= 1e8+1; 
+0208       <span class="keyword">end</span>
+0209 <span class="comment">%if hashing code is unavailable, then disable caching function</span>
+0210       obj_id= sprintf(<span class="string">'id_%08d'</span>, eidors_objects.hash_type );
+0211       eidors_objects.hash_type= eidors_objects.hash_type + 1;
+0212    <span class="keyword">end</span>
+0213 
+0214 <span class="comment">% Test whether the cachedir field has been set. This is</span>
+0215 <span class="comment">%  where eidors will store cached calculations. If it has</span>
+0216 <span class="comment">%  not been set, then create it as 'eidors_cache' in the</span>
+0217 <span class="comment">%  current directory</span>
+0218 <span class="comment">%</span>
+0219 <span class="comment">% NOTE: This code is not (yet) used</span>
+0220 <a name="_sub8" href="#_subfunctions" class="code">function test_for_cachdir</a>
+0221    <span class="keyword">global</span> eidors_objects; 
+0222    <span class="keyword">if</span> ~isfield(eidors_objects, <span class="string">'cachedir'</span>)
+0223       cachedir= <span class="string">'eidors_cache'</span>;
+0224       eidors_objects.cachedir= [pwd,<span class="string">'/'</span>,cachedir];
+0225 
+0226       <span class="keyword">if</span> ~exist( eidors_objects.cachedir, <span class="string">'dir'</span>)
+0227 <span class="comment">% Now we need to ensure that cachedir exists. Because the</span>
+0228 <span class="comment">% STUPID!!! matlab has a completely useless and nonstandard</span>
+0229 <span class="comment">% mkdir function, we try this</span>
+0230          mkdir(pwd,cachedir); 
+0231       <span class="keyword">end</span>
+0232    <span class="keyword">end</span>
+0233 
+0234 <span class="comment">% Test whether a cachedir function has been provided</span>
+0235 <span class="comment">% (by testing whether the last entry is a string). If so,</span>
+0236 <span class="comment">% return it in objlist, otherwise return []</span>
+0237 <a name="_sub9" href="#_subfunctions" class="code">function [objlist, cachedir]= proc_obj_list( varargin );</a>
+0238    cachedir= [];
+0239    <span class="keyword">if</span> nargin==0
+0240       objlist= {};
+0241    <span class="keyword">elseif</span> ischar(varargin{nargin})
+0242       cachedir= varargin{nargin};
+0243       objlist = varargin(1:nargin-1);
+0244    <span class="keyword">else</span>
+0245       objlist = varargin(:);
+0246    <span class="keyword">end</span>
+0247 
+0248 <a name="_sub10" href="#_subfunctions" class="code">function retval= cache_this( obj )</a>
+0249 <span class="comment">% we choose not to cache data and images because this will</span>
+0250 <span class="comment">% tend to fill up the workspace.</span>
+0251 <span class="comment">% TODO: make the DONT_CACHE list use configuable</span>
+0252    <span class="keyword">if</span> ~isstruct( obj); retval=1; <span class="keyword">return</span>; <span class="keyword">end</span>
+0253    DONT_CACHE= {<span class="string">'data'</span>,<span class="string">'image'</span>};
+0254    <span class="keyword">if</span> any(strcmp( obj.type, DONT_CACHE));
+0255       retval = 0;
+0256    <span class="keyword">else</span>
+0257       retval = 1;
+0258    <span class="keyword">end</span>
+0259 
+0260 <a name="_sub11" href="#_subfunctions" class="code">function update_timestamp( obj_id )</a>
+0261    <span class="keyword">global</span> eidors_objects;
+0262 
+0263    eidors_objects.( obj_id ).last_used = now;
+0264 
+0265    max_memory= eidors_objects.max_cache_size;
+0266    ww= whos(<span class="string">'eidors_objects'</span>);
+0267    <span class="keyword">if</span> ww.bytes &gt; max_memory
+0268       <a href="eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'clear_max'</span>,floor(max_memory*.75));
+0269    <span class="keyword">end</span>
+0270</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

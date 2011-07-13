@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bs_calc_system_mat</title>
+  <meta name="keywords" content="bs_calc_system_mat">
+  <meta name="description" content="AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html b_sawicki -->
+<h1>bs_calc_system_mat
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function s_mat= bs_calc_system_mat( fwd_model, img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)
+ Calc system matrix for Andy Adler's EIT code
+ fwd_model = forward model
+ img       = image background for system matrix calc
+ s_mat.E = CC' * SS * conductivites * CC;
+ where:
+   SS  = Unconnected system Matrix
+   CC  = Connectivity Matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="../../../eidors/algorithms/a_adler/aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>	AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s_mat= bs_calc_system_mat( fwd_model, img)</a>
+0002 <span class="comment">% AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</span>
+0003 <span class="comment">% Calc system matrix for Andy Adler's EIT code</span>
+0004 <span class="comment">% fwd_model = forward model</span>
+0005 <span class="comment">% img       = image background for system matrix calc</span>
+0006 <span class="comment">% s_mat.E = CC' * SS * conductivites * CC;</span>
+0007 <span class="comment">% where:</span>
+0008 <span class="comment">%   SS  = Unconnected system Matrix</span>
+0009 <span class="comment">%   CC  = Connectivity Matrix</span>
+0010 
+0011 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0012 <span class="comment">% Modified by Bartosz Sawicki</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015 FC= <a href="../../../eidors/algorithms/a_adler/aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>( fwd_model);
+0016 lFC= size(FC,1);
+0017 
+0018 pp= <a href="../../../eidors/algorithms/a_adler/aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>( fwd_model);
+0019 
+0020 <span class="keyword">if</span>( size(img.elem_data,1) == pp.n_elem )
+0021     <span class="comment">%For non-dual models</span>
+0022     elem_data = img.elem_data; 
+0023 <span class="keyword">else</span>
+0024     <span class="comment">%For dual models</span>
+0025     <span class="keyword">if</span> isfield(fwd_model, <span class="string">'coarse2fine'</span>)
+0026         elem_data = fwd_model.coarse2fine * img.elem_data;
+0027     <span class="keyword">end</span>  
+0028     <span class="comment">%If background image is known</span>
+0029     <span class="keyword">if</span> isfield(fwd_model, <span class="string">'background'</span>)
+0030         elem_data = elem_data + fwd_model.background;
+0031     <span class="keyword">end</span>
+0032 <span class="keyword">end</span>
+0033   
+0034 elem_sigma = kron( elem_data(:), ones(pp.n_dims,1) );
+0035 
+0036 ES= ones(lFC,1);
+0037 ES(1:length(elem_sigma))= elem_sigma;
+0038 ES= spdiags(ES,0,lFC,lFC);
+0039 
+0040 s_mat.E= FC' * ES * FC;
+0041</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

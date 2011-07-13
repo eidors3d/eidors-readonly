@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of repaint_inho</title>
+  <meta name="keywords" content="repaint_inho">
+  <meta name="description" content="function repaint_inho(mat,mat_ref,vtx,simp, thresh);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html graphics_matlab -->
+<h1>repaint_inho
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function repaint_inho(mat,mat_ref,vtx,simp, thresh);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function repaint_inho(mat,mat_ref,vtx,simp, thresh);
+
+Repaints the simulated inhomogeneity according to the reference
+distribution. (Increase -&gt; Red, Decrease -&gt; Blue) 
+
+mat     = The simulated (targeted) distribution.
+mat_ref = The known initial (homogeneous) distribution.
+        = Override default unless 'use_global'
+vtx     = The vertices matrix.
+simp    = The simplices matrix.
+thresh  = Threshold to show imaged region (or [] for default)
+clr_def = Colour definitions val.calc_colours.field etc</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/examples/demo_complex.html" class="code" title="">demo_complex</a>	This demo function shows how the EIT problem can be formulated in a complex</li><li><a href="show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);</a>
+0002 <span class="comment">%function repaint_inho(mat,mat_ref,vtx,simp, thresh);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%Repaints the simulated inhomogeneity according to the reference</span>
+0005 <span class="comment">%distribution. (Increase -&gt; Red, Decrease -&gt; Blue)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%mat     = The simulated (targeted) distribution.</span>
+0008 <span class="comment">%mat_ref = The known initial (homogeneous) distribution.</span>
+0009 <span class="comment">%        = Override default unless 'use_global'</span>
+0010 <span class="comment">%vtx     = The vertices matrix.</span>
+0011 <span class="comment">%simp    = The simplices matrix.</span>
+0012 <span class="comment">%thresh  = Threshold to show imaged region (or [] for default)</span>
+0013 <span class="comment">%clr_def = Colour definitions val.calc_colours.field etc</span>
+0014 
+0015 <span class="comment">% (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3</span>
+0016 <span class="comment">% $Id$</span>
+0017 
+0018 <span class="keyword">if</span> nargin&lt;5
+0019     thresh = [];
+0020 <span class="keyword">end</span>
+0021 <span class="keyword">if</span> nargin&lt;6
+0022     clr_def = [];
+0023 <span class="keyword">end</span>
+0024 <span class="keyword">if</span> strcmp(mat_ref, <span class="string">'use_global'</span>)
+0025    img.calc_colours.ref_level = mat_ref;
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="keyword">if</span> isempty(thresh)
+0029     thresh = 1/4;
+0030 <span class="keyword">end</span>
+0031 
+0032 <span class="comment">% looks best if eidors_colours.greylev &lt; 0</span>
+0033 [colours,scl_data] = <a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>( mat, clr_def, 0);
+0034 ii=find( abs(scl_data) &gt; thresh);
+0035 this_x = simp(ii,:);
+0036 
+0037 colours= permute(colours(ii,:,:),[2,1,3]);
+0038 ELEM= vtx';
+0039 
+0040 Xs=   zeros(3,length(ii));
+0041 Ys=   zeros(3,length(ii));
+0042 Zs=   zeros(3,length(ii));
+0043 <span class="keyword">switch</span>(size(this_x,2))
+0044     <span class="keyword">case</span> 3
+0045         idx_ = [1;2;3];
+0046     <span class="keyword">case</span> 4
+0047         idx_ = [[1;2;3], <span class="keyword">...</span>
+0048                 [1;2;4], <span class="keyword">...</span>
+0049                 [1;3;4], <span class="keyword">...</span>
+0050                 [2;3;4]];
+0051 <span class="keyword">end</span>
+0052 <span class="keyword">for</span> idx=idx_
+0053    Xs(:)=vtx(this_x(:,idx)',1);
+0054    Ys(:)=vtx(this_x(:,idx)',2);
+0055    Zs(:)=vtx(this_x(:,idx)',3);
+0056 
+0057    <span class="keyword">if</span> exist(<span class="string">'OCTAVE_VERSION'</span>);
+0058 <span class="comment">% TODO: This is really slow, can we do anything about it</span>
+0059       cmap = colormap;
+0060       <span class="keyword">for</span> i=1:size(colours,2);
+0061          patch(Xs(:,i),Ys(:,i),Zs(:,i),cmap(colours(i),:));
+0062       <span class="keyword">end</span>
+0063    <span class="keyword">else</span>
+0064    <span class="keyword">if</span> size(colours,1)==1 &amp;&amp; size(colours,2)==3
+0065       <span class="comment">% need to work around ^%$#%$# matlab bug which</span>
+0066       <span class="comment">% forces an incorrect interpretation is colours of this size</span>
+0067       hh= patch(Xs(:,[1:3,1]), <span class="keyword">...</span>
+0068                 Ys(:,[1:3,1]), <span class="keyword">...</span>
+0069                 Zs(:,[1:3,1]), <span class="keyword">...</span>
+0070                 colours(:,[1:3,1]), <span class="keyword">...</span>
+0071             <span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+0072    <span class="keyword">else</span>
+0073       hh= patch(Xs,Ys,Zs,colours, <span class="keyword">...</span>
+0074             <span class="string">'EdgeColor'</span>,<span class="string">'none'</span>);
+0075    <span class="keyword">end</span>
+0076    <span class="keyword">end</span>
+0077 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

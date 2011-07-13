@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_noise_params</title>
+  <meta name="keywords" content="calc_noise_params">
+  <meta name="description" content="params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>calc_noise_params
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function params = calc_noise_params(imdl, vh, vi ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)
+  params(1,:) = Noise Figure = SNR(image) / SNR(data)
+
+  see also: <a href="eval_GREIT_fig_merit.html" class="code" title="function params = eval_GREIT_fig_merit(imgs, xyzr_pt)">eval_GREIT_fig_merit</a> or using test_performance</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/a_adler/mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li><li><a href="../../../eidors/tools/test_performance.html" class="code" title="function [r, params] =  test_performance( imdls, fmdl );">test_performance</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li><li><a href="../../../eidors/tools/test_performance_img.html" class="code" title="function [params_img] =  test_performance_img( imdls, fmdl );">test_performance_img</a>	TEST_PERFORMANCE: test of difference reconstruction algorithms</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function params = calc_noise_params(imdl, vh, vi )</a>
+0002 <span class="comment">% params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)</span>
+0003 <span class="comment">%  params(1,:) = Noise Figure = SNR(image) / SNR(data)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%  see also: eval_GREIT_fig_merit or using test_performance</span>
+0006 
+0007 <span class="comment">% (C) 2008 Andy Adler. Licensed under GPL v2 or v3</span>
+0008 <span class="comment">% $Id$</span>
+0009 
+0010 <span class="comment">% NOTE THAT WE ASSUME A LINEAR ALGORITHM FOR THIS MEASURE</span>
+0011 
+0012 <span class="comment">% Add random noise</span>
+0013 Nnoise = 1000;
+0014 noise = 0.01*std(vh)*randn(size(vh,1),Nnoise);
+0015 vhn= vh*ones(1,Nnoise) + noise;
+0016 
+0017 signal_y = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( vh, vi,  imdl.fwd_model);
+0018 noise_y  = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( vh, vhn, imdl.fwd_model);
+0019 
+0020 signal_x = <a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh, vi);  signal_x = signal_x.elem_data;
+0021 noise_x  = <a href="../../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(imdl, vh, vhn); noise_x  = noise_x.elem_data;
+0022 
+0023 
+0024 <span class="comment">% This is how we defined it in GREIT 2009.</span>
+0025 <span class="comment">% It could also be defined as</span>
+0026 <span class="comment">%    signal_x = mean(   (signal_x),1);</span>
+0027 <span class="comment">% and this may make more sense for lots of ringing. In the centre, however, this is probably OK.</span>
+0028 
+0029 signal_x = mean(abs(signal_x),1);
+0030 noise_x  = mean(std(noise_x));
+0031 snr_x = signal_x / noise_x;
+0032 
+0033 signal_y = mean(abs(signal_y),1);
+0034 noise_y  = mean(std(noise_y));
+0035 snr_y = signal_y / noise_y;
+0036 
+0037 params= [snr_y(:)./snr_x(:)]';</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

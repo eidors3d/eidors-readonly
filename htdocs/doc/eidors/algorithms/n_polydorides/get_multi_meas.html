@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of get_multi_meas</title>
+  <meta name="keywords" content="get_multi_meas">
+  <meta name="description" content="function [voltage,ind,df] = get_multi_meas(protocol,elec,V,I,vtx,no_pl);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>get_multi_meas
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [voltage,ind,df] = get_multi_meas(protocol,elec,V,I,vtx,no_pl);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [voltage,ind,df] = get_multi_meas(protocol,elec,V,I,vtx,no_pl); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [voltage,ind,df] = get_multi_meas(protocol,elec,V,I,vtx,no_pl);
+
+The function can be used in the occasions where plane current patterns 
+(adjacent or polar) are adopted for systems with more planes, i.e. set by
+set_multi_currents function. Only non-current carrying electrodes are 
+involved in the measurements.
+ 
+
+
+protocol= The selected protocol '{op}' or '{ad}'
+elec    = The electrodes
+no_pl   = The number of planes
+I       = The RHS vectors, i.e., the current patterns padded with zeroes 
+          for the forward calculations
+V       = The forward solution
+voltage = The array of measureemnts according to the selected protocol
+ind     = The index of the measurements</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [voltage,ind,df] = get_multi_meas(protocol,elec,V,I,vtx,no_pl);</a>
+0002 <span class="comment">%function [voltage,ind,df] = get_multi_meas(protocol,elec,V,I,vtx,no_pl);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%The function can be used in the occasions where plane current patterns</span>
+0005 <span class="comment">%(adjacent or polar) are adopted for systems with more planes, i.e. set by</span>
+0006 <span class="comment">%set_multi_currents function. Only non-current carrying electrodes are</span>
+0007 <span class="comment">%involved in the measurements.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%protocol= The selected protocol '{op}' or '{ad}'</span>
+0012 <span class="comment">%elec    = The electrodes</span>
+0013 <span class="comment">%no_pl   = The number of planes</span>
+0014 <span class="comment">%I       = The RHS vectors, i.e., the current patterns padded with zeroes</span>
+0015 <span class="comment">%          for the forward calculations</span>
+0016 <span class="comment">%V       = The forward solution</span>
+0017 <span class="comment">%voltage = The array of measureemnts according to the selected protocol</span>
+0018 <span class="comment">%ind     = The index of the measurements</span>
+0019 
+0020 
+0021 <span class="keyword">if</span> size(V,2)~= size(I,2)
+0022     error(<span class="string">'Unmatched pattens'</span>)
+0023 <span class="keyword">end</span>
+0024 
+0025 
+0026 no_el = size(elec,1);
+0027 el_pp = no_el/no_pl;
+0028 
+0029 I = I(size(vtx,1)+1:<span class="keyword">end</span>,:);  <span class="comment">%Lower chunk</span>
+0030 Vm = V(size(vtx,1)+1:<span class="keyword">end</span>,:); <span class="comment">%Lower chunk</span>
+0031 
+0032 
+0033 voltage = [];
+0034 ind = [];
+0035 df = [];
+0036 
+0037 d = size(I,2); <span class="comment">%Injections</span>
+0038 
+0039 <span class="keyword">for</span> i=1:d <span class="comment">%for each injection</span>
+0040    
+0041 cn = 0;
+0042  
+0043 L = [];
+0044 fst = 0;
+0045 kk=0;
+0046 
+0047 <span class="keyword">for</span> ej=1:el_pp:no_el
+0048    
+0049    kk=ej-1;
+0050    
+0051    <span class="keyword">for</span> ei=1:el_pp-1
+0052       <span class="keyword">if</span> ei==1
+0053          fst = ej;
+0054       <span class="keyword">end</span>
+0055       L = [L;[kk+ei kk+(ei+1)]];
+0056    <span class="keyword">end</span>
+0057    L = [L;[fst fst+16-1]];
+0058 <span class="keyword">end</span>
+0059 
+0060 LMP = []; <span class="comment">%Exclude measurements engaging electrodes from different electrodes</span>
+0061 
+0062 <span class="keyword">for</span> j=1:size(L,1)
+0063    
+0064    <span class="keyword">if</span> ceil(L(j,1)/el_pp) == ceil(L(j,2)/el_pp)
+0065       
+0066       LMP = [LMP;L(j,:)];
+0067    <span class="keyword">end</span>
+0068 <span class="keyword">end</span>
+0069 
+0070 el_in = find(I(:,i)~=0); <span class="comment">% The current carring electrodes</span>
+0071 
+0072 LM =[];
+0073 
+0074 <span class="keyword">for</span> k=1:size(LMP,1)
+0075    <span class="keyword">if</span> ismember(LMP(k,:),el_in) == [0 0]
+0076       LM = [LM;LMP(k,:)]; <span class="comment">%Modified list current carring electrodes removed.</span>
+0077    <span class="keyword">end</span>
+0078 <span class="keyword">end</span>
+0079 
+0080 lf = size(LM,1);
+0081 dd = lf/no_pl;
+0082 
+0083 LN = [];
+0084 
+0085 k=0;
+0086 
+0087 <span class="keyword">for</span> in=1:dd:lf <span class="comment">%   1    13    25    37</span>
+0088    
+0089    k = k+1;
+0090 
+0091    th_LM = LM(in:in+dd-1,:); <span class="comment">%size(th_LM) = (12 2)</span>
+0092    
+0093    <span class="keyword">if</span> protocol == <span class="string">'{op}'</span>
+0094           <span class="keyword">for</span> j=1:size(th_LM,1)
+0095           <span class="keyword">if</span> th_LM(j,1)== intersect(find(I(:,i)&gt;0),in:k*el_pp)+1
+0096              LN = [th_LM(j:<span class="keyword">end</span>,:);th_LM(1:j-1,:)];
+0097            <span class="keyword">break</span>;
+0098           <span class="keyword">end</span>
+0099        <span class="keyword">end</span>
+0100    <span class="keyword">elseif</span> protocol ==<span class="string">'{ad}'</span>
+0101       <span class="keyword">for</span> j=1:size(th_LM,1)
+0102          <span class="keyword">if</span> th_LM(j,1)== intersect(find(I(:,i)&lt;0),in:k*el_pp)+1
+0103              LN = [th_LM(j:<span class="keyword">end</span>,:);th_LM(1:j-1,:)];
+0104            <span class="keyword">break</span>;
+0105           <span class="keyword">end</span>
+0106        <span class="keyword">end</span>
+0107    <span class="keyword">else</span>
+0108       error(<span class="string">'Protocol needs to be {op} or {ad}'</span>);
+0109    <span class="keyword">end</span> 
+0110    
+0111 <span class="keyword">for</span> u=1:size(LN,1)
+0112   voltage = [voltage; (Vm(LN(u,1),i)- Vm(LN(u,2),i))];
+0113 <span class="keyword">end</span>
+0114 
+0115    
+0116    ind = [ind;LN];
+0117    cn = cn+1;
+0118       
+0119 <span class="keyword">end</span> <span class="comment">%for in</span>
+0120 
+0121 df = [df;cn];
+0122 <span class="keyword">end</span> <span class="comment">%for injections</span>
+0123 
+0124 
+0125 
+0126 
+0127 
+0128 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0129 <span class="comment">% This is part of the EIDORS suite.</span>
+0130 <span class="comment">% Copyright (c) N. Polydorides 2003</span>
+0131 <span class="comment">% Copying permitted under terms of GNU GPL</span>
+0132 <span class="comment">% See enclosed file gpl.html for details.</span>
+0133 <span class="comment">% EIDORS 3D version 2.0</span>
+0134 <span class="comment">% MATLAB version 5.3 R11</span>
+0135 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0136 
+0137 
+0138 
+0139</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

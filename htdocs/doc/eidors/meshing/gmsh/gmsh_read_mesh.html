@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmsh_read_mesh</title>
+  <meta name="keywords" content="gmsh_read_mesh">
+  <meta name="description" content="[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html gmsh -->
+<h1>gmsh_read_mesh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)
+ Function to read in a mesh model from Gmsh and saves it in
+ five arrays; surface (srf), veritices (vtx), face no. (fc)
+ volume (simp) and edges (edg)
+
+ srf      = The surfaces indices into vtx
+ simp     = The volume indices into vtx
+ vtx      = The vertices matrix
+ fc       = A one column matrix containing the face numbers
+ edg      = Edge segment information
+ filename = Name of file containing NetGen .vol information
+ mat_ind  = Material index</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="create_circle_mesh_gmsh.html" class="code" title="function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )">create_circle_mesh_gmsh</a>	Create a 2D Circular FEM using GMSH</li><li><a href="create_poly_mesh_gmsh.html" class="code" title="function mdl = create_poly_mesh_gmsh(basename, vertices, elem_size )">create_poly_mesh_gmsh</a>	Create a 2D Polygon FEM using GMSH</li><li><a href="gmsh_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=gmsh_mk_fwd_model( vol_filename, name, centres, z_contact)">gmsh_mk_fwd_model</a>	GMSH_MK_FWD_MODEL: create a fwd_model object from a Gmsh file</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function mat= get_lines_with_nodes( fid )</a></li><li><a href="#_sub2" class="code">function mat = get_lines_with_elements( fid )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)</a>
+0002 <span class="comment">%[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)</span>
+0003 <span class="comment">% Function to read in a mesh model from Gmsh and saves it in</span>
+0004 <span class="comment">% five arrays; surface (srf), veritices (vtx), face no. (fc)</span>
+0005 <span class="comment">% volume (simp) and edges (edg)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% srf      = The surfaces indices into vtx</span>
+0008 <span class="comment">% simp     = The volume indices into vtx</span>
+0009 <span class="comment">% vtx      = The vertices matrix</span>
+0010 <span class="comment">% fc       = A one column matrix containing the face numbers</span>
+0011 <span class="comment">% edg      = Edge segment information</span>
+0012 <span class="comment">% filename = Name of file containing NetGen .vol information</span>
+0013 <span class="comment">% mat_ind  = Material index</span>
+0014 
+0015 <span class="comment">% $Id$</span>
+0016 <span class="comment">% (C) 2009 Bartosz Sawicki. Licensed under GPL V2</span>
+0017 
+0018 
+0019 fid = fopen(filename,<span class="string">'r'</span>);
+0020 <span class="keyword">while</span> 1
+0021     tline = fgetl(fid);
+0022     <span class="keyword">if</span> ~ischar(tline); fclose(fid); <span class="keyword">break</span>; <span class="keyword">end</span>
+0023 
+0024     <span class="keyword">if</span> strcmp(tline,<span class="string">'$Elements'</span>)
+0025        elements= <a href="#_sub2" class="code" title="subfunction mat = get_lines_with_elements( fid )">get_lines_with_elements</a>( fid );
+0026     <span class="keyword">elseif</span> strcmp(tline,<span class="string">'$Nodes'</span>)
+0027        nodes= <a href="#_sub1" class="code" title="subfunction mat= get_lines_with_nodes( fid )">get_lines_with_nodes</a>( fid );
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="comment">%srf = elements(:,6:8);</span>
+0032 srf = [];
+0033 <span class="comment">%fc = elements(:,1);</span>
+0034 fc = [];
+0035 simp = elements(:,7:9);
+0036 <span class="comment">%edg = elements;</span>
+0037 edg = [];
+0038 mat_ind=elements(:,5);
+0039 <span class="comment">%bc = elements(:,2);</span>
+0040 bc = [];
+0041 vtx = nodes(:,2:3);
+0042 <span class="keyword">end</span>
+0043 
+0044 <a name="_sub1" href="#_subfunctions" class="code">function mat= get_lines_with_nodes( fid )</a>
+0045    tline = fgetl(fid);
+0046    n_rows = sscanf(tline,<span class="string">'%d'</span>);
+0047    mat= fscanf(fid,<span class="string">'%f'</span>,[4,n_rows])';
+0048 <span class="keyword">end</span>
+0049 
+0050 <a name="_sub2" href="#_subfunctions" class="code">function mat = get_lines_with_elements( fid )</a>
+0051    tline = fgetl(fid);
+0052    n_rows = sscanf(tline,<span class="string">'%d'</span>);
+0053    mat = [];
+0054    <span class="keyword">for</span> i = 1:n_rows
+0055        tline = fgetl(fid);
+0056        parts = regexp(tline,<span class="string">' '</span>,<span class="string">'split'</span>);
+0057        <span class="keyword">if</span> str2double( parts(2) ) == 2
+0058            n = str2double( parts );
+0059            mat(size(mat,1)+1,:) = n;
+0060        <span class="keyword">end</span>
+0061    <span class="keyword">end</span>
+0062 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

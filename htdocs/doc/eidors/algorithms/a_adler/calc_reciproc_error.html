@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_reciproc_error</title>
+  <meta name="keywords" content="calc_reciproc_error">
+  <meta name="description" content="CALC_RECIPROC_ERROR: CALCULATE RECIPROCITY ERROR MATRIX">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>calc_reciproc_error
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CALC_RECIPROC_ERROR: CALCULATE RECIPROCITY ERROR MATRIX</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function meas_icov = calc_reciproc_error(inv_model, data ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_RECIPROC_ERROR: CALCULATE RECIPROCITY ERROR MATRIX
+ meas_icov = calc_reciproc_error(inv_model, data )
+
+ Calculate meas_icov from data
+ 
+ specify tau as 
+    inv_model.calc_reciproc_error.tau</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/models/a_adler/reciprocity_idx.html" class="code" title="function idxr = reciprocity_idx( fmdl);">reciprocity_idx</a>	RECIPROCITY_IDX: find indices of stim, meas pairs that are recirocal</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function oldcode</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function meas_icov = calc_reciproc_error(inv_model, data )</a>
+0002 <span class="comment">% CALC_RECIPROC_ERROR: CALCULATE RECIPROCITY ERROR MATRIX</span>
+0003 <span class="comment">% meas_icov = calc_reciproc_error(inv_model, data )</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Calculate meas_icov from data</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% specify tau as</span>
+0008 <span class="comment">%    inv_model.calc_reciproc_error.tau</span>
+0009 
+0010 <span class="comment">% Reference: Real-time management of faulty electrodes in</span>
+0011 <span class="comment">%  electrical impedance tomography AE Hartinger, R Guardo,</span>
+0012 <span class="comment">%  A Adler, H Gagnon. IEEE T BME 2008.</span>
+0013 
+0014 <span class="comment">% (C) 2008 Andy Adler. License: GPL version 2 or version 3</span>
+0015 <span class="comment">% $Id$</span>
+0016 
+0017 <span class="keyword">try</span>;    tau = inv_model.calc_reciproc_error.tau;
+0018 <span class="keyword">catch</span>;  tau = 2.5e-6;                            <span class="keyword">end</span>
+0019 
+0020 fmdl = inv_model.fwd_model;
+0021 
+0022 data = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( 0, data, fmdl);
+0023 
+0024 idx = <a href="../../../eidors/models/a_adler/reciprocity_idx.html" class="code" title="function idxr = reciprocity_idx( fmdl);">reciprocity_idx</a>( fmdl );
+0025 <span class="keyword">if</span> any(isnan(idx));
+0026    error(<span class="string">'not all meas have reciprocity for this stim_pattern'</span>);
+0027 <span class="keyword">end</span>
+0028 
+0029 data = data/max(abs(data));
+0030 recerr=  data - data(idx,:);
+0031 recerr= mean( abs(recerr), 2);
+0032 s2  = exp(-recerr.^2/tau); <span class="comment">% eqn 8 from paper</span>
+0033 
+0034 nmeas = length(idx);
+0035 meas_icov= spdiags(s2(:),0,nmeas,nmeas);
+0036 
+0037 <a name="_sub1" href="#_subfunctions" class="code">function oldcode</a>
+0038 <span class="comment">% Use only with no_rotate</span>
+0039 Nel = length(inv_model.fwd_model.electrode);
+0040 nframes= size(data,2);
+0041 nmeas = size(data,1);
+0042 <span class="keyword">if</span> nmeas ~= Nel^2
+0043    data2= zeros(Nel^2, nframes);
+0044    mselect = inv_model.fwd_model.meas_select;
+0045    data2(mselect,:)= data;
+0046    data2= reshape( data2, Nel,Nel,nframes);
+0047 <span class="keyword">else</span> 
+0048    data2= reshape( data, Nel,Nel,nframes);
+0049 <span class="keyword">end</span>
+0050 
+0051 ndata2= abs(data2)/max(abs(data2(:)));
+0052 ndata2r= permute(ndata2, [2,1,3]); <span class="comment">% Transpose</span>
+0053 recerr= mean( ndata2 - ndata2r, 3);
+0054 e2    = recerr.^2; <span class="comment">% eqn 8 from paper</span>
+0055 
+0056 s2  = exp(-e2/tau);
+0057 
+0058 <span class="keyword">if</span> isfield(inv_model.fwd_model,<span class="string">'meas_select'</span>)
+0059    mselect = inv_model.fwd_model.meas_select;
+0060    s2= s2(mselect);
+0061    nmeas = length(find(mselect));
+0062 <span class="keyword">end</span>
+0063 
+0064 meas_icov= spdiags(s2(:),0,nmeas,nmeas);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

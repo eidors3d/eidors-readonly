@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MakeRegmatrix</title>
+  <meta name="keywords" content="MakeRegmatrix">
+  <meta name="description" content="MakeRegmatrix Computes a regularisation matrix which includes smoothness assumptions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html m_vauhkonen -->
+<h1>MakeRegmatrix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>MakeRegmatrix Computes a regularisation matrix which includes smoothness assumptions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function R=MakeRegmatrix(Element); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MakeRegmatrix Computes a regularisation matrix which includes smoothness assumptions
+ Function R=MakeRegmatrix(Element);
+ computes a regularization matrix R which is a
+ version of 2D difference. 
+
+ INPUT
+ Element = element structure
+
+ OUTPUT
+
+ R = regularisation matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/eidors2d_demo1.html" class="code" title="">eidors2d_demo1</a>	EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function R=MakeRegmatrix(Element);</a>
+0002 
+0003 <span class="comment">%MakeRegmatrix Computes a regularisation matrix which includes smoothness assumptions</span>
+0004 <span class="comment">% Function R=MakeRegmatrix(Element);</span>
+0005 <span class="comment">% computes a regularization matrix R which is a</span>
+0006 <span class="comment">% version of 2D difference.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% INPUT</span>
+0009 <span class="comment">% Element = element structure</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% OUTPUT</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% R = regularisation matrix</span>
+0014 
+0015 <span class="comment">% M. Vauhkonen 13.8.1999,</span>
+0016 <span class="comment">% University of Kuopio, Department of Applied Physics, PO Box 1627,</span>
+0017 <span class="comment">% FIN-70211 Kuopio, Finland, email: Marko.Vauhkonen@uku.fi</span>
+0018 
+0019 
+0020 msE=max(size(Element));
+0021 R=sparse(msE,msE);
+0022 <span class="keyword">for</span> ii=1:msE
+0023  Inds=[Element(ii).Face{:,2}];
+0024  R(ii,Inds(Inds~=0))=-1;
+0025  R(ii,ii)=abs(sum(R(ii,:)));
+0026 <span class="keyword">end</span>
+0027   
+0028 
+0029</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

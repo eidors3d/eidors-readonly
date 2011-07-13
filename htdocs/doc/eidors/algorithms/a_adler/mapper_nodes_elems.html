@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mapper_nodes_elems</title>
+  <meta name="keywords" content="mapper_nodes_elems">
+  <meta name="description" content="MAPPER_ELEMS_NODES: calculates mapping function taking elems to nodes">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>mapper_nodes_elems
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>MAPPER_ELEMS_NODES: calculates mapping function taking elems to nodes</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function EtoN= mapper_elems_nodes(fwd_model) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MAPPER_ELEMS_NODES: calculates mapping function taking elems to nodes
+ EtoN= mapper_elems_nodes(fwd_model)
+ EtoN is a matrix [Nnodes x Nelems]
+    where [EtoN]_ij = 1/3 if elem_j shares node_i</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="RtR_prior_elem2nodes.html" class="code" title="function Reg= RtR_prior_elem2nodes( inv_model )">RtR_prior_elem2nodes</a>	RtR_PRIOR_ELEM2NODES: Convert elem to nodal RtR Image Prior</li><li><a href="jacobian_elem2nodes.html" class="code" title="function J= jacobian_elem2nodes( fwd_model, img);">jacobian_elem2nodes</a>	JACOBIAN_ELEM2NODES: calculate Jacobian on Nodes from Elem solver</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function EtoN= mapper_elems_nodes(fwd_model)</a>
+0002 <span class="comment">% MAPPER_ELEMS_NODES: calculates mapping function taking elems to nodes</span>
+0003 <span class="comment">% EtoN= mapper_elems_nodes(fwd_model)</span>
+0004 <span class="comment">% EtoN is a matrix [Nnodes x Nelems]</span>
+0005 <span class="comment">%    where [EtoN]_ij = 1/3 if elem_j shares node_i</span>
+0006 
+0007 elems= fwd_model.elems;
+0008 n_elems= size(elems,1);
+0009 n_dimp1= size(elems,2);
+0010 n_nodes= size(fwd_model.nodes,1);
+0011 EtoN = sparse(elems, (1:n_elems)'*ones(1,n_dimp1), 1/3, n_nodes, n_elems);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

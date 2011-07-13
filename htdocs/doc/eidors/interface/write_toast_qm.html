@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of write_toast_qm</title>
+  <meta name="keywords" content="write_toast_qm">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html interface -->
+<h1>write_toast_qm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function write_toast_qm(fname, fmdl) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function write_toast_qm(fname, fmdl)</a>
+0002 fid = fopen(fname,<span class="string">'w'</span>);
+0003 dims = size(fmdl.nodes,2);
+0004 elecs= length(fmdl.electrode);
+0005 elecpos= zeros(elecs,dims);
+0006 <span class="keyword">for</span> i=1:elecs
+0007     elnodes = fmdl.electrode(i).nodes;
+0008     elecpos(i,:) = mean( fmdl.nodes(elnodes,:),1);
+0009 <span class="keyword">end</span>
+0010 
+0011 fprintf(fid,<span class="string">'QM file %dD\n'</span>,dims);
+0012 fprintf(fid,<span class="string">'Dimension %d\n'</span>,dims);
+0013 fprintf(fid,<span class="string">'SourceList %d fixed\n'</span>,elecs);
+0014 fprintf(fid,<span class="string">'%6.4g     %6.4g\n'</span>, elecpos');
+0015 fprintf(fid,<span class="string">'MeasurementList %d\n'</span>,elecs);
+0016 fprintf(fid,<span class="string">'%6.4g     %6.4g\n'</span>, elecpos');
+0017 fprintf(fid,<span class="string">'LinkList\n'</span>);
+0018 <span class="keyword">for</span> i=1:elecs
+0019   fprintf(fid,<span class="string">'%d:'</span>,elecs);
+0020   fprintf(fid,<span class="string">'%d '</span>,0:elecs-1);
+0021   fprintf(fid,<span class="string">'\n'</span>);
+0022 <span class="keyword">end</span>
+0023 
+0024 fclose(fid);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

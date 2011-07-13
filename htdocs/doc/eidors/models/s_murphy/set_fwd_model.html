@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of set_fwd_model</title>
+  <meta name="keywords" content="set_fwd_model">
+  <meta name="description" content="SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html s_murphy -->
+<h1>set_fwd_model
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters
+ [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);
+
+ Optional parameters
+   srf = specify [] to automatically generate
+   perm_sym = default is '{y}'
+
+ Unknown parameters
+   specify '[]' to be used later
+
+ (C) 2005 Stephen Murphy. Licenced under GPL
+ $Id$</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/manchester_tomography.html" class="code" title="function manchester_tomography( example_no)">manchester_tomography</a>	Example to show reconstructions from</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);</a>
+0002 <span class="comment">% SET_FWD_MODEL: create EIDORS v3 fwd_model from v2 parameters</span>
+0003 <span class="comment">% [fwd_mdl]=set_fwd_model(vtx,simp,srf,elec,zc,gnd_ind,Ib,indH,df,perm_sym);</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Optional parameters</span>
+0006 <span class="comment">%   srf = specify [] to automatically generate</span>
+0007 <span class="comment">%   perm_sym = default is '{y}'</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Unknown parameters</span>
+0010 <span class="comment">%   specify '[]' to be used later</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% (C) 2005 Stephen Murphy. Licenced under GPL</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015 <span class="keyword">if</span> nargin&lt;10
+0016     perm_sym= <span class="string">'{y}'</span>;
+0017 <span class="keyword">end</span>
+0018 <span class="keyword">if</span> isempty( srf)
+0019     srf= <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>( simp );
+0020 <span class="keyword">end</span>
+0021 fwd_mdl= <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,<span class="string">'FWD_MDL created by set_fwd_model'</span>);
+0022 fwd_mdl.nodes=vtx;
+0023 fwd_mdl.elems=simp;
+0024 fwd_mdl.boundary=srf;
+0025 fwd_mdl.gnd_node=gnd_ind;
+0026 
+0027 elec_mdl=[];
+0028 <span class="keyword">for</span> loop1=1:size(elec,1);
+0029     elec_mdl(loop1,1).z_contact=zc(loop1);
+0030     elec_mdl(loop1,1).nodes=elec(loop1,:);
+0031 <span class="keyword">end</span>
+0032 
+0033 fwd_mdl.electrode=elec_mdl;
+0034 
+0035 stim_mdl=[];
+0036 <span class="keyword">for</span> loop1=1:size(df,1)
+0037     stim_mdl(loop1,1).stimulation=abs(max(Ib(:,loop1)));
+0038     stim_mdl(loop1,1).stim_pattern=Ib(:,loop1);
+0039     meas=zeros(df(loop1),size(elec,1));
+0040     loop3=1;
+0041     <span class="keyword">for</span> loop2=sum(df(1:loop1))-df(loop1)+1:sum(df(1:loop1))
+0042         meas(loop3,indH(loop2,1))=1;
+0043         meas(loop3,indH(loop2,2))=-1;
+0044         loop3=loop3+1;
+0045     <span class="keyword">end</span>
+0046     stim_mdl(loop1,1).meas_pattern=meas;
+0047 <span class="keyword">end</span>
+0048 
+0049 fwd_mdl.stimulation=stim_mdl;
+0050 fwd_mdl.misc.perm_sym=perm_sym;
+0051 fwd_mdl.solve=<span class="string">'np_fwd_solve'</span>;
+0052 fwd_mdl.jacobian=<span class="string">'np_calc_jacobian'</span>;
+0053 fwd_mdl.system_mat=<span class="string">'np_calc_system_mat'</span>;</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

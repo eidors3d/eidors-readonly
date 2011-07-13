@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of object_in_tank_2d</title>
+  <meta name="keywords" content="object_in_tank_2d">
+  <meta name="description" content="2D demo example for reconstruction of object floating inside tank with">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html examples -->
+<h1>object_in_tank_2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>2D demo example for reconstruction of object floating inside tank with</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> 2D demo example for reconstruction of object floating inside tank with
+ ambient fluid. Only internat structure of the object is reconstruted.
+ External shape od object, and parameters of fluid is treated as a known.
+ Dual meshing for inverse problem has been deployed.
+ 
+ (C) 2010 Bartosz Sawicki. License: GPL v.3</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>	MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM</li><li><a href="../../eidors/algorithms/a_adler/tikhonov_image_prior.html" class="code" title="function Reg= tikhonov_image_prior( inv_model );">tikhonov_image_prior</a>	TIKHONOV_IMAGE_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/b_sawicki/bs_nonlinearGN.html" class="code" title="function img= bs_nonlinearGN( inv_model, data )">bs_nonlinearGN</a>	NONLINEARGN Non-Linear EIT Inverse</li><li><a href="../../eidors/algorithms/b_sawicki/create_inclusion.html" class="code" title="function inhomg_img = create_inclusion( homg_img, center, r, inclusion_mat, order)">create_inclusion</a>	USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../eidors/meshing/gmsh/create_circle_mesh_gmsh.html" class="code" title="function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )">create_circle_mesh_gmsh</a>	Create a 2D Circular FEM using GMSH</li><li><a href="../../eidors/meshing/netgen/ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>	NG_MAKE_CYL_MODELS: create cylindrical models using netgen</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% 2D demo example for reconstruction of object floating inside tank with</span>
+0002 <span class="comment">% ambient fluid. Only internat structure of the object is reconstruted.</span>
+0003 <span class="comment">% External shape od object, and parameters of fluid is treated as a known.</span>
+0004 <span class="comment">% Dual meshing for inverse problem has been deployed.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% (C) 2010 Bartosz Sawicki. License: GPL v.3</span>
+0007 
+0008 <span class="comment">%% Create object model for reconstruction</span>
+0009 
+0010 object_center = [0.0, 0.1];
+0011 object_radius = 0.6;
+0012 
+0013 mdl = <a href="../../eidors/meshing/gmsh/create_circle_mesh_gmsh.html" class="code" title="function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )">create_circle_mesh_gmsh</a>(<span class="string">'circle'</span>, object_center, object_radius, 0.04 );
+0014 object_mdl = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>, mdl);
+0015 
+0016 <span class="comment">%% Create fine 'tank with object' model for forward problem</span>
+0017 
+0018 electrodes_per_plane = 16;
+0019 tank_radius = 1.0;
+0020 
+0021 extra={<span class="string">'object'</span>,<span class="string">'solid object = cylinder(0.0,0.,0;0,0,1;0.6) and plane(0,0,0;0,0,-1) and plane(0,0,0.2;0,0,1) -maxh=0.05;'</span>};
+0022 [tank_mdl, mat_indices] = <a href="../../eidors/meshing/netgen/ng_mk_cyl_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_cyl_models</a>([0,tank_radius,0.03],[electrodes_per_plane],[0.1,0,0.01], extra);
+0023 
+0024 fluid_indices=mat_indices{1};
+0025 object_indices=mat_indices{2};
+0026 
+0027 options = {<span class="string">'no_meas_current'</span>,<span class="string">'no_rotate_meas'</span>};
+0028 [st, els]= <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(electrodes_per_plane, 1, <span class="string">'{ad}'</span>,<span class="string">'{ad}'</span>, options, 10);
+0029 
+0030 tank_mdl.stimulation= st;
+0031 tank_mdl.meas_select= els;
+0032 tank_mdl.solve=      <span class="string">'aa_fwd_solve'</span>;
+0033 tank_mdl.system_mat= <span class="string">'bs_calc_system_mat'</span>;
+0034 tank_mdl.jacobian=   <span class="string">'aa_calc_jacobian'</span>;
+0035 tank_mdl.normalize_measurements= 0;
+0036 tank_mdl.np_fwd_solve.perm_sym= <span class="string">'{n}'</span>;
+0037 
+0038 <span class="comment">%% Solve model without inclusion</span>
+0039 disp(<span class="string">'Model without inclusion'</span>);
+0040 
+0041 <span class="comment">%Initialize</span>
+0042 mat = ones(size(tank_mdl.elems,1),1);
+0043 <span class="comment">%Fluid conductivity</span>
+0044 mat(fluid_indices) = 0.75;
+0045 <span class="comment">%Object avarage conductivity</span>
+0046 mat(object_indices) = 1.0;
+0047 
+0048 homg_img= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, <span class="string">'homogeneous image'</span>, <span class="keyword">...</span>
+0049                      <span class="string">'elem_data'</span>, mat, <span class="keyword">...</span>
+0050                      <span class="string">'fwd_model'</span>, tank_mdl );
+0051 
+0052 homg_data=<a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( tank_mdl, homg_img);
+0053 
+0054 <span class="comment">%% Create inclusion and solve model</span>
+0055 disp(<span class="string">'Model with inclusion'</span>);
+0056 
+0057 inclusion_center = [0.3, 0.3];
+0058 inclusion_radius = 0.05;
+0059 inclusion_conductivity = 1.1;
+0060 
+0061 inhomg_img = <a href="../../eidors/algorithms/b_sawicki/create_inclusion.html" class="code" title="function inhomg_img = create_inclusion( homg_img, center, r, inclusion_mat, order)">create_inclusion</a>(homg_img, inclusion_center, inclusion_radius, <span class="keyword">...</span>
+0062     inclusion_conductivity);
+0063 
+0064 inhomg_img.name = <span class="string">'Inhomogeneous model'</span>;
+0065 
+0066 figure; <a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>( inhomg_img );
+0067 
+0068 inhomg_data = <a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( tank_mdl, inhomg_img);
+0069 
+0070 <span class="comment">%% Add some noise</span>
+0071 disp(<span class="string">'Add noise'</span>);
+0072 
+0073 SNR = -30; <span class="comment">%dB</span>
+0074 
+0075 hdata = homg_data.meas;
+0076 idata = inhomg_data.meas;
+0077 noise = 10^(SNR/20)*std(idata-hdata)*randn(size(idata));
+0078 idata = idata + noise;
+0079 inhomg_data.meas = idata ;
+0080 
+0081 <span class="comment">%% Create inverse model</span>
+0082 disp(<span class="string">'Inverse model'</span>)
+0083 
+0084 inv2d.name=  <span class="string">'Object in tank 2D EIT inverse'</span>;
+0085 inv2d.fwd_model= tank_mdl;
+0086 inv2d.rec_model= object_mdl;
+0087 
+0088 disp(<span class="string">'Calculating coarse2fine mapping ...'</span>);
+0089 inv2d.fwd_model.coarse2fine = <span class="keyword">...</span>
+0090        <a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>( tank_mdl, object_mdl);
+0091 disp(<span class="string">'   ... done'</span>);
+0092 
+0093 <span class="comment">% Absolute reconstruction</span>
+0094 inv2d.reconst_type= <span class="string">'static'</span>;
+0095 inv2d.solve= @<a href="../../eidors/algorithms/b_sawicki/bs_nonlinearGN.html" class="code" title="function img= bs_nonlinearGN( inv_model, data )">bs_nonlinearGN</a>;
+0096 inv2d.parameters.term_tolerance= 1e-8;
+0097 inv2d.parameters.max_iterations= 5;
+0098 inv2d.nonlinearGN.init_backgnd= 0.00;
+0099 <span class="comment">%</span>
+0100 inv2d.RtR_prior= @<a href="../../eidors/algorithms/a_adler/tikhonov_image_prior.html" class="code" title="function Reg= tikhonov_image_prior( inv_model );">tikhonov_image_prior</a>;
+0101 inv2d.hyperparameter.value= 1e-3;
+0102 <span class="comment">%</span>
+0103 inv2d.fwd_model.background= homg_img.elem_data;
+0104 
+0105 inv2d= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>, inv2d);
+0106 recon_img= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>(inv2d, inhomg_data);
+0107 
+0108 figure; <a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>( recon_img );</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

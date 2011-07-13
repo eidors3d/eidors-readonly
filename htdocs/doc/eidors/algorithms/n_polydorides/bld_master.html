@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bld_master</title>
+  <meta name="keywords" content="bld_master">
+  <meta name="description" content="function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>bld_master
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);
+
+Builds up the main compartment (GAP-SHUNT) of the system matrix 
+for the complete electrode model. It is called within the function 
+fem_master_full.
+
+
+
+Ef      = The UNreferenced GAP based system matrix
+D       = The sgradients of the shape functions 
+          over each element.
+Ela     = Normalised volums of the elements
+vtx     = The vertices matrix.
+simp    = The simplices matrix.
+mat_ref = The reference CONDUCTIVITY at each element. 
+In the complex case mat_ref(i) = sigma(i) - epsilon(i)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="bld_master_full.html" class="code" title="function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);">bld_master_full</a>	function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [Ef,A,Ela] = bld_master_2d(vtx,simp,mat_ref)</a></li><li><a href="#_sub2" class="code">function [Ef,D,Ela] = bld_master_3d(vtx,simp,mat_ref)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);</a>
+0002 <span class="comment">%function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%Builds up the main compartment (GAP-SHUNT) of the system matrix</span>
+0005 <span class="comment">%for the complete electrode model. It is called within the function</span>
+0006 <span class="comment">%fem_master_full.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%Ef      = The UNreferenced GAP based system matrix</span>
+0011 <span class="comment">%D       = The sgradients of the shape functions</span>
+0012 <span class="comment">%          over each element.</span>
+0013 <span class="comment">%Ela     = Normalised volums of the elements</span>
+0014 <span class="comment">%vtx     = The vertices matrix.</span>
+0015 <span class="comment">%simp    = The simplices matrix.</span>
+0016 <span class="comment">%mat_ref = The reference CONDUCTIVITY at each element.</span>
+0017 <span class="comment">%In the complex case mat_ref(i) = sigma(i) - epsilon(i)</span>
+0018 
+0019 dimen= size(vtx,2);
+0020 <span class="keyword">if</span> dimen==2
+0021    [Ef,D,Ela] = <a href="#_sub1" class="code" title="subfunction [Ef,A,Ela] = bld_master_2d(vtx,simp,mat_ref)">bld_master_2d</a>(vtx,simp,mat_ref); 
+0022 <span class="keyword">elseif</span> dimen==3
+0023    [Ef,D,Ela] = <a href="#_sub2" class="code" title="subfunction [Ef,D,Ela] = bld_master_3d(vtx,simp,mat_ref)">bld_master_3d</a>(vtx,simp,mat_ref);
+0024 <span class="keyword">else</span>
+0025    error(<span class="string">'not 2d or 3d'</span>);
+0026 <span class="keyword">end</span>
+0027    
+0028 <a name="_sub1" href="#_subfunctions" class="code">function [Ef,A,Ela] = bld_master_2d(vtx,simp,mat_ref) </a>
+0029 <span class="comment">%Based on gm_assemble by S.Vavasis , http://www.cs.cornel.edu/</span>
+0030 
+0031 [vr, vc] = size(vtx);
+0032 [sr, sc] = size(simp);
+0033 a = mat_ref;
+0034 
+0035 ilist = kron((1:vc*sr), [1,1]);
+0036 jlist = zeros(1,sr*vc*2);
+0037 slist = zeros(1,sr*vc*2);
+0038 
+0039 <span class="keyword">for</span> d = 1 : vc
+0040   jlist(2 * d - 1 : 2 * vc : sr * vc * 2) = simp(:,1)';
+0041   jlist(2 * d : 2 * vc : sr * vc * 2) = simp(:, d + 1);
+0042   slist(2 * d - 1 : 2 * vc : sr * vc * 2) = -ones(1,sr);
+0043   slist(2 * d : 2 * vc : sr * vc * 2) = ones(1,sr);
+0044 <span class="keyword">end</span>
+0045 
+0046 A0 = sparse(ilist,jlist,slist,vc*sr,vr);
+0047 
+0048 
+0049 <span class="keyword">if</span> vc == 2
+0050   J1 = A0 * vtx(:,1);
+0051   J2 = A0 * vtx(:,2);
+0052   J11 = J1(1:2:sr*2);
+0053   J12 = J1(2:2:sr*2);
+0054   J21 = J2(1:2:sr*2);
+0055   J22 = J2(2:2:sr*2);
+0056   detJ = J11 .* J22 - J21 .* J12;
+0057   
+0058   
+0059   invJ11 = J22 ./ detJ;
+0060   invJ12 = -J12 ./ detJ;
+0061   invJ21 = -J21 ./ detJ;
+0062   invJ22 = J11 ./ detJ;
+0063 <span class="keyword">elseif</span> vc == 3
+0064   J1 = A0 * vtx(:,1);
+0065   J2 = A0 * vtx(:,2);
+0066   J3 = A0 * vtx(:,3);
+0067   J11 = J1(1:3:sr*3);
+0068   J12 = J1(2:3:sr*3);
+0069   J13 = J1(3:3:sr*3);
+0070   J21 = J2(1:3:sr*3);
+0071   J22 = J2(2:3:sr*3);
+0072   J23 = J2(3:3:sr*3);
+0073   J31 = J3(1:3:sr*3);
+0074   J32 = J3(2:3:sr*3);
+0075   J33 = J3(3:3:sr*3);
+0076   detJ = J11 .* J22 .* J33 - J11 .* J23 .* J32 - J12 .* J21 .* J33 <span class="keyword">...</span>
+0077           + J12 .* J23 .* J31 + J13 .* J21 .* J32 - J13 .* J22 .* J31;
+0078        
+0079        
+0080   invJ11 = (J22 .* J33 - J23 .* J32) ./ detJ;
+0081   invJ12 = (J32 .* J13 - J12 .* J33) ./ detJ;
+0082   invJ13 = (J12 .* J23 - J22 .* J13) ./ detJ;
+0083   invJ21 = (J31 .* J23 - J21 .* J33) ./ detJ;
+0084   invJ22 = (J11 .* J33 - J13 .* J31) ./ detJ;
+0085   invJ23 = (J21 .* J13 - J11 .* J23) ./ detJ;
+0086   invJ31 = (J21 .* J32 - J31 .* J22) ./ detJ;
+0087   invJ32 = (J31 .* J12 - J11 .* J32) ./ detJ;
+0088   invJ33 = (J11 .* J22 - J21 .* J12) ./ detJ;
+0089 <span class="keyword">else</span>
+0090   error(<span class="string">'Master matrix construction failed'</span>)
+0091 <span class="keyword">end</span>
+0092 
+0093 
+0094 ilist = kron((1 : vc * sr), ones(1,vc));
+0095 jlist = zeros(1, sr*vc^2);
+0096 <span class="keyword">for</span> d = 1 : vc 
+0097   jlist(d:vc:sr*vc^2) = kron((d:vc:vc*sr),ones(1,vc));
+0098 <span class="keyword">end</span>
+0099 
+0100 <span class="keyword">if</span> vc == 2
+0101   slist = zeros(1,sr*4);
+0102   slist(1:4:sr*4) = invJ11;
+0103   slist(2:4:sr*4) = invJ21;
+0104   slist(3:4:sr*4) = invJ12;
+0105   slist(4:4:sr*4) = invJ22;
+0106 <span class="keyword">else</span>
+0107   slist = zeros(1,sr*9);
+0108   slist(1:9:sr*9) = invJ11;
+0109   slist(2:9:sr*9) = invJ21;
+0110   slist(3:9:sr*9) = invJ31;
+0111   slist(4:9:sr*9) = invJ12;
+0112   slist(5:9:sr*9) = invJ22;
+0113   slist(6:9:sr*9) = invJ32;
+0114   slist(7:9:sr*9) = invJ13;
+0115   slist(8:9:sr*9) = invJ23;
+0116   slist(9:9:sr*9) = invJ33;
+0117 <span class="keyword">end</span>
+0118 
+0119 
+0120 ElJac = sparse(ilist,jlist,slist,vc*sr,vc*sr);
+0121 A = ElJac * A0;
+0122 
+0123 
+0124 Vols = abs(detJ) / prod(1:vc);
+0125 
+0126 materials = length(a);
+0127 volumes = size(Vols);
+0128 
+0129 <span class="keyword">if</span> materials ~= volumes
+0130   error(<span class="string">'Some elements have not been assigned'</span>);
+0131 <span class="keyword">end</span>;
+0132 
+0133 Ela = sparse( (1:vc*sr), (1:vc*sr),kron( (a .* Vols)',ones(1,vc)) );
+0134 
+0135 Ef = A'*Ela*A; 
+0136 
+0137 <span class="comment">%This is for the Jacobian matrix (does not include conductivity)</span>
+0138 Ela = sparse( (1:vc*sr), (1:vc*sr),kron( Vols.',ones(1,vc)) );
+0139 
+0140 
+0141 <span class="comment">%</span>
+0142 <span class="comment">% 3D BLD MASTER</span>
+0143 <span class="comment">%</span>
+0144 <a name="_sub2" href="#_subfunctions" class="code">function [Ef,D,Ela] = bld_master_3d(vtx,simp,mat_ref) </a>
+0145 [nv, dimen] = size(vtx);  <span class="comment">%Number of vertices and dimension</span>
+0146 [ns, dimen_p1] = size(simp); <span class="comment">%Number of simplices</span>
+0147 a = mat_ref;
+0148 dimen2 = 2*dimen;
+0149 
+0150 ils = 1:dimen*ns;
+0151 ilst(1:2:dimen2*ns) = ils;
+0152 ilst(2:2:dimen2*ns) = ils;
+0153 
+0154 
+0155 patt = 1:dimen2:ns*dimen2;
+0156 
+0157 jlst(patt) = simp(:,1);
+0158 jlst(patt+1) = simp(:,2);
+0159 jlst(patt+2) = simp(:,1);
+0160 jlst(patt+3) = simp(:,3);
+0161 jlst(patt+4) = simp(:,1);
+0162 jlst(patt+5) = simp(:,4);
+0163 
+0164 
+0165 sls = ones(1,dimen*ns);
+0166 slst(1:2:dimen2*ns) = -sls;
+0167 slst(2:2:dimen2*ns) = sls;
+0168 
+0169 
+0170 D0 = sparse(ilst,jlst,slst,dimen*ns,nv); 
+0171 <span class="comment">%D0 is the matrix of the definitions of the gradients on elements</span>
+0172 
+0173 J1 = D0 * vtx(:,1);
+0174 J2 = D0 * vtx(:,2);
+0175 J3 = D0 * vtx(:,3);
+0176   
+0177 JJ= zeros( 3,3, ns );
+0178 <span class="keyword">for</span> w=1:3
+0179    r=1;
+0180    JJ(r,w,:)   = J1(w:dimen:ns*dimen);
+0181    JJ(r+1,w,:) = J2(w:dimen:ns*dimen);
+0182    JJ(r+2,w,:) = J3(w:dimen:ns*dimen);
+0183 <span class="keyword">end</span>
+0184 
+0185 dj = squeeze(sum( [prod([JJ(1,1,:);JJ(2,2,:);JJ(3,3,:)]); prod([JJ(1,2,:);JJ(2,3,:);JJ(3,1,:)]);<span class="keyword">...</span>
+0186                    prod([JJ(1,3,:);JJ(2,1,:);JJ(3,2,:)]); prod([-JJ(1,3,:);JJ(2,2,:);JJ(3,1,:)]);<span class="keyword">...</span>
+0187                    prod([-JJ(1,1,:);JJ(2,3,:);JJ(3,2,:)]); prod([-JJ(1,2,:);JJ(2,1,:);JJ(3,3,:)])]));
+0188 
+0189       
+0190 ilst = kron((1:dimen*ns), ones(1,dimen));
+0191 jlst = zeros(1, ns*dimen^2);
+0192 <span class="keyword">for</span> d = 1:dimen 
+0193   jlst(d:dimen:ns*dimen^2) = kron((d:dimen:dimen*ns),ones(1,dimen));
+0194 <span class="keyword">end</span>
+0195 slst = zeros(1,ns*dimen^2); 
+0196    
+0197   pat = 1:dimen^2:ns*dimen^2; 
+0198   
+0199   slst(pat) = squeeze(sum([prod([JJ(2,2,:) ; JJ(3,3,:)]); prod([-JJ(2,3,:) ; JJ(3,2,:)])])) ./ dj; 
+0200   slst(pat+1) = squeeze(sum([prod([JJ(3,1,:) ; JJ(2,3,:)]); prod([-JJ(2,1,:) ; JJ(3,3,:)])])) ./ dj; 
+0201   slst(pat+2) = squeeze(sum([prod([JJ(2,1,:) ; JJ(3,2,:)]); prod([-JJ(3,1,:) ; JJ(2,2,:)])])) ./ dj; 
+0202   slst(pat+3) = squeeze(sum([prod([JJ(3,2,:) ; JJ(1,3,:)]); prod([-JJ(1,2,:) ; JJ(3,3,:)])])) ./ dj; 
+0203   slst(pat+4) = squeeze(sum([prod([JJ(1,1,:) ; JJ(3,3,:)]); prod([-JJ(1,3,:) ; JJ(3,1,:)])])) ./ dj; 
+0204   slst(pat+5) = squeeze(sum([prod([JJ(3,1,:) ; JJ(1,2,:)]); prod([-JJ(1,1,:) ; JJ(3,2,:)])])) ./ dj; 
+0205   slst(pat+6) = squeeze(sum([prod([JJ(1,2,:) ; JJ(2,3,:)]); prod([-JJ(2,2,:) ; JJ(1,3,:)])])) ./ dj; 
+0206   slst(pat+7) = squeeze(sum([prod([JJ(2,1,:) ; JJ(1,3,:)]); prod([-JJ(1,1,:) ; JJ(2,3,:)])])) ./ dj; 
+0207   slst(pat+8) = squeeze(sum([prod([JJ(1,1,:) ; JJ(2,2,:)]); prod([-JJ(2,1,:) ; JJ(1,2,:)])])) ./ dj; 
+0208   
+0209 
+0210 LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns);
+0211 
+0212 D = LocJac * D0;
+0213 
+0214 
+0215 Vols = abs(dj(:)) / 6;
+0216 
+0217 materials = length(a);
+0218 volumes = size(Vols);
+0219 
+0220 <span class="keyword">if</span> materials ~= volumes
+0221   error(<span class="string">'Some elements have not been assigned'</span>);
+0222 <span class="keyword">end</span>;
+0223 
+0224 <span class="comment">%This is for the global conductance matrix (includes conductivity)</span>
+0225 Ela = sparse( (1:dimen*ns), (1:dimen*ns),kron( (a.* Vols).',ones(1,dimen)) );
+0226 
+0227 Ef = D'*Ela*D; 
+0228 
+0229 <span class="comment">%This is for the Jacobian matrix (does not include conductivity)</span>
+0230 Ela = sparse( (1:dimen*ns), (1:dimen*ns),kron( Vols.',ones(1,dimen)) );
+0231 
+0232 
+0233 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0234 <span class="comment">% This is part of the EIDORS suite.</span>
+0235 <span class="comment">% Copyright (c) N. Polydorides 2003</span>
+0236 <span class="comment">% Copying permitted under terms of GNU GPL</span>
+0237 <span class="comment">% See enclosed file gpl.html for details.</span>
+0238 <span class="comment">% EIDORS 3D version 2.0</span>
+0239 <span class="comment">% MATLAB version 5.3 R11</span>
+0240 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0241</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_difference_data</title>
+  <meta name="keywords" content="calc_difference_data">
+  <meta name="description" content="CALC_DIFFERENCE_DATA: calculate difference data between">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html algorithms -->
+<h1>calc_difference_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>CALC_DIFFERENCE_DATA: calculate difference data between</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function dva = calc_difference_data( data1, data2, fwd_model) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_DIFFERENCE_DATA: calculate difference data between
+   two eidors data vectors
+ dva = calc_difference_data( meas1, meas2, fwd_model)
+   
+  dva   = Matrix n_meas x n_time_steps of difference meas
+  meas1 = measurement object (or matrix) at time1 (homogeneous)
+  meas2 = measurement object (or matrix) at time2 (inhomogeneous)
+  fwd_model (optional, if provided in meas1 and meas2)
+
+  if data1==0, then just process data2 like absolute data
+
+ This code appears simple, but there are a number of tricks
+  to remember, so it is best to factor it out. Issues are
+  1) normalize_data, 2) remove zero meas from adjacent systems,
+  3) allow both raw data and eidors_obj formats for data</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_total_var.html" class="code" title="function img= aa_inv_total_var( inv_model, data1, data2)">aa_inv_total_var</a>	AA_INV_TOTAL_VARIANCE inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/backproj_solve.html" class="code" title="function img= backproj_solve( inv_model, data1, data2)">backproj_solve</a>	BACKPROJ_SOLVE inverse solver using backprojection</li><li><a href="../../eidors/algorithms/a_adler/calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>	CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm</li><li><a href="../../eidors/algorithms/a_adler/calc_noise_params.html" class="code" title="function params = calc_noise_params(imdl, vh, vi )">calc_noise_params</a>	params = GREIT_noise_params(imdl, homg_voltage, sig_voltage)</li><li><a href="../../eidors/algorithms/a_adler/calc_reciproc_error.html" class="code" title="function meas_icov = calc_reciproc_error(inv_model, data )">calc_reciproc_error</a>	CALC_RECIPROC_ERROR: CALCULATE RECIPROCITY ERROR MATRIX</li><li><a href="../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/solve_use_matrix.html" class="code" title="function img= solve_use_matrix( inv_model, data1, data2)">solve_use_matrix</a>	SOLVE_USE_MATRIX solve using reconstruction matrix</li><li><a href="../../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../../eidors/algorithms/a_borsic/ab_tv_diff_solve.html" class="code" title="function img= ab_tv_diff_solve( inv_model, data1, data2)">ab_tv_diff_solve</a>	AB_TV_DIFF_SOLVE inverse solver for Andrea Borsic's</li><li><a href="../../eidors/algorithms/a_borsic/ab_tv_lagged_diff.html" class="code" title="function img=ab_tv_lagged_diff( inv_model, data1, data2)">ab_tv_lagged_diff</a>	AB_TV_LAGGED_DIFF Lagged Diffusivity Inverse Solver</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_abs.html" class="code" title="function img=pdipm_abs( inv_model, data);">pdipm_abs</a>	PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_diff.html" class="code" title="function img=pdipm_diff( inv_model, data1, data2)">pdipm_diff</a>	PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/primaldual_tvrecon_lsearch.html" class="code" title="function [rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas,maxiter,alpha1,alpha2, epsilon, beta, min_change)">primaldual_tvrecon_lsearch</a>	[rs,x]=primaldual_tvrecon_lsearch(inv_mdl, vmeas, ...</li><li><a href="../../eidors/algorithms/d_stephenson/inv_solve_trunc_iterative.html" class="code" title="function img= inv_solve_trunc_iterative( inv_model, data1, data2)">inv_solve_trunc_iterative</a>	INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration</li><li><a href="../../eidors/algorithms/n_polydorides/mcmc_solve.html" class="code" title="function img= mcmc_solve( inv_model, data1, data2)">mcmc_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function nf= num_frames(d0)</a></li><li><a href="#_sub2" class="code">function d2= filt_data(fwd_model, d0, data_width )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function dva = calc_difference_data( data1, data2, fwd_model)</a>
+0002 <span class="comment">% CALC_DIFFERENCE_DATA: calculate difference data between</span>
+0003 <span class="comment">%   two eidors data vectors</span>
+0004 <span class="comment">% dva = calc_difference_data( meas1, meas2, fwd_model)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%  dva   = Matrix n_meas x n_time_steps of difference meas</span>
+0007 <span class="comment">%  meas1 = measurement object (or matrix) at time1 (homogeneous)</span>
+0008 <span class="comment">%  meas2 = measurement object (or matrix) at time2 (inhomogeneous)</span>
+0009 <span class="comment">%  fwd_model (optional, if provided in meas1 and meas2)</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%  if data1==0, then just process data2 like absolute data</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% This code appears simple, but there are a number of tricks</span>
+0014 <span class="comment">%  to remember, so it is best to factor it out. Issues are</span>
+0015 <span class="comment">%  1) normalize_data, 2) remove zero meas from adjacent systems,</span>
+0016 <span class="comment">%  3) allow both raw data and eidors_obj formats for data</span>
+0017 
+0018 <span class="comment">% (C) 2006 Andy Adler. License: GPL version 2 or version 3</span>
+0019 <span class="comment">% $Id$</span>
+0020 
+0021 data_width= max(<a href="#_sub1" class="code" title="subfunction nf= num_frames(d0)">num_frames</a>(data1), <a href="#_sub1" class="code" title="subfunction nf= num_frames(d0)">num_frames</a>(data2));
+0022 
+0023 <span class="keyword">try</span> <span class="keyword">if</span> data1.type == <span class="string">'data'</span>
+0024    data1= data1.meas;
+0025 <span class="keyword">end</span>; <span class="keyword">end</span>
+0026 
+0027 <span class="keyword">try</span> <span class="keyword">if</span> data2.type == <span class="string">'data'</span>
+0028    data2= data2.meas;
+0029 <span class="keyword">end</span>; <span class="keyword">end</span>
+0030 
+0031 <span class="keyword">if</span> all(size(data1) == [1,1]) &amp;&amp; (data1 == 0)
+0032    dva =  <a href="#_sub2" class="code" title="subfunction d2= filt_data(fwd_model, d0, data_width )">filt_data</a>( fwd_model, data2, data_width );
+0033    <span class="keyword">return</span>;
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">if</span> ~isfield(fwd_model,<span class="string">'normalize_measurements'</span>)
+0037    fwd_model.normalize_measurements = 0;
+0038 <span class="keyword">end</span>
+0039 
+0040 fdata1 = <a href="#_sub2" class="code" title="subfunction d2= filt_data(fwd_model, d0, data_width )">filt_data</a>( fwd_model, data1, data_width );
+0041 fdata2 = <a href="#_sub2" class="code" title="subfunction d2= filt_data(fwd_model, d0, data_width )">filt_data</a>( fwd_model, data2, data_width );
+0042 
+0043 <span class="keyword">if</span> fwd_model.normalize_measurements
+0044    dva= fdata2 ./ fdata1 - 1;
+0045 <span class="keyword">else</span>   
+0046    dva= fdata2 - fdata1;
+0047 <span class="keyword">end</span>
+0048 
+0049 <a name="_sub1" href="#_subfunctions" class="code">function nf= num_frames(d0)</a>
+0050    <span class="keyword">if</span> isnumeric( d0 )
+0051       nf= size(d0,2);
+0052    <span class="keyword">elseif</span> strcmp( d0(1).type, <span class="string">'data'</span> );
+0053       nf= length(d0);
+0054    <span class="keyword">else</span>
+0055       error(<span class="string">'Problem calculating number of frames'</span>);
+0056    <span class="keyword">end</span>
+0057    
+0058 <span class="comment">% test for existance of meas_select and filter data</span>
+0059 <a name="_sub2" href="#_subfunctions" class="code">function d2= filt_data(fwd_model, d0, data_width )</a>
+0060    <span class="keyword">if</span> ~isnumeric( d0 )
+0061        <span class="comment">% we probably have a 'data' object</span>
+0062 
+0063        l_obj = length(d0);
+0064        d1 = zeros( length( d0(1).meas ), l_obj);
+0065        <span class="keyword">for</span> i=1:l_obj
+0066           <span class="keyword">if</span> strcmp( d0(i).type, <span class="string">'data'</span> )
+0067               d1(:,i) = d0(i).meas;
+0068           <span class="keyword">else</span>
+0069               error(<span class="string">'expecting an object of type data'</span>);
+0070           <span class="keyword">end</span>
+0071        <span class="keyword">end</span>
+0072 
+0073    <span class="keyword">else</span>
+0074       <span class="comment">% we have a matrix of data. Hope for the best</span>
+0075       d1 = d0;
+0076    <span class="keyword">end</span>
+0077 
+0078    d1= double(d1); <span class="comment">% ensure we can do math on our object</span>
+0079 
+0080    <span class="keyword">if</span> isfield(fwd_model,<span class="string">'meas_select'</span>) &amp;&amp; <span class="keyword">...</span>
+0081      ~isempty(fwd_model.meas_select);
+0082       <span class="comment">% we have a meas_select parameter</span>
+0083 
+0084       meas_select= fwd_model.meas_select;
+0085       <span class="keyword">if</span>     size(d1,1) == length(meas_select)
+0086          d2= d1(meas_select,:);
+0087       <span class="keyword">elseif</span> size(d1,1) == sum(meas_select==1)
+0088          d2= d1;
+0089       <span class="keyword">else</span>
+0090          error(<span class="string">'data size does not match meas_select'</span>);
+0091       <span class="keyword">end</span>
+0092    <span class="keyword">else</span>
+0093       d2= d1;
+0094    <span class="keyword">end</span>
+0095 
+0096    <span class="keyword">if</span> nargin==3 <span class="comment">% expand to data width</span>
+0097       d2_width= size(d2,2);
+0098       <span class="keyword">if</span> d2_width == data_width
+0099          <span class="comment">% ok</span>
+0100       <span class="keyword">elseif</span> d2_width == 1
+0101          d2= d2(:,ones(1,data_width));
+0102       <span class="keyword">else</span>
+0103          error(<span class="string">'inconsistent difference data: (%d ~= %d)'</span>,  <span class="keyword">...</span>
+0104                d2_width, data_width);
+0105       <span class="keyword">end</span>
+0106    <span class="keyword">end</span>
+0107</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

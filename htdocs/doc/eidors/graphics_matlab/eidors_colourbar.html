@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of eidors_colourbar</title>
+  <meta name="keywords" content="eidors_colourbar">
+  <meta name="description" content="EIDORS_COLOURBAR - create an eidors colourbar with scaling to image">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html graphics_matlab -->
+<h1>eidors_colourbar
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>EIDORS_COLOURBAR - create an eidors colourbar with scaling to image</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function eidors_colourbar(max_scale,ref_lev, cb_shrink_move) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> EIDORS_COLOURBAR - create an eidors colourbar with scaling to image
+ usage: eidors_colourbar(max_scale,ref_lev)
+    ref_lev:   centre of the colour scale
+    max_scale: max difference from colour scale centre 
+
+ Optional parameter:
+    cb_shrink_move(1) = horizontal shrink (relative)
+    cb_shrink_move(2) = vertial shrink (relative)
+    cb_shrink_move(3) = horizontal move (absolute screen units)
+
+ The colorbars are removed with colorbar('delete')</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)</a>
+0002 <span class="comment">% EIDORS_COLOURBAR - create an eidors colourbar with scaling to image</span>
+0003 <span class="comment">% usage: eidors_colourbar(max_scale,ref_lev)</span>
+0004 <span class="comment">%    ref_lev:   centre of the colour scale</span>
+0005 <span class="comment">%    max_scale: max difference from colour scale centre</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Optional parameter:</span>
+0008 <span class="comment">%    cb_shrink_move(1) = horizontal shrink (relative)</span>
+0009 <span class="comment">%    cb_shrink_move(2) = vertial shrink (relative)</span>
+0010 <span class="comment">%    cb_shrink_move(3) = horizontal move (absolute screen units)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% The colorbars are removed with colorbar('delete')</span>
+0013 
+0014 <span class="comment">% (C) 2005-2010 Andy Adler. License: GPL version 2 or version 3</span>
+0015 <span class="comment">% $Id$</span>
+0016 
+0017    hh= colorbar; 
+0018    <span class="comment">% make colourbar smaller and closer to axis</span>
+0019    <span class="keyword">if</span> nargin == 3
+0020       posn= get(hh,<span class="string">'Position'</span>);
+0021       cbsm = cb_shrink_move; 
+0022       <span class="keyword">if</span> ~all(cbsm == [1,1,0]); 
+0023          posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, <span class="keyword">...</span>
+0024                  posn(3) * cbsm(1), posn(4) * cbsm(2)];
+0025         
+0026          set(hh,<span class="string">'Position'</span>, posn );
+0027 
+0028       <span class="keyword">end</span>
+0029    <span class="keyword">end</span>
+0030 
+0031    <span class="comment">% Stop scale from being too small</span>
+0032    <span class="keyword">if</span> max_scale&lt;abs(ref_lev)
+0033       <span class="keyword">if</span> max_scale &lt; 1e-10; max_scale = 1e-10; <span class="keyword">end</span>
+0034    <span class="keyword">else</span>
+0035       <span class="keyword">if</span> max_scale/abs(ref_lev) &lt; 1e-4; max_scale = ref_lev*1e-4; <span class="keyword">end</span> 
+0036    <span class="keyword">end</span>
+0037 
+0038    <span class="comment">% Get colormap limits  and move bottom so we don't see the background colour</span>
+0039    ylim = get(hh,<span class="string">'Ylim'</span>);
+0040    ylim(1)= ylim(1)+1;
+0041    set(hh,<span class="string">'Ylim'</span>,ylim);
+0042 
+0043    c_ctr = mean(ylim);
+0044    c_max = ylim(2) - c_ctr;
+0045 
+0046 <span class="comment">%  in order to make the labels clean, we round to a near level</span>
+0047    OrdOfMag = 10^floor(log10(max_scale));
+0048    scale_r  = OrdOfMag * floor( max_scale / OrdOfMag );
+0049    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
+0050    
+0051    tick_vals = [-1:0.5:1]*scale_r + ref_r;
+0052    <span class="comment">% ref_lev goes to c_ctr. max_scale goes to c_max</span>
+0053    tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+0054    set(hh,<span class="string">'YTick'</span>, tick_locs');
+0055    set(hh,<span class="string">'YTickLabel'</span>, tick_vals');
+0056</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

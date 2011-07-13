@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of np_calc_image_prior</title>
+  <meta name="keywords" content="np_calc_image_prior">
+  <meta name="description" content="NP_CALC_IMAGE_PRIOR calculate image prior">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>np_calc_image_prior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NP_CALC_IMAGE_PRIOR calculate image prior</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function Reg= np_calc_image_prior( inv_model ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NP_CALC_IMAGE_PRIOR calculate image prior
+
+ Intended to be used as calc_R_prior
+
+ Ref= np_calc_image_prior( inv_model )
+ Ref        =&gt; output regularization term
+ inv_model  =&gt; inverse model struct</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="iso_f_smooth.html" class="code" title="function [Reg] = iso_f_smooth(simp,vtx,deg,w);">iso_f_smooth</a>	function [Reg] = iso_f_smooth(simp,vtx,deg,w);</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/tests/test_c2f_jacobian.html" class="code" title="function test_c2f_jacobian">test_c2f_jacobian</a>	Test calc of jacobian given coarse to fine mapping</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Reg= np_calc_image_prior( inv_model );</a>
+0002 <span class="comment">% NP_CALC_IMAGE_PRIOR calculate image prior</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Intended to be used as calc_R_prior</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Ref= np_calc_image_prior( inv_model )</span>
+0007 <span class="comment">% Ref        =&gt; output regularization term</span>
+0008 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0009 
+0010 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0011 <span class="comment">% $Id$</span>
+0012 
+0013 Reg = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, inv_model, <span class="string">'np_2003_image_prior'</span>);
+0014 
+0015 <span class="keyword">if</span> ~isempty(Reg)
+0016    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'np_calc_image_prior: using cached value'</span>, 3);
+0017    <span class="keyword">return</span>
+0018 <span class="keyword">end</span>
+0019 
+0020 parameters=  inv_model.np_calc_image_prior.parameters;
+0021 smooth_deg= parameters(1);
+0022 smooth_w  = parameters(2);
+0023 
+0024 Reg = <a href="iso_f_smooth.html" class="code" title="function [Reg] = iso_f_smooth(simp,vtx,deg,w);">iso_f_smooth</a>(inv_model.fwd_model.elems, <span class="keyword">...</span>
+0025                    inv_model.fwd_model.nodes, <span class="keyword">...</span>
+0026                    smooth_deg, smooth_w);
+0027 
+0028 <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, inv_model, <span class="string">'np_2003_image_prior'</span>, Reg);
+0029 <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'np_calc_image_prior: setting cached value'</span>, 3);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

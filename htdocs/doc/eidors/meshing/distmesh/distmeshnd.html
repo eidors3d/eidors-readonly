@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of distmeshnd</title>
+  <meta name="keywords" content="distmeshnd">
+  <meta name="description" content="DISTMESHND N-D Mesh Generator using Distance Functions.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html distmesh -->
+<h1>distmeshnd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DISTMESHND N-D Mesh Generator using Distance Functions.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">DISTMESHND N-D Mesh Generator using Distance Functions.
+   [P,T]=DISTMESHND(FDIST,FH,H,BOX,FIX,FDISTPARAMS)
+
+      P:           Node positions (NxNDIM)
+      T:           Triangle indices (NTx(NDIM+1))
+      FDIST:       Distance function
+      FH:          Edge length function
+      H:           Smallest edge length
+      BOX:         Bounding box [xmin,xmax;ymin,ymax; ...] (NDIMx2)
+      FIX:         Fixed node positions (NFIXxNDIM)
+      FDISTPARAMS: Additional parameters passed to FDIST
+
+   Example: Unit ball
+      dim=3;
+      d=inline('sqrt(sum(p.^2,2))-1','p');
+      [p,t]=distmeshnd(d,@huniform,0.2,[-ones(1,dim);ones(1,dim)],[]);
+
+   See also: <a href="distmesh2d.html" class="code" title="function [p,t]=distmesh2d(fd,fh,h0,bbox,pfix,varargin)">DISTMESH2D</a>, DELAUNAYN, TRIMESH, MESHDEMOND.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="dm_2d_pt_elecs.html" class="code" title="function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);">dm_2d_pt_elecs</a>	DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined</li><li><a href="dm_mk_fwd_model.html" class="code" title="function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes,refine_nodes, z_contact, name)">dm_mk_fwd_model</a>	DM_MK_FWD_MODEL: create a fwd_model object using distmesh</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)</a>
+0002 <span class="comment">%DISTMESHND N-D Mesh Generator using Distance Functions.</span>
+0003 <span class="comment">%   [P,T]=DISTMESHND(FDIST,FH,H,BOX,FIX,FDISTPARAMS)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%      P:           Node positions (NxNDIM)</span>
+0006 <span class="comment">%      T:           Triangle indices (NTx(NDIM+1))</span>
+0007 <span class="comment">%      FDIST:       Distance function</span>
+0008 <span class="comment">%      FH:          Edge length function</span>
+0009 <span class="comment">%      H:           Smallest edge length</span>
+0010 <span class="comment">%      BOX:         Bounding box [xmin,xmax;ymin,ymax; ...] (NDIMx2)</span>
+0011 <span class="comment">%      FIX:         Fixed node positions (NFIXxNDIM)</span>
+0012 <span class="comment">%      FDISTPARAMS: Additional parameters passed to FDIST</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%   Example: Unit ball</span>
+0015 <span class="comment">%      dim=3;</span>
+0016 <span class="comment">%      d=inline('sqrt(sum(p.^2,2))-1','p');</span>
+0017 <span class="comment">%      [p,t]=distmeshnd(d,@huniform,0.2,[-ones(1,dim);ones(1,dim)],[]);</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   See also: DISTMESH2D, DELAUNAYN, TRIMESH, MESHDEMOND.</span>
+0020 
+0021 <span class="comment">%   Copyright (C) 2004-2006 Per-Olof Persson. See COPYRIGHT.TXT for details.</span>
+0022 <span class="comment">% This file is taken from the 3.2 Release by Per-Olof Persson,</span>
+0023 <span class="comment">% available under the GPL version 2 or any later version.</span>
+0024 <span class="comment">% Source is from http://www-math.mit.edu/~persson/mesh/</span>
+0025 
+0026 <span class="keyword">global</span> distmesh_do_graphics; <span class="comment">% flag do decide if we do graphics</span>
+0027 maxiter = 500;
+0028 
+0029 dim=size(box,2);
+0030 ptol=.01;
+0031 ttol=.1;
+0032 L0mult=1+.4/2^(dim-1);
+0033 deltat=.10; <span class="comment">% Stimulation Time step - Speed or slow simulation</span>
+0034 geps=1e-1*h; deps=sqrt(eps)*h;
+0035 
+0036 <span class="comment">% 1. Create initial distribution in bounding box</span>
+0037 <span class="keyword">if</span> dim==1
+0038   p=(box(1):h:box(2))';
+0039 <span class="keyword">else</span>
+0040   cbox=cell(1,dim);
+0041   <span class="keyword">for</span> ii=1:dim
+0042     cbox{ii}=box(1,ii):h:box(2,ii);
+0043   <span class="keyword">end</span>
+0044   pp=cell(1,dim);
+0045   [pp{:}]=ndgrid(cbox{:});
+0046   <span class="keyword">for</span> ii=1:dim; pp{ii} = pp{ii} + h/2*(rand(size(pp{ii}))-0.5); <span class="keyword">end</span>
+0047   p=zeros(prod(size(pp{1})),dim);
+0048   <span class="keyword">for</span> ii=1:dim
+0049     p(:,ii)=pp{ii}(:);
+0050   <span class="keyword">end</span>
+0051 <span class="keyword">end</span>
+0052 
+0053 <span class="comment">% 2. Remove points outside the region, apply the rejection method</span>
+0054 p=p(feval(fdist,p,varargin{:})&lt;geps,:);
+0055 r0=feval(fh,p,varargin{:});
+0056 p=[fix; p(rand(size(p,1),1)&lt;min(r0)^dim./r0.^dim,:)];
+0057 N=size(p,1);
+0058 
+0059 count=0;
+0060 p0=inf;
+0061 <span class="keyword">while</span> 1
+0062   <span class="comment">% 3. Retriangulation by Delaunay</span>
+0063   <span class="keyword">if</span> max(sqrt(sum((p-p0).^2,2)))&gt;ttol*h
+0064     p0=p;
+0065     t=delaunayn(p);
+0066     pmid=zeros(size(t,1),dim);
+0067     <span class="keyword">for</span> ii=1:dim+1
+0068       pmid=pmid+p(t(:,ii),:)/(dim+1);
+0069     <span class="keyword">end</span>
+0070     t=t(feval(fdist,pmid,varargin{:})&lt;geps,:); <span class="comment">%BUGFIX -geps to geps</span>
+0071     <span class="comment">% 4. Describe each edge by a unique pair of nodes</span>
+0072     pair=zeros(0,2);
+0073     localpairs=nchoosek(1:dim+1,2);
+0074     <span class="keyword">for</span> ii=1:size(localpairs,1)
+0075       pair=[pair;t(:,localpairs(ii,:))];
+0076     <span class="keyword">end</span>
+0077     pair=unique(sort(pair,2),<span class="string">'rows'</span>);
+0078     <span class="comment">% 5. Graphical output of the current mesh</span>
+0079     <span class="keyword">if</span> dim==2 &amp; distmesh_do_graphics
+0080       hh=trimesh(t,p(:,1),p(:,2),zeros(N,1),<span class="string">'edgecolor'</span>,<span class="string">'black'</span>);
+0081       view(2),axis equal,axis off,drawnow
+0082     <span class="keyword">elseif</span> dim==3 &amp; distmesh_do_graphics
+0083       <span class="keyword">if</span> mod(count,5)==0
+0084         simpplot(p,t,<span class="string">'p(:,2)&gt;0'</span>);
+0085         title([<span class="string">'Retriangulation #'</span>,int2str(count)])
+0086         drawnow
+0087       <span class="keyword">end</span>
+0088     <span class="keyword">else</span>
+0089       <span class="keyword">if</span> count ==0
+0090          <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'distmeshnd: retriangulation #%d'</span>,count,2);
+0091       <span class="keyword">else</span>
+0092          <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'.'</span>,2);
+0093       <span class="keyword">end</span>
+0094     <span class="keyword">end</span>
+0095 
+0096     count=count+1;
+0097   <span class="keyword">end</span>
+0098 
+0099   <span class="comment">% 6. Move mesh points based on edge lengths L and forces F</span>
+0100   bars=p(pair(:,1),:)-p(pair(:,2),:);
+0101   L=sqrt(sum(bars.^2,2));
+0102   L0=feval(fh,(p(pair(:,1),:)+p(pair(:,2),:))/2,varargin{:});
+0103   L0=L0*L0mult*(sum(L.^dim)/sum(L0.^dim))^(1/dim);
+0104   F=max(L0-L,0);
+0105   Fbar=[bars,-bars].*repmat(F./L,1,2*dim);
+0106   dp=full(sparse(pair(:,[ones(1,dim),2*ones(1,dim)]), <span class="keyword">...</span>
+0107                  ones(size(pair,1),1)*[1:dim,1:dim], <span class="keyword">...</span>
+0108                  Fbar,N,dim));
+0109   dp(1:size(fix,1),:)=0;
+0110   p=p+deltat*dp;
+0111 
+0112   <span class="comment">% 7. Bring outside points back to the boundary</span>
+0113   d=feval(fdist,p,varargin{:}); ix=d&gt;0;
+0114   gradd=zeros(sum(ix),dim);
+0115   <span class="keyword">for</span> ii=1:dim
+0116     a=zeros(1,dim);
+0117     a(ii)=deps;
+0118     d1x=feval(fdist,p(ix,:)+ones(sum(ix),1)*a,varargin{:});
+0119     gradd(:,ii)=(d1x-d(ix))/deps;
+0120   <span class="keyword">end</span>
+0121   p(ix,:)=p(ix,:)-d(ix)*ones(1,dim).*gradd;
+0122 
+0123   <span class="comment">% 8. Termination criterion</span>
+0124   maxdp=max(deltat*sqrt(sum(dp(d&lt;-geps,:).^2,2)));
+0125   <span class="keyword">if</span> maxdp&lt;ptol*h; <span class="keyword">break</span>; <span class="keyword">end</span>
+0126   <span class="comment">% maximum iterations</span>
+0127   <span class="keyword">if</span> count&gt;maxiter; <span class="keyword">break</span>; <span class="keyword">end</span>
+0128 <span class="keyword">end</span>
+0129 
+0130 <span class="comment">% final delaunayn just to make sure triangularization returned is good</span>
+0131 t=delaunayn(p);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
