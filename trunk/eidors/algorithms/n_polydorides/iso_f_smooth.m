@@ -66,7 +66,7 @@ for i=1:size(ndsrch,1)
       Xsimp = [Xsimp;Xu];
       end
       
-      if deg > 3 | deg < 1 
+      if deg > 3 || deg < 1 
           error('deg parameter can only be 1, 2 or 3')
       end
             

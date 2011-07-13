@@ -90,7 +90,7 @@ if length(str)<3
    error('format specified not recognized')
 end
 
-if str(2:3)=='2c' | str(2:3) == '2C'
+if str(2:3)=='2c' || str(2:3) == '2C'
 % 2D circular models
    if     str(1)=='a'; layers=  4;
    elseif str(1)=='b'; layers=  8;
@@ -148,7 +148,7 @@ elseif str(2:3)=='2s'
    end
    inv_mdl = mk_2r_model( n_elec, layers, options);
 
-elseif ( str(2:3)=='2t' | str(2:3)=='2T') & length(str)==4
+elseif ( str(2:3)=='2t' || str(2:3)=='2T') && length(str)==4
    if     str(1)=='a'; layers=  4;
    elseif str(1)=='b'; layers=  8;
    elseif str(1)=='c'; layers= 12;
@@ -177,7 +177,7 @@ elseif strcmp( str, 'n3r2')
     inv_mdl = mk_n3r2_model( n_elec, options );
 elseif strcmp( str, 'n3z') || strcmp(str, 'n3z2')
     inv_mdl = mk_n3z_model( n_elec, options );
-elseif str(2:3)=='3c' | str(2:3) =='3t'
+elseif str(2:3)=='3c' || str(2:3) =='3t'
    if     str(1)=='a'; xy_layers=  4; z_layers= linspace(-.5,.5,5);
    elseif str(1)=='b'; xy_layers=  8; z_layers= linspace(-.7,.7,11);
    elseif str(1)=='c'; xy_layers= 12; z_layers= linspace(-.9,.9,21);

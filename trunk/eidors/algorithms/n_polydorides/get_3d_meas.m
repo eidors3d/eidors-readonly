@@ -53,14 +53,14 @@ for w=1:size(Vm,2) %For each column of Vm
    
       for t=vv:vv+(el_pp-1)-1 %t=1:15
       
-       	if Ib(t,w) == 0  & Ib(t+1,w) == 0   %Electrode not in the drive pair
+       	if Ib(t,w) == 0  && Ib(t+1,w) == 0   %Electrode not in the drive pair
          
              voltageH = [voltageH; (this_inj(t)-this_inj(t+1))];
              indH = [indH;[t , t+1]];
              cn = cn+1;
         end
         
-        if t == vv+(el_pp-1)-1 & Ib(vv,w) == 0 & Ib(t+1,w) == 0
+        if t == vv+(el_pp-1)-1 && Ib(vv,w) == 0 && Ib(t+1,w) == 0
  
              voltageH = [voltageH; (this_inj(t+1))-this_inj(vv)]; %or is it vv=1;
              indH = [indH;[t+1, vv]];
@@ -91,7 +91,7 @@ for w=1:size(Vm,2) %For each column of Vm
          
         for jj=1:length(this_chunk)-1 
          
-         if Ib(this_chunk(jj),wc) == 0 & Ib(this_chunk(jj+1),wc) == 0 %Electrodes not involved in currents
+         if Ib(this_chunk(jj),wc) == 0 && Ib(this_chunk(jj+1),wc) == 0 %Electrodes not involved in currents
             
             voltageV = [voltageV; ((this_inj(this_chunk(jj)))- this_inj(this_chunk(jj+1)))];
             indV = [indV;[this_chunk(jj),this_chunk(jj+1)]];

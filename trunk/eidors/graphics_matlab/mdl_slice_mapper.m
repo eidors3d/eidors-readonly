@@ -221,7 +221,7 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
   for j= 1: size(ELEM,2)
     xyz= NODE(:,ELEM(:,j))';
     min_z= min(xyz(:,3)); max_z= max(xyz(:,3));
-    if (min_z>0 | max_z<0)
+    if (min_z>0 || max_z<0)
         continue;
     end
     min_x= min(xyz(:,1)); max_x= max(xyz(:,1));
