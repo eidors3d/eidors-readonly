@@ -459,7 +459,11 @@ function inv_mdl = mk_n3z_model( n_elec, options );
    inv_mdl.name= 'NP 3D model with zigzag electrodes';
 
 function inv_mdl = mk_n3r2_model( n_elec, options );
-   load( 'datareal.mat' );
+   if ~exist('OCTAVE_VERSION');
+      load( 'datareal.mat' );
+   else
+      load( file_in_loadpath( 'datareal.mat' ));
+   end
    fmdl.nodes= vtx;
    fmdl.elems= simp;
    fmdl.boundary= find_boundary( simp );

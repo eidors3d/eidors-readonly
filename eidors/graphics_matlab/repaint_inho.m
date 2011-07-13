@@ -54,7 +54,8 @@ for idx=idx_
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
 
-   if size(colours,1)==1 & size(colours,2)==3
+   if ~exist('OCTAVE_VERSION');
+   if size(colours,1)==1 && size(colours,2)==3
       % need to work around ^%$#%$# matlab bug which
       % forces an incorrect interpretation is colours of this size
       patch(Xs(:,[1:3,1]), ...
@@ -65,6 +66,7 @@ for idx=idx_
    else
       patch(Xs,Ys,Zs,colours, ...
             'EdgeColor','none', 'CdataMapping','Direct');
+   end
    end
 end
 
