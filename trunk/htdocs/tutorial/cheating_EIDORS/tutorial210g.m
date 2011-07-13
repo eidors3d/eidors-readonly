@@ -4,6 +4,7 @@
 lmdl= mk_common_model('c2c');
 lmdl.RtR_prior= @tutorial210_cheat_laplace;
 lmdl.tutorial210_cheat_laplace.cheat_weight= .3;
+clear im_st;
 
 % Normal Tikhonov prior
 lmdl.tutorial210_cheat_laplace.cheat_elements= [];
