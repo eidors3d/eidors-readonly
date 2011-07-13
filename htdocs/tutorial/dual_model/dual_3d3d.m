@@ -60,7 +60,8 @@ inclusion_material = 10;
 
 inhomg_img = create_inclusion(homg_img, center, radius, inclusion_material);
 
-figure; show_fem( inhomg_img );
+show_fem( inhomg_img );
+print_convert dual_3d3d01a.png '-density 80'
 
 inhomg_data=fwd_solve( fine_mdl, inhomg_img);
 
@@ -95,7 +96,8 @@ inv3d= eidors_obj('inv_model', inv3d);
 
 recon_img= inv_solve( inv3d, homg_data, inhomg_data);
 
-figure; show_fem( recon_img );
+show_fem( recon_img );
+print_convert dual_3d3d02a.png '-density 80'
 
 
 %% Show results on coarse mesh
@@ -105,7 +107,5 @@ coarse_recon_img= eidors_obj('image', 'reconstructed coarse image', ...
                      'elem_data', mat, ...
                      'fwd_model', coarse_mdl );
 
-figure; show_fem( coarse_recon_img );              
-
-
-
+show_fem( coarse_recon_img );              
+print_convert dual_3d3d02b.png '-density 80'
