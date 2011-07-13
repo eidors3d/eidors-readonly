@@ -9,20 +9,8 @@ electrodes_per_plane = 16;
 number_of_planes = 2;
 tank_radius = 0.2;
 tank_height = 0.5;
-
-[fine_mdl,centres] = create_tank_mesh_ng( ...
-   tank_radius, ...   
-   tank_height, ...  
-   'C', ... % Rect_or_Circ_electrode
-   log2(electrodes_per_plane), ...  
-   number_of_planes, ...  
-   0.15, ... % first_plane_starts
-   0.2, ... % height_between_centres
-   0.01, ... % electrode_width
-   0.05, ... % electrode_height, ...
-   'tank', ... % fname, 
-   0 ... % elec_mesh_density  
-   );
+fine_mdl = ng_mk_cyl_models([tank_height,tank_radius],...
+    [electrodes_per_plane,0.15,0.35],[0.01]);
 
 % Determine stimulation paterns
 stim_pat = mk_stim_patterns(electrodes_per_plane, number_of_planes, ...
@@ -69,8 +57,7 @@ inhomg_data=fwd_solve( fine_mdl, inhomg_img);
 %% Create coarse model for inverse problem
 
 coarse_mdl_maxh = 0.07; % maximum element size 
-coarse_mdl = create_cylinder_mesh_ng('cylinder', tank_radius, ...
-                                     tank_height, coarse_mdl_maxh) ;
+coarse_mdl = ng_mk_cyl_models([tank_height,tank_radius,coarse_mdl_maxh],[0],[]);
 
 
 %% Create inverse model
