@@ -133,7 +133,7 @@ eidors_msg('EIDORS model cache: %s', mk_library_model('LIBRARY_PATH'),1);
 % check that the compiled mex file is newer than the source file
 srcf = strcat(HOMEDIR,'/arch/eidors_var_id.cpp');
 mexf = strcat(HOMEDIR,strcat(archdir,'/eidors_var_id.mex'));
-if exist(srcf) == 2 & exist(mexf) == 2
+if exist(srcf) == 2 && exist(mexf) == 2
   srcd=dir(srcf);
   mexd=dir(mexf);
   if srcd.datenum > mexd.datenum
