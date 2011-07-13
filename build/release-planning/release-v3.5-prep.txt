@@ -267,7 +267,7 @@ TUTORIAL STATUS:
         0264  ./netgen\moving_ball_16x1_03 ERROR -> GONE
         0265  ./netgen\moving_ball_16x2_01 ERROR -> GONE
         0266  ./netgen\moving_ball_16x2_02 ERROR -> GONE
-0267  ./netgen\netgen_accuracy01 ERROR 
+	0267  ./netgen\netgen_accuracy01 ERROR -> WFM (1hr, 50GB, 8CPUs) 
 0268  ./netgen\netgen_accuracy02 ERROR
 0269  ./netgen\netgen_accuracy03 ERROR
         0270  ./netgen\netgen_sims01 OK
@@ -310,3 +310,48 @@ TUTORIAL STATUS:
         0307  ./strange_effects\opposite_meas01 OK
         0308  ./toast\eidors_toast_demo1 ERROR -> UNFIXED
         0309  ./version2\eidors3d_tutorial ERROR -> UNFIXED
+
+
+UNIT TESTS 
+algorithms/n_polydorides/find_boundary.m
+algorithms/a_adler/mk_c2f_circ_mapping.m
+algorithms/a_adler/perturb_jacobian.m
+algorithms/a_adler/interp_mesh.m
+algorithms/b_grychtol/calc_TSVD_RM.m
+algorithms/b_grychtol/inv_solve_TSVD.m
+algorithms/b_grychtol/fix_model.m
+algorithms/get_img_data.m
+algorithms/m_crabb/linear_reorder.m
+graphics_matlab/calc_slices.m
+graphics_matlab/show_3d_slices.m
+graphics_matlab/mdl_slice_mapper.m
+graphics_matlab/show_current.m
+graphics_matlab/calc_colours.m
+graphics_matlab/show_fem.m
+graphics_matlab/show_slices.m
+inv_solve.m
+meshing/netgen/fourier_fit.m
+meshing/netgen/ng_mk_gen_models.m
+meshing/netgen/piece_poly_fit.m
+meshing/netgen/ng_mk_extruded_model.m
+meshing/distmesh/dm_2d_circ_pt_elecs.m
+mk_image.m
+models/a_adler/select_imdl.m
+models/a_adler/mk_GREIT_model.m
+models/a_adler/add_noise.m
+models/a_adler/num_nodes.m
+models/a_adler/mdl_dim.m
+models/a_adler/mk_common_model.m
+models/a_adler/reciprocity_idx.m
+models/a_adler/stim_meas_list.m
+models/a_adler/num_elems.m
+models/a_adler/mk_stim_patterns.m
+models/a_adler/deform_cylinder.m
+models/a_adler/elem_dim.m
+models/a_adler/elem_select.m
+models/b_grychtol/mk_library_model.m
+models/b_grychtol/shape_library.m
+tools/test_performance_img.m
+tools/test_performance.m
+tools/unit_test_cmp.m
+
