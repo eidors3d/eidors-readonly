@@ -10,7 +10,8 @@ imdl.solve = @aa_inv_solve;
 imdl.hyperparameter.value= 0.03;
 
 imgc= inv_solve(imdl, vh, vi);
-subplot(131); show_slices(imgc);
+clf; show_slices(imgc);
+print_convert centre_slice06a.png '-density 75';
 
 c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,-.3];
 c_mdl.mk_coarse_fine_mapping.z_depth = 0.1;
@@ -19,7 +20,8 @@ imdl.fwd_model.coarse2fine = c2f;
 imgc0= inv_solve(imdl, vh, vi);
 
 imgc0= inv_solve(imdl, vh, vi);
-subplot(132); show_slices(imgc0);
+show_slices(imgc0);
+print_convert centre_slice06b.png '-density 75';
 
 c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,.3];
 c_mdl.mk_coarse_fine_mapping.z_depth = 0.1;
@@ -27,6 +29,5 @@ c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
 imdl.fwd_model.coarse2fine = c2f;
 
 imgc1= inv_solve(imdl, vh, vi);
-subplot(133); show_slices(imgc1);
-
-print_convert centre_slice06a.png;
+show_slices(imgc1);
+print_convert centre_slice06c.png '-density 75';
