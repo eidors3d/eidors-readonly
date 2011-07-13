@@ -29,7 +29,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 %      ->use  elec_spec = { 'planes', n_elecs/2, elec_planes }
 %
 % mk_circ_tank creates simple, point electrodes. Improved models
-%  may be created with create_tank_mesh_ng
+%  may be created with ng_mk_cyl_models
 %
 % output:
 %  param.name        Model name (if known) 
