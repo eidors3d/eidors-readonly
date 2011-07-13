@@ -315,7 +315,7 @@ TUTORIAL STATUS:
 UNIT TESTS 
 OK	algorithms/n_polydorides/find_boundary.m
 OK   	algorithms/a_adler/mk_c2f_circ_mapping.m - fixed
-FAIL	algorithms/a_adler/perturb_jacobian.m
+OK      algorithms/a_adler/perturb_jacobian.m
 OK	algorithms/a_adler/interp_mesh.m
 OK	algorithms/b_grychtol/calc_TSVD_RM.m
 OK	algorithms/b_grychtol/inv_solve_TSVD.m
@@ -346,12 +346,12 @@ OK	models/a_adler/reciprocity_idx.m
 OK	models/a_adler/stim_meas_list.m
 OK	models/a_adler/num_elems.m
 OK	models/a_adler/mk_stim_patterns.m
-FAIL	models/a_adler/deform_cylinder.m
+OK  	models/a_adler/deform_cylinder.m - fixed
 OK	models/a_adler/elem_dim.m
 OK	models/a_adler/elem_select.m
 OK	models/b_grychtol/mk_library_model.m
 OK	models/b_grychtol/shape_library.m
 MEMORY	tools/test_performance_img.m
 MEMORY	tools/test_performance.m
-FAIL	tools/unit_test_cmp.m
+OK  	tools/unit_test_cmp.m - fixed
 
