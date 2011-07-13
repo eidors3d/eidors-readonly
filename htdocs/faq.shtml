@@ -56,6 +56,29 @@ EIDORS is pronounced like eiderdown.
 It sounds like <i>eye doors</i>.
 
 <p><li><b>
+What do I need to run EIDORS
+</b><p>
+You will need a modern windows, unix or mac computer,
+and Matlab (version &ge; 7.0). To be able to do
+fine 3D meshes you will need at least 2GB RAM (or more).
+For FEM meshing you will need
+<a href="http://sourceforge.net/projects/netgen-mesher/"
+ >Netgen</a>. 
+It is possible to use Matlab 6.5 with older versions
+(EIDORS &le; 3.4). EIDORS also supports modern versions
+of Octave (&ge; 3.4);
+
+<p><li><b>
+Can I use Octave instead of Matlab?
+</b><p>
+Partially. Many EIDORS functions work well in Octave;
+however, there are some missing capabilities. This
+is especially true of the graphical parts of EIDORS.
+If you are interested to help, we are actively looking
+for help with Octave support,
+
+
+<p><li><b>
 What is the logo?
 </b><p>
 The logo is a walrus. EIDORS images
@@ -72,10 +95,9 @@ great picture of fat waruses see this
     Whom should I blame or thank or contact for more information?
 </b><p>
 The current maintainers of EIDORS are
-<a href="mailto:bill.lionh&#101;&#97;rt@manchester.ac.uk">Bill Lionheart</a>
+<a href="mailto:&#97;dl&#101;r@sce.c&#97;rleton.c&#97;" >Andy Adler</a>
 and
-<a href="mailto:&#97;dl&#101;r@sce.c&#97;rleton.c&#97;"
-    >Andy Adler</a>.
+<a href="mailto:bill.lionh&#101;&#97;rt@manchester.ac.uk">Bill Lionheart</a>.
 Please contact them with suggestions, contribution of code,
 and contribution of sample data, meshes, and algorithms.
 
@@ -89,7 +111,7 @@ Step 1: Download
 Step 2: Unzip the file and save it to a directory like
    <tt>/path/to/eidors</tt>
 <br>
-Step 3: Start Matlab (or Octave). Run this command:
+Step 3: Start Matlab. Run this command:
    <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
 
 <p><li><b>
