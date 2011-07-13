@@ -15,14 +15,15 @@ Source code: <a href="dual_3d3d.m">dual_3d3d.m</a>
 </pre>
 
 <center>
-<img src="dual_3d3d01.png">
+<img src="dual_3d3d01a.png">
 <br><i> Figure:</i>
 Netgen generated mesh for tank problem, with a 2&times;16 electrodes. Mesh consists of 36,000 elements.
 Single spherical inclusion was applied.
 </center>
 
 <center>
-<img src="dual_3d3d02.png">
+<img src="dual_3d3d02a.png">
+<img src="dual_3d3d02b.png">
 <br><i> Figure:</i>
 Results of reconstruction. On the left results shown on coarse mesh used in inverse problem. On the right solution projected into fine, forward mesh.
 </center>
