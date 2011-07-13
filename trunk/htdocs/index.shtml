@@ -26,7 +26,7 @@ To try the EIDORS software, follow these steps:
 
 <li> Unzip the software in a directory <tt>/path/to/eidors</tt> or <tt>C:/path/to/eidors</tt>
 
-<li> Start Matlab (or Octave).
+<li> Start Matlab
 
 <li> type: <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
 <br> (windows
