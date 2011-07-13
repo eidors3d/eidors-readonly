@@ -103,9 +103,9 @@ TUTORIAL STATUS:
         0100  ./GREIT-evaluation\simulate_2d_test01 OK
         0101  ./GREIT-evaluation\simulate_2d_test02 OK
         0102  ./GREIT-evaluation\simulate_2d_test03 OK
-0103  ./GREIT-evaluation\simulation_3d_test00 ERROR -> create_tank_mesh_ng
-        0104  ./GREIT-evaluation\simulation_3d_test01 OK
-0105  ./GREIT-evaluation\simulation_3d_test02 ERROR 
+        0103  ./GREIT-evaluation\simulation_3d_test00 ERROR -> DELETE
+        0104  ./GREIT-evaluation\simulation_3d_test01 OK -> FIXED
+        0105  ./GREIT-evaluation\simulation_3d_test02 ERROR -> FIXED
 0106  ./GREIT-evaluation\simulation_radmove ERROR -> create_tank_mesh_ng
         0107  ./GREIT-evaluation\simulation_test03 ERROR -> FIXED (simulation_test00)
         0108  ./GREIT-evaluation\simulation_test04 ERROR -> FIXED (simulation_test00)
@@ -255,9 +255,9 @@ TUTORIAL STATUS:
         0252  ./netgen\fish_tank02 OK
         0253  ./netgen\fish_tank03 OK
         0254  ./netgen\fish_tank04 OK
-0255  ./netgen\meshsize_param01 ERROR
-0256  ./netgen\meshsize_param02 ERROR
-0257  ./netgen\meshsize_param03 ERROR
+        0255  ./netgen\meshsize_param01 ERROR -> FIXED
+        0256  ./netgen\meshsize_param02 ERROR -> FIXED
+        0257  ./netgen\meshsize_param03 ERROR -> FIXED
         0258  ./netgen\mk_library_model00 OK
         0259  ./netgen\mk_library_model01 OK
         0260  ./netgen\mk_library_model02 OK
