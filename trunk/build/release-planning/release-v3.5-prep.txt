@@ -93,12 +93,12 @@ TUTORIAL STATUS:
         0090  ./GREIT-algorithm\demo_algs02 WARNING(S) -> WFM ?
         0091  ./GREIT-algorithm\demo_algs03 OK
         0092  ./GREIT-algorithm\demo_algs04 ERROR -> FIXED
-0093  ./GREIT-algorithm\framework00 ERROR
-0094  ./GREIT-algorithm\framework01 ERROR
-0095  ./GREIT-algorithm\framework02 ERROR
-0096  ./GREIT-algorithm\framework03 ERROR
-0097  ./GREIT-algorithm\framework04 ERROR
-0098  ./GREIT-algorithm\framework05 ERROR
+        0093  ./GREIT-algorithm\framework00 ERROR -> FIXED
+        0094  ./GREIT-algorithm\framework01 ERROR -> FIXED
+        0095  ./GREIT-algorithm\framework02 ERROR -> FIXED
+        0096  ./GREIT-algorithm\framework03 ERROR -> FIXED
+        0097  ./GREIT-algorithm\framework04 ERROR -> FIXED
+        0098  ./GREIT-algorithm\framework05 ERROR -> FIXED
         0099  ./GREIT-algorithm\get_list_of_algs OK
         0100  ./GREIT-evaluation\simulate_2d_test01 OK
         0101  ./GREIT-evaluation\simulate_2d_test02 OK
