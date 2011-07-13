@@ -136,7 +136,7 @@ function normals = calc_normals(mdl)
         otherwise;
             error('not 2D or 3D')
     end
-    normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,[])';
+    normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,1)';
     
     
 function len = calc_longest_edge(elems,nodes)
