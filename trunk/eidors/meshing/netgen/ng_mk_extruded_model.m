@@ -1277,6 +1277,6 @@ a = flipud(a);
 % a=[sin(th)*0.3,cos(th)];
 
 
-     fmdl = ng_mk_extruded_model({300,a,[3,50]},[16,1.11,150],[1]);
+     fmdl = ng_mk_extruded_model({300,a,[4,50]},[16,1.11,150],[1]);
      figure
      show_fem(fmdl);
