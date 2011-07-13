@@ -15,6 +15,7 @@ function [img,map]= GREIT_test_ndiff( ref_meas, reconst_meas )
    ds = RM*dv;
 
    img= reshape(ds, 32,32,num_meas);
+   map = img ~= 0;
 
 function RM = calc_RM(data_file, noiselev)
    if data_file==1
