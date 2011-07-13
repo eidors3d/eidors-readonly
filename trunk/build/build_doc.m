@@ -18,7 +18,7 @@ m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','frame','index','menu',...
     'helptocxml', 'on');
 end
-!cp build/doc_template/intro.html ../doc/intro.html
+!cp build/doc_template/intro.html doc/
 !rsync -r doc htdocs
 !rm -rf doc
 cd build
