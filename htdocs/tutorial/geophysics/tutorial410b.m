@@ -13,7 +13,7 @@ gallery_3D_img.elem_data= background_conductivity * ...
 % build the parameter-to-elements mapping
 %USE: sparse pilot-point parameterization
 sparsity = 1;
-%gallery_3D_img= mk_Pilot2DtoFine3D_mapping(gallery_3D_img,sparsity);
+gallery_3D_img= mk_Pilot2DtoFine3D_mapping(gallery_3D_img,sparsity);
 gallery_3D_img.fwd_model.coarse2fine = kron(ones(42,1), speye(1024));
 
 gallery_3D_img.rec_model.type = 'fwd_model';
