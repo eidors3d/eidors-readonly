@@ -262,30 +262,30 @@ function do_unit_test
    th=linspace(0,2*pi,20)';
    xx=[0*th+1]*xyc(1,:)+sin(th)*xyc(3,:);
    yy=[0*th+1]*xyc(2,:)+cos(th)*xyc(3,:);
-   show_fem(fmdl,[0,0,1]); set(line(xx,yy),'Color',[1,0,0],'LineWidth',2);
+   show_fem(fmdl,[0,0,1]); set(line(xx,yy),'LineWidth',2);
 
-   c2f= mk_c2f_circ_mapping( fmdl, xyc );
+   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0.1] );
    t1= all( abs(c2f(1:4)-0.2857)<.001 ) & all( c2f(5:end)==0 );
-   fprintf('2D ex 1: [%d]\n',full(t1));
+   unit_test_cmp('2D ex 1:',t1,1);
 
    c2f= mk_c2f_circ_mapping( fmdl, [.0;.05;0.03]); 
    t2= abs( c2f(1) - 0.1429) < .001 & all( c2f(2:end)==0 );
-   fprintf('2D ex 2: [%d]\n',full(t2));
+   unit_test_cmp('2D ex 2:',t2,1);
       
    %3D example - cylinder
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
    c2f= mk_c2f_circ_mapping( fmdl, [0;0;0.1]); 
    t3= all( abs(c2f(1:4)-0.1714)<.001 ) & all( c2f(5:64)==0 );
-   fprintf('3D ex 1: [%d]\n',full(t3));
+   unit_test_cmp('3D ex 1:',t2,1);
 
    %3D example - cylinder
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
    c2f= mk_c2f_circ_mapping( fmdl, [0;0;0;0.1]); 
    t4= all( abs(c2f(193:196)-0.0595)<.001 ) & all( c2f(1:64)==0 );
-   fprintf('3D ex 2: [%d]\n',full(t4));
+   unit_test_cmp('3D ex 2:',t4,1);
    
    %3D example - cylinder - 2 pts
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
    c2f= mk_c2f_circ_mapping( fmdl, [0 0;0 0;0 0;0.1 0.2]); 
    t4= all( abs(c2f(193:196,1)-0.0595)<.001 ) & all( c2f(1:64)==0 );
-   fprintf('3D ex 3: [%d]\n',full(t4));
+   unit_test_cmp('3D ex 3:',t4,1);
