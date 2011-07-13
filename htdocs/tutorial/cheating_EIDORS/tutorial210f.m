@@ -4,6 +4,7 @@
 smdl= mk_common_model('b2c');
 smdl.RtR_prior= @tutorial210_cheat_laplace;
 smdl.tutorial210_cheat_laplace.cheat_weight= .3;
+clear im_st;
 
 % Normal Tikhonov prior
 smdl.tutorial210_cheat_laplace.cheat_elements= [];
