@@ -16,8 +16,6 @@ end
 function [J,vbkgnd,map] = Jacobian_calc;
 use_3d_model = 1;
 if use_3d_model % This 3D model has some problems
-%  load ng_mdl_16x1_fine;  fmdl= ng_mdl_16x1_fine;
-%  load ng_tank1_0;  - old model developed in initial GREIT calcs
    fmdl = ng_mk_cyl_models([10,15,1.2],[16,5],[.5,0,.15]);
    fmdl.solve =    @aa_fwd_solve;
    fmdl.jacobian = @aa_calc_jacobian;
