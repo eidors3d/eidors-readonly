@@ -221,13 +221,13 @@ TUTORIAL STATUS:
         0218  ./geophysics\Electrode_Positions_Ring1_EZG04 OK
         0219  ./geophysics\tunnelsim01 OK
         0220  ./geophysics\tunnelsim02 OK
-0221  ./geophysics\tunnelsim03 ERROR
+        0221  ./geophysics\tunnelsim03 ERROR -> WFM, but takes forever
         0222  ./geophysics\tunnelsim04 OK
         0223  ./geophysics\tunnelsim05 OK
         0224  ./geophysics\tunnelsim06 OK
         0225  ./geophysics\tutorial410a OK
         0226  ./geophysics\tutorial410b OK
-0227  ./geophysics\tutorial410c ERROR
+	0227  ./geophysics\tutorial410c ERROR -> FIXED
         0228  ./geophysics\tutorial410c0 OK
         0229  ./geophysics\tutorial410d OK
         0230  ./lung_EIT\if_lung_injury00 OK
