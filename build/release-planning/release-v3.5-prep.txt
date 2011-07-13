@@ -323,17 +323,17 @@ OK	algorithms/b_grychtol/fix_model.m
 OK	algorithms/get_img_data.m
 OK	algorithms/m_crabb/linear_reorder.m
 OK	graphics_matlab/calc_slices.m
-CHECK	graphics_matlab/show_3d_slices.m
+OK   	graphics_matlab/show_3d_slices.m - fixed
 OK	graphics_matlab/mdl_slice_mapper.m
 OK	graphics_matlab/show_current.m
 OK	graphics_matlab/calc_colours.m
-CHECK	graphics_matlab/show_fem.m
+OK      graphics_matlab/show_fem.m  -- warnings expected
 OK	graphics_matlab/show_slices.m
 OK	inv_solve.m
 OK	meshing/netgen/fourier_fit.m
 OK	meshing/netgen/ng_mk_gen_models.m
 OK	meshing/netgen/piece_poly_fit.m
-FIXED	meshing/netgen/ng_mk_extruded_model.m
+OK   	meshing/netgen/ng_mk_extruded_model.m - fixed
 	meshing/distmesh/dm_2d_circ_pt_elecs.m
 	mk_image.m
 	models/a_adler/select_imdl.m
