@@ -617,11 +617,11 @@ TUTORIALS x 2
      0257  ./netgen\netgen_accuracy02 OK
      0258  ./netgen\netgen_accuracy03 OK
      0259  ./netgen\netgen_sims01 OK
-0260  ./netgen\netgen_sims02 ERROR
-0261  ./netgen\netgen_sims03 ERROR
-0262  ./netgen\netgen_sims04 ERROR
-0263  ./netgen\netgen_sims05 ERROR
-0264  ./netgen\netgen_sims06 ERROR
+     0260  ./netgen\netgen_sims02 OK
+     0261  ./netgen\netgen_sims03 OK
+     0262  ./netgen\netgen_sims04 OK
+     0263  ./netgen\netgen_sims05 OK
+     0264  ./netgen\netgen_sims06 OK
      0265  ./netgen/extrusion\pig_body01 OK
      0266  ./netgen/extrusion\pig_body02 OK
      0267  ./netgen/extrusion\pig_body03 OK
@@ -631,7 +631,7 @@ TUTORIALS x 2
      0271  ./netgen/extrusion\pig_body07 OK
      0272  ./netgen/extrusion\pig_body08 OK
      0273  ./netgen/extrusion\pig_body09 OK
-0274  ./netgen/extrusion\pig_body10 ERROR
+     0274  ./netgen/extrusion\pig_body10 ok
 0275  ./netgen/extrusion\thoraxmdl01 WARNING(S)
      0276  ./netgen/extrusion\thoraxmdl02 OK
      0277  ./netgen/extrusion\thoraxmdl03 OK
