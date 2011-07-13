@@ -8,3 +8,4 @@ end
 img= calc_jacobian_bkgnd(imdl);
 
 aa_calc_system_mat(fmdl,img);
+disp('success'); % if we have no errors

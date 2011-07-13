@@ -12,4 +12,6 @@ function cache_limit_test
        pause(.01);
     end
 
+    disp('expect no output'); 
     eidors_cache show_objs
+
