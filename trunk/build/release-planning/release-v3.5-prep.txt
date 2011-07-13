@@ -638,15 +638,15 @@ TUTORIALS x 2
      0278  ./netgen/extrusion\thoraxmdl04 OK
      0279  ./netgen/extrusion\thoraxmdl05 OK
      0280  ./netgen/extrusion\thoraxmdl06 OK
-0281  ./other_models\cube_mesh01 ERROR
+     0281  ./other_models\cube_mesh01 ERROR - WFM
      0282  ./other_models\mk_common_model_2d_01 OK
-0283  ./other_models\mk_common_model_2d_02 ERROR
-0284  ./other_models\mk_common_model_2d_03 ERROR
-0285  ./other_models\mk_common_model_2d_04 ERROR
-0286  ./other_models\square_mesh01 ERROR
-0287  ./other_models\square_mesh02 ERROR
-0288  ./other_models\square_mesh03 ERROR
-0289  ./other_models\square_mesh04 ERROR
+     0283  ./other_models\mk_common_model_2d_02 ERROR - WFM
+     0284  ./other_models\mk_common_model_2d_03 ERROR - WFM
+     0285  ./other_models\mk_common_model_2d_04 ERROR - WFM
+     0286  ./other_models\square_mesh01 ERROR - WFM
+     0287  ./other_models\square_mesh02 ERROR - WFM
+     0288  ./other_models\square_mesh03 ERROR - WFM
+     0289  ./other_models\square_mesh04 ERROR - WFM
      0290  ./other_models\square_mesh05 OK
      0291  ./strange_effects\conformal1_01 OK
      0292  ./strange_effects\conformal1_02 OK

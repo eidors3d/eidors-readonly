@@ -14,14 +14,13 @@
 <p>
 Animated graphic of the finite element mesh of a 
 small ball contrasting object in a 2D tank. 
-This follows a "spirograph" type pattern. Simulation
-data for this model is available in
- <tt>sample_data/netgen_moving_ball.mat</tt>
+This follows a "spirograph" type pattern.
 
 
 </center>
 <p>
 
+<!--
 <pre>
     % Matlab instructions
     % You need to have netgen installed to run this demo
@@ -36,6 +35,7 @@ data for this model is available in
     end
     !convert -delay 25 ball_model*.png -loop 0 ball-models.gif
 </pre>
+-->
 
 
 </td></tr></table>

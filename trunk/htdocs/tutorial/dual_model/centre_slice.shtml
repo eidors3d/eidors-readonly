@@ -9,18 +9,10 @@ reconstruction model represents a slice through
 the volume at the place of interest. 
 <p>
 To simulate this, we simulate a ball moving in
-a helical path on a fine netgen model
-(available
- <a href="../../data_contrib/netgen_moving_ball/ng_mdl_16x2_vfine.7z"
-           >here</a>)
+a helical path on a fine netgen model.
 <pre>
 <!--#include virtual="centre_slice01.m" -->
 </pre>
-
-<b>Note:</b> this stimulation requires at least 4GB memory
-and many minutes of CPU time to run. The calculated data
-are available 
-<a href="./centre_slice01_output.mat">here</a>
 
 <center>
 <img src="centre_slice01a.png">
@@ -35,9 +27,6 @@ a helical path are shown in purple.
 In order to reconstruct the image, we use a dual
 model where the 2D coarse model is mapped to only
 a layer of elements in the fine model.
-(available
- <a href="..\..\data_contrib\netgen_moving_ball\ng_mdl_16x2_coarse.7z"
-           >here</a>)
 
 <pre>
 <!--#include virtual="centre_slice02.m" -->
@@ -79,6 +68,8 @@ from the original volume.
 
 <center>
 <img src="centre_slice04a.png">
+<img src="centre_slice04b.png">
+<img src="centre_slice04c.png">
 <br><i> Figure:</i>
 Reconstructed images of a target moving in a helical
 pattern using difference coarse models
@@ -128,6 +119,8 @@ from the original volume.
 
 <center>
 <img src="centre_slice06a.png">
+<img src="centre_slice06b.png">
+<img src="centre_slice06c.png">
 <br><i> Figure:</i>
 Reconstructed images of a target moving in a helical
 pattern using difference coarse models
