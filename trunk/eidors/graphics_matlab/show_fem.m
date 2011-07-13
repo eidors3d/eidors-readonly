@@ -1,7 +1,8 @@
-function show_fem( mdl, options)
+function hh=show_fem( mdl, options)
 % SHOW_FEM: show the EIDORS3D finite element model
-% show_fem( mdl, options )
+% hh=show_fem( mdl, options )
 % mdl is a EIDORS3D 'model' or 'image' structure
+% hh= handle to the plotted model
 %
 % options specifies a set of options
 %   options(1) => show colourbar
@@ -13,8 +14,10 @@ function show_fem( mdl, options)
 % see help for calc_colours.
 %
 % for control of colourbar, use img.calc_colours.cb_shrink_move
+%
+% to change colours, try hh=show_fem(...); set(hh,'EdgeColor',[0,0,1];
 
-% (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
+% (C) 2005-2011 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 % TESTS
@@ -33,8 +36,8 @@ end
 
 
 switch opts.dims
-   case 2;    show_2d(img,mdl,opts)
-   case 3;    show_3d(img,mdl,opts)
+   case 2;    hh= show_2d(img,mdl,opts);
+   case 3;    hh= show_3d(img,mdl,opts);
    otherwise; error('model is not 2D or 3D');
 end
 
@@ -52,6 +55,8 @@ if opts.show_numbering
             'HorizontalAlignment','center','FontSize',7);
    end
 end
+
+if nargout == 0; clear hh; end
 
 
 function [img,mdl,opts] = proc_params( mdl, options );
@@ -80,7 +85,7 @@ function [img,mdl,opts] = proc_params( mdl, options );
    opts.dims = size(mdl.nodes,2);
 
 % 2D Case
-function show_2d(img,mdl,opts)
+function hh= show_2d(img,mdl,opts)
    hax= gca;
    pax= get(hax,'position');
    if ~isempty(img)
@@ -88,7 +93,7 @@ function show_2d(img,mdl,opts)
    else
       colours= [1,1,1]; % white elements if no image
    end
-   show_2d_fem( mdl, colours );
+   hh= show_2d_fem( mdl, colours );
    show_electrodes_2d(mdl, opts.number_electrodes);
 
    set(hax,'position', pax);
@@ -114,8 +119,8 @@ function show_2d(img,mdl,opts)
    
 
 % 3D Case
-function show_3d(img,mdl,opts)
-   show_3d_fem( mdl );
+function hh= show_3d(img,mdl,opts)
+   hh= show_3d_fem( mdl );
 
    if ~isempty(img)
        elem_data = get_img_data(img);
@@ -240,7 +245,7 @@ h=patch(Xs,Ys,Zs, colour);
 % need 'direct' otherwise colourmap is screwed up
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
-function show_3d_fem( mdl, options )
+function hh= show_3d_fem( mdl, options )
    ee= get_boundary( mdl );
    hh= trimesh(ee, mdl.nodes(:,1), ...
                    mdl.nodes(:,2), ...
@@ -250,7 +255,7 @@ function show_3d_fem( mdl, options )
    set(gcf,'Colormap',[0 0 0]);
    hidden('off');
 
-function show_2d_fem( mdl, colours, imgno )
+function hh=show_2d_fem( mdl, colours, imgno )
   szcolr = size(colours);
   if nargin<3;
       imgno = 1;
@@ -270,7 +275,7 @@ function show_2d_fem( mdl, colours, imgno )
   Ys= S*Ys+ (1-S)*ones(3,1)*mean(Ys);
   Zs = zeros(size(Xs));
   if szcolr(1:2) == [1,3]  % no reconstruction  - just use white
-     h= patch(Xs,Ys,zeros(3,e),colours);
+     hh= patch(Xs,Ys,zeros(3,e),colours);
   elseif size(colours,1) == e % defined on elems
 % THE STUPID MATLAB 7 WILL RESET THE COLOURBAR WHENEVER YOU DO A PATCH. DAMN.
      colours = permute(colours(:,imgno,:),[2,1,3]);
@@ -282,8 +287,8 @@ function show_2d_fem( mdl, colours, imgno )
     colours= [1,1,1]/2; % Grey to show we're not sure
   end
 
-  h= patch(Xs,Ys,Zs,colours);
-  set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+  hh= patch(Xs,Ys,Zs,colours);
+  set(hh, 'FaceLighting','none', 'CDataMapping', 'direct' );
   % FOR NODE RGB MATLAB SCREWS UP THE COLOURS FOR US (ONCE AGAIN). THERE MUST
   % BE SOME KIND OF SECRET FLAG@@@
 
@@ -407,24 +412,36 @@ function do_unit_test
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
-   subplot(3,4,1); show_fem(img.fwd_model) 
+   subplot(3,4,1); show_fem(img.fwd_model,[0,0,1]) 
+   title('regular mesh numbered');
 
    imgn = rmfield(img,'elem_data');
    imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
    subplot(3,4,9); show_fem(imgn) 
+   title('interpolated node colours');
 
    img2(1) = img; img2(2) = img;
-   subplot(3,4,2); show_fem(img,[1])
-   subplot(3,4,3); show_fem(img2,[0,1])
+   subplot(3,4,2); show_fem(img,[1]);
+   title('colours with legend');
+   subplot(3,4,3); show_fem(img2,[0,1]);
+   title('colours with legend');
    img.calc_colours.mapped_colour = 0; % USE RGB colours
-   subplot(3,4,4); show_fem(img,[0,1,1])
+   subplot(3,4,4); show_fem(img,[0,1,1]);
+   title('RGB colours');
    subplot(3,4,4); show_fem(img);
+   title('RGB colours');
 
    imgn.calc_colours.mapped_colour = 0; % USE RGB colours
    subplot(3,4,10);show_fem(imgn,[0,1]) 
+   title('interpolated node colours');
+
+
+   subplot(3,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
+   title('with edge colours');
 
    imgn.node_data = [1:10];
-   subplot(3,4,11);show_fem(imgn) 
+   subplot(3,4,12);show_fem(imgn); %Should show grey
+   title('error -> show grey');
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',8));
    img3.elem_data= randn(828,1);                       
@@ -433,12 +450,3 @@ function do_unit_test
    subplot(3,4,7); show_fem(img3,[1,1])
    subplot(3,4,8); show_fem(img3,[1,1,1])
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This is part of the EIDORS suite.
-% Copyright (c) N. Polydorides 2003, A. Adler 2004
-% Copying permitted under terms of GNU GPL
-% See enclosed file gpl.html for details.
-% EIDORS 3D version 2.0
-% MATLAB version 5.3 R11
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
