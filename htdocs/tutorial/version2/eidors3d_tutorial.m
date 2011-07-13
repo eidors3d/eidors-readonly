@@ -32,15 +32,12 @@ demo_complex;
 load datareal vtx simp;
 
 %Generate the outer surfaces of the mesh,
-[srf] = dubs3(simp);
+[srf] = find_boundary(simp);
 
 %Now plot the outer surfaces, 
 trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3)); 
 colormap([0 0 0]); 
 daspect([1 1 1]);
-
-%Save workspace as
-name_work
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +65,7 @@ load datareal elec sels
 % v
 
 %Save workspace as
-name_work elec sels
+%name_work elec sels
 
 %i.e saving workspace with the new variables "elec" and "sels" defined
 
@@ -96,7 +93,7 @@ plot3(vtx(gnd_ind,1),vtx(gnd_ind,2),vtx(gnd_ind,3),'.', ...
 gnd_ind = elec(2,:) ;
 
 %Save workspace as
-name_work gnd_ind 
+%name_work gnd_ind 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +104,7 @@ name_work gnd_ind
 mat_ref = ones(size(simp,1),1);
 
 %Save workspace as
-name_work mat_ref 
+%name_work mat_ref 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +124,7 @@ I = [zeros(size(vtx,1),size(Ib,2)); Ib];
 sum(I)
 
 %Save workspace as
-name_work I Ib 
+%name_work I Ib 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,12 +141,12 @@ zc = 20* ones(size(elec,1),1);
 
 %Check the size of E_f, and its sparsity
 size(Ef)
-figure; spy(Ef);
+figure(1); spy(Ef);
 
 %Then apply the reference conditions
-[Er] = ref_master(Ef,gnd_ind);
+[Er] = ref_master(Ef,vtx,gnd_ind,0);
 %for the grounding node gnd_ind or
-[Er] = ref_master(Ef,gnd_ind);
+% [Er] = ref_master(Ef,vtx,gnd_ind,1);
 %for the grounding electrode gnd_ind
 
 %and then compare numerical ranks before 
@@ -174,7 +171,7 @@ svds(Ef)
 [Eref,D,Ela,ppr] = fem_master_full(vtx,simp,mat_ref,gnd_ind,elec,zc,'{n}');
 
 %and calculte the reference forward solution Vref
-[Vref] = forward_solver(vtx,Eref,I,1e-5,ppr);
+[Vref] = forward_solver(Eref,I,1e-5,ppr);
 
         %or use Vref = Eref\I;
 
@@ -182,7 +179,7 @@ svds(Ef)
 potplot(vtx,srf,Vref);
 
 %Save workspace as
-name_work zc Eref D Ela Vref 
+%name_work zc Eref D Ela Vref 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,15 +199,15 @@ mat_ref3 = 3*ones(size(simp,1),1);
 
 [Eref3,D,Ela,ppr3] = fem_master_full(vtx,simp,mat_ref3,gnd_ind,elec,zc,'{n}');
 
-[Vref3] = forward_solver(vtx,Eref3,I,1e-5,ppr);
+[Vref3] = forward_solver(Eref3,I,1e-5,ppr);
 
 [refH3,refV3,indH,indV,dfr3]=get_3d_meas(elec,vtx,Vref3,Ib,2);
 
 %Then plot the difference in the data sets
-figure; plot(refH - refH3);
+figure(1); plot(refH - refH3);
 
 %or alternatively use
-figure; plot(refH)
+figure(1); plot(refH)
 hold on; plot(refH3,'r')
 
 %Create target inhomogeneity of magnitude 1.2 (remember that mat_ref = 1)
@@ -224,16 +221,16 @@ hold on; plot(refH3,'r')
 
 [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,'{n}');
 
-[V] = forward_solver(vtx,E,I,1e-5,pp);
+[V] = forward_solver(E,I,1e-5,pp);
 
 [voltageH,voltageV,indH,indV,df]=get_3d_meas(elec,vtx,V,Ib,2);
 
 %Plot the perturbation on the data dv due to the introduced inhomogeneities
 dv = voltageH - refH;
-figure; plot(dv);
+figure(1); plot(dv);
 
 %Save workspace as
-name_work E D Ela refH voltageH dfj 
+%name_work E D Ela refH voltageH dfj 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +255,7 @@ cond(J)
 
 %and its singular values
 s = svd(J);
-figure; semilogy(s,'.');
+figure(1); semilogy(s,'.');
 
 %Check that
 cond(J) > condest(Eref)
@@ -267,7 +264,7 @@ cond(J) > condest(Eref)
 rank(J)
 
 %Save workspace as
-name_work v_f J 
+%name_work v_f J 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,7 +300,7 @@ writevtkfile('xt1',vtx,simp,xt1)
 writevtkfile('xt2',vtx,simp,xt2)
 
 %Save workspace as
-name_work xt1 xt2 
+%name_work xt1 xt2 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Exercise 11:  Linear inverse solution 2.
@@ -325,7 +322,7 @@ end
 [xpcg,flag,relres,iter,resvec] = pcg(J.'*J,J.'*b,1e-4,50);
 
 %Save workspace as
-name_work xL xpcg 
+%name_work xL xpcg 
 
 %Write the solutions to a VTK (Visualization ToolKit) file using,
 writevtkfile('xL',vtx,simp,xL)
@@ -345,7 +342,7 @@ writevtkfile('xpcg',vtx,simp,xpcg)
    zc,'{n}',gnd_ind,a,R1,5);
 
 %Save workspace as
-name_work solf
+%name_work solf
 
 %Write the solutions to a VTK (Visualization ToolKit) file using,
 writevtkfile('solf',vtx,simp,solf)
@@ -360,7 +357,7 @@ mat_refC = (1+0.5i)*ones(size(simp,1),1);
 
 %and compute the reference system matrix, forward solution, and complex data
 [ErefC,D,ElaC,ppr] = fem_master_full(vtx,simp,mat_refC,gnd_ind,elec,zc,'{n}');
-[VrefC] = forward_solver(vtx,ErefC,I,1e-5,pp);
+[VrefC] = forward_solver(ErefC,I,1e-5,pp);
 [refHC,refVC,indH,indV,df]=get_3d_meas(elec,vtx,VrefC,Ib,2);
 
 %complex measurement fields
@@ -382,7 +379,7 @@ tolC = 1e-5
 
 %Compute the data with the inhomogeneity in place
 [EC,D,Ela,pp] = fem_master_full(vtx,simp,matC,gnd_ind,elec,zc,'{n}');
-[VC] = forward_solver(vtx,EC,I,1e-5,pp);
+[VC] = forward_solver(EC,I,1e-5,pp);
 [voltageHC,voltageVC,indH,indV,df]=get_3d_meas(elec,vtx,VC,Ib,2);
 
 %and a Tikhonov regularized solution
@@ -392,7 +389,7 @@ srC = real(matC); rrC = real(xtC);
 siC = imag(matC); riC = imag(xtC);
 
 %Plot the real part of the solution
-hsrC = figure;
+hsrC = figure(1);
 set(hsrC,'NumberTitle','off');
 set(hsrC,'Name','Original conductivity distribution');
 subplot(2,3,1); [fc] = slicer_plot_n(2.63,srC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.63'); 
@@ -402,7 +399,7 @@ subplot(2,3,4); [fc] = slicer_plot_n(1.10,srC,vtx,simp,fc); view(2); grid; color
 subplot(2,3,5); [fc] = slicer_plot_n(0.83,srC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.83');
 subplot(2,3,6); [fc] = slicer_plot_n(0.10,srC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
 
-hrrC = figure;
+hrrC = figure(1);
 set(hrrC,'NumberTitle','off');
 set(hrrC,'Name','Reconstructed conductivity distribution');
 subplot(2,3,1); [fc] = slicer_plot_n(2.63,rrC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.63'); 
@@ -414,7 +411,7 @@ subplot(2,3,6); [fc] = slicer_plot_n(0.10,rrC,vtx,simp,fc); view(2); grid; color
 
 %and the imaginary part
 
-hsiC = figure;
+hsiC = figure(1);
 set(hsiC,'NumberTitle','off');
 set(hsiC,'Name','Original permitivity distribution');
 subplot(2,3,1); [fc] = slicer_plot_n(2.63,siC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.63'); 
@@ -424,7 +421,7 @@ subplot(2,3,4); [fc] = slicer_plot_n(1.10,siC,vtx,simp,fc); view(2); grid; color
 subplot(2,3,5); [fc] = slicer_plot_n(0.83,siC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.83');
 subplot(2,3,6); [fc] = slicer_plot_n(0.10,siC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
 
-hriC = figure;
+hriC = figure(1);
 set(hriC,'NumberTitle','off');
 set(hriC,'Name','Reconstructed permitivity distribution');
 subplot(2,3,1); [fc] = slicer_plot_n(2.63,riC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=2.63'); 
@@ -435,7 +432,7 @@ subplot(2,3,5); [fc] = slicer_plot_n(0.83,riC,vtx,simp,fc); view(2); grid; color
 subplot(2,3,6); [fc] = slicer_plot_n(0.10,riC,vtx,simp,fc); view(2); grid; colorbar; axis off; title('z=0.10');
 
 %Save workspace as
-name_work complex
+%name_work complex
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -481,15 +478,3 @@ Ela = diag(Ela1) .* Ela2;
 
 %and use the anisotropic normalized (by the volume) admittivities 
 Jrow = Jrow_x3 .* diag(Ela);
-
-%Save workspace as
-name_work anisotropic
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%END.
-
-
-
-
-
