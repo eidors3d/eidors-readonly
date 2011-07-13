@@ -3,7 +3,7 @@
 % CALCULATE JACOBIAN AND SAVE IT
 
 img= eidors_obj('image','GREIT-ng_mdl');
-img.fwd_model= ng_mdl_16x1_fine;
+img.fwd_model= fmdl;
 img.fwd_model.coarse2fine = c2f;
 img.rec_model= rmdl;
 img.elem_data= ones(size(img.fwd_model,1));
