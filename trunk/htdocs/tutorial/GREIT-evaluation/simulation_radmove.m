@@ -1,5 +1,5 @@
-% Radial Movement - $Id$  
 function [xp,yp,zp]= simulation_radmove(f_frac, radius, z0,zt);
+% Radial Movement - $Id$  
    rp= f_frac*radius; 
    cv= 2*pi*f_frac * 73;
    xp= rp * cos(cv);
