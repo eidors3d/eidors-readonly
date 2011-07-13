@@ -14,4 +14,4 @@ for i=1:1:size(xyzr_pt,2);
 end
 hold off
 
-print -dpng -r100 simulation_3d_test02a.png
+print_convert simulation_3d_test02a.png '-density 100'
