@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of inv_solve_trunc_iterative</title>
+  <meta name="keywords" content="inv_solve_trunc_iterative">
+  <meta name="description" content="INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html d_stephenson -->
+<h1>inv_solve_trunc_iterative
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img= inv_solve_trunc_iterative( inv_model, data1, data2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration
+ img= inv_solve_trunc_iterative( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ inv_model  =&gt; inverse model struct
+ data1      =&gt; differential data at earlier time
+ data2      =&gt; differential data at later time
+
+ both data1 and data2 may be matrices (MxT) each of
+  M measurements at T times
+ if either data1 or data2 is a vector, then it is expanded
+  to be the same size matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img= inv_solve_trunc_iterative( inv_model, data1, data2)</a>
+0002 <span class="comment">% INV_SOLVE_TRUNC_ITERATIVE using Morozov truncated iteration</span>
+0003 <span class="comment">% img= inv_solve_trunc_iterative( inv_model, data1, data2)</span>
+0004 <span class="comment">% img        =&gt; output image (or vector of images)</span>
+0005 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0006 <span class="comment">% data1      =&gt; differential data at earlier time</span>
+0007 <span class="comment">% data2      =&gt; differential data at later time</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% both data1 and data2 may be matrices (MxT) each of</span>
+0010 <span class="comment">%  M measurements at T times</span>
+0011 <span class="comment">% if either data1 or data2 is a vector, then it is expanded</span>
+0012 <span class="comment">%  to be the same size matrix</span>
+0013 
+0014 <span class="comment">% (C) 2005 David Stephenson. License: GPL version 2 or version 3</span>
+0015 <span class="comment">% $Id$</span>
+0016 
+0017 fwd_model= inv_model.fwd_model;
+0018 
+0019 img_bkgnd= <a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>( inv_model );
+0020 J = <a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>( fwd_model, img_bkgnd);
+0021 
+0022 <span class="comment">% The one_step reconstruction matrix is cached</span>
+0023 JtJ = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, inv_model, <span class="string">'Hessian'</span>);
+0024 <span class="keyword">if</span> ~isempty(JtJ)
+0025     <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'inv_solve_trunc_iterative: using cached value'</span>, 2);
+0026 <span class="keyword">else</span>
+0027     JtJ= J'*J;
+0028 
+0029     <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, inv_model, <span class="string">'Hessian'</span>, JtJ);
+0030     <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'inv_solve_trunc_iterative: setting cached value'</span>, 2);
+0031 <span class="keyword">end</span>
+0032 
+0033 l_data1= length(data1); l1_0 = l_data1 ~=0;
+0034 l_data2= length(data2); l2_0 = l_data2 ~=0;
+0035 l_data= max( l_data1, l_data2 );
+0036 
+0037 
+0038 dva = <a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( data1, data2, fwd_model);
+0039 
+0040 tol= 1e-4;
+0041 maxiter= 50;
+0042 <span class="keyword">if</span> isfield(inv_model,<span class="string">'parameters'</span>);
+0043     tol=     inv_model.parameters.term_tolerance;
+0044     maxiter= inv_model.parameters.max_iterations;
+0045 <span class="keyword">end</span>
+0046 sol = pcg(JtJ, J'*dva, tol, maxiter);
+0047 
+0048 
+0049 <span class="comment">% create a data structure to return</span>
+0050 img.name= <span class="string">'solved by inv_solve_trunc_iterative'</span>;
+0051 img.elem_data = sol;
+0052 img.fwd_model= fwd_model;</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

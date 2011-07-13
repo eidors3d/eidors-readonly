@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of demo_2d_simdata</title>
+  <meta name="keywords" content="demo_2d_simdata">
+  <meta name="description" content="Example of using EIDORS to simulate 2D data and to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html examples -->
+<h1>demo_2d_simdata
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Example of using EIDORS to simulate 2D data and to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Example of using EIDORS to simulate 2D data and to
+ solve it using various 2D solvers</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>	out_img = show_slices (img, levels ) show slices at levels of an</li><li><a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>	INV_SOLVE: calculate imag from an inv_model and data</li><li><a href="../../eidors/models/a_adler/mk_circ_tank.html" class="code" title="function param= mk_circ_tank(rings, levels, elec_spec );">mk_circ_tank</a>	MK_CIRC_TANK: make a cylindrical tank FEM geometry in 2D or 3D</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Example of using EIDORS to simulate 2D data and to</span>
+0002 <span class="comment">% solve it using various 2D solvers</span>
+0003 
+0004 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0005 <span class="comment">% $Id$</span>
+0006 
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Step 1: Create simple 16 electrode 2D model</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% get parameters for model from mk_circ_tank</span>
+0011 <span class="comment">% param= mk_circ_tank(rings, levels, n_elec, n_planes )</span>
+0012 n_elec= 16;
+0013 n_rings= 1;
+0014 <span class="comment">%options = {'no_meas_current','rotate_meas'};</span>
+0015  options = {<span class="string">'no_meas_current'</span>,<span class="string">'no_rotate_meas'</span>};
+0016 params= <a href="../../eidors/models/a_adler/mk_circ_tank.html" class="code" title="function param= mk_circ_tank(rings, levels, elec_spec );">mk_circ_tank</a>(12, [], n_elec ); 
+0017 
+0018 params.stimulation= <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(n_elec, n_rings, <span class="string">'{ad}'</span>,<span class="string">'{ad}'</span>, <span class="keyword">...</span>
+0019                             options, 10);
+0020 params.solve=      <span class="string">'aa_fwd_solve'</span>;
+0021 params.system_mat= <span class="string">'aa_calc_system_mat'</span>;
+0022 mdl_2d = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>, params);
+0023 <a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>( mdl_2d ); pause;
+0024 
+0025 <span class="comment">% create homogeneous image + simulate data</span>
+0026 mat= ones( size(mdl_2d.elems,1) ,1);
+0027 homg_img= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, <span class="string">'homogeneous image'</span>, <span class="keyword">...</span>
+0028                      <span class="string">'elem_data'</span>, mat, <span class="keyword">...</span>
+0029                      <span class="string">'fwd_model'</span>, mdl_2d );
+0030 homg_data=<a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( homg_img);
+0031 
+0032 <span class="comment">% create inhomogeneous image + simulate data</span>
+0033 mat([65,81,82,101,102,122])=2;
+0034 inh_img= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, <span class="string">'homogeneous image'</span>, <span class="keyword">...</span>
+0035                      <span class="string">'elem_data'</span>, mat, <span class="keyword">...</span>
+0036                      <span class="string">'fwd_model'</span>, mdl_2d );
+0037 inh_data=<a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( inh_img);
+0038 
+0039 <span class="comment">%</span>
+0040 <span class="comment">% Step 2: Create different model for reconstruction</span>
+0041 <span class="comment">%</span>
+0042 params= <a href="../../eidors/models/a_adler/mk_circ_tank.html" class="code" title="function param= mk_circ_tank(rings, levels, elec_spec );">mk_circ_tank</a>(8, [], n_elec ); 
+0043 
+0044 params.stimulation= <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(n_elec, n_rings, <span class="string">'{ad}'</span>,<span class="string">'{ad}'</span>, <span class="keyword">...</span>
+0045                             options, 10);
+0046 params.solve=      <span class="string">'aa_fwd_solve'</span>;
+0047 params.system_mat= <span class="string">'aa_calc_system_mat'</span>;
+0048 params.jacobian=   <span class="string">'aa_calc_jacobian'</span>;
+0049 mdl_2d_2 = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>, params);
+0050 <a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>( mdl_2d_2 ); pause;
+0051 
+0052 <span class="comment">%</span>
+0053 <span class="comment">% Step 3: Create inverse model</span>
+0054 <span class="comment">%</span>
+0055 clear inv2d;
+0056 inv2d.name= <span class="string">'EIT inverse'</span>;
+0057 <span class="comment">%inv2d.solve=       'aa_inv_solve';</span>
+0058  inv2d.solve=       <span class="string">'np_inv_solve'</span>;
+0059 <span class="comment">%inv2d.solve=       'aa_inv_total_var';</span>
+0060  inv2d.hyperparameter.value = 3e-3;
+0061 <span class="comment">%inv2d.hyperparameter.func = 'select_noise_figure';</span>
+0062 <span class="comment">%inv2d.hyperparameter.noise_figure= 2;</span>
+0063 <span class="comment">%inv2d.hyperparameter.tgt_elems= 1:4;</span>
+0064 <span class="comment">%inv2d.RtR_prior= 'laplace_image_prior';</span>
+0065  inv2d.R_prior= <span class="string">'ab_calc_tv_prior'</span>;
+0066 <span class="comment">%inv2d.RtR_prior= 'gaussian_HPF_prior';</span>
+0067 inv2d.reconst_type= <span class="string">'difference'</span>;
+0068 inv2d.jacobian_bkgnd.value= 1;
+0069 inv2d.fwd_model= mdl_2d_2;
+0070 inv2d.fwd_model.misc.perm_sym= <span class="string">'{y}'</span>;
+0071 inv2d= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'inv_model'</span>, inv2d);
+0072 
+0073 <span class="comment">%</span>
+0074 <span class="comment">% Step 3: Reconst and show image</span>
+0075 <span class="comment">%</span>
+0076 img= <a href="../../eidors/inv_solve.html" class="code" title="function img = inv_solve( inv_model, data1, data2)">inv_solve</a>( inv2d, inh_data, homg_data);
+0077 <a href="../../eidors/graphics_matlab/show_slices.html" class="code" title="function out_img= show_slices( img, levels )">show_slices</a>(img);
+0078</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

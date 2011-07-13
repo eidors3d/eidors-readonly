@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of create_inclusion</title>
+  <meta name="keywords" content="create_inclusion">
+  <meta name="description" content="USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html b_sawicki -->
+<h1>create_inclusion
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function inhomg_img = create_inclusion( homg_img, center, r, inclusion_mat, order) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...
+                                       inclusion_r, inclusion_mat )
+
+ Parameters: 
+      homg_img  -  image structure (fwd_model + elem_data)
+      center    -  center of spherical inclusion
+      r         -  radius of inclusion
+      inclusion_mat   -  inclusion material
+
+ Function create inclusion by changing material properties for elements
+ which center is is inside of the sphere defined by (center and r).
+
+ (C) 2009,  Bartosz Sawicki
+ $Id$
+ Licenced under the GPLv2 or later</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>	MK_C2F_CIRC_MAPPING: create a mapping matrix from circles/spheres to FEM</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/object_in_tank_2d.html" class="code" title="">object_in_tank_2d</a>	2D demo example for reconstruction of object floating inside tank with</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function inhomg_img = create_inclusion( homg_img, center, r, inclusion_mat, order)</a>
+0002 <span class="comment">% USAGE: inhomg_img = create_inclusion( homg_img, inclusion_xyz, ...</span>
+0003 <span class="comment">%                                       inclusion_r, inclusion_mat )</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Parameters:</span>
+0006 <span class="comment">%      homg_img  -  image structure (fwd_model + elem_data)</span>
+0007 <span class="comment">%      center    -  center of spherical inclusion</span>
+0008 <span class="comment">%      r         -  radius of inclusion</span>
+0009 <span class="comment">%      inclusion_mat   -  inclusion material</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Function create inclusion by changing material properties for elements</span>
+0012 <span class="comment">% which center is is inside of the sphere defined by (center and r).</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% (C) 2009,  Bartosz Sawicki</span>
+0015 <span class="comment">% $Id$</span>
+0016 <span class="comment">% Licenced under the GPLv2 or later</span>
+0017 
+0018 name = homg_img.name;
+0019 mat = homg_img.elem_data;
+0020 fwd_model = homg_img.fwd_model;
+0021 
+0022 <span class="comment">% Use coarse2fine mapping to determine if elements are in sphere</span>
+0023 xyzr = [center r];
+0024 fraction = <a href="../../../eidors/algorithms/a_adler/mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>( homg_img.fwd_model, xyzr');
+0025 
+0026 <span class="comment">% Inclusion is overlaped on old material</span>
+0027 mat = fraction*inclusion_mat + (1-fraction).*mat;     
+0028 
+0029 <span class="comment">% Create new image object</span>
+0030 inhomg_img= <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, name, <span class="keyword">...</span>
+0031                        <span class="string">'elem_data'</span>, mat, <span class="keyword">...</span>
+0032                        <span class="string">'fwd_model'</span>, fwd_model );
+0033     
+0034   
+0035   
+0036</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

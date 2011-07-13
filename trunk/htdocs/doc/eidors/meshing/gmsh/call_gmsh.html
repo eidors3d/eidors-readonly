@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of call_gmsh</title>
+  <meta name="keywords" content="call_gmsh">
+  <meta name="description" content="call_gmsh: call Gmsh to create a vol_file from a geo_file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html gmsh -->
+<h1>call_gmsh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>call_gmsh: call Gmsh to create a vol_file from a geo_file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function status= call_gmsh(geo_file) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> call_gmsh: call Gmsh to create a vol_file from a geo_file
+ status= call_netgen(geo_file, vol_file, msz_file, finelevel)
+  staus = 0 -&gt; success , negative -&gt; failure
+
+ geo_file = geometry file (input)
+ vol_file = FEM mesh file (output)
+ msz_file = Meshsize file in netgen format
+
+ Finelevel controls the fineness of the mesh
+   default is '' -&gt; coarse
+   valid values are 'fine' or 'veryfine'
+
+ $Id$
+ (C) 2009 Bartosz Sawicki. Licensed under GPL V2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="create_2d2l_mesh_gmsh.html" class="code" title="function [mdl, mat_indices] = create_2d2l_mesh_gmsh(basename, in_rad, ext_rad, no_elec)">create_2d2l_mesh_gmsh</a>	Create a 2D Circular FEM using GMSH</li><li><a href="create_circle_mesh_gmsh.html" class="code" title="function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )">create_circle_mesh_gmsh</a>	Create a 2D Circular FEM using GMSH</li><li><a href="create_poly_mesh_gmsh.html" class="code" title="function mdl = create_poly_mesh_gmsh(basename, vertices, elem_size )">create_poly_mesh_gmsh</a>	Create a 2D Polygon FEM using GMSH</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function status= call_gmsh(geo_file)</a>
+0002 <span class="comment">% call_gmsh: call Gmsh to create a vol_file from a geo_file</span>
+0003 <span class="comment">% status= call_netgen(geo_file, vol_file, msz_file, finelevel)</span>
+0004 <span class="comment">%  staus = 0 -&gt; success , negative -&gt; failure</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% geo_file = geometry file (input)</span>
+0007 <span class="comment">% vol_file = FEM mesh file (output)</span>
+0008 <span class="comment">% msz_file = Meshsize file in netgen format</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Finelevel controls the fineness of the mesh</span>
+0011 <span class="comment">%   default is '' -&gt; coarse</span>
+0012 <span class="comment">%   valid values are 'fine' or 'veryfine'</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% $Id$</span>
+0015 <span class="comment">% (C) 2009 Bartosz Sawicki. Licensed under GPL V2</span>
+0016 
+0017 
+0018 <span class="comment">% Gmsh executable filename</span>
+0019 gmsh_name = <span class="string">'gmsh'</span>;
+0020 
+0021 <span class="keyword">while</span>( 1 )
+0022    ldpath=<span class="string">''</span>;
+0023    <span class="keyword">if</span>  strfind(system_dependent(<span class="string">'getos'</span>),<span class="string">'Linux'</span>)
+0024      islinux =1;
+0025      s=version; ff= find(s==<span class="string">'.'</span>);
+0026       <span class="keyword">if</span> str2double(s(1:ff(2)-1))&gt;=7
+0027         <span class="comment">%Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen</span>
+0028           ldpath =<span class="string">'LD_LIBRARY_PATH=;'</span>;
+0029       <span class="keyword">end</span>      
+0030    <span class="keyword">else</span>
+0031      islinux =0;
+0032    <span class="keyword">end</span>    
+0033 
+0034    status= system(sprintf( <span class="string">'%s %s %s -2 -v 2'</span>, ldpath, gmsh_name, geo_file));
+0035 
+0036    <span class="keyword">if</span> status==0; <span class="keyword">break</span>; <span class="keyword">end</span>
+0037 
+0038    <span class="keyword">if</span> islinux
+0039       disp([<span class="string">'It seems you are running Linux and Gmsh has not worked. '</span> <span class="keyword">...</span>
+0040            <span class="string">'Check that it is installed and on the path. \n'</span> <span class="keyword">...</span>
+0041            <span class="string">'Perhaps LD_LIBRARY_PATH needs to be set?'</span> ]);
+0042        <span class="keyword">break</span>;
+0043    <span class="keyword">else</span>
+0044       fprintf([ <span class="keyword">...</span>
+0045        <span class="string">'Gmsh call failed. Is Gmsh installed and on the search path?\n'</span> <span class="keyword">...</span>
+0046        <span class="string">'You are running under windows, I can attempt to create\n'</span> <span class="keyword">...</span>
+0047        <span class="string">'a batch file to access gmsh.\n'</span> <span class="keyword">...</span>
+0048        <span class="string">'Please enter the directory in which to find gmsh.\n'</span> <span class="keyword">...</span>
+0049        <span class="string">'If you dont have a copy, download it from'</span> <span class="keyword">...</span>
+0050        <span class="string">'http://www.geuz.org/gmsh/\n\n'</span> <span class="keyword">...</span>
+0051        <span class="string">'Note that you *MUST* use names without spaces. Thus\n'</span> <span class="keyword">...</span>
+0052        <span class="string">'instead of C:/Program Files/ write C:/Progra~1/\n\n'</span> ]);
+0053 <span class="comment">%      gmsh_path = input('gmsh_path? ','s');</span>
+0054 <span class="comment">%      if exist( sprintf('%s/gmsh.exe',gmsh_path) , 'file' )</span>
+0055 <span class="comment">%         disp('Found gmsh.');</span>
+0056 <span class="comment">%       fid= fopen('ng.bat','w');</span>
+0057 <span class="comment">%       fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);</span>
+0058 <span class="comment">%       fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);</span>
+0059 <span class="comment">%       fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);</span>
+0060 <span class="comment">%       fclose(fid);</span>
+0061 <span class="comment">%       elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )</span>
+0062 <span class="comment">%          disp('Found netgen version 4.3.1');</span>
+0063 <span class="comment">%          fid= fopen('ng.bat','w');</span>
+0064 <span class="comment">%          fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);</span>
+0065 <span class="comment">%          fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);</span>
+0066 <span class="comment">%          fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);</span>
+0067 <span class="comment">%          fclose(fid);</span>
+0068 <span class="comment">%       else</span>
+0069 <span class="comment">%          warning(['cannot find a version of netgen that I know about\n' ...</span>
+0070 <span class="comment">%                   'Install netgen 4.4 or 4.3.1 or check the path\n']);</span>
+0071 <span class="comment">%       end</span>
+0072         <span class="keyword">break</span>;
+0073    <span class="keyword">end</span>
+0074 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

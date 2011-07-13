@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of set_electrodes</title>
+  <meta name="keywords" content="set_electrodes">
+  <meta name="description" content="function [elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html graphics_matlab -->
+<h1>set_electrodes
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);
+
+This function must be called recursively to sellect boundary faces building up 
+the elec_face. You will need to reshape this matrix appropriately to get the elec 
+matrix, depending on how many faces there are in each electrode.
+
+
+
+vtx      = The vertices matrix
+srf      = The boundary surfaces
+elec_face = A 3 column matrix holding the boundary faces to be used for constructing 
+           the electrodes
+sels     = The indices in srf matrix of the sellected surfaces
+cnts     = The coordinates of the center of each triangular boundary surface.
+VV       = The last viewing angle.
+
+Call this function as follows
+
+[elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,[],[],[],[30 60]);
+ONLY FOR THE FIRST TIME, for the first row of elec_face.
+and then ...
+[elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);
+Once you have gathered the faces to be assigned as electrodes,  
+provided that you have (the same) N number of faces per electrode and these are indexed in 
+sequence inside &quot;elec_face&quot;, then use something like
+&quot;elec = reshape(elec_face',(N*3),number of electrodes)';&quot;
+In this case note that &quot;elec_face = srf(sels,:);&quot; should be valid.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="laserbeam.html" class="code" title="function [sel] = laserbeam(vtx,srf,cnts)">laserbeam</a>	function [sel] = laserbeam(vtx,srf,cnts)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);</a>
+0002 <span class="comment">%function [elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%This function must be called recursively to sellect boundary faces building up</span>
+0005 <span class="comment">%the elec_face. You will need to reshape this matrix appropriately to get the elec</span>
+0006 <span class="comment">%matrix, depending on how many faces there are in each electrode.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%vtx      = The vertices matrix</span>
+0011 <span class="comment">%srf      = The boundary surfaces</span>
+0012 <span class="comment">%elec_face = A 3 column matrix holding the boundary faces to be used for constructing</span>
+0013 <span class="comment">%           the electrodes</span>
+0014 <span class="comment">%sels     = The indices in srf matrix of the sellected surfaces</span>
+0015 <span class="comment">%cnts     = The coordinates of the center of each triangular boundary surface.</span>
+0016 <span class="comment">%VV       = The last viewing angle.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%Call this function as follows</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%[elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,[],[],[],[30 60]);</span>
+0021 <span class="comment">%ONLY FOR THE FIRST TIME, for the first row of elec_face.</span>
+0022 <span class="comment">%and then ...</span>
+0023 <span class="comment">%[elec_face,sels,cnts,VV] = set_electrodes(vtx,srf,elec_face,sels,cnts,VV);</span>
+0024 <span class="comment">%Once you have gathered the faces to be assigned as electrodes,</span>
+0025 <span class="comment">%provided that you have (the same) N number of faces per electrode and these are indexed in</span>
+0026 <span class="comment">%sequence inside &quot;elec_face&quot;, then use something like</span>
+0027 <span class="comment">%&quot;elec = reshape(elec_face',(N*3),number of electrodes)';&quot;</span>
+0028 <span class="comment">%In this case note that &quot;elec_face = srf(sels,:);&quot; should be valid.</span>
+0029 
+0030 
+0031 <span class="keyword">if</span> size(cnts,1) == 0
+0032 
+0033 
+0034 cnts = []; <span class="comment">% Vector containing the geometric center of each triangular</span>
+0035               <span class="comment">% surface in x,y,z coordinates.</span>
+0036  
+0037 <span class="keyword">for</span> i=1:size(srf,1)
+0038    
+0039    a = srf(i,1);
+0040    b = srf(i,2);
+0041    c = srf(i,3);
+0042    
+0043    ccnx = (vtx(a,1) + vtx(b,1) + vtx(c,1))/3;
+0044    ccny = (vtx(a,2) + vtx(b,2) + vtx(c,2))/3;
+0045    ccnz = (vtx(a,3) + vtx(b,3) + vtx(c,3))/3;
+0046    
+0047    ccn = [ccnx,ccny,ccnz];
+0048    
+0049    cnts = [cnts; ccn];
+0050 <span class="keyword">end</span>
+0051 <span class="keyword">end</span>
+0052 
+0053 <span class="comment">%Plot the surface</span>
+0054 
+0055 trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
+0056 axis image;
+0057 set(gcf,<span class="string">'Colormap'</span>,[0 0 0]);
+0058 grid off
+0059 hidden off <span class="comment">%%%% If you have viewing problems comment this line</span>
+0060 view(VV);
+0061 
+0062 
+0063 <span class="comment">%and any previous patches</span>
+0064 <span class="keyword">if</span> ~isempty(sels) == 1 
+0065 <span class="keyword">for</span> y=1:size(sels)
+0066       paint_electrodes(sels(y),srf,vtx);
+0067 <span class="keyword">end</span>
+0068 <span class="keyword">end</span>
+0069 
+0070 disp(<span class="string">'Rotate and click on the figure to locate electrode and then press ENTER'</span>);
+0071 disp(<span class="string">'Try to aim near the centre of the triangular face from a small angle'</span>);
+0072 
+0073 pause; 
+0074 
+0075 VV = get(gca,<span class="string">'View'</span>);
+0076 
+0077 [sel] = <a href="laserbeam.html" class="code" title="function [sel] = laserbeam(vtx,srf,cnts)">laserbeam</a>(vtx,srf,cnts);
+0078 
+0079 paint_electrodes(sel,srf,vtx);
+0080    
+0081 
+0082 <span class="comment">%Now confirmation about sel is required.</span>
+0083 
+0084 button = questdlg(<span class="string">'Was the positioning OK?'</span>,<span class="string">'Electrode confirmation'</span>,<span class="string">'Yes'</span>,<span class="string">'No'</span>,<span class="string">'Help'</span>,<span class="string">'No'</span>);
+0085 <span class="keyword">if</span> strcmp(button,<span class="string">'Yes'</span>)
+0086    disp(<span class="string">'Creating electrode'</span>);
+0087 <span class="keyword">elseif</span> strcmp(button,<span class="string">'No'</span>)
+0088    disp(<span class="string">'Canceling electrode'</span>);
+0089    <span class="keyword">elseif</span> strcmp(button,<span class="string">'Help'</span>)
+0090    disp(<span class="string">'Sorry, no help available'</span>)
+0091 <span class="keyword">end</span>
+0092 
+0093 
+0094 <span class="keyword">if</span> strcmp(button,<span class="string">'Yes'</span>)
+0095 elec_face = [elec_face; srf(sel,:)];
+0096 sels = [sels;sel];
+0097 <span class="keyword">end</span>
+0098 
+0099    
+0100 <span class="keyword">if</span> strcmp(button,<span class="string">'No'</span>)  
+0101    
+0102 elec_face = elec_face;
+0103    
+0104 <span class="comment">%Plot the surface</span>
+0105 trimesh(srf,vtx(:,1),vtx(:,2),vtx(:,3));
+0106 axis image;
+0107 set(gcf,<span class="string">'Colormap'</span>,[0 0 0]);
+0108 grid off
+0109 hidden off <span class="comment">%%%% If you have viewing problems, comment this line</span>
+0110 
+0111    <span class="keyword">for</span> u=1:size(sels)
+0112        paint_electrodes(sels(u),srf,vtx);
+0113    <span class="keyword">end</span>
+0114   
+0115 <span class="keyword">end</span>
+0116 
+0117 view(VV);
+0118 
+0119 
+0120 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0121 <span class="comment">% This is part of the EIDORS suite.</span>
+0122 <span class="comment">% Copyright (c) N. Polydorides 2003</span>
+0123 <span class="comment">% Copying permitted under terms of GNU GPL</span>
+0124 <span class="comment">% See enclosed file gpl.html for details.</span>
+0125 <span class="comment">% EIDORS 3D version 2.0</span>
+0126 <span class="comment">% MATLAB version 5.3 R11</span>
+0127 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

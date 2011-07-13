@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- $Date: 2011-07-13 23:23:06 $ -->
+
+<toc version="1.0">
+
+<tocitem target="menu.html" image="$toolbox/matlab/icons/book_mat.gif">Toolbox
+<tocitem target="eidors/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors
+	<tocitem target="eidors/eidors_cache.html">eidors_cache</tocitem>
+	<tocitem target="eidors/eidors_msg.html">eidors_msg</tocitem>
+	<tocitem target="eidors/eidors_obj.html">eidors_obj</tocitem>
+	<tocitem target="eidors/fwd_solve.html">fwd_solve</tocitem>
+	<tocitem target="eidors/inv_solve.html">inv_solve</tocitem>
+	<tocitem target="eidors/mk_image.html">mk_image</tocitem>
+	<tocitem target="eidors/startup.html">startup</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms
+	<tocitem target="eidors/algorithms/calc_JiRtRJt.html">calc_JiRtRJt</tocitem>
+	<tocitem target="eidors/algorithms/calc_R_prior.html">calc_R_prior</tocitem>
+	<tocitem target="eidors/algorithms/calc_RtR_prior.html">calc_RtR_prior</tocitem>
+	<tocitem target="eidors/algorithms/calc_difference_data.html">calc_difference_data</tocitem>
+	<tocitem target="eidors/algorithms/calc_hyperparameter.html">calc_hyperparameter</tocitem>
+	<tocitem target="eidors/algorithms/calc_jacobian.html">calc_jacobian</tocitem>
+	<tocitem target="eidors/algorithms/calc_jacobian_bkgnd.html">calc_jacobian_bkgnd</tocitem>
+	<tocitem target="eidors/algorithms/calc_meas_icov.html">calc_meas_icov</tocitem>
+	<tocitem target="eidors/algorithms/calc_system_mat.html">calc_system_mat</tocitem>
+	<tocitem target="eidors/algorithms/eidors_model_params.html">eidors_model_params</tocitem>
+	<tocitem target="eidors/algorithms/get_img_data.html">get_img_data</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/a_adler/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/a_adler
+	<tocitem target="eidors/algorithms/a_adler/GN_abs_solve.html">GN_abs_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/RtR_prior_elem2nodes.html">RtR_prior_elem2nodes</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_calc_jacobian.html">aa_calc_jacobian</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_calc_system_mat.html">aa_calc_system_mat</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_e_move_image_prior.html">aa_e_move_image_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_e_move_jacobian.html">aa_e_move_jacobian</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_fwd_parameters.html">aa_fwd_parameters</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_fwd_solve.html">aa_fwd_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_inv_conj_grad.html">aa_inv_conj_grad</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_inv_solve.html">aa_inv_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_inv_total_var.html">aa_inv_total_var</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/aa_system_mat_fields.html">aa_system_mat_fields</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/backproj_solve.html">backproj_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_GREIT_RM.html">calc_GREIT_RM</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_all_node_voltages.html">calc_all_node_voltages</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_hm_set.html">calc_hm_set</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_noise_figure.html">calc_noise_figure</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_noise_params.html">calc_noise_params</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_posn_resolution.html">calc_posn_resolution</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_reciproc_error.html">calc_reciproc_error</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/calc_sim_params.html">calc_sim_params</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/choose_noise_figure.html">choose_noise_figure</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/eval_GREIT_fig_merit.html">eval_GREIT_fig_merit</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/exponential_covar_prior.html">exponential_covar_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/filter_jacobian.html">filter_jacobian</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/find_electrode_bdy.html">find_electrode_bdy</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/gaussian_HPF_prior.html">gaussian_HPF_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/get_elem_volume.html">get_elem_volume</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/interp_mesh.html">interp_mesh</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/inv_kalman_diff.html">inv_kalman_diff</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/jacobian_elem2nodes.html">jacobian_elem2nodes</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/laplace_image_prior.html">laplace_image_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/mapper_nodes_elems.html">mapper_nodes_elems</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/meas_icov_rm_elecs.html">meas_icov_rm_elecs</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/mk_c2f_circ_mapping.html">mk_c2f_circ_mapping</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/mk_coarse_fine_mapping.html">mk_coarse_fine_mapping</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/nodal_solve.html">nodal_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/noser_image_prior.html">noser_image_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/perturb_jacobian.html">perturb_jacobian</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/solve_use_matrix.html">solve_use_matrix</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/tikhonov_image_prior.html">tikhonov_image_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/time_prior_solve.html">time_prior_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_adler/time_smooth_prior.html">time_smooth_prior</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/a_borsic/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/a_borsic
+	<tocitem target="eidors/algorithms/a_borsic/TV_operator_2D.html">TV_operator_2D</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/TV_operator_3D.html">TV_operator_3D</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/ab_calc_tv_prior.html">ab_calc_tv_prior</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/ab_tv_diff_solve.html">ab_tv_diff_solve</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/ab_tv_lagged_diff.html">ab_tv_lagged_diff</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/pdipm_abs.html">pdipm_abs</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/pdipm_diff.html">pdipm_diff</tocitem>
+	<tocitem target="eidors/algorithms/a_borsic/primaldual_tvrecon_lsearch.html">primaldual_tvrecon_lsearch</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/b_graham/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/b_graham
+	<tocitem target="eidors/algorithms/b_graham/bg_bld_master.html">bg_bld_master</tocitem>
+	<tocitem target="eidors/algorithms/b_graham/calc_shape_grads.html">calc_shape_grads</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/b_grychtol/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/b_grychtol
+	<tocitem target="eidors/algorithms/b_grychtol/calc_TSVD_RM.html">calc_TSVD_RM</tocitem>
+	<tocitem target="eidors/algorithms/b_grychtol/fix_model.html">fix_model</tocitem>
+	<tocitem target="eidors/algorithms/b_grychtol/inv_solve_TSVD.html">inv_solve_TSVD</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/b_lionheart/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/b_lionheart
+	<tocitem target="eidors/algorithms/b_lionheart/calc_transferimpedance.html">calc_transferimpedance</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/b_sawicki/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/b_sawicki
+	<tocitem target="eidors/algorithms/b_sawicki/bs_calc_system_mat.html">bs_calc_system_mat</tocitem>
+	<tocitem target="eidors/algorithms/b_sawicki/bs_nonlinearGN.html">bs_nonlinearGN</tocitem>
+	<tocitem target="eidors/algorithms/b_sawicki/create_inclusion.html">create_inclusion</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/c_gomez/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/c_gomez
+	<tocitem target="eidors/algorithms/c_gomez/calc_move_jacobian.html">calc_move_jacobian</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/d_stephenson/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/d_stephenson
+	<tocitem target="eidors/algorithms/d_stephenson/center_of_simps.html">center_of_simps</tocitem>
+	<tocitem target="eidors/algorithms/d_stephenson/edge_refined_elem_mapper.html">edge_refined_elem_mapper</tocitem>
+	<tocitem target="eidors/algorithms/d_stephenson/edge_refined_node_mapper.html">edge_refined_node_mapper</tocitem>
+	<tocitem target="eidors/algorithms/d_stephenson/inv_solve_dual_mesh.html">inv_solve_dual_mesh</tocitem>
+	<tocitem target="eidors/algorithms/d_stephenson/inv_solve_trunc_iterative.html">inv_solve_trunc_iterative</tocitem>
+	<tocitem target="eidors/algorithms/d_stephenson/jacobian_3d_with_fields.html">jacobian_3d_with_fields</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/m_crabb/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/m_crabb
+	<tocitem target="eidors/algorithms/m_crabb/linear_reorder.html">linear_reorder</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/m_vauhkonen/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/m_vauhkonen
+	<tocitem target="eidors/algorithms/m_vauhkonen/Contents.html">Contents</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/Dyneit.html">Dyneit</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/ErrorFunc.html">ErrorFunc</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/FemMatrix.html">FemMatrix</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/FemMatrixNode.html">FemMatrixNode</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/ForwardSolution.html">ForwardSolution</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/Jacobian.html">Jacobian</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/JacobianNode.html">JacobianNode</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/MakeRegmatrix.html">MakeRegmatrix</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/MakeRegmatrixFace.html">MakeRegmatrixFace</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/MakeRegmatrixNode.html">MakeRegmatrixNode</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/RemoveJacob.html">RemoveJacob</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/mv_calc_system_mat.html">mv_calc_system_mat</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/mv_fwd_parameters.html">mv_fwd_parameters</tocitem>
+	<tocitem target="eidors/algorithms/m_vauhkonen/mv_fwd_solve.html">mv_fwd_solve</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/n_polydorides/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/n_polydorides
+	<tocitem target="eidors/algorithms/n_polydorides/adjoint_spin.html">adjoint_spin</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/bld_master.html">bld_master</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/bld_master_full.html">bld_master_full</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/check_vols.html">check_vols</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/contents.html">contents</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/db23d.html">db23d</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/delfix.html">delfix</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/fem_master_full.html">fem_master_full</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/find_boundary.html">find_boundary</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/forward_solver.html">forward_solver</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/gaussian_prior_likelyhood.html">gaussian_prior_likelyhood</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/get_3d_meas.html">get_3d_meas</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/get_multi_meas.html">get_multi_meas</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/integrofgrad.html">integrofgrad</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/inverse_solver.html">inverse_solver</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/iso_f_smooth.html">iso_f_smooth</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/iso_s_smooth.html">iso_s_smooth</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/jacobian_3d.html">jacobian_3d</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/jacobian_3d_fields.html">jacobian_3d_fields</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/m_3d_fields.html">m_3d_fields</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/mcmc_solve.html">mcmc_solve</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_calc_3d_fields.html">np_calc_3d_fields</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_calc_image_prior.html">np_calc_image_prior</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_calc_jacobian.html">np_calc_jacobian</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_calc_system_mat.html">np_calc_system_mat</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_fwd_parameters.html">np_fwd_parameters</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_fwd_solve.html">np_fwd_solve</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/np_inv_solve.html">np_inv_solve</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/ref_master.html">ref_master</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/set_3d_currents.html">set_3d_currents</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/set_multi_currents.html">set_multi_currents</tocitem>
+	<tocitem target="eidors/algorithms/n_polydorides/triarea3d.html">triarea3d</tocitem>
+</tocitem>
+<tocitem target="eidors/algorithms/t_dai/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/algorithms/t_dai
+	<tocitem target="eidors/algorithms/t_dai/calc_covar_prior.html">calc_covar_prior</tocitem>
+	<tocitem target="eidors/algorithms/t_dai/fourD_prior_solve.html">fourD_prior_solve</tocitem>
+</tocitem>
+<tocitem target="eidors/examples/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/examples
+	<tocitem target="eidors/examples/cheating_2d.html">cheating_2d</tocitem>
+	<tocitem target="eidors/examples/compare_2d_algs.html">compare_2d_algs</tocitem>
+	<tocitem target="eidors/examples/compare_3d_algs.html">compare_3d_algs</tocitem>
+	<tocitem target="eidors/examples/demo_2d_simdata.html">demo_2d_simdata</tocitem>
+	<tocitem target="eidors/examples/demo_3d_simdata.html">demo_3d_simdata</tocitem>
+	<tocitem target="eidors/examples/demo_complex.html">demo_complex</tocitem>
+	<tocitem target="eidors/examples/demo_real.html">demo_real</tocitem>
+	<tocitem target="eidors/examples/eidors2d_demo1.html">eidors2d_demo1</tocitem>
+	<tocitem target="eidors/examples/image_2d_algs.html">image_2d_algs</tocitem>
+	<tocitem target="eidors/examples/manchester_tomography.html">manchester_tomography</tocitem>
+	<tocitem target="eidors/examples/moving_tank_objs.html">moving_tank_objs</tocitem>
+	<tocitem target="eidors/examples/object_in_tank_2d.html">object_in_tank_2d</tocitem>
+	<tocitem target="eidors/examples/resistor_model.html">resistor_model</tocitem>
+</tocitem>
+<tocitem target="eidors/graphics_matlab/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/graphics_matlab
+	<tocitem target="eidors/graphics_matlab/animate_reconstructions.html">animate_reconstructions</tocitem>
+	<tocitem target="eidors/graphics_matlab/calc_colours.html">calc_colours</tocitem>
+	<tocitem target="eidors/graphics_matlab/calc_slices.html">calc_slices</tocitem>
+	<tocitem target="eidors/graphics_matlab/crop_model.html">crop_model</tocitem>
+	<tocitem target="eidors/graphics_matlab/display_meas.html">display_meas</tocitem>
+	<tocitem target="eidors/graphics_matlab/eidors_colourbar.html">eidors_colourbar</tocitem>
+	<tocitem target="eidors/graphics_matlab/figaro3d.html">figaro3d</tocitem>
+	<tocitem target="eidors/graphics_matlab/image_levels.html">image_levels</tocitem>
+	<tocitem target="eidors/graphics_matlab/laserbeam.html">laserbeam</tocitem>
+	<tocitem target="eidors/graphics_matlab/mdl_slice_mapper.html">mdl_slice_mapper</tocitem>
+	<tocitem target="eidors/graphics_matlab/potplot.html">potplot</tocitem>
+	<tocitem target="eidors/graphics_matlab/print_convert.html">print_convert</tocitem>
+	<tocitem target="eidors/graphics_matlab/repaint_inho.html">repaint_inho</tocitem>
+	<tocitem target="eidors/graphics_matlab/scale_for_display.html">scale_for_display</tocitem>
+	<tocitem target="eidors/graphics_matlab/set_electrodes.html">set_electrodes</tocitem>
+	<tocitem target="eidors/graphics_matlab/set_inho.html">set_inho</tocitem>
+	<tocitem target="eidors/graphics_matlab/show_3d_slices.html">show_3d_slices</tocitem>
+	<tocitem target="eidors/graphics_matlab/show_current.html">show_current</tocitem>
+	<tocitem target="eidors/graphics_matlab/show_fem.html">show_fem</tocitem>
+	<tocitem target="eidors/graphics_matlab/show_fem_move.html">show_fem_move</tocitem>
+	<tocitem target="eidors/graphics_matlab/show_slices.html">show_slices</tocitem>
+	<tocitem target="eidors/graphics_matlab/show_slices_move.html">show_slices_move</tocitem>
+	<tocitem target="eidors/graphics_matlab/slicer_plot_n.html">slicer_plot_n</tocitem>
+</tocitem>
+<tocitem target="eidors/graphics_vtk/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/graphics_vtk
+	<tocitem target="eidors/graphics_vtk/writevtkfile.html">writevtkfile</tocitem>
+	<tocitem target="eidors/graphics_vtk/writevtkfile_old.html">writevtkfile_old</tocitem>
+</tocitem>
+<tocitem target="eidors/interface/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/interface
+	<tocitem target="eidors/interface/display_data.html">display_data</tocitem>
+	<tocitem target="eidors/interface/eidors_readdata.html">eidors_readdata</tocitem>
+	<tocitem target="eidors/interface/eidors_readimg.html">eidors_readimg</tocitem>
+	<tocitem target="eidors/interface/eidors_saveimg.html">eidors_saveimg</tocitem>
+	<tocitem target="eidors/interface/find_frc.html">find_frc</tocitem>
+	<tocitem target="eidors/interface/igt2img.html">igt2img</tocitem>
+	<tocitem target="eidors/interface/iirc_system_configure.html">iirc_system_configure</tocitem>
+	<tocitem target="eidors/interface/iirc_system_getdata.html">iirc_system_getdata</tocitem>
+	<tocitem target="eidors/interface/img2igt.html">img2igt</tocitem>
+	<tocitem target="eidors/interface/write_toast_qm.html">write_toast_qm</tocitem>
+</tocitem>
+<tocitem target="eidors/meshing/distmesh/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/meshing/distmesh
+	<tocitem target="eidors/meshing/distmesh/distmesh2d.html">distmesh2d</tocitem>
+	<tocitem target="eidors/meshing/distmesh/distmeshnd.html">distmeshnd</tocitem>
+	<tocitem target="eidors/meshing/distmesh/dm_2d_circ_pt_elecs.html">dm_2d_circ_pt_elecs</tocitem>
+	<tocitem target="eidors/meshing/distmesh/dm_2d_pt_elecs.html">dm_2d_pt_elecs</tocitem>
+	<tocitem target="eidors/meshing/distmesh/dm_mk_elec_nodes.html">dm_mk_elec_nodes</tocitem>
+	<tocitem target="eidors/meshing/distmesh/dm_mk_fwd_model.html">dm_mk_fwd_model</tocitem>
+	<tocitem target="eidors/meshing/distmesh/dm_refine_points.html">dm_refine_points</tocitem>
+</tocitem>
+<tocitem target="eidors/meshing/gmsh/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/meshing/gmsh
+	<tocitem target="eidors/meshing/gmsh/call_gmsh.html">call_gmsh</tocitem>
+	<tocitem target="eidors/meshing/gmsh/create_2d2l_mesh_gmsh.html">create_2d2l_mesh_gmsh</tocitem>
+	<tocitem target="eidors/meshing/gmsh/create_circle_mesh_gmsh.html">create_circle_mesh_gmsh</tocitem>
+	<tocitem target="eidors/meshing/gmsh/create_gmsh_2d_circle.html">create_gmsh_2d_circle</tocitem>
+	<tocitem target="eidors/meshing/gmsh/create_poly_mesh_gmsh.html">create_poly_mesh_gmsh</tocitem>
+	<tocitem target="eidors/meshing/gmsh/gmsh_mk_fwd_model.html">gmsh_mk_fwd_model</tocitem>
+	<tocitem target="eidors/meshing/gmsh/gmsh_read_mesh.html">gmsh_read_mesh</tocitem>
+</tocitem>
+<tocitem target="eidors/meshing/netgen/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/meshing/netgen
+	<tocitem target="eidors/meshing/netgen/call_netgen.html">call_netgen</tocitem>
+	<tocitem target="eidors/meshing/netgen/fourier_fit.html">fourier_fit</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_extract_face.html">ng_extract_face</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_mk_closed_contour.html">ng_mk_closed_contour</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_mk_cyl_models.html">ng_mk_cyl_models</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_mk_ellip_models.html">ng_mk_ellip_models</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_mk_extruded_model.html">ng_mk_extruded_model</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_mk_fwd_model.html">ng_mk_fwd_model</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_mk_gen_models.html">ng_mk_gen_models</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_read_mesh.html">ng_read_mesh</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_tank_find_elec.html">ng_tank_find_elec</tocitem>
+	<tocitem target="eidors/meshing/netgen/ng_tank_select_elec.html">ng_tank_select_elec</tocitem>
+	<tocitem target="eidors/meshing/netgen/piece_poly_fit.html">piece_poly_fit</tocitem>
+</tocitem>
+<tocitem target="eidors/models/a_adler/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/models/a_adler
+	<tocitem target="eidors/models/a_adler/add_noise.html">add_noise</tocitem>
+	<tocitem target="eidors/models/a_adler/analytic_2d_circle.html">analytic_2d_circle</tocitem>
+	<tocitem target="eidors/models/a_adler/deform_cylinder.html">deform_cylinder</tocitem>
+	<tocitem target="eidors/models/a_adler/elem_dim.html">elem_dim</tocitem>
+	<tocitem target="eidors/models/a_adler/elem_select.html">elem_select</tocitem>
+	<tocitem target="eidors/models/a_adler/fwd_model_from_v2.html">fwd_model_from_v2</tocitem>
+	<tocitem target="eidors/models/a_adler/mdl_dim.html">mdl_dim</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_GREIT_model.html">mk_GREIT_model</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_circ_tank.html">mk_circ_tank</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_common_gridmdl.html">mk_common_gridmdl</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_common_model.html">mk_common_model</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_fmdl_from_nodes.html">mk_fmdl_from_nodes</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_grid_model.html">mk_grid_model</tocitem>
+	<tocitem target="eidors/models/a_adler/mk_stim_patterns.html">mk_stim_patterns</tocitem>
+	<tocitem target="eidors/models/a_adler/num_elems.html">num_elems</tocitem>
+	<tocitem target="eidors/models/a_adler/num_nodes.html">num_nodes</tocitem>
+	<tocitem target="eidors/models/a_adler/reciprocity_idx.html">reciprocity_idx</tocitem>
+	<tocitem target="eidors/models/a_adler/select_imdl.html">select_imdl</tocitem>
+	<tocitem target="eidors/models/a_adler/simulate_2d_movement.html">simulate_2d_movement</tocitem>
+	<tocitem target="eidors/models/a_adler/simulate_3d_movement.html">simulate_3d_movement</tocitem>
+	<tocitem target="eidors/models/a_adler/simulate_movement.html">simulate_movement</tocitem>
+	<tocitem target="eidors/models/a_adler/stim_meas_list.html">stim_meas_list</tocitem>
+	<tocitem target="eidors/models/a_adler/test_GREIT_model.html">test_GREIT_model</tocitem>
+	<tocitem target="eidors/models/a_adler/thorax_geometry.html">thorax_geometry</tocitem>
+	<tocitem target="eidors/models/a_adler/unpack_reconst_matrix.html">unpack_reconst_matrix</tocitem>
+</tocitem>
+<tocitem target="eidors/models/b_grychtol/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/models/b_grychtol
+	<tocitem target="eidors/models/b_grychtol/mk_library_model.html">mk_library_model</tocitem>
+	<tocitem target="eidors/models/b_grychtol/shape_library.html">shape_library</tocitem>
+</tocitem>
+<tocitem target="eidors/models/d_stephenson/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/models/d_stephenson
+	<tocitem target="eidors/models/d_stephenson/elems_in_cylinder.html">elems_in_cylinder</tocitem>
+</tocitem>
+<tocitem target="eidors/models/m_vauhkonen/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/models/m_vauhkonen
+	<tocitem target="eidors/models/m_vauhkonen/Contents.html">Contents</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/Current.html">Current</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/RemoveVolt.html">RemoveVolt</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/UpdateFemMatrix.html">UpdateFemMatrix</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/bound1.html">bound1</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/bound2.html">bound2</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/boundquad1.html">boundquad1</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/boundquad2.html">boundquad2</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/electrlen.html">electrlen</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/grinprodgaus.html">grinprodgaus</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/grinprodgausnode.html">grinprodgausnode</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/grinprodgausnodequad.html">grinprodgausnodequad</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/grinprodgausquad.html">grinprodgausquad</tocitem>
+	<tocitem target="eidors/models/m_vauhkonen/mv_mdl_meshdata.html">mv_mdl_meshdata</tocitem>
+</tocitem>
+<tocitem target="eidors/models/s_murphy/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/models/s_murphy
+	<tocitem target="eidors/models/s_murphy/set_fwd_model.html">set_fwd_model</tocitem>
+</tocitem>
+<tocitem target="eidors/tests/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/tests
+	<tocitem target="eidors/tests/cache_limit_test.html">cache_limit_test</tocitem>
+	<tocitem target="eidors/tests/calc_data_prior_test.html">calc_data_prior_test</tocitem>
+	<tocitem target="eidors/tests/calc_jacobian_test.html">calc_jacobian_test</tocitem>
+	<tocitem target="eidors/tests/calc_model_prior_test.html">calc_model_prior_test</tocitem>
+	<tocitem target="eidors/tests/demo_real_test.html">demo_real_test</tocitem>
+	<tocitem target="eidors/tests/demo_real_test2.html">demo_real_test2</tocitem>
+	<tocitem target="eidors/tests/demo_real_test3.html">demo_real_test3</tocitem>
+	<tocitem target="eidors/tests/mk_stim_patterns_test.html">mk_stim_patterns_test</tocitem>
+	<tocitem target="eidors/tests/perturb_jacobian_test.html">perturb_jacobian_test</tocitem>
+	<tocitem target="eidors/tests/test_2d_resistor.html">test_2d_resistor</tocitem>
+	<tocitem target="eidors/tests/test_3d_resistor.html">test_3d_resistor</tocitem>
+	<tocitem target="eidors/tests/test_c2f_jacobian.html">test_c2f_jacobian</tocitem>
+	<tocitem target="eidors/tests/test_colour_direction.html">test_colour_direction</tocitem>
+	<tocitem target="eidors/tests/test_compl_elec_mdl.html">test_compl_elec_mdl</tocitem>
+	<tocitem target="eidors/tests/tutorials_test.html">tutorials_test</tocitem>
+	<tocitem target="eidors/tests/var_id_test.html">var_id_test</tocitem>
+</tocitem>
+<tocitem target="eidors/tools/menu.html" image="$toolbox/matlab/icons/reficon.gif">eidors/tools
+	<tocitem target="eidors/tools/test_performance.html">test_performance</tocitem>
+	<tocitem target="eidors/tools/test_performance_img.html">test_performance_img</tocitem>
+	<tocitem target="eidors/tools/unit_test_cmp.html">unit_test_cmp</tocitem>
+</tocitem>
+</tocitem>
+
+</toc>

@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aa_calc_jacobian</title>
+  <meta name="keywords" content="aa_calc_jacobian">
+  <meta name="description" content="AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>aa_calc_jacobian
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function J= aa_calc_jacobian( fwd_model, img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)
+ Calculate Jacobian Matrix for current stimulation EIT
+ J         = Jacobian matrix
+ fwd_model = forward model
+
+ fwd_model.normalize_measurements if param exists, calculate
+                                  a Jacobian for normalized
+                                  difference measurements
+ img = image background for jacobian calc</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>	AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</li><li><a href="../../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>	CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image</li><li><a href="../../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>	PERTURB_JACOBIAN: J= perturb_jacobian( fwd_model, img)</li><li><a href="../../../eidors/meshing/netgen/ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li><li><a href="../../../eidors/models/a_adler/mk_fmdl_from_nodes.html" class="code" title="function mdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, name)">mk_fmdl_from_nodes</a>	MK_FMDL_FROM_NODES: create fmdl from nodes</li><li><a href="../../../eidors/tests/perturb_jacobian_test.html" class="code" title="">perturb_jacobian_test</a>	Perturbation Jacobians</li><li><a href="../../../eidors/tests/test_2d_resistor.html" class="code" title="">test_2d_resistor</a>	Create 2D model of a cylindrical resistor</li><li><a href="../../../eidors/tests/test_3d_resistor.html" class="code" title="">test_3d_resistor</a>	Create 3D model of a Rectangular resistor</li><li><a href="../../../eidors/tests/test_c2f_jacobian.html" class="code" title="function test_c2f_jacobian">test_c2f_jacobian</a>	Test calc of jacobian given coarse to fine mapping</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function DE = jacobian_calc(pp, zi2E, FC, sv, c2f);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function J= aa_calc_jacobian( fwd_model, img)</a>
+0002 <span class="comment">% AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</span>
+0003 <span class="comment">% Calculate Jacobian Matrix for current stimulation EIT</span>
+0004 <span class="comment">% J         = Jacobian matrix</span>
+0005 <span class="comment">% fwd_model = forward model</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% fwd_model.normalize_measurements if param exists, calculate</span>
+0008 <span class="comment">%                                  a Jacobian for normalized</span>
+0009 <span class="comment">%                                  difference measurements</span>
+0010 <span class="comment">% img = image background for jacobian calc</span>
+0011 
+0012 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015 pp= <a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>( fwd_model );
+0016 s_mat= <a href="../../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>( fwd_model, img );
+0017 
+0018 d= pp.n_dims+1;
+0019 e= pp.n_elem;
+0020 n= pp.n_node;
+0021 
+0022 idx= 1:size(s_mat.E,1);
+0023 idx( fwd_model.gnd_node ) = [];
+0024 
+0025 sv= zeros(n, pp.n_stim );
+0026 sv( idx,:) = <a href="../../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>(s_mat.E(idx,idx) , pp.QQ( idx,: ));
+0027 
+0028 zi2E= zeros(pp.n_elec, n);
+0029 zi2E(:, idx)= pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+0030 
+0031 FC= <a href="aa_system_mat_fields.html" class="code" title="function FC= aa_system_mat_fields( fwd_model )">aa_system_mat_fields</a>( fwd_model );
+0032 
+0033 
+0034 <span class="keyword">if</span> isfield(fwd_model,<span class="string">'coarse2fine'</span>)
+0035    DE = <a href="#_sub1" class="code" title="subfunction DE = jacobian_calc(pp, zi2E, FC, sv, c2f);">jacobian_calc</a>(pp, zi2E, FC, sv, fwd_model.coarse2fine);
+0036    nparam= size(fwd_model.coarse2fine,2);
+0037 <span class="keyword">else</span>
+0038    DE = <a href="#_sub1" class="code" title="subfunction DE = jacobian_calc(pp, zi2E, FC, sv, c2f);">jacobian_calc</a>(pp, zi2E, FC, sv);
+0039    nparam= e;
+0040 <span class="keyword">end</span>
+0041 
+0042 J = zeros( pp.n_meas, nparam );
+0043 idx=0;
+0044 <span class="keyword">for</span> j= 1:pp.n_stim
+0045    meas_pat= fwd_model.stimulation(j).meas_pattern;
+0046    n_meas  = size(meas_pat,1);
+0047    DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
+0048    J( idx+(1:n_meas),: ) = meas_pat*DEj;
+0049    idx= idx+ n_meas;
+0050 <span class="keyword">end</span>
+0051 
+0052 <span class="comment">% calculate normalized Jacobian</span>
+0053 <span class="keyword">if</span> pp.normalize
+0054    data= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0055    J= J ./ (data.meas(:)*ones(1,nparam));
+0056    
+0057 <span class="keyword">end</span>
+0058 
+0059 <span class="comment">% FIXME: The Jacobian calculated is inversed</span>
+0060 J= -J;
+0061 
+0062 <span class="comment">% DE_{i,j,k} is dV_i,j / dS_k</span>
+0063 <span class="comment">%  where V_i is change in voltage on electrode i for</span>
+0064 <span class="comment">%        stimulation pattern j</span>
+0065 <span class="comment">%        S_k is change in conductivity on element k</span>
+0066 <a name="_sub1" href="#_subfunctions" class="code">function DE = jacobian_calc(pp, zi2E, FC, sv, c2f);</a>
+0067 d= pp.n_dims+1;
+0068 dfact= (d-1)*(d-2); <span class="comment">% Valid for d&lt;=3</span>
+0069 
+0070 do_c2f = ( nargin==5 );
+0071 
+0072 zi2E_FCt = zi2E * FC';
+0073 FC_sv   = FC * sv;
+0074 
+0075 <span class="keyword">if</span> ~do_c2f
+0076    DE= zeros(pp.n_elec, pp.n_stim, pp.n_elem);
+0077    <span class="keyword">for</span> k= 1:pp.n_elem
+0078        idx= (d-1)*(k-1)+1 : (d-1)*k;
+0079        dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
+0080        DE(:,:,k)= dq;
+0081    <span class="keyword">end</span>
+0082 <span class="keyword">else</span>
+0083    DE= zeros(pp.n_elec, pp.n_stim, size(c2f,2) );
+0084    <span class="keyword">if</span> 0 <span class="comment">% Code is slower</span>
+0085       de= pp.n_elem * (d-1);
+0086       <span class="keyword">for</span> k= 1:size(c2f,2);
+0087           chg_col = kron( c2f(:,k), ones(d-1,1));
+0088           dDD_dEj = spdiags(chg_col,0, de, de);
+0089           dq= zi2E_FCt * dDD_dEj * FC_sv;
+0090           DE(:,:,k)= dq;
+0091       <span class="keyword">end</span>
+0092    <span class="keyword">else</span>
+0093       de= pp.n_elem * (d-1);
+0094       <span class="keyword">for</span> k= 1:size(c2f,2);
+0095           ff = find( c2f(:,k) );
+0096           lff= length(ff)*(d-1);
+0097           ff1= ones(d-1,1) * ff(:)';
+0098           ffd= (d-1)*ff1 + (-(d-2):0)'*ones(1,length(ff));
+0099           dDD_dEj = spdiags(c2f(ff1,k), 0, lff, lff);
+0100           dq= zi2E_FCt(:,ffd) * dDD_dEj * FC_sv(ffd,:);
+0101           DE(:,:,k)= dq;
+0102       <span class="keyword">end</span>
+0103    <span class="keyword">end</span>
+0104 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

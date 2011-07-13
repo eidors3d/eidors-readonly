@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dm_mk_fwd_model</title>
+  <meta name="keywords" content="dm_mk_fwd_model">
+  <meta name="description" content="DM_MK_FWD_MODEL: create a fwd_model object using distmesh">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html distmesh -->
+<h1>dm_mk_fwd_model
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DM_MK_FWD_MODEL: create a fwd_model object using distmesh</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes,refine_nodes, z_contact, name) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DM_MK_FWD_MODEL: create a fwd_model object using distmesh
+ fwd_mdl= dm_mk_fwd_model( fd, fh, h0, bbox,...
+                          elec_nodes, stim_pattern, z_contact, name);
+
+  fd:        Shape function - +ve for space inside area, -ve outside
+  fh:        Mesh refinement function - use [] for uniform
+  nnodes:    Estimate of number of nodes in model
+  bbox:      Bounding box [xmin,ymin, {zmin}; xmax,ymax,{zmax}]
+
+  elec_nodes:        cell of matrix N x [x,y,{z}] for each electrode
+  refine_nodes:      vector of fixed nodes to add to model to refine it
+  z_contact:         vector or scalar electrode contact impedance
+  name:              name for eidors object
+
+  fwd_mdl:           eidors format fwd_model</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="distmeshnd.html" class="code" title="function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)">distmeshnd</a>	DISTMESHND N-D Mesh Generator using Distance Functions.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function  h0= estimate_h0(bbox, nnodes);</a></li><li><a href="#_sub2" class="code">function fmdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes,</a></li><li><a href="#_sub3" class="code">function mdl= construct_fwd_model(srf,vtx,simp, name,</a></li><li><a href="#_sub4" class="code">function [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox,</a></li><li><a href="#_sub5" class="code">function h= huniform(p);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fwd_mdl]= dm_mk_fwd_model( fd, fh, nnodes, bbox, elec_nodes, </a><span class="keyword">...</span>
+0002                      refine_nodes, z_contact, name)
+0003 <span class="comment">% DM_MK_FWD_MODEL: create a fwd_model object using distmesh</span>
+0004 <span class="comment">% fwd_mdl= dm_mk_fwd_model( fd, fh, h0, bbox,...</span>
+0005 <span class="comment">%                          elec_nodes, stim_pattern, z_contact, name);</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%  fd:        Shape function - +ve for space inside area, -ve outside</span>
+0008 <span class="comment">%  fh:        Mesh refinement function - use [] for uniform</span>
+0009 <span class="comment">%  nnodes:    Estimate of number of nodes in model</span>
+0010 <span class="comment">%  bbox:      Bounding box [xmin,ymin, {zmin}; xmax,ymax,{zmax}]</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%  elec_nodes:        cell of matrix N x [x,y,{z}] for each electrode</span>
+0013 <span class="comment">%  refine_nodes:      vector of fixed nodes to add to model to refine it</span>
+0014 <span class="comment">%  z_contact:         vector or scalar electrode contact impedance</span>
+0015 <span class="comment">%  name:              name for eidors object</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%  fwd_mdl:           eidors format fwd_model</span>
+0018 
+0019 <span class="comment">% (C) 2008 Andy Adler. License: GPL version 2 or version 3</span>
+0020 <span class="comment">% $Id$</span>
+0021 
+0022 <span class="keyword">if</span> nargin &lt;7
+0023    error(<span class="string">'dm_mk_fwd_model requires 7 or 8 parameters'</span>);
+0024 <span class="keyword">else</span>
+0025    name = <span class="string">'MDL from dm_mk_fwd_model'</span>;
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="keyword">if</span> isempty(fh); fh= @<a href="#_sub5" class="code" title="subfunction h= huniform(p);">huniform</a>; <span class="keyword">end</span>
+0029 
+0030 h0= <a href="#_sub1" class="code" title="subfunction  h0= estimate_h0(bbox, nnodes);">estimate_h0</a>(bbox, nnodes);
+0031 fwd_mdl= <a href="#_sub2" class="code" title="subfunction fmdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes, ">create_refined_model</a>(name, fd, fh, h0, bbox, elec_nodes, <span class="keyword">...</span>
+0032                         refine_nodes, z_contact); 
+0033 
+0034 <span class="comment">% estimate initial edge length to get nnodes</span>
+0035 <a name="_sub1" href="#_subfunctions" class="code">function  h0= estimate_h0(bbox, nnodes);</a>
+0036    dims= size(bbox,2);
+0037    area_est= prod(abs(diff(bbox,[],1)));
+0038    h0 = (area_est/nnodes)^(1/dims);
+0039 
+0040 <a name="_sub2" href="#_subfunctions" class="code">function fmdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes, </a><span class="keyword">...</span>
+0041                         refine_nodes, z_contact); 
+0042 
+0043    <span class="comment">% fixed_node= [elec_nodes{:}]; - wish we could do it like this - matlab bug!!</span>
+0044    fixed_node= [];
+0045    <span class="keyword">for</span> i= 1:prod(size(elec_nodes)) 
+0046       fixed_node= [fixed_node; elec_nodes{i}];
+0047    <span class="keyword">end</span>
+0048    n_elec_nodes= size(fixed_node,1);
+0049    fixed_node= [fixed_node; refine_nodes];
+0050    [vtx,simp,srf] = <a href="#_sub4" class="code" title="subfunction [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox, ">call_distmesh</a>(fd,fh, h0,bbox,fixed_node, n_elec_nodes);
+0051 
+0052    fmdl = <a href="#_sub3" class="code" title="subfunction mdl= construct_fwd_model(srf,vtx,simp, name, ">construct_fwd_model</a>(srf,vtx,simp, name, <span class="keyword">...</span>
+0053                           elec_nodes, z_contact);
+0054 
+0055 
+0056 <span class="comment">% build fwd_model structure</span>
+0057 <a name="_sub3" href="#_subfunctions" class="code">function mdl= construct_fwd_model(srf,vtx,simp, name, </a><span class="keyword">...</span>
+0058                        elec_nodes, z_contact)
+0059    mdl= <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>, name);
+0060 
+0061    mdl.nodes    = vtx;
+0062    mdl.elems    = simp;
+0063    mdl.boundary = srf;
+0064    mdl.gnd_node=           1;
+0065    mdl.np_fwd_solve.perm_sym =     <span class="string">'{n}'</span>;
+0066    mdl.name = name;
+0067 
+0068    <span class="comment">% Electrodes and z_contact</span>
+0069 
+0070    <span class="comment">% set the z_contact</span>
+0071    n_elec= prod(size(elec_nodes));
+0072    z_contact= z_contact.*ones(n_elec,1);
+0073    curr_e_node=0;
+0074    <span class="keyword">for</span> i= 1:n_elec
+0075       this_elec= size(elec_nodes{i},1);
+0076 
+0077       electrodes(i).nodes    = curr_e_node + (1:this_elec);
+0078       electrodes(i).z_contact= z_contact(i);
+0079 
+0080       curr_e_node= curr_e_node + this_elec;
+0081    <span class="keyword">end</span>
+0082 
+0083 
+0084    mdl.electrode =     electrodes;
+0085    mdl.solve=          <span class="string">'np_fwd_solve'</span>;
+0086    mdl.jacobian=       <span class="string">'np_calc_jacobian'</span>;
+0087    mdl.system_mat=     <span class="string">'np_calc_system_mat'</span>;
+0088 
+0089 <a name="_sub4" href="#_subfunctions" class="code">function [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox, </a><span class="keyword">...</span>
+0090                                  fixed_node, n_elec_nodes);
+0091    [vtx,simp] = <a href="distmeshnd.html" class="code" title="function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)">distmeshnd</a>(fd,fh,h0,bbox,fixed_node);
+0092    srf= <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>(simp);
+0093    <span class="comment">% Test if distmesh puts extra unneeded nodes on boundary</span>
+0094    rmnode= [];
+0095    <span class="comment">% Get srf_nodes which aren't in electrodes</span>
+0096    srf_nodes= unique( srf(:));
+0097    srf_nodes= srf_nodes( srf_nodes &gt; n_elec_nodes);
+0098    <span class="keyword">for</span> nd = srf_nodes(:)'
+0099        ff= find( any(srf == nd, 2) );
+0100        this_bdy= srf(ff,:);
+0101        this_bdy= unique(this_bdy(:));
+0102        this_bdy( find(this_bdy==nd) ) = [];
+0103        <span class="keyword">if</span> all( this_bdy &lt; n_elec_nodes);
+0104            rmnode= [rmnode, nd];
+0105 <span class="comment">%          disp([nd, this_bdy(:)']);</span>
+0106        <span class="keyword">end</span>
+0107    <span class="keyword">end</span>
+0108 
+0109    <span class="keyword">if</span> ~isempty(rmnode)
+0110       vtx(rmnode,:) = [];
+0111       simp = delaunayn( vtx);
+0112       srf= <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>(simp);
+0113    <span class="keyword">end</span>
+0114 
+0115 <a name="_sub5" href="#_subfunctions" class="code">function h= huniform(p);</a>
+0116    h= ones(size(p,1),1);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

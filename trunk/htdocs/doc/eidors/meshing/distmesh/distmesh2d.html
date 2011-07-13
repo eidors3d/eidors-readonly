@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of distmesh2d</title>
+  <meta name="keywords" content="distmesh2d">
+  <meta name="description" content="DISTMESH2D 2-D Mesh Generator using Distance Functions.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html distmesh -->
+<h1>distmesh2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>DISTMESH2D 2-D Mesh Generator using Distance Functions.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [p,t]=distmesh2d(fd,fh,h0,bbox,pfix,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">DISTMESH2D 2-D Mesh Generator using Distance Functions.
+   [P,T]=DISTMESH2D(FD,FH,H0,BBOX,PFIX,FPARAMS)
+
+      P:         Node positions (Nx2)
+      T:         Triangle indices (NTx3)
+      FD:        Distance function d(x,y)
+      FH:        Scaled edge length function h(x,y)
+      H0:        Initial edge length
+      BBOX:      Bounding box [xmin,ymin; xmax,ymax]
+      PFIX:      Fixed node positions (NFIXx2)
+      FPARAMS:   Additional parameters passed to FD and FH
+
+   Example: (Uniform Mesh on Unit Circle)
+      fd=inline('sqrt(sum(p.^2,2))-1','p');
+      [p,t]=distmesh2d(fd,@huniform,0.2,[-1,-1;1,1],[]);
+
+   Example: (Rectangle with circular hole, refined at circle boundary)
+      fd=inline('ddiff(drectangle(p,-1,1,-1,1),dcircle(p,0,0,0.5))','p');
+      fh=inline('min(4*sqrt(sum(p.^2,2))-1,2)','p');
+      [p,t]=distmesh2d(fd,fh,0.05,[-1,-1;1,1],[-1,-1;-1,1;1,-1;1,1]);
+
+   See also: MESHDEMO2D, <a href="distmeshnd.html" class="code" title="function [p,t]=distmeshnd(fdist,fh,h,box,fix,varargin)">DISTMESHND</a>, DELAUNAYN, TRIMESH.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [p,t]=distmesh2d(fd,fh,h0,bbox,pfix,varargin)</a>
+0002 <span class="comment">%DISTMESH2D 2-D Mesh Generator using Distance Functions.</span>
+0003 <span class="comment">%   [P,T]=DISTMESH2D(FD,FH,H0,BBOX,PFIX,FPARAMS)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%      P:         Node positions (Nx2)</span>
+0006 <span class="comment">%      T:         Triangle indices (NTx3)</span>
+0007 <span class="comment">%      FD:        Distance function d(x,y)</span>
+0008 <span class="comment">%      FH:        Scaled edge length function h(x,y)</span>
+0009 <span class="comment">%      H0:        Initial edge length</span>
+0010 <span class="comment">%      BBOX:      Bounding box [xmin,ymin; xmax,ymax]</span>
+0011 <span class="comment">%      PFIX:      Fixed node positions (NFIXx2)</span>
+0012 <span class="comment">%      FPARAMS:   Additional parameters passed to FD and FH</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%   Example: (Uniform Mesh on Unit Circle)</span>
+0015 <span class="comment">%      fd=inline('sqrt(sum(p.^2,2))-1','p');</span>
+0016 <span class="comment">%      [p,t]=distmesh2d(fd,@huniform,0.2,[-1,-1;1,1],[]);</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   Example: (Rectangle with circular hole, refined at circle boundary)</span>
+0019 <span class="comment">%      fd=inline('ddiff(drectangle(p,-1,1,-1,1),dcircle(p,0,0,0.5))','p');</span>
+0020 <span class="comment">%      fh=inline('min(4*sqrt(sum(p.^2,2))-1,2)','p');</span>
+0021 <span class="comment">%      [p,t]=distmesh2d(fd,fh,0.05,[-1,-1;1,1],[-1,-1;-1,1;1,-1;1,1]);</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   See also: MESHDEMO2D, DISTMESHND, DELAUNAYN, TRIMESH.</span>
+0024 
+0025 <span class="comment">%   Copyright (C) 2004-2006 Per-Olof Persson. See COPYRIGHT.TXT for details.</span>
+0026 <span class="comment">% This file is taken from the 3.2 Release by Per-Olof Persson,</span>
+0027 <span class="comment">% available under the GPL version 2 or any later version.</span>
+0028 <span class="comment">% Source is from http://www-math.mit.edu/~persson/mesh/</span>
+0029 
+0030 dptol=.01; ttol=.1; Fscale=1.2; deltat=.2; geps=.001*h0; deps=sqrt(eps)*h0;
+0031 
+0032 <span class="comment">% 1. Create initial distribution in bounding box (equilateral triangles)</span>
+0033 [x,y]=meshgrid(bbox(1,1):h0:bbox(2,1),bbox(1,2):h0*sqrt(3)/2:bbox(2,2));
+0034 x(2:2:<span class="keyword">end</span>,:)=x(2:2:<span class="keyword">end</span>,:)+h0/2;                      <span class="comment">% Shift even rows</span>
+0035 p=[x(:),y(:)];                                       <span class="comment">% List of node coordinates</span>
+0036 
+0037 <span class="comment">% 2. Remove points outside the region, apply the rejection method</span>
+0038 p=p(feval(fd,p,varargin{:})&lt;geps,:);                 <span class="comment">% Keep only d&lt;0 points</span>
+0039 r0=1./feval(fh,p,varargin{:}).^2;                    <span class="comment">% Probability to keep point</span>
+0040 p=[pfix; p(rand(size(p,1),1)&lt;r0./max(r0),:)];        <span class="comment">% Rejection method</span>
+0041 
+0042 pold=inf;                                            <span class="comment">% For first iteration</span>
+0043 iteration=1;
+0044 <span class="keyword">while</span> 1
+0045   N=size(p,1);                                       <span class="comment">% Number of points N</span>
+0046   <span class="comment">% 3. Retriangulation by the Delaunay algorithm</span>
+0047   <span class="keyword">if</span> max(sqrt(sum((p-pold).^2,2))/h0)&gt;ttol           <span class="comment">% Any large movement?</span>
+0048     pold=p;                                          <span class="comment">% Save current positions</span>
+0049     t=delaunayn(p);                                  <span class="comment">% List of triangles</span>
+0050     pmid=(p(t(:,1),:)+p(t(:,2),:)+p(t(:,3),:))/3;    <span class="comment">% Compute centroids</span>
+0051     t=t(feval(fd,pmid,varargin{:})&lt;-geps,:);         <span class="comment">% Keep interior triangles</span>
+0052     <span class="comment">% 4. Describe each bar by a unique pair of nodes</span>
+0053     bars=[t(:,[1,2]);t(:,[1,3]);t(:,[2,3])];         <span class="comment">% Interior bars duplicated</span>
+0054     [bars,i_bars,j_bars]=unique(bars,<span class="string">'rows'</span>);<span class="comment">% Bars as node pairs</span>
+0055 <span class="comment">%   [bars,i_bars,j_bars]=unique(sort(bars,2),'rows');% Bars as node pairs</span>
+0056     <span class="comment">% 5. Graphical output of the current mesh</span>
+0057     trimesh(t,p(:,1),p(:,2),zeros(N,1),<span class="string">'edgecolor'</span>,<span class="string">'black'</span>)
+0058     view(2),axis equal,axis off,drawnow
+0059   <span class="keyword">end</span>
+0060 
+0061   <span class="comment">% 6. Move mesh points based on bar lengths L and forces F</span>
+0062   barvec=p(bars(:,1),:)-p(bars(:,2),:);              <span class="comment">% List of bar vectors</span>
+0063   L=sqrt(sum(barvec.^2,2));                          <span class="comment">% L = Bar lengths</span>
+0064 
+0065   <span class="keyword">if</span> 1
+0066 <span class="comment">% Get length function at average</span>
+0067      hbars=feval(fh,(p(bars(:,1),:)+p(bars(:,2),:))/2,varargin{:});
+0068   <span class="keyword">else</span>
+0069 <span class="comment">% Get minimum length function at both ends</span>
+0070      hbars1=feval(fh,p(bars(:,1),:),varargin{:});
+0071      hbars2=feval(fh,p(bars(:,2),:),varargin{:});
+0072      hbars= min([hbars1,hbars2],[],2);
+0073   <span class="keyword">end</span>
+0074 
+0075   L0=hbars*Fscale*sqrt(sum(L.^2)/sum(hbars.^2));     <span class="comment">% L0 = Desired lengths</span>
+0076 
+0077   add_p= zeros(0,2);
+0078 <span class="keyword">if</span> 0
+0079   <span class="comment">% 6.3 Desired length cannot be larger than tshape * connecting ones</span>
+0080   nt= size(t,1); <span class="comment">% number of triangles</span>
+0081   min_L= zeros(nt,1);
+0082   <span class="keyword">for</span> i= 1:nt
+0083      Lt = L(j_bars([i,i+nt,i+nt*2]));
+0084      min_L(i) = min(Lt);
+0085   
+0086      <span class="keyword">if</span> min(Lt)*5 &lt; max(Lt); add_p= [add_p;pmid(i,:)];<span class="keyword">end</span>
+0087   <span class="keyword">end</span>
+0088   min_L = 2*[min_L;min_L;min_L];
+0089   L0i= L0;
+0090   L0 = min([L0,min_L(i_bars)],[],2);
+0091 <span class="keyword">end</span>
+0092 
+0093   F=max(L0-L,0);                                     <span class="comment">% Bar forces (scalars)</span>
+0094   Fvec=F./L*[1,1].*barvec;                           <span class="comment">% Bar forces (x,y components)</span>
+0095 
+0096   <span class="comment">% 6.5. Points get sucked to the centroid to make them equilateral</span>
+0097 <span class="keyword">if</span> 0
+0098   <span class="keyword">for</span> i= 1:size(t,1)
+0099      idx= t(i,:);
+0100      dist_vtx = p(idx,:) - ones(3,1)*pmid(i,:);
+0101      dist_mn  = sqrt(sum(dist_vtx.^2,2));
+0102      dist_mn  = dist_mn/mean(dist_mn) - 1;
+0103      dist_mn  = dist_mn.*(abs(dist_mn)&gt;.4); <span class="comment">%zero if too small</span>
+0104      F_adj    = (dist_mn*[1,1]) .* dist_vtx; 
+0105      Fvec(idx,:) = Fvec(idx,:) + .3*F_adj;
+0106   <span class="keyword">end</span>
+0107 <span class="keyword">end</span>
+0108 
+0109   Ftot=full(sparse(bars(:,[1,1,2,2]),ones(size(F))*[1,2,1,2],[Fvec,-Fvec],N,2));
+0110   Ftot(1:size(pfix,1),:)=0;                          <span class="comment">% Force = 0 at fixed points</span>
+0111   p=p+deltat*Ftot;                                   <span class="comment">% Update node positions</span>
+0112 
+0113 
+0114   <span class="comment">% 7. Bring outside points back to the boundary</span>
+0115   d=feval(fd,p,varargin{:}); ix=d&gt;0;                 <span class="comment">% Find points outside (d&gt;0)</span>
+0116   dgradx=(feval(fd,[p(ix,1)+deps,p(ix,2)],varargin{:})-d(ix))/deps; <span class="comment">% Numerical</span>
+0117   dgrady=(feval(fd,[p(ix,1),p(ix,2)+deps],varargin{:})-d(ix))/deps; <span class="comment">%    gradient</span>
+0118   p(ix,:)=p(ix,:)-[d(ix).*dgradx,d(ix).*dgrady];     <span class="comment">% Project back to boundary</span>
+0119 
+0120   <span class="comment">% 8. Termination criterion: All interior nodes move less than dptol (scaled)</span>
+0121   <span class="keyword">if</span> max(sqrt(sum(deltat*Ftot(d&lt;-geps,:).^2,2))/h0)&lt;dptol, <span class="keyword">break</span>; <span class="keyword">end</span>
+0122 
+0123   <span class="comment">% 9. Add new points</span>
+0124   <span class="keyword">if</span> size(add_p,1)&gt;0 &amp;&amp; rem(iteration,10)==1
+0125      p= [p;add_p];
+0126      pold=inf; 
+0127   <span class="keyword">end</span>
+0128   iteration=iteration+1;
+0129 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of eidors2d_demo1</title>
+  <meta name="keywords" content="eidors2d_demo1">
+  <meta name="description" content="EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html examples -->
+<h1>eidors2d_demo1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis
+ EidorsDemo1 Demonstrates the use of 2D EIT Package for simulations with linear approksimation basis</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="../../eidors/algorithms/a_adler/aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>	CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image</li><li><a href="../../eidors/algorithms/m_vauhkonen/FemMatrix.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrix(Node,Element,z);">FemMatrix</a>	FemMatrix Computes the blocks of the system matrix for 2D EIT with linear and quadratic basis</li><li><a href="../../eidors/algorithms/m_vauhkonen/ForwardSolution.html" class="code" title="function [U,p,r]=ForwardSolution(NNode,NElement,A,C,T,MeasPattern,style,p,r);">ForwardSolution</a>	ForwardSolution Solves the potential distribution in 2D EIT</li><li><a href="../../eidors/algorithms/m_vauhkonen/Jacobian.html" class="code" title="function [J]=Jacobian(Node,Element,Agrad,U,U0,rho,style);">Jacobian</a>	Jacobian Computes the Jacobian for 2D EIT when elementwise basis is used</li><li><a href="../../eidors/algorithms/m_vauhkonen/MakeRegmatrix.html" class="code" title="function R=MakeRegmatrix(Element);">MakeRegmatrix</a>	MakeRegmatrix Computes a regularisation matrix which includes smoothness assumptions</li><li><a href="../../eidors/algorithms/m_vauhkonen/mv_calc_system_mat.html" class="code" title="function s_mat= mv_calc_system_mat( fwd_model, img)">mv_calc_system_mat</a>	MV_CALC_SYSTEM_MAT: s_mat= mv_calc_system_mat( fwd_model, img)</li><li><a href="../../eidors/algorithms/m_vauhkonen/mv_fwd_solve.html" class="code" title="function data= mv_fwd_solve( fwd_model, img)">mv_fwd_solve</a>	MV_FWD_SOLVE: data= mv_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li><li><a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>	MK_IMAGE: create eidors image object</li><li><a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>	MK_STIM_PATTERNS: create an EIDORS stimulation pattern structure</li><li><a href="../../eidors/models/m_vauhkonen/Current.html" class="code" title="function [I,T]=Current(L,lg,style,rms,numpat);">Current</a>	Current Supplies some current patterns for 2D EIT</li><li><a href="../../eidors/models/m_vauhkonen/UpdateFemMatrix.html" class="code" title="function [A]=UpdateFemMatrix(Agrad,Kb,M,S,sigma);">UpdateFemMatrix</a>	UpdateFemMatrix Assembles the system matrix for EIT</li><li><a href="../../eidors/models/m_vauhkonen/mv_mdl_meshdata.html" class="code" title="function [fmdl1,fmdl2] = mv_mdl_meshdata;">mv_mdl_meshdata</a>	MV_MESHDATA: create demo mesh for EIDORS2D</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%EidorsDemo1 Demonstrates the use of 2D EIT Package with linear basis</span>
+0002 <span class="comment">% EidorsDemo1 Demonstrates the use of 2D EIT Package for simulations with linear approksimation basis</span>
+0003 
+0004 <span class="comment">% M. Vauhkonen 28.3.2000,</span>
+0005 <span class="comment">% University of Kuopio, Department of Applied Physics, PO Box 1627,</span>
+0006 <span class="comment">% FIN-70211 Kuopio, Finland, email: Marko.Vauhkonen@uku.fi</span>
+0007 
+0008 <span class="comment">% Refactored for EIDORS 3.4 by Andy Adler - June 2009</span>
+0009 <span class="comment">% $Id$</span>
+0010 
+0011 
+0012 tgt_elems= [374,375,376,601,603,604, <span class="keyword">...</span>
+0013             250,254,268,437,449,456];
+0014 
+0015 [fmdl1,fmdl2] = <a href="../../eidors/models/m_vauhkonen/mv_mdl_meshdata.html" class="code" title="function [fmdl1,fmdl2] = mv_mdl_meshdata;">mv_mdl_meshdata</a>;
+0016 
+0017 <span class="comment">% Stimulation</span>
+0018 stim = <a href="../../eidors/models/a_adler/mk_stim_patterns.html" class="code" title="function [stim, meas_sel]= mk_stim_patterns(n_elec, n_rings, inj, meas, options, amplitude)">mk_stim_patterns</a>(16,1,<span class="string">'{trig}'</span>,<span class="string">'{ad}'</span>,{},1);
+0019 
+0020 <span class="comment">% Override with MV's stim pattern</span>
+0021 <span class="comment">% Trigonometric current pattern.</span>
+0022 [jnk,T]=<a href="../../eidors/models/m_vauhkonen/Current.html" class="code" title="function [I,T]=Current(L,lg,style,rms,numpat);">Current</a>(length(fmdl1.electrode),0,<span class="string">'tri'</span>);
+0023 
+0024 <span class="keyword">for</span> i=1:size(T,2)
+0025    stim(i).stim_pattern= T(:,i);
+0026    stim(i).meas_pattern(16,:) = [];
+0027 <span class="keyword">end</span>
+0028 <span class="comment">%stim(2:end) = [];</span>
+0029 
+0030 fmdl2.stimulation = stim;
+0031 fmdl1.stimulation = stim;
+0032 
+0033 Ne2= size(fmdl2.elems,1);
+0034 Ne2= size(fmdl2.elems,1);
+0035 
+0036 
+0037 <span class="comment">% Create a sample image</span>
+0038 elem_data = 1/400*ones(Ne2,1);
+0039 elem_data(tgt_elems) = 1/200;
+0040 
+0041 tgt_img= <a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>(fmdl2,elem_data);
+0042 
+0043 <a href="../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>(tgt_img,[0,1,0])
+0044 
+0045 tgt_img.fwd_model.system_mat = @<a href="../../eidors/algorithms/a_adler/aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>;
+0046 tgt_img.fwd_model.solve = @<a href="../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>;
+0047  meas_aa = <a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( tgt_img );
+0048 
+0049 pp= <a href="../../eidors/algorithms/a_adler/aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>( tgt_img.fwd_model );
+0050 s_mat= <a href="../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>(tgt_img.fwd_model, tgt_img );
+0051 [tgt_img.fwd_model.electrode.z_contact]= deal(50);
+0052 v= zeros(pp.n_node,pp.n_stim);
+0053 
+0054 idx= 1:size(s_mat.E,1); idx( tgt_img.fwd_model.gnd_node ) = [];
+0055 
+0056 tol= 1e-5;
+0057 v(idx,:)= <a href="../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>( s_mat.E(idx,idx), pp.QQ(idx,:), tol);
+0058 
+0059 
+0060 fmdl2.system_mat = @<a href="../../eidors/algorithms/m_vauhkonen/mv_calc_system_mat.html" class="code" title="function s_mat= mv_calc_system_mat( fwd_model, img)">mv_calc_system_mat</a>;
+0061 fmdl2.solve = @<a href="../../eidors/algorithms/m_vauhkonen/mv_fwd_solve.html" class="code" title="function data= mv_fwd_solve( fwd_model, img)">mv_fwd_solve</a>;
+0062 tgt_img.fwd_model= fmdl2;
+0063 meas_mv = <a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( tgt_img );
+0064 
+0065 <span class="keyword">for</span> i=1:10
+0066 plot([v(1:1049,i),meas_mv.U.MeasField(:,i)])
+0067 pause
+0068 <span class="keyword">end</span>
+0069 
+0070 <span class="keyword">return</span>
+0071 
+0072 load meshdata <span class="comment">% Data for two different meshes.</span>
+0073 
+0074 NNode1=max(size(Node1));                      <span class="comment">%The number of nodes</span>
+0075 NElement1=max(size(Element1));                <span class="comment">%The number of element</span>
+0076 NNode2=max(size(Node2));                      <span class="comment">%The number of nodes</span>
+0077 NElement2=max(size(Element2));                <span class="comment">%The number of elements</span>
+0078 
+0079 g1=reshape([Node1.Coordinate],2,NNode1)';
+0080 H1=reshape([Element1.Topology],3,NElement1)';
+0081 g2=reshape([Node2.Coordinate],2,NNode2)';
+0082 H2=reshape([Element2.Topology],3,NElement2)';
+0083 
+0084 
+0085 <span class="comment">%disp('Choose a circular inhomogeneity. Left mouse button, center, right button, radius.')</span>
+0086 <span class="comment">%Ind=ChooseCircle(Node2,Element2);  % Make data for an inhomogeneity.</span>
+0087 Ind = tgt_elems;
+0088 sigma=1/400*ones(NElement2,1);            <span class="comment">% Make a conductivity vector.</span>
+0089 sigma(Ind)=2/400;              <span class="comment">% Conductivity of the inhomogeneity.</span>
+0090 
+0091 clf,Plotinvsol(1./sigma,g2,H2);colorbar,title([<span class="string">'Your resistivity distribution'</span>]);drawnow
+0092 disp(<span class="string">'Press any key to continue...'</span>),pause
+0093 
+0094 disp(<span class="string">'Computes the simulated data.'</span>)
+0095 L=16;                      <span class="comment">% The number of electrodes.</span>
+0096 z=0.005*ones(L,1);              <span class="comment">% Contact impedances.</span>
+0097 [II1,T]=<a href="../../eidors/models/m_vauhkonen/Current.html" class="code" title="function [I,T]=Current(L,lg,style,rms,numpat);">Current</a>(L,NNode2,<span class="string">'tri'</span>);      <span class="comment">% Trigonometric current pattern.</span>
+0098 
+0099 [Agrad,Kb,M,S,C]=<a href="../../eidors/algorithms/m_vauhkonen/FemMatrix.html" class="code" title="function [Agrad,Kb,M,S,C]=FemMatrix(Node,Element,z);">FemMatrix</a>(Node2,Element2,z);
+0100 A=<a href="../../eidors/models/m_vauhkonen/UpdateFemMatrix.html" class="code" title="function [A]=UpdateFemMatrix(Agrad,Kb,M,S,sigma);">UpdateFemMatrix</a>(Agrad,Kb,M,S,sigma);  <span class="comment">% The system matrix.</span>
+0101 
+0102 [U,p,r]=<a href="../../eidors/algorithms/m_vauhkonen/ForwardSolution.html" class="code" title="function [U,p,r]=ForwardSolution(NNode,NElement,A,C,T,MeasPattern,style,p,r);">ForwardSolution</a>(NNode2,NElement2,A,C,T,[],<span class="string">'real'</span>); <span class="comment">% Simulated data.</span>
+0103 Uel=U.Electrode(:);
+0104 
+0105 Agrad1=Agrad*Ind2;   <span class="comment">% Group some of the element for the inverse computations</span>
+0106 
+0107 
+0108 <span class="comment">%%             PROCEDURE TO SOLVE THE INVERSE PROBLEM           %%</span>
+0109 
+0110 <span class="comment">% Approximate the best homogenous resistivity.</span>
+0111 
+0112 
+0113 disp(<span class="string">'Solves the full nonlinear inverse problem by regularised Gauss-Newton iteration.'</span>)
+0114 
+0115 disp(<span class="string">'Initialisations...'</span>)
+0116 
+0117 A=<a href="../../eidors/models/m_vauhkonen/UpdateFemMatrix.html" class="code" title="function [A]=UpdateFemMatrix(Agrad,Kb,M,S,sigma);">UpdateFemMatrix</a>(Agrad,Kb,M,S,ones(NElement2,1));  <span class="comment">% The system matrix.</span>
+0118 Uref=<a href="../../eidors/algorithms/m_vauhkonen/ForwardSolution.html" class="code" title="function [U,p,r]=ForwardSolution(NNode,NElement,A,C,T,MeasPattern,style,p,r);">ForwardSolution</a>(NNode2,NElement2,A,C,T,[],<span class="string">'real'</span>,p,r);
+0119 
+0120 rho0=Uref.Electrode(:)\U.Electrode(:);
+0121 
+0122 A=<a href="../../eidors/models/m_vauhkonen/UpdateFemMatrix.html" class="code" title="function [A]=UpdateFemMatrix(Agrad,Kb,M,S,sigma);">UpdateFemMatrix</a>(Agrad,Kb,M,S,1./rho0*ones(size(sigma)));  <span class="comment">% The system matrix.</span>
+0123 Uref=<a href="../../eidors/algorithms/m_vauhkonen/ForwardSolution.html" class="code" title="function [U,p,r]=ForwardSolution(NNode,NElement,A,C,T,MeasPattern,style,p,r);">ForwardSolution</a>(NNode2,NElement2,A,C,T,[],<span class="string">'real'</span>,p,r);
+0124 Urefel=Uref.Electrode(:);
+0125 
+0126 rho=rho0*ones(size(Agrad1,2),1);
+0127 J=<a href="../../eidors/algorithms/m_vauhkonen/Jacobian.html" class="code" title="function [J]=Jacobian(Node,Element,Agrad,U,U0,rho,style);">Jacobian</a>(Node2,Element2,Agrad1,Uref.Current,Uref.MeasField, <span class="keyword">...</span>
+0128            rho,<span class="string">'real'</span>);
+0129 
+0130 <span class="comment">%Regularisation parameter and matrix</span>
+0131 
+0132 alpha = 0.000005; 
+0133 R=<a href="../../eidors/algorithms/m_vauhkonen/MakeRegmatrix.html" class="code" title="function R=MakeRegmatrix(Element);">MakeRegmatrix</a>(Element1);
+0134 
+0135 iter=5;
+0136 
+0137 disp(<span class="string">'Iterations...'</span>)
+0138 
+0139 <span class="keyword">for</span> ii=1:iter
+0140  rho=rho+(J'*J+alpha*R'*R)\(J'*(Uel-Urefel)-alpha*R'*R*rho);
+0141  rhobig=Ind2*rho;
+0142  A=<a href="../../eidors/models/m_vauhkonen/UpdateFemMatrix.html" class="code" title="function [A]=UpdateFemMatrix(Agrad,Kb,M,S,sigma);">UpdateFemMatrix</a>(Agrad,Kb,M,S,1./rhobig);  <span class="comment">% The system matrix.</span>
+0143  Uref=<a href="../../eidors/algorithms/m_vauhkonen/ForwardSolution.html" class="code" title="function [U,p,r]=ForwardSolution(NNode,NElement,A,C,T,MeasPattern,style,p,r);">ForwardSolution</a>(NNode2,NElement2,A,C,T,[],<span class="string">'real'</span>,p,r);
+0144  Urefel=Uref.Electrode(:);
+0145  J=<a href="../../eidors/algorithms/m_vauhkonen/Jacobian.html" class="code" title="function [J]=Jacobian(Node,Element,Agrad,U,U0,rho,style);">Jacobian</a>(Node2,Element2,Agrad1,Uref.Current,Uref.MeasField,rho,<span class="string">'real'</span>);
+0146  clf,Plotinvsol(rho,g1,H1);colorbar,title([num2str(ii) <span class="string">'. step'</span>]);drawnow;
+0147 <span class="keyword">end</span>
+0148 
+0149 
+0150 
+0151 
+0152 
+0153 
+0154 
+0155 
+0156 
+0157</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

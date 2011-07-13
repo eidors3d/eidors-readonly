@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of piece_poly_fit</title>
+  <meta name="keywords" content="piece_poly_fit">
+  <meta name="description" content="PIECE_POLY_FIT: piecewise polynomial fitting toolset">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>piece_poly_fit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>PIECE_POLY_FIT: piecewise polynomial fitting toolset</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [pp, m] = piece_poly_fit(points, fstr, linear_frac) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> PIECE_POLY_FIT: piecewise polynomial fitting toolset
+
+ [pp m] = pp_fit(points, fstr) fits a piecewise polynomial to a contour
+    points - [x y] contour to be fitted
+    fstr   - function to use: 'spline' or 'pchip' (default)
+    m      - returns the mean of the original points which was subtracted
+             for fitting
+
+ [th xy] = pp_fit(pp, start_th, linear_frac) returns points at linear_frac
+ distance along the contour using start_th as the starting angle.
+    pp          - piecewise polynomial structure
+    start_th    - starting angle
+    linear_frac - vector of length fractions (0 to 1) to calculate points
+    th          - angles of the desired points (-pi to pi) (use ppval to
+                  obtain the radii.
+    xy          - cartesian coordinates of the points</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="piece_poly_fit.html" class="code" title="function [pp, m] = piece_poly_fit(points, fstr, linear_frac)">piece_poly_fit</a>	PIECE_POLY_FIT: piecewise polynomial fitting toolset</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="piece_poly_fit.html" class="code" title="function [pp, m] = piece_poly_fit(points, fstr, linear_frac)">piece_poly_fit</a>	PIECE_POLY_FIT: piecewise polynomial fitting toolset</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [pp centroid] = fit_to_pp(points, fstr)</a></li><li><a href="#_sub2" class="code">function r = fit_from_pp(pp,rho)</a></li><li><a href="#_sub3" class="code">function [th_frac xy]  = path_len( pp, pts, start_th, linear_frac )</a></li><li><a href="#_sub4" class="code">function do_unit_test</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [pp, m] = piece_poly_fit(points, fstr, linear_frac)</a>
+0002 <span class="comment">% PIECE_POLY_FIT: piecewise polynomial fitting toolset</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% [pp m] = pp_fit(points, fstr) fits a piecewise polynomial to a contour</span>
+0005 <span class="comment">%    points - [x y] contour to be fitted</span>
+0006 <span class="comment">%    fstr   - function to use: 'spline' or 'pchip' (default)</span>
+0007 <span class="comment">%    m      - returns the mean of the original points which was subtracted</span>
+0008 <span class="comment">%             for fitting</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% [th xy] = pp_fit(pp, start_th, linear_frac) returns points at linear_frac</span>
+0011 <span class="comment">% distance along the contour using start_th as the starting angle.</span>
+0012 <span class="comment">%    pp          - piecewise polynomial structure</span>
+0013 <span class="comment">%    start_th    - starting angle</span>
+0014 <span class="comment">%    linear_frac - vector of length fractions (0 to 1) to calculate points</span>
+0015 <span class="comment">%    th          - angles of the desired points (-pi to pi) (use ppval to</span>
+0016 <span class="comment">%                  obtain the radii.</span>
+0017 <span class="comment">%    xy          - cartesian coordinates of the points</span>
+0018 
+0019 <span class="comment">% (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3</span>
+0020 <span class="comment">% $Id$</span>
+0021 
+0022 <span class="keyword">if</span> isstr(points) &amp;&amp; strcmp(points,<span class="string">'UNIT_TEST'</span>); <a href="#_sub4" class="code" title="subfunction do_unit_test">do_unit_test</a>; <span class="keyword">return</span> ; <span class="keyword">end</span>
+0023 
+0024 <span class="keyword">if</span> nargin &lt; 2
+0025     fstr = <span class="string">'pchip'</span>;
+0026 <span class="keyword">end</span>
+0027 m = [];
+0028 <span class="keyword">if</span> isstruct(points)
+0029     pts = max(100,length(linear_frac)*3);
+0030     start_th = fstr;
+0031     [pp m] = <a href="#_sub3" class="code" title="subfunction [th_frac xy]  = path_len( pp, pts, start_th, linear_frac )">path_len</a>(points, pts, start_th, linear_frac );
+0032 <span class="keyword">else</span>
+0033     [pp m] = <a href="#_sub1" class="code" title="subfunction [pp centroid] = fit_to_pp(points, fstr)">fit_to_pp</a>(points, fstr);
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="comment">%%</span>
+0037 <a name="_sub1" href="#_subfunctions" class="code">function [pp centroid] = fit_to_pp(points, fstr)</a>
+0038 
+0039 <span class="comment">% 0. Subtract the centroid and convert to polar coords</span>
+0040 centroid = mean(points);
+0041 n_points = size(points,1);
+0042 points = points - repmat(centroid, [n_points,1]);
+0043 [ppoints(:,1), ppoints(:,2)] = cart2pol(points(:,1), points(:,2));
+0044 <span class="comment">% 1. close the loop:</span>
+0045 ppoints = sortrows(ppoints,1);
+0046 r = ppoints(:,2);rho = ppoints(:,1);
+0047 <span class="comment">% add points at +/- pi (if none present)</span>
+0048 <span class="keyword">if</span> rho(1) == -pi
+0049     r = [r; r(1)];
+0050     rho = [rho; pi];
+0051 <span class="keyword">elseif</span> rho(end) == pi
+0052     r = [r(end); r];
+0053     rho = [-pi; rho];
+0054 <span class="keyword">else</span>
+0055     dist = 2*pi - rho(end) + rho(1);
+0056     m = r(end)*(pi+rho(1))/dist + r(1)*(pi-rho(end))/dist;
+0057     r = [m; r; m];
+0058     rho = [-pi; ppoints(:,1); pi  ];
+0059 <span class="keyword">end</span>
+0060 <span class="comment">% 2. fit</span>
+0061 <span class="keyword">switch</span> fstr
+0062     <span class="keyword">case</span> <span class="string">'pchip'</span>
+0063         pp=pchip(rho,r);
+0064     <span class="keyword">case</span> <span class="string">'spline'</span>
+0065         df = (r(2) - r(end-1)) / ( rho(end-1) + rho(2));
+0066         pp=spline(rho, [df;r;df]);
+0067 <span class="comment">%         pp=spline(rho, r);</span>
+0068 <span class="keyword">end</span>
+0069 
+0070 <a name="_sub2" href="#_subfunctions" class="code">function r = fit_from_pp(pp,rho)</a>
+0071 r = ppval(pp,rho);
+0072 
+0073 <span class="comment">% start_th is starting angle for interpolation</span>
+0074 <span class="comment">% linear_frac is length fraction at which to find the theta =&gt; [0.1, 0.5,]</span>
+0075 <a name="_sub3" href="#_subfunctions" class="code">function [th_frac xy]  = path_len( pp, pts, start_th, linear_frac )</a>
+0076    th = linspace(start_th, start_th+2*pi,pts+1)';
+0077    [x,y] = pol2cart(th,ones(size(th)));
+0078    th = cart2pol(x,y);
+0079    th(end) = [];
+0080    th = sortrows(th);
+0081    dth= diff(th);
+0082    rad = <a href="#_sub2" class="code" title="subfunction r = fit_from_pp(pp,rho)">fit_from_pp</a>(pp, th);
+0083    drad= diff(rad);
+0084    rad_= 0.5*(rad(1:end-1) + rad(2:end));
+0085    dlen= sqrt( (rad_ .* dth).^2 + drad.^2 );
+0086    pathlen = [0;cumsum(dlen)];
+0087    
+0088    npath = pathlen/max(pathlen);
+0089    linear_frac = linear_frac + 0.5 + start_th / (2*pi) ;
+0090    idx = find(linear_frac &gt; 1);
+0091    linear_frac(idx) = linear_frac(idx) - 1;
+0092    th_frac = interp1(npath, th, linear_frac);
+0093 
+0094    lrad = <a href="#_sub2" class="code" title="subfunction r = fit_from_pp(pp,rho)">fit_from_pp</a>(pp,th_frac);
+0095    [xe,ye]= pol2cart( th_frac, lrad);
+0096    xy = [xe ye];
+0097    
+0098 <span class="comment">%%</span>
+0099 <a name="_sub4" href="#_subfunctions" class="code">function do_unit_test</a>
+0100 <span class="comment">%     a = [</span>
+0101 <span class="comment">%    -0.8981   -0.7492   -0.2146    0.3162    0.7935    0.9615    0.6751    0.0565   -0.3635   -0.9745</span>
+0102 <span class="comment">%     0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ]';</span>
+0103 <span class="comment">%</span>
+0104 <span class="comment">% centroid = mean(a);</span>
+0105 <span class="comment">% n_points = size(a,1);</span>
+0106 <span class="comment">% a = a - repmat(centroid, [n_points,1]);</span>
+0107 
+0108 th=linspace(0,2*pi,33)'; th(end)=[];
+0109 a=[sin(th)*0.3,cos(th)];
+0110 
+0111 
+0112   pp= <a href="piece_poly_fit.html" class="code" title="function [pp, m] = piece_poly_fit(points, fstr, linear_frac)">piece_poly_fit</a>(a,<span class="string">'pchip'</span>);
+0113    
+0114    th2 = linspace(-pi,pi,33)';th2(end)=[];
+0115    r2 = ppval(pp,th2);
+0116    [xf,yf] = pol2cart(th2,r2);
+0117 
+0118 
+0119    
+0120    [lfrac xy] = <a href="#_sub3" class="code" title="subfunction [th_frac xy]  = path_len( pp, pts, start_th, linear_frac )">path_len</a>( pp, 100, 0, linspace(.5,.8,6)' );
+0121    
+0122    clf
+0123    subplot 121
+0124    plot(a(:,1),a(:,2),<span class="string">'*'</span>,xf,yf,<span class="string">'b-'</span>, xy(:,1),xy(:,2),<span class="string">'r+'</span>);
+0125    axis equal
+0126 
+0127    pp= <a href="piece_poly_fit.html" class="code" title="function [pp, m] = piece_poly_fit(points, fstr, linear_frac)">piece_poly_fit</a>(a,<span class="string">'spline'</span>);
+0128    th2 = linspace(-pi,pi,33)';th2(end)=[];
+0129    r2 = ppval(pp,th2);
+0130    [x,y] = pol2cart(th2,r2);
+0131    subplot 122
+0132    plot(a(:,1),a(:,2),<span class="string">'r+'</span>); hold on
+0133    plot(x,y,<span class="string">'.'</span>);
+0134    axis equal</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

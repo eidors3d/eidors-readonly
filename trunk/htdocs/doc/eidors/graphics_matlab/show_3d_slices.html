@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of show_3d_slices</title>
+  <meta name="keywords" content="show_3d_slices">
+  <meta name="description" content="show_3d_slices(img, z_cuts, x_cuts, y_cuts)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html graphics_matlab -->
+<h1>show_3d_slices
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>show_3d_slices(img, z_cuts, x_cuts, y_cuts)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function show_3d_slices(img, varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> show_3d_slices(img, z_cuts, x_cuts, y_cuts)
+ Show a 3d view of an object with many slices through it
+  z_cuts = planes in z to do a cut
+  x_cuts = planes in x to do a cut
+  y_cuts = planes in y to do a cut
+ Default show 2 z_cuts and 1 x and 1 y cut</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>	[colours,scl_data]= calc_colours(img, set_value, do_colourbar)</li><li><a href="calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li><li><a href="show_3d_slices.html" class="code" title="function show_3d_slices(img, varargin);">show_3d_slices</a>	show_3d_slices(img, z_cuts, x_cuts, y_cuts)</li><li><a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>	MK_IMAGE: create eidors image object</li><li><a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="show_3d_slices.html" class="code" title="function show_3d_slices(img, varargin);">show_3d_slices</a>	show_3d_slices(img, z_cuts, x_cuts, y_cuts)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [xyz_max, xyz_min, rimg, cimg,</a></li><li><a href="#_sub2" class="code">function xyz= linspace_plus4(lim_min, lim_max, np);</a></li><li><a href="#_sub3" class="code">function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);</a></li><li><a href="#_sub4" class="code">function draw_line_around(cimg, rimg, x,y, M_trans, M_add);</a></li><li><a href="#_sub5" class="code">function do_unit_test</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function show_3d_slices(img, varargin);</a>
+0002 <span class="comment">% show_3d_slices(img, z_cuts, x_cuts, y_cuts)</span>
+0003 <span class="comment">% Show a 3d view of an object with many slices through it</span>
+0004 <span class="comment">%  z_cuts = planes in z to do a cut</span>
+0005 <span class="comment">%  x_cuts = planes in x to do a cut</span>
+0006 <span class="comment">%  y_cuts = planes in y to do a cut</span>
+0007 <span class="comment">% Default show 2 z_cuts and 1 x and 1 y cut</span>
+0008 
+0009 <span class="comment">% (C) 2007 Andy Adler. License: GPL version 2 or version 3</span>
+0010 <span class="comment">% $Id$</span>
+0011 
+0012 <span class="keyword">if</span> isstr(img) &amp;&amp; strcmp(img,<span class="string">'UNIT_TEST'</span>); <a href="#_sub5" class="code" title="subfunction do_unit_test">do_unit_test</a>; <span class="keyword">return</span>; <span class="keyword">end</span>
+0013 
+0014 cla;
+0015 hold on
+0016 
+0017 [xyz_max, xyz_min, rimg, cimg, <span class="keyword">...</span>
+0018           x_cuts, y_cuts, z_cuts] = get_slices(img, varargin{:});
+0019 
+0020 <span class="keyword">for</span> zi= 1:length(z_cuts)
+0021    M_trans= [1,0;0,1;0,0];
+0022    M_add= [0,0,z_cuts(zi)];
+0023    idx= zi;
+0024    <a href="#_sub3" class="code" title="subfunction surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);">surf_slice</a>(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, <span class="keyword">...</span>
+0025               M_trans, M_add, 1);
+0026 <span class="keyword">end</span>
+0027 
+0028 <span class="keyword">for</span> xi= 1:length(x_cuts)
+0029    M_trans= [0,0;1,0;0,1];
+0030    M_add= [x_cuts(xi),0,0];
+0031    idx= length(z_cuts) + xi;
+0032    <a href="#_sub3" class="code" title="subfunction surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);">surf_slice</a>(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, <span class="keyword">...</span>
+0033               M_trans, M_add, 1);
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">for</span> yi= 1:length(y_cuts)
+0037    M_trans= [1,0;0,0;0,1];
+0038    M_add= [0,y_cuts(yi),0];
+0039    idx= length(z_cuts) + length(x_cuts) + yi;
+0040    <a href="#_sub3" class="code" title="subfunction surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);">surf_slice</a>(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, <span class="keyword">...</span>
+0041               M_trans, M_add, 1);
+0042 <span class="keyword">end</span>
+0043 
+0044 hold off
+0045 
+0046 <a name="_sub1" href="#_subfunctions" class="code">function [xyz_max, xyz_min, rimg, cimg, </a><span class="keyword">...</span>
+0047           x_cuts, y_cuts, z_cuts] = get_slices(img, varargin);
+0048    xyz_max= max(img.fwd_model.nodes);
+0049    xyz_min= min(img.fwd_model.nodes);
+0050    <span class="keyword">if</span> nargin==1;
+0051       <span class="comment">% Default show 2 z_cuts and 1 x and 1 y cut</span>
+0052        x_cuts= linspace(xyz_min(1), xyz_max(1), 3); x_cuts([1,3])=[];
+0053        y_cuts= linspace(xyz_min(2), xyz_max(2), 3); y_cuts([1,3])=[];
+0054        z_cuts= linspace(xyz_min(3), xyz_max(3), 4); z_cuts([1,4])=[];
+0055    <span class="keyword">elseif</span> nargin==2;
+0056        z_cuts= varargin{1};
+0057        x_cuts= [];
+0058        y_cuts= [];
+0059    <span class="keyword">elseif</span> nargin==3;
+0060        z_cuts= varargin{1};
+0061        x_cuts= varargin{2};
+0062        y_cuts= [];
+0063    <span class="keyword">elseif</span> nargin==4;
+0064        z_cuts= varargin{1};
+0065        x_cuts= varargin{2};
+0066        y_cuts= varargin{3};
+0067    <span class="keyword">else</span> 
+0068        error(<span class="string">'too many inputs'</span>);
+0069    <span class="keyword">end</span>
+0070 
+0071    limts= [ z_cuts(:)*[inf,inf,1  ]; <span class="keyword">...</span>
+0072             x_cuts(:)*[1  ,inf,inf]; <span class="keyword">...</span>
+0073             y_cuts(:)*[inf,1  ,inf]];
+0074 
+0075    rimg0= <a href="calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>( img, limts);
+0076 <span class="comment">% SURF DOESN'T SHOW THE BLOODY OUTER BOUNDARY, WE NEED TO ADD 4 POINTS</span>
+0077    rimg= NaN*ones(size(rimg0,1)+4,size(rimg0,2)+4,size(limts,1));
+0078    rimg(3:end-2,3:end-2,:)= rimg0;
+0079    cimg = <a href="calc_colours.html" class="code" title="function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)">calc_colours</a>( rimg, img);
+0080 
+0081 <a name="_sub2" href="#_subfunctions" class="code">function xyz= linspace_plus4(lim_min, lim_max, np);</a>
+0082    ooo= ones(length(lim_min),1);
+0083    delta = lim_max(:)-lim_min(:);
+0084    delta = max(delta)*ones(size(delta)); 
+0085    middle=(lim_max(:)+lim_min(:))/2;
+0086    xyz= middle(:)*ones(1,np+4) + <span class="keyword">...</span>
+0087         delta/(np-1)*[-(np+3)/2:(np+3)/2]; <span class="comment">% for plus4</span>
+0088 <span class="comment">%       delta/(np-1)*[-(np+1)/2:(np+1)/2]; % for plus2</span>
+0089 <span class="comment">%       delta/(np-1)*[-(np-1)/2:(np-1)/2]; % for plus0</span>
+0090 
+0091 <a name="_sub3" href="#_subfunctions" class="code">function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);</a>
+0092    np= size(rimg,1)-4;
+0093    lim_min= xyz_min*M_trans;
+0094    lim_max= xyz_max*M_trans;
+0095    xyz= <a href="#_sub2" class="code" title="subfunction xyz= linspace_plus4(lim_min, lim_max, np);">linspace_plus4</a>( lim_min, lim_max, np);
+0096    [x,y]= meshgrid(xyz(1,:),xyz(2,:));
+0097    xyz= reshape( [x(:),y(:)]*M_trans', np+4,np+4,3);
+0098 
+0099    ff=isnan(rimg);
+0100    bdr= (conv2(double(~ff),ones(3),<span class="string">'same'</span>)&gt;0) &amp; ff;
+0101    outbdr = ff &amp; ~bdr;
+0102 
+0103    ver = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'interpreter_version'</span>);
+0104    <span class="keyword">if</span> ver.isoctave ==0 &amp;&amp; ver.is64bit
+0105       <a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>([<span class="string">'Poor you. You''re using a 64 bit version of matlab. '</span> <span class="keyword">...</span>
+0106                   <span class="string">'Unfortunately, these versions have serious graphics '</span> <span class="keyword">...</span>
+0107                   <span class="string">'bugs and we can''t show a nice image. Sorry. '</span> <span class="keyword">...</span>
+0108                   <span class="string">'Please bug Mathworks for a fix (good luck!).'</span>],0);
+0109    <span class="keyword">else</span>
+0110       cimg(outbdr)= NaN;
+0111    <span class="keyword">end</span>
+0112 
+0113    <span class="keyword">if</span> show_surf
+0114       hh=surf(xyz(:,:,1)+M_add(1), <span class="keyword">...</span>
+0115               xyz(:,:,2)+M_add(2), <span class="keyword">...</span>
+0116               xyz(:,:,3)+M_add(3), flipud(cimg));
+0117 
+0118       set(hh,<span class="string">'EdgeAlpha'</span>,0); <span class="comment">% Remove background grid</span>
+0119 
+0120       <span class="comment">% WHY WOULD CDataMapping BE ANYTHING ELSE  - STUPID MATLAB !!!</span>
+0121       <span class="comment">% In 64 bit matlab, doing CDataMapping direct on a matrix with</span>
+0122       <span class="comment">%   NaN's will crash matlab. Damn.</span>
+0123       set(hh,<span class="string">'CDataMapping'</span>,<span class="string">'direct'</span>);
+0124    <span class="keyword">end</span>
+0125 
+0126 <span class="comment">%  draw_line_around(cimg, rimg, x,y, M_trans, M_add);</span>
+0127 
+0128 
+0129 <a name="_sub4" href="#_subfunctions" class="code">function draw_line_around(cimg, rimg, x,y, M_trans, M_add);</a>
+0130 <span class="comment">% The MATLAB contour functions are inflexible crap. We</span>
+0131 <span class="comment">% Need to completely break them to get it to work</span>
+0132 <span class="comment">% [x_ax;y_ax;z_ax] = M_trans * [x_ax_matlab;y_ax_matlab] + M_add</span>
+0133 <span class="comment">% For x,z plane at y level 4 we have</span>
+0134 <span class="comment">% M_trans = [1 0;0 0;0 1]; M_add= [0;4;0];</span>
+0135 
+0136    cimg(isnan(rimg))= -1e50;
+0137    [jnk,hh]=contour(x,y,cimg, [-1e49,-1e49]);
+0138    Contour_paths = M_trans*[ get(hh,<span class="string">'Xdata'</span>), <span class="keyword">...</span>
+0139                              get(hh,<span class="string">'Ydata'</span>) ]';
+0140    set(hh,<span class="string">'EdgeColor'</span>,[0,0,0], <span class="keyword">...</span>
+0141           <span class="string">'Xdata'</span>, Contour_paths(1,:) + M_add(1), <span class="keyword">...</span>
+0142           <span class="string">'Ydata'</span>, Contour_paths(2,:) + M_add(2), <span class="keyword">...</span>
+0143           <span class="string">'Zdata'</span>, Contour_paths(3,:) + M_add(3));
+0144 
+0145 <a name="_sub5" href="#_subfunctions" class="code">function do_unit_test</a>
+0146    img = <a href="../../eidors/mk_image.html" class="code" title="function img= mk_image(mdl, elem_data, name)">mk_image</a>(<a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'n3r2'</span>,16),1);
+0147    <a href="show_3d_slices.html" class="code" title="function show_3d_slices(img, varargin);">show_3d_slices</a>(img,[1,2],0,0.5);
+0148    view(10,18);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

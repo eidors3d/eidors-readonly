@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of choose_noise_figure</title>
+  <meta name="keywords" content="choose_noise_figure">
+  <meta name="description" content="CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>choose_noise_figure
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function HP= choose_noise_figure( inv_model ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation
+ HP= choose_noise_figure( inv_model );
+ inv_model  =&gt; inverse model struct
+
+ In order to use this function, it is necessary to specify
+ inv_model.hyperparameter. has the following fields
+ hpara.func         = @choose_noise_figure;
+ hpara.noise_figure = NF Value requested
+ hpara.tgt_elems    = vector of element numbers of contrast in centre
+
+ The NF parameter is from the definition in Adler &amp; Guardo (1996).
+
+ SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)
+ SNR_x = sumsq(A*x0) / var(A*x) = sum((A*x0).^2) / trace(ABRnB'A')
+   where Rn = noise covariance and A_ii = area of element i
+ NF = SNR_z / SNR_x</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>	CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm</li><li><a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/compare_2d_algs.html" class="code" title="function [imgr, img]= compare_2d_algs(option,shape);">compare_2d_algs</a>	Compare different 2D reconstructions</li><li><a href="../../../eidors/examples/moving_tank_objs.html" class="code" title="function imgs= moving_tank_objs(data_sel, inv_sel, options)">moving_tank_objs</a>	MOVING_TANK_OBJS: create movies of objects moving in tanks</li><li><a href="../../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [HP,NF,SE] = HP_for_NF_search(dNF,imdl);</a></li><li><a href="#_sub2" class="code">function hp= search1(dNF, imdl, hp)</a></li><li><a href="#_sub3" class="code">function hp=search2(dNF, imdl, dx)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function HP= choose_noise_figure( inv_model );</a>
+0002 <span class="comment">% CHOOSE_NOISE_FIGURE: choose hyperparameter based on NF calculation</span>
+0003 <span class="comment">% HP= choose_noise_figure( inv_model );</span>
+0004 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% In order to use this function, it is necessary to specify</span>
+0007 <span class="comment">% inv_model.hyperparameter. has the following fields</span>
+0008 <span class="comment">% hpara.func         = @choose_noise_figure;</span>
+0009 <span class="comment">% hpara.noise_figure = NF Value requested</span>
+0010 <span class="comment">% hpara.tgt_elems    = vector of element numbers of contrast in centre</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% The NF parameter is from the definition in Adler &amp; Guardo (1996).</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% SNR_z = sumsq(z0) / var(z) = sum(z0.^2) / trace(Rn)</span>
+0015 <span class="comment">% SNR_x = sumsq(A*x0) / var(A*x) = sum((A*x0).^2) / trace(ABRnB'A')</span>
+0016 <span class="comment">%   where Rn = noise covariance and A_ii = area of element i</span>
+0017 <span class="comment">% NF = SNR_z / SNR_x</span>
+0018 
+0019 <span class="comment">% (C) 2006 Andy Adler. License: GPL version 2 or version 3</span>
+0020 <span class="comment">% $Id$</span>
+0021 
+0022 reqNF= inv_model.hyperparameter.noise_figure;
+0023 <span class="keyword">try</span> <span class="comment">% remove the value field</span>
+0024    inv_model.hyperparameter = rmfield(inv_model.hyperparameter,<span class="string">'value'</span>);
+0025 <span class="keyword">end</span>
+0026 
+0027 HP = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, inv_model, <span class="string">'HP_for_NF'</span>);
+0028 <span class="keyword">if</span> ~isempty(HP)
+0029    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'choose_noise_figure: using cached value'</span>, 2);
+0030    <span class="keyword">return</span>
+0031 <span class="keyword">end</span>
+0032 
+0033 HP = <a href="#_sub1" class="code" title="subfunction [HP,NF,SE] = HP_for_NF_search(dNF,imdl);">HP_for_NF_search</a>(reqNF,inv_model);
+0034 
+0035    
+0036 <a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'boost_priority'</span>,3);
+0037 <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, inv_model, <span class="string">'HP_for_NF'</span>, HP);
+0038 <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'choose_noise_figure: setting cached value'</span>, 2);
+0039 <a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'boost_priority'</span>,-3);
+0040 
+0041 
+0042 <a name="_sub1" href="#_subfunctions" class="code">function [HP,NF,SE] = HP_for_NF_search(dNF,imdl);</a>
+0043    hp= <a href="#_sub2" class="code" title="subfunction hp= search1(dNF, imdl, hp)">search1</a>(dNF, imdl, 1);
+0044 
+0045    dx= hp-linspace(-0.7,0.7,5);
+0046    hp= <a href="#_sub3" class="code" title="subfunction hp=search2(dNF, imdl, dx)">search2</a>(dNF, imdl, dx);
+0047 
+0048    dx= hp-linspace(-0.2,0.2,5);
+0049    hp= <a href="#_sub3" class="code" title="subfunction hp=search2(dNF, imdl, dx)">search2</a>(dNF,imdl, dx);
+0050 
+0051    dx= hp-linspace(-0.1,0.1,5); 
+0052    hp= <a href="#_sub3" class="code" title="subfunction hp=search2(dNF, imdl, dx)">search2</a>(dNF,imdl, dx);
+0053 
+0054    dx= hp-linspace(-0.05,0.05,21);
+0055    hp= <a href="#_sub3" class="code" title="subfunction hp=search2(dNF, imdl, dx)">search2</a>(dNF,imdl, dx);
+0056 
+0057    HP= 10^-hp;
+0058   
+0059 <a name="_sub2" href="#_subfunctions" class="code">function hp= search1(dNF, imdl, hp)</a>
+0060   [NF,SE]=<a href="calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>( imdl, 10^(-hp));
+0061    <span class="keyword">if</span>     NF+3*SE &lt; dNF; dir = 1;
+0062    <span class="keyword">elseif</span> NF-3*SE &gt; dNF; dir = -1;
+0063    <span class="keyword">else</span>   dir = 0; <span class="keyword">end</span>
+0064    <span class="keyword">while</span>  dir*NF+3*SE &lt; dir*dNF <span class="comment">%&gt;</span>
+0065      hp= hp+0.5*dir;
+0066      [NF,SE]=<a href="calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>( imdl, 10^(-hp));
+0067    <span class="keyword">end</span>
+0068 
+0069 <a name="_sub3" href="#_subfunctions" class="code">function hp=search2(dNF, imdl, dx)</a>
+0070    hp = [];
+0071    it = 0;
+0072    nf = zeros(1,length(dx));
+0073    <span class="keyword">while</span> isempty(hp) &amp;&amp; it &lt; 2
+0074        it = it+1;
+0075        <span class="comment">%if it &gt; 1 keyboard, end</span>
+0076        <span class="keyword">for</span> k=1:length(dx)
+0077            nf(k)=nf(k)+<a href="calc_noise_figure.html" class="code" title="function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)">calc_noise_figure</a>( imdl, 10^-dx(k), 10 );
+0078        <span class="keyword">end</span>
+0079        log_nf = log10(nf/it);
+0080        p= polyfit( dx, log_nf-log10(dNF), 1);
+0081        hp = roots(p);
+0082        hp = hp( hp&lt;max(dx) &amp; hp&gt;min(dx) );  <span class="comment">%USE if poly&gt;1</span>
+0083    <span class="keyword">end</span>
+0084    <span class="keyword">if</span> isempty(hp)
+0085        <span class="comment">%fallback</span>
+0086        [jnk,idx] = min(abs(log_nf-log10(dNF)));
+0087        hp = dx(idx);
+0088    <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

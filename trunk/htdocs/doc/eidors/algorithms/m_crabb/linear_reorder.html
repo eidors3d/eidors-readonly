@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of linear_reorder</title>
+  <meta name="keywords" content="linear_reorder">
+  <meta name="description" content="function [fwd_model] = linear_reorder(fwd_model,ccw)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html m_crabb -->
+<h1>linear_reorder
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fwd_model] = linear_reorder(fwd_model,ccw)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fwd_model] = linear_reorder(fwd_model,ccw) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [fwd_model] = linear_reorder(fwd_model,ccw)
+Function to reorder local nodes (counter)clockwise per element
+Input:  - fwd_model structure
+        - ccw = -1 (default) - counter clockwise OR 1 - clockwise   
+Output: - fwd_model structure (only .elems changes)
+NOTE:Function only for linear triangles, since in this case, identity:
+         No. of nodes/element = No. spatial dimensions + 1</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="linear_reorder.html" class="code" title="function [fwd_model] = linear_reorder(fwd_model,ccw)">linear_reorder</a>	function [fwd_model] = linear_reorder(fwd_model,ccw)</li><li><a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/b_grychtol/fix_model.html" class="code" title="function [mdl] = fix_model(mdl,options)">fix_model</a>	FIX_MODEL: Add useful fields to a model</li><li><a href="linear_reorder.html" class="code" title="function [fwd_model] = linear_reorder(fwd_model,ccw)">linear_reorder</a>	function [fwd_model] = linear_reorder(fwd_model,ccw)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function do_unit_test</a></li><li><a href="#_sub2" class="code">function vol = test_linear_reorder(fwd_model)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fwd_model] = linear_reorder(fwd_model,ccw)</a>
+0002 <span class="comment">%function [fwd_model] = linear_reorder(fwd_model,ccw)</span>
+0003 <span class="comment">%Function to reorder local nodes (counter)clockwise per element</span>
+0004 <span class="comment">%Input:  - fwd_model structure</span>
+0005 <span class="comment">%        - ccw = -1 (default) - counter clockwise OR 1 - clockwise</span>
+0006 <span class="comment">%Output: - fwd_model structure (only .elems changes)</span>
+0007 <span class="comment">%NOTE:Function only for linear triangles, since in this case, identity:</span>
+0008 <span class="comment">%         No. of nodes/element = No. spatial dimensions + 1</span>
+0009 
+0010 <span class="comment">% (C) 2011 Michael Crabb. License: GPL version 2 or version 3</span>
+0011 <span class="comment">% $Id$</span>
+0012 
+0013 <span class="keyword">if</span> isstr(fwd_model) &amp;&amp; strcmp(fwd_model,<span class="string">'UNIT_TEST'</span>); <a href="#_sub1" class="code" title="subfunction do_unit_test">do_unit_test</a>; <span class="keyword">return</span>; <span class="keyword">end</span>
+0014 
+0015 <span class="keyword">if</span> (nargin==1) 
+0016     ccw=-1; <span class="comment">%Default specify counter-clockwise nodes</span>
+0017 <span class="keyword">end</span>
+0018 
+0019 nodecoords = fwd_model.nodes; <span class="comment">%Cache coorindates of nodes [nnodesxnodedim]</span>
+0020 elementnodes = fwd_model.elems; <span class="comment">%Cache matrix of elements [eletotalxelenode]</span>
+0021 
+0022 eletotal = size(elementnodes,1); <span class="comment">%No. of elements</span>
+0023 elenode = size(elementnodes,2); <span class="comment">%No. of nodes per element</span>
+0024 
+0025 <span class="keyword">for</span> e=1:eletotal; <span class="comment">%Loop over all elements</span>
+0026     <span class="comment">%Row vector of global nodes [1xelenode]</span>
+0027     enodes = elementnodes(e,:); 
+0028     <span class="comment">%Matrix of nodal positions [elenodexdim] (Linear dimension==elenode-1)</span>
+0029     nd = nodecoords(enodes,:); 
+0030     
+0031     <span class="comment">%Calculate area of triangle/volume defined by the elements nodes</span>
+0032     <span class="comment">%In 2D this is area and in 3D this is volume</span>
+0033     area= det([ones(elenode,1),nd]);
+0034     areasign=sign(area); 
+0035     
+0036     <span class="comment">%If sign is (pos) neg swap two nodes (last two will suffice..)</span>
+0037     <span class="keyword">if</span>(areasign == ccw) <span class="comment">%Swap last two entries of enodes</span>
+0038         temp=enodes(elenode-1);
+0039         enodes(elenode-1)=enodes(elenode);
+0040         enodes(elenode) = temp;
+0041         <span class="comment">%elementnodes(e,:)=enodes; %Put back into elementnodes matrix</span>
+0042     <span class="keyword">end</span>
+0043     elementnodes(e,:)=enodes; <span class="comment">%Put enodes back into elementnodes matrix</span>
+0044 <span class="keyword">end</span>
+0045 fwd_model.elems=elementnodes; <span class="comment">%Reassign fwd_model.elems</span>
+0046 
+0047 <span class="comment">%End LinearReorder function</span>
+0048 
+0049 <a name="_sub1" href="#_subfunctions" class="code">function do_unit_test</a>
+0050    imdl = <a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'n3r2'</span>,32); fmdl = imdl.fwd_model;
+0051    fm1 = <a href="linear_reorder.html" class="code" title="function [fwd_model] = linear_reorder(fwd_model,ccw)">linear_reorder</a>(fmdl);
+0052    vol1= <a href="#_sub2" class="code" title="subfunction vol = test_linear_reorder(fwd_model)">test_linear_reorder</a>( fm1 );
+0053    ok = all(vol1&gt;0);
+0054    fprintf(<span class="string">'test1 3d: OK=%d\n'</span>,ok);
+0055 
+0056    fm1 = <a href="linear_reorder.html" class="code" title="function [fwd_model] = linear_reorder(fwd_model,ccw)">linear_reorder</a>(fmdl, 1);
+0057    vol1= <a href="#_sub2" class="code" title="subfunction vol = test_linear_reorder(fwd_model)">test_linear_reorder</a>( fm1 );
+0058    ok = all(vol1&lt;0);
+0059    fprintf(<span class="string">'test2 3d: OK=%d\n'</span>,ok);
+0060 
+0061    imdl = <a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'a2c2'</span>,8); fmdl = imdl.fwd_model;
+0062    fm1 = <a href="linear_reorder.html" class="code" title="function [fwd_model] = linear_reorder(fwd_model,ccw)">linear_reorder</a>(fmdl);
+0063    vol1= <a href="#_sub2" class="code" title="subfunction vol = test_linear_reorder(fwd_model)">test_linear_reorder</a>( fm1 );
+0064    ok = all(vol1&gt;0);
+0065    fprintf(<span class="string">'test1 2d: OK=%d\n'</span>,ok);
+0066 
+0067    fm1 = <a href="linear_reorder.html" class="code" title="function [fwd_model] = linear_reorder(fwd_model,ccw)">linear_reorder</a>(fmdl, 1);
+0068    vol1= <a href="#_sub2" class="code" title="subfunction vol = test_linear_reorder(fwd_model)">test_linear_reorder</a>( fm1 );
+0069    ok = all(vol1&lt;0);
+0070    fprintf(<span class="string">'test2 2d: OK=%d\n'</span>,ok);
+0071 
+0072    
+0073 
+0074 <a name="_sub2" href="#_subfunctions" class="code">function vol = test_linear_reorder(fwd_model)</a>
+0075 
+0076 dim=size(fwd_model.nodes,2); elee=size(fwd_model.elems,1);
+0077 
+0078 <span class="keyword">for</span> e=1:elee
+0079     b=fwd_model.elems(e,:);  [v]=fwd_model.nodes(b,:);
+0080         <span class="keyword">for</span> i=1:dim
+0081             vv1(i,:)=v(i+1,:)-v(1,:);
+0082         <span class="keyword">end</span>
+0083     vol(e)=det([vv1]);
+0084 <span class="keyword">end</span>
+0085</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

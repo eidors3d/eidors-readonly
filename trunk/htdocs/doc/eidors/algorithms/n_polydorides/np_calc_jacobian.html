@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of np_calc_jacobian</title>
+  <meta name="keywords" content="np_calc_jacobian">
+  <meta name="description" content="NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>np_calc_jacobian
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function J= np_calc_jacobian( fwd_model, img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)
+ Fwd solver for Nick Polydorides EIDORS3D code
+ J         = Jacobian matrix
+ fwd_model = forward model
+ img = image background for jacobian calc</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>	CALC_SYSTEM_MAT: calculate FEM system matrix from fwd_model and image</li><li><a href="forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="jacobian_3d_fields.html" class="code" title="function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);">jacobian_3d_fields</a>	[J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);</li><li><a href="np_calc_3d_fields.html" class="code" title="function v_f= np_calc_3d_fields( fwd_model, img)">np_calc_3d_fields</a>	NP_CALC_3D_FIELDS: J= np_calc_3d_fields( fwd_model, img)</li><li><a href="np_fwd_parameters.html" class="code" title="function param = np_fwd_parameters( fwd_model )">np_fwd_parameters</a>	NP_FWD_PARAMETERS: data= np_fwd_solve( fwd_model )</li><li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>	PERTURB_JACOBIAN: J= perturb_jacobian( fwd_model, img)</li><li><a href="../../../eidors/tests/perturb_jacobian_test.html" class="code" title="">perturb_jacobian_test</a>	Perturbation Jacobians</li><li><a href="../../../eidors/tests/test_2d_resistor.html" class="code" title="">test_2d_resistor</a>	Create 2D model of a cylindrical resistor</li><li><a href="../../../eidors/tests/test_3d_resistor.html" class="code" title="">test_3d_resistor</a>	Create 3D model of a Rectangular resistor</li><li><a href="../../../eidors/tests/test_c2f_jacobian.html" class="code" title="function test_c2f_jacobian">test_c2f_jacobian</a>	Test calc of jacobian given coarse to fine mapping</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function J= np_calc_jacobian( fwd_model, img)</a>
+0002 <span class="comment">% NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</span>
+0003 <span class="comment">% Fwd solver for Nick Polydorides EIDORS3D code</span>
+0004 <span class="comment">% J         = Jacobian matrix</span>
+0005 <span class="comment">% fwd_model = forward model</span>
+0006 <span class="comment">% img = image background for jacobian calc</span>
+0007 
+0008 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0009 <span class="comment">% $Id$</span>
+0010 
+0011 p= <a href="np_fwd_parameters.html" class="code" title="function param = np_fwd_parameters( fwd_model )">np_fwd_parameters</a>( fwd_model );
+0012 
+0013 s_mat= <a href="../../../eidors/algorithms/calc_system_mat.html" class="code" title="function system_mat = calc_system_mat( fwd_model, img)">calc_system_mat</a>( fwd_model, img );
+0014 
+0015 v_f = <a href="np_calc_3d_fields.html" class="code" title="function v_f= np_calc_3d_fields( fwd_model, img)">np_calc_3d_fields</a>( fwd_model, img );
+0016 
+0017 tol = 1e-5; <span class="comment">%tolerance for the forward solver</span>
+0018 
+0019 <span class="comment">% Calculating the Jacobian</span>
+0020 Vfwd = <a href="forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>(s_mat.E, p.I, tol, s_mat.perm);
+0021 
+0022 <span class="keyword">if</span> isfield(fwd_model,<span class="string">'coarse2fine'</span>);
+0023    J = <a href="jacobian_3d_fields.html" class="code" title="function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);">jacobian_3d_fields</a>(Vfwd,s_mat.Ela,s_mat.D, p.elec, <span class="keyword">...</span>
+0024                           p.vtx,p.simp, img.elem_data, v_f, p.df, <span class="keyword">...</span>
+0025                           fwd_model.coarse2fine);
+0026    nparam= size(fwd_model.coarse2fine,2);
+0027 <span class="keyword">else</span> 
+0028    J = <a href="jacobian_3d_fields.html" class="code" title="function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);">jacobian_3d_fields</a>(Vfwd,s_mat.Ela,s_mat.D, p.elec, <span class="keyword">...</span>
+0029                           p.vtx,p.simp, img.elem_data, v_f, p.df);
+0030    nparam= p.n_elem;
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="comment">% calculate normalized Jacobian if required</span>
+0034 <span class="keyword">if</span> p.normalize
+0035    data= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0036    J= J ./ (data.meas(:)*ones(1,nparam));
+0037 <span class="keyword">end</span>
+0038</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

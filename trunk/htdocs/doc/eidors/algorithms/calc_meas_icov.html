@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_meas_icov</title>
+  <meta name="keywords" content="calc_meas_icov">
+  <meta name="description" content="meas_icov = calc_meas_icov( inv_model )">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html algorithms -->
+<h1>calc_meas_icov
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>meas_icov = calc_meas_icov( inv_model )</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function meas_icov = calc_meas_icov( inv_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> meas_icov = calc_meas_icov( inv_model )
+ CALC_MEAS_ICOV: calculate inverse covariance of measurements
+   The meas_icov is a matrix n_meas x n_meas of the
+     inverse of measurement covariances. Normally measurements
+     are assumed to be independant, so the meas_icov is 
+     a diagonal matrix of 1/var(meas)
+
+ calc_meas_icov can be called as
+    meas_icov= calc_meas_icov( inv_model )
+
+ meas_icov   is the calculated data prior
+ inv_model    is an inv_model structure
+
+ if:
+    inv_model.meas_icov    is a function
+          -&gt; call it to calculate meas_icov
+    inv_model.meas_icov    is a matrix
+          -&gt; return it as meas_icov
+    inv_model.meas_icov    does not exist
+          -&gt; use I, or 1./homg (for normalized difference)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/GN_abs_solve.html" class="code" title="function img= GN_abs_solve( inv_model, data1);">GN_abs_solve</a>	GN_ABS_SOLVER absolute solver using Gauss Newton approximation</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_conj_grad.html" class="code" title="function img= aa_inv_conj_grad( inv_model, data1, data2)">aa_inv_conj_grad</a>	AA_INV_CONJ_GRAD inverse solver based on the CG</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_solve.html" class="code" title="function img= aa_inv_solve( inv_model, data1, data2)">aa_inv_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/aa_inv_total_var.html" class="code" title="function img= aa_inv_total_var( inv_model, data1, data2)">aa_inv_total_var</a>	AA_INV_TOTAL_VARIANCE inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/inv_kalman_diff.html" class="code" title="function img= inv_kalman_diff( inv_model, data1, data2)">inv_kalman_diff</a>	INV_KALMAN_DIFF inverse solver for difference EIT</li><li><a href="../../eidors/algorithms/a_adler/nodal_solve.html" class="code" title="function img= nodal_solve( inv_model, data1, data2)">nodal_solve</a>	AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996</li><li><a href="../../eidors/algorithms/a_adler/time_prior_solve.html" class="code" title="function img= time_prior_solve( inv_model, data1, data2)">time_prior_solve</a>	TIME_PRIOR_SOLVE inverse solver to account for time differences</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_abs.html" class="code" title="function img=pdipm_abs( inv_model, data);">pdipm_abs</a>	PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/a_borsic/pdipm_diff.html" class="code" title="function img=pdipm_diff( inv_model, data1, data2)">pdipm_diff</a>	PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</li><li><a href="../../eidors/algorithms/t_dai/fourD_prior_solve.html" class="code" title="function img= fourD_prior_solve( inv_model, data1, data2)">fourD_prior_solve</a>	fourD_prior_solve-- inverse solver to account for temporal</li><li><a href="../../eidors/tests/calc_jacobian_test.html" class="code" title="function ok= calc_jacobian_test">calc_jacobian_test</a>	Verify Jacobian Calculation by small derivative from forward problem</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function meas_icov = default_meas_icov( inv_model )</a></li><li><a href="#_sub2" class="code">function n_meas = calc_n_meas( fwd_model )</a></li><li><a href="#_sub3" class="code">function homg_data = solve_homg_image( fwd_mdl )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function meas_icov = calc_meas_icov( inv_model )</a>
+0002 <span class="comment">% meas_icov = calc_meas_icov( inv_model )</span>
+0003 <span class="comment">% CALC_MEAS_ICOV: calculate inverse covariance of measurements</span>
+0004 <span class="comment">%   The meas_icov is a matrix n_meas x n_meas of the</span>
+0005 <span class="comment">%     inverse of measurement covariances. Normally measurements</span>
+0006 <span class="comment">%     are assumed to be independant, so the meas_icov is</span>
+0007 <span class="comment">%     a diagonal matrix of 1/var(meas)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% calc_meas_icov can be called as</span>
+0010 <span class="comment">%    meas_icov= calc_meas_icov( inv_model )</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% meas_icov   is the calculated data prior</span>
+0013 <span class="comment">% inv_model    is an inv_model structure</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% if:</span>
+0016 <span class="comment">%    inv_model.meas_icov    is a function</span>
+0017 <span class="comment">%          -&gt; call it to calculate meas_icov</span>
+0018 <span class="comment">%    inv_model.meas_icov    is a matrix</span>
+0019 <span class="comment">%          -&gt; return it as meas_icov</span>
+0020 <span class="comment">%    inv_model.meas_icov    does not exist</span>
+0021 <span class="comment">%          -&gt; use I, or 1./homg (for normalized difference)</span>
+0022 
+0023 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0024 <span class="comment">% $Id$</span>
+0025 
+0026 meas_icov = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, inv_model, <span class="string">'meas_icov'</span>);
+0027 
+0028 <span class="keyword">if</span> ~isempty(meas_icov)
+0029    <a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'calc_meas_icov: using cached value'</span>, 3);
+0030    <span class="keyword">return</span>
+0031 <span class="keyword">end</span>
+0032 
+0033 <span class="keyword">if</span> isfield(inv_model,<span class="string">'meas_icov'</span>)
+0034    <span class="keyword">if</span> isnumeric(inv_model.meas_icov);
+0035       meas_icov = inv_model.meas_icov;
+0036    <span class="keyword">else</span>
+0037       meas_icov= feval( inv_model.meas_icov, inv_model);
+0038    <span class="keyword">end</span>
+0039 <span class="keyword">else</span>
+0040    meas_icov= <a href="#_sub1" class="code" title="subfunction meas_icov = default_meas_icov( inv_model )">default_meas_icov</a>( inv_model );
+0041 <span class="keyword">end</span>
+0042 
+0043 <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, inv_model, <span class="string">'meas_icov'</span>, meas_icov);
+0044 <a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'calc_meas_icov: setting cached value'</span>, 3);
+0045  
+0046 <span class="comment">% Calculate a data prior for an assumption of uniform noise</span>
+0047 <span class="comment">% on each channel</span>
+0048 <span class="comment">%</span>
+0049 <a name="_sub1" href="#_subfunctions" class="code">function meas_icov = default_meas_icov( inv_model )</a>
+0050 
+0051    fwd_model= inv_model.fwd_model;
+0052    <span class="keyword">if</span> isfield(fwd_model,<span class="string">'normalize_measurements'</span>)
+0053       normalize = fwd_model.normalize_measurements;
+0054    <span class="keyword">else</span>
+0055       normalize = 0;
+0056    <span class="keyword">end</span>
+0057 
+0058    n =  <a href="#_sub2" class="code" title="subfunction n_meas = calc_n_meas( fwd_model )">calc_n_meas</a>( fwd_model );
+0059 
+0060    <span class="keyword">if</span> ~normalize
+0061       meas_icov= speye( n );
+0062    <span class="keyword">else</span>
+0063       homg_data=  <a href="#_sub3" class="code" title="subfunction homg_data = solve_homg_image( fwd_mdl )">solve_homg_image</a>( fwd_model );
+0064 <span class="comment">% sig = k/h -&gt; std = k/h -&gt; 1/std = kh</span>
+0065       meas_icov = sparse(1:n, 1:n, ( homg_data.meas ).^2 );
+0066    <span class="keyword">end</span>
+0067 
+0068 <a name="_sub2" href="#_subfunctions" class="code">function n_meas = calc_n_meas( fwd_model )</a>
+0069 
+0070    n_meas = 0;
+0071    <span class="keyword">for</span> i= 1:length(fwd_model.stimulation );
+0072        n_meas = n_meas + size(fwd_model.stimulation(i).meas_pattern,1);
+0073    <span class="keyword">end</span>
+0074 
+0075 <span class="comment">% create homogeneous image + simulate data</span>
+0076 <a name="_sub3" href="#_subfunctions" class="code">function homg_data = solve_homg_image( fwd_mdl )</a>
+0077     n_elems= size( fwd_mdl.elems , 1);
+0078     mat= ones( n_elems, 1);
+0079     homg_img= <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'image'</span>, <span class="string">'homogeneous image'</span>, <span class="keyword">...</span>
+0080                          <span class="string">'elem_data'</span>, mat, <span class="string">'fwd_model'</span>, fwd_mdl );
+0081     homg_data=<a href="../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( homg_img);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of demo_real_test</title>
+  <meta name="keywords" content="demo_real_test">
+  <meta name="description" content="Perform tests based on the demo_real function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html tests -->
+<h1>demo_real_test
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Perform tests based on the demo_real function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function ok= demo_real_test </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Perform tests based on the demo_real function</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/n_polydorides/fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>	function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);</li><li><a href="../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>	[V] = forward_solver(E,I,tol,pp,V);</li><li><a href="../../eidors/algorithms/n_polydorides/get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>	GET_3D_MEAS: extracts multiplane voltage measurements from a calculated</li><li><a href="../../eidors/algorithms/n_polydorides/iso_f_smooth.html" class="code" title="function [Reg] = iso_f_smooth(simp,vtx,deg,w);">iso_f_smooth</a>	function [Reg] = iso_f_smooth(simp,vtx,deg,w);</li><li><a href="../../eidors/algorithms/n_polydorides/jacobian_3d.html" class="code" title="function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);">jacobian_3d</a>	function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);</li><li><a href="../../eidors/algorithms/n_polydorides/m_3d_fields.html" class="code" title="function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);">m_3d_fields</a>	function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);</li><li><a href="../../eidors/algorithms/n_polydorides/set_3d_currents.html" class="code" title="function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);">set_3d_currents</a>	function [I,Ib]=set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);</li><li><a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function compare_tol( cmp1, cmp2, errtext )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ok= demo_real_test</a>
+0002 <span class="comment">% Perform tests based on the demo_real function</span>
+0003 
+0004 <span class="comment">% (C) 2005 Andy Adler + Nick Polydorides. License: GPL version 2 or version 3</span>
+0005 <span class="comment">% $Id$</span>
+0006 
+0007 isOctave= exist(<span class="string">'OCTAVE_VERSION'</span>);
+0008 
+0009 datareal= <span class="string">'datareal.mat'</span>;
+0010 datacom=  <span class="string">'datacom.mat'</span>;
+0011 drt=      <span class="string">'demo_real_test.mat'</span>;
+0012 <span class="keyword">if</span> isOctave
+0013     datareal= file_in_loadpath(datareal);
+0014     datacom=  file_in_loadpath(datacom);
+0015     drt    =  file_in_loadpath(drt);
+0016     page_screen_output= 0;
+0017 <span class="keyword">end</span>
+0018 
+0019 load(datareal);
+0020 perm_sym= <span class="string">'{y}'</span>;
+0021 
+0022 [I,Ib] = <a href="../../eidors/algorithms/n_polydorides/set_3d_currents.html" class="code" title="function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);">set_3d_currents</a>(protocol,elec,vtx,gnd_ind,no_pl);
+0023 
+0024 mat_ref = 1*ones(828,1);
+0025 
+0026 <span class="comment">%Set the tolerance for the forward solver</span>
+0027 tol = 1e-5;
+0028 
+0029 [Eref,D,Ela,ppr] = <a href="../../eidors/algorithms/n_polydorides/fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>(vtx,simp,mat_ref,gnd_ind,elec,zc,perm_sym);
+0030 [Vref] = <a href="../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>(Eref,I,tol,ppr);
+0031 [refH,refV,indH,indV,dfr]=<a href="../../eidors/algorithms/n_polydorides/get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>(elec,vtx,Vref,Ib,no_pl);
+0032 dfr = dfr(1:2:end); <span class="comment">%Taking just the horrizontal measurements</span>
+0033 
+0034 mat=mat_ref;
+0035 load(datacom,<span class="string">'A'</span>,<span class="string">'B'</span>); <span class="comment">%Indices of the elements to represent the inhomogeneity</span>
+0036 sA = mat_ref(A(1))+0.15;
+0037 sB = mat_ref(B(1))-0.20;
+0038 mat(A) = sA;
+0039 mat(B) = sB;
+0040 
+0041 [En,D,Ela,ppn] = <a href="../../eidors/algorithms/n_polydorides/fem_master_full.html" class="code" title="function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);">fem_master_full</a>(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
+0042 [Vn] = <a href="../../eidors/algorithms/n_polydorides/forward_solver.html" class="code" title="function [V] = forward_solver(E,I,tol,pp,V, compat_param);">forward_solver</a>(En,I,tol,ppn,Vref);
+0043 [voltageH,voltageV,indH,indV,dfv]=<a href="../../eidors/algorithms/n_polydorides/get_3d_meas.html" class="code" title="function [voltageH,voltageV,indH,indV,df] = get_3d_meas(elec,vtx,V,Ib,no_pl);">get_3d_meas</a>(elec,vtx,Vn,Ib,no_pl);
+0044 dfv = dfv(1:2:end);
+0045 
+0046 <span class="keyword">if</span> size(dfr)~= size(dfv)
+0047    error(<span class="string">'Mismatched measurements'</span>)
+0048 <span class="keyword">end</span>
+0049 
+0050 [v_f] = <a href="../../eidors/algorithms/n_polydorides/m_3d_fields.html" class="code" title="function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);">m_3d_fields</a>(vtx,32,indH,Eref,tol,gnd_ind);
+0051 
+0052 [J] = <a href="../../eidors/algorithms/n_polydorides/jacobian_3d.html" class="code" title="function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sym);">jacobian_3d</a>(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfr,tol,perm_sym);
+0053 
+0054 [Reg] = <a href="../../eidors/algorithms/n_polydorides/iso_f_smooth.html" class="code" title="function [Reg] = iso_f_smooth(simp,vtx,deg,w);">iso_f_smooth</a>(simp,vtx,3,1);
+0055 
+0056 tfac = 1e-8;
+0057 
+0058 sol = (J'*J +  tfac*Reg'*Reg)\J' * (voltageH - refH);
+0059 
+0060 Diag_Reg_012= [diag(Reg,0),[diag(Reg,1);0],[diag(Reg,2);0;0]];
+0061 Jcolsby100=J(:,1:100:size(J,2));
+0062 
+0063 <span class="comment">%% verifications</span>
+0064 
+0065 load(drt);
+0066 
+0067 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.voltageH, voltageH, <span class="string">'voltageH'</span> )
+0068 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.voltageV, voltageV, <span class="string">'voltageV'</span> )
+0069 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.sol, sol, <span class="string">'sol'</span> )
+0070 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.Jcolsby100, Jcolsby100, <span class="string">'Jcolsby100'</span> )
+0071 <a href="#_sub1" class="code" title="subfunction compare_tol( cmp1, cmp2, errtext )">compare_tol</a>( drt.Diag_Reg_012, Diag_Reg_012, <span class="string">'Diag_Reg_012'</span> )
+0072 
+0073 ok=1;
+0074 
+0075 
+0076 <a name="_sub1" href="#_subfunctions" class="code">function compare_tol( cmp1, cmp2, errtext )</a>
+0077 <span class="comment">% compare matrices and give error if not equal</span>
+0078 fprintf(2,<span class="string">'testing parameter: %s ...\n'</span>,errtext);
+0079 
+0080 tol= 2e-4;
+0081 
+0082 vd= mean(mean( abs(cmp1 - cmp2) ));
+0083 vs= mean(mean( abs(cmp1) + abs(cmp2) ));
+0084 <span class="keyword">if</span> vd/vs &gt; tol
+0085    <a href="../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>( <span class="keyword">...</span>
+0086      <span class="string">'parameter %s exceeds tolerance %g (=%g)'</span>, errtext, tol, vd/vs,1 );
+0087 <span class="keyword">end</span>
+0088</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

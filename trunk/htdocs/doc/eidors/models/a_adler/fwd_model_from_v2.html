@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fwd_model_from_v2</title>
+  <meta name="keywords" content="fwd_model_from_v2">
+  <meta name="description" content="CREATE EIDORS v3 fwd_model from the v2 variables">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # models --><!-- menu.html a_adler -->
+<h1>fwd_model_from_v2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CREATE EIDORS v3 fwd_model from the v2 variables</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function fmdl = fwd_model_from_v2( elec, vtx, bdy, simp, zc, gnd_ind, name) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CREATE EIDORS v3 fwd_model from the v2 variables
+ fmdl = fwd_model_from_v2( elec, vtx, simp, zc, gnd_ind)
+ Input paramers
+  elec: [N_elec x 3*Srf] for each electrode
+  vtx:  [N_nodes x 3] Vertices
+  bdy:  [N_bdy x 2]   Boundary elements (specify [] if not available)
+  simp:  [N_elems x 4] Tetrahedral elements
+  zc;   [N_elec x 1]  Electrode contact impedances
+  gnd_ind: [1x1] ground Vertex
+  name:  fwd_model name (optional)
+ (C) 2008 Andy Adler. License: GPL version 2 or version 3
+ $Id$</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [electrodes] = get_model_elecs(elec,zc);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function fmdl = fwd_model_from_v2( elec, vtx, bdy, simp, zc, gnd_ind, name)</a>
+0002 <span class="comment">% CREATE EIDORS v3 fwd_model from the v2 variables</span>
+0003 <span class="comment">% fmdl = fwd_model_from_v2( elec, vtx, simp, zc, gnd_ind)</span>
+0004 <span class="comment">% Input paramers</span>
+0005 <span class="comment">%  elec: [N_elec x 3*Srf] for each electrode</span>
+0006 <span class="comment">%  vtx:  [N_nodes x 3] Vertices</span>
+0007 <span class="comment">%  bdy:  [N_bdy x 2]   Boundary elements (specify [] if not available)</span>
+0008 <span class="comment">%  simp:  [N_elems x 4] Tetrahedral elements</span>
+0009 <span class="comment">%  zc;   [N_elec x 1]  Electrode contact impedances</span>
+0010 <span class="comment">%  gnd_ind: [1x1] ground Vertex</span>
+0011 <span class="comment">%  name:  fwd_model name (optional)</span>
+0012 <span class="comment">% (C) 2008 Andy Adler. License: GPL version 2 or version 3</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015 <span class="keyword">if</span> isempty(bdy);
+0016    bdy= <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>( simp );
+0017 <span class="keyword">end</span>
+0018 
+0019 fmdl.type =     <span class="string">'fwd_model'</span>;
+0020 fmdl.name =     <span class="string">'fwd_model_from_v2'</span>;
+0021 fmdl.nodes=     vtx;
+0022 fmdl.elems=     simp;
+0023 fmdl.boundary=  bdy;
+0024 fmdl.electrode= <a href="#_sub1" class="code" title="subfunction [electrodes] = get_model_elecs(elec,zc);">get_model_elecs</a>(elec,zc);
+0025 fmdl.solve=     <span class="string">'np_fwd_solve'</span>;
+0026 fmdl.jacobian=  <span class="string">'np_calc_jacobian'</span>;
+0027 fmdl.system_mat=<span class="string">'np_calc_system_mat'</span>;
+0028 fmdl.gnd_node=  gnd_ind;
+0029 fmdl.np_fwd_solve.perm_sym = <span class="string">'{n}'</span>; <span class="comment">% default, can change</span>
+0030 
+0031 
+0032 <a name="_sub1" href="#_subfunctions" class="code">function [electrodes] = get_model_elecs(elec,zc);</a>
+0033 <span class="comment">%elec : The electrodes matrix.</span>
+0034 <span class="comment">%np_pl : Number of electrode planes (in planar arrangements)</span>
+0035 <span class="comment">%zc : Contact impedances of the electrodes</span>
+0036 
+0037 <span class="keyword">for</span> i=1:length(zc)
+0038     electrodes(i).z_contact= zc(i);
+0039     electrodes(i).nodes=     unique( elec(i,:) );
+0040 <span class="keyword">end</span>
+0041 
+0042 perm_sym=<span class="string">'{n}'</span>;</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

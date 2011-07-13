@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bg_bld_master</title>
+  <meta name="keywords" content="bg_bld_master">
+  <meta name="description" content="function [Y,D,Y_homo,Vols] = bld_master_PointElectrodes(vtx,simp,mat_ref);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html b_graham -->
+<h1>bg_bld_master
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Y,D,Y_homo,Vols] = bld_master_PointElectrodes(vtx,simp,mat_ref);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [Y,D,Y_homo,Vols] = bg_bld_master(mesh,param2, param3); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [Y,D,Y_homo,Vols] = bld_master_PointElectrodes(vtx,simp,mat_ref);
+Builds up the main compartment (GAP-SHUNT) of the system matrix 
+for the complete electrode model. It is called within the function 
+fem_master_full.
+
+Y      = The UNreferenced GAP based system matrix
+D       = The gradients of the shape functions 
+          over each element.
+Vols     = Normalised volumes of the elements
+vtx     = The vertices matrix.
+simp    = The simplices matrix.
+mat_ref = The reference CONDUCTIVITY at each element. 
+In the complex case mat_ref(i) = sigma(i) - epsilon(i)
+
+ (C) 2003 Nick Polydorides, modified by  Brad Graham (2005)
+  Licenced under GNU GPL
+ $Id$</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Y,D,Y_homo,Vols] = bg_bld_master(mesh,param2, param3);</a>
+0002 <span class="comment">%function [Y,D,Y_homo,Vols] = bld_master_PointElectrodes(vtx,simp,mat_ref);</span>
+0003 <span class="comment">%Builds up the main compartment (GAP-SHUNT) of the system matrix</span>
+0004 <span class="comment">%for the complete electrode model. It is called within the function</span>
+0005 <span class="comment">%fem_master_full.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%Y      = The UNreferenced GAP based system matrix</span>
+0008 <span class="comment">%D       = The gradients of the shape functions</span>
+0009 <span class="comment">%          over each element.</span>
+0010 <span class="comment">%Vols     = Normalised volumes of the elements</span>
+0011 <span class="comment">%vtx     = The vertices matrix.</span>
+0012 <span class="comment">%simp    = The simplices matrix.</span>
+0013 <span class="comment">%mat_ref = The reference CONDUCTIVITY at each element.</span>
+0014 <span class="comment">%In the complex case mat_ref(i) = sigma(i) - epsilon(i)</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% (C) 2003 Nick Polydorides, modified by  Brad Graham (2005)</span>
+0017 <span class="comment">%  Licenced under GNU GPL</span>
+0018 <span class="comment">% $Id$</span>
+0019 
+0020 <span class="keyword">if</span> nargin == 3
+0021     mesh.NODE = mesh;
+0022     mesh.ELEM = param2;
+0023     mesh.sigma = param3;
+0024 <span class="keyword">elseif</span> nargin ~=1
+0025     error(<span class="string">'wrong number of args'</span>);
+0026 <span class="keyword">end</span>
+0027     
+0028 [nv, dimen] = size(mesh.NODE);  <span class="comment">%Number of vertices and dimension</span>
+0029 [ns, dimen_p1] = size(mesh.ELEM); <span class="comment">%Number of simplices (elements)</span>
+0030 dimen2 = 2*dimen;
+0031 
+0032 ils = 1:dimen*ns;
+0033 ilst(1:2:dimen2*ns) = ils;
+0034 ilst(2:2:dimen2*ns) = ils;
+0035 
+0036 patt = 1:dimen2:ns*dimen2;
+0037 
+0038 jlst(patt) = mesh.ELEM(:,1);
+0039 jlst(patt+1) = mesh.ELEM(:,2);
+0040 jlst(patt+2) = mesh.ELEM(:,1);
+0041 jlst(patt+3) = mesh.ELEM(:,3);
+0042 
+0043 <span class="keyword">if</span>(dimen==3)
+0044     <span class="comment">% disp('3D.');</span>
+0045     jlst(patt+4) = mesh.ELEM(:,1);  <span class="comment">%3D</span>
+0046     jlst(patt+5) = mesh.ELEM(:,4);  <span class="comment">%3D</span>
+0047 <span class="keyword">else</span>
+0048     <span class="comment">% disp('2D.');</span>
+0049 <span class="keyword">end</span>
+0050 
+0051 sls = ones(1,dimen*ns);
+0052 slst(1:2:dimen2*ns) = -sls;
+0053 slst(2:2:dimen2*ns) = sls;
+0054 
+0055 D0 = sparse(ilst,jlst,slst,dimen*ns,nv); 
+0056 <span class="comment">%D0 is the matrix of the definitions of the gradients on elements</span>
+0057 
+0058 
+0059 <span class="keyword">if</span>(dimen==3)
+0060     aa=[1 1 1 1]'; <span class="comment">%3D</span>
+0061 <span class="keyword">else</span>
+0062     aa=[1 1 1]';    <span class="comment">%2D</span>
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="keyword">for</span> ii=1:ns
+0066     a2=mesh.NODE(mesh.ELEM(ii,:),:);
+0067     a2=[aa a2];
+0068     dj2(ii)=det(a2);
+0069 <span class="keyword">end</span>
+0070 dj=dj2';
+0071 
+0072 ilst = kron((1:dimen*ns), ones(1,dimen));
+0073 
+0074 jlst = zeros(1, ns*dimen^2);
+0075 <span class="keyword">for</span> d = 1:dimen 
+0076     jlst(d:dimen:ns*dimen^2) = kron((d:dimen:dimen*ns),ones(1,dimen));
+0077 <span class="keyword">end</span>
+0078 
+0079 
+0080 <span class="keyword">if</span>(dimen==3)
+0081     M_0 = [1 0 0 -1;0 1 0 -1; 0 0 1 -1]; <span class="comment">% 3D</span>
+0082 <span class="keyword">else</span>
+0083     M_0 = [1 0 -1;0 1 -1];    <span class="comment">%2D</span>
+0084 <span class="keyword">end</span>
+0085 
+0086 slst=[];
+0087 <span class="keyword">for</span> jj=1:ns
+0088     ii=mesh.ELEM(jj,:);
+0089     <span class="keyword">if</span>(dimen==3)
+0090         ii=[ii(2:4) ii(1)]; <span class="comment">%3D</span>
+0091     <span class="keyword">else</span>
+0092         ii=[ii(2:3) ii(1)]; <span class="comment">% 2D</span>
+0093     <span class="keyword">end</span>
+0094     nodes_ = mesh.NODE(ii,:);
+0095     J_k=M_0*nodes_;
+0096     invJ_k=inv(J_k)';
+0097     
+0098     tw=invJ_k(:)';
+0099     slst=[slst, tw];
+0100 <span class="keyword">end</span>
+0101 
+0102 <span class="comment">%LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns);</span>
+0103 LocJac = sparse(ilst,jlst,slst,dimen*ns,dimen*ns).*sqrt(2);
+0104 <span class="comment">%Brad's correction to make this code match Silvestri's</span>
+0105 
+0106 D = LocJac * D0;
+0107 
+0108 <span class="keyword">if</span> (dimen==3)
+0109     Vols = abs(dj) / 6; <span class="comment">%3D</span>
+0110 <span class="keyword">else</span> <span class="comment">%dimen==2</span>
+0111     Vols = abs(dj) / 2; <span class="comment">%2D</span>
+0112 <span class="keyword">end</span>
+0113 
+0114 <span class="keyword">if</span> length(mesh.sigma) ~= size(Vols)
+0115     error(<span class="string">'Some elements have not been assigned'</span>);
+0116 <span class="keyword">end</span>;
+0117 
+0118 <span class="comment">%This is for the global conductance matrix (includes conductivity)</span>
+0119 Ela = sparse( (1:dimen*ns), (1:dimen*ns),kron( (mesh.sigma.* Vols).',ones(1,dimen)) );
+0120 
+0121 Y = D'*Ela*D; 
+0122 
+0123 <span class="comment">%This is for the Jacobian calculation function, matrix (does not include conductivity)</span>
+0124 Y_homo = sparse( (1:dimen*ns), (1:dimen*ns),kron( Vols.',ones(1,dimen)) );
+0125</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

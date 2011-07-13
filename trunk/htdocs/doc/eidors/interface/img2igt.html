@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of img2igt</title>
+  <meta name="keywords" content="img2igt">
+  <meta name="description" content="IMG2IGT returns an IGT-compatible image matrix from any EIDORS">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html interface -->
+<h1>img2igt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>IMG2IGT returns an IGT-compatible image matrix from any EIDORS</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function igt = img2igt(img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">IMG2IGT returns an IGT-compatible image matrix from any EIDORS
+ IMG struct. 
+
+ IGT = IMG2IGT(IMG) returns a vector NFrames-by-912.
+
+ WARNING: When the mesh stored in fwd_model is not a resterised 32-by-32
+ matrix, this conversion results in a loss of quality.
+ 
+ See also <a href="igt2img.html" class="code" title="function img = igt2img(igt)">IGT2IMG</a>, <a href="eidors_saveimg.html" class="code" title="function eidors_saveimg( img, fname, format )">EIDORS_SAVEIMG</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>	calc_slices (img, levels, clim  ) show slices at levels of an</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="eidors_saveimg.html" class="code" title="function eidors_saveimg( img, fname, format )">eidors_saveimg</a>	EIDORS saveimg - save reconstructed image files in formats</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function igt = img2igt(img)</a>
+0002 <span class="comment">%IMG2IGT returns an IGT-compatible image matrix from any EIDORS</span>
+0003 <span class="comment">% IMG struct.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% IGT = IMG2IGT(IMG) returns a vector NFrames-by-912.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% WARNING: When the mesh stored in fwd_model is not a resterised 32-by-32</span>
+0008 <span class="comment">% matrix, this conversion results in a loss of quality.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% See also IGT2IMG, EIDORS_SAVEIMG.</span>
+0011 
+0012 <span class="comment">% (C) 2009 by Bartlomiej Grychtol. Licensed under GPL v2 or v3</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015 <span class="comment">% render the image on a 34-by-34 grid</span>
+0016 img.calc_colours.npoints=34;
+0017 greit_m = <a href="../../eidors/graphics_matlab/calc_slices.html" class="code" title="function rimg = calc_slices( img, levels );">calc_slices</a>(img);
+0018 <span class="comment">% reduce to 32-by-32</span>
+0019 greit_m = greit_m(2:33,2:33); 
+0020 
+0021 greit_m(isnan(greit_m)) = 0;
+0022 
+0023 
+0024 <span class="comment">% create an IGT mask</span>
+0025 ind=[8:25,39:58,70:91,101:124,132:157,163:190,194:223,225:800, <span class="keyword">...</span>
+0026         802:831,835:862,868:893,901:924,934:955,967:986,1000:1017];
+0027 igt_m = zeros(1,1024);
+0028 igt_m(ind) = 1:912;
+0029 igt_m = reshape(igt_m,32,32)';
+0030 
+0031 <span class="comment">% create IGT vector</span>
+0032 igt=zeros(size(img.elem_data,2),912);
+0033 <span class="keyword">for</span> i = 1:32
+0034     <span class="keyword">for</span> j = 1:32
+0035         <span class="keyword">if</span> igt_m(i,j)&gt;0 
+0036             igt(:,igt_m(i,j)) = greit_m(i,j,:);
+0037         <span class="keyword">end</span>
+0038     <span class="keyword">end</span>
+0039 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of test_c2f_jacobian</title>
+  <meta name="keywords" content="test_c2f_jacobian">
+  <meta name="description" content="Test calc of jacobian given coarse to fine mapping">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html tests -->
+<h1>test_c2f_jacobian
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Test calc of jacobian given coarse to fine mapping</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function test_c2f_jacobian </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Test calc of jacobian given coarse to fine mapping
+
+ (C) Andy Adler 2008. Licenced under GPL v2 or v3
+ $Id$</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="../../eidors/algorithms/a_adler/aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>	AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)</li><li><a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>	MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM</li><li><a href="../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>	PERTURB_JACOBIAN: J= perturb_jacobian( fwd_model, img)</li><li><a href="../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../../eidors/algorithms/n_polydorides/np_calc_image_prior.html" class="code" title="function Reg= np_calc_image_prior( inv_model );">np_calc_image_prior</a>	NP_CALC_IMAGE_PRIOR calculate image prior</li><li><a href="../../eidors/algorithms/n_polydorides/np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>	NP_CALC_JACOBIAN: J= np_calc_jacobian( fwd_model, img)</li><li><a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>	NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code</li><li><a href="../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li><li><a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function test1_np_3d</a></li><li><a href="#_sub2" class="code">function test2_aa_2d</a></li><li><a href="#_sub3" class="code">function test3_aa_3d</a></li><li><a href="#_sub4" class="code">function test4_npaa_3d</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function test_c2f_jacobian</a>
+0002 <span class="comment">% Test calc of jacobian given coarse to fine mapping</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% (C) Andy Adler 2008. Licenced under GPL v2 or v3</span>
+0005 <span class="comment">% $Id$</span>
+0006 <a href="../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a> clear
+0007 
+0008 <a href="#_sub1" class="code" title="subfunction test1_np_3d">test1_np_3d</a>
+0009 <a href="#_sub2" class="code" title="subfunction test2_aa_2d">test2_aa_2d</a>
+0010 <a href="#_sub3" class="code" title="subfunction test3_aa_3d">test3_aa_3d</a>
+0011 <a href="#_sub4" class="code" title="subfunction test4_npaa_3d">test4_npaa_3d</a>
+0012 
+0013 <a name="_sub1" href="#_subfunctions" class="code">function test1_np_3d</a>
+0014 <span class="comment">% Fine model</span>
+0015 imdl = <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'n3r2'</span>);
+0016 f1mdl = imdl.fwd_model;
+0017 
+0018 <span class="comment">% Create 2D FEM of all NODES with z=0</span>
+0019 n2d = f1mdl.nodes( (f1mdl.nodes(:,3) == 0), 1:2);
+0020 e2d = delaunayn(n2d);
+0021 c_mdl = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,<span class="string">'2d'</span>,<span class="string">'elems'</span>,e2d,<span class="string">'nodes'</span>,n2d);
+0022 
+0023 <span class="comment">% Create f_mdl with coarse2fine mapping</span>
+0024 c2f= <a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>( f1mdl, c_mdl );
+0025 f2mdl= f1mdl;
+0026 f2mdl.coarse2fine = c2f;
+0027 
+0028 <span class="comment">% Just in case - define reconstruction</span>
+0029 imdl.solve=       @<a href="../../eidors/algorithms/n_polydorides/np_inv_solve.html" class="code" title="function img= np_inv_solve( inv_model, data1, data2)">np_inv_solve</a>;
+0030 imdl.hyperparameter.value = 1e-3;
+0031 imdl.R_prior= @<a href="../../eidors/algorithms/n_polydorides/np_calc_image_prior.html" class="code" title="function Reg= np_calc_image_prior( inv_model );">np_calc_image_prior</a>;
+0032 imdl.np_calc_image_prior.parameters= [3 1]; <span class="comment">% see iso_f_smooth: deg=1, w=1</span>
+0033 imdl.jacobian_bkgnd.value= .6;
+0034 imdl.reconst_type= <span class="string">'difference'</span>;
+0035 imdl.fwd_model= f1mdl; <span class="comment">% fine model</span>
+0036 
+0037 img = <a href="../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>( imdl);
+0038 
+0039 t=cputime;
+0040 J1= <a href="../../eidors/algorithms/n_polydorides/np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>( f1mdl, img)*c2f;
+0041 fprintf(<span class="string">'np_calc - full: t=%f\n'</span>,  cputime-t  );
+0042 n_J1 = norm(J1,<span class="string">'fro'</span>);
+0043 
+0044 t=cputime;
+0045 J2= <a href="../../eidors/algorithms/n_polydorides/np_calc_jacobian.html" class="code" title="function J= np_calc_jacobian( fwd_model, img)">np_calc_jacobian</a>( f2mdl, img);
+0046 fprintf(<span class="string">'np_calc - c2f: t=%f\n'</span>,  cputime-t  );
+0047 
+0048 n_J1_J2 = norm(J1-J2,<span class="string">'fro'</span>)/ n_J1;
+0049 <span class="keyword">if</span> n_J1_J2 &gt; 1e-4; 
+0050    warning(<span class="string">'J1-J2 is too big'</span>);
+0051 <span class="keyword">end</span>
+0052 
+0053 
+0054 t=cputime;
+0055 J2p= <a href="../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>( f2mdl, img);
+0056 fprintf(<span class="string">'perturb_j - c2f: t=%f\n'</span>,  cputime-t  );
+0057 
+0058 n_J1_J2p = norm(J1-J2p,<span class="string">'fro'</span>)/ n_J1;
+0059 <span class="keyword">if</span> n_J1_J2p &gt; 1e-4; 
+0060    warning(<span class="string">'J1-J2p is too big'</span>);
+0061 <span class="keyword">end</span>
+0062 
+0063 
+0064 
+0065 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0066 <a name="_sub2" href="#_subfunctions" class="code">function test2_aa_2d</a>
+0067 
+0068 imdl= <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'a2c2'</span>,16);
+0069 cmdl = imdl.fwd_model;
+0070 imdl= <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'c2c0'</span>,16);
+0071 f1mdl = imdl.fwd_model;
+0072 
+0073 c2f= <a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>(f1mdl,cmdl);
+0074 img= <a href="../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>(imdl);
+0075 
+0076 t=cputime;
+0077 J1= <a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>( f1mdl, img)*c2f;
+0078 fprintf(<span class="string">'aa_calc - full: t=%f\n'</span>,  cputime-t  );
+0079 n_J1 = norm(J1,<span class="string">'fro'</span>);
+0080 
+0081 f2mdl= f1mdl;
+0082 f2mdl.coarse2fine = c2f;
+0083 
+0084 <span class="comment">%%%%%%%%%% J2</span>
+0085 t=cputime;
+0086 J2= <a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>( f2mdl, img);
+0087 fprintf(<span class="string">'aa_calc - c2f: t=%f\n'</span>,  cputime-t  );
+0088 
+0089 n_J1_J2 = norm(J1-J2,<span class="string">'fro'</span>)/ n_J1;
+0090 <span class="keyword">if</span> n_J1_J2 &gt; 1e-4; 
+0091    warning(<span class="string">'J1-J2 is too big'</span>);
+0092 keyboard
+0093 <span class="keyword">end</span>
+0094 
+0095 
+0096 <span class="comment">%%%%%%%%%% J2p</span>
+0097 t=cputime;
+0098 J2p= <a href="../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>( f2mdl, img);
+0099 fprintf(<span class="string">'perturb_j - c2f: t=%f\n'</span>,  cputime-t  );
+0100 
+0101 n_J1_J2p = norm(J1-J2p,<span class="string">'fro'</span>)/ n_J1;
+0102 
+0103 <span class="keyword">if</span> n_J1_J2p &gt; 1e-4; 
+0104    warning(<span class="string">'J1-J2p is too big'</span>);
+0105 <span class="keyword">end</span>
+0106 
+0107 <span class="comment">%%%%%%%%%% J1p</span>
+0108 t=cputime;
+0109 J1p= <a href="../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>( f1mdl, img)*c2f;
+0110 fprintf(<span class="string">'perturb_j - full: t=%f\n'</span>,  cputime-t  );
+0111 
+0112 n_J1_J1p = norm(J1-J1p,<span class="string">'fro'</span>)/ n_J1;
+0113 <span class="keyword">if</span> n_J1_J1p &gt; 1e-4; 
+0114    warning(<span class="string">'J1-J1p is too big'</span>);
+0115 <span class="keyword">end</span>
+0116 
+0117 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0118 <a name="_sub3" href="#_subfunctions" class="code">function test3_aa_3d</a>
+0119 
+0120 imdl= <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'a2c0'</span>,16);
+0121 cmdl = imdl.fwd_model;
+0122 imdl= <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'a3cr'</span>,16);
+0123 f1mdl = imdl.fwd_model;
+0124 
+0125 c2f= <a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>(f1mdl,cmdl);
+0126 img= <a href="../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>(imdl);
+0127 
+0128 t=cputime;
+0129 J1= <a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>( f1mdl, img)*c2f;
+0130 fprintf(<span class="string">'aa_calc - full: t=%f\n'</span>,  cputime-t  );
+0131 n_J1 = norm(J1,<span class="string">'fro'</span>);
+0132 
+0133 f2mdl= f1mdl;
+0134 f2mdl.coarse2fine = c2f;
+0135 
+0136 <span class="comment">%%%%%%%%%% J2</span>
+0137 t=cputime;
+0138 J2= <a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>( f2mdl, img);
+0139 fprintf(<span class="string">'aa_calc - c2f: t=%f\n'</span>,  cputime-t  );
+0140 
+0141 n_J1_J2 = norm(J1-J2,<span class="string">'fro'</span>)/ n_J1;
+0142 <span class="keyword">if</span> n_J1_J2 &gt; 1e-4; 
+0143    warning(<span class="string">'J1-J2 is too big'</span>);
+0144 keyboard
+0145 <span class="keyword">end</span>
+0146 
+0147 
+0148 <span class="comment">%%%%%%%%%% J2p</span>
+0149 t=cputime;
+0150 J2p= <a href="../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>( f2mdl, img);
+0151 fprintf(<span class="string">'perturb_j - c2f: t=%f\n'</span>,  cputime-t  );
+0152 
+0153 n_J1_J2p = norm(J1-J2p,<span class="string">'fro'</span>)/ n_J1;
+0154 
+0155 <span class="keyword">if</span> n_J1_J2p &gt; 1e-4; 
+0156    warning(<span class="string">'J1-J2p is too big'</span>);
+0157 <span class="keyword">end</span>
+0158 
+0159 <a name="_sub4" href="#_subfunctions" class="code">function test4_npaa_3d</a>
+0160 <span class="comment">% Fine model</span>
+0161 imdl = <a href="../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>(<span class="string">'n3r2'</span>);
+0162 f1mdl = imdl.fwd_model;
+0163 f1mdl.solve = @<a href="../../eidors/algorithms/a_adler/aa_fwd_solve.html" class="code" title="function data =aa_fwd_solve(fwd_model, img)">aa_fwd_solve</a>;
+0164 f1mdl.jacobian = @<a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>;
+0165 f1mdl.system_mat = @<a href="../../eidors/algorithms/a_adler/aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>;
+0166 
+0167 <span class="comment">% Create 2D FEM of all NODES with z=0</span>
+0168 n2d = f1mdl.nodes( (f1mdl.nodes(:,3) == 0), 1:2);
+0169 e2d = delaunayn(n2d);
+0170 c_mdl = <a href="../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,<span class="string">'2d'</span>,<span class="string">'elems'</span>,e2d,<span class="string">'nodes'</span>,n2d);
+0171 
+0172 <span class="comment">% Create f_mdl with coarse2fine mapping</span>
+0173 c2f= <a href="../../eidors/algorithms/a_adler/mk_coarse_fine_mapping.html" class="code" title="function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );">mk_coarse_fine_mapping</a>( f1mdl, c_mdl );
+0174 f2mdl= f1mdl;
+0175 f2mdl.coarse2fine = c2f;
+0176 
+0177 imdl.jacobian_bkgnd.value= .6;
+0178 img = <a href="../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>( imdl);
+0179 
+0180 t=cputime;
+0181 J1= <a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>( f1mdl, img)*c2f;
+0182 fprintf(<span class="string">'aa_calc - full: t=%f\n'</span>,  cputime-t  );
+0183 n_J1 = norm(J1,<span class="string">'fro'</span>);
+0184 
+0185 t=cputime;
+0186 J2= <a href="../../eidors/algorithms/a_adler/aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>( f2mdl, img);
+0187 fprintf(<span class="string">'aa_calc - c2f: t=%f\n'</span>,  cputime-t  );
+0188 
+0189 n_J1_J2 = norm(J1-J2,<span class="string">'fro'</span>)/ n_J1;
+0190 <span class="keyword">if</span> n_J1_J2 &gt; 1e-4; 
+0191    warning(<span class="string">'J1-J2 is too big'</span>);
+0192 <span class="keyword">end</span>
+0193 
+0194 
+0195 t=cputime;
+0196 J2p= <a href="../../eidors/algorithms/a_adler/perturb_jacobian.html" class="code" title="function J= perturb_jacobian( fwd_model, img)">perturb_jacobian</a>( f2mdl, img);
+0197 fprintf(<span class="string">'perturb_j - c2f: t=%f\n'</span>,  cputime-t  );
+0198 
+0199 n_J1_J2p = norm(J1-J2p,<span class="string">'fro'</span>)/ n_J1;
+0200 <span class="keyword">if</span> n_J1_J2p &gt; 1e-4; 
+0201    warning(<span class="string">'J1-J2p is too big'</span>);
+0202 <span class="keyword">end</span>
+0203</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

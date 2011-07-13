@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of display_data</title>
+  <meta name="keywords" content="display_data">
+  <meta name="description" content="DISPLAY_DATA show measurement structure in web browser">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html eidors --><!-- menu.html interface -->
+<h1>display_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>DISPLAY_DATA show measurement structure in web browser</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function display_data( data, fwd_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> DISPLAY_DATA show measurement structure in web browser
+
+ Usage:
+  display_data( data )
+
+   where data is an eidors data object
+
+ Usage:
+  display_data( data, fwd_model )
+
+   where data is a matrix M x F (Measurements x Frames)
+   and fwd_model is an eidors fwd model structure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function display_data( data, fwd_model )</a>
+0002 <span class="comment">% DISPLAY_DATA show measurement structure in web browser</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Usage:</span>
+0005 <span class="comment">%  display_data( data )</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   where data is an eidors data object</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Usage:</span>
+0010 <span class="comment">%  display_data( data, fwd_model )</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%   where data is a matrix M x F (Measurements x Frames)</span>
+0013 <span class="comment">%   and fwd_model is an eidors fwd model structure</span>
+0014  
+0015 <span class="comment">% (C) 2005 Andy Adler.  License: GPL version 2 or version 3</span>
+0016 <span class="comment">% $Id$</span>
+0017 
+0018 <span class="keyword">if</span> nargin==1
+0019     fwd_model= data.fwd_model;
+0020 <span class="keyword">end</span>
+0021 
+0022 d_name= <span class="string">'Unknown'</span>;
+0023 <span class="keyword">if</span> isfield(data,<span class="string">'name'</span>);
+0024     dname= data.name;
+0025 <span class="keyword">end</span>
+0026 fm_name= fwd_model.name;
+0027 
+0028 fname= sprintf(<span class="string">'%s.html'</span>, tempname );
+0029 fid= fopen(fname,<span class="string">'wt'</span>);
+0030 <span class="keyword">if</span> fid==0; 
+0031     error(<span class="string">'can''t open file %s'</span>, fname );
+0032 <span class="keyword">end</span>
+0033 
+0034 <span class="comment">%</span>
+0035 <span class="comment">% Write out header</span>
+0036 <span class="comment">%</span>
+0037 fprintf(fid, [ <span class="keyword">...</span>
+0038 <span class="string">'&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;'</span> <span class="keyword">...</span>
+0039 <span class="string">'Data display %s. Model %s'</span> <span class="keyword">...</span>
+0040 <span class="string">'&lt;/TITLE&gt;&lt;/HEAD&gt;&lt;BODY&gt;'</span> <span class="keyword">...</span>
+0041 <span class="string">'&lt;H1&gt;Data display. &lt;tt&gt;data.name&lt;/tt&gt;= %s'</span> <span class="keyword">...</span>
+0042                   <span class="string">'&lt;tt&gt;fwd_model.name&lt;/tt&gt;= %s&lt;/H1&gt;'</span>], <span class="keyword">...</span>
+0043   d_name, fm_name, d_name, fm_name );
+0044 
+0045 <span class="comment">%</span>
+0046 <span class="comment">% Write out electrodes</span>
+0047 <span class="comment">%</span>
+0048 fprintf(fid, [<span class="keyword">...</span>
+0049 <span class="string">'&lt;H2&gt;Electrode information&lt;/H2&gt;\n'</span> <span class="keyword">...</span>
+0050 <span class="string">'&lt;Table border=&quot;1&quot;&gt;&lt;TR&gt;\n'</span> <span class="keyword">...</span>
+0051 <span class="string">'&lt;TH&gt;Elec #&lt;TH colspan=5&gt;Posn&lt;TH&gt;Nodes&lt;TH&gt;Z&lt;sub&gt;c&lt;/sub&gt;\n'</span>, <span class="keyword">...</span>
+0052 <span class="string">'&lt;TR&gt;'</span> <span class="keyword">...</span>
+0053 <span class="string">'&lt;TH&gt;&lt;TH&gt;x&lt;TH&gt;y&lt;TH&gt;z&lt;TH&gt;r&lt;TH&gt;&amp;theta; (&amp;deg;)&lt;TH&gt; &lt;TH&gt;(&amp;Omega;)\n'</span>]);
+0054 
+0055 fme= fwd_model.electrode;
+0056 n_elec= length(fme);
+0057 xyctr= mean(fwd_model.nodes,1);
+0058 <span class="keyword">for</span> i=1:n_elec
+0059     nodes= fme(i).nodes;
+0060     posn= mean(fwd_model.nodes(nodes,:),1);
+0061     posn= [posn, zeros(1,3-length(posn))]; <span class="comment">% zero pad</span>
+0062     dxy= posn(1:2) - xyctr(1:2);
+0063     radius= sqrt(norm(dxy));
+0064     angle = 180/pi*atan2(dxy(2),dxy(1));
+0065     nlist= sprintf(<span class="string">'%d,'</span>, nodes);
+0066     nlist= [<span class="string">'['</span>, nlist(1:end-1),<span class="string">']'</span>];
+0067     fprintf( fid, [<span class="string">'\n&lt;TR&gt;'</span> <span class="keyword">...</span>
+0068     <span class="string">'&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%d&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%1.3f&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%1.3f&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%1.3f&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%1.3f&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%1.1f&lt;TD&gt;%s&lt;TD align=&quot;right&quot;&gt;&amp;nbsp;%1.3f'</span>], <span class="keyword">...</span>
+0069     i,posn,radius,angle,nlist ,fme(i).z_contact);
+0070 <span class="keyword">end</span>
+0071 fprintf( fid, <span class="string">'\n&lt;/Table&gt;\n'</span>);
+0072 
+0073 <span class="comment">%</span>
+0074 <span class="comment">% Write out stimulation patterns</span>
+0075 <span class="comment">%</span>
+0076 
+0077 <span class="comment">% Step 1: What are all the meas patterns used?</span>
+0078 <span class="comment">% It is possible that two different patterns</span>
+0079 <span class="comment">% use the same electrodes with different amplifications</span>
+0080 <span class="comment">% we ignore that possibility here</span>
+0081 fms= fwd_model.stimulation;
+0082 lfms= length(fms);
+0083 
+0084 elec_list = 2.^(0:n_elec-1)';
+0085 meas_list = [];
+0086 <span class="keyword">for</span> i=1:lfms
+0087     this_meas_list= (fms(i).meas_pattern~=0)*elec_list;
+0088     meas_list = [meas_list, this_meas_list(:)'];
+0089 <span class="keyword">end</span>
+0090 meas_list= unique(meas_list);
+0091 lml= length(meas_list);
+0092 
+0093 fprintf(fid, [<span class="keyword">...</span>
+0094 <span class="string">'&lt;H2&gt;Stimulation pattern information&lt;/H2&gt;\n'</span> <span class="keyword">...</span>
+0095 <span class="string">'&lt;Table border=&quot;1&quot;&gt;&lt;TR&gt;\n'</span> <span class="keyword">...</span>
+0096 <span class="string">'&lt;TH&gt;Stimulation&lt;TH colspan=&quot;%d&quot;&gt;Measurement Patterns\n'</span>, <span class="keyword">...</span>
+0097 <span class="string">'&lt;TR&gt;&lt;TH&gt;Patterns'</span>],lml);
+0098 ne2= floor(n_elec)/2;
+0099 <span class="keyword">for</span> i=1:lml
+0100     d2b= dec2bin( meas_list(i),n_elec);
+0101     <span class="keyword">for</span> j=length(d2b):-4:1;
+0102         d2b= [d2b(1:j),<span class="string">'&lt;br&gt;'</span>,d2b(j+1:end)];
+0103     <span class="keyword">end</span>
+0104     fprintf(fid,<span class="string">'&lt;TH aligh=&quot;center&quot;&gt;%s'</span>, d2b );
+0105 <span class="keyword">end</span>
+0106 fprintf( fid, <span class="string">'\n&lt;/Table&gt;\n'</span>);
+0107 
+0108 
+0109 fclose(fid);
+0110 
+0111 <span class="keyword">if</span> isunix
+0112     system(sprintf(<span class="string">'mozilla file:///%s'</span>, fname));
+0113 <span class="keyword">else</span>
+0114     system(sprintf(<span class="string">'start file:///%s'</span>, fname));
+0115 <span class="keyword">end</span>
+0116</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

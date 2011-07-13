@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_transferimpedance</title>
+  <meta name="keywords" content="calc_transferimpedance">
+  <meta name="description" content="CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html b_lionheart -->
+<h1>calc_transferimpedance
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function transfimp = calc_transferimpedance( img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix
+ 
+   transfimp = calc_transferimpedance( img)
+
+ fwd_model is a fwd_model structure
+ img       is an image structure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function transfimp = calc_T( img);</a></li><li><a href="#_sub2" class="code">function [stim_pat, meas_pat] = trigonometric( n_elecs )</a></li><li><a href="#_sub3" class="code">function [stim_pat, meas_pat] = electrode_wise( n_elecs)</a></li><li><a href="#_sub4" class="code">function [stim_pat, meas_pat] = monopolar( n_elecs)</a></li><li><a href="#_sub5" class="code">function [stim_pat, meas_pat] = monopolar_even( n_elecs)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function transfimp = calc_transferimpedance( img)</a>
+0002 <span class="comment">% CALC_TRANSFERIMPEDANCE: Calculates transfer impedance matrix</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   transfimp = calc_transferimpedance( img)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% fwd_model is a fwd_model structure</span>
+0007 <span class="comment">% img       is an image structure</span>
+0008 
+0009 <span class="comment">% (C) 2006 Bill Lionheart. License: GPL version 2 or version 3</span>
+0010 <span class="comment">% $Id$</span>
+0011 
+0012 <span class="comment">% create new stim patterns</span>
+0013 <span class="comment">% stimulate with one ref electrode and then each in turn</span>
+0014 <span class="comment">% make an equiv set of measurements</span>
+0015 
+0016 cacheobj = {img.fwd_model, img.elem_data};
+0017 transfimp = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, cacheobj, <span class="string">'calc_transferimpedance'</span>);
+0018 
+0019 <span class="keyword">if</span> ~isempty(transfimp)
+0020    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'calc_transferimpedance: using cached value'</span>, 3);
+0021    <span class="keyword">return</span>
+0022 <span class="keyword">end</span>
+0023 
+0024 transfimp = <a href="#_sub1" class="code" title="subfunction transfimp = calc_T( img);">calc_T</a>( img );
+0025 
+0026 <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, cacheobj, <span class="string">'calc_transferimpedance'</span>, transfimp);
+0027 <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'calc_transferimpedance: setting cached value'</span>, 3);
+0028 
+0029 <a name="_sub1" href="#_subfunctions" class="code">function transfimp = calc_T( img);</a>
+0030    n_elecs= length( img.fwd_model.electrode );
+0031 
+0032    <span class="comment">%[stim_pat, meas_pat]= trigonometric( n_elecs );</span>
+0033    <span class="comment">%[stim_pat, meas_pat]= electrode_wise( n_elecs );</span>
+0034    <span class="comment">%[stim_pat, meas_pat]= monopolar( n_elecs );</span>
+0035     [stim_pat, meas_pat]= <a href="#_sub5" class="code" title="subfunction [stim_pat, meas_pat] = monopolar_even( n_elecs)">monopolar_even</a>( n_elecs );
+0036    img.fwd_model.stimulation = stim_pat;
+0037 
+0038    imeas_pat= pinv(meas_pat);
+0039 
+0040    data = <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>(img);
+0041 
+0042    sz= length(img.fwd_model.stimulation);
+0043    transfimp = reshape( data.meas, sz, sz);
+0044    transfimp = imeas_pat * transfimp * imeas_pat';
+0045 
+0046 <a name="_sub2" href="#_subfunctions" class="code">function [stim_pat, meas_pat] = trigonometric( n_elecs )</a>
+0047     stim_pat = struct;
+0048     idx= linspace(0,2*pi,n_elecs+1)'; idx(end)= [];
+0049     omega= idx*[1:n_elecs/2];
+0050     meas_pat= [cos(omega), sin(omega) ]';
+0051     <span class="keyword">for</span> i=1:n_elecs
+0052         stim_pat(i).stimulation=<span class="string">'mA'</span>;
+0053         stim_pat(i).stim_pattern= meas_pat(i,:)';
+0054         stim_pat(i).meas_pattern= meas_pat;
+0055     <span class="keyword">end</span>
+0056 
+0057 <a name="_sub3" href="#_subfunctions" class="code">function [stim_pat, meas_pat] = electrode_wise( n_elecs)</a>
+0058     stim_pat = struct;
+0059     meas_pat= [-ones(n_elecs-1,1), speye(n_elecs-1)];
+0060     <span class="keyword">for</span> i=2:n_elecs
+0061         stim_pat(i-1).stimulation=<span class="string">'mA'</span>;
+0062         stim_pat(i-1).stim_pattern= sparse([1,i],1,[-1,1],n_elecs,1);
+0063         stim_pat(i-1).meas_pattern= meas_pat;
+0064     <span class="keyword">end</span>
+0065 
+0066 <a name="_sub4" href="#_subfunctions" class="code">function [stim_pat, meas_pat] = monopolar( n_elecs)</a>
+0067     stim_pat = struct;
+0068     meas_pat= speye(n_elecs);
+0069     <span class="keyword">for</span> i=1:n_elecs
+0070         stim_pat(i).stimulation=<span class="string">'mA'</span>;
+0071         stim_pat(i).stim_pattern= sparse(i,1,1,n_elecs,1);
+0072         stim_pat(i).meas_pattern= meas_pat;
+0073     <span class="keyword">end</span>
+0074 
+0075 <a name="_sub5" href="#_subfunctions" class="code">function [stim_pat, meas_pat] = monopolar_even( n_elecs)</a>
+0076     stim_pat = struct;
+0077     meas_pat= eye(n_elecs) - ones(n_elecs)/n_elecs;
+0078     <span class="keyword">for</span> i=1:n_elecs
+0079         stim_pat(i).stimulation=<span class="string">'mA'</span>;
+0080         stim_pat(i).stim_pattern= meas_pat(i,:)';
+0081         stim_pat(i).meas_pattern= meas_pat;
+0082     <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

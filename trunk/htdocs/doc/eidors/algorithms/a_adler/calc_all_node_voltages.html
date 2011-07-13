@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calc_all_node_voltages</title>
+  <meta name="keywords" content="calc_all_node_voltages">
+  <meta name="description" content="CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>calc_all_node_voltages
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function node_v= calc_all_node_voltages( himg ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes
+ node_v= calc_all_node_voltages( himg );
+ img        =&gt; image object
+
+ node_v     = n_nodes x n_stims voltage on each node
+
+ NOTE THIS IS DEPRECATED. The recommended was is to do:
+   img.fwd_solve.get_all_meas = 1; vv= fwd_solve(img);
+   img will now have a data.volt structure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="backproj_solve.html" class="code" title="function img= backproj_solve( inv_model, data1, data2)">backproj_solve</a>	BACKPROJ_SOLVE inverse solver using backprojection</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function node_v= calc_all_node_voltages( himg );</a>
+0002 <span class="comment">% CALC_ALL_NODE_VOLTAGES - calculate voltage on all nodes</span>
+0003 <span class="comment">% node_v= calc_all_node_voltages( himg );</span>
+0004 <span class="comment">% img        =&gt; image object</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% node_v     = n_nodes x n_stims voltage on each node</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% NOTE THIS IS DEPRECATED. The recommended was is to do:</span>
+0009 <span class="comment">%   img.fwd_solve.get_all_meas = 1; vv= fwd_solve(img);</span>
+0010 <span class="comment">%   img will now have a data.volt structure</span>
+0011 
+0012 <span class="comment">% (C) 2007 Andy Adler. License: GPL version 2 or version 3</span>
+0013 <span class="comment">% $Id$</span>
+0014 
+0015    <span class="comment">% create one &quot;measurement electrode&quot; per node and</span>
+0016    <span class="comment">% meas patterns to match</span>
+0017    n_nodes = size(himg.fwd_model.nodes,1);
+0018    n_elecs = length(himg.fwd_model.electrode);
+0019    ze= zeros(n_elecs,1);
+0020    <span class="keyword">for</span> i= 1:n_nodes
+0021       himg.fwd_model.electrode(n_elecs + i).nodes= i;
+0022       himg.fwd_model.electrode(n_elecs + i).z_contact= 0.01;
+0023    <span class="keyword">end</span>
+0024 
+0025    n_stims = length(himg.fwd_model.stimulation);
+0026    zn= zeros(n_nodes,1);
+0027    zs= zeros(n_stims,1);
+0028    meas_pat = spdiags(zn+1, n_elecs, n_nodes, n_nodes+n_stims);
+0029    <span class="keyword">for</span> i= 1:n_stims
+0030       himg.fwd_model.stimulation(i).meas_pattern= meas_pat;
+0031       himg.fwd_model.stimulation(i).stim_pattern= <span class="keyword">...</span>
+0032          [himg.fwd_model.stimulation(i).stim_pattern; zn];
+0033    <span class="keyword">end</span>
+0034 
+0035    node_v= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( himg );
+0036    node_v= reshape(node_v.meas,n_nodes,n_stims);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

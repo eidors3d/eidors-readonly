@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aa_system_mat_fields</title>
+  <meta name="keywords" content="aa_system_mat_fields">
+  <meta name="description" content="AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>aa_system_mat_fields
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function FC= aa_system_mat_fields( fwd_model ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat
+ FC= aa_system_mat_fields( fwd_model )
+ input: 
+   fwd_model = forward model
+ output:
+   FC:        s_mat= C' * S * conduct * C = FC' * conduct * FC;</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="find_electrode_bdy.html" class="code" title="function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)">find_electrode_bdy</a>	FIND_ELECTRODE_BDY: find the boundary index area for electrode</li><li><a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li><li><a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>	EIDORS_MSG: eidors progress and status messages</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_calc_jacobian.html" class="code" title="function J= aa_calc_jacobian( fwd_model, img)">aa_calc_jacobian</a>	AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)</li><li><a href="aa_calc_system_mat.html" class="code" title="function s_mat= aa_calc_system_mat( fwd_model, img)">aa_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li><li><a href="../../../eidors/algorithms/b_sawicki/bs_calc_system_mat.html" class="code" title="function s_mat= bs_calc_system_mat( fwd_model, img)">bs_calc_system_mat</a>	AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function cache_obj = mk_cache_obj(fwd_model);</a></li><li><a href="#_sub2" class="code">function FC= calc_system_mat_fields( fwd_model );</a></li><li><a href="#_sub3" class="code">function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] =</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function FC= aa_system_mat_fields( fwd_model )</a>
+0002 <span class="comment">% AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat</span>
+0003 <span class="comment">% FC= aa_system_mat_fields( fwd_model )</span>
+0004 <span class="comment">% input:</span>
+0005 <span class="comment">%   fwd_model = forward model</span>
+0006 <span class="comment">% output:</span>
+0007 <span class="comment">%   FC:        s_mat= C' * S * conduct * C = FC' * conduct * FC;</span>
+0008 
+0009 <span class="comment">% (C) 2008 Andy Adler. License: GPL version 2 or version 3</span>
+0010 <span class="comment">% $Id$</span>
+0011 
+0012 cache_obj = <a href="#_sub1" class="code" title="subfunction cache_obj = mk_cache_obj(fwd_model);">mk_cache_obj</a>(fwd_model);
+0013 FC = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, cache_obj, <span class="string">'aa_system_mat_fields'</span>);
+0014 <span class="keyword">if</span> ~isempty(FC)
+0015    <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'aa_system_mat_fields: using cached value'</span>, 4);
+0016    <span class="keyword">return</span>
+0017 <span class="keyword">end</span>
+0018 
+0019 FC= <a href="#_sub2" class="code" title="subfunction FC= calc_system_mat_fields( fwd_model );">calc_system_mat_fields</a>( fwd_model );
+0020 
+0021 <a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'boost_priority'</span>,1); <span class="comment">% Moderate Priority boost</span>
+0022 <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, cache_obj, <span class="string">'aa_system_mat_fields'</span>, FC);
+0023 <a href="../../../eidors/eidors_msg.html" class="code" title="function log_level= eidors_msg( message, varargin )">eidors_msg</a>(<span class="string">'aa_system_mat_fields: setting cached value'</span>, 4);
+0024 <a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'boost_priority'</span>,-1);
+0025 
+0026 <span class="comment">% only cache stuff which is really relevant here</span>
+0027 <a name="_sub1" href="#_subfunctions" class="code">function cache_obj = mk_cache_obj(fwd_model);</a>
+0028    cache_obj.elems       = fwd_model.elems;
+0029    cache_obj.nodes       = fwd_model.nodes;
+0030    <span class="keyword">try</span>
+0031    cache_obj.electrode   = fwd_model.electrode; <span class="comment">% if we have it</span>
+0032    <span class="keyword">end</span>
+0033    cache_obj.type        = <span class="string">'fwd_model'</span>;
+0034    cache_obj.name        = <span class="string">''</span>; <span class="comment">% it has to have one</span>
+0035 
+0036 <a name="_sub2" href="#_subfunctions" class="code">function FC= calc_system_mat_fields( fwd_model );</a>
+0037    p= <a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>( fwd_model );
+0038    d0= p.n_dims+0;
+0039    d1= p.n_dims+1;
+0040    e= p.n_elem;
+0041    n= p.n_node;
+0042 
+0043    FFjidx= floor([0:d0*e-1]'/d0)*d1*ones(1,d1) + ones(d0*e,1)*(1:d1);
+0044    FFiidx= [1:d0*e]'*ones(1,d1);
+0045    FFdata= zeros(d0*e,d1);
+0046    dfact = (d0-1)*d0;
+0047    <span class="keyword">for</span> j=1:e
+0048      a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
+0049      idx= d0*(j-1)+1 : d0*j;
+0050      FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
+0051    <span class="keyword">end</span> <span class="comment">%for j=1:ELEMs</span>
+0052 
+0053 <span class="keyword">if</span> 0 <span class="comment">% Not complete electrode model</span>
+0054    FF= sparse(FFiidx,FFjidx,FFdata);
+0055    CC= sparse((1:d1*e),p.ELEM(:),ones(d1*e,1), d1*e, n);
+0056 <span class="keyword">else</span>
+0057    [F2data,F2iidx,F2jidx, C2data,C2iidx,C2jidx] = <span class="keyword">...</span>
+0058              compl_elec_mdl(fwd_model,p);
+0059    FF= sparse([FFiidx(:); F2iidx(:)],<span class="keyword">...</span>
+0060               [FFjidx(:); F2jidx(:)],<span class="keyword">...</span>
+0061               [FFdata(:); F2data(:)]);
+0062    
+0063    CC= sparse([(1:d1*e)';    C2iidx(:)], <span class="keyword">...</span>
+0064               [p.ELEM(:);   C2jidx(:)], <span class="keyword">...</span>
+0065               [ones(d1*e,1); C2data(:)]);
+0066 <span class="keyword">end</span>
+0067 
+0068 FC= FF*CC;
+0069 
+0070 <span class="comment">% Add parts for complete electrode model</span>
+0071 <a name="_sub3" href="#_subfunctions" class="code">function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = </a><span class="keyword">...</span>
+0072              compl_elec_mdl(fwd_model,pp);
+0073    d0= pp.n_dims;
+0074    FFdata= zeros(0,d0);
+0075    FFd_block= sqrtm( ( ones(d0) + eye(d0) )/6/(d0-1) ); <span class="comment">% 6 in 2D, 12 in 3D</span>
+0076    FFiidx= zeros(0,d0);
+0077    FFjidx= zeros(0,d0);
+0078    FFi_block= ones(d0,1)*(1:d0);
+0079    CCdata= zeros(0,d0);
+0080    CCiidx= zeros(0,d0);
+0081    CCjidx= zeros(0,d0);
+0082   
+0083    sidx= d0*pp.n_elem;
+0084    cidx= (d0+1)*pp.n_elem;
+0085    <span class="keyword">for</span> i= 1:pp.n_elec
+0086       eleci = fwd_model.electrode(i);
+0087       zc=  eleci.z_contact;
+0088 <span class="comment">%     ffb = find_bdy_idx( bdy, fwd_model.electrode(i).nodes);</span>
+0089       [bdy_idx, bdy_area] = <a href="find_electrode_bdy.html" class="code" title="function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)">find_electrode_bdy</a>( <span class="keyword">...</span>
+0090           pp.boundary, fwd_model.nodes, eleci.nodes );
+0091 
+0092       <span class="keyword">for</span> j= 1:length(bdy_idx);
+0093          bdy_nds= pp.boundary(bdy_idx(j),:);
+0094 
+0095          FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
+0096          FFiidx= [FFiidx; FFi_block' + sidx];
+0097          FFjidx= [FFjidx; FFi_block  + cidx];
+0098 
+0099          CCiidx= [CCiidx; FFi_block(1:2,:) + cidx];
+0100          CCjidx= [CCjidx; bdy_nds ; (pp.n_node+i)*ones(1,d0)];
+0101          CCdata= [CCdata; [1;-1]*ones(1,d0)];
+0102          sidx = sidx + d0;
+0103          cidx = cidx + d0;
+0104       <span class="keyword">end</span>
+0105       
+0106    <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

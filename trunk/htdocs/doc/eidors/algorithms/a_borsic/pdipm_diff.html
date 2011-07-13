@@ -1,0 +1,288 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pdipm_diff</title>
+  <meta name="keywords" content="pdipm_diff">
+  <meta name="description" content="PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_borsic -->
+<h1>pdipm_diff
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function img=pdipm_diff( inv_model, data1, data2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method
+ img= ab_pdipm( inv_model, data1, data2)
+ img        =&gt; output image (or vector of images)
+ inv_model  =&gt; inverse model struct
+ data1      =&gt; differential data at earlier time
+ data2      =&gt; differential data at later time
+
+  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)
+  inv_model.pdipm_diff.norm_image 1 or 2 (DEFAULT 2)
+  inv_model.pdipm_diff.beta     (default 1e-6)
+
+ Parameters:
+  max_iters =  inv_model.parameters.max_iteration (default 10)
+      Max number of iterations before stopping
+  min change = inv_model.parameters.min_change   (default 0)
+      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
+ beta is the parameter that smooths the TV functional</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/calc_R_prior.html" class="code" title="function R_prior = calc_R_prior( inv_model, varargin )">calc_R_prior</a>	R = calc_R_prior( inv_model, varargin )</li><li><a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>	CALC_DIFFERENCE_DATA: calculate difference data between</li><li><a href="../../../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>	CALC_HYPERPARAMETER: calculate hyperparameter value</li><li><a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>	CALC_JACOBIAN: calculate jacobian from an inv_model</li><li><a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>	CALC_JACOBIAN_BKGND: calculate background image around</li><li><a href="../../../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>	meas_icov = calc_meas_icov( inv_model )</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function s= pdipm_2_2( J,W,L,d, pp);</a></li><li><a href="#_sub2" class="code">function m= pdipm_1_2( J,W,L,d, pp);</a></li><li><a href="#_sub3" class="code">function m= pdipm_2_1( J,W,L,d, pp);</a></li><li><a href="#_sub4" class="code">function m= pdipm_1_1( J,W,L,d, pp);</a></li><li><a href="#_sub5" class="code">function sM = spdiag(V)</a></li><li><a href="#_sub6" class="code">function [s,x,y,sz]= initial_values( J, L, pp);</a></li><li><a href="#_sub7" class="code">function dx = x_update( x, dx)</a></li><li><a href="#_sub8" class="code">function debug(vals)</a></li><li><a href="#_sub9" class="code">function pp = manage_beta(pp);</a></li><li><a href="#_sub10" class="code">function pp= process_parameters(imdl);</a></li><li><a href="#_sub11" class="code">function loop_display(i)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function img=pdipm_diff( inv_model, data1, data2)</a>
+0002 <span class="comment">% PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method</span>
+0003 <span class="comment">% img= ab_pdipm( inv_model, data1, data2)</span>
+0004 <span class="comment">% img        =&gt; output image (or vector of images)</span>
+0005 <span class="comment">% inv_model  =&gt; inverse model struct</span>
+0006 <span class="comment">% data1      =&gt; differential data at earlier time</span>
+0007 <span class="comment">% data2      =&gt; differential data at later time</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)</span>
+0010 <span class="comment">%  inv_model.pdipm_diff.norm_image 1 or 2 (DEFAULT 2)</span>
+0011 <span class="comment">%  inv_model.pdipm_diff.beta     (default 1e-6)</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Parameters:</span>
+0014 <span class="comment">%  max_iters =  inv_model.parameters.max_iteration (default 10)</span>
+0015 <span class="comment">%      Max number of iterations before stopping</span>
+0016 <span class="comment">%  min change = inv_model.parameters.min_change   (default 0)</span>
+0017 <span class="comment">%      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping</span>
+0018 <span class="comment">% beta is the parameter that smooths the TV functional</span>
+0019 
+0020 <span class="comment">% (C) 2008 Andrea Borsic. License: GPL version 2 or version 3</span>
+0021 <span class="comment">% $Id$</span>
+0022 
+0023 
+0024 pp= <a href="#_sub10" class="code" title="subfunction pp= process_parameters(imdl);">process_parameters</a>(inv_model);
+0025 
+0026 fwd_model= inv_model.fwd_model;
+0027 
+0028 d=<a href="../../../eidors/algorithms/calc_difference_data.html" class="code" title="function dva = calc_difference_data( data1, data2, fwd_model)">calc_difference_data</a>( data1, data2, fwd_model);
+0029 
+0030 img_bkgnd=<a href="../../../eidors/algorithms/calc_jacobian_bkgnd.html" class="code" title="function img_bkgnd = calc_jacobian_bkgnd( inv_model )">calc_jacobian_bkgnd</a>( inv_model );
+0031 J=<a href="../../../eidors/algorithms/calc_jacobian.html" class="code" title="function J = calc_jacobian( fwd_model, img)">calc_jacobian</a>( fwd_model, img_bkgnd);
+0032 
+0033 alpha=<a href="../../../eidors/algorithms/calc_hyperparameter.html" class="code" title="function hyperparameter = calc_hyperparameter( inv_model )">calc_hyperparameter</a>( inv_model );
+0034 L=<a href="../../../eidors/algorithms/calc_R_prior.html" class="code" title="function R_prior = calc_R_prior( inv_model, varargin )">calc_R_prior</a>( inv_model );
+0035 W= <a href="../../../eidors/algorithms/calc_meas_icov.html" class="code" title="function meas_icov = calc_meas_icov( inv_model )">calc_meas_icov</a>( inv_model );
+0036 <span class="keyword">if</span> pp.norm_data==1
+0037   W = sqrt(W); <span class="comment">% sW is in units of volts</span>
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">if</span>     pp.norm_data==2 &amp;&amp; pp.norm_image==2
+0041   x= <a href="#_sub1" class="code" title="subfunction s= pdipm_2_2( J,W,L,d, pp);">pdipm_2_2</a>( J,W,alpha*L,d, pp);
+0042 <span class="keyword">elseif</span> pp.norm_data==2 &amp;&amp; pp.norm_image==1
+0043   x= <a href="#_sub3" class="code" title="subfunction m= pdipm_2_1( J,W,L,d, pp);">pdipm_2_1</a>( J,W,alpha*L,d, pp);
+0044 <span class="keyword">elseif</span> pp.norm_data==1 &amp;&amp; pp.norm_image==2
+0045   x= <a href="#_sub2" class="code" title="subfunction m= pdipm_1_2( J,W,L,d, pp);">pdipm_1_2</a>( J,W,alpha*L,d, pp);
+0046 <span class="keyword">elseif</span> pp.norm_data==1 &amp;&amp; pp.norm_image==1
+0047   x= <a href="#_sub4" class="code" title="subfunction m= pdipm_1_1( J,W,L,d, pp);">pdipm_1_1</a>( J,W,alpha*L,d, pp);
+0048 <span class="keyword">end</span>
+0049 
+0050 <span class="comment">% create a data structure to return</span>
+0051 img.name = <span class="string">'pdipm_diff'</span>;
+0052 img.elem_data = x;
+0053 img.fwd_model = fwd_model;
+0054 
+0055 <a name="_sub1" href="#_subfunctions" class="code">function s= pdipm_2_2( J,W,L,d, pp);</a>
+0056    [s]= <a href="#_sub6" class="code" title="subfunction [s,x,y,sz]= initial_values( J, L, pp);">initial_values</a>( J, L, pp);
+0057 
+0058    R = L'*L;
+0059    ds= (J'*W*J + R)\(J'*W*(d - J*s) - R*s);
+0060    s= s + ds;
+0061 
+0062 <a name="_sub2" href="#_subfunctions" class="code">function m= pdipm_1_2( J,W,L,d, pp);</a>
+0063    [m,x,jnk,sz]= <a href="#_sub6" class="code" title="subfunction [s,x,y,sz]= initial_values( J, L, pp);">initial_values</a>( J, L, pp);
+0064 
+0065    I_M = speye(sz.M, sz.M);
+0066    <span class="keyword">for</span> loop = 1:pp.max_iter
+0067       <span class="comment">% Define variables</span>
+0068       f = J*m - d;             F= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(f);
+0069                                X= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(x);
+0070       e = sqrt(f.^2 + pp.beta);E= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(e);
+0071 
+0072       <span class="comment">% Define derivatives</span>
+0073       dFc_dm = (I_M - X*inv(E)*F)*J;
+0074       dFc_dx = -E;
+0075       dFf_dm = L'*L;
+0076       dFf_dx = J'*W;
+0077 
+0078       dmdx = -[dFc_dm, dFc_dx; dFf_dm, dFf_dx] \ <span class="keyword">...</span>
+0079               [ f-E*x; J'*W*x + L'*L*m ];
+0080 
+0081       dm =             dmdx(      1:sz.N);
+0082       dx = <a href="#_sub7" class="code" title="subfunction dx = x_update( x, dx)">x_update</a>(x, dmdx(sz.N+(1:sz.M)));
+0083 
+0084       m= m + dm; x= x + dx;
+0085       <a href="#_sub11" class="code" title="subfunction loop_display(i)">loop_display</a>(i)
+0086 <a href="#_sub8" class="code" title="subfunction debug(vals)">debug</a>([mean(abs([m,dm])) mean(abs([x,dx]))])
+0087       pp = <a href="#_sub9" class="code" title="subfunction pp = manage_beta(pp);">manage_beta</a>(pp);
+0088    <span class="keyword">end</span>
+0089 
+0090 <a name="_sub3" href="#_subfunctions" class="code">function m= pdipm_2_1( J,W,L,d, pp);</a>
+0091    [m,jnk,y,sz]= <a href="#_sub6" class="code" title="subfunction [s,x,y,sz]= initial_values( J, L, pp);">initial_values</a>( J, L, pp);
+0092 
+0093    I_D = speye(sz.D, sz.D);
+0094    <span class="keyword">for</span> loop = 1:pp.max_iter
+0095       <span class="comment">% Define variables</span>
+0096       g = L*m;                 G= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(g);
+0097                                Y= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(y);
+0098       s = sqrt(g.^2 + pp.beta);S= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(s);
+0099 
+0100       <span class="comment">% Define derivatives</span>
+0101       dFf_dm = 2*J'*W*J;
+0102       dFf_dy = L';
+0103       dFc_dm = (I_D - Y*inv(S)*G)*L;
+0104       dFc_dy = -S;
+0105 
+0106       dmdy = -[dFf_dm, dFf_dy; dFc_dm, dFc_dy] \ <span class="keyword">...</span>
+0107               [ J'*W*(J*m-d) + L'*y; g-S*y ];
+0108 
+0109       dm =             dmdy(      1:sz.N );
+0110       dy = <a href="#_sub7" class="code" title="subfunction dx = x_update( x, dx)">x_update</a>(y, dmdy(sz.N+(1:sz.D)));
+0111 
+0112       m= m + dm; y= y + dy;
+0113       <a href="#_sub11" class="code" title="subfunction loop_display(i)">loop_display</a>(i)
+0114 <a href="#_sub8" class="code" title="subfunction debug(vals)">debug</a>([mean(abs([m,dm])), mean(abs([y,dy]))]);
+0115       pp = <a href="#_sub9" class="code" title="subfunction pp = manage_beta(pp);">manage_beta</a>(pp);
+0116    <span class="keyword">end</span>
+0117 
+0118 <a name="_sub4" href="#_subfunctions" class="code">function m= pdipm_1_1( J,W,L,d, pp);</a>
+0119    [m,x,y,sz]= <a href="#_sub6" class="code" title="subfunction [s,x,y,sz]= initial_values( J, L, pp);">initial_values</a>( J, L, pp);
+0120 
+0121    I_M = speye(sz.M,sz.M); 
+0122    I_D = speye(sz.D,sz.D); 
+0123    Z_N = sparse(sz.N,sz.N);
+0124    Z_DM= sparse(sz.D,sz.M);
+0125    <span class="keyword">for</span> loop = 1:pp.max_iter
+0126       <span class="comment">% Define variables</span>
+0127       g = L*m;                 G= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(g);
+0128       r = sqrt(g.^2 + pp.beta);R= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(r); <span class="comment">% S in paper</span>
+0129                                Y= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(y);
+0130 
+0131       f = J*m - d;             F= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(f);
+0132       e = sqrt(f.^2 + pp.beta);E= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(e);
+0133                                X= <a href="#_sub5" class="code" title="subfunction sM = spdiag(V)">spdiag</a>(x);
+0134 
+0135       <span class="comment">% Define derivatives</span>
+0136       As1 = Z_N;
+0137       As2 = (I_M - X*inv(E)*F) * J;
+0138       As3 = (I_D - Y*inv(R)*G) * L;
+0139       Ax1 = J'*W;
+0140       Ax2 = -E;
+0141       Ax3 = Z_DM;
+0142       Ay1 = L';
+0143       Ay2 = Z_DM';
+0144       Ay3 = -R;
+0145       B1  = J'*W*x + L'*y;
+0146       B2  = f - E*x;
+0147       B3  = g - R*y;
+0148 
+0149       DD = -[As1,Ax1,Ay1; <span class="keyword">...</span>
+0150              As2,Ax2,Ay2; <span class="keyword">...</span>
+0151              As3,Ax3,Ay3] \ [B1;B2;B3];
+0152 
+0153       dm = DD(1:sz.N);
+0154       dx = <a href="#_sub7" class="code" title="subfunction dx = x_update( x, dx)">x_update</a>(x, DD(sz.N +        (1:sz.M)) );
+0155       dy = <a href="#_sub7" class="code" title="subfunction dx = x_update( x, dx)">x_update</a>(y, DD(sz.N + sz.M + (1:sz.D)) );
+0156 
+0157       m= m + dm;
+0158       x= x + dx;
+0159       y= y + dy;
+0160       <a href="#_sub11" class="code" title="subfunction loop_display(i)">loop_display</a>(i)
+0161 <a href="#_sub8" class="code" title="subfunction debug(vals)">debug</a>([mean(abs([m,dm])), mean(abs([x,dx])), mean(abs([y,dy]))]);
+0162       pp = <a href="#_sub9" class="code" title="subfunction pp = manage_beta(pp);">manage_beta</a>(pp);
+0163    <span class="keyword">end</span>
+0164 
+0165 <span class="comment">% fix matlab's stupid verbose spdiags function</span>
+0166 <a name="_sub5" href="#_subfunctions" class="code">function sM = spdiag(V)</a>
+0167    lV = length(V);
+0168    sM = spdiags(V,0,lV,lV);
+0169 
+0170 <a name="_sub6" href="#_subfunctions" class="code">function [s,x,y,sz]= initial_values( J, L, pp);</a>
+0171    [sz.M,sz.N] = size(J); <span class="comment">% M measurements, N parameters</span>
+0172    [sz.D  ] = size(L,1); <span class="comment">% E edges</span>
+0173    y= zeros( sz.D, 1 ); <span class="comment">% dual var - start with zeros</span>
+0174    s= zeros( sz.N, 1 ); <span class="comment">% solution - start with zeros</span>
+0175    x= zeros( sz.M, 1 ); <span class="comment">% dual var - start with zeros</span>
+0176 
+0177 <span class="comment">% abs(x + dx) must be &lt;= 1</span>
+0178 <a name="_sub7" href="#_subfunctions" class="code">function dx = x_update( x, dx)</a>
+0179  <span class="comment">% can't have zeros</span>
+0180    dx(dx==0) = eps;
+0181  <span class="comment">% space to limits in direction of dx</span>
+0182    sx = sign(dx);
+0183    clr = sx - x;
+0184    <span class="comment">% how much to multiply by to get to limits</span>
+0185    fac = clr./dx;
+0186    <span class="comment">% choose min amount to get to limits</span>
+0187    dx = dx*min(abs(fac));
+0188 <span class="comment">%  dx = dx*0.9;</span>
+0189 
+0190 <a name="_sub8" href="#_subfunctions" class="code">function debug(vals)</a>
+0191 <span class="comment">%  disp(vals)</span>
+0192 
+0193 <a name="_sub9" href="#_subfunctions" class="code">function pp = manage_beta(pp);</a>
+0194    pp.beta = pp.beta * pp.beta_reduce;
+0195    <span class="keyword">if</span> pp.beta &lt; pp.beta_minimum;
+0196       pp.beta = pp.beta_minimum;
+0197    <span class="keyword">end</span>
+0198 
+0199 <a name="_sub10" href="#_subfunctions" class="code">function pp= process_parameters(imdl);</a>
+0200    <span class="keyword">try</span>    pp.max_iter = imdl.parameters.max_iterations;
+0201    <span class="keyword">catch</span>  pp.max_iter = 10;
+0202    <span class="keyword">end</span>
+0203 
+0204    <span class="keyword">try</span>    pp.min_change = imdl.parameters.min_change;
+0205    <span class="keyword">catch</span>  pp.min_change = 0;
+0206    <span class="keyword">end</span>
+0207 
+0208    <span class="keyword">try</span>    pp.beta = imdl.pdipm_diff.beta; 
+0209    <span class="keyword">catch</span>  pp.beta = 1e-6;
+0210    <span class="keyword">end</span>
+0211 
+0212    pp.beta_reduce = 0.2;
+0213    pp.beta_minimum= 1e-16;
+0214 
+0215    <span class="keyword">try</span>    pp.norm_data = imdl.pdipm_diff.norm_data;
+0216    <span class="keyword">catch</span>  pp.norm_data = 2;
+0217    <span class="keyword">end</span>
+0218 
+0219    <span class="keyword">try</span>    pp.norm_image = imdl.pdipm_diff.norm_image;
+0220    <span class="keyword">catch</span>  pp.norm_image = 2;
+0221    <span class="keyword">end</span>
+0222 
+0223 <a name="_sub11" href="#_subfunctions" class="code">function loop_display(i)</a>
+0224    fprintf(<span class="string">'+'</span>);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_mk_gen_models</title>
+  <meta name="keywords" content="ng_mk_gen_models">
+  <meta name="description" content="NG_MAKE_ELLIP_MODELS: create elliptical models using netgen">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>ng_mk_gen_models
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
+[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);
+
+ INPUT:
+ shape_str = {height, [x_radius, y_radius, [maxsz]]}
+    if height = 0 -&gt; calculate a 2D shape
+    x_radius, y_radius (OPT)  -&gt; elliptical eccentricity in x,y directions(default = 1)
+    maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)
+
+ ELECTRODE POSITIONS:
+  elec_pos = [x,y,z,nx,ny,nz] centres of each electrode (N_elecs x 6)
+   [x,y,z] is the position, and [nx,ny,nz] is the surface normal
+
+ ELECTRODE SHAPES::
+  elec_shape = [width,height, maxsz]  % Rectangular elecs
+     OR
+  elec_shape = [radius, 0, maxsz ]    % Circular elecs
+     OR 
+  elec_shape = [0, sz, maxsz ]         % Point electrodes
+    (point elecs does some tricks with netgen, using sz square, so the elecs aren't exactly where you ask)
+
+ Specify either a common electrode shape or for each electrode
+
+ ELECTRODE DEFITIONS:
+  elec_obj = 'obj_name' or {'name','for','each','elec'} where
+    the name is the primitive netgen object (cylinder, plane, etc) which the electrode intersects
+
+ OUTPUT:
+  fmdl    - fwd_model object
+  mat_idx - indices of materials
+
+ USAGE EXAMPLES:
+shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
+             'solid bottom = plane(0,0,0;0,0,-1);\n' ...
+             'solid top    = plane(0,0,2;0,0,1);\n' ...
+             'solid mainobj= top and bottom and cyl -maxh=0.3;\n'];
+elec_pos = [  1,  0,  1,   1,  0,  0;
+              0,  1,1.2,   0,  1,  0;
+              0.8,  0,  0, 0,  0, -1]; 
+elec_shape=[0.1];
+elec_obj = {'cyl','cyl','bottom'};
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>	[srf, idx] = find_boundary(simp);</li><li><a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>	Control eidors_caching</li><li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="../../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>	SHOW_FEM: show the EIDORS3D finite element model</li><li><a href="call_netgen.html" class="code" title="function status= call_netgen(geo_file, vol_file, msz_file, finelevel)">call_netgen</a>	CALL_NETGEN: call netgen to create a vol_file from a geo_file</li><li><a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li><li><a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>	NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);</a></li><li><a href="#_sub2" class="code">function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);</a></li><li><a href="#_sub3" class="code">function [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );</a></li><li><a href="#_sub4" class="code">function elec = elec_spec( row, posrow, elec_obj );</a></li><li><a href="#_sub5" class="code">function write_header(fid, shape_str);</a></li><li><a href="#_sub6" class="code">function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);</a></li><li><a href="#_sub7" class="code">function write_rect_elec(fid,name,c, dirn,wh,d,maxh)</a></li><li><a href="#_sub8" class="code">function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)</a></li><li><a href="#_sub9" class="code">function electrode = pem_from_cem(elecs, electrode, nodes)</a></li><li><a href="#_sub10" class="code">function do_unit_test</a></li><li><a href="#_sub11" class="code">function fmdl= do_test_number(tn)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);</a>
+0002 <span class="comment">% NG_MAKE_ELLIP_MODELS: create elliptical models using netgen</span>
+0003 <span class="comment">%[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% INPUT:</span>
+0006 <span class="comment">% shape_str = {height, [x_radius, y_radius, [maxsz]]}</span>
+0007 <span class="comment">%    if height = 0 -&gt; calculate a 2D shape</span>
+0008 <span class="comment">%    x_radius, y_radius (OPT)  -&gt; elliptical eccentricity in x,y directions(default = 1)</span>
+0009 <span class="comment">%    maxsz  (OPT)  -&gt; max size of mesh elems (default = course mesh)</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% ELECTRODE POSITIONS:</span>
+0012 <span class="comment">%  elec_pos = [x,y,z,nx,ny,nz] centres of each electrode (N_elecs x 6)</span>
+0013 <span class="comment">%   [x,y,z] is the position, and [nx,ny,nz] is the surface normal</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% ELECTRODE SHAPES::</span>
+0016 <span class="comment">%  elec_shape = [width,height, maxsz]  % Rectangular elecs</span>
+0017 <span class="comment">%     OR</span>
+0018 <span class="comment">%  elec_shape = [radius, 0, maxsz ]    % Circular elecs</span>
+0019 <span class="comment">%     OR</span>
+0020 <span class="comment">%  elec_shape = [0, sz, maxsz ]         % Point electrodes</span>
+0021 <span class="comment">%    (point elecs does some tricks with netgen, using sz square, so the elecs aren't exactly where you ask)</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Specify either a common electrode shape or for each electrode</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% ELECTRODE DEFITIONS:</span>
+0026 <span class="comment">%  elec_obj = 'obj_name' or {'name','for','each','elec'} where</span>
+0027 <span class="comment">%    the name is the primitive netgen object (cylinder, plane, etc) which the electrode intersects</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% OUTPUT:</span>
+0030 <span class="comment">%  fmdl    - fwd_model object</span>
+0031 <span class="comment">%  mat_idx - indices of materials</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% USAGE EXAMPLES:</span>
+0034 <span class="comment">%shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...</span>
+0035 <span class="comment">%             'solid bottom = plane(0,0,0;0,0,-1);\n' ...</span>
+0036 <span class="comment">%             'solid top    = plane(0,0,2;0,0,1);\n' ...</span>
+0037 <span class="comment">%             'solid mainobj= top and bottom and cyl -maxh=0.3;\n'];</span>
+0038 <span class="comment">%elec_pos = [  1,  0,  1,   1,  0,  0;</span>
+0039 <span class="comment">%              0,  1,1.2,   0,  1,  0;</span>
+0040 <span class="comment">%              0.8,  0,  0, 0,  0, -1];</span>
+0041 <span class="comment">%elec_shape=[0.1];</span>
+0042 <span class="comment">%elec_obj = {'cyl','cyl','bottom'};</span>
+0043 <span class="comment">%fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);</span>
+0044 
+0045 <span class="comment">% (C) Andy Adler, 2010. Licenced under GPL v2 or v3</span>
+0046 <span class="comment">% $Id$</span>
+0047 
+0048 <span class="keyword">if</span> isstr(shape_str) &amp;&amp; strcmp(shape_str,<span class="string">'UNIT_TEST'</span>); <a href="#_sub10" class="code" title="subfunction do_unit_test">do_unit_test</a>; <span class="keyword">return</span>; <span class="keyword">end</span>
+0049 
+0050 <span class="keyword">if</span> nargin &lt; 4; extra_ng_code = {<span class="string">''</span>,<span class="string">''</span>}; <span class="keyword">end</span>
+0051 cache_obj = { shape_str, elec_pos, elec_shape, elec_obj };
+0052 
+0053 fmdl = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'get-cache'</span>, cache_obj, <span class="string">'ng_mk_gen_models'</span> );
+0054 <span class="keyword">if</span> isempty(fmdl);
+0055    fmdl = <a href="#_sub1" class="code" title="subfunction [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);">mk_gen_model</a>( shape_str, elec_pos, elec_shape, elec_obj);
+0056    <a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'boost_priority'</span>, -2); <span class="comment">% netgen objs are low priority</span>
+0057    <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, cache_obj, <span class="string">'ng_mk_gen_models'</span>, fmdl);
+0058    <a href="../../../eidors/eidors_cache.html" class="code" title="function retval=eidors_cache( command, limit )">eidors_cache</a>(<span class="string">'boost_priority'</span>, +2); <span class="comment">% return values</span>
+0059 <span class="keyword">end</span>
+0060 
+0061 mat_idx = fmdl{2};
+0062 fmdl = fmdl{1};
+0063 
+0064 <a name="_sub1" href="#_subfunctions" class="code">function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);</a>
+0065 
+0066    fnstem = tempname;
+0067    geofn= [fnstem,<span class="string">'.geo'</span>];
+0068    ptsfn= [fnstem,<span class="string">'.msz'</span>];
+0069    meshfn= [fnstem,<span class="string">'.vol'</span>];
+0070 
+0071    is2D = 0;
+0072    [elecs, centres] = <a href="#_sub3" class="code" title="subfunction [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );">parse_elecs</a>( elec_pos, elec_shape, is2D, elec_obj );
+0073 
+0074    n_pts = <a href="#_sub2" class="code" title="subfunction n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);">write_geo_file</a>(geofn, ptsfn, shape_str, elecs);
+0075    <span class="keyword">if</span> n_pts == 0 
+0076       <a href="call_netgen.html" class="code" title="function status= call_netgen(geo_file, vol_file, msz_file, finelevel)">call_netgen</a>( geofn, meshfn);
+0077    <span class="keyword">else</span>
+0078       <a href="call_netgen.html" class="code" title="function status= call_netgen(geo_file, vol_file, msz_file, finelevel)">call_netgen</a>( geofn, meshfn, ptsfn);
+0079    <span class="keyword">end</span>
+0080 
+0081    [fmdl,mat_idx] = <a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>( meshfn, centres, <span class="string">'ng'</span>, []);
+0082 
+0083    delete(geofn); delete(meshfn); delete(ptsfn); <span class="comment">% remove temp files</span>
+0084    <span class="keyword">if</span> is2D
+0085       [fmdl,mat_idx] = <a href="#_sub6" class="code" title="subfunction [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);">mdl2d_from3d</a>(fmdl,mat_idx);
+0086    <span class="keyword">end</span>
+0087 
+0088    <span class="comment">% convert CEM to PEM if so configured</span>
+0089    <span class="comment">% TODO shunt model is unsupported</span>
+0090    <span class="keyword">if</span> isfield(fmdl,<span class="string">'electrode'</span>);
+0091    fmdl.electrode = <a href="#_sub9" class="code" title="subfunction electrode = pem_from_cem(elecs, electrode, nodes)">pem_from_cem</a>(elecs, fmdl.electrode, fmdl.nodes);
+0092    <span class="keyword">end</span>
+0093 
+0094    fmdl_mat_idx = {fmdl,mat_idx};
+0095 
+0096 <span class="comment">% for the newest netgen, we can't call msz file unless there are actually points in  it</span>
+0097 <a name="_sub2" href="#_subfunctions" class="code">function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);</a>
+0098    fid=fopen(geofn,<span class="string">'w'</span>);
+0099    <a href="#_sub5" class="code" title="subfunction write_header(fid, shape_str);">write_header</a>(fid, shape_str);
+0100 
+0101    n_elecs = length(elecs);
+0102    <span class="comment">%  elecs(i).pos   = [x,y,z]</span>
+0103    <span class="comment">%  elecs(i).shape = 'C' or 'R' or 'P'</span>
+0104    <span class="comment">%  elecs(i).dims  = [radius] or [width,height]</span>
+0105    <span class="comment">%  elecs(i).maxh  = '-maxh=#' or '';</span>
+0106    pts_elecs_idx = []; 
+0107 
+0108    <span class="keyword">if</span> n_elecs &gt; 1
+0109       tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
+0110    <span class="keyword">end</span>
+0111    <span class="keyword">for</span> i=1:n_elecs
+0112       name = sprintf(<span class="string">'elec%04d'</span>,i);
+0113       pos = elecs(i).pos;
+0114       dirn= elecs(i).dirn;
+0115       <span class="keyword">switch</span> elecs(i).shape
+0116        <span class="keyword">case</span> <span class="string">'C'</span>
+0117          <a href="#_sub8" class="code" title="subfunction write_circ_elec(fid,name,c, dirn,rd,ln,maxh)">write_circ_elec</a>(fid,name, pos, dirn,  <span class="keyword">...</span>
+0118                elecs(i).dims, tank_radius/4, elecs(i).maxh);
+0119        <span class="keyword">case</span> <span class="string">'R'</span>
+0120          <a href="#_sub7" class="code" title="subfunction write_rect_elec(fid,name,c, dirn,wh,d,maxh)">write_rect_elec</a>(fid,name, pos, dirn,  <span class="keyword">...</span>
+0121                elecs(i).dims, tank_radius/4, elecs(i).maxh);
+0122        <span class="keyword">case</span> <span class="string">'P'</span>
+0123          <span class="keyword">if</span> 0 <span class="comment">% Netgen doesn't put elecs where you ask</span>
+0124             pts_elecs_idx = [ pts_elecs_idx, i]; 
+0125             <span class="keyword">continue</span>; <span class="comment">% DON'T print solid cyl</span>
+0126          <span class="keyword">end</span>
+0127          <a href="#_sub7" class="code" title="subfunction write_rect_elec(fid,name,c, dirn,wh,d,maxh)">write_rect_elec</a>(fid,name, pos, dirn,  <span class="keyword">...</span>
+0128                elecs(i).dims, tank_radius, elecs(i).maxh);
+0129 
+0130        <span class="keyword">otherwise</span>; error(<span class="string">'huh? shouldnt get here'</span>);
+0131       <span class="keyword">end</span>
+0132       fprintf(fid,<span class="string">'solid cyl%04d = mainobj    and %s; \n'</span>,i,name);
+0133    <span class="keyword">end</span>
+0134 
+0135    <span class="comment">% SHOULD tank_maxh go here?</span>
+0136    fprintf(fid,<span class="string">'tlo mainobj;\n'</span>);
+0137    <span class="keyword">for</span> i=1:n_elecs
+0138       <span class="keyword">if</span> any(i == pts_elecs_idx); <span class="keyword">continue</span>; <span class="keyword">end</span>
+0139       fprintf(fid,<span class="string">'tlo cyl%04d %s -col=[1,0,0];\n'</span>,i, elecs(i).ngobj);
+0140    <span class="keyword">end</span>
+0141 
+0142 <span class="comment">%  if ~isempty(extra_ng_code{1})</span>
+0143 <span class="comment">%     fprintf(fid,'tlo %s  -col=[0,1,0];\n',extra_ng_code{1});</span>
+0144 <span class="comment">%  end</span>
+0145 
+0146    fclose(fid); <span class="comment">% geofn</span>
+0147 <span class="comment">% From Documentation: Syntax is</span>
+0148 <span class="comment">% np</span>
+0149 <span class="comment">% x1 y1 z1 h1</span>
+0150 <span class="comment">% x2 y2 z2 h2</span>
+0151    n_pts_elecs= length(pts_elecs_idx);
+0152    fid=fopen(ptsfn,<span class="string">'w'</span>);
+0153    fprintf(fid,<span class="string">'%d\n'</span>,n_pts_elecs);
+0154    <span class="keyword">for</span> i = pts_elecs_idx;
+0155       posxy = elecs(i).pos(1:2);
+0156       fprintf(fid,<span class="string">'%10f %10f 0 %10f\n'</span>, posxy, elecs(i).dims(1) );
+0157    <span class="keyword">end</span>
+0158    fclose(fid); <span class="comment">% ptsfn</span>
+0159 
+0160 
+0161 <span class="comment">% ELECTRODE POSITIONS:</span>
+0162 <span class="comment">%  elec_pos = [n_elecs_per_plane,z_planes]</span>
+0163 <span class="comment">%     OR</span>
+0164 <span class="comment">%  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)</span>
+0165 <span class="comment">%</span>
+0166 <span class="comment">% ELECTRODE SHAPES::</span>
+0167 <span class="comment">%  elec_shape = [width,height, {maxsz}]  % Rectangular elecs</span>
+0168 <span class="comment">%     OR</span>
+0169 <span class="comment">%  elec_shape = [radius, {0, maxsz} ]  % Circular elecs</span>
+0170 <span class="comment">%     maxsz  (OPT)  -&gt; max size of mesh elems (default = courase mesh)</span>
+0171 <span class="comment">%</span>
+0172 <span class="comment">% OUTPUT:</span>
+0173 <span class="comment">%  elecs(i).pos   = [x,y,z]</span>
+0174 <span class="comment">%  elecs(i).shape = 'C' or 'R'</span>
+0175 <span class="comment">%  elecs(i).dims  = [radius] or [width,height]</span>
+0176 <span class="comment">%  elecs(i).maxh  = '-maxh=#' or '';</span>
+0177 <a name="_sub3" href="#_subfunctions" class="code">function [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );</a>
+0178 
+0179    n_elecs= size(elec_pos,1); 
+0180    <span class="keyword">if</span> n_elecs == 0
+0181       elecs= struct([]); <span class="comment">% empty</span>
+0182       centres= [];
+0183       <span class="keyword">return</span>;
+0184    <span class="keyword">end</span>
+0185 
+0186 
+0187    <span class="keyword">if</span> size(elec_shape,1) == 1
+0188       elec_shape = ones(n_elecs,1) * elec_shape;
+0189    <span class="keyword">end</span>
+0190 
+0191    <span class="keyword">for</span> i= 1:n_elecs
+0192      <span class="keyword">if</span> isstr(elec_obj); 
+0193         elecs(i) = <a href="#_sub4" class="code" title="subfunction elec = elec_spec( row, posrow, elec_obj );">elec_spec</a>( elec_shape(i,:), elec_pos(i,:), elec_obj );
+0194      <span class="keyword">else</span>
+0195         elecs(i) = <a href="#_sub4" class="code" title="subfunction elec = elec_spec( row, posrow, elec_obj );">elec_spec</a>( elec_shape(i,:), elec_pos(i,:), elec_obj{i}  );
+0196      <span class="keyword">end</span>
+0197    <span class="keyword">end</span>
+0198    
+0199    centres = elec_pos(:,1:3);
+0200 
+0201 <a name="_sub4" href="#_subfunctions" class="code">function elec = elec_spec( row, posrow, elec_obj );</a>
+0202   elec.pos =  posrow(1:3);
+0203   elec.dirn=  posrow(4:6);
+0204   elec.ngobj= elec_obj;
+0205 
+0206   <span class="keyword">if</span> row(1) == 0
+0207      elec.shape = <span class="string">'P'</span> 
+0208      elec.dims  = row(2)*[1,1];
+0209   <span class="keyword">elseif</span> length(row)&lt;2 || row(2) == 0 <span class="comment">% Circular electrodes</span>
+0210      elec.shape = <span class="string">'C'</span>;
+0211      elec.dims  = row(1);
+0212   <span class="keyword">elseif</span> row(2)&gt;0      <span class="comment">% Rectangular electrodes</span>
+0213      elec.shape = <span class="string">'R'</span>;
+0214      elec.dims  = row(1:2);
+0215   <span class="keyword">else</span>
+0216      error(<span class="string">'negative electrode width'</span>);
+0217   <span class="keyword">end</span>
+0218 
+0219   <span class="keyword">if</span> length(row)&gt;=3 &amp;&amp; row(3) &gt; 0
+0220      elec.maxh = sprintf(<span class="string">'-maxh=%f'</span>, row(3));
+0221   <span class="keyword">else</span>
+0222      elec.maxh = <span class="string">''</span>;
+0223   <span class="keyword">end</span>
+0224 
+0225 
+0226 <a name="_sub5" href="#_subfunctions" class="code">function write_header(fid, shape_str);</a>
+0227    fprintf(fid,<span class="string">'#Automatically generated by ng_mk_gen_models\n'</span>);
+0228    fprintf(fid,<span class="string">'algebraic3d\n'</span>);
+0229    fprintf(fid,shape_str);
+0230 
+0231 <a name="_sub6" href="#_subfunctions" class="code">function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);</a>
+0232    <span class="comment">% set name</span>
+0233    mdl2 = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,sprintf(<span class="string">'%s 2D'</span>,mdl3.name));
+0234 
+0235    <span class="comment">% set nodes</span>
+0236    [bdy,idx] = <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>(mdl3.elems);
+0237    vtx = mdl3.nodes;
+0238    z_vtx = reshape(vtx(bdy,3), size(bdy) );
+0239    lay0  = find( all(z_vtx==0,2) );
+0240    bdy0  = bdy( lay0, :);
+0241    
+0242    vtx0  = unique(bdy0(:));
+0243    mdl2.nodes = vtx(vtx0,1:2);
+0244 
+0245    <span class="comment">% set elems</span>
+0246    nmap  = zeros(size(vtx,1),1); nmap(vtx0) = 1:length(vtx0);
+0247    bdy0  = reshape(nmap(bdy0), size(bdy0) ); <span class="comment">% renumber to new scheme</span>
+0248    mdl2.elems = bdy0;
+0249 
+0250    <span class="comment">% set boundary</span>
+0251    mdl2.boundary = <a href="../../../eidors/algorithms/n_polydorides/find_boundary.html" class="code" title="function [srf, idx] = find_boundary(simp);">find_boundary</a>( mdl2.elems);
+0252 
+0253    <span class="comment">% set gnd_node</span>
+0254    mdl2.gnd_node = nmap(mdl3.gnd_node);
+0255 
+0256    <span class="comment">% set material indices</span>
+0257    <span class="comment">% TODO: vectorize code</span>
+0258    idx2 = {};
+0259    idx0  = idx( lay0, :);
+0260    <span class="keyword">for</span> i=1:size(idx3,2)
+0261      idx2{i} = [];
+0262      ii = 1;
+0263      <span class="keyword">for</span> j=1:size(idx3{i},1)
+0264          idx_tmp = find( idx0==idx3{i}(j) );
+0265          <span class="keyword">if</span> not(isempty(idx_tmp))
+0266            idx2{i}(ii,1) = idx_tmp(1,1);
+0267            ii = ii + 1;
+0268          <span class="keyword">end</span>
+0269      <span class="keyword">end</span>
+0270    <span class="keyword">end</span>
+0271    
+0272    <span class="comment">% set electrode</span>
+0273    <span class="keyword">if</span> isfield(mdl3,<span class="string">'electrode'</span>)
+0274      mdl2.electrode = mdl3.electrode;
+0275      <span class="keyword">for</span> i=1:length(mdl2.electrode);
+0276         enodes = nmap( mdl2.electrode(i).nodes );
+0277         enodes(enodes==0) = []; <span class="comment">% Remove 3D layers</span>
+0278         mdl2.electrode(i).nodes = enodes(:)';
+0279      <span class="keyword">end</span>
+0280    <span class="keyword">end</span>
+0281 
+0282    <span class="comment">% copy other fields</span>
+0283    <span class="keyword">if</span> isfield(mdl3,<span class="string">'stimulation'</span>); mdl2.stimulation= mdl3.stimulation; <span class="keyword">end</span>
+0284    <span class="comment">%if isfield(mdl3,'solve');       mdl2.solve = mdl3.solve;            end</span>
+0285    mdl2.solve = <span class="string">'aa_fwd_solve'</span>; <span class="comment">% FIXME? can't use default np_fwd_solve</span>
+0286    <span class="keyword">if</span> isfield(mdl3,<span class="string">'jacobian'</span>);    mdl2.jacobian = mdl3.jacobian;      <span class="keyword">end</span>
+0287    <span class="comment">%if isfield(mdl3,'system_mat');  mdl2.system_mat = mdl3.system_mat;  end</span>
+0288    mdl2.system_mat = <span class="string">'aa_calc_system_mat'</span>; <span class="comment">% FIXME? can't use default np_calc_system_mat</span>
+0289 
+0290    <span class="comment">% update cache</span>
+0291    mdl2 = <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>,mdl2);
+0292 
+0293 <a name="_sub7" href="#_subfunctions" class="code">function write_rect_elec(fid,name,c, dirn,wh,d,maxh)</a>
+0294 <span class="comment">% writes the specification for a netgen cuboid on fid, named name, centerd on c,</span>
+0295 <span class="comment">% in the direction given by vector dirn,</span>
+0296 <span class="comment">% hw = [height, width]  and depth d</span>
+0297 <span class="comment">% direction is in the xy plane</span>
+0298    d= min(d);
+0299    w = wh(1); h= wh(2);
+0300    dirn = dirn/norm(dirn);
+0301    dirnp = [-dirn(2),dirn(1),0];
+0302 <span class="keyword">if</span> any(isnan(dirnp));
+0303    error(<span class="string">'ng_mk_gen_models: how to define width and height for vertical electrodes?'</span>)
+0304 <span class="keyword">end</span>
+0305    dirnp = dirnp/norm(dirnp);
+0306 
+0307    bl = c - (d/2)* dirn + (w/2)*dirnp - [0,0,h/2];
+0308    tr = c + (d/2)* dirn - (w/2)*dirnp + [0,0,h/2];
+0309    fprintf(fid,<span class="string">'solid %s  = '</span>, name);
+0310    fprintf(fid,<span class="string">' plane (%6.3f,%6.3f,%6.3f;0, 0, -1) and\n'</span>, <span class="keyword">...</span>
+0311            bl(1),bl(2),bl(3));
+0312    fprintf(fid,<span class="string">' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n'</span>, <span class="keyword">...</span>
+0313            bl(1),bl(2),bl(3),-dirn(1),-dirn(2),0);
+0314    fprintf(fid,<span class="string">' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n'</span>, <span class="keyword">...</span>
+0315            bl(1),bl(2),bl(3),dirnp(1),dirnp(2),0);
+0316    fprintf(fid,<span class="string">' plane(%6.3f,%6.3f,%6.3f;0, 0, 1) and\n'</span>, <span class="keyword">...</span>
+0317            tr(1),tr(2),tr(3));
+0318    fprintf(fid,<span class="string">' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n'</span>, <span class="keyword">...</span>
+0319            tr(1),tr(2),tr(3),dirn(1),dirn(2),0);
+0320    fprintf(fid,<span class="string">' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )%s;\n'</span>, <span class="keyword">...</span>
+0321            tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0,maxh);
+0322 
+0323 <a name="_sub8" href="#_subfunctions" class="code">function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)</a>
+0324 <span class="comment">% writes the specification for a netgen cylindrical rod on fid,</span>
+0325 <span class="comment">%  named name, centerd on c,</span>
+0326 <span class="comment">% in the direction given by vector d, radius rd  lenght ln</span>
+0327 <span class="comment">% direction is in the xy plane</span>
+0328 <span class="comment">% the direction vector</span>
+0329    dirn = dirn/norm(dirn);
+0330 
+0331    ln = min(ln);
+0332  <span class="comment">% I would divide by 2 here (shorted tube in cyl), but ng doesn't like</span>
+0333  <span class="comment">% That - it fails for 16 (but no 15 or 17) electrodes</span>
+0334    inpt = c - dirn.*(ln/1);
+0335    outpt =c + dirn.*(ln/1);
+0336 
+0337    fprintf(fid,<span class="string">'solid %s  = '</span>, name);
+0338    fprintf(fid,<span class="string">'  plane(%f,%f,%f;%f,%f,%f) and\n'</span>,       inpt, -dirn);
+0339    fprintf(fid,<span class="string">'  plane(%f,%f,%f;%f,%f,%f) and\n'</span>,       outpt, dirn);
+0340    fprintf(fid,<span class="string">'  cylinder(%f,%f,%f;%f,%f,%f;%f) %s;\n'</span>, inpt, outpt, rd,maxh);
+0341 
+0342 
+0343 <a name="_sub9" href="#_subfunctions" class="code">function electrode = pem_from_cem(elecs, electrode, nodes)</a>
+0344 <span class="comment">% elecs = electrode structure of model, from the parse_elecs function</span>
+0345 <span class="comment">% electrode = the forward electrode model</span>
+0346 <span class="comment">% nodes = the coordinates for the nodes</span>
+0347 <span class="comment">% Can only have one node per electrode so we get a Point Electrode Model.</span>
+0348 <span class="comment">% Choose the node with the greatest angle, so we atlest pick a consistent</span>
+0349 <span class="comment">% side of the electrode: NetGen seems to give a random order to the nodes</span>
+0350 <span class="comment">% in the electrode listing so we can't just pick the first one.</span>
+0351 <span class="comment">% The nodes aside from those on the edges are not garanteed to be at any</span>
+0352 <span class="comment">% particular location, so won't be consistent between meshes.</span>
+0353 <span class="comment">% TODO should probably also adjust contact impedance too: its found later</span>
+0354 <span class="comment">% by taking the average of the edges around the PEM's node, and those</span>
+0355 <span class="comment">% will vary for each mesh -- should adjust so all electrodes get a</span>
+0356 <span class="comment">% consistent effective impedance later.</span>
+0357   Ne = length(electrode);
+0358   <span class="keyword">for</span> i = 1:Ne
+0359     <span class="keyword">if</span> elecs(i).shape == <span class="string">'P'</span>
+0360       <span class="comment">% find the angles of the nodes for this electrode relative to (0,0)</span>
+0361       xy = nodes(electrode(i).nodes,:);
+0362       ang = atan2(xy(:,2),xy(:,1));
+0363       <span class="comment">% if the angles cover more than 180 degrees, must be an angle</span>
+0364       <span class="comment">% roll-over from -pi to +pi, so take all the negative angles</span>
+0365       <span class="comment">% and move them up</span>
+0366       <span class="keyword">if</span> (max(ang) - min(ang)) &gt; pi
+0367         ang = ang + (ang &lt;0)*2*pi;
+0368       <span class="keyword">end</span>
+0369       <span class="comment">% choose the counter-clockwise most node only</span>
+0370       <span class="keyword">if</span> size(xy,2) == 3 ; ang = ang - xy(:,3); <span class="keyword">end</span>
+0371       [jnk, ind] = max(ang);
+0372       electrode(i).nodes = electrode(i).nodes(ind);
+0373     <span class="keyword">end</span>
+0374   <span class="keyword">end</span>
+0375 
+0376 
+0377 <a name="_sub10" href="#_subfunctions" class="code">function do_unit_test</a>
+0378   <span class="keyword">for</span> tn = 8
+0379      fmdl= <a href="#_sub11" class="code" title="subfunction fmdl= do_test_number(tn)">do_test_number</a>(tn);
+0380      <a href="../../../eidors/graphics_matlab/show_fem.html" class="code" title="function hh=show_fem( mdl, options)">show_fem</a>(fmdl);
+0381   <span class="keyword">end</span>
+0382 
+0383 <a name="_sub11" href="#_subfunctions" class="code">function fmdl= do_test_number(tn)</a>
+0384 <span class="keyword">switch</span> tn
+0385    <span class="keyword">case</span> 1;
+0386  shape_str = [<span class="string">'solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n'</span>, <span class="keyword">...</span>
+0387               <span class="string">'solid mainobj= orthobrick(-2,-2,0;2,2,2) and cyl -maxh=0.3;\n'</span>];
+0388  elec_pos = []; elec_shape = []; elec_obj = {};
+0389  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0390 
+0391    <span class="keyword">case</span> 2;
+0392  shape_str = [<span class="string">'solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n'</span>, <span class="keyword">...</span>
+0393               <span class="string">'solid mainobj= plane(0,0,0;0,0,-1)\n'</span> <span class="keyword">...</span>
+0394                         <span class="string">'and  plane(0,0,2;0,0,1)\n'</span> <span class="keyword">...</span>
+0395                         <span class="string">'and  cyl -maxh=0.3;\n'</span>];
+0396  elec_pos = [  1,  0,  1,   1,  0,  0;
+0397                0,  1,1.2,   0,  1,  0]; 
+0398  elec_shape=[0.1];
+0399  elec_obj = <span class="string">'cyl'</span>;
+0400  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0401 
+0402    <span class="keyword">case</span> 3;
+0403  shape_str = [<span class="string">'solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n'</span>, <span class="keyword">...</span>
+0404               <span class="string">'solid mainobj= orthobrick(-2,-2,0;2,2,2) and cyl -maxh=0.3;\n'</span>];
+0405  th = linspace(0,2*pi,15)'; th(end) = [];
+0406  cs = [cos(th), sin(th)];
+0407  elec_pos = [  cs, th/2/pi + 0.5, cs, 0*th];
+0408  elec_shape=[0.1];
+0409  elec_obj = <span class="string">'cyl'</span>;
+0410  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0411 
+0412    <span class="keyword">case</span> 4;
+0413  shape_str = [<span class="string">'solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n'</span>, <span class="keyword">...</span>
+0414               <span class="string">'solid mainobj= orthobrick(-2,-2,0;2,2,2) and cyl -maxh=0.3;\n'</span>];
+0415  th = linspace(0,2*pi,15)'; th(end) = [];
+0416  cs = [cos(th), sin(th)];
+0417  elec_pos = [  cs, th/2/pi + 0.5, cs, 0*th];
+0418  elec_shape=[0.1*th/2/pi + 0.05];
+0419  elec_obj = <span class="string">'cyl'</span>;
+0420  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0421 
+0422    <span class="keyword">case</span> 5;
+0423  shape_str = [<span class="string">'solid cyl    = cylinder (0,0,0; 1,0,0; 1); \n'</span>, <span class="keyword">...</span>
+0424               <span class="string">'solid mainobj= plane(0,0,0;-1,0,0)\n'</span> <span class="keyword">...</span>
+0425                         <span class="string">'and  plane(2,0,0;1,0,0)\n'</span> <span class="keyword">...</span>
+0426                         <span class="string">'and  cyl -maxh=0.3;\n'</span>];
+0427  elec_pos = [  1,  0,  1,   0,  0,  1;
+0428              1.2,  1,  0,   0,  1,  0]; 
+0429  elec_shape=[0.1];
+0430  elec_obj = <span class="string">'cyl'</span>;
+0431  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0432 
+0433    <span class="keyword">case</span> 6;
+0434  shape_str = [<span class="string">'solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n'</span>, <span class="keyword">...</span>
+0435               <span class="string">'solid bottom = plane(0,0,0;0,0,-1);\n'</span> <span class="keyword">...</span>
+0436               <span class="string">'solid top    = plane(0,0,2;0,0,1);\n'</span> <span class="keyword">...</span>
+0437               <span class="string">'solid mainobj= top and bottom and cyl -maxh=0.3;\n'</span>];
+0438  elec_pos = [  1,  0,  1,   1,  0,  0;
+0439                0,  1,1.2,   0,  1,  0;
+0440                0.8,  0,  0, 0,  0, -1]; 
+0441  elec_shape=[0.1];
+0442  elec_obj = {<span class="string">'cyl'</span>,<span class="string">'cyl'</span>,<span class="string">'bottom'</span>};
+0443  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0444 
+0445    <span class="keyword">case</span> 7;
+0446  shape_str = [<span class="string">'solid top    = plane(0,0,0;0,0,1);\n'</span> <span class="keyword">...</span>
+0447               <span class="string">'solid mainobj= top and orthobrick(-2,-2,-2;2,2,0);\n'</span>];
+0448  elec_pos = [  1,  0,  0,   0,  0,  1;
+0449                0,  0,  0,   0,  0,  1;
+0450               -1,  0,  0,   0,  0,  1];
+0451  elec_shape=[0.1];
+0452  elec_obj = <span class="string">'top'</span>;
+0453  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0454 
+0455    <span class="keyword">case</span> 8;
+0456  shape_str = [<span class="string">'solid top    = plane(0,0,0;0,0,1);\n'</span> <span class="keyword">...</span>
+0457               <span class="string">'solid cyl    = ellipticcylinder(0,0,0;2.5,0,0;0,1,0);\n'</span> <span class="keyword">...</span>
+0458               <span class="string">'solid mainobj= top and cyl and orthobrick(-2,-2,-2;2,2,0);\n'</span>];
+0459  elec_pos = [  1,  0,  0,   0,  0,  1;
+0460                0,  0,  0,   0,  0,  1;
+0461               -1,  0,  0,   0,  0,  1;
+0462                1, -1,-1.2,  0, -1,  0;
+0463                0, -1,-1.0,  0, -1,  0;
+0464               -1, -1,-0.8,  0, -1,  0];
+0465  elec_shape=[0.1];
+0466  elec_obj = {<span class="string">'top'</span>,<span class="string">'top'</span>,<span class="string">'top'</span>,<span class="string">'cyl'</span>,<span class="string">'cyl'</span>,<span class="string">'cyl'</span>};
+0467  fmdl = <a href="ng_mk_gen_models.html" class="code" title="function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);">ng_mk_gen_models</a>(shape_str, elec_pos, elec_shape, elec_obj);
+0468    <span class="keyword">otherwise</span>;
+0469      error(<span class="string">'huh?'</span>)
+0470 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of aa_e_move_jacobian</title>
+  <meta name="keywords" content="aa_e_move_jacobian">
+  <meta name="description" content="AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html a_adler -->
+<h1>aa_e_move_jacobian
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function J= aa_e_move_jacobian( fwd_model, img) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)
+ Calculate Jacobian Matrix for EIT, based on conductivity
+   change and movement of electrodes
+ J         = Jacobian matrix
+ fwd_model = forward model
+
+ fwd_model.conductivity_jacobian = fcn
+
+ fwd_model.normalize_measurements if param exists, calculate
+                                  a Jacobian for normalized
+                                  difference measurements
+ img = image background for jacobian calc</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>	AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)</li><li><a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>	FWD_SOLVE: calculate data from a fwd_model object and an image</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/models/a_adler/select_imdl.html" class="code" title="function inv_mdl= select_imdl( mdl, options )">select_imdl</a>	SELECT_IMDL: select pre-packaged inverse model features</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function J= conductivity_jacobian_perturb( pp, delta, img );</a></li><li><a href="#_sub2" class="code">function J= movement_jacobian( pp, delta, img )</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function J= aa_e_move_jacobian( fwd_model, img)</a>
+0002 <span class="comment">% AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)</span>
+0003 <span class="comment">% Calculate Jacobian Matrix for EIT, based on conductivity</span>
+0004 <span class="comment">%   change and movement of electrodes</span>
+0005 <span class="comment">% J         = Jacobian matrix</span>
+0006 <span class="comment">% fwd_model = forward model</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% fwd_model.conductivity_jacobian = fcn</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% fwd_model.normalize_measurements if param exists, calculate</span>
+0011 <span class="comment">%                                  a Jacobian for normalized</span>
+0012 <span class="comment">%                                  difference measurements</span>
+0013 <span class="comment">% img = image background for jacobian calc</span>
+0014 
+0015 <span class="comment">% (C) 2005 Andy Adler. License: GPL version 2 or version 3</span>
+0016 <span class="comment">% $Id$</span>
+0017 
+0018 pp= <a href="aa_fwd_parameters.html" class="code" title="function param = aa_fwd_parameters( fwd_model )">aa_fwd_parameters</a>( fwd_model );
+0019 delta= 1e-6; <span class="comment">% tests indicate this is a good value</span>
+0020              <span class="comment">% too high and J is not linear, too low and numerical error</span>
+0021 
+0022 <span class="keyword">if</span> isfield(fwd_model,<span class="string">'conductivity_jacobian'</span>)
+0023    Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
+0024 <span class="keyword">else</span>
+0025    Jc= <a href="#_sub1" class="code" title="subfunction J= conductivity_jacobian_perturb( pp, delta, img );">conductivity_jacobian_perturb</a>( pp, delta, img );
+0026 <span class="keyword">end</span>
+0027 
+0028 Jm= <a href="#_sub2" class="code" title="subfunction J= movement_jacobian( pp, delta, img )">movement_jacobian</a>( pp, delta, img );
+0029 J= [Jc,Jm];
+0030 
+0031 <span class="comment">% calculate normalized Jacobian</span>
+0032 <span class="keyword">if</span> pp.normalize
+0033    data= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0034    J= J ./ (data.meas(:)*ones(1,size(J,2)));
+0035 <span class="keyword">end</span>
+0036 
+0037 
+0038 <span class="comment">% Calculate the conductivity jacobian based on a perturbation</span>
+0039 <span class="comment">% of each element by a delta</span>
+0040 <span class="comment">% Relative error mean(mean(abs(J-Jx)))/ mean(mean(abs(J)))</span>
+0041 <span class="comment">%   10^-2   0.00308129369015</span>
+0042 <span class="comment">%   10^-3   0.00030910899216</span>
+0043 <span class="comment">%   10^-4   0.00003092078190</span>
+0044 <span class="comment">%   10^-5   0.00000309281790</span>
+0045 <span class="comment">%   10^-6   0.00000035468582</span>
+0046 <span class="comment">%   10^-7   0.00000098672198</span>
+0047 <span class="comment">%   10^-8   0.00000938262464</span>
+0048 <span class="comment">%   10^-9   0.00009144743903</span>
+0049 
+0050 <a name="_sub1" href="#_subfunctions" class="code">function J= conductivity_jacobian_perturb( pp, delta, img );</a>
+0051 
+0052 J = zeros( pp.n_meas, pp.n_elem );
+0053 
+0054 elem_data = img.elem_data;
+0055 d0= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0056 <span class="keyword">for</span> i=1:pp.n_elem
+0057    img.elem_data   = elem_data;
+0058    img.elem_data(i)= elem_data(i) + delta;
+0059    di= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0060    J(:,i) = (1/delta) * (di.meas - d0.meas);
+0061 <span class="keyword">end</span>
+0062 
+0063 <span class="comment">% xy-Movement Jacobian</span>
+0064 <a name="_sub2" href="#_subfunctions" class="code">function J= movement_jacobian( pp, delta, img )</a>
+0065 
+0066 J = zeros( pp.n_meas, pp.n_elec*pp.n_dims );
+0067 
+0068 node0= img.fwd_model.nodes;
+0069 d0= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0070 <span class="keyword">for</span> d= 1:pp.n_dims
+0071    <span class="keyword">for</span> i= 1:pp.n_elec
+0072       idx= img.fwd_model.electrode(i).nodes;
+0073 
+0074       img.fwd_model.nodes( idx, d)= node0(idx,d) + delta;
+0075       di= <a href="../../../eidors/fwd_solve.html" class="code" title="function data = fwd_solve( fwd_model, img)">fwd_solve</a>( img );
+0076       img.fwd_model.nodes( idx, d)= node0(idx,d);
+0077 
+0078       J_idx = pp.n_elec*(d-1) + i;
+0079       J(:,J_idx) = (1/delta) * (di.meas - d0.meas);
+0080    <span class="keyword">end</span>
+0081 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

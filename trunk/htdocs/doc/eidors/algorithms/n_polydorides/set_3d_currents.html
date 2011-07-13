@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of set_3d_currents</title>
+  <meta name="keywords" content="set_3d_currents">
+  <meta name="description" content="function [I,Ib]=set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- ../menu.html algorithms --><!-- menu.html n_polydorides -->
+<h1>set_3d_currents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [I,Ib]=set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">function [I,Ib]=set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
+
+This function sets current patterns in a system with (no_pl) planes of 
+equal number of electrodes according to &quot;opposite&quot; or &quot;adjacent&quot; protocols, 
+or their 3D similar.
+
+
+
+protocol= The selected protocol '{op}' or '{ad}'
+elec    = The electrodes (only the number of electrodes is used)
+vtx     = The vertices
+gnd_ind = the index of the ground node
+no_pl   = The number of planes
+Ib      = The current patterns
+I       = The RHS vectors, i.e., the current patterns padded with zeroes</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/demo_complex.html" class="code" title="">demo_complex</a>	This demo function shows how the EIT problem can be formulated in a complex</li><li><a href="../../../eidors/examples/demo_real.html" class="code" title="function [inhomg_img, demo_img] = demo_real;">demo_real</a>	[inhomg_img, demo_img] = demo_real;</li><li><a href="../../../eidors/models/a_adler/mk_common_model.html" class="code" title="function inv_mdl= mk_common_model( str, n_elec, varargin )">mk_common_model</a>	MK_COMMON_MODEL: make common EIT models</li><li><a href="../../../eidors/tests/demo_real_test.html" class="code" title="function ok= demo_real_test">demo_real_test</a>	Perform tests based on the demo_real function</li><li><a href="../../../eidors/tests/demo_real_test2.html" class="code" title="function ok= demo_real_test2">demo_real_test2</a>	Perform tests based on the demo_real function with new structs</li><li><a href="../../../eidors/tests/demo_real_test3.html" class="code" title="function ok= demo_real_test3">demo_real_test3</a>	Perform tests based on the demo_real function with new structs</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);</a>
+0002 <span class="comment">%function [I,Ib]=set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%This function sets current patterns in a system with (no_pl) planes of</span>
+0005 <span class="comment">%equal number of electrodes according to &quot;opposite&quot; or &quot;adjacent&quot; protocols,</span>
+0006 <span class="comment">%or their 3D similar.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%protocol= The selected protocol '{op}' or '{ad}'</span>
+0011 <span class="comment">%elec    = The electrodes (only the number of electrodes is used)</span>
+0012 <span class="comment">%vtx     = The vertices</span>
+0013 <span class="comment">%gnd_ind = the index of the ground node</span>
+0014 <span class="comment">%no_pl   = The number of planes</span>
+0015 <span class="comment">%Ib      = The current patterns</span>
+0016 <span class="comment">%I       = The RHS vectors, i.e., the current patterns padded with zeroes</span>
+0017 
+0018 
+0019 [vr,vc] = size(vtx);
+0020    
+0021 [el_no,q] = size(elec); 
+0022 
+0023 el_pp = el_no/no_pl;
+0024 
+0025 a=1:el_no;
+0026 
+0027 X = reshape(a,el_pp,no_pl)';
+0028 
+0029 <span class="keyword">if</span> protocol == <span class="string">'{op}'</span>
+0030    
+0031    Ib = [];
+0032    
+0033     <span class="keyword">for</span> i=1:no_pl
+0034    
+0035        this_plane = X(i,:);
+0036       
+0037       <span class="keyword">for</span> j=this_plane(1):this_plane(8)
+0038          
+0039          Ip = zeros(el_no,1);
+0040          Ip(j) = 1;
+0041          Ip(j+ el_pp/2) = -1;
+0042          Ib = [Ib,Ip];
+0043       <span class="keyword">end</span>
+0044    
+0045    <span class="keyword">end</span> 
+0046    
+0047     
+0048    Is_supl = zeros(vr,size(Ib,2));
+0049 
+0050    I = [Is_supl;Ib];
+0051 
+0052    I(gnd_ind,:) = 0;
+0053 
+0054 <span class="keyword">elseif</span> protocol == <span class="string">'{ad}'</span>
+0055    
+0056    Ib = [];
+0057    
+0058    <span class="keyword">for</span> i=1:no_pl
+0059    
+0060      this_plane = X(i,:); 
+0061    
+0062         <span class="keyword">for</span> j=this_plane(1):this_plane(el_pp-1)
+0063            
+0064            Ip = zeros(el_no,1);
+0065            Ip(j) = 1;
+0066            Ip(j+1) = -1;
+0067            Ib =[Ib,Ip];
+0068            
+0069            <span class="keyword">if</span> j==this_plane(el_pp-1) <span class="comment">%the ring pattern</span>
+0070               
+0071               Ip = zeros(el_no,1);
+0072               
+0073               Ip(j+1) = 1;
+0074               Ip(this_plane(1)) = -1;
+0075               Ib = [Ib,Ip];
+0076            <span class="keyword">end</span>
+0077            
+0078            
+0079         <span class="keyword">end</span>
+0080         
+0081      <span class="keyword">end</span>
+0082      
+0083     Is_supl = zeros(vr,size(Ib,2));
+0084 
+0085     I = [Is_supl;Ib];
+0086 
+0087     I(gnd_ind,:) = 0;
+0088 
+0089 <span class="keyword">else</span>
+0090    error([<span class="string">'protocol '</span>,protocol,<span class="string">' is not recognized'</span>]);
+0091 <span class="keyword">end</span> <span class="comment">%protocol</span>
+0092          
+0093 
+0094 
+0095 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0096 <span class="comment">% This is part of the EIDORS suite.</span>
+0097 <span class="comment">% Copyright (c) N. Polydorides 2003</span>
+0098 <span class="comment">% Copying permitted under terms of GNU GPL</span>
+0099 <span class="comment">% See enclosed file gpl.html for details.</span>
+0100 <span class="comment">% EIDORS 3D version 2.0</span>
+0101 <span class="comment">% MATLAB version 5.3 R11</span>
+0102 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span></pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

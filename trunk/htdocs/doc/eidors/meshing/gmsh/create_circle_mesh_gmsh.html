@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of create_circle_mesh_gmsh</title>
+  <meta name="keywords" content="create_circle_mesh_gmsh">
+  <meta name="description" content="Create a 2D Circular FEM using GMSH">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html gmsh -->
+<h1>create_circle_mesh_gmsh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>Create a 2D Circular FEM using GMSH</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Create a 2D Circular FEM using GMSH
+ mdl= CREATE_GMSH_2D_CIRCLE(rad, n_elec)
+
+ mdl - EIDORS forward model
+ rad - model radius</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>	EIDORS_OBJ: 'constructor' to create a eidors structure</li><li><a href="call_gmsh.html" class="code" title="function status= call_gmsh(geo_file)">call_gmsh</a>	call_gmsh: call Gmsh to create a vol_file from a geo_file</li><li><a href="gmsh_read_mesh.html" class="code" title="function[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)">gmsh_read_mesh</a>	[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../eidors/examples/object_in_tank_2d.html" class="code" title="">object_in_tank_2d</a>	2D demo example for reconstruction of object floating inside tank with</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )</a>
+0002 <span class="comment">% Create a 2D Circular FEM using GMSH</span>
+0003 <span class="comment">% mdl= CREATE_GMSH_2D_CIRCLE(rad, n_elec)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% mdl - EIDORS forward model</span>
+0006 <span class="comment">% rad - model radius</span>
+0007 
+0008 <span class="comment">% (C) 2006 Andy Adler. License: GPL version 2 or version 3</span>
+0009 <span class="comment">% $Id$</span>
+0010 
+0011 
+0012 geo_filename = sprintf(<span class="string">'%s.geo'</span>, basename);
+0013 geo_fid= fopen(geo_filename,<span class="string">'w'</span>);
+0014 
+0015 point_no = 1;
+0016 <span class="comment">% Points to define circle</span>
+0017 center_no = point_no;
+0018 fprintf(geo_fid,<span class="string">'Point(%d) = {%f, %f, 0, %f};\n'</span>,center_no, <span class="keyword">...</span>
+0019     center(1), center(2), 1);
+0020 point_no = point_no + 1;
+0021 inpoint1_no = point_no;
+0022 fprintf(geo_fid,<span class="string">'Point(%d) = {%f, %f, 0, %f};\n'</span>,inpoint1_no, <span class="keyword">...</span>
+0023     center(1)+rad, center(2), elem_size);
+0024 point_no = point_no + 1;
+0025 inpoint2_no = point_no;
+0026 fprintf(geo_fid,<span class="string">'Point(%d) = {%f, %f, 0, %f};\n'</span>,inpoint2_no, <span class="keyword">...</span>
+0027     center(1)-rad, center(2), elem_size);
+0028 point_no = point_no + 1;
+0029 
+0030 
+0031 line_no = 1;
+0032 <span class="comment">% Internal circle and loop</span>
+0033 circle1_no = line_no;
+0034 line_no = line_no + 1;
+0035 fprintf(geo_fid,<span class="string">'Circle(%d) = {%d, %d, %d};\n'</span>, circle1_no, inpoint1_no, <span class="keyword">...</span>
+0036     center_no, inpoint2_no);
+0037 circle2_no = line_no;
+0038 line_no = line_no + 1;
+0039 fprintf(geo_fid,<span class="string">'Circle(%d) = {%d, %d, %d};\n'</span>, circle2_no, inpoint2_no, <span class="keyword">...</span>
+0040     center_no, inpoint1_no);
+0041 
+0042 loop_no = line_no;
+0043 line_no = line_no + 1;
+0044 fprintf(geo_fid,<span class="string">'Line Loop(%d) = {%d,%d};\n'</span>, loop_no, circle1_no, <span class="keyword">...</span>
+0045     circle2_no);
+0046 
+0047 fprintf(geo_fid, <span class="string">'Plane Surface(%d) = {%d};\n'</span>, line_no, loop_no);
+0048 line_no = line_no + 1;
+0049 
+0050 fclose(geo_fid);
+0051 
+0052 <span class="comment">% Call Gmsh</span>
+0053 disp(<span class="string">'Calling Gmsh. Please wait ...'</span>);
+0054 <a href="call_gmsh.html" class="code" title="function status= call_gmsh(geo_file)">call_gmsh</a>( geo_filename);
+0055 
+0056 msh_filename = sprintf(<span class="string">'%s.msh'</span>, basename);
+0057 
+0058 disp([<span class="string">'Now reading back data from file: '</span> msh_filename])
+0059 
+0060 [srf,vtx,fc,bc,simp,edg,mat_ind] = <a href="gmsh_read_mesh.html" class="code" title="function[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)">gmsh_read_mesh</a>(<span class="string">'circle.msh'</span>);
+0061 mdl.nodes    = vtx;
+0062 mdl.elems    = simp;
+0063 mdl.name = <span class="string">'Circle'</span>;
+0064 coarse_breast_mdl= <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'fwd_model'</span>, mdl);
+0065 
+0066</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fourier_fit</title>
+  <meta name="keywords" content="fourier_fit">
+  <meta name="description" content="FOURIER_FIT: use fourier series to interpolate onto a boundary">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>fourier_fit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>FOURIER_FIT: use fourier series to interpolate onto a boundary</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function C = fourier_fit(points,N,start); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> FOURIER_FIT: use fourier series to interpolate onto a boundary
+
+ [pp] = fourier_fit(points) fits a Fourier series
+    points - [x y] contour to be fitted
+ [pp] = fourier_fit(points,N) fits a Fourier series and downsamples
+    N is the number of Fourier components to fit to.
+
+ [xy] = fourier_fit(pp,  linear_frac) returns points at linear_frac
+ distance along the contour
+    pp          - piecewise polynomial structure
+    linear_frac - vector of length fractions (0 to 1) to calculate points
+    start       - (optional) a seed for the first point
+    xy          - cartesian coordinates of the points</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>	FOURIER_FIT: use fourier series to interpolate onto a boundary</li><li><a href="ng_mk_closed_contour.html" class="code" title="function [fmdl,mat_idx] = ng_mk_ellip_models(ellip_shape, elec_pos,elec_shape, extra_ng_code);">ng_mk_closed_contour</a>	NG_MK_CLOSED_CONTOUR: fit elliptical model to a contour</li><li><a href="ng_mk_extruded_model.html" class="code" title="function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape,extra_ng_code)">ng_mk_extruded_model</a>	NG_MAKE_EXTRUDED_MODEL: create extruded models using netgen</li><li><a href="../../../eidors/models/a_adler/mk_GREIT_model.html" class="code" title="function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )">mk_GREIT_model</a>	MK_GREIT_MODEL: make EIDORS inverse models using the GREIT approach</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function C = fit_to_fourier(points,N);</a></li><li><a href="#_sub2" class="code">function xy = fit_from_fourier(C,linear_frac,start);</a></li><li><a href="#_sub3" class="code">function do_unit_test</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function C = fourier_fit(points,N,start);</a>
+0002 <span class="comment">% FOURIER_FIT: use fourier series to interpolate onto a boundary</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% [pp] = fourier_fit(points) fits a Fourier series</span>
+0005 <span class="comment">%    points - [x y] contour to be fitted</span>
+0006 <span class="comment">% [pp] = fourier_fit(points,N) fits a Fourier series and downsamples</span>
+0007 <span class="comment">%    N is the number of Fourier components to fit to.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% [xy] = fourier_fit(pp,  linear_frac) returns points at linear_frac</span>
+0010 <span class="comment">% distance along the contour</span>
+0011 <span class="comment">%    pp          - piecewise polynomial structure</span>
+0012 <span class="comment">%    linear_frac - vector of length fractions (0 to 1) to calculate points</span>
+0013 <span class="comment">%    start       - (optional) a seed for the first point</span>
+0014 <span class="comment">%    xy          - cartesian coordinates of the points</span>
+0015 
+0016 <span class="comment">% (C) Andy Adler, 2010. Licenced under GPL v2 or v3</span>
+0017 <span class="comment">% $Id$</span>
+0018 
+0019 <span class="keyword">if</span> isstr(points) &amp;&amp; strcmp(points,<span class="string">'UNIT_TEST'</span>); <a href="#_sub3" class="code" title="subfunction do_unit_test">do_unit_test</a>; <span class="keyword">return</span> ; <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> size(points,2)==2 <span class="comment">% calling analysis function</span>
+0022    <span class="keyword">if</span> nargin&lt;2; N= size(points,1); <span class="keyword">end</span>
+0023    C = <a href="#_sub1" class="code" title="subfunction C = fit_to_fourier(points,N);">fit_to_fourier</a>(points,N);
+0024 <span class="keyword">elseif</span> size(points,2)==1 <span class="comment">% calling synthesis function</span>
+0025    <span class="keyword">if</span> nargin&lt;3; start = []; <span class="keyword">end</span>
+0026    C = <a href="#_sub2" class="code" title="subfunction xy = fit_from_fourier(C,linear_frac,start);">fit_from_fourier</a>(points,N,start);
+0027 <span class="keyword">else</span>
+0028    error(<span class="string">'size of first parameter to fourier_fit not undersood'</span>);
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="comment">% this will crash if N&gt;length(points)</span>
+0032 <a name="_sub1" href="#_subfunctions" class="code">function C = fit_to_fourier(points,N);</a>
+0033    z = points*[1;1i];
+0034    Z = fft(z);
+0035    <span class="keyword">if</span> rem(N,2)==0 <span class="comment">% Even</span>
+0036      N2 = N/2;
+0037      Zlp = Z([1,2:N2,1,end-(N2-2:-1:0)]);
+0038      Zlp(N2+1) = 0.5*(Z(N2+1) + Z(end-N2+1)); <span class="comment">%centre point</span>
+0039    <span class="keyword">else</span> 
+0040      N2 = floor(N/2);
+0041      Zlp = Z([1,2:N2+1,end-(N2-1:-1:0)]);
+0042    <span class="keyword">end</span>
+0043    C = length(Zlp)/length(Z)*Zlp; <span class="comment">% Amplitude scaling</span>
+0044     
+0045 <a name="_sub2" href="#_subfunctions" class="code">function xy = fit_from_fourier(C,linear_frac,start);</a>
+0046    <span class="comment">% Step 1: oversample</span>
+0047    N = length(C);
+0048    n2 = ceil(N/2);
+0049 
+0050    pad = zeros(1000,1);
+0051    <span class="keyword">if</span> rem(N,2)==0 <span class="comment">% even</span>
+0052       Zos = [C(1:n2); C(n2+1)/2; pad; C(n2+1)/2; C(n2+2:end)];
+0053    <span class="keyword">else</span>
+0054       Zos = [C(1:n2); pad; C(n2+1:end)];
+0055    <span class="keyword">end</span>
+0056    Zos = length(Zos)/length(C)*Zos;
+0057    zos = ifft(Zos);
+0058    <span class="comment">% rearrange the points such that they start as close as possible to the</span>
+0059    <span class="comment">% seed</span>
+0060    <span class="keyword">if</span> ~isempty(start)
+0061        <span class="keyword">if</span> size(start,2) == 1; start = start'; <span class="keyword">end</span>
+0062        start = start*[1; 1i];
+0063        dist = abs(zos-start);
+0064        [jnk,p] = min(dist);
+0065        zos = circshift(zos,-p+1);
+0066    <span class="keyword">end</span>
+0067    
+0068    <span class="comment">% Step 2:</span>
+0069    dpath= abs(diff(zos));
+0070    pathlen = [0;cumsum(dpath)];
+0071 
+0072    <span class="comment">% interpolate points onto path</span>
+0073    npath = pathlen/max(pathlen);
+0074    linear_frac= mod(linear_frac,1);
+0075    z_int = interp1(npath, zos, linear_frac);
+0076 
+0077    xy= [real(z_int(:)), imag(z_int(:))];
+0078    
+0079 <a name="_sub3" href="#_subfunctions" class="code">function do_unit_test</a>
+0080 
+0081     a = [
+0082    -0.8981   -0.7492   -0.2146    0.3162    0.7935    0.9615    0.6751    0.0565   -0.3635   -0.9745
+0083     0.1404    0.5146    0.3504    0.5069    0.2702   -0.2339   -0.8677   -0.6997   -0.8563   -0.4668 ]';
+0084 
+0085    C= <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(a,10);
+0086    xy = <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(C, linspace(.05,1.04,100));
+0087    xy2= <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(C, [.3,.4,.5,.6]);
+0088    plot(a(:,1),a(:,2),<span class="string">'r'</span>,xy(:,1),xy(:,2),<span class="string">'b'</span>,xy2(:,1),xy2(:,2),<span class="string">'m*'</span>);
+0089 
+0090    a(5,:)= [];
+0091    C= <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(a);
+0092    xy = <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(C, linspace(.05,1.04,100));
+0093    xy2= <a href="fourier_fit.html" class="code" title="function C = fourier_fit(points,N,start);">fourier_fit</a>(C, [.3,.4,.5,.6]);
+0094    plot(a(:,1),a(:,2),<span class="string">'r'</span>,xy(:,1),xy(:,2),<span class="string">'b'</span>,xy2(:,1),xy2(:,2),<span class="string">'m*'</span>);</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

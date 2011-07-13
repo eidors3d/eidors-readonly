@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ng_tank_find_elec</title>
+  <meta name="keywords" content="ng_tank_find_elec">
+  <meta name="description" content="[elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html eidors --><!-- # meshing --><!-- menu.html netgen -->
+<h1>ng_tank_find_elec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>[elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">[elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);
+
+ This function Tries to find the electrdes given the x y x coords of their centres.
+
+ Version 5.0
+ B.D.Grieve - 13/02/2002 + modyfication by lmazurk
+ WRBL added default as prevous choice 20/1/2004
+ WRBL deleted ground plane 05/12/2005
+ WRBL derived automatic version ditto
+ AA   speedup and fix to not output zeros
+ AA  add ability to define electrodes with a function
+
+ srf      = The boundary surfaces
+ vtx      = The vertices matrix
+ fc       = A one column matrix containing the face numbers
+ elsrf    = Cell array of indices matrices mapping into vtx each electrode face
+ sels     = The indices into the srf matrix of the selected electrode faces
+ elec     = The EIDORS-3D electrode matrix of dimensions NxM, where 
+            where N: no. of electrodes, M: 3 * max no. of faces per electrode
+            [ kept for backward compatibility. Use electrodes output instead]
+ centres(k,:)=[ x,y,z ] of kth electrode
+  OR 
+ centres = struct where centres(k).centre is electrode centre and
+             centres(k).fcn = fcn of vtx and ctr which is
+             zero outside and one inside electrode
+    example: ctr_fcn = inline( 'sum((vtx-ones(size(vtx,1),1)*ctr).^2,2)&lt;1', ...
+                               'vtx','ctr');
+            [ctr_param(1:nn).fcn]     = deal( ctr_fcn );
+             centres=  mat2cell( [x(:),y(:),z(:)], ones(nn,1),3);
+            [ctr_param(1:nn).centre] = deal( centres{:} );
+    this form allows for more complicated electrode shapes
+          
+ electrodes = EIDORS V3.x electrodes structure</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="ng_mk_fwd_model.html" class="code" title="function [fwd_mdl, mat_indices]=ng_mk_fwd_model( ng_vol_filename, centres,name, stim_pattern, z_contact, postprocmesh)">ng_mk_fwd_model</a>	NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres)</a>
+0002 <span class="comment">%[elec,sels, electrodes] = ng_tank_find_elec(srf,vtx,fc,centres);</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% This function Tries to find the electrdes given the x y x coords of their centres.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Version 5.0</span>
+0007 <span class="comment">% B.D.Grieve - 13/02/2002 + modyfication by lmazurk</span>
+0008 <span class="comment">% WRBL added default as prevous choice 20/1/2004</span>
+0009 <span class="comment">% WRBL deleted ground plane 05/12/2005</span>
+0010 <span class="comment">% WRBL derived automatic version ditto</span>
+0011 <span class="comment">% AA   speedup and fix to not output zeros</span>
+0012 <span class="comment">% AA  add ability to define electrodes with a function</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% srf      = The boundary surfaces</span>
+0015 <span class="comment">% vtx      = The vertices matrix</span>
+0016 <span class="comment">% fc       = A one column matrix containing the face numbers</span>
+0017 <span class="comment">% elsrf    = Cell array of indices matrices mapping into vtx each electrode face</span>
+0018 <span class="comment">% sels     = The indices into the srf matrix of the selected electrode faces</span>
+0019 <span class="comment">% elec     = The EIDORS-3D electrode matrix of dimensions NxM, where</span>
+0020 <span class="comment">%            where N: no. of electrodes, M: 3 * max no. of faces per electrode</span>
+0021 <span class="comment">%            [ kept for backward compatibility. Use electrodes output instead]</span>
+0022 <span class="comment">% centres(k,:)=[ x,y,z ] of kth electrode</span>
+0023 <span class="comment">%  OR</span>
+0024 <span class="comment">% centres = struct where centres(k).centre is electrode centre and</span>
+0025 <span class="comment">%             centres(k).fcn = fcn of vtx and ctr which is</span>
+0026 <span class="comment">%             zero outside and one inside electrode</span>
+0027 <span class="comment">%    example: ctr_fcn = inline( 'sum((vtx-ones(size(vtx,1),1)*ctr).^2,2)&lt;1', ...</span>
+0028 <span class="comment">%                               'vtx','ctr');</span>
+0029 <span class="comment">%            [ctr_param(1:nn).fcn]     = deal( ctr_fcn );</span>
+0030 <span class="comment">%             centres=  mat2cell( [x(:),y(:),z(:)], ones(nn,1),3);</span>
+0031 <span class="comment">%            [ctr_param(1:nn).centre] = deal( centres{:} );</span>
+0032 <span class="comment">%    this form allows for more complicated electrode shapes</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% electrodes = EIDORS V3.x electrodes structure</span>
+0035 
+0036 <span class="comment">% WARNING! the 'fc' variable in this function is what everywhere else is</span>
+0037 <span class="comment">% called 'bc', and that's how it should be used.</span>
+0038 
+0039 <span class="comment">% (C) 2002-2006. Licenced under the GPL</span>
+0040 <span class="comment">% $Id$</span>
+0041 
+0042 <span class="keyword">if</span>  isstruct(centres)
+0043    <span class="comment">% Calc centre of each surface</span>
+0044    <span class="keyword">for</span> d=1:size(vtx,2)
+0045       srfctr(:,d) = mean(reshape( vtx(srf,d), size(srf) ),2);
+0046    <span class="keyword">end</span>
+0047    <span class="keyword">for</span> e=1:length(centres)
+0048       inside = feval(centres(e).fcn,srfctr,centres(e).centre);
+0049       this_el = srf(inside,:);
+0050       electrodes(e).nodes     = unique( this_el )';
+0051       electrodes(e).z_contact = 0.1; <span class="comment">% set placeholder value</span>
+0052    <span class="keyword">end</span>
+0053    elec= NaN; sels= NaN; <span class="comment">% No backward compatible for this mode</span>
+0054 <span class="keyword">elseif</span> size(centres,2)==3;
+0055    [elec,sels, electrodes] = <a href="#_sub1" class="code" title="subfunction [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);">find_elec_centres</a>(srf,vtx,fc,centres);
+0056 <span class="keyword">else</span>
+0057    error(<span class="string">'don`t understand format of centres'</span>);
+0058 <span class="keyword">end</span>
+0059 
+0060 
+0061 <a name="_sub1" href="#_subfunctions" class="code">function [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);</a>
+0062 sels = [];
+0063 
+0064 <span class="keyword">for</span> loop1 = 1:max(fc)
+0065     <span class="comment">% Create a logical array (lgelfc) to determine which faces are electrodes</span>
+0066     lgelfc(loop1) = logical(0);
+0067     
+0068 <span class="comment">%   [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);</span>
+0069     fci  = find( fc == loop1 );
+0070     fcsrf= srf(fci,:); <span class="comment">% should be vertex numbers for this face</span>
+0071     coordsforthisface= vtx(fcsrf,:);
+0072     centreofface(loop1,:)= mean(coordsforthisface,1);
+0073     ttlfcsrf(loop1) = {fcsrf};
+0074     
+0075 <span class="keyword">end</span>
+0076 
+0077 <span class="keyword">for</span> ielec = 1:size(centres,1)
+0078 <span class="comment">% Find the distance from the centre of faces to this electrode</span>
+0079     dists =  (centreofface(:,1) - centres(ielec,1)).^2 + <span class="keyword">...</span>
+0080              (centreofface(:,2) - centres(ielec,2)).^2 + <span class="keyword">...</span>
+0081              (centreofface(:,3) - centres(ielec,3)).^2;
+0082     [d,iface] = min(dists); <span class="comment">%iface is closest face to this electrode.</span>
+0083     lgelfc(iface) = logical(1);
+0084     sels(ielec)= iface;
+0085 <span class="comment">%   disp([ielec, iface, d]);</span>
+0086 <span class="keyword">end</span>
+0087 
+0088 
+0089 <span class="comment">% Extract from the total face indices matrix (ttlfcsrf) the</span>
+0090 <span class="comment">% faces which are electrodes and store them in the cell</span>
+0091 <span class="comment">% array (elsrf)</span>
+0092 elsrf = ttlfcsrf(lgelfc);
+0093 
+0094 <span class="keyword">if</span> 0
+0095    <span class="comment">% Display each electrode in turn as a wire mesh</span>
+0096    figure
+0097    set(gcf,<span class="string">'Name'</span>,<span class="string">'Wire Mesh Electrode Faces'</span>)
+0098    <span class="keyword">for</span> loop1 = 1:size(elsrf,2)
+0099        trimesh(elsrf{loop1},vtx(:,1),vtx(:,2),vtx(:,3),<span class="string">'EdgeColor'</span>,<span class="string">'red'</span>)
+0100        title([<span class="string">'Electrode '</span> num2str(loop1) <span class="string">': red'</span>])
+0101        axis equal
+0102        axis(mshaxs)
+0103        view(45,10)
+0104        hidden off
+0105        hold on
+0106        pause(0.75)
+0107    <span class="keyword">end</span>
+0108    title(<span class="string">'Electrodes: red,'</span>)
+0109    hidden off
+0110    pause(2)
+0111 <span class="keyword">end</span>
+0112 <span class="comment">% Convert elsrf into the EIDORS-3D matrix electrode matrix format</span>
+0113 
+0114 nmel = size(elsrf,2);
+0115 <span class="keyword">for</span> loop1 = 1:nmel
+0116     nmfc(loop1) = size(elsrf{loop1},1);
+0117 <span class="keyword">end</span>
+0118 <span class="comment">% Initiate electrode matrix (elec) &amp; pad with zeros</span>
+0119 elec = zeros(nmel,3*max(nmfc));
+0120 <span class="comment">% Put electrode surface information into elec</span>
+0121 <span class="keyword">for</span> loop1 = 1:nmel
+0122     el_idx= sels(loop1);
+0123     this_el= ttlfcsrf{el_idx}';
+0124     l_this_el= prod(size(this_el));
+0125     elec(loop1, 1:l_this_el) = this_el(:)';
+0126 
+0127     electrodes(loop1).nodes     = unique( this_el )';
+0128     electrodes(loop1).z_contact = 0.1; <span class="comment">% set placeholder value</span>
+0129 <span class="keyword">end</span>
+0130 
+0131</pre></div>
+<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
