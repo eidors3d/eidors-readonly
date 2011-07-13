@@ -222,8 +222,10 @@ if size(elem_data,2)>1
    eidors_msg('warning: show_fem only shows first image',1);
 end
 repaint_inho(elem_data(:,1), 'use_global' , mdl.nodes, mdl.elems, [], img); 
+if ~exist('OCTAVE_VERSION');
 camlight('left');
 lighting('none'); % lighting doesn't help much
+end
 
 function paint_electrodes(sel,srf,vtx, colour, show_num);
 %function paint_electrodes(sel,srf,vtx);

@@ -5,7 +5,6 @@ function [inhomg_img, demo_img] = demo_real;
 % (C) 2005 Nick Polydorides + Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-isOctave= exist('OCTAVE_VERSION');
 eidors_msg('log_level',2); % most messages
 
 disp('step 1: create FEM model structure');
@@ -50,6 +49,7 @@ homg_img= eidors_obj('image', 'homogeneous image', ...
                      'fwd_model', demo_mdl );
 
 homg_data=fwd_solve( demo_mdl, homg_img);                    
+
 disp('step 5: simulate data for inhomogeneous medium');
 %
 % create an inhomogeneous image
