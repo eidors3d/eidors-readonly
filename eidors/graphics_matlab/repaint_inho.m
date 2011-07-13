@@ -45,37 +45,33 @@ switch(size(this_x,2))
         idx_ = [1;2;3];
     case 4
         idx_ = [[1;2;3], ...
-         [1;2;4], ...
-         [1;3;4], ...
-         [2;3;4]];
+                [1;2;4], ...
+                [1;3;4], ...
+                [2;3;4]];
 end
 for idx=idx_
    Xs(:)=vtx(this_x(:,idx)',1);
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
 
-   if ~exist('OCTAVE_VERSION');
+   if exist('OCTAVE_VERSION');
+% TODO: This is really slow, can we do anything about it
+      cmap = colormap;
+      for i=1:size(colours,2);
+         patch(Xs(:,i),Ys(:,i),Zs(:,i),cmap(colours(i),:));
+      end
+   else
    if size(colours,1)==1 && size(colours,2)==3
       % need to work around ^%$#%$# matlab bug which
       % forces an incorrect interpretation is colours of this size
-      patch(Xs(:,[1:3,1]), ...
-            Ys(:,[1:3,1]), ...
-            Zs(:,[1:3,1]), ...
-            colours(:,[1:3,1]), ...
-            'EdgeColor','none', 'CdataMapping','Direct');
+      hh= patch(Xs(:,[1:3,1]), ...
+                Ys(:,[1:3,1]), ...
+                Zs(:,[1:3,1]), ...
+                colours(:,[1:3,1]), ...
+            'EdgeColor','none');
    else
-      patch(Xs,Ys,Zs,colours, ...
-            'EdgeColor','none', 'CdataMapping','Direct');
+      hh= patch(Xs,Ys,Zs,colours, ...
+            'EdgeColor','none');
    end
    end
 end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This is part of the EIDORS suite.
-% Copyright (c) N. Polydorides 2003
-% Copying permitted under terms of GNU GPL
-% See enclosed file gpl.html for details.
-% EIDORS 3D version 2.0
-% MATLAB version 5.3 R11
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
