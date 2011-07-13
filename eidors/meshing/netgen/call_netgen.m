@@ -29,7 +29,9 @@ if nargin<4
 end
 
    ldpath='';
-   if  strfind(system_dependent('getos'),'Linux')
+   if  exist('OCTAVE_VERSION') % FIXME
+     islinux =1;
+   elseif strfind(system_dependent('getos'),'Linux')
      islinux =1;
      s=version; ff= find(s=='.');
       if str2num(s(1:ff(2)-1))>=7
