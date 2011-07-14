@@ -17,6 +17,6 @@ for loop1= 1:5;
      img=inv_solve(imdl,dd(:,fmax), dd(:,fmin));
      show_slices(img);
 
-     print('-dpng','-r50',prname);
+     print_convert(prname,'-density 50');
    end
 end
