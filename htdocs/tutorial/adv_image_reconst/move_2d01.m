@@ -1,4 +1,3 @@
-
 % Generate simulation data without noise and standard reconstruction
 % Create circular FEM - creates a eidors_mdl type inv_model.
 mdlc = mk_common_model('c2c');
@@ -37,4 +36,4 @@ move = node1 - node0;
 
 % Plot FEM with conductivities and movement vectors.
 show_fem_move( f_img, move, 20 );
-print -r75 -dpng move_2d01.png
+print_convert move_2d01.png '-density 75'
