@@ -7,10 +7,12 @@ subplot(221);
 fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.05] );
 show_fem(fmdl)
 hold on; plot(0.5,0.5,'o','Color',[0,0.5,0]); hold off
+axis equal
 
 subplot(222);
 fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
 show_fem(fmdl)
 hold on; plot(0.5,0.5,'o','Color',[0,0.5,0]); hold off
+axis equal
 
-print -dpng -r125 circ_2d_model01.png
+print_convert circ_2d_model01.png '-density 125'

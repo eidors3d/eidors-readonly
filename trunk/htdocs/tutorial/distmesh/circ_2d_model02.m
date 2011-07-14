@@ -17,4 +17,4 @@ subplot(222);
 fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
 show_fem(fmdl);
 
-print -dpng -r125 circ_2d_model02.png
+print_convert circ_2d_model02.png '-density 125'
