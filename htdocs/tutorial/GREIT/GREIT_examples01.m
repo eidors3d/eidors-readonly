@@ -18,5 +18,5 @@ vt = fwd_solve( imgt);
 % Add SNR 2.0 noise
 vn = add_noise(4, vt, vh);
 
-show_fem(imgt);
+clf; show_fem(imgt);
 print_convert GREIT_examples01a.png
