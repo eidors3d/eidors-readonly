@@ -1,0 +1,19 @@
+EIDORS:TODO
+ - deform_cylinder - use proper fit like a fourier fit.
+ - mk_c2f_circ_mapping - not quite right fitting
+ - move np stuff to background. Change aa to the defaults.
+ - unit_test_cmp - print tolerance of comparison
+
+ - merge choose_imdl
+ - \ => forward_solver
+ - library_model => accept simulation
+ - BG's colourbar
+ - ng_mk_closed_contour - rename + make tutorial
+ - unify the 'extra' code handing in ng_mk ...
+ - move absolute tutorials into functions in main code
+
+ - migrate aa_fwd_parameters to fix_model
+ - fix_model should accept options
+ - see if we need bs_calc_system_mat
+ - see if we need object_in_tank_2d
+ - see if we need examples, or move to tutorials
