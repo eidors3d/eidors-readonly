@@ -35,7 +35,7 @@ else
     switch size(xyzr,1)
       case 3; mapping = contained_elems_2d( mdl, xyzr );
       case 4; [mapping failed] = contained_elems_3d( mdl, xyzr );
-      case 5: error('size of xyzr incorrect');
+      otherwise: error('size of xyzr incorrect');
     end
 
     eidors_obj('set-cache', c_obj, 'circle_mapping', mapping);
