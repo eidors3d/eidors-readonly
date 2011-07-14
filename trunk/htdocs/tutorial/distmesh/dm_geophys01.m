@@ -1,6 +1,6 @@
 % Geophysics model $Id$
 
-n_nodes= 1000;
+n_nodes= 2000;
 z_contact= 0.01;
 n_elec= 9;
 nodes_per_elec= 5;
@@ -40,15 +40,15 @@ fmdl= dm_mk_fwd_model( fd, fh, n_nodes, bbox, ...
 
 % Show results - big
 subplot(121)
-show_fem(gmdl); axis on
+show_fem(gmdl);axis equal; axis([-11 11 -11 1]); 
 subplot(122)
-show_fem(fmdl); axis on
+show_fem(fmdl);axis equal; axis([-11 11 -11 1]); 
 
-print -dpng -r150 dm_geophys01a.png
+print_convert dm_geophys01a.png '-density 150'
 
 % Show results - small
 subplot(121)
-show_fem(gmdl); axis([-3,3,-3,0.3]);
+show_fem(gmdl); axis equal; axis([-3,3,-3,0.3]);
 subplot(122)
-show_fem(fmdl); axis([-3,3,-3,0.3]);
-print -dpng -r150 dm_geophys01b.png
+show_fem(fmdl); axis equal; axis([-3,3,-3,0.3]);
+print_convert dm_geophys01b.png '-density 150'

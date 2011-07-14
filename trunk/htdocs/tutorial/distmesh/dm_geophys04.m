@@ -21,4 +21,4 @@ hold on
 show_fem(imgs);
 hold off
 axis(ax); axis image
-print -dpng -r125 dm_geophys04a.png
+print_convert dm_geophys04a.png '-density 125'

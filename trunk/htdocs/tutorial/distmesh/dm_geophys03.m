@@ -17,4 +17,4 @@ img.elem_data= img.elem_data + ff;
 vi= fwd_solve(img);
 
 show_fem(img); axis image;
-print -dpng -r125 dm_geophys03a.png
+print_convert dm_geophys03a.png '-density 125'
