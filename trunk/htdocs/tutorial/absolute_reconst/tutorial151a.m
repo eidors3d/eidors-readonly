@@ -19,4 +19,4 @@ axes('position',[.1,.1,.65,.8]);
 axes('position',[.8,.1,.15,.8]);
    show_slices(sim_img,5);
 
-print -r75 -dpng tutorial151a.png;
+print_convert tutorial151a.png '-density 75'

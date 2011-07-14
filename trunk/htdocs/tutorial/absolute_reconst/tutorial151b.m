@@ -13,4 +13,4 @@ v_targ= fwd_solve(sim_img);
 
 clf; subplot(211);
 plot([v_homg.meas, v_targ.meas]);
-print -r75 -dpng tutorial151b.png;
+print_convert tutorial151b.png '-density 75'

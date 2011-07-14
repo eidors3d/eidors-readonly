@@ -14,4 +14,4 @@ axes('position',[.1,.1,.65,.8]);
 axes('position',[.8,.1,.15,.8]);
    show_slices(img_diff,5);
 
-print -r75 -dpng tutorial151c.png;
+print_convert tutorial151c.png '-density 75'
