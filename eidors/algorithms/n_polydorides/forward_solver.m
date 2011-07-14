@@ -82,7 +82,6 @@ catch
 end
 
 
-
 %%% OLD CODE
    % Cholesky solver. Gives poor results matching others
    % so we no longer use it
