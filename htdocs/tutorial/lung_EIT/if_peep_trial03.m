@@ -16,4 +16,4 @@ for yl = 1:4;
 end
 
 axis off
-print -r100 -dpng if_peep_trial03.png
+print_convert if_peep_trial03.png

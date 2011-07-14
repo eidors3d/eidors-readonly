@@ -13,4 +13,4 @@ set(hh,'Rotation',90,'HorizontalAlignment','Center');
 hh=text(0,+1.1,'Ventral');
 set(hh,'HorizontalAlignment','Center');
 
-print -r150 -dpng if_peep_trial01.png
+print_convert if_peep_trial01.png
