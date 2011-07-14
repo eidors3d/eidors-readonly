@@ -55,4 +55,4 @@ show_fem(fmdl); axis image
 subplot(122)
 show_fem(fmdl); axis image; axis([-2 2 -14 -12]);
 
-print -dpng -r150 square_mesh05a.png
+print_convert square_mesh05a.png

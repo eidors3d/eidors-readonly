@@ -11,4 +11,4 @@ set(h,'Color',[0,0,1],'LineWidth',2);
 hold off
 axis image
 
-print -dpng -r125 square_mesh02a.png
+print_convert square_mesh02a.png

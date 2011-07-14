@@ -20,4 +20,4 @@ img.elem_data= img.elem_data + 0.1*mean(ff,3);
 vi= fwd_solve(img);
 
 show_fem(img); axis image;
-print -dpng -r125 square_mesh03a.png
+print_convert square_mesh03a.png
