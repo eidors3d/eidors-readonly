@@ -19,7 +19,7 @@ subplot(122);
 show_fem(c_mdl); title('coarse (2d) model');
 axis square
 
-print -r75 -dpng two_and_half_d01a.png
+print_convert two_and_half_d01a.png '-density 75'
 
 % Simulate data - inhomogeneous
 vi= fwd_solve(inhomg_img);

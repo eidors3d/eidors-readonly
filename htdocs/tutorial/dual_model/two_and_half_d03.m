@@ -15,4 +15,4 @@ img3.fwd_model= c_mdl;
 show_fem(img3);
 set(gca,'ZLim',[0,3]); axis equal; view(-62,28)
 
-print -r150 -dpng two_and_half_d03a.png
+print_convert two_and_half_d03a.png
