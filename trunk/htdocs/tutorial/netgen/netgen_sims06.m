@@ -7,10 +7,10 @@ imdl.fwd_model = img.fwd_model;
 
 imgr = inv_solve(imdl, vh, vi);
 show_fem(imgr);
-axis equal; print -dpng -r100 netgen_sims06a.png
+axis equal; print_convert netgen_sims06a.png '-density 100'
 
 % Change the hyperparameter
 imdl.hyperparameter.value = .003;
 imgr = inv_solve(imdl, vh, vi);
 show_fem(imgr);
-axis equal; print -dpng -r100 netgen_sims06b.png
+axis equal; print_convert netgen_sims06b.png '-density 100'

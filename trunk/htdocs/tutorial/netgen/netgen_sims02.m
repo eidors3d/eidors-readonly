@@ -17,7 +17,7 @@ imgn = rmfield(img,'elem_data');
 imgn.node_data = vh.volt(:,1);
 
 show_fem(imgn);
-print -dpng -r100 netgen_sims02a.png
+print_convert netgen_sims02a.png '-density 100'
 
 % Show Voltage for stim pattern #2
 imgn = rmfield(img,'elem_data');
@@ -26,4 +26,4 @@ imgn.node_data = vh.volt(:,2);
 imgn.calc_colours.cb_shrink_move = [0.5,0.8,.02];
 
 show_fem(imgn,1);
-print -dpng -r100 netgen_sims02b.png
+print_convert netgen_sims02b.png '-density 100'
