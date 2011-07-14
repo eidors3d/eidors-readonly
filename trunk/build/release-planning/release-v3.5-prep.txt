@@ -393,7 +393,7 @@ TUTORIALS x 3
         0033  ./EIDORS_basics\rpi_data04 OK
         0034  ./EIDORS_basics\rpi_data05 OK
         0035  ./EIDORS_basics\rpi_data06 OK
-0036  ./EIDORS_basics\rpi_data99 ERROR
+	0036  ./EIDORS_basics\rpi_data99 ERROR
         0037  ./EIDORS_basics\sensitivity_map01 OK
         0038  ./EIDORS_basics\sensitivity_map02 OK
         0039  ./EIDORS_basics\tutorial010a OK
@@ -421,32 +421,32 @@ TUTORIALS x 3
         0061  ./GREIT\adult_ex01 OK
         0062  ./GREIT\adult_ex02 OK
         0063  ./GREIT\adult_ex03 OK
-0064  ./GREIT\algorithm_performance01 ERROR
+	0064  ./GREIT\algorithm_performance01 ERROR -> WFM
         0065  ./GREIT\mk_GREIT_mat_2layer01 OK
         0066  ./GREIT\mk_GREIT_mat_2layer02 OK
         0067  ./GREIT\mk_GREIT_mat_2layer03 OK
         0068  ./GREIT\mk_GREIT_mat_ellip01 OK
-0069  ./GREIT\mk_GREIT_mat_ellip02 ERROR
-0070  ./GREIT\mk_GREIT_mat_ellip03 ERROR
+	0069  ./GREIT\mk_GREIT_mat_ellip02 ERROR -> WFM
+	0070  ./GREIT\mk_GREIT_mat_ellip03 ERROR -> WFM
         0071  ./GREIT\mk_GREIT_matrix01 OK
-0072  ./GREIT\mk_GREIT_matrix02 ERROR
+	0072  ./GREIT\mk_GREIT_matrix02 ERROR -> WFM
         0073  ./GREIT\mk_GREIT_matrix03 OK
-0074  ./GREIT\mk_GREIT_matrix04 ERROR
+	0074  ./GREIT\mk_GREIT_matrix04 ERROR -> WFM
         0075  ./GREIT\neonate_ex00 OK
         0076  ./GREIT\neonate_ex01 OK
         0077  ./GREIT\neonate_ex02 OK
         0078  ./GREIT\neonate_ex03 OK
         0079  ./GREIT\neonate_ex04 OK
-0080  ./GREIT\neonate_ex99 ERROR
+	0080  ./GREIT\neonate_ex99 ERROR
         0081  ./GREIT\pig_ex01 OK
-0082  ./GREIT\pig_ex02 ERROR
-0083  ./GREIT\pig_ex03 ERROR
+	0082  ./GREIT\pig_ex02 ERROR -> WFM
+	0083  ./GREIT\pig_ex03 ERROR -> WFM
         0084  ./GREIT\test_params01 OK
         0085  ./GREIT\test_params02 OK
         0086  ./GREIT\test_params03 OK
         0087  ./GREIT\test_params04 OK
         0088  ./GREIT-algorithm\demo_algs01 OK
-0089  ./GREIT-algorithm\demo_algs02 WARNING(S)
+	0089  ./GREIT-algorithm\demo_algs02 WARNING(S)
         0090  ./GREIT-algorithm\demo_algs03 OK
         0091  ./GREIT-algorithm\demo_algs04 OK
         0092  ./GREIT-algorithm\framework00 OK
@@ -481,10 +481,10 @@ TUTORIALS x 3
         0121  ./adv_image_reconst\electrode_errors01 OK
         0122  ./adv_image_reconst\electrode_errors02 OK
         0123  ./adv_image_reconst\electrode_errors03 OK
-0124  ./adv_image_reconst\move_2d01 WARNING(S)
-0125  ./adv_image_reconst\move_2d02 WARNING(S)
+	0124  ./adv_image_reconst\move_2d01 WARNING(S)
+	0125  ./adv_image_reconst\move_2d02 WARNING(S)
         0126  ./adv_image_reconst\move_3d01 OK
-0127  ./adv_image_reconst\move_3d02 WARNING(S)
+	0127  ./adv_image_reconst\move_3d02 WARNING(S)
         0128  ./adv_image_reconst\temporal_solver01 OK
         0129  ./adv_image_reconst\temporal_solver02 OK
         0130  ./adv_image_reconst\temporal_solver03 OK
@@ -493,7 +493,7 @@ TUTORIALS x 3
         0133  ./adv_image_reconst\total_variation02 OK
         0134  ./adv_image_reconst\total_variation03 OK
         0135  ./adv_image_reconst\total_variation04 OK
-0136  ./adv_image_reconst\vitro_2d01 ERROR
+	0136  ./adv_image_reconst\vitro_2d01 ERROR -> WFM
         0137  ./cheating_EIDORS\tutorial210a OK
         0138  ./cheating_EIDORS\tutorial210b OK
         0139  ./cheating_EIDORS\tutorial210c OK
@@ -577,7 +577,7 @@ TUTORIALS x 3
         0217  ./geophysics\Electrode_Positions_Ring1_EZG04 OK
         0218  ./geophysics\tunnelsim01 OK
         0219  ./geophysics\tunnelsim02 OK
-0220  ./geophysics\tunnelsim03 ERROR
+	0220  ./geophysics\tunnelsim03 ERROR -> WFM
         0221  ./geophysics\tunnelsim04 OK
         0222  ./geophysics\tunnelsim05 OK
         0223  ./geophysics\tunnelsim06 OK
@@ -589,14 +589,14 @@ TUTORIALS x 3
         0229  ./lung_EIT\if_lung_injury00 OK
         0230  ./lung_EIT\if_lung_injury01 OK
         0231  ./lung_EIT\if_lung_injury02 OK
-0232  ./lung_EIT\if_lung_injury99 ERROR
+	0232  ./lung_EIT\if_lung_injury99 ERROR
         0233  ./lung_EIT\if_peep_trial00 OK
         0234  ./lung_EIT\if_peep_trial01 OK
         0235  ./lung_EIT\if_peep_trial02 OK
         0236  ./lung_EIT\if_peep_trial03 OK
         0237  ./lung_EIT\if_peep_trial04 OK
         0238  ./lung_EIT\if_peep_trial05 OK
-0239  ./lung_EIT\if_peep_trial99 ERROR
+	0239  ./lung_EIT\if_peep_trial99 ERROR
         0240  ./lung_EIT\tutorial310a OK
         0241  ./lung_EIT\tutorial310b OK
         0242  ./lung_EIT\tutorial310c OK
@@ -615,9 +615,9 @@ TUTORIALS x 3
         0255  ./netgen\mk_library_model01 OK
         0256  ./netgen\mk_library_model02 OK
         0257  ./netgen\mk_library_model03 OK
-0258  ./netgen\netgen_accuracy01 ERROR
-0259  ./netgen\netgen_accuracy02 ERROR
-0260  ./netgen\netgen_accuracy03 ERROR
+	0258  ./netgen\netgen_accuracy01 ERROR
+	0259  ./netgen\netgen_accuracy02 ERROR
+	0260  ./netgen\netgen_accuracy03 ERROR
         0261  ./netgen\netgen_sims01 OK
         0262  ./netgen\netgen_sims02 OK
         0263  ./netgen\netgen_sims03 OK
@@ -633,8 +633,8 @@ TUTORIALS x 3
         0273  ./netgen/extrusion\pig_body07 OK
         0274  ./netgen/extrusion\pig_body08 OK
         0275  ./netgen/extrusion\pig_body09 OK
-0276  ./netgen/extrusion\pig_body10 ERROR
-0277  ./netgen/extrusion\thoraxmdl01 WARNING(S)
+	0276  ./netgen/extrusion\pig_body10 ERROR
+	0277  ./netgen/extrusion\thoraxmdl01 WARNING(S)
         0278  ./netgen/extrusion\thoraxmdl02 OK
         0279  ./netgen/extrusion\thoraxmdl03 OK
         0280  ./netgen/extrusion\thoraxmdl04 OK
@@ -654,5 +654,5 @@ TUTORIALS x 3
         0294  ./strange_effects\conformal1_02 OK
         0295  ./strange_effects\conformal1_03 OK
         0296  ./strange_effects\opposite_meas01 OK
-0297  ./toast\eidors_toast_demo1 ERROR
-0298  ./version2\eidors3d_tutorial ERROR
+	0297  ./toast\eidors_toast_demo1 ERROR
+	0298  ./version2\eidors3d_tutorial ERROR
