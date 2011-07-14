@@ -8,47 +8,75 @@ EIDORS package.
 <p><li><b>
     14 July 2011:
 </b><br>
-EIDORS Version 3.5 release
-Blobby the walrus is proud to release EIDORS version 3.5,
-available at www.eidors.org. This version incorporates
-bug fixes, automated tests and code speedups.
+<b>EIDORS Version 3.5 release</b>
+<p>Blobby the walrus is proud to release EIDORS version 3.5,
+available at <a href="www.eidors.org">www.eidors.org</a>. 
+This release includes new and enhanced reconstruction 
+algorithms, expanded support for meshing software and
+EIT file formats as well as the usual bug fixes and 
+code speedups. Functions can now be browsed online in a new 
+interactive 
+<a href="http://www.sce.carleton.ca/~grychtol/trunk/htdocs/doc/index.html">
+documentation browser
+</a>
+.
+All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
+Tutorials</a> have been updated and new ones are 
+available.
+</p>
 New features since v3.4 include:
+<UL>
 <BR>
-  - improved GREIT algorithm support - especially for
-       arbitrary extruded shapes and lungs regions
-  - algorithms for TV and Data 1-norm pdipm_diff pdipm_abs
-  - updated capabilities in netgen interface 
-       - eg ng_mk_extruded_model
-  - equidistant electrode placement on arbitrary contours
-  - algorithms to detect and compensate for electrode errors
-        reciprocity_idx meas_icov_rm_elecs calc_reciproc_error
-  - functions and tutorials for geophysical eit
-  - expanded distmesh and gmsh support
-  - support for three new EIT system data formats
-  - faster forward solvers forward_solver
-  
-        
-
-  - graphics enhancement
-  - nodal resconstructions and display
-  - filter image options
-  - improved octave support
-  - memory efficiency
-  - shape library - model library
-  - programming utility functions
-  - additional solvers -TSVD_solve
-  - bug fixes and unit tests
-  - improved support for dual model and FEM interpolation
-mk_c2f_circ_mapping elem_select
-  - shape smoothing and interpolation functions
-      piece_poly_fit, fourier_fit
-  - clean up unused and deprecated functions
-  - calculate geometrical FEM properties (fix_model,
-  linear_reorder)
-  - caching to HDD of library FEM models
-  - caching improvements (64 bit support)
-  - added new tutorials
-
+<li> improved GREIT algorithm support - especially for
+       arbitrary extruded shapes and lungs regions (<a href="http://eidors3d.sourceforge.net/tutorial/GREIT.shtml">tutorials</a>)
+<li> algorithms for TV and Data 1-norm 
+(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_borsic/pdipm_diff.html">pdipm_diff</a>,
+<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_borsic/pdipm_abs.html">pdipm_abs</a>)
+<li> updated capabilities in netgen interface (<a href="http://eidors3d.sourceforge.net/tutorial/netgen/extrusion/netgen_ext_models.shtml">tutorial</a>)
+<li> equidistant electrode placement on arbitrary contours
+<li> algorithms to detect and compensate for electrode errors 
+(<a href="http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/electrode_errors.shtml">tutorial</a> 
+and functions:
+<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/meas_icov_rm_elecs.html">meas_icov_rm_elecs</a>,
+<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/calc_reciproc_error.html">calc_reciproc_error</a>,
+<a href="http://eidors3d.sourceforge.net/doc/eidors/models/a_adler/meas_icov_rm_elecs.html">reciprocity_idx</a>)
+<li> functions and 
+<a href=http://eidors3d.sourceforge.net/tutorial/tutorial.shtml#geophysics>tutorials</a>
+for geophysical eit
+<li> expanded distmesh and gmsh  support
+<li> support for three new EIT system data formats
+<li> faster forward solvers 
+(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/n_polydorides/forward_solver.html">forward_solver</a>)
+</ul>
+Additional enhancements:         
+<ul>
+<li> graphics enhancements
+<li> nodal resconstructions and display
+<li> image filtering options
+<li> improved octave support
+<li> increased memory efficiency
+<li> quick acces functions for common shapes 
+(<a href="http://eidors3d.sourceforge.net/doc/eidors/models/b_grychtol/shape_library.html">shape_library</a>)
+and models
+(<a href="http://eidors3d.sourceforge.net/doc/eidors/models/b_grychtol/mk_library_model.html">mk_library_model</a>),
+see <a href="http://eidors3d.sourceforge.net/tutorial/netgen/mk_library_model.shtml">tutorial</a>
+<li> programming utility functions
+<li> additional solvers 
+(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/b_grychtol/inv_solve_TSVD.html">inv_solve_TSVD</a>)
+<li> bug fixes and unit tests
+<li> improved support for dual model and FEM interpolation (
+<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/mk_c2f_circ_mapping.html">mk_c2f_circ_mapping</a>,
+<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/elem_select.html">elem_select</a>)
+<li> shape smoothing and interpolation functions (
+<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/fourier_fit.html">fourier_fit</a>,
+<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/piece_poly_fit.html">piece_poly_fit</a>)
+<li> clean up unused and deprecated functions
+<li> calculate geometrical FEM properties 
+(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/b_grychtol/fix_model.html">fix_model</a>,
+ <a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/m_crabb/linear_reorder.html">linear_reorder</a>)
+<li> caching to HDD of library FEM models
+<li> caching improvements (64 bit support)
+</UL>
 <p><li><b>
     4 May 2011:
 </b><br>
