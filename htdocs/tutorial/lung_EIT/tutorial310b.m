@@ -18,4 +18,4 @@ subplot(222);
 show_fem(imdl_d.fwd_model);
 
 axis equal
-print -r100 -dpng tutorial310b.png;
+print_convert tutorial310b.png;

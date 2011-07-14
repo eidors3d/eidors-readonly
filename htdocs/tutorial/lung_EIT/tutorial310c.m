@@ -8,4 +8,4 @@ img= inv_solve(imdl_d, zc_resp(:,1), zc_resp);
 clf; show_slices(img)
 axis equal
 
-print -r100 -dpng tutorial310c.png;
+print_convert tutorial310c.png;
