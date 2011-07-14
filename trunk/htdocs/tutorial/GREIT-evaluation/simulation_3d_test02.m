@@ -1,5 +1,5 @@
 % Show simulated positions $Id$
-show_fem(fmdl)
+clf; show_fem(fmdl)
 crop_model(gca, inline('x-z<-15','x','y','z'))
       view(-90,20)
 
@@ -14,4 +14,4 @@ for i=1:1:size(xyzr_pt,2);
 end
 hold off
 
-print_convert simulation_3d_test02a.png '-density 100'
+print_convert simulation_3d_test02a.png 
