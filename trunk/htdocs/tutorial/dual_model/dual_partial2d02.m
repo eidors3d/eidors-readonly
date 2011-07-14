@@ -24,6 +24,4 @@ show_fem(smdl); axis square
    end
    hold off;
 
-
-
 print_convert dual_partial2d02a.png;
