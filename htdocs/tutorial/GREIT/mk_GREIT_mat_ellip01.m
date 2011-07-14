@@ -12,4 +12,4 @@ img.elem_data(midx{2}) = 0.5; % Lung regions
 vi = fwd_solve(img);
 
 show_fem(img); view(0,70);
-print_convert mk_GREIT_mat_ellip01a.png '-density 60'
+print_convert mk_GREIT_mat_ellip01a.png '-density 75'
