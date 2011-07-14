@@ -11,4 +11,4 @@ show_slices(img);
 subplot(133)
 calc_colours('npoints',64);
 show_slices(img); %default value
-print -r100 -dpng eidors_vars02a.png
+print_convert eidors_vars02a.png '-density 100'
