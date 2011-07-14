@@ -100,7 +100,7 @@ while ~isempty(d)
                 errors{e_count,2} = d;
                 errors{e_count,3} = L.message;
                 e_count = e_count + 1;
-                fprintf(' ERROR\n');
+                fprintf(' ERROR = (%s)\n',L.message);
             end
             T(1) = [];
             F(1) = [];
