@@ -101,11 +101,12 @@ Image Reconstruction
 
 We reconstruct the image at 9&nbsp;O'clock using
 each algorithm, using the code:
-<pre><!--#include virtual="temporal_solver02.m" --></pre>
+<pre><!--#include virtual="temporal_solver03.m" --></pre>
 
 <center>
 <img src="temporal_solver03a.png">
 <img src="temporal_solver03b.png">
+<br>
 <img src="temporal_solver03c.png">
 <img src="temporal_solver03d.png">
 <br><i>Figure:</i>

@@ -62,5 +62,5 @@ for alg=1:4
    end
    hold off;
 
-   print('-r75','-dpng',sprintf('temporal_solver03%c.png',96+alg));
+   print_convert(sprintf('temporal_solver03%c.png',96+alg));
 end % for i
