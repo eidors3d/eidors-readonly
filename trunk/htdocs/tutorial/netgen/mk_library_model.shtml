@@ -12,16 +12,26 @@ to this model. Contributions are welcome</i>
 <p>
 To see what shapes are available, run:
 <pre>
-&gt;&gt; mk_library_model('list')
+&gt;&gt; >> mk_library_model('list')
 ans =
-    'pig_23kg_16el'
-    'pig_23kg_32el'
-    'pig_23kg_16el_lungs'
-    'pig_23kg_32el_lungs'
     'adult_male_16el'
     'adult_male_32el'
     'adult_male_16el_lungs'
     'adult_male_32el_lungs'
+    'cylinder_16x1el_coarse'
+    'cylinder_16x1el_fine'
+    'cylinder_16x1el_vfine'
+    'cylinder_16x2el_coarse'
+    'cylinder_16x2el_fine'
+    'cylinder_16x2el_vfine'
+    'neonate_16el'
+    'neonate_32el'
+    'neonate_16el_lungs'
+    'neonate_32el_lungs'
+    'pig_23kg_16el'
+    'pig_23kg_32el'
+    'pig_23kg_16el_lungs'
+    'pig_23kg_32el_lungs'
 </pre>
 
 <h3>Pig thorax model</h3>
