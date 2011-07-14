@@ -10,4 +10,4 @@ axis image
 subplot(122)
 show_slices(img)
 
-print -dpng -r125 simulate_move1_03a.png
+print_convert simulate_move1_03a.png '-density 125'

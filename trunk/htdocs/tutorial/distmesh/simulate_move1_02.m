@@ -14,5 +14,5 @@ for i=1:length(xyr_pt)
         'Color',[0,0,1],'FontWeight','bold');
 end
 hold off;
-
-print -dpng -r100 simulate_move1_02a.png
+axis([-1.1 1.1 -1.1 1.1]); axis equal
+print_convert simulate_move1_02a.png '-density 100'
