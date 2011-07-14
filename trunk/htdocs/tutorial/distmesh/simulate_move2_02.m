@@ -21,11 +21,11 @@ timg= eidors_obj('image','','fwd_model',tmdl,...
                  'elem_data',1 + in_trg*.5);
 
 % Show output - full size
-subplot(121); show_fem( smdl ); axis on;
-subplot(122); show_fem( timg ); axis on;
-print -dpng -r125 simulate_move2_02a.png
+subplot(121); show_fem( smdl ); axis equal; axis([-1.1 1.1 -1.1 1.1]);  
+subplot(122); show_fem( timg ); axis equal; axis([-1.1 1.1 -1.1 1.1]);
+print_convert simulate_move2_02a.png '-density 125'
 
 % Show output - full size
-subplot(121); show_fem( smdl ); axis([.5,1.05,-.1,.3]); axis on;
-subplot(122); show_fem( timg ); axis([.5,1.05,-.1,.3]); axis on;
-print -dpng -r125 simulate_move2_02b.png
+subplot(121); show_fem( smdl ); axis equal; axis([.5,1.05,-.1,.3]);
+subplot(122); show_fem( timg ); axis equal; axis([.5,1.05,-.1,.3]); 
+print_convert simulate_move2_02b.png '-density 125'

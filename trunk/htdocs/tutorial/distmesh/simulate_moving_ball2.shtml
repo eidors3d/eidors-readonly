@@ -8,7 +8,7 @@ remesh around each new target. Doing this with
 <i>distmesh</i> involves directly accessing the
 mesh creation functions.
 
-<h3>Step 1: Create fine mesh (2376 elems)</h3>
+<h3>Step 1: Create fine mesh (300 nodes)</h3>
 
 <pre>
 <!--#include virtual="simulate_move2_01.m" -->
@@ -84,7 +84,7 @@ and electrode refinement, we modify the parameters
 <tt>n_nodes</tt> and <tt>refine_level</tt> (electrode
 refinement.
 
-<h3>Mesh with <tt>n_nodes=50</tt> and <tt>refine_level=2</tt></H3>
+<h3>Mesh with <tt>n_nodes=500</tt> and <tt>refine_level=2</tt></H3>
 <center>
 <img src="simulate_move2_05b.gif"
 <br><i>Figure:</i>
@@ -99,7 +99,7 @@ Reconstructed images of targets moving in the mesh
 <i>Right</i> Reconstructed images of all targets
 </center>
 
-<h3>Mesh with <tt>n_nodes=600</tt> and <tt>refine_level=4</tt></H3>
+<h3>Mesh with <tt>n_nodes=1000</tt> and <tt>refine_level=4</tt></H3>
 <center>
 <img src="simulate_move2_05c.gif"
 <br><i>Figure:</i>
