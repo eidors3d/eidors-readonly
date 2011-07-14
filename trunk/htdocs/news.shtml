@@ -6,6 +6,50 @@ EIDORS package.
 <ul>
 
 <p><li><b>
+    14 July 2011:
+</b><br>
+EIDORS Version 3.5 release
+Blobby the walrus is proud to release EIDORS version 3.5,
+available at www.eidors.org. This version incorporates
+bug fixes, automated tests and code speedups.
+New features since v3.4 include:
+<BR>
+  - improved GREIT algorithm support - especially for
+       arbitrary extruded shapes and lungs regions
+  - algorithms for TV and Data 1-norm pdipm_diff pdipm_abs
+  - updated capabilities in netgen interface 
+       - eg ng_mk_extruded_model
+  - equidistant electrode placement on arbitrary contours
+  - algorithms to detect and compensate for electrode errors
+        reciprocity_idx meas_icov_rm_elecs calc_reciproc_error
+  - functions and tutorials for geophysical eit
+  - expanded distmesh and gmsh support
+  - support for three new EIT system data formats
+  - faster forward solvers forward_solver
+  
+        
+
+  - graphics enhancement
+  - nodal resconstructions and display
+  - filter image options
+  - improved octave support
+  - memory efficiency
+  - shape library - model library
+  - programming utility functions
+  - additional solvers -TSVD_solve
+  - bug fixes and unit tests
+  - improved support for dual model and FEM interpolation
+mk_c2f_circ_mapping elem_select
+  - shape smoothing and interpolation functions
+      piece_poly_fit, fourier_fit
+  - clean up unused and deprecated functions
+  - calculate geometrical FEM properties (fix_model,
+  linear_reorder)
+  - caching to HDD of library FEM models
+  - caching improvements (64 bit support)
+  - added new tutorials
+
+<p><li><b>
     4 May 2011:
 </b><br>
 EIDORS Tutorial @ EIT 2011 Conf
