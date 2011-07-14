@@ -16,4 +16,4 @@ set(hh,'Rotation',90,'HorizontalAlignment','Center');
 hh=text(0,+1.15,'Ventral');
 set(hh,'HorizontalAlignment','Center');
 
-print -r150 -dpng if_lung_injury01.png
+print_convert if_lung_injury01.png 
