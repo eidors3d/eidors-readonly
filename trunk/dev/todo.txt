@@ -17,3 +17,6 @@ EIDORS:TODO
  - see if we need bs_calc_system_mat
  - see if we need object_in_tank_2d
  - see if we need examples, or move to tutorials
+
+ - fix gaussian_HPF_prior
+     - work in 3D like laplace_image_prior
