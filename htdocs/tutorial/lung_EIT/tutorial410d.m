@@ -25,7 +25,7 @@ subplot(222); show_fem(img); axis equal; axis off
 imdl= rmfield(imdl,'RtR_prior');
 imdl.R_prior=   @ab_calc_tv_prior;
 imdl.solve=     @ab_tv_diff_solve;
-imdl.hyperparameter.value=1e-2;
+imdl.hyperparameter.value=3e-4;
 img= inv_solve(imdl, vh, vi);
 
 subplot(223); show_fem(img); axis equal; axis off
@@ -33,10 +33,10 @@ subplot(223); show_fem(img); axis equal; axis off
 % GN solution - Noser prior
 imdl.R_prior=   @ab_calc_tv_prior;
 imdl.solve=     @ab_tv_diff_solve;
-imdl.hyperparameter.value=1e-1;
+imdl.hyperparameter.value=3e-3;
 img= inv_solve(imdl, vh, vi);
 
 subplot(224); show_fem(img); axis equal; axis off
 
 
-print -r100 -dpng tutorial410d.png;
+print_convert tutorial410d.png '-density 150';

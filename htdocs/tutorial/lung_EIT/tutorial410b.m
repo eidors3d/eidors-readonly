@@ -10,4 +10,4 @@ img= inv_solve(imdl, vh, vi);
 clf; show_slices(img)
 axis equal
 
-print -r100 -dpng tutorial410b.png;
+print_convert tutorial410b.png;

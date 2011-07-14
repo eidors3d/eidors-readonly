@@ -16,4 +16,4 @@ plot( ((1:s_ri(3))-1)*5, sig/sig(1))
 xlabel('minutes after drink')
 ylabel('normalized conductivity');
 
-print -r125 -dpng tutorial410c.png;
+print_convert tutorial410c.png '-density 150';
