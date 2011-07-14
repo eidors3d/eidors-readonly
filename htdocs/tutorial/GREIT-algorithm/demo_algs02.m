@@ -15,4 +15,4 @@ v(3).vh = v(2).vh;
 
 subplot(221);show_fem(img);
 axis square; axis off
-print -r75 -dpng demo_algs02a.png;
+print_convert demo_algs02a.png;

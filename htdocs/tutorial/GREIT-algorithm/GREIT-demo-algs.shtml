@@ -54,7 +54,7 @@ we can run the following demo script:
    <th> Insulating <br> target in <br> tank
    <th> Simulated <br> target <br> (No noise)
    <th> Simulated <br> target <br> (6dB SNR)
-   <th> Shallow<br> breathing <br> (Turned 180&deg;)
+   <th> Shallow<br> breathing <br> &nbsp;
 <tr>
    <th> Sheffield <br>Backproj
    <td> <img src="demo_algs04_11.png" width="96">
@@ -73,6 +73,12 @@ we can run the following demo script:
    <td> <img src="demo_algs04_32.png" width="96">
    <td> <img src="demo_algs04_33.png" width="96">
    <td> <img src="demo_algs04_34.png" width="96">
+<tr>
+   <th> GREIT <br>Test
+   <td> <img src="demo_algs04_41.png" width="96">
+   <td> <img src="demo_algs04_42.png" width="96">
+   <td> <img src="demo_algs04_43.png" width="96">
+   <td> <img src="demo_algs04_44.png" width="96">
 </table>
 </center>
 
