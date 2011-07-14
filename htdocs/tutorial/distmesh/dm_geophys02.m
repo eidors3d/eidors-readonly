@@ -21,4 +21,4 @@ set(h,'Color',[0,0,1],'LineWidth',2);
 hold off
 axis image
 
-print -dpng -r125 dm_geophys02a.png
+print_convert dm_geophys02a.png '-density 125'
