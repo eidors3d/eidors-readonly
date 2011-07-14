@@ -8,16 +8,20 @@ subplot(221);
 
 img.calc_colours.greylev = 0.01;
 show_fem(img,[1,1]);
-axis equal; axis off; print -r75 -dpng eidors_colours07a.png
+axis equal; axis off;
+print_convert eidors_colours07a.png '-density 75'
 
 img.calc_colours.greylev =  0.3;
 show_fem(img,[1,1]);
-axis equal; axis off; print -r75 -dpng eidors_colours07b.png
+axis equal; axis off; 
+print_convert eidors_colours07b.png '-density 75'
 
 img.calc_colours.greylev = -0.01;
 show_fem(img,[1,1]);
-axis equal; axis off; print -r75 -dpng eidors_colours07c.png
+axis equal; axis off;
+print_convert eidors_colours07c.png '-density 75'
 
 img.calc_colours.cmap_type = 'draeger';
 show_fem(img,[1,1]);
-axis equal; axis off; print -r75 -dpng eidors_colours07d.png
+axis equal; axis off;
+print_convert eidors_colours07d.png '-density 75'
