@@ -4,16 +4,23 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 % Args:     fwd_model - the EIDORS object forward model
 %            img_bkgd - the image background conductivity
 % Returns:          J - the Jacobian matrix [Jc, Jm]
+%
+% WARNING: THIS CODE IS EXPERIMENTAL AND GIVES PROBLEMS
+% SEE: Camille Gomez-Laberge, Andy Adler
+% Direct EIT Jacobian calculations for conductivity change
+%  and electrode movement,  Physiol. Meas., 29:S89-S99, 2008
 
 % (C) 2007, Camille Gomez-Laberge and Andy Adler.
 %  License: GPL version 2 or version 3
 % $Id$
 
+warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care');
+
 % System matrix and its parameters
 
 pp = aa_fwd_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
-pp.DEBUG = 0;
+pp.DEBUG = 1;
 if pp.DEBUG
     pp.ss_mat = calc_unconnected_system_mat( fwd_model, img_bkgd);
     pp.fwd_meas =fwd_solve( fwd_model, img_bkgd);
@@ -168,8 +175,9 @@ for colidx = 1:pp.n_dims
             mdl_delta = fwd_model;
             mdl_delta.nodes(elec_nodes, colidx) = ...
                 mdl_delta.nodes(elec_nodes, colidx) + delta;
-            [Vc_delta] = Vc_Re_matrices( pp, mdl_delta, ...
-                calc_system_mat( mdl_delta, img_bkgd));
+            S= calc_system_mat( mdl_delta, img_bkgd); S=S.E;
+keyboard
+            [Vc_delta] = Vc_Re_matrices( pp, mdl_delta, S);
             delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta;
             nn = norm(delVm_part - delVm_pert,1 ); % WHY NEGATIVE?
 
