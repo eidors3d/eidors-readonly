@@ -33,4 +33,4 @@ for i=1:5; for j=0:1
    if i>1; set(gca,'XTickLabel',[]); end
 end; end
 
-print -dpng -r200 circ_2d_model03.png
+print_convert circ_2d_model03.png '-density 200'
