@@ -9,7 +9,7 @@ smdl.stimulation = mk_stim_patterns(11,1,'{ad}','{ad}',{},1);
 
 [vh,vi,xyr]= simulate_2d_movement(32, smdl, [0.75,0.05] );
 % Only 12 to 2 O'clock
-idx= 25:30;
+idx= 5:10;
 vi= vi(:,idx); xyr= xyr(:,idx);
 
 clf;subplot(121)
@@ -26,4 +26,4 @@ show_fem(smdl); axis square
 
 
 
-print -r125 -dpng dual_partial2d02a.png;
+print_convert dual_partial2d02a.png;

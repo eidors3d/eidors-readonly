@@ -8,12 +8,12 @@ imgf.fwd_model= cmdl;
 imgf.elem_data= imgf.elem_data(c2f_idx,:);
 
 show_slices(imgf,levels);
-print -r125 -dpng dual_partial2d05a.png;
+print_convert dual_partial2d05a.png;
 
 % reconstruct dual model on coarse mesh
 imgd= inv_solve(drec_mdl, vh, vi);
 imgd.fwd_model= cmdl;
 
 show_slices(imgd,levels);
-print -r125 -dpng dual_partial2d05b.png;
+print_convert dual_partial2d05b.png;
 
