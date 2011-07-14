@@ -17,4 +17,4 @@ subplot(122)
 show_fem(cmdl);
 axis(1.05*[-1 1 -1 1]); axis square;
 
-print -r125 -dpng dual_partial2d01a.png;
+print_convert dual_partial2d01a.png;
