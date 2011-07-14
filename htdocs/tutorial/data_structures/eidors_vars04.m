@@ -13,4 +13,4 @@ show_slices(img);
 subplot(133)
 img.calc_colours.clim= .3;
 show_slices(img);
-print -r100 -dpng eidors_vars04a.png
+print_convert eidors_vars04a.png '-density 100'
