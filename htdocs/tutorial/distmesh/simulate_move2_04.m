@@ -28,7 +28,7 @@ for i= 1:n_sims;
    timg= eidors_obj('image','','fwd_model',tmdl,...
                     'elem_data',1 + in_trg*contrast);
 
-   clf; show_fem(timg);
-   print('-dpng','-r50',sprintf('simulate_move2_04a%02d.png',i));
+   clf; show_fem(timg); axis equal
+   print_convert(sprintf('simulate_move2_04a%02d.png',i),'-density 50');
    vi(i)= fwd_solve(timg);
 end
