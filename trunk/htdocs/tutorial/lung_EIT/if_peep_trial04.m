@@ -23,4 +23,4 @@ for loop = 1:2;
    ylabel('normalized \Delta Z')
 end
 
-print -dpng -r150 if_peep_trial04.png
+print_convert if_peep_trial04.png '-density 175'
