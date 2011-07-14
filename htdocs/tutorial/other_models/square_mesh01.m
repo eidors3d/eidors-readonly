@@ -36,4 +36,4 @@ show_fem(fmdl); axis image
 subplot(122)
 show_fem(fmdl); axis image; axis([-2 2 -2.5 0.5]);
 
-print -dpng -r150 square_mesh01a.png
+print_convert square_mesh01a.png '-density 175'

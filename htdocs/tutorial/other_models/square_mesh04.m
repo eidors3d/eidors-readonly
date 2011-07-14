@@ -26,4 +26,4 @@ set(h,'Color',[0,0,1]);
 hold off
 hold off
 axis(ax); axis image
-print -dpng -r125 square_mesh04a.png
+print_convert square_mesh04a.png
