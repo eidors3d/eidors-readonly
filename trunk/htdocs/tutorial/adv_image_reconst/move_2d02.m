@@ -13,6 +13,7 @@ img2dim.calc_colours.backgnd= [.9,.9,.9];
 % Plot results for each algorithm
 subplot(1,2,1);
 show_fem_move(img2dim);
+img2dim.calc_colours.cb_shrink_move = [0.5,0.5,-.05];
 calc_colours(img2dim,[],1); % do colourbar
 
 % Set eidors_obj hyperparameter member.
@@ -32,8 +33,7 @@ imgM.calc_colours.backgnd= [.9,.9,.9];
 % Plot results for each algorithm
 subplot(1,2,2);
 show_fem_move(imgM);
+imgM.calc_colours.cb_shrink_move = [0.5,0.5,-.05];
+calc_colours(img2dim,[],1); % do colourbar
 
-calc_colours(imgM,[],1); % do colourbar
-
-set(gcf,'paperposition',[.25 2.5 8 4]);
-print -r125 -dpng move_2d02.png
+print_convert move_2d02.png
