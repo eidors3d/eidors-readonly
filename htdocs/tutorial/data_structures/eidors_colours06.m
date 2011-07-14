@@ -18,4 +18,4 @@ img.calc_colours.ref_level =  0.1;
 show_fem(img,[1,1]);
 axis equal; axis off;
 
-print -r75 -dpng eidors_colours06.png
+print_convert eidors_colours06.png '-density 75'
