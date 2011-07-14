@@ -22,8 +22,8 @@ Single spherical inclusion was applied.
 </center>
 
 <center>
-<img src="dual_3d3d02a.png">
 <img src="dual_3d3d02b.png">
+<img src="dual_3d3d02a.png">
 <br><i> Figure:</i>
 Results of reconstruction. On the left results shown on coarse mesh used in inverse problem. On the right solution projected into fine, forward mesh.
 </center>
