@@ -983,6 +983,8 @@ for i=1:length(mdir)
 		
 			curfile = fullfile(options.htmlDir,mdir{i},...
 							   [names{j} options.extension]);
+            shortfile = fullfile(mdir{i},...
+							   [names{j} options.extension]);
 							   
 			%- Copy M-file for download, if necessary
 			if options.download
@@ -1015,7 +1017,7 @@ for i=1:length(mdir)
 			tpl = set(tpl,'var','MDIR',             mdirs{j});
 			tpl = set(tpl,'var','NAME',             names{j});
 			tpl = set(tpl,'var','H1LINE',           entity(h1line{j}));
-            tpl = set(tpl,'var','MYPATH',           curfile);
+            tpl = set(tpl,'var','MYPATH',           shortfile);
 			tpl = set(tpl,'var','scriptfile',       '');
 			if isempty(synopsis{j})
 				tpl = set(tpl,'var','SYNOPSIS',get(tpl,'var','script'));
