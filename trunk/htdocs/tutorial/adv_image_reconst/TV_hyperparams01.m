@@ -16,4 +16,4 @@ vi= fwd_solve( img );
 subplot(221)
 show_fem(img);
 axis equal; axis off;
-print -r100 -dpng TV_hyperparams01a.png;
+print_convert TV_hyperparams01a.png '-density 100';

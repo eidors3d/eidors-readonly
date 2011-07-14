@@ -17,6 +17,6 @@ invtv.parameters.max_iterations=  maxit;
 subplot(221)
 show_fem(invtv.fwd_model);
 axis equal; axis off;
-print -r100 -dpng TV_hyperparams02a.png;
+print_convert TV_hyperparams02a.png '-density 100';
 
 
