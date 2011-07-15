@@ -4,6 +4,9 @@ EIDORS:TODO
  - move np stuff to background. Change aa to the defaults.
  - unit_test_cmp - print tolerance of comparison
 
+ - add_noise - work for matrix noise
+             - then update temporal_solver01
+
  - merge choose_imdl
  - \ => forward_solver
  - library_model => accept simulation
