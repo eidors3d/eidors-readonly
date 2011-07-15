@@ -1,4 +1,5 @@
-<!--#include virtual="nav-sidebar.html" -->
+<!--#set var="root" value="./" -->
+<!--#include virtual="nav-sidebar.shtml" -->
 <h2>News</h2>
 This page is a list of updates, discussions, and 
 ideas for enhancements to the

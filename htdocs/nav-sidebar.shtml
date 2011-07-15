@@ -44,7 +44,7 @@
 <a href="<!--#echo var="root" -->docs.shtml"
    >Documentation</a><br>
 <a href="<!--#echo var="root" -->tutorial/tutorial.shtml"
-   >Tutorial</a><br>
+   >Tutorials</a><br>
 <!--#if expr="$show_tut = /1/" -->
 <a href="<!--#echo var="root" -->tutorial/image_reconst.shtml"
       >&minus; Image Reconst</a><br>
