@@ -18,8 +18,9 @@
 <body link="#800000"
       marginwidth=5 marginheight=5 topmargin=5 leftmargin=5 
       vlink="#400000" >
-<table border="0" cellspacing="0" cellpadding="0"><tr><td>
-<img alt="Eidors-logo" src="./eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+<table border="0" cellspacing="0" cellpadding="0">
+<tr height="80"><td valign="middle">
+<img alt="Eidors-logo" src="<!--#echo var="root" -->eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
 </td><td>
 <h2>
     EIDORS:
@@ -28,41 +29,53 @@
 </h2>
 </td></tr></table>
 <table border="0"> <tr>
-<td valign="top">
+<td valign="top" width="100">
 <a href="http://eidors3d.sf.net/" >EIDORS</a>
 (<a href="http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml"
     >mirror</a>)<br>
-<a href="index.shtml"
-   >Main</a><br>
-<a href="docs.shtml"
+<a href="<!--#echo var="root" -->index.shtml"
+>Main</a><br>
+<a href="<!--#echo var="root" -->docs.shtml"
    >Documentation</a><br>
-<a href="examples/examples.shtml"
-   >Examples</a><br>
-<a href="tutorial/tutorial.shtml"
+<a href="<!--#echo var="root" -->tutorial/tutorial.shtml"
    >Tutorial</a><br>
-<a href="download.shtml"
+<!--#if expr="$show_tut = /1/" -->
+<a href="<!--#echo var="root" -->tutorial/image_reconst.shtml"
+      >&minus; Image Reconst</a><br>
+<a href="<!--#echo var="root" -->tutorial/data_structures.shtml"
+      >&minus; Data Structures</a><br>
+<a href="<!--#echo var="root" -->tutorial/application_examples.shtml"
+      >&minus; Application Examples</a><br>
+<a href="<!--#echo var="root" -->tutorial/netgen.shtml"
+      >&minus; FEM Modelling</a><br>
+<a href="<!--#echo var="root" -->tutorial/GREIT.shtml"
+      >&minus; GREIT</a><br>
+<a href="<!--#echo var="root" -->tutorial/old-tutorials.shtml"
+      >&minus; Old tutorials</a><br>
+<!--#endif -->
+<a href="<!--#echo var="root" -->download.shtml"
    >Download</a><br>
-<a href="data_contrib.shtml"
+<a href="<!--#echo var="root" -->data_contrib.shtml"
    >Contrib Data</a><br>
-<a href="GREIT/index.shtml"
+<a href="<!--#echo var="root" -->GREIT/index.shtml"
    >GREIT</a><br>
-<a href="doc/index.html"
+<a href="<!--#echo var="root" -->doc/index.html"
    >Browse Docs</a><br>
-<a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk"
+<a href="<!--#echo var="root" -->http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk"
    >Browse SVN</a><br>
 <hr>
-<a href="news.shtml">News</a><br>
+<a href="<!--#echo var="root" -->news.shtml">News</a><br>
 <a href="https://lists.sourceforge.net/lists/listinfo/eidors3d-help"
    >Mailing list</a><br>
 (<a href="https://sourceforge.net/mailarchive/forum.php?forum_name=eidors3d-help"
    >archive</a>)<br>
-<a href="faq.shtml">FAQ</a><br>
-<a href="programming/programming.shtml">Developer</a><br>
+<a href="<!--#echo var="root" -->faq.shtml">FAQ</a><br>
+<a href="<!--#echo var="root" -->programming/programming.shtml">Developer</a><br>
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <!-- EIDORS Navigation sidebar
-     $Id$
+     $Id: nav-sidebar.html 2578 2011-05-20 18:01:21Z bgrychtol $
   -->
 <p>&nbsp;
 <p>

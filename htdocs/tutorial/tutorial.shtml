@@ -1,4 +1,6 @@
-<!--#include virtual="nav-sidebar.shtml" -->
+<!--#set var="root" value="../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 <h2>EIDORS Examples</h2>
 
 To run these tutorials, you need to 
