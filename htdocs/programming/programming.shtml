@@ -1,4 +1,7 @@
-<!--#include virtual="nav-sidebar.html" -->
+<!--#set var="root" value="../" -->
+<!--#set var="show_dev" value="1" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
+
 <h2>EIDORS: Information for developers</h2>
     <H3>Getting the EIDORS Source</H3>
 
