@@ -77,6 +77,17 @@
    >archive</a>)<br>
 <a href="<!--#echo var="root" -->faq.shtml">FAQ</a><br>
 <a href="<!--#echo var="root" -->programming/programming.shtml">Developer</a><br>
+<!--#if expr="$show_dev = /1/" -->
+<a href="../programming/examples.shtml"
+      >&minus; Examples</a><br>
+<a href="../programming/structure.shtml"
+      >&minus; Structure</a><br>
+<a href="../programming/objects.shtml"
+      >&minus; Objects</a><br>
+<a href="../programming/caching.shtml"
+      >&minus; Caching</a><br>
+<!--#endif -->
+
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;

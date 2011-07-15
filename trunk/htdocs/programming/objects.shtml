@@ -1,4 +1,6 @@
-<!--#include virtual="nav-sidebar.html" -->
+<!--#set var="root" value="../" -->
+<!--#set var="show_dev" value="1" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
 
 <h2>EIDORS: Programming / Objects</h2>
 
