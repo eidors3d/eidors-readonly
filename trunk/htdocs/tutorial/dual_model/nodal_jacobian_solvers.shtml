@@ -1,4 +1,7 @@
-<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
 <H2>GN reconstruction vs Backprojection</H2>
 
 This tutorial shows how solvers can be defined to

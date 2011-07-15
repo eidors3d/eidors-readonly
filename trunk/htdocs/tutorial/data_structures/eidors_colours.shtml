@@ -1,4 +1,7 @@
-<!--#include virtual="../nav-sidebar-tut.shtml" -->
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
 <h2>EIDORS display functions and control of colours</h2>
 
 <h3>
