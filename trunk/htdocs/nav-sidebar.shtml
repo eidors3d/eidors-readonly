@@ -11,6 +11,12 @@
         font-family:lucida console, FixedSys, Courier, Terminal, monospaced;
         font-size:100%;
         }
+        pre {
+        background-color: #E0F0FE;
+        border-style: groove;
+        border-color: black;
+        border-width: 2px;
+        }
    </style>
 
 </head>
@@ -45,7 +51,7 @@
 <a href="<!--#echo var="root" -->tutorial/data_structures.shtml"
       >&minus; Data Structures</a><br>
 <a href="<!--#echo var="root" -->tutorial/application_examples.shtml"
-      >&minus; Application Examples</a><br>
+      >&minus; Applications</a><br>
 <a href="<!--#echo var="root" -->tutorial/netgen.shtml"
       >&minus; FEM Modelling</a><br>
 <a href="<!--#echo var="root" -->tutorial/GREIT.shtml"
