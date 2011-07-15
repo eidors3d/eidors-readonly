@@ -23,3 +23,5 @@ EIDORS:TODO
 
  - fix gaussian_HPF_prior
      - work in 3D like laplace_image_prior
+
+ - remove examples and integrate with tutorials
