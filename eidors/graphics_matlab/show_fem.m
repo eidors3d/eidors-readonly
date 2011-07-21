@@ -254,7 +254,6 @@ function hh= show_3d_fem( mdl, options )
                    mdl.nodes(:,3));
    set(hh, 'EdgeColor', [0,0,0]);
    axis('image');
-   set(gcf,'Colormap',[0 0 0]);
    hidden('off');
 
 function hh=show_2d_fem( mdl, colours, imgno )
