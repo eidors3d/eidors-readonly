@@ -8,6 +8,8 @@ function show_fem_move( img, move, scale, options )
 
 % $Id$
 
+if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
 % Check for single argument call
 if nargin == 1
     move = [];
@@ -36,12 +38,26 @@ show_fem(img, options); % Show colourbar
 
 % Plot movement vectors on electrodes
 if ~isempty(move)
-    % Group all electrode node indicies into a single vector
-    e_nodes = cell2mat({img.fwd_model.electrode(:).nodes});
+    % e_nodes is the average position of each electrodes nodes
+    e_nodes = [];
+    electr= img.fwd_model.electrode;
+    nodes = img.fwd_model.nodes;
+    switch size(move,1)
+      case length(electr)
+        for i=1:length(electr)
+           e_nodes(i,:) = mean(nodes(electr(i).nodes,:),1);
+        end
     
-    % Keep only electrode node movement coordinates
-    if size(move,1) == fwdp.n_node;
-        move = move(e_nodes,:);
+      case num_nodes(img)
+        % Keep only electrode node movement coordinates
+        e_nodes = [electr(:).nodes];
+        if size(move,1) == fwdp.n_node;
+            move = move(e_nodes,:);
+        end
+        e_nodes = nodes(e_nodes,:);
+
+      otherwise;
+        error('movement vector doesn''t match model');
     end
     move = move- ones(size(move,1),1)*mean(move);
     
@@ -50,26 +66,66 @@ if ~isempty(move)
     if nargin < 3
         scale = 20;
     end
-    nodes = img.fwd_model.nodes;
-    hh = working_quiver(nodes(e_nodes,1), nodes(e_nodes,2), ...
-        scale*move(:,1), scale*move(:,2), 0 );
+    hh = working_quiver(e_nodes, scale*move);
     set(hh,'Color', [0,.3,0], 'LineWidth', 2, 'Clipping', 'off');
     hold off;
 end
 % Format output figure
 axis('off'); 
 axis('image'); 
-axis(1.3*[-1,1,-1,1]);
+%axis(1.3*[-1,1,-1,1]); % let it take it's own space
 
-function hh= working_quiver( varargin )
+function hh= working_quiver( nn,mm )
 % WORKING_QUIVER   Matlab has made a completely imcompatible
 % quiver function which you can't call properly with different
 % versions of matlab.
+%
+% Last I checked, the V7 version of quiver was horrible, so
+%  we use the v6 one.
 
-v = version;
-octave = exist('OCTAVE_VERSION') | str2num(v(1)) < 7 | str2num(v(1:3)) >= 7.8;
-if octave
-    hh = quiver( varargin{:} );
+% TODO: Write a new, fixed quiver function that can do 3D
+
+ver= eidors_obj('interpreter_version');
+if ver.isoctave || ver.ver<7;
+    hh = quiver( nn(:,1),nn(:,2), mm(:,1),mm(:,2),0);
 else
-    hh = quiver('v6', varargin{:} );
+    warning('off','MATLAB:quiver:DeprecatedV6Argument');
+    hh = quiver('v6', nn(:,1),nn(:,2), mm(:,1),mm(:,2),0);
 end
+
+function do_unit_test;
+   subplot(231);
+   img = mk_image(mk_common_model('a2c2',8));
+   img.elem_data = [img.elem_data;.01*randn(16,1)];
+   show_fem_move(img);
+   title('move at electrodes');
+
+   subplot(232);
+   img = mk_image(mk_common_model('a2c2',8));
+   show_fem_move( img, img.fwd_model.nodes*[-1,0;0,1], .2);
+   title('move at electrodes (via all move)');
+
+   subplot(233);
+   img = mk_image(mk_common_model('a2C2',8));
+   img.elem_data = [img.elem_data;.01*randn(16,1)];
+   show_fem_move(img);
+   title('move at electrodes ctrs');
+
+   subplot(234);
+   img = mk_image(mk_common_model('a2C0',8));
+   img.elem_data(1:2) = 1.1;
+   show_fem_move( img, img.fwd_model.nodes*[-1,0;0,1], .2);
+   title('move at electrodes nodes');
+
+   subplot(235);
+   img = mk_image(mk_common_model('n3r2'));
+   img.elem_data(400)= 0.9;
+   img.elem_data = [img.elem_data;.01*randn(3*32,1)];
+   show_fem_move(img); view([-14,62]);
+   title('BUG:move at electrodes ctrs');
+
+   subplot(236);
+   img = mk_image(mk_common_model('n3r2'));
+   move = img.fwd_model.nodes*diag([-1,1,1]);
+   show_fem_move( img, move, .2); view([-14,62]);
+   title('BUG:move at electrodes ctrs');

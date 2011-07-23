@@ -11,7 +11,7 @@ function img=pdipm_diff( inv_model, data1, data2)
 %  inv_model.pdipm_diff.beta     (default 1e-6)
 %
 % Parameters:
-%  max_iters =  inv_model.parameters.max_iteration (default 10)
+%  max_iters =  inv_model.parameters.max_iterations (default 10)
 %      Max number of iterations before stopping
 %  min change = inv_model.parameters.min_change   (default 0)
 %      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping

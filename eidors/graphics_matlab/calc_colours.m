@@ -57,6 +57,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           if 'jet' use the matlab jet colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
+%   'defaults' set to default colours in list above
 %
 %   'colourmap' Return the current EIDORS colormap. 
 %           Use as colormap(calc_colours('colourmap'))
@@ -89,6 +90,9 @@ if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 if ischar(img)
     % called as calc_colours('parameter' ... )
     if nargin==1;
+       if strcmp(img,'defaults') % set defaults and return
+          set_colours_defaults; return
+       end
        colours= get_field(img);
     else
        colours= set_field(img, set_value);
@@ -144,6 +148,18 @@ if do_colourbar
        eidors_colourbar(max_scale,ref_lev,pp.cb_shrink_move)
    end
 end
+
+function set_colours_defaults;
+   calc_colours('greylev',-.001);          % background colour = white
+   calc_colours('sat_adj',.9);             % saturation of red and blue
+   calc_colours('window_range', .7);       % windowing of colours
+   calc_colours('backgnd',[.5,.5,.15]);    % background colour
+   calc_colours('mapped_colour',127);      % use 127*2+1 colourmap entries
+   calc_colours('ref_level','auto');       % auto set background colour
+   calc_colours('npoints',64);             % 64 raster points
+   calc_colours('clim',[]);                % no colour cropping
+   calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
+   eidors_msg('Setting Default Colours',1);
 
 
 %scaled data must go from -1 to 1

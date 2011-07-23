@@ -6,7 +6,9 @@ function meas_icov = calc_reciproc_error(inv_model, data )
 % 
 % specify tau as 
 %    inv_model.calc_reciproc_error.tau
-
+% as tau increases, effect is less. There is almost
+% no effect when tau > 1e-4
+%
 % Reference: Real-time management of faulty electrodes in
 %  electrical impedance tomography AE Hartinger, R Guardo,
 %  A Adler, H Gagnon. IEEE T BME 2008.
