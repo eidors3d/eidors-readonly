@@ -169,12 +169,18 @@ function img= pdipm_1_1( img,W,L,d, pp);
       B2  = f - E*x;
       B3  = g - S*y;
 
-      DD = -[As1,Ax1,Ay1; ...
-             As2,Ax2,Ay2; ...
-             As3,Ax3,Ay3] \ [B1;B2;B3];
+%     DD = -[As1,Ax1,Ay1; ...
+%            As2,Ax2,Ay2; ...
+%            As3,Ax3,Ay3] \ [B1;B2;B3];
 
-      ds = DD(1:N); dx = DD(N+(1:M)); dy = DD(N+M+(1:D));
-      img = line_optimize(img, ds, d);
+%     dm = DD(1:N); dx = DD(N+(1:M)); dy = DD(N+M+(1:D));
+
+      JtWiE = J'*W/E; LtiS = L'/S;
+      dm= -(JtWiE*As2 + LtiS*As3)\(JtWiE*f + LtiS*g);
+      dx= E\(B2 + As2*dm);
+      dy= S\(B3 + As3*dm);
+
+      img = line_optimize(img, dm, d);
 
       dx = x_update(x, dx);
       x= x + dx;
