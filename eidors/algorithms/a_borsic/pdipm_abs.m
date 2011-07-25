@@ -148,7 +148,7 @@ function img= pdipm_1_1( img,W,L,d, pp);
 
       % Define variables
       g = L*img.elem_data;     G= spdiags(g,0,D,D);
-      r = sqrt(g.^2 + pp.beta);R= spdiags(r,0,D,D); % S in paper
+      s = sqrt(g.^2 + pp.beta);S= spdiags(s,0,D,D);
                                Y= spdiags(y,0,D,D);
 
       f = dv;                  F= spdiags(f,0,M,M);
@@ -157,29 +157,29 @@ function img= pdipm_1_1( img,W,L,d, pp);
 
       % Define derivatives
       As1 = sparse(N,N);
-      As2 = (speye(M,M) - X*inv(E)*F) * J;
-      As3 = (speye(D,D) - Y*inv(R)*G) * L;
+      As2 = (speye(M,M) - X/E*F) * J; % As2 = (speye(M,M) - X*inv(E)*F) * J;
+      As3 = (speye(D,D) - Y/S*G) * L; % As3 = (speye(D,D) - Y*inv(S)*G) * L;
       Ax1 = J'*W;
       Ax2 = -E;
       Ax3 = sparse(D,M);
       Ay1 = L';
       Ay2 = sparse(M,D);
-      Ay3 = -R;
+      Ay3 = -S;
       B1  = J'*W*x + L'*y;
       B2  = f - E*x;
-      B3  = g - R*y;
+      B3  = g - S*y;
 
       DD = -[As1,Ax1,Ay1; ...
              As2,Ax2,Ay2; ...
              As3,Ax3,Ay3] \ [B1;B2;B3];
 
-      ds = DD(1:N);
+      ds = DD(1:N); dx = DD(N+(1:M)); dy = DD(N+M+(1:D));
       img = line_optimize(img, ds, d);
 
-      dx = x_update(x, DD(N+(1:M)));
+      dx = x_update(x, dx);
       x= x + dx;
 
-      dy = x_update(y, DD(N+M+(1:D)));
+      dy = x_update(y, dy);
       y= y + dy;
 
       loop_display(i)
