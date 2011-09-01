@@ -67,7 +67,7 @@
    >GREIT</a><br>
 <a href="<!--#echo var="root" -->doc/index.html"
    >Browse Docs</a><br>
-<a href="<!--#echo var="root" -->http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk"
+<a href="http://eidors3d.svn.sourceforge.net/viewvc/eidors3d/trunk"
    >Browse SVN</a><br>
 <hr>
 <a href="<!--#echo var="root" -->news.shtml">News</a><br>
