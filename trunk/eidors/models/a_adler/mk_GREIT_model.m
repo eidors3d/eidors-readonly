@@ -74,8 +74,8 @@ eidors_msg('mk_GREIT_model: setting cached value', 3);
 function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
 
 Nsim = opt.Nsim;
-[vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
-
+[vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
+bound = calc_bound(fmdl);
 
 xgrid = linspace(opt.minnode(1),opt.maxnode(1),opt.imgsz(1)+1);
 ygrid = linspace(opt.minnode(2),opt.maxnode(2),opt.imgsz(2)+1);
@@ -110,10 +110,12 @@ if ~isempty(opt.noise_figure)
     else
         weight = target;
     end
-
+    
+    R = max(range(fmdl.nodes(:,1:2)));
+    
     xyzr = mean(fmdl.nodes);
     xyzr(3) = opt.target_plane;
-    xyzr(4) = opt.target_size;
+    xyzr(4) = opt.target_size*0.5*R;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
@@ -138,7 +140,38 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
    out = (NF - target)^2;
 %    out = (mean(NF) - target)^2 + std(NF);
-   
+
+function bound = calc_bound( fmdl );
+% find the outline of the shape in the electrode plane.
+% 1. find the min and max height of electrodes
+min_e = inf; max_e = - inf;
+for i = 1:numel(fmdl.electrode)
+    min_e = min(min_e, min(fmdl.nodes( fmdl.electrode(i).nodes, 3)));
+    max_e = max(max_e, max(fmdl.nodes( fmdl.electrode(i).nodes, 3)));
+end
+% 2. find boundary nodes
+b_nodes = fmdl.nodes( unique(fmdl.boundary) , :);
+% 3. keep only nodes in the electrode plane
+b_nodes( b_nodes(:,3) < min_e | b_nodes(:,3) > max_e , :) = [];
+% 4. sort the nodes in polar coordinates
+c = mean(b_nodes);
+tmp = b_nodes - repmat(c,size(b_nodes,1),[]);
+[th] = cart2pol(tmp(:,1),tmp(:,2));
+[th idx] = sort(th);
+bound = b_nodes(idx,:);
+% 5. That will normally produce way too many points on the boundary
+%    Let's try to reduce
+% the different segments are well visible if one plots 'th'
+% so let's detrend
+if size(bound,1) > 500
+    th = detrend(th,'linear');
+    th(2:end) = abs(diff(th));
+    m = mean(th(2:end));
+    th(1) = 3*m+1; % keep the first point
+    
+    bound = bound(th>3*m,:);
+end
+
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
     case 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd'
@@ -150,7 +183,7 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
+function [vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
    ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
@@ -166,12 +199,6 @@ function [vi,vh,xy,bound,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
    if opt.target_plane == 1i
        opt.target_plane = mean(elec_loc(:,3));
    end
-   
-   % calculate the boundary (for external use)
-   F = fourier_fit(elec_loc(:,1:2));
-   v = linspace(0,1,100+1); v(end)=[];
-   bound = fourier_fit(F,v);
-
    
    switch opt.distr 
        case 0 % original
