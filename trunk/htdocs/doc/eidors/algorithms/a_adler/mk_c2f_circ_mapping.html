@@ -10,7 +10,7 @@
   <meta name="robots" content="index, follow">
   <link type="text/css" rel="stylesheet" href="../../../m2html.css">
   <script type="text/javascript">
-    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+    if (top.frames.length == 0) { top.location = "../../../index.html?eidors/algorithms/a_adler/mk_c2f_circ_mapping.html"; };
   </script>
 </head>
 <body>
@@ -94,7 +94,7 @@ This function is called by:
 0035     <span class="keyword">switch</span> size(xyzr,1)
 0036       <span class="keyword">case</span> 3; mapping = <a href="#_sub2" class="code" title="subfunction mapping = contained_elems_2d( mdl, xyr );">contained_elems_2d</a>( mdl, xyzr );
 0037       <span class="keyword">case</span> 4; [mapping failed] = <a href="#_sub8" class="code" title="subfunction [mapping failed] = contained_elems_3d( mdl, xyr );">contained_elems_3d</a>( mdl, xyzr );
-0038       <span class="keyword">case</span> 5: error(<span class="string">'size of xyzr incorrect'</span>);
+0038       <span class="keyword">otherwise</span>; error(<span class="string">'size of xyzr incorrect'</span>);
 0039     <span class="keyword">end</span>
 0040 
 0041     <a href="../../../eidors/eidors_obj.html" class="code" title="function obj_id= eidors_obj(type,name, varargin );">eidors_obj</a>(<span class="string">'set-cache'</span>, c_obj, <span class="string">'circle_mapping'</span>, mapping);
@@ -351,6 +351,6 @@ This function is called by:
 0292    c2f= <a href="mk_c2f_circ_mapping.html" class="code" title="function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );">mk_c2f_circ_mapping</a>( fmdl, [0 0;0 0;0 0;0.1 0.2]); 
 0293    t4= all( abs(c2f(193:196,1)-0.0595)&lt;.001 ) &amp; all( c2f(1:64)==0 );
 0294    <a href="../../../eidors/tools/unit_test_cmp.html" class="code" title="function unit_test_cmp(txt,a,b,tol)">unit_test_cmp</a>(<span class="string">'3D ex 3:'</span>,t4,1);</pre></div>
-<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+<hr><address>Generated on Tue 09-Aug-2011 11:38:31 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>

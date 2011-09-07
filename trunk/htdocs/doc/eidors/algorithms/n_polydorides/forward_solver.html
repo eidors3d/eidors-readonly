@@ -10,7 +10,7 @@
   <meta name="robots" content="index, follow">
   <link type="text/css" rel="stylesheet" href="../../../m2html.css">
   <script type="text/javascript">
-    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+    if (top.frames.length == 0) { top.location = "../../../index.html?eidors/algorithms/n_polydorides/forward_solver.html"; };
   </script>
 </head>
 <body>
@@ -134,23 +134,22 @@ This function is called by:
 0082 <span class="keyword">end</span>
 0083 
 0084 
-0085 
-0086 <span class="comment">%%% OLD CODE</span>
-0087    <span class="comment">% Cholesky solver. Gives poor results matching others</span>
-0088    <span class="comment">% so we no longer use it</span>
-0089    <span class="keyword">if</span> 0 
-0090        <span class="comment">%Permute the rows and columns to make the factors sparser</span>
-0091        E = E(pp,pp);
-0092        In = I(pp,:);
-0093        rr(pp)=1:max(size(pp));  <span class="comment">% this should be done only Once!</span>
-0094                                 <span class="comment">% actually much better just to do the</span>
-0095                                 <span class="comment">% renumbering when the mesh is generated!</span>
-0096        U = chol(E);
-0097        q_c =  U' \ In;  
-0098        Vn = U \ q_c;
-0099        <span class="comment">%De-permute the result for Cholesky</span>
-0100        V = Vn(rr,:);
-0101    <span class="keyword">end</span></pre></div>
-<hr><address>Generated on Wed 13-Jul-2011 23:23:10 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+0085 <span class="comment">%%% OLD CODE</span>
+0086    <span class="comment">% Cholesky solver. Gives poor results matching others</span>
+0087    <span class="comment">% so we no longer use it</span>
+0088    <span class="keyword">if</span> 0 
+0089        <span class="comment">%Permute the rows and columns to make the factors sparser</span>
+0090        E = E(pp,pp);
+0091        In = I(pp,:);
+0092        rr(pp)=1:max(size(pp));  <span class="comment">% this should be done only Once!</span>
+0093                                 <span class="comment">% actually much better just to do the</span>
+0094                                 <span class="comment">% renumbering when the mesh is generated!</span>
+0095        U = chol(E);
+0096        q_c =  U' \ In;  
+0097        Vn = U \ q_c;
+0098        <span class="comment">%De-permute the result for Cholesky</span>
+0099        V = Vn(rr,:);
+0100    <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Tue 09-Aug-2011 11:38:31 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
 </body>
 </html>
