@@ -16,10 +16,11 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   weight - weighting matrix (weighting of noise vs signal). Can be empty
 %            options.noise_figure is specified
 %   options- structure with fields:
-%     imgsz       - [xsz ysz] reconstructed image size in pixels 
-%                   (default: [32 32])
-%     Nsim        - number of training points (default: 1000)
-%     distr       - distribution of training points:
+%     imgsz         - [xsz ysz] reconstructed image size in pixels 
+%                     (default: [32 32])
+%     square_pixels - forces square pixels if 1 (default: 0)
+%     Nsim          - number of training points (default: 1000)
+%     distr         - distribution of training points:
 %         0 -> original (as per GREITv1, default)
 %         1 -> random, centre-heavy 
 %         2 -> random, uniform
@@ -74,11 +75,29 @@ eidors_msg('mk_GREIT_model: setting cached value', 3);
 function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
 
 Nsim = opt.Nsim;
-[vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
+%[vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
 bound = calc_bound(fmdl);
 
-xgrid = linspace(opt.minnode(1),opt.maxnode(1),opt.imgsz(1)+1);
-ygrid = linspace(opt.minnode(2),opt.maxnode(2),opt.imgsz(2)+1);
+mingrid = opt.minnode;
+maxgrid = opt.maxnode;
+if opt.square_pixels ==1
+    mdl_sz = opt.maxnode - opt.minnode; 
+    mdl_AR = mdl_sz(1)/mdl_sz(2);
+    img_AR = opt.imgsz(1)/opt.imgsz(2);
+    if mdl_AR < img_AR
+        delta = (mdl_sz(2) * img_AR - mdl_sz(1)) /2;
+        mingrid(1) = mingrid(1) - delta;
+        maxgrid(1) = maxgrid(1) + delta;
+    elseif mdl_AR > img_AR
+        delta = (mdl_sz(1)/img_AR - mdl_sz(2)) / 2;
+        mingrid(2) = mingrid(2) - delta;
+        maxgrid(2) = maxgrid(2) + delta;
+    end
+        
+end
+
+xgrid = linspace(mingrid(1),maxgrid(1),opt.imgsz(1)+1);
+ygrid = linspace(mingrid(2),maxgrid(2),opt.imgsz(2)+1);
 rmdl = mk_grid_model([],xgrid,ygrid);
 x_avg = conv2(xgrid, [1,1]/2,'valid');
 y_avg = conv2(ygrid, [1,1]/2,'valid');
@@ -326,6 +345,9 @@ function opt = parse_options(opt,fmdl,imdl);
     opt.maxnode = maxnode;     opt.minnode = minnode; 
     
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
+    if ~isfield(opt, 'square_pixels')
+        opt.square_pixels = 0;
+    end
     % Allow imdl.rec_model to overwrite options.imgsz
     if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
         % this assumes rec_model is a rectangular grid, as it should
