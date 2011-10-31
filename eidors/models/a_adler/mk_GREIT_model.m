@@ -75,7 +75,7 @@ eidors_msg('mk_GREIT_model: setting cached value', 3);
 function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
 
 Nsim = opt.Nsim;
-%[vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
+[vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
 bound = calc_bound(fmdl);
 
 mingrid = opt.minnode;
