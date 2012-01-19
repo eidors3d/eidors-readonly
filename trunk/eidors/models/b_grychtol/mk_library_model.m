@@ -212,7 +212,13 @@ global eidors_objects
 eidors_objects.model_cache = val;
 %if folder doesn't exist, create it
 if ~exist(val,'dir')
-    mkdir(val);
+    ver= eidors_obj('interpreter_version');
+    if ver.ver<4 || ver.ver>=7
+       mkdir(val);
+    else
+ % matlab 6.x has a stupid mkdir function
+       system(['mkdir ',val]); 
+    end
 end
 
 function out = do_unit_test
