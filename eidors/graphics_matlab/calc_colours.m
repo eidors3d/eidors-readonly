@@ -151,11 +151,6 @@ if do_colourbar
        warning('Colorbar not available without mapped_colour option');
     elseif do_colourbar < 0
         eidors_colourbar(-do_colourbar,max_scale,pp.cb_shrink_move,1)
-        if isfield(pp,'image_field')
-            rm_field('image_field');
-            rm_field('image_field_val');
-            rm_field('image_field_idx');
-        end
    else
        eidors_colourbar(max_scale,ref_lev,pp.cb_shrink_move)
    end
@@ -163,6 +158,9 @@ end
 
 
 function set_colours_defaults;
+   global eidors_colours;
+   clear eidors_colours;
+
    calc_colours('greylev',-.001);          % background colour = white
    calc_colours('sat_adj',.9);             % saturation of red and blue
    calc_colours('window_range', .7);       % windowing of colours
@@ -219,12 +217,13 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    red(backgnd) = pp.backgnd(1);
    grn(backgnd) = pp.backgnd(2);
    blu(backgnd) = pp.backgnd(3);
-%%FIXME   
+
+%FIXME - come up with a general way to handle blocks in image field
 if isfield(pp,'image_field')
     red(2)=pp.image_field(1);
     grn(2)=pp.image_field(2);
     blu(2)=pp.image_field(3);
-end%|||cgomez end
+end
 
    
 function [red,grn,blu]= blue_red_colours(pp,scale_data);
@@ -397,7 +396,8 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
    [red,grn,blu] = blu_red_axis( pp, ...
           [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
-   %FIXME
+
+   %FIXME - come up with a general way to handle blocks in image field
    if isfield(pp,'image_field')
       infmask = isinf(img_data);
       mindata = min(img_data(~infmask));
@@ -430,11 +430,6 @@ function value= set_field(param, value);
    eidors_colours = setfield(eidors_colours, param, value);
    value= eidors_colours;
 
-%FIXME AA+CG 300112   
-function value= rm_field(fieldname);
-   global eidors_colours;
-   eidors_colours = rmfield(eidors_colours, fieldname);
-    
 % TESTS:
 function do_unit_test
    img = eidors_obj('image','test'); 

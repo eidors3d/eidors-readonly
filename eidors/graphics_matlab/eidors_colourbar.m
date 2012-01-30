@@ -62,7 +62,7 @@ else
 end
 
    % ref_lev goes to c_ctr. max_scale goes to c_max
-   %FIXME
+%FIXME - need a switch to control use of max scale
 %  tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
 if isempty(greyscale) 
     tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
