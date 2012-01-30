@@ -20,6 +20,8 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
 % $Id$
 % (C) 2006 Andy Adler. Licensed under GPL v2
 
+%FIXME - set to use the colours in the img.calc_colours fields
+
    global eidors_colours;
    if nargin <=1
       ref_lev = eidors_colours.ref_level;
