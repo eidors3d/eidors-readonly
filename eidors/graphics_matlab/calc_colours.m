@@ -86,6 +86,9 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$  
 
+% BUGS TO FIX:
+%  mapped_colour should set the colourmap length for all
+
 if nargin==0; error('calc_colours: expecting argument'); end
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
@@ -196,18 +199,18 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       % Make most of the range for air -ve
       scd = (scale_data + 0.5)/0.6;
       [red,grn,blu]= jet_colours(pp,scd);
-     case 'cg_custom'
-         [red,grn,blu] = cg_custom_colours(pp,scale_data);
-     case 'cg_greyscale'
-         [red,grn,blu] = cg_custom_greyscale(pp,scale_data);
-     case 'cg_compliance'
-         [red,grn,blu] = cg_custom_compliance(pp,scale_data);
-     case 'cg_timetopeak'
-         [red,grn,blu] = cg_custom_timetopeak(pp,scale_data);
-     case 'cg_lungstate'
-         [red,grn,blu] = cg_custom_lungstate(pp,scale_data);
-     case 'cg_duallungstate'
-         [red,grn,blu] = cg_custom_duallungstate(pp,scale_data);
+     case 'blue_yellow'
+         [red,grn,blu] = blue_yellow_colours(pp,scale_data);
+     case 'greyscale'
+         [red,grn,blu] = greyscale_colours(pp,scale_data);
+     case 'copper'
+         [red,grn,blu] = copper_colours(pp,scale_data);
+     case 'blue_white_red'
+         [red,grn,blu]= blue_white_red_colours(pp,scale_data);
+     case 'black_red'
+         [red,grn,blu] = black_red_colours(pp,scale_data);
+     case 'blue_black_red'
+         [red,grn,blu] = blue_black_red_colours(pp,scale_data);
 
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
@@ -284,7 +287,7 @@ function [red,grn,blu] = jet_colours(pp,scale_data);
    blu = 1.5 - 2*abs(scale_data - 0.5);
    blu(blu>1) = 1; blu(blu<0) = 0;
 
-function [red,grn,blu]= cg_custom_colours(pp,scale_data);
+function [red,grn,blu] = blue_yellow_colours(pp,scale_data);
    cc = fireice(256);
    red = cc(:,1);
    grn = cc(:,2);
@@ -315,19 +318,19 @@ function cmap = fireice(m)
    cmap = interp2(1:3,y,clrs,1:3,yi);
 
 
-function [red,grn,blu]= cg_custom_greyscale(pp,scale_data);
+function [red,grn,blu]= greyscale_colours(pp,scale_data);
    cc = gray(256);
    red = cc(:,1);
    grn = cc(:,2);
    blu = cc(:,3);
 
-function [red,grn,blu]= cg_custom_compliance(pp,scale_data);
+function [red,grn,blu]= copper_colours(pp,scale_data);
    cc = copper(256);
    red = cc(:,1);
    grn = cc(:,2);
    blu = cc(:,3);
 
-function [red,grn,blu]= cg_custom_timetopeak(pp,scale_data);
+function [red,grn,blu]= blue_white_red_colours(pp,scale_data);
    cc = bluewhitered(256);
    red = cc(:,1);
    grn = cc(:,2);
@@ -353,13 +356,14 @@ function cmap = bluewhitered(m)
    end
    cmap = interp2(1:3,y,clrs,1:3,yi);
 
-function [red,grn,blu]= cg_custom_lungstate(pp,scale_data);
+
+function [red,grn,blu] = black_red_colours(pp,scale_data);
    cc = gray(256);
    red = cc(:,1);
-   grn = zeros(size(cc,1),1);
+   grn = zeros(256,1);
    blu = grn;
 
-function [red,grn,blu]= cg_custom_duallungstate(pp,scale_data);
+function [red,grn,blu] = blue_black_red_colours(pp,scale_data);
    cc = gray(128);
    red = [flipud(cc(:,1));zeros(128,1)];
    grn = zeros(256,1);
