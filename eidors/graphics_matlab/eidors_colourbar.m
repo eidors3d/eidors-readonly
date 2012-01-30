@@ -1,4 +1,4 @@
-function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
+function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 % EIDORS_COLOURBAR - create an eidors colourbar with scaling to image
 % usage: eidors_colourbar(max_scale,ref_lev)
 %    ref_lev:   centre of the colour scale
@@ -16,7 +16,7 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
 
    hh= colorbar; 
    % make colourbar smaller and closer to axis
-   if nargin == 3
+   if nargin >= 3
       posn= get(hh,'Position');
       cbsm = cb_shrink_move; 
       if ~all(cbsm == [1,1,0]); 
@@ -28,6 +28,9 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
       end
    end
 
+   %FIXME = AA+CG 30/1/12
+   if nargin <4; greyscale=[]; end
+
    % Stop scale from being too small
    if max_scale<abs(ref_lev)
       if max_scale < 1e-10; max_scale = 1e-10; end
@@ -38,6 +41,8 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
    % Get colormap limits  and move bottom so we don't see the background colour 
    ylim = get(hh,'Ylim');
    ylim(1)= ylim(1)+1;
+   %FIXME = AA+CG 30/1/12
+   if ~isempty(greyscale); ylim(1) = ylim(1) + 1 ; end
    set(hh,'Ylim',ylim);
 
    c_ctr = mean(ylim);
@@ -48,9 +53,23 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move)
    scale_r  = OrdOfMag * floor( max_scale / OrdOfMag );
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
    
-   tick_vals = [-1:0.5:1]*scale_r + ref_r;
+   %FIXME = AA+CG 30/1/12
+%  tick_vals = [-1:0.5:1]*scale_r + ref_r;
+if isempty(greyscale)
+    tick_vals = [-1:0.2:1]*max_scale + ref_r;
+else
+    tick_vals = [0:0.2:1]*max_scale;
+end
+
    % ref_lev goes to c_ctr. max_scale goes to c_max
-   tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+   %FIXME
+%  tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+if isempty(greyscale) 
+    tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+else
+    tick_locs = tick_vals*c_max*2/max_scale +2.5;
+end
+
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
 

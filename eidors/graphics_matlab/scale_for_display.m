@@ -21,7 +21,6 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
 % (C) 2006 Andy Adler. Licensed under GPL v2
 
    global eidors_colours;
-   % need crazy if statement to support matlab >= 6.0
    if nargin <=1
       ref_lev = eidors_colours.ref_level;
    elseif strcmp(ref_lev, 'use_global' );
@@ -55,6 +54,10 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
       elem_data( elem_data> clim)=  clim;
       elem_data( elem_data<-clim)= -clim;
       max_scale = clim;
+   end
+
+   if isfield(eidors_colours,'image_field')
+      elem_data(eidors_colours.image_field_idx) = eidors_colours.image_field_val;
    end
 
    elem_data = elem_data/max_scale;

@@ -57,6 +57,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           if 'jet' use the matlab jet colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
+%   'image_field', 'image_field_idx', 'image_field_val' 
+%           image elements which match _idx are set to _val.
 %   'defaults' set to default colours in list above
 %
 %   'colourmap' Return the current EIDORS colormap. 
@@ -144,10 +146,18 @@ end
 if do_colourbar
    if ~pp.mapped_colour
        warning('Colorbar not available without mapped_colour option');
+    elseif do_colourbar < 0
+        eidors_colourbar(-do_colourbar,max_scale,pp.cb_shrink_move,1)
+        if isfield(pp,'image_field')
+            rm_field('image_field');
+            rm_field('image_field_val');
+            rm_field('image_field_idx');
+        end
    else
        eidors_colourbar(max_scale,ref_lev,pp.cb_shrink_move)
    end
 end
+
 
 function set_colours_defaults;
    calc_colours('greylev',-.001);          % background colour = white
@@ -186,6 +196,19 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       % Make most of the range for air -ve
       scd = (scale_data + 0.5)/0.6;
       [red,grn,blu]= jet_colours(pp,scd);
+     case 'cg_custom'
+         [red,grn,blu] = cg_custom_colours(pp,scale_data);
+     case 'cg_greyscale'
+         [red,grn,blu] = cg_custom_greyscale(pp,scale_data);
+     case 'cg_compliance'
+         [red,grn,blu] = cg_custom_compliance(pp,scale_data);
+     case 'cg_timetopeak'
+         [red,grn,blu] = cg_custom_timetopeak(pp,scale_data);
+     case 'cg_lungstate'
+         [red,grn,blu] = cg_custom_lungstate(pp,scale_data);
+     case 'cg_duallungstate'
+         [red,grn,blu] = cg_custom_duallungstate(pp,scale_data);
+
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
    end
@@ -193,7 +216,14 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    red(backgnd) = pp.backgnd(1);
    grn(backgnd) = pp.backgnd(2);
    blu(backgnd) = pp.backgnd(3);
+%%FIXME   
+if isfield(pp,'image_field')
+    red(2)=pp.image_field(1);
+    grn(2)=pp.image_field(2);
+    blu(2)=pp.image_field(3);
+end%|||cgomez end
 
+   
 function [red,grn,blu]= blue_red_colours(pp,scale_data);
 if 0
    D= sign(pp.greylev+eps); %force 0 to 1
@@ -254,6 +284,88 @@ function [red,grn,blu] = jet_colours(pp,scale_data);
    blu = 1.5 - 2*abs(scale_data - 0.5);
    blu(blu>1) = 1; blu(blu<0) = 0;
 
+function [red,grn,blu]= cg_custom_colours(pp,scale_data);
+   cc = fireice(256);
+   red = cc(:,1);
+   grn = cc(:,2);
+   blu = cc(:,3);
+
+function cmap = fireice(m)
+   % FIREICE LightCyan-Cyan-Blue-Black-Red-Yellow-LightYellow Colormap
+   %
+   % See also: hot, jet, hsv, gray, copper, bone, cold, vivid, colors
+   %
+   % Author: Joseph Kirk %  jdkirk630@gmail.com
+   % Date: 07/29/09
+
+   % LightCyan-Cyan-Blue-Black-Red-Yellow-LightYellow
+   clrs = flipud([0.75 1 1; 0 1 1; 0 0 1;...
+       0 0 0; 1 0 0; 1 1 0; 1 1 0.75]);
+
+   y = -3:3;
+   if mod(m,2)
+       delta = min(1,6/(m-1));
+       half = (m-1)/2;
+       yi = delta*(-half:half)';
+   else
+       delta = min(1,6/m);
+       half = m/2;
+       yi = delta*nonzeros(-half:half);
+   end
+   cmap = interp2(1:3,y,clrs,1:3,yi);
+
+
+function [red,grn,blu]= cg_custom_greyscale(pp,scale_data);
+   cc = gray(256);
+   red = cc(:,1);
+   grn = cc(:,2);
+   blu = cc(:,3);
+
+function [red,grn,blu]= cg_custom_compliance(pp,scale_data);
+   cc = copper(256);
+   red = cc(:,1);
+   grn = cc(:,2);
+   blu = cc(:,3);
+
+function [red,grn,blu]= cg_custom_timetopeak(pp,scale_data);
+   cc = bluewhitered(256);
+   red = cc(:,1);
+   grn = cc(:,2);
+   blu = cc(:,3);
+
+function cmap = bluewhitered(m)
+   % bluewhitered Colormap
+   %
+   % Based on FIREICE from Joseph Kirk jdkirk630@gmail.com
+
+   % Blue-White-Red
+   clrs = flipud([0 0 1; 1 1 1; 1 0 0]);
+
+   y = -1:1;
+   if mod(m,2)
+       delta = min(1,2/(m-1));
+       half = (m-1)/2;
+       yi = delta*(-half:half)';
+   else
+       delta = min(1,2/m);
+       half = m/2;
+       yi = delta*nonzeros(-half:half);
+   end
+   cmap = interp2(1:3,y,clrs,1:3,yi);
+
+function [red,grn,blu]= cg_custom_lungstate(pp,scale_data);
+   cc = gray(256);
+   red = cc(:,1);
+   grn = zeros(size(cc,1),1);
+   blu = grn;
+
+function [red,grn,blu]= cg_custom_duallungstate(pp,scale_data);
+   cc = gray(128);
+   red = [flipud(cc(:,1));zeros(128,1)];
+   grn = zeros(256,1);
+   blu = [zeros(128,1);cc(:,1)];
+
+
 function pp=get_colours( img );
    global eidors_colours;
    pp= eidors_colours;
@@ -281,6 +393,16 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
    [red,grn,blu] = blu_red_axis( pp, ...
           [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
    colormap([red,grn,blu]);
+   %FIXME
+   if isfield(pp,'image_field')
+      infmask = isinf(img_data);
+      mindata = min(img_data(~infmask));
+      colours = fix( (img_data-mindata) * (ncol-1))' + 3;
+      colours(backgnd)= backgndidx;
+      colours(pp.image_field_idx)=2;
+      return
+   end
+
 % This is the line I wan't to write. However, matlab seems to waste
 %  lots of memory to do it. Instead we break it into pieces
 %  colours = fix( img_data * (ncol-1))' + ncol + 1;
@@ -289,21 +411,26 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
    colours(backgnd)= backgndidx;
 
 function value= get_field(param);
-    global eidors_colours;
-    if strcmp(param,'colourmap')
-       ncol= eidors_colours.mapped_colour;
-       [red,grn,blu] = blu_red_axis( eidors_colours, ...
-              [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
-       value= [red,grn,blu];
-    else
-       value = getfield(eidors_colours, param);
-    end
+   global eidors_colours;
+   if strcmp(param,'colourmap')
+      ncol= eidors_colours.mapped_colour;
+      [red,grn,blu] = blu_red_axis( eidors_colours, ...
+             [-1,linspace(-1,1,2*ncol - 1)]', backgndidx );
+      value= [red,grn,blu];
+   else
+      value = getfield(eidors_colours, param);
+   end
 
 function value= set_field(param, value);
-    global eidors_colours;
-    eidors_colours = setfield(eidors_colours, param, value);
-    value= eidors_colours;
+   global eidors_colours;
+   eidors_colours = setfield(eidors_colours, param, value);
+   value= eidors_colours;
 
+%FIXME AA+CG 300112   
+function value= rm_field(fieldname);
+   global eidors_colours;
+   eidors_colours = rmfield(eidors_colours, fieldname);
+    
 % TESTS:
 function do_unit_test
    img = eidors_obj('image','test'); 
