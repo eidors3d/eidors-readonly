@@ -20,7 +20,7 @@ warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care');
 
 pp = aa_fwd_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
-pp.DEBUG = 1;
+pp.DEBUG = 0;
 if pp.DEBUG
     pp.ss_mat = calc_unconnected_system_mat( fwd_model, img_bkgd);
     pp.fwd_meas =fwd_solve( fwd_model, img_bkgd);
@@ -176,7 +176,7 @@ for colidx = 1:pp.n_dims
             mdl_delta.nodes(elec_nodes, colidx) = ...
                 mdl_delta.nodes(elec_nodes, colidx) + delta;
             S= calc_system_mat( mdl_delta, img_bkgd); S=S.E;
-keyboard
+% FIXME: AA+CG 30/1/12
             [Vc_delta] = Vc_Re_matrices( pp, mdl_delta, S);
             delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta;
             nn = norm(delVm_part - delVm_pert,1 ); % WHY NEGATIVE?
