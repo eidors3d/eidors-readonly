@@ -21,7 +21,10 @@ EIDORS Analysis
 </h3>
 
 <ol>
-<li><b> Download </b> the
+<li>Go to the 
+    <a href="../../data_contrib/cg-2012-ards-recruitment/cg_2012_ards_recruitment.shtml"
+        >Data Contrib</a> section, and 
+<b> download </b> the
     <a href="../../data_contrib/cg-2012-ards-recruitment/cg_data_2012.zip"
    >data</a> and save it to your working directory.
 
@@ -110,8 +113,6 @@ P_STAR map indicates the pressure at which maximum compliance was achieved durin
 <img src="cg_ards_recruitment_08B.png">
 <img src="cg_ards_recruitment_08C.png">
 <img src="cg_ards_recruitment_08D.png">
-<img src="cg_ards_recruitment_08E.png">
-<img src="cg_ards_recruitment_08F.png">
 <br><i> Figure 7:</i>
 Regional overdistension (blue) and collapse (red) maps during PEEP titration. Grey pixels represent extrapulmonary tissue.
 </center>
