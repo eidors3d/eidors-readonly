@@ -21,9 +21,16 @@
 %
 % -------------------------------------------------------------------------
 clear
+addpath EITCalcFrequencySpectrum
+addpath EITCalcLungRoi
+addpath EITCalcTimeSignal
+addpath EITFilterData
+addpath EITReadData
+addpath EITReconstructImages
+addpath Special
 %% ------------------------------ STAGE 1 ---------------------------------
 % PROCESS EACH STEP OF THE PROTOCOL
-basename = 'E:/TUTORIAL/DATA';
+basename = './DATA';
 filename = 'STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_b.get'; 
 range =[]; maneuver='increment'; PEEP=14; dP=5;
 process_and_save(basename, filename, range, maneuver, PEEP, dP);
