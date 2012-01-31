@@ -1,20 +1,5 @@
 function [vref,s] = CalcReferenceImage(vd,method)
-%FUNCTIONTEMPLATE   Describe function here.
-%   
-% Signature:
-% function [out1,out2] = FunctionTemplate(in1,in2,in3)
-%
-% Input:
-% in1       double      scalar      description here
-% in2       double      MxN         description here
-% (in3)     boolean     scalar      description here
-% 
-% Output:   
-% out1      double      scalar      description here
-% out2      boolean     scalar      description here
-% s         boolean     scalar      errors present: true
-% 
-% Copyright C. Gomez-Laberge, Month yyyy.
+% Copyright C. Gomez-Laberge, January 2012.
 % $Id: $
 
 % Set error status to 'no errors present'
@@ -33,10 +18,6 @@ switch nargin
         display('Error CalcReferenceImage: invalid arguments');
         error('Error CalcReferenceImage: aborting execution');
 end
-
-% % Define function constants
-% K1=0;
-% K2=1+i;
 
 switch method
     case 'avgim'
@@ -70,15 +51,6 @@ switch method
         display('Error CalcReferenceImage: invalid calculation method');
         error('Error CalcReferenceImage: aborting execution');
 end
-
-% % Report error with abort
-% display('Error FunctionTemplate: error message');
-% s = true;
-% error('Error FunctionTemplate: aborting execution');
-% 
-% % Report error without abort
-% display('Error FunctionName: error message');
-% s = true;
 
 % End of function
 end %function

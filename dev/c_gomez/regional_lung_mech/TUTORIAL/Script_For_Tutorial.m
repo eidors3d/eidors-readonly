@@ -1,4 +1,4 @@
-% ----------------- TUTORIAL: REGIONAL LUNG MECHANICS ---------------------
+% ------------- TUTORIAL: REGIONAL LUNG MECHANICS IN ARDS -----------------
 %
 % AUTHORS: Camille Gomez-Laberge, John H Arnold & Gerhard K Wolf
 %
@@ -9,7 +9,7 @@
 % PLEASE CITE THE FOLLOWING ARTICLE WHEN USING THIS SOFTWARE:
 %   Gomez-Laberge C, Arnold JH & Wolf GK. A unified approach for EIT
 %   imaging of regional overdistension and atelectasis in acute lung
-%   injury. IEEE Trans Med Imag, VOL: P-P, 2012.
+%   injury. IEEE Trans Med Imag, in press.
 %
 % SOFTWARE CONTRIBUTED TO EIDORS UNDER THE FOLLOWING PROJECTS
 %   RegionalLungMechanics/

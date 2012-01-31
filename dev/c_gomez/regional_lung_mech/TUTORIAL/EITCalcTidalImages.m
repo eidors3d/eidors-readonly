@@ -85,10 +85,6 @@ end
 
 % Define function constants
 GLOBALSIGNAL = 1; % set to 1 for voltage data, 0 for image data
-                  % ideally we should be calculating extrema from the
-                  % voltage signal; however, there is an unexplained shift
-                  % occasionally occurring where image peaks do not match
-                  % with voltage peaks.
 K1=0.5; % tidal period fraction for tidalperiodthreshold
 K2 = 1; % tidal SD fraction for tidalmagnitudethreshold
 

@@ -1,4 +1,6 @@
 function data= find_artefacts( data)
+% Copyright C. Gomez-Laberge, August 2009.
+% $Id: $
    for i=1:208
       dc = data(i,:);
       if norm(dc) < 1e-4; continue; end

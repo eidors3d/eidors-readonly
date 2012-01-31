@@ -5,6 +5,7 @@ function [ztab,index] = TabulateImageData(z,mask)
 % masked, 1 included)
 % mask is optional
 % Copyright C. Gomez-Laberge, August 2009
+% $Id: $
 
 if nargin == 1
     mask = ones(size(z));
