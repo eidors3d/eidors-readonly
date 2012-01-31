@@ -67,10 +67,14 @@ on patient left of each other.
        <hr>
    <tr><th valign="top"> Methods:
        <td>
+Detailed methods are described in the referenced papers.
 The following figure illustrates the experimental protocol.
-<img src="cg_ards_recruitment_data.png">
 (Source:
    C G&oacute;mez-Laberge, <i>et al</i>, 2012)
+<br>
+<center>
+<a href="cg_ards_recruitment_data.png"><img height= 300 src="cg_ards_recruitment_data.png"></a>
+</center>
 <br>
 The patient details are as follows:
 Gender: F,
@@ -85,15 +89,15 @@ Condition: Primary ARDS of parainfluenza pneumonia etiology.
 File details:
 <pre>
         FILENAME                                       cmH<sub>2</sub>O        cmH<sub>2</sub>O
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_b.get    PEEP=14 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =5;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c1.get   PEEP=15 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =15;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c2.get   PEEP=20 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =15;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c3.get   PEEP=25 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =15;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c4.get   PEEP=30 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =15;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d1.get   PEEP=20 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =6;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d2.get   PEEP=18 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =6;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d3.get   PEEP=16 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =5;
-STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d4.get   PEEP=14 cmH2O;  (P<sub>Plat</sub>&minus;PEEP) =4;
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_b.get    PEEP=14   (P<sub>Plat</sub>&minus;PEEP) =5 
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c1.get   PEEP=15   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c2.get   PEEP=20   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c3.get   PEEP=25   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_c4.get   PEEP=30   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d1.get   PEEP=20   (P<sub>Plat</sub>&minus;PEEP) =6
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d2.get   PEEP=18   (P<sub>Plat</sub>&minus;PEEP) =6
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d3.get   PEEP=16   (P<sub>Plat</sub>&minus;PEEP) =5
+STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d4.get   PEEP=14   (P<sub>Plat</sub>&minus;PEEP) =4
 </pre>
 
        <hr>
