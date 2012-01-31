@@ -158,8 +158,7 @@ end
 
 
 function set_colours_defaults;
-   global eidors_colours;
-   clear eidors_colours;
+   clear -global eidors_colours;
 
    calc_colours('greylev',-.001);          % background colour = white
    calc_colours('sat_adj',.9);             % saturation of red and blue
