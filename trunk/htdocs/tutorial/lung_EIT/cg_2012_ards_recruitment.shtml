@@ -1,0 +1,59 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2 >EIT images of a patient with the acute respiratory distress syndrome during a recruitment manouevre (human)
+</h2>
+
+<h3> 
+Methods and Data
+</h3>
+<p>
+The EIT data were collected during a stepwise lung recruitment maneuver of a patient with the acute respiratory distress syndrome as part of a clinical study described in:
+<ul>
+   GK Wolf, C G&oacute;mez-Laberge, JN Kheir, D Zurakowski,
+     	BK Walsh, A Adler, JH Arnold. 
+   Reversal of Dependent Lung Collapse Predicts Response to Lung Recruitment
+   in Children with Early Acute Lung Injury
+   <i>Pediatr Crit Care Med</i>, In Press.
+</ul>
+
+The methods described here use the raw EIT data and pressure measurements made at the airway opening to estimate the extent of regional lung overdistension and collapse during mechanical ventilation at various levels of positive end-expiratory pressure (PEEP). The details of the methods and results shown here are described in:
+
+<ul>
+	C G&oacute;mez-Laberge, JH Arnold, GK Wolf.
+	A Unified Approach for EIT Imaging of Regional Overdistension and Atelectasis in Acute Lung Injury
+	<i>IEEE Trans Med Imag</i>, In Press.
+</ul>
+
+<h3> 
+EIDORS Analysis
+</h3>
+
+<ol>
+<li><b> Download </b> the
+    <a href="../../data_contrib/cg-2012-ards-recruitment/cg_data_2012.zip"
+   >data</a> and save it to your working directory.
+
+<li><b> Create a FEM model of the pig</b>
+<pre>
+<!--#include virtual="if_peep_trial01.m" -->
+</pre>
+
+<center>
+<img src="if_peep_trial01.png">
+<br><i> Figure:</i>
+2D FEM of pig thorax
+</center>
+
+
+</ol>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
