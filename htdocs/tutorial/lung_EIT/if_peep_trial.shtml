@@ -4,14 +4,6 @@
 
 <h2 >PEEP trial after lung injury (pig)</h2>
 
-<h3> 
-Methods and Data
-</h3>
-
-Use mk_common_model to create a thorax shaped
-model with 16 electrodes. Ensure the model
-uses 1) Correct stimulation patterns (adjacent is default),
-2) Normalized difference imaging
 
 <h3> 
 Methods and Data
