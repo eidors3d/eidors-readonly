@@ -2,24 +2,14 @@
 <!--#set var="show_tut" value="1" -->
 <!--#include virtual="../../nav-sidebar.shtml" -->
 
-<h2 >EIT-based regional lung mechanics of a patient with the acute respiratory distress syndrome during a recruitment manouevre (human)
+<h2 >EIT-based regional lung mechanics in the acute respiratory distress syndrome during lung recruitment (human)
 </h2>
 
 <h3> 
 Methods and Data
 </h3>
 <p>
-The EIT data were collected at Children's Hospital Boston in 2009 during a stepwise lung recruitment maneuver and positive end-expiratory pressure (PEEP) titration of a patient with the acute respiratory distress syndrome as part of a clinical study described in:
-<ul>
-   GK Wolf, C G&oacute;mez-Laberge, JN Kheir, D Zurakowski,
-     	BK Walsh, A Adler, JH Arnold. 
-   Reversal of Dependent Lung Collapse Predicts Response to Lung Recruitment
-   in Children with Early Acute Lung Injury
-   <i>Pediatr Crit Care Med</i>, In Press.
-</ul>
-
-The methods described here use the raw EIT data and pressure measurements made at the airway opening to estimate the extent of regional lung overdistension and collapse during mechanical ventilation at various levels of PEEP. The methods and results are reported in:
-
+The EIT data were collected at Children's Hospital Boston in 2009 during a stepwise lung recruitment manoeuver and positive end-expiratory pressure (PEEP) titration of a patient with the acute respiratory distress syndrome as part of a clinical study described in
 <ul>
 	C G&oacute;mez-Laberge, JH Arnold, GK Wolf.
 	A Unified Approach for EIT Imaging of Regional Overdistension and Atelectasis in Acute Lung Injury
@@ -47,11 +37,86 @@ EIDORS Analysis
 
 <center>
 <img src="cg_ards_recruitment_02.png">
-<br><i> Figure:</i>
-Output of the command "EITDisplayImages(db_c1.eitimages,1,'mtd');" an estimate regional tidal ventilation.
+<br><i> Figure 1:</i>
+Output of "EITDisplayImages(db_c1.eitimages,1,'mtd');". An estimate regional tidal ventilation.
 </center>
 
+<li><b> Aggregate data from all recruitment maneuver steps </b> 
+<pre> 
+<!--#include virtual="cg_ards_recruitment_03.m" -->
+</pre>
 
+<li><b> Display C_MAX and P_STAR maps </b>
+<pre>
+<!--#include virtual="cg_ards_recruitment_04.m" -->
+</pre>
+
+<center>
+<img src="cg_ards_recruitment_04A.png">
+<br><i> Figure 2:</i>
+C_MAX map represents each pixel's maximum compliance during the recruitment manoeuvre. Grey pixels represent extrapulmonary tissue excluded during ROI analysis in step 4. 
+</center>
+
+<center>
+<img src="cg_ards_recruitment_04B.png">
+<br><i> Figure 3:</i>
+P_STAR map indicates the pressure at which maximum compliance was achieved during lung recruitment. Black pixels were most compliant at 14 cm of water, while brightest pixels were most compliant at 30 cm of water.  Grey pixels represent extrapulmonary tissue.
+</center>
+
+<li><b> Display lung overdistension (blue) and collapse (red) maps </b>
+<pre>
+<!--#include virtual="cg_ards_recruitment_05.m" -->
+</pre>
+
+<center>
+<img src="cg_ards_recruitment_05A.png">
+<img src="cg_ards_recruitment_05B.png">
+<img src="cg_ards_recruitment_05C.png">
+<img src="cg_ards_recruitment_05D.png">
+<img src="cg_ards_recruitment_05E.png">
+<br><i> Figure 4:</i>
+Regional overdistension (blue) and collapse (red) maps during lung recruitment. Grey pixels represent extrapulmonary tissue.
+</center>
+
+<li><b> Repeat steps 4-6 for PEEP titration manoeuvre: aggregate data from titration steps </b>
+<pre>
+<!--#include virtual="cg_ards_recruitment_06.m" -->
+</pre>
+
+<li><b> Display C_MAX and P_STAR maps </b>
+<pre>
+<!--#include virtual="cg_ards_recruitment_07.m" -->
+</pre>
+
+<center>
+<img src="cg_ards_recruitment_07A.png">
+<br><i> Figure 5:</i>
+C_MAX map represents each pixel's maximum compliance during the PEEP titration. Grey pixels represent extrapulmonary tissue.
+</center>
+
+<center>
+<img src="cg_ards_recruitment_07B.png">
+<br><i> Figure 6:</i>
+P_STAR map indicates the pressure at which maximum compliance was achieved during PEEP titration. Black pixels were most compliant at 14 cmH2O, while brightest pixels were most compliant at 20 cmH2O. Grey pixels represent extrapulmonary tissue.
+</center>
+
+<li><b> Display lung overdistension (blue) and collapse (red) maps </b>
+<pre>
+<!--#include virtual="cg_ards_recruitment_08.m" -->
+</pre>
+
+<center>
+<img src="cg_ards_recruitment_08A.png">
+<img src="cg_ards_recruitment_08B.png">
+<img src="cg_ards_recruitment_08C.png">
+<img src="cg_ards_recruitment_08D.png">
+<img src="cg_ards_recruitment_08E.png">
+<img src="cg_ards_recruitment_08F.png">
+<br><i> Figure 7:</i>
+Regional overdistension (blue) and collapse (red) maps during PEEP titration. Grey pixels represent extrapulmonary tissue.
+</center>
+
+</ol>
 </ol>
 
 </td></tr></table>
