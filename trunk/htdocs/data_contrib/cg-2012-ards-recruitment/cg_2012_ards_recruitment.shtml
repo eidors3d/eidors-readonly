@@ -101,6 +101,9 @@ STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d3.get   PEEP=16   (P<sub>Plat</sub
 STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d4.get   PEEP=14   (P<sub>Plat</sub>&minus;PEEP) =4
 </pre>
 
+       <td> <a href="./cg_2012_ards_recruitment_code.zip"
+            >Analysis software (m files in zip format)</a>
+
        <hr>
    <tr><th valign="top"> Images:
        <td> See the 
