@@ -31,10 +31,6 @@ switch nargin
         error('Error CalcFourierTransform: aborting execution');
 end
 
-% Define function constants
-% K1=0;
-% K2=1+i;
-
 % Remove signal offset
 y = y-mean(y);
 L = length(y);

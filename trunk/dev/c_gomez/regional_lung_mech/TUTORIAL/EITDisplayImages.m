@@ -277,9 +277,9 @@ switch series
         end
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','greyscale');
         calc_colours('clim',clim);
         show_slices(img-imax);
@@ -306,9 +306,9 @@ switch series
         end
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','copper');
         calc_colours('clim',clim/2);
         img = img-imax/2-min(imgtemp);
@@ -346,9 +346,9 @@ switch series
         end
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','copper');
         calc_colours('clim',clim/2);
         img = img-imax/2-min(imgtemp);
@@ -383,9 +383,9 @@ switch series
         clim = imax;
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','copper');
         calc_colours('clim',clim/2);
         img = img-imax/2-min(imgtemp);
@@ -418,9 +418,9 @@ switch series
         clim = 1;
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','black_red');
         calc_colours('clim',clim/2);
         img = img-imax/2-min(imgtemp);
@@ -448,9 +448,9 @@ switch series
         clim = 1;
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','black_red');
         calc_colours('clim',clim/2);
         img = img-imax/2-min(imgtemp);
@@ -477,9 +477,9 @@ switch series
         clim = 1;
         calc_colours('ref_level',0);
         calc_colours('backgnd',[.8 .8 .8]);
-        calc_colours('image_field',[.6 .6 .6]); %|||cgomez custom field
-        calc_colours('image_field_val',fieldmark);    %|||cgomez custom field
-        calc_colours('image_field_idx',image_field);%|||cgomez custom field
+        calc_colours('image_field',[.6 .6 .6]);      %new calc_colours field
+        calc_colours('image_field_val',fieldmark);   %new calc_colours field
+        calc_colours('image_field_idx',image_field); %new calc_colours field
         calc_colours('cmap_type','blue_black_red');
         calc_colours('clim',clim); 
         img(image_field)=fieldmark;

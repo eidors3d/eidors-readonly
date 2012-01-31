@@ -34,7 +34,7 @@ switch nargin
 end
 
 % Define function constants
-% Viasys parameters SEEM TO BE INCORRECT; CHECK BEFORE USING
+% Viasys parameters
 VELEC   = 16;
 VRING   = 1;
 VINJ    = '{ad}'; 

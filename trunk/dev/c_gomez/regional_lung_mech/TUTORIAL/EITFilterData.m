@@ -55,10 +55,6 @@ K1=100;  % filter order
 K2=1;   % number of harmonics after peak for transition band
 K3 = 0.6641; % Manual frequency peak setting
 K4 = 0.9961-K3; % Manual frequency harmonic setting
-%     K3 = 0.6094;    % 1006-RERV c1
-%     K4 = 1.1930 -K3; % 1006-RERV c1
-%     K3 = 0.4063;    % 1004-RERV d5
-%     K4 = .8379 -K3; % 1004-RERV d5
 K5 = 0.1; % Bandpass Fstart/fpeak ratio
 
 % The sampling rate
@@ -88,7 +84,7 @@ switch filtertype
         else
             [fpeak,fharmonic,s] = EITCalcFrequencySpectrum(eitdata_in,range,false);
         end
-        Fstop1 = 0.01; %fpeak*K5;
+        Fstop1 = 0.01;
         Fstop2 = fpeak + K2*fharmonic;
         % Input of parameters
         d = fdesign.bandpass('n,fc1,fc2');
