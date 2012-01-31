@@ -1,0 +1,87 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2009 (data collection)
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+Five pigs before (e.g. 1-control.raw) and after induction of unilateral lung
+injury 
+(e.g. 1-injury.raw). Oleic acid was administered through the distal opening of a
+pulmonary artery catheter placed in a branch of the left pulmonary artery.
+<p>
+Data were published in: <br>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65/"
+   >Electrical impedance tomography in
+    monitoring experimental lung injury </a>
+  <i>Intensive Care Med.</i> 24:829-836, 1998.
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attribution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+ Use or presentation of these data must acknowledge
+In&eacute;z Frerichs, and cite this publication:
+<ul>
+I. Frerichs,
+G. Hahn,
+T. Schr&ouml;der,
+G. Hellige
+<a href="http://www.springerlink.com/content/yt01jjp4d8tj3e65/"
+   >Electrical impedance tomography in
+    monitoring experimental lung injury </a>
+  <i>Intensive Care Med.</i> 24:829-836, 1998.
+</ul>
+   <tr><th valign="top"> Format:
+       <td>
+EIT data were acquired with the Sheffield APT device Mk 1.
+Measurement duration 240 s, frame rate 1 Hz.
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td>
+Five pigs before (e.g. 1-control.raw) and after induction of unilateral lung
+injury 
+(e.g. 1-injury.raw). Oleic acid was administered through the distal opening of a
+pulmonary artery catheter placed in a branch of the left pulmonary artery.
+<pre>
+Ventilator settings:
+Volume-controlled ventilation
+PEEP: 5 cm H2O
+FIO2: 0.5
+Fresp: 12 /min
+The ventilator settings were not changed!
+</pre>
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./cg_data_2012.zip"
+            >Data (zip format)</a>
+       <hr>
+   <tr><th valign="top"> Images:
+       <td> <a href="../../"
+            >Tutorial example using these data</a>
+       <hr>
+   </table>
+
+
+<p>
+<small>
+    Last Modified: $Date: 2011-06-19 05:17:49 -0400 (Sun, 19 Jun 2011) $ by $Author: aadler $
+</small>
+</body></html>
+
