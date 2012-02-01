@@ -133,7 +133,8 @@ function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_n
 
    fmdl_mat_idx = {fmdl,mat_idx};
 
-% for the newest netgen, we can't call msz file unless there are actually points in  it
+% for the newest netgen, we can't call msz file unless there are 
+% actually points in  it (ie. empty msz files break netgen)
 function n_pts_elecs = write_geo_file(geofn, ptsfn, tank_height, tank_radius, ...
                         tank_maxh, elecs, extra_ng_code);
    fid=fopen(geofn,'w');
@@ -326,7 +327,7 @@ function write_header(fid,tank_height,tank_radius,maxsz,extra);
    extra_ng= '';
    for i=1:length(extra)-1
       if ~isempty( extra{i} )
-         extra_ng = sprintf(' %s and not (%s) ', ...
+         extra_ng = sprintf(' %s and (not %s) ', ...
             extra_ng,extra{i});
       end
    end
