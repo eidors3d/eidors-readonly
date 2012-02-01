@@ -31,9 +31,21 @@ EIDORS Analysis
 <li>Go to the 
     <a href="../../data_contrib/cg-2012-ards-recruitment/cg_2012_ards_recruitment.shtml"
         >Data Contrib</a> section, and 
-<b> download </b> the
+<b> download the
     <a href="../../data_contrib/cg-2012-ards-recruitment/cg_data_2012.zip"
-   >data</a> and save it to your working directory.
+   >data</a></b> and save it to your working directory.
+
+<li>Go to the 
+    <a href="../../data_contrib/cg-2012-ards-recruitment/cg_2012_ards_recruitment.shtml"
+        >Data Contrib</a> section, and 
+<b> download the 
+    <a href="../../data_contrib/cg-2012-ards-recruitment/cg_2012_ards_recruitment_code.zip"
+   >code</a></b> and save it to your working directory.
+
+ <p>
+ At this point, you should have 27 *.m files in the directory, and a directory structure
+ 'DATA/STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys' containing 9 *.get files.
+ <p>
 
 <li><b> Reconstruct images for each step of the protocol and save images </b>
 <pre>
