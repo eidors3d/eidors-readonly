@@ -34,3 +34,7 @@ Cleanup calc_colours to clean up handling of image_field
   - code also in eidors_colours, scale_for_display, 
   - probably need new colourbar functions
 ===================
+ng_mk_ ... models
+  - put in unit test code
+  - allow each to call with multiple extra parameters
+  - start to refactor electrode code
