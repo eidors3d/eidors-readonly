@@ -492,6 +492,7 @@ function do_unit_test
   end
 
 function fmdl= do_test_number(tn)
+   eidors_msg('ng_mk_cyl_models: UNIT_TEST #%d',tn,1);
    switch tn
    case 1;
 % Simple 3D cylinder. Radius = 1. No electrodes
