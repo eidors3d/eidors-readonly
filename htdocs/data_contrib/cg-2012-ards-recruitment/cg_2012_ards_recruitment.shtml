@@ -64,7 +64,7 @@ Data were acquired with the Goe-MF II (CareFusion, San Diego, CA) EIT system,
 using 16 electrodes with adjacent current stimulation and measurement. Electrodes
 were placed equidistantly around the thorax at the level of the parasternal 6th intercostal space.
 Electrode #1 was placed on the sternum and subsequent electrodes (#2, #3, ...) were placed
-on patient left of each other.
+sequentially starting to the patient left of electrode #1.
        <hr>
    <tr><th valign="top"> Methods:
        <td>
@@ -81,7 +81,7 @@ The patient details are as follows:
 Gender: F,
 Age: 5.9 years,
 Weight: 20kg,
-Condition: Primary ARDS of parainfluenza pneumonia etiology.
+Condition: Primary ARDS triggered by parainfluenza pneumonia.
        <hr>
    <tr><th valign="top"> Data:
        <td> <a href="./cg_data_2012.zip"
