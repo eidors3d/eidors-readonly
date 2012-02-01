@@ -25,3 +25,12 @@ EIDORS:TODO
      - work in 3D like laplace_image_prior
 
  - remove examples and integrate with tutorials
+
+===================
+Problems with calc_move_jacobian.m - only with 3D models
+===================
+Cleanup calc_colours to clean up handling of image_field
+   parameter.
+  - code also in eidors_colours, scale_for_display, 
+  - probably need new colourbar functions
+===================
