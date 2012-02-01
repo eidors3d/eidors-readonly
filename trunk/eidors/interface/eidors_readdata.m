@@ -10,7 +10,9 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 % Currently the list of supported file formats is:
 %    - MCEIT (Goettingen / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
-%    - Draeger "get" file format (older format for Draeger equipment)
+%    - Draeger "eit" file format (post 2008 format for Draeger equipment)
+%        format = "draeger-eit"
+%    - Draeger "get" file format (older - pre 2007 - format for Draeger equipment)
 %        format = "GET" or "draeger-get"
 %    - New Carefusion "EIT" file format
 %        format = "EIT" or "carefusion"
@@ -84,6 +86,9 @@ switch pre_proc_spec_fmt( format, fname );
       vv = draeger_get_readdata( fname );
 
       stim = basic_stim(16);
+
+   case 'draeger-get'
+
    case {'raw', 'sheffield'}
       vv = sheffield_readdata( fname );
 
@@ -150,6 +155,7 @@ function fmt = pre_proc_spec_fmt( format, fname );
    if strcmp(fmt,'eit')
       if is_eit_file_a_carefusion_file( fname )
          fmt= 'carefusion';
+      elseif is_eit_file_a_draeger_file( fname );
       else
          error('EIT file specified, but it doesn''t seem to be a Carefusion file')
       end
