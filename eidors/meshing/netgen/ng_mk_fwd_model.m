@@ -95,7 +95,16 @@ function mat_idx= mk_mat_indices( mat_ind);
   % put the largest material first
   [jnk, max_l] = max(mat_idx_l);
   new_idx = 1:length(mat_indices); new_idx(max_l) = [];
-  [mat_idx{:}] = mat_idx{[max_l, new_idx]};
+  ver= eidors_obj('interpreter_version');
+  if ~ver.isoctave && ver.ver < 7
+% STUPID MATLAB WORK AROUND
+     clear jnk;ii=1;for i=[max_l, new_idx];
+         jnk{ii} = mat_idx{i}; ii=ii+1;
+     end
+     mat_idx = jnk;
+  else
+     [mat_idx{:}] = mat_idx{[max_l, new_idx]};
+  end
 
 
 function gnd_node=    find_centre_node(vtx);
