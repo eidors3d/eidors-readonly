@@ -37,7 +37,7 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 %           - Output: [encodepage] = eidors_readdata( path,'DIXTAL_encode');
 %              where path= '/path/to/Criptografa_New.dll' (provided with system)
 %        format = 'DIXTAL'
-%           - output: [vv] = eidors_readdata( fname, 'DIXTAL', encodepage );
+%           - output: [vv] = eidors_readdata( fname, 'DIXTAL', [], encodepage );
 %
 % Usage
 % [vv, auxdata, stim ]= eidors_readdata( fname, format )
@@ -131,7 +131,7 @@ switch pre_proc_spec_fmt( format, fname );
       [vv] = dixtal_read_data( fname, frame_range, extra );
       auxdata = vv(1025:end,:);
       vv      = vv([1:1024],:);
-      stim= mk_stim_patterns(32,1,[0,4],[0,4], ... \
+      stim= mk_stim_patterns(32,1,[0,4],[0,4], ... 
               {'meas_current','no_rotate_meas'}, 1);
 
    otherwise
