@@ -107,9 +107,19 @@ if ~isfield(imdl,'rec_model');
  if 1 % BARTEK's Code - with a shape bug
     bound = calc_bound(fmdl);
     inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
+    ff = find(~inside);
+ else
+    z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
+    min_e = min(z_elec); max_e = max(z_elec);
+    elec_lev = [inf,inf,mean([min_e,max_e])];
+    iimg = mk_image(fmdl,1);
+    iimg.calc_colours.npoints = opt.imgsz(1)+2;
+% TODO Note that this won't work for sz(1) ~= sz(2)
+    inside =calc_slices(iimg,elec_lev);
+    inside(:,[1,end])= []; inside([1,end],:) = [];
+    ff= find(isnan(inside));
  end
  
- ff = find(~inside);
  rmdl.elems([2*ff, 2*ff-1],:)= [];
  rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
  rmdl.coarse2fine(:,ff)= [];
