@@ -76,7 +76,6 @@ function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, 
 
 Nsim = opt.Nsim;
 [vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
-bound = calc_bound(fmdl);
 
 mingrid = opt.minnode;
 maxgrid = opt.maxnode;
@@ -105,7 +104,10 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 %Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model');
- inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
+ if 1 % BARTEK's Code - with a shape bug
+    bound = calc_bound(fmdl);
+    inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
+ end
  
  ff = find(~inside);
  rmdl.elems([2*ff, 2*ff-1],:)= [];
