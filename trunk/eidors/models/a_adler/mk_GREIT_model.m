@@ -104,7 +104,7 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 %Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model');
- if 1 % BARTEK's Code - with a shape bug
+ if 0 % BARTEK's Code - with a shape bug
     bound = calc_bound(fmdl);
     inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
     ff = find(~inside);
@@ -112,12 +112,22 @@ if ~isfield(imdl,'rec_model');
     z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
     min_e = min(z_elec); max_e = max(z_elec);
     elec_lev = [inf,inf,mean([min_e,max_e])];
-    iimg = mk_image(fmdl,1);
-    iimg.calc_colours.npoints = opt.imgsz(1)+2;
+    x_pts = xgrid(1:end-1) + 0.5*diff(xgrid);
+    y_pts = ygrid(1:end-1) + 0.5*diff(ygrid); flipud(y_pts); %medical
+    fmdl.mdl_slice_mapper.x_pts = x_pts;
+    fmdl.mdl_slice_mapper.y_pts = y_pts; 
+    fmdl.mdl_slice_mapper.level = elec_lev;
+    slice = mdl_slice_mapper(fmdl,'elem');
+    inside = slice' ~= 0;
+    %iimg = mk_image(fmdl,1);
+    %iimg.calc_colours.npoints = opt.imgsz(1)+2;
 % TODO Note that this won't work for sz(1) ~= sz(2)
-    inside =calc_slices(iimg,elec_lev);
-    inside(:,[1,end])= []; inside([1,end],:) = [];
-    ff= find(isnan(inside));
+    %inside =calc_slices(iimg,elec_lev);
+    %inside(:,[1,end])= []; inside([1,end],:) = [];
+    ff= find(inside==0);
+    %inside(isnan(inside)) = 0;
+    %inside = logical(inside');
+    inside = inside(:);
  end
  
  rmdl.elems([2*ff, 2*ff-1],:)= [];
@@ -194,14 +204,17 @@ bound = b_nodes(idx,:);
 %    Let's try to reduce
 % the different segments are well visible if one plots 'th'
 % so let's detrend
-if size(bound,1) > 500
-    th = detrend(th,'linear');
-    th(2:end) = abs(diff(th));
-    m = mean(th(2:end));
-    th(1) = 3*m+1; % keep the first point
-    
-    bound = bound(th>3*m,:);
-end
+
+% Intention was good, but implementation bad. doesn't work for smooth
+% shapes
+% if size(bound,1) > 500
+%     th = detrend(th,'linear');
+%     th(2:end) = abs(diff(th));
+%     m = mean(th(2:end));
+%     th(1) = 3*m+1; % keep the first point
+%     
+%     bound = bound(th>3*m,:);
+% end
 
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
@@ -478,6 +491,9 @@ vi = fwd_solve(img);
 fmdl2 = mk_library_model('adult_male_16el');
 fmdl2.stimulation = stim;
 fmdl2.normalize_measurements = 1;
+
+opt.imgsz = [50 30];
+opt.square_pixels = 1;
 imdl = mk_GREIT_model(fmdl2,0.25,3,opt);
 
 img = inv_solve(imdl,vh, vi);
