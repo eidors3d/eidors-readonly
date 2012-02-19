@@ -112,11 +112,11 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 %Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model');
- if 0 % BARTEK's Code - with a shape bug
+ if 0 % old way
     bound = calc_bound(fmdl);
     inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
     ff = find(~inside);
- else
+ else % better way
     z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
     min_e = min(z_elec); max_e = max(z_elec);
     elec_lev = [inf,inf,mean([min_e,max_e])];
@@ -124,14 +124,7 @@ if ~isfield(imdl,'rec_model');
     fmdl.mdl_slice_mapper.level = elec_lev;
     slice = mdl_slice_mapper(fmdl,'elem');
     inside = slice' ~= 0;
-    %iimg = mk_image(fmdl,1);
-    %iimg.calc_colours.npoints = opt.imgsz(1)+2;
-% TODO Note that this won't work for sz(1) ~= sz(2)
-    %inside =calc_slices(iimg,elec_lev);
-    %inside(:,[1,end])= []; inside([1,end],:) = [];
     ff= find(inside==0);
-    %inside(isnan(inside)) = 0;
-    %inside = logical(inside');
     inside = inside(:);
  end
  
@@ -144,6 +137,7 @@ else
  % this assumes the original grid model was created the same way 
  inside = ismember(rmdl.elems,imdl.rec_model.elems,'rows');
  inside = inside(1:2:end);
+ % TODO: user MUST specify the inside array
 end
 
 imdl.solve = @solve_use_matrix;
