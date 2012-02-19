@@ -99,7 +99,8 @@ xgrid = linspace(mingrid(1),maxgrid(1),opt.imgsz(1)+1);
 ygrid = linspace(mingrid(2),maxgrid(2),opt.imgsz(2)+1);
 rmdl = mk_grid_model([],xgrid,ygrid);
 x_pts = xgrid(1:end-1) + 0.5*diff(xgrid);
-y_pts = ygrid(1:end-1) + 0.5*diff(ygrid); %flipud(y_pts); %medical
+y_pts = ygrid(1:end-1) + 0.5*diff(ygrid); 
+y_pts = fliplr(y_pts); %medical
 % NOTE: This controls the image resolution. If you want higher res, you
 % need to either specify it in opt.imgsz or manually overwrite (or remove)
 % the imdl.rec_model.mdl_slice_mapper.
@@ -112,7 +113,7 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 %Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model');
- if 0 % old way
+ if 1 % old way
     bound = calc_bound(fmdl);
     inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
     ff = find(~inside);
