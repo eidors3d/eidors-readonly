@@ -10,6 +10,8 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %    or
 %   fmdl.mdl_slice_mapper.x_pts - vector of points in horizontal direction
 %   fmdl.mdl_slice_mapper.y_pts - vector of points in vertical
+%     x_pts starts at the left, and y_pts starts at the top, this means
+%     that y_pts normally would run from max to min
 %
 %   fmdl.mdl_slice_mapper.level = Vector [1x3] of intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
@@ -305,8 +307,8 @@ function  [x,y] = grid_the_space( fmdl);
 
   xspace = []; yspace = [];
   try 
-     xspace = fmdl.mdl_slice_mapper.x_pts;
-     yspace = fmdl.mdl_slice_mapper.y_pts;
+     xspace =  fmdl.mdl_slice_mapper.x_pts;
+     yspace =  fmdl.mdl_slice_mapper.y_pts;
   end
 
   if isempty(xspace)
@@ -387,3 +389,15 @@ function do_unit_test
    unit_test_cmp('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
 
 
+% CHECK ORIENTATION
+   imdl=mk_common_model('a2c0',16);
+   img= mk_image(imdl,1); img.elem_data(26)=1.2;
+   subplot(221);show_fem(img);
+   subplot(222);show_slices(img);
+   img.fwd_model.mdl_slice_mapper.npx= 20;
+   img.fwd_model.mdl_slice_mapper.npy= 30;
+   img.fwd_model.mdl_slice_mapper.level= [inf,inf,0];
+   subplot(223);show_slices(img);
+   img.fwd_model.mdl_slice_mapper.x_pts = [linspace(-1,1,23),.5];
+   img.fwd_model.mdl_slice_mapper.y_pts = [linspace( 1,-1,34),.5];
+   subplot(224);show_slices(img);
