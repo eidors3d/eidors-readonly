@@ -98,6 +98,14 @@ end
 xgrid = linspace(mingrid(1),maxgrid(1),opt.imgsz(1)+1);
 ygrid = linspace(mingrid(2),maxgrid(2),opt.imgsz(2)+1);
 rmdl = mk_grid_model([],xgrid,ygrid);
+x_pts = xgrid(1:end-1) + 0.5*diff(xgrid);
+y_pts = ygrid(1:end-1) + 0.5*diff(ygrid); %flipud(y_pts); %medical
+% NOTE: This controls the image resolution. If you want higher res, you
+% need to either specify it in opt.imgsz or manually overwrite (or remove)
+% the imdl.rec_model.mdl_slice_mapper.
+rmdl.mdl_slice_mapper.x_pts = x_pts;
+rmdl.mdl_slice_mapper.y_pts = y_pts;
+rmdl.mdl_slice_mapper.level = [inf inf 0];
 x_avg = conv2(xgrid, [1,1]/2,'valid');
 y_avg = conv2(ygrid, [1,1]/2,'valid');
 [x,y] = ndgrid( x_avg, y_avg);
@@ -112,10 +120,7 @@ if ~isfield(imdl,'rec_model');
     z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
     min_e = min(z_elec); max_e = max(z_elec);
     elec_lev = [inf,inf,mean([min_e,max_e])];
-    x_pts = xgrid(1:end-1) + 0.5*diff(xgrid);
-    y_pts = ygrid(1:end-1) + 0.5*diff(ygrid); flipud(y_pts); %medical
-    fmdl.mdl_slice_mapper.x_pts = x_pts;
-    fmdl.mdl_slice_mapper.y_pts = y_pts; 
+    fmdl.mdl_slice_mapper = rmdl.mdl_slice_mapper;
     fmdl.mdl_slice_mapper.level = elec_lev;
     slice = mdl_slice_mapper(fmdl,'elem');
     inside = slice' ~= 0;
