@@ -25,6 +25,9 @@ else
    error('check nargin');
 end
 
+% this had too many side effects
+% cmdl = set_pixel_pos(cmdl,xvec,yvec);% same for 2d and 3d
+
 if ~isempty( fmdl)
    if nargin ==3
       c2f= calc_c2f_2d( fmdl, xvec, yvec);
@@ -140,7 +143,14 @@ function cmdl= mk_3d_grid(xvec, yvec, zvec);
    params= ceil(( 1:e )/6);
    cmdl.coarse2fine = sparse(1:e,params,1,e,max(params));
 
-
+function mdl = set_pixel_pos(mdl, xvec, yvec)
+   x = xvec(1:end-1) + 0.5*diff(xvec);
+   y = yvec(1:end-1) + 0.5*diff(yvec);
+   y = flipud(y); %get the medical orientation right
+   mdl.mdl_slice_mapper.x_pts = x;
+   mdl.mdl_slice_mapper.y_pts = y;
+   
+   
 function in_d_pts = calc_in_d_pts( d_pts, dvec);
    l1dvec= length(dvec)-1;
    in_d_pts = cell(l1dvec,1);
