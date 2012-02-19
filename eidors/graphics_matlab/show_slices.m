@@ -33,15 +33,14 @@ function out_img= show_slices( img, levels )
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
-np = calc_colours('npoints');
-try   np = img(1).calc_colours.npoints;
-end
-
 sep = 0;
 try sep = img(1).show_slices.sep;
 end
 
 
+% TODO: because we wanted (back in 2005) to let show_slices
+% handle lots of different scenarios (calling with images and
+% without. It is now crufty ... and should be changed.
 do_calc_slices = 0;
 try if strcmp(img(1).type,'image'); do_calc_slices= 1; end;end 
 
@@ -78,8 +77,9 @@ if do_calc_slices
    rimg= calc_slices( img, levels(:,1:3) );
 else
    rimg= img;
-   np = size(rimg,1);
 end
+% jnk so that matab doesn't put larger dims in npy
+   [npy,npx,jnk] = size(rimg);
 
 
 n_frames = size(rimg,3);
@@ -100,10 +100,11 @@ else
    img_rows = ceil(img_rows/n_levels)*n_levels; % Ensure divisible by n_levels
 end
 % here include the separation
-r_img = NaN*ones(img_rows*np + (img_rows-1)*sep, ...
-    img_cols*np + (img_cols-1)*sep );
+r_img = NaN*ones(img_rows*npy + (img_rows-1)*sep, ...
+                 img_cols*npx + (img_cols-1)*sep );
 
-idx= (-np:-1)+1;
+idxx= (-npx:-1)+1;
+idxy= (-npy:-1)+1;
 imno= 1;
 for img_no = 1:n_frames
    for lev_no = 1:n_levels
@@ -115,7 +116,8 @@ for img_no = 1:n_frames
          i_row= (ceil( img_no / img_cols) -1) * n_levels + lev_no ;
       end
 % disp([imno, vert_rows, img_cols, img_rows, img_no, lev_no, i_col, i_row]);
-      r_img(i_row*np + idx + sep*(i_row-1), i_col*np + idx +sep*(i_col-1)) = rimg(:,:,img_no,lev_no);
+      r_img(i_row*npy + idxy + sep*(i_row-1), ...
+            i_col*npx + idxx + sep*(i_col-1)) = rimg(:,:,img_no,lev_no);
       imno= imno + 1; 
    end
 end

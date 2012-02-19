@@ -38,3 +38,20 @@ ng_mk_ ... models
   - put in unit test code
   - allow each to call with multiple extra parameters
   - start to refactor electrode code
+==================
+noser_image_prior
+  - may fail on this line (change in spdiags in new matlab)
+    Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
+=================
+There is an inconsistency between
+   mk_grid_models - which has its own pixels
+and
+   calc_slices - which does its own interpolation
+Generally, this means that the pictures from calc_slices
+are even smoother than they should be. 
+
+also show_slices is crufty
+% TODO: because we wanted (back in 2005) to let show_slices
+% handle lots of different scenarios (calling with images and
+% without. It is now crufty ... and should be changed.
+=================
