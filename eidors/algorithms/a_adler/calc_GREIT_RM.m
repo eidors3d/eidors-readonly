@@ -17,6 +17,8 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 %   options.meshsz = [xmin xmax ymin ymax] size of mesh
 %      defaults to [-1 1 -1 1]
 %   options.imgsz  = [xsz ysz] size of the reconstructed image in pixels
+%   options.noise_covar [optional]
+%       covariance matrix of data noise
 % 
 %
 % (C) 2009 Andy Adler. Licenced under GPL v2 or v3
@@ -36,20 +38,28 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
    D = desired_soln( xyc, radius, opt);
 
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
-       [RM] = calc_RM(Y,D,weight);
+       [RM] = calc_RM(Y,D,weight, opt);
    else
        error('not coded yet');
    end
 
-function RM = calc_RM(Y, D, noiselev)
+function RM = calc_RM(Y, D, noiselev, opt)
 
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0
    N_meas = size(Y,1);
-   Y = [Y, noiselev*eye(N_meas)];
-   D = [D,          zeros(size(D,1),N_meas)];
 
-   RM = D*Y'/(Y*Y');
+   % This implements RM = D*Y'/(J*Sx*J + Sn);
+   Sn = speye(N_meas) .* opt.noise_covar; % Noise covariance
+   RM = D*Y'/(Y*Y' + noiselev^2*Sn);
+   % This implements RM = D*Y'/(Y*Y');
+   if 0
+      Y = [Y, noiselev*eye(N_meas)];
+      D = [D,          zeros(size(D,1),N_meas)];
+
+      RMold = D*Y'/(Y*Y');
+      if norm(RM-RMold,'fro')/norm(RM,'fro') > 1e-10; warning('not OK'); end
+   end
 
 function PSF= desired_soln(xyc, radius, opt)
    c_obj = {xyc, radius, opt};
@@ -84,3 +94,7 @@ function PSF= desired_soln(xyc, radius, opt)
        if ~isfield(opt, 'normalize'), opt.normalize = 1; end
        if ~isfield(opt, 'meshsz'),    opt.meshsz = [-1 1 -1 1]; end
        if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
+       if ~isfield(opt, 'noise_covar'),
+                     opt.noise_covar = 1;
+       end
+%   options.data_covariance [optional]
