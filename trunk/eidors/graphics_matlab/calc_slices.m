@@ -17,7 +17,12 @@ function rimg = calc_slices( img, levels );
 %   img.calc_slices.levels % an alternative way to specify levels
 %
 % rimg= np x np x I x L where np is 128 by default
-% np can be adjusted by calc_colours('npoints')
+%
+%   np can be adjusted by calc_colours('npoints')
+%     or by setting
+%   img.fwd_model.mdl_slice_mapper.{npx, npy}
+%        see help of mdl_slice_mapper for more options
+%
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -67,9 +72,10 @@ function rimg = calc_this_slice( img, levels, np)
     num_levs= size(levels,1);
     if isfield(img,'elem_data')
        [elem_data, n_images] = get_img_data(img);
-       rimg=zeros(np,np,n_images,num_levs);
 
-       for lev_no = 1:num_levs
+       clear rimg;
+       for lev_no = fliplr(1:num_levs)
+           % start at max so memory is allocated once
           level= levels( lev_no, 1:3 );
 
           rimg(:,:,:,lev_no) = calc_image_elems( elem_data, level, fwd_model, np);
@@ -78,12 +84,12 @@ function rimg = calc_this_slice( img, levels, np)
        node_data= [img.node_data];
        if size(node_data,1)==1; node_data=node_data';end
        n_images= size(node_data,2);
-       rimg=zeros(np,np,n_images,num_levs);
+       clear rimg;
 
-       for lev_no = 1:num_levs
+       for lev_no = fliplr(1:num_levs)
           level= levels( lev_no, 1:3 );
-
-          rimg(:,:,:,lev_no) = calc_image_nodes( node_data, level, fwd_model, np);
+          rimg(:,:,:,lev_no) = ...
+             calc_image_nodes( node_data, level, fwd_model, np);
        end
     else
        error('img does not have a data field');
@@ -104,22 +110,26 @@ function rimg = calc_this_slice( img, levels, np)
 % Calculate an image by mapping it onto the node_ptr matrix
 % This makes a blocky image to nearest node -> no longer used
 function rimg= calc_image_nearestnodes( node_data, level, fwd_model, np);
-   fwd_model.mdl_slice_mapper.npx  = np;
-   fwd_model.mdl_slice_mapper.npy  = np;
-   fwd_model.mdl_slice_mapper.level= level;
+   if ~isfield(fwd_model,'mdl_slice_mapper');
+      fwd_model.mdl_slice_mapper.npx  = np;
+      fwd_model.mdl_slice_mapper.npy  = np;
+      fwd_model.mdl_slice_mapper.level= level;
+   end
    node_ptr = mdl_slice_mapper( fwd_model, 'node' );
 
    backgnd= NaN;
    n_images= size(node_data,2);
    rval= [backgnd*ones(1,n_images); node_data];
-   rimg= reshape( rval(node_ptr+1,:), np,np, n_images );
+   rimg= reshape( rval(node_ptr+1,:), [size(node_ptr), n_images]);
 
 % Calculate an image by interpolating it onto the elem_ptr matrix
 function rimg= calc_image_nodes( node_data, level, fwd_model, np)
 
-   fwd_model.mdl_slice_mapper.npx  = np;
-   fwd_model.mdl_slice_mapper.npy  = np;
-   fwd_model.mdl_slice_mapper.level= level;
+   if ~isfield(fwd_model,'mdl_slice_mapper');
+      fwd_model.mdl_slice_mapper.npx  = np;
+      fwd_model.mdl_slice_mapper.npy  = np;
+      fwd_model.mdl_slice_mapper.level= level;
+   end
 
    nd_interp= mdl_slice_mapper( fwd_model, 'nodeinterp' );
    elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
@@ -141,16 +151,18 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np)
 % Calculate an image by mapping it onto the elem_ptr matrix
 function rimg= calc_image_elems( elem_data, level, fwd_model, np)
 
-   fwd_model.mdl_slice_mapper.npx  = np;
-   fwd_model.mdl_slice_mapper.npy  = np;
-   fwd_model.mdl_slice_mapper.level= level;
+   if ~isfield(fwd_model,'mdl_slice_mapper');
+      fwd_model.mdl_slice_mapper.npx  = np;
+      fwd_model.mdl_slice_mapper.npy  = np;
+      fwd_model.mdl_slice_mapper.level= level;
+   end
    elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
 
    backgnd= NaN;
    n_images= size(elem_data,2);
    rval= backgnd*ones(size(elem_data)+[1,0]);
    rval(2:end,:) = elem_data;
-   rimg= reshape( rval(elem_ptr+1,:), np,np, n_images );
+   rimg= reshape( rval(elem_ptr+1,:), [size(elem_ptr), n_images]);
 
 
 function  rimg = filter_image(rimg, filt);
@@ -234,3 +246,37 @@ function do_unit_test
    imc = calc_slices(img); 
    unit_test_cmp('cs mult 2', imc, cat(3,imt,imt,imt));
 
+   imdl = mk_common_model('c2t2',16);
+   img = mk_image(imdl,1);
+   imc = calc_slices(img);
+   unit_test_cmp('size e  1', size(imc), [64,64]);
+
+   img.calc_colours.npoints = 40;
+   imc = calc_slices(img);
+   unit_test_cmp('size e  2', size(imc), [40,40]);
+
+   img.fwd_model.mdl_slice_mapper.npx = 22;
+   img.fwd_model.mdl_slice_mapper.npy = 32;
+   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
+   imc = calc_slices(img);
+   unit_test_cmp('size e  3', size(imc), [32,22]);
+
+   img.fwd_model = rmfield(img.fwd_model,'mdl_slice_mapper');
+   img.fwd_model.mdl_slice_mapper.x_pts = linspace(-150,150,20);
+   img.fwd_model.mdl_slice_mapper.y_pts =-linspace(-150,150,23);
+   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
+   imc = calc_slices(img);
+   unit_test_cmp('size e  4', size(imc), [23,20]);
+
+   img = rmfield(img,'elem_data');
+   img.node_data =  ones(size(img.fwd_model.nodes,1),1);
+   img.node_data =  (1:size(img.fwd_model.nodes,1))';
+   img.fwd_model = rmfield(img.fwd_model,'mdl_slice_mapper');
+   imc = calc_slices(img);
+   unit_test_cmp('size n  1', size(imc), [40,40]);
+
+   img.fwd_model.mdl_slice_mapper.x_pts = linspace(-150,150,20);
+   img.fwd_model.mdl_slice_mapper.y_pts =-linspace(-150,150,23);
+   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
+   imc = calc_slices(img);
+   unit_test_cmp('size n  2', size(imc), [23,20]);
