@@ -86,7 +86,37 @@ Reconstructions removing
 </center>
 
 
+<h3>
+Electrode Errors with GREIT
+</H3>
 
+Electrode error management with GREIT is 
+essentially the same. The key difference is that
+GREIT requires a noise covariance, not the
+noise inverse covariance.
+<p>
+Create a GREIT model.
+<pre>
+<!--#include virtual="electrode_errors04.m" -->
+</pre>
+
+Basic GREIT reconstruction
+<pre>
+<!--#include virtual="electrode_errors05.m" -->
+</pre>
+<center><img src="electrode_errors05a.jpg">
+<br><i>Figure:</i>
+Basic GREIT reconstruction
+</center>
+
+GREIT with single electrode errors
+<pre>
+<!--#include virtual="electrode_errors06.m" -->
+</pre>
+<center><img src="electrode_errors06a.jpg">
+<br><i>Figure:</i>
+Basic GREIT reconstruction
+</center>
 
 
 </td></tr></table>
