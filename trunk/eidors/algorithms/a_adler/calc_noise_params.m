@@ -9,10 +9,14 @@ function params = calc_noise_params(imdl, vh, vi )
 
 % NOTE THAT WE ASSUME A LINEAR ALGORITHM FOR THIS MEASURE
 
-% Add random noise
-Nnoise = 1000;
-noise = 0.01*std(vh)*randn(size(vh,1),Nnoise);
-vhn= vh*ones(1,Nnoise) + noise;
+if 0 % old code with random noise
+   Nnoise = 1000;
+   noise = 0.01*std(vh)*randn(size(vh,1),Nnoise);
+   vhn= vh*ones(1,Nnoise) + noise;
+else % use independent noise model on each channel
+   noise = 0.01*std(vh)*speye(size(vh,1));
+   vhn= vh*ones(1,size(vh,1)) + noise;
+end
 
 signal_y = calc_difference_data( vh, vi,  imdl.fwd_model);
 noise_y  = calc_difference_data( vh, vhn, imdl.fwd_model);
@@ -20,18 +24,29 @@ noise_y  = calc_difference_data( vh, vhn, imdl.fwd_model);
 signal_x = inv_solve(imdl, vh, vi);  signal_x = signal_x.elem_data;
 noise_x  = inv_solve(imdl, vh, vhn); noise_x  = noise_x.elem_data;
 
-
-% This is how we defined it in GREIT 2009.
-% It could also be defined as 
-%    signal_x = mean(   (signal_x),1);
-% and this may make more sense for lots of ringing. In the centre, however, this is probably OK.
-
 signal_x = mean(abs(signal_x),1);
 noise_x  = mean(std(noise_x));
 snr_x = signal_x / noise_x;
 
 signal_y = mean(abs(signal_y),1);
-noise_y  = mean(std(noise_y));
+noise_y  = mean(std(noise_y)); 
 snr_y = signal_y / noise_y;
 
 params= [snr_y(:)./snr_x(:)]';
+
+% NOTES on the calculations: AA - Feb 20, 2012
+% SNR = mean(abs(x)); VAR = 
+% ym= E[y]                
+% Sy= E[(y-ym)*(y-ym)'] = E[y*y'] - ym*ym'
+% ny = sqrt(trace(Sy))
+% xm= E[x]  = E[R*y] = R*E[y] = R*ym
+% Sx= E[(x-xm)*(x-xm)'] = E[x*x'] - xm*xm'
+%   = E[R*ym*ym'*R'] = R*E[ym*ym']*R' = R*Sy*R'
+% nx = sqrt(trace(Sx))
+% 
+% signal = mean(abs(x));
+% 
+% In this case, these are exactly the same:
+%    noise_x  = mean(std(noise_x));
+%    noise_x  = sqrt(mean(noise_x.^2,2));
+
