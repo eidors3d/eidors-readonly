@@ -22,7 +22,19 @@ if ret1 == 1 || ~any(findstr(ret2, 'ImageMagick'))
    eidors_msg(['This function requires the ImageMagick convert program ' ...
                ' be installed and on the path.' ...
                ' On windows, we recommend you install it as part of ' ...
-               ' cygwin (www.cygwin.com)']);
+               ' cygwin (www.cygwin.com). Continuing without this sw.'],1);
+   ext = find(filename=='.'); ext = ext(end);
+   try;  ext = filename(ext+1:end);
+   catch; error('unable to get filename extension');
+   end
+   if strcmp(ext,'jpg'); ext='jpeg';  end
+   if strcmp(ext,'ps');  ext='psc2';  end
+   if strcmp(ext,'eps'); ext='epsc2'; end
+
+   posn = get(gcf,'PaperPosition');
+   set(gcf,'PaperPosition',[posn(1:3), posn(3)*pagehwr]);
+   print(['-d',ext],filename);
+   set(gcf,'PaperPosition',[posn(1:4)]);
    return
 end
 
