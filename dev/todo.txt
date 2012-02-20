@@ -55,3 +55,12 @@ also show_slices is crufty
 % handle lots of different scenarios (calling with images and
 % without. It is now crufty ... and should be changed.
 =================
+one important feature would be to add code introspection.
+This would allow you to know if a given algorithm can support
+   linear reconstruction, etc.
+
+One way to enfore this is to add modes to every piece of code
+   function('UNIT_TEST')
+   function('CAPABILITY_LIST')
+etc.
+==================
