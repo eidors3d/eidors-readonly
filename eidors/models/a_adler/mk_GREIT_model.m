@@ -133,7 +133,24 @@ if ~isfield(imdl,'rec_model');
  rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
  rmdl.coarse2fine(:,ff)= [];
  
+ % ADD electrode locations
+
+ nodes = rmdl.nodes;
+ for i = flipud(1:numel(fmdl.electrode))
+    x_elec = mean(fmdl.nodes( [fmdl.electrode(i).nodes], 1));
+    y_elec = mean(fmdl.nodes( [fmdl.electrode(i).nodes], 2));
+    dist = (nodes(:,1)-x_elec).^2 + (nodes(:,2)-y_elec).^2;
+    [jnk,e_node]= min(dist);
+    elec(i).z_contact = 0.001;
+    elec(i).nodes     = e_node;
+ end
+ rmdl.electrode = elec;
+ 
  imdl.rec_model = rmdl;
+ 
+
+ 
+ 
 else
  % this assumes the original grid model was created the same way 
  inside = ismember(rmdl.elems,imdl.rec_model.elems,'rows');
