@@ -5,7 +5,7 @@
 <h2>One line starter program for EIDORS</h2>
 
 To run this tutorial, you need to 
-<a href="../download.shtml">download and install</a>
+<a href="../../download.shtml">download and install</a>
 EIDORS and then run this command in a matlab
 (or octave) session.
 <pre width="40">
