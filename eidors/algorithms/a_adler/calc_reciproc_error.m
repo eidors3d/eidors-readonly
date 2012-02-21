@@ -9,6 +9,8 @@ function meas_icov = calc_reciproc_error(inv_model, data )
 % as tau increases, effect is less. There is almost
 % no effect when tau > 1e-4
 %
+% also accepts a fwd_model parameter
+%
 % Reference: Real-time management of faulty electrodes in
 %  electrical impedance tomography AE Hartinger, R Guardo,
 %  A Adler, H Gagnon. IEEE T BME 2008.
@@ -19,7 +21,11 @@ function meas_icov = calc_reciproc_error(inv_model, data )
 try;    tau = inv_model.calc_reciproc_error.tau;
 catch;  tau = 2.5e-6;                            end
 
-fmdl = inv_model.fwd_model;
+switch inv_model.type
+  case 'inv_model'; fmdl = inv_model.fwd_model;
+  case 'fwd_model'; fmdl = inv_model;
+  otherwise;        error('calc_reciproc_error: require model input');
+end
 
 data = calc_difference_data( 0, data, fmdl);
 
