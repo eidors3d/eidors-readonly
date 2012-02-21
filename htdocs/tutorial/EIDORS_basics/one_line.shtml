@@ -1,0 +1,51 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>One line starter program for EIDORS</h2>
+
+To run this tutorial, you need to 
+<a href="../download.shtml">download and install</a>
+EIDORS and then run this command in a matlab
+(or octave) session.
+<pre width="40">
+run /path/to/eidors3d/startup.m
+</pre>
+
+
+<h3> 
+Step 1: Get data
+</h3>
+
+EIDORS provides <a href="../../data_contrib.shtml"
+>lots of data</a> to get you started. Here we choose
+a small file in the <tt>sample_data/</tt> directory.
+<p>
+Type:
+<pre>
+load montreal_data_1995
+</pre>
+
+<h3> 
+Step 2: Reconstruct and display image
+</h3>
+
+<pre>
+show_slices(inv_solve(mk_common_model('d2c2',16),zc_h_demo4,zc_demo4)) 
+</pre>
+
+<center>
+<img src="one_line01a.png">
+<br><i> Figure:</i>
+Output image showing images of a non-conductive
+object moving across a saline tank.
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
