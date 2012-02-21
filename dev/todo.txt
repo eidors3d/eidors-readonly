@@ -64,3 +64,107 @@ One way to enfore this is to add modes to every piece of code
    function('CAPABILITY_LIST')
 etc.
 ==================
+NEW DIRECTORY STRUCTURE:
+ ON THE PATH:
+   eidors/
+     - license, startup
+
+   eidors/models
+     - entry level functions for models
+
+   eidors/meshing
+   eidors/meshing/distmesh
+   eidors/meshing/gmsh
+   eidors/meshing/netgen
+
+   eidors/solvers
+     - entry level functions for solvers
+   eidors/solvers/inverse
+   eidors/solvers/forward
+
+   eidors/algorithms
+     - functions to process EIT images (eg. find_frc)
+
+   eidors/examples
+   eidors/sample_data
+     - a small collection of sample data to play with
+
+   eidors/tools
+     - unit_tests
+     - mesh fixers
+     - evaluation programs
+     - test if models have standard fields
+
+   eidors/interface
+     - read and write file formats
+     - interface to other software (ie Toast)
+
+   eidors/graphics
+     - general graphics functions
+   eidors/graphics/matlab
+   eidors/graphics/vtk
+
+
+LOW LEVEL DIRECTORIES
+
+   eidors/arch
+     - architecture specific (ie mex files)
+   eidors/arch/octave
+   eidors/arch/matlab
+
+   eidors/cache
+     - default, but let users choose where to cache
+
+   eidors/deprecated
+     - functions named for particular people (aa, np, etc)
+
+ NOT THE PATH:
+   eidors/compatibility
+     - compatibility for old eidors code. Stuff that has
+       was taken out of deprecated. (not for 3.6)
+
+   eidors/tests 
+   dev/name
+    - place for work before it moves to release
+    - here we have individually named directories
+   htdocs/ ...
+
+OLD:
+   eidors/
+   eidors/algorithms
+   eidors/algorithms/t_dai
+   eidors/algorithms/b_grychtol
+   eidors/algorithms/m_crabb
+   eidors/algorithms/a_borsic
+   eidors/algorithms/d_stephenson
+   eidors/algorithms/b_sawicki
+   eidors/algorithms/a_adler
+   eidors/algorithms/b_lionheart
+   eidors/algorithms/b_graham
+   eidors/algorithms/c_gomez
+   eidors/algorithms/n_polydorides
+   eidors/algorithms/m_vauhkonen
+   eidors/arch
+   eidors/arch/octave
+   eidors/arch/octave/x86_64-pc-linux-gnu
+   eidors/arch/octave/pc
+   eidors/arch/matlab
+   eidors/arch/matlab/dll
+   eidors/tests
+   eidors/sample_data
+   eidors/examples
+   eidors/tools
+   eidors/meshing
+   eidors/meshing/distmesh
+   eidors/meshing/gmsh
+   eidors/meshing/netgen
+   eidors/models
+   eidors/models/cache
+   eidors/models/s_murphy
+   eidors/models/b_grychtol
+   eidors/models/d_stephenson
+   eidors/models/a_adler
+   eidors/models/m_vauhkonen
+   eidors/graphics_matlab
+   eidors/interface
+   eidors/graphics_vtk
