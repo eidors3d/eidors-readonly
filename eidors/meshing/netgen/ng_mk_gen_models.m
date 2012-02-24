@@ -1,4 +1,4 @@
-function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj);
+function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj, extra_ng_code);
 % NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
 %[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);
 %
@@ -47,12 +47,12 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, ele
 
 if isstr(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin < 4; extra_ng_code = {'',''}; end
-cache_obj = { shape_str, elec_pos, elec_shape, elec_obj };
+if nargin <= 4; extra_ng_code = ''; end
+cache_obj = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
 
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_gen_models' );
 if isempty(fmdl);
-   fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);
+   fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code);
    eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_gen_models', fmdl);
    eidors_cache('boost_priority', +2); % return values
@@ -61,7 +61,8 @@ end
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
 
-function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj);
+function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, ...
+                         elec_obj, extra_ng_code);
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
@@ -71,7 +72,7 @@ function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_ob
    is2D = 0;
    [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );
 
-   n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs);
+   n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs, extra_ng_code);
    if n_pts == 0 
       call_netgen( geofn, meshfn);
    else
@@ -94,7 +95,8 @@ function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, elec_ob
    fmdl_mat_idx = {fmdl,mat_idx};
 
 % for the newest netgen, we can't call msz file unless there are actually points in  it
-function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
+function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
+                          elecs, extra_ng_code);
    fid=fopen(geofn,'w');
    write_header(fid, shape_str);
 
@@ -133,6 +135,7 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, elecs);
    end
 
    % SHOULD tank_maxh go here?
+   fprintf(fid,'%s;\n', extra_ng_code);
    fprintf(fid,'tlo mainobj;\n');
    for i=1:n_elecs
       if any(i == pts_elecs_idx); continue; end
