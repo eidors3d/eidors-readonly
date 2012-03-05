@@ -327,6 +327,9 @@ function [vv,curr,volt,auxdata] = mceit_readdata( fname );
    end
 
    dd= reshape( d, 256, length(d)/256);
+   if dd(39,1)==0 %104 measurements per frame
+       dd=transfer104_208(dd);
+   end
    vv= untwist(dd);
 
    curr=0.00512*dd(209:224,:);  % Amps
@@ -334,6 +337,49 @@ function [vv,curr,volt,auxdata] = mceit_readdata( fname );
    auxdata= dd(241:255,:);
    auxdata= auxdata(:);
    %input impedance=voltage./current-440;        Ohm
+
+function array208=transfer104_208(array104),
+% The order in the 208-vector is
+% Index   Inject    Measure Pair
+% 1         1-2        3-4        (alternate pair is 3-4, 1-2, at location 39)
+% 2         1-2        4-5
+% 3         1-2        5-6
+% ¡­
+% 13        1-2        15-16
+% 14        2-3        4-5
+% 15        2-3        5-6
+% ¡­
+% 26        2-3        16-1
+% 27        3-4        5-6
+% ¡­
+% 39        3-4        1-2
+% 40        4-5        6-7
+% ¡­
+
+ind=[39,51,63,75,87,99,111,123,135,147,159,171,183,52,64,76, ...
+     88,100,112,124,136,148,160,172,184,196,65,77,89,101,113, ...
+     125,137,149,161,173,185,197,78,90,102,114,126,138,150,162, ...
+     174,186,198,91,103,115,127,139,151,163,175,187,199,104,116, ...
+     128,140,152,164,176,188,200,117,129,141,153,165,177,189, ...
+     201,130,142,154,166,178,190,202,143,155,167,179,191,203, ...
+     156,168,180,192,204,169,181,193,205,182,194,206,195,207,208];
+ro=[1:13, 14:26, 27:38, 40:50, 53:62, 66:74, 79:86, 92:98, ...
+    105:110,118:122,131:134,144:146,157:158,170:170];
+
+[x,y]=size(array104);
+if x~=256 && y~=256,
+    eidors_msg(['eidors_readdata: expectingin an input array ', ...
+                'of size 208*n']);
+    return;
+elseif y==256,
+    array104=array104';
+    y=x;
+end
+array208=array104;
+for i=1:y,
+    array208(ind,i)=array104(ro,i);    
+end
+   
 
 % measurements rotate with stimulation, we untwist them
 function vv= untwist(dd);
