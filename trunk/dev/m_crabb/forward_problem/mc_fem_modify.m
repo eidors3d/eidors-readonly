@@ -76,7 +76,7 @@ elseif(strcmp(mdl.mc_type,'tet10'));
          [boundstruc,elemstruc,nodestruc,newnodes] = prefine3dquadboundary(boundstruc,elemstruc,nodestruc,newnodes,jj,elembound);        
     end
 else
-    error('Element type not recognised');
+    error('mc_fem_modify: Element type ("%s") not recognised',mdl.mc_type);
 end
 
 %Re-assign node, element and boundary structures
