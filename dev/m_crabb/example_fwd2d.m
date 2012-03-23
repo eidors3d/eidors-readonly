@@ -15,9 +15,13 @@ v1 = fwd_solve(img1); v1=v1.meas;
 
 fmdl.mc_type    = 'tri6'; % linear case
 img2 = mk_image(fmdl,1);
-v2 = fwd_solve(img2); v2=v2.meas;
+img2.fwd_solve.get_all_meas = 1;
+v2 = fwd_solve(img2); v2all = v2.volt; v2=v2.meas;
+img2n = rmfield(img2,'elem_data');
+vtxidx = 1:size(fmdl.nodes,1);
+img2n.node_data = v2all(vtxidx,1);
 
-fmdl.mc_type    = 'tri20'; % linear case
+fmdl.mc_type    = 'tri10'; % linear case
 img3 = mk_image(fmdl,1);
 v3 = fwd_solve(img3); v3=v3.meas;
 
