@@ -1,0 +1,67 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>The effect of contact impedance</H2>
+
+
+The contact impedance parameter <tt>fmdl.electrode(idx).z_contact</tt>
+controls the impedance of the material out of which the 
+electrode is contructed. <tt>z_contact</tt> is not the impedance
+of the electrode cable. It also has no effect for point
+electrode models.
+
+<h3> Simulation Model</H3>
+<pre>
+<!--#include virtual="contact_impedance01.m" -->
+</pre>
+
+<center>
+<img src="contact_impedance01a.png">
+<br><i> Figure:</i>
+A 2D finite element model with four electrodes
+and current simulation across horizontal pairs.
+</center>
+
+<pre>
+<!--#include virtual="contact_impedance02.m" -->
+</pre>
+
+<center>
+<img src="contact_impedance02a.png">
+<br><i> Figure:</i>
+Voltage distribution from horizontally opposite stimulation
+</center>
+
+<h3>Current Near Top Electrode</h3>
+<pre>
+<!--#include virtual="contact_impedance03.m" -->
+</pre>
+
+<center>
+<img src="contact_impedance03a.png">
+<br><i> Figure:</i>
+Current near top electrode
+</center>
+
+<h3>Current Stream Lines</h3>
+<pre>
+<!--#include virtual="contact_impedance04.m" -->
+</pre>
+
+<center>
+<img src="contact_impedance04a.png">
+<img src="contact_impedance04b.png">
+<img src="contact_impedance04c.png">
+<br><i> Figure:</i>
+Current near top electrode
+for three different <tt>z_contact</tt> values
+</center>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
