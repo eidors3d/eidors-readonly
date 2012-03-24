@@ -260,6 +260,40 @@ function hh=show_2d_fem( mdl, colours, imgno )
   szcolr = size(colours);
   if nargin<3;
       imgno = 1;
+      if szcolr(1:2)>1; 
+          eidors_msg('warning: show_fem only shows first image',1);
+      end
+  end
+
+  if szcolr(1:2) == [1,3]  % no reconstruction  - just use white
+     hh= patch('Faces',mdl.elems,'Vertices',mdl.nodes, 'facecolor',colours);
+  elseif size(colours,1) == num_elems(mdl);
+     colours = squeeze(colours(:,imgno,:));
+
+     ver= eidors_obj('interpreter_version');
+     if ver.isoctave && size(colours,2)==1 %% Octave bug on CDataMapping
+        colours = colours /(2*calc_colours('mapped_colour')+1);     
+     end
+
+     hh= patch('Faces',mdl.elems,'Vertices',mdl.nodes, 'facecolor','flat', ...
+               'facevertexcdata',colours,'CDataMapping','direct'); 
+  elseif size(colours,1) == num_nodes(mdl);
+     colours = squeeze(colours(:,imgno,:));
+     % 'interp' not supported in octave
+     hh= patch('Faces',mdl.elems,'Vertices',mdl.nodes, 'facecolor','interp', ...
+               'facevertexcdata',colours,'CDataMapping','direct'); 
+  else
+    eidors_msg('warning: image elements and mesh do not match. Showing grey',1);
+    colours= [1,1,1]/2; % Grey to show we're not sure
+    hh= patch('Faces',mdl.elems,'Vertices',mdl.nodes, 'facecolor',colours);
+  end
+
+  set(hh, 'FaceLighting','none', 'CDataMapping', 'direct' );
+
+function hh=show_2d_fem_oldmatlab( mdl, colours, imgno )
+  szcolr = size(colours);
+  if nargin<3;
+      imgno = 1;
       if szcolr(1:2)>1;  eidors_msg('warning: show_fem only shows first image',1); end
   end
   
@@ -409,6 +443,7 @@ function ee= get_boundary( mdl )
 
 % TESTS:
 function do_unit_test
+     ver= eidors_obj('interpreter_version');
    clf
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
@@ -416,10 +451,12 @@ function do_unit_test
    subplot(3,4,1); show_fem(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
 
+if ~ver.isoctave 
    imgn = rmfield(img,'elem_data');
    imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
    subplot(3,4,9); show_fem(imgn) 
    title('interpolated node colours');
+end
 
    img2(1) = img; img2(2) = img;
    subplot(3,4,2); show_fem(img,[1]);
@@ -432,6 +469,11 @@ function do_unit_test
    subplot(3,4,4); show_fem(img);
    title('RGB colours');
 
+   img.elem_data = [1:10];
+   subplot(3,4,12);show_fem(img); %Should show grey
+   title('error -> show grey');
+
+if ~ver.isoctave
    imgn.calc_colours.mapped_colour = 0; % USE RGB colours
    subplot(3,4,10);show_fem(imgn,[0,1]) 
    title('interpolated node colours');
@@ -440,9 +482,7 @@ function do_unit_test
    subplot(3,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
    title('with edge colours');
 
-   imgn.node_data = [1:10];
-   subplot(3,4,12);show_fem(imgn); %Should show grey
-   title('error -> show grey');
+end
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',8));
    img3.elem_data= randn(828,1);                       
