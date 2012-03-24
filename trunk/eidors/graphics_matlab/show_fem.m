@@ -77,7 +77,7 @@ function [img,mdl,opts] = proc_params( mdl, options );
    % if we have an only img input, then define mdl
    if strcmp( mdl(1).type , 'image' )
       img= mdl;
-      mdl= img.fwd_model;
+      mdl= img(1).fwd_model;
    else 
       img = [];
    end
