@@ -76,10 +76,10 @@ while 1
     end
     pair=unique(sort(pair,2),'rows');
     % 5. Graphical output of the current mesh
-    if dim==2 & distmesh_do_graphics
+    if dim==2 && distmesh_do_graphics
       hh=trimesh(t,p(:,1),p(:,2),zeros(N,1),'edgecolor','black');
       view(2),axis equal,axis off,drawnow
-    elseif dim==3 & distmesh_do_graphics
+    elseif dim==3 && distmesh_do_graphics
       if mod(count,5)==0
         simpplot(p,t,'p(:,2)>0');
         title(['Retriangulation #',int2str(count)])

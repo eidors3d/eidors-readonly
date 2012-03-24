@@ -1,4 +1,4 @@
-function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, params, shapefn, bbox);
+function fmdl = dm_2d_pt_elecs( elec_pts, pfix, params, shapefn, bbox);
 % DM_2D_PT_ELECS: Create circle mesh (or radius 1) refined
 %     at points on the electrodes
 %
