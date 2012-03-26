@@ -36,7 +36,7 @@ end
      s=version; ff= find(s=='.');
       if str2num(s(1:ff(2)-1))>=7
         %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
-          ldpath ='LD_LIBRARY_PATH=/usr/lib/Togl1.7:/opt/netgen/lib;';
+          ldpath ='LD_LIBRARY_PATH=;';
       end      
    else
      islinux =0;
@@ -44,7 +44,7 @@ end
 
 % Netgen executable filename
    if  islinux
-      ng_name = '/usr/bin/netgen';
+      ng_name = 'netgen';
    else
       ng_name = 'ng';
    end
