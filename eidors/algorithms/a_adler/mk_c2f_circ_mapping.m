@@ -16,7 +16,8 @@ function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );
 %  shapes (circle extruded in z) are selected
 %
 
-% (C) 2009 Andy Adler. License: GPL version 2 or version 3
+% (C) 2009 Andy Adler and Bartlomiej Grychtol. 
+% License: GPL version 2 or version 3
 % $Id$
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
@@ -175,21 +176,34 @@ function too_far = elems_too_far( mdl, xyr );
    Ne = num_elems(mdl);
    Nc = size(xyr, 2); % Num circs
    Nt = elem_dim(mdl) + 1; % Elements per simplex
-   nodes = repmat(mdl.nodes,[1,1,Nc]);
-   targets = repmat(xyr(1:mdl_dim(mdl),:),[1,1,num_nodes(mdl)]);
-   targets = shiftdim(targets,2);
-   dist = nodes - targets;
-   dist = sqrt(sum(dist.^2,2));
-   node_target_dist = squeeze(dist);
-   furthest_elem_node_dist = node_target_dist(mdl.elems,:);
-   furthest_elem_node_dist = reshape(furthest_elem_node_dist,Ne,Nt,Nc);
-   [furthest_elem_node_dist, furthest_elem_node]= max(furthest_elem_node_dist,[],2);
-   furthest_elem_node_dist = squeeze(furthest_elem_node_dist);
-   furthest_elem_node = squeeze(furthest_elem_node);
+   if 0 % for biggish Nc, this is insane
+       nodes = repmat(mdl.nodes,[1,1,Nc]);
+       targets = repmat(xyr(1:mdl_dim(mdl),:),[1,1,num_nodes(mdl)]);
+       targets = shiftdim(targets,2);
+       dist = nodes - targets;
+       dist = sqrt(sum(dist.^2,2));
+       node_target_dist = squeeze(dist);
+       furthest_elem_node_dist = node_target_dist(mdl.elems,:);
+       furthest_elem_node_dist = reshape(furthest_elem_node_dist,Ne,Nt,Nc);
+       [furthest_elem_node_dist, furthest_elem_node]= max(furthest_elem_node_dist,[],2);
+       furthest_elem_node_dist = squeeze(furthest_elem_node_dist);
+       furthest_elem_node = squeeze(furthest_elem_node);
+       max_edge_len =  repmat(mdl.max_edge_len,1,Nc);
+       radius = ones(Ne,1)*xyr(Nt,:);
+       too_far = (furthest_elem_node_dist - max_edge_len) > radius;
+   else
+       too_far = false(Ne,Nc);
+      for i = 1:Nc 
+          targets = repmat(xyr(1:mdl_dim(mdl),i),[1,num_nodes(mdl)])';
+          dist = mdl.nodes - targets;
+          dist = sqrt(sum(dist.^2,2));
+          furthest_elem_node_dist =max(dist(mdl.elems),[],2);
+          too_far(:,i) = (furthest_elem_node_dist - mdl.max_edge_len) > xyr(Nt,i);
+      end
+   end
+  
    
-   max_edge_len =  repmat(mdl.max_edge_len,1,Nc);
-   radius = ones(Ne,1)*xyr(Nt,:);
-   too_far = (furthest_elem_node_dist - max_edge_len) > radius;
+  
 
 function [mapping failed] = contained_elems_3d( mdl, xyr );
    Ne = size(mdl.elems,1); % Num elems
@@ -214,7 +228,7 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
    
    tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
    %mapping = sparse( Ne, Nc );
-   n_interp_min = 6;
+   n_interp_min = 4;
    n_interp_max = 10;
    for i=1:Nc
        good = ~too_far(:,i);
