@@ -28,8 +28,15 @@ if nargin==1
    fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 
    fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
 end
-imgs= mk_image( fmdl, 1);
-
+switch fmdl.type
+    case 'fwd_model'
+        imgs= mk_image( fmdl, 1);
+    case 'image'
+        imgs = fmdl;
+        fmdl = fmdl.fwd_model;
+    otherwise
+        error('Second parameter not understood');
+end
 % if ~iscell(imdls)
 %     imdls = {imdls};
 % end
@@ -47,13 +54,24 @@ xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim);
 else 
 %%
     N = 128;
+     % this bit is copied from mdl_slice_mapper to make sure
+     xmin = min(fmdl.nodes(:,1));    xmax = max(fmdl.nodes(:,1));
+     xmean= mean([xmin,xmax]); xrange= xmax-xmin;
+
+     ymin = min(fmdl.nodes(:,2));    ymax = max(fmdl.nodes(:,2));
+     ymean= mean([ymin,ymax]); yrange= ymax-ymin;
+
+     range= max([xrange, yrange]);
+     xspace = linspace( xmean - range*0.5, xmean + range*0.5, N );
+     yspace = linspace( ymean + range*0.5, ymean - range*0.5, N );
+     % end of copied block
     bnd_nodes = unique(fmdl.boundary);
     min_bb = min(fmdl.nodes(bnd_nodes,:));
     max_bb = max(fmdl.nodes(bnd_nodes,:));
     h = mean([min_bb(3),max_bb(3)]);
-    r = 0.025 * max(max_bb(1:2) - min_bb(1:2));
-    xspace = linspace(min_bb(1),max_bb(1),N);
-    yspace = linspace(max_bb(2),min_bb(2),N);
+    r = 0.025 * range;
+%     xspace = linspace(min_bb(1),max_bb(1),N);
+%     yspace = linspace(max_bb(2),min_bb(2),N);
     [X Y] = meshgrid(xspace,yspace);
     img = mk_image(fmdl,1);
     img.calc_colours.npoints = N;
