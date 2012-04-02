@@ -24,6 +24,11 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 % (C) 2006-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(axis_handle) && strcmp(axis_handle,'UNIT_TEST'); do_unit_test; return; end
+
+% TODO (update 2 apr 2012):
+%  - make crop_model work for 2D fems
+
 usage_graphics= 1;
 try if axis_handle.type == 'fwd_model'
    usage_graphics= 0;
@@ -73,7 +78,8 @@ function [fmdl1,c2f_idx]= crop_fwd_model(fmdl0, fcn_handle);
    [n,d]= size(nodes);
    n2xyz= eye(d,3); 
    xyz= nodes*n2xyz;
-   idx0= ~all( feval(fcn_handle,xyz(:,1), ...
+% Keep these nodes
+   idx0=  all( feval(fcn_handle,xyz(:,1), ...
                                 xyz(:,2), ...
                                 xyz(:,3)),2);
 % remove these nodes
@@ -95,13 +101,50 @@ function [fmdl1,c2f_idx]= crop_fwd_model(fmdl0, fcn_handle);
 
 % renumber nodes, set unused ones to 0
 if isfield(fmdl1,'electrode');
-   for i=1:length(fmdl1.electrode)
+   n_elecs = length(fmdl1.electrode);
+   rm_elec_list = zeros(n_elecs,1);
+   for i=1:n_elecs;
       el_nodes= fmdl0.electrode(i).nodes;
       el_nodes(:)= idx1(el_nodes);
       if any(el_nodes==0);
-         error('crop_model: nodes in electrode are removed');
+         rm_elec_list(i) = 1;
       end
       fmdl1.electrode(i).nodes= el_nodes;
    end
+   if any(rm_elec_list)
+      str = sprintf('%d,', find(rm_elec_list));
+      eidors_msg('crop_model: removing electrodes (%s)',str(1:end-1),1);
+      fmdl1.electrode = fmdl1.electrode( find(~rm_elec_list));
+   end
 end
+
+
+function do_unit_test
+   subplot(331)
+   imdl = mk_common_model('n3r2'); fmdl= imdl.fwd_model;
+   show_fem(fmdl);
+   subplot(332)
+   show_fem(fmdl); hh= gca; 
+   subplot(333)
+   show_fem(fmdl);
+   crop_model([],inline('z<2','x','y','z'));
+   crop_model(hh,inline('x<0','x','y','z'));
+
+   subplot(334)
+   fmdlc = fmdl;
+   fmdlc = crop_model(fmdlc,inline('x<0','x','y','z'));
+   show_fem(fmdlc);
+
+   subplot(337)
+   imdl = mk_common_model('d2c2'); fmdl= imdl.fwd_model;
+   show_fem(fmdl);
+   subplot(338)
+   show_fem(fmdl); hh= gca; 
+   title('expected fail');
+   subplot(339)
+   show_fem(fmdl);
+   crop_model([],inline('y<0','x','y','z'));
+   crop_model(hh,inline('x<0','x','y','z'));
+   title('expected fail');
+   
 
