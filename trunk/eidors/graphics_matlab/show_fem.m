@@ -270,10 +270,12 @@ function hh=show_2d_fem( mdl, colours, imgno )
   elseif size(colours,1) == num_elems(mdl);
      colours = squeeze(colours(:,imgno,:));
 
-     ver= eidors_obj('interpreter_version');
-     if ver.isoctave && size(colours,2)==1 %% Octave bug on CDataMapping
-        colours = colours /(2*calc_colours('mapped_colour')+1);     
-     end
+% THE OCTAVE GNUPLOT INTERPRETER HAS BUGS - recommend FLTK
+%    ver= eidors_obj('interpreter_version');
+% 
+%    if ver.isoctave && size(colours,2)==1 %% Octave bug on CDataMapping
+%       colours = colours /(2*calc_colours('mapped_colour')+1);     
+%    end
 
      hh= patch('Faces',mdl.elems,'Vertices',mdl.nodes, 'facecolor','flat', ...
                'facevertexcdata',colours,'CDataMapping','direct'); 
