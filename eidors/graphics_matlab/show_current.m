@@ -65,8 +65,11 @@ oo = ones(dims+1,1);
 for i=1:Nel
   idx = img.fwd_model.elems(i,:);
   nod = img.fwd_model.nodes(idx,:);
-  VE  = ([oo, nod])\vv(idx);
-   
+  if dims ==2
+     VE  = ([oo, nod])\vv(idx)';
+  else
+     VE  = ([oo, nod])\vv(idx);
+  end
   elemcur(i+1,:) = img.elem_data(i)*VE(2:end)';
 end
 
@@ -81,18 +84,27 @@ if isfield(img.fwd_model, 'mdl_slice_mapper');
 
    xc = reshape( elemcur(elem_ptr+1,1), szep);
    yc = reshape( elemcur(elem_ptr+1,2), szep);
+   if dims==3
+      zc = reshape( elemcur(elem_ptr+1,3), szep);
+   end
 else 
    pp = interp_mesh( img.fwd_model);
    xp = pp(:,1);
    yp= pp(:,2);
    xc = elemcur(2:end,1);
    yc = elemcur(2:end,2);
+   if dims==3
+      zc = elemcur(2:end,3);
+   end
 end
 
 quiv.xp = xp; 
 quiv.yp = yp; 
 quiv.xc = xc; 
 quiv.yc = yc; 
+if dims==3
+   quiv.zc = zc; 
+end
 quiver(xp,yp,xc,yc,2,'k');
 
 function  [x,y] = grid_the_space( fmdl);
