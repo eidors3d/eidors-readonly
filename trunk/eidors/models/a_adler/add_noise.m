@@ -14,14 +14,17 @@ function vv = add_noise( SNR, v1, v2, options)
 if isstr(SNR) && strcmp(SNR,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin>=2; try; v1 = v1.meas; end; end
-if nargin>=3; try; v2 = v2.meas; end; end
+if nargin>=3; try; v2 = v2.meas; end;
+   if any(size(v1)~=size(v2)); v2 = v2*ones(1,size(v1,2)); end
+end
+
    
 if nargin == 2;
    signal = v1;
 elseif nargin==3;
    signal = v1 - v2;
 elseif strcmp( options, 'norm' )
-   signal = (v1 - v2) ./ v1;
+   signal = (v1 - v2) ./ v2;
 else
    error('add_noise: input arguments not understood');
 end

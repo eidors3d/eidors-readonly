@@ -50,7 +50,7 @@ function nf= num_frames(d0)
    if isnumeric( d0 )
       nf= size(d0,2);
    elseif strcmp( d0(1).type, 'data' );
-      nf= length(d0);
+      nf= size(horzcat(d0(:).meas),2);
    else
       error('Problem calculating number of frames');
    end
