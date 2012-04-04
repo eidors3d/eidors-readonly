@@ -24,11 +24,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <mex.h>
-/* This shouldn't be necessary - last tested in octave 3.2.0 */
-#ifdef OCTAVE_API
-#include <octave/config.h>
-#include <octave/oct-types.h>
-#endif
 
 /*
  * Defines to alow stat
