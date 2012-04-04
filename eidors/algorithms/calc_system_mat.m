@@ -15,6 +15,7 @@ function system_mat = calc_system_mat( fwd_model, img)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+%system_mat= feval(fwd_model.system_mat, fwd_model, img);return
 
 if nargin==1
    img = fwd_model;
