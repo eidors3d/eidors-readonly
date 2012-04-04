@@ -14,8 +14,7 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 FC= aa_system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
-pp= aa_fwd_parameters( fwd_model);
-elem_sigma = kron( img.elem_data(:), ones(pp.n_dims,1) );
+elem_sigma = kron( img.elem_data(:), ones(elem_dim(fwd_model),1) );
 
 ES= ones(lFC,1);
 ES(1:length(elem_sigma))= elem_sigma;
