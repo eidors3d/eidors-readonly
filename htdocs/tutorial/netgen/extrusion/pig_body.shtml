@@ -134,9 +134,11 @@ Conforming model: 2D reconstructon with 3D forward model
 <center>
 <img src="pig_body09a.jpg"> <img src="pig_body10a.jpg">
 <br>
-<i>Left</i>  Simulated conductivity change region
-<i>Right</i> Simulated voltage signals
+<i>Left</i>  Simple 2D circular model reconstruction
+<i>Right</i> 2D reconstructon with conforming 3D forward model
 </center>
+
+
 
 
 </td></tr></table>
