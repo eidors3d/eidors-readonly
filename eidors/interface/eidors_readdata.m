@@ -46,8 +46,9 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 %     stim    = stimulation structure, to be used with
 %                fwd_model.stimulation. 
 %     fname = file name
+%     stim.framerate = acquisition rate (frames/sec) if available
 %
-%  if format is unspecified, we attempt to autodetect
+%  if format is unspecified, an attempt to autodetect is made
 
 % (C) 2005-09 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -87,7 +88,14 @@ switch pre_proc_spec_fmt( format, fname );
 
       stim = basic_stim(16);
 
-   case 'draeger-get'
+   case 'draeger-eit'
+     [fr] = read_draeger_header( fname );
+     % Currently Draeger equipment uses this pattern with 5mA injection
+     stim = mk_stim_patterns(16,1,[0,1],[0,1],{'no_rotate_meas','no_meas_current'},.005);
+     [stim(:).framerate] = deal(fr);
+     [vv] = read_draeger_file( fname );
+     auxdata = vv;
+     vv = vv(1:208,:) + 1j*vv(323+(1:208),:); % I THINK THAT's WHAT THIS IS
 
    case {'raw', 'sheffield'}
       vv = sheffield_readdata( fname );
@@ -809,3 +817,152 @@ function  data = proc_dixtal_data( b, encodepage );
 
    fracbt = bitand( bb, 2^23-1)/2^23 + 1;
    data = sgnbit .* expbit .* fracbt;
+
+function [fr] = read_draeger_header( filename );
+%READ_DRAEGER_HEADER   Opens and reads the header portion of the Draeger .eit
+%file. Current parameter returned is frame rate.
+%
+% function [fr,s] = ReadDraegerHeader(filename)
+% fr        double      scalar      frame rate in hertz
+
+% Determine file version
+K0 = 1024;   % bytes to read in char class
+K1='Framerate [Hz]:'; % Draeger frame rate line in header
+K2=15;                % Length of K1 string
+K3='Samples';         % Following F1 Field for delimiter
+
+% Open file for reading in little-endian form
+fid = fopen(filename,'r','l');
+if fid == -1
+    error('Error read_draeger_header: can''t open file');
+end
+header = fread(fid,K0,'*char')';
+index = strfind(header,K1);
+if ~isempty(index)
+    [tok,rem]= strtok(header(index+K2:end),K3);
+    fr = str2num(tok);
+else
+    error('Error read_draeger_header: frame rate unspecified');
+end
+
+if isempty(fr)
+    error('Error read_draeger_header: Frame rate could not be read');
+end
+
+fclose(fid);
+
+
+function vd = read_draeger_file(filename)
+%READDRAEGERFILE   Opens and reads a Draeger .eit file. Returns an array
+%containing the voltage data arranged per frame.
+%   
+% Input:
+% filename  char        1xN         
+% 
+% Output:   
+% vd        double      MxN         M = volt measurements per frame (mV)
+%                                   N = number of frames        
+
+
+% Determine file version
+K0 = 128;   % bytes to read in char class
+
+% Open file for reading in little-endian form
+fid = fopen(filename,'r','l');
+if fid == -1
+    error('Error read_draeger_file: file could not be opened');
+end
+header = fread(fid,K0,'*char')';
+if ~isempty(strfind(header,'V3.2'))
+    version = '3.2';
+elseif ~isempty(strfind(header,'V4.01'))
+    version = '4.01'; 
+else
+    error('Error read_draeger_file: unknown file version');
+end
+
+% Read according to file version
+switch version
+    case '3.2'
+        % Define function constants
+        K1 = 4;     % byte offset from bof for data address offset
+        K2 = 513;   % data frame length in units of 'double'
+        K3 = '0000003400000000'; % 0xh control characters at end of data frame 
+        K4 = '0000003500000000'; % read in little-endian
+
+        % Seek to data offset value and read offset as a uint32 class
+        fseek(fid,K1,'bof');
+        dataoffset = fread(fid,1,'*uint32');
+        fseek(fid,dataoffset,'cof');
+
+        % Enter loop to read data frame-by-frame
+        vd = [];
+        control1 = hex2dec(K3);
+        control2 = hex2dec(K4);
+        while ~feof(fid)
+            vd = [vd, fread(fid,K2,'double')];
+            controlstart = fread(fid,1,'uint64');
+            if isempty(controlstart)
+                break;
+            end
+            switch controlstart
+                case control1
+                    % Do nothing
+                case control2
+                    % Do nothing
+                otherwise
+                    fclose(fid);
+                    error('Error read_draeger_file: file could not be read');
+            end
+        end
+    case '4.01'
+        % Define function constants
+        K1 = 4;     % byte offset from bof for data address offset
+        K2 = 645;   % data frame length in units of 'double'
+        K3 = 10000; % control character at end of data frame
+                    % is greather than this threshold value 
+        K6 = 20;    % byte offset for frame count after control lines
+        K7 = '0000000000000000'; % 0xh control characters at end of data frame
+        
+        % Seek to data offset value and read offset as a uint32 class
+        fseek(fid,K1,'bof');
+        dataoffset = fread(fid,1,'*uint32');
+        fseek(fid,dataoffset,'cof');
+
+        % Enter loop to read data frame-by-frame
+        vd = [];
+        framecount = [];
+        control4 = hex2dec(K7);
+        while ~feof(fid)
+            vd = [vd, fread(fid,K2,'double')];
+            controlstart = fread(fid,1,'uint64');
+            if isempty(controlstart)
+                break;
+            end
+            if controlstart ==0 ; break; end
+            if controlstart < K3
+                fclose(fid);
+                error('Error read_draeger_file: file could not be read');
+            end
+            fseek(fid,K6,'cof');
+            framecount = [framecount;fread(fid,1,'uint32')];
+            controlend = fread(fid,1,'uint64');
+            if controlend ~= control4
+                fclose(fid);
+                error('Error read_draeger_file: file could not be read');
+            end                
+        end
+        if framecount(end)-framecount(1)+1 ~= size(vd,2)
+            % Second check for circular counter
+            if framecount(end)-framecount(1)+65536+1 ~= size(vd,2)
+                eidors_msg('Error read_draeger_file: number of frames read does not match file record',1);
+            end
+        end            
+    otherwise
+        fclose(fid);
+        error('Error read_draeger_file: unsupported version');
+end
+
+% End of function
+fclose(fid);
+
