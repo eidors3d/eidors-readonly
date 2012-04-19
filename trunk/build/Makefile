@@ -91,6 +91,14 @@ $(REL)/htdocs: $(REL) Makefile
 	find $@ -size +$(SZLIM) -and -not -iname \*html | xargs rm -f
 	find $@ -name \*-s.html.bak | xargs rm -f
 
+fix-cmyk-jpgs:
+	find -iname \*.jpg | \
+   while read ff ; do \
+      if [ -n "$$(identify -verbose $$ff | grep -i 'colorspace: 4')" ]; then \
+         echo $$ff ; \
+         convert -quality 80 -colorspace RGB $$ff $$ff ; \
+      fi ; done
+
 
 # FIX adv hyperparams in build
 # for fn in *html ; do perl -i -pe's{./adv_image_reconst/TV_compare_hyperparams.*html"}{http://eidors3d.sf.net/tutorial/adv_image_reconst/TV_compare_hyperparams.shtml"}' $fn ; done
