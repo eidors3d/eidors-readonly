@@ -792,6 +792,9 @@ function [vv] = dixtal_read_data( file_name, frame_range, encodepage1 );
       status= fseek(fid, start + i*dplen, 'bof');
       if status~=0; break; end
       datapage = fread(fid, dplen, 'uint8');
+      if length(datapage)== 0; 
+         vv= vv(:,1:k-1); break; % frame number inside file is wrong
+      end
       vv(:,k) = proc_dixtal_data( datapage, encodepage );
 	  k=k+1;
    end
