@@ -34,6 +34,11 @@ stim_pattern=[];
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                              stim_pattern, centres, z_contact);
 mat_indices= mk_mat_indices( mat_ind);
+if isempty(srf)
+   fwd_mdl.boundary = find_boundary(fwd_mdl);
+end
+
+fwd_mdl.mat_idx = mat_indices;
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
@@ -64,8 +69,9 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
         electrodes(i).nodes(1) = i; 
         electrodes(i).z_contact= z_contact(i);
     end
-
+    if nelec >0
     mdl.electrode =     electrodes;
+    end
     mdl.solve=          'np_fwd_solve';
     mdl.jacobian=       'np_calc_jacobian';
     mdl.system_mat=     'np_calc_system_mat';
