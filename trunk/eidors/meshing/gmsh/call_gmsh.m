@@ -1,4 +1,4 @@
-function status= call_gmsh(geo_file)
+function status= call_gmsh(geo_file, dim)
 % call_gmsh: call Gmsh to create a vol_file from a geo_file
 % status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 %  staus = 0 -> success , negative -> failure
@@ -18,6 +18,10 @@ function status= call_gmsh(geo_file)
 % Gmsh executable filename
 gmsh_name = 'gmsh';
 
+if nargin < 2
+   dim = 2;
+end
+
 while( 1 )
    ldpath='';
    if  strfind(system_dependent('getos'),'Linux')
@@ -31,7 +35,7 @@ while( 1 )
      islinux =0;
    end    
 
-   status= system(sprintf( '%s %s %s -2 -v 2', ldpath, gmsh_name, geo_file));
+   status= system(sprintf( '%s %s %s -%d -v 2', ldpath, gmsh_name, geo_file, dim));
 
    if status==0; break; end
 
