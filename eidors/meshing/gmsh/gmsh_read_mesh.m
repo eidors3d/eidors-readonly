@@ -57,13 +57,17 @@ end
 function mat = get_lines_with_elements( fid )
    tline = fgetl(fid);
    n_rows = sscanf(tline,'%d');
-   mat = [];
+   mat = zeros(n_rows,8);
+   count = 1;
    for i = 1:n_rows
        tline = fgetl(fid);
-       parts = regexp(tline,' ','split');
-       if str2double( parts(2) ) == 2 || str2double( parts(2) ) == 4
-           n = str2double( parts );
-           mat(end+1,1:length(n)) = n;
+       parts = sscanf(tline,'%f');
+       if parts(2) == 2 || parts(2) == 4
+           mat(count,1:length(parts)) = parts;
+           count = count + 1;
        end
+   end
+   if count <= n_rows
+      mat(count:end,:) = []; % remove unused rows
    end
 end
