@@ -168,7 +168,7 @@ function d2= filt_data(inv_model, d0, data_width )
          d2= d1;
       else
          error('inconsistent difference data: (%d ~= %d). Maybe check fwd_model.meas_select',  ...
-               d2_width, data_width);
+               size(d1,1), length(meas_select));
       end
    else
       d2= d1;
