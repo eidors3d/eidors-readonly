@@ -30,15 +30,22 @@ end
 
 %srf = elements(:,6:8);
 srf = [];
+
+surf_mesh = elements(:,end) ==0;
+if any(surf_mesh)
+   srf = elements(surf_mesh,6:end-1);
+   elements(surf_mesh) = [];
+end
+
 %fc = elements(:,1);
 fc = [];
-simp = elements(:,7:9);
+simp = elements(:,6:end);
 %edg = elements;
 edg = [];
 mat_ind=elements(:,5);
 %bc = elements(:,2);
 bc = [];
-vtx = nodes(:,2:3);
+vtx = nodes(:,2:end);
 end
 
 function mat= get_lines_with_nodes( fid )
@@ -54,9 +61,9 @@ function mat = get_lines_with_elements( fid )
    for i = 1:n_rows
        tline = fgetl(fid);
        parts = regexp(tline,' ','split');
-       if str2double( parts(2) ) == 2
+       if str2double( parts(2) ) == 2 || str2double( parts(2) ) == 4
            n = str2double( parts );
-           mat(size(mat,1)+1,:) = n;
+           mat(end+1,1:length(n)) = n;
        end
    end
 end
