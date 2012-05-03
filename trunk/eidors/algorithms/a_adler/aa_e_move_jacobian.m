@@ -48,7 +48,7 @@ end
 %   10^-9   0.00009144743903
 
 function J= conductivity_jacobian_perturb( pp, delta, img );
-%J=calc_jacobian(img.fwd_model,img);
+
 J = zeros( pp.n_meas, pp.n_elem );
 
 elem_data = img.elem_data;
@@ -61,7 +61,7 @@ for i=1:pp.n_elem
 end
 
 % xy-Movement Jacobian
-function J= movement_jacobian( pp, delta, img );
+function J= movement_jacobian( pp, delta, img )
 
 J = zeros( pp.n_meas, pp.n_elec*pp.n_dims );
 
