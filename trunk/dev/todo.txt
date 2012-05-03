@@ -1,3 +1,25 @@
+EIDORS:RELEASE 3.6
+ - fix eidors colorbar - give proper location
+ - movement jacobians
+     - separate code for movement and conductivity
+     - calc_move_and_conductivity_jacobian.m 
+     - think about how to depricate aa_e_move_jacobian
+     - have explicit function that does perturbation jacobian
+ - movement priors
+     - calc_move_and_conductivity_prior( move_prior_fun, conductivity_prior_fcn)
+       - maybe with some defaults for each case
+
+    - PLAN => M.Crabb to create general functions
+
+ - PLAN => AA create a "papers" section of htdocs => click on paper => tutorials
+
+ - Next, test in 3D
+    - issue is here: delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta; (line 181)
+   
+    - PLAN => M.Crabb take a look and then setup call.
+
+
+
 EIDORS:TODO
  - deform_cylinder - use proper fit like a fourier fit.
  - mk_c2f_circ_mapping - not quite right fitting
