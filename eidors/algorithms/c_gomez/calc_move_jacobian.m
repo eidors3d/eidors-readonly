@@ -14,7 +14,8 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 %  License: GPL version 2 or version 3
 % $Id$
 
-warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care');
+%%%%%warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care'); %MC %%%%%11/05/2012
+warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON POINT ELECTRODE MODEL - use with care');
 
 % System matrix and its parameters
 
@@ -43,7 +44,8 @@ end
 % Define the element connectivity matrix Ce
 function Ce= connectivity_matrix( pp );
 lengthX = (pp.n_dims+1)*pp.n_elem;
-lengthY = pp.n_node;
+%%%%%lengthY = pp.n_node; %MC 11/05/2012
+lengthY=size(pp.N2E,2);
 Xidx = pp.ELEM(:);
 Yidx = ones(lengthX, 1);
 Ce = sparse(1:lengthX, Xidx, Yidx, lengthX, lengthY);
@@ -54,7 +56,8 @@ Ce = sparse(1:lengthX, Xidx, Yidx, lengthX, lengthY);
 function [Vc, Re] = Vc_Re_matrices( pp, fwd_model, s_mat );
 % Define the stimulation matrix Vc for each node I, and pattern
 % Ground node is never excited; remove it from the index
-nodeidx = 1:pp.n_node;
+%%%%%%nodeidx = 1:pp.n_node; %MC 11/05/2012
+nodeidx = 1:size(s_mat);
 nodeidx( fwd_model.gnd_node ) = [];
 
 % The stimulation matrix Vc is the voltage at each node (row) for a
@@ -113,7 +116,8 @@ for k = 1:pp.n_elem
     % Define Be as the matrix Ae with row 1 deleted
     Be = Ae(2:pp.n_dims+1,:);
     % Calculate the system submatrix subSe for the element i
-    subSe = 2*Be'*Be/pp.dfact/abs(det(Ae));
+    %%%%%subSe = 2*Be'*Be/pp.dfact/abs(det(Ae)); %MC 11/05/2012
+    subSe = Be'*Be/pp.dfact/abs(det(Ae)); 
     % Select the same submatrix of Ce
     subidx = (pp.n_dims+1)*(k-1)+1 : (pp.n_dims+1)*k;
     % The system submatrix is given by the product
@@ -218,7 +222,11 @@ for j = elemidx'
     deldetAe =   1/absdetAe*b'*Ae*a;
     delBe = -Ae*a*b'*Ae;
     delBe = delBe(2:pp.n_dims+1,:);
-    subSm = 2/pp.dfact*(...
+    %%%%%subSm = 2/pp.dfact*(...
+    %%%%%    deldetAe*Be'*Be + ...
+    %%%%%    delBe'*Be/absdetAe + ...
+    %%%%%    Be'*delBe/absdetAe); %MC 11/05/2012
+    subSm = 1/pp.dfact*(...
         deldetAe*Be'*Be + ...
         delBe'*Be/absdetAe + ...
         Be'*delBe/absdetAe);
