@@ -24,10 +24,15 @@ show_slices_move( img3dim );
 move_vs_conduct = 20;  % Movement penalty (symbol mu in paper)
 
 mdlM = mdl3dim;
-mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
+if 0
+   mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
+   mdlM.fwd_model.jacobian = @aa_e_move_jacobian; % perturbation type jacobian
+else
+   mdlM.fwd_model.jacobian = @calc_move_jacobian;
+end
 
-mdlM.fwd_model.jacobian = @aa_e_move_jacobian; % perturbation type jacobian
 mdlM.RtR_prior = @aa_e_move_image_prior;
+
 mdlM.aa_e_move_image_prior.parameters = move_vs_conduct;
 
 % Solve inversglobale problem and show slices
