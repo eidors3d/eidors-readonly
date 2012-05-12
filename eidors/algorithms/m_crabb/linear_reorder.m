@@ -21,16 +21,23 @@ elementnodes = fwd_model.elems; %Cache matrix of elements [eletotalxelenode]
 
 eletotal = size(elementnodes,1); %No. of elements
 elenode = size(elementnodes,2); %No. of nodes per element
+nodedim = size(fwd_model.nodes,2);
+midpoint = mean(fwd_model.nodes(unique(fwd_model.elems),:));
 
 for e=1:eletotal; %Loop over all elements
     %Row vector of global nodes [1xelenode]
     enodes = elementnodes(e,:); 
     %Matrix of nodal positions [elenodexdim] (Linear dimension==elenode-1) 
-    nd = nodecoords(enodes,:); 
+    nd = nodecoords(enodes,:);
     
+    % surface meshes need tweaking. Use the midpoint to fit the 3D formula.
+    % This will not work for non simply-connected surfaces.
+    if elenode == 3 && nodedim == 3
+       nd = [nd; midpoint]; 
+    end
     %Calculate area of triangle/volume defined by the elements nodes
     %In 2D this is area and in 3D this is volume
-    area= det([ones(elenode,1),nd]);
+    area= det([ones(length(nd),1),nd]);
     areasign=sign(area); 
     
     %If sign is (pos) neg swap two nodes (last two will suffice..)
