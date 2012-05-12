@@ -22,7 +22,7 @@ at Universit&eacute; Rennes 1 over the period 2000&minus;2011.
 
 
 <h3>
-Create 3D FEM model of the gallery and load homogeneous model
+Create 3D FEM model of the terrain
 </h3>
 <pre>
 <!--#include virtual="pont_pean01.m" -->
@@ -31,7 +31,37 @@ Create 3D FEM model of the gallery and load homogeneous model
 <center>
 <img src="pont_pean01a.png">
 <br><i> Figure:</i>
-???
+Forward model
+</center>
+
+<h3>
+Create 2&frac12;D inverse model 
+</h3>
+<pre>
+<!--#include virtual="pont_pean02.m" -->
+</pre>
+
+<h3>
+Reconstruct the data 
+</h3>
+<pre>
+<!--#include virtual="pont_pean03.m" -->
+</pre>
+<center>
+<img src="pont_pean03a.png">
+<br><i> Figure:</i>
+Reconstruction (2&frac12;D) using a 
+one step GN algorithm
+</center>
+
+<h3>
+Comparison to Apparent Resistivity
+</h3>
+
+<center>
+<img src="../../data_contrib/dg_geophysical_EIT/Mine_20FEV2004_LI_i.jpg"
+<br><i> Figure:</i>
+Apparent resistivity plot (not using EIDORS)
 </center>
 
 
