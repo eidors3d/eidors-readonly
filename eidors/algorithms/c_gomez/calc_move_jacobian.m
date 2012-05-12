@@ -312,8 +312,13 @@ idx= 1:e*d;
 SS= sparse(SSiidx,SSjidx,SSdata) * ...
     sparse(idx,idx, img.elem_data(ceil(idx/d)) );
 
-return
 
+function do_unit_test;
+   unit_test_3d_inv_solve1
+   unit_test_test_matrices
+
+
+function unit_test_test_matrices
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST CODE FOR MATRIX DERIVATIVES
 
@@ -342,8 +347,7 @@ for i=1:20
     disp(norm([dX_p-dX])/norm(dX));
 end
 
-function do_unit_test;
-
+function unit_test_3d_inv_solve1
    mdl3dim = mk_common_model( 'n3r2' );
    img = mk_image(mdl3dim);
    vh = fwd_solve( img );
