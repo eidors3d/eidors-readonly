@@ -1,6 +1,5 @@
 % Generate eidors planar finite element model
 mdl2dim = mk_common_model('b2c');
-% Set eidors_obj hyperparameter member.
 mdl2dim.hyperparameter.value= 0.01;
 
 clim= .088;
@@ -18,10 +17,16 @@ calc_colours(img2dim,[],1); % do colourbar
 
 % Set eidors_obj hyperparameter member.
 mdlM = mdl2dim;
-% Place traditional jacobian in temporary member.
-mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
-% Redefine jacobian member for movement & conductivity.
-mdlM.fwd_model.jacobian = 'aa_e_move_jacobian';
+
+if 0
+   % Place traditional jacobian in temporary member.
+   mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
+   % Redefine jacobian member for movement & conductivity.
+   mdlM.fwd_model.jacobian = 'aa_e_move_jacobian';
+else
+   mdlM.fwd_model.jacobian = @calc_move_jacobian;
+end
+
 mdlM.RtR_prior =     'aa_e_move_image_prior';
 mdlM.aa_e_move_image_prior.parameters = sqrt(1e2/1); 
 
