@@ -14,6 +14,8 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 %  License: GPL version 2 or version 3
 % $Id$
 
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
+
 %%%%%warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care'); %MC %%%%%11/05/2012
 warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON POINT ELECTRODE MODEL - use with care');
 
@@ -21,7 +23,7 @@ warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON POINT ELECTRODE MODEL - use wit
 
 pp = aa_fwd_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
-pp.DEBUG = 0;
+pp.DEBUG = 1;
 if pp.DEBUG
     pp.ss_mat = calc_unconnected_system_mat( fwd_model, img_bkgd);
     pp.fwd_meas =fwd_solve( fwd_model, img_bkgd);
@@ -339,3 +341,15 @@ for i=1:20
     dX  = - 1/abs(det(X))*b'*inv(X)*a;
     disp(norm([dX_p-dX])/norm(dX));
 end
+
+function do_unit_test;
+
+   mdl3dim = mk_common_model( 'n3r2' );
+   img = mk_image(mdl3dim);
+   vh = fwd_solve( img );
+   mdl3dim.fwd_model.jacobian = @calc_move_jacobian;
+
+   mdl3dim.RtR_prior = @aa_e_move_image_prior;
+
+   imgM = inv_solve(mdl3dim, vh, vh);
+
