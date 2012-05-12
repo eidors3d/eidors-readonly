@@ -314,37 +314,36 @@ SS= sparse(SSiidx,SSjidx,SSdata) * ...
 
 
 function do_unit_test;
-   unit_test_3d_inv_solve1
-   unit_test_test_matrices
+   unit_test_matrix_derivatives
+%  unit_test_3d_inv_solve1
 
 
-function unit_test_test_matrices
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST CODE FOR MATRIX DERIVATIVES
+function unit_test_matrix_derivatives
 
-% TEST dertiv of det(X + t*a*b')
-
-d= 1e-6;
+TEST= 'd/dt det(X + t*a*b'')';
+d= 1e-8;
 X= rand(5);
 a=zeros(5,1); a(ceil(5*rand))=1;
 b=zeros(5,1); b(ceil(5*rand))=1;
 dX_p= (det(X + d*a*b') - det(X) )/d;
 dX  = b'*inv(X)*a*det(X);
-disp([dX_p dX]);
+unit_test_cmp(TEST, dX_p,dX,1e-6);
 
-% TEST dertiv of inv(X + t*a*b')
+TEST= 'd/dt inv(X + t*a*b'')';
 dX_p= (inv(X + d*a*b') - inv(X) )/d;
 dX  = -inv(X)*a*b'*inv(X);
-disp(norm([dX_p-dX],1));
+unit_test_cmp(TEST, dX_p,dX,1e-5);
 
-% TEST dertiv of 1/abs(det(X + t*a*b')) = abs(1/det(X+t*a*b'))
-for i=1:20
+% TEST d/dt 1/abs(det(X + t*a*b')) = abs(1/det(X+t*a*b'))
+for i=1:10
+    TEST = sprintf('d/dt abs(1/det(X+t*a*b'')) [%02d]',i);
     X= rand(5);
     a=zeros(5,1); a(ceil(5*rand))=1;
     b=zeros(5,1); b(ceil(5*rand))=1;
     dX_p= (1/abs(det(X + d*a*b')) - 1/abs(det(X)) )/d;
     dX  = - 1/abs(det(X))*b'*inv(X)*a;
-    disp(norm([dX_p-dX])/norm(dX));
+    unit_test_cmp(TEST, norm([dX_p-dX]),0, 1e-5*norm(dX));
 end
 
 function unit_test_3d_inv_solve1
