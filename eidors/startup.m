@@ -51,12 +51,17 @@ addpath([HOMEDIR, '/models/m_vauhkonen']);
 addpath([HOMEDIR, '/meshing/netgen']);
 addpath([HOMEDIR, '/meshing/distmesh']);
 addpath([HOMEDIR, '/meshing/gmsh']);
+addpath([HOMEDIR, '/meshing/stl']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/tools']);
 addpath([HOMEDIR, '/graphics_matlab']);
 addpath([HOMEDIR, '/graphics_vtk']);
 %addpath([HOMEDIR, '/tests']);
+
+% DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
+% addpath([DEVDIR, '/a_adler']);
+% addpath([DEVDIR, '/b_grychtol']);
 
 % We need to add an architecture specific directory for mex files
 if ver.isoctave 
