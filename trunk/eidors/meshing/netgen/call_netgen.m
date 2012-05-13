@@ -51,7 +51,7 @@ end
 
 while( 1 )
 
-   fid= fopen('ng.opt','w'); %create ng.opt file in local dir
+   fid= fopen('ng.opt','a'); %create ng.opt file in local dir
    if fid==-1
       error(['Netgen requires writing files in the current directory(%s).', ...
              'Unfortunately, you don''t have permission'], pwd);
