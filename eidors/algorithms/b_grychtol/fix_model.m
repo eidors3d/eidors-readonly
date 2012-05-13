@@ -38,18 +38,19 @@ if ischar(mdl) && strcmp(mdl,'options');
 end
 doall = false;
 if nargin > 1
-   opt = fix_options(opt);
+   opt = fix_options(mdl,opt);
 else
    doall = true;
 end
 
-mdl = linear_reorder(mdl); %counter-clockwise
+
 if doall || opt.boundary
    if ~isfield(mdl,'boundary')
       mdl.boundary = find_boundary(mdl);
    end
 end
 if doall || opt.faces
+   mdl = linear_reorder(mdl); %counter-clockwise
    [mdl.faces mdl.face2elem mdl.elem2face] = calc_faces(mdl);
 end
 if doall || opt.boundary_face
@@ -186,7 +187,7 @@ function len = calc_longest_edge(elems,nodes)
         len = max(len,tmp);  
     end
     
-function out = fix_options(opt)
+function out = fix_options(mdl, opt)
     out = list_options(false);
     flds = fields(opt);
     for i = 1:length(flds)
@@ -204,8 +205,10 @@ function out = fix_options(opt)
        out.elem_centre = true;
        out.face_centre = true;
     end
-    if any([out.face2elem out.elem2face out.boundary_face ...
-          out.face_centre out.normals])
+    if any([ out.boundary_face out.face_centre out.normals]) && ~isfield(mdl,'faces')
+          out.faces = true;
+    end
+    if any([out.face2elem out.elem2face])
        out.faces = true;
     end
 
