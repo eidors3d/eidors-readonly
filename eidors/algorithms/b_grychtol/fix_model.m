@@ -11,6 +11,7 @@ function [mdl] = fix_model(mdl,opt)
 %
 % Run fix_model('options') to get an all-false options struct, or
 % fix_model('options',true) to get an all-true one.
+% mdl.faces is only replaced if necessary. mdl.boundary is never replaced.
 %
 % OUTPUT:
 %    mdl - a copy of the input model with these additional fields:
