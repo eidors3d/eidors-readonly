@@ -1,4 +1,4 @@
-function [mdl] = fix_model(mdl,options)
+function [mdl] = fix_model(mdl,opt)
 % FIX_MODEL: Add useful fields to a model
 %    [mdl] = fix_model(mdl,options)
 % INPUT:
@@ -6,7 +6,11 @@ function [mdl] = fix_model(mdl,options)
 %       .name
 %       .nodes
 %       .elem
-%    options - not coded yet
+%    options - a struct with logical values specifying which fields to
+%        compute. Defaults to false for absent fields. 
+%
+% Run fix_model('options') to get an all-false options struct, or
+% fix_model('options',true) to get an all-true one.
 %
 % OUTPUT:
 %    mdl - a copy of the input model with these additional fields:
@@ -25,30 +29,61 @@ function [mdl] = fix_model(mdl,options)
 % (C) 2011 Bartlomiej Grychtol. Licensed under GPL v2 or v3
 % $Id$
 
-if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
+if ischar(mdl) && strcmp(mdl,'options'); 
+   if nargin < 2, opt = false; end
+   mdl = list_options(opt); 
+   return 
+end
+doall = false;
+if nargin > 1
+   opt = fix_options(opt);
+else
+   doall = true;
+end
 
 mdl = linear_reorder(mdl); %counter-clockwise
-if ~isfield(mdl,'boundary')
-    mdl.boundary = find_boundary(mdl);
+if doall || opt.boundary
+   if ~isfield(mdl,'boundary')
+      mdl.boundary = find_boundary(mdl);
+   end
 end
-[mdl.faces mdl.face2elem mdl.elem2face] = calc_faces(mdl);
-mdl.boundary_face = mdl.face2elem(:,2)==0;
-mdl.elem_centre = interp_mesh(mdl, 0);
-tmp = mdl;
-tmp.elems = tmp.faces;
-mdl.face_centre = interp_mesh(tmp,0);
-mdl.normals = calc_normals(mdl);
-mdl.inner_normal = test_inner_normal( mdl );
-mdl.max_edge_len = calc_longest_edge(mdl.elems,mdl.nodes);
-mdl.elem_volume = get_elem_volume(mdl);
+if doall || opt.faces
+   [mdl.faces mdl.face2elem mdl.elem2face] = calc_faces(mdl);
+end
+if doall || opt.boundary_face
+   mdl.boundary_face = mdl.face2elem(:,2)==0;
+end
+if doall || opt.elem_centre
+   mdl.elem_centre = interp_mesh(mdl, 0);
+end
+if doall || opt.face_centre
+   tmp = mdl;
+   tmp.elems = tmp.faces;
+   mdl.face_centre = interp_mesh(tmp,0);
+end
+if doall || opt.normals
+   mdl.normals = calc_normals(mdl);
+end
+if doall || opt.inner_normal
+   mdl.inner_normal = test_inner_normal( mdl );
+end
+if doall || opt.max_edge_len
+   mdl.max_edge_len = calc_longest_edge(mdl.elems,mdl.nodes);
+end
+if doall || opt.elem_volume
+   mdl.elem_volume = get_elem_volume(mdl);
+end
 
 
 % decrease memory footprint
 mdl.elems = uint32(mdl.elems);
-mdl.faces = uint32(mdl.faces);
-mdl.elem2face = uint32(mdl.elem2face);
-mdl.face2elem = uint32(mdl.face2elem);
+if doall || opt.faces
+   mdl.faces = uint32(mdl.faces);
+   mdl.elem2face = uint32(mdl.elem2face);
+   mdl.face2elem = uint32(mdl.face2elem);
+end
 
 % Test whether normal points into or outsize
 % mdl.inner_normal(i,j) = 1 if face i of elem j points in
@@ -151,6 +186,41 @@ function len = calc_longest_edge(elems,nodes)
         len = max(len,tmp);  
     end
     
+function out = fix_options(opt)
+    out = list_options(false);
+    flds = fields(opt);
+    for i = 1:length(flds)
+       try
+       out.(flds{i}) = opt.(flds{i});
+       catch
+          warning(sprintf('Option %s not recognised. Ignoring', flds{i}));
+       end
+    end
+    if out.boundary_face
+       out.face2elem = true;
+    end
+    if out.inner_normal
+       out.normals = true;
+       out.elem_centre = true;
+       out.face_centre = true;
+    end
+    if any([out.face2elem out.elem2face out.boundary_face ...
+          out.face_centre out.normals])
+       out.faces = true;
+    end
+
+    
+function out = list_options(val)
+    nodes = [0 0; 0 1; 1 1; 1 0];
+    elems = [1 2 3; 1 3 4];
+    mdl = eidors_obj('fwd_model','square','nodes', nodes, 'elems', elems);
+    out = fix_model(mdl);
+    out = rmfield(out,{'elems','nodes','name','type'});
+    flds = fields(out);
+    for i = 1:length(flds)
+       out.(flds{i}) = val;
+    end
+    
 function do_unit_test
     % square
     nodes = [0 0; 0 1; 1 1; 1 0];
@@ -170,6 +240,17 @@ function do_unit_test
     out.faces
     out.elem2face
     out.face2elem    
+    
+    % test options
+    opt = fix_model('options',false);
+    flds = fields(opt);
+    % if there are no errors, option interdependence is dealt with
+    % correctly
+    for i = 1:length(flds)
+       opt.(flds{i}) = true;
+       out = fix_model(mdl, opt);
+       opt.(flds{i}) = false;
+    end
     
     mdl = mk_common_model('n3r2',16); mdl= mdl.fwd_model;
     out = fix_model(mdl);
