@@ -13,11 +13,38 @@ Create a simple 3D model (electrodes at 170&deg; and 190&deg;
 </pre>
 
 <center>
-<img src="vew_3D_surf01a.png">
+<img src="view_3D_surf01a.png">
 <br><i>Figure:</i>
 Cylinder with electrodes at 170&deg; and 190&deg;
 </center>
 
+<h3> 
+Show voltage on surface
+</h3>
+
+<pre>
+<!--#include virtual="view_3D_surf02.m" -->
+</pre>
+
+<center>
+<img src="view_3D_surf02a.png"> <img src="view_3D_surf02b.png">
+<br><i>Figure:</i>
+Two views of surface voltage on cylinder
+</center>
+
+<h3> 
+Show vertical slices (internal)
+</h3>
+
+<pre>
+<!--#include virtual="view_3D_surf03.m" -->
+</pre>
+
+<center>
+<img src="view_3D_surf03a.png">
+<br><i>Figure:</i>
+Vertical slices of internal voltage at 0.6, 0.7, 0.8, 0.9
+</center>
 
 </td></tr></table>
 <p>
