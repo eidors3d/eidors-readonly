@@ -13,7 +13,7 @@ img.fwd_solve.get_all_meas = 1;
 vh=fwd_solve(img);
 
 clf;show_fem(img);
-print_convert view_3D_surf04a.png '-density 75'
+print_convert view_3D_surf04a.jpg '-density 75'
 view(0,0);
-print_convert view_3D_surf04b.png '-density 75'
+print_convert view_3D_surf04b.jpg '-density 75'
 
