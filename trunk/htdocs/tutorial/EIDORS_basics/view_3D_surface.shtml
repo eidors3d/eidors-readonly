@@ -27,7 +27,7 @@ Show voltage on surface
 </pre>
 
 <center>
-<img src="view_3D_surf02a.png"> <img src="view_3D_surf02b.png">
+<img src="view_3D_surf02a.jpg"> <img src="view_3D_surf02b.jpg">
 <br><i>Figure:</i>
 Two views of surface voltage on cylinder
 </center>
@@ -55,7 +55,7 @@ Adding contrasts to adjust surface voltages
 </pre>
 
 <center>
-<img src="view_3D_surf04a.png"> <img src="view_3D_surf04b.png">
+<img src="view_3D_surf04a.jpg"> <img src="view_3D_surf04b.jpg">
 <br><i>Figure:</i>
 Cylinder model with contrasting region (higher
 mesh density to see details)
@@ -66,7 +66,7 @@ mesh density to see details)
 </pre>
 
 <center>
-<img src="view_3D_surf05a.png"> <img src="view_3D_surf05b.png">
+ <img src="view_3D_surf05b.jpg">
 <br><i>Figure:</i>
 Two views of surface voltage on cylinder
 </center>
