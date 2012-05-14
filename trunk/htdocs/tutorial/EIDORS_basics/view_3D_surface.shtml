@@ -46,6 +46,31 @@ Show vertical slices (internal)
 Vertical slices of internal voltage at 0.6, 0.7, 0.8, 0.9
 </center>
 
+<h3> 
+Adding contrasts to adjust surface voltages
+</h3>
+
+<pre>
+<!--#include virtual="view_3D_surf04.m" -->
+</pre>
+
+<center>
+<img src="view_3D_surf04a.png"> <img src="view_3D_surf04b.png">
+<br><i>Figure:</i>
+Cylinder model with contrasting region (higher
+mesh density to see details)
+</center>
+
+<pre>
+<!--#include virtual="view_3D_surf05.m" -->
+</pre>
+
+<center>
+<img src="view_3D_surf05a.png"> <img src="view_3D_surf05b.png">
+<br><i>Figure:</i>
+Two views of surface voltage on cylinder
+</center>
+
 </td></tr></table>
 <p>
 <small>
