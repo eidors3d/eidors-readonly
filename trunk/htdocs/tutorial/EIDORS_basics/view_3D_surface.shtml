@@ -1,0 +1,29 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>Viewing surface and depth voltages</h2>
+
+<h3> 
+Create a simple 3D model (electrodes at 170&deg; and 190&deg;
+</h3>
+
+<pre>
+<!--#include virtual="view_3D_surf01.m" -->
+</pre>
+
+<center>
+<img src="vew_3D_surf01a.png">
+<br><i>Figure:</i>
+Cylinder with electrodes at 170&deg; and 190&deg;
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
