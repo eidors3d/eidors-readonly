@@ -223,7 +223,8 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
 
     tank_shape.vertices = points;
     % diagonal of the containing rectangle:
-    tank_shape.size = 0.5 * sqrt(sum(range(points).^2));
+    range_points = max(points) - min(points);
+    tank_shape.size = 0.5 * sqrt(sum(range_points.^2));
     
     if tank_height==0
         is2D = 1;

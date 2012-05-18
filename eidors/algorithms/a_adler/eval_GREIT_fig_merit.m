@@ -70,6 +70,7 @@ function [x,y,bb_min,bb_max]=prepare_grid(sz,mdl)
    bb_max = max(mdl.nodes(bnd,:));
    
    [x,y]=meshgrid(linspace(bb_min(1),bb_max(1),sz),linspace(bb_min(2),bb_max(2),sz)); 
+
    
 function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
 %  if abs(max(img(:))) < abs(min(img(:))); img= -img; end
@@ -77,7 +78,7 @@ function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
    qmi = calc_hm_set( img, 0.25 );
    if sum(img(:) & qmi(:))<0 ; keyboard ; end
    
-   pix_sz = range(x(:))*range(y(:))/numel(img);
+   pix_sz = (max(x(:)) - min(x(:))) *( max((y(:)) - min(y(:))) /numel(img);
 
    %map = x.^2+y.^2<1.1;
    qmi = qmi.*map; img = img.*map;
