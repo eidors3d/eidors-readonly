@@ -114,6 +114,7 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 %Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model');
  if 1 % old way
+    fmdl.boundary = find_boundary(fmdl); %just to make sure...
     bound = calc_bound(fmdl);
     inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
     ff = find(~inside);
