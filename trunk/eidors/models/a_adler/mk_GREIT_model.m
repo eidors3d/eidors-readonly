@@ -169,7 +169,7 @@ if ~isempty(opt.noise_figure)
         weight = target;
     end
     
-    R = max(range(fmdl.nodes(:,1:2)));
+    R = max(max(fmdl.nodes(:,1:2)) - min(fmdl.nodes(:,1:2)));
     
     xyzr = mean(fmdl.nodes);
     xyzr(3) = opt.target_plane;
