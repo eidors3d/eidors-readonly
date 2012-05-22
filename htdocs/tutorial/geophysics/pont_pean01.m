@@ -7,6 +7,9 @@
  elec_obj = 'top';
  [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
+% Load data and positions (unused in this tutorial)
+gps = load('Mine_20FEV2004.gps');
+data= load('Mine_20FEV2004_LI.tomel');
   fmdl.stimulation = stim_meas_list( data(:,3:6) - 40100);
 
 show_fem(fmdl);
