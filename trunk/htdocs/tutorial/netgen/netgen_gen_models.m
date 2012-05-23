@@ -143,12 +143,29 @@ th = (-70:20:70)'*deg2rad;
  elec_obj = 'top';
 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
+   case 13;
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,1,0; 1); \n', ...
+              'solid bottom = plane(0, 0,0;0,-1,0);\n' ...
+              'solid top    = plane(0,10,0;0, 1,0);\n' ...
+              'solid cut1   = plane(0, 4,0;0,-1,0);\n' ...
+              'solid cut2   = plane(0, 6,0;0, 1,0);\n' ...
+              'solid ball   = cyl and cut1 and cut2;  tlo ball;\n' ...
+              'solid mainobj= ( top and (not cut2) and cyl ) or ' ...
+                      '(bottom      and (not cut1) and cyl ) -maxh=0.8;\n'];
+ elec_pos = [ 0, 10,  0, 0,  1,  0; 
+              0,  0,  0, 0, -1,  0]; 
+ elec_shape=[1.0];
+ elec_obj = {'top','bottom'};
+ [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ fmdl = mk_image(fmdl,1); 
+ fmdl.elem_data(mat_idx{2}) = 1.1;
 end
 
 if ~exist('fmdl'); return; end
 
 show_fem(fmdl);
 if any(number==[11]); view(270,60); end
+if any(number==[13]); view(-64,-13); end
 
 print_convert( ...
    sprintf('netgen_gen_models%02d.png',number), '-density 75');
