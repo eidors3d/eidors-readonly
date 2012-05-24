@@ -65,13 +65,7 @@ addpath([HOMEDIR, '/graphics_vtk']);
 
 % We need to add an architecture specific directory for mex files
 if ver.isoctave 
-   if findstr(computer,'x86_64-pc-');
-      archdir= strcat('/arch/octave/',computer);
-   elseif findstr(computer,'-pc-');
-      archdir= '/arch/octave/pc';
-   else
-      archdir= strcat('/arch/octave/',computer);
-   end
+   archdir= strcat('/arch/octave/',computer);
 else
     % I don't know when matlab stopped using DLL as the extension
     % for WIN32 mex files. I'm guessing it's around 7.5
