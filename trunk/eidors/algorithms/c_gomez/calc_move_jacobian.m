@@ -29,7 +29,7 @@ if pp.DEBUG
 end
 
 %Tensor product for conductivity matrix %MC 25/05/2012
-I_nd=eye(pp.n_dims+1); sigma_mat=diag(img_bkgd.elem_data);
+I_nd=speye(pp.n_dims+1); sigma_mat=sparse(diag(img_bkgd.elem_data));
 pp.kron_cond=kron(sigma_mat,I_nd);
 
 pp.Ce= connectivity_matrix( pp );
@@ -318,8 +318,9 @@ dfact= (d-1)*(d-2); % Valid for d<=3
 for j=1:e
     a=  inv([ ones(d,1), p.NODE( :, p.ELEM(:,j) )' ]);
     idx= d*(j-1)+1 : d*j;
-    %%%%% SSdata(idx,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a)); %MC 25/05/2012
+    %%%%SSdata(idx,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a)); %MC 25/05/2012
     SSdata(idx,1:d)= a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
+
 end %for j=1:ELEMs
 idx= 1:e*d;
 SS= sparse(SSiidx,SSjidx,SSdata) * ...
@@ -388,8 +389,8 @@ function unit_test_diff_jacobian_b2C_rand_cond
    mdl3dim = mk_common_model( 'b2C' );
    cond=0.5+rand(size(mdl3dim.fwd_model.elems,1),1);
    img = mk_image(mdl3dim,cond);
-   J_pert=aa_e_move_jacobian(img.fwd_model,img);
    J_direct =calc_move_jacobian(img.fwd_model,img);
+   J_pert=aa_e_move_jacobian(img.fwd_model,img);   
    unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
    
 function unit_test_diff_jacobian_n3r2_rand_cond
