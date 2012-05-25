@@ -20,10 +20,9 @@ if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON DEFAULT CONTACT IMPEDANCES - use with care');
 
 % System matrix and its parameters
-
 pp = aa_fwd_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
-pp.DEBUG = 1;
+pp.DEBUG = 0;
 if pp.DEBUG
     pp.ss_mat = calc_unconnected_system_mat( fwd_model, img_bkgd);
     pp.fwd_meas =fwd_solve( fwd_model, img_bkgd);
@@ -280,17 +279,18 @@ end
 delVm = pp.Re * pp.Ce' * delSm * pp.kron_cond * pp.Ce * pp.Vc;
 if pp.DEBUG
     delta=1e-8;
+    ss_mat = calc_unconnected_system_mat(fwd_model ,img_bkgd);
     mdl_delta = fwd_model;
     mdl_delta.nodes(elec_nodes, colidx) = ...
         mdl_delta.nodes(elec_nodes, colidx) + delta;
-    ss_mat_delta= calc_unconnected_system_mat( mdl_delta, img_bkgd );
-    delSm_pert = (ss_mat_delta - pp.ss_mat) / delta;
+    ss_mat_delta= calc_unconnected_system_mat( mdl_delta, img_bkgd_delta );
+     delSm_pert = (ss_mat_delta - pp.ss_mat) / delta;
     % delSe_pert shound be Ce'*delSe*Ce
     if norm(delSm -delSm_pert ,1) > 1e-5
         eidors_msg('delSm calc wrong',1);
         %%%%% delVm = pp.Re * pp.Ce' * delSm_pert * pp.Ce * pp.Vc; %MC 25/05/2012
         delVm = pp.Re * pp.Ce' * delSm_pert * pp.kron_cond * pp.Ce * pp.Vc;
-
+    
         keyboard
     end
 end
@@ -329,7 +329,11 @@ SS= sparse(SSiidx,SSjidx,SSdata) * ...
 
 function do_unit_test;
    unit_test_matrix_derivatives
-%  unit_test_3d_inv_solve1
+   unit_test_diff_jacobian_b2C_const_cond
+   unit_test_diff_jacobian_n3r2_const_cond
+   unit_test_diff_jacobian_b2C_rand_cond
+   unit_test_diff_jacobian_n3r2_rand_cond
+%   unit_test_3d_inv_solve1
 
 
 
@@ -360,6 +364,43 @@ for i=1:10
     dX  = - 1/abs(det(X))*b'*inv(X)*a;
     unit_test_cmp(TEST, norm([dX_p-dX]),0, 1e-5*norm(dX));
 end
+
+
+   
+function unit_test_diff_jacobian_b2C_const_cond
+   TEST= 'J_perturb-J_direct - b2C model (const sigma)';
+   mdl3dim = mk_common_model( 'b2C' );
+   img = mk_image(mdl3dim);
+   J_pert=aa_e_move_jacobian(img.fwd_model,img);
+   J_direct =calc_move_jacobian(img.fwd_model,img);
+   unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
+
+   
+function unit_test_diff_jacobian_n3r2_const_cond
+   TEST= 'J_perturb-J_direct - n3r2 model (const sigma)';
+   mdl3dim = mk_common_model( 'n3r2' );
+   img = mk_image(mdl3dim);
+   J_pert=aa_e_move_jacobian(img.fwd_model,img);
+   J_direct =calc_move_jacobian(img.fwd_model,img);
+   unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
+   
+function unit_test_diff_jacobian_b2C_rand_cond
+   TEST= 'J_perturb-J_direct - b2C model (rand sigma)';
+   mdl3dim = mk_common_model( 'b2C' );
+   cond=0.5+rand(size(mdl3dim.fwd_model.elems,1),1);
+   img = mk_image(mdl3dim,cond);
+   J_pert=aa_e_move_jacobian(img.fwd_model,img);
+   J_direct =calc_move_jacobian(img.fwd_model,img);
+   unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
+   
+function unit_test_diff_jacobian_n3r2_rand_cond
+   TEST= 'J_perturb-J_direct - n3r2 model (rand sigma)';
+   mdl3dim = mk_common_model( 'n3r2' );
+   cond=0.5+rand(size(mdl3dim.fwd_model.elems,1),1);
+   img = mk_image(mdl3dim,cond);
+   J_pert=aa_e_move_jacobian(img.fwd_model,img);
+   J_direct =calc_move_jacobian(img.fwd_model,img);
+   unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
   
 function unit_test_3d_inv_solve1
    mdl3dim = mk_common_model( 'n3r2' );
