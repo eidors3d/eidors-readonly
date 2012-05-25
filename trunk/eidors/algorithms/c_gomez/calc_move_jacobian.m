@@ -279,11 +279,10 @@ end
 delVm = pp.Re * pp.Ce' * delSm * pp.kron_cond * pp.Ce * pp.Vc;
 if pp.DEBUG
     delta=1e-8;
-    ss_mat = calc_unconnected_system_mat(fwd_model ,img_bkgd);
     mdl_delta = fwd_model;
     mdl_delta.nodes(elec_nodes, colidx) = ...
         mdl_delta.nodes(elec_nodes, colidx) + delta;
-    ss_mat_delta= calc_unconnected_system_mat( mdl_delta, img_bkgd_delta );
+    ss_mat_delta= calc_unconnected_system_mat( mdl_delta, img_bkgd );
      delSm_pert = (ss_mat_delta - pp.ss_mat) / delta;
     % delSe_pert shound be Ce'*delSe*Ce
     if norm(delSm -delSm_pert ,1) > 1e-5
