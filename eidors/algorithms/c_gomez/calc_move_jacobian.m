@@ -16,8 +16,8 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
-%%%%%warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care'); %MC %%%%%11/05/2012
-warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON POINT ELECTRODE MODEL - use with care');
+%%%%%warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care'); %MC %%%%%25/05/2012
+warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON DEFAULT CONTACT IMPEDANCES - use with care');
 
 % System matrix and its parameters
 
@@ -28,6 +28,10 @@ if pp.DEBUG
     pp.ss_mat = calc_unconnected_system_mat( fwd_model, img_bkgd);
     pp.fwd_meas =fwd_solve( fwd_model, img_bkgd);
 end
+
+%Tensor product for conductivity matrix %MC 25/05/2012
+I_nd=eye(pp.n_dims+1); sigma_mat=diag(img_bkgd.elem_data);
+pp.kron_cond=kron(sigma_mat,I_nd);
 
 pp.Ce= connectivity_matrix( pp );
 s_mat= calc_system_mat( fwd_model, img_bkgd );
@@ -166,12 +170,14 @@ for colidx = 1:pp.n_dims
         elec_nodes = fwd_model.electrode(k).nodes;
  
         %for compound electrodes, average jacobian for each node
-        delVm_part = zeros(pp.n_elec);
+        %%%%% delVm_part = zeros(pp.n_elec); %MC 25/05/2012
+        delVm_part = zeros(pp.n_elec,pp.n_stim);
         for each_elec_node= elec_nodes(:)';
            delVm_part =  delVm_part + ...
                 calc_delVm(each_elec_node,pp,fwd_model,img_bkgd,colidx);
         end
-        delVm_part = delVm_part/length(elec_nodes);
+        %%%%% delVm_part = delVm_part/length(elec_nodes); %MC 25/05/2012
+        delVm_part = delVm_part;
 
         vm_idx= k + pp.n_elec*(colidx-1);
         delVm(:,:,vm_idx) = delVm_part;
@@ -187,7 +193,9 @@ for colidx = 1:pp.n_dims
             delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta;
             nn = norm(delVm_part - delVm_pert,1 ); % WHY NEGATIVE?
 
-            if nn > 5e-5 ; keyboard; end
+            %%%%% if nn > 5e-5 ; keyboard; end %MC 25/05/2012
+            if nn > 5e-3 ; keyboard; end
+
         end
     end
 end
@@ -235,7 +243,8 @@ for j = elemidx'
 
     if pp.DEBUG
         delta=1e-8;
-        subSe = 2*Be'*Be/pp.dfact/abs(det(Ae));
+        %%%%% subSe = 2*Be'*Be/pp.dfact/abs(det(Ae)); %MC 25/05/2012
+        subSe = Be'*Be/pp.dfact/abs(det(Ae));
         d_NODE= pp.NODE;
         d_NODE(colidx,elec_nodes) =  d_NODE(colidx,elec_nodes) + delta;
         Ae = d_NODE(:,pp.ELEM(:, j))';
@@ -244,7 +253,8 @@ for j = elemidx'
         deldetAe_pert = (absdetAe_pert - absdetAe) / delta;
         % Define Be as the matrix Ae with row 1 deleted
         Be = Ae(2:pp.n_dims+1,:);
-        subSe_delta = 2*Be'*Be/pp.dfact/abs(det(Ae));
+        %%%%% subSe_delta = 2*Be'*Be/pp.dfact/abs(det(Ae)); %MC 25/05/2012
+        subSe_delta = Be'*Be/pp.dfact/abs(det(Ae));
         subSm_pert= (subSe_delta - subSe ) / delta;
         if norm(subSm_pert - subSm,1) > 1e-5
             eidors_msg('subSm calc wrong',1);
@@ -266,7 +276,8 @@ end
 
 % The system submatrix is given by the product where delSm is
 % non-zero only in submatrices corresponding to touching elements
-delVm = pp.Re * pp.Ce' * delSm * pp.Ce * pp.Vc;
+%%%%% delVm = pp.Re * pp.Ce' * delSm * pp.Ce * pp.Vc; %MC 25/05/2012
+delVm = pp.Re * pp.Ce' * delSm * pp.kron_cond * pp.Ce * pp.Vc;
 if pp.DEBUG
     delta=1e-8;
     mdl_delta = fwd_model;
@@ -277,7 +288,9 @@ if pp.DEBUG
     % delSe_pert shound be Ce'*delSe*Ce
     if norm(delSm -delSm_pert ,1) > 1e-5
         eidors_msg('delSm calc wrong',1);
-        delVm = pp.Re * pp.Ce' * delSm_pert * pp.Ce * pp.Vc;
+        %%%%% delVm = pp.Re * pp.Ce' * delSm_pert * pp.Ce * pp.Vc; %MC 25/05/2012
+        delVm = pp.Re * pp.Ce' * delSm_pert * pp.kron_cond * pp.Ce * pp.Vc;
+
         keyboard
     end
 end
@@ -306,7 +319,8 @@ dfact= (d-1)*(d-2); % Valid for d<=3
 for j=1:e
     a=  inv([ ones(d,1), p.NODE( :, p.ELEM(:,j) )' ]);
     idx= d*(j-1)+1 : d*j;
-    SSdata(idx,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
+    %%%%% SSdata(idx,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a)); %MC 25/05/2012
+    SSdata(idx,1:d)= a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
 end %for j=1:ELEMs
 idx= 1:e*d;
 SS= sparse(SSiidx,SSjidx,SSdata) * ...
@@ -316,6 +330,7 @@ SS= sparse(SSiidx,SSjidx,SSdata) * ...
 function do_unit_test;
    unit_test_matrix_derivatives
 %  unit_test_3d_inv_solve1
+
 
 
 % TEST CODE FOR MATRIX DERIVATIVES
@@ -345,7 +360,7 @@ for i=1:10
     dX  = - 1/abs(det(X))*b'*inv(X)*a;
     unit_test_cmp(TEST, norm([dX_p-dX]),0, 1e-5*norm(dX));
 end
-
+  
 function unit_test_3d_inv_solve1
    mdl3dim = mk_common_model( 'n3r2' );
    img = mk_image(mdl3dim);
