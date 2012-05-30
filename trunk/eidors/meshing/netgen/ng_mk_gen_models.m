@@ -105,7 +105,10 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
    pts_elecs_idx = []; 
 
    if n_elecs > 1
-      tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
+      elec_depth = min(nonzeros(distmat(vertcat( elecs(:).pos ))))/2;
+      % tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
+      % NOTE: all functions but the point electrode used to use
+      % tank_radius/4. Point electrode used just tank_radius.
    end
    for i=1:n_elecs
       name = sprintf('elec%04d',i);
@@ -114,17 +117,17 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
       switch elecs(i).shape
        case 'C'
          write_circ_elec(fid,name, pos, dirn,  ...
-               elecs(i).dims, tank_radius/4, elecs(i).maxh);
+               elecs(i).dims, elec_depth, elecs(i).maxh);
        case 'R'
          write_rect_elec(fid,name, pos, dirn,  ...
-               elecs(i).dims, tank_radius/4, elecs(i).maxh);
+               elecs(i).dims, elec_depth, elecs(i).maxh);
        case 'P'
          if 0 % Netgen doesn't put elecs where you ask
             pts_elecs_idx = [ pts_elecs_idx, i]; 
             continue; % DON'T print solid cyl
          end
          write_rect_elec(fid,name, pos, dirn,  ...
-               elecs(i).dims, tank_radius, elecs(i).maxh);
+               elecs(i).dims, elec_depth, elecs(i).maxh);
 
        otherwise; error('huh? shouldnt get here');
       end
@@ -375,7 +378,7 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
 
 
 function do_unit_test
-  for tn = 8
+  for tn = 1:13
      fmdl= do_test_number(tn);
      show_fem(fmdl);
   end
