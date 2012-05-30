@@ -57,9 +57,10 @@ addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/tools']);
 addpath([HOMEDIR, '/graphics_matlab']);
 addpath([HOMEDIR, '/graphics_vtk']);
+addpath([HOMEDIR, '/external']);
 %addpath([HOMEDIR, '/tests']);
 
-% DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
+DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
 % addpath([DEVDIR, '/a_adler']);
 % addpath([DEVDIR, '/b_grychtol']);
 
