@@ -8,6 +8,8 @@ function Reg= aa_e_move_image_prior( inv_model );
 %     of movement vs image fraction of hyperparameter
 %     => Default = 100
 %   inv_model.aa_e_move_image_prior.RegC.func = Cond Reg fcn
+%   inv_model.aa_e_move_image_prior.RegM.func = Move Reg fcn
+%   either @laplace_movement_image_prior OR @tikhonov_movement_image_prior
 %
 % For image portion, we use a Laplace prior, as 
 % -1 for each adjacent element, and 3 (in 2D) or 4 (in 3D)
@@ -49,20 +51,28 @@ RegC= calc_RtR_prior( inv_model);
 szC = size(RegC,1);
 
 % calc movement portion
-RegM = movement_image_prior( pp.n_dims, pp.n_elec );
-
+try
+   fname = func2str(inv_model.aa_e_move_image_prior.RegM.func);
+   if(strcmp(fname,'tikhonov_movement_image_prior'))
+       RegM = tikhonov_movement_image_prior(pp.n_dims,pp.n_elec);
+   elseif(strcmp(fname,'laplace_movement_image_prior'))
+       RegM=laplace_movement_image_prior(pp.n_dims,pp.n_elec);
+   end
+catch
+   RegM = laplace_movement_image_prior( pp.n_dims, pp.n_elec );
+end
 % zero blocks
 RegCM= sparse( szC, pp.n_dims*pp.n_elec );
 
 Reg= [RegC,           RegCM;
-      RegCM', hp_move^2*RegM ];
+      RegCM', hp_move^2*RegM ]; 
 
 % For the movmenent portion, we define a smoothness
 % constraint, such that Rij = -1 for adjacent electrodes
 %
 % TODO: this approach assumes that electrodes close in number
 %   are close to each other. This isn't necessarily right.
-function RegM = movement_image_prior( dims, elecs );
+function RegM = laplace_movement_image_prior( dims, elecs );
 
    % movement constraint in each dimention
    idx =(0:elecs-1)';
@@ -76,4 +86,6 @@ function RegM = movement_image_prior( dims, elecs );
      m_idx= idx + i*elecs + 1;
      RegM( m_idx, m_idx ) = mv;
    end
-
+   
+function RegM = tikhonov_movement_image_prior( dims, elecs);
+   RegM=eye(dims*elecs);   
