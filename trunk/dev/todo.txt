@@ -19,6 +19,11 @@ EIDORS:RELEASE 3.6
     - PLAN => M.Crabb take a look and then setup call.
 
 
+ - Factor out all the electrode code in the ng_mk* functions
+     and put it into a ng_define_electrodes function 
+
+     - Next, create a fourth parameter to control the depth of the electrode shape
+
 
 EIDORS:TODO
  - deform_cylinder - use proper fit like a fourier fit.
