@@ -37,7 +37,15 @@ Read-only, worldwide access is available via SVN using
 svn co <a href="https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/"
                >https://eidors3d.svn.sourceforge.net/svnroot/eidors3d/trunk/</a>
 </pre>
-Read-write access is available via SVN for registered
+
+<p><li><b>
+Read/Write access to Developer Version 
+</b><br>
+Read/Write access is available via SVN using
+<pre>
+svn co --username=YOUR_USERNAME svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk eidors
+</pre>
+Read-write access is available for registered <a href="http://www.sf.net">Sourceforge</a>
 developers. To become a developer, 
 email the <a href="faq.shtml#maintainers">maintainers</a>.
 
