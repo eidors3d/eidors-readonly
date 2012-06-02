@@ -30,6 +30,9 @@ end
 HOMEDIR=pwd;
 
 addpath( HOMEDIR );
+addpath([HOMEDIR, '/solvers']);
+addpath([HOMEDIR, '/solvers/inverse']);
+addpath([HOMEDIR, '/solvers/forward']);
 addpath([HOMEDIR, '/algorithms']);
 addpath([HOMEDIR, '/algorithms/a_adler']);
 addpath([HOMEDIR, '/algorithms/a_borsic']);
@@ -55,9 +58,10 @@ addpath([HOMEDIR, '/meshing/stl']);
 addpath([HOMEDIR, '/sample_data']);
 addpath([HOMEDIR, '/examples']);
 addpath([HOMEDIR, '/tools']);
-addpath([HOMEDIR, '/graphics_matlab']);
-addpath([HOMEDIR, '/graphics_vtk']);
+addpath([HOMEDIR, '/graphics/matlab']);
+addpath([HOMEDIR, '/graphics/vtk']);
 addpath([HOMEDIR, '/external']);
+addpath([HOMEDIR, '/deprecated']);
 %addpath([HOMEDIR, '/tests']);
 
 DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
