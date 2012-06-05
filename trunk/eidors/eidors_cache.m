@@ -65,6 +65,11 @@ switch command
       else
          retval= eidors_objects.max_cache_size;
       end
+      
+   case 'disable'
+       eidors_objects.cache_enable = 0;
+   case 'enable'
+       eidors_objects.cache_enable = 1;
 
    case 'boost_priority'
       try
