@@ -210,9 +210,10 @@ function delVm=  calc_delVm( elec_nodes, pp, fwd_model, img_bkgd, colidx, Re_Ce,
 [rowidx, elemidx] = find(pp.ELEM == elec_nodes);
 % Define the system sensitivity matrix to movement delSm
 sz= (pp.n_dims+1)*pp.n_elem;
-delSm = sparse(sz,sz);
+%delSm = sparse(sz,sz);
 % For each touching element, calculate the perturbation
 jcount = 1;
+I = []; J=[]; S= [];
 for j = elemidx'
     % Extract the coordinates of the element's four nodes
     Ae = pp.NODE(:,pp.ELEM(:, j))';
@@ -274,8 +275,13 @@ for j = elemidx'
     % Embed subSm into delSm such that subSm(1,1) is the
     % (4j+1,4j+1) element of delSm
     se_idx= (pp.n_dims+1)*j+(-pp.n_dims : 0);
-    delSm(se_idx, se_idx) = subSm;
+    Iidx = vertcat(se_idx,se_idx,se_idx,se_idx); 
+    I = [I Iidx(:)];
+    J = [J, se_idx,se_idx,se_idx,se_idx];
+    S = [S subSm(:)];
+%     delSm(se_idx, se_idx) = subSm;
 end
+delSm = sparse(I,J,S,sz,sz);
 
 % The system submatrix is given by the product where delSm is
 % non-zero only in submatrices corresponding to touching elements
@@ -331,14 +337,14 @@ SS= sparse(SSiidx,SSjidx,SSdata) * ...
 
 
 function do_unit_test;
-%    unit_test_matrix_derivatives
-%    unit_test_diff_jacobian_b2C_const_cond
-%    unit_test_diff_jacobian_n3r2_const_cond
-%    unit_test_diff_jacobian_b2C_rand_cond
+   unit_test_matrix_derivatives
+   unit_test_diff_jacobian_b2C_const_cond
+   unit_test_diff_jacobian_n3r2_const_cond
+   unit_test_diff_jacobian_b2C_rand_cond
    unit_test_diff_jacobian_n3r2_rand_cond
-%   unit_test_3d_inv_solve1
+  unit_test_3d_inv_solve1
 
-
+   
 
 % TEST CODE FOR MATRIX DERIVATIVES
 function unit_test_matrix_derivatives
@@ -399,13 +405,11 @@ function unit_test_diff_jacobian_b2C_rand_cond
 function unit_test_diff_jacobian_n3r2_rand_cond
    TEST= 'J_perturb-J_direct - n3r2 model (rand sigma)';
    mdl3dim = mk_common_model( 'n3r2' );
-   mdl3dim.fwd_model.solve = 'aa_fwd_solve';
-   mdl3dim.fwd_model.system_mat = 'aa_calc_system_mat';
    cond=0.5+rand(size(mdl3dim.fwd_model.elems,1),1);
    img = mk_image(mdl3dim,cond);
-%    J_pert=aa_e_move_jacobian(img.fwd_model,img);
+   J_pert=aa_e_move_jacobian(img.fwd_model,img);
    J_direct =calc_move_jacobian(img.fwd_model,img);
-%    unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
+   unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
   
 function unit_test_3d_inv_solve1
    mdl3dim = mk_common_model( 'n3r2' );
