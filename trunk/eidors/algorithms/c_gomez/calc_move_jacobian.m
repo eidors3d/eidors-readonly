@@ -29,7 +29,9 @@ if pp.DEBUG
 end
 
 %Tensor product for conductivity matrix %MC 25/05/2012
-I_nd=speye(pp.n_dims+1); sigma_mat=sparse(diag(img_bkgd.elem_data));
+I_nd=speye(pp.n_dims+1); 
+% use spdiags instead of sparse(diag( to avoid running out of memory %BG
+sigma_mat=spdiags(img_bkgd.elem_data,0,pp.n_elem,pp.n_elem);
 pp.kron_cond=kron(sigma_mat,I_nd);
 
 pp.Ce= connectivity_matrix( pp );
