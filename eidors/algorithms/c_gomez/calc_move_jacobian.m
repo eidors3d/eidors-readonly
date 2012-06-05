@@ -16,9 +16,6 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
-%%%%%warning('THIS CODE IS KNOWN TO HAVE BUGS - use with care'); %MC %%%%%25/05/2012
-warning('THIS CODE IS KNOWN TO HAVE BUGS FOR NON DEFAULT CONTACT IMPEDANCES - use with care');
-
 % System matrix and its parameters
 pp = aa_fwd_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
