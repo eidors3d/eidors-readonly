@@ -67,9 +67,11 @@ switch type
       obj_id= set_obj( name, varargin{:} );
    case 'get-cache'
       test_install
+      if cache_disabled, obj_id = []; return, end
       obj_id= get_cache_obj( name, varargin{:} );
    case 'set-cache'
       test_install
+      if cache_disabled, obj_id = []; return, end
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
@@ -81,6 +83,13 @@ switch type
       obj_id= new_obj( type, name, varargin{:} );
 end
 
+function out = cache_disabled
+    global eidors_objects;
+    try 
+        out = ~ eidors_objects.cache_enable; 
+    catch
+        out = 0;
+    end
 function test_install
   global eidors_objects;
   if isfield(eidors_objects,'max_cache_size'); return; end % OK
