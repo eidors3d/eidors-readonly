@@ -275,9 +275,17 @@ for j = elemidx'
     % Embed subSm into delSm such that subSm(1,1) is the
     % (4j+1,4j+1) element of delSm
     se_idx= (pp.n_dims+1)*j+(-pp.n_dims : 0);
-    Iidx = vertcat(se_idx,se_idx,se_idx,se_idx); 
-    I = [I Iidx(:)];
-    J = [J, se_idx,se_idx,se_idx,se_idx];
+    switch pp.n_dims
+       case 2
+          Iidx = vertcat(se_idx,se_idx,se_idx);
+          I = [I Iidx(:)];
+          J = [J, se_idx,se_idx,se_idx];
+          
+       case 3
+          Iidx = vertcat(se_idx,se_idx,se_idx,se_idx);
+          I = [I Iidx(:)];
+          J = [J, se_idx,se_idx,se_idx,se_idx];
+    end
     S = [S subSm(:)];
 %     delSm(se_idx, se_idx) = subSm;
 end
