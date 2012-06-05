@@ -24,7 +24,9 @@ end
 
 % Extract forward model parameters
 fwdp = aa_fwd_parameters( img.fwd_model );
-
+try
+    fwdp.n_elem = size(img.fwd_model.coarse2fine,2);
+end
 % Verify if img is partitioned by conductivity and move submatrices
 if length(img.elem_data) > fwdp.n_elem
     move = reshape( ...
