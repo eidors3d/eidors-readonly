@@ -27,7 +27,6 @@ end
 
 %Tensor product for conductivity matrix %MC 25/05/2012
 I_nd=speye(pp.n_dims+1); 
-% use spdiags instead of sparse(diag( to avoid running out of memory %BG
 sigma_mat=spdiags(img_bkgd.elem_data,0,pp.n_elem,pp.n_elem);
 pp.kron_cond=kron(sigma_mat,I_nd);
 
@@ -161,9 +160,10 @@ function Jm = calc_movement_jacobian(pp, fwd_model, img_bkgd)
 % Define the voltage sensitivity delVm on electrode I, for stimulation
 % pattern J, for a movement of electrode K as a 3D array
 delVm = zeros(pp.n_elec, pp.n_stim, pp.n_elec*pp.n_dims);
-% BG 05/06/2012 : Pulled out for speed. Somebody give them a better name
-calc1 = pp.Re * pp.Ce';
-calc2 = pp.kron_cond * pp.Ce * pp.Vc;
+
+% Precalculate
+Re_Ce      = pp.Re * pp.Ce';
+cond_Ce_Vc = pp.kron_cond * pp.Ce * pp.Vc;
 for colidx = 1:pp.n_dims
     fprintf('   JM: direction # %d\n',colidx);
     % Calculate the values for the voltage sensitivity for each electrode
@@ -172,12 +172,11 @@ for colidx = 1:pp.n_dims
         elec_nodes = fwd_model.electrode(k).nodes;
  
         %for compound electrodes, average jacobian for each node
-        %%%%% delVm_part = zeros(pp.n_elec); %MC 25/05/2012
         delVm_part = zeros(pp.n_elec,pp.n_stim);
         for each_elec_node= elec_nodes(:)';
            delVm_part =  delVm_part + ...
                 calc_delVm(each_elec_node,pp,fwd_model,img_bkgd,colidx,...
-                calc1, calc2);
+                Re_Ce, cond_Ce_Vc);
         end
         %%%%% delVm_part = delVm_part/length(elec_nodes); %MC 25/05/2012
         delVm_part = delVm_part;
@@ -207,7 +206,7 @@ Jm= nodes_to_stim_jacobian( delVm, fwd_model, pp );
 
 
 
-function delVm=  calc_delVm( elec_nodes, pp, fwd_model, img_bkgd, colidx, calc1, calc2)
+function delVm=  calc_delVm( elec_nodes, pp, fwd_model, img_bkgd, colidx, Re_Ce, cond_Ce_Vc)
 [rowidx, elemidx] = find(pp.ELEM == elec_nodes);
 % Define the system sensitivity matrix to movement delSm
 sz= (pp.n_dims+1)*pp.n_elem;
@@ -281,7 +280,7 @@ end
 % The system submatrix is given by the product where delSm is
 % non-zero only in submatrices corresponding to touching elements
 %%%%% delVm = pp.Re * pp.Ce' * delSm * pp.Ce * pp.Vc; %MC 25/05/2012
-delVm = calc1 * delSm * calc2;
+delVm = Re_Ce * delSm * cond_Ce_Vc;
 if pp.DEBUG
     delta=1e-8;
     mdl_delta = fwd_model;
@@ -323,7 +322,6 @@ dfact= (d-1)*(d-2); % Valid for d<=3
 for j=1:e
     a=  inv([ ones(d,1), p.NODE( :, p.ELEM(:,j) )' ]);
     idx= d*(j-1)+1 : d*j;
-    %%%%SSdata(idx,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a)); %MC 25/05/2012
     SSdata(idx,1:d)= a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
 
 end %for j=1:ELEMs
