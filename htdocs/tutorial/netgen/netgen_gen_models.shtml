@@ -274,7 +274,7 @@ Shape 13
 </pre>
 <center>
 <img src="netgen_gen_models13.png">
-<br>Half sphere with top surface electrodes
+<br>Fem model of a cylindrical resistor with electrodes at the ends
 </center>
 
 </td></tr></table>
