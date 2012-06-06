@@ -106,8 +106,11 @@ function imdl = Elec_Move_GN( imdl );
    imdl.aa_e_move_image_prior.RegC.func = @laplace_image_prior;
 %  imdl.aa_e_move_image_prior.RegC.func = @gaussian_HPF_prior; % not OK for 3D
    imdl.hyperparameter.value = .03;
-
-   n_elems = size(imdl.fwd_model.elems,1);
+   try
+      n_elems = size(imdl.rec_model.coarse2fine,2);
+   catch
+      n_elems = size(imdl.fwd_model.elems,1);
+   end
    imdl.inv_solve.select_parameters = 1:n_elems;
 
    imdl.prior_use_fwd_not_rec = 1; % for c2f mapping
