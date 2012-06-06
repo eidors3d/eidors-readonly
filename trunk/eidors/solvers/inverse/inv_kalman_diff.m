@@ -24,7 +24,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 % $Id$
 
 fwd_model= inv_model.fwd_model;
-pp= aa_fwd_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model );
 
 img_bkgnd= calc_jacobian_bkgnd( inv_model );
 J = calc_jacobian( fwd_model, img_bkgnd);

@@ -15,7 +15,7 @@ function J= aa_e_move_jacobian( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-pp= aa_fwd_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model );
 delta= 1e-6; % tests indicate this is a good value
              % too high and J is not linear, too low and numerical error
 

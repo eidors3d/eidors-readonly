@@ -31,7 +31,7 @@ else
    hp_move= 10;
 end
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
+pp= fwd_model_parameters( inv_model.fwd_model );
 n_elec = pp.n_elec;
 
 % calc conductivity portion
@@ -44,7 +44,7 @@ try; inv_model = rmfield(inv_model, 'R_prior'); end
 try; inv_model = rmfield(inv_model, 'prior_use_fwd_not_rec'); end
 inv_model.RtR_prior = RegCfcn;
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
+pp= fwd_model_parameters( inv_model.fwd_model );
 
 
 RegC= calc_RtR_prior( inv_model); 

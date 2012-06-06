@@ -34,7 +34,7 @@ function cache_obj = mk_cache_obj(fwd_model);
    cache_obj.name        = ''; % it has to have one
 
 function FC= calc_system_mat_fields( fwd_model );
-   p= aa_fwd_parameters( fwd_model );
+   p= fwd_model_parameters( fwd_model );
    d0= p.n_dims+0;
    d1= p.n_dims+1;
    e= p.n_elem;

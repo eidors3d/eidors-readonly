@@ -17,7 +17,7 @@ function J = calc_move_jacobian(fwd_model, img_bkgd)
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
 % System matrix and its parameters
-pp = aa_fwd_parameters( fwd_model );
+pp = fwd_model_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
 pp.DEBUG = 0;
 if pp.DEBUG
@@ -331,7 +331,7 @@ function SS= calc_unconnected_system_mat( fwd_model, img)
 %   SS  = Unconnected system Matrix
 %   CC  = Connectivity Matrix
 
-p= aa_fwd_parameters( fwd_model );
+p= fwd_model_parameters( fwd_model );
 
 d= p.n_dims+1;
 e= p.n_elem;

@@ -63,7 +63,7 @@ function Jbp = calc_backprojection_mask( fmdl , type);
                     'elem_data',ones(size(fmdl.elems,1),1) );
    node_v= calc_all_node_voltages( himg );
 
-   pp= aa_fwd_parameters( fmdl );
+   pp= fwd_model_parameters( fmdl );
 
    elem_v= reshape(node_v( fmdl.elems',:),pp.n_dims+1,[],pp.n_elec);
    elem_v= squeeze(mean(elem_v,1));

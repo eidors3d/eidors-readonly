@@ -12,7 +12,7 @@ function J= calc_jacobian_adjoint( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-pp= aa_fwd_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
 d= pp.n_dims+1;

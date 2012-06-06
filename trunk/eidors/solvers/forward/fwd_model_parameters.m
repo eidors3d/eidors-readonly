@@ -1,5 +1,5 @@
-function param = aa_fwd_parameters( fwd_model )
-% AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
+function param = fwd_model_parameters( fwd_model )
+% FWD_MODEL_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Andy Adler's EIT code
 %   param.n_elem     => number of elements
@@ -23,17 +23,17 @@ function param = aa_fwd_parameters( fwd_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-param = eidors_obj('get-cache', fwd_model, 'aa_fwd_parameters');
+param = eidors_obj('get-cache', fwd_model, 'fwd_model_parameters');
 
 if ~isempty(param)
-   eidors_msg('aa_fwd_parameters: using cached value', 3);
+   eidors_msg('fwd_model_parameters: using cached value', 3);
    return
 end
 
 param = calc_param( fwd_model );
 
-eidors_obj('set-cache', fwd_model, 'aa_fwd_parameters', param);
-eidors_msg('aa_fwd_parameters: setting cached value', 3);
+eidors_obj('set-cache', fwd_model, 'fwd_model_parameters', param);
+eidors_msg('fwd_model_parameters: setting cached value', 3);
 
 % perform actual parameter calculation
 function pp= calc_param( fwd_model );

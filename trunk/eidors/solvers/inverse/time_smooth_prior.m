@@ -27,7 +27,7 @@ function Reg= time_smooth_prior( inv_model );
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
+pp= fwd_model_parameters( inv_model.fwd_model );
 ne = pp.n_elem;
 
 % relative strengths of conductivity and movement priors

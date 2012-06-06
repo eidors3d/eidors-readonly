@@ -318,7 +318,7 @@ function Reg= cheat_tikhonov( inv_model )
 %            => new weight to set elements to
 
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
+pp= fwd_model_parameters( inv_model.fwd_model );
 idx= 1:pp.n_elem;
 weight= ones(1,pp.n_elem);
 weight( inv_model.cheat_tikhonov.cheat_elements ) = ...
@@ -350,7 +350,7 @@ function Reg= cheat_laplace( inv_model )
 %   roielems = region to exclude boundary
 %   if both ii and jj are in or out of roielems
 %   then include the term
-   pp= aa_fwd_parameters( inv_model.fwd_model );
+   pp= fwd_model_parameters( inv_model.fwd_model );
 
    ROI = zeros(1,pp.n_elem);
    ROI( inv_model.cheat_laplace.cheat_elements ) = 1;

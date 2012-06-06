@@ -71,7 +71,7 @@ function Reg= calc_exponential_covar_prior( fwd_model, gamma)
    Reg=sparse(Reg);
 
 function [rad,elem_ctr]= get_elem_rad_ctr( fwd_model );
-   pp= aa_fwd_parameters( fwd_model);
+   pp= fwd_model_parameters( fwd_model);
    if     pp.n_dims==2 % in 2d A=pi*r^2
       rad= sqrt(pp.VOLUME/pi);
    elseif pp.n_dims ==3 % in 3D V=4/3*pi*r^3
