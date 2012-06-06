@@ -16,11 +16,11 @@ function [Reg] = iso_s_smooth(simp,vtx,deg,w);
 warning('EIDORS:deprecated','ISO_S_SMOOTH is deprecated as of 06-Jun-2012. ');
 
 if nargin<2
-w=1;
+   w=1;
 end
 
 if w<0
-error('Weight must be possitive');
+   error('Weight must be possitive');
 end
 
 [R_first] = iso_f_smooth(simp,vtx,deg,w);

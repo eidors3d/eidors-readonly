@@ -26,7 +26,7 @@ warning('EIDORS:deprecated','JACOBIAN_3D_WITH_FIELDS is deprecated as of 06-Jun-
 el_no = size(elec,1);
 
 if sum(df)~= size(v_f,2);
-error('Mismatched data input');
+   error('Mismatched data input');
 end
 
 %Select the part referring to the interior nodes
@@ -41,25 +41,25 @@ h = waitbar(0,'Calculating Jacobian Matrix');
 
 for p=1:size(V,2)
 
-waitbar(p/(size(V,2)))
+   waitbar(p/(size(V,2)))
 
-DV =  D*V(:,p); %Gradient of the current fields
+   DV =  D*V(:,p); %Gradient of the current fields
 
-for m=1:df(p)
+   for m=1:df(p)
 
 
-Dvf = D*v_f(:,sum(df(1:p-1))+m); %Gradient of the measurement fields
+      Dvf = D*v_f(:,sum(df(1:p-1))+m); %Gradient of the measurement fields
 
-Jrow_x3 = Dvf .* DV ;
-Jrow_u = Jrow_x3(1:3:end) + Jrow_x3(2:3:end) + Jrow_x3(3:3:end);
+      Jrow_x3 = Dvf .* DV ;
+      Jrow_u = Jrow_x3(1:3:end) + Jrow_x3(2:3:end) + Jrow_x3(3:3:end);
 
-Jrow = Jrow_u .* diag(Ela(1:3:end,1:3:end));
+      Jrow = Jrow_u .* diag(Ela(1:3:end,1:3:end));
 
-cnt = cnt+1;
-J(cnt,:) = -Jrow.';
-Jrow = zeros(1,size(simp,1));
+      cnt = cnt+1;
+      J(cnt,:) = -Jrow.';
+      Jrow = zeros(1,size(simp,1));
 
-end %m
+   end %m
 
 end %p
 

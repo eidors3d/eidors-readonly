@@ -14,8 +14,8 @@ warning('EIDORS:deprecated','EDGE_REFINED_NODE_MAPPER is deprecated as of 06-Jun
 
 index_vtx = eidors_obj('get-cache', mdl_dense, 'index_vtx', mdl_coarse);
 if ~isempty(index_vtx)
-eidors_msg('edge_refined_node_mapper: using cached value', 2);
-return
+   eidors_msg('edge_refined_node_mapper: using cached value', 2);
+   return
 end
 
 vtx_dense  = mdl_dense.nodes;
@@ -32,18 +32,18 @@ h = waitbar(0,'Calculating Verticies Map');
 
 for ic=1:size(vtx_coarse,1);   % for all coarse verticies
 
-waitbar(ic/size(vtx_coarse,1))
+   waitbar(ic/size(vtx_coarse,1))
 
-dx=vtx_dense(:,1)-vtx_coarse(ic,1);   % find the x co-ord difference
-dy=vtx_dense(:,2)-vtx_coarse(ic,2);   % find the y co-ord difference
-dz=vtx_dense(:,3)-vtx_coarse(ic,3);   % find the z co-ord difference
+   dx=vtx_dense(:,1)-vtx_coarse(ic,1);   % find the x co-ord difference
+   dy=vtx_dense(:,2)-vtx_coarse(ic,2);   % find the y co-ord difference
+   dz=vtx_dense(:,3)-vtx_coarse(ic,3);   % find the z co-ord difference
 
-% distance between points for each dense vertex and the ic'th coarse vertex
-dist=sqrt((dx.^2)+(dy.^2)+(dz.^2));
+   % distance between points for each dense vertex and the ic'th coarse vertex
+   dist=sqrt((dx.^2)+(dy.^2)+(dz.^2));
 
-[m,index(ic,1)]=min(dist);   % index out the minimum distance from the dense mesh to the ic'th vertex
+   [m,index(ic,1)]=min(dist);   % index out the minimum distance from the dense mesh to the ic'th vertex
 
-index(ic,2)=m;   % write the actual minimum distance (as a quality control procedure)
+   index(ic,2)=m;   % write the actual minimum distance (as a quality control procedure)
 
 end
 

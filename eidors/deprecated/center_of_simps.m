@@ -15,11 +15,11 @@ function [center_simp]=center_of_simps(fwd_model, extraparam)
 warning('EIDORS:deprecated','CENTER_OF_SIMPS is deprecated as of 06-Jun-2012. Use FIX_MODEL instead.');
 
 if nargin==1
-simp= fwd_model.elems;
-vtx = fwd_model.nodes;
+   simp= fwd_model.elems;
+   vtx = fwd_model.nodes;
 else
-simp= fwd_model;
-vtx= extraparam;
+   simp= fwd_model;
+   vtx= extraparam;
 end
 
 x_sum=vtx(simp(:,1),1)+vtx(simp(:,2),1)+vtx(simp(:,3),1)+vtx(simp(:,4),1);

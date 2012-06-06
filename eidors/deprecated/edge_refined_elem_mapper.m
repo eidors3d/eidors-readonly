@@ -13,8 +13,8 @@ warning('EIDORS:deprecated','EDGE_REFINED_ELEM_MAPPER is deprecated as of 06-Jun
 
 index_simp = eidors_obj('get-cache', mdl_dense, 'index_simp', mdl_coarse);
 if ~isempty(index_simp)
-eidors_msg('edge_refined_elem_mapper: using cached value', 2);
-return
+   eidors_msg('edge_refined_elem_mapper: using cached value', 2);
+   return
 end
 
 vtx_coarse =  mdl_coarse.nodes;
@@ -59,16 +59,16 @@ y=8;
 
 for i=1:a;
 
-for ii=x:y;
+   for ii=x:y;
 
-lookup(ii)=i;
+      lookup(ii)=i;
 
-ii=ii+1;
+      ii=ii+1;
 
-end
+   end
 
-x=x+8;
-y=y+8;
+   x=x+8;
+   y=y+8;
 
 end
 
@@ -205,56 +205,56 @@ center_simp_proximity=[];
 
 for i=1:size(simp,1);
 
-vtx_dave_1(1,1)=vtx(simp(i,1),1);
-vtx_dave_1(1,2)=vtx(simp(i,1),2);
-vtx_dave_1(1,3)=vtx(simp(i,1),3);
+   vtx_dave_1(1,1)=vtx(simp(i,1),1);
+   vtx_dave_1(1,2)=vtx(simp(i,1),2);
+   vtx_dave_1(1,3)=vtx(simp(i,1),3);
 
-vtx_dave_1(2,1)=vtx(simp(i,2),1);
-vtx_dave_1(2,2)=vtx(simp(i,2),2);
-vtx_dave_1(2,3)=vtx(simp(i,2),3);
+   vtx_dave_1(2,1)=vtx(simp(i,2),1);
+   vtx_dave_1(2,2)=vtx(simp(i,2),2);
+   vtx_dave_1(2,3)=vtx(simp(i,2),3);
 
-vtx_dave_1(3,1)=vtx(simp(i,3),1);
-vtx_dave_1(3,2)=vtx(simp(i,3),2);
-vtx_dave_1(3,3)=vtx(simp(i,3),3);
+   vtx_dave_1(3,1)=vtx(simp(i,3),1);
+   vtx_dave_1(3,2)=vtx(simp(i,3),2);
+   vtx_dave_1(3,3)=vtx(simp(i,3),3);
 
-vtx_dave_1(4,1)=vtx(simp(i,4),1);
-vtx_dave_1(4,2)=vtx(simp(i,4),2);
-vtx_dave_1(4,3)=vtx(simp(i,4),3);
+   vtx_dave_1(4,1)=vtx(simp(i,4),1);
+   vtx_dave_1(4,2)=vtx(simp(i,4),2);
+   vtx_dave_1(4,3)=vtx(simp(i,4),3);
 
-vtx_dave_2(1,1)=vtx_midpoints(i,1);
-vtx_dave_2(1,2)=vtx_midpoints(i,2);
-vtx_dave_2(1,3)=vtx_midpoints(i,3);
+   vtx_dave_2(1,1)=vtx_midpoints(i,1);
+   vtx_dave_2(1,2)=vtx_midpoints(i,2);
+   vtx_dave_2(1,3)=vtx_midpoints(i,3);
 
-vtx_dave_2(2,1)=vtx_midpoints(i,4);
-vtx_dave_2(2,2)=vtx_midpoints(i,5);
-vtx_dave_2(2,3)=vtx_midpoints(i,6);
+   vtx_dave_2(2,1)=vtx_midpoints(i,4);
+   vtx_dave_2(2,2)=vtx_midpoints(i,5);
+   vtx_dave_2(2,3)=vtx_midpoints(i,6);
 
-vtx_dave_2(3,1)=vtx_midpoints(i,7);
-vtx_dave_2(3,2)=vtx_midpoints(i,8);
-vtx_dave_2(3,3)=vtx_midpoints(i,9);
+   vtx_dave_2(3,1)=vtx_midpoints(i,7);
+   vtx_dave_2(3,2)=vtx_midpoints(i,8);
+   vtx_dave_2(3,3)=vtx_midpoints(i,9);
 
-vtx_dave_2(4,1)=vtx_midpoints(i,10);
-vtx_dave_2(4,2)=vtx_midpoints(i,11);
-vtx_dave_2(4,3)=vtx_midpoints(i,12);
+   vtx_dave_2(4,1)=vtx_midpoints(i,10);
+   vtx_dave_2(4,2)=vtx_midpoints(i,11);
+   vtx_dave_2(4,3)=vtx_midpoints(i,12);
 
-vtx_dave_2(5,1)=vtx_midpoints(i,13);
-vtx_dave_2(5,2)=vtx_midpoints(i,14);
-vtx_dave_2(5,3)=vtx_midpoints(i,15);
+   vtx_dave_2(5,1)=vtx_midpoints(i,13);
+   vtx_dave_2(5,2)=vtx_midpoints(i,14);
+   vtx_dave_2(5,3)=vtx_midpoints(i,15);
 
-vtx_dave_2(6,1)=vtx_midpoints(i,16);
-vtx_dave_2(6,2)=vtx_midpoints(i,17);
-vtx_dave_2(6,3)=vtx_midpoints(i,18);
+   vtx_dave_2(6,1)=vtx_midpoints(i,16);
+   vtx_dave_2(6,2)=vtx_midpoints(i,17);
+   vtx_dave_2(6,3)=vtx_midpoints(i,18);
 
-vtx_dave=[vtx_dave_1;vtx_dave_2];
+   vtx_dave=[vtx_dave_1;vtx_dave_2];
 
-[center_simp_dave]=center_of_simps(simp_dave,vtx_dave);
+   [center_simp_dave]=center_of_simps(simp_dave,vtx_dave);
 
-center_simp_proximity=[center_simp_proximity;center_simp_dave];
+   center_simp_proximity=[center_simp_proximity;center_simp_dave];
 
-vtx_dave_1=[];
-vtx_dave_2=[];
+   vtx_dave_1=[];
+   vtx_dave_2=[];
 
-i=i+1;
+   i=i+1;
 
 end
 
@@ -283,21 +283,21 @@ h = waitbar(0,'Calculating Simplex Map');
 
 for id=1:size(simp_dense,1);   % for all dense center of simplicies
 
-waitbar(id/size(simp_dense,1))
+   waitbar(id/size(simp_dense,1))
 
-% find the x,y,z co-ord difference
-dx=centre_simp_dense(id,1)-center_h_refined_simps(:,1);
-dy=centre_simp_dense(id,2)-center_h_refined_simps(:,2);
-dz=centre_simp_dense(id,3)-center_h_refined_simps(:,3);
+   % find the x,y,z co-ord difference
+   dx=centre_simp_dense(id,1)-center_h_refined_simps(:,1);
+   dy=centre_simp_dense(id,2)-center_h_refined_simps(:,2);
+   dz=centre_simp_dense(id,3)-center_h_refined_simps(:,3);
 
-dist_simp=sqrt((dx.^2)+(dy.^2)+(dz.^2));
+   dist_simp=sqrt((dx.^2)+(dy.^2)+(dz.^2));
 
 
-[m,I]=min(dist_simp);   % index out the minimum distance from the dense mesh to the id'th center of simplex
+   [m,I]=min(dist_simp);   % index out the minimum distance from the dense mesh to the id'th center of simplex
 
-index_simp(id,1)=lookup(I);
+   index_simp(id,1)=lookup(I);
 
-index_simp(id,2)=m;   % write the actual minimum distance (as a quality control procedure)
+   index_simp(id,2)=m;   % write the actual minimum distance (as a quality control procedure)
 
 end
 

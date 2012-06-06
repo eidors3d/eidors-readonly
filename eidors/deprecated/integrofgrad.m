@@ -19,11 +19,11 @@ warning('EIDORS:deprecated','INTEGROFGRAD is deprecated as of 06-Jun-2012. ');
 [sr,sc] = size(simp);
 
 if sr ~= length(mat_ref)
-error('Mismatched data entered')
+   error('Mismatched data entered')
 end
 
 if sc ~= 4
-error('Only first order tetrahedral elements supported');
+   error('Only first order tetrahedral elements supported');
 end
 
 
@@ -33,32 +33,32 @@ IntGrad = sparse(vr^2,sr);
 
 for i=1:size(simp,1)
 
-vv = [];
+   vv = [];
 
-for j=1:size(simp,2)
-vv = [vv;vtx(simp(i,j),:)];
-end
+   for j=1:size(simp,2)
+      vv = [vv;vtx(simp(i,j),:)];
+   end
 
-interp_fun = [-1 1 0 0; -1 0 1 0; -1 0 0 1];
+   interp_fun = [-1 1 0 0; -1 0 1 0; -1 0 0 1];
 
-Jts = interp_fun*vv;
-inv_Jts = inv(Jts);
-det_Jts = abs(det(Jts));
+   Jts = interp_fun*vv;
+   inv_Jts = inv(Jts);
+   det_Jts = abs(det(Jts));
 
-Gs = inv_Jts*interp_fun;
+   Gs = inv_Jts*interp_fun;
 
-%int = 0;
-%for q=1:4
-%  int = int + w(q)*Gs'*Gs;
-%end
-%Inte = int*det_Jts; % or simplified
-% Citation: The FEM displayed G.Dhatt & G. Touzot
+   %int = 0;
+   %for q=1:4
+   %  int = int + w(q)*Gs'*Gs;
+   %end
+   %Inte = int*det_Jts; % or simplified
+   % Citation: The FEM displayed G.Dhatt & G. Touzot
 
-Inte = (1/6)*Gs'*Gs*det_Jts;
+   Inte = (1/6)*Gs'*Gs*det_Jts;
 
-Local = sparse(vr,vr);
-Local(simp(i,:),simp(i,:))= Inte;
-IntGrad(:,i) = Local(:);
+   Local = sparse(vr,vr);
+   Local(simp(i,:),simp(i,:))= Inte;
+   IntGrad(:,i) = Local(:);
 end
 
 
