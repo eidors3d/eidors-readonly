@@ -43,7 +43,6 @@ EIDORS:TODO
  - move absolute tutorials into functions in main code
 
  - migrate aa_fwd_parameters to fix_model
- - fix_model should accept options
  - see if we need bs_calc_system_mat
  - see if we need object_in_tank_2d
  - see if we need examples, or move to tutorials
@@ -63,6 +62,8 @@ Cleanup calc_colours to clean up handling of image_field
    parameter.
   - code also in eidors_colours, scale_for_display, 
   - probably need new colourbar functions
+
+Fix colourbar -> make work with Camille's code, too.
 ===================
 ng_mk_ ... models
   - put in unit test code
