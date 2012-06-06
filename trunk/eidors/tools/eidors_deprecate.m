@@ -17,23 +17,25 @@ end
 oldpath = sprintf('%s/%s.m',olddir, oldname);
 newpath = sprintf('%s/deprecated/%s.m',eidors_dir,oldname);
 
-newfile = sprintf('%s/%s.m',olddir,newname);
 
 
 
 if nargin == 1
-   cmd = sprintf('svn mv %s %s',oldpath, newpath);
+   cmd = sprintf('%s svn cp %s %s',LDP, oldpath, newpath);
    system(cmd);
    copy_warn(oldpath, newpath);
-   system(sprintf('rm %s',oldpath));
+   system(sprintf('%s svn rm %s',LDP, oldpath));
 else
-   cmd = sprintf('svn cp %s %s',oldpath, newpath); system(cmd);
-   cmd = sprintf('svn mv %s %s',oldpath, newfile); system(cmd);
+   newfile = sprintf('%s/%s.m',olddir,newname);
+   cmd = sprintf('%s svn cp %s %s',LDP, oldpath, newpath); system(cmd);
    copy_warn(oldpath, newpath, newname);
    % rename all references 
    eidors_rename(oldname, newname);
+   cmd = sprintf('%s svn mv %s %s',LDP, oldpath, newfile); system(cmd);
 end
 
+function ldp = LDP;
+   ldp = 'LD_LIBRARY_PATH="" ';
 
 
 function copy_warn(oldpath, newpath, newname)

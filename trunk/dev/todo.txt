@@ -1,3 +1,10 @@
+Gmsh code eidors
+===============
+ OCTAVE DIRECTORY NAMES
+   - move to something like x86_64-linux etc
+   - get new code into startup which detects the system
+   - compile mex file for various oses
+===============
 EIDORS:RELEASE 3.6
  - fix eidors colorbar - give proper location
  - movement jacobians
