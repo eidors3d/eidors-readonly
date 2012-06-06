@@ -1,3 +1,5 @@
+think through how the cache is managed. esp for read-only installs
+===============
 Gmsh code eidors
 ===============
  OCTAVE DIRECTORY NAMES
