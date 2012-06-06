@@ -58,7 +58,7 @@ function imdl = basic_imdl( fmdl );
    imdl.name= 'Basic imdl from select_imdl';
    imdl.type= 'inv_model';
 
-   imdl.solve= @aa_inv_solve;
+   imdl.solve= @GN_one_step_diff_solve;
    imdl.hyperparameter.value = .01;
    imdl.RtR_prior = @laplace_image_prior;
    imdl.jacobian_bkgnd.value = 1;
@@ -69,13 +69,13 @@ function imdl = NOSER_dif( imdl );
    imdl.RtR_prior = @noser_image_prior;
    try; imdl = rmfield(imdl,'R_prior'); end
    imdl.hyperparameter.value = .03;
-   imdl.solve= @aa_inv_solve;
+   imdl.solve= @GN_one_step_diff_solve;
    imdl.reconst_type= 'difference';
 
 function imdl = Basic_GN_Dif( imdl );
    imdl.RtR_prior = @laplace_image_prior;
    try; imdl = rmfield(imdl,'R_prior'); end
-   imdl.solve= @aa_inv_solve;
+   imdl.solve= @GN_one_step_diff_solve;
    imdl.reconst_type= 'difference';
 
 function imdl = Basic_GN_Abs( imdl );
@@ -99,7 +99,7 @@ function imdl = Elec_Move_GN( imdl );
    imdl.fwd_model.conductivity_jacobian = imdl.fwd_model.jacobian; 
    imdl.fwd_model.jacobian = @aa_e_move_jacobian;
    imdl.RtR_prior =          @aa_e_move_image_prior;
-   imdl.solve= @aa_inv_solve;
+   imdl.solve= @GN_one_step_diff_solve;
 
    MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
    imdl.aa_e_move_image_prior.parameters = MV_prior;

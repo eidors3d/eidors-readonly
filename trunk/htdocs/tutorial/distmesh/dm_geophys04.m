@@ -10,7 +10,7 @@ imdl.fwd_model= fmdl;
 c2f= mk_coarse_fine_mapping( fmdl, cmdl);
 imdl.fwd_model.coarse2fine = c2f;
 imdl.RtR_prior = @gaussian_HPF_prior;
-imdl.solve = @aa_inv_solve;
+imdl.solve = @GN_one_step_diff_solve;
 imdl.hyperparameter.value= 0.0001;
 
 

@@ -19,8 +19,8 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %
 % inv_sel
 %  2D reconstructions
-%   inv_sel = 1   => aa_inv_solve
-%   inv_sel = 1.1 => aa_inv_solve (576 elems)
+%   inv_sel = 1   => GN_one_step_diff_solve
+%   inv_sel = 1.1 => GN_one_step_diff_solve (576 elems)
 %   inv_sel = 2   => inv_kalman_diff
 %
 %   if inv_sel is a inv_model structure, then use it to
