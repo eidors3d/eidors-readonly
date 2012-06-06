@@ -1,5 +1,5 @@
-function img=ab_tv_lagged_diff( inv_model, data1, data2)
-% AB_TV_LAGGED_DIFF Lagged Diffusivity Inverse Solver
+function img=TV_lagged_diffusivity( inv_model, data1, data2)
+% TV_LAGGED_DIFFUSIVITY Lagged Diffusivity Inverse Solver
 % img= ab_inv_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
@@ -11,7 +11,7 @@ function img=ab_tv_lagged_diff( inv_model, data1, data2)
 %      Max number of iterations before stopping
 %  min change = inv_model.parameters.min_change   (default 0)
 %      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
-%  beta      =  inv_model.ab_tv_lagged_diff.beta   (default 1e-3)
+%  beta      =  inv_model.TV_lagged_diffusivity.beta   (default 1e-3)
 % beta is the parameter that smooths the TV functional
 
 % (C) 2008 Andrea Borsic. License: GPL version 2 or version 3
@@ -25,7 +25,7 @@ try    min_change = inv_model.parameters.min_change;
 catch  min_change = 0;
 end
 
-try    beta = inv_model.ab_tv_lagged_diff.beta; 
+try    beta = inv_model.TV_lagged_diffusivity.beta; 
 catch  beta = 1e-3;
 end
 
@@ -73,6 +73,6 @@ for k=1:max_iter
 end % for k
 
 % create a data structure to return
-img.name = 'ab_tv_lagged_diff';
+img.name = 'TV_lagged_diffusivity';
 img.elem_data = delta_sigma;
 img.fwd_model = fwd_model;

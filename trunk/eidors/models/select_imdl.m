@@ -86,9 +86,9 @@ function imdl = Basic_GN_Abs( imdl );
    imdl.reconst_type= 'absolute';
 
 function imdl = TV_solve_Dif( imdl );
-   imdl.R_prior = @ab_calc_tv_prior;
+   imdl.R_prior = @calc_TV_prior;
    try; imdl = rmfield(imdl,'RtR_prior'); end
-   imdl.solve= @ab_tv_diff_solve;
+   imdl.solve= @TV_diffusivity_solve;
    imdl.reconst_type= 'difference';
    imdl.parameters.max_iterations= 15;
    imdl.hyperparameter.value = 1e-1;

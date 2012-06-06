@@ -11,11 +11,11 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   2   np_inv_solve       laplace_image_prior   1e-3
 %   3   aa_inv_solve       gaussian_HPF_prior   NF=2
 %   3.1 aa_inv_solve       noser_image_prior     NF=2
-%   4   ab_tv_diff_solve   ab_calc_tv_prior      1e-4
+%   4   TV_diffusivity_solve   calc_TV_prior      1e-4
 %   5   aa_inv_total_var   laplace_image_prior   1e-4 (not the usual prior)
-%   6   aa_inv_total_var   ab_calc_tv_prior      1e-4
-%   7   aa_inv_conj_grad   ab_calc_tv_prior      ??? 
-%   8   ab_tv_lagged_diff  ab_calc_tv_prior      ???
+%   6   aa_inv_total_var   calc_TV_prior      1e-4
+%   7   aa_inv_conj_grad   calc_TV_prior      ??? 
+%   8   TV_lagged_diffusivity  calc_TV_prior      ???
 %
 %  OPTION = 1dd => do OPTION=dd with normalize_measurements
 %
@@ -101,8 +101,8 @@ switch option
    case 4,
      inv2d.hyperparameter.value = 1e-6;
      inv2d.parameters.max_iterations= 10;
-     inv2d.R_prior=     'ab_calc_tv_prior';
-     inv2d.solve=       'ab_tv_diff_solve';
+     inv2d.R_prior=     'calc_TV_prior';
+     inv2d.solve=       'TV_diffusivity_solve';
      inv2d.parameters.keep_iterations=1;
 
    case 5,
@@ -115,7 +115,7 @@ switch option
      subplot(141); show_slices(img);
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
-     inv2d.R_prior=     'ab_calc_tv_prior';
+     inv2d.R_prior=     'calc_TV_prior';
      inv2d.parameters.max_iterations= 1;
      inv2d.parameters.keep_iterations=1;
      subplot(142); show_slices( inv_solve( inv2d, vh, vi) );
@@ -130,14 +130,14 @@ switch option
      inv2d.parameters.max_iterations = 1e3;
      inv2d.parameters.term_tolerance = 1e-3;
      inv2d.solve=          'aa_inv_conj_grad';
-     inv2d.R_prior=        'ab_calc_tv_prior';
+     inv2d.R_prior=        'calc_TV_prior';
 
      
    case 8,
      inv2d.hyperparameter.value = 1e-5;
      inv2d.parameters.max_iterations= 20;
-     inv2d.R_prior=     'ab_calc_tv_prior';
-     inv2d.solve=       'ab_tv_lagged_diff';
+     inv2d.R_prior=     'calc_TV_prior';
+     inv2d.solve=       'TV_lagged_diffusivity';
      inv2d.parameters.keep_iterations=1;
      
    otherwise,

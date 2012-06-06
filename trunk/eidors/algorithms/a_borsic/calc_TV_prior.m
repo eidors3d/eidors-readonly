@@ -1,6 +1,6 @@
-function Reg= ab_calc_tv_prior( inv_model );
-% AB_CALC_TV_PRIOR calculate Total Variation image prior
-% Reg= ab_calc_tv_prior( inv_model )
+function Reg= calc_TV_prior( inv_model );
+% CALC_TV_PRIOR calculate Total Variation image prior
+% Reg= calc_TV_prior( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 
