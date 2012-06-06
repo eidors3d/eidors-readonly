@@ -40,7 +40,7 @@ else
    system(cmd);
    copy_warn(oldpath, newpath, newname);
    % rename all references 
-   eidors_rename(oldname, newname);
+%    eidors_rename(oldname, newname);
    cmd = sprintf('%s svn mv %s %s',LDP, oldpath, newfile); system(cmd);
 end
 
@@ -65,9 +65,9 @@ fid2 = fopen(newpath,'w');
 tline = fgetl(fid1);
 done = false;
 while ischar(tline)
-   tline = strtrim(tline);
-   if ~done && ~(isempty(tline) || (length(tline) > 0 && tline(1)=='%') || ...
-      (length(tline) > 8 && strcmp(tline(1:8), 'function')))
+   test = strtrim(tline);
+   if ~done && ~(isempty(tline) || (length(test) > 0 && test(1)=='%') || ...
+      (length(test) > 8 && strcmp(test(1:8), 'function')))
       write_warning(fid2,oldname, newname);
       done = true;
       %break; % if we break here the rest of the file will not be written
@@ -99,7 +99,7 @@ fprintf(fid, '\n');
 fprintf(fid, ' %% nasty comment \n');
 fprintf(fid, '\n');
 fprintf(fid, 'code\n');
-fprintf(fid, 'code\n');
+fprintf(fid, '     code\n');
 fprintf(fid, 'code\n');
 fclose(fid);
 
