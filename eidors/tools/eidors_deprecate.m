@@ -66,8 +66,8 @@ while ischar(tline)
    fprintf(fid2,'%s\n',tline);
    tline = fgetl(fid1);
 end
-fclose(fid1)
-fclose(fid2)
+fclose(fid1);
+fclose(fid2);
 
 function write_warning(fid, oldname, newname)
 if ~isempty(newname)
