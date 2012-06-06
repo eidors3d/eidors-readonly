@@ -6,7 +6,7 @@ function C = fourier_fit(points,N,start);
 % [pp] = fourier_fit(points,N) fits a Fourier series and downsamples
 %    N is the number of Fourier components to fit to.
 %
-% [xy] = fourier_fit(pp,  linear_frac) returns points at linear_frac
+% [xy] = fourier_fit(pp,  linear_frac, start) returns points at linear_frac
 % distance along the contour
 %    pp          - piecewise polynomial structure
 %    linear_frac - vector of length fractions (0 to 1) to calculate points

@@ -26,7 +26,7 @@ if nargin < 2
 end
 m = [];
 if isstruct(points)
-    pts = max(100,length(linear_frac)*3);
+    pts = max(500,length(linear_frac)*3);
     start_th = fstr;
     [pp m] = path_len(points, pts, start_th, linear_frac );
 else
