@@ -1,6 +1,6 @@
-function img= aa_inv_solve( inv_model, data1, data2)
-% AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996
-% img= aa_inv_solve( inv_model, data1, data2)
+function img= GN_one_step_diff_solve( inv_model, data1, data2)
+% GN_ONE_STEP_DIFF_SOLVE inverse solver using approach of Adler&Guardo 1996
+% img= GN_one_step_diff_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
@@ -17,15 +17,15 @@ function img= aa_inv_solve( inv_model, data1, data2)
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 sol = get_RM( inv_model ) * dv;
 
-img.name= 'solved by aa_inv_solve';
+img.name= 'solved by GN_one_step_diff_solve';
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
 
 function RM = get_RM( inv_model );
    % The one_step reconstruction matrix is cached
-   RM = eidors_obj('get-cache', inv_model, 'aa_inv_solve');
+   RM = eidors_obj('get-cache', inv_model, 'GN_one_step_diff_solve');
    if ~isempty(RM)
-       eidors_msg('aa_inv_solve: using cached value', 3);
+       eidors_msg('GN_one_step_diff_solve: using cached value', 3);
        return;
    end
 
@@ -38,5 +38,5 @@ function RM = get_RM( inv_model );
 
    RM= (J'*W*J +  hp^2*RtR)\J'*W;
 
-   eidors_obj('set-cache', inv_model, 'aa_inv_solve', RM);
-   eidors_msg('aa_inv_solve: setting cached value', 3);
+   eidors_obj('set-cache', inv_model, 'GN_one_step_diff_solve', RM);
+   eidors_msg('GN_one_step_diff_solve: setting cached value', 3);

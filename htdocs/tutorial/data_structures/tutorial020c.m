@@ -14,7 +14,7 @@ i_mdl.RtR_prior= @tikhonov_image_prior;
 i_mdl.hyperparameter.value= 0;
 
 i_mdl.reconst_type= 'difference';
-i_mdl.solve= @aa_inv_solve;
+i_mdl.solve= @GN_one_step_diff_solve;
 
 % Reconstruct resistor change
 reconst= inv_solve(i_mdl, data_1k0, data_1k2);

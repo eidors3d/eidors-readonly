@@ -1,6 +1,6 @@
 function img= time_prior_solve( inv_model, data1, data2)
 % TIME_PRIOR_SOLVE inverse solver to account for time differences
-% img= aa_inv_solve( inv_model, data1, data2)
+% img= GN_one_step_diff_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time

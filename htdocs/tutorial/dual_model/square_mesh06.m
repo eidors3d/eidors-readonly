@@ -5,7 +5,7 @@ imdl= mk_common_model('c2c2',16);
 % Rotate electrodes to match
 imdl.fwd_model.electrode([5:-1:1,16:-1:6]) = imdl.fwd_model.electrode;
 imdl.RtR_prior = @gaussian_HPF_prior;
-imdl.solve = @aa_inv_solve;
+imdl.solve = @GN_one_step_diff_solve;
 imdl.hyperparameter.value= 0.01;
 
 imgc= inv_solve(imdl, vh, vi);

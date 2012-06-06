@@ -12,7 +12,7 @@ imdl.fwd_model.coarse2fine = c2f;
 imdl.RtR_prior = @noser_image_prior;
 imdl.prior_use_fwd_not_rec = 1;
 imdl.noser_image_prior.exponent= 0.5;
-imdl.solve = @aa_inv_solve;
+imdl.solve = @GN_one_step_diff_solve;
 imdl.hyperparameter.value= 0.003;
 
 imgs= inv_solve(imdl, vh, vi);

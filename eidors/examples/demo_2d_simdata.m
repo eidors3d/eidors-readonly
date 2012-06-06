@@ -54,7 +54,7 @@ show_fem( mdl_2d_2 ); pause;
 % 
 clear inv2d;
 inv2d.name= 'EIT inverse';
-%inv2d.solve=       'aa_inv_solve';
+%inv2d.solve=       'GN_one_step_diff_solve';
  inv2d.solve=       'np_inv_solve';
 %inv2d.solve=       'aa_inv_total_var';
  inv2d.hyperparameter.value = 3e-3;
