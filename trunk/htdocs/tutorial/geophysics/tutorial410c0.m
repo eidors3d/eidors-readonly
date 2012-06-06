@@ -5,7 +5,7 @@ if 0
 imdl.RtR_prior = @laplace_image_prior;
 imdl.solve = @GN_one_step_diff_solve;
 end
-imdl.R_prior = @ab_calc_tv_prior;
+imdl.R_prior = @calc_TV_prior;
 imdl.solve = @pdipm_diff;
 imdl.pdipm_diff.norm_image = 1;
 imdl.pdipm_diff.norm_data  = 1;
