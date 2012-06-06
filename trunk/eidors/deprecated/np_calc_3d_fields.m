@@ -12,6 +12,8 @@ function v_f= np_calc_3d_fields( fwd_model, img)
 %  on the fwd_model (depending on the image wouldn't help, because
 %  it changes). It is used as the first guess for m_3d_fields
 
+warning('EIDORS:deprecated','NP_CALC_3D_FIELDS is deprecated as of 06-Jun-2012. ');
+
 p= np_fwd_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
@@ -21,6 +23,6 @@ tol = 1e-5;
 v_f = eidors_obj('get-cache', fwd_model, 'np_2003_3d_fields');
 
 [v_f] = m_3d_fields(p.vtx, p.n_elec, p.indH, ...
-                    s_mat.E, tol, p.gnd_ind, v_f);
+s_mat.E, tol, p.gnd_ind, v_f);
 
 eidors_obj('set-cache', fwd_model, 'np_2003_image_prior', v_f);
