@@ -47,6 +47,14 @@ svn co --username=YOUR_USERNAME svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors
 Read-write access is available for registered <a href="http://www.sf.net">Sourceforge</a>
 developers. To become a developer, 
 email the <a href="faq.shtml#maintainers">maintainers</a>.
+<p>
+For developers, to avoid having to type in your password,
+sourceforge needs to know your ssh public key. 
+SSH information at sourceforge is 
+<a href="http://sourceforge.net/apps/trac/sourceforge/wiki/SSH%20keys">here</a>. 
+Upload your <a href="https://sourceforge.net/account/ssh">
+SSH public key here</a>.
+
 
 </ul>
 
