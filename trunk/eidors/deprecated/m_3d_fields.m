@@ -30,12 +30,12 @@ MC = [];
 
 for i=1:size(m_ind,1)
 
-m_n = zeros(el_no,1);
+   m_n = zeros(el_no,1);
 
-m_n(m_ind(i,1)) = 1;
-m_n(m_ind(i,2)) = -1;
+   m_n(m_ind(i,1)) = 1;
+   m_n(m_ind(i,2)) = -1;
 
-MC = [MC,m_n];
+   MC = [MC,m_n];
 
 end
 
@@ -52,47 +52,47 @@ maxiter=10000; % This should be high enough, but it may maybe this should
 
 if isreal(E)==1
 
-ver = eidors_obj('interpreter_version');
+   ver = eidors_obj('interpreter_version');
 
-if ver.isoctave % OCtave doesn't have Cholinc yet (as of 2.9.13)
-M= [];
-else
-opts.droptol = tol/10;
-if ver.ver < 7.012
-M = cholinc(E,opts.droptol);
-else
-opts.droptol = 1e-6;
-opts.type = 'ict'; %otherwise droptol is ignored opts.type = 'nofill';
+   if ver.isoctave % OCtave doesn't have Cholinc yet (as of 2.9.13)
+      M= [];
+   else
+      opts.droptol = tol/10;
+      if ver.ver < 7.012
+         M = cholinc(E,opts.droptol);
+      else
+         opts.droptol = 1e-6;
+         opts.type = 'ict'; %otherwise droptol is ignored opts.type = 'nofill';
 
-%         M = ichol(E,opts);
-% ichol makes pcg even slower. It's better to use no pre-conditioner
-M = [];
-end
-end
+         %         M = ichol(E,opts);
+         % ichol makes pcg even slower. It's better to use no pre-conditioner
+         M = [];
+      end
+   end
 
-for y=1:size(MC,2)
-%Set this line to suit your approximation needs. ***************
-%for more details use help pcg on Matlab's command window.
-[v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y), ...
-tol*norm(I(:,y)),maxiter,M',M,v_f(:,y));
-end
+   for y=1:size(MC,2)
+      %Set this line to suit your approximation needs. ***************
+      %for more details use help pcg on Matlab's command window.
+      [v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y), ...
+      tol*norm(I(:,y)),maxiter,M',M,v_f(:,y));
+   end
 
 else  %is real
 
-%Preconditioner
-% OCtave doesn't have Cholinc yet (as of 2.9.13)
-if exist('OCTAVE_VERSION')
-L= []; U=[];
-else
-[L,U] = luinc(E,tol/10);
-end
+   %Preconditioner
+   % OCtave doesn't have Cholinc yet (as of 2.9.13)
+   if exist('OCTAVE_VERSION')
+      L= []; U=[];
+   else
+      [L,U] = luinc(E,tol/10);
+   end
 
-for y=1:size(MC,2)
+   for y=1:size(MC,2)
 
-[v_f(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y), ...
-tol*norm(I(:,y)),maxiter,L,U);
+      [v_f(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y), ...
+      tol*norm(I(:,y)),maxiter,L,U);
 
-end
+   end
 end %is complex
 
 
