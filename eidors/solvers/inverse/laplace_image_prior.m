@@ -20,7 +20,7 @@ function Reg= laplace_image_prior( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
+pp= fwd_model_parameters( inv_model.fwd_model );
 
 Reg = speye( pp.n_elem );
 

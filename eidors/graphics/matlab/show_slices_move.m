@@ -46,7 +46,7 @@ hh= line(vx, vy);
 set(hh, 'LineStyle','none','Marker','.', ...
     'MarkerSize',10,'MarkerEdgeColor',ecolour);
 
-pp = aa_fwd_parameters( mdl );
+pp = fwd_model_parameters( mdl );
 if nargin == 1;
     move = [];
 end

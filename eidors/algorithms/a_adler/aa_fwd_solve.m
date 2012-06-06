@@ -20,7 +20,7 @@ if nargin==1 && strcmp(fwd_model.type, 'image');
     fwd_model= img.fwd_model;
 end
 
-pp= aa_fwd_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
 idx= 1:size(s_mat.E,1);

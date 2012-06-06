@@ -46,7 +46,7 @@ tgt_img.fwd_model.system_mat = @aa_calc_system_mat;
 tgt_img.fwd_model.solve = @aa_fwd_solve;
  meas_aa = fwd_solve( tgt_img );
 
-pp= aa_fwd_parameters( tgt_img.fwd_model );
+pp= fwd_model_parameters( tgt_img.fwd_model );
 s_mat= calc_system_mat(tgt_img.fwd_model, tgt_img );
 [tgt_img.fwd_model.electrode.z_contact]= deal(50);
 v= zeros(pp.n_node,pp.n_stim);

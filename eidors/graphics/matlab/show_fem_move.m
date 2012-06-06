@@ -23,7 +23,7 @@ elseif nargin == 3
 end
 
 % Extract forward model parameters
-fwdp = aa_fwd_parameters( img.fwd_model );
+fwdp = fwd_model_parameters( img.fwd_model );
 try
     fwdp.n_elem = size(img.fwd_model.coarse2fine,2);
 end
