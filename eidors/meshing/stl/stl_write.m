@@ -5,7 +5,7 @@ function stl_write(fv, name)
 %  name is the file name (character string), if no extension give, 'stl'
 %  assumed.
 
-% (C) 2006 Eric Carlson
+% (C) 2006 Eric Carlson: Public Domain
 % Adapted by Bartlomiej Grychtol from:
 % http://www.mathworks.com/matlabcentral/newsreader/view_thread/126215
 % $Id$
