@@ -1,3 +1,5 @@
+Change code that uses iso_f_smooth to use the proper RtR_prior formulation
+===============
 think through how the cache is managed. esp for read-only installs
 ===============
 merge eidors_model_params and fix_models
