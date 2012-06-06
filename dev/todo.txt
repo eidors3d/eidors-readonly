@@ -49,6 +49,7 @@ EIDORS:TODO
              - then update temporal_solver01
 
  - merge choose_imdl
+ - update select_imdl to reflect best practice
  - \ => forward_solver
  - library_model => accept simulation
  - BG's colourbar
