@@ -1,4 +1,4 @@
-function mdl = place_elec_on_surf(mdl,elec_pos, elec_spec)
+function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec)
 % PLACE_ELEC_ON_SURF Place electrodes on the surface of a model
 %  mdl = place_elec_on_surf(mdl,elec_pos, elec_spec)
 
@@ -58,6 +58,12 @@ stl_write(STL,'tmp.stl');
 % TODO:
 % re-mesh the inside???
 
+mdl2 = gmsh_stl2tet('tmp.stl');
+mdl2.electrode = mdl.electrode;
+for i = 1:length(elecs)
+   enodes = mdl.nodes(mdl.electrode(i).nodes,:);
+   mdl2.electrode(i).nodes = find_matching_nodes(mdl2,enodes,1e-5);
+end
 
 function mdl = flatten_electrode(mdl,inner,outer, V)
 n1 = find_matching_nodes(mdl,inner, 1e-5);
@@ -176,6 +182,7 @@ keep = keep(jnk.elems);
 % to boundary and the electrode is in the middle (small electrode, big
 % element). Fortunately, in these cases the edge will be there twice
 edges = reshape(jnk.elems(:,[1 2 2 3 3 1])',2,[])';
+if size(keep,2) == 1; keep = shiftdim(keep,1); end
 keep = reshape(keep(:,[1 2 2 3 3 1])',2,[])';
 rm = sum(keep,2)<2;
 edges(rm,:) = [];
@@ -442,6 +449,7 @@ function [u v s] = get_face_basis(mdl, fc)
 
 function [fc pos] = find_elec_centre(mdl, el_th,el_z)
 Ctr = mean(mdl.nodes(mdl.boundary,:));
+Ctr(3) = el_z;
 
 %1. Find elements that cross the z plane
 n_above = mdl.nodes(:,3) >= el_z;
