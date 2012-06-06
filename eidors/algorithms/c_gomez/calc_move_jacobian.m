@@ -172,14 +172,18 @@ for colidx = 1:pp.n_dims
         elec_nodes = fwd_model.electrode(k).nodes;
  
         %for compound electrodes, average jacobian for each node
-        delVm_part = zeros(pp.n_elec,pp.n_stim);
-        for each_elec_node= elec_nodes(:)';
-           delVm_part =  delVm_part + ...
-                calc_delVm(each_elec_node,pp,fwd_model,img_bkgd,colidx,...
+%         delVm_part = zeros(pp.n_elec,pp.n_stim);
+        delVm_part = calc_delVm(elec_nodes(:)',pp,fwd_model,img_bkgd,colidx,...
                 Re_Ce, cond_Ce_Vc);
-        end
+%         delVm_part = sparse(length(pp.kron_cond),length(pp.kron_cond));
+%         for each_elec_node= elec_nodes(:)';
+%            delVm_part =  delVm_part + ...
+%                 calc_delVm(each_elec_node,pp,fwd_model,img_bkgd,colidx,...
+%                 Re_Ce, cond_Ce_Vc);
+%         end
+%         delVm_part = Re_Ce * delVm_part * cond_Ce_Vc;
         %%%%% delVm_part = delVm_part/length(elec_nodes); %MC 25/05/2012
-        delVm_part = delVm_part;
+%         delVm_part = delVm_part;
 
         vm_idx= k + pp.n_elec*(colidx-1);
         delVm(:,:,vm_idx) = delVm_part;
@@ -206,14 +210,15 @@ Jm= nodes_to_stim_jacobian( delVm, fwd_model, pp );
 
 
 
-function delVm=  calc_delVm( elec_nodes, pp, fwd_model, img_bkgd, colidx, Re_Ce, cond_Ce_Vc)
+function delVm=  calc_delVm( elec_nodes_array, pp, fwd_model, img_bkgd, colidx, Re_Ce, cond_Ce_Vc)
+I = []; J=[]; S= [];
+for elec_nodes= elec_nodes_array(:)';
 [rowidx, elemidx] = find(pp.ELEM == elec_nodes);
 % Define the system sensitivity matrix to movement delSm
 sz= (pp.n_dims+1)*pp.n_elem;
 %delSm = sparse(sz,sz);
 % For each touching element, calculate the perturbation
 jcount = 1;
-I = []; J=[]; S= [];
 for j = elemidx'
     % Extract the coordinates of the element's four nodes
     Ae = pp.NODE(:,pp.ELEM(:, j))';
@@ -289,12 +294,15 @@ for j = elemidx'
     S = [S subSm(:)];
 %     delSm(se_idx, se_idx) = subSm;
 end
+end
 delSm = sparse(I,J,S,sz,sz);
+delVm = Re_Ce * delSm * cond_Ce_Vc;
+
 
 % The system submatrix is given by the product where delSm is
 % non-zero only in submatrices corresponding to touching elements
 %%%%% delVm = pp.Re * pp.Ce' * delSm * pp.Ce * pp.Vc; %MC 25/05/2012
-delVm = Re_Ce * delSm * cond_Ce_Vc;
+% delVm = Re_Ce * delSm * cond_Ce_Vc;
 if pp.DEBUG
     delta=1e-8;
     mdl_delta = fwd_model;
@@ -351,7 +359,7 @@ function do_unit_test;
    unit_test_diff_jacobian_b2C_rand_cond
    unit_test_diff_jacobian_n3r2_rand_cond
   unit_test_3d_inv_solve1
-
+  unit_test_3d_inv_solve2
    
 
 % TEST CODE FOR MATRIX DERIVATIVES
@@ -429,3 +437,45 @@ function unit_test_3d_inv_solve1
 
    imgM = inv_solve(mdl3dim, vh, vh);
 
+ function unit_test_3d_inv_solve2
+    fmdl = mk_library_model('adult_male_16el_lungs');
+    [fmdl.stimulation, fmdl.meas_select] = ...
+       mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
+    
+    outline = shape_library('get','adult_male','boundary');
+    
+    minnode = min(fmdl.nodes);
+    maxnode = max(fmdl.nodes);
+    imgsz = [32 32];
+    
+    xgrid = linspace(minnode(1),maxnode(1),imgsz(1));
+    ygrid = linspace(minnode(2),maxnode(2),imgsz(2));
+    rmdl = mk_grid_model([],xgrid,ygrid);
+    
+    % remove pixels outside the model
+    x_avg = conv2(xgrid, [1,1]/2,'valid');
+    y_avg = conv2(ygrid, [1,1]/2,'valid');
+    [x,y] = ndgrid( x_avg, y_avg);
+    inside = inpolygon(x(:),y(:),outline(:,1),outline(:,2));
+    ff = find(~inside);
+    
+    rmdl.elems([2*ff, 2*ff-1],:)= [];
+    rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
+    rmdl.coarse2fine(:,ff)= [];
+    rmdl.mk_coarse_fine_mapping.f2c_offset = [0 0 0.5];
+    rmdl.mk_coarse_fine_mapping.z_depth = 0.25;
+    
+    
+    % calculate coarse2fine
+    fmdl.coarse2fine = mk_coarse_fine_mapping(fmdl,rmdl);
+    
+    imdl = select_imdl( fmdl,{'Basic GN dif'});
+    imdl.rec_model = rmdl;
+    
+    img = mk_image(imdl,1);
+   vh = fwd_solve( img );
+   imdl.prior_use_fwd_not_rec = 1;
+   imdl.fwd_model.jacobian = @calc_move_jacobian;
+   imdl.RtR_prior = @aa_e_move_image_prior;
+   imgM = inv_solve(imdl, vh, vh);
+    
