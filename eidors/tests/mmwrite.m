@@ -36,6 +36,9 @@ function [ err ] = mmwrite(filename,A,comment,mattype,precision)
 %                              If ommitted, full working precision is used.
 %
 
+% From http://math.nist.gov/MatrixMarket/mmio/matlab/mmwrite.m
+% (C) 2007  NIST
+
 if ( nargin == 5) 
   precision = 16;
 elseif ( nargin == 4) 
