@@ -7,7 +7,7 @@ function Reg= tutorial210_cheat_laplace( inv_model )
 %   weight   = inv_model.tutorial210_cheat_laplace.cheat_weight;
 %            => new weight to set elements to
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
+pp= fwd_model_parameters( inv_model.fwd_model );
 
 ROI = zeros(1,pp.n_elem);
 ROI( inv_model.tutorial210_cheat_laplace.cheat_elements ) = 1;
