@@ -1,6 +1,15 @@
-function eidors_deprecate(oldname, newname)
+function eidors_deprecate(oldname, newname, rename)
 
 if ischar(oldname) && strcmp(oldname,'UNIT_TEST'), do_unit_test, return, end
+
+switch nargin
+   case 1
+      newname = [];
+      rename = [];
+      
+   case 2
+      rename = [];
+end
 
 eidors_dir = fileparts(which('eidors_obj'));
 oldfile = which(oldname, '-all');
@@ -20,10 +29,10 @@ newpath = sprintf('%s/deprecated/%s.m',eidors_dir,oldname);
 
 
 
-if nargin == 1
+if isempty(newname)
    cmd = sprintf('%s svn cp %s %s/deprecated/',LDP, oldpath, eidors_dir);
    system(cmd);
-   copy_warn(oldpath, newpath);
+   copy_warn(oldpath, newpath, rename);
    system(sprintf('%s svn rm %s',LDP, oldpath));
 else
    newfile = sprintf('%s/%s.m',olddir,newname);
