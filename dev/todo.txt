@@ -53,6 +53,9 @@ EIDORS:TODO
 
  - remove examples and integrate with tutorials
 
+ - put defaults for functions
+I like the idea of having a defaults in each function, but I think the np_fwd_solve is a level to low. The choice is between np_fwd_solve and aa_fwd_solve, etc. so perhaps it would make sense to put the defaults in fwd_solve itself. Then we could put mdl.solve = 'defualt';
+
 ===================
 Problems with calc_move_jacobian.m - only with 3D models
 ===================
