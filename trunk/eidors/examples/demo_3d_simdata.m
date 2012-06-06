@@ -68,7 +68,7 @@ params= mk_circ_tank(8, [], n_elec);
 params.stimulation= stimulation;
 params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
-params.jacobian=   'aa_calc_jacobian';
+params.jacobian=   'calc_jacobian_adjoint';
 mdl_2d_2 = eidors_obj('fwd_model', params);
 
 inv2d.name= 'EIT inverse';

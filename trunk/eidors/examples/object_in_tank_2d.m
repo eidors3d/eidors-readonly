@@ -31,7 +31,7 @@ tank_mdl.stimulation= st;
 tank_mdl.meas_select= els;
 tank_mdl.solve=      'aa_fwd_solve';
 tank_mdl.system_mat= 'bs_calc_system_mat';
-tank_mdl.jacobian=   'aa_calc_jacobian';
+tank_mdl.jacobian=   'calc_jacobian_adjoint';
 tank_mdl.normalize_measurements= 0;
 tank_mdl.np_fwd_solve.perm_sym= '{n}';
 
