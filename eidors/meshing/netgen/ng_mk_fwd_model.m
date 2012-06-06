@@ -74,7 +74,7 @@ if nelec>0
 end
 
 mdl.solve=      @aa_fwd_solve;
-mdl.jacobian=   @aa_calc_jacobian;
+mdl.jacobian=   @calc_jacobian_adjoint;
 mdl.system_mat= @aa_calc_system_mat;
 
 fwd_mdl= eidors_obj('fwd_model', mdl);

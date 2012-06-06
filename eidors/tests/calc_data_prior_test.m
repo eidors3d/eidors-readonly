@@ -17,7 +17,7 @@ params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
 params.solve=      'aa_fwd_solve';
 params.system_mat= 'aa_calc_system_mat';
-params.jacobian=   'aa_calc_jacobian';
+params.jacobian=   'calc_jacobian_adjoint';
 params.normalize_measurements = 0;
 mdl_2d = eidors_obj('fwd_model', params);
 

@@ -274,7 +274,7 @@ function i_mdl= make_inv_model( n_rings, img_prior, param_name, param_vals );
                          {'no_meas_current','no_rotate_meas'}, 1);
    params.solve=      'aa_fwd_solve';
    params.system_mat= 'aa_calc_system_mat';
-   params.jacobian  = 'aa_calc_jacobian';
+   params.jacobian  = 'calc_jacobian_adjoint';
 %  params.normalize_measurements  = 1; TODO: we have a bug here
    l_mdl= eidors_obj('fwd_model', params);
 
