@@ -21,13 +21,14 @@ newpath = sprintf('%s/deprecated/%s.m',eidors_dir,oldname);
 
 
 if nargin == 1
-   cmd = sprintf('%s svn cp %s %s',LDP, oldpath, newpath);
+   cmd = sprintf('%s svn cp %s %s/deprecated/',LDP, oldpath, eidors_dir);
    system(cmd);
    copy_warn(oldpath, newpath);
    system(sprintf('%s svn rm %s',LDP, oldpath));
 else
    newfile = sprintf('%s/%s.m',olddir,newname);
-   cmd = sprintf('%s svn cp %s %s',LDP, oldpath, newpath); system(cmd);
+   cmd = sprintf('%s svn cp %s %s/deprecated/',LDP, oldpath, eidors_dir);
+   system(cmd);
    copy_warn(oldpath, newpath, newname);
    % rename all references 
    eidors_rename(oldname, newname);
@@ -72,11 +73,11 @@ function write_warning(fid, oldname, newname)
 if ~isempty(newname)
 fprintf(fid,...
    'warning(''EIDORS:deprecated'',''%s is deprecated as of %s. Use %s instead.'');\n\n',...
-   date, upper(oldname),upper(newname));
+   upper(oldname),date,upper(newname));
 else
    fprintf(fid,...
    'warning(''EIDORS:deprecated'',''%s is deprecated as of %s. '');\n\n',...
-   date, upper(oldname));
+   upper(oldname),date);
 end
 
 function do_unit_test
