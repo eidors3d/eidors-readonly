@@ -1,5 +1,8 @@
 think through how the cache is managed. esp for read-only installs
 ===============
+merge eidors_model_params and fix_models
+ rename fix_models
+===============
 Gmsh code eidors
 ===============
  OCTAVE DIRECTORY NAMES
