@@ -17,13 +17,18 @@ end
 oldpath = sprintf('%s/%s.m',olddir, oldname);
 newpath = sprintf('%s/deprecated/%s.m',eidors_dir,oldname);
 
+newfile = sprintf('%s/%s.m',olddir,newname);
 
 
 
 if nargin == 1
+   cmd = sprintf('svn mv %s %s',oldpath, newpath);
+   system(cmd);
    copy_warn(oldpath, newpath);
    system(sprintf('rm %s',oldpath));
 else
+   cmd = sprintf('svn cp %s %s',oldpath, newpath); system(cmd);
+   cmd = sprintf('svn mv %s %s',oldpath, newfile); system(cmd);
    copy_warn(oldpath, newpath, newname);
    % rename all references 
    eidors_rename(oldname, newname);
@@ -38,6 +43,7 @@ function copy_warn(oldpath, newpath, newname)
 if nargin < 3
    newname = [];
 end
+   
 
 [jnk, oldname] = fileparts(oldpath);
 
