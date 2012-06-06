@@ -91,8 +91,8 @@ function example_diff_tv_reconst_sim
     [fwd_m1,vi,vh]= twoplane_mdl;
 
     imdl= eidors_obj('inv_model','TV mdl');
-    imdl.solve= 'ab_tv_diff_solve';
-    imdl.R_prior= 'ab_calc_tv_prior';
+    imdl.solve= 'TV_diffusivity_solve';
+    imdl.R_prior= 'calc_TV_prior';
     imdl.parameters.max_iterations= 5;
     imdl.hyperparameter.value = 1e-4;
 
@@ -108,8 +108,8 @@ function example_diff_tv_reconst
     [fwd_m1,vi,vh]= twoplane_mdl;
 
     imdl= eidors_obj('inv_model','TV mdl');
-    imdl.solve= 'ab_tv_diff_solve';
-    imdl.R_prior= 'ab_calc_tv_prior';
+    imdl.solve= 'TV_diffusivity_solve';
+    imdl.R_prior= 'calc_TV_prior';
     imdl.parameters.max_iterations= 3;
     imdl.hyperparameter.value = 1e-4;
 

@@ -165,7 +165,7 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
 
 % Test for special functions and solve them specially
    switch solve
-   case 'ab_tv_diff_solve'
+   case 'TV_diffusivity_solve'
       error('Dont know how to calculate TV noise figure')
 
    case 'inv_kalman_diff'

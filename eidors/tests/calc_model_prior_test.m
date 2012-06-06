@@ -14,7 +14,7 @@ any_priors= {@tikhonov_image_prior, ...
              @laplace_image_prior};
 
 R_priors=   {any_priors{:}, ...
-             @ab_calc_tv_prior};
+             @calc_TV_prior};
 
 % Call R_priors as R_priors
 eidors_cache clear
@@ -52,7 +52,7 @@ eidors_cache clear
 for i = 1:length(R_priors); p = R_priors{i};
    inv_mdl= imdl;
    inv_mdl.RtR_prior= p;
-   if strcmp(func2str(p), 'ab_calc_tv_prior')
+   if strcmp(func2str(p), 'calc_TV_prior')
       continue; % not fair to ask it to ichol a non-square matrix
    end
    R= calc_R_prior(inv_mdl);
