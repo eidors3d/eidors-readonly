@@ -166,7 +166,7 @@ for e=1:length(mdl.electrode)
        S= 1.05;
        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
-       hh= text(mean(vx), mean(vy), num2str(e));
+       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y, num2str(e));
        set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
     end
 end
