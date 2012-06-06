@@ -9,6 +9,8 @@ function img= inv_solve_dual_mesh( inv_model, voltage)
 % (C) 2005 David Stephenson. License: GPL version 2 or version 3
 % $Id$
 
+warning('EIDORS:deprecated','INV_SOLVE_DUAL_MESH is deprecated as of 06-Jun-2012. INV_SOLVE now does this.');
+
 M_dense= inv_model.fwd_model;
 % Load parameters
 M_coarse= inv_model.inv_solve_dual_mesh.coarse_mdl;
@@ -70,29 +72,29 @@ df_coarse       = pcoarse.df;
 elec_coarse     = pcoarse.elec;
 
 %Set the tolerance for the forward solver
-for iter= 1:inv_model.parameters.max_iterations;                     
-    [E_dense,D_dense,Ela_dense,pp_dense] = ...
-        fem_master_full(vtx_dense,simp_dense,sol_upd_dense,gnd_ind_dense,elec_dense,zc,perm_sym);
- 
- if iter==1
-   %sprintf('Current fields for iteration %d',i)
-   [V_dense] = forward_solver(E_dense,I_dense,tol_for,pp_dense);
-   [viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
-   dfv = df(1:2:end);
-   vi = (viH); 
-   %sprintf('Measurement fields for iteration %d',i)
-   [v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense);
+for iter= 1:inv_model.parameters.max_iterations;
+[E_dense,D_dense,Ela_dense,pp_dense] = ...
+fem_master_full(vtx_dense,simp_dense,sol_upd_dense,gnd_ind_dense,elec_dense,zc,perm_sym);
+
+if iter==1
+%sprintf('Current fields for iteration %d',i)
+[V_dense] = forward_solver(E_dense,I_dense,tol_for,pp_dense);
+[viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
+dfv = df(1:2:end);
+vi = (viH);
+%sprintf('Measurement fields for iteration %d',i)
+[v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense);
 else
-   %sprintf('Current fields for iteration %d',i)
-   [V_dense] = forward_solver(E_dense,I_dense,tol_for,pp_dense,V_dense);
-   [viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
-   dfv = df(1:2:end);
-   vi = (viH); 
-   %sprintf('Measurement fields for iteration %d',i)
-   [v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense,v_f_dense);
+%sprintf('Current fields for iteration %d',i)
+[V_dense] = forward_solver(E_dense,I_dense,tol_for,pp_dense,V_dense);
+[viH,viV,indH_dense,indV,df] = get_3d_meas(elec_dense,vtx_dense,V_dense,Ib_dense,no_pl);
+dfv = df(1:2:end);
+vi = (viH);
+%sprintf('Measurement fields for iteration %d',i)
+[v_f_dense] = m_3d_fields(vtx_dense,el_no,indH_dense,E_dense,tol_for,gnd_ind_dense,v_f_dense);
 end
-    
-    
+
+
 %% DENSE MESH TO COARSE MESH HERE for scaler potentials
 
 [V_coarse] = mapvd(V_dense,index_vtx,elec_dense,vtx_coarse,vtx_dense);
@@ -132,16 +134,16 @@ img.elem_data = sol_array;
 img.fwd_model= M_dense;
 
 function voltH = elec_volts( Vfwd, fwd_model)
-    p = np_fwd_parameters( fwd_model);
-    Velec=Vfwd( p.n_node+(1:p.n_elec),:);
-    voltH = zeros( p.n_meas, 1 );
-    idx=0;
-    for i=1:p.n_stim
-       meas_pat= fwd_model.stimulation(i).meas_pattern;
-       n_meas  = size(meas_pat,1);
-       voltH( idx+(1:n_meas) ) = meas_pat*Velec(:,i);
-       idx= idx+ n_meas;
-    end
+p = np_fwd_parameters( fwd_model);
+Velec=Vfwd( p.n_node+(1:p.n_elec),:);
+voltH = zeros( p.n_meas, 1 );
+idx=0;
+for i=1:p.n_stim
+meas_pat= fwd_model.stimulation(i).meas_pattern;
+n_meas  = size(meas_pat,1);
+voltH( idx+(1:n_meas) ) = meas_pat*Velec(:,i);
+idx= idx+ n_meas;
+end
 
 function [V_coarse] = mapvd(V_dense,index_vtx,elec,vtx_coarse,vtx_dense);
 
@@ -151,12 +153,12 @@ function [V_coarse] = mapvd(V_dense,index_vtx,elec,vtx_coarse,vtx_dense);
 
 for j=1:size(elec,1);
 
-    for i=1:size(vtx_coarse,1);
+for i=1:size(vtx_coarse,1);
 
-        V_coarse(i,j)=V_dense((index_vtx(i,1)),j);
-        
-    end
-    
+V_coarse(i,j)=V_dense((index_vtx(i,1)),j);
+
+end
+
 end
 
 V_coarse_elec=V_dense((size(vtx_dense,1)+1):(size(V_dense,1)),:);
@@ -171,12 +173,12 @@ function [v_f_coarse] = mapvm(v_f_dense,index_vtx,indH_dense,vtx_coarse,vtx_dens
 
 for j=1:size(indH_dense,1);
 
-    for i=1:size(vtx_coarse,1);
+for i=1:size(vtx_coarse,1);
 
-        v_f_coarse(i,j)=v_f_dense((index_vtx(i,1)),j);
-        
-    end
-    
+v_f_coarse(i,j)=v_f_dense((index_vtx(i,1)),j);
+
+end
+
 end
 
 v_f_coarse_elec=v_f_dense((size(vtx_dense,1)+1):(size(v_f_dense,1)),:);
