@@ -9,7 +9,7 @@ function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);
 %el_no   = The total number of electrodes in the system
 %m_ind   = The measurements matrix (indices of electrode pairs)
 %E       = The full rank system matrix
-%tol     = The tolerance in the forward solution 
+%tol     = The tolerance in the forward solution
 %gnd_ind = The ground index
 %v_f     = The measurements fields
 
@@ -19,22 +19,24 @@ function [v_f] = m_3d_fields(vtx,el_no,m_ind,E,tol,gnd_ind,v_f);
 % (C) Nick Polydorides GPL v2 or v3. $Id$
 
 
+warning('EIDORS:deprecated','M_3D_FIELDS is deprecated as of 06-Jun-2012. ');
+
 [vr,vc] = size(vtx);
 
-Is_supl = zeros(vr,size(m_ind,1)); 
+Is_supl = zeros(vr,size(m_ind,1));
 %no of electrodes x no of measurements (now currents)!
 
 MC = [];
 
 for i=1:size(m_ind,1)
-   
-   m_n = zeros(el_no,1);
-   
-   m_n(m_ind(i,1)) = 1;
-   m_n(m_ind(i,2)) = -1;
-   
-   MC = [MC,m_n];
-   
+
+m_n = zeros(el_no,1);
+
+m_n(m_ind(i,1)) = 1;
+m_n(m_ind(i,2)) = -1;
+
+MC = [MC,m_n];
+
 end
 
 I = [Is_supl;MC];
@@ -42,55 +44,55 @@ I(gnd_ind,:) = 0;
 
 % stupidity to be matlab 6+7 compatible
 if nargin < 7;  v_f = zeros(size(E,1),size(I,2)); end
-if isempty(v_f);v_f = zeros(size(E,1),size(I,2)); end 
+if isempty(v_f);v_f = zeros(size(E,1),size(I,2)); end
 
 maxiter=10000; % This should be high enough, but it may maybe this should
-               % depend on the number of measurements?
-              
+% depend on the number of measurements?
+
 
 if isreal(E)==1
 
-    ver = eidors_obj('interpreter_version');
+ver = eidors_obj('interpreter_version');
 
-    if ver.isoctave % OCtave doesn't have Cholinc yet (as of 2.9.13)
-       M= [];
-    else
-       opts.droptol = tol/10;
-       if ver.ver < 7.012
-          M = cholinc(E,opts.droptol);
-       else
-          opts.droptol = 1e-6;
-          opts.type = 'ict'; %otherwise droptol is ignored opts.type = 'nofill';
+if ver.isoctave % OCtave doesn't have Cholinc yet (as of 2.9.13)
+M= [];
+else
+opts.droptol = tol/10;
+if ver.ver < 7.012
+M = cholinc(E,opts.droptol);
+else
+opts.droptol = 1e-6;
+opts.type = 'ict'; %otherwise droptol is ignored opts.type = 'nofill';
 
 %         M = ichol(E,opts);
 % ichol makes pcg even slower. It's better to use no pre-conditioner
-          M = [];
-       end
-    end
+M = [];
+end
+end
 
-    for y=1:size(MC,2)
-    %Set this line to suit your approximation needs. ***************
-    %for more details use help pcg on Matlab's command window.
-    [v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y), ...
-            tol*norm(I(:,y)),maxiter,M',M,v_f(:,y)); 
-    end
+for y=1:size(MC,2)
+%Set this line to suit your approximation needs. ***************
+%for more details use help pcg on Matlab's command window.
+[v_f(:,y),flag,relres,iter,resvec] = pcg(E,I(:,y), ...
+tol*norm(I(:,y)),maxiter,M',M,v_f(:,y));
+end
 
 else  %is real
 
-   %Preconditioner
-   % OCtave doesn't have Cholinc yet (as of 2.9.13)
-    if exist('OCTAVE_VERSION')
-       L= []; U=[];
-    else
-       [L,U] = luinc(E,tol/10);
-    end
+%Preconditioner
+% OCtave doesn't have Cholinc yet (as of 2.9.13)
+if exist('OCTAVE_VERSION')
+L= []; U=[];
+else
+[L,U] = luinc(E,tol/10);
+end
 
-   for y=1:size(MC,2)
- 
-      [v_f(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y), ...
-              tol*norm(I(:,y)),maxiter,L,U);
- 
-   end 
+for y=1:size(MC,2)
+
+[v_f(:,y),flag,relres,iter,resvec] = bicgstab(E,I(:,y), ...
+tol*norm(I(:,y)),maxiter,L,U);
+
+end
 end %is complex
 
 
