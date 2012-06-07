@@ -7,7 +7,7 @@ imdl.hyperparameter.value = 5.0;
 imdl.solve = @GN_abs_solve;
 
 for iter = [1,2,3, 5];
-   imdl.parameters.max_iteration = iter;
+   imdl.parameters.max_iterations = iter;
    img = inv_solve(imdl , vi);
    img.calc_colours.cb_shrink_move = [0.5,0.8,0.05];
    show_fem(img,[1,1]); axis off; axis image
