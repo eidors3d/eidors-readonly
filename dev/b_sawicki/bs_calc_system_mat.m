@@ -12,7 +12,7 @@ function s_mat= bs_calc_system_mat( fwd_model, img)
 % Modified by Bartosz Sawicki
 % $Id$
 
-FC= aa_system_mat_fields( fwd_model);
+FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
 pp= aa_fwd_parameters( fwd_model);

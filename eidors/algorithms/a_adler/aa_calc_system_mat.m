@@ -11,7 +11,7 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-FC= aa_system_mat_fields( fwd_model);
+FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
 elem_sigma = kron( img.elem_data(:), ones(elem_dim(fwd_model),1) );
