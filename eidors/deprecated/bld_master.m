@@ -16,6 +16,8 @@ function [Ef,D,Ela] = bld_master(vtx,simp,mat_ref);
 %mat_ref = The reference CONDUCTIVITY at each element. 
 %In the complex case mat_ref(i) = sigma(i) - epsilon(i)
 
+warning('EIDORS:deprecated','BLD_MASTER is deprecated as of 07-Jun-2012. ');
+
 dimen= size(vtx,2);
 if dimen==2
    [Ef,D,Ela] = bld_master_2d(vtx,simp,mat_ref); 

@@ -16,6 +16,8 @@ function [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc);
 %       dimensions are [number of electrodes x 3*number of faces per electrode].
 %zc   = The array of electrode contact impedances. 
 
+warning('EIDORS:deprecated','BLD_MASTER_FULL is deprecated as of 07-Jun-2012. ');
+
 dimen= size(vtx,2);
 if dimen==2
    [Ef,D,Ela] = bld_master_full_2d(vtx,simp,mat,elec,zc);

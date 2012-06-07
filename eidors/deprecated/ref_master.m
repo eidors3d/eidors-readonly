@@ -13,6 +13,8 @@ function [Er] = ref_master(E,vtx,gnd_ind,sch);
 %          1 for grounding electrode gnd_ind
 %gnd_ind = The ground index 
 
+warning('EIDORS:deprecated','REF_MASTER is deprecated as of 07-Jun-2012. ');
+
 [nv,jnk] = size(vtx);
 
 if nargin < 4

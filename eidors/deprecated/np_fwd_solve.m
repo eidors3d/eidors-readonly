@@ -13,6 +13,8 @@ function data= np_fwd_solve( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+warning('EIDORS:deprecated','NP_FWD_SOLVE is deprecated as of 07-Jun-2012. Use FWD_SOLVE_1ST_ORDER instead.');
+
 p= np_fwd_parameters( fwd_model );
 
 %Set the tolerance for the forward solver

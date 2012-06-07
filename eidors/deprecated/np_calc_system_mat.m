@@ -12,6 +12,8 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+warning('EIDORS:deprecated','NP_CALC_SYSTEM_MAT is deprecated as of 07-Jun-2012. Use SYSTEM_MAT_1ST_ORDER instead.');
+
 s_mat = eidors_obj('get-cache', fwd_model, 'np_system_mat', img);
 
 if ~isempty(s_mat)

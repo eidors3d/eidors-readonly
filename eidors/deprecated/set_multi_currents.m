@@ -15,6 +15,8 @@ function [I,Ib] = set_multi_currents(protocol,elec,vtx,gnd_ind,no_pl);
 %I       = The RHS vectors, i.e., the current patterns padded with zeroes 
 %          for the forward calculations
 
+warning('EIDORS:deprecated','SET_MULTI_CURRENTS is deprecated as of 07-Jun-2012. ');
+
 no_el = size(elec,1);
 
 elpp = no_el/no_pl;
