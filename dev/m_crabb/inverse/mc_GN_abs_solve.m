@@ -1,4 +1,4 @@
-function [img,img_iteration]= mc_GN_abs_solve( inv_model, sim_data, meas_data)
+function [img,img_iteration]= mc_GN_abs_solve( inv_model, meas_data)
 % MC_GN_ABS_SOLVE inverse solver 
 % img= mc_GN_abs_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
@@ -17,9 +17,9 @@ function [img,img_iteration]= mc_GN_abs_solve( inv_model, sim_data, meas_data)
 %Do not show iterations
 if(show_iter==1); img_iteration=0; end
 
-%Calculate the background image and save as current image
-img_bkgnd= calc_jacobian_bkgnd( inv_model );
-img_cur=img_bkgnd.elem_data;
+%Background image, save as current image and simulate some data
+img_bkgnd= calc_jacobian_bkgnd( inv_model ); img_cur=img_bkgnd.elem_data;
+sim_data=fwd_solve(img_bkgnd);
                      
 %Calculate the Jacobian, prior matrix and hyperparameter
 RtR = calc_RtR_prior( inv_model );

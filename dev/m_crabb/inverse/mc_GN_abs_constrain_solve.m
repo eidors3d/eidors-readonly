@@ -1,4 +1,4 @@
-function [img,img_iteration] = mc_GN_abs_constrain_solve(inv_model,sim_data,meas_data)
+function [img,img_iteration] = mc_GN_abs_constrain_solve(inv_model,meas_data)
 %Do Gauss Netwon Method with barrier to ensure positvity of the con
 %ductivity elements
 %INPUT v_h,v_i - simulated/measured voltages
@@ -16,8 +16,9 @@ function [img,img_iteration] = mc_GN_abs_constrain_solve(inv_model,sim_data,meas
 %Do not show iterations
 if(show_iter==1); img_iteration=0; end
 
-%Calculate the background image and save as current image
+%Background image and simulate some data
 img_bkgnd= calc_jacobian_bkgnd( inv_model );
+sim_data=fwd_solve(img_bkgnd);
 
 %Current image and the logistic equivalent
 img_cur=img_bkgnd.elem_data; n_cond=length(img_cur);
