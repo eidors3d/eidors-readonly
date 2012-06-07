@@ -8,6 +8,8 @@ function J= np_calc_jacobian( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+warning('EIDORS:deprecated','NP_CALC_JACOBIAN is deprecated as of 07-Jun-2012. Use CALC_JACOBIAN_ADJOINT instead.');
+
 p= np_fwd_parameters( fwd_model );
 
 s_mat= calc_system_mat( fwd_model, img );

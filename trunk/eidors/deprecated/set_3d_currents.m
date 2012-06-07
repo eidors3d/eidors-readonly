@@ -16,6 +16,8 @@ function [I,Ib] = set_3d_currents(protocol,elec,vtx,gnd_ind,no_pl);
 %I       = The RHS vectors, i.e., the current patterns padded with zeroes 
 
 
+warning('EIDORS:deprecated','SET_3D_CURRENTS is deprecated as of 07-Jun-2012. ');
+
 [vr,vc] = size(vtx);
    
 [el_no,q] = size(elec); 

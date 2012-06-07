@@ -24,6 +24,8 @@ function param = np_fwd_parameters( fwd_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+warning('EIDORS:deprecated','NP_FWD_PARAMETERS is deprecated as of 07-Jun-2012. ');
+
 param = eidors_obj('get-cache', fwd_model, 'np_fwd_parameters');
 
 if ~isempty(param)

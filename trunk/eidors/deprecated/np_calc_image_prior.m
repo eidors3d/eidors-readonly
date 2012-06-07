@@ -10,6 +10,8 @@ function Reg= np_calc_image_prior( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+warning('EIDORS:deprecated','NP_CALC_IMAGE_PRIOR is deprecated as of 07-Jun-2012. Use LAPLACE_IMAGE_PRIOR instead.');
+
 Reg = eidors_obj('get-cache', inv_model, 'np_2003_image_prior');
 
 if ~isempty(Reg)

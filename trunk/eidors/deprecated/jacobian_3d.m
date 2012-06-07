@@ -19,6 +19,8 @@ function [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,df,tol,perm_sy
 %tol      = Tolerance 
 %J        = The Jacobian (sensitivity) matrix with respect to conductivity
 
+warning('EIDORS:deprecated','JACOBIAN_3D is deprecated as of 07-Jun-2012. ');
+
 [vr,vc] = size(vtx);
 [sr,sc] = size(simp);
 

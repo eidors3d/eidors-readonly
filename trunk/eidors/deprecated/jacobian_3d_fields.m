@@ -17,6 +17,8 @@ function [J] = jacobian_3d_fields(V,Ela,D,elec,vtx,simp,mat_ref,v_f,df, c2f);
 
 % $Id$ 
 
+warning('EIDORS:deprecated','JACOBIAN_3D_FIELDS is deprecated as of 07-Jun-2012. ');
+
 [vr,dim] = size(vtx);
 
 if sum(df)~= size(v_f,2);

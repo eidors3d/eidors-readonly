@@ -17,6 +17,8 @@ function [E,D,Ela,pp] = fem_master_full(vtx,simp,mat,gnd_ind,elec,zc,perm_sym);
 %elec    = The bounary electrodes matrix
 %zc      = The contact impedance vector, satisfying size(elec,1) = length(zc)
 %perm_sym= Column permutation of E, either '{y}' to opt or '{n}' to avoid.       
+warning('EIDORS:deprecated','FEM_MASTER_FULL is deprecated as of 07-Jun-2012. ');
+
    [Ef,D,Ela] = bld_master_full(vtx,simp,mat,elec,zc); 
    
    [E] = ref_master(Ef,vtx,gnd_ind);  
