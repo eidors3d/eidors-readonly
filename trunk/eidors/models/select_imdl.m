@@ -97,7 +97,7 @@ function imdl = TV_solve_Dif( imdl );
 function imdl = Elec_Move_GN( imdl );
    % keep previous model as conductivity jacobian, so it should be ok
    imdl.fwd_model.conductivity_jacobian = imdl.fwd_model.jacobian; 
-   imdl.fwd_model.jacobian = @aa_e_move_jacobian;
+   imdl.fwd_model.jacobian = @calc_move_jacobian_perturb;
    imdl.RtR_prior =          @elec_move_image_prior;
    imdl.solve= @GN_one_step_diff_solve;
 

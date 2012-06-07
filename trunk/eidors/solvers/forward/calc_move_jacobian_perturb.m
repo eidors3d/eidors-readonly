@@ -1,5 +1,5 @@
-function J= aa_e_move_jacobian( fwd_model, img)
-% AA_E_MOVE_JACOBIAN: J= aa_e_move_jacobian( fwd_model, img)
+function J= calc_move_jacobian_perturb( fwd_model, img)
+% CALC_MOVE_JACOBIAN_PERTURB: J= calc_move_jacobian_perturb( fwd_model, img)
 % Calculate Jacobian Matrix for EIT, based on conductivity
 %   change and movement of electrodes
 % J         = Jacobian matrix
