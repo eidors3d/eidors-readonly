@@ -13,7 +13,7 @@ img.fwd_model.stimulation= mk_stim_patterns(16, 1, ...
              [0,1],[0,1], {'do_redundant', 'no_meas_current'}, 1);
 
 % SOLVERS
-img.fwd_model.system_mat= @aa_calc_system_mat;
+img.fwd_model.system_mat= @system_mat_1st_order;
 img.fwd_model.solve=      @fwd_solve_1st_order;
 img.fwd_model.jacobian=   @aa_calc_jacobian;
 

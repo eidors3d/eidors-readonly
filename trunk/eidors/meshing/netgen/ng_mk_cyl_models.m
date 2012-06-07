@@ -398,7 +398,7 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    mdl2.solve = 'fwd_solve_1st_order'; % FIXME? can't use default np_fwd_solve
    if isfield(mdl3,'jacobian');    mdl2.jacobian = mdl3.jacobian;      end
    %if isfield(mdl3,'system_mat');  mdl2.system_mat = mdl3.system_mat;  end
-   mdl2.system_mat = 'aa_calc_system_mat'; % FIXME? can't use default np_calc_system_mat
+   mdl2.system_mat = 'system_mat_1st_order'; % FIXME? can't use default np_calc_system_mat
 
    % update cache
    mdl2 = eidors_obj('fwd_model',mdl2);

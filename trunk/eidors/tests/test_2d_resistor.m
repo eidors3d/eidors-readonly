@@ -25,7 +25,7 @@ img= eidors_obj('image','2D rectangle', ...
 
 % AA_SOLVER
 mdl.solve = @fwd_solve_1st_order;
-mdl.system_mat = @aa_calc_system_mat;
+mdl.system_mat = @system_mat_1st_order;
 img.fwd_model = mdl;
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
@@ -97,7 +97,7 @@ img= eidors_obj('image','2D rectangle', 'fwd_model',mdl, ...
       'elem_data', ones(n_el,1) * conduc );
 % AA_SOLVER
 mdl.solve = @fwd_solve_1st_order;
-mdl.system_mat = @aa_calc_system_mat;
+mdl.system_mat = @system_mat_1st_order;
 fsol= fwd_solve(mdl,img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 % NP_SOLVER

@@ -7,5 +7,5 @@ for i=1:8;
 end
 img= calc_jacobian_bkgnd(imdl);
 
-aa_calc_system_mat(fmdl,img);
+system_mat_1st_order(fmdl,img);
 disp('success'); % if we have no errors
