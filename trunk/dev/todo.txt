@@ -1,3 +1,11 @@
+Iteratively refine 
+% See also:
+% http://www.cs.berkeley.edu/~wkahan/MxMulEps.pdf
+% especially page 15 where it discusses the value of iterative refinement
+%  without extra precision bits.  ALso, we need to enable 
+% system_dependent('SetPrecision', 53) in starup
+
+==================
 Create a GN_diff_solve function
 ==================
 DEFAULT SOLVER:
@@ -5,6 +13,7 @@ DEFAULT SOLVER:
 Add Wiener filter form to speed up
 
   - talk to Bill about estimates of covariance inverses 
+  - look at calc_Ji ... fcn
 ==================
 Change code that uses iso_f_smooth to use the proper RtR_prior formulation
 ===============
