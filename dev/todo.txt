@@ -1,3 +1,9 @@
+DEFAULT SOLVER:
+   GN_one_step_diff_solve
+Add Wiener filter form to speed up
+
+  - talk to Bill about estimates of covariance inverses 
+==================
 Change code that uses iso_f_smooth to use the proper RtR_prior formulation
 ===============
 think through how the cache is managed. esp for read-only installs

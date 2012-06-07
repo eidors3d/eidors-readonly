@@ -14,6 +14,11 @@ function img= GN_one_step_diff_solve( inv_model, data1, data2)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+% TODO:
+% Test whether Wiener filter form or Tikhonov form are faster
+%  Tikhonov: RM= (J'*W*J +  hp^2*RtR)\J'*W;
+%  Wiener:   P= inv(RtR); V = inv(W); RM = P*J'/(J*P*J' + hp^2*V)
+
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 sol = get_RM( inv_model ) * dv;
 
