@@ -1,3 +1,5 @@
+Create a GN_diff_solve function
+==================
 DEFAULT SOLVER:
    GN_one_step_diff_solve
 Add Wiener filter form to speed up
