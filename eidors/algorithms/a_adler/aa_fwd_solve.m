@@ -15,6 +15,8 @@ function data =aa_fwd_solve(fwd_model, img)
 % $Id$
 
 % correct input paralemeters if function was called with only img
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
 if nargin==1 && strcmp(fwd_model.type, 'image');
     img = fwd_model;
     fwd_model= img.fwd_model;
@@ -28,8 +30,7 @@ idx( fwd_model.gnd_node ) = [];
 
 v= zeros(pp.n_node,pp.n_stim);
 
-tol= 1e-5;
-v(idx,:)= forward_solver( s_mat.E(idx,idx), pp.QQ(idx,:), tol);
+v(idx,:)= forward_solver( s_mat.E(idx,idx), pp.QQ(idx,:));
 
 % calc voltage on electrodes
 v_els= pp.N2E * v;
@@ -55,3 +56,7 @@ end; end
 try; if img.fwd_solve.get_all_nodes== 1
    data.volt = v;                % all, including CEM nodes
 end; end
+
+function do_unit_test
+   img = mk_image( mk_common_model('b2c2',16),1);
+   vh = fwd_solve(img);
