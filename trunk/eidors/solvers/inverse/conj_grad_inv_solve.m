@@ -1,7 +1,7 @@
-function img= aa_inv_conj_grad( inv_model, data1, data2)
-% AA_INV_CONJ_GRAD inverse solver based on the CG
+function img= conj_grad_inv_solve( inv_model, data1, data2)
+% CONJ_GRAD_INV_SOLVE inverse solver based on the CG
 % inverse [Ref Shewchuck, 1994]
-% img= aa_inv_conj_grad( inv_model, data1, data2)
+% img= conj_grad_inv_solve( inv_model, data1, data2)
 % img        => output image
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
@@ -55,7 +55,7 @@ for i=1:n_img
 end
 
 % create a data structure to return
-img.name= 'solved by aa_inv_conj_grad';
+img.name= 'solved by conj_grad_inv_solve';
 img.elem_data = sol;
 img.inv_model= inv_model;
 img.fwd_model= fwd_model;
