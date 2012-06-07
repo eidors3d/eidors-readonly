@@ -29,7 +29,7 @@ options = {'no_meas_current','no_rotate_meas'};
 
 tank_mdl.stimulation= st;
 tank_mdl.meas_select= els;
-tank_mdl.solve=      'aa_fwd_solve';
+tank_mdl.solve=      'fwd_solve_1st_order';
 tank_mdl.system_mat= 'bs_calc_system_mat';
 tank_mdl.jacobian=   'calc_jacobian_adjoint';
 tank_mdl.normalize_measurements= 0;

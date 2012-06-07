@@ -1,5 +1,5 @@
-function data =aa_fwd_solve(fwd_model, img)
-% AA_FWD_SOLVE: data= aa_fwd_solve( fwd_model, img)
+function data =fwd_solve_1st_order(fwd_model, img)
+% FWD_SOLVE_1ST_ORDER: data= fwd_solve_1st_order( fwd_model, img)
 % Fwd solver for Andy Adler's EIT code
 % Input:
 %    fwd_model = forward model
@@ -49,7 +49,7 @@ end
 % create a data structure to return
 data.meas= vv;
 data.time= -1; % unknown
-data.name= 'solved by aa_fwd_solve';
+data.name= 'solved by fwd_solve_1st_order';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = v(1:pp.n_node,:); % but not on CEM nodes
 end; end

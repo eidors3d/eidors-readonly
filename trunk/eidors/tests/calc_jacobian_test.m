@@ -132,7 +132,7 @@ function mdl= make_aa_mdl2;
 
     params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                                 options, 10);
-    params.solve=      'aa_fwd_solve';
+    params.solve=      'fwd_solve_1st_order';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'calc_jacobian_adjoint';
     params.normalize_measurements = 0;
@@ -143,7 +143,7 @@ function mdl= make_aa_mdl3;
     i_mdl = mk_common_model('b3cz2',16);
     mdl= i_mdl.fwd_model;
     mdl.name= 'AA_1996 mdl';
-    mdl.solve=      'aa_fwd_solve';
+    mdl.solve=      'fwd_solve_1st_order';
     mdl.system_mat= 'aa_calc_system_mat';
     mdl.jacobian=   'calc_jacobian_adjoint';
     

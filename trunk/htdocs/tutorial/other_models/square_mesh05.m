@@ -45,7 +45,7 @@ for i=1:n_elec
 end
 
 fmdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, 'sq_m1');
-fmdl.solve=@aa_fwd_solve;
+fmdl.solve=@fwd_solve_1st_order;
 fmdl.system_mat=@aa_calc_system_mat;
 fmdl.jacobian=@aa_calc_jacobian;
 

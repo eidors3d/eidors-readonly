@@ -185,7 +185,7 @@ function approach4(vis, vhs, s_mdl, il_g, rand_seed)
    params= mk_circ_tank(8, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
                          {'no_meas_current','no_rotate_meas'}, 1);
-   params.solve=      'aa_fwd_solve';
+   params.solve=      'fwd_solve_1st_order';
    params.system_mat= 'aa_calc_system_mat';
 
    mat= ones( size(params.elems,1), 1);
@@ -249,7 +249,7 @@ function [vis,vhs,mdl]= small_2d_mdl
    params= mk_circ_tank(8, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
                          {'no_meas_current','no_rotate_meas'}, 1);
-   params.solve=      'aa_fwd_solve';
+   params.solve=      'fwd_solve_1st_order';
    params.system_mat= 'aa_calc_system_mat';
    mdl= eidors_obj('fwd_model', params);
 
@@ -272,7 +272,7 @@ function i_mdl= make_inv_model( n_rings, img_prior, param_name, param_vals );
    params= mk_circ_tank(n_rings, [], 16 ); 
    params.stimulation= mk_stim_patterns(16, 1, '{ad}','{ad}', ...
                          {'no_meas_current','no_rotate_meas'}, 1);
-   params.solve=      'aa_fwd_solve';
+   params.solve=      'fwd_solve_1st_order';
    params.system_mat= 'aa_calc_system_mat';
    params.jacobian  = 'calc_jacobian_adjoint';
 %  params.normalize_measurements  = 1; TODO: we have a bug here

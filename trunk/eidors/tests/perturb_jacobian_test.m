@@ -21,12 +21,12 @@
 
   img.fwd_model.jacobian=   @calc_jacobian_adjoint;
   img.fwd_model.system_mat= @aa_calc_system_mat;
-  img.fwd_model.solve=      @aa_fwd_solve;
+  img.fwd_model.solve=      @fwd_solve_1st_order;
   J_aa= calc_jacobian( img ); % 2 for bug in my code
 
   img.fwd_model.jacobian=   @perturb_jacobian;
   img.fwd_model.system_mat= @aa_calc_system_mat;
-  img.fwd_model.solve=      @aa_fwd_solve;
+  img.fwd_model.solve=      @fwd_solve_1st_order;
   J_aa_p= calc_jacobian( img ); % 2 for bug in my code
 
   norm(J_aa - J_aa_p,'fro')/norm(J_aa,'fro')

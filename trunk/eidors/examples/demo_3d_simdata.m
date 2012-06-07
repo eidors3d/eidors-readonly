@@ -66,7 +66,7 @@ inh_data.meas= inh_data.meas + 0.10 * sig* randn( size(inh_data.meas) );
 params= mk_circ_tank(8, [], n_elec);
 
 params.stimulation= stimulation;
-params.solve=      'aa_fwd_solve';
+params.solve=      'fwd_solve_1st_order';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'calc_jacobian_adjoint';
 mdl_2d_2 = eidors_obj('fwd_model', params);

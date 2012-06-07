@@ -24,7 +24,7 @@ img= eidors_obj('image','2D rectangle', ...
       'elem_data', ones(n_el,1) * conduc );
 
 % AA_SOLVER
-mdl.solve = @aa_fwd_solve;
+mdl.solve = @fwd_solve_1st_order;
 mdl.system_mat = @aa_calc_system_mat;
 img.fwd_model = mdl;
 fsol= fwd_solve(img);
@@ -63,7 +63,7 @@ for i=1:n_el
    Jp2(:,i) = (fsol_i.meas - fsol_h.meas)/delta; 
 end
    
-mdl.solve = @aa_fwd_solve;
+mdl.solve = @fwd_solve_1st_order;
 mdl.jacobian = @calc_jacobian_adjoint;
 Jaa= calc_jacobian(mdl,img);
 
@@ -96,7 +96,7 @@ n_el = size(mdl.elems,1);
 img= eidors_obj('image','2D rectangle', 'fwd_model',mdl, ...
       'elem_data', ones(n_el,1) * conduc );
 % AA_SOLVER
-mdl.solve = @aa_fwd_solve;
+mdl.solve = @fwd_solve_1st_order;
 mdl.system_mat = @aa_calc_system_mat;
 fsol= fwd_solve(mdl,img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);

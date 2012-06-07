@@ -12,7 +12,7 @@ data_tomel= Data_Ring1_July2004_Wen32_1;
 real_data= mk_data_tomel(data_tomel,'Mont-Terri data','Wenner protocol');
 
 gallery_3D_fwd = mk_gallery(elec_posn,data_tomel,n_rings,factor,levels);
-gallery_3D_fwd.solve = 'aa_fwd_solve';
+gallery_3D_fwd.solve = 'fwd_solve_1st_order';
 gallery_3D_fwd.system_mat = 'aa_calc_system_mat';
 gallery_3D_fwd.jacobian = 'aa_calc_jacobian';
 
