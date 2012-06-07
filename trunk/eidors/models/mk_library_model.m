@@ -151,7 +151,8 @@ switch str
             [16 1 0.5],[0.05],0.08);
     case 'pig_23kg_32el_lungs'
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [32 1 0.5],[0.05],0.08);    case 'pig_23kg_16el'
+            [32 1 0.5],[0.05],0.08);    
+    case 'pig_23kg_16el'
         out = mk_library_model({'pig_23kg','boundary'},...
             [16 1 0.5],[0.05],0.08);
     case 'pig_23kg_32el'
