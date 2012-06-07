@@ -1,6 +1,6 @@
-function [img,cond_samp]= mc_gibbs_solve( inv_model, sim_data, meas_data)
-% MC_GN_SOLVE inverse solver 
-% img= mc_GN_solve( inv_model, data1, data2)
+function [img,cond_samp]= mc_mcmc_metro_mem_eff_solve( inv_model, sim_data, meas_data)
+% MC_MCMC_METRO_MEM_EFF_SOLVE inverse solver 
+% img= mc_mcmc_metro_mem_eff_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => simulated   data 
@@ -41,9 +41,8 @@ img_it.type='image';
 
 %Initialise a solution matrix and put current image in first column
 n_cond=size(img_cur,1); 
-cond_samp=zeros(n_cond,n_samples+1); cond_samp(:,1)=img_cur;
+cond_samp=zeros(n_cond,2); cond_samp(:,1)=img_cur;
 n_cond_samp=ceil(n_cond*cond_frac); %no. pixel change per sample
-
 %Prior
 img_prior=img_cur;
 
@@ -53,13 +52,15 @@ img_prior=img_cur;
 img_bkgnd.elem_data=cond_samp(:,1);
 sim_data=fwd_solve(img_bkgnd);
 prior_b=calc_prior(R,cond_samp(:,1),hp);
+%POSITIVITY CONSTRAIT HERE!!!!!!!!!!!!!!!!
 likelihood_b=calc_likelihood(meas_data,sim_data,noise_var);        
 %Posterior is product of prior and likelihood
 post_b=prior_b*likelihood_b;
 
+
+
 %Initialise the acceptance
 acceptance=0;
-
 %Loop through the samples
 for i=1:n_samples           
     tic; fprintf('Sample %i of %i',i,n_samples);
@@ -69,16 +70,16 @@ for i=1:n_samples
     con_i=cond_rand(1:n_cond_samp); 
     
     %Cahce the old conductivity at the random pixels and perturb
-    old_sigma=cond_samp(:,i);
-    cond_samp(con_i,i)=cond_samp(con_i,i) + sqrt(prop_var)*randn(n_cond_samp,1);
+    old_sigma=cond_samp(:,1);
+    cond_samp(con_i,1)=cond_samp(con_i,1) + sqrt(prop_var)*randn(n_cond_samp,1);
                
     %Forward solve, calc prior and likelihood at new conductivity
-    img_bkgnd.elem_data=cond_samp(:,i);
+    img_bkgnd.elem_data=cond_samp(:,1);
     sim_data=fwd_solve(img_bkgnd);
-    prior_n=calc_prior(R,cond_samp(:,i),hp);    
+    prior_n=calc_prior(R,cond_samp(:,1),hp);    
     %Test for negative conducitivity
     for iii=1:n_cond_samp
-        if( (cond_samp(con_i(iii),i) < min_s) || (cond_samp(con_i(iii),i) > max_s) )
+        if( (cond_samp(con_i(iii),1) < min_s) || (cond_samp(con_i(iii),1) > max_s) )
         prior_n=0;
         end
     end
@@ -94,17 +95,19 @@ for i=1:n_samples
         acceptance=acceptance+1;
         post_b=post_n;
     else %Reject - Resassign the conductivity
-        cond_samp(:,i)=old_sigma;
+        cond_samp(:,1)=old_sigma;
     end      
 
     %Print the running acceptance rate
     fprintf(' has acceptance rate of %0.2f\n',acceptance/i); toc;
 
-    %Update the sample
-    cond_samp(:,i+1)=cond_samp(:,i);
+    %After burn point start updating the sample
+    if(i>=n_burn)
+        cond_samp(:,2)=cond_samp(:,2)+(cond_samp(:,1)-cond_samp(:,2))/(i+1-n_burn);
+    end
 
-    if(mod(i,n_show)==0 && show_iter==1)
-        img_it.elem_data=mean(cond_samp(:,1:i),2);
+    if(i >= n_burn && mod(i,n_show)==0 && show_iter==1)
+        img_it.elem_data=cond_samp(:,2);
         figure; show_fem(img_it,[1,0,0]);
     end
         
@@ -136,7 +139,7 @@ img.fwd_model= inv_model.fwd_model;
 img.type='image';
 
 %Calculate the mean of samples (after burn)
-img.elem_data=mean(cond_samp(:,n_burn:n_samples),2);
+img.elem_data=cond_samp(:,2);
 
 
 
