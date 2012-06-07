@@ -133,7 +133,7 @@ function mdl= make_aa_mdl2;
     params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                                 options, 10);
     params.solve=      'fwd_solve_1st_order';
-    params.system_mat= 'aa_calc_system_mat';
+    params.system_mat= 'system_mat_1st_order';
     params.jacobian=   'calc_jacobian_adjoint';
     params.normalize_measurements = 0;
     mdl = eidors_obj('fwd_model', params);
@@ -144,7 +144,7 @@ function mdl= make_aa_mdl3;
     mdl= i_mdl.fwd_model;
     mdl.name= 'AA_1996 mdl';
     mdl.solve=      'fwd_solve_1st_order';
-    mdl.system_mat= 'aa_calc_system_mat';
+    mdl.system_mat= 'system_mat_1st_order';
     mdl.jacobian=   'calc_jacobian_adjoint';
     
     

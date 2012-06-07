@@ -42,7 +42,7 @@ tgt_img= mk_image(fmdl2,elem_data);
 
 show_fem(tgt_img,[0,1,0])
 
-tgt_img.fwd_model.system_mat = @aa_calc_system_mat;
+tgt_img.fwd_model.system_mat = @system_mat_1st_order;
 tgt_img.fwd_model.solve = @fwd_solve_1st_order;
  meas_aa = fwd_solve( tgt_img );
 

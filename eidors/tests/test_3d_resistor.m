@@ -45,7 +45,7 @@ mdl.electrode= elec;
 show_fem(mdl);
 
 mdl.solve = @fwd_solve_1st_order;
-mdl.system_mat = @aa_calc_system_mat;
+mdl.system_mat = @system_mat_1st_order;
 
 n_el = size(mdl.elems,1);
 img= eidors_obj('image','3D rectangle', ...

@@ -14,7 +14,7 @@ stim.meas_pattern= [-1,1];
 mdl.stimulation= stim;
 mdl.electrode= elec;
 mdl.solve = @fwd_solve_1st_order;
-mdl.system_mat = @aa_calc_system_mat;
+mdl.system_mat = @system_mat_1st_order;
 
 show_fem(mdl); axis('equal'); set(gca,'Ylim',[-.5,ww-.5]);
 print_convert tutorial022a.png '-density 75'

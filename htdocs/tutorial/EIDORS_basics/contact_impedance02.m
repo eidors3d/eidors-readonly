@@ -1,7 +1,7 @@
 fmdl.stimulation(1).stim_pattern = [0;1;0;-1];
 fmdl.stimulation(1).meas_pattern = [0;1;0;-1]';
 fmdl.solve =      @fwd_solve_1st_order;
-fmdl.system_mat = @aa_calc_system_mat;
+fmdl.system_mat = @system_mat_1st_order;
 fmdl.electrode(1).z_contact = 0.01;
 
 img = mk_image(fmdl,1);

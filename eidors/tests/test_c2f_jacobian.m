@@ -162,7 +162,7 @@ imdl = mk_common_model('n3r2');
 f1mdl = imdl.fwd_model;
 f1mdl.solve = @fwd_solve_1st_order;
 f1mdl.jacobian = @calc_jacobian_adjoint;
-f1mdl.system_mat = @aa_calc_system_mat;
+f1mdl.system_mat = @system_mat_1st_order;
 
 % Create 2D FEM of all NODES with z=0
 n2d = f1mdl.nodes( (f1mdl.nodes(:,3) == 0), 1:2);

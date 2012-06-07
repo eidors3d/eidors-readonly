@@ -75,7 +75,7 @@ end
 
 mdl.solve=      @fwd_solve_1st_order;
 mdl.jacobian=   @calc_jacobian_adjoint;
-mdl.system_mat= @aa_calc_system_mat;
+mdl.system_mat= @system_mat_1st_order;
 
 fwd_mdl= eidors_obj('fwd_model', mdl);
 
