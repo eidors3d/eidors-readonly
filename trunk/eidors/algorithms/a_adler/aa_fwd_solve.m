@@ -30,7 +30,7 @@ idx( fwd_model.gnd_node ) = [];
 
 v= zeros(pp.n_node,pp.n_stim);
 
-v(idx,:)= forward_solver( s_mat.E(idx,idx), pp.QQ(idx,:));
+v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:));
 
 % calc voltage on electrodes
 v_els= pp.N2E * v;

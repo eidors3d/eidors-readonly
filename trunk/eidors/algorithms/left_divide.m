@@ -1,5 +1,5 @@
-function [V] = forward_solver(E,I,tol,pp,V, compat_param);
-%[V] = forward_solver(E,I,tol,pp,V);
+function [V] = left_divide(E,I,tol)
+%[V] = left_divide(E,I,tol,pp,V);
 %
 % Implements left division and overcomes many small inefficiencies
 % of matlab's left division. Also uses conjugate gradients (for large problems). 
@@ -7,21 +7,10 @@ function [V] = forward_solver(E,I,tol,pp,V, compat_param);
 %E   = The full rank system matrix 
 %I   = The currents matrix (RHS) 
 %tol = The tolerance in the forward solution, e.g. 1e-5
-%pp  = UNUSED
-%V   = The approximated nodal potential distribution (USED FOR PCG SOLN)
 
 % (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL
 % $Id$
 
-% The EIDORS3D V2 was [V] = forward_solver(vtx,E,I,tol,pp,V);
-% but vtx not used, so it's forward_solver(E,I,tol,pp,V, compat_param);
-if size(E,2) == 3; % E is actually vtx
-  if nargin>=2; E= I;             end
-  if nargin>=3; I= tol;           end
-  if nargin>=4; tol= pp;          end
-  if nargin>=5; pp= V;            end
-  if nargin>=6; V =compat_param;  end
-end 
 if ~exist('tol'); tol = 1e-8; end
 
 [n_nodes,n_stims] = size(I);
@@ -69,7 +58,7 @@ catch
 
    if nargin < 5
       sz= [size(E,1),n_stims];
-      V = eidors_obj('get-cache', sz, 'forward_solver_V');
+      V = eidors_obj('get-cache', sz, 'left_divide_V');
       if isempty(V); V= zeros(sz); end
    end
 
@@ -85,7 +74,7 @@ catch
       [V(:,i),flag] = feval( cgsolver, E,I(:,i), ...
                tol*norm(I(:,i)),n_nodes,L,U,V(:,i));
    end 
-      eidors_obj('set-cache', sz, 'forward_solver_V', V);
+      eidors_obj('set-cache', sz, 'left_divide_V', V);
 end
 
 

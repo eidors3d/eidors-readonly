@@ -82,7 +82,7 @@ end
 groundnode=fwd_model.gnd_node; idx=1:size(At,1); idx(groundnode)=[];
 
 %Solve the simulated linear system with index
-nodeunknownsfwd(idx,:)=forward_solver(At(idx,idx),datafwd(idx,:));
+nodeunknownsfwd(idx,:)=left_divide(At(idx,idx),datafwd(idx,:));
 
 
 %STEP 2 : SOLVE FORWARD PROBLEM ON ALL MEASUREMENT PAIRS
@@ -106,7 +106,7 @@ for k=1:nstims
 end
 
 %Solve the simulated linear system with index
-nodeunknownsjac(idx,:)=forward_solver(At(idx,idx),datajac(idx,:));
+nodeunknownsjac(idx,:)=left_divide(At(idx,idx),datajac(idx,:));
 
 
 %STEP 3 : FORM JACOBIAN USING INNER PRODUCT u^{e}A^{e}v^{e}

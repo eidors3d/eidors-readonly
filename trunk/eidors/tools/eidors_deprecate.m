@@ -40,7 +40,7 @@ else
    system(cmd);
    copy_warn(oldpath, newpath, newname);
    % rename all references 
-%    eidors_rename(oldname, newname);
+     eidors_rename(oldname, newname);
    cmd = sprintf('%s svn mv %s %s',LDP, oldpath, newfile); system(cmd);
 end
 

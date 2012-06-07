@@ -85,7 +85,7 @@ end
 groundnode=fwd_model.gnd_node; idx=1:size(At,1); idx(groundnode)=[];
 
 %Solve the simulated linear system with index
-nodeunknownsfwd(idx,:)=forward_solver(At(idx,idx),datafwd(idx,:));
+nodeunknownsfwd(idx,:)=left_divide(At(idx,idx),datafwd(idx,:));
 
 %Calculate Hessian tensor - D2E_{i,j,k,l} == d2V_i,j / dS_k dS_l
 %V_i,j - voltage change on electrode i for stim j
