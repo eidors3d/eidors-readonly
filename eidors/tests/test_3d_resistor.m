@@ -44,7 +44,7 @@ mdl.stimulation= stim;
 mdl.electrode= elec;
 show_fem(mdl);
 
-mdl.solve = @aa_fwd_solve;
+mdl.solve = @fwd_solve_1st_order;
 mdl.system_mat = @aa_calc_system_mat;
 
 n_el = size(mdl.elems,1);
@@ -91,7 +91,7 @@ for i=1:n_el
    Jp2(:,i) = (fsol_i.meas - fsol_h.meas)/delta; 
 end
    
-mdl.solve = @aa_fwd_solve;
+mdl.solve = @fwd_solve_1st_order;
 mdl.jacobian = @calc_jacobian_adjoint;
 Jaa= calc_jacobian(mdl,img);
 

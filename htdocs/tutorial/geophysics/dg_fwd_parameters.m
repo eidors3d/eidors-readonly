@@ -1,5 +1,5 @@
 function param = dg_fwd_parameters(fwd_model)
-% AA_FWD_PARAMETERS: data= aa_fwd_solve( fwd_model, image)
+% AA_FWD_PARAMETERS: data= fwd_solve_1st_order( fwd_model, image)
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Andy Adler's EIT code
 %   param.n_elem     => number of elements

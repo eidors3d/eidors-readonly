@@ -395,7 +395,7 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    % copy other fields
    if isfield(mdl3,'stimulation'); mdl2.stimulation= mdl3.stimulation; end
    %if isfield(mdl3,'solve');       mdl2.solve = mdl3.solve;            end
-   mdl2.solve = 'aa_fwd_solve'; % FIXME? can't use default np_fwd_solve
+   mdl2.solve = 'fwd_solve_1st_order'; % FIXME? can't use default np_fwd_solve
    if isfield(mdl3,'jacobian');    mdl2.jacobian = mdl3.jacobian;      end
    %if isfield(mdl3,'system_mat');  mdl2.system_mat = mdl3.system_mat;  end
    mdl2.system_mat = 'aa_calc_system_mat'; % FIXME? can't use default np_calc_system_mat

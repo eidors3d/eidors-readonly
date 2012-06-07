@@ -22,7 +22,7 @@ gallery_3D_img.rec_model.elems = gallery_3D_img.fwd_model.misc.model2d.elems;
 gallery_3D_img.rec_model.nodes = gallery_3D_img.fwd_model.misc.model2d.nodes;
 
 %disp(['Computing the CC and SS matrices = ' gallery_3D_img.fwd_model.misc.compute_CCandSS]);
-%[ref_data,gallery_3D_img]= aa_fwd_solve(gallery_3D_img);
+%[ref_data,gallery_3D_img]= fwd_solve_1st_order(gallery_3D_img);
 [ref_data]= fwd_solve(gallery_3D_img);
 residuals= real_data.meas-ref_data.meas;
 

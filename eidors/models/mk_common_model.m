@@ -392,7 +392,7 @@ function inv2d= add_params_2d_mdl( params, n_elec, options);
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
     params.stimulation= st;
     params.meas_select= els;
-    params.solve=      'aa_fwd_solve';
+    params.solve=      'fwd_solve_1st_order';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'calc_jacobian_adjoint';
     params.normalize_measurements= 0;
@@ -427,7 +427,7 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
 
     params.stimulation= st;
     params.meas_select= els;
-    params.solve=      'aa_fwd_solve';
+    params.solve=      'fwd_solve_1st_order';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'calc_jacobian_adjoint';
     params.normalize_measurements= 0;
@@ -525,7 +525,7 @@ function inv3d= mk_b3r1_model( n_elec, options )
 
     params.stimulation= st;
     params.meas_select= els;
-    params.solve=      'aa_fwd_solve';
+    params.solve=      'fwd_solve_1st_order';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'calc_jacobian_adjoint';
     params.normalize_measurements= 0;
@@ -554,7 +554,7 @@ function inv3d= mk_b3r2_model( n_elec, nr, options )
 
     params.stimulation= st;
     params.meas_select= els;
-    params.solve=      'aa_fwd_solve';
+    params.solve=      'fwd_solve_1st_order';
     params.system_mat= 'aa_calc_system_mat';
     params.jacobian=   'calc_jacobian_adjoint';
     params.normalize_measurements= 0;

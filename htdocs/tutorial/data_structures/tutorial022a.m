@@ -13,7 +13,7 @@ stim.stim_pattern= [-1;1];
 stim.meas_pattern= [-1,1];
 mdl.stimulation= stim;
 mdl.electrode= elec;
-mdl.solve = @aa_fwd_solve;
+mdl.solve = @fwd_solve_1st_order;
 mdl.system_mat = @aa_calc_system_mat;
 
 show_fem(mdl); axis('equal'); set(gca,'Ylim',[-.5,ww-.5]);

@@ -17,7 +17,7 @@ params= mk_circ_tank(12, [], n_elec );
 
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
-params.solve=      'aa_fwd_solve';
+params.solve=      'fwd_solve_1st_order';
 params.system_mat= 'aa_calc_system_mat';
 mdl_2d = eidors_obj('fwd_model', params);
 show_fem( mdl_2d ); pause;
@@ -43,7 +43,7 @@ params= mk_circ_tank(8, [], n_elec );
 
 params.stimulation= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', ...
                             options, 10);
-params.solve=      'aa_fwd_solve';
+params.solve=      'fwd_solve_1st_order';
 params.system_mat= 'aa_calc_system_mat';
 params.jacobian=   'calc_jacobian_adjoint';
 mdl_2d_2 = eidors_obj('fwd_model', params);

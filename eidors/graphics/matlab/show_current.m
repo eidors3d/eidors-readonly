@@ -140,7 +140,7 @@ function do_unit_test
    fmdl.gnd_node = 1;
    fmdl.stimulation(1).stim_pattern = [1;-1];
    fmdl.stimulation(1).meas_pattern = [1,-1];
-   fmdl.solve = @aa_fwd_solve;
+   fmdl.solve = @fwd_solve_1st_order;
    fmdl.system_mat = @aa_calc_system_mat;
    fmdl.type = 'fwd_model'
    img = mk_image(fmdl,[1,1]); 
