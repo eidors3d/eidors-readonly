@@ -6,10 +6,15 @@ function img= aa_inv_conj_grad( inv_model, data1, data2)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
-%
+
+% parameters:
+%   tol =     inv_model.parameters.term_tolerance;
+%   maxiter = inv_model.parameters.max_iterations;
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 fwd_model= inv_model.fwd_model;
 pp= fwd_model_parameters( fwd_model );
@@ -104,4 +109,23 @@ function x= cg_ls_inv0( J, R, y, Rx0, maxiter, tol )
    end 
 %     disp([k, x_delta, x_delta_filt]);
 
-   
+function do_unit_test
+   img= mk_image( mk_common_model('c2c2',16),1);
+   vh = fwd_solve(img);
+   img.elem_data([65,81,82,101,102,122])=2; 
+   vi = fwd_solve(img);
+
+   imdl = mk_common_model('b2c2',16);
+   subplot(221); show_fem( inv_solve(imdl, vh, vi) );
+
+   imdl.solve = @conj_grad_inv_solve;
+   imdl.hyperparameter.value = .001;
+   subplot(222); show_fem( inv_solve(imdl, vh, vi) );
+
+   imdl.parameters.max_iterations = 2;
+   imdl.parameters.term_tolerance = 1e-4;
+   subplot(223); show_fem( inv_solve(imdl, vh, vi) );
+
+   imdl.parameters.max_iterations = 20;
+   imdl.parameters.term_tolerance = 1e-4;
+   subplot(224); show_fem( inv_solve(imdl, vh, vi) );
