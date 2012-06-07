@@ -131,7 +131,7 @@ for DIMENSIONS=[2 3]
     idx( imdl.fwd_model.gnd_node ) = [];
     v= zeros(pp.n_node,pp.n_stim);
     tol= 1e-5;
-    v(idx,:)= forward_solver( FC.E(idx,idx), pp.QQ(idx,:), tol);
+    v(idx,:)= left_divide( FC.E(idx,idx), pp.QQ(idx,:), tol);
 
     % save matrices for the sparse timing later (matrix market format)
     if(MMSAVE == 1)

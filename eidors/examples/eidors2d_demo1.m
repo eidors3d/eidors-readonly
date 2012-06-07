@@ -54,7 +54,7 @@ v= zeros(pp.n_node,pp.n_stim);
 idx= 1:size(s_mat.E,1); idx( tgt_img.fwd_model.gnd_node ) = [];
 
 tol= 1e-5;
-v(idx,:)= forward_solver( s_mat.E(idx,idx), pp.QQ(idx,:), tol);
+v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:), tol);
 
 
 fmdl2.system_mat = @mv_calc_system_mat;

@@ -23,7 +23,7 @@ idx= 1:size(s_mat.E,1);
 idx( fwd_model.gnd_node ) = [];
 
 sv= zeros(n, pp.n_stim );
-sv( idx,:) = forward_solver(s_mat.E(idx,idx) , pp.QQ( idx,: ));
+sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
 
 zi2E= zeros(pp.n_elec, n);
 zi2E(:, idx)= pp.N2E(:,idx)/ s_mat.E(idx,idx) ;

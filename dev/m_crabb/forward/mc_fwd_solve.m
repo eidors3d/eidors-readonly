@@ -65,7 +65,7 @@ end
 groundnode=fwd_model.gnd_node; idx=1:size(At,1); idx(groundnode)=[];
 
 %Solve the simulated linear system with index
-nodeunknowns(idx,:)=forward_solver(At(idx,idx),rhsdata(idx,:));
+nodeunknowns(idx,:)=left_divide(At(idx,idx),rhsdata(idx,:));
 
 
 %Find electrode voltages and store in matrix
