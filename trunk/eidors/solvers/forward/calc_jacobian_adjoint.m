@@ -28,7 +28,7 @@ sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
 zi2E= zeros(pp.n_elec, n);
 zi2E(:, idx)= pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 
-FC= aa_system_mat_fields( fwd_model );
+FC= system_mat_fields( fwd_model );
 
 
 if isfield(fwd_model,'coarse2fine')

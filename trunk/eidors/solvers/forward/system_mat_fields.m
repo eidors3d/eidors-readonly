@@ -1,6 +1,6 @@
-function FC= aa_system_mat_fields( fwd_model )
-% AA_SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat
-% FC= aa_system_mat_fields( fwd_model )
+function FC= system_mat_fields( fwd_model )
+% SYSTEM_MAT_FIELDS: fields (elem to nodes) fraction of system mat
+% FC= system_mat_fields( fwd_model )
 % input: 
 %   fwd_model = forward model
 % output:
@@ -10,17 +10,17 @@ function FC= aa_system_mat_fields( fwd_model )
 % $Id$
 
 cache_obj = mk_cache_obj(fwd_model);
-FC = eidors_obj('get-cache', cache_obj, 'aa_system_mat_fields');
+FC = eidors_obj('get-cache', cache_obj, 'system_mat_fields');
 if ~isempty(FC)
-   eidors_msg('aa_system_mat_fields: using cached value', 4);
+   eidors_msg('system_mat_fields: using cached value', 4);
    return
 end
 
 FC= calc_system_mat_fields( fwd_model );
 
 eidors_cache('boost_priority',1); % Moderate Priority boost
-eidors_obj('set-cache', cache_obj, 'aa_system_mat_fields', FC);
-eidors_msg('aa_system_mat_fields: setting cached value', 4);
+eidors_obj('set-cache', cache_obj, 'system_mat_fields', FC);
+eidors_msg('system_mat_fields: setting cached value', 4);
 eidors_cache('boost_priority',-1);
 
 % only cache stuff which is really relevant here
