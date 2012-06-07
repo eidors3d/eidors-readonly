@@ -19,8 +19,8 @@ mdl2dim.hyperparameter.value= hparameter;
 mdlM = mdl2dim;
 mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
 mdlM.fwd_model.jacobian = 'aa_e_move_jacobian';
-mdlM.RtR_prior = 'aa_e_move_image_prior';
-mdlM.aa_e_move_image_prior.parameters = move_vs_conduct;
+mdlM.RtR_prior = 'elec_move_image_prior';
+mdlM.elec_move_image_prior.parameters = move_vs_conduct;
 
 % Solve inverse problem for mdl2dim and mdlM eidors_obj models.
 img2dim = inv_solve(mdl2dim, vvRef, vvAvg1);  % solved no movement algorithms

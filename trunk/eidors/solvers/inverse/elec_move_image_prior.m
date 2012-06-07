@@ -1,14 +1,14 @@
-function Reg= aa_e_move_image_prior( inv_model );
-% AA_E_MOVE_IMAGE_PRIOR calculate image prior
-% Reg= aa_e_move_image_prior( inv_model )
+function Reg= elec_move_image_prior( inv_model );
+% ELEC_MOVE_IMAGE_PRIOR calculate image prior
+% Reg= elec_move_image_prior( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 % Parameters:
 %   inv_model.image_prior.parameters(1) -> relative weighting
 %     of movement vs image fraction of hyperparameter
 %     => Default = 100
-%   inv_model.aa_e_move_image_prior.RegC.func = Cond Reg fcn
-%   inv_model.aa_e_move_image_prior.RegM.func = Move Reg fcn
+%   inv_model.elec_move_image_prior.RegC.func = Cond Reg fcn
+%   inv_model.elec_move_image_prior.RegM.func = Move Reg fcn
 %   either @laplace_movement_image_prior OR @tikhonov_movement_image_prior
 %
 % For image portion, we use a Laplace prior, as 
@@ -25,8 +25,8 @@ function Reg= aa_e_move_image_prior( inv_model );
 % $Id$
 
 % relative strengths of conductivity and movement priors
-if isfield( inv_model,'aa_e_move_image_prior')
-   hp_move= inv_model.aa_e_move_image_prior.parameters(1);
+if isfield( inv_model,'elec_move_image_prior')
+   hp_move= inv_model.elec_move_image_prior.parameters(1);
 else
    hp_move= 10;
 end
@@ -36,7 +36,7 @@ n_elec = pp.n_elec;
 
 % calc conductivity portion
 try
-   RegCfcn = inv_model.aa_e_move_image_prior.RegC.func;
+   RegCfcn = inv_model.elec_move_image_prior.RegC.func;
 catch
    RegCfcn = @laplace_image_prior;
 end
@@ -52,7 +52,7 @@ szC = size(RegC,1);
 
 % calc movement portion
 try
-   fname = func2str(inv_model.aa_e_move_image_prior.RegM.func);
+   fname = func2str(inv_model.elec_move_image_prior.RegM.func);
    if(strcmp(fname,'tikhonov_movement_image_prior'))
        RegM = tikhonov_movement_image_prior(pp.n_dims,pp.n_elec);
    elseif(strcmp(fname,'laplace_movement_image_prior'))
