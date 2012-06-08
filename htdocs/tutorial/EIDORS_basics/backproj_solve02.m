@@ -24,7 +24,7 @@ for idx=1:3
   imgn.node_data= vh.volt;
   subplot(2,3,idx); show_fem(imgn);
 end
-print_convert backproj_solve02a.png
+print_convert inv_solve_backproj02a.png
 
 % Calculate Equipotential lines
 for idx=1:3
@@ -38,4 +38,4 @@ for idx=1:3
 
   subplot(2,3,idx); show_fem(imgn);
 end
-print_convert backproj_solve02b.png
+print_convert inv_solve_backproj02b.png

@@ -1,5 +1,5 @@
-function img= backproj_solve( inv_model, data1, data2)
-% BACKPROJ_SOLVE inverse solver using backprojection
+function img= inv_solve_backproj( inv_model, data1, data2)
+% INV_SOLVE_BACKPROJ inverse solver using backprojection
 % NOTE: This is the beginnings of an attempt to reproduce
 %  the backprojection algorithm implemented in the
 %  Sheffield MKI EIT system. It is far from complete.
@@ -7,15 +7,15 @@ function img= backproj_solve( inv_model, data1, data2)
 % If you wish to use the actual algorithm, use the
 %  function "mk_common_gridmdl('backproj')"
 %
-% img= backproj_solve( inv_model, data1, data2)
+% img= inv_solve_backproj( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 %
-% inv_model.backproj_solve.type = 'naive' (DEFAULT)
+% inv_model.inv_solve_backproj.type = 'naive' (DEFAULT)
 %    use naive (unfiltered algorithm)
-% inv_model.backproj_solve.type = 'filtered' (NOT IMPLEMENTED YET)
+% inv_model.inv_solve_backproj.type = 'filtered' (NOT IMPLEMENTED YET)
 %    ref: Barber DC Brown BH, "fast reconstruction of resistance
 %         images", clin Phys Physiol Mes, pp 47-54, vol 8,sup A,1987
 %
@@ -28,7 +28,7 @@ function img= backproj_solve( inv_model, data1, data2)
 % $Id$
 
 try
-   type= inv_model.backproj_solve.type;
+   type= inv_model.inv_solve_backproj.type;
 catch
    type= 'naive';
 end
@@ -36,16 +36,16 @@ end
 fwd_model= inv_model.fwd_model;
 
 % The one_step reconstruction matrix is cached
-one_step_inv = eidors_obj('get-cache', inv_model, 'backproj_solve');
+one_step_inv = eidors_obj('get-cache', inv_model, 'inv_solve_backproj');
 if ~isempty(one_step_inv)
-    eidors_msg('backproj_solve: using cached value', 2);
+    eidors_msg('inv_solve_backproj: using cached value', 2);
 else
     Jbp = calc_backprojection_mask( fwd_model, type );
 
     one_step_inv= Jbp;
 
-    eidors_obj('set-cache', inv_model, 'backproj_solve', one_step_inv);
-    eidors_msg('backproj_solve: setting cached value', 2);
+    eidors_obj('set-cache', inv_model, 'inv_solve_backproj', one_step_inv);
+    eidors_msg('inv_solve_backproj: setting cached value', 2);
 end
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
@@ -53,7 +53,7 @@ dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 sol = one_step_inv * dv;
 
 % create a data structure to return
-img.name= 'solved by backproj_solve';
+img.name= 'solved by inv_solve_backproj';
 img.elem_data = sol;
 img.fwd_model= fwd_model;
 
