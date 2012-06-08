@@ -34,7 +34,7 @@ pp.Ce= connectivity_matrix( pp );
 s_mat= calc_system_mat( fwd_model, img_bkgd );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
 % Jc = calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
-Jc = calc_jacobian_adjoint(fwd_model,img_bkgd);
+Jc = jacobian_adjoint(fwd_model,img_bkgd);
 Jm = calc_movement_jacobian(pp, fwd_model, img_bkgd);
 J=[Jc,Jm];
 

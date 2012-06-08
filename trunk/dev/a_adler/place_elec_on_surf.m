@@ -4,6 +4,8 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec)
 
 % (C) Bartlomiej Grychtol and Andy Adler, 2012. Licenced under GPL v2 or v3
 
+% TODO: allow 3D electrode positions
+
 % This is work in progress code. Careful!
 
 if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;

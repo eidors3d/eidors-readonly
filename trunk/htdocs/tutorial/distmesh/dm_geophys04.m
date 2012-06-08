@@ -4,7 +4,7 @@
 % reconstruction model and fwd_model
 imdl= mk_common_model('c2c2',16);
 imdl.rec_model= cmdl;
-fmdl.jacobian = @aa_calc_jacobian;
+fmdl.jacobian = @jacobian_adjoint;
 imdl.fwd_model= fmdl;
 
 c2f= mk_coarse_fine_mapping( fmdl, cmdl);

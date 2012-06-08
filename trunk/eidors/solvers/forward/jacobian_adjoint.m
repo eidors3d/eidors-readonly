@@ -1,5 +1,5 @@
-function J= calc_jacobian_adjoint( fwd_model, img)
-% CALC_JACOBIAN_ADJOINT: J= calc_jacobian_adjoint( fwd_model, img)
+function J= jacobian_adjoint( fwd_model, img)
+% JACOBIAN_ADJOINT: J= jacobian_adjoint( fwd_model, img)
 % Calculate Jacobian Matrix for current stimulation EIT
 % J         = Jacobian matrix
 % fwd_model = forward model

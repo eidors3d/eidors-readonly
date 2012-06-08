@@ -74,7 +74,7 @@ c2f= mk_coarse_fine_mapping(f1mdl,cmdl);
 img= calc_jacobian_bkgnd(imdl);
 
 t=cputime;
-J1= calc_jacobian_adjoint( f1mdl, img)*c2f;
+J1= jacobian_adjoint( f1mdl, img)*c2f;
 fprintf('aa_calc - full: t=%f\n',  cputime-t  );
 n_J1 = norm(J1,'fro');
 
@@ -83,7 +83,7 @@ f2mdl.coarse2fine = c2f;
 
 %%%%%%%%%% J2
 t=cputime;
-J2= calc_jacobian_adjoint( f2mdl, img);
+J2= jacobian_adjoint( f2mdl, img);
 fprintf('aa_calc - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2 = norm(J1-J2,'fro')/ n_J1;
@@ -126,7 +126,7 @@ c2f= mk_coarse_fine_mapping(f1mdl,cmdl);
 img= calc_jacobian_bkgnd(imdl);
 
 t=cputime;
-J1= calc_jacobian_adjoint( f1mdl, img)*c2f;
+J1= jacobian_adjoint( f1mdl, img)*c2f;
 fprintf('aa_calc - full: t=%f\n',  cputime-t  );
 n_J1 = norm(J1,'fro');
 
@@ -135,7 +135,7 @@ f2mdl.coarse2fine = c2f;
 
 %%%%%%%%%% J2
 t=cputime;
-J2= calc_jacobian_adjoint( f2mdl, img);
+J2= jacobian_adjoint( f2mdl, img);
 fprintf('aa_calc - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2 = norm(J1-J2,'fro')/ n_J1;
@@ -161,7 +161,7 @@ function test4_npaa_3d
 imdl = mk_common_model('n3r2');
 f1mdl = imdl.fwd_model;
 f1mdl.solve = @fwd_solve_1st_order;
-f1mdl.jacobian = @calc_jacobian_adjoint;
+f1mdl.jacobian = @jacobian_adjoint;
 f1mdl.system_mat = @system_mat_1st_order;
 
 % Create 2D FEM of all NODES with z=0
@@ -178,12 +178,12 @@ imdl.jacobian_bkgnd.value= .6;
 img = calc_jacobian_bkgnd( imdl);
 
 t=cputime;
-J1= calc_jacobian_adjoint( f1mdl, img)*c2f;
+J1= jacobian_adjoint( f1mdl, img)*c2f;
 fprintf('aa_calc - full: t=%f\n',  cputime-t  );
 n_J1 = norm(J1,'fro');
 
 t=cputime;
-J2= calc_jacobian_adjoint( f2mdl, img);
+J2= jacobian_adjoint( f2mdl, img);
 fprintf('aa_calc - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2 = norm(J1-J2,'fro')/ n_J1;

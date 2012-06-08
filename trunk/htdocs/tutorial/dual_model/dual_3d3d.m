@@ -20,7 +20,7 @@ stim_pat = mk_stim_patterns(electrodes_per_plane, number_of_planes, ...
 fine_mdl.stimulation= stim_pat;
 fine_mdl.solve=      'fwd_solve_1st_order';
 fine_mdl.system_mat= 'system_mat_1st_order';
-fine_mdl.jacobian=   'aa_calc_jacobian';
+fine_mdl.jacobian=   'jacobian_adjoint';
 fine_mdl.normalize_measurements= 0;
 fine_mdl.np_fwd_solve.perm_sym= '{n}';
 

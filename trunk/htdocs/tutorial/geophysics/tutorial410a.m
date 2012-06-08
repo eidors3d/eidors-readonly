@@ -14,7 +14,7 @@ real_data= mk_data_tomel(data_tomel,'Mont-Terri data','Wenner protocol');
 gallery_3D_fwd = mk_gallery(elec_posn,data_tomel,n_rings,factor,levels);
 gallery_3D_fwd.solve = 'fwd_solve_1st_order';
 gallery_3D_fwd.system_mat = 'system_mat_1st_order';
-gallery_3D_fwd.jacobian = 'aa_calc_jacobian';
+gallery_3D_fwd.jacobian = 'jacobian_adjoint';
 
 
 subplot(121)
