@@ -396,7 +396,7 @@ function unit_test_diff_jacobian_b2C_const_cond
    TEST= 'J_perturb-J_direct - b2C model (const sigma)';
    mdl3dim = mk_common_model( 'b2C' );
    img = mk_image(mdl3dim);
-   J_pert=calc_move_jacobian_perturb(img.fwd_model,img);
+   J_pert=jacobian_movement_perturb(img.fwd_model,img);
    J_direct =calc_move_jacobian(img.fwd_model,img);
    unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
 
@@ -405,7 +405,7 @@ function unit_test_diff_jacobian_n3r2_const_cond
    TEST= 'J_perturb-J_direct - n3r2 model (const sigma)';
    mdl3dim = mk_common_model( 'n3r2' );
    img = mk_image(mdl3dim);
-   J_pert=calc_move_jacobian_perturb(img.fwd_model,img);
+   J_pert=jacobian_movement_perturb(img.fwd_model,img);
    J_direct =calc_move_jacobian(img.fwd_model,img);
    unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
    
@@ -415,7 +415,7 @@ function unit_test_diff_jacobian_b2C_rand_cond
    cond=0.5+rand(size(mdl3dim.fwd_model.elems,1),1);
    img = mk_image(mdl3dim,cond);
    J_direct =calc_move_jacobian(img.fwd_model,img);
-   J_pert=calc_move_jacobian_perturb(img.fwd_model,img);   
+   J_pert=jacobian_movement_perturb(img.fwd_model,img);   
    unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
    
 function unit_test_diff_jacobian_n3r2_rand_cond
@@ -423,7 +423,7 @@ function unit_test_diff_jacobian_n3r2_rand_cond
    mdl3dim = mk_common_model( 'n3r2' );
    cond=0.5+rand(size(mdl3dim.fwd_model.elems,1),1);
    img = mk_image(mdl3dim,cond);
-   J_pert=calc_move_jacobian_perturb(img.fwd_model,img);
+   J_pert=jacobian_movement_perturb(img.fwd_model,img);
    J_direct =calc_move_jacobian(img.fwd_model,img);
    unit_test_cmp(TEST, norm([J_pert-J_direct]),0, 1e-5*norm(J_direct));
   
