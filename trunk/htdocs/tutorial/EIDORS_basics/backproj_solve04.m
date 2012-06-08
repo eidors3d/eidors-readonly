@@ -15,4 +15,4 @@ for loop=1:3
    axis equal; axis off
 end
 
-print_convert backproj_solve04a.png
+print_convert inv_solve_backproj04a.png

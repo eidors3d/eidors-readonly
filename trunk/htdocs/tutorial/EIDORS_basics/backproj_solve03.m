@@ -18,19 +18,19 @@ axis equal; axis off
 % Backprojection Solver
 inv_BP= eidors_obj('inv_model','BP_solver','fwd_model', img.fwd_model);
 inv_BP.reconst_type= 'difference';
-inv_BP.solve= @backproj_solve;
-inv_BP.backproj_solve.type= 'naive';
+inv_BP.solve= @inv_solve_backproj;
+inv_BP.inv_solve_backproj.type= 'naive';
 
 imgr= inv_solve(inv_BP, vh,vi);
 imgr.calc_colours.ref_level=0;
 subplot(132); show_fem(imgr);
 axis equal; axis off
 
-inv_BP.backproj_solve.type= 'simple_filter';
+inv_BP.inv_solve_backproj.type= 'simple_filter';
 
 imgr= inv_solve(inv_BP, vh,vi);
 imgr.calc_colours.ref_level=0;
 subplot(133); show_fem(imgr);
 axis equal; axis off
 
-print_convert backproj_solve03a.png
+print_convert inv_solve_backproj03a.png
