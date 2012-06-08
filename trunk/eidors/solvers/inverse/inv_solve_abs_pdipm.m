@@ -1,13 +1,13 @@
-function img=pdipm_abs( inv_model, data);
-% PDIPM_ABS  inverse solver for absolute data using Primal/Dual interior point method
-% img= pdipm_abs( inv_model, data);
+function img=inv_solve_abs_pdipm( inv_model, data);
+% INV_SOLVE_ABS_PDIPM  inverse solver for absolute data using Primal/Dual interior point method
+% img= inv_solve_abs_pdipm( inv_model, data);
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data       => vector of eit data
 %
-%  inv_model.pdipm_abs.norm_data  1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_abs.norm_prior 1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_abs.beta     (default 1e-6)
+%  inv_model.inv_solve_abs_pdipm.norm_data  1 or 2 (DEFAULT 2)
+%  inv_model.inv_solve_abs_pdipm.norm_prior 1 or 2 (DEFAULT 2)
+%  inv_model.inv_solve_abs_pdipm.beta     (default 1e-6)
 %
 % Parameters:
 %  max_iter =  inv_model.parameters.max_iteration (default 10)
@@ -30,7 +30,7 @@ W= calc_meas_icov( inv_model );
 
 img= feval(pp.fn, img_bkgnd, W,alpha*L,data, pp);
 
-img.name = sprintf('pdipm_abs-nd%d-ni%d',pp.norm_data,pp.norm_image);
+img.name = sprintf('inv_solve_abs_pdipm-nd%d-ni%d',pp.norm_data,pp.norm_image);
 
 % This is the Gauss-Newton algorithm
 %   for the linear case it is: s= (J'*W*J + L'*L)\J'*W*d;
@@ -218,18 +218,18 @@ function pp= process_parameters(imdl);
    catch  pp.min_change = 0;
    end
 
-   try    pp.beta = imdl.pdipm_abs.beta; 
+   try    pp.beta = imdl.inv_solve_abs_pdipm.beta; 
    catch  pp.beta = 1e-6;
    end
 
    pp.beta_reduce = 0.2;
    pp.beta_minimum= 1e-16;
 
-   try    pp.norm_data = imdl.pdipm_abs.norm_data;
+   try    pp.norm_data = imdl.inv_solve_abs_pdipm.norm_data;
    catch  pp.norm_data = 2;
    end
 
-   try    pp.norm_image = imdl.pdipm_abs.norm_image;
+   try    pp.norm_image = imdl.inv_solve_abs_pdipm.norm_image;
    catch  pp.norm_image = 2;
    end
 
