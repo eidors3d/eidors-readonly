@@ -18,7 +18,7 @@ move_vs_conduct = 20;
 mdl2dim.hyperparameter.value= hparameter;
 mdlM = mdl2dim;
 mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
-mdlM.fwd_model.jacobian = 'calc_move_jacobian_perturb';
+mdlM.fwd_model.jacobian = 'jacobian_movement_perturb';
 mdlM.RtR_prior = 'elec_move_image_prior';
 mdlM.elec_move_image_prior.parameters = move_vs_conduct;
 

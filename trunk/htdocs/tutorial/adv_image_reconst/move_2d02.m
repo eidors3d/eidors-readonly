@@ -22,7 +22,7 @@ if 0
    % Place traditional jacobian in temporary member.
    mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
    % Redefine jacobian member for movement & conductivity.
-   mdlM.fwd_model.jacobian = 'calc_move_jacobian_perturb';
+   mdlM.fwd_model.jacobian = 'jacobian_movement_perturb';
 else
    mdlM.fwd_model.jacobian = @calc_move_jacobian;
 end

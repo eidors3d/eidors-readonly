@@ -15,6 +15,6 @@ function J= aa_e_move_jacobian( varargin );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-warning('EIDORS:deprecated','AA_E_MOVE_JACOBIAN is deprecated as of 07-Jun-2012. Use CALC_MOVE_JACOBIAN_PERTURB instead.');
+warning('EIDORS:deprecated','AA_E_MOVE_JACOBIAN is deprecated as of 07-Jun-2012. Use JACOBIAN_MOVEMENT_PERTURB instead.');
 
-J = calc_move_jacobian_perturb( varargin{:} );
+J = jacobian_movement_perturb( varargin{:} );
