@@ -7,7 +7,7 @@ function likelihood= prior_gaussian_likelihood( inv_model, x, y, J )
 %   inv_model.gaussian_prior_likelihood.Noise -> L*L' = inv(Noise covariance)
 %   inv_model.gaussian_prior_likelihood.data_exp -> ( default = 2)
 %
-% Function to be used with mcmc_solve
+% Function to be used with inv_solve_mcmc
 
 % (C) 2007 Nick Polydorides. License: GPL version 2 or version 3
 % $Id$
