@@ -21,7 +21,7 @@ function imgs= moving_tank_objs(data_sel, inv_sel, options)
 %  2D reconstructions
 %   inv_sel = 1   => inv_solve_diff_GN_one_step
 %   inv_sel = 1.1 => inv_solve_diff_GN_one_step (576 elems)
-%   inv_sel = 2   => inv_kalman_diff
+%   inv_sel = 2   => inv_solve_diff_kalman
 %
 %   if inv_sel is a inv_model structure, then use it to
 %   do reconstructions.
@@ -145,11 +145,11 @@ switch inv_sel
 
     case 2
         imdl= set_basic( 'b2c' );
-        imdl.solve= @inv_kalman_diff;
+        imdl.solve= @inv_solve_diff_kalman;
 
     case 2.1
         imdl= set_basic( 'c2c' );
-        imdl.solve= @inv_kalman_diff;
+        imdl.solve= @inv_solve_diff_kalman;
 
     case 3
         imdl= set_basic( 'b2c' );
@@ -178,14 +178,14 @@ switch inv_sel
 
     case 12
         imdl= set_basic( 'b2c' );
-        imdl.solve= @inv_kalman_diff;
+        imdl.solve= @inv_solve_diff_kalman;
         [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
 
         vi = extract_subframes(vi,4);
 
     case 12.1
         imdl= set_basic( 'c2c' );
-        imdl.solve= @inv_kalman_diff;
+        imdl.solve= @inv_solve_diff_kalman;
         [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
 
         vi = extract_subframes(vi,4);

@@ -168,12 +168,12 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
    case 'ab_tv_diff_solve'
       error('Dont know how to calculate TV noise figure')
 
-   case 'inv_kalman_diff'
-      inv_model.inv_kalman_diff.keep_K_k1= 1;
+   case 'inv_solve_diff_kalman'
+      inv_model.inv_solve_diff_kalman.keep_K_k1= 1;
       stablize = 6;
       img0 = inv_solve( inv_model, h_data, ...
                                    c_data*ones(1,stablize) );
-      K= img0.inv_kalman_diff.K_k1;
+      K= img0.inv_solve_diff_kalman.K_k1;
       img0.elem_data = K*calc_difference_data( h_data , c_data , inv_model.fwd_model);
       img0n.elem_data= K*calc_difference_data( h_full , c_noise, inv_model.fwd_model);
 

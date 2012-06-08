@@ -1,6 +1,6 @@
-function img= inv_kalman_diff( inv_model, data1, data2)
-% INV_KALMAN_DIFF inverse solver for difference EIT
-% img= inv_kalman_diff( inv_model, data1, data2)
+function img= inv_solve_diff_kalman( inv_model, data1, data2)
+% INV_SOLVE_DIFF_KALMAN inverse solver for difference EIT
+% img= inv_solve_diff_kalman( inv_model, data1, data2)
 %
 % img        => output image
 % inv_model  => inverse model struct
@@ -13,11 +13,11 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 %
 % Note that the classic Kalman filter assumes that the
 %   time step between each measurement is constant
-%   (ie as part of the state update eqn). inv_kalman_diff
+%   (ie as part of the state update eqn). inv_solve_diff_kalman
 %   cannot work with non-constant time steps
 %
-% if inv_model.inv_kalman_diff.keep_K_k1 = 1
-%  then img outputs img.inv_kalman_diff.K_k1 = K_k1
+% if inv_model.inv_solve_diff_kalman.keep_K_k1 = 1
+%  then img outputs img.inv_solve_diff_kalman.K_k1 = K_k1
 %  this can be used to estimate noise properties
  
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
@@ -62,14 +62,14 @@ end
 [sol, K_k1] = kalman_inv( J, hp^2*Q, RtR, dva, sequence );
 
 % create a data structure to return
-img.name= 'solved by inv_kalman_diff';
+img.name= 'solved by inv_solve_diff_kalman';
 img.elem_data = sol;
 img.inv_model= inv_model;
 img.fwd_model= fwd_model;
 
 try % keep parameter if requested
-   if inv_model.inv_kalman_diff.keep_K_k1
-      img.inv_kalman_diff.K_k1 = K_k1;
+   if inv_model.inv_solve_diff_kalman.keep_K_k1
+      img.inv_solve_diff_kalman.K_k1 = K_k1;
    end
 end
 
@@ -110,7 +110,7 @@ seq= [0;seq(:)];
 iter=0;
 for i=1:ll
    for ss= 2:length(seq);
-      eidors_msg('inv_kalman_diff: iteration %d.%d',i,ss-1,2);
+      eidors_msg('inv_solve_diff_kalman: iteration %d.%d',i,ss-1,2);
 
       seq_i= (seq(ss-1)+1) : seq(ss);
 

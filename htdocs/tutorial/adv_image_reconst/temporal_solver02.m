@@ -31,4 +31,4 @@ imdl_TS.time_prior_solve.time_steps=   time_steps;
 imdl_KS = base_model;
 imdl_KS.RtR_prior= @noser_image_prior;
 imdl_KS.noser_image_prior.exponent= .5;
-imdl_KS.solve= @inv_kalman_diff;
+imdl_KS.solve= @inv_solve_diff_kalman;
