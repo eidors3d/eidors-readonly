@@ -18,7 +18,7 @@ imdl.fwd_model.meas_select= els;
 
 % most EIT systems image best with normalized difference
 imdl.fwd_model.normalize_measurements= 1;
-imdl.RtR_prior= @gaussian_HPF_prior;
+imdl.RtR_prior= @prior_gaussian_HPF;
 
 
 subplot(221);

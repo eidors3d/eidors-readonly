@@ -1,33 +1,33 @@
-function Reg= gaussian_HPF_prior( inv_model );
-% GAUSSIAN_HPF_PRIOR calculate image prior
-% Reg= gaussian_HPF_prior( inv_model )
+function Reg= prior_gaussian_HPF( inv_model );
+% PRIOR_GAUSSIAN_HPF calculate image prior
+% Reg= prior_gaussian_HPF( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 % Parameters:
-%   diam_frac= inv_model.fwd_model.gaussian_HPF_prior.diam_frac DEFAULT 0.1
+%   diam_frac= inv_model.fwd_model.prior_gaussian_HPF.diam_frac DEFAULT 0.1
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 fwd_model= inv_model.fwd_model;
 try 
-    diam_frac= fwd_model.gaussian_HPF_prior.diam_frac;
+    diam_frac= fwd_model.prior_gaussian_HPF.diam_frac;
 catch
     diam_frac= 0.1;
 end
 
 cache_test_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
-Reg = eidors_obj('get-cache', cache_test_obj, 'gaussian_HPF_prior');
+Reg = eidors_obj('get-cache', cache_test_obj, 'prior_gaussian_HPF');
 if ~isempty(Reg)
-   eidors_msg('gaussian_HPF_prior: using cached value', 3);
+   eidors_msg('prior_gaussian_HPF: using cached value', 3);
    return
 end
 
 Reg = calc_Gaussian_HPF( fwd_model, diam_frac );
 
 cache_test_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
-eidors_obj('set-cache', cache_test_obj, 'gaussian_HPF_prior', Reg);
-eidors_msg('gaussian_HPF_prior: setting cached value', 3);
+eidors_obj('set-cache', cache_test_obj, 'prior_gaussian_HPF', Reg);
+eidors_msg('prior_gaussian_HPF: setting cached value', 3);
 
 % Calculate Gaussian HP Filter as per Adler & Guardo 96
 % parameter is diam_frac (normally 0.1)
