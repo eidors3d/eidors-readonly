@@ -14,7 +14,7 @@ img= inv_solve(imdl, vh, vi);
 subplot(221); show_fem(img); axis equal; axis off
 
 % GN solution - Noser prior
-imdl.RtR_prior= @noser_image_prior;
+imdl.RtR_prior= @prior_noser;
 imdl.solve=     @inv_solve_diff_GN_one_step;
 imdl.hyperparameter.value=8e-2;
 img= inv_solve(imdl, vh, vi);

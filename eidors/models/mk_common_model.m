@@ -437,7 +437,7 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
     inv3d.name=  'EIT inverse: 3D';
     inv3d.solve= @inv_solve_time_prior;
     inv3d.inv_solve_time_prior.time_steps=   0;
-    inv3d.time_smooth_prior.space_prior = @noser_image_prior;
+    inv3d.time_smooth_prior.space_prior = @prior_noser;
     inv3d.time_smooth_prior.time_weight = 0;
     inv3d.inv_solve_time_prior.time_steps   = 0;
 

@@ -10,7 +10,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   1   inv_solve_diff_GN_one_step       prior_laplace   1e-3
 %   2   np_inv_solve       prior_laplace   1e-3
 %   3   inv_solve_diff_GN_one_step       prior_gaussian_HPF   NF=2
-%   3.1 inv_solve_diff_GN_one_step       noser_image_prior     NF=2
+%   3.1 inv_solve_diff_GN_one_step       prior_noser     NF=2
 %   4   TV_diffusivity_solve   prior_TV      1e-4
 %   5   aa_inv_total_var   prior_laplace   1e-4 (not the usual prior)
 %   6   aa_inv_total_var   prior_TV      1e-4

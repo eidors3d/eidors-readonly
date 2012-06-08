@@ -22,7 +22,7 @@ imgn(1)= inv_solve( inv2d, vh, vi_n);
 
 % NOSER prior
 inv2d.hyperparameter.value = 1e-2;
-inv2d.RtR_prior=   @noser_image_prior;
+inv2d.RtR_prior=   @prior_noser;
 imgr(2)= inv_solve( inv2d, vh, vi);
 imgn(2)= inv_solve( inv2d, vh, vi_n);
 

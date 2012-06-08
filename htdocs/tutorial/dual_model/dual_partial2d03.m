@@ -1,7 +1,7 @@
 % Dual Partial $Id$
 
 % base model
-imdl.RtR_prior = @noser_image_prior;
+imdl.RtR_prior = @prior_noser;
 imdl.hyperparameter.value = 3e-2;
 
 % Reconstruction model - only fine reconstruction

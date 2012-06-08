@@ -24,7 +24,7 @@ img= mk_image( mdl, 1); J = calc_jacobian(img);
 
 %% inverse solution (faster solution)
 hp  = 0.015;
-RtR = noser_image_prior( imdl ); P= inv(RtR);
+RtR = prior_noser( imdl ); P= inv(RtR);
 Rn = speye( size(J,1) );
 imdl.solve = @solve_use_matrix;
 imdl.solve_use_matrix.RM = P*J'/(J*P*J' + hp^2*Rn);
