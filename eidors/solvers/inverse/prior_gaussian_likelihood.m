@@ -1,4 +1,4 @@
-function likelihood= gaussian_prior_likelyhood( inv_model, x, y, J )
+function likelihood= prior_gaussian_likelihood( inv_model, x, y, J )
 % Parameters for image
 %   inv_model.gaussian_prior_likelihood.img_mean -> image mean
 %   inv_model.gaussian_prior_likelihood.R_prior -> L*L' = inv(image covariance)
