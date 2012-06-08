@@ -6,9 +6,9 @@ imdl.RtR_prior = @laplace_image_prior;
 imdl.solve = @inv_solve_diff_GN_one_step;
 end
 imdl.R_prior = @prior_TV;
-imdl.solve = @pdipm_diff;
-imdl.pdipm_diff.norm_image = 1;
-imdl.pdipm_diff.norm_data  = 1;
+imdl.solve = @inv_solve_diff_pdipm;
+imdl.inv_solve_diff_pdipm.norm_image = 1;
+imdl.inv_solve_diff_pdipm.norm_data  = 1;
 
 imdl.jacobian_bkgnd.value = 1;
 imdl.reconst_type = 'difference';
