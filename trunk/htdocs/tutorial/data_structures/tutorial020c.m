@@ -2,7 +2,7 @@
 % $Id$
 
 % Now we complete the fwd_model
-r_mdl.jacobian= @perturb_jacobian;
+r_mdl.jacobian= @jacobian_perturb;
 
 % Now create an inverse model
 i_mdl= eidors_obj('inv_model','resistor inverse');

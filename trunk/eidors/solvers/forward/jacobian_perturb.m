@@ -1,12 +1,12 @@
-function J= perturb_jacobian( fwd_model, img)
-% PERTURB_JACOBIAN: J= perturb_jacobian( fwd_model, img)
+function J= jacobian_perturb( fwd_model, img)
+% JACOBIAN_PERTURB: J= jacobian_perturb( fwd_model, img)
 % Calculate Jacobian Matrix, based on small perturbations
 %   in the forward model. This will tend to be slow, but
 %   should be best used to 'sanity check' other code
 %
 % J         = Jacobian matrix
 % fwd_model = forward model
-% fwd_model.perturb_jacobian.delta   - delta perturbation to use
+% fwd_model.jacobian_perturb.delta   - delta perturbation to use
 % img = image background for jacobian calc
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
@@ -14,8 +14,8 @@ function J= perturb_jacobian( fwd_model, img)
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return;end
 
-if isfield(fwd_model,'perturb_jacobian')
-   delta = fwd_model.perturb_jacobian.delta;
+if isfield(fwd_model,'jacobian_perturb')
+   delta = fwd_model.jacobian_perturb.delta;
 else
    delta= 1e-6; % tests indicate this is a good value
 end
@@ -76,7 +76,7 @@ function do_unit_test
   img.fwd_model.solve=      @fwd_solve_1st_order;
   J_aa= calc_jacobian( img ); % 2 for bug in my code
 
-  img.fwd_model.jacobian=   @perturb_jacobian;
+  img.fwd_model.jacobian=   @jacobian_perturb;
   img.fwd_model.system_mat= @system_mat_1st_order;
   img.fwd_model.solve=      @fwd_solve_1st_order;
   J_aa_p= calc_jacobian( img ); % 2 for bug in my code
@@ -86,7 +86,7 @@ function do_unit_test
   img.fwd_model.solve=      @np_fwd_solve;
   J_np= calc_jacobian( img );
 
-  img.fwd_model.jacobian=   @perturb_jacobian;
+  img.fwd_model.jacobian=   @jacobian_perturb;
   img.fwd_model.system_mat= @np_calc_system_mat;
   img.fwd_model.solve=      @np_fwd_solve;
   J_np_p= calc_jacobian( img );
