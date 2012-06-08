@@ -11,17 +11,5 @@ function Reg= noser_image_prior( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-    img_bkgnd= calc_jacobian_bkgnd( inv_model );
-    J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
-
-    exponent= 0.5;
-    if isfield(inv_model,'noser_image_prior');
-       exponent= inv_model.noser_image_prior.exponent;
-    end
-
-    l_prior= size(J,2);
-
-    % Reg is spdiags(diag(J'*J),0, l_prior, l_prior);
-    diag_col= sum(J.^2,1)';
-    Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
-
+warning('EIDORS:deprecated','NOSER_IMAGE_PRIOR is deprecated as of 08-Jun-2012. Use PRIOR_NOSER instead.');
+Reg = prior_noser(inv_model);

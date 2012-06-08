@@ -6,7 +6,7 @@ tutorial120a; % get the model from a related tutorial
 inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);
 inv_GN.reconst_type= 'difference';
 inv_GN.solve= @np_inv_solve;
-inv_GN.RtR_prior= @noser_image_prior;
+inv_GN.RtR_prior= @prior_noser;
 inv_GN.jacobian_bkgnd.value= 1;
 inv_GN.hyperparameter.value= 0.03;
 

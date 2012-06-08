@@ -2,7 +2,7 @@
 
 % create base model
 mdl_base=mk_common_model('a2c0',16);
-mdl_base.RtR_prior = @noser_image_prior;
+mdl_base.RtR_prior = @prior_noser;
 mdl_base.hyperparameter.value = 3e-2;
 
 elems= mdl_base.fwd_model.elems;

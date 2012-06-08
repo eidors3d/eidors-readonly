@@ -15,7 +15,7 @@ inv2d.solve=       @np_inv_solve;
 
 % NOSER prior
 inv2d.hyperparameter.value = 3e-1;
-inv2d.RtR_prior=   @noser_image_prior;
+inv2d.RtR_prior=   @prior_noser;
 
 imgr= inv_solve( inv2d, v_homg, v_simu);
 

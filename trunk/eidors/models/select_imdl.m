@@ -66,7 +66,7 @@ function imdl = basic_imdl( fmdl );
    imdl.fwd_model = fmdl;
 
 function imdl = NOSER_dif( imdl );
-   imdl.RtR_prior = @noser_image_prior;
+   imdl.RtR_prior = @prior_noser;
    try; imdl = rmfield(imdl,'R_prior'); end
    imdl.hyperparameter.value = .03;
    imdl.solve= @inv_solve_diff_GN_one_step;

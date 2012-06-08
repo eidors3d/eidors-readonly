@@ -195,7 +195,7 @@ switch inv_sel
         time_steps= 3;
 
         imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @noser_image_prior;
+        imdl.time_smooth_prior.space_prior= @prior_noser;
         imdl.time_smooth_prior.time_weight= .5;
         imdl.time_smooth_prior.time_steps=  time_steps;
 
@@ -305,8 +305,8 @@ function vv= remove_curr_elecs(vv)
 
 function imdl= set_basic( shape_str, type, vals )
    imdl = mk_common_model( shape_str, 16 );
-   imdl.RtR_prior= @noser_image_prior;
-   imdl.noser_image_prior.exponent= .5;
+   imdl.RtR_prior= @prior_noser;
+   imdl.prior_noser.exponent= .5;
    imdl.solve= @np_inv_solve;
    imdl.hyperparameter.value= 1e-1;
 
@@ -318,7 +318,7 @@ function imdl= set_basic( shape_str, type, vals )
         time_weight= vals(2);
 
         imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @noser_image_prior;
+        imdl.time_smooth_prior.space_prior= @prior_noser;
         imdl.time_smooth_prior.time_weight= time_weight;
         imdl.time_smooth_prior.time_steps=  time_steps;
 

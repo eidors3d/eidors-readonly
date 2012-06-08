@@ -1,6 +1,6 @@
 % Reconstruction Model $Id$
 J = calc_jacobian( calc_jacobian_bkgnd( imdl) );
-iRtR = inv(noser_image_prior( imdl ));
+iRtR = inv(prior_noser( imdl ));
 hp = 0.17;
 iRN = hp^2 * speye(size(J,1));
 RM = iRtR*J'/(J*iRtR*J' + iRN);
