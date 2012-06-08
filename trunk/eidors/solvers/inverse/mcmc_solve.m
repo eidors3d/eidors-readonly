@@ -37,4 +37,4 @@ img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
 
 %%%%% TODO: Add tests
-%% use gaussian_prior_likelyhood
+%% use prior_gaussian_likelihood
