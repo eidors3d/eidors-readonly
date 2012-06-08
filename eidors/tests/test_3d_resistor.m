@@ -92,7 +92,7 @@ for i=1:n_el
 end
    
 mdl.solve = @fwd_solve_1st_order;
-mdl.jacobian = @calc_jacobian_adjoint;
+mdl.jacobian = @jacobian_adjoint;
 Jaa= calc_jacobian(mdl,img);
 
 [Jaa;Jnp;Jp1;Jp2]

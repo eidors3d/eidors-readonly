@@ -62,7 +62,7 @@ end
 
 mdl.electrode =     electrodes;
 mdl.solve=          @fwd_solve_1st_order;
-mdl.jacobian=       @calc_jacobian_adjoint;
+mdl.jacobian=       @jacobian_adjoint;
 mdl.system_mat=     @system_mat_1st_order;
 
 

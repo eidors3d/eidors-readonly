@@ -15,7 +15,7 @@ img.fwd_model.stimulation= mk_stim_patterns(16, 1, ...
 % SOLVERS
 img.fwd_model.system_mat= @system_mat_1st_order;
 img.fwd_model.solve=      @fwd_solve_1st_order;
-img.fwd_model.jacobian=   @aa_calc_jacobian;
+img.fwd_model.jacobian=   @jacobian_adjoint;
 
 J= calc_jacobian(img);
 

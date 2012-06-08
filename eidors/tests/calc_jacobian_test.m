@@ -13,24 +13,24 @@ testvec= [5,20,40,130];
 
 mdl= make_aa_mdl2;
 %
-disp('test calc_jacobian_adjoint (2D) for difference data')
+disp('test jacobian_adjoint (2D) for difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
 %
-disp('test calc_jacobian_adjoint (2D) for normalized difference data');
+disp('test jacobian_adjoint (2D) for normalized difference data');
 mdl.normalize_measurements= 1;
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
 mdl= make_aa_mdl3;
 %
-disp('test calc_jacobian_adjoint (3D) for difference data')
+disp('test jacobian_adjoint (3D) for difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
 mdl.normalize_measurements= 1;
-disp('test calc_jacobian_adjoint (3D) for normalized difference data')
+disp('test jacobian_adjoint (3D) for normalized difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
@@ -134,7 +134,7 @@ function mdl= make_aa_mdl2;
                                 options, 10);
     params.solve=      'fwd_solve_1st_order';
     params.system_mat= 'system_mat_1st_order';
-    params.jacobian=   'calc_jacobian_adjoint';
+    params.jacobian=   'jacobian_adjoint';
     params.normalize_measurements = 0;
     mdl = eidors_obj('fwd_model', params);
     mdl.name= 'AA_1996 mdl';
@@ -145,7 +145,7 @@ function mdl= make_aa_mdl3;
     mdl.name= 'AA_1996 mdl';
     mdl.solve=      'fwd_solve_1st_order';
     mdl.system_mat= 'system_mat_1st_order';
-    mdl.jacobian=   'calc_jacobian_adjoint';
+    mdl.jacobian=   'jacobian_adjoint';
     
     
 

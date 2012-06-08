@@ -19,7 +19,7 @@
   img.fwd_model.solve=      @np_fwd_solve;
   J_np_p= calc_jacobian( img );
 
-  img.fwd_model.jacobian=   @calc_jacobian_adjoint;
+  img.fwd_model.jacobian=   @jacobian_adjoint;
   img.fwd_model.system_mat= @system_mat_1st_order;
   img.fwd_model.solve=      @fwd_solve_1st_order;
   J_aa= calc_jacobian( img ); % 2 for bug in my code

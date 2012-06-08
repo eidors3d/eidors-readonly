@@ -18,7 +18,7 @@ use_3d_model = 1;
 if use_3d_model % This 3D model has some problems
    fmdl = ng_mk_cyl_models([10,15,1.2],[16,5],[.5,0,.15]);
    fmdl.solve =    @fwd_solve_1st_order;
-   fmdl.jacobian = @aa_calc_jacobian;
+   fmdl.jacobian = @jacobian_adjoint;
    fmdl.system_mat=@system_mat_1st_order;
    fmdl.elems = double(fmdl.elems);
 else
@@ -55,7 +55,7 @@ end
    % SOLVERS
    img.fwd_model.system_mat= @system_mat_1st_order;
    img.fwd_model.solve=      @fwd_solve_1st_order;
-   img.fwd_model.jacobian=   @aa_calc_jacobian;
+   img.fwd_model.jacobian=   @jacobian_adjoint;
 
    vbkgnd = fwd_solve(img);
    vbkgnd = vbkgnd.meas;
