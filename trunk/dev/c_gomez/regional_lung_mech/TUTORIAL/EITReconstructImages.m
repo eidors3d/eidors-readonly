@@ -71,7 +71,7 @@ switch ALGORITHM
         end
         im.hyperparameter.value = HP; % How shall we choose this?
         im.fwd_model.normalize_measurements = 1;
-        im.RtR_prior = @laplace_image_prior;
+        im.RtR_prior = @prior_laplace;
     case 2
         % Regularization hyperparameter chosen according to EIT system
         if strcmp(eitdata.eit_device,'Viasys')
@@ -93,7 +93,7 @@ switch ALGORITHM
         im.fwd_model.normalize_measurements=1;
         im.fwd_model.jacobian = @jacobian_movement;
         im.RtR_prior          = @elec_move_image_prior;
-        %         im.elec_move_image_prior.RegC.func = @laplace_image_prior;
+        %         im.elec_move_image_prior.RegC.func = @prior_laplace;
         im.elec_move_image_prior.RegC.func = @prior_gaussian_HPF;
         im.elec_move_image_prior.parameters = sqrt(P2/1);
         im.fwd_model.prior_gaussian_HPF.diam_frac = 0.2;

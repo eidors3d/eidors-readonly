@@ -20,15 +20,15 @@ function Reg= prior_laplace( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-pp= aa_fwd_parameters( inv_model.fwd_model );
-pp = grid_or_elems( pp, inv_model);
+pp= fwd_model_parameters( inv_model.fwd_model );
+
 Reg = speye( pp.n_elem );
 
    Iidx= [];
    Jidx= [];
    Vidx= [];
    for ii=1:pp.n_elem
-     el_adj = find_adjoin( ii, pp.ELEM, pp.n_dims );
+     el_adj = find_adjoin( ii, pp.ELEM );
      for jj=el_adj(:)'
          Iidx= [Iidx, ii, ii, jj, jj];
          Jidx= [Jidx, ii, jj, ii, jj];
@@ -39,28 +39,11 @@ Reg = speye( pp.n_elem );
    Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
 
 % find elems which are connected to elems ee
-function elems= find_adjoin(ee, ELEM, n_dims)
+function elems= find_adjoin(ee, ELEM)
    nn= ELEM(:,ee);
    [d,e]= size(ELEM);
    ss= zeros(1,e);
    for i=1:d
      ss= ss+ any(ELEM==nn(i));
    end
-   elems= find(ss==n_dims);
-
-   function pp = grid_or_elems( pp, inv_model)
-
-    fwd_model = inv_model.fwd_model;
-    if isfield(fwd_model,'grid')
-        use_grid = 1;
-        try if inv_model.prior_use_elems_not_grid== 1
-                use_grid = 0;
-        end; end
-    
-        if use_grid
-            pp.ELEM = fwd_model.grid';
-            pp.n_elem = size(pp.ELEM,2);
-        end
-    end
-
-        
+   elems= find(ss==d-1);

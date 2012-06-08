@@ -28,7 +28,7 @@ imgn(2)= inv_solve( inv2d, vh, vi_n);
 
 % Laplace image prior
 inv2d.hyperparameter.value = 1e-3;
-inv2d.RtR_prior=   @laplace_image_prior;
+inv2d.RtR_prior=   @prior_laplace;
 imgr(3)= inv_solve( inv2d, vh, vi);
 imgn(3)= inv_solve( inv2d, vh, vi_n);
 
