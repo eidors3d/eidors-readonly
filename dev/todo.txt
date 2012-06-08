@@ -1,3 +1,5 @@
+Rename nodal_solve
+=============
 Create a variable in eidors_msg that knows if desktop is available
 http://www.mathworks.com/matlabcentral/newsreader/view_thread/284363
 mf = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame; 

@@ -1,5 +1,5 @@
 function img= nodal_solve( inv_model, data1, data2)
-% INV_SOLVE_DIFF_GN_ONE_STEP inverse solver using approach of Adler&Guardo 1996
+% NODAL_SOLVE inverse solver using approach of Adler&Guardo 1996
 % img= nodal_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
