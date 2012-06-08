@@ -78,8 +78,8 @@ function one_step_inv= standard_form( inv_model, J )
 % CovX * J' * inv(J*CovX*J' + CovZ)
 %   iRtR*Jt/(Ji*RtR*Jt +  hp^2*iW);
 function one_step_inv= data_form( inv_model, J );
-    space_prior= inv_model.time_smooth_prior.space_prior;
-    time_weight= inv_model.time_smooth_prior.time_weight;
+    space_prior= inv_model.prior_time_smooth.space_prior;
+    time_weight= inv_model.prior_time_smooth.time_weight;
     ts         = inv_model.inv_solve_time_prior.time_steps;
 
     space_Reg= feval(space_prior, inv_model);

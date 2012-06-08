@@ -19,11 +19,11 @@ imdl_GN.fwd_model.normalize_measurements= 0;
 
 % Temporal Solver
 imdl_TS = base_model;
-imdl_TS.RtR_prior= @time_smooth_prior;
-imdl_TS.time_smooth_prior.space_prior= @prior_noser;
+imdl_TS.RtR_prior= @prior_time_smooth;
+imdl_TS.prior_time_smooth.space_prior= @prior_noser;
 imdl_TS.prior_noser.exponent= .5;
-imdl_TS.time_smooth_prior.time_weight= time_weight;
-imdl_TS.time_smooth_prior.time_steps=  time_steps;
+imdl_TS.prior_time_smooth.time_weight= time_weight;
+imdl_TS.prior_time_smooth.time_steps=  time_steps;
 imdl_TS.solve= @inv_solve_time_prior;
 imdl_TS.inv_solve_time_prior.time_steps=   time_steps;
 

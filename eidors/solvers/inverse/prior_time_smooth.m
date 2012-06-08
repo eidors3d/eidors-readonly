@@ -1,13 +1,13 @@
-function Reg= time_smooth_prior( inv_model );
-% TIME_SMOOTH_PRIOR calculate image prior
-% Reg= time_smooth_prior( inv_model )
+function Reg= prior_time_smooth( inv_model );
+% PRIOR_TIME_SMOOTH calculate image prior
+% Reg= prior_time_smooth( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
-% inv_model.time_smooth_prior.space_prior =
+% inv_model.prior_time_smooth.space_prior =
 %          @space_prior_function
-% inv_model.time_smooth_prior.time_steps  =
+% inv_model.prior_time_smooth.time_steps  =
 %          # of steps into future and past
-% inv_model.time_smooth_prior.time_weight =  0..1
+% inv_model.prior_time_smooth.time_weight =  0..1
 %    each step is weighted by time_weight^time_difference
 %
 % This image prior is intended to be used as
@@ -31,13 +31,13 @@ pp= fwd_model_parameters( inv_model.fwd_model );
 ne = pp.n_elem;
 
 % relative strengths of conductivity and movement priors
-if ~isfield( inv_model,'time_smooth_prior')
-   error('parameters must be specified for time_smooth_prior');
+if ~isfield( inv_model,'prior_time_smooth')
+   error('parameters must be specified for prior_time_smooth');
 end
 
-space_prior= inv_model.time_smooth_prior.space_prior;
-time_weight= inv_model.time_smooth_prior.time_weight;
-time_steps = inv_model.time_smooth_prior.time_steps;
+space_prior= inv_model.prior_time_smooth.space_prior;
+time_weight= inv_model.prior_time_smooth.time_weight;
+time_steps = inv_model.prior_time_smooth.time_steps;
 
 space_Reg= feval(space_prior, inv_model);
 %time_Reg= -speye(ne);
