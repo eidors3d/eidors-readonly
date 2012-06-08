@@ -91,7 +91,7 @@ switch ALGORITHM
         end
         
         im.fwd_model.normalize_measurements=1;
-        im.fwd_model.jacobian = @calc_move_jacobian;
+        im.fwd_model.jacobian = @jacobian_movement;
         im.RtR_prior          = @elec_move_image_prior;
         %         im.elec_move_image_prior.RegC.func = @laplace_image_prior;
         im.elec_move_image_prior.RegC.func = @gaussian_HPF_prior;

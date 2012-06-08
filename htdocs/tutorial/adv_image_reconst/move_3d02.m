@@ -28,7 +28,7 @@ if 0
    mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
    mdlM.fwd_model.jacobian = @jacobian_movement_perturb; % perturbation type jacobian
 else
-   mdlM.fwd_model.jacobian = @calc_move_jacobian;
+   mdlM.fwd_model.jacobian = @jacobian_movement;
 end
 
 mdlM.RtR_prior = @elec_move_image_prior;

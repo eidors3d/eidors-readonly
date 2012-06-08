@@ -24,7 +24,7 @@ if 0
    % Redefine jacobian member for movement & conductivity.
    mdlM.fwd_model.jacobian = 'jacobian_movement_perturb';
 else
-   mdlM.fwd_model.jacobian = @calc_move_jacobian;
+   mdlM.fwd_model.jacobian = @jacobian_movement;
 end
 
 mdlM.RtR_prior =     'elec_move_image_prior';
