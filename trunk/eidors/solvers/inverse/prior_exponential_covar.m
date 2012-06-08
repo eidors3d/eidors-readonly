@@ -1,14 +1,14 @@
-function Reg= exponential_covar_prior( inv_model );
-% EXPONENTIAL_COVAR_PRIOR image prior with exponential
+function Reg= prior_exponential_covar( inv_model );
+% PRIOR_EXPONENTIAL_COVAR image prior with exponential
 %      inter-element covariance, multiplied by a NOSER
 %      type weighting, if desired.
-% Reg= exponential_covar_prior( inv_model )
+% Reg= prior_exponential_covar( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 % Parameters: exponential rate
-%   gamma= inv_model.exponential_covar_prior.gamma
+%   gamma= inv_model.prior_exponential_covar.gamma
 % Parameters: NOSER exponent: diag(J'*J)^exponent )
-%   gamma= inv_model.exponential_covar_prior.noser_exp
+%   gamma= inv_model.prior_exponential_covar.noser_exp
 %       DEFAULT is 0 (ie. no NOSER exponent)
 %
 % FIXME: this code does an inv or the reg matrix. This
@@ -20,20 +20,20 @@ function Reg= exponential_covar_prior( inv_model );
 fwd_model= inv_model.fwd_model;
 
 try 
-    gamma= inv_model.exponential_covar_prior.gamma;
+    gamma= inv_model.prior_exponential_covar.gamma;
 catch
     xy_diam = max( max(fwd_model.nodes(:,1:2)) -  ...
                    min(fwd_model.nodes(:,1:2)));
     gamma= 0.05*xy_diam;
 end
 
-Reg = calc_exponential_covar_prior( fwd_model, gamma);
+Reg = calc_prior_exponential_covar( fwd_model, gamma);
 Reg= 0.5*(Reg+Reg'); % calculation should be symmetric, but is slightly off.
 
 Reg= inv(Reg); % FIXME - not part of inverse
 
 try 
-    noser_exp= inv_model.exponential_covar_prior.noser_exp;
+    noser_exp= inv_model.prior_exponential_covar.noser_exp;
 catch
     noser_exp= 0;
 end
@@ -56,7 +56,7 @@ end
 
 % Calculate exponential LPF Filter
 % parameter is gamma (normally 0.1)
-function Reg= calc_exponential_covar_prior( fwd_model, gamma)
+function Reg= calc_prior_exponential_covar( fwd_model, gamma)
    [rad,ctr]= get_elem_rad_ctr( fwd_model );
 
    n_elem= size(ctr,1);

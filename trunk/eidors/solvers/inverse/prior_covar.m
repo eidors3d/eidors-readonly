@@ -1,6 +1,6 @@
 function Reg= prior_covar( inv_model )
 % PRIOR_COVAR image prior with distance-based interelement covar
-% This is a simplification of exponential_covar_prior.m
+% This is a simplification of prior_exponential_covar.m
 % Reg= prior_covar( inv_model )
 % Reg        => output regularization 
 % inv_model  => inverse model struct
