@@ -15,6 +15,8 @@ function img= fourD_prior_solve( inv_model, data1, data2)
 % (C) 2007, Tao Dai and Andy Adler. Licenced under the GPL Version 2
 % $Id$
 
+warning('EIDORS:deprecated','FOURD_PRIOR_SOLVE is deprecated as of 08-Jun-2012. Use INV_SOLVE_4D_PRIOR instead.');
+
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.fourD_prior.time_steps;
 
