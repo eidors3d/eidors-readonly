@@ -26,7 +26,7 @@ hp= calc_hyperparameter( inv_model );
 %STEP 2 - ONE STEP GN (faster convergence)
 J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
 volt_diff_meas_sim = calc_difference_data( sim_data, meas_data, inv_model.fwd_model);
-RtRtik=tikhonov_image_prior(inv_model);
+RtRtik=prior_tikhonov(inv_model);
 grad_obj = J'*(-volt_diff_meas_sim);  
 hess_obj = J'*J + one_step_reg^2*RtRtik;
 grad_obj=-grad_obj; p_search = hess_obj \ grad_obj;
