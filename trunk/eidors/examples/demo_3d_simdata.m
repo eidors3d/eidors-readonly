@@ -72,7 +72,7 @@ params.jacobian=   'jacobian_adjoint';
 mdl_2d_2 = eidors_obj('fwd_model', params);
 
 inv2d.name= 'EIT inverse';
-inv2d.solve=       'GN_one_step_diff_solve';
+inv2d.solve=       'inv_solve_diff_GN_one_step';
 %inv2d.hyperparameter.func = 'select_noise_figure';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;

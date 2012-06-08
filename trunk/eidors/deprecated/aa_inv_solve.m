@@ -1,6 +1,6 @@
-function img= GN_one_step_diff_solve( varargin )
+function img= inv_solve_diff_GN_one_step( varargin )
 % AA_INV_SOLVE inverse solver using approach of Adler&Guardo 1996
-% img= GN_one_step_diff_solve( inv_model, data1, data2)
+% img= inv_solve_diff_GN_one_step( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
@@ -14,6 +14,6 @@ function img= GN_one_step_diff_solve( varargin )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-warning('EIDORS:deprecated','AA_INV_SOLVE is deprecated as of 06-Jun-2012. Use GN_ONE_STEP_DIFF_SOLVE instead.');
+warning('EIDORS:deprecated','AA_INV_SOLVE is deprecated as of 06-Jun-2012. Use INV_SOLVE_DIFF_GN_ONE_STEP instead.');
 
-img = GN_one_step_diff_solve( varargin{:} );
+img = inv_solve_diff_GN_one_step( varargin{:} );

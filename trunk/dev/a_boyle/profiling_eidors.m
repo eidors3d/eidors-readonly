@@ -165,7 +165,7 @@ for DIMENSIONS=[2 3]
     t4 = toc;
     clear J iRTR iRN RM; % free up some memory
     
-    % GN_one_step_diff_solve does the following
+    % inv_solve_diff_GN_one_step does the following
     %   img_bkgnd= calc_jacobian_bkgnd( inv_model );
     %   J = calc_jacobian( img_bkgnd);
     %
