@@ -45,7 +45,7 @@ inv2d.hyperparameter = rmfield(inv2d.hyperparameter,'func');
 
 % Total variation using PDIPM
 inv2d.hyperparameter.value = 1e-5;
-inv2d.solve=       @TV_diffusivity_solve;
+inv2d.solve=       @inv_solve_TV_diffusivity;
 inv2d.R_prior=     @prior_TV;
 inv2d.parameters.max_iterations= 10;
 inv2d.parameters.term_tolerance= 1e-3;

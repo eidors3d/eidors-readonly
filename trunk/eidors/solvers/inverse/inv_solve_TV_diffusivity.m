@@ -1,7 +1,7 @@
-function img= TV_diffusivity_solve( inv_model, data1, data2)
-% TV_DIFFUSIVITY_SOLVE inverse solver for Andrea Borsic's
+function img= inv_solve_TV_diffusivity( inv_model, data1, data2)
+% INV_SOLVE_TV_DIFFUSIVITY inverse solver for Andrea Borsic's
 %   Total Variation solver for use with difference EIT
-% img= TV_diffusivity_solve( inv_model, data1, data2)
+% img= inv_solve_TV_diffusivity( inv_model, data1, data2)
 % img        => output image
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
@@ -39,20 +39,20 @@ for i=1:size(dva,2)
    sol=[sol, soln];
 end
 
-img.name= 'solved by TV_diffusivity_solve';
+img.name= 'solved by inv_solve_TV_diffusivity';
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
-try if inv_model.TV_diffusivity_solve.want_dual_variable
+try if inv_model.inv_solve_TV_diffusivity.want_dual_variable
    img.dual_data = dual_x;
 end; end
 
 function p = get_params(inv_model);
    
-   try   p.alpha1= inv_model.TV_diffusivity_solve.alpha1;
+   try   p.alpha1= inv_model.inv_solve_TV_diffusivity.alpha1;
    catch p.alpha1= 1e-2;
    end
 
-   try   p.beta= inv_model.TV_diffusivity_solve.beta;
+   try   p.beta= inv_model.inv_solve_TV_diffusivity.beta;
    catch p.beta= 1e-4;
    end
 

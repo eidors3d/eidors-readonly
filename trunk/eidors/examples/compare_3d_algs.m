@@ -4,7 +4,7 @@ function imgr= compare_3d_algs( algno )
 % algno=1     np_inv_solve            np_calc_image_prior
 % algno=2     prior_laplace     np_inv_solve
 % algno=3     prior_TV        np_inv_solve
-% algno=4     prior_TV        TV_diffusivity_solve
+% algno=4     prior_TV        inv_solve_TV_diffusivity
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -60,7 +60,7 @@ switch algno
      inv3d.parameters.term_tolerance= 1e-3;
      inv3d.parameters.keep_iterations= 1;
      inv3d.R_prior=      'prior_TV';
-     inv3d.solve=        'TV_diffusivity_solve';
+     inv3d.solve=        'inv_solve_TV_diffusivity';
      iidx=[1,2,5];
 
    case 5,
