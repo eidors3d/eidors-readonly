@@ -1,4 +1,4 @@
-function img= mcmc_solve( inv_model, data1, data2)
+function img= inv_solve_mcmc( inv_model, data1, data2)
 % NP_INV_SOLVE inverse solver for Nick Polydorides EIDORS3D code
 % img= np_inv_solve( inv_model, data1, data2)
 % img        => output image
@@ -32,7 +32,7 @@ likelihood= feval(inv_model.likelyhood_fcn, inv_model, sol, dv, J )
 
 
 
-img.name= 'solved by mcmc_solve';
+img.name= 'solved by inv_solve_mcmc';
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
 
