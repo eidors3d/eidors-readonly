@@ -11,7 +11,7 @@ function img= aa_inv_conj_grad( varargin )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-warning('EIDORS:deprecated','AA_INV_CONJ_GRAD is deprecated as of 07-Jun-2012. Use CONJ_GRAD_INV_SOLVE instead.');
+warning('EIDORS:deprecated','AA_INV_CONJ_GRAD is deprecated as of 07-Jun-2012. Use INV_SOLVE_CONJ_GRAD instead.');
 
 img = conj_grad_inv_solve( varargin{:} );
 
