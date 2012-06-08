@@ -1,12 +1,12 @@
 function Reg= ab_calc_tv_prior( inv_model );
-% AB_CALC_TV_PRIOR calculate Total Variation image prior
+% AB_PRIOR_TV calculate Total Variation image prior
 % Reg= ab_calc_tv_prior( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
-warning('EIDORS:deprecated','AB_CALC_TV_PRIOR is deprecated as of 06-Jun-2012. Use CALC_TV_PRIOR instead.');
+warning('EIDORS:deprecated','AB_CALC_TV_PRIOR is deprecated as of 06-Jun-2012. Use PRIOR_TV instead.');
 % Andrea's code requires a msh 
 elem = inv_model.fwd_model.elems;
 node = inv_model.fwd_model.nodes;

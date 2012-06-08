@@ -7,7 +7,7 @@ invtv.jacobian_bkgnd.value= 1;
 
 invtv.hyperparameter.value = 1e-3;
 invtv.solve=       @TV_diffusivity_solve;
-invtv.R_prior=     @calc_TV_prior;
+invtv.R_prior=     @prior_TV;
 invtv.parameters.term_tolerance= 1e-3;
 invtv.parameters.keep_iterations= 1;
 

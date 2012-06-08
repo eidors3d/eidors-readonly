@@ -138,7 +138,7 @@ end
     
 function prior= calc_prior(R_mat,img_val,alpha_param,R_name) 
     %1 and 2 norm priors are fundamentally different
-    if(strcmp(R_name,'calc_TV_prior')) %1-norm type
+    if(strcmp(R_name,'prior_TV')) %1-norm type
         TV_img_val_surf=R_mat*(img_val-img_prior);
         TV_img_val=alpha_param*norm(TV_img_val_surf,1);
         prior=exp(-TV_img_val);    

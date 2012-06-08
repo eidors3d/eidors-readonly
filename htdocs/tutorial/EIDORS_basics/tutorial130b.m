@@ -24,10 +24,10 @@ imgr(2)= inv_solve( inv3d, vh, vi);
 imgn(2)= inv_solve( inv3d, vh, vi_n);
 
 % Andrea Borsic's PDIPM TV solver
-inv3d.calc_TV_prior.alpha2 = 1e-5;
+inv3d.prior_TV.alpha2 = 1e-5;
 inv3d.parameters.max_iterations= 20;
 inv3d.parameters.term_tolerance= 1e-3;
-inv3d.R_prior=     @calc_TV_prior;
+inv3d.R_prior=     @prior_TV;
 inv3d.solve=       @TV_diffusivity_solve;
 
 imgr(3)= inv_solve( inv3d, vh, vi);
