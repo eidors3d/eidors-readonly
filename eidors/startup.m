@@ -1,6 +1,9 @@
-function startup
+function startup( path_array )
 % Script to start EIDORS
 % Set path and variables correctly
+% USAGE:
+%   startup - setup basic eidors usage functions
+%   startup( { dev directory paths })
 
 % NOTE: this is a function, so that we don't put variables into the
 % workspace
@@ -122,6 +125,7 @@ if exist(srcf) == 2 && exist(mexf) == 2
 end
 
 % helpful messages
+% TODO: test if desktop is available
 if ~ver.isoctave
    tutorials = '<a href="http://eidors3d.sf.net/tutorial/tutorial.shtml">Tutorials</a>';
 else
