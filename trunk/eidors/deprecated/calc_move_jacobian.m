@@ -16,4 +16,4 @@ function J = calc_move_jacobian(varargin)
 
 warning('EIDORS:deprecated','CALC_MOVE_JACOBIAN is deprecated as of 08-Jun-2012. Use JACOBIAN_MOVEMENT instead.');
 
-jacobian_movement(varargin{:});
+J = jacobian_movement(varargin{:});

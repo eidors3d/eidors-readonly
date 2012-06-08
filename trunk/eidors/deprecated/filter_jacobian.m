@@ -1,4 +1,4 @@
-function J= filter_jacobian( fwd_model, img)
+function J= filter_jacobian( varargin)
 % FILTER_JACOBIAN: J= filter_jacobian( fwd_model, img)
 %
 % Filter a jacobian matrix by a specified filter function
@@ -13,9 +13,7 @@ function J= filter_jacobian( fwd_model, img)
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-J0 = feval(fwd_model.filter_jacobian.jacobian, ...
-           fwd_model, img);
-F  = fwd_model.filter_jacobian.filter;
+warning('EIDORS:deprecated','FILTER_JACOBIAN is deprecated as of 08-Jun-2012. Use JACOBIAN_FILTERED instead.');
 
-J= F*J0;
+J = jacobian_filtered(varargin{:});
 
