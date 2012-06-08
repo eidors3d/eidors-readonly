@@ -12,7 +12,7 @@ function J= aa_calc_jacobian( varargin );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-warning('EIDORS:deprecated','AA_CALC_JACOBIAN is deprecated as of 06-Jun-2012. Use CALC_JACOBIAN_ADJOINT instead.');
+warning('EIDORS:deprecated','AA_CALC_JACOBIAN is deprecated as of 06-Jun-2012. Use JACOBIAN_ADJOINT instead.');
 
-J = calc_jacobian_adjoint( varargin{:} );
+J = jacobian_adjoint( varargin{:} );
 
