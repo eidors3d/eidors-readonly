@@ -13,7 +13,7 @@ inv3d.hyperparameter.value = 1e-3;
 inv3d.solve=       @np_inv_solve;
 
 % Tikhonov prior
-inv3d.R_prior=     @tikhonov_image_prior;
+inv3d.R_prior=     @prior_tikhonov;
 imgr(1)= inv_solve( inv3d, vh, vi);
 imgn(1)= inv_solve( inv3d, vh, vi_n);
 

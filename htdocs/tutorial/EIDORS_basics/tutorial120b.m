@@ -16,7 +16,7 @@ inv2d.solve=       @np_inv_solve;
 
 % Tikhonov prior
 inv2d.hyperparameter.value = 1e-3;
-inv2d.RtR_prior=   @tikhonov_image_prior;
+inv2d.RtR_prior=   @prior_tikhonov;
 imgr(1)= inv_solve( inv2d, vh, vi);
 imgn(1)= inv_solve( inv2d, vh, vi_n);
 

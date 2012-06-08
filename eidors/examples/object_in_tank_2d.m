@@ -97,7 +97,7 @@ inv2d.parameters.term_tolerance= 1e-8;
 inv2d.parameters.max_iterations= 5;
 inv2d.nonlinearGN.init_backgnd= 0.00;
 %
-inv2d.RtR_prior= @tikhonov_image_prior;
+inv2d.RtR_prior= @prior_tikhonov;
 inv2d.hyperparameter.value= 1e-3;
 %
 inv2d.fwd_model.background= homg_img.elem_data;

@@ -285,7 +285,7 @@ function i_mdl= make_inv_model( n_rings, img_prior, param_name, param_vals );
   %hparam.tgt_elems= 1:4;
 
    if nargin < 2
-      img_prior = 'tikhonov_image_prior';
+      img_prior = 'prior_tikhonov';
       param_name= 'jnk___'; param_vals= 'jnk___';
    end
 

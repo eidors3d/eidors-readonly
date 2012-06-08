@@ -10,7 +10,7 @@ i_mdl.fwd_model= r_mdl;
 i_mdl.jacobian_bkgnd.value= 1000;
 
 % regulatization not needed for this problem
-i_mdl.RtR_prior= @tikhonov_image_prior;
+i_mdl.RtR_prior= @prior_tikhonov;
 i_mdl.hyperparameter.value= 0;
 
 i_mdl.reconst_type= 'difference';
