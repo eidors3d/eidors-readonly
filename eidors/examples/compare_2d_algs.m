@@ -7,12 +7,12 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %
 % option -> select algorithm
 % OPTION   SOLVER               PRIOR             HP
-%   1   inv_solve_diff_GN_one_step       laplace_image_prior   1e-3
-%   2   np_inv_solve       laplace_image_prior   1e-3
+%   1   inv_solve_diff_GN_one_step       prior_laplace   1e-3
+%   2   np_inv_solve       prior_laplace   1e-3
 %   3   inv_solve_diff_GN_one_step       prior_gaussian_HPF   NF=2
 %   3.1 inv_solve_diff_GN_one_step       noser_image_prior     NF=2
 %   4   TV_diffusivity_solve   prior_TV      1e-4
-%   5   aa_inv_total_var   laplace_image_prior   1e-4 (not the usual prior)
+%   5   aa_inv_total_var   prior_laplace   1e-4 (not the usual prior)
 %   6   aa_inv_total_var   prior_TV      1e-4
 %   7   aa_inv_conj_grad   prior_TV      ??? 
 %   8   TV_lagged_diffusivity  prior_TV      ???
@@ -77,11 +77,11 @@ switch option
    case 1,
      inv2d.hyperparameter.value = 1e-3;
      inv2d.solve=       'inv_solve_diff_GN_one_step';
-     inv2d.RtR_prior=   'laplace_image_prior';
+     inv2d.RtR_prior=   'prior_laplace';
 
    case 2,
      inv2d.hyperparameter.value = 1e-3;
-     inv2d.RtR_prior=   'laplace_image_prior';
+     inv2d.RtR_prior=   'prior_laplace';
      inv2d.solve=       'np_inv_solve';
 
    case 3,
@@ -95,7 +95,7 @@ switch option
      inv2d.hyperparameter.func = @choose_noise_figure;
      inv2d.hyperparameter.noise_figure= 2;
      inv2d.hyperparameter.tgt_elems= 1:4;
-     inv2d.RtR_prior=   @laplace_image_prior;
+     inv2d.RtR_prior=   @prior_laplace;
      inv2d.solve=       'inv_solve_diff_GN_one_step';
 
    case 4,
@@ -108,7 +108,7 @@ switch option
    case 5,
      inv2d.hyperparameter.value = 1e-4;
      inv2d.solve=       'aa_inv_total_var';
-     inv2d.R_prior=     'laplace_image_prior';
+     inv2d.R_prior=     'prior_laplace';
      inv2d.parameters.max_iterations= 10;
 
    case 6,

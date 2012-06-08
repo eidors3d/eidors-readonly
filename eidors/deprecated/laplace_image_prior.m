@@ -20,30 +20,5 @@ function Reg= laplace_image_prior( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-pp= fwd_model_parameters( inv_model.fwd_model );
-
-Reg = speye( pp.n_elem );
-
-   Iidx= [];
-   Jidx= [];
-   Vidx= [];
-   for ii=1:pp.n_elem
-     el_adj = find_adjoin( ii, pp.ELEM );
-     for jj=el_adj(:)'
-         Iidx= [Iidx, ii, ii, jj, jj];
-         Jidx= [Jidx, ii, jj, ii, jj];
-         Vidx= [Vidx,  1, -1, -1,  1];
-     end
-   end
-
-   Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
-
-% find elems which are connected to elems ee
-function elems= find_adjoin(ee, ELEM)
-   nn= ELEM(:,ee);
-   [d,e]= size(ELEM);
-   ss= zeros(1,e);
-   for i=1:d
-     ss= ss+ any(ELEM==nn(i));
-   end
-   elems= find(ss==d-1);
+warning('EIDORS:deprecated','LAPLACE_IMAGE_PRIOR is deprecated as of 08-Jun-2012. Use PRIOR_LAPLACE instead.');
+Reg = prior_laplace(inv_model);

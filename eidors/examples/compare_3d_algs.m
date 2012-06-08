@@ -2,7 +2,7 @@ function imgr= compare_3d_algs( algno )
 % Compare different 3D reconstructions
 % 
 % algno=1     np_inv_solve            np_calc_image_prior
-% algno=2     laplace_image_prior     np_inv_solve
+% algno=2     prior_laplace     np_inv_solve
 % algno=3     prior_TV        np_inv_solve
 % algno=4     prior_TV        TV_diffusivity_solve
 
@@ -46,7 +46,7 @@ switch algno
 
    case 2,
      inv3d.hyperparameter.value = 1e-3;
-     inv3d.RtR_prior=    'laplace_image_prior';
+     inv3d.RtR_prior=    'prior_laplace';
      inv3d.solve=        'np_inv_solve';
 
    case 3,

@@ -60,7 +60,7 @@ function imdl = basic_imdl( fmdl );
 
    imdl.solve= @inv_solve_diff_GN_one_step;
    imdl.hyperparameter.value = .01;
-   imdl.RtR_prior = @laplace_image_prior;
+   imdl.RtR_prior = @prior_laplace;
    imdl.jacobian_bkgnd.value = 1;
    imdl.reconst_type= 'difference';
    imdl.fwd_model = fmdl;
@@ -73,13 +73,13 @@ function imdl = NOSER_dif( imdl );
    imdl.reconst_type= 'difference';
 
 function imdl = Basic_GN_Dif( imdl );
-   imdl.RtR_prior = @laplace_image_prior;
+   imdl.RtR_prior = @prior_laplace;
    try; imdl = rmfield(imdl,'R_prior'); end
    imdl.solve= @inv_solve_diff_GN_one_step;
    imdl.reconst_type= 'difference';
 
 function imdl = Basic_GN_Abs( imdl );
-   imdl.RtR_prior = @laplace_image_prior;
+   imdl.RtR_prior = @prior_laplace;
    try; imdl = rmfield(imdl,'R_prior'); end
    imdl.solve= @inv_solve_abs_GN;
    imdl.parameters.max_iterations= 10;
@@ -103,7 +103,7 @@ function imdl = Elec_Move_GN( imdl );
 
    MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
    imdl.elec_move_image_prior.parameters = MV_prior;
-   imdl.elec_move_image_prior.RegC.func = @laplace_image_prior;
+   imdl.elec_move_image_prior.RegC.func = @prior_laplace;
 %  imdl.elec_move_image_prior.RegC.func = @prior_gaussian_HPF; % not OK for 3D
    imdl.hyperparameter.value = .03;
    try

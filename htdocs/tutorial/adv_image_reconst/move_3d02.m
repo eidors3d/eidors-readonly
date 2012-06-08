@@ -2,7 +2,7 @@
 
 img3dim= img;
 
-mdl3dim.RtR_prior = 'laplace_image_prior';
+mdl3dim.RtR_prior = 'prior_laplace';
 mdl3dim.hyperparameter.value = 3e-3;
 
 % Show slices of 3D model with true movement vectors

@@ -38,7 +38,7 @@ n_elec = pp.n_elec;
 try
    RegCfcn = inv_model.elec_move_image_prior.RegC.func;
 catch
-   RegCfcn = @laplace_image_prior;
+   RegCfcn = @prior_laplace;
 end
 try; inv_model = rmfield(inv_model, 'R_prior'); end
 try; inv_model = rmfield(inv_model, 'prior_use_fwd_not_rec'); end

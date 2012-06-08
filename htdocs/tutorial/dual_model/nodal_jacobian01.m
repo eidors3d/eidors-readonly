@@ -1,14 +1,14 @@
 %$Id$
 imdl_e= mk_common_model('b2c2',16);
 imdl_e.hyperparameter.value= 0.05;
-imdl_e.RtR_prior = @laplace_image_prior;
+imdl_e.RtR_prior = @prior_laplace;
 
 fmdl= imdl_e.fwd_model;
 imdl_n= imdl_e;
 imdl_n.fwd_model.jacobian = @jacobian_elem2nodes;
 imdl_n.fwd_model.jacobian_elem2nodes.fwd_model = fmdl;
 imdl_n.RtR_prior = @RtR_prior_elem2nodes;
-imdl_n.RtR_prior_elem2nodes.RtR_prior = @laplace_image_prior;
+imdl_n.RtR_prior_elem2nodes.RtR_prior = @prior_laplace;
 imdl_n.RtR_prior_elem2nodes.fwd_model = fmdl;
 imdl_n.reconst_to = 'nodes';
 
