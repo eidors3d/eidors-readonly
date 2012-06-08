@@ -194,10 +194,10 @@ switch inv_sel
         imdl= set_basic( 'b2c' );
         time_steps= 3;
 
-        imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @prior_noser;
-        imdl.time_smooth_prior.time_weight= .5;
-        imdl.time_smooth_prior.time_steps=  time_steps;
+        imdl.RtR_prior= @prior_time_smooth;
+        imdl.prior_time_smooth.space_prior= @prior_noser;
+        imdl.prior_time_smooth.time_weight= .5;
+        imdl.prior_time_smooth.time_steps=  time_steps;
 
         imdl.solve= @inv_solve_time_prior;
         imdl.inv_solve_time_prior.time_steps=   time_steps;
@@ -220,12 +220,12 @@ if nargin>=3
          filename = sprintf('%s-hp=%g', filename, options(1));
    end; end
    if length(options) >=2 if ~isnan(options(2))
-      imdl.time_smooth_prior.time_steps=  options(2);
+      imdl.prior_time_smooth.time_steps=  options(2);
       imdl.inv_solve_time_prior.time_steps=   options(2);
       filename = sprintf('%s-ts=%d', filename, options(2));
    end; end
    if length(options) >=3 if ~isnan(options(3))
-      imdl.time_smooth_prior.time_weight=  options(3);
+      imdl.prior_time_smooth.time_weight=  options(3);
       filename = sprintf('%s-tw=%4.2f', filename, options(3));
    end; end
 end
@@ -317,10 +317,10 @@ function imdl= set_basic( shape_str, type, vals )
         time_steps= vals(1); 
         time_weight= vals(2);
 
-        imdl.RtR_prior= @time_smooth_prior;
-        imdl.time_smooth_prior.space_prior= @prior_noser;
-        imdl.time_smooth_prior.time_weight= time_weight;
-        imdl.time_smooth_prior.time_steps=  time_steps;
+        imdl.RtR_prior= @prior_time_smooth;
+        imdl.prior_time_smooth.space_prior= @prior_noser;
+        imdl.prior_time_smooth.time_weight= time_weight;
+        imdl.prior_time_smooth.time_steps=  time_steps;
 
         imdl.solve= @inv_solve_time_prior;
         imdl.inv_solve_time_prior.time_steps=   time_steps;
