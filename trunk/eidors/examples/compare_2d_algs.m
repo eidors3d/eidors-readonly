@@ -9,7 +9,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 % OPTION   SOLVER               PRIOR             HP
 %   1   GN_one_step_diff_solve       laplace_image_prior   1e-3
 %   2   np_inv_solve       laplace_image_prior   1e-3
-%   3   GN_one_step_diff_solve       gaussian_HPF_prior   NF=2
+%   3   GN_one_step_diff_solve       prior_gaussian_HPF   NF=2
 %   3.1 GN_one_step_diff_solve       noser_image_prior     NF=2
 %   4   TV_diffusivity_solve   prior_TV      1e-4
 %   5   aa_inv_total_var   laplace_image_prior   1e-4 (not the usual prior)
@@ -88,7 +88,7 @@ switch option
      inv2d.hyperparameter.func = @choose_noise_figure;
      inv2d.hyperparameter.noise_figure= 2;
      inv2d.hyperparameter.tgt_elems= 1:4;
-     inv2d.RtR_prior=   'gaussian_HPF_prior';
+     inv2d.RtR_prior=   'prior_gaussian_HPF';
      inv2d.solve=       'GN_one_step_diff_solve';
 
    case 3.1,

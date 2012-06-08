@@ -16,7 +16,7 @@ print_convert 'GREIT_examples02b.png' '-density 50';
 i_gn = mk_common_model('d2c2',16);
 i_gn.hyperparameter.value = 0.01;
 i_gn.fwd_model.normalize_measurements = 1;
-% i_gn.RtR_prior = @gaussian_HPF_prior;
+% i_gn.RtR_prior = @prior_gaussian_HPF;
 
 show_fem( inv_solve( i_gn, vh, vt) ); axis equal;
 print_convert 'GREIT_examples02c.png' '-density 50';

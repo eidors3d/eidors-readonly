@@ -8,7 +8,7 @@ imdl.fwd_model= fmdl;
 
 c2f= mk_coarse_fine_mapping( fmdl, cmdl);
 imdl.fwd_model.coarse2fine = c2f;
-%imdl.RtR_prior = @gaussian_HPF_prior;
+%imdl.RtR_prior = @prior_gaussian_HPF;
 imdl.RtR_prior = @noser_image_prior;
 imdl.prior_use_fwd_not_rec = 1;
 imdl.noser_image_prior.exponent= 0.5;

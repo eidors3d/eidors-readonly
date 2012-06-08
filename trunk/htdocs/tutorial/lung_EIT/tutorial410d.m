@@ -6,7 +6,7 @@ vh= zc_h_stomach_pre; % abdomen before fluid
 vi= zc_stomach_0_5_60min(:,1); % right after drink
 
 % GN solution - Gaussian prior
-imdl.RtR_prior= @gaussian_HPF_prior;
+imdl.RtR_prior= @prior_gaussian_HPF;
 imdl.solve=     @GN_one_step_diff_solve;
 imdl.hyperparameter.value=1e-2;
 img= inv_solve(imdl, vh, vi);

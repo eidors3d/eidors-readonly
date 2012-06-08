@@ -104,7 +104,7 @@ function imdl = Elec_Move_GN( imdl );
    MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
    imdl.elec_move_image_prior.parameters = MV_prior;
    imdl.elec_move_image_prior.RegC.func = @laplace_image_prior;
-%  imdl.elec_move_image_prior.RegC.func = @gaussian_HPF_prior; % not OK for 3D
+%  imdl.elec_move_image_prior.RegC.func = @prior_gaussian_HPF; % not OK for 3D
    imdl.hyperparameter.value = .03;
    try
       n_elems = size(imdl.rec_model.coarse2fine,2);

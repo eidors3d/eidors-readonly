@@ -5,7 +5,7 @@
 imdl.rec_model= c_mdl;
 c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
 imdl.fwd_model.coarse2fine = c2f;
-imdl.RtR_prior = @gaussian_HPF_prior;
+imdl.RtR_prior = @prior_gaussian_HPF;
 imdl.solve = @GN_one_step_diff_solve;
 imdl.hyperparameter.value= 0.03;
 
