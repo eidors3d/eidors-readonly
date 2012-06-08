@@ -50,7 +50,7 @@ mdl.jacobian = @np_calc_jacobian;
 mg.elem_data= ones(n_el,1) * conduc ;
 Jnp= calc_jacobian(mdl,img);
 
-mdl.jacobian = @perturb_jacobian;
+mdl.jacobian = @jacobian_perturb;
 Jp1= calc_jacobian(mdl,img);
 
 img.elem_data= ones(n_el,1) * conduc ;

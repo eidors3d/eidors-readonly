@@ -52,7 +52,7 @@ end
 
 
 t=cputime;
-J2p= perturb_jacobian( f2mdl, img);
+J2p= jacobian_perturb( f2mdl, img);
 fprintf('perturb_j - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2p = norm(J1-J2p,'fro')/ n_J1;
@@ -95,7 +95,7 @@ end
 
 %%%%%%%%%% J2p
 t=cputime;
-J2p= perturb_jacobian( f2mdl, img);
+J2p= jacobian_perturb( f2mdl, img);
 fprintf('perturb_j - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2p = norm(J1-J2p,'fro')/ n_J1;
@@ -106,7 +106,7 @@ end
 
 %%%%%%%%%% J1p
 t=cputime;
-J1p= perturb_jacobian( f1mdl, img)*c2f;
+J1p= jacobian_perturb( f1mdl, img)*c2f;
 fprintf('perturb_j - full: t=%f\n',  cputime-t  );
 
 n_J1_J1p = norm(J1-J1p,'fro')/ n_J1;
@@ -147,7 +147,7 @@ end
 
 %%%%%%%%%% J2p
 t=cputime;
-J2p= perturb_jacobian( f2mdl, img);
+J2p= jacobian_perturb( f2mdl, img);
 fprintf('perturb_j - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2p = norm(J1-J2p,'fro')/ n_J1;
@@ -193,7 +193,7 @@ end
 
 
 t=cputime;
-J2p= perturb_jacobian( f2mdl, img);
+J2p= jacobian_perturb( f2mdl, img);
 fprintf('perturb_j - c2f: t=%f\n',  cputime-t  );
 
 n_J1_J2p = norm(J1-J2p,'fro')/ n_J1;
