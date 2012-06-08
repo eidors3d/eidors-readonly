@@ -1,4 +1,3 @@
-clear
 addpath EITCalcFrequencySpectrum
 addpath EITCalcLungRoi
 addpath EITCalcTimeSignal
