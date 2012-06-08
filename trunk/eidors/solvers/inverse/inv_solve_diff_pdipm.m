@@ -1,14 +1,14 @@
-function img=pdipm_diff( inv_model, data1, data2)
-% PDIPM_DIFF inverse solver for difference data using Primal/Dual interior point method
+function img=inv_solve_diff_pdipm( inv_model, data1, data2)
+% INV_SOLVE_DIFF_PDIPM inverse solver for difference data using Primal/Dual interior point method
 % img= ab_pdipm( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
 %
-%  inv_model.pdipm_diff.norm_data  1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_diff.norm_image 1 or 2 (DEFAULT 2)
-%  inv_model.pdipm_diff.beta     (default 1e-6)
+%  inv_model.inv_solve_diff_pdipm.norm_data  1 or 2 (DEFAULT 2)
+%  inv_model.inv_solve_diff_pdipm.norm_image 1 or 2 (DEFAULT 2)
+%  inv_model.inv_solve_diff_pdipm.beta     (default 1e-6)
 %
 % Parameters:
 %  max_iters =  inv_model.parameters.max_iterations (default 10)
@@ -48,7 +48,7 @@ elseif pp.norm_data==1 && pp.norm_image==1
 end
 
 % create a data structure to return
-img.name = 'pdipm_diff';
+img.name = 'inv_solve_diff_pdipm';
 img.elem_data = x;
 img.fwd_model = fwd_model;
 
@@ -205,18 +205,18 @@ function pp= process_parameters(imdl);
    catch  pp.min_change = 0;
    end
 
-   try    pp.beta = imdl.pdipm_diff.beta; 
+   try    pp.beta = imdl.inv_solve_diff_pdipm.beta; 
    catch  pp.beta = 1e-6;
    end
 
    pp.beta_reduce = 0.2;
    pp.beta_minimum= 1e-16;
 
-   try    pp.norm_data = imdl.pdipm_diff.norm_data;
+   try    pp.norm_data = imdl.inv_solve_diff_pdipm.norm_data;
    catch  pp.norm_data = 2;
    end
 
-   try    pp.norm_image = imdl.pdipm_diff.norm_image;
+   try    pp.norm_image = imdl.inv_solve_diff_pdipm.norm_image;
    catch  pp.norm_image = 2;
    end
 
