@@ -98,13 +98,13 @@ function imdl = Elec_Move_GN( imdl );
    % keep previous model as conductivity jacobian, so it should be ok
    imdl.fwd_model.conductivity_jacobian = imdl.fwd_model.jacobian; 
    imdl.fwd_model.jacobian = @jacobian_movement_perturb;
-   imdl.RtR_prior =          @elec_move_image_prior;
+   imdl.RtR_prior =          @prior_movement;
    imdl.solve= @inv_solve_diff_GN_one_step;
 
    MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
-   imdl.elec_move_image_prior.parameters = MV_prior;
-   imdl.elec_move_image_prior.RegC.func = @prior_laplace;
-%  imdl.elec_move_image_prior.RegC.func = @prior_gaussian_HPF; % not OK for 3D
+   imdl.prior_movement.parameters = MV_prior;
+   imdl.prior_movement.RegC.func = @prior_laplace;
+%  imdl.prior_movement.RegC.func = @prior_gaussian_HPF; % not OK for 3D
    imdl.hyperparameter.value = .03;
    try
       n_elems = size(imdl.rec_model.coarse2fine,2);

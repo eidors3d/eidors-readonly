@@ -31,9 +31,9 @@ else
    mdlM.fwd_model.jacobian = @jacobian_movement;
 end
 
-mdlM.RtR_prior = @elec_move_image_prior;
+mdlM.RtR_prior = @prior_movement;
 
-mdlM.elec_move_image_prior.parameters = move_vs_conduct;
+mdlM.prior_movement.parameters = move_vs_conduct;
 
 % Solve inversglobale problem and show slices
 imgM = inv_solve(mdlM, vh, vi);

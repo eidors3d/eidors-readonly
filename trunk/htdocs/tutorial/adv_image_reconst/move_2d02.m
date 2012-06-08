@@ -27,8 +27,8 @@ else
    mdlM.fwd_model.jacobian = @jacobian_movement;
 end
 
-mdlM.RtR_prior =     'elec_move_image_prior';
-mdlM.elec_move_image_prior.parameters = sqrt(1e2/1); 
+mdlM.RtR_prior =     'prior_movement';
+mdlM.prior_movement.parameters = sqrt(1e2/1); 
 
 % Solve inverse problem for mdlM eidors_obj model.
 imgM = inv_solve(mdlM, vh, vi);

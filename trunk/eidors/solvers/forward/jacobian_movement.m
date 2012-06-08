@@ -433,7 +433,7 @@ function unit_test_3d_inv_solve1
    vh = fwd_solve( img );
    mdl3dim.fwd_model.jacobian = @jacobian_movement;
 
-   mdl3dim.RtR_prior = @elec_move_image_prior;
+   mdl3dim.RtR_prior = @prior_movement;
 
    imgM = inv_solve(mdl3dim, vh, vh);
 
@@ -476,6 +476,6 @@ function unit_test_3d_inv_solve1
    vh = fwd_solve( img );
    imdl.prior_use_fwd_not_rec = 1;
    imdl.fwd_model.jacobian = @jacobian_movement;
-   imdl.RtR_prior = @elec_move_image_prior;
+   imdl.RtR_prior = @prior_movement;
    imgM = inv_solve(imdl, vh, vh);
     
