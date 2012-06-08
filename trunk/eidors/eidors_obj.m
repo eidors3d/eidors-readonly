@@ -78,6 +78,10 @@ switch type
       obj_id= '3.5+ ($Date$)';  % Update for New eidors version
    case 'interpreter_version'
       obj_id= test_versions;
+% TODO: Add these functions
+%  case 'eidors_path'
+%  case 'eidors_dev_path'
+%  case 'eidors_cache_path'
    otherwise
       test_install
       obj_id= new_obj( type, name, varargin{:} );
