@@ -1,6 +1,6 @@
-function [img,img_iteration]= mc_GN_abs_solve( inv_model, meas_data)
-% MC_GN_ABS_SOLVE inverse solver 
-% img= mc_GN_abs_solve( inv_model, data1, data2)
+function [img,img_iteration]= mc_inv_solve_abs_GN( inv_model, meas_data)
+% MC_INV_SOLVE_ABS_GN inverse solver 
+% img= mc_inv_solve_abs_GN( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => simulated   data 

@@ -81,7 +81,7 @@ function imdl = Basic_GN_Dif( imdl );
 function imdl = Basic_GN_Abs( imdl );
    imdl.RtR_prior = @laplace_image_prior;
    try; imdl = rmfield(imdl,'R_prior'); end
-   imdl.solve= @GN_abs_solve;
+   imdl.solve= @inv_solve_abs_GN;
    imdl.parameters.max_iterations= 10;
    imdl.reconst_type= 'absolute';
 

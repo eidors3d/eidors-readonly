@@ -1,5 +1,5 @@
 function img= GN_absLogCond_solve( inv_model, data1);
-% GN_ABS_SOLVER absolute solver using Gauss Newton approximation
+% INV_SOLVE_ABS_GNR absolute solver using Gauss Newton approximation
 % img= gn_abs_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
@@ -9,7 +9,7 @@ function img= GN_absLogCond_solve( inv_model, data1);
 %   inv_model.parameters.max_iterations = N_max iter
 
 % (C) 2012 Nolwenn Lesparre. License: GPL version 2 or version 3
-% $Id: GN_abs_solve.m 2596 2011-06-18 14:18:06Z aadler $
+% $Id: inv_solve_abs_GN.m 2596 2011-06-18 14:18:06Z aadler $
 
 % Step 1: fit to background
 img = homogeneous_estimate( inv_model, data1 );

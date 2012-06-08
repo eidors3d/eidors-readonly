@@ -1,5 +1,5 @@
-function img= GN_abs_solve( inv_model, data1);
-% GN_ABS_SOLVER absolute solver using Gauss Newton approximation
+function img= inv_solve_abs_GN( inv_model, data1);
+% INV_SOLVE_ABS_GNR absolute solver using Gauss Newton approximation
 % img= gn_abs_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
