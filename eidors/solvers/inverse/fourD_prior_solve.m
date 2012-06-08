@@ -173,8 +173,8 @@ Gama = gama.^abs(k-l);%correlation matrix of image set
 
 function P_3d = calc_P_3d(inv_model,P_2d)
 
-% P_C = exponential_covar_prior( inv_model );
-P_C = prior_covar( inv_model );%a simplified calculation of "exponential_covar_prior"
+% P_C = prior_exponential_covar( inv_model );
+P_C = prior_covar( inv_model );%a simplified calculation of "prior_exponential_covar"
 
 P_N = sqrt(P_2d);
 P_3d = P_N*P_C*P_N;
