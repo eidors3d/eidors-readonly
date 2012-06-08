@@ -199,8 +199,8 @@ switch inv_sel
         imdl.time_smooth_prior.time_weight= .5;
         imdl.time_smooth_prior.time_steps=  time_steps;
 
-        imdl.solve= @time_prior_solve;
-        imdl.time_prior_solve.time_steps=   time_steps;
+        imdl.solve= @inv_solve_time_prior;
+        imdl.inv_solve_time_prior.time_steps=   time_steps;
 
         [imdl.fwd_model.stimulation(:).delta_time]=deal(1);
 
@@ -221,7 +221,7 @@ if nargin>=3
    end; end
    if length(options) >=2 if ~isnan(options(2))
       imdl.time_smooth_prior.time_steps=  options(2);
-      imdl.time_prior_solve.time_steps=   options(2);
+      imdl.inv_solve_time_prior.time_steps=   options(2);
       filename = sprintf('%s-ts=%d', filename, options(2));
    end; end
    if length(options) >=3 if ~isnan(options(3))
@@ -322,8 +322,8 @@ function imdl= set_basic( shape_str, type, vals )
         imdl.time_smooth_prior.time_weight= time_weight;
         imdl.time_smooth_prior.time_steps=  time_steps;
 
-        imdl.solve= @time_prior_solve;
-        imdl.time_prior_solve.time_steps=   time_steps;
+        imdl.solve= @inv_solve_time_prior;
+        imdl.inv_solve_time_prior.time_steps=   time_steps;
         imdl.hyperparameter.value= 1e-1;
 
      otherwise

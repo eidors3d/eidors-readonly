@@ -1,6 +1,6 @@
-function img= time_prior_solve( inv_model, data1, data2)
-% TIME_PRIOR_SOLVE inverse solver to account for time differences
-% img= inv_solve_diff_GN_one_step( inv_model, data1, data2)
+function img= inv_solve_time_prior( inv_model, data1, data2)
+% INV_SOLVE_TIME_PRIOR inverse solver to account for time differences
+% img= inv_solve_time_prior( inv_model, data1, data2)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
@@ -19,13 +19,13 @@ function img= time_prior_solve( inv_model, data1, data2)
 % $Id$
 
 fwd_model= inv_model.fwd_model;
-time_steps = inv_model.time_prior_solve.time_steps;
+time_steps = inv_model.inv_solve_time_prior.time_steps;
 l_ts  = time_steps*2 + 1;
 
 % The one_step reconstruction matrix is cached
-one_step_inv = eidors_obj('get-cache', inv_model, 'time_prior_solve');
+one_step_inv = eidors_obj('get-cache', inv_model, 'inv_solve_time_prior');
 if ~isempty(one_step_inv)
-    eidors_msg('time_prior_solve: using cached value', 2);
+    eidors_msg('inv_solve_time_prior: using cached value', 2);
 else
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
     J = calc_jacobian( fwd_model, img_bkgnd);
@@ -33,8 +33,8 @@ else
 %   one_step_inv= standard_form( inv_model, J );
     one_step_inv= data_form( inv_model, J );
 
-    eidors_obj('set-cache', inv_model, 'time_prior_solve', one_step_inv);
-    eidors_msg('time_prior_solve: setting cached value', 2);
+    eidors_obj('set-cache', inv_model, 'inv_solve_time_prior', one_step_inv);
+    eidors_msg('inv_solve_time_prior: setting cached value', 2);
 end
 
 dva = calc_difference_data( data1, data2, inv_model.fwd_model);
@@ -52,7 +52,7 @@ dvat= reshape(dva(:,idx),[],l_dva);
 sol = one_step_inv * dvat;
 
 % create a data structure to return
-img.name= 'solved by time_prior_solve';
+img.name= 'solved by inv_solve_time_prior';
 img.elem_data = sol;
 img.inv_model= inv_model;
 img.fwd_model= fwd_model;
@@ -64,7 +64,7 @@ function one_step_inv= standard_form( inv_model, J )
     W   = calc_meas_icov( inv_model );
     hp  = calc_hyperparameter( inv_model );
 
-    time_steps = inv_model.time_prior_solve.time_steps;
+    time_steps = inv_model.inv_solve_time_prior.time_steps;
     l_ts  = time_steps*2 + 1;
 
     JtWJ = kron( speye(l_ts), J'*W*J);
@@ -80,7 +80,7 @@ function one_step_inv= standard_form( inv_model, J )
 function one_step_inv= data_form( inv_model, J );
     space_prior= inv_model.time_smooth_prior.space_prior;
     time_weight= inv_model.time_smooth_prior.time_weight;
-    ts         = inv_model.time_prior_solve.time_steps;
+    ts         = inv_model.inv_solve_time_prior.time_steps;
 
     space_Reg= feval(space_prior, inv_model);
 

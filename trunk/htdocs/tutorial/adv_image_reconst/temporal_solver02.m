@@ -24,8 +24,8 @@ imdl_TS.time_smooth_prior.space_prior= @noser_image_prior;
 imdl_TS.noser_image_prior.exponent= .5;
 imdl_TS.time_smooth_prior.time_weight= time_weight;
 imdl_TS.time_smooth_prior.time_steps=  time_steps;
-imdl_TS.solve= @time_prior_solve;
-imdl_TS.time_prior_solve.time_steps=   time_steps;
+imdl_TS.solve= @inv_solve_time_prior;
+imdl_TS.inv_solve_time_prior.time_steps=   time_steps;
 
 % Kalman Solver
 imdl_KS = base_model;
