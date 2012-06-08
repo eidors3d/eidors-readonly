@@ -24,7 +24,7 @@ subplot(222); show_fem(img); axis equal; axis off
 % GN solution - Noser prior
 imdl= rmfield(imdl,'RtR_prior');
 imdl.R_prior=   @prior_TV;
-imdl.solve=     @TV_diffusivity_solve;
+imdl.solve=     @inv_solve_TV_diffusivity;
 imdl.hyperparameter.value=3e-4;
 img= inv_solve(imdl, vh, vi);
 
@@ -32,7 +32,7 @@ subplot(223); show_fem(img); axis equal; axis off
 
 % GN solution - Noser prior
 imdl.R_prior=   @prior_TV;
-imdl.solve=     @TV_diffusivity_solve;
+imdl.solve=     @inv_solve_TV_diffusivity;
 imdl.hyperparameter.value=3e-3;
 img= inv_solve(imdl, vh, vi);
 
