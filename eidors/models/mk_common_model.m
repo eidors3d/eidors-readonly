@@ -399,7 +399,7 @@ function inv2d= add_params_2d_mdl( params, n_elec, options);
     params.np_fwd_solve.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);
 
-    inv2d.solve=       'GN_one_step_diff_solve';
+    inv2d.solve=       'inv_solve_diff_GN_one_step';
     inv2d.hyperparameter.value = 3e-2;
     %inv2d.hyperparameter.func = 'choose_noise_figure';
     %inv2d.hyperparameter.noise_figure= 1;
@@ -533,7 +533,7 @@ function inv3d= mk_b3r1_model( n_elec, options )
     mdl_3d = eidors_obj('fwd_model', params);
 
     inv3d.name = 'EIT inverse: 3D';
-    inv3d.solve=       'GN_one_step_diff_solve';
+    inv3d.solve=       'inv_solve_diff_GN_one_step';
     %inv3d.solve=       'aa_inv_conj_grad';
     inv3d.hyperparameter.value = 1e-5;
     inv3d.RtR_prior= 'laplace_image_prior';
@@ -570,7 +570,7 @@ function inv3d= mk_b3r2_model( n_elec, nr, options )
     mdl_3d.levels = levels;
     
     inv3d.name = 'EIT inverse: 3D';
-    inv3d.solve=       'GN_one_step_diff_solve';
+    inv3d.solve=       'inv_solve_diff_GN_one_step';
     %inv3d.solve=       'aa_inv_conj_grad';
     inv3d.hyperparameter.value = 1e-5;
     inv3d.RtR_prior= 'laplace_image_prior';

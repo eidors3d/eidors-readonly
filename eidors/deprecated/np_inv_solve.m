@@ -11,7 +11,7 @@ function img= np_inv_solve( inv_model, data1, data2)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-warning('EIDORS:deprecated','NP_INV_SOLVE is deprecated as of 07-Jun-2012. Use GN_ONE_STEP_DIFF_SOLVE instead.');
+warning('EIDORS:deprecated','NP_INV_SOLVE is deprecated as of 07-Jun-2012. Use INV_SOLVE_DIFF_GN_ONE_STEP instead.');
 
 [maxiter, tol] = get_parameters(inv_model);
   

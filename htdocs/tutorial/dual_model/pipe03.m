@@ -14,7 +14,7 @@ imdl.rec_model= cmdl;
 imdl.fwd_model= fmdl;
 imdl.fwd_model.coarse2fine = c2f;
 imdl.RtR_prior = @prior_gaussian_HPF;
-imdl.solve = @GN_one_step_diff_solve;
+imdl.solve = @inv_solve_diff_GN_one_step;
 imdl.hyperparameter.value= 1e-4;
 
 imgc= inv_solve(imdl, vh, vi);

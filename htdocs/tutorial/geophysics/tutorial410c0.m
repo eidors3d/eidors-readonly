@@ -3,7 +3,7 @@ imdl = eidors_obj('inv_solve','test');
 imdl.hyperparameter.value = .1;
 if 0
 imdl.RtR_prior = @laplace_image_prior;
-imdl.solve = @GN_one_step_diff_solve;
+imdl.solve = @inv_solve_diff_GN_one_step;
 end
 imdl.R_prior = @prior_TV;
 imdl.solve = @pdipm_diff;
