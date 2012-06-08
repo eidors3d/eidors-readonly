@@ -34,8 +34,6 @@ addpath([HOMEDIR, '/solvers']);
 addpath([HOMEDIR, '/solvers/inverse']);
 addpath([HOMEDIR, '/solvers/forward']);
 addpath([HOMEDIR, '/algorithms']);
-addpath([HOMEDIR, '/algorithms/a_adler']);
-addpath([HOMEDIR, '/algorithms/n_polydorides']);
 addpath([HOMEDIR, '/interface']);
 addpath([HOMEDIR, '/models']);
 addpath([HOMEDIR, '/meshing/netgen']);
