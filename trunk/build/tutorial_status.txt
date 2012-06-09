@@ -1,7 +1,7 @@
 0001  ./EIDORS_basics\backproj_solve01 OK
 0002  ./EIDORS_basics\backproj_solve02 OK
-0003  ./EIDORS_basics\backproj_solve03 WARNING(S)
-0004  ./EIDORS_basics\backproj_solve04 WARNING(S)
+0003  ./EIDORS_basics\backproj_solve03 WARNING(S)                    np_inv_solve
+0004  ./EIDORS_basics\backproj_solve04 WARNING(S)                    np_inv_solve 
 0005  ./EIDORS_basics\basic_3d_01 OK
 0006  ./EIDORS_basics\basic_3d_02 OK
 0007  ./EIDORS_basics\basic_3d_03 OK
@@ -14,10 +14,8 @@
 0014  ./EIDORS_basics\common_models04 OK
 0015  ./EIDORS_basics\contact_impedance01 OK
 0016  ./EIDORS_basics\contact_impedance02 OK
-0017  ./EIDORS_basics\contact_impedance03 ERROR = (Error using \
-Matrix dimensions must agree.)
-0018  ./EIDORS_basics\contact_impedance04 ERROR = (Error using \
-Matrix dimensions must agree.)
+0017  ./EIDORS_basics\contact_impedance03 OK
+0018  ./EIDORS_basics\contact_impedance04 OK
 0019  ./EIDORS_basics\forward_solver_3d_01 OK
 0020  ./EIDORS_basics\forward_solver_3d_02 OK
 0021  ./EIDORS_basics\forward_solver_3d_03 OK
@@ -27,8 +25,7 @@ Matrix dimensions must agree.)
 0025  ./EIDORS_basics\forward_solvers02 OK
 0026  ./EIDORS_basics\forward_solvers03 OK
 0027  ./EIDORS_basics\forward_solvers04 OK
-0028  ./EIDORS_basics\forward_solvers05 ERROR = (Error using \
-Matrix dimensions must agree.)
+0028  ./EIDORS_basics\forward_solvers05 OK
 0029  ./EIDORS_basics\forward_solvers_2d_high_order01 ERROR = (Error using feval
 Undefined function 'mc_fwd_solve' for input arguments of type 'struct'.)
 0030  ./EIDORS_basics\forward_solvers_2d_high_order02 ERROR = (Undefined variable "v1" or function "v1.volt".)
@@ -49,13 +46,13 @@ Undefined function 'mc_fwd_solve' for input arguments of type 'struct'.)
 0044  ./EIDORS_basics\rpi_data99 ERROR = (Undefined function or variable 'zipfilecontents'.)
 0045  ./EIDORS_basics\sensitivity_map01 OK
 0046  ./EIDORS_basics\sensitivity_map02 OK
-0047  ./EIDORS_basics\tutorial010a WARNING(S)
+0047  ./EIDORS_basics\tutorial010a WARNING(S)              DEPRECATE or REWRITE
 0048  ./EIDORS_basics\tutorial010b WARNING(S)
 0049  ./EIDORS_basics\tutorial010c WARNING(S)
 0050  ./EIDORS_basics\tutorial110a OK
 0051  ./EIDORS_basics\tutorial120a OK
-0052  ./EIDORS_basics\tutorial120b WARNING(S)
-0053  ./EIDORS_basics\tutorial130a WARNING(S)
+0052  ./EIDORS_basics\tutorial120b WARNING(S)              NP_INV_SOLVE
+0053  ./EIDORS_basics\tutorial130a WARNING(S)              DEPRECTATE or REWRITE
 0054  ./EIDORS_basics\tutorial130b WARNING(S)
 0055  ./EIDORS_basics\view_3D_surf01 OK
 0056  ./EIDORS_basics\view_3D_surf02 OK
@@ -63,28 +60,23 @@ Undefined function 'mc_fwd_solve' for input arguments of type 'struct'.)
 0058  ./EIDORS_basics\view_3D_surf04 OK
 0059  ./EIDORS_basics\view_3D_surf05 OK
 0060  ./GREIT\GREIT_AUSPEX01 OK
-0061  ./GREIT\GREIT_AUSPEX02 ERROR = (Error using feval
-Undefined function 'calc_jacobian_adjoint' for input arguments of type 'struct'.)
+0061  ./GREIT\GREIT_AUSPEX02 OK
 0062  ./GREIT\GREIT_AUSPEX03 OK
 0063  ./GREIT\GREIT_AUSPEX04 OK
 0064  ./GREIT\GREIT_examples01 OK
 0065  ./GREIT\GREIT_examples02 OK
 0066  ./GREIT\GREIT_examples03 OK
-0067  ./GREIT\GREIT_params01 ERROR = (Error: <a href="matlab: opentoline('/home/grychtol/clean/eidors/algorithms/eval_GREIT_fig_merit.m',81,75)">File: eval_GREIT_fig_merit.m Line: 81 Column: 75</a>
-Unbalanced or unexpected parenthesis or bracket.)
+0067  ./GREIT\GREIT_params01 OK
 0068  ./GREIT\GREIT_test_params01 OK
 0069  ./GREIT\GREIT_test_params02 OK
 0070  ./GREIT\GREIT_test_params03 OK
-0071  ./GREIT\GREIT_test_params04 ERROR = (Error: <a href="matlab: opentoline('/home/grychtol/clean/eidors/algorithms/eval_GREIT_fig_merit.m',81,75)">File: eval_GREIT_fig_merit.m Line: 81 Column: 75</a>
-Unbalanced or unexpected parenthesis or bracket.)
+0071  ./GREIT\GREIT_test_params04 OK
 0072  ./GREIT\GREIT_test_params05 OK
 0073  ./GREIT\GREIT_test_params06 OK
 0074  ./GREIT\adult_ex01 OK
-0075  ./GREIT\adult_ex02 ERROR = (Error using feval
-Undefined function 'calc_jacobian_adjoint' for input arguments of type 'struct'.)
-0076  ./GREIT\adult_ex03 ERROR = (Undefined function or variable 'imdl'.)
-0077  ./GREIT\algorithm_performance01 ERROR = (Error: <a href="matlab: opentoline('/home/grychtol/clean/eidors/algorithms/eval_GREIT_fig_merit.m',81,75)">File: eval_GREIT_fig_merit.m Line: 81 Column: 75</a>
-Unbalanced or unexpected parenthesis or bracket.)
+0075  ./GREIT\adult_ex02 OK 
+0076  ./GREIT\adult_ex03 OK 
+0077  ./GREIT\algorithm_performance01 OK 
 0078  ./GREIT\mk_GREIT_mat_2layer01 OK
 0079  ./GREIT\mk_GREIT_mat_2layer02 OK
 0080  ./GREIT\mk_GREIT_mat_2layer03 OK
@@ -108,11 +100,10 @@ Unbalanced or unexpected parenthesis or bracket.)
 0098  ./GREIT\pig_ex99 ERROR = (Undefined function or variable 'zipfilecontents'.)
 0099  ./GREIT\test_params01 OK
 0100  ./GREIT\test_params02 OK
-0101  ./GREIT\test_params03 WARNING(S)
-0102  ./GREIT\test_params04 ERROR = (Error: <a href="matlab: opentoline('/home/grychtol/clean/eidors/algorithms/eval_GREIT_fig_merit.m',81,75)">File: eval_GREIT_fig_merit.m Line: 81 Column: 75</a>
-Unbalanced or unexpected parenthesis or bracket.)
+0101  ./GREIT\test_params03 OK 
+0102  ./GREIT\test_params04 OK
 0103  ./GREIT-algorithm\demo_algs01 OK
-0104  ./GREIT-algorithm\demo_algs02 WARNING(S)
+0104  ./GREIT-algorithm\demo_algs02 OK 
 0105  ./GREIT-algorithm\demo_algs03 OK
 0106  ./GREIT-algorithm\demo_algs04 OK
 0107  ./GREIT-algorithm\framework00 OK
@@ -123,8 +114,8 @@ Unbalanced or unexpected parenthesis or bracket.)
 0112  ./GREIT-algorithm\framework05 OK
 0113  ./GREIT-algorithm\get_list_of_algs OK
 0114  ./GREIT-evaluation\simulate_2d_test01 OK
-0115  ./GREIT-evaluation\simulate_2d_test02 WARNING(S)
-0116  ./GREIT-evaluation\simulate_2d_test03 WARNING(S)
+0115  ./GREIT-evaluation\simulate_2d_test02 WARNING(S)   DEPRECATE OR REWRITE
+0116  ./GREIT-evaluation\simulate_2d_test03 WARNING(S)   DEPRECATE OR REWRITE
 0117  ./GREIT-evaluation\simulation_3d_test00 OK
 0118  ./GREIT-evaluation\simulation_3d_test01 OK
 0119  ./GREIT-evaluation\simulation_3d_test02 OK
@@ -132,9 +123,9 @@ Unbalanced or unexpected parenthesis or bracket.)
 0121  ./GREIT-evaluation\simulation_test03 OK
 0122  ./GREIT-evaluation\simulation_test04 OK
 0123  ./absolute_reconst\tutorial151a OK
-0124  ./absolute_reconst\tutorial151b WARNING(S)
-0125  ./absolute_reconst\tutorial151c WARNING(S)
-0126  ./absolute_reconst\tutorial151d WARNING(S)
+0124  ./absolute_reconst\tutorial151b WARNING(S)         DEPRECATE OR REWRITE
+0125  ./absolute_reconst\tutorial151c WARNING(S)         DEPRECATE OR REWRITE 
+0126  ./absolute_reconst\tutorial151d WARNING(S)         DEPRECATE OR REWRITE
 0127  ./adv_image_reconst\TV_hyperparams01 OK
 0128  ./adv_image_reconst\TV_hyperparams02 OK
 0129  ./adv_image_reconst\TV_hyperparams03 OK
@@ -142,32 +133,28 @@ Unbalanced or unexpected parenthesis or bracket.)
 0131  ./adv_image_reconst\TV_hyperparams05 OK
 0132  ./adv_image_reconst\TV_hyperparams06 OK
 0133  ./adv_image_reconst\TV_hyperparams07 OK
-0134  ./adv_image_reconst\basic_iterative01 WARNING(S)
-0135  ./adv_image_reconst\basic_iterative02 WARNING(S)
+0134  ./adv_image_reconst\basic_iterative01 WARNING(S)  DEPRECATE OR REWRITE
+0135  ./adv_image_reconst\basic_iterative02 WARNING(S)  DEPRECATE OR REWRITE
 0136  ./adv_image_reconst\electrode_errors01 OK
 0137  ./adv_image_reconst\electrode_errors02 OK
 0138  ./adv_image_reconst\electrode_errors03 OK
-0139  ./adv_image_reconst\electrode_errors04 ERROR = (Error using feval
-Undefined function 'calc_jacobian_adjoint' for input arguments of type 'struct'.)
+0139  ./adv_image_reconst\electrode_errors04 OK 
 0140  ./adv_image_reconst\electrode_errors05 OK
-0141  ./adv_image_reconst\electrode_errors06 ERROR = (Error using feval
-Undefined function 'calc_jacobian_adjoint' for input arguments of type 'struct'.)
-0142  ./adv_image_reconst\electrode_errors07 ERROR = (Error using feval
-Undefined function 'calc_jacobian_adjoint' for input arguments of type 'struct'.)
-0143  ./adv_image_reconst\move_2d01 ERROR = (Undefined function or variable 'node1'.)
-0144  ./adv_image_reconst\move_2d02 WARNING(S)
-0145  ./adv_image_reconst\move_3d01 WARNING(S)
-0146  ./adv_image_reconst\move_3d02 WARNING(S)
+0141  ./adv_image_reconst\electrode_errors06 OK 
+0142  ./adv_image_reconst\electrode_errors07 OK 
+0143  ./adv_image_reconst\move_2d01 OK 
+0144  ./adv_image_reconst\move_2d02 WARNING(S)          DEPRECATE OR REWRITE
+0145  ./adv_image_reconst\move_3d01 WARNING(S)          DEPRECATE OR REWRITE
+0146  ./adv_image_reconst\move_3d02 WARNING(S)          DEPRECATE OR REWRITE
 0147  ./adv_image_reconst\temporal_solver01 OK
 0148  ./adv_image_reconst\temporal_solver02 OK
-0149  ./adv_image_reconst\temporal_solver03 ERROR = (Undefined variable vi_n.)
-0150  ./adv_image_reconst\temporal_solver04 WARNING(S)
+0149  ./adv_image_reconst\temporal_solver03 OK 
+0150  ./adv_image_reconst\temporal_solver04 WARNING(S)  NP_INV_SOLVE
 0151  ./adv_image_reconst\total_variation01 OK
-0152  ./adv_image_reconst\total_variation02 WARNING(S)
+0152  ./adv_image_reconst\total_variation02 WARNING(S)  NP_INV_SOLVE
 0153  ./adv_image_reconst\total_variation03 OK
 0154  ./adv_image_reconst\total_variation04 OK
-0155  ./adv_image_reconst\vitro_2d01 ERROR = (Error using load
-Unable to read file ../../data_contrib/cg_deforming_tank_phantom/oct05/ph1t1/avgdata_ph1t1.mat: No such file or directory.)
+0155  ./adv_image_reconst\vitro_2d01 ERROR              UNUSED??
 0156  ./cheating_EIDORS\tutorial210a OK
 0157  ./cheating_EIDORS\tutorial210b OK
 0158  ./cheating_EIDORS\tutorial210c OK
@@ -191,16 +178,16 @@ Unable to read file ../../data_contrib/cg_deforming_tank_phantom/oct05/ph1t1/avg
 0176  ./data_structures\tutorial020c OK
 0177  ./data_structures\tutorial022a OK
 0178  ./data_structures\tutorial022b OK
-0179  ./data_structures\tutorial030a WARNING(S)
-0180  ./data_structures\tutorial030b WARNING(S)
-0181  ./data_structures\tutorial030c WARNING(S)
+0179  ./data_structures\tutorial030a WARNING(S)    DEPRECATE OR REWRITE
+0180  ./data_structures\tutorial030b WARNING(S)    DEPRECATE OR REWRITE
+0181  ./data_structures\tutorial030c WARNING(S)    DEPRECATE OR REWRITE
 0182  ./distmesh\circ_2d_model01 OK
 0183  ./distmesh\circ_2d_model02 OK
 0184  ./distmesh\circ_2d_model03 OK
 0185  ./distmesh\dm_geophys01 OK
 0186  ./distmesh\dm_geophys02 OK
-0187  ./distmesh\dm_geophys03 WARNING(S)
-0188  ./distmesh\dm_geophys04 WARNING(S)
+0187  ./distmesh\dm_geophys03 WARNING(S)    DEPRECATE OR REWRITE
+0188  ./distmesh\dm_geophys04 WARNING(S)    DEPRECATE OR REWRITE
 0189  ./distmesh\simple_2d_model01 OK
 0190  ./distmesh\simple_2d_model02 OK
 0191  ./distmesh\simulate_move1_01 OK
@@ -208,19 +195,19 @@ Unable to read file ../../data_contrib/cg_deforming_tank_phantom/oct05/ph1t1/avg
 0193  ./distmesh\simulate_move1_03 OK
 0194  ./distmesh\simulate_move2_01 OK
 0195  ./distmesh\simulate_move2_02 OK
-0196  ./distmesh\simulate_move2_03 WARNING(S)
-0197  ./distmesh\simulate_move2_04 WARNING(S)
+0196  ./distmesh\simulate_move2_03 WARNING(S)    DEPRECATE OR REWRITE
+0197  ./distmesh\simulate_move2_04 WARNING(S)    DEPRECATE OR REWRITE
 0198  ./distmesh\simulate_move2_05 OK
 0199  ./distmesh\simulate_move2_06 OK
-0200  ./distmesh\simulate_move2_07 WARNING(S)
-0201  ./distmesh\simulate_move2_08 WARNING(S)
+0200  ./distmesh\simulate_move2_07 WARNING(S)    DEPRECATE OR REWRITE
+0201  ./distmesh\simulate_move2_08 WARNING(S)    DEPRECATE OR REWRITE
 0202  ./dual_model\centre_slice01 OK
 0203  ./dual_model\centre_slice02 OK
 0204  ./dual_model\centre_slice03 OK
 0205  ./dual_model\centre_slice04 OK
 0206  ./dual_model\centre_slice05 OK
 0207  ./dual_model\centre_slice06 OK
-0208  ./dual_model\dual_3d3d WARNING(S)
+0208  ./dual_model\dual_3d3d WARNING(S)    DEPRECATE OR REWRITE
 0209  ./dual_model\dual_model01 OK
 0210  ./dual_model\dual_model02 OK
 0211  ./dual_model\dual_model03 OK
@@ -244,16 +231,16 @@ Unable to read file ../../data_contrib/cg_deforming_tank_phantom/oct05/ph1t1/avg
 0229  ./dual_model\square_mesh04 OK
 0230  ./dual_model\square_mesh05 OK
 0231  ./dual_model\square_mesh06 OK
-0232  ./dual_model\two_and_half_d01 WARNING(S)
-0233  ./dual_model\two_and_half_d02 WARNING(S)
-0234  ./dual_model\two_and_half_d03 WARNING(S)
+0232  ./dual_model\two_and_half_d01 WARNING(S)    DEPRECATE OR REWRITE
+0233  ./dual_model\two_and_half_d02 WARNING(S)    DEPRECATE OR REWRITE
+0234  ./dual_model\two_and_half_d03 WARNING(S)    DEPRECATE OR REWRITE
 0235  ./geophysics\Anneau1_Decembre2004_wen32_1 OK
 0236  ./geophysics\Anneau1_Janvier2005_wen64_1 OK
 0237  ./geophysics\Anneau1_Juillet2004_wen32_1 OK
 0238  ./geophysics\Electrode_Positions_Ring1_EZG04 OK
-0239  ./geophysics\pont_pean01 ERROR = (Undefined variable gps.)
-0240  ./geophysics\pont_pean02 ERROR = (Undefined function or variable 'fmdl'.)
-0241  ./geophysics\pont_pean03 ERROR = (Undefined variable data.)
+0239  ./geophysics\pont_pean01 OK 
+0240  ./geophysics\pont_pean02 OK
+0241  ./geophysics\pont_pean03 OK
 0242  ./geophysics\tunnelsim01 OK
 0243  ./geophysics\tunnelsim02 OK
 0244  ./geophysics\tunnelsim03 OK
@@ -265,17 +252,14 @@ Unable to read file ../../data_contrib/cg_deforming_tank_phantom/oct05/ph1t1/avg
 0250  ./geophysics\tutorial410c OK
 0251  ./geophysics\tutorial410c0 OK
 0252  ./geophysics\tutorial410d OK
-0253  ./lung_EIT\cg_ards_recruitment_01 ERROR = (Undefined function 'process_and_save' for input arguments of type 'char'.)
-0254  ./lung_EIT\cg_ards_recruitment_02 ERROR = (Error using load
-Unable to read file SUBJECT_1-c1.mat: No such file or directory.)
-0255  ./lung_EIT\cg_ards_recruitment_03 ERROR = (Error using load
-Unable to read file SUBJECT_1-b.mat: No such file or directory.)
-0256  ./lung_EIT\cg_ards_recruitment_04 ERROR = (Undefined function or variable 'eitimages'.)
-0257  ./lung_EIT\cg_ards_recruitment_05 ERROR = (Undefined function or variable 'lindex'.)
-0258  ./lung_EIT\cg_ards_recruitment_06 ERROR = (Error using load
-Unable to read file SUBJECT_1-b.mat: No such file or directory.)
-0259  ./lung_EIT\cg_ards_recruitment_07 ERROR = (Undefined function or variable 'eitimages'.)
-0260  ./lung_EIT\cg_ards_recruitment_08 ERROR = (Undefined function or variable 'lindex'.)
+0253  ./lung_EIT\cg_ards_recruitment_01 OK 
+0254  ./lung_EIT\cg_ards_recruitment_02 OK
+0255  ./lung_EIT\cg_ards_recruitment_03 OK
+0256  ./lung_EIT\cg_ards_recruitment_04 ERROR in EITDisplayImages
+0257  ./lung_EIT\cg_ards_recruitment_05 OK
+0258  ./lung_EIT\cg_ards_recruitment_06 OK
+0259  ./lung_EIT\cg_ards_recruitment_07 ERROR in EITDisplayImages
+0260  ./lung_EIT\cg_ards_recruitment_08 OK
 0261  ./lung_EIT\if_lung_injury00 OK
 0262  ./lung_EIT\if_lung_injury01 OK
 0263  ./lung_EIT\if_lung_injury02 OK
@@ -323,8 +307,8 @@ Unable to read file SUBJECT_1-b.mat: No such file or directory.)
 0305  ./netgen/extrusion\pig_body07 OK
 0306  ./netgen/extrusion\pig_body08 OK
 0307  ./netgen/extrusion\pig_body09 OK
-0308  ./netgen/extrusion\pig_body10 ERROR = (Undefined function or variable 'fmdl'.)
-0309  ./netgen/extrusion\thoraxmdl01 WARNING(S)
+0308  ./netgen/extrusion\pig_body10 OK
+0309  ./netgen/extrusion\thoraxmdl01 WARNING(S)  Use shape_library, fix pictures
 0310  ./netgen/extrusion\thoraxmdl02 OK
 0311  ./netgen/extrusion\thoraxmdl03 OK
 0312  ./netgen/extrusion\thoraxmdl04 OK
@@ -342,9 +326,8 @@ Unable to read file SUBJECT_1-b.mat: No such file or directory.)
 0324  ./other_models\square_mesh05 OK
 0325  ./strange_effects\conformal1_01 OK
 0326  ./strange_effects\conformal1_02 OK
-0327  ./strange_effects\conformal1_03 ERROR = (Error using \
-Matrix dimensions must agree.)
+0327  ./strange_effects\conformal1_03 OK 
 0328  ./strange_effects\opposite_meas01 OK
 0329  ./toast\eidors_toast_demo1 ERROR = (Undefined function 'toastMakeMesh' for input arguments of type 'double'.)
 0330  ./version2\eidors3d_tutorial ERROR = (Error using left_divide
-Too many input arguments.)
+Too many input arguments.)                                DEPRECATE OR REWRITE
