@@ -78,7 +78,7 @@ function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
    qmi = calc_hm_set( img, 0.25 );
    if sum(img(:) & qmi(:))<0 ; keyboard ; end
    
-   pix_sz = (max(x(:)) - min(x(:))) *( max((y(:)) - min(y(:))) /numel(img);
+   pix_sz = (max(x(:)) - min(x(:))) *( max(y(:)) - min(y(:))) /numel(img);
 
    %map = x.^2+y.^2<1.1;
    qmi = qmi.*map; img = img.*map;
