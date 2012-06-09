@@ -3,7 +3,6 @@
 %fed into the reconstruction process. This is a different forulation from the 
 %demo_comp.m function.
 
-clear;
 warning off;
 disp('This is a demo for reconstructing admittivity changes of the form a + bi')
 
