@@ -13,4 +13,4 @@ nsr= 4.0; %Noise to Signal Ratio
 signal = mean( abs(mean(vi,2) - vh) ); % remember to define signal
 % Only add noise to vi. This is reasonable, since we have
 % lots of data of vh to average to reduce noise
-vi= vi + nsr*signal*randn( size(vi) );
+vi_n= vi + nsr*signal*randn( size(vi) );
