@@ -14,7 +14,8 @@ f_img.elem_data([105,125,126,149,150,174]) = 0.8;
 
 movement = [1-0.01 0; 0 1+0.01];
 node0 = f_img.fwd_model.nodes;
-f_img.fwd_model.nodes = node0*movement;
+node1 = node0*movement;
+f_img.fwd_model.nodes = node1;
 
 % Solve inhomogeneous forward problem with movements and normal noise
 % 1% of standard deviation of signal
