@@ -1,5 +1,5 @@
 close all
-% clear
+clear
 load SUBJECT_1-b.mat
 load SUBJECT_1-c1.mat
 load SUBJECT_1-c2.mat
