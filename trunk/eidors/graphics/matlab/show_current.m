@@ -66,7 +66,7 @@ for i=1:Nel
   idx = img.fwd_model.elems(i,:);
   nod = img.fwd_model.nodes(idx,:);
   if dims ==2
-     VE  = ([oo, nod])\vv(idx)';
+     VE  = ([oo, nod])\fix_dim(vv(idx));
   else
      VE  = ([oo, nod])\vv(idx);
   end
@@ -106,6 +106,11 @@ if dims==3
    quiv.zc = zc; 
 end
 quiver(xp,yp,xc,yc,2,'k');
+
+function vv = fix_dim(vv)
+    if size(vv,1) == 1
+        vv = vv';
+    end
 
 function  [x,y] = grid_the_space( fmdl);
 
