@@ -75,7 +75,7 @@ switch type
       set_cache_obj( name, varargin{:} );
       obj_id= []; % quiet matlab errors
    case 'eidors_version'
-      obj_id= '3.5+ ($Date$)';  % Update for New eidors version
+      obj_id= '3.6pre1 ($Date$)';  % Update for New eidors version
    case 'interpreter_version'
       obj_id= test_versions;
 % TODO: Add these functions
