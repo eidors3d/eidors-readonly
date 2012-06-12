@@ -22,7 +22,9 @@ delta= 1e-6; % tests indicate this is a good value
 if isfield(fwd_model,'conductivity_jacobian')
    Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
 else
-   Jc= conductivity_jacobian_perturb( pp, delta, img );
+   fwd_model.jacobian_perturb.delta = delta;
+   Jc = jacobian_perturb(fwd_model, img);
+%    Jc= conductivity_jacobian_perturb( pp, delta, img );
 end
 
 Jm= movement_jacobian( pp, delta, img );
