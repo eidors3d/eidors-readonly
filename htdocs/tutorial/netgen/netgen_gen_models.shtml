@@ -252,6 +252,33 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 </center>
 
 <h3>
+Shape 13
+</h3>
+
+<pre>
+ shape_str = ['solid cyl    = cylinder (0,0,0; 0,1,0; 1); \n', ...
+              'solid bottom = plane(0, 0,0;0,-1,0);\n' ...
+              'solid top    = plane(0,10,0;0, 1,0);\n' ...
+              'solid cut1   = plane(0, 4,0;0,-1,0);\n' ...
+              'solid cut2   = plane(0, 6,0;0, 1,0);\n' ...
+              'solid ball   = cyl and cut1 and cut2;  tlo ball;\n' ...
+              'solid mainobj= ( top and (not cut2) and cyl ) or ' ...
+                      '(bottom      and (not cut1) and cyl ) -maxh=0.8;\n'];
+ elec_pos = [ 0, 10,  0, 0,  1,  0; 
+              0,  0,  0, 0, -1,  0]; 
+ elec_shape=[1.0];
+ elec_obj = {'top','bottom'};
+ [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ img  = mk_image(fmdl,1); 
+ img.elem_data(mat_idx{2}) = 1.1;
+</pre>
+<center>
+<img src="netgen_gen_models13.png">
+<br>Fem model of a cylindrical resistor with electrodes at the ends
+</center>
+
+
+<h3>
 Shape 14
 </h3>
 
@@ -283,32 +310,6 @@ fmdl.electrode(2) = [];
 <center>
 <img src="netgen_gen_models14.png">
 <br>Bare conductive wires within a tank
-</center>
-
-<h3>
-Shape 13
-</h3>
-
-<pre>
- shape_str = ['solid cyl    = cylinder (0,0,0; 0,1,0; 1); \n', ...
-              'solid bottom = plane(0, 0,0;0,-1,0);\n' ...
-              'solid top    = plane(0,10,0;0, 1,0);\n' ...
-              'solid cut1   = plane(0, 4,0;0,-1,0);\n' ...
-              'solid cut2   = plane(0, 6,0;0, 1,0);\n' ...
-              'solid ball   = cyl and cut1 and cut2;  tlo ball;\n' ...
-              'solid mainobj= ( top and (not cut2) and cyl ) or ' ...
-                      '(bottom      and (not cut1) and cyl ) -maxh=0.8;\n'];
- elec_pos = [ 0, 10,  0, 0,  1,  0; 
-              0,  0,  0, 0, -1,  0]; 
- elec_shape=[1.0];
- elec_obj = {'top','bottom'};
- [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
- img  = mk_image(fmdl,1); 
- img.elem_data(mat_idx{2}) = 1.1;
-</pre>
-<center>
-<img src="netgen_gen_models13.png">
-<br>Fem model of a cylindrical resistor with electrodes at the ends
 </center>
 
 </td></tr></table>
