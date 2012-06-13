@@ -39,7 +39,7 @@ s_mat= calc_system_mat( fwd_model, img_bkgd );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
 
 if isfield(fwd_model,'conductivity_jacobian')
-   Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
+   Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img_bkgd );
 else
    fwd_model.jacobian_perturb.delta = delta;
    fwd_model.normalize = 0; % we normalize on our own
