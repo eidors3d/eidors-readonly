@@ -15,7 +15,10 @@ function inv_mdl= select_imdl( mdl, options )
 % 'NOSER dif';      Basic GN one step difference solver with NOSER prior 
 % 'Nodal GN dif';   Basic GN solver, solves onto nodes
 % 'TV solve dif';   Total Variation PDIPM difference solver 
-% 'Elec Move GN';   One step GN difference solver with compensation for electrode movement
+% 'Elec Move GN';   One step GN difference solver with compensation for
+%                   electrode movement. Conductivity prior, hyperparameter
+%                   and Jacobian will be preserved if specified in the
+%                   model
 % 'Choose NF=1.0';  Choose hyperparameter value appropriate for specified noise figure (NF)
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
@@ -97,15 +100,30 @@ function imdl = TV_solve_Dif( imdl );
 function imdl = Elec_Move_GN( imdl );
    % keep previous model as conductivity jacobian, so it should be ok
    imdl.fwd_model.conductivity_jacobian = imdl.fwd_model.jacobian; 
-   imdl.fwd_model.jacobian = @jacobian_movement_perturb;
+   imdl.fwd_model.jacobian = @jacobian_movement;
+   
+   % keep previous prior
+   try
+       imdl.prior_movement.RegC.func = imdl.RtR_prior;
+   catch
+       imdl.prior_movement.RegC.func = @prior_laplace;
+       %  imdl.prior_movement.RegC.func = @prior_gaussian_HPF; % not OK for 3D
+   end
+   
    imdl.RtR_prior =          @prior_movement;
-   imdl.solve= @inv_solve_diff_GN_one_step;
-
    MV_prior = 1./mean( std( imdl.fwd_model.nodes ));
    imdl.prior_movement.parameters = MV_prior;
-   imdl.prior_movement.RegC.func = @prior_laplace;
-%  imdl.prior_movement.RegC.func = @prior_gaussian_HPF; % not OK for 3D
-   imdl.hyperparameter.value = .03;
+   
+   imdl.solve= @inv_solve_diff_GN_one_step;
+   
+   % keep hyperparameter
+   try 
+       hp = imdl.hyperparameter.value;
+   catch
+       hp = 0.03;
+   end
+   imdl.hyperparameter.value = hp;
+   
    try
       n_elems = size(imdl.rec_model.coarse2fine,2);
    catch
