@@ -20,6 +20,12 @@ function data = fwd_solve( fwd_model, img)
 % Options: (not available on all solvers)
 %    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
 %    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
+%
+% Parameters:
+%    fwd_model.background = constant conductivity offset added to elem_data
+%    fwd_model.coarse2fine = linear mapping between img.elem_data and model parameters
+%    img.params_mapping = function mapping img.elem_data to model parameters
+%
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -29,6 +35,12 @@ if nargin==1
    fwd_model= img.fwd_model;
 end
 fwd_model= eidors_model_params( fwd_model );
+
+if isfield(img,'params_mapping')
+%     fwd_model data is provided using a mapping function
+    mapping_function= img.params_mapping.function;
+    img= feval(mapping_function,img);
+end
 
 if isfield(fwd_model,'coarse2fine')
    c2f= fwd_model.coarse2fine;
