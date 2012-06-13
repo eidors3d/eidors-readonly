@@ -3,6 +3,10 @@ function J = jacobian_movement(fwd_model, img_bkgd)
 % electrode movement variables in 3D EIT.
 % Args:     fwd_model - the EIDORS object forward model
 %            img_bkgd - the image background conductivity
+%
+% fwd_model.conductivity_jacobian - function to calculate conductivity
+%                                   Jacobian (defaults to jacobian_adjoint)
+%
 % Returns:          J - the Jacobian matrix [Jc, Jm]
 %
 % WARNING: THIS CODE IS EXPERIMENTAL AND GIVES PROBLEMS
@@ -33,8 +37,17 @@ pp.kron_cond=kron(sigma_mat,I_nd);
 pp.Ce= connectivity_matrix( pp );
 s_mat= calc_system_mat( fwd_model, img_bkgd );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
-% Jc = calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
-Jc = jacobian_adjoint(fwd_model,img_bkgd);
+
+if isfield(fwd_model,'conductivity_jacobian')
+   Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
+else
+   fwd_model.jacobian_perturb.delta = delta;
+   fwd_model.normalize = 0; % we normalize on our own
+   Jc = jacobian_adjoint(fwd_model,img_bkgd);
+   % Jc = calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
+end
+
+
 Jm = calc_movement_jacobian(pp, fwd_model, img_bkgd);
 J=[Jc,Jm];
 
