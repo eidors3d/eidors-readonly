@@ -1,3 +1,5 @@
+decide if mapping_function should go on fwd_model or img
+===========
 what is mapper_elems_nodes ??
 ===========
 inv_solve_4d_prior and inv_solve_time_prior ?
