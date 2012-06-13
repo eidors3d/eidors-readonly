@@ -159,6 +159,33 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  fmdl = mk_image(fmdl,1); 
  fmdl.elem_data(mat_idx{2}) = 1.1;
+
+   case 14;
+shape_str = ['solid cyl    = cylinder (0,0,0; 0,1,0; 1); \n', ...
+             'solid bottom = plane(0, 0,0;0,-1,0);\n' ...
+             'solid top    = plane(0,15,0;0, 1,0);\n' ...
+             'solid cut1   = plane(0, 6,0;0,-1,0);\n' ...
+             'solid cut2   = plane(0, 9,0;0, 1,0);\n' ...
+             'solid rod   = cyl and (top and not cut2) or cyl and (bottom and not cut1);\n' ... 
+             'tlo rod -maxh=0.8;\n',...
+             'solid mainobj= orthobrick(-5,-5,-5;5,20,5) and not rod;\n'];
+
+elec_pos = [0,15, 0, 0, 1, 0; %top end electrode
+            0,13, 0,-1, 0, 0; %top cylinder electrode
+            0, 0, 0, 0,-1, 0; %bot end electrode
+            0, 2, 0, 1, 0, 0];%bot cylinder electrode
+elec_shape=[6,0,0];
+elec_obj = {'rod','rod','rod','rod'};
+[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+img  = mk_image(fmdl,1); 
+
+% join electrodes
+fmdl.electrode(3).nodes = unique(horzcat(fmdl.electrode(3:4).nodes));
+fmdl.electrode(4) = [];
+fmdl.electrode(1).nodes = unique(horzcat(fmdl.electrode(1:2).nodes));
+fmdl.electrode(2) = [];
+
+
 end
 
 if ~exist('fmdl'); return; end
@@ -166,6 +193,7 @@ if ~exist('fmdl'); return; end
 show_fem(fmdl);
 if any(number==[11]); view(270,60); end
 if any(number==[13]); view(-64,-13); end
+if any(number==[14]); view(-111,21); end
 
 print_convert( ...
    sprintf('netgen_gen_models%02d.png',number), '-density 75');
