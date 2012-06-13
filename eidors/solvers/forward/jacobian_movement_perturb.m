@@ -23,7 +23,7 @@ if isfield(fwd_model,'conductivity_jacobian')
    Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
 else
    fwd_model.jacobian_perturb.delta = delta;
-   fwd_model.normalize = 0; % we normalize on our own
+   fwd_model.normalize_movement = 0; % we normalize on our own
    Jc = jacobian_perturb(fwd_model, img);
 %    Jc= conductivity_jacobian_perturb( pp, delta, img );
 end
