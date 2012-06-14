@@ -39,6 +39,7 @@ if isfield(inv_model.fwd_model,'coarse2fine')
     img.elem_data = mean(img.elem_data)*ones(nc,1);
 end
 
+
 if isfield(inv_model.parameters,'max_iterations')
     iters = inv_model.parameters.max_iterations;
 else
@@ -68,15 +69,15 @@ for k= 1:iters
     % Calculate Jacobian
     disp(['Begin Jacobian computation - Iteration ' num2str(k)]);
     J = calc_jacobian( img );
-    
+
     % Convert Jacobian as the adjusted parameters are the logarithm of the
     % resistivity
     img.logRes= -log(img.elem_data);
     dCond_dlogRes= -exp(-img.logRes);
     J = J.*repmat((dCond_dlogRes),1,size(data,1))';
+
     % Normalize the Jacobian
     J= inv_model.parameters.normalisation*J;
-    
     % Some of the parameters may not be adjusted, as for instance the
     % background for huge forward models
     if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
@@ -90,7 +91,6 @@ for k= 1:iters
     % Estimate the perturbation direction
     tol= svdAnalysisLcurvecrit(data,img,J);
     delta_params= pinv(J,tol)*residuals;
-    
     if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
         if isfield(inv_model.fwd_model.misc,'wall')
             delta_params(nc-1:nc)= 0;
@@ -108,21 +108,23 @@ end
 function  img = line_optimize(imgk, dx, data1)
 img = imgk;
 perturb= img.parameters.perturb;
-
 % Compute the forward model for eah perturbation step
 mlist= perturb*0;
 for i = 1:length(perturb);
     img.logRes= imgk.logRes + perturb(i)*dx;
+    img.elem_data= exp(-img.logRes);
     vsim = fwd_solve( img );
     dv = vsim.meas-data1;
     dv= img.parameters.normalisation*dv;
     mlist(i) = norm(dv);
 end
+
 % Select the best fitting step
 pf = polyfit(perturb, mlist, 2);
 fmin = -pf(2)/pf(1)/2; % poly minimum
 fmin(fmin<0)= min(perturb);
-p= logspace(perturb(1),perturb(end),30);
+
+p=logspace(perturb(1),perturb(end),30);
 cp= pf(1)*p.^2+pf(2)*p+pf(3);
 
 if pf(1)*fmin^2+pf(2)*fmin+pf(3)>min(mlist) || fmin>max(perturb)
@@ -133,8 +135,10 @@ if fmin>min(mlist);
     [mk,ik]= min(mlist);
     fmin= perturb(ik);
 end
-img.parameters.perturb= [fmin/4 fmin/2 fmin fmin*2 fmin*4] ;
-
+img.parameters.perturb= [0 fmin/2 fmin fmin*2] ;
+if fmin==0;
+img.parameters.perturb= [0 logspace(-7,-1,7)] ;
+end
 % figure; semilogx(perturb,mlist,'xk',fmin,pf(1)*fmin^2+pf(2)*fmin+pf(3),'or'); hold on
 % semilogx(p,pf(1)*p.^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
 % xlabel('alpha','fontsize',30,'fontname','Times')
@@ -180,70 +184,115 @@ resi= sqrt(RES2); xlambda = sqrt(XL2);
 [m,ist]= min(abs(svj-lambda(ik)));
 tol=svj(ist);
 
-figure;
-loglog(resi,xlambda,'k',resi(ik),xlambda(ik),'or','linewidth',2); axis tight; hold on
-yl= get(gca,'ylim');
-ylabel('Roughness','fontsize',30,'fontname','Times')
-xlabel('Residuals','fontsize',30,'fontname','Times')
-ylim(yl);
-title(['Best solution lambda=' num2str(lambda(ik),'%1.2e')],'fontsize',30,'fontname','Times')
-set(gca,'fontsize',30,'fontname','Times'); drawnow;
+% figure;
+% loglog(resi,xlambda,'k',resi(ik),xlambda(ik),'or','linewidth',2); axis tight; hold on
+% yl= get(gca,'ylim');
+% ylabel('Roughness','fontsize',30,'fontname','Times')
+% xlabel('Residuals','fontsize',30,'fontname','Times')
+% ylim(yl);
+% title(['Best solution lambda=' num2str(lambda(ik),'%1.2e')],'fontsize',30,'fontname','Times')
+% set(gca,'fontsize',30,'fontname','Times'); drawnow;
 end  
 
 function do_unit_test
-unzip('../../htdocs/data_contrib/dg_geophysical_EIT/Mine_20FEV2004.zip')
-data= load('Mine_20FEV2004_LI.tomel');
-gps = load('Mine_20FEV2004.gps');
-% Forward Model
- shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
-              'solid mainobj= top and orthobrick(-100,-200,-100;425,10,100) -maxh=20.0;\n'];
- elec_pos = gps(:,2:4); e0 = elec_pos(:,1)*0;
- elec_pos = [  elec_pos, e0, e0+1, e0 ]; 
- elec_shape=[0.5,.5,.5];
- elec_obj = 'top';
- [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+    unit_test_circ_tank;
+    %unit_test_pont_pean;
+end
 
-% Load data and positions (unused in this tutorial)
-  fmdl.stimulation = stim_meas_list( data(:,3:6) - 40100);
+function unit_test_circ_tank
+   imdl = mk_common_model('b2c2',16);
+   img = mk_image(imdl);
+   vh= fwd_solve(img);
+   img.elem_data(25:26) = 2; 
+   vi= fwd_solve(img);
+   imgrGN = inv_solve(imdl, vh, vi);
+   subplot(211); show_fem(imgrGN);
 
-show_fem(fmdl);
-%Reconstruction model
-[cmdl]= mk_grid_model([],  [-101,-50,-20,0:10:320,340,370,426], ...
-                          -[-0.1:2.5:10, 15:5:25,30:10:80,100,120,201]);
-c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-%c2f_sum = sum(c2f');
-fmdl.coarse2fine = c2f;
-imdl= eidors_obj('inv_model','test');
-imdl.fwd_model= fmdl;
+    imdl.reconst_type = 'absolute';
+    imdl.solve = @CG_lr_solve;
+    imdl.fwd_model.normalize_measurements = 1;
+    imdl.jacobian_bkgnd.value = 1;
+    imdl.parameters.default = [];
+    imdl.parameters.lambda= logspace(-7,-2,500);
+    imdl.parameters.perturb= [logspace(-8,-1,11)];
+    imdl.parameters.max_iterations= 1;
+    %imdl.parameters.normalisation= I;
+%     imdl.parameters.fixed_background= 1;
+    imdl.fwd_model.misc.default = [];
+    imgrCG = inv_solve(imdl, vi);
+    subplot(212); show_fem(imgrCG);
 
-% Test Originals GN solver
-imdl.rec_model= cmdl;
-imdl.reconst_type = 'difference';
-imdl.RtR_prior = @prior_laplace;
-imdl.solve = @inv_solve_diff_GN_one_step;
-imdl.hyperparameter.value = 0.1;
-imdl.fwd_model.normalize_measurements = 1;
-imdl.jacobian_bkgnd.value = 0.03;
+end
 
-% Difference image vs simulated data
-vr = data(:,9);
-img = mk_image( imdl );
-vh = fwd_solve(img); vh = vh.meas;
+function  unit_test_pont_pean
+    unzip('../../htdocs/data_contrib/dg_geophysical_EIT/Mine_20FEV2004.zip')
+    data= load('Mine_20FEV2004_LI.tomel');
+    gps = load('Mine_20FEV2004.gps');
+    % Forward Model
+    shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
+        'solid mainobj= top and orthobrick(-100,-200,-100;425,10,100) -maxh=20.0;\n'];
+    elec_pos = gps(:,2:4); e0 = elec_pos(:,1)*0;
+    elec_pos = [  elec_pos, e0, e0+1, e0 ];
+    elec_shape=[0.5,.5,.5];
+    elec_obj = 'top';
+    [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
-imgGN = inv_solve(imdl, vh, vr);
+    % Load data and positions (unused in this tutorial)
+    fmdl.stimulation = stim_meas_list( data(:,3:6) - 40100);
+    % show_fem(fmdl);
 
-% NOW USE CG_lr_solve
-imdl.rec_model= cmdl;
-imdl.reconst_type = 'absolute';
-imdl.solve = @CG_lr_solve;
-imdl.fwd_model.normalize_measurements = 1;
-imdl.jacobian_bkgnd.value = 0.03;
-imdl.parameters.default = [];
-inv_model.parameters.lambda= logspace(-4,-2,500);
-imgCG = inv_solve(imdl, vr);
+    %Reconstruction model
+    % [cmdl]= mk_grid_model([],  [-101,-50,-20,0:10:320,340,370,426], ...
+    %     -[-0.1:2.5:10, 15:5:25,30:10:80,100,120,201]);
+    [cmdl]= mk_grid_model([], 2.5+[-50,-20,0:10:320,340,370], ...
+        -[0:2.5:10, 15:5:25,30:10:80,100,120]);
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    fmdl.coarse2fine = c2f;
+    imdl= eidors_obj('inv_model','test');
+    imdl.fwd_model= fmdl;
 
-figure
-subplot(211); show_fem(imgGN); axis equal
-subplot(212); show_fem(imgCG); axis equal
+    % Test Originals GN solver
+    imdl.rec_model= cmdl;
+    imdl.reconst_type = 'difference';
+    imdl.RtR_prior = @prior_laplace;
+    imdl.solve = @inv_solve_diff_GN_one_step;
+    imdl.hyperparameter.value = 0.1;
+    imdl.fwd_model.normalize_measurements = 1;
+    imdl.jacobian_bkgnd.value = 0.03;
+
+    % Difference image vs simulated data
+    vr = data(:,9);
+    img = mk_image( imdl );
+    vh = fwd_solve(img); vh = vh.meas;
+    img1 = mk_image( imdl,1);
+    vh1 = fwd_solve(img1); vh1 = vh1.meas;
+    normalisation= 1./vh1;
+    I= speye(length(normalisation));
+    I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
+    imgGN = inv_solve(imdl, vh, vr);
+    1/min(imgGN.elem_data)
+    1/max(imgGN.elem_data)
+
+    % NOW USE CG_lr_solve
+    % Gather outward elements in an added last element
+    % c2f(sum(c2f,2)==0,end+1)= 1;
+    % imdl.fwd_model.coarse2fine= c2f;
+    % imdl.rec_model= cmdl;
+    % imdl.reconst_type = 'absolute';
+    % imdl.solve = @CG_lr_solve;
+    % imdl.fwd_model.normalize_measurements = 1;
+    % imdl.jacobian_bkgnd.value = 0.03;
+    % imdl.parameters.default = [];
+    % imdl.parameters.lambda= logspace(-7,-2,500);
+    % imdl.parameters.perturb= [0 logspace(-8,-3,11)];
+    % imdl.parameters.max_iterations= 1;
+    % imdl.parameters.normalisation= I;
+    % imdl.parameters.fixed_background= 1;
+    % imdl.fwd_model.misc.default = [];
+    % imgCG = inv_solve(imdl, vr);
+    %
+    % figure
+    % subplot(211); show_fem(imgGN); axis equal
+    % subplot(212); show_fem(imgCG); axis equal
 
 end
