@@ -38,6 +38,9 @@ function img= CG_params_solve( inv_model, data)
 % by respect to the forward problem one. In that case, a mapping function
 % rely the elements to reconstruct the medium conductivity
 
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+
+
 mapping_function= inv_model.params_mapping.function;
 img= feval(mapping_function,inv_model);
 
@@ -174,3 +177,74 @@ tol=svj(ist);
 % set(gca,'fontsize',30,'fontname','Times'); drawnow;
 end   
 
+
+function do_unit_test
+unzip('../../htdocs/data_contrib/dg_geophysical_EIT/Mine_20FEV2004.zip')
+data= load('Mine_20FEV2004_LI.tomel');
+gps = load('Mine_20FEV2004.gps');
+% Forward Model
+shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
+    'solid mainobj= top and orthobrick(-100,-200,-100;425,10,100) -maxh=20.0;\n'];
+elec_pos = gps(:,2:4); e0 = elec_pos(:,1)*0;
+elec_pos = [  elec_pos, e0, e0+1, e0 ];
+elec_shape=[0.5,.5,.5];
+elec_obj = 'top';
+[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+% Load data and positions (unused in this tutorial)
+fmdl.stimulation = stim_meas_list( data(:,3:6) - 40100);
+% show_fem(fmdl);
+%Reconstruction model
+% [cmdl]= mk_grid_model([],  [-101,-50,-20,0:10:320,340,370,426], ...
+%     -[-0.1:2.5:10, 15:5:25,30:10:80,100,120,201]);
+[cmdl]= mk_grid_model([], 2.5+[-50,-20,0:10:320,340,370], ...
+                             -[0:2.5:10, 15:5:25,30:10:80,100,120]);
+c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+fmdl.coarse2fine = c2f;
+imdl= eidors_obj('inv_model','test');
+imdl.fwd_model= fmdl;
+
+% Test Originals GN solver
+imdl.rec_model= cmdl;
+imdl.reconst_type = 'difference';
+imdl.RtR_prior = @prior_laplace;
+imdl.solve = @inv_solve_diff_GN_one_step;
+imdl.hyperparameter.value = 0.1;
+imdl.fwd_model.normalize_measurements = 1;
+imdl.jacobian_bkgnd.value = 0.03;
+
+% Difference image vs simulated data
+vr = data(:,9);
+img = mk_image( imdl );
+vh = fwd_solve(img); vh = vh.meas;
+img1 = mk_image( imdl,1);
+vh1 = fwd_solve(img1); vh1 = vh1.meas;
+normalisation= 1./vh1; 
+I= speye(length(normalisation));
+I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
+imgGN = inv_solve(imdl, vh, vr);
+1/min(imgGN.elem_data)
+1/max(imgGN.elem_data)
+
+% % NOW USE CG_lr_solve
+% % Gather outward elements in an added last element
+% c2f(sum(c2f,2)==0,end+1)= 1;
+% imdl.fwd_model.coarse2fine= c2f;
+% imdl.rec_model= cmdl;
+% imdl.reconst_type = 'absolute';
+% imdl.solve = @CG_lr_solve;
+% imdl.fwd_model.normalize_measurements = 1;
+% imdl.jacobian_bkgnd.value = 0.03;
+% imdl.parameters.default = [];
+% imdl.parameters.lambda= logspace(-7,-2,500);
+% imdl.parameters.perturb= [0 logspace(-8,-3,11)];
+% imdl.parameters.max_iterations= 1;
+% imdl.parameters.normalisation= I;
+% imdl.parameters.fixed_background= 1;
+% imdl.fwd_model.misc.default = [];
+% imgCG = inv_solve(imdl, vr);
+% 
+% figure
+% subplot(211); show_fem(imgGN); axis equal
+% subplot(212); show_fem(imgCG); axis equal
+end
