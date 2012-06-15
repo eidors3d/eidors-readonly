@@ -53,6 +53,9 @@ addpath([HOMEDIR, '/deprecated']);
 %addpath([HOMEDIR, '/tests']);
 
 DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
+for i = 1:length(path_array)
+    addpath([DEVDIR, '/', path_array{i}]);
+end
 % addpath([DEVDIR, '/a_adler']);
 % addpath([DEVDIR, '/b_grychtol']);
 
