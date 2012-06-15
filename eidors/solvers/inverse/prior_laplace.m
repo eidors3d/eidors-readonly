@@ -20,7 +20,17 @@ function Reg= prior_laplace( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+
+
+
 pp= fwd_model_parameters( inv_model.fwd_model );
+
+Reg = eidors_obj('get-cache', pp, 'prior_laplace');
+if ~isempty(Reg)
+   eidors_msg('prior_laplace: using cached value', 3);
+   return
+end
+
 
 Reg = speye( pp.n_elem );
 
@@ -37,7 +47,11 @@ Reg = speye( pp.n_elem );
    end
 
    Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
-
+   
+eidors_obj('set-cache', pp, 'prior_laplace', RegJ);
+eidors_msg('prior_laplace: setting cached value', 3);
+   
+   
 % find elems which are connected to elems ee
 function elems= find_adjoin(ee, ELEM)
    nn= ELEM(:,ee);
