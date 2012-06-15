@@ -25,7 +25,7 @@ function Reg= prior_laplace( inv_model );
 
 pp= fwd_model_parameters( inv_model.fwd_model );
 
-Reg = eidors_obj('get-cache', pp, 'prior_laplace');
+Reg = eidors_obj('get-cache', inv_model.fwd_model , 'prior_laplace');
 if ~isempty(Reg)
    eidors_msg('prior_laplace: using cached value', 3);
    return
@@ -48,7 +48,7 @@ Reg = speye( pp.n_elem );
 
    Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
    
-eidors_obj('set-cache', pp, 'prior_laplace', RegJ);
+eidors_obj('set-cache', inv_model.fwd_model , 'prior_laplace', Reg);
 eidors_msg('prior_laplace: setting cached value', 3);
    
    
