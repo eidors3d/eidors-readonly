@@ -56,8 +56,8 @@ eidors_msg('prior_laplace: setting cached value', 3);
 function elems= find_adjoin(ee, ELEM)
    nn= ELEM(:,ee);
    [d,e]= size(ELEM);
-   ss= zeros(1,e);
+   ss = false(size(ELEM));
    for i=1:d
-     ss= ss+ any(ELEM==nn(i));
+     ss= ss | ELEM==nn(i);
    end
-   elems= find(ss==d-1);
+   elems= find(sum(ss,1)==d-1);
