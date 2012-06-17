@@ -16,6 +16,10 @@ function startup( path_array )
 % output of the version command. It used to be R13, now it is more
 % like 2009a. Also the number of minor versions changes.
 
+if nargin == 0
+    path_array = {};
+end
+
 ver= eidors_obj('interpreter_version');
 
 if ver.isoctave
