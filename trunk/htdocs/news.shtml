@@ -59,10 +59,10 @@ solvers, etc. Directories are now:
 <li><tt>models</tt>: create FEM models
 <li><tt>sample_data</tt>: included samples of data
 <li><tt>solvers</tt>: forward and inverse solvers
-   </ul>
+   <ul>
    <li><tt>solvers/forward</tt>: 
    <li><tt>solvers/inverse</tt>: 
-   <ul>
+   </ul>
 <li><tt>tests</tt>: test code (eventually all into unit tests)
 <li><tt>tools</tt>: utility functions (cache, unit testing)
 </ul>
