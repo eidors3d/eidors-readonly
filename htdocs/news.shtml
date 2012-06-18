@@ -6,6 +6,68 @@ ideas for enhancements to the
 EIDORS package.
 <ul>
 
+<p><li> <b>
+   29 June &minus; 3 July, 2012:
+</b><br>
+<b>EIDORS code-fest</b>
+<p>Several EIDORS developers will be getting together in Manchester
+to develop and release EIDORS 3.6. Planned features are:
+<ul>
+  <li>Tutorials:
+  <ul>
+     <li>Restructure Tutorials:
+         =>Fix warnings in tutorials</u>
+         =>Remove old approaches in tutorials</u>
+     <li>New Tutorials: 
+         =>Movement solver tutorial</u>
+     <li>"Papers" section in tutorials
+         =>Create section</u>
+  </ul>
+  <li>Solvers:
+
+  <li>FEM Modelling:
+         =>Add Gmsh code</u>
+  <li>Architecture:
+         =>flag for desktop available. Fix eidors_msg</u>
+         =>add unit_tests to solvers</u>
+         =>merge eidors_model_params and fix_models. rename fix_models</u>
+         =>clean up octave directory names in arch</u>
+  <li>Tests
+         =>Test for octave</u>
+  <li>Graphics
+         =>Fix eidors colourbar</u>
+</ul>
+
+
+<p><li> <b>
+   8 June 2012:
+</b><br>
+<b>File renaming and file organization</b>
+<p>All files named after their authors are now deprecated (ie. aa_*, np_*)
+etc. We now have a consistent directory structure and naming convention for
+solvers, etc. Directories are now:
+<ul>
+<li><tt>algorithms</tt>: treatment of data
+<li><tt>arch</tt>: architecture specific
+<li><tt>compatibility</tt>: include in path to support much older code
+<li><tt>deprecated</tt>: files to support older code
+<li><tt>examples</tt>: example code (in addition to tutorials)
+<li><tt>external</tt>: imported code from external sources
+<li><tt>graphics</tt>: graphics code
+<li><tt>interface</tt>: read and write external data
+<li><tt>meshing</tt>: interface to Netgen and other meshing
+<li><tt>models</tt>: create FEM models
+<li><tt>sample_data</tt>: included samples of data
+<li><tt>solvers</tt>: forward and inverse solvers
+   </ul>
+   <li><tt>solvers/forward</tt>: 
+   <li><tt>solvers/inverse</tt>: 
+   <ul>
+<li><tt>tests</tt>: test code (eventually all into unit tests)
+<li><tt>tools</tt>: utility functions (cache, unit testing)
+</ul>
+
+
 <p><li><b>
     14 July 2011:
 </b><br>
