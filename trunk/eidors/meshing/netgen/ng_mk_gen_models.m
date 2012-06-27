@@ -134,8 +134,11 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
       fprintf(fid,'solid cyl%04d = mainobj    and %s; \n',i,name);
    end
 
+   % In some cases, ng can't handle an extra ';'
+   if ~isempty(extra_ng_code)
+      fprintf(fid,'%s;\n', extra_ng_code);
+   end
    % SHOULD tank_maxh go here?
-   fprintf(fid,'%s;\n', extra_ng_code);
    fprintf(fid,'tlo mainobj;\n');
    for i=1:n_elecs
       if any(i == pts_elecs_idx); continue; end
