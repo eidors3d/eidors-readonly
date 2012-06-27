@@ -10,9 +10,6 @@ function image_levels(img, levels, clim )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if exist('OCTAVE_VERSION');
-   warning('image_levels does not support octave. Try show_slices');
-end
 
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);
@@ -21,7 +18,6 @@ vtx=  fwd_mdl.nodes;
 simp= fwd_mdl.elems;
 img_data = img.elem_data;
 
-fc= [];
 
 if size(levels,1)==3
    ll = size(levels,2);
@@ -55,7 +51,9 @@ for idx= 1:length(levels);
     slicer_plot_n(lev,img_data,vtx,simp, fc);
     view(2);
     axis('off');
+if ~exist('OCTAVE_VERSION'); % octave gives ft_render warnings
     axis equal
+end
     title(sprintf('z=%4.2f',lev));
 end
 
