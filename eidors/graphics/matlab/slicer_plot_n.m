@@ -40,8 +40,8 @@ vap = []; %Value of the node in vtxp
 for j=1:size(fc,1)
       this_ph = fc(j,:); %[nodeA nodeB]
    
-   if max(vtx(this_ph(1),3),vtx(this_ph(2),3))> h & ...
-         min(vtx(this_ph(1),3),vtx(this_ph(2),3))<= h 		
+   if max(vtx(this_ph(1),3),vtx(this_ph(2),3))> h && ...
+      min(vtx(this_ph(1),3),vtx(this_ph(2),3))<= h 		
      
   %If the face is crossed through by the plane then 
   %create a plotable node on the plane.
