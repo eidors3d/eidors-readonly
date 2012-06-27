@@ -1,4 +1,6 @@
 
+=================
+Fix coarse2fine -> give options for elements in fine but not coarse model
 
 
 
@@ -9,21 +11,24 @@ will just load the function into memory, you need to run it with startup.
 
 How can we make octave actually run the startup file?
   => DONE - AA
-=================
-Fix coarse2fine -> give options for elements in fine but not coarse model
 ===========
 decide if mapping_function should go on fwd_model or img
   => FUTURE
 ===========
 what is mapper_elems_nodes ??
+     ./eidors/models/mapper_nodes_elems.m
+  => DEPRECATE
 ===========
 inv_solve_4d_prior and inv_solve_time_prior ?
+   
 ============
 Rename nodal_solve
+   => TODO: rename to inv_solve_diff_GN_one_step_nodal;
 =============
 Create a variable in eidors_msg that knows if desktop is available
 http://www.mathworks.com/matlabcentral/newsreader/view_thread/284363
 mf = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame; 
+   => DONE - AA
 ===============
 Iteratively refine 
 % See also:
@@ -34,6 +39,7 @@ Iteratively refine
 
 ==================
 Create a GN_diff_solve function
+   => DONE - AA
 ==================
 DEFAULT SOLVER:
    GN_one_step_diff_solve
@@ -69,24 +75,34 @@ EIDORS:RELEASE 3.6
 
     - PLAN => M.Crabb to create general functions
 
+ => DONE 
+==============
  - PLAN => AA create a "papers" section of htdocs => click on paper => tutorials
 
+==============
  - Next, test in 3D
     - issue is here: delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta; (line 181)
    
     - PLAN => M.Crabb take a look and then setup call.
 
+ => DONE 
+==============
 
  - Factor out all the electrode code in the ng_mk* functions
      and put it into a ng_define_electrodes function 
 
      - Next, create a fourth parameter to control the depth of the electrode shape
+==============
 
 
-EIDORS:TODO
  - deform_cylinder - use proper fit like a fourier fit.
+==============
  - mk_c2f_circ_mapping - not quite right fitting
+==============
  - move np stuff to background. Change aa to the defaults.
+
+  => DONE
+==============
  - unit_test_cmp - print tolerance of comparison
 
  - add_noise - work for matrix noise
@@ -153,7 +169,9 @@ One way to enfore this is to add modes to every piece of code
    function('UNIT_TEST')
    function('CAPABILITY_LIST')
 etc.
+ => WON'T DO FOR NOW. DEFER FOR LATER
 ==================
+ => DONE
 NEW DIRECTORY STRUCTURE:
  ON THE PATH:
    eidors/

@@ -1,4 +1,4 @@
-function startup( path_array )
+function eidors_startup( path_array )
 % Script to start EIDORS
 % Set path and variables correctly
 % USAGE:
@@ -133,7 +133,20 @@ end
 
 % helpful messages
 % TODO: test if desktop is available
-if ~ver.isoctave
+if ver.isoctave
+   canwritehtml=0; 
+else try 
+   mf = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame; 
+   if isempty(mf)
+      canwritehtml=0; 
+   else
+      canwritehtml=1; 
+   end
+     catch
+      canwritehtml=0; 
+   end
+end
+if canwritehtml
    tutorials = '<a href="http://eidors3d.sf.net/tutorial/tutorial.shtml">Tutorials</a>';
 else
    tutorials = 'Tutorials';
