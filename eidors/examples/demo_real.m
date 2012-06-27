@@ -55,7 +55,7 @@ disp('step 5: simulate data for inhomogeneous medium');
 % create an inhomogeneous image
 % A,B are Indices of the elements to represent the inhomogeneity
 %
-load( datacom_file ,'A','B')
+load( 'datacom.mat' ,'A','B')
 mat(A)= mat(A)+0.15;
 mat(B)= mat(B)-0.20;
 
@@ -93,25 +93,17 @@ disp('step 9: display results');
 
 levels=[ 2.63 2.10 1.72 1.10 0.83 0.10 ];
 
-if ~exist('OCTAVE_VERSION');
-   figure; image_levels( inhomg_img, levels );
-else
-   show_slices( inhomg_img, levels' * [inf,inf,1] );
-end
+figure; image_levels( inhomg_img, levels );
 
 demo_img.name= 'Reconstructed conductivity distribution';
 demo_img.calc_colours.ref_level = 0;
-if ~exist('OCTAVE_VERSION');
-   figure; image_levels( demo_img, levels );
-else
-   show_slices( demo_img, levels' * [inf,inf,1] );
-end
+figure; image_levels( demo_img, levels );
 
 function [vtx,simp,bdy] = get_model_elems;
 %bdy : the boundary surfaces (triangles)
 %vtx : the vertices of the model (coordinates of the nodes)
 %simp: the simplices of the model (connectivity in tetrahedral)
-load(datareal_file,'vtx','simp');
+load('datareal.mat','vtx','simp');
 bdy= find_boundary( simp );
 
 
@@ -124,7 +116,7 @@ function [gnd_ind, electrodes, perm_sym, elec, protocol, no_pl] = get_model_elec
 %perm_sym : Boolean entry for efficient forward computations 
 %perm_sym='{n}';
 
-load(datareal_file,'gnd_ind','elec','zc','protocol','no_pl');
+load('datareal.mat','gnd_ind','elec','zc','protocol','no_pl');
 
 for i=1:length(zc)
     electrodes(i).z_contact= zc(i);
@@ -136,7 +128,7 @@ perm_sym='{n}';
 % get the current stimulation patterns
 function [stimulations] = get_model_stim( mdl );
 
-load(datareal_file,'protocol','no_pl','elec');
+load('datareal.mat','protocol','no_pl','elec');
 [I,Ib] = set_3d_currents(protocol, ...
                          elec, ...
                          mdl.nodes, ...
@@ -163,19 +155,6 @@ for i=1:size(Ib,2)
     stimulations(i).meas_pattern= meas_pat;
 end
 
-% Get filename for datareal
-function fname= datareal_file;
-   fname= 'datareal.mat';
-   if exist('OCTAVE_VERSION');
-       fname= file_in_loadpath(fname);
-   end
-
-% Get filename for datacom
-function fname= datacom_file;
-   fname=  'datacom.mat';
-   if exist('OCTAVE_VERSION');
-       fname=  file_in_loadpath(fname);
-   end
 
 
 
