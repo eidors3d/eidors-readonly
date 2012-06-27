@@ -2,34 +2,22 @@
 =================
 Fix coarse2fine -> give options for elements in fine but not coarse model
 
+ - see if we need bs_calc_system_mat
+ - look at background parameter
+
+==================
+
+write a non-linear GN solver
+  - consider bs_nonlinearGN
 
 
 #######################
-In octave
-   run /path/to/startup.m
-will just load the function into memory, you need to run it with startup.
-
-How can we make octave actually run the startup file?
-  => DONE - AA
-===========
 decide if mapping_function should go on fwd_model or img
   => FUTURE
-===========
-what is mapper_elems_nodes ??
-     ./eidors/models/mapper_nodes_elems.m
-  => DEPRECATE
 ===========
 inv_solve_4d_prior and inv_solve_time_prior ?
    
 ============
-Rename nodal_solve
-   => TODO: rename to inv_solve_diff_GN_one_step_nodal;
-=============
-Create a variable in eidors_msg that knows if desktop is available
-http://www.mathworks.com/matlabcentral/newsreader/view_thread/284363
-mf = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame; 
-   => DONE - AA
-===============
 Iteratively refine 
 % See also:
 % http://www.cs.berkeley.edu/~wkahan/MxMulEps.pdf
@@ -37,9 +25,6 @@ Iteratively refine
 %  without extra precision bits.  ALso, we need to enable 
 % system_dependent('SetPrecision', 53) in starup
 
-==================
-Create a GN_diff_solve function
-   => DONE - AA
 ==================
 DEFAULT SOLVER:
    GN_one_step_diff_solve
@@ -51,9 +36,16 @@ Add Wiener filter form to speed up
 Change code that uses iso_f_smooth to use the proper RtR_prior formulation
 ===============
 think through how the cache is managed. esp for read-only installs
+
+  - look at cache priorities
+===============
+fix timing in eidors_var_id
+
 ===============
 merge eidors_model_params and fix_models
  rename fix_models
+
+ - migrate aa_fwd_parameters to fix_model
 ===============
 Gmsh code eidors
 ===============
@@ -62,30 +54,10 @@ Gmsh code eidors
    - get new code into startup which detects the system
    - compile mex file for various oses
 ===============
-EIDORS:RELEASE 3.6
  - fix eidors colorbar - give proper location
- - movement jacobians
-     - separate code for movement and conductivity
-     - calc_move_and_conductivity_jacobian.m 
-     - think about how to depricate aa_e_move_jacobian
-     - have explicit function that does perturbation jacobian
- - movement priors
-     - calc_move_and_conductivity_prior( move_prior_fun, conductivity_prior_fcn)
-       - maybe with some defaults for each case
-
-    - PLAN => M.Crabb to create general functions
-
- => DONE 
-==============
+===============
  - PLAN => AA create a "papers" section of htdocs => click on paper => tutorials
 
-==============
- - Next, test in 3D
-    - issue is here: delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta; (line 181)
-   
-    - PLAN => M.Crabb take a look and then setup call.
-
- => DONE 
 ==============
 
  - Factor out all the electrode code in the ng_mk* functions
@@ -99,27 +71,32 @@ EIDORS:RELEASE 3.6
 ==============
  - mk_c2f_circ_mapping - not quite right fitting
 ==============
- - move np stuff to background. Change aa to the defaults.
-
-  => DONE
-==============
  - unit_test_cmp - print tolerance of comparison
 
+==============
  - add_noise - work for matrix noise
              - then update temporal_solver01
 
- - merge choose_imdl
+==============
+ - merge choose_imdl with select_imdl
+==============
  - update select_imdl to reflect best practice
+==============
  - \ => forward_solver
+==============
  - library_model => accept simulation
+==============
  - BG's colourbar
+==============
  - ng_mk_closed_contour - rename + make tutorial
+==============
  - unify the 'extra' code handing in ng_mk ...
+==============
  - move absolute tutorials into functions in main code
 
- - migrate aa_fwd_parameters to fix_model
- - see if we need bs_calc_system_mat
+==============
  - see if we need object_in_tank_2d
+==============
  - see if we need examples, or move to tutorials
 
  - fix gaussian_HPF_prior
@@ -160,7 +137,12 @@ also show_slices is crufty
 % TODO: because we wanted (back in 2005) to let show_slices
 % handle lots of different scenarios (calling with images and
 % without. It is now crufty ... and should be changed.
+
+  => May be fixed. Check
 =================
+
+################ DEFER #####################3
+
 one important feature would be to add code introspection.
 This would allow you to know if a given algorithm can support
    linear reconstruction, etc.
@@ -170,7 +152,55 @@ One way to enfore this is to add modes to every piece of code
    function('CAPABILITY_LIST')
 etc.
  => WON'T DO FOR NOW. DEFER FOR LATER
+
+###################### DONE ####################
+
+ - move np stuff to background. Change aa to the defaults.
+
+  => DONE
+==============
+ - Next, test in 3D
+    - issue is here: delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta; (line 181)
+   
+    - PLAN => M.Crabb take a look and then setup call.
+
+ => DONE 
+==============
+ - movement jacobians
+     - separate code for movement and conductivity
+     - calc_move_and_conductivity_jacobian.m 
+     - think about how to depricate aa_e_move_jacobian
+     - have explicit function that does perturbation jacobian
+ - movement priors
+     - calc_move_and_conductivity_prior( move_prior_fun, conductivity_prior_fcn)
+       - maybe with some defaults for each case
+
+    - PLAN => M.Crabb to create general functions
+
+ => DONE 
+==============
+Create a GN_diff_solve function
+   => DONE - AA
 ==================
+Create a variable in eidors_msg that knows if desktop is available
+http://www.mathworks.com/matlabcentral/newsreader/view_thread/284363
+mf = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame; 
+   => DONE - AA
+===============
+Rename nodal_solve
+   => TODO: rename to inv_solve_diff_GN_one_step_nodal;
+=============
+what is mapper_elems_nodes ??
+     ./eidors/models/mapper_nodes_elems.m
+  => DEPRECATE
+===========
+In octave
+   run /path/to/startup.m
+will just load the function into memory, you need to run it with startup.
+
+How can we make octave actually run the startup file?
+  => DONE - AA
+===========
  => DONE
 NEW DIRECTORY STRUCTURE:
  ON THE PATH:
