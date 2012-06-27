@@ -187,19 +187,26 @@ fmdl.electrode(2) = [];
 
    case 15;
 shape_str = [ ...
-  'solid cyl    = cylinder (0,2,0; 0,2,1; 0.1); \n', ...
-  'solid cut1   = orthobrick(-10,-10,-1.2;10,10,-1.0); \n', ...
-  'solid celec1 = cyl and cut1; tlo celec1 -maxh=0.5;\n' ...
+  'solid cyl     = cylinder (-2,0,0;-2,0,1; 0.1); \n', ...
+  'solid borehole= cyl and plane (0,0,-2;0,0,-1); \n', ...
+  'solid cel1= orthobrick(-10,-10,-1.1;10,10,-1.0) and cyl; tlo cel1 -maxh=0.5;\n' ...
+  'solid cel2= orthobrick(-10,-10,-1.6;10,10,-1.5) and cyl; tlo cel2 -maxh=0.5;\n' ...
   'solid top    = plane(0,0,0;0,0,1);\n' ...
   'solid top_obj= top and orthobrick(-5,-5,-5;5,5,0) -maxh=0.5;\n' ...
-  'solid mainobj= top_obj and not celec1;\n'];
-[elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,2),linspace(-2,2,2));
+  'solid mainobj= top_obj and not borehole;\n'];
+[elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,3),linspace(-2,2,4));
 elec_pos = [  elec_pos_x(:), elec_pos_y(:), ones(size(elec_pos_x(:)))*[0,0,0,1] ];
 elec_shape=[0.1];
 elec_obj = repmat({'top'}, 1, size(elec_pos,1));
-elec_pos(end+1,:) = [0.0,2,-1.1,0,0,1];
-elec_obj(end+1)   = {'celec1'};
+elec_pos(end+1,:) = [-2.0,0,-1.05,0,0,1]; elec_obj(end+1)   = {'cel1'};
+elec_pos(end+1,:) = [-2.0,0,-1.55,0,0,1]; elec_obj(end+1)   = {'cel2'};
 [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 15.1;
+% First run 15
+crop_model([], inline('z<-2 | abs(x)>2.5 | abs(y)>2.5','x','y','z'));
+axis([-2.5,2.5,-2.5,2.5,-2,0]);
+
 
 end
 
@@ -209,6 +216,7 @@ show_fem(fmdl);
 if any(number==[11]); view(270,60); end
 if any(number==[13]); view(-64,-13); end
 if any(number==[14]); view(-111,21); end
+if any(number==[15]); view(-10,20); end
 
 print_convert( ...
    sprintf('netgen_gen_models%02d.png',number), '-density 75');
