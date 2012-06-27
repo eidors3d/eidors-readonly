@@ -185,6 +185,21 @@ fmdl.electrode(4) = [];
 fmdl.electrode(1).nodes = unique(horzcat(fmdl.electrode(1:2).nodes));
 fmdl.electrode(2) = [];
 
+   case 15;
+shape_str = [ ...
+  'solid cyl    = cylinder (0,2,0; 0,2,1; 0.1); \n', ...
+  'solid cut1   = orthobrick(-10,-10,-1.2;10,10,-1.0); \n', ...
+  'solid celec1 = cyl and cut1; tlo celec1 -maxh=0.5;\n' ...
+  'solid top    = plane(0,0,0;0,0,1);\n' ...
+  'solid top_obj= top and orthobrick(-5,-5,-5;5,5,0) -maxh=0.5;\n' ...
+  'solid mainobj= top_obj and not celec1;\n'];
+[elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,2),linspace(-2,2,2));
+elec_pos = [  elec_pos_x(:), elec_pos_y(:), ones(size(elec_pos_x(:)))*[0,0,0,1] ];
+elec_shape=[0.1];
+elec_obj = repmat({'top'}, 1, size(elec_pos,1));
+elec_pos(end+1,:) = [0.0,2,-1.1,0,0,1];
+elec_obj(end+1)   = {'celec1'};
+[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
 end
 
