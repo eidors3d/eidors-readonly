@@ -312,6 +312,38 @@ fmdl.electrode(2) = [];
 <br>Bare conductive wires within a tank
 </center>
 
+<h3>
+Shape 15
+</h3>
+<pre>
+shape_str = [ ...
+  'solid cyl     = cylinder (-2,0,0;-2,0,1; 0.1); \n', ...
+  'solid borehole= cyl and plane (0,0,-2;0,0,-1); \n', ...
+  'solid cel1= orthobrick(-10,-10,-1.1;10,10,-1.0) and cyl; tlo cel1 -maxh=0.5;\n' ...
+  'solid cel2= orthobrick(-10,-10,-1.6;10,10,-1.5) and cyl; tlo cel2 -maxh=0.5;\n' ...
+  'solid top    = plane(0,0,0;0,0,1);\n' ...
+  'solid top_obj= top and orthobrick(-5,-5,-5;5,5,0) -maxh=0.5;\n' ...
+  'solid mainobj= top_obj and not borehole;\n'];
+[elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,3),linspace(-2,2,4));
+elec_pos = [  elec_pos_x(:), elec_pos_y(:), ones(size(elec_pos_x(:)))*[0,0,0,1] ];
+elec_shape=[0.1];
+elec_obj = repmat({'top'}, 1, size(elec_pos,1));
+elec_pos(end+1,:) = [-2.0,0,-1.05,0,0,1]; elec_obj(end+1)   = {'cel1'};
+elec_pos(end+1,:) = [-2.0,0,-1.55,0,0,1]; elec_obj(end+1)   = {'cel2'};
+[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+</pre>
+
+To crop the model, use the code
+<pre>
+crop_model([], inline('z<-2 | abs(x)>2.5 | abs(y)>2.5','x','y','z'));
+axis([-2.5,2.5,-2.5,2.5,-2,0]);
+</pre>
+
+<center>
+<img src="netgen_gen_models15.png"><img src="netgen_gen_models15a.png">
+<br>Surface electrodes and ring electrodes on a borehole
+</center>
+
 </td></tr></table>
 <p>
 <small>
