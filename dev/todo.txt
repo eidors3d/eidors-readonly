@@ -1,7 +1,19 @@
+
+
+
+
+#######################
+In octave
+   run /path/to/startup.m
+will just load the function into memory, you need to run it with startup.
+
+How can we make octave actually run the startup file?
+  => DONE - AA
 =================
 Fix coarse2fine -> give options for elements in fine but not coarse model
 ===========
 decide if mapping_function should go on fwd_model or img
+  => FUTURE
 ===========
 what is mapper_elems_nodes ??
 ===========
