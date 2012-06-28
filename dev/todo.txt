@@ -2,7 +2,7 @@ whole electrode options for ng_mk_gen...
 =================
  complex conductivity
 =================
-
+check jacobian c2f calcs
 
 =================
 Fix coarse2fine -> give options for elements in fine but not coarse model
