@@ -1,0 +1,32 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2> 
+Simulation of 3D surface electrode patterns.
+</h2>
+
+
+
+<h3>
+Create 3D FEM model of the terrain
+</h3>
+<pre>
+<!--#include virtual="surface_sim01.m" -->
+</pre>
+
+<center>
+<img src="surface_sim01a.png">
+<br><i> Figure:</i>
+Forward model
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
