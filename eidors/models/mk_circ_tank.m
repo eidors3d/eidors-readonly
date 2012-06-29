@@ -42,9 +42,8 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if rem(rings,4) ~= 0
-   error('parameter rings and must be divisible by 4');
-end
+if isstr(rings) && strcmp(rings,'UNIT_TEST'); do_unit_test; return; end
+
 
 % parse easy case of electrode specifications
 n_elec= [];
@@ -59,7 +58,7 @@ if isempty( levels ) % 2D
    if ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
       if any(rem(idx,1) ~= 0);
-         error('The requested number of electrodes is not compatible with this FEM mesh')
+         error('The requested number of electrodes (%d) is not compatible with this FEM mesh', n_elec)
       end
       elec_nodes= point_elec_nodes( idx );
    else
@@ -68,8 +67,6 @@ if isempty( levels ) % 2D
 else  %3D
    [elem, node, bdy, point_elec_nodes] = mk_3D_model( elem, node, ...
                   levels, bdy, point_elec_nodes, node_order );
-    % 3D - fixed - don't need this anymore!
-%  bdy= find_boundary(elem')';
 
    if ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
@@ -265,3 +262,28 @@ function elem=  node_reorder( elem0, node_order);
   ok= ~norm(no_test - [1;2;3]*ones(1,e));
 
   if ~ok; error('test_node_order fails - cant do 3D meshes'); end
+
+function do_unit_test
+  subplot(3,3,1)
+  mdl= eidors_obj('fwd_model', mk_circ_tank(2, [], 2 ));
+  show_fem(mdl, [0,1,1]);
+  unit_test_cmp('2D mdl', length(mdl.elems), 16);
+
+  subplot(3,3,2)
+  mdl= eidors_obj('fwd_model', mk_circ_tank(4, [], 16 ));
+  show_fem(mdl);
+  unit_test_cmp('2D mdl', length(mdl.nodes), 41);
+
+  subplot(3,3,3)
+  mdl= eidors_obj('fwd_model', ...
+        mk_circ_tank(4, linspace(-1,1,3), {'planes', 8, 2} ));
+  show_fem(mdl);
+  unit_test_cmp('2D mdl', length(mdl.elems), 384);
+
+  subplot(3,3,4)
+  mdl= eidors_obj('fwd_model', ...
+        mk_circ_tank(4, linspace(-1,1,5), {'zigzag', 4, [2,4]} ));
+  show_fem(mdl);
+  unit_test_cmp('2D mdl', length(mdl.elems), 768);
+
+  mdl= eidors_obj('fwd_model', mk_circ_tank(2, [], 18 ));

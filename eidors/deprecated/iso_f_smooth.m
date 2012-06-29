@@ -11,7 +11,10 @@ function [Reg] = iso_f_smooth(simp,vtx,deg,w);
 %w    = smoothing weight, w=1...k, default value = 1
 %Reg  = The first order smoothing regulariser.
 
+if isstr(simp) && strcmp(simp,'UNIT_TEST'); do_unit_test; return; end
+
 warning('EIDORS:deprecated','ISO_F_SMOOTH is deprecated as of 06-Jun-2012. ');
+
 
 if nargin<2
    w=1;
@@ -115,3 +118,8 @@ end %for i'th simplex
 % MATLAB version 5.3 R11
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+function do_unit_test
+   imdl = mk_common_model('a2c0',8);
+   simp = imdl.fwd_model.elems;
+   vtx  = imdl.fwd_model.nodes;
+   show_fem(imdl.fwd_model,[1,1,1]);
