@@ -1,13 +1,13 @@
 %Repeat with quadratic and cubic finite elements
 %Quadratic FEM
-fmdl.mc_type    = 'tri6'; %Quadratic
+fmdl.approx_type    = 'tri6'; %Quadratic
 img2 = mk_image(fmdl,1);
 img2.fwd_solve.get_all_meas = 1; %Internal voltage
 v2 = fwd_solve(img2); 
 v2e=v2.meas; v2all=v2.volt;
 
 %Cubic FEM
-fmdl.mc_type    = 'tri10'; %Cubic
+fmdl.approx_type    = 'tri10'; %Cubic
 img3 = mk_image(fmdl,1);
 img3.fwd_solve.get_all_meas = 1; %Internal voltage
 v3 = fwd_solve(img3); 

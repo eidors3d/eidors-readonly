@@ -17,7 +17,7 @@ fmdl.solve = @fwd_solve_higher_order;
 fmdl.system_mat = @calc_system_mat_higher_order;
 
 %Add element type
-fmdl.mc_type    = 'tri3'; % linear
+fmdl.approx_type    = 'tri3'; % linear
 %Make an image and get voltages using high order solver
 img1 = mk_image(fmdl,1);
 img1.fwd_solve.get_all_meas = 1; %Internal voltage
