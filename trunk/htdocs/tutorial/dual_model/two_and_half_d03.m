@@ -13,6 +13,7 @@ subplot(144)
 img3= inv_solve(imdl, vh, vi);
 img3.fwd_model= c_mdl;
 show_fem(img3);
-set(gca,'ZLim',[0,3]); axis equal; view(-62,28)
+zlim([0,3]); xlim([-1,1]); ylim([-1,1]);
+ axis equal; view(-62,28)
 
 print_convert two_and_half_d03a.png
