@@ -1,3 +1,32 @@
+add interface to ng.opt
+============
+noise figures and nf selection code
+============
+c2f - analytical
+============
+parfor
+===============
+movement greit
+===============
+tutorials - deprecate update
+===============
+fix timing in eidors_var_id
+===============
+mk_library
+===============
+CG's code
+==============
+GMSH 
+ - see if we need object_in_tank_2d
+     => turn into tutorial
+
+===============
+think through how the cache is managed. esp for read-only installs
+
+  - look at cache priorities
+  - cache to disk
+
+============
 whole electrode options for ng_mk_gen...
 =================
  complex conductivity
@@ -16,11 +45,10 @@ write a non-linear GN solver
   - consider bs_nonlinearGN
 
 
-#######################
-decide if mapping_function should go on fwd_model or img
-  => FUTURE
-===========
+==================
 inv_solve_4d_prior and inv_solve_time_prior ?
+==================
+Add Wiener filter form to speed up
    
 ============
 Iteratively refine 
@@ -33,33 +61,27 @@ Iteratively refine
 ==================
 DEFAULT SOLVER:
    GN_one_step_diff_solve
-Add Wiener filter form to speed up
+
+ - put defaults for functions
+I like the idea of having a defaults in each function, but I think the np_fwd_solve is a level to low. The choice is between np_fwd_solve and aa_fwd_solve, etc. so perhaps it would make sense to put the defaults in fwd_solve itself. Then we could put mdl.solve = 'defualt';
+
+==================
 
   - talk to Bill about estimates of covariance inverses 
   - look at calc_Ji ... fcn
 ==================
 Change code that uses iso_f_smooth to use the proper RtR_prior formulation
-===============
-think through how the cache is managed. esp for read-only installs
-
-  - look at cache priorities
-===============
-fix timing in eidors_var_id
 
 ===============
 merge eidors_model_params and fix_models
- rename fix_models
+ -  rename fix_models
 
  - migrate aa_fwd_parameters to fix_model
-===============
-Gmsh code eidors
 ===============
  OCTAVE DIRECTORY NAMES
    - move to something like x86_64-linux etc
    - get new code into startup which detects the system
    - compile mex file for various oses
-===============
- - fix eidors colorbar - give proper location
 ===============
  - PLAN => AA create a "papers" section of htdocs => click on paper => tutorials
 
@@ -69,10 +91,6 @@ Gmsh code eidors
      and put it into a ng_define_electrodes function 
 
      - Next, create a fourth parameter to control the depth of the electrode shape
-==============
-
-
- - deform_cylinder - use proper fit like a fourier fit.
 ==============
  - mk_c2f_circ_mapping - not quite right fitting
 ==============
@@ -89,38 +107,37 @@ Gmsh code eidors
 ==============
  - \ => forward_solver
 ==============
+ - ng_mk_closed_contour - rename + make tutorial
+==============
+ - think through mk_common_model, library_model, and choose_imdl
+    - what to deprecate, how to merge
  - library_model => accept simulation
 ==============
- - BG's colourbar
-==============
- - ng_mk_closed_contour - rename + make tutorial
+ - ng_mk_functions
+     - add mat_idx on the output itself
 ==============
  - unify the 'extra' code handing in ng_mk ...
 ==============
  - move absolute tutorials into functions in main code
 
 ==============
- - see if we need object_in_tank_2d
-==============
  - see if we need examples, or move to tutorials
+    - deprecate demo_real, demo_complex
 
+==============
  - fix gaussian_HPF_prior
      - work in 3D like laplace_image_prior
 
- - remove examples and integrate with tutorials
-
- - put defaults for functions
-I like the idea of having a defaults in each function, but I think the np_fwd_solve is a level to low. The choice is between np_fwd_solve and aa_fwd_solve, etc. so perhaps it would make sense to put the defaults in fwd_solve itself. Then we could put mdl.solve = 'defualt';
-
-===================
-Problems with calc_move_jacobian.m - only with 3D models
 ===================
 Cleanup calc_colours to clean up handling of image_field
    parameter.
   - code also in eidors_colours, scale_for_display, 
   - probably need new colourbar functions
 
+===============
+ - fix eidors colorbar - give proper location
 Fix colourbar -> make work with Camille's code, too.
+ - BG's colourbar
 ===================
 ng_mk_ ... models
   - put in unit test code
@@ -137,16 +154,23 @@ and
    calc_slices - which does its own interpolation
 Generally, this means that the pictures from calc_slices
 are even smoother than they should be. 
+  => May be fixed. Check
 
+=================
 also show_slices is crufty
 % TODO: because we wanted (back in 2005) to let show_slices
 % handle lots of different scenarios (calling with images and
 % without. It is now crufty ... and should be changed.
 
-  => May be fixed. Check
 =================
 
 ################ DEFER #####################3
+ - deform_cylinder - use proper fit like a fourier fit.
+  => keep for historical reasons
+==============
+decide if mapping_function should go on fwd_model or img
+  => FUTURE
+===========
 
 one important feature would be to add code introspection.
 This would allow you to know if a given algorithm can support
@@ -160,6 +184,8 @@ etc.
 
 ###################### DONE ####################
 
+Problems with calc_move_jacobian.m - only with 3D models
+===================
  - move np stuff to background. Change aa to the defaults.
 
   => DONE
