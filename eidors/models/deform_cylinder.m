@@ -3,6 +3,13 @@ function fwd_mdl = deform_cylinder( fwd_mdl, geo);
 % Deform the boundary of the cylinder to make it like a torso
 % niv= 1.. 5 => Torso shape from T5 - T12
 % xyz_expand - rescale xyz - default should be [1];
+%
+% This function is called by the '?2t#' (eg c2t2) options
+%  in mk_common_model. It is kept for compatibility with 
+%  old tutorials, but we don't recommend it's use for new code.
+
+% (C) 1995 Andy Adler. License: GPL version 2 or 3
+% $Id$
 
 if isstr(fwd_mdl) && strcmp(fwd_mdl,'UNIT_TEST'); do_unit_test; return; end
 

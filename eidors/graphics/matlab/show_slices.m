@@ -33,6 +33,8 @@ function out_img= show_slices( img, levels )
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
+if ~strcmp(img(1).type,'image'); error('show_slices: img must be type image'); end
+
 sep = 0;
 try sep = img(1).show_slices.sep;
 end
