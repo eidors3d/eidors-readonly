@@ -16,7 +16,7 @@ function param = dg_fwd_parameters(fwd_model)
 
 % Modified by Dominique Gibert, April 2007
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_fwd_parameters.m,v 1.16 2006/08/17 22:15:13 aadler Exp $
+% $Id$
 
 persistent param_save
 

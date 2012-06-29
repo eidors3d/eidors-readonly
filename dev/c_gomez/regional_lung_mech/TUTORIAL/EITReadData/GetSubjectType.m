@@ -14,7 +14,7 @@ function [type,s] = GetSubjectType(studycode)
 % s         boolean     scalar      errors present: true
 % 
 % Copyright C. Gomez-Laberge, November 2010.
-% $Id: $
+% $Id$
 
 % Set error status to 'no errors present'
 s = false;

@@ -24,7 +24,7 @@ function img= CG_lr_solve( inv_model, data)
 %     estimation
 
 % (C) 2012 Nolwenn Lesparre. License: GPL version 2 or version 3
-% $Id: CG_lr_solve.m 2596 2012-06-06 14:18:06Z nlesparre $
+% $Id$
 
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 

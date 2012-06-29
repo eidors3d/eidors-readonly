@@ -81,7 +81,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_colours.m 2175 2010-04-20 13:31:06Z aadler $
+% $Id$
 
 if nargin==0; error('calc_colours: expecting argument'); end
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end

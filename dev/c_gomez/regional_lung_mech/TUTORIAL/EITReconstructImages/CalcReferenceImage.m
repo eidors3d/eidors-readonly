@@ -1,6 +1,6 @@
 function [vref,s] = CalcReferenceImage(vd,method)
 % Copyright C. Gomez-Laberge, January 2012.
-% $Id: $
+% $Id$
 
 % Set error status to 'no errors present'
 s = false;

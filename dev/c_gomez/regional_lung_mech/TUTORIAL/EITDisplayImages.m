@@ -37,7 +37,7 @@ function EITDisplayImages(eitimages,time,series,clim)
 % Output:
 %
 % Copyright C. Gomez-Laberge, November 2010.
-% $Id: $
+% $Id$
 
 % Set error status to 'no errors present'
 s = false;
