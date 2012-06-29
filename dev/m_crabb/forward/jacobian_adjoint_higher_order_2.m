@@ -1,6 +1,7 @@
 function J = jacobian_adjoint_higher_order_2(fwd_model,img)
 %Find the Jacobian associated with an image (and forward model)
 %Discretization of derivative method
+%M Crabb - 29.06.2012
 
 %If function called only with image, extract forward model
 if(nargin==1)

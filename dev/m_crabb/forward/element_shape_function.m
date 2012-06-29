@@ -14,6 +14,8 @@ function map = element_shape_function(type,x,y,z)
 %
 %OUTPUT
 %1. MAPFUNC - vector of map functions
+%
+%M Crabb - 29.06.2012
 
 if(strcmp(type(1:3),'tri'))
     map = maptri3(x,y,z);

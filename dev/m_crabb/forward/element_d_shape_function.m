@@ -3,7 +3,7 @@ function dshape = element_d_shape_function(type,x,y,z)
 %Derivative of shape functions of elements in local coordiantes. The basis 
 %functions are for an anti-clockwise vertex arrangement triangle (or in 3D
 %anti-clockwise to the point of looking INTO triangle from a vertex)
-%DSHAPE = dshapefunc(TYPE,X,Y,Z). 
+%DSHAPE = dshapefunc(TYPE,X,Y,Z)
 %
 %INPUT:
 %1. X, Y, Z - local coordinates
@@ -17,6 +17,8 @@ function dshape = element_d_shape_function(type,x,y,z)
 %OUTPUT
 %1. DELEMSHAPEFUNC - matrix of shape function derivatives size(ndim,nshape)
 %              - using convention : dshape(i,j) = d shape_{j} / d x_{i}
+%
+%M Crabb - 29.06.2012
 
 if(strcmp(type,'tri3'))
     dshape = delemshapetri3(x,y,z);

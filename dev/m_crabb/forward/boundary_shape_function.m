@@ -15,6 +15,8 @@ function shape=boundary_shape_function(type,x,y)
 %
 %OUTPUT
 %1. SHAPE - vector of shape functions on this segment of boundary
+%
+%M Crabb - 29.06.2012
 
 if(strcmp(type,'tri3'))
     shape = boundshapetri3(x,y);
