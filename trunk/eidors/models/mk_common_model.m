@@ -405,7 +405,6 @@ function inv2d= add_params_2d_mdl( params, n_elec, options);
     params.system_mat= 'system_mat_1st_order';
     params.jacobian=   'jacobian_adjoint';
     params.normalize_measurements= 0;
-    params.np_fwd_solve.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);
 
     inv2d.solve=       'inv_solve_diff_GN_one_step';
@@ -440,7 +439,6 @@ function inv3d = mk_3c_model( n_elec, xy_layers, z_layers, elec_space, ...
     params.system_mat= 'system_mat_1st_order';
     params.jacobian=   'jacobian_adjoint';
     params.normalize_measurements= 0;
-    params.np_fwd_solve.perm_sym= '{n}';
     fm3d = eidors_obj('fwd_model', params);
 
     inv3d.name=  'EIT inverse: 3D';
@@ -477,9 +475,9 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    fmdl.elems= simp;
    fmdl.boundary= find_boundary( simp );
 
-   fmdl.solve=      'np_fwd_solve';
-   fmdl.jacobian=   'np_calc_jacobian';
-   fmdl.system_mat= 'np_calc_system_mat';
+   fmdl.solve=      @fwd_solve_1st_order;
+   fmdl.jacobian=   @jacobian_adjoint;
+   fmdl.system_mat= @system_mat_1st_order;
 
    for i=1:length(zc)
        electrodes(i).z_contact= zc(i);
@@ -488,7 +486,6 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
 
    fmdl.gnd_node=           gnd_ind;
    fmdl.electrode =         electrodes;
-   fmdl.np_fwd_solve.perm_sym =     '{n}';
 
    fmdl.stimulation = mk_stim_patterns(16,2,[0,1],[0,1], ...
              {'no_meas_current','no_rotate_meas'},-1);
@@ -496,10 +493,9 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    fmdl= eidors_obj('fwd_model', fmdl);
 
    inv_mdl.name=         'Nick Polydorides EIT inverse';
-   inv_mdl.solve=       'np_inv_solve';
+   inv_mdl.solve=       @inv_solve_diff_GN_one_step;
    inv_mdl.hyperparameter.value = 1e-2;
-   inv_mdl.RtR_prior= 'np_calc_image_prior';
-   inv_mdl.np_calc_image_prior.parameters= [3 1]; % see iso_f_smooth: deg=1, w=1
+   inv_mdl.RtR_prior= @prior_laplace;
    inv_mdl.reconst_type= 'difference';
    inv_mdl.jacobian_bkgnd.value= 1;
    inv_mdl.fwd_model= fmdl;
