@@ -5,6 +5,11 @@ PRI DEF=
 4 if we have time
 5 some day
 
+==========
+ - fix for deprecate
+     mk_common_model('n3r2')
+
+
 ========== 01: PRI=1 ACT=AA
 tutorials - deprecate update
  - geophys tutorial - finish = AA
@@ -45,6 +50,8 @@ Fix colourbar -> make work with Camille's code, too.
 noser_image_prior
   - may fail on this line (change in spdiags in new matlab)
     Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
+
+  => DONE. DON'T SEE THE PROBLEM
 ========== 11: PRI=1 ACT=AA/BG
 There is an inconsistency between
    mk_grid_models - which has its own pixels
@@ -59,6 +66,9 @@ also show_slices is crufty
 % TODO: because we wanted (back in 2005) to let show_slices
 % handle lots of different scenarios (calling with images and
 % without. It is now crufty ... and should be changed.
+
+  => DONE. VALIDATE WITH TUTORIALS
+  => REMOVE CRUFT
 
 ========== 13: PRI=2 ACT=AA/BG
 noise figures and nf selection code
@@ -155,6 +165,8 @@ merge eidors_model_params and fix_models
     - deprecate demo_real, demo_complex
 ========== 36: PRI=3 ACT=?
  - add a 'papers using eidors' section
+========== 3 : PRI=3 ACT=?
+ - 2.5D solutions
 
 ========== 37: PRI=4 ACT=?
  OCTAVE DIRECTORY NAMES
