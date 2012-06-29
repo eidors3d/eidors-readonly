@@ -1,4 +1,4 @@
-function [s_mat]=mc_calc_system_mat(fwd_model,img)
+function [s_mat]=calc_system_mat_higher_order(fwd_model,img)
 %Assemble the total stiffness matrix : s_mat.E=At;
 %M Crabb - 29.06.2012
 
@@ -44,7 +44,7 @@ elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
 %Find fem type and find quadrature points/weights for integration over
 %element consistent with geometry of reference element
 eletype=fwd_model.mc_type; 
-[weight,xcoord,ycoord,zcoord]=elemgaussquad(eletype);
+[weight,xcoord,ycoord,zcoord]=element_gauss_points(eletype);
 
 %Loop over the elements and calculate local Am matrix
 for i=1:nelems
@@ -71,8 +71,8 @@ for i=1:nelems
     Ammat=0;
     for kk=1:size(weight,2)
         Ammat = Ammat + weight(kk)* ...
-            (jacobianelem\delemshapefunc(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))'* ...
-            (jacobianelem\delemshapefunc(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))*magjacelem;
+            (jacobianelem\element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))'* ...
+            (jacobianelem\element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))*magjacelem;
     end
     %This is element stiffness matrix (and multiply by its conductivity)
     elemstruc(i).stiff=Ammat*img.elem_data(i); 
@@ -128,7 +128,7 @@ end
 %Find fem type and find quadrature points/weights for integration over
 %boundaries consistent with geometry of reference boundary
 eletype=fwd_model.mc_type; 
-[weight,xcoord,ycoord]=boundgaussquad(eletype);
+[weight,xcoord,ycoord]=boundary_gauss_points(eletype);
 
 
 %Loop over boundarys and calculate local Aw/Az matrices
@@ -153,10 +153,10 @@ for ii=1:nbounds
     Azmat=0; Awmat=0;
     for kk=1:size(weight,2)
         Azmat = Azmat + weight(kk)* ...
-            (boundshapefunc(eletype,xcoord(kk),ycoord(kk)))'* ...
-            (boundshapefunc(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
+            (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))'* ...
+            (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
         Awmat = Awmat + weight(kk)* ...
-            (boundshapefunc(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
+            (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
     end              
     %Multiply by the boundary scaling factor and store in fwd_model.boundary
     boundstruc(ii).Azmat=Azmat; boundstruc(ii).Awmat=Awmat; 

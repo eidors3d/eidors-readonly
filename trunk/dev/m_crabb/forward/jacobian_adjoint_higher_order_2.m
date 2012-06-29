@@ -1,4 +1,4 @@
-function J = mc_calc_jacobian(fwd_model,img)
+function J = jacobian_adjoint_higher_order_2(fwd_model,img)
 %Find the Jacobian associated with an image (and forward model)
 %Discretization of derivative method
 

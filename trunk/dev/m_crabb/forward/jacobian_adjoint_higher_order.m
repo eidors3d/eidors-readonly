@@ -1,4 +1,4 @@
-function J = mc_calc_jacobian_2(fwd_model,img)
+function J = jacobian_adjoint_higher_order(fwd_model,img)
 %Find the Jacobian associated with an image (and forward model)
 %Derivative of discretization method
 
@@ -9,7 +9,7 @@ end
 
 %Modify the forward model to be of my type
 %%fwd_model = mc_fem_modify(fwd_model); img.fwd_model=fwd_model;
-[bound,elem,nodes] = fem_modify(fwd_model); 
+[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model); 
 fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
 img.fwd_model=fwd_model;
 
@@ -146,7 +146,7 @@ elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
 %Find fem type and find quadrature points/weights for integration over
 %element consistent with geometry of reference element
 eletype=fwd_model.mc_type; 
-[weight,xcoord,ycoord,zcoord]=elemgaussquad(eletype);
+[weight,xcoord,ycoord,zcoord]=element_gauss_points(eletype);
 
 for i=1:nelems
     %Find the list of node numbers for each element
@@ -171,8 +171,8 @@ for i=1:nelems
     Ammat=0;
     for kk=1:size(weight,2)
         Ammat = Ammat + weight(kk)* ...
-            (jacobianelem\delemshapefunc(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))'* ...
-            (jacobianelem\delemshapefunc(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))*magjacelem;
+            (jacobianelem\element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))'* ...
+            (jacobianelem\element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))*magjacelem;
     end
     %This is element stiffness matrix (multiply by conductivity????)
     elemstiff(i).stiff=Ammat; %elemstiff(i).stiff=Ammat*img.elem_data(i); 

@@ -1,4 +1,4 @@
-function map = mapfunc(type,x,y,z)
+function map = element_shape_function(type,x,y,z)
 %MAPFUNC  A simple transformation to map from local coordinates of unit 
 %triangle and tetrahedra to global coordinates (straight edged elements!)
 %MAP = mapfunc(TYPE,X,Y,Z)
