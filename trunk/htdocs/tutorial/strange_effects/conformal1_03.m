@@ -10,8 +10,7 @@ hold on;
 show_current( img); 
 hold off;
 
-%print -dpng -r125 rpi_data01a.png
-print -depsc2 jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps conformal1_03a.png
+print_convert conformal1_03a.png '-density 125'
 
 nodes = img2.fwd_model.nodes; mn = min(nodes); mx= max(nodes);
 img2.fwd_model.mdl_slice_mapper.x_pts = linspace(mn(1),mx(1),50);
@@ -22,5 +21,5 @@ show_fem(img2); axis image;
 hold on;
 show_current( img2); 
 hold off;
-%print -dpng -r125 rpi_data01a.png
-print -depsc2 jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps conformal1_03b.png
+
+print_convert conformal1_03a.png '-density 125'

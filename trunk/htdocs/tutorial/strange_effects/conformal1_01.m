@@ -22,8 +22,7 @@ img.elem_data( yctr> 0 & yctr<2 & xctr>-10 & xctr<10 ) = 0.01;
 subplot(221)
 show_fem(img); axis image
 
-%print -dpng -r125 rpi_data01a.png
-print -depsc2 jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps conformal1_01a.png
+print_convert conformal1_01a.png '-density 125'
 
 
 
@@ -34,5 +33,4 @@ img2 = img; img2.fwd_model.nodes = [real(z), imag(z)];
 
 show_fem(img2); axis image
 
-%print -dpng -r125 rpi_data01a.png
-print -depsc2 jnk.eps;!LD_LIBRARY_PATH="" convert -density 125 jnk.eps conformal1_01b.png
+print_convert conformal1_01b.png '-density 125'
