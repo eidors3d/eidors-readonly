@@ -93,29 +93,27 @@ function mk_movie2(fname, imgs);
      imwrite(this_img, cmap, this_name, itp);
    end
 
-   ld_lib_path= sys_dep;
-
    if 0 % enumerate each file
       files= dir(sprintf('%s/img*.%s', dirname,itp ));
       % font selected is a windows font - how to make os-neutral?
       for ff= files(:)'
          fn= [dirname,'/',ff.name];
          fno= ff.name(4:8);
-         retval= system(sprintf( ...
-          '%s convert -font 6x8 -draw "text 0,10 ''%s''" %s %s', ...
-          ld_lib_path, fno, fn, fn ));
+         retval= system_cmd(sprintf( ...
+          'convert -font 6x8 -draw "text 0,10 ''%s''" %s %s', ...
+          fno, fn, fn ));
       end
 
    end
       
    if make_avi == 0
-      retval= system(sprintf( ...
-          '%s convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
-          ld_lib_path, dirname, fname ));
+      retval= system_cmd(sprintf( ...
+          'convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
+          dirname, fname ));
    else
-      retval= system(sprintf( ...
-          '%s ffmpeg -qscale 2 -r 25 -i %s/img*.jpg -vcodec msmpeg4v2 -y -an %s.avi', ...
-          ld_lib_path, dirname, fname ));
+      retval= system_cmd(sprintf( ...
+          'ffmpeg -qscale 2 -r 25 -i %s/img*.jpg -vcodec msmpeg4v2 -y -an %s.avi', ...
+          dirname, fname ));
    end
 
    if retval~=0
@@ -138,21 +136,6 @@ function rm_rf(dirname)
    else
        system(['rmdir /s /q "',dirname,'"']);
    end
-
-% work around stupid matlab bugs
-function ld_lib_path= sys_dep;
-   ld_lib_path='';
-   if  strfind(system_dependent('getos'),'Linux')
-     vv=version; 
-     ff=find(vv == ' '); 
-     if length(ff)>0;vv=vv(1:ff(1)-1);end
-     ff=find(vv == '.');
-     if length(ff)>1;vv=vv(1:ff(2)-1);end     
-     if str2num(vv)>=7
-        %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks external progs
-          ld_lib_path='LD_LIBRARY_PATH=;';
-      end      
-   end    
 
 function add_bar = mk_add_bar(frac, len) 
    sz_bar = 3/len;
