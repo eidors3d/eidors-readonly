@@ -54,7 +54,15 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 inv_model= eidors_model_params( inv_model );
 opts = parse_parameters( inv_model );
 
-eidors_msg('inv_solve: %s', inv_model.solve,2);
+solver = inv_model.solve;
+if isa(solver,'function handle')
+    solver = func2str(solver);
+end
+if strcmp(solver, 'eidors_default');
+    solver = eidors_default('get','inv_solve');
+end
+
+eidors_msg('inv_solve: %s', solver,2);
 
 if opts.abs_solve
    if nargin~=2;
