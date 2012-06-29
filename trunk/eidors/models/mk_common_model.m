@@ -92,17 +92,21 @@ end
 
 if strcmp(str(2:3),'2c') || strcmp(str(2:3),'2C')
 % 2D circular models
-   if     str(1)=='a'; layers=  4;
-   elseif str(1)=='b'; layers=  8;
-   elseif str(1)=='c'; layers= 12;
-   elseif str(1)=='d'; layers= 16;
-   elseif str(1)=='e'; layers= 20;
-   elseif str(1)=='f'; layers= 24;
-   elseif str(1)=='g'; layers= 28;
-   elseif str(1)=='h'; layers= 32;
-   elseif str(1)=='i'; layers= 36;
-   elseif str(1)=='j'; layers= 40;
-   else;  error(['don`t know what to do with option=%s',str]);
+   switch str(1)
+      case 'a'; layers=  4;
+      case 'b'; layers=  8;
+      case 'c'; layers= 12;
+      case 'd'; layers= 16;
+      case 'e'; layers= 20;
+      case 'f'; layers= 24;
+      case 'g'; layers= 28;
+      case 'h'; layers= 32;
+      case 'i'; layers= 36;
+      case 'j'; layers= 40;
+      case 'k'; layers= 44;
+      case 'l'; layers= 48;
+      case 'm'; layers= 52;
+      otherwise; error(['don`t know what to do with option=%s',str]);
    end
 
    inv_mdl = mk_2c_model( n_elec, layers, options );   
