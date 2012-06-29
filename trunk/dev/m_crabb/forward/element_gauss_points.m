@@ -20,6 +20,8 @@
 %OUTPUT
 %1. w - the weights matrix of shape function derivatives size(ndim,nshape)
 %2. x,y,z - evaluation points of the function f
+%
+%M Crabb - 29.06.2012
 
 if(strcmp(type,'tri3'))
     [w,x,y,z] = elemgaussquadtri3;

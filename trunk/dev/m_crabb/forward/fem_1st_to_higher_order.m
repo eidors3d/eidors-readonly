@@ -7,6 +7,8 @@ function [bound,elem,nodes]=fem_1st_to_higher_order(fwd_model)
 % fwd_model : is a fwd_model structure
 % bound : is the boundary nodes numbers (from boundary (bound(ii).nodes))
 % elem : is the element nodes numbers (from elems elem(ii).nodes))
+%
+%M Crabb - 29.06.2012
 
 bound = eidors_obj('get-cache', {fwd_model}, 'bound');
 elem = eidors_obj('get-cache', {fwd_model}, 'elem');

@@ -22,6 +22,8 @@ function [w,x,y]=boundary_gauss_points(type)
 %OUTPUT
 %1. w - the weights matrix of shape function derivatives size(ndim,nshape)
 %2. x,y,z - evaluation points of the function f
+%
+%M Crabb - 29.06.2012
 
 %Test what type of element we have
 if(strcmp(type,'tri3'))

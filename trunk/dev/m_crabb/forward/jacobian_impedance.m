@@ -1,6 +1,7 @@
 function J=jacobian_impedance(fwd_model,img)
 %Find the Jacobian associated with an image (and forward model) 
 %for the contact impedance
+%M Crabb - 29.06.2012
 
 %If function called only with image extract forward model
 if(nargin==1)
