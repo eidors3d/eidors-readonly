@@ -1,5 +1,6 @@
 function [s_mat]=mc_calc_system_mat(fwd_model,img)
 %Assemble the total stiffness matrix : s_mat.E=At;
+%M Crabb - 29.06.2012
 
 %Find no. of electrodes and no. of ndoes
 elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);

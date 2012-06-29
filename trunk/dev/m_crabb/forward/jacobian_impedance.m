@@ -1,4 +1,4 @@
-function J=mc_calc_jacobian_imp(fwd_model,img)
+function J=jacobian_impedance(fwd_model,img)
 %Find the Jacobian associated with an image (and forward model) 
 %for the contact impedance
 
