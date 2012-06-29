@@ -1,5 +1,28 @@
 function varargout = eidors_default(varargin)
-% EIDORS_DEFAULT - default function handler
+%EIDORS_DEFAULT Default function handler.
+%  EIDORS_DEFAULT redirects calls to the default implementation of the 
+%  calling function's functionality, e.g. if called from CALC_JACOBIAN it 
+%  will call JACOBIAN_ADJOINT. The default implementations are set at 
+%  startup in EIDORS_STARTUP, and can be manipulated as follows:
+%
+%  eidors_default('set','caller','implementation')  - set the default
+%  implementation of 'caller' function to 'implementation'.
+%
+%  eidors_default('get','caller') - get the current default implementation
+%  for 'caller'
+% 
+%  eidors_default('list') - list all stored defaults
+%
+%  NOTE: This is an internal function not meant to be called directly other
+%  than as indicated above. Rather, where the algorithm to be used by a 
+%  certain function is passed to it as a field on an eidors model
+%  structure, that field can be set to 'eidors_default'. For example, 
+%  the inverse solver to be used is in inv_solve is specified in 
+%  imdl.solve. If imdl.solve = 'eidors_default', a call to inv_solve(imdl)
+%  will use the default implementation.
+
+% (C) Bartlomiej Grychtol, 2012. License: GPL v. 2 or 3.
+% $Id$
 
 optargin = size(varargin,2);
 
