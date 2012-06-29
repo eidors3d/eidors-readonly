@@ -3,6 +3,8 @@ function Reg= prior_laplace( inv_model );
 % Reg= prior_laplace( inv_model )
 % Reg        => output regularization term
 % inv_model  => inverse model struct
+%  or
+% Reg= prior_laplace( fwd_model )
 %
 % This image prior is intended to be used as
 %  R'*R, but may be used as R for as well.
@@ -20,12 +22,17 @@ function Reg= prior_laplace( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
+switch inv_model.type
+  case 'inv_model'; fwd_model = inv_model.fwd_model;
+  case 'fwd_model'; fwd_model = inv_model;
+  otherwise; error('PRIOR_LAPLACE requires input type of inv_model or fwd_model');
+end
 
+pp= fwd_model_parameters( fwd_model );
 
-pp= fwd_model_parameters( inv_model.fwd_model );
-
-Reg = eidors_obj('get-cache', inv_model.fwd_model , 'prior_laplace');
+Reg = eidors_obj('get-cache', fwd_model , 'prior_laplace');
 if ~isempty(Reg)
    eidors_msg('prior_laplace: using cached value', 3);
    return
@@ -48,7 +55,7 @@ Reg = speye( pp.n_elem );
 
    Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
    
-eidors_obj('set-cache', inv_model.fwd_model , 'prior_laplace', Reg);
+eidors_obj('set-cache', fwd_model , 'prior_laplace', Reg);
 eidors_msg('prior_laplace: setting cached value', 3);
    
    
@@ -61,3 +68,17 @@ function elems= find_adjoin(ee, ELEM)
      ss= ss | ELEM==nn(i);
    end
    elems= find(sum(ss,1)==d-1);
+
+function do_unit_test
+
+   imdl = mk_common_model('a2c2',16);
+   RtR = prior_laplace( imdl );
+   subplot(221); spy(RtR);
+   unit_test_cmp('a2c2', nnz(RtR), 240);
+
+   fmdl = mk_circ_tank(2,[],4);
+   RtR = prior_laplace( fmdl );
+   subplot(222); spy(RtR);
+   unit_test_cmp('2-4',RtR(1:4,1:8), [ ...
+      6, -2,  0, -2, -2,  0,  0,  0; -2,  6, -2,  0,  0, -2,  0,  0;
+      0, -2,  6, -2,  0,  0, -2,  0; -2,  0, -2,  6,  0,  0,  0, -2]);
