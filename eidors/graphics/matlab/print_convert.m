@@ -53,22 +53,18 @@ if any(slash)
 %  tmpnam = ['/cygdrive/', tmpnam([1,3:end])]; - find a way to generalize
 end
 
-ld = ''; % OVERRIDE STUPID MATLAB LD_LIBRARY_PATH
-if isunix && ~exist('OCTAVE_VERSION','var');
-   ld= 'LD_LIBRARY_PATH=""';
-end
 
 % this isn't working for old versions of vnc
-cmd = sprintf('%s convert -density 125 %s -trim  %s %s', ld, options, tmpnam, filename);
+cmd = sprintf('convert -density 125 %s -trim  %s %s',  options, tmpnam, filename);
 
 % Code to try to use gs to get around imagemagick bugs
 if 0
 options = regexprep(options, '\-density (\d+)','-r$1');
-cmd = sprintf('%s gs -r125 %s -dEPSCrop -sDEVICE=png16m -sOutputFile=%s -dBATCH -dNOPAUSE %s', ...
-    ld, options, filename, tmpnam) 
+cmd = sprintf('gs -r125 %s -dEPSCrop -sDEVICE=png16m -sOutputFile=%s -dBATCH -dNOPAUSE %s', ...
+     options, filename, tmpnam) 
 end
 
-flag = system(cmd);
+flag = system_cmd(cmd);
 if flag~=0
    warning('Failed to call imagemagick to crop image?');
 end
