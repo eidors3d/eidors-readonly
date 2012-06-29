@@ -14,6 +14,9 @@ function test1_np_3d
 % Fine model
 imdl = mk_common_model('n3r2');
 f1mdl = imdl.fwd_model;
+f1mdl.solve = @np_fwd_solve;
+f1mdl.system_mat = @np_calc_system_mat;
+f1mdl.jacobian   = @np_calc_jacobian;
 
 % Create 2D FEM of all NODES with z=0
 n2d = f1mdl.nodes( (f1mdl.nodes(:,3) == 0), 1:2);
