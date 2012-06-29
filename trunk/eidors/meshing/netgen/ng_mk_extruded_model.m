@@ -67,7 +67,7 @@ end
 
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
-
+fmdl.mat_idx = mat_idx;
 
 function [fmdl_mat_idx] = mk_extruded_model(shape, elec_pos, elec_shape, ...
     extra_ng_code)

@@ -38,7 +38,9 @@ are even smoother than they should be.
   => May be fixed. Check
   => DONE. Fixed in calc_slices
 
-
+========== 08: PRI=1 ACT=BG
+ - ng_mk_functions
+     - add mat_idx on the output itself : DONE   
 ###############
 
 ========== 01: PRI=1 ACT=AA
@@ -65,9 +67,6 @@ inv_solve_4d_prior and inv_solve_time_prior ?
 ========== 06: PRI=1 ACT=AA
 Change code that uses iso_f_smooth to use the proper RtR_prior formulation
 
-========== 08: PRI=1 ACT=BG
- - ng_mk_functions
-     - add mat_idx on the output itself
 ========== 09: PRI=1 ACT=BG/AA
  - fix eidors colorbar - give proper location
 Fix colourbar -> make work with Camille's code, too.
