@@ -24,7 +24,7 @@ function EITDisplayMovie(eitimages,time,clim,createavi)
 % Output:
 %
 % Copyright C. Gomez-Laberge, January 2011.
-% $Id: $
+% $Id$
 
 % Set error status to 'no errors present'
 s = false;

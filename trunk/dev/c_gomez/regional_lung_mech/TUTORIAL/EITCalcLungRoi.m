@@ -3,7 +3,7 @@ function [eitimages_out,optimalp,s] = EITCalcLungRoi(eitimages,optimalp)
 %value for ROI heuristically: threshold perturbation causing least effect.
 %
 % Copyright C. Gomez-Laberge, December 2010.
-% $Id: $
+% $Id$
 
 s = false;
 

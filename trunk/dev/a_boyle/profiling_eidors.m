@@ -1,5 +1,5 @@
 % This started from the EIDORS tutorial, then modified as required
-% Basic 3d model $Id: basic_3d_01.m 2161 2010-04-04 20:33:46Z aadler $
+% Basic 3d model $Id$
 
 % Make sure we're only doing this in a single-threaded fashion
 maxNumCompThreads(1);

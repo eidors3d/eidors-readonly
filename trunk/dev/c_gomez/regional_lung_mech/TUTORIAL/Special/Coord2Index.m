@@ -4,7 +4,7 @@ function index = Coord2Index(coord,dims)
 % coord = [x1,y1;x2,y2;...;xm,ym];
 % dims = [number of x pixels,number of y pixels];
 % Copyright C. Gomez-Laberge, August 2009
-% $Id: $
+% $Id$
 m = size(coord,1);
 index = zeros(m,1);
 xdim = dims(1);

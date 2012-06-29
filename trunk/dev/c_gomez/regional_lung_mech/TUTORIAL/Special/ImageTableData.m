@@ -1,7 +1,7 @@
 function z = ImageTableData(ztab,imgdim,index)
 % function z = ImageTableData(ztab,imgdim,index)
 % Copyright C. Gomez-Laberge, November 2010
-% $Id: $
+% $Id$
 
 [pixels,time] = size(ztab);
 z = zeros([imgdim(1),imgdim(2),time]);

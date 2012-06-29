@@ -15,7 +15,7 @@ function [bands] = CalcRoiBands(lungROI)
 % s         boolean     scalar      errors present: true
 % 
 % Copyright C. Gomez-Laberge, June 2011.
-% $Id: $
+% $Id$
 
 vdproj = sum(lungROI,2);
 

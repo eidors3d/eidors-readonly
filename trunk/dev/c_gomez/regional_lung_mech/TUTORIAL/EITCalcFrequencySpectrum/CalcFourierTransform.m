@@ -15,7 +15,7 @@ function [Ymag,Ypha,f] = CalcFourierTransform(y,samplerate,graph)
 % f             double     1xM          frequency axis (Hz)
 %
 % Copyright C. Gomez-Laberge, November 2010.
-% $Id: $
+% $Id$
 
 % Check arguments
 switch nargin
