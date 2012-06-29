@@ -5,10 +5,26 @@ PRI DEF=
 4 if we have time
 5 some day
 
-==========
+========== 00: PRI=1 ACT=AA
  - fix for deprecate
      mk_common_model('n3r2')
+    - DONE
+========== 10: PRI=1 ACT=MC/RM
+noser_image_prior
+  - may fail on this line (change in spdiags in new matlab)
+    Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
 
+  => DONE. DON'T SEE THE PROBLEM
+========== 12: PRI=1 ACT=AA
+also show_slices is crufty
+% TODO: because we wanted (back in 2005) to let show_slices
+% handle lots of different scenarios (calling with images and
+% without. It is now crufty ... and should be changed.
+
+  => DONE. VALIDATE WITH TUTORIALS
+  => REMOVE CRUFT
+
+###############
 
 ========== 01: PRI=1 ACT=AA
 tutorials - deprecate update
@@ -46,12 +62,6 @@ Change code that uses iso_f_smooth to use the proper RtR_prior formulation
  - fix eidors colorbar - give proper location
 Fix colourbar -> make work with Camille's code, too.
  - BG's colourbar
-========== 10: PRI=1 ACT=MC/RM
-noser_image_prior
-  - may fail on this line (change in spdiags in new matlab)
-    Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
-
-  => DONE. DON'T SEE THE PROBLEM
 ========== 11: PRI=1 ACT=AA/BG
 There is an inconsistency between
    mk_grid_models - which has its own pixels
@@ -61,14 +71,6 @@ Generally, this means that the pictures from calc_slices
 are even smoother than they should be. 
   => May be fixed. Check
 
-========== 12: PRI=1 ACT=AA
-also show_slices is crufty
-% TODO: because we wanted (back in 2005) to let show_slices
-% handle lots of different scenarios (calling with images and
-% without. It is now crufty ... and should be changed.
-
-  => DONE. VALIDATE WITH TUTORIALS
-  => REMOVE CRUFT
 
 ========== 13: PRI=2 ACT=AA/BG
 noise figures and nf selection code
