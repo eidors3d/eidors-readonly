@@ -342,6 +342,11 @@ function inv2d= mk_2r_model( n_elec, xy_size, options)
     xy_size= xy_size+1;
 
 % TODO: To keep elements square, we should scale the 1's
+    if 1
+    xvec = linspace(-1,1,xy_size(1));
+    yvec = linspace(-1,1,xy_size(2));
+    fmdl = mk_grid_model([],xvec,yvec);
+    else
     [x,y]= meshgrid( linspace(-1,1,xy_size(1)), ...
                      linspace(-1,1,xy_size(2)));
     x=x';y=y';
@@ -356,7 +361,7 @@ function inv2d= mk_2r_model( n_elec, xy_size, options)
     end
 
     fmdl.boundary = find_boundary( fmdl.elems);
-
+    end
     % put 1/4 of elecs on each side 
     tb_elecs= linspace(1, xy_size(1), 1+2*n_elec(1)/4); 
     tb_elecs= tb_elecs(2:2:end);
