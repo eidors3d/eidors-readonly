@@ -10,7 +10,7 @@ if optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
 end
 
 % setters and getters
-if optargin > 1 && ischar(varargin{1})
+if optargin > 0 && ischar(varargin{1})
     switch varargin{1}
         case 'get'
             varargout{1} = get_default(varargin{2});
@@ -22,12 +22,22 @@ if optargin > 1 && ischar(varargin{1})
             set_default(varargin{2},varargin{3});
             return
         case 'list'
+            varargout{1} = list_defaults;
             return
     end
 end
 s = dbstack;
 caller  = s(2).name;
 varargout{:} = call_default(caller,varargin{:});
+
+function list = list_defaults
+    global eidors_objects
+    try
+        list = eidors_objects.defaults;
+    catch
+        list = [];
+    end
+
 
 function set_default(caller, default)
     global eidors_objects
@@ -36,7 +46,11 @@ function set_default(caller, default)
 
 function default = get_default(caller)
     global eidors_objects
-    default = eidors_objects.defaults.(caller);
+    try
+        default = eidors_objects.defaults.(caller);
+    catch
+        error(['No default implementation of ' caller '.']);
+    end
 
 function varargout = call_default(caller,varargin);
 default = get_default(caller);
@@ -44,7 +58,14 @@ varargout{:} = feval(default,varargin{:});
 
 
 function do_unit_test
-eidors_default('set','eidors_default','test_def');
+fid = fopen('test_def.m','w');
+fprintf(fid, 'function out = test_def(in);');
+fprintf(fid, 'disp(''test_def'');');
+fprintf(fid, 'disp(in);');
+fprintf(fid, 'out = in;');
+fclose(fid);
+eidors_default('set','do_unit_test','test_def');
 eidors_default(5);
 val = eidors_default(6)
-eidors_default('get','eidors_default')
+eidors_default('get','do_unit_test')
+delete('test_def.m');
