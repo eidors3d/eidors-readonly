@@ -19,8 +19,11 @@ axis square
 print_convert two_and_half_d01a.png '-density 75'
 
 % Simulate data - inhomogeneous
-vi= fwd_solve(inhomg_img);
+img = mk_image(demo_img,1);
+vi= fwd_solve(img);
 
 % Simulate data - homogeneous
-homg_img= inhomg_img; homg_img.elem_data(:) = 1;
-vh= fwd_solve(homg_img);
+load( 'datacom.mat' ,'A','B')
+img.elem_data(A)= 1.15;
+img.elem_data(B)= 0.80;
+vh= fwd_solve(img);
