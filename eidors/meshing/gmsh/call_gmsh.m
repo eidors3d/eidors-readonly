@@ -26,16 +26,11 @@ while( 1 )
    ldpath='';
    if  strfind(system_dependent('getos'),'Linux')
      islinux =1;
-     s=version; ff= find(s=='.');
-      if str2double(s(1:ff(2)-1))>=7
-        %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
-          ldpath ='LD_LIBRARY_PATH=;';
-      end      
    else
      islinux =0;
    end    
 
-   status= system(sprintf( '%s %s %s -%d -v 2', ldpath, gmsh_name, geo_file, dim));
+   status= system_cmd(sprintf( '%s %s -%d -v 2',  gmsh_name, geo_file, dim));
 
    if status==0; break; end
 
@@ -54,25 +49,6 @@ while( 1 )
        'http://www.geuz.org/gmsh/\n\n' ...
        'Note that you *MUST* use names without spaces. Thus\n' ...
        'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
-%      gmsh_path = input('gmsh_path? ','s');
-%      if exist( sprintf('%s/gmsh.exe',gmsh_path) , 'file' ) 
-%         disp('Found gmsh.');
-%       fid= fopen('ng.bat','w');
-%       fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-%       fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path);
-%       fprintf(fid,'%s/netgen.exe %%*\n', netgen_path);
-%       fclose(fid);
-%       elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
-%          disp('Found netgen version 4.3.1');
-%          fid= fopen('ng.bat','w');
-%          fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-%          fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-%          fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
-%          fclose(fid);
-%       else
-%          warning(['cannot find a version of netgen that I know about\n' ...
-%                   'Install netgen 4.4 or 4.3.1 or check the path\n']);
-%       end
         break;
    end
 end
