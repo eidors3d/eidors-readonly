@@ -2,8 +2,6 @@
 
 % Create a classic 2D inverse model
 imdl= mk_common_model('c2c2',16);
-% Rotate electrodes to match
-imdl.fwd_model.electrode([5:-1:1,16:-1:6]) = imdl.fwd_model.electrode;
 imdl.RtR_prior = @prior_gaussian_HPF;
 imdl.solve = @inv_solve_diff_GN_one_step;
 imdl.hyperparameter.value= 0.01;
