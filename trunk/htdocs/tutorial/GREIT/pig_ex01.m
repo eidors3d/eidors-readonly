@@ -10,7 +10,7 @@ pp= fourier_fit(trunk); sp = linspace(0,1,51);sp(end)=[]; centroid = mean(fourie
 elec_pos = elec_pos - ones(size(elec_pos,1),1) * centroid;
 electh= atan2(elec_pos(:,2),elec_pos(:,1))*180/pi; 
 
-% Buiold a fwd model
+% Build a fwd model
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 [fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk,lung} ,[4,50],.1},[electh,1+0*electh],[0.1]);
 fmdl.name = 'trunk_and_lungs';
