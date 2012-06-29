@@ -7,6 +7,9 @@ PRI DEF=
 
 ========== 01: PRI=1 ACT=AA
 tutorials - deprecate update
+ - geophys tutorial - finish = AA
+ - add neonate tutorial
+ - look at tutorial report
 
 ========== 02: PRI=1 ACT=BG
 GMSH 
@@ -150,6 +153,8 @@ merge eidors_model_params and fix_models
 ========== 36: PRI=3 ACT=?
  - see if we need examples, or move to tutorials
     - deprecate demo_real, demo_complex
+========== 36: PRI=3 ACT=?
+ - add a 'papers using eidors' section
 
 ========== 37: PRI=4 ACT=?
  OCTAVE DIRECTORY NAMES
