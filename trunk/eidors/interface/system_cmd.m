@@ -13,7 +13,7 @@ if strfind(system_dependent('getos'),'Linux')
   % Problems are a) some newer matlab versions dont' need it,
   %   b) what if people are working in tcsh?
 
-  cmd = ['sh -c ''LD_LIBRARY_PATH; ',cmd,' '' '];
+  cmd = ['sh -c ''LD_LIBRARY_PATH=""; ',cmd,' '' '];
 end
 
 status = system(cmd);
