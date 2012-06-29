@@ -3,6 +3,7 @@
 imdl= mk_common_model('c2c2',16);
 % Use normalized difference imaging
 imdl.fwd_model.normalize_measurements=1;
+%imdl= mk_common_gridmdl('GREITc1');
 
 subplot(211);
 show_fem(imdl.fwd_model, [0,1,0]);
