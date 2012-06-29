@@ -145,7 +145,7 @@ elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
 
 %Find fem type and find quadrature points/weights for integration over
 %element consistent with geometry of reference element
-eletype=fwd_model.mc_type; 
+eletype=fwd_model.approx_type; 
 [weight,xcoord,ycoord,zcoord]=element_gauss_points(eletype);
 
 for i=1:nelems

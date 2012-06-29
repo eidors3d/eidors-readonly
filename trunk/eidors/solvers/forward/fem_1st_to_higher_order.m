@@ -2,7 +2,7 @@ function [bound,elem,nodes]=fem_1st_to_higher_order(fwd_model)
 % FEM_MODIFY:  Modify the FEM for high order FEM called as
 %    [bound,elem] = mc_fem_modify( fwd_model )
 % It will call :fwd_model.modify=@mc_fem_modify
-% where we need to make sure fwd_model.mc_type='tri3', 'tet4' etc. 
+% where we need to make sure fwd_model.approx_type='tri3', 'tet4' etc. 
 %
 % fwd_model : is a fwd_model structure
 % bound : is the boundary nodes numbers (from boundary (bound(ii).nodes))
@@ -88,26 +88,26 @@ elembound = mc_connect_elem_bound(elemstruc,boundstruc,nodedim);
 boundstruc = linear_bound_reorder(boundstruc,nodestruc,elemstruc,elembound,ccw);
 
 %Find every elements neighbouring elements (sharing an EDGE)
-elemedge = mc_connect_elem_edge_neigh(elemstruc,mdl.mc_type,nodedim);
+elemedge = mc_connect_elem_edge_neigh(elemstruc,mdl.approx_type,nodedim);
 
 %Loop over elems, add new nodes using index vector of element neighbours
-if(strcmp(mdl.mc_type,'tri3') || strcmp(mdl.mc_type,'tet4'))
+if(strcmp(mdl.approx_type,'tri3') || strcmp(mdl.approx_type,'tet4'))
     %Do nothing, need no refinement
-elseif(strcmp(mdl.mc_type,'tri6'))    
+elseif(strcmp(mdl.approx_type,'tri6'))    
     for ii=1:nelems
         [elemstruc,nodestruc,newnodes] = prefine2dquadelement(elemstruc,nodestruc,newnodes,ii,elemedge); 
     end
     for jj=1:nbounds
         [boundstruc,elemstruc,nodestruc,newnodes] = prefine2dquadboundary(boundstruc,elemstruc,nodestruc,newnodes,jj,elembound); 
     end        
-elseif(strcmp(mdl.mc_type,'tri10'))
+elseif(strcmp(mdl.approx_type,'tri10'))
     for ii=1:nelems
         [elemstruc,nodestruc,newnodes] = prefine2dcubielement(elemstruc,nodestruc,newnodes,ii,elemedge); 
     end
     for jj=1:nbounds
         [boundstruc,elemstruc,nodestruc,newnodes] = prefine2dcubiboundary(boundstruc,elemstruc,nodestruc,newnodes,jj,elembound); 
     end
-elseif(strcmp(mdl.mc_type,'tet10'));
+elseif(strcmp(mdl.approx_type,'tet10'));
     for ii=1:nelems
         [elemstruc,nodestruc,newnodes] = prefine3dquadelement(elemstruc,nodestruc,newnodes,ii,elemedge); 
     end
@@ -115,7 +115,7 @@ elseif(strcmp(mdl.mc_type,'tet10'));
          [boundstruc,elemstruc,nodestruc,newnodes] = prefine3dquadboundary(boundstruc,elemstruc,nodestruc,newnodes,jj,elembound);        
     end
 else
-    error('mc_fem_modify: Element type ("%s") not recognised',mdl.mc_type);
+    error('mc_fem_modify: Element type ("%s") not recognised',mdl.approx_type);
 end
 
 %Re-assign node, element and boundary structures
