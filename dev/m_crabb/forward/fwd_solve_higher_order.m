@@ -1,5 +1,6 @@
-function[data] = mc_fwd_solve(fwd_model,img)
+function[data] = fwd_solve_higher_order(fwd_model,img)
 %Solve for voltages (nodes/electrodes) for a forward model. 
+%M Crabb - 29.06.2012
 
 %If function called only with image, extract forward model
 if(nargin==1)
