@@ -54,9 +54,9 @@ if any(slash)
 end
 
 ld = ''; % OVERRIDE STUPID MATLAB LD_LIBRARY_PATH
-% if isunix && ~exist('OCTAVE_VERSION','var');
-%    ld= 'LD_LIBRARY_PATH=""';
-% end
+if isunix && ~exist('OCTAVE_VERSION','var');
+   ld= 'LD_LIBRARY_PATH=""';
+end
 
 % this isn't working for old versions of vnc
 cmd = sprintf('%s convert -density 125 %s -trim  %s %s', ld, options, tmpnam, filename);
