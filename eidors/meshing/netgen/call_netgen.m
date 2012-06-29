@@ -33,11 +33,6 @@ end
      islinux =1;
    elseif strfind(system_dependent('getos'),'Linux')
      islinux =1;
-     s=version; ff= find(s=='.');
-      if str2num(s(1:ff(2)-1))>=7
-        %Version 7 under linux sets the LD_LIBRARY_PATH and that breaks netgen    
-          ldpath ='LD_LIBRARY_PATH=;';
-      end      
    else
      islinux =0;
    end    
@@ -64,17 +59,18 @@ while( 1 )
    end
    fclose(fid);
 
-   status= system(sprintf( ...
-        '%s %s %s -batchmode -geofile=%s  -meshfile=%s ', ...
-         ldpath, ng_name, finelevel,geo_file,vol_file));
+   sys_cmd = sprintf('%s %s -batchmode -geofile=%s  -meshfile=%s ', ...
+             ng_name, finelevel,geo_file,vol_file);
+   status= system_cmd( sys_cmd );
    if status==0; break; end
 
    if islinux
-      disp(['It seems you are running Linux and netgen has not worked. ' ...
+      fprintf(['It seems you are running Linux and netgen has not worked. ' ...
            'Check that it is installed and on the path. ' ...
-           'Perhaps LD_LIBRARY_PATH needs to be set?' ...
-           'For newer versions of netgen, you need to set the environment variable NETGENDIR.', ...
-           'Please enter a new netgen file name' ]);
+           'For newer versions of netgen, you need to set the environment' ...
+           ' variable NETGENDIR. This can be set by starting matlab as follows:\n', ...
+           '   NETGENDIR=/path/to/netgen PATH=/path/to/netgen:$PATH matlab\n', ...
+           'Please enter a new netgen file name\n' ]);
       ng_name = input('netgen file name (with path)? [or i=ignore, e=error] ','s');
       if strcmp(ng_name,'i'); break;end
       if strcmp(ng_name,'e'); error('user requested'),end;
@@ -115,7 +111,7 @@ while( 1 )
          fclose(fid);
       else
          warning(['cannot find a version of netgen that I know about\n' ...
-                  'Install netgen 4.4 or 4.3.1 or check the path\n']);
+                  'Install netgen or check the path\n']);
       end
    end
 end
