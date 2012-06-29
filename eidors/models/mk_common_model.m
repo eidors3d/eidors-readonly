@@ -481,27 +481,9 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    fmdl.electrode =         electrodes;
    fmdl.np_fwd_solve.perm_sym =     '{n}';
 
-   [I,Ib] = set_3d_currents(protocol, elec, ...
-               fmdl.nodes, fmdl.gnd_node, no_pl);
+   fmdl.stimulation = mk_stim_patterns(16,2,[0,1],[0,1], ...
+             {'no_meas_current','no_rotate_meas'},-1);
 
-   % get the measurement patterns, only indH is used in this model
-   %   here we only want to get the meas pattern from 'get_3d_meas',
-   %   not the voltages, so we enter zeros
-   [jnk,jnk,indH,indV,jnk] = get_3d_meas( elec, ...
-            fmdl.nodes, zeros(size(I)), Ib, no_pl );
-   n_elec= size(elec,1);
-   n_meas= size(indH,1) / size(Ib,2);
-   for i=1:size(Ib,2)
-      fmdl.stimulation(i).stimulation= 'mA';
-      fmdl.stimulation(i).stim_pattern= Ib(:,i);
-
-      idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
-      fmdl.stimulation(i).meas_pattern= sparse ( ...
-              (1:n_meas)'*[1,1], ...
-              indH( idx, : ), ...
-              ones(n_meas,2)*[1,0;0,-1], ...
-              n_meas, n_elec );
-   end
    fmdl= eidors_obj('fwd_model', fmdl);
 
    inv_mdl.name=         'Nick Polydorides EIT inverse';
@@ -612,6 +594,50 @@ function inv_mdl = mk_complete_elec_mdl( inv_mdl, layers);
 %%%%%%%%%%%%%%%%%%%%%% TESTS %%%%%%%%%%%%%%%%%%%%%%%
 function do_unit_test
 
+test_circ_models
+test_3d_models
+test_np_get_3d_meas
+test_distmesh_models
+
+function test_np_get_3d_meas
+   imdl=mk_common_model('n3r2'); st1=imdl.fwd_model.stimulation;
+   fmdl = imdl.fwd_model;
+   
+   % get the measurement patterns, only indH is used in this model
+   %   here we only want to get the meas pattern from 'get_3d_meas',
+   %   not the voltages, so we enter zeros
+   load( 'datareal.mat' );
+   [I,Ib] = set_3d_currents(protocol, elec, ...
+               fmdl.nodes, fmdl.gnd_node, no_pl);
+   [jnk,jnk,indH,indV,jnk] = get_3d_meas( elec, ...
+            fmdl.nodes, zeros(size(I)), Ib, no_pl );
+   n_elec= size(elec,1);
+   n_meas= size(indH,1) / size(Ib,2);
+   for i=1:size(Ib,2)
+      fmdl.stimulation(i).stimulation= 'mA';
+      fmdl.stimulation(i).stim_pattern= Ib(:,i);
+
+      idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
+      fmdl.stimulation(i).meas_pattern= sparse ( ...
+              (1:n_meas)'*[1,1], ...
+              indH( idx, : ), ...
+              ones(n_meas,2)*[1,0;0,-1], ...
+              n_meas, n_elec );
+   end
+   st2 = fmdl.stimulation;
+   
+
+   sp1=[]; sp2=[]; mp1=[]; mp2=[]; 
+   for i=1:32;
+      sp1= [sp1, st1(i).stim_pattern]; mp1= [mp1, st1(i).meas_pattern];
+      sp2= [sp2, st2(i).stim_pattern]; mp2= [mp2, st2(i).meas_pattern];
+   end
+   unit_test_cmp('STIM_PAT:',sp1,sp2);
+   unit_test_cmp('MEAS_PAT:',mp1,mp2);
+     
+      
+
+function test_circ_models
 % 2D Circular Models
 for j=('a'+0):('j'+0)
     mk_common_model(sprintf('%c2C2',j),16);
@@ -624,6 +650,7 @@ for j=('a'+0):('f'+0)
     mk_common_model(sprintf('%c2s',j),8);
 end;
 
+function test_3d_models
 % 3D Models:
     mk_common_model('n3r2',16);
  %  mk_common_model('n3z',16);
@@ -638,6 +665,7 @@ end;
     mk_common_model('c3cr',16);
     mk_common_model('d3cr',16);
 
+function test_distmesh_models
 % Distmesh models
 for i=0:4; for j=('a'+0):('j'+0)
     mk_common_model(sprintf('%c2d%dd',j,i),16);
