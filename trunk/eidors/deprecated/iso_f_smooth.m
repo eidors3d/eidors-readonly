@@ -3,8 +3,6 @@ function [Reg] = iso_f_smooth(simp,vtx,deg,w);
 %
 %Calculates a first order discrete Gaussian smoothing operator.
 %
-%
-%
 %simp = The simplices matrix.
 %vtx  = The vertices matrix.
 %deg  = 1 for nodes, 2 for edges and 3 for faces
@@ -14,6 +12,9 @@ function [Reg] = iso_f_smooth(simp,vtx,deg,w);
 if isstr(simp) && strcmp(simp,'UNIT_TEST'); do_unit_test; return; end
 
 warning('EIDORS:deprecated','ISO_F_SMOOTH is deprecated as of 06-Jun-2012. ');
+% It is recommended to use the newer prior functions in EIDORS. These
+% produce well documented prior matrices.
+
 
 
 if nargin<2
@@ -108,6 +109,25 @@ for i=1:size(ndsrch,1)
 end %for i'th simplex
 
 
+function [dd] = db23d(x1,y1,z1,x2,y2,z2);
+%Auxiliary function that caclulates the distance between 
+%two points or two sets of points in 3D
+%
+%(x1,y1,z1) = The coordinates of the first point(s) in 3D
+%(x2,y2,z2) = The coordinates of the second point(s) in 3D
+%dd         = Their distance(s)
+
+dd = sqrt((x2 - x1).^2 + (y2 - y1).^2 + (z2 - z1).^2);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is part of the EIDORS suite.
+% Copyright (c) N. Polydorides 2003
+% Copying permitted under terms of GNU GPL
+% See enclosed file gpl.html for details.
+% EIDORS 3D version 2.0
+% MATLAB version 5.3 R11
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is part of the EIDORS suite.
@@ -119,7 +139,19 @@ end %for i'th simplex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function do_unit_test
-   imdl = mk_common_model('a2c0',8);
-   simp = imdl.fwd_model.elems;
-   vtx  = imdl.fwd_model.nodes;
-   show_fem(imdl.fwd_model,[1,1,1]);
+   fmdl = mk_circ_tank(1,[0,.5],4);
+   simp = fmdl.elems;
+   vtx  = fmdl.nodes;
+subplot(221)
+   show_fem(fmdl,[1,1,1]);
+
+   Ref = iso_f_smooth(simp,vtx,1,1);
+   Ref = iso_f_smooth(simp,vtx,2,1);
+   Ref = iso_f_smooth(simp,vtx,3,1);
+subplot(222); spy(Ref)
+   Rel = prior_laplace(fmdl);
+subplot(224); spy(Rel);
+
+%% The shapes should be the same but the 
+%% Matrices are not symmetric from iso_f_smooth
+
