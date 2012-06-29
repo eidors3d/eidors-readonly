@@ -39,6 +39,7 @@ end
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                              stim_pattern, centres, z_contact,fc);
 mat_indices= mk_mat_indices( mat_ind);
+fwd_mdl.mat_idx = mat_indices;
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...

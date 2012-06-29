@@ -57,6 +57,7 @@ end
 
 mat_idx = fmdl{2};
 fmdl = fmdl{1};
+fmdl.mat_idx = mat_idx;
 
 function [fmdl_mat_idx] = mk_gen_model( shape_str, elec_pos, elec_shape, ...
                          elec_obj, extra_ng_code);
