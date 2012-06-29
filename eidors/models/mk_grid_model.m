@@ -26,7 +26,7 @@ else
 end
 
 % this had too many side effects
-% cmdl = set_pixel_pos(cmdl,xvec,yvec);% same for 2d and 3d
+cmdl = set_pixel_pos(cmdl,xvec,yvec);% same for 2d and 3d
 
 if ~isempty( fmdl)
    if nargin ==3

@@ -155,6 +155,9 @@ function rimg= calc_image_elems( elem_data, level, fwd_model, np)
       fwd_model.mdl_slice_mapper.npx  = np;
       fwd_model.mdl_slice_mapper.npy  = np;
       fwd_model.mdl_slice_mapper.level= level;
+      % grid model sets mdl_slice_mapper.np* but not level
+   elseif ~isfield(fwd_model.mdl_slice_mapper,'level');
+      fwd_model.mdl_slice_mapper.level= level;
    end
    elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
 
