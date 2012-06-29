@@ -18,7 +18,7 @@ end
 
 curdir = cd;
 cd(olddir);
-system(sprintf('%s svn mv %s.m %s.m', LDP, oldname, newname));
+system_cmd(sprintf('svn mv %s.m %s.m', oldname, newname));
 cd(eidors_dir);
 % match = '-path ./tools -prune -o -type f -iname "*.m"'; 
 match = '-path ./deprecated -prune -o -path ./tools -prune -o -type f -iname "*.m"';
@@ -33,9 +33,6 @@ system(sprintf(...
    'find ../htdocs/tutorial %s -print0 | xargs -0 sed  -i "s/%s/%s/g;s/%s/%s/g;"',...
    match, oldname, newname,upper(oldname),upper(newname)));
 cd(curdir)
-
-function ldp = LDP;
-   ldp = 'LD_LIBRARY_PATH="" ';
 
 function do_unit_test
 fid = fopen('test5.m','w');
