@@ -23,6 +23,12 @@ also show_slices is crufty
 
   => DONE. VALIDATE WITH TUTORIALS
   => REMOVE CRUFT
+========== 07: PRI=1 ACT=BG
+ - unit_test_cmp - print tolerance of comparison
+
+ - create assertions. standardize output
+  => DONE
+
 
 ###############
 
@@ -49,11 +55,6 @@ inv_solve_4d_prior and inv_solve_time_prior ?
 
 ========== 06: PRI=1 ACT=AA
 Change code that uses iso_f_smooth to use the proper RtR_prior formulation
-
-========== 07: PRI=1 ACT=BG
- - unit_test_cmp - print tolerance of comparison
-
- - create assertions. standardize output
 
 ========== 08: PRI=1 ACT=BG
  - ng_mk_functions
