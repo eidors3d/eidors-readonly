@@ -1,9 +1,6 @@
 % Build 2D and 3D model $Id$
 
-if ~exist('demo_img');
-   [inhomg_img, demo_img] = demo_real;
-   close all;
-end
+demo_img = mk_common_model('n3r2');
 
 % Create 2D FEM of all NODES with z=0
 f_mdl = demo_img.fwd_model;
