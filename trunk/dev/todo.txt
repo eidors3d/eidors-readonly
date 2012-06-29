@@ -28,6 +28,15 @@ also show_slices is crufty
 
  - create assertions. standardize output
   => DONE
+========== 11: PRI=1 ACT=AA/BG
+There is an inconsistency between
+   mk_grid_models - which has its own pixels
+and
+   calc_slices - which does its own interpolation
+Generally, this means that the pictures from calc_slices
+are even smoother than they should be. 
+  => May be fixed. Check
+  => DONE. Fixed in calc_slices
 
 
 ###############
@@ -63,15 +72,6 @@ Change code that uses iso_f_smooth to use the proper RtR_prior formulation
  - fix eidors colorbar - give proper location
 Fix colourbar -> make work with Camille's code, too.
  - BG's colourbar
-========== 11: PRI=1 ACT=AA/BG
-There is an inconsistency between
-   mk_grid_models - which has its own pixels
-and
-   calc_slices - which does its own interpolation
-Generally, this means that the pictures from calc_slices
-are even smoother than they should be. 
-  => May be fixed. Check
-
 
 ========== 13: PRI=2 ACT=AA/BG
 noise figures and nf selection code
