@@ -85,6 +85,7 @@ param.elems = elem';
 param.boundary = bdy';
 param.gnd_node = 1; % node at bottom and center of the tank
 param.electrode =  mk_electrodes( elec_nodes );
+param.type = 'fwd_model';
 
 return;
 
@@ -265,25 +266,23 @@ function elem=  node_reorder( elem0, node_order);
 
 function do_unit_test
   subplot(3,3,1)
-  mdl= eidors_obj('fwd_model', mk_circ_tank(2, [], 2 ));
+  mdl= mk_circ_tank(2, [], 2 );
   show_fem(mdl, [0,1,1]);
   unit_test_cmp('2D mdl', length(mdl.elems), 16);
 
   subplot(3,3,2)
-  mdl= eidors_obj('fwd_model', mk_circ_tank(4, [], 16 ));
+  mdl= mk_circ_tank(4, [], 16 );
   show_fem(mdl);
   unit_test_cmp('2D mdl', length(mdl.nodes), 41);
 
   subplot(3,3,3)
-  mdl= eidors_obj('fwd_model', ...
-        mk_circ_tank(4, linspace(-1,1,3), {'planes', 8, 2} ));
+  mdl= mk_circ_tank(4, linspace(-1,1,3), {'planes', 8, 2} );
   show_fem(mdl);
   unit_test_cmp('2D mdl', length(mdl.elems), 384);
 
   subplot(3,3,4)
-  mdl= eidors_obj('fwd_model', ...
-        mk_circ_tank(4, linspace(-1,1,5), {'zigzag', 4, [2,4]} ));
+  mdl= mk_circ_tank(4, linspace(-1,1,5), {'zigzag', 4, [2,4]} );
   show_fem(mdl);
   unit_test_cmp('2D mdl', length(mdl.elems), 768);
 
-  mdl= eidors_obj('fwd_model', mk_circ_tank(2, [], 18 ));
+% mdl=  mk_circ_tank(2, [], 18 );  error
