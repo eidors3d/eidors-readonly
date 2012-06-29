@@ -1,4 +1,4 @@
- function [w,x,y,z] = elemgaussquad(type)
+ function [w,x,y,z] = element_gauss_points(type)
 %ELEMGAUSSQUAD  
 %Weights and coordinate for Gauss integration over reference element as a
 %function of the element type. Specifically, we have rules that integrate

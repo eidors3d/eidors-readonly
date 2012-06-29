@@ -1,4 +1,4 @@
-function shape=boundshapefunc(type,x,y)
+function shape=boundary_shape_function(type,x,y)
 %BOUNDSHAPEFUNC  Shape functions on the boundary in local coordiantes
 %SHAPE = boundshapefunc(TYPE,X,Y)
 %

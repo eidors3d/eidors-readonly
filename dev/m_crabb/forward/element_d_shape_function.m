@@ -1,4 +1,4 @@
-function dshape = delemshapefunc(type,x,y,z)
+function dshape = element_d_shape_function(type,x,y,z)
 %DELEMSHAPEFUNC  
 %Derivative of shape functions of elements in local coordiantes. The basis 
 %functions are for an anti-clockwise vertex arrangement triangle (or in 3D

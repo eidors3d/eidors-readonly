@@ -8,7 +8,7 @@ if(nargin==1)
 end
 
 %Modify the forward model to be of my type
-[bound,elem,nodes] = fem_modify(fwd_model);
+[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model);
 fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
 img.fwd_model=fwd_model; %CHANGE THIS
 

@@ -1,4 +1,4 @@
-function [w,x,y]=boundgaussquad(type)
+function [w,x,y]=boundary_gauss_points(type)
 %BOUNDGAUSSQUAD  Weights and coordinate for Gauss integration over 
 %over triangles as a function of the element type
 %[w,x,y,z] = boundgaussquad(TYPE,X,Y,Z)
