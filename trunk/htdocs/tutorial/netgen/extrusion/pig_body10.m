@@ -9,7 +9,7 @@ imdl.fwd_model = fmdl;
 imdl.rec_model = fmdlr;
 imdl.fwd_model.coarse2fine = c2f;
 imdl.jacobian_bkgnd.value = ones(size(fmdl.elems,1),1);
-imdl.jacobian_bkgnd.value( mat_idx{2} ) = 0.3;
+imdl.jacobian_bkgnd.value( fmdl.mat_idx{2} ) = 0.3;
 
 imdl.fwd_model.normalize_measurements= 1;
 imdl.hyperparameter.value = 1e-3;

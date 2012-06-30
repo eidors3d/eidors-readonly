@@ -102,9 +102,9 @@ switch number
  elec_pos = [  elec_pos, elec_pos*[0,0,0,0], elec_pos*0+1];
  elec_shape=[0.3];
  elec_obj = 'top';
- [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  img = mk_image( fmdl, 1);
- img.elem_data(mat_idx{2}) = 1.1; 
+ img.elem_data(fmdl.mat_idx{2}) = 1.1; 
  
  fmdl = img; % so that the code shows the image
 
@@ -115,7 +115,7 @@ switch number
  elec_pos = [  elec_pos_x(:), elec_pos_y(:), ones(size(elec_pos_x(:)))*[0,0,0,1] ];
  elec_shape=[0.2];
  elec_obj = 'top';
- [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
    case 11;
  shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1.0); \n', ...
@@ -156,9 +156,9 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
               0,  0,  0, 0, -1,  0]; 
  elec_shape=[1.0];
  elec_obj = {'top','bottom'};
- [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  fmdl = mk_image(fmdl,1); 
- fmdl.elem_data(mat_idx{2}) = 1.1;
+ fmdl.elem_data(fmdl.mat_idx{2}) = 1.1;
 
    case 14;
 shape_str = ['solid cyl    = cylinder (0,0,0; 0,1,0; 1); \n', ...
@@ -176,7 +176,7 @@ elec_pos = [0,15, 0, 0, 1, 0; %top end electrode
             0, 2, 0, 1, 0, 0];%bot cylinder electrode
 elec_shape=[6,0,0];
 elec_obj = {'rod','rod','rod','rod'};
-[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 img  = mk_image(fmdl,1); 
 
 % join electrodes
@@ -200,7 +200,7 @@ elec_shape=[0.1];
 elec_obj = repmat({'top'}, 1, size(elec_pos,1));
 elec_pos(end+1,:) = [-2.0,0,-1.05,0,0,1]; elec_obj(end+1)   = {'cel1'};
 elec_pos(end+1,:) = [-2.0,0,-1.55,0,0,1]; elec_obj(end+1)   = {'cel2'};
-[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
    case 15.1;
 % First run 15

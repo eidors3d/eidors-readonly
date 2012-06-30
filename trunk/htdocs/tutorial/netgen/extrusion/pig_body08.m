@@ -1,5 +1,5 @@
 img = mk_image( fmdl, 1 );
-img.elem_data( mat_idx{2} ) = 0.3;
+img.elem_data( fmdl.mat_idx{2} ) = 0.3;
 vh= fwd_solve(img);
 
 % Put a ball in the object center

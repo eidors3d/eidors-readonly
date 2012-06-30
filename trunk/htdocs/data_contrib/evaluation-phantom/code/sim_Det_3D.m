@@ -50,15 +50,15 @@ end
 
 switch Dims;  % dims = 2 (2D) or 3 (3d)
     case 3;             
-[fmdl,mat_idx]= ng_mk_cyl_models(2,[Nelec,1],[0.1,0,0.03],extra);
+        fmdl= ng_mk_cyl_models(2,[Nelec,1],[0.1,0,0.03],extra);
  %show_fem(fmdl, [1 1 0])
     case 2;
-        [fmdl,mat_idx]= ng_mk_cyl_models(0,Nelec,[0.1,0,0.01],extra);
+        fmdl= ng_mk_cyl_models(0,Nelec,[0.1,0,0.01],extra);
     otherwise; error('huh?');
 end
 
 img= mk_image(fmdl,1);
-idx = mat_idx{2};
+idx = fmdl.mat_idx{2};
 vol= get_elem_volume(fmdl);
 ctrs = interp_mesh(fmdl); ctrs = ctrs( idx,: );
 rctrs = sqrt(ctrs(:,1).^2 + ctrs(:,2).^2) ;
