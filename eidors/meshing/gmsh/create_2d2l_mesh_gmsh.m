@@ -20,6 +20,7 @@ for th=theta
     y=ext_rad*cos(th);
     z=0;
     fprintf(geo_fid,'Point(%d) = {%f,%f,%f,%f};\n',point_no, x,y,z, ext_rad/100);
+    fprintf(geo_fid,'Physical Point("%s%d") = {%d};\n','electrode-',point_no, point_no);
     point_no = point_no + 1;
 end
 
@@ -71,9 +72,11 @@ fprintf(geo_fid,'Line Loop(%d) = {%d,%d};\n', inloop_no, circle1_no, ...
 
 fprintf(geo_fid, 'Plane Surface(%d) = {%d, %d};\n', line_no, extloop_no, ...
     inloop_no);
+fprintf(geo_fid, 'Physical Surface("extcircle") = {%d};\n', line_no);
 line_no = line_no + 1;
 
 fprintf(geo_fid, 'Plane Surface(%d) = {%d};\n', line_no, inloop_no);
+fprintf(geo_fid, 'Physical Surface("incircle") = {%d};\n', line_no);
 line_no = line_no + 1;
 
 fclose(geo_fid);

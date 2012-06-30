@@ -14,13 +14,13 @@ function status= call_gmsh(geo_file, dim)
 % $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
 
+% default to 2-D model
+if nargin<2
+    dim = 2;
+end
 
 % Gmsh executable filename
 gmsh_name = 'gmsh';
-
-if nargin < 2
-   dim = 2;
-end
 
 while( 1 )
    ldpath='';
