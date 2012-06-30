@@ -1,3 +1,4 @@
+2011-06-30: addeed electrode support in gmsh code 
 2011-06-30: added geophysics simulation for surface electrode array
 2011-06-30: eidors_msg will print the calling function automatically
 2011-06-30: eidors_cache can clean up named parts of the cache
