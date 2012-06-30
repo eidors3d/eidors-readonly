@@ -10,10 +10,13 @@ function log_level= eidors_msg( message, varargin )
 % eidors_msg('did %d of %s at %f', 2, 'stuff', sqrt(2), 1)
 %   prints 'EIDORS:[ did 2 of stuff at 1.414214 ]'
 %
+% if the message starts with '@@@' then the character
+%   is replaced with the calling function name
+%
 % USAGE: eidors_msg( 'log_level', 1)
 %   sets the loglevel to 1
-% USAGE: eidors_msg( 'log_level2', 3)
-%   sets the loglevel2 to 3
+% USAGE: eidors_msg( 'log_level')
+%   return the current log_level
 %
 % meanings of levels
 %   0 => keep quiet (no messages should be level=0)
@@ -22,10 +25,11 @@ function log_level= eidors_msg( message, varargin )
 %   3 => detailed information
 %
 % Messages at log_level are displayed
-% Messages at log_level2 are displayed temprorarily
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if isstr(message) && strcmp(message,'UNIT_TEST'); do_unit_test; return; end
 
 global eidors_objects
 
@@ -37,7 +41,7 @@ else
    args= varargin( 1:nargin-2 );
 end
 
-[log_level, log_level2] = get_levels;
+[log_level] = get_levels;
 
 for i= 1:length(args)
    if isa( args{i}, 'function_handle')
@@ -58,7 +62,17 @@ else ;         fid= 2; end
 % Need to do twice to interpret text in message
 % message= sprintf(message, args{:} );
 if length(message)>1 % single characters are just for progress
-   string= ['EIDORS:[',message,']\n'];
+   if length(message)>=3 && strcmp(message(1:3),'@@@');
+      if length(message)==3; msg_extra = '';
+      else                   msg_extra = [':', message(4:end)];
+      end
+      dbs = dbstack;
+      message = sprintf('%s/%s%s', dbs(2).file, ...
+            dbs(2).name, msg_extra);
+   end
+   string= [sprintf('%c',' ' * ones(1,level-1)), ...
+            'EIDORS:[',message,']\n'];
+       
 elseif strcmp( message, 'log_level');
    log_level= eidors_objects.log_level;
 else
@@ -71,15 +85,10 @@ elseif level <= log_level
    fprintf(fid, string, args{:});
    if exist('OCTAVE_VERSION'); fflush(fid); end
    eidors_objects.last_message_size= 0;
-elseif 0 %level <= log_level2
-% TODO, save messages, and write them out via (printing-hyperlinks)
-%   so that users can see them.
-   fprintf(fid, string);
-   eidors_objects.last_message_size= length(string);
 end
 
 
-function [log_level, log_level2] = get_levels;
+function [log_level] = get_levels;
    global eidors_objects
    try
       log_level= eidors_objects.log_level;
@@ -87,10 +96,23 @@ function [log_level, log_level2] = get_levels;
       log_level= 2; % default;
       eidors_objects.log_level= log_level;
    end
-   try
-      log_level2= eidors_objects.log_level2;
-   catch
-      log_level2= 4; % default;
-      eidors_objects.log_level2= log_level2;
-   end
 
+function do_unit_test
+   ll= eidors_msg('log_level');
+   eidors_msg('log_level',5);
+   eidors_msg('l1',1); eidors_msg('l2',2); eidors_msg('l3',3); eidors_msg('l4',4);
+
+   eidors_msg('log_level',1);
+   eidors_msg('l1',1); eidors_msg('l2',2); eidors_msg('l3',3); eidors_msg('l4',4);
+
+
+   eidors_msg('@@@',1);
+   eidors_msg('@@@ a message',1);
+   eidors_msg('a @@@ message',1);
+   extra_caller;
+
+   eidors_msg('log_level',ll);
+
+function extra_caller
+   eidors_msg('@@@ a message from extra_caller',1);
+  
