@@ -41,13 +41,13 @@ function [bound,elem,nodes]=mc_fem_modify(fwd_model)
 %extra p-refined nodes correctly positioned, and still has the fwd_model.boundary
 %and fwd_model.elems structures
 
-%Change to fwd_model.elem(i)
-for i=1:size(fwd_model.elems,1)
+%Change to fwd_model.elem(i) - do from last to first
+for i=size(fwd_model.elems,1):-1:1
     fwd_model.elem(i).nodes=fwd_model.elems(i,:);
 end
 
-%Change to fwd_model.boundary(i)
-for i=1:size(fwd_model.boundary,1)
+%Change to fwd_model.boundary(i) - do from last to first
+for i=size(fwd_model.boundary,1):-1:1
     fwd_model.bound(i).nodes=fwd_model.boundary(i,:);
 end
 

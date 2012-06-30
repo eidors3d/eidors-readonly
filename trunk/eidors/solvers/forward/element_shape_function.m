@@ -23,9 +23,9 @@ elseif(strcmp(type,'tri6'))
 elseif(strcmp(type,'tri10'))
     shape = elemshapetri10(x,y);
 elseif(strcmp(type,'tet4'))
-    shape = elemshapetet4(x,y);
+    shape = elemshapetet4(x,y,z);
 elseif(strcmp(type,'tet10'))
-    shape = elemshapetet10(x,y);
+    shape = elemshapetet10(x,y,z);
 else
     error('Incorrect number of input arguments')
 end
