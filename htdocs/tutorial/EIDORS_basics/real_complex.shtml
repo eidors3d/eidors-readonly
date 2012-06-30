@@ -14,7 +14,6 @@ some challenges in showing the images.
 Simulation of data with real and complex components
 </h3>
 
-
 <pre>
 <!--#include virtual="real_complex01.m" -->
 </pre>
@@ -22,8 +21,39 @@ Simulation of data with real and complex components
 <center>
 <img src="real_complex01a.png">
 <br><i>Figure:</i>
+Simulated conductivity (left) and permittivity (right)
+changes in a circular tank
 </center>
 
+<h3> 
+Reconstruction of real and complex changes
+</h3>
+
+<pre>
+<!--#include virtual="real_complex02.m" -->
+</pre>
+
+<center>
+<img src="real_complex02a.png">
+<br><i>Figure:</i>
+Reconstructed conductivity (left) and permittivity (right)
+changes.
+</center>
+
+<h3> 
+Reconstruction of real and complex changes (tank measurements)
+</h3>
+
+<pre>
+<!--#include virtual="real_complex03.m" -->
+</pre>
+
+<center>
+<img src="real_complex03a.png">
+<br><i>Figure:</i>
+Reconstructed conductivity (left) and permittivity (right)
+changes from saline tank measurements at IIRC (Korea)
+</center>
 
 </td></tr></table>
 <p>
