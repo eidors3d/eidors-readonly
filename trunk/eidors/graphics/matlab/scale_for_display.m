@@ -1,5 +1,5 @@
-function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, clim )
-% [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, clim )
+function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
+% [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
 %
 % PARAMETERS: elem_data
 %  elem_data: data for fem elements or image pixels
@@ -25,12 +25,11 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
    global eidors_colours;
    if nargin <=1
       ref_lev = eidors_colours.ref_level;
-   elseif strcmp(ref_lev, 'use_global' );
+   elseif isstr(pp)  && strcmp(pp, 'use_global' );
       ref_lev = eidors_colours.ref_level;
-   end
-
-   if nargin<=2
-      clim= [];
+   else
+      ref_lev = pp.ref_level;
+      clim    = pp.clim 
    end
 
    if ~isnumeric(ref_lev)
@@ -49,10 +48,16 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, ref_lev, 
 
    elem_data = elem_data - ref_lev;
 
+   max_scale = max(abs(elem_data(:))) + eps;
+
+   switch pp.component;
+      case 'real'; elem_data = real(elem_data);
+      case 'imag'; elem_data = imag(elem_data);
+      otherwise;   error('specified component not real or imag');
+   end
+
    % Crop output to the colour limit
-   if isempty(clim)
-      max_scale = max(abs(elem_data(:))) + eps;
-   else
+   if ~isempty(clim)
       elem_data( elem_data> clim)=  clim;
       elem_data( elem_data<-clim)= -clim;
       max_scale = clim;

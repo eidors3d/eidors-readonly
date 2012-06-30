@@ -134,13 +134,7 @@ m= size(img_data,1); n=size(img_data,2);
 
 % We can only plot the real part of data
 % Vectorize img_data here, it gets reshaped later
-switch pp.component;
-   case 'real'; img_data_comp = real(img_data);
-   case 'imag'; img_data_comp = imag(img_data);
-   otherwise;   error('specified component not real or imag');
-end
-[scl_data, ref_lev, max_scale] = ...
-      scale_for_display( img_data_comp(:), pp.ref_level, pp.clim );
+[scl_data, ref_lev, max_scale] = scale_for_display( img_data(:), pp);
 
 backgnd= isnan(scl_data);
 scl_data(backgnd)= mean( scl_data(~backgnd));
@@ -157,7 +151,7 @@ end
 if do_colourbar
    if ~pp.mapped_colour
        warning('Colorbar not available without mapped_colour option');
-    elseif do_colourbar < 0
+   elseif do_colourbar < 0
         eidors_colourbar(-do_colourbar,max_scale,pp.cb_shrink_move,1)
    else
        eidors_colourbar(max_scale,ref_lev,pp.cb_shrink_move)

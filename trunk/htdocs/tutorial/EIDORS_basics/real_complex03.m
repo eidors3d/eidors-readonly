@@ -4,7 +4,6 @@ vi= v_rotate(:,9); vh= v_reference;
 
 imgr = inv_solve(imdl, vh, vi);
 
- imgr.calc_colours.clim = 5e3;
 subplot(221); show_fem(imgr);
 title 'real conductivity change'
 
