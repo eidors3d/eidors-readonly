@@ -62,6 +62,7 @@ while ~isempty(d)
 
     while length(F) > 0
         tutname = F{1};
+        if any(strcmp( tutname, skiplist)); break; end
         %tutname(end-3) = [];
         tutname(end-2) = '*'; % assume tutorials differ by one char
         T = dir(tutname);
@@ -122,6 +123,9 @@ clear global F tut_count e_count errors warnings w_count
 cd(my_dir)
 diary off
 
+function sl = skiplist
+  sl = {'netgen_accuracy01.m', ...
+        'common_models01.m'};
 
 function flag = isfunction(fname)
 fid = fopen([fname '.m']);
