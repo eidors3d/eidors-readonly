@@ -1,5 +1,5 @@
 function [fwd_mdl, mat_indices]= ...
-             gmsh_mk_fwd_model( vol_filename, name, eprefix, z_contact)
+             gmsh_mk_fwd_model( vol_filename, name, eprefix,stim_pattern, z_contact)
 % GMSH_MK_FWD_MODEL: create a fwd_model object from a Gmsh file
 % [fwd_mdl, mat_indices]= ...
 %      gmsh_mk_fwd_model( vol_filename, centres, ...
@@ -16,19 +16,19 @@ function [fwd_mdl, mat_indices]= ...
 %  fwd_mdl:           eidors format fwd_model
 %  mat_indices:       cell array of material indices from eidors 
 
-% Gmsh mesher for EIRODS was based on Netgen interface.
+% Gmsh mesher for EIDORS was based on Netgen interface.
 % (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
-% Modified by James Snyder
+% Modified by James Snyder & Bartlomiej Grychtol
 
 if isempty(name); 
    name = ['fwd_mdl based on ', vol_filename];
 end
 
-if nargin<4
-   eprefix = 'electrode-';
+if nargin < 3
+    stim_pattern=[];
 end
 
-if isempty(eprefix); 
+if nargin<4 || isempty(eprefix); 
    eprefix = 'electrode-';
 end
 
@@ -37,13 +37,16 @@ if nargin<5
 end
 
 
-
-stim_pattern=[];
 % Model Geometry
 [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(vol_filename);
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                              stim_pattern, eprefix, z_contact, fc,phys_names);
 mat_indices= mk_mat_indices( mat_ind);
+if isempty(srf)
+   fwd_mdl.boundary = find_boundary(fwd_mdl);
+end
+
+fwd_mdl.mat_idx = mat_indices;
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
@@ -53,7 +56,6 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     mdl.boundary = srf;
     mdl.boundary_numbers=fc; 
     mdl.gnd_node = 1;
-    mdl.np_fwd_solve.perm_sym = '{n}';
     mdl.name = name;
     
     % Model Stimulation
@@ -65,9 +67,9 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     electrodes = find_elec(phys_names,eprefix,z_contact);
 
     mdl.electrode =     electrodes;
-    mdl.solve=      @np_fwd_solve;
-    mdl.jacobian=   @np_calc_jacobian;
-    mdl.system_mat= @np_calc_system_mat;
+    mdl.solve=          'eidors_default';
+    mdl.jacobian=       'eidors_default';
+    mdl.system_mat=     'eidors_default';
 
     fwd_mdl= eidors_obj('fwd_model', mdl);
 
