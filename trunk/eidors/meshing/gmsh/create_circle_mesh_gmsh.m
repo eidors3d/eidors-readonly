@@ -8,6 +8,7 @@ function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )
 % (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
 % $Id$
 
+if ischar(basename) && strcmp(basename,'UNIT_TEST'),do_unit_test,return,end
 
 geo_filename = sprintf('%s.geo', basename);
 geo_fid= fopen(geo_filename,'w');
@@ -63,4 +64,10 @@ mdl.elems    = simp;
 mdl.name = 'Circle';
 coarse_breast_mdl= eidors_obj('fwd_model', mdl);
 
+
+function do_unit_test
+object_center = [0.0, 0.1];
+object_radius = 0.6;
+
+mdl = create_circle_mesh_gmsh('circle', object_center, object_radius, 0.04 );
 
