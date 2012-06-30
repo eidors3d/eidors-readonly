@@ -41,7 +41,6 @@ s_mat= calc_system_mat( fwd_model, img_bkgd );
 if isfield(fwd_model,'conductivity_jacobian')
    Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img_bkgd );
 else
-   fwd_model.jacobian_perturb.delta = delta;
    fwd_model.normalize_movement = 0; % we normalize on our own
    Jc = jacobian_adjoint(fwd_model,img_bkgd);
    % Jc = calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
