@@ -102,14 +102,19 @@ function elements = parse_elements( fid )
 % elm-number elm-type number-of-tags < tag > ... node-number-list
 tline = fgetl(fid);
 n_rows = sscanf(tline,'%d');
-elements(n_rows) = struct('simp',{},'phys_tag',{},'geom_tag',{});
+% elements = struct('simp',{},'phys_tag',{},'geom_tag',{});
+elements(n_rows).simp = [];
+elements(n_rows).phys_tag = [];
+elements(n_rows).geom_tag = [];
+elements(n_rows).type = [];
+
 for i = 1:n_rows
     tline = fgetl(fid);
     n = sscanf(tline, '%d')';
-    nsz = size(elements,2)+1;
-    elements(nsz).simp = n(n(3) + 4:end);
+%     nsz = size(elements,2)+1;
+    elements(i).simp = n(n(3) + 4:end);
     % 
-    elements(nsz).type = n(2);
+    elements(i).type = n(2);
     if n(3) > 0 % get tags if they exist
         % By default, first tag is number of parent physical entity
         % second is parent elementary geometrical entity
@@ -117,9 +122,9 @@ for i = 1:n_rows
         % partition ids
         tags = n(4:3+n(3));
         if length(tags) >= 1
-            elements(nsz).phys_tag = tags(1);
+            elements(i).phys_tag = tags(1);
             if length(tags) >= 2
-                elements(nsz).geom_tag = tags(2);
+                elements(i).geom_tag = tags(2);
             end
         end
     end
