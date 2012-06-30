@@ -15,7 +15,11 @@ function hh=show_fem( mdl, options)
 %
 % for control of colourbar, use img.calc_colours.cb_shrink_move
 %
-% to change colours, try hh=show_fem(...); set(hh,'EdgeColor',[0,0,1];
+% parameters
+%     fwd_model.show_fem.linecolour
+%
+% to change line properties:
+%      hh=show_fem(...); set(hh,'EdgeColor',[0,0,1];
 
 % (C) 2005-2011 Andy Adler. License: GPL version 2 or version 3
 % $Id$
