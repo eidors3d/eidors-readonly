@@ -5,7 +5,7 @@ function mdl= create_gmsh_2d_circle(rad, n_elec)
 % mdl - EIDORS forward model
 % rad - model radius
 
-% License: GPL version 2 or version 3
+% (C) Bartosz Sawicki. License: GPL version 2 or version 3
 % $Id$
 
 p=[];
@@ -42,6 +42,6 @@ function p=assign_p(p);
    if isempty(p)
       % Unique name to about the second
       p.nam = sprintf('gmshmdl_%06d.geo', round(rem(now*1e5,1e6)));
-      p.fid= fopen(p.nam,'wa');
+      p.fid= fopen(p.nam,'w');
       p.ptno= 0;
    end

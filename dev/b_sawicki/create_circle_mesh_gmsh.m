@@ -5,7 +5,7 @@ function mdl = create_circle_mesh_gmsh(basename, center, rad, elem_size )
 % mdl - EIDORS forward model
 % rad - model radius
 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
 % $Id$
 
 
