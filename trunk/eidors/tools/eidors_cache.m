@@ -21,6 +21,10 @@ function retval=eidors_cache( command, limit )
 %      - set max cache size to be memory_in_bytes
 %      - without 2nd arg will return current cache_size
 %
+%   eidors_cache( 'clear_name', cache_name )
+%      - eg. eidors_cache( 'clear_name', 'inv_solve_diff_GN_one_step')
+%      - clear all variables with name 
+%
 %   eidors_cache( 'clear_model_library' );
 %      - clear the eidors model library directory
 %      - NOTE: this function is experimental. 
@@ -38,6 +42,9 @@ function retval=eidors_cache( command, limit )
 %      to clear old variables
 %      to clear specific parts of structures
 
+if nargin==1 && isstr(command) && strcmp(command,'UNIT_TEST');
+      do_unit_test; return; end
+
 global eidors_objects;
 if nargin<1
    fprintf('EIDORS_CACHE: current max memory = %5.1fMB\n', ...
@@ -48,8 +55,6 @@ if nargin<1
    fprintf('EIDORS_CACHE: current priority = %d\n', ...
          eidors_objects.cache_priority); 
    return;
-elseif nargin>=2
-   if ischar(limit); limit= str2num(limit); end
 end
 
 
@@ -60,6 +65,7 @@ switch command
       remove_objids( objid, sizes,  1:length(sizes) );
 
    case 'cache_size'
+      if ischar(limit); limit= str2num(limit); end
       if nargin==2
          eidors_objects.max_cache_size = limit;
       else
@@ -72,6 +78,7 @@ switch command
        eidors_objects.cache_enable = 1;
 
    case 'boost_priority'
+      if ischar(limit); limit= str2num(limit); end
       try
          retval= eidors_objects.cache_priority;
       catch
@@ -90,6 +97,7 @@ switch command
       end
 
    case 'clear_max'
+      if ischar(limit); limit= str2num(limit); end
 % This will remove just in order of priidx.
 %     remove_objids( objid, sizes,  find(cumsum(sizes) > limit) );
 % Remove in order of time + priority
@@ -100,11 +108,13 @@ switch command
       remove_objids( objid, sizes,  rmidx);
 
    case 'clear_old'
+      if ischar(limit); limit= str2num(limit); end
       [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  ...
         find(times < limit) );
 
    case 'clear_new'
+      if ischar(limit); limit= str2num(limit); end
       [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  ...
         find(times > limit) );
@@ -112,10 +122,36 @@ switch command
    case 'clear_model_library'
       %TODO: add ways to select what to delete
       delete([eidors_objects.model_cache,'/*.mat']);
+
+   case 'clear_name'
+      [objid, sizes, clearidx] = clear_names_cache( limit );
+      remove_objids( objid, sizes, clearidx);
    
    otherwise
       error('command %s not understood',command);
 end
+
+function [objid, sizes, clearidx] = clear_names_cache( name );
+   objid={}; times=[]; clearidx= [];
+   global eidors_objects;
+   if isempty(eidors_objects); return; end
+   idx=1;
+   for fn= fieldnames(eidors_objects)'
+      fn1= fn{1};
+      if fn1(1:3)== 'id_'
+         objid{idx}= fn1;
+         obj = getfield(eidors_objects, fn1 );
+         ww= whos('obj');
+         sizes(idx) = ww.bytes;
+
+         cache= getfield(obj,'cache');
+         if isfield(getfield(obj,'cache'), name);
+           clearidx(end+1) = idx;
+         end
+
+         idx= idx+1;
+      end
+   end
 
 % priidx is priority index, where 1 prio is 0.1 of a day
 function [objid, times, sizes, prios, priidx] = get_names_times;
@@ -161,3 +197,24 @@ function remove_objids( objid, sizes, idx)
    eidors_objects= rmfield( eidors_objects, objid( idx ) );
    eidors_msg('eidors_cache: removing %d objects with %d bytes', ...
           length(idx), sum(sizes(idx)), 3 );
+
+
+function do_unit_test;
+   ll= eidors_msg('log_level');
+   eidors_msg('log_level',5);
+   eidors_cache
+   eidors_cache('clear_all');
+   eidors_cache
+   eidors_obj('set-cache', rand(1) , 't1', rand(2e3));
+   eidors_obj('set-cache', rand(1) , 't2', rand(2e3));
+   eidors_obj('set-cache', rand(1) , 't3', rand(2e3));
+   eidors_cache('clear_name','t3');
+   eidors_cache
+   eidors_cache('clear_max', 34e6);
+   eidors_cache
+   eidors_cache('boost_priority', 1);
+   eidors_cache
+   eidors_cache('boost_priority', -1);
+   eidors_cache
+
+   eidors_msg('log_level',ll);
