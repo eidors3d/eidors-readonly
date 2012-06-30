@@ -34,6 +34,9 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %         Use this to allow printing vector eps files to get around
 %         a matlab bug with warning 'RGB color data not ...'
 %
+%   calc_colours( 'component', 'real' ); (DEFAULT real)
+%     the other value is 'imag' to show the imaginary component
+%
 %   The following parameters are accepted
 %
 %   'greylev'    (DEFAULT -.01): the colour of the ref_level.
@@ -131,8 +134,13 @@ m= size(img_data,1); n=size(img_data,2);
 
 % We can only plot the real part of data
 % Vectorize img_data here, it gets reshaped later
+switch pp.component;
+   case 'real'; img_data_comp = real(img_data);
+   case 'imag'; img_data_comp = imag(img_data);
+   otherwise;   error('specified component not real or imag');
+end
 [scl_data, ref_lev, max_scale] = ...
-      scale_for_display( real(img_data(:)), pp.ref_level, pp.clim );
+      scale_for_display( img_data_comp(:), pp.ref_level, pp.clim );
 
 backgnd= isnan(scl_data);
 scl_data(backgnd)= mean( scl_data(~backgnd));
@@ -371,6 +379,8 @@ function [red,grn,blu] = blue_black_red_colours(pp,scale_data);
 function pp=get_colours( img );
    global eidors_colours;
    pp= eidors_colours;
+
+   pp.component = 'real'; % Don't get from globals
 
 % override global if calc.colours specified
    try
