@@ -102,7 +102,7 @@ function elements = parse_elements( fid )
 % elm-number elm-type number-of-tags < tag > ... node-number-list
 tline = fgetl(fid);
 n_rows = sscanf(tline,'%d');
-elements = struct('simp',{},'phys_tag',{},'geom_tag',{});
+elements(n_rows) = struct('simp',{},'phys_tag',{},'geom_tag',{});
 for i = 1:n_rows
     tline = fgetl(fid);
     n = sscanf(tline, '%d')';
