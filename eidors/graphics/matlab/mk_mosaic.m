@@ -29,6 +29,9 @@ n_levels = size(rimg,4);
 if nargin < 2
     sep = 0;
 end
+if nargin < 3
+    vh = [];
+end
 if nargin < 4 
     n_col = 0;
 end
