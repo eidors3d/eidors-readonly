@@ -365,6 +365,7 @@ SS= sparse(SSiidx,SSjidx,SSdata) * ...
 
 
 function do_unit_test;
+   unit_test_compare_approaches
    unit_test_matrix_derivatives
    unit_test_diff_jacobian_b2C_const_cond
    unit_test_diff_jacobian_n3r2_const_cond
@@ -373,6 +374,22 @@ function do_unit_test;
   unit_test_3d_inv_solve1
   unit_test_3d_inv_solve2
    
+function unit_test_compare_approaches
+   inv_model = mk_common_model('c2t3',16);
+   img_bkgd  = mk_image( inv_model);
+   fwd_model = inv_model.fwd_model;
+
+   pp = aa_fwd_parameters( fwd_model );
+   pp.DEBUG = 0;
+   pp.dfact = factorial(pp.n_dims);
+   s_mat= calc_system_mat( fwd_model, img_bkgd );
+   [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
+   pp.Ce= connectivity_matrix( pp );
+
+   Jc1= calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
+   Jc2= aa_calc_jacobian(fwd_model,img_bkgd);
+   unit_test_cmp('Compare J', Jc1, Jc2, 1e-14);
+
 
 % TEST CODE FOR MATRIX DERIVATIVES
 function unit_test_matrix_derivatives
