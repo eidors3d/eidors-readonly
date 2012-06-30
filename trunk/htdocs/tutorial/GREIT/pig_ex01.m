@@ -1,4 +1,3 @@
-%% This first bit comes largely from the other tutorial
 load CT3
 
 trunk = trunk*.01;

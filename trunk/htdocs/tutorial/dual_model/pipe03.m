@@ -1,4 +1,3 @@
-
 % Create coarse model
 imdl= mk_common_model('b2c2',16);
 cmdl= imdl.fwd_model;

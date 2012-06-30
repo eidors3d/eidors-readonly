@@ -5,10 +5,7 @@
 background_resistivity= 15.0; % Unit is Ohm.m
 background_conductivity= 1./background_resistivity;
 
-gallery_3D_img= eidors_obj('image',gallery_3D_fwd.name);
-gallery_3D_img.fwd_model= gallery_3D_fwd;
-gallery_3D_img.elem_data= background_conductivity * ...
-   ones(size(gallery_3D_img.fwd_model.elems,1),1);
+gallery_3D_img= mk_image( gallery_3D_fwd, background_conductivity);
 
 % build the parameter-to-elements mapping
 %USE: sparse pilot-point parameterization

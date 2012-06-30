@@ -2,13 +2,10 @@
 % $Id$
 
 imb=  mk_common_model('n3r2',16);
-e= size(imb.fwd_model.elems,1);
 bkgnd= 1;
 
 % Homogenous Data
-img= eidors_obj('image','Demo Image');
-img.elem_data= bkgnd*ones(e,1);
-img.fwd_model= imb.fwd_model;
+img= mk_image(imb.fwd_model, bkgnd);
 vh= fwd_solve( img );
 
 % Inhomogenous Data - Load from file 'datacom'

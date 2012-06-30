@@ -1,5 +1,4 @@
-% Lung images
-% $Id$
+% Abdomen Images $Id$
 
 load montreal_data_1995
 vh= zc_h_stomach_pre; % abdomen before fluid

@@ -29,11 +29,7 @@ fine_mdl.np_fwd_solve.perm_sym= '{n}';
 disp('Homogeneous model');
 
 % Every cells has the same material
-mat= ones( size(fine_mdl.elems,1) ,1);
-
-homg_img= eidors_obj('image', 'homogeneous image', ...
-                     'elem_data', mat, ...
-                     'fwd_model', fine_mdl );
+homg_img= mk_image(fine_mdl, 1 );
 
 homg_data=fwd_solve( fine_mdl, homg_img);
 
@@ -89,10 +85,7 @@ print_convert dual_3d3d02a.png '-density 80'
 
 %% Show results on coarse mesh
 
-mat= recon_img.elem_data;
-coarse_recon_img= eidors_obj('image', 'reconstructed coarse image', ...
-                     'elem_data', mat, ...
-                     'fwd_model', coarse_mdl );
+coarse_recon_img= mk_image(coarse_mdl, recon_img.elem_data);
 
 show_fem( coarse_recon_img );              
 print_convert dual_3d3d02b.png '-density 80'

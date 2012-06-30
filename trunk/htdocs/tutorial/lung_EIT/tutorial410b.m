@@ -1,5 +1,4 @@
-% Lung images
-% $Id$
+% Abdomen Images  $Id$
 
 load montreal_data_1995
 imdl.hyperparameter.value=5e-2;

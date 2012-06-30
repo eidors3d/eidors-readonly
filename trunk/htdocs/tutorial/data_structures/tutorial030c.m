@@ -2,8 +2,7 @@
 % $Id$
 
 % Define an image
-sim_img= eidors_obj('image', 'stimulation image');
-sim_img.elem_data= ones( size(zigzag_mdl.elems,1) ,1);
+sim_img= mk_image(zigzag_mdl, 1);
 
 % Simulate homogeneous measurements
 sim_img.fwd_model= zigzag_mdl;

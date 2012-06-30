@@ -24,12 +24,7 @@ show_slices_move( img3dim );
 move_vs_conduct = 20;  % Movement penalty (symbol mu in paper)
 
 mdlM = mdl3dim;
-if 0
-   mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
-   mdlM.fwd_model.jacobian = @jacobian_movement_perturb; % perturbation type jacobian
-else
-   mdlM.fwd_model.jacobian = @jacobian_movement;
-end
+mdlM.fwd_model.jacobian = @jacobian_movement;
 
 mdlM.RtR_prior = @prior_movement;
 

@@ -23,7 +23,7 @@ for i= 1:n_sims;
    in_trg  =(sum(ctr_pts.^2,2) < trg_rad^2);
 
    % Create target image object
-   timg= eidors_obj('image','','fwd_model',tmdl, 'elem_data',1 + in_trg*contrast);
+   timg= mk_image(tmdl, 1 + in_trg*contrast);
    vi_t= fwd_solve(timg);
    vi = [vi, vi_t.meas];
    if     i==1;    show_fem(timg); print -dpng -r60 simulate_2d_test03a.png

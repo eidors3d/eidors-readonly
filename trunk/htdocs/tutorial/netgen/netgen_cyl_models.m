@@ -69,16 +69,14 @@ show_fem(fmdl);
 case 12;
     extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'};
     fmdl= ng_mk_cyl_models(3,[0],[],extra); 
-    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
-    img.elem_data(fmdl.mat_idx{1}) = 1; img.elem_data(fmdl.mat_idx{2}) = 2;
+    img= mk_image(fmdl,1); img.elem_data(fmdl.mat_idx{2}) = 2;
 show_fem(img);
 
 % 3D cylinder with 8 electrodes and cube
 case 13;
     extra={'cube','solid cube = orthobrick(0.5,0.5,0.5;0,0,1.5);'};
     fmdl= ng_mk_cyl_models(2,[8,0.5,1.5],[0.1],extra); 
-    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
-    img.elem_data(fmdl.mat_idx{1}) = 1; img.elem_data(fmdl.mat_idx{2}) = 2;
+    img= mk_image(fmdl,1); img.elem_data(fmdl.mat_idx{2}) = 2;
 show_fem(img);
 
 % 3D cylinder with inner cylinder
@@ -97,9 +95,8 @@ show_fem(fmdl);
 case 16;
     extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.03;'};
     fmdl= ng_mk_cyl_models(0,[9],[0.2,0,0.05],extra); 
-    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
     ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
-    img.elem_data = 1 + 0.1*(ctr<0.2^2);
+    img= mk_image(fmdl, 1 + 0.1*(ctr<0.2^2));
 show_fem(img);
 
 % 2D cylinder with 16 electrodes and inner cylinder and box

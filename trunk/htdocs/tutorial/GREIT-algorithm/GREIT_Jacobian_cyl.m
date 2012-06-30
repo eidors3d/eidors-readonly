@@ -42,11 +42,9 @@ else
    [rmdl,c2f] = mk_grid_model(fmdl, xvec, yvec);
 end
 
-   img= eidors_obj('image','GREIT-ng_mdl');
-   img.fwd_model= fmdl;
+   img= mk_image(fmdl, 1);
    img.fwd_model.coarse2fine = c2f;
    img.rec_model= rmdl;
-   img.elem_data= ones(size(img.fwd_model,1));
 
    % ADJACENT STIMULATION PATTERNS
    img.fwd_model.stimulation= mk_stim_patterns(16, 1, ...

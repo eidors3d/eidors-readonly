@@ -7,8 +7,7 @@ fmdl= imdl.fwd_model;
     xx= reshape( fmdl.nodes(ee,1),3, []); 
     yy= reshape( fmdl.nodes(ee,2),3, []); 
 
-homog= ones(size(fmdl.elems,1),1);
-img= eidors_obj('image','','elem_data',homog);
+img= mk_image(fmdl, 1);
 
 
 for i=1:4
@@ -20,7 +19,6 @@ for i=1:4
 
    fmdl.stimulation = mk_stim_patterns(16,1,stim,[0 1], {}, 1);
 
-   img.fwd_model= fmdl;
    node_v= calc_all_node_voltages( img );
    zz{i}= reshape(     node_v(ee,4),3, []); 
 end

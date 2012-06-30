@@ -1,15 +1,13 @@
 % Simulate EIT data
 % $Id$
 
-sim_img= eidors_obj('image', 'stimulation image');
-sim_img.fwd_model= imdl_3d.fwd_model;
+sim_img= mk_image(imdl_3d.fwd_model,1);
 
 % set voltage and current stimulation patterns
 stim =  mk_stim_patterns(16,2,[0,1],[0,1],{},1);
 sim_img.fwd_model.stimulation = stim;
 
 % set homogeneous conductivity and simulate
-sim_img.elem_data= ones( size(sim_img.fwd_model.elems,1) ,1);
 homg_data=fwd_solve( sim_img );
 
 % set inhomogeneous conductivity and simulate

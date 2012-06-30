@@ -4,11 +4,9 @@
 imdl_3d= mk_common_model('n3r2',16);
 show_fem(imdl_3d.fwd_model);
 
-sim_img= eidors_obj('image', 'stimulation image');
-sim_img.fwd_model= imdl_3d.fwd_model;
+sim_img= mk_image( imdl_3d.fwd_model, 1);
 
 % set homogeneous conductivity and simulate
-sim_img.elem_data= ones( size(sim_img.fwd_model.elems,1) ,1);
 homg_data=fwd_solve( sim_img );
 
 % set inhomogeneous conductivity and simulate

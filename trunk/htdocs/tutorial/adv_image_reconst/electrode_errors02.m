@@ -1,6 +1,5 @@
 % Reject electrodes + Image $Id$
 
-
 imdl.meas_icov = meas_icov_rm_elecs( imdl, 13);
 
 img = inv_solve(imdl, vh, vi(:,20));

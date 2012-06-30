@@ -1,8 +1,8 @@
 function netgen_ext_models( numbers )
 
-if nargin==0; numbers = 1:8; end
+if nargin==0; numbers = 1:20; end
 for i=numbers(:)';
-    i
+   disp(i);
    do_sim(i);
 end
 
