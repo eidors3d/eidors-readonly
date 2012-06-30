@@ -1,5 +1,5 @@
 function [fwd_mdl, mat_indices]= ...
-             gmsh_mk_fwd_model( vol_filename, name, centres, z_contact)
+             gmsh_mk_fwd_model( vol_filename, name, eprefix,stim_pattern, z_contact)
 % GMSH_MK_FWD_MODEL: create a fwd_model object from a Gmsh file
 % [fwd_mdl, mat_indices]= ...
 %      gmsh_mk_fwd_model( vol_filename, centres, ...
@@ -7,9 +7,8 @@ function [fwd_mdl, mat_indices]= ...
 %
 %  vol_filename:      filename output from Gmsh
 %  name:              name for object (if [] use vol_filename)
-%  centres:           matrix of N x [x,y,z] electrode centres
-%                     centres can also be a Nx1 cell matrix of
-%                     functions which are 1 inside the electrode and 0 outside
+%  eprefix:           prefix used for names of electrodes
+%                     (if [] or omitted use 'electrode-')
 %  stim_pattern:      a stimulation pattern structure
 %                     empty ([]) if stim_pattern is not available
 %  z_contact:         vector or scalar electrode contact impedance
@@ -17,22 +16,31 @@ function [fwd_mdl, mat_indices]= ...
 %  fwd_mdl:           eidors format fwd_model
 %  mat_indices:       cell array of material indices from eidors 
 
-% Gmsh mesher for EIRODS was based on Netgen interface.
+% Gmsh mesher for EIDORS was based on Netgen interface.
 % (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
+% Modified by James Snyder & Bartlomiej Grychtol
 
 if isempty(name); 
    name = ['fwd_mdl based on ', vol_filename];
+end
+
+if nargin < 3
+    stim_pattern=[];
+end
+
+if nargin<4 || isempty(eprefix); 
+   eprefix = 'electrode-';
 end
 
 if nargin<5
    z_contact=0.01; % singular if z_contact=0
 end
 
-stim_pattern=[];
+
 % Model Geometry
-[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(vol_filename);
+[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(vol_filename);
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
-                             stim_pattern, centres, z_contact);
+                             stim_pattern, eprefix, z_contact, fc,phys_names);
 mat_indices= mk_mat_indices( mat_ind);
 if isempty(srf)
    fwd_mdl.boundary = find_boundary(fwd_mdl);
@@ -42,10 +50,11 @@ fwd_mdl.mat_idx = mat_indices;
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
-    stim_pattern, centres, z_contact)
+    stim_pattern, eprefix, z_contact, fc, phys_names)
     mdl.nodes    = vtx;
     mdl.elems    = simp;
     mdl.boundary = srf;
+    mdl.boundary_numbers=fc; 
     mdl.gnd_node = 1;
     mdl.name = name;
     
@@ -54,23 +63,10 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
         mdl.stimulation= stim_pattern;
     end
     
-    nelec= size(centres,1);
     % Electrodes
-%    [elec,sels,electrodes] = ng_tank_find_elec(srf,vtx,bc,centres);
-%    if size(elec,1) ~= nelec
-%        error('Failed to find all the electrodes')
-%    end
-    
+    electrodes = find_elec(phys_names,eprefix,z_contact);
 
-    % set the z_contact
-    z_contact= z_contact.*ones(nelec,1);
-    for i=1:nelec
-        electrodes(i).nodes(1) = i; 
-        electrodes(i).z_contact= z_contact(i);
-    end
-    if nelec >0
     mdl.electrode =     electrodes;
-    end
     mdl.solve=          'eidors_default';
     mdl.jacobian=       'eidors_default';
     mdl.system_mat=     'eidors_default';
@@ -93,3 +89,11 @@ function mat_indices= mk_mat_indices( mat_ind);
         mat_indices{i}= find(mat_ind == mat_idx_i);
     end
 
+% Assumes that electrodes are numbered starting at 1, with prefix provided
+function electrodes = find_elec(phys_names,prefix,z_contact)
+phys_elecs = find(arrayfun(@(x)strncmp(x.name,prefix,length(prefix)),phys_names));
+for i = 1:length(phys_elecs)
+    cur_elec = arrayfun(@(x)strcmp(sprintf('%s%d',prefix,i),x.name),phys_names(phys_elecs));
+    electrodes(i).nodes = unique(phys_names(phys_elecs(cur_elec)).nodes(:));
+    electrodes(i).z_contact = z_contact;
+end
