@@ -21,7 +21,7 @@ for i=2+(1:n_elec);
    elec_obj{i} = 'cyl';
    elec_shape(i)=[0.05];
 end
-[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
 show_fem(fmdl);view(90,20);
 print_convert fish_tank01a.png '-density 60'

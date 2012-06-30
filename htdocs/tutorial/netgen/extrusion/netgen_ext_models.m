@@ -14,19 +14,19 @@ switch number
    case 1;
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1},[9,0,1],[0.05,0.4]);
+fmdl = ng_mk_extruded_model({2,xy,1},[9,0,1],[0.05,0.4]);
 
 % Extruded 3D shape with mesh refinement and 5 large circular electrodes
    case 2;
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({2,xy,1,0.1},[5,0,1,2],[0.10]);
+fmdl = ng_mk_extruded_model({2,xy,1,0.1},[5,0,1,2],[0.10]);
 
 % Extruded 3D shape mesh with boundary interpolation
    case 3;
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,50]},[8,0,0.3,0.6],[0.08]);
+fmdl = ng_mk_extruded_model({1,xy,[4,50]},[8,0,0.3,0.6],[0.08]);
 
 % 2D shape mesh boundary interpolation
    case 4;
@@ -34,7 +34,7 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
    % electrodes to equidistant to avoid netgen playing up.
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
-[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,47]},[16,1],[0.1]);
+fmdl = ng_mk_extruded_model({0,xy,[4,47]},[16,1],[0.1]);
 
 % 2D shape with object and specific electrode positions
    case 5;
@@ -42,9 +42,9 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
 extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.05;'};
 elec_pos = [0, 0; 30,0;60,0;90,0];
-[fmdl, mat_idx] = ng_mk_extruded_model({0,xy,[4,49]},elec_pos,[0.1],extra);
+fmdl = ng_mk_extruded_model({0,xy,[4,49]},elec_pos,[0.1],extra);
 img = mk_image(fmdl,1);
-img.elem_data( mat_idx{2} ) = 1.1;
+img.elem_data( fmdl.mat_idx{2} ) = 1.1;
 fmdl= img;
 
 % 3D shape with two objects and no electrodes
@@ -52,9 +52,9 @@ fmdl= img;
 xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
 extra={'twoball','solid twoball = sphere(0.2,0.2,.7;0.2) or sphere(-0.2,-0.2,.4;0.3);'};
-[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,20]},[0,0],[0.05],extra);
+fmdl = ng_mk_extruded_model({1,xy,[4,20]},[0,0],[0.05],extra);
 img = mk_image(fmdl,1);
-img.elem_data( mat_idx{2} ) = 1.1;
+img.elem_data( fmdl.mat_idx{2} ) = 1.1;
 fmdl= img;
 
 % 3D shape with custom electrodes
@@ -63,9 +63,9 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
 elec_pos = [0, 0.1; 30,0.2; 60,0.3; 90,0.4;120,0.5];
 extra={'cyl','solid cyl = cylinder(0.2,-0.2,0;0.2,-0.2,1;0.2) and orthobrick(-1,-1,0;1,1,1);'};
-[fmdl, mat_idx] = ng_mk_extruded_model({1,xy,[4,47]},elec_pos,[0.05,0.2],extra);
+fmdl = ng_mk_extruded_model({1,xy,[4,47]},elec_pos,[0.05,0.2],extra);
 img = mk_image(fmdl,1);
-img.elem_data( mat_idx{2} ) = 1.1;
+img.elem_data( fmdl.mat_idx{2} ) = 1.1;
 fmdl= img;
 
 % CAN'T MAKE IT WORK
@@ -74,10 +74,10 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
        0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
 xyi=[ -0.74 -0.74 -0.60 -0.36 -0.35 -0.55;
       -0.17 -0.51 -0.55 -0.44 -0.12  0.00]';
-%[fmdl, mat_idx] = ng_mk_extruded_model({1,{xy,xyi},[4,20]},elec_pos,[0.05,0.2]);
-[fmdl, mat_idx] = ng_mk_extruded_model({1,{xy,xyi},[0]},[0,0],[]);
+%[fmdl,mat_idx] = ng_mk_extruded_model({1,{xy,xyi},[4,20]},elec_pos,[0.05,0.2]);
+fmdl = ng_mk_extruded_model({1,{xy,xyi},[0]},[0,0],[]);
 img = mk_image(fmdl,1);
-img.elem_data( mat_idx{2} ) = 1.1;
+img.elem_data( fmdl.mat_idx{2} ) = 1.1;
 fmdl= img;
 
 
@@ -104,27 +104,24 @@ yy=fliplr([
    17.6897  -22.2803  -73.6723  -85.0923 -117.9263 -163.6083 -176.4573 -205.9613 ...
  -245.93 -256.4023 -275.4373 -304.9403 -315.4083 -332.0623 -352.0473 -355.3783]);
 % Equidistant electrodes
- [fmdl, mat_idx] = ng_mk_extruded_model({1,[xx',yy']/300,[4,40]},[16,1,0.5],[0.05]);
-%[fmdl, mat_idx] = ng_mk_extruded_model({1,[xx',yy']/300,[4,40]},[16,1,0.94],[0.05]);
+fmdl = ng_mk_extruded_model({1,[xx',yy']/300,[4,40]},[16,1,0.5],[0.05]);
 
 case 234918;
-[fmdl, mat_idx] = ng_mk_extruded_model({2,{a,0.3*a},1},[16,0,1],[0.01]);
-[fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk/100, lung/100} ,[4,40]},[16,0,1],[0.1]);
+fmdl = ng_mk_extruded_model({2,{a,0.3*a},1},[16,0,1],[0.01]);
+fmdl = ng_mk_extruded_model({2,{trunk/100, lung/100} ,[4,40]},[16,0,1],[0.1]);
 
 % Thorax with two layers of electrodes
    case 8;
 load CT2.mat;
-%[fmdl, mat_idx] = ng_mk_extruded_model({2,trunk/100 ,[4,50]},[16,0,1.0],[0.1]);
- [fmdl, mat_idx] = ng_mk_extruded_model({2,trunk/100 ,[4,50]},[6,0,0.5,1.5],[0.1,0.2]);
-%[fmdl, mat_idx] = ng_mk_extruded_model({2,trunk/100 ,[4,50]},[8,0,0.5,0.5],[0.1,0.2]);
+fmdl = ng_mk_extruded_model({2,trunk/100 ,[4,50]},[6,0,0.5,1.5],[0.1,0.2]);
 
 
 % Thorax with lung with 16 circular electrodes
    case 9;
 load CT2.mat; lung = flipud(lung(1:3:end,:));
-[fmdl, mat_idx] = ng_mk_extruded_model({1,{trunk/100, lung/100} ,[4,50]},[16,0,0.5],[0.1]);
+fmdl = ng_mk_extruded_model({1,{trunk/100, lung/100} ,[4,50]},[16,0,0.5],[0.1]);
 img = mk_image(fmdl,1);
-img.elem_data( mat_idx{2} ) = 0.9;
+img.elem_data( fmdl.mat_idx{2} ) = 0.9;
 fmdl= img;
 
 end

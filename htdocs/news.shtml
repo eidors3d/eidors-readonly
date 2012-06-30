@@ -220,13 +220,13 @@ Challenge problem:
 <li>Put a ball into the elliptical cylinder
 <br><tt><font color=#E0F0FE
 >   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1);'};
-<br>[fmdl,mat_idx]= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+<br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
 </font> show_fem(fmdl); </tt>
 
 <li>Put two balls into the elliptical cylinder
 <br><tt><font color=#E0F0FE
 >   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
-<br>[fmdl,mat_idx]= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+<br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
 </font> show_fem(fmdl); </tt>
 
 <li>Set the model to use adjacent current patterns
@@ -242,7 +242,7 @@ Challenge problem:
 
 <li>Simulate inhomogeneous voltages  (ball conductivity = 1.0);
 <br><tt><font color=#E0F0FE
->   img.elem_data(mat_idx{2})= 1.0; vi = fwd_solve(img);
+>   img.elem_data(fmdl.mat_idx{2})= 1.0; vi = fwd_solve(img);
 <br>
 </font> show_fem(img); </tt>
 

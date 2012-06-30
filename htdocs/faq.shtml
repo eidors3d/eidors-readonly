@@ -231,13 +231,13 @@ many electrodes. If you're having troubles, try these ideas:
 		each other. In the ng_mk_extruded_model function, the electrodes are perpendicular to the side on which
 		their center lies. However, you can discretise the angle into N possible values by specifying a 5th
 		parameter to the elec_shape (3rd) input, as in:<br>
-		<pre>[fmdl, mat_idx] = ng_mk_extruded_model({300,a,[3,10],25},[16,1,150],<u>[1,0,0,0,N]</u>);</pre>
+		<pre>fmdl = ng_mk_extruded_model({300,a,[3,10],25},[16,1,150],<u>[1,0,0,0,N]</u>);</pre>
 		Values of N between 6 and 67 have proven useful at times. You should settle for the highest number that works
 		for your shape, as discretization in general distorts electrode shape.
    <li> Try building your model without internal structures, e.g.<br>
-		<pre>[fmdl, mat_idx] = ng_mk_extruded_model({2,trunk ,[4,50],.1},[electh,1+0*electh],[0.1 0 0.05]);</pre>
+		<pre>fmdl = ng_mk_extruded_model({2,trunk ,[4,50],.1},[electh,1+0*electh],[0.1 0 0.05]);</pre>
 		instead of <br>
-		<pre>[fmdl, mat_idx] = ng_mk_extruded_model(<u>{2,{trunk,lung} ,[4,50],.1}</u>,[electh,1+0*electh],[0.1 0 0.05]);</pre>
+		<pre>fmdl = ng_mk_extruded_model(<u>{2,{trunk,lung} ,[4,50],.1}</u>,[electh,1+0*electh],[0.1 0 0.05]);</pre>
 		If that works, refine the internal shapes.
    <li> Try a smaller mesh density (larger last parameter in the underlined field above).
    <li> Try a smaller electrode density (larger, or none, last parameter in the [0.1 0 0.05] electrode shape field above)

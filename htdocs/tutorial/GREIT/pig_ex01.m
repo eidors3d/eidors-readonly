@@ -12,7 +12,7 @@ electh= atan2(elec_pos(:,2),elec_pos(:,1))*180/pi;
 
 % Build a fwd model
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
-[fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk,lung} ,[4,50],.1},[electh,1+0*electh],[0.1]);
+fmdl = ng_mk_extruded_model({2,{trunk,lung} ,[4,50],.1},[electh,1+0*electh],[0.1]);
 fmdl.name = 'trunk_and_lungs';
 fmdl.stimulation = stim;
 fmdl.meas_select = meas_sel;
@@ -21,7 +21,7 @@ fmdl.electrode(2:16) =  fmdl.electrode(16:-1:2); %flip electrodes to match
 fmdl.nodes = fmdl.nodes*diag([-1,-1,1]);
 
 img = mk_image(fmdl,1);
-img.elem_data( mat_idx{2} ) = 0.25;
+img.elem_data( fmdl.mat_idx{2} ) = 0.25;
 
 show_fem(img);
 print -dpng -r75 pig_ex_fmdl.png

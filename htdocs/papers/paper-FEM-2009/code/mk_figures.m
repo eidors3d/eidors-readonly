@@ -140,7 +140,7 @@ function mk_fit_table_3d;
      img = calc_jacobian_bkgnd(imdl);
      vh1 = fwd_solve(img);
 
-     [fmdl,mat_idx]= ng_mk_cyl_models( ...
+     fmdl= ng_mk_cyl_models( ...
                [1,1,maxh],[16,0.5],[0.05,0,0.02],extra); 
      imdl = assign_mdl(imdl0, fmdl);
      img = calc_jacobian_bkgnd(imdl);
@@ -174,11 +174,11 @@ function mk_3d_fig
 
   extra={'ball','solid ball = sphere(0.5,0,0.5;0.2);'}
 
-  [fmdl,mat_idx]= ng_mk_cyl_models( ...
+  fmdl= ng_mk_cyl_models( ...
             [1,1,maxh],[16,0.5],[0.05,0,0.02],extra); 
   imdl = assign_mdl(imdl, fmdl);
   img = calc_jacobian_bkgnd(imdl);
-  img.elem_data(mat_idx{2}) = 1 + contrast;
+  img.elem_data(fmdl.mat_idx{2}) = 1 + contrast;
   vi = fwd_solve(img);
 
   axes('position',[0.1,0.5,0.4,0.4]);

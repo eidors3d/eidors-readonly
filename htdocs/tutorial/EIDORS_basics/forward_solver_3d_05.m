@@ -1,9 +1,9 @@
 img.fwd_model.electrode([2,13]) = img.fwd_model.electrode([13,2]); % flip electrodes
 
-img.elem_data(mat_idx{2}) = conduct; % Homogenous
+img.elem_data(fmdl.mat_idx{2}) = conduct; % Homogenous
 vh = fwd_solve(img);
 
-img.elem_data(mat_idx{2}) = 0.95*conduct; %Non-conductive inclusion
+img.elem_data(fmdl.mat_idx{2}) = 0.95*conduct; %Non-conductive inclusion
 vi = fwd_solve(img);
 
 img_v.node_data = vh.volt(:,1);
