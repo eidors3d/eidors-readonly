@@ -9,7 +9,7 @@ Simulation of 3D surface electrode patterns.
 
 
 <h3>
-Create 3D FEM model of the terrain
+Simulate 3D data 
 </h3>
 <pre>
 <!--#include virtual="surface_sim01.m" -->
@@ -18,11 +18,44 @@ Create 3D FEM model of the terrain
 <center>
 <img src="surface_sim01a.png">
 <br><i> Figure:</i>
-Forward model
+model of a conductive ball underneath a set of electrodes
 </center>
 
+<pre>
+<!--#include virtual="surface_sim02.m" -->
+</pre>
 
+<h3>
+Create 3D forward model and reconstruction model
+</h3>
+<pre>
+<!--#include virtual="surface_sim03.m" -->
+</pre>
+
+<center>
+<img src="surface_sim03a.png">
+<br><i> Figure:</i>
+Forward model (black) and reconstruction model (blue)
+</center>
+
+<h3>
+Inversion (using a difference solver)
+</h3>
+<pre>
+<!--#include virtual="surface_sim04.m" -->
+</pre>
+
+<center>
+<img src="surface_sim04a.png">
+<br><img src="surface_sim04b.png">
+<br><i> Figure:</i>
+Reconstruction: (top) mesh and (bottom)
+slices at <i>z</i>=-0.4, 
+          <i>z</i>=-1.0, 
+and       <i>z</i>=-1.6. 
+</center>
 </td></tr></table>
+
 <p>
 <small>
     Last Modified: $Date$ by $Author$
