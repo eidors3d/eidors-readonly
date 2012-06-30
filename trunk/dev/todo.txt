@@ -50,6 +50,12 @@ DEFAULT SOLVER:
 
  - put defaults for functions
 
+========== 02: PRI=1 ACT=BG
+GMSH 
+ - see if we need object_in_tank_2d
+     => turn into tutorial
+   => DONE. Cleanup, speedup and move to dev
+
 ###############
 
 ========== 01: PRI=1 ACT=AA
@@ -57,11 +63,6 @@ tutorials - deprecate update
  - geophys tutorial - finish = AA
  - add neonate tutorial
  - look at tutorial report
-
-========== 02: PRI=1 ACT=BG
-GMSH 
- - see if we need object_in_tank_2d
-     => turn into tutorial
 
 ========== 03: PRI=1 ACT=AA
  complex conductivity
