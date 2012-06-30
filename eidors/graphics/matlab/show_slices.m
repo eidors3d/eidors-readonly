@@ -139,17 +139,17 @@ function do_unit_test
 
    img=calc_jacobian_bkgnd(mk_common_model('a2t3',8)); 
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
-   subplot(3,4,1); show_slices(img) 
+   subplot(4,4,1); show_slices(img) 
 
    img.calc_colours.npoints= 128;
-   subplot(3,4,2); show_slices(img) 
+   subplot(4,4,2); show_slices(img) 
 
    img.calc_colours.npoints= 32;
    img.elem_data=rand(size(img.fwd_model.elems,1),3);
-   subplot(3,4,3); show_slices(img) 
+   subplot(4,4,3); show_slices(img) 
 
    img.show_slices.img_cols= 1;
-   subplot(3,4,4); show_slices(img) 
+   subplot(4,4,4); show_slices(img) 
 
    imgn = rmfield(img,'elem_data');
    imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
@@ -158,37 +158,54 @@ function do_unit_test
    img.fwd_model.mdl_slice_mapper.npx = 10;
    img.fwd_model.mdl_slice_mapper.npy = 20;
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(3,4,5); show_slices(img);
+   subplot(4,4,5); show_slices(img);
 
    img.elem_data = img.elem_data(:,1);
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-150,150,30);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(3,4,6); show_slices(img);
+   subplot(4,4,6); show_slices(img);
 
 
-   subplot(3,4,7); show_slices(imgn) 
+   subplot(4,4,7); show_slices(imgn) 
 
    imgn.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
    imgn.fwd_model.mdl_slice_mapper.y_pts = linspace(-150,150,30);
    imgn.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(3,4,8); show_slices(imgn) 
+   subplot(4,4,8); show_slices(imgn) 
 
 
 % 3D images
    img=calc_jacobian_bkgnd(mk_common_model('n3r2',32)); 
    img.calc_colours.npoints= 16;
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
-   subplot(3,4,9); show_slices(img,2) 
+   subplot(4,4,9); show_slices(img,2) 
 
    img.elem_data=img.elem_data*[1:3];
-   subplot(3,4,10); show_slices(img,2) 
+   subplot(4,4,10); show_slices(img,2) 
 
    img.elem_data=img.elem_data(:,1:2);
-   subplot(3,4,11); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);
+   subplot(4,4,11); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);
 
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-1,1,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-1,1,30);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(3,4,12); show_slices(img,2) 
+   subplot(4,4,12); show_slices(img,2) 
 
+
+   img.elem_data = img.elem_data(:,1);
+   levels=[inf,inf,1,1,1;
+           0,inf,inf,2,1;
+           0,1,inf,3,1];
+   subplot(4,4,13); show_slices(img,levels) 
+
+   levels=[inf,inf,1,1,1;
+           0,inf,inf,2,2;
+           0,1,inf,  1,3];
+   subplot(4,4,14); show_slices(img,levels) 
+
+   img.elem_data = img.elem_data(:,[1,1]);
+   levels=[inf,inf,1,1,1;
+           0,inf,inf,2,1;
+           0,1,inf,  3,1];
+   subplot(4,4,15); show_slices(img,levels) 
