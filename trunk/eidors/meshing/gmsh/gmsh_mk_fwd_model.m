@@ -24,11 +24,11 @@ if isempty(name);
    name = ['fwd_mdl based on ', vol_filename];
 end
 
-if nargin < 3
+if nargin < 4
     stim_pattern=[];
 end
 
-if nargin<4 || isempty(eprefix); 
+if nargin<3 || isempty(eprefix); 
    eprefix = 'electrode-';
 end
 
@@ -65,8 +65,9 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     
     % Electrodes
     electrodes = find_elec(phys_names,eprefix,z_contact);
-
-    mdl.electrode =     electrodes;
+    if ~isempty(electrodes);
+        mdl.electrode =     electrodes;
+    end
     mdl.solve=          'eidors_default';
     mdl.jacobian=       'eidors_default';
     mdl.system_mat=     'eidors_default';
@@ -91,6 +92,7 @@ function mat_indices= mk_mat_indices( mat_ind);
 
 % Assumes that electrodes are numbered starting at 1, with prefix provided
 function electrodes = find_elec(phys_names,prefix,z_contact)
+electrodes = struct();
 phys_elecs = find(arrayfun(@(x)strncmp(x.name,prefix,length(prefix)),phys_names));
 for i = 1:length(phys_elecs)
     cur_elec = arrayfun(@(x)strcmp(sprintf('%s%d',prefix,i),x.name),phys_names(phys_elecs));

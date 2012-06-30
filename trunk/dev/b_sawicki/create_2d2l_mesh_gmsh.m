@@ -5,7 +5,7 @@ function [mdl, mat_indices] = create_2d2l_mesh_gmsh(basename, in_rad, ext_rad, n
 % mdl - EIDORS forward model
 % rad - model radius
 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
 % $Id$
 
 
