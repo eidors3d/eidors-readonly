@@ -10,7 +10,7 @@ function [img,img_iteration] = inv_solve_abs_GN_constrain(inv_model,meas_data)
 %
 %% PARAMETERS - MAKE AUTOMATIC
 %
-%M Crabb - 29.06.2012
+%M Crabb and N Polydorides- 29.06.2012
 
 %Convergence tolerance
 [maxiter, tol, min_s,max_s,rel_par,show_iter,bls] = get_parameters(inv_model);
