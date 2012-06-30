@@ -65,8 +65,8 @@ switch command
       remove_objids( objid, sizes,  1:length(sizes) );
 
    case 'cache_size'
-      if ischar(limit); limit= str2num(limit); end
       if nargin==2
+      if ischar(limit); limit= str2num(limit); end
          eidors_objects.max_cache_size = limit;
       else
          retval= eidors_objects.max_cache_size;
@@ -78,13 +78,13 @@ switch command
        eidors_objects.cache_enable = 1;
 
    case 'boost_priority'
-      if ischar(limit); limit= str2num(limit); end
       try
          retval= eidors_objects.cache_priority;
       catch
          retval= 0; % default priority
       end
       if nargin==2
+      if ischar(limit); limit= str2num(limit); end
          retval = retval + limit;
       end
       eidors_objects.cache_priority = retval;
