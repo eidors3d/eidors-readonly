@@ -56,23 +56,21 @@ if isempty(levels) && do_calc_slices && size(img(1).fwd_model.nodes,2)==2
    levels= [Inf,Inf,0];
 end
 
+vh = [];
 if size(levels,2) == 5
-   spec_position= 1;
+   vh = levels(:,4:5);
+   levels = levels(:,1:3);
 elseif size(levels)== [1,1]
    if size(img(1).fwd_model.nodes,2) == 2 % Can't do horiz slices for 2D model
       eidors_msg('Can''t do horizontal slices for 2D model. Showing 2D slice');
       levels= [Inf,Inf,0];
-      spec_position= 0;
    else
       zmax= max(img(1).fwd_model.nodes(:,3));
       zmin= min(img(1).fwd_model.nodes(:,3));
       levels = linspace(zmax,zmin, levels+2);
       levels = levels(2:end-1)';
       levels = [(1+0*levels)*[Inf,Inf], levels];
-      spec_position= 0;
    end
-else
-   spec_position= 0;
 end
 
 if do_calc_slices
@@ -80,49 +78,12 @@ if do_calc_slices
 else
    rimg= img;
 end
-% jnk so that matab doesn't put larger dims in npy
-   [npy,npx,jnk] = size(rimg);
 
-
-n_frames = size(rimg,3);
-n_levels = size(rimg,4);
-if spec_position %won't work for multiple image inputs
-   img_cols = max( levels(:,4) );
-   img_rows = max( levels(:,5) );
-else
-   % vertical slices must be kept together
-   % To nicely fill the image: img_cols ~ img_rows
-   % Thus,  n_frames/vert_rows ~ vert_rows*n_levels;
-   % or     vert_rows^2 ~ n_frames / n_levels
-   vert_rows = ceil( sqrt(n_frames / n_levels) );
-   try   img_cols = img(1).show_slices.img_cols;
-   catch img_cols = ceil( n_frames/vert_rows );
-   end
-   img_rows = ceil(n_frames*n_levels/img_cols);
-   img_rows = ceil(img_rows/n_levels)*n_levels; % Ensure divisible by n_levels
+n_col = 0;
+try  n_col = img(1).show_slices.img_cols;
 end
-% here include the separation
-r_img = NaN*ones(img_rows*npy + (img_rows-1)*sep, ...
-                 img_cols*npx + (img_cols-1)*sep );
 
-idxx= (-npx:-1)+1;
-idxy= (-npy:-1)+1;
-imno= 1;
-for img_no = 1:n_frames
-   for lev_no = 1:n_levels
-      if spec_position %won't work for multiple image inputs
-         i_col= levels( lev_no, 4) + img_no -1;
-         i_row= levels( lev_no, 5);
-      else
-         i_col= rem( img_no-1, img_cols) + 1;
-         i_row= (ceil( img_no / img_cols) -1) * n_levels + lev_no ;
-      end
-% disp([imno, vert_rows, img_cols, img_rows, img_no, lev_no, i_col, i_row]);
-      r_img(i_row*npy + idxy + sep*(i_row-1), ...
-            i_col*npx + idxx + sep*(i_col-1)) = rimg(:,:,img_no,lev_no);
-      imno= imno + 1; 
-   end
-end
+r_img = mk_mosaic(rimg, sep, vh, n_col);
 
 c_img = calc_colours( r_img, img);
 out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
@@ -133,26 +94,26 @@ axis('image');axis('off');axis('equal');
 
 if nargout==0; clear('out_img'); end
 
-
 function do_unit_test
    clf
 
    img=calc_jacobian_bkgnd(mk_common_model('a2t3',8)); 
-   img.elem_data=rand(size(img.fwd_model.elems,1),1);
+   img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
    subplot(4,4,1); show_slices(img) 
 
    img.calc_colours.npoints= 128;
    subplot(4,4,2); show_slices(img) 
 
    img.calc_colours.npoints= 32;
-   img.elem_data=rand(size(img.fwd_model.elems,1),3);
+   img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1:3);
    subplot(4,4,3); show_slices(img) 
+
 
    img.show_slices.img_cols= 1;
    subplot(4,4,4); show_slices(img) 
 
    imgn = rmfield(img,'elem_data');
-   imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
+   imgn.node_data=toeplitz(1:size(img.fwd_model.nodes,1),1);
 
    img.elem_data = img.elem_data(:,1);
    img.fwd_model.mdl_slice_mapper.npx = 10;
@@ -166,7 +127,6 @@ function do_unit_test
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    subplot(4,4,6); show_slices(img);
 
-
    subplot(4,4,7); show_slices(imgn) 
 
    imgn.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
@@ -178,8 +138,9 @@ function do_unit_test
 % 3D images
    img=calc_jacobian_bkgnd(mk_common_model('n3r2',32)); 
    img.calc_colours.npoints= 16;
-   img.elem_data=rand(size(img.fwd_model.elems,1),1);
+   img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
    subplot(4,4,9); show_slices(img,2) 
+
 
    img.elem_data=img.elem_data*[1:3];
    subplot(4,4,10); show_slices(img,2) 
@@ -187,9 +148,11 @@ function do_unit_test
    img.elem_data=img.elem_data(:,1:2);
    subplot(4,4,11); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);
 
+   img.show_slices.sep = 5;
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-1,1,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-1,1,30);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
+
    subplot(4,4,12); show_slices(img,2) 
 
 
@@ -209,3 +172,4 @@ function do_unit_test
            0,inf,inf,2,1;
            0,1,inf,  3,1];
    subplot(4,4,15); show_slices(img,levels) 
+
