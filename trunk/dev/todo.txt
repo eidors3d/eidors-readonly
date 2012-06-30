@@ -41,6 +41,15 @@ are even smoother than they should be.
 ========== 08: PRI=1 ACT=BG
  - ng_mk_functions
      - add mat_idx on the output itself : DONE   
+========== 06: PRI=1 ACT=AA
+Change code that uses iso_f_smooth to use the proper RtR_prior formulation
+    - DONE
+========== 23: PRI=2 ACT=BG
+DEFAULT SOLVER:
+   GN_one_step_diff_solve
+
+ - put defaults for functions
+
 ###############
 
 ========== 01: PRI=1 ACT=AA
@@ -64,8 +73,7 @@ check jacobian c2f calcs
 ========== 05: PRI=1 ACT=AA
 inv_solve_4d_prior and inv_solve_time_prior ?
 
-========== 06: PRI=1 ACT=AA
-Change code that uses iso_f_smooth to use the proper RtR_prior formulation
+Add Wiener filter form to speed up
 
 ========== 09: PRI=1 ACT=BG/AA
  - fix eidors colorbar - give proper location
@@ -94,20 +102,12 @@ write a non-linear GN solver
   - consider bs_nonlinearGN
 
  - move absolute tutorials into functions in main code
-========== 21: PRI=2 ACT=AA
-Add Wiener filter form to speed up
 ========== 22: PRI=2 ACT=?
 Cleanup calc_colours to clean up handling of image_field
    parameter.
   - code also in eidors_colours, scale_for_display, 
   - probably need new colourbar functions
 
-========== 23: PRI=2 ACT=BG
-DEFAULT SOLVER:
-   GN_one_step_diff_solve
-
- - put defaults for functions
-I like the idea of having a defaults in each function, but I think the np_fwd_solve is a level to low. The choice is between np_fwd_solve and aa_fwd_solve, etc. so perhaps it would make sense to put the defaults in fwd_solve itself. Then we could put mdl.solve = 'defualt';
 
 ========== 24: PRI=2 ACT=AA
  - reorganize tutorials
