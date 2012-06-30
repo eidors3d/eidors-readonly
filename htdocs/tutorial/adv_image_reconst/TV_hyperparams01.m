@@ -1,9 +1,7 @@
 % TV: Create object $Id$
 
 imb=  mk_common_model('c2c2',16);
-fmdl= imb.fwd_model;
-sigma= ones(size(fmdl.elems,1),1);
-img= eidors_obj('image','','elem_data',sigma,'fwd_model',fmdl);
+img= mk_image(imb.fwd_model, 1);
 
 vh= fwd_solve( img );
 

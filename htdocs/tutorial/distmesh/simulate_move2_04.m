@@ -25,8 +25,7 @@ for i= 1:n_sims;
    in_trg  =(sum(ctr_pts.^2,2) < trg_rad^2);
 
    % Create target image object
-   timg= eidors_obj('image','','fwd_model',tmdl,...
-                    'elem_data',1 + in_trg*contrast);
+   timg= mk_image(tmdl,1 + in_trg*contrast);
 
    clf; show_fem(timg); axis equal
    print_convert(sprintf('simulate_move2_04a%02d.png',i),'-density 50');

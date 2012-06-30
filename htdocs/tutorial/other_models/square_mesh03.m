@@ -2,8 +2,7 @@
 
 fmdl.stimulation= mk_stim_patterns(length(elec_nodes), 1, '{ad}','{ad}', {}, 1);
 
-img= eidors_obj('image','fmdl','fwd_model',fmdl, ...
-                'elem_data', ones(size(fmdl.elems,1),1) );
+img= mk_image(fmdl, 1);
 vh= fwd_solve(img);
 
 % interpolate onto mesh

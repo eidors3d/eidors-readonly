@@ -1,6 +1,6 @@
 % Create 3D model of a tunnel $Id$ 
 
-% Simulation protocol. TODO: we need a geophysical stim protocol
+% Simulation protocol. 
 stim = mk_stim_patterns(N_elec, 1, [0,4], [0,4], {'no_meas_current'},1);
 fmdl.stimulation = stim;
 cond_mdl = .1; % in S/m units

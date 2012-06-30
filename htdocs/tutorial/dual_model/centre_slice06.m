@@ -1,6 +1,5 @@
 % 2D solver $Id$
 
-
 % Set coarse as reconstruction model
 imdl.rec_model= c_mdl;
 c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);

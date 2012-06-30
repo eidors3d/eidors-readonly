@@ -4,8 +4,7 @@ demo_img = mk_common_model('n3r2');
 
 % Create 2D FEM of all NODES with z=0
 f_mdl = demo_img.fwd_model;
-n2d = f_mdl.nodes( ...
-           (f_mdl.nodes(:,3) == 0), 1:2);
+n2d = f_mdl.nodes( (f_mdl.nodes(:,3) == 0), 1:2);
 e2d = delaunayn(n2d);
 c_mdl = eidors_obj('fwd_model','2d','elems',e2d,'nodes',n2d);
 

@@ -18,14 +18,7 @@ calc_colours(img2dim,[],1); % do colourbar
 % Set eidors_obj hyperparameter member.
 mdlM = mdl2dim;
 
-if 0
-   % Place traditional jacobian in temporary member.
-   mdlM.fwd_model.conductivity_jacobian = mdlM.fwd_model.jacobian;
-   % Redefine jacobian member for movement & conductivity.
-   mdlM.fwd_model.jacobian = 'jacobian_movement_perturb';
-else
-   mdlM.fwd_model.jacobian = @jacobian_movement;
-end
+mdlM.fwd_model.jacobian = @jacobian_movement;
 
 mdlM.RtR_prior =     'prior_movement';
 mdlM.prior_movement.parameters = sqrt(1e2/1); 

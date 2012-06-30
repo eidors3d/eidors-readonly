@@ -39,8 +39,7 @@ ctr_pts = mdl_pts - ones(size(mdl_pts,1),1)*trg_ctr;
 in_trg  =(sum(ctr_pts.^2,2) < trg_rad^2);
 
 
-timg= eidors_obj('image','','fwd_model',tmdl,...
-                 'elem_data',1 + in_trg*.5);
+timg= mk_image(tmdl,1 + in_trg*.5);
 
 % % Show output - full size
 % subplot(121); show_fem( smdl ); axis equal; axis([-1.1 1.1 -1.1 1.1]);  
@@ -58,8 +57,7 @@ timg= eidors_obj('image','','fwd_model',tmdl,...
 stim_pat= mk_stim_patterns(n_elec,1,'{ad}','{ad}',{},1);
 
 smdl.stimulation= stim_pat;
-himg= eidors_obj('image','','fwd_model',smdl,...
-                 'elem_data',ones(size(smdl.elems,1),1) );
+himg= mk_image(smdl, 1);
 
 vh= fwd_solve(himg);
 

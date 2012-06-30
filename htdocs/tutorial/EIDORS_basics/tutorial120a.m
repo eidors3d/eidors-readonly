@@ -7,9 +7,7 @@ e= size(imb.fwd_model.elems,1);
 bkgnd= 1;
 
 % Solve Homogeneous model
-img= eidors_obj('image','');
-img.elem_data= bkgnd * ones(e,1);
-img.fwd_model= imb.fwd_model;
+img= mk_image(imb.fwd_model, bkgnd);
 vh= fwd_solve( img );
 
 % Add Two triangular elements

@@ -1,5 +1,4 @@
-% Lung images
-% $Id$
+% Abdomen Images  $Id$
 
 raster_img= calc_slices(img);
 raster_img(isnan(raster_img))=0;
