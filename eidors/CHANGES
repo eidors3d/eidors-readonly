@@ -1,0 +1,4 @@
+2011-07-30: Function defaults
+	    Models now use 'eidors_default' instead of a particular solver.
+	    Defaults are set in eidors_startup.
+2011-07-30: Started changelog
