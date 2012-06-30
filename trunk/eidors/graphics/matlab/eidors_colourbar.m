@@ -54,16 +54,16 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
    
    %FIXME = AA+CG 30/1/12
-%  tick_vals = [-1:0.5:1]*scale_r + ref_r;
+   tick_vals = [-1:0.5:1]*scale_r + ref_r;
 if isempty(greyscale)
-    tick_vals = [-1:0.2:1]*max_scale + ref_r;
+%   tick_vals = [-1:0.2:1]*max_scale + ref_r;
 else
     tick_vals = [0:0.2:1]*max_scale;
 end
 
    % ref_lev goes to c_ctr. max_scale goes to c_max
 %FIXME - need a switch to control use of max scale
-%  tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+   tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
 if isempty(greyscale) 
     tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
 else
