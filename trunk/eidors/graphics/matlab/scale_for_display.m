@@ -29,7 +29,7 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
       ref_lev = eidors_colours.ref_level;
    else
       ref_lev = pp.ref_level;
-      clim    = pp.clim 
+      clim    = pp.clim;
    end
 
    if ~isnumeric(ref_lev)
