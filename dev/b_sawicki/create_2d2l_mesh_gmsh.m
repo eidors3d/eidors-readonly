@@ -89,6 +89,6 @@ msh_filename = sprintf('%s.msh', basename);
 
 disp(['Now reading back data from file: ' msh_filename])
 [mdl, mat_indices]= gmsh_mk_fwd_model( msh_filename, ...
-    'Gmsh based 2 layer circural model', ones(no_elec,3) );
+    'Gmsh based 2 layer circural model' );
 
 
