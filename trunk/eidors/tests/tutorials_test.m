@@ -125,7 +125,8 @@ diary off
 
 function sl = skiplist
   sl = {'netgen_accuracy01.m', ...
-        'common_models01.m'};
+        'common_models01.m', ...
+        'cg_ards_recruitment_01.m'};
 
 function flag = isfunction(fname)
 fid = fopen([fname '.m']);
