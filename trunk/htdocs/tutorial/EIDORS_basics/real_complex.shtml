@@ -1,0 +1,35 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>Reconstruction of real and complex components</H2>
+
+Many EIT systems allow measurement of the in-phase
+and quadrature signals from the voltage data. From these
+data a complex measurement phasor is calculated. Image
+can be directly reconstructed, although there are 
+some challenges in showing the images.
+
+<h3> 
+Simulation of data with real and complex components
+</h3>
+
+
+<pre>
+<!--#include virtual="real_complex01.m" -->
+</pre>
+
+<center>
+<img src="real_complex01a.png">
+<br><i>Figure:</i>
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
