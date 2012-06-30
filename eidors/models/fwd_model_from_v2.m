@@ -22,11 +22,10 @@ fmdl.nodes=     vtx;
 fmdl.elems=     simp;
 fmdl.boundary=  bdy;
 fmdl.electrode= get_model_elecs(elec,zc);
-fmdl.solve=     'np_fwd_solve';
-fmdl.jacobian=  'np_calc_jacobian';
-fmdl.system_mat='np_calc_system_mat';
+fmdl.solve=     'eidors_default';
+fmdl.jacobian=  'eidors_default';
+fmdl.system_mat='eidors_default';
 fmdl.gnd_node=  gnd_ind;
-fmdl.np_fwd_solve.perm_sym = '{n}'; % default, can change
 
 
 function [electrodes] = get_model_elecs(elec,zc);

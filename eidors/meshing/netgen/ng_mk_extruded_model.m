@@ -1206,11 +1206,12 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
 
    % copy other fields
    if isfield(mdl3,'stimulation'); mdl2.stimulation= mdl3.stimulation; end
-   %if isfield(mdl3,'solve');       mdl2.solve = mdl3.solve;            end
-   mdl2.solve = 'fwd_solve_1st_order'; % FIXME? can't use default np_fwd_solve
-   if isfield(mdl3,'jacobian');    mdl2.jacobian = mdl3.jacobian;      end
-   %if isfield(mdl3,'system_mat');  mdl2.system_mat = mdl3.system_mat;  end
-   mdl2.system_mat = 'system_mat_1st_order'; % FIXME? can't use default np_calc_system_mat
+   try   mdl2.solve      = mdl3.solve;
+   catch mdl2.solve      = 'eidors_default';end 
+   try   mdl2.jacobian   = mdl3.jacobian;
+   catch mdl2.jacobian   = 'eidors_default';end
+   try   mdl2.system_mat = mdl3.system_mat;  
+   catch mdl2.system_mat = 'eidors_default'; end; 
 
    % update cache
 %    mdl2 = eidors_obj('fwd_model',mdl2);

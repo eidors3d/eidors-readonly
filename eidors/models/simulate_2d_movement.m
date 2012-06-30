@@ -174,15 +174,15 @@ function [EPTR,VOL]= img_mapper2(NODE, ELEM, npx, npy );
 
 
 function mdl_2d= mk_fwd_model(n_circles, n_elec)
+    %TODO: is there a mk_common_model call that can replace all that?
     params= mk_circ_tank(n_circles, [], n_elec); 
     n_rings= 1;
     options= {'no_meas_current','no_rotate_meas','do_redundant'};
     [st, els]= mk_stim_patterns(n_elec, n_rings, '{ad}','{ad}', options, 10);
     params.stimulation= st;
     params.meas_select= els;
-    params.solve=      'fwd_solve_1st_order';
-    params.system_mat= 'system_mat_1st_order';
-    params.jacobian=   'jacobian_adjoint';
+    params.solve=      'eidors_default';
+    params.system_mat= 'eidors_default';
+    params.jacobian=   'eidors_default';
     params.normalize_measurements= 1;
-    params.np_fwd_solve.perm_sym= '{n}';
     mdl_2d   = eidors_obj('fwd_model', params);

@@ -47,7 +47,6 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     mdl.elems    = simp;
     mdl.boundary = srf;
     mdl.gnd_node = 1;
-    mdl.np_fwd_solve.perm_sym = '{n}';
     mdl.name = name;
     
     % Model Stimulation
@@ -72,9 +71,9 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     if nelec >0
     mdl.electrode =     electrodes;
     end
-    mdl.solve=          'np_fwd_solve';
-    mdl.jacobian=       'np_calc_jacobian';
-    mdl.system_mat=     'np_calc_system_mat';
+    mdl.solve=          'eidors_default';
+    mdl.jacobian=       'eidors_default';
+    mdl.system_mat=     'eidors_default';
 
     fwd_mdl= eidors_obj('fwd_model', mdl);
 

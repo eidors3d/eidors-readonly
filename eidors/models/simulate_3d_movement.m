@@ -1,5 +1,5 @@
 function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )
-% SIMULATE_3D_MOVEMENT simulate rotational movement in 2D
+% SIMULATE_3D_MOVEMENT simulate rotational movement in 3D
 % [vh,vi,xyzr_pt]= simulate_3d_movement( n_points, model, rad_pr, movefcn )
 %
 %   rad_pr = [path_radius, target_radius, zmin, zmax]
@@ -57,16 +57,6 @@ if isnumeric(movefcn)
 else
    % assume movefcn is a function 
 end
-
-
-if 0 % OLD CODE - now use solver provided
-   mdl_3d.solve=      'np_fwd_solve';
-   mdl_3d.system_mat= 'np_calc_system_mat';
-   mdl_3d.jacobian=   'np_calc_jacobian';
-   mdl_3d.misc.perm_sym=   '{n}';
-   n_elems= size(mdl_3d.elems,1);
-end
-
 
 eidors_msg('simulate_3d_movement: step #1: homogeneous simulation',2);
 % create homogeneous image + simulate data
