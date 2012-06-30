@@ -517,7 +517,6 @@ function inv3d= mk_b3r1_model( n_elec, options )
     params.system_mat= 'system_mat_1st_order';
     params.jacobian=   'jacobian_adjoint';
     params.normalize_measurements= 0;
-    params.np_fwd_solve.perm_sym= '{n}';
     mdl_3d = eidors_obj('fwd_model', params);
 
     inv3d.name = 'EIT inverse: 3D';
@@ -546,7 +545,6 @@ function inv3d= mk_b3r2_model( n_elec, nr, options )
     params.system_mat= 'system_mat_1st_order';
     params.jacobian=   'jacobian_adjoint';
     params.normalize_measurements= 0;
-    params.np_fwd_solve.perm_sym= '{n}';
     mdl_3d = eidors_obj('fwd_model', params);
     
     % Specify number of levels in mesh for imaging slices

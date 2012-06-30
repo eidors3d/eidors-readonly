@@ -62,7 +62,6 @@ function mdl= construct_fwd_model(srf,vtx,simp, name, ...
    mdl.elems    = simp;
    mdl.boundary = srf;
    mdl.gnd_node=           1;
-   mdl.np_fwd_solve.perm_sym =     '{n}';
    mdl.name = name;
 
    % Electrodes and z_contact
@@ -82,9 +81,9 @@ function mdl= construct_fwd_model(srf,vtx,simp, name, ...
 
 
    mdl.electrode =     electrodes;
-   mdl.solve=          'np_fwd_solve';
-   mdl.jacobian=       'np_calc_jacobian';
-   mdl.system_mat=     'np_calc_system_mat';
+   mdl.solve=          'eidors_default';
+   mdl.jacobian=       'eidors_default';
+   mdl.system_mat=     'eidors_default';
 
 function [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox, ...
                                  fixed_node, n_elec_nodes);

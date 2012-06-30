@@ -47,7 +47,6 @@ mdl.elems    = simp;
 
 mdl.boundary = find_boundary( simp );
 mdl.gnd_node = 1;
-mdl.np_fwd_solve.perm_sym = '{n}';
 
 % Electrodes and z_contact
 
@@ -61,9 +60,9 @@ end
 
 
 mdl.electrode =     electrodes;
-mdl.solve=          @fwd_solve_1st_order;
-mdl.jacobian=       @jacobian_adjoint;
-mdl.system_mat=     @system_mat_1st_order;
+mdl.solve=          'eidors_default';
+mdl.jacobian=       'eidors_default';
+mdl.system_mat=     'eidors_default';
 
 
 function vtx_perturb= perturb_vtx( vtx );

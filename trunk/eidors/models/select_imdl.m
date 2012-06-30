@@ -61,9 +61,9 @@ function imdl = basic_imdl( fmdl );
    imdl.name= 'Basic imdl from select_imdl';
    imdl.type= 'inv_model';
 
-   imdl.solve= @inv_solve_diff_GN_one_step;
+   imdl.solve= 'eidors_default';
    imdl.hyperparameter.value = .01;
-   imdl.RtR_prior = @prior_laplace;
+   imdl.RtR_prior = 'eidors_default';
    imdl.jacobian_bkgnd.value = 1;
    imdl.reconst_type= 'difference';
    imdl.fwd_model = fmdl;

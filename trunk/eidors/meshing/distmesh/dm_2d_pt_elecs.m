@@ -52,7 +52,6 @@ fmdl.type = 'fwd_model';
 fmdl.name = 'dm_2d_pt_elec';
 fmdl.electrode = electrode;
 fmdl.gnd_node=           1;
-fmdl.np_fwd_solve.perm_sym =     '{n}';
 
 
 % Find the nodes associated with a given electrode
