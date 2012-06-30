@@ -1,11 +1,3 @@
-addpath EITCalcFrequencySpectrum
-addpath EITCalcLungRoi
-addpath EITCalcTimeSignal
-addpath EITFilterData
-addpath EITReadData
-addpath EITReconstructImages
-addpath Special
-
 % PROCESS EACH STEP OF THE PROTOCOL
 basename = './DATA';
 filename = 'STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_b.get'; 
