@@ -5,7 +5,7 @@ n_elecs = 16;
 [stim,msel] =  mk_stim_patterns(n_elecs,1,[0,1],[0,1],{'no_meas_current'}, 1);
 fmdle.stimulation =  stim;       
 fmdle.meas_select =  msel;       
-fmdle.normalize_measurements = 1;
+fmdle = mdl_normalize(fmdle, 1);
 
 % GREIT Ellip - circ objects
 opt.distr = 0; % central
