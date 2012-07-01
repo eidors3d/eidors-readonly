@@ -239,7 +239,7 @@ function  imgs = get_prepackaged_fmdls( fmdl );
     case 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd'
       fmdl = ng_mk_cyl_models([2,1,0.18],[16,1],[0.05]); 
       fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
-      fmdl.normalize_measurements = 1;
+      fmdl = mdl_normalize(fmdl,1);
       imgs= mk_image( fmdl, 1);
     otherwise
       error('specified fmdl (%s) is not understood', fmdl);
@@ -470,24 +470,24 @@ figure, show_slices(img)
 
 % Create a GREIT model for the ellipse
 opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
-fmdl_2.normalize_measurements = 0;
+fmdl_2 = mdl_normalize(fmdl_2,0);
 % use the true model (inverse crime)
 imdl1 = mk_GREIT_model(mk_image(fmdl_2,0.5), 0.25, [], opt);
 img1= inv_solve(imdl1,vh,vi); 
 
 % use honogenous model 
-fmdl_1.normalize_measurements = 0;
+fmdl_1 = mdl_normalize(fmdl_1,0);
 imdl2 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img2= inv_solve(imdl2,vh,vi); 
 
 %% repeat with normalized data
-fmdl_2.normalize_measurements = 1;
+fmdl_2 = mdl_normalize(fmdl_2,1);
 % use the true model (inverse crime)
 imdl3 = mk_GREIT_model(mk_image(fmdl_2,0.5), 0.25, [], opt);
 img3= inv_solve(imdl3,vh,vi); 
 
 % use honogenous model 
-fmdl_1.normalize_measurements = 1;
+fmdl_1 = mdl_normalize(fmdl_1,1);
 imdl4 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img4= inv_solve(imdl4,vh,vi); 
 
@@ -498,7 +498,7 @@ show_slices([img1 img2 img3 img4])
 %% Use a prepackaged model
 fmdl = mk_library_model('adult_male_16el_lungs');
 fmdl.stimulation = stim;
-fmdl.normalize_measurements = 1;
+fmdl = mdl_normalize(fmdl,1);
 img = mk_image(fmdl,1);
 img.elem_data([fmdl.mat_idx{2}; fmdl.mat_idx{3}],1) = 0.3;
 vh = fwd_solve(img);
@@ -508,7 +508,7 @@ vi = fwd_solve(img);
 
 fmdl2 = mk_library_model('adult_male_16el');
 fmdl2.stimulation = stim;
-fmdl2.normalize_measurements = 1;
+fmdl2 = mdl_normalize(fmdl2,1);
 
 opt.imgsz = [50 30];
 opt.square_pixels = 1;
