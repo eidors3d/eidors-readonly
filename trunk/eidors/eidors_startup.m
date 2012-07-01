@@ -11,11 +11,6 @@ function eidors_startup( path_array )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-% CHECK WE HAVE THE RIGHT VERSION
-% this is hard because matlab keeps on changing the format of the
-% output of the version command. It used to be R13, now it is more
-% like 2009a. Also the number of minor versions changes.
-
 if nargin == 0
     path_array = {};
 end
