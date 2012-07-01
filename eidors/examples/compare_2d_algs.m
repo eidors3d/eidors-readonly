@@ -69,7 +69,7 @@ inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 inv2d.parameters.term_tolerance= 1e-4;
 
 if option>100
-   inv2d.fwd_model.normalize_measurements=1;
+   inv2d.fwd_model = mdl_normalize(inv2d.fwd_model,1);
    option=option-100;
 end
 
