@@ -45,9 +45,12 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 
    % Get colormap limits  and move bottom so we don't see the background colour 
    ylim = get(hh,'Ylim');
-   ylim(1)= ylim(1)+1;
+   cmsz = size(colormap,1);
+   cbsz = ylim(2) - ylim(1);
+   unit = cbsz/cmsz;
+   ylim(1)= ylim(1)+unit;
    %FIXME = AA+CG 30/1/12
-   if ~isempty(greyscale); ylim(1) = ylim(1) + 1 ; end
+   if ~isempty(greyscale); ylim(1) = ylim(1) + unit ; end
    set(hh,'Ylim',ylim);
 
    c_ctr = mean(ylim);
