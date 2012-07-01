@@ -29,7 +29,12 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
    end
 
    %FIXME = AA+CG 30/1/12
-   if nargin <4; greyscale=[]; end
+   if nargin <4; 
+       greyscale=[]; 
+   else
+       warning(['eidors_colourbar: greyscale is an experimental feature'...
+           'and will be re-implemented']);
+   end
 
    % Stop scale from being too small
    if max_scale<abs(ref_lev)
@@ -50,15 +55,17 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 
 %  in order to make the labels clean, we round to a near level
    OrdOfMag = 10^floor(log10(max_scale));
-   scale_r  = OrdOfMag * floor( max_scale / OrdOfMag );
+   scale_r  = OrdOfMag * floor( max_scale / OrdOfMag + 2*eps );
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
    
    %FIXME = AA+CG 30/1/12
-   tick_vals = [-1:0.5:1]*scale_r + ref_r;
+   
 if isempty(greyscale)
-%   tick_vals = [-1:0.2:1]*max_scale + ref_r;
+    %   tick_vals = [-1:0.2:1]*max_scale + ref_r;
+    tick_vals = [-1:0.5:1]*scale_r + ref_r;
 else
-    tick_vals = [0:0.2:1]*max_scale;
+%     tick_vals = [0:0.2:1]*max_scale;
+     tick_vals = [0:0.2:1]*scale_r;
 end
 
    % ref_lev goes to c_ctr. max_scale goes to c_max
