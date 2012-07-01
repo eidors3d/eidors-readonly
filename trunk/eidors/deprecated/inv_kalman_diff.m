@@ -24,4 +24,7 @@ function img= inv_kalman_diff( inv_model, data1, data2)
 % $Id$
 
 warning('EIDORS:deprecated','INV_KALMAN_DIFF is deprecated as of 08-Jun-2012. Use INV_SOLVE_DIFF_KALMAN instead.');
+if isfield(inv_model,'inv_kalman_diff');
+  inv_model.inv_solve_diff_kalman = inv_model.inv_kalman_diff;
+end
 img = inv_solve_diff_kalman(varargin{:});

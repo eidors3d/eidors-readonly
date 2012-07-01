@@ -19,4 +19,9 @@ function img= time_prior_solve( varargin )
 % $Id$
 
 warning('EIDORS:deprecated','TIME_PRIOR_SOLVE is deprecated as of 08-Jun-2012. Use INV_SOLVE_TIME_PRIOR instead.');
+
+if isfield(inv_model,'time_prior_solve');
+  inv_model.inv_solve_time_prior = inv_model.time_prior_solve;
+end
+
 img = inv_solve_time_prior(varargin{:});

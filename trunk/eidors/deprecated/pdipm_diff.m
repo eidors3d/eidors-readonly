@@ -22,4 +22,9 @@ function img=pdipm_diff( varargin )
 
 
 warning('EIDORS:deprecated','PDIPM_DIFF is deprecated as of 08-Jun-2012. Use INV_SOLVE_DIFF_PDIPM instead.');
+
+if isfield(inv_model,'pdipm_diff');
+  inv_model.inv_solve_diff_pdipm = inv_model.pdipm_diff;
+end
+
 img = inv_solve_diff_pdipm(varargin{:});

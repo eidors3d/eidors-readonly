@@ -14,4 +14,8 @@ function J= perturb_jacobian( varargin )
 
 warning('EIDORS:deprecated','PERTURB_JACOBIAN is deprecated as of 08-Jun-2012. Use JACOBIAN_PERTURB instead.');
 
+if isfield(inv_model,'perturb_jacobian');
+  inv_model.jacobian_perturb = inv_model.perturb_jacobian;
+end
+
 J = jacobian_perturb(varargin{:});

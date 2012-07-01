@@ -10,4 +10,9 @@ function Reg= gaussian_HPF_prior( inv_model );
 % $Id$
 
 warning('EIDORS:deprecated','GAUSSIAN_HPF_PRIOR is deprecated as of 08-Jun-2012. Use PRIOR_GAUSSIAN_HPF instead.');
+
+if isfield(inv_model,'gaussian_HPF_prior');
+  inv_model.prior_gaussian_HPF = inv_model.gaussian_HPF_prior;
+end
+
 Reg = prior_gaussian_hpf(inv_model);
