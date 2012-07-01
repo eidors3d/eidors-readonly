@@ -151,9 +151,4 @@ pp.n_dims   = d-1;
 pp.n_meas   = n_meas;
 pp.N2E      = N2E;
 pp.boundary = bdy;
-
-if isfield(fwd_model,'normalize_measurements')
-   pp.normalize = fwd_model.normalize_measurements;
-else
-   pp.normalize = 0;
-end
+pp.normalize = mdl_normalize(fwd_model);
