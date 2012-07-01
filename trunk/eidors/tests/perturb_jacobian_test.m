@@ -7,7 +7,7 @@
   imdl.fwd_model.nodes = imdl.fwd_model.nodes*.25;
   img= calc_jacobian_bkgnd(imdl);
 
-  img.fwd_model.normalize_measurements= 0;
+  img.fwd_model = mdl_normalize(img.fwd_model,0);
 
   img.fwd_model.jacobian=   @np_calc_jacobian;
   img.fwd_model.system_mat= @np_calc_system_mat;
