@@ -49,11 +49,7 @@ eidors_msg('calc_meas_icov: setting cached value', 3);
 function meas_icov = default_meas_icov( inv_model )
 
    fwd_model= inv_model.fwd_model;
-   if isfield(fwd_model,'normalize_measurements')
-      normalize = fwd_model.normalize_measurements;
-   else
-      normalize = 0;
-   end
+   fwd_model = mdl_normalize(fwd_model,mdl_normalize(fwd_model));
 
    n =  calc_n_meas( fwd_model );
 
