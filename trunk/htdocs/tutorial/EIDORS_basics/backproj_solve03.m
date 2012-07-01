@@ -5,7 +5,7 @@ tutorial120a; % get the model from a related tutorial
 % Gauss Newton Solver
 inv_GN= eidors_obj('inv_model','GN_solver','fwd_model', img.fwd_model);
 inv_GN.reconst_type= 'difference';
-inv_GN.solve= @np_inv_solve;
+inv_GN.solve= @inv_solve_diff_GN_one_step;
 inv_GN.RtR_prior= @prior_noser;
 inv_GN.jacobian_bkgnd.value= 1;
 inv_GN.hyperparameter.value= 0.03;
