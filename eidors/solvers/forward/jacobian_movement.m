@@ -375,7 +375,7 @@ function do_unit_test;
   unit_test_3d_inv_solve2
    
 function unit_test_compare_approaches
-   inv_model = mk_common_model('c2t3',16);
+   inv_model = mk_common_model('d2t2',16);
    img_bkgd  = mk_image( inv_model);
    fwd_model = inv_model.fwd_model;
 
@@ -388,7 +388,11 @@ function unit_test_compare_approaches
 
    Jc1= calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
    Jc2= aa_calc_jacobian(fwd_model,img_bkgd);
-   unit_test_cmp('Compare J', Jc1, Jc2, 1e-14);
+   unit_test_cmp('Compare J d2t2', Jc1, Jc2, 1e-13);
+
+   fwd_model.normalize_measurements = 1;
+   unit_test_cmp('Compare J norm', Jc1, Jc2, 1e-13);
+
 
 
 % TEST CODE FOR MATRIX DERIVATIVES
