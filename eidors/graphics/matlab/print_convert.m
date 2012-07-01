@@ -55,7 +55,8 @@ end
 
 
 % this isn't working for old versions of vnc
-cmd = sprintf('convert -density 125 %s -trim  %s %s',  options, tmpnam, filename);
+% Need colorspace RGB, otherwise IE can't read it.
+cmd = sprintf('convert -colorspace RGB -density 125 %s -trim  %s %s',  options, tmpnam, filename);
 
 % Code to try to use gs to get around imagemagick bugs
 if 0
