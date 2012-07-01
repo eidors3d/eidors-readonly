@@ -48,6 +48,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %   'backgnd' ( DEFAULT [.5,.5,.15] ): image border colour 
 %   'ref_level' (DEFAULT 'auto') conductivity of centre of
 %      colour mapping. 'auto' tries to estimate a good level.
+%      For complex image data, ref_level should also be complex.
 %   'mapped_colour' (DEFAULT 127) number of colourmap entries
 %      using mapped_colour allows matlab to print vector graphics to eps
 %      setting mapped_colour=0 means to use RGB colours
