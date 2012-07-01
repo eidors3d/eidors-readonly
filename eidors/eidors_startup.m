@@ -35,6 +35,8 @@ function set_defaults(HOMEDIR)
     eidors_default('set','calc_RtR_prior','prior_laplace');
     eidors_default('set','calc_R_prior','prior_laplace');
     eidors_default('set','fwd_solve','fwd_solve_1st_order');
+    %models are NOT normalized by default
+    eidors_default('set','mdl_normalize',@(x) 0); 
     
 
 
