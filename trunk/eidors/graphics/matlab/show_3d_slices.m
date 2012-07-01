@@ -99,28 +99,44 @@ function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
    ff=isnan(rimg);
    bdr= (conv2(double(~ff),ones(3),'same')>0) & ff;
    outbdr = ff & ~bdr;
+   outbdr = ff;
+   bdr= (conv2(double(~ff),ones(2),'same')>0);
+   bdr(:,end) = []; bdr(end,:) = [];
 
-   ver = eidors_obj('interpreter_version');
-   if ver.isoctave ==0 && ver.is64bit
-      eidors_msg(['Poor you. You''re using a 64 bit version of matlab. ' ...
-                  'Unfortunately, these versions have serious graphics ' ...
-                  'bugs and we can''t show a nice image. Sorry. ' ...
-                  'Please bug Mathworks for a fix (good luck!).'],0);
-   else
-      cimg(outbdr)= NaN;
+   if 0 % It looks like putting NaN on zz does the trick
+      ver = eidors_obj('interpreter_version');
+      if ver.isoctave ==0 && ver.is64bit
+         cimg(outbdr)= Inf;
+      else
+         cimg(outbdr)= NaN;
+      end
    end
 
    if show_surf
-      hh=surf(xyz(:,:,1)+M_add(1), ...
-              xyz(:,:,2)+M_add(2), ...
-              xyz(:,:,3)+M_add(3), flipud(cimg));
+      xx=xyz(:,:,1)+M_add(1);
+      yy=xyz(:,:,2)+M_add(2);
+      zz=xyz(:,:,3)+M_add(3);
+%     xx= flipud(xx); xx(ff & ~bdr) = NaN; xx= flipud(xx);
+      xx(end,:) = []; xx(:,end) = [];
+      yy(end,:) = []; yy(:,end) = [];
+      zz(end,:) = []; zz(:,end) = [];
+      cimg(end,:) = []; cimg(:,1) = [];
+      zz(~bdr) = NaN;
+      cimg = flipud(cimg);   cimg(~bdr) = NaN;
+%xx(outbdr) = NaN;
+%yy(outbdr) = NaN;
+      hh=pcolor(xx,yy,cimg);
+      set(hh,'Zdata',zz);
+%     hh=surface(xx,yy,zz,cimg);
+      set(hh,'FaceColor','flat');
 
-      set(hh,'EdgeAlpha',0); % Remove background grid
+%     set(hh,'EdgeAlpha',0); % Remove background grid
+%     set(hh,'EdgeColor','none'); % Remove background grid
 
       % WHY WOULD CDataMapping BE ANYTHING ELSE  - STUPID MATLAB !!!
       % In 64 bit matlab, doing CDataMapping direct on a matrix with
       %   NaN's will crash matlab. Damn.
-      set(hh,'CDataMapping','direct');
+%     set(hh,'CDataMapping','direct');
    end
 
 %  draw_line_around(cimg, rimg, x,y, M_trans, M_add);
@@ -144,5 +160,11 @@ function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
 
 function do_unit_test
    img = mk_image(mk_common_model('n3r2',16),1);
-   show_3d_slices(img,[1,2],0,0.5);
+   load datacom.mat A B;
+   img.elem_data(A) = 1.2;
+   img.elem_data(B) = 0.8;
+   img.calc_colours.npoints = 15;
+   show_3d_slices(img,[1.5,2],[],[]);
+
+%  show_3d_slices(img,[1,2],0,0.5);
    view(10,18);
