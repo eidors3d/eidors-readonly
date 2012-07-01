@@ -59,6 +59,13 @@ else ;         fid= 2; end
 %  if lms>0; fprintf(fid,'%c', 8*ones(lms,1)); end
 %end
 
+% deal with variables
+if ~ischar(message)
+   var = inputname(1);
+   message = [var ' = ' num2str(message)];
+end
+
+
 % Need to do twice to interpret text in message
 % message= sprintf(message, args{:} );
 if length(message)>1 % single characters are just for progress
