@@ -14,7 +14,7 @@ v0e=v0.meas; v0all=v0.volt;
 %High-order EIDORS solver
 %Change default eidors solvers
 fmdl.solve = @fwd_solve_higher_order;
-fmdl.system_mat = @calc_system_mat_higher_order;
+fmdl.system_mat = @system_mat_higher_order;
 
 %Add element type
 fmdl.approx_type    = 'tri3'; % linear
