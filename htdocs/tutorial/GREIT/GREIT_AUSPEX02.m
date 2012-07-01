@@ -4,7 +4,7 @@ n_elecs = 16;
    fmdl.electrode = fmdl.electrode([1,16:-1:2]);
    fmdl.stimulation =  mk_stim_patterns(n_elecs,1,[0,1],[0,1],{'rotate_meas','no_meas_current'}, 1);
 
-   fmdl.normalize_measurements = 1;
+   fmdl = mdl_normalize(fmdl, 1);
    img = mk_image(fmdl,1); % Homogeneous background
 
    opt.imgsz = [32 32];
