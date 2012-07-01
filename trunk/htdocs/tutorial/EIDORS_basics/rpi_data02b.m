@@ -2,7 +2,7 @@
 
 % simple inverse model -> replace fields to match this model
 imdl = mk_common_model('b2c2',32);
-imdl.fwd_model.normalize_measurements = 0;
+imdl.fwd_model = mdl_normalize(imdl.fwd_model, 0);
 
 imdl.fwd_model.electrode = imdl.fwd_model.electrode([8:-1:1, 32:-1:9]);
 
