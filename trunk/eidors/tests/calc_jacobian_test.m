@@ -19,7 +19,7 @@ ok=ok & run_dataprior_test( mdl );
 
 %
 disp('test jacobian_adjoint (2D) for normalized difference data');
-mdl.normalize_measurements= 1;
+mdl = mdl_normalize(mdl,1);
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
@@ -29,7 +29,7 @@ disp('test jacobian_adjoint (3D) for difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
-mdl.normalize_measurements= 1;
+mdl = mdl_normalize(mdl,1);
 disp('test jacobian_adjoint (3D) for normalized difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
@@ -40,7 +40,7 @@ disp('test np_calc_jacobian for difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
 
-mdl.normalize_measurements= 1;
+mdl = mdl_normalize(mdl,1);
 disp('test np_calc_jacobian for normalized difference data')
 ok=ok & run_jacobian_test( mdl, delta, testvec );
 ok=ok & run_dataprior_test( mdl );
@@ -49,10 +49,8 @@ ok=ok & run_dataprior_test( mdl );
 % run the jacobian test 
 function ok= run_jacobian_test( mdl, delta, testvec ); 
     calc_norm = 0;
-    if isfield(mdl,'normalize_measurements')
-       if mdl.normalize_measurements
-           calc_norm = 1;
-       end
+    if mdl_normalize(mdl)
+        calc_norm = 1;    
     end
 
     img= eidors_obj('image', 'homg image');
@@ -106,10 +104,8 @@ function ok= run_dataprior_test( mdl )
 
     % difference dataprior
     testvec= diag(DP);
-    if isfield(mdl,'normalize_measurements')
-       if mdl.normalize_measurements
-           testvec = homg_data.meas.^2 .* diag(DP);
-       end
+    if mdl_normalize(mdl)
+        testvec = homg_data.meas.^2 .* diag(DP);
     end
 
     mdiff = full(max(abs(diff( testvec ))));
