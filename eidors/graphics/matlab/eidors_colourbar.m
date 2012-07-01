@@ -1,5 +1,8 @@
 function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 % EIDORS_COLOURBAR - create an eidors colourbar with scaling to image
+% usage: eidors_colourbar( img )
+%    show a colourbar on the current axis representing img
+%
 % usage: eidors_colourbar(max_scale,ref_lev)
 %    ref_lev:   centre of the colour scale
 %    max_scale: max difference from colour scale centre 
@@ -14,6 +17,16 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 % (C) 2005-2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+
+if isstr(max_scale) && strcmp(max_scale,'UNIT_TEST'); do_unit_test; return; end
+
+% if called as a simple eidors colourbar function
+if isstruct(max_scale) && strcmp(max_scale.type,'image')
+    calc_colours(max_scale,[],1);
+    return
+end
+
+% Now deal with the other cases
    hh= colorbar; 
    % make colourbar smaller and closer to axis
    if nargin >= 3
@@ -83,3 +96,20 @@ end
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
 
+end
+
+function do_unit_test
+imdl = mk_common_model('n3r2');
+img = mk_image(imdl);
+img=rmfield(img,'elem_data');
+img.node_data(1:252)= (1:252)/100 - 1;
+subplot(221);
+show_slices(img,2);
+eidors_colourbar(img);
+
+img.calc_colours.cb_shrink_move = [.5,.5,0];
+subplot(222);
+show_slices(img,2);
+eidors_colourbar(img);
+
+end
