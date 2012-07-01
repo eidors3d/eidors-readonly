@@ -13,7 +13,7 @@ invtv.parameters.keep_iterations= 0;
 
 invtv.fwd_model= inv2d.fwd_model;
    
-invtv.fwd_model.normalize_measurements=1;
+invtv.fwd_model = mdl_normalize(invtv.fwd_model, 1);
 
 
 maxiters= [1,3,6,15];
