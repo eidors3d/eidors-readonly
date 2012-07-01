@@ -1,4 +1,4 @@
-function [s_mat]=lc_calc_system_mat_higher_order(fwd_model,img)
+function [s_mat]=calc_system_mat_higher_order(fwd_model,img)
 %Assemble the total stiffness matrix : s_mat.E=At;
 %M Crabb - 29.06.2012
 %TODO - Sparse assignment of the matrices
@@ -14,18 +14,8 @@ if(size(elecstruc(1).nodes,2)==1 && size(elecstruc(1).nodes,1)==1) %POINT ELECTR
 else %COMPLETE ELECTRODE
     [Am]=mc_calc_stiffness(fwd_model,img);
     
-     [Aw,Az,Ad]=mc_calc_complete(fwd_model,img);
-     At=zeros(nnodes+nelecs,nnodes+nelecs);     
-%     [i,j,s] = find(Am);
-%     At=At+sparse(i,j,s,nnodes+nelecs,nnodes+nelecs);
-%     [i,j,s] = find(Az);
-%     At=At+sparse(i,j,s,nnodes+nelecs,nnodes+nelecs);
-%     [i,j,s] = find(Aw);
-%     At=At+sparse(i,j+nnodes,s,nnodes+nelecs,nnodes+nelecs);
-%     At=At+sparse(j+nnodes,i,s,nnodes+nelecs,nnodes+nelecs);
-%     [i,j,s] = find(Ad);
-%     At=At+sparse(i+nnodes,j+nnodes,s,nnodes+nelecs,nnodes+nelecs);
-    
+    [Aw,Az,Ad]=mc_calc_complete(fwd_model,img);
+    At=zeros(nnodes+nelecs,nnodes+nelecs);
     At(1:nnodes,1:nnodes) = Am+Az;
     At(1:nnodes,nnodes+1:nnodes+nelecs) = Aw;
     At(nnodes+1:nnodes+nelecs,1:nnodes)=Aw';
@@ -33,7 +23,7 @@ else %COMPLETE ELECTRODE
 end
 
 %Put in structure to be compatibile with eidors
-s_mat.E=sparse(At);
+s_mat.E=At;
 end
 
 %STIFFNESS MATRIX PART
@@ -56,10 +46,6 @@ elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
 %element consistent with geometry of reference element
 eletype=fwd_model.approx_type; 
 [weight,xcoord,ycoord,zcoord]=element_gauss_points(eletype);
-%dphi = zeros(1,size(weight,2));
-for kk=size(weight,2):-1:1
-    dphi(:,:,kk) = element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk));
-end
 
 %Initialise global stiffness matrix
 Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
@@ -89,38 +75,21 @@ for i=1:nelems
     Ammat=0;
     for kk=1:size(weight,2)
         Ammat = Ammat + weight(kk)* ...
-            (jacobianelem\dphi(:,:,kk))'* ...
-            (jacobianelem\dphi(:,:,kk))*magjacelem;
+            (jacobianelem\element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))'* ...
+            (jacobianelem\element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk)))*magjacelem;
     end
     %This is element stiffness matrix (and multiply by its conductivity)
     stiff=Ammat*img.elem_data(i); 
     
     %Assemble global stiffness matrix (Silvester's book!!)
-%    nnodeselems=size(elemstruc(i).nodes,2); %No. of nodes per element
+    nnodeselems=size(elemstruc(i).nodes,2); %No. of nodes per element
+    for ii=1:nnodeselems %loop over nodes in element
+        for jj=1:nnodeselems %loop over nodes in element
+            Agal(elemstruc(i).nodes(ii),elemstruc(i).nodes(jj)) = ...
+            Agal(elemstruc(i).nodes(ii),elemstruc(i).nodes(jj)) +  stiff(ii,jj);
+        end
+    end   
     
-    Agal(elemstruc(i).nodes, elemstruc(i).nodes) = Agal(elemstruc(i).nodes, elemstruc(i).nodes) + stiff;
-    
-%     for ii=1:nnodeselems %loop over nodes in element
-%         for jj=1:nnodeselems %loop over nodes in element 
-%             Agal(elemstruc(i).nodes(ii),elemstruc(i).nodes(jj)) = ...
-%             Agal(elemstruc(i).nodes(ii),elemstruc(i).nodes(jj)) +  stiff(ii,jj);
-%         end
-%     end 
-
-%     sparseindex = 1;
-%     dofi = zeros(1,nnodeselems*nnodeselems);
-%     dofj = zeros(1,nnodeselems*nnodeselems);
-%     dofv = zeros(1,nnodeselems*nnodeselems);
-%     for ii=1:nnodeselems %loop over nodes in element
-%         for jj=1:nnodeselems %loop over nodes in element 
-%             dofi(sparseindex) = elemstruc(i).nodes(ii);
-%             dofj(sparseindex) = elemstruc(i).nodes(jj);
-%             dofv(sparseindex) = stiff(ii,jj);
-%             sparseindex = sparseindex + 1;
-%         end
-%     end 
-%     Agal = Agal + sparse(dofi,dofj, dofv, nnodes, nnodes);
-
 end
  
 end
@@ -142,7 +111,7 @@ boundstruc=fwd_model.bound; nbounds=size(boundstruc,2);
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); nodedim=size(nodestruc,2);
 
 %Connect boundary/electrode -Put boundary into old matrix strucutre
-for i=nbounds:-1:1
+for i=1:nbounds
     boundstrucold(i,:)=boundstruc(i).nodes;
 end
 
@@ -150,9 +119,7 @@ end
 %boundaries consistent with geometry of reference boundary
 eletype=fwd_model.approx_type; 
 [weight,xcoord,ycoord]=boundary_gauss_points(eletype);
-for kk=size(weight,2):-1:1
-    phi(:,kk) = boundary_shape_function(eletype,xcoord(kk),ycoord(kk));
-end
+
 
 %1. Initialise global Az/Aw/Ad matrices and assemble a la Silvester
 Az=zeros(nnodes,nnodes); Aw=zeros(nnodes,nelecs); Ad=zeros(nelecs,nelecs); %sparse updating non zero slow
@@ -199,55 +166,27 @@ for ke=1:nelecs
         Azmat=0; Awmat=0;
         for kk=1:size(weight,2)
             Azmat = Azmat + weight(kk)* ...
-                (phi(:,kk))'* ...
-                (phi(:,kk))*magjacbound;
+                (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))'* ...
+                (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
             Awmat = Awmat + weight(kk)* ...
-                (phi(:,kk))*magjacbound;
+                (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
         end         
         
         %Node numbers for this boundary
         boundnodes=boundstruc(boundidx_ke(ii)).nodes;
-        
-        Az(boundnodes,boundnodes) = Az(boundnodes,boundnodes)+Azmat/elecimped;
-        Aw(boundnodes,ke) = Aw(boundnodes,ke) - Awmat/elecimped;
-        
-%         dofAzi = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-%         dofAzj = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-%         dofAzv = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-%         
-%         dofAwi = zeros(1,size(boundnodes,2));
-%         dofAwj = zeros(1,size(boundnodes,2));
-%         dofAwv = zeros(1,size(boundnodes,2));
-%         
-%         sparseindex = 1;
-%         for i=1:size(boundnodes,2)
-%             for j=1:size(boundnodes,2)
-%                 dofAzi(sparseindex) = boundnodes(i);
-%                 dofAzj(sparseindex) = boundnodes(j);
-%                 dofAzv(sparseindex) = Azmat(i,j)/elecimped;
-%                 sparseindex = sparseindex + 1;
-%             end
-%             dofAwi(i) = boundnodes(i);
-%             dofAwj(i) = ke;
-%             dofAwv(i) = Awmat(i)/elecimped;
-%         end          
-%         Az = Az + sparse(dofAzi,dofAzj,dofAzv,nnodes,nnodes);      
-%         Aw = Aw + sparse(dofAwi,dofAwj,dofAwz,nnodes,nelecs);
-        
+                
         %Loop over the nodes on the boundary and form Az/Aw matrices
-%         for i=1:size(boundnodes,2)
-%             for j=1:size(boundnodes,2)
-%                 %Form Az matrix in inner loop
-%                 %Az(boundnodes(i),boundnodes(j)) =
-%                 Az(boundnodes(i),boundnodes(j)) + Azmat(i,j)/elecimped;
-%             end
-%             %Form Aw matrix in outer loop
-%             Aw(boundnodes(i),ke) = Aw(boundnodes(i),ke) - Awmat(i)/elecimped;
-%         end        
+        for i=1:size(boundnodes,2)
+            for j=1:size(boundnodes,2)
+                %Form Az matrix in inner loop
+                Az(boundnodes(i),boundnodes(j)) = Az(boundnodes(i),boundnodes(j)) + Azmat(i,j)/elecimped;
+            end
+            %Form Aw matrix in outer loop
+            Aw(boundnodes(i),ke) = Aw(boundnodes(i),ke) - Awmat(i)/elecimped;
+        end        
 
     end
        
 end
 
 end
-
