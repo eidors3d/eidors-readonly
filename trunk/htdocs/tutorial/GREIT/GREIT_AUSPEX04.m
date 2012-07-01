@@ -13,4 +13,3 @@ for i=1:length(fnames);
    title('Domain Boundary');
 s=s+2;end
 print_convert GREIT_AUSPEX04a.png
-
