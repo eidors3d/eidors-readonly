@@ -15,7 +15,7 @@ fmdl = ng_mk_extruded_model({2,{trunk,lung} ,[4,50],.1},[electh,1+0*electh],[0.1
 fmdl.name = 'trunk_and_lungs';
 fmdl.stimulation = stim;
 fmdl.meas_select = meas_sel;
-fmdl.normalize_measurements = 1;
+fmdl = mdl_normalize(fmdl, 1);
 fmdl.electrode(2:16) =  fmdl.electrode(16:-1:2); %flip electrodes to match 
 fmdl.nodes = fmdl.nodes*diag([-1,-1,1]);
 
