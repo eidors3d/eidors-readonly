@@ -126,6 +126,7 @@ diary off
 function sl = skiplist
   sl = {'netgen_accuracy01.m', ...
         'common_models01.m', ...
+        'Script_For_Tutorial.m'};
         'cg_ards_recruitment_01.m'};
 
 function flag = isfunction(fname)
