@@ -5,7 +5,7 @@ imdl= mk_common_model('c2c2',16);
 imdl.fwd_model.electrode =  ...
    imdl.fwd_model.electrode([9:-1:1,16:-1:10]);
 % Use normalized difference imaging
-imdl.fwd_model.normalize_measurements=1;
+imdl.fwd_model = mdl_normalize(imdl.fwd_model, 1);
 
 subplot(211);
 show_fem(imdl.fwd_model, [0,1,0]);
