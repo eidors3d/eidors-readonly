@@ -29,7 +29,7 @@ fmdl = ng_mk_extruded_model({300,a,[3,10],25},[16,1.11,150],[1]);
 % scale = max(maxx,maxy);
 % fmdl.nodes = fmdl.nodes/scale;
 % fmdl.nodes(:,3) = fmdl.nodes(:,3) - mean(fmdl.nodes(:,3));
-fmdl.normalize_measurements = 1;
+fmdl = mdl_normalize(fmdl,1);
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 fmdl.stimulation = stim;
 %%
@@ -65,7 +65,7 @@ im_gr = mk_common_gridmdl('GREITc1');
 show_fem(inv_solve(im_gr,vh,vi))
 %%
 imdl = mk_common_model('b3cr',[16,1]) %3d, 16 elec, 1 ring
-imdl.fwd_model.normalize_measurements = 1;
+imdl.fwd_model = mdl_normalize(imdl.fwd_model,1);
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 imdl.stimulation = stim;
 img = mk_image(imdl);
