@@ -38,7 +38,7 @@ else
     eidors_msg('inv_solve_4d_prior: setting cached value', 2);
 end
 
-if fwd_model.normalize_measurements
+if mdl_normalize(fwd_model)
     dva= data2 ./ data1 - 1;
 else
     dva= data2 - data1;
