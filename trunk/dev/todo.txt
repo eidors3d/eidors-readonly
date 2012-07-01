@@ -195,6 +195,10 @@ ng_mk_ ... models
 add interface to ng.opt
 
 ################ DEFER #####################3
+Re-think calc_colours: image_fields and
+         eidors_colourbar: background (CG's tutorial)
+
+==========
  - deform_cylinder - use proper fit like a fourier fit.
   => keep for historical reasons
 ========== 42: PRI=? ACT=?
