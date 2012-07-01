@@ -1,0 +1,63 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>EIDORS fwd_models</h2>
+
+<h3> 
+Solving the forward problem for EIT in 3D with higher order finite elements
+</h3>
+
+Create a common model with EIDORS and solve using default solver. Swap the default forward solvers to the high order solvers, and the element type ('tet4' is linear and 'tet10' is quadratic).
+
+<pre>
+<!--#include virtual="forward_solvers_3d_high_order01.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers_3d_high_order01a.png">
+<br><i> Figure:</i>
+The plot reassuringly shows the two approximations (eidors default and the high order linear solver) both agree at machine precision on the electrodes.
+</center>
+
+<pre>
+<!--#include virtual="forward_solvers_3d_high_order02.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers_3d_high_order02a.png">
+<br><i> Figure:</i>
+The left plot shows the voltage distribution for the first stimulation using the linear high order solver. The right plot shows the difference between the default eidors solver and the linear high order solver, which agree to machine precision.
+</center>
+
+We now solve the forward problem using a quadratic ('tet10') approximation and look at the electrode voltages and internal voltage distribution.
+
+<pre>
+<!--#include virtual="forward_solvers_3d_high_order03.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers_3d_high_order03a.png">
+<br><i> Figure:</i>
+The electrode voltages for linear and quadratic approximation. The linear approximation agrees with the high order approximations away from the drive electrodes, but gets worse as we move toward the drive electrodes.
+</center>
+
+<pre>
+<!--#include virtual="forward_solvers_3d_high_order04.m" -->
+</pre>
+
+<center>
+<img src="forward_solvers_3d_high_order04a.png">
+<br><i> Figure:</i>
+The plot illustrates the difference between linear and quadratic approximation on the internal voltage distribution.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2012-06-29 22:53:39 +0100 (Fri, 29 Jun 2012) $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
