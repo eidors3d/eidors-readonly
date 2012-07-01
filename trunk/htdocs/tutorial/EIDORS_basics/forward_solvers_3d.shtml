@@ -1,0 +1,72 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>EIDORS fwd_models</h2>
+
+<h3> 
+Creating an FEM and solving a 3D forward problem 
+</h3>
+
+EIDORS has functions to create common FEM models.
+
+<pre>
+<!--#include virtual="forward_solver_3d_01.m" -->
+</pre>
+<pre>
+<!--#include virtual="forward_solver_3d_02.m" -->
+</pre>
+
+<center>
+<img src="forward_solver_3d_01a.png">
+<img src="forward_solver_3d_02a.png">
+<br><i> Figure:</i>
+A 3D finite element model (left) and an
+insulating inclusion (right)
+</center>
+
+Solving voltage pattern with and without inclusion
+<pre>
+<!--#include virtual="forward_solver_3d_03.m" -->
+</pre>
+
+<center>
+<img src="forward_solver_3d_03a.png">
+<br><i> Figure:</i>
+Measured voltages pattern from adjacent stimulation
+</center>
+
+<pre>
+<!--#include virtual="forward_solver_3d_04.m" -->
+</pre>
+
+<center>
+<img src="forward_solver_3d_04a.png">
+<img src="forward_solver_3d_04b.png">
+<br><i> Figure:</i>
+The voltage pattern in three vertical slices of medium from 
+adjacent stimulation. (left) voltage pattern. (right) pattern due
+to a change in conductivity.
+</center>
+
+<pre>
+<!--#include virtual="forward_solver_3d_05.m" -->
+</pre>
+
+<center>
+<img src="forward_solver_3d_05a.png">
+<img src="forward_solver_3d_05b.png">
+<br><i> Figure:</i>
+The voltage pattern in three vertical slices of medium from 
+opposity stimulation (across two electrode rings). (left) voltage pattern. (right) pattern due
+to a change in conductivity.
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
