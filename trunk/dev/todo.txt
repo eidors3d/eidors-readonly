@@ -1,3 +1,7 @@
+-----------------NEW
+ - calc_jacobian_test fails
+ - think though the fwd_model.background - good idea?
+-----------------
 PRI DEF=
 1 do now
 2 do next
@@ -149,6 +153,9 @@ Iteratively refine
 ========== 31: PRI=3 ACT=?
 merge eidors_model_params and fix_models
  -  rename fix_models
+
+also merge fwd_model_params
+put neighborhood matrix - from M.Crabb
 
  - migrate aa_fwd_parameters to fix_model
 ========== 32: PRI=3 ACT=?
