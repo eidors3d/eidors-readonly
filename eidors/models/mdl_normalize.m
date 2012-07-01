@@ -13,8 +13,6 @@ function out = mdl_normalize(mdl, val)
 
 if ischar(mdl) && strcmp(mdl, 'UNIT_TEST'); do_unit_test; return; end
 
-s = warning('query', 'backtrace');
-warning off backtrace;
 % check that we got a fwd_model
 try 
     if ~strcmp(mdl.type,'fwd_model'), error;end;
@@ -35,7 +33,6 @@ switch nargin
     otherwise
         error('Wrong number of parameters');
 end
-warning(s);
 
 function out = get_flag(mdl)
  out = [];
@@ -58,6 +55,8 @@ function mdl = set_flag(mdl, val)
 mdl.normalize_measurements = val;
 
 function do_unit_test
+s = warning('query', 'backtrace');
+warning off backtrace;
 eidors_default('set','mdl_normalize',@(x) 0);
 mdl = mk_common_model('c2t2',16);
 fmdl = mdl.fwd_model;
@@ -87,4 +86,4 @@ eidors_msg(mdl_normalize(mdl));
 catch
     eidors_msg('Just so.');
 end
-
+warning(s);
