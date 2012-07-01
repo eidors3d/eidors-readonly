@@ -90,7 +90,7 @@ inv_mdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
 % it may be useful to populate in this case
 %  inv_mdl.solve_use_matrix.map = map;
 inv_mdl.solve = @solve_use_matrix;
-inv_mdl.fwd_model.normalize_measurements= 1;
+inv_mdl.fwd_model = mdl_normalize(inv_mdl.fwd_model, 1);
 [st, els]= mk_stim_patterns(16, 1, '{ad}','{ad}', {}, 10);
 inv_mdl.fwd_model.meas_select= els;
 
