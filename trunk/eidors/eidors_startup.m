@@ -88,7 +88,8 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
 
     DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
     for i = 1:length(path_array)
-        addpath([DEVDIR, '/', path_array{i}]);
+        p = genpath([DEVDIR, '/', path_array{i}]);
+        addpath(p);
     end
     % addpath([DEVDIR, '/a_adler']);
     % addpath([DEVDIR, '/b_grychtol']);
