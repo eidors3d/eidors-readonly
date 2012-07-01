@@ -27,4 +27,8 @@ function Reg= aa_e_move_image_prior( inv_model );
 % relative strengths of conductivity and movement priors
 warning('EIDORS:deprecated','AA_E_MOVE_IMAGE_PRIOR is deprecated as of 07-Jun-2012. Use PRIOR_MOVEMENT instead.');
 
+if isfield(inv_model,'aa_e_move_image_prior');
+  inv_model.prior_movement = inv_model.aa_e_move_image_prior;
+end
+
 Reg = prior_movement( inv_model);
