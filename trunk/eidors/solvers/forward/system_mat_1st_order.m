@@ -14,7 +14,23 @@ function s_mat= system_mat_1st_order( fwd_model, img)
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
-elem_sigma = kron( img.elem_data(:), ones(elem_dim(fwd_model),1) );
+if( size(img.elem_data,1) == pp.n_elem )
+    %For non-dual models
+    elem_data = img.elem_data; 
+else
+    %For dual models
+    if isfield(fwd_model, 'coarse2fine')
+        elem_data = fwd_model.coarse2fine * img.elem_data;
+    end  
+
+% Fixme: is 'background' the right parameter here?
+    %If background image is known
+    if isfield(fwd_model, 'background')
+        elem_data = elem_data + fwd_model.background;
+    end
+end
+
+elem_sigma = kron( elem_data(:), ones(pp.n_dims,1) );
 
 ES= ones(lFC,1);
 ES(1:length(elem_sigma))= elem_sigma;
