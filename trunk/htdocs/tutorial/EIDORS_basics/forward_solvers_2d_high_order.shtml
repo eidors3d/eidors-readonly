@@ -5,10 +5,10 @@
 <h2>EIDORS fwd_models</h2>
 
 <h3> 
-Solving the forward problem for EIT with high order finite elements
+Solving the forward problem for EIT in 2D with higher order finite elements
 </h3>
 
-Create a common model with EIDORS and solve using default solver. Swap the default forward solvers to the high order solvers, and the element type ('tri3' is linear, 'tri6' is quadratic and 'tri10' is cubic).
+Create a common model with EIDORS and solve using default solver. Swap the default forward solvers to the higher order solvers, and the element type ('tri3' is linear, 'tri6' is quadratic and 'tri10' is cubic).
 
 <pre>
 <!--#include virtual="forward_solvers_2d_high_order01.m" -->
