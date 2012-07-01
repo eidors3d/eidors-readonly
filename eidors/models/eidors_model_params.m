@@ -21,9 +21,10 @@ switch type;
       end
 
    case 'fwd_model';
-      if ~isfield(mdl,'normalize_measurements');
-         mdl.normalize_measurements= 0;
-      end
+      mdl = mdl_normalize(mdl,mdl_normalize(mdl));
+%       if ~isfield(mdl,'normalize_measurements');
+%          mdl.normalize_measurements= 0;
+%       end
       if ~isfield(mdl,'elems');
          return;
       end
