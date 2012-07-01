@@ -53,7 +53,7 @@ function meas_icov = default_meas_icov( inv_model )
 
    n =  calc_n_meas( fwd_model );
 
-   if ~normalize
+   if ~mdl_normalize(fwd_model);
       meas_icov= speye( n );
    else
       homg_data=  solve_homg_image( fwd_model );

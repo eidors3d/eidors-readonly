@@ -33,7 +33,7 @@ if all(size(data1) == [1,1]) && (data1 == 0)
    return;
 end
 
-fwd_model = mdl_normalize(fmdl,mdl_normalize(fmdl));
+fwd_model = mdl_normalize(fwd_model,mdl_normalize(fwd_model));
 
 fdata1 = filt_data( fwd_model, data1, data_width );
 fdata2 = filt_data( fwd_model, data2, data_width );
