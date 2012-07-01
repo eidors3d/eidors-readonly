@@ -2,7 +2,6 @@
 imdl = mk_common_model('n3r2',16);
 fmdl = imdl.fwd_model;
 
-
 %Default EIDORS solver
 %Make image of unit conductivity
 img0 = mk_image(fmdl,1);
@@ -29,5 +28,3 @@ figure; plot([v0e,v1e,[v0e-v1e]*100]);
 legend('0','1','(1-0) x 100',4); xlim([1,100]);
 
 print_convert forward_solvers_3d_high_order01a.png
-
-

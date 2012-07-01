@@ -30,5 +30,3 @@ figure; plot([v0e,v1e,[v0e-v1e]*100]);
 legend('0','1','(1-0) x 100'); xlim([1,100]);
 
 print_convert forward_solvers_2d_high_order01a.png
-
-

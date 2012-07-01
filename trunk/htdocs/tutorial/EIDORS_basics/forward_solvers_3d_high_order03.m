@@ -12,5 +12,3 @@ legend('1','2','(2-0) x 10',4)
 xlim([1,100]);
 
 print_convert forward_solvers_3d_high_order03a.png
-
-
