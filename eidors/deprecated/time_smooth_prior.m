@@ -28,4 +28,9 @@ function Reg= time_smooth_prior( inv_model );
 % $Id$
 
 warning('EIDORS:deprecated','TIME_SMOOTH_PRIOR is deprecated as of 08-Jun-2012. Use PRIOR_TIME_SMOOTH instead.');
+
+if isfield(inv_model,'time_smooth_prior');
+  inv_model.prior_time_smooth = inv_model.time_smooth_prior;
+end
+
 Reg = prior_time_smooth( inv_model);

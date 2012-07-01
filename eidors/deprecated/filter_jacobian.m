@@ -15,5 +15,9 @@ function J= filter_jacobian( varargin)
 
 warning('EIDORS:deprecated','FILTER_JACOBIAN is deprecated as of 08-Jun-2012. Use JACOBIAN_FILTERED instead.');
 
+if isfield(inv_model,'filter_jacobian');
+  inv_model.jacobian_filtered = inv_model.filter_jacobian;
+end
+
 J = jacobian_filtered(varargin{:});
 

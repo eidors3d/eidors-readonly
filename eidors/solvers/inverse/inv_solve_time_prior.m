@@ -10,6 +10,9 @@ function img= inv_solve_time_prior( inv_model, data1, data2)
 %  M measurements at T times
 % if either data1 or data2 is a vector, then it is expanded
 %  to be the same size matrix
+%
+% Parameters
+%   inv_model.inv_solve_time_prior.time_steps => time_steps
 
 % TODO: This function really should be calling the proper
 %   prior calculator functions, and not reimplementing

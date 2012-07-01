@@ -12,4 +12,9 @@ function Reg= noser_image_prior( inv_model );
 % $Id$
 
 warning('EIDORS:deprecated','NOSER_IMAGE_PRIOR is deprecated as of 08-Jun-2012. Use PRIOR_NOSER instead.');
+
+if isfield(inv_model,'noser_image_prior');
+  inv_model.prior_noser = inv_model.noser_image_prior;
+end
+
 Reg = prior_noser(inv_model);

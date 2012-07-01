@@ -21,4 +21,9 @@ function img=pdipm_abs( varargin )
 
 
 warning('EIDORS:deprecated','PDIPM_ABS is deprecated as of 08-Jun-2012. Use INV_SOLVE_ABS_PDIPM instead.');
+
+if isfield(inv_model,'pdipm_abs');
+  inv_model.inv_solve_abs_pdipm = inv_model.pdipm_abs;
+end
+
 img = inv_solve_abs_pdipm(varargin{:});
