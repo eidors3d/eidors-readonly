@@ -39,7 +39,7 @@ for alg=1:4
 
    end
 
-   imdl.fwd_model.normalize_measurements= 0;
+   imdl.fwd_model = mdl_normalize(imdl.fwd_model, 0);
    img= inv_solve( imdl, vh, vi_sel);
    % only show image for sel (ie. last for kalman, middle for temporal)
    img.elem_data= img.elem_data(:,sel);
