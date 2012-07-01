@@ -14,7 +14,7 @@ function s_mat= system_mat_1st_order( fwd_model, img)
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
-if( size(img.elem_data,1) == pp.n_elem )
+if( size(img.elem_data,1) == num_elems(fwd_model))
     %For non-dual models
     elem_data = img.elem_data; 
 else
@@ -30,7 +30,7 @@ else
     end
 end
 
-elem_sigma = kron( elem_data(:), ones(pp.n_dims,1) );
+elem_sigma = kron( elem_data(:), mdl_dim(fwd_model) );
 
 ES= ones(lFC,1);
 ES(1:length(elem_sigma))= elem_sigma;
