@@ -1,11 +1,5 @@
 function volint=tet_vol_int(v1,v2)
 % Find vertices of intersection volume of two tetrahedra
-% volint=tet_vol_int(v1,v2)
-
-% (C) 2012 Bill Lionheart. License GPL v2 or v3
-% $Id$
-
-if isstr(v1) && strcmp(v1,'UNIT_TEST'); do_unit_test; return; end
 
 % List of choices of 2 from 1 and one from the other
 choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
@@ -71,18 +65,9 @@ end
     
 end
 
-
 function vol=tet_vol(v)
 %finds the volume of one tetrahedron
 edges= v(2:end,:)-ones(3,1)*v(1,:);
 vol= abs(det(edges))/6;
 end   
-   
-function do_unit_test 
-v1=[0,0,0;eye(3)];
-v2 = v1;v2(1,:)=v2(1,:)+0.1;
     
-out =  tet_vol_int(v1,v2)
-correct = 7/60;
-unit_test_cmp('test1', out, correct)
-end
