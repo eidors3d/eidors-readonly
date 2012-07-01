@@ -9,7 +9,7 @@ load SUBJECT_1-d2.mat
 load SUBJECT_1-d3.mat
 load SUBJECT_1-d4.mat
 clear matname
-vars = who;
+vars = who('db_*');
 aggLungROI = eval([vars{1} '.eitimages.lungROI;']);
 for i = 2:length(vars)
     aggLungROI = aggLungROI | eval([vars{i} '.eitimages.lungROI;']);
