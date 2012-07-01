@@ -13,7 +13,7 @@ function out = mdl_normalize(mdl, val)
 
 if ischar(mdl) && strcmp(mdl, 'UNIT_TEST'); do_unit_test; return; end
 
-s = warning('query', 'all');
+s = warning('query', 'backtrace');
 warning off backtrace;
 % check that we got a fwd_model
 try 
