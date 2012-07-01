@@ -122,7 +122,7 @@ for j=1:nstims
 end; 
 
 %Get the Jacobian and normalize measurements (if field exists)
-if isfield(fwd_model,'normalize_measurements')
+if mdl_normalize(fwd_model)
 %    data=mc_fwd_solve( img );   
 %    J= J ./ (data.meas(:)*ones(1,nelems));
 end
