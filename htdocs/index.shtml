@@ -10,7 +10,7 @@ working these fields.
 <H3>Requirements</H3>
 <ul>
 <li> <a href="http://www.matlab.com">Matlab</a> (&ge;7.0) or
-     <a href="http://www.octave.org">Octave</a> (&ge;3.4)
+     <a href="http://www.octave.org">Octave</a> (&ge;3.6)
 <li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional)
 </ul>
 
