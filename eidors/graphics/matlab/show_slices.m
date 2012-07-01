@@ -2,6 +2,8 @@ function out_img= show_slices( img, levels )
 % out_img = show_slices (img, levels ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or a array of structs
+%          or output of CALC_SLICES (or equivalent multi-dimensional
+%          picture array to be processed by mk_mosaic
 % out_img= matrix in the current colormap which we can use image(out_img);
 %
 % PARAMETERS:
@@ -27,13 +29,13 @@ function out_img= show_slices( img, levels )
 % Show slices is roughly equivalent to:
 %   rimg = calc_slices(img,levels); 
 %   rimg = calc_colours(rimg,img); image(rimg);
+%
+% See also: CALC_SLICES, MK_MOSAIC
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
-
-if ~strcmp(img(1).type,'image'); error('show_slices: img must be type image'); end
 
 sep = 0;
 try sep = img(1).show_slices.sep;
@@ -172,4 +174,8 @@ function do_unit_test
            0,inf,inf,2,1;
            0,1,inf,  3,1];
    subplot(4,4,15); show_slices(img,levels) 
+   
+   m = calc_slices(img,levels);
+   subplot(4,4,16); show_slices(m) 
+   
 
