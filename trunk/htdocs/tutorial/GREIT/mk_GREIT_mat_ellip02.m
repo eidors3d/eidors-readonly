@@ -8,7 +8,7 @@ opt.noise_figure = 0.5; % Recommended NF=0.5;
 k=1; for el = linspace(1,2.4,4);
    fmdl = ng_mk_ellip_models([2, 2,el,0.2] ,[n_elecs,1],[0.1]);
    fmdl.stimulation =  stim;
-   fmdl.normalize_measurements = 0;
+   fmdl = mdl_normalize(fmdl, 0);
    img = mk_image(fmdl,1);
 
    imdl(k) = mk_GREIT_model(img, 0.25, [], opt);
