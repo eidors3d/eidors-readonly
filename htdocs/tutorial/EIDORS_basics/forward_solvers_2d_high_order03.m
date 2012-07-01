@@ -19,5 +19,3 @@ legend('1','2','3','(2-0) x 10','(3-0) x 10')
 xlim([1,100]);
 
 print_convert forward_solvers_2d_high_order03a.png
-
-
