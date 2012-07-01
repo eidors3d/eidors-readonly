@@ -33,14 +33,12 @@ if all(size(data1) == [1,1]) && (data1 == 0)
    return;
 end
 
-if ~isfield(fwd_model,'normalize_measurements')
-   fwd_model.normalize_measurements = 0;
-end
+fwd_model = mdl_normalize(fmdl,mdl_normalize(fmdl));
 
 fdata1 = filt_data( fwd_model, data1, data_width );
 fdata2 = filt_data( fwd_model, data2, data_width );
 
-if fwd_model.normalize_measurements
+if mdl_normalize(fwd_model)
    dva= fdata2 ./ fdata1 - 1;
 else   
    dva= fdata2 - fdata1;
