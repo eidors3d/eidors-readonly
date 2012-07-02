@@ -25,6 +25,8 @@ if nargin==1
    fwd_model = img.fwd_model;
 end
 
+fwd_model_check(fwd_model);
+
 cache_obj= jacobian_cache_params( fwd_model, img );
 
 J= eidors_obj('get-cache', cache_obj, 'jacobian');
@@ -56,3 +58,14 @@ function cache_obj= jacobian_cache_params( fwd_model, img );
       error('calc_jacobian: execting elem_data or node_data in image');
    end
 
+function fwd_model_check(fmdl)
+pp = fwd_model_parameters(fmdl); % they cache, so no problem
+if pp.n_elec == 0
+    error('Cannot calculate Jacobian. No electrodes found.');
+end
+if pp.n_stim == 0
+    error('Cannot calculate Jacobian. No stimulation found.');
+end
+if pp.n_meas == 0
+    error('Cannot calculate Jacobian. No measurements found.');
+end
