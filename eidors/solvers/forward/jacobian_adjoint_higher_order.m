@@ -92,11 +92,8 @@ zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 
 %Calculate the partial derivative matrix for kth change
 for k=1:nelems    
-    %Get the kth element stiffness matrix and global nodes
-    stiffk=elemstiff(k).elemstiff; nodesk=elem(k).nodes;
-    
-    %Get an index vector for the 
-    idx2=1:size(nodesk,2);
+    %kth element stiffness matrix, global nodes and index vector
+    stiffk=elemstiff(k).elemstiff; nodesk=elem(k).nodes; idx2=1:size(nodesk,2);
         
     %Create the FEM derivative matrix
     dA_dSk=dA_zero; dA_dSk(nodesk(idx2),nodesk(idx2))=stiffk(idx2,idx2);
