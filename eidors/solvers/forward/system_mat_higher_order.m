@@ -10,9 +10,9 @@ nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1);
 %Test - Point/Complete electrodes. Assume no mixed model so test first elect
 if(size(elecstruc(1).nodes,2)==1 && size(elecstruc(1).nodes,1)==1) %POINT ELECTRODE
     %IF POINT ELECTRODE
-    [At]=mc_calc_stiffness(fwd_model,img);
+    [At,elemstiff]=mc_calc_stiffness(fwd_model,img);
 else %COMPLETE ELECTRODE
-    [Am]=mc_calc_stiffness(fwd_model,img);
+    [Am,elemstiff]=mc_calc_stiffness(fwd_model,img);
     
      [Aw,Az,Ad]=mc_calc_complete(fwd_model);
      At=zeros(nnodes+nelecs,nnodes+nelecs);     
@@ -33,10 +33,13 @@ end
 
 %Put in structure to be compatibile with eidors
 s_mat.E=sparse(At);
+
+%Store individual stiffness matrices for Jacobian
+s_mat.elemstiff=elemstiff;
 end
 
 %STIFFNESS MATRIX PART
-function [Agal]=mc_calc_stiffness(fwd_model,img)
+function [Agal,elemstiff]=mc_calc_stiffness(fwd_model,img)
 %Stiffness matrix, including piecewise conductivity, for EIT. The second
 %argument is for Jacobian, it gives discretied gradients in element.
 
@@ -75,8 +78,10 @@ end
 %Initialise global stiffness matrix
 Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
 
+%Initialise structure
+
 %Loop over the elements and calculate local Am matrix
-for i=1:nelems
+for i=nelems:-1:1
     %Find the list of node numbers for each element
     eleminodelist=elemstruc(i).nodes;
     
@@ -103,6 +108,10 @@ for i=1:nelems
             (jacobianelem\dphi(:,:,kk))'* ...
             (jacobianelem\dphi(:,:,kk))*magjacelem;
     end
+    
+    %Store the Ammat without multiplication of conductivity for Jacobian
+    elemstiff(i).elemstiff=Ammat;
+    
     %This is element stiffness matrix (and multiply by its conductivity)
     stiff=Ammat*img.elem_data(i); 
     
