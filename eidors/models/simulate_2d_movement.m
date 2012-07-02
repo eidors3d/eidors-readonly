@@ -17,6 +17,10 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 %   movefcn = 2 movement from centre to outward on to
 %     at (rad_pr(1),0) on x-axis
 %
+%   For these movefcn values, the start and end of the complete
+%      movement may be specified as [movefcn, mv_start, mv_end].
+%      default values are [movefcn, 0, 1] (ie. the complete movement)
+%
 %   movefcn = FUCN NAME or FUNC HANDLE
 %      the function must accept the following parameters
 %      [xp,yp] = movefcn(f_frac, radius);
@@ -31,6 +35,8 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 
 % (C) 2005-2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
+
+if nargin>=1 && isstr(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin <1
    n_sims = 200;
@@ -53,10 +59,14 @@ end
 if nargin<4
    movefcn = 1;
 end
+    mv_start = 0;
+    mv_end   = 1;
 if isnumeric(movefcn)
-   if     movefcn==1
+   if length(movefcn)>=2; mv_start = movefcn(2); end
+   if length(movefcn)>=3; mv_end   = movefcn(3); end
+   if     movefcn(1)==1
       movefcn = @rotation_path;
-   elseif movefcn==2
+   elseif movefcn(1)==2
       movefcn = @straight_out;
    else
       error('value of movefcn not understood');
@@ -94,8 +104,8 @@ end
     target_conductivity= .1;
  
     for i=1:n_sims
-       f_frac= (i-1)/n_sims;
-       fprintf('simulating %d / %d \n',i,n_sims);
+       f_frac= mv_start + ( (i-1)/n_sims ) * (mv_end - mv_start);
+       fprintf('simulating %d / %d (f_frac=%0.2f) \n',i,n_sims, f_frac);
 
       [xp,yp]= feval(movefcn, f_frac, radius);
 
@@ -186,3 +196,42 @@ function mdl_2d= mk_fwd_model(n_circles, n_elec)
     params.jacobian=   'eidors_default';
     params.normalize_measurements= 1;
     mdl_2d   = eidors_obj('fwd_model', params);
+
+function do_unit_test
+   N_TEST = 5;
+   imdl = mk_common_model( 'c2c2', 16 );
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST);
+   subplot(421);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [0.3,0.01],1);
+   subplot(422);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [0.9,0.01],2);
+   subplot(423);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+   
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [],[1,0.5,0.4]);
+   subplot(424);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [],@test_movefcn);
+   subplot(425);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   fmdl = mk_common_model('a2c2',16); fmdl= fmdl.fwd_model;
+   fmdl.nodes = fmdl.nodes*1.5;
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, fmdl, [],@test_movefcn);
+   subplot(426);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+function [xp,yp] = test_movefcn(f_frac, radius);
+  ff = radius/sqrt(2);
+  xp= ff*f_frac; yp= ff*f_frac;
