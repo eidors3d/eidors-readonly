@@ -11,6 +11,8 @@ function s_mat= system_mat_1st_order( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
@@ -38,3 +40,7 @@ ES= spdiags(ES,0,lFC,lFC);
 
 s_mat.E= FC' * ES * FC;
 
+function do_unit_test
+   imdl=  mk_common_model('a2c2',16);
+   img=  mk_image(imdl);
+   S1 = system_mat_1st_order(img.fwd_model,img);
