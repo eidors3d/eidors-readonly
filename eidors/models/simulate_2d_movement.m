@@ -48,7 +48,25 @@ if nargin<2 || isempty(fmdl) % create our own fmdl
    fmdl= mk_fwd_model(n_circles, n_elec);
 end
 
-if nargin<3 || isempty(rad_pr)
+if nargin<3; rad_pr= []; end
+
+cache_obj = {n_sims,fmdl, rad_pr, movefcn};
+FC = eidors_obj('get-cache', cache_obj, 'simulate_2d_movement');
+if ~isempty(FC)
+   eidors_msg('simulate_2d_movement: using cached value', 4);
+   vh = FC.vh; vi= FC.vi; xyr_pt = FC.xyr_pt;
+   return
+end
+
+[vh,vi,xyr_pt]= do_simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn );
+FC.vh = vh; FC.vi = vi; FC.xyr_pt = xyr_pt;
+
+eidors_obj('set-cache', cache_obj, 'simulate_2d_movement', FC);
+eidors_msg('simulate_2d_movement: setting cached value', 4);
+
+
+function [vh,vi,xyr_pt]= do_simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
+if isempty(rad_pr)
    radius= 2/3;
    rp= .05;
 else
@@ -56,9 +74,6 @@ else
    rp=     rad_pr(2);
 end
 
-if nargin<4
-   movefcn = 1;
-end
     mv_start = 0;
     mv_end   = 1;
 if isnumeric(movefcn)
