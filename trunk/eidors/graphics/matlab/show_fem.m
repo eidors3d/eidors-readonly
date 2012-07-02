@@ -88,6 +88,7 @@ function [img,mdl,opts] = proc_params( mdl, options );
        end
    end
 
+   
    % if we have an only img input, then define mdl
    if strcmp( mdl(1).type , 'image' )
       img= mdl;
@@ -95,7 +96,12 @@ function [img,mdl,opts] = proc_params( mdl, options );
    else 
       img = [];
    end
-
+   
+   opts.transparency_thresh = calc_colours('transparency_thresh');
+   try
+       opts.transparency_thresh = img.calc_colours.transparency_thresh;
+   end
+   
    opts.dims = size(mdl.nodes,2);
 
 % 2D Case
@@ -138,7 +144,7 @@ function hh= show_3d(img,mdl,opts)
 
    if ~isempty(img)
        elem_data = get_img_data(img);
-       show_inhomogeneities( elem_data , mdl, img);
+       show_inhomogeneities( elem_data , mdl, img, opts);
        if opts.do_colourbar
            calc_colours(img, [], opts.do_colourbar);
        end
@@ -230,12 +236,13 @@ for e=1:length(mdl.electrode)
     end
 end
 
-function show_inhomogeneities( elem_data, mdl, img)
+function show_inhomogeneities( elem_data, mdl, img, opt)
 % show
 if size(elem_data,2)>1
    eidors_msg('warning: show_fem only shows first image',1);
 end
-repaint_inho(elem_data(:,1), 'use_global' , mdl.nodes, mdl.elems, [], img); 
+repaint_inho(elem_data(:,1), 'use_global' , mdl.nodes, mdl.elems, ...
+    opt.transparency_thresh, img); 
 if ~exist('OCTAVE_VERSION');
 camlight('left');
 lighting('none'); % lighting doesn't help much
