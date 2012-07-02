@@ -2,7 +2,7 @@ function [A,b]=tet_to_inequal(v)
 % [A,b]=tet_to_inequal(v)
 % Given the vertices of a simplex v return a system
 % of linear inequalities so that a point x in in 
-% the simplex iff Ax >= b
+% the simplex iff Ax <= b
 
 % (C) 2012 Bill Lionheart. License GPL v2 or v3
 % $Id$
