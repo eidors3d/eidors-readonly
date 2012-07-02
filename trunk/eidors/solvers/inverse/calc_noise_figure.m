@@ -205,8 +205,11 @@ function [img0, img0n] = get_images( inv_model, h_data, c_data, ...
 
 % OLD CODE - iterate
 function NF= nf_calc_iterate( inv_model, h_data, c_data);
-   VOL = get_elem_volume(inv_model.fwd_model)';
-
+   try 
+       VOL = get_elem_volume(inv_model.rec_model)';
+   catch
+       VOL = get_elem_volume(inv_model.fwd_model)';
+   end
    % calculate signal
    d_len   = size(h_data,1);
    delta   = 1e-2* mean(h_data);
@@ -253,10 +256,18 @@ function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
 
    if isfield(imgr,'node_data');
       img0 = imgr.node_data;
-      VOL = get_elem_volume(rec.fwd_model, 1);
+      try
+          VOL = get_elem_volume(rec.rec_model, 1);
+      catch
+          VOL = get_elem_volume(rec.fwd_model, 1);
+      end
    else
       img0 = imgr.elem_data;
-      VOL = get_elem_volume(rec.fwd_model, 0);
+      try
+          VOL = get_elem_volume(rec.rec_model, 0);
+      catch
+          VOL = get_elem_volume(rec.fwd_model, 0);
+      end
    end
 
    sig_ampl = mean( abs( VOL .* img0 )) / ...
