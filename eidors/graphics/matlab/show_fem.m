@@ -49,21 +49,21 @@ end
 
 if opts.show_elem_numbering
    xyzc= interp_mesh(mdl);
-   placenumbers(xyzc, 7, [0,0,0]);
+   placenumbers(xyzc, 7, [0,0,0],'none');
 end
 if opts.show_node_numbering
    xyzc= mdl.nodes;
-   placenumbers(xyzc, 7, [0.5,0,0.5]);
+   placenumbers(xyzc, 7, [0.0,0,0.5],[1,1,1]);
 end
 
 if nargout == 0; clear hh; end
 
-function placenumbers(xyzc, fontsize, colour)
+function placenumbers(xyzc, fontsize, colour, bgcolour)
    xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
    for i= 1:size(xyzc,1)
       text(xyzc(i,1),xyzc(i,2), xyzc(i,3), num2str(i), ...
             'HorizontalAlignment','center', ...
-            'FontSize',fontsize,'Color',colour);
+            'FontSize',fontsize,'Color',colour,'BackgroundColor',bgcolour);
    end
 
 function [img,mdl,opts] = proc_params( mdl, options );
