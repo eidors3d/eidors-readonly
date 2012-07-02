@@ -21,6 +21,8 @@ function img= inv_solve_time_prior( inv_model, data1, data2)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.inv_solve_time_prior.time_steps;
 l_ts  = time_steps*2 + 1;
@@ -148,3 +150,37 @@ function delta_vec= calc_delta( inv_model, J)
               (sum(delta_time) + eps );
 
    
+function do_unit_test
+   time_steps=  3;
+   time_weight= .8;
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(50);
+
+   imdl_TS = mk_common_model( 'c2c2', 16 ); % 576 element
+   imdl_TS.fwd_model.normalize_measurements= 0;
+   imdl_TS.hyperparameter.value= 0.10;
+
+   imdl_TS.RtR_prior= @prior_time_smooth;
+   imdl_TS.prior_time_smooth.space_prior= @prior_noser;
+   imdl_TS.prior_noser.exponent= .5;
+   imdl_TS.prior_time_smooth.time_weight= time_weight;
+   imdl_TS.prior_time_smooth.time_steps=  time_steps;
+   imdl_TS.solve= @inv_solve_time_prior;
+   imdl_TS.inv_solve_time_prior.time_steps=   time_steps;
+
+image_select= length(xyr_pt)/2+1;; % this image is at 9 O'Clock
+time_steps=  3; ts_expand= 5;
+time_weight= .8;
+ts_vec= -time_steps:time_steps;
+
+    im_sel= image_select+ ts_vec*ts_expand;
+    vi_sel= vi(:,im_sel);
+    sel  = 1 + time_steps; % choose the middle
+
+   img= inv_solve( imdl_TS, vh, vi_sel);
+   img.elem_data= img.elem_data(:,sel);
+   show_fem(img);
+
+
+
+
