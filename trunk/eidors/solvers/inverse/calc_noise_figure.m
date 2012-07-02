@@ -67,7 +67,8 @@ switch solver
             'inv_solve_trunc_iterative'
             'inv_solve_TSVD'
             'solve_use_matrix'}
-        NF= nf_calc_linear( inv_model, h_data, c_data);
+        NF = nf_calc_linear( inv_model, h_data, c_data);
+        SE = 0;
     otherwise
         [NF,SE]= nf_calc_random( inv_model, h_data, c_data, iterations);
 end
