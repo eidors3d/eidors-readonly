@@ -1,4 +1,4 @@
-function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )
+function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl, rad_pr,movefcn )
 % SIMULATE_3D_MOVEMENT simulate rotational movement in 3D
 % [vh,vi,xyzr_pt]= simulate_3d_movement( n_points, model, rad_pr, movefcn )
 %
@@ -34,32 +34,34 @@ if nargin <1; n_sims = 200; end
 
 if nargin>=1 && isstr(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin<2 || isempty(mdl_3d) % create our own fmdl
-   mdl_3d= mk_library_model('cylinder_16x2el_fine');
+if nargin<2 || isempty(fmdl) % create our own fmdl
+   fmdl= mk_library_model('cylinder_16x2el_fine');
+   fmdl.normalize_measurements = 0;
+   fmdl.electrode = fmdl.electrode(1:16);
+   fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
 end
 
 if nargin<3 || isempty(rad_pr);
    rad_pr= [2/3, 0.05, 0.1, 0.9];
 end
 
-if nargin<3; rad_pr= []; end
 if nargin<4; movefcn= 1; end
 
 cache_obj = {n_sims,fmdl, rad_pr, movefcn};
 FC = eidors_obj('get-cache', cache_obj, 'simulate_3d_movement');
 if ~isempty(FC)
    eidors_msg('simulate_3d_movement: using cached value', 4);
-   vh = FC.vh; vi= FC.vi; xyr_pt = FC.xyr_pt;
+   vh = FC.vh; vi= FC.vi; xyzr_pt = FC.xyzr_pt;
    return
 end
 
-[vh,vi,xyr_pt]= do_simulate_3d_movement( n_sims, fmdl, rad_pr, movefcn );
-FC.vh = vh; FC.vi = vi; FC.xyr_pt = xyr_pt;
+[vh,vi,xyzr_pt]= do_simulate_3d_movement( n_sims, fmdl, rad_pr, movefcn );
+FC.vh = vh; FC.vi = vi; FC.xyzr_pt = xyzr_pt;
 
 eidors_obj('set-cache', cache_obj, 'simulate_3d_movement', FC);
 eidors_msg('simulate_3d_movement: setting cached value', 4);
 
-function [vh,vi,xyr_pt]= do_simulate_3d_movement( n_sims, fmdl, rad_pr, movefcn )
+function [vh,vi,xyzr_pt]= do_simulate_3d_movement( n_sims, mdl_3d, rad_pr, movefcn )
 
 if isnumeric(movefcn)
    if     movefcn==1
