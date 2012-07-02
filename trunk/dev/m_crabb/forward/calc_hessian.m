@@ -29,25 +29,20 @@ end
 
 %Modify the forward model to be of my type
 %%fwd_model = mc_fem_modify(fwd_model); img.fwd_model=fwd_model;
-[bound,elem,nodes] = fem_modify(fwd_model); 
+[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model); 
 fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
 img.fwd_model=fwd_model;
 
 %Calculate the total stiffness matrix and elemental stiffness matrices
-s_mat = calc_system_mat(fwd_model,img); At=s_mat.E;
-%Get the stiffness matrix structure
-elemstiff = mc_calc_elem_stiff(fwd_model); %CHANGE THIS!!!!!!!!!!!!!
+s_mat = calc_system_mat(fwd_model,img); At=s_mat.E; elemstiff=s_mat.elemstiff;
  
 %Find electrode stucture and no.of electrodes 
-elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
-
 %Find stim strucutre and no. stimulations
-stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
-
 %Find node structure and find no.nodes 
-nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
-
 %Find element structure and create vector of length no. elements
+elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
+stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
+nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
 elemstruc=fwd_model.elem; nelems=size(elemstruc,2); 
 
 %Find total number of measurements
