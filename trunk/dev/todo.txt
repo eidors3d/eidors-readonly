@@ -2,6 +2,8 @@
  - calc_jacobian_test fails
  - think though the fwd_model.background - good idea?
  - Caching: all to disable caching calls from a specific function
+
+ - Movement priors, allow selection of dimensions
 -----------------
 PRI DEF=
 1 do now
