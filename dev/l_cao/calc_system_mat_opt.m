@@ -2,10 +2,10 @@ function [s_mat] = calc_system_mat_opt( fwd_model, img )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-%[bound,elem,nodes]=fem_1st_to_higher_order(fwd_model);
-bound = fwd_model.bound;
-elem = fwd_model.elem;
-nodes = fwd_model.nodes;
+[bound,elem,nodes]=fem_1st_to_higher_order(fwd_model);
+%bound = fwd_model.bound;
+%elem = fwd_model.elem;
+%nodes = fwd_model.nodes;
 
 nodedim=size(nodes,2); nnodes=size(nodes,1); 
 
@@ -27,12 +27,28 @@ elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
 %Find fem type and find quadrature points/weights for integration over
 %element consistent with geometry of reference element
 eletype=fwd_model.approx_type; 
-[weight,xcoord,ycoord,zcoord]=element_gauss_points(eletype);
-for kk=1:size(weight,2)
-    dphi(:,:,kk) = element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk));
-    phi(:,kk) = element_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk));
+if(strcmp(eletype,'tri3'))
+    dim=2; order1=0; order2=2;
+elseif(strcmp(eletype,'tri6'))
+    dim=2; order1=2; order2=4;
+elseif(strcmp(eletype,'tri10'))
+    dim=2; order1=4; order2=7;
+elseif(strcmp(eletype,'tet4'))
+    dim=3; order1=0; order2=2;
+elseif(strcmp(eletype,'tet10'))
+    dim=3; order1=2; order2=4;
+else  
+    error('Element type not recognised for integration rules');
+end
+[weight1,xcoord1,ycoord1,zcoord1]=gauss_points(dim,order1);
+for kk=1:size(weight1,2)
+    dphi(:,:,kk) = element_d_shape_function(eletype,xcoord1(kk),ycoord1(kk),zcoord1(kk));
 end
 
+[weight2,xcoord2,ycoord2,zcoord2]=gauss_points(dim,order2);
+for kk=1:size(weight2,2)
+    phi(:,kk) = element_shape_function(eletype,xcoord2(kk),ycoord2(kk),zcoord2(kk))';
+end
 %Initialise global stiffness matrix
 Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
 
@@ -59,11 +75,13 @@ for i=1:nelems
            
     %Initialise and find elemental stiffness matrices 
     Kmat=0;Cmat=0;
-    for kk=1:size(weight,2)
-        Kmat = Kmat + weight(kk)* ...
+    for kk=1:size(weight1,2)
+        Kmat = Kmat + weight1(kk)* ...
             (jacobianelem\dphi(:,:,kk))'* ...
             (jacobianelem\dphi(:,:,kk))*magjacelem;
-        Cmat = Cmat + weight(kk)* ...
+    end
+    for kk=1:size(weight2,2)
+        Cmat = Cmat + weight2(kk)* ...
             (phi(:,kk))'* ...
             (phi(:,kk)) * magjacelem;
     end
@@ -73,136 +91,62 @@ for i=1:nelems
     %Assemble global stiffness matrix (Silvester's book!!)
     Agal(elemstruc(i).nodes, elemstruc(i).nodes) = Agal(elemstruc(i).nodes, elemstruc(i).nodes) + stiff;
     
+    %Store the Cmat without multiplication of Mua for Jacobian
+    elemstiff(i).elemstiff=Cmat;
 end
 
+if(strcmp(eletype,'tri3'))
+    dim=1; order=2;
+elseif(strcmp(eletype,'tri6'))
+    dim=1; order=4;
+elseif(strcmp(eletype,'tri10'))
+    dim=1; order=6;
+elseif(strcmp(eletype,'tet4'))
+    dim=2; order=2;
+elseif(strcmp(eletype,'tet10'))
+    dim=2; order=4;
+else  
+    error('Element type not recognised for integration rules');
+end
+[weight,xcoord,ycoord]=gauss_points(dim,order);
+for kk=1:size(weight,2)
+    bphi(:,kk) = boundary_shape_function(eletype,xcoord(kk),ycoord(kk))';
+end
 
+boundstruc=fwd_model.bound; nbounds=size(boundstruc,2);
 
+for i=1:nbounds
+    %List by row of coordinates of on the boundaryNodal coordinates on the boundary
+    thisb=nodestruc(boundstruc(i).nodes,:);
+
+    %Find the magnitude Jacobian of the mapping in 2D/3D
+    %NB:Scalings are consistent with reference element shape
+    if(nodedim==2)
+        %Jacobian = 0.5*|(x2-x1)| (x1,x2 vector of coords)
+        diff21=thisb(2,:)-thisb(1,:);
+        magjacbound=0.5*sqrt(diff21(1)^2+diff21(2)^2);
+    elseif(nodedim==3)
+        %Jacobian = |(x3-x1)x(x3-x2)| (x1,x2,x3 vector of coords)
+        diffprod=cross(thisb(3,:)-thisb(1,:),thisb(3,:)-thisb(2,:));
+        magjacbound=sqrt(diffprod(1)^2+diffprod(2)^2+diffprod(3)^2);
+    end
+    
+    %Initialise Azlocmat/Awlocmat and find local matrices
+    Bmat=0;
+    for kk=1:size(weight,2)
+        Bmat = Bmat + weight(kk)* ...
+            (bphi(:,kk))'* ...
+            (bphi(:,kk))*magjacbound;
+    end
+    
+    Agal(boundstruc(i).nodes,boundstruc(i).nodes) = Agal(boundstruc(i).nodes,boundstruc(i).nodes) + Bmat/(2*A);
+    
+end
 
 s_mat.E=sparse(Agal);
 
+%Store individual stiffness matrices for Jacobian
+s_mat.elemstiff=elemstiff;
 
 end
-
-
-% %COMPLETE ELECTRODE MATRICES
-% function [Aw,Az,Ad]=mc_calc_complete(fwd_model,img)
-% %Takes a forward model and calculates Az, Aw, Ad for complete electrode
-% 
-% %If function called only with image, extract forward model
-% if(nargin==1)
-%     img=fwd_model; fwd_model=img.fwd_model;
-% end
-% 
-% %Get the electrode structure, find number of electrodes
-% %Get the boundary strucutre, find number of boundaries
-% %Get the node structrue, find number of nodes and problem dim
-% elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
-% boundstruc=fwd_model.bound; nbounds=size(boundstruc,2);
-% nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); nodedim=size(nodestruc,2);
-% 
-% %Connect boundary/electrode -Put boundary into old matrix strucutre
-% for i=1:nbounds
-%     boundstrucold(i,:)=boundstruc(i).nodes;
-% end
-% 
-% %Find fem type and find quadrature points/weights for integration over
-% %boundaries consistent with geometry of reference boundary
-% eletype=fwd_model.approx_type; 
-% [weight,xcoord,ycoord]=boundary_gauss_points(eletype);
-% 
-% 
-% %1. Initialise global Az/Aw/Ad matrices and assemble a la Silvester
-% Az=zeros(nnodes,nnodes); Aw=zeros(nnodes,nelecs); Ad=zeros(nelecs,nelecs); %sparse updating non zero slow
-% 
-% %Loop over the electrodes
-% for ke=1:nelecs    
-%     %The boundary numbers and areas, outputs rows of mdl.boundary of electrode
-%     [bdy_idx,bdy_area]=find_electrode_bdy(boundstrucold(:,1:nodedim),nodestruc,elecstruc(ke).nodes);
-%     
-%     %Store boundary numbers, and corresponding areas
-%     boundidx_ke=bdy_idx; area_ke=bdy_area;
-%     
-%     %Find contact impedance of electrode
-%     elecimped=elecstruc(ke).z_contact;   
-%            
-%     %Find total electrode area (absolute values)
-%     elecarea=0;
-%     for i=1:size(area_ke,2)
-%         elecarea = elecarea + abs(area_ke(i));
-%     end
-%     
-%     %Form the matrix Ad
-%     Ad(ke,ke)=elecarea/elecimped; 
-%     
-%     
-%     %Loop over boundarys and calculate Aw/Az matrices
-%     for ii=1:length(boundidx_ke)
-%         %List by row of coordinates of on the boundaryNodal coordinates on the boundary
-%         thisb=nodestruc(boundstruc(boundidx_ke(ii)).nodes,:);
-%     
-%         %Find the magnitude Jacobian of the mapping in 2D/3D
-%         %NB:Scalings are consistent with reference element shape
-%         if(nodedim==2)
-%             %Jacobian = 0.5*|(x2-x1)| (x1,x2 vector of coords)
-%             diff21=thisb(2,:)-thisb(1,:);
-%             magjacbound=0.5*sqrt(diff21(1)^2+diff21(2)^2);
-%         elseif(nodedim==3)
-%             %Jacobian = |(x3-x1)x(x3-x2)| (x1,x2,x3 vector of coords)
-%             diffprod=cross(thisb(3,:)-thisb(1,:),thisb(3,:)-thisb(2,:));
-%             magjacbound=sqrt(diffprod(1)^2+diffprod(2)^2+diffprod(3)^2);
-%         end
-% 
-%         %Initialise Azlocmat/Awlocmat and find local matrices
-%         Azmat=0; Awmat=0;
-%         for kk=1:size(weight,2)
-%             Azmat = Azmat + weight(kk)* ...
-%                 (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))'* ...
-%                 (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
-%             Awmat = Awmat + weight(kk)* ...
-%                 (boundary_shape_function(eletype,xcoord(kk),ycoord(kk)))*magjacbound;
-%         end         
-%         
-%         %Node numbers for this boundary
-%         boundnodes=boundstruc(boundidx_ke(ii)).nodes;
-%         
-%         Az(boundnodes,boundnodes) = Az(boundnodes,boundnodes)+Azmat/elecimped;
-%         Aw(boundnodes,ke) = Aw(boundnodes,ke) - Awmat'/elecimped;
-%         
-% %         dofAzi = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-% %         dofAzj = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-% %         dofAzv = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-% %         
-% %         dofAwi = zeros(1,size(boundnodes,2));
-% %         dofAwj = zeros(1,size(boundnodes,2));
-% %         dofAwv = zeros(1,size(boundnodes,2));
-% %         
-% %         sparseindex = 1;
-% %         for i=1:size(boundnodes,2)
-% %             for j=1:size(boundnodes,2)
-% %                 dofAzi(sparseindex) = boundnodes(i);
-% %                 dofAzj(sparseindex) = boundnodes(j);
-% %                 dofAzv(sparseindex) = Azmat(i,j)/elecimped;
-% %                 sparseindex = sparseindex + 1;
-% %             end
-% %             dofAwi(i) = boundnodes(i);
-% %             dofAwj(i) = ke;
-% %             dofAwv(i) = Awmat(i)/elecimped;
-% %         end          
-% %         Az = Az + sparse(dofAzi,dofAzj,dofAzv,nnodes,nnodes);      
-% %         Aw = Aw + sparse(dofAwi,dofAwj,dofAwz,nnodes,nelecs);
-%         
-%         %Loop over the nodes on the boundary and form Az/Aw matrices
-% %         for i=1:size(boundnodes,2)
-% %             for j=1:size(boundnodes,2)
-% %                 %Form Az matrix in inner loop
-% %                 %Az(boundnodes(i),boundnodes(j)) =
-% %                 Az(boundnodes(i),boundnodes(j)) + Azmat(i,j)/elecimped;
-% %             end
-% %             %Form Aw matrix in outer loop
-% %             Aw(boundnodes(i),ke) = Aw(boundnodes(i),ke) - Awmat(i)/elecimped;
-% %         end        
-% 
-%     end
-%        
-% end
 
