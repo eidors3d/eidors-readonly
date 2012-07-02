@@ -1,5 +1,25 @@
 function volint=tet_vol_int(v1,v2)
+% volint=tet_vol_int(v1,v2)
 % Find vertices of intersection volume of two tetrahedra
+% the vertices of the tetrahedra are in 4x3 matrices v1 and v2 and
+% need not be consistently oriented
+
+% The algorithm is as follows. First calculate a system of linear
+% inequalites so that the tetrahedron is x: A*x -b <=0, then use
+% this to see if the tetrahedra have an intersection. If they do 
+% the intersection is a convex polyhedron, the vertices of which are the
+% intersection of planes corresponding to faces of the tetraherda.
+% Other than vertices of one tetrahedron that are in the other tetrahedron 
+% these vertices are the intersection of two planes from one tetrahedron
+% and one from the other. All such points are calculated and tested to see
+% if they lie within both tetrahedra. The convex hull of these points is
+% the intersection.  
+
+
+% (C) 2012 Bill Lionheart. License GPL v2 or v3
+% $Id$
+
+if isstr(v1) && strcmp(v1,'UNIT_TEST'); do_unit_test; return; end
 
 % List of choices of 2 from 1 and one from the other
 choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
@@ -70,4 +90,13 @@ function vol=tet_vol(v)
 edges= v(2:end,:)-ones(3,1)*v(1,:);
 vol= abs(det(edges))/6;
 end   
+
+function do_unit_test 
+v1=[0,0,0;eye(3)];
+v2 = v1;v2(1,:)=v2(1,:)+0.1;
+     
+out =  tet_vol_int(v1,v2);
+correct = 7/60;
+unit_test_cmp('test1', out, correct)
+end
     
