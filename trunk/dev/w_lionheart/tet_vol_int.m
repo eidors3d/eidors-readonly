@@ -92,11 +92,27 @@ vol= abs(det(edges))/6;
 end   
 
 function do_unit_test 
+% Test inequalities
 v1=[0,0,0;eye(3)];
 v2 = v1;v2(1,:)=v2(1,:)+0.1;
      
 out =  tet_vol_int(v1,v2);
 correct = 7/60;
-unit_test_cmp('test1', out, correct)
+unit_test_cmp('Shifted rightangle tetrahedron', out, correct,1e-14)
+
+% test volume
+
+out =  tet_vol(v1);
+correct = 1/6;
+unit_test_cmp('Unit tetrahedron volume', out, correct)
+
+A=[1,4,-1;3,4,1;0,0,2];
+v3 =(A*v1')'+ ones(4,1)*[1,4,-3];
+volu=out;
+out= tet_vol(v3);
+correct = volu * abs(det(A));
+unit_test_cmp('Scaled shifted tetrahedron volume', out, correct)
+
+
 end
     
