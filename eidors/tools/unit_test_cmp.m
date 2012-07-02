@@ -13,7 +13,8 @@ tolstr='';
 
    fprintf('TEST: %20s = ',txt);
    ok='fail';
-   if isnumeric(a) && isnumeric(b)
+   if (isnumeric(a) || islogical(a)) && ...
+      (isnumeric(b) || islogical(b))
       if isnan(a) == isnan(b);
           a(isnan(a))=0; b(isnan(b))=0;
        end;
