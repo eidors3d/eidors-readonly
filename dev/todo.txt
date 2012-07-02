@@ -4,6 +4,15 @@
  - Caching: all to disable caching calls from a specific function
 
  - Movement priors, allow selection of dimensions
+
+----------------
+ - turn 4d solver into a prior
+  - build a 4d tutorial using simulate_3d_movement and
+         tutorial/dual_model/centre_slice.shtml
+-----------------
+ - fix GN_first order to do Wiener form
+  = modify priors to give R and inv(R) as requested
+
 -----------------
 PRI DEF=
 1 do now
