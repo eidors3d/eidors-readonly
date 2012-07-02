@@ -44,8 +44,13 @@ for i=size(fwd_model.boundary,1):-1:1
     fwd_model.bound(i).nodes=fwd_model.boundary(i,:);
 end
 
-%Prefine - boundary first, then remaining elements
-fwd_model=mc_p_refine(fwd_model);
+%Linear approximation no refine BUT take abs in system matrix
+eletype=fwd_model.approx_type;
+if(strcmp(eletype,'tri3') || strcmp(eletype,'tet4'))    
+else
+    %Prefine - boundary first, then remaining elements
+    fwd_model=mc_p_refine(fwd_model);
+end
 
 %FIXME Clear this up, by changing the output of two functions above, 
 %so that the output is just bound and elem...

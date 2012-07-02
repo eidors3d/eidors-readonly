@@ -99,7 +99,8 @@ for i=nelems:-1:1
     end
     
     %Find the magnitude of the Jacobian of the mapping
-    magjacelem=det(jacobianelem);
+    % magjacelem=det(jacobianelem);
+    magjacelem=abs(det(jacobianelem));
            
     %Initialise and find elemental stiffness matrices 
     Ammat=0;
