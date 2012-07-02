@@ -1,34 +1,27 @@
 function [bound,elem,nodes]=fem_1st_to_higher_order(fwd_model)
-% FEM_MODIFY:  Modify the FEM for high order FEM called as
-%    [bound,elem] = mc_fem_modify( fwd_model )
-% It will call :fwd_model.modify=@mc_fem_modify
+% FEM_1ST_TO_HIGH_ORDER:  Modify the FEM for high order FEM called as
+%    [bound,elem,nodes] = fem_1st_to_higher_order( fwd_model )
 % where we need to make sure fwd_model.approx_type='tri3', 'tet4' etc. 
 %
 % fwd_model : is a fwd_model structure
 % bound : is the boundary nodes numbers (from boundary (bound(ii).nodes))
 % elem : is the element nodes numbers (from elems elem(ii).nodes))
+% nodes : is the fem nodes including extra nodes added in refinement
 %
 %M Crabb - 29.06.2012
 
-bound = eidors_obj('get-cache', {fwd_model}, 'bound');
-elem = eidors_obj('get-cache', {fwd_model}, 'elem');
-nodes=eidors_obj('get-cache',{fwd_model},'nodes');
-if ~isempty(bound)
-    if ~isempty(elem)
-        if ~isempty(nodes)
-            eidors_msg('bound: using cached value', 3);        
-            eidors_msg('elem: using cached value',3);
-            eidors_msg('nodes: using cached value',3);
-        return
-        end
-    end
+cache_obj = {fwd_model.nodes, fwd_model.elems, ...
+             fwd_model.approx_type, fwd_model.boundary};
+bel = eidors_obj('get-cache', cache_obj, 'bound_elem_nodes');
+if ~isempty(bel)
+    eidors_msg('bound, elem, nodes: using cached value', 3);
+    bound = bel{1}; elem= bel{2}; nodes= bel{3};
+    return
 end
 
 [bound,elem,nodes]= mc_fem_modify(fwd_model);
 
-eidors_obj('set-cache', {fwd_model}, 'bound', bound);
-eidors_obj('set-cache', {fwd_model}, 'elem',elem);
-eidors_obj('set-cache', {fwd_model}, 'nodes',nodes);
+eidors_obj('set-cache', cache_obj, 'bound_elem_nodes', {bound,elem,nodes});
 eidors_msg('fem_modify: setting cached value', 3);
 end
 
