@@ -51,7 +51,7 @@ function img = inv_solve( inv_model, data1, data2)
 
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
-inv_model= eidors_model_params( inv_model );
+inv_model = prepare_model( inv_model );
 opts = parse_parameters( inv_model );
 
 solver = inv_model.solve;
@@ -120,19 +120,41 @@ function opts = parse_parameters( imdl );
    opts.select_parameters = [];
    try
       opts.select_parameters = imdl.inv_solve.select_parameters;
-   end;
+   end
 
    opts.reconst_to_elems = 1;
-   try; if strcmp( imdl.reconst_to, 'nodes' )
+   try if strcmp( imdl.reconst_to, 'nodes' )
       opts.reconst_to_elems = 0;
    end; end
    
    opts.scale  = 1;
-   try; opts.scale = imdl.inv_solve.scale_solution.scale; end
+   try opts.scale = imdl.inv_solve.scale_solution.scale; end
 
    opts.offset = 0;
-   try; opts.offset = imdl.inv_solve.scale_solution.offset; end
- 
+   try opts.offset = imdl.inv_solve.scale_solution.offset; end
+
+function mdl = prepare_model( mdl )
+    fmdl = mdl.fwd_model;
+    fmdl = mdl_normalize(fmdl,mdl_normalize(fmdl));
+    if ~isfield(fmdl,'elems');
+        return;
+    end
+
+    fmdl.elems  = double(fmdl.elems);
+    fmdl.n_elem = size(fmdl.elems,1);
+    fmdl.n_node = size(fmdl.nodes,1);
+    if isfield(fmdl,'electrode');
+        fmdl.n_elec = length(fmdl.electrode);
+    else
+        fmdl.n_elec = 0;
+    end
+
+    mdl.fwd_model= fmdl;
+    if ~isfield(mdl,'reconst_type');
+        mdl.reconst_type= 'difference';
+    end
+
+
 
 % TODO: this code really needs to be cleaned, but not before eidors 3.4
 function nf= num_frames(d0)
