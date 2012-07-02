@@ -1,11 +1,11 @@
 % Select ROI's
 
-img = i_injury; img.elem_data = img.elem_data(:,630);
+img = i_injury; img.elem_data = img.elem_data(:,700);
 rimg = calc_colours( calc_slices( img ), img);
 
 np= calc_colours('npoints');
-xlocn= 0.25 * np;
-ylocn= [2:5]/8 * np; 
+xlocn= 5/16 * np;
+ylocn= [4:2:10]/16 * np; 
 for yl = 1:4;
    rimg(ylocn(yl) + (-2:2), xlocn + (-2:2) ) = 1;
 end
