@@ -44,3 +44,13 @@ function do_unit_test
    imdl=  mk_common_model('a2c2',16);
    img=  mk_image(imdl);
    S1 = system_mat_1st_order(img.fwd_model,img);
+   unit_test_cmp('sys_mat1', S1.E(1,:), [8,-2,-2,-2,-2,zeros(1,36)],1e-14);
+
+   img.elem_data([1:16]) = 2;
+   S2 = system_mat_1st_order(img.fwd_model,img);
+   unit_test_cmp('sys_mat2', S2.E(1,:), 2*[8,-2,-2,-2,-2,zeros(1,36)],1e-14);
+   
+   idx = 41-(0:15);
+   unit_test_cmp('sys_mat4', S2.E(idx,idx),   S1.E(idx,idx),1e-14);
+   idx = 1:5;
+   unit_test_cmp('sys_mat3', S2.E(idx,idx), 2*S1.E(idx,idx),1e-14);

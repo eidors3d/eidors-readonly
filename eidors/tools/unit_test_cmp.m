@@ -22,7 +22,7 @@ tolstr='';
       end;
 
       if tol>0
-         tolstr= sprintf('(%1.2f x tol)', max(abs(a(:)-b(:))/tol)); 
+         tolstr= sprintf('(%1.2f x tol)', full(max(abs(a(:)-b(:))/tol))); 
       end
    else
       if strcmp(eidors_var_id(a), eidors_var_id(b)); ok='ok';end
