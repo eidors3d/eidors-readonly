@@ -9,6 +9,8 @@ function params = calc_noise_params(imdl, vh, vi )
 
 % NOTE THAT WE ASSUME A LINEAR ALGORITHM FOR THIS MEASURE
 
+if ischar(imdl) && strcmp(imdl,'UNIT_TEST'), do_unit_test, return, end
+
 if 0 % old code with random noise
    Nnoise = 1000;
    noise = 0.01*std(vh)*randn(size(vh,1),Nnoise);
@@ -50,3 +52,54 @@ params= [snr_y(:)./snr_x(:)]';
 %    noise_x  = mean(std(noise_x));
 %    noise_x  = sqrt(mean(noise_x.^2,2));
 
+function do_unit_test
+% test1; % cannot deal with c2f
+test2;
+
+function test1
+% big model with c2f and supposedly an NF of 0.5
+fmdl = mk_library_model('pig_23kg_16el');
+[fmdl.stimulation fmdl.meas_select] = mk_stim_patterns(16,1,'{ad}','{ad}');
+fmdl = mdl_normalize(fmdl, 1);  % Use normalized difference imaging
+opt.noise_figure = 0.5; opt.imgsz = [64 64];
+imdl = mk_GREIT_model(fmdl, 0.25, [], opt);
+% homogeneous measurement
+img = mk_image(fmdl,1);
+vh = fwd_solve(img);
+% inhomogeneous measurement
+select_fcn = inline('(x-0).^2+(y-0).^2+(z-0.5).^2<0.1^2','x','y','z');
+mfrac = elem_select(fmdl, select_fcn);
+img.elem_data = img.elem_data + mfrac*0.1;
+vi = fwd_solve(img);
+
+nf1 = calc_noise_params(imdl, vh.meas, vi.meas);
+
+imdl.hyperparameter.tgt_data.meas_t1 = vh.meas;
+imdl.hyperparameter.tgt_data.meas_t2 = vi.meas;
+try
+    % calc_noise_figure doens't support dual models
+    nf2 = calc_noise_figure(imdl);
+catch
+    nf2 = 0;
+end
+unit_test_cmp('Noise fig implementations',nf1, nf2, 1e-2);
+
+function test2
+imdl = mk_common_model('d2t2',16);
+fmdl = imdl.fwd_model;
+% homogeneous measurement
+img = mk_image(fmdl,1);
+vh = fwd_solve(img);
+% inhomogeneous measurement
+select_fcn = inline('(x-0).^2+(y-0).^2.^2<15^2','x','y','z');
+mfrac = elem_select(fmdl, select_fcn);
+img.elem_data = img.elem_data + mfrac*0.1;
+vi = fwd_solve(img);
+
+nf1 = calc_noise_params(imdl, vh.meas, vi.meas);
+
+imdl.hyperparameter.tgt_data.meas_t1 = vh.meas;
+imdl.hyperparameter.tgt_data.meas_t2 = vi.meas;
+% calc_noise_figure doens't support dual models
+nf2 = calc_noise_figure(imdl);
+unit_test_cmp('Noise fig implementations',nf1, nf2, 1e-2);
