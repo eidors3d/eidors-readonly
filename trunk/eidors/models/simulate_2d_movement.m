@@ -49,6 +49,7 @@ if nargin<2 || isempty(fmdl) % create our own fmdl
 end
 
 if nargin<3; rad_pr= []; end
+if nargin<4; movefcn= 1; end
 
 cache_obj = {n_sims,fmdl, rad_pr, movefcn};
 FC = eidors_obj('get-cache', cache_obj, 'simulate_2d_movement');
