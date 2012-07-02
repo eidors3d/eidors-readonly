@@ -11,18 +11,47 @@ function show_3d_slices(img, varargin);
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
+try 
+    np = img.calc_colours.npoints;
+catch
+    np = calc_colours('npoints');
+end
+mdl_min = min(img.fwd_model.nodes);
+mdl_max = max(img.fwd_model.nodes);
+
 cla;
 hold on
-
+show_fem(img.fwd_model);
 [xyz_max, xyz_min, rimg, cimg, ...
           x_cuts, y_cuts, z_cuts] = get_slices(img, varargin{:});
+xvec = linspace(mdl_min(1), mdl_max(1),np+1);
+yvec = linspace(mdl_min(2), mdl_max(2),np+1);
+zvec = linspace(mdl_min(3), mdl_max(3),np+1);
+x_avg = conv2(xvec, [1,1]/2,'valid');
+y_avg = conv2(yvec, [1,1]/2,'valid');
+z_avg = conv2(yvec, [1,1]/2,'valid');
 
+[x,y] = ndgrid( x_avg, y_avg);
 for zi= 1:length(z_cuts)
-   M_trans= [1,0;0,1;0,0];
-   M_add= [0,0,z_cuts(zi)];
-   idx= zi;
-   surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
-              M_trans, M_add, 1);
+    grid = mk_grid_model([],xvec,yvec);
+    grid.nodes(:,3) = z_cuts(zi);
+    pic  = rimg(3:end-2,3:end-2,zi);
+    ff   = find(isnan(pic(:)));
+    grid.elems([2*ff, 2*ff-1],:)= [];
+    grid.coarse2fine([2*ff, 2*ff-1],:)= [];
+    grid.coarse2fine(:,ff)= [];
+    grid = rmfield(grid,'boundary');
+    opt.boundary = true;
+    grid.fwd_model = fix_model(grid, opt);
+    gim  = mk_image(grid,1);
+    gim.elem_data(1:2:end) = pic(~isnan(pic));
+    gim.elem_data(2:2:end) = pic(~isnan(pic));
+    show_fem(gim);
+%    M_trans= [1,0;0,1;0,0];
+%    M_add= [0,0,z_cuts(zi)];
+%    idx= zi;
+%    surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
+%               M_trans, M_add, 1);
 end
 
 for xi= 1:length(x_cuts)
@@ -163,7 +192,7 @@ function do_unit_test
    load datacom.mat A B;
    img.elem_data(A) = 1.2;
    img.elem_data(B) = 0.8;
-   img.calc_colours.npoints = 15;
+   img.calc_colours.npoints = 64;
    show_3d_slices(img,[1.5,2],[],[]);
 
 %  show_3d_slices(img,[1,2],0,0.5);
