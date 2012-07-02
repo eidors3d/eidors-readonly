@@ -154,7 +154,7 @@ function do_unit_test
    time_steps=  3;
    time_weight= .8;
 
-   [vh,vi,xyr_pt]=simulate_2d_movement(50);
+   [vh,vi,xyr_pt]=simulate_2d_movement(7, [], [],[1,0.5,0.4]);
 
    imdl_TS = mk_common_model( 'c2c2', 16 ); % 576 element
    imdl_TS.fwd_model.normalize_measurements= 0;
@@ -168,8 +168,8 @@ function do_unit_test
    imdl_TS.solve= @inv_solve_time_prior;
    imdl_TS.inv_solve_time_prior.time_steps=   time_steps;
 
-image_select= length(xyr_pt)/2+1;; % this image is at 9 O'Clock
-time_steps=  3; ts_expand= 5;
+image_select= floor(length(xyr_pt)/2)+1;  % this image is at 9 O'Clock
+time_steps=  3; ts_expand= 1;
 time_weight= .8;
 ts_vec= -time_steps:time_steps;
 
