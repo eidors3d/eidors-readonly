@@ -63,10 +63,14 @@ eidors_msg('simulate_3d_movement: setting cached value', 4);
 
 function [vh,vi,xyzr_pt]= do_simulate_3d_movement( n_sims, mdl_3d, rad_pr, movefcn )
 
+    mv_start = 0;
+    mv_end   = 1;
 if isnumeric(movefcn)
-   if     movefcn==1
+   if length(movefcn)>=2; mv_start = movefcn(2); end
+   if length(movefcn)>=3; mv_end   = movefcn(3); end
+   if     movefcn(1)==1
       movefcn = @helical_path;
-   elseif movefcn==2
+   elseif movefcn(1)==2
       movefcn = @radial_path;
    else
       error('value of movefcn not understood');
@@ -94,20 +98,16 @@ eidors_msg('simulate_3d_movement: step #2: find points',2);
 target_conductivity= .1;
 
 for i=1:n_sims
-   if rem(i, max( floor(i/10), 10))==1; eidors_msg( ...
+   if rem(i, max( floor(i/10), 10))==1;
+       eidors_msg( ...
        'simulate_3d_movement: step #3 (%d of %d): target simulations', ...
        i, n_sims, 2); 
    end
-   if 0
-      obj_n= sparse( eptr(pts_idx{i}),1,1, n_elems, 1);
-      img.elem_data= 1 + target_conductivity * obj_n./vol;
-  %   show_fem(img); view([-2,84]);pause;
-   else
-      f_frac= (i-1)/n_sims;
-      [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
-      ff=  (x-xp).^2 + (y-yp).^2 + (z-zp).^2 <= rp^2;
-      img.elem_data= 1 + target_conductivity * mean(ff,3);
-   end
+
+   f_frac= mv_start + ( (i-1)/n_sims ) * (mv_end - mv_start);
+   [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
+   ff=  (x-xp).^2 + (y-yp).^2 + (z-zp).^2 <= rp^2;
+   img.elem_data= 1 + target_conductivity * mean(ff,3);
 
    xyzr_pt(:,i)= [xp;-yp;zp;rp]; % -y because images and axes are reversed
    vi(i)= fwd_solve( img );% measurement
@@ -209,41 +209,41 @@ function [radius, rp, zmin, zmax,x,y,z] = ...
 function do_unit_test
    N_TEST = 5;
    imdl = mk_common_model( 'c2c2', 16 );
-if 0
-   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST);
 
+   [vh,vi,xyzr_pt]=simulate_3d_movement(N_TEST);
    subplot(421);
    imgs = inv_solve(imdl, vh, vi);
    imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
 
-   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [0.3,0.01],1);
+   [vh,vi,xyzr_pt]=simulate_3d_movement(N_TEST, [], [0.3,0.01,.1,.9],1);
    subplot(422);
    imgs = inv_solve(imdl, vh, vi);
    imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
 
-   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [0.9,0.01],2);
+   [vh,vi,xyzr_pt]=simulate_3d_movement(N_TEST, [], [0.9,0.01,.1,.9],2);
    subplot(423);
    imgs = inv_solve(imdl, vh, vi);
    imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
    
-   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [],[1,0.5,0.4]);
+   [vh,vi,xyzr_pt]=simulate_3d_movement(N_TEST, [], [],[1,0.5,0.4]);
    subplot(424);
    imgs = inv_solve(imdl, vh, vi);
    imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
 
-   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [],@test_movefcn);
+   [vh,vi,xyzr_pt]=simulate_3d_movement(N_TEST, [], [],@test_movefcn);
    subplot(425);
    imgs = inv_solve(imdl, vh, vi);
    imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
-end
 
-   fmdl = mk_common_model('a2c2',16); fmdl= fmdl.fwd_model;
+   fmdl = mk_common_model('n3r2',[16,2]); fmdl= fmdl.fwd_model;
+   fmdl.electrode = fmdl.electrode(1:16);
+   fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
    fmdl.nodes = fmdl.nodes*1.5;
-   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, fmdl, [],@test_movefcn);
+   [vh,vi,xyzr_pt]=simulate_3d_movement(N_TEST, fmdl, [],@test_movefcn);
    subplot(426);
    imgs = inv_solve(imdl, vh, vi);
    imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
 
-function [xp,yp] = test_movefcn(f_frac, radius);
-  ff = radius/sqrt(2);
-  xp= ff*f_frac; yp= ff*f_frac;
+function [xp,yp,zp] = test_movefcn(f_frac, radius,z0,zt);
+  ff =  radius/sqrt(2);
+  xp= ff*f_frac; yp= ff*f_frac; zp = mean([z0,zt]);
