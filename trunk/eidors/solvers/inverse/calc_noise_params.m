@@ -12,6 +12,7 @@ function params = calc_noise_params(imdl, vh, vi )
 if ischar(imdl) && strcmp(imdl,'UNIT_TEST'), do_unit_test, return, end
 
 if 0 % old code with random noise
+     % Keep this to validate while we test it
    Nnoise = 1000;
    noise = 0.01*std(vh)*randn(size(vh,1),Nnoise);
    vhn= vh*ones(1,Nnoise) + noise;
@@ -25,6 +26,11 @@ noise_y  = calc_difference_data( vh, vhn, imdl.fwd_model);
 
 signal_x = inv_solve(imdl, vh, vi);  signal_x = signal_x.elem_data;
 noise_x  = inv_solve(imdl, vh, vhn); noise_x  = noise_x.elem_data;
+
+VOL = get_elem_volume(imdl.fwd_model); 
+VOL = spdiags(VOL,0, length(VOL), length(VOL));
+signal_x = VOL*signal_x;
+noise_x = VOL*noise_x;
 
 signal_x = mean(abs(signal_x),1);
 noise_x  = mean(std(noise_x));
@@ -53,8 +59,13 @@ params= [snr_y(:)./snr_x(:)]';
 %    noise_x  = sqrt(mean(noise_x.^2,2));
 
 function do_unit_test
+ll = eidors_msg('log_level',1);
 % test1; % cannot deal with c2f
-test2;
+imdl = mk_common_model('a2t2',16); test2(imdl);
+imdl = mk_common_model('d2t2',16); test2(imdl);
+imdl = mk_common_model('a2c2',16); test2(imdl);
+imdl = mk_common_model('d2c2',16); test2(imdl);
+ll = eidors_msg('log_level',ll);
 
 function test1
 % big model with c2f and supposedly an NF of 0.5
@@ -84,8 +95,7 @@ catch
 end
 unit_test_cmp('Noise fig implementations',nf1, nf2, 1e-2);
 
-function test2
-imdl = mk_common_model('d2t2',16);
+function test2(imdl)
 fmdl = imdl.fwd_model;
 % homogeneous measurement
 img = mk_image(fmdl,1);
@@ -97,9 +107,10 @@ img.elem_data = img.elem_data + mfrac*0.1;
 vi = fwd_solve(img);
 
 nf1 = calc_noise_params(imdl, vh.meas, vi.meas);
+eidors_msg(nf1,0);
 
 imdl.hyperparameter.tgt_data.meas_t1 = vh.meas;
 imdl.hyperparameter.tgt_data.meas_t2 = vi.meas;
 % calc_noise_figure doens't support dual models
-nf2 = calc_noise_figure(imdl);
+nf2 = calc_noise_figure(imdl,[],1000);
 unit_test_cmp('Noise fig implementations',nf1, nf2, 1e-2);
