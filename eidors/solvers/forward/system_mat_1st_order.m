@@ -13,13 +13,13 @@ function s_mat= system_mat_1st_order( fwd_model, img)
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
+FC= system_mat_fields( fwd_model);
+lFC= size(FC,1);
 
 elem_data = check_elem_data(fwd_model, img);
 elem_sigma = kron( elem_data, ones(elem_dim(fwd_model),1) );
+elem_sigma(end+1:lFC) = 1; % add ones for CEM
 
-FC= system_mat_fields( fwd_model);
-
-lFC= size(FC,1);
 ES= spdiags(elem_sigma,0,lFC,lFC);
 
 s_mat.E= FC' * ES * FC;
