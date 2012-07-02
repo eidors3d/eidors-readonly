@@ -1,12 +1,12 @@
 % Sensitivity map $Id$
 
-imdl= mk_common_model('a2c0',16); % Basic model - replace
-imdl.fwd_model= ng_mk_cyl_models([2,1,.07],[16,1.0],[0.1]);
-imdl.fwd_model.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
-J= calc_jacobian(calc_jacobian_bkgnd(imdl));
-img = mk_image(imdl, J(5,:)');
+fwd_model= ng_mk_cyl_models([2,1,.07],[16,1.0],[0.1]);
+fwd_model.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
+J= calc_jacobian( mk_image(fwd_model,1) );
+Sens = J(5,:)'./get_elem_volume(imdl.fwd_model);
+img = mk_image(imdl, Sens');
 
-img.calc_colours.clim= 3e-6;
+img.calc_colours.clim= 3e-2;
 
 img.calc_colours.npoints= 256;
 img.calc_slices.filter = conv2(ones(3),ones(3));
