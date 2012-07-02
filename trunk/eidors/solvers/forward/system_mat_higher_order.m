@@ -111,7 +111,7 @@ for i=nelems:-1:1
     
     %Store the Ammat without multiplication of conductivity for Jacobian
     elemstiff(i).elemstiff=Ammat;
-    
+   
     %This is element stiffness matrix (and multiply by its conductivity)
     stiff=Ammat*img.elem_data(i); 
     
