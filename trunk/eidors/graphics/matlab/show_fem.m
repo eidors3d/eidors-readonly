@@ -47,16 +47,13 @@ switch opts.dims
    otherwise; error('model is not 2D or 3D');
 end
 
-if opts.show_numbering
-   if     bitand( opts.show_numbering, 1 )
-      xyzc= interp_mesh(mdl);
-      placenumbers(xyzc, 7, [0,0,0]);
-   elseif bitand( opts.show_numbering, 2 )
-      xyzc= mdl.nodes;
-      placenumbers(xyzc, 7, [0.5,0,0.5]);
-   else
-      error('don''t understand show_numbering value of %d', opts.show_numbering);
-   end
+if opts.show_elem_numbering
+   xyzc= interp_mesh(mdl);
+   placenumbers(xyzc, 7, [0,0,0]);
+end
+if opts.show_node_numbering
+   xyzc= mdl.nodes;
+   placenumbers(xyzc, 7, [0.5,0,0.5]);
 end
 
 if nargout == 0; clear hh; end
@@ -74,6 +71,8 @@ function [img,mdl,opts] = proc_params( mdl, options );
    opts.do_colourbar=0;
    opts.number_electrodes=0;
    opts.show_numbering  =0;
+   opts.show_elem_numbering = 0;
+   opts.show_node_numbering = 0;
    if nargin >=2
        % fill in default options
        optionstr= zeros(1,100);
@@ -81,7 +80,12 @@ function [img,mdl,opts] = proc_params( mdl, options );
 
        opts.do_colourbar=      optionstr(1);
        opts.number_electrodes= optionstr(2);
-       opts.show_numbering   =  optionstr(3);
+       switch optionstr(3)
+          case 1; opts.show_elem_numbering = 1;
+          case 2; opts.show_node_numbering = 1;
+          case 3; opts.show_elem_numbering = 1;
+                  opts.show_node_numbering = 1;
+       end
    end
 
    % if we have an only img input, then define mdl
