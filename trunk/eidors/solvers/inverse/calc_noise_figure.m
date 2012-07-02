@@ -1,3 +1,4 @@
+
 function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 % CALC_NOISE_FIGURE: calculate the noise amplification (NF) of an algorithm
 % [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
@@ -100,7 +101,11 @@ function NF= nf_calc_use_matrix( inv_model, h_data, c_data)
 % To run efficiently mean(diag(cov_N))=mean(sum(N.^2,2))
 % The sum over X is actually weighted by the volume of
 %  each element, so VOL.^2*(sum(X.^2,2)
-   VOL = get_elem_volume(inv_model.fwd_model)';
+   try 
+       VOL = get_elem_volume(inv_model.rec_model)';
+   catch
+       VOL = get_elem_volume(inv_model.fwd_model)';
+   end
 
    % calculate signal
    d_len   = size(h_data,1);
