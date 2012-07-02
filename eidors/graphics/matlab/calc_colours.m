@@ -53,6 +53,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %      using mapped_colour allows matlab to print vector graphics to eps
 %      setting mapped_colour=0 means to use RGB colours
 %   'npoints' (DEFAULT 64) number of points accross the image
+%   'transparency_thresh' fraction of maximum value at which colours
+%             are rendered transparent
 %   'clim'    (DEFAULT []) crop colour display of values above clim
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
@@ -172,6 +174,7 @@ function set_colours_defaults;
    calc_colours('npoints',64);             % 64 raster points
    calc_colours('clim',[]);                % no colour cropping
    calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
+   calc_colours('transparency_thresh',0.25); % transparent at .25 of max
    eidors_msg('Setting Default Colours',1);
 
 
