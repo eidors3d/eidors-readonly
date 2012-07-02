@@ -56,7 +56,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
 %
 % 3D Models:
-%   mk_common_model('n3r2',16)  - NP's 3D model with 2 ring electrodes
+%   mk_common_model('n3r2',[16,2])  - NP's 3D model with 2 rings of 16 elecs
 %
 %   mk_common_model('b3cr',[16,3])  - cylinder with 3 rings of 16 elecs
 %   mk_common_model('b3t2r',[16,1]) - t2 thorax shape with 1 ring of 16 elecs
@@ -467,6 +467,10 @@ function inv_mdl = mk_n3z_model( n_elec, options );
    inv_mdl.name= 'NP 3D model with zigzag electrodes';
 
 function inv_mdl = mk_n3r2_model( n_elec, options );
+   if ~isempty(n_elec) if  ~all(n_elec == [16,2]);
+      warning(['You have requested an "n3" model with [%d,%d] electrodes.' ...
+         'Note that these models always have 32 electrodes (16x2)'], n_elec);
+   end; end
    if ~exist('OCTAVE_VERSION');
       load( 'datareal.mat' );
    else
