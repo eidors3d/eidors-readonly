@@ -65,7 +65,7 @@ params= [snr_y(:)./snr_x(:)]';
 
 function do_unit_test
 ll = eidors_msg('log_level',1);
-% test1; % cannot deal with c2f
+test1; % can we deal with c2f ?
 imdl = mk_common_model('a2t2',16); test2(imdl);
 imdl = mk_common_model('d2t2',16); test2(imdl);
 imdl = mk_common_model('a2c2',16); test2(imdl);
@@ -90,6 +90,7 @@ vi = fwd_solve(img);
 
 nf1 = calc_noise_params(imdl, vh.meas, vi.meas);
 
+% We use different measurements so naturally we don't get 0.5 here
 imdl.hyperparameter.tgt_data.meas_t1 = vh.meas;
 imdl.hyperparameter.tgt_data.meas_t2 = vi.meas;
 try
