@@ -30,22 +30,37 @@ function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, mdl_3d, rad_pr,movefcn )
 % (C) 2005-2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
-if nargin <1
-   n_sims = 200;
-end
+if nargin <1; n_sims = 200; end
+
+if nargin>=1 && isstr(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin<2 || isempty(mdl_3d) % create our own fmdl
-   mdl_3d= mk_common_model('n3r2',[16,2]); % NP's demo model
-   mdl_3d= mdl_3d.fwd_model;
+   mdl_3d= mk_library_model('cylinder_16x2el_fine');
 end
 
 if nargin<3 || isempty(rad_pr);
    rad_pr= [2/3, 0.05, 0.1, 0.9];
 end
 
-if nargin<4
-   movefcn = 1;
+if nargin<3; rad_pr= []; end
+if nargin<4; movefcn= 1; end
+
+cache_obj = {n_sims,fmdl, rad_pr, movefcn};
+FC = eidors_obj('get-cache', cache_obj, 'simulate_3d_movement');
+if ~isempty(FC)
+   eidors_msg('simulate_3d_movement: using cached value', 4);
+   vh = FC.vh; vi= FC.vi; xyr_pt = FC.xyr_pt;
+   return
 end
+
+[vh,vi,xyr_pt]= do_simulate_3d_movement( n_sims, fmdl, rad_pr, movefcn );
+FC.vh = vh; FC.vi = vi; FC.xyr_pt = xyr_pt;
+
+eidors_obj('set-cache', cache_obj, 'simulate_3d_movement', FC);
+eidors_msg('simulate_3d_movement: setting cached value', 4);
+
+function [vh,vi,xyr_pt]= do_simulate_3d_movement( n_sims, fmdl, rad_pr, movefcn )
+
 if isnumeric(movefcn)
    if     movefcn==1
       movefcn = @helical_path;
@@ -68,38 +83,11 @@ vh = fwd_solve( img);
 
 eidors_msg('simulate_3d_movement: step #2: find points',2);
 
-if 0 % Old Style
-   npx=128;
-   npy=128;
-   npz=64;
-   [radius,rp,z0,zt,x,y,z] = calc_point_grid(mdl_3d.nodes', rad_pr, npx, npy, npz);
-
-   clear pts;
-   for i=1:n_sims
-       f_frac= (i-1)/n_sims;
-
-       % call function to simulate data
-       [xp,yp,zp]= feval(movefcn, f_frac, radius, z0,zt);
-
-       ff= find( (x(:)-xp).^2 + (y(:)-yp).^2 + (z(:)-zp).^2 <= rp^2 )';
-       pts{i} = ff;
-   end
-   pts_all = unique( [pts{:}] );
-   pts_all = pts_all(:);
-   for i=1:n_sims
-      [jnk,idx_i]= intersect( pts_all, pts{i});
-      pts_idx{i}= idx_i;
-   end
-
-   [eptr,vol]= img_mapper3a(mdl_3d.nodes', mdl_3d.elems',  ...
-            x(pts_all), y(pts_all), z(pts_all));
-else
     mdl_pts = interp_mesh( mdl_3d, 2); % 10 per elem
     x= mdl_pts(:,1,:);
     y= mdl_pts(:,2,:);
     z= mdl_pts(:,3,:);
    [radius,rp,z0,zt] = calc_point_grid(mdl_3d.nodes', rad_pr);
-end
 
 target_conductivity= .1;
 
@@ -215,3 +203,45 @@ function [radius, rp, zmin, zmax,x,y,z] = ...
        linspace( xmean - range*0.5, xmean + range*0.5, npx ), ...
        linspace( ymean + range*0.5, ymean - range*0.5, npy ),...
        linspace( zmean - zrange*0.5, zmean + zrange*0.5, npz ));
+
+function do_unit_test
+   N_TEST = 5;
+   imdl = mk_common_model( 'c2c2', 16 );
+if 0
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST);
+
+   subplot(421);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [0.3,0.01],1);
+   subplot(422);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [0.9,0.01],2);
+   subplot(423);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+   
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [],[1,0.5,0.4]);
+   subplot(424);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, [], [],@test_movefcn);
+   subplot(425);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+end
+
+   fmdl = mk_common_model('a2c2',16); fmdl= fmdl.fwd_model;
+   fmdl.nodes = fmdl.nodes*1.5;
+   [vh,vi,xyr_pt]=simulate_2d_movement(N_TEST, fmdl, [],@test_movefcn);
+   subplot(426);
+   imgs = inv_solve(imdl, vh, vi);
+   imgs.show_slices.img_cols = N_TEST; show_slices(imgs);
+
+function [xp,yp] = test_movefcn(f_frac, radius);
+  ff = radius/sqrt(2);
+  xp= ff*f_frac; yp= ff*f_frac;
