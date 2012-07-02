@@ -1,6 +1,7 @@
 -----------------NEW
  - calc_jacobian_test fails
  - think though the fwd_model.background - good idea?
+ - Caching: all to disable caching calls from a specific function
 -----------------
 PRI DEF=
 1 do now
