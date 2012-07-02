@@ -1,5 +1,5 @@
 %Make an inverse model and extract forward model
-imdl = mk_common_model('n3r2',16);
+imdl = mk_common_model('n3r2',[16,2]);
 fmdl = imdl.fwd_model;
 
 %Default EIDORS solver
