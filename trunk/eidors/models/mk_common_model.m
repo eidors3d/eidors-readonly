@@ -483,6 +483,7 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    fmdl.solve=      @fwd_solve_1st_order;
    fmdl.jacobian=   @jacobian_adjoint;
    fmdl.system_mat= @system_mat_1st_order;
+   fmdl.normalize_measurements = 0;
 
    for i=1:length(zc)
        electrodes(i).z_contact= zc(i);
