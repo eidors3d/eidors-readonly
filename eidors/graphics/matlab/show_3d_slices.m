@@ -11,47 +11,83 @@ function show_3d_slices(img, varargin);
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
-cla;
-hold on
-
-[xyz_max, xyz_min, rimg, cimg, ...
-          x_cuts, y_cuts, z_cuts] = get_slices(img, varargin{:});
-
-for zi= 1:length(z_cuts)
-   M_trans= [1,0;0,1;0,0];
-   M_add= [0,0,z_cuts(zi)];
-   idx= zi;
-   surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
-              M_trans, M_add, 1);
+try 
+    np = img.calc_colours.npoints;
+catch
+    np = calc_colours('npoints');
 end
 
-for xi= 1:length(x_cuts)
-   M_trans= [0,0;1,0;0,1];
-   M_add= [x_cuts(xi),0,0];
-   idx= length(z_cuts) + xi;
-   surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
-              M_trans, M_add, 1);
+%  show_fem(img.fwd_model);
+mdl_min = min(img.fwd_model.nodes);
+mdl_max = max(img.fwd_model.nodes);
+mdl_rng = mdl_max - mdl_min;
+np = round(mdl_rng/min(mdl_rng) * np);
+[x_cuts, y_cuts, z_cuts] = get_cuts(img,varargin{:});
+xvec = linspace(mdl_min(1), mdl_max(1),np(1)+1);
+yvec = linspace(mdl_min(2), mdl_max(2),np(2)+1);
+zvec = linspace(mdl_min(3), mdl_max(3),np(3)+1);
+
+img.fwd_model.mdl_slice_mapper.x_pts  = xvec(1:end-1) + .5*diff(xvec);
+img.fwd_model.mdl_slice_mapper.y_pts  = yvec(1:end-1) + .5*diff(yvec);
+for i= 1:length(z_cuts)
+    gmdl = mk_grid_model([],xvec,yvec);
+    gmdl.nodes(:,3) = z_cuts(i);
+    level = [inf inf z_cuts(i)];
+    img.fwd_model.mdl_slice_mapper.level = level; 
+    pic  = calc_slices(img,level)';
+    show_slice(gmdl,pic,img);
+    hold on
 end
 
-for yi= 1:length(y_cuts)
-   M_trans= [1,0;0,0;0,1];
-   M_add= [0,y_cuts(yi),0];
-   idx= length(z_cuts) + length(x_cuts) + yi;
-   surf_slice(rimg(:,:,idx), cimg(:,:,idx), xyz_min, xyz_max, ...
-              M_trans, M_add, 1);
+img.fwd_model.mdl_slice_mapper.x_pts  = yvec(1:end-1) + .5*diff(yvec);
+img.fwd_model.mdl_slice_mapper.y_pts  = zvec(1:end-1) + .5*diff(zvec);
+for i= 1:length(x_cuts)
+    gmdl = mk_grid_model([],yvec,zvec);
+    gmdl.nodes(:,2:3) = gmdl.nodes;
+    gmdl.nodes(:,1) = x_cuts(i);
+    level = [x_cuts(i) inf inf];
+    img.fwd_model.mdl_slice_mapper.level = level;
+    pic  = calc_slices(img,level)';
+    show_slice(gmdl,pic,img);
 end
 
+img.fwd_model.mdl_slice_mapper.x_pts  = xvec(1:end-1) + .5*diff(xvec);
+img.fwd_model.mdl_slice_mapper.y_pts  = zvec(1:end-1) + .5*diff(zvec);
+for i= 1:length(y_cuts)
+    gmdl = mk_grid_model([],xvec,zvec);
+    gmdl.nodes(:,[1 3]) = gmdl.nodes;
+    gmdl.nodes(:,2) = y_cuts(i);
+    level = [inf y_cuts(i) inf];
+    img.fwd_model.mdl_slice_mapper.level = level;
+    pic  = calc_slices(img,level)';
+    show_slice(gmdl,pic,img);
+end
 hold off
 
-function [xyz_max, xyz_min, rimg, cimg, ...
-          x_cuts, y_cuts, z_cuts] = get_slices(img, varargin);
-   xyz_max= max(img.fwd_model.nodes);
-   xyz_min= min(img.fwd_model.nodes);
+function show_slice(gmdl,pic,img)
+    ff   = find(isnan(pic(:)));
+    gmdl.elems([2*ff, 2*ff-1],:)= [];
+    gmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
+    gmdl.coarse2fine(:,ff)= [];
+    gmdl = rmfield(gmdl,'boundary');
+    opt.boundary = true;
+    gmdl.fwd_model = fix_model(gmdl, opt);
+    gim  = mk_image(gmdl,1);
+    gim.elem_data(1:2:end) = pic(~isnan(pic));
+    gim.elem_data(2:2:end) = pic(~isnan(pic));
+    try gim.calc_colours = img.calc_colours; end
+    try gim.calc_slices = img.calc_slices; end
+    show_fem(gim);
+
+    
+function [x_cuts, y_cuts, z_cuts] =  get_cuts(img, varargin)
+   mdl_max= max(img.fwd_model.nodes);
+   mdl_min= min(img.fwd_model.nodes);
    if nargin==1;
       % Default show 2 z_cuts and 1 x and 1 y cut
-       x_cuts= linspace(xyz_min(1), xyz_max(1), 3); x_cuts([1,3])=[];
-       y_cuts= linspace(xyz_min(2), xyz_max(2), 3); y_cuts([1,3])=[];
-       z_cuts= linspace(xyz_min(3), xyz_max(3), 4); z_cuts([1,4])=[];
+       x_cuts= linspace(mdl_min(1), mdl_max(1), 3); x_cuts([1,3])=[];
+       y_cuts= linspace(mdl_min(2), mdl_max(2), 3); y_cuts([1,3])=[];
+       z_cuts= linspace(mdl_min(3), mdl_max(3), 4); z_cuts([1,4])=[];
    elseif nargin==2;
        z_cuts= varargin{1};
        x_cuts= [];
@@ -67,79 +103,7 @@ function [xyz_max, xyz_min, rimg, cimg, ...
    else 
        error('too many inputs');
    end
-
-   limts= [ z_cuts(:)*[inf,inf,1  ]; ...
-            x_cuts(:)*[1  ,inf,inf]; ...
-            y_cuts(:)*[inf,1  ,inf]];
-
-   rimg0= calc_slices( img, limts);
-% SURF DOESN'T SHOW THE BLOODY OUTER BOUNDARY, WE NEED TO ADD 4 POINTS
-   rimg= NaN*ones(size(rimg0,1)+4,size(rimg0,2)+4,size(limts,1));
-   rimg(3:end-2,3:end-2,:)= rimg0;
-   cimg = calc_colours( rimg, img);
-
-function xyz= linspace_plus4(lim_min, lim_max, np);
-   ooo= ones(length(lim_min),1);
-   delta = lim_max(:)-lim_min(:);
-   delta = max(delta)*ones(size(delta)); 
-   middle=(lim_max(:)+lim_min(:))/2;
-   xyz= middle(:)*ones(1,np+4) + ...
-        delta/(np-1)*[-(np+3)/2:(np+3)/2]; % for plus4
-%       delta/(np-1)*[-(np+1)/2:(np+1)/2]; % for plus2
-%       delta/(np-1)*[-(np-1)/2:(np-1)/2]; % for plus0
-
-function surf_slice(rimg, cimg, xyz_min, xyz_max, M_trans, M_add, show_surf);
-   np= size(rimg,1)-4;
-   lim_min= xyz_min*M_trans;
-   lim_max= xyz_max*M_trans;
-   xyz= linspace_plus4( lim_min, lim_max, np);
-   [x,y]= meshgrid(xyz(1,:),xyz(2,:));
-   xyz= reshape( [x(:),y(:)]*M_trans', np+4,np+4,3);
-
-   ff=isnan(rimg);
-   bdr= (conv2(double(~ff),ones(3),'same')>0) & ff;
-   outbdr = ff & ~bdr;
-   outbdr = ff;
-   bdr= (conv2(double(~ff),ones(2),'same')>0);
-   bdr(:,end) = []; bdr(end,:) = [];
-
-   if 0 % It looks like putting NaN on zz does the trick
-      ver = eidors_obj('interpreter_version');
-      if ver.isoctave ==0 && ver.is64bit
-         cimg(outbdr)= Inf;
-      else
-         cimg(outbdr)= NaN;
-      end
-   end
-
-   if show_surf
-      xx=xyz(:,:,1)+M_add(1);
-      yy=xyz(:,:,2)+M_add(2);
-      zz=xyz(:,:,3)+M_add(3);
-%     xx= flipud(xx); xx(ff & ~bdr) = NaN; xx= flipud(xx);
-      xx(end,:) = []; xx(:,end) = [];
-      yy(end,:) = []; yy(:,end) = [];
-      zz(end,:) = []; zz(:,end) = [];
-      cimg(end,:) = []; cimg(:,1) = [];
-      zz(~bdr) = NaN;
-      cimg = flipud(cimg);   cimg(~bdr) = NaN;
-%xx(outbdr) = NaN;
-%yy(outbdr) = NaN;
-      hh=pcolor(xx,yy,cimg);
-      set(hh,'Zdata',zz);
-%     hh=surface(xx,yy,zz,cimg);
-      set(hh,'FaceColor','flat');
-
-%     set(hh,'EdgeAlpha',0); % Remove background grid
-%     set(hh,'EdgeColor','none'); % Remove background grid
-
-      % WHY WOULD CDataMapping BE ANYTHING ELSE  - STUPID MATLAB !!!
-      % In 64 bit matlab, doing CDataMapping direct on a matrix with
-      %   NaN's will crash matlab. Damn.
-%     set(hh,'CDataMapping','direct');
-   end
-
-%  draw_line_around(cimg, rimg, x,y, M_trans, M_add);
+   
 
 
 function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
@@ -159,12 +123,28 @@ function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
           'Zdata', Contour_paths(3,:) + M_add(3));
 
 function do_unit_test
-   img = mk_image(mk_common_model('n3r2',16),1);
+   imdl = mk_common_model('n3r2',[16,2]);
+   img = mk_image(imdl,1); vh= fwd_solve(img);
    load datacom.mat A B;
    img.elem_data(A) = 1.2;
    img.elem_data(B) = 0.8;
-   img.calc_colours.npoints = 15;
-   show_3d_slices(img,[1.5,2],[],[]);
+   vi = fwd_solve(img);
+   imgr = inv_solve(imdl, vh, vi);
+   imgr.calc_colours.npoints =64;
+   show_3d_slices(img);
+   calc_colours('transparency_thresh', 0.25);
+   show_3d_slices(imgr,[1.5,2],[],[]);
 
-%  show_3d_slices(img,[1,2],0,0.5);
+   subplot(221);  show_3d_slices(imgr,[1,2],0,0.5);
+   subplot(222);  show_3d_slices(img ,[1,2],0,0.5);
+   
+   imgr.calc_colours.transparency_thresh = -1;
+   img.calc_colours.transparency_thresh = -1;
+   subplot(223);  show_3d_slices(imgr,[1,2],0.3,0.7);
+   subplot(224);  
+   show_fem(img.fwd_model);
+   hold on
+   show_3d_slices(img ,[1,2],0.3,0.7);
+   axis off
+   
    view(10,18);
