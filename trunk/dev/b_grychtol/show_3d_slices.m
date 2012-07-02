@@ -188,7 +188,7 @@ function draw_line_around(cimg, rimg, x,y, M_trans, M_add);
           'Zdata', Contour_paths(3,:) + M_add(3));
 
 function do_unit_test
-   img = mk_image(mk_common_model('n3r2',16),1);
+   img = mk_image(mk_common_model('n3r2',[16,2]),1);
    load datacom.mat A B;
    img.elem_data(A) = 1.2;
    img.elem_data(B) = 0.8;
