@@ -3,7 +3,11 @@ function [A,b]=tet_to_inequal(v)
 % Given the vertices of a simplex v return a system
 % of linear inequalities so that a point x in in 
 % the simplex iff Ax >= b
-% Bill Lionheart 30/06/2012
+
+% (C) 2012 Bill Lionheart. License GPL v2 or v3
+% $Id$
+
+if isstr(v1) && strcmp(v1,'UNIT_TEST'); do_unit_test; return; end
 
 [d1,d]=size(v);
 if d~=3
@@ -28,3 +32,11 @@ edges2= [v(3,:)-v(2,:);v(4,:)-v(2,:)];
 A(4,:) = cross(edges2(1,:),edges2(2,:));
 b(4) = A(4,:)*v(2,:)';
 b=b';
+
+function do_unit_test 
+v1=[0,0,0;eye(3)];
+[A1,b1] =  tet_to_inequal(v1);
+out = all( A1*[0.1;0.1;0.1]-b1<0)
+correct = 1;
+unit_test_cmp('test1', out, correct)
+end
