@@ -195,7 +195,7 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
    % calculate GREIT matrix as usual
    RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
    imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
-   NF = calc_noise_params(imdl,vh, vi_NF);
+   NF = calc_noise_figure(imdl,vh, vi_NF);
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
    out = (NF - target)^2;
 %    out = (mean(NF) - target)^2 + std(NF);

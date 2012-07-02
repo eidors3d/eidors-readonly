@@ -69,15 +69,15 @@ IN6 = repmat(IN,[1 1 6]); IN6 = shiftdim(IN6,2);
 for i= 1:length(imdls);
     if iscell(imdls)
         imgr = inv_solve(imdls{i}, vh, vi);
-        pnoise = calc_noise_params( imdls{i}, vh, vi );
+        pnoise = calc_noise_figure( imdls{i}, vh, vi );
     else
         imgr = inv_solve(imdls(i), vh, vi);
-        pnoise = calc_noise_params( imdls(i), vh, vi );
+        pnoise = calc_noise_figure( imdls(i), vh, vi );
     end
    
    %imgr.calc_colours.npoints = 64;
    param_GR = eval_GREIT_fig_merit(imgr, xyzr);
-   %pnoise = calc_noise_params( imdls{i}, vh, vi );
+   %pnoise = calc_noise_figure( imdls{i}, vh, vi );
    params{i} = [param_GR; pnoise];
    p_img = nan([6 size(IN)]);
    p_img(IN6) = params{i};
@@ -203,7 +203,7 @@ end
    img.calc_colours.npoints=32;
    imgs = calc_slices(img);
 
-       param= [calc_noise_params(imdl, vh, vi); ... % noise parameters
+       param= [calc_noise_figure(imdl, vh, vi); ... % noise parameters
            GREIT_sim_params(  imgs, xyzr_pt)];            % image parameters
        
        r = sqrt(sum(xyzr_pt(1:2,:).^2));
