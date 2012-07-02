@@ -24,3 +24,7 @@ elseif dims==3
 else
     error('problem dimension must be 2 or 3');
 end
+
+if isfield(inv_model.fwd_model,'coarse2fine')
+     Reg = Reg*inv_model.fwd_model.coarse2fine;
+end
