@@ -16,7 +16,6 @@ inv3d= select_imdl(fmdl, {'Basic GN dif'});
 inv3d.solve= @inv_solve_diff_GN_one_step;
 inv3d.hyperparameter.value = 1e-3;
 inv3d.RtR_prior= @prior_laplace;
-%inv3d.RtR_prior= @prior_tikhonov;
 inv3d.fwd_model.coarse2fine = c2f;
 inv3d.rec_model = cmdl;
 
