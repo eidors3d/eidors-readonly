@@ -34,7 +34,7 @@ if nargin==1
    img= fwd_model;
    fwd_model= img.fwd_model;
 end
-fwd_model= eidors_model_params( fwd_model );
+fwd_model= prepare_model( fwd_model );
 
 if isfield(img,'params_mapping')
 %     fwd_model data is provided using a mapping function
@@ -66,3 +66,18 @@ data= eidors_obj('data',data);  % create data object
 
 eidors_obj('set-cache', img, 'fwd_solve_data', data);
 eidors_msg('fwd_solve: setting cached value',3);
+
+function mdl = prepare_model( mdl )
+mdl = mdl_normalize(mdl,mdl_normalize(mdl));
+if ~isfield(mdl,'elems');
+    return;
+end
+
+mdl.elems  = double(mdl.elems);
+mdl.n_elem = size(mdl.elems,1);
+mdl.n_node = size(mdl.nodes,1);
+if isfield(mdl,'electrode');
+    mdl.n_elec = length(mdl.electrode);
+else
+    mdl.n_elec = 0;
+end

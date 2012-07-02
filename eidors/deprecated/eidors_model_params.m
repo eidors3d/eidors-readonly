@@ -7,6 +7,8 @@ function mdl = eidors_model_params( mdl );
 
 % TODO - to caching
 
+warning('EIDORS:deprecated','EIDORS_MODEL_PARAMS is deprecated as of 02-Jul-2012. ');
+
 try
    type=mdl.type;
 catch
