@@ -27,6 +27,9 @@ function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 % 
 %     inv_model.hyperparameter.tgt_elems
 %
+% [NF,SE] = calc_noise_figure( inv_model, vh, vi)
+%    interface provided for compatibility with the deprecated
+%    calc_noise_params
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -48,7 +51,12 @@ if nargin>=2 && ~isempty(hp)
 % Remove function parameter because it will recurse
    try; inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func'); end
 end
-[inv_model, h_data, c_data] = process_parameters( inv_model );
+if nargin == 3 && numel(hp) > 1
+    h_data = hp;
+    c_data = iterations;
+else
+    [inv_model, h_data, c_data] = process_parameters( inv_model );
+end
 
 %NF= nf_calc_use_matrix( inv_model, h_data, c_data);
 %NF= nf_calc_iterate( inv_model, h_data, c_data); 
