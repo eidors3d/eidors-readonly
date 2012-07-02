@@ -51,7 +51,7 @@ if optargin > 0 && ischar(varargin{1})
 end
 s = dbstack;
 caller  = s(2).name;
-varargout{:} = call_default(caller,varargin{:});
+varargout{1:nargout} = call_default(caller,varargin{:});
 
 function list = list_defaults
     global eidors_objects
@@ -77,7 +77,7 @@ function default = get_default(caller)
 
 function varargout = call_default(caller,varargin);
 default = get_default(caller);
-varargout{:} = feval(default,varargin{:});
+varargout{1:nargout} = feval(default,varargin{:});
 
 
 function do_unit_test
