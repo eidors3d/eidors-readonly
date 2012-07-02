@@ -14,7 +14,7 @@ if(size(elecstruc(1).nodes,2)==1 && size(elecstruc(1).nodes,1)==1) %POINT ELECTR
 else %COMPLETE ELECTRODE
     [Am]=mc_calc_stiffness(fwd_model,img);
     
-     [Aw,Az,Ad]=mc_calc_complete(fwd_model,img);
+     [Aw,Az,Ad]=mc_calc_complete(fwd_model);
      At=zeros(nnodes+nelecs,nnodes+nelecs);     
 %     [i,j,s] = find(Am);
 %     At=At+sparse(i,j,s,nnodes+nelecs,nnodes+nelecs);
@@ -25,7 +25,6 @@ else %COMPLETE ELECTRODE
 %     At=At+sparse(j+nnodes,i,s,nnodes+nelecs,nnodes+nelecs);
 %     [i,j,s] = find(Ad);
 %     At=At+sparse(i+nnodes,j+nnodes,s,nnodes+nelecs,nnodes+nelecs);
-    
     At(1:nnodes,1:nnodes) = Am+Az;
     At(1:nnodes,nnodes+1:nnodes+nelecs) = Aw;
     At(nnodes+1:nnodes+nelecs,1:nnodes)=Aw';
@@ -47,16 +46,28 @@ if(nargin==1)
 end
 
 %Cache node structure and find no. of spatial dimensions and nodes
-nodestruc=fwd_model.nodes; nodedim=size(nodestruc,2); nnodes=size(nodestruc,1); 
-
 %Cache element structure and find no. of elements
+nodestruc=fwd_model.nodes; nodedim=size(nodestruc,2); nnodes=size(nodestruc,1); 
 elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
 
-%Find fem type and find quadrature points/weights for integration over
-%element consistent with geometry of reference element
+%Find quadrature points/weights for integration by switching between cases
 eletype=fwd_model.approx_type; 
-[weight,xcoord,ycoord,zcoord]=element_gauss_points(eletype);
-%dphi = zeros(1,size(weight,2));
+if(strcmp(eletype,'tri3'))
+    dim=2; order=0;
+elseif(strcmp(eletype,'tri6'))
+    dim=2; order=2;
+elseif(strcmp(eletype,'tri10'))
+    dim=2; order=4;
+elseif(strcmp(eletype,'tet4'))
+    dim=3; order=0;
+elseif(strcmp(eletype,'tet10'))
+    dim=3; order=2;
+else  
+    error('Element type not recognised for integration rules');
+end
+[weight,xcoord,ycoord,zcoord]=gauss_points(dim,order);
+
+%Find derivative of shape function on domain element
 for kk=size(weight,2):-1:1
     dphi(:,:,kk) = element_d_shape_function(eletype,xcoord(kk),ycoord(kk),zcoord(kk));
 end
@@ -95,44 +106,16 @@ for i=1:nelems
     %This is element stiffness matrix (and multiply by its conductivity)
     stiff=Ammat*img.elem_data(i); 
     
-    %Assemble global stiffness matrix (Silvester's book!!)
-%    nnodeselems=size(elemstruc(i).nodes,2); %No. of nodes per element
-    
+    %Assemble global stiffness matrix (Silvester's book!!)    
     Agal(elemstruc(i).nodes, elemstruc(i).nodes) = Agal(elemstruc(i).nodes, elemstruc(i).nodes) + stiff;
-    
-%     for ii=1:nnodeselems %loop over nodes in element
-%         for jj=1:nnodeselems %loop over nodes in element 
-%             Agal(elemstruc(i).nodes(ii),elemstruc(i).nodes(jj)) = ...
-%             Agal(elemstruc(i).nodes(ii),elemstruc(i).nodes(jj)) +  stiff(ii,jj);
-%         end
-%     end 
-
-%     sparseindex = 1;
-%     dofi = zeros(1,nnodeselems*nnodeselems);
-%     dofj = zeros(1,nnodeselems*nnodeselems);
-%     dofv = zeros(1,nnodeselems*nnodeselems);
-%     for ii=1:nnodeselems %loop over nodes in element
-%         for jj=1:nnodeselems %loop over nodes in element 
-%             dofi(sparseindex) = elemstruc(i).nodes(ii);
-%             dofj(sparseindex) = elemstruc(i).nodes(jj);
-%             dofv(sparseindex) = stiff(ii,jj);
-%             sparseindex = sparseindex + 1;
-%         end
-%     end 
-%     Agal = Agal + sparse(dofi,dofj, dofv, nnodes, nnodes);
 
 end
  
 end
 
 %COMPLETE ELECTRODE MATRICES
-function [Aw,Az,Ad]=mc_calc_complete(fwd_model,img)
+function [Aw,Az,Ad]=mc_calc_complete(fwd_model)
 %Takes a forward model and calculates Az, Aw, Ad for complete electrode
-
-%If function called only with image, extract forward model
-if(nargin==1)
-    img=fwd_model; fwd_model=img.fwd_model;
-end
 
 %Get the electrode structure, find number of electrodes
 %Get the boundary strucutre, find number of boundaries
@@ -146,10 +129,24 @@ for i=nbounds:-1:1
     boundstrucold(i,:)=boundstruc(i).nodes;
 end
 
-%Find fem type and find quadrature points/weights for integration over
-%boundaries consistent with geometry of reference boundary
+%Find quadrature points/weights for integration by switching between cases
 eletype=fwd_model.approx_type; 
-[weight,xcoord,ycoord]=boundary_gauss_points(eletype);
+if(strcmp(eletype,'tri3'))
+    dim=1; order=2;
+elseif(strcmp(eletype,'tri6'))
+    dim=1; order=4;
+elseif(strcmp(eletype,'tri10'))
+    dim=1; order=6;
+elseif(strcmp(eletype,'tet4'))
+    dim=2; order=2;
+elseif(strcmp(eletype,'tet10'))
+    dim=2; order=4;
+else  
+    error('Element type not recognised for integration rules');
+end
+[weight,xcoord,ycoord]=gauss_points(dim,order);
+
+%Find shape function on boundary element
 for kk=size(weight,2):-1:1
     phi(:,kk) = boundary_shape_function(eletype,xcoord(kk),ycoord(kk))';
 end
@@ -208,43 +205,9 @@ for ke=1:nelecs
         %Node numbers for this boundary
         boundnodes=boundstruc(boundidx_ke(ii)).nodes;
         
+        %Assemble the matrices
         Az(boundnodes,boundnodes) = Az(boundnodes,boundnodes)+Azmat/elecimped;
         Aw(boundnodes,ke) = Aw(boundnodes,ke) - Awmat'/elecimped;
-        
-%         dofAzi = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-%         dofAzj = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-%         dofAzv = zeros(1,size(boundnodes,2)*size(boundnodes,2));
-%         
-%         dofAwi = zeros(1,size(boundnodes,2));
-%         dofAwj = zeros(1,size(boundnodes,2));
-%         dofAwv = zeros(1,size(boundnodes,2));
-%         
-%         sparseindex = 1;
-%         for i=1:size(boundnodes,2)
-%             for j=1:size(boundnodes,2)
-%                 dofAzi(sparseindex) = boundnodes(i);
-%                 dofAzj(sparseindex) = boundnodes(j);
-%                 dofAzv(sparseindex) = Azmat(i,j)/elecimped;
-%                 sparseindex = sparseindex + 1;
-%             end
-%             dofAwi(i) = boundnodes(i);
-%             dofAwj(i) = ke;
-%             dofAwv(i) = Awmat(i)/elecimped;
-%         end          
-%         Az = Az + sparse(dofAzi,dofAzj,dofAzv,nnodes,nnodes);      
-%         Aw = Aw + sparse(dofAwi,dofAwj,dofAwz,nnodes,nelecs);
-        
-        %Loop over the nodes on the boundary and form Az/Aw matrices
-%         for i=1:size(boundnodes,2)
-%             for j=1:size(boundnodes,2)
-%                 %Form Az matrix in inner loop
-%                 %Az(boundnodes(i),boundnodes(j)) =
-%                 Az(boundnodes(i),boundnodes(j)) + Azmat(i,j)/elecimped;
-%             end
-%             %Form Aw matrix in outer loop
-%             Aw(boundnodes(i),ke) = Aw(boundnodes(i),ke) - Awmat(i)/elecimped;
-%         end        
-
     end
        
 end
