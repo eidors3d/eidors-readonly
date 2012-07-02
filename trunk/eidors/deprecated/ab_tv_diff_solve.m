@@ -18,7 +18,7 @@ function img= ab_tv_diff_solve( inv_model, data1, data2)
 
 % (C) 2002-2009 Andrea Borsic and Andy Adler. License: GPL version 2 or version 3
 % $Id$
-warning('EIDORS:deprecated','AB_TV_DIFF_SOLVE is deprecated as of 06-Jun-2012. Use INV_SOLVE_TV_DIFFUSIVITY instead.');
+warning('EIDORS:deprecated','AB_TV_DIFF_SOLVE is deprecated as of 06-Jun-2012. Use INV_SOLVE_TV_PDIPM instead.');
 
 
 p= get_params(inv_model);

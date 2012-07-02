@@ -11,7 +11,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   2   np_inv_solve       prior_laplace   1e-3
 %   3   inv_solve_diff_GN_one_step       prior_gaussian_HPF   NF=2
 %   3.1 inv_solve_diff_GN_one_step       prior_noser     NF=2
-%   4   inv_solve_TV_diffusivity   prior_TV      1e-4
+%   4   inv_solve_TV_pdipm   prior_TV      1e-4
 %   5   aa_inv_total_var   prior_laplace   1e-4 (not the usual prior)
 %   6   aa_inv_total_var   prior_TV      1e-4
 %   7   aa_inv_conj_grad   prior_TV      ??? 
@@ -102,7 +102,7 @@ switch option
      inv2d.hyperparameter.value = 1e-6;
      inv2d.parameters.max_iterations= 10;
      inv2d.R_prior=     'prior_TV';
-     inv2d.solve=       'inv_solve_TV_diffusivity';
+     inv2d.solve=       'inv_solve_TV_pdipm';
      inv2d.parameters.keep_iterations=1;
 
    case 5,
