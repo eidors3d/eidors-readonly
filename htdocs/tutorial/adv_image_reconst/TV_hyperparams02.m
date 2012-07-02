@@ -8,7 +8,7 @@ invtv.reconst_type= 'difference';
 invtv.jacobian_bkgnd.value= 1;
 
 invtv.fwd_model=                  imdl.fwd_model;
-invtv.solve=                      @inv_solve_TV_diffusivity;
+invtv.solve=                      @inv_solve_TV_pdipm;
 invtv.R_prior=                    @prior_TV;
 invtv.parameters.term_tolerance=  1e-6;
 invtv.parameters.keep_iterations= 1;
