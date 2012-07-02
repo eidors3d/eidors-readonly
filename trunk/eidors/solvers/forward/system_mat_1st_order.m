@@ -16,6 +16,8 @@ if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
 
+elem_sigma = kron( img.elem_data(:), ones(elem_dim(fwd_model),1) );
+if 0
 if( size(img.elem_data,1) == num_elems(fwd_model))
     %For non-dual models
     elem_data = img.elem_data; 
@@ -33,10 +35,10 @@ else
 end
 
 elem_sigma = kron( elem_data(:), mdl_dim(fwd_model) );
+end
 
-ES= ones(lFC,1);
-ES(1:length(elem_sigma))= elem_sigma;
-ES= spdiags(ES,0,lFC,lFC);
+
+ES= spdiags(elem_sigma,0,lFC,lFC);
 
 s_mat.E= FC' * ES * FC;
 
@@ -44,13 +46,14 @@ function do_unit_test
    imdl=  mk_common_model('a2c2',16);
    img=  mk_image(imdl);
    S1 = system_mat_1st_order(img.fwd_model,img);
-   unit_test_cmp('sys_mat1', S1.E(1,:), [8,-2,-2,-2,-2,zeros(1,36)],1e-14);
+   unit_test_cmp('sys_mat1', S1.E(1,:), [4,-1,-1,-1,-1,zeros(1,36)],1e-14);
+keyboard
 
    img.elem_data([1:16]) = 2;
 img.calc_colours.clim = 4;
 show_fem(img,[0,0,3]);
    S2 = system_mat_1st_order(img.fwd_model,img);
-   unit_test_cmp('sys_mat2', S2.E(1,:), 2*[8,-2,-2,-2,-2,zeros(1,36)],1e-14);
+   unit_test_cmp('sys_mat2', S2.E(1,:), 2*[4,-1,-1,-1,-1,zeros(1,36)],1e-14);
    
    idx = 41-(0:15);
    unit_test_cmp('sys_mat4', S2.E(idx,idx),   S1.E(idx,idx),1e-14);
