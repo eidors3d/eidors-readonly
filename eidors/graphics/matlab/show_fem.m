@@ -4,6 +4,8 @@ function hh=show_fem( mdl, options)
 % mdl is a EIDORS3D 'model' or 'image' structure
 % hh= handle to the plotted model
 %
+% options may be specified by a list
+%
 % options specifies a set of options
 %   options(1) => show colourbar
 %   options(2) => show numbering on electrodes
@@ -48,20 +50,24 @@ end
 if opts.show_numbering
    if     bitand( opts.show_numbering, 1 )
       xyzc= interp_mesh(mdl);
+      placenumbers(xyzc, 7, [0,0,0]);
    elseif bitand( opts.show_numbering, 2 )
       xyzc= mdl.nodes;
+      placenumbers(xyzc, 7, [0.5,0,0.5]);
    else
       error('don''t understand show_numbering value of %d', opts.show_numbering);
-   end
-   xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
-   for i= 1:size(xyzc,1)
-      text(xyzc(i,1),xyzc(i,2), xyzc(i,3), num2str(i), ...
-            'HorizontalAlignment','center','FontSize',7);
    end
 end
 
 if nargout == 0; clear hh; end
 
+function placenumbers(xyzc, fontsize, colour)
+   xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
+   for i= 1:size(xyzc,1)
+      text(xyzc(i,1),xyzc(i,2), xyzc(i,3), num2str(i), ...
+            'HorizontalAlignment','center', ...
+            'FontSize',fontsize,'Color',colour);
+   end
 
 function [img,mdl,opts] = proc_params( mdl, options );
 
