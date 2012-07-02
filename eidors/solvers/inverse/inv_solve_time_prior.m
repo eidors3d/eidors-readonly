@@ -151,6 +151,8 @@ function delta_vec= calc_delta( inv_model, J)
 
    
 function do_unit_test
+
+function do_unit_test_2d
    time_steps=  3;
    time_weight= .8;
 
@@ -182,5 +184,14 @@ ts_vec= -time_steps:time_steps;
    show_fem(img);
 
 
+function do_unit_test_3d
+   n_sims= 20;
+   stim = mk_stim_patterns(16,2,'{ad}','{ad}',{},1);
+   fmdl = mk_library_model('cylinder_16x2el_vfine');
+   fmdl.stimulation = stim;
+   [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl);
 
 
+
+
+function do_unit_test_3d
