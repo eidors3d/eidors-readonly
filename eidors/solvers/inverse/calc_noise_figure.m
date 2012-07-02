@@ -6,6 +6,7 @@ function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 %         then use the value of inv_model.hyperparameter.value)
 %    iterations => number of iterations (default 10)
 %       (for calculation of noise figure using random noise)
+%    if hp is [] => use the hp on the inv_model
 %  NF = calculated NF. SE = standard error on NF
 %
 % hp is specified, it will be used for the hyperparameter.
@@ -41,7 +42,7 @@ function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 %    SNR_x = sum(|x0|/len_x) / std(x/len_x)
 
 
-if nargin>=2
+if nargin>=2 && ~isempty(hp)
    inv_model.hyperparameter.value= hp;
 % Remove function parameter because it will recurse
    try; inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func'); end
