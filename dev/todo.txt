@@ -1,3 +1,13 @@
+---------- Left overs from blackboard:
+- mk_common_model + mk_common_gridmdl + mk_library
+- fix GN_first_order
+- analytical c2f
+- GREIT: movement + noise weighting
+- EIDORS_VAR_ID
+- whole electrode opts for Netgen
+
+
+
 -----------------NEW
  - calc_jacobian_test fails
  - think though the fwd_model.background - good idea?
