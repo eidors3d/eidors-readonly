@@ -15,6 +15,10 @@ function [img,img_iteration]= inv_solve_abs_GN_prior( inv_model, meas_data)
 %       (i) Allow a best fitting homogeneous (user may not want this)
 %       (ii) Allow a reference conductivity at each iteration
 %       (iii) Allow a global reference conductivity
+warning off backtrace
+warning('EIDORS:experimental','%s is experimental, handle with care!',...
+                upper('inv_solve_abs_GN_prior'));
+warning on backtrace
 
 %Get parameters (default : 1 maxiter, 1e-3 tol,2 show_iter, 2 backtrack)
 [maxiter, tol, show_iter,bls,best_homog,best_homog_ref] = get_parameters(inv_model);
