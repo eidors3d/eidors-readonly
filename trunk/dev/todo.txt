@@ -17,6 +17,10 @@
  - Create a "contributions" section
    - move part of the tutorials into the contribs
 -----------------
+ - Build NG.bat file into the path.
+    - maybe have eidors/executables?
+    - maybe an eidors install script
+-----------------
 PRI DEF=
 1 do now
 2 do next
