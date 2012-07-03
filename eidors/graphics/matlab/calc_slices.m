@@ -217,7 +217,7 @@ function do_unit_test
 
 
 % 3D Tests
-   img = calc_jacobian_bkgnd( mk_common_model('n3r2'));
+   img = calc_jacobian_bkgnd( mk_common_model('n3r2',[16,2]));
    img.calc_colours.npoints = 8; 
    imn = calc_slices(img,[inf,inf,1]);
 
