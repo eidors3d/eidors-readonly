@@ -140,7 +140,7 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
 % element which contains it.
 function EPTR= img_mapper2(NODE, ELEM, x, y );
   [npy,npx] = size(x);
-  v_yx= [-y(:) x(:)];
+  v_yx= [-y(:),x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
   EPTR=zeros(npy,npx);
   % for each element j, we get points on the simplex a,b,c
@@ -365,7 +365,7 @@ function do_unit_test
    unit_test_cmp('nptr03',nptr,[ 40 13 1 9 32; 0 14 7 17 0]);
 
 % 3D NPOINTS
-   imdl = mk_common_model('n3r2',8); fmdl = imdl.fwd_model;
+   imdl = mk_common_model('n3r2',[16,2]); fmdl = imdl.fwd_model;
    fmdl.mdl_slice_mapper.level = [inf,inf,1];
    fmdl.mdl_slice_mapper.npx = 4;
    fmdl.mdl_slice_mapper.npy = 4;
