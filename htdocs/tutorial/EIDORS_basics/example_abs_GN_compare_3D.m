@@ -34,7 +34,7 @@ imdl.reconst_type = 'absolute';
 imdl.jacobian_bkgnd.value=img_h.elem_data; %Background conductivity
 imdl.parameters.show_iterations=2; %Show iteration progress
 imdl.parameters.best_homog=2; %Best fitting homogeneous
-imdl.parameters.max_iterations = 1; %Number of iterations
+imdl.parameters.max_iterations = 10; %Number of iterations
 
 
 
