@@ -39,6 +39,7 @@ if nargin<2 || isempty(fmdl) % create our own fmdl
    fmdl.normalize_measurements = 0;
    fmdl.electrode = fmdl.electrode(1:16);
    fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
+   fmdl.normalize_measurements = 0;
 end
 
 if nargin<3 || isempty(rad_pr);
