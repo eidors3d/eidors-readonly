@@ -121,7 +121,7 @@ end
 
 function do_unit_test
    subplot(331)
-   imdl = mk_common_model('n3r2'); fmdl= imdl.fwd_model;
+   imdl = mk_common_model('n3r2',[16,2]); fmdl= imdl.fwd_model;
    show_fem(fmdl);
    subplot(332)
    show_fem(fmdl); hh= gca; 

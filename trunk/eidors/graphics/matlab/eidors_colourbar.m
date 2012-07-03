@@ -99,7 +99,7 @@ end
 end
 
 function do_unit_test
-imdl = mk_common_model('n3r2');
+imdl = mk_common_model('n3r2',[16,2]);
 img = mk_image(imdl);
 img=rmfield(img,'elem_data');
 img.node_data(1:252)= (1:252)/100 - 1;
