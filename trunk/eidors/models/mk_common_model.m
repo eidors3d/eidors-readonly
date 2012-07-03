@@ -468,8 +468,9 @@ function inv_mdl = mk_n3z_model( n_elec, options );
 
 function inv_mdl = mk_n3r2_model( n_elec, options );
    if ~isempty(n_elec) if  ~all(n_elec == [16,2]);
-      warning(['You have requested an "n3" model with [%d,%d] electrodes.' ...
-         'Note that these models always have 32 electrodes (16x2)'], n_elec);
+      if length(n_elec)~=2; n_elec= [n_elec(1),1]; end
+      warning(sprintf(['You have requested an "n3" model with [%d,%d] electrodes.' ...
+         'Note that these models always have 32 electrodes (16x2)'], n_elec));
    end; end
    if ~exist('OCTAVE_VERSION');
       load( 'datareal.mat' );
