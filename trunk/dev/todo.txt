@@ -31,6 +31,8 @@
     - maybe have eidors/executables?
     - maybe an eidors install script
 -----------------
+ - Move away from assuming default n_elec is 16 in mk_common_model
+-----------------
 PRI DEF=
 1 do now
 2 do next
