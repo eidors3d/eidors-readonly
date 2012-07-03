@@ -151,6 +151,8 @@ function delta_vec= calc_delta( inv_model, J)
 
    
 function do_unit_test
+   do_unit_test_2d
+   do_unit_test_3d
 
 function do_unit_test_2d
    time_steps=  3;
@@ -191,7 +193,3 @@ function do_unit_test_3d
    fmdl.stimulation = stim;
    [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl);
 
-
-
-
-function do_unit_test_3d
