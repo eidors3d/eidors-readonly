@@ -90,6 +90,14 @@ DE= zeros(nelecs,nstims,nelems);
 %First step, we only want to pick off the ith electrode
 zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 
+%SPEED UP HERE
+%Factorise A into C'*S*C where S diagonal conduc i.e. C=system_mat_fields,
+%then don't need extra multiplication in loop below
+%
+%zi2E= zeros(nelecs, nnodes+nelecs);
+%zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
+%zi2E=zi2E*FC'; sv=Fc*sv;
+
 %Calculate the partial derivative matrix for kth change
 for k=1:nelems    
     %kth element stiffness matrix, global nodes and index vector
