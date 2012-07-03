@@ -54,7 +54,7 @@ fwd_model.elems=elementnodes; %Reassign fwd_model.elems
 %End LinearReorder function
 
 function do_unit_test
-   imdl = mk_common_model('n3r2',32); fmdl = imdl.fwd_model;
+   imdl = mk_common_model('n3r2',[16,2]); fmdl = imdl.fwd_model;
    fm1 = linear_reorder(fmdl);
    vol1= test_linear_reorder( fm1 );
    ok = all(vol1>0);
