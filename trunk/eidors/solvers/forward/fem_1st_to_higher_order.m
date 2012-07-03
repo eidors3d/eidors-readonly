@@ -10,6 +10,8 @@ function [bound,elem,nodes]=fem_1st_to_higher_order(fwd_model)
 %
 %M Crabb - 29.06.2012
 
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
+
 cache_obj = {fwd_model.nodes, fwd_model.elems, ...
              fwd_model.approx_type, fwd_model.boundary};
 bel = eidors_obj('get-cache', cache_obj, 'bound_elem_nodes');
@@ -664,6 +666,26 @@ function [boundstruc,elemstruc,nodestruc,newnodes] = prefine3dquadboundary(bound
         end
     end
 end
+
+function do_unit_test
+    do_unit_test_2D;
+    do_unit_test_3D;
+end
+
+function do_unit_test_2D
+    imdl=mk_common_model('c2C',16);
+    fmdl=imdl.fwd_model;
+    fmdl.approx_type='tri6';
+    [bou,ele,nod]=fem_1st_to_higher_order(fmdl);
+end
+
+function do_unit_test_3D
+    imdl=mk_common_model('n3r2',[16,2]);
+    fmdl=imdl.fwd_model;
+    fmdl.approx_type='tet10';
+    [bou,ele,nod]=fem_1st_to_higher_order(fmdl);
+end
+
 
 %OLD CODE (WITHOUT INDEXING ARRAYS OF NEIGHBOURING EDGES)
 
