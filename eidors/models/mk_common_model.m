@@ -610,7 +610,7 @@ test_np_get_3d_meas
 test_distmesh_models
 
 function test_np_get_3d_meas
-   imdl=mk_common_model('n3r2'); st1=imdl.fwd_model.stimulation;
+   imdl=mk_common_model('n3r2',[16,2]); st1=imdl.fwd_model.stimulation;
    fmdl = imdl.fwd_model;
    
    % get the measurement patterns, only indH is used in this model
@@ -662,8 +662,8 @@ end;
 
 function test_3d_models
 % 3D Models:
-    mk_common_model('n3r2',16);
- %  mk_common_model('n3z',16);
+    mk_common_model('n3r2',[16,2]);
+ %  mk_common_model('n3z',[16,2]);
  
     mk_common_model('b3cr',[16,3]);
     mk_common_model('b3t2r',[16,1]);
