@@ -29,7 +29,7 @@ S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs,
 
 
 <h3> 
-Use Circular GREIT v1.0 model
+Use GREIT reconstruction
 </h3>
 
 Reconstruction model
@@ -57,7 +57,7 @@ Reconstruct temporal signals
 <br><i>Figure:</i>
 (bottom) time course of several lung pixels
 </center>
-
+<!--
 <h3> 
 Use Elliptic GREIT model
 </h3>
@@ -76,7 +76,7 @@ here</a>, the elliptical ration is about 1:1.14.
 Images of lungs using ellipcal GREIT reconstruction
 </center>
 
-
+-->
 </td></tr></table>
 <p>
 <small>
