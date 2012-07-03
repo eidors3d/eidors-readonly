@@ -220,7 +220,7 @@ function out = list_options(val)
     mdl = eidors_obj('fwd_model','square','nodes', nodes, 'elems', elems);
     out = fix_model(mdl);
     out = rmfield(out,{'elems','nodes','name','type'});
-    flds = fields(out);
+    flds = fieldnames(out);
     for i = 1:length(flds)
        out.(flds{i}) = val;
     end
@@ -247,7 +247,7 @@ function do_unit_test
     
     % test options
     opt = fix_model('options',false);
-    flds = fields(opt);
+    flds = fieldnames(opt);
     % if there are no errors, option interdependence is dealt with
     % correctly
     for i = 1:length(flds)
@@ -256,6 +256,6 @@ function do_unit_test
        opt.(flds{i}) = false;
     end
     
-    mdl = mk_common_model('n3r2',16); mdl= mdl.fwd_model;
+    mdl = mk_common_model('n3r2',[16,2]); mdl= mdl.fwd_model;
     out = fix_model(mdl);
     
