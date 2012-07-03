@@ -298,11 +298,11 @@ function do_unit_test
    %3D example - cylinder
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
    c2f= mk_c2f_circ_mapping( fmdl, [0;0;0;0.1]); 
-   t4= all( abs(c2f(193:196)-0.0595)<.001 ) & all( c2f(1:64)==0 );
-   unit_test_cmp('3D ex 2:',t4,1);
-   
+   unit_test_cmp('3D ex 2a:',c2f(193:196),.0571,.001);
+   unit_test_cmp('3D ex 2b:',c2f(1:64),0);
+
    %3D example - cylinder - 2 pts
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
    c2f= mk_c2f_circ_mapping( fmdl, [0 0;0 0;0 0;0.1 0.2]); 
-   t4= all( abs(c2f(193:196,1)-0.0595)<.001 ) & all( c2f(1:64)==0 );
-   unit_test_cmp('3D ex 3:',t4,1);
+   unit_test_cmp('3D ex 3a:',c2f(193:196),.0571,.001);
+   unit_test_cmp('3D ex 3b:',c2f(1:64),0);
