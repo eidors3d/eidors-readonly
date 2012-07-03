@@ -438,7 +438,7 @@ verts = tmp;
 for i = 2:n_verts+1
     v1 = [verts(i-1,:) - verts(i,:), 0];
     v2 = [verts(i+1,:) - verts(i,:), 0];
-    cp = cross(v1',v2);
+    cp = cross(v1,v2);
     out(i-1) = cp(3) >= 0;
 end
 
