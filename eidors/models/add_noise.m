@@ -49,10 +49,9 @@ function do_unit_test
     v0 = add_noise(.1, v1, v2);
     SNR_test(.1, v0.meas - v1, v1 - v2);
 
-    v0 = add_noise(.3, v1, v2, 'norm' );
-    SNR_test(.3, v0.meas - v1, (v1 - v2)./v1);
+    v0 = add_noise(.9, v1, v2, 'norm' );
+    SNR_test(.9, v0.meas - v1 , (v1 - v2)./v2);
 
 function SNR_test(SNRspec, noi, sig)
     SNR = norm(sig)/norm(noi);
-    if abs(SNR - SNRspec) < .001; disp('ok');
-    else;                         disp('fail'); end
+    unit_test_cmp('SNR_test', SNR, SNRspec, 1e-13);
