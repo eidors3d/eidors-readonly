@@ -210,7 +210,7 @@ function mdl_2d= mk_fwd_model(n_circles, n_elec)
     params.solve=      'eidors_default';
     params.system_mat= 'eidors_default';
     params.jacobian=   'eidors_default';
-    params.normalize_measurements= 1;
+    params.normalize_measurements= 0;
     mdl_2d   = eidors_obj('fwd_model', params);
 
 function do_unit_test
