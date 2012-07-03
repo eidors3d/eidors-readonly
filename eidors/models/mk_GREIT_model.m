@@ -214,7 +214,7 @@ b_nodes = fmdl.nodes( unique(fmdl.boundary) , :);
 b_nodes( b_nodes(:,3) < min_e | b_nodes(:,3) > max_e , :) = [];
 % 4. sort the nodes in polar coordinates
 c = mean(b_nodes);
-tmp = b_nodes - repmat(c,size(b_nodes,1),[]);
+tmp = b_nodes - repmat(c,size(b_nodes,1),1);
 [th] = cart2pol(tmp(:,1),tmp(:,2));
 [th idx] = sort(th);
 bound = b_nodes(idx,:);
@@ -517,6 +517,3 @@ imdl = mk_GREIT_model(fmdl2,0.25,3,opt);
 img = inv_solve(imdl,vh, vi);
 figure
 show_slices(img);
-
-
-
