@@ -10,7 +10,7 @@ close F;
 
 foreach (sort keys %tuts) {
     my $cmd = "$_" . "*.m";
-    my $octcmd = "octave -q --eval 'run /home/adler/docs/eidors/eidors/startup.m;";
+    my $octcmd = "octave -q --persist --eval 'run /home/adler/docs/eidors/eidors/startup.m;";
     m{(.*)/[^/.*]}; $octcmd .= " cd $1; ";
     open F, "ls $cmd| sort|" or die $!;
     while ( <F> ) {
@@ -22,5 +22,4 @@ foreach (sort keys %tuts) {
    
    system "$octcmd";
 
-
-
+}
