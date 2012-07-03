@@ -1,0 +1,15 @@
+- Test with tutorials_test.m
+- Test old tutorials 
+- Test octave
+- Run unit-tests
+- Build library models package
+- Update version in eidors_obj.m
+- run package script
+
+- run html buils script
+
+
+
+POST RELEASE:
+- update version in eidors_obj (to 3.x+)
+
