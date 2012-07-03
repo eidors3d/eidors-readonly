@@ -190,7 +190,7 @@ function len = calc_longest_edge(elems,nodes)
     
 function out = fix_options(mdl, opt)
     out = list_options(false);
-    flds = fields(opt);
+    flds = fieldnames(opt);
     for i = 1:length(flds)
        try
        out.(flds{i}) = opt.(flds{i});
