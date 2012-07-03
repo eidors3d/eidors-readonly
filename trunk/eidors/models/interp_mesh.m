@@ -122,7 +122,7 @@ function do_unit_test
     pp=interp_mesh(mdl,0);
     unit_test_cmp('2D/3D (#1): ',pp,[14 9 3;16 12 3; 20 9 3;22 12 3]);
 
-    mdl = mk_common_model('n3r2',16); mdl= mdl.fwd_model;
+    mdl = mk_common_model('n3r2',[16,2]); mdl= mdl.fwd_model;
     pp=interp_mesh(mdl,0);
     unit_test_cmp('3D/3D (#1): ',pp(1,:),[0.920196320100808   0.048772580504032   0.5],1e-14);
 

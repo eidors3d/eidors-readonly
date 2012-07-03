@@ -62,11 +62,7 @@ function do_unit_test;
     memb_frac = elem_select( imdl.fwd_model, {select_fcn,select_fcn2});
     unit_test_cmp('a2c2 (2fcns)',find(memb_frac), [5, 10,18,27]');
 
-    imdl = mk_common_model('n3r2',8);
+    imdl = mk_common_model('n3r2',[16,2]);
     select_fcn = inline('(x-0.2).^2+(y-0.5).^2 + (z-1).^2<0.1^2','x','y','z');
     memb_frac = elem_select( imdl.fwd_model, select_fcn);
     unit_test_cmp('n3r2',find(memb_frac), [156 159 162 168 431 434 437 503]');
-
-
-
-
