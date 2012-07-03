@@ -61,7 +61,7 @@ bdyc= sort_boundary(mdl.fwd_model.boundary);
 ok= match(bdy,bdyc,ok,'2D test');
 
 %3D Test:  
-mdl = mk_common_model('n3r2',16);
+mdl = mk_common_model('n3r2',[16,2]);
 bdy = find_boundary(mdl.fwd_model.elems);
 bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
