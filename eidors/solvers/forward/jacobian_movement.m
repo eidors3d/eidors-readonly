@@ -39,7 +39,7 @@ s_mat= calc_system_mat( fwd_model, img_bkgd );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
 
 if isfield(fwd_model,'conductivity_jacobian')
-   Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img_bkgd );
+   Jc= calc_jacobian( fwd_model, img_bkgd );
 else
    fwd_model = mdl_normalize(fwd_model, 0); % we normalize on our own
    Jc = jacobian_adjoint(fwd_model,img_bkgd);
@@ -379,7 +379,7 @@ function unit_test_compare_approaches
    img_bkgd  = mk_image( inv_model);
    fwd_model = inv_model.fwd_model;
 
-   pp = aa_fwd_parameters( fwd_model );
+   pp = fwd_model_parameters( fwd_model );
    pp.DEBUG = 0;
    pp.dfact = factorial(pp.n_dims);
    s_mat= calc_system_mat( fwd_model, img_bkgd );
@@ -387,7 +387,7 @@ function unit_test_compare_approaches
    pp.Ce= connectivity_matrix( pp );
 
    Jc1= calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
-   Jc2= aa_calc_jacobian(fwd_model,img_bkgd);
+   Jc2= jacobian_adjoint(fwd_model,img_bkgd);
    unit_test_cmp('Compare J d2t2', Jc1, Jc2, 1e-13);
 
    fwd_model.normalize_measurements = 1;
