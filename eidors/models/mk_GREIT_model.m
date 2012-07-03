@@ -215,8 +215,8 @@ b_nodes( b_nodes(:,3) < min_e | b_nodes(:,3) > max_e , :) = [];
 % 4. sort the nodes in polar coordinates
 c = mean(b_nodes);
 tmp = b_nodes - repmat(c,size(b_nodes,1),1);
-[th] = cart2pol(tmp(:,1),tmp(:,2));
-[th idx] = sort(th);
+[th,jnk] = cart2pol(tmp(:,1),tmp(:,2)); % 2nd param for octave bug (3.6.2)
+[th,idx] = sort(th);
 bound = b_nodes(idx,:);
 % 5. That will normally produce way too many points on the boundary
 %    Let's try to reduce
