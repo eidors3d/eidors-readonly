@@ -2,10 +2,10 @@ function [s_mat] = calc_system_mat_opt( fwd_model, img )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-[bound,elem,nodes]=fem_1st_to_higher_order(fwd_model);
+%[bound,elem,nodes]=fem_1st_to_higher_order(fwd_model);
 %bound = fwd_model.bound;
-%elem = fwd_model.elem;
-%nodes = fwd_model.nodes;
+elem = fwd_model.elem;
+nodes = fwd_model.nodes;
 
 nodedim=size(nodes,2); nnodes=size(nodes,1); 
 
@@ -71,7 +71,7 @@ for i=1:nelems
     end
     
     %Find the magnitude of the Jacobian of the mapping
-    magjacelem=det(jacobianelem);
+    magjacelem=abs(det(jacobianelem));
            
     %Initialise and find elemental stiffness matrices 
     Kmat=0;Cmat=0;
