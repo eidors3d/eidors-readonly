@@ -171,30 +171,41 @@ function [elemedge]=mc_connect_elem_edge_neigh(elemstruc,eletype,nodedim)
                 %Store this in mdl.elem(ii)
                 elemedge(ii).edgeneigh=elemiiedgeneighbour;                
             elseif(nodedim==3) %3D problem
-                %Find elements to which each node of elem ii belongs
-                [rownode1,blah]=find(elemstrucold==elemiinodes(1));
-                [rownode2,blah]=find(elemstrucold==elemiinodes(2));
-                [rownode3,blah]=find(elemstrucold==elemiinodes(3)); 
-                [rownode4,blah]=find(elemstrucold==elemiinodes(4));
-        
-                %Intersection vectors above gives common elements along edge
-                r1r2=intersect(rownode1,rownode2);
-                r1r3=intersect(rownode1,rownode3);
-                r1r4=intersect(rownode1,rownode4);
-                r2r3=intersect(rownode2,rownode3);
-                r2r4=intersect(rownode2,rownode4);
-                r3r4=intersect(rownode3,rownode4);
-        
-                %Now we find the union of the vectors
-                union1=union(r1r2,r1r3);
-                union2=union(r1r4,r2r3);
-                union3=union(r2r4,r3r4);
-                union4=union(union1,union2);
-                union5=union(union3,union4);
-            
-                %Now eliminate the current element from this 
-                elemiiedgeneighbour=setdiff(union5,ii);
-        
+                %SPEEDUP CODE
+                if 0
+                    jnk = false(size(elemstrucold));
+                    for i = 1:4
+                        jnk = jnk | elemstrucold==elemiinodes(i);
+                    end
+                    s = sum(uint8(jnk),2);
+                    elemiiedgeneighbour = find(s>1 | s<4); % take care of the four
+                else                               
+                    %Find elements to which each node of elem ii belongs
+                    [rownode1,blah]=find(elemstrucold==elemiinodes(1));
+                    [rownode2,blah]=find(elemstrucold==elemiinodes(2));
+                    [rownode3,blah]=find(elemstrucold==elemiinodes(3)); 
+                    [rownode4,blah]=find(elemstrucold==elemiinodes(4));
+  
+                    %Intersection vectors above gives common elements along edge
+                    r1r2=intersect(rownode1,rownode2);
+                    r1r3=intersect(rownode1,rownode3);
+                    r1r4=intersect(rownode1,rownode4);
+                    r2r3=intersect(rownode2,rownode3);
+                    r2r4=intersect(rownode2,rownode4);
+                    r3r4=intersect(rownode3,rownode4);
+    
+                    vec = [r1r2; r1r3; r1r4; r2r3; r2r4; r3r4];
+                    vec = unique(vec);
+                    %Now we find the union of the vectors
+                    union1=union(r1r2,r1r3);
+                    union2=union(r1r4,r2r3);
+                    union3=union(r2r4,r3r4);
+                    union4=union(union1,union2);
+                    union5=union(union3,union4);
+                
+                    %Now eliminate the current element from this 
+                    elemiiedgeneighbour=setdiff(union5,ii);
+                end
                 %Store this in mdl.elem(ii)
                 elemedge(ii).edgeneigh=elemiiedgeneighbour;
             end 
@@ -668,7 +679,7 @@ function [boundstruc,elemstruc,nodestruc,newnodes] = prefine3dquadboundary(bound
 end
 
 function do_unit_test
-    do_unit_test_2D;
+%     do_unit_test_2D;
     do_unit_test_3D;
 end
 
@@ -680,8 +691,8 @@ function do_unit_test_2D
 end
 
 function do_unit_test_3D
-    imdl=mk_common_model('n3r2',[16,2]);
-    fmdl=imdl.fwd_model;
+    fmdl=mk_library_model('adult_male_16el');
+    fmdl.stimulation = mk_stim_patterns(16,1,'{ad}','{ad}');
     fmdl.approx_type='tet10';
     [bou,ele,nod]=fem_1st_to_higher_order(fmdl);
 end
