@@ -1,13 +1,18 @@
 function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM
-% mapping= mk_coarse_fine_mapping( f_mdl, c_mdl );
+% c2f= mk_coarse_fine_mapping( f_mdl, c_mdl );
+%  
+% Parameters:
+%    c_mdl is coarse fwd_model
+%    f_mdl is fine fwd_model
 %
-% Mapping approximates elem_data_fine from elem_data_coase
-%   elem_data_fine = Mapping*elem_data_coase
+% C2F_ij is the fraction if f_mdl element i which is
+%   contained in c_mdl element j. This is used to map
+%   from data on the reconstruction model (c_mdl) to
+%   the forward model f_mdl as 
+%      elem_data_fine = Mapping*elem_data_coase
 %
-% c_mdl is coarse fwd_model
-% f_mdl is fine fwd_model
-%
+% OPTIONS:
 % if the geometry of the fine and coarse models are not
 %  aligned, then they can be translated and mapped using
 %    coarse_xyz = M*( fine_xyz - T)
@@ -20,9 +25,24 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %     c_mdl.mk_coarse_fine_mapping.z_depth
 %     indicates the +/- z_depth which elements in 2D are
 %     considered to be extruded in 3D (default inf)
+%
+% NOTES:
+% if c_mdl and f_mdl do not cover the same area, then 
+%    sum(c2f') will not be 1. If all coarse elements cover
+%    at least partially the fine ones, then this 
+%    can be corrected by:
+%      c2f = c2f./(sum(c2f,2) * ones(1,size(c2f,2)));
+% if not all coarse elements cover fine ones, then this
+%    approach cannot be used. This will be fixed in a 
+%    future release
 
-% (C) 2007-2008 Andy Adler. License: GPL version 2 or version 3
+%
+% See also MK_C2F_CIRC_MAPPING
+
+% (C) 2007-2012 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if isstr(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
 
 c_mdl = assign_defaults( c_mdl, f_mdl );
 c_obj = cache_obj(c_mdl, f_mdl);
@@ -181,3 +201,37 @@ function c_mdl = assign_defaults( c_mdl, f_mdl );
     try    c_mdl.mk_coarse_fine_mapping.z_depth;
     catch  c_mdl.mk_coarse_fine_mapping.z_depth= inf;
     end
+
+function do_unit_test
+    fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
+    cmdl = mk_circ_tank(2,[],2); cmdl.nodes = cmdl.nodes*2;
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    unit_test_cmp('t1',c2f,eye(16))
+
+    fmdl = mk_circ_tank(3,[],2);
+    fmdl.nodes = fmdl.nodes*3;
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    unit_test_cmp('t2',c2f,[eye(16);zeros(20,16)])
+
+    fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
+    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*1;
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    unit_test_cmp('t3',c2f,[eye(4);zeros(12,4)])
+
+    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*0.8;
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    unit_test_cmp('t3',c2f,[eye(4)*2/3;zeros(12,4)])
+
+    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*1.2;
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    unit_test_cmp('t3',c2f,[eye(4);eye(4)/3;kron(eye(4),[1;1])/15]);
+
+    fmdl = mk_circ_tank(10,[],2);
+    cmdl = mk_circ_tank(8,[],2);
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+    unit_test_cmp('t4',sum(c2f'),ones(1,size(c2f,1)),1e-14);
+   
+    cmdl.nodes = cmdl.nodes*0.95;
+% show_fem(fmdl); hold on ; show_fem(cmdl); hold off
+    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+
