@@ -27,6 +27,6 @@ function do_unit_test
    ne = num_nodes( mk_image( mdl ));
    ok='fail'; if ne==41; ok='ok'; end; fprintf('test3: %10s\n',ok);
 
-   mdl = mk_common_model('n3r2',16);
+   mdl = mk_common_model('n3r2',[16,2]);
    ne = num_nodes( mk_image( mdl ));
    ok='fail'; if ne==252; ok='ok'; end; fprintf('test4: %10s\n',ok);
