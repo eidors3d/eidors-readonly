@@ -16,26 +16,24 @@ to develop and release EIDORS 3.6. Planned features are:
   <li>Tutorials:
   <ul>
      <li>Restructure Tutorials:
-         =>Fix warnings in tutorials</u>
-         =>Remove old approaches in tutorials</u>
+        <u>Fix warnings in tutorials</u>
+        <u>Replace old approaches in tutorials (eidors_obj, add_noise)</u>
      <li>New Tutorials: 
-         =>Movement solver tutorial</u>
-     <li>"Papers" section in tutorials
-         =>Create section</u>
+        <u>Movement solver tutorial</u>
+        <u>Add recent contributions</u>
   </ul>
   <li>Solvers:
+       <u> Absolute solvers</u>
 
   <li>FEM Modelling:
-         =>Add Gmsh code</u>
+        <u>Add Gmsh code</u>
   <li>Architecture:
-         =>flag for desktop available. Fix eidors_msg</u>
-         =>add unit_tests to solvers</u>
-         =>merge eidors_model_params and fix_models. rename fix_models</u>
-         =>clean up octave directory names in arch</u>
+        <u>flag for desktop available. Fix eidors_msg</u>
+        <u>add unit_tests to solvers</u>
   <li>Tests
-         =>Test for octave</u>
+        <u>Test for octave</u>
   <li>Graphics
-         =>Fix eidors colourbar</u>
+        <u>Fix eidors colourbar</u>
 </ul>
 
 
