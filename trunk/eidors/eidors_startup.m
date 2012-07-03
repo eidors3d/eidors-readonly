@@ -81,6 +81,8 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     addpath([HOMEDIR, '/graphics/vtk']);
     addpath([HOMEDIR, '/external']);
     addpath([HOMEDIR, '/deprecated']);
+    addpath([HOMEDIR, '/overloads']);
+
     %addpath([HOMEDIR, '/tests']);
 
     DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
