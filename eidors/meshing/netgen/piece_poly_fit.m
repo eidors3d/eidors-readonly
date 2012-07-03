@@ -75,7 +75,7 @@ r = ppval(pp,rho);
 function [th_frac xy]  = path_len( pp, pts, start_th, linear_frac )
    th = linspace(start_th, start_th+2*pi,pts+1)';
    [x,y] = pol2cart(th,ones(size(th)));
-   th = cart2pol(x,y);
+   [th,jnk] = cart2pol(x,y); % 2nd param for octave bug (3.6.2)
    th(end) = [];
    th = sortrows(th);
    dth= diff(th);
@@ -120,7 +120,7 @@ a=[sin(th)*0.3,cos(th)];
    [lfrac xy] = path_len( pp, 100, 0, linspace(.5,.8,6)' );
    
    clf
-   subplot 121
+   subplot(121)
    plot(a(:,1),a(:,2),'*',xf,yf,'b-', xy(:,1),xy(:,2),'r+');
    axis equal
 
@@ -128,7 +128,7 @@ a=[sin(th)*0.3,cos(th)];
    th2 = linspace(-pi,pi,33)';th2(end)=[];
    r2 = ppval(pp,th2);
    [x,y] = pol2cart(th2,r2);
-   subplot 122
+   subplot(122)
    plot(a(:,1),a(:,2),'r+'); hold on
    plot(x,y,'.');
    axis equal
