@@ -46,7 +46,7 @@ function [NF,SE] = calc_noise_figure( inv_model, hp, iterations)
 
 if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'), do_unit_test, return, end
 
-if nargin>=2 && ~isempty(hp)
+if nargin>=2 && numel(hp) == 1
    inv_model.hyperparameter.value= hp;
 % Remove function parameter because it will recurse
    try; inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'func'); end
