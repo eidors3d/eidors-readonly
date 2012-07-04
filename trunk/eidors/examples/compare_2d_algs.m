@@ -15,7 +15,7 @@ function [imgr, img]= compare_2d_algs(option,shape);
 %   5   aa_inv_total_var   prior_laplace   1e-4 (not the usual prior)
 %   6   aa_inv_total_var   prior_TV      1e-4
 %   7   aa_inv_conj_grad   prior_TV      ??? 
-%   8   inv_solve_TV_lagged_diffusivity  prior_TV      ???
+%   8   inv_solve_TV_irls  prior_TV      ???
 %
 %  OPTION = 1dd => do OPTION=dd with normalize_measurements
 %
@@ -137,7 +137,7 @@ switch option
      inv2d.hyperparameter.value = 1e-5;
      inv2d.parameters.max_iterations= 20;
      inv2d.R_prior=     'prior_TV';
-     inv2d.solve=       'inv_solve_TV_lagged_diffusivity';
+     inv2d.solve=       'inv_solve_TV_irls';
      inv2d.parameters.keep_iterations=1;
      
    otherwise,

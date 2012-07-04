@@ -11,12 +11,12 @@ function img=ab_tv_lagged_diff( inv_model, data1, data2)
 %      Max number of iterations before stopping
 %  min change = inv_model.parameters.min_change   (default 0)
 %      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
-%  beta      =  inv_model.inv_solve_TV_lagged_diffusivity.beta   (default 1e-3)
+%  beta      =  inv_model.inv_solve_TV_irls.beta   (default 1e-3)
 % beta is the parameter that smooths the TV functional
 
 % (C) 2008 Andrea Borsic. License: GPL version 2 or version 3
 % $Id$
-warning('EIDORS:deprecated','AB_TV_LAGGED_DIFF is deprecated as of 06-Jun-2012. Use INV_SOLVE_TV_LAGGED_DIFFUSIVITY instead.');
+warning('EIDORS:deprecated','AB_TV_LAGGED_DIFF is deprecated as of 06-Jun-2012. Use INV_SOLVE_TV_IRLS instead.');
 try    max_iter = inv_model.parameters.max_iterations;
 catch  max_iter = 10;
 end

@@ -20,7 +20,8 @@ curdir = cd;
 cd(olddir);
 system_cmd(sprintf('svn mv %s.m %s.m', oldname, newname));
 cd(eidors_dir);
-match = '-path ./tools -prune -o -type f -iname "*.m"'; 
+match = '-type f -iname "*.m"'; 
+% match = '-path ./tools -prune -o -type f -iname "*.m"'; 
 % match = '-path ./deprecated -prune -o -path ./tools -prune -o -type f -iname "*.m"';
 system(sprintf(...
    'find . %s -print0 | xargs -0 sed  -i "s/%s/%s/g;s/%s/%s/g;"',...
