@@ -11,9 +11,9 @@ INCLDIRS =  data_contrib \
             programming \
             tutorial 
 WEBLINK= http://eidors3d.sourceforge.net/
- EIDORSDL=http://localhost:80/~adler/eidors/index.shtml
+#EIDORSDL=http://localhost:80/~adler/eidors/index.shtml
 #CUTDL=1
-#EIDORSDL=http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml
+ EIDORSDL=http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml
  CUTDL=2
 
 #all: $(REL) shtml other
