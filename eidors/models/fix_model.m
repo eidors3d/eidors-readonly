@@ -57,7 +57,10 @@ if doall || opt.boundary
 end
 if doall || opt.faces
    mdl = linear_reorder(mdl); %counter-clockwise
-   [mdl.faces mdl.face2elem mdl.elem2face] = calc_faces(mdl);
+   [mdl.faces mdl.elem2face] = calc_faces(mdl);
+end
+if doall || opt.face2elem
+    mdl.face2elem = calc_face2elem(mdl.elem2face);
 end
 if doall || opt.boundary_face
    mdl.boundary_face = mdl.face2elem(:,2)==0;
@@ -82,16 +85,19 @@ end
 if doall || opt.elem_volume
    mdl.elem_volume = get_elem_volume(mdl);
 end
-el_dim = size(mdl.elems,2);
-if 0
-if el_dim==4 && (doall || opt.edges)
-%     mdl.edge2elem doesn't work yet
-   [mdl.edges jnk mdl.elem2edge] = calc_faces(mdl,2);
+el_dim = elem_dim(mdl);
+if doall || opt.edges
+    if el_dim>=3 %that's unlikely to work for higher order elements
+        [mdl.edges mdl.elem2edge] = calc_faces(mdl,2);
+    else 
+        mdl.edges = mdl.faces;
+        mdl.elem2edge = mdl.elem2face;
+    end
 end
+if doall || opt.edge2elem
+    mdl.edge2elem = calc_edge2elem(mdl.elem2edge);
 end
 if el_dim<4 && (doall || opt.edges)
-   mdl.edges = mdl.faces;
-   mdl.edge2elem = mdl.face2elem;
    mdl.elem2edge = mdl.elem2face;
 end
 
@@ -100,19 +106,22 @@ mdl.elems = uint32(mdl.elems);
 if doall || opt.faces
    mdl.faces = uint32(mdl.faces);
    mdl.elem2face = uint32(mdl.elem2face);
-   mdl.face2elem = uint32(mdl.face2elem);
 end
-if 0
+if doall || opt.face2elem
+   mdl.face2elem = uint32(mdl.face2elem);
+end     
 if doall || opt.edges
    mdl.edges = uint32(mdl.edges);
    mdl.elem2edge = uint32(mdl.elem2edge);
-%    mdl.edge2elem = uint32(mdl.edge2elem);
 end
-end
+if doall || opt.edge2elem
+   mdl.edge2elem = logical(mdl.edge2elem);
+end     
+
 % Test whether normal points into or outsize
 % mdl.inner_normal(i,j) = 1 if face i of elem j points in
-function inner_normal = test_inner_normal( mdl );
-   inner_normal = logical(zeros(size(mdl.elem2face)));
+function inner_normal = test_inner_normal( mdl )
+   inner_normal = false(size(mdl.elem2face));
    d = elem_dim(mdl) + 1;
    for i=1:num_elems(mdl);
       el_faces = mdl.elem2face(i,:);
@@ -123,8 +132,7 @@ function inner_normal = test_inner_normal( mdl );
       inner_normal(i,:) = dot_prod' > 0;
    end
 
-function [faces, face2elem, elem2face] = calc_faces(mdl, facedim)
-
+function [faces,  elem2face] = calc_faces(mdl, facedim)
 
 e_dim = mdl_dim(mdl);
 if nargin == 1
@@ -132,16 +140,19 @@ if nargin == 1
 end
 
 idx = nchoosek(1:e_dim+1, facedim);
-% switch e_dim
-%     case 2
-%         idx = [1 2; 2 3; 1 3];
-%     case 3
-%         idx = [1 2 3; 2 3 4; 1 2 4; 1 3 4];
-% end
 elem_sorted = sort(mdl.elems,2);
 [faces ib ia] = unique(reshape(elem_sorted(:,idx),[],facedim),'rows');
 elem2face = reshape(ia,[],size(idx,1));
-face2elem = calc_face2elem(elem2face);
+
+function edge2elem = calc_edge2elem(elem2edge)
+
+    [n_elems, el_faces] = size(elem2edge);
+    elem2edgeno = (1:n_elems)'*ones(1,el_faces);
+    elem2edgeno = elem2edgeno(:);
+    elem2edge   = elem2edge(:);
+    edge2elem = sparse(elem2edge,elem2edgeno,ones(size(elem2edgeno)));
+
+
 
 function face2elem = calc_face2elem(elem2face)
 % This is easier to understand but very slow
@@ -238,6 +249,9 @@ function out = fix_options(mdl, opt)
     end
     if any([out.edge2elem out.elem2edge])
         out.edges = true;
+    end
+    if out.edges && elem_dim(mdl) < 4
+        out.faces = true;
     end
 
     
