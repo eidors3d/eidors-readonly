@@ -52,5 +52,5 @@ function do_unit_test
 
    t.a= a; s.a=b;
    unit_test_cmp('Expect OK'  ,t,s);
-   s2.b= b;
-   unit_test_cmp('Expect OK'  ,t,s2);
+   s2.b= b; 
+   unit_test_cmp('Expect Fail'  ,t,s2);
