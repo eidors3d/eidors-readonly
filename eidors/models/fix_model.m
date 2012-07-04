@@ -84,7 +84,8 @@ if doall || opt.elem_volume
 end
 el_dim = size(mdl.elems,2);
 if el_dim==4 && (doall || opt.edges)
-   [mdl.edges mdl.edge2elem mdl.elem2edge] = calc_faces(mdl,2);
+%     mdl.edge2elem doesn't work yet
+   [mdl.edges jnk mdl.elem2edge] = calc_faces(mdl,2);
 end
 if el_dim<4 && (doall || opt.edges)
    mdl.edges = mdl.faces;
@@ -100,9 +101,9 @@ if doall || opt.faces
    mdl.face2elem = uint32(mdl.face2elem);
 end
 if doall || opt.edges
-   mdl.faces = uint32(mdl.edges);
-   mdl.elem2face = uint32(mdl.elem2edge);
-   mdl.face2elem = uint32(mdl.edge2elem);
+   mdl.edges = uint32(mdl.edges);
+   mdl.elem2edge = uint32(mdl.elem2edge);
+%    mdl.edge2elem = uint32(mdl.edge2elem);
 end
 % Test whether normal points into or outsize
 % mdl.inner_normal(i,j) = 1 if face i of elem j points in
@@ -135,7 +136,7 @@ idx = nchoosek(1:e_dim+1, facedim);
 % end
 elem_sorted = sort(mdl.elems,2);
 [faces ib ia] = unique(reshape(elem_sorted(:,idx),[],facedim),'rows');
-elem2face = reshape(ia,[],facedim+1);
+elem2face = reshape(ia,[],size(idx,1));
 face2elem = calc_face2elem(elem2face);
 
 function face2elem = calc_face2elem(elem2face)
