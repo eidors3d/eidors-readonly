@@ -231,9 +231,9 @@ function out = fix_options(mdl, opt)
     if any([out.face2elem out.elem2face])
        out.faces = true;
     end
-%     if any([out.edge2elem out.elem2edge])
-%         out.edges = true;
-%     end
+    if any([out.edge2elem out.elem2edge])
+        out.edges = true;
+    end
 
     
 function out = list_options(val)
