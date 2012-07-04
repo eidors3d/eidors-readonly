@@ -12,7 +12,7 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh(filename)
 % filename = Name of file containing NetGen .vol information
 % mat_ind  = Material index
 
-% $Id: gmsh_read_mesh.m 2927 2012-05-01 18:22:05Z bgrychtol $
+% $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
 
 
