@@ -1,23 +1,66 @@
-function mdl = mdl_slice_mesher(fmdl,level)
+function nimg = mdl_slice_mesher(fmdl,level)
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
+switch fmdl.type
+    case 'image'
+        img  = fmdl;
+        fmdl = fmdl.fwd_model;
+    case 'fwd_model'
+        img  = mk_image(fmdl,1);
+    otherwise
+        error('Unknown object type');
+end
+
 
 mdl = fmdl;
-[edges edge2elem] = get_edges(mdl);
+opt.edge2elem = true;
+mdl = fix_model(mdl,opt);
+edges = mdl.edges;
+edge2elem = mdl.edge2elem;
 [nodeval nodedist] = nodes_above_or_below(mdl,level);
 idx = sum(nodeval(edges),2)==0; % crossed edges
-crsd_edg = edges(idx,:);
-
 dist = (nodedist(edges(idx,2)) - nodedist(edges(idx,1)));
 t = -nodedist(edges(idx,1))./dist;
 nodes = mdl.nodes(edges(idx,1),:) + ...
     repmat(t,1,3).*(mdl.nodes(edges(idx,2),:) - mdl.nodes(edges(idx,1),:));
+[nn els] = find(edge2elem(idx,:));
+[uels jnk n] = unique(els);
+nodes_per_elem = jnk;
+nodes_per_elem(2:end) = diff(jnk);
 
-% mld.nodes = level_model(fmdl, level);
-show_fem(mdl);
-hold on
-plot3(nodes(:,1),nodes(:,2),nodes(:,3),'bo','MarkerFaceColor','b')
-hold off
+n_tri = length(uels) + sum(nodes_per_elem==4);
+
+nmdl.type = 'fwd_model';
+nmdl.nodes = nodes;
+nmdl.elems = zeros(n_tri,3);
+nimg = mk_image(nmdl,1);
+c = 1;
+% TODO: Speed this up
+for i = 1:length(uels)
+    switch nodes_per_elem(i)
+        case 3
+            nmdl.elems(c,:) = nn(n==i);
+            nimg.elem_data(c) = img.elem_data(uels(i));
+            c = c + 1;
+        case 4
+            nds = nn(n==i);
+            nmdl.elems(c,:) = nds(1:3);
+            nimg.elem_data(c) = img.elem_data(uels(i));
+            nmdl.elems(c+1,:) = nds(2:4);
+            nimg.elem_data(c+1) = img.elem_data(uels(i));
+            c = c + 2;
+    end
+end
+nimg.fwd_model = nmdl;
+
+% This bit could be useful to look at the shape of the actual elements
+% But the quad patches would have to be re-ordered
+% show_fem(fmdl);
+% for i = 1:length(uels)
+%     idx = els == uels(i);
+%     patch(nodes(nn(idx),1),nodes(nn(idx),2),nodes(nn(idx),3),1)
+% end
+
 
 function [nodeval dist] = nodes_above_or_below(mdl,level)
 % nodeval = zeros(size(mdl.nodes,1),1);
@@ -26,12 +69,7 @@ function [nodeval dist] = nodes_above_or_below(mdl,level)
 dist = mdl.nodes(:,3) - level;
 nodeval = sign(dist);
 
-function [edges edge2elem] = get_edges(mdl)
-opt.edges = true;
-opt.edge2elem = true;
-mdl = fix_model(mdl, opt);
-edges = mdl.edges;
-edge2elem = mdl.edge2elem;
+
 
 
 % Level model: usage
@@ -85,5 +123,13 @@ function NODE= level_model( fwd_model, level )
    
 function do_unit_test
     imdl = mk_common_model('n3r2',[16,2]);
-    level = [inf 0 inf];
-    mdl_slice_mesher(imdl.fwd_model, 1.3);
+    img = mk_image(imdl.fwd_model,1);
+    load datacom.mat A B;
+    img.elem_data(A) = 1.2;
+    img.elem_data(B) = 0.8;
+    slc = mdl_slice_mesher(img, 1.3);
+    subplot(121)
+    show_fem(img);
+    subplot(122)
+    show_fem(slc);
+    zlim([0 3]);
