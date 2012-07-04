@@ -138,7 +138,7 @@ function do_unit_test
 
 
 % 3D images
-   img=calc_jacobian_bkgnd(mk_common_model('n3r2',32)); 
+   img=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2])); 
    img.calc_colours.npoints= 16;
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
    subplot(4,4,9); show_slices(img,2) 

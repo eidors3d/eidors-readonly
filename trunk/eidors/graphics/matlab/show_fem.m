@@ -507,7 +507,7 @@ if ~ver.isoctave
 
 end
 
-   img3=calc_jacobian_bkgnd(mk_common_model('n3r2',8));
+   img3=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2]));
    img3.elem_data= randn(828,1);                       
    subplot(3,4,5); show_fem(img3.fwd_model) 
    subplot(3,4,6); show_fem(img3,[1])
