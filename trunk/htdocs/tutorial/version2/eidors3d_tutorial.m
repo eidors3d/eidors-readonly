@@ -115,8 +115,8 @@ mat_ref = ones(size(simp,1),1);
 [I,Ib]=set_3d_currents('{ad}',elec,vtx,gnd_ind,2);
 
 %Alternatively, for some custom made patterns use
-Ibt = ones(1,15);
-Ibr = - eye(15,15);
+Ibt = ones(1,31);
+Ibr = - eye(31,31);
 Ib = [Ibt;Ibr];
 I = [zeros(size(vtx,1),size(Ib,2)); Ib];
 
@@ -176,7 +176,7 @@ svds(Ef)
         %or use Vref = Eref\I;
 
 %Then animate the forward solution
-potplot(vtx,srf,Vref);
+% potplot(vtx,srf,Vref);
 
 %Save workspace as
 %name_work zc Eref D Ela Vref 
@@ -211,10 +211,12 @@ figure(1); plot(refH)
 hold on; plot(refH3,'r')
 
 %Create target inhomogeneity of magnitude 1.2 (remember that mat_ref = 1)
-[mat,grp] = set_inho(srf,simp,vtx,mat_ref,1.2);
+%[mat,grp] = set_inho(srf,simp,vtx,mat_ref,1.2);
+mat = mat_ref; mat(A) = 1.2;
 
 %and maybe a second one as
-[mat,grp] = set_inho(srf,simp,vtx,mat,0.85);
+%[mat,grp] = set_inho(srf,simp,vtx,mat,0.85);
+mat(B) = 0.85;
 
 %The target conductivity distribution is now mat
 %Calculating its corresponding measurements voltageH
