@@ -83,9 +83,11 @@ if doall || opt.elem_volume
    mdl.elem_volume = get_elem_volume(mdl);
 end
 el_dim = size(mdl.elems,2);
+if 0
 if el_dim==4 && (doall || opt.edges)
 %     mdl.edge2elem doesn't work yet
    [mdl.edges jnk mdl.elem2edge] = calc_faces(mdl,2);
+end
 end
 if el_dim<4 && (doall || opt.edges)
    mdl.edges = mdl.faces;
@@ -100,10 +102,12 @@ if doall || opt.faces
    mdl.elem2face = uint32(mdl.elem2face);
    mdl.face2elem = uint32(mdl.face2elem);
 end
+if 0
 if doall || opt.edges
    mdl.edges = uint32(mdl.edges);
    mdl.elem2edge = uint32(mdl.elem2edge);
 %    mdl.edge2elem = uint32(mdl.edge2elem);
+end
 end
 % Test whether normal points into or outsize
 % mdl.inner_normal(i,j) = 1 if face i of elem j points in
