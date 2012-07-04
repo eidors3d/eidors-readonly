@@ -120,14 +120,14 @@ function do_unit_test;
    title('move at electrodes nodes');
 
    subplot(235);
-   img = mk_image(mk_common_model('n3r2'));
+   img = mk_image(mk_common_model('n3r2',[16,2]));
    img.elem_data(400)= 0.9;
    img.elem_data = [img.elem_data;.01*randn(3*32,1)];
    show_fem_move(img); view([-14,62]);
    title('BUG:move at electrodes ctrs');
 
    subplot(236);
-   img = mk_image(mk_common_model('n3r2'));
+   img = mk_image(mk_common_model('n3r2',[16,2]));
    move = img.fwd_model.nodes*diag([-1,1,1]);
    show_fem_move( img, move, .2); view([-14,62]);
    title('BUG:move at electrodes ctrs');
