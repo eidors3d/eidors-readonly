@@ -1,4 +1,4 @@
-function [V] = left_divide(E,I,tol)
+function [V] = left_divide(E,I,tol,pp,V)
 %[V] = left_divide(E,I,tol,pp,V);
 %
 % Implements left division and overcomes many small inefficiencies
@@ -7,6 +7,8 @@ function [V] = left_divide(E,I,tol)
 %E   = The full rank system matrix 
 %I   = The currents matrix (RHS) 
 %tol = The tolerance in the forward solution, e.g. 1e-5
+%
+% pp,V are old options from previous solver
 
 % (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL
 % $Id$
