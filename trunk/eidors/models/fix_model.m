@@ -24,6 +24,11 @@ function [mdl] = fix_model(mdl,opt)
 %       .face_centre
 %       .normals
 %       .max_edge_len (per elem)
+%       .edges
+%       .edge2elem
+%       .elem2edge
+%
+% For triangular meshes, edges and faces are the same.
 %
 % The elems will be reordered so that all faces are counter-clockwise.
 
@@ -77,7 +82,15 @@ end
 if doall || opt.elem_volume
    mdl.elem_volume = get_elem_volume(mdl);
 end
-
+el_dim = size(mdl.elems,2);
+if el_dim==4 && (doall || opt.edges)
+   [mdl.edges mdl.edge2elem mdl.elem2edge] = calc_faces(mdl,2);
+end
+if el_dim<4 && (doall || opt.edges)
+   mdl.edges = mdl.faces;
+   mdl.edge2elem = mdl.face2elem;
+   mdl.elem2edge = mdl.elem2face;
+end
 
 % decrease memory footprint
 mdl.elems = uint32(mdl.elems);
@@ -86,7 +99,11 @@ if doall || opt.faces
    mdl.elem2face = uint32(mdl.elem2face);
    mdl.face2elem = uint32(mdl.face2elem);
 end
-
+if doall || opt.edges
+   mdl.faces = uint32(mdl.edges);
+   mdl.elem2face = uint32(mdl.elem2edge);
+   mdl.face2elem = uint32(mdl.edge2elem);
+end
 % Test whether normal points into or outsize
 % mdl.inner_normal(i,j) = 1 if face i of elem j points in
 function inner_normal = test_inner_normal( mdl );
@@ -101,22 +118,24 @@ function inner_normal = test_inner_normal( mdl );
       inner_normal(i,:) = dot_prod' > 0;
    end
 
-function [faces, face2elem, elem2face] = calc_faces(mdl)
+function [faces, face2elem, elem2face] = calc_faces(mdl, facedim)
 
 
 e_dim = mdl_dim(mdl);
-
-
-%elem2face = zeros(size(mdl.elems));
-switch e_dim
-    case 2
-        idx = [1 2; 2 3; 1 3];
-    case 3
-        idx = [1 2 3; 2 3 4; 1 2 4; 1 3 4];
+if nargin == 1
+    facedim = e_dim;
 end
+
+idx = nchoosek(1:e_dim+1, facedim);
+% switch e_dim
+%     case 2
+%         idx = [1 2; 2 3; 1 3];
+%     case 3
+%         idx = [1 2 3; 2 3 4; 1 2 4; 1 3 4];
+% end
 elem_sorted = sort(mdl.elems,2);
-[faces ib ia] = unique(reshape(elem_sorted(:,idx),[],e_dim),'rows');
-elem2face = reshape(ia,[],e_dim+1);
+[faces ib ia] = unique(reshape(elem_sorted(:,idx),[],facedim),'rows');
+elem2face = reshape(ia,[],facedim+1);
 face2elem = calc_face2elem(elem2face);
 
 function face2elem = calc_face2elem(elem2face)
@@ -212,6 +231,9 @@ function out = fix_options(mdl, opt)
     if any([out.face2elem out.elem2face])
        out.faces = true;
     end
+%     if any([out.edge2elem out.elem2edge])
+%         out.edges = true;
+%     end
 
     
 function out = list_options(val)
