@@ -89,7 +89,7 @@ ind=1;
     rs(:,iter)=s;
 
 Obj_Fcn_old = inf;
-while (~terminate)&(iter<maxiter)
+while (~terminate)&&(iter<maxiter)
     
 %   u=potentials(msh,s,c);
 %   v_sim=measures(msh,u); 
@@ -188,7 +188,7 @@ while (~terminate)&(iter<maxiter)
 %    if norm(A*x)>gap(x,z) error('Rounding errors are spoiling the calculation, stopping.'); end % if
     
     % The primal-dual gap has been reduced and measures match
-    if (sum(abs(z)-x.*z)<epsilon)&(norm(v_sim-vmeas)<epsilon)
+    if (sum(abs(z)-x.*z)<epsilon)&&(norm(v_sim-vmeas)<epsilon)
         terminate=1;
     end % if
     
