@@ -113,6 +113,7 @@ function do_unit_test
 
    cmdl = mk_circ_tank(2,[],0);
    c2f = mk_coarse_fine_mapping( img.fwd_model, cmdl); % spy(c2f)
+   c2f = c2f./(sum(c2f,2) * ones(1,size(c2f,2))); % FIX
    img.fwd_model.coarse2fine = c2f;
    img.elem_data = ones(size(cmdl.elems,1),1);
    S4 = system_mat_1st_order(img.fwd_model,img);
