@@ -39,6 +39,7 @@ s_mat= calc_system_mat( fwd_model, img_bkgd );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
 
 if isfield(fwd_model,'conductivity_jacobian')
+   fwd_model.jacobian = fwd_model.conductivity_jacobian;
    Jc= calc_jacobian( fwd_model, img_bkgd );
 else
    fwd_model = mdl_normalize(fwd_model, 0); % we normalize on our own
