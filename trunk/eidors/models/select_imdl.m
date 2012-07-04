@@ -166,6 +166,7 @@ function do_unit_test
 
    for i=1:100; % Break when finished
       vh = zc_resp(:,1); vi= zc_resp(:,23);
+      fprintf('solver #%d\n',i);
       switch i
          case 01;
             imdl0 = select_imdl( imdl );
@@ -180,31 +181,33 @@ function do_unit_test
          case 06;
             imdl0 = select_imdl( imdl, {'TV solve dif'} );
          case 07;
-            imdl0 = select_imdl( imdl.fwd_model, {'Basic GN dif','Elec Move GN','Choose NF=0.5'} );
+            imdl0 = select_imdl( imdl.fwd_model, {'Basic GN dif','Elec Move GN'} );
          case 08;
-            imdl0 = select_imdl( imdl, {'Elec Move GN'} );
+            imdl0 = select_imdl( imdl.fwd_model, {'Basic GN dif','Elec Move GN','Choose NF=0.5'} );
          case 09;
+            imdl0 = select_imdl( imdl, {'Elec Move GN'} );
+         case 10;
             imdl0 = mk_common_model('b2C2',16); 
             imdl0 = select_imdl( imdl0, {'Elec Move GN'} );
-         case 10;
-            imdl0 = select_imdl( imdl, {'Nodal GN dif'} );
          case 11;
-            imdl0 = select_imdl( imdl, {'Nodal GN dif', 'Choose NF=0.50'} );
+            imdl0 = select_imdl( imdl, {'Nodal GN dif'} );
          case 12;
+            imdl0 = select_imdl( imdl, {'Nodal GN dif', 'Choose NF=0.50'} );
+         case 13;
             imdl0 = mk_common_model('b2C2',16); 
             imdl0 = select_imdl( imdl0, {'Basic GN dif', 'TV solve dif'} );
             imdl0.parameters.max_iterations= 2;
             imdl0 = select_imdl( imdl0, {'Choose NF=0.8'} );
             [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.35]);
-         case 13;
+         case 14;
             imdl0 = mk_common_model('b2C2',16); 
             imdl0 = select_imdl( imdl0, {'Nodal GN dif', 'Choose NF=0.50'} );
             [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.05]);
-         case 14;
+         case 15;
             imdl0 = mk_common_model('b2C2',16); 
             imdl0 = select_imdl( imdl0, {'Basic GN abs'} );
             [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.05]);
-         case 15; break
+         case 16; break
       end;
 
 %     disp([i,imdl0.hyperparameter.value]);
