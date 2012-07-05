@@ -67,6 +67,7 @@ while ~isempty(d)
         tutname(end-2) = '*'; % assume tutorials differ by one char
         T = dir(tutname);
         while length(T) > 0
+            eidors_colours('defaults');
             if length(T(1).name)>length(tutname)+1 % allow some leeway
                 T(1) = [];
                 continue
