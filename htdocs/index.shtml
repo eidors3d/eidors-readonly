@@ -23,10 +23,15 @@ To try the EIDORS software, follow these steps:
     <br>&minus; <i>Release Version:</i>
          <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.6.zip"
              >EIDORS 3.6</a> (7 Jul 2012)
+    <br>&minus; <i>Optional ready-made FEM models</i>
+         <a href="http://prdownloads.sf.net/eidors3d/model_library.zip"
+             >model_library</a> (7 Jul 2012)
     <br>&minus; <a href="./download.shtml">
-                  <i>Developer Version:</i></a>
+                  <i>Developer Version</i></a>
 
 <li> Unzip the software in a directory <tt>/path/to/eidors</tt> or <tt>C:/path/to/eidors</tt>
+
+<br> (installation instructions for model_library are included in a README file)
 
 <li> Start Matlab
 
