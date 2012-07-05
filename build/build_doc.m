@@ -9,20 +9,31 @@ tpl = 'blue';
 !cp doc_template/matlabicon.gif m2html/templates/frame
 !cp doc_template/matlabicon.gif m2html/templates/blue
 !cp doc_template/mfile.tpl m2html/templates/frame
-% !cp doc_template/m2html.m m2html
+
+VERSION = 1; % 1 for MATLAB docs, 0 for SOURCEFORGE
+
+
 cd ..
-if 1
+if VERSION
 m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','blue',...
     'helptocxml', 'on');
 else
+!cp build/doc_template/m2html.m m2html
 m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','frame','index','menu',...
     'helptocxml', 'on');
+ !cp build/doc_template/intro.html doc/
 end
-!cp build/doc_template/intro.html doc/
 !rsync -r doc htdocs
 !rm -rf doc
+if VERSION
+   cd htdocs/doc
+   p = cd;
+   %eidors must be on the path before this can run
+   builddocsearchdb(p);
+   cd ../..
+end
 cd build
 !rm -rf m2html
 !rm m2html.zip

@@ -14,7 +14,7 @@
     <!-- (Required if you supply help) relative path to help (HTML) folder -->
     <help_location>../htdocs/doc</help_location>
     <!-- (Required if you supply help) icon used in the Help browser TOC -->
-    <help_contents_icon>$toolbox/matlab/icons/book-mat.gif</help_contents_icon>
+    <help_contents_icon>$toolbox/matlab/icons/book_mat.gif</help_contents_icon>
     
     <!-- - - - - - - - - - - - -  Start menu - - - - - - - - - - - - - - - -->
     <!-- Optional list of entries to display on Start Menu -->
@@ -27,7 +27,7 @@
             <label>EIDORS Documentation</label>
             <!-- This callback is a command to open your documentation -->
             <callback>
-            web ../html/doc/index.html -helpbrowser
+            doc eidors
             </callback>
              <!-- Menu item icon (a toolbox icon from the help browser ) -->
              <icon>$toolbox/matlab/icons/bookicon.gif</icon>
