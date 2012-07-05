@@ -3,6 +3,7 @@
 - Test octave
 - Run unit-tests
 - Build library models package
+- Tag release
 - Update version in eidors_obj.m
 - run package script
 
