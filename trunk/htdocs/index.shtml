@@ -10,8 +10,9 @@ working these fields.
 <H3>Requirements</H3>
 <ul>
 <li> <a href="http://www.matlab.com">Matlab</a> (&ge;7.0) or
-     <a href="http://www.octave.org">Octave</a> (&ge;3.6)
-<li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional)
+     <a href="http://www.octave.org">Octave</a> (&ge;3.6),
+<li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional),
+<li> <a href="http://geuz.org/gmsh/">Gmsh Mesher</a> (optional)
 </ul>
 
 <H3>Getting Started</H3>
@@ -20,8 +21,8 @@ To try the EIDORS software, follow these steps:
 <ol>
 <li> Download the software (release or developer version):
     <br>&minus; <i>Release Version:</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.5.zip"
-             >EIDORS 3.5</a> (14 Jul 2011)
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.6.zip"
+             >EIDORS 3.6</a> (7 Jul 2012)
     <br>&minus; <a href="./download.shtml">
                   <i>Developer Version:</i></a>
 
@@ -33,9 +34,10 @@ To try the EIDORS software, follow these steps:
 <br> (windows
            <tt>&gt;&gt;run C:/path/to/eidors/startup.m</tt>)
 
-<li> Execute one of the sample programs in the
+<li> Try the <a href="tutorial/tutorial.shtml">Tutorials</a>, or
+     execute one of the sample programs in the
     <tt>/path/to/eidors/examples</tt>
-     directory (such as <tt>demo_real.m</tt>)
+     directory (such as <tt>compare_2d_algs(1)</tt>)
 </ol>
 
 
