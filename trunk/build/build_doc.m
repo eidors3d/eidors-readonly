@@ -9,9 +9,9 @@ tpl = 'blue';
 !cp doc_template/matlabicon.gif m2html/templates/frame
 !cp doc_template/matlabicon.gif m2html/templates/blue
 !cp doc_template/mfile.tpl m2html/templates/frame
-!cp doc_template/m2html.m m2html
+% !cp doc_template/m2html.m m2html
 cd ..
-if 0
+if 1
 m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','blue',...
     'helptocxml', 'on');
