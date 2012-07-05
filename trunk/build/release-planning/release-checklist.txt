@@ -6,6 +6,7 @@
 - Tag release
 - Update version in eidors_obj.m
 - run package script
+- build mex files for matlab versions
 
 - run html buils script
 
