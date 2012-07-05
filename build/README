@@ -1,0 +1,14 @@
+This is EIDORS v3.6. The eidors-v3.6.zip file
+contains all code and documentation. The
+model_library.zip file contains additional
+finite element models for use with EIDORS.
+
+To use the EIDORS software, follow these steps:
+
+- Download the software eidors-v3.6.zip
+- Unzip the software in a directory /path/to/eidors or C:/path/to/eidors
+- Start Matlab / GNU Octave
+- type: >>run /path/to/eidors/startup.m
+    (windows >>run C:/path/to/eidors/startup.m)
+- Try the Tutorials, or execute one of the sample programs in the
+   /path/to/eidors/examples directory (such as compare_2d_algs(1)) 
