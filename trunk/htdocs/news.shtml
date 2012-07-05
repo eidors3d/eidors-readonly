@@ -31,7 +31,7 @@ Tutorials</a> have been revised and new ones are available.
 <br> The default
 solvers are now set at startup and centrally managed through the 
 <a href="http://eidors3d.sourceforge.net/doc/eidors/tools/eidors_default.html">eidors_default</a> function.
-
+<br>
 Because of the many renamed functions, it will be increasingly difficult for the developers to answer questions pertaining to older versions of EIDORS, so we request all users to update.
 </p>
 
