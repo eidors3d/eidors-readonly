@@ -1,0 +1,16 @@
+This file contains a number of useful netgen models for use
+with EIDORS. It is not strictly necessary; EIDORS will automatically
+generate these files as requested. However, these models are
+very computationally expensive to create, and require a 
+computer with lots of memory (at least 8GB).
+
+To allow EIDORS to use these models, unzip the file into
+a path (for example /path/to/models or C:/path/to/models)
+and run
+   mk_library_model('LIBRARY_PATH','/path/to/models');
+after startup.
+
+The default location for these models is
+   /path/to/eidors/models/cache
+if the models are placed there, the above command is 
+unnecessary.
