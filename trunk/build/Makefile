@@ -2,7 +2,7 @@
 
 # Need to have a local apache pointing to eidors
 
-SZLIM= 1000k
+SZLIM= 20k
 WKDIR = cd ..
 REL= ../../../release/
 INCLDIRS =  data_contrib \
@@ -141,8 +141,16 @@ step7:
 	find $P -name \*-s.html.bak | xargs rm -f
 
 step8:
-	svn co svn://svn.code.sf.net/p/eidors3d/code/trunk/eidors $P/../eidors
-	(cd $P/../eidors && find -type d -name .svn -exec rm -rf \{} \; )
+	svn export svn://svn.code.sf.net/p/eidors3d/code/trunk/eidors $P/../eidors
+
+step9:
+	echo "COPY LOCAL EIDORS BUILD DOC"
+
+VERSION=v3.6
+step10:
+	mv $P $P/../eidors-$(VERSION)
+	(cd $P/.. && zip -r eidors-$(VERSION).zip eidors-$(VERSION))
+	
 
 fix-cmyk-jpgs:
 	find -iname \*.jpg | \
