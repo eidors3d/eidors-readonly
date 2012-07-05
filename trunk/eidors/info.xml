@@ -24,7 +24,7 @@
     <list>
          <listitem>
             <!-- The label provides the text for this menu item --> 
-            <label>EIDORS Documentation</label>
+            <label>Documentation</label>
             <!-- This callback is a command to open your documentation -->
             <callback>
             doc eidors
@@ -34,9 +34,14 @@
         </listitem>
         <listitem>
              <!-- Include call to open your Web site, if any -->
+           <label>Tutorials</label>
+            <callback>web http://eidors3d.sourceforge.net/tutorial/tutorial.shtml -browser</callback>
+            <icon>$docroot/techdoc/matlab_env/examples/webicon.gif</icon>
+        </listitem>
+        <listitem>
+             <!-- Include call to open your Web site, if any -->
            <label>EIDORS Web Site</label>
-           <!-- -browser ? -->
-            <callback>web http://eidors3d.sourceforge.net/</callback>
+            <callback>web http://eidors3d.sourceforge.net -browser</callback>
             <icon>$docroot/techdoc/matlab_env/examples/webicon.gif</icon>
         </listitem>
         <!-- Add listitems for other features of your toolbox... -->
