@@ -11,18 +11,28 @@ EIDORS package.
 <b>EIDORS Version 3.6 release</b>
 <p>Blobby the walrus is proud to release EIDORS version 3.6,
 available at <a href="www.eidors.org">www.eidors.org</a>. 
-This release includes improvements to advanced solvers (electrode movement 
-reconstructions in 3D, 4D reconstruction), better support for complex conductivity,
-experimental support for higher order FEM, improved 3D visualization, 
-expanded support for meshing software and several bug fixes and 
-code speedups. Additionally, in order to make EIDORS easier to use and 
+This release includes:
+<ul>
+  <li> improvements to advanced solvers (electrode movement 
+reconstructions in 3D, 4D reconstruction)
+  <li> better support for complex conductivity
+  <li> experimental support for higher order FEM
+  <li> improved 3D visualization
+  <li> expanded support for meshing software and 
+  <li> several bug fixes and code speedups. 
+</ul>
+Additionally, in order to make EIDORS easier to use and 
 maintain, function names have been standardized to reflect their purpose.
 Several older functions have been deprecated (you may get warning when running 
-older code).  
+older code). 
+<br>
 All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
-Tutorials</a> have been revised and new ones are available. The default
+Tutorials</a> have been revised and new ones are available. 
+<br> The default
 solvers are now set at startup and centrally managed through the 
 <a href="http://eidors3d.sourceforge.net/doc/eidors/tools/eidors_default.html">eidors_default</a> function.
+
+Because of the many renamed functions, it will be increasingly difficult for the developers to answer questions pertaining to older versions of EIDORS, so we request all users to update.
 </p>
 
 <p><li> <b>
