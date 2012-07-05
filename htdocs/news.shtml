@@ -23,7 +23,7 @@ reconstructions in 3D, 4D reconstruction)
 </ul>
 Additionally, in order to make EIDORS easier to use and 
 maintain, function names have been standardized to reflect their purpose.
-Several older functions have been deprecated (you may get warning when running 
+Several older functions have been deprecated (you may see several warnings when running 
 older code). 
 <br>
 All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
