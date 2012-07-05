@@ -17,9 +17,12 @@ experimental support for higher order FEM, improved 3D visualization,
 expanded support for meshing software and several bug fixes and 
 code speedups. Additionally, in order to make EIDORS easier to use and 
 maintain, function names have been standardized to reflect their purpose.
-Several older functions have been deprecated.  
+Several older functions have been deprecated (you may get warning when running 
+older code).  
 All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
-Tutorials</a> have been revised and new ones are available.
+Tutorials</a> have been revised and new ones are available. The default
+solvers are now set at startup and centrally managed through the 
+<a href="http://eidors3d.sourceforge.net/doc/eidors/tools/eidors_default.html">eidors_default</a> function.
 </p>
 
 <p><li> <b>
