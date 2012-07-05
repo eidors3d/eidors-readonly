@@ -12,7 +12,7 @@ subplot(121)
 show_fem(fmdl); axis square
 
 % Crop model
-[cmdl,c2f_idx]= crop_model(fmdl, inline('(y-0.25)-abs(x)>0','x','y','z'));
+[cmdl,c2f_idx]= crop_model(fmdl, inline('(y-0.25)-abs(x)<0','x','y','z'));
 subplot(122)
 show_fem(cmdl);
 axis(1.05*[-1 1 -1 1]); axis square;
