@@ -12,16 +12,15 @@ EIDORS package.
 <p>Blobby the walrus is proud to release EIDORS version 3.6,
 available at <a href="www.eidors.org">www.eidors.org</a>. 
 This release includes improvements to advanced solvers (electrode movement 
-reconstructions in 3D, 4D reconstruction), support for complex conductivity,
+reconstructions in 3D, 4D reconstruction), better support for complex conductivity,
 experimental support for higher order FEM, improved 3D visualization, 
 expanded support for meshing software and several bug fixes and 
 code speedups. Additionally, in order to make EIDORS easier to use and 
 maintain, function names have been standardized to reflect their purpose.
 Several older functions have been deprecated.  
 All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
-Tutorials</a> have been revised eand new ones are available.
+Tutorials</a> have been revised and new ones are available.
 </p>
-New features since v3.5 include:
 
 <p><li> <b>
    29 June &minus; 3 July, 2012:
@@ -33,24 +32,24 @@ to develop and release EIDORS 3.6. Planned features are:
   <li>Tutorials:
   <ul>
      <li>Restructure Tutorials:
-        <u>Fix warnings in tutorials</u>
-        <u>Replace old approaches in tutorials (eidors_obj, add_noise)</u>
+        <s>Fix warnings in tutorials</s>
+        <s>Replace old approaches in tutorials (eidors_obj, add_noise)</s>
      <li>New Tutorials: 
-        <u>Movement solver tutorial</u>
-        <u>Add recent contributions</u>
+        <s>Movement solver tutorial</s>
+        <s>Add recent contributions</s>
   </ul>
   <li>Solvers:
-       <u> Absolute solvers</u>
+       <s> Absolute solvers</s>
 
   <li>FEM Modelling:
-        <u>Add Gmsh code</u>
+        <s>Add Gmsh code</s>
   <li>Architecture:
-        <u>flag for desktop available. Fix eidors_msg</u>
-        <u>add unit_tests to solvers</u>
+        <s>flag for desktop available. Fix eidors_msg</s>
+        <s>add unit_tests to solvers</s>
   <li>Tests
-        <u>Test for octave</u>
+        <s>Test for octave</s>
   <li>Graphics
-        <u>Fix eidors colourbar</u>
+        <s>Fix eidors colourbar</s>
 </ul>
 
 
