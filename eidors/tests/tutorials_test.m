@@ -33,7 +33,7 @@ pause off
 
 % a little consistency would have been nice!
 global tut_dlm;
-if strcmp(computer,'PCWIN')
+if strcmp(computer,'PCWIN') || if strcmp(computer,'PCWIN64')
     tut_dlm = ';';
 else
     tut_dlm = ':';
