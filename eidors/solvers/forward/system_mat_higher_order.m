@@ -109,6 +109,9 @@ for i=nelems:-1:1
             (jacobianelem\dphi(:,:,kk))'* ...
             (jacobianelem\dphi(:,:,kk))*magjacelem;
     end
+
+    %SPEED UP
+    %Can we get system_mat_fields here to speed Jacobian?
     
     %Store the Ammat without multiplication of conductivity for Jacobian
     elemstiff(i).elemstiff=Ammat;
