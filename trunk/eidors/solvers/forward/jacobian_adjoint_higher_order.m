@@ -94,8 +94,9 @@ DE= zeros(nelecs,nstims,nelems);
 zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 
 %SPEED UP HERE
-%Factorise A into C'*S*C where S diagonal conduc i.e. C=system_mat_fields,
-%then don't need extra multiplication in loop below
+%Factorise A = C'*S*C  - S diagonal conduc (C=system_mat_fields)
+%We don't need extra multiplication in loop below
+%only for piecewise linear FEM??
 %
 %zi2E= zeros(nelecs, nnodes+nelecs);
 %zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);

@@ -155,16 +155,16 @@ function [mdl] = linear_elem_reorder(mdl,ccw)
 end
 
 function [mdl]=linear_bound_reorder(mdl,ccw)
-    %Find bound_elem - vector of each boundary's element 
-    %TODO - Change fix_model with option opt.bound_elec2elem=1
+    %Reorder nodes on each electrode's boundary
+    %SPEED UP
+    %1fix_model with option opt.bound_elec2elem=1
     
     %Find boundary, elems, nodes, elecs
     boundstruc=mdl.boundary; elemstruc=mdl.elems; nodestruc=mdl.nodes; elecstruc=mdl.electrode;
     %Find no. elecs and node dimension
     nelecs=size(elecstruc,2); nodedim=size(nodestruc,2);
 
-    %Only need to reorder boundaries of electrodes
-    %TODO - This is done in system mat too - figure way to do this
+    %Reorder boundaries belonging to electrodes
     for ke=1:nelecs
         %The boundary numbers and areas, outputs rows of mdl.boundary of electrode
         bdy_idx=find_electrode_bdy(boundstruc(:,1:nodedim),nodestruc,elecstruc(ke).nodes);                 
