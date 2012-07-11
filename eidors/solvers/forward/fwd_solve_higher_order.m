@@ -8,21 +8,23 @@ if(nargin==1)
 end
 
 %Modify the forward model to be of my type
-[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model);
-fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
-img.fwd_model=fwd_model; %CHANGE THIS
+if(strcmp(fwd_model.approx_type,'tri3') || strcmp(fwd_model.approx_type,'tet4'))   
+    %Do nothing
+else
+    [bound,elem,nodes] = fem_1st_to_higher_order_3(fwd_model);
+    fwd_model.boundary=bound; fwd_model.elems=elem; fwd_model.nodes=nodes;
+    %We need to update fwd_model of img too for system_mat
+    img.fwd_model=fwd_model;
+end
 
 %Calculate the total stiffness matrix
 s_mat = calc_system_mat(fwd_model,img); At=s_mat.E;
 
-
 %Find electrode stucture and no.of electrodes and initialize vector
-elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
-
 %Find stim strucutre and no. stimulations
-stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
-
 %Find node structure and find no.nodes 
+elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
+stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
 
 %Find total number of measurements
@@ -78,27 +80,13 @@ for i=1:nelecs
 end
 
 %Get the measured voltages 
-if isfield(fwd_model,'absolute') %Volt sum over boundary is zero
-    %Initialize electrode voltage measurements vector (and vectroizing index)
-    vmeaselec=zeros(nmeass,1); idx=0;
-    for ii=1:nstims
-        n_meas=nelecs; %Absolute => no. meas = no. elecs??
-        %Subtract mean voltage from data, and add to measured
-        vmean=mean(velec(:,ii));
-        vmeaselec(idx + (1:n_meas) ) = velec(:,ii)-vmean; 
-        idx=idx+n_meas; %Increase counter
-    end
-else %Volt differences between electrodes
-    %Initialize electrode voltage measurements vector (and vectroizing index)
-    vmeaselec=zeros(nmeass,1); idx=0;
-    for ii=1:nstims
-        meas_pat=stimstruc(ii).meas_pattern; %Measurement patterns
-        n_meas=size(meas_pat,1); %Number of measures
-        vmeaselec(idx + (1:n_meas) ) = meas_pat*velec(:,ii); %Diff data
-        idx=idx+n_meas; %Increase counter
-    end
+vmeaselec=zeros(nmeass,1); idx=0;
+for ii=1:nstims
+    meas_pat=stimstruc(ii).meas_pattern; %Measurement patterns
+    n_meas=size(meas_pat,1); %Number of measures
+    vmeaselec(idx + (1:n_meas) ) = meas_pat*velec(:,ii); %Diff data
+    idx=idx+n_meas; %Increase counter
 end
-
 
 %Return the electrode voltages in data structure
 data.meas= vmeaselec;
