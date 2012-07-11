@@ -51,7 +51,7 @@ end
 %Cache node structure and find no. of spatial dimensions and nodes
 %Cache element structure and find no. of elements
 nodestruc=fwd_model.nodes; nodedim=size(nodestruc,2); nnodes=size(nodestruc,1); 
-elemstruc=fwd_model.elem; nelems=size(elemstruc,2);
+elemstruc=fwd_model.elems; nelems=size(elemstruc,1);
 
 %Find quadrature points/weights for integration by switching between cases
 eletype=fwd_model.approx_type; 
@@ -83,7 +83,7 @@ Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
 %Loop over the elements and calculate local Am matrix
 for i=nelems:-1:1
     %Find the list of node numbers for each element
-    eleminodelist=elemstruc(i).nodes;
+    eleminodelist=elemstruc(i,:);
     
     %List by row of coordinate on the element
     thise = nodestruc(eleminodelist,:);
@@ -117,7 +117,7 @@ for i=nelems:-1:1
     stiff=Ammat*img.elem_data(i); 
     
     %Assemble global stiffness matrix (Silvester's book!!)    
-    Agal(elemstruc(i).nodes, elemstruc(i).nodes) = Agal(elemstruc(i).nodes, elemstruc(i).nodes) + stiff;
+    Agal(elemstruc(i,:), elemstruc(i,:)) = Agal(elemstruc(i,:), elemstruc(i,:)) + stiff;
 
 end
  
@@ -130,14 +130,13 @@ function [Aw,Az,Ad]=mc_calc_complete(fwd_model)
 %Get the electrode structure, find number of electrodes
 %Get the boundary strucutre, find number of boundaries
 %Get the node structrue, find number of nodes and problem dim
-elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
-boundstruc=fwd_model.bound; nbounds=size(boundstruc,2);
-nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); nodedim=size(nodestruc,2);
+elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);boundstruc=fwd_model.boundary; nodestruc=fwd_model.nodes; 
+nnodes=size(nodestruc,1); nodedim=size(nodestruc,2);
 
 %Connect boundary/electrode -Put boundary into old matrix strucutre
-for i=nbounds:-1:1
-    boundstrucold(i,:)=boundstruc(i).nodes;
-end
+%for i=nbounds:-1:1
+%    boundstrucold(i,:)=boundstruc(i).nodes;
+%end
 
 %Find quadrature points/weights for integration by switching between cases
 eletype=fwd_model.approx_type; 
@@ -167,7 +166,7 @@ Az=zeros(nnodes,nnodes); Aw=zeros(nnodes,nelecs); Ad=zeros(nelecs,nelecs); %spar
 %Loop over the electrodes
 for ke=1:nelecs    
     %The boundary numbers and areas, outputs rows of mdl.boundary of electrode
-    [bdy_idx,bdy_area]=find_electrode_bdy(boundstrucold(:,1:nodedim),nodestruc,elecstruc(ke).nodes);
+    [bdy_idx,bdy_area]=find_electrode_bdy(boundstruc(:,1:nodedim),nodestruc,elecstruc(ke).nodes);
     
     %Store boundary numbers, and corresponding areas
     boundidx_ke=bdy_idx; area_ke=bdy_area;
@@ -188,7 +187,7 @@ for ke=1:nelecs
     %Loop over boundarys and calculate Aw/Az matrices
     for ii=1:length(boundidx_ke)
         %List by row of coordinates of on the boundaryNodal coordinates on the boundary
-        thisb=nodestruc(boundstruc(boundidx_ke(ii)).nodes,:);
+        thisb=nodestruc(boundstruc(boundidx_ke(ii),:),:);
     
         %Find the magnitude Jacobian of the mapping in 2D/3D
         %NB:Scalings are consistent with reference element shape
@@ -213,7 +212,7 @@ for ke=1:nelecs
         end         
         
         %Node numbers for this boundary
-        boundnodes=boundstruc(boundidx_ke(ii)).nodes;
+        boundnodes=boundstruc(boundidx_ke(ii),:);
         
         %Assemble the matrices
         Az(boundnodes,boundnodes) = Az(boundnodes,boundnodes)+Azmat/elecimped;

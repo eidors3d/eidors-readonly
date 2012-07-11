@@ -8,10 +8,13 @@ if(nargin==1)
 end
 
 %Modify the forward model to be of my type
-%%fwd_model = mc_fem_modify(fwd_model); img.fwd_model=fwd_model;
-[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model); 
-fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
-img.fwd_model=fwd_model;
+if(strcmp(fwd_model.approx_type,'tri3') || strcmp(fwd_model.approx_type,'tet4'))   
+    %Do nothing
+else
+    [bound,elem,nodes] = fem_1st_to_higher_order_2(fwd_model);
+    fwd_model.boundary=bound; fwd_model.elems=elem; fwd_model.nodes=nodes;
+    img.fwd_model=fwd_model; %CHANGE THIS
+end
 
 %Calculate the total stiffness matrix and elemental stiffness matrices
 s_mat = calc_system_mat(fwd_model,img); At=s_mat.E; elemstiff=s_mat.elemstiff;
@@ -23,7 +26,7 @@ s_mat = calc_system_mat(fwd_model,img); At=s_mat.E; elemstiff=s_mat.elemstiff;
 elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
 stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
-elemstruc=fwd_model.elem; nelems=size(elemstruc,2); 
+elemstruc=fwd_model.elems; nelems=size(elemstruc,1); 
 
 %Find total number of measurements
 nmeass=0;
@@ -101,7 +104,7 @@ zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 %Calculate the partial derivative matrix for kth change
 for k=1:nelems    
     %kth element stiffness matrix, global nodes and index vector
-    stiffk=elemstiff(k).elemstiff; nodesk=elem(k).nodes; idx2=1:size(nodesk,2);
+    stiffk=elemstiff(k).elemstiff; nodesk=elemstruc(k,:); idx2=1:size(nodesk,2);
         
     %Create the FEM derivative matrix
     dA_dSk=dA_zero; dA_dSk(nodesk(idx2),nodesk(idx2))=stiffk(idx2,idx2);
