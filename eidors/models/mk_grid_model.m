@@ -28,6 +28,12 @@ end
 % this had too many side effects
 cmdl = set_pixel_pos(cmdl,xvec,yvec);% same for 2d and 3d
 
+% put in the centre (or near it)
+ctr = ones(num_nodes(cmdl),1)*mean(cmdl.nodes);
+dctr= sum( (cmdl.nodes - ctr).^2, 2);
+[jnk, c_idx] = min(dctr);
+cmdl.gnd_node = c_idx(1);
+
 if ~isempty( fmdl)
    if nargin ==3
       c2f= calc_c2f_2d( fmdl, xvec, yvec);
@@ -35,6 +41,7 @@ if ~isempty( fmdl)
       c2f= calc_c2f_3d( fmdl, xvec, yvec, zvec);
    end
 end
+
 
 function c2f= calc_c2f_2d( fmdl, xvec, yvec);
    nef= size( fmdl.elems,1);
@@ -106,6 +113,7 @@ function cmdl= mk_2d_grid(xvec, yvec);
    e= size(cmdl.elems,1);
    params= ceil(( 1:e )/2);
    cmdl.coarse2fine = sparse(1:e,params,1,e,max(params));
+
 
 function cmdl= mk_3d_grid(xvec, yvec, zvec);
    xlen = length(xvec);
