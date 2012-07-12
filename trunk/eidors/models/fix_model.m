@@ -27,6 +27,7 @@ function [mdl] = fix_model(mdl,opt)
 %       .edges
 %       .edge2elem
 %       .elem2edge
+%       .node2elem
 %
 % For triangular meshes, edges and faces are the same.
 %
@@ -93,6 +94,9 @@ if doall || opt.edges
         mdl.edges = mdl.faces;
         mdl.elem2edge = mdl.elem2face;
     end
+end
+if doall || opt.node2elem
+    mdl.node2elem = calc_edge2elem(mdl.elems);
 end
 if doall || opt.edge2elem
     mdl.edge2elem = calc_edge2elem(mdl.elem2edge);
