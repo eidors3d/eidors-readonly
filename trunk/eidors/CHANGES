@@ -1,5 +1,6 @@
+2011-07-07: ======================== RELEASE 3.6 =========================
 2011-07-03: GN absolute solvers (i)  Constrained optimization on conductivity
-															  (ii) Prior conductivity at each iteration
+                                (ii) Prior conductivity at each iteration
 2011-07-03: Higher order FEM solvers (on voltage) for forward problem and Jacobian
 2011-07-03: Bugs fixed for electrode movement for CEM
 2011-07-02: significantly improved 3D visualization
