@@ -11,7 +11,7 @@ end
 if(strcmp(fwd_model.approx_type,'tri3') || strcmp(fwd_model.approx_type,'tet4'))   
     %Do nothing
 else
-    [bound,elem,nodes] = fem_1st_to_higher_order_3(fwd_model);
+    [bound,elem,nodes] = fem_1st_to_higher_order(fwd_model);
     fwd_model.boundary=bound; fwd_model.elems=elem; fwd_model.nodes=nodes;
     %We need to update fwd_model of img too for system_mat
     img.fwd_model=fwd_model;
