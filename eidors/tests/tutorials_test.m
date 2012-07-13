@@ -86,8 +86,9 @@ while ~isempty(d)
             end
             fprintf([num2str(tut_count,'%04d') '  ' strrep(d,'\','\\') '\\' name]);
             lastwarn('');
+            save tmp
             try
-                evalc(name);
+                evalin('base',evalc(name));
                 if ~isempty(lastwarn)
                     fprintf(' WARNING(S)\n');
                     warnings{w_count,1} = T(1).name;
@@ -96,7 +97,12 @@ while ~isempty(d)
                 else
                     fprintf(' OK\n');
                 end
+                load tmp
+                delete('tmp.mat');
+                global warnings w_count;
             catch
+                load tmp
+                delete('tmp.mat');
                 errors{e_count,1} = T(1).name;
                 L = lasterror();
                 errors{e_count,2} = d;
@@ -104,6 +110,7 @@ while ~isempty(d)
                 e_count = e_count + 1;
                 fprintf(' ERROR = (%s)\n',L.message);
             end
+
             T(1) = [];
             F(1) = [];
 
