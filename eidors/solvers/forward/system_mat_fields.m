@@ -9,17 +9,22 @@ function FC= system_mat_fields( fwd_model )
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
 cache_obj = mk_cache_obj(fwd_model);
-FC = eidors_obj('get-cache', cache_obj, 'system_mat_fields');
-if ~isempty(FC)
-   eidors_msg('system_mat_fields: using cached value', 4);
-   return
+if 0
+else
+   FC = eidors_obj('get-cache', cache_obj, 'system_mat_fields');
+   if ~isempty(FC)
+      eidors_msg('system_mat_fields: using cached value', 4);
+      return
+   end
+
+   FC= calc_system_mat_fields( fwd_model );
+
+   eidors_obj('set-cache', cache_obj, 'system_mat_fields', FC);
+   eidors_msg('system_mat_fields: setting cached value', 4);
 end
-
-FC= calc_system_mat_fields( fwd_model );
-
-eidors_obj('set-cache', cache_obj, 'system_mat_fields', FC);
-eidors_msg('system_mat_fields: setting cached value', 4);
 
 % only cache stuff which is really relevant here
 function cache_obj = mk_cache_obj(fwd_model);
@@ -102,3 +107,15 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
       end
       
    end
+
+function do_unit_test
+   imdl=  mk_common_model('a2c2',16);
+   FC = system_mat_fields( imdl.fwd_model);
+   unit_test_cmp('sys_mat1', size(FC), [128,41]);
+   unit_test_cmp('sys_mat2', FC(1:2,:), [[0,-1,1,0;-2,1,1,0], zeros(2,37)]/2, 1e-14);
+
+   % THis is a 45 degree rotation of the previous
+   imdl=  mk_common_model('a2c0',16);
+   FC2= system_mat_fields( imdl.fwd_model);
+   M = sqrt(.5)*[1,-1;1,1];
+   unit_test_cmp('sys_mat3', M*FC2(1:2,:), [[0,-1,1,0;-2,1,1,0], zeros(2,37)]/2, 1e-14);
