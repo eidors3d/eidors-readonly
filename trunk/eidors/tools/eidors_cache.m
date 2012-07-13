@@ -72,11 +72,33 @@ switch command
          retval= eidors_objects.max_cache_size;
       end
       
-   case 'disable'
-       eidors_objects.cache_enable = 0;
-   case 'enable'
-       eidors_objects.cache_enable = 1;
-
+   case {'disable' 'off'}
+       if nargin == 1
+           eidors_objects.cache_enable = 0;
+           eidors_objects.cache_disabled_on = {};
+       else
+           eidors_objects.cache_enable = 0.5;
+           if isfield(eidors_objects,'cache_disabled_on')
+            if ~any(strcmp(eidors_objects.cache_disabled_on, limit))
+                eidors_objects.cache_disabled_on = [...
+                    eidors_objects.cache_disabled_on; {limit}];
+            end
+           else
+               eidors_objects.cache_disabled_on =  {limit};
+           end
+       end
+   case {'enable' 'on'}
+       if nargin == 1
+           eidors_objects.cache_enable = 1;
+       else
+           if isfield(eidors_objects,'cache_disabled_on')
+               idx = strcmp(eidors_objects.cache_disabled_on, limit);
+               eidors_objects.cache_disabled_on(idx) = [];
+           end
+           if isempty(eidors_objects.cache_disabled_on)
+               eidors_objects.cache_enable = 1;
+           end
+       end
    case 'boost_priority'
       try
          retval= eidors_objects.cache_priority;
