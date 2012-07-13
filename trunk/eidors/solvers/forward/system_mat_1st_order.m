@@ -97,10 +97,11 @@ function do_unit_test
 
    img.elem_data = ones(63,1);
    try
+     % this should give an error, since elem_data is wrong size
       S2 = system_mat_1st_order(img.fwd_model,img);
-      unit_test_cmp('sys_mat: error', 1,0);
+      unit_test_cmp('sys_mat: test for size error', 1,0);
    catch
-      unit_test_cmp('sys_mat: error', 1,1);
+      unit_test_cmp('sys_mat: test for size error', 1,1);
    end
 
    imdl=  mk_common_model('a2c2',16);
