@@ -14,7 +14,6 @@
 -----------------NEW
  - calc_jacobian_test fails
  - think though the fwd_model.background - good idea?
- - Caching: all to disable caching calls from a specific function
 
  - Movement priors, allow selection of dimensions
 
@@ -93,6 +92,10 @@ GMSH
  - see if we need object_in_tank_2d
      => turn into tutorial
    => DONE. Cleanup, speedup and move to dev
+
+==========
+ - Caching: all to disable caching calls from a specific function
+=>DONE
 
 ###############
 

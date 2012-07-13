@@ -67,13 +67,17 @@ switch type
       obj_id= set_obj( name, varargin{:} );
    case 'get-cache'
       test_install
-      if cache_disabled, obj_id = []; return, end
-      obj_id= get_cache_obj( name, varargin{:} );
+      obj_id = [];
+      if status_check
+        obj_id= get_cache_obj( name, varargin{:} );
+      end
+      
    case 'set-cache'
       test_install
-      if cache_disabled, obj_id = []; return, end
-      set_cache_obj( name, varargin{:} );
-      obj_id= []; % quiet matlab errors
+      obj_id= [];
+      if status_check
+          set_cache_obj( name, varargin{:} );
+      end
    case 'eidors_version'
       obj_id= '3.6+ ($Date$)';  % Update for New eidors version
    case 'interpreter_version'
@@ -87,13 +91,31 @@ switch type
       obj_id= new_obj( type, name, varargin{:} );
 end
 
-function out = cache_disabled
+function ok = status_check
+ok = true;
+switch cache_status
+    case 0
+        ok = false;
+    case 0.5
+        dbs = dbstack;
+        if cache_status(dbs(3).name) == 0
+            ok = false;
+        end
+end
+
+
+function out = cache_status(fname)
     global eidors_objects;
-    try 
-        out = ~ eidors_objects.cache_enable; 
-    catch
-        out = 0;
+    if nargin == 0
+        try
+            out = eidors_objects.cache_enable;
+        catch
+            out = 1;
+        end
+    else
+        out = ~any(strcmp(eidors_objects.cache_disabled_on,fname));
     end
+    
 function test_install
   global eidors_objects;
   if isfield(eidors_objects,'max_cache_size'); return; end % OK
