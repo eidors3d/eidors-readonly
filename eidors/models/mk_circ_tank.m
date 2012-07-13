@@ -55,7 +55,9 @@ end; end
 
 if isempty( levels ) % 2D
    
-   if ~isempty( n_elec )
+   if n_elec==0
+      elec_nodes= [];
+   elseif ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
       if any(rem(idx,1) ~= 0);
          error('The requested number of electrodes (%d) is not compatible with this FEM mesh', n_elec)
@@ -68,7 +70,9 @@ else  %3D
    [elem, node, bdy, point_elec_nodes] = mk_3D_model( elem, node, ...
                   levels, bdy, point_elec_nodes, node_order );
 
-   if ~isempty( n_elec )
+   if n_elec==0
+      elec_nodes= [];
+   elseif ~isempty( n_elec )
       idx= (0:n_elec-1)*length(point_elec_nodes)/n_elec + 1;
       half_lev = ceil( length(levels)/2 );
       elec_nodes= point_elec_nodes( half_lev, idx );
@@ -84,7 +88,9 @@ param.nodes = node';
 param.elems = elem';
 param.boundary = bdy';
 param.gnd_node = 1; % node at bottom and center of the tank
-param.electrode =  mk_electrodes( elec_nodes );
+if ~isempty( elec_nodes)
+   param.electrode =  mk_electrodes( elec_nodes );
+end
 param.type = 'fwd_model';
 
 return;
@@ -285,4 +291,19 @@ function do_unit_test
   show_fem(mdl);
   unit_test_cmp('2D mdl', length(mdl.elems), 768);
 
-% mdl=  mk_circ_tank(2, [], 18 );  error
+  try 
+     mdl=  mk_circ_tank(2, [], 18 );  error
+     unit_test_cmp('test for error', 1,0);
+  catch
+     unit_test_cmp('test for error', 1,1);
+  end
+
+  subplot(3,3,5)
+  mdl= mk_circ_tank(4, [], 0);
+  show_fem(mdl);
+  title 'no electodes'
+
+  subplot(3,3,6)
+  mdl= mk_circ_tank(4, linspace(-1,1,5), 0);
+  show_fem(mdl);
+  title 'no electodes'
