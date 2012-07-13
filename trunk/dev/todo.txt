@@ -1,30 +1,19 @@
----------- Left overs from blackboard:
-- mk_common_model + mk_common_gridmdl + mk_library
-- fix GN_first_order
-- analytical c2f
-- GREIT: movement + noise weighting
-- EIDORS_VAR_ID
-- whole electrode opts for Netgen
-
 - still bugs in eidors3d_tutorial near line  253: NaNs
 [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfj,tol,'{n}');
 
-
-
 -----------------NEW
  - calc_jacobian_test fails
- - think though the fwd_model.background - good idea?
-
+-----------------
+ - think through the fwd_model.background - good idea?
+-----------------
  - Movement priors, allow selection of dimensions
-
-----------------
+-----------------
  - turn 4d solver into a prior
   - build a 4d tutorial using simulate_3d_movement and
          tutorial/dual_model/centre_slice.shtml
 -----------------
  - fix GN_first order to do Wiener form
   = modify priors to give R and inv(R) as requested
-
 -----------------
  - Create a "contributions" section
    - move part of the tutorials into the contribs
@@ -42,61 +31,6 @@ PRI DEF=
 4 if we have time
 5 some day
 
-========== 00: PRI=1 ACT=AA
- - fix for deprecate
-     mk_common_model('n3r2')
-    - DONE
-========== 10: PRI=1 ACT=MC/RM
-noser_image_prior
-  - may fail on this line (change in spdiags in new matlab)
-    Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
-
-  => DONE. DON'T SEE THE PROBLEM
-========== 12: PRI=1 ACT=AA
-also show_slices is crufty
-% TODO: because we wanted (back in 2005) to let show_slices
-% handle lots of different scenarios (calling with images and
-% without. It is now crufty ... and should be changed.
-
-  => DONE. VALIDATE WITH TUTORIALS
-  => REMOVE CRUFT
-========== 07: PRI=1 ACT=BG
- - unit_test_cmp - print tolerance of comparison
-
- - create assertions. standardize output
-  => DONE
-========== 11: PRI=1 ACT=AA/BG
-There is an inconsistency between
-   mk_grid_models - which has its own pixels
-and
-   calc_slices - which does its own interpolation
-Generally, this means that the pictures from calc_slices
-are even smoother than they should be. 
-  => May be fixed. Check
-  => DONE. Fixed in calc_slices
-
-========== 08: PRI=1 ACT=BG
- - ng_mk_functions
-     - add mat_idx on the output itself : DONE   
-========== 06: PRI=1 ACT=AA
-Change code that uses iso_f_smooth to use the proper RtR_prior formulation
-    - DONE
-========== 23: PRI=2 ACT=BG
-DEFAULT SOLVER:
-   GN_one_step_diff_solve
-
- - put defaults for functions
-
-========== 02: PRI=1 ACT=BG
-GMSH 
- - see if we need object_in_tank_2d
-     => turn into tutorial
-   => DONE. Cleanup, speedup and move to dev
-
-==========
- - Caching: all to disable caching calls from a specific function
-=>DONE
-
 ###############
 
 ========== 01: PRI=1 ACT=AA
@@ -104,68 +38,51 @@ tutorials - deprecate update
  - geophys tutorial - finish = AA
  - add neonate tutorial
  - look at tutorial report
-
 ========== 03: PRI=1 ACT=AA
  complex conductivity
 ========== 04: PRI=1 ACT=MC
 check jacobian c2f calcs
-
  - see if we need bs_calc_system_mat
  - look at background parameter
 ========== 05: PRI=1 ACT=AA
 inv_solve_4d_prior and inv_solve_time_prior ?
-
 Add Wiener filter form to speed up
-
 ========== 09: PRI=1 ACT=BG/AA
  - fix eidors colorbar - give proper location
 Fix colourbar -> make work with Camille's code, too.
  - BG's colourbar
-
 ========== 13: PRI=2 ACT=AA/BG
 noise figures and nf selection code
 ========== 14: PRI=2 ACT=MC/RM
 c2f - analytical
  - mk_c2f_circ_mapping - not quite right fitting
 ========== 15: PRI=2 ACT=BG
-movement greit
+GREIT: movement + noise weighting
 ========== 16: PRI=2 ACT=AA
 fix timing in eidors_var_id
-========== 17: PRI=2 ACT=BG
-mk_library
-  - put additional files for release
 ========== 18: PRI=2 ACT=AA
 whole electrode options for ng_mk_gen...
 ========== 19: PRI=2 ACT=AA
 Fix coarse2fine -> give options for elements in fine but not coarse model
-
 ========== 20: PRI=2 ACT=?
 write a non-linear GN solver
   - consider bs_nonlinearGN
-
- - move absolute tutorials into functions in main code
+  - move absolute tutorials into functions in main code
 ========== 22: PRI=2 ACT=?
-Cleanup calc_colours to clean up handling of image_field
-   parameter.
+Cleanup calc_colours to clean up handling of image_field parameter.
   - code also in eidors_colours, scale_for_display, 
   - probably need new colourbar functions
-
-
 ========== 24: PRI=2 ACT=AA
  - reorganize tutorials
  - PLAN => AA create a "papers" section of htdocs => click on paper => tutorials
-
 ========== 25: PRI=2 ACT=?
  - think through mk_common_model, library_model, and choose_imdl
     - what to deprecate, how to merge
  - library_model => accept simulation
-   
 ========== 26: PRI=3 ACT=?
 CG's code
-
 ========== 27: PRI=3 ACT=?
 think through how the cache is managed. esp for read-only installs
-
   - look at cache priorities
   - cache to disk
 ========== 28: PRI=3 ACT=?
@@ -181,24 +98,22 @@ Iteratively refine
 % especially page 15 where it discusses the value of iterative refinement
 %  without extra precision bits.  ALso, we need to enable 
 % system_dependent('SetPrecision', 53) in starup
-
  - \ => left_divide
 ========== 30: PRI=3 ACT=?
-
   - talk to Bill about estimates of covariance inverses 
   - look at calc_Ji ... fcn
 ========== 31: PRI=3 ACT=?
-merge eidors_model_params and fix_models
- -  rename fix_models
+merge eidors_model_params and fix_model
+    => DONE. Deprecated eidors_model_params
+ -  rename fix_model
 
-also merge fwd_model_params
-put neighborhood matrix - from M.Crabb
-
- - migrate aa_fwd_parameters to fix_model
+ -  merge fwd_model_params
+    => Decided against
+ - put neighborhood matrix - from M.Crabb
+    => DONE. edge2elem, elem2edge, node2elem
 ========== 32: PRI=3 ACT=?
  - add_noise - work for matrix noise
              - then update temporal_solver01
-
 ========== 33: PRI=3 ACT=?
  - merge choose_imdl with select_imdl
  - update select_imdl to reflect best practice
@@ -206,7 +121,6 @@ put neighborhood matrix - from M.Crabb
  - ng_mk_closed_contour - rename + make tutorial
 ========== 35: PRI=4 ACT=?
  - unify the 'extra' code handing in ng_mk ...
-
 ========== 36: PRI=3 ACT=?
  - see if we need examples, or move to tutorials
     - deprecate demo_real, demo_complex
@@ -214,22 +128,18 @@ put neighborhood matrix - from M.Crabb
  - add a 'papers using eidors' section
 ========== 3 : PRI=3 ACT=?
  - 2.5D solutions
-
 ========== 37: PRI=4 ACT=?
  OCTAVE DIRECTORY NAMES
    - move to something like x86_64-linux etc
    - get new code into startup which detects the system
    - compile mex file for various oses
 ========== 38: PRI=4 ACT=?
-
  - Factor out all the electrode code in the ng_mk* functions
      and put it into a ng_define_electrodes function 
-
-     - Next, create a fourth parameter to control the depth of the electrode shape
+ - Next, create a fourth parameter to control the depth of the electrode shape
 ========== 39: PRI=4 ACT=AA
  - fix gaussian_HPF_prior
      - work in 3D like laplace_image_prior
-
 ========== 40: PRI=4 ACT=?
 ng_mk_ ... models
   - put in unit test code
@@ -237,8 +147,10 @@ ng_mk_ ... models
   - start to refactor electrode code
 ========== 41: PRI=4 ACT=?
 add interface to ng.opt
-
-################ DEFER #####################3
+========== 49: PRI=? ACT=?
+Rename nodal_solve
+   => TODO: rename to inv_solve_diff_GN_one_step_nodal;
+################ DEFER #####################
 Re-think calc_colours: image_fields and
          eidors_colourbar: background (CG's tutorial)
 
@@ -249,7 +161,6 @@ Re-think calc_colours: image_fields and
 decide if mapping_function should go on fwd_model or img
   => FUTURE
 ========== 43: PRI=? ACT=?
-
 one important feature would be to add code introspection.
 This would allow you to know if a given algorithm can support
    linear reconstruction, etc.
@@ -262,17 +173,67 @@ etc.
 
 ###################### DONE ####################
 
+========== 00: PRI=1 ACT=AA
+ - fix for deprecate
+     mk_common_model('n3r2')
+    - DONE
+========== 10: PRI=1 ACT=MC/RM
+noser_image_prior
+  - may fail on this line (change in spdiags in new matlab)
+    Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
+  => DONE. DON'T SEE THE PROBLEM
+========== 12: PRI=1 ACT=AA
+also show_slices is crufty
+% TODO: because we wanted (back in 2005) to let show_slices
+% handle lots of different scenarios (calling with images and
+% without. It is now crufty ... and should be changed.
+  => DONE. VALIDATE WITH TUTORIALS
+  => REMOVE CRUFT
+========== 07: PRI=1 ACT=BG
+ - unit_test_cmp - print tolerance of comparison
+ - create assertions. standardize output
+  => DONE
+========== 11: PRI=1 ACT=AA/BG
+There is an inconsistency between
+   mk_grid_models - which has its own pixels
+and
+   calc_slices - which does its own interpolation
+Generally, this means that the pictures from calc_slices
+are even smoother than they should be. 
+  => May be fixed. Check
+  => DONE. Fixed in calc_slices
+========== 08: PRI=1 ACT=BG
+ - ng_mk_functions
+     - add mat_idx on the output itself : DONE   
+========== 06: PRI=1 ACT=AA
+Change code that uses iso_f_smooth to use the proper RtR_prior formulation
+    - DONE
+========== 23: PRI=2 ACT=BG
+DEFAULT SOLVER:
+   GN_one_step_diff_solve
+ - put defaults for functions
+    - DONE
+========== 02: PRI=1 ACT=BG
+GMSH 
+ - see if we need object_in_tank_2d
+     => turn into tutorial
+   => DONE. Cleanup, speedup and move to dev
+==========
+ - Caching: all to disable caching calls from a specific function
+=>DONE
+========== 17: PRI=2 ACT=BG
+mk_library
+  - put additional files for release
+=> DONE
+==========
 Problems with calc_move_jacobian.m - only with 3D models
 ========== 44: PRI=? ACT=?
  - move np stuff to background. Change aa to the defaults.
-
   => DONE
 ========== 45: PRI=? ACT=?
  - Next, test in 3D
     - issue is here: delVm_pert = pp.N2E*(Vc_delta - pp.Vc) / delta; (line 181)
-   
     - PLAN => M.Crabb take a look and then setup call.
-
  => DONE 
 ========== 46: PRI=? ACT=?
  - movement jacobians
@@ -283,9 +244,7 @@ Problems with calc_move_jacobian.m - only with 3D models
  - movement priors
      - calc_move_and_conductivity_prior( move_prior_fun, conductivity_prior_fcn)
        - maybe with some defaults for each case
-
     - PLAN => M.Crabb to create general functions
-
  => DONE 
 ========== 47: PRI=? ACT=?
 Create a GN_diff_solve function
@@ -295,9 +254,6 @@ Create a variable in eidors_msg that knows if desktop is available
 http://www.mathworks.com/matlabcentral/newsreader/view_thread/284363
 mf = com.mathworks.mde.desk.MLDesktop.getInstance.getMainFrame; 
    => DONE - AA
-========== 49: PRI=? ACT=?
-Rename nodal_solve
-   => TODO: rename to inv_solve_diff_GN_one_step_nodal;
 ========== 50: PRI=? ACT=?
 what is mapper_elems_nodes ??
      ./eidors/models/mapper_nodes_elems.m
@@ -306,7 +262,6 @@ what is mapper_elems_nodes ??
 In octave
    run /path/to/startup.m
 will just load the function into memory, you need to run it with startup.
-
 How can we make octave actually run the startup file?
   => DONE - AA
 ========== 52: PRI=? ACT=?
