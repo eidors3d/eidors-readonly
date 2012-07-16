@@ -77,7 +77,9 @@ If this is not what you want, it must be changed.
 Step 2b: Create a forward model (<tt>fmdl</tt>) that matches the shape / electrodes
 </h3>
 
-As an example, we create a circular tank, but also we can use many other functions.
+This step is not required, if <tt>mk_common_model</tt> provides
+you with the shape you need. Here, as an example, we create a circular tank,
+but also we can use many other functions.
 <pre>
 n_rings = 12;
 n_electrodes = 16;
@@ -90,7 +92,8 @@ fmdl = mk_circ_tank( n_rings , three_d_layers, n_electrodes);
 Step 2c: Create a forward model (<tt>fmdl</tt>) that matches the stimulation / measurement protocol
 </h3>
 
-Often the function <tt>mk_stim_patterns</tt> can do what you need
+Often the function <tt>mk_stim_patterns</tt> can do what you need;
+if not, you will need to:
 <pre>
 options = {'no_meas_current','no_rotate_meas'};
 [stim, meas_select] = mk_stim_patterns(16,1,'{ad}','{ad}',options,1);
