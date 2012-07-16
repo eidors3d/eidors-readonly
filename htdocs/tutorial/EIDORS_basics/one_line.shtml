@@ -41,6 +41,90 @@ Output image showing images of a non-conductive
 object moving across a saline tank.
 </center>
 
+
+<h2>One line starter program (<i>explained in more detail</i>)</h2>
+
+<h3> 
+Step 1: Get data
+</h3>
+
+The key thing you need to know about your data are:
+<ul>
+ <li>The medium shape and the electrode positions
+<br>
+  In this case, the measurements were made from a cylindrical tank
+  with 16 electrodes in a plane.
+
+ <li>The stimulation/measurement protocol
+<br>
+  In this case, the measurements were made using the adjacent stimulation
+  and measurement (the Sheffield protocol)
+</ul>
+
+<h3> 
+Step 2a: Create an inverse model (<tt>imdl</tt>) from the template
+</h3>
+
+<pre>
+imdl = mk_common_model('c2c2',16);
+</pre>
+
+See the documentation for <tt>mk_common_model</tt>. It has lots of options.
+The function provides a circular model with adjacent stimulation patterns.
+If this is not what you want, it must be changed.
+
+<h3> 
+Step 2b: Create a forward model (<tt>fmdl</tt>) that matches the shape / electrodes
+</h3>
+
+As an example, we create a circular tank, but also we can use many other functions.
+<pre>
+n_rings = 12;
+n_electrodes = 16;
+three_d_layers = []; % no 3D
+fmdl = mk_circ_tank( n_rings , three_d_layers, n_electrodes);
+% then assign the fields in fmdl to imdl.fwd_model
+</pre>
+
+<h3> 
+Step 2c: Create a forward model (<tt>fmdl</tt>) that matches the stimulation / measurement protocol
+</h3>
+
+Often the function <tt>mk_stim_patterns</tt> can do what you need
+<pre>
+options = {'no_meas_current','no_rotate_meas'};
+[stim, meas_select] = mk_stim_patterns(16,1,'{ad}','{ad}',options,1);
+imdl.fwd_model.stimulation = stim;
+imdl.fwd_model.meas_select = meas_select;
+</pre>
+
+If <tt>mk_stim_patterns</tt> doesn't provide what you need, then you
+will need to use a function like <tt>stim_meas_list</tt>.
+
+
+<h3> 
+Step 2d: Reconstruct the image (<tt>img</tt>) using inv_solve
+</h3>
+
+<pre>
+data_homg = zc_h_demo4;
+data_objs = zc_demo4; % from your file
+img = inv_solve(imdl, data_homg, data_objs);
+</pre>
+
+<h3> 
+Step 2e: Display the image
+</h3>
+<pre>
+show_slices(img);
+</pre>
+
+<center>
+<img src="one_line01a.png">
+<br><i> Figure:</i>
+Output image.
+</center>
+
 </td></tr></table>
 <p>
 <small>
