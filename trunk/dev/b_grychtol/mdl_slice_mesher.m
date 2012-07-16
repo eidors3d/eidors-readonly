@@ -14,16 +14,31 @@ end
 
 mdl = fmdl;
 opt.edge2elem = true;
+opt.node2elem = true;
 mdl = fix_model(mdl,opt);
 edges = mdl.edges;
 edge2elem = mdl.edge2elem;
-[nodeval nodedist] = nodes_above_or_below(mdl,level);
-idx = sum(nodeval(edges),2)==0; % crossed edges
+tmp = mdl;
+tmp.nodes = level_model( tmp, level )';
+[nodeval nodedist] = nodes_above_or_below(tmp,0);
+%% crossed edges
+idx = sum(nodeval(edges),2) == 0 ; 
 dist = (nodedist(edges(idx,2)) - nodedist(edges(idx,1)));
 t = -nodedist(edges(idx,1))./dist;
 nodes = mdl.nodes(edges(idx,1),:) + ...
     repmat(t,1,3).*(mdl.nodes(edges(idx,2),:) - mdl.nodes(edges(idx,1),:));
 [nn els] = find(edge2elem(idx,:));
+
+
+%% crossed nodes
+% idx = nodeval == 0;
+% [nnn eee] = find(mdl.node2elem(idx,:));
+% nn = [nn; nnn];
+% els = [els; eee];
+% [els idx] = sort(els);
+% nn = nn(idx);
+
+%% proceed
 [uels jnk n] = unique(els);
 nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
@@ -42,7 +57,7 @@ for i = 1:length(uels)
             nmdl.elems(c,:) = nn(n==i);
             nimg.elem_data(c) = img.elem_data(uels(i));
             c = c + 1;
-        case 4
+        case 5
             nds = nn(n==i);
             nmdl.elems(c,:) = nds(1:3);
             nimg.elem_data(c) = img.elem_data(uels(i));
@@ -127,7 +142,7 @@ function do_unit_test
     load datacom.mat A B;
     img.elem_data(A) = 1.2;
     img.elem_data(B) = 0.8;
-    slc = mdl_slice_mesher(img, 1.3);
+    slc = mdl_slice_mesher(img, [3 3 2]);
     subplot(121)
     show_fem(img);
     subplot(122)
