@@ -33,12 +33,30 @@ nodes = mdl.nodes(edges(idx,1),:) + ...
 %% crossed nodes
 % idx = nodeval == 0;
 % [nnn eee] = find(mdl.node2elem(idx,:));
-% nn = [nn; nnn];
-% els = [els; eee];
+% [ueee jnk n1] = unique(eee);
+% nodes_per_elem = jnk;
+% nodes_per_elem(2:end) = diff(jnk);
+% % if an elem has more than 2 crossed nodes, add it
+% add = find(nodes_per_elem > 2);
+% els = [els; ueee(add)];
+% for i = 1:length(add)
+%     nn = [nn; nnn(n1 == add(i))];
+% end
 % [els idx] = sort(els);
 % nn = nn(idx);
-
-%% proceed
+% % for elems with less than 4 crossed edges -> add crossed nodes if needed
+% [uels jnk n] = unique(els);
+% nodes_per_elem = jnk;
+% nodes_per_elem(2:end) = diff(jnk);
+% 
+% [idx ia ib] = intersect(ueee, uels);
+% for i = 1:length(ia)
+%     newnodes = nnn(n1==ia(i));
+%     nn = [nn; newnodes];
+%     els = [els; repmat(ib(i),length(newnodes),1)];
+% end
+% [els idx] = sort(els);
+% nn = nn(idx);
 [uels jnk n] = unique(els);
 nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
