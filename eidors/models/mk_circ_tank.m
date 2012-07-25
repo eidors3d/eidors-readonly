@@ -93,6 +93,8 @@ if ~isempty( elec_nodes)
 end
 param.type = 'fwd_model';
 
+param.normalize_measurements = 0; % default
+
 return;
 
 % parse the elec_spec parameter

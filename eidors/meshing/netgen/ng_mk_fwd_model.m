@@ -41,6 +41,10 @@ fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
 mat_indices= mk_mat_indices( mat_ind);
 fwd_mdl.mat_idx = mat_indices;
 
+if ~isfield(fwd_mdl,'normalize_measurements')
+   fwd_mdl.normalize_measurements = 0;
+end
+
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                        stim_pattern, centres, z_contact,fc)
