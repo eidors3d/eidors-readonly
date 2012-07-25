@@ -15,4 +15,4 @@ if isfield(inv_model,'gaussian_HPF_prior');
   inv_model.prior_gaussian_HPF = inv_model.gaussian_HPF_prior;
 end
 
-Reg = prior_gaussian_hpf(inv_model);
+Reg = prior_gaussian_HPF(inv_model);
