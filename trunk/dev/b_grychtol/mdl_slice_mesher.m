@@ -44,12 +44,16 @@ nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
 % if an elem has more than 2 crossed nodes, add it
 add = find(nodes_per_elem > 2);
-els = [els; ueee(add)];
-for i = 1:length(add)
-    nn = [nn; nnn(n1 == add(i))];
+if ~isempty(add)
+    keyboard
+    % what to do with faces shared between elements?
+    els = [els; ueee(add)];
+    for i = 1:length(add)
+        nn = [nn; nnn(n1 == add(i))];
+    end
+    [els idx] = sort(els);
+    nn = nn(idx);
 end
-[els idx] = sort(els);
-nn = nn(idx);
 % for elems with less than 4 crossed edges -> add crossed nodes if needed
 [uels jnk n] = unique(els,'last');
 nodes_per_elem = jnk;
@@ -106,6 +110,7 @@ function [nodeval dist] = nodes_above_or_below(mdl,level)
 % nodeval = nodeval + ((mdl.nodes(:,3) - eps) > level);
 % nodeval = nodeval - ((mdl.nodes(:,3) + eps) < level);
 dist = mdl.nodes(:,3) - level;
+dist(abs(dist) < eps) = 0;
 nodeval = sign(dist);
 
 
@@ -172,10 +177,10 @@ function do_unit_test
     hold off
     show_fem(img.fwd_model);
     hold on
-    slc = mdl_slice_mesher(img, [3 -3 2]);
-    slc.calc_colours.transparency_thresh = -1;
-    show_fem(slc);
-    slc = mdl_slice_mesher(img, [inf inf 1]);
+%     slc = mdl_slice_mesher(img, [3 -3 2]);
+%     slc.calc_colours.transparency_thresh = -1;
+%     show_fem(slc);
+    slc = mdl_slice_mesher(img, [inf inf 2]);
     slc.calc_colours.transparency_thresh = -1;
     show_fem(slc);
     zlim([0 3]);
