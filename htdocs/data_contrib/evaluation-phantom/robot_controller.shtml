@@ -6,10 +6,10 @@
    <table>
    <tr><th valign="top"> Authors:
        <td> 
-Sascha Reidt
+Sascha Reidt, Jonathan From
        <hr>
    <tr><th valign="top"> Date:
-       <td> 2009
+       <td> 2009, 2012
        <hr>
    <tr><th valign="top"> Brief Description:
        <td> 
@@ -28,6 +28,9 @@ protocol was stored on a computer and transmitted to the
 position controllers via Bluetooth. A control program
 stores the coordinates and the position controller
 automatically moves the object to the desired locations.
+<p>
+Original work was done in 2009 by Sascha Reidt in Landquart, Switzerland. 
+In 2012, Jonathan From updated the software, tests and documentation.
        <hr>
    <tr><th valign="top"> License:
        <td>  Creative Commons Artistic License (with Attribution) 
@@ -62,6 +65,9 @@ In order to use the provided software you will need:
       <tr><td> <a href="documents/Phantom-Positioning-System_User_Guide.pdf"
                        >Phantom-Positioning-System_User_Guide.pdf</a>
           <td> Software installation and tutorials
+      <tr><td> <a href="documents/Robot_Construction_Documentation_DE.pdf"
+                       >Robot_Construction_Documentation_DE.pdf</a>
+          <td> Project report for robot system (in German)
       <tr><td> <a href="documents/Position-Controller-PC-exe.zip"
                        >Position-Controller-PC-exe.zip</a>
           <td> Position controller software (PC) &minus; executable (Win32)
@@ -71,9 +77,17 @@ In order to use the provided software you will need:
       <tr><td> <a href="documents/Position-Controller-NXT.zip"
                        >Position-Controller-NXT.zip</a>
           <td> Position controller software (NXT)
-      <tr><td> <a href="documents/Robot_Construction_Documentation_DE.pdf"
-                       >Robot_Construction_Documentation_DE.pdf</a>
-          <td> Project report for robot system (in German)
+      <tr><th valign="top"> Files (from 2009 release):
+          <th>
+      <tr><td> <a href="documents/Position-Controller-PC-exe-v1.0.zip"
+                       >Position-Controller-PC-exe-v1.0.zip</a>
+          <td> Position controller software (PC) &minus; executable (Win32)
+      <tr><td> <a href="documents/Position-Controller-PC-src-v1.0.zip"
+                       >Position-Controller-PC-src-v1.0.zip</a>
+          <td> Position controller software (PC) &minus; source code
+      <tr><td> <a href="documents/Position-Controller-NXT-v1.0.zip"
+                       >Position-Controller-NXT-v1.0.zip</a>
+          <td> Position controller software (NXT)
       </table>
 
        <hr>
