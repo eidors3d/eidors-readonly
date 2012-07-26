@@ -166,9 +166,17 @@ function do_unit_test
     load datacom.mat A B;
     img.elem_data(A) = 1.2;
     img.elem_data(B) = 0.8;
-    slc = mdl_slice_mesher(img, [3 3 2]);
     subplot(121)
     show_fem(img);
     subplot(122)
+    hold off
+    show_fem(img.fwd_model);
+    hold on
+    slc = mdl_slice_mesher(img, [3 -3 2]);
+    slc.calc_colours.transparency_thresh = -1;
+    show_fem(slc);
+    slc = mdl_slice_mesher(img, [inf inf 1]);
+    slc.calc_colours.transparency_thresh = -1;
     show_fem(slc);
     zlim([0 3]);
+    hold off
