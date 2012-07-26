@@ -22,47 +22,52 @@ tmp = mdl;
 tmp.nodes = level_model( tmp, level )';
 [nodeval nodedist] = nodes_above_or_below(tmp,0);
 %% crossed edges
-idx = sum(nodeval(edges),2) == 0 ; 
+% exclude edges on plane (dealt with later)
+idx = (sum(nodeval(edges),2) == 0) & (nodeval(edges(:,1)) ~= 0) ; 
 dist = (nodedist(edges(idx,2)) - nodedist(edges(idx,1)));
 t = -nodedist(edges(idx,1))./dist;
+% new nodes along the edges
 nodes = mdl.nodes(edges(idx,1),:) + ...
     repmat(t,1,3).*(mdl.nodes(edges(idx,2),:) - mdl.nodes(edges(idx,1),:));
+% nn indexes the just-created nodes, els indexes elements
 [nn els] = find(edge2elem(idx,:));
 
 
 %% crossed nodes
-% idx = nodeval == 0;
-% [nnn eee] = find(mdl.node2elem(idx,:));
-% [ueee jnk n1] = unique(eee);
-% nodes_per_elem = jnk;
-% nodes_per_elem(2:end) = diff(jnk);
-% % if an elem has more than 2 crossed nodes, add it
-% add = find(nodes_per_elem > 2);
-% els = [els; ueee(add)];
-% for i = 1:length(add)
-%     nn = [nn; nnn(n1 == add(i))];
-% end
-% [els idx] = sort(els);
-% nn = nn(idx);
-% % for elems with less than 4 crossed edges -> add crossed nodes if needed
-% [uels jnk n] = unique(els);
-% nodes_per_elem = jnk;
-% nodes_per_elem(2:end) = diff(jnk);
-% 
-% [idx ia ib] = intersect(ueee, uels);
-% for i = 1:length(ia)
-%     newnodes = nnn(n1==ia(i));
-%     nn = [nn; newnodes];
-%     els = [els; repmat(ib(i),length(newnodes),1)];
-% end
-% [els idx] = sort(els);
-% nn = nn(idx);
-[uels jnk n] = unique(els);
+idx = nodeval == 0;
+ln = length(nodes); %store the size
+nodes = [nodes; mdl.nodes(idx,:)]; % add the crossed nodes to the new model
+[nnn eee] = find(mdl.node2elem(idx,:));
+nnn = nnn + ln; %make a proper index into nodes
+[ueee jnk n1] = unique(eee,'last');
+nodes_per_elem = jnk;
+nodes_per_elem(2:end) = diff(jnk);
+% if an elem has more than 2 crossed nodes, add it
+add = find(nodes_per_elem > 2);
+els = [els; ueee(add)];
+for i = 1:length(add)
+    nn = [nn; nnn(n1 == add(i))];
+end
+[els idx] = sort(els);
+nn = nn(idx);
+% for elems with less than 4 crossed edges -> add crossed nodes if needed
+[uels jnk n] = unique(els,'last');
+nodes_per_elem = jnk;
+nodes_per_elem(2:end) = diff(jnk);
+% only consider elements who have both a crossed node and edge
+[idx ia ib] = intersect(ueee, uels);
+for i = 1:length(ia)
+    newnodes = nnn(n1==ia(i));
+    nn = [nn; newnodes];
+    els = [els; repmat(uels(ib(i)),length(newnodes),1)];
+end
+[els idx] = sort(els);
+nn = nn(idx);
+[uels jnk n] = unique(els,'last');
 nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
 
 n_tri = length(uels) + sum(nodes_per_elem==4);
-
 nmdl.type = 'fwd_model';
 nmdl.nodes = nodes;
 nmdl.elems = zeros(n_tri,3);
@@ -75,7 +80,7 @@ for i = 1:length(uels)
             nmdl.elems(c,:) = nn(n==i);
             nimg.elem_data(c) = img.elem_data(uels(i));
             c = c + 1;
-        case 5
+        case 4
             nds = nn(n==i);
             nmdl.elems(c,:) = nds(1:3);
             nimg.elem_data(c) = img.elem_data(uels(i));
@@ -85,6 +90,7 @@ for i = 1:length(uels)
     end
 end
 nimg.fwd_model = nmdl;
+
 
 % This bit could be useful to look at the shape of the actual elements
 % But the quad patches would have to be re-ordered
