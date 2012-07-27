@@ -31,31 +31,33 @@ nodes = mdl.nodes(edges(idx,1),:) + ...
     repmat(t,1,3).*(mdl.nodes(edges(idx,2),:) - mdl.nodes(edges(idx,1),:));
 % nn indexes the just-created nodes, els indexes elements
 [nn els] = find(edge2elem(idx,:));
-
-
+els_edge = els;
 %% crossed nodes
 idx = nodeval == 0;
 ln = length(nodes); %store the size
 nodes = [nodes; mdl.nodes(idx,:)]; % add the crossed nodes to the new model
+% nnn indexes mdl.nodes(idx), eee indexes mdl.elems
 [nnn eee] = find(mdl.node2elem(idx,:));
 nnn = nnn + ln; %make a proper index into nodes
+% n1: eee = ueee(n1)
 [ueee jnk n1] = unique(eee,'last');
 nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
-% if an elem has more than 2 crossed nodes, add it
-add = find(nodes_per_elem > 2);
+% if an elem has 3 crossed nodes, there must be 2 of them, add both for now
+add = find(nodes_per_elem == 3);
 if ~isempty(add)
-    keyboard
     % what to do with faces shared between elements?
-    els = [els; ueee(add)];
+    addel = ueee(add*[1 1 1])';
+    els = [els; addel(:)];
     for i = 1:length(add)
-        nn = [nn; nnn(n1 == add(i))];
+       addnd = nnn(n1 == add(i));
+       nn = [nn; addnd(:)];
     end
     [els idx] = sort(els);
     nn = nn(idx);
 end
 % for elems with less than 4 crossed edges -> add crossed nodes if needed
-[uels jnk n] = unique(els,'last');
+[uels jnk n] = unique(els_edge,'last');
 nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
 % only consider elements who have both a crossed node and edge
@@ -93,8 +95,15 @@ for i = 1:length(uels)
             c = c + 2;
     end
 end
+% deal with double elements (from shared faces)
+nmdl.elems = sort(nmdl.elems,2);
+[nmdl.elems idx] = sortrows(nmdl.elems);
+nimg.elem_data = nimg.elem_data(idx);
+[nmdl.elems n idx] = unique(nmdl.elems, 'rows');
+n(2:end) = diff(n);
 nimg.fwd_model = nmdl;
-
+% use sparse to calculate the avarage value
+nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
 
 % This bit could be useful to look at the shape of the actual elements
 % But the quad patches would have to be re-ordered
@@ -106,11 +115,12 @@ nimg.fwd_model = nmdl;
 
 
 function [nodeval dist] = nodes_above_or_below(mdl,level)
-% nodeval = zeros(size(mdl.nodes,1),1);
-% nodeval = nodeval + ((mdl.nodes(:,3) - eps) > level);
-% nodeval = nodeval - ((mdl.nodes(:,3) + eps) < level);
+
+% TODO: The tolerance value should be somehow model-dependent
+tol = 1e-10;
+
 dist = mdl.nodes(:,3) - level;
-dist(abs(dist) < eps) = 0;
+dist(abs(dist) < tol) = 0;
 nodeval = sign(dist);
 
 
@@ -174,14 +184,28 @@ function do_unit_test
     subplot(121)
     show_fem(img);
     subplot(122)
-    hold off
-    show_fem(img.fwd_model);
+    cla
+%     show_fem(img.fwd_model);
     hold on
 %     slc = mdl_slice_mesher(img, [3 -3 2]);
 %     slc.calc_colours.transparency_thresh = -1;
 %     show_fem(slc);
+    slc = mdl_slice_mesher(img, [0 inf inf]);
+    slc.calc_colours.transparency_thresh = -1;
+    slc.fwd_model.boundary = slc.fwd_model.elems;
+    show_fem(slc);
     slc = mdl_slice_mesher(img, [inf inf 2]);
     slc.calc_colours.transparency_thresh = -1;
+    slc.fwd_model.boundary = slc.fwd_model.elems;
+    show_fem(slc);
+    slc = mdl_slice_mesher(img, [inf inf 2.5]);
+    slc.calc_colours.transparency_thresh = -1;
+    slc.fwd_model.boundary = slc.fwd_model.elems;
+    show_fem(slc);
+    slc = mdl_slice_mesher(img, [inf inf 1.3]);
+    slc.calc_colours.transparency_thresh = -1;
+    slc.fwd_model.boundary = slc.fwd_model.elems;
     show_fem(slc);
     zlim([0 3]);
+    view(3)
     hold off
