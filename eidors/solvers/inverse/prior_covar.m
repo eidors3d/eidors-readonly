@@ -12,8 +12,12 @@ function Reg= prior_covar( inv_model )
 % (C) 2007, Tao Dai and Andy Adler. Licenced under the GPL Version 2
 % $Id$
 
-% get average x,y,z of each element
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+Reg = prior_covar_calc( inv_model);
+
+function Reg = prior_covar_calc( inv_model );
 ff = inv_model.fwd_model;
+% get average x,y,z of each element
 nel = size(ff.elems,1);
 eta = .1;%attenuation factor. eta is large when elems're spatially highly correlated
 
@@ -52,3 +56,10 @@ dist = sqrt(dist);%elements distance matrix
 dist = dist/max(dist(:));
 
 Reg = exp(-dist ./ H);% 3-D elements correlations matrix.
+
+function do_unit_test
+   imdl = mk_common_model('b3cr',[16,3]);
+   imdl.fourD_prior.P_type = 2;
+tic; 
+   prior_covar( imdl );
+toc;
