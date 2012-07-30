@@ -35,28 +35,12 @@ function Reg = prior_covar_calc( cache_obj );
 
    z1 = ff.nodes(ff.electrode(1).nodes,3);%upper electrode ring
    z2 = ff.nodes(ff.electrode(end).nodes,3);%lower electrode ring
+   zmax = max(z1,z2);
+   zmin = min(z1,z2);
 
    for dim = 1: size(ff.nodes,2);
        coords = reshape(ff.nodes(ff.elems,dim),[size(ff.elems)]);%coord of four vertex of each elem
        m_coords = mean( coords,2);%calc center coord
-       if dim == 3
-           temp = double((m_coords<max(z1,z2))&(m_coords>min(z1,z2)));%regions of interests
-           H = temp*temp';
-           switch P_type %Prior type
-               case 1 % all elements are correlated
-                   H = eta*(ones(size(H)));
-               case 2 % elements of ROI are not correlated with elements of non_ROI
-                   temp = double(m_coords>max(z1,z2));
-                   H = H + temp*temp';
-                   temp = double(m_coords<min(z1,z2));
-                   H = H + temp*temp';
-                   H = eta*(H+1e-6);
-               case 3 % elements are only correlated within ROI, non-ROI elements are highly attenuated
-                   H = eta*(H+1e-6);
-               otherwise
-                   error('no such a 3-D prior type');
-           end
-       end
        difm = m_coords*ones(1,nel);
        difm = difm - difm';
        dist= dist + difm.^2;%
@@ -65,11 +49,55 @@ function Reg = prior_covar_calc( cache_obj );
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    dist = dist/max(dist(:));
 
-   Reg = exp(-dist ./ H);% 3-D elements correlations matrix.
+   Reg = exp(-dist ./ eta);% 3-D elements correlations matrix.
+       if dim == 3
+%          temp = double((m_coords<max(z1,z2))&(m_coords>min(z1,z2)));%regions of interests
+%          H = temp*temp';
+           above = m_coords>zmax;
+           below = m_coords<zmin;
+           switch P_type %Prior type
+               case 2 % elements of ROI are not correlated with elements of non_ROI
+%          temp = find( ~above & ~below);
+%          Reg(temp,temp) = 1;
+%                  temp = double(m_coords>max(z1,z2));
+%                  H = H + temp*temp';
+%                  above = find(above);
+%                  H(above,above) = 1;
+%                  temp = double(m_coords<min(z1,z2));
+%                  H = H + temp*temp';
+%                  temp = m_coords<zmin;
+%                  below = find(below);
+%                  H(below,below) = 1;
+%                  H = eta*(H+1e-6);
+                   Reg(above,~above) = 0;
+                   Reg(below,~below) = 0;
+               case 3 % elements are only correlated within ROI, non-ROI elements are highly attenuated
+%                  H = eta*(H+1e-6);
+                   temp = find( above | below);
+                   Reg(temp,temp) = 0;
+               otherwise
+                   error('no such a 3-D prior type');
+           end
+       end
+
 
 function do_unit_test
    imdl = mk_common_model('b3cr',[16,3]);
    imdl.fourD_prior.P_type = 2;
-tic; 
-   prior_covar( imdl );
+tic;
+   Reg = prior_covar( imdl );
+   unit_test_cmp('#1:', diag(Reg), ones(size(Reg,1),1));
+   unit_test_cmp('#2:', Reg(102:103,100:103), [ ...
+   0.011818547266014   0.367556336897157   1.000000000000000   0.396442626219240; ...
+   0.008985742075647   0.160077522568152   0.396442626219240   1.000000000000000], 1e-10);
+
+toc;
+
+tic;
+   imdl.fourD_prior.P_type = 1;
+   Reg = prior_covar( imdl );
+   unit_test_cmp('#1:', diag(Reg), ones(size(Reg,1),1));
+   unit_test_cmp('#2:', Reg(102:103,100:103), [ ...
+   0.011818494814411   0.367555969018042   1.000000000000000   0.396442259421198; ...
+   0.008985699733886   0.160077229290862   0.396442259421198   1.000000000000000], 1e-10);
 toc;
