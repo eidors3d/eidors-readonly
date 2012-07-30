@@ -1,3 +1,9 @@
+- Look at backproj - make sure it has the correct orientation (same as GREIT)
+   - AA 20120730
+-----------------
+- Check correct operation and speed up prior_covar
+   - AA 20120730
+-----------------
 - still bugs in eidors3d_tutorial near line  253: NaNs
 [J] = jacobian_3d(I,elec,vtx,simp,gnd_ind,mat_ref,zc,v_f,dfj,tol,'{n}');
 
