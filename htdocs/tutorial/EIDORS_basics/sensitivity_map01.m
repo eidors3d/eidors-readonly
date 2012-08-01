@@ -12,5 +12,5 @@ show_slices(img);
 print_convert('sensitivity_map01a.png','-density 60');
 
 img.calc_colours.cb_shrink_move = [0.5,0.8,0];
-clf;show_fem(img,[1,1]);
+clf;axis square,show_fem(img,[1,1]);axis off
 print_convert('sensitivity_map01b.png','-density 60');

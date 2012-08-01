@@ -353,7 +353,8 @@ function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
           VOL = get_elem_volume(rec.fwd_model, 1);
       end
    else
-      img0 = imgr.elem_data;
+      n_els = length(rec.fwd_model);
+      img0 = imgr.elem_data(1:n_els); % elem_data can also contain movement
       try
           VOL = get_elem_volume(rec.rec_model, 0);
       catch
@@ -371,7 +372,7 @@ function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
       imgr= inv_solve(rec, vh, vn);
 
       if isfield(imgr,'node_data'); img0 = imgr.node_data;
-      else;                         img0 = imgr.elem_data;
+      else;                         img0 = imgr.elem_data(1:n_els);
       end
 
       noi_imag(i) = std( VOL .* img0 );
