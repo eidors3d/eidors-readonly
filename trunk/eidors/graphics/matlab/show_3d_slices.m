@@ -11,12 +11,15 @@ function show_3d_slices(img, varargin);
 % $Id$
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+[jnk,ref_lev,max_scale] = scale_for_display( img.elem_data);
 try 
-    pp.ref_level = img.calc_colours.ref_level; 
-    pp.clim      = img.calc_colours.clim;
+    img.calc_colours.ref_level; 
 catch
-    [jnk,ref_lev,max_scale] = scale_for_display( img.elem_data);
     img.calc_colours.ref_level = ref_lev;
+end
+try
+    img.calc_colours.clim;
+catch
     img.calc_colours.clim = max_scale;
 end
 try 
