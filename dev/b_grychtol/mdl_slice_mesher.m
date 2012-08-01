@@ -1,4 +1,37 @@
 function nimg = mdl_slice_mesher(fmdl,level)
+%MDL_SLICE_MESHER A slice of a 3D FEM as a 2D FEM 
+% img2d = mdl_slice_mesher(mdl3d,level) returns a 2D FEM model MDL2D 
+% suitable for viewing with show_fem representing a cut through MDL3D at
+% LEVEL. 
+%   MDL3D  - an EIDORS fwd_model or img struct with elem_data
+%   LEVEL  - Vector [1x3] of intercepts
+%          of the slice on the x, y, z axis. To specify a z=2 plane
+%          parallel to the x,y: use levels= [inf,inf,2]
+%   IMG2D  - an EIDORS img struct with a 2D triangular fwd_model
+%
+% Note that where the intersection of an element of MDL3D and the LEVEL is
+% a quadrangle, this will be represented as two triangles in IMG2D. 
+% Faces of MDL3D co-planar with LEVEL will be assigned an avarage of the
+% values of the two elements that share them. 
+%
+% To view element boundaries in the slice run
+%   img2d.boundary = img2d.elems;
+%   show_fem(img2d);
+% To control the transparency use transparency_tresh (see CALC_COLOURS for
+% details), e.g.:
+%    img2d.calc_colours.transparency_thresh = -1; (no transperency)
+%    calc_colours('transparency_thresh', 0.25); (some transparency)
+%
+% See also: SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, CROP_MODEL, CALC_COLOURS
+
+% (C) 2012 Bartlomiej Grychtol. 
+% License: GPL version 2 or version 3
+% $Id$
+
+% TODO: 
+%  1. Also provide patch output
+%  2. More intuitive cut plane specification
+%  3. Support node_data
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 switch fmdl.type
@@ -76,7 +109,7 @@ nodes_per_elem(2:end) = diff(jnk);
 n_tri = length(uels) + sum(nodes_per_elem==4);
 nmdl.type = 'fwd_model';
 nmdl.nodes = nodes;
-nmdl.elems = zeros(n_tri,3);
+nmdl.elems = zeros(n_tri,3); * tol
 nimg = mk_image(nmdl,1);
 c = 1;
 % TODO: Speed this up
@@ -116,8 +149,8 @@ nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
 
 function [nodeval dist] = nodes_above_or_below(mdl,level)
 
-% TODO: The tolerance value should be somehow model-dependent
-tol = 1e-10;
+% Set a model-dependent tolerance
+tol = min(max(mdl.nodes) - min(mdl.nodes)) * 1e-10;
 
 dist = mdl.nodes(:,3) - level;
 dist(abs(dist) < tol) = 0;
