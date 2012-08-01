@@ -109,7 +109,7 @@ nodes_per_elem(2:end) = diff(jnk);
 n_tri = length(uels) + sum(nodes_per_elem==4);
 nmdl.type = 'fwd_model';
 nmdl.nodes = nodes;
-nmdl.elems = zeros(n_tri,3); * tol
+nmdl.elems = zeros(n_tri,3); 
 nimg = mk_image(nmdl,1);
 c = 1;
 % TODO: Speed this up
