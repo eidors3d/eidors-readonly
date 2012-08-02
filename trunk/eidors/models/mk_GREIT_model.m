@@ -159,6 +159,11 @@ else
  % TODO: user MUST specify the inside array
 end
 
+% IMPORTANT: opt.meshsz must now reflect the rec_model, not the fwd_model!!
+minnode = min(imdl.rec_model.nodes);
+maxnode = max(imdl.rec_model.nodes);
+opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
+
 imdl.solve = @solve_use_matrix;
 log_level = eidors_msg( 'log_level', 1);
 
