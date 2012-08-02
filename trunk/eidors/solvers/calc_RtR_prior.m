@@ -69,6 +69,9 @@ function inv_model = rec_or_fwd_model( inv_model);
       end; end
 
       if use_rec_model
+          % copy the normalize flag from the fwd_model to prevent warnings
+         inv_model.rec_model = mdl_normalize(inv_model.rec_model, ...
+                                       mdl_normalize(inv_model.fwd_model));
          inv_model.fwd_model= inv_model.rec_model;
          inv_model= rmfield(inv_model,'rec_model');
       end
