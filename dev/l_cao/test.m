@@ -2,6 +2,16 @@
 imdl = mk_common_model('c2C0',16);
 fmdl = imdl.fwd_model;
 
+% make point electrodes
+for i = 1:length(fmdl.electrode)
+    fmdl.electrode(i).nodes = fmdl.electrode(i).nodes(1);
+end
+
+
+for i = 1:length(fmdl.stimulation);
+   fmdl.stimulation(i).stim_pattern(fmdl.stimulation(i).stim_pattern < 0 ) = 0;
+end
+imdl.fwd_model = fmdl;
 %Default EIDORS solver
 %Make image of unit conductivity
 img0 = mk_image(fmdl,0.15);
@@ -13,6 +23,7 @@ v0e=v0.meas; v0all=v0.volt;
 %High-order EIDORS solver
 %Change default eidors solvers
 fmdl.solve = @fwd_solve_higher_order;
+% fmdl.system_mat = @system_mat_higher_order; 
 fmdl.system_mat = @calc_system_mat_opt;
 
 %Add element type
