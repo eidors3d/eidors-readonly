@@ -8,7 +8,9 @@ if(nargin==1)
 end
 
 %Modify the forward model to be of my type
-if(strcmp(fwd_model.approx_type,'tri3') || strcmp(fwd_model.approx_type,'tet4'))   
+if ~isfield(fwd_model,'approx_type')    || ...
+   strcmp(fwd_model.approx_type,'tri3') || ...
+   strcmp(fwd_model.approx_type,'tet4')   
     %Do nothing
 else
     [bound,elem,nodes] = fem_1st_to_higher_order(fwd_model);
