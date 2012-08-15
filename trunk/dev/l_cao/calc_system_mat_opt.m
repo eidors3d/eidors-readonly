@@ -22,7 +22,7 @@ A = (1+Rx)/(1-Rx);
 nodestruc=fwd_model.nodes; nodedim=size(nodestruc,2); nnodes=size(nodestruc,1); 
 
 %Cache element structure and find no. of elements
-elemstruc=fwd_model.elems; nelems=size(elemstruc,2);
+elemstruc=fwd_model.elems; nelems=size(elemstruc,1);
 
 %Find fem type and find quadrature points/weights for integration over
 %element consistent with geometry of reference element
