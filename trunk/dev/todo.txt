@@ -1,3 +1,6 @@
+Add option to mk_coarse_fine_mapping to control the direction
+in which we do the mapping (default = z)
+-----------------
 Add mk_stim_wenner and other geophysical patterns
 -----------------
 Fix the 'mA' in stimulation. This should be 'Amps'
