@@ -31,6 +31,8 @@ function img= inv_solve_CG_logc( inv_model, data)
 % the forward problems. In that case, a coarse2fine matrix rely the
 % elements to reconstruct the medium conductivity
 
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+
 img = calc_jacobian_bkgnd( inv_model );
 img.parameters= inv_model.parameters;
 
@@ -299,4 +301,50 @@ function img = homogeneous_estimate( img, data )
     img.jacobian_bkgnd.value = conductivity_background;
     img.elem_data= ones(size(img.elem_data))*conductivity_background;
     disp(['Homogeneous resistivity = ' num2str(1/(conductivity_background),3) ' Ohm.m'])
+end
+
+function do_unit_test
+   unit_test_simdata
+end
+
+function unit_test_simdata
+shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
+             'solid mainobj= top and orthobrick(-100,-200,-100;425,10,100) -maxh=20.0;\n'];
+e0 = linspace(0,300,10)';
+elec_pos = [e0,0*e0,0*e0,1+0*e0,0*e0,0*e0];
+elec_shape=[0.5,.5,.5];
+elec_obj = 'top';
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+%fmdl.nodes = fmdl.nodes(:,[1,3,2]);
+
+fmdl.stimulation = mk_stim_patterns(10,1,[0,1],[0,1],{},1);
+
+img = mk_image(fmdl,1 + mk_c2f_circ_mapping(fmdl,[100;0;-50;30]));
+dd  = fwd_solve(img);
+show_fem(img);
+
+cmdl = mk_grid_model([], 2.5+[-50,-20,0:10:320,340,370], ...
+                             -[0:2.5:10, 15:5:25,30:10:80,100,120]);
+c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+
+fmdl.coarse2fine = c2f;
+imdl= eidors_obj('inv_model','test');
+imdl.fwd_model= fmdl;
+imdl.rec_model= cmdl;
+imdl.solve = @inv_solve_CG_logc;
+imdl.reconst_type = 'absolute';
+imdl.jacobian_bkgnd.value = 1;
+
+imdl.parameters.lambda= logspace(-1.5,1.5,1000);
+
+% imdl.parameters.perturb= [0 logspace(-3,-1,9)];
+imdl.parameters.perturb= [0 logspace(-1,1,5)];
+
+imdl.parameters.max_iterations= 10;
+%imdl.parameters.normalisation= I;
+imdl.parameters.homogeneization=1;
+imdl.parameters.fixed_background= 1;
+imdl.fwd_model.misc.default = [];
+
+imgr= inv_solve(imdl, dd);
 end
