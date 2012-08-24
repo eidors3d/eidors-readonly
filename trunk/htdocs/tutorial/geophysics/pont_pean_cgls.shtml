@@ -1,0 +1,75 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2> 
+Images of the Pont P&eacute;an region
+</h2>
+
+The <a href="http://maps.google.com/maps?q=48.008182,-1.710085&z=18">Pont P&eacute;an</a>
+was an important silver mine before it flooded in April 1, 1904. Historical information
+is explained can be found at 
+<a href="http://fr.wikipedia.org/wiki/Pont-P%C3%A9an">fr.Wikipedia.org</a> and
+<a href="http://www.galene.fr/">galene.fr</a>. Due to the regular geophysical
+geometries of the site, and the large conductivity contrast of the ore with
+the surrounding rock, it represents an excellent test site for geophysical EIT
+measurements.
+
+<p>
+The data are available <a href="../../data_contrib/dg_geophysical_EIT/pont_pean.shtml">here</a>. They
+ were measured by a team of geophysical researchers
+at Universit&eacute; Rennes 1 over the period 2000&minus;2011.
+
+
+<h3>
+Create 3D FEM model of the terrain
+</h3>
+<pre>
+<!--#include virtual="pont_pean_cgls_01.m" -->
+</pre>
+
+<center>
+<img src="pont_pean_cgls_01a.png">
+<br><i> Figure:</i>
+Forward model
+</center>
+
+<h3>
+Create 2&frac12;D inverse model 
+</h3>
+<pre>
+<!--#include virtual="pont_pean_cgls_02.m" -->
+</pre>
+
+<h3>
+Reconstruct the data 
+</h3>
+<pre>
+<!--#include virtual="pont_pean_cgls_03.m" -->
+</pre>
+<center>
+<img src="pont_pean_cgls_03a.png">
+<br><i> Figure:</i>
+Reconstruction (2&frac12;D) using a 
+one step GN algorithm
+</center>
+
+<h3>
+Comparison to Apparent Resistivity
+</h3>
+
+<center>
+<img src="../../data_contrib/dg_geophysical_EIT/Mine_20FEV2004_LI_i.jpg"
+<br><i> Figure:</i>
+Apparent resistivity plot (not using EIDORS)
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
