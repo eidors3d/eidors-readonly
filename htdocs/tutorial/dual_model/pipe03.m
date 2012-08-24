@@ -3,7 +3,7 @@ imdl= mk_common_model('b2c2',16);
 cmdl= imdl.fwd_model;
 
 scl = 1;
-cmdl.mk_coarse_fine_mapping.f2c_offset = [0,0,scl];
+cmdl.mk_coarse_fine_mapping.f2c_offset = [0,0,1];
 cmdl.mk_coarse_fine_mapping.f2c_project = (1/scl)*speye(3);
 cmdl.mk_coarse_fine_mapping.z_depth = inf;
 c2f= mk_coarse_fine_mapping( fmdl, cmdl);
