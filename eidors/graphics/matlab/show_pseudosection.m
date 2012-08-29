@@ -46,7 +46,7 @@ function plotPseudoSectionProfile(fmdl,data)
    
    % Identiy reciprocal data(elecNumber(:,1)-elecNumber(:,2)) > abs(elecNumber(:,3)-elecNumber(:,4))
    R= find(abs(elecNumber(:,1)-elecNumber(:,2)) < abs(elecNumber(:,3)-elecNumber(:,4)));
-   keyboard
+   
    if ~isempty(R)
        xps(R)= (elec_posn(elecNumber(R,3),4)+elec_posn(elecNumber(R,4),4))/2;
        a(R)= abs(elecNumber(R,3)-elecNumber(R,4));
@@ -172,54 +172,7 @@ elec_shape= [0.1,0.1,1];
 elec_obj = 'top';
 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 %fmdl.nodes = fmdl.nodes(:,[1,3,2]);
-fmdl.stimulation = mk_stim_patterns(64,1,[0,3],[0,1],{},0.1);
-fmdl.stimulation = fmdl.stimulation(1:61);
-for i=1:61
-    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
-    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
-    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
-    fmdl.stimulation(1,i).meas_pattern(1,injn+1)= -1;
-    fmdl.stimulation(1,i).meas_pattern(1,injp-1)= 1;
-end
-fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,6],[0,1],{},0.1)];
-fmdl.stimulation = fmdl.stimulation(1:61+58);
-for i=62:61+58
-    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
-    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
-    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
-    fmdl.stimulation(1,i).meas_pattern(1,injn+2)= -1;
-    fmdl.stimulation(1,i).meas_pattern(1,injp-2)= 1;
-end
-fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,9],[0,1],{},0.1)];
-fmdl.stimulation = fmdl.stimulation(1:62+58+55);
-for i=62+58:61+58+55; %29+26+23
-    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
-    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
-    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
-    fmdl.stimulation(1,i).meas_pattern(1,injn+3)= -1;
-    fmdl.stimulation(1,i).meas_pattern(1,injp-3)= 1;
-end
-fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,12],[0,1],{},0.1)];
-fmdl.stimulation = fmdl.stimulation(1:61+58+55+52);%29+26+23+20);
-for i=62+58+55:61+58+55+52; %30+26+23:29+26+23+20
-    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
-    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
-    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
-    if injp < injn; injn2= injp; injp= injn; injn=injn2; end
-    fmdl.stimulation(1,i).meas_pattern(1,injn+4)= -1;
-    fmdl.stimulation(1,i).meas_pattern(1,injp-4)= 1;
-end
-fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,24],[0,1],{},0.1)];
-fmdl.stimulation = fmdl.stimulation(1:61+58+55+52+49); % 29+26+23+20+8);
-for i=62+58+55+52:61+58+55+52+49; %30+26+23+20:29+26+23+20+8
-    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
-    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
-    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
-    if injp < injn; injn2= injp; injp= injn; injn=injn2; end
-    fmdl.stimulation(1,i).meas_pattern(1,injn+8)= -1;
-    fmdl.stimulation(1,i).meas_pattern(1,injp-8)= 1;
-end
-
+fmdl.stimulation= stim_pattern_geophys( 64, 'Wenner', {'spacings', 1:32} );
 
 img1= mk_image(fmdl,1);
 vh1= fwd_solve(img1);
