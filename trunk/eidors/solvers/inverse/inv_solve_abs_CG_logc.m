@@ -1,4 +1,4 @@
-function img= inv_solve_CG_logc( inv_model, data)
+function img= inv_solve_abs_CG_logc( inv_model, data)
 % inv_solve_CG_logc absolute solver using the conjugate gradient method with
 % L-Curve criterion. Convert the element conductivity into their
 % logarithm
@@ -33,14 +33,20 @@ function img= inv_solve_CG_logc( inv_model, data)
 
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
+% Construct the image
 img = calc_jacobian_bkgnd( inv_model );
-img.parameters= inv_model.parameters;
 
 if isfield(inv_model.fwd_model,'coarse2fine')
     nc = size(img.fwd_model.coarse2fine,2);
     img.elem_data = mean(img.elem_data)*ones(nc,1);
 end
 
+% Load the paramaters for the inversion
+if isfield(inv_model,'parameters')
+    img.parameters= inv_model.parameters;
+else img.parameters.default= [];
+end
+    
 if isfield(img.parameters,'max_iterations')
     iters = inv_model.parameters.max_iterations;
 else
@@ -63,8 +69,6 @@ if isfield(img.parameters,'homogeneization')
     img = homogeneous_estimate( img, data );
 end
 
-
-
 residuals= zeros(size(data,1),iters+1);
 for k= 1:iters
     % Calculate Jacobian
@@ -83,11 +87,7 @@ for k= 1:iters
     % Some of the parameters may not be adjusted, as for instance the
     % background for huge forward models
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
-        if isfield(img.fwd_model.misc,'wall')
-            J= J(:,1:nc-2);
-        else
-            J= J(:,1:nc-1);
-        end
+        J= J(:,1:nc-1);
     end
 
     if k==1
@@ -106,11 +106,7 @@ for k= 1:iters
     delta_params= pinv(J,tol)*(img.parameters.normalisation*(res));
 
     if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
-        if isfield(inv_model.fwd_model.misc,'wall')
-            delta_params(nc-1:nc)= 0;
-        else
-            delta_params(nc)= 0;
-        end
+        delta_params(nc)= 0;
     end
     % Compute the step length and adjust the parameters
     img = line_optimize(img, delta_params, data);
@@ -120,14 +116,12 @@ vsim=  fwd_solve(img);
 residuals(:,k+1) = img.parameters.normalisation*(vsim.meas-data);
 img.residuals= residuals;
 img.estimation= vsim.meas;
-
 end
 
 
 function  img = line_optimize(imgk, dx, data1)
 img = imgk;
 perturb= img.parameters.perturb;
-
 % Compute the forward model for eah perturbation step
 mlist= perturb*0;
 for i = 1:length(perturb); 
@@ -154,7 +148,6 @@ img.elem_data= exp(img.logCond);
 vsim = fwd_solve( img );
 dv = vsim.meas-data1;
 dv= img.parameters.normalisation*dv;
-% norm(dv)
 
 if norm(dv) > mlist(1)
     img.parameters.perturb= [0 logspace(-4,-2,5)];
@@ -169,13 +162,13 @@ else
       end
 end
 
-% figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
-% semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
-% xlabel('alpha','fontsize',20,'fontname','Times')
-% ylabel('Normalized residuals','fontsize',20,'fontname','Times')
-% title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
-%     ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
-% set(gca,'fontsize',20,'fontname','Times'); drawnow;
+figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
+semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
+xlabel('alpha','fontsize',20,'fontname','Times')
+ylabel('Normalized residuals','fontsize',20,'fontname','Times')
+title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
+    ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
+set(gca,'fontsize',20,'fontname','Times'); drawnow;
 
 % Record the corresponding parameters
 img.elem_data= exp(img.logCond);
@@ -234,26 +227,24 @@ tol= svj(ist);
 % % [ms,ist1]= min(abs(svj-5))
 % [ist1 ist2];
 
-% figure;
-% loglog(resi,xlambda,'k','linewidth',2); axis tight; hold on
-% % [x,y]= ginput;
-% % [mk,ik]= min(abs(resi-x));
-% % [m,ist]= min(abs(svj-lambda(ik)));
-% % tol= svj(ist)
-% % tol= lambda(ik)
-% % loglog(resi(ik),xlambda(ik),'or','linewidth',2)
+figure;
+loglog(resi,xlambda,'k','linewidth',2); axis tight; hold on
+% [x,y]= ginput;
+% [mk,ik]= min(abs(resi-x));
+% [m,ist]= min(abs(svj-lambda(ik)));
+% tol= svj(ist)
+% tol= lambda(ik)
+loglog(resi(ik),xlambda(ik),'or','linewidth',2)
 % loglog(resi(iu),xlambda(iu),'xr','linewidth',2)
-% 
-% % loglog(resi,10.^cp1,resi,10.^cp2,'linewidth',2)
-% yl= get(gca,'ylim');
-% ylabel('Roughness','fontsize',20,'fontname','Times')
-% xlabel('Residuals','fontsize',20,'fontname','Times')
-% ylim(yl);
-% % title({['Best solution lambda=' num2str(lambda(ik),'%1.2e')]; ...
-% %     ['Number of Singular vector involved = ' num2str(ist)]},'fontsize',20,'fontname','Times')
-% set(gca,'fontsize',20,'fontname','Times'); drawnow;
-% im= 'Figures/LCurveGallery';
-% saveas(gcf, [im '.pdf'], 'pdf');
+
+% loglog(resi,10.^cp1,resi,10.^cp2,'linewidth',2)
+yl= get(gca,'ylim');
+ylabel('Roughness','fontsize',20,'fontname','Times')
+xlabel('Residuals','fontsize',20,'fontname','Times')
+ylim(yl);
+title({['Best solution lambda=' num2str(lambda(ik),'%1.2e')]; ...
+    ['Number of Singular vector involved = ' num2str(ist)]},'fontsize',20,'fontname','Times')
+set(gca,'fontsize',20,'fontname','Times'); drawnow;
 
 % figure;
 % semilogx(resi,kapa,'k','linewidth',2); axis tight; hold on
@@ -309,42 +300,145 @@ end
 
 function unit_test_simdata
 shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
-             'solid mainobj= top and orthobrick(-100,-200,-100;425,10,100) -maxh=20.0;\n'];
-e0 = linspace(0,300,10)';
+             'solid mainobj= top and orthobrick(-100,-200,-100;410,10,100) -maxh=20.0;\n'];
+e0 = linspace(0,310,64)';
 elec_pos = [e0,0*e0,0*e0,1+0*e0,0*e0,0*e0];
-elec_shape=[0.5,.5,.5];
+elec_shape= [0.1,0.1,1];
 elec_obj = 'top';
 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 %fmdl.nodes = fmdl.nodes(:,[1,3,2]);
+fmdl.stimulation = mk_stim_patterns(64,1,[0,3],[0,1],{},0.1);
+fmdl.stimulation = fmdl.stimulation(1:61);
+for i=1:61
+    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
+    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
+    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
+    fmdl.stimulation(1,i).meas_pattern(1,injn+1)= -1;
+    fmdl.stimulation(1,i).meas_pattern(1,injp-1)= 1;
+end
+fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,6],[0,1],{},0.1)];
+fmdl.stimulation = fmdl.stimulation(1:61+58);
+for i=62:61+58
+    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
+    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
+    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
+    fmdl.stimulation(1,i).meas_pattern(1,injn+2)= -1;
+    fmdl.stimulation(1,i).meas_pattern(1,injp-2)= 1;
+end
+fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,9],[0,1],{},0.1)];
+fmdl.stimulation = fmdl.stimulation(1:62+58+55);
+for i=62+58:61+58+55; %29+26+23
+    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
+    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
+    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
+    fmdl.stimulation(1,i).meas_pattern(1,injn+3)= -1;
+    fmdl.stimulation(1,i).meas_pattern(1,injp-3)= 1;
+end
+fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,12],[0,1],{},0.1)];
+fmdl.stimulation = fmdl.stimulation(1:61+58+55+52);%29+26+23+20);
+for i=62+58+55:61+58+55+52; %30+26+23:29+26+23+20
+    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
+    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
+    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
+    if injp < injn; injn2= injp; injp= injn; injn=injn2; end
+    fmdl.stimulation(1,i).meas_pattern(1,injn+4)= -1;
+    fmdl.stimulation(1,i).meas_pattern(1,injp-4)= 1;
+end
+fmdl.stimulation = [fmdl.stimulation  mk_stim_patterns(64,1,[0,24],[0,1],{},0.1)];
+fmdl.stimulation = fmdl.stimulation(1:61+58+55+52+49); % 29+26+23+20+8);
+for i=62+58+55+52:61+58+55+52+49; %30+26+23+20:29+26+23+20+8
+    fmdl.stimulation(1,i).meas_pattern= spalloc(1,64,128);
+    injp= find(fmdl.stimulation(1,i).stim_pattern>0);
+    injn= find(fmdl.stimulation(1,i).stim_pattern<0);
+    if injp < injn; injn2= injp; injp= injn; injn=injn2; end
+    fmdl.stimulation(1,i).meas_pattern(1,injn+8)= -1;
+    fmdl.stimulation(1,i).meas_pattern(1,injp-8)= 1;
+end
+% fmdl.stimulation = stim_meas_list([1,4,2,3;
+%      2,5,3,4
 
-fmdl.stimulation = mk_stim_patterns(10,1,[0,1],[0,1],{},1);
 
-img = mk_image(fmdl,1 + mk_c2f_circ_mapping(fmdl,[100;0;-50;30]));
-dd  = fwd_solve(img);
-show_fem(img);
 
-cmdl = mk_grid_model([], 2.5+[-50,-20,0:10:320,340,370], ...
-                             -[0:2.5:10, 15:5:25,30:10:80,100,120]);
+
+
+cmdl= mk_grid_model([], 2.5+[-30,5,20,30:10:290,300,315,340], ...
+                            -[0:5:10 17 30 50 75 100]);
+% cmdl = mk_grid_model([], 2.5+[-50,-20,0:10:310,330,360], ...
+%                              -[0:2.5:10, 15:5:25,30:10:80,100,120]);
 c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+S= sum(c2f,2); b= find(S<0.9999); a= find(S>=0.9999 & S<1);
+c2f(a,:)= c2f(a,:)./repmat(S(a),1,size(c2f,2));
+c2f(b,:)= 0; c2f(b,end+1)= 1;
+fmdl.coarse2fine= c2f;
 
-fmdl.coarse2fine = c2f;
+
+img = mk_image(fmdl,1);
+fm_pts = interp_mesh(fmdl);
+x_bary= fm_pts(:,1); z_bary= fm_pts(:,2);
+
+z_params= (min(fmdl.nodes(:,2)):max(fmdl.nodes(:,2)))';
+a = 0.36;
+b = 130;
+x_params= a*z_params+b;
+xlim=interp1(z_params,x_params,z_bary);
+img.elem_data(x_bary>xlim)= 0.01;
+
+% img2= mk_image(fmdl,img.elem_data);
+% figure; show_fem(img2);
+
+% img = mk_image(fmdl,0+ mk_c2f_circ_mapping(fmdl,[100;-30;0;50])*100);
+% img.elem_data(img.elem_data==0)= 0.1;
+dd  = fwd_solve(img);
+% show_fem(img);
+
 imdl= eidors_obj('inv_model','test');
 imdl.fwd_model= fmdl;
 imdl.rec_model= cmdl;
-imdl.solve = @inv_solve_CG_logc;
+imdl.solve = @inv_solve_abs_CG_logc;
 imdl.reconst_type = 'absolute';
 imdl.jacobian_bkgnd.value = 1;
 
-imdl.parameters.lambda= logspace(-1.5,1.5,1000);
+img1= mk_image(fmdl,1);
+vh1= fwd_solve(img1);
+normalisation= 1./vh1.meas;
+I= speye(length(normalisation));
+I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
 
-% imdl.parameters.perturb= [0 logspace(-3,-1,9)];
-imdl.parameters.perturb= [0 logspace(-1,1,5)];
+imdl.parameters.lambda= logspace(-5.5,-2,1000);
+imdl.parameters.perturb= [0 logspace(-5,-3,5)];
 
-imdl.parameters.max_iterations= 10;
-%imdl.parameters.normalisation= I;
+imdl.parameters.max_iterations= 3;
+imdl.parameters.normalisation= I;
 imdl.parameters.homogeneization=1;
 imdl.parameters.fixed_background= 1;
-imdl.fwd_model.misc.default = [];
 
 imgr= inv_solve(imdl, dd);
+
+imgCGd= imgr;
+imgCGd.fwd_model.coarse2fine= cmdl.coarse2fine;
+imgCGd.elem_data= log10(imgCGd.res_data(1:end-1));
+imgCGd.calc_colours.clim= 1.5;
+imgCGd.calc_colours.ref_level= 1.5;
+
+elec_posn= zeros(length(fmdl.electrode),3);
+for i=1:length(fmdl.electrode)
+    elec_posn(i,:)= mean(fmdl.nodes(fmdl.electrode(1,i).nodes,:),1);
+end
+   
+figure; show_fem(imgCGd,1);
+hold on; plot(elec_posn(:,1),elec_posn(:,3),'k*');
+axis tight; ylim([-100 0.5])
+xlabel('X (m)','fontsize',20,'fontname','Times')
+ylabel('Z (m)','fontsize',20,'fontname','Times')
+set(gca,'fontsize',20,'fontname','Times');
+
+img = mk_image( imdl );
+img.elem_data= imgr.elem_data;
+vCG= fwd_solve(img); vCG = vCG.meas;
+
+figure; plot(I*(dd.meas-vCG))
+figure; hist(I*(dd.meas-vCG),50)
+
+% show_pseudosection( fmdl, I*dd.meas, '')
+% show_pseudosection( fmdl, I*vCG, '')
 end
