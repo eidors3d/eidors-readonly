@@ -38,6 +38,7 @@ end
 
 if ~ishold
     cla;
+    axis auto;
 end
 
 
