@@ -172,7 +172,16 @@ elec_shape= [0.1,0.1,1];
 elec_obj = 'top';
 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 %fmdl.nodes = fmdl.nodes(:,[1,3,2]);
-fmdl.stimulation= stim_pattern_geophys( 64, 'Wenner', {'spacings', 1:32} );
+% fmdl.stimulation= stim_pattern_geophys( 64, 'Wenner', {'spacings', 1:32} );
+
+
+% spacing= [1 1 1 2 3 4 6 8 8 11 12 14 17];
+% multiples= [1 2 3 2 5/3 6/4 7/6 1 10/8 1 13/12 15/14 1];
+spacing= [1 1 1 2 3 3 4 4 5 6 6 7 8 8 9 10 10 11 12 12 13 14 14 15 16 17];
+multiples= [1 2 3 2 1 5/3 1 2  1 1 7/6 1 1 10/8 1 1 12/10 1 1 13/12 1 1 15/14 1 1 1];
+% fmdl.stimulation= stim_pattern_geophys( 64, 'Schlumberger', {'spacings', spacing,'multiples',multiples} );
+fmdl.stimulation= stim_pattern_geophys( 64, 'DipoleDipole', {'spacings', spacing,'multiples',multiples} );
+
 
 img1= mk_image(fmdl,1);
 vh1= fwd_solve(img1);
