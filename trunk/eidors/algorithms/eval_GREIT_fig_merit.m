@@ -50,7 +50,11 @@ function ampl = calc_amplitude(img)
    ampl = sum(img(:));
 
 function pe   = calc_posn_error(qmi, xmean, ymean, xy)
+   % This definition allows + and - PE, but can also give zero in unexpected places
    pe = sqrt(sum(xy.^2)) - sqrt( xmean^2 + ymean^2);
+   % This definition gives the absolute PE, but can't be negative
+%  pe = sqrt((xy(1,:) - xmean).^2 + ...
+%            (xy(2,:) - ymean).^2);
 
 function res  = calc_resolution(qmi, map)
    res = sqrt( sum(qmi(:)) / sum(map(:)));
