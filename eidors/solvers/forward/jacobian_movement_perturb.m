@@ -20,7 +20,13 @@ delta= 1e-6; % tests indicate this is a good value
              % too high and J is not linear, too low and numerical error
 
 if isfield(fwd_model,'conductivity_jacobian')
-   Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
+   % reroute the calculation through calc_jacobian to correctly process
+   % eidors_default
+   tmp = img;
+   tmp.fwd_model = rmfield(tmp.fwd_model,'conductivity_jacobian');
+   tmp.fwd_model.jacobian = fwd_model.conductivity_jacobian;
+   Jc = calc_jacobian(tmp);
+%    Jc= feval(fwd_model.conductivity_jacobian, fwd_model, img );
 else
    fwd_model.jacobian_perturb.delta = delta;
    fwd_model = mdl_normalize(fwd_model,0); % we normalize on our own
