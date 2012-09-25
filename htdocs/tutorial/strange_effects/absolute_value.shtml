@@ -1,0 +1,69 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<H2>Unexpected Effect: Imaging with absolute value of measurements</H2>
+
+
+Many EIT systems take the amplitude of the measured signal; however
+EIDORS expects to see the in-phase (and quadrature) signals. If these
+are not used, EIDORS will reconstruct incorrectly.
+
+<h3>Stimulation Patterns</h3>
+This effect is not visible for adjacent stimulation/measurement
+(the default from <tt>mk_common_models</tt>. It is necessary to
+specify a pattern such as this.
+<pre>
+<!--#include virtual="absolute_value01.m" -->
+</pre>
+
+<h3>Simulation Image</h3>
+<pre>
+<!--#include virtual="absolute_value02.m" -->
+</pre>
+
+<center>
+<img src="absolute_value02a.png">
+<br><i> Figure:</i>
+Stimulation Image
+</center>
+
+<h3>Reconstruct without/with Absolute Value</h3>
+<pre>
+<!--#include virtual="absolute_value03.m" -->
+</pre>
+
+<center>
+<img src="absolute_value03a.png">
+<img src="absolute_value03b.png">
+<br><i> Figure:</i>
+Reconstructed images:
+  <i>left</i>) Real measurements,
+  <i>right</i>) Absolute measurements,
+</center>
+
+<h3>Strategy #1 for absolute values</h3>
+The easiest way is to re-calculate the
+original value, by getting the sign of
+simulated data. This may have errors if
+voltages are close to zero.
+<pre>
+<!--#include virtual="absolute_value04.m" -->
+</pre>
+
+<center>
+<img src="absolute_value04a.png">
+<br><i> Figure:</i>
+Reconstructed images by re-calculating the sign
+</center>
+
+<h3>Strategy #2 for absolute values</h3>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
