@@ -401,6 +401,8 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    catch mdl2.jacobian   = 'eidors_default';end
    try   mdl2.system_mat = mdl3.system_mat;  
    catch mdl2.system_mat = 'eidors_default'; end; 
+   try   mdl2.normalize_measurements = mdl3.normalize_measurements;  
+   catch mdl2.normalize_measurements = 0; end; 
 
    % update cache
    mdl2 = eidors_obj('fwd_model',mdl2);
