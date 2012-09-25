@@ -58,6 +58,23 @@ Reconstructed images by re-calculating the sign
 </center>
 
 <h3>Strategy #2 for absolute values</h3>
+Define a new Jacobian matrix calculator for the
+system that knows about absolute values
+<pre>
+<!--#include virtual="jacobian_absolute.m" -->
+</pre>
+
+Then use this jacobian to override the <tt>jacobian</tt> field in 
+the <tt>fwd_model.jacobian</tt>.
+<pre>
+<!--#include virtual="absolute_value05.m" -->
+</pre>
+
+<center>
+<img src="absolute_value05a.png">
+<br><i> Figure:</i>
+Reconstructed images by re-calculating the Jacobian matrix
+</center>
 
 </td></tr></table>
 <p>
