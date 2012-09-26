@@ -15,7 +15,7 @@ if~isfield(fwd_model,'approx_type')    || ...
     %Do nothing
 else
     [bound,elem,nodes] = fem_1st_to_higher_order(fwd_model);
-    fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
+    fwd_model.boundary=bound; fwd_model.elems=elem; fwd_model.nodes=nodes;
     img.fwd_model=fwd_model;
 end
 

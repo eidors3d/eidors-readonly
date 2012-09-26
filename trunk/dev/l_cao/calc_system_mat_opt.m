@@ -11,7 +11,7 @@ nodedim=size(nodes,2); nnodes=size(nodes,1);
 
 nelems=size(elem,2);
 
-Mus = 10;
+Mus = 14;
 D = 1.0/(3.0*Mus);
 Mua = check_elem_data(fwd_model, img); % 0.15
 optical_n = 1.4;
@@ -52,7 +52,7 @@ end
 
 [weight2,xcoord2,ycoord2,zcoord2]=gauss_points(dim,order2);
 for kk=1:size(weight2,2)
-    phi(:,kk) = element_shape_function(eletype,xcoord2(kk),ycoord2(kk),zcoord2(kk))';
+    phi(:,kk) = element_shape_function(eletype,xcoord2(kk),ycoord2(kk),zcoord2(kk));
 end
 %Initialise global stiffness matrix
 Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
@@ -77,18 +77,17 @@ for i=1:nelems
     
     %Find the magnitude of the Jacobian of the mapping
     magjacelem=abs(det(jacobianelem));
-           
     %Initialise and find elemental stiffness matrices 
     Kmat=0;Cmat=0;
     for kk=1:size(weight1,2)
-        Kmat = Kmat + weight1(kk)* ...
+		Kmat = Kmat + weight1(kk)* ...
             (jacobianelem\dphi(:,:,kk))'* ...
             (jacobianelem\dphi(:,:,kk))*magjacelem;
     end
     for kk=1:size(weight2,2)
         Cmat = Cmat + weight2(kk)* ...
-            (phi(:,kk))'* ...
-            (phi(:,kk)) * magjacelem;
+            (phi(:,kk))* ...
+            (phi(:,kk))' * magjacelem;
     end
     %This is element stiffness matrix (and multiply by its conductivity)
     stiff=Kmat*D+Cmat*Mua(i); 
@@ -140,8 +139,8 @@ for i=1:nbounds
     Bmat=0;
     for kk=1:size(weight,2)
         Bmat = Bmat + weight(kk)* ...
-            (bphi(:,kk))'* ...
-            (bphi(:,kk))*magjacbound;
+            (bphi(:,kk))* ...
+            (bphi(:,kk))'*magjacbound;
     end
     
     Agal(boundstruc(i,:),boundstruc(i,:)) = Agal(boundstruc(i,:),boundstruc(i,:)) + Bmat/(2*A);
