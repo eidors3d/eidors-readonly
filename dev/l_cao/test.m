@@ -20,18 +20,19 @@ fmdl.meas_select(1:17:256) = false;
 
 %Default EIDORS solver
 %Make image of unit conductivity
-img0 = mk_image(fmdl,0.15);
-img0.fwd_solve.get_all_meas = 1; %Internal voltage
-v0=fwd_solve(img0);
-v0e=v0.meas; v0all=v0.volt; 
+% img0 = mk_image(fmdl,0.15);
+% img0.fwd_solve.get_all_meas = 1; %Internal voltage
+% v0=fwd_solve(img0);
+% v0e=v0.meas; v0all=v0.volt; 
 
 
 %High-order EIDORS solver
 %Change default eidors solvers
 fmdl.solve = @fwd_solve_higher_order;
-% fmdl.system_mat = @system_mat_higher_order; 
+%fmdl.system_mat = @system_mat_higher_order; 
 fmdl.system_mat = @calc_system_mat_opt;
 fmdl.jacobian = @jacobian_adjoint_opt;
+%fmdl.jacobian = @jacobian_adjoint_higher_order;
 imdl.fwd_model = fmdl;
 
 %Add element type
@@ -47,9 +48,9 @@ v1e=v1.meas; v1all=v1.volt;
 clf;subplot(211); plot([v0e,v1e]);
 legend('0','1'); xlim([1,256]);
 
-v0 = fwd_solve(img1);
-img1.elem_data(361) = 0.5;
-v1 = fwd_solve(img1);
-rimg = inv_solve(imdl,v1,v0);
-clf
-show_fem(rimg,[0 0 1]);
+% v0 = fwd_solve(img1);
+% img1.elem_data(531) = 0.5;
+% v1 = fwd_solve(img1);
+% rimg = inv_solve(imdl,v1,v0);
+% clf
+% show_fem(rimg,[0 0 1]);
