@@ -87,6 +87,8 @@ function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
    %map = x.^2+y.^2<1.1;
    qmi = qmi.*map; img = img.*map;
 
+%  qmi = qmi .* img;  %USE THE IMAGE AMPLITUDE FOR THE CALCULATION
+
    ss_qmi = sum(qmi(:));
    xmean =  sum(sum( (qmi.*x) ))/ss_qmi; % centre of gravity
    ymean =  sum(sum( (qmi.*y) ))/ss_qmi;
