@@ -316,4 +316,3 @@ show_pseudosection( fmdl, I*dd.meas, '')
 show_pseudosection( fmdl, I*vCG, '')
 show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100)
 
-end
