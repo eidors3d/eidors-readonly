@@ -63,6 +63,7 @@ mdl.electrode =     electrodes;
 mdl.solve=          'eidors_default';
 mdl.jacobian=       'eidors_default';
 mdl.system_mat=     'eidors_default';
+mdl.normalize_measurements = 0;
 
 
 function vtx_perturb= perturb_vtx( vtx );
