@@ -47,7 +47,7 @@ function xy = fit_from_fourier(C,linear_frac,start);
    N = length(C);
    n2 = ceil(N/2);
 
-   pad = zeros(1000,1);
+   pad = zeros(10000,1);
    if rem(N,2)==0 % even
       Zos = [C(1:n2); C(n2+1)/2; pad; C(n2+1)/2; C(n2+2:end)];
    else
@@ -66,6 +66,7 @@ function xy = fit_from_fourier(C,linear_frac,start);
    end
    
    % Step 2:
+   zos(end+1) = zos(1); % make sure the loop is closed
    dpath= abs(diff(zos));
    pathlen = [0;cumsum(dpath)];
 
