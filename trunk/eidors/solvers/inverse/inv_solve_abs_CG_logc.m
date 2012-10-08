@@ -94,10 +94,12 @@ for k= 1:iters
     if k==1
         if isfield(img.parameters,'tol')
             tol= img.parameters.tol;
-        else
+%         else
             tol= svdAnalysisLcurvecrit(img.parameters.normalisation*data,img,J);
         end
     end
+    
+    tol= img.parameters.tol;
     % Estimate residuals between data and estimation
     vsim=  fwd_solve(img);
     res = data-vsim.meas;
@@ -105,6 +107,7 @@ for k= 1:iters
     
     % Compute the step length for the Conjugate Gradient increment
     delta_params= pinv(J,tol)*(img.parameters.normalisation*(res));
+%     figure; plot(delta_params)
 
     if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
         delta_params(nc)= 0;
@@ -182,6 +185,8 @@ function tol= svdAnalysisLcurvecrit(data,img,J)
 [U,S,V]= svd(J); svj= diag(S);
 svj = svj(svj>eps);
 
+figure; plot(svj)
+
 % Estimate the model parameters from a forward model linear approximation
 beta= U'*data;     %  adjust data
 beta= beta(1:length(svj));
@@ -221,7 +226,9 @@ cp2= pf2(1)*log10(resi)+pf2(2);
 [m,ist]= min(abs(svj-lambda(ik)));
 tol= svj(ist);
 
-% [mu,iu]= min(abs(img.parameters.tol-lambda));
+if isfield(img.parameters,'tol')
+[mu,iu]= min(abs(img.parameters.tol-lambda));
+end
 % [ms,ist1]= min(abs(svj-1));
 % % [ms,ist1]= min(abs(svj-1.5))
 % [ms,ist2]= min(abs(svj-2));
@@ -236,7 +243,9 @@ loglog(resi,xlambda,'k','linewidth',2); axis tight; hold on
 % tol= svj(ist)
 % tol= lambda(ik)
 loglog(resi(ik),xlambda(ik),'or','linewidth',2)
-% loglog(resi(iu),xlambda(iu),'xr','linewidth',2)
+if isfield(img.parameters,'tol')
+loglog(resi(iu),xlambda(iu),'xr','linewidth',2)
+end
 
 % loglog(resi,10.^cp1,resi,10.^cp2,'linewidth',2)
 yl= get(gca,'ylim');
