@@ -66,7 +66,7 @@ residuals= zeros(size(data1,1),iters+1);
 
 for k = 1:iters  
 
-   vsim=  fwd_solve(img);
+    vsim=  fwd_solve(img);
     res = img.parameters.normalisation*(data1-vsim.meas);
     residuals(:,k)=res;
    
@@ -89,14 +89,16 @@ for k = 1:iters
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
         RDx = hp2RtR*(img0.logCond(1:end-1) - img.logCond(1:end-1));
     else
-  RDx = hp2RtR*(img0.logCond - img.logCond);
+        RDx = hp2RtR*(img0.logCond - img.logCond);
     end
-  dx = (J'*W*J + hp2RtR)\(J'*res + RDx);
-   if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
+%     figure; plot(RDx);
+    dx = (J'*W*J + hp2RtR)\(J'*res + RDx);
+    if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
         dx(nc)= 0;
     end
-
-  img = line_optimize(img, dx, data1);
+    
+    img= line_optimize(img, dx, data1);
+%     img0= img;
 end
 
 

@@ -99,7 +99,6 @@ for k= 1:iters
         end
     end
     
-    tol= img.parameters.tol;
     % Estimate residuals between data and estimation
     vsim=  fwd_solve(img);
     res = data-vsim.meas;

@@ -15,6 +15,13 @@ function show_pseudosection( fwd_model, data, orientation)
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end 
 
+if size(fwd_model.electrode,2) <= 16
+    fwd_model.misc.sizepoint= 500;
+elseif size(fwd_model.electrode,2) <= 32
+    fwd_model.misc.sizepoint= 200;
+else
+    fwd_model.misc.sizepoint= 50;
+end
 
 switch(upper(orientation))
     case 'HORIZONTALDOWNWARD';  plotPseudoSectionProfileDown(fwd_model,data)
@@ -31,7 +38,7 @@ function plotPseudoSectionProfileDown(fmdl,data)
    fs= 20;
    
    [elec_posn,elecNumber]= electrodesPosition(fmdl);
-  
+   
    xps= (elec_posn(elecNumber(:,1),1)+elec_posn(elecNumber(:,2),1))/2;
    a= abs(elecNumber(:,1)-elecNumber(:,2));
    de= elec_posn(1,1)-elec_posn(2,1);
@@ -55,7 +62,7 @@ function plotPseudoSectionProfileDown(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   figure;scatter(xu,zu,100,(du),'filled');  colorbar
+   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
    xlabel('Distance (m)','fontsize',fs,'fontname','Times');
    ylabel('Depth (m)','fontsize',fs,'fontname','Times')
     axis equal; axis tight;
@@ -69,7 +76,7 @@ function plotPseudoSectionProfileVert(fmdl,data)
   
    zps= (elec_posn(elecNumber(:,1),3)+elec_posn(elecNumber(:,2),3))/2;
    a= abs(elecNumber(:,1)-elecNumber(:,2));
-   de= sqrt((elec_posn(1,1)-elec_posn(2,1))^2+(elec_posn(1,2)-elec_posn(2,2))^2);
+   de= abs(elec_posn(1,3)-elec_posn(2,3));
    
    % Identiy reciprocal data(elecNumber(:,1)-elecNumber(:,2)) > abs(elecNumber(:,3)-elecNumber(:,4))
    R= find(abs(elecNumber(:,1)-elecNumber(:,2)) < abs(elecNumber(:,3)-elecNumber(:,4)));
@@ -78,7 +85,7 @@ function plotPseudoSectionProfileVert(fmdl,data)
        zps(R)= (elec_posn(elecNumber(R,3),4)+elec_posn(elecNumber(R,4),4))/2;
        a(R)= abs(elecNumber(R,3)-elecNumber(R,4));
    end
-   xps= -abs(a*de/2);
+   xps= abs(a*de/2);
       
    P= zps+1i*xps;
    [Pu,iu,ju]= unique(P);
@@ -90,14 +97,14 @@ function plotPseudoSectionProfileVert(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   figure;scatter(xu,zu,100,(du),'filled');  colorbar
+   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
    xlabel('Pseudo distance (m)','fontsize',fs,'fontname','Times');
    if zps(1)<0
        ylabel('Depth (m)','fontsize',fs,'fontname','Times')
    else
        ylabel('Height (m)','fontsize',fs,'fontname','Times')
    end
-    axis equal; axis tight;
+   axis equal; axis tight;
    set(gca,'fontsize',fs,'fontname','Times')
 end
 
@@ -120,7 +127,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-figure;scatter(xu,zu,100,(du),'filled');  colorbar
+figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
@@ -145,7 +152,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-figure;scatter(xu,zu,100,(du),'filled');  colorbar
+figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
