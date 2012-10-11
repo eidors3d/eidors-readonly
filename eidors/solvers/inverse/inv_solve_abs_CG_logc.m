@@ -94,7 +94,7 @@ for k= 1:iters
     if k==1
         if isfield(img.parameters,'tol')
             tol= img.parameters.tol;
-%         else
+        else
             tol= svdAnalysisLcurvecrit(img.parameters.normalisation*data,img,J);
         end
     end
