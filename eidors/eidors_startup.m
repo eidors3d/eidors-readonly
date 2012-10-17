@@ -70,6 +70,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     addpath([HOMEDIR, '/algorithms']);
     addpath([HOMEDIR, '/interface']);
     addpath([HOMEDIR, '/models']);
+    addpath([HOMEDIR, '/meshing']);
     addpath([HOMEDIR, '/meshing/netgen']);
     addpath([HOMEDIR, '/meshing/distmesh']);
     addpath([HOMEDIR, '/meshing/gmsh']);
@@ -85,7 +86,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
 
     %addpath([HOMEDIR, '/tests']);
 
-    DEVDIR = [HOMEDIR(1:find(HOMEDIR == '/',1,'last')) '/dev'];
+    DEVDIR = [HOMEDIR(1:find(HOMEDIR == filesep,1,'last')-1) '/dev'];
     for i = 1:length(path_array)
         p = genpath([DEVDIR, '/', path_array{i}]);
         addpath(p);
