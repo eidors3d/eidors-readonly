@@ -32,7 +32,6 @@ function nimg = mdl_slice_mesher(fmdl,level)
 %  1. Also provide patch output
 %  2. More intuitive cut plane specification
 %  3. Support node_data
-%  4. Inlude electrodes in the output model
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 
@@ -64,6 +63,14 @@ edge2elem = mdl.edge2elem;
 tmp = mdl;
 tmp.nodes = level_model( tmp, level )';
 [nodeval nodedist] = nodes_above_or_below(tmp,0);
+% find which edges are on electrodes
+e_nodes = zeros(length(mdl.nodes),1);
+try
+   for i = 1:length(mdl.electrode)
+      e_nodes(mdl.electrode(i).nodes) = i;
+   end
+end
+e_edges = (sum(e_nodes(edges),2)/ 2)  .* (e_nodes(edges(:,1)) == e_nodes(edges(:,2)));
 %% crossed edges
 % exclude edges on plane (dealt with later)
 idx = (sum(nodeval(edges),2) == 0) & (nodeval(edges(:,1)) ~= 0) ; 
@@ -75,10 +82,13 @@ nodes = mdl.nodes(edges(idx,1),:) + ...
 % nn indexes the just-created nodes, els indexes elements
 [nn els] = find(edge2elem(idx,:));
 els_edge = els;
+
+electrode_node = e_edges(idx);
 %% crossed nodes
 idx = nodeval == 0;
 ln = length(nodes); %store the size
 nodes = [nodes; mdl.nodes(idx,:)]; % add the crossed nodes to the new model
+electrode_node = [electrode_node; e_nodes(idx)];
 % nnn indexes mdl.nodes(idx), eee indexes mdl.elems
 [nnn eee] = find(mdl.node2elem(idx,:));
 nnn = nnn + ln; %make a proper index into nodes
@@ -147,6 +157,13 @@ n(2:end) = diff(n);
 nimg.fwd_model = nmdl;
 % use sparse to calculate the avarage value
 nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
+
+% add electrodes
+try
+   for i = 1:length(mdl.electrode)
+      nimg.fwd_model.electrode(i).nodes = find(electrode_node == i);
+   end
+end
 
 % This bit could be useful to look at the shape of the actual elements
 % But the quad patches would have to be re-ordered
@@ -245,7 +262,7 @@ function do_unit_test
     slc = mdl_slice_mesher(img, [inf inf 2]);
     slc.calc_colours.transparency_thresh = -1;
     slc.fwd_model.boundary = slc.fwd_model.elems;
-    show_fem(slc);
+    show_fem(slc,[0 1 0]);
     slc = mdl_slice_mesher(img, [inf inf 2.5]);
     slc.calc_colours.transparency_thresh = -1;
     slc.fwd_model.boundary = slc.fwd_model.elems;
