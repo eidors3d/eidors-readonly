@@ -150,8 +150,11 @@ function hh= show_3d(img,mdl,opts)
            calc_colours(img, [], opts.do_colourbar);
        end
    end
-
-   show_electrodes_3d(mdl, opts.number_electrodes);
+   if size(mdl.elems,2) == 3
+      show_electrodes_surf(mdl, opts.number_electrodes);
+   else
+      show_electrodes_3d(mdl, opts.number_electrodes);
+   end
 
 function show_electrodes_2d(mdl, number_electrodes)
     if ~isfield(mdl,'electrode'); return; end
@@ -188,6 +191,48 @@ for e=1:length(mdl.electrode)
        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
        hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y, num2str(e));
+       set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
+    end
+end
+
+function show_electrodes_surf(mdl, number_electrodes)
+    if ~isfield(mdl,'electrode'); return; end
+
+    ee= get_boundary( mdl );
+    ctr_x= mean(mdl.nodes(:,1));
+    ctr_y= mean(mdl.nodes(:,2));
+    ctr_z= mean(mdl.nodes(:,3));
+% scale away from model
+
+for e=1:length(mdl.electrode)
+    elec_nodes= mdl.electrode(e).nodes;
+
+    S= 1.00;
+    vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+    vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+    vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
+    % sort nodes around the model (to avoid crossed lines)
+    % TODO: figure out what to do in different directions
+    [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+    ecolour = electr_colour( e );
+    if(length(elec_nodes) == 1)
+       % Point Electrode Models: put a circle around the node
+       line(vx(idx)+ctr_x,vy(idx)+ctr_y, vz(idx)+ctr_z,  ...
+            'LineWidth', 2, 'LineStyle','-','Color', ecolour, ...
+            'Marker','o','MarkerSize', 6,'MarkerEdgeColor',ecolour);
+    else
+       % Complete/Shunt Electrode Models (multiple nodes per electrode)
+       %  put a line along the edges that form the electrode
+       line(vx(idx)+ctr_x,vy(idx)+ctr_y, vz(idx)+ctr_z, ...
+            'LineWidth', 3, 'LineStyle','-','Color', ecolour, ...
+            'Marker','none','MarkerSize', 6,'MarkerEdgeColor',ecolour);
+    end
+    if number_electrodes
+       S= 1.05;
+       vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+       vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+       vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
+       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y,mean(vz)+ctr_z,num2str(e));
        set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
     end
 end

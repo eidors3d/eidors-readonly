@@ -1,3 +1,4 @@
+2012-10-17: Add support for electrodes in mdl_slice_mesher
 2012-10-17: Refactor mk_GREIT_model to use mdl_slice mesher for better rmdl
 2012-10-17: Add order_loop under meshing
 2012-08-02: Fixed a bug mk_GREIT_model for opt.square_pixels = 1
