@@ -32,8 +32,18 @@ function nimg = mdl_slice_mesher(fmdl,level)
 %  1. Also provide patch output
 %  2. More intuitive cut plane specification
 %  3. Support node_data
+%  4. Inlude electrodes in the output model
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
+
+cache_obj= { fmdl, level };
+
+out= eidors_obj('get-cache', cache_obj, 'mdl_slice_mesher');
+if ~isempty(out)
+   eidors_msg('@@@: using cached value', 3);
+   nimg = out{1};return
+end
+
 switch fmdl.type
     case 'image'
         img  = fmdl;
@@ -145,6 +155,11 @@ nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
 %     idx = els == uels(i);
 %     patch(nodes(nn(idx),1),nodes(nn(idx),2),nodes(nn(idx),3),1)
 % end
+
+
+eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
+eidors_msg('mk_GREIT_model: setting cached value', 3);
+
 
 
 function [nodeval dist] = nodes_above_or_below(mdl,level)
