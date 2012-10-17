@@ -51,6 +51,8 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   opt.noise_figure = 0.5; 
 %   imdl = mk_GREIT_model(fmdl,0.25,5,opt);
 
+% TODO: Fix pixel size finding for non-extruded models.
+
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
@@ -75,10 +77,12 @@ eidors_msg('mk_GREIT_model: setting cached value', 3);
 function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
 
 Nsim = opt.Nsim;
-[vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
+[vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
 
-mingrid = opt.minnode;
-maxgrid = opt.maxnode;
+% TODO: This should take into account the electrode plane only, not the
+% whole model size
+mingrid = opt.minele;
+maxgrid = opt.maxele;
 if opt.square_pixels ==1
     mdl_sz = opt.maxnode - opt.minnode; 
     mdl_AR = mdl_sz(1)/mdl_sz(2);
@@ -113,12 +117,12 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 %Calculate rec_model (if absent) and find the inside array
 if ~isfield(imdl,'rec_model');
- if 1 % old way
+ if 0 % old way
     fmdl.boundary = find_boundary(fmdl); %just to make sure...
     bound = calc_bound(fmdl);
     inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
     ff = find(~inside);
- else % better way
+ elseif 0 % better way
     z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
     min_e = min(z_elec); max_e = max(z_elec);
     elec_lev = [inf,inf,mean([min_e,max_e])];
@@ -128,6 +132,10 @@ if ~isfield(imdl,'rec_model');
     inside = slice' ~= 0;
     ff= find(inside==0);
     inside = inside(:);
+ else % a yet better way
+    inside = inpolygon(x(:),y(:),...
+       opt.contour_boundary(:,1),opt.contour_boundary(:,2) );
+    ff = find(~inside);
  end
  
  rmdl.elems([2*ff, 2*ff-1],:)= [];
@@ -136,14 +144,16 @@ if ~isfield(imdl,'rec_model');
  
  % ADD electrode locations
 
- nodes = rmdl.nodes;
+ nodes = rmdl.nodes(unique(rmdl.elems(:)),:);
+ v = 1:length(rmdl.nodes);
+ map = v(unique(rmdl.elems(:)));
  for i = flipud(1:numel(fmdl.electrode))
     x_elec = mean(fmdl.nodes( [fmdl.electrode(i).nodes], 1));
     y_elec = mean(fmdl.nodes( [fmdl.electrode(i).nodes], 2));
     dist = (nodes(:,1)-x_elec).^2 + (nodes(:,2)-y_elec).^2;
     [jnk,e_node]= min(dist);
     elec(i).z_contact = 0.001;
-    elec(i).nodes     = e_node;
+    elec(i).nodes     = map(e_node);
  end
  rmdl.electrode = elec;
  
@@ -250,23 +260,12 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
+function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
    ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
    maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
 
-   % Calculate the position of the electrodes
-   Nelecs = length(imgs.fwd_model.electrode);
-   for i=1:Nelecs
-       enodesi =     imgs.fwd_model.electrode(i).nodes;
-       elec_loc(i,:) = mean( imgs.fwd_model.nodes( enodesi,:),1 );
-   end
-   
-   if opt.target_plane == 1i
-       opt.target_plane = mean(elec_loc(:,3));
-   end
-   
    switch opt.distr 
        case 0 % original
            r = linspace(0,0.9, Nsim);
@@ -276,9 +275,7 @@ function [vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
                0.05/mean([maxx,maxy])*ones(1,Nsim)];
        
        case 1 %centre-heavy
-           % Now, use elec_loc to figure out the shape. We can assume the obj is
-           % extruded in z
-           F = fourier_fit(elec_loc(:,1:2));
+           F = fourier_fit(opt.contour_boundary);
            v = linspace(0,1,Nsim*100+1); v(end)=[];
            pts = fourier_fit(F,v);
            idx_p = floor(rand(Nsim,1)*Nsim*100);
@@ -288,7 +285,7 @@ function [vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 2 %uniform
-           F = fourier_fit(elec_loc(:,1:2));
+           F = fourier_fit(opt.contour_boundary);
            v = linspace(0,1,101); v(end)=[];
            pts = fourier_fit(F,v);
            % avoid edges 
@@ -305,7 +302,7 @@ function [vi,vh,xy,elec_loc,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 3 % uniform, non-random
-           F = fourier_fit(elec_loc(:,1:2));
+           F = fourier_fit(opt.elec_loc(:,1:2));
            v = linspace(0,1,101); v(end)=[];
            pts = fourier_fit(F,v);
            lim = max(maxx, maxy);
@@ -392,6 +389,10 @@ function opt = parse_options(opt,fmdl,imdl);
     maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
     opt.maxnode = maxnode;     opt.minnode = minnode; 
     
+    elnodes = cell2mat({fmdl.electrode.nodes})';
+    opt.minele = min(fmdl.nodes(elnodes,:));
+    opt.maxele = max(fmdl.nodes(elnodes,:));
+    
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'square_pixels')
         opt.square_pixels = 0;
@@ -423,8 +424,16 @@ function opt = parse_options(opt,fmdl,imdl);
             opt.random_size = false;
     end
     
+    % Calculate the position of the electrodes
+    Nelecs = length(fmdl.electrode);
+    for i=1:Nelecs
+       enodesi = fmdl.electrode(i).nodes;
+       elec_loc(i,:) = mean( fmdl.nodes( enodesi,:),1 );
+    end
+    opt.elec_loc = elec_loc;
+    
     if ~isfield(opt, 'target_plane')
-        opt.target_plane = 1i;
+          opt.target_plane = mean(elec_loc(:,3));
     else
         t = opt.target_plane;
         if t<minnode(3) || t>maxnode(3)
@@ -452,6 +461,12 @@ function opt = parse_options(opt,fmdl,imdl);
         eidors_msg('mk_GREIT_model: fmdl.normalize_measurements not specified, assuming 0');
     end
     opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
+    
+    % find a boundary at target level (needed in many places)
+    slc = mdl_slice_mesher(fmdl,[inf inf opt.target_plane]);
+    bnd = find_boundary(slc.fwd_model);
+    opt.contour_boundary = order_loop(slc.fwd_model.nodes(unique(bnd),:));
+    
 
 function do_unit_test
 % Create a 3D elliptical cylinder with 16 circular electrodes 
