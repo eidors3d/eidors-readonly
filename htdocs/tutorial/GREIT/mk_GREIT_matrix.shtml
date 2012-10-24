@@ -2,7 +2,7 @@
 <!--#set var="show_tut" value="1" -->
 <!--#include virtual="../../nav-sidebar.shtml" -->
 
-<h2>GREIT Reconstruction Examples</h2>
+<h2>Calculate GREIT Reconstruction Matrix</h2>
 
 GREIT calculates a linear reconstruction matrix: <b>R</b><sub>GR</sub>
 which is used to calculate the reconstructed image <b>x</b> from
