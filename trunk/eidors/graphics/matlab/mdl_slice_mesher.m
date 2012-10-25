@@ -29,19 +29,24 @@ function nimg = mdl_slice_mesher(fmdl,level)
 % $Id$
 
 % TODO: 
-%  1. Also provide patch output
-%  2. More intuitive cut plane specification
-%  3. Support node_data
+%  1. Provide patch structure output
+%  2. Fix colours on path plot
+%  3. More intuitive cut plane specification
+%  4. Support node_data
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 
 cache_obj= { fmdl, level };
-
+nimg = [];
 out= eidors_obj('get-cache', cache_obj, 'mdl_slice_mesher');
 if ~isempty(out)
    eidors_msg('@@@: using cached value', 3);
-   nimg = out{1};return
+   nimg = out{1};
+   if nargout > 0
+       return
+   end
 end
+
 
 switch fmdl.type
     case 'image'
@@ -165,18 +170,49 @@ try
    end
 end
 
-% This bit could be useful to look at the shape of the actual elements
-% But the quad patches would have to be re-ordered
-% show_fem(fmdl);
-% for i = 1:length(uels)
-%     idx = els == uels(i);
-%     patch(nodes(nn(idx),1),nodes(nn(idx),2),nodes(nn(idx),3),1)
-% end
-
-
 eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
 eidors_msg('mk_GREIT_model: setting cached value', 3);
 
+if nargout > 0
+    return
+end
+% show_fem(nimg);
+for i = 1:length(uels)
+    idx = els == uels(i);
+    id = find(idx);
+    nnn = nodes(nn(idx),:);
+    if nnz(idx)==4
+        if intersection_test(nnn(1,:),nnn(4,:),nnn(2,:),nnn(3,:))
+            id(3:4) = id([4 3]);
+        elseif intersection_test(nnn(1,:),nnn(2,:),nnn(3,:),nnn(4,:))
+            id(2:3) = id([3 2]);
+        end
+    end
+    patch(nodes(nn(id),1),nodes(nn(id),2),nodes(nn(id),3),img.elem_data(uels(i)));
+end
+
+
+
+function res = intersection_test(A,B,C,D)
+% checks for intersection of segments AB and CD
+% if AB and CD intersect in 3D, then their projections on a 2D plane also
+% intersect (or are colliniar).
+
+% assume they don't
+res = false;
+
+% check for interesection on the 3 cartesian planes
+idx = 1:3;
+for i = 0%:2
+    id = circshift(idx',i)';
+    id = id(1:2);
+    res = res || ( sign(signed_area(A(id), B(id), C(id))) ~= ...
+                   sign(signed_area(A(id), B(id), D(id)))        );
+end
+
+function a = signed_area(A,B,C)
+    a = ( B(1) - A(1) ) * ( C(2) - A(2) ) - ...
+        ( C(1) - A(1) ) * ( B(2) - A(2) );
 
 
 function [nodeval dist] = nodes_above_or_below(mdl,level)
@@ -246,9 +282,9 @@ function do_unit_test
     load datacom.mat A B;
     img.elem_data(A) = 1.2;
     img.elem_data(B) = 0.8;
-    subplot(121)
+    subplot(131)
     show_fem(img);
-    subplot(122)
+    subplot(132)
     cla
 %     show_fem(img.fwd_model);
     hold on
@@ -274,3 +310,11 @@ function do_unit_test
     zlim([0 3]);
     view(3)
     hold off
+    subplot(133)
+    hold on
+    mdl_slice_mesher(img, [0 inf inf]);
+    mdl_slice_mesher(img, [inf inf 2]);
+    mdl_slice_mesher(img, [inf inf 2.5]);
+    mdl_slice_mesher(img, [inf inf 1.3]);
+    axis equal
+    view(3)
