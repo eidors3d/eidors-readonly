@@ -188,6 +188,7 @@ if ~isempty(opt.noise_figure)
     R = max(max(fmdl.nodes(:,1:2)) - min(fmdl.nodes(:,1:2)));
     
     xyzr = mean(fmdl.nodes);
+    xyzr(1:2) = 0;
     xyzr(3) = opt.target_plane;
     xyzr(4) = opt.target_size*0.5*R;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
@@ -195,7 +196,7 @@ if ~isempty(opt.noise_figure)
     eidors_msg('mk_GREIT_model: This will take a while...',1);
     f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
-    [weight, NF] = fminsearch(f, weight);
+    [weight, NF] = fminsearch(f, weight,fms_opts);
     eidors_msg(['mk_GREIT_model: Optimal solution gives NF=' ... 
         num2str(NF+target) ' with weight=' num2str(weight)],1);
 end
@@ -411,7 +412,7 @@ function opt = parse_options(opt,fmdl,imdl);
       error('mk_GREIT_model: doesn''t currently support extra_noise');
     end
     if ~isfield(opt, 'target_size')
-        opt.target_size = 0.02;
+        opt.target_size = 0.05;
     end
     if sum(size(opt.target_size)) > 2
         if opt.target_size(1) == opt.target_size(2);
