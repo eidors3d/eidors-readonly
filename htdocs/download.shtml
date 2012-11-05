@@ -43,6 +43,11 @@ Read-only, worldwide access is available via SVN using
 <pre>
 svn co svn://svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
 </pre>
+Note that in a GUI client, such as 
+<a href="http://tortoisesvn.net/downloads.html">Tortoise SVN</a>,
+you will likely only need to input the address part from the above command.
+
+
 
 <p><li><b>
 Read/Write access to Developer Version 
