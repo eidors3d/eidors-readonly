@@ -1,3 +1,10 @@
+Plans for Manchester code-a-thon:
+
+1. Geophysics
+2. GREIT: target distributions and other defaults, electrode errors
+3. Bill's c2f mapper
+
+----------------
 Add option to mk_coarse_fine_mapping to control the direction
 in which we do the mapping (default = z)
 -----------------
