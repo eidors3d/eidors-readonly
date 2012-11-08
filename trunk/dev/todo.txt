@@ -5,6 +5,7 @@ Plans for Manchester code-a-thon:
 3. Bill's c2f mapper
 4. Electrode interface for netgen 2d models
 5. place_elec_on_surf
+6. move normalize_measurements from fwd_model to inv_model gracefully. Take care of calc_difference_data
 
 ----------------
 Add option to mk_coarse_fine_mapping to control the direction
@@ -124,15 +125,6 @@ Iteratively refine
 ========== 30: PRI=3 ACT=?
   - talk to Bill about estimates of covariance inverses 
   - look at calc_Ji ... fcn
-========== 31: PRI=3 ACT=?
-merge eidors_model_params and fix_model
-    => DONE. Deprecated eidors_model_params
- -  rename fix_model
-
- -  merge fwd_model_params
-    => Decided against
- - put neighborhood matrix - from M.Crabb
-    => DONE. edge2elem, elem2edge, node2elem
 ========== 32: PRI=3 ACT=?
  - add_noise - work for matrix noise
              - then update temporal_solver01
@@ -194,6 +186,16 @@ etc.
  => WON'T DO FOR NOW. DEFER FOR LATER
 
 ###################### DONE ####################
+
+========== 31: PRI=3 ACT=?
+merge eidors_model_params and fix_model
+    => DONE. Deprecated eidors_model_params
+ -  rename fix_model
+
+ -  merge fwd_model_params
+    => Decided against
+ - put neighborhood matrix - from M.Crabb
+    => DONE. edge2elem, elem2edge, node2elem
 
 ========== 00: PRI=1 ACT=AA
  - fix for deprecate
