@@ -77,7 +77,6 @@ function rimg = calc_this_slice( img, levels, np)
        for lev_no = fliplr(1:num_levs)
            % start at max so memory is allocated once
           level= levels( lev_no, 1:3 );
-
           rimg(:,:,:,lev_no) = calc_image_elems( elem_data, level, fwd_model, np);
        end
     elseif isfield(img,'node_data')
@@ -95,17 +94,17 @@ function rimg = calc_this_slice( img, levels, np)
        error('img does not have a data field');
     end
 
-    % FILTER IMAGE
-    try   filt = img.calc_slices.filter; 
-    catch filt = 1; end
-    try   scal = img.calc_slices.scale; 
-    catch scal = 1; end
-
-    
-    if filt*scal ~= 1
-       filt = scal * ( filt/sum(filt(:)) );
-       rimg = filter_image(rimg, filt);
-    end
+%     % FILTER IMAGE
+%     try   filt = img.calc_slices.filter; 
+%     catch filt = 1; end
+%     try   scal = img.calc_slices.scale; 
+%     catch scal = 1; end
+% 
+%     
+%     if filt*scal ~= 1
+%        filt = scal * ( filt/sum(filt(:)) );
+%        rimg = filter_image(rimg, filt);
+%     end
 
 % Calculate an image by mapping it onto the node_ptr matrix
 % This makes a blocky image to nearest node -> no longer used

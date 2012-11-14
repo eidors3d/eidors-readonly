@@ -90,11 +90,11 @@ for k= 1:iters
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
         J= J(:,1:nc-1);
     end
-
-    if k==1
-        if isfield(img.parameters,'tol')
+     
+    if k==1 && size(J,1)<size(J,2)
+        if isfield(img.parameters,'tol') 
             tol= img.parameters.tol;
-        else
+        elseif ~isfield(img.parameters,'tol') 
             tol= svdAnalysisLcurvecrit(img.parameters.normalisation*data,img,J);
         end
     end
@@ -105,7 +105,11 @@ for k= 1:iters
     residuals(:,k)= img.parameters.normalisation*res;
     
     % Compute the step length for the Conjugate Gradient increment
-    delta_params= pinv(J,tol)*(img.parameters.normalisation*(res));
+    if size(J,1)<size(J,2)
+        delta_params= pinv(J,tol)*(img.parameters.normalisation*(res));
+    else
+        delta_params= pinv(J)*(img.parameters.normalisation*(res));
+    end
 %     figure; plot(delta_params)
 
     if isfield(inv_model.parameters,'fixed_background') && inv_model.parameters.fixed_background==1
@@ -141,7 +145,8 @@ fmin= 10.^(-pf(2)/pf(1)/2); % poly minimum
 p= linspace(log10(perturb(2)),log10(perturb(end)),50);
 cp= pf(1)*p.^2+pf(2)*p+pf(3);
 
-if pf(1)*(log10(fmin))^2+pf(2)*log10(fmin)+pf(3) > min(mlist(2:end)) || log10(fmin)>max(perturb) || log10(fmin)<min(perturb(2:end)) 
+
+if pf(1)*(log10(fmin))^2+pf(2)*log10(fmin)+pf(3) > min(mlist(2:end)) || fmin>max(perturb) || fmin<min(perturb(2:end)) 
     [mk,ik]= min(mlist(2:end));
     fmin= perturb(ik+1);
 end
@@ -184,7 +189,7 @@ function tol= svdAnalysisLcurvecrit(data,img,J)
 [U,S,V]= svd(J); svj= diag(S);
 svj = svj(svj>eps);
 
-figure; plot(svj)
+% figure; plot(svj)
 
 % Estimate the model parameters from a forward model linear approximation
 beta= U'*data;     %  adjust data
@@ -224,12 +229,15 @@ cp2= pf2(1)*log10(resi)+pf2(2);
 [mk,ik]= min(abs(cp1-cp2));
 [m,ist]= min(abs(svj-lambda(ik)));
 tol= svj(ist);
+tol= tol*5;
 
 if isfield(img.parameters,'tol')
-[mu,iu]= min(abs(img.parameters.tol-lambda));
+    [mu,iu]= min(abs(img.parameters.tol-lambda));
+else
+    [mu,iu]= min(abs(tol-lambda));
 end
 % [ms,ist1]= min(abs(svj-1));
-% % [ms,ist1]= min(abs(svj-1.5))
+% % [ms,ist1]= min(abs(svj-1.5)) 
 % [ms,ist2]= min(abs(svj-2));
 % % [ms,ist1]= min(abs(svj-5))
 % [ist1 ist2];
@@ -242,9 +250,9 @@ loglog(resi,xlambda,'k','linewidth',2); axis tight; hold on
 % tol= svj(ist)
 % tol= lambda(ik)
 loglog(resi(ik),xlambda(ik),'or','linewidth',2)
-if isfield(img.parameters,'tol')
+% if isfield(img.parameters,'tol')
 loglog(resi(iu),xlambda(iu),'xr','linewidth',2)
-end
+% end
 
 % loglog(resi,10.^cp1,resi,10.^cp2,'linewidth',2)
 yl= get(gca,'ylim');
@@ -264,6 +272,10 @@ set(gca,'fontsize',20,'fontname','Times'); drawnow;
 % title(['Best solution lambda=' num2str(lambda(ik),'%1.2e')],'fontsize',30,'fontname','Times')
 % set(gca,'fontsize',30,'fontname','Times'); drawnow;
 
+
+if isfield(img.parameters,'tol')
+    tol= img.parameters.tol;
+end
 
 end  
 

@@ -127,7 +127,7 @@ while temp>=tempfinale && dist >= 1e-5
                 modeles= (modeles+repmat(modeles(:,ilo),1,np+1))/2;
                 for j= 1:np+1
                     img.params_mapping.params= modeles(:,j);
-                    cost(j)= objectiveFunction(img,data,temp);
+                    cost(j)= objectiveFunction(img,data);
                 end
             end
         end
@@ -169,48 +169,24 @@ img.params_mapping.params= modeles(:,ilo);
 img= feval(mapping_function,img);
 
 
-modeles(1:end-2,ilo)
-exp(modeles(end-1:end,ilo))
+modeles(1:end-2,ilo);
+exp(modeles(end-1:end,ilo));
 
 v= 1:size(modelesLo,2);
 
-if size(modelesLo,1)==4
-    figure; [ax,h1,h2]= plotyy(v,modelesLo(1,:),v,modelesLo(2,:),'plot');
-    set(get(ax(1),'Ylabel'),'String','Alpha parameter (degree)','fontsize',20,'fontname','Times');
-    set(get(ax(2),'Ylabel'),'String','Beta parameter (m)','fontsize',20,'fontname','Times');
-    set(ax(1),'fontsize',15,'fontname','Times');
-    set(ax(2),'fontsize',15,'fontname','Times');
-    axis tight; bx= get(ax(1),'xlim'); set(ax(2),'xlim',bx)
-    set(h1,'linewidth',2); set(h2,'linewidth',2)
-    im= ['Figures/AlphaBeta' inv_model.name 'Ti' num2str(tempInit) 'Tf000'  ...
-    num2str(tempfinale*1000) 'Cd' num2str(cooldown*1000) 'Nm' num2str(nMetro)];
-else
-    figure; plot(v,modelesLo(1,:),'k','linewidth',2);
-    ylabel('Beta parameter (m)','fontsize',20,'fontname','Times');
-    axis tight; set(gca,'fontsize',15,'fontname','Times');
-    im= ['Figures/Beta' inv_model.name 'Ti' num2str(tempInit) 'Tf000'  ...
-    num2str(tempfinale*1000) 'Cd' num2str(cooldown*1000) 'Nm' num2str(nMetro)];
-end
+figure; plot(v,exp(modelesLo),'linewidth',2);
 xlabel('Iteration number','fontsize',20,'fontname','Times')
-saveas(gcf,[im '.pdf'], 'pdf');
+ylabel('Inversion parameter','fontsize',20,'fontname','Times');
+set(gca,'fontsize',15,'fontname','Times');
+axis tight;
 
-figure; plot(exp(modelesLo(end-1:end,:))','linewidth',2)
-xlabel('Iteration number','fontsize',20,'fontname','Times')
-ylabel('Resistivity values (Omega.m))','interpreter','latex','fontsize',20,'fontname','Times')
-legend('Rho_1','Rho_2','fontsize',15,'fontname','Times')
-set(gca,'fontsize',15,'fontname','Times'); drawnow
-im= ['Figures/Resistivity' inv_model.name 'Ti' num2str(tempInit) 'Tf000'  ...
-    num2str(tempfinale*1000) 'Cd' num2str(cooldown*1000) 'Nm' num2str(nMetro)];
-saveas(gcf,[im '.pdf'], 'pdf');
 
 
 figure; semilogy(reshape(costhhi,[],1),'k','linewidth',2)
 xlabel('Iteration number','fontsize',20,'fontname','Times')
 ylabel('Cost function','fontsize',20,'fontname','Times')
 set(gca,'fontsize',15,'fontname','Times'); drawnow
-im= ['Figures/Resistivity' inv_model.name 'Ti' num2str(tempInit) 'Tf000'  ...
-    num2str(tempfinale*1000) 'Cd' num2str(cooldown*1000) 'Nm' num2str(nMetro)];
-saveas(gcf,[im '.pdf'], 'pdf');
+
 
 end
 
