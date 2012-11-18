@@ -1,3 +1,8 @@
+1. Deprecate jacobian.background.value ->
+             jacobian.background.elem_data (and new physics)
+
+2. Make sure default GREIT is pretty
+-------------
 Plans for Manchester code-a-thon:
 
 1. Geophysics
