@@ -16,8 +16,11 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 %      The background may be calculated by a function
 %  inv_model.jacobian_bkgnd.func;
 
-% (C) 2005 Andy Adler. License: GPL version 2 or version 3
+% (C) 2005-2012 Andy Adler and Bartlomiej Grychtol
+% License: GPL version 2 or version 3
 % $Id$
+
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') do_unit_test; return;end
 
 img_bkgnd= eidors_obj('get-cache', inv_model, 'jacobian_bkgnd');
 if ~isempty(img_bkgnd)
@@ -27,17 +30,59 @@ end
 
 if isfield(inv_model.jacobian_bkgnd,'func')
    img_bkgnd= feval( inv_model.jacobian_bkgnd.func, inv_model );
-else
+elseif isfield(inv_model.jacobian_bkgnd,'value')
    % allow bkgnd to be scalar or vector
    fwd_model= inv_model.fwd_model;
    bkgnd = ones(size(fwd_model.elems,1),1);
    bkgnd(:)= inv_model.jacobian_bkgnd.value;
 
-   img_bkgnd= eidors_obj('image', 'homog image', ...
+   img_bkgnd= eidors_obj('image', 'background image', ...
                          'elem_data', bkgnd, ...
                          'fwd_model', fwd_model );
+else
+    fwd_model = inv_model.fwd_model;
+    if isfield(inv_model.jacobian_bkgnd, 'node_data')
+        fld = 'node_data';
+        bkgnd = ones(size(fwd_model.nodes,1),1);
+    else
+        fld = 'elem_data';
+        bkgnd = ones(size(fwd_model.elems,1),1);
+    end
+    img_bkgnd = eidors_obj('image', 'background_image', ...
+        'fwd_model', fwd_model);
+    if ~isstruct(inv_model.jacobian_bkgnd.(fld))
+        img_bkgnd.(fld) =  bkgnd;
+        img_bkgnd.(fld)(:) = ...
+            inv_model.jacobian_bkgnd.(fld);
+    else
+        flds = fieldnames(inv_model.jacobian_bkgnd.(fld));
+        for i = 1:length(flds)
+            img_bkgnd.(fld).(flds{i}) = bkgnd;
+            img_bkgnd.(fld).(flds{i})(:) = ...
+                inv_model.jacobian_bkgnd.(fld).(flds{i});
+        end
+    end
 end
 
 
 eidors_obj('set-cache', inv_model, 'jacobian_bkgnd', img_bkgnd);
 eidors_msg('jacobian_bkgnd: setting cached value', 3);
+
+
+function do_unit_test
+imdl = mk_common_model('d2c2');
+calc_jacobian_bkgnd(imdl)
+imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'value');
+imdl.jacobian_bkgnd.node_data  = 5;
+calc_jacobian_bkgnd(imdl)
+imdl.jacobian_bkgnd.node_data.val1  = 5;
+imdl.jacobian_bkgnd.node_data.val2  = ones(length(imdl.fwd_model.nodes),1);
+img = calc_jacobian_bkgnd(imdl);
+display(img.node_data);
+imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'node_data');
+imdl.jacobian_bkgnd.elem_data.val1  = 5;
+imdl.jacobian_bkgnd.elem_data.val2  = ones(length(imdl.fwd_model.elems),1);
+img = calc_jacobian_bkgnd(imdl);
+display(img.elem_data);
+
+
