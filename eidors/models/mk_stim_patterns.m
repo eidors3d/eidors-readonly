@@ -6,11 +6,11 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %                                      inj, meas, options, amplitude)
 %
 % where
-% stim(#).stimulation = 'mA'
+% stim(#).stimulation = 'Amp'
 %     (#).stim_pattern= [vector n_elec*n_rings x 1 ]
 %     (#).meas_pattern= [matrix n_elec*n_rings x n_meas_patterns]
 %
-% for example, for an adjacent pattern for 4 electrodes, with 0.5mA
+% for example, for an adjacent pattern for 4 electrodes, with 0.5 Amp
 %   if all electrodes are used for measurement
 % stim(1).stim_pattern= [0.5;-0.5;0;0]
 % stim(1).meas_pattern= [1, 0, 0,-1 
@@ -66,14 +66,14 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %         -> do / don't subtrant measurement from all electrodes so total
 %            average measurement is zero (useful for mono patterns)
 %
-%   amplitude: drive current levels, DEFAULT = 1mA
+%   amplitude: drive current levels, DEFAULT = 0.010 Amp
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 if isstr(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin<6; amplitude= 1; end
+if nargin<6; amplitude= .01; end
 if nargin<5; options= {};  end
 v = process_args(n_elec, n_rings, inj, meas, options, amplitude );
 
@@ -106,7 +106,7 @@ function [stim,mpat] = calc_stim(v, n_elec, n_rings)
           end
 
           if ~isempty(m_pat) 
-              stim(i).stimulation = 'mA';
+              stim(i).stimulation = 'Amp';
               stim(i).stim_pattern= sparse(s_pat);
               stim(i).meas_pattern= sparse(m_pat);
               i=i+1;
@@ -435,41 +435,41 @@ function do_unit_test
 %         -> do / don't draw current from all electrodes so total
 %            injection is zero (useful for mono patterns)
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'balance_inj','meas_current'},1);
-   unit_test_cmp('balance_inj: t0',length(stim), 4);
+   unit_test_cmp('balance_inj: t0',length(stim), 4,1);
    unit_test_cmp('balance_inj: t1',stim(2).stim_pattern, -[1;-3;1;1]/3);
    unit_test_cmp('balance_inj: t2',stim(2).meas_pattern, ...
          [1,-1,0,0;0,1,-1,0;0,0,1,-1;-1,0,0,1]);
 
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{'no_balance_inj','no_meas_current'},1);
-   unit_test_cmp('no_balance_inj: t0',length(stim), 4);
+   unit_test_cmp('no_balance_inj: t0',length(stim), 4,1);
    unit_test_cmp('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
    unit_test_cmp('no_balance_inj: t2',stim(2).meas_pattern, ...
          [0,0,1,-1;-1,0,0,1]);
 
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},1);
-   unit_test_cmp('no_balance_inj: t0',length(stim), 4);
+   unit_test_cmp('no_balance_inj: t0',length(stim), 4,1);
    unit_test_cmp('no_balance_inj: t1',stim(2).stim_pattern, [0;1;0;0]);
 
 %      'balance_meas' / 'no_balance_meas'
 %         -> do / don't subtrant measurement from all electrodes so total
 %            average measurement is zero (useful for mono patterns)
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'no_balance_meas','meas_current'},1);
-   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4,1);
    unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
    unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'meas_current'},1);
-   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4,1);
    unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
    unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, eye(4));
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{'no_meas_current'},1);
-   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4,1);
    unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
    unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
 
    stim = mk_stim_patterns(4,1,[0,1],'{mono}',{},1); % DO WE WANT THIS AS DEFAULT??
-   unit_test_cmp('no_balance_meas: t0',length(stim), 4);
+   unit_test_cmp('no_balance_meas: t0',length(stim), 4,1);
    unit_test_cmp('no_balance_meas: t1',stim(2).stim_pattern, [0;-1;1;0]);
    unit_test_cmp('no_balance_meas: t1',stim(2).meas_pattern, [1,0,0,0;0,0,0,1]);
 
@@ -552,42 +552,42 @@ end
    unit_test_cmp('meas_sel: nnp2436',msel(:,[4,5]), [1,0;1,1;1,1;0,1;1,0;0,1]);
 
 % TESTS FROM OLD mk_stim_patterns_test CODE
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}');
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}',{}, 1);
    test_adj(pat);
 
    options= {'no_rotate_meas'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj(pat);
 
    options= {'no_rotate_meas', 'no_meas_current'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj(pat);
 
    options= {'no_rotate_meas', 'meas_current'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj_full(pat);
 
    options= {'meas_current'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj_full(pat);
 
    options= {'rotate_meas'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj_rotate(pat);
 
    options= {'rotate_meas', 'no_meas_current'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj_rotate(pat);
 
    options= {'rotate_meas','no_redundant', 'no_meas_current'};
-   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options);
+   pat= mk_stim_patterns(16,1,'{ad}','{ad}', options,1);
    test_adj_no_redund(pat);
 
 function ok= test_adj(pat)
    %%%  test adjacent current pattern
 
    unit_test_cmp('pt#01', length(pat), 16);
-   unit_test_cmp('pt#02', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#02', pat(1).stimulation, 'Amp');
    unit_test_cmp('pt#03', pat(1).stim_pattern, [-1;1;zeros(14,1)]); % Stim pattern # 1
 
    meas= pat(1).meas_pattern;
@@ -605,7 +605,7 @@ function ok= test_adj_full(pat)
    %%% test adjacent current pattern (full)
 
    unit_test_cmp('pt#11', length(pat), 16);
-   unit_test_cmp('pt#12', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#12', pat(1).stimulation, 'Amp');
    unit_test_cmp('pt#13', pat(1).stim_pattern, [-1;1;zeros(14,1)]);
 
    meas= pat(1).meas_pattern;
@@ -624,7 +624,7 @@ function ok= test_adj_rotate(pat)
    %%%% test adjacent current pattern (rotate)
 
    unit_test_cmp('pt#21', length(pat), 16);
-   unit_test_cmp('pt#22', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#22', pat(1).stimulation, 'Amp');
    unit_test_cmp('pt#23', pat(1).stim_pattern, [-1;1;zeros(14,1)]);
 
    meas= pat(1).meas_pattern;
@@ -642,7 +642,7 @@ function ok= test_adj_no_redund(pat)
    %%% test adjacent current pattern (rotate)
 
    unit_test_cmp('pt#31', length(pat), 14);
-   unit_test_cmp('pt#32', pat(1).stimulation, 'mA');
+   unit_test_cmp('pt#32', pat(1).stimulation, 'Amp');
    unit_test_cmp('pt#33', pat(1).stim_pattern, [-1;1;zeros(14,1)]);
 
    meas= pat(1).meas_pattern;

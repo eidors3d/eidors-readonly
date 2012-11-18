@@ -145,7 +145,7 @@ load('datareal.mat','protocol','no_pl','elec');
 n_elec= size(elec,1);
 n_meas= size(indH,1) / size(Ib,2);
 for i=1:size(Ib,2)
-    stimulations(i).stimulation= 'mA';
+    stimulations(i).stimulation= 'Amp';
     stimulations(i).stim_pattern= Ib(:,i);
     idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
     meas_pat = sparse( (1:n_meas)'*[1,1], ...

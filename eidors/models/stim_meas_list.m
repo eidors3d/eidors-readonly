@@ -10,7 +10,7 @@ function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);
 % sp_mp = matrix [stim+, stim-, meas+, meas-] x N_patterns
 %
 % Nelec  = Num of electrodes         DEFAULT = max sp_mp
-% current= drive current levels,     DEFAULT = 1mA
+% current= drive current levels,     DEFAULT = .010 Amp
 % gain   = gain on voltage channels  DEFAULT = 1
 %
 % example: stim_meas_list([1,2,3,4; 1,2,4,5])
@@ -29,11 +29,11 @@ if nargin <4; gain    = 1;           end
 stim = struct([]);
 Npat = size(sp_mp,1);
 for i=1:Npat
-   stim(i).stimulation = 'mA';
+   stim(i).stimulation = 'Amp';
    cur = sp_mp(i,1:2); 
-   stim(i).stim_pattern = sparse( cur, 1, current*[-1,1], Nelec,1);
+   stim(i).stim_pattern = sparse( cur, 1, current*[-1,1], Nelec,.010);
    mes = sp_mp(i,3:4); 
-   stim(i).meas_pattern = sparse( 1, mes, gain *  [-1,1], 1, Nelec);
+   stim(i).meas_pattern = sparse( 1, mes, gain *  [-1,1], .010, Nelec);
 end
 
 function  do_unit_test

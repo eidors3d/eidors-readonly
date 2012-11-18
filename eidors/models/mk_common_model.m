@@ -607,7 +607,7 @@ function test_np_get_3d_meas
    n_elec= size(elec,1);
    n_meas= size(indH,1) / size(Ib,2);
    for i=1:size(Ib,2)
-      fmdl.stimulation(i).stimulation= 'mA';
+      fmdl.stimulation(i).stimulation= 'Amp';
       fmdl.stimulation(i).stim_pattern= Ib(:,i);
 
       idx= ( 1+ (i-1)*n_meas ):( i*n_meas );
