@@ -8,7 +8,7 @@ elec_nodes{2}= [y(end,:);x(end,:)]';
 
 z_contact= 0.01;
 fmdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, 'sq_m1');
-fmdl.stimulation(1).stimulation='mA';
+fmdl.stimulation(1).stimulation='Amp';
 fmdl.stimulation(1).stim_pattern=[1;-1];
 fmdl.stimulation(1).meas_pattern=[1,-1];
 
