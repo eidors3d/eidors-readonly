@@ -81,7 +81,8 @@ elseif d == 2 % 3D nodes in 1D mesh (ie resistor mesh)
        pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
    end
 else
-   error('mesh size not understood when calculating volumes')
+   warning('mesh size not understood when calculating volumes')
+   pp.VOLUME = NaN;
 end
 
 if isfield(fwd_model,'boundary')

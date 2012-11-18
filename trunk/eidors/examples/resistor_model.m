@@ -36,13 +36,14 @@ r_mdl.jacobian=   @c_jacobian;
 r_mdl.electrode(1).z_contact= 10; % ohms
 r_mdl.electrode(1).nodes=     1;
 r_mdl.gnd_node= 2;
+r_mdl.normalize_measurements = 0;
 
 %
 % Step 3: create stimulation and measurement patterns
-% patterns are 0.010,0.020,0.030 mA
+% patterns are 0.010,0.020,0.030 Amp
 
 for i=1:3
-    r_mdl.stimulation(i).stimulation= 'mA';
+    r_mdl.stimulation(i).stimulation= 'Amp';
     r_mdl.stimulation(i).stim_pattern= ( 0.010*i );
     r_mdl.stimulation(i).meas_pattern= 1; % measure electrode 1
 end
@@ -106,11 +107,11 @@ function data =f_solve( f_mdl, img )
   V= zeros(n_stim, 1);
 
   for i=1:n_stim
-    if ~strcmp( f_mdl.stimulation(i).stimulation, 'mA' )
-       error('f_solve expects current in mA');
+    if ~strcmp( f_mdl.stimulation(i).stimulation, 'Amp' )
+       error('f_solve expects current in Amp');
     end
 
-    I        = f_mdl.stimulation(i).stim_pattern / 1000;
+    I        = f_mdl.stimulation(i).stim_pattern;
     meas_pat = f_mdl.stimulation(i).meas_pattern;
 
     stim_elec= find( I );
@@ -127,20 +128,19 @@ function J= c_jacobian( f_mdl, img)
   n_stim= length( f_mdl.stimulation );
   J= zeros(n_stim, 1);
   for i=1:n_stim
-    J(i)     = f_mdl.stimulation(i).stim_pattern / 1000; % mA
+    J(i)     = f_mdl.stimulation(i).stim_pattern; % Amp
   end
 
 % Inverse Model: R= inv(J'*J)*J'*V
 %    This corresponds to the least squares solution
 function img= i_solve( i_mdl, data )
   % Normally the Jacobian depends on an image. Create a dummy one here
-  i_img= eidors_obj('image','Unused');
-  f_mdl= i_mdl.fwd_model;
-  J = calc_jacobian( f_mdl, i_img); 
+  i_img= mk_image(i_mdl,1);
+  J = calc_jacobian( i_img); 
 
   img.name= 'solved by i_solve';
   img.elem_data= (J'*J)\J'* data(:);
   img.inv_model= i_mdl;
-  img.fwd_model= f_mdl;
+  img.fwd_model= i_mdl.fwd_model;
 
 
