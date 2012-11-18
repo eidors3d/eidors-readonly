@@ -78,7 +78,9 @@ end
 %Initialise global stiffness matrix
 Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
 
-%Initialise structure
+%Initialise an elemental stiffness matrix for the Jacobian later
+%Elems * CDOF per element * nodes per element * nodes per element
+elemstiff=zeros(nelems,0.5*dim*(dim+1),size(dphi,2),size(dphi,2));
 
 %Loop over the elements and calculate local Am matrix
 for i=nelems:-1:1
@@ -103,7 +105,7 @@ for i=nelems:-1:1
     magjacelem=abs(det(jacobianelem));
            
     %Initialise and find elemental stiffness matrices 
-    Ammat=0;
+    Ammat=0; 
     for kk=1:size(weight,2)
         Ammat = Ammat + weight(kk)* ...
             (jacobianelem\dphi(:,:,kk))'* ...
@@ -111,25 +113,35 @@ for i=nelems:-1:1
             (jacobianelem\dphi(:,:,kk))*magjacelem; %Gradient of field
     end
     
-    
-    %Conductivities per element     
-    DOF = 0.5*nodedim*(nodedim+1);
-    
-    %We have traingular number stiffness per matrix
-    aa=0;
-    
-    %Now pp(i,j,1) is dphi_{j}/dx_{i}  
-    pp=jacobianelem\dphi(:,:,1);
-    
-    
-    for dof=1:DOF
+    %Compute the derivative of the system matrix for anisotropic Jacobian
+    %d_shape_m_d_xi * d_shape_n_d_xj with weight and mapping determinant
+    %Choose order for xi: 2D - xx, xy, yy, 3D - xx, xy, xz, yy, yz, zz
+    if(nodedim==2)
         for kk=1:size(weight,2)
-            
+            %Get the gradient of each basis function at the knot point
+            dphi_m_d_xi_kk = jacobianelem\dphi(:,:,kk); 
+            %Add each matrix to the 4D array in turn
+            elemstiff(i,1,:,:) = elemstiff(i,1,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(1,:)'*dphi_m_d_xi_kk(1,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));
+            elemstiff(i,2,:,:) = elemstiff(i,2,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(1,:)'*dphi_m_d_xi_kk(2,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));
+            elemstiff(i,3,:,:) = elemstiff(i,3,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(2,:)'*dphi_m_d_xi_kk(2,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));                                     
         end
-    end   
+    elseif(nodedim==3)
+        for kk=1:size(weight,2)
+            %Get the gradient of each basis function at the knot point
+            dphi_m_d_xi_kk = jacobianelem\dphi(:,:,kk); 
+            %Add each matrix to the 4D array in turn
+            elemstiff(i,1,:,:) = elemstiff(i,1,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(1,:)'*dphi_m_d_xi_kk(1,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));
+            elemstiff(i,2,:,:) = elemstiff(i,2,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(1,:)'*dphi_m_d_xi_kk(2,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));
+            elemstiff(i,3,:,:) = elemstiff(i,3,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(1,:)'*dphi_m_d_xi_kk(3,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));                                     
+            elemstiff(i,4,:,:) = elemstiff(i,4,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(2,:)'*dphi_m_d_xi_kk(2,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));
+            elemstiff(i,5,:,:) = elemstiff(i,5,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(2,:)'*dphi_m_d_xi_kk(3,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));
+            elemstiff(i,6,:,:) = elemstiff(i,6,:,:) + reshape(weight(kk)*dphi_m_d_xi_kk(3,:)'*dphi_m_d_xi_kk(3,:)*magjacelem,1,1,size(dphi,2),size(dphi,2));             
+        end        
+        
+    end
 
     %Set to 0 so function returns 
-    elemstiff=0;
+  %  elemstiff=0;
     
     %Assemble global stiffness matrix (Silvester's book!!)    
     Agal(elemstruc(i,:), elemstruc(i,:)) = Agal(elemstruc(i,:), elemstruc(i,:)) + Ammat;
