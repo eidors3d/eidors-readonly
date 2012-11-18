@@ -10,7 +10,7 @@ tpl = 'blue';
 !cp doc_template/matlabicon.gif m2html/templates/blue
 !cp doc_template/mfile.tpl m2html/templates/frame
 
-VERSION = 1; % 1 for MATLAB docs, 0 for SOURCEFORGE
+VERSION = 0; % 1 for MATLAB docs, 0 for SOURCEFORGE
 
 
 cd ..
