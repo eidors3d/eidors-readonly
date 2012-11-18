@@ -4,7 +4,59 @@
 This page is a list of updates, discussions, and 
 ideas for enhancements to the
 EIDORS package.
+
+
+<p><li> <b>
+   17&minus;20 November 2012:
+</b><br>
+<b>EIDORS code-a-thon</b>
+<br>
+Several EIDORS developers got together in Manchester, UK to
+work on adding new features and squashing old bugs. 
+Priorities for the workshop were:
+1) Geophysics
+2) GREIT: target distributions and other defaults, electrode errors
+3) Bill's c2f mapper
+4) Electrode interface for netgen 2d models
+5) place_elec_on_surf
+6) move normalize_measurements from fwd_model to inv_model gracefully. Take care of calc_difference_data
+
 <ul>
+<p><li> <b>
+   18 November 2012:
+</b><br>
+<b>EIDORS and "New Physics"</b>
+<br>
+We've decided on an infrastructure to allow "new physics" to be encoded
+onto a forward model. This will remain (mostly) backwards compatible, but
+will permit us to better support new problem formulations and multimodality
+physics. Examples of physics and their encoding are:
+<table border="1" cellspacing="0" cellpadding="3" >
+<tr><th>Property<th>Encoding
+<tr>
+   <td>Conductivity
+   <td> <tt>img.elem_data</tt>
+   <br> or
+   <br> <tt>img.node_data</tt> (no change)
+<tr>
+   <td>Log conductivity
+   <td> <tt>img.elem_data.logconductivity</tt>
+<tr>
+   <td>Movement
+   <td> <tt>img.elem_data</tt> and
+   <br> <tt>img.electrode_data.xyz_movement</tt> or
+   <br> <tt>img.electrode_data.xy_movement</tt> or
+   <br> <tt>img.electrode_data.??_movement</tt>
+<tr>
+   <td>Anisotropic<br> Conductivity
+   <td> <tt>img.elem_data(elem#,img#,:,:)</tt>
+   <br> so each element has an individual tensor
+   <br> Functions to create anisotropic
+        images from eigenfunctions will be provided
+</table>
+
+
+
 <p><li> <b>
     7 July 2012:
 </b><br>
