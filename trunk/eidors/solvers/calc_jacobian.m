@@ -23,6 +23,10 @@ function J = calc_jacobian( fwd_model, img)
 if nargin==1
    img       = fwd_model;
    fwd_model = img.fwd_model;
+else
+    warning('EIDORS:calc_jacobian_input_params',...
+        ['Calling calc_jacobian with more than one parameter is '...
+         'DEPRECATED and will be dropped in a future release'];
 end
 
 fwd_model_check(fwd_model);
