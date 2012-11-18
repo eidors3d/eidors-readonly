@@ -1,17 +1,33 @@
+%Choose a 2D or 3D model
+m_dim=2; 
+
 %Make an inverse model and extract forward model
-imdl = mk_common_model('n3r2',[16,1]);
+if(m_dim==2)
+    imdl = mk_common_model('c2C2',16);
+else
+    imdl = mk_common_model('n3r2',[16,2]);    
+end
 fmdl = imdl.fwd_model;
 
 %Assign a matrix to each elem data
 n_elem=size(fmdl.elems,1); 
-for i=1:n_elem 
-    %Symmetric conductivity tensor Cartesian coordinates
-    elem_data(i,1,1,1) =1;
-    elem_data(i,1,1,2) =0; elem_data(i,1,2,1) =0;
-    elem_data(i,1,1,3) =0; elem_data(i,1,3,1) =0;
-    elem_data(i,1,2,2) =1;
-    elem_data(i,1,2,3) =0; elem_data(i,1,3,2) =0;
-    elem_data(i,1,3,3) =1;   
+if(m_dim==2)
+    for i=1:n_elem 
+        %Symmetric conductivity tensor Cartesian coordinates
+        elem_data(i,1,1,1) =1;
+        elem_data(i,1,1,2) =0; elem_data(i,1,2,1) =0;
+        elem_data(i,1,2,2) =2;
+    end
+else
+    for i=1:n_elem 
+        %Symmetric conductivity tensor Cartesian coordinates
+        elem_data(i,1,1,1) =1;
+        elem_data(i,1,1,2) =0; elem_data(i,1,2,1) =0;
+        elem_data(i,1,1,3) =0; elem_data(i,1,3,1) =0;
+        elem_data(i,1,2,2) =3;
+        elem_data(i,1,2,3) =0; elem_data(i,1,3,2) =0;
+        elem_data(i,1,3,3) =3;   
+    end
 end
 
 %High-order EIDORS solver
@@ -19,7 +35,11 @@ end
 fmdl.system_mat = @system_mat_higher_order_anisotropy;
 
 %Add element type
-fmdl.approx_type    = 'tet4'; % linear
+if(m_dim==2)
+    fmdl.approx_type    = 'tri3'; % linear
+else
+    fmdl.approx_type    = 'tet4'; % linear
+end
 %Make an image and get voltages using high order solver
 img1 = mk_image_anisotropy(fmdl,elem_data);
 img1.fwd_solve.get_all_meas = 1; %Internal voltage
@@ -42,3 +62,7 @@ img_v.fwd_model.mdl_slice_mapper.npx = 64;
 img_v.fwd_model.mdl_slice_mapper.npy = 64;
 img_v.fwd_model.mdl_slice_mapper.level = [inf,inf,1.0];
 figure; show_current(img_v, v1.volt(:,1));
+
+%Calculate the Jacobian
+img1.fwd_model.jacobian=@jacobian_adjoint_higher_order_anisotropy;
+J = calc_jacobian(img1);

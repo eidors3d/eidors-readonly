@@ -89,41 +89,44 @@ groundnode=fwd_model.gnd_node; idx=1:size(At,1); idx(groundnode)=[];
 %Solve the simulated linear system with index
 nodeunknownsfwd(idx,:)=left_divide(At(idx,idx),datafwd(idx,:));
 
-%Calculate Jacobian tensor - DE_{i,j,k} == dV_i,j / dS_k
+%Calculate Jacobian tensor - DE_{i,j,k,l} == dV_i,j / dS_k_l
 %V_i,j - voltage change on electrode i for stim j
-%S_k - conductivity change on element k
-DE= zeros(nelecs,nstims,nelems);
+%S_k_l - conductivity change on element k on the l term of tensor
+%      - Choose to order in block's of elements  
+%      - Choose within block element ordering 2D - xx, xy, yy
+%                                             3D - xx, xy, xz, yy, yz, zz 
+
+%Unique conductivity tensor components (CDOF) in element depends on dimension
+node_dim=size(nodestruc,2);
+CDOF = 0.5*node_dim*(node_dim+1);
+DE= zeros(nelecs,nstims,nelems*CDOF);
 
 %First step, we only want to pick off the ith electrode
 zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 
-%SPEED UP HERE
-%Factorise A = C'*S*C  - S diagonal conduc (C=system_mat_fields)
-%We don't need extra multiplication in loop below
-%only for piecewise linear FEM??
-%
-%zi2E= zeros(nelecs, nnodes+nelecs);
-%zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
-%zi2E=zi2E*FC'; sv=Fc*sv;
-
-%Calculate the partial derivative matrix for kth change
-for k=1:nelems    
-    %kth element stiffness matrix, global nodes and index vector
-    stiffk=elemstiff(k).elemstiff; nodesk=elemstruc(k,:); idx2=1:size(nodesk,2);
+%Calculate the partial derivative matrix for kth change in conductivity
+for k=1:nelems 
+    %Calculate the partial derivative for the lth components
+    for l=1:CDOF 
+      %Get the nodes of element k and create index vector  
+      nodesk=elemstruc(k,:); idx2=1:size(nodesk,2);
+      %kth element stiffness matrix, global nodes and index vector
+      stiffkl=reshape(elemstiff(k,l,:,:),size(nodesk,2),size(nodesk,2)); 
         
-    %Create the FEM derivative matrix
-    dA_dSk=dA_zero; dA_dSk(nodesk(idx2),nodesk(idx2))=stiffk(idx2,idx2);
+      %Create the FEM derivative matrix
+      dA_dSkl=dA_zero; dA_dSkl(nodesk(idx2),nodesk(idx2))=stiffkl(idx2,idx2);
 
-    %Now form product with solution
-    DE(:,:,k) = zi2E(:,idx)*dA_dSk(idx,idx)*nodeunknownsfwd(idx,:);
+      %Now form product with solution
+      DE(:,:,(k-1)*CDOF+l) = zi2E(:,idx)*dA_dSkl(idx,idx)*nodeunknownsfwd(idx,:); 
+    end
 end
 
 %Calculate Jacobian matrix (measurement patterns specified here)
-cntjac=0; J=zeros(nmeass,nelems);
+cntjac=0; J=zeros(nmeass,nelems*CDOF);
 for j=1:nstims   
    meas_pat= fwd_model.stimulation(j).meas_pattern;
    n_meas  = size(meas_pat,1);
-   DEj = reshape( DE(:,j,:), nelecs, nelems);
+   DEj = reshape( DE(:,j,:), nelecs, nelems*CDOF);
    J( cntjac+(1:n_meas),: ) = meas_pat*DEj;
    cntjac = cntjac + n_meas;
 end; 
