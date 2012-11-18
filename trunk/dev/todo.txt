@@ -2,6 +2,11 @@
              jacobian.background.elem_data (and new physics)
 
 2. Make sure default GREIT is pretty
+
+3. calc_meas_icov -> choose good value for normalized solvers
+    - why is is homg^2 rather than inv(homg)^2
+    - maybe just abs(homg) is better and less sensitive
+    - fix calc_jacobian_test
 -------------
 Plans for Manchester code-a-thon:
 

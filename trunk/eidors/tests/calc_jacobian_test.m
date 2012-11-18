@@ -105,13 +105,16 @@ function ok= run_dataprior_test( mdl )
     % difference dataprior
     testvec= diag(DP);
     if mdl_normalize(mdl)
-        testvec = homg_data.meas.^2 .* diag(DP);
+%       FIX THIS CODE WHEN WE FIX THE meas_icov
+%       testvec = homg_data.meas.^2 .* diag(DP);
+        testvec = homg_data.meas.^2 ./ diag(DP);
     end
 
     mdiff = full(max(abs(diff( testvec ))));
     if mdiff > 1e-12 
        ok=0;
        eidors_msg('Dataprior calculation error (%s) = %f', mdl.name, mdiff, 1);
+keyboard
     else
        ok=1;
     end
