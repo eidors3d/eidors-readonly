@@ -154,7 +154,7 @@ function cmdl= mk_3d_grid(xvec, yvec, zvec);
 function mdl = set_pixel_pos(mdl, xvec, yvec)
    x = xvec(1:end-1) + 0.5*diff(xvec);
    y = yvec(1:end-1) + 0.5*diff(yvec);
-   y = flipud(y); %get the medical orientation right
+   y = y(end:-1:1); %get the medical orientation right
    mdl.mdl_slice_mapper.x_pts = x;
    mdl.mdl_slice_mapper.y_pts = y;
    
