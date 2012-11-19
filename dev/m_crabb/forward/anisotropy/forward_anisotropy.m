@@ -15,7 +15,7 @@ if(m_dim==2)
     for i=1:n_elem 
         %Symmetric conductivity tensor Cartesian coordinates
         elem_data(i,1,1,1) =1;
-        elem_data(i,1,1,2) =0; elem_data(i,1,2,1) =0;
+        elem_data(i,1,1,2) =3; elem_data(i,1,2,1) =3;
         elem_data(i,1,2,2) =2;
     end
 else
@@ -67,5 +67,7 @@ figure; show_current(img_v, v1.volt(:,1));
 img1.fwd_model.jacobian=@jacobian_adjoint_higher_order_anisotropy;
 J = calc_jacobian(img1);
 Jp=jacobian_adjoint_higher_order_anisotropy_perturb(img1.fwd_model,img1);
-norm(Jp-J)/norm(J)
+
+fprintf('Norm diff of perturbed and analytic Jacobian %1.6f',norm(Jp-J)/norm(J));
+
 
