@@ -1,0 +1,45 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<H2>Anisotroic deformations of medium shape</H2>
+
+
+<H3>
+   Create a simple resistor model and calculate current streamlines
+</H3>
+
+<pre>
+<!--#include virtual="anisotropy1_01.m" -->
+</pre>
+
+<center>
+<img src="anisotropy1_01a.png">
+<br><i> Figure:</i>
+Rectangular model with current streamlines
+</center>
+
+
+<H3>
+   Deform the model and recalculate streamlines
+</H3>
+
+<pre>
+<!--#include virtual="anisotropy1_02.m" -->
+</pre>
+
+<center>
+<img src="anisotropy1_02a.png">
+<br><i> Figure:</i>
+Deformed model with current streamlines
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->

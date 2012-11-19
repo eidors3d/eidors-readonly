@@ -21,3 +21,6 @@ sx =  linspace(1.1,6.9,15); sy =  0*sx;
 sy = -linspace(1.1,6.9,15); sx =  0*sy;
 hh=streamline(q.xp,q.yp, q.xc, q.yc, sx,sy); set(hh,'Linewidth',2);
 hold off;
+
+axis image
+print_convert anisotropy1_02a.png '-density 125'
