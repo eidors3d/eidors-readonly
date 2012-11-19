@@ -31,9 +31,9 @@ Npat = size(sp_mp,1);
 for i=1:Npat
    stim(i).stimulation = 'Amp';
    cur = sp_mp(i,1:2); 
-   stim(i).stim_pattern = sparse( cur, 1, current*[-1,1], Nelec,.010);
+   stim(i).stim_pattern = sparse( cur, 1, current*[-1,1], Nelec,1);
    mes = sp_mp(i,3:4); 
-   stim(i).meas_pattern = sparse( 1, mes, gain *  [-1,1], .010, Nelec);
+   stim(i).meas_pattern = sparse( 1, mes, gain *  [-1,1], 1, Nelec);
 end
 
 function  do_unit_test
