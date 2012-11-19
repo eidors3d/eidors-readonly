@@ -22,18 +22,21 @@ img = mk_image( fmdl,  ones(length(xctr),1) );
 
 show_fem(img); axis image
 
-print_convert anisotropy1_01a.png '-density 125'
+
+img.fwd_solve.get_all_meas = 1;
+vh = fwd_solve(img);
+
+img.fwd_model.mdl_slice_mapper.npx = 200;
+img.fwd_model.mdl_slice_mapper.npy = 100;
+q = show_current(img,vh.volt);
+hh=show_fem(img);
+set(hh,'EdgeColor',[1,1,1]*.75);
+hold on;
+sy = linspace(-3,3,15); sx =  15+0*sy;
+hh=streamline(q.xp,q.yp, q.xc, q.yc, sx,sy); set(hh,'Linewidth',2);
+hold off;
+axis([-16,16,-3.3,3.3]);
 
 
+%print_convert anisotropy1_01a.png '-density 125'
 
-% deformation
-th = fmdl.nodes(:,1)/yt*(pi/2);
-y = fmdl.nodes(:,2); y = y.*(th<=0) - y.*(th>0);
-th = (th-pi/2).*(th<=0) + (pi/2-th).*(th>0);
-[x,y] = pol2cart(th, y+4);
-y = y+8.*(fmdl.nodes(:,1)<=0);
-img2 = img; img2.fwd_model.nodes = [x, y*4];
-
-show_fem(img2); axis image
-
-print_convert anisotropy1_01b.png '-density 125'
