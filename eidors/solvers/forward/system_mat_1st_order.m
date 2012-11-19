@@ -15,12 +15,23 @@ if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
+ED = elem_dim(fwd_model);
+lNE= ED*num_elems(fwd_model);
 
 elem_data = check_elem_data(fwd_model, img);
-elem_sigma = kron( elem_data, ones(elem_dim(fwd_model),1) );
-elem_sigma(end+1:lFC) = 1; % add ones for CEM
+if size(elem_data,3) == 1
+% Scalar conductivity == isotropic
+   elem_sigma = kron( elem_data, ones(ED,1) );
+   elem_sigma(end+1:lFC) = 1; % add ones for CEM
 
-ES= spdiags(elem_sigma,0,lFC,lFC);
+   ES= spdiags(elem_sigma,0,lFC,lFC);
+else
+   idx = 1:2:lNE;
+   ES= sparse([idx,idx+1,idx,idx+1]', ...
+              [idx,idx,idx+1,idx+1]', elem_data(:), lFC,lFC);
+   
+   ES(lNE+1:lFC,lNE+1:lFC) = speye(lFC-lNE+1);
+end
 
 s_mat.E= FC' * ES * FC;
 
