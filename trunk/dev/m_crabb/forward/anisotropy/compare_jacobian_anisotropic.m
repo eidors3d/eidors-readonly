@@ -1,9 +1,10 @@
+%COMPARE THE PERTURBATION JACOBIAN AND ANALYTIC JACOBIAN
 %Choose a 2D or 3D model
-m_dim=2; 
+m_dim=2;
 
 %Make an inverse model and extract forward model
 if(m_dim==2)
-    imdl = mk_common_model('a2C2',16);
+    imdl = mk_common_model('c2C2',16);
 else
     imdl = mk_common_model('n3r2',[16,2]);    
 end
@@ -12,12 +13,19 @@ fmdl = imdl.fwd_model;
 %Assign a matrix to each elem data
 n_elem=size(fmdl.elems,1); 
 if(m_dim==2)
-    for i=1:n_elem 
+    for i=1:64 
         %Symmetric conductivity tensor Cartesian coordinates
         elem_data(i,1,1,1) =1;
         elem_data(i,1,1,2) =3; elem_data(i,1,2,1) =3;
         elem_data(i,1,2,2) =2;
     end
+    %Change for interior pixels    
+    for i=64+1:n_elem %Change interior for 'c2C2' model
+        %Symmetric conductivity tensor Cartesian coordinates
+        elem_data(i,1,1,1) =1;
+        elem_data(i,1,1,2) =0; elem_data(i,1,2,1) =1;
+        elem_data(i,1,2,2) =1;
+    end        
 else
     for i=1:n_elem 
         %Symmetric conductivity tensor Cartesian coordinates
@@ -67,7 +75,4 @@ figure; show_current(img_v, v1.volt(:,1));
 img1.fwd_model.jacobian=@jacobian_adjoint_higher_order_anisotropy;
 J = calc_jacobian(img1);
 Jp=jacobian_adjoint_higher_order_anisotropy_perturb(img1.fwd_model,img1);
-
-fprintf('Norm diff of perturbed and analytic Jacobian %1.6f',norm(Jp-J)/norm(J));
-
-
+fprintf('Norm diff of perturbed and analytic Jacobian %1.6f\n',norm(Jp-J)/norm(J));
