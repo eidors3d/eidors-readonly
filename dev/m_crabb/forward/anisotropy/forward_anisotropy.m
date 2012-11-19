@@ -3,7 +3,7 @@ m_dim=2;
 
 %Make an inverse model and extract forward model
 if(m_dim==2)
-    imdl = mk_common_model('c2C2',16);
+    imdl = mk_common_model('a2C2',16);
 else
     imdl = mk_common_model('n3r2',[16,2]);    
 end
@@ -63,6 +63,9 @@ img_v.fwd_model.mdl_slice_mapper.npy = 64;
 img_v.fwd_model.mdl_slice_mapper.level = [inf,inf,1.0];
 figure; show_current(img_v, v1.volt(:,1));
 
-%Calculate the Jacobian
+%Calculate the Jacobian and compare with simple perturbation
 img1.fwd_model.jacobian=@jacobian_adjoint_higher_order_anisotropy;
 J = calc_jacobian(img1);
+Jp=jacobian_adjoint_higher_order_anisotropy_perturb(img1.fwd_model,img1);
+norm(Jp-J)/norm(J)
+
