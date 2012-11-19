@@ -70,7 +70,7 @@ for i=1:Nel
   else
      VE  = ([oo, nod])\vv(idx);
   end
-  elemcur(i+1,:) = img.elem_data(i)*VE(2:end)';
+  elemcur(i+1,:) = img.elem_data(i,1,:,:)*VE(2:end)';
 end
 
 if isfield(img.fwd_model, 'mdl_slice_mapper');
