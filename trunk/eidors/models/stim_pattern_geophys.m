@@ -10,6 +10,7 @@ function stim= stim_pattern_geophys( n_elec, pat_type,  options )
 %  options = {'gain', 2.0}     % 2.0 gain         (default 1)
 %  options = {'spacings',[1,2,3,4]} list of spacings 
 %  options = {'reciprocal_meas',1} % do reciprocal (default 0);
+%  options = {'circumferential_meas',1} % do a circumferential protocol (default 0 = in line protocol);
 %
 % TYPE = 'WENNER'
 % 
@@ -28,7 +29,6 @@ switch(upper(pat_type))
   otherwise;
     error('No pattern of type "%s" available', upper(pat_type));
 end
-
 stim = stim_meas_list( stim, n_elec, options.current, options.gain); 
 
 function pp= parse_options(opts)
@@ -37,6 +37,7 @@ function pp= parse_options(opts)
   pp.spacings= 1:256;
   pp.multiples= ones(1,256);
   pp.reciprocal_meas = 0;
+  pp.circumferential_meas = 0;
   pp.current = 1;
   pp.gain = 1;
 
@@ -48,15 +49,28 @@ function stim = stim_pattern_wenner(n_elec, options)
   stim=[];
   for a= options.spacings;
     block =  [0,3,1,2]*a + 1;
-    if max(block)>n_elec
-       break;
-    end
-    for i=(0:n_elec-max(block))
+    if options.circumferential_meas 
+        if max(block(1))>n_elec
+           break;
+        end
+        n_meas= n_elec-1;
+    else
+        if max(block)>n_elec
+           break;
+        end
+        n_meas= n_elec-max(block);
+    end 
+    for i=(0:n_meas)
        stim = [stim; i+block];
        if options.reciprocal_meas
           stim = [stim; i+block([3,4,1,2])];
        end
     end
+    if options.circumferential_meas 
+       stim(stim>n_elec)= stim(stim>n_elec)-n_elec;
+       stim= reshape(stim,[],4);
+    end
+
   end
 
 function stim = stim_pattern_schlumberger(n_elec, options)
@@ -68,14 +82,26 @@ function stim = stim_pattern_schlumberger(n_elec, options)
   end
   for k= 1:length(a);
       block =  [0,round((2*n(k)+1)*a(k)),round(n(k)*a(k)),round((n(k)+1)*a(k))]+1;
-    if max(block)>n_elec
-       break;
-    end
-    for i=(0:n_elec-max(block))
+    if options.circumferential_meas 
+        if max(block(1))>n_elec
+           break;
+        end
+        n_meas= n_elec-1;
+    else
+        if max(block)>n_elec
+           break;
+        end
+        n_meas= n_elec-max(block);
+    end 
+    for i=(0:n_meas)
        stim = [stim; i+block];
        if options.reciprocal_meas
           stim = [stim; i+block([3,4,1,2])];
        end
+    end
+    if options.circumferential_meas 
+       stim(stim>n_elec)= stim(stim>n_elec)-n_elec;
+       stim= reshape(stim,[],4);
     end
   end  
   
@@ -89,14 +115,26 @@ function stim = stim_pattern_dipoledipole(n_elec, options)
   end
   for k= 1:length(a);
       block =  [0,round((n(k)+2)*a(k)),a(k),round((n(k)+1)*a(k))]+1;
-    if max(block)>n_elec
-       break;
-    end
-    for i=(0:n_elec-max(block))
+    if options.circumferential_meas 
+        if max(block(1))>n_elec
+           break;
+        end
+        n_meas= n_elec-1;
+    else
+        if max(block)>n_elec
+           break;
+        end
+        n_meas= n_elec-max(block);
+    end 
+    for i=(0:n_meas)
        stim = [stim; i+block];
        if options.reciprocal_meas
           stim = [stim; i+block([3,4,1,2])];
        end
+    end
+    if options.circumferential_meas 
+       stim(stim>n_elec)= stim(stim>n_elec)-n_elec;
+       stim= reshape(stim,[],4);
     end
   end  
   
@@ -132,6 +170,12 @@ function unit_test_wenner
   stim= stim_pattern_geophys( 7,'wenner', {'spacings',[2,1,3]});
   unit_test_cmp('WENNER #5b',stim, stim_meas_list(...
        [1,7,3,5; 1,4,2,3; 2,5,3,4; 3,6,4,5; 4,7,5,6]));
+  stim= stim_pattern_geophys( 8,'wenner', {'spacings',[1],'circumferential_meas',1});
+  unit_test_cmp('WENNER #5c',stim, stim_meas_list(...
+       [1,4,2,3; 2,5,3,4; 3,6,4,5; 4,7,5,6;5,8,6,7;6,1,7,8;7,2,8,1;8,3,1,2]));
+  stim= stim_pattern_geophys( 8,'wenner', {'spacings',[1,2],'circumferential_meas',1});
+  unit_test_cmp('WENNER #5d',stim, stim_meas_list(...
+       [1,4,2,3; 2,5,3,4; 3,6,4,5; 4,7,5,6;5,8,6,7;6,1,7,8;7,2,8,1;8,3,1,2;1,7,3,5;2,8,4,6;3,1,5,7;4,2,6,8]));
 
 
 function unit_test_schlumberger

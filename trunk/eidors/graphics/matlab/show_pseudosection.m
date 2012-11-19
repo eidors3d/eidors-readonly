@@ -23,6 +23,15 @@ else
     fwd_model.misc.sizepoint= 50;
 end
 
+if iscell(orientation) 
+    if strcmp(orientation{2},'yz')
+    fwd_model.nodes= fwd_model.nodes(:,[2 3 1]);
+    elseif strcmp(orientation{2},'xz')
+     fwd_model.nodes= fwd_model.nodes(:,[1 3 2]);
+    end
+    orientation= orientation{1};
+end
+
 switch(upper(orientation))
     case 'HORIZONTALDOWNWARD';  plotPseudoSectionProfileDown(fwd_model,data)
     case 'VERTICAL';            plotPseudoSectionProfileVert(fwd_model,data)
@@ -31,6 +40,8 @@ switch(upper(orientation))
   otherwise;
     error('No orientation of type "%s" available', upper(pat_type));
 end
+
+
 
 end
 

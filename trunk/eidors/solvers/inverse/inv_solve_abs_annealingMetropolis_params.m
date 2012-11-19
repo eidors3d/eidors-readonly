@@ -32,6 +32,9 @@ else
     error('The inverse model must contain a field "params_mapping" where a mapping function links the forward and inverse parameters');
 end
 
+% Estimate the number of parameters to adjust
+n_parameters= size(img.params_mapping.params,1);
+
 if isfield(inv_model.parameters,'temp')
     tempInit = inv_model.parameters.temp;
     tempfinale= inv_model.parameters.tempfinale;
@@ -48,6 +51,13 @@ if ~isfield(inv_model.parameters,'normalisation')
     img.parameters.normalisation= 1;
 end
 
+if ~isfield(inv_model.params_mapping,'range')
+    rangeParams= zeros(n_parameters,2);
+    rangeParams(:,1)= -6; rangeParams(:,2)= 6;
+else
+    rangeParams= inv_model.params_mapping.range;
+end
+
 temp= tempInit; k= 1;
 while temp>=tempfinale
     temp= temp*cooldown;
@@ -56,8 +66,7 @@ end
 
 disp(['Number of iteration ' num2str(k)])
 
-% Estimate the number of parameters to adjust
-n_parameters= size(img.params_mapping.params,1);
+
 
 % Generates np+1 models with a Gaussian law with a mean equals to
 % inv_model.params_mapping.params and a standard deviation of
@@ -65,7 +74,6 @@ n_parameters= size(img.params_mapping.params,1);
 if isfield(inv_model.params_mapping,'inital_model')
     model= inv_model.params_mapping.inital_model;
 else
-    range= inv_model.params_mapping.range;
     model= 10.^((rand(np,1).*(range(:,2)-range(:,1))+range(:,1)));    
 end
 
@@ -77,38 +85,38 @@ cost= objectiveFunction(img,data);
 % Proceed to the Metropolis regression while reducing the temperature
 %% Run over the Simulated annealing loops
 
-temperature= t_start;
+temp= tempInit;
 n_temp= 1;
-while temperature >= t_end % Loop over temperature
+while temp >= tempfinale % Loop over temperature
     for n= 1:nMetro % Metropolis loop
         model_try= model;
         idx_parametr= randi(n_parameters,1,1);
-        model_try(idx_parametr)= 10.^(rand(1,1)*(range(idx_parametr,2)-range(idx_parametr,1))+range(idx_parametr,1));
+        model_try(idx_parametr)= (rand(1,1)*(rangeParams(idx_parametr,1))+rangeParams(idx_parametr,2));
         img.params_mapping.params= model_try;
         cost_try= objectiveFunction(img,data);
-        if rand <= (cost_try/cost)^(1/temperature) % Metropolis test for acceptance of trial model
-            likelihood= (cost_try/cost)^(1/temperature);
+        if rand <= exp((-cost_try/cost)^(1/temp)) % Metropolis test for acceptance of trial model
+            likelihood= exp((-cost_try/cost)^(1/temp));
             cost= cost_try;
             model= model_try;
         end
     end % End of Metropolis loop
     resRec(n_temp)= cost;
     res_parRec(n_temp,:)= model';
-    tempRec(n_temp)= temperature;
+    tempRec(n_temp)= temp;
     likelihoodRec(n_temp)= likelihood;
         
     n_temp= n_temp+1;
-    temperature = temperature*alpha;	% Decrease the temperature
+    temp = temp*cooldown;	% Decrease the temperature
 end % End of temperature loop
-
+res_parRec= 10.^res_parRec;
 screenSize = get(0,'ScreenSize');
 h = figure;
 set(h,'Position',[0 0 screenSize(3)/2 screenSize(4)]);
 subplot(4,1,1)
-plot(tempRec,res_parRec(:,1))
-set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log','yScale','log')
+plot(tempRec,res_parRec(:,1),tempRec,res_parRec(:,2))
+set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log')
 subplot(4,1,2)
-plot(tempRec,res_parRec(:,2))
+plot(tempRec,res_parRec(:,3),tempRec,res_parRec(:,4),tempRec,res_parRec(:,5))
 set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log','yScale','log')
 subplot(4,1,3)
 plot(tempRec,resRec)
@@ -116,6 +124,9 @@ set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log','yScale
 subplot(4,1,4)
 plot(tempRec,likelihoodRec)
 set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log')
+
+[res_parRec(end,1) res_parRec(end,2)]
+[res_parRec(end,3) res_parRec(end,4) res_parRec(end,5)]
 
 end
 
