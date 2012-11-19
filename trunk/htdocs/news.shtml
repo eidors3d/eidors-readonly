@@ -34,19 +34,25 @@ physics. Examples of physics and their encoding are:
 <table border="1" cellspacing="0" cellpadding="3" >
 <tr><th>Property<th>Encoding
 <tr>
-   <td>Conductivity
+   <td>Generic image<br> information
    <td> <tt>img.elem_data</tt>
    <br> or
    <br> <tt>img.node_data</tt> (no change)
+   <br> These fields will by default be interpreted as conductivity
+          (by forward solvers)
+<tr>
+   <td>Conductivity
+   <td> <tt>img.conductivity.elem_data</tt>
+   <br> or
+   <br> <tt>img.conductivity.node_data</tt> (no change)
 <tr>
    <td>Log conductivity
-   <td> <tt>img.elem_data.logconductivity</tt>
+   <td> <tt>img.log_conductivity.elem_data</tt>
 <tr>
    <td>Movement
-   <td> <tt>img.elem_data</tt> and
-   <br> <tt>img.electrode_data.xyz_movement</tt> or
-   <br> <tt>img.electrode_data.xy_movement</tt> or
-   <br> <tt>img.electrode_data.??_movement</tt>
+   <td> <tt>img.conductivity.elem_data</tt> and
+   <br> <tt>img.movement.electrode_data</tt> or
+   <br> <tt>img.movement.node_data</tt> or
 <tr>
    <td>Anisotropic<br> Conductivity
    <td> <tt>img.elem_data(elem#,img#,:,:)</tt>
