@@ -1,4 +1,4 @@
-% Linear model $Id$
+% $Id$
 xl=-3; xr= 3; yb=-15; yt= 15;
 np= 35;
 [x,y] = meshgrid( linspace(xr,xl,np), linspace(yb,yt,61) );
@@ -20,9 +20,8 @@ ctr = interp_mesh( fmdl,0); xctr= ctr(:,1); yctr= ctr(:,2);
 img = mk_image( fmdl,  ones(length(xctr),1) );
 
 
-show_fem(img); axis image
 
-
+% Solve and add streamlines
 img.fwd_solve.get_all_meas = 1;
 vh = fwd_solve(img);
 
@@ -35,8 +34,8 @@ hold on;
 sy = linspace(-3,3,15); sx =  15+0*sy;
 hh=streamline(q.xp,q.yp, q.xc, q.yc, sx,sy); set(hh,'Linewidth',2);
 hold off;
-axis([-16,16,-3.3,3.3]);
 
-
-%print_convert anisotropy1_01a.png '-density 125'
+axis image
+axis([-16,16,-5,5]);
+print_convert anisotropy1_01a.png '-density 125'
 
