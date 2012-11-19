@@ -1,0 +1,128 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2> 
+Create geophysical stimulation patterns and draw the corresponding pseudo-sections 
+</h2>
+
+In geophysics particular protocols are generally used to sound the soil depending on the sought structures. 
+The stim_pattern_geophys function allows the creation of specific protocols that might be useful for computing synthetic models (simulation models).
+
+<p>
+In order to evaluate fastly the data quality, geophysicists usually represent pseudo-sections that allow a fast visualisation of the raw data. Pseudo-sections may also represent the residuals after the data inversion and so illustrate the repartition of fit quality. The show_pseudosection function allows such representation.
+
+<p>
+This tutorial gives an exemple of the two EIDORS functions constructed to create geophysical protocols and represent data in pseudo-sections.
+
+
+<h3>
+Create 3D FEM model for a horizontal profile
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec01.m" -->
+</pre>
+
+<center>
+<img src="stimPatt_PseudoSec01.png">
+<br><i> Figure:</i>
+Forward model
+</center>
+
+<h3>
+Create a stimulation pattern with a Wenner protocol and show the pseudo-section
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec02.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec02.png">
+<br><i> Figure:</i>
+Pseudo-section for a horizontal profile using a Wenner protocol.
+</center>
+
+<h3>
+Create a stimulation pattern with a Schlumberger protocol and show the pseudo-section
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec03.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec03.png">
+<br><i> Figure:</i>
+Pseudo-section for a horizontal profile using a Schlumberger protocol.
+</center>
+
+<h3>
+Create a stimulation pattern with a Dipole-dipole protocol and show the pseudo-section
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec04.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec04.png">
+<br><i> Figure:</i>
+Pseudo-section for a horizontal profile using a Dipole-dipole protocol.
+</center>
+
+
+
+
+
+
+
+<h3>
+Case of borehole measurements (or any vertical acquisition setup)
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec05.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec05_1.png"><img src="stimPatt_PseudoSec05_2.png">
+<br><i> Figure:</i>
+Forward model including a borehole and pseudo-section for a vertical profile using a Wenner protocol.
+</center>
+
+
+
+
+
+<h3>
+Case of circumferential measurements around a circular object (rock sample, human, tree...)
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec06.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec06_1.png"><img src="stimPatt_PseudoSec06_2.png">
+<br><i> Figure:</i>
+Forward model of a cylindrical obect and pseudo-section for circumferential inward measurements using a Wenner protocol.
+</center>
+
+
+
+
+<h3>
+Case of circumferential measurements around a cavity (gallery)
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec07.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec07_1.png"><img src="stimPatt_PseudoSec07_2.png">
+<br><i> Figure:</i>
+Forward model including a cavity and pseudo-section for circumferential outward measurements using a Wenner protocol.
+</center>
+
+
+
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2012-11-18 10:53:57 -0400 (Sun, 18 November 2012) $ by $Author: n_lesparre $
+</small>
+</BODY></HTML>
+<!--
+      -->
