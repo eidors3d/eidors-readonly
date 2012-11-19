@@ -1,12 +1,44 @@
-1. Deprecate jacobian.background.value ->
+-. Deprecate jacobian.background.value ->
              jacobian.background.elem_data (and new physics)
 
-2. Make sure default GREIT is pretty
+-. Make sure default GREIT is pretty
 
-3. calc_meas_icov -> choose good value for normalized solvers
+-. calc_meas_icov -> choose good value for normalized solvers
     - why is is homg^2 rather than inv(homg)^2
     - maybe just abs(homg) is better and less sensitive
     - fix calc_jacobian_test
+
+- accessor functions for elem_data (and new physics)
+
+-------------
+Lower priority items
+3 - colourbar
+8 - ng.opt interface
+6 - data from
+  - patient 7
+  - dargaville (2010)
+  - Slow flow inflation (Pulletz 2012)
+4 - GREIT electrode errors
+3 - Bill's analytic c2f mapper
+9 - 2D Netgen + elecs
+9 - Automate c2f and include parameterization options
+3 - c2f - extrude options
+3 - c2f - extra space options
+8 - c2f - using mdl space mapper
+9 - netgen interface to keep points
+3 - 3D electrode shapes interface 
+    (alllow electrode shapes which penetrate object)
+9 - refactor ng interface functions (unmix pieces)
+7 - Cleanup difference_data, incorporate apparent resistivity
+4- fix prior covariance
+3 - fix noise covariance
+9 - model validation - automatic testing whether model elements are consistent
+3- plan next releases
+   3.7 (january) 3.8 ? 4.0 ?
+9 - infinite elements
+6 - hessian
+
+
 -------------
 Plans for Manchester code-a-thon:
 
