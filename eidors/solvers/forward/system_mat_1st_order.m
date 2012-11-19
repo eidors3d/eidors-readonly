@@ -30,7 +30,7 @@ else
    ES= sparse([idx,idx+1,idx,idx+1]', ...
               [idx,idx,idx+1,idx+1]', elem_data(:), lFC,lFC);
    
-   ES(lNE+1:lFC,lNE+1:lFC) = speye(lFC-lNE+1);
+   ES(lNE+1:lFC,lNE+1:lFC) = speye(lFC-lNE);
 end
 
 s_mat.E= FC' * ES * FC;
