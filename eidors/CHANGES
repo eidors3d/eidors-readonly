@@ -1,3 +1,5 @@
+2012-11-20: Revised interface of all jacobian, system mat and fwd_solve functions
+            to only accept one input param
 2012-11-19: New geophysics tutorials
 2012-11-19: pseudosection and geophys stim patterns
 2012-11-19: Anisotropy support in fwd_solve and jacobian
