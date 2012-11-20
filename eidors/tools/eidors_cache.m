@@ -149,6 +149,12 @@ switch command
       [objid, sizes, clearidx] = clear_names_cache( limit );
       remove_objids( objid, sizes, clearidx);
    
+   case 'dump'
+      retval = eidors_objects;
+      
+   case 'load'
+      eidors_objects = limit;
+      
    otherwise
       error('command %s not understood',command);
 end
