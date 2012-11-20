@@ -94,6 +94,8 @@ switch command
            if isfield(eidors_objects,'cache_disabled_on')
                idx = strcmp(eidors_objects.cache_disabled_on, limit);
                eidors_objects.cache_disabled_on(idx) = [];
+           else 
+               eidors_objects.cache_disabled_on = [];
            end
            if isempty(eidors_objects.cache_disabled_on)
                eidors_objects.cache_enable = 1;
