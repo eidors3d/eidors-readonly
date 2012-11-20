@@ -25,7 +25,7 @@ else
 end
 
 %Calculate the total stiffness matrix
-s_mat = calc_system_mat(fwd_model,img); At=s_mat.E;
+s_mat = calc_system_mat(img); At=s_mat.E;
 
 %Find electrode stucture and no.of electrodes and initialize vector
 %Find stim strucutre and no. stimulations

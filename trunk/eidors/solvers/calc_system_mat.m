@@ -17,10 +17,15 @@ function system_mat = calc_system_mat( fwd_model, img)
 % $Id$
 %system_mat= feval(fwd_model.system_mat, fwd_model, img);return
 
-if nargin==1
-   img = fwd_model;
-   fwd_model = img.fwd_model;
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling CALC_SYSTEM_MAT with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+   warning off EIDORS:DeprecatedInterface
 end
+fwd_model= img.fwd_model;
 
 cache_obj= {fwd_model, img.elem_data};
 system_mat= eidors_obj('get-cache', cache_obj, 'system_mat');
@@ -30,6 +35,7 @@ if ~isempty(system_mat)
 end
 
 system_mat= feval(fwd_model.system_mat, fwd_model, img);
+warning on EIDORS:DeprecatedInterface
 
 eidors_obj('set-cache', cache_obj, 'system_mat', system_mat);
 eidors_msg('calc_system_mat: setting cached value', 3);
