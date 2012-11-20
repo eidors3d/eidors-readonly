@@ -1,16 +1,26 @@
 function J= jacobian_adjoint( fwd_model, img)
-% JACOBIAN_ADJOINT: J= jacobian_adjoint( fwd_model, img)
+% JACOBIAN_ADJOINT: J= jacobian_adjoint( img ) 
 % Calculate Jacobian Matrix for current stimulation EIT
 % J         = Jacobian matrix
-% fwd_model = forward model
+% img.fwd_model = forward model
+% img.elem_data = background for jacobian calculations
 %
 % fwd_model.normalize_measurements if param exists, calculate
 %                                  a Jacobian for normalized
 %                                  difference measurements
-% img = image background for jacobian calc
+
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling JACOBIAN_ADJOINT with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+end
+fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );

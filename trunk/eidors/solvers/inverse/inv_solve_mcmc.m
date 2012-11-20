@@ -17,7 +17,7 @@ RtR = calc_RtR_prior( inv_model );
 hp= calc_hyperparameter( inv_model );
 
 img_bkgnd= calc_jacobian_bkgnd( inv_model );
-J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+J = calc_jacobian(img_bkgnd);
 
 sol= (J'*J +  hp^2*RtR)\(J' * dv );
 

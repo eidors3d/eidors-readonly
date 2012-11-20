@@ -63,7 +63,7 @@ for i=1:maxiter
     end
     
     %Calculate the Jacobian
-    J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+    J = calc_jacobian( img_bkgnd);
 
     %Gradient of objective function (regularization term not needed)
     %grad_obj = J'*W*(-volt_diff_meas_sim);

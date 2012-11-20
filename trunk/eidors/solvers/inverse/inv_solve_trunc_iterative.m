@@ -17,7 +17,7 @@ function img= inv_solve_trunc_iterative( inv_model, data1, data2)
 fwd_model= inv_model.fwd_model;
 
 img_bkgnd= calc_jacobian_bkgnd( inv_model );
-J = calc_jacobian( fwd_model, img_bkgnd);
+J = calc_jacobian(img_bkgnd);
 
 % The one_step reconstruction matrix is cached
 JtJ = eidors_obj('get-cache', inv_model, 'Hessian');

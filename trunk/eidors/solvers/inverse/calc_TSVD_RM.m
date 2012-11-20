@@ -32,7 +32,7 @@ if nargin < 2
     hp = 1;
 end
 
-J= calc_jacobian(fmdl,bkgnd_img);
+J= calc_jacobian(bkgnd_img);
 imdl.solve = @solve_use_matrix;
 S = eidors_obj('get-cache',mdl,'TSVD_S');
 if isempty(S)

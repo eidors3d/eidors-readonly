@@ -1,13 +1,12 @@
 function J = calc_jacobian( fwd_model, img)
 % CALC_JACOBIAN: calculate jacobian from an inv_model
 % 
-%  J = calc_jacobian( fwd_model, img )
 %  J = calc_jacobian( img )
-%      calc Jacobian on fwd_model at conductivity given
+%      calc Jacobian on img.fwd_model at conductivity given
 %      in image (fwd_model is for forward and reconstruction)
 %
 % For reconstructions on dual meshes, the interpolation matrix
-%    is defined as fwd_model.coarse2fine. This takes
+%    is defined as img.fwd_model.coarse2fine. This takes
 %    coarse2fine * x_coarse = x_fine
 %
 % If the underlying jacobian calculator doesn't understand dual
@@ -20,14 +19,17 @@ function J = calc_jacobian( fwd_model, img)
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if nargin==1
-   img       = fwd_model;
-   fwd_model = img.fwd_model;
+
+if nargin == 1
+   img= fwd_model;
 else
-    warning('EIDORS:calc_jacobian_input_params',...
-        ['Calling calc_jacobian with more than one parameter is '...
-         'DEPRECATED and will be dropped in a future release']);
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling CALC_JACOBIAN with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+   warning off EIDORS:DeprecatedInterface
+
 end
+fwd_model= img.fwd_model;
 
 fwd_model_check(fwd_model);
 
@@ -48,6 +50,8 @@ if isfield(fwd_model,'coarse2fine')
       J=J*c2f;
    end
 end
+
+warning on EIDORS:DeprecatedInterface
 
 eidors_obj('set-cache', cache_obj, 'jacobian', J);
 eidors_msg('calc_jacobian: setting cached value', 3);

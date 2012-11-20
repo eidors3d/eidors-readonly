@@ -12,7 +12,7 @@ function Reg= prior_noser( inv_model );
 % $Id$
 
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
-    J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+    J = calc_jacobian(img_bkgnd);
 
     exponent= 0.5;
     if isfield(inv_model,'prior_noser');

@@ -1,8 +1,8 @@
-function J= jacobian_elem2nodes( fwd_model, img);
+function J= jacobian_elem2nodes( fwd_model, img)
 % JACOBIAN_ELEM2NODES: calculate Jacobian on Nodes from Elem solver
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
-% fwd_model = forward model defined on nodes (elems may not be defined)
+% img.fwd_model = forward model defined on nodes (elems may not be defined)
 % jacobian_elem2nodes.fwd_model 
 %           = full forward model (with nodes and elements)
 %
@@ -11,14 +11,23 @@ function J= jacobian_elem2nodes( fwd_model, img);
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling JACOBIAN_elem2nodes with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+end
+fwd_model= img.fwd_model;
+
 fem_fmdl= fwd_model.jacobian_elem2nodes.fwd_model;
 EtoN = mapper_nodes_elems( fem_fmdl);
 
 if ~isfield(img,'elem_data')
   img.elem_data= calc_elem_from_node_image(EtoN, img.node_data);
 end
-
-J= calc_jacobian(fem_fmdl, img)*EtoN';
+img.fwd_model = fem_fmdl;
+J= calc_jacobian(img)*EtoN';
 
 % Create an image on the elements with a fwd_model on the elemtents
 function e_d = calc_elem_from_node_image(EtoN, node_data); 

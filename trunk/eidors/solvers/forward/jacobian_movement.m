@@ -1,5 +1,5 @@
-function J = jacobian_movement(fwd_model, img_bkgd)
-% CALC_JACOBIAN   Computes the Jacobian matrix for conductivity and
+function J = jacobian_movement(fwd_model, img)
+% JACOBIAN_MOVEMENT   Computes the Jacobian matrix for conductivity and
 % electrode movement variables in 3D EIT.
 % Args:     fwd_model - the EIDORS object forward model
 %            img_bkgd - the image background conductivity
@@ -12,7 +12,7 @@ function J = jacobian_movement(fwd_model, img_bkgd)
 % WARNING: THIS CODE IS EXPERIMENTAL AND GIVES PROBLEMS
 % SEE: Camille Gomez-Laberge, Andy Adler
 % Direct EIT Jacobian calculations for conductivity change
-%  and electrode movement,  Physiol. Meas., 29:S89-S99, 2008
+%  and electrode movement,  Physiol. Meas., 29:S89-S99, 208
 
 % (C) 2007, Camille Gomez-Laberge and Andy Adler.
 %  License: GPL version 2 or version 3
@@ -20,12 +20,24 @@ function J = jacobian_movement(fwd_model, img_bkgd)
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling JACOBIAN_MOVEMENT with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+   warning off EIDORS:DeprecatedInterface
+
+end
+fwd_model= img.fwd_model;
+
+
 % System matrix and its parameters
 pp = fwd_model_parameters( fwd_model );
 pp.dfact = factorial(pp.n_dims);
 pp.DEBUG = 0;
 if pp.DEBUG
-    pp.ss_mat = calc_unconnected_system_mat( fwd_model, img_bkgd);
+    pp.ss_mat = calc_unconnected_system_mat( fwd_model, img);
     pp.fwd_meas =fwd_solve( fwd_model, img_bkgd);
 end
 
@@ -35,24 +47,24 @@ sigma_mat=spdiags(img_bkgd.elem_data,0,pp.n_elem,pp.n_elem);
 pp.kron_cond=kron(sigma_mat,I_nd);
 
 pp.Ce= connectivity_matrix( pp );
-s_mat= calc_system_mat( fwd_model, img_bkgd );
+s_mat= calc_system_mat( fwd_model, img );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
 
 if isfield(fwd_model,'conductivity_jacobian')
-   fwd_model.jacobian = fwd_model.conductivity_jacobian;
-   Jc= calc_jacobian( fwd_model, img_bkgd );
+   img.fwd_model.jacobian = fwd_model.conductivity_jacobian;
+   Jc= calc_jacobian( img );
 else
-   fwd_model = mdl_normalize(fwd_model, 0); % we normalize on our own
-   Jc = jacobian_adjoint(fwd_model,img_bkgd);
-%    Jc = calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
+   img.fwd_model = mdl_normalize(fwd_model, 0); % we normalize on our own
+   Jc = jacobian_adjoint(img);
+%    Jc = calc_conductivity_jacobian(pp, fwd_model, img);
 end
 
 
-Jm = calc_movement_jacobian(pp, fwd_model, img_bkgd);
+Jm = calc_movement_jacobian(pp, fwd_model, img);
 J=[Jc,Jm];
 
 if pp.normalize
-    data= fwd_solve( img_bkgd );
+    data= fwd_solve( img );
     J= J ./ (data.meas(:)*ones(1,size(J,2)));
 end
 
@@ -119,7 +131,7 @@ end
 % CONDUCTIVITY JACOBIAN (Based on Andy Adler's 1996 algorithms)
 % Define the voltage sensitivity delVc on electrode I, for stimulation
 % pattern J, for a change in conductivity of element K as a 3D array
-function Jc = calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
+function Jc = calc_conductivity_jacobian(pp, fwd_model, img);
 delVc = zeros(pp.n_elec, pp.n_stim, pp.n_elem);
 % Calculate the values for the voltage sensitivity for each element
 for k = 1:pp.n_elem
@@ -151,7 +163,7 @@ for k = 1:pp.n_elem
 
         if mod(k,50) == 0
             delta=1e-6;
-            img_delta = img_bkgd;
+            img_delta = img;
             img_delta.elem_data(k) = img_delta.elem_data(k) + delta;
             ss_mat_delta= calc_unconnected_system_mat( fwd_model, img_delta);
             delSe_pert = (ss_mat_delta - pp.ss_mat) / delta;
@@ -168,7 +180,7 @@ Jc= nodes_to_stim_jacobian( delVc, fwd_model, pp );
 
 
 % MOVEMENT JACOBIAN
-function Jm = calc_movement_jacobian(pp, fwd_model, img_bkgd)
+function Jm = calc_movement_jacobian(pp, fwd_model, img)
 % The movement Jacobian is defined for each coordinate Jm = [Jmx Jmy Jmz]
 % Define the voltage sensitivity delVm on electrode I, for stimulation
 % pattern J, for a movement of electrode K as a 3D array
@@ -186,12 +198,12 @@ for colidx = 1:pp.n_dims
  
         %for compound electrodes, average jacobian for each node
 %         delVm_part = zeros(pp.n_elec,pp.n_stim);
-        delVm_part = calc_delVm(elec_nodes(:)',pp,fwd_model,img_bkgd,colidx,...
+        delVm_part = calc_delVm(elec_nodes(:)',pp,fwd_model,img,colidx,...
                 Re_Ce, cond_Ce_Vc);
 %         delVm_part = sparse(length(pp.kron_cond),length(pp.kron_cond));
 %         for each_elec_node= elec_nodes(:)';
 %            delVm_part =  delVm_part + ...
-%                 calc_delVm(each_elec_node,pp,fwd_model,img_bkgd,colidx,...
+%                 calc_delVm(each_elec_node,pp,fwd_model,img,colidx,...
 %                 Re_Ce, cond_Ce_Vc);
 %         end
 %         delVm_part = Re_Ce * delVm_part * cond_Ce_Vc;
@@ -206,7 +218,7 @@ for colidx = 1:pp.n_dims
             mdl_delta = fwd_model;
             mdl_delta.nodes(elec_nodes, colidx) = ...
                 mdl_delta.nodes(elec_nodes, colidx) + delta;
-            S= calc_system_mat( mdl_delta, img_bkgd); 
+            S= calc_system_mat( mdl_delta, img); 
             S=S.E;
 % FIXME: AA+CG 30/1/12
             [Vc_delta] = Vc_Re_matrices( pp, mdl_delta, S);
@@ -223,7 +235,7 @@ Jm= nodes_to_stim_jacobian( delVm, fwd_model, pp );
 
 
 
-function delVm=  calc_delVm( elec_nodes_array, pp, fwd_model, img_bkgd, colidx, Re_Ce, cond_Ce_Vc)
+function delVm=  calc_delVm( elec_nodes_array, pp, fwd_model, img, colidx, Re_Ce, cond_Ce_Vc)
 I = []; J=[]; S= [];
 for elec_nodes= elec_nodes_array(:)';
 [rowidx, elemidx] = find(pp.ELEM == elec_nodes);
@@ -321,7 +333,7 @@ if pp.DEBUG
     mdl_delta = fwd_model;
     mdl_delta.nodes(elec_nodes, colidx) = ...
         mdl_delta.nodes(elec_nodes, colidx) + delta;
-    ss_mat_delta= calc_unconnected_system_mat( mdl_delta, img_bkgd );
+    ss_mat_delta= calc_unconnected_system_mat( mdl_delta, img );
      delSm_pert = (ss_mat_delta - pp.ss_mat) / delta;
     % delSe_pert shound be Ce'*delSe*Ce
     if norm(delSm -delSm_pert ,1) > 1e-5
@@ -377,18 +389,18 @@ function do_unit_test;
    
 function unit_test_compare_approaches
    inv_model = mk_common_model('d2t2',16);
-   img_bkgd  = mk_image( inv_model);
+   img  = mk_image( inv_model);
    fwd_model = inv_model.fwd_model;
 
    pp = fwd_model_parameters( fwd_model );
    pp.DEBUG = 0;
    pp.dfact = factorial(pp.n_dims);
-   s_mat= calc_system_mat( fwd_model, img_bkgd );
+   s_mat= calc_system_mat( fwd_model, img );
    [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
    pp.Ce= connectivity_matrix( pp );
 
-   Jc1= calc_conductivity_jacobian(pp, fwd_model, img_bkgd);
-   Jc2= jacobian_adjoint(fwd_model,img_bkgd);
+   Jc1= calc_conductivity_jacobian(pp, fwd_model, img);
+   Jc2= jacobian_adjoint(fwd_model,img);
    unit_test_cmp('Compare J d2t2', Jc1, Jc2, 1e-13);
 
    fwd_model.normalize_measurements = 1;
