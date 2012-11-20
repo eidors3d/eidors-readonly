@@ -1,38 +1,40 @@
-function nimg = mdl_slice_mesher(fmdl,level)
+function nimg = mdl_slice_mesher(fmdl,level,varargin)
 %MDL_SLICE_MESHER A slice of a 3D FEM as a 2D FEM 
 % img2d = mdl_slice_mesher(mdl3d,level) returns a 2D FEM model MDL2D 
-% suitable for viewing with show_fem representing a cut through MDL3D at
+% suitable for viewing with SHOW_FEM representing a cut through MDL3D at
 % LEVEL. 
-%   MDL3D  - an EIDORS fwd_model or img struct with elem_data
-%   LEVEL  - Vector [1x3] of intercepts
-%          of the slice on the x, y, z axis. To specify a z=2 plane
-%          parallel to the x,y: use levels= [inf,inf,2]
-%   IMG2D  - an EIDORS img struct with a 2D triangular fwd_model
-%
 % Note that where the intersection of an element of MDL3D and the LEVEL is
 % a quadrangle, this will be represented as two triangles in IMG2D. 
 % Faces of MDL3D co-planar with LEVEL will be assigned an avarage of the
 % values of the two elements that share them. 
 %
-% To view element boundaries in the slice run
-%   img2d.boundary = img2d.elems;
-%   show_fem(img2d);
+% [img2d ptch] = mdl_slice_mesher(...) also returns a struct PTCH suitable
+% for use with the PATCH function. It offers the advantage of displaying
+% both quad and tri elements. Colors can be controlled by adding
+% additional arguments passed to calc_colours:
+% [img2d ptch] = mdl_slice_mesher(mdl3d,level, ... )
+% 
+% Inputs:
+%   MDL3D  - an EIDORS fwd_model or img struct with elem_data
+%   LEVEL  - Vector [1x3] of intercepts
+%          of the slice on the x, y, z axis. To specify a z=2 plane
+%          parallel to the x,y: use levels= [inf,inf,2]
+%
 % To control the transparency use transparency_tresh (see CALC_COLOURS for
 % details), e.g.:
 %    img2d.calc_colours.transparency_thresh = -1; (no transperency)
 %    calc_colours('transparency_thresh', 0.25); (some transparency)
 %
-% See also: SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, CROP_MODEL, CALC_COLOURS
+% See also: SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, CROP_MODEL,
+%           CALC_COLOURS. PATCH
 
 % (C) 2012 Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
 % $Id$
 
 % TODO: 
-%  1. Provide patch structure output
-%  2. Fix colours on path plot
-%  3. More intuitive cut plane specification
-%  4. Support node_data
+%  1. More intuitive cut plane specification
+%  2. Support node_data
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 
@@ -173,9 +175,13 @@ end
 eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
 eidors_msg('mk_GREIT_model: setting cached value', 3);
 
-if nargout > 0
+if nargout == 1
     return
 end
+out.Vertices = nodes;
+out.Faces    = NaN(length(uels),4);
+ed = zeros(length(uels),1);
+
 % show_fem(nimg);
 for i = 1:length(uels)
     idx = els == uels(i);
@@ -188,9 +194,16 @@ for i = 1:length(uels)
             id(2:3) = id([3 2]);
         end
     end
-    patch(nodes(nn(id),1),nodes(nn(id),2),nodes(nn(id),3),img.elem_data(uels(i)));
+%     patch(nodes(nn(id),1),nodes(nn(id),2),nodes(nn(id),3),img.elem_data(uels(i)));
+    out.Faces(i,1:length(id)) = nn(id);
+    ed(i) = img.elem_data(uels(i));
 end
-
+out.FaceVertexCData = calc_colours(ed,varargin{:});
+out.FaceColor = 'flat';
+out.CDataMapping = 'direct';
+if nargin == 0
+    patch(out);
+end
 
 
 function res = intersection_test(A,B,C,D)
@@ -317,4 +330,5 @@ function do_unit_test
     mdl_slice_mesher(img, [inf inf 2.5]);
     mdl_slice_mesher(img, [inf inf 1.3]);
     axis equal
+    axis tight
     view(3)
