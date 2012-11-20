@@ -38,6 +38,8 @@ else
        ' an error in a future version. First argument ignored.']);
 end
 
+warning off EIDORS:DeprecatedInterface
+
 fwd_model= img.fwd_model;
 
 
@@ -70,6 +72,8 @@ end
 
 data = feval( fwd_model.solve, fwd_model, img);
 data= eidors_obj('data',data);  % create data object
+
+warning on EIDORS:DeprecatedInterface
 
 eidors_obj('set-cache', img, 'fwd_solve_data', data);
 eidors_msg('fwd_solve: setting cached value',3);

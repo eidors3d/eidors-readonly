@@ -1,8 +1,7 @@
 function data =fwd_solve_1st_order(fwd_model, img)
-% FWD_SOLVE_1ST_ORDER: data= fwd_solve_1st_order( fwd_model, img)
+% FWD_SOLVE_1ST_ORDER: data= fwd_solve_1st_order( img)
 % Fwd solver for Andy Adler's EIT code
 % Input:
-%    fwd_model = forward model
 %    img       = image struct
 % Output:
 %    data = measurements struct
@@ -17,10 +16,14 @@ function data =fwd_solve_1st_order(fwd_model, img)
 % correct input paralemeters if function was called with only img
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin==1 && strcmp(fwd_model.type, 'image');
-    img = fwd_model;
-    fwd_model= img.fwd_model;
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling FWD_SOLVE_1ST_ORDER with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
 end
+fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
@@ -59,4 +62,4 @@ end; end
 
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
-   vh = fwd_solve(img);
+   vh = fwd_solve_1st_order(img);
