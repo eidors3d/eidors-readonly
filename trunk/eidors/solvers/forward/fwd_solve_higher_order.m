@@ -2,10 +2,15 @@ function[data] = fwd_solve_higher_order(fwd_model,img)
 %Solve for voltages (nodes/electrodes) for a forward model. 
 %M Crabb - 29.06.2012
 
-%If function called only with image, extract forward model
-if(nargin==1)
-    img=fwd_model; fwd_model=img.fwd_model;
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling FWD_SOLVE_HIGHER_ORDER with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
 end
+
+fwd_model= img.fwd_model;
 
 %Modify the forward model to be of my type
 if ~isfield(fwd_model,'approx_type')    || ...
