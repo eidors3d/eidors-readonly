@@ -11,9 +11,9 @@ n_elem=size(fmdl.elems,1);
 if(int_ani==1)
     for i=1:64 
         %Symmetric conductivity tensor Cartesian coordinates
-        elem_data(i,1,1,1) =1;
-        elem_data(i,1,1,2) =3; elem_data(i,1,2,1) =3;
-        elem_data(i,1,2,2) =2;
+        elem_data(i,1,1,1) =10;
+        elem_data(i,1,1,2) =9; elem_data(i,1,2,1) =9;
+        elem_data(i,1,2,2) =10;
     end
     %Change for interior pixels    
     for i=64+1:n_elem %Change exterior to isotropic for 'c2C2' model
@@ -25,9 +25,9 @@ if(int_ani==1)
 else
     for i=1:n_elem
         %Symmetric conductivity tensor Cartesian coordinates
-        elem_data(i,1,1,1) =1;
-        elem_data(i,1,1,2) =3; elem_data(i,1,2,1) =3;
-        elem_data(i,1,2,2) =2;
+        elem_data(i,1,1,1) =10;
+        elem_data(i,1,1,2) =9; elem_data(i,1,2,1) =9;
+        elem_data(i,1,2,2) =10;
     end
     %Change for interior pixels    
     for i=1:64 %Change interior to isotropic
