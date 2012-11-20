@@ -33,7 +33,7 @@ if ~isempty(one_step_inv)
     eidors_msg('inv_solve_time_prior: using cached value', 2);
 else
     img_bkgnd= calc_jacobian_bkgnd( inv_model );
-    J = calc_jacobian( fwd_model, img_bkgnd);
+    J = calc_jacobian(img_bkgnd);
 
 %   one_step_inv= standard_form( inv_model, J );
     one_step_inv= data_form( inv_model, J );

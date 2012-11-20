@@ -37,7 +37,7 @@ else
    RtR_p_reg = spdiags( spdiags(RtR_prior,0)*1.00001, 0, RtR_prior);
 
    img_bkgnd= calc_jacobian_bkgnd( inv_model );
-   J = calc_jacobian( fwd_model, img_bkgnd);
+   J = calc_jacobian( img_bkgnd);
 
    JiRtRJt= J*(RtR_p_reg\J');
 end

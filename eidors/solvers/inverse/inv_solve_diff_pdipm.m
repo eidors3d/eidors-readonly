@@ -28,7 +28,7 @@ fwd_model= inv_model.fwd_model;
 d=calc_difference_data( data1, data2, fwd_model);
 
 img_bkgnd=calc_jacobian_bkgnd( inv_model );
-J=calc_jacobian( fwd_model, img_bkgnd);
+J=calc_jacobian(img_bkgnd);
 
 alpha=calc_hyperparameter( inv_model );
 L=calc_R_prior( inv_model );

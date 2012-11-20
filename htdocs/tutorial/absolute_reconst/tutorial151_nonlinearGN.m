@@ -29,7 +29,7 @@ for iter= 1:inv_model.parameters.max_iterations
       break;
    end
    
-   J = calc_jacobian( fwd_model, img);
+   J = calc_jacobian( img);
    delta_sol = (J.'*J + hp2*RtR)\ (J.' * d_data);
    factor= linesearch(img, data, sol, delta_sol, norm_d_data);
    sol = sol + factor*delta_sol;

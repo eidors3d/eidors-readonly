@@ -63,7 +63,7 @@ for i=1:maxiter
     end
     
     %Calculate the Jacobian
-    J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+    J = calc_jacobian( img_bkgnd);
                 
     %Compute the different vectors for method  (Polydorides 2012 Pg.10)
     d_s_d_m=zeros(n_cond,n_cond);

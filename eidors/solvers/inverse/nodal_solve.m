@@ -35,7 +35,7 @@ function one_step_inv = get_RM( inv_model );
    end
 
    img_bkgnd= calc_jacobian_bkgnd( inv_model );
-   J = calc_jacobian( fwd_model, img_bkgnd);
+   J = calc_jacobian(img_bkgnd);
 
    RtR = calc_RtR_prior( inv_model );
    W   = calc_meas_icov( inv_model );
