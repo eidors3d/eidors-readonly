@@ -26,9 +26,8 @@ else
    warning('EIDORS:DeprecatedInterface', ...
       ['Calling CALC_JACOBIAN with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
-   warning off EIDORS:DeprecatedInterface
-
 end
+warning off EIDORS:DeprecatedInterface
 fwd_model= img.fwd_model;
 
 fwd_model_check(fwd_model);

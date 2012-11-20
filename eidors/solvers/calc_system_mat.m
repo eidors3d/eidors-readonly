@@ -23,8 +23,8 @@ else
    warning('EIDORS:DeprecatedInterface', ...
       ['Calling CALC_SYSTEM_MAT with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
-   warning off EIDORS:DeprecatedInterface
 end
+warning off EIDORS:DeprecatedInterface
 fwd_model= img.fwd_model;
 
 cache_obj= {fwd_model, img.elem_data};
