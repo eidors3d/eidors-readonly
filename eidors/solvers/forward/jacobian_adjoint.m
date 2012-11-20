@@ -36,7 +36,8 @@ sv= zeros(n, pp.n_stim );
 sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
 
 zi2E= zeros(pp.n_elec, n);
-zi2E(:, idx)= pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+% the minus below used to be missing
+zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 
 FC= system_mat_fields( fwd_model );
 
@@ -66,8 +67,8 @@ if pp.normalize
    
 end
 
-% FIXME: The Jacobian calculated is inversed
-J= -J;
+% This was a correction for the missing minus above
+% J= -J;
 
 % DE_{i,j,k} is dV_i,j / dS_k
 %  where V_i is change in voltage on electrode i for
