@@ -47,7 +47,7 @@ sigma_mat=spdiags(img_bkgd.elem_data,0,pp.n_elem,pp.n_elem);
 pp.kron_cond=kron(sigma_mat,I_nd);
 
 pp.Ce= connectivity_matrix( pp );
-s_mat= calc_system_mat( fwd_model, img );
+s_mat= calc_system_mat( img );
 [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
 
 if isfield(fwd_model,'conductivity_jacobian')
@@ -218,7 +218,9 @@ for colidx = 1:pp.n_dims
             mdl_delta = fwd_model;
             mdl_delta.nodes(elec_nodes, colidx) = ...
                 mdl_delta.nodes(elec_nodes, colidx) + delta;
-            S= calc_system_mat( mdl_delta, img); 
+            img_delta = img;
+            img_delta.fwd_model = mdl_delta;
+            S= calc_system_mat(img_delta); 
             S=S.E;
 % FIXME: AA+CG 30/1/12
             [Vc_delta] = Vc_Re_matrices( pp, mdl_delta, S);
@@ -395,7 +397,7 @@ function unit_test_compare_approaches
    pp = fwd_model_parameters( fwd_model );
    pp.DEBUG = 0;
    pp.dfact = factorial(pp.n_dims);
-   s_mat= calc_system_mat( fwd_model, img );
+   s_mat= calc_system_mat(img );
    [pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
    pp.Ce= connectivity_matrix( pp );
 

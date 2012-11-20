@@ -23,7 +23,7 @@ end
 fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
-s_mat= calc_system_mat( fwd_model, img );
+s_mat= calc_system_mat( img );
 
 d= pp.n_dims+1;
 e= pp.n_elem;

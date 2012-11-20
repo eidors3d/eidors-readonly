@@ -26,7 +26,7 @@ end
 fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
-s_mat= calc_system_mat( fwd_model, img );
+s_mat= calc_system_mat( img );
 
 idx= 1:size(s_mat.E,1);
 idx( fwd_model.gnd_node ) = [];

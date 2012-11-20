@@ -1,7 +1,7 @@
 function s_mat= system_mat_1st_order( fwd_model, img)
 % SYSTEM_MAT_1ST_ORDER: SS= system_mat_1st_order( fwd_model, img)
 % Calc system matrix for Andy Adler's EIT code
-% fwd_model = forward model
+% img.fwd_model = forward model
 % img       = image background for system matrix calc
 % s_mat.E = CC' * SS * conductivites * CC;
 % where:
@@ -12,6 +12,16 @@ function s_mat= system_mat_1st_order( fwd_model, img)
 % $Id$
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
+if nargin == 1
+   img= fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling SYSTEM_MAT_1ST_ORDER with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+end
+fwd_model= img.fwd_model;
+
 
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
