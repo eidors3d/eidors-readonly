@@ -31,7 +31,7 @@ disp('Homogeneous model');
 % Every cells has the same material
 homg_img= mk_image(fine_mdl, 1 );
 
-homg_data=fwd_solve( fine_mdl, homg_img);
+homg_data=fwd_solve( homg_img);
 
 
 %% Create inclusion and solve inhomogenous model
@@ -47,7 +47,7 @@ inhomg_img = create_inclusion(homg_img, center, radius, inclusion_material);
 show_fem( inhomg_img );
 print_convert dual_3d3d01a.png '-density 80'
 
-inhomg_data=fwd_solve( fine_mdl, inhomg_img);
+inhomg_data=fwd_solve( inhomg_img);
 
 
 %% Create coarse model for inverse problem

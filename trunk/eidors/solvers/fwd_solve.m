@@ -1,10 +1,10 @@
-function data = fwd_solve( fwd_model, img)
+function data = fwd_solve(fwd_model, img)
 % FWD_SOLVE: calculate data from a fwd_model object and an image
 % 
 % fwd_solve can be called as
-%    data= fwd_solve( fwd_model, img)
-% or
 %    data= fwd_solve( img)
+% or (deprecated)
+%    data= fwd_solve( fwd_model, img)
 %
 % in each case it will call the fwd_model.solve
 %                        or img.fwd_model.solve method
@@ -30,10 +30,17 @@ function data = fwd_solve( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if nargin==1
+if nargin == 1
    img= fwd_model;
-   fwd_model= img.fwd_model;
+else
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling FWD_SOLVE with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
 end
+
+fwd_model= img.fwd_model;
+
+
 fwd_model= prepare_model( fwd_model );
 
 if isfield(img,'params_mapping')

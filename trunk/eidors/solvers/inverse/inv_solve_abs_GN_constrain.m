@@ -109,7 +109,7 @@ for i=1:maxiter
            img_new(iii)=logistic_f(log_img_new(iii),min_s,max_s,rel_par);
        end               
        img_bkgnd.elem_data=img_new'; 
-       sim_data_new=fwd_solve(img_bkgnd.fwd_model,img_bkgnd);
+       sim_data_new=fwd_solve(img_bkgnd);
        volt_diff_meas_sim_new = calc_difference_data( sim_data_new, meas_data, inv_model.fwd_model);   
 
        %Calculate the functions for BLS
@@ -128,7 +128,7 @@ for i=1:maxiter
                img_new(iii)=logistic_f(log_img_new(iii),min_s,max_s,rel_par);
            end               
            img_bkgnd.elem_data=img_new; 
-           sim_data_new=fwd_solve(img_bkgnd.fwd_model,img_bkgnd);
+           sim_data_new=fwd_solve(img_bkgnd);
            volt_diff_meas_sim_new = calc_difference_data( sim_data_new, meas_data, inv_model.fwd_model);   
            
            %Calculate the functions for BLS
@@ -143,7 +143,7 @@ for i=1:maxiter
     end
        
     %Resolve model, find difference data and test convergence
-    sim_data_new=fwd_solve(img_bkgnd.fwd_model,img_bkgnd);
+    sim_data_new=fwd_solve(img_bkgnd);
     volt_diff_meas_sim = calc_difference_data( sim_data_new, meas_data, inv_model.fwd_model);   
     
     if norm(volt_diff_meas_sim)<tol; break; end  % test tolerance   
