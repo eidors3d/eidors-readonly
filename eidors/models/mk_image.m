@@ -14,24 +14,38 @@ function img= mk_image(mdl, elem_data, name)
 % Usage 3: create image from previous image, override conductity
 %  img = mk_image( other_image, 2 ) -> image with c=2
 
-% (C) 2008-10 Andy Adler. Licenced under GPL version 2 or 3
+% (C) 2008-12 Andy Adler and Bartlomiej Grychtol. 
+% Licenced under GPL version 2 or 3
 % $Id$
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin<3; name = 'Created by mk_image'; end
-if nargin<2; 
-   try
-     elem_data = mdl.jacobian_bkgnd.value;
-   catch
-     error('mk_image: for one parameter, needs a mdl.jacobian_bkgnd field');
-   end
-end
+% if nargin<2; 
+%    try
+%      elem_data = mdl.jacobian_bkgnd.value;
+%    catch
+%      error('mk_image: for one parameter, needs a mdl.jacobian_bkgnd field');
+%    end
+% end
 
 switch mdl.type
-   case 'inv_model'; mdl = mdl.fwd_model;
-   case 'fwd_model'; mdl = mdl; % keep model
-   case 'image';     mdl = mdl.fwd_model;
+   case 'inv_model'
+      if nargin == 1
+         img = calc_jacobian_bkgnd(mdl);
+         return
+      else
+         mdl = mdl.fwd_model;
+         % warning('Ignoring inv_model.jacobian_bkgnd in favour of the supplied elem_data');
+      end
+   case 'fwd_model'
+      mdl = mdl; % keep model
+   case 'image'
+      if nargin == 1
+         img = physics_data_mapper(mdl);
+         return
+      end
+      mdl = mdl.fwd_model;
    otherwise; error('mk_image: no inv_model, fwd_model or image object');
 end
 
@@ -46,8 +60,26 @@ function do_unit_test
    im0 = mk_image( imdl );
    unit_test_cmp('im1',im0.elem_data, ones(64,1) );
 
-   im0 = mk_image( imdl, 2 );
+   im0 = mk_image( imdl, 2 ); % warning
    unit_test_cmp('im2',im0.elem_data, 2*ones(64,1) );
 
    im0 = mk_image( imdl.fwd_model, 3*ones(64,1) );
    unit_test_cmp('im3',im0.elem_data, 3*ones(64,1) );
+   
+   im0 = mk_image(im0); % no change
+   unit_test_cmp('im4',im0.elem_data, 3*ones(64,1) );
+   
+   im0.conductivity.elem_data = im0.elem_data;
+   im0 = rmfield(im0, 'elem_data');
+   im1 = mk_image(im0); % use physics_data_mapper
+   unit_test_cmp('im5',im1.elem_data, 3*ones(64,1) );
+   
+   im0.resistivity.node_data = 5;
+   im0.physics_data_mapper = 'resistivity';
+   im1 = mk_image(im0); % use physics_data_mapper
+   unit_test_cmp('im6',im1.node_data(1), 5 );
+   
+   imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd, 'value');
+   imdl.jacobian_bkgnd.conductivity = im0.conductivity;
+   im2 = mk_image(imdl);
+   unit_test_cmp('im6',im2.elem_data, 3*ones(64,1) );
