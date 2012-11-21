@@ -11,11 +11,11 @@ function J = jacobian_log_conductivity(jnk, img)
 % License: GPL version 2 or 3
 % $Id$
 
-if ~isfield(img.elem_data,'log_conductivity')
-    error('img.elem_data.log_conductivity required');
+if ~isfield(img,'log_conductivity')
+    error('img.log_conductivity.elem_data required');
 end
 
-logc = img.elem_data.log_conductivity;
+logc = img.log_conductivity.elem_data;
 img.elem_data = exp(logc);
 try
     img.fwd_model.jacobian = ...

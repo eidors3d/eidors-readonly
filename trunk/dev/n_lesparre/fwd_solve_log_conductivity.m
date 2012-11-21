@@ -9,10 +9,10 @@ function data = fwd_solve_log_conductivity(jnk, img)
 % License: GPL version 2 or 3
 % $Id$
 
-if isfield(img,'elem_data')
-    img.elem_data = exp(img.elem_data.log_conductivity);
+if isfield(img.log_conductivity,'elem_data')
+    img.elem_data = exp(img.log_conductivity.elem_data);
 else 
-    img.node_data = exp(img.node_data.log_conductivity);
+    img.node_data = exp(img.log_conductivity.node_data);
 end
 
 if isfield(img.fwd_model,'fwd_solve_log_conductivity')
