@@ -15,10 +15,12 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 % Step 1: fit to background
 img = calc_jacobian_bkgnd( inv_model );
+img.log_conductivity.elem_data = img.elem_data;
+img = rmfield(img, 'elem_data');
 % img = homogeneous_estimate( inv_model, data1 );
 if isfield(inv_model.fwd_model,'coarse2fine')
     nc = size(img.fwd_model.coarse2fine,2);
-    img.elem_data.log_conductivity = mean(img.elem_data.log_conductivity)*ones(nc,1);
+    img.log_conductivity.elem_data = mean(img.log_conductivity.elem_data)*ones(nc,1);
 end
 
 % Load the paramaters for the inversion
@@ -65,15 +67,16 @@ img0 = img;
 residuals= zeros(size(data1,1),iters+1);
 
 for k = 1:iters  
-
+    img = physics_data_mapper(img);
     vsim=  fwd_solve(img);
+
     res = img.parameters.normalisation*(data1-vsim.meas);
     residuals(:,k)=res;
    
   % Calculate Jacobian
     disp(['Begin Jacobian computation - Iteration ' num2str(k)]);
     J = calc_jacobian( img ); 
-
+    img = physics_data_mapper(img,1);
     % Convert Jacobian as the adjusted parameters are the logarithm of the
     % conductivity
 %     img.logCond= log(img.elem_data);
@@ -89,10 +92,10 @@ for k = 1:iters
 
         
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
-        RDx = hp2RtR*(img0.elem_data.log_conductivity(1:end-1) ... 
-                - img.elem_data.log_conductivity(1:end-1));
+        RDx = hp2RtR*(img0.log_conductivity.elem_data(1:end-1) ... 
+                - img.log_conductivity.elem_data(1:end-1));
     else
-        RDx = hp2RtR*(img0.elem_data.log_conductivity - img.elem_data.log_conductivity);
+        RDx = hp2RtR*(img0.log_conductivity.elem_data - img.log_conductivity.elem_data);
     end
 %     figure; plot(RDx);
     dx = (J'*W*J + hp2RtR)\(J'*res + RDx);
@@ -106,8 +109,9 @@ for k = 1:iters
 %     img0= img;
 end
 
-
+img = physics_data_mapper(img);
 vsim=  fwd_solve(img);
+img = physics_data_mapper(img,1);
 residuals(:,k+1) = img.parameters.normalisation*(vsim.meas-data1);
 img.residuals= residuals;
 img.estimation= vsim.meas;
@@ -137,8 +141,10 @@ perturb= img.parameters.perturb;
 % Compute the forward model for eah perturbation step
 mlist= perturb*0;
 for i = 1:length(perturb); 
-    img.elem_data.log_conductivity= imgk.elem_data.log_conductivity + perturb(i)*dx;
+    img.log_conductivity.elem_data= imgk.log_conductivity.elem_data + perturb(i)*dx;
+    img = physics_data_mapper(img);
     vsim = fwd_solve( img );
+    img = physics_data_mapper(img,1);
     dv = vsim.meas-data1;
     dv= img.parameters.normalisation*dv;
     mlist(i) = norm(dv);
@@ -154,18 +160,20 @@ if pf(1)*(log10(fmin))^2+pf(2)*log10(fmin)+pf(3) > min(mlist(2:end)) || log10(fm
     fmin= perturb(ik+1);
 end
 
-img.elem_data.log_conductivity = imgk.elem_data.log_conductivity + fmin*dx;
+img.log_conductivity.elem_data = imgk.log_conductivity.elem_data + fmin*dx;
 % img.elem_data= exp(img.logCond);
+img = physics_data_mapper(img);
 vsim = fwd_solve( img );
+img = physics_data_mapper(img,1);
 dv = vsim.meas-data1;
 dv= img.parameters.normalisation*dv;
 
 if norm(dv) > mlist(1)
     img.parameters.perturb= [0 logspace(-4,-2,5)];
-    img.elem_data.log_conductivity= imgk.elem_data.log_conductivity;
+    img.log_conductivity.elem_data= imgk.log_conductivity.elem_data;
 else
       img.parameters.perturb= [0 fmin/2 fmin fmin*2];
-      img.elem_data.log_conductivity= imgk.elem_data.log_conductivity + fmin*dx;
+      img.log_conductivity.elem_data= imgk.log_conductivity.elem_data + fmin*dx;
       if size(imgk.fwd_model.elems,1) <= 200000
           img.parameters.perturb= [0 fmin/4 fmin/2 fmin fmin*2 fmin*4];
       else
@@ -214,7 +222,7 @@ function img = homogeneous_estimate( img, data )
 
  conductivity_background= (img.parameters.normalisation*data)\(ones(size(data)));
  img.homogenous_estimate = conductivity_background;
- img.elem_data.log_conductivity= ones(size(img.elem_data.log_conductivity,1),1) * log(conductivity_background);
+ img.log_conductivity.elem_data= ones(size(img.log_conductivity.elem_data,1),1) * log(conductivity_background);
  disp(['Homogeneous resistivity = ' num2str(1/(conductivity_background),3) ' Ohm.m'])
  
     function do_unit_test
@@ -276,7 +284,7 @@ imdl.RtR_prior = @prior_laplace;
 imdl.solve = @inv_solve_abs_GN_logC;
 imdl.reconst_type = 'absolute';
 imdl.hyperparameter.value = 0.1;
-imdl.jacobian_bkgnd.elem_data.log_conductivity = log(1);
+imdl.jacobian_bkgnd.log_conductivity.elem_data = log(1);
 
 
 img1= mk_image(fmdl,1);
@@ -299,7 +307,7 @@ imgr= inv_solve(imdl, dd);
 
 imgGNd= imgr;
 imgGNd.fwd_model.coarse2fine= cmdl.coarse2fine;
-imgGNd.elem_data= log10(exp(-imgGNd.elem_data.log_conductivity(1:end-1)));
+imgGNd.elem_data= log10(exp(-imgGNd.log_conductivity.elem_data(1:end-1)));
 imgGNd.calc_colours.clim= 1.5;
 imgGNd.calc_colours.ref_level= 1.5;
 
@@ -316,8 +324,11 @@ ylabel('Z (m)','fontsize',20,'fontname','Times')
 set(gca,'fontsize',20,'fontname','Times');
 
 img = mk_image( imdl );
-img.elem_data= imgr.elem_data;
-vCG= fwd_solve(img); vCG = vCG.meas;
+img.log_conductivity.elem_data= imgr.log_conductivity.elem_data;
+img = physics_data_mapper(img);
+vCG= fwd_solve(img); 
+img = physics_data_mapper(img,1);
+vCG = vCG.meas;
 
 figure; plot(I*(dd.meas-vCG))
 figure; hist(I*(dd.meas-vCG),50)
