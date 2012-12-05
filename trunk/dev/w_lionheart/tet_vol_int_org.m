@@ -29,77 +29,22 @@ choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
            2,4,1;2,4,2;2,4,3;2,4,4;
            3,4,1;3,4,2;3,4,3;3,4,4];
            
-if isstruct(v1)
-   vol1 = get_elem_volume(v1);
-   nn1 = num_nodes(v1);
-   ne1 = num_elems(v1);
-   e1 = v1.elems;
-   v1 = v1.nodes;
-else
-   vol1 = tet_vol(v1);
-   nn1 = 4;
-   ne1 = 1;
-   e1 = [1 2 3 4];
-end
-if isstruct(v2)
-   vol2 = get_elem_volume(v2);
-   nn2 = num_nodes(v2);
-   ne2 = num_elems(v2);
-   e2 = v2.elems;
-   v2 = v2.nodes;
-else
-   vol2 = tet_vol(v2);
-   nn2 = 4;
-   ne2 = 1;
-   e2 = [1 2 3 4];
-end
-
-volint = sparse(ne2,ne1);
-
+           
+           
+    
 epsilon=1e-10;
-[A1,b1]=tet_to_inequal(v1,e1);
-[A2,b2]=tet_to_inequal(v2,e2);
-i12 = (A1*v2' -b1*ones(1,nn2))< epsilon; % 4*ne1 X nn2
-i21 = (A2*v1' -b2*ones(1,nn1))< epsilon; % 4*ne2 X nn1
-i12 = i12(:,reshape(e2',[],1));          % 4*ne1 X 4*ne2
-i21 = i21(:,reshape(e1',[],1));          % 4*ne2 X 4*ne1
-% is there a prettier way of doing this?
-% TRUE if elem of 2 contained in elem of 1
-ei12 = reshape(all(reshape(reshape(all(reshape(...
-          i12,4,[])),[],4*ne1)',[],4)')',[],ne1)'; % ne1 X ne2
-% TRUE if elem of 1 contained in elem of 2
-ei21 = reshape(all(reshape(reshape(all(reshape(...
-          i21,4,[])),4*ne2,[])',[],4)')',[],ne2)'; % ne2 X ne1
-% TRUE if elem of 2 does NOT have nodes in elem of 1       
-ni12 = reshape(all(reshape(reshape(~all(reshape(...
-          i12,4,[])),[],4*ne1)',[],4)')',[],ne1)'; % ne1 X ne2
-% TRUE if elem of 1 does NOT have nodes in elem of 2       
-ni21 = reshape(all(reshape(reshape(~all(reshape(...
-          i21,4,[])),4*ne2,[])',[],4)')',[],ne2)'; % ne2 X ne1
-disjoint = ni12' & ni21;
-
-if any(ei12(:))
-   [el1 el2] = find(ei12);
-   volint = volint + sparse(el2,el1,vol2(el2),ne2,ne1);
-end
-if any(ei21(:))
-   [el2 el1] = find(ei21);
-   volint = volint + sparse(el2,el1,vol1(el1),ne2,ne1);
-end
-todo = ~(volint~=0 | disjoint);
-   
-% if all(all(i12))
-%     volint=tet_vol(v2);
-% elseif all(all(i21))
-%     volint=tet_vol(v1);
-% elseif all(~all(i12)) & all(~all(i21));
-%     % disjoint
-%     volint=0;
-% if all(~all(i12)) & all(~all(i21))
-%    keyboard
-% end
-% VECTORISE FROM HERE ON
-if any(todo(:))
+[A1,b1]=tet_to_inequal(v1);
+[A2,b2]=tet_to_inequal(v2);
+i12 = (A1*v2' -b1*ones(1,4))< epsilon;
+i21 = (A2*v1' -b2*ones(1,4))< epsilon;
+if all(all(i12))
+    volint=tet_vol(v2);
+elseif all(all(i21))
+    volint=tet_vol(v1);
+elseif all(~all(i12)) & all(~all(i21));
+    % disjoint
+    volint=0;
+else
    % some intersection, 
    vs=[];
    % add the vertices that are already in both
@@ -185,8 +130,8 @@ toc
 end
 
 function unit_test_smaller
-  f_mdl =  mk_circ_tank(2,[0,1],0 );
-  c_mdl =  mk_circ_tank(1,[0,1],0 );
+  f_mdl =  mk_circ_tank(3,[0,1],0 );
+  c_mdl =  mk_circ_tank(2,[0,1],0 );
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
@@ -197,12 +142,10 @@ function unit_test_smaller
       vf = f_mdl.nodes(f_mdl.elems(f,:),:);
       for c = 1:nec
          vc = c_mdl.nodes(c_mdl.elems(c,:),:);
-%disp([f,c]);
-% if f==5 && c==3 ; keyboard; end
-         mapping(f,c) = tet_vol_int(vc,vf);
+%disp([f,c]);%if f==10 && c==2 ; keyboard; end
+         mapping(f,c) = tet_vol_int_org(vc,vf);
       end
    end
-c2f = tet_vol_int(c_mdl,f_mdl);   
 end
 
     
