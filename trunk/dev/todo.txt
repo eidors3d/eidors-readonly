@@ -1,3 +1,5 @@
+
+
 -. Deprecate jacobian.background.value ->
              jacobian.background.elem_data (and new physics)
 
@@ -10,6 +12,9 @@
 
 - accessor functions for elem_data (and new physics)
 
+- colorbar
+   - code in move_2d02 and eidors_colourbar
+   - need to completely avoid matlab's colourbar
 -------------
 Lower priority items
 3 - colourbar
