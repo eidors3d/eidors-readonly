@@ -80,11 +80,15 @@ else
      if size(vs,1)<4
          volint=0;
      else   
-        if size(vs,1)==4 && tet_vol(vs) == 0
-           volint = 0;
-        else
-           [K,volint]=convhulln(vs); %FIXME: get info from convhulln
-        end
+       try
+          [K,volint]=convhulln(vs); %FIXME: get info from convhulln
+       catch err 
+          if strcmp(err.identifier, 'MATLAB:qhullmx:DegenerateData')
+             volint = 0;
+          else 
+             rethrow( err); 
+          end 
+       end
      end
    end    
 end
@@ -119,13 +123,15 @@ function do_unit_test
    correct = volu * abs(det(A));
    unit_test_cmp('Scaled shifted tetrahedron volume', out, correct)
 
+tic
    unit_test_smaller;
+toc
 
 end
 
 function unit_test_smaller
-  f_mdl =  mk_circ_tank(2,[0,1],0 );
-  c_mdl =  mk_circ_tank(1,[0,1],0 );
+  f_mdl =  mk_circ_tank(3,[0,1],0 );
+  c_mdl =  mk_circ_tank(2,[0,1],0 );
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
@@ -136,7 +142,7 @@ function unit_test_smaller
       vf = f_mdl.nodes(f_mdl.elems(f,:),:);
       for c = 1:nec
          vc = c_mdl.nodes(c_mdl.elems(c,:),:);
-disp([f,c]);%if f==10 && c==2 ; keyboard; end
+%disp([f,c]);%if f==10 && c==2 ; keyboard; end
          mapping(f,c) = tet_vol_int(vc,vf);
       end
    end
