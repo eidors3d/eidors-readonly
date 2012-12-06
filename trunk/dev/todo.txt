@@ -1,4 +1,5 @@
-
+-. Add a tutorial to show how to do pairs of electrodes
+    for injection patterns
 
 -. Deprecate jacobian.background.value ->
              jacobian.background.elem_data (and new physics)
