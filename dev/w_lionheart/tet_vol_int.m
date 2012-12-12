@@ -91,11 +91,21 @@ todo = ~(volint~=0 | disjoint);
 %    keyboard
 % end
 % VECTORISE FROM HERE ON
-[x,y]=find(todo);
+[y,x]=find(todo);
 for i=1:length(x)
-   volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
+        id_x = (x(i)-1)*4 + (1:4);
+        id_y = (y(i)-1)*4 + (1:4);
+   volint(y(i),x(i)) = calc_int_vol( ...
+     v1(e1(x(i),:),:), ...
+     v2(e2(y(i),:),:), ...
+     i12(id_x,id_y), ...
+     i21(id_y,id_x), ...
+     A1(id_x,:),...
+     A2(id_y,:), ...
+     b1(id_x,:), b2(id_y,:));
 end
-    
+
+%v1,v2,i21,i12, A1, A2, b1,b2);
 end
 
 function epsi= epsilon; epsi=1e-10; end
@@ -165,11 +175,12 @@ end
 function do_unit_test 
 %  simple_inequalities_test
 tic
-%  unit_test_smaller(1);
+a= unit_test_smaller(1);
 toc
 tic
-   unit_test_smaller(2);
+b= unit_test_smaller(2);
 toc
+keyboard
 end
 
 function simple_inequalities_test
@@ -197,14 +208,14 @@ function simple_inequalities_test
 
 end
 
-function unit_test_smaller( select)
+function c2f= unit_test_smaller( select)
   f_mdl =  mk_circ_tank(2,[0,1],0 );
   c_mdl =  mk_circ_tank(1,[0,1],0 );
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
 
-   mapping = sparse(nef,nec);
+   c2f = sparse(nef,nec);
 
 if select==1;
    for f = 1:nef
@@ -213,7 +224,7 @@ if select==1;
          vc = c_mdl.nodes(c_mdl.elems(c,:),:);
 %disp([f,c]);
 % if f==5 && c==3 ; keyboard; end
-         mapping(f,c) = tet_vol_int(vc,vf);
+         c2f(f,c) = tet_vol_int(vc,vf);
       end
    end
 else
