@@ -21,13 +21,6 @@ function volint=tet_vol_int(v1,v2)
 
 if isstr(v1) && strcmp(v1,'UNIT_TEST'); do_unit_test; return; end
 
-% List of choices of 2 from 1 and one from the other
-choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
-           1,3,1;1,3,2;1,3,3;1,3,4;
-           1,4,1;1,4,2;1,4,3;1,4,4;                      
-           2,3,1;2,3,2;2,3,3;2,3,4;
-           2,4,1;2,4,2;2,4,3;2,4,4;
-           3,4,1;3,4,2;3,4,3;3,4,4];
            
 if isstruct(v1)
    vol1 = get_elem_volume(v1);
@@ -56,7 +49,6 @@ end
 
 volint = sparse(ne2,ne1);
 
-epsilon=1e-10;
 [A1,b1]=tet_to_inequal(v1,e1);
 [A2,b2]=tet_to_inequal(v2,e2);
 i12 = (A1*v2' -b1*ones(1,nn2))< epsilon; % 4*ne1 X nn2
@@ -99,7 +91,23 @@ todo = ~(volint~=0 | disjoint);
 %    keyboard
 % end
 % VECTORISE FROM HERE ON
-if any(todo(:))
+[x,y]=find(todo);
+for i=1:length(x)
+   volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
+end
+    
+end
+
+function epsi= epsilon; epsi=1e-10; end
+function volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
+   % List of choices of 2 from 1 and one from the other
+   choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
+              1,3,1;1,3,2;1,3,3;1,3,4;
+              1,4,1;1,4,2;1,4,3;1,4,4;                      
+              2,3,1;2,3,2;2,3,3;2,3,4;
+              2,4,1;2,4,2;2,4,3;2,4,4;
+              3,4,1;3,4,2;3,4,3;3,4,4];
+
    % some intersection, 
    vs=[];
    % add the vertices that are already in both
@@ -145,9 +153,7 @@ if any(todo(:))
           end 
        end
      end
-   end    
-end
-    
+   end
 end
 
 function vol=tet_vol(v)
@@ -157,6 +163,16 @@ function vol=tet_vol(v)
 end   
 
 function do_unit_test 
+%  simple_inequalities_test
+tic
+%  unit_test_smaller(1);
+toc
+tic
+   unit_test_smaller(2);
+toc
+end
+
+function simple_inequalities_test
    % Test inequalities
    v1=[0,0,0;eye(3)];
    v2 = v1;v2(1,:)=v2(1,:)+0.1;
@@ -178,13 +194,10 @@ function do_unit_test
    correct = volu * abs(det(A));
    unit_test_cmp('Scaled shifted tetrahedron volume', out, correct)
 
-tic
-   unit_test_smaller;
-toc
 
 end
 
-function unit_test_smaller
+function unit_test_smaller( select)
   f_mdl =  mk_circ_tank(2,[0,1],0 );
   c_mdl =  mk_circ_tank(1,[0,1],0 );
 
@@ -193,6 +206,7 @@ function unit_test_smaller
 
    mapping = sparse(nef,nec);
 
+if select==1;
    for f = 1:nef
       vf = f_mdl.nodes(f_mdl.elems(f,:),:);
       for c = 1:nec
@@ -202,7 +216,9 @@ function unit_test_smaller
          mapping(f,c) = tet_vol_int(vc,vf);
       end
    end
-c2f = tet_vol_int(c_mdl,f_mdl);   
+else
+   c2f = tet_vol_int(c_mdl,f_mdl);   
+end
 end
 
     
