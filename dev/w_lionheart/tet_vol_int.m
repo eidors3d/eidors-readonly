@@ -175,12 +175,18 @@ end
 function do_unit_test 
 %  simple_inequalities_test
 tic
+c= unit_test_smaller(0);
+toc
+
+tic
 a= unit_test_smaller(1);
 toc
+
 tic
 b= unit_test_smaller(2);
 toc
-keyboard
+  unit_test_cmp('unit_test_smaller', a,b, 1e-14);
+
 end
 
 function simple_inequalities_test
@@ -209,15 +215,16 @@ function simple_inequalities_test
 end
 
 function c2f= unit_test_smaller( select)
-  f_mdl =  mk_circ_tank(2,[0,1],0 );
-  c_mdl =  mk_circ_tank(1,[0,1],0 );
+  f_mdl =  mk_circ_tank(6,[0,1],0 );
+  c_mdl =  mk_circ_tank(3,[0,1],0 );
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
 
    c2f = sparse(nef,nec);
 
-if select==1;
+switch select;
+case 1;
    for f = 1:nef
       vf = f_mdl.nodes(f_mdl.elems(f,:),:);
       for c = 1:nec
@@ -227,8 +234,10 @@ if select==1;
          c2f(f,c) = tet_vol_int(vc,vf);
       end
    end
-else
+case 2;
    c2f = tet_vol_int(c_mdl,f_mdl);   
+case 0;
+   c2f = mk_coarse_fine_mapping( f_mdl, c_mdl );
 end
 end
 
