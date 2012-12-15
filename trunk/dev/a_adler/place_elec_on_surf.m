@@ -1,4 +1,4 @@
-function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec)
+function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
 % PLACE_ELEC_ON_SURF Place electrodes on the surface of a model
 %  mdl = place_elec_on_surf(mdl,elec_pos, elec_spec)
 
@@ -9,28 +9,33 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec)
 % This is work in progress code. Careful!
 
 if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
+if nargin < 4
+   ng_opt_file = '';
+end
 oldbound = [];
 try 
    oldbound = mdl.boundary;
    mdl = rmfield(mdl,'boundary');
 end
 mdl = fix_model(mdl);
+flip = mdl.elem2face(logical(mdl.boundary_face(mdl.elem2face).*mdl.inner_normal));
+mdl.faces(flip,:) = mdl.faces(flip,[1 3 2]);
+mdl.normals(flip,:) = -mdl.normals(flip,:);
 mdl.boundary = mdl.faces(mdl.boundary_face,:);
 mdl.elems = mdl.boundary;
-mdl = linear_reorder(mdl,1);
-mdl.boundary = mdl.elems;
+% mdl = linear_reorder(mdl,1);
+% mdl.boundary = mdl.elems;
 mdl.faces = mdl.boundary;
-
-mdl  = linear_reorder(mdl,1);
+% 
+% mdl  = linear_reorder(mdl,1);
 mdl.face_centre = mdl.face_centre(mdl.boundary_face,:);
 % This is a bit convoluted
-to_flip = unique(nonzeros(uint32(mdl.boundary_face(mdl.elem2face) .* mdl.inner_normal) .* mdl.elem2face));
-mdl.normals(to_flip,:) = -mdl.normals(to_flip,:);
+% to_flip = unique(nonzeros(uint32(mdl.boundary_face(mdl.elem2face) .* mdl.inner_normal) .* mdl.elem2face));
+% mdl.normals(to_flip,:) = -mdl.normals(to_flip,:);
 mdl.normals = mdl.normals(mdl.boundary_face,:);
 
 mdl = rmfield(mdl, 'inner_normal');
 mdl = rmfield(mdl, 'boundary_face');
-
 elecs = parse_elecs(mdl,elec_pos,elec_spec);
 for i = 1:length(elecs)
    N = grow_neighbourhood(mdl,elecs(i));
@@ -42,24 +47,42 @@ STL.vertices = mdl.nodes;
 STL.faces    = mdl.elems;
 stl_write(STL,'tmp.stl');
 
+% these options are meant to insure that the electrode sides don't get 
+% modified, but there's no guarantee
+if ~isempty(ng_opt_file)
+   ng_write_opt(ng_opt_file);
+else
+   opt.options.curvaturesafety = 0.2;
+   opt.stloptions.yangle = 10;
+   opt.stloptions.contyangle = 20;
+   opt.stloptions.edgecornerangle = 0;
+   opt.stloptions.chartangle = 0;
+   opt.stloptions.outerchartangle = 120;
+   opt.stloptions.resthchartdistenable = 0;
+   ng_write_opt(opt);
+end
 call_netgen('tmp.stl','tmp.vol');
+delete('ng.opt'); % clean up
 fmdl=ng_mk_fwd_model('tmp.vol',[],[],[],[]);
 fmdl = fix_model(fmdl);
 fmdl.boundary = fmdl.faces(fmdl.boundary_face,:);
 
 mdl = fmdl;
-mdl.elems = fmdl.boundary;
-
+flip = mdl.elem2face(logical(mdl.boundary_face(mdl.elem2face).*mdl.inner_normal));
+mdl.faces(flip,:) = mdl.faces(flip,[1 3 2]);
+mdl.normals(flip,:) = -mdl.normals(flip,:);
+mdl.boundary = mdl.faces(mdl.boundary_face,:);
+mdl.elems = mdl.boundary;
+% mdl.elems = fmdl.boundary;
 for i = 1:length(elecs)
    mdl = flatten_electrode(mdl,E1{i},E2{i}, V{i});
 end
-mdl = linear_reorder(mdl,1);
+% mdl = linear_reorder(mdl,1);
 STL.vertices = mdl.nodes;
 STL.faces    = mdl.elems;
 stl_write(STL,'tmp.stl');
-% TODO:
-% re-mesh the inside???
 
+% re-mesh the inside
 mdl2 = gmsh_stl2tet('tmp.stl');
 mdl2.electrode = mdl.electrode;
 for i = 1:length(elecs)
@@ -68,7 +91,7 @@ for i = 1:length(elecs)
 end
 
 function mdl = flatten_electrode(mdl,inner,outer, V)
-n1 = find_matching_nodes(mdl,inner, 1e-5);
+n1 = find_matching_nodes(mdl,inner, 1e-2);
 n2 = find_matching_nodes(mdl,outer, 1e-5);
 % remove the side nodes of the electrode
 N1 = false(length(mdl.nodes),1);
@@ -85,6 +108,10 @@ p = mdl.face_centre(B(f),:);
 r = Inf;
 mdl.elems(rm,:) = [];
 mdl.boundary = mdl.elems;
+mdl.boundary_face(B(rm)) = [];
+mdl.face_centre(B(rm),:) = [];
+mdl.normals(B(rm),:)     = [];
+mdl.faces(B(rm),:)       = [];
 f = f - nnz(rm(1:f));
 N = grow_neighbourhood(mdl,f,p,r);
 
@@ -99,6 +126,7 @@ e_nodes = ntm;
 map = 1:length(mdl.nodes);
 map(n2) = n1;
 mdl.elems = map(mdl.elems);
+mdl.faces = map(mdl.faces);
 e_nodes = map(ntm);
 
 % remove the outer nodes
@@ -109,6 +137,7 @@ map(m) = 1:nnz(m);
 
 mdl.nodes(n2,:) = [];
 mdl.elems = map(mdl.elems);
+mdl.faces = map(mdl.faces);
 e_nodes = map(e_nodes);
 
 mdl.boundary = mdl.elems;
@@ -249,6 +278,7 @@ C = [];
 for i= 0:length(elecs.points)-2
    C = [C; i+f];
 end
+
 
 D = DelaunayTri([x y],[edges; C]);
 % D = DelaunayTri([x y],[edges]);
@@ -642,5 +672,6 @@ xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
 elec_pos = [-0.5, -0.8, 1];
 % place_elec_on_surf(fmdl, elec_pos, [0.1 0 0.01]);
 % place_elec_on_surf(fmdl, elec_pos, [0.15 0.1 0.01]);
-place_elec_on_surf(fmdl, [16 0 1], [0.15 0.1 0.01]);
+mdl = place_elec_on_surf(fmdl, [16 0 1], [0.15 0.1 0.01]);
 % place_elec_on_surf(fmdl, [16 0 1], [0.1 0 0.01]);
+show_fem(mdl);
