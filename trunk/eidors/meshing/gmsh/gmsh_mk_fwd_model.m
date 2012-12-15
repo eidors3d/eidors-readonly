@@ -65,7 +65,7 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     
     % Electrodes
     electrodes = find_elec(phys_names,eprefix,z_contact);
-    if ~isempty(electrodes);
+    if ~isempty(fields(electrodes));
         mdl.electrode =     electrodes;
     end
     mdl.solve=          'eidors_default';
