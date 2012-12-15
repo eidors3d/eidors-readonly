@@ -135,10 +135,18 @@ noise_y  = calc_difference_data( vh, vhn, imdl.fwd_model);
 signal_x = inv_solve(imdl, vh, vi);  signal_x = signal_x.elem_data;
 noise_x  = inv_solve(imdl, vh, vhn); noise_x  = noise_x.elem_data;
 
+use_rec = 1;
 try 
-    VOL = get_elem_volume(imdl.rec_model);
-catch
-    VOL = get_elem_volume(imdl.fwd_model);
+   use_rec = ~imdl.prior_use_fwd_not_rec;
+end
+if use_rec
+   try
+      VOL = get_elem_volume(imdl.rec_model);
+   catch
+      VOL = get_elem_volume(imdl.fwd_model);
+   end
+else
+   VOL = get_elem_volume(imdl.fwd_model);
 end
 VOL = spdiags(VOL,0, length(VOL), length(VOL));
 
