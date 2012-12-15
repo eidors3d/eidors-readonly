@@ -392,6 +392,8 @@ if size(elec_shape,2) < 3
    elec_shape(:,3) = elec_shape(:,1)/10;
 end
 
+have_xyz = 0;
+
 if size(elec_pos,1) == 1
    % Parse elec_pos = [n_elecs_per_plane,(0=equal angles,1=equal dist),z_planes]
    n_elecs= elec_pos(1); % per plane
@@ -412,14 +414,19 @@ if size(elec_pos,1) == 1
       el_th = [el_th; th];
       el_z  = [el_z ; on_elecs*elec_pos(i)];
    end
-else
+elseif size(elec_pos,2) == 2
+   % elec_pos = [theta z];
    el_th = elec_pos(:,1)*2*pi/360;
    el_z  = elec_pos(:,2);
+elseif size(elec_pos,2) == 3
+   have_xyz = 1;
+   el_z  = elec_pos(:,3);
 end
 
-el_th(el_th>pi) =  el_th(el_th>pi) - 2*pi;
-el_th(el_th<-pi) = el_th(el_th<-pi) + 2*pi;
-
+if ~have_xyz
+   el_th(el_th>pi) =  el_th(el_th>pi) - 2*pi;
+   el_th(el_th<-pi) = el_th(el_th<-pi) + 2*pi;
+end
 n_elecs= size(el_z,1);
 
 if size(elec_shape,1) == 1
@@ -427,12 +434,13 @@ if size(elec_shape,1) == 1
 end
 
 for i = 1:n_elecs
-   if 1
+   if ~have_xyz
       [fc elecs(i).pos] = find_elec_centre(mdl,el_th(i),el_z(i));
    else
-      [bfc elecs(i).pos] = find_face_under_elec(mdl,elecs(i).pos);
-      idx = find(mdl.boundary_face);
-      fc = idx(bfc);
+      elecs(i).pos = elec_pos(i,:);
+%       [bfc elecs(i).pos] = find_face_under_elec(mdl,elecs(i).pos);
+%       idx = find(mdl.boundary_face);
+%       fc = idx(bfc);
    end
 %    elecs(i).face = fc; % this changes too often to store!
    elecs(i).dims = elec_shape(i,1:2);
@@ -622,14 +630,27 @@ nn(fc) = 0;
 
 function [e p] = find_face_under_elec(mdl, elec_pos)
 for i = 1:size(elec_pos,1)
+   % 1. Project electrode on all faces
    ee = repmat(elec_pos(i,:),length(mdl.faces),1);
    fc = mdl.face_centre;
    n  = mdl.normals;
-   proj = ee - repmat(dot(ee-fc, n,2),1,3) .* n;
-   in = point_in_triangle(proj,mdl.faces,mdl.nodes);
+   proj1 = ee - repmat(dot(ee-fc, n,2),1,3) .* n;
+   in1 = point_in_triangle(proj1,mdl.faces,mdl.nodes);
+   % 2. Project electrode on all edges 
+   edg = [mdl.faces(:,1:2);mdl.faces(:,2:3);mdl.faces(:,[3 1])];
+   edg = sort(edg,2);
+   [edg jnk e2f] = unique(edg,'rows');
+   ee = repmat(elec_pos(i,:),length(edg),1);
+   s = mdl.nodes(edg(:,2),:) - mdl.nodes(edg(:,1),:); %edge direction vector
+   t = dot(ee-mdl.nodes(edg(:,1),:),s,2)./dot(s,s,2);
+   in2 = t>=0 & t <=1;
+   in2 = any(reshape(in2(e2f),[],3),2);
+%    proj2 = repmat(dot(ee,s,2)./dot(s,s,2),1,3) .* s ;
+
+   in = in1 | in2;
    if nnz(in) == 1
-      e(i) = find(in);  % this should be an index into mdl.boundary
-      p(i,:) = proj(in,:);
+         e(i) = find(in1);  % this should be an index into mdl.boundary
+         p(i,:) = proj1(in1,:);
    else
       % take the element that is closest to ee
       cand = find(in);
@@ -637,7 +658,7 @@ for i = 1:size(elec_pos,1)
          (fc(cand,:) - repmat(elec_pos(i,:),length(cand),1)).^2,2));
       [jnk pos] = min(dd);
       e(i) = cand(pos);
-      p(i,:) = proj(e(i),:);
+      p(i,:) = proj1(e(i),:);
    end
 
 end
