@@ -44,7 +44,9 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 
 if isstr(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
 
-c_mdl = assign_defaults( c_mdl, f_mdl );
+if isstr(f_mdl) && strcmp(f_mdl, 'LOAD'); load; return; end
+
+[c_mdl, f_mdl] = assign_defaults( c_mdl, f_mdl );
 c_obj = cache_obj(c_mdl, f_mdl);
 
 f_mdl= offset_and_project( f_mdl, c_mdl);
@@ -69,7 +71,8 @@ end
 % Mapping depends only on nodes and elems - remove the other stuff
 function c_obj = cache_obj(c_mdl, f_mdl)
    c_obj = {c_mdl.nodes, c_mdl.elems, c_mdl.mk_coarse_fine_mapping, ...
-            f_mdl.nodes, f_mdl.elems};
+            f_mdl.nodes, f_mdl.elems, f_mdl.interp_mesh};
+
 
 % find all elems of ff_mdl completely contained in cc_mdl
 function c_elems = all_contained_elems( fm, cm, z_depth)
@@ -146,6 +149,8 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    n_interp = 7-df;
    interp_mdl.nodes= fm.nodes;
    interp_mdl.elems= fm.elems(fidx,:);
+   interp_mdl.interp_mesh.n_interp = fm.interp_mesh.n_interp;
+ 
 
    fm_pts = interp_mesh( interp_mdl, n_interp);
    l_interp = size(fm_pts,3);
@@ -173,7 +178,7 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
       
 % Do 3D interpolation of region xyzmin= [x,y,z] to xyzmax
 %  with n_interp points in the minimum direction
-function xyz = interpxyz( xyzmin, xyzmax, n_interp);
+function xyz = interpxyz( xyzmin, xyzmax, n_interp)
     xyzdelta= xyzmax - xyzmin;
     xyz_interp = 1 + floor(n_interp * xyzdelta / max(xyzdelta) );
     xspace = linspace(xyzmin(1), xyzmax(1), xyz_interp(1) );
@@ -183,14 +188,14 @@ function xyz = interpxyz( xyzmin, xyzmax, n_interp);
     xyz= [xx3(:), yy3(:), zz3(:)];
 
 % Offset and project f_mdl as required
-function f_mdl= offset_and_project( f_mdl, c_mdl);
+function f_mdl= offset_and_project( f_mdl, c_mdl)
     [fn,fd]= size(f_mdl.nodes);
     T= c_mdl.mk_coarse_fine_mapping.f2c_offset;
     M= c_mdl.mk_coarse_fine_mapping.f2c_project;
 
     f_mdl.nodes= ( f_mdl.nodes - ones(fn,1)*T )*M;
 
-function c_mdl = assign_defaults( c_mdl, f_mdl );
+function [c_mdl f_mdl] = assign_defaults( c_mdl, f_mdl )
     [fn,fd]= size(f_mdl.nodes);
     try    c_mdl.mk_coarse_fine_mapping.f2c_offset; % test exist
     catch  c_mdl.mk_coarse_fine_mapping.f2c_offset= zeros(1,fd);
@@ -201,7 +206,13 @@ function c_mdl = assign_defaults( c_mdl, f_mdl );
     try    c_mdl.mk_coarse_fine_mapping.z_depth;
     catch  c_mdl.mk_coarse_fine_mapping.z_depth= inf;
     end
-
+    try    f_mdl.interp_mesh.n_interp;
+    % lower density interpolation in higher dimentions, since
+    % the added dimensions will give extra interpolation points.
+    catch  f_mdl.interp_mesh.n_interp = 7 - size(f_mdl.elems,2);
+    end
+     
+    
 function do_unit_test
     fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
     cmdl = mk_circ_tank(2,[],2); cmdl.nodes = cmdl.nodes*2;
@@ -235,3 +246,21 @@ function do_unit_test
 % show_fem(fmdl); hold on ; show_fem(cmdl); hold off
     c2f = mk_coarse_fine_mapping( fmdl, cmdl);
 
+function load
+
+% Create forward, fine tank model
+electrodes_per_plane = 16;
+number_of_planes = 2;
+tank_radius = 0.2;
+tank_height = 0.5;
+fine_mdl = ng_mk_cyl_models([tank_height,tank_radius],...
+    [electrodes_per_plane,0.15,0.35],[0.01]);
+ 
+% Create coarse model for inverse problem
+coarse_mdl_maxh = 0.07; % maximum element size 
+coarse_mdl = ng_mk_cyl_models([tank_height,tank_radius,coarse_mdl_maxh],[0],[]);
+
+disp('Calculating coarse2fine mapping ...');
+inv3d.fwd_model.coarse2fine = ...
+       mk_coarse_fine_mapping( fine_mdl, coarse_mdl);
+disp('   ... done');
