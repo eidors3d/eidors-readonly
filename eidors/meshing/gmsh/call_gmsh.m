@@ -24,7 +24,7 @@ gmsh_name = 'gmsh';
 
 while( 1 )
    ldpath='';
-   if  ~exist('OCTAVE_VERSION') && strfind(system_dependent('getos'),'Linux')
+   if  ~exist('OCTAVE_VERSION') && ~isempty(strfind(system_dependent('getos'),'Linux'))
      islinux =1;
    else
      islinux =0;
