@@ -5,6 +5,9 @@ function out = merge_meshes(M1,varargin)
 % MERGE_MESHES(M1,M2,M3,..., T) merges M2, M3, ... into M1 (individually)
 
 % (C) Bartlomiej Grychtol and Andy Adler, 2012. Licenced under GPL v2 or v3
+% $Id$
+
+% TODO: Add unit tests
 
 if nargin < 3  || isstruct(varargin{end})
    th = mean(std(M1.nodes))/length(M1.nodes);
