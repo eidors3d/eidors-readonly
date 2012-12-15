@@ -6,15 +6,21 @@ function out = merge_meshes(M1,varargin)
 
 % (C) Bartlomiej Grychtol and Andy Adler, 2012. Licenced under GPL v2 or v3
 
-th = varargin{end};
+if nargin < 3  || isstruct(varargin{end})
+   th = mean(std(M1.nodes))/length(M1.nodes);
+   shapes = varargin;
+else
+   th = varargin{end};
+   shapes = varargin(1:end-1);
+end
 % Use a for loop, vectorised approach can run out of memory
 l0 = length(M1.nodes);
 if ~isfield(M1, 'mat_idx')
    M1.mat_idx = {1:length(M1.elems)};
 end
-for i = 1:length(varargin)-1
+for i = 1:length(shapes)
    l1 = length(M1.nodes);
-   M2 = varargin{i};
+   M2 = shapes{i};
    nodes_to_add = [];
    n_new_nodes = 0;
    match = 0 * (1:length(M2.nodes)); 
