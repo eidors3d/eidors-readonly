@@ -7,6 +7,7 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % Version 4.0
 % B.D.Grieve - 27/01/2002 + modifications by lmazurk
 % A.Adler - 2006 mods to run quicker
+% B.Grychtol - 2012 partial support for *.in2d
 %
 % EIDORS's srf array is a subset of NetGen's surface element data
 % (columns 6:8). The first column of the surface element data also
@@ -25,7 +26,7 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % mat_ind  = Material index
 
 % $Id$
-% (C) 2002-2006 (C) Licenced under the GPL
+% (C) 2002-2012 (C) Licenced under the GPL
 
 eidors_msg('ng_read_mesh',3);
 
@@ -51,9 +52,15 @@ end
 
 srf = se(:,6:8);
 fc = se(:,1);
-simp = ve(:,3:6);
+if ~isempty(ve)
+   simp = ve(:,3:6);
+   mat_ind=ve(:,1);
+else
+   % *.in2d case
+   simp = srf;
+   mat_ind = fc; % not sure..
+end
 edg = es;
-mat_ind=ve(:,1);
 bc = se(:,2);
 
 function mat= get_lines_with_numbers( fid, n_cols);

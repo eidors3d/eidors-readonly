@@ -92,6 +92,10 @@ function mat_idx= mk_mat_indices( mat_ind);
   % find length of mat_indices 
   % test example: mat_ind=[10 12 14 14 12 12 14 12];
 
+  if isempty(mat_ind)
+     mat_idx = [];
+      return
+  end
   mat_indices = unique( mat_ind );
   for i= 1:length(mat_indices);
      mat_idx{i}= find(mat_ind == mat_indices(i));
