@@ -123,7 +123,7 @@ if doall || opt.edge2elem
 end     
 
 % Test whether normal points into or outsize
-% mdl.inner_normal(i,j) = 1 if face i of elem j points in
+% mdl.inner_normal(i,j) = 1 if face j of elem i points in
 function inner_normal = test_inner_normal( mdl )
    inner_normal = false(size(mdl.elem2face));
    d = elem_dim(mdl) + 1;
