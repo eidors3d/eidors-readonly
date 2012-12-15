@@ -188,7 +188,7 @@ if ~isempty(opt.noise_figure)
     R = max(max(fmdl.nodes(:,1:2)) - min(fmdl.nodes(:,1:2)));
     
     xyzr = mean(fmdl.nodes);
-    xyzr(1:2) = 0;
+%     xyzr(1:2) = 0;
     xyzr(3) = opt.target_plane;
     xyzr(4) = opt.target_size*0.5*R;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
