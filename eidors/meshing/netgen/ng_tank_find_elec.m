@@ -81,6 +81,10 @@ for ielec = 1:size(centres,1)
              (centreofface(:,3) - centres(ielec,3)).^2;
     [d,iface] = min(dists); %iface is closest face to this electrode.
     lgelfc(iface) = logical(1);
+    if sum(lgelfc) ~= ielec
+       disp(ielec);
+       keyboard;
+    end
     sels(ielec)= iface;
 %   disp([ielec, iface, d]);
 end
