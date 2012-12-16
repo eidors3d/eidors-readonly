@@ -168,8 +168,13 @@ nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
 % add electrodes
 try
    for i = 1:length(mdl.electrode)
+      nimg.fwd_model.electrode(i) = mdl.electrode(i);
       nimg.fwd_model.electrode(i).nodes = find(electrode_node == i);
    end
+end
+% copy calc_colours
+try
+   nimg.calc_colours = img.calc_colours;
 end
 
 eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
@@ -202,6 +207,7 @@ end
 out.FaceVertexCData = calc_colours(ed,varargin{:});
 out.FaceColor = 'flat';
 out.CDataMapping = 'direct';
+colormap(calc_colours('colourmap'));
 if nargout == 0
     patch(out);
 end
