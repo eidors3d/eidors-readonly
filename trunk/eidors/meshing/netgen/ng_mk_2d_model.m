@@ -1,9 +1,27 @@
-function mdl = ng_mk_2d_models(shape)
+function mdl = ng_mk_2d_model(shape)
+%NG_MG_2D_MODELS create a 2D mesh with Netgen via the in2d interface
+% mdl = ng_mk_2d_model(xy) creates a 2D model from a clockwise list of
+% points
+%
+% mdl = ng_mk_2d_model({xy, xy1, xy2, ...}) allows specifying additional
+% clockwise loops xy1, xy2, etc, which represent holes in the bigger xy
+% contour
+%
+% Example:
+%
+%  xy = [0 0;  1 0; 1 1; 0 1];
+%  ng_mk_2d_model({xy, 0.25 + 0.5*xy});
+%
 
+% (C) 2012 Bartlomiej Grychtol, License: GPL version 2 or version 3
+% $Id$
 
+%TODO: Add support for electrodes
+
+mdl = [];
 if ischar(shape) && strcmp(shape, 'UNIT_TEST'), do_unit_test, return, end 
 if ~iscell(shape)
-   shape = {shape}
+   shape = {shape};
 end
 
 points = [];
@@ -14,7 +32,11 @@ for i = 1:length(shape)
    seg{i} = repmat([0 1],ls,1) + lp + repmat((1:ls)',1,2);
    seg{i}(end,2) = lp + 1;
 end
-write_in2d_file('tmp.in2d',points, seg);
+write_in2d_file('tmp2.in2d',points, seg);
+
+call_netgen( 'tmp2.in2d', 'tmp2.vol');
+[mdl,mat_idx] = ng_mk_fwd_model( 'tmp2.vol', [], 'ng', []);
+
 
 
 function write_in2d_file(fname,points, seg)
@@ -40,4 +62,4 @@ fclose(fid);
 
 function do_unit_test
 xy = [0 0;  1 0; 1 1; 0 1];
-ng_mk_2d_models({xy, 0.25 + 0.5*xy});
+ng_mk_2d_model({xy, 0.25 + 0.5*xy});

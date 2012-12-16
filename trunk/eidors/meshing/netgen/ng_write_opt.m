@@ -22,6 +22,7 @@ function opt = ng_write_opt(varargin)
 %  Example:
 %  ng_write_opt('meshoptions.fineness',6,'options.minmeshsize',20);
 %  call_netgen(...)
+%  delete('ng.opt'); % clean up
 %
 %  Caveat: Currently it seems that Netgen on Windows ignores the ng.opt
 %  file
