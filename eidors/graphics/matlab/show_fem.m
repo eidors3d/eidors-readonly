@@ -190,7 +190,13 @@ for e=1:length(mdl.electrode)
        S= 1.05;
        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
-       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y, num2str(e));
+       switch number_electrodes
+          case {1 true}
+             txt = num2str(e);
+          case 2
+             try, txt = mdl.electrode(e).label; end
+       end
+       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y, txt);
        set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
     end
 end
@@ -232,7 +238,13 @@ for e=1:length(mdl.electrode)
        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
        vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
-       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y,mean(vz)+ctr_z,num2str(e));
+       switch number_electrodes
+          case {1 true}
+            txt = num2str(e);
+          case 2
+             try, txt = mdl.electrode(e).label; end
+       end
+       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y,mean(vz)+ctr_z,txt);
        set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
     end
 end
@@ -274,9 +286,15 @@ for e=1:length(mdl.electrode)
         end
         if number_electrodes
             el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
+            switch number_electrodes
+               case {1 true}
+                  txt = num2str(e);
+               case 2
+                  try, txt = mdl.electrode(e).label; end
+            end
             hh=text( mean(el_nodes(:,1)), ...
                      mean(el_nodes(:,2)), ...
-                     mean(el_nodes(:,3)), num2str(e) );
+                     mean(el_nodes(:,3)), txt );
             set(hh,'FontWeight','bold','Color',[.6,0,0]);
         end
     end
