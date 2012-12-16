@@ -41,6 +41,7 @@ if nargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
 
 if nargin == 1 && ischar(varargin{1}) % a path
    copyfile(varargin{1},'ng.opt');
+   return
 end
 % get default options
 opt = default_opt;
