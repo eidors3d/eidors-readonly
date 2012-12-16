@@ -178,6 +178,7 @@ eidors_msg('mk_GREIT_model: setting cached value', 3);
 if nargout == 1
     return
 end
+clear out
 out.Vertices = nodes;
 out.Faces    = NaN(length(uels),4);
 ed = zeros(length(uels),1);
@@ -201,10 +202,9 @@ end
 out.FaceVertexCData = calc_colours(ed,varargin{:});
 out.FaceColor = 'flat';
 out.CDataMapping = 'direct';
-if nargin == 0
+if nargout == 0
     patch(out);
 end
-
 
 function res = intersection_test(A,B,C,D)
 % checks for intersection of segments AB and CD
@@ -216,7 +216,7 @@ res = false;
 
 % check for interesection on the 3 cartesian planes
 idx = 1:3;
-for i = 0%:2
+for i = 0:2
     id = circshift(idx',i)';
     id = id(1:2);
     res = res || ( sign(signed_area(A(id), B(id), C(id))) ~= ...
