@@ -484,7 +484,12 @@ end
 function [u v s] = get_face_basis(mdl, fc)
    u = mdl.normals(fc,:); % unit normal
    % vertical vector on the plane of that surface triangle
-   v = [0 0 1] - dot([0 0 1],u) *u; v = v/norm(v);
+   v = [0 0 1] - dot([0 0 1],u) *u;
+   if norm(v) == 0
+      % the element is horizontal
+      v = [0 1 0] - dot([0 1 0],u)*u;
+   end
+   v = v/norm(v);
    s = cross(u,v); s= s/norm(s);
 
 function [fc pos] = find_elec_centre(mdl, el_th,el_z)
