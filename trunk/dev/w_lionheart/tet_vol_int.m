@@ -15,6 +15,31 @@ function volint=tet_vol_int(v1,v2)
 % if they lie within both tetrahedra. The convex hull of these points is
 % the intersection.  
 
+% NOTES ON BUGS: 17 dec 2012
+% 1. for 
+% vs =
+%   -0.5541   -0.1847    0.7388
+%   -0.2500   -0.2500    0.5000
+%   -0.1847   -0.5541    0.7388
+%         0   -0.5000    0.5000
+%K>> convhulln(vs)
+%Error using qhullmx
+%QH6114 qhull precision error: initial simplex is not convex. Distance=0
+% 2. For 
+%  f_mdl =  mk_circ_tank(2,[0,1],0 );
+%  c_mdl =  mk_circ_tank(1,[0,1],0 );
+%  c_mdl.nodes = c_mdl.nodes*10;
+%  c_mdl.nodes(:,3) = c_mdl.nodes(:,3) -7;
+%  c_mdl.nodes(:,2) = c_mdl.nodes(:,2) +5;
+%  c_mdl.nodes(:,1) = c_mdl.nodes(:,1) +2;
+% all elements should be completely contained. WHy
+% is convhulln running?
+%
+% 3. 
+% Why are values different to meshing model
+
+
+
 
 % (C) 2012 Bill Lionheart. License GPL v2 or v3
 % $Id$
@@ -109,23 +134,13 @@ end
 end
 
 function epsi= epsilon; epsi=1e-10; end
-function volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
-   % List of choices of 2 from 1 and one from the other
+function vs = do_choices_old(A1,A2,b1,b2,vs);
    choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
               1,3,1;1,3,2;1,3,3;1,3,4;
               1,4,1;1,4,2;1,4,3;1,4,4;                      
               2,3,1;2,3,2;2,3,3;2,3,4;
               2,4,1;2,4,2;2,4,3;2,4,4;
               3,4,1;3,4,2;3,4,3;3,4,4];
-
-   % some intersection, 
-   vs=[];
-   % add the vertices that are already in both
-   vs=[vs;v1(find(all(i21)),:)];
-   vs=[vs;v2(find(all(i12)),:)];
-
-   %try all two faces from one intersected with one face from the
-   %other
    for i = 1:24
        A=[A1(choices(i,1:2),:);A2(choices(i,3),:)];
        b=[b1(choices(i,1:2));b2(choices(i,3))];
@@ -142,6 +157,19 @@ function volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
        end
        
    end
+end
+function volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
+   % List of choices of 2 from 1 and one from the other
+
+   % some intersection, 
+   vs=[];
+   % add the vertices that are already in both
+   vs=[vs;v1(find(all(i21)),:)];
+   vs=[vs;v2(find(all(i12)),:)];
+   vs = do_choices_old(A1,A2,b1,b2,vs);
+
+   %try all two faces from one intersected with one face from the
+   %other
    if isempty(vs)
       volint=0;
    else
@@ -186,6 +214,7 @@ tic
 b= unit_test_smaller(2);
 toc
   unit_test_cmp('unit_test_smaller', a,b, 1e-14);
+keyboard
 
 end
 
@@ -215,8 +244,12 @@ function simple_inequalities_test
 end
 
 function c2f= unit_test_smaller( select)
-  f_mdl =  mk_circ_tank(6,[0,1],0 );
-  c_mdl =  mk_circ_tank(3,[0,1],0 );
+  f_mdl =  mk_circ_tank(2,[0,1],0 );
+  c_mdl =  mk_circ_tank(1,[0,1],0 );
+  c_mdl.nodes = c_mdl.nodes*10;
+  c_mdl.nodes(:,3) = c_mdl.nodes(:,3) -7;
+  c_mdl.nodes(:,2) = c_mdl.nodes(:,2) +5;
+  c_mdl.nodes(:,1) = c_mdl.nodes(:,1) +2;
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
@@ -230,7 +263,7 @@ case 1;
       for c = 1:nec
          vc = c_mdl.nodes(c_mdl.elems(c,:),:);
 %disp([f,c]);
-% if f==5 && c==3 ; keyboard; end
+  if f==23 && c==7 ; keyboard; end
          c2f(f,c) = tet_vol_int(vc,vf);
       end
    end
