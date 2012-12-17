@@ -83,3 +83,8 @@ function do_unit_test
    imdl.jacobian_bkgnd.conductivity = im0.conductivity;
    im2 = mk_image(imdl);
    unit_test_cmp('im6',im2.elem_data, 3*ones(64,1) );
+
+% TODO
+%  im0 = mk_image(fmdl, .2343, 'log_conductivity');
+%  unit_test_cmp('im7a', im0.elem_data, .2343);
+%  unit_test_cmp('im7b', im0.log_conductivity.elem_data, .2343);

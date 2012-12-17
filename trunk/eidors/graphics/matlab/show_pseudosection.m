@@ -38,7 +38,7 @@ switch(upper(orientation))
     case 'CIRCULAROUTSIDE';     plotPseudoSectionCircularOut(fwd_model,data)
     case 'CIRCULARINSIDE';      plotPseudoSectionCircularIn(fwd_model,data)
   otherwise;
-    error('No orientation of type "%s" available', upper(pat_type));
+    error('No orientation of type "%s" available', upper(orientation));
 end
 
 
