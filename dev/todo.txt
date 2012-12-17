@@ -2,13 +2,18 @@
  - new physics -BG
     - docs for mk_image
     - accessor functions for elem_data (and new physics)
+
  - fix anisotropy -> check -AA
+
  - Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
+
  -. calc_meas_icov -> choose good value for normalized solvers
      - why is is homg^2 rather than inv(homg)^2
      - maybe just abs(homg) is better and less sensitive
      - fix calc_jacobian_test
+
+ - pixel grid interface function
  
  - colorbar -BG(start)
     - code in move_2d02 and eidors_colourbar
@@ -16,6 +21,12 @@
 
  - c2f - think about how to work on NOSER -AA
        - provide some new options for abs solvers
+
+    - what if we send fwd to the prior calculation?
+          (img.orig_fwd_model)
+
+ - in show_pseudosection
+     - fmdl.show_pseudosection.orientation = field
 
 TESTS:
  - test new png on windows

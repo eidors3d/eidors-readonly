@@ -286,9 +286,9 @@ function unit_test_simdata
    figure; plot(I*(dd.meas-vCG))
    figure; hist(I*(dd.meas-vCG),50)
 
-   show_pseudosection( fmdl, I*dd.meas, '')
-   show_pseudosection( fmdl, I*vCG, '')
-   show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100)
+   show_pseudosection( fmdl, I*dd.meas, 'profile')
+   show_pseudosection( fmdl, I*vCG, 'profile')
+   show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100, 'profile')
 
 
 function [fmdl, cmdl] = unit_test_models
