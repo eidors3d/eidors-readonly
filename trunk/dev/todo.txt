@@ -1,3 +1,42 @@
+3.7
+ - new physics -BG
+    - docs for mk_image
+    - accessor functions for elem_data (and new physics)
+ - fix anisotropy -> check -AA
+ - Make sure default GREIT is pretty -BG
+    - rerun GREITv1 performance metrics with new GREIT cylinder
+ -. calc_meas_icov -> choose good value for normalized solvers
+     - why is is homg^2 rather than inv(homg)^2
+     - maybe just abs(homg) is better and less sensitive
+     - fix calc_jacobian_test
+ 
+ - colorbar -BG(start)
+    - code in move_2d02 and eidors_colourbar
+    - need to completely avoid matlab's colourbar
+
+ - c2f - think about how to work on NOSER -AA
+       - provide some new options for abs solvers
+
+TESTS:
+ - test new png on windows
+
+ANNOUNCE:
+ - new phyics
+ - anisotropy for fwd_model
+ - opt file
+===================
+
+-Create helper function spdiag
+
+-Mods to show_slices to only
+   show part of the slice
+
+- Make functions
+    mk_fwd_model
+    mk_inv_model
+  that do useful stuff like
+    normalize_measurements = 0;
+
 -. Add a tutorial to show how to do pairs of electrodes
     for injection patterns
 
@@ -16,6 +55,13 @@
 - colorbar
    - code in move_2d02 and eidors_colourbar
    - need to completely avoid matlab's colourbar
+
+- add option to show_fem to display electrodes that
+    come from another model (is the fine model)
+  (or create a function to do this)
+
+- mk_image assumes values on elems. THink about how
+    to create node images. New function?
 -------------
 Lower priority items
 3 - colourbar
