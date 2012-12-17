@@ -583,7 +583,7 @@ todo = false(length(mdl.boundary),1);
 todo(fc) = true;
 bb = mdl.boundary;
 vv = mdl.nodes;
-% distance of each vertex to a the line perpendicular to face fc passing
+% distance of each vertex to the line perpendicular to face fc passing
 % through p
 dv = vv - repmat(p,length(vv),1);
 nl = mdl.normals;
@@ -641,6 +641,7 @@ for i = 1:size(elec_pos,1)
    n  = mdl.normals;
    proj1 = ee - repmat(dot(ee-fc, n,2),1,3) .* n;
    in1 = point_in_triangle(proj1,mdl.faces,mdl.nodes);
+   dis1 = sqrt(sum((ee-proj1).^2,2));
    % 2. Project electrode on all edges 
    edg = [mdl.faces(:,1:2);mdl.faces(:,2:3);mdl.faces(:,[3 1])];
    edg = sort(edg,2);
@@ -650,7 +651,15 @@ for i = 1:size(elec_pos,1)
    t = dot(ee-mdl.nodes(edg(:,1),:),s,2)./dot(s,s,2);
    in2 = t>=0 & t <=1;
    in2 = any(reshape(in2(e2f),[],3),2);
-%    proj2 = repmat(dot(ee,s,2)./dot(s,s,2),1,3) .* s ;
+   proj2 = mdl.nodes(edg(:,1),:) + repmat(t,1,3).*s;
+   dis = sqrt(sum((ee - proj2).^2,2));
+   dis = repmat(dis,2,1);
+   dis(t<0 | t > 1) = Inf;
+   dis = reshape(dis(e2f),[],3);
+   [jnk, pos] = min(dis,[],2);
+   idx = sparse(1:length(pos),pos,1);
+   dis = dis';
+   dis2 = dis(logical(idx'));
 
    in = in1 | in2;
    if nnz(in) == 1
@@ -659,8 +668,8 @@ for i = 1:size(elec_pos,1)
    else
       % take the element that is closest to ee
       cand = find(in);
-      dd = sqrt(sum(  ...
-         (fc(cand,:) - repmat(elec_pos(i,:),length(cand),1)).^2,2));
+      dd(in1(cand)) = dis1(in1);
+      dd(in2(cand)) = dis2(in2);
       [jnk pos] = min(dd);
       e(i) = cand(pos);
       p(i,:) = proj1(e(i),:);
