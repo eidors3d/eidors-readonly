@@ -36,11 +36,24 @@ if size(elem_data,3) == 1
 
    ES= spdiags(elem_sigma,0,lFC,lFC);
 else
-   idx = 1:2:lNE;
-   ES= sparse([idx,idx+1,idx,idx+1]', ...
-              [idx,idx,idx+1,idx+1]', elem_data(:), lFC,lFC);
-   
-   ES(lNE+1:lFC,lNE+1:lFC) = speye(lFC-lNE);
+   switch elem_dim(fwd_model)
+     case 2;
+       idx = 1:2:lNE;
+       ES= sparse([idx,idx+1,idx,idx+1]', ...
+                  [idx,idx,idx+1,idx+1]', elem_data(:), lFC,lFC);
+       
+       ES(lNE+1:lFC,lNE+1:lFC) = speye(lFC-lNE);
+     case 3;
+       idx = 1:3:lNE;
+       ES= sparse([idx,idx+1,idx+2,idx,idx+1,idx+2,idx,idx+1,idx+2]', ...
+                  [idx,idx,idx,idx+1,idx+1,idx+1,idx+2,idx+2,idx+2]', ...
+                   elem_data(:), lFC,lFC);
+       
+       ES(lNE+1:lFC,lNE+1:lFC) = speye(lFC-lNE);
+     otherwise; 
+       error('%d D anisotropic elements not implemented', elem_dim(fwd_model));
+   end
+
 end
 
 s_mat.E= FC' * ES * FC;
