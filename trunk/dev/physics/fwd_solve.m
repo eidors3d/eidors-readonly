@@ -69,7 +69,7 @@ end
 if ~isfield(fwd_model, 'stimulation')
    error('EIDORS: attempting to solve on model without stimulation patterns');
 end
-
+img = physics_data_mapper(img);
 data = feval( fwd_model.solve, fwd_model, img);
 data= eidors_obj('data',data);  % create data object
 
