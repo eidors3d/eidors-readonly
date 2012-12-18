@@ -99,7 +99,7 @@ for i = 1:length(phys_flds)
       eidors_msg('@@@ Overwriting img.%s',phys_flds{i},3);
    end
    % allow elem_data/node_data to be scalar
-   if strcmp(phys_flds{i},'elem_data') && numel(img.(phys).elem_data == 1)
+   if strcmp(phys_flds{i},'elem_data') && numel(img.(phys).elem_data) == 1
       n_elem = calc_num_elems(img.fwd_model);
       img.elem_data = ones(n_elem,1);
       img.elem_data(:) = img.(phys).elem_data;

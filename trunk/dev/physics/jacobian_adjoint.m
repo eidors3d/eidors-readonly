@@ -27,7 +27,7 @@ if ~ismember(img.current_physics, supported_physics)
     'JACOBIAN_ADJOINT',img.current_physics);
 end
 
-orig_physics = img.current_physics;
+org_physics = img.current_physics;
 % all calcs use conductivity
 img = convert_units(img, 'conductivity');
 
@@ -53,7 +53,7 @@ zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 FC= system_mat_fields( fwd_model );
 
 
-if isfield(fwd_model,'coarse2fine') && ~strcmp(org_physics, 'conductivity');
+if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
    DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
    nparam= size(fwd_model.coarse2fine,2);
 else
@@ -71,9 +71,10 @@ for j= 1:pp.n_stim
    idx= idx+ n_meas;
 end
 
-if ~strcmp(orig_physics,'conductivity')
-    J = apply_chain_rule(J, img, orig_physics);
-    if isfield(fwd_model, 'coarse2fine') && size(img.elem_data,1)==size(c2f,1)
+if ~strcmp(org_physics,'conductivity')
+    J = apply_chain_rule(J, img, org_physics);
+    if isfield(fwd_model, 'coarse2fine') && ...
+          size(img.elem_data,1)==size(fwd_model.coarse2fine,1)
             J=J*fwd_model.coarse2fine;
     end 
 end
@@ -132,8 +133,8 @@ else
    end
 end
 
-function J = apply_chain_rule(J, img, orig_physics)
-switch(orig_physics)
+function J = apply_chain_rule(J, img, org_physics)
+switch(org_physics)
     case 'resistivity'
         dCond_dPhys = -img.elem_data.^2;
     case 'log_conductivity'
