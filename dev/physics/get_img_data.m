@@ -22,6 +22,8 @@ if ~strcmp( img(1).type, 'image' );
     return;
 end
 
+img = physics_data_mapper(img);
+
 try
    img_data= [img.elem_data];
 catch

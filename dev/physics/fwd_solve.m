@@ -45,13 +45,13 @@ fwd_model= img.fwd_model;
 
 fwd_model= prepare_model( fwd_model );
 
+% TODO: This should be handled by the physics_data_mapper
 if isfield(img,'params_mapping')
 %     fwd_model data is provided using a mapping function
     mapping_function= img.params_mapping.function;
     img= feval(mapping_function,img);
 end
-
-if isfield(fwd_model,'coarse2fine')
+if isfield(fwd_model,'coarse2fine') && isfield(img,'elem_data')
    c2f= fwd_model.coarse2fine;
    if size(img.elem_data,1)==size(c2f,2)
 %     fwd_model data is provided on coarse mesh
@@ -69,7 +69,7 @@ end
 if ~isfield(fwd_model, 'stimulation')
    error('EIDORS: attempting to solve on model without stimulation patterns');
 end
-img = physics_data_mapper(img);
+
 data = feval( fwd_model.solve, fwd_model, img);
 data= eidors_obj('data',data);  % create data object
 
