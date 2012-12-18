@@ -27,7 +27,7 @@ if ~isempty(img_bkgnd)
    eidors_msg('calc_jacobian_bkgnd: using cached value', 3);
    return
 end
-
+%%% old interface %%%
 if isfield(inv_model.jacobian_bkgnd,'func')
    img_bkgnd= feval( inv_model.jacobian_bkgnd.func, inv_model );
 elseif isfield(inv_model.jacobian_bkgnd,'value')
@@ -40,28 +40,36 @@ elseif isfield(inv_model.jacobian_bkgnd,'value')
                          'elem_data', bkgnd, ...
                          'fwd_model', fwd_model );
 else
+%%% new interface with physics %%%
     fwd_model = inv_model.fwd_model;
-    if isfield(inv_model.jacobian_bkgnd, 'node_data')
-        fld = 'node_data';
-        bkgnd = ones(size(fwd_model.nodes,1),1);
-    else
-        fld = 'elem_data';
-        bkgnd = ones(size(fwd_model.elems,1),1);
+    img_bkgnd = eidors_obj('image','background image','fwd_model',fwd_model);
+    flds = fieldnames(inv_model.jacobian_bkgnd);
+    % copy physics from to im
+    for i = 1:length(flds)
+       img_bkgnd.(flds{i}) = inv_model.jacobian_bkgnd.(flds{i});
     end
-    img_bkgnd = eidors_obj('image', 'background_image', ...
-        'fwd_model', fwd_model);
-    if ~isstruct(inv_model.jacobian_bkgnd.(fld))
-        img_bkgnd.(fld) =  bkgnd;
-        img_bkgnd.(fld)(:) = ...
-            inv_model.jacobian_bkgnd.(fld);
-    else
-        flds = fieldnames(inv_model.jacobian_bkgnd.(fld));
-        for i = 1:length(flds)
-            img_bkgnd.(fld).(flds{i}) = bkgnd;
-            img_bkgnd.(fld).(flds{i})(:) = ...
-                inv_model.jacobian_bkgnd.(fld).(flds{i});
-        end
-    end
+    img_bkgnd = physics_data_mapper(img_bkgnd);
+%     if isfield(inv_model.jacobian_bkgnd, 'node_data')
+%         fld = 'node_data';
+%         bkgnd = ones(size(fwd_model.nodes,1),1);
+%     else
+%         fld = 'elem_data';
+%         bkgnd = ones(size(fwd_model.elems,1),1);
+%     end
+%     img_bkgnd = eidors_obj('image', 'background_image', ...
+%         'fwd_model', fwd_model);
+%     if ~isstruct(inv_model.jacobian_bkgnd.(fld))
+%         img_bkgnd.(fld) =  bkgnd;
+%         img_bkgnd.(fld)(:) = ...
+%             inv_model.jacobian_bkgnd.(fld);
+%     else
+%         flds = fieldnames(inv_model.jacobian_bkgnd.(fld));
+%         for i = 1:length(flds)
+%             img_bkgnd.(fld).(flds{i}) = bkgnd;
+%             img_bkgnd.(fld).(flds{i})(:) = ...
+%                 inv_model.jacobian_bkgnd.(fld).(flds{i});
+%         end
+%     end
 end
 
 
