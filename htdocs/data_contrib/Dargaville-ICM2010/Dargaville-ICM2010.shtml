@@ -46,22 +46,25 @@ In&eacute;z Frerichs, and reference this publication:
 with electrode #1 at the anterior, electrode #5 at the right side, electrode #9 at the posterior and electrode #13 at the left side of the chest. 
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./Dargaville-ICM2010-data.zip"
-            >Data (zip format)</a>
+       <td> <a href="./Dargaville-ICM2010-data-g08.zip"
+            >Data for animal g08 (zip format)</a>
+       <br> <a href="./Dargaville-ICM2010-data-g10.zip"
+            >Data for animal g10 (zip format)</a>.
+<br>
 The manoeuvre was performed in:
 <ul>
 <li>
-  File:<tt>g10-c005.get</tt> &minus; normal lung
-<li>
-  File:<tt>g10-c019.get</tt> &minus; after repeated saline lavage
-<li>
-  File:<tt>g10-c029.get</tt> &minus; after surfactant therapy.
+  Files:<tt>g08-c003.get</tt>,
+        <tt>g10-c005.get</tt> &minus; normal lung
+<li>                         
+  Files:<tt>g08-c017.get</tt>,
+        <tt>g10-c019.get</tt> &minus; after repeated saline lavage
+<li>                         
+  Files:<tt>g08-c035.get</tt>,
+        <tt>g10-c029.get</tt> &minus; after surfactant therapy.
 </ul>
        <hr>
    </table>
-
-<a href="http://www.springerlink.com/content/220rudd750445m6y/"
-   ><img src="Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
 
 <small>
     Last Modified: $Date$ by $Author$
