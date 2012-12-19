@@ -48,6 +48,15 @@ with electrode #1 at the anterior, electrode #5 at the right side, electrode #9 
    <tr><th valign="top"> Data:
        <td> <a href="./Dargaville-ICM2010-data.zip"
             >Data (zip format)</a>
+The manoeuvre was performed in:
+<ul>
+<li>
+  File:<tt>g10-c005.get</tt> &minus; normal lung
+<li>
+  File:<tt>g10-c019.get</tt> &minus; after repeated saline lavage
+<li>
+  File:<tt>g10-c029.get</tt> &minus; after surfactant therapy.
+</ul>
        <hr>
    </table>
 
