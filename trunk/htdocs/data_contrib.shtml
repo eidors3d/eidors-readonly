@@ -20,14 +20,17 @@ use the data.</b>
 
 <li> <a href="./data_contrib/cg-2012-ards-recruitment/cg_2012_ards_recruitment.shtml"
       >Lung Recruitment in patient with ARDS</a>
+    (<i>Pediatric Crit. Care Med.</i>, 2012)
       By: C. G&oacute;mez-Laberge
 
 <li> <a href="./data_contrib/if-neonate-spontaneous/index.shtml"
       >EIT images of spontaneously breathing neonate</a> 
+    (<i>Intensive Care Med.</i>, 2006)
       By: In&eacute;z Frerichs
 
 <li> <a href="./data_contrib/chb_child_acute_lung_injury/chb_child_acute_lung_injury.shtml"
       >Conventional ventilation of a child with ALI during saline instillation and suctioning</a> 
+    (<i>Crit. Care Med.</i>, 2007)
       By: Gerhard K Wolf
 
 <li> <a href="./data_contrib/cg_normal_breathing_2006/cg_normal_breathing_2006.shtml">
@@ -39,6 +42,7 @@ use the data.</b>
 <h4>Human Arm</h4>
 <li> <a href="./data_contrib/bb-human-arm/bb-human-arm.shtml"
       >Earliest published EIT image data: 1981 measuring Rod Smallwood's arm</a>
+    (<i>Electronics Lettere</i>, 1983)
       By: Brian Brown
 </ul>
 
@@ -46,21 +50,34 @@ use the data.</b>
 <ul>
 <h4>Breathing Data</h4>
 
-<li> <a href="./data_contrib/gh_pleural_cavity/gh-pleural-cavity.shtml"
-      >EIT of incremental pneumothorax and pleural effusion in a pig</a>
-      By: G&uuml;nter Hahn
-
-<li> <a href="./data_contrib/if-peep-acute-lung-injury/if-peep-acute-lung-injury.shtml"
-index.shtml
-     >EIT of incremental and decremental PEEP trial of acute lung injury in a pig</a>
+<li> <a href="./Dargaville-ICM2010/Dargaville-ICM2010.shtml"
+     >Regional tidal ventilation and compliance during a stepwise vital
+      capacity manoeuvre</a>
+    (<i>Intensive Care Med.</i>, 2010)
       By: In&eacute;z Frerichs
 
 <li> <a href="./data_contrib/chb_hfov_porcine/chb_hfov_porcine.shtml"
-      >High-frequency oscillatory ventilation (HFOV) in a porcine model of acute lung injury</a> 
+      >High-frequency oscillatory ventilation (HFOV) in a porcine model of
+      acute lung injury</a> 
+    (<i>Pediatric Crit. Care Med.</i>, 2010)
       By: Gerhard K Wolf
+  
+
+<li> <a href="./data_contrib/gh_pleural_cavity/gh-pleural-cavity.shtml"
+      >EIT of incremental pneumothorax and pleural effusion in a pig</a>
+    (<i>Physiol. Meas.</i>, 2006)
+      By: G&uuml;nter Hahn
+
+<li> <a href="./data_contrib/if-peep-acute-lung-injury/if-peep-acute-lung-injury.shtml"
+     >EIT of incremental and decremental PEEP trial of acute lung
+       injury in a pig</a>
+    (<i>Intensive Care Med.</i>, 2003)
+      By: In&eacute;z Frerichs
+
 
 <li> <a href="./data_contrib/if-experimental-lung-injury/if-experimental-lung-injury.shtml"
      >Electrical impedance tomography in monitoring experimental lung injury</a>
+    (<i>Intensive Care Med.</i>, 1998)
       By: In&eacute;z Frerichs
 </ul>
 
