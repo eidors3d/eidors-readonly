@@ -1,0 +1,61 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+Peter A. Dargaville,
+Peter C. Rimensberger,
+In&eacute;z Frerichs
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2010
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+The measurements were performed in two piglets (g08 and g10) during baseline conditions in healthy lung (g08-c003.get, g10-c003.get), after induction of acute lung injury by repeated bronchoalveolar lavage (g08-c017.get, g10-c019.get) and after administration of surfactant (g08-c035.get, g10-c029.get) during pressure-controlled ventilation. The EIT raw data were acquired during an incremental and decremental PEEP trial (stepwise increase and decrease of positive end-expiratory pressure from 0 cm H2O to 25 cm H2O and back) at a rate of 13 frames/s. Each measurement lasted 180 s. The excitation current was 70 kHz. 
+<p>
+Data were published in 
+Dargaville, P.A., Rimensberger, P.M., Frerichs, I. (2010)
+<a href="http://link.springer.com/article/10.1007%2Fs00134-010-1995-1"
+   >Regional tidal ventilation and compliance during a stepwise
+     vital capacity manoeuvre.</a>
+  <i>Intensive Care Med.</i> 36:1953-1961. 
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attribution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+ Use or presentation of these data must acknowledge
+In&eacute;z Frerichs, and reference this publication:
+<ul>
+<a href="http://link.springer.com/article/10.1007%2Fs00134-010-1995-1"
+   >Regional tidal ventilation and compliance during a stepwise
+     vital capacity manoeuvre.</a>
+  <i>Intensive Care Med.</i> 36:1953-1961. 
+</ul>
+   <tr><th valign="top"> Format:
+       <td> Data are in *get files encoded in a zip file
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td> Pig torso. Single plane of  
+            16 Electrodes numbered clockwise,
+with electrode #1 at the anterior, electrode #5 at the right side, electrode #9 at the posterior and electrode #13 at the left side of the chest. 
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./Dargaville-ICM2010-data.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<a href="http://www.springerlink.com/content/220rudd750445m6y/"
+   ><img src="Frerichs-2003-regional-lung-fig3.png" alt="figure 3"></a>
+
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
