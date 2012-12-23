@@ -48,28 +48,7 @@ else
     for i = 1:length(flds)
        img_bkgnd.(flds{i}) = inv_model.jacobian_bkgnd.(flds{i});
     end
-    img_bkgnd = physics_data_mapper(img_bkgnd);
-%     if isfield(inv_model.jacobian_bkgnd, 'node_data')
-%         fld = 'node_data';
-%         bkgnd = ones(size(fwd_model.nodes,1),1);
-%     else
-%         fld = 'elem_data';
-%         bkgnd = ones(size(fwd_model.elems,1),1);
-%     end
-%     img_bkgnd = eidors_obj('image', 'background_image', ...
-%         'fwd_model', fwd_model);
-%     if ~isstruct(inv_model.jacobian_bkgnd.(fld))
-%         img_bkgnd.(fld) =  bkgnd;
-%         img_bkgnd.(fld)(:) = ...
-%             inv_model.jacobian_bkgnd.(fld);
-%     else
-%         flds = fieldnames(inv_model.jacobian_bkgnd.(fld));
-%         for i = 1:length(flds)
-%             img_bkgnd.(fld).(flds{i}) = bkgnd;
-%             img_bkgnd.(fld).(flds{i})(:) = ...
-%                 inv_model.jacobian_bkgnd.(fld).(flds{i});
-%         end
-%     end
+%     img_bkgnd = physics_data_mapper(img_bkgnd);
 end
 
 
@@ -92,5 +71,8 @@ imdl.jacobian_bkgnd.elem_data.val1  = 5;
 imdl.jacobian_bkgnd.elem_data.val2  = ones(length(imdl.fwd_model.elems),1);
 img = calc_jacobian_bkgnd(imdl);
 display(img.elem_data);
+imdl = rmfield(imdl,'jacobian_bkgnd');
+imdl.jacobian_bkgnd.resistivity.elem_data = 3;
+img = calc_jacobian_bkgnd(imdl);
 
 

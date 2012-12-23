@@ -97,6 +97,7 @@ phys_flds = fieldnames(img.(phys));
 for i = 1:length(phys_flds)
    if isfield(img, phys_flds{i})
       eidors_msg('@@@ Overwriting img.%s',phys_flds{i},3);
+      warning('EIDORS:OverwritingData', 'Overwriting img.%s',phys_flds{i});
    end
    % allow elem_data/node_data to be scalar
    if strcmp(phys_flds{i},'elem_data') && numel(img.(phys).elem_data) == 1
@@ -138,15 +139,24 @@ function img = map_data_to_physics(img)
 try 
    curphys = img.current_physics;
 catch
-   error('img.current_physics required');
+   if isfield(img,'elem_data') || isfield(img, 'node_data')
+      return % old type image, nothing to do
+   else
+      error('img.current_physics required');
+   end
 end
 if ismember(curphys, fieldnames(img))
    img = copy_data_to_physics(img,curphys);
+elseif strcmp(curphys,'conductivity')
+   % current_physics is conductivity, but there's no img.conductivity
+   % i.e. we're dealing with an old physics-oblivious image
+   % nothing to do
+   img.current_physics = [];
 else
    try
       % user-provided physics_data_mapper must provide the reverse
       img = feval(curphys,img,1);
-   catch
+   catch 
       error('physics_data_mapper %s failed to reverse', curphys);
    end
 end
