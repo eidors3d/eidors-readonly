@@ -92,7 +92,10 @@ out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
 
 
 image(out_img);
-axis('image');axis('off');axis('equal');
+axis image
+axis off
+axis equal
+axis tight
 
 if nargout==0; clear('out_img'); end
 

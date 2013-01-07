@@ -12,15 +12,14 @@ img2dim.calc_colours.backgnd= [.9,.9,.9];
 % Plot results for each algorithm
 subplot(1,2,1);
 show_fem_move(img2dim);
-img2dim.calc_colours.cb_shrink_move = [0.5,0.5,-.05];
-calc_colours(img2dim,[],1); % do colourbar
+img2dim.calc_colours.cb_shrink_move = [0.5,1.0,.02];
+eidors_colourbar(img2dim);
 
 % Set eidors_obj hyperparameter member.
 mdlM = mdl2dim;
 
 mdlM.fwd_model.jacobian = @jacobian_movement;
-
-mdlM.RtR_prior =     'prior_movement';
+mdlM.RtR_prior =          @prior_movement;
 mdlM.prior_movement.parameters = sqrt(1e2/1); 
 
 % Solve inverse problem for mdlM eidors_obj model.
@@ -31,7 +30,7 @@ imgM.calc_colours.backgnd= [.9,.9,.9];
 % Plot results for each algorithm
 subplot(1,2,2);
 show_fem_move(imgM);
-imgM.calc_colours.cb_shrink_move = [0.5,0.5,-.05];
-calc_colours(img2dim,[],1); % do colourbar
+imgM.calc_colours.cb_shrink_move = [0.5,1.0,.02];
+eidors_colourbar(imgM);
 
 print_convert move_2d02.png
