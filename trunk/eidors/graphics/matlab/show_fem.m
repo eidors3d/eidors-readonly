@@ -59,6 +59,10 @@ end
 
 if nargout == 0; clear hh; end
 
+if ~ishold
+   axis tight;
+end
+
 function placenumbers(xyzc, fontsize, colour, bgcolour)
    xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
    for i= 1:size(xyzc,1)

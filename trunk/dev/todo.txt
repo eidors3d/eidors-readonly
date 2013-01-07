@@ -16,9 +16,32 @@
  - pixel grid interface function
  
  - colorbar -BG(start)
-    - code in move_2d02 and eidors_colourbar
-    - need to completely avoid matlab's colourbar
-
+    + code in move_2d02 and eidors_colourbar - DONE
+    + need to completely avoid matlab's colourbar - DEFER to 3.8
+    - check every use of cb_shrink_move in tutorials 
+        adv_image_reconst/move_2d02.m
+        data_structures/eidors_colours02.m
+        data_structures/eidors_colours03.m
+        data_structures/eidors_colours04.m
+        data_structures/eidors_colours05.m
+        data_structures/eidors_colours06.m
+        data_structures/eidors_colours07.m
+        EIDORS_basics/basic_3d_02.m
+        EIDORS_basics/example_abs_GN_compare_3D.m
+        EIDORS_basics/forward_solvers01.m
+        EIDORS_basics/forward_solvers02.m
+        EIDORS_basics/forward_solvers03.m
+        EIDORS_basics/forward_solvers04.m
+        EIDORS_basics/forward_solvers_2d_high_order02.m
+        EIDORS_basics/forward_solvers_2d_high_order02.m
+        EIDORS_basics/rpi_data02b.m
+        EIDORS_basics/rpi_data03.m
+        EIDORS_basics/rpi_data04.m
+        EIDORS_basics/rpi_data05.m
+        EIDORS_basics/rpi_data06.m
+        EIDORS_basics/sensitivity_map01.m
+        netgen/netgen_sims02.m
+   
  - c2f - think about how to work on NOSER -AA
        - provide some new options for abs solvers
 

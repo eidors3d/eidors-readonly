@@ -30,15 +30,18 @@ end
    hh= colorbar; 
    % make colourbar smaller and closer to axis
    if nargin >= 3
+
+
+      axpos = get(gca,'Position');
       posn= get(hh,'Position');
       cbsm = cb_shrink_move; 
       if ~all(cbsm == [1,1,0]); 
          posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, ...
                  posn(3) * cbsm(1), posn(4) * cbsm(2)];
-        
          set(hh,'Position', posn );
-
+         set(gca,'Position',axpos);
       end
+
    end
 
    %FIXME = AA+CG 30/1/12
