@@ -57,10 +57,10 @@ function  img = line_optimize(imgk, dx, data1)
      mlist(i) = norm(dv);
   end
   pf = polyfit(flist, mlist, 2);
-  fmin = -pf(2)/pf(1)/2; % poly minimum
-  fmin(fmin>1) = 1; fmin(fmin<0) = 0;
+  fmin = -pf(2)/pf(1)/2; % poly minimum for a 2nd order poly
+  fmin(fmin>1) = 1; fmin(fmin<0) = 0; % set to limits of [0,1]
 
-  img.elem_data = imgk.elem_data + flist(i)*dx;
+  img.elem_data = imgk.elem_data + fmin*dx;
   img.elem_data(img.elem_data <= clim ) = clim;
   
   % recreate physics

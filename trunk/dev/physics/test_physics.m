@@ -63,6 +63,7 @@ switch N
       fmdl = imdl.fwd_model;
       imgh = mk_image(fmdl,1,'resistivity','Graphics functions');
       imgh.resistivity.elem_data(3400:3500) = 1/2;
+      if isfield(imgh,'elem_data'); error('bad'); end
       subplot(3,4,N)
       show_fem(imgh)
       show_slices(imgh,[inf inf -0.1])
@@ -94,6 +95,7 @@ switch N
       imgh = mk_image(fmdl,1,'Absolute res');
       imgi = imgh;
       imgi.elem_data(32) = 1/2;
+      disp('EXPECTED FAIL:');
    otherwise
       error('No test %d',N);
 end
