@@ -143,6 +143,8 @@ function J = apply_chain_rule(J, img, org_physics)
 switch(org_physics)
     case 'resistivity'
         dCond_dPhys = -img.elem_data.^2;
+    case 'log_resistivity'
+        dCond_dPhys = -img.elem_data;
     case 'log_conductivity'
         dCond_dPhys = img.elem_data;
     otherwise
