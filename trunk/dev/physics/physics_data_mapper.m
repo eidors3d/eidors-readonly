@@ -149,9 +149,13 @@ if ismember(curphys, fieldnames(img))
    img = copy_data_to_physics(img,curphys);
 elseif strcmp(curphys,'conductivity')
    % current_physics is conductivity, but there's no img.conductivity
-   % i.e. we're dealing with an old physics-oblivious image
-   % nothing to do
-   img.current_physics = [];
+   if ~any(ismember(fieldnames(img),supported_physics))
+      % we're dealing with an old physics-oblivious image
+      % nothing to do
+      img.current_physics = [];
+   else
+      error('Cannot reverse %s mapping',curphys);
+   end
 else
    try
       % user-provided physics_data_mapper must provide the reverse

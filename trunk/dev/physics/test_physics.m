@@ -96,6 +96,9 @@ switch N
       imgi = imgh;
       imgi.elem_data(32) = 1/2;
       disp('EXPECTED FAIL:');
+   case 12
+      test_GREIT_resistivity;
+      return
    otherwise
       error('No test %d',N);
 end
@@ -122,6 +125,35 @@ eidors_colourbar(imgr);
 title(imgh.name);
 eidors_msg('log_level',2);
 eidors_cache on
+
+
+function [imgh imgi imdl] = test_GREIT_resistivity
+
+x = 0.8;
+
+imdl = mk_common_model('b3cr',[16,1]);
+fmdl = imdl.fwd_model;
+imgh = mk_image(fmdl,1,'resistivity','GREIT resistivity');
+fm.elem_centre = 1;
+fmdl = fix_model(fmdl,fm);
+imgh.resistivity.elem_data(fmdl.elem_centre(:,2) > 0) = 1 + x;
+imgh.resistivity.elem_data(fmdl.elem_centre(:,2) > 0) = 1 - x;
+imgi = imgh;
+select_fcn = inline('(x).^2+(y).^2+(z).^2<0.2^2','x','y','z');
+memb_frac = elem_select( imgi.fwd_model, select_fcn);
+imgi.resistivity.elem_data = imgi.resistivity.elem_data + memb_frac*1;
+tmp = mk_image(fmdl,1,'resistivity','GREIT resistivity');
+imdl = mk_GREIT_model(tmp,0.05,2);
+% 
+% imdl = mk_common_model('b3cr',[16,1]);
+% imdl.jacobian_bkgnd = imgh;
+
+vh = fwd_solve(imgh);
+vi = fwd_solve(imgi);
+imgr = inv_solve(imdl,vh, vi);
+imgr.calc_colours.ref_level = 0;
+subplot(3,4,12)
+show_slices(imgr,[inf inf 0]);
 
 function imdl = prepare_model
 imdl = mk_common_model('b2C',16);

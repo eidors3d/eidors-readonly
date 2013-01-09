@@ -31,6 +31,9 @@ end
 if isfield(inv_model.jacobian_bkgnd,'func')
    img_bkgnd= feval( inv_model.jacobian_bkgnd.func, inv_model );
 elseif isfield(inv_model.jacobian_bkgnd,'value')
+   if has_physics(inv_model.jacobian_bkgnd)
+      warning('Ignoring physics-specific fields in Jacobian background')
+   end
    % allow bkgnd to be scalar or vector
    fwd_model= inv_model.fwd_model;
    bkgnd = ones(size(fwd_model.elems,1),1);
@@ -55,6 +58,12 @@ end
 eidors_obj('set-cache', inv_model, 'jacobian_bkgnd', img_bkgnd);
 eidors_msg('jacobian_bkgnd: setting cached value', 3);
 
+
+function b = has_physics(s)
+b = false;
+if isstruct(s)
+   b = any(ismember(fields(s),supported_physics));
+end
 
 function do_unit_test
 imdl = mk_common_model('d2c2');
