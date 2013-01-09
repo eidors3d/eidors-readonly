@@ -76,8 +76,13 @@ if ~strcmp(org_physics,'conductivity')
     if isfield(fwd_model, 'coarse2fine') && ...
           size(img.elem_data,1)==size(fwd_model.coarse2fine,1)
             J=J*fwd_model.coarse2fine;
-    end 
+            nparam = size(fwd_model.coarse2fine,2);
+    end
 end
+
+%restore img to original condition
+img = rmfield(img,'elem_data');
+img.current_physics = [];
 
 % calculate normalized Jacobian
 if pp.normalize
@@ -134,6 +139,7 @@ else
 end
 
 function J = apply_chain_rule(J, img, org_physics)
+
 switch(org_physics)
     case 'resistivity'
         dCond_dPhys = -img.elem_data.^2;
