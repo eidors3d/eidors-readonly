@@ -53,7 +53,7 @@ switch N
       imgh = mk_image(fmdl,1,'resistivity','GREIT resistivity');
       imgi = imgh;
       imgi.resistivity.elem_data(3450) = 1/2;
-      subplot(3,4,N)
+      subplot(4,4,N)
       show_slices(imgi,[inf inf -0.1]);
       title('GREIT resistivity target');
       return
@@ -64,7 +64,7 @@ switch N
       imgh = mk_image(fmdl,1,'resistivity','Graphics functions');
       imgh.resistivity.elem_data(3400:3500) = 1/2;
       if isfield(imgh,'elem_data'); error('bad'); end
-      subplot(3,4,N)
+      subplot(4,4,N)
       show_fem(imgh)
       show_slices(imgh,[inf inf -0.1])
       show_3d_slices(imgh)
@@ -78,7 +78,7 @@ switch N
       imgi = imgh;
       imgi.elem_data(32) = 2;
    case 10
-      imdl.solve = @inv_solve_abs_GN;
+      imdl.solve = @inv_solve_abs_GN_uni;
       imdl.reconst_type = 'absolute';
       imdl.parameters.max_iterations = 3;
       imdl = rmfield(imdl,'jacobian_bkgnd');
@@ -87,15 +87,15 @@ switch N
       imgi = imgh;
       imgi.elem_data(32) = 2;
    case 11
-      imdl.solve = @inv_solve_abs_GN;
+      imdl.solve = @inv_solve_abs_GN_uni;
       imdl.reconst_type = 'absolute';
       imdl.parameters.max_iterations = 3;
       imdl = rmfield(imdl,'jacobian_bkgnd');
       imdl.jacobian_bkgnd.resistivity.elem_data = 1;
       imgh = mk_image(fmdl,1,'Absolute res');
       imgi = imgh;
-      imgi.elem_data(32) = 1/2;
-      disp('EXPECTED FAIL:');
+      imgi.elem_data(32) = 2;
+      % imgi is a conductivity image, just because it can
    case 12
       test_GREIT_resistivity;
       return
@@ -117,9 +117,14 @@ try
    end
    fprintf('OK\n');
 catch err
-   rethrow(err)
+   if strcmp(err.identifier,'EIDORS:PhysicsNotSupported')
+      fprintf('NOT SUPPORTED\n');
+      return
+   else
+      rethrow(err)
+   end
 end
-subplot(3,4,N)
+subplot(4,4,N)
 show_slices(imgr);
 eidors_colourbar(imgr);
 title(imgh.name);
@@ -152,7 +157,7 @@ vh = fwd_solve(imgh);
 vi = fwd_solve(imgi);
 imgr = inv_solve(imdl,vh, vi);
 imgr.calc_colours.ref_level = 0;
-subplot(3,4,12)
+subplot(4,4,12)
 show_slices(imgr,[inf inf 0]);
 
 function imdl = prepare_model
