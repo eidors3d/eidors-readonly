@@ -1,4 +1,4 @@
-function data =jacobian_apparent_resistivity(fwd_model, img)
+function J =jacobian_apparent_resistivity(fwd_model, img)
 
 % $Id$
 

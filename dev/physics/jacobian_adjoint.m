@@ -31,6 +31,8 @@ org_physics = img.current_physics;
 % all calcs use conductivity
 img = convert_units(img, 'conductivity');
 
+img.elem_data = check_elem_data(img);
+
 fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
@@ -152,6 +154,30 @@ switch(org_physics)
 end
 
 J = J.*repmat(dCond_dPhys ,1,size(J,1))';
+
+function elem_data = check_elem_data(img)
+   elem_data = img.elem_data; 
+   sz_elem_data = size(elem_data);
+   if sz_elem_data(2) ~= 1;
+      error('jacobian_adjoin: can only solve one image (sz_elem_data=%)', ...
+            sz_elem_data);
+   end
+
+   if isfield(img.fwd_model, 'coarse2fine');
+     c2f = img.fwd_model.coarse2fine;
+     sz_c2f = size(c2f);
+     switch sz_elem_data(1)
+       case sz_c2f(1); % Ok     
+       case sz_c2f(2); elem_data = c2f * elem_data;
+       otherwise; error(['jacobian_adjoint: provided elem_data ' ...
+            ' (sz=%d) does not match c2f (sz=%d %d)'], sz_elem_data(1), sz_c2f);
+     end
+   else
+     if sz_elem_data(1) ~= num_elems(fwd_model)
+       error(['jacobian_adjoint: provided elem_data (sz=%d) does ' ...
+          ' not match fwd_model (sz=%d)'], sz_elem_data(1), num_elems(sz_c2f));
+     end
+   end
 
 
 
