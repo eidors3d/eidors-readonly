@@ -109,9 +109,9 @@ for k = 1:iters
 %     img0= img;
 end
 
-img = physics_data_mapper(img);
+% img = physics_data_mapper(img);
 vsim=  fwd_solve(img);
-img = physics_data_mapper(img,1);
+% img = physics_data_mapper(img,1);
 residuals(:,k+1) = img.parameters.normalisation*(vsim.meas-data1);
 img.residuals= residuals;
 img.estimation= vsim.meas;
@@ -142,9 +142,9 @@ perturb= img.parameters.perturb;
 mlist= perturb*0;
 for i = 1:length(perturb); 
     img.log_conductivity.elem_data= imgk.log_conductivity.elem_data + perturb(i)*dx;
-    img = physics_data_mapper(img);
+%     img = physics_data_mapper(img);
     vsim = fwd_solve( img );
-    img = physics_data_mapper(img,1);
+%     img = physics_data_mapper(img,1);
     dv = vsim.meas-data1;
     dv= img.parameters.normalisation*dv;
     mlist(i) = norm(dv);
@@ -162,9 +162,9 @@ end
 
 img.log_conductivity.elem_data = imgk.log_conductivity.elem_data + fmin*dx;
 % img.elem_data= exp(img.logCond);
-img = physics_data_mapper(img);
+% img = physics_data_mapper(img);
 vsim = fwd_solve( img );
-img = physics_data_mapper(img,1);
+% img = physics_data_mapper(img,1);
 dv = vsim.meas-data1;
 dv= img.parameters.normalisation*dv;
 
@@ -275,17 +275,17 @@ function unit_test_simdata
 
    img = mk_image( imdl );
    img.log_conductivity.elem_data= imgr.log_conductivity.elem_data;
-   img = physics_data_mapper(img);
+%    img = physics_data_mapper(img);
    vCG= fwd_solve(img); 
-   img = physics_data_mapper(img,1);
+%    img = physics_data_mapper(img,1);
    vCG = vCG.meas;
 
-   I= imdl.parameters.normalisation;
-   figure; plot(I*(dd.meas-vCG))
-   figure; hist(I*(dd.meas-vCG),50)
+%    I= imdl.parameters.normalisation;
+   figure; plot((dd.meas-vCG))
+   figure; hist((dd.meas-vCG),50)
 
-   show_pseudosection( fmdl, I*dd.meas, 'profile')
-   show_pseudosection( fmdl, I*vCG, 'profile')
+   show_pseudosection( fmdl, dd.meas, 'profile')
+   show_pseudosection( fmdl, vCG, 'profile')
    show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100, 'profile')
 
 
