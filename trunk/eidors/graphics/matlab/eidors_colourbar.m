@@ -11,6 +11,15 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 %    cb_shrink_move(1) = horizontal shrink (relative)
 %    cb_shrink_move(2) = vertial shrink (relative)
 %    cb_shrink_move(3) = horizontal move (absolute screen units)
+% KNOWN ISSUE: if you use cb_shrink_move, then matlab will
+%   forget the link between the figure and its colorbar. Future
+%   plots in the same axis will continue to shrink. In general, the
+%   axis will need to be cleared or reinitialized.
+% EXAMPLE:
+%   show_slices(img,2);
+%    p = get(gca,'position') 
+%   eidors_colourbar(img);
+%    set(gca,'position',p); %%% Reset axes after colourbar and move
 %
 % The colorbars are removed with colorbar('delete')
 
@@ -31,7 +40,6 @@ end
    % make colourbar smaller and closer to axis
    if nargin >= 3
 
-
       axpos = get(gca,'Position');
       posn= get(hh,'Position');
       cbsm = cb_shrink_move; 
@@ -40,6 +48,23 @@ end
                  posn(3) * cbsm(1), posn(4) * cbsm(2)];
          set(hh,'Position', posn );
          set(gca,'Position',axpos);
+% DEBUG CODE ATTEMPTING TO FIX CB
+if 0
+         a = get(hh);
+         set(hh,'Position', posn );
+         a = rmfield(a,'CurrentPoint');
+         a = rmfield(a,'TightInset');
+         a = rmfield(a,'BeingDeleted');
+         a = rmfield(a,'Type');
+         a.Position = posn;
+         set(hh,a);
+         op = get(hh,'OuterPosition') 
+         set(hh,'Position', posn );
+         op1= get(hh,'OuterPosition') 
+         set(hh,'OuterPosition',op);
+         op2= get(hh,'OuterPosition') 
+         set(gca,'Position',axpos);
+end
       end
 
    end
@@ -99,6 +124,15 @@ end
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
 
+   if nargin >= 3
+% RESET OUR AXES
+
+      if ~all(cbsm == [1,1,0]); 
+         set(gca,'position',axpos);
+      end
+
+   end
+
 end
 
 function do_unit_test
@@ -106,12 +140,33 @@ imdl = mk_common_model('n3r2',[16,2]);
 img = mk_image(imdl);
 img=rmfield(img,'elem_data');
 img.node_data(1:252)= (1:252)/100 - 1;
-subplot(221);
+subplot(331);
 show_slices(img,2);
 eidors_colourbar(img);
 
 img.calc_colours.cb_shrink_move = [.5,.5,0];
-subplot(222);
+subplot(332);
+show_slices(img,2);
+eidors_colourbar(img);
+
+subplot(333);
+show_fem(img,1);
+subplot(334);
+%show_fem(img,-1); %%% Experimental feature
+
+subplot(335);
+show_slices(img,2);
+ p = get(gca,'position') 
+eidors_colourbar(img);
+ set(gca,'position',p);
+
+show_slices(img,2);
+ eidors_colourbar(img);
+
+subplot(336);
+img.node_data = abs(img.node_data);
+img.calc_colours.ref_level = 0.5;
+img.calc_colours.clim      = 0.5;
 show_slices(img,2);
 eidors_colourbar(img);
 

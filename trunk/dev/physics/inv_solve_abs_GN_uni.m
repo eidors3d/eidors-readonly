@@ -7,6 +7,15 @@ function img= inv_solve_abs_GN( inv_model, data1);
 %
 % Parameters:
 %   inv_model.parameters.max_iterations = N_max iter
+% Parameters: (will override parameters field)
+%   Maximum Iterations
+%    inv_model.inv_solve_abs_GN.max_iterations = N_max iter
+%   Line Optimize parameters
+%    inv_model.inv_solve_abs_GN.line_optimize.perturb
+%    inv_model.inv_solve_abs_GN.line_optimize.min_value
+%    inv_model.inv_solve_abs_GN.line_optimize.max_value
+%   Perform initial estimate of Homogeneous background
+%    inv_model.inv_solve_abs_GN.do_starting_estimate  (default 1)
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -62,6 +71,8 @@ function img = homogeneous_estimate( imdl, data )
    if isfield(img.fwd_model,'coarse2fine');
 % TODO: the whole coarse2fine needs work here.
 %   what happens if c2f doesn't cover the whole region
+
+% TODO: the two cases are very different. c2f case should match other
       nc = size(img.fwd_model.coarse2fine,2);
       img.elem_data = mean(img.elem_data)*ones(nc,1)*pf(1);
    else

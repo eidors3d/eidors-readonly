@@ -61,6 +61,12 @@ ANNOUNCE:
  - anisotropy for fwd_model
  - opt file
 ===================
+POST 3.7
+  clean up TODO in inv_solve_abs_GN
+    (specifically the coarse2fine handling
+      - cover whole region, etc)
+
+===================
 
 -Create helper function spdiag
 
