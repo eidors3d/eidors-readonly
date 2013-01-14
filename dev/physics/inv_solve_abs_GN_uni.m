@@ -21,7 +21,7 @@ function img= inv_solve_abs_GN( inv_model, data1);
 % $Id$
 
 % Step 1: fit to background
-img = homogeneous_estimate( inv_model, data1 );
+img = initial_estimate( inv_model, data1 );
 
 hp  = calc_hyperparameter( inv_model );
 RtR = calc_RtR_prior( inv_model );
@@ -43,11 +43,11 @@ for i = 1:iters
   RDx = hp2RtR*(img0.elem_data - tmp.elem_data);
   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
 
-  img = line_optimize(img, dx, data1);
+  img = line_optimize(img, dx, data1, opt.line_optimize);
 end
 
 
-function img = homogeneous_estimate( imdl, data )
+function img = initial_estimate( imdl, data )
    img = calc_jacobian_bkgnd( imdl );
    vs = fwd_solve(img);
    
@@ -90,6 +90,14 @@ opt.max_iter = 1;
 try
    opt.max_iter = imdl.parameters.max_iterations;
 end
+
 if isfield(imdl, 'inv_solve_abs_GN');
    opt = imdl.inv_solve_abs_GN;
 end
+
+if ~isfield(opt,'line_optimize')
+   opt.line_optimize = [];
+end
+
+
+

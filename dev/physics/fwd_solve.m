@@ -37,7 +37,7 @@ else
       ['Calling FWD_SOLVE with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
 end
-
+ws = warning('query','EIDORS:DeprecatedInterface');
 warning off EIDORS:DeprecatedInterface
 
 fwd_model= img.fwd_model;
