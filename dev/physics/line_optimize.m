@@ -46,7 +46,7 @@ if fmin > max( opt.perturb )
 end
 
 % RETURN VALUES
-img  = calc_perturb(imgk,opt.perturb(i),dx,opt);
+img  = calc_perturb(imgk,fmin,dx,opt);
 vsim = fwd_solve(img);
 res  = calc_difference_data( vsim, data1, img.fwd_model);
 
