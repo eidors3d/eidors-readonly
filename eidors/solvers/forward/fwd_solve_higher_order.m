@@ -98,7 +98,8 @@ end
 %Return the electrode voltages in data structure
 data.meas= vmeaselec;
 data.time= -1; % unknown
-data.name= 'solved by mc_fwd_solve';
+data.name= 'solved by fwd_solve_higher_order';
+data.quantity = 'voltage';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = nodeunknowns(1:nnodes,:); % but not on CEM nodes
 end; end
@@ -106,7 +107,5 @@ try; if img.fwd_solve.get_all_nodes== 1
    data.volt = nodeunknowns;             % all, including CEM nodes
 end; end
 
-%And now put this as an eidors object
-data= eidors_obj('data',data);
 
 end

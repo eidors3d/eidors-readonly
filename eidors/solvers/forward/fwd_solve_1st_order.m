@@ -53,6 +53,7 @@ end
 data.meas= vv;
 data.time= -1; % unknown
 data.name= 'solved by fwd_solve_1st_order';
+data.quantity = 'voltage';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = v(1:pp.n_node,:); % but not on CEM nodes
 end; end
