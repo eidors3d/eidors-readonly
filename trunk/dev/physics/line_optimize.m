@@ -1,6 +1,6 @@
 function [img fmin res] = line_optimize(imgk, dx, data1, opt)
 
-if nargin <4
+if nargin <4 || isempty(opt)
    opt = struct;
 end
 

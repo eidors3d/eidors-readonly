@@ -27,7 +27,9 @@ else
       ['Calling CALC_JACOBIAN with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
 end
+ws = warning('query','EIDORS:DeprecatedInterface');
 warning off EIDORS:DeprecatedInterface
+
 fwd_model= img.fwd_model;
 
 fwd_model_check(fwd_model);
@@ -50,7 +52,7 @@ if isfield(fwd_model,'coarse2fine')
    end
 end
 
-warning on EIDORS:DeprecatedInterface
+warning(ws.state, 'EIDORS:DeprecatedInterface');
 
 eidors_obj('set-cache', cache_obj, 'jacobian', J);
 eidors_msg('calc_jacobian: setting cached value', 3);
