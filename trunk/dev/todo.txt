@@ -5,6 +5,8 @@
 
  - fix anisotropy -> check -AA
 
+ - fix and restore warning state EIDORS:DeprecatedInterface
+
  - Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
 
