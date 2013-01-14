@@ -24,37 +24,52 @@ n_elem = size(fwd_model.elems,1);
 % force image to use provided fwd_model
 img.fwd_model= fwd_model;
 
+jnk = physics_data_mapper(img);
+physics = jnk.current_physics;
+
+if strcmp(physics, 'conductivity') && ~isfield(img,'conductivity')
+   physics = '';
+end
+
 % solve one time to get the size
 d0= fwd_solve( img );
 
 if isfield(img.fwd_model,'coarse2fine');
-   Jcol= perturb_c2f(img, 1, delta, d0);
+   Jcol= perturb_c2f(img, 1, delta, d0, physics);
    Jrows= size(img.fwd_model.coarse2fine,2);
    J= zeros(length(Jcol), Jrows );
    J(:,1)= Jcol;
    for i=2:size(img.fwd_model.coarse2fine,2);
-     J(:,i)= perturb_c2f(img, i, delta, d0);
+     J(:,i)= perturb_c2f(img, i, delta, d0, physics);
      if rem(i,50)==0; fprintf('+'); end
    end
 else
-   Jcol= perturb(img, 1, delta, d0);
+   Jcol= perturb(img, 1, delta, d0, physics);
 
    J= zeros(length(Jcol), n_elem);
    J(:,1)= Jcol;
 
    for i=2:n_elem
-     J(:,i)= perturb(img, i, delta, d0);
+     J(:,i)= perturb(img, i, delta, d0, physics);
    end
 end
 
 
-function Jcol= perturb( img, i, delta, d0)
-   img.elem_data(i)= img.elem_data(i) + delta;
+function Jcol= perturb( img, i, delta, d0, physics)
+   if ~isempty(physics)
+      img.(physics).elem_data(i)= img.(physics).elem_data(i) + delta;
+   else
+      img.elem_data(i)= img.elem_data(i) + delta;
+   end
    di= fwd_solve( img );
    Jcol = (1/delta) * (di.meas - d0.meas);
 
-function Jcol= perturb_c2f( img, i, delta, d0)
-   img.elem_data= img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
+function Jcol= perturb_c2f( img, i, delta, d0, physics)
+   if ~isempty(physics)
+      img.(physics).elem_data= img.(physics).elem_data + delta*img.fwd_model.coarse2fine(:,i);
+   else
+      img.elem_data= img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
+   end
    di= fwd_solve( img );
    Jcol = (1/delta) * (di.meas - d0.meas);
 
