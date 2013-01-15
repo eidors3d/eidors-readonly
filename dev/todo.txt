@@ -10,10 +10,11 @@
  - Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
 
- -. calc_meas_icov -> choose good value for normalized solvers
-     - why is is homg^2 rather than inv(homg)^2
+ -. calc_meas_icov -> choose good value for normalized solvers - DONE
+     - why is is homg^2 rather than inv(homg)^2 - tested
      - maybe just abs(homg) is better and less sensitive
-     - fix calc_jacobian_test
+
+ - fix calc_jacobian_test
 
  - pixel grid interface function
  

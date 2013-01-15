@@ -8,6 +8,9 @@ function meas_icov = meas_icov_rm_elecs( imdl, elec_list)
 %
 % - imdl.meas_icov_rm_elecs.exponent - exponent
 % - imdl.meas_icov_rm_elecs.SNR      - SNR to add (default inf)
+% - imdl.meas_icov_rm_elecs.replace_value (default 0)
+%      Default is to modify the current meas_icov value, if replace_value==1,
+%      then a new value is calculated without reference to the current
 %
 % meas_icov_rm_elecs can also accept a fwd_model parameter
 % 
@@ -22,6 +25,7 @@ if isstr(imdl) && strcmp(imdl,'UNIT_TEST'); do_unit_test; return; end
 switch imdl.type,
   case 'inv_model'; fmdl = imdl.fwd_model;
   case 'fwd_model'; fmdl = imdl;
+                    imdl.meas_icov_rm_elecs.replace_value = 1;
   otherwise;        error('meas_icov_rm_elecs: require inv- or fwd-model');
 end
 
@@ -35,6 +39,10 @@ end
 
     exponent = 1;
 try;exponent = imdl.meas_icov_rm_elecs.exponent;
+end
+
+    replace_value = 0;
+try;replace_value = imdl.meas_icov_rm_elecs.replace_value;
 end
  
 
@@ -56,6 +64,10 @@ n = length(meas_icov);
 
 meas_icov(meas_icov == 0) = NSR;
 meas_icov = spdiags( meas_icov.^exponent, 0, n,n );
+
+if replace_value == 0
+   meas_icov = calc_meas_icov(imdl)*meas_icov;
+end
 
 function do_unit_test
    imdl = mk_common_model('a2c0',4);
@@ -111,7 +123,17 @@ function do_unit_test
    unit_test_cmp('ire #11', find(covar==1),ffcmp);
    ff =    find( covar~=1);
    unit_test_cmp('ire #12', covar(ff),100);
+
+   imdl = mk_common_model('a2c0',8);
+   imdl.meas_icov = spdiag((1:40)');
+   covar=  diag( meas_icov_rm_elecs(imdl,[]) );
+   unit_test_cmp('ire #13', covar,(1:40)');
+
+   imdl.meas_icov_rm_elecs.replace_value = 0;
+   covar=  diag( meas_icov_rm_elecs(imdl,[]) );
+   unit_test_cmp('ire #14', covar,(1:40)');
+
+   imdl.meas_icov_rm_elecs.replace_value = 1;
+   covar=  diag( meas_icov_rm_elecs(imdl,[]) );
+   unit_test_cmp('ire #15', covar,1);
     
-   
-
-
