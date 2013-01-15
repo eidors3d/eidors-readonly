@@ -92,7 +92,7 @@ function ok= run_jacobian_test( mdl, delta, testvec );
 %
 % test dataprior
 %     Difference dataprior should be 1
-%     normalized difference dataprior should be 1./ homg_data
+%     normalized difference dataprior should be homg_data.^2
 function ok= run_dataprior_test( mdl )
     img= eidors_obj('image', 'homg image');
     img.fwd_model= mdl;
@@ -105,8 +105,8 @@ function ok= run_dataprior_test( mdl )
     % difference dataprior
     testvec= diag(DP);
     if mdl_normalize(mdl)
-%       FIX THIS CODE WHEN WE FIX THE meas_icov
-%       testvec = homg_data.meas.^2 .* diag(DP);
+%  from calc_meas_icov, we have the following
+%     meas_icov = sparse(1:n, 1:n, ( homg_data.meas ).^2 );
         testvec = homg_data.meas.^2 ./ diag(DP);
     end
 

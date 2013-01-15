@@ -1,3 +1,4 @@
+2013-01-15: New options in meas_icov_rm_elecs to keep or discard default estimate
 2012-12-15: Interface to ng.opt
 2012-11-20: Revised interface of all jacobian, system mat and fwd_solve functions
             to only accept one input param

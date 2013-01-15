@@ -57,6 +57,10 @@ function meas_icov = default_meas_icov( inv_model )
       meas_icov= speye( n );
    else
       homg_data=  solve_homg_image( fwd_model );
+% if we normalize, then small data get increased
+%   this means that noise on small data gets increased,
+%    so the covariance is large when data are small
+%   so the icov is small when data are small
 % sig = k/h -> std = k/h -> 1/std = kh
       meas_icov = sparse(1:n, 1:n, ( homg_data.meas ).^2 );
    end
