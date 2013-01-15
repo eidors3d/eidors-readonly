@@ -14,7 +14,8 @@
      - why is is homg^2 rather than inv(homg)^2 - tested
      - maybe just abs(homg) is better and less sensitive
 
- - fix calc_jacobian_test
+ - fix calc_jacobian_test - DONE
+     -> line 108
 
  - pixel grid interface function
  
