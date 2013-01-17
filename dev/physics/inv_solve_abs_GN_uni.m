@@ -1,9 +1,9 @@
-function img= inv_solve_abs_GN( inv_model, data1);
-% INV_SOLVE_ABS_GNR absolute solver using Gauss Newton approximation
-% img= gn_abs_solve( inv_model, data1, data2)
+function img= inv_solve_abs_GN( inv_model, data0);
+%INV_SOLVE_ABS_GN Absolute solver using Gauss Newton approximation
+% img= inv_solve_abs_GN( inv_model, data0)
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
-% data1      => EIT data
+% data0      => EIT data
 %
 % Parameters:
 %   inv_model.parameters.max_iterations = N_max iter
@@ -30,19 +30,26 @@ function img= inv_solve_abs_GN( inv_model, data1);
 %    res  - the residual on "next" estimate
 %    opt  - the option structure as described above
 %    img  - the estimate to be used at next iteration
+%
+% See also: LINE_OPTIMIZE
 
-% (C) 2010 Andy Adler. License: GPL version 2 or version 3
+% (C) 2010-2013 Andy Adler & Bartłomiej Grychtol.
+% License: GPL version 2 or version 3
 % $Id$
 
-% Step 1: fit to background
-img = initial_estimate( inv_model, data1 );
+
+opt = parse_options(inv_model);
+if opt.do_starting_estimate
+    img = initial_estimate( inv_model, data1 );
+else
+    img = calc_jacobian_bkgnd( inv_model );
+end
 
 hp  = calc_hyperparameter( inv_model );
 RtR = calc_RtR_prior( inv_model );
 W   = calc_meas_icov( inv_model );
 hp2RtR= hp*RtR;
 
-opt = parse_options(inv_model);
 iters = opt.max_iter;
 
 img0 = physics_data_mapper(img);
@@ -56,10 +63,24 @@ for i = 1:iters
   tmp = physics_data_mapper(img);
   RDx = hp2RtR*(img0.elem_data - tmp.elem_data);
   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
-
+  
+  opt.line_optimize.hp2RtR = hp2RtR;
   [next fmin res] = line_optimize(img, dx, data1, opt.line_optimize);
+  
   [img opt] = update_step(img, next, dx, fmin, res, opt);
+  
+  inv_model.jacobian_backgnd = img;
+  RtR = calc_RtR_prior( inv_model );
+  hp2RtR = hp*RtR;
 end
+
+
+function val = GN_objective_function(data0, data, img0, img, opt)
+dv = calc_difference_data(data, data0, img0.fwd_model);
+if ~isfield(img0, 'elem_data'), img0 = physics_data_mapper(img0); end
+if ~isfield(img, 'elem_data'), img = physics_data_mapper(img); end
+de = img0.elem_data - img.elem_data;
+val = norm(dv) + 0.5 * de' * opt.hp2RtR * de;
 
 
 function img = initial_estimate( imdl, data )
@@ -127,6 +148,12 @@ function opt = parse_options(imdl)
    if isfield(opt, 'max_value')
       opt.line_optimize.max_value = opt.max_value;
    end
-      
+   
+   if ~isfield(opt, 'line_optimize') || ...
+      ~isfield(opt.line_optimize, 'objective_func')
+    % not sure this should be allowed to change
+      opt.line_optimize.objective_func = ...
+          @(d0,d,i0,i,o)GN_objective_function(d0,d,i0,i,o);
+   end
 
 
