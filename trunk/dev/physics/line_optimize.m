@@ -14,7 +14,7 @@ function [img fmin res] = line_optimize(imgk, dx, data0, opt)
 %   opt.min_value: lower limit of img values (default: -Inf)
 %   opt.max_value: upper limit of img values (default: Inf)
 %   opt.objective_function: @my_objective_fun
-%       handle to an objective with the following signature
+%       handle to an objective funtion with the following signature
 %           val = my_objective_fun(data0, data, img0, img, opt)
 %       where:
 %           data0   : data to fit
