@@ -78,7 +78,7 @@ hp2RtR= hp*RtR;
 iters = opt.max_iter;
 
 img0 = physics_data_mapper(img);
-
+opt.meas_icov = calc_meas_icov( inv_model);
 for i = 1:iters  
   vsim = fwd_solve( img ); 
   dv = calc_difference_data( vsim , data0, img.fwd_model);
@@ -102,11 +102,11 @@ end
 
 
 function val = GN_objective_function(data0, data, img0, img, opt)
-dv = calc_difference_data(data, data0, img0.fwd_model);
-if ~isfield(img0, 'elem_data'), img0 = physics_data_mapper(img0); end
-if ~isfield(img, 'elem_data'), img = physics_data_mapper(img); end
-de = img0.elem_data - img.elem_data;
-val = 0.5*norm(dv) + 0.5 * de' * opt.hp2RtR * de;
+   dv = calc_difference_data(data, data0, img0.fwd_model);
+   if ~isfield(img0, 'elem_data'), img0 = physics_data_mapper(img0); end
+   if ~isfield(img, 'elem_data'), img = physics_data_mapper(img); end
+   de = img0.elem_data - img.elem_data;
+   val = 0.5( dv'*opt.meas_icov*dv + de' * opt.hp2RtR * de);
 
 
 function img = initial_estimate( imdl, data )

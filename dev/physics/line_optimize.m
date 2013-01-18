@@ -31,7 +31,7 @@ function [img fmin res] = line_optimize(imgk, dx, data0, opt)
 %
 % See also: INV_SOLVE_ABS_GN
 
-% (C) 2010-2013 Copyright Bartłomiej Grychtol, Andy Adler & Nolwenn Lesparre.
+% (C) 2010-2013 Copyright Bartlomiej Grychtol, Andy Adler & Nolwenn Lesparre.
 % License: GPL version 2 or 3.
 % $Id$
 
@@ -93,8 +93,8 @@ function img = calc_perturb(imgk, p, dx, opt)
 
 
 function img = apply_limits(img,opt)
-img.elem_data(img.elem_data > opt.max_value) = opt.max_value;
-img.elem_data(img.elem_data < opt.min_value) = opt.min_value;
+   img.elem_data(img.elem_data > opt.max_value) = opt.max_value;
+   img.elem_data(img.elem_data < opt.min_value) = opt.min_value;
 
 
 function val = default_obj_fun(data0, data, img0, img, opt)
