@@ -1,20 +1,35 @@
+post 3.7
+
+ - update GREIT tutorials to give recommendations to make it pretty
+    - do this as part of a paper
+
+ - Deprecate jacobian.background.value ->
+ +            jacobian.background.elem_data (and new physics)
+
+ - clean up TODO in inv_solve_abs_GN
+    (specifically the coarse2fine handling
+      - cover whole region, etc)
+
+ - clean up the whole c2f and parameter_mapping 
+    - fix tutorials
+
 3.7
  - new physics -BG
     - docs for mk_image
     - accessor functions for elem_data (and new physics)
 
- - fix anisotropy -> check -AA
+ + fix anisotropy -> check -AA
 
- - fix and restore warning state EIDORS:DeprecatedInterface
+ + fix and restore warning state EIDORS:DeprecatedInterface
 
- - Make sure default GREIT is pretty -BG
+ + Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
 
- -. calc_meas_icov -> choose good value for normalized solvers - DONE
+ + calc_meas_icov -> choose good value for normalized solvers - DONE
      - why is is homg^2 rather than inv(homg)^2 - tested
      - maybe just abs(homg) is better and less sensitive
 
- - fix calc_jacobian_test - DONE
+ + fix calc_jacobian_test - DONE
      -> line 108
 
  - pixel grid interface function
@@ -47,10 +62,11 @@
         netgen/netgen_sims02.m
    
  - c2f - think about how to work on NOSER -AA
-       - provide some new options for abs solvers
-
     - what if we send fwd to the prior calculation?
           (img.orig_fwd_model)
+       - provide some new options for abs solvers
+   - add a parameter_mapping interface
+
 
  - in show_pseudosection
      - fmdl.show_pseudosection.orientation = field
@@ -64,13 +80,8 @@ ANNOUNCE:
  - opt file
 ===================
 POST 3.7
-  clean up TODO in inv_solve_abs_GN
-    (specifically the coarse2fine handling
-      - cover whole region, etc)
 
-===================
-
--Create helper function spdiag
++Create helper function spdiag
 
 -Mods to show_slices to only
    show part of the slice
@@ -84,8 +95,6 @@ POST 3.7
 -. Add a tutorial to show how to do pairs of electrodes
     for injection patterns
 
--. Deprecate jacobian.background.value ->
-             jacobian.background.elem_data (and new physics)
 
 -. Make sure default GREIT is pretty
 
@@ -93,8 +102,6 @@ POST 3.7
     - why is is homg^2 rather than inv(homg)^2
     - maybe just abs(homg) is better and less sensitive
     - fix calc_jacobian_test
-
-- accessor functions for elem_data (and new physics)
 
 - colorbar
    - code in move_2d02 and eidors_colourbar
