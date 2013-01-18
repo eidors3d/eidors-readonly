@@ -6,30 +6,55 @@ function img= inv_solve_abs_GN( inv_model, data0);
 % data0      => EIT data
 %
 % Parameters:
-%   inv_model.parameters.max_iterations = N_max iter
+%   inv_model.parameters.max_iterations = N_max iter            (default 1)
 % Parameters: (will override parameters field)
-%   Maximum Iterations
-%    inv_model.inv_solve_abs_GN.max_iterations = N_max iter
-%   Line Optimize parameters
-%    inv_model.inv_solve_abs_GN.line_optimize.perturb
-%   Limits on solution
-%    inv_model.inv_solve_abs_GN.min_value
-%    inv_model.inv_solve_abs_GN.max_value
-%   Update function after each iteration (more details below)
-%    inv_model.inv_solve_abs_GN.update_func
-%   Perform initial estimate of Homogeneous background
-%    inv_model.inv_solve_abs_GN.do_starting_estimate  (default 1)
+%   Maximum Iterations:
+%    inv_model.inv_solve_abs_GN.max_iterations
+%   Line Optimize function (more details below):
+%    inv_model.inv_solve_abs_GN.line_optimize_func (default @line_optimize)
+%   Line Optimize parameters:
+%    inv_model.inv_solve_abs_GN.line_optimize.perturb            (optional)
+%   Limits on solution:
+%    inv_model.inv_solve_abs_GN.min_value                    (default -Inf)
+%    inv_model.inv_solve_abs_GN.max_value                    (default +Inf)
+%   Update function after each iteration (more details below):
+%    inv_model.inv_solve_abs_GN.update_func                      (optional)
+%   Perform initial estimate (more details below):
+%    inv_model.inv_solve_abs_GN.do_starting_estimate            (default 1)
 %
-%   The signature for the update_func:
-%    [img opt] = my_function(org, next, dx, fmin,res, opt)
+%   Signature for line_optimize_func
+%    [next fmin res] = my_line_optimize(org, dx, data0, opt)
+%   where:
+%    next - the image to use in the next iteration
+%    fmin - step size along dx that minimizes the objective function
+%    res  - the value of the objective function for the next image
+%    org  - the current estimate
+%    dx   - the current derivative (step direction)
+%    opt  - the options structure specified in 
+%           inv_model.inv_solve_abs_GN.line_optimize (can be used to pass
+%           additonal arguments, stores the GN objective function in 
+%           opt.objective_func)
+%   Note that changing the line optimize function can substantially alter
+%   the behavior of the solver, especially if a different objective
+%   function is used.
+%
+%   Signature for update_func:
+%    [img opt] = my_update_func(org, next, dx, fmin,res, opt)
 %   where:
 %    org  - the current estimate
 %    next - the proposed next estimate as returned by line_optimize
-%    dx   - the current derivative
+%    dx   - the current derivative (step direction)
 %    fmin - the step size chosen by line_optimize
 %    res  - the residual on "next" estimate
 %    opt  - the option structure as described above
 %    img  - the estimate to be used at next iteration
+%
+% By default, the starting estimate will be based on
+% inv_model.jacobian_bkgnd, but scaled such as to best fit data0. 
+% Set opt.do_initial_estimate to 0 to use inv_model.jacobian_bkgnd without
+% modification. 
+% The initial estimate serves as a prior for the reconstruction, deviation
+% from which is penalized.
 %
 % See also: LINE_OPTIMIZE
 
@@ -40,7 +65,7 @@ function img= inv_solve_abs_GN( inv_model, data0);
 
 opt = parse_options(inv_model);
 if opt.do_starting_estimate
-    img = initial_estimate( inv_model, data1 );
+    img = initial_estimate( inv_model, data0 );
 else
     img = calc_jacobian_bkgnd( inv_model );
 end
@@ -56,7 +81,7 @@ img0 = physics_data_mapper(img);
 
 for i = 1:iters  
   vsim = fwd_solve( img ); 
-  dv = calc_difference_data( vsim , data1, img.fwd_model);
+  dv = calc_difference_data( vsim , data0, img.fwd_model);
   J = calc_jacobian( img );
 
   % create elem_data
@@ -65,7 +90,8 @@ for i = 1:iters
   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
   
   opt.line_optimize.hp2RtR = hp2RtR;
-  [next fmin res] = line_optimize(img, dx, data1, opt.line_optimize);
+  [next fmin res] = ...
+      feval(opt.line_optimize_func,img, dx, data0, opt.line_optimize);
   
   [img opt] = update_step(img, next, dx, fmin, res, opt);
   
@@ -80,7 +106,7 @@ dv = calc_difference_data(data, data0, img0.fwd_model);
 if ~isfield(img0, 'elem_data'), img0 = physics_data_mapper(img0); end
 if ~isfield(img, 'elem_data'), img = physics_data_mapper(img); end
 de = img0.elem_data - img.elem_data;
-val = norm(dv) + 0.5 * de' * opt.hp2RtR * de;
+val = 0.5*norm(dv) + 0.5 * de' * opt.hp2RtR * de;
 
 
 function img = initial_estimate( imdl, data )
@@ -127,14 +153,25 @@ function [img opt] = update_step(org, next, dx, fmin,res, opt)
    
    
 function opt = parse_options(imdl)
-
+   try
+       % for any general options
+       opt = imdl.parameters;
+   end
+   
    opt.max_iter = 1;
    try
-      opt.max_iter = imdl.parameters.max_iterations;
+      opt.max_iter = imdl.parameters.max_iter;
    end
    
    if isfield(imdl, 'inv_solve_abs_GN');
-      opt = imdl.inv_solve_abs_GN;
+      fnames = fieldnames(imdl.inv_solve_abs_GN);
+      for i = 1:length(fnames)
+          opt.(fnames{i}) = imdl.inv_solve_abs_GN.(fnames{i});
+      end
+   end
+   
+   if ~isfield(opt,'line_optimize_func')
+      opt.line_optimize_func = @line_optimize;
    end
    
    if ~isfield(opt,'line_optimize')
@@ -152,8 +189,10 @@ function opt = parse_options(imdl)
    if ~isfield(opt, 'line_optimize') || ...
       ~isfield(opt.line_optimize, 'objective_func')
     % not sure this should be allowed to change
-      opt.line_optimize.objective_func = ...
-          @(d0,d,i0,i,o)GN_objective_function(d0,d,i0,i,o);
+      opt.line_optimize.objective_func = @GN_objective_function;       
    end
-
+   
+   if ~isfield(opt,'do_starting_estimate')
+       opt.do_starting_estimate = 1;
+   end
 
