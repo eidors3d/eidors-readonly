@@ -15,8 +15,8 @@ post 3.7
 
 3.7
  - new physics -BG
-    - docs for mk_image
-    - accessor functions for elem_data (and new physics)
+    + docs for mk_image
+    + accessor functions for elem_data (and new physics)
 
  + fix anisotropy -> check -AA
 
