@@ -60,6 +60,7 @@ end
 if nargout == 0; clear hh; end
 
 if ~ishold
+   axis equal;
    axis tight;
 end
 
@@ -135,10 +136,15 @@ function hh= show_2d(img,mdl,opts)
 
      % Here's the magic trick I found. Force a drawnow,
      %     then delete and recreate
-      if ~exist('OCTAVE_VERSION')
-         drawnow; colorbar('delete');
-         colours= calc_colours(img, [], opts.do_colourbar);
-      end
+
+     % Because of a change in matlab colorbar somewhere around
+     % 2012, none of this compensation code works any more. We
+     % don't really understand what to do anymore, but this
+     % seems best, for now ...
+    % if ~exist('OCTAVE_VERSION')
+    %    drawnow; colorbar('delete');
+    %    colours= calc_colours(img, [], opts.do_colourbar);
+    % end
    end
 
    

@@ -13,6 +13,12 @@ post 3.7
  - clean up the whole c2f and parameter_mapping 
     - fix tutorials
 
+ - create tutorial for  place_elec_on_surf
+
+ - need to completely avoid matlab's colourbar - DEFER to 3.8
+
+ - add more colourbar tutorials, to show background colour features.
+
 3.7
  - new physics -BG
     + docs for mk_image
@@ -32,21 +38,26 @@ post 3.7
  + fix calc_jacobian_test - DONE
      -> line 108
 
+ - move place_elec_on_surf into main
+
  - pixel grid interface function
+
+ - fix and test:
+     -  EIDORS_basics/example_abs_GN_compare_3D.m
  
  - colorbar -BG(start)
     + code in move_2d02 and eidors_colourbar - DONE
-    + need to completely avoid matlab's colourbar - DEFER to 3.8
+        - need to have option to put colorbar outside 
     - check every use of cb_shrink_move in tutorials 
-        adv_image_reconst/move_2d02.m
-        data_structures/eidors_colours02.m
-        data_structures/eidors_colours03.m
-        data_structures/eidors_colours04.m
-        data_structures/eidors_colours05.m
-        data_structures/eidors_colours06.m
-        data_structures/eidors_colours07.m
-        EIDORS_basics/basic_3d_02.m
-        EIDORS_basics/example_abs_GN_compare_3D.m
+     +  adv_image_reconst/move_2d02.m
+     +  data_structures/eidors_colours02.m
+     +  data_structures/eidors_colours03.m
+     +  data_structures/eidors_colours04.m
+     +  data_structures/eidors_colours05.m
+     +  data_structures/eidors_colours06.m
+     +  data_structures/eidors_colours07.m
+     +  EIDORS_basics/basic_3d_02.m
+     -  EIDORS_basics/example_abs_GN_compare_3D.m
         EIDORS_basics/forward_solvers01.m
         EIDORS_basics/forward_solvers02.m
         EIDORS_basics/forward_solvers03.m

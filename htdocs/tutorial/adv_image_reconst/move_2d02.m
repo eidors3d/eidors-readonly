@@ -30,7 +30,7 @@ imgM.calc_colours.backgnd= [.9,.9,.9];
 % Plot results for each algorithm
 subplot(1,2,2);
 show_fem_move(imgM);
-imgM.calc_colours.cb_shrink_move = [0.5,1.0,.02];
+imgM.calc_colours.cb_shrink_move = [0.5,0.9,.02];
 eidors_colourbar(imgM);
 
 print_convert move_2d02.png
