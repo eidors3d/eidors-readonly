@@ -13,6 +13,9 @@ function img= mk_image(mdl, elem_data, physics, name)
 % 
 % Usage 3: create image from previous image, override conductity
 %  img = mk_image( other_image, 2 ) -> image with c=2
+%
+% Usage 4: create image with specific 'physics' properties
+%  img = mk_image( mdl, 3*ones(64,1),'resistivity' ); % resistivity image
 
 % (C) 2008-12 Andy Adler and Bartlomiej Grychtol. 
 % Licenced under GPL version 2 or 3
