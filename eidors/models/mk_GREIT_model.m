@@ -203,6 +203,7 @@ end
 eidors_msg( 'log_level', log_level);
 RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
 imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
+imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
 
 function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
@@ -374,7 +375,7 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
                          fmdl = imgs.fwd_model; % now it's a fmdl
        case 'inv_model'; imdl = fmdl;
                          fmdl = imdl.fwd_model;
-                         imgs = mk_image( fmdl, 1);
+                         imgs = calc_jacobian_bkgnd(imdl);
        otherwise; error('unrecognized eidors object');
      end
    else
