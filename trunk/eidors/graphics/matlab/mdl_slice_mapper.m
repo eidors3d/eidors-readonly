@@ -44,6 +44,10 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    end
 
    NODE = level_model( fwd_model, level );
+   if isfield(fwd_model.mdl_slice_mapper,'model_2d') && ...
+           fwd_model.mdl_slice_mapper.model_2d
+       NODE(3,:) = [];
+   end
    ELEM= fwd_model.elems';
    if size(NODE,1) ==2 %2D
       [x,y] = grid_the_space( fwd_model);

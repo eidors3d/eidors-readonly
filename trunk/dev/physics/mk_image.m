@@ -67,6 +67,9 @@ end
 
 img = eidors_obj('image',name);
 img.fwd_model = mdl;
+if isfield(mdl,'show_slices');
+    img.show_slices = mdl.show_slices;
+end
 img = fill_in_data(img,elem_data,physics);
 % img.current_physics = physics;
 

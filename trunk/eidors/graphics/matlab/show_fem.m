@@ -176,15 +176,22 @@ function show_electrodes_2d(mdl, number_electrodes)
 % scale away from model
 
 for e=1:length(mdl.electrode)
-    elec_nodes= mdl.electrode(e).nodes;
-
-    S= 1.00;
-    vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
-    vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
-    % sort nodes around the model (to avoid crossed lines)
-    [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+    if isfield(mdl.electrode(e),'pos') && ~isfield(mdl.electrode(e),'nodes')
+        vx = mdl.electrode(e).pos(:,1) - ctr_x;
+        vy = mdl.electrode(e).pos(:,2) - ctr_y;
+        idx = 1:length(vx);
+    else
+        elec_nodes= mdl.electrode(e).nodes;
+        
+        S= 1.00;
+        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+        % sort nodes around the model (to avoid crossed lines)
+        [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+    end
+        
     ecolour = electr_colour( e );
-    if(length(elec_nodes) == 1)
+    if numel(vx) == 1
        % Point Electrode Models: put a circle around the node
        line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
             'LineWidth', 2, 'LineStyle','-','Color', ecolour, ...
@@ -221,17 +228,24 @@ function show_electrodes_surf(mdl, number_electrodes)
 % scale away from model
 
 for e=1:length(mdl.electrode)
-    elec_nodes= mdl.electrode(e).nodes;
-
-    S= 1.00;
-    vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
-    vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
-    vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
-    % sort nodes around the model (to avoid crossed lines)
-    % TODO: figure out what to do in different directions
-    [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+    if isfield(mdl.electrode(e),'pos') && ~isfield(mdl.electrode(e),'nodes')
+        vx = mdl.electrode(e).pos(:,1) - ctr_x;
+        vy = mdl.electrode(e).pos(:,2) - ctr_y;
+        vz = mdl.electrode(e).pos(:,3) - ctr_z;
+        idx = 1:length(vx);
+    else
+        elec_nodes= mdl.electrode(e).nodes;
+        
+        S= 1.00;
+        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+        vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
+        % sort nodes around the model (to avoid crossed lines)
+        % TODO: figure out what to do in different directions
+        [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+    end
     ecolour = electr_colour( e );
-    if(length(elec_nodes) == 1)
+    if numel(vx) == 1
        % Point Electrode Models: put a circle around the node
        line(vx(idx)+ctr_x,vy(idx)+ctr_y, vz(idx)+ctr_z,  ...
             'LineWidth', 2, 'LineStyle','-','Color', ecolour, ...
@@ -259,16 +273,21 @@ for e=1:length(mdl.electrode)
     end
 end
 
-function show_electrodes_3d(mdl, number_electrodes);
+function show_electrodes_3d(mdl, number_electrodes)
 % show electrode positions on model
 if ~isfield(mdl,'electrode'); return; end
 
 ee= get_boundary( mdl );
 for e=1:length(mdl.electrode)
-    elec_nodes= mdl.electrode(e).nodes;
-
     colour= electr_colour( e);
-
+    
+    if isfield(mdl.electrode(e),'pos') && ~isfield(mdl.electrode(e),'nodes')
+        show_electrodes_surf(mdl, number_electrodes);
+        return
+    end
+    elec_nodes= mdl.electrode(e).nodes;
+    
+    
     if length(elec_nodes) == 1  % point electrode model
         vtx= mdl.nodes(elec_nodes,:);
         line(vtx(1),vtx(2),vtx(3), ...
