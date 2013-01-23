@@ -248,12 +248,12 @@ PN = project_nodes_on_elec(mdl,elecs,nodes);
 % v = [0 0 1] - dot([0 0 1],u) *u; v = v/norm(v);
 % s = cross(u,v); s= s/norm(s);
 
-% mark nodes that are very close to elecs.points for removal
+% mark nodes that are too close to elecs.points for removal
 rm = false(length(PN),1);
 for i = 1:length(PN)
    D = repmat(PN(i,:),length(elecs.points),1) - elecs.points;
    D = sqrt(sum(D.^2,2));
-   if any(D < elecs.maxh/2)
+   if any(D < 2*elecs.maxh)
       rm(i) = true;
    end
 end
@@ -512,13 +512,18 @@ idx = find(th(:,1) > el_th,1,'first');
 if isempty(idx) || idx == 1
    n1 = n(th(1,2));
    n2 = n(th(end,2));
+   % elements in els that contain these nodes (they don't need to be on the
+   % same element)
+   el = els & sum( (mdl.boundary == n1) + (mdl.boundary == n2) ,2) > 0;
 else
-   n1 = n(th(idx-1,2));
-   n2 = n(th(idx,  2));
+   to_the_left = false(length(mdl.nodes),1);
+   to_the_left(n(th(1:idx-1,2))) = true;
+   sum_left = sum( to_the_left(mdl.boundary), 2);
+   el = els & sum_left > 0 & sum_left < 3;
+%    n1 = n(th(idx-1,2));
+%    n2 = n(th(idx,  2));
 end
-% elements in els that contain these nodes (they don't need to be on the
-% same element)
-el = els & sum( (mdl.boundary == n1) + (mdl.boundary == n2) ,2) > 0;
+
 el = find(el);
 % fcs = find(mdl.boundary_face);
 % fcs = fcs(el);
@@ -534,7 +539,9 @@ for i = 1:length(el)
    % (Ctr - Cf).Nf + tDe.Nf = 0
    % t =
    % X = Ctr + De * (Cf-Ctr).Nf / (De.Nf)
-   X = Ctr + De * dot(Cf-Ctr,Nf) / dot(De,Nf) ;
+   t = dot(Cf-Ctr,Nf) / dot(De,Nf);
+   if t < 0, continue, end
+   X = Ctr + De * t ;
    if point_in_triangle(X, mdl.faces(el(i),:), mdl.nodes)
       pos = X;
       fc = el(i);
@@ -595,6 +602,9 @@ if use_elec
    PN = project_nodes_on_elec(mdl,elecs,1:length(mdl.nodes));
    emin = min(elecs.points);
    emax = max(elecs.points);
+   rng = emax-emin;
+   emin = emin - 0.1*rng;
+   emax = emax + 0.1*rng;
    toofar = false(size(mdl.boundary,1),1);
    
    for i = 1:3
