@@ -1,4 +1,29 @@
-function imdl = add_gridmodel(imdl,opt)
+function [imdl fmdl] = mk_pixel_slice(imdl,level,opt)
+%MK_PIXEL_SLICE create a pixel model to reconstruct on
+% OUT = MK_PIXEL_SLICE(MDL, LEVEL, OPT) creates a slice of pixels as a
+% model to reconstruct on. 
+%
+% Inputs:
+%  MDL   = an EIDORS forward or inverse model structure
+%  LEVEL = either a vector of x-,y-, and z-intercepts of the cut plane or
+%          a single value interpreted as the height of a single cut in the
+%          z plane (by default, a horizontal slice at the average electrode
+%          height will be created)
+%  OPT   = an option structure with the following fields and defaults:
+%     opt.imgsz = [32 32];    % dimensions of the pixel grid
+%     opt.square_pixels = 0;  % adjust imgsz to get square pixels
+%     opt.do_coarse2fine = 1; % calcuate c2f on the forward model
+%     opt.z_depth = inf;      % z_depth to use with mk_coarse_fine_mapping
+%
+% Output depends on the type of model suplied. If MDL is a fwd_model
+% structure then OUT is a rec_model. If MDL is an inv_model, then OUT is a
+% modified version of it, with the pixel slice in inv_model.rec_model and
+% updated inv_model.fwd_model.coarse2fine
+% 
+% [OUT FMDL] = MK_PIXEL_SLICE(MDL, ...) also returns the forward model
+% structure with the coarse2fine field.
+%
+% See also MK_COARSE_FINE_MAPPING, MK_GRID_MODEL
 
 if isstr(imdl) && strcmp(imdl,'UNIT_TEST'),do_unit_test;return;end;
 
@@ -12,7 +37,9 @@ switch(imdl.type)
 end
 
 if nargin < 2, opt = struct; end
-
+if nargin > 1
+   opt.level = level;
+end
 opt = parse_opts(fmdl,opt);
 
 tmp = fmdl;
@@ -72,7 +99,7 @@ if opt.do_coarse2fine
     tmp.mk_coarse_fine_mapping.f2c_offset  = T;
     tmp.mk_coarse_fine_mapping.f2c_project = R;
     tmp.mk_coarse_fine_mapping.z_depth     = opt.z_depth;
-    imdl.fwd_model.coarse2fine = mk_coarse_fine_mapping(fmdl,tmp);
+    fmdl.coarse2fine = mk_coarse_fine_mapping(fmdl,tmp);
 end
 
 rmdl.nodes(:,3) = 0;
@@ -91,8 +118,14 @@ end
 
 rmdl.show_slices.levels = opt.level;
 
-imdl.rec_model = rmdl;
-
+switch imdl.type
+   case 'inv_model'
+      imdl.rec_model = rmdl;
+      imdl.fwd_model = fmdl;
+   case 'fwd_model'
+      imdl = rmdl;
+end
+      
  
  function opt = parse_opts(fmdl, opt)
     if ~isfield(opt, 'imgsz'),     
@@ -167,11 +200,9 @@ function elec_lev = get_elec_level(fmdl)
     
 function do_unit_test
     imdl = mk_common_model('n3r2',[16,2]);
-    opt.level = [ inf 2 2.5];
     opt.square_pixels = 1;
     opt.imgsz = [16 16];
-    imdl = add_gridmodel(imdl, opt);
-    mdl = imdl.rec_model;
+    mdl = mk_pixel_slice(imdl.fwd_model,[inf 2 2.5], opt);
     img = mk_image(mdl,1);
     
     subplot(221)
@@ -189,7 +220,7 @@ function do_unit_test
     show_slices(img);
     
     subplot(224)
-    imdl = add_gridmodel(imdl);
+    imdl = mk_pixel_slice(imdl);
     img = mk_image(imdl.rec_model,1);
     show_fem(img);
     zlim([0 3]);

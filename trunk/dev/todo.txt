@@ -40,7 +40,7 @@ post 3.7
 
  - move place_elec_on_surf into main
 
- - pixel grid interface function
+ + pixel grid interface function
 
  - fix and test:
      -  EIDORS_basics/example_abs_GN_compare_3D.m
@@ -57,7 +57,7 @@ post 3.7
      +  data_structures/eidors_colours06.m
      +  data_structures/eidors_colours07.m
      +  EIDORS_basics/basic_3d_02.m
-     -  EIDORS_basics/example_abs_GN_compare_3D.m
+     +  EIDORS_basics/example_abs_GN_compare_3D.m
         EIDORS_basics/forward_solvers01.m
         EIDORS_basics/forward_solvers02.m
         EIDORS_basics/forward_solvers03.m
