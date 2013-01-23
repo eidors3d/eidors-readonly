@@ -1,6 +1,6 @@
-function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
+function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM
-% c2f= mk_coarse_fine_mapping( f_mdl, c_mdl );
+% [c2f,out]= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %  
 % Parameters:
 %    c_mdl is coarse fwd_model
@@ -11,6 +11,9 @@ function mapping = mk_coarse_fine_mapping( f_mdl, c_mdl );
 %   from data on the reconstruction model (c_mdl) to
 %   the forward model f_mdl as 
 %      elem_data_fine = Mapping*elem_data_coase
+%
+% OUT_i is the fraction of f_mdl element i which is not
+%   contained in any c_mdl element.
 %
 % OPTIONS:
 % if the geometry of the fine and coarse models are not
@@ -66,6 +69,10 @@ else
 
     eidors_obj('set-cache', c_obj, 'coarse_fine_mapping', mapping);
     eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
+end
+
+if nargout>1;
+  outside = 1 - sum(mapping,2);
 end
 
 % Mapping depends only on nodes and elems - remove the other stuff
