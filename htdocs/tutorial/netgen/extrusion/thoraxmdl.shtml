@@ -26,6 +26,8 @@ This image is from a human CT of a healthy man,
 provided with permission.
 Hand registered contours are available in 
 <a href="CT1.mat">this file [CT1.mat]</a>.
+The image is available 
+<a href="thorax-mdl.jpg">here [thorax-mdl.jpg]</a>
 <pre>
 <!--#include virtual="thoraxmdl01.m" -->
 </pre>
