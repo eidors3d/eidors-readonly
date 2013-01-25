@@ -79,17 +79,20 @@ The following figure illustrates the experimental protocol.
 <center>
 <a href="cg_ards_recruitment_data.png"><img height= 300 src="cg_ards_recruitment_data.png"></a>
 </center>
+       <hr>
+   <tr><th valign="top"> Data:
+Data for two patients and analysis software are contributed:
+<UL>
+<LI> Patient #1:
+       <td> <a href="./cg_data_2012_p1.zip"
+            >Data (zip format)</a>
 <br>
 The patient details are as follows:
 Gender: F,
 Age: 5.9 years,
 Weight: 20kg,
 Condition: Primary ARDS triggered by parainfluenza pneumonia.
-       <hr>
-   <tr><th valign="top"> Data:
-       <td> <a href="./cg_data_2012.zip"
-            >Data (zip format)</a>
-
+<br>
 File details:
 <pre>
         FILENAME                                       cmH<sub>2</sub>O        cmH<sub>2</sub>O
@@ -103,9 +106,24 @@ STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d2.get   PEEP=18   (P<sub>Plat</sub
 STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d3.get   PEEP=16   (P<sub>Plat</sub>&minus;PEEP) =5
 STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d4.get   PEEP=14   (P<sub>Plat</sub>&minus;PEEP) =4
 </pre>
-
-       <br> <a href="./cg_2012_ards_recruitment_code.zip"
+<LI> Patient #7:
+       <td> <a href="./cg_data_2012_p7.zip"
+            >Data (zip format)</a>
+<br>
+The patient details are as follows:
+Gender: F,
+Age: 13.9 years,
+Weight: 76kg,
+Condition: patient on ECMO suffering from secondary ARDS due to sepsis
+<br>
+File details:
+<pre>
+???
+</pre>
+<LI>
+       <a href="./cg_2012_ards_recruitment_code.zip"
             >Analysis software (m files in zip format)</a>
+<UL>
 
        <hr>
    <tr><th valign="top"> Images:
