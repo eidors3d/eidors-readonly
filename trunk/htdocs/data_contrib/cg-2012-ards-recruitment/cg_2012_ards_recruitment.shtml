@@ -114,11 +114,18 @@ The patient details are as follows:
 Gender: F,
 Age: 13.9 years,
 Weight: 76kg,
-Condition: patient on ECMO suffering from secondary ARDS due to sepsis
-<br>
+Condition: patient on ECMO suffering from secondary ARDS due to sepsis.
+<br>                                                                  
 File details:
 <pre>
-???
+        FILENAME                                       cmH<sub>2</sub>O        cmH<sub>2</sub>O
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_b2.get   PEEP=22   (P<sub>Plat</sub>&minus;PEEP) =16
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_c1.get   PEEP=15   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_c2.get   PEEP=20   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_c3.get   PEEP=25   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_c4.get   PEEP=30   (P<sub>Plat</sub>&minus;PEEP) =15
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_d1.get   PEEP=20   (P<sub>Plat</sub>&minus;PEEP) =17
+STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_d2.get   PEEP=18   (P<sub>Plat</sub>&minus;PEEP) =15
 </pre>
 <LI>
        <a href="./cg_2012_ards_recruitment_code.zip"
