@@ -3,6 +3,10 @@ post 3.7
  - fix jacobian_elem2nodes
     - test behaviour for simple elec sensitivity models
 
+ - test_2d_resistor
+    - why fwd_solve_1st_order: 249.294837 Solver analytic: 249.745561
+    - put into a proper test function as UNIT_TEST
+
  - update GREIT tutorials to give recommendations to make it pretty
     - do this as part of a paper
 
