@@ -1,5 +1,8 @@
 post 3.7
 
+ - fix jacobian_elem2nodes
+    - test behaviour for simple elec sensitivity models
+
  - update GREIT tutorials to give recommendations to make it pretty
     - do this as part of a paper
 

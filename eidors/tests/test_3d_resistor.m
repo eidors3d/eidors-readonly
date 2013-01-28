@@ -58,6 +58,7 @@ fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 mdl.solve = @np_fwd_solve;
 mdl.system_mat = @np_calc_system_mat;
 mdl.misc.perm_sym= '{n}';
+mdl.normalize_measurements = 0;
 img= eidors_obj('image','3D rectangle', ...
       'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
       'fwd_model', mdl); 
@@ -75,8 +76,9 @@ fprintf('Solver %s: %f\n', 'analytic', V);
 % NOW CALCULATE THE ANALYTICAL JACOBIAN
 mdl.solve = @np_fwd_solve;
 mdl.jacobian = @np_calc_jacobian;
-mg.elem_data= ones(n_el,1) * conduc ;
-Jnp= calc_jacobian(mdl,img);
+img.fwd_model = mdl;
+img.elem_data= ones(n_el,1) * conduc ;
+Jnp= calc_jacobian(img);
 
 mdl.jacobian = @jacobian_perturb;
 Jp1= calc_jacobian(mdl,img);
