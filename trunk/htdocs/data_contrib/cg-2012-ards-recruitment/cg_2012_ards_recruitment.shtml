@@ -81,10 +81,12 @@ The following figure illustrates the experimental protocol.
 </center>
        <hr>
    <tr><th valign="top"> Data:
+<td>
+
 Data for two patients and analysis software are contributed:
 <UL>
 <LI> Patient #1:
-       <td> <a href="./cg_data_2012_p1.zip"
+            <a href="./cg_data_2012_p1.zip"
             >Data (zip format)</a>
 <br>
 The patient details are as follows:
@@ -107,7 +109,7 @@ STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d3.get   PEEP=16   (P<sub>Plat</sub
 STUDYNAME/SUBJECT_1/YYYYMMDD/Eit/Viasys/1001_d4.get   PEEP=14   (P<sub>Plat</sub>&minus;PEEP) =4
 </pre>
 <LI> Patient #7:
-       <td> <a href="./cg_data_2012_p7.zip"
+            <a href="./cg_data_2012_p7.zip"
             >Data (zip format)</a>
 <br>
 The patient details are as follows:
@@ -130,7 +132,7 @@ STUDYNAME/SUBJECT_7/YYYYMMDD/Eit/Viasys/1007_d2.get   PEEP=18   (P<sub>Plat</sub
 <LI>
        <a href="./cg_2012_ards_recruitment_code.zip"
             >Analysis software (m files in zip format)</a>
-<UL>
+</UL>
 
        <hr>
    <tr><th valign="top"> Images:
