@@ -1,5 +1,9 @@
 post 3.7
 
+ - Nodal Jacobian bugs (example in 24 jan 2012 email)
+
+ - fix tutrorial for human thorax - ensure it works
+
  - fix jacobian_elem2nodes
     - test behaviour for simple elec sensitivity models
 
