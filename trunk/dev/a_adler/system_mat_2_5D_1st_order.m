@@ -17,19 +17,18 @@ d= p.n_dims+1;
 e= p.n_elem;
 n= p.n_node;
 
-SSiidx= floor([0:d*e-1]'/d)*d*ones(1,d) + ones(d*e,1)*(1:d) ;
-SSjidx= [1:d*e]'*ones(1,d);
-SSdata= zeros(d*e,d);
-dfact= (d-1)*(d-2); % Valid for d<=3
+SS = sparse(d*e,d*e);
+
+dfact= factorial(d-1);
 for j=1:e
   a=  inv([ ones(d,1), p.NODE( :, p.ELEM(:,j) )' ]);
+  area = 1/dfact/abs(det(a));
   idx= d*(j-1)+1 : d*j;
-  SSdata(idx,1:d)= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
+  SS(idx,idx)= area*a(2:d,:)'*a(2:d,:);
 end %for j=1:ELEMs 
-SS= sparse(SSiidx,SSjidx,SSdata);
 
 CC= sparse((1:d*e),p.ELEM(:),ones(d*e,1), d*e, n);
 
 idx= 1:e*d;
 elem_sigma = sparse(idx,idx, img.elem_data(ceil(idx/d)) );
-s_mat= CC'* SS * elem_sigma * CC;
+s_mat.E= CC'* SS * elem_sigma * CC;
