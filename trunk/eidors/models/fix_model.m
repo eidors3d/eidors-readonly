@@ -101,7 +101,7 @@ end
 if doall || opt.edge2elem
     mdl.edge2elem = calc_edge2elem(mdl.elem2edge);
 end
-if el_dim<4 && (doall || opt.edges)
+if el_dim<3 && (doall || opt.edges)
    mdl.elem2edge = mdl.elem2face;
 end
 
