@@ -84,7 +84,7 @@ Nsim = opt.Nsim;
 mingrid = opt.minele;
 maxgrid = opt.maxele;
 if opt.square_pixels ==1
-    mdl_sz = opt.maxnode - opt.minnode; 
+    mdl_sz = maxgrid - mingrid; 
     mdl_AR = mdl_sz(1)/mdl_sz(2);
     img_AR = opt.imgsz(1)/opt.imgsz(2);
     if mdl_AR < img_AR
