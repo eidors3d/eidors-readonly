@@ -1,4 +1,11 @@
+2013-02-18: Added code for placing electrodes on arbitrary meshes
+2013-02-18: Added merge_meshes to merge non-overlapping (surface) meshes
+2013-02-18: Expand support for gmsh: gmsh_stl2tet
+2013-01-23: Quick building of pixel rec_models: mk_pixel_slice
+2013-01-23: Draw a single colourbar for mulitple sub-plots
+2013-01-23: Outside parameter for c2f mapping
 2013-01-15: New options in meas_icov_rm_elecs to keep or discard default estimate
+2013-01-15: Spdiag utility
 2012-12-15: Interface to ng.opt
 2012-11-20: Revised interface of all jacobian, system mat and fwd_solve functions
             to only accept one input param
