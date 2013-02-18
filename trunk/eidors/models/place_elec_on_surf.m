@@ -31,8 +31,7 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
 %
 % See also gmsh_stl2tet, ng_write_opt, merge_meshes
 
-% (C) Bartlomiej Grychtol and Andy Adler, 2012-2013. 
-% Licence: GPL v2 or v3
+% (C) Bartlomiej Grychtol and Andy Adler, 2012-2013. Licence: GPL v2 or v3
 % $Id$
 
 % set to true for some graphical output
