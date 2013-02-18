@@ -1,52 +1,119 @@
 function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
-% PLACE_ELEC_ON_SURF Place electrodes on the surface of a model
-%  mdl = place_elec_on_surf(mdl,elec_pos, elec_spec)
+%PLACE_ELEC_ON_SURF Place electrodes on the surface of a model
+% mdl = place_elec_on_surf(mdl,elec_pos, elec_spec)
+% INPUT:
+%  mdl         = an EIDORS fwd_model struct
+%  elec_pos    = an array specigying electrode positions
+%  elec_shape  = an array specifying electrode shape (can be different for
+%                each electrode)
+%  ng_opt_file = an alternative ng.opt file to use (OPTIONAL)
+% ELECTRODE POSITIONS:
+%  elec_pos = [n_elecs_per_plane,z_planes] 
+%     OR
+%  elec_pos = [degrees,z] centres of each electrode (N_elecs x 2)
+%     OR
+%  elec_pos = [x y z] centres of each electrode (N_elecs x 3)
+%
+% ELECTRODE SHAPES::
+%  elec_shape = [width,height, maxsz]  % Rectangular elecs
+%     OR
+%  elec_shape = [radius, 0, maxsz ]    % Circular elecs
+%
+% NOTE that this function requires both Netgen and Gmsh.
+% It will completely re-mesh your model.
+% The code makes several assumptions about the output of Netgen, which it
+% attempts to control through the ng.opt file, but there will be meshes 
+% for which this appraoch will fail. In this case, you can supply your own 
+% file with options for Netgen (with a filename different than ng.opt), or
+% change your mesh and/or electrode locations. Most common problem is too 
+% big electrode maxh value (must be significantly smaller than the smallest
+% element on which the electrode will fall).
+%
+% See also gmsh_stl2tet, ng_write_opt, merge_meshes
 
-% (C) Bartlomiej Grychtol and Andy Adler, 2012. Licenced under GPL v2 or v3
+% (C) Bartlomiej Grychtol and Andy Adler, 2012-2013. 
+% Licence: GPL v2 or v3
+% $Id$
 
-% TODO: allow 3D electrode positions
-
-% This is work in progress code. Careful!
+% set to true for some graphical output
+global EIDORS_DEBUG_PLACE_ELEC_ON_SURF; 
+if isempty(EIDORS_DEBUG_PLACE_ELEC_ON_SURF);
+   EIDORS_DEBUG_PLACE_ELEC_ON_SURF = false;
+end
 
 if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
 if nargin < 4
    ng_opt_file = '';
 end
-oldbound = [];
-try 
-   oldbound = mdl.boundary;
-   mdl = rmfield(mdl,'boundary');
-end
-mdl = fix_model(mdl);
-flip = mdl.elem2face(logical(mdl.boundary_face(mdl.elem2face).*mdl.inner_normal));
-mdl.faces(flip,:) = mdl.faces(flip,[1 3 2]);
-mdl.normals(flip,:) = -mdl.normals(flip,:);
-mdl.boundary = mdl.faces(mdl.boundary_face,:);
-mdl.elems = mdl.boundary;
-% mdl = linear_reorder(mdl,1);
-% mdl.boundary = mdl.elems;
-mdl.faces = mdl.boundary;
-% 
-% mdl  = linear_reorder(mdl,1);
-mdl.face_centre = mdl.face_centre(mdl.boundary_face,:);
-% This is a bit convoluted
-% to_flip = unique(nonzeros(uint32(mdl.boundary_face(mdl.elem2face) .* mdl.inner_normal) .* mdl.elem2face));
-% mdl.normals(to_flip,:) = -mdl.normals(to_flip,:);
-mdl.normals = mdl.normals(mdl.boundary_face,:);
 
-mdl = rmfield(mdl, 'inner_normal');
-mdl = rmfield(mdl, 'boundary_face');
+% filenames
+if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+   fnstem = 'tmp1';
+else
+   fnstem = tempname;
+end
+stlfn = [fnstem,'.stl'];
+meshfn= [fnstem,'.vol'];
+if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+   fnstem = 'tmp2';
+else
+   fnstem = tempname;
+end
+stlfn2 = [fnstem,'.stl'];
+
+% 1. Get a surface model
+mdl = prepare_surf_model(mdl);
+
 elecs = parse_elecs(mdl,elec_pos,elec_spec);
+
+% 2. Add extruded electrodes
 for i = 1:length(elecs)
-   N = grow_neighbourhood(mdl,elecs(i));
-   [mdl E1{i} E2{i} V{i}] = add_electrodes(mdl,N,elecs(i));
+   try
+      N = grow_neighbourhood(mdl,elecs(i));
+      [mdl E1{i} E2{i} V{i}] = add_electrodes(mdl,N,elecs(i));
+   catch
+      error('Failed to add electrode #%d',i);
+   end
 end
 
+% 3. Save as STL and mesh with NETGEN 
+write_to_stl(mdl,stlfn);
+write_ng_opt_file(ng_opt_file)
+call_netgen(stlfn,meshfn);
+delete('ng.opt'); % clean up
 
+% 4. Extract surface
+fmdl=ng_mk_fwd_model(meshfn,[],[],[],[]);
+mdl = fix_model(fmdl);
+mdl = orient_boundary(mdl);
+mdl.elems = mdl.boundary;
+
+% 5. One by one, flatten the electrodes
+for i = 1:length(elecs)
+   try 
+      mdl = flatten_electrode(mdl,E1{i},E2{i}, V{i});
+   catch
+      error('Failed to flatten electrode #%d',i);
+   end
+end
+
+% 6. Keeping the surface intact, remesh the inside
+write_to_stl(mdl,stlfn2);
+mdl2 = gmsh_stl2tet(stlfn2);
+mdl2.electrode = mdl.electrode;
+
+% 7. Find all electrode nodes
+for i = 1:length(elecs)
+   enodes = mdl.nodes(mdl.electrode(i).nodes,:);
+   mdl2.electrode(i).nodes = find_matching_nodes(mdl2,enodes,1e-5);
+end
+
+function write_to_stl(mdl,stlfn)
 STL.vertices = mdl.nodes;
 STL.faces    = mdl.elems;
-stl_write(STL,'tmp.stl');
+stl_write(STL,stlfn);
 
+function write_ng_opt_file(ng_opt_file)
 % these options are meant to insure that the electrode sides don't get 
 % modified, but there's no guarantee
 if ~isempty(ng_opt_file)
@@ -61,34 +128,27 @@ else
    opt.stloptions.resthchartdistenable = 0;
    ng_write_opt(opt);
 end
-call_netgen('tmp.stl','tmp.vol');
-delete('ng.opt'); % clean up
-fmdl=ng_mk_fwd_model('tmp.vol',[],[],[],[]);
-fmdl = fix_model(fmdl);
-fmdl.boundary = fmdl.faces(fmdl.boundary_face,:);
 
-mdl = fmdl;
+
+% Extract a nice surface model from the one given
+function mdl = prepare_surf_model(mdl)
+try mdl = rmfield(mdl,'boundary');  end
+mdl = fix_model(mdl);
+mdl = orient_boundary(mdl);
+mdl.elems = mdl.boundary;
+mdl.faces = mdl.boundary;
+mdl.face_centre = mdl.face_centre(mdl.boundary_face,:);
+mdl.normals = mdl.normals(mdl.boundary_face,:);
+mdl = rmfield(mdl, 'inner_normal');
+mdl = rmfield(mdl, 'boundary_face');
+
+function mdl = orient_boundary(mdl)
+% consistently orient boundary elements
 flip = mdl.elem2face(logical(mdl.boundary_face(mdl.elem2face).*mdl.inner_normal));
 mdl.faces(flip,:) = mdl.faces(flip,[1 3 2]);
 mdl.normals(flip,:) = -mdl.normals(flip,:);
 mdl.boundary = mdl.faces(mdl.boundary_face,:);
-mdl.elems = mdl.boundary;
-% mdl.elems = fmdl.boundary;
-for i = 1:length(elecs)
-   mdl = flatten_electrode(mdl,E1{i},E2{i}, V{i});
-end
-% mdl = linear_reorder(mdl,1);
-STL.vertices = mdl.nodes;
-STL.faces    = mdl.elems;
-stl_write(STL,'tmp.stl');
 
-% re-mesh the inside
-mdl2 = gmsh_stl2tet('tmp.stl');
-mdl2.electrode = mdl.electrode;
-for i = 1:length(elecs)
-   enodes = mdl.nodes(mdl.electrode(i).nodes,:);
-   mdl2.electrode(i).nodes = find_matching_nodes(mdl2,enodes,1e-5);
-end
 
 function mdl = flatten_electrode(mdl,inner,outer, V)
 n1 = find_matching_nodes(mdl,inner, 1e-2);
@@ -99,8 +159,6 @@ N1(n1) = true;
 N2 = false(length(mdl.nodes),1);
 N2(n2) = true;
 rm = sum(N1(mdl.elems),2)>0 & sum(N2(mdl.elems),2)>0;
-
-
 
 f = find(sum(N2(mdl.elems),2)>1 & ~rm,1,'first');
 B = find(mdl.boundary_face);
@@ -147,7 +205,7 @@ if ~isfield(mdl,'electrode')
 else
    l = length(mdl.electrode);
    % because we are changing the number of nodes, we need to correct the
-   % electrodes that are there alread
+   % electrodes that are there already
    for i = 1:l
       mdl.electrode(i).nodes = map(mdl.electrode(i).nodes);
    end
@@ -156,9 +214,10 @@ end
 mdl.electrode(l).nodes = double(e_nodes);
 mdl.electrode(l).z_contact = 0.01;
 
-% img = mk_image(mdl,1);
-% img.elem_data(N) = 2;
-show_fem(mdl);
+global EIDORS_DEBUG_PLACE_ELEC_ON_SURF; 
+if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+   show_fem(mdl);
+end
 
 
 function match = find_matching_nodes(mdl, nodes,th)
@@ -176,6 +235,9 @@ end
 % Returns a joint surface mesh and the list of nodes on the side of the
 % electrode
 function [joint EL1 EL2 V] = add_electrodes(mdl,N,elecs)
+
+global EIDORS_DEBUG_PLACE_ELEC_ON_SURF; 
+
 fc = find_face_under_elec(mdl,elecs.pos);
 % N indexes the boundary, need index into faces
 % fcs = find(mdl.boundary_face);
@@ -187,13 +249,13 @@ jnk.elems = mdl.boundary(N,:);
 jnk.nodes = mdl.nodes;
 jnk.boundary = jnk.elems;
 img = mk_image(jnk,1);
-
-show_fem(jnk);
-hold on
-plot3(elecs.points(:,1),elecs.points(:,2),elecs.points(:,3),'ro');
-% plot3(node(:,1),node(:,2),node(:,3),'bs');
-% plot3(mdl.nodes(nn(outer),1), mdl.nodes(nn(outer),2), mdl.nodes(nn(outer),3),'bs') 
-hold off
+if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+   show_fem(jnk);
+   hold on
+   plot3(elecs.points(:,1),elecs.points(:,2),elecs.points(:,3),'ro');
+   % plot3(mdl.nodes(nn(outer),1), mdl.nodes(nn(outer),2), mdl.nodes(nn(outer),3),'bs')
+   hold off
+end
 
 
 %nodes used
@@ -218,30 +280,15 @@ keep = reshape(keep(:,[1 2 2 3 3 1])',2,[])';
 rm = sum(keep,2)<2;
 edges(rm,:) = [];
 
-% tmp = jnk.elems'; tmp(:,rm) = [];
-% edges = reshape(tmp(keep'),2,[])'; 
-% % rotate those that were 101
-% tmp=edges(:,1);
-% flip = keep(:,2) == 0;
-% edges(flip,1) = edges(flip,2);
-% edges(flip,2) = tmp(flip,1);
-
 % detect and remove double entries
 rm = ismember(edges,edges(:,[2 1]),'rows');
 edges(rm,:) = [];
 
-
 % project all nodes of the faces in N onto the plane of the electrode
 nodes = unique(mdl.faces(fcs,:));
 PN = project_nodes_on_elec(mdl,elecs,nodes);
-% Ne = mdl.normals(fc,:);
-% Pe = elecs.pos;
-% for i = 1:length(nodes)
-%    P = mdl.nodes(nodes(i),:);
-%    PN(i,:) = P + dot(Pe - P, Ne) * Ne;
-% end
 
-% % electrode coordinate system
+% electrode coordinate system
 [u v s] = get_face_basis(mdl,fc);
 % u = mdl.normals(fc,:); % unit normal
 % % vertical vector on the plane of that surface triangle
@@ -262,6 +309,7 @@ b = unique(edges(:));
 rm = find(rm);
 rm(ismember(nodes(rm),b)) = [];
 
+% remove and remap
 PN(rm,:) = [];
 nodes(rm) = [];
 
@@ -273,23 +321,17 @@ y = dot(points,repmat(s,np,1),2);
 map(nodes) = 1:length(nodes);
 edges = map(edges); %
 
+% constrained Delaunay triangulation in 2D
 f = length(PN) +(1:2);
 C = [];
 for i= 0:length(elecs.points)-2
    C = [C; i+f];
 end
-
-
 D = DelaunayTri([x y],[edges; C]);
-% D = DelaunayTri([x y],[edges]);
 els = D.Triangulation(D.inOutStatus,:);
 
 % project all electrode points on all triangles, using the normal of the central elem
 Ne = mdl.normals(fc,:);
-% % make sure the normal points outside
-% if mdl.inner_normal(fc)
-%    Ne = -1 * Ne;
-% end
 for j = 1:length(elecs.points)
    Pe = elecs.points(j,:);
    for i = 1:length(fcs)
@@ -333,9 +375,7 @@ IN = [IN; ones(le,1)];
 el_c = D.incenters;
 el_c(~D.inOutStatus,:) = [];
 e_el = inpolygon(el_c(:,1),el_c(:,2),x(ln+1:end),y(ln+1:end));
-% e_el =  sum(IN(els),2) == 3;
 els(e_el,:) = els(e_el,:) + (els(e_el,:)>ln ) .* le;
-
 
 % add connecting elements
 E = [];
@@ -349,7 +389,9 @@ E = [E; M];
 jnk.nodes = [nn ; Proj;  ne];
 jnk.elems = [ els; E];
 jnk.boundary = jnk.elems;
-show_fem(jnk)
+if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+   show_fem(jnk);
+end
 
 % remove the patch we're replacing
 big = mdl;
@@ -358,10 +400,7 @@ big.faces(N,:) = [];
 big.normals(N,:) = [];
 big.face_centre(N,:) = [];
 
-
 big.elems = big.boundary;
-
-% big = linear_reorder(big,1);
 
 joint = merge_meshes(big,jnk,0.001);
 joint.boundary = joint.elems;
@@ -419,6 +458,7 @@ elseif size(elec_pos,2) == 2
    el_th = elec_pos(:,1)*2*pi/360;
    el_z  = elec_pos(:,2);
 elseif size(elec_pos,2) == 3
+   % elec_pos = [x y z];
    have_xyz = 1;
    el_z  = elec_pos(:,3);
 end
@@ -438,9 +478,6 @@ for i = 1:n_elecs
       [fc elecs(i).pos] = find_elec_centre(mdl,el_th(i),el_z(i));
    else
       elecs(i).pos = elec_pos(i,:);
-%       [bfc elecs(i).pos] = find_face_under_elec(mdl,elecs(i).pos);
-%       idx = find(mdl.boundary_face);
-%       fc = idx(bfc);
    end
 %    elecs(i).face = fc; % this changes too often to store!
    elecs(i).dims = elec_shape(i,1:2);
@@ -476,7 +513,6 @@ for i = 1:n_elecs
    end
    fc = find_face_under_elec(mdl,elecs(i).pos);
    [u v s] = get_face_basis(mdl, fc);
-
    
    elecs(i).points = ones(size(x))' * elecs(i).pos + x'*s + y'*v;
 end
@@ -552,17 +588,6 @@ for i = 1:length(el)
    % check if it falls inside
 end
 
-function write_polyhedron(fid,fmdl, str)
-   fprintf(fid, 'solid %s = polyhedron(',str);
-   NN = fmdl.nodes;
-   BB = fmdl.boundary;
-   for i = 1:size(fmdl.nodes,1)
-   fprintf(fid, '\n                      %4.16f, %4.16f, %4.16f;',NN(i,:));
-   end
-   for i = 1:size(fmdl.boundary,1)
-   fprintf(fid, ';\n                      %d, %d, %d',BB(i,:));
-   end
-   fprintf(fid, ');\n');
 
 function out = grow_neighbourhood(mdl, varargin)
 use_elec = false;
@@ -577,8 +602,6 @@ if length(varargin) == 1
       case 'C'
          r = 2 * elecs.dims(1);
    end
-   % here we want fc to be an index into the boundary field
-%    fc = sum(mdl.boundary_face(1:fc));
 else
    fc = varargin{1};
    p = varargin{2};

@@ -1,4 +1,4 @@
-function mdl = gmsh_stl2tet(stlfile);
+function mdl = gmsh_stl2tet(stlfile)
 %GMSH_STL2TET creates a tetrahedral mesh from an stl file
 %  Only one surface per file is allowed.
 
