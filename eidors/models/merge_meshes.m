@@ -10,7 +10,7 @@ function out = merge_meshes(M1,varargin)
 %
 % See also FIND_BOUNDARY
 
-% (C) Bartlomiej Grychtol and Andy Adler, 2012. Licenced under GPL v2 or v3
+% (C) Bartlomiej Grychtol and Andy Adler, 2012-2013. Licence: GPL v2 or v3
 % $Id$
 
 if ischar(M1) && strcmp(M1,'UNIT_TEST'), run_unit_test; return; end

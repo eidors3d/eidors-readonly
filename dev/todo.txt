@@ -49,7 +49,7 @@ post 3.7
  + fix calc_jacobian_test - DONE
      -> line 108
 
- - move place_elec_on_surf into main
+ + move place_elec_on_surf into main
 
  + pixel grid interface function
 
