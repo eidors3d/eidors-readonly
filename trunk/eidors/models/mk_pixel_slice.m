@@ -26,7 +26,7 @@ function [imdl fmdl] = mk_pixel_slice(imdl,level,opt)
 % See also MK_COARSE_FINE_MAPPING, MK_GRID_MODEL
 
 % (C) 2013 Bartlomiej Grychtol. License: GPL version 2 or 3
-% $Id:$
+% $Id$
 
 if isstr(imdl) && strcmp(imdl,'UNIT_TEST'),do_unit_test;return;end;
 
