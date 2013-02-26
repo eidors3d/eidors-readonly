@@ -16,7 +16,7 @@ function volint=tet_vol_int(v1,v2)
 % the intersection.  
 
 % NOTES ON BUGS: 17 dec 2012
-% 1. for 
+% 1. FIXED for 
 % vs =
 %   -0.5541   -0.1847    0.7388
 %   -0.2500   -0.2500    0.5000
@@ -78,21 +78,32 @@ volint = sparse(ne2,ne1);
 [A2,b2]=tet_to_inequal(v2,e2);
 i12 = (A1*v2' -b1*ones(1,nn2))< epsilon; % 4*ne1 X nn2
 i21 = (A2*v1' -b2*ones(1,nn1))< epsilon; % 4*ne2 X nn1
-i12 = i12(:,reshape(e2',[],1));          % 4*ne1 X 4*ne2
-i21 = i21(:,reshape(e1',[],1));          % 4*ne2 X 4*ne1
-% is there a prettier way of doing this?
-% TRUE if elem of 2 contained in elem of 1
-ei12 = reshape(all(reshape(reshape(all(reshape(...
-          i12,4,[])),[],4*ne1)',[],4)')',[],ne1)'; % ne1 X ne2
-% TRUE if elem of 1 contained in elem of 2
-ei21 = reshape(all(reshape(reshape(all(reshape(...
-          i21,4,[])),4*ne2,[])',[],4)')',[],ne2)'; % ne2 X ne1
-% TRUE if elem of 2 does NOT have nodes in elem of 1       
-ni12 = reshape(all(reshape(reshape(~all(reshape(...
-          i12,4,[])),[],4*ne1)',[],4)')',[],ne1)'; % ne1 X ne2
-% TRUE if elem of 1 does NOT have nodes in elem of 2       
-ni21 = reshape(all(reshape(reshape(~all(reshape(...
-          i21,4,[])),4*ne2,[])',[],4)')',[],ne2)'; % ne2 X ne1
+% i12 = i12(:,reshape(e2',[],1));          % 4*ne1 X 4*ne2
+% i21 = i21(:,reshape(e1',[],1));          % 4*ne2 X 4*ne1
+% % is there a prettier way of doing this?
+% % TRUE if elem of 2 contained in elem of 1
+% ei12 = reshape(all(reshape(reshape(all(reshape(...
+%           i12,4,[])),[],4*ne1)',[],4)')',[],ne1)'; % ne1 X ne2
+% % TRUE if elem of 1 contained in elem of 2
+% ei21 = reshape(all(reshape(reshape(all(reshape(...
+%           i21,4,[])),4*ne2,[])',[],4)')',[],ne2)'; % ne2 X ne1
+% % TRUE if elem of 2 does NOT have nodes in elem of 1       
+% ni12 = reshape(all(reshape(reshape(~all(reshape(...
+%           i12,4,[])),[],4*ne1)',[],4)')',[],ne1)'; % ne1 X ne2
+% % TRUE if elem of 1 does NOT have nodes in elem of 2       
+% ni21 = reshape(all(reshape(reshape(~all(reshape(...
+%           i21,4,[])),4*ne2,[])',[],4)')',[],ne2)'; % ne2 X ne1
+% disjoint = ni12' & ni21;
+i12 =  4 == (i12(1:4:end,:) + i12(2:4:end,:) + i12(3:4:end,:) + i12(4:4:end,:));
+i21 =  4 == (i21(1:4:end,:) + i21(2:4:end,:) + i21(3:4:end,:) + i21(4:4:end,:));
+i12 = i12(:,reshape(e2',[],1));% ne1 X 4*ne2
+i21 = i21(:,reshape(e1',[],1));% ne2 X 4*ne1
+s12 = i12(:,1:4:end) + i12(:,2:4:end) + i12(:,3:4:end) + i12(:,4:4:end);
+s21 = i21(:,1:4:end) + i21(:,2:4:end) + i21(:,3:4:end) + i21(:,4:4:end);
+ei12 = s12 ==4;
+ei21 = s21 ==4;
+ni12 = s12 ==0;
+ni21 = s21 ==0;
 disjoint = ni12' & ni21;
 
 if any(ei12(:))
@@ -121,19 +132,20 @@ for i=1:length(x)
         id_x = (x(i)-1)*4 + (1:4);
         id_y = (y(i)-1)*4 + (1:4);
    volint(y(i),x(i)) = calc_int_vol( ...
-     v1(e1(x(i),:),:), ...
-     v2(e2(y(i),:),:), ...
-     i12(id_x,id_y), ...
-     i21(id_y,id_x), ...
-     A1(id_x,:),...
-     A2(id_y,:), ...
-     b1(id_x,:), b2(id_y,:));
+                                     v1(e1(x(i),:),:), ...
+                                     v2(e2(y(i),:),:), ...
+                                     i12(x(i),id_y), ...
+                                     i21(y(i),id_x), ...
+                                     A1(id_x,:),...
+                                     A2(id_y,:), ...
+                                     b1(id_x,:), b2(id_y,:));
 end
 
 %v1,v2,i21,i12, A1, A2, b1,b2);
 end
 
 function epsi= epsilon; epsi=1e-10; end
+
 function vs = do_choices_old(A1,A2,b1,b2,vs);
    choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
               1,3,1;1,3,2;1,3,3;1,3,4;
@@ -158,14 +170,28 @@ function vs = do_choices_old(A1,A2,b1,b2,vs);
        
    end
 end
-function volint = calc_int_vol(v1,v2,i21,i12, A1, A2, b1,b2);
+function volint = calc_int_vol(v1,v2,i12,i21, A1, A2, b1,b2);
    % List of choices of 2 from 1 and one from the other
-
+   if 0
+       clf
+       hold on
+       m1.type = 'fwd_model';
+       m1.nodes = v1;
+       m1.elems = [1 2 3 4];
+       m2.type = 'fwd_model';
+       m2.nodes = v2;
+       m2.elems = [1 2 3 4];
+       h1 = show_fem(m1)
+       set(h1,'edgecolor','b')
+       h2 = show_fem(m2)
+       set(h1,'edgecolor','r')
+       pause
+   end
    % some intersection, 
    vs=[];
    % add the vertices that are already in both
-   vs=[vs;v1(find(all(i21)),:)];
-   vs=[vs;v2(find(all(i12)),:)];
+   vs=[vs;v1(find(i21),:)];
+   vs=[vs;v2(find(i12),:)];
    vs = do_choices_old(A1,A2,b1,b2,vs);
 
    %try all two faces from one intersected with one face from the
@@ -203,18 +229,19 @@ end
 function do_unit_test 
 %  simple_inequalities_test
 tic
-c= unit_test_smaller(0);
+c= unit_test_smaller(0); % old c2f
 toc
 
 tic
-a= unit_test_smaller(1);
+a= unit_test_smaller(1); % for loop
 toc
 
 tic
-b= unit_test_smaller(2);
+b= unit_test_smaller(2); % vectorised
 toc
-  unit_test_cmp('unit_test_smaller', a,b, 1e-14);
-keyboard
+  unit_test_cmp('unit_test_smaller', b,c, 0.2);
+% keyboard
+  unit_test_big
 
 end
 
@@ -250,6 +277,7 @@ function c2f= unit_test_smaller( select)
   c_mdl.nodes(:,3) = c_mdl.nodes(:,3) -7;
   c_mdl.nodes(:,2) = c_mdl.nodes(:,2) +5;
   c_mdl.nodes(:,1) = c_mdl.nodes(:,1) +2;
+  
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
@@ -263,12 +291,14 @@ case 1;
       for c = 1:nec
          vc = c_mdl.nodes(c_mdl.elems(c,:),:);
 %disp([f,c]);
-  if f==23 && c==7 ; keyboard; end
-         c2f(f,c) = tet_vol_int(vc,vf);
+%   if f==23 && c==7 ; keyboard; end
+         c2f(f,c) = tet_vol_int_org(vc,vf);
       end
    end
+   c2f = c2f ./ repmat(get_elem_volume(f_mdl),1,num_elems(c_mdl));
 case 2;
-   c2f = tet_vol_int(c_mdl,f_mdl);   
+   c2f = tet_vol_int(c_mdl,f_mdl);
+   c2f = c2f ./ repmat(get_elem_volume(f_mdl),1,num_elems(c_mdl));
 case 0;
    c2f = mk_coarse_fine_mapping( f_mdl, c_mdl );
 end
@@ -288,6 +318,18 @@ function unit_test_big
    coarse_mdl = ng_mk_cyl_models([tank_height,tank_radius,coarse_mdl_maxh],[0],[]);
 
    disp('Calculating coarse2fine mapping ...');
-   inv3d.fwd_model.coarse2fine = ...
-          mk_coarse_fine_mapping_analytic( fine_mdl, coarse_mdl);
+   disp('Old c2f:');
+   tic
+   c = mk_coarse_fine_mapping( fine_mdl, coarse_mdl);
+   toc
+   disp('Analytic:');
+   tic
+   a = tet_vol_int(coarse_mdl,fine_mdl);
+   toc
+%    tic
+% %    a = a ./ repmat(get_elem_volume(fine_mdl),1,num_elems(coarse_mdl));
+%    toc
+   
+%    unit_test_cmp('unit_test_big', a,c, 0.2);
+   keyboard
 end

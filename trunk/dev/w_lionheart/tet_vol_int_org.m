@@ -29,9 +29,22 @@ choices =[ 1,2,1;1,2,2;1,2,3;1,2,4;
            2,4,1;2,4,2;2,4,3;2,4,4;
            3,4,1;3,4,2;3,4,3;3,4,4];
            
-           
-           
-    
+       if 0
+           clf
+           hold on
+           m1.type = 'fwd_model';
+           m1.nodes = v1;
+           m1.elems = [1 2 3 4];
+           m2.type = 'fwd_model';
+           m2.nodes = v2;
+           m2.elems = [1 2 3 4];
+           h1 = show_fem(m1);
+           set(h1,'edgecolor','b')
+           h2 = show_fem(m2);
+           set(h1,'edgecolor','r')
+           view(3)
+       end
+       
 epsilon=1e-10;
 [A1,b1]=tet_to_inequal(v1);
 [A2,b2]=tet_to_inequal(v2);
