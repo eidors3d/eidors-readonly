@@ -119,7 +119,7 @@ function do_unit_test
    v1=[0,0,0;eye(3)];
    v2 = v1;v2(1,:)=v2(1,:)+0.1;
         
-   out =  tet_vol_int(v1,v2);
+   out =  tet_vol_int_org(v1,v2);
    correct = 7/60;
    unit_test_cmp('Shifted rightangle tetrahedron', out, correct,1e-14)
 
@@ -136,9 +136,39 @@ function do_unit_test
    correct = volu * abs(det(A));
    unit_test_cmp('Scaled shifted tetrahedron volume', out, correct)
 
-tic
-   unit_test_smaller;
-toc
+   v1 = [  0.0320    0.1974    0.1865
+          -0.0073    0.1239    0.2095
+           0.0987    0.1740    0.1854
+           0.0668    0.1885    0.1274];
+       
+   v2 = [   0.0988    0.1739    0.1791
+            0.0894    0.1789    0.1773
+            0.0870    0.1694    0.1736
+            0.0934    0.1769    0.1703];
+   res = tet_vol_int_org(v1,v2);
+   if res == 0
+       clf
+       hold on
+       m1.type = 'fwd_model';
+       m1.nodes = v1;
+       m1.elems = [1 2 3 4];
+       m2.type = 'fwd_model';
+       m2.nodes = v2;
+       m2.elems = [1 2 3 4];
+       h1 = show_fem(m1);
+       set(h1,'edgecolor','b')
+       h2 = show_fem(m2);
+       set(h1,'edgecolor','r')
+       view(3)
+       disp('Problem here');
+       keyboard
+   end
+
+   
+   
+% tic
+%    unit_test_smaller;
+% toc
 
 end
 
