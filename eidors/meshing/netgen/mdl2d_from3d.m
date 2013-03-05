@@ -5,6 +5,7 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
 % $Id$
    % set name
    mdl2 = eidors_obj('fwd_model',sprintf('%s 2D',mdl3.name));
+   if nargin==1; idx3 = {}; end
 
    % set nodes
    [bdy,idx] = find_boundary(mdl3.elems);

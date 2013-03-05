@@ -56,12 +56,12 @@ if isfield(fwd_model,'coarse2fine')
    if size(img.elem_data,1)==size(c2f,2)
 %     fwd_model data is provided on coarse mesh
       img.elem_data = c2f * img.elem_data; 
+      if isfield(fwd_model,'background')
+          img.elem_data = img.elem_data + fwd_model.background; 
+      end
    end
 end
 
-if isfield(fwd_model,'background')
-    img.elem_data = img.elem_data + fwd_model.background; 
-end
 
 if ~isfield(fwd_model, 'electrode')
    error('EIDORS: attempting to solve on model without electrodes');
