@@ -33,6 +33,8 @@ post 3.7
  - fix tutorials:
           distmesh/dm_geophys.shtml
 
+ - refactor out the mdl2d_from3d from various ng_mk function
+
 3.7
  - new physics -BG
     + docs for mk_image
