@@ -30,6 +30,9 @@ post 3.7
 
  - add more colourbar tutorials, to show background colour features.
 
+ - fix tutorials:
+          distmesh/dm_geophys.shtml
+
 3.7
  - new physics -BG
     + docs for mk_image

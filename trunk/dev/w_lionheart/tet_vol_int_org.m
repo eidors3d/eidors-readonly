@@ -115,6 +115,8 @@ function vol=tet_vol(v)
 end   
 
 function do_unit_test 
+%  unit_test_big;
+
    % Test inequalities
    v1=[0,0,0;eye(3)];
    v2 = v1;v2(1,:)=v2(1,:)+0.1;
@@ -155,9 +157,9 @@ function do_unit_test
        m2.type = 'fwd_model';
        m2.nodes = v2;
        m2.elems = [1 2 3 4];
-       h1 = show_fem(m1);
+       h1 = show_fem(m1,[0,0,2]);
        set(h1,'edgecolor','b')
-       h2 = show_fem(m2);
+       h2 = show_fem(m2,[0,0,2]);
        set(h1,'edgecolor','r')
        view(3)
        disp('Problem here');
@@ -173,8 +175,8 @@ function do_unit_test
 end
 
 function unit_test_smaller
-  f_mdl =  mk_circ_tank(3,[0,1],0 );
-  c_mdl =  mk_circ_tank(2,[0,1],0 );
+  f_mdl =  mk_circ_tank(2,[0,1],0 );
+  c_mdl =  mk_circ_tank(1,[0,1],0 );
 
    nef = num_elems(f_mdl);
    nec = num_elems(c_mdl);
