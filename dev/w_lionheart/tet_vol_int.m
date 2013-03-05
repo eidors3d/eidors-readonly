@@ -131,6 +131,7 @@ todo = ~(volint~=0 | disjoint);
 for i=1:length(x)
         id_x = (x(i)-1)*4 + (1:4);
         id_y = (y(i)-1)*4 + (1:4);
+        if i == 68877, keyboard, end % x(i)=23; y(i)=19879;
    volint(y(i),x(i)) = calc_int_vol( ...
                                      v1(e1(x(i),:),:), ...
                                      v2(e2(y(i),:),:), ...
@@ -157,14 +158,14 @@ function vs = do_choices_old(A1,A2,b1,b2,vs);
        A=[A1(choices(i,1:2),:);A2(choices(i,3),:)];
        b=[b1(choices(i,1:2));b2(choices(i,3))];
        
-       if abs(det(A))>1e-5
+       if abs(det(A))>1e-20
         vs=[vs;(A\b)'];
        end
          
        A=[A2(choices(i,1:2),:);A1(choices(i,3),:)];
        b=[b2(choices(i,1:2));b1(choices(i,3))];
     
-       if abs(det(A))>1e-5
+       if abs(det(A))>1e-20
         vs=[vs;(A\b)'];
        end
        
@@ -181,9 +182,9 @@ function volint = calc_int_vol(v1,v2,i12,i21, A1, A2, b1,b2);
        m2.type = 'fwd_model';
        m2.nodes = v2;
        m2.elems = [1 2 3 4];
-       h1 = show_fem(m1)
+       h1 = show_fem(m1);
        set(h1,'edgecolor','b')
-       h2 = show_fem(m2)
+       h2 = show_fem(m2);
        set(h1,'edgecolor','r')
        pause
    end
@@ -228,18 +229,18 @@ end
 
 function do_unit_test 
 %  simple_inequalities_test
-tic
-c= unit_test_smaller(0); % old c2f
-toc
-
-tic
-a= unit_test_smaller(1); % for loop
-toc
-
-tic
-b= unit_test_smaller(2); % vectorised
-toc
-  unit_test_cmp('unit_test_smaller', b,c, 0.2);
+% tic
+% c= unit_test_smaller(0); % old c2f
+% toc
+% 
+% tic
+% a= unit_test_smaller(1); % for loop
+% toc
+% 
+% tic
+% b= unit_test_smaller(2); % vectorised
+% toc
+%   unit_test_cmp('unit_test_smaller', b,c, 0.2);
 % keyboard
   unit_test_big
 
