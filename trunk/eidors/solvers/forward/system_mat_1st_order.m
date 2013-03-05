@@ -72,6 +72,9 @@ function elem_data = check_elem_data(fwd_model, img);
      switch sz_elem_data(1)
        case sz_c2f(1); % Ok     
        case sz_c2f(2); elem_data = c2f * elem_data;
+          if isfield(fwd_model, 'background')
+              elem_data = elem_data + fwd_model.background;
+          end
        otherwise; error(['system_mat_1st_order: provided elem_data ' ...
             ' (sz=%d) does not match c2f (sz=%d %d)'], sz_elem_data(1), sz_c2f);
      end
@@ -83,15 +86,6 @@ function elem_data = check_elem_data(fwd_model, img);
    end
 
 
-% FIXME: is 'background' the right parameter here?
-% There is some need to provide a background, especially
-%  for absolute solutions with a smaller c2f model, 
-%  but this doesn't seem the best way. It's here for now
-%  (as of July, 2012), but we plan to develop a better
-%  solution.
-    if isfield(fwd_model, 'background')
-        elem_data = elem_data + fwd_model.background;
-    end
 
 % Need tests for each error case
 % Need tests for background
