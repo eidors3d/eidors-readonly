@@ -1,5 +1,7 @@
 post 3.7
 
+ - Bug with 'trig' measurement patterns
+
  - Nodal Jacobian bugs (example in 24 jan 2012 email)
 
  - fix tutrorial for human thorax - ensure it works
