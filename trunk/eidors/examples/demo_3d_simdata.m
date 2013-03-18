@@ -25,10 +25,10 @@ e_levels= [4, 8];
 %                                    'planes', n_elec, 2} );
 
 params.stimulation= stimulation;
-params.solve=      'np_fwd_solve';
-params.system_mat= 'np_calc_system_mat';
-params.jacobian=   'np_calc_jacobian';
-params.misc.perm_sym=   '{n}';
+params.solve=      @fwd_solve_1st_order;
+%params.solve=      @eidors_default;
+params.system_mat= @system_mat_1st_order;
+params.jacobian=   @jacobian_adjoint;
 mdl_3d = eidors_obj('fwd_model', params);
 
 
@@ -76,7 +76,7 @@ inv2d.solve=       'inv_solve_diff_GN_one_step';
 %inv2d.hyperparameter.func = 'select_noise_figure';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;
- inv2d.hyperparameter.value = 1e-2;
+ inv2d.hyperparameter.value = 1e-1;
  inv2d.RtR_prior= 'prior_laplace';
 %inv2d.RtR_prior= 'prior_gaussian_HPF';
 inv2d.jacobian_bkgnd.value= 1;
@@ -106,16 +106,15 @@ clear inv3d;
 %params= mk_circ_tank( 4, levels, { 'zigzag', n_elec, e_levels } );
 %params= mk_circ_tank( 4, levels, n_elec );
 params.stimulation= stimulation;
-params.solve=      'np_fwd_solve';
-params.system_mat= 'np_calc_system_mat';
-params.jacobian=   'np_calc_jacobian';
+params.solve=      @fwd_solve_1st_order;
+params.system_mat= @system_mat_1st_order;
+params.jacobian=   @jacobian_adjoint;
 params.misc.perm_sym= '{n}';
 fm3d = eidors_obj('fwd_model', params);
 
 inv3d.name=  'EIT inverse: 3D';
-%inv3d.solve= 'np_inv_solve';
- inv3d.solve= 'aa_inv_conj_grad'; % faster and feasible with less memory
-inv3d.hyperparameter.value = 1e-4;
+inv3d.solve= @inv_solve_diff_GN_one_step;
+inv3d.hyperparameter.value = 1e-2;
 inv3d.jacobian_bkgnd.value= 1;
 inv3d.RtR_prior= 'prior_laplace';
 inv3d.reconst_type= 'difference';
