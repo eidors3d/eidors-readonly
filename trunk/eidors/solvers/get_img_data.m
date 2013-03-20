@@ -22,6 +22,9 @@ if ~strcmp( img(1).type, 'image' );
     return;
 end
 
+if ~isfield(img,'elem_data')
+   img = physics_data_mapper(img);
+end
 try
    img_data= [img.elem_data];
 catch

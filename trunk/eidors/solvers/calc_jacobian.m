@@ -27,7 +27,9 @@ else
       ['Calling CALC_JACOBIAN with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
 end
+ws = warning('query','EIDORS:DeprecatedInterface');
 warning off EIDORS:DeprecatedInterface
+
 fwd_model= img.fwd_model;
 
 fwd_model_check(fwd_model);
@@ -50,17 +52,21 @@ if isfield(fwd_model,'coarse2fine')
    end
 end
 
-warning on EIDORS:DeprecatedInterface
+warning(ws.state, 'EIDORS:DeprecatedInterface');
 
 eidors_obj('set-cache', cache_obj, 'jacobian', J);
 eidors_msg('calc_jacobian: setting cached value', 3);
+        
+
+
 
 % Make the Jacobian only depend on 
 function cache_obj= jacobian_cache_params( fwd_model, img );
+   img = physics_data_mapper(img);
    if isfield(img, 'elem_data')
-      cache_obj = {fwd_model, img.elem_data};
+      cache_obj = {fwd_model, img.elem_data, img.current_physics};
    elseif isfield(img, 'node_data')
-      cache_obj = {fwd_model, img.node_data};
+      cache_obj = {fwd_model, img.node_data, img.current_physics};
    else
       error('calc_jacobian: execting elem_data or node_data in image');
    end
