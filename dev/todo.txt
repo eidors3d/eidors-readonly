@@ -140,7 +140,7 @@ POST 3.7
     come from another model (is the fine model)
   (or create a function to do this)
 
-- mk_image assumes values on elems. THink about how
++ mk_image assumes values on elems. THink about how
     to create node images. New function?
 -------------
 Lower priority items

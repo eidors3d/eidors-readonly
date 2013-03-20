@@ -1,3 +1,5 @@
+2013-03-20: Added node_data support to mk_image
+2013-03-20: Added physics support: conductivity, resisitivity and logs:q
 2013-02-18: Added code for placing electrodes on arbitrary meshes
 2013-02-18: Added merge_meshes to merge non-overlapping (surface) meshes
 2013-02-18: Expand support for gmsh: gmsh_stl2tet
