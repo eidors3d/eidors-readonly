@@ -9,6 +9,7 @@ function img= mk_image(mdl, elem_data, physics, name)
 % Usage 2: mdl can be a fwd_model or inv_model
 %   img = mk_image( mdl, 1 ) -> uniform image with conductivity 1
 %   img = mk_image( mdl, 2*ones(n_elems,1) ) -> uniform with c=2
+%   img = mk_image( mdl, 2*ones(n_nodes,1) ) -> image with node data
 %   img = mk_image( mdl, 1, 'This name') -> Specify a 'name' attribute
 % 
 % Usage 3: create image from previous image, override conductity
@@ -77,12 +78,23 @@ function str = no_physics
 str = 'unspecified';
 
 function img = fill_in_data(img,elem_data,physics)
-if strcmp(physics,no_physics);
-    img.elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
-    img.elem_data(:) = elem_data;
-else
-    img.(physics).elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
-    img.(physics).elem_data(:) = elem_data;
+switch numel(elem_data)
+    case {1, size(img.fwd_model.elems,1)}
+        if strcmp(physics,no_physics);
+            img.elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
+            img.elem_data(:) = elem_data;
+        else
+            img.(physics).elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
+            img.(physics).elem_data(:) = elem_data;
+        end
+    case size(img.fwd_model.nodes,1)
+        if strcmp(physics,no_physics);
+            img.node_data = NaN*ones(size(img.fwd_model.nodes,1),1);
+            img.node_data(:) = elem_data;
+        else
+            img.(physics).node_data = NaN*ones(size(img.fwd_model.nodes,1),1);
+            img.(physics).node_data(:) = elem_data;
+        end
 end
 
 % TESTS:
