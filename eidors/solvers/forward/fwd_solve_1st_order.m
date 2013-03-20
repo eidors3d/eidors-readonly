@@ -25,6 +25,15 @@ else
 end
 fwd_model= img.fwd_model;
 
+img = physics_data_mapper(img);
+if ~ismember(img.current_physics, supported_physics)
+    error('EIDORS:PhysicsNotSupported', '%s does not support %s', ...
+    'FWD_SOLVE_1ST_ORDER',img.current_physics);
+end
+orig_physics = img.current_physics;
+% all calcs use conductivity
+img = convert_units(img, 'conductivity');
+
 pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( img );
 
@@ -53,7 +62,6 @@ end
 data.meas= vv;
 data.time= -1; % unknown
 data.name= 'solved by fwd_solve_1st_order';
-data.quantity = 'voltage';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = v(1:pp.n_node,:); % but not on CEM nodes
 end; end

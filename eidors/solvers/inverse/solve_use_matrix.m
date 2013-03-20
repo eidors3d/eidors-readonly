@@ -39,5 +39,9 @@ try if inv_model.solve_use_matrix.solve_nodes == 1
    solve_to = 'node_data';
 end; end
 
-img.(solve_to) = sol;
+if isfield(inv_model.solve_use_matrix,'physics')
+    img.(inv_mode.solve_use_matrix.physics).(solve_to) = sol;
+else
+    img.(solve_to) = sol;
+end
 img.fwd_model= inv_model.fwd_model;

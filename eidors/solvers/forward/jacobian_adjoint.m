@@ -20,6 +20,19 @@ else
       ['Calling JACOBIAN_ADJOINT with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
 end
+
+img = physics_data_mapper(img);
+if ~ismember(img.current_physics, supported_physics)
+    error('EIDORS:PhysicsNotSupported', '%s does not support %s', ...
+    'JACOBIAN_ADJOINT',img.current_physics);
+end
+
+org_physics = img.current_physics;
+% all calcs use conductivity
+img = convert_units(img, 'conductivity');
+
+img.elem_data = check_elem_data(img);
+
 fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
@@ -42,7 +55,7 @@ zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 FC= system_mat_fields( fwd_model );
 
 
-if isfield(fwd_model,'coarse2fine')
+if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
    DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
    nparam= size(fwd_model.coarse2fine,2);
 else
@@ -60,6 +73,19 @@ for j= 1:pp.n_stim
    idx= idx+ n_meas;
 end
 
+if ~strcmp(org_physics,'conductivity')
+    J = apply_chain_rule(J, img, org_physics);
+    if isfield(fwd_model, 'coarse2fine') && ...
+          size(img.elem_data,1)==size(fwd_model.coarse2fine,1)
+            J=J*fwd_model.coarse2fine;
+            nparam = size(fwd_model.coarse2fine,2);
+    end
+end
+
+%restore img to original condition
+img = rmfield(img,'elem_data');
+img.current_physics = [];
+
 % calculate normalized Jacobian
 if pp.normalize
    data= fwd_solve( img );
@@ -74,7 +100,7 @@ end
 %  where V_i is change in voltage on electrode i for
 %        stimulation pattern j
 %        S_k is change in conductivity on element k
-function DE = jacobian_calc(pp, zi2E, FC, sv, c2f);
+function DE = jacobian_calc(pp, zi2E, FC, sv, c2f)
 d= pp.n_dims+1;
 dfact= (d-1)*(d-2); % Valid for d<=3
 
@@ -113,3 +139,51 @@ else
       end
    end
 end
+
+function J = apply_chain_rule(J, img, org_physics)
+
+switch(org_physics)
+    case 'resistivity'
+        dCond_dPhys = -img.elem_data.^2;
+    case 'log_resistivity'
+        dCond_dPhys = -img.elem_data;
+    case 'log_conductivity'
+        dCond_dPhys = img.elem_data;
+    otherwise
+        error('not implemented yet')
+end
+
+J = J.*repmat(dCond_dPhys ,1,size(J,1))';
+
+function elem_data = check_elem_data(img)
+   elem_data = img.elem_data; 
+   sz_elem_data = size(elem_data);
+   if sz_elem_data(2) ~= 1;
+      error('jacobian_adjoin: can only solve one image (sz_elem_data=%)', ...
+            sz_elem_data);
+   end
+
+   if isfield(img.fwd_model, 'coarse2fine');
+     c2f = img.fwd_model.coarse2fine;
+     sz_c2f = size(c2f);
+     switch sz_elem_data(1)
+       case sz_c2f(1); % Ok     
+       case sz_c2f(2); elem_data = c2f * elem_data;
+       otherwise; error(['jacobian_adjoint: provided elem_data ' ...
+            ' (sz=%d) does not match c2f (sz=%d %d)'], sz_elem_data(1), sz_c2f);
+     end
+   else
+     if sz_elem_data(1) ~= num_elems(img.fwd_model)
+       error(['jacobian_adjoint: provided elem_data (sz=%d) does ' ...
+          ' not match fwd_model (sz=%d)'], sz_elem_data(1), num_elems(sz_c2f));
+     end
+   end
+
+
+
+function str = supported_physics
+    str = {'conductivity'
+           'resistivity'
+           'log_conductivity'
+           'log_resistivity'};
+      

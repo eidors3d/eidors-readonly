@@ -1,4 +1,4 @@
-function img= mk_image(mdl, elem_data, name)
+function img= mk_image(mdl, elem_data, physics, name)
 % MK_IMAGE: create eidors image object
 %   img= mk_image(mdl, elem_data, name)
 %
@@ -13,6 +13,9 @@ function img= mk_image(mdl, elem_data, name)
 % 
 % Usage 3: create image from previous image, override conductity
 %  img = mk_image( other_image, 2 ) -> image with c=2
+%
+% Usage 4: create image with specific 'physics' properties
+%  img = mk_image( mdl, 3*ones(64,1),'resistivity' ); % resistivity image
 
 % (C) 2008-12 Andy Adler and Bartlomiej Grychtol. 
 % Licenced under GPL version 2 or 3
@@ -20,7 +23,20 @@ function img= mk_image(mdl, elem_data, name)
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin<3; name = 'Created by mk_image'; end
+default_physics = no_physics; % later: conductivity ?
+default_name    = 'Created by mk_image';
+if nargin<3
+    name = default_name;
+    physics = default_physics;
+elseif nargin < 4 % preserve old interface
+    if ismember(physics,supported_physics)
+        name = default_name;
+    else
+        name = physics;
+        physics = default_physics;
+    end
+end
+
 % if nargin<2; 
 %    try
 %      elem_data = mdl.jacobian_bkgnd.value;
@@ -51,8 +67,23 @@ end
 
 img = eidors_obj('image',name);
 img.fwd_model = mdl;
-img.elem_data = NaN*ones(size(mdl.elems,1),1);
-img.elem_data(:) = elem_data;
+if isfield(mdl,'show_slices');
+    img.show_slices = mdl.show_slices;
+end
+img = fill_in_data(img,elem_data,physics);
+% img.current_physics = physics;
+
+function str = no_physics
+str = 'unspecified';
+
+function img = fill_in_data(img,elem_data,physics)
+if strcmp(physics,no_physics);
+    img.elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
+    img.elem_data(:) = elem_data;
+else
+    img.(physics).elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
+    img.(physics).elem_data(:) = elem_data;
+end
 
 % TESTS:
 function do_unit_test
@@ -77,14 +108,19 @@ function do_unit_test
    im0.resistivity.node_data = 5;
    im0.physics_data_mapper = 'resistivity';
    im1 = mk_image(im0); % use physics_data_mapper
-   unit_test_cmp('im6',im1.node_data(1), 5 );
+   unit_test_cmp('im6',im1.node_data(5), 5 );
    
    imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd, 'value');
    imdl.jacobian_bkgnd.conductivity = im0.conductivity;
    im2 = mk_image(imdl);
-   unit_test_cmp('im6',im2.elem_data, 3*ones(64,1) );
-
-% TODO
-%  im0 = mk_image(fmdl, .2343, 'log_conductivity');
-%  unit_test_cmp('im7a', im0.elem_data, .2343);
-%  unit_test_cmp('im7b', im0.log_conductivity.elem_data, .2343);
+   unit_test_cmp('im7',im2.elem_data, 3*ones(64,1) );
+   
+   im0 = mk_image( imdl.fwd_model, 3*ones(64,1),'my_name' );
+   unit_test_cmp('im8',im0.elem_data, 3*ones(64,1) );
+   
+   im0 = mk_image( imdl.fwd_model, 3*ones(64,1),'resistivity' );
+   unit_test_cmp('im8',im0.resistivity.elem_data, 3*ones(64,1) );
+   
+   im0 = mk_image( imdl.fwd_model, 3*ones(64,1),'resistivity','my name' );
+   unit_test_cmp('im9a',im0.resistivity.elem_data, 3*ones(64,1) );
+   unit_test_cmp('im9b',im0.name, 'my name' );

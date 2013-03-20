@@ -68,7 +68,7 @@ if opts.abs_solve
    if nargin~=2;
       error('only one data set is allowed for a static reconstruction');
    end
-
+   
    imgc= feval( inv_model.solve, inv_model, ...
                filt_data(inv_model,data1) );
 else
@@ -86,7 +86,11 @@ else
    imgc= feval( inv_model.solve, inv_model, fdata1, fdata2);
 end
 
+check_physics_handling(inv_model,imgc);
+     
 img = eidors_obj('image', imgc );
+% img = physics_data_mapper(img,1);
+
 % If we reconstruct with a different 'rec_model' then
 %  put this into the img
 if isfield(inv_model,'rec_model')
@@ -154,6 +158,28 @@ function mdl = prepare_model( mdl )
         mdl.reconst_type= 'difference';
     end
 
+function check_physics_handling(inv_model,imgc)
+if has_physics(inv_model.jacobian_bkgnd) && ~has_physics(imgc)
+   if isa(inv_model.solve,'function_handle')
+      solver = func2str(inv_model.solve);
+   else
+      solver = inv_model.solve;
+   end
+   if strcmp(solver,'eidors_default');
+      solver = eidors_default('get','inv_solve');
+   end
+   warning('EIDORS:PhysicsObliviousSolver',...
+      ['The solver %s did not handle the physics data properly.\n'...
+       'The results may be incorrect. Please check the code to verify.'], ...
+       solver);
+end
+         
+    
+function b = has_physics(s)
+b = false;
+if isstruct(s)
+   b = any(ismember(fields(s),supported_physics));
+end
 
 
 % TODO: this code really needs to be cleaned, but not before eidors 3.4

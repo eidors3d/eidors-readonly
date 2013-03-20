@@ -41,6 +41,8 @@ if nargin < 2
     end
 end
 
+img = physics_data_mapper(img);
+
 % Assume all fwd_models are same dimension (all 3D or 2D no mixed dims)
 if mdl_dim(img(1))==2 
    if nargin>1 && ~isempty(levels);

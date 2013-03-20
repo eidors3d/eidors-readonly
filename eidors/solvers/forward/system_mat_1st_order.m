@@ -22,6 +22,11 @@ else
 end
 fwd_model= img.fwd_model;
 
+% check physics
+if isfield(img,'current_physics') && ~isempty(img.current_physics) ... 
+        && ~strcmp(img.current_physics,'conductivity')
+    error('system_mat_1st_order does not work for %s',img.current_physics);
+end
 
 FC= system_mat_fields( fwd_model);
 lFC= size(FC,1);
@@ -75,6 +80,7 @@ function elem_data = check_elem_data(fwd_model, img);
           if isfield(fwd_model, 'background')
               elem_data = elem_data + fwd_model.background;
           end
+
        otherwise; error(['system_mat_1st_order: provided elem_data ' ...
             ' (sz=%d) does not match c2f (sz=%d %d)'], sz_elem_data(1), sz_c2f);
      end
@@ -84,7 +90,6 @@ function elem_data = check_elem_data(fwd_model, img);
           ' not match fwd_model (sz=%d)'], sz_elem_data(1), num_elems(sz_c2f));
      end
    end
-
 
 
 % Need tests for each error case

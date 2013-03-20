@@ -37,7 +37,7 @@ else
       ['Calling FWD_SOLVE with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
 end
-
+ws = warning('query','EIDORS:DeprecatedInterface');
 warning off EIDORS:DeprecatedInterface
 
 fwd_model= img.fwd_model;
@@ -45,23 +45,23 @@ fwd_model= img.fwd_model;
 
 fwd_model= prepare_model( fwd_model );
 
+% TODO: This should be handled by the physics_data_mapper
 if isfield(img,'params_mapping')
 %     fwd_model data is provided using a mapping function
     mapping_function= img.params_mapping.function;
     img= feval(mapping_function,img);
 end
-
-if isfield(fwd_model,'coarse2fine')
+if isfield(fwd_model,'coarse2fine') && isfield(img,'elem_data')
    c2f= fwd_model.coarse2fine;
    if size(img.elem_data,1)==size(c2f,2)
 %     fwd_model data is provided on coarse mesh
       img.elem_data = c2f * img.elem_data; 
+
       if isfield(fwd_model,'background')
           img.elem_data = img.elem_data + fwd_model.background; 
       end
    end
 end
-
 
 if ~isfield(fwd_model, 'electrode')
    error('EIDORS: attempting to solve on model without electrodes');
