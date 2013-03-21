@@ -83,8 +83,10 @@ if ~strcmp(org_physics,'conductivity')
 end
 
 %restore img to original condition
-img = rmfield(img,'elem_data');
-img.current_physics = [];
+if ~strcmp(org_physics,'conductivity') || isfield(img, org_physics)
+    img = rmfield(img,'elem_data');
+    img.current_physics = [];
+end
 
 % calculate normalized Jacobian
 if pp.normalize
