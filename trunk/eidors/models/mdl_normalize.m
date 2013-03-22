@@ -43,7 +43,8 @@ for i = 1:length(ff);
     if any(strcmp(ff{i},{'normalize','normalize_measurements'}))
         out = mdl.(ff{i});
     else
-        token = regexp(ff{i},'normal.*','match','once');
+        % won't hit 'normal' or anything that starts with 'normals'. 
+        token = regexp(ff{i},'normal[^s]+.*','match','once'); 
         if ~isempty(token);
             warning('Suspect field "%s" found on the model',token);
         end
