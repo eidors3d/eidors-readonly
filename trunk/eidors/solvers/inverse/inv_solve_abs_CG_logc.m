@@ -74,6 +74,7 @@ residuals= zeros(size(data,1),iters+1);
 for k= 1:iters
     % Calculate Jacobian
     disp(['Begin Jacobian computation - Iteration ' num2str(k)]);
+
     J = calc_jacobian( img ); 
 
     % Convert Jacobian as the adjusted parameters are the logarithm of the
@@ -90,13 +91,13 @@ for k= 1:iters
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
         J= J(:,1:nc-1);
     end
-     
+   
     if k==1 && size(J,1)<size(J,2)
-        if isfield(img.parameters,'tol') 
-            tol= img.parameters.tol;
-        elseif ~isfield(img.parameters,'tol') 
+%         if isfield(img.parameters,'tol') 
+%             tol= img.parameters.tol;
+%         elseif ~isfield(img.parameters,'tol') 
             tol= svdAnalysisLcurvecrit(img.parameters.normalisation*data,img,J);
-        end
+%         end
     end
     
     % Estimate residuals between data and estimation
@@ -170,14 +171,15 @@ else
       end
 end
 
-figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
-semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
-xlabel('alpha','fontsize',20,'fontname','Times')
-ylabel('Normalized residuals','fontsize',20,'fontname','Times')
-title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
-    ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
-set(gca,'fontsize',20,'fontname','Times'); drawnow;
-
+% figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
+% semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
+% semilogx(10.^p,p*0+mlist(1),':k','linewidth',2); axis tight
+% xlabel('alpha','fontsize',20,'fontname','Times')
+% ylabel('Normalized residuals','fontsize',20,'fontname','Times')
+% title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
+%     ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
+% set(gca,'fontsize',20,'fontname','Times'); drawnow;
+% 
 % Record the corresponding parameters
 img.elem_data= exp(img.logCond);
 img.res_data= exp(-img.logCond);
@@ -229,12 +231,15 @@ cp2= pf2(1)*log10(resi)+pf2(2);
 [mk,ik]= min(abs(cp1-cp2));
 [m,ist]= min(abs(svj-lambda(ik)));
 tol= svj(ist);
-tol= tol*5;
+disp(['Tolerance value = ' num2str(tol,3)])
+% tol= tol*5;
 
 if isfield(img.parameters,'tol')
     [mu,iu]= min(abs(img.parameters.tol-lambda));
+    [m,istu]= min(abs(svj-lambda(iu)));
 else
     [mu,iu]= min(abs(tol-lambda));
+    [m,istu]= min(abs(svj-lambda(iu)));
 end
 % [ms,ist1]= min(abs(svj-1));
 % % [ms,ist1]= min(abs(svj-1.5)) 
@@ -249,18 +254,21 @@ loglog(resi,xlambda,'k','linewidth',2); axis tight; hold on
 % [m,ist]= min(abs(svj-lambda(ik)));
 % tol= svj(ist)
 % tol= lambda(ik)
-loglog(resi(ik),xlambda(ik),'or','linewidth',2)
+for ii= 1:100:length(lambda)
+    plot(resi(ii),xlambda(ii),'x','MarkerSize',10,'linewidth',2)
+    text(resi(ii),xlambda(ii),num2str(lambda(ii),3),'fontsize',14,'fontname','Times')
+end
+loglog(resi(ik),xlambda(ik),'or','linewidth',2,'MarkerSize',10)
 % if isfield(img.parameters,'tol')
-loglog(resi(iu),xlambda(iu),'xr','linewidth',2)
+loglog(resi(iu),xlambda(iu),'pr','linewidth',2,'MarkerSize',10)
 % end
-
-% loglog(resi,10.^cp1,resi,10.^cp2,'linewidth',2)
+loglog(resi,10.^cp1,'k:',resi,10.^cp2,'k:','linewidth',2)
 yl= get(gca,'ylim');
 ylabel('Roughness','fontsize',20,'fontname','Times')
 xlabel('Residuals','fontsize',20,'fontname','Times')
 ylim(yl);
 title({['Best solution lambda=' num2str(lambda(ik),'%1.2e')]; ...
-    ['Number of Singular vector involved = ' num2str(ist)]},'fontsize',20,'fontname','Times')
+    ['Number of Singular vector involved = ' num2str(ist) ';' num2str(istu) ]},'fontsize',20,'fontname','Times')
 set(gca,'fontsize',20,'fontname','Times'); drawnow;
 
 % figure;

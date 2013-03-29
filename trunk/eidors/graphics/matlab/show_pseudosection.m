@@ -1,4 +1,4 @@
-function show_pseudosection( fwd_model, data, orientation)
+function fwd_model= show_pseudosection( fwd_model, data)
 %SHOW_PSEUDOSECTION: show a pseudo-section image of data
 %
 % OPTIONS:
@@ -23,6 +23,8 @@ else
     fwd_model.misc.sizepoint= 50;
 end
 
+orientation= fwd_model.show_pseudosection.orientation;
+
 if iscell(orientation) 
     if strcmp(orientation{2},'yz')
     fwd_model.nodes= fwd_model.nodes(:,[2 3 1]);
@@ -33,19 +35,20 @@ if iscell(orientation)
 end
 
 switch(upper(orientation))
-    case 'HORIZONTALDOWNWARD';  plotPseudoSectionProfileDown(fwd_model,data)
-    case 'VERTICAL';            plotPseudoSectionProfileVert(fwd_model,data)
-    case 'CIRCULAROUTSIDE';     plotPseudoSectionCircularOut(fwd_model,data)
-    case 'CIRCULARINSIDE';      plotPseudoSectionCircularIn(fwd_model,data)
+    case 'HORIZONTALDOWNWARD';  [depth,location]= plotPseudoSectionProfileDown(fwd_model,data);
+    case 'VERTICAL';            [depth,location]= plotPseudoSectionProfileVert(fwd_model,data);
+    case 'CIRCULAROUTSIDE';     [depth,location]= plotPseudoSectionCircularOut(fwd_model,data);
+    case 'CIRCULARINSIDE';      [depth,location]= plotPseudoSectionCircularIn(fwd_model,data);
   otherwise;
     error('No orientation of type "%s" available', upper(orientation));
 end
 
-
+fwd_model.show_pseudosection.depth= depth;
+fwd_model.show_pseudosection.location= location;
 
 end
 
-function plotPseudoSectionProfileDown(fmdl,data)
+function [a,xps]= plotPseudoSectionProfileDown(fmdl,data)
    fs= 20;
    
    [elec_posn,elecNumber]= electrodesPosition(fmdl);
@@ -73,30 +76,33 @@ function plotPseudoSectionProfileDown(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
+   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');
    xlabel('Distance (m)','fontsize',fs,'fontname','Times');
-   ylabel('Depth (m)','fontsize',fs,'fontname','Times')
+   ylabel('Pseudo-depth (m)','fontsize',fs,'fontname','Times')
     axis equal; axis tight;
    set(gca,'fontsize',fs,'fontname','Times')
 end
 
-function plotPseudoSectionProfileVert(fmdl,data)
+function [a,zps]= plotPseudoSectionProfileVert(fmdl,data)
    fs= 20;
    
    [elec_posn,elecNumber]= electrodesPosition(fmdl);
   
    zps= (elec_posn(elecNumber(:,1),3)+elec_posn(elecNumber(:,2),3))/2;
-   a= abs(elecNumber(:,1)-elecNumber(:,2));
-   de= abs(elec_posn(1,3)-elec_posn(2,3));
+   a= abs(elec_posn(elecNumber(:,1),3)-elec_posn(elecNumber(:,2),3));
+%    a= abs(elecNumber(:,1)-elecNumber(:,2));
+%    de= abs(elec_posn(1,3)-elec_posn(2,3));
    
    % Identiy reciprocal data(elecNumber(:,1)-elecNumber(:,2)) > abs(elecNumber(:,3)-elecNumber(:,4))
    R= find(abs(elecNumber(:,1)-elecNumber(:,2)) < abs(elecNumber(:,3)-elecNumber(:,4)));
    
    if ~isempty(R)
-       zps(R)= (elec_posn(elecNumber(R,3),4)+elec_posn(elecNumber(R,4),4))/2;
-       a(R)= abs(elecNumber(R,3)-elecNumber(R,4));
+       zps(R)= (elec_posn(elecNumber(R,3),3)+elec_posn(elecNumber(R,4),3))/2;
+       a(R)= abs(elec_posn(elecNumber(R,3),3)-elec_posn(elecNumber(R,4),3));
+%        a(R)= abs(elecNumber(R,3)-elecNumber(R,4));
    end
-   xps= abs(a*de/2);
+   xps= a/3;
+%    xps= abs(a*de/2);
       
    P= zps+1i*xps;
    [Pu,iu,ju]= unique(P);
@@ -108,7 +114,7 @@ function plotPseudoSectionProfileVert(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
+   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k'); 
    xlabel('Pseudo distance (m)','fontsize',fs,'fontname','Times');
    if zps(1)<0
        ylabel('Depth (m)','fontsize',fs,'fontname','Times')
@@ -119,7 +125,7 @@ function plotPseudoSectionProfileVert(fmdl,data)
    set(gca,'fontsize',fs,'fontname','Times')
 end
 
-function plotPseudoSectionCircularIn(fmdl,data)
+function [r_point,th_point]= plotPseudoSectionCircularIn(fmdl,data)
 fs= 20;
 [elec_posn,elecNumber] = electrodesPosition(fmdl);
 [r_point,th_point,r] = polarPosition(elecNumber,elec_posn);
@@ -138,7 +144,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
+figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
@@ -146,7 +152,7 @@ set(gca,'fontsize',fs,'fontname','Times')
 end
 
 
-function plotPseudoSectionCircularOut(fmdl,data)
+function [r_point,th_point]= plotPseudoSectionCircularOut(fmdl,data)
 fs= 20;
 [elec_posn,elecNumber] = electrodesPosition(fmdl);
 [r_point,th_point,r] = polarPosition(elecNumber,elec_posn);

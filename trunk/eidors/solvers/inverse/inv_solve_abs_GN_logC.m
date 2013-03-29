@@ -65,7 +65,6 @@ img0.logCond= log(img0.elem_data);
 residuals= zeros(size(data1,1),iters+1);
 
 for k = 1:iters  
-
     vsim=  fwd_solve(img);
     res = img.parameters.normalisation*(data1-vsim.meas);
     residuals(:,k)=res;
