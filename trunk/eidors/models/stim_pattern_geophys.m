@@ -114,7 +114,7 @@ function stim = stim_pattern_dipoledipole(n_elec, options)
    error('spacings and multiples must be vector with a same size');
   end
   for k= 1:length(a);
-      block =  [0,round((n(k)+2)*a(k)),a(k),round((n(k)+1)*a(k))]+1;
+      block =  [0,a(k),a(k)+n(k)*a(k),2*a(k)+n(k)*a(k)]+1;
     if options.circumferential_meas 
         if max(block(1))>n_elec
            break;
@@ -212,31 +212,31 @@ function unit_test_schlumberger
 
 function unit_test_dipoledipole
     stim= stim_pattern_dipoledipole( 13, parse_options({}) );
-    test1= [1,4,2,3; 2,5,3,4;
-        3,6,4,5; 4,7,5,6; 5,8,6,7; 6,9,7,8; 7,10,8,9; 8,11,9,10;
-        9,12,10,11; 10,13,11,12; 1,7,3,5; 2,8,4,6; 3,9,5,7;
-        4,10,6,8; 5,11,7,9; 6,12,8,10; 7,13,9,11; 1,10,4,7; 2 11 5 8; 3 12 6 9;
-        4 13 7 10; 1,13,5,9];
+    test1= [1,2,3,4; 2,3,4,5;
+        3,4,5,6; 4,5,6,7; 5,6,7,8; 6,7,8,9; 7,8,9,10; 8,9,10,11;
+        9,10,11,12; 10,11,12,13; 1,3,5,7; 2,4,6,8; 3,5,7,9;
+        4,6,8,10; 5,7,9,11; 6,8,10,12; 7,9,11,13; 1,4,7,10; 2 5 8 11; 3 6 9 12;
+        4 7 10 13; 1,5,9,13];
     unit_test_cmp('DIPOLEDIPOLE #1', stim, test1);
     stim= stim_pattern_geophys( 13,'dipoledipole', {});
     unit_test_cmp('DIPOLEDIPOLE #2', stim, stim_meas_list(test1));
 
 
     stim= stim_pattern_geophys( 5,'dipoledipole', {'reciprocal_meas',0});
-    unit_test_cmp('DIPOLEDIPOLE #3a',stim, stim_meas_list([1,4,2,3;2,5,3,4]));
+    unit_test_cmp('DIPOLEDIPOLE #3a',stim, stim_meas_list([1,2,3,4;2,3,4,5]));
     stim= stim_pattern_geophys( 5,'dipoledipole', {'reciprocal_meas',1});
-    unit_test_cmp('DIPOLEDIPOLE #3b',stim, stim_meas_list([1,4,2,3;2,3,1,4;2,5,3,4;3,4,2,5]));
+    unit_test_cmp('DIPOLEDIPOLE #3b',stim, stim_meas_list([1,2,3,4;3,4,1,2;2,3,4,5;4,5,2,3]));
 
     stim= stim_pattern_geophys( 5,'dipoledipole', {'current',0.1});
-    unit_test_cmp('DIPOLEDIPOLE #4a',stim, stim_meas_list([1,4,2,3;2,5,3,4],5,0.1));
+    unit_test_cmp('DIPOLEDIPOLE #4a',stim, stim_meas_list([1,2,3,4;2,3,4,5],5,0.1));
     stim= stim_pattern_geophys( 5,'dipoledipole', {'gain',0.1});
-    unit_test_cmp('DIPOLEDIPOLE #4b',stim, stim_meas_list([1,4,2,3;2,5,3,4],5,1,0.1));
+    unit_test_cmp('DIPOLEDIPOLE #4b',stim, stim_meas_list([1,2,3,4;2,3,4,5],5,1,0.1));
 
     stim= stim_pattern_geophys( 6,'dipoledipole', {'spacings',[1,1],'multiples',[1,2]});
-    unit_test_cmp('DIPOLEDIPOLE #5a',stim, stim_meas_list([1,4,2,3;2,5,3,4;3,6,4,5;1,5,2,4;2,6,3,5]));
+    unit_test_cmp('DIPOLEDIPOLE #5a',stim, stim_meas_list([1,2,3,4;2,3,4,5;3,4,5,6;1,2,4,5;2,3,5,6]));
     stim= stim_pattern_geophys( 9,'dipoledipole', {'spacings',[1,2],'multiples',[3,2]});
     unit_test_cmp('DIPOLEDIPOLE #5b',stim, stim_meas_list(...
-        [1,6,2,5;2,7,3,6;3,8,4,7;4,9,5,8;1,9,3,7]));
+        [1,2,5,6;2,3,6,7;3,4,7,8;4,5,8,9;1,3,7,9]));
     
     
     
