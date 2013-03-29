@@ -81,10 +81,10 @@ for k= 1:iters
     % Normalize the Jacobian
     J= img.parameters.normalisation*J;
 %     figure; plot(J); 
-    if k==1
+    if k==1;
     if np<=7
         [U,S,V]= svd(J); svj= diag(S);
-        svj = svj(svj>eps);
+        svj = svj(svj>eps);%figure; semilogy(svj)
 %         tol= svj(np);
 %         tol= svj(round(np/2));
         tol= svj(end)
@@ -156,16 +156,16 @@ end
 img= feval(mapping_function,img);
 
 
-% figure;
-% semilogx(perturb,mlist,'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
-% semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
-% % semilogx(perturb,mlist,'xk',fmin,pf(1)*fmin^2+pf(2)*fmin+pf(3),'or'); hold on
-% % semilogx(p,pf(1)*p.^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
-% xlabel('alpha','fontsize',30,'fontname','Times')
-% ylabel('Normalized residuals','fontsize',30,'fontname','Times')
-% title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
-%     ['norm no move = ' num2str(round(mlist(1)))]},'fontsize',30,'fontname','Times')
-% set(gca,'fontsize',30,'fontname','Times'); drawnow;
+figure;
+semilogx(perturb,mlist,'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
+semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
+% semilogx(perturb,mlist,'xk',fmin,pf(1)*fmin^2+pf(2)*fmin+pf(3),'or'); hold on
+% semilogx(p,pf(1)*p.^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
+xlabel('alpha','fontsize',30,'fontname','Times')
+ylabel('Normalized residuals','fontsize',30,'fontname','Times')
+title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
+    ['norm no move = ' num2str(round(mlist(1)))]},'fontsize',30,'fontname','Times')
+set(gca,'fontsize',30,'fontname','Times'); drawnow;
 
 end
 
@@ -283,7 +283,7 @@ vCG= fwd_solve(img); vCG = vCG.meas;
 figure; hist(I*(dd.meas-vCG),50)
 show_pseudosection( fmdl, I*dd.meas, 'HorizontalDownward')
 show_pseudosection( fmdl, I*vCG, 'HorizontalDownward')
-show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100'HorizontalDownward')
+show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100','HorizontalDownward')
 
 end
 

@@ -10,9 +10,9 @@ function [img]= inv_solve_abs_annealingMetropolis_params(inv_model, data)
 % data      => EIT data
 %
 % Parameters:
-%     inv_model.parameters.tempInit = N_max iter
-%     inv_model.parameters.tempfinale = vector with at least 3 variables
-%     inv_model.parameters.cooldown = 
+%     inv_model.parameters.tempInit = Initial temperature
+%     inv_model.parameters.tempfinale = Final temperature
+%     inv_model.parameters.cooldown = Temperature decrease
 %     inv_model.parameters.normalisation
 
 % (C) 2012 Nolwenn Lesparre. License: GPL version 2 or version 3
@@ -51,11 +51,17 @@ if ~isfield(inv_model.parameters,'normalisation')
     img.parameters.normalisation= 1;
 end
 
-if ~isfield(inv_model.params_mapping,'range')
+if ~isfield(inv_model.params_mapping,'rangeParams')
     rangeParams= zeros(n_parameters,2);
     rangeParams(:,1)= -6; rangeParams(:,2)= 6;
 else
-    rangeParams= inv_model.params_mapping.range;
+    rangeParams= inv_model.params_mapping.rangeParams;
+end
+
+if ~isfield(inv_model.params_mapping,'alpha')
+    alpha= 1;
+else
+    alpha= inv_model.params_mapping.alpha;
 end
 
 temp= tempInit; k= 1;
@@ -74,13 +80,14 @@ disp(['Number of iteration ' num2str(k)])
 if isfield(inv_model.params_mapping,'inital_model')
     model= inv_model.params_mapping.inital_model;
 else
-    model= 10.^((rand(np,1).*(range(:,2)-range(:,1))+range(:,1)));    
+    np= numel(inv_model.params_mapping.params);
+    model= 10.^((rangeParams(np,1).*(rangeParams(:,2)-rangeParams(:,1))+rangeParams(:,1)));    
 end
 
 % Estimate the cost of the initial model
 img.params_mapping.params= model;
-cost= objectiveFunction(img,data);
-
+cost= objectiveFunction(img,data,alpha);
+costRef= cost;
 
 % Proceed to the Metropolis regression while reducing the temperature
 %% Run over the Simulated annealing loops
@@ -93,9 +100,9 @@ while temp >= tempfinale % Loop over temperature
         idx_parametr= randi(n_parameters,1,1);
         model_try(idx_parametr)= (rand(1,1)*(rangeParams(idx_parametr,1))+rangeParams(idx_parametr,2));
         img.params_mapping.params= model_try;
-        cost_try= objectiveFunction(img,data);
-        if rand <= exp((-cost_try/cost)^(1/temp)) % Metropolis test for acceptance of trial model
-            likelihood= exp((-cost_try/cost)^(1/temp));
+        cost_try= objectiveFunction(img,data,alpha);
+        if rand <= (exp(-cost_try/costRef)/exp(-cost/costRef))^(1/temp) % Metropolis test for acceptance of trial model
+            likelihood= exp(-cost_try/costRef);
             cost= cost_try;
             model= model_try;
         end
@@ -108,32 +115,33 @@ while temp >= tempfinale % Loop over temperature
     n_temp= n_temp+1;
     temp = temp*cooldown;	% Decrease the temperature
 end % End of temperature loop
-res_parRec= 10.^res_parRec;
+res_parRec(:,3:4)= 10.^res_parRec(:,3:4);
+
 screenSize = get(0,'ScreenSize');
 h = figure;
 set(h,'Position',[0 0 screenSize(3)/2 screenSize(4)]);
 subplot(4,1,1)
-plot(tempRec,res_parRec(:,1),tempRec,res_parRec(:,2))
+plot(tempRec,res_parRec(:,1),tempRec,res_parRec(:,2),'linewidth',2)
 set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log')
 subplot(4,1,2)
-plot(tempRec,res_parRec(:,3),tempRec,res_parRec(:,4),tempRec,res_parRec(:,5))
+plot(tempRec,res_parRec(:,3),tempRec,res_parRec(:,4),'linewidth',2)
 set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log','yScale','log')
 subplot(4,1,3)
-plot(tempRec,resRec)
+plot(tempRec,resRec,'linewidth',2)
 set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log','yScale','log')
 subplot(4,1,4)
-plot(tempRec,likelihoodRec)
+plot(tempRec,likelihoodRec,'linewidth',2)
 set(gca,'fontsize',16,'fontname','Times','xDir','reverse','xScale','log')
 
 [res_parRec(end,1) res_parRec(end,2)]
-[res_parRec(end,3) res_parRec(end,4) res_parRec(end,5)]
+[res_parRec(end,3) res_parRec(end,4)]
 
 end
 
-function cost= objectiveFunction(img,data)
+function cost= objectiveFunction(img,data,alpha)
 vsim=  fwd_solve(img);
 residuals= img.parameters.normalisation*(vsim.meas-data);
-cost= sqrt(sum(residuals.^2));
+cost= sqrt(sum(residuals.^2))/alpha;
 end
 
 

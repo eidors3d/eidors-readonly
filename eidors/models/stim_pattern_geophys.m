@@ -1,4 +1,4 @@
-function stim= stim_pattern_geophys( n_elec, pat_type,  options )
+function [stim,S]= stim_pattern_geophys( n_elec, pat_type,  options )
 % STIM_PATTERN_GEOPHYS: Create Geophysical Stimulation Patterns
 %
 % stim= stim_pattern_geophys( n_elec, type, options_list )
@@ -23,13 +23,13 @@ if nargin<3; options = {}; end
 options = parse_options(options);
 
 switch(upper(pat_type))
-    case 'WENNER';          stim = stim_pattern_wenner(n_elec, options);
-    case 'SCHLUMBERGER';    stim = stim_pattern_schlumberger(n_elec, options);
-    case 'DIPOLEDIPOLE';   stim = stim_pattern_dipoledipole(n_elec, options);
+    case 'WENNER';          S = stim_pattern_wenner(n_elec, options);
+    case 'SCHLUMBERGER';    S = stim_pattern_schlumberger(n_elec, options);
+    case 'DIPOLEDIPOLE';   S = stim_pattern_dipoledipole(n_elec, options);
   otherwise;
     error('No pattern of type "%s" available', upper(pat_type));
 end
-stim = stim_meas_list( stim, n_elec, options.current, options.gain); 
+stim = stim_meas_list( S, n_elec, options.current, options.gain); 
 
 function pp= parse_options(opts)
 % Set defaults here
