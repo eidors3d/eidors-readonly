@@ -75,6 +75,7 @@ if nargin < 2
 end
 
 
+auxdata = []; % default, can be overriden if the format has it
 switch pre_proc_spec_fmt( format, fname );
    case 'mceit';
       [vv,curr,volt,auxdata_out] = mceit_readdata( fname );
