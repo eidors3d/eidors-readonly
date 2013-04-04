@@ -16,14 +16,16 @@ vh = fwd_solve(img);
 imgn = rmfield(img,'elem_data');
 imgn.node_data = vh.volt(:,1);
 
+h1= subplot(221);
 show_fem(imgn);
-print_convert netgen_sims02a.png '-density 100'
 
 % Show Voltage for stim pattern #2
 imgn = rmfield(img,'elem_data');
 imgn.node_data = vh.volt(:,2);
 
-imgn.calc_colours.cb_shrink_move = [0.5,0.8,.02];
+h2= subplot(222);
+show_fem(imgn);
 
-show_fem(imgn,1);
-print_convert netgen_sims02b.png '-density 100'
+imgn.calc_colours.cb_shrink_move = [0.5,0.8,-.02];
+common_colourbar([h1,h2],imgn);
+print_convert netgen_sims02a.png '-density 100'
