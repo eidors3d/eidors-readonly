@@ -11,11 +11,11 @@ img.calc_colours.cb_shrink_move = [0.5,0.8,.02];
 
 subplot(221);
 show_fem(img,[1,1]);
-axis equal; axis off;
+axis equal; axis off; axis tight;
 
 subplot(222);
 img.calc_colours.ref_level =  0.1;
 show_fem(img,[1,1]);
-axis equal; axis off;
+axis equal; axis off; axis tight;
 
 print_convert eidors_colours06.png '-density 75'
