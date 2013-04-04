@@ -103,6 +103,10 @@ end
 
 %  in order to make the labels clean, we round to a near level
    OrdOfMag = 10^floor(log10(max_scale));
+
+% COMMENTS: AA - 4 apr 13
+% If we want to ahve less aggressive rounding, we can do this
+%  OrdOfMag = 10^floor(log10(max_scale*2))/2;
    scale_r  = OrdOfMag * floor( max_scale / OrdOfMag + 2*eps );
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
    

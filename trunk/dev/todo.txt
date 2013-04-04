@@ -1,5 +1,9 @@
 ############## post 3.7 ################3
 
+
+ - fix the example tutorial
+        EIDORS_basics/example_abs_GN_compare_3D.m
+
  - Bug with 'trig' measurement patterns
 
  - Nodal Jacobian bugs (example in 24 jan 2012 email)
@@ -83,18 +87,18 @@
      +  data_structures/eidors_colours07.m
      +  EIDORS_basics/basic_3d_02.m
      +  EIDORS_basics/example_abs_GN_compare_3D.m
-        EIDORS_basics/forward_solvers01.m
-        EIDORS_basics/forward_solvers02.m
-        EIDORS_basics/forward_solvers03.m
-        EIDORS_basics/forward_solvers04.m
-        EIDORS_basics/forward_solvers_2d_high_order02.m
-        EIDORS_basics/forward_solvers_2d_high_order02.m
-        EIDORS_basics/rpi_data02b.m
-        EIDORS_basics/rpi_data03.m
-        EIDORS_basics/rpi_data04.m
-        EIDORS_basics/rpi_data05.m
-        EIDORS_basics/rpi_data06.m
-        EIDORS_basics/sensitivity_map01.m
+     +  EIDORS_basics/forward_solvers01.m
+     +  EIDORS_basics/forward_solvers02.m
+     +  EIDORS_basics/forward_solvers03.m
+     +  EIDORS_basics/forward_solvers04.m
+     +  EIDORS_basics/forward_solvers_2d_high_order02.m
+     +  EIDORS_basics/forward_solvers_2d_high_order02.m
+     +  EIDORS_basics/rpi_data02b.m
+     +  EIDORS_basics/rpi_data03.m
+     +  EIDORS_basics/rpi_data04.m
+     +  EIDORS_basics/rpi_data05.m
+     +  EIDORS_basics/rpi_data06.m
+     +  EIDORS_basics/sensitivity_map01.m
         netgen/netgen_sims02.m
    
  - c2f - think about how to work on NOSER -AA
