@@ -11,6 +11,10 @@ function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 %    cb_shrink_move(1) = horizontal shrink (relative)
 %    cb_shrink_move(2) = vertial shrink (relative)
 %    cb_shrink_move(3) = horizontal move (absolute screen units)
+%
+% Make sure you use 'axis tight' in order for cb_shrink_move to
+%    give a correct looking image
+%
 % KNOWN ISSUE: if you use cb_shrink_move, then matlab will
 %   forget the link between the figure and its colorbar. Future
 %   plots in the same axis will continue to shrink. In general, the
