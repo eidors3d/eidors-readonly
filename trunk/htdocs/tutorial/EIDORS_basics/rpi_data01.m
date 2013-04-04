@@ -23,10 +23,11 @@ for i=1:Nel-1;
       stim(i).stim_pattern = curr*sin(th*( i - Nel/2 ));
    end
    stim(i).meas_pattern= eye(Nel)-ones(Nel)/Nel;
+   stim(i).stimulation = 'Amp';
 end
 
 fmdl.stimulation = stim;
 
-show_fem(fmdl,[0,1])
+clf; show_fem(fmdl,[0,1])
 
 print_convert('rpi_data01a.png','-density 60');
