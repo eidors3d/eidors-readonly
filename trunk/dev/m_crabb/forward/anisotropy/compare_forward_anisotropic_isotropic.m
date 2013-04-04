@@ -1,4 +1,4 @@
-% $Id: anisotropy1_01.m 3640 2012-11-19 11:04:50Z aadler $
+% $Id$
 xl=-3; xr= 3; yb=-15; yt= 15;
 np= 35;
 [x,y] = meshgrid( linspace(xr,xl,np), linspace(yb,yt,61) );

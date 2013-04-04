@@ -15,7 +15,7 @@ function img= mk_image_anisotropy(mdl, elem_data, name)
 %  img = mk_image( other_image, 2 ) -> image with c=2
 
 % (C) 2008-10 Andy Adler. Licenced under GPL version 2 or 3
-% $Id: mk_image.m 3095 2012-06-08 13:37:44Z aadler $
+% $Id$
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 

@@ -1,5 +1,7 @@
 ############## post 3.7 ################3
 
+ - colourbar - put some logic to allow labels like 1.5 as max
+    (instead of 1,2,3 etc)
 
  - fix the example tutorial
         EIDORS_basics/example_abs_GN_compare_3D.m
@@ -58,13 +60,6 @@
  - move to some type of bugzilla version management.
 
 3.7
- - new physics -BG
-    + docs for mk_image
-    + accessor functions for elem_data (and new physics)
-
- - mk_image to create node_data - BG
-
- + fix anisotropy -> show_fem to display check -AA
 
  - Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
@@ -73,11 +68,34 @@
      -  EIDORS_basics/example_abs_GN_compare_3D.m
 
  - ng on windows (incl ng.opt interface) - test ng5
+
+ - c2f - think about how to work on NOSER -AA
+    - what if we send fwd to the prior calculation?
+          (img.orig_fwd_model)
+       - provide some new options for abs solvers
+   - add a parameter_mapping interface
+
+ - debug caching for netgen models
+    - example is show_pseudosection UNIT_TEST
+
+
+ + in show_pseudosection
+     - fmdl.show_pseudosection.orientation = field
+
+ - set properties properly
+
+ + mk_image to create node_data - BG
+
+ + new physics -BG
+    + docs for mk_image
+    + accessor functions for elem_data (and new physics)
  
- - colorbar -BG(start)
+ + fix anisotropy -> show_fem to display check -AA
+
+ + colorbar -BG(start)
     + code in move_2d02 and eidors_colourbar - DONE
-        - need to have option to put colorbar outside 
-    - check every use of cb_shrink_move in tutorials 
+        + need to have option to put colorbar outside 
+    + check every use of cb_shrink_move in tutorials 
      +  adv_image_reconst/move_2d02.m
      +  data_structures/eidors_colours02.m
      +  data_structures/eidors_colours03.m
@@ -99,20 +117,9 @@
      +  EIDORS_basics/rpi_data05.m
      +  EIDORS_basics/rpi_data06.m
      +  EIDORS_basics/sensitivity_map01.m
-        netgen/netgen_sims02.m
-   
- - c2f - think about how to work on NOSER -AA
-    - what if we send fwd to the prior calculation?
-          (img.orig_fwd_model)
-       - provide some new options for abs solvers
-   - add a parameter_mapping interface
+     +  netgen/netgen_sims02.m
 
-
- - in show_pseudosection
-     - fmdl.show_pseudosection.orientation = field
-
-TESTS:
- - test new png on windows
+ + test new png on windows
 
 ANNOUNCE:
  - new phyics

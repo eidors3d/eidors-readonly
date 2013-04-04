@@ -1,5 +1,5 @@
 % Forward Model of a cylindrical object
-% Create 3D model of a tunnel $Id: tunnelsim01.m 2356 2010-11-08 08:41:42Z aadler $
+% Create 3D model of a tunnel $Id$
 n_elec = 32;
 shape_str = ['solid incyl  = cylinder (0,0,0; 1,0,0; 1) -maxh=1.0; \n', ...
     'solid farcyl = cylinder (0,0,0; 1,0,0; 5) -maxh=5.0; \n' ...
