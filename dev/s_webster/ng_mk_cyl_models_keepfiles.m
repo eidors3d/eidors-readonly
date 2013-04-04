@@ -94,7 +94,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models_keepfiles(cyl_shape, elec_pos, ...
 %   img.elem_data = 1 + 0.1*(ctr<0.2^2);
 
 % (C) Andy Adler, 2009. Licenced under GPL v2 or v3
-% $Id: ng_mk_cyl_models.m 3592 2012-09-25 16:11:07Z aadler $
+% $Id$
 
 if isstr(cyl_shape) && strcmp(cyl_shape,'UNIT_TEST'); do_unit_test; return; end
 

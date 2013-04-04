@@ -10,7 +10,7 @@ function J= jacobian_adjoint_higher_order_anisotropy_perturb( fwd_model, img)
 % img = image background for jacobian calc
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
-% $Id: jacobian_perturb.m 3326 2012-07-01 18:09:20Z bgrychtol $
+% $Id$
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return;end
 
@@ -61,7 +61,7 @@ function Jcol= perturb( img, i, a, b, delta, d0)
 %{
 function do_unit_test
 % Perturbation Jacobians
-% $Id: jacobian_perturb.m 3326 2012-07-01 18:09:20Z bgrychtol $
+% $Id$
 
 % imdl= mk_common_model('c2c2',16);
   imdl= mk_common_model('a3cr',16);

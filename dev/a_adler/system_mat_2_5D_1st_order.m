@@ -12,7 +12,7 @@ function s_mat= system_mat_2_5D_1st_order( fwd_model, img)
 %   fwd_model.system_mat_2_5D_1st_order.k
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: aa_calc_system_mat.m,v 1.5 2006/03/15 21:54:20 aadler Exp $
+% $Id$
 
 p= fwd_model_parameters( fwd_model );
 
