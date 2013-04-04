@@ -6,7 +6,7 @@ select_fcn = inline('(x-0.2).^2 + (y-0.5).^2 + (z-2).^2 < 0.3^2','x','y','z');
 memb_frac = elem_select( img1.fwd_model, select_fcn);
 img2 = mk_image(img1, 1 + memb_frac );
 
-img2.calc_colours.cb_shrink_move = [0.3,0.6, 0];
-show_fem(img2,1);
+img2.calc_colours.cb_shrink_move = [0.3,0.6,0.02];
+show_fem(img2,1); axis tight;
 
 print_convert('basic_3d_02a.png','-density 60');
