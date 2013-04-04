@@ -6,6 +6,25 @@ ideas for enhancements to the
 EIDORS package.
 
 <p><li> <b>
+   4 April 2013
+</b><br>
+<b>Plans: EIDORS workshop 20&minus;21 April 2013</b>
+The following topics have been requested for the workshop
+<ul>
+<LI>
+ constrained inverse problem for difference measurement
+
+<LI>
+ choosing appropriate regularization and computing hyperparameter value based on L-curve
+
+<LI>
+absolute solvers 
+
+<LI>
+an overview of all the available functions and data structures in EIDORS.
+</ul>
+
+<p><li> <b>
    28 February 2013
 </b><br>
 <b>Announcing: EIDORS workshop 20&minus;21 April 2013</b>
