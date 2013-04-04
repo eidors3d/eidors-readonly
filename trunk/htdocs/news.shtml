@@ -5,6 +5,8 @@ This page is a list of updates, discussions, and
 ideas for enhancements to the
 EIDORS package.
 
+<ul>
+
 <p><li> <b>
    4 April 2013
 </b><br>
@@ -133,7 +135,6 @@ Priorities for the workshop were:
 5) place_elec_on_surf
 6) move normalize_measurements from fwd_model to inv_model gracefully. Take care of calc_difference_data
 
-<ul>
 <p><li> <b>
    18 November 2012:
 </b><br>
