@@ -33,7 +33,7 @@ pause off
 
 % a little consistency would have been nice!
 global tut_dlm;
-if strcmp(computer,'PCWIN') || if strcmp(computer,'PCWIN64')
+if strcmp(computer,'PCWIN') || strcmp(computer,'PCWIN64')
     tut_dlm = ';';
 else
     tut_dlm = ':';
@@ -67,7 +67,7 @@ while ~isempty(d)
         tutname(end-2) = '*'; % assume tutorials differ by one char
         T = dir(tutname);
         while length(T) > 0
-            eidors_colours('defaults');
+            calc_colours('defaults');
             if length(T(1).name)>length(tutname)+1 % allow some leeway
                 T(1) = [];
                 continue
