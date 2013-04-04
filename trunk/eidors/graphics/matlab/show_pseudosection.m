@@ -4,11 +4,14 @@ function fwd_model= show_pseudosection( fwd_model, data)
 % OPTIONS:
 %   fwd_model - fwd model of the domain
 %   data      - data to display
-%   orientation - orientation of the pseudo-section
-%      orientation = 'profile': show section in +z direction from 
-%         the electrode plane
-%      orientation = 'gallery': show section in gallery outside electrode plane
-%      orientation (other options not yet available)
+%
+% OPTIONS:
+% fwd_model.show_pseudosection.orientation - of the pseudo-section
+%      orientation = 'horizontaldownward': section in +z direction from 
+%         the electrode plane (default)
+%      orientation = 'circularoutside': gallery outside electrode plane
+%      orientation = 'vertical'
+%      orientation = 'circularinside'
 
 % (C) 2005-2008 Nolwenn Lesparre. License: GPL version 2 or version 3
 % $Id$
@@ -23,7 +26,11 @@ else
     fwd_model.misc.sizepoint= 50;
 end
 
-orientation= fwd_model.show_pseudosection.orientation;
+try
+   orientation= fwd_model.show_pseudosection.orientation;
+catch
+   orientation = 'horizontaldownward';
+end
 
 if iscell(orientation) 
     if strcmp(orientation{2},'yz')
@@ -76,7 +83,7 @@ function [a,xps]= plotPseudoSectionProfileDown(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');
+   scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');
    xlabel('Distance (m)','fontsize',fs,'fontname','Times');
    ylabel('Pseudo-depth (m)','fontsize',fs,'fontname','Times')
     axis equal; axis tight;
@@ -114,7 +121,7 @@ function [a,zps]= plotPseudoSectionProfileVert(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k'); 
+   scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k'); 
    xlabel('Pseudo distance (m)','fontsize',fs,'fontname','Times');
    if zps(1)<0
        ylabel('Depth (m)','fontsize',fs,'fontname','Times')
@@ -144,7 +151,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  
+scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
@@ -169,7 +176,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-figure;scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
+scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
@@ -260,6 +267,15 @@ I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
 img = mk_image(fmdl,0+ mk_c2f_circ_mapping(fmdl,[100;-50;0;50])*100);
 img.elem_data(img.elem_data==0)= 0.1;
 dd  = fwd_solve(img);
-show_pseudosection( fmdl, I*dd.meas, '')
+subplot(221);
+show_pseudosection( fmdl, I*dd.meas )
+
+subplot(222);
+fmdl.show_pseudosection.orientation = 'horizontaldownward';
+show_pseudosection( fmdl, I*dd.meas )
+
+subplot(223);
+fmdl.show_pseudosection.orientation = 'vertical';
+show_pseudosection( fmdl, I*dd.meas )
 
 end
