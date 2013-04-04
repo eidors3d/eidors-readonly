@@ -5,11 +5,104 @@ This page is a list of updates, discussions, and
 ideas for enhancements to the
 EIDORS package.
 
+<p><li> <b>
+   28 February 2013
+</b><br>
+<b>Announcing: EIDORS workshop 20&minus;21 April 2013</b>
+<br>
+<table border=1><tr><td>
+<b>EIDORS Masterclass + tutorial session</b>
+<p>
+
+For those interested in learning more about
+<a href="http://www.eidors.org">EIDORS</a>, we will be offering an
+EIDORS masterclass during the weekend before the opening of the
+<a href="http://www.icebi-conference.org/">ICEBI/EIT</a>
+conference.
+<p>
+
+Activities:
+<ul>
+
+<li>
+      Tutorials on EIDORS software
+<li>
+      Help implementing and debugging EIDORS-based EIT analysis
+<li>
+      You can request specific topics of interest on the registration form (see below), which we will try to accommodate.
+</ul>
+
+Logistics:
+<ul>
+<li>
+    Date: 20-21 April 2013
+<br>&nbsp;&minus; 20 April: EIDORS Tutorial Session
+<br>&nbsp;&minus; 21 April: EIDORS Masterclass
+<li>
+    Time: 8h30 - 16h30
+<li>
+    Location: University of G&ouml;ttingen, <a href=
+   "http://www.uni-goettingen.de/en/164816.html"
+    >Institute of Computer Science</a>, Rooms -1.110 and -1.111
+<li>
+    Meeting point: 8h00, Main entrance to the <a href=
+     "http://www.med.uni-goettingen.de/en/content/service/2985.html"
+     >University Medical Center</a>
+<li>
+    Cost: The workshop is free to attend thanks to our sponsors
+<li>
+    Accommodation: None provided, but one conveniently located
+       hotel is <a href=
+   "http://www.med.uni-goettingen.de/en/content/service/2985.html"
+       >Am Papenberg</a>
+<li>
+    Registration is mandatory (<a href=
+"https://docs.google.com/forms/d/1WFKpQifnly0UGHIquDc8lHBHhPu9PlGPx-SKTLYfFzU/viewform">
+   REGISTER HERE</a>)
+</ul>
+
+Important dates:
+
+<ul>
+<li>
+    Register by: 1 April (<a href=
+"https://docs.google.com/forms/d/1WFKpQifnly0UGHIquDc8lHBHhPu9PlGPx-SKTLYfFzU/viewform">
+   REGISTER HERE</a>)
+<li>
+    Suggest topics: 1 April
+<li>
+    Final program: 15 April
+</ul>
+
+Organizers:
+
+<ul>
+<li>
+    Andy Adler, Carleton University
+<li>
+   Bart&#0322;omiej Grychtol, German Cancer Research Center
+<li>
+    G&uuml;nter Hahn, University of G&ouml;ttingen
+<li>
+    Bill Lionheart, University of Manchester
+<ul>
+
+Sponsors:
+
+<ul>
+<li>
+    University of G&ouml;ttingen
+<li>
+    Swisstom AG
+</ul>
+
+</table>
+
 
 <p><li> <b>
    17&minus;20 November 2012:
 </b><br>
-<b>EIDORS code-a-thon</b>
+<b>EIDORS code-a-thon<a name="workshop2013"></a></b>
 <br>
 Several EIDORS developers got together in Manchester, UK to
 work on adding new features and squashing old bugs. 

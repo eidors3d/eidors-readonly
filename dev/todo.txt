@@ -1,4 +1,4 @@
-post 3.7
+############## post 3.7 ################3
 
  - Bug with 'trig' measurement patterns
 
@@ -9,12 +9,15 @@ post 3.7
  - fix jacobian_elem2nodes
     - test behaviour for simple elec sensitivity models
 
+ - tutorial on mk_image including nodal images
+
  - test_2d_resistor
     - why fwd_solve_1st_order: 249.294837 Solver analytic: 249.745561
     - put into a proper test function as UNIT_TEST
 
  - update GREIT tutorials to give recommendations to make it pretty
     - do this as part of a paper
+    - Make sure default GREIT is pretty
 
  - Deprecate jacobian.background.value ->
  +            jacobian.background.elem_data (and new physics)
@@ -25,43 +28,47 @@ post 3.7
 
  - clean up the whole c2f and parameter_mapping 
     - fix tutorials
+    - handle complex non-linear parameter maps
 
  - create tutorial for  place_elec_on_surf
 
  - need to completely avoid matlab's colourbar - DEFER to 3.8
-
- - add more colourbar tutorials, to show background colour features.
+    - add more colourbar tutorials, to show background colour features.
 
  - fix tutorials:
           distmesh/dm_geophys.shtml
 
  - refactor out the mdl2d_from3d from various ng_mk function
 
+ - Mods to show_slices to only show part of the slice
+
+ - Add a tutorial to show how to do pairs of electrodes
+    for injection patterns
+
+ - add option to show_fem to display electrodes that
+       come from another model (is the fine model)
+     (or create a function to do this)
+
+ - data_contrib - add slow flow inflation (Pulletz 2012) data
+
+ - move to some type of bugzilla version management.
+
 3.7
  - new physics -BG
     + docs for mk_image
     + accessor functions for elem_data (and new physics)
 
- + fix anisotropy -> check -AA
+ - mk_image to create node_data - BG
 
- + fix and restore warning state EIDORS:DeprecatedInterface
+ + fix anisotropy -> show_fem to display check -AA
 
- + Make sure default GREIT is pretty -BG
+ - Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
-
- + calc_meas_icov -> choose good value for normalized solvers - DONE
-     - why is is homg^2 rather than inv(homg)^2 - tested
-     - maybe just abs(homg) is better and less sensitive
-
- + fix calc_jacobian_test - DONE
-     -> line 108
-
- + move place_elec_on_surf into main
-
- + pixel grid interface function
 
  - fix and test:
      -  EIDORS_basics/example_abs_GN_compare_3D.m
+
+ - ng on windows (incl ng.opt interface) - test ng5
  
  - colorbar -BG(start)
     + code in move_2d02 and eidors_colourbar - DONE
@@ -107,39 +114,36 @@ ANNOUNCE:
  - new phyics
  - anisotropy for fwd_model
  - opt file
-===================
-POST 3.7
 
-+Create helper function spdiag
+########### DONE FOR 3.7 ############
+ + fix and restore warning state EIDORS:DeprecatedInterface
 
--Mods to show_slices to only
-   show part of the slice
+ + calc_meas_icov -> choose good value for normalized solvers - DONE
+     - why is is homg^2 rather than inv(homg)^2 - tested
+     - maybe just abs(homg) is better and less sensitive
 
-- Make functions
-    mk_fwd_model
-    mk_inv_model
-  that do useful stuff like
-    normalize_measurements = 0;
+ + fix calc_jacobian_test - DONE
+     -> line 108
 
--. Add a tutorial to show how to do pairs of electrodes
-    for injection patterns
+ + move place_elec_on_surf into main
+
+ + pixel grid interface function
+
+ + Create helper function spdiag
+
+ + Make functions - WON'T DO
+     mk_fwd_model
+     mk_inv_model
+   that do useful stuff like
+     normalize_measurements = 0;
+
+ + calc_meas_icov -> choose good value for normalized solvers
+     - why is is homg^2 rather than inv(homg)^2
+     - maybe just abs(homg) is better and less sensitive
+     - fix calc_jacobian_test
 
 
--. Make sure default GREIT is pretty
-
--. calc_meas_icov -> choose good value for normalized solvers
-    - why is is homg^2 rather than inv(homg)^2
-    - maybe just abs(homg) is better and less sensitive
-    - fix calc_jacobian_test
-
-- colorbar
-   - code in move_2d02 and eidors_colourbar
-   - need to completely avoid matlab's colourbar
-
-- add option to show_fem to display electrodes that
-    come from another model (is the fine model)
-  (or create a function to do this)
-
+################################ HISTORY ######################
 + mk_image assumes values on elems. THink about how
     to create node images. New function?
 -------------
@@ -147,10 +151,10 @@ Lower priority items
 3 - colourbar
 8 - ng.opt interface
 6 - data from
-  - patient 7
-  - dargaville (2010)
+  - patient 7 - DONE
+  - dargaville (2010) - DONE
   - Slow flow inflation (Pulletz 2012)
-4 - GREIT electrode errors
+4 - GREIT electrode errors - DONE
 3 - Bill's analytic c2f mapper
 9 - 2D Netgen + elecs
 9 - Automate c2f and include parameterization options
