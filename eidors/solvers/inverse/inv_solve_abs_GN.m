@@ -159,8 +159,9 @@ function opt = parse_options(imdl)
    end
    
    opt.max_iter = 1;
+
    try
-      opt.max_iter = imdl.parameters.max_iter;
+      opt.max_iter = imdl.parameters.max_iterations;
    end
    
    if isfield(imdl, 'inv_solve_abs_GN');
