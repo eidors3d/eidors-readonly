@@ -159,7 +159,8 @@ function mdl = prepare_model( mdl )
     end
 
 function check_physics_handling(inv_model,imgc)
-if has_physics(inv_model.jacobian_bkgnd) && ~has_physics(imgc)
+if isfield(inv_model, 'jaocbian_bkgnd') && ... 
+    has_physics(inv_model.jacobian_bkgnd) && ~has_physics(imgc)
    if isa(inv_model.solve,'function_handle')
       solver = func2str(inv_model.solve);
    else
