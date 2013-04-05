@@ -88,9 +88,10 @@ while ~isempty(d)
             lastwarn('');
             save tmp
             try
-                evalin('base',evalc(name));
+              evalin('base',sprintf('evalc(''%s'');',name));
+%                 evalc(['evalin(''base'',''' name ''')'])
                 if ~isempty(lastwarn)
-                    fprintf(' WARNING(S)\n');
+                    fprintf(' WARNING(S) = (%s)\n',lastwarn);
                     warnings{w_count,1} = T(1).name;
                     warnings{w_count,1} = d;
                     w_count = w_count+1;
