@@ -214,6 +214,8 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
          [red,grn,blu] = black_red_colours(pp,scale_data);
      case 'blue_black_red'
          [red,grn,blu] = blue_black_red_colours(pp,scale_data);
+     case 'polar_colours'
+         [red,grn,blu] = polar_blue_white_red_colours(pp,scale_data);
 
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
@@ -372,6 +374,28 @@ function [red,grn,blu] = blue_black_red_colours(pp,scale_data);
    red = [flipud(cc(:,1));zeros(128,1)];
    grn = zeros(256,1);
    blu = [zeros(128,1);cc(:,1)];
+
+% Ideas for this colourmap, and a few lines of code are from
+% (C) 2011, Francois Beauducel, IPGP in polarmap.m
+function [red,grn,blu] = polar_blue_white_red_colours(pp,scale_data);
+   n = 256; % FIXME let user select
+
+   clim=.5
+   ind=1;
+   r = repmat(abs(linspace(1,-1,n)).^ind,[3,1])';
+
+   if mod(n,2)
+           z = [0,0,0];
+           n2 = floor(n/2);
+   else
+           z = zeros([0,3]);
+           n2 = n/2;
+   end
+   map = [repmat([0,0,1],[n2,1]);z;repmat([1,0,0],[n2,1])];
+   map = map.*r + 1 - r;
+   red = map(:,1);
+   grn = map(:,2);
+   blu = map(:,3);
 
 
 function pp=get_colours( img );
