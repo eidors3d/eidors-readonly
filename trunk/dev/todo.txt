@@ -60,6 +60,8 @@
  - move to some type of bugzilla version management.
 
 3.7
+ - fix calc_colours to it takes non 256 colours (in CG's code) and 
+     fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml     
 
  - Make sure default GREIT is pretty -BG
     - rerun GREITv1 performance metrics with new GREIT cylinder
