@@ -82,7 +82,7 @@
  + in show_pseudosection
      - fmdl.show_pseudosection.orientation = field
 
- - set properties properly
+ + set properties properly
 
  + mk_image to create node_data - BG
 
