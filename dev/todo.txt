@@ -60,6 +60,16 @@
  - move to some type of bugzilla version management.
 
 3.7
+ - tutorial_tests errors
+     - framework05
+     - tutorial210d - physics error
+     - stimPatt_PseudoSec02 ERROR = (Error using show_pseudosection
+     - cg_ards_recruitment_00 ERROR = (Error using checkfilename>validateFilename (line 182)
+     - dm_geophys03 - Warning: normalize_measurements
+     - thoraxmdl02 - ng_remove_electrodes
+     - thoraxmdl03 - mdl_normalize
+     - eidors_toast_demo1 - toastMakeMesh - Add documentation
+
  - fix calc_colours to it takes non 256 colours (in CG's code) and 
      fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml     
 
