@@ -55,7 +55,7 @@ W   = calc_meas_icov( inv_model );
 hp2RtR= hp*RtR;
 
 iters = 1;
-try 
+if isfield(inv_model.parameters,'max_iterations')
    iters = inv_model.parameters.max_iterations; 
 end
 
@@ -84,7 +84,21 @@ for k = 1:iters
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
         J= J(:,1:nc-1);
     end
-
+%     Jsum= sum(abs(J),1);
+%     Jmax= max(J); Jmax= (Jmax+abs(min(Jmax)));
+%     Jmax(Jmax== 0)= 1e-4;
+%     figure; hist(log10(Jmax))
+%     figure; hist(Jsum);
+%     img2= img; img2.fwd_model= inv_model.rec_model;
+%     img2.elem_data= Jsum;
+%     img2.calc_colours.clim= 25;
+%     img2.calc_colours.ref_level= 25;
+%     figure; show_fem(img2,3)
+%     img2.elem_data= log10(Jmax);
+%     img2.calc_colours.clim= 2;
+%     img2.calc_colours.ref_level= -1;
+%     figure; show_fem(img2,3)
+%     
     if isfield(img.parameters,'fixed_background') && img.parameters.fixed_background==1
         RDx = hp2RtR*(img0.logCond(1:end-1) - img.logCond(1:end-1));
     else
@@ -168,13 +182,13 @@ else
       end
 end
 
-% figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
-% semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
-% xlabel('alpha','fontsize',20,'fontname','Times')
-% ylabel('Normalized residuals','fontsize',20,'fontname','Times')
-% title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
-%     ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
-% set(gca,'fontsize',20,'fontname','Times'); drawnow;
+figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
+semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
+xlabel('alpha','fontsize',20,'fontname','Times')
+ylabel('Normalized residuals','fontsize',20,'fontname','Times')
+title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
+    ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
+set(gca,'fontsize',20,'fontname','Times'); drawnow;
 
 % Record the corresponding parameters
 img.elem_data= exp(img.logCond);

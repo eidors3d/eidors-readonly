@@ -18,12 +18,14 @@ function fwd_model= show_pseudosection( fwd_model, data)
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end 
 
+if ~isfield(fwd_model.misc,'sizepoint') 
 if size(fwd_model.electrode,2) <= 16
     fwd_model.misc.sizepoint= 500;
 elseif size(fwd_model.electrode,2) <= 32
     fwd_model.misc.sizepoint= 200;
 else
     fwd_model.misc.sizepoint= 50;
+end
 end
 
 try
@@ -163,7 +165,7 @@ function [r_point,th_point]= plotPseudoSectionCircularOut(fmdl,data)
 fs= 20;
 [elec_posn,elecNumber] = electrodesPosition(fmdl);
 [r_point,th_point,r] = polarPosition(elecNumber,elec_posn);
-
+r_point= (r+r_point);
 [x_point,y_point]= pol2cart(th_point,r_point+r);
 
 P= x_point+1i*y_point;
