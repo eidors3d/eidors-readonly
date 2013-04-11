@@ -26,6 +26,9 @@ function img = physics_data_mapper(img, reverse)
 %  img.physics_data_mapper = 'some_function_that_takes_an_image';
 %  img = physics_data_mapper(img);
 %
+% KNOWN ISSUES:
+%   - doesn't fully support image arrays
+%
 % See also: MK_IMAGE, SUPPORTED_PHYSICS
 
 % (C) 2012 Bartlomiej Grychtol. 
@@ -59,7 +62,7 @@ switch sum(phys)
          error('No physics, elem_data or node_data found on img');
       else
          eidors_msg('@@@ No physics present on img. Assuming conductivity',3);
-         img.current_physics = 'conductivity';
+         img = setfield(img,{},'current_physics', 'conductivity');
       end
       return      % returns img
    case 1
