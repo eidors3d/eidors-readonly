@@ -132,38 +132,27 @@ switch str
         
         
     case 'neonate_16el'
-        out = mk_library_model({'neonate','boundary'},[16 1 0.5],0.1,0.08,49);
+        out = mk_library_model({'neonate','boundary'},[16 1 0.5],[0.1 0 -1 0 60],0.08,49);
     case 'neonate_32el'
-        out = mk_library_model({'neonate','boundary'},[32 1 0.5],0.07,0.08,49);
+        out = mk_library_model({'neonate','boundary'},[32 1 0.5],[0.06 0 -1 0 60],0.08,49);
     case 'neonate_16el_lungs'
-        out = mk_library_model({'neonate','boundary','left_lung','right_lung'},[16 1 0.5],0.1,0.08,49);
+        out = mk_library_model({'neonate','boundary','left_lung','right_lung'},[16 1 0.5],[0.1 0 -1 0 60],0.08,49);
     case 'neonate_32el_lungs'
-        out = mk_library_model({'neonate','boundary','left_lung','right_lung'},[32 1 0.5],0.07,0.08,49);
+        out = mk_library_model({'neonate','boundary','left_lung','right_lung'},[32 1 0.5],[0.06 0 -1 0 60],0.08,49);
         
     case 'pig_23kg_16el'
         out = mk_library_model({'pig_23kg','boundary'},...
-            [16 1 0.5],[0.05],0.08);
+            [16 1 0.5],[0.05 0 -1 0 60],0.08);
     case 'pig_23kg_32el'
         out = mk_library_model({'pig_23kg','boundary'},...
-            [32 1 0.5],[0.05],0.08);
+            [32 1 0.5],[0.05 0 -1 0 60],0.08);
     case 'pig_23kg_16el_lungs'
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [16 1 0.5],[0.05],0.08);
+            [16 1 0.5],[0.05 0 -1 0 60],0.08);
     case 'pig_23kg_32el_lungs'
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [32 1 0.5],[0.05],0.08);    
-    case 'pig_23kg_16el'
-        out = mk_library_model({'pig_23kg','boundary'},...
-            [16 1 0.5],[0.05],0.08);
-    case 'pig_23kg_32el'
-        out = mk_library_model({'pig_23kg','boundary'},...
-            [32 1 0.5],[0.05],0.08);
-    case 'pig_23kg_16el_lungs'
-        out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [16 1 0.5],[0.05],0.08);
-    case 'pig_23kg_32el_lungs'
-        out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
-            [32 1 0.5],[0.05],0.08);
+            [32 1 0.5],[0.05 0 -1 0 60],0.08);    
+
     otherwise
         error('No such model');
 end
@@ -239,5 +228,5 @@ for i = 1:numel(models)
 end
 
 
-out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},[32 1 0.5],[0.05],0.08);
+out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},[32 1 0.5],[0.05 0 -1 0 60],0.08);
 
