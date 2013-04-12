@@ -40,10 +40,9 @@ maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
 
 th=  r*4321; % want object to jump around in radius
 xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); ctr(3)*ones(1,Nsim); 
-        0.05/mean([maxx,maxy])*ones(1, Nsim)];
+        0.050*mean([maxx,maxy])*ones(1, Nsim)];
 
 [vh,vi] = simulate_movement(imgs, xyzr);
-
 for i= 1:length(imdls);
    imgr = inv_solve(imdls{i}, vh, vi);
    imgr.calc_colours.npoints = 64;
@@ -58,13 +57,13 @@ for j=1:Nparams;
    for i= 1:length(params);
       p = [p, params{i}(j,:)'];
    end
-
+   m = mean([maxx,maxy]);
 %   subplot(5,1,j);
    hig = 0.95/Nparams;
    axes('position',[0.1,0.05 + hig*(Nparams-j),.88, hig]);
    plot(r, p);
    if j==1;     axis([0,0.9,0,2.1]);        ylabel('AR');
-   elseif j==2; axis([0,0.9,-0.16,0.16]);   ylabel('PE');
+   elseif j==2; axis([0,0.9,-0.16*m,0.16*m]);   ylabel('PE');
    elseif j==3; axis([0,0.9,0,0.41]);       ylabel('RES');
    elseif j==4; axis([0,0.9,0,0.31]);       ylabel('SD');
    elseif j==5; axis([0,0.9,0,0.61]);       ylabel('RNG');

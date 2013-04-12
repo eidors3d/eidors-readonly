@@ -274,10 +274,10 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            th = r*4321; % want object to jump around in radius
            xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); 
                opt.target_plane*ones(1,Nsim);
-               0.05/mean([maxx,maxy])*ones(1,Nsim)];
+               0.05*mean([maxx,maxy])*ones(1,Nsim)];
        
        case 1 %centre-heavy
-           F = fourier_fit(opt.contour_boundary);
+           F = fourier_fit(opt.contour_boundary(:,1:2));
            v = linspace(0,1,Nsim*100+1); v(end)=[];
            pts = fourier_fit(F,v);
            idx_p = floor(rand(Nsim,1)*Nsim*100);
@@ -287,7 +287,7 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 2 %uniform
-           F = fourier_fit(opt.contour_boundary);
+           F = fourier_fit(opt.contour_boundary(:,1:2));
            v = linspace(0,1,101); v(end)=[];
            pts = fourier_fit(F,v);
            % avoid edges 
@@ -471,6 +471,10 @@ function opt = parse_options(opt,fmdl,imdl);
     
 
 function do_unit_test
+
+do_performance_test; 
+% return;
+figure
 % Create a 3D elliptical cylinder with 16 circular electrodes 
 fmdl_1= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]); %show_fem(fmdl);
 % Put two balls into the elliptical cylinder
@@ -539,3 +543,23 @@ imdl = mk_GREIT_model(fmdl2,0.25,3,opt);
 img = inv_solve(imdl,vh, vi);
 figure
 show_slices(img);
+
+
+function do_performance_testto musisz tak sformulowac obowiazki zeb
+% Reconstruct GREIT Images
+imdl_v1 = mk_common_gridmdl('GREITc1');
+
+% Reconstruct backprojection Images
+imdl_bp = mk_common_gridmdl('backproj');
+
+% Recosntruct with new GREIT
+% fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 
+fmdl = mk_library_model('cylinder_16x1el_fine');
+fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
+opt.noise_figure = 0.88;
+opt.target_size = 0.1;
+opt.distr = 0;
+imdl_gr = mk_GREIT_model(fmdl, 0.2, [], opt);
+ 
+
+test_performance( { imdl_v1, imdl_gr},fmdl );
