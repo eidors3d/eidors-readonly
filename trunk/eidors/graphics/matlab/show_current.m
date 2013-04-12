@@ -107,7 +107,9 @@ quiv.yc = yc;
 if dims==3
    quiv.zc = zc; 
 end
-quiver(xp,yp,xc,yc,2,'k');
+if nargout == 0
+   quiver(xp,yp,xc,yc,2,'k');
+end
 
 function vv = fix_dim(vv)
     if size(vv,1) == 1
