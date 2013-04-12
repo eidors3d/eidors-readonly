@@ -1,13 +1,13 @@
-load CT1.mat
-img = flipdim(imread('thorax-mdl.jpg'),1); %Keep up direction
-imagesc(img);
-colormap(gray(256)); set(gca,'YDir','normal');
+% get contours
+thorax = shape_library('get','adult_male','boundary');
+rlung  = shape_library('get','adult_male','right_lung');
+llung  = shape_library('get','adult_male','left_lung');
+% one could also run:
+% shape_library('get','adult_male');
+% to get all the info at once in a struct
 
-hold on;
-plot(thorax(:,1),thorax(:,2),'b','LineWidth',2);
-plot(rlung(:,1),rlung(:,2),'b','LineWidth',2);
-plot(llung(:,1),llung(:,2),'b','LineWidth',2);
-hold off
-
-subplot(221); axis off; axis equal
+% show the library image
+shape_library('show','adult_male');
 print_convert thoraxmdl01a.jpg
+
+
