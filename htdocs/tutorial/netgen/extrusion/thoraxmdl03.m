@@ -9,5 +9,6 @@ img_v.node_data = vh.volt(:,1);
 img_v.calc_colours.npoints = 128;
 
 subplot(221);
-show_slices(img_v,[inf,inf,1.0]); axis off; axis equal
+show_slices(img_v,[inf,inf,0.5]); axis off; axis equal
 print_convert thoraxmdl03a.jpg
+% 

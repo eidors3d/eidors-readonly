@@ -32,7 +32,7 @@ The image is available
 <!--#include virtual="thoraxmdl01.m" -->
 </pre>
 <center>
-<a href="thorax-mdl.jpg"><img width="256" src="thorax-mdl.jpg"></a> <img src="thoraxmdl01a.jpg">
+<img src="thoraxmdl01a.jpg">
 </center>
 
 
@@ -74,7 +74,7 @@ Current streamlines and the original image
 <center>
 <img src="thoraxmdl05a.jpg">
 <br>
-Stream lines through <i>z</i>= 1.0.
+Stream lines through <i>z</i>= 0.5.
 
 The path of the streamslines is limited by the density of the underlying FEM.
 With a finer mesh FEM, it would be possible to calculate streamlines that
@@ -91,7 +91,7 @@ Add Equipotential lines to the original image
 <center>
 <img src="thoraxmdl06a.jpg">
 <br>
-Stream lines and equipotiential through <i>z</i>= 1.0.
+Stream lines and equipotiential through <i>z</i>= 0.5.
 </center>
 
 
