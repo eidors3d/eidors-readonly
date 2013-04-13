@@ -16,6 +16,7 @@ for i= 1:n_sims;
 
    tmdl= dm_mk_fwd_model( fd, [], n_nodes, bbox, elec_nodes, trg_refine_nodes, z_contact);
    tmdl.stimulation = stim_pat;
+   tmdl = mdl_normalize(tmdl,0);
 
    % find elements in size target
    mdl_pts = interp_mesh( tmdl );

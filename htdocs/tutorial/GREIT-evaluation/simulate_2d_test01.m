@@ -16,4 +16,5 @@ elec_posn= [sin(th),cos(th)];
 % Define circular medium
 fd=inline('sum(p.^2,2)-1','p');
 bbox = [-1,-1;1,1];
-smdl= dm_mk_fwd_model( fd, [], n_nodes, bbox, elec_nodes, refine_nodes, z_contact);
+smdl = dm_mk_fwd_model( fd, [], n_nodes, bbox, elec_nodes, refine_nodes, z_contact);
+smdl = mdl_normalize(smdl,0); 
