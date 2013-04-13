@@ -1,7 +1,7 @@
 % Create simulation data $Id$
 
 % 3D Model
-imdl_3d= mk_common_model('n3r2',16);
+imdl_3d= mk_common_model('n3r2',[16,2]);
 show_fem(imdl_3d.fwd_model);
 
 sim_img= mk_image( imdl_3d.fwd_model, 1);
