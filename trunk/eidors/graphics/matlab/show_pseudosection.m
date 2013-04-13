@@ -18,22 +18,10 @@ function fwd_model= show_pseudosection( fwd_model, data)
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end 
 
-if ~isfield(fwd_model.misc,'sizepoint') 
-if size(fwd_model.electrode,2) <= 16
-    fwd_model.misc.sizepoint= 500;
-elseif size(fwd_model.electrode,2) <= 32
-    fwd_model.misc.sizepoint= 200;
-else
-    fwd_model.misc.sizepoint= 50;
-end
-end
 
-try
-   orientation= fwd_model.show_pseudosection.orientation;
-catch
-   orientation = 'horizontaldownward';
-end
+fwd_model = process_options(fwd_model);
 
+orientation = fwd_model.show_pseudosection.orientation;
 if iscell(orientation) 
     if strcmp(orientation{2},'yz')
     fwd_model.nodes= fwd_model.nodes(:,[2 3 1]);
@@ -51,11 +39,34 @@ switch(upper(orientation))
   otherwise;
     error('No orientation of type "%s" available', upper(orientation));
 end
+colormap('jet'); colorbar;
 
 fwd_model.show_pseudosection.depth= depth;
 fwd_model.show_pseudosection.location= location;
 
 end
+
+function fwd_model = process_options(fwd_model)
+try
+    fwd_model.show_pseudosection.point_size;
+catch
+    if size(fwd_model.electrode,2) <= 16
+        fwd_model.show_pseudosection.point_size= 500;
+    elseif size(fwd_model.electrode,2) <= 32
+        fwd_model.show_pseudosection.point_size= 200;
+    else
+        fwd_model.show_pseudosection.point_size= 50;
+    end
+end
+
+try
+    fwd_model.show_pseudosection.orientation;
+catch
+    fwd_model.show_pseudosection.orientation = 'horizontaldownward';
+end
+end
+
+
 
 function [a,xps]= plotPseudoSectionProfileDown(fmdl,data)
    fs= 20;
@@ -85,7 +96,7 @@ function [a,xps]= plotPseudoSectionProfileDown(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');
+   scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');
    xlabel('Distance (m)','fontsize',fs,'fontname','Times');
    ylabel('Pseudo-depth (m)','fontsize',fs,'fontname','Times')
     axis equal; axis tight;
@@ -123,7 +134,7 @@ function [a,zps]= plotPseudoSectionProfileVert(fmdl,data)
        du(i)= mean(data(ju==i));
    end
    
-   scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k'); 
+   scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k'); 
    xlabel('Pseudo distance (m)','fontsize',fs,'fontname','Times');
    if zps(1)<0
        ylabel('Depth (m)','fontsize',fs,'fontname','Times')
@@ -153,7 +164,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  
+scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');  
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
@@ -178,7 +189,7 @@ for i= 1:length(Pu)
     du(i)= mean(data(ju==i));
 end
    
-scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  colorbar
+scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');  colorbar
 xlabel('X (m)','fontsize',fs,'fontname','Times');
 ylabel('Y (m)','fontsize',fs,'fontname','Times')
 axis equal; axis tight;
