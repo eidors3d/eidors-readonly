@@ -226,6 +226,8 @@ function img = homogeneous_estimate( img, data )
  img.elem_data= ones(size(img.elem_data,1),1)*conductivity_background;
  disp(['Homogeneous resistivity = ' num2str(1/(conductivity_background),3) ' Ohm.m'])
  
+    function do_unit_test
+        unit_test_simdata
  
  
  function unit_test_simdata
