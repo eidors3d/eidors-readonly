@@ -8,7 +8,9 @@ img_v = rmfield(img, 'elem_data');
 img_v.node_data = vh.volt(:,1);
 img_v.calc_colours.npoints = 128;
 
+PLANE= [inf,inf,0.35]; % show voltages on this slice
+
 subplot(221);
-show_slices(img_v,[inf,inf,0.5]); axis off; axis equal
+show_slices(img_v,PLANE); axis off; axis equal
 print_convert thoraxmdl03a.jpg
 % 

@@ -7,7 +7,7 @@ vh = fwd_solve(img_v);
 img_v = rmfield(img, 'elem_data');
 img_v.node_data = vh.volt(:,1);
 img_v.calc_colours.npoints = 256;
-imgs = calc_slices(img_v,[inf,inf,0.5]);
+imgs = calc_slices(img_v,PLANE);
 
 
 clf
