@@ -1,6 +1,6 @@
 img_v.fwd_model.mdl_slice_mapper.npx = 1000;
 img_v.fwd_model.mdl_slice_mapper.npy = 1000;
-img_v.fwd_model.mdl_slice_mapper.level = [inf,inf,0.5];
+img_v.fwd_model.mdl_slice_mapper.level = PLANE;
 
 % Calculate at high resolution
 q = show_current(img_v, vh.volt(:,1));

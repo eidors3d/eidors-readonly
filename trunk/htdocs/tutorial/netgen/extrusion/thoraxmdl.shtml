@@ -25,7 +25,7 @@ Load thorax shape and identify contours
 This image is from a human CT of a healthy man,
 provided with permission.
 Hand registered contours are available in 
-<a href="CT1.mat">this file [CT1.mat]</a>.
+the eidors <tt>shape_library</tt>.
 The image is available 
 <a href="thorax-mdl.jpg">here [thorax-mdl.jpg]</a>
 <pre>
@@ -61,7 +61,7 @@ Current distribution
 <img src="thoraxmdl03a.jpg"> <img src="thoraxmdl04a.jpg">
 <br>
 <i>Left</i> Voltage distribution and
-<i>Right</i> Current distribution in slices at <i>z</i>= 1.0.
+<i>Right</i> Current distribution in slices at <i>z</i>= 0.35.
 </center>
 
 
@@ -74,7 +74,7 @@ Current streamlines and the original image
 <center>
 <img src="thoraxmdl05a.jpg">
 <br>
-Stream lines through <i>z</i>= 0.5.
+Stream lines through <i>z</i>= 0.35.
 
 The path of the streamslines is limited by the density of the underlying FEM.
 With a finer mesh FEM, it would be possible to calculate streamlines that
@@ -91,7 +91,7 @@ Add Equipotential lines to the original image
 <center>
 <img src="thoraxmdl06a.jpg">
 <br>
-Stream lines and equipotiential through <i>z</i>= 0.5.
+Stream lines and equipotiential through <i>z</i>= 0.35.
 </center>
 
 
