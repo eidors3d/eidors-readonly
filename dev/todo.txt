@@ -22,6 +22,7 @@
     - put into a proper test function as UNIT_TEST
 
  - update GREIT tutorials to give recommendations to make it pretty
+    - make new GREIT tutorial
     - do this as part of a paper
     - Make sure default GREIT is pretty
 
@@ -79,7 +80,7 @@
  - fix and test:
      -  EIDORS_basics/example_abs_GN_compare_3D.m
 
- - ng on windows (incl ng.opt interface) - test ng5
+ + ng on windows (incl ng.opt interface) - test ng5
 
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
