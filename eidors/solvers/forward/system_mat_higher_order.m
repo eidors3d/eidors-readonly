@@ -4,7 +4,7 @@ function [s_mat]=system_mat_higher_order(fwd_model,img)
 %TODO - Sparse assignment of the matrices
 if nargin == 1
    img= fwd_model;
-else
+elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'on')
    warning('EIDORS:DeprecatedInterface', ...
       ['Calling SYSTEM_MAT_HIGHER_ORDER with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);

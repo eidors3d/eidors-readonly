@@ -4,7 +4,7 @@ function J = jacobian_adjoint_higher_order(fwd_model,img)
 
 if nargin == 1
    img= fwd_model;
-else
+elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'on')
    warning('EIDORS:DeprecatedInterface', ...
       ['Calling JACOBIAN_ADJOINT_HIGHER_ORDER with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
