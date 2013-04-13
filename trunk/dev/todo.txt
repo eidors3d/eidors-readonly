@@ -61,10 +61,12 @@
  - move to some type of bugzilla version management.
 
 3.7
+ - check and commit images for stimPatt_PseudoSec
+ - check and commit images for thoraxmdl   
  - tutorial_tests errors
      - (WFM?) framework05 
      + tutorial210d - physics error
-     - stimPatt_PseudoSec02 ERROR = (Error using show_pseudosection
+     + stimPatt_PseudoSec02 ERROR = (Error using show_pseudosection
      - cg_ards_recruitment_00 ERROR = (Error using checkfilename>validateFilename (line 182)
      - dm_geophys03 - ugly images?
      + thoraxmdl02 - ng_remove_electrodes 
