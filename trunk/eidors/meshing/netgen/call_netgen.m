@@ -19,99 +19,113 @@ if nargin<3
 end
 
 if ~isempty(msz_file)
-    eidors_msg('call_netgen: Warning. Using an *.msz file. This often fails.');
+   eidors_msg('call_netgen: Warning. Using an *.msz file. This often fails.');
 end
 
 if nargin<4
-%  finelevel= '-veryfine';
-%  finelevel= '-fine';
+   %  finelevel= '-veryfine';
+   %  finelevel= '-fine';
    finelevel= '';
 end
 
-   ldpath='';
-   if  exist('OCTAVE_VERSION') % FIXME
-     islinux =1;
-   elseif strfind(system_dependent('getos'),'Linux')
-     islinux =1;
-   else
-     islinux =0;
-   end    
+ldpath='';
+if  exist('OCTAVE_VERSION') % FIXME
+   islinux =1;
+elseif strfind(system_dependent('getos'),'Linux')
+   islinux =1;
+else
+   islinux =0;
+end
 
 % Netgen executable filename
-   if  islinux
-      ng_name = 'netgen';
-   else
-      ng_name = 'ng';
-   end
+if  islinux
+   ng_name = 'netgen';
+else
+   ng_name = 'ng';
+end
 
 while( 1 )
-
+   
    fid= fopen('ng.opt','a'); %create ng.opt file in local dir
    if fid==-1
       error(['Netgen requires writing files in the current directory(%s).', ...
-             'Unfortunately, you don''t have permission'], pwd);
+         'Unfortunately, you don''t have permission'], pwd);
    end
    if ~isempty(msz_file)
-%     fprintf(fid,'options.segmentsperedge 5\n'); % Another
-%                                                   potentially useful parameter
-%                                                   except netgen ignores it
+      %     fprintf(fid,'options.segmentsperedge 5\n'); % Another
+      %                                                   potentially useful parameter
+      %                                                   except netgen ignores it
       fprintf(fid,'options.meshsizefilename= %s\n',msz_file);
    end
    fclose(fid);
-
-   sys_cmd = sprintf('%s %s -batchmode -geofile=%s  -meshfile=%s ', ...
-             ng_name, finelevel,geo_file,vol_file);
+   
+   if strncmp(computer,'PC',2)
+      % on Linux, Netgen runs in the current directory
+      % enforce this behavioud in Windows
+      oldpath = getenv('NETGEN_USER_DIR');
+      setenv('NETGEN_USER_DIR', cd);
+   end
+   % -batchmode
+   sys_cmd = sprintf('%s %s  -geofile=%s  -meshfile=%s ', ...
+      ng_name, finelevel,geo_file,vol_file);
    status= system_cmd( sys_cmd );
    if status==0; break; end
-
-   if islinux
-      fprintf(['It seems you are running Linux and netgen has not worked. ' ...
-           'Check that it is installed and on the path. ' ...
-           'For newer versions of netgen, you need to set the environment' ...
-           ' variable NETGENDIR. This can be set by starting matlab as follows:\n', ...
-           '   NETGENDIR=/path/to/netgen PATH=/path/to/netgen:$PATH matlab\n', ...
-           'Please enter a new netgen file name\n' ]);
-      ng_name = input('netgen file name (with path)? [or i=ignore, e=error] ','s');
-      if strcmp(ng_name,'i'); break;end
-      if strcmp(ng_name,'e'); error('user requested'),end;
-   else
-      fprintf([ ...
-       'Netgen call failed. Is netgen installed and on the search path?\n' ...
-       'If you are running under windows, I can attempt to create\n' ...
-       'a batch file to access netgen.\n' ...
-       'Please enter the directory in which to find netgen.exe.\n' ...
-       'If you don''t have a copy, download it from' ...
-       'http://sourceforge.net/projects/netgen-mesher/ \n\n' ...
-       'Note that you *MUST* use names without spaces. Thus\n' ...
-       'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
-      netgen_path = input('netgen_path? [or i=ignore, e=error] ','s');
-      if strcmp(ng_name,'i'); break;end
-      if strcmp(ng_name,'e'); error('user requested'),end;
-      if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) || ...
-              exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
-         disp('Found netgen version 4.4 or higher');
-         netgen_exe = netgen_path;
-         if exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
-             netgen_exe = [netgen_path '/bin'];
-         end
-
-         
-         fid= fopen('ng.bat','w');
-         fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
-         fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
-         fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
-         fprintf(fid,'%s/netgen.exe %%*\n', netgen_exe);
-         fclose(fid);
-      elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' ) 
-         disp('Found netgen version 4.3.1');
-         fid= fopen('ng.bat','w');
-         fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-         fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-         fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
-         fclose(fid);
+   try
+      if islinux
+         fprintf(['It seems you are running Linux and netgen has not worked. ' ...
+            'Check that it is installed and on the path. ' ...
+            'For newer versions of netgen, you need to set the environment' ...
+            ' variable NETGENDIR. This can be set by starting matlab as follows:\n', ...
+            '   NETGENDIR=/path/to/netgen PATH=/path/to/netgen:$PATH matlab\n', ...
+            'Please enter a new netgen file name\n' ]);
+         ng_name = input('netgen file name (with path)? [or i=ignore, e=error] ','s');
+         if strcmp(ng_name,'i'); break;end
+         if strcmp(ng_name,'e'); error('user requested'),end;
       else
-         warning(['cannot find a version of netgen that I know about\n' ...
-                  'Install netgen or check the path\n']);
+         fprintf([ ...
+            'Netgen call failed. Is netgen installed and on the search path?\n' ...
+            'If you are running under windows, I can attempt to create\n' ...
+            'a batch file to access netgen.\n' ...
+            'Please enter the directory in which to find netgen.exe.\n' ...
+            'If you don''t have a copy, download it from' ...
+            'http://sourceforge.net/projects/netgen-mesher/ \n\n' ...
+            'Note that you *MUST* use names without spaces. Thus\n' ...
+            'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
+         netgen_path = input('netgen_path? [or i=ignore, e=error] ','s');
+         if strcmp(ng_name,'i'); break;end
+         if strcmp(ng_name,'e'); error('user requested'),end;
+         if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) || ...
+               exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
+            disp('Found netgen version 4.4 or higher');
+            netgen_exe = netgen_path;
+            if exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
+               netgen_exe = [netgen_path '/bin'];
+            end
+            
+            
+            fid= fopen('ng.bat','w');
+            fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
+            fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
+            fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
+            fprintf(fid,'%s/netgen.exe %%*\n', netgen_exe);
+            fclose(fid);
+         elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )
+            disp('Found netgen version 4.3.1');
+            fid= fopen('ng.bat','w');
+            fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
+            fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
+            fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
+            fclose(fid);
+         else
+            warning(['cannot find a version of netgen that I know about\n' ...
+               'Install netgen or check the path\n']);
+         end
       end
+   catch e
+      if strncmp(computer,'PC',2)
+         % restore Netgen settings on Windows
+         setenv('NETGEN_USER_DIR', oldpath);
+      end
+      rethrow(e)
    end
 end
