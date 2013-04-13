@@ -16,6 +16,7 @@ shape_str = ['solid incyl  = ',incyl,' -maxh=0.1 ; \n', ...
              'solid plu2   =  plane(0,0,-15; 0,0,-1);\n' ...
              'solid innerobj= pli1 and pli2 and incyl;\n', ...
              'solid mainobj= plu1 and plu2 and farcyl and not innerobj;\n'];
+clear elec_obj
 for i=1:size(e0,1) ;  elec_obj{i} = 'incyl';end
 [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
@@ -23,12 +24,9 @@ for i=1:size(e0,1) ;  elec_obj{i} = 'incyl';end
 % Construct the Wenner stimulation pattern
 fmdl.stimulation= stim_pattern_geophys( n_elec, 'Wenner', {'spacings', 1:25} );
 
-% Compute the geometrical factor for the apparent resistivity estimation
-img1= mk_image(fmdl,1);
-vh1= fwd_solve(img1);
-normalisation= 1./vh1.meas;
-I= speye(length(normalisation));
-I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
+% Use apparent_resistivity
+fmdl.jacobian = @jacobian_apparent_resistivity;
+fmdl.solve    = @fwd_solve_apparent_resistivity;
 
 
 % Construct a model with a homogeneous conductivity of 0.1 Sm and insert a conductive sphere
@@ -41,5 +39,6 @@ print_convert stimPatt_PseudoSec05_1.png
 dd  = fwd_solve(img);
 
 % Show the pseudo-section of the apparent resistivity
-show_pseudosection( fmdl, I*dd.meas, 'Vertical')
+fmdl.show_pseudosection.orientation = 'vertical';
+show_pseudosection( fmdl, dd.meas);
 print_convert stimPatt_PseudoSec05_2.png
