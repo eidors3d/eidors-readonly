@@ -65,8 +65,8 @@ while( 1 )
       oldpath = getenv('NETGEN_USER_DIR');
       setenv('NETGEN_USER_DIR', cd);
    end
-   %                         -batchmode
-   sys_cmd = sprintf('%s %s  -geofile=%s  -meshfile=%s ', ...
+   
+   sys_cmd = sprintf('%s %s -batchmode -geofile=%s  -meshfile=%s ', ...
       ng_name, finelevel,geo_file,vol_file);
    status= system_cmd( sys_cmd );
    if status==0; break; end
