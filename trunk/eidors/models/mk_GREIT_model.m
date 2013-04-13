@@ -545,7 +545,7 @@ figure
 show_slices(img);
 
 
-function do_performance_testto musisz tak sformulowac obowiazki zeb
+function do_performance_test
 % Reconstruct GREIT Images
 imdl_v1 = mk_common_gridmdl('GREITc1');
 
