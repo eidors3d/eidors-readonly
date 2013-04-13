@@ -28,7 +28,7 @@ fctr = get_factor(img);
 
 data.meas = fctr * data.meas;
 data.name = ['apparent resistivity ' data.name];
-data.quality = 'apparent resistivity';
+data.quantity = 'apparent resistivity';
 
 function fctr = get_factor(img)
 fctr = NaN;
@@ -36,7 +36,7 @@ try
    fctr = img.fwd_model.apparent_resistivity_factor;
 end
 
-if isstr(fctr), fctr = str2func(fcstr); end;
+if ischar(fctr), fctr = str2func(fcstr); end;
 
 if isa(fctr, 'function_handle')
    fctr = feval(fctr, img);
