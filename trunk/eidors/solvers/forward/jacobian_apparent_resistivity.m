@@ -7,7 +7,7 @@ if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin == 1
    img= fwd_model;
-else
+elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'on')
    warning('EIDORS:DeprecatedInterface', ...
       ['Calling JACOBIAN_APPARENT_RESISTIVITY with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);

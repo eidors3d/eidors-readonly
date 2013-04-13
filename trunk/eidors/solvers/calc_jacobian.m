@@ -30,7 +30,11 @@ end
 ws = warning('query','EIDORS:DeprecatedInterface');
 warning off EIDORS:DeprecatedInterface
 
-fwd_model= img.fwd_model;
+try 
+   fwd_model= img.fwd_model;
+catch
+   error('CALC_JACOBIAN requires an eidors image structure');
+end
 
 fwd_model_check(fwd_model);
 
