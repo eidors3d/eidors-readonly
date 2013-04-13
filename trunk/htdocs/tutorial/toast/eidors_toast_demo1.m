@@ -1,3 +1,7 @@
+% This functions needs the functions from the matlab 
+%  version of toast to be installed. You can get them from 
+%    http://web4.cs.ucl.ac.uk/research/vis/toast/
+%
 imdl=mk_common_model('a2c2',8);
 imdl.fwd_model.stimulation = mk_stim_patterns(8,1,'{mono}','{ad}',{}',0.1);
 fmdl=imdl.fwd_model;

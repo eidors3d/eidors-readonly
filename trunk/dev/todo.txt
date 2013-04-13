@@ -1,5 +1,7 @@
 ############## post 3.7 ################3
 
+ - ng models with point electrodes
+
  - colourbar - put some logic to allow labels like 1.5 as max
     (instead of 1,2,3 etc)
 
@@ -61,22 +63,25 @@
  - move to some type of bugzilla version management.
 
 3.7
+ - make mk_GREIT_model accept function for desired image
+
  - check and commit images for stimPatt_PseudoSec
- - check and commit images for thoraxmdl   
+ + check and commit images for thoraxmdl   
  - tutorial_tests errors
-     - (WFM?) framework05 
+     + (WFM?) framework05 
      + tutorial210d - physics error
      + stimPatt_PseudoSec02 ERROR = (Error using show_pseudosection
      + cg_ards_recruitment_00 ERROR = (Error using checkfilename>validateFilename (line 182)
      - dm_geophys03 - ugly images?
      + thoraxmdl02 - ng_remove_electrodes 
      + (WFM?) thoraxmdl03 - mdl_normalize
-     - eidors_toast_demo1 - toastMakeMesh - Add documentation
+     + eidors_toast_demo1 - toastMakeMesh - Add documentation
 
  - fix calc_colours to it takes non 256 colours (in CG's code) and 
      fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml     
 
  - Make sure default GREIT is pretty -BG
+    = add string interface
     + rerun GREITv1 performance metrics with new GREIT cylinder
 
  - fix and test:
@@ -92,6 +97,7 @@
 
  - debug caching for netgen models
     - example is show_pseudosection UNIT_TEST
+    - write function to give messages when cache happens
 
 
  + in show_pseudosection
