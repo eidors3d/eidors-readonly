@@ -8,6 +8,8 @@
  - fix the example tutorial
         EIDORS_basics/example_abs_GN_compare_3D.m
 
+ - fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml
+
  - Bug with 'trig' measurement patterns
 
  - Nodal Jacobian bugs (example in 24 jan 2012 email)
@@ -66,7 +68,6 @@
  - make mk_GREIT_model accept function for desired image
 
  - check and commit images for stimPatt_PseudoSec
- + check and commit images for thoraxmdl   
  - tutorial_tests errors
      + (WFM?) framework05 
      + tutorial210d - physics error
@@ -77,17 +78,12 @@
      + (WFM?) thoraxmdl03 - mdl_normalize
      + eidors_toast_demo1 - toastMakeMesh - Add documentation
 
- + fix calc_colours to it takes non 256 colours (in CG's code) and 
-     fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml     
-
  - Make sure default GREIT is pretty -BG
     = add string interface
     + rerun GREITv1 performance metrics with new GREIT cylinder
 
  - fix and test:
      -  EIDORS_basics/example_abs_GN_compare_3D.m
-
- + ng on windows (incl ng.opt interface) - test ng5
 
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
@@ -98,6 +94,14 @@
  - debug caching for netgen models
     - example is show_pseudosection UNIT_TEST
     - write function to give messages when cache happens
+
+ + output svn verions
+
+ + check and commit images for thoraxmdl   
+
+ + fix calc_colours to it takes non 256 colours (in CG's code) and 
+
+ + ng on windows (incl ng.opt interface) - test ng5
 
 
  + in show_pseudosection

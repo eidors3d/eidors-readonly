@@ -144,13 +144,23 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
 
 
 function print_welcome(HOMEDIR,archdir,ver)
-    eidors_msg('Installed EIDORS (Ver: %s)', eidors_obj('eidors_version'),1);
+    eidors_ver = eidors_obj('eidors_version');
+    if eidors_ver(end) == '+' % post release version
+       % THIS IS HORRIBLE, HORRIBLE CRAP IN SVN. LOTS OF USERS WANT GlobalRev
+       % BUT THE ARROGANT SVN AUTHORS REFUSE TO PROVIDE IT!!!!
+       [status, result] = system_cmd('svnversion');
+       if status==0;
+          eidors_ver = [eidors_ver, ' SVN_ID=', result(1:end-1)];
+       end
+    end
+    eidors_msg('Installed EIDORS (Ver: %s)', eidors_ver,1);
+
     eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
     eidors_msg('Parameter: mapped_colour=%d',calc_colours('mapped_colour'),1);
     if calc_colours('greylev')>=0
-        eidors_msg('Default background colour: black');
+        eidors_msg('Default background colour: black',1);
     else
-        eidors_msg('Default background colour: white');
+        eidors_msg('Default background colour: white',1);
     end
     eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
     eidors_msg('EIDORS model cache: %s', mk_library_model('LIBRARY_PATH'),1);
