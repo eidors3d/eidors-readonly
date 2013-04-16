@@ -3,7 +3,7 @@
 
 il_g= mk_common_model('c2c2',16);
 
-num_tries=6;
+num_tries=6; clear vi_n;
 for i= 1:num_tries 
    vi_n(:,i) = add_noise(2, vi, vh);
 end
