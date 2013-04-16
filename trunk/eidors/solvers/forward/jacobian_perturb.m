@@ -80,7 +80,7 @@ function do_unit_test
 
 % imdl= mk_common_model('c2c2',16);
   imdl= mk_common_model('a3cr',16);
-% imdl= mk_common_model('n3r2',16);
+% imdl= mk_common_model('n3r2',[16,2]);
   imdl.fwd_model.nodes = imdl.fwd_model.nodes*.25;
   img= calc_jacobian_bkgnd(imdl);
 
@@ -113,7 +113,7 @@ function do_unit_test
   unit_test_cmp('J_np - J_aa  ', norm(J_np - J_aa  ,'fro')/norm(J_np,'fro'), 0, tol);
 
 % Demo model with EIDORS3D
-  imdl= mk_common_model('n3r2',16);
+  imdl= mk_common_model('n3r2',[16,2]);
   img= calc_jacobian_bkgnd(imdl);
   for i=1:16; imdl.fwd_model.electrode(i).z_contact= .01;end
 
