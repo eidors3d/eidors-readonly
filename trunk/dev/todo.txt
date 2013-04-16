@@ -10,6 +10,10 @@
 
  - fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml
 
+ - fix simulate_move2_ ... tutorials to use 2d netgen interface
+
+ - replace tutorial 151 with better absolute solver example
+
  - Bug with 'trig' measurement patterns
 
  - Nodal Jacobian bugs (example in 24 jan 2012 email)
