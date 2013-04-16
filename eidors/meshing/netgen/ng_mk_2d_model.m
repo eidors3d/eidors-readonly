@@ -70,7 +70,8 @@ if ischar(varargin{1}) && strcmp(varargin{1}, 'UNIT_TEST'), mdl = do_unit_test; 
 
 [shape, elec_pos, elec_shape] = process_input(varargin{:});
 
-mdl = ng_mk_2d_model_do(shape, elec_pos, elec_shape);
+mdl = eidors_cache(@ng_mk_2d_model_do,{shape, elec_pos, elec_shape});
+
 
 
 function [shape, elec_pos, elec_shape] = process_input(shape, elec_pos, elec_shape)
@@ -409,5 +410,4 @@ for i = 1:15
     end
     show_fem(mdl,[0 1 0]);
     drawnow
-    pause
 end
