@@ -1,4 +1,4 @@
-function retval=eidors_cache( command, limit )
+function varargout=eidors_cache( command, varargin )
 % Control eidors_caching
 % Usage: eidors_cache( command, limit )
 %
@@ -55,10 +55,17 @@ if nargin<1
    fprintf('EIDORS_CACHE: current priority = %d\n', ...
          eidors_objects.cache_priority); 
    return;
+elseif nargin > 1 
+   limit = varargin{1};
 end
 
+if isa(command, 'function_handle')
+   output = mk_varargout_str(nargout);
+   eval(sprintf('%s = %s', output, 'cache_shorthand(command, varargin{:});'));
+   return
+end
 
-
+    
 switch command
    case {'clear_all','clear'}
       [objid, times, sizes, prios, priidx] = get_names_times;
@@ -69,7 +76,7 @@ switch command
       if ischar(limit); limit= str2num(limit); end
          eidors_objects.max_cache_size = limit;
       else
-         retval= eidors_objects.max_cache_size;
+         varargout{1}= eidors_objects.max_cache_size;
       end
       
    case {'disable' 'off'}
@@ -103,15 +110,15 @@ switch command
        end
    case 'boost_priority'
       try
-         retval= eidors_objects.cache_priority;
+         varargout{1}= eidors_objects.cache_priority;
       catch
-         retval= 0; % default priority
+         varargout{1}= 0; % default priority
       end
       if nargin==2
       if ischar(limit); limit= str2num(limit); end
-         retval = retval + limit;
+         varargout{1} = varargout{1} + limit;
       end
-      eidors_objects.cache_priority = retval;
+      eidors_objects.cache_priority = varargout{1};
 
    case 'show_objs'
       [objid, times, sizes, prios, priidx] = get_names_times;
@@ -152,7 +159,7 @@ switch command
       remove_objids( objid, sizes, clearidx);
    
    case 'dump'
-      retval = eidors_objects;
+      varargout{1} = eidors_objects;
       
    case 'load'
       eidors_objects = limit;
@@ -227,8 +234,29 @@ function remove_objids( objid, sizes, idx)
    eidors_objects= rmfield( eidors_objects, objid( idx ) );
    eidors_msg('eidors_cache: removing %d objects with %d bytes', ...
           length(idx), sum(sizes(idx)), 3 );
+       
+function varargout = cache_shorthand(fhandle, varargin)
+   fstr = func2str(fhandle);
+   cache_obj = varargin{1};
+   varargout = eidors_obj('get-cache', cache_obj, fstr );
+   if numel(varargout) < nargout
+      eidors_msg('@@@ (Re)calculating %s',fstr, 1);
+      output = mk_varargout_str(nargout);
+      eval(sprintf('%s = %s', output, 'feval(fhandle,cache_obj{:});'));
+      % eidors_cache('boost_priority', -2); % netgen objs are low priority
+      eidors_obj('set-cache', cache_obj, fstr, varargout);
+      % eidors_cache('boost_priority', +2); % return values
+      return
+   end
+   eidors_msg('%s: Using cached value',fstr,2);
 
-
+function output = mk_varargout_str(N)
+output = '[';
+for i = 1:N
+   output = [ output sprintf('varargout{%d} ',i)];
+end
+output = [ output ']' ];
+      
 function do_unit_test;
    ll= eidors_msg('log_level');
    eidors_msg('log_level',5);
@@ -246,5 +274,17 @@ function do_unit_test;
    eidors_cache
    eidors_cache('boost_priority', -1);
    eidors_cache
-
+   [v1] = eidors_cache(@test_function,{3,4});
+   [v2] = eidors_cache(@test_function,{3,4});
+   unit_test_cmp('shorthand 1 param:',v1,v2);
+   [v3 v4] = eidors_cache(@test_function,{3,4});
+   unit_test_cmp('expect fail', v3, v4);
+   [v5 v6 ] = eidors_cache(@test_function,{3,4});
+   unit_test_cmp('shorthand 2 params:',v4, v6);
+   [v5 v6 ] = eidors_cache(@test_function,{3,4, 5}); %this should re-calc
    eidors_msg('log_level',ll);
+   
+function [v1 v2] = test_function(a,b,c,d)
+   v1 = rand(1);
+   v2 = rand(1);
+   
