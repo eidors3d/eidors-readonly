@@ -1,7 +1,6 @@
 % Create stimulation patterns and solve fwd_model
 % $Id$
 
-
 % Define stimulation patterns
 for i=1:3
     r_mdl.stimulation(i).stimulation= 'Amps';

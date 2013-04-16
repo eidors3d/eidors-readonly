@@ -22,7 +22,6 @@ fine_mdl.solve=      'fwd_solve_1st_order';
 fine_mdl.system_mat= 'system_mat_1st_order';
 fine_mdl.jacobian=   'jacobian_adjoint';
 fine_mdl = mdl_normalize(fine_mdl,0);
-fine_mdl.np_fwd_solve.perm_sym= '{n}';
 
           
 %% Solve homogeneous model 
@@ -68,10 +67,9 @@ inv3d.fwd_model.coarse2fine = ...
 disp('   ... done');
 
 % Parameters for inverse model
-inv3d.solve= 'np_inv_solve';
+inv3d.solve= @eidors_default;
 inv3d.hyperparameter.value = 1e-4;
-inv3d.R_prior= 'np_calc_image_prior';
-inv3d.np_calc_image_prior.parameters= [3 1]; 
+inv3d.R_prior= @prior_laplace;
 inv3d.jacobian_bkgnd.value= 1;
 inv3d.reconst_type= 'difference';
 

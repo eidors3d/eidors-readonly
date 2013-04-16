@@ -1,6 +1,6 @@
 % Build 2D and 3D model $Id$
 
-demo_img = mk_common_model('n3r2');
+demo_img = mk_common_model('n3r2',[16,2]);
 
 % Create 2D FEM of all NODES with z=0
 f_mdl = demo_img.fwd_model;
