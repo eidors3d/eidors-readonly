@@ -54,7 +54,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %      setting mapped_colour=0 means to use RGB colours
 %   'npoints' (DEFAULT 64) number of points accross the image
 %   'transparency_thresh' fraction of maximum value at which colours
-%             are rendered transparent
+%             are rendered transparent for 
 %   'clim'    (DEFAULT []) crop colour display of values above clim
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
@@ -497,16 +497,39 @@ function do_unit_test
    calc_colours('mapped_colour',4);
    calc_colours('backgnd',[0.5,0.5,0.5]);
    cc= calc_colours('colourmap');
-   unit_test_cmp('cc05',cc, [2,2,2;4,4,4;2,4,4;0,1,4;0,0,0;4,1,0;4,4,2;4,4,4]/4,1e-4);
+   unit_test_cmp('cc05',cc, ...
+      [2,2,2;4,4,4;2,4,4;0,1,4;0,0,0;4,1,0;4,4,2;4,4,4]/4,1e-10);
 
-% TESTS TO WRITE
-%   'greylev'    (DEFAULT -.01)
-%   'sat_adj'    (DEFAULT .9)
+   calc_colours('greylev',-.01);
+   cc= calc_colours('colourmap');
+   unit_test_cmp('cc06',cc, [200,200,200;0,0,0;0,0,198; ...
+        0,297,396;396,396,396;396,297,0;198,0,0;0,0,0]/400,1e-10);
+
+   calc_colours('greylev',0);
+   calc_colours('sat_adj',.5);
+   cc= calc_colours('colourmap');
+   unit_test_cmp('sa01',cc(2,:), [0,5,10]/10,1e-10);
+
+   calc_colours('sat_adj',.8);
+   cc= calc_colours('colourmap');
+   unit_test_cmp('sa02',cc(2,:), [4,10,10]/10,1e-10);
+
+   calc_colours('sat_adj',1 );
+   cc= calc_colours('colourmap');
+   unit_test_cmp('sa03',cc(2,:), [10,10,10]/10,1e-10);
+
 %   'window_range' (DEFAULT .9)
-%   'backgnd' ( DEFAULT [.5,.5,.15] )
+   unit_test_cmp('bg01',cc(1,:), [50,50,50]/100, 1e-10);
+   calc_colours('defaults');
+   cc= calc_colours('colourmap');
+   unit_test_cmp('bg01',cc(1,:), [50,50,15]/100, 1e-10);
+
+   unit_test_cmp('mc01',size(cc), [127*2,3]);
+   calc_colours('mapped_colour',4);
+   cc= calc_colours('colourmap');
+   unit_test_cmp('mc02',size(cc), [4*2,3]);
 %   'ref_level' (DEFAULT 'auto')
-%   'mapped_colour' (DEFAULT 127)
-%   'npoints' (DEFAULT 64)
 %   'clim'    (DEFAULT [])
 %   'cmap_type'  (Default blue-red)
 
+cc
