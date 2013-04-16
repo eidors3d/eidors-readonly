@@ -18,7 +18,7 @@ tolstr='';
       if isnan(a) == isnan(b);
           a(isnan(a))=0; b(isnan(b))=0;
        end;
-      if all(abs(a - b) <= tol);
+      if all(abs(double(a) - double(b)) <= tol);
          ok='ok';
       end;
 

@@ -276,9 +276,9 @@ function do_unit_test
     elems = [1 2 3; 1 3 4];
     mdl = eidors_obj('fwd_model','square','nodes', nodes, 'elems', elems);
     out = fix_model(mdl);
-    out.faces
-    out.elem2face
-    out.face2elem
+    unit_test_cmp('2d: faces'    ,out.faces    ,[1,2;1,3;1,4;2,3;3,4]);
+    unit_test_cmp('2d: elem2face',out.elem2face,[1,2,4;2,3,5]);
+    unit_test_cmp('2d: face2elem',out.face2elem,[1,0;2,1;2,0;1,0;2,0]);
 
     %cube
     nodes = [0 0 0; 0 1 0; 1 1 0; 1 0 0;...
@@ -286,9 +286,11 @@ function do_unit_test
     elems = [1 2 3 6; 3 6 7 8; 1 5 6 8; 1 3 4 8; 1 3 6 8];
     mdl = eidors_obj('fwd_model','cube','nodes', nodes, 'elems', elems);
     out = fix_model(mdl);
-    out.faces
-    out.elem2face
-    out.face2elem    
+    unit_test_cmp('3d: faces'    ,out.faces(1:4,:), [1,2,3;1,2,6;1,3,4;1,3,6]);
+    unit_test_cmp('3d: elem2face',out.elem2face, [1,2,4,10; 12,13,14,16;
+            7,8,9,15; 3,5,6,11; 4,5,9,13]);
+    unit_test_cmp('3d: face2elem',out.face2elem(1:5,:), [1,0; 1,0; 4,0; 5,1; 4,5]);
+
     
     % test options
     opt = fix_model('options',false);
