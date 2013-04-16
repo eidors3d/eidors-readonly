@@ -175,7 +175,6 @@ nds(1) = enodes(1);
 for i = 1:length(enodes)-1
     startnode  = enodes(i);
     targetnode = enodes(i+1);
-    if startnode==147, keyboard,end;
     nextnode   = startnode;
     while nextnode ~= targetnode
         % find the two faces the startnode is on
