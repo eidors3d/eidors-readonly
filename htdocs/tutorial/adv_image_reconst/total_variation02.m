@@ -11,7 +11,7 @@ inv2d.fwd_model= imb.fwd_model;
 inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 
 % Guass-Newton solvers
-inv2d.solve=       @np_inv_solve;
+inv2d.solve=       @eidors_default;
 
 % NOSER prior
 inv2d.hyperparameter.value = 3e-1;
