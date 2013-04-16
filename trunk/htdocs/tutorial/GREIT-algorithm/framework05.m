@@ -10,7 +10,7 @@ v_reference= - real(v_reference(idx,:));
 v_rotate   = - real(v_rotate(idx,:));
 
 load RM_framework_example RM map;
-for k=1:4;
+clear imgs;for k=1:4;
    dv = v_rotate(:,k*2) - v_reference;
    img = reshape( RM*dv, 32,32); % reconstruction
    img(~map) = NaN;              % background
