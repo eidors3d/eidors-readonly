@@ -18,6 +18,7 @@ end
 HOMEDIR=pwd;
 ver = version_check;
 archdir = set_paths(HOMEDIR,ver, path_array);
+eidors_cache('init');
 set_defaults(HOMEDIR);
 print_welcome(HOMEDIR,archdir, ver);
 
