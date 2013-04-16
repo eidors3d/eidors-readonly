@@ -1,5 +1,5 @@
 function J= jacobian_movement_perturb( fwd_model, img)
-% JACOBIAN_MOVEMENT_PERTURB: J= jacobian_movement_perturb( fwd_model, img)
+% JACOBIAN_MOVEMENT_PERTURB: J= jacobian_movement_perturb( img )
 % Calculate Jacobian Matrix for EIT, based on conductivity
 %   change and movement of electrodes
 % J         = Jacobian matrix
@@ -14,6 +14,17 @@ function J= jacobian_movement_perturb( fwd_model, img)
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+if nargin == 1
+   img= fwd_model;
+elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'on')
+   warning('EIDORS:DeprecatedInterface', ...
+      ['Calling JACOBIAN_MOVEMENT with two arguments is deprecated and will cause' ...
+       ' an error in a future version. First argument ignored.']);
+   warning off EIDORS:DeprecatedInterface
+
+end
+fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
 delta= 1e-6; % tests indicate this is a good value
