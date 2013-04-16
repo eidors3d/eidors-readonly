@@ -1,9 +1,11 @@
 % Create 2D model $Id$
+clear mdl elec stim
 
 nn= 84;     % number of nodes
 ww=4;       % width = 4
 conduc= 1;  % conductivity in Ohm-meters
 mdl= eidors_obj('fwd_model','2D rectangle');
+mdl= mdl_normalize( mdl, 0);
 mdl.nodes = [floor( (0:nn-1)/ww );rem(0:nn-1,ww)]';
 mdl.elems = delaunayn(mdl.nodes);
 mdl.gnd_node = 1;

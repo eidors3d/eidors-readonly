@@ -2,6 +2,7 @@
 % $Id$
 
 r_mdl= eidors_obj('fwd_model','demo resistor model');
+r_mdl = mdl_normalize( r_mdl, 0);
 
 % Geometry
 r_mdl.nodes= [1,1,1;  2,2,2];
