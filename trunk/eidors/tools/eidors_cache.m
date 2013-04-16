@@ -1,6 +1,8 @@
 function varargout=eidors_cache( command, varargin )
-% Control eidors_caching
-% Usage: eidors_cache( command, limit )
+% EIDORS_CACHE Control eidors caching
+% Usage: eidors_cache( command, limit ) for cache management
+% Usage: eidors_cache(@function_handle, {params1, ... }) for shorthand
+%        chashing in m-files
 %
 % USAGE:
 %   eidors_cache( 'clear_all' ) 
@@ -32,9 +34,39 @@ function varargout=eidors_cache( command, varargin )
 %  
 %   eidors_cache( 'boost_priority', value)
 %      - modify the priority of the next cached items
-%      - low priority variables will be deleted first when memory is tight  
+%      - low priority variables will be deleted first when memory is tight
+%
+%   eidors_cache( 'off' )
+%   eidors_cache( 'disable' )
+%   eidors_cache( 'off', 'function_name' )
+%      - new values are not added to cache
+%      - requests for cached values return []
+%      - if specified, only applies to specified function
+%
+%   eidors_cache( 'on' )
+%   eidors_cache( 'enable' )
+%   eidors_cache( 'on', 'function_name' )
+%      - re-enables caching
+%      - if specified, only applies to specified function
+%
+%   v1 = eidors_cache( @function_handle, {param1, param2, ...})
+%   [v1, v2, ...] = eidors_cache( @function_handle, {param1, param2, ...})
+%   [v1, v2, ...] = eidors_cache( ... , opt)
+%      Shorthand interface for caching the output of a specific function.
+%      Specify all arguments to the function as a cell array. They will all
+%      be used for as a caching object by default. The following options
+%      are available:
+%        opt.cache_obj
+%            - a single value, or a cell array of values to cache on, 
+%              rather than all the inputs (e.g. not all values of an input
+%              struct may be used in the function)
+%        opt.boost_priority
+%            - priority boost to use for that function
+%
+% See also EIDORS_OBJ
 
-% (C) 2005 Andy Adler. Licensed under GPL version 2
+% (C) 2005-2013 Andy Adler and Bartlomiej Grychtol.
+% License: GPL version 2
 % $Id$
 
 % Comments
@@ -236,16 +268,38 @@ function remove_objids( objid, sizes, idx)
           length(idx), sum(sizes(idx)), 3 );
        
 function varargout = cache_shorthand(fhandle, varargin)
+% Will cache on all function inputs, unless opt.cache_obj is specified
+   if nargin >2
+      opt = varargin{2};
+   else
+      opt = struct;
+   end
+   if isfield(opt, 'cache_obj');
+      cache_obj = opt.cache_obj;
+      if ~iscell(cache_obj)
+         cache_obj = {cache_obj};
+      end
+   else
+      cache_obj = varargin{1};
+   end
+   
    fstr = func2str(fhandle);
-   cache_obj = varargin{1};
+   
    varargout = eidors_obj('get-cache', cache_obj, fstr );
    if numel(varargout) < nargout
       eidors_msg('@@@ (Re)calculating %s',fstr, 1);
       output = mk_varargout_str(nargout);
       eval(sprintf('%s = %s', output, 'feval(fhandle,cache_obj{:});'));
-      % eidors_cache('boost_priority', -2); % netgen objs are low priority
+      
+      if isfield(opt,'boost_priority');
+         eidors_cache('boost_priority',opt.boost_priority);
+      end
+      
       eidors_obj('set-cache', cache_obj, fstr, varargout);
-      % eidors_cache('boost_priority', +2); % return values
+      
+      if isfield(opt,'boost_priority');
+         eidors_cache('boost_priority',-opt.boost_priority);
+      end
       return
    end
    eidors_msg('%s: Using cached value',fstr,2);
@@ -282,6 +336,17 @@ function do_unit_test;
    [v5 v6 ] = eidors_cache(@test_function,{3,4});
    unit_test_cmp('shorthand 2 params:',v4, v6);
    [v5 v6 ] = eidors_cache(@test_function,{3,4, 5}); %this should re-calc
+   opt.cache_obj = 5;
+   [v5 v6 ] = eidors_cache(@test_function,{3,4, 5}, opt); %this should re-calc
+   [v7 v8 ] = eidors_cache(@test_function,{1,2, 3}, opt); %this should NOT
+   unit_test_cmp('shorthand cache_obj:',v6, v8);
+   eidors_cache clear_all
+   opt = struct;
+   [v7 v8 ] = eidors_cache(@test_function,{1,2, 3}, opt); %this should NOT
+   opt.boost_priority = 2;
+   [v7 v8 ] = eidors_cache(@test_function,{3,4, 5}, opt); %this should NOT
+   eidors_cache show_objs
+   eidors_cache
    eidors_msg('log_level',ll);
    
 function [v1 v2] = test_function(a,b,c,d)
