@@ -79,7 +79,7 @@ switch type
           set_cache_obj( name, varargin{:} );
       end
    case 'eidors_version'
-      obj_id= '3.6+ ($Date$)';  % Update for New eidors version
+      obj_id= '3.6+';  % Update for New eidors version
    case 'interpreter_version'
       obj_id= test_versions;
 % TODO: Add these functions

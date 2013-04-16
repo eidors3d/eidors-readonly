@@ -1,4 +1,4 @@
-function status = system_cmd( cmd );
+function [status,result] = system_cmd( cmd );
 % SYSTEM_CMD: issue system commands, and try to compensate for
 %    strange differences between systems.
 %
@@ -18,4 +18,4 @@ if ~exist('OCTAVE_VERSION')
    end
 end
 
-status = system(cmd);
+[status,result] = system(cmd);
