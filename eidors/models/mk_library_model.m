@@ -74,6 +74,8 @@ else
        save(fname,'fmdl');
        out = fmdl;
     end
+
+    out = mdl_normalize(out, 0); % not normalized by default
 end
 
 %%%%%
