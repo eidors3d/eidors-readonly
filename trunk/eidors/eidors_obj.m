@@ -103,6 +103,18 @@ switch cache_status
         end
 end
 
+function on = debug_status_check
+on = false;
+switch debug_status
+    case 1
+        on = true;
+    case 0.5
+        dbs = dbstack;
+        if debug_status(dbs(3).name) == 1
+            on = true;
+        end
+end
+
 
 function out = cache_status(fname)
     global eidors_objects;
@@ -115,7 +127,21 @@ function out = cache_status(fname)
     else
         out = ~any(strcmp(eidors_objects.cache_disabled_on,fname));
     end
+
     
+function out = debug_status(fname)   
+   global eidors_objects;
+   if nargin == 0
+      try
+         out = eidors_objects.debug_enable;
+      catch
+         out = 0;
+      end
+   else
+      out = ~any(strcmp(eidors_objects.debug_enabled_on,fname));
+   end
+      
+      
 function test_install
   global eidors_objects;
   if isfield(eidors_objects,'max_cache_size'); return; end % OK

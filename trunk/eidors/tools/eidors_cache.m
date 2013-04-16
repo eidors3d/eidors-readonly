@@ -99,6 +99,12 @@ end
 
     
 switch command
+   case 'init'
+      eidors_objects.cache_enable = 1;
+      eidors_objects.cache_disabled_on = [];
+      eidors_objects.debug_enable = 0;
+      eidors_objects.debug_enabled_on = [];
+      
    case {'clear_all','clear'}
       [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  1:length(sizes) );
@@ -140,6 +146,57 @@ switch command
                eidors_objects.cache_enable = 1;
            end
        end
+   case 'status'
+      if nargin == 1
+         try
+            varargout{1} = eidors_objects.cache_enable;
+         catch
+            varargout{1} = 1;
+         end
+      else
+         if isfield(eidors_objects,'cache_disabled_on')
+            idx = strcmp(eidors_objects.cache_disabled_on, limit);
+            varargout{1} = double(~any(idx));
+         end
+      end
+   case 'debug_status'
+      if nargin == 1
+         varargout{1} = eidors_objects.debug_enable;
+      else
+         if isfield(eidors_objects,'debug_enabled_on')
+            idx = strcmp(eidors_objects.debug_enabled_on, limit);
+            varargout{1} = double(any(idx));
+         end
+      end
+   case 'debug_on'
+       if nargin == 1
+           eidors_objects.debug_enable = 1;
+           eidors_objects.debug_enabled_on = {};
+       else
+           eidors_objects.debug_enable = 0.5;
+           if isfield(eidors_objects,'debug_enabled_on')
+            if ~any(strcmp(eidors_objects.debug_enabled_on, limit))
+                eidors_objects.debug_enabled_on = [...
+                    eidors_objects.debug_enabled_on; {limit}];
+            end
+           else
+               eidors_objects.debug_enabled_on =  {limit};
+           end
+       end
+   case 'debug_off'
+      if nargin == 1
+         eidors_objects.debug_enable = 0;
+      else
+         if isfield(eidors_objects,'debug_enabled_on')
+            idx = strcmp(eidors_objects.debug_enabled_on, limit);
+            eidors_objects.debug_enabled_on(idx) = [];
+         else
+            eidors_objects.debug_enabled_on = [];
+         end
+         if isempty(eidors_objects.debug_enabled_on)
+            eidors_objects.debug_enable = 0;
+         end
+      end
    case 'boost_priority'
       try
          varargout{1}= eidors_objects.cache_priority;
