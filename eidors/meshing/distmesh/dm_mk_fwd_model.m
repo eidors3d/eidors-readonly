@@ -31,6 +31,8 @@ h0= estimate_h0(bbox, nnodes);
 fwd_mdl= create_refined_model(name, fd, fh, h0, bbox, elec_nodes, ...
                         refine_nodes, z_contact); 
 
+fwd_mdl = mdl_normalize( fwd_mdl, 0);
+
 % estimate initial edge length to get nnodes
 function  h0= estimate_h0(bbox, nnodes);
    dims= size(bbox,2);

@@ -1,4 +1,8 @@
 function J =jacobian_apparent_resistivity(fwd_model, img)
+% jacobian_apparent_resistivity: Jacobian output as apparent resistivity
+%  This function is a wrapper to the calc_jacobian; however, the output
+%  is converted into apparent resistivity units, rather than in
+%  voltage units
 
 % $Id$
 
