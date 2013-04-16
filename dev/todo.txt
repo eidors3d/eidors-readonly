@@ -77,7 +77,7 @@
      + (WFM?) thoraxmdl03 - mdl_normalize
      + eidors_toast_demo1 - toastMakeMesh - Add documentation
 
- - fix calc_colours to it takes non 256 colours (in CG's code) and 
+ + fix calc_colours to it takes non 256 colours (in CG's code) and 
      fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml     
 
  - Make sure default GREIT is pretty -BG
