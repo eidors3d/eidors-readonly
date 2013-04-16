@@ -59,8 +59,17 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
 %   'cmap_type'  Specify special colours (Default 'blue_red')
-%           if 'draeger' use the Draegerwerk/Amato colourmap
-%           if 'jet' use the matlab jet colourmap
+%           'blue_red':       default Blue/Red eidors colourmpa
+%           'draeger':        Draegerwerk colourmap
+%           'jet':            matlab jet colourmap
+%           'jetair':         scaled jet colours
+%           'blue_yellow':    Blue/Yellow colours
+%           'greyscale':      Greyscale colours
+%           'copper':         Copper colours
+%           'blue_white_red': Blue/White/Red colours
+%           'black_red':      Black/Red Colours
+%           'blue_black_red': Blue/Black/Red colours
+%           'polar_colours':  "Polar" blue/white/red colours
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
 %   'image_field', 'image_field_idx', 'image_field_val' 
@@ -176,6 +185,7 @@ function set_colours_defaults;
    calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
    calc_colours('transparency_thresh',0.25); % transparent at .25 of max
    eidors_msg('Setting Default Colours',1);
+   calc_colours('cmap_type','blue_red');   % default eidors colours
 
 
 %scaled data must go from -1 to 1
@@ -192,7 +202,7 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
      (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
 
    switch pp.cmap_type
-     case {'blue_red',''}
+     case 'blue_red'
       [red,grn,blu]= blue_red_colours(pp,scale_data);
      case 'draeger'
       [red,grn,blu]= draeger_colours(pp,scale_data);
@@ -293,8 +303,9 @@ function [red,grn,blu] = jet_colours(pp,scale_data);
    blu = 1.5 - 2*abs(scale_data - 0.5);
    blu(blu>1) = 1; blu(blu<0) = 0;
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu] = blue_yellow_colours(pp,scale_data);
-   cc = fireice(256);
+   cc = [0,0,0;fireice(2*pp.mapped_colour-1)];
    red = cc(:,1);
    grn = cc(:,2);
    blu = cc(:,3);
@@ -324,24 +335,28 @@ function cmap = fireice(m)
    cmap = interp2(1:3,y,clrs,1:3,yi);
 
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= greyscale_colours(pp,scale_data);
-   cc = gray(256);
+   cc = [0,0,0;gray(2*pp.mapped_colour-1)];
    red = cc(:,1);
    grn = cc(:,2);
    blu = cc(:,3);
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= copper_colours(pp,scale_data);
-   cc = copper(256);
+   cc = [0,0,0;copper(2*pp.mapped_colour-1)];
    red = cc(:,1);
    grn = cc(:,2);
    blu = cc(:,3);
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= blue_white_red_colours(pp,scale_data);
-   cc = bluewhitered(256);
+   cc = [0,0,0;bluewhitered(2*pp.mapped_colour-1)];
    red = cc(:,1);
    grn = cc(:,2);
    blu = cc(:,3);
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function cmap = bluewhitered(m)
    % bluewhitered Colormap
    %
@@ -363,24 +378,29 @@ function cmap = bluewhitered(m)
    cmap = interp2(1:3,y,clrs,1:3,yi);
 
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu] = black_red_colours(pp,scale_data);
-   cc = gray(256);
+   ncols = 2*pp.mapped_colour-1;
+   cc = [0,0,0;gray(ncols)];
    red = cc(:,1);
-   grn = zeros(256,1);
+   grn = [0;zeros(ncols,1)];
    blu = grn;
 
+% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu] = blue_black_red_colours(pp,scale_data);
-   cc = gray(128);
-   red = [flipud(cc(:,1));zeros(128,1)];
-   grn = zeros(256,1);
-   blu = [zeros(128,1);cc(:,1)];
+   ncol = pp.mapped_colour;
+   cc = gray(ncol);
+   red = [0;flipud(cc(:,1));zeros(ncol-1,1)];
+   grn = zeros(2*ncol,1);
+   blu = [0;zeros(ncol-1,1);cc(:,1)];
 
+% TODO: only works with mapped_colours, fix to use scale_data
 % Ideas for this colourmap, and a few lines of code are from
 % (C) 2011, Francois Beauducel, IPGP in polarmap.m
 function [red,grn,blu] = polar_blue_white_red_colours(pp,scale_data);
-   n = 256; % FIXME let user select
+   n = calc_colours('mapped_colour')*2-1;
 
-   clim=.5
+   clim=.5;
    ind=1;
    r = repmat(abs(linspace(1,-1,n)).^ind,[3,1])';
 
@@ -393,9 +413,10 @@ function [red,grn,blu] = polar_blue_white_red_colours(pp,scale_data);
    end
    map = [repmat([0,0,1],[n2,1]);z;repmat([1,0,0],[n2,1])];
    map = map.*r + 1 - r;
-   red = map(:,1);
-   grn = map(:,2);
-   blu = map(:,3);
+   red = [0;map(:,1)];
+   grn = [0;map(:,2)];
+   blu = [0;map(:,3)];
+   
 
 
 function pp=get_colours( img );
@@ -465,6 +486,8 @@ function value= set_field(param, value);
 
 % TESTS:
 function do_unit_test
+   calc_colours('defaults');
+
    img = eidors_obj('image','test'); 
 
    img.calc_colours.mapped_colour = 127;
@@ -532,4 +555,49 @@ function do_unit_test
 %   'clim'    (DEFAULT [])
 %   'cmap_type'  (Default blue-red)
 
-cc
+   calc_colours('defaults');
+   calc_colours('mapped_colour',4);
+
+   calc_colours('cmap_type', 'blue_red');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct01',cc([2,5,8],:), ...
+      [0,0,2997; 9990,9990,9990; 2997,0,0]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'draeger');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [10000,10000,10000;0,0,0;6667,0,6667]/1e4, 1e-4);
+   calc_colours('cmap_type', 'jet');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [5000,0,0;5000,10000,5000;0,0,5000]/1e4, 1e-4);
+   calc_colours('cmap_type', 'jetair');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [8333,0,0; 0,0,8333;0,0,0]/1e4, 1e-4);
+   calc_colours('cmap_type', 'blue_yellow');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [10000,10000,7500; 0,0,0;7500,10000,10000]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'greyscale');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [0,0,0;5000,5000,5000;10000,10000,10000]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'copper');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [0,0,0;6250,3906,2487;10000,7812,4975]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'blue_white_red');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [10000,0,0;10000,10000,10000;0,0,10000]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'black_red');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [0,0,0;5000,0,0;10000,0,0]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'blue_black_red');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [10000,0,0;0,0,0;0,0,10000]/1e4, 1e-4);
+
+   calc_colours('cmap_type', 'polar_colours');
+   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
+      [0,0,10000;10000,10000,10000;10000,0,0]/1e4, 1e-4);
+
+
+%  calc_colours('defaults');
