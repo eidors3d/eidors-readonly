@@ -1,11 +1,17 @@
+2013-04-17: Desired image function for mk_GREIT_model: opt.desired_image_fn
+2013-04-17: Cache debug output: eidors_cache debug_on/debug_off
+2013-04-16: Auto-compile required mex file on startup on Linux
+2013-04-16: SVN revision number on startup in dev versions
+2013-04-16: Shorthand caching interface: eidors_cache(@fn, params)
+2013-04-16: 2D interface to Netgen: ng_mk_2d_model
 2013-04-13: Added apparent_resisitivity fwd_solver and jacobian
-2013-03-20: Added node_data support to mk_image
-2013-03-20: Added physics support: conductivity, resisitivity and logs:q
-2013-02-18: Added code for placing electrodes on arbitrary meshes
-2013-02-18: Added merge_meshes to merge non-overlapping (surface) meshes
+2013-03-20: Node_data support for mk_image
+2013-03-20: Physics support: conductivity, resisitivity and logs:q
+2013-02-18: Electrode placement on arbitrary meshes: place_elec_on_surf
+2013-02-18: merge non-overlapping (surface) meshes: merge_meshes
 2013-02-18: Expand support for gmsh: gmsh_stl2tet
 2013-01-23: Quick building of pixel rec_models: mk_pixel_slice
-2013-01-23: Draw a single colourbar for mulitple sub-plots
+2013-01-23: Draw a single colourbar for mulitple sub-plots: common_colourbar
 2013-01-23: Outside parameter for c2f mapping
 2013-01-15: New options in meas_icov_rm_elecs to keep or discard default estimate
 2013-01-15: Spdiag utility
