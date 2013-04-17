@@ -210,7 +210,7 @@ function value= get_cache_obj( obj, prop, varargin );
       try
          value= eidors_objects.( obj_id ).cache.( prop );
 %        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
-         update_timestamp(obj_id);
+         update_timestamp_and_check_size(obj_id);
       end
 %  end
 
@@ -233,7 +233,7 @@ function set_cache_obj( obj, prop, value, varargin )
 %  if isempty(cachename)
       eidors_objects.( obj_id ).cache.( prop ) = value;
       eidors_objects.( obj_id ).priority = eidors_objects.cache_priority;
-      update_timestamp(obj_id);
+      update_timestamp_and_check_size(obj_id);
 %  else
 %     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
 %     save(filename, 'value');
@@ -318,7 +318,7 @@ function retval= cache_this( obj )
       retval = 1;
    end
 
-function update_timestamp( obj_id )
+function update_timestamp_and_check_size( obj_id )
    global eidors_objects;
 
    eidors_objects.( obj_id ).last_used = now;

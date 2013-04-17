@@ -41,13 +41,34 @@ function varargout=eidors_cache( command, varargin )
 %   eidors_cache( 'off', 'function_name' )
 %      - new values are not added to cache
 %      - requests for cached values return []
-%      - if specified, only applies to specified function
+%      - if specified, only applies to a specific function
 %
 %   eidors_cache( 'on' )
 %   eidors_cache( 'enable' )
 %   eidors_cache( 'on', 'function_name' )
 %      - re-enables caching
-%      - if specified, only applies to specified function
+%      - if specified, only applies to a specific function
+%
+%   eidors_cache( 'status' )
+%      - queries the caching status
+%      - 0  : all off
+%      - 1  : all on
+%      - 0.5: off for some functions
+%
+%   eidors_cache( 'debug_on' )
+%   eidors_cache( 'debug_on', 'function_name' )
+%      - enables debug output
+%      - if specified, only applies to a specific function
+%      - will print a message everytime an object is removed from cache
+%
+%   eidors_cache( 'debug_off' )
+%   eidors_cache( 'debug_off', 'function_name' );
+%      - disables debug output
+%      - if specified, only applies to a specific function
+%
+%   eidors_cache( 'debug_status' )
+%      - queries debug status
+%      - output analogous to cache status above
 %
 %   v1 = eidors_cache( @function_handle, {param1, param2, ...})
 %   [v1, v2, ...] = eidors_cache( @function_handle, {param1, param2, ...})
@@ -135,6 +156,7 @@ switch command
    case {'enable' 'on'}
        if nargin == 1
            eidors_objects.cache_enable = 1;
+           eidors_objects.cache_disabled_on = {};
        else
            if isfield(eidors_objects,'cache_disabled_on')
                idx = strcmp(eidors_objects.cache_disabled_on, limit);
@@ -165,7 +187,7 @@ switch command
       else
          if isfield(eidors_objects,'debug_enabled_on')
             idx = strcmp(eidors_objects.debug_enabled_on, limit);
-            varargout{1} = double(any(idx));
+            varargout{1} = double(any(idx)) | eidors_objects.debug_enable==1;
          end
       end
    case 'debug_on'
@@ -186,6 +208,7 @@ switch command
    case 'debug_off'
       if nargin == 1
          eidors_objects.debug_enable = 0;
+         eidors_objects.debug_enabled_on = {};
       else
          if isfield(eidors_objects,'debug_enabled_on')
             idx = strcmp(eidors_objects.debug_enabled_on, limit);
@@ -210,10 +233,12 @@ switch command
       eidors_objects.cache_priority = varargout{1};
 
    case 'show_objs'
-      [objid, times, sizes, prios, priidx] = get_names_times;
+      [objid, times, sizes, prios, priidx, names] = get_names_times;
       for i=1:length(times)
-         fprintf('t=%9.7f b=%9.0d p=%02d, i=%03d: %s\n', rem(times(i),1), ... %today
-             sizes(i), prios(i), priidx(i), objid{i} ); 
+         fprintf('t=%9.7f b=%9.0d p=%02d, i=%03d: %s { ', rem(times(i),1), ... %today
+             sizes(i), prios(i), priidx(i), objid{i} );
+         fprintf('%s ', names{i}{:});
+         fprintf('}\n');
       end
 
    case 'clear_max'
@@ -280,8 +305,8 @@ function [objid, sizes, clearidx] = clear_names_cache( name );
    end
 
 % priidx is priority index, where 1 prio is 0.1 of a day
-function [objid, times, sizes, prios, priidx] = get_names_times;
-   objid={}; times=[]; sizes=[]; pri=[]; prios=[]; priidx=[];
+function [objid, times, sizes, prios, priidx, names] = get_names_times;
+   objid={}; times=[]; sizes=[]; pri=[]; prios=[]; priidx=[];names={};
    global eidors_objects;
    if isempty(eidors_objects); return; end
    idx=1;
@@ -301,7 +326,7 @@ function [objid, times, sizes, prios, priidx] = get_names_times;
          catch
             prios(idx) = 0; % default
          end
-
+         names(idx) = {fieldnames(obj.cache)};
          ww= whos('obj');
          sizes(idx) = ww.bytes;
 
@@ -315,14 +340,34 @@ function [objid, times, sizes, prios, priidx] = get_names_times;
    objid= objid(idx);
    sizes= sizes(idx);
    prios= prios(idx);
+   names= names(idx);
    % sort from high to low priority and recent (high) to old (low)
    [jnk, priidx] = sortrows([-prios(:), -times(:)]);
 
 function remove_objids( objid, sizes, idx)
    global eidors_objects;
+   
+   switch eidors_cache('debug_status')
+      case 1
+         for i = 1:length(idx)
+            debug_msg(objid{idx(i)},'removed');
+         end
+      case 0.5
+         for i = 1:length(idx)
+            flds = fieldnames(eidors_objects.(objid{idx(i)}).cache);
+            for j = 1:numel(flds)
+               if eidors_cache('debug_status',flds)
+                  debug_msg(objid{idx(i)}, 'removed');
+                  break
+               end
+            end
+         end
+   end
+   
    eidors_objects= rmfield( eidors_objects, objid( idx ) );
    eidors_msg('eidors_cache: removing %d objects with %d bytes', ...
           length(idx), sum(sizes(idx)), 3 );
+
        
 function varargout = cache_shorthand(fhandle, varargin)
 % Will cache on all function inputs, unless opt.cache_obj is specified
@@ -367,8 +412,17 @@ for i = 1:N
    output = [ output sprintf('varargout{%d} ',i)];
 end
 output = [ output ']' ];
-      
-function do_unit_test;
+
+function debug_msg(id,action)
+global eidors_objects;
+name = fieldnames(eidors_objects.(id).cache);
+fprintf('EIDORS_CACHE: %s %s {', action, id);
+fprintf(' %s', name{:});
+fprintf(' }\n');
+% dbstack could be useful too
+
+function do_unit_test
+
    ll= eidors_msg('log_level');
    eidors_msg('log_level',5);
    eidors_cache
@@ -406,7 +460,31 @@ function do_unit_test;
    eidors_cache
    eidors_msg('log_level',ll);
    
+   test_debug
+   
 function [v1 v2] = test_function(a,b,c,d)
    v1 = rand(1);
    v2 = rand(1);
    
+function test_debug
+   eidors_cache clear
+   eidors_obj('set-cache',{5}, 'test1',50);
+   eidors_obj('set-cache',{5}, 'test2',500);
+   eidors_obj('set-cache',{10}, 'test1',100);
+   eidors_cache show_objs
+   eidors_cache debug_off
+   eidors_cache debug_on test2
+   eidors_cache clear_name test2
+   eidors_cache show_objs
+%    eidors_obj('set-cache',{5}, 'test1',50);
+   eidors_obj('set-cache',{5}, 'test2',500);
+   eidors_cache debug_off
+   eidors_cache debug_on test1
+   eidors_cache clear_name test2
+   eidors_cache('clear_max',0)
+   eidors_cache('show_objs')
+   eidors_cache debug_off
+   
+   
+   
+%    obj= eidors_obj('get-cache',{5}, 'test1');
