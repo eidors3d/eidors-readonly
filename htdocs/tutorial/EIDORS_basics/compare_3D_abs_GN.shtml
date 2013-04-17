@@ -1,0 +1,67 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>Gauss Newton solvers in 3D</h2>
+
+
+
+<h3> Simulation Model</H3>
+<pre>
+<!--#include virtual="compare_3D_abs_GN_01.m" -->
+</pre>
+
+<center>
+<img src="compare_3D_abs_GN_01a.png">
+<img src="compare_3D_abs_GN_01b.png">
+<br><i> Figure:</i>
+Simulation model
+</center>
+
+<h3> Reconstruction with GN solver</H3>
+<pre>
+<!--#include virtual="compare_3D_abs_GN_02.m" -->
+</pre>
+
+<center>
+<img src="compare_3D_abs_GN_02a.png">
+<img src="compare_3D_abs_GN_02b.png">
+<br><i> Figure:</i>
+<i>Left</i> Data without noise
+<i>Right</i> Data with noise
+</center>
+
+<h3> Reconstruction with GN solver with hyperparameter adjustment</H3>
+<pre>
+<!--#include virtual="compare_3D_abs_GN_03.m" -->
+</pre>
+
+<center>
+<img src="compare_3D_abs_GN_03a.png">
+<img src="compare_3D_abs_GN_03b.png">
+<br><i> Figure:</i>
+<i>Left</i> Data without noise
+<i>Right</i> Data with noise
+</center>
+
+<h3> Reconstruction with constrained GN solver</H3>
+<pre>
+<!--#include virtual="compare_3D_abs_GN_04.m" -->
+</pre>
+
+<center>
+<img src="compare_3D_abs_GN_04a.png">
+<img src="compare_3D_abs_GN_04b.png">
+<br><i> Figure:</i>
+<i>Left</i> Data without noise
+<i>Right</i> Data with noise
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
