@@ -1,3 +1,4 @@
+2013-04.17: Quick GREIT models: mk_common_gridmdl('GREIT','mdl_library_string')
 2013-04-17: Desired image function for mk_GREIT_model: opt.desired_image_fn
 2013-04-17: Cache debug output: eidors_cache debug_on/debug_off
 2013-04-16: Auto-compile required mex file on startup on Linux
