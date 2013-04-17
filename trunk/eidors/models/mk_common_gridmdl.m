@@ -14,6 +14,12 @@ function inv_mdl= mk_common_gridmdl( str, RM)
 %   indicate location, it does not necessarily correspond to the
 %   Reconstruction Matrix RM provided. 
 %
+% GREIT MODELS - calculated for library models
+%  mk_common_gridmdl('GREIT', PARAMS TO MK_LIBRARY_MODEL)
+%    (run mk_library_model('list') to get list)
+%  eg. mk_common_gridmdl('GREIT','cylinder_16x1el_coarse')
+%  eg. mk_common_gridmdl('GREIT','adult_male_32el')
+%
 % GREIT V1 (GREIT matrix for reconstruction to circle, 2009)
 %   mk_common_gridmdl('GREITc1') - 32x32 with Circle shape
 %

@@ -69,25 +69,12 @@
  - move to some type of bugzilla version management.
 
 3.7
- - make mk_GREIT_model accept function for desired image
-
- - check and commit images for stimPatt_PseudoSec
- - tutorial_tests errors
-     + (WFM?) framework05 
-     + tutorial210d - physics error
-     + stimPatt_PseudoSec02 ERROR = (Error using show_pseudosection
-     + cg_ards_recruitment_00 ERROR = (Error using checkfilename>validateFilename (line 182)
-     - dm_geophys03 - ugly images?
-     + thoraxmdl02 - ng_remove_electrodes 
-     + (WFM?) thoraxmdl03 - mdl_normalize
-     + eidors_toast_demo1 - toastMakeMesh - Add documentation
-
  - Make sure default GREIT is pretty -BG
     = add string interface
-    + rerun GREITv1 performance metrics with new GREIT cylinder
 
- - fix and test:
-     -  EIDORS_basics/example_abs_GN_compare_3D.m
+ - check and commit images for stimPatt_PseudoSec
+
+ - dm_geophys03 - ugly images?
 
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
@@ -95,9 +82,24 @@
        - provide some new options for abs solvers
    - add a parameter_mapping interface
 
- - debug caching for netgen models
-    - example is show_pseudosection UNIT_TEST
-    - write function to give messages when cache happens
+ + make mk_GREIT_model accept function for desired image
+
+ + tutorial_tests errors
+     + (WFM?) framework05 
+     + tutorial210d - physics error
+     + stimPatt_PseudoSec02 ERROR = (Error using show_pseudosection
+     + cg_ards_recruitment_00 ERROR = (Error using checkfilename>validateFilename (line 182)
+     + thoraxmdl02 - ng_remove_electrodes 
+     + (WFM?) thoraxmdl03 - mdl_normalize
+     + eidors_toast_demo1 - toastMakeMesh - Add documentation
+
+ + rerun GREITv1 performance metrics with new GREIT cylinder
+
+ + fix and test:  EIDORS_basics/example_abs_GN_compare_3D.m
+
+ + debug caching for netgen models
+    + example is show_pseudosection UNIT_TEST
+    + write function to give messages when cache happens
 
  + output svn verions
 
