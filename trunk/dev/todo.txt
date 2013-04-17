@@ -69,18 +69,18 @@
  - move to some type of bugzilla version management.
 
 3.7
- - Make sure default GREIT is pretty -BG
-    = add string interface
-
- - check and commit images for stimPatt_PseudoSec
-
- - dm_geophys03 - ugly images?
+ - check and commit images for stimPatt_PseudoSec -NL
 
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
           (img.orig_fwd_model)
        - provide some new options for abs solvers
    - add a parameter_mapping interface
+
+ + Make sure default GREIT is pretty -BG
+    = add string interface
+
+ + dm_geophys03 - ugly images -AA
 
  + make mk_GREIT_model accept function for desired image
 
