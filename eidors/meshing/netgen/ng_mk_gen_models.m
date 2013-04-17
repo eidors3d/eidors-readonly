@@ -384,6 +384,7 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
 
 function do_unit_test
   for tn = 1:13
+     eidors_msg('ng_mk_gen_models: unit_test %02d',tn,1);
      fmdl= do_test_number(tn);
      show_fem(fmdl);
   end
