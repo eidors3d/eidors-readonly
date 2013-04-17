@@ -68,7 +68,8 @@ switch str
    case 'b2t3'; inside = inside_thorax(x,y,3);
    case 'b2t4'; inside = inside_thorax(x,y,4);
    case 'b2t5'; inside = inside_thorax(x,y,5);
-
+   
+   case 'GREIT'; inv_mdl = greit_library_model(RM); return
 
    otherwise
       error(['mdl_string ',str,' not understood']);
@@ -141,5 +142,21 @@ function elec = mk_electrode_locns( nodes, n_elec );
       elec(i).z_contact = 0.001;
       elec(i).nodes     = e_node;
    end
-    
+   
+function inv_mdl = greit_library_model(str)
+fmdl = mk_library_model(str);
+fmdl = mdl_normalize(fmdl,1);
+nelec = numel(fmdl.electrode);
+fmdl.stimulation = ...
+   mk_stim_patterns(nelec,1,[0,1],[0,1],{'no_meas_current'}, 1);
 
+opt.noise_figure = 1;
+opt.target_size = 0.1;
+opt.square_pixels = 1;
+if strcmp(str(1:8),'cylinder');
+   opt.distr = 0; % seems best, but only works for cylinders
+else
+   opt.distr = 4; % best bet for the time being
+end
+
+inv_mdl = mk_GREIT_model(fmdl,0.25,5,opt);

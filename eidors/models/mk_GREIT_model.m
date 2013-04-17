@@ -45,9 +45,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % NOTE
 %   currently extra_noise is not supported
 %   currently weighting matrix must be scalar
-% 
-% See also CALC_GREIT_RM
-              
+%               
 % Examples
 %   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
 % OR
@@ -56,8 +54,8 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   fmdl.normalize_measurements = 1;
 %   opt.noise_figure = 0.5; 
 %   imdl = mk_GREIT_model(fmdl,0.25,5,opt);
-
-% TODO: Fix pixel size finding for non-extruded models.
+%
+% See also CALC_GREIT_RM
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
