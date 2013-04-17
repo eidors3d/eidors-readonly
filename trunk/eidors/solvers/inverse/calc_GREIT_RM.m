@@ -41,7 +41,7 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
    if ~isfield(opt, 'desired_solution_fn')
       D = default_GREIT_desired_soln( xyc, radius, opt);
    else
-      D = feval(opt.desired_solution_fn, xyc, radius, opt)
+      D = feval(opt.desired_solution_fn, xyc, radius, opt);
    end
 
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
