@@ -18,7 +18,11 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 %      defaults to [-1 1 -1 1]
 %   options.imgsz  = [xsz ysz] size of the reconstructed image in pixels
 %   options.noise_covar [optional]
-%       covariance matrix of data noise
+%      covariance matrix of data noise
+%   options.desired_solution_fn
+%      specify a function to calculate the desired image. 
+%      It must have the signature:
+%      D = my_function( xyc, radius, options);
 % 
 %
 % (C) 2009 Andy Adler. Licenced under GPL v2 or v3
@@ -34,8 +38,11 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
    else
       Y = vi - (vh*ones(1,size(vi,2)));
    end
-
-   D = desired_soln( xyc, radius, opt);
+   if ~isfield(opt, 'desired_solution_fn')
+      D = default_GREIT_desired_soln( xyc, radius, opt);
+   else
+      D = feval(opt.desired_solution_fn, xyc, radius, opt)
+   end
 
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
        [RM] = calc_RM(Y,D,weight, opt);
@@ -61,7 +68,7 @@ function RM = calc_RM(Y, D, noiselev, opt)
       if norm(RM-RMold,'fro')/norm(RM,'fro') > 1e-10; warning('not OK'); end
    end
 
-function PSF= desired_soln(xyc, radius, opt)
+function PSF= default_GREIT_desired_soln(xyc, radius, opt)
    c_obj = {xyc, radius, opt};
    PSF = eidors_obj('get-cache', c_obj, 'desired_solution');
    if ~isempty(PSF)

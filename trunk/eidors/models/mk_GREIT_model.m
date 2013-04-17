@@ -37,10 +37,16 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     noise_figure - the noise figure (NF) to achieve. Overwrites weight 
 %         which will be optimised to achieve the target NF.
 %     extra_noise - extra noise samples (such as electrode movement)
+%     desired_solution_fn - specify a function to calculate the desired 
+%         image. It must have the signature:
+%         D = my_function( xyc, radius, options); 
+%         See CALC_GREIT_RM for details.
 %
 % NOTE
 %   currently extra_noise is not supported
 %   currently weighting matrix must be scalar
+% 
+% See also CALC_GREIT_RM
               
 % Examples
 %   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
