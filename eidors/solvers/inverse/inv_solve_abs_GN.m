@@ -7,6 +7,7 @@ function img= inv_solve_abs_GN( inv_model, data0);
 %
 % Parameters:
 %   inv_model.parameters.max_iterations = N_max iter            (default 1)
+%   inv_model.parameters.show_iterations  (print status lines)  (default 0)
 % Parameters: (will override parameters field)
 %   Maximum Iterations:
 %    inv_model.inv_solve_abs_GN.max_iterations
@@ -75,11 +76,9 @@ RtR = calc_RtR_prior( inv_model );
 W   = calc_meas_icov( inv_model );
 hp2RtR= hp*RtR;
 
-iters = opt.max_iter;
-
 img0 = physics_data_mapper(img);
 opt.line_optimize.meas_icov = calc_meas_icov( inv_model);
-for i = 1:iters  
+for i = 1:opt.max_iter
   vsim = fwd_solve( img ); 
   dv = calc_difference_data( vsim , data0, img.fwd_model);
   J = calc_jacobian( img );
@@ -90,10 +89,14 @@ for i = 1:iters
   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
   
   opt.line_optimize.hp2RtR = hp2RtR;
-  [next fmin res] = ...
+  [next, fmin, res] = ...
       feval(opt.line_optimize_func,img, dx, data0, opt.line_optimize);
+
+  if opt.show_iterations
+     eidors_msg('#%02d residual=%.3g', i, res, 1);
+  end
   
-  [img opt] = update_step(img, next, dx, fmin, res, opt);
+  [img, opt] = update_step(img, next, dx, fmin, res, opt);
   
   inv_model.jacobian_backgnd = img;
   RtR = calc_RtR_prior( inv_model );
