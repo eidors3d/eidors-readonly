@@ -22,8 +22,8 @@ to be supplied to distmesh.
 </pre>
 
 <center>
-<img src="dm_geophys01a.png"
-<img src="dm_geophys01b.png"
+<img src="dm_geophys01a.png">
+<img src="dm_geophys01b.png">
 <br><i>Figure:</i>
 Geophysical model with electrodes on surface from distmesh
 <i>Left</i>: Uniform mesh density
@@ -41,7 +41,7 @@ mesh in this case.
 </pre>
 
 <center>
-<img src="dm_geophys02a.png"
+<img src="dm_geophys02a.png">
 <br><i>Figure:</i>
 Coarse mesh (blue) superimposed onto the fine mesh (black).
 Electrode positions are shown in green.
@@ -56,7 +56,7 @@ onto the fine mesh using the <tt>interp_mesh</tt> function.
 </pre>
 
 <center>
-<img src="dm_geophys03a.png"
+<img src="dm_geophys03a.png">
 <br><i>Figure:</i>
 Simulated position of target in the fine mesh
 </center>
@@ -71,7 +71,7 @@ The image is reconstructed onto the coarse
 </pre>
 
 <center>
-<img src="dm_geophys04a.png"
+<img src="dm_geophys04a.png">
 <br><i>Figure:</i>
 Reconstructed target showing coarse and fine mesh
 in background.
