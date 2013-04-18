@@ -173,7 +173,7 @@ function print_welcome(HOMEDIR,archdir,ver)
     if eidors_ver(end) == '+' % post release version
        % THIS IS HORRIBLE, HORRIBLE CRAP IN SVN. LOTS OF USERS WANT GlobalRev
        % BUT THE ARROGANT SVN AUTHORS REFUSE TO PROVIDE IT!!!!
-       [status, result] = system_cmd('svnversion');
+       [status, result] = system('svnversion');
        if status==0;
           eidors_ver = [eidors_ver, ' SVN_ID=', result(1:end-1)];
        end
