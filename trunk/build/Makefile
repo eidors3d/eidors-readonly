@@ -146,10 +146,11 @@ step8:
 step9:
 	echo "COPY LOCAL EIDORS BUILD DOC"
 
-VERSION=v3.6
+VERSION=v3.7RC
 step10:
-	mv $P $P/../eidors-$(VERSION)
-	(cd $P/.. && zip -r eidors-$(VERSION).zip eidors-$(VERSION))
+	mkdir $(REL)/eidors-$(VERSION)
+	mv $P $(REL)/eidors $(REL)/eidors-$(VERSION)
+	(cd $(REL) && zip -r eidors-$(VERSION).zip eidors-$(VERSION))
 	
 
 fix-cmyk-jpgs:

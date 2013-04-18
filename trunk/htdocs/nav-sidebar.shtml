@@ -58,6 +58,8 @@
       >&minus; GREIT</a><br>
 <a href="<!--#echo var="root" -->tutorial/old-tutorials.shtml"
       >&minus; Old tutorials</a><br>
+<a href="<!--#echo var="root" -->tutorial/workshop.shtml"
+      >&minus; <i>Workshop</i></a><br>
 <!--#endif -->
 <a href="<!--#echo var="root" -->download.shtml"
    >Download</a><br>
