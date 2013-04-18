@@ -6,6 +6,7 @@ function show_fem_move( img, move, scale, options )
 %       scale   - factor to scale movement arrows (optional)
 %       options - options array passed on to show_fem()
 
+% (C) 2005 Andy Adler. License GPL v2 or v3
 % $Id$
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end

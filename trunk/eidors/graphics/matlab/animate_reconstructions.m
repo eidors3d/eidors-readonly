@@ -16,6 +16,9 @@ function fname_out= animate_reconstructions(fname, imgs);
 %     Name of animated file written to.
 %     An animated window will not pop up if output requested
 
+% (C) 2006 Andy Adler. Licensed under GPL version 2 or 3
+% $Id$
+
 mk_movie2(fname,imgs)
 
 if nargout>0
