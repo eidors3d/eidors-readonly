@@ -1,0 +1,29 @@
+<!--#set var="root" value="../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../nav-sidebar.shtml" -->
+<h2>EIDORS Workshop</h2>
+To run these tutorials, you need to 
+<a href="../download.shtml">download and install</a>
+EIDORS and then run this command in a matlab
+(or octave) session.
+<pre width="40">
+&gt;&gt;run /path/to/eidors3d/startup.m
+</pre>
+
+<!--#include virtual="./workshop.html" -->
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      <p><li><b>
+      </b><br>
+      <ul>
+      </ul>
+      <i>Questions</i>:
+      <br>&minus;
+
+      -->
