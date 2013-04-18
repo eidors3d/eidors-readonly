@@ -2,7 +2,7 @@
     xsi:noNamespaceSchemaLocation="optional">
     <?xml-stylesheet type="text/xsl"href="optional"?>
     <!-- info.xml file for EIDORS -->
-    <!-- Version 3.6 -->
+    <!-- Version 3.7 -->
     <!-- $Id$ -->
     
     <!-- Supply the following six elements in the order specified -->
