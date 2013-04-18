@@ -18,4 +18,5 @@ if ~exist('OCTAVE_VERSION')
    end
 end
 
-[status,result] = system(cmd);
+[status,result] = system(cmd,'-echo');
+
