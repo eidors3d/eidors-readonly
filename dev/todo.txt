@@ -1,9 +1,13 @@
 ############## post 3.7 ################3
 
  - ng models with point electrodes
+   + fixed for 2D
+
+ - ensure jacobian_perturb works on physics parameters
 
  - colourbar - put some logic to allow labels like 1.5 as max
     (instead of 1,2,3 etc)
+    - when max is 1.5 (or 3) then split into 1,2,3, not 1.5,3
 
  - fix the example tutorial
         EIDORS_basics/example_abs_GN_compare_3D.m
@@ -76,6 +80,8 @@
           (img.orig_fwd_model)
        - provide some new options for abs solvers
    - add a parameter_mapping interface
+
+ - fix ugly tutorials
 
  + Make sure default GREIT is pretty -BG
     = add string interface
