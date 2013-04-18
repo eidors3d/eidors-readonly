@@ -23,5 +23,4 @@ img.elem_data(fmdl.mat_idx{2})= 0.3; % rlung
 img.elem_data(fmdl.mat_idx{3})= 0.3; % llung
 
 clf; show_fem(img); view(0,70);
-print_convert thoraxmdl02a.jpg
-
+print_convert thoraxmdl02a.jpg '-density 100'

@@ -8,6 +8,4 @@ llung  = shape_library('get','adult_male','left_lung');
 
 % show the library image
 shape_library('show','adult_male');
-print_convert thoraxmdl01a.jpg
-
-
+print_convert thoraxmdl01a.jpg '-density 100'
