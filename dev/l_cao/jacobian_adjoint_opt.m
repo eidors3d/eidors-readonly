@@ -109,7 +109,7 @@ if mdl_normalize(fwd_model)
 end
 
 %Negative Jacobian for injected currents??
-J= -J;  
+% J= -J;  
 
 end
 

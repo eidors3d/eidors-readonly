@@ -11,7 +11,7 @@ nodedim=size(nodes,2); nnodes=size(nodes,1);
 
 nelems=size(elem,2);
 
-Mus = 14;
+Mus = 1400;
 D = 1.0/(3.0*Mus);
 Mua = check_elem_data(fwd_model, img); % 0.15
 optical_n = 1.4;
