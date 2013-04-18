@@ -1,7 +1,7 @@
 <!--#set var="root" value="../" -->
 <!--#set var="show_tut" value="1" -->
 <!--#include virtual="../nav-sidebar.shtml" -->
-<h2>EIDORS Workshop</h2>
+<h2>Samples for the EIDORS Workshop</h2>
 To run these tutorials, you need to 
 <a href="../download.shtml">download and install</a>
 EIDORS and then run this command in a matlab
@@ -11,6 +11,43 @@ EIDORS and then run this command in a matlab
 </pre>
 
 <!--#include virtual="./workshop.html" -->
+
+<h3>
+Other interesting Tutorials
+</h3>
+
+Here are useful tutorials to start with:
+<ul>
+<li>
+<h3>
+<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml"
+     >EIDORS Basics</a>
+</h3>
+
+<li>
+<h3>
+<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"
+     >Absolute and difference solvers</a>
+</h3>
+
+<li>
+<h3>
+<a href="http://eidors3d.sourceforge.net/tutorial/lung_EIT/if_peep_trial.shtml"
+     >Lung injury images</a>
+</h3>
+
+<li>
+<h3>
+<a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml"
+     >Netgen FEM models</a>
+</h3>
+
+<li>
+<h3>
+<a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml"
+     >GREIT</a>
+</h3>
+</yl>
 
 </td></tr></table>
 <p>
