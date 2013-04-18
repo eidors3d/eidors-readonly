@@ -24,8 +24,8 @@ fmdl.solve    = @fwd_solve_apparent_resistivity;
 % Construct a model with a homogeneous conductivity of 0.1 Sm and insert a conductive sphere
 img = mk_image(fmdl,0+ mk_c2f_circ_mapping(fmdl,[0;1.5;0;0.3])*100);
 img.elem_data(img.elem_data==0)= 0.1;
-show_fem(img,3);
-print_convert stimPatt_PseudoSec07_1.png
+show_fem(img);
+print_convert stimPatt_PseudoSec07_1.png '-density 75'
 
 % Solve the forward problem
 dd  = fwd_solve(img);
@@ -33,4 +33,4 @@ dd  = fwd_solve(img);
 % Show the pseudo-section of the apparent resistivity
 fmdl.show_pseudosection.orientation = {'CircularOutside','yz'};
 show_pseudosection( fmdl, dd.meas);
-print_convert stimPatt_PseudoSec07_2.png
+print_convert stimPatt_PseudoSec07_2.png '-density 75'
