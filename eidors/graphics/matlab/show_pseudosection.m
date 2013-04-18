@@ -53,6 +53,12 @@ function [fwd_model, orientation] = process_options( fwd_model );
       end
    end
 
+   try 
+      fwd_model.show_pseudosection.font_size
+   catch
+      fwd_model.show_pseudosection.font_size = 12;
+   end
+
    try
       fwd_model.show_pseudosection.orientation;
    catch
@@ -72,7 +78,7 @@ end
 
 
 function [zps,xps]= plotPseudoSectionProfileDown(fmdl,data)
-   fs= 20;
+   fs= fmdl.show_pseudosection.font_size;
    
    [elec_posn,elecNumber]= electrodesPosition(fmdl);
    xposition_elec= reshape(elec_posn(elecNumber,1),[],4);
@@ -123,7 +129,7 @@ function [zps,xps]= plotPseudoSectionProfileDown(fmdl,data)
 end
 
 function [xps,zps]= plotPseudoSectionProfileVert(fmdl,data)
-   fs= 20;
+   fs= fmdl.show_pseudosection.font_size;
    
    [elec_posn,elecNumber]= electrodesPosition(fmdl);
   
@@ -174,58 +180,64 @@ function [xps,zps]= plotPseudoSectionProfileVert(fmdl,data)
        ylabel('Height (m)','fontsize',fs,'fontname','Times')
    end
    axis equal; axis tight;
+   xl = xlim; xl(1) = xl(1) - 0.1*abs(diff(xl)); xlim(xl);
    set(gca,'fontsize',fs,'fontname','Times')
 end
 
 
 function [r_point,th_point]= plotPseudoSectionCircularIn(fmdl,data)
-fs= 20;
-[elec_posn,elecNumber] = electrodesPosition(fmdl);
-[r_point,th_point,r] = polarPosition(elecNumber,elec_posn);
+   fs= fmdl.show_pseudosection.font_size;
+   [elec_posn,elecNumber] = electrodesPosition(fmdl);
+   [r_point,th_point,r] = polarPosition(elecNumber,elec_posn);
 
-r_point= (r-r_point/pi);%*9*pi*r/10+pi*r/10;
+   r_point=  (r-r_point/pi);%*9*pi*r/10+pi*r/10;
+%  r_point = 1./r_point;
 
-[x_point,y_point]= pol2cart(th_point,r_point);
+   [x_point,y_point]= pol2cart(th_point,r_point);
 
-P= x_point+1i*y_point;
-[Pu,iu,ju]= unique(P);
-   
-xu= x_point(iu);
-zu= y_point(iu);
-du= iu*0;
-for i= 1:length(Pu)
-    du(i)= mean(data(ju==i));
-end
-   
-scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');  
-xlabel('X (m)','fontsize',fs,'fontname','Times');
-ylabel('Y (m)','fontsize',fs,'fontname','Times')
-axis equal; axis tight;
-set(gca,'fontsize',fs,'fontname','Times')
+   P= x_point+1i*y_point;
+   [Pu,iu,ju]= unique(P);
+      
+   xu= x_point(iu);
+   zu= y_point(iu);
+   du= iu*0;
+
+   for i= 1:length(Pu)
+       du(i)= mean(data(ju==i));
+   end
+      
+   scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');  
+   th_point = sort(th_point); th_point = th_point([1:end,1]);
+   hold on; [xp,yp]= pol2cart(th_point,r); plot(xp,yp,'k'); hold off;
+   xlabel('X (m)','fontsize',fs,'fontname','Times');
+   ylabel('Y (m)','fontsize',fs,'fontname','Times')
+   axis equal; axis tight;
+   set(gca,'fontsize',fs,'fontname','Times')
 end
 
 
 function [r_point,th_point]= plotPseudoSectionCircularOut(fmdl,data)
-fs= 20;
-[elec_posn,elecNumber] = electrodesPosition(fmdl);
-[r_point,th_point,r] = polarPosition(elecNumber,elec_posn);
-r_point= (r+r_point);
-[x_point,y_point]= pol2cart(th_point,r_point+r);
+   fs= fmdl.show_pseudosection.font_size;
+   [elec_posn,elecNumber] = electrodesPosition(fmdl);
+   [r_point,th_point,r] = polarPosition(elecNumber,elec_posn);
+   r_point= (r+r_point);
+   [x_point,y_point]= pol2cart(th_point,r_point+r);
 
-P= x_point+1i*y_point;
-[Pu,iu,ju]= unique(P);
-   
-xu= x_point(iu);
-zu= y_point(iu);
-du= iu*0;
-for i= 1:length(Pu)
-    du(i)= mean(data(ju==i));
-end
-   
-scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');  colorbar
-xlabel('X (m)','fontsize',fs,'fontname','Times');
-ylabel('Y (m)','fontsize',fs,'fontname','Times')
-axis equal; axis tight;
+   P= x_point+1i*y_point;
+   [Pu,iu,ju]= unique(P);
+      
+   xu= x_point(iu);
+   zu= y_point(iu);
+   du= iu*0;
+   for i= 1:length(Pu)
+       du(i)= mean(data(ju==i));
+   end
+      
+   scatter(xu,zu,fmdl.show_pseudosection.point_size,(du),'filled','MarkerEdgeColor','k');  colorbar
+%  hold on; [xp,yp]= pol2cart(th_point,r); plot(xp,yp,'k'); hold off;
+   xlabel('X (m)','fontsize',fs,'fontname','Times');
+   ylabel('Y (m)','fontsize',fs,'fontname','Times')
+   axis equal; axis tight;
 set(gca,'fontsize',fs,'fontname','Times')
 end
 
@@ -235,11 +247,17 @@ function [elec_posn,elecNumber] = electrodesPosition(fmdl)
    B= zeros(length(fmdl.stimulation),1);
    M= zeros(length(fmdl.stimulation),1);
    N= zeros(length(fmdl.stimulation),1);
+   k=1;
    for i=1:length(fmdl.stimulation)
-       A(i)= find(fmdl.stimulation(1,i).stim_pattern<0);
-       B(i)= find(fmdl.stimulation(1,i).stim_pattern>0);
-       M(i)= find(fmdl.stimulation(1,i).meas_pattern<0);
-       N(i)= find(fmdl.stimulation(1,i).meas_pattern>0);
+       stim_pat = fmdl.stimulation(i).stim_pattern;
+       meas_pat = fmdl.stimulation(i).meas_pattern;
+       for j=1:size(meas_pat,1);
+          A(k)= find(stim_pat<0);
+          B(k)= find(stim_pat>0);
+          M(k)= find(meas_pat(j,:)<0);
+          N(k)= find(meas_pat(j,:)>0);
+          k=k+1;
+       end
    end
    elecNumber= [A B M N];
    
