@@ -831,7 +831,7 @@ function write_geo_file(geofn, tank_height, tank_shape, ...
                 %          pts_elecs_idx = [ pts_elecs_idx, i];
                 %          continue; % DON'T print solid cyl
 
-            otherwise; error('unknown electorde shape');
+            otherwise; error('unknown electrode shape');
         end
         %       fprintf(fid,'solid cyl%04d = trunk   and %s; \n',i,name);
     end
