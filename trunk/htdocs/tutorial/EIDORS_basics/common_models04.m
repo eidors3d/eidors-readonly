@@ -17,5 +17,3 @@ for i= 1:length(models);
    axis([0,1.05,-0.15,0.15]);
    print_convert(sprintf('common_models04_%s.png',models{i}), '-density 50');
 end
-
-
