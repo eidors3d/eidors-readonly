@@ -1,5 +1,6 @@
 %Make an inverse model and extract forward model
-imdl = mk_common_model('c2C0',16);
+%imdl = mk_common_model('c2C0',16);
+imdl = mk_common_model('n3r2',[16,2]);
 fmdl = imdl.fwd_model;
 
 % make point electrodes
@@ -36,8 +37,9 @@ fmdl.jacobian = @jacobian_adjoint_opt;
 imdl.fwd_model = fmdl;
 
 %Add element type
-fmdl.approx_type    = 'tri3'; % linear
+fmdl.approx_type    = 'tet4'; % linear
 %Make an image and get voltages using high order solver
+fmdl.gnd_node = [];
 img1 = mk_image(fmdl,0.15);
 img1.fwd_solve.get_all_meas = 1; %Internal voltage
 v1 = fwd_solve(img1); 
@@ -45,12 +47,13 @@ v1e=v1.meas; v1all=v1.volt;
 
 
 %Plot electrode voltages and difference
-clf;subplot(211); plot([v0e,v1e]);
-legend('0','1'); xlim([1,256]);
+%clf;subplot(211); plot([v0e,v1e]);
+%legend('0','1'); xlim([1,256]);
 
-% v0 = fwd_solve(img1);
-% img1.elem_data(531) = 0.5;
-% v1 = fwd_solve(img1);
-% rimg = inv_solve(imdl,v1,v0);
-% clf
-% show_fem(rimg,[0 0 1]);
+v0 = fwd_solve(img1);
+img1.elem_data(326) = 0.05;
+imgl.gnd_node = [];
+v1 = fwd_solve(img1);
+rimg = inv_solve(imdl,v1,v0);
+clf
+show_fem(rimg,[0 0 1]);
