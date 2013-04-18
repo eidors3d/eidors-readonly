@@ -11,7 +11,8 @@ function print_convert(filename, options, pagehwr)
 %   print_convert('outname.png','-density 150') % resolution to 150 dpi
 %   print_convert('outname.png','-density 150', 0.5)
 
-% (C) Andy Adler 2010. License: GPL v2 or v3. $Id$
+% (C) Andy Adler 2010. License: GPL v2 or v3.
+% $Id$
 
 if nargin<=1; options = '';  end
 if nargin<=2; pagehwr = 6/8; end

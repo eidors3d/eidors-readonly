@@ -14,7 +14,7 @@ function fwd_model= show_pseudosection( fwd_model, data)
 %      orientation = 'circularinside'
 
 % (C) 2005-2008 Nolwenn Lesparre. License: GPL version 2 or version 3
-% $Id$
+% $Id:$
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end 
 
