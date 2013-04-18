@@ -16,4 +16,4 @@ sy =-centroid(2) + linspace(-1,1,15)';
 hh=streamline(q.xp,q.yp, q.xc, q.yc,sx,sy);
 hh=streamline(q.xp,q.yp,-q.xc,-q.yc,sx,sy);
 
-axis tight; print_convert pig_body05a.jpg
+axis equal; axis tight;  print_convert pig_body05a.jpg
