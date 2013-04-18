@@ -758,7 +758,7 @@ function [vv] = landquart2_readdata( fname )
       if format_version ~= 3
          error('unsupported file format version');
       else
-         fseek(fid,2264,'bof')
+         fseek(fid,2264,'bof');
 
          %%% Read frames
          i = 1;
