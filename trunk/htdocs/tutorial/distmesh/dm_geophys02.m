@@ -5,7 +5,7 @@ imdl= mk_common_model('c2s',16);
 cmdl= rmfield(imdl.fwd_model,{'electrode','stimulation'});
 
 % magnify and move down onto geophysics model
-cmdl.nodes(:,2)= cmdl.nodes(:,2) - 1.05;
+cmdl.nodes(:,2)= cmdl.nodes(:,2) - 1.02;
 cmdl.nodes= cmdl.nodes*4;
 
 % assign one parameter to each square
