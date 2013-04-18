@@ -132,7 +132,7 @@ Conforming model: 2D reconstructon with 3D forward model
 </pre>
 
 <center>
-<img src="pig_body09a.jpg"> <img src="pig_body10a.jpg">
+<img height=256 src="pig_body09a.jpg"> <img height=256 src="pig_body10a.jpg">
 <br>
 <i>Left</i>  Simple 2D circular model reconstruction
 <i>Right</i> 2D reconstructon with conforming 3D forward model
