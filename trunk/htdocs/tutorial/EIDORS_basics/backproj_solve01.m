@@ -28,10 +28,10 @@ for i=1:4
    patch(xx,yy,zz{i},zz{i}); view(0, 4); axis off
 end
 
-print_convert inv_solve_backproj01a.png
+print_convert backproj_solve01a.png
 
 for i=1:4
    subplot(2,4,i); cla
    patch(xx,yy,zz{i},zz{i}); view(0,34); axis off
 end
-print_convert inv_solve_backproj01b.png
+print_convert backproj_solve01b.png
