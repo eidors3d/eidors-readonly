@@ -115,6 +115,18 @@ Forward model including a cavity and pseudo-section for circumferential outward 
 </center>
 
 
+<h3>
+Case of circumferential measurements around a cylinder
+</h3>
+<pre>
+<!--#include virtual="stimPatt_PseudoSec08.m" -->
+</pre>
+<center>
+<img src="stimPatt_PseudoSec08_1.png"><img src="stimPatt_PseudoSec08_2.png">
+<br><i> Figure:</i>
+Forward model around a cylinder and pseudo-section for circumferential inward measurements using a Wenner protocol.
+</center>
+
 
 
 
