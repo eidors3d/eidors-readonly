@@ -82,8 +82,7 @@
  - fix print_convert
 
 3.7 RC
- - check and commit images for stimPatt_PseudoSec -NL
-
+ + check and commit images for stimPatt_PseudoSec -NL
 
  - fix ugly tutorials
 
