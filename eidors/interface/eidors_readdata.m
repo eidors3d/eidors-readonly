@@ -131,6 +131,11 @@ switch pre_proc_spec_fmt( format, fname );
       [vv] = landquart1_readdata( fname );
 
       stim = 'UNKNOWN';
+      
+   case 'lq2'
+      [vv] = landquart2_readdata( fname );
+
+      stim = 'UNKNOWN';
 
    case 'dixtal_encode'
       [vv] = dixtal_read_codepage( fname );
@@ -744,6 +749,36 @@ function [vv] = landquart1_readdata( fname );
        end
        
    end
+   
+% Read data from the file format develped by Swisstom, Landquart, Switzerland.
+function [vv] = landquart2_readdata( fname )
+   [fid msg]= fopen(fname,'r','ieee-be','UTF-8');
+   try
+      format_version = fread(fid,1,'int32','ieee-be');
+      if format_version ~= 3
+         error('unsupported file format version');
+      else
+         fseek(fid,2264,'bof')
+
+         %%% Read frames
+         i = 1;
+         while fseek(fid, 1,'cof') ~= -1
+            fseek(fid, -1,'cof');
+            fseek(fid,340, 'cof');
+            iqPayload(:,i) = fread(fid,2048,'int32','ieee-le');
+            fseek(fid,32,'cof');
+            i = i +1;
+         end
+
+      end
+   catch err
+      fclose(fid);
+      rethrow(err);
+   end
+   fclose(fid);
+
+   amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
+   vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
 
 %  Output: [encodepage] = eidors_readdata( path,'DIX_encode');
 %   where path= '/path/to/Criptografa_New.dll' (provided with system)
