@@ -84,7 +84,7 @@
 3.7 RC
  + check and commit images for stimPatt_PseudoSec -NL
 
- - fix ugly tutorials
+ + fix ugly tutorials
 
  + Make sure default GREIT is pretty -BG
     = add string interface
