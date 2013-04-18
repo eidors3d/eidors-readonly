@@ -81,6 +81,8 @@
 
  - fix print_convert
 
+ - Test if Problems with HPF_Gaussian prior?
+
 3.7 RC
  + check and commit images for stimPatt_PseudoSec -NL
 
