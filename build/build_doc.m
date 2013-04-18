@@ -10,10 +10,12 @@ tpl = 'blue';
 !cp doc_template/matlabicon.gif m2html/templates/blue
 !cp doc_template/mfile.tpl m2html/templates/frame
 
-VERSION = 0; % 1 for MATLAB docs, 0 for SOURCEFORGE
+VERSION = 1; % 1 for MATLAB docs, 0 for SOURCEFORGE
 
 
-cd ..
+ cd ..
+% FOR THE BUILD PROCESS, AFTER RUNNING MAKE STEPS 0 .. 9
+%cd ~/eidors-release/eidors
 if VERSION
 m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','blue',...

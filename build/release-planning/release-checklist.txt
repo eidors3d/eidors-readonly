@@ -7,7 +7,7 @@
 - Update version in eidors_obj.m
 - run package script
 - build mex files for matlab versions
-
+- build docs
 - run html buils script
 
 
