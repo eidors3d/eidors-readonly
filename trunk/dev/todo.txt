@@ -72,14 +72,18 @@
 
  - move to some type of bugzilla version management.
 
-3.7
- - check and commit images for stimPatt_PseudoSec -NL
-
+3.7 
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
           (img.orig_fwd_model)
        - provide some new options for abs solvers
    - add a parameter_mapping interface
+
+ - fix print_convert
+
+3.7 RC
+ - check and commit images for stimPatt_PseudoSec -NL
+
 
  - fix ugly tutorials
 
