@@ -15,7 +15,7 @@ if nargin == 0
     path_array = {};
 end
 
-HOMEDIR=pwd;
+HOMEDIR=strrep(pwd,'\','/');
 ver = version_check;
 archdir = set_paths(HOMEDIR,ver, path_array);
 eidors_cache('init');
