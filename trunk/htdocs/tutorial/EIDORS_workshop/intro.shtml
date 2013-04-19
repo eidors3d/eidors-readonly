@@ -1,0 +1,111 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2> 
+Workshop: Introduction to EIDORS
+</h2>
+
+<h2>Instructions</h2>
+<OL>
+<LI> Create a directory <tt>H:\tutorial</tt>
+<LI> Download these files and unzip into the directory
+<UL>
+<LI> <a href="http://www.sce.carleton.ca/~adler/eidors-tut/eidors3.5rc1.zip"
+             >eidors3.5rc1.zip</a>
+<LI> <a href="http://www.sce.carleton.ca/~adler/eidors-tut/ngs44_rel.zip"
+             >ngs44_rel.zip</a>
+</UL>
+
+<LI> Start Matlab
+
+<LI> In matlab, do
+<ul>
+<LI> <tt>
+cd H:/tutorial/eidors35rc1
+</tt>
+
+<LI> <tt>
+startup
+</tt>
+
+<LI> <tt>
+compare_2d_algs(1)
+</tt> <br>(this tests if eidors is working)
+
+<LI> <tt>
+show_fem(ng_mk_cyl_models(3,[0],[]))
+</tt> (this tests if netgen is working)
+
+<br>
+You will need to add the path <tt>H:/tutorial/ngs44</tt>
+
+</ul>
+
+</OL>
+
+
+<H3>Challenge problem:</H3>
+<ol>
+<li>Create a 3D elliptical cylinder with 16 circular electrodes
+    (see <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_ellip_models.shtml">here</a>)
+<br><tt>fmdl= <font color=#E0F0FE
+>ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]);
+</font> show_fem(fmdl); </tt>
+
+<li>Put a ball into the elliptical cylinder
+<br><tt><font color=#E0F0FE
+>   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1);'};
+<br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+</font> show_fem(fmdl); </tt>
+
+<li>Put two balls into the elliptical cylinder
+<br><tt><font color=#E0F0FE
+>   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
+<br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+</font> show_fem(fmdl); </tt>
+
+<li>Set the model to use adjacent current patterns
+<br><tt><font color=#E0F0FE
+>   stim = mk_stim_patterns(16,1,[0,1],[0,1],{});
+</font> fmdl.stimulation = stim;</tt>
+
+<li>Simulate homogeneous voltages  (background conductivity = 0.5);
+<br><tt><font color=#E0F0FE
+>   img = mk_image(fmdl, 0.5); vh = fwd_solve(img);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Simulate inhomogeneous voltages  (ball conductivity = 1.0);
+<br><tt><font color=#E0F0FE
+>   img.elem_data(fmdl.mat_idx{2})= 1.0; vi = fwd_solve(img);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Reconstruct the image using GREITv1
+<br><tt><font color=#E0F0FE
+>  imdl= mk_common_gridmdl('GREITc1'); 
+   img= inv_solve(imdl,vh,vi);
+<br>
+</font> show_fem(img); </tt>
+<li>Create a GREIT model for the ellipse
+    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
+<br><tt><font color=#E0F0FE
+> opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
+<br>fmdl.normalize_measurements = 0;
+<br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
+<br>img= inv_solve(imdl,vh,vi);
+</font> show_fem(img); </tt>
+<li>Compare images for different stimulation patterns
+    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/GREIT_test_params.shtml">here</a>)
+</ol>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
