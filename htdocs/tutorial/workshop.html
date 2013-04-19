@@ -4,14 +4,103 @@
         <a href="./EIDORS_workshop/intro.shtml"
          >Introduction</a>
         </h3>
-    (Data structures, functions overview, docs, defaults, caching)
+<ul>
+   <li>Downloading and Installing EIDORS and Netgen
+   <li>Test that EIDORS is working
+   <li>EIDORS data structures
+   <ul>
+      <li><tt>fwd_model</tt>
+      <li><tt>inv_model</tt>
+      <li><tt>rec_model</tt>
+      <li><tt>data</tt>
+      <li><tt>image</tt>
+   </ul>
+   <li>EIDORS functions overview
+   <li>Documentation
+   <table><tr>
+    <tr><TD><a href="LINK/meshingLLL">meshing</a>
+        <TD>Interface to FEM libraries: Netgen / GMSH / distmesh
+    <tr><TD><a href="LINK/modelsLLL">models</a>
+        <TD>FEM modelling tools
+    <tr><TD><a href="LINK/solversLLL">solvers</a>
+        <TD>forward and inverse solverse
+    <tr><TD><a href="LINK/externalLLL">external</a>
+        <TD>Read write external file formats
+    <tr><TD><a href="LINK/graphicsLLL">graphics</a>
+        <TD>Graphics / Display functions
+    <tr><TD colspan=2><hr>
+
+    <tr><TD><a href="LINK/algorithmsLLL">algorithms</a>
+        <TD>Algorithms to process EIT images (time series)
+    <tr><TD><a href="LINK/sample_dataLLL">sample_data</a>
+        <TD>Some sample data (deprecated, now use data_contrib)
+    <tr><TD><a href="LINK/examplesLLL">examples</a>
+        <TD>Examples (deprecated, now use tutorials)
+    <tr><TD><a href="LINK/toolsLLL">tools</a>
+        <TD>low level EIDORS tools
+    <tr><TD><a href="LINK/testsLLL">tests</a>
+        <TD>Tests for debugging (deprecated, now in <tt>UNIT_TEST</tt>
+    <tr><TD><a href="LINK/archLLL">arch</a>
+        <TD>Mex files and architecture specific code
+    <tr><TD><a href="LINK/compatibilityLLL">compatibility</a>
+        <TD>Compatibility with older matlab versions
+    <tr><TD><a href="LINK/deprecatedLLL">deprecated</a>
+        <TD>Older, deprecated EIDORS files
+    <tr><TD><a href="LINK/overloadsLLL">overloads</a>
+        <TD>Override matlab functions to give extra features
+    </table>
+    <li>Defaults
+    <li>Caching
+<pre>
+tic;
+fmdl= ng_mk_cyl_models(1,[16,.5],0.1)
+toc;
+
+fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1);
+img = mk_image( fmdl, 1);
+
+tic;
+vh = fwd_solve(img);
+toc
+</pre>
+      <li>Challenge Questions
+          <ul>
+ <li>What is the speedup for more 
+          </ul>
+   </ul>
+    
 
     <li><h3>
         <a href="./EIDORS_workshop/FEMs-and-Sensitivity.shtml"
          >Forward Models</a>
         </h3>
-    ( FEM generation 2D and 3D, Netgen, sensitivity, voltage and
-       current distributions, stimulation patterns )
+     <ul>
+         <li>Finite ELement Models
+         <li>EIDORS FEM structure
+fmdl= ng_mk_cyl_models(1,[16,.5],0.1)
+fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1) 
+fmdl =
+                     nodes: [1958x3 double]
+                     elems: [7849x4 double]
+                  boundary: [2326x3 double]
+          boundary_numbers: [2326x1 double]
+                  gnd_node: 350
+              np_fwd_solve: [1x1 struct]
+                      name: 'ng'
+                 electrode: [1x16 struct]
+                     solve: 'eidors_default'
+                  jacobian: 'eidors_default'
+                system_mat: 'eidors_default'
+                      type: 'fwd_model'
+                   mat_idx: {[7849x1 double]}
+    normalize_measurements: 0
+               stimulation: [1x16 struct]
+>>
+         <li>
+
+         FEM generation 2D and 3D, Netgen, sensitivity, voltage and
+         current distributions, stimulation patterns )
+     </ul>
 
     <li><h3>
         <a href="./EIDORS_workshop/reconstructions.shtml"
