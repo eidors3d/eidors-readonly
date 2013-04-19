@@ -90,6 +90,9 @@ end
 if nargin < 3
     elec_shape = [0 10]; % point electrode
 end
+if size(elec_shape,2) == 1
+    elec_shape(:,2) = 1;
+end
 if ~iscell(elec_shape)
     elec_shape = {elec_shape};
 end
