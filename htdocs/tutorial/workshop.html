@@ -77,8 +77,9 @@ toc
      <ul>
          <li>Finite ELement Models
          <li>EIDORS FEM structure
-fmdl= ng_mk_cyl_models(1,[16,.5],0.1)
-fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1) 
+<pre>
+>> fmdl= ng_mk_cyl_models(1,[16,.5],0.1);
+>> fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{},1) 
 fmdl =
                      nodes: [1958x3 double]
                      elems: [7849x4 double]
@@ -95,10 +96,43 @@ fmdl =
                    mat_idx: {[7849x1 double]}
     normalize_measurements: 0
                stimulation: [1x16 struct]
->>
-         <li>
+>> fmdl.stimulation(1)
 
-         FEM generation 2D and 3D, Netgen, sensitivity, voltage and
+ans = 
+
+     stimulation: 'Amp'
+    stim_pattern: [16x1 double]
+    meas_pattern: [13x16 double]
+
+>> fmdl.electrode(1)
+
+ans = 
+
+    nodes: [114 115 116 117 118 119 415]
+    z_contact: 0.0100
+</pre>
+         <li> Use shape_library to obtain a human thorax contour
+			<br><tt>shape = <font color=#E0F0FE>
+			shape_library('get', 'adult_male','boundary');
+			</font></tt>		 
+		 <li> make a 2d model with 16 electrodes (width 0.1) with electrode 1 on the sternum (remember the shape must be counter-clockwise)
+		 	<br><tt>fmdl = <font color=#E0F0FE>
+			ng_mk_2d_model({flipud(shape),0.1},[16 -.17],[0.1 20]);
+			</font>show_fem(fmdl)</tt>		 
+		 <li> make a simmilar 3d model
+			<br><tt>fmdl = <font color=#E0F0FE>
+			ng_mk_extruded_model({1, shape, [4,49]},[16,1,0.5],[0.05 0 -1 0 60]);
+			</font>show_fem(fmdl)</tt>	
+		 <li> add contrast using elem_select
+		 <li> solve for internal voltages
+		 <li> visualize using calc_slices
+		 <li> visualize using show_3d_slices
+		 <li> calculate current
+		 <li> calculate Jacobian
+		 <li> visualize Jacobian
+		 <li> change current pattern to N/2-1
+		 <li> compare Jacobian
+		 <li> (FEM generation 2D and 3D, Netgen, sensitivity, voltage and
          current distributions, stimulation patterns )
      </ul>
 
@@ -106,18 +140,39 @@ fmdl =
         <a href="./EIDORS_workshop/reconstructions.shtml"
          >Reconstructions</a>
         </h3>
-    ( 2D and 3D FEMS, visualization functions,
+		<ul>
+		<li> finemdl = 
+		<li> coarsemdl
+		<li> imdl = mk_common_mdl
+		<li> select_imdl(imdl, 'Basic GN')
+		<li> inv_solve with inverse crime
+		<li> inv_solve w/o inverse crime
+		<li> show_slices
+		<li> use mk_pixel_grid to setup a dual model
+		<li> manually change hyperparam
+		<li> select_imdl('Choose NF')
+		<li> ( 2D and 3D FEMS, inverse crime, visualization functions,
       hyperparameter choice, functions: select_imdl ,
       functions: mk_pixel_grid )
-
+		</ul>
+    
 
     <li><h3>
         <a href="./EIDORS_workshop/GREIT.shtml"
          >GREIT</a>
         </h3>
-    ( GREIT algorithm, adapting shape, background conductivity,
-      working with sample data )
-
+		<ul>
+		<li> String interface
+		<li> Custom model (for a 2 ring cyl)
+		<li> Use ng_write_opt to increase minimum elem size and build a coarse pig model
+		<li> imdl1 = mk_GREIT_model (fmdl)
+		<li> set the lungs to have 0.3 conductivity
+		<li> vh =
+		<li> vi = 
+		<li> compare reconstructions 
+		<li>( GREIT algorithm, adapting shape, background conductivity,
+		working with sample data )
+		</ul>
     <li><h3>
         <a href="./EIDORS_workshop/live.shtml"
          >Live data</a>
