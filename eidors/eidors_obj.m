@@ -101,6 +101,9 @@ switch cache_status
         if cache_status(dbs(3).name) == 0
             ok = false;
         end
+        if strcmp(dbs(3).name,'cache_shorthand') && cache_status(dbs(5).name) == 0
+            ok = false;
+        end
 end
 
 function on = debug_status_check
