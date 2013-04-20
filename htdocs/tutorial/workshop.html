@@ -18,37 +18,38 @@
    <li>EIDORS functions overview
    <li>Documentation
    <table><tr>
-    <tr><TD><a href="LINK/meshingLLL">meshing</a>
-        <TD>Interface to FEM libraries: Netgen / GMSH / distmesh
-    <tr><TD><a href="LINK/modelsLLL">models</a>
-        <TD>FEM modelling tools
-    <tr><TD><a href="LINK/solversLLL">solvers</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/solvers">solvers</a>
         <TD>forward and inverse solverse
-    <tr><TD><a href="LINK/externalLLL">external</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/meshing">meshing</a>
+        <TD>Interface to FEM libraries: Netgen / GMSH / distmesh
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/models">models</a>
+        <TD>FEM modelling tools
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/external">external</a>
         <TD>Read write external file formats
-    <tr><TD><a href="LINK/graphicsLLL">graphics</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/graphics">graphics</a>
         <TD>Graphics / Display functions
     <tr><TD colspan=2><hr>
 
-    <tr><TD><a href="LINK/algorithmsLLL">algorithms</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/algorithms">algorithms</a>
         <TD>Algorithms to process EIT images (time series)
-    <tr><TD><a href="LINK/sample_dataLLL">sample_data</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/sample_data">sample_data</a>
         <TD>Some sample data (deprecated, now use data_contrib)
-    <tr><TD><a href="LINK/examplesLLL">examples</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/examples">examples</a>
         <TD>Examples (deprecated, now use tutorials)
-    <tr><TD><a href="LINK/toolsLLL">tools</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/tools">tools</a>
         <TD>low level EIDORS tools
-    <tr><TD><a href="LINK/testsLLL">tests</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/tests">tests</a>
         <TD>Tests for debugging (deprecated, now in <tt>UNIT_TEST</tt>
-    <tr><TD><a href="LINK/archLLL">arch</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/arch">arch</a>
         <TD>Mex files and architecture specific code
-    <tr><TD><a href="LINK/compatibilityLLL">compatibility</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/compatibility">compatibility</a>
         <TD>Compatibility with older matlab versions
-    <tr><TD><a href="LINK/deprecatedLLL">deprecated</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/deprecated">deprecated</a>
         <TD>Older, deprecated EIDORS files
-    <tr><TD><a href="LINK/overloadsLLL">overloads</a>
+    <tr><TD><a href="http://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/overloads">overloads</a>
         <TD>Override matlab functions to give extra features
     </table>
+    <li><a href="../data_contrib.shtml">Contributed Data</a>
     <li>Defaults
     <li>Caching
 <pre>
@@ -65,7 +66,9 @@ toc
 </pre>
       <li>Challenge Questions
           <ul>
- <li>What is the speedup for more 
+ <li>What data are from a cute baby on EIDORS? load and display these data
+ <li>What is the speedup for larger FEM models?
+ <li>Look at inv_solve_diff_GN_one_step - what part is cached?
           </ul>
    </ul>
     
@@ -134,6 +137,14 @@ ans =
 		 <li> compare Jacobian
 		 <li> (FEM generation 2D and 3D, Netgen, sensitivity, voltage and
          current distributions, stimulation patterns )
+
+       <li>Challenge Questions
+       <ul>
+          <li>Compare the sensitivity for a slice of a 3D vs 2D tank. 
+              Why are they different?
+          <li>Create images of current flow in the thorax with various
+              values for lung conductivity. How do they vary?
+       </ul>
      </ul>
 
     <li><h3>
@@ -144,6 +155,19 @@ ans =
 		<li> finemdl = 
 		<li> coarsemdl
 		<li> imdl = mk_common_mdl
+<pre>
+>> fmdl = ng_mk_cyl_models(0,16,0.05);
+>> imdl = select_imdl(fmdl,{'Basic GN dif'})
+imdl =
+              name: 'Basic imdl from select_imdl'
+              type: 'inv_model'
+             solve: @inv_solve_diff_GN_one_step
+    hyperparameter: [1x1 struct]
+         RtR_prior: @prior_laplace
+    jacobian_bkgnd: [1x1 struct]
+      reconst_type: 'difference'
+         fwd_model: [1x1 struct]
+</pre>
 		<li> select_imdl(imdl, 'Basic GN')
 		<li> inv_solve with inverse crime
 		<li> inv_solve w/o inverse crime
@@ -151,9 +175,24 @@ ans =
 		<li> use mk_pixel_grid to setup a dual model
 		<li> manually change hyperparam
 		<li> select_imdl('Choose NF')
+<pre>
+>> imdl = mk_common_model('c2c2',16);
+>> imdl = select_imdl(imdl,{'Choose NF=1.0'})
+</pre>
 		<li> ( 2D and 3D FEMS, inverse crime, visualization functions,
       hyperparameter choice, functions: select_imdl ,
       functions: mk_pixel_grid )
+
+       <li>Challenge Questions,
+   Using simulated and read data, test the effect of 
+          
+       <ul>
+          <li>different model shapes
+          <li>different priors
+          <li>hyperparameter.value
+          <li>noise figure
+       </ul>
+
 		</ul>
     
 
@@ -193,7 +232,6 @@ ans =
         </h3>
     ( dual models, reconstruct a slice of a 3D volume,
       jacobian_background, abs reconstructions)
-
 
 
 </ul>
