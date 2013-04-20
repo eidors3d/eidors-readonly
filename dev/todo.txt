@@ -3,6 +3,9 @@
  - ng models with point electrodes
    + fixed for 2D
 
+ - remove ng field from ng_mk_models
+    - add default ng fields to the ng functions
+
  - ensure jacobian_perturb works on physics parameters
 
  - colourbar - put some logic to allow labels like 1.5 as max
