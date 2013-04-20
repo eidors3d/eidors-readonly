@@ -45,7 +45,9 @@ if nargin == 1 && ischar(varargin{1}) % a path
 end
 % get default options
 opt = default_opt;
-
+if nargin == 0
+    usr = struct;
+end
 % modify as per user input
 if nargin == 1 && isstruct(varargin{1})
    usr = varargin{1};
