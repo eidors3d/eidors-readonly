@@ -80,7 +80,9 @@ function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
 %  if abs(max(img(:))) < abs(min(img(:))); img= -img; end
    sz = size(img,1);
    qmi = calc_hm_set( img, 0.25 );
-   if sum(img(:) & qmi(:))<0 ; keyboard ; end
+   if sum(img(:) & qmi(:))<0 ; 
+     error('problem in CofG calculation');
+   end
    
    pix_sz = (max(x(:)) - min(x(:))) *( max(y(:)) - min(y(:))) /numel(img);
 
