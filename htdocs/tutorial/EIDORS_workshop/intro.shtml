@@ -103,8 +103,7 @@ show_fem(ng_mk_cyl_models(3,[0],[]))
 <li>Create a GREIT model for the ellipse
     (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
 <br><tt><font color=#E0F0FE
-> opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
-<br>fmdl.normalize_measurements = 0;
+> opt.noise_figure = 0.5; %other options are defaults
 <br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
 <br>img= inv_solve(imdl,vh,vi);
 </font> show_fem(img); </tt>
