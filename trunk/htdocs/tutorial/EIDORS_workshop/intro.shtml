@@ -13,7 +13,7 @@ Workshop: Introduction to EIDORS
 mkdir src
 cd src
 wget http://downloads.sf.net/project/netgen-mesher/netgen-mesher/5.0/netgen-5.0.0.zip
-tar xfz netgen-5.0.0.zip
+unzip netgen-5.0.0.zip
 cd netgen-5.0.0
 # ENSURE we have apt-get install tk-dev tcl-dev libtogl-dev
 ./configure --prefix=$HOME/local
@@ -35,12 +35,9 @@ matlab
 
 <LI> In matlab, do
 <ul>
-<LI> <tt>
-cd ~/Desktop/eidors-v3.7RC
-</tt>
-
-<LI> <tt>
-startup
+<LI>
+ <tt>
+run ~/Desktop/eidors-v3.7RC/eidors/startup.m
 </tt>
 
 <LI> <tt>
