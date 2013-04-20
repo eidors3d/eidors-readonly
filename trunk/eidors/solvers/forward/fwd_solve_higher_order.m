@@ -97,7 +97,7 @@ end
 
 %Return the electrode voltages in data structure
 data.meas= vmeaselec;
-data.time= -1; % unknown
+data.time= NaN; % unknown
 data.name= 'solved by fwd_solve_higher_order';
 data.quantity = 'voltage';
 try; if img.fwd_solve.get_all_meas == 1
