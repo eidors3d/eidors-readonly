@@ -8,21 +8,35 @@ Workshop: Introduction to EIDORS
 
 <h2>Instructions</h2>
 <OL>
-<LI> Create a directory <tt>H:\tutorial</tt>
-<LI> Download these files and unzip into the directory
+<LI> Compile and install a copy of netgen 5.0
+<pre>
+mkdir src
+cd src
+wget http://downloads.sf.net/project/netgen-mesher/netgen-mesher/5.0/netgen-5.0.0.zip
+tar xfz netgen-5.0.0.zip
+cd netgen-5.0.0
+# ENSURE we have apt-get install tk-dev tcl-dev libtogl-dev
+./configure --prefix=$HOME/local
+make
+make install
+</pre>
+<LI> Download and unzip the latest EIDORS release
 <UL>
-<LI> <a href="http://www.sce.carleton.ca/~adler/eidors-tut/eidors3.5rc1.zip"
-             >eidors3.5rc1.zip</a>
-<LI> <a href="http://www.sce.carleton.ca/~adler/eidors-tut/ngs44_rel.zip"
-             >ngs44_rel.zip</a>
+<LI> <a href="http://eidors.org"
+             >eidors3.7RC.zip</a>
 </UL>
 
-<LI> Start Matlab
+<LI> Start Matlab, in a terminal
+<pre>
+export NETGENDIR=$HOME/local/bin
+export PATH=$HOME/local/bin:$PATH
+matlab
+</pre>
 
 <LI> In matlab, do
 <ul>
 <LI> <tt>
-cd H:/tutorial/eidors35rc1
+cd ~/Desktop/eidors-v3.7RC
 </tt>
 
 <LI> <tt>
@@ -37,8 +51,6 @@ compare_2d_algs(1)
 show_fem(ng_mk_cyl_models(3,[0],[]))
 </tt> (this tests if netgen is working)
 
-<br>
-You will need to add the path <tt>H:/tutorial/ngs44</tt>
 
 </ul>
 
