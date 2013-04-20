@@ -83,7 +83,7 @@ for ielec = 1:size(centres,1)
     lgelfc(iface) = logical(1);
     if sum(lgelfc) ~= ielec
        disp(ielec);
-       keyboard;
+       error('Electrode #%d not found', ielec,);
     end
     sels(ielec)= iface;
 %   disp([ielec, iface, d]);

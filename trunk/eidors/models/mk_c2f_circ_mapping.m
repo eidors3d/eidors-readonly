@@ -127,7 +127,6 @@ function mapping = circ_in_elem_2d( mdl, look, xc, yc, rc);
    
          case 1; 
             nd = mdl.elems(k, n_in(k,:));
-   keyboard
             vol = vol + pi_slice(p1,p2,[xc,yc],mdl.nodes(nd,:),rc);
 
          case 2; 
