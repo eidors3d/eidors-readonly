@@ -90,9 +90,6 @@ end
 if nargin < 3
     elec_shape = [0 10]; % point electrode
 end
-if size(elec_shape,2) == 1
-    elec_shape(:,2) = 1;
-end
 if ~iscell(elec_shape)
     elec_shape = {elec_shape};
 end
@@ -137,6 +134,10 @@ call_netgen( 'tmp2.in2d', 'tmp2.vol');
 mdl.nodes(:,3) = [];
 if ~isempty(elec_pos{1})
     mdl = find_electrodes(mdl, points(find(eidx),:), nonzeros(eidx));
+end
+mdl.boundary = find_boundary(mdl);
+for i = 1:length(mdl.electrode)
+    mdl.electrode(i).z_contact = 0.01;
 end
 
 function shape = process_maxsz(shape)
