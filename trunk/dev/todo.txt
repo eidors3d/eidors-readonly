@@ -73,6 +73,12 @@
  - move to some type of bugzilla version management.
 
 3.7 
+ - fix startup isues on windows
+
+ - add tmp file handling to ng_mk_2d_model
+
+ - revert changes to .cpp file OR recompile all mex files
+
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
           (img.orig_fwd_model)
