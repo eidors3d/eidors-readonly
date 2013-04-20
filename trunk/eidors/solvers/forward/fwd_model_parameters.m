@@ -101,7 +101,11 @@ N2E = sparse(n_elec, n+n_elec);
 pp.QQ= sparse(n+n_elec,p);
 
 for i=1:n_elec
-    elec_nodes = fwd_model.electrode(i).nodes;
+    try
+        elec_nodes = fwd_model.electrode(i).nodes;
+    catch
+        break; %Not a real electrode so don't include
+    end
     if length(elec_nodes) ==1 % point electrode (maybe inside body)
        N2E(i, elec_nodes) = 1;
     elseif length(elec_nodes) ==0
