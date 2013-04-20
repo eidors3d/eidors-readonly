@@ -38,7 +38,7 @@ end
 
 % create a data structure to return
 data.meas= voltH;
-data.time= -1; % unknown
+data.time= NaN; % unknown
 data.name= 'solved by np_fwd_solve';
 try; if img.fwd_solve.get_all_meas == 1
    data.volt = Vfwd(1:p.n_node,:); % but not on CEM nodes
