@@ -15,6 +15,9 @@ if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 %multi-physics
 img = physics_data_mapper(img);
 
+% need to make sure boundary is just the outside
+img.fwd_model.boundary = find_boundary(img.fwd_model);
+
 [jnk,ref_lev,max_scale] = scale_for_display( img.elem_data);
 try 
     img.calc_colours.ref_level; 
