@@ -3,6 +3,13 @@
  - ng models with point electrodes
    + fixed for 2D
 
+ - why y-cut in this example
+ extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'}
+ img.elem_data(fmdl.mat_idx{2}) = 1.1;
+ img= mk_image(fmdl,1);
+ fmdl= ng_mk_cyl_models(3,[0],[],extra);
+ show_3d_slices(img,[0.5:0.5:2.5],[],[])
+
  - remove ng field from ng_mk_models
     - add default ng fields to the ng functions
 
