@@ -30,8 +30,10 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 %                 where no_cur_caldata_raw is data captured with no current
 %        format = "UCT_DATA"  UCT data frame file
 %           - Output: [vv]= eidors_readdata( fname, 'UCT_DATA' )
-%    - Landquart, Switzerland EIT equipment 'LQ1'
+%    - Landquart, Switzerland EIT equipment 'LQ1' (pre - 2011)
+%    - Landquart, Switzerland EIT equipment 'LQ2' (2013 - ?)
 %        files are 'EIT' files, but are not autodetected
+%
 %    - Dixtal file format, from Dixtal inc, Brazil
 %        format = 'DIXTAL_encode' extract encoder from provided Dll
 %           - Output: [encodepage] = eidors_readdata( path,'DIXTAL_encode');
