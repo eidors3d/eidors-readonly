@@ -136,10 +136,11 @@ if ~isempty(elec_pos{1})
     mdl = find_electrodes(mdl, points(find(eidx),:), nonzeros(eidx));
 end
 mdl.boundary = find_boundary(mdl);
-for i = 1:length(mdl.electrode)
-    mdl.electrode(i).z_contact = 0.01;
+if isfield(mdl, 'electrode')
+    for i = 1:length(mdl.electrode)
+        mdl.electrode(i).z_contact = 0.01;
+    end
 end
-
 function shape = process_maxsz(shape)
 maxsz = [];
 if numel(shape{end})==1
