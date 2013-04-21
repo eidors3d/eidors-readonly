@@ -182,6 +182,10 @@ function opt = parse_options(imdl)
       opt.line_optimize = [];
    end
 
+   if ~isfield(opt,'show_iterations')
+      opt.show_iterations = 0;
+   end
+
    if isfield(opt, 'min_value')
       opt.line_optimize.min_value = opt.min_value;
    end
