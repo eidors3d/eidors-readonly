@@ -47,9 +47,19 @@ compare_2d_algs(1)
 <LI> <tt>
 show_fem(ng_mk_cyl_models(3,[0],[]))
 </tt> (this tests if netgen is working)
-
-
 </ul>
+
+
+<LI>Get svn version of eidors
+<pre>
+cd 
+svn co svn://svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
+</pre>
+In matlab run the new startup file
+<pre>
+run ~/eidors-svn/eidors/startup.m
+</pre>
+
 
 </OL>
 
