@@ -14,8 +14,10 @@ function S = spdiag(V,K)
 if nargin == 1; K=0; end
 
 N = length(V) + K;
-V = [zeros(K,1);V];
-S = spdiags(V, K, N, N);
+V = [zeros(K,1);V(:)];
+S = spdiags(V(:), K, N, N);
+
+
 
 
 
