@@ -78,7 +78,7 @@
  - move to some type of bugzilla version management.
 
 3.7 
- - fix set_field in physics data mapper
+ + fix set_field in physics data mapper
 
  + fix startup isues on windows
 

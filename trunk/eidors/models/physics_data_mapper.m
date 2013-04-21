@@ -62,7 +62,12 @@ switch sum(phys)
          error('No physics, elem_data or node_data found on img');
       else
          eidors_msg('@@@ No physics present on img. Assuming conductivity',3);
-         img = setfield(img,{},'current_physics', 'conductivity');
+% STUPID MATLAB CAN'T KEEP SYNTAX STRAIGHT BETWEEN VERSIONS
+%        img = setfield(img,{},'current_physics', 'conductivity');
+% NEED TO DO THIS, UGLY INEFFICIENT CODE
+         for i=1:length(img)
+            img(i).current_physics = 'conductivity';
+         end
       end
       return      % returns img
    case 1
