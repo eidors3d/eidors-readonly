@@ -81,7 +81,9 @@
 
  - Test if Problems with HPF_Gaussian prior?
 
-3.7 
+ - add a code to set_fields into tools
+
+############## 3.7 ################3
  + fix set_field in physics data mapper
 
  + fix startup isues on windows
@@ -97,6 +99,10 @@
           (img.orig_fwd_model)
        - provide some new options for abs solvers
    - add a parameter_mapping interface
+
+ - print_convert - all matlab version
+
+ - octave tests
 
  - Windows errors
 

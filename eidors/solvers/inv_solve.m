@@ -90,6 +90,9 @@ check_physics_handling(inv_model,imgc);
      
 img = eidors_obj('image', imgc );
 % img = physics_data_mapper(img,1);
+if ~isfield(img,'current_physics')
+  img.current_physics = [];
+end
 
 % If we reconstruct with a different 'rec_model' then
 %  put this into the img
@@ -110,6 +113,12 @@ end
 % Scale if required
 try; img.elem_data = opts.offset + opts.scale * img.elem_data; end
 try; img.node_data = opts.offset + opts.scale * img.node_data; end
+
+% MATLAB IS SUPER SUPER STUPID HERE. YOU CAN'T ASSIGN IF FIELDS ARE IN
+%  A DIFFERENT ORDER. Example
+%>> A.a= 1; A.b= 2; B.b= 3; B.a = 3; A(2) = B
+%??? Subscripted assignment between dissimilar structures.
+img = orderfields(img);
 
 function opts = parse_parameters( imdl );
    if  strcmp(imdl.reconst_type,'static') || ...
@@ -159,7 +168,7 @@ function mdl = prepare_model( mdl )
     end
 
 function check_physics_handling(inv_model,imgc)
-if isfield(inv_model, 'jaocbian_bkgnd') && ... 
+if isfield(inv_model, 'jacobian_bkgnd') && ... 
     has_physics(inv_model.jacobian_bkgnd) && ~has_physics(imgc)
    if isa(inv_model.solve,'function_handle')
       solver = func2str(inv_model.solve);
