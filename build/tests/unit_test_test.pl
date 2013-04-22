@@ -10,6 +10,8 @@ close F;
 
 
 open F, "> run_current.m" or die $!;
+print F "if ~exist('TEST'); TEST =0; end;\n";
+print F "TEST= TEST + 1; fprintf('TEST=%d\\n', TEST);\n";
 print F "switch TEST\n"; my $i=1;
 foreach (sort keys %tuts) {
   print F "case $i; $_('UNIT_TEST')\n";
