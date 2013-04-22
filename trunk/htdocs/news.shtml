@@ -18,17 +18,35 @@ This release includes:
  <li> Infrastructure to support new physics on FEMs
  <li> Physics support: conductivity, resisitivity and logs
  <li> Anisotropy support in forward solvers and Jacobian
- <li> FEM models with arbitrary electrode refinement: place_elec_on_surf
- <li> Pseudosection Display and Geophysics stim patterns
+ <li> FEM models with arbitrary electrode refinement: 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/place_elec_on_surf.html">place_elec_on_surf</a>
+ <li> Pseudosection Display(
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/graphics/matlab/show_pseudosection.html">show_pseudosection</a>) 
+	and Geophysics stim patterns (
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/stim_pattern_geophys.html">stim_pattern_geophys</a>), see
+	<a href="http://eidors3d.sourceforge.net/tutorial/geophysics/stimPattern_pseudoSection.shtml">tutorial</a>
  <li> Geophysics solvers and tutorials
- <li> Support for netgen 2D FEM generation 
- <li> Merging of FEM meshes
- <li> Apparent resisitivity fwd_solver and jacobian
- <li> Support for new EIT data formats
- <li> GREIT models from a model shape library
- <li> Debug features for the eidors cache
- <li> Better support for Node data 
+ <li> Re-worked interface to 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/inverse/inv_solve_abs_GN.html">inv_solve_abs_GN</a>
+	exposing advanced features and options
+ <li> Support for fast 2D FEM generation with netgen:
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/ng_mk_2d_model.html">ng_mk_2d_model</a>
+ <li> Merging of FEM meshes: 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/merge_meshes.html">merge_meshes</a>
+ <li> Apparent resisitivity 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/forward/fwd_solve_apparent_resistivity.html">forward solver</a> 
+	and <a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/forward/jacobian_apparent_resistivity.html">jacobian</a>
+ <li> Support for new EIT data formats: 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/interface/eidors_readdata.html">eidors_readdata</a>
+ <li> GREIT models from a model shape library: 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/mk_GREIT_model.html">mk_GREIT_model</a>
+ <li> Debug features for the eidors cache: 
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/tools/eidors_cache.html">eidors_cache</a>
+ <li> Better support for node data in
+	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/mk_image.html">mk_image</a>
 </ul>
+All <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a> have been updated to use the new features.
+
 
 <p><li> <b>
    20 April 2013
