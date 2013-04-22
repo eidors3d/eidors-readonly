@@ -77,10 +77,16 @@
 
  - move to some type of bugzilla version management.
 
+ - fix print_convert
+
+ - Test if Problems with HPF_Gaussian prior?
+
 3.7 
  + fix set_field in physics data mapper
 
  + fix startup isues on windows
+
+ - change background colour
 
  - add tmp file handling to ng_mk_2d_model
 
@@ -92,9 +98,10 @@
        - provide some new options for abs solvers
    - add a parameter_mapping interface
 
- - fix print_convert
+ - Windows errors
 
- - Test if Problems with HPF_Gaussian prior?
+ + fix call_netgen
+   - call_netgen create a user writable dir
 
 3.7 RC
  + check and commit images for stimPatt_PseudoSec -NL
