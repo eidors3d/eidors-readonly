@@ -1,5 +1,6 @@
 % Compare 2D algorithms
 % $Id$
+clear imgr imgn
 
 % Create Inverse Model
 inv2d= eidors_obj('inv_model', 'EIT inverse');
