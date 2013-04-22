@@ -4,13 +4,15 @@ urlwrite('http://www.artefact.tk/software/matlab/m2html/m2html.zip',...
 unzip('m2html.zip');
 addpath([pwd '/m2html']);
 tpl = 'blue';
+try 
 !chmod u+w -R m2html
-!cp doc_template/index.html m2html/templates/frame
-!cp doc_template/matlabicon.gif m2html/templates/frame
-!cp doc_template/matlabicon.gif m2html/templates/blue
-!cp doc_template/mfile.tpl m2html/templates/frame
+end
+copyfile('doc_template/index.html','m2html/templates/frame/index.html','f')
+copyfile('doc_template/matlabicon.gif','m2html/templates/frame/matlabicon.gif','f')
+copyfile('doc_template/matlabicon.gif','m2html/templates/blue/matlabicon.gif','f')
+copyfile('doc_template/mfile.tpl','m2html/templates/frame/mfile.tpl','f')
 
-VERSION = 1; % 1 for MATLAB docs, 0 for SOURCEFORGE
+VERSION = 0; % 1 for MATLAB docs, 0 for SOURCEFORGE
 
 
  cd ..
@@ -21,11 +23,11 @@ m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','blue',...
     'helptocxml', 'on');
 else
-!cp build/doc_template/m2html.m m2html
+copyfile('build/doc_template/m2html.m','build/m2html','f');
 m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','frame','index','menu',...
     'helptocxml', 'on');
- !cp build/doc_template/intro.html doc/
+ copyfile('build/doc_template/intro.html','doc/intro.html','f')
 end
 !rsync -r doc htdocs
 !rm -rf doc
