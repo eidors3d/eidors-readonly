@@ -84,6 +84,11 @@ function varargout=eidors_cache( command, varargin )
 %        opt.boost_priority
 %            - priority boost to use for that function
 %
+%   eidors_cache( 'cache_path' )
+%   eidors_cache( 'cache_path', '/path/to/cache/path' )
+%       - get and set cache_path, a path to a writable
+%           directory in which eidors can store files
+%
 % See also EIDORS_OBJ
 
 % (C) 2005-2013 Andy Adler and Bartlomiej Grychtol.
@@ -136,6 +141,13 @@ switch command
          eidors_objects.max_cache_size = limit;
       else
          varargout{1}= eidors_objects.max_cache_size;
+      end
+
+   case 'cache_path'
+      if nargin == 1
+         varargout{1}= eidors_objects.cache_path;
+      else
+         eidors_objects.cache_path = varargin{1};
       end
       
    case {'disable' 'off'}

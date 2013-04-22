@@ -37,11 +37,11 @@ else
 end
 
 % Netgen executable filename
-model_path = mk_library_model('LIBRARY_PATH');
+cache_path = eidors_cache('cache_path');
 if  islinux
    ng_name = 'netgen';
 else
-   ng_name = [model_path,'/ng'];
+   ng_name = [cache_path,'/ng'];
 end
 
 ldpath='';
@@ -104,8 +104,8 @@ while( 1 )
             end
             
             
-            fid= fopen([model_path, '/ng.bat'],'w');
-            if fid<0; error('Unable to write to %s',model_path); end
+            fid= fopen([cache_path, '/ng.bat'],'w');
+            if fid<0; error('Unable to write to %s',cache_path); end
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
@@ -113,8 +113,8 @@ while( 1 )
             fclose(fid);
          elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )
             disp('Found netgen version 4.3.1');
-            fid= fopen([model_path, '/ng.bat'],'w');
-            if fid<0; error('Unable to write to %s',model_path); end
+            fid= fopen([cache_path, '/ng.bat'],'w');
+            if fid<0; error('Unable to write to %s',cache_path); end
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
             fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
