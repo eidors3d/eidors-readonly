@@ -68,13 +68,17 @@ end
 function do_unit_test
 imdl = mk_common_model('d2c2');
 calc_jacobian_bkgnd(imdl)
+
 imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'value');
 imdl.jacobian_bkgnd.node_data  = 5;
 calc_jacobian_bkgnd(imdl)
+
+imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'node_data');
 imdl.jacobian_bkgnd.node_data.val1  = 5;
 imdl.jacobian_bkgnd.node_data.val2  = ones(length(imdl.fwd_model.nodes),1);
 img = calc_jacobian_bkgnd(imdl);
 display(img.node_data);
+
 imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'node_data');
 imdl.jacobian_bkgnd.elem_data.val1  = 5;
 imdl.jacobian_bkgnd.elem_data.val2  = ones(length(imdl.fwd_model.elems),1);
