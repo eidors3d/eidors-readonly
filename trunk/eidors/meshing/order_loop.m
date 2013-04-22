@@ -36,7 +36,8 @@ for i = 1:length(pp)-1
 end
 ctr = mean(p);
 tmp = p - repmat(ctr,length(p),1);
-th = unwrap(cart2pol(tmp(:,1),tmp(:,2)));
+[th,r]=cart2pol(tmp(:,1),tmp(:,2)); % OCTAVE BUG in 3.7 - needs 2 outputs
+th = unwrap(th);
 
 if th(1) < th(end)
    %counter-clockwise
