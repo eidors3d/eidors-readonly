@@ -10,7 +10,7 @@ function status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 % Finelevel controls the fineness of the mesh
 %   default is '' -> coarse
 %   valid values are 'fine' or 'veryfine'
-%
+
 % $Id$
 % (C) 2006 Andy Adler. Licensed under GPL V2
 
@@ -28,22 +28,23 @@ if nargin<4
    finelevel= '';
 end
 
-ldpath='';
 if  exist('OCTAVE_VERSION') % FIXME
    islinux =1;
-elseif strfind(system_dependent('getos'),'Linux')
+elseif ~strncmp(computer,'PC',2) % Don't know if we have isunix
    islinux =1;
 else
    islinux =0;
 end
 
 % Netgen executable filename
+model_path = mk_library_model('LIBRARY_PATH');
 if  islinux
    ng_name = 'netgen';
 else
-   ng_name = 'ng';
+   ng_name = [model_path,'/ng'];
 end
 
+ldpath='';
 while( 1 )
    
    fid= fopen('ng.opt','a'); %create ng.opt file in local dir
@@ -103,7 +104,8 @@ while( 1 )
             end
             
             
-            fid= fopen('ng.bat','w');
+            fid= fopen([model_path, '/ng.bat'],'w');
+            if fid<0; error('Unable to write to %s',model_path); end
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
@@ -111,7 +113,8 @@ while( 1 )
             fclose(fid);
          elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )
             disp('Found netgen version 4.3.1');
-            fid= fopen('ng.bat','w');
+            fid= fopen([model_path, '/ng.bat'],'w');
+            if fid<0; error('Unable to write to %s',model_path); end
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
             fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
