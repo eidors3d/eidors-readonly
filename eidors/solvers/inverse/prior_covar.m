@@ -84,20 +84,20 @@ function Reg = prior_covar_calc( cache_obj );
 function do_unit_test
    imdl = mk_common_model('b3cr',[16,3]);
    imdl.fourD_prior.P_type = 2;
-tic;
+%tic;
    Reg = prior_covar( imdl );
    unit_test_cmp('#1:', diag(Reg), ones(size(Reg,1),1));
    unit_test_cmp('#2:', Reg(102:103,100:103), [ ...
    0.011818547266014   0.367556336897157   1.000000000000000   0.396442626219240; ...
-   0.008985742075647   0.160077522568152   0.396442626219240   1.000000000000000], 1e-10);
+   0.008985742075647   0.160077522568152   0.396442626219240   1.000000000000000], 1e-6);
 
-toc;
+%toc;
 
-tic;
+%tic;
    imdl.fourD_prior.P_type = 1;
    Reg = prior_covar( imdl );
    unit_test_cmp('#1:', diag(Reg), ones(size(Reg,1),1));
    unit_test_cmp('#2:', Reg(102:103,100:103), [ ...
    0.011818494814411   0.367555969018042   1.000000000000000   0.396442259421198; ...
    0.008985699733886   0.160077229290862   0.396442259421198   1.000000000000000], 1e-10);
-toc;
+%toc;
