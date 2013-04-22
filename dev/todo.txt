@@ -3,10 +3,10 @@
  - ng models with point electrodes
    + fixed for 2D
 
- + why y-cut in this example
+ - check for additional y-cut in show_3d_slices
 
- - remove ng field from ng_mk_models
-    - add default ng fields to the ng functions
+ - remove np fields from ng_mk_models
+    - add default np fields to the np functions
 
  - ensure jacobian_perturb works on physics parameters
 
@@ -24,10 +24,11 @@
  - replace tutorial 151 with better absolute solver example
 
  - Bug with 'trig' measurement patterns
+    - make an option to give the stim pattern used by RPI
 
  - Nodal Jacobian bugs (example in 24 jan 2012 email)
 
- - fix tutrorial for human thorax - ensure it works
+ + fix tutrorial for human thorax - ensure it works
 
  - fix jacobian_elem2nodes
     - test behaviour for simple elec sensitivity models
@@ -59,7 +60,7 @@
  - need to completely avoid matlab's colourbar - DEFER to 3.8
     - add more colourbar tutorials, to show background colour features.
 
- - fix tutorials:
+ + fix tutorials:
           distmesh/dm_geophys.shtml
 
  - refactor out the mdl2d_from3d from various ng_mk function
@@ -75,7 +76,7 @@
 
  - data_contrib - add slow flow inflation (Pulletz 2012) data
 
- - move to some type of bugzilla version management.
+ - think about a move to some type of bugzilla version management.
 
  - fix print_convert
 
@@ -89,6 +90,13 @@
        - provide some new options for abs solvers
    - add a parameter_mapping interface
 
+ - print_convert - all matlab version
+
+ - force all inv_model to have fwd_model and rec_model
+    - rewrite prior code to assume rec_model is available.
+
+ - all inverse solvers to do print data residual
+
 ############## 3.7 ################3
  + fix set_field in physics data mapper
 
@@ -101,9 +109,7 @@
  + revert changes to .cpp file OR recompile all mex files
     + solve by touching *mex files before release
 
- - print_convert - all matlab version
-
- - octave tests
+ + octave tests
 
  + Windows errors
 
