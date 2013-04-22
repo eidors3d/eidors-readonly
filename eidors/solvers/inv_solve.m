@@ -188,7 +188,7 @@ end
 function b = has_physics(s)
 b = false;
 if isstruct(s)
-   b = any(ismember(fields(s),supported_physics));
+   b = any(ismember(fieldnames(s),supported_physics));
 end
 
 
