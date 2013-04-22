@@ -30,7 +30,7 @@ if maxiter>1
 
       img_bkgnd= calc_jacobian_bkgnd( inv_model );
       img_bkgnd.elem_data = img_bkgnd.elem_data + sol;
-      J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+      J = calc_jacobian(img_bkgnd);
 
       sol_upd= (J'*J +  hp^2*RtR)\(J' * (dv - dv_sim));
       sol = sol + sol_upd;
@@ -49,7 +49,7 @@ function one_step_inv = one_step_inv_matrix(inv_model)
        eidors_msg('np_inv_solve: using cached value', 3);
    else
        img_bkgnd= calc_jacobian_bkgnd( inv_model );
-       J = calc_jacobian( inv_model.fwd_model, img_bkgnd);
+       J = calc_jacobian( img_bkgnd);
 
        RtR = calc_RtR_prior( inv_model );
        hp= calc_hyperparameter( inv_model );
