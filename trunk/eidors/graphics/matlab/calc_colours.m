@@ -177,7 +177,7 @@ function set_colours_defaults;
    calc_colours('greylev',-.001);          % background colour = white
    calc_colours('sat_adj',.9);             % saturation of red and blue
    calc_colours('window_range', .7);       % windowing of colours
-   calc_colours('backgnd',[.5,.5,.15]);    % background colour
+   calc_colours('backgnd',[.2,.4,.4]);    % background colour
    calc_colours('mapped_colour',127);      % use 127*2+1 colourmap entries
    calc_colours('ref_level','auto');       % auto set background colour
    calc_colours('npoints',64);             % 64 raster points
