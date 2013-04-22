@@ -34,16 +34,15 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
 % (C) Bartlomiej Grychtol and Andy Adler, 2012-2013. Licence: GPL v2 or v3
 % $Id$
 
+if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
+if nargin < 4
+   ng_opt_file = '';
+end
+
 % set to true for some graphical output
 try mdl.place_elec_on_surf.DEBUG;
 catch
    mdl.place_elec_on_surf.DEBUG = false;
-end
-
-
-if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
-if nargin < 4
-   ng_opt_file = '';
 end
 
 % filenames
