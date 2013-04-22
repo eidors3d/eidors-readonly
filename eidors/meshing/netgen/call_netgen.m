@@ -59,17 +59,18 @@ while( 1 )
       fprintf(fid,'options.meshsizefilename= %s\n',msz_file);
    end
    fclose(fid);
-   
+
    if strncmp(computer,'PC',2)
       % on Linux, Netgen runs in the current directory
       % enforce this behavioud in Windows
       oldpath = getenv('NETGEN_USER_DIR');
       setenv('NETGEN_USER_DIR', cd);
    end
-   
+
    sys_cmd = sprintf('%s %s -batchmode -geofile=%s  -meshfile=%s ', ...
       ng_name, finelevel,geo_file,vol_file);
    status= system_cmd( sys_cmd );
+
    if status==0; break; end
    try
       if islinux

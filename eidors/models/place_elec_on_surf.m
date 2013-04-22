@@ -39,25 +39,18 @@ if nargin < 4
    ng_opt_file = '';
 end
 
-% set to true for some graphical output
-try mdl.place_elec_on_surf.DEBUG;
-catch
-   mdl.place_elec_on_surf.DEBUG = false;
+% filenames
+if do_debug; fnstem = 'tmp1';
+else;        fnstem = tempname;
 end
 
-% filenames
-if mdl.place_elec_on_surf.DEBUG
-   fnstem = 'tmp1';
-else
-   fnstem = tempname;
-end
 stlfn = [fnstem,'.stl'];
 meshfn= [fnstem,'.vol'];
-if mdl.place_elec_on_surf.DEBUG
-   fnstem = 'tmp2';
-else
-   fnstem = tempname;
+
+if do_debug; fnstem = 'tmp2';
+else;        fnstem = tempname;
 end
+
 stlfn2 = [fnstem,'.stl'];
 
 % 1. Get a surface model
@@ -70,8 +63,9 @@ for i = 1:length(elecs)
    try
       N = grow_neighbourhood(mdl,elecs(i));
       [mdl E1{i} E2{i} V{i}] = add_electrodes(mdl,N,elecs(i));
-   catch
-      error('Failed to add electrode #%d',i);
+   catch e
+      eidors_msg('Failed to add electrode #%d',i,1);
+      rethrow e;
    end
 end
 
@@ -106,6 +100,20 @@ for i = 1:length(elecs)
    enodes = mdl.nodes(mdl.electrode(i).nodes,:);
    mdl2.electrode(i).nodes = find_matching_nodes(mdl2,enodes,1e-5);
 end
+
+function debugging = do_debug;
+  % Old idea
+  %% set to true for some graphical output
+  %try mdl.place_elec_on_surf.DEBUG;
+  %catch
+  %   mdl.place_elec_on_surf.DEBUG = false;
+  %end
+  global eidors_objects;
+  try 
+     debugging = eidors_objects.place_elec_on_surf.debugging;
+  catch
+     debugging = false;
+  end
 
 function write_to_stl(mdl,stlfn)
 STL.vertices = mdl.nodes;
@@ -213,7 +221,7 @@ end
 mdl.electrode(l).nodes = double(e_nodes);
 mdl.electrode(l).z_contact = 0.01;
 
-if mdl.place_elec_on_surf.DEBUG
+if do_debug
    show_fem(mdl);
 end
 
@@ -246,7 +254,7 @@ jnk.elems = mdl.boundary(N,:);
 jnk.nodes = mdl.nodes;
 jnk.boundary = jnk.elems;
 img = mk_image(jnk,1);
-if mdl.place_elec_on_surf.DEBUG
+if do_debug
    show_fem(jnk);
    hold on
    plot3(elecs.points(:,1),elecs.points(:,2),elecs.points(:,3),'ro');
@@ -386,7 +394,7 @@ E = [E; M];
 jnk.nodes = [nn ; Proj;  ne];
 jnk.elems = [ els; E];
 jnk.boundary = jnk.elems;
-if mdl.place_elec_on_surf.DEBUG
+if do_debug
    show_fem(jnk);
 end
 
