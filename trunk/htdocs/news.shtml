@@ -10,14 +10,14 @@ EIDORS package.
    22 April 2013
 </b><br>
 <b>EIDORS Version 3.7 release</b>
-<p>Blobby the walrus is ecstatic to annouce the \
-release EIDORS version 3.7. The software is
+<p>Blobby the walrus is ecstatic to annouce the 
+release of EIDORS version 3.7. The software is
 available at <a href="www.eidors.org">www.eidors.org</a>. 
 This release includes:
 <ul>
  <li> Infrastructure to support new physics on FEMs
  <li> Physics support: conductivity, resisitivity and logs
- <li> Anisotropy support in forward solvers and jacobian
+ <li> Anisotropy support in forward solvers and Jacobian
  <li> FEM models with arbitrary electrode refinement: place_elec_on_surf
  <li> Pseudosection Display and Geophysics stim patterns
  <li> Geophysics solvers and tutorials
