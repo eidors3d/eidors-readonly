@@ -97,6 +97,9 @@
 
  - all inverse solvers to do print data residual
 
+ - bug in prior_covar UNIT_TEST
+     - the whole time_solver infrastructure needds to be properly tested
+
 ############## 3.7 ################3
  + fix set_field in physics data mapper
 
