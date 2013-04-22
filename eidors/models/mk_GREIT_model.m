@@ -200,7 +200,12 @@ if ~isempty(opt.noise_figure)
     eidors_msg('mk_GREIT_model: This will take a while...',1);
     f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
-    [weight, NF] = fminsearch(f, weight,fms_opts);
+    if exist('OCTAVE_VERSION')
+       % octave doesn't currently (2013 Apr) include an fminsearch function
+       [weight, NF] = fminsearch_octave(f, weight,fms_opts);
+    else
+       [weight, NF] = fminsearch(f, weight,fms_opts);
+    end
     eidors_msg(['mk_GREIT_model: Optimal solution gives NF=' ... 
         num2str(NF+target) ' with weight=' num2str(weight)],1);
 end
