@@ -46,6 +46,7 @@ bbox= [-1,-1;1,1];
 fmdl= dm_2d_pt_elecs( elec_pts, [], params, @circle, [-1,-1;1,1] );
 
 fmdl.name = sprintf('dm_2d_circ_pt_elec');
+fmdl.normalize_measurements = 'eidors_default';
 eidors_obj('set-cache',cache_obj, 'dm_2d_circ_pt_elecs', fmdl);
 
 function d= circle(p,params);
