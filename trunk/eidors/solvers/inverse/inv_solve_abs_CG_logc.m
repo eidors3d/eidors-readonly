@@ -24,7 +24,7 @@ function img= inv_solve_abs_CG_logc( inv_model, data)
 %     estimation
 
 % (C) 2012 Nolwenn Lesparre. License: GPL version 2 or version 3
-% $Id$
+% $Id:$
 
 
 % Possibility to use a different parameterisation between the inverse and
@@ -390,7 +390,7 @@ I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
 imdl.parameters.lambda= logspace(-3,2,1000);
 imdl.parameters.perturb= [0 logspace(-1,0,5)];
 
-imdl.parameters.max_iterations= 10;
+imdl.parameters.max_iterations= 2;
 imdl.parameters.normalisation= I;
 imdl.parameters.homogeneization=1;
 imdl.parameters.fixed_background= 1;
