@@ -35,10 +35,11 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
 % $Id$
 
 % set to true for some graphical output
-global EIDORS_DEBUG_PLACE_ELEC_ON_SURF; 
-if isempty(EIDORS_DEBUG_PLACE_ELEC_ON_SURF);
-   EIDORS_DEBUG_PLACE_ELEC_ON_SURF = false;
+try mdl.place_elec_on_surf.DEBUG;
+catch
+   mdl.place_elec_on_surf.DEBUG = false;
 end
+
 
 if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
 if nargin < 4
@@ -46,14 +47,14 @@ if nargin < 4
 end
 
 % filenames
-if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+if mdl.place_elec_on_surf.DEBUG
    fnstem = 'tmp1';
 else
    fnstem = tempname;
 end
 stlfn = [fnstem,'.stl'];
 meshfn= [fnstem,'.vol'];
-if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+if mdl.place_elec_on_surf.DEBUG
    fnstem = 'tmp2';
 else
    fnstem = tempname;
@@ -213,8 +214,7 @@ end
 mdl.electrode(l).nodes = double(e_nodes);
 mdl.electrode(l).z_contact = 0.01;
 
-global EIDORS_DEBUG_PLACE_ELEC_ON_SURF; 
-if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+if mdl.place_elec_on_surf.DEBUG
    show_fem(mdl);
 end
 
@@ -235,7 +235,6 @@ end
 % electrode
 function [joint EL1 EL2 V] = add_electrodes(mdl,N,elecs)
 
-global EIDORS_DEBUG_PLACE_ELEC_ON_SURF; 
 
 fc = find_face_under_elec(mdl,elecs.pos);
 % N indexes the boundary, need index into faces
@@ -248,7 +247,7 @@ jnk.elems = mdl.boundary(N,:);
 jnk.nodes = mdl.nodes;
 jnk.boundary = jnk.elems;
 img = mk_image(jnk,1);
-if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+if mdl.place_elec_on_surf.DEBUG
    show_fem(jnk);
    hold on
    plot3(elecs.points(:,1),elecs.points(:,2),elecs.points(:,3),'ro');
@@ -388,7 +387,7 @@ E = [E; M];
 jnk.nodes = [nn ; Proj;  ne];
 jnk.elems = [ els; E];
 jnk.boundary = jnk.elems;
-if EIDORS_DEBUG_PLACE_ELEC_ON_SURF
+if mdl.place_elec_on_surf.DEBUG
    show_fem(jnk);
 end
 
