@@ -62,7 +62,7 @@ eidors_msg('jacobian_bkgnd: setting cached value', 3);
 function b = has_physics(s)
 b = false;
 if isstruct(s)
-   b = any(ismember(fields(s),supported_physics));
+   b = any(ismember(fieldnames(s),supported_physics));
 end
 
 function do_unit_test
