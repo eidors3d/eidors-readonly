@@ -20,6 +20,9 @@ function out = mk_library_model(shape,elec_pos,elec_shape,maxsz,nfft)
 % QUICK ACCESS TO COMMON MODELS:
 %   MK_LIBRARY_MODEL(str) where str is a single string specifying a model.
 %   Use MK_LIBRARY_MODEL('list') to obtain a list of available models.
+%
+% PATH TO LIBRARY MODELS
+%   'LIBRARY_PATH' - get or set library path
 
 % (C) 2011 Bartlomiej Grychtol. License: GPL version 2 or version 3
 % $Id$
