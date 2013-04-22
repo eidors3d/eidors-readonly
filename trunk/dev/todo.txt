@@ -83,6 +83,12 @@
 
  - add a code to set_fields into tools
 
+ - c2f - think about how to work on NOSER -AA
+    - what if we send fwd to the prior calculation?
+          (img.orig_fwd_model)
+       - provide some new options for abs solvers
+   - add a parameter_mapping interface
+
 ############## 3.7 ################3
  + fix set_field in physics data mapper
 
@@ -90,21 +96,16 @@
 
  + change background colour
 
- - add tmp file handling to ng_mk_2d_model
+ + add tmp file handling to ng_mk_2d_model
 
- - revert changes to .cpp file OR recompile all mex files
-
- - c2f - think about how to work on NOSER -AA
-    - what if we send fwd to the prior calculation?
-          (img.orig_fwd_model)
-       - provide some new options for abs solvers
-   - add a parameter_mapping interface
+ + revert changes to .cpp file OR recompile all mex files
+    + solve by touching *mex files before release
 
  - print_convert - all matlab version
 
  - octave tests
 
- - Windows errors
+ + Windows errors
 
  + fix call_netgen
    + call_netgen create a user writable dir
