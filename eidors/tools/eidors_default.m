@@ -24,34 +24,42 @@ function varargout = eidors_default(varargin)
 % (C) Bartlomiej Grychtol, 2012. License: GPL v. 2 or 3.
 % $Id$
 
-optargin = size(varargin,2);
+   optargin = size(varargin,2);
 
-% unit test
-if optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
-    do_unit_test;
-    return;
-end
+   % unit test
+   if optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
+       do_unit_test;
+       return;
+   end
 
-% setters and getters
-if optargin > 0 && ischar(varargin{1})
-    switch varargin{1}
-        case 'get'
-            varargout{1} = get_default(varargin{2});
-            return
-        case 'set'
-            if optargin ~= 3
-                error('Wrong number of inputs');
-            end
-            set_default(varargin{2},varargin{3});
-            return
-        case 'list'
-            varargout{1} = list_defaults;
-            return
-    end
-end
-s = dbstack;
-caller  = s(2).name;
-varargout{1:nargout} = call_default(caller,varargin{:});
+   % setters and getters
+   if optargin > 0 && ischar(varargin{1})
+       switch varargin{1}
+           case 'get'
+               varargout{1} = get_default(varargin{2});
+               return
+           case 'set'
+               if optargin ~= 3
+                   error('Wrong number of inputs');
+               end
+               set_default(varargin{2},varargin{3});
+               return
+           case 'list'
+               varargout{1} = list_defaults;
+               return
+       end
+   end
+   s = dbstack;
+   caller  = octave_caller(  s(2).name );
+   % This works on a specific version of matlab, and not octave
+   %varargout{1:nargout} = call_default(caller,varargin{:});
+   if nargout>0
+      output = mk_varargout_str(nargout);
+      cmd= sprintf('%s = %s', output, 'call_default(caller,varargin{:});');
+      eval(cmd)
+   else
+      call_default(caller,varargin{:});
+   end
 
 function list = list_defaults
     global eidors_objects
@@ -61,13 +69,28 @@ function list = list_defaults
         list = [];
     end
 
+function caller = octave_caller(caller)
+    if exist('OCTAVE_VERSION')
+    % octave gives caller = eidors_default>do_unit_test
+       ff= find(caller == '>'); 
+       if length(ff)>=1; ff= ff(end); else ff=0; end
+       caller = caller(ff+1:end);
+    end
+
 
 function set_default(caller, default)
     global eidors_objects
+    caller = octave_caller( caller );
     eidors_objects.defaults.(caller) = default;
 
 
 function default = get_default(caller)
+    if exist('OCTAVE_VERSION')
+    % octave gives caller = eidors_default>do_unit_test
+       ff= find(caller == '>'); 
+       if length(ff)>=1; ff= ff(end); else ff=0; end
+       caller = caller(ff+1:end);
+    end
     global eidors_objects
     try
         default = eidors_objects.defaults.(caller);
@@ -76,8 +99,23 @@ function default = get_default(caller)
     end
 
 function varargout = call_default(caller,varargin);
-default = get_default(caller);
-varargout{1:nargout} = feval(default,varargin{:});
+   default = get_default(caller);
+   % Octave can't do this, and we don't think matlab can properly either
+   %  varargout{1:nargout} = feval(default,varargin{:});
+   if nargout>0
+      output = mk_varargout_str(nargout);
+      cmd= sprintf('%s = %s', output, 'feval(default,varargin{:});');
+      eval(cmd)
+   else
+      feval(default,varargin{:});
+   end
+
+function output = mk_varargout_str(N)
+   output = '[';
+   for i = 1:N
+      output = [ output sprintf('varargout{%d} ',i)];
+   end
+   output = [ output ']' ];
 
 
 function do_unit_test
@@ -88,7 +126,12 @@ fprintf(fid, 'disp(in);');
 fprintf(fid, 'out = in;');
 fclose(fid);
 eidors_default('set','do_unit_test','test_def');
-eidors_default(5);
-val = eidors_default(6)
-eidors_default('get','do_unit_test')
-delete('test_def.m');
+name = eidors_default(5);
+unit_test_cmp('dut1', name, 5);
+
+val = eidors_default(6);
+unit_test_cmp('dut2', val, 6);
+
+name = eidors_default('get','do_unit_test');
+unit_test_cmp('dut3', name, 'test_def');
+%delete('test_def.m');
