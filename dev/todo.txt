@@ -86,7 +86,7 @@
 
  + fix startup isues on windows
 
- - change background colour
+ + change background colour
 
  - add tmp file handling to ng_mk_2d_model
 
@@ -101,7 +101,7 @@
  - Windows errors
 
  + fix call_netgen
-   - call_netgen create a user writable dir
+   + call_netgen create a user writable dir
 
 3.7 RC
  + check and commit images for stimPatt_PseudoSec -NL

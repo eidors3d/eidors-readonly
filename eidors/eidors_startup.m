@@ -45,6 +45,7 @@ function set_defaults(HOMEDIR)
 
     % Set default model cache location
     mk_library_model('LIBRARY_PATH',[HOMEDIR, '/models/cache']);
+    eidors_cache('cache_path',[HOMEDIR, '/models/cache']);
 
 
 function ver = version_check
@@ -188,6 +189,8 @@ function print_welcome(HOMEDIR,archdir,ver)
         eidors_msg('Default background colour: white',1);
     end
     eidors_msg('EIDORS mex folder: %s%s',HOMEDIR,archdir,1);
+    eidors_msg('EIDORS cache folder: %s (must be writable)', ...
+         eidors_cache('cache_path'),1);
     eidors_msg('EIDORS model cache: %s', mk_library_model('LIBRARY_PATH'),1);
 
 
