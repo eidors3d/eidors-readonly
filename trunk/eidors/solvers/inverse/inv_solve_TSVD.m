@@ -28,7 +28,7 @@ function do_unit_test
     img  = mk_image(fmdl,1);
     vh = fwd_solve(img);
     % inhomogeneous measurement
-    str = sprintf('(x-%f).^2+(y-%f).^2+(z-%f).^2<%f^2',[-0.3 0.2 0 0.1]);
+    str = sprintf('(x - %f).^2+(y - %f).^2+(z - %f).^2<%f^2',[-0.3 0.2 0 0.1]);
     select_fcn = inline(str,'x','y','z');
     e = elem_select(img.fwd_model, select_fcn);
     ind = find(e);
