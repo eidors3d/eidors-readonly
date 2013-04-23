@@ -10,19 +10,19 @@ EIDORS package.
    22 April 2013
 </b><br>
 <b>EIDORS Version 3.7 release</b>
-<p>Blobby the walrus is ecstatic to annouce the 
+<p>Blobby the walrus is ecstatic to announce the 
 release of EIDORS version 3.7. The software is
 available at <a href="www.eidors.org">www.eidors.org</a>. 
 This release includes:
 <ul>
  <li> Infrastructure to support new physics on FEMs
- <li> Physics support: conductivity, resisitivity and logs
+ <li> Physics support: conductivity, resistivity and logs
  <li> Anisotropy support in forward solvers and Jacobian
  <li> FEM models with arbitrary electrode refinement: 
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/place_elec_on_surf.html">place_elec_on_surf</a>
  <li> Pseudosection Display(
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/graphics/matlab/show_pseudosection.html">show_pseudosection</a>) 
-	and Geophysics stim patterns (
+	and Geophysics stimulation patterns (
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/stim_pattern_geophys.html">stim_pattern_geophys</a>), see
 	<a href="http://eidors3d.sourceforge.net/tutorial/geophysics/stimPattern_pseudoSection.shtml">tutorial</a>
  <li> Geophysics solvers and tutorials
@@ -33,7 +33,7 @@ This release includes:
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/ng_mk_2d_model.html">ng_mk_2d_model</a>
  <li> Merging of FEM meshes: 
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/merge_meshes.html">merge_meshes</a>
- <li> Apparent resisitivity 
+ <li> Apparent resistivity 
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/forward/fwd_solve_apparent_resistivity.html">forward solver</a> 
 	and <a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/forward/jacobian_apparent_resistivity.html">jacobian</a>
  <li> Support for new EIT data formats: 
@@ -45,7 +45,7 @@ This release includes:
  <li> Better support for node data in
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/mk_image.html">mk_image</a>
 </ul>
-All <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a> have been updated to use the new features.
+<a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a> have been updated to use the new features.
 
 
 <p><li> <b>
