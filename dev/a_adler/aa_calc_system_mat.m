@@ -7,6 +7,10 @@ function s_mat= aa_calc_system_mat( fwd_model, img)
 % where:
 %   SS  = Unconnected system Matrix
 %   CC  = Connectivity Matrix
+%
+% This code is older and less efficient; however, it does
+% represent an easier to understand implementation of this
+% code
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
 % $Id$
@@ -29,6 +33,7 @@ end %for j=1:ELEMs
 CC= sparse((1:d*e),p.ELEM(:),ones(d*e,1), d*e, n);
 
 idx= 1:e*d;
+
 if 1
 elem_sigma = sparse(idx,idx, img.elem_data(ceil(idx/d)) );
 s_mat.E= CC'* SS * elem_sigma * CC;
