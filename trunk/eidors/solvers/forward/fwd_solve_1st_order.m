@@ -47,14 +47,23 @@ v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:));
 % calc voltage on electrodes
 v_els= pp.N2E * v;
 
-% measured voltages from v
-vv = zeros( pp.n_meas, 1 );
-idx=0;
-for i=1:pp.n_stim
-   meas_pat= fwd_model.stimulation(i).meas_pattern;
-   n_meas  = size(meas_pat,1);
-   vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
-   idx= idx+ n_meas;
+try
+    % measured voltages from v
+    vv = zeros( pp.n_meas, 1 );
+    idx=0;
+    for i=1:pp.n_stim
+       meas_pat= fwd_model.stimulation(i).meas_pattern;
+       n_meas  = size(meas_pat,1);
+       vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
+       idx= idx+ n_meas;
+    end
+catch err
+   if strcmp(err.identifier, 'MATLAB:innerdim');
+       error(['measurement pattern not compatible with number' ...
+               'of electrodes for stimulation patter %d'],i);
+   else
+       rethrow(err);
+   end
 end
 
 
