@@ -372,7 +372,23 @@ function pat= trig_pat( elec_sel, n_elecs, sel);
     meas_pat= meas_pat(:,1:end-1); % only n_elecs-1 independent patterns
     pat  = meas_pat(:, elec_sel+1);
 
+function trig_tests;
+   stim = mk_stim_patterns(8,1,'{trig}',[0,1],{},2);
+   t= linspace(0,2*pi,8+1)'; t(end)= [];
+   unit_test_cmp('trig: t1',[stim(1:4).stim_pattern], ...
+         2*[cos(t),sin(t),cos(2*t),sin(2*t)], 1e-10);
+
+   stim = mk_stim_patterns(8,1,'{trigcscs}',[0,1],{},2);
+   unit_test_cmp('trig: t2',[stim(1:4).stim_pattern], ...
+         2*[cos(t),sin(t),cos(2*t),sin(2*t)], 1e-10);
+
+   stim = mk_stim_patterns(8,1,'{trigccss}',[0,1],{},2);
+   unit_test_cmp('trig: t2',[stim([1,2,5,6]).stim_pattern], ...
+         2*[cos(t),sin(t),cos(2*t),sin(2*t)], 1e-10);
+%keyboard
+
 function do_unit_test
+   trig_tests;
    stim = mk_stim_patterns(4,1,[0,1],[0,1],{},1);
    unit_test_cmp('t1',stim(1).stim_pattern, [-1;1;0;0]);
    unit_test_cmp('t2',stim(4).stim_pattern, [1;0;0;-1]);
@@ -486,14 +502,11 @@ function do_unit_test
    unit_test_cmp('amplitude: t3',stim(2).stim_pattern, [0;2;0;0]);
    stim = mk_stim_patterns(4,1,'{mono}',[0,1],{},2);
    unit_test_cmp('amplitude: t4',stim(2).stim_pattern, [0;2;0;0]);
-   stim = mk_stim_patterns(4,1,'{trig}',[0,1],{},2);
-   unit_test_cmp('amplitude: t5',stim(2).stim_pattern, [0;2;0;-2],1e-5);
   
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
    unit_test_cmp('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
 
-if 0
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','rotate_meas'},2);
    msel = reshape(msel, 6, 6);
    unit_test_cmp('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
@@ -504,8 +517,7 @@ if 0
 
    [stim,msel] = mk_stim_patterns(6,1,[0,2],[0,1],{'meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
-   unit_test_cmp('meas_sel: t1',msel(:,6), [0;1;1;1;0;0]); %%%
-end
+   unit_test_cmp('meas_sel: t1',msel(:,6), [1;1;1;1;1;1]);
 
    [stim,msel] = mk_stim_patterns(6,1,[0,1],[0,1],{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
