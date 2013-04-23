@@ -1,14 +1,27 @@
-This is EIDORS v3.7RC. The eidors-v3.7RC.zip file
-contains all code and documentation. The
-model_library.zip file contains additional
-finite element models for use with EIDORS.
+This is EIDORS v3.7. The eidors-v3.7.zip file
+contains all code and documentation to run EIDORS.
+
+Additionally, you can download the model_library.zip
+file, which contains precalculated additional finite
+element models for use with EIDORS.  The model_library.zip
+file is not necessary, EIDORS will recalculate these
+models if they are not available.
 
 To use the EIDORS software, follow these steps:
 
-- Download the software eidors-v3.7rc.zip
-- Unzip the software in a directory /path/to/eidors or C:/path/to/eidors
+- Download the software eidors-v3.7.zip
+- Unzip the software in a directory such as
+      /path/to/eidors or C:/path/to/eidors
 - Start Matlab / GNU Octave
 - type: >>run /path/to/eidors/startup.m
     (windows >>run C:/path/to/eidors/startup.m)
 - Try the Tutorials, or execute one of the sample programs in the
    /path/to/eidors/examples directory (such as compare_2d_algs(1)) 
+
+For new features and other changes with this release,
+see the CHANGES file in the eidors directory.
+
+For other information on EIDORS, see www.eidors.org
+
+For questions and comments on EIDORS, you can join the
+eidors3d-help mailing list.
