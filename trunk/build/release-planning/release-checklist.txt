@@ -9,7 +9,10 @@
 - build mex files for matlab versions
 - touch mex files to be older than *cpp
 - build docs
-- run html buils script
+- run html build script
+- create eidors-vXX directory with eidors and htdocs
+- update README file and put it into top level directory
+- zip -r -9 eidors-vXX.zip eidors-vXX
 
 
 
