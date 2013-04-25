@@ -46,6 +46,17 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %                    electrodes facing each other.
 %
 % Specify either a common electrode shape or for each electrode
+%
+% CITATION_REQUEST:
+% AUTHOR: B Grychtol et al.
+% TITLE: Impact of model shape mismatch on reconstruction quality in
+% Electrical Impedance Tomography
+% YEAR: 2012
+% VOL: 31
+% NUM: 9
+% DOI: 10.1109/TMI.2012.2200904
+% PDF: http://www.sce.carleton.ca/faculty/adler/publications/2012/
+%      grychtol-2012-model-shape-EIT.pdf
 
 % (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
 % $Id$
@@ -53,6 +64,8 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 % TODO: Implement control segments in the bit that writes the file.
 
 if isstr(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
+
+citeme(mfilename);
 
 if nargin < 4; extra_ng_code = {'',''}; end
 cache_obj = { shape, elec_pos, elec_shape, extra_ng_code};
