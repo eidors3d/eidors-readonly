@@ -55,10 +55,23 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   opt.noise_figure = 0.5; 
 %   imdl = mk_GREIT_model(fmdl,0.25,5,opt);
 %
+% CITATION_REQUEST:
+% AUTHOR: A Adler et al.
+% TITLE: GREIT: a unified approach to 2D linear EIT reconstruction of lung
+% images
+% JOURNAL: Phys Meas
+% YEAR: 2009
+% VOL: 30
+% NUM: 6
+% PAGE: S35-55
+% LINK: http://iopscience.iop.org/0967-3334/30/6/S03
+%
 % See also CALC_GREIT_RM
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+citeme(mfilename);
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
