@@ -51,6 +51,7 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 % AUTHOR: B Grychtol et al.
 % TITLE: Impact of model shape mismatch on reconstruction quality in
 % Electrical Impedance Tomography
+% JOURNAL: IEEE Trans Med Imag
 % YEAR: 2012
 % VOL: 31
 % NUM: 9

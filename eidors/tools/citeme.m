@@ -32,6 +32,10 @@ if ischar(fname) & strcmp(fname, 'UNIT_TEST')
     citeme(mfilename);
     return;
 end
+cm = warning('query','EIDORS:CITEME'); % one would think this is supported
+if strcmp(cm.state, 'off')
+    return
+end
 h = help(fname);
 s = strfind(h,'CITATION_REQUEST:');
 if isempty(s), return, end;
@@ -119,11 +123,11 @@ rsp(idx) = [];
 nl = rsp(nl);
 nl(nl==length(str)) = [];
 str(nl) = sprintf('\n');
-ws = warning('query','backtrace');
-warning('off', 'backtrace');
+
+ws = warning('off', 'backtrace');
 idstr = sprintf('EIDORS:CITEME:%s',fname);
 msg = sprintf('If you use %s in a publication, please cite:\n', upper(fname));
-warning(idstr,[msg str]);
+warning(idstr,[msg str '\n']);
 warning(ws.state, 'backtrace');
 if ~strcmp(fname,'citeme')
     warning('off',idstr); % only show once per session
