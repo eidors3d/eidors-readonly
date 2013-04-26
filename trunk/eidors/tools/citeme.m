@@ -126,8 +126,9 @@ str(nl) = sprintf('\n');
 
 ws = warning('off', 'backtrace');
 idstr = sprintf('EIDORS:CITEME:%s',fname);
-msg = sprintf('If you use %s in a publication, please cite:\n', upper(fname));
-warning(idstr,[msg str '\n']);
+stars(1:80) = '=';
+msg = sprintf('\n%s\nIf you use %s in a publication, please cite:\n', stars,upper(fname));
+warning(idstr,[msg str '\n' stars]);
 warning(ws.state, 'backtrace');
 if ~strcmp(fname,'citeme')
     warning('off',idstr); % only show once per session
