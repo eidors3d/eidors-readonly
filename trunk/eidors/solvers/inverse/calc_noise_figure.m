@@ -132,8 +132,10 @@ end
 signal_y = calc_difference_data( vh, vi,  imdl.fwd_model);
 noise_y  = calc_difference_data( vh, vhn, imdl.fwd_model);
 
-signal_x = inv_solve(imdl, vh, vi);  signal_x = signal_x.elem_data;
-noise_x  = inv_solve(imdl, vh, vhn); noise_x  = noise_x.elem_data;
+signal_x = inv_solve(imdl, vh, vi);  
+signal_x = physics_data_mapper(signal_x); signal_x = signal_x.elem_data;
+noise_x  = inv_solve(imdl, vh, vhn); 
+noise_x  = physics_data_mapper(noise_x);  noise_x  = noise_x.elem_data;
 
 use_rec = 1;
 try 
