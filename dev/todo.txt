@@ -35,10 +35,6 @@
 
  - tutorial on mk_image including nodal images
 
- - test_2d_resistor
-    - why fwd_solve_1st_order: 249.294837 Solver analytic: 249.745561
-    - put into a proper test function as UNIT_TEST
-
  - update GREIT tutorials to give recommendations to make it pretty
     - make new GREIT tutorial
     - do this as part of a paper
@@ -90,15 +86,30 @@
        - provide some new options for abs solvers
    - add a parameter_mapping interface
 
- - print_convert - all matlab version
-
  - force all inv_model to have fwd_model and rec_model
     - rewrite prior code to assume rec_model is available.
 
  - all inverse solvers to do print data residual
 
+ - animate stimulation patterns
+
  - bug in prior_covar UNIT_TEST
      - the whole time_solver infrastructure needds to be properly tested
+
+ - create test infrastructure for old tutorials
+
+ - keep the gmsh path the same way as the new netgen
+
+############## 3.7.1 ################3
+ - test_2d_resistor
+    - why fwd_solve_1st_order: 249.294837 Solver analytic: 249.745561
+    - put into a proper test function as UNIT_TEST
+
+ - print_convert - all matlab version
+
+ - allow netgen paths with spaces in windows
+
+ + Fix spaces in path bug with windows netgen
 
 ############## 3.7 ################3
  + fix set_field in physics data mapper
