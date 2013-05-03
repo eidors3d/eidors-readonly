@@ -165,7 +165,8 @@ function compile_mex(HOMEDIR,archdir, ver)
        flags = '-largeArrayDims';
     end  
     cmd = sprintf('mex %s %s/arch/eidors_var_id.cpp', flags, HOMEDIR);
-    eval(cmd);
+    system_cmd(cmd);
+%     eval(cmd);
     movefile(sprintf('%s/*.mex*',HOMEDIR), ...
            sprintf('%s%s',HOMEDIR,archdir));
 
