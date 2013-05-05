@@ -403,6 +403,7 @@ function varargout = cache_shorthand(fhandle, varargin)
    if numel(varargout) < nargout
       eidors_msg('@@@ (Re)calculating %s',fstr, 1);
       output = mk_varargout_str(nargout);
+      varargout = cell(0);
       eval(sprintf('%s = %s', output, 'feval(fhandle,cache_obj{:});'));
       
       if isfield(opt,'boost_priority');
