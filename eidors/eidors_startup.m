@@ -101,8 +101,8 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
         archdir= strcat('/arch/octave/',computer);
     else
         % I don't know when matlab stopped using DLL as the extension
-        % for WIN32 mex files. I'm guessing it's around 7.5
-        if any(findstr(computer,'PCWIN')) && ( ver.ver < 7.005 )
+        % for WIN32 mex files. Last I know of is 7.3
+        if any(findstr(computer,'PCWIN')) && ( ver.ver < 7.003 )
             archdir= '/arch/matlab/dll';
         else
             archdir= '/arch/matlab';
@@ -122,7 +122,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     if exist(srcf) == 2 && exist(mexf) == 3
         srcd=dir(srcf);
         mexd=dir(mexf);
-        if srcd.datenum > mexd.datenum
+        if datenum(srcd.date) > datenum(mexd.date)
            if ver.isoctave
               warning(sprintf([ ...
                  'eidors_var_id.mex file is older than source file and should be recompiled.\n' ...
@@ -137,7 +137,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
                  'eidors_var_id.mex file is older than source file and should be recompiled.\n' ...
                  '  Please compile it using:\n'...
                  '     cd ',HOMEDIR,'/arch\n'...
-                 '     mex ',HOMEDIR,'/arch/eidors_var_id.cpp\n'...
+                 '     mex "',HOMEDIR,'/arch/eidors_var_id.cpp"\n'...
                  '     mv *.mex* ',HOMEDIR,'/arch/matlab\n' ...
                  'If you have a 64 bit machine, please use "mex -largeArrayDims ..."\n' ...
                  ]));
@@ -164,7 +164,7 @@ function compile_mex(HOMEDIR,archdir, ver)
     if strcmp(c(end-1:end),'64')
        flags = '-largeArrayDims';
     end  
-    cmd = sprintf('mex %s %s/arch/eidors_var_id.cpp', flags, HOMEDIR);
+    cmd = sprintf('mex %s "%s/arch/eidors_var_id.cpp"', flags, HOMEDIR);
     system_cmd(cmd);
 %     eval(cmd);
     movefile(sprintf('%s/*.mex*',HOMEDIR), ...
