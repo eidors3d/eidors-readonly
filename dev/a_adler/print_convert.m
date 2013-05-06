@@ -1,4 +1,4 @@
-function print_convert(filename, options, pagehwr)
+function print_convert(filename, varargin);
 % PRINT_CONVERT: print figures and call imagemagick to trim them
 % print_convert(filename, options, pagehwr)
 %
@@ -26,43 +26,65 @@ function print_convert(filename, options, pagehwr)
 
 if isstr(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
-if nargin<=1; options = '';  end
-if nargin<=2; pagehwr = 6/8; end
+pp = parse_options(varargin{:});
 
 tmpnam = [tempname,'.png'];
 
 posn = get(gcf,'PaperPosition');
 % I wish matlab gave us unwind protect - like octave does!
-set(gcf,'PaperPosition',[posn(1:3), posn(3)*pagehwr]);
+set(gcf,'PaperPosition',[posn(1:3), posn(3)*pp.pagehwr]);
 print('-dpng',tmpnam);
 set(gcf,'PaperPosition',[posn(1:4)]);
 
 im = imread(tmpnam,'png');
 delete(tmpnam);
-szim = size(im);
-bdr = mean(double(im(1,:,:)),2);
 
-isbdr = true(szim(1),szim(2));
-for i=1:szim(3);
-  isbdr = isbdr & (im(:,:,i) == bdr(i));
-end
-horz = [true,all(isbdr,1),true];
-horzpt = find(diff(horz)) - 1; % first 'true'
-
-vert = [true,all(isbdr,2)',true];
-vertpt = find(diff(vert)) - 1; % first 'true'
-
-im = im(vertpt(1):vertpt(end), horzpt(1):horzpt(end),:);
-
+im= crop_image(im,pp);
 imwrite(im,filename);
 
+function im = crop_image(im,pp)
+   szim = size(im);
+   bdr = mean(double(im(1,:,:)),2);
+
+   isbdr = true(szim(1),szim(2));
+   for i=1:szim(3);
+     isbdr = isbdr & (im(:,:,i) == bdr(i));
+   end
+
+   horz = [true,all(isbdr,1),true];
+   horzpt = find(diff(horz)) - 1; % first 'true'
+   im(:,1:horzpt(1)    ,:)= [];
+   im(:,horzpt(end):end,:)= [];
+
+   vert = [true,all(isbdr,2)',true];
+   vertpt = find(diff(vert)) - 1; % first 'true'
+   im(1:vertpt(1)    ,:,:)= [];
+   im(vertpt(end):end,:,:)= [];
+
+function pp = parse_options(varargin)
+   if nargin<=1; pp.options = '';  end
+   if nargin<=2; pp.pagehwr = 6/8; end
+
 function do_unit_test
+   fid = fopen('print_convert_test.html','w');
+   fprintf(fid,'<HTML><BODY>\n');
+   for i=1:26;
+     fprintf(fid,'<H1>%02d</H1><img src="pc%02d.png">\n',i,i);
+   end
+   fprintf(fid,'</BODY></HTML>\n');
+   fclose(fid);
+
    im = mk_image( mk_common_model('b2c2',8), 1:256);
    clf; show_fem(im);
-   print_convert pc10a.png
-   !display pc10a.png
+   print_convert pc01.png
 
    clf; subplot(221); show_fem(im); 
         subplot(224); show_slices(im); 
-   print_convert pc10b.png
-   !display pc10b.png
+   print_convert pc02.png
+
+   im = mk_image( ng_mk_cyl_models(1,[16,.5],.05),1);
+   clf; 
+   show_fem(im);
+   print_convert pc03.png
+
+   
