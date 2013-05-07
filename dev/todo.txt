@@ -1,5 +1,7 @@
 ############## post 3.7 ################3
 
+ - Laplace prior with a 3D-2D grid setup gives pepper noise with prior_use_fwd_not_rec=1;
+
  - ng models with point electrodes
    + fixed for 2D
 
