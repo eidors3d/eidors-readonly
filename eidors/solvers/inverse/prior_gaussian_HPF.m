@@ -5,6 +5,18 @@ function Reg= prior_gaussian_HPF( inv_model );
 % inv_model  => inverse model struct
 % Parameters:
 %   diam_frac= inv_model.fwd_model.prior_gaussian_HPF.diam_frac DEFAULT 0.1
+%
+% CITATION_REQUEST:
+% AUTHOR: A Adler & R Guardo
+% YEAR: 1996
+% TITLE: Electrical impedance tomography: regularized imaging and contrast
+% detection 
+% JOURNAL: IEEE transactions on medical imaging
+% VOL: 15
+% NUM: 2
+% PAGE: 170–9
+% LINK: http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=491418
+
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$

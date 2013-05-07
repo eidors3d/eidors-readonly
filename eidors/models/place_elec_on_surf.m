@@ -29,10 +29,19 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
 % big electrode maxh value (must be significantly smaller than the smallest
 % element on which the electrode will fall).
 %
+% CITATION_REQUEST:
+% TITLE: FEM Electrode Refinement for Electrical Impedance Tomography 
+% AUTHOR: B Grychtol and A Adler
+% JOURNAL: Engineering in Medicine and Biology Society (EMBC), 2013 Annual 
+% International Conference of the IEEE 
+% YEAR: 2013
+%
 % See also gmsh_stl2tet, ng_write_opt, merge_meshes
 
 % (C) Bartlomiej Grychtol and Andy Adler, 2012-2013. Licence: GPL v2 or v3
 % $Id$
+
+citeme(mfilename);
 
 if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
 if nargin < 4

@@ -28,12 +28,13 @@ function citeme(fname)
 % At the moment, only one CITATION_REQUEST block per file is supported.
 %
 % See also STARTUP
-if ischar(fname) & strcmp(fname, 'UNIT_TEST')
+if ischar(fname) && strcmp(fname, 'UNIT_TEST')
     citeme(mfilename);
     return;
 end
 cm = warning('query','EIDORS:CITEME'); % one would think this is supported
-if strcmp(cm.state, 'off')
+cf = warning('query',sprintf('EIDORS:CITEME:%s',fname));
+if strcmp(cm.state, 'off') || strcmp(cf.state, 'off');
     return
 end
 h = help(fname);
@@ -103,7 +104,7 @@ if ~isempty(cite.arxiv)
                     str, cite.doi,cite.doi);
 end
 
-                
+str = strtrim(str);                
 sp = strfind(str,' ');
 tp1 = strfind(str,'<');
 tp2 = strfind(str,'>');
@@ -119,7 +120,7 @@ end
 sp(idx) = [];
 rsp(idx) = [];
 
-[jnk, nl] = unique(floor(sp/80),'last');
+[jnk, nl] = unique(floor(sp/82),'last');
 nl = rsp(nl);
 nl(nl==length(str)) = [];
 str(nl) = sprintf('\n');
@@ -129,6 +130,17 @@ idstr = sprintf('EIDORS:CITEME:%s',fname);
 stars(1:80) = '=';
 msg = sprintf('\n%s\nIf you use %s in a publication, please cite:\n', stars,upper(fname));
 warning(idstr,[msg str '\n' stars]);
+if 0
+   disp('Press any key to continue...');
+   pause
+else
+   fprintf('Continuing in  ');
+   for i = 2:-1:1
+      fprintf('\b%d',i);
+      pause(1);
+   end
+   fprintf('\b0\n');
+end
 warning(ws.state, 'backtrace');
 if ~strcmp(fname,'citeme')
     warning('off',idstr); % only show once per session
