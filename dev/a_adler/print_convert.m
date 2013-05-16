@@ -30,11 +30,9 @@ pp = parse_options(varargin{:});
 
 tmpnam = [tempname,'.png'];
 
-posn = get(gcf,'PaperPosition');
-% I wish matlab gave us unwind protect - like octave does!
-set(gcf,'PaperPosition',[posn(1:3), posn(3)*pp.pagehwr]);
-print('-dpng',tmpnam);
-set(gcf,'PaperPosition',[posn(1:4)]);
+set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
+print('-dpng ',pp.resolution,tmpnam);
+set(gcf,'PaperPosition',pp.page);
 
 im = imread(tmpnam,'png');
 delete(tmpnam);
@@ -62,8 +60,32 @@ function im = crop_image(im,pp)
    im(vertpt(end):end,:,:)= [];
 
 function pp = parse_options(varargin)
-   if nargin<=1; pp.options = '';  end
-   if nargin<=2; pp.pagehwr = 6/8; end
+   pp.resolution = '';
+   pp.page = get(gcf,'PaperPosition');
+   pp.posn = pp.page;
+
+% Old options
+   if nargin< 1; pp.options = '';  return; end
+   if nargin>=2; pp.posn = [pp.posn(1:3), pp.posn(3)*varargin{2}];  end
+
+   opt = varargin{1};
+   if isstr(opt)
+      val =regexp(opt,'-density (\d+)','tokens');
+      if length(val)>0;
+         pp.resolution = ['-r',val{1}{1}];
+      end
+      val =regexp(opt,'-r(\d+)','tokens');
+      if length(val)>0;
+         pp.resolution = ['-r',val{1}{1}];
+      end
+   elseif isstr(opt)
+     if isfield(opt,'resolution');
+         pp.resolution = sprintf('-r%d',opt.resolution);
+     end
+   else
+      error('Can''t parse options');
+   end
+
 
 function do_unit_test
    fid = fopen('print_convert_test.html','w');
@@ -74,17 +96,25 @@ function do_unit_test
    fprintf(fid,'</BODY></HTML>\n');
    fclose(fid);
 
-   im = mk_image( mk_common_model('b2c2',8), 1:256);
+   im = mk_image( ng_mk_cyl_models(1,[16,.5],.05),1);
    clf; show_fem(im);
    print_convert pc01.png
 
-   clf; subplot(221); show_fem(im); 
-        subplot(224); show_slices(im); 
+   im = mk_image( mk_common_model('b2c2',8), 1:256);
+   clf; show_fem(im);
    print_convert pc02.png
 
-   im = mk_image( ng_mk_cyl_models(1,[16,.5],.05),1);
-   clf; 
-   show_fem(im);
+
+   clf; subplot(221); show_fem(im); 
+        subplot(224); show_slices(im); 
    print_convert pc03.png
 
+   print_convert pc04.png '-density 50'
+   print_convert pc05.png '-r100'
+
+   print_convert('pc06.png', '-r100' , 1/8)
+
+   print_convert('pc06.png', '-r100' , 8/1)
+
+   opt.resolution = 100;
    
