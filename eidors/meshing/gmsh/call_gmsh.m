@@ -15,8 +15,22 @@ if nargin<2
     dim = 2;
 end
 
+cache_path = eidors_cache('cache_path');
+
+if  exist('OCTAVE_VERSION') % FIXME
+   islinux =1;
+elseif ~strncmp(computer,'PC',2) % Don't know if we have isunix
+   islinux =1;
+else
+   islinux =0;
+end
+
 % Gmsh executable filename
-gmsh_name = 'gmsh';
+if  islinux
+   gmsh_name = 'gmsh';
+else
+   gmsh_name = [cache_path,'/gmsh'];
+end
 
 while( 1 )
     ldpath='';
@@ -42,9 +56,7 @@ while( 1 )
             'a batch file to access gmsh.\n' ...
             'Please enter the directory in which to find gmsh.\n' ...
             'If you dont have a copy, download it from' ...
-            'http://www.geuz.org/gmsh/\n\n' ...
-            'Note that you *MUST* use names without spaces. Thus\n' ...
-            'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
+            'http://www.geuz.org/gmsh/\n\n' ]);
         
         gmsh_path = input('gmsh_path? [or i=ignore, e=error] ','s');
         if strcmp(gmsh_name,'i'); break;end
@@ -58,8 +70,8 @@ while( 1 )
             end
             
             
-            fid= fopen('gmsh.bat','w');
-            fprintf(fid,'%s/gmsh.exe %%*\n', gmsh_exe);
+            fid= fopen([cache_path, '/gmsh.bat'],'w');
+            fprintf(fid,'"%s/gmsh.exe" %%*\n', gmsh_exe);
             fclose(fid);
         end
     end
