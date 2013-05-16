@@ -1,4 +1,4 @@
-function show_fem_move( img, move, scale, options )
+function [hf,hh] = show_fem_move( img, move, scale, options )
 % SHOW_FEM_MOVE   Plot EIT finite element model (FEM) and movement 
 %    vectors.
 % Args: img     - eidors_obj of type 'image'
@@ -37,7 +37,7 @@ if length(img.elem_data) > fwdp.n_elem
 end
 
 % Plot FEM with conductivity elements with or without colourbars
-show_fem(img, options); % Show colourbar
+hf = show_fem(img, options); % Show colourbar
 
 % Plot movement vectors on electrodes
 if ~isempty(move)
