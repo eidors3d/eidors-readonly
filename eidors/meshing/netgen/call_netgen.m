@@ -90,9 +90,7 @@ while( 1 )
             'a batch file to access netgen.\n' ...
             'Please enter the directory in which to find netgen.exe.\n' ...
             'If you don''t have a copy, download it from' ...
-            'http://sourceforge.net/projects/netgen-mesher/ \n\n' ...
-            'Note that you *MUST* use names without spaces. Thus\n' ...
-            'instead of C:/Program Files/ write C:/Progra~1/\n\n' ]);
+            'http://sourceforge.net/projects/netgen-mesher/ \n\n']);
          netgen_path = input('netgen_path? [or i=ignore, e=error] ','s');
          if strcmp(ng_name,'i'); break;end
          if strcmp(ng_name,'e'); error('user requested'),end;
@@ -110,7 +108,7 @@ while( 1 )
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
-            fprintf(fid,'%s/netgen.exe %%*\n', netgen_exe);
+            fprintf(fid,'"%s/netgen.exe" %%*\n', netgen_exe);
             fclose(fid);
          elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )
             disp('Found netgen version 4.3.1');
@@ -118,7 +116,7 @@ while( 1 )
             if fid<0; error('Unable to write to %s',cache_path); end
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-            fprintf(fid,'%s/ng431.exe %%*\n', netgen_path);
+            fprintf(fid,'"%s/ng431.exe" %%*\n', netgen_path);
             fclose(fid);
          else
             warning(['cannot find a version of netgen that I know about\n' ...
