@@ -332,7 +332,11 @@ end
 function show_inhomogeneities( elem_data, mdl, img, opt)
 % show
 if size(elem_data,2)>1
-   eidors_msg('warning: show_fem only shows first image',1);
+   q = warning('query','backtrace');
+   warning('backtrace','off');
+   warning('EIDORS:FirstImageOnly','show_fem only shows first image');
+   warning('backtrace',q.state);
+%    eidors_msg('warning: show_fem only shows first image',1);
 end
 repaint_inho(elem_data(:,1), 'use_global' , mdl.nodes, mdl.elems, ...
     opt.transparency_thresh, img); 
