@@ -138,33 +138,43 @@ nmdl.type = 'fwd_model';
 nmdl.nodes = nodes;
 nmdl.elems = zeros(n_tri,3); 
 nimg = mk_image(nmdl,1);
+nimg.elem_data(end,size(img.elem_data,2)) = 1; % make size consistent with img
 c = 1;
 % TODO: Speed this up
 for i = 1:length(uels)
     switch nodes_per_elem(i)
         case 3
             nmdl.elems(c,:) = nn(n==i);
-            nimg.elem_data(c) = img.elem_data(uels(i));
+            nimg.elem_data(c,:) = img.elem_data(uels(i),:);
             c = c + 1;
         case 4
             nds = nn(n==i);
             nmdl.elems(c,:) = nds(1:3);
-            nimg.elem_data(c) = img.elem_data(uels(i));
+            nimg.elem_data(c,:) = img.elem_data(uels(i),:);
             nmdl.elems(c+1,:) = nds(2:4);
-            nimg.elem_data(c+1) = img.elem_data(uels(i));
+            nimg.elem_data(c+1,:) = img.elem_data(uels(i),:);
             c = c + 2;
     end
 end
 % deal with double elements (from shared faces)
 nmdl.elems = sort(nmdl.elems,2);
 [nmdl.elems idx] = sortrows(nmdl.elems);
-nimg.elem_data = nimg.elem_data(idx);
+nimg.elem_data = nimg.elem_data(idx,:);
 [nmdl.elems n idx] = unique(nmdl.elems, 'rows');
 n(2:end) = diff(n);
 nimg.fwd_model = nmdl;
 % use sparse to calculate the avarage value
-nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
-
+% nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
+noimgs = size(nimg.elem_data,2);
+noels  = size(nimg.elem_data,1);
+if noimgs > 1
+   idx = repmat(0:noimgs-1,noels,[])*max(idx) + repmat(idx,1,noimgs);
+end
+nimg.elem_data = full(sparse(ones(numel(nimg.elem_data),1), ...
+                             idx(:)        , ...
+                             reshape(nimg.elem_data,[],1)      )) ./ ...
+                                 repmat(n,noimgs,[])';
+nimg.elem_data = reshape(nimg.elem_data,[], noimgs);
 % add electrodes
 try
    for i = 1:length(mdl.electrode)
