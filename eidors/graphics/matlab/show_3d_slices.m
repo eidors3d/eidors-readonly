@@ -15,6 +15,16 @@ if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 %multi-physics
 img = physics_data_mapper(img);
 
+qfi = warning('query','EIDORS:FirstImageOnly');
+% check size
+if size(img.elem_data,2) > 1
+   q = warning('query','backtrace');
+   warning('backtrace','off');
+   warning('EIDORS:FirstImageOnly','show_3d_slices only shows first image');
+   warning('backtrace',q.state);
+   warning('off','EIDORS:FirstImageOnly');
+end
+
 % need to make sure boundary is just the outside
 img.fwd_model.boundary = find_boundary(img.fwd_model);
 
@@ -60,6 +70,8 @@ for i= 1:length(y_cuts)
     hold on
 end
 hold off
+
+warning(qfi.state,'EIDORS:FirstImageOnly');
 
 function show_slice(img, level)
     slc = mdl_slice_mesher(img,level);
