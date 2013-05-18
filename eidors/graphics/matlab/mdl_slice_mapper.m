@@ -45,7 +45,7 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
 
    NODE = level_model( fwd_model, level );
    if isfield(fwd_model.mdl_slice_mapper,'model_2d') && ...
-           fwd_model.mdl_slice_mapper.model_2d
+           fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
        NODE(3,:) = [];
    end
    ELEM= fwd_model.elems';

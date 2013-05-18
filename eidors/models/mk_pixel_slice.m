@@ -95,6 +95,7 @@ rmdl.coarse2fine(:,ff)= [];
 % rmdl.boundary = find_boundary(rmdl);
 % show individual elements (more like how the 2d grid models display)
 rmdl.boundary = rmdl.elems;
+rmdl.inside   = inside; % the inside array is useful in other functions
 
 if opt.do_coarse2fine
     % to calculate c2f, models must be aligned

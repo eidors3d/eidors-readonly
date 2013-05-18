@@ -96,95 +96,15 @@ function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, 
 Nsim = opt.Nsim;
 [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
 
-% TODO: This should take into account the electrode plane only, not the
-% whole model size
-mingrid = opt.minele;
-maxgrid = opt.maxele;
-if opt.square_pixels ==1
-    mdl_sz = maxgrid - mingrid; 
-    mdl_AR = mdl_sz(1)/mdl_sz(2);
-    img_AR = opt.imgsz(1)/opt.imgsz(2);
-    if mdl_AR < img_AR
-        delta = (mdl_sz(2) * img_AR - mdl_sz(1)) /2;
-        mingrid(1) = mingrid(1) - delta;
-        maxgrid(1) = maxgrid(1) + delta;
-    elseif mdl_AR > img_AR
-        delta = (mdl_sz(1)/img_AR - mdl_sz(2)) / 2;
-        mingrid(2) = mingrid(2) - delta;
-        maxgrid(2) = maxgrid(2) + delta;
-    end
-        
-end
-
-xgrid = linspace(mingrid(1),maxgrid(1),opt.imgsz(1)+1);
-ygrid = linspace(mingrid(2),maxgrid(2),opt.imgsz(2)+1);
-rmdl = mk_grid_model([],xgrid,ygrid);
-x_pts = xgrid(1:end-1) + 0.5*diff(xgrid);
-y_pts = ygrid(1:end-1) + 0.5*diff(ygrid); 
-y_pts = fliplr(y_pts); %medical
-% NOTE: This controls the image resolution. If you want higher res, you
-% need to either specify it in opt.imgsz or manually overwrite (or remove)
-% the imdl.rec_model.mdl_slice_mapper.
-rmdl.mdl_slice_mapper.x_pts = x_pts;
-rmdl.mdl_slice_mapper.y_pts = y_pts;
-rmdl.mdl_slice_mapper.level = [inf inf 0];
-x_avg = conv2(xgrid, [1,1]/2,'valid');
-y_avg = conv2(ygrid, [1,1]/2,'valid');
-[x,y] = ndgrid( x_avg, y_avg);
-
-%Calculate rec_model (if absent) and find the inside array
+%Calculate rec_model (if absent)
 if ~isfield(imdl,'rec_model');
- if 0 % old way
-    fmdl.boundary = find_boundary(fmdl); %just to make sure...
-    bound = calc_bound(fmdl);
-    inside = inpolygon(x(:),y(:),bound(:,1),bound(:,2) );
-    ff = find(~inside);
- elseif 0 % better way
-    z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
-    min_e = min(z_elec); max_e = max(z_elec);
-    elec_lev = [inf,inf,mean([min_e,max_e])];
-    fmdl.mdl_slice_mapper = rmdl.mdl_slice_mapper;
-    fmdl.mdl_slice_mapper.level = elec_lev;
-    slice = mdl_slice_mapper(fmdl,'elem');
-    inside = slice' ~= 0;
-    ff= find(inside==0);
-    inside = inside(:);
- else % a yet better way
-    inside = inpolygon(x(:),y(:),...
-       opt.contour_boundary(:,1),opt.contour_boundary(:,2) );
-    ff = find(~inside);
- end
- 
- rmdl.elems([2*ff, 2*ff-1],:)= [];
- rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
- rmdl.coarse2fine(:,ff)= [];
- 
- % ADD electrode locations
-
- nodes = rmdl.nodes(unique(rmdl.elems(:)),:);
- v = 1:length(rmdl.nodes);
- map = v(unique(rmdl.elems(:)));
- for i = flipud(1:numel(fmdl.electrode))
-    x_elec = mean(fmdl.nodes( [fmdl.electrode(i).nodes], 1));
-    y_elec = mean(fmdl.nodes( [fmdl.electrode(i).nodes], 2));
-    dist = (nodes(:,1)-x_elec).^2 + (nodes(:,2)-y_elec).^2;
-    [jnk,e_node]= min(dist);
-    elec(i).z_contact = 0.001;
-    elec(i).nodes     = map(e_node);
- end
- rmdl.electrode = elec;
- 
- imdl.rec_model = rmdl;
- 
-
- 
- 
-else
- % this assumes the original grid model was created the same way 
- inside = ismember(rmdl.elems,imdl.rec_model.elems,'rows');
- inside = inside(1:2:end);
- % TODO: user MUST specify the inside array
+   imdl.rec_model = mk_pixel_slice(fmdl,opt.target_plane,opt);
+   imdl.rec_model.nodes(:,3) = []; % the third dimension complicated display
+   % medical orientation
+   imdl.rec_model.mdl_slice_mapper.y_pts = fliplr(imdl.rec_model.mdl_slice_mapper.y_pts);
 end
+% user MUST specify the inside array
+inside = imdl.rec_model.inside;
 
 % IMPORTANT: opt.meshsz must now reflect the rec_model, not the fwd_model!!
 minnode = min(imdl.rec_model.nodes);
@@ -409,14 +329,7 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
    end
 
 function opt = parse_options(opt,fmdl,imdl);
-    
-    maxnode = max(fmdl.nodes); minnode = min(fmdl.nodes);
-    opt.maxnode = maxnode;     opt.minnode = minnode; 
-    
-    elnodes = cell2mat({fmdl.electrode.nodes})';
-    opt.minele = min(fmdl.nodes(elnodes,:));
-    opt.maxele = max(fmdl.nodes(elnodes,:));
-    
+
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'square_pixels')
         opt.square_pixels = 0;
@@ -463,7 +376,7 @@ function opt = parse_options(opt,fmdl,imdl);
         if t<minnode(3) || t>maxnode(3)
             warning('options.target_plane is outside the model!');
             eidors_msg('mk_GREIT_model: Resorting to default target_plane');
-            opt.target_plane = 1i;
+            opt.target_plane = mean(elec_loc(:,3));
         end
     end
     if ~isfield(opt, 'target_offset')
@@ -484,9 +397,8 @@ function opt = parse_options(opt,fmdl,imdl);
         opt.normalize = 0;
         eidors_msg('mk_GREIT_model: fmdl.normalize_measurements not specified, assuming 0');
     end
-    opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
     
-    % find a boundary at target level (needed in many places)
+    % find the boundary at target level (needed in many places)
     slc = mdl_slice_mesher(fmdl,[inf inf opt.target_plane]);
     bnd = find_boundary(slc.fwd_model);
     opt.contour_boundary = order_loop(slc.fwd_model.nodes(unique(bnd),:));
@@ -500,7 +412,7 @@ figure
 % Create a 3D elliptical cylinder with 16 circular electrodes 
 fmdl_1= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]); %show_fem(fmdl);
 % Put two balls into the elliptical cylinder
-extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
+extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1);'};
 [fmdl_2,mat_idx]= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra); 
 % Set the model to use adjacent current patterns
 stim = mk_stim_patterns(16,1,[0,1],[0,1],{}); 
