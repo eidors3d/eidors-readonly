@@ -15,7 +15,7 @@ function img=inv_solve_TV_irls( inv_model, data1, data2)
 % beta is the parameter that smooths the TV functional
 
 % (C) 2008 Andrea Borsic. License: GPL version 2 or version 3
-% $Id%
+% $Id$
 
 try    max_iter = inv_model.parameters.max_iterations;
 catch  max_iter = 10;
