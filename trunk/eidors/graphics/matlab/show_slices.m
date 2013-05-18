@@ -54,7 +54,7 @@ if nargin<=1;
    end
 end
 
-if isempty(levels) && do_calc_slices && size(img(1).fwd_model.nodes,2)==2
+if isempty(levels) && do_calc_slices %&& size(img(1).fwd_model.nodes,2)==2
    levels= [Inf,Inf,0];
 end
 
