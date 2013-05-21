@@ -33,14 +33,12 @@ function set_defaults(HOMEDIR)
     eidors_default('set','fwd_solve','fwd_solve_1st_order');
     %models are NOT normalized by default
     eidors_default('set','mdl_normalize',@(x) 0); 
-    
-
 
     calc_colours('defaults'); % default calc_colours
 
-    % Set max cache size. Not completely sure about this
-    %  but 250MB should be available in most modern machines
-    eidors_cache('cache_size', 300e6 );
+    %  Set max cache size. Not completely sure about this
+    %  but 256MB should be available in most modern machines
+    eidors_cache('cache_size', 256*1024*1024 );
     eidors_cache('boost_priority', 0 ); % set default priority
 
     % Set default model cache location
@@ -182,7 +180,7 @@ function print_welcome(HOMEDIR,archdir,ver)
     end
     eidors_msg('Installed EIDORS (Ver: %s)', eidors_ver,1);
 
-    eidors_msg('Parameter: cache_size=%d MB',eidors_cache('cache_size')/1e6,1);
+    eidors_msg('Parameter: cache_size=%.0f MB',eidors_cache('cache_size')/(1024*1024),1);
     eidors_msg('Parameter: mapped_colour=%d',calc_colours('mapped_colour'),1);
     if calc_colours('greylev')>=0
         eidors_msg('Default background colour: black',1);
