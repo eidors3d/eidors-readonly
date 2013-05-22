@@ -23,7 +23,7 @@ This function is provided by <tt>simulate_2d_movement</tt>
 </pre>
 
 <center>
-<img src="simulate_move1_02a.png"
+<img src="simulate_move1_02a.png">
 <br><i>Figure:</i>
 Simulation mesh and simulated target positions
 </center>
@@ -33,7 +33,7 @@ Simulation mesh and simulated target positions
 <!--#include virtual="simulate_move1_03.m" -->
 </pre>
 <center>
-<img src="simulate_move1_03a.png"
+<img src="simulate_move1_03a.png">
 <br><i>Figure:</i>
 Reconstructed images
 <i>Left</i> FEM of first image

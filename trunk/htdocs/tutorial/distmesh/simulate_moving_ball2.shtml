@@ -28,14 +28,14 @@ we find the elements that are in the target position.
 </pre>
 
 <center>
-<img src="simulate_move2_02a.png"
+<img src="simulate_move2_02a.png">
 <br><i>Figure:</i>
 <i>Left</i> Simulation mesh homogeneous mesh
 <i>Right</i> Simulation mesh with target at (0.1,0.7)
 </center>
 
 <center>
-<img src="simulate_move2_02b.png"
+<img src="simulate_move2_02b.png">
 <br><i>Figure:</i>
 Magnification of areas of interest in the previous figure.
 <i>Left</i> Simulation mesh homogeneous mesh
@@ -61,7 +61,7 @@ In order to animate these meshes, we call the
 </pre>
 
 <center>
-<img src="simulate_move2_05a.gif"
+<img src="simulate_move2_05a.gif">
 <br><i>Figure:</i>
 Animation of the simulation mesh surrounding a moving target
 </center>
@@ -72,7 +72,7 @@ Animation of the simulation mesh surrounding a moving target
 </pre>
 
 <center>
-<img src="simulate_move2_06a.png"
+<img src="simulate_move2_06a.png">
 <br><i>Figure:</i>
 Reconstructed images of targets moving in the mesh
 <i>Left</i> Reconstruction mesh with first image
@@ -89,13 +89,13 @@ refinement.
 
 <h3>Mesh with <tt>n_nodes=500</tt> and <tt>refine_level=2</tt></H3>
 <center>
-<img src="simulate_move2_05b.gif"
+<img src="simulate_move2_05b.gif">
 <br><i>Figure:</i>
 Animation of the simulation mesh surrounding a moving target
 </center>
 
 <center>
-<img src="simulate_move2_06b.png"
+<img src="simulate_move2_06b.png">
 <br><i>Figure:</i>
 Reconstructed images of targets moving in the mesh
 <i>Left</i> Reconstruction mesh with first image
@@ -104,13 +104,13 @@ Reconstructed images of targets moving in the mesh
 
 <h3>Mesh with <tt>n_nodes=1000</tt> and <tt>refine_level=4</tt></H3>
 <center>
-<img src="simulate_move2_05c.gif"
+<img src="simulate_move2_05c.gif">
 <br><i>Figure:</i>
 Animation of the simulation mesh surrounding a moving target
 </center>
 
 <center>
-<img src="simulate_move2_06c.png"
+<img src="simulate_move2_06c.png">
 <br><i>Figure:</i>
 Reconstructed images of targets moving in the mesh
 <i>Left</i> Reconstruction mesh with first image
