@@ -56,8 +56,9 @@ path/to/eidors3d/models/cache
 <h3>Default functions</h3>
 Several EIDORS functions, particularly those building forward and inverse models, 
 make extensive use of the function
-<a href="../../doc/eidors/tools/eidors_default.html"><tt>eidors_default</tt></a>, which
-maintains a list of default implementations of certain functionalities. For instance,
+<a href="../../doc/eidors/tools/eidors_default.html"><tt>eidors_default</tt></a>, 
+<br>
+which maintains a list of default implementations of certain functionalities. For instance,
 <tt>fwd_solve_1st_order</tt> is the default forward solver:
 <pre width="80" >
 >> eidors_default('get','fwd_solve')
@@ -95,8 +96,10 @@ eidors_default('set','inv_solve',@my_solver);
 
 <h3>For Developers</h3>
 If you are a developer, it is nice to add your staging directory (under /dev) 
-to Matlab's path. That way, you can shadow specific functions while you develop
-them. A convenient way to do this is by calling the 
+to Matlab's path. <br>
+That way, you can shadow specific functions while you develop
+them. <br>
+A convenient way to do this is by calling the 
 <a href="../../doc/eidors/eidors_startup.html"><tt>eidors_startup</tt></a> 
 function rather than the 
 <a href="../../doc/eidors/startup.html"><tt>startup</tt></a> script. 
