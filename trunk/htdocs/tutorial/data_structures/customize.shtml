@@ -1,0 +1,126 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>Customizing EIDORS</h2>
+
+EIDORS has several parameters that can be customized. Those are set to sensible values when you run
+<pre width="40">
+run /path/to/eidors3d/startup.m
+</pre>
+but in some cases you may want to modify the defaults. A good way to do it is to write 
+your own startup file, or a matlab toolbar shortcut if you use the GUI. 
+<br>
+This tutorial explains what can be customized.
+
+<h3>Colours</h3>
+<a href="/doc/eidors/graphics/matlab/calc_colours"><tt>calc_colours</tt></a> 
+is the main function that affects how EIDORS displays models and images.
+For details see the <a href="tutorial/data_structures/eidors_colours.hmtl">EIDORS Colours tutorial</a>.
+<br>
+For example, you may want to modify the default colormap and image background at startup:
+<pre>
+calc_colours('backgnd',[.8,.8,.8]);    % gray background colour
+calc_colours('cmap_type','draeger'');  % Draegerwerk colourmap
+</pre>
+
+<h3>Cache</h3>
+EIDORS caches results of certain calculations. The default cache size is 256 MB, but if you 
+work with big FEMs, you will likely need more:
+<pre>
+eidors_cache('cache_size', 2*1024^3 ); % 2 GB cache
+</pre>
+<br>
+EIDORS also requires a writeable directory for caching and some other functions. This can be set by:
+<pre>
+eidors_cache('cache_path','C:/path/to/a/writeable/folder');
+</pre>
+<br>
+The function <a href="/doc/eidors/models/mk_library_model.html"><tt>mk_library_model</tt></a> 
+also stores its models to disk. 
+<br>
+Alternatively, you may download the 
+<a href="http://prdownloads.sf.net/eidors3d/model_library.zip">model_library.zip</a> 
+file with all the models (some of which are expensive to build). 
+<br>
+The path where models are stored can be specified by calling:
+<pre>
+mk_library_model('LIBRARY_PATH','path/to/models');
+</pre>
+<br>
+At startup, both <tt>LIBRARY_PATH</tt> and <tt>cache_path</tt> are set to
+<pre>
+path/to/eidors3d/models/cache
+</pre>
+
+<h3>Default functions</h3>
+Several EIDORS functions, particularly those building forward and inverse models, 
+make extensive use of the function
+<a href="/doc/eidors/tools/eidors_default.html"><tt>eidors_default</tt></a>, which
+maintains a list of default implementations of certain functionalities. For instance,
+<tt>fwd_solve_1st_order</tt> is the default forward solver:
+<pre>
+>> eidors_default('get','fwd_solve')
+
+ans =
+
+fwd_solve_1st_order
+</pre>
+You can list all defaults by runnning:
+<pre>
+ eidors_default('list')
+</pre>
+
+To maintain flexibility, fields on EIDORS forward and inverse model structures are set
+to 'eidors_default' rather than a specific function:
+<pre>
+>> mk_common_model('a2C',16)
+
+ans = 
+
+             solve: 'eidors_default'
+    hyperparameter: [1x1 struct]
+         RtR_prior: 'eidors_default'
+    jacobian_bkgnd: [1x1 struct]
+      reconst_type: 'difference'
+         fwd_model: [1x1 struct]
+              name: 'EIDORS common_model_a2C0'
+              type: 'inv_model'
+</pre>
+
+Thus, if you want a specific inverse solver to be used by default, specify
+<pre>
+eidors_default('set','inv_solve',@my_solver);
+</pre>
+
+<h3>For Developers</h3>
+If you are a developer, it is nice to add your staging directory (under /dev) 
+to Matlab's path. That way, you can shadow specific functions while you develop
+them. A convenient way to do this is by calling the 
+<a href="/doc/eidors/eidors_startup.html"><tt>eidors_startup</tt></a> 
+function rather than the 
+<a href="/doc/eidors/startup.html"><tt>startup</tt></a> script. 
+<br>
+Thus, we need a custom startup function (or a Toolbar shortcut) that could look 
+like this:
+<pre>
+% Custom EIDORS Startup
+curdir = cd;                                   % save current directory
+cd /path/to/eidors
+warning off MATLAB:dispatcher:nameConflict     % prevent complaining
+eidors_startup({'my_dev_folder_name'});        % add my dev to path
+
+% Set additional options (cache size, background, etc)
+
+warning off MATLAB:dispatcher:nameConflict     % re-enable the warning
+cd(curdir);                                    % restore the working directory
+clear curdir                                   % clean up
+</pre>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2012-07-16 22:33:51 +0200 (Mon, 16 Jul 2012) $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
