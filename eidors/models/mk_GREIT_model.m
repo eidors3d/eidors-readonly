@@ -127,7 +127,7 @@ if ~isempty(opt.noise_figure)
     xyzr = mean(fmdl.nodes);
 %     xyzr(1:2) = 0;
     xyzr(3) = opt.target_plane;
-    xyzr(4) = opt.target_size*0.5*R;
+    xyzr(4) = mean(opt.target_size)*0.5*R;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
