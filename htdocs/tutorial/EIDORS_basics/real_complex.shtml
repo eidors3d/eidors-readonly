@@ -20,6 +20,7 @@ Simulation of data with real and complex components
 
 <center>
 <img src="real_complex01a.png">
+<img src="real_complex01b.png">
 <br><i>Figure:</i>
 Simulated conductivity (left) and permittivity (right)
 changes in a circular tank
@@ -35,6 +36,7 @@ Reconstruction of real and complex changes
 
 <center>
 <img src="real_complex02a.png">
+<img src="real_complex02b.png">
 <br><i>Figure:</i>
 Reconstructed conductivity (left) and permittivity (right)
 changes.
@@ -50,6 +52,7 @@ Reconstruction of real and complex changes (tank measurements)
 
 <center>
 <img src="real_complex03a.png">
+<img src="real_complex03b.png">
 <br><i>Figure:</i>
 Reconstructed conductivity (left) and permittivity (right)
 changes from saline tank measurements at IIRC (Korea)

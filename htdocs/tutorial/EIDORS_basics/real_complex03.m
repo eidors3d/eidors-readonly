@@ -6,9 +6,9 @@ imgr = inv_solve(imdl, vh, vi);
 
 subplot(221); show_fem(imgr);
 title 'real conductivity change'
+print_convert real_complex03a.png 
 
 imgr.calc_colours.component = 'imag';
-subplot(222); show_fem(imgr);
+subplot(221); show_fem(imgr);
 title 'imag conductivity change'
-
-print_convert real_complex03a.png 
+print_convert real_complex03b.png 
