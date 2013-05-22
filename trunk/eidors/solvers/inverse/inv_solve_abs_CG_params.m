@@ -31,7 +31,7 @@ function img= inv_solve_abs_CG_params( inv_model, data)
 % params_mapping.perturb
 
 % (C) 2012 Nolwenn Lesparre. License: GPL version 2 or version 3
-% $Id: CG_lr_solve.m 2596 2012-06-06 14:18:06Z nlesparre $
+% $Id$
 
 
 % Necessity to define a different parameterisation of the inverse problem

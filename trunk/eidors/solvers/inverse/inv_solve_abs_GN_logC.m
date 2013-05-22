@@ -9,7 +9,7 @@ function img= inv_solve_abs_GN_logC( inv_model, data1);
 %   inv_model.parameters.max_iterations = N_max iter
 
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
-% $Id: inv_solve_abs_GN.m 3116 2012-06-08 15:22:35Z bgrychtol $
+% $Id$
 
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
