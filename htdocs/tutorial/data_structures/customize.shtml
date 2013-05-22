@@ -16,7 +16,7 @@ This tutorial explains what can be customized.
 <h3>Colours</h3>
 <a href="../../doc/eidors/graphics/matlab/calc_colours"><tt>calc_colours</tt></a> 
 is the main function that affects how EIDORS displays models and images.
-For details see the <a href="eidors_colours.hmtl">EIDORS Colours tutorial</a>.
+For details see the <a href="eidors_colours.html">EIDORS Colours tutorial</a>.
 <br>
 For example, you may want to modify the default colormap and image background at startup:
 <pre width="80">
