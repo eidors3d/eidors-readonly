@@ -19,6 +19,13 @@ WEBLINK= http://eidors3d.sourceforge.net/
 #all: $(REL) shtml other
 all: $(REL)/htdocs
 
+copy-to-mirror:
+	@echo "Copy to Mirror ## Must run on adler-server"
+	chgrp adler-res -R ../htdocs/
+	chmod g+rw -R ../htdocs
+	rsync --exclude=.svn -av ../htdocs/ /home/adler/htdocs/eidors/ 
+	@echo "It's OK if some warnings"
+
 $(REL):
 	mkdir -p $(REL)
 #	$(WKDIR) && mkdir -p $@
