@@ -12,9 +12,10 @@ vi = add_noise(5,vi,vh);
 img.calc_colours.component = 'real';
 subplot(221); show_fem(img);
 title 'real conductivity change'
+print_convert real_complex01a.png 
 
 img.calc_colours.component = 'imag';
-subplot(222); show_fem(img);
+subplot(221); show_fem(img);
 title 'imag conductivity change'
+print_convert real_complex01b.png 
 
-print_convert real_complex01a.png 
