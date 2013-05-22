@@ -24,7 +24,7 @@ function img= inv_solve_abs_CG_logc( inv_model, data)
 %     estimation
 
 % (C) 2012 Nolwenn Lesparre. License: GPL version 2 or version 3
-% $Id:$
+% $Id$
 
 
 % Possibility to use a different parameterisation between the inverse and

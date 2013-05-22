@@ -2,7 +2,7 @@ function voltage_sources(img)
 % voltage_sources
 
 % (C) 2013 Andy Adler.  License:  GPL v2 or v3
-% $Id:$
+% $Id$
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
