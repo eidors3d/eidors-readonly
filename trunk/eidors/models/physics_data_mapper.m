@@ -40,13 +40,15 @@ if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 if nargin < 2
    reverse = false;
 end
-
-if reverse
-   img = map_data_to_physics(img);
-else
-   img = map_physics_to_data(img);
+% need to handle image arrays
+for i = 1:length(img)
+   if reverse
+      tmp(i) = map_data_to_physics(img(i));
+   else
+      tmp(i) = map_physics_to_data(img(i));
+   end
 end
-
+img = tmp;
 end
 
 function img = map_physics_to_data(img);
