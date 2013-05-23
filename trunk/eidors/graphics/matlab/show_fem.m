@@ -205,8 +205,8 @@ for e=1:length(mdl.electrode)
     end
     if number_electrodes
        S= 1.05;
-       vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
-       vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+       vx= vx*S;
+       vy= vy*S;
        switch number_electrodes
           case {1 true}
              txt = num2str(e);
