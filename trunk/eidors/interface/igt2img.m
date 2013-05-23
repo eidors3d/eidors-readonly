@@ -11,7 +11,7 @@ function img = igt2img(igt)
 img.name = 'Read in from an igt file';
 img.type = 'image';
 img.elem_data = 1:912;
-tempmdl = mk_common_gridmdl('backproj');
+tempmdl = mk_common_gridmdl('b2d','backproj');
 img.fwd_model = tempmdl.fwd_model;
 
 % render the image on a 32-by-32 grid
@@ -36,4 +36,4 @@ for i = 1:32
     end
 end
 
-img.elem_data = data;
+img.elem_data = data';
