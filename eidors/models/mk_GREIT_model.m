@@ -229,9 +229,10 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 2 %uniform
-           F = fourier_fit(opt.contour_boundary(:,1:2));
-           v = linspace(0,1,101); v(end)=[];
-           pts = fourier_fit(F,v);
+%            F = fourier_fit(opt.contour_boundary(:,1:2));
+%            v = linspace(0,1,101); v(end)=[];
+%            pts = fourier_fit(F,v);
+           pts = opt.contour_boundary(:,1:2);
            % avoid edges 
            pts = 0.9*( pts - repmat(ctr(1:2),length(pts),1) ) + repmat(ctr(1:2),length(pts),1);
            % using maxx and maxy below would in general not produce a
@@ -246,9 +247,10 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
        case 3 % uniform, non-random
-           F = fourier_fit(opt.elec_loc(:,1:2));
-           v = linspace(0,1,101); v(end)=[];
-           pts = fourier_fit(F,v);
+%            F = fourier_fit(opt.elec_loc(:,1:2));
+%            v = linspace(0,1,101); v(end)=[];
+%            pts = fourier_fit(F,v);
+           pts = opt.contour_boundary(:,1:2);
            lim = max(maxx, maxy);
            frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
            [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
