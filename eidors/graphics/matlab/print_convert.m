@@ -34,6 +34,9 @@ set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octa
 print('-dpng ',pp.resolution,tmpnam);
 set(gcf,'PaperPosition',pp.page);
 
+set(gcf,'InvertHardCopy','off'); % 
+set(gcf,'Color','w');
+
 im = imread(tmpnam,'png');
 delete(tmpnam);
 
@@ -42,7 +45,7 @@ imwrite(im,filename,pp.imwrite_opts{:});
 
 function im = crop_image(im,pp)
    szim = size(im);
-   bdr = mean(double(im(1,:,:)),2);
+   bdr = squeeze(mean(double(im(1,:,:)),2));
 
    isbdr = true(szim(1),szim(2));
    for i=1:szim(3);
@@ -51,7 +54,7 @@ function im = crop_image(im,pp)
 
    horz = [true,all(isbdr,1),true];
    horzpt = find(diff(horz)) - 1; % first 'true'
-   im(:,horzpt(end):end,:)= []; % remove higher first
+   im(:,horzpt(end)+1:end,:)= []; % remove higher first
    if pp.horz_cut >0;
       horz_e_pt = find(diff(horz)==-1) -1; horz_e_pt(1) = [];
       horz_s_pt = find(diff(horz)==+1)   ; horz_s_pt(end) = [];
@@ -64,7 +67,7 @@ function im = crop_image(im,pp)
 
    vert = [true,all(isbdr,2)',true];
    vertpt = find(diff(vert)) - 1; % first 'true'
-   im(vertpt(end):end,:,:)= [];
+   im(vertpt(end)+1:end,:,:)= [];
    if pp.vert_cut >0;
       vert_e_pt = find(diff(vert)==-1) -1; vert_e_pt(1) = [];
       vert_s_pt = find(diff(vert)==+1)   ; vert_s_pt(end) = [];
