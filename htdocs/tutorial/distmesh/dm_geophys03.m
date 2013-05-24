@@ -1,9 +1,8 @@
 % simulate targets $Id$
 
 fmdl.stimulation= mk_stim_patterns(n_elec, 1, [0,1],[0,1], {}, 1);
-
-img= eidors_obj('image','fmdl','fwd_model',fmdl, ...
-                'elem_data', ones(size(fmdl.elems,1),1) );
+fmdl = mdl_normalize(fmdl,1);
+img= mk_image(fmdl,1);
 vh= fwd_solve(img);
 
 % interpolate onto mesh
