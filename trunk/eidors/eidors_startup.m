@@ -80,7 +80,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     addpath([HOMEDIR, '/tools']);
     addpath([HOMEDIR, '/graphics/matlab']);
     addpath([HOMEDIR, '/graphics/vtk']);
-    addpath([HOMEDIR, '/external']);
+    addpath(genpath([HOMEDIR, '/external'])); %add subdirectories
     addpath([HOMEDIR, '/deprecated']);
     addpath([HOMEDIR, '/overloads']);
 
