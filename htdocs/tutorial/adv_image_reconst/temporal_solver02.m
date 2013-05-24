@@ -13,7 +13,7 @@ base_model.hyperparameter.value= hp;
 imdl_GN = base_model;
 imdl_GN.RtR_prior= @prior_noser;
 imdl_GN.prior_noser.exponent= .5;
-imdl_GN.solve= @np_inv_solve;
+imdl_GN.solve= @inv_solve_diff_GN_one_step;
 imdl_GN.hyperparameter.value= hp;
 imdl_GN.fwd_model = mdl_normalize(imdl_GN.fwd_model, 0);
 

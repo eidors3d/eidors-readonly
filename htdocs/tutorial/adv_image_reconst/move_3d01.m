@@ -4,7 +4,7 @@ noiselev = .1;
 movement = 2;
 
 % Generate eidors 3D finite element model
-mdl3dim = mk_common_model( 'n3r2' );
+mdl3dim = mk_common_model( 'n3r2', [16 2]);
 mdl3dim.fwd_model.nodes(:,3) = mdl3dim.fwd_model.nodes(:,3)/3;
 
 img = mk_image(mdl3dim);

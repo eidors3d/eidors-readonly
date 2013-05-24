@@ -2,7 +2,7 @@
 % $Id$
 
 % 3D Model
-imdl_3d= mk_common_model('n3r2',16);
+imdl_3d= mk_common_model('n3r2',[16. 2]);
 fmdl= imdl_3d.fwd_model;
 
 % Show opposite pattern
