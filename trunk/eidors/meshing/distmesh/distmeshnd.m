@@ -94,7 +94,6 @@ while 1
          eidors_msg('.',2);
       end
     end
-
     count=count+1;
   end
 
@@ -127,6 +126,9 @@ while 1
   if maxdp<ptol*h; break; end
   % maximum iterations
   if count>maxiter; break; end
+end
+if ~distmesh_do_graphics
+    fprintf('\n');
 end
 
 % final delaunayn just to make sure triangularization returned is good
