@@ -10,10 +10,9 @@ inv2d.jacobian_bkgnd.value= 1;
 % This is not an inverse crime; inv_mdl != fwd_mdl
 imb=  mk_common_model('b2c',16);
 inv2d.fwd_model= imb.fwd_model;
-inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 
 % Guass-Newton solvers
-inv2d.solve=       @np_inv_solve;
+inv2d.solve=       @inv_solve_diff_GN_one_step;
 
 % Tikhonov prior
 inv2d.hyperparameter.value = 1e-3;

@@ -1,7 +1,7 @@
 % Compare 3D algorithms
 % $Id$
 
-imb=  mk_common_model('n3r2',16);
+imb=  mk_common_model('n3r2',[16 2]);
 bkgnd= 1;
 
 % Homogenous Data
@@ -15,9 +15,9 @@ img.elem_data(B)= bkgnd*0.8;
 clear A B;
 vi= fwd_solve( img );
 
-% Add 12dB noise
+% Add 15dB noise
 vi_n= vi; 
-vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(12/20) ...
+vi_n.meas = vi.meas + std(vi.meas - vh.meas)/10^(10/20) ...
                      *randn(size(vi.meas));
 sig= sqrt(norm(vi.meas - vh.meas));
 
