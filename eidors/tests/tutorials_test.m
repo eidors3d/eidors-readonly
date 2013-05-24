@@ -62,6 +62,7 @@ while ~isempty(d)
 
     while length(F) > 0
         evalin('base','clear');
+        clf; % make sure pictures from previous tutorial don't affect
         tutname = F{1};
         if any(strcmp( tutname, skiplist)); break; end
         %tutname(end-3) = [];
