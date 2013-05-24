@@ -30,12 +30,19 @@ pp = parse_options(varargin{:});
 
 tmpnam = [tempname,'.png'];
 
+old_ihc = get(gcf, 'InvertHardcopy');
+old_col = get(gcf, 'Color');
+set(gcf,'InvertHardCopy','off'); % 
+set(gcf,'Color','w');
+
 set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
 print('-dpng ',pp.resolution,tmpnam);
 set(gcf,'PaperPosition',pp.page);
 
-set(gcf,'InvertHardCopy','off'); % 
-set(gcf,'Color','w');
+set(gcf,'InvertHardCopy',old_ihc); % 
+set(gcf,'Color',old_col);
+
+
 
 im = imread(tmpnam,'png');
 delete(tmpnam);
