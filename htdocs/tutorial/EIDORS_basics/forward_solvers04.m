@@ -17,17 +17,17 @@ img_v = rmfield(img_2, 'elem_data');
 % Show homoeneous image
 h1= subplot(231);
 img_v.node_data = vh1.volt(:,1);
-show_fem(img_v);
+show_fem(img_v); axis equal
 
 % Show inhomoeneous image
 h2= subplot(232);
 img_v.node_data = vh2.volt(:,1);
-show_fem(img_v);
+show_fem(img_v); axis equal
 
 % Show difference image
 h3= subplot(233);
 img_v.node_data = vh1.volt(:,1) - vh2.volt(:,1);
-show_fem(img_v);
+show_fem(img_v); axis equal
 
 img_v.calc_colours.cb_shrink_move = [0.3,0.8,-0.05];
 common_colourbar([h1,h2,h3],img_v);
