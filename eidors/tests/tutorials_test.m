@@ -51,7 +51,11 @@ while ~isempty(d)
         [d,D]= strtok(D,tut_dlm); 
         continue; 
     end;
-    cd(d);
+    try
+       cd(d);
+    catch
+       keyboard
+    end
     global F;F = dir('*.m');
     F = struct2cell(F); F = sortrows(F(1,:));% assume sorted by name
     global errors; errors={};
@@ -66,11 +70,12 @@ while ~isempty(d)
         tutname = F{1};
         if any(strcmp( tutname, skiplist)); break; end
         %tutname(end-3) = [];
-        tutname(end-2) = '*'; % assume tutorials differ by one char
+        tutname(end-3) = '*'; % assume tutorials differ by 2 chars
+        tutname(end-2) = [];
         T = dir(tutname);
         while length(T) > 0
             calc_colours('defaults');
-            if length(T(1).name)>length(tutname)+1 % allow some leeway
+            if length(T(1).name)>length(tutname)+2 % allow some leeway
                 T(1) = [];
                 continue
             end
