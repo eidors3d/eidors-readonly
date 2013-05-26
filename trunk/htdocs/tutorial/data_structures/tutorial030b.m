@@ -29,4 +29,4 @@ pl_ops_mdl.electrode= fmdl.electrode( pl_ops_pat(:) );
 
 subplot(133); display_meas(pl_ops_mdl,'y')
 
-print -r75 -dpng tutorial030b.png;
+print tutorial030b.png '-density 75';
