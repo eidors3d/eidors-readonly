@@ -60,7 +60,7 @@ function [RM, PJt, M] = calc_RM(Y, D, noiselev, opt)
    Sn = speye(N_meas) .* opt.noise_covar; % Noise covariance
    PJt= D*Y';
    M  = (Y*Y' + noiselev^2*Sn);
-   RM = PJt/M;
+   RM =  left_divide(M',PJt')';    %PJt/M;
    % This implements RM = D*Y'/(Y*Y');
    if 0
       Y = [Y, noiselev*eye(N_meas)];
