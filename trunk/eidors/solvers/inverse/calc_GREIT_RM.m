@@ -1,4 +1,4 @@
-function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
+function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 % CALCULATE GREIT reconstruction matrix
 %   RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, normalize)
 % 
@@ -45,12 +45,12 @@ function RM= calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
    end
 
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
-       [RM] = calc_RM(Y,D,weight, opt);
+       [RM, PJt, M] = calc_RM(Y,D,weight, opt);
    else
        error('not coded yet');
    end
 
-function RM = calc_RM(Y, D, noiselev, opt)
+function [RM, PJt, M] = calc_RM(Y, D, noiselev, opt)
 
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0
@@ -58,7 +58,9 @@ function RM = calc_RM(Y, D, noiselev, opt)
 
    % This implements RM = D*Y'/(J*Sx*J + Sn);
    Sn = speye(N_meas) .* opt.noise_covar; % Noise covariance
-   RM = D*Y'/(Y*Y' + noiselev^2*Sn);
+   PJt= D*Y';
+   M  = (Y*Y' + noiselev^2*Sn);
+   RM = PJt/M;
    % This implements RM = D*Y'/(Y*Y');
    if 0
       Y = [Y, noiselev*eye(N_meas)];
