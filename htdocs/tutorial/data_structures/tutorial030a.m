@@ -17,4 +17,4 @@ fmdl.stimulation=mk_stim_patterns(16,2, '{ad}','{ad}', ...
 subplot(122)
 display_meas(fmdl,'ya')
 
-print -r75 -dpng tutorial030a.png;
+print_convert tutorial030a.png '-density 75';
