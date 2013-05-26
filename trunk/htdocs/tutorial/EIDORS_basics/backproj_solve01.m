@@ -7,9 +7,6 @@ fmdl= imdl.fwd_model;
     xx= reshape( fmdl.nodes(ee,1),3, []); 
     yy= reshape( fmdl.nodes(ee,2),3, []); 
 
-img= mk_image(fmdl, 1);
-
-
 for i=1:4
    if     i==1; stim= [0,1];
    elseif i==2; stim= [0,2];
@@ -18,7 +15,8 @@ for i=1:4
    end
 
    fmdl.stimulation = mk_stim_patterns(16,1,stim,[0 1], {}, 1);
-
+   img= mk_image(fmdl, 1);
+   
    node_v= calc_all_node_voltages( img );
    zz{i}= reshape(     node_v(ee,4),3, []); 
 end
