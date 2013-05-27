@@ -38,7 +38,7 @@ end
 
 if ~ishold
     cla;
-    axis auto;
+    axis normal;
 end
 
 
@@ -60,8 +60,9 @@ end
 if nargout == 0; clear hh; end
 
 if ~ishold
-   axis equal;
-   axis tight;
+   set(gca,'DataAspectRatio',[1 1 1]);
+%    axis equal;
+%    axis tight;
 end
 
 function placenumbers(xyzc, fontsize, colour, bgcolour)
