@@ -21,4 +21,4 @@ subplot(121)
 show_fem(gallery_3D_fwd); axis square; view(0.,15.);
 subplot(122)
 show_fem(gallery_3D_fwd); axis square; view(0.,75);
-%print -r100 -dpng tutorial410a.png;
+% print_convert tutorial410a.png '-density 100';

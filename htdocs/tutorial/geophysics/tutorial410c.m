@@ -1,7 +1,7 @@
 % Reconstruct data on Gallery
 % $Id$
 
-n_iter=2;
+n_iter=10;
 
 gallery_3D_img.fwd_model.misc.compute_CCandSS='n';
 for k= 1:n_iter
@@ -21,4 +21,4 @@ ref_data= fwd_solve(gallery_3D_img);
 
 subplot(211)
 plot([ref_data.meas,real_data.meas]);
-%print -r75 -dpng tutorial410c.png;
+print_convert tutorial410c.png '-density 75';
