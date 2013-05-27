@@ -6,4 +6,4 @@ vh = fwd_solve(img); vh = vh.meas;
 imgr = inv_solve(imdl, vh, vr);
 
 show_fem(imgr);
-axis equal; axis tight
+print_convert pont_pean3a.png

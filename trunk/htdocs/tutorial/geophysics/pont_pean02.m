@@ -13,3 +13,9 @@ imdl.rec_model= cmdl;
    imdl.hyperparameter.value = 0.1;
    imdl.fwd_model.normalize_measurements = 1;
    imdl.jacobian_bkgnd.value = 0.03;
+
+hold on
+show_fem(cmdl);
+view([0 -0.2 1])
+hold off
+print_convert pont_pean01a.png
