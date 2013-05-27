@@ -66,6 +66,7 @@ while ~isempty(d)
 
     while length(F) > 0
         evalin('base','clear');
+        calc_colours('defaults');
         clf; % make sure pictures from previous tutorial don't affect
         tutname = F{1};
         if any(strcmp( tutname, skiplist)); 
