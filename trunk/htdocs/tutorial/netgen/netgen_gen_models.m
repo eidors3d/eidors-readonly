@@ -158,7 +158,7 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  elec_obj = {'top','bottom'};
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  fmdl = mk_image(fmdl,1); 
- fmdl.elem_data(fmdl.mat_idx{2}) = 1.1;
+ fmdl.elem_data(fmdl.fwd_model.mat_idx{2}) = 1.1;
 
    case 14;
 shape_str = ['solid cyl    = cylinder (0,0,0; 0,1,0; 1); \n', ...
