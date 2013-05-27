@@ -21,4 +21,4 @@ ref_data= fwd_solve(gallery_3D_img);
 
 subplot(211)
 plot([ref_data.meas,real_data.meas]);
-print_convert tutorial410c.png '-density 75';
+% print_convert tutorial410c.png '-density 75';
