@@ -79,6 +79,10 @@ mdl.elem_area   = elem_area(mdl);
 mdl.rad_inscr   = inscribed_radius(mdl);
 mdl.rad_circ    = circumscribed_radius(mdl);
 mdl.tet_alt     = tet_altitudes(mdl);
+% Note: The measure based on the minimum solid angle (sin(1/2 min angle)
+% is bound between 0 and 1, but both 0 and 1 are degenerate, so measure is
+% not calculated
+% mdl.solid_angles= solid_angles(mdl);
 
 % Quality measures
 Q.NSR          = normalized_shape_ratio(mdl);
@@ -139,6 +143,25 @@ O = sqrt(3)*mdl.max_edge_length ./ (2*sqrt(2)*mdl.rad_circ);
 
 function NSR = normalized_shape_ratio(mdl)
 NSR = 3 * (mdl.rad_inscr ./ mdl.rad_circ);
+
+function A = solid_angles(mdl)
+for i = 1:4
+   ne = size(mdl.elems,1);
+   E = mdl.elems';
+   idx = 1:numel(E); idx(i:4:end) = [];
+   N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(i:4:end),:)',3,[]),3,[])';
+   nmrtr = abs(my_det(N));
+   L = sqrt(sum(N.^2,2)); % length of each vector
+   dnmtr = L(1:3:end).*L(2:3:end).*L(3:3:end) ...
+      + my_dot(N(1:3:end,:), N(2:3:end,:)) .* L(3:3:end) ...
+      + my_dot(N(1:3:end,:), N(3:3:end,:)) .* L(2:3:end) ...
+      + my_dot(N(2:3:end,:), N(3:3:end,:)) .* L(1:3:end);
+   
+   A(:,i) = atan2( nmrtr, dnmtr );
+end
+idx = A<0;
+A(idx) = A(idx) + pi;
+A = 2*A;
 
 
 function R = circumscribed_radius(mdl)
