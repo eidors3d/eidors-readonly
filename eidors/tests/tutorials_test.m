@@ -99,7 +99,7 @@ while ~isempty(d)
             lastwarn('');
             save tmp
             try
-%               evalin('base',sprintf('evalc(''%s'');',name));
+              evalin('base',sprintf('evalc(''%s'');',name));
 %                 evalc(['evalin(''base'',''' name ''')'])
                 if ~isempty(lastwarn)
                     fprintf(' WARNING(S) = (%s)\n',lastwarn);
