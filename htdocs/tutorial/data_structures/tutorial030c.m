@@ -60,4 +60,4 @@ imdl_3d.fwd_model= pl_ops_mdl;
 img= inv_solve(imdl_3d, pl_ops_data_h, pl_ops_data_i);
 show_slices(img, slices);
 
-print tutorial030c.png '-density 75';
+print_convert tutorial030c.png '-density 75';
