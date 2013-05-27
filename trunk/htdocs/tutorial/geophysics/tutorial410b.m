@@ -26,4 +26,4 @@ residuals= real_data.meas-ref_data.meas;
 %% plot the data
 subplot(211);
 plot([ref_data.meas,real_data.meas]);
-%print -r75 -dpng tutorial410b.png;
+% print_convert tutorial410b.png '-density 75';
