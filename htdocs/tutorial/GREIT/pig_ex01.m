@@ -23,5 +23,4 @@ img = mk_image(fmdl,1);
 img.elem_data( fmdl.mat_idx{2} ) = 0.25;
 
 show_fem(img);
-print -dpng -r75 pig_ex_fmdl.png
-%print_convert pig_ex_fmdl.png '-density 75';
+print_convert pig_ex_fmdl.png '-density 75';
