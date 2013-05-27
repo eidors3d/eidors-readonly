@@ -1,7 +1,7 @@
-function Q = calc_mesh_quality(mdl)
+function [Q mdl] = calc_mesh_quality(mdl)
 %CALC_MESH_QUALITY Various measures of mesh quality.
-%  Q = CALC_MESH_QUALITY(MDL) calculates several measures of mesh quality
-%  for the EIDORS fwd_model struct MDL and returns them in a struct Q:
+%  [Q MDL] = CALC_MESH_QUALITY(MDL) calculates several measures of mesh 
+%  quality for the EIDORS fwd_model struct MDL and returns them in Q:
 %     Q.NSR    - inradius to circumradius ratio (normalized shape ratio)
 %                 n*r / R
 %                where r = inradius; R = circumradius; n = dimensions [3,4]
@@ -30,6 +30,11 @@ function Q = calc_mesh_quality(mdl)
 %  Measures where implemented based on review articles of V. Phathasarahy
 %  (1994) [1] and D. Field (2000) [2]. The references above indicate the
 %  original sources, although those were not consulted.
+%
+%  Additionally, CALC_MESH_QUALITY returns the original MDL with several
+%  useful fields added, which can also be used to assess quality:
+%    MDL.dihedral_angles (NE x 6) 
+%    MDL.solid_angles    (NE x 4)
 %
 %  REFERENCES:
 %  [1] Parthasarathy V (1994) "A comparison of tetrahedron quality measures" 
@@ -68,6 +73,7 @@ opt.face2elem = 1;
 opt.boundary  = 1;
 opt.normals   = 1;
 opt.face_centre = 1;
+opt.inner_normal = 1;
 
 mdl = fix_model(mdl, opt);
 mdl.edge_length = edge_length(mdl);
@@ -82,7 +88,8 @@ mdl.tet_alt     = tet_altitudes(mdl);
 % Note: The measure based on the minimum solid angle (sin(1/2 min angle)
 % is bound between 0 and 1, but both 0 and 1 are degenerate, so measure is
 % not calculated
-% mdl.solid_angles= solid_angles(mdl);
+mdl.solid_angle    = solid_angles(mdl);
+mdl.dihedral_angle = dihedral_angles(mdl);
 
 % Quality measures
 Q.NSR          = normalized_shape_ratio(mdl);
@@ -144,9 +151,21 @@ O = sqrt(3)*mdl.max_edge_length ./ (2*sqrt(2)*mdl.rad_circ);
 function NSR = normalized_shape_ratio(mdl)
 NSR = 3 * (mdl.rad_inscr ./ mdl.rad_circ);
 
+function A = dihedral_angles(mdl)
+v = nchoosek(1:4,2); % choose 2 faces
+for i = 1:6
+      N1 = mdl.normals(mdl.elem2face(:,v(i,1))         , :) ...
+            .* repmat(sign(mdl.inner_normal(:,v(i,1))-0.5),1,3);
+      N2 = mdl.normals(mdl.elem2face(:,v(i,2)), :) ...
+            .* repmat(sign(mdl.inner_normal(:,v(i,2))-0.5),1,3);
+      C  = my_cross(N1, N2);
+      D  = my_dot  (N1, N2);
+      A(:,i) = atan2( sqrt(sum(C.^2,2)), D);
+end
+
+
 function A = solid_angles(mdl)
 for i = 1:4
-   ne = size(mdl.elems,1);
    E = mdl.elems';
    idx = 1:numel(E); idx(i:4:end) = [];
    N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(i:4:end),:)',3,[]),3,[])';
@@ -244,7 +263,7 @@ for i = 1:length(f)
 end
 
 real = mk_library_model('pig_23kg_16el');
-Q = calc_mesh_quality(real);
+[Q real] = calc_mesh_quality(real);
 
 f = fields(Q);
 for i = 1:length(f)
@@ -254,5 +273,6 @@ for i = 1:length(f)
    xlim([0 1]);
 end
 subplot(3,3,9)
-hist(get_elem_volume(real),100)
-xlabel('volume');
+hist(180*real.dihedral_angle(:)/pi,100)
+xlabel('dihedral angle');
+xlim([0 180])
