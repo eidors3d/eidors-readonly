@@ -69,14 +69,14 @@ while ~isempty(d)
         calc_colours('defaults');
         clf; % make sure pictures from previous tutorial don't affect
         tutname = F{1};
-        if any(strcmp( tutname, skiplist)); 
-           F(1) = []; 
-           continue; 
-        end
         %tutname(end-3) = [];
         tutname(end-3) = '*'; % assume tutorials differ by 2 chars
         tutname(end-2) = [];
         T = dir(tutname);
+        if any(strcmp( T(1).name, skiplist)); 
+           F(1:length(T)) = []; 
+           continue; 
+        end
         while length(T) > 0
             calc_colours('defaults');
             if length(T(1).name)>length(tutname)+2 % allow some leeway
