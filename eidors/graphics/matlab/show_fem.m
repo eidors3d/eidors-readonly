@@ -61,6 +61,8 @@ end
 if nargout == 0; clear hh; end
 
 if ~ishold
+   axis tight
+   axis normal
    set(gca,'DataAspectRatio',[1 1 1]);
 %    axis equal;
 %    axis tight;
