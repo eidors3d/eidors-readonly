@@ -15,4 +15,4 @@ r_mdl.electrode(1).nodes=     1;
 r_mdl.gnd_node= 2;
 
 show_fem(r_mdl); view(-12,24);
-print -r50 -dpng tutorial020a.png
+print_convert tutorial020a.png '-density 50';
