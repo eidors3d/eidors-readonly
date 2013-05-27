@@ -68,7 +68,10 @@ while ~isempty(d)
         evalin('base','clear');
         clf; % make sure pictures from previous tutorial don't affect
         tutname = F{1};
-        if any(strcmp( tutname, skiplist)); break; end
+        if any(strcmp( tutname, skiplist)); 
+           F(1) = []; 
+           continue; 
+        end
         %tutname(end-3) = [];
         tutname(end-3) = '*'; % assume tutorials differ by 2 chars
         tutname(end-2) = [];
@@ -95,7 +98,7 @@ while ~isempty(d)
             lastwarn('');
             save tmp
             try
-              evalin('base',sprintf('evalc(''%s'');',name));
+%               evalin('base',sprintf('evalc(''%s'');',name));
 %                 evalc(['evalin(''base'',''' name ''')'])
                 if ~isempty(lastwarn)
                     fprintf(' WARNING(S) = (%s)\n',lastwarn);
