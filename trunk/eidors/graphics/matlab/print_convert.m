@@ -93,7 +93,7 @@ function f = default_factor
    f = 1; % default for images
    sp = get(gcf,'Children'); % subplots
    for i = 1:length(sp)
-      obj = get(sp,'Children');
+      obj = get(sp(i),'Children');
       tp  = get(obj,'Type');
       if ~all(strcmp(tp,'image'))
          f = 2;
