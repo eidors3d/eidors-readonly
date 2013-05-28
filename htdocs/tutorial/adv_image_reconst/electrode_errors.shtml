@@ -115,7 +115,7 @@ GREIT with single electrode errors
 </pre>
 <center><img src="electrode_errors06a.jpg">
 <br><i>Figure:</i>
-Basic GREIT reconstruction
+GREIT with single electrode errors
 </center>
 
 GREIT with reciprocity-based electrode errors
@@ -124,7 +124,7 @@ GREIT with reciprocity-based electrode errors
 </pre>
 <center><img src="electrode_errors07a.jpg">
 <br><i>Figure:</i>
-Basic GREIT reconstruction
+GREIT with reciprocity-based electrode errors
 </center>
 
 
