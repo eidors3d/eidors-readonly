@@ -38,8 +38,6 @@ end
 
 if ~ishold
     cla;
-    axis auto;
-    axis normal;
 end
 
 
@@ -61,12 +59,44 @@ end
 if nargout == 0; clear hh; end
 
 if ~ishold
-   axis tight
-   axis normal
-   set(gca,'DataAspectRatio',[1 1 1]);
-%    axis equal;
-%    axis tight;
+   fix_axis
 end
+
+function fix_axis
+   ax = gca;
+   axis tight
+   set(ax,'DataAspectRatio',[1 1 1]);
+   % expand the axis limits slightly
+   [az el] = view;
+   if el==90
+      % for 2d plots we need x and y
+      xl=get(ax,'XLim'); yl=get(ax,'Ylim');
+      dx = diff(xl); dy = diff(yl);
+      % make sure to expand away from the origin
+      xb = strcmp(get(ax,'XAxisLocation'),'bottom');
+      yn = strcmp(get(ax,'YDir'),'normal');
+      if xb == yn
+         set(ax,'YLim',yl + [0 1]*1e-3*dy);
+      else
+         set(ax,'YLim',yl + [-1 0]*1e-3*dy);
+      end
+      yl = strcmp(get(ax,'XAxisLocation'),'bottom');
+      xn = strcmp(get(ax,'XDir'),'normal');
+      if yl == xn
+         set(ax,'XLim',xl + [0 1]*1e-3*dx);
+      else
+         set(ax,'XLim',xl + [-1 0]*1e-3*dx);
+      end
+   else
+      % for 3d plots it's enough to adjust z
+      zl = get(ax,'Zlim'); dz = diff(zl);
+      if strcmp(get(ax,'Zdir'),'normal')
+         set(ax,'ZLim',zl + [0 1]*1e-3*dz);
+      else
+         set(ax,'ZLim',zl + [-1 0]*1e-3*dz);
+      end
+   end
+   
 
 function placenumbers(xyzc, fontsize, colour, bgcolour)
    xyzc= xyzc * eye(size(xyzc,2),3); %convert to 3D
