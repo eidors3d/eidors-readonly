@@ -213,6 +213,8 @@ function [r_point,th_point]= plotPseudoSectionCircularIn(fmdl,data)
    ylabel('Y (m)','fontsize',fs,'fontname','Times')
    axis equal; axis tight;
    set(gca,'fontsize',fs,'fontname','Times')
+   yl = ylim;
+   ylim([yl(1) yl(2)+1e-3*diff(yl)])
 end
 
 
