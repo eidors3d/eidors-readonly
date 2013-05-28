@@ -12,9 +12,9 @@ imdl.hyperparameter.value = .1;
 img = inv_solve(imdl, vh, vi);
 subplot(221)
 show_slices(img);
-print_convert electrode_errors01a.jpg
+print_convert electrode_errors01a.png
 close % else matlab remembers image axis
 subplot(221) % to preserve size
 img = inv_solve(imdl, vh, vi(:,20));
 show_fem(img,[0,1,0]);axis off
-print_convert electrode_errors01b.jpg
+print_convert electrode_errors01b.png

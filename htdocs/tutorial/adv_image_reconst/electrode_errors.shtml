@@ -22,8 +22,8 @@ Sample Data and clean reconstruction
 </pre>
 
 <center>
-<img src="electrode_errors01a.jpg">
-<img src="electrode_errors01b.jpg">
+<img src="electrode_errors01a.png">
+<img src="electrode_errors01b.png">
 <br><i>Figure:</i>
 Reconstructions of breathing data, illustrating that
 a small amount of electrode error occurs at electrodes
@@ -48,8 +48,8 @@ Andy Adler
 </pre>
 
 <center>
-<img src="electrode_errors02a.jpg">
-<img src="electrode_errors02b.jpg">
+<img src="electrode_errors02a.png">
+<img src="electrode_errors02b.png">
 <br><i>Figure:</i>
 Reconstructions removing 
 <i>Left</i>: Electrode 13, and
@@ -77,8 +77,8 @@ Real-time management of faulty electrodes in EIT
 </pre>
 
 <center>
-<img src="electrode_errors03a.jpg">
-<img src="electrode_errors03b.jpg">
+<img src="electrode_errors03a.png">
+<img src="electrode_errors03b.png">
 <br><i>Figure:</i>
 Reconstructions removing 
 <i>Left</i>:  Parameter <i>&tau;</i>=0.0003
@@ -104,7 +104,7 @@ Basic GREIT reconstruction
 <pre>
 <!--#include virtual="electrode_errors05.m" -->
 </pre>
-<center><img src="electrode_errors05a.jpg">
+<center><img src="electrode_errors05a.png">
 <br><i>Figure:</i>
 Basic GREIT reconstruction
 </center>
@@ -113,7 +113,7 @@ GREIT with single electrode errors
 <pre>
 <!--#include virtual="electrode_errors06.m" -->
 </pre>
-<center><img src="electrode_errors06a.jpg">
+<center><img src="electrode_errors06a.png">
 <br><i>Figure:</i>
 GREIT with single electrode errors
 </center>
@@ -122,7 +122,7 @@ GREIT with reciprocity-based electrode errors
 <pre>
 <!--#include virtual="electrode_errors07.m" -->
 </pre>
-<center><img src="electrode_errors07a.jpg">
+<center><img src="electrode_errors07a.png">
 <br><i>Figure:</i>
 GREIT with reciprocity-based electrode errors
 </center>
