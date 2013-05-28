@@ -1,0 +1,813 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://oeit.org/2013/XMLSchema"
+    elementFormDefault="qualified"
+    xmlns="http://oeit.org/2013/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      This schema represent a collaborative effort to unify the file enconding practices amongst EIT providers.
+
+      Electrical impedance tomography (EIT) is a tomographic imaging technique that makes use of electrical currents injected into a body and of the resulting potential field to calculate the spatial distribution of electrical impedance.  This technique showed promising results in various fields of application like earth sciences, industrial process monitoring, and medical imaging.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:element name="oeit" type="oeit" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="oeit" id="oeit">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Oeit is the type of the root element of Open EIT descriptor XML documents.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="subject" type="oeit.subject" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="configuration" type="oeit.configuration" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="captures" type="oeit.captures" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="version" type="xs:decimal" use="required" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.subject">
+    <xs:annotation>
+      <xs:documentation></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip">
+      </xs:any>
+    </xs:sequence>
+
+    <xs:attribute name="name" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="oeit.subject.type" use="optional" >
+      <xs:annotation>
+        <xs:documentation></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax">
+    </xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:simpleType name="oeit.subject.type">
+    <xs:annotation>
+      <xs:documentation></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Patient"></xs:enumeration>
+      <xs:enumeration value="Saline Tank"></xs:enumeration>
+      <xs:enumeration value="Volcano"></xs:enumeration>
+      <xs:enumeration value="Field"></xs:enumeration>
+      <xs:enumeration value="Phantom"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="oeit.configuration">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Configuration of device/procedure for EIT capture.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="general" type="oeit.configuration.general" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="device" type="oeit.configuration.device" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="definitions" type="oeit.configuration.definitions" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.general" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        General settings used in the configuration of device/procedure for EIT capture.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="framerate" type="oeit.configuration.general.framerate" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.general.framerate" >
+    <xs:attribute name="value" type="xs:decimal" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          The rate of capture.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.device">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Description of the device used to perform EIT capture.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="firmware" type="oeit.configuration.device.firmware" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="software" type="oeit.configuration.device.software" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="manufacturer" type="xs:string" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="model" type="xs:string" use="optional"  >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="serialnumber" type="xs:string" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.device.firmware">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="manufacturer" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="version" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax">
+
+    </xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.device.software">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="manufacturer" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="version" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax">
+
+    </xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="electrodes" type="oeit.configuration.definitions.electrodes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="measurements" type="oeit.configuration.definitions.measurements" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="stimuli" type="oeit.configuration.definitions.stimuli" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.electrodes">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="electrode_device" type="oeit.configuration.definitions.electrodes.electrode_device" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="electrode" type="oeit.configuration.definitions.electrodes.electrode" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="coordinate_system" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="position_description" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.electrodes.electrode_device">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="additional_information" type="xs:string" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="manufacturer" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="model" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="diameter" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="thickness" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="width" type="xs:string" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="height" type="xs:string" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.electrodes.electrode">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="device" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="position" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+
+  <xs:complexType name="oeit.configuration.definitions.measurements">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="measurement" type="oeit.configuration.definitions.measurements.measurement" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.measurements.measurement">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="fields" type="oeit.configuration.definitions.measurements.measurement.fields" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="demod_frequency" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="property" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Voltage, current, etc...
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="signal_gain" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="offset_gain" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.measurements.measurement.fields">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="field" type="oeit.configuration.definitions.measurements.measurement.fields.field"  maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.measurements.measurement.fields.field">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="length" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="delimiter" type="xs:string" use="optional" default="">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.configuration.definitions.stimuli">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="electrode" type="oeit.configuration.definitions.stimuli.stimulus" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="oeit.configuration.definitions.stimuli.stimulus">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="frequency" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="property" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Voltage, current, etc...
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="wave" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="amplitude" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+
+  <xs:complexType name="oeit.captures">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="capture" type="oeit.captures.capture" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="inputs" type="oeit.captures.capture.inputs">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="outputs" type="oeit.captures.capture.outputs">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="start" type="xs:time" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="stop" type="xs:time" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="file" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="frames" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.inputs" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="input" type="oeit.captures.capture.inputs.input" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.inputs.input" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="contacts" type="oeit.captures.capture.inputs.contacts" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="stimulus" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="gain" type="xs:string" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.inputs.contacts" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="contact" type="oeit.captures.capture.inputs.contacts.contact" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.inputs.contacts.contact" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="electrode" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.outputs" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="output" type="oeit.captures.capture.outputs.output" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.outputs.output" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="contacts" type="oeit.captures.capture.outputs.contacts" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="measurement" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="gain" type="xs:string" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.outputs.contacts" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="contact" type="oeit.captures.capture.outputs.contacts.contact" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="oeit.captures.capture.outputs.contacts.contact" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="electrode" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+</xs:schema>
+
+
