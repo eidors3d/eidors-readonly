@@ -88,14 +88,30 @@ function im = crop_image(im,pp)
    im(1:vertpt(1)    ,:,:)= [];
 
     
-
+% factor = 1 if all plots only contain images, 2 otherwise
+function f = default_factor
+   f = 1; % default for images
+   sp = get(gcf,'Children'); % subplots
+   for i = 1:length(sp)
+      obj = get(sp,'Children');
+      tp  = get(obj,'Type');
+      if ~all(strcmp(tp,'image'))
+         f = 2;
+         return;
+      end
+   end
+      
+   
+   
+      
+   
 function pp = parse_options(varargin)
    pp.page = get(gcf,'PaperPosition');
    pp.posn = pp.page;
    pp.imwrite_opts = {};
    pp.horz_cut = 0;
    pp.vert_cut = 0;
-   pp.factor = 2;
+   pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
 
 % Old options
