@@ -1,0 +1,7667 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Open Electrical Impedance Tomography File Format
+\end_layout
+
+\begin_layout Standard
+\align center
+OEIT version 1.0.4
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+Pascal O.
+ Gaggero
+\begin_inset Formula $^{1}$
+\end_inset
+
+, Bartłomiej Grychtol
+\begin_inset Formula $^{2}$
+\end_inset
+
+, Hervé Gagnon
+\begin_inset Formula $^{3}$
+\end_inset
+
+, Andy Adler
+\begin_inset Formula $^{4}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $^{1}$
+\end_inset
+
+Bern University of Applied Sciences, Biel/Bienne, Switzerland
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $^{2}$
+\end_inset
+
+German Cancer Research Center, Heidelberg, Germany 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $^{3}$
+\end_inset
+
+École Polytechnique de Montréal, Montréal, Canada 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Formula $^{4}$
+\end_inset
+
+Carleton University, Ottawa, Canada 
+\end_layout
+
+\begin_layout Standard
+*onyl main contributors are listed, for complete list of people who joined
+ the community please refer to the google group
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace vfill
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Licence: CC-BY-SA see http://creativecommons.org/ for details
+\end_layout
+
+\begin_layout Standard
+OEIT consortium © 2011 - 2012
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Subsection
+Motivation
+\end_layout
+
+\begin_layout Standard
+Electrical impedance tomography (EIT) is a tomographic imaging technique
+ that makes use of electrical currents injected into a body and of the resulting
+ potential field to calculate the spatial distribution of electrical impedance.
+ This technique showed promising results in various fields of application
+ like earth science, industrial process monitoring and medical imaging.
+ In medical imaging the most promising application is lung function monitoring
+ to prevent ventilator-induced acute lung injury.
+ In this area, EIT covers the need for a cost-effective, ionizing-radiation-free
+ and compact monitoring solution.
+ As showed by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "adler2012"
+
+\end_inset
+
+, EIT has witnessed a dramatic increase in the number of studies over the
+ last decade.
+ Outside academia, commercial interest also increases: the first commercial
+ medical-grade EIT instrument addressing ICU market, PulmoVista 500 (Dräger
+ Medical, Lübeck, Germany), has been brought to the market in 2011.
+ The downside of worldwide distributed research is that every group has
+ defined their own standards.
+ This is especially true for data storage.
+ Among the multitude of today’s research and commercial EIT devices, none
+ share a file format.
+ An early attempt to define a file format was made by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Record_RiuCosta_1992"
+
+\end_inset
+
+, but was not taken up by the community.
+ Twenty years later we feel it is the right time for the community to commit
+ to a common data storage solution.
+ 
+\end_layout
+
+\begin_layout Subsection
+Nomenclature
+\end_layout
+
+\begin_layout Standard
+This section introduces nomenclature and intends to remove misunderstanding
+ due to vocabulary.
+ A measurement corresponds to the processed (i.e.
+ demodulated) signal generated by a given pattern of current.
+ A frame contain enough data for image reconstruction.
+ For example, a system with 32 electrodes generate frames of 1024 measurements
+ each.
+ Several frames can be stored inside an OEIT file.
+ Several OEIT files collected together represents a data set, see Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:terminology"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Graphical_terminology.pdf
+	lyxscale 50
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Proposed terminology to describe EIT data acquisition process and OEIT data
+ storage nomenclature.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:terminology"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+File architecture overview
+\end_layout
+
+\begin_layout Standard
+The basic idea is to make use of a ZIP-based archive to store the several
+ folders and files into a single .oeit file, see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:File-architecture"
+
+\end_inset
+
+.
+ A similar approach is used to store OpenOffice documents.
+ Moreover, the ZIP format is well defined and even recognized by the Internation
+al Organization for Standardization (ISO), see ISO/IEC JTC 1/SC 34 N 1621.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+version.txt
+\begin_inset Quotes erd
+\end_inset
+
+ file contains version number used to select the corresponding OEIT file
+ parser.
+ Thus the possibility is provided to add more features to the format in
+ future version.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+header
+\begin_inset Quotes erd
+\end_inset
+
+ folder contains file invariant information such: subject description, manufactu
+rer and model of the EIT instrument.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+raw
+\begin_inset Quotes erd
+\end_inset
+
+ folder can be used so store proprietary-formatted data.
+ The way information is stored in the raw folder is up to the manufacturer
+ to decide.
+ But it is worth noting that OEIT file which only provide raw data will
+ not be considered as a valid OEIT-formated file.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+eit
+\begin_inset Quotes erd
+\end_inset
+
+ folder stores manufacturer-independent data.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+optional data
+\begin_inset Quotes erd
+\end_inset
+
+ folder stores miscellaneous information such: print screens and user comments.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+auxiliarynn
+\begin_inset Quotes erd
+\end_inset
+
+ folder contains data stream which are acquired at a different rate compared
+ to the EIT data.
+ For example ECG or other information can be stored here provided they do
+ not share the same sampling rate (or an integer multiple) as the EIT device.
+ Auxiliary folder are limited to 100 starting with auxiliary00 up to auxiliary99.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/file_architecture.pdf
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+File architecture of the ZIP-based archive used to store OEIT data.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:File-architecture"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Type of tags
+\end_layout
+
+\begin_layout Itemize
+[mandatory], mandatory tags are required for correct file parsing.
+\end_layout
+
+\begin_layout Itemize
+[mandatory 1], means that at least one tag of this type is required within
+ the file for correct parsing.
+\end_layout
+
+\begin_layout Itemize
+[optional], optional tags are not required for correct file parsing.When
+ not set by the user the default value applies.
+ The scope of application only includes the configuration where they appear.
+ 
+\end_layout
+
+\begin_layout Itemize
+<comment><comment/>, comment tags can be added to describe in more detail
+ some of the tags which surround the given comment tag.
+ 
+\end_layout
+
+\begin_layout Itemize
+timestamps, timestamps values are refers to the same time for all OEIT files.
+ The timestamps values represent dates and times with values starting from
+ January 1 1972 00:00:00 UTC.
+ The smallest represented time units is 
+\begin_inset Formula $1\,\mathrm{ns}$
+\end_inset
+
+.
+ Between two time stamps the events or values are assumed uniformly distributed
+ in time.
+ Timestamps are represented by 64 bits integer number.
+\end_layout
+
+\begin_layout Section
+Header folder
+\end_layout
+
+\begin_layout Subsection
+Electrode description
+\end_layout
+
+\begin_layout Standard
+File name: electrode.xml
+\end_layout
+
+\begin_layout Itemize
+<electrode_type name=
+\begin_inset Quotes erd
+\end_inset
+
+[eltypename]
+\begin_inset Quotes erd
+\end_inset
+
+></electrode_type > Several electrode types can be defined in a single file.
+ For instance, the electrode used for ground could be a different type of
+ electrodes.
+ Most electrode type parameters should be optional but users should be encourage
+d to give as much details as possible on their electrode composition and
+ geometry.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+<manufacturer>[manufacturer_name]</manufacturer >
+\end_layout
+
+\begin_layout Itemize
+<model>[manufacturer_model]</model >
+\end_layout
+
+\begin_layout Itemize
+<material>[material]</material >
+\end_layout
+
+\begin_layout Itemize
+<diameter>[diameter]</diameter >
+\end_layout
+
+\begin_layout Itemize
+<thickness>[thickness]</thickness >
+\end_layout
+
+\begin_layout Itemize
+<height>[height]</height >
+\end_layout
+
+\begin_layout Itemize
+<width>[width]</width >
+\end_layout
+
+\begin_layout Itemize
+<additional_information>[width]</additional_information >
+\end_layout
+
+\begin_layout Itemize
+<position type=
+\begin_inset Quotes erd
+\end_inset
+
+[c_format]
+\begin_inset Quotes erd
+\end_inset
+
+>[position]</ position>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[c_format]={gps, xyz, illustrative, approximate}
+\end_layout
+
+\begin_layout Itemize
+[position]
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+gps: WGS84: DD e.g.
+ [49.5000°, 123.5000°]
+\end_layout
+
+\begin_layout Itemize
+xyz: e.g.
+ [origin, x, y, z]
+\end_layout
+
+\begin_layout Itemize
+illustrative: e.g.
+ [thorax]
+\end_layout
+
+\begin_layout Itemize
+approximate: e.g.
+ [thorax, 6th rib]
+\end_layout
+
+\end_deeper
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+<electrode_list coordinate_system=
+\begin_inset Quotes erd
+\end_inset
+
+[coordinatesystem]
+\begin_inset Quotes erd
+\end_inset
+
+ position_description=
+\begin_inset Quotes erd
+\end_inset
+
+[positiondescription]
+\begin_inset Quotes erd
+\end_inset
+
+></electrode_list>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+<electrode type=
+\begin_inset Quotes erd
+\end_inset
+
+[eltypename]
+\begin_inset Quotes erd
+\end_inset
+
+> [position]</electrode>
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[positiondescription] {absolute, relative, illustrative} “Absolute” means
+ that the coordinate system should be interpreted as referring to absolute
+ coordinates where the point [0,0] or [0,0,0] refer to a standardized reference
+ such as in a gps coordinate system.
+ “Relative” means that only the relative 3D spacing between the electrodes
+ is important.
+ Mainly useful for tank or mesh phantoms where the electrode positions are
+ fixed, for some electrode belts that do not stretch, or for handheld electrode
+ matrices.
+ “Illustrative” means that the coordinates are not to scale and are given
+ for illustration purposes to show the general positioning of the electrodes
+ in 3D space.
+ For instance, it shows that the topology is planar, circular with one plane
+ of electrodes, or circular with multiple planes of electrodes.
+ It also shows for example that electrode #1 is at the left of electrode
+ #2.
+ “Illustrative“” coordinates could be used to show how the electrodes are
+ positioned on a generic torso shape.
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[coordinatesystem] {cartesian, cylindrical, spherical, gps}
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[position] depends on the selected [coordinatesystem]:
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+cartesian [x,y,z]
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+cylindrical [r,theta, phi]
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+spherical [r, theta, phi]
+\end_layout
+
+\end_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[manufacturer_name] {carefusion, draeger, swisstom} 
+\end_layout
+
+\begin_layout Standard
+Only one electrode list should be defined in a single file.
+ The electrode numbering would be implicit from the order they are defined.
+ It is defined as zero-based to comply with the electrode references in
+ the <meas_task> descriptions.
+ The position_description field has three possible values: 
+\end_layout
+
+\begin_layout Subsection
+Subject description
+\end_layout
+
+\begin_layout Standard
+The subject description is split in two patient.xml and subject.xml.
+ In the first file all data subjected to anonymization should be stored
+ and the reset into the second file.
+ In this way anonymisation procedure in done be deleting the patient.xml.
+\end_layout
+
+\begin_layout Standard
+File name: patient.xml
+\end_layout
+
+\begin_layout Itemize
+<patient></patient>
+\end_layout
+
+\begin_layout Itemize
+<name>[patient_name]</name>
+\end_layout
+
+\begin_layout Standard
+File name: subject.xml
+\end_layout
+
+\begin_layout Itemize
+<subject type=
+\begin_inset Quotes erd
+\end_inset
+
+[subject_type]
+\begin_inset Quotes erd
+\end_inset
+
+></subject>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[subject_type]={patient, salinetank, volcano, field, resistive phantom,
+ other}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<age value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the age in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={year, days, hours}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<weight value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the weight in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={kg}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<width value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the width in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={m}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<height value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the height in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={m}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<conductivity value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the conductivity in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={simens}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<radius value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the radius in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={m}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<waterlevel value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]
+\begin_inset Quotes erd
+\end_inset
+
+ unit=
+\begin_inset Quotes erd
+\end_inset
+
+[unit]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] is the waterlevel in [unit] units
+\end_layout
+
+\begin_layout Itemize
+[unit]={m}
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<type manufacture=
+\begin_inset Quotes erd
+\end_inset
+
+[man]
+\begin_inset Quotes erd
+\end_inset
+
+ model=
+\begin_inset Quotes erd
+\end_inset
+
+[model]
+\begin_inset Quotes erd
+\end_inset
+
+ serialnumber=
+\begin_inset Quotes erd
+\end_inset
+
+[sn]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[man] = name of the manufacturer
+\end_layout
+
+\begin_layout Itemize
+[model] = name of the model
+\end_layout
+
+\begin_layout Itemize
+[sn] = serial number
+\end_layout
+
+\begin_layout Itemize
+This tag is for example used to reference tanks of resistor models.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Device description
+\end_layout
+
+\begin_layout Standard
+File name: device.xml
+\end_layout
+
+\begin_layout Itemize
+<device></device>
+\end_layout
+
+\begin_layout Itemize
+<manufacturer>[value]<manufacturer />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value]={swisstom, draeger, timpel, carefusion, [other]}
+\end_layout
+
+\begin_layout Itemize
+[other] for not above listed manufacturer insert your name and apply for
+ official OEIT name recognition as soon as possible
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<model>[value]<model />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] name of the model
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<serialnumber> [value]<serialnumber/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] serial number of the EIT device if available
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<firmware>[value]<firmware/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+<name>[value]<name/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[name] name of the software used to record this particular OEIT file
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<manufacturer>[value]<manufacturer />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] manufacturer of the software
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<version>[value]<version />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] version number of the firmware running the EIT device
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Itemize
+<dataacqsw> name=
+\begin_inset Quotes erd
+\end_inset
+
+[name]
+\begin_inset Quotes erd
+\end_inset
+
+ value=
+\begin_inset Quotes erd
+\end_inset
+
+[value]<dataacqsw/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+<name>[value]<name/>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[name] name of the software used to record this particular OEIT file
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<manufacturer>[value]<manufacturer />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] manufacturer of the software
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+<version>[value]<version />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value] version number of the data acquisition software using to record
+ this OEIT file
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Section
+EIT folder
+\end_layout
+
+\begin_layout Subsection
+Architecture
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+eit
+\begin_inset Quotes erd
+\end_inset
+
+ folder stores the manufacturer-independent EIT data.
+ The folder is subdivided into subfolders: 1) 
+\begin_inset Quotes eld
+\end_inset
+
+data
+\begin_inset Quotes erd
+\end_inset
+
+ that stores the binary information, 2) 
+\begin_inset Quotes eld
+\end_inset
+
+config
+\begin_inset Quotes erd
+\end_inset
+
+ which stores XML-formatted file describing configuration and 3) 
+\begin_inset Quotes eld
+\end_inset
+
+log
+\begin_inset Quotes erd
+\end_inset
+
+ that stores XML-formatted events.
+ In the 
+\begin_inset Quotes eld
+\end_inset
+
+data
+\begin_inset Quotes erd
+\end_inset
+
+ folder the binary files with the extension .sframes are stored, see Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:manfest_binary_config"
+
+\end_inset
+
+.
+ Inside each file many frame are stored and each individual frame store
+ an index pointing toward a corresponding configuration file.
+ The frames are stored in each binary file in chronological acquisition
+ order.
+ The manifest file, stored into the 
+\begin_inset Quotes eld
+\end_inset
+
+eit
+\begin_inset Quotes erd
+\end_inset
+
+ folder, describes how the frames are stored into the binary files.
+ The main purpose of the manifest file is to allow quicker browsing of large
+ data files.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary_config_manifest.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Depicts the file structure organization inside the 
+\begin_inset Quotes eld
+\end_inset
+
+eit
+\begin_inset Quotes erd
+\end_inset
+
+ folder.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:manfest_binary_config"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Configuration file
+\end_layout
+
+\begin_layout Standard
+The configuration file(s) describes the way the data were acquired and provides
+ enough information for correct interpretation and image reconstruction.
+ The basic idea behind the architecture of those configuration files is
+ that complex data acquisition scheme have complex description file whereas
+ simple acquisition scheme are easier to describe.
+ The configuration file are named systematically:
+\end_layout
+
+\begin_layout Standard
+\align center
+config_[c_file_id].xml
+\end_layout
+
+\begin_layout Standard
+where [file_id] starts at 0000 and increments by one up to 9999 for further
+ configuration files.
+ This implies a maximum number of file of 10000.
+\end_layout
+
+\begin_layout Standard
+The XML format has been selected to avoid formatting and charset issue associate
+d with standard plain text file.
+ Moreover XML format allows more flexibility for future format improvement
+ and new features.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+c_file_id
+\begin_inset Quotes erd
+\end_inset
+
+ is used to reference each frame to a particular configuration file, see
+ Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Binary-file"
+
+\end_inset
+
+ for details.
+ With the aim to limit the complexity of the parser and to avoid too many
+ degrees of liberty into the configuration file, we need to set a few design
+ rules:
+\end_layout
+
+\begin_layout Itemize
+One single frequency tag per configuration file is allowed.
+\end_layout
+
+\begin_layout Itemize
+One <configuration></configuration> structure per configuration file is
+ allowed
+\end_layout
+
+\begin_layout Itemize
+[we may add more rules here]
+\end_layout
+
+\begin_layout Subsubsection
+Tags
+\end_layout
+
+\begin_layout Itemize
+[mandatory]: <configuration></configuration>
+\end_layout
+
+\begin_layout Itemize
+[mandatory]: <general></general>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[mandatory]: <framerate>[value]</framerate>
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[value]: Frame rate is the number of frames per second
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+[optional]: <volatage_scale>[value]< /volatage_scale> , this is a factor
+ to multiply with all voltage within this file to get SI volt unit.
+ Default value is 1.
+\end_layout
+
+\begin_layout Itemize
+[optional]: <current_scale>[value]< /current_scale> , this is a factor to
+ multiply with all current within this file to get SI ampere unit.
+ Default value is 1.
+\end_layout
+
+\begin_layout Itemize
+[optional]: <time_scale>[value]< /time_scale> , this is a factor to multiply
+ with all time within this file to get SI second unit.
+ Default value is 1.
+\end_layout
+
+\begin_layout Itemize
+[optional]: <freq_scale>[value]< /freq_scale> , this is a factor to multiply
+ with all frequency within this file to get SI second unit.
+ Default value is 1.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+[mandatory]: <measurements></measurements>
+\end_layout
+
+\begin_layout Itemize
+[mandatory 1]: <meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+[meas_type_name]
+\begin_inset Quotes erd
+\end_inset
+
+><meas_type />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[mandatory 1]: <demod_freq><demod_freq />, is the demodulation frequency.
+\end_layout
+
+\begin_layout Itemize
+[mandatory 1]: <demod_time><demod_time/>, is the demodulation time of the
+ particular measurement.
+\end_layout
+
+\begin_layout Itemize
+[mandatory 1]: <bin_storage><bin_storage />, in the binary file the byte
+ are the stored in the order indicated by the tags.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+<real format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>, is phase compensated i.e.
+ represent the ohmic part of the signal
+\end_layout
+
+\begin_layout Itemize
+<imaginary format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>, is phase compensated i.e.
+ represent the capacitive part of the signal
+\end_layout
+
+\begin_layout Itemize
+<amplitude format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>, is not phase compensated
+\end_layout
+
+\begin_layout Itemize
+<phase format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>, is not phase compensated
+\end_layout
+
+\begin_layout Itemize
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>, is not phase compensated
+\end_layout
+
+\begin_layout Itemize
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>, is not phase compensated
+\end_layout
+
+\begin_layout Itemize
+<number format=
+\begin_inset Quotes erd
+\end_inset
+
+[bin_format]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+[mandatory]: <physical_quantity>[phy_q]</physical_quantity>
+\end_layout
+
+\begin_layout Itemize
+[optional]: <signal_gain>[value]<signal_gain>, default 1.
+\end_layout
+
+\begin_layout Itemize
+[optional]: <signal_offset>[value]<signal_offset>, default 0.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+[mandatory 1]: <stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+[stim_type_name]
+\begin_inset Quotes erd
+\end_inset
+
+><stim_type />
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+<stim_freq><stim_freq />, stimulation frequency
+\end_layout
+
+\begin_layout Itemize
+<stim_wave><stim_wave />, stimulation wave type e.g., square, sinus,
+\end_layout
+
+\begin_layout Itemize
+<stim_type><stim_type/>, stimulation type, e.g.voltage, current
+\end_layout
+
+\begin_layout Itemize
+<stim_amplitude><stim_amplitude/>, stimulation amplitude
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+[mandatory 1]: <meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+[start_value]
+\begin_inset Quotes erd
+\end_inset
+
+ start=
+\begin_inset Quotes erd
+\end_inset
+
+[stop_value]
+\begin_inset Quotes erd
+\end_inset
+
+></meas_task> groups measurement done at the same time.
+ All enclosed tasks must start and stop at the same time.
+ <meas_task> tags must appear in the [start_value] chronological order.
+ <meas_task> can be overlapped.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+[start_value] is the starting referenced at the frame start.
+\end_layout
+
+\begin_layout Itemize
+[stop_value] is the stop referenced at the frame start.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+[mandatory 1]: <meas type=
+\begin_inset Quotes erd
+\end_inset
+
+[meas_type_name]
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes=
+\begin_inset Quotes erd
+\end_inset
+
+[electrode_list]
+\begin_inset Quotes erd
+\end_inset
+
+ gain=
+\begin_inset Quotes erd
+\end_inset
+
+[gain_list]
+\begin_inset Quotes erd
+\end_inset
+
+/>.
+ The binary data are recorded in the same order as described by the <meas>
+ tags.
+ [electrode_list] refers to the electrode defined into 
+\begin_inset Quotes eld
+\end_inset
+
+electrode.xml
+\begin_inset Quotes erd
+\end_inset
+
+.
+ [gain_list] the gains refers to each corresponding electrode listed in
+ [electrode_list].
+ Each item in [electrode_list] and [gain_list] separated by a coma.
+ 
+\end_layout
+
+\begin_layout Itemize
+[mandatory 1]: <stim type=
+\begin_inset Quotes erd
+\end_inset
+
+[stim_type_name]
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes=
+\begin_inset Quotes erd
+\end_inset
+
+[electrode_list]
+\begin_inset Quotes erd
+\end_inset
+
+ gain=
+\begin_inset Quotes erd
+\end_inset
+
+[gain_list]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Subsubsection
+Attributes
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[bin_format] {float, double, uint8, int8, uint16, int16, uin32, int32, uint64,
+ int64}
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[frequency_value] the format to use is decimal e.g.
+ 100000.003 is valid but 100e3 is not
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[electrode_list] list of electrodes, the electrode are referenced by their
+ index e.g.
+ [1, 2].
+ Other value such as gnd, v+, v- and shield can be used to indicate measurement
+ on those lines.
+ Each item in [electrode_list] is separated by a coma.
+ 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[gain_list] list of gains, the gains correspond to the electrode listed
+ in [electrode_list], when [electrode_list] and [gain_list] are of different
+ lengths parsing error is thrown.
+ Default for this attribute is [1 ,-1].
+ Each item in [gain_list] is separated by a coma.
+ 
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+[phy_q] Describes what is measured in therm of units.
+ {voltage, current, gpsposition, ecg, volume, distance}
+\end_layout
+
+\begin_layout Subsubsection
+Parsing of the gain
+\end_layout
+
+\begin_layout Standard
+The gains of individual measurements are defined in 1) the <meas> tag and
+ 2) the <meas_type>.
+ Beware the general multiplying factor defined in the <general> do not apply
+ here.
+ Let assume: <meas gain=
+\begin_inset Quotes erd
+\end_inset
+
+[a, b]
+\begin_inset Quotes erd
+\end_inset
+
+>, <signal_gain>c</signal_gain> and <signal_offset>d</signal_offset> with
+ x and y the the measurement.
+ The the measurement given is given by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+m=\left(ax+by\right)c+d
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Binary file
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Binary-file"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The main data are stored into binary format to optimized storage size and
+ performance.
+ The data are stored into files with the extension 
+\begin_inset Quotes eld
+\end_inset
+
+.sframes
+\begin_inset Quotes erd
+\end_inset
+
+ and named systematically with the prefix 
+\begin_inset Quotes eld
+\end_inset
+
+data_
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The name of each file is formed the following way:
+\end_layout
+
+\begin_layout Standard
+\align center
+data_[d_file_id].sframes
+\end_layout
+
+\begin_layout Standard
+where [d_file_id] starts at 00000 and increments by one up to 99999 for
+ further binary files.
+ This implies that the maximal number of file 100000.
+\end_layout
+
+\begin_layout Standard
+The number and size of each file inside the eit/data folder is selected
+ to optimize file handling performances or to organize the data in a logical
+ way.
+ This organization is described into the manifest file.
+ The manifest file is an XML-formatted file, which describes how frames
+ are stored and enables to find a particular frame without the need to read
+ all binary files.
+ The tag, which describes a sframes file is constructed as follow:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+<file index="[d_file_id]
+\begin_inset Quotes erd
+\end_inset
+
+> 
+\end_layout
+
+\begin_layout Plain Layout
+<n_frames>[number_frame]</n_frames>
+\end_layout
+
+\begin_layout Plain Layout
+<first_t>[first_timestamp]</first_t> 
+\end_layout
+
+\begin_layout Plain Layout
+<last_t>[last_timestamp]</last_t>
+\end_layout
+
+\begin_layout Plain Layout
+</file> 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+where
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+[number_frame] is the number of frame inside the file
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+[first_timestamp] is the chronologically first timestamps
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+[last_timestamp] is the chronologically last timestamps
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Each binary file is sub divided into data blocks.
+ Each data block follows the same scheme: 1) timestamps uint64, 2) reference
+ to the configuration file identification number [c_file_id] uint16 and
+ 3) binary eit data, see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Architecture-binaryfile"
+
+\end_inset
+
+.
+ The content and organization of the binary eit data is given in the configurati
+on file by the content of the binary and measurements tags.
+ In order to know how this measurement is stored, one needs to look for
+ the <binary> tag, for this example we assume: <binary><real format=
+\begin_inset Quotes erd
+\end_inset
+
+int32
+\begin_inset Quotes erd
+\end_inset
+
+><imaginary format=
+\begin_inset Quotes erd
+\end_inset
+
+int32
+\begin_inset Quotes erd
+\end_inset
+
+</binary>.
+ Thus in this case the first 4 bytes correspond to the real part of the
+ measurement and the next 4 bytes to the imaginary part.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary_file.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Architecture of the binary file
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Architecture-binaryfile"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Log file
+\end_layout
+
+\begin_layout Standard
+This file is intended to store hardware events and clinical manipulation.
+ Logging events is optional.
+ It is XML-formatted using the following tag set:
+\end_layout
+
+\begin_layout Itemize
+<event> </event> 
+\end_layout
+
+\begin_layout Itemize
+<timestamp>value</timestamp>, contains the timestamp of the event
+\end_layout
+
+\begin_layout Itemize
+<agent>[HW, Robot,Operator,Ventilator,etc]</agent>, contains the name of
+ the agent which generated the event
+\end_layout
+
+\begin_layout Itemize
+<data>[Anything goes here]</data>, contains the event data
+\end_layout
+
+\begin_layout Itemize
+<event
+\begin_inset Quotes erd
+\end_inset
+
+>[description]</event>
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<event> <timestamp>12435</timestamp> 
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<agent>[HW, Robot,Operator,Ventilator,etc]</agent> 
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<data>[Anything goes here]</data>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</event> 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Example of configuration files
+\end_layout
+
+\begin_layout Subsubsection
+Göttigen System
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<configuration version=
+\begin_inset Quotes erd
+\end_inset
+
+1.0.0
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<frame_rate>13</ frame_rate>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<amplitude format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<comment>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+This is a comment.
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</comment>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>100000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<comment>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+This is a comment.
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</comment>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+300
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe electrodes="[3, 4]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+etc...
+ for a total of N measurement tasks
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</configuration>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Göttigen System grounded
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<configuration version=
+\begin_inset Quotes erd
+\end_inset
+
+1.0.0
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<frame_rate>13</ frame_rate>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<amplitude format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>100000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+gned_el
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>0<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>voltage<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>dc<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+gned_el
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[17]" gain="[1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+gned_el
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[17]" gain="[1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+300
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sgoe
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+gned_el
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[17]" gain="[1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mgoe
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+etc...
+ for a total of N measurement tasks
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</configuration>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Swisstom System
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100in"
+special "width"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<configuration version=
+\begin_inset Quotes erd
+\end_inset
+
+1.0.0
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<frame_rate>10</ frame_rate>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+mstm
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>10<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+mstm2
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<description>measurement on injecting electrode<description />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>0.2<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+sstm
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>100000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+10
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sstm
+\begin_inset Quotes erd
+\end_inset
+
+>[1 -2]</ stim>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mstm
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mstm2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+110
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sstm
+\begin_inset Quotes erd
+\end_inset
+
+>[1 -2]</ stim>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mstm
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+210
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+300
+\begin_inset Quotes erd
+\end_inset
+
+ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+sstm
+\begin_inset Quotes erd
+\end_inset
+
+>[1 -2]</ stim>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+mstm
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+etc...
+ for a total of 1024 measurement tasks
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</configuration>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Multi-frequence simultaneous injection and measurement
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<configuration version=
+\begin_inset Quotes erd
+\end_inset
+
+1.0.0
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<frame_rate>10</ frame_rate>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas1
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas2
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>200000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas3
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>300000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim1
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>100000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim2
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>200000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim3
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>300000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes eld
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[2, 3]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+300
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+etc...
+ for a total of N measurement tasks
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</configuration>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Multi-frequence sequential 
+\end_layout
+
+\begin_layout Standard
+
+\size footnotesize
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100in"
+special "width"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<configuration version=
+\begin_inset Quotes erd
+\end_inset
+
+1.0.0
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<frame_rate>10</ frame_rate>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas1
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas2
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>200000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas3
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>300000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<physical_quantity>voltage<physical_quantity />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<signal_gain>1<signal_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<offset_gain>0<offset_gain />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<I format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<Q format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim1
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>100000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim2
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>200000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim3
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>300000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea1
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+ >
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea2
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+200
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+300
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1] 
+\begin_inset Quotes eld
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_mea3
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+etc...
+ for a total of N measurement tasks
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</configuration>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Geological EIT moving cart (same as Geocarta)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Framed
+position "t"
+hor_pos "c"
+has_inner_box 0
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100in"
+special "width"
+height "1in"
+height_special "totalheight"
+status collapsed
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<?xml version="1.0" encoding="UTF-8" ?>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+<configuration>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</general>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<demod_freq>100000<demod_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<amplitude format=
+\begin_inset Quotes erd
+\end_inset
+
+float
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+lat
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<description>WGS84 DD latitude</description>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<number format=
+\begin_inset Quotes erd
+\end_inset
+
+double
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+long
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<description>WGS84 DD longitude</description>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<number format=
+\begin_inset Quotes erd
+\end_inset
+
+double
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<meas_type name=
+\begin_inset Quotes erd
+\end_inset
+
+grav
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<description>gravimeter</description>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<number format=
+\begin_inset Quotes erd
+\end_inset
+
+double
+\begin_inset Quotes erd
+\end_inset
+
+/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+</binary>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ meas_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type name=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_freq>100000<stim_freq />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_type>current<stim_type />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_wave>sinus<stim_wave />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim_amplitude>0.001<stim_amplitude />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</ stim_type>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+<measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task start=
+\begin_inset Quotes erd
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ stop=
+\begin_inset Quotes erd
+\end_inset
+
+100
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<stim type=
+\begin_inset Quotes erd
+\end_inset
+
+my_stim
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[1, 2]" gain="[1,-1]/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+my_meas
+\begin_inset Quotes erd
+\end_inset
+
+ electrodes="[3, 4]" gain="[1,-1]/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+lat
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+long
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas type=
+\begin_inset Quotes erd
+\end_inset
+
+grav
+\begin_inset Quotes erd
+\end_inset
+
+ />
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\begin_inset space \quad{}
+\end_inset
+
+<meas_task/>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+</measurements>
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+\begin_inset space \quad{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+</configuration>
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since that in the present application the electrode are moving across a
+ field it is mandatory to record position.
+ In the above example GPS position is recorded in WGS83 DD format (double).
+ Thus each frame contains the data for each position including 3 different
+ electrode measurements, GPS position and a gravimeter.
+\end_layout
+
+\begin_layout Section
+Raw Folder
+\end_layout
+
+\begin_layout Standard
+Inside this folder industrials are free to store proprietary data file.
+ Nevertheless it is recommended to follow a similar structure as for the
+ manufacture-independent data.
+ It is important to note that OEIT file that only contains raw-formatted
+ data are not valid, even if parsers are made available.
+ We recommend to make used of the raw folder only if storage option for
+ a very specific format is not yet provided by the OEIT format.
+ In this respect, people with specific needs regarding data storage are
+ strongly advised to share them with the OEIT community of developer thus
+ new features could be added in future version.
+ 
+\end_layout
+
+\begin_layout Section
+References
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "references"
+options "bibtotoc,plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
