@@ -108,28 +108,20 @@
     - put into a proper test function as UNIT_TEST
 
  + print_convert - all matlab version
-    - test for imagemagick, have code to use it  -AA
-    - top and right of image are cropped by 1 pixel -AA
+    + test for imagemagick, have code to use it - not needed any more
+    + top and right of image are cropped by 1 pixel -AA
 
  + allow netgen paths with spaces in windows
 
  + Fix spaces in path bug with windows netgen
 
- - review images
+ + review images
 
  + stl support
 
- - code from BMU
-
-Tutorials to redo images:
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/EIDORS_basics/one_line.shtml
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/adv_image_reconst/temporal_solver.shtml
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/adv_image_reconst/electrode_errors.shtml (GREIT images + captions)
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/lung_EIT/if_peep_trial.shtml
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/lung_EIT/if_lung_injury.shtml
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/lung_EIT/tutorial310-lung-images.shtml
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/lung_EIT/tutorial410-stomach-images.shtml
-http://www.sce.carleton.ca/faculty/adler/eidors/tutorial/geophysics/tutorial410-hole-model.shtml
+ + code from BMU
+ 
+ - fix distmesh 
 
 
 ############## 3.7 ################3
