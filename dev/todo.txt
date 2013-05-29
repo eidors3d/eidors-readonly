@@ -10,6 +10,10 @@
  - remove np fields from ng_mk_models
     - add default np fields to the np functions
 
+ - redo dm_distmeshxx - base it on dm_2d_pt_elecs
+ - update distesh to latest version
+ - fix and re-insert dm_geophys into tutorials
+
  - ensure jacobian_perturb works on physics parameters
 
  - colourbar - put some logic to allow labels like 1.5 as max
