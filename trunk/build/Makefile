@@ -164,6 +164,7 @@ step7:
 # export the latest eidors svn
 # export is like checkout except no .svn directories
 step8:
+	rm -rf $P/../eidors
 	svn export svn://svn.code.sf.net/p/eidors3d/code/trunk/eidors $P/../eidors
 
 step9:
