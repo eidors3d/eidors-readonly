@@ -26,6 +26,9 @@ copy-to-mirror:
 	rsync --exclude=.svn -av ../htdocs/ /home/adler/htdocs/eidors/ 
 	@echo "It's OK if some warnings"
 
+copy-mirror-to-sf:
+	rsync --exclude=.svn -avz /home/adler/htdocs/eidors/ aadler,eidors3d@web.sf.net:htdocs/
+
 $(REL):
 	mkdir -p $(REL)
 #	$(WKDIR) && mkdir -p $@
