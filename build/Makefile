@@ -124,6 +124,12 @@ step3:
 	 perl -i -pe's{\.shtml\s*"}{-s.html"}' \{} \;
 	@echo "################### 3 ####################"
 
+# fix rewrite for the mirror link
+step3a:
+	find $P -name \*.html -exec \
+	 perl -i -pe's{(http://\S*)-s\.html"}{\1.shtml"}' \{} \;
+	@echo "################### 3 ####################"
+
 # get rid of the bak files that are created in step3
 step4:
 	find $P -name \*-s.html.bak | xargs rm -f
@@ -170,6 +176,9 @@ step9a:
 VERSION=v3.7.1
 step10:
 	mkdir -p $(REL)
+	rm -f $P/robots.txt
+	rm -r $(REL)/eidors-$(VERSION)
+	rm -f $(REL)/eidors-$(VERSION).zip
 	cp -r $P/.. $(REL)/eidors-$(VERSION)
 	(cd $(REL) && zip -r eidors-$(VERSION).zip eidors-$(VERSION))
 
