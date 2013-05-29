@@ -107,9 +107,16 @@
  - keep the gmsh path the same way as the new netgen
 
 ############## 3.7.1 ################3
- - changes
-
- - build
+ - how to touch on svn - or delete and readd
+ - write the changes
+ - update news
+ - update version #
+ - build docs x 2
+ - update README
+ - build script and zip file
+ - tag release
+ - touch mex files to be older than *cpp
+ - zip -r -9 eidors-vXX.zip eidors-vXX
 
  + Update FAQ
      - Netgen build
