@@ -420,35 +420,41 @@ dependencies under linux:
 
 <table border="1"><tr><td><pre>
 # Ubuntu/Debian
-   apt-get install tk-dev
-   apt-get install tix-dev
-# Redhat / Fedora / SuSE
-   yum install tk-devel
-   yum install tix-devel
+   sudo apt-get install tk-dev tcl-dev libglu1-mesa-dev libtogl-dev
+   (cd /usr/lib/x86_64-linux-gnu/ && sudo ln -s libXmu.so.6 libXmu.so )
 
-# Download and install Togl-1.7
-   wget <a href="http://sourceforge.net/projects/togl/files/Togl/1.7/Togl-1.7.zip">http://sourceforge.net/projects/togl/files/Togl/1.7/Togl-1.7.zip</a>
-   unzip Togl-1.7.zip
-   cd Togl-1.7
-   ./configure --prefix=/usr/local
-   make && make install
+# Create a src dir
+cd $HOME && mkdir -p src && cd src
+# Download the latest Netgen 
+wget http://downloads.sf.net/project/netgen-mesher/netgen-mesher/5.0/netgen-5.0.0.tar.gz
+# Unzip
+tar xfz netgen-5,0.0.tar.gz && cd netgen-5.0.0
+# Configure and Make
+./configure
+make
+sudo make install
+# That should work and install netgen to /opt/netgen/bin
+# Set the environment variable to
+NETGENDIR=/opt/netgen/bin
 
-# Download and install netgen-mesher
-   # Download from http://sourceforge.net/projects/netgen-mesher/files/
-   # unzip and cd
-   ./configure --prefix=/usr/local
-   make && make install
+# if you don't have root permissions on the machine, then use
+./configure --prefix=$HOME/local
+# then add the directory to your path
+export PATH=$PATH:$HOME/local
+</pre></table>
 
-# Now netgen requires a script to make it work.
-   cd /usr/local
-   mv netgen netgen.bin
-   cat > netgen
-#!/bin/sh
-NETGENDIR=/home/adler/local/bin/  \
-LD_LIBRARY_PATH=/usr/local/lib/Togl1.7/  \
-netgen.bin $1 $2 $3
-^D
-   chmod a+x netgen
+<p><li><b>
+Printing (including print_convert) gives tiny fonts on Ubuntu
+</b><p>
+
+This is similar to the issue discussed 
+<a href="http://stackoverflow.com/questions/13148818/cannot-change-font-size-type-in-plots">here</a>.
+
+<table border="1"><tr><td><pre>
+# Install these fonts
+sudo apt-get install xfonts-75dpi xfonts-100dpi
+# Restart the x server. 
+# Or, if you're using vncserver, kill and restart the vncserver
 </pre></table>
 
 

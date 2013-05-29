@@ -103,6 +103,14 @@
  - keep the gmsh path the same way as the new netgen
 
 ############## 3.7.1 ################3
+ - changes
+
+ - build
+
+ + Update FAQ
+     - Netgen build
+     - Ubuntu fonts xfonts-75dpi xfonts-100dpi 
+
  - test_2d_resistor
     - why fwd_solve_1st_order: 249.294837 Solver analytic: 249.745561
     - put into a proper test function as UNIT_TEST
