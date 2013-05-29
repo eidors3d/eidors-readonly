@@ -4,8 +4,9 @@
 This page is a list of updates, discussions, and 
 ideas for enhancements to the
 EIDORS package.
-
 <ul>
+
+
 <p><li> <b>
    29 May 2013
 </b><br>
@@ -28,7 +29,6 @@ New features include:
 All <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">tutorials</a> have been updated to use the new features.
 The entire suite has been tested with the newest Matlab 2013a.
 
-<ul>
 <p><li> <b>
    22 April 2013
 </b><br>
