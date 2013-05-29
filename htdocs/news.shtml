@@ -12,13 +12,13 @@ EIDORS package.
 <b>EIDORS Version 3.7.1 release</b>
 <p>Blobby the walrus is happy to announce the 
 release of EIDORS version 3.7.1. The software is
-available at <a href="www.eidors.org">www.eidors.org</a>. 
+available at <a href="http://www.eidors.org">www.eidors.org</a>. 
 This is a minor release, primarily fixing some small (but annoying)
-incompatibilites between different Matlab versions and operating systems.
+incompatibilities between different Matlab versions and operating systems.
 New features include:
 <ul>
- <li> Better handling of netgen and gmsh executables (Windows) -- paths need only ever by provided once and can contain spaces.
- <li> Completely re-written <a href"http://eidors3d.sourceforge.net/doc/eidors/graphics/matlab/print_convert.html>
+ <li> Better handling of netgen and gmsh executables (Windows) &minus; paths need only ever by provided once and can contain spaces.
+ <li> Completely re-written <a href"http://eidors3d.sourceforge.net/doc/eidors/graphics/matlab/print_convert.html">
 	print_convert</a> function to produce beautiful cropped images with anti-aliasing without using ImageMagick
  <li> Citation requests when specific functions are called for the first time (
 	<a href="http://eidors3d.sourceforge.net/doc/eidors/tools/citeme.html">citeme</a>). We hope this will encourage contributions.
@@ -27,7 +27,6 @@ New features include:
 </ul>
 All <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">tutorials</a> have been updated to use the new features.
 The entire suite has been tested with the newest Matlab 2013a.
-
 
 <ul>
 <p><li> <b>
