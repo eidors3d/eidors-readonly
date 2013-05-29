@@ -40,7 +40,7 @@ elseif l_bdy_idx == 0 && l_point >0
      bdy_area(i)= bdy_area(i) + this_area/dims;
    end
 else
-   error('can`t model this electrode, with %d CEM and %d point', ...
+   error('Can''t model this electrode. It has %d CEM and %d point nodes.', ...
             l_bdy_idx, l_point )
 end
    
