@@ -113,5 +113,15 @@ function [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox, ...
       srf= find_boundary(simp);
    end
 
+   % Test and remove if distmesh creates degenerate elements
+   vol = get_elem_volume(struct('nodes',vtx,'elems',simp));
+   mvol = mean(vol);
+   degen = find(vol/mvol < 1e-10); 
+   if length(degen)>0
+      warning(['distmesh: degenerate (zero volume) elements created and removed.'
+              ' Your mesh may contain holes.']);
+      simp(degen,:) = [];
+   end
+
 function h= huniform(p);
    h= ones(size(p,1),1);
