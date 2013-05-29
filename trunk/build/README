@@ -3,6 +3,11 @@ The eidors-v3.7.1.zip file contains all code and
  documentation to run EIDORS on all platforms.
 EIDORS requires Matlab (>7.0) or GNU Octave.
 
+Unless otherwise specified inside the respective files,
+EIDORS functions are licensed under the GNU GPL, either
+version 2 or version 3 (at your choice). You can find a
+copy of the license at: www.gnu.org/licenses/gpl.html.
+
 Additionally, you can download the model_library.zip
 file, which contains precalculated additional finite
 element models for use with EIDORS.  The model_library.zip

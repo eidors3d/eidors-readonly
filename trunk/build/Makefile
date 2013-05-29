@@ -4,7 +4,7 @@
 
 SZLIM= 20k
 WKDIR = cd ..
-REL= ../../../release/
+REL= $(HOME)/release/
 INCLDIRS =  data_contrib \
             examples \
             paper-cheating \
@@ -102,31 +102,38 @@ $(REL)/htdocs: $(REL) Makefile
 P = $(HOME)/eidors-release/htdocs
 step0: 
 	echo $P
+	@echo "##### ENSURE YOU HAVE COPIED TO THE MIRROR ON sce.carleton.ca ####"
 
+# download eidors though a shtml web site to get the dyn html 
 step1:
 	( mkdir -p $P && cd $P && \
         wget -r -nH -np --cut-dirs=$(CUTDL) $(EIDORSDL) && \
 	echo "################### 1 ####################" )  
 
+# rename shtml to -s.html files
 step2:
 	find $P -name \*.shtml -print \
          | while read a ; do \
            mv $$a `dirname $$a`/`basename $$a .shtml`-s.html; \
          done
-	echo "################### 2 ####################"
+	@echo "################### 2 ####################"
 
+# rewrite internal links so  shtml to -s.html files
 step3:
 	find $P -name \*.html -exec \
 	 perl -i -pe's{\.shtml\s*"}{-s.html"}' \{} \;
-	echo "################### 3 ####################"
+	@echo "################### 3 ####################"
 
+# get rid of the bak files that are created in step3
 step4:
 	find $P -name \*-s.html.bak | xargs rm -f
-	echo "################### 3 ####################"
+	@echo "################### 3 ####################"
 
+# create and EIDORS-docs.html files
 step5:
 	cp $P/index-s.html $P/EIDORS-docs.html
 
+# create web links to big files
 step6:
 	bigfiles=`find $P -size +$(SZLIM) -and -not -iname \*html` ; \
 	find $P -name \*-s.html -exec \
@@ -143,21 +150,31 @@ step6:
           -e '{$$1 = "$$m{$$4}"}x;' \
         \{} \;
 
+# erase too big files
 step7:
 	find $P -size +$(SZLIM) -and -not -iname \*html | xargs rm -f
 	find $P -name \*-s.html.bak | xargs rm -f
 
+# export the latest eidors svn
+# export is like checkout except no .svn directories
 step8:
 	svn export svn://svn.code.sf.net/p/eidors3d/code/trunk/eidors $P/../eidors
 
 step9:
-	echo "COPY LOCAL EIDORS BUILD DOC"
+	@echo "BUILD LOCAL DOCS: run build_doc.m making sure variable=1"
 
-VERSION=v3.7RC
+step9a:
+	cp README $P/..
+	cp -r ../htdocs/doc $P
+
+VERSION=v3.7.1
 step10:
-	mkdir $(REL)/eidors-$(VERSION)
-	mv $P $(REL)/eidors $(REL)/eidors-$(VERSION)
+	mkdir -p $(REL)
+	cp -r $P/.. $(REL)/eidors-$(VERSION)
 	(cd $(REL) && zip -r eidors-$(VERSION).zip eidors-$(VERSION))
+
+step11:
+	cp $(REL)/eidors-$(VERSION).zip $(HOME)/public_html
 	
 
 fix-cmyk-jpgs:
