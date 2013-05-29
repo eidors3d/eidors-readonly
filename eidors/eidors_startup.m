@@ -110,7 +110,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     fname = [HOMEDIR, archdir, '/eidors_var_id.', mexext];
     
     if ~exist(fname, 'file')
-       warning('missing a required, pre-compiled mex file: eidors_var_id');
+       eidors_msg('STARTUP: missing a required, pre-compiled mex file: eidors_var_id', 1);
        compile_mex(HOMEDIR,archdir,ver);
     end
 
@@ -163,7 +163,10 @@ function compile_mex(HOMEDIR,archdir, ver)
        flags = '-largeArrayDims';
     end  
     cmd = sprintf('mex %s "%s/arch/eidors_var_id.cpp"', flags, HOMEDIR);
+    tmppath= getenv('PATH');
+    setenv('PATH',[tmppath,pathsep,matlabroot,'/bin']); % add matlab to path if required
     system_cmd(cmd);
+    setenv('PATH',tmppath); % restore path
 %     eval(cmd);
     movefile(sprintf('%s/*.mex*',HOMEDIR), ...
            sprintf('%s%s',HOMEDIR,archdir));
