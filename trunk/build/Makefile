@@ -188,6 +188,11 @@ step10:
 
 step11:
 	cp $(REL)/eidors-$(VERSION).zip $(HOME)/public_html
+
+# update as required
+tag-release:
+	svn copy svn+ssh://aadler@svn.code.sf.net/p/eidors3d/code/trunk svn+ssh://aadler@svn.code.sf.net/p/eidors3d/code/tags/$(VERSION) -m"Tagging release $(VERSION)"
+
 	
 
 fix-cmyk-jpgs:
