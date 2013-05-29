@@ -1,4 +1,14 @@
+2013-05-29: ======================= RELEASE 3.7.1 ========================
+2013-05-26: add anti-aliasing to print_convert
+2013-05-18: refactor mk_GREIT_model to use mk_pixel_slice
+2013-05-16: new print_convert that doesn't use external tools (imagemagick)
+2013-05-16: improve gmsh interface 
+2013-05-16: allow spaces in path to netgen
+2013-05-05: fix compatibility with older Matlab and Windows
+2013-04-25: citeme tool to request citations for specific functions
 2013-04-22: ======================== RELEASE 3.7 =========================
+2013-04-22: fminsearch for Octave
+2013-04-22: Use a single ng.bat file once and for all
 2013-04-18: readers for LQ2 file format
 2013-04.17: Quick GREIT models: mk_common_gridmdl('GREIT','mdl_library_string')
 2013-04-17: Desired image function for mk_GREIT_model: opt.desired_image_fn
