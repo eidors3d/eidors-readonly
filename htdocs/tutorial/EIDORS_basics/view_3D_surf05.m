@@ -8,4 +8,4 @@ patch('Faces',fmdl.boundary,'Vertices',fmdl.nodes, 'facecolor','interp', ...
       'facevertexcdata',colours,'CDataMapping','direct'); 
 
 view(0,0)
-print_convert view_3D_surf05b.jpg '-density 300 -resize 33%% -quality 75'
+print_convert view_3D_surf05b.jpg
