@@ -1,5 +1,12 @@
+function test_2d_resistor(opt)
 % Create 2D model of a cylindrical resistor
 % $Id$
+
+if nargin>0 && strcmp(opt,'UNIT_TEST'); do_unit_test; return; end
+
+resistor_test;
+
+function vals = resistor_test;
 
 nn= 12;     % number of nodes
 ww=2;       % width = 4
@@ -23,6 +30,14 @@ n_el = size(mdl.elems,1);
 img= eidors_obj('image','2D rectangle', ...
       'elem_data', ones(n_el,1) * conduc );
 
+% analytical solution
+wid_len= max(mdl.nodes) - min(mdl.nodes);
+R = wid_len(2) / wid_len(1) / conduc + 2*z_contact/scale;
+
+V= current*R;
+fprintf('Solver %s: %f\n', 'analytic', V);
+vals.analytic = V;
+
 % AA_SOLVER
 mdl.solve = @fwd_solve_1st_order;
 mdl.system_mat = @system_mat_1st_order;
@@ -30,6 +45,11 @@ mdl.normalize_measurements = 0;
 img.fwd_model = mdl;
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
+vals.aa_solver = fsol.meas;
+
+warn_state = warning('query','EIDORS:Deprecated');
+warning('off','EIDORS:Deprecated');
+
 
 % NP_SOLVER
 mdl.solve = @np_fwd_solve;
@@ -37,13 +57,7 @@ mdl.system_mat = @np_calc_system_mat;
 img.fwd_model = mdl;
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
-
-% analytical solution
-wid_len= max(mdl.nodes) - min(mdl.nodes);
-R = wid_len(2) / wid_len(1) / conduc + 2*z_contact/scale;
-
-V= current*R;
-fprintf('Solver %s: %f\n', 'analytic', V);
+vals.np_solver = fsol.meas;
 
 % NOW CALCULATE THE ANALYTICAL JACOBIAN
 mdl.solve = @np_fwd_solve;
@@ -124,4 +138,14 @@ hig= max(mdl.nodes(:,2)) - min(mdl.nodes(:,2));
 R = (log(d2)-log(d1))*hig/(d2-d1)/conduc + 2*z_contact/scale;
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
-fprintf('Analytic is not expected to be same in last case');
+fprintf('Analytic is not expected to be same in last case\n');
+
+warning(warn_state.state,'EIDORS:Deprecated');
+
+
+function do_unit_test
+  vals = resistor_test;
+
+  unit_test_cmp('Analytic vs AA', vals.analytic, vals.aa_solver, 1e-10);
+  unit_test_cmp('Analytic vs NP', vals.analytic, vals.np_solver, 1e-10);
+
