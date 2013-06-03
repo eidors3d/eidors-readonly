@@ -1,7 +1,11 @@
-function [Q mdl] = calc_mesh_quality(mdl)
+function [Q mdl] = calc_mesh_quality(mdl, show)
 %CALC_MESH_QUALITY Various measures of mesh quality.
 %  [Q MDL] = CALC_MESH_QUALITY(MDL) calculates several measures of mesh 
-%  quality for the EIDORS fwd_model struct MDL and returns them in Q:
+%  quality for the EIDORS fwd_model struct MDL and returns them in Q 
+%  (described below).
+%  [Q MDL] = CALC_MESH_QUALITY(MDL, SHOW) if SHOW is TRUE displays two 
+%  figures with histograms of each measure.
+%  
 %   Q.tet.
 %     NSR    - inradius to circumradius ratio (normalized shape ratio)
 %                 n*r / R
@@ -100,6 +104,10 @@ function [Q mdl] = calc_mesh_quality(mdl)
 
 if ischar(mdl) && strcmp(mdl, 'UNIT_TEST'), do_unit_test; return; end
 
+if nargin < 2
+   show = 0;
+end
+
 opt.elem2edge = 1;
 opt.face2elem = 1;
 opt.boundary  = 1;
@@ -164,6 +172,36 @@ Q.tet.eta          = eta(mdl);
 Q.tet.alpha        = alpha(mdl);
 Q.tet.gamma        = gamma(mdl);
 Q.tet.min_angle    = tet_min_angle(mdl);
+
+if show
+   display_figs(Q)
+end
+
+function display_figs(Q);
+f = figure;  set(f,'Name','Tetrahedron quality');
+f = fields(Q.tet);
+for i = 1:length(f)
+   subplot(3,3,i)
+   hist(Q.tet.(f{i}),100);
+   xlabel(strrep(f{i},'_','\_'));
+   axis tight
+   xlim([0 1]);
+end
+% subplot(3,3,9)
+% hist(180*real.dihedral_angle(:)/pi,100)
+% xlabel('dihedral angle');
+% xlim([0 180])
+
+f = figure; set(f,'Name','Surface triangle quality');
+f = fields(Q.tri);
+for i = 1:length(f)
+   subplot(3,3,i)
+   hist(Q.tri.(f{i}),100);
+   xlabel(strrep(f{i},'_','\_'));
+   axis tight
+   xlim([0 1]);
+end
+
 
 function a = tet_min_angle(mdl)
 a = min(mdl.dihedral_angle,[],2) / acos(1/3);
@@ -380,30 +418,7 @@ for i = 1:length(f)
 end
 
 real = mk_library_model('pig_23kg_16el');
-[Q real] = calc_mesh_quality(real);
+[Q real] = calc_mesh_quality(real, 1);
 
-figure(1); clf; set(1,'Name','Tet quality');
-f = fields(Q.tet);
-for i = 1:length(f)
-   subplot(3,3,i)
-   hist(Q.tet.(f{i}),100);
-   xlabel(f{i});
-   axis tight
-   xlim([0 1]);
-end
-% subplot(3,3,9)
-% hist(180*real.dihedral_angle(:)/pi,100)
-% xlabel('dihedral angle');
-% xlim([0 180])
-
-figure(2); clf; set(2,'Name','Surface triangle quality');
-f = fields(Q.tri);
-for i = 1:length(f)
-   subplot(3,3,i)
-   hist(Q.tri.(f{i}),100);
-   xlabel(f{i});
-   axis tight
-   xlim([0 1]);
-end
 
 
