@@ -1,12 +1,14 @@
-function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file)
+function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file, maxh)
 %PLACE_ELEC_ON_SURF Place electrodes on the surface of a model
-% mdl = place_elec_on_surf(mdl,elec_pos, elec_spec)
+% mdl = place_elec_on_surf(mdl,elec_pos, elec_spec, ng_opt_file, maxh)
 % INPUT:
 %  mdl         = an EIDORS fwd_model struct
 %  elec_pos    = an array specigying electrode positions
 %  elec_shape  = an array specifying electrode shape (can be different for
 %                each electrode)
 %  ng_opt_file = an alternative ng.opt file to use (OPTIONAL)
+%                specify [] to use dafault
+%  maxh        = maximum edge length in the resulting volume 
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
 %     OR
@@ -46,6 +48,9 @@ citeme(mfilename);
 if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
 if nargin < 4
    ng_opt_file = '';
+end
+if nargin < 5
+   maxh = [];
 end
 
 % filenames
@@ -101,7 +106,7 @@ end
 
 % 6. Keeping the surface intact, remesh the inside
 write_to_stl(mdl,stlfn2);
-mdl2 = gmsh_stl2tet(stlfn2);
+mdl2 = gmsh_stl2tet(stlfn2, maxh);
 mdl2.electrode = mdl.electrode;
 
 % 7. Find all electrode nodes

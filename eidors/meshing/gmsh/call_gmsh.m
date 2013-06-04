@@ -1,10 +1,12 @@
-function status= call_gmsh(geo_file, dim)
+function status= call_gmsh(geo_file, dim,extra)
 % call_gmsh: call Gmsh to create a vol_file from a geo_file
-% status= call_gmsh(geo_file, dim)
+% status= call_gmsh(geo_file, dim, extra)
 %  staus = 0 -> success , negative -> failure
 %
 % geo_file = geometry file (input)
 % dim      = model dimenstion (default: 2)
+% extra    = additional string options for gmsh (see gmsh manual at
+%            http://geuz.org/gmsh/doc/texinfo/gmsh.html#Command_002dline-options
 
 % (C) 2009-2012 Bartosz Sawicki and Bartlomiej Grychtol
 % License: GPL  version 2
@@ -13,6 +15,9 @@ function status= call_gmsh(geo_file, dim)
 % default to 2-D model
 if nargin<2
     dim = 2;
+end
+if nargin<3
+   extra = [];
 end
 
 cache_path = eidors_cache('cache_path');
@@ -40,7 +45,7 @@ while( 1 )
         islinux =0;
     end
     
-    status= system_cmd(sprintf( '%s %s -%d -v 2',  gmsh_name, geo_file, dim));
+    status= system_cmd(sprintf( '%s %s -%d -v 2 %s',  gmsh_name, geo_file, dim, extra));
     
     if status==0; break; end
     
