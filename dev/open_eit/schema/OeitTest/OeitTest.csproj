@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\sample1.xml" />
+    <Content Include="TestFiles\sample2.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -73,6 +74,6 @@ copy "$(ProjectDir)\TestFiles\*.xml" "$(TargetDir)"</PostBuildEvent>
   </Target>
 -->
   <Target Name="AfterBuild">
-	<XslTransformation XslInputPath="$(SolutionDir)xs3p.xsl" XmlInputPaths="$(SolutionDir)oeit.2013.1.xsd" OutputPaths="$(SolutionDir)schema.html" />
+    <XslTransformation XslInputPath="$(SolutionDir)xs3p.xsl" XmlInputPaths="$(SolutionDir)oeit.2013.1.xsd" OutputPaths="$(SolutionDir)schema.html" />
   </Target>
 </Project>

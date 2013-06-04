@@ -72,6 +72,12 @@ namespace OeitTest
             Validate(@"sample1.xml", false);
         }
 
+        [TestMethod]
+        public void TestSampleFile2()
+        {
+            Validate(@"sample2.xml", false);
+        }
+
 
         private void Validate(string x, bool expected)
         {
@@ -79,8 +85,10 @@ namespace OeitTest
             XmlSchema schema = XmlSchema.Read(reader, ValidationEventHandler);
 
             XmlDocument doc = new XmlDocument();
+
             doc.Schemas.Add(schema);
             doc.Load(x);
+
             doc.Validate(ValidationEventHandler);
 
             Assert.AreEqual(expected, validationErrorsEncountered);

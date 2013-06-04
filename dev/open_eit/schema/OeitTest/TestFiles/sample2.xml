@@ -8,6 +8,7 @@
     </electrode_type_list>
 
     <electrode_list coordinate_system="Cartesian" position_description="Absolute">
+      <not_allowed></not_allowed>
       <electrode name="electrode0" type="electrode_type0" ordinal="0" position="[0,0,0]"/>
       <electrode name="electrode1" type="electrode_type0" ordinal="1" position="[0,0,0]"/>
       <electrode name="electrode2" type="electrode_type0" ordinal="2" position="[0,0,0]"/>
@@ -33,9 +34,8 @@
     </meas_type_list>
 
     <stim_type_list>
-      <stim_type name="sgoe" amplitude="100" frequency="55.6" physical_property="current" wave="square"/>
+      <stim_type />
     </stim_type_list>
-
     <measurements>
       <meas_task start="0" stop="100">
         <inputs>

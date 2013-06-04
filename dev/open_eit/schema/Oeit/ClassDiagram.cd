@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Oeit.Oeit">
+    <Position X="5.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Oeit.cs</FileName>
+      <NewMemberFileName>oeit.cs</NewMemberFileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Subject" />
+      <Property Name="Configuration" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Oeit.Subject">
+    <Position X="8" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Subject.cs</FileName>
+      <NewMemberFileName>subject.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.Configuration">
+    <Position X="8" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration.cs</FileName>
+      <NewMemberFileName>configuration.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.ElectrodeType">
+    <Position X="10.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEgAEAAABAABAAAAAAAAAEQAAAAAAAAAAAgBAAAAAAA=</HashCode>
+      <FileName>ElectrodeType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.ElectrodeList">
+    <Position X="2" Y="5.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAEAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ElectrodeList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.Electrode">
+    <Position X="6.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgABAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Electrode.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Type" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Oeit.Position">
+    <Position X="5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Position.cs</FileName>
+      <NewMemberFileName>position.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.CartesianPosition">
+    <Position X="4" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CartesianPosition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.Dataset">
+    <Position X="0.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dataset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.Recording">
+    <Position X="2.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Recording.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oeit.Measurement">
+    <Position X="4.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Measurement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Oeit.CoordinateSystem">
+    <Position X="8.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IEAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>CoordinateSystem.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Oeit.PositionDescription">
+    <Position X="10.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAgAAAA=</HashCode>
+      <FileName>PositionDescription.cs</FileName>
+      <NewMemberFileName>positiondescription.cs</NewMemberFileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
