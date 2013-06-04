@@ -30,6 +30,13 @@ end
 for i = 1:length(shapes)
    l1 = length(M1.nodes);
    M2 = shapes{i};
+   % make sure boundaries are the same dimension
+   if size(M1.boundary,2) == 2 && size(M2.boundary,2)==3
+      % M1 is 2D, M2 is 3D
+      M1.boundary = M1.elems;
+   elseif size(M1.boundary,2) == 3 && size(M2.boundary,2)==2
+      M2.boundary = M2.elems;
+   end
    nodes_to_add = [];
    n_new_nodes = 0;
    match = 0 * (1:length(M2.nodes)); 
