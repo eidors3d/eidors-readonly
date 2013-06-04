@@ -8,7 +8,8 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file, maxh)
 %                each electrode)
 %  ng_opt_file = an alternative ng.opt file to use (OPTIONAL)
 %                specify [] to use dafault
-%  maxh        = maximum edge length in the resulting volume 
+%  maxh        = maximum edge length (if ng_opt_file is specified, maxh 
+%                only applies to the volume and not the surface)
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
 %     OR
@@ -52,6 +53,7 @@ end
 if nargin < 5
    maxh = [];
 end
+   
 
 % filenames
 if do_debug; fnstem = 'tmp1';
@@ -85,7 +87,7 @@ end
 
 % 3. Save as STL and mesh with NETGEN 
 write_to_stl(mdl,stlfn);
-write_ng_opt_file(ng_opt_file)
+write_ng_opt_file(ng_opt_file, maxh)
 call_netgen(stlfn,meshfn);
 delete('ng.opt'); % clean up
 
@@ -134,7 +136,7 @@ STL.vertices = mdl.nodes;
 STL.faces    = mdl.elems;
 stl_write(STL,stlfn);
 
-function write_ng_opt_file(ng_opt_file)
+function write_ng_opt_file(ng_opt_file, maxh)
 % these options are meant to insure that the electrode sides don't get 
 % modified, but there's no guarantee
 if ~isempty(ng_opt_file)
@@ -147,6 +149,10 @@ else
    opt.stloptions.chartangle = 0;
    opt.stloptions.outerchartangle = 120;
    opt.stloptions.resthchartdistenable = 0;
+   if ~isempty(maxh)
+      opt.options.meshsize = maxh;
+   end
+   opt.meshoptions.laststep = 'mv'; % don't need volume optimization
    ng_write_opt(opt);
 end
 
@@ -761,4 +767,10 @@ elec_pos = [-0.5, -0.8, 1];
 % place_elec_on_surf(fmdl, elec_pos, [0.15 0.1 0.01]);
 mdl = place_elec_on_surf(fmdl, [16 0 1], [0.15 0.1 0.01]);
 % place_elec_on_surf(fmdl, [16 0 1], [0.1 0 0.01]);
+subplot(121)
+show_fem(mdl);
+
+mdl = place_elec_on_surf(fmdl, [16 0 1], [0.15 0.1 0.01],[],0.1);
+% place_elec_on_surf(fmdl, [16 0 1], [0.1 0 0.01]);
+subplot(122)
 show_fem(mdl);
