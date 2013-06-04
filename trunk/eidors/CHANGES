@@ -1,3 +1,4 @@
+2013-06-03: allow specifying command line options for gmsh
 2013-05-29: ======================= RELEASE 3.7.1 ========================
 2013-05-26: add anti-aliasing to print_convert
 2013-05-18: refactor mk_GREIT_model to use mk_pixel_slice
