@@ -31,7 +31,7 @@ end
 % this will crash if N>length(points)
 function C = fit_to_fourier(points,N);
    z = points*[1;1i];
-   Z = fft(z);
+   Z = fft(z,max(N,size(points,1)));
    if rem(N,2)==0 % Even 
      N2 = N/2;
      Zlp = Z([1,2:N2,1,end-(N2-2:-1:0)]);

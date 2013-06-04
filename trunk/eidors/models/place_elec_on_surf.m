@@ -513,25 +513,31 @@ for i = 1:n_elecs
       elecs(i).shape = 'C';
       r = elec_shape(i,1);
       n = ceil(2*pi*elec_shape(i,1) / elec_shape(i,3));
-      t = linspace(0,2*pi,n); t(end) = [];
+      t = linspace(0,2*pi,n+1); t(end) = [];
       x = r*sin(t); y = r*cos(t);
    else
       elecs(i).shape = 'R';
-      height = elec_shape(i,1); width = elec_shape(i,2); d = elec_shape(i,3);
-      nh = ceil(height/d); nw = ceil(height/d);
+      height = elec_shape(i,1); width = elec_shape(i,2); d_org = elec_shape(i,3);
+      % enforce a minimum of 5 nodes per side
+      d = min( [ d_org , height/5, width/5]);
+      if d < d_org
+         elecs(i).maxh = d;
+         eidors_msg('@@@ Decreased maxh of electrode %d from %f to %f',i,d_org, d,2);
+      end
+      nh = ceil(height/d); nw = ceil(width/d); 
       ph = linspace(-height/2,height/2,nh);
       pw = linspace(-width/2,width/2,nw);
       y = [ph, ph(end)*ones(1,nw-2), fliplr(ph), ph(1)*ones(1,nw-2)];
       x = [pw(1)*ones(1,nh-1), pw, pw(end)*ones(1,nh-2), fliplr(pw(2:end))];
       %    % we don't want real rectangles, because Netgen will merge coplanar
       %    % faces, so we create a nice superellipse instead
-      n = ceil(2*(height+width)/d);
+      n = 2*(nh+nw);
       %    t = linspace(2*pi,0,n); t(end) = [];
       %    N = 8;
       %    x = abs(cos(t)).^(2/N) * width/2  .* sign(cos(t));
       %    y = abs(sin(t)).^(2/N) * height/2 .* sign(sin(t));
       % superellipses are also bad, what about a wavy rectange?
-      [pp] = fourier_fit([x; y]',20);
+      [pp] = fourier_fit([x; y]', min(size(x,2),20) );
       t = linspace(0,1,n+1); t(end) = [];
       xy = fourier_fit(pp,t);
       x = xy(:,1)'; y = xy(:,2)';
