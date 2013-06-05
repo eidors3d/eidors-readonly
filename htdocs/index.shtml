@@ -12,6 +12,8 @@ working these fields.
 <li> <a href="http://www.matlab.com">Matlab</a> (&ge;7.0) or
      <a href="http://www.octave.org">Octave</a> (&ge;3.6),
 <li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional),
+(Direct link to 
+<a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.0/">Netgen 5.0</a>)
 <li> <a href="http://geuz.org/gmsh/">Gmsh Mesher</a> (optional)
 </ul>
 
