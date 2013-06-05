@@ -23,11 +23,11 @@ copy-to-mirror:
 	@echo "Copy to Mirror ## Must run on adler-server"
 	chgrp adler-res -R ../htdocs/
 	chmod g+rw -R ../htdocs
-	rsync --exclude=.svn -av ../htdocs/ /home/adler/htdocs/eidors/ 
+	rsync --exclude=.svn -av -O ../htdocs/ /home/adler/htdocs/eidors/ 
 	@echo "It's OK if some warnings"
 
 copy-mirror-to-sf:
-	rsync --exclude=.svn -avz /home/adler/htdocs/eidors/ aadler,eidors3d@web.sf.net:htdocs/
+	rsync --exclude=.svn -avz -O /home/adler/htdocs/eidors/ aadler,eidors3d@web.sf.net:htdocs/
 
 $(REL):
 	mkdir -p $(REL)
