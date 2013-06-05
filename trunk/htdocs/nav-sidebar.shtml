@@ -62,7 +62,7 @@
       >&minus; <i>Workshop</i></a><br>
 <!--#endif -->
 <a href="<!--#echo var="root" -->download.shtml"
-   >Download</a><br>
+   >Install</a><br>
 <a href="<!--#echo var="root" -->data_contrib.shtml"
    >Contrib Data</a><br>
 <a href="<!--#echo var="root" -->GREIT/index.shtml"
