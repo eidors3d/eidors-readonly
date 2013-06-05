@@ -344,6 +344,35 @@ axis([-2.5,2.5,-2.5,2.5,-2,0]);
 <br>Surface electrodes and ring electrodes on a borehole
 </center>
 
+<h3>
+Shape 16
+</h3>
+<pre>
+ shape_str = ['solid top    = plane( 0, 0, 0; 0, 0, 1);\n' ...
+              'solid bot    = plane( 0, 0,-1; 0, 0,-1);\n' ...
+              'solid xmax   = plane( 3, 0, 0; 1, 0, 0);\n' ...
+              'solid xmin   = plane(-3, 0, 0;-1, 0, 0);\n' ...
+              'solid ymax   = plane( 0, 2, 0; 0, 2, 0);\n' ...
+              'solid ymin   = plane( 0,-2, 0; 0,-2, 0);\n' ...
+              'solid mainobj= top and bot and xmax and xmin and ymax and ymin;'];
+ elec_pos = [  1, -2,  0,   0,  1,  0;
+               0, -2,  0,   0,  1,  0;
+              -1, -2,  0,   0,  1,  0;
+              -1,  2,  0,   0, -1,  0;
+              -3,  1,  0,  -1,  0,  0];
+ elec_shape=[0.4,1,0.05];
+ elec_obj = {'ymin', 'ymin', 'ymin','ymax','xmin'};
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+</pre>
+To crop the <i>z</i>=0 layer, use
+<pre>
+ fmdl = mdl2d_from3d(fmdl);
+</pre>
+<center>
+<img src="netgen_gen_models16.png"><img src="netgen_gen_models16a.png">
+<br>A 2D slice of a model on the <i>z</i>=0 plane
+</center>
+
 </td></tr></table>
 <p>
 <small>

@@ -1,11 +1,11 @@
 function netgen_gen_models( numbers )
 
-if nargin==0; numbers = 1:20; end
+if nargin==0; numbers = [1:15,15.1,16,16.1,17:20]; end
 for i=numbers(:)';
    do_sim(i);
 end
 
-function do_sim( number )
+function fmdl= do_sim( number )
 switch number
    case 1;
  shape_str = ['solid cyl    = cylinder (0,0,0; 0,0,1; 1); \n', ...
@@ -207,6 +207,26 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 crop_model([], inline('z<-2 | abs(x)>2.5 | abs(y)>2.5','x','y','z'));
 axis([-2.5,2.5,-2.5,2.5,-2,0]);
 
+   case 16;
+ shape_str = ['solid top    = plane( 0, 0, 0; 0, 0, 1);\n' ...
+              'solid bot    = plane( 0, 0,-1; 0, 0,-1);\n' ...
+              'solid xmax   = plane( 3, 0, 0; 1, 0, 0);\n' ...
+              'solid xmin   = plane(-3, 0, 0;-1, 0, 0);\n' ...
+              'solid ymax   = plane( 0, 2, 0; 0, 2, 0);\n' ...
+              'solid ymin   = plane( 0,-2, 0; 0,-2, 0);\n' ...
+              'solid mainobj= top and bot and xmax and xmin and ymax and ymin;'];
+ elec_pos = [  1, -2,  0,   0,  1,  0;
+               0, -2,  0,   0,  1,  0;
+              -1, -2,  0,   0,  1,  0;
+              -1,  2,  0,   0, -1,  0;
+              -3,  1,  0,  -1,  0,  0];
+ elec_shape=[0.4,1,0.05];
+ elec_obj = {'ymin', 'ymin', 'ymin','ymax','xmin'};
+ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+   case 16.1;
+ fmdl = do_sim( 16 );
+ fmdl = mdl2d_from3d(fmdl);
 
 end
 
@@ -218,5 +238,9 @@ if any(number==[13]); view(-64,-13); end
 if any(number==[14]); view(-111,21); end
 if any(number==[15]); view(-10,20); end
 
-print_convert( ...
-   sprintf('netgen_gen_models%02d.png',number), '-density 75');
+if rem(number,1) ==0 
+  prname = sprintf('netgen_gen_models%02d.png',floor(number));
+else
+  prname = sprintf('netgen_gen_models%02da.png',floor(number));
+end
+print_convert( prname, '-density 75');
