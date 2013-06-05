@@ -43,9 +43,10 @@ Read-only, worldwide access is available via SVN using
 <pre>
 svn co svn://svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
 </pre>
-Note that in a GUI client, such as 
-<a href="http://tortoisesvn.net/downloads.html">Tortoise SVN</a>,
-you will likely only need to input the address part from the above command.
+OR
+<pre>
+svn checkout http://svn.code.sf.net/p/eidors3d/code/trunk eidors3d-code
+</pre>
 
 
 
@@ -55,6 +56,10 @@ Read/Write access to Developer Version
 Read/Write access is available via SVN using
 <pre>
 svn co --username=YOUR_USERNAME svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
+</pre>
+OR
+<pre>
+svn checkout https://svn.code.sf.net/p/eidors3d/code/trunk eidors3d-code
 </pre>
 Read-write access is available for registered <a href="http://www.sf.net">Sourceforge</a>
 developers. To become a developer, 
@@ -68,6 +73,23 @@ Upload your <a href="https://sourceforge.net/account/ssh">
 SSH public key here</a>.
 
 
+</ul>
+
+<h3>GUI clients for developers</h3>
+<ul>
+<li> 
+<b>
+<a href="http://tortoisesvn.net/downloads.html">Tortoise SVN</a>,
+</b>
+   <ol type="a">
+     <li> (in windows) Download and install  
+<a href="http://tortoisesvn.net/downloads.html">Tortoise SVN</a>,
+     <li> (in a directory or desktop) right click and select "SVN Checkout"
+     <li> (in "URL of repository") type:
+<pre>
+svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk
+</pre>
+   </ol>
 </ul>
 
 <!--
