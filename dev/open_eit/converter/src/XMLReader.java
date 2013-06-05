@@ -25,8 +25,4 @@ public class XMLReader {
 		}
 
 	}
-	
-	public static void main(String argv[]) {
-		readXML("sample1.xml");
-	}
 }
