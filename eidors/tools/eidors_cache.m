@@ -128,8 +128,8 @@ switch command
    case 'init'
       eidors_objects.cache_enable = 1;
       eidors_objects.cache_disabled_on = [];
-      eidors_objects.debug_enable = 0;
-      eidors_objects.debug_enabled_on = [];
+      eidors_objects.cache_debug_enable = 0;
+      eidors_objects.cache_debug_enabled_on = [];
       
    case {'clear_all','clear'}
       [objid, times, sizes, prios, priidx] = get_names_times;
@@ -195,41 +195,41 @@ switch command
       end
    case 'debug_status'
       if nargin == 1
-         varargout{1} = eidors_objects.debug_enable;
+         varargout{1} = eidors_objects.cache_debug_enable;
       else
-         if isfield(eidors_objects,'debug_enabled_on')
-            idx = strcmp(eidors_objects.debug_enabled_on, limit);
-            varargout{1} = double(any(idx)) | eidors_objects.debug_enable==1;
+         if isfield(eidors_objects,'cache_debug_enabled_on')
+            idx = strcmp(eidors_objects.cache_debug_enabled_on, limit);
+            varargout{1} = double(any(idx)) | eidors_objects.cache_debug_enable==1;
          end
       end
    case 'debug_on'
        if nargin == 1
-           eidors_objects.debug_enable = 1;
-           eidors_objects.debug_enabled_on = {};
+           eidors_objects.cache_debug_enable = 1;
+           eidors_objects.cache_debug_enabled_on = {};
        else
-           eidors_objects.debug_enable = 0.5;
-           if isfield(eidors_objects,'debug_enabled_on')
-            if ~any(strcmp(eidors_objects.debug_enabled_on, limit))
-                eidors_objects.debug_enabled_on = [...
-                    eidors_objects.debug_enabled_on; {limit}];
+           eidors_objects.cache_debug_enable = 0.5;
+           if isfield(eidors_objects,'cache_debug_enabled_on')
+            if ~any(strcmp(eidors_objects.cache_debug_enabled_on, limit))
+                eidors_objects.cache_debug_enabled_on = [...
+                    eidors_objects.cache_debug_enabled_on; {limit}];
             end
            else
-               eidors_objects.debug_enabled_on =  {limit};
+               eidors_objects.cache_debug_enabled_on =  {limit};
            end
        end
    case 'debug_off'
       if nargin == 1
-         eidors_objects.debug_enable = 0;
-         eidors_objects.debug_enabled_on = {};
+         eidors_objects.cache_debug_enable = 0;
+         eidors_objects.cache_debug_enabled_on = {};
       else
-         if isfield(eidors_objects,'debug_enabled_on')
-            idx = strcmp(eidors_objects.debug_enabled_on, limit);
-            eidors_objects.debug_enabled_on(idx) = [];
+         if isfield(eidors_objects,'cache_debug_enabled_on')
+            idx = strcmp(eidors_objects.cache_debug_enabled_on, limit);
+            eidors_objects.cache_debug_enabled_on(idx) = [];
          else
-            eidors_objects.debug_enabled_on = [];
+            eidors_objects.cache_debug_enabled_on = [];
          end
-         if isempty(eidors_objects.debug_enabled_on)
-            eidors_objects.debug_enable = 0;
+         if isempty(eidors_objects.cache_debug_enabled_on)
+            eidors_objects.cache_debug_enable = 0;
          end
       end
    case 'boost_priority'
@@ -267,14 +267,14 @@ switch command
    case 'clear_old'
       if ischar(limit); limit= str2num(limit); end
       [objid, times, sizes, prios, priidx] = get_names_times;
-      remove_objids( objid, sizes,  ...
-        find(times < limit) );
+      remove_objids( objid, sizes, ...
+         find(times < limit));
 
    case 'clear_new'
       if ischar(limit); limit= str2num(limit); end
       [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  ...
-        find(times > limit) );
+         find(times > limit) );
 
    case 'clear_model_library'
       %TODO: add ways to select what to delete
@@ -283,7 +283,7 @@ switch command
    case 'clear_name'
       [objid, sizes, clearidx] = clear_names_cache( limit );
       remove_objids( objid, sizes, clearidx);
-   
+      
    case 'dump'
       varargout{1} = eidors_objects;
       
@@ -293,6 +293,7 @@ switch command
    otherwise
       error('command %s not understood',command);
 end
+
 
 function [objid, sizes, clearidx] = clear_names_cache( name );
    objid={}; times=[]; clearidx= [];
@@ -377,8 +378,8 @@ function remove_objids( objid, sizes, idx)
    end
    
    eidors_objects= rmfield( eidors_objects, objid( idx ) );
-   eidors_msg('eidors_cache: removing %d objects with %d bytes', ...
-          length(idx), sum(sizes(idx)), 3 );
+   eidors_msg('Removed %d objects with %d bytes from cache', ...
+          length(idx), sum(sizes(idx)), 2 );
 
        
 function varargout = cache_shorthand(fhandle, varargin)
@@ -387,6 +388,10 @@ function varargout = cache_shorthand(fhandle, varargin)
       opt = varargin{2};
    else
       opt = struct;
+   end
+   if ischar(opt)
+      fstr = opt; clear opt;
+      opt.fstr = fstr;
    end
    if isfield(opt, 'cache_obj');
       cache_obj = opt.cache_obj;
@@ -397,7 +402,11 @@ function varargout = cache_shorthand(fhandle, varargin)
       cache_obj = varargin{1};
    end
    
-   fstr = func2str(fhandle);
+   try
+      fstr = opt.fstr;
+   catch
+      fstr = func2str(fhandle);
+   end
    
    varargout = eidors_obj('get-cache', cache_obj, fstr );
    if numel(varargout) < nargout

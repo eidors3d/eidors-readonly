@@ -70,7 +70,7 @@ if ischar(varargin{1}) && strcmp(varargin{1}, 'UNIT_TEST'), mdl = do_unit_test; 
 
 [shape, elec_pos, elec_shape] = process_input(varargin{:});
 
-mdl = eidors_cache(@ng_mk_2d_model_do,{shape, elec_pos, elec_shape});
+mdl = eidors_cache(@ng_mk_2d_model_do,{shape, elec_pos, elec_shape},'ng_mk_2d_model');
 
 
 

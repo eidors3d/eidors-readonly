@@ -69,8 +69,14 @@ while( 1 )
       setenv('NETGEN_USER_DIR', cd);
    end
 
-   sys_cmd = sprintf('"%s" %s -batchmode -geofile=%s  -meshfile=%s ', ...
-      ng_name, finelevel,geo_file,vol_file);
+   if eidors_debug('query','call_netgen')
+      sys_cmd = sprintf('"%s" %s  -geofile=%s  -meshfile=%s ', ...
+         ng_name, finelevel,geo_file,vol_file);
+   else
+      sys_cmd = sprintf('"%s" %s -batchmode -geofile=%s  -meshfile=%s ', ...
+         ng_name, finelevel,geo_file,vol_file);
+   end
+   
    status= system_cmd( sys_cmd );
 
    if status==0; break; end
