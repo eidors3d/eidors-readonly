@@ -50,6 +50,9 @@ switch command
    case 'query'
       idx = strcmp(eidors_objects.debug_enabled_on, fstr);
       out = any(idx);
+   otherwise
+      error('EIDORS:WrongInput',['First input to eidors_debug must be ', ...
+         '''on'',''off'' or ''query''.']);
 end
 
 function test
