@@ -533,7 +533,7 @@ for i = 1:n_elecs
          elecs(i).maxh = d;
          eidors_msg('@@@ Decreased maxh of electrode %d from %f to %f',i,d_org, d,2);
       end
-      nh = ceil(height/d); nw = ceil(width/d); 
+      nh = ceil(height/d)+1; nw = ceil(width/d)+1; 
       ph = linspace(-height/2,height/2,nh);
       pw = linspace(-width/2,width/2,nw);
       y = [ph, ph(end)*ones(1,nw-2), fliplr(ph), ph(1)*ones(1,nw-2)];
