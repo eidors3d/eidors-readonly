@@ -106,6 +106,10 @@
 
  - keep the gmsh path the same way as the new netgen
 
+ - On left_divide
+    - remove old parameters tol,pp,V)
+    - add options for solver type, tol, etc
+
 ############## 3.7.1 ################3
  + how to touch on svn - or delete and readd
  + write the changes

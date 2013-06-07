@@ -6,7 +6,7 @@ function img = eidors_readimg( fname, format )
 % Currently the list of supported file formats is:
 %    - MCEIT (Goettingen / Viasys) "igt" file format 
 %        format = "IGT" or "MCEIT"
-%    - DIXTAL (Goettingen / Viasys) "imt" file format 
+%    - DIXTAL (Goettingen / Viasys) "img" file format 
 %        format = "DIXTAL-IMG"
 %    - NATIVE "e3d" file format
 %        format = "e3d" or "NATIVE"
