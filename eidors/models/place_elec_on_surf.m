@@ -71,6 +71,9 @@ stlfn2 = [fnstem,'.stl'];
 
 % 1. Get a surface model
 mdl = prepare_surf_model(mdl);
+if isempty(maxh)
+   maxh = max(mdl.edge_len);
+end
 
 elecs = parse_elecs(mdl,elec_pos,elec_spec);
 
@@ -81,7 +84,7 @@ for i = 1:length(elecs)
       [mdl E1{i} E2{i} V{i}] = add_electrodes(mdl,N,elecs(i));
    catch e
       eidors_msg('Failed to add electrode #%d',i,1);
-      rethrow e;
+      rethrow(e);
    end
 end
 
@@ -101,8 +104,9 @@ mdl.elems = mdl.boundary;
 for i = 1:length(elecs)
    try 
       mdl = flatten_electrode(mdl,E1{i},E2{i}, V{i});
-   catch
-      error('Failed to flatten electrode #%d',i);
+   catch e
+      eidors_msg('Failed to flatten electrode #%d',i,1);
+      rethrow(e);
    end
 end
 
@@ -118,18 +122,7 @@ for i = 1:length(elecs)
 end
 
 function debugging = do_debug;
-  % Old idea
-  %% set to true for some graphical output
-  %try mdl.place_elec_on_surf.DEBUG;
-  %catch
-  %   mdl.place_elec_on_surf.DEBUG = false;
-  %end
-  global eidors_objects;
-  try 
-     debugging = eidors_objects.place_elec_on_surf.debugging;
-  catch
-     debugging = false;
-  end
+  debugging = eidors_debug('query','place_elec_on_surf');
 
 function write_to_stl(mdl,stlfn)
 STL.vertices = mdl.nodes;
@@ -142,17 +135,23 @@ function write_ng_opt_file(ng_opt_file, maxh)
 if ~isempty(ng_opt_file)
    ng_write_opt(ng_opt_file);
 else
+   opt.meshoptions.fineness = 6; % some options have no effect without this
    opt.options.curvaturesafety = 0.2;
-   opt.stloptions.yangle = 10;
-   opt.stloptions.contyangle = 20;
+   % small yangle preserves the original mesh, large encourages smoother
+   % surface with nicer spreading of refinement
+   opt.stloptions.yangle = 30; % was 10
+ %    opt.stloptions.contyangle = 20;
    opt.stloptions.edgecornerangle = 0;
-   opt.stloptions.chartangle = 0;
+%    opt.stloptions.chartangle = 0;
    opt.stloptions.outerchartangle = 120;
-   opt.stloptions.resthchartdistenable = 0;
+   opt.stloptions.resthchartdistenable = 1;
+   opt.stloptions.resthchartdistfac = 2.0; % encourages slower increase of element size
    if ~isempty(maxh)
       opt.options.meshsize = maxh;
    end
    opt.meshoptions.laststep = 'mv'; % don't need volume optimization
+   opt.options.optsteps2d =  5; % but we can up surface optimization
+   opt.options.badellimit = 120; % decrease the maximum allowed angle
    ng_write_opt(opt);
 end
 
@@ -168,6 +167,11 @@ mdl.face_centre = mdl.face_centre(mdl.boundary_face,:);
 mdl.normals = mdl.normals(mdl.boundary_face,:);
 mdl = rmfield(mdl, 'inner_normal');
 mdl = rmfield(mdl, 'boundary_face');
+idx = nchoosek(1:3, 2);
+elem_sorted = sort(mdl.elems,2);
+[mdl.edges ib ia] = unique(reshape(elem_sorted(:,idx),[],2),'rows');
+D = mdl.nodes(mdl.edges(:,1),:) - mdl.nodes(mdl.edges(:,2),:);
+mdl.edge_len = sqrt(sum(D.^2,2)); 
 
 function mdl = orient_boundary(mdl)
 % consistently orient boundary elements
@@ -329,6 +333,7 @@ for i = 1:length(PN)
       rm(i) = true;
    end
 end
+
 % we can only delete if it's not part of the boundary
 b = unique(edges(:));
 rm = find(rm);
@@ -355,10 +360,11 @@ end
 D = DelaunayTri([x y],[edges; C]);
 els = D.Triangulation(D.inOutStatus,:);
 
+
 % project all electrode points on all triangles, using the normal of the central elem
 Ne = mdl.normals(fc,:);
-for j = 1:length(elecs.points)
-   Pe = elecs.points(j,:);
+for j = 1:length(elecs.nodes)
+   Pe = elecs.nodes(j,:);
    for i = 1:length(fcs)
       Nf = mdl.normals(fcs(i),:);
       Cf = mdl.face_centre(fcs(i),:);
@@ -380,39 +386,42 @@ for j = 1:length(elecs.points)
 end
 
 % this is just output
-EL1 = Proj;
+EL1 = Proj(1:length(elecs.points),:);
 
+% remove any nodes inside the electrode
 ln = length(nodes);
-IN = inpolygon(x(1:ln),y(1:ln),x(ln+1:end),y(ln+1:end));
+% IN = inpolygon(x(1:ln),y(1:ln),x(ln+1:end),y(ln+1:end));
+% nodes(IN) = [];
 
 add = elecs.maxh;
 
-nn = mdl.nodes(nodes,:) + add * repmat(IN,1,3) .* repmat(Ne,ln,1);
-le = length(elecs.points);
+nn = mdl.nodes(nodes,:);% + add * repmat(IN,1,3) .* repmat(Ne,ln,1);
+le = length(elecs.nodes);
 ne = Proj + add * repmat(Ne,le,1);
 
 %this is just output
-EL2 = ne;
+EL2 = ne(1:length(elecs.points),:);
 V = add*Ne;
 
 % the nodes of the electrode
-IN = [IN; ones(le,1)];
+% IN = [IN; ones(le,1)];
 el_c = D.incenters;
 el_c(~D.inOutStatus,:) = [];
 e_el = inpolygon(el_c(:,1),el_c(:,2),x(ln+1:end),y(ln+1:end));
-els(e_el,:) = els(e_el,:) + (els(e_el,:)>ln ) .* le;
+els(e_el,:) = []; % els(e_el,:) + (els(e_el,:)>ln ) .* le;
 
 % add connecting elements
 E = [];
-f = ln + [ 1 le+2 le+1; le+2 1 2];
+le = length(elecs.points);
+f = ln + [ 1 le+1 le+2; le+2 2 1];
 for j = 0:(le-2)
    E = [E; j+f];
 end
-M = ln + [le+1 2*le le; le 1 le+1];
+M = ln + [le+1 le 2*le; le le+1 1];
 E = [E; M];
 
-jnk.nodes = [nn ; Proj;  ne];
-jnk.elems = [ els; E];
+jnk.nodes = [nn ; Proj(1:le,:);  ne];
+jnk.elems = [ els; E; elecs.elems+ln+le];
 jnk.boundary = jnk.elems;
 if do_debug
    show_fem(jnk);
@@ -537,16 +546,33 @@ for i = 1:n_elecs
       %    x = abs(cos(t)).^(2/N) * width/2  .* sign(cos(t));
       %    y = abs(sin(t)).^(2/N) * height/2 .* sign(sin(t));
       % superellipses are also bad, what about a wavy rectange?
-      [pp] = fourier_fit([x; y]', min(size(x,2),20) );
-      t = linspace(0,1,n+1); t(end) = [];
-      xy = fourier_fit(pp,t);
-      x = xy(:,1)'; y = xy(:,2)';
+%       [pp] = fourier_fit([x; y]', min(size(x,2),18) );
+%       t = linspace(0,1,n+1); t(end) = [];
+%       xy = fourier_fit(pp,t);
+%       x = xy(:,1)'; y = xy(:,2)';
+      % wavy rectangles are nice but don't guarantee absence of co-planar
+      % faces
+      % let's try a brute-force approach
+      e = tand(0.5)*d;
+      x = x + e* [0 power(-1,0:nh-3) zeros(1,nw)  power(-1,0:nh-3) zeros(1,nw-1)];
+      y = y + e* [zeros(1,nh) power(-1,0:nw-3) zeros(1,nh) power(-1,0:nw-3)];
    end
    fc = find_face_under_elec(mdl,elecs(i).pos);
    [u v s] = get_face_basis(mdl, fc);
    
-   elecs(i).points = ones(size(x))' * elecs(i).pos + x'*s + y'*v;
+   np = length(x);
+%    elecs(i).points = flipud(ones(size(x))' * elecs(i).pos + x'*s + y'*v);
+
+   ng_write_opt('meshoptions.fineness',1,'options.meshsize',1.2*elecs(i).maxh);
+   emdl = ng_mk_2d_model(flipud([x', y']));
+   x = emdl.nodes(:,1); y = emdl.nodes(:,2);
+   elecs(i).nodes = ones(size(x)) * elecs(i).pos + x*s + y*v;
+   elecs(i).elems = emdl.elems(:,[1 3 2]); % flip orientation to the outside
+   elecs(i).points = elecs(i).nodes(1:np,:); % this must be the boundary
+   % TODO: write code to check if this is true
+   
 end
+delete('ng.opt');
 
 function [u v s] = get_face_basis(mdl, fc)
    u = mdl.normals(fc,:); % unit normal
@@ -560,16 +586,19 @@ function [u v s] = get_face_basis(mdl, fc)
    s = cross(u,v); s= s/norm(s);
 
 function [fc pos] = find_elec_centre(mdl, el_th,el_z)
+fc = [];
+pos = [];
+
 Ctr = mean(mdl.nodes(mdl.boundary,:));
 Ctr(3) = el_z;
 
-%1. Find elements that cross the z plane
+%1. Find edges that cross the z plane
 n_above = mdl.nodes(:,3) >= el_z;
-sum_above = sum(n_above(mdl.boundary),2) ;
-els = sum_above > 0 & sum_above < 3;
+sum_above = sum(n_above(mdl.edges),2) ;
+edg = sum_above == 1;
 
 %2. Find an edge that crosses el_th
-n = unique(mdl.boundary(els,:));
+n = unique(mdl.edges(edg,:));
 nn = mdl.nodes(n,1:2);
 nn = nn - repmat(Ctr(:,1:2),length(nn),1);
 th = cart2pol(nn(:,1),nn(:,2));
@@ -579,18 +608,25 @@ idx = find(th(:,1) > el_th,1,'first');
 if isempty(idx) || idx == 1
    n1 = n(th(1,2));
    n2 = n(th(end,2));
-   % elements in els that contain these nodes (they don't need to be on the
+   % edges in edg that contain these nodes (they don't need to be on the
    % same element)
-   el = els & sum( (mdl.boundary == n1) + (mdl.boundary == n2) ,2) > 0;
+   ed = edg & sum( (mdl.edges == n1) + (mdl.edges == n2) ,2) > 0;
 else
-   to_the_left = false(length(mdl.nodes),1);
-   to_the_left(n(th(1:idx-1,2))) = true;
-   sum_left = sum( to_the_left(mdl.boundary), 2);
-   el = els & sum_left > 0 & sum_left < 3;
-%    n1 = n(th(idx-1,2));
-%    n2 = n(th(idx,  2));
+%    to_the_left = false(length(mdl.nodes),1);
+%    to_the_left(n(th(1:idx-1,2))) = true;
+%    sum_left = sum( to_the_left(mdl.boundary), 2);
+%    el = els & sum_left > 0 & sum_left < 3;
+   n1 = n(th(idx-1,2));
+   n2 = n(th(idx,  2));
+   ed = edg & sum( (mdl.edges == n1) + (mdl.edges == n2) ,2) > 0;
 end
 
+el = false(length(mdl.boundary),1);
+for i = find(ed)'
+   n1 = mdl.edges(i,1);
+   n2 = mdl.edges(i,2);
+   el = el | sum( (mdl.boundary == n1) + (mdl.boundary == n2), 2) == 2;
+end
 el = find(el);
 % fcs = find(mdl.boundary_face);
 % fcs = fcs(el);
@@ -618,7 +654,9 @@ for i = 1:length(el)
    % project the line on this element
    % check if it falls inside
 end
-
+if isempty(pos)
+   keyboard
+end
 
 function out = grow_neighbourhood(mdl, varargin)
 use_elec = false;
