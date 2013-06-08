@@ -17,6 +17,8 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file, maxh)
 %     OR
 %  elec_pos = [x y z] centres of each electrode (N_elecs x 3)
 %
+%  Note: N_elecs >= 2.
+%
 % ELECTRODE SHAPES::
 %  elec_shape = [width,height, maxsz]  % Rectangular elecs
 %     OR
