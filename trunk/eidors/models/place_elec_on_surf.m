@@ -78,6 +78,10 @@ if isempty(maxh)
 end
 
 elecs = parse_elecs(mdl,elec_pos,elec_spec);
+if isempty(elecs)
+   error('EIDORS:WrongInput', 'Failed to parse electrode positions. Exiting');
+end
+
 
 % 2. Add extruded electrodes
 for i = 1:length(elecs)
@@ -462,6 +466,7 @@ end
 %  elecs(i).points= list of points around the perimeter
 % Angles (th) are interpreted with the mean of boundary nodes as origin
 function [elecs] = parse_elecs(mdl, elec_pos, elec_shape )
+elecs = [];
 
 if size(elec_shape,2) < 3
    elec_shape(:,3) = elec_shape(:,1)/10;
