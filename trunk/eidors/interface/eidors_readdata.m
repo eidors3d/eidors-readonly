@@ -10,6 +10,7 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 % Currently the list of supported file formats is:
 %    - MCEIT (Goettingen / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
+%        Note that the data is "untwisted" to correspond to a "no_rotate_meas" stim pattern
 %    - Draeger "eit" file format (post 2008 format for Draeger equipment)
 %        format = "draeger-eit"
 %    - Draeger "get" file format (older - pre 2007 - format for Draeger equipment)
