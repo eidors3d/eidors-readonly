@@ -89,6 +89,10 @@ function varargout=eidors_cache( command, varargin )
 %       - get and set cache_path, a path to a writable
 %           directory in which eidors can store files
 %
+%   eidors_cache( 'eidors_path' )
+%   eidors_cache( 'eidors_path', '/path/to/eidors/' )
+%       - /path/to/eidors is the path in which eidors_startup.m is found
+%
 % See also EIDORS_OBJ
 
 % (C) 2005-2013 Andy Adler and Bartlomiej Grychtol.
@@ -148,6 +152,13 @@ switch command
          varargout{1}= eidors_objects.cache_path;
       else
          eidors_objects.cache_path = varargin{1};
+      end
+
+   case 'eidors_path'
+      if nargin == 1
+         varargout{1}= eidors_objects.eidors_path;
+      else
+         eidors_objects.eidors_path = varargin{1};
       end
       
    case {'disable' 'off'}
