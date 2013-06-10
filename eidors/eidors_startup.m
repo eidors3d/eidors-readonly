@@ -45,6 +45,8 @@ function set_defaults(HOMEDIR)
     mk_library_model('LIBRARY_PATH',[HOMEDIR, '/models/cache']);
     eidors_cache('cache_path',[HOMEDIR, '/models/cache']);
 
+    eidors_cache('eidors_path',HOMEDIR);
+
 
 function ver = version_check
     ver= eidors_obj('interpreter_version');
