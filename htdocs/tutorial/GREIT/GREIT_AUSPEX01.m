@@ -1,5 +1,6 @@
 n_elecs = 16;
 fmdl = ng_mk_cyl_models([1 1 0.1] ,[n_elecs,.5],[0.05]);
+% NOTE: The 'rotate_meas' is essential here.
 fmdl.stimulation =  mk_stim_patterns(n_elecs,1,[0,1],[0,1],{'rotate_meas','no_meas_current'}, 1);
 fmdl = mdl_normalize(fmdl, 1); %MUST FOR AUSPEX
 
