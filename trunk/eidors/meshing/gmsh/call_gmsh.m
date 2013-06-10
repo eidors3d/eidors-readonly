@@ -45,7 +45,7 @@ while( 1 )
         islinux =0;
     end
     
-    status= system_cmd(sprintf( '%s %s -%d -v 2 %s',  gmsh_name, geo_file, dim, extra));
+    status= system_cmd(sprintf( '%s "%s" -%d -v 2 %s',  gmsh_name, geo_file, dim, extra));
     
     if status==0; break; end
     
