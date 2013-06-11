@@ -108,6 +108,17 @@ if nargin < 2
    show = 0;
 end
 
+opt.cache_obj = {mdl.nodes, mdl.elems};
+opt.fstr      = 'calc_mesh_quality';
+[Q mdl] = eidors_cache(@do_quality_calc,{mdl},opt);
+
+if show
+   display_figs(Q)
+end
+
+
+function [Q mdl] = do_quality_calc(mdl)
+
 opt.elem2edge = 1;
 opt.face2elem = 1;
 opt.boundary  = 1;
@@ -173,9 +184,6 @@ Q.tet.alpha        = alpha(mdl);
 Q.tet.gamma        = gamma(mdl);
 Q.tet.min_angle    = tet_min_angle(mdl);
 
-if show
-   display_figs(Q)
-end
 
 function display_figs(Q);
 f = figure;  set(f,'Name','Tetrahedron quality');
