@@ -395,6 +395,11 @@ function remove_objids( objid, sizes, idx)
        
 function varargout = cache_shorthand(fhandle, varargin)
 % Will cache on all function inputs, unless opt.cache_obj is specified
+   args = varargin{1};
+   if ~iscell(args)
+      args = {args};
+   end
+   
    if nargin >2
       opt = varargin{2};
    else
@@ -410,9 +415,8 @@ function varargout = cache_shorthand(fhandle, varargin)
          cache_obj = {cache_obj};
       end
    else
-      cache_obj = varargin{1};
+      cache_obj = args;
    end
-   
    try
       fstr = opt.fstr;
    catch
@@ -424,7 +428,7 @@ function varargout = cache_shorthand(fhandle, varargin)
       eidors_msg('@@@ (Re)calculating %s',fstr, 1);
       output = mk_varargout_str(nargout);
       varargout = cell(0);
-      eval(sprintf('%s = %s', output, 'feval(fhandle,cache_obj{:});'));
+      eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
       
       if isfield(opt,'boost_priority');
          eidors_cache('boost_priority',opt.boost_priority);
