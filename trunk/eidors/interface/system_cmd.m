@@ -1,4 +1,4 @@
-function [status,result] = system_cmd( cmd );
+function [status,result] = system_cmd( cmd )
 % SYSTEM_CMD: issue system commands, and try to compensate for
 %    strange differences between systems.
 %
@@ -17,6 +17,8 @@ if ~exist('OCTAVE_VERSION')
      cmd = ['sh -c ''LD_LIBRARY_PATH=""; ',cmd,' '' '];
    end
 end
-
+if eidors_debug('query','system_cmd')
+   disp(cmd);
+end
 [status,result] = system(cmd,'-echo');
 
