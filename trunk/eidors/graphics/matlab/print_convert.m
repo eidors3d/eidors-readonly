@@ -69,7 +69,7 @@ function im = crop_image(im,pp)
       horz_s_pt = find(diff(horz)==+1)   ; horz_s_pt(end) = [];
       idx = find(horz_e_pt - horz_s_pt > pp.horz_cut);
       for i=fliplr(idx) % remove higher first
-        im(:,horz_s_pt(i):horz_e_pt(i),:)= [];
+        im(:,horz_s_pt(i)+pp.horz_space:horz_e_pt(i),:)= [];
       end
    end
    im(:,1:horzpt(1)    ,:)= [];
@@ -82,7 +82,7 @@ function im = crop_image(im,pp)
       vert_s_pt = find(diff(vert)==+1)   ; vert_s_pt(end) = [];
       idx = find(vert_e_pt - vert_s_pt > pp.vert_cut);
       for i=fliplr(idx) % remove higher first
-        im(vert_s_pt(i):vert_e_pt(i),:,:)= [];
+        im(vert_s_pt(i)+pp.vert_space:vert_e_pt(i),:,:)= [];
       end
    end
    im(1:vertpt(1)    ,:,:)= [];
@@ -110,7 +110,9 @@ function pp = parse_options(varargin)
    pp.posn = pp.page;
    pp.imwrite_opts = {};
    pp.horz_cut = 0;
+   pp.horz_space = 0;
    pp.vert_cut = 0;
+   pp.vert_space = 0;
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
 
@@ -149,6 +151,20 @@ function pp = parse_options(varargin)
      end
      if isfield(opt,'vert_cut');
          pp.vert_cut = opt.vert_cut;
+     end
+     if isfield(opt,'vert_space');
+        if opt.vert_space >= pp.vert_cut;
+           warrning('Option vert_space must be smaller than vert_cut. Ingoring');
+        else
+           pp.vert_space = opt.vert_space;
+        end
+     end
+     if isfield(opt,'horz_space');
+        if opt.vert_space >= pp.vert_cut;
+           warrning('Option vert_space must be smaller than vert_cut. Ingoring');
+        else
+           pp.horz_space = opt.horz_space;
+        end
      end
    else
       error('Can''t parse options');
