@@ -1,3 +1,4 @@
+clf
 n_elecs = 16;
 
 % Elliptic model
