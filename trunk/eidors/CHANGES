@@ -1,3 +1,4 @@
+2013-06-11: dramatic speedup of show_fem for 3D meshes
 2013-06-07: various improvements to place_elec_on_surf
 2013-06-06: global managment of debug flags (eidors_debug)
 2013-06-03: allow specifying command line options for gmsh
