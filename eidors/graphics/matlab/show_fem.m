@@ -333,20 +333,14 @@ for e=1:length(mdl.electrode)
         end
     else
         % find elems on boundary attached to this electrode
-        nn=ones(size(ee,1),1)*mdl.electrode(e).nodes(:)';
-        oo=ones(1,size(nn,2));
-        ec=zeros(size(ee));
-        for i=1:size(ec,2);
-           ec(:,i) = any( ee(:,i*oo)==nn, 2);
-        end
+        map = zeros(length(mdl.nodes),1);
+        map(mdl.electrode(e).nodes) = 1;
+        ec = map(ee);
         sels= find(all(ec'));
-
-        for u=1:length(sels)
-            ee= get_boundary( mdl );
-            paint_electrodes(sels(u), ee, ...
-                             mdl.nodes, colour, ...
-                             number_electrodes);
-        end
+        
+        ee= get_boundary( mdl );
+        paint_electrodes(sels,ee,mdl.nodes,colour,number_electrodes);
+        
         if number_electrodes
             el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
             switch number_electrodes
@@ -379,7 +373,7 @@ camlight('left');
 lighting('none'); % lighting doesn't help much
 end
 
-function paint_electrodes(sel,srf,vtx, colour, show_num);
+function paint_electrodes_old(sel,srf,vtx, colour, show_num);
 %function paint_electrodes(sel,srf,vtx);
 %
 % plots the electrodes red at the boundaries.
@@ -396,6 +390,15 @@ Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
 Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
 
 h=patch(Xs,Ys,Zs, colour);
+% need 'direct' otherwise colourmap is screwed up
+set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+
+function paint_electrodes(sel,srf,vtx, colour, show_num);
+
+[u n m] = unique(srf(sel,:));
+fv.vertices = vtx(u,:);
+fv.faces = reshape(m,[],3);
+h = patch(fv,'FaceColor',colour);
 % need 'direct' otherwise colourmap is screwed up
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
