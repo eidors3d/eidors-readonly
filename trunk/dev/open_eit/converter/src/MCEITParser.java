@@ -10,6 +10,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/*
+ * MCEITParser 
+ * Chengbo He June 2013
+ * Carleton University
+ */
+
 public class MCEITParser implements OeitLegacyParser {
 
 	public EitEntity parse(String fileName) throws IOException{
@@ -53,7 +59,7 @@ public class MCEITParser implements OeitLegacyParser {
         /*
          *  Rearranges data and reshapes to a 1D array
          */
-        int a = 0, d = 0;
+        int a = 0, b = 0;
         for (int i = 0; i< 256*(length/256)-1; i++){
     		if ((i+3)%16==0 && a<16*(length/256)){
     			data[i]= input[208+a/(length/256)][a%(length/256)];
@@ -62,8 +68,8 @@ public class MCEITParser implements OeitLegacyParser {
     			a++;
     			i=i+2;
     		}else{
-    			data[i] = input[d/(length/256)][d%(length/256)];
-    			d++;
+    			data[i] = input[b/(length/256)][b%(length/256)];
+    			b++;
     		}
         }
         
@@ -115,6 +121,8 @@ public class MCEITParser implements OeitLegacyParser {
 			NodeList elect0 = stimE.getElementsByTagName("e");
 			String firstOrdinal0 = ((Element)elect0.item(0)).getAttribute("ordinal");
 			String secondOrdinal0 = ((Element)elect0.item(1)).getAttribute("ordinal");
+			String firstGain0 = ((Element)elect0.item(0)).getAttribute("gain");
+			String secondGain0 = ((Element)elect0.item(1)).getAttribute("gain");
 			
 			/*
 			 * GET STIM ORDINAL INFO
@@ -159,6 +167,8 @@ public class MCEITParser implements OeitLegacyParser {
 			NodeList elect = measE.getElementsByTagName("e");
 			String firstOrdinal = ((Element)elect.item(0)).getAttribute("ordinal");
 			String secondOrdinal = ((Element)elect.item(1)).getAttribute("ordinal");
+			String firstGain = ((Element)elect.item(0)).getAttribute("gain");
+			String secondGain = ((Element)elect.item(1)).getAttribute("gain");
 			
 			/*
 			 * GET MEAS ORDINAL INFO
@@ -204,24 +214,28 @@ public class MCEITParser implements OeitLegacyParser {
 					+" <<<STIMULATION>>> "
 					+ "Ordinals:" + firstOrdinal0 + "("
 					+ "name:" + name01
+					+ " gain:" + firstGain0
 					+ " type:" + type01
 					+ " position:" + position01 + ")"
 					+ " " + secondOrdinal0 + "("
 					+ "name:" + name02
+					+ " gain:" + secondGain0
 					+ " type:" + type02
 					+ " position:" + position02 + ")"
 					+ " type:" + stimType + "("
 					+ "amplitude:" + amplitude
 					+ " frequency:" + frequency
 					+ " physical_property:" + physical_property
-					+ " wave" + wave + ")"
+					+ " wave:" + wave + ")"
 					+ " <<<MEASUREMENT>>> " 
 					+ "Ordinals:" + firstOrdinal + "("
 					+ "name:" + name1
+					+ " gain:" + firstGain
 					+ " type:" + type1
 					+ " position:" + position1 + ")"
 					+ " " + secondOrdinal + "("
 					+ "name:" + name2
+					+ " gain:" + secondGain
 					+ " type:" + type2
 					+ " position:" + position2 + ")"
 					+ " type:" + measType  + "("
@@ -229,8 +243,9 @@ public class MCEITParser implements OeitLegacyParser {
 					+ " physical_property:" + physical_property2
 					+ " offset_gain:" + offset_gain
 					+ " signal_gain:" + signal_gain + ")"
-					+ " VALUE: "
-					+ data[i]);
+					+ " <<<VALUE>>> "
+					+ "raw:0x" + Integer.toHexString(0x1000000 | data[i]).substring(1)
+					+ " interpreted:" + data[i]);
 		}
 		//return data;
 	}
@@ -245,11 +260,9 @@ public class MCEITParser implements OeitLegacyParser {
 			System.out.println("eidors_readdata: expecting an input array of size 208*n");
 			return array104;
 		}
-		
 		for (int i = 0; i < x; i++){
 			// to be written
 		}
-		
 		return array208;
 	}
 	
