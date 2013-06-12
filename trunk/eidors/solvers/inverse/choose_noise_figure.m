@@ -77,9 +77,18 @@ function hp=search2(dNF, imdl, dx)
            nf(k)=nf(k)+calc_noise_figure( imdl, 10^-dx(k), 10 );
        end
        log_nf = log10(nf/it);
-       p= polyfit( dx, log_nf-log10(dNF), 1);
+       p= polyfit( dx, log_nf-log10(dNF), 3);
        hp = roots(p);
+       %eliminate complex roots
+       hp = hp(imag(hp)==0);
+       %eliminate out of range roots
        hp = hp( hp<max(dx) & hp>min(dx) );  %USE if poly>1
+       % pick the root with the smallest derivative
+       if numel(hp) >1
+           p2 = p.*(numel(p)-1:-1:0); p2(end) = [];
+           [jnk, pos] = min(abs(polyval(p2,hp)));
+           hp = hp(pos);
+       end
    end
    if isempty(hp)
        %fallback
