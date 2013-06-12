@@ -1,4 +1,4 @@
-function p = order_loop(pp,clk)
+function [p n] = order_loop(pp,clk)
 %ORDER_LOOP Order a list of points on a loop
 % P = ORDER_LOOP(PP) orders clockwise a matrix PP (N x D) of N points in D 
 % dimensions that constitute a continues loop, under the assumption that 
@@ -20,19 +20,24 @@ end
 
 D = distmat(pp) + diag(inf*ones(length(pp),1));
 p = zeros(size(pp));
+n = zeros(size(pp,1),1);
+N = 1:size(pp,1);
 p(1,:) = pp(1,:);
 idx1 = 1;
+n(1) = 1;
 for i = 1:length(pp)-1
    [jnk,idx2] = min(D(idx1,:));
    p(i+1,:) = pp(idx2,:);
    D(:,idx1) = [];
    D(idx1,:) = [];
    pp(idx1,:) = [];
+   N(idx1)   = [];
    if idx2 > idx1
       idx1 = idx2-1;
    else
       idx1 = idx2;
    end
+   n(i+1) = N(idx1);
 end
 ctr = mean(p);
 tmp = p - repmat(ctr,length(p),1);
