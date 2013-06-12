@@ -1,33 +1,46 @@
 function print_convert(filename, varargin)
-% PRINT_CONVERT: print figures and trim them
-% print_convert(filename, options, pagehwr)
+%PRINT_CONVERT: print figures and trim them
+%  PRINT_CONVERT(FILENAME,OPT) prints current figure to FILENAME, which 
+%  must include extenstion.
 %
-%  filename: filename to print to file type is the extension
-%  options:  options to send to imagemagick convert (if it is available)
-%  pagehwr:  set page high/width to control shape of figures
+%  OPT is either a string specifying dpi in the format '-r150' or a struct
+%  with (some of) these fields:
+%   opt.resolution   = 150;              % 150 dpi (default: 125)
+%   opt.pagesize     = [width, height];  % whatever matlab's current units
+%   opt.jpeg_quality = 75;               % jpeg quality (default: 80)
+%   opt.imwrite_opts = {'BitDepth',8};   % options to IMWRITE (default: '')
+%   opt.supersampling_factor = 2;        % anti-aliasing (default: 1 for
+%                                        % images, 2 for graphs). Higher is
+%                                        % smoother.
+%
+%  Note that opt.imwrite_opts takes precedence over opt.jpeq_quality.
 %
 %  Examples
-%   print_convert('outname.png') % assumes resolution = 125dpi
-%   print_convert('outname.png',opts);
+%   print_convert('outname.png')         % uses default options
+%   print_convert outname.png
+%   print_conver outname.png -r150       % set dpi=150
+%   print_convert('outname.png',opts);   % use options
 %
-%  Where options are:
-%   opt.resolution = 150; % 150 dpi
-%   opt.pagesize   = [width, height]; %whatever matlab's current units
-%   opt.imwrite_opts = {'Quality',75}; % Jpeg quality
-%   opt.supersampling_factor = 2; % default, moderate anti-aliasing
 %
-%  Other options are in the UNIT_TEST section of this file
+%  Compatibility with pre-3.7 features:
+%  ------------------------------------
+%  PRINT_CONVERT(FILENAME, OPTIONS, PAGEHWR)
 %
-% Compatibility with pre-3.7 features
+%  FILENAME : filename to print to file type is the extension
+%  OPTIONS  : specify dpi as '-density N'
+%  PAGEHWR  : set page hight/width to control shape of figures
+%  
 %   print_convert('outname.png','-density 150') % resolution to 150 dpi
 %   print_convert('outname.png','-density 150', 0.5)
+%
+% See also IMWRITE
  
-% (C) Andy Adler 2010-2013. License: GPL v2 or v3.
+% (C) Andy Adler and Bartlomiej Grychtol 2010-2013. License: GPL v2 or v3.
 % $Id$
  
 if ischar(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
-pp = parse_options(varargin{:});
+pp = parse_options(filename, varargin{:});
 
 tmpnam = [tempname,'.png'];
 
@@ -48,13 +61,17 @@ delete(tmpnam);
 
 im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
+try
+   imwrite(im,filename,pp.imwrite_opts{:});
+catch e
+   eidors_msg(['Call to IMWRITE failed.'...
+               'Probably opt.imwrite_opts is incorrect for %s files.'],...
+               upper(pp.fmt), 1);
+   disp('opt.imwrite_opts:');
+   disp(pp.imwrite_opts);
+   rethrow(e);
+end
 
-if (strfind(filename,'.jpg') == (length(filename)-3) );
-    imwrite(im,filename,'Quality', pp.jpeg_quality, pp.imwrite_opts{:});
-else 
-imwrite(im,filename,pp.imwrite_opts{:});
-end 
- 
 function im = crop_image(im,pp)
    szim = size(im);
    bdr = squeeze(mean(double(im(1,:,:)),2));
@@ -104,19 +121,43 @@ function f = default_factor
       end
    end 
    
-function pp = parse_options(varargin)
+function fmt = parse_format(filename)   
+    ext = lower(regexp(filename,'(?<=\.).+$','match'));
+    switch ext{1}
+       case {'jpg', 'jpeg'}
+          fmt = 'jpg';
+       case {'j2c', 'j2k', 'jp2'}
+          fmt = 'jp2';
+       case {'tif','tiff'}
+          fmt = 'tif';
+       otherwise
+          fmt = ext{1};
+    end
+       
+function pp = parse_options(filename,varargin)
+   
+   pp.fmt = parse_format(filename);
+
    pp.page = get(gcf,'PaperPosition');
    pp.posn = pp.page;
-   pp.imwrite_opts = {};
+   pp.jpeg_quality = 80; % default jpeg quality
+   if strcmp(pp.fmt,'jpg')
+      pp.imwrite_opts = {'quality',pp.jpeg_quality}; 
+   else
+      pp.imwrite_opts = {};
+   end
    pp.horz_cut = 0;
    pp.vert_cut = 0;
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
-   pp.jpeg_quality = 80;
+   
+   
  
 % Old options
-   if nargin< 1; pp.options = '';  return; end
-   if nargin>=2; pp.posn(4) = pp.posn(3)*varargin{2};  end
+   if nargin< 2;   
+      return; 
+   end
+   if nargin>=3; pp.posn(4) = pp.posn(3)*varargin{2};  end
  
    opt = varargin{1};
    if ischar(opt)
@@ -141,13 +182,14 @@ function pp = parse_options(varargin)
          pp.posn(3:4) = opt.pagesize;
      end
      % TODO, this code can copy from opt to pp
+     if isfield(opt,'jpeg_quality')
+        pp.jpeg_quality = opt.jpeg_quality;
+     end
      if isfield(opt,'imwrite_opts');
         pp.imwrite_opts = opt.imwrite_opts;
-        %if ~any(strcmp(pp.imwrite_opts,'quality') | strcmp(pp.imwrite_opts,'Quality') );
-           %pp.imwrite_opts(end+1:end+2) = {'quality',pp.jpeg_quality};
-        %end
-     %else 
-        %pp.imwrite_opts(end+1:end+2) = {'quality',pp.jpeg_quality};
+        if strcmp(pp.fmt,'jpg') && ~any(strcmpi(pp.imwrite_opts,'quality'))
+           pp.imwrite_opts(end+1:end+2) = {'quality',pp.jpeg_quality};
+        end
      end
     
      if isfield(opt,'horz_cut');
