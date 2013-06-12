@@ -126,26 +126,29 @@ opt.boundary_face = 1;
 opt.normals   = 1;
 opt.face_centre = 1;
 opt.inner_normal = 1;
+opt.face2edge = 1;
+opt.face_area = 1;
+opt.edge_length = 1;
 mdl = fix_model(mdl, opt);
 
+
 % tet properties
-mdl.edge_length = edge_length(mdl);
-mdl.max_edge_length = max(mdl.edge_length(mdl.elem2edge),[],2);
-mdl.min_edge_length = min(mdl.edge_length(mdl.elem2edge),[],2);
-mdl.elem_vol    = elem_volume(mdl);
-mdl.face_area   = face_area(mdl);
-mdl.elem_area   = elem_area(mdl);
-mdl.rad_insphere      = insphere_radius(mdl);
-mdl.rad_circumsphere  = circumsphere_radius(mdl);
-mdl.tet_alt     = tet_altitudes(mdl);
-% Note: The measure based on the minimum solid angle (sin(1/2 min angle)
-% is bound between 0 and 1, but both 0 and 1 are degenerate, so measure is
-% not calculated
-mdl.solid_angle    = solid_angles(mdl);
-mdl.dihedral_angle = dihedral_angles(mdl);
+if elem_dim(mdl) == 3
+   mdl.max_edge_length = max(mdl.edge_length(mdl.elem2edge),[],2);
+   mdl.min_edge_length = min(mdl.edge_length(mdl.elem2edge),[],2);
+   mdl.elem_vol    = elem_volume(mdl);
+   mdl.elem_area   = elem_area(mdl);
+   mdl.rad_insphere      = insphere_radius(mdl);
+   mdl.rad_circumsphere  = circumsphere_radius(mdl);
+   mdl.tet_alt     = tet_altitudes(mdl);
+   % Note: The measure based on the minimum solid angle (sin(1/2 min angle)
+   % is bound between 0 and 1, but both 0 and 1 are degenerate, so measure is
+   % not calculated
+   mdl.solid_angle    = solid_angles(mdl);
+   mdl.dihedral_angle = dihedral_angles(mdl);
+end
 
 % tri properties
-mdl.face2edge        = calc_face2edge(mdl);
 mdl.rad_incircle     = incircle_radius(mdl);
 mdl.rad_circumcircle = circumcircle_radius(mdl);
 mdl.tri_alt          = tri_altitudes(mdl);
@@ -167,25 +170,35 @@ for i = 1:length(f)
 end
 
 
-
-% TET Quality measures
-Q.tet.NSR          = tet_normalized_shape_ratio(mdl);
-% this measure is not very sensitive and not bound between 0 and 1
-% Q.omega        = omega(mdl);
-Q.tet.mu           = mu(mdl);
-Q.tet.tau          = tau(mdl);
-Q.tet.reg          = R_measure(mdl);
-% These two measures from Field's paper are not scale invariant
-% Q.R_star       = R_star(mdl);
-% Q.S            = S_measure(mdl);
-Q.tet.zeta         = zeta(mdl);
-Q.tet.eta          = eta(mdl);
-Q.tet.alpha        = alpha(mdl);
-Q.tet.gamma        = gamma(mdl);
-Q.tet.min_angle    = tet_min_angle(mdl);
-
+if elem_dim(mdl) == 3
+   % TET Quality measures
+   Q.tet.NSR          = tet_normalized_shape_ratio(mdl);
+   % this measure is not very sensitive and not bound between 0 and 1
+   % Q.omega        = omega(mdl);
+   Q.tet.mu           = mu(mdl);
+   Q.tet.tau          = tau(mdl);
+   Q.tet.reg          = R_measure(mdl);
+   % These two measures from Field's paper are not scale invariant
+   % Q.R_star       = R_star(mdl);
+   % Q.S            = S_measure(mdl);
+   Q.tet.zeta         = zeta(mdl);
+   Q.tet.eta          = eta(mdl);
+   Q.tet.alpha        = alpha(mdl);
+   Q.tet.gamma        = gamma(mdl);
+   Q.tet.min_angle    = tet_min_angle(mdl);
+end
 
 function display_figs(Q);
+f = figure; set(f,'Name','Surface triangle quality');
+f = fields(Q.tri);
+for i = 1:length(f)
+   subplot(3,3,i)
+   hist(Q.tri.(f{i}),100);
+   xlabel(strrep(f{i},'_','\_'));
+   axis tight
+   xlim([0 1]);
+end
+if ~isfield(Q,'tet'), return, end;
 f = figure;  set(f,'Name','Tetrahedron quality');
 f = fields(Q.tet);
 for i = 1:length(f)
@@ -200,20 +213,9 @@ end
 % xlabel('dihedral angle');
 % xlim([0 180])
 
-f = figure; set(f,'Name','Surface triangle quality');
-f = fields(Q.tri);
-for i = 1:length(f)
-   subplot(3,3,i)
-   hist(Q.tri.(f{i}),100);
-   xlabel(strrep(f{i},'_','\_'));
-   axis tight
-   xlim([0 1]);
-end
-
 
 function a = tet_min_angle(mdl)
 a = min(mdl.dihedral_angle,[],2) / acos(1/3);
-
 
 function a = tri_min_angle(mdl)
 a = 3*min(mdl.tri_angle,[],2)/pi;
@@ -278,8 +280,8 @@ for i = 1:6
             .* repmat(sign(mdl.inner_normal(:,v(i,1))-0.5),1,3);
       N2 = mdl.normals(mdl.elem2face(:,v(i,2)), :) ...
             .* repmat(sign(mdl.inner_normal(:,v(i,2))-0.5),1,3);
-      C  = my_cross(N1, N2);
-      D  = -my_dot  (N1, N2);
+      C  = cross3(N1, N2);
+      D  = -dot3  (N1, N2);
       A(:,i) = atan2( sqrt(sum(C.^2,2)), D);
 end
 
@@ -289,12 +291,12 @@ for i = 1:4
    E = mdl.elems';
    idx = 1:numel(E); idx(i:4:end) = [];
    N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(i:4:end),:)',3,[]),3,[])';
-   nmrtr = abs(my_det(N));
+   nmrtr = abs(det3(N));
    L = sqrt(sum(N.^2,2)); % length of each vector
    dnmtr = L(1:3:end).*L(2:3:end).*L(3:3:end) ...
-      + my_dot(N(1:3:end,:), N(2:3:end,:)) .* L(3:3:end) ...
-      + my_dot(N(1:3:end,:), N(3:3:end,:)) .* L(2:3:end) ...
-      + my_dot(N(2:3:end,:), N(3:3:end,:)) .* L(1:3:end);
+      + dot3(N(1:3:end,:), N(2:3:end,:)) .* L(3:3:end) ...
+      + dot3(N(1:3:end,:), N(3:3:end,:)) .* L(2:3:end) ...
+      + dot3(N(2:3:end,:), N(3:3:end,:)) .* L(1:3:end);
    
    A(:,i) = atan2( nmrtr, dnmtr );
 end
@@ -340,7 +342,7 @@ for i = 1:4 % loop over vertices
       Nf = mdl.normals(mdl.elem2face(:,i),:);
       Cf = mdl.face_centre(mdl.elem2face(:,i),:);
       Pe = mdl.nodes(elem_sorted(:,v(i)), :);
-      H(:,i) = abs(my_dot(Nf, Pe - Cf));
+      H(:,i) = abs(dot3(Nf, Pe - Cf));
 end
 
 function H = tri_altitudes(mdl)
@@ -360,55 +362,14 @@ R = 2*mdl.face_area ./ sum(mdl.edge_length(mdl.face2edge),2);
 function R = insphere_radius(mdl)
 R = 3* mdl.elem_vol ./ mdl.elem_area;
 
-function f2e = calc_face2edge(mdl)
-%faces and edges are both column-wise sorted
-nf = length(mdl.faces);
-list(1:3:3*nf,:) = mdl.faces(:,1:2);
-list(2:3:3*nf,:) = mdl.faces(:,[1 3]);
-list(3:3:3*nf,:) = mdl.faces(:,2:3);
-[jnk f2e] = ismember(list, mdl.edges, 'rows');
-f2e = reshape(f2e,3,[])';
-
 function A = elem_area(mdl)
 A = sum(mdl.face_area(mdl.elem2face),2);
-
-function A = face_area(mdl)
-F = mdl.faces';
-A = mdl.nodes(mdl.faces(:,2),:) - mdl.nodes(mdl.faces(:,1),:);
-B = mdl.nodes(mdl.faces(:,3),:) - mdl.nodes(mdl.faces(:,1),:);
-A = sqrt(sum(my_cross(A,B).^2,2))/2;
-A = A;
 
 function V = elem_volume(mdl)
 E = mdl.elems';
 idx = 1:numel(E); idx(1:4:end) = [];
 N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(1:4:end),:)',3,[]),3,[])';
-V = abs(my_det(N))/6;
-
-function d = my_dot(a,b)
-d = sum(a.*b,2);
-
-function c = my_cross(a,b)
-c = [a(:,2).*b(:,3)-a(:,3).*b(:,2), ...
-     a(:,3).*b(:,1)-a(:,1).*b(:,3), ...
-     a(:,1).*b(:,2)-a(:,2).*b(:,1)];
-
-function D = my_det(a)
-ln = size(a,1);
-c1 = 1:3:ln;
-c2 = 2:3:ln;
-c3 = 3:3:ln;
-D = a(c1,1).*a(c2,2).*a(c3,3) + ...
-    a(c2,1).*a(c3,2).*a(c1,3) + ...
-    a(c3,1).*a(c1,2).*a(c2,3) - ...
-    a(c3,1).*a(c2,2).*a(c1,3) - ...
-    a(c2,1).*a(c1,2).*a(c3,3) - ...
-    a(c1,1).*a(c3,2).*a(c2,3);
-
-
-function L = edge_length(mdl)
-L = sqrt(sum( (mdl.nodes(mdl.edges(:,1),:) ...
-             - mdl.nodes(mdl.edges(:,2),:) ).^2 ,2 ));
+V = abs(det3(N))/6;
 
 function do_unit_test
 
@@ -422,11 +383,18 @@ Q = calc_mesh_quality(cube);
 f = fields(Q);
 for i = 1:length(f)
    disp(f{i});
-   disp(Q.(f{i}));
+   f2 = fields(Q.(f{i}));
+   for j = 1:length(f2)
+      disp([' .' f2{j}]);
+      disp(Q.(f{i}).(f2{j})');
+   end
 end
 
 real = mk_library_model('pig_23kg_16el');
 [Q real] = calc_mesh_quality(real, 1);
 
+
+shell = real; shell.elems = shell.boundary;
+[Q shel] = calc_mesh_quality(shell, 1);
 
 
