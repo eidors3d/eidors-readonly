@@ -83,6 +83,10 @@ function im = crop_image(im,pp)
  
    horz = [true,all(isbdr,1),true];
    horzpt = find(diff(horz)) - 1; % first 'true'
+   if isempty(horzpt)
+      eidors_msg('Image is blank. Cropping aborted.',1);
+      return
+   end
    im(:,horzpt(end)+1:end,:)= []; % remove higher first
    if pp.horz_cut >0;
       horz_e_pt = find(diff(horz)==-1) -1; horz_e_pt(1) = [];
@@ -157,7 +161,9 @@ function pp = parse_options(filename,varargin)
    if nargin< 2;   
       return; 
    end
-   if nargin>=3; pp.posn(4) = pp.posn(3)*varargin{2};  end
+   if nargin>=3
+      pp.posn(4) = pp.posn(3)*varargin{2};  
+   end
  
    opt = varargin{1};
    if ischar(opt)
