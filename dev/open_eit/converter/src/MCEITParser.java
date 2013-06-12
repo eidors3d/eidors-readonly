@@ -1,6 +1,5 @@
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,7 +8,6 @@ import java.nio.ByteOrder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class MCEITParser implements OeitLegacyParser {
@@ -27,7 +25,7 @@ public class MCEITParser implements OeitLegacyParser {
 		}
 		
         /*
-         * Read in source file here
+         * Read in .get file here
          */
 		FileInputStream fin = new FileInputStream(file);
 		BufferedInputStream bin = new BufferedInputStream(fin);
@@ -35,48 +33,44 @@ public class MCEITParser implements OeitLegacyParser {
 		
 		int[][] input = new int[256][length/256];
 		byte[] bytes = new byte[4];
-		int counter = 0;
 		
-		
-
 		for (int i = 0; i<256; i++){
-			//System.out.print(counter + ": ");
-			for (int j = 0; j<length/256; j++){            //METHOD 1
+			for (int j = 0; j<length/256; j++){
 				bytes[0] = din.readByte();
 				bytes[1] = din.readByte();
 				bytes[2] = din.readByte();
 				bytes[3] = din.readByte();
-				input[i][j] = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN ).getInt();
-				counter++;
-				//System.out.print(" " + input[i][j]);
+				input[i][j] = ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN ).getInt();
 			}
-			//System.out.print("\n");
 		}
 		
         din.close();
         bin.close();
         fin.close();
         
-        double[] data = new double[256*(length/256)];
-		
-/*        for (int i = 0; i< 256*(length/256); i++){
-    		if (i%14==0 && i<208*(length/256)){
-    			data[i]= input[208+i/16][i%length];
-    		}else if (i%15==0 && i<224*(length/256)){
-    			data[i] = input[224+i/16][i%length];
-    		}else if (i%16==0 && i<240*(length/256)){
-    			data[i] = input[240+i/16][i%length];
-    		}else{
-    			data[i] = input[i/length][i%length];
-    		}
-        }*/
- 
+        int[] data = new int[256*(length/256)];
         
         /*
-         * Read in Config file here, using DOM
+         *  Rearranges data and reshapes to a 1D array
          */
+        int a = 0, d = 0;
+        for (int i = 0; i< 256*(length/256)-1; i++){
+    		if ((i+3)%16==0 && a<16*(length/256)){
+    			data[i]= input[208+a/(length/256)][a%(length/256)];
+    			data[i+1] = input[224+a/(length/256)][a%(length/256)];
+    			data[i+2] = input[240+a/(length/256)][a%(length/256)];
+    			a++;
+    			i=i+2;
+    		}else{
+    			data[i] = input[d/(length/256)][d%(length/256)];
+    			d++;
+    		}
+        }
         
-		getData();
+        /*
+         * Read in XML file here, using DOM and prints data
+         */
+		showData(data);
 		
         //input = untwist(input);
         mceitInfo.setLength(length);
@@ -89,13 +83,13 @@ public class MCEITParser implements OeitLegacyParser {
 		return mceitInfo;
 	}
 	
-	public void getData(){
+	public void showData(int[] data){
 		
 		//double[] data = new double[256*(length/256)];
 	
-		Document doc = XMLReader.returnDOM("sample1.xml");
+		//Get NodeLists here
+		Document doc = XMLReader.returnDOM("sample.xml"); // Returns DOM
 		NodeList measTasks = doc.getElementsByTagName("meas_task");
-		
 		NodeList measTypeList = doc.getElementsByTagName("meas_type");
 		NodeList electrodeList = doc.getElementsByTagName("electrode");
 		
@@ -104,7 +98,6 @@ public class MCEITParser implements OeitLegacyParser {
 		
 		for (int i = 0; i<measTasks.getLength(); i++){
 			Element measTaskE = (Element) measTasks.item(i);
-			
 			String start = null, stop = null;
 			
 			start = measTaskE.getAttribute("start");
@@ -113,18 +106,40 @@ public class MCEITParser implements OeitLegacyParser {
 			NodeList meas = measTaskE.getElementsByTagName("meas");
 			NodeList stim = measTaskE.getElementsByTagName("stim");
 			
+			/*
+			 * --STIM--
+			 */
 			NodeList stimTypeList = doc.getElementsByTagName("stim_type");
+			Element stimE = (Element)stim.item(0);
+			stimType = stimE.getAttribute("type");
+			NodeList elect0 = stimE.getElementsByTagName("e");
+			String firstOrdinal0 = ((Element)elect0.item(0)).getAttribute("ordinal");
+			String secondOrdinal0 = ((Element)elect0.item(1)).getAttribute("ordinal");
 			
-			String elec1 = null, elec2 = null;
-			
+			/*
+			 * GET STIM ORDINAL INFO
+			 */
+			String name01 = null, type01 = null, position01 = null, 
+					name02 = null, type02 = null, position02 = null;
+
+			for (int k = 0; k<electrodeList.getLength(); k++){
+				Element electrode = (Element)electrodeList.item(k);
+				if (firstOrdinal0.equals(electrode.getAttribute("ordinal"))){
+					name01 = electrode.getAttribute("name");
+					type01 = electrode.getAttribute("type");
+					position01 = electrode.getAttribute("position");
+				}
+				if (secondOrdinal0.equals(electrode.getAttribute("ordinal"))){
+					name02 = electrode.getAttribute("name");
+					type02 = electrode.getAttribute("type");
+					position02 = electrode.getAttribute("position");
+				}
+			}
+				
+			/*
+			 * GET STIM TYPES INFO
+			 */
 			String amplitude=null, frequency=null, physical_property=null, wave=null;
-			
-			Element electrode1 = (Element) stim.item(0);
-			Element electrode2 = (Element) stim.item(1);
-			stimType = electrode1.getAttribute("type");
-			
-			elec1 = electrode1.getAttribute("elec");
-			elec2 = electrode2.getAttribute("elec");
 			
 			for (int k = 0; k<stimTypeList.getLength(); k++){
 				Element stimulation = (Element)stimTypeList.item(k);
@@ -136,76 +151,91 @@ public class MCEITParser implements OeitLegacyParser {
 				}
 			}
 			
-			for (int j = 0; j<meas.getLength(); j++){
-				Element measE = (Element) meas.item(j);
-				measType = measE.getAttribute("type");
-				NodeList elect = measE.getElementsByTagName("e");
-				String firstOrdinal = ((Element)elect.item(0)).getAttribute("ordinal");
-				String secondOrdinal = ((Element)elect.item(1)).getAttribute("ordinal");
-				
-				String name1 = null, type1 = null, 
-						position1 = null, name2 = null, 
-						type2 = null, position2 = null;
-				
-				for (int k = 0; k<electrodeList.getLength(); k++){
-					Element electrode = (Element)electrodeList.item(k);
-					if (firstOrdinal.equals(electrode.getAttribute("ordinal"))){
-						name1 = electrode.getAttribute("name");
-						type1 = electrode.getAttribute("type");
-						position1 = electrode.getAttribute("position");
-					}
-					if (secondOrdinal.equals(electrode.getAttribute("ordinal"))){
-						name2 = electrode.getAttribute("name");
-						type2 = electrode.getAttribute("type");
-						position2 = electrode.getAttribute("position");
-					}
+			/*
+			 * --MEAS--
+			 */
+			Element measE = (Element) meas.item(0);
+			measType = measE.getAttribute("type");
+			NodeList elect = measE.getElementsByTagName("e");
+			String firstOrdinal = ((Element)elect.item(0)).getAttribute("ordinal");
+			String secondOrdinal = ((Element)elect.item(1)).getAttribute("ordinal");
+			
+			/*
+			 * GET MEAS ORDINAL INFO
+			 */
+			String name1 = null, type1 = null, position1 = null, 
+					name2 = null, type2 = null, position2 = null;
+
+			for (int k = 0; k<electrodeList.getLength(); k++){
+				Element electrode = (Element)electrodeList.item(k);
+				if (firstOrdinal.equals(electrode.getAttribute("ordinal"))){
+					name1 = electrode.getAttribute("name");
+					type1 = electrode.getAttribute("type");
+					position1 = electrode.getAttribute("position");
 				}
-				
-				String demod_freq = null, physical_property2 = null, 
-						offset_gain = null, signal_gain = null;
-				
-				for (int k = 0; k<measTypeList.getLength(); k++){
-					Element measurement = (Element)measTypeList.item(k);
-					if (measType.equals(measurement.getAttribute("name"))){
-						demod_freq = measurement.getAttribute("demod_freq");
-						physical_property2 = measurement.getAttribute("physical_property");
-						offset_gain = measurement.getAttribute("offset_gain");
-						signal_gain = measurement.getAttribute("signal_gain");
-					}
+				if (secondOrdinal.equals(electrode.getAttribute("ordinal"))){
+					name2 = electrode.getAttribute("name");
+					type2 = electrode.getAttribute("type");
+					position2 = electrode.getAttribute("position");
 				}
-				System.out.println("<<TASK>>" 
-						+ " Start:" + start
-						+ " Stop:" + stop
-						+" <<<STIMULATION>>>"
-						+ "Elects:" + elec1
-						+ " " + elec2
-						+ " type:" + stimType + "("
-						+ "amplitude:" + amplitude
-						+ " frequency:" + frequency
-						+ " physical_property:" + physical_property
-						+ " wave" + wave + ")"
-						+ " <<<MEASUREMENT>>>" 
-						+ "Ordinals:" + firstOrdinal + "("
-						+ "name:" + name1
-						+ " type:" + type1
-						+ " position:" + position1 + ")"
-						+ " " + secondOrdinal + "("
-						+ "name:" + name2
-						+ " type:" + type2
-						+ " position:" + position2 + ")"
-						+ " type:" + measType  + "("
-						+ "demod_freq:" + demod_freq
-						+ " physical_property:" + physical_property2
-						+ " offset_gain:" + offset_gain
-						+ " signal_gain:" + signal_gain + ")"
-						+ "   <measurement here>");
 			}
+			
+			String demod_freq = null, physical_property2 = null, 
+					offset_gain = null, signal_gain = null;
+			/*
+			 * GET MEAS TYPES INFO
+			 */
+			for (int k = 0; k<measTypeList.getLength(); k++){
+				Element measurement = (Element)measTypeList.item(k);
+				if (measType.equals(measurement.getAttribute("name"))){
+					demod_freq = measurement.getAttribute("demod_frequency");
+					physical_property2 = measurement.getAttribute("physical_property");
+					offset_gain = measurement.getAttribute("offset_gain");
+					signal_gain = measurement.getAttribute("signal_gain");
+				}
+			}
+			
+			/*
+			 * PRINT
+			 */
+			System.out.println("<<TASK>> " 
+					+ "Start:" + start
+					+ " Stop:" + stop
+					+" <<<STIMULATION>>> "
+					+ "Ordinals:" + firstOrdinal0 + "("
+					+ "name:" + name01
+					+ " type:" + type01
+					+ " position:" + position01 + ")"
+					+ " " + secondOrdinal0 + "("
+					+ "name:" + name02
+					+ " type:" + type02
+					+ " position:" + position02 + ")"
+					+ " type:" + stimType + "("
+					+ "amplitude:" + amplitude
+					+ " frequency:" + frequency
+					+ " physical_property:" + physical_property
+					+ " wave" + wave + ")"
+					+ " <<<MEASUREMENT>>> " 
+					+ "Ordinals:" + firstOrdinal + "("
+					+ "name:" + name1
+					+ " type:" + type1
+					+ " position:" + position1 + ")"
+					+ " " + secondOrdinal + "("
+					+ "name:" + name2
+					+ " type:" + type2
+					+ " position:" + position2 + ")"
+					+ " type:" + measType  + "("
+					+ "demod_freq:" + demod_freq
+					+ " physical_property:" + physical_property2
+					+ " offset_gain:" + offset_gain
+					+ " signal_gain:" + signal_gain + ")"
+					+ " VALUE: "
+					+ data[i]);
 		}
-		
 		//return data;
 	}
 	
-	public double[][] transfer104To208(double[][] array104){
+	public double[][] transfer104To208(double[][] array104){ //Unnecessary right now
 		double[][] array208 = null;
 		int x,y;
 		x = array104.length;
@@ -223,7 +253,7 @@ public class MCEITParser implements OeitLegacyParser {
 		return array208;
 	}
 	
-	public double[][] untwist(double[][] twistedArray){
+	public double[][] untwist(double[][] twistedArray){ //Unnecessary right now
 		double[][] untwistedArray = twistedArray;
 		
 		return untwistedArray;
