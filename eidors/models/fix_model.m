@@ -22,11 +22,14 @@ function [mdl] = fix_model(mdl,opt)
 %       .elem2face
 %       .elem_centre
 %       .face_centre
+%       .face_area
 %       .normals
 %       .max_edge_len (per elem)
 %       .edges
+%       .edge_length
 %       .edge2elem
 %       .elem2edge
+%       .face2edge
 %       .node2elem
 %
 % For triangular meshes, edges and faces are the same.
@@ -87,7 +90,7 @@ if doall || opt.inner_normal
    if mdl_dim(mdl) == elem_dim(mdl);
       mdl.inner_normal = test_inner_normal( mdl );
    else
-      eidors_msg('&&& Inner normal test for surface meshes not implemented.',1);
+      eidors_msg('@@@ Inner normal test for surface meshes not implemented.',1);
    end
 end
 if doall || opt.max_edge_len
@@ -95,6 +98,13 @@ if doall || opt.max_edge_len
 end
 if doall || opt.elem_volume
    mdl.elem_volume = get_elem_volume(mdl);
+end
+if doall || opt.face_area
+   if elem_dim(mdl) == 2
+      mdl.face_area = mdl.elem_volume;
+   else
+      mdl.face_area = calc_face_area(mdl);
+   end
 end
 el_dim = elem_dim(mdl);
 if doall || opt.edges
@@ -111,9 +121,19 @@ end
 if doall || opt.edge2elem
     mdl.edge2elem = calc_edge2elem(mdl.elem2edge);
 end
-if el_dim<3 && (doall || opt.edges)
-   mdl.elem2edge = mdl.elem2face;
+
+if doall || opt.face2edge
+   if el_dim <3
+      mdl.face2edge = mdl.elem2edge;
+   else
+      mdl.face2edge = uint32(calc_face2edge(mdl));
+   end
 end
+
+if doall || opt.edge_length
+   mdl.edge_length = calc_edge_length(mdl);
+end
+   
 
 % decrease memory footprint
 mdl.elems = uint32(mdl.elems);
@@ -166,7 +186,14 @@ function edge2elem = calc_edge2elem(elem2edge)
     elem2edge   = elem2edge(:);
     edge2elem = sparse(elem2edge,elem2edgeno,ones(size(elem2edgeno)));
 
-
+function f2e = calc_face2edge(mdl)
+%faces and edges are both row-wise sorted
+nf = length(mdl.faces);
+list(1:3:3*nf,:) = mdl.faces(:,1:2);
+list(2:3:3*nf,:) = mdl.faces(:,[1 3]);
+list(3:3:3*nf,:) = mdl.faces(:,2:3);
+[jnk f2e] = ismember(list, mdl.edges, 'rows');
+f2e = reshape(f2e,3,[])';
 
 function face2elem = calc_face2elem(elem2face)
 % This is easier to understand but very slow
@@ -224,6 +251,14 @@ function normals = calc_normals(mdl)
     end
     normals = normals./ repmat(sqrt(sum(normals.^2,2))',face_dim,1)';
     
+ function A = calc_face_area(mdl)
+A = mdl.nodes(mdl.faces(:,2),:) - mdl.nodes(mdl.faces(:,1),:);
+B = mdl.nodes(mdl.faces(:,3),:) - mdl.nodes(mdl.faces(:,1),:);
+A = sqrt(sum(cross3(A,B).^2,2))/2;
+
+function L = calc_edge_length(mdl)
+L = sqrt(sum( (mdl.nodes(mdl.edges(:,1),:) ...
+             - mdl.nodes(mdl.edges(:,2),:) ).^2 ,2 ));
     
 function len = calc_longest_edge(elems,nodes)
     [E_num E_dim] = size(elems);
@@ -258,10 +293,10 @@ function out = fix_options(mdl, opt)
     if any([ out.boundary_face out.face_centre out.normals]) && ~isfield(mdl,'faces')
           out.faces = true;
     end
-    if any([out.face2elem out.elem2face])
+    if any([out.face2elem out.elem2face out.face_area])
        out.faces = true;
     end
-    if any([out.edge2elem out.elem2edge])
+    if any([out.edge2elem out.elem2edge out.edge_length out.face2edge])
         out.edges = true;
     end
     if out.edges && elem_dim(mdl) < 4
