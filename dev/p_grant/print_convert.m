@@ -33,7 +33,7 @@ tmpnam = [tempname,'.png'];
 
 old_ihc = get(gcf, 'InvertHardcopy');
 old_col = get(gcf, 'Color');
-set(gcf,'InvertHardCopy','off'); % 
+set(gcf,'InvertHardCopy','off'); 
 set(gcf,'Color','w');
 
 set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
@@ -50,9 +50,9 @@ im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
 
 if (strfind(filename,'.jpg') == (length(filename)-3) );
-   imwrite(im,filename,'Quality',60);
+    imwrite(im,filename,'Quality', pp.jpeg_quality, pp.imwrite_opts{:});
 else 
-   imwrite(im,filename,pp.imwrite_opts{:});
+imwrite(im,filename,pp.imwrite_opts{:});
 end 
  
 function im = crop_image(im,pp)
@@ -112,13 +112,14 @@ function pp = parse_options(varargin)
    pp.vert_cut = 0;
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
+   pp.jpeg_quality = 80;
  
 % Old options
    if nargin< 1; pp.options = '';  return; end
    if nargin>=2; pp.posn(4) = pp.posn(3)*varargin{2};  end
  
    opt = varargin{1};
-   if isstr(opt)
+   if ischar(opt)
       val =regexp(opt,'-density (\d+)','tokens');
       if length(val)>0;
          pp.resolution = sprintf('-r%d', str2double(val{1}{1}) * pp.factor);
@@ -140,10 +141,15 @@ function pp = parse_options(varargin)
          pp.posn(3:4) = opt.pagesize;
      end
      % TODO, this code can copy from opt to pp
-     
      if isfield(opt,'imwrite_opts');
-         pp.imwrite_opts = opt.imwrite_opts;
+        pp.imwrite_opts = opt.imwrite_opts;
+        %if ~any(strcmp(pp.imwrite_opts,'quality') | strcmp(pp.imwrite_opts,'Quality') );
+           %pp.imwrite_opts(end+1:end+2) = {'quality',pp.jpeg_quality};
+        %end
+     %else 
+        %pp.imwrite_opts(end+1:end+2) = {'quality',pp.jpeg_quality};
      end
+    
      if isfield(opt,'horz_cut');
          pp.horz_cut = opt.horz_cut;
      end
