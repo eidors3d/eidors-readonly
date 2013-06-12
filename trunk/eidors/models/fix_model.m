@@ -58,7 +58,13 @@ if doall || opt.boundary
 end
 if doall || opt.faces
    mdl = linear_reorder(mdl); %counter-clockwise
-   [mdl.faces mdl.elem2face] = calc_faces(mdl);
+   if elem_dim(mdl) == mdl_dim(mdl);
+      [mdl.faces mdl.elem2face] = calc_faces(mdl);
+   else
+      % surface mesh
+      mdl.faces = sort(mdl.elems,2);
+      mdl.elem2face = (1:length(mdl.faces))';
+   end
 end
 if doall || opt.face2elem
     mdl.face2elem = calc_face2elem(mdl.elem2face);
@@ -78,7 +84,11 @@ if doall || opt.normals
    mdl.normals = calc_normals(mdl);
 end
 if doall || opt.inner_normal
-   mdl.inner_normal = test_inner_normal( mdl );
+   if mdl_dim(mdl) == elem_dim(mdl);
+      mdl.inner_normal = test_inner_normal( mdl );
+   else
+      eidors_msg('&&& Inner normal test for surface meshes not implemented.',1);
+   end
 end
 if doall || opt.max_edge_len
    mdl.max_edge_len = calc_longest_edge(mdl.elems,mdl.nodes);
@@ -88,7 +98,7 @@ if doall || opt.elem_volume
 end
 el_dim = elem_dim(mdl);
 if doall || opt.edges
-    if el_dim>=3 %that's unlikely to work for higher order elements
+    if mdl_dim(mdl)==3 %that's unlikely to work for higher order elements
         [mdl.edges mdl.elem2edge] = calc_faces(mdl,2);
     else 
         mdl.edges = mdl.faces;
@@ -122,7 +132,7 @@ if doall || opt.edge2elem
    mdl.edge2elem = logical(mdl.edge2elem);
 end     
 
-% Test whether normal points into or outsize
+% Test whether normal points into or outside
 % mdl.inner_normal(i,j) = 1 if face j of elem i points in
 function inner_normal = test_inner_normal( mdl )
    inner_normal = false(size(mdl.elem2face));
@@ -138,7 +148,7 @@ function inner_normal = test_inner_normal( mdl )
 
 function [faces,  elem2face] = calc_faces(mdl, facedim)
 
-e_dim = mdl_dim(mdl);
+e_dim = elem_dim(mdl);
 if nargin == 1
     facedim = e_dim;
 end
