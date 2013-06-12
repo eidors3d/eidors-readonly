@@ -123,8 +123,8 @@ Calculate the parameters
 <img src="GREIT_test_params06a_sd.png"> <img src="GREIT_test_params06b_sd.png"> <br>
 <img src="GREIT_test_params06a_rng.png"> <img src="GREIT_test_params06b_rng.png"> <br>
 <br><i>Figure:</i>
-Evaluation for off plane object (25%) of GREIT (right), and Sheffield
-Backprojection (left) GREIT parameters AR, PE, RES, SD, and RNG as a function 
+Evaluation for off plane object (25%) of GREIT (left), and Sheffield
+Backprojection (right) GREIT parameters AR, PE, RES, SD, and RNG as a function 
 of point radial position
 </center>
 
