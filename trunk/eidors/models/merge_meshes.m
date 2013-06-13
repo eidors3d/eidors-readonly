@@ -46,26 +46,34 @@ for i = 1:length(shapes)
    useM1 = nodes_in_bounding_box(M2,M1,th);
    useM1 = find(useM1);
    useM2 = nodes_in_bounding_box(M1,M2,th);
-   len_useM1 = length(useM1);
    
    if isempty(useM1) || all(~useM2(:))
       M1 = naive_join(M1,M2);
       continue
    end
    
-   nodes_to_add = [];
-   n_new_nodes = 0;
-   match = 0 * (1:length(M2.nodes)); 
-   for n = 1:length(M2.nodes);
-      val = Inf;
-      if useM2(n)
-         D = M1.nodes(useM1,:) - repmat(M2.nodes(n,:),len_useM1,1);
-         D = sum(D.^2,2); % sqrt(sum(D.^2,2)); % don't need to sqrt
-         [val p] = min(D);
+   nodes_to_add = M2.nodes(~useM2,:);
+   n_new_nodes = nnz(~useM2);
+   match = zeros(length(M2.nodes),1);
+   match(~useM2) = l1 + (1:n_new_nodes);
+   useM2 = find(useM2);
+   for n = useM2'
+      use = nodes_near_node(M1.nodes(useM1,:), M2.nodes(n,:), 1.1*th);
+      switch nnz(use)
+         case 0
+         case 1
+            match(n) = useM1(use);
+         otherwise
+            use = useM1(use);
+            len_use = length(use);
+            D = M1.nodes(use,:) - ones(len_use,1)*M2.nodes(n,:);
+            D = sum(D.^2,2); % sqrt(sum(D.^2,2)); % don't need to sqrt
+            [val p] = min(D);
+            if val < th^2    % but then need th^2
+               match(n) = use(p); % matching node of M1
+            end
       end
-      if val < th^2    % but then need th^2
-         match(n) = useM1(p); % matching node of M1
-      else
+      if ~match(n)
          match(n) = l1 + n_new_nodes+1;
          n_new_nodes = n_new_nodes + 1;
          nodes_to_add = [nodes_to_add; M2.nodes(n,:)];
@@ -99,6 +107,13 @@ function use = nodes_in_bounding_box(M2,M1,th)
       use = use & M1.nodes(:,i) < maxM2(i) & M1.nodes(:,i) > minM2(i);
    end
 
+function use = nodes_near_node(nodes,node,th)
+   maxlim = node + th;
+   minlim = node - th;
+   use = true(length(nodes),1);
+   for i = 1:size(nodes,2);
+      use = use & nodes(:,i) < maxlim(i) & nodes(:,i) > minlim(i);
+   end
 
 function run_unit_test
 subplot(221)
