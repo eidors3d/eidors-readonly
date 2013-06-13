@@ -572,12 +572,172 @@ The OEIT file architecture should be flexible enough to easily introduce
  new features when required.
 \end_layout
 
+\begin_layout Enumerate
+The manufacture must be allowed to store a proprietary format if required
+ and only as complementary information.
+\end_layout
+
 \begin_layout Subsection
 Implementation
 \end_layout
 
+\begin_layout Standard
+The most important implementation decision we took were to select ZIP-archive
+ as a way to save the information within a single binary stream.
+ This decision was motivate by the fact that ZIP is became a standard and
+ is available on many platform at a ready to use software package.
+ ZIP-archive system allowed us to implement a file format which made out
+ of a hierarchical structure of folder and file.
+ Additionally, ZIP offer some level of compression and also encryption features.
+ They are two type of information that needs to be stored: 1) file invariant
+ information and 2) information that potentially changes during the acquisition
+ time.
+\end_layout
+
+\begin_layout Standard
+The file invariant information are typically stored in the 
+\begin_inset Quotes eld
+\end_inset
+
+header
+\begin_inset Quotes erd
+\end_inset
+
+ folder.
+ They typically contain information about the EIT instrument, the electrode
+ position and the body which is measured.
+ Some of those information may in some application be subject to change
+ overtime.
+ The way to implement this would be to create an additional data stream,
+ which would store those information, see Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Binary-files"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The data that are composed of a stream of data are stored within the dedicated
+ stream folders.
+ The binary files store the measured data streams.
+ The data are considered to belong to the same data stream if their sampling
+ rate are equivalent.
+ The rule is to store one data stream per folder.
+ The default folder were the EIT data are stored is 
+\begin_inset Quotes eld
+\end_inset
+
+eit/data
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For all others data stream that are not synchronous with the EIT acquisition
+ framerate so called 
+\begin_inset Quotes eld
+\end_inset
+
+auxiliaryXX
+\begin_inset Quotes erd
+\end_inset
+
+ folders can be created.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+XX
+\begin_inset Quotes erd
+\end_inset
+
+ is replaced by a stream identification number included between 
+\begin_inset Quotes eld
+\end_inset
+
+00
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+99
+\begin_inset Quotes erd
+\end_inset
+
+, thus effectively limiting the number of additional data stream to 100.
+ The way to store the information within 
+\begin_inset Quotes eld
+\end_inset
+
+auxiliaryXX
+\begin_inset Quotes erd
+\end_inset
+
+ folder of 
+\begin_inset Quotes eld
+\end_inset
+
+eit/data
+\begin_inset Quotes erd
+\end_inset
+
+ is identical, thus in the rest of the article we will limit the description
+ to the 
+\begin_inset Quotes eld
+\end_inset
+
+eit/data
+\begin_inset Quotes erd
+\end_inset
+
+ folder.The data stream folder contains 3 subfolders: 1) data, which store
+ the binary files, 2) config, which stores the configuration file (see section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Configuration-files"
+
+\end_inset
+
+for details) and 3) log, which stores a stream of events or comment that
+ are time stamped.
+\end_layout
+
+\begin_layout Subsection
+Binary files
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Binary-files"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Configuration files
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Configuration-files"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The configuration files enable to understand how were the data measured
+ and how were the data stored with the binary files.
+ 
+\end_layout
+
+\begin_layout Subsection
+OEIT file invariant information
 \end_layout
 
 \begin_layout Section
