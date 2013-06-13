@@ -8,6 +8,8 @@ function obj= matlab_xml_test( filename)
 
    obj = print_recurse( tree, 0);
 
+function d = DEBUG; d=0;
+
 function obj = print_recurse( node, level);
    if level>5; obj.name ='empty'; return;end
    
@@ -21,13 +23,19 @@ function obj = print_recurse( node, level);
       case 'electrode'; obj.contact_impedance = '???';
    end
 
+if DEBUG
    for i=1:level; fprintf('>'); end
    fprintf('[ %s: ',name);
+end
    for i=1:length(atts);
+if DEBUG
       fprintf('%s="%s" ',atts(i).Name, atts(i).Value);
+end
       obj.(atts(i).Name) = atts(i).Value;
    end
+if DEBUG
    fprintf(']\n');
+end
    for i=1:length(kids);
      obj_i = print_recurse( kids{i}, level+1);
      on = obj_i.name;
