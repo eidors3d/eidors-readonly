@@ -80,682 +80,682 @@
 				physical_property="current" wave="square" />
 		</stim_type_list>
 
-		<measurements>
-			<meas_task start="0" stop="10">
-				<inputs>
+		<acquisition_list>
+			<acquisition start="0" stop="10">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="10" stop="20">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="10" stop="20">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="4" gain="1"/>
 						<e id="5" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="20" stop="30">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="20" stop="30">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="5" gain="1"/>
 						<e id="6" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="30" stop="40">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="30" stop="40">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="6" gain="1"/>
 						<e id="7" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="40" stop="50">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="40" stop="50">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="7" gain="1"/>
 						<e id="8" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="50" stop="60">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="50" stop="60">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="8" gain="1"/>
 						<e id="9" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="60" stop="70">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="60" stop="70">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="9" gain="1"/>
 						<e id="10" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="70" stop="80">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="70" stop="80">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="10" gain="1"/>
 						<e id="11" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="80" stop="90">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="80" stop="90">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="11" gain="1"/>
 						<e id="12" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="90" stop="100">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="90" stop="100">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="12" gain="1"/>
 						<e id="13" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="100" stop="110">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="100" stop="110">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="13" gain="1"/>
 						<e id="14" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="110" stop="120">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="110" stop="120">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="14" gain="1"/>
 						<e id="15" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="120" stop="130">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="120" stop="130">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="15" gain="1"/>
 						<e id="16" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="130" stop="140">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="130" stop="140">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="current">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="140" stop="150">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="140" stop="150">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="voltage">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="150" stop="160">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="150" stop="160">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="aux">
 						<e id="1" gain="1"/>
 						<e id="2" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
+				</meas_list>
+			</acquisition>
 			
-			<meas_task start="160" stop="170">
-				<inputs>
+			<acquisition start="160" stop="170">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="4" gain="1"/>
 						<e id="5" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="170" stop="180">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="170" stop="180">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="5" gain="1"/>
 						<e id="6" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="180" stop="190">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="180" stop="190">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="6" gain="1"/>
 						<e id="7" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="190" stop="200">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="190" stop="200">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="7" gain="1"/>
 						<e id="8" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="200" stop="210">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="200" stop="210">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="8" gain="1"/>
 						<e id="9" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="210" stop="220">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="210" stop="220">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="9" gain="1"/>
 						<e id="10" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="220" stop="230">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="220" stop="230">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="10" gain="1"/>
 						<e id="11" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="230" stop="240">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="230" stop="240">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="11" gain="1"/>
 						<e id="12" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="240" stop="250">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="240" stop="250">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="12" gain="1"/>
 						<e id="13" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="250" stop="260">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="250" stop="260">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="13" gain="1"/>
 						<e id="14" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="260" stop="270">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="260" stop="270">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="14" gain="1"/>
 						<e id="15" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="270" stop="280">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="270" stop="280">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="15" gain="1"/>
 						<e id="16" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="280" stop="290">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="280" stop="290">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="290" stop="300">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="290" stop="300">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="current">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="300" stop="310">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="300" stop="310">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="voltage">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="310" stop="320">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="310" stop="320">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="aux">
 						<e id="2" gain="1"/>
 						<e id="3" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
+				</meas_list>
+			</acquisition>
 				
 				
-			<meas_task start="320" stop="330">
-				<inputs>
+			<acquisition start="320" stop="330">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="5" gain="1"/>
 						<e id="6" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="330" stop="340">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="330" stop="340">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="6" gain="1"/>
 						<e id="7" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>	
-			<meas_task start="340" stop="350">
-				<inputs>
+				</meas_list>
+			</acquisition>	
+			<acquisition start="340" stop="350">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="7" gain="1"/>
 						<e id="8" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="350" stop="360">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="350" stop="360">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="8" gain="1"/>
 						<e id="9" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="360" stop="370">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="360" stop="370">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="9" gain="1"/>
 						<e id="10" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="370" stop="380">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="370" stop="380">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="10" gain="1"/>
 						<e id="11" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="380" stop="390">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="380" stop="390">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="11" gain="1"/>
 						<e id="12" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="390" stop="400">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="390" stop="400">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="12" gain="1"/>
 						<e id="13" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="410" stop="420">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="410" stop="420">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="13" gain="1"/>
 						<e id="14" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="420" stop="430">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="420" stop="430">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="14" gain="1"/>
 						<e id="15" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="430" stop="440">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="430" stop="440">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="15" gain="1"/>
 						<e id="16" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="440" stop="450">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="440" stop="450">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="450" stop="460">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="450" stop="460">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="get">
 						<e id="4" gain="1"/>
 						<e id="5" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="460" stop="470">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="460" stop="470">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="current">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="470" stop="480">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="470" stop="480">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="voltage">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-			<meas_task start="480" stop="490">
-				<inputs>
+				</meas_list>
+			</acquisition>
+			<acquisition start="480" stop="490">
+				<stim_list>
 					<stim type="sgoe">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</stim>
-				</inputs>
-				<outputs>
+				</stim_list>
+				<meas_list>
 					<meas type="aux">
 						<e id="3" gain="1"/>
 						<e id="4" gain="-1"/>
 					</meas>
-				</outputs>
-			</meas_task>
-		</measurements>
+				</meas_list>
+			</acquisition>
+		</acquisition_list>
 	</configuration>
 </oeit>
