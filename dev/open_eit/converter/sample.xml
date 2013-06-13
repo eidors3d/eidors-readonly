@@ -11,40 +11,40 @@
 
 		<electrode_list coordinate_system="Cartesian"
 			position_description="Absolute">
-			<electrode name="electrode0" type="electrode_type0"
-				ordinal="0" position="[0,0,0]" />
-			<electrode name="electrode1" type="electrode_type0"
-				ordinal="1" position="[0,0,0]" />
-			<electrode name="electrode2" type="electrode_type0"
-				ordinal="2" position="[0,0,0]" />
-			<electrode name="electrode3" type="electrode_type0"
-				ordinal="3" position="[0,0,0]" />
-			<electrode name="electrode4" type="electrode_type0"
-				ordinal="4" position="[0,0,0]" />
-			<electrode name="electrode5" type="electrode_type0"
-				ordinal="5" position="[0,0,0]" />
-			<electrode name="electrode6" type="electrode_type0"
-				ordinal="6" position="[0,0,0]" />
-			<electrode name="electrode7" type="electrode_type0"
-				ordinal="7" position="[0,0,0]" />
-			<electrode name="electrode8" type="electrode_type0"
-				ordinal="8" position="[0,0,0]" />
-			<electrode name="electrode9" type="electrode_type0"
-				ordinal="9" position="[0,0,0]" />
-			<electrode name="electrode10" type="electrode_type0"
-				ordinal="10" position="[0,0,0]" />
-			<electrode name="electrode11" type="electrode_type0"
-				ordinal="11" position="[0,0,0]" />
-			<electrode name="electrode12" type="electrode_type0"
-				ordinal="12" position="[0,0,0]" />
-			<electrode name="electrode13" type="electrode_type0"
-				ordinal="13" position="[0,0,0]" />
-			<electrode name="electrode14" type="electrode_type0"
-				ordinal="14" position="[0,0,0]" />
-			<electrode name="electrode15" type="electrode_type0"
-				ordinal="15" position="[0,0,0]" />
-			<electrode name="electrode16" type="electrode_type0"
-				ordinal="16" position="[0,0,0]" />
+			<electrode id="electrode0" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode1" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode2" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode3" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode4" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode5" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode6" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode7" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode8" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode9" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode10" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode11" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode12" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode13" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode14" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode15" type="electrode_type0"
+				 position="[0,0,0]" />
+			<electrode id="electrode16" type="electrode_type0"
+				 position="[0,0,0]" />
 		</electrode_list>
 
 		<meas_type_list>
@@ -84,224 +84,224 @@
 			<meas_task start="0" stop="10">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="10" stop="20">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="4" gain="1"/>
-						<e ordinal="5" gain="-1"/>
+						<e id="4" gain="1"/>
+						<e id="5" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="20" stop="30">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="5" gain="1"/>
-						<e ordinal="6" gain="-1"/>
+						<e id="5" gain="1"/>
+						<e id="6" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="30" stop="40">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="6" gain="1"/>
-						<e ordinal="7" gain="-1"/>
+						<e id="6" gain="1"/>
+						<e id="7" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="40" stop="50">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="7" gain="1"/>
-						<e ordinal="8" gain="-1"/>
+						<e id="7" gain="1"/>
+						<e id="8" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="50" stop="60">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="8" gain="1"/>
-						<e ordinal="9" gain="-1"/>
+						<e id="8" gain="1"/>
+						<e id="9" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="60" stop="70">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="9" gain="1"/>
-						<e ordinal="10" gain="-1"/>
+						<e id="9" gain="1"/>
+						<e id="10" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="70" stop="80">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="10" gain="1"/>
-						<e ordinal="11" gain="-1"/>
+						<e id="10" gain="1"/>
+						<e id="11" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="80" stop="90">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="11" gain="1"/>
-						<e ordinal="12" gain="-1"/>
+						<e id="11" gain="1"/>
+						<e id="12" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="90" stop="100">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="12" gain="1"/>
-						<e ordinal="13" gain="-1"/>
+						<e id="12" gain="1"/>
+						<e id="13" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="100" stop="110">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="13" gain="1"/>
-						<e ordinal="14" gain="-1"/>
+						<e id="13" gain="1"/>
+						<e id="14" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="110" stop="120">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="14" gain="1"/>
-						<e ordinal="15" gain="-1"/>
+						<e id="14" gain="1"/>
+						<e id="15" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="120" stop="130">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="15" gain="1"/>
-						<e ordinal="16" gain="-1"/>
+						<e id="15" gain="1"/>
+						<e id="16" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="130" stop="140">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="current">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="140" stop="150">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="voltage">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="150" stop="160">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="aux">
-						<e ordinal="1" gain="1"/>
-						<e ordinal="2" gain="-1"/>
+						<e id="1" gain="1"/>
+						<e id="2" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
@@ -309,224 +309,224 @@
 			<meas_task start="160" stop="170">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="4" gain="1"/>
-						<e ordinal="5" gain="-1"/>
+						<e id="4" gain="1"/>
+						<e id="5" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="170" stop="180">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="5" gain="1"/>
-						<e ordinal="6" gain="-1"/>
+						<e id="5" gain="1"/>
+						<e id="6" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="180" stop="190">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="6" gain="1"/>
-						<e ordinal="7" gain="-1"/>
+						<e id="6" gain="1"/>
+						<e id="7" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="190" stop="200">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="7" gain="1"/>
-						<e ordinal="8" gain="-1"/>
+						<e id="7" gain="1"/>
+						<e id="8" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="200" stop="210">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="8" gain="1"/>
-						<e ordinal="9" gain="-1"/>
+						<e id="8" gain="1"/>
+						<e id="9" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="210" stop="220">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="9" gain="1"/>
-						<e ordinal="10" gain="-1"/>
+						<e id="9" gain="1"/>
+						<e id="10" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="220" stop="230">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="10" gain="1"/>
-						<e ordinal="11" gain="-1"/>
+						<e id="10" gain="1"/>
+						<e id="11" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="230" stop="240">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="11" gain="1"/>
-						<e ordinal="12" gain="-1"/>
+						<e id="11" gain="1"/>
+						<e id="12" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="240" stop="250">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="12" gain="1"/>
-						<e ordinal="13" gain="-1"/>
+						<e id="12" gain="1"/>
+						<e id="13" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="250" stop="260">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="13" gain="1"/>
-						<e ordinal="14" gain="-1"/>
+						<e id="13" gain="1"/>
+						<e id="14" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="260" stop="270">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="14" gain="1"/>
-						<e ordinal="15" gain="-1"/>
+						<e id="14" gain="1"/>
+						<e id="15" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="270" stop="280">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="15" gain="1"/>
-						<e ordinal="16" gain="-1"/>
+						<e id="15" gain="1"/>
+						<e id="16" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="280" stop="290">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="290" stop="300">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="current">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="300" stop="310">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="voltage">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="310" stop="320">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="aux">
-						<e ordinal="2" gain="1"/>
-						<e ordinal="3" gain="-1"/>
+						<e id="2" gain="1"/>
+						<e id="3" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
@@ -535,224 +535,224 @@
 			<meas_task start="320" stop="330">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="5" gain="1"/>
-						<e ordinal="6" gain="-1"/>
+						<e id="5" gain="1"/>
+						<e id="6" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="330" stop="340">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="6" gain="1"/>
-						<e ordinal="7" gain="-1"/>
+						<e id="6" gain="1"/>
+						<e id="7" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>	
 			<meas_task start="340" stop="350">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="7" gain="1"/>
-						<e ordinal="8" gain="-1"/>
+						<e id="7" gain="1"/>
+						<e id="8" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="350" stop="360">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="8" gain="1"/>
-						<e ordinal="9" gain="-1"/>
+						<e id="8" gain="1"/>
+						<e id="9" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="360" stop="370">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="9" gain="1"/>
-						<e ordinal="10" gain="-1"/>
+						<e id="9" gain="1"/>
+						<e id="10" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="370" stop="380">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="10" gain="1"/>
-						<e ordinal="11" gain="-1"/>
+						<e id="10" gain="1"/>
+						<e id="11" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="380" stop="390">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="11" gain="1"/>
-						<e ordinal="12" gain="-1"/>
+						<e id="11" gain="1"/>
+						<e id="12" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="390" stop="400">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="12" gain="1"/>
-						<e ordinal="13" gain="-1"/>
+						<e id="12" gain="1"/>
+						<e id="13" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="410" stop="420">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="13" gain="1"/>
-						<e ordinal="14" gain="-1"/>
+						<e id="13" gain="1"/>
+						<e id="14" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="420" stop="430">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="14" gain="1"/>
-						<e ordinal="15" gain="-1"/>
+						<e id="14" gain="1"/>
+						<e id="15" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="430" stop="440">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="15" gain="1"/>
-						<e ordinal="16" gain="-1"/>
+						<e id="15" gain="1"/>
+						<e id="16" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="440" stop="450">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="450" stop="460">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="get">
-						<e ordinal="4" gain="1"/>
-						<e ordinal="5" gain="-1"/>
+						<e id="4" gain="1"/>
+						<e id="5" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="460" stop="470">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="current">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="470" stop="480">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="voltage">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
 			<meas_task start="480" stop="490">
 				<inputs>
 					<stim type="sgoe">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</stim>
 				</inputs>
 				<outputs>
 					<meas type="aux">
-						<e ordinal="3" gain="1"/>
-						<e ordinal="4" gain="-1"/>
+						<e id="3" gain="1"/>
+						<e id="4" gain="-1"/>
 					</meas>
 				</outputs>
 			</meas_task>
