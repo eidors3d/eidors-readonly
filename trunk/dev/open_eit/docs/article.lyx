@@ -719,6 +719,123 @@ name "sub:Binary-files"
 
 \end_layout
 
+\begin_layout Standard
+The binary files store data frames.
+ A data frame is the quality of data acquired during the sampling period
+ (i.e.
+ given by the frame rate).
+ In case of the EIT data stream the frame rate is given by the number of
+ acquired images per second.
+ The frame stores a reference to a configuration file, which allow the reader
+ to decode the stored information, see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Architecture-binaryfile"
+
+\end_inset
+
+ .
+ Additionally a timestamps is also stored in order to now when which data
+ frame was acquired.
+ The timestamp, the configuration file reference and the data frame together
+ constitute a data block.
+ A binary file is made out of selected number of data blocks.
+ This number can vary in function whether for the particular application
+ it is better to have a collection of small or larger files.
+ A manifest file contains information on the stored data within the file
+ collection and can be used to implement some fast data search functions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary_config_manifest.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Depicts the file structure organization inside the 
+\begin_inset Quotes eld
+\end_inset
+
+eit
+\begin_inset Quotes erd
+\end_inset
+
+ folder.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:manfest_binary_config"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/binary_file.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Architecture of the binary file
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Architecture-binaryfile"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Configuration files
 \begin_inset CommandInset label
