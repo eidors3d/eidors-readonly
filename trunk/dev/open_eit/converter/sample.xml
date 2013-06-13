@@ -4,7 +4,7 @@
 		<general framerate="13" />
 
 		<electrode_type_list>
-			<electrode_type name="electrode_type0" />
+			<electrode_type name="electrode_type0" contact_impedance=".01"/>
 		</electrode_type_list>
 
 		<sometag />
@@ -12,8 +12,12 @@
 		<electrode_list coordinate_system="Cartesian"
 			position_description="Absolute">
 			<electrode id="1" type="electrode_type0" position="[0,0,0]" comment="this electrode is ground"/>
-			<electrode id="2" type="electrode_type0" position="[0,0,0]" />
-			<electrode id="3" type="electrode_type0" position="[0,0,0]" />
+			<electrode id="2" type="electrode_type0" position="[0,0,0]" >
+                           <user_data>
+                               arbitrary content
+                           </user_data>
+                        </electrode>
+			<electrode id="3" type="electrode_type0" position="[0,0,0]" contact_impedance=".02"/>
 			<electrode id="4" type="electrode_type0" position="[0,0,0]" />
 			<electrode id="5" type="electrode_type0" position="[0,0,0]" />
 			<electrode id="6" type="electrode_type0" position="[0,0,0]" />
@@ -31,27 +35,27 @@
 
 		<meas_type_list>
 			<meas_type name="get" demod_frequency="100000"
-				physical_property="voltage" offset_gain="0" signal_gain="1">
+				physical_property="voltage" offset="0" gain="1">
 				<fields>
-					<field name="Amplitude" type="int" length="4" />
+					<field name="Amplitude" type="float" />
 				</fields>
 			</meas_type>
 			<meas_type name="current" demod_frequency="100000"
-				physical_property="current" offset_gain="0" signal_gain="1">
+				physical_property="current" offset="0" gain="1">
 				<fields>
-					<field name="Amplitude" type="int" length="4" />
+					<field name="Amplitude" type="float" />
 				</fields>
 			</meas_type>
 			<meas_type name="voltage" demod_frequency="100000"
-				physical_property="voltage" offset_gain="0" signal_gain="1">
+				physical_property="voltage" offset="0" gain="1">
 				<fields>
-					<field name="Amplitude" type="int" length="4" />
+					<field name="Amplitude" type="float" />
 				</fields>
 			</meas_type>
 			<meas_type name="aux" demod_frequency="100000"
-				physical_property="voltage" offset_gain="0" signal_gain="1">
+				physical_property="voltage" offset="0" gain="1">
 				<fields>
-					<field name="Amplitude" type="int" length="4" />
+					<field name="Real" type="float" />
 				</fields>
 			</meas_type>
 			
@@ -274,16 +278,9 @@
 				</meas_list>
 			</acquisition>
 			<acquisition start="150" stop="160">
-				<stim_list>
-					<stim type="sgoe">
-						<elec id="1" gain="1"/>
-						<elec id="2" gain="-1"/>
-					</stim>
-				</stim_list>
 				<meas_list>
 					<meas type="aux">
-						<elec id="1" gain="1"/>
-						<elec id="2" gain="-1"/>
+						<line id="aux0" gain="1"/>
 					</meas>
 				</meas_list>
 			</acquisition>
