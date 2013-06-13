@@ -34,25 +34,25 @@
 		</electrode_list>
 
 		<meas_type_list>
-			<meas_type name="get" demod_frequency="100000"
+			<meas_type name="get" demod_frequency="100000 Hz"
 				physical_property="voltage" offset="0" gain="1">
 				<fields>
 					<field name="Amplitude" type="float" />
 				</fields>
 			</meas_type>
-			<meas_type name="current" demod_frequency="100000"
+			<meas_type name="current" demod_frequency="100000 Hz"
 				physical_property="current" offset="0" gain="1">
 				<fields>
 					<field name="Amplitude" type="float" />
 				</fields>
 			</meas_type>
-			<meas_type name="voltage" demod_frequency="100000"
+			<meas_type name="voltage" demod_frequency="100000 Hz"
 				physical_property="voltage" offset="0" gain="1">
 				<fields>
 					<field name="Amplitude" type="float" />
 				</fields>
 			</meas_type>
-			<meas_type name="aux" demod_frequency="100000"
+			<meas_type name="aux"
 				physical_property="voltage" offset="0" gain="1">
 				<fields>
 					<field name="Real" type="float" />
@@ -62,12 +62,12 @@
 		</meas_type_list>
 
 		<stim_type_list>
-			<stim_type name="sgoe" amplitude="100" frequency="55.6"
+			<stim_type name="sgoe" amplitude="100 mA" frequency="55.6 kHz"
 				physical_property="current" wave="square" />
 		</stim_type_list>
 
 		<acquisition_list>
-			<acquisition start="0" stop="10">
+			<acquisition start="0 ns" stop="10 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -81,7 +81,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="10" stop="20">
+			<acquisition start="10 ns" stop="20 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -95,7 +95,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="20" stop="30">
+			<acquisition start="20 ns" stop="30 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -109,7 +109,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="30" stop="40">
+			<acquisition start="30 ns" stop="40 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -123,7 +123,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="40" stop="50">
+			<acquisition start="40 ns" stop="50 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -137,7 +137,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="50" stop="60">
+			<acquisition start="50 ns" stop="60 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -151,7 +151,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="60" stop="70">
+			<acquisition start="60 ns" stop="70 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -165,7 +165,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="70" stop="80">
+			<acquisition start="70 ns" stop="80 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -179,7 +179,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="80" stop="90">
+			<acquisition start="80 ns" stop="90 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -193,7 +193,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="90" stop="100">
+			<acquisition start="90 ns" stop="100 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -207,7 +207,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="100" stop="110">
+			<acquisition start="100 ns" stop="110 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -221,7 +221,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="110" stop="120">
+			<acquisition start="110 ns" stop="120 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -235,7 +235,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="120" stop="130">
+			<acquisition start="120 ns" stop="130 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -249,7 +249,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="130" stop="140">
+			<acquisition start="130 ns" stop="140 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -263,7 +263,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="140" stop="150">
+			<acquisition start="140 ns" stop="150 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="1" gain="1"/>
@@ -277,15 +277,13 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="150" stop="160">
+			<acquisition start="150 ns" stop="160 ns">
 				<meas_list>
-					<meas type="aux">
-						<line id="aux0" gain="1"/>
-					</meas>
+					<meas type="aux0" gain="1"/>
 				</meas_list>
 			</acquisition>
 			
-			<acquisition start="160" stop="170">
+			<acquisition start="160 ns" stop="170 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -299,7 +297,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="170" stop="180">
+			<acquisition start="170 ns" stop="180 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -313,7 +311,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="180" stop="190">
+			<acquisition start="180 ns" stop="190 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -327,7 +325,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="190" stop="200">
+			<acquisition start="190 ns" stop="200 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -341,7 +339,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="200" stop="210">
+			<acquisition start="200 ns" stop="210 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -355,7 +353,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="210" stop="220">
+			<acquisition start="210 ns" stop="220 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -369,7 +367,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="220" stop="230">
+			<acquisition start="220 ns" stop="230 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -383,7 +381,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="230" stop="240">
+			<acquisition start="230 ns" stop="240 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -397,7 +395,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="240" stop="250">
+			<acquisition start="240 ns" stop="250 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -411,7 +409,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="250" stop="260">
+			<acquisition start="250 ns" stop="260 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -425,7 +423,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="260" stop="270">
+			<acquisition start="260 ns" stop="270 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -439,7 +437,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="270" stop="280">
+			<acquisition start="270 ns" stop="280 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -453,7 +451,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="280" stop="290">
+			<acquisition start="280 ns" stop="290 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -467,7 +465,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="290" stop="300">
+			<acquisition start="290 ns" stop="300 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -481,7 +479,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="300" stop="310">
+			<acquisition start="300 ns" stop="310 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -495,7 +493,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="310" stop="320">
+			<acquisition start="310 ns" stop="320 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="2" gain="1"/>
@@ -511,7 +509,7 @@
 			</acquisition>
 				
 				
-			<acquisition start="320" stop="330">
+			<acquisition start="320 ns" stop="330 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -525,7 +523,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="330" stop="340">
+			<acquisition start="330 ns" stop="340 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -539,7 +537,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>	
-			<acquisition start="340" stop="350">
+			<acquisition start="340 ns" stop="350 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -553,7 +551,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="350" stop="360">
+			<acquisition start="350 ns" stop="360 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -567,7 +565,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="360" stop="370">
+			<acquisition start="360 ns" stop="370 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -581,7 +579,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="370" stop="380">
+			<acquisition start="370 ns" stop="380 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -595,7 +593,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="380" stop="390">
+			<acquisition start="380 ns" stop="390 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -609,7 +607,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="390" stop="400">
+			<acquisition start="390 ns" stop="400 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -623,7 +621,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="410" stop="420">
+			<acquisition start="410 ns" stop="420 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -637,7 +635,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="420" stop="430">
+			<acquisition start="420 ns" stop="430 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -651,7 +649,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="430" stop="440">
+			<acquisition start="430 ns" stop="440 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -665,7 +663,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="440" stop="450">
+			<acquisition start="440 ns" stop="450 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -679,7 +677,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="450" stop="460">
+			<acquisition start="450 ns" stop="460 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -693,7 +691,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="460" stop="470">
+			<acquisition start="460 ns" stop="470 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -707,7 +705,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="470" stop="480">
+			<acquisition start="470 ns" stop="480 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
@@ -721,7 +719,7 @@
 					</meas>
 				</meas_list>
 			</acquisition>
-			<acquisition start="480" stop="490">
+			<acquisition start="480 ns" stop="490 ns">
 				<stim_list>
 					<stim type="sgoe">
 						<elec id="3" gain="1"/>
