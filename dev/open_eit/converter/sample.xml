@@ -11,7 +11,7 @@
 
 		<electrode_list coordinate_system="Cartesian"
 			position_description="Absolute">
-			<electrode id="1" type="electrode_type0" position="[0,0,0]" />
+			<electrode id="1" type="electrode_type0" position="[0,0,0]" comment="this electrode is ground"/>
 			<electrode id="2" type="electrode_type0" position="[0,0,0]" />
 			<electrode id="3" type="electrode_type0" position="[0,0,0]" />
 			<electrode id="4" type="electrode_type0" position="[0,0,0]" />
