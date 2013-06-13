@@ -1,0 +1,619 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Open Electrical Impedance Tomography File Format
+\end_layout
+
+\begin_layout Author
+Pascal O.
+ Gaggero
+\begin_inset Formula $^{1}$
+\end_inset
+
+, Bartłomiej Grychtol
+\begin_inset Formula $^{2}$
+\end_inset
+
+, Hervé Gagnon
+\begin_inset Formula $^{3}$
+\end_inset
+
+,[add other author later], Andy Adler
+\begin_inset Formula $^{4}$
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Pascal O.
+ Gaggero is with the Department of Human Centered Engineering, Technique
+ and Informatics Institute of the Bern University of Applied Sciences, Bienne,
+ Switzerland, e-mail: 
+\begin_inset CommandInset href
+LatexCommand href
+target "pascal.gaggero@bfh.ch"
+type "mailto:"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Second
+\begin_inset space ~
+\end_inset
+
+Name is with the Department of ..., ...
+ Institute of ..., City, Country, e-mail: 
+\begin_inset CommandInset href
+LatexCommand href
+target "xxx@xxx.xxx"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Third
+\begin_inset space ~
+\end_inset
+
+Name is with the Department of ..., ...
+ Institute of ..., City, Country, e-mail: 
+\begin_inset CommandInset href
+LatexCommand href
+target "xxx@xxx.xxx"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Page headings
+Journal of XXX
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}{
+\end_layout
+
+\end_inset
+
+Your Name 
+\begin_inset Flex Lowercase
+status open
+
+\begin_layout Plain Layout
+
+\emph on
+et al.
+\end_layout
+
+\end_inset
+
+: Your Title
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+left side
+\series bold
+}{
+\series default
+right side
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Publication ID
+0000--0000/00$00.00
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+copyright
+\end_layout
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+2007 IEEE
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+only if you have one
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+This ist the abstact text.
+\end_layout
+
+\begin_layout Keywords
+simplicity, beauty, elegance
+\end_layout
+
+\begin_layout Section
+Abstract
+\end_layout
+
+\begin_layout Standard
+[write abstract later]
+\end_layout
+
+\begin_layout Author
+Pascal O.
+ Gaggero
+\begin_inset Formula $^{1}$
+\end_inset
+
+, Bartłomiej Grychtol
+\begin_inset Formula $^{2}$
+\end_inset
+
+, Hervé Gagnon
+\begin_inset Formula $^{3}$
+\end_inset
+
+,[add other author later], Andy Adler
+\begin_inset Formula $^{4}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+\begin_inset Formula $^{1}$
+\end_inset
+
+Bern University of Applied Sciences, Biel/Bienne, Switzerland
+\end_layout
+
+\begin_layout Author
+\begin_inset Formula $^{2}$
+\end_inset
+
+German Cancer Research Center, Heidelberg, Germany 
+\end_layout
+
+\begin_layout Author
+\begin_inset Formula $^{3}$
+\end_inset
+
+École Polytechnique de Montréal, Montréal, Canada 
+\end_layout
+
+\begin_layout Author
+\begin_inset Formula $^{4}$
+\end_inset
+
+Carleton University, Ottawa, Canada Your Title
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Subsection
+Motivation
+\end_layout
+
+\begin_layout Standard
+Electrical impedance tomography (EIT) is a tomographic imaging technique
+ that makes use of electrical currents injected into a body and of the resulting
+ potential field to calculate the spatial distribution of electrical impedance.
+ This technique showed promising results in various fields of application
+ like earth science, industrial process monitoring and medical imaging.
+ In medical imaging the most promising application is lung function monitoring
+ to prevent ventilator-induced acute lung injury.
+ In this area, EIT covers the need for a cost-effective, ionizing-radiation-free
+ and compact monitoring solution.
+ As showed by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "adler2012"
+
+\end_inset
+
+, EIT has witnessed a dramatic increase in the number of studies over the
+ last decade.
+ Outside academia, commercial interest also increases: the first commercial
+ medical-grade EIT instrument addressing ICU market, PulmoVista 500 (Dräger
+ Medical, Lübeck, Germany), has been brought to the market in 2011.
+ The downside of worldwide distributed research is that every group has
+ defined their own standards.
+ This is especially true for data storage.
+ Among the multitude of today’s research and commercial EIT devices, none
+ share a file format.
+ An early attempt to define a file format was made by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Record_RiuCosta_1992"
+
+\end_inset
+
+, but was not taken up by the community.
+ Twenty years later we feel it is the right time for the community to commit
+ to a common data storage solution.
+ 
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Standard
+The basic idea is to make use of a ZIP-based archive to store the several
+ folders and files into a single .oeit file, see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:File-architecture"
+
+\end_inset
+
+.
+ A similar approach is used to store OpenOffice documents.
+ Moreover, the ZIP format is well defined and even recognized by the Internation
+al Organization for Standardization (ISO), see ISO/IEC JTC 1/SC 34 N 1621.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+version.txt
+\begin_inset Quotes erd
+\end_inset
+
+ file contains version number used to select the corresponding OEIT file
+ parser.
+ Thus the possibility is provided to add more features to the format in
+ future version.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+header
+\begin_inset Quotes erd
+\end_inset
+
+ folder contains file invariant information such: subject description, manufactu
+rer and model of the EIT instrument.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+raw
+\begin_inset Quotes erd
+\end_inset
+
+ folder can be used so store proprietary-formatted data.
+ The way information is stored in the raw folder is up to the manufacturer
+ to decide.
+ But it is worth noting that OEIT file which only provide raw data will
+ not be considered as a valid OEIT-formated file.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+eit
+\begin_inset Quotes erd
+\end_inset
+
+ folder stores manufacturer-independent data.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+optional data
+\begin_inset Quotes erd
+\end_inset
+
+ folder stores miscellaneous information such: print screens and user comments.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+auxiliarynn
+\begin_inset Quotes erd
+\end_inset
+
+ folder contains data stream which are acquired at a different rate compared
+ to the EIT data.
+ For example ECG or other information can be stored here provided they do
+ not share the same sampling rate (or an integer multiple) as the EIT device.
+ Auxiliary folder are limited to 100 starting with auxiliary00 up to auxiliary99.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/file_architecture.pdf
+	lyxscale 50
+	width 40text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+File architecture of the ZIP-based archive used to store OEIT data.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:File-architecture"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Structure of the article
+\end_layout
+
+\begin_layout Itemize
+XML schema NG language
+\end_layout
+
+\begin_layout Itemize
+structure of the article
+\end_layout
+
+\begin_layout Itemize
+limitation due to space limitation and compactness -> link to more documentation
+\end_layout
+
+\begin_layout Section
+Detailed description
+\end_layout
+
+\begin_layout Subsection
+Specification requirement for OEIT
+\end_layout
+
+\begin_layout Standard
+The basic idea when we started this project was to design a file format
+ which could be accommodated to the need of the EIT community in broad meaning.
+ This includes the applications and there respective hardware within the
+ field of geophysics, mining, agriculture, archeology, industrial process
+ and medicine.
+ Therefor the developed file format should be very flexible.
+ The downside of being very flexible is the ever increase complexity of
+ the file parser with each supplementary degree of freedom.
+ So the first basic rule we decided to adopt was to be able to describe
+ simple configuration in a simple way, even if the description of more complicat
+ion configuration is then made also more complex.
+ The second design rule the first version of the OEIT file format is to
+ mainly address the need of the biomedical EIT community.
+ The reason for this is to be able to start small and grown from there while
+ attracting more and more people to the project, because of the authors
+ background, and the pressing need for a common file format within the medical
+ EIT community.
+ That being said some non-medical feature have already be implemented in
+ this version.
+ The third and last design rule was to reuse as much code and already available
+ application as possible this mainly concerns the binary coding scheme and
+ the XML language validation for which we selected ZIP and Schema NG, respective
+ly.
+ Those choices impacted slightly the design of the format but offered a
+ tremendous gain in the development time.
+\end_layout
+
+\begin_layout Standard
+The specification requirement for OEIT were drafted based on the above rules
+ and basic need of the community:
+\end_layout
+
+\begin_layout Enumerate
+An OEIT file should be an ZIP-archive, which contains a hierarchical folder
+ and file arrangement.
+\end_layout
+
+\begin_layout Enumerate
+It should be possible to describes EIT systems with the following features:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+voltage or current drive
+\end_layout
+
+\begin_layout Enumerate
+pair or multiple electrode drive
+\end_layout
+
+\begin_layout Enumerate
+ground electrode
+\end_layout
+
+\begin_layout Enumerate
+serial and parallel measurement
+\end_layout
+
+\begin_layout Enumerate
+multiple data stream
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+OEIT should also be able to record external signals other than the one from
+ the EIT instrument.
+\end_layout
+
+\begin_layout Enumerate
+One should also be able to record events.
+\end_layout
+
+\begin_layout Enumerate
+The OEIT file architecture should be flexible enough to easily introduce
+ new features when required.
+\end_layout
+
+\begin_layout Subsection
+Implementation
+\end_layout
+
+\begin_layout Subsection
+Configuration files
+\end_layout
+
+\begin_layout Section
+Use cases
+\end_layout
+
+\begin_layout Subsection
+Legacy converter
+\end_layout
+
+\begin_layout Subsection
+Manufacturer writer
+\end_layout
+
+\begin_layout Subsection
+Third party reader
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Section
+References
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "references"
+options "bibtotoc,plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
