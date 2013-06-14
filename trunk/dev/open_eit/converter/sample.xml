@@ -5,6 +5,10 @@
 
 		<electrode_type_list>
 			<electrode_type name="electrode_type0" contact_impedance=".01"/>
+			<electrode_type name="electrode_type1" contact_impedance=".01">
+				<user_data box_serial_numer="asfd"/>
+			</electrode_type>
+
 		</electrode_type_list>
 
 		<sometag />
@@ -66,7 +70,9 @@
 				physical_property="current" wave="square" />
 		</stim_type_list>
 
-		<acquisition_list>
+		<acquisition_list id="1234" 
+			comment="the id is the index field in the binary data">
+
 			<acquisition start="0 ns" stop="10 ns">
 				<stim_list>
 					<stim type="sgoe">
