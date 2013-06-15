@@ -198,19 +198,21 @@ public class MCEITParser implements OeitLegacyParser {
 			/*
 			 * GET MEAS TYPES INFO
 			 */
+			int j = 0;
 			for (int k = 0; k<measTypeList.getLength(); k++){
 				Element measurement = (Element)measTypeList.item(k);
 				if (measType.equals(measurement.getAttribute("name"))){
 					demod_freq = measurement.getAttribute("demod_frequency");
 					physical_property2 = measurement.getAttribute("physical_property");
 					meas_gain = measurement.getAttribute("gain");
+					j++;
 				}
 			}
-			
+			Element measurement = (Element)measTypeList.item(j);
 			/*
 			 * GET FIELD INFO
 			 */
-			NodeList fieldList = ((Element)measTypeList.item(i)).getElementsByTagName("field");
+			NodeList fieldList = measurement.getElementsByTagName("field");
 			String[] fieldName = new String[fieldList.getLength()];
 			String[] fieldType = new String[fieldList.getLength()];
 			
