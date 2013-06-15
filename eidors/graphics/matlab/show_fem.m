@@ -267,21 +267,24 @@ for e=1:length(mdl.electrode)
         vy = mdl.electrode(e).pos(:,2) - ctr_y;
         vz = mdl.electrode(e).pos(:,3) - ctr_z;
         idx = 1:length(vx);
+        S = 1.00;
     else
         elec_nodes= mdl.electrode(e).nodes;
         
         S= 1.00;
-        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
-        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
-        vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
-        % sort nodes around the model (to avoid crossed lines)
-        % TODO: figure out what to do in different directions
-        [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+        vx= (mdl.nodes(elec_nodes,1) - ctr_x);
+        vy= (mdl.nodes(elec_nodes,2) - ctr_y);
+        vz= (mdl.nodes(elec_nodes,3) - ctr_z);
     end
+    
+    % sort nodes around the model (to avoid crossed lines)
+    % TODO: figure out what to do in different directions
+    [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+    
     ecolour = electr_colour( e );
     if numel(vx) == 1
        % Point Electrode Models: put a circle around the node
-       line(vx(idx)+ctr_x,vy(idx)+ctr_y, vz(idx)+ctr_z,  ...
+       line(S*vx(idx)+ctr_x,S*vy(idx)+ctr_y, S*vz(idx)+ctr_z,  ...
             'LineWidth', 2, 'LineStyle','-','Color', ecolour, ...
             'Marker','o','MarkerSize', 6,'MarkerEdgeColor',ecolour);
     else
@@ -293,16 +296,16 @@ for e=1:length(mdl.electrode)
     end
     if number_electrodes
        S= 1.05;
-       vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
-       vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
-       vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
+%        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
+%        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
+%        vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
        switch number_electrodes
           case {1 true}
             txt = num2str(e);
           case 2
              try, txt = mdl.electrode(e).label; end
        end
-       hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y,mean(vz)+ctr_z,txt);
+       hh= text(S*mean(vx)+ctr_x, S*mean(vy)+ctr_y,S*mean(vz)+ctr_z,txt);
        set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
     end
 end
