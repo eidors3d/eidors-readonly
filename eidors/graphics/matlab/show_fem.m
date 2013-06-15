@@ -58,9 +58,10 @@ end
 
 if nargout == 0; clear hh; end
 
-if ~ishold
-   fix_axis
-end
+% this is moved to show_2d and show_3d
+% if ~ishold
+%    fix_axis
+% end
 
 function fix_axis
    ax = gca;
@@ -180,6 +181,9 @@ function hh= show_2d(img,mdl,opts)
     %    colours= calc_colours(img, [], opts.do_colourbar);
     % end
    end
+   if ~ishold
+      fix_axis
+   end
 
    
 
@@ -194,11 +198,18 @@ function hh= show_3d(img,mdl,opts)
            calc_colours(img, [], opts.do_colourbar);
        end
    end
+   % need to adjust the axis limits before we plot electrodes
+   % who have thickness in all dimensions and thus cause 'axis tight' to
+   % mess up the z limits
+   if ~ishold
+      fix_axis
+   end
    if size(mdl.elems,2) == 3
       show_electrodes_surf(mdl, opts.number_electrodes);
    else
       show_electrodes_3d(mdl, opts.number_electrodes);
    end
+
 
 function show_electrodes_2d(mdl, number_electrodes)
     if ~isfield(mdl,'electrode'); return; end
