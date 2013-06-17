@@ -1,0 +1,108 @@
+<project name="OEIT Build Script" basedir="." default="jar">
+	<property name="dir.lib" value="lib" />
+	<property name="dir.src" value="src" />
+	<property name="dir.build" value="build" />
+	<property name="dir.dest" value="dist" />
+	<property name="dir.test" value="test" />
+	<property name="full-compile" value="false" />
+
+	<path id="classpath.base">
+		<pathelement location="${dir.lib}/junit-4.11.jar" />
+		<pathelement location="${dir.lib}/hamcrest-core-1.3.jar" />
+		<pathelement location="${dir.build}" />
+	</path>
+
+	<path id="classpath.test">
+		<pathelement location="${dir.test}" />
+		<path refid="classpath.base" />
+	</path>
+
+	<target name="clean" description="Removing the all generated files.">
+		<delete verbose="${full-compile}">
+			<fileset dir="${dir.test}" includes="**/*.class" />
+		</delete>
+
+		<delete verbose="${full-compile}" dir="${dir.build}" />
+		<delete verbose="${full-compile}" dir="${dir.dest}" />
+	</target>
+
+	<target name="prepare" depends="clean">
+		<mkdir dir="${dir.build}" />
+		<mkdir dir="${dir.dest}" />
+		<mkdir dir="${dir.src}" />
+		<mkdir dir="${dir.test}" />
+	</target>
+
+	<target name="compile" depends="prepare" description="Compilation of all source code.">
+		<javac verbose="${full-compile}" srcdir="${dir.src}" destdir="${dir.build}" includeantruntime="false">
+			<classpath refid="classpath.base" />
+		</javac>
+	</target>
+
+	<target name="test" description="Run unit test within the project.">
+		<property name="dir.test-classes" value="tmp" />
+		<mkdir dir="${dir.test-classes}" />
+
+		<path id="classpath.test">
+			<pathelement location="${dir.test-classes}" />
+			<path refid="classpath.base" />
+		</path>
+
+		<javac verbose="${full-compile}" srcdir="${dir.test}" destdir="${dir.test-classes}" includeantruntime="false">
+			<classpath refid="classpath.test" />
+		</javac>
+
+		<junit failureProperty="test.failure">
+			<classpath refid="classpath.test" />
+			<formatter type="plain" usefile="false" />
+
+			<batchtest>
+				<fileset dir="${dir.test-classes}" includes="**/*.class" />
+			</batchtest>
+		</junit>
+
+		<fail message="test failed" if="test.failure" />
+
+		<delete dir="${dir.test-classes}" />
+	</target>
+
+	<target name="jar" depends="compile" description="Generates oeit.jar file in to the 'dest' directory.">
+		<property name="version.num" value="1.00" />
+		<buildnumber file="build.num" />
+
+		<!-- create a property containing all .jar files, prefix lib/, and seperated with a space -->
+		<pathconvert property="libs.project" pathsep=" ">
+			<mapper>
+				<chainedmapper>
+					<!-- remove absolute path -->
+					<flattenmapper />
+					<!-- add lib/ prefix -->
+					<globmapper from="*" to="lib/*" />
+				</chainedmapper>
+			</mapper>
+			<path>
+				<!-- lib.home contains all jar files, in several subdirectories -->
+				<fileset dir="${dir.lib}">
+					<include name="**/*.jar" />
+				</fileset>
+			</path>
+		</pathconvert>
+
+		<jar jarfile="${dir.dest}/oeit.jar" basedir="${dir.build}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="org.openeit.oeit.Oeit" />
+				<attribute name="Implementation-Version" value="${version.num}-b${build.number}" />
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+		</jar>
+
+		<!-- contains all library dependencies -->
+		<mkdir dir="${dir.dest}/lib" />
+		<copy todir="${dir.dest}/lib" filtering="off">
+			<!-- remove the directory hierarchy: lib contains no subdirectories -->
+			<flattenmapper />
+			<fileset dir="${dir.lib}" includes="**/*.jar" />
+		</copy>
+	</target>
+</project>

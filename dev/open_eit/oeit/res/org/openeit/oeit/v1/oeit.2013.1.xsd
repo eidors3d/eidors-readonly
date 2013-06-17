@@ -1,0 +1,805 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://open-eit.org/2013/XMLSchema"
+    elementFormDefault="qualified"
+    xmlns="http://open-eit.org/2013/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      This schema represent a collaborative effort to unify the file enconding practices amongst EIT providers.
+
+      Electrical impedance tomography (EIT) is a tomographic imaging technique that makes use of electrical currents injected into a body and of the resulting potential field to calculate the spatial distribution of electrical impedance.  This technique showed promising results in various fields of application like earth sciences, industrial process monitoring, and medical imaging.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:element name="oeit" type="oeit" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="electrode_type_list" type="electrode_type_list">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="subject" type="subject">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="device" type="device">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="configuration" type="configuration">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="oeit" id="oeit">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Oeit is the type of the root element of Open EIT descriptor XML documents.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="subject" type="subject" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="configuration" type="configuration" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="version" type="xs:decimal" use="required" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="subject">
+    <xs:annotation>
+      <xs:documentation></xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip">
+      </xs:any>
+    </xs:sequence>
+
+    <xs:attribute name="name" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="subject_type" use="optional" >
+      <xs:annotation>
+        <xs:documentation></xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax">
+    </xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:simpleType name="subject_type">
+    <xs:annotation>
+      <xs:documentation></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Patient"></xs:enumeration>
+      <xs:enumeration value="Saline Tank"></xs:enumeration>
+      <xs:enumeration value="Volcano"></xs:enumeration>
+      <xs:enumeration value="Field"></xs:enumeration>
+      <xs:enumeration value="Phantom"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="configuration">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Configuration of device/procedure for EIT capture.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="general" type="general" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="device" type="device" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="electrode_type_list" type="electrode_type_list" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="electrode_list" type="electrode_list" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="meas_type_list" type="meas_type_list" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="stim_type_list" type="stim_type_list" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="measurements" type="measurements" minOccurs="1" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="general" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        General settings used in the configuration of device/procedure for EIT capture.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="framerate" type="xs:decimal" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          The rate of capture.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="device">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Description of the device used to perform EIT capture.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="firmware" type="firmware" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="software" type="software" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="manufacturer" type="xs:string" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="model" type="xs:string" use="optional"  >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="serialnumber" type="xs:string" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="firmware">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="manufacturer" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="version" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax">
+
+    </xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="software">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="manufacturer" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="version" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax">
+
+    </xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="electrode_type_list">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="electrode_type" type="electrode_type" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="electrode_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="additional_information" type="xs:string" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="manufacturer" type="manufacturer" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="model" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="diameter" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="thickness" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="width" type="xs:decimal" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="height" type="xs:decimal" use="optional" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:simpleType name="manufacturer">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Carefusion"></xs:enumeration>
+      <xs:enumeration value="Draeger"></xs:enumeration>
+      <xs:enumeration value="Swisstom"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="electrode_list">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="electrode" type="electrode" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="coordinate_system" type="coordinate_system" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="position_description" type="position_description" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:simpleType name="coordinate_system">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Cartesian"></xs:enumeration>
+      <xs:enumeration value="Cylindrical"></xs:enumeration>
+      <xs:enumeration value="Spherical"></xs:enumeration>
+      <xs:enumeration value="GPS"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="position_description">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Absolute"></xs:enumeration>
+      <xs:enumeration value="Relative"></xs:enumeration>
+      <xs:enumeration value="Illustrative"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="electrode">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="position" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="ordinal" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="meas_type_list">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="meas_type" type="meas_type" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="meas_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="fields" type="fields" >
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="demod_frequency" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="physical_property" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Voltage, current, etc...
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="signal_gain" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="offset_gain" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="fields">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="field" type="field"  maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="field">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="length" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="delimiter" type="xs:string" use="optional" default="">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="stim_type_list">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="stim_type" type="stim_type" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="stim_type">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="frequency" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="physical_property" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+          Voltage, current, etc...
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="wave" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="amplitude" type="xs:decimal" use="optional">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+
+  <xs:complexType name="measurements">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="meas_task" type="meas_task" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="meas_task" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="inputs" type="inputs">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="outputs" type="outputs">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="start" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="stop" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="inputs" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="stim" type="stim" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="stim" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="elec" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="gain" type="xs:string" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="outputs" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="meas" type="meas" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="meas" >
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="elec" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="type" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="gain" type="xs:string" >
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+</xs:schema>
+
+
