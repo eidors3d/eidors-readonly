@@ -17,21 +17,7 @@ CLASS=src/CarefusionParser.class \
       src/UTCCalParser.class \
       src/UTCDataParser.class \
       src/UTCSeqParser.class \
-      src/XMLReader.class \
-      test/CarefusionTest.class \
-      test/DixtalEncodeTest.class \
-      test/DixtalTest.class \
-      test/DraegereitTest.class \
-      test/DraegergetTest.class \
-      test/IIRCTest.class \
-      test/ITSTest.class \
-      test/Landquart1Test.class \
-      test/Landquart2Test.class \
-      test/MceitTest.class \
-      test/SheffieldTest.class \
-      test/UTCCalTest.class \
-      test/UTCDataTest.class \
-      test/UTCSeqTest.class
+      src/XMLReader.class 
 
 SRC = $(patsubst %.class, %.java, $(CLASS))
 
@@ -43,7 +29,7 @@ $(CLASS):
 	javac -cp $(CLASSPATH) $(SRC)
 
 MceitTest: GetParser.jar 
-	java -cp GetParser.jar MceitTest
+	java -cp GetParser.jar RunParser
 
 GetParser.jar: $(CLASS)
 	jar cf $@ $(CLASS)
