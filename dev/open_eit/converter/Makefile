@@ -35,8 +35,11 @@ CLASS=src/CarefusionParser.class \
 
 SRC = $(patsubst %.class, %.java, $(CLASS))
 
+# This is for UNIX
+CLASSPATH = :./usr/share/java/junit4.jar
+
 $(CLASS):
-	javac $(SRC)
+	javac -cp $(CLASSPATH) $(SRC)
 
 MceitTest: GetParser.jar 
 	java -cp GetParser.jar MceitTest
