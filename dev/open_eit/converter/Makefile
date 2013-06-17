@@ -36,6 +36,7 @@ CLASS=src/CarefusionParser.class \
 SRC = $(patsubst %.class, %.java, $(CLASS))
 
 # This is for UNIX
+# In ununtu, install apt-get install junit4
 CLASSPATH = :./usr/share/java/junit4.jar
 
 $(CLASS):
