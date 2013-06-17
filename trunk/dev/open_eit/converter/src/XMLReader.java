@@ -1,14 +1,14 @@
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 import java.io.File;
 
 public class XMLReader {
-
-	public static Document readXML(String filename){
+	
+	/*
+	 * This method reads a config xml file and returns a document object model (DOM)
+	 */
+	public Document returnDOM(String filename){
 		
 		try{
 			File fXmlFile = new File(filename);
@@ -21,8 +21,8 @@ public class XMLReader {
 			
 			return doc;
 		}catch (Exception e){
+			System.out.println(filename + " not found.");
 			return null;
 		}
-
 	}
 }

@@ -97,7 +97,8 @@ public class MCEITParser implements OeitLegacyParser {
 		//double[] data = new double[256*(length/256)];
 	
 		//Get NodeLists here
-		Document doc = XMLReader.returnDOM("sample.xml"); // Returns DOM
+		XMLReader reader = new XMLReader();
+		Document doc = reader.returnDOM("sample.xml"); // Returns DOM
 		NodeList measTasks = doc.getElementsByTagName("acquisition");
 		NodeList measTypeList = doc.getElementsByTagName("meas_type");
 		NodeList electrodeList = doc.getElementsByTagName("electrode");
