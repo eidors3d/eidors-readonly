@@ -31,7 +31,7 @@ q = show_current(img,vh.volt);
 hh=show_fem(img);
 set(hh,'EdgeColor',[1,1,1]*.75);
 hold on;
-sy = linspace(-3,3,15); sx =  15+0*sy;
+sy = linspace(-3,3,10); sx =  15+0*sy;
 hh=streamline(q.xp,q.yp, q.xc, q.yc, sx,sy); set(hh,'Linewidth',2);
 hold off;
 
