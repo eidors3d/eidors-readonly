@@ -1,4 +1,5 @@
 all: MceitTest
+
 CLASS=src/CarefusionParser.class \
       src/DixtalEncodeParser.class \
       src/DixtalParser.class \
@@ -22,6 +23,7 @@ CLASS=src/CarefusionParser.class \
       test/DixtalEncodeTest.class \
       test/DixtalTest.class \
       test/DraegereitTest.class \
+      test/MakeGetFile.class \
       test/DraegergetTest.class \
       test/IIRCTest.class \
       test/ITSTest.class \
@@ -42,9 +44,13 @@ CLASSPATH = .:/usr/share/java/junit4.jar
 $(CLASS):
 	javac -cp $(CLASSPATH) $(SRC)
 
-MceitTest: GetParser.jar 
+MceitTest: GetParser.jar sample.get
 	#java -cp GetParser.jar RunParser
 	java -cp src:test RunParser
 
+
 GetParser.jar: $(CLASS)
 	jar cf $@ $(CLASS)
+
+sample.get: test/MakeGetFile.class
+	java -cp test MakeGetFile
