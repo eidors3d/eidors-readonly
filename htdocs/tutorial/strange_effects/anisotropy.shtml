@@ -34,6 +34,20 @@ Rectangular model with current streamlines
 Deformed model with current streamlines
 </center>
 
+<H3>
+   Create isotropic conductivity patterns and recalulate streamlines
+</H3>
+
+<pre>
+<!--#include virtual="anisotropy1_03.m" -->
+</pre>
+
+<center>
+<img src="anisotropy1_03a.png">
+<br><i> Figure:</i>
+Deformed model with current streamlines
+</center>
+
 
 </td></tr></table>
 <p>
