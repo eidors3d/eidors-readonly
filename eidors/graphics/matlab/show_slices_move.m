@@ -16,8 +16,12 @@ if exist('move') && size(move,1) == size(mdl.nodes,1)
     move= zeros(elecs,3);
 end
 for e = 1:elecs;
-    elec_nodes = mdl.electrode(e).nodes;
-    pos(e,:) = mean(mdl.nodes(elec_nodes,:),1);
+    if isfield(mdl.electrode(e),'pos')
+       pos(e,:) = mean(mdl.electrode(e).pos);
+    else
+       elec_nodes = mdl.electrode(e).nodes;
+       pos(e,:) = mean(mdl.nodes(elec_nodes,:),1);
+    end
     if exist('move_nodes');
         move(e,:) = mean( move_nodes(elec_nodes,:), 1);
     end

@@ -48,7 +48,11 @@ if ~isempty(move)
     switch size(move,1)
       case length(electr)
         for i=1:length(electr)
-           e_nodes(i,:) = mean(nodes(electr(i).nodes,:),1);
+           if isfield(electr(i), 'pos')
+              e_nodes(i,:) = mean(electr(i).pos);
+           else
+              e_nodes(i,:) = mean(nodes(electr(i).nodes,:),1);
+           end
         end
     
       case num_nodes(img)
