@@ -69,8 +69,9 @@ if opts.abs_solve
       error('only one data set is allowed for a static reconstruction');
    end
    
-   imgc= feval( inv_model.solve, inv_model, ...
-               filt_data(inv_model,data1) );
+   fdata = filt_data(inv_model,data1);
+   imgc= feval( inv_model.solve, inv_model, fdata);
+
 else
    if nargin~=3;
       error('two data sets are required for a difference reconstruction');
@@ -84,6 +85,8 @@ else
 
    % TODO: Check if solver can handle being called with multiple data
    imgc= feval( inv_model.solve, inv_model, fdata1, fdata2);
+   
+
 end
 
 check_physics_handling(inv_model,imgc);
@@ -119,6 +122,15 @@ try; img.node_data = opts.offset + opts.scale * img.node_data; end
 %>> A.a= 1; A.b= 2; B.b= 3; B.a = 3; A(2) = B
 %??? Subscripted assignment between dissimilar structures.
 img = orderfields(img);
+
+% calculate residuals
+if opts.abs_solve
+   err = calc_solution_error( imgc, inv_model, fdata);
+else
+   err = calc_solution_error( imgc, inv_model, fdata1, fdata2 );
+end
+
+eidors_msg('inv_solve: Solution Error: %f', err,  2);
 
 function opts = parse_parameters( imdl );
    if  strcmp(imdl.reconst_type,'static') || ...
