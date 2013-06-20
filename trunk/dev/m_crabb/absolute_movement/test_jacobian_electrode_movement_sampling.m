@@ -1,7 +1,7 @@
 clc; close all;
 run ~/EIT/Code/mk_paths.m
 
-n_dim=3; 
+n_dim=2; 
 
 if(n_dim==2)
 %No .of electrodes and the anomaly parameter
@@ -28,12 +28,10 @@ figure; show_fem(img_h,[1,0,0]);
 
 %Homogeneous and inhomgeneous voltages
 v_h=fwd_solve(img_h.fwd_model,img_h);
-
-
 elec_comp = calc_electrode_components(mdl_h);
 %Get the Movement Jacobian and the components into normal and tangential
-tic; [Jold] = jacobian_movement_eidors_electrode_tangential(img_h); toc;
-tic; [Jnew] = jacobian_movement_electrode_tangential(img_h); toc;
+tic; [Jold] = jacobian_movement_eidors_electrode_tangential(img_h.fwd_model,img_h); toc;
+tic; [Jnew] = jacobian_movement_sampling_electrode_tangential(img_h.fwd_model,img_h); toc;
 
 elseif(n_dim==3)
 %No .of electrodes and the anomaly parameter
@@ -57,7 +55,7 @@ figure; show_fem(img_h,[1,0,0]);
 elec_comp = calc_electrode_components(mdl_h);
 
 %Get the Movement Jacobian and the components into normal and tangential
-[Jold] = jacobian_movement_eidors_electrode_tangential(img_h);
-%[Jnew] = jacobian_movement_electrode_tangential(img_h);
+[Jold] = jacobian_movement_eidors_electrode_tangential(img_h.fwd_model,img_h);
+%[Jnew] = jacobian_movement_sampling_electrode_tangential(img_h);
 
 end

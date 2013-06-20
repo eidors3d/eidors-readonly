@@ -1,4 +1,4 @@
-function J = jacobian_movement_conductivity(fwd_model, img)
+function J = jacobian_movement_sampling_electrode_tangential(fwd_model, img)
 % JACOBIAN_MOVEMENT   Computes the Jacobian matrix for conductivity and
 % electrode movement variables in 3D EIT.
 % Args:     fwd_model - the EIDORS object forward model
