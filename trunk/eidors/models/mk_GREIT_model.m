@@ -98,6 +98,7 @@ Nsim = opt.Nsim;
 
 %Calculate rec_model (if absent)
 if ~isfield(imdl,'rec_model');
+   opt.do_coarse2fine = 0;
    imdl.rec_model = mk_pixel_slice(fmdl,opt.target_plane,opt);
    imdl.rec_model.nodes(:,3) = []; % the third dimension complicated display
    % medical orientation
