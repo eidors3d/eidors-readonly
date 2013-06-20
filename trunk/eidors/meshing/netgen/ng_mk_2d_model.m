@@ -90,6 +90,9 @@ end
 if nargin < 3
     elec_shape = [0 10]; % point electrode
 end
+if size(elec_shape,2) == 1
+   elec_shape(:,2) = 10;
+end
 if ~iscell(elec_shape)
     elec_shape = {elec_shape};
 end
@@ -389,7 +392,7 @@ fclose(fid);
 
 function mdl = do_unit_test
 xy = [0 0;  1 0; 1 1; 0 1];
-for i = 1:15
+for i = 1:16
     switch i
         case 1
             mdl = ng_mk_2d_model({xy, 0.25 + 0.5*xy});
@@ -425,6 +428,12 @@ for i = 1:15
         case 15
             mdl = ng_mk_2d_model({xy, 0.1 + 0.25*xy, 0.4 + 0.5*xy, 0.05}, {[5, -0.25], [], [4]},...
                 [0.2,10;0 20; 0 20; 0 20; 0 20; 0 20; 0 20; 0.2 20; 0 20]);
+        case 16
+            xy= [ -0.89 -0.74 -0.21  0.31  0.79  0.96  0.67  0.05 -0.36 -0.97;
+                   0.14  0.51  0.35  0.50  0.27 -0.23 -0.86 -0.69 -0.85 -0.46]';
+                xy = flipud(xy);
+            mdl = ng_mk_2d_model(xy,9,0.05);
+          
     end
     show_fem(mdl,[0 1 0]);
     drawnow
