@@ -68,14 +68,14 @@ switch type
    case 'get-cache'
       test_install
       obj_id = [];
-      if status_check
+      if status_check(varargin{1})
         obj_id= get_cache_obj( name, varargin{:} );
       end
       
    case 'set-cache'
       test_install
       obj_id= [];
-      if status_check
+      if status_check(varargin{1})
           set_cache_obj( name, varargin{:} );
       end
 
@@ -93,7 +93,7 @@ switch type
       obj_id= new_obj( type, name, varargin{:} );
 end
 
-function ok = status_check
+function ok = status_check(name)
 ok = true;
 switch cache_status
     case 0
@@ -105,6 +105,9 @@ switch cache_status
         end
         if strcmp(dbs(3).name,'cache_shorthand') && cache_status(dbs(5).name) == 0
             ok = false;
+        end
+        if cache_status(name) == 0
+           ok = false;
         end
 end
 
