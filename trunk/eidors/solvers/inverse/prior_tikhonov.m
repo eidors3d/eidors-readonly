@@ -8,11 +8,16 @@ function Reg= prior_tikhonov( inv_model );
 % $Id$
 
 %pp= fwd_model_parameters( inv_model.fwd_model );
+switch inv_model.type
+  case 'inv_model'; fwd_model = inv_model.fwd_model;
+  case 'fwd_model'; fwd_model = inv_model;
+  otherwise; error('PRIOR_TIKHONOV requires input type of inv_model or fwd_model');
+end
 
-if isfield( inv_model.fwd_model, 'coarse2fine' )
-    no_dof = size(inv_model.fwd_model.coarse2fine,2);
+if isfield( fwd_model, 'coarse2fine' )
+    no_dof = size(fwd_model.coarse2fine,2);
 else
-    no_dof = size(inv_model.fwd_model.elems,1);
+    no_dof = size(fwd_model.elems,1);
 end
 
 Reg = speye( no_dof );
