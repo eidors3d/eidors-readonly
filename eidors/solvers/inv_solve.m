@@ -45,6 +45,8 @@ function img = inv_solve( inv_model, data1, data2)
 %  Scale solution (to correct for amplitude or other defects)
 %   inv_model.inv_solve.scale_solution.offset
 %   inv_model.inv_solve.scale_solution.scale
+%  Disable solution error calculations
+%   inv_model.inv_solve.calc_solution_error = 0
 
 % (C) 2005-2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -124,13 +126,22 @@ try; img.node_data = opts.offset + opts.scale * img.node_data; end
 img = orderfields(img);
 
 % calculate residuals
-if opts.abs_solve
-   err = calc_solution_error( imgc, inv_model, fdata);
-else
-   err = calc_solution_error( imgc, inv_model, fdata1, fdata2 );
+try 
+   do_calc = inv_model.inv_solve.calc_solution_error;
+catch
+   do_calc = true;
 end
-
-eidors_msg('inv_solve: Solution Error: %f', err,  2);
+if ~do_calc, return, end
+try
+   if opts.abs_solve
+      err = calc_solution_error( imgc, inv_model, fdata);
+   else
+      err = calc_solution_error( imgc, inv_model, fdata1, fdata2 );
+   end
+   eidors_msg('inv_solve: Solution Error: %f', err,  2);
+catch
+   eidors_msg('inv_solve: Solution Error calculation failed.',2);
+end
 
 function opts = parse_parameters( imdl );
    if  strcmp(imdl.reconst_type,'static') || ...

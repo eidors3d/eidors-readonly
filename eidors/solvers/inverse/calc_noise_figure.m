@@ -58,6 +58,9 @@ else
     [inv_model, h_data, c_data] = process_parameters( inv_model );
 end
 
+% disable solution checking (slow)
+inv_model.inv_solve.calc_solution_error = false;
+
 %NF= nf_calc_use_matrix( inv_model, h_data, c_data);
 %NF= nf_calc_iterate( inv_model, h_data, c_data); 
 if nargin<3; iterations= 10; end
