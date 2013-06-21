@@ -81,6 +81,10 @@ switch type
 
    case 'eidors_version'
       obj_id= '3.7.1+';  % Update for New eidors version
+      
+   case 'eidors_path'
+      global eidors_objects
+      obj_id = eidors_objects.eidors_path;
 
    case 'interpreter_version'
       obj_id= test_versions;
