@@ -75,36 +75,58 @@ res = sim.meas - data;
 
 
 
-function res = calc_diff_residual(imgc,imdl,data)
+function res = calc_diff_residual(sol,imdl,data)
+
+% protect agains legacy movement image
+sol = convert_legacy_movement_img(sol);
 
 fmdl = imdl.fwd_model;
 img = calc_jacobian_bkgnd(imdl);
+if isfield(sol, 'movement') && ~isfield(img,'movement');
+   % old approach to movement
+   n_elec = length(img.fwd_model.electrode);
+   n_dim  = mdl_dim(img.fwd_model);
+   img.elem_data(end + (1:n_elec*n_dim),:) = 0;
+   
+   img = convert_legacy_movement_img(img);  
+end
 simh = fwd_solve(img);
 
-% map physics to elem_data
+% sort out the size of any physics that becomes elem_data
 img = physics_data_mapper(img);
-imgc = physics_data_mapper(imgc);
-
-% add solution to jacobian background
-e_data = repmat(img.elem_data,1,size(imgc.elem_data,2));
-try
-   n_elems = size(imgc.fwd_model.coarse2fine,2);
-catch
-   n_elems = num_elems(imgc.fwd_model);
+sol = physics_data_mapper(sol);
+if isfield(img, 'elem_data');
+   try
+      n_elems = size(sol.fwd_model.coarse2fine,2);
+   catch
+      n_elems = num_elems(sol.fwd_model);
+   end
+   if size(img.elem_data,1) ~= size(sol.elem_data,1);
+      try
+         sol.elem_data = fmdl.coarse2fine*sol.elem_data(1:n_elems,:);
+      catch e
+         eidors_msg(['dimensions of solution and jacobian background don''t agree' ...
+            ' and using coarse2fine failed.']);
+         rethrow(e);
+      end
+   end
 end
-if size(img.elem_data,1) == n_elems;
-   img.elem_data = e_data + imgc.elem_data(1:n_elems,:);
-elseif size(img.elem_data,1) == size(imgc.elem_data,1);
-   img.elem_data = e_data + imgc.elem_data;
-else
-   img.elem_data = e_data + fmdl.coarse2fine*imgc.elem_data(1:n_elems,:);
-end
-img = physics_data_mapper(img,1);
+sol = physics_data_mapper(sol,1);
+img  = physics_data_mapper(img,1);
 
-% simulate data from solution
+% add solution to jacobian background in param space
+img  = physics_param_mapper(img);
+sol = physics_param_mapper(sol);
+initial = repmat(img.params,1,size(sol.params,2));
+
+% add the solution params to the initial params from jacobian bkgnd
+img.params = initial + sol.params;
+
+% deal with arrays
 jnk = img;
-for i = fliplr(1:size(imgc.elem_data,2));
-   jnk.elem_data = img.elem_data(:,i);
+for i = fliplr(1:size(sol.params,2));
+   jnk.params = img.params(:,i);
+   jnk = physics_param_mapper(jnk,1);
    tmp = fwd_solve(jnk);
    simi(:,i) = tmp.meas;
 end
