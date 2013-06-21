@@ -83,7 +83,7 @@ switch obj_type
         Zpos=ctr(3)*ones(1,Nsim);
         xyzr = [maxx*l.*cos(th); maxy*l.*sin(th); Zpos; r*mean([maxx,maxy])*ones(1, Nsim)];
         N_b=64;
-        [xyzr]=del_out_map(imdls{1},imgs,N_b,xyzr);
+        [xyzr]=del_out_map(imgs,N_b,xyzr);
     case 4      %uniform, non-random modified for non-circular shape (default)
         N = 16;
         bnd_nodes = unique(imdls{1}.fwd_model.boundary);
@@ -104,7 +104,7 @@ switch obj_type
         Zpos=h*ones(1,n_px);
         xyzr = [0.9*X(IN)'; 0.9*Y(IN)'; Zpos; r*ones(1,n_px); ];
         N_b=64;
-        [xyzr]=del_out_map(imdls{1},imgs,N_b,xyzr);
+        [xyzr]=del_out_map(imgs,N_b,xyzr);
        
 end
 [vh,vi] = simulate_movement(imgs, xyzr);
@@ -153,10 +153,10 @@ for j=1:Nparams;
    if j<Nparams; set(gca,'XTickLabel',[]);end
 end
 
-function [xyzr]=del_out_map(i_gr,imgs,N,xyzr)
-bnd_nodes = unique(i_gr.fwd_model.boundary);
-min_bb = min(i_gr.fwd_model.nodes(bnd_nodes,:));
-max_bb = max(i_gr.fwd_model.nodes(bnd_nodes,:));
+function [xyzr]=del_out_map(imgs,N,xyzr)
+bnd_nodes = unique(imgs.fwd_model.boundary);
+min_bb = min(imgs.fwd_model.nodes(bnd_nodes,:));
+max_bb = max(imgs.fwd_model.nodes(bnd_nodes,:));
 xspace = linspace(min_bb(1),max_bb(1),N);
 yspace = linspace(min_bb(2),max_bb(2),N);
 [X Y] = meshgrid(xspace,yspace);
