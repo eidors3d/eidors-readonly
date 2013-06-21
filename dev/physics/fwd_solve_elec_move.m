@@ -13,7 +13,7 @@ catch
 end
 img.fwd_model.solve = solver;
 data = fwd_solve(img);
-
+data.name = 'Solved by fwd_solve_elec_move';
 function img = apply_movement(img)
 
 n_elec  = length(img.fwd_model.electrode);

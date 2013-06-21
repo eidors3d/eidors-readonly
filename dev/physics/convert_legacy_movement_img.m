@@ -16,10 +16,11 @@ img.conductivity.elem_data  = elem_data(1:n_data_elem,:);
 img.movement.electrode_data = elem_data((n_data_elem+1):end, :);
 img.physics_data_mapper = 'conductivity';
 img.fwd_model.solve     = @fwd_solve_elec_move;
+img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
 
 function exp_sizes = expected_data_sizes(img)
 % number of elements
-exp_sizes(1) = size(img.fwd_model.elems);
+exp_sizes(1) = size(img.fwd_model.elems,1);
 % number of elements in coarse model
 try
    exp_sizes(2) = size(img.fwd_model.coarse2fine,2);

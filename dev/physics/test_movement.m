@@ -1,6 +1,6 @@
 function test_movement(test_no)
 if nargin < 1
-   test_no =  1:10;
+   test_no =  1:20;
 end
 
 
@@ -91,6 +91,95 @@ for i = test_no
          hold off
          
          fprintf('  OK\n');
+      case 6
+         mdlc = mk_common_model('c2c');
+         img = mk_image( mdlc, 1,'conductivity');
+         J = calc_jacobian(img);
+         vh = fwd_solve(img);
+         img.conductivity.elem_data([75,93,94,113,114,136]) = 1.2;
+         img.conductivity.elem_data([105,125,126,149,150,174]) = 0.8;
+         vi = fwd_solve(img);
+         
+         diff_J = J*(img.conductivity.elem_data-1);
+         diff_F = vi.meas - vh.meas;
+         
+         clf
+         plot(diff_F);
+         hold all
+         plot(diff_J);
+         plot((diff_J-diff_F),'r','linewidth',2)
+         legend('fwd\_solve diff', 'Jacobian diff', 'error');
+         hold off
+         
+         fprintf('  OK\n');
+      case 7
+         mdlc.jacobian_bkgnd = img;
+         R1 = calc_RtR_prior(mdlc);
+         mdlc.RtR_prior = @prior_movement;
+         R2 = calc_RtR_prior(mdlc);
+         sz = size(R1);
+         assert(all(all(R2(1:sz(1),1:sz(2)) == R1)));
+         fprintf('  OK\n');
+         
+      case 8
+         img = mk_image( mdlc, 1,'conductivity');
+         img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
+         img.physics_data_mapper = 'conductivity';
+         img.fwd_model.solve = @fwd_solve_elec_move;
+         img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+         mdlc.jacobian_bkgnd = rmfield(img,'fwd_model');
+         mdlc.fwd_model.jacobian = @jacobian_movement;
+         mdlc.RtR_prior =          @prior_movement;
+         mdlc.prior_movement.parameters = sqrt(1e2/1);
+         
+         % find the right scale
+         mdlc.inv_solve_diff_GN_one_step.calc_step_size = 1;
+         
+         % Solve inverse problem for mdlM eidors_obj model.
+         imgc = inv_solve(mdlc, vh, vi);
+         fprintf('  OK\n');
+         
+      case 9
+         img = mk_image( mdlc, 1,'conductivity');
+         img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
+         img.physics_data_mapper = 'conductivity';
+         img.fwd_model.solve = @fwd_solve_elec_move;
+         img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+         mdlc.jacobian_bkgnd = rmfield(img,'fwd_model');
+         mdlc.fwd_model.jacobian = @jacobian_movement;
+         mdlc.RtR_prior =          @prior_movement;
+         mdlc.prior_movement.parameters = sqrt(1e2/1);
+         
+         vh = fwd_solve(img);
+         
+         img.conductivity.elem_data([75,93,94,113,114,136]) = 1.2;
+         img.conductivity.elem_data([105,125,126,149,150,174]) = 0.8;
+         img.movement.electrode_data(5) = 0.1; % x coord of 5th elec
+         vi = fwd_solve(img);         
+         % find the right scale
+         mdlc.inv_solve_diff_GN_one_step.step_size = 1;
+
+         imgc = inv_solve(mdlc, vh, vi);
+         show_fem(imgc);
+         fprintf('  OK\n');
+      case 10
+         % old tutorials
+         path = eidors_obj('eidors_path');
+         path = [path '/../htdocs/tutorial/adv_image_reconst/'];
+         tuts = {'move_2d01', 'move_2d02', 'move_3d01', 'move_3d02'};
+         clf
+         for i = 1:length(tuts)
+            run([path tuts{i}]);
+         end
+      case 11
+         % new tutorials
+         path = [];
+         tuts = {'move_2d01', 'move_2d02'};%, 'move_3d01', 'move_3d02'};
+         clf
+         for i = 1:length(tuts)
+            run([path tuts{i}]);
+         end
+
       otherwise 
          fprintf('  (no more tests)\n')
          break

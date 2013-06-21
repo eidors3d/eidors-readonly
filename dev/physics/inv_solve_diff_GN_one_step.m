@@ -43,14 +43,13 @@ sol = get_RM( inv_model ) * dv;
 
 
 
-img = physics_data_mapper(calc_jacobian_bkgnd( inv_model ));
+img = physics_param_mapper(calc_jacobian_bkgnd( inv_model ));
 img.name= 'solved by inv_solve_diff_GN_one_step';
-img.elem_data = sol;
+img.params = sol;
 img.fwd_model= inv_model.fwd_model;
-img = physics_data_mapper(img,1);
 
 img = scale_to_fit_data(img, inv_model, data1, data2);
-
+img = physics_param_mapper(img,1);
 
 function RM = get_RM( inv_model )
    % The one_step reconstruction matrix is cached
@@ -102,10 +101,11 @@ function [img step_size] = scale_to_fit_data(img, inv_model, data1, data2)
          step_size = inv_model.inv_solve_diff_GN_one_step.step_size;
       end
    end
-   img.elem_data = img.elem_data * step_size;
+   img.params = img.params * step_size;
    img.step_size = step_size;
 
 function out = to_optimize(img, inv_model, data1, data2, x)
-   img.elem_data = img.elem_data*x;
+   img.params = img.params*x;
+   img = physics_param_mapper(img,1);
    out = calc_solution_error(img, inv_model, data1, data2);
 
