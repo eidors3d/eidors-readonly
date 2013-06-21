@@ -154,11 +154,9 @@ for j=1:Nparams;
 end
 
 function [xyzr]=del_out_map(i_gr,imgs,N,xyzr)
-% N = 16;
 bnd_nodes = unique(i_gr.fwd_model.boundary);
 min_bb = min(i_gr.fwd_model.nodes(bnd_nodes,:));
 max_bb = max(i_gr.fwd_model.nodes(bnd_nodes,:));
-h = mean([min_bb(3),max_bb(3)]);            % better way to calculate Zpos
 xspace = linspace(min_bb(1),max_bb(1),N);
 yspace = linspace(min_bb(2),max_bb(2),N);
 [X Y] = meshgrid(xspace,yspace);
@@ -167,20 +165,13 @@ M = calc_slices(imgs,1);
 IN = M==1;
 IN=bwperim(IN,8); %contur
 xy = [X(IN)'; Y(IN)'];
-% Q1 = xy(1,:)>0 & xy(2,:)>0;
-% Q2 = xy(1,:)<0 & xy(2,:)>0;
-% Q3 = xy(1,:)<0 & xy(2,:)<0;
-% Q4 = xy(1,:)>0 & xy(2,:)<0;
 out_ind=[];
 max_x=max(xy(1,:));
 max_y=max(xy(2,:));
 min_x=min(xy(1,:));
 min_y=min(xy(2,:));
 for i=1:length(xyzr)
-    % in the first Quadrant, x>0, y>0
-    if i==100
-        i=i;
-    end
+
     if xyzr(1,i)>max_x || xyzr(1,i)<min_x || xyzr(2,i)>max_y || xyzr(2,i)<min_y
         out_ind=[out_ind i];
     end
@@ -190,31 +181,6 @@ for i=1:length(xyzr)
         out_ind=[out_ind i];
     end
     
-%     if xyzr(1,i)>0 && xyzr(2,i)>0
-%         out_boundary = sum ((repmat(xyzr(1:2,i),1,size(xy(:,Q1),2))-xy(:,Q1)).^2) <= xyzr(4,i)^2;
-%         if any(out_boundary)    
-%             out_ind=[out_ind i];
-%         end
-%         % in the second quadrant, x<0, y>0
-%     elseif xyzr(1,i)<0 && xyzr(2,i)>0
-%         out_boundary = sum ((repmat(xyzr(1:2,i),1,size(xy(:,Q2),2))-xy(:,Q2)).^2) <= xyzr(4,i)^2;
-%         if any(out_boundary)
-%             out_ind=[out_ind i];
-%         end
-%         % in the third quadrant, x<0, y<0
-%     elseif xyzr(1,i)<0 && xyzr(2,i)<0
-%         out_boundary = sum ((repmat(xyzr(1:2,i),1,size(xy(:,Q3),2))-xy(:,Q3)).^2) <= xyzr(4,i)^2;
-%         if any(out_boundary) 
-%             out_ind=[out_ind i];
-%         end
-%         % in the fourth quadrant, x>0, y<0
-%     else  % xyzr(1,i)>0 & xyzr(2,i)<0;
-%         out_boundary = sum ((repmat(xyzr(1:2,i),1,size(xy(:,Q4),2))-xy(:,Q4)).^2) <= xyzr(4,i)^2;
-%         if any(out_boundary)
-%             out_ind=[out_ind i];
-%         end
-%         
-%     end
 end
 xyzr(:,out_ind)=[];
 
