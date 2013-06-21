@@ -98,8 +98,8 @@ Nsim = opt.Nsim;
 
 %Calculate rec_model (if absent)
 if ~isfield(imdl,'rec_model');
-   opt.do_coarse2fine = 0;
-   imdl.rec_model = mk_pixel_slice(fmdl,opt.target_plane,opt);
+%    opt.do_coarse2fine = 0;
+   [imdl.rec_model imdl.fwd_model] = mk_pixel_slice(fmdl,opt.target_plane,opt);
    imdl.rec_model.nodes(:,3) = []; % the third dimension complicated display
    % medical orientation
    imdl.rec_model.mdl_slice_mapper.y_pts = fliplr(imdl.rec_model.mdl_slice_mapper.y_pts);
@@ -485,6 +485,7 @@ show_slices(img);
 function do_performance_test
 % Reconstruct GREIT Images
 imdl_v1 = mk_common_gridmdl('GREITc1');
+imdl_v1.inv_solve.calc_solution_error = false;
 
 % Reconstruct backprojection Images
 imdl_bp = mk_common_gridmdl('backproj');
