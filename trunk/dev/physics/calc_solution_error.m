@@ -82,12 +82,20 @@ sol = convert_legacy_movement_img(sol);
 
 fmdl = imdl.fwd_model;
 img = calc_jacobian_bkgnd(imdl);
-if isfield(sol, 'movement') && ~isfield(img,'movement');
-   % old approach to movement
-   n_elec = length(img.fwd_model.electrode);
-   n_dim  = mdl_dim(img.fwd_model);
-   img.elem_data(end + (1:n_elec*n_dim),:) = 0;
-   
+if isfield(sol, 'movement') && ~isfield(img,'movement')
+   try
+      n_c2f = size(img.fwd_model.coarse2fine,2);
+   catch
+      n_c2f = 0;
+   end
+   n_elem = size(img.fwd_model.elems,1);
+   n_elem_data = length(img.elem_data);
+   if n_elem_data == n_elem || n_elem_data == n_c2f
+      % jacobian background misses movement
+      n_elec = length(img.fwd_model.electrode);
+      n_dim  = mdl_dim(img.fwd_model);
+      img.elem_data(end + (1:n_elec*n_dim),:) = 0;
+   end
    img = convert_legacy_movement_img(img);  
 end
 simh = fwd_solve(img);
