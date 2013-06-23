@@ -16,10 +16,8 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isfield(inv_model,'rec_model');
-   inv_model.fwd_model= inv_model.rec_model;
-   inv_model= rmfield(inv_model,'rec_model');
-end
+
+inv_model = rec_or_fwd_model( inv_model);
 
 R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
 if ~isempty(R_prior)
@@ -61,3 +59,21 @@ end
 
 eidors_obj('set-cache', inv_model, 'R_prior', R_prior);
 eidors_msg('calc_R_prior: setting cached value', 3);
+
+
+function inv_model = rec_or_fwd_model( inv_model);
+
+   if isfield(inv_model,'rec_model');
+      use_rec_model = 1;
+      try if inv_model.prior_use_fwd_not_rec== 1;
+         use_rec_model = 0;
+      end; end
+
+      if use_rec_model
+          % copy the normalize flag from the fwd_model to prevent warnings
+         inv_model.rec_model = mdl_normalize(inv_model.rec_model, ...
+                                       mdl_normalize(inv_model.fwd_model));
+         inv_model.fwd_model= inv_model.rec_model;
+         inv_model= rmfield(inv_model,'rec_model');
+      end
+   end
