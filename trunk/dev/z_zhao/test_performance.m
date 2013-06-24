@@ -24,7 +24,7 @@ function [r, params] =  test_performance( imdls, fmdl, obj_type);
 %  1:original; 2: uniform, non-random; 3:original modified for non-circular
 %  shape; 4: uniform, non-random modified for non-circular shape (default)
 
-% $Id: test_performance.m 3808 2013-04-12 17:49:37Z bgrychtol $
+% $Id$
 
 if isstr(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
 
