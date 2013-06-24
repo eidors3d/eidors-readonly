@@ -13,10 +13,10 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 % for example, for an adjacent pattern for 4 electrodes, with 0.5 Amp
 %   if all electrodes are used for measurement
 % stim(1).stim_pattern= [0.5;-0.5;0;0]
-% stim(1).meas_pattern= [1, 0, 0,-1 
-%                       -1, 1, 0, 0 
-%                        0,-1, 1, 0 
-%                        0, 0,-1, 1]
+% stim(1).meas_pattern= [1,-1, 0, 0 
+%                        0, 1,-1, 0 
+%                        0, 0, 1,-1 
+%                       -1, 0, 0, 1]
 %
 % meas_sel: when not using data from current injection electrodes,
 %           it is common to be given a full measurement set.
