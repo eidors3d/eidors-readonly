@@ -25,6 +25,8 @@ function img = forward_mapping(img)
          params = [params; eval(['img.' img.physics_param_mapper{i}])];
       end
       img.params = params;
+   elseif isa(img.physics_param_mapper,'function_handle')
+      img.params = feval(img.physics_param_mapper,img);
    end
       
    
@@ -48,8 +50,15 @@ function img = reverse_mapping(img)
       for i = 1:length(img.physics_param_mapper)
          len = size(eval(['img.' img.physics_param_mapper{i}]),1);
          stop = start+len-1;
-         eval(['img.' img.physics_param_mapper{i} ' = img.params(start:stop,:);']);
-         start = len + 1;
+         try
+            eval(['img.' img.physics_param_mapper{i} ' = img.params(start:stop,:);']);
+         catch
+            stop = start + size(img.fwd_model.coarse2fine,2)-1;
+            eval(['img.' img.physics_param_mapper{i} ' = img.params(start:stop,:);']);
+         end
+         start = stop + 1;
       end
+   elseif isa(img.physics_param_mapper,'function_handle')
+      img.params = feval(img.physics_param_mapper,img,1);
   end
       
