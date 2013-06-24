@@ -25,8 +25,10 @@ function img = forward_mapping(img)
          params = [params; eval(['img.' img.physics_param_mapper{i}])];
       end
       img.params = params;
+      img.current_params = img.physics_param_mapper;
    elseif isa(img.physics_param_mapper,'function_handle')
       img.params = feval(img.physics_param_mapper,img);
+      img.current_params = fun2str(img.physics_param_mapper);
    end
       
    
