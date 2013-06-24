@@ -122,7 +122,13 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     if exist(srcf) == 2 && exist(mexf) == 3
         srcd=dir(srcf);
         mexd=dir(mexf);
-        if datenum(srcd.date) > datenum(mexd.date)
+        % We thank MATLAB for their version issues
+        newer_src = false;
+        try newer_src = datenum(srcd.date) > datenum(mexd.date);
+        catch
+           newer_src = srcd.datenum > mexd.datenum;
+        end
+        if newer_src
            if ver.isoctave
               warning(sprintf([ ...
                  'eidors_var_id.mex file is older than source file and should be recompiled.\n' ...
