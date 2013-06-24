@@ -26,5 +26,4 @@ hold off
 set(gca,'ytick',[]);
 xlim([0 16]);
 
-
 print_convert neonate_ex03a.png
