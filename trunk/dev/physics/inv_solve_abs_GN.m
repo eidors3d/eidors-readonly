@@ -71,21 +71,23 @@ else
     img = calc_jacobian_bkgnd( inv_model );
 end
 
+img = physics_param_mapper(img);
+
 hp  = calc_hyperparameter( inv_model );
 RtR = calc_RtR_prior( inv_model );
 W   = calc_meas_icov( inv_model );
 hp2RtR= hp*RtR;
 
-img0 = physics_data_mapper(img);
+img0 = physics_param_mapper(img);
 opt.line_optimize.meas_icov = calc_meas_icov( inv_model);
 for i = 1:opt.max_iter
   vsim = fwd_solve( img ); 
   dv = calc_difference_data( vsim , data0, img.fwd_model);
   J = calc_jacobian( img );
 
-  % create elem_data
-  tmp = physics_data_mapper(img);
-  RDx = hp2RtR*(img0.elem_data - tmp.elem_data);
+  % create param
+  tmp = physics_param_mapper(img);
+  RDx = hp2RtR*(img0.params - tmp.params);
   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
   
   opt.line_optimize.hp2RtR = hp2RtR;
@@ -98,7 +100,7 @@ for i = 1:opt.max_iter
   
   [img, opt] = update_step(img, next, dx, fmin, res, opt);
   
-  inv_model.jacobian_backgnd = img;
+  inv_model.jacobian_backgnd = physics_param_mapper(img,1);
   RtR = calc_RtR_prior( inv_model );
   hp2RtR = hp*RtR;
 end
@@ -106,9 +108,9 @@ end
 
 function val = GN_objective_function(data0, data, img0, img, opt)
    dv = calc_difference_data(data, data0, img0.fwd_model);
-   if ~isfield(img0, 'elem_data'), img0 = physics_data_mapper(img0); end
-   if ~isfield(img, 'elem_data'), img = physics_data_mapper(img); end
-   de = img0.elem_data - img.elem_data;
+   if ~isfield(img0, 'params'), img0 = physics_param_mapper(img0); end
+   if ~isfield(img, 'params'), img = physics_param_mapper(img); end
+   de = img0.params - img.params;
    val = 0.5*( dv'*opt.meas_icov*dv + de' * opt.hp2RtR * de);
 
 
@@ -131,21 +133,25 @@ function img = initial_estimate( imdl, data )
    pf = polyfit(data,vs.meas,1);
 
    % create elem_data
-   img = physics_data_mapper(img);
+   img = physics_param_mapper(img);
    
    if isfield(img.fwd_model,'coarse2fine');
       % TODO: the whole coarse2fine needs work here.
       %   what happens if c2f doesn't cover the whole region
       
+      % TODO: this assumes that params is elem_data...
+      
       % TODO: the two cases are very different. c2f case should match other
       nc = size(img.fwd_model.coarse2fine,2);
-      img.elem_data = mean(img.elem_data)*ones(nc,1)*pf(1);
+      img.params = mean(img.params)*ones(nc,1)*pf(1);
+      
+      warning('c2f needs work');
    else
-      img.elem_data = img.elem_data*pf(1);
+      img.params = img.params*pf(1);
    end
    
    % remove elem_data
-   img = physics_data_mapper(img,1);
+   img = physics_param_mapper(img,1);
  
 function [img opt] = update_step(org, next, dx, fmin,res, opt)
    if isfield(opt, 'update_func')
