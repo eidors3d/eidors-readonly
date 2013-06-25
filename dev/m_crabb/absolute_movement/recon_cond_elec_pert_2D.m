@@ -1,10 +1,16 @@
 clc; close all; run ~/EIT/Code/mk_paths.m
 
-%Parameter for inclusion conductivity
-cond_inc=2; move_fac=0.2;
+%Choose absolute solver (1 is Tikhonov and 2 is TV)
+solve_type=2;
 
-%Pick the difference hyperparm
-hp=10^-4; hpmtohp=8; hpabs=10^-3; 
+%Parameter for inclusion conductivity
+cond_inc=2; cond_inc2=0.5; move_fac=0.2;
+
+%Pick hyperparameters for the simultaneous solver
+hp=10^-4; hpmtohp=8;
+
+%Absolute regularisation parameter
+hpabsTik=10^-3; hpabsTV=10^-5; 
 
 %Iterations for absolute movement
 move_its=5; cond_its=10;
@@ -30,7 +36,10 @@ for i=1:nelec
     elec_pos_i(1,2)=0;
 end
 %Inhomogeneous model
-extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;'};
+ball1='solid ball1 = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;';
+ball2='solid ball2 = cylinder(-0.2,-0.2,0;-0.2,-0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;';
+extra={'ball1','ball2',[ball1,ball2]};
+%extra={'ball','solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;0.2) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;'};
 [mdl_i,mat_idx_i]=ng_mk_cyl_models(0,elec_pos_i,elec_t,extra);
 
 %Make some stimulation patterns and add to models
@@ -40,13 +49,16 @@ mdl_i.stimulation= stim;
 
 %Make inhomogeneous image
 img_h=mk_image(mdl_h,1);
-img_i=mk_image(mdl_i,1); img_i.elem_data(mat_idx_i{2})=cond_inc;
+img_i=mk_image(mdl_i,1); 
+img_i.elem_data(mat_idx_i{2})=cond_inc;
+img_i.elem_data(mat_idx_i{3})=cond_inc2;
 figure; show_fem(img_h,[1,1,0]);
 figure; show_fem(img_i,[1,1,0]);
 
 %Inhomgeneous voltages
 v_i=fwd_solve(img_i.fwd_model,img_i);
 v_h=fwd_solve(img_h.fwd_model,img_h);     v_hd = v_h.meas; 
+figure; hold on; plot(v_h.meas,'b'); plot(v_i.meas,'r'); plot(v_h.meas-v_i.meas,'g'); hold off;
 
 %Calc the inhomogeneous model components
 elec_comp_i=calc_electrode_components(img_i.fwd_model);
@@ -131,11 +143,16 @@ inv_tik_2d=eidors_obj('inv_model','EIT inverse');
 inv_tik_2d.reconst_type='absolute';
 inv_tik_2d.jacobian_bkgnd.value=img_h.elem_data;
 inv_tik_2d.fwd_model=mdl_h;
-inv_tik_2d.hyperparameter.value=hpabs; %Appears best hyperparameter
-inv_tik_2d.RtR_prior=@prior_laplace;
-%inv_tik_2d.intial_c=img_h.elem_data; %CHANGE BFGS SOLVER!!!!
-%inv_tik_2d.prior_c=img_h.elem_data;
-inv_tik_2d.solve=@inv_solve_abs_GN;
+
+if(solve_type==1)
+    inv_tik_2d.RtR_prior=@prior_laplace;
+    inv_tik_2d.hyperparameter.value=hpabsTik; %Appears best hyperparameter
+    inv_tik_2d.solve=@inv_solve_abs_GN;        
+elseif(solve_type==2)
+    inv_tik_2d.R_prior=@prior_TV;
+    inv_tik_2d.hyperparameter.value=hpabsTV; %Appears best hyperparameter
+    inv_tik_2d.solve=@inv_solve_abs_pdipm;    
+end    
 inv_tik_2d.parameters.max_iterations=cond_its;
 inv_tik_2d.parameters.term_tolerance=10^-10;
 img_r_tik_tik =inv_solve(inv_tik_2d,v_i);
@@ -149,3 +166,6 @@ img_h=mk_image(mdl_h,img_r_tik_tik.elem_data(1:n_elems));
 v_h=fwd_solve(img_h);
 
 end
+
+%Plot the final
+figure; hold on; plot(v_h.meas,'b'); plot(v_i.meas,'r'); plot(v_h.meas-v_i.meas,'g'); hold off;
