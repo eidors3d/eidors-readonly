@@ -15,8 +15,8 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 % Step 1: fit to background
 img = calc_jacobian_bkgnd( inv_model );
-img.log_conductivity.elem_data = img.elem_data;
-img = rmfield(img, 'elem_data');
+% img.log_conductivity.elem_data = img.elem_data;
+% img = rmfield(img, 'elem_data');
 % img = homogeneous_estimate( inv_model, data1 );
 if isfield(inv_model.fwd_model,'coarse2fine')
     nc = size(img.fwd_model.coarse2fine,2);
