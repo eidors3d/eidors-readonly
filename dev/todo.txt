@@ -1,4 +1,8 @@
-############## post 3.7 ################3
+############## 3.8 ################
+
+ - Full OEIT v1.1 support
+
+ - Check caching efficiency and timing bugs
 
  - Laplace prior with a 3D-2D grid setup gives pepper noise with prior_use_fwd_not_rec=1;
 
@@ -97,7 +101,7 @@
 
  - all inverse solvers to do print data residual
 
- - animate stimulation patterns
+ - animate stimulation patterns: display_meas (and rename)
 
  - bug in prior_covar UNIT_TEST
      - the whole time_solver infrastructure needds to be properly tested
