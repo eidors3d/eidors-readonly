@@ -1,19 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <oeit>
-  <subject_list>
-    <subject id="patient0" >
-      <type>Person</type>
-      <patient>
-        <firstname>Bobby</firstname>
-        <lastname>McGee</lastname>
-        <age>22</age>
-      </patient>
-    </subject>
-
-    <subject id="tank0" >
-      <type>Saline Tank</type>
-    </subject>
-  </subject_list>
+  <subject id="patient0" >
+    <type>Person</type>
+    <patient>
+      <firstname>Bobby</firstname>
+      <lastname>McGee</lastname>
+      <age>22</age>
+    </patient>
+  </subject>
 
   <device_list>
     <device id="device1">
@@ -34,55 +28,31 @@
     </electrode_type>
   </electrode_type_list>
 
-  <electrode_list_list>
-    <electrode_list id="elec_list1" coordinate_system="Cartesian" position_description="Absolute">
-      <electrode id="elec1_1" type="elec_type1" position="[0,0,0]" comment="this elec is ground" />
-      <electrode id="elec2_1" type="elec_type0" position="[0,0,0]">
-        <user_data>arbitrary content</user_data>
-        <user_data>box_serial_numer="asfd"</user_data>
-      </electrode>
-      <electrode id="elec3_1" type="elec_type0" position="[0,0,0]" contact_impedance=".02" />
-      <electrode id="elec4_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec5_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec6_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec7_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec8_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec9_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec10_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec11_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec12_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec13_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec14_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec15_1" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec16_1" type="elec_type0" position="[0,0,0]" />
-    </electrode_list>
-
-    <electrode_list id="elec_list2" coordinate_system="Polar" position_description="Relative">
-      <electrode id="elec1_2" type="elec_type1" position="[0,0,0]" comment="this elec is ground" />
-      <electrode id="elec2_2" type="elec_type0" position="[0,0,0]">
-        <user_data>arbitrary content</user_data>
-        <user_data>box_serial_numer="asfd"</user_data>
-      </electrode>
-      <electrode id="elec3_2" type="elec_type0" position="[0,0,0]" contact_impedance=".02" />
-      <electrode id="elec4_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec5_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec6_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec7_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec8_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec9_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec10_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec11_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec12_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec13_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec14_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec15_2" type="elec_type0" position="[0,0,0]" />
-      <electrode id="elec16_2" type="elec_type0" position="[0,0,0]" />
-    </electrode_list>
-  </electrode_list_list>
+  <electrode_list id="elec_list1" coordinate_system="Cartesian" position_description="Absolute">
+    <electrode id="elec1" type="elec_type1" position="[0,0,0]" comment="this elec is ground" />
+    <electrode id="elec2" type="elec_type0" position="[0,0,0]">
+      <user_data>arbitrary content</user_data>
+      <user_data>box_serial_numer="asfd"</user_data>
+    </electrode>
+    <electrode id="elec3" type="elec_type0" position="[0,0,0]" contact_impedance=".02" />
+    <electrode id="elec4" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec5" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec6" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec7" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec8" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec9" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec10" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec11" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec12" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec13" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec14" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec15" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec16" type="elec_type0" position="[0,0,0]" />
+  </electrode_list>
 
   <stim_type_list>
     <stim_type id="step1" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="square" />
-    <stim_type id="sgoe" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="square" />
+    <stim_type id="sgoe" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="sinusoid" />
   </stim_type_list>
 
   <meas_type_list>
@@ -103,12 +73,14 @@
     </meas_type>
     <meas_type id="meas4" demod_frequency="100 kHz" physical_property="current" offset="0" gain="1">
       <fields>
-        <field name="Amplitude" type="float" />
+        <field name="Amplitude" type="double" />
+        <field name="Phase" type="float" />
       </fields>
     </meas_type>
     <meas_type id="meas5" demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
       <fields>
-        <field name="Amplitude" type="float" />
+        <field name="In-Phase" type="float" />
+        <field name="Quadrature" type="float" />
       </fields>
     </meas_type>
     <meas_type id="current" demod_frequency="100 kHz" physical_property="current" offset="0" gain="1">
@@ -132,237 +104,237 @@
     <acqusition_type id="step1" >
       <stim_list>
         <stim type="stim1">
-          <elec index="1" gain ="1" />
-          <elec index="2" gain ="1"/>
-          <elec index="3" gain="1"/>
+          <elec ref="elec1" gain ="1" />
+          <elec ref="elec2" gain ="1"/>
+          <elec ref="elec3" gain="1"/>
         </stim>
       </stim_list>
       <meas_list>
         <meas type="meas1">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
         </meas>
         <meas type="meas2">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
         </meas>
         <meas type="meas3">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="1" />
         </meas>
         <meas type="meas3">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
         </meas>
         <meas type="meas4">
-          <elec index="1" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec3" gain="1" />
         </meas>
         <meas type="meas4">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
         </meas>
       </meas_list>
     </acqusition_type>
     <acqusition_type id="step2" >
       <stim_list>
         <stim type="stim1">
-          <elec index="1" gain ="1" />
-          <elec index="2" gain ="1"/>
-          <elec index="3" gain="1"/>
+          <elec ref="elec1" gain ="1" />
+          <elec ref="elec2" gain ="1"/>
+          <elec ref="elec3" gain="1"/>
         </stim>
       </stim_list>
       <meas_list>
         <meas type="meas1">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
         </meas>
         <meas type="meas2">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
         </meas>
         <meas type="meas3">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="1" />
         </meas>
         <meas type="meas3">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
         </meas>
         <meas type="meas4">
-          <elec index="1" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec3" gain="1" />
         </meas>
         <meas type="meas4">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
         </meas>
         <meas type="meas3">
-          <elec index="1" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec4" gain="1" />
         </meas>
         <meas type="meas3">
-          <elec index="1" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec5" gain="1" />
         </meas>
       </meas_list>
     </acqusition_type>
 
-    <acquisition_type id="goe_1" >
+    <acquisition_type id="goe_1_2_3_4" >
       <stim_list>
         <stim type="sgoe">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
         </stim>
       </stim_list>
       <meas_list>
         <meas type="get">
-          <elec index="3" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_2" >
+    <acquisition_type id="goe_1_2_4_5" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_3" >
+    <acquisition_type id="goe_2_3_4_5" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_4" >
+    <acquisition_type id="goe_2_3_5_1" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="5" gain="1" />
-          <elec index="1" gain="1" />
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_5" >
+    <acquisition_type id="goe_3_4_5_1" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="3" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="5" gain="1" />
-          <elec index="1" gain="1" />
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_6" >
+    <acquisition_type id="goe_3_4_1_2" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="3" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_7" >
+    <acquisition_type id="goe_4_5_1_2" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_8" >
+    <acquisition_type id="goe_4_5_2_3" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_9" >
+    <acquisition_type id="goe_5_1_2_3" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="5" gain="1" />
-          <elec index="1" gain="1" />
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_10" >
+    <acquisition_type id="goe_5_1_3_4" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="5" gain="1" />
-          <elec index="1" gain="1" />
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
         <meas type="get">
-          <elec index="3" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
         </meas>
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_current1" >
+    <acquisition_type id="goe_current_1_2" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -370,11 +342,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_current2" >
+    <acquisition_type id="goe_current_2_3" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -382,11 +354,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_current3" >
+    <acquisition_type id="goe_current_3_4" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="3" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -394,11 +366,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_current4" >
+    <acquisition_type id="goe_current_4_5" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -406,11 +378,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_current5" >
+    <acquisition_type id="goe_current_5_1" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="5" gain="1" />
-          <elec index="1" gain="1" />
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -418,11 +390,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_voltage1" >
+    <acquisition_type id="goe_voltage_1_2" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="1" gain="1" />
-          <elec index="2" gain="1" />
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -430,11 +402,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_voltage2" >
+    <acquisition_type id="goe_voltage_2_3" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="2" gain="1" />
-          <elec index="3" gain="1" />
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -442,11 +414,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_voltage3" >
+    <acquisition_type id="goe_voltage_3_4" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="3" gain="1" />
-          <elec index="4" gain="1" />
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -454,11 +426,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_voltage4" >
+    <acquisition_type id="goe_voltage_4_5" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="4" gain="1" />
-          <elec index="5" gain="1" />
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -466,11 +438,11 @@
       </meas_list>
     </acquisition_type>
 
-    <acquisition_type id="goe_voltage5" >
+    <acquisition_type id="goe_voltage_5_1" >
       <stimuli>
         <stimulus type="sgoe">
-          <elec index="5" gain="1" />
-          <elec index="1" gain="1" />
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
         </stimulus>
       </stimuli>
       <meas_list>
@@ -524,88 +496,72 @@
     </frame>
 
     <frame id ="goe_frame">
-      <element acquisition="goe_1"/>
-      <element acquisition="goe_2"/>
-      <element acquisition="goe_3"/>
-      <element acquisition="goe_4"/>
-      <element acquisition="goe_5"/>
-      <element acquisition="goe_6"/>
-      <element acquisition="goe_7"/>
-      <element acquisition="goe_8"/>
-      <element acquisition="goe_9"/>
-      <element acquisition="goe_10"/>
-      <element acquisition="goe_current_1"/>
-      <element acquisition="goe_current_2"/>
-      <element acquisition="goe_current_3"/>
-      <element acquisition="goe_current_4"/>
-      <element acquisition="goe_current_5"/>
-      <element acquisition="goe_voltage_1"/>
-      <element acquisition="goe_voltage_2"/>
-      <element acquisition="goe_voltage_3"/>
-      <element acquisition="goe_voltage_4"/>
-      <element acquisition="goe_voltage_5"/>
-      <element acquisition="aux_1"/>
-      <element acquisition="aux_2"/>
-      <element acquisition="aux_3"/>
-      <element acquisition="aux_4"/>
-      <element acquisition="aux_5"/>
+      <acquisition type="goe_1" start="? ns" stop="? ns"/>
+      <acquisition type="goe_2" start="? ns" stop="? ns"/>
+      <acquisition type="goe_3" start="? ns" stop="? ns"/>
+      <acquisition type="goe_4" start="? ns" stop="? ns"/>
+      <acquisition type="goe_5" start="? ns" stop="? ns"/>
+      <acquisition type="goe_6" start="? ns" stop="? ns"/>
+      <acquisition type="goe_7" start="? ns" stop="? ns"/>
+      <acquisition type="goe_8" start="? ns" stop="? ns"/>
+      <acquisition type="goe_9" start="? ns" stop="? ns"/>
+      <acquisition type="goe_10" start="? ns" stop="? ns"/>
+      <acquisition type="goe_current_1" start="? ns" stop="? ns"/>
+      <acquisition type="goe_current_2" start="? ns" stop="? ns"/>
+      <acquisition type="goe_current_3" start="? ns" stop="? ns"/>
+      <acquisition type="goe_current_4" start="? ns" stop="? ns"/>
+      <acquisition type="goe_current_5" start="? ns" stop="? ns"/>
+      <acquisition type="goe_voltage_1" start="? ns" stop="? ns"/>
+      <acquisition type="goe_voltage_2" start="? ns" stop="? ns"/>
+      <acquisition type="goe_voltage_3" start="? ns" stop="? ns"/>
+      <acquisition type="goe_voltage_4" start="? ns" stop="? ns"/>
+      <acquisition type="goe_voltage_5" start="? ns" stop="? ns"/>
+      <acquisition type="aux_1" start="? ns" stop="? ns"/>
+      <acquisition type="aux_2" start="? ns" stop="? ns"/>
+      <acquisition type="aux_3" start="? ns" stop="? ns"/>
+      <acquisition type="aux_4" start="? ns" stop="? ns"/>
+      <acquisition type="aux_5" start="? ns" stop="? ns"/>
     </frame>
   </frame_list>
 
 
-  <recording_list>
-    <recording id="recording1" device="device1" subject="patient0" electode_list="electrode_list1" acquired_on="June 14, 2013 15:04:29+0500">
-      <streams>
-        <stream id="stream1">
-          <process>
-            <repeat number="100000">
-              <repeat number="9">
-                <decode frame="frame1" />
-                <sync point="sync1" stream="stream2" />
-              </repeat>
-              <decode frame="frame2" />
-              <sync point="sync1" stream="stream2" />
-            </repeat>
-          </process>
+  <streams>
+    <stream id="stream1">
+      <process>
+        <repeat number="end_of_stream">
+          <repeat number="9">
+            <decode frame="frame1" />
+            <sync point="sync1" stream="stream2" />
+          </repeat>
+          <decode frame="frame2" />
+          <sync point="sync1" stream="stream2" />
+        </repeat>
+      </process>
 
-          <files>
-            <file name="file1" start_frame="1" />
-            <file name="file2" start_frame="40000"/>
-            <file name="file3" start_frame="834999"/>
-          </files>
-        </stream>
+      <files>
+        <file name="file1" start_frame="1" end_frame="39999" start_time="? ns" end_time="? ns"
+            comment="start_time and end_time are hints. The values in the file are
+                     authorative. Values in the xml are optional" />
+           
+        <file name="file2" start_frame="40000" start_time="? ns" end_time="? ns" />
+        <file name="file3" start_frame="834999" start_time="? ns" end_time="? ns" />
+      </files>
+    </stream>
 
-        <stream id="stream2">
-          <process>
-            <repeat number="1000000">
-              <repeat number="600">
-                <decode frame="frame3" />
-              </repeat>
-              <sync point="sync1" stream="stream1" />
-            </repeat>
-          </process>
+    <stream id="stream2">
+      <process>
+        <repeat number="1000000">
+          <repeat number="600">
+            <decode frame="frame3" />
+          </repeat>
+          <sync point="sync1" stream="stream1" />
+        </repeat>
+      </process>
 
-          <files>
-            <file name="file4" start_frame="1" />
-          </files>
-        </stream>
-      </streams>
-    </recording>
+      <files>
+        <file name="file4" start_frame="1" />
+      </files>
+    </stream>
+  </streams>
 
-    <recording id="recording2" device="device2" subject="tank0" electode_list="electrode_list2" acquired_on="June 14, 2013 15:04:29+0500">
-      <streams>
-        <stream id="stream1">
-          <process>
-            <repeat number="53800">
-              <decode frame="goe_frame" />
-            </repeat>
-          </process>
-          <files>
-            <file name="data_00000.sframes" start_frame="1" />
-          </files>
-        </stream>
-      </streams>
-    </recording>
-
-  </recording_list>
 </oeit>
