@@ -1,5 +1,47 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <oeit>
+<!--
+     Questions from AA:
+
+1. We could collapse the hierarchy by defining acquisitions as
+     <acquisition type="get" start="? ns" stop="? ns"
+          elec1="stim+" elec2="stim-" 
+          elec3="meas+" elec4="meas-" gain="1" />
+
+     OR, if elecs are used for multiple things
+     <acquisition type="get" start="? ns" stop="? ns"
+          elec1="stim+" elec2="stim-;meas+" elec4="meas-" gain="1" />
+
+     OR, if elec
+
+    <acquisition_type id="goe_eA_eB_eC_eD" param="{eA;eB;eC;eD}" >
+      <stim_list>
+        <stim type="sgoe">
+          <elec ref="eA" gain="1" />
+          <elec ref="eB" gain="-1" />
+        </stim>
+      </stim_list>
+      <meas_list>
+        <meas type="get">
+          <elec ref="eC" gain="1" />
+          <elec ref="eD" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition_type>
+
+
+     <acquisition type="get" start="? ns" stop="? ns">
+        <param ref="elec1"/>
+        <param ref="elec2"/>
+        <param ref="elec3"/>
+        <param ref="elec4"/>
+     </acqusition>
+
+     OR
+     <acquisition type="get" start="? ns" stop="? ns" p1="elec1" p2="elec2" p3="elec3" p4="elec4"/>
+     OR
+     <acquisition type="get" start="? ns" stop="? ns" p1="{elec1;elec2;elec3;elec4}"/>
+-->
   <subject id="patient0" >
     <type>Person</type>
     <patient>
@@ -101,7 +143,7 @@
   </meas_type_list>
 
   <acquisition_type_list>
-    <acqusition_type id="step1" >
+    <acquisition_type id="step1" >
       <stim_list>
         <stim type="stim1">
           <elec ref="elec1" gain ="1" />
@@ -496,8 +538,16 @@
     </frame>
 
     <frame id ="goe_frame">
-      <acquisition type="goe_1" start="? ns" stop="? ns"/>
-      <acquisition type="goe_2" start="? ns" stop="? ns"/>
+      <acquisition type="timestamp"/>
+<!--
+     Do we want to have timestamp be explicit. (Ie a defined meaning in the protocol)
+     or to allow time to be a quantity we measure.
+
+     Suggestion: allow a quanity time to be measured any way a user wants
+                 have a acquisition type="timestamp" with pre-defined semantics
+  -->
+      <acquisition type="goe_1_2_3_4" start="? ns" stop="? ns"/>
+      <acquisition type="goe_1_2_4_5" start="? ns" stop="? ns"/>
       <acquisition type="goe_3" start="? ns" stop="? ns"/>
       <acquisition type="goe_4" start="? ns" stop="? ns"/>
       <acquisition type="goe_5" start="? ns" stop="? ns"/>
