@@ -1,0 +1,34 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>
+  TITLE
+</h2>
+
+<h3> 
+  Subtitle
+</h3>
+
+   Some text
+
+   <pre>
+   <!--#include virtual="basic_3d_01.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="basic_3d_01a.png">
+   <br><i>Figure:</i>
+   Description of the figure
+   </center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
