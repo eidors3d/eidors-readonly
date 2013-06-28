@@ -3,24 +3,101 @@
 <!--#include virtual="../../nav-sidebar.shtml" -->
 
 <h2>
-  TITLE
+  EIDORS ng_mk_2d_models
 </h2>
 
 <h3> 
-  Subtitle
+  Creating 2d models
 </h3>
 
-   Some text
+   Here are some examples of the variety of models which can be generated using the function: ng_mk_2d_model
 
    <pre>
-   <!--#include virtual="basic_3d_01.m" -->
+   <!--#include virtual="ng_mk_2d_model_1.m" -->
    </pre>
 
    <!-- figure goes here -->
    <center>
-   <img src="basic_3d_01a.png">
+   <img src="one.png">
    <br><i>Figure:</i>
-   Description of the figure
+   2D model with 3 electrodes, with square hole
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_2.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="two.png">
+   <br><i>Figure:</i>
+   2D model with 5 electrodes on outer surface and 4 electrodes on inner surface
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_3.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="three.png">
+   <br><i>Figure:</i>
+   2D model with 5 electrodes on outer surface, 4 electrodes on each inner surface
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_4.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="four.png">
+   <br><i>Figure:</i>
+   2D model with 7 electrodes on outer surface and 4 electrodes on one inner surface with different electrode shapes
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_5.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="five.png">
+   <br><i>Figure:</i>
+   Complex 2D model with 9 electrodes
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_6.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="six.png">
+   <br><i>Figure:</i>
+   Complex 2D model with smoothed contour and evenly spaced electrodes
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_7.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="seven.png">
+   <br><i>Figure:</i>
+   2D model with smoothed contour, specifically placed electrodes and an internal object
+   </center>
+   
+   <pre>
+   <!--#include virtual="ng_mk_2d_model_8.m" -->
+   </pre>
+
+   <!-- figure goes here -->
+   <center>
+   <img src="eight.png">
+   <br><i>Figure:</i>
+   2D model of pig thorax
    </center>
 
 
