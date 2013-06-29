@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oeit>
+<!-- LINK TO FILE:
+  -->
+  <subject id="patient0" >
+    <type>Person</type>
+    <patient>
+      <firstname>Bobby</firstname>
+      <lastname>McGee</lastname>
+      <age>22</age>
+    </patient>
+  </subject>
+
+<!-- LINK TO FILE:
+  -->
+  <device_list>
+    <device id="GoeII_EIT_device">
+      <manufacturer>Universit&auml;t G&ouml;ttingen</manufacturer>
+      <model>Basic</model>
+    </device>
+
+    <device id="pressure_device">
+      <manufacturer>Acme</manufacturer>
+      <model>Super</model>
+    </device>
+  </device_list>
+
+<!-- LINK TO FILE:
+  -->
+  <electrode_type_list>
+    <electrode_type name="elec_type0" contact_impedance=".01" />
+    <electrode_type name="elec_type1" contact_impedance=".01">
+      <user_data></user_data>
+    </electrode_type>
+  </electrode_type_list>
+
+  <electrode_list coordinate_system="Cartesian" position_description="Relative">
+    <electrode id="elec0" type="elec_type1" position="[0,0,0]" comment="this elec is ground" />
+    <electrode id="elec1" type="elec_type1" position="[0,0,0]"/>
+    <electrode id="elec2" type="elec_type0" position="[0,0,0]">
+      <user_data>arbitrary content</user_data>
+      <user_data box_serial_numer="ACME 123"/>
+    </electrode>
+    <electrode id="elec3" type="elec_type0" position="[0,0,0]" contact_impedance=".02" />
+    <electrode id="elec4" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec5" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec6" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec7" type="elec_type0" position="[0,0,0]" />
+    <electrode id="elec8" type="elec_type0" position="[0,0,0]" />
+  </electrode_list>
+
+  <stim_type_list>
+    <stim_type id="step1" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="square" />
+    <stim_type id="sgoe" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="sinusoid" />
+  </stim_type_list>
+
+  <meas_type_list>
+    <meas_type id="EIT_abs" device="GoeII_EIT_device"
+               demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+      <fields>
+        <field name="Amplitude" type="float" />
+      </fields>
+    </meas_type>
+    <meas_type id="EIT_IQ" device="GoeII_EIT_device"
+               demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+      <fields>
+        <field name="In-Phase" type="float" />
+        <field name="Quadrature" type="float" />
+      </fields>
+    </meas_type>
+    <meas_type id="EIT_current" device="GoeII_EIT_device"
+               demod_frequency="100 kHz" physical_property="current" offset="0" gain="1">
+      <fields>
+        <field name="Amplitude" type="float" />
+      </fields>
+    </meas_type>
+    <meas_type id="EIT_voltage" device="GoeII_EIT_device"
+               demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+      <fields>
+        <field name="Amplitude" type="float" />
+      </fields>
+    </meas_type>
+    <meas_type id="aux" device="GoeII_EIT_device"
+               physical_property="voltage" offset="0" gain="1">
+      <fields>
+        <field name="Real" type="float" />
+      </fields>
+    </meas_type>
+    <meas_type id="pres_meas" device="pressure_device"
+               physical_property="voltage" offset="0" gain="1">
+      <fields>
+        <field name="Real" type="int16" />
+      </fields>
+    </meas_type>
+  </meas_type_list>
+
+
+  <frame_list>
+    <frame id ="pressure_frame">
+      <acquisition type="pres_meas"         start=  "0 ns" duration="10 ns"/>
+    </frame>
+
+    <frame id ="goe_frame">
+<!--
+      <acquisition type="timestamp"/>
+     Do we want to have timestamp be explicit. (Ie a defined meaning in the protocol)
+     or to allow time to be a quantity we measure.
+
+     Suggestion: allow a quanity time to be measured any way a user wants
+                 have a acquisition type="timestamp" with pre-defined semantics
+  -->
+
+  <!-- STIMULATION ON ELECTRODES 1 and 2 -->
+      <acquisition type="EIT_abs"     start=   "0 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+            <meas elec="elec3" gain="+1"/> <meas elec="elec4" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start=  "10 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+            <meas elec="elec4" gain="+1"/> <meas elec="elec5" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start=  "20 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+            <meas elec="elec5" gain="+1"/> <meas elec="elec6" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start=  "30 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+            <meas elec="elec6" gain="+1"/> <meas elec="elec7" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start=  "40 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+            <meas elec="elec7" gain="+1"/> <meas elec="elec8" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_current" start=  "50 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_voltage" start=  "60 ns" duration="10 ns">
+            <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
+            <meas elec="elec1" gain="+1"/> <meas elec="elec2" gain="-1"/>
+         </acquisition>
+      <acquisition type="aux"         start=  "70 ns" duration="10 ns"/>
+  <!-- STIMULATION ON ELECTRODES 2 and 3 -->
+      <acquisition type="EIT_abs"     start= "100 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+            <meas elec="elec4" gain="+1"/> <meas elec="elec5" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start= "110 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+            <meas elec="elec5" gain="+1"/> <meas elec="elec6" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start= "120 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+            <meas elec="elec6" gain="+1"/> <meas elec="elec7" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start= "130 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+            <meas elec="elec7" gain="+1"/> <meas elec="elec8" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_abs"     start= "140 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+            <meas elec="elec8" gain="+1"/> <meas elec="elec9" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_current" start= "150 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+         </acquisition>
+      <acquisition type="EIT_voltage" start= "160 ns" duration="10 ns">
+            <stim elec="elec2" gain="+1"/> <stim elec="elec3" gain="-1"/>
+            <meas elec="elec2" gain="+1"/> <meas elec="elec3" gain="-1"/>
+         </acquisition>
+      <acquisition type="aux"         start=  "70 ns" duration="10 ns"/>
+  <!-- STIMULATION ON ELECTRODES 3 and 4 -->
+  <!-- etc -->
+    </frame>
+  </frame_list>
+
+
+  <streams>
+    <stream id="EIT_stream">
+      <process>
+        <repeat number="end_of_stream">
+          <decode frame="EIT_frame" />
+          <delay time="10 ms"/>
+        </repeat>
+      </process>
+
+<!-- OR we could have a separate sync_list outside the files -->
+      <sync_list>
+          <sync point="user_click_1" time="850 ns"/>
+      </sync_list>
+
+      <file_list>
+        <file name="EIT_file" start_frame="1" end_frame="39999" start_time="? ns" end_time="? ns"
+            comment="start_time and end_time are hints. The values in the file are
+                     authorative. Values in the xml are optional" />
+      </file_list>
+    </stream>
+
+    <stream id="stream2">
+      <process>
+        <repeat number="end_of_stream">
+          <decode frame="pressure_frame" />
+          <delay time="10 us"/>
+        </repeat>
+      </process>
+
+      <sync_list>
+          <sync point="user_click_1" time="1500 ns"/>
+      </sync_list>
+
+      <files>
+        <file name="Pressure_file1" start_frame="1" />
+      </files>
+    </stream>
+  </streams>
+
+</oeit>
