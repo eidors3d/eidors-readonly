@@ -27,6 +27,8 @@
  - fix the example tutorial
         EIDORS_basics/example_abs_GN_compare_3D.m
 
+ - cmap_type = 'draeger' does draeger colours, but not the offset
+     in the colourbar. Add a centre_move option to eidors_colourbar
  - fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml
 
  - fix simulate_move2_ ... tutorials to use 2d netgen interface
