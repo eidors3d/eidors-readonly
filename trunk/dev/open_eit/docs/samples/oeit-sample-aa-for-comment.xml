@@ -1,4 +1,58 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<!-- 
+DISCUSSION - 2 July 2013
+
+          -->
+<stream_list>
+  <stream id="EIT_stream">
+    <frame_list>
+      <frame>
+        <acquisition_list>
+          <acquisition>
+             <stimulation_list>
+                <stimulation square wave current outputZ frequency>
+                  <elec />
+                  <elec />
+                </stimulation>
+                <stimulation ground
+                  <elec />
+                </stimulation>
+             </stimulation_list>
+             <measurement_list>
+               <measurement>
+                  <elec />
+                  <elec />
+                  <field name="" type=""/>
+                  <field name="DUMMY" type="uint32" length=""/>
+               </measurement>
+             </measurement_list>
+          </acquisition>
+        </acquisition_list>
+      </frame>
+    </frame_list>
+
+    <process>
+      <repeat number="end_of_stream">
+        <decode frame="EIT_frame" />
+        <delay time="10 ms"/>
+      </repeat>
+    </process>
+
+<!-- OR have a value_list?? -->
+    <file_list>
+      <file name="EIT_file" start_frame="1" end_frame="39999" start_time="? ns" end_time="? ns"
+          comment="start_time and end_time are hints. The values in the file are
+                   authorative. Values in the xml are optional" />
+    </file_list>
+
+    <event_list>
+        <event type="user" name="user_click_1" time="850 ns"/>
+    </event_list>
+  </stream>
+</stream_list>
+
+
+<!--           -->
+<?xml version="1.0" encoding="UTF-8"?>
 <oeit>
 <!-- LINK TO FILE:
   -->
@@ -55,6 +109,16 @@
   </stim_type_list>
 
   <meas_type_list>
+<!--
+  Do we need a way to specity the bytes to skip?
+  -->
+
+    <meas_type id="skip4" >
+      <fields>
+        <field name="SKIP" type="int32" />
+      </fields>
+    </meas_type>
+
     <meas_type id="EIT_abs" device="GoeII_EIT_device"
                demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
       <fields>
@@ -112,6 +176,7 @@
 
   <!-- STIMULATION ON ELECTRODES 1 and 2 -->
       <acquisition type="EIT_abs"     start=   "0 ns" duration="10 ns">
+         <stim_list>
             <stim elec="elec1" gain="+1"/> <stim elec="elec2" gain="-1"/>
             <meas elec="elec3" gain="+1"/> <meas elec="elec4" gain="-1"/>
          </acquisition>
@@ -174,7 +239,7 @@
   </frame_list>
 
 
-  <streams>
+  <stream_list>
     <stream id="EIT_stream">
       <process>
         <repeat number="end_of_stream">
@@ -211,6 +276,6 @@
         <file name="Pressure_file1" start_frame="1" />
       </files>
     </stream>
-  </streams>
+  </stream_list>
 
 </oeit>
