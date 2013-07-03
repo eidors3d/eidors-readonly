@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Even though this document is included in oeit.xml, do we want it to conform to proper XML? 
+  As it stands, there are 2 root elements, which is invalid XML
+-->
+
+<electrode_type_list>
+  <electrode_type name="elec_type0">
+    <manufacturer></manufacturer>
+    <model></model>
+    <material></material>
+    <diameter></diameter>
+    <thickness></thickness>
+    <height></height>
+    <width></width>
+    <orientation></orientation>
+    <contactimpedance>.01</contactimpedance>
+    <user_data type="comment">arbitrary content</user_data>
+    <user_data type="box_serial_numer">ACME 123</user_data>
+  </electrode_type>
+
+  <electrode_type name="elec_type1"></electrode_type>
+
+</electrode_type_list>
+
+<electrode_list id="elec_list1" coordinate_system="Cartesian" position_description="Absolute">
+  <electrode id="elec1" type="elec_type1" position="[0,0,0]" position_accuracy="1mm">
+    <user_data type="comment">ground electrode</user_data>
+  </electrode>
+  
+  <electrode id="elec2" type="elec_type0" position="[0,0,0]">
+    <user_data>arbitrary content</user_data>
+    <user_data key="serial_number">asfd</user_data>
+  </electrode>
+  <electrode id="elec3" type="elec_type0" position="[0,0,0]" contact_impedance=".02" />
+  <electrode id="elec4" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec5" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec6" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec7" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec8" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec9" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec10" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec11" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec12" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec13" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec14" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec15" type="elec_type0" position="[0,0,0]" />
+  <electrode id="elec16" type="elec_type0" position="[0,0,0]" />
+</electrode_list>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<stim_type_list>
+  <stim_type id="step1" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="square" />
+  <stim_type id="sgoe" amplitude="100 mA" frequency="55.6 kHz" physical_property="current" wave="sinusoid" />
+</stim_type_list>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<frame_list>
+  <frame id="timestamp_frame">
+    <acquisition type="timestamp" start="0 ns" stop="0 ns" />
+  </frame>
+
+  <frame id="frame1">
+    <data acquisition="step1" start="0 ms" stop="1000 ms" />
+  </frame>
+
+  <frame id="frame2" >
+    <element acquisition="step1" start="0 ms" stop="1000 ms" />
+  </frame>
+
+  <frame id="frame3">
+    <element acquisition="acquisition9" start="0 ns" stop="83 ns" />
+    <pad stop="1667 ns" />
+  </frame>
+
+  <frame id ="goe_frame">
+    <acquisition type="goe_1_2_3_4" start="? ns" stop="? ns"/>
+    <acquisition type="goe_1_2_4_5" start="? ns" stop="? ns"/>
+    <acquisition type="goe_3" start="? ns" stop="? ns"/>
+    <acquisition type="goe_4" start="? ns" stop="? ns"/>
+    <acquisition type="goe_5" start="? ns" stop="? ns"/>
+    <acquisition type="goe_6" start="? ns" stop="? ns"/>
+    <acquisition type="goe_7" start="? ns" stop="? ns"/>
+    <acquisition type="goe_8" start="? ns" stop="? ns"/>
+    <acquisition type="goe_9" start="? ns" stop="? ns"/>
+    <acquisition type="goe_10" start="? ns" stop="? ns"/>
+    <acquisition type="goe_current_1" start="? ns" stop="? ns"/>
+    <acquisition type="goe_current_2" start="? ns" stop="? ns"/>
+    <acquisition type="goe_current_3" start="? ns" stop="? ns"/>
+    <acquisition type="goe_current_4" start="? ns" stop="? ns"/>
+    <acquisition type="goe_current_5" start="? ns" stop="? ns"/>
+    <acquisition type="goe_voltage_1" start="? ns" stop="? ns"/>
+    <acquisition type="goe_voltage_2" start="? ns" stop="? ns"/>
+    <acquisition type="goe_voltage_3" start="? ns" stop="? ns"/>
+    <acquisition type="goe_voltage_4" start="? ns" stop="? ns"/>
+    <acquisition type="goe_voltage_5" start="? ns" stop="? ns"/>
+    <acquisition type="aux_1" start="? ns" stop="? ns"/>
+    <acquisition type="aux_2" start="? ns" stop="? ns"/>
+    <acquisition type="aux_3" start="? ns" stop="? ns"/>
+    <acquisition type="aux_4" start="? ns" stop="? ns"/>
+    <acquisition type="aux_5" start="? ns" stop="? ns"/>
+  </frame>
+</frame_list>
+

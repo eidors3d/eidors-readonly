@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device_list>
+  <device id="GoeII_EIT_device">
+    <manufacturer>Universität Göttingen</manufacturer>
+    <model>Basic</model>
+    <serialnumber>12345</serialnumber>
+    <firmware>
+      <name>myfirmware</name>
+      <version>123</version>
+      <manufacturer>mymanufacturer</manufacturer>
+    </firmware >
+    <data_acquisition_software>
+      <name>mydataacquisitionsoftware</name>
+      <version>123</version>
+      <manufacturer>mymanufacturer</manufacturer >
+    </data_acquisition_software>
+  </device>
+
+  <device id="pressure_device">
+    <!-- Is this an acceptable minimal definition of a device? -->
+  </device>
+</device_list>
