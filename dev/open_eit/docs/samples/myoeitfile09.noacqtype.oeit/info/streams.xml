@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<streams>
+  <stream id="eit-0000">
+    <process>
+      <!-- implied repeat infinite (until EOF/EOS) since number="" is missing -->
+      <repeat>
+        <decode frame="timestamp" />
+        <repeat number="9">
+          <decode frame="frame1" />
+        </repeat>
+        <decode frame="frame2" />
+          <!--  There was a proposal to skip X number of bytes in a stream, 
+              using 'skip' is one mechanism  -->
+        <skip length="128" />
+
+        <!--  There was a proposal to skip X number of bytes in a stream, 
+            using a frame definition that 'measures' the skipped data is another mechanism -->
+        <decode frame="skip_data" />
+      </repeat>
+    </process>
+
+    <files>
+      <file name="eit/0000/00000.frames" start_frame="1" end_frame="999" start_time="? ns" end_time="? ns">
+        <user_data>
+          Start_time and end_time are hints. The values in the file are authorative. Values in the xml are optional.
+        </user_data>
+      </file>
+    </files>
+
+    <!-- These events should be in the log files and cleaned up to reflect original spec -->
+    <event_list>
+      <event type="user" name="user_click_1" time="850 ns"/>
+    </event_list>
+
+    <logs>
+      <file name="logs/eit-0000.log" />
+    </logs>
+  </stream>
+
+  <stream id="aux-0000">
+    <process>
+      <repeat>
+        <decode frame="timestamp" />
+        <repeat number="600">
+          <decode frame="aux_1" />
+        </repeat>
+      </repeat>
+    </process>
+
+    <files>
+      <file name="auxiliary/0000/00000.frames" start_frame="1" />
+    </files>
+
+    <!-- These events should be in the log files and cleaned up to reflect original spec -->
+    <event_list>
+      <event type="user" name="user_click_1" time="854 ns"/>
+    </event_list>
+
+    <logs>
+      <file name="logs/aux-0000.log" />
+    </logs>
+  </stream>
+</streams>
