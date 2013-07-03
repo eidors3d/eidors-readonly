@@ -34,6 +34,7 @@ fctr = get_factor(img);
 data.meas = fctr * data.meas;
 data.name = ['apparent resistivity ' data.name];
 data.quantity = 'apparent resistivity';
+data.apparent_resistivity_factor= fctr;
 
 function fctr = get_factor(img)
 fctr = NaN;
