@@ -2,7 +2,7 @@
 
 <frame_list>
   <frame id="timestamp_frame">
-    <acquisition start="0 ns" stop="0 ns" >
+    <acquisition start="0 ns" duration="0 ns" >
       <stim_list/>
       <meas_list>
         <meas type="timestamp_meas" />
@@ -10,8 +10,8 @@
     </acquisition>
   </frame>
 
-  <frame id="frame1">
-    <acquisition start="? ns" stop="? ns">
+  <frame id="sheffield_8_electrode_fram">
+    <acquisition start="? ns" duration="? ns">
       <stim_list>
         <stim type="stim1">
           <elec ref="elec1" gain ="1" />
@@ -48,8 +48,8 @@
     </acquisition>
   </frame>
 
-  <frame id="frame2">
-    <acquisition>
+  <frame id="frame2_parallel">
+    <acquisition start="? ns" duration="10 ns">
       <stim_list>
         <stim type="stim1">
           <elec ref="elec1" gain ="1" />
@@ -95,7 +95,7 @@
   </frame>
 
   <frame id="frame3">
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <stim_list>
       </stim_list>
       <meas_list>
@@ -106,7 +106,7 @@
   </frame>
 
   <frame id ="goe_frame">
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <stim_list>
         <stim type="sgoe">
           <elec ref="elec1" gain="1" />
@@ -121,13 +121,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec1" gain="1" />
           <elec ref="elec2" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec4" gain="1" />
@@ -136,13 +136,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec2" gain="1" />
           <elec ref="elec3" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec4" gain="1" />
@@ -151,13 +151,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec2" gain="1" />
           <elec ref="elec3" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec5" gain="1" />
@@ -166,13 +166,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec3" gain="1" />
           <elec ref="elec4" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec5" gain="1" />
@@ -181,28 +181,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec3" gain="1" />
           <elec ref="elec4" gain="-1" />
         </stimulus>
-      </stimuli>
-      <meas_list>
-        <meas type="get">
-          <elec ref="elec1" gain="1" />
-          <elec ref="elec2" gain="-1" />
-        </meas>
-      </meas_list>
-    </acquisition>
-
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
-        <stimulus type="sgoe">
-          <elec ref="elec4" gain="1" />
-          <elec ref="elec5" gain="-1" />
-        </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec1" gain="1" />
@@ -211,13 +196,28 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec4" gain="1" />
           <elec ref="elec5" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
+        <stimulus type="sgoe">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </stimulus>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec2" gain="1" />
@@ -226,13 +226,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec5" gain="1" />
           <elec ref="elec1" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec2" gain="1" />
@@ -241,13 +241,13 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec5" gain="1" />
           <elec ref="elec1" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="get">
           <elec ref="elec3" gain="1" />
@@ -256,151 +256,151 @@
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec1" gain="1" />
           <elec ref="elec2" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="current" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec2" gain="1" />
           <elec ref="elec3" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="current" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec3" gain="1" />
           <elec ref="elec4" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="current" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec4" gain="1" />
           <elec ref="elec5" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="current" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec5" gain="1" />
           <elec ref="elec1" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="current" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec1" gain="1" />
           <elec ref="elec2" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="voltage" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec2" gain="1" />
           <elec ref="elec3" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="voltage" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec3" gain="1" />
           <elec ref="elec4" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="voltage" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec4" gain="1" />
           <elec ref="elec5" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="voltage" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
-      <stimuli>
+    <acquisition start="? ns" duration="? ns">
+      <stim_list>
         <stimulus type="sgoe">
           <elec ref="elec5" gain="1" />
           <elec ref="elec1" gain="-1" />
         </stimulus>
-      </stimuli>
+      </stim_list>
       <meas_list>
         <meas type="voltage" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <meas_list>
         <meas type="aux" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <meas_list>
         <meas type="aux" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <meas_list>
         <meas type="aux" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <meas_list>
         <meas type="aux" />
       </meas_list>
     </acquisition>
 
-    <acquisition start="? ns" stop="? ns">
+    <acquisition start="? ns" duration="? ns">
       <meas_list>
         <meas type="aux" />
       </meas_list>
