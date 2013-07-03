@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<meas_type_list>
+  <meas_type id="timestamp_meas" physical_property="time" >
+    <fields>
+      <field name="Relative" type="timestamp" />
+    </fields>
+  </meas_type>
+  <meas_type id="datetime_meas" physical_property="time" >
+    <fields>
+      <field name="Realtime" type="datetime" />
+    </fields>
+  </meas_type>
+  <meas_type id="meas1" demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+    <fields>
+      <field name="Amplitude" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="meas2" demod_frequency="100 kHz" physical_property="current" offset="0" gain="1">
+    <fields>
+      <field name="Amplitude" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="meas3" demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+    <fields>
+      <field name="Amplitude" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="meas4" demod_frequency="100 kHz" physical_property="current" offset="0" gain="1">
+    <fields>
+      <field name="Amplitude" type="double" />
+      <field name="Phase" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="meas5" demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+    <fields>
+      <field name="In-Phase" type="float" />
+      <field name="Quadrature" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="current" demod_frequency="100 kHz" physical_property="current" offset="0" gain="1">
+    <fields>
+      <field name="Amplitude" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="voltage" demod_frequency="100 kHz" physical_property="voltage" offset="0" gain="1">
+    <fields>
+      <field name="Amplitude" type="float" />
+    </fields>
+  </meas_type>
+  <meas_type id="aux" physical_property="voltage" offset="0" gain="1">
+    <fields>
+      <field name="Real" type="float" />
+    </fields>
+  </meas_type>
+</meas_type_list>
