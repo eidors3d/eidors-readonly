@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<frame_list>
+  <frame id="timestamp_frame">
+    <acquisition start="0 ns" stop="0 ns" >
+      <stim_list/>
+      <meas_list>
+        <meas type="timestamp_meas" />
+      </meas_list>
+    </acquisition>
+  </frame>
+
+  <frame id="frame1">
+    <acquisition start="? ns" stop="? ns">
+      <stim_list>
+        <stim type="stim1">
+          <elec ref="elec1" gain ="1" />
+          <elec ref="elec2" gain ="1" />
+          <elec ref="elec3" gain="1" />
+        </stim>
+      </stim_list>
+      <meas_list>
+        <meas type="meas1">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
+        </meas>
+        <meas type="meas2">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
+        </meas>
+        <meas type="meas3">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="1" />
+        </meas>
+        <meas type="meas3">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
+        </meas>
+        <meas type="meas4">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec3" gain="1" />
+        </meas>
+        <meas type="meas4">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+  </frame>
+
+  <frame id="frame2">
+    <acquisition>
+      <stim_list>
+        <stim type="stim1">
+          <elec ref="elec1" gain ="1" />
+          <elec ref="elec2" gain ="1" />
+          <elec ref="elec3" gain="1" />
+        </stim>
+      </stim_list>
+      <meas_list>
+        <meas type="meas1">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
+        </meas>
+        <meas type="meas2">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="1" />
+        </meas>
+        <meas type="meas3">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="1" />
+        </meas>
+        <meas type="meas3">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
+        </meas>
+        <meas type="meas4">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec3" gain="1" />
+        </meas>
+        <meas type="meas4">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="1" />
+        </meas>
+        <meas type="meas3">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec4" gain="1" />
+        </meas>
+        <meas type="meas3">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec5" gain="1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+  </frame>
+
+  <frame id="frame3">
+    <acquisition start="? ns" stop="? ns">
+      <stim_list>
+      </stim_list>
+      <meas_list>
+        <meas type="pressure">
+        </meas>
+      </meas_list>
+    </acquisition>
+  </frame>
+
+  <frame id ="goe_frame">
+    <acquisition start="? ns" stop="? ns">
+      <stim_list>
+        <stim type="sgoe">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </stim>
+      </stim_list>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="get">
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
+        </meas>
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="current" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="current" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="current" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="current" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="current" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec1" gain="1" />
+          <elec ref="elec2" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="voltage" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec2" gain="1" />
+          <elec ref="elec3" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="voltage" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec3" gain="1" />
+          <elec ref="elec4" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="voltage" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec4" gain="1" />
+          <elec ref="elec5" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="voltage" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <stimuli>
+        <stimulus type="sgoe">
+          <elec ref="elec5" gain="1" />
+          <elec ref="elec1" gain="-1" />
+        </stimulus>
+      </stimuli>
+      <meas_list>
+        <meas type="voltage" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <meas_list>
+        <meas type="aux" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <meas_list>
+        <meas type="aux" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <meas_list>
+        <meas type="aux" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <meas_list>
+        <meas type="aux" />
+      </meas_list>
+    </acquisition>
+
+    <acquisition start="? ns" stop="? ns">
+      <meas_list>
+        <meas type="aux" />
+      </meas_list>
+    </acquisition>
+  </frame>
+</frame_list>
+

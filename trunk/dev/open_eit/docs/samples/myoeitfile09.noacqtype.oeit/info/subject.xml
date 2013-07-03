@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  This subject does not make sense.  
+  Also, not that the subject id must be different than the patient id (found in patient.xml)
+  since any ID must be unique
+-->
+<subject id="subject0" type="Person" xmlns:xi="http://www.w3.org/2001/XInclude" >
+  <xi:include href="sensitive/patient.xml" />
+  <age>22</age>
+  <weight>43 kg</weight>
+  <width>580 mm</width>
+  <height>400 mm</height>
+  <radius>290 mm</radius>
+  <waterlevel>222 mm</waterlevel>
+  <waterconductivity>1.6 S/m</waterconductivity>
+  <manufacturer>tankmanufacturer AG</manufacturer>
+  <model>my model</model>
+  <serialnumber>123.45.abc</serialnumber>
+</subject>
+
+

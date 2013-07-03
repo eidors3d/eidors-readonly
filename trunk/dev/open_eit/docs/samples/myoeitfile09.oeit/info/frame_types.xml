@@ -6,16 +6,15 @@
   </frame>
 
   <frame id="frame1">
-    <data acquisition="step1" start="0 ms" stop="1000 ms" />
+    <acquisition type="step1" start="0 ms" stop="1000 ms" />
   </frame>
 
   <frame id="frame2" >
-    <element acquisition="step1" start="0 ms" stop="1000 ms" />
+    <acquisition type="step1" start="0 ms" stop="1000 ms" />
   </frame>
 
   <frame id="frame3">
-    <element acquisition="acquisition9" start="0 ns" stop="83 ns" />
-    <pad stop="1667 ns" />
+    <acquisition type="acquisition9" start="0 ns" stop="83 ns" />
   </frame>
 
   <frame id ="goe_frame">
