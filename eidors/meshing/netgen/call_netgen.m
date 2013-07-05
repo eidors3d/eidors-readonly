@@ -39,7 +39,7 @@ end
 % Netgen executable filename
 cache_path = eidors_cache('cache_path');
 if  islinux
-   ng_name = '/opt/netgen/bin/netgen';
+   ng_name = '';
 else
    ng_name = [cache_path,'/ng'];
 end
