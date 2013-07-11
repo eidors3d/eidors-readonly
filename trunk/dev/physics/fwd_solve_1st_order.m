@@ -100,33 +100,20 @@ switch measurement
     case 'log_voltage'
         vv = log(vv);
     case 'apparent_resistivity'
-        fctr = get_factor(img);
+        fctr = apparent_resistivity_factor(img.fwd_model);
         vv = fctr*vv;
     case 'log_apparent_resistivity'
-        fctr = get_factor(img);
+        fctr = apparent_resistivity_factor(img.fwd_model);
         vv = log(fctr*vv);
 end
 
-function fctr = get_factor(img)
-fctr = NaN;
-try
-   fctr = img.fwd_model.apparent_resistivity_factor;
-end
 
-if ischar(fctr), fctr = str2func(fcstr); end;
-
-if isa(fctr, 'function_handle')
-   fctr = feval(fctr, img);
-end
-
-if isnan(fctr)
-   img.fwd_model.measured_quantity = 'voltage';
-   %TODO: Should we use 1, or the actual image?
-   vh = fwd_solve(mk_image(img.fwd_model,1));
-   n = length(vh.meas);
-   fctr = spdiags(1./vh.meas,0,n,n);
-end
-
+function list = supported_measurement
+   list = {'voltage'
+           'log_voltage'
+           'apparent_resistivity'
+           'log_apparent_resistivity'
+           };
 
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
