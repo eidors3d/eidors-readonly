@@ -43,8 +43,7 @@ if  islinux
 else
    ng_name = [cache_path,'/ng'];
 end
-
-ldpath='';
+ 
 while( 1 )
    
    fid= fopen('ng.opt','a'); %create ng.opt file in local dir
@@ -76,7 +75,6 @@ while( 1 )
       sys_cmd = sprintf('"%s" %s -batchmode -geofile=%s  -meshfile=%s ', ...
          ng_name, finelevel,geo_file,vol_file);
    end
-   
    status= system_cmd( sys_cmd );
 
    if status==0; break; end
