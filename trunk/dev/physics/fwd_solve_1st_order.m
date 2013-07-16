@@ -99,20 +99,27 @@ function [vv] = convert_measurement(vv,img,measurement)
 switch measurement
     case 'log_voltage'
         vv = log(vv);
+    case 'log10_voltage'
+        vv = log10(vv);
     case 'apparent_resistivity'
         fctr = apparent_resistivity_factor(img.fwd_model);
         vv = fctr*vv;
     case 'log_apparent_resistivity'
         fctr = apparent_resistivity_factor(img.fwd_model);
         vv = log(fctr*vv);
+    case 'log10_apparent_resistivity'
+        fctr = apparent_resistivity_factor(img.fwd_model);
+        vv = log10(fctr*vv);
 end
 
 
 function list = supported_measurement
    list = {'voltage'
            'log_voltage'
+           'log10_voltage'
            'apparent_resistivity'
            'log_apparent_resistivity'
+           'log10_apparent_resistivity'
            };
 
 function do_unit_test

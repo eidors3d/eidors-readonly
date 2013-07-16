@@ -159,18 +159,26 @@ end
 
 J = J.*repmat(dCond_dPhys ,1,size(J,1))';
 
-function J = convert_measurement(J, img, measurement);
+function J = convert_measurement(J, img, measurement)
 switch measurement
    case 'log_voltage'
       img.fwd_model.measured_quantity = 'voltage';
       vv = fwd_solve(img);
       fctr = spdiag(1./vv.meas);
+   case 'log10_voltage'
+      img.fwd_model.measured_quantity = 'voltage';
+      vv = fwd_solve(img);
+      fctr = spdiag(1./(log(10)*vv.meas));
    case 'apparent_resistivity'
       fctr = apparent_resistivity_factor(img.fwd_model);
    case 'log_apparent_resistivity'
       img.fwd_model.measured_quantity = 'voltage';
       vv = fwd_solve(img);
       fctr = spdiag(log( diag(apparent_resistivity_factor(img.fwd_model)) ./ vv.meas));
+   case 'log10_apparent_resistivity'
+      img.fwd_model.measured_quantity = 'voltage';
+      vv = fwd_solve(img);
+      fctr = spdiag(log( diag(apparent_resistivity_factor(img.fwd_model))) ./(log(10)*vv.meas));
 end
 J = fctr*J;
 
@@ -225,8 +233,10 @@ function str = supported_physics
 function list = supported_measurement
    list = {'voltage'
            'log_voltage'
+           'log10_voltage'
            'apparent_resistivity'
            'log_apparent_resistivity'
+           'log10_apparent_resistivity'
            };
       
 function do_unit_test
@@ -249,14 +259,12 @@ function do_unit_test
    fmdl.gnd_node = 3;
 %    show_fem(fmdl);
  
-  
+   fctr= apparent_resistivity_factor(fmdl);  
   
    meas = supported_measurement;
    phys = supported_physics;
    j= 1; i = 1;
    img_test = mk_image(fmdl,1,phys{j});
-   v1= fwd_solve(img_test);
-   apparent_resistivity_factor= 1./v1.meas;  
    img_test.(phys{j}).elem_data = [.5 1.1 2 4]';
    img_test.fwd_model.measured_quantity = meas{i};
    fprintf('%s vs %s\n', meas{i}, phys{j});
@@ -265,31 +273,38 @@ function do_unit_test
    Voltage_estimated= v.meas;
    
    elem_data_init= [.5 1.1 2 4]';
-   elem_data= [elem_data_init,1./elem_data_init,log10(elem_data_init),-log10(elem_data_init)];
-   
+   elem_data= [elem_data_init,1./elem_data_init,log(elem_data_init),-log(elem_data_init)];
+%    keyboard
    J_test(:,:,1,1)= J_init;
-   J_test(:,:,1,2)= repmat(1./(Voltage_estimated),1,4).*J_init;
-%    J_test(:,:,1,2)= repmat(1./(log(10)*Voltage_estimated),1,4).*J_init;
-   J_test(:,:,1,3)= repmat(apparent_resistivity_factor,1,4).*J_init;
-   J_test(:,:,1,4)= repmat(log(apparent_resistivity_factor)./(log(10)*Voltage_estimated),1,4).*J_init;
+   J_test(:,:,1,2)= spdiag(1./(Voltage_estimated))*J_init;
+   J_test(:,:,1,3)= spdiag(1./(log(10)*Voltage_estimated))*J_init;
+   J_test(:,:,1,4)= fctr*J_init;
+%    J_test(:,:,1,5)= log(fctr)*spdiag(1./(Voltage_estimated))*J_init;
+%    J_test(:,:,1,6)= log(fctr)*spdiag(1./(log(10)*Voltage_estimated))*J_init;
    J_test(:,:,2,1)= repmat(-elem_data_init'.^2,4,1).*J_init;
-   J_test(:,:,2,2)= repmat(-elem_data_init'.^2,4,1).*repmat(1./(log(10)*Voltage_estimated),1,4).*J_init;
-   J_test(:,:,2,3)= repmat(-elem_data_init'.^2,4,1).*repmat(apparent_resistivity_factor,1,4).*J_init;
-   J_test(:,:,2,4)= repmat(-elem_data_init'.^2,4,1).*repmat(log(apparent_resistivity_factor)./(log(10)*Voltage_estimated),1,4).*J_init;
-   J_test(:,:,3,1)= repmat(elem_data_init'*log(10),4,1).*J_init;
-   J_test(:,:,3,2)= repmat(elem_data_init'*log(10),4,1).*repmat(1./(log(10)*Voltage_estimated),1,4).*J_init;
-   J_test(:,:,3,3)= repmat(elem_data_init'*log(10),4,1).*repmat(apparent_resistivity_factor,1,4).*J_init;
-   J_test(:,:,3,4)= repmat(elem_data_init'*log(10),4,1).*repmat(log(apparent_resistivity_factor)./(log(10)*Voltage_estimated),1,4).*J_init;
-   J_test(:,:,4,1)= repmat(-elem_data_init'*log(10),4,1).*J_init;
-   J_test(:,:,4,2)= repmat(-elem_data_init'*log(10),4,1).*repmat(1./(log(10)*Voltage_estimated),1,4).*J_init;
-   J_test(:,:,4,3)= repmat(-elem_data_init'*log(10),4,1).*repmat(apparent_resistivity_factor,1,4).*J_init;
-   J_test(:,:,4,4)= repmat(-elem_data_init'*log(10),4,1).*repmat(log(apparent_resistivity_factor)./(log(10)*Voltage_estimated),1,4).*J_init;
-   
-   tol= 1e-5;
+   J_test(:,:,2,2)= repmat(-elem_data_init'.^2,4,1).*(spdiag(1./(Voltage_estimated))*J_init);
+   J_test(:,:,2,3)= repmat(-elem_data_init'.^2,4,1).*(spdiag(1./(log(10)*Voltage_estimated))*J_init);
+   J_test(:,:,2,4)= repmat(-elem_data_init'.^2,4,1).*(fctr*J_init);
+%    J_test(:,:,2,5)= repmat(-elem_data_init'.^2,4,1).*(log(fctr)*spdiag(1./(Voltage_estimated))*J_init);
+%    J_test(:,:,2,6)= repmat(-elem_data_init'.^2,4,1).*(log(fctr)*spdiag(1./(log(10)*Voltage_estimated))*J_init);
+   J_test(:,:,3,1)= repmat(elem_data_init',4,1).*J_init;
+   J_test(:,:,3,2)= repmat(elem_data_init',4,1).*(spdiag(1./(Voltage_estimated))*J_init);
+   J_test(:,:,3,3)= repmat(elem_data_init',4,1).*(spdiag(1./(log(10)*Voltage_estimated))*J_init);
+   J_test(:,:,3,4)= repmat(elem_data_init',4,1).*(fctr*J_init);
+%    J_test(:,:,3,5)= repmat(elem_data_init',4,1).*(log(fctr)*spdiag(1./(Voltage_estimated))*J_init);
+%    J_test(:,:,3,6)= repmat(elem_data_init',4,1).*(log(fctr)*spdiag(1./(log(10)*Voltage_estimated))*J_init);
+   J_test(:,:,4,1)= repmat(-elem_data_init',4,1).*J_init;
+   J_test(:,:,4,2)= repmat(-elem_data_init',4,1).*(spdiag(1./(Voltage_estimated))*J_init);
+   J_test(:,:,4,3)= repmat(-elem_data_init',4,1).*(spdiag(1./(log(10)*Voltage_estimated))*J_init);
+   J_test(:,:,4,4)= repmat(-elem_data_init',4,1).*(fctr*J_init);
+%    J_test(:,:,4,5)= repmat(-elem_data_init',4,1).*(log(fctr)*spdiag(1./(Voltage_estimated))*J_init);
+%    J_test(:,:,4,6)= repmat(-elem_data_init',4,1).*(log(fctr)*spdiag(1./(log(10)*Voltage_estimated))*J_init);
+
+    tol= 1e-5;
    for j = 1:length(phys)
       img = mk_image(fmdl,1,phys{j});
       img.(phys{j}).elem_data = elem_data(:,j);
-      for i = 1:length(meas)
+      for i = 1:4;%length(meas)
          img.fwd_model.measured_quantity = meas{i};
          J = jacobian_adjoint(img);
          test= [ meas{i} ' vs ' phys{j} ];
