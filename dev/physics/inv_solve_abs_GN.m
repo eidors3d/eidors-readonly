@@ -71,7 +71,6 @@ else
     img = calc_jacobian_bkgnd( inv_model );
 end
 
-img = physics_param_mapper(img);
 
 hp  = calc_hyperparameter( inv_model );
 RtR = calc_RtR_prior( inv_model );
@@ -81,6 +80,7 @@ hp2RtR= hp*RtR;
 img0 = physics_param_mapper(img);
 opt.line_optimize.meas_icov = calc_meas_icov( inv_model);
 for i = 1:opt.max_iter
+
   vsim = fwd_solve( img ); 
   dv = calc_difference_data( vsim , data0, img.fwd_model);
   J = calc_jacobian( img );
@@ -100,7 +100,7 @@ for i = 1:opt.max_iter
   
   [img, opt] = update_step(img, next, dx, fmin, res, opt);
   
-  inv_model.jacobian_backgnd = physics_param_mapper(img,1);
+  inv_model.jacobian_bkgnd = physics_param_mapper(img,1); % map params back to physics
   RtR = calc_RtR_prior( inv_model );
   hp2RtR = hp*RtR;
 end

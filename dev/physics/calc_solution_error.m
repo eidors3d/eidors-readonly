@@ -65,7 +65,7 @@ if size(img.elem_data,1) == size(imgc.elem_data,1)
 else
    img.elem_data = fmdl.coarse2fine*imgc.elem_data;
 end
-img = physics_data_mapper(img);
+img = physics_data_mapper(img,1);
 
 % simualate data from solution
 sim = fwd_solve(img);

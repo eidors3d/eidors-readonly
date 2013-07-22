@@ -78,7 +78,7 @@ switch N
       imgi = imgh;
       imgi.elem_data(32) = 2;
    case 10
-      imdl.solve = @inv_solve_abs_GN_uni;
+      imdl.solve = @inv_solve_abs_GN;
       imdl.reconst_type = 'absolute';
       imdl.parameters.max_iterations = 3;
       imdl = rmfield(imdl,'jacobian_bkgnd');
@@ -87,7 +87,7 @@ switch N
       imgi = imgh;
       imgi.elem_data(32) = 2;
    case 11
-      imdl.solve = @inv_solve_abs_GN_uni;
+      imdl.solve = @inv_solve_abs_GN;
       imdl.reconst_type = 'absolute';
       imdl.parameters.max_iterations = 3;
       imdl = rmfield(imdl,'jacobian_bkgnd');

@@ -15,10 +15,13 @@ function img = forward_mapping(img)
       try 
          img.params = jnk.node_data;
          img.current_params = 'node_data';
+%          img = rmfield(img, 'node_data');
       catch
          img.params = jnk.elem_data;
          img.current_params = 'elem_data';
+%          img = rmfield(img, 'elem_data');
       end
+      img.current_physics = jnk.current_physics;
    elseif iscell(img.physics_param_mapper)
       params = [];
       for i = 1:length(img.physics_param_mapper)
@@ -45,7 +48,7 @@ function img = reverse_mapping(img)
          otherwise
             error('huh?');
       end
-      img = physics_data_mapper(rmfield(img,'params'));
+      img = physics_data_mapper(rmfield(img,'params'),1);
       img.current_params = [];
    elseif iscell(img.physics_param_mapper)
       start = 1;
