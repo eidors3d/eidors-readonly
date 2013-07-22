@@ -73,6 +73,29 @@ end
 data = feval( fwd_model.solve, fwd_model, img);
 data= eidors_obj('data',data);  % create data object
 
+
+if isa(fwd_model.solve,'function_handle')
+    solver = func2str(fwd_model.solve);
+else
+    solver = fwd_model.solve;
+end
+if strcmp(solver,'eidors_default');
+    solver = eidors_default('get','fwd_solve');
+end
+if isfield(fwd_model,'measured_quantity') && ~isfield(data,'measured_quantity')
+   warning('EIDORS:MeasurementQuantityObliviousSolver',...
+      ['The solver %s did not handle the requested measurement quantity properly.\n'...
+       'The results may be incorrect. Please check the code to verify.'], ...
+       solver);
+elseif isfield(fwd_model,'measured_quantity') ... 
+        && isfield(data,'measured_quantity') ...
+        && ~strcmp(fwd_model.measured_quantity, data.measured_quantity)
+   error('EIDORS:MeasurementQuantityDisagreement',...
+       'The solver %s return measurements as %s, while %s was expected.',...
+       solver, data.measured_quantity, fwd_model.measured_quantity);
+end
+    
+
 warning on EIDORS:DeprecatedInterface
 
 eidors_obj('set-cache', img, 'fwd_solve_data', data);
