@@ -63,6 +63,8 @@ function img = reverse_mapping(img)
          end
          start = stop + 1;
       end
+      img = rmfield(img,'params'); % remove parameters after mapping
+      img.current_params = [];
    elseif isa(img.physics_param_mapper,'function_handle')
       img.params = feval(img.physics_param_mapper,img,1);
   end

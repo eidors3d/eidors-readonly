@@ -14,13 +14,18 @@ function Reg= prior_tikhonov( inv_model );
 %   otherwise; error('PRIOR_TIKHONOV requires input type of inv_model or fwd_model');
 % end
 
-% if isfield( fwd_model, 'coarse2fine' )
-%     no_dof = size(fwd_model.coarse2fine,2);
-% else
-%     no_dof = size(fwd_model.elems,1);
-% end
-
-img = physics_param_mapper(calc_jacobian_bkgnd(inv_model));
-no_dof = numel(img.params);
+switch inv_model.type
+   case 'fwd_model'
+      fwd_model = inv_model;
+      if isfield( fwd_model, 'coarse2fine' )
+          no_dof = size(fwd_model.coarse2fine,2);
+      else
+          no_dof = size(fwd_model.elems,1);
+      end
+   case 'inv_model'
+      img = physics_param_mapper(calc_jacobian_bkgnd(inv_model));
+      no_dof = numel(img.params);
+   otherwise; error('PRIOR_TIKHONOV requires input type of inv_model or fwd_model');
+end
 Reg = speye( no_dof );
 

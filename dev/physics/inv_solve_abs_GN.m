@@ -100,7 +100,7 @@ for i = 1:opt.max_iter
   
   [img, opt] = update_step(img, next, dx, fmin, res, opt);
   
-  inv_model.jacobian_bkgnd = physics_param_mapper(img,1); % map params back to physics
+  inv_model.jacobian_bkgnd = img;
   RtR = calc_RtR_prior( inv_model );
   hp2RtR = hp*RtR;
 end
@@ -152,6 +152,7 @@ function img = initial_estimate( imdl, data )
    
    % remove elem_data
    img = physics_param_mapper(img,1);
+   img = rmfield(img,'current_params');
  
 function [img opt] = update_step(org, next, dx, fmin,res, opt)
    if isfield(opt, 'update_func')
