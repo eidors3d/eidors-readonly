@@ -21,7 +21,7 @@ else
 end
 
 n_elem = size(fwd_model.elems,1);
-n_param = numel(img.params);
+
 % force image to use provided fwd_model
 img.fwd_model= fwd_model;
 
@@ -47,6 +47,9 @@ if isfield(img.fwd_model,'coarse2fine');
 else
    Jcol= perturb(img, 1, delta, d0, physics);
 
+   tmp = physics_param_mapper(img);
+   n_param = numel(tmp.params);
+   
    J= zeros(length(Jcol), n_param);
    J(:,1)= Jcol;
 

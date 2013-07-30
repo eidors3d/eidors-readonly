@@ -10,11 +10,11 @@ vh  = fwd_solve(img);
 
 circ= @(r,x,y,v) 1 - v * elem_select(fmdl,inline(sprintf('(x-%f).^2 + (y-%f).^2 <= %f^2',x,y,r),'x','y','z'));
 
-img.conductivity.elem_data = circ(0.2, 0.5, 0.5, 0.5);
+img.conductivity.elem_data = circ(0.2, 0.3, 0.7, 0.5);
 vi  = fwd_solve(img);
+vi = add_noise(20,vi);
 
-
-bkgnd.conductivity.params = [0.5, 0, 0]';
+bkgnd.conductivity.params = [0.5, 0, 0]'; % r x y
 bkgnd.physics_data_mapper = 'conductivity';
 bkgnd.conductivity.func   = @apply_circle_parametrization;
 bkgnd.physics_param_mapper = {'conductivity.params'};
@@ -29,5 +29,5 @@ imdl.parameters.show_iterations  = 1;
 rimg = inv_solve(imdl, vi);
 show_fem(rimg);
 eidors_colourbar(rimg);
-disp(rimg.params);
+disp(rimg.conductivity.params);
 
