@@ -1,4 +1,4 @@
-function out = mk_library_model(shape,elec_pos,elec_shape,maxsz,nfft)
+function out = mk_library_model(shape,elec_pos,elec_shape,maxsz,nfft,scale)
 %MK_LIBRARY_MODEL - FEM models based on library shapes 
 %
 % MK_LIBRARY_MODEL(shape,elec_pos,elec_shape,maxsz,nfft) where:
@@ -16,6 +16,11 @@ function out = mk_library_model(shape,elec_pos,elec_shape,maxsz,nfft)
 %     NG_MK_EXTRUDED_MODEL for details.
 %   maxsz - maximum FEM size (default: course mesh)
 %   nfft  - number of points to create along the boundary (default: 50)
+%     If nfft==0, no interpolation takes place.
+%   scale - avoids some Netgen issues by scaling the contours before 
+%     calling netgen and scaling the resulting model back afterwards
+%     (default: 1). Note that electrode and maxh specifications are not
+%     scaled.
 %
 % QUICK ACCESS TO COMMON MODELS:
 %   MK_LIBRARY_MODEL(str) where str is a single string specifying a model.
@@ -44,41 +49,78 @@ if ischar(shape)
             out = predef_model(shape);
     end
 else
-    if ~iscell(shape) 
-        shape = {shape, 'boundary'}; 
-    elseif numel(shape) == 1
-        shape{2} = 'boundary';
-    end
-    fname = make_filename(shape,elec_pos,elec_shape,maxsz);
-    fname = [get_path '/' fname '.mat'];
-    if exist(fname,'file')
-        eidors_msg('MK_LIBRARY_MODEL: Using stored model');
-        load(fname);
-        out = fmdl;
-    else
-       s_shape = split_var_strings(shape(2:end));
-       shapes = shape_library('get',shape{1},s_shape(1,:));
-       if ~iscell(shapes), shapes = {shapes}; end
-       %apply any indeces specified
-       for i = 1:numel(shapes)
-           eval(['shapes{i} = shapes{i}' s_shape{2,i} ';']);
-       end
-       if ischar(elec_pos) && strcmp(elec_pos,'original')
-          el = shape_library('get',shape{1},'electrodes');
-          electh= atan2(el(:,2),el(:,1))*180/pi;
-          elec_pos = [electh,0.5*ones(size(electh))];
-       end
-       if nargin < 5
-           nfft = 50;
-       end
-       [fmdl, mat_idx] = ng_mk_extruded_model({1,shapes,[4,nfft],maxsz},...
-           elec_pos,elec_shape);
-       fmdl.mat_idx = mat_idx;
-       save(fname,'fmdl');
-       out = fmdl;
-    end
+   if ~iscell(shape)
+      shape = {shape, 'boundary'};
+   elseif numel(shape) == 1
+      shape{2} = 'boundary';
+   end
+   fname = make_filename(shape,elec_pos,elec_shape,maxsz);
+   out = load_stored_model(fname);
+   if ~isempty(out)
+      return
+   end
+   s_shape = split_var_strings(shape(2:end));
+   shapes = shape_library('get',shape{1},s_shape(1,:));
+   if ~iscell(shapes), shapes = {shapes}; end
+   if nargin < 6
+      scale = 1;
+   end
+   %apply any indeces specified
+   for i = 1:numel(shapes)
+      eval(sprintf('shapes{i} = %f*shapes{i}%s;',scale,s_shape{2,i}));
+   end
+   if ischar(elec_pos) && strcmp(elec_pos,'original')
+      el = shape_library('get',shape{1},'electrodes');
+      electh= atan2(el(:,2),el(:,1))*180/pi;
+      elec_pos = [electh,0.5*ones(size(electh))];
+   end
+   if nargin < 5
+      nfft = 50;
+   end
+   
+   if nfft > 0
+      [fmdl, mat_idx] = ng_mk_extruded_model({scale,shapes,[4,nfft],maxsz},...
+         elec_pos,elec_shape);
+   else
+      [fmdl, mat_idx] = ng_mk_extruded_model({scale,shapes,0,maxsz},...
+         elec_pos,elec_shape);
+   end
+   fmdl.nodes = fmdl.nodes/scale;
+   fmdl.mat_idx = mat_idx;
+   store_model(fmdl,fname)
+   out = fmdl;
+end
 
-    out = mdl_normalize(out, 0); % not normalized by default
+out = mdl_normalize(out, 0); % not normalized by default
+
+
+function out = load_stored_model(fname)
+out = [];
+fname = [get_path '/' fname '.mat'];
+if exist(fname,'file')
+   eidors_msg('MK_LIBRARY_MODEL: Using stored model');
+   load(fname);
+   out = fmdl;
+end
+
+function store_model(fmdl,fname)
+fname = [get_path '/' fname '.mat'];
+save(fname,'fmdl');
+
+function out = build_if_needed(cmd,str)
+out = load_stored_model(str);
+if isempty(out)
+   if ~iscell(cmd)
+      cmd = {cmd};
+   end 
+   for i = 1:length(cmd)
+      if i ==1
+         eval(['out = ' cmd{i} ';']);
+      else
+         eval(cmd{i});
+      end
+   end
+   store_model(out,str);
 end
 
 %%%%%
@@ -103,6 +145,10 @@ out = {
     'pig_23kg_32el';
     'pig_23kg_16el_lungs';
     'pig_23kg_32el_lungs';
+    'lamb_newborn_16el';
+%     'lamb_newborn_32el';
+    'lamb_newborn_16el_organs';
+%     'lamb_newborn_32el_organs';
     };
 
 %%%%%
@@ -123,17 +169,23 @@ switch str
             [32 1 0.5],[0.05],0.08);
         
     case 'cylinder_16x1el_coarse'
-        out = ng_mk_cyl_models([10,15],[16,5],[0.5,0,0.18]);
-    case 'cylinder_16x1el_fine'  
-        out = ng_mk_cyl_models([10,15,1.1],[16,5],[0.5,0,0.15]);
+       out = build_if_needed(...
+          'ng_mk_cyl_models([10,15],[16,5],[0.5,0,0.18])', str);
+    case 'cylinder_16x1el_fine' 
+       out = build_if_needed(...
+          'ng_mk_cyl_models([10,15,1.1],[16,5],[0.5,0,0.15])',str);
     case 'cylinder_16x1el_vfine' 
-        out = ng_mk_cyl_models([10,15,0.8],[16,5],[0.5,0,0.08]);
+        out = build_if_needed(...
+           'ng_mk_cyl_models([10,15,0.8],[16,5],[0.5,0,0.08])',str);
     case 'cylinder_16x2el_coarse' 
-        out = ng_mk_cyl_models([30,15],[16,10,20],[0.5,0,0.18]);
+        out = build_if_needed(...
+           'ng_mk_cyl_models([30,15],[16,10,20],[0.5,0,0.18])',str);
     case 'cylinder_16x2el_fine'  
-        out = ng_mk_cyl_models([30,15,1.5],[16,10,20],[0.5,0,0.15]);
+        out = build_if_needed(...
+           'ng_mk_cyl_models([30,15,1.5],[16,10,20],[0.5,0,0.15])',str);
     case 'cylinder_16x2el_vfine' 
-        out = ng_mk_cyl_models([30,15,0.8],[16,10,20],[0.5,0,0.08]);
+        out = build_if_needed(...
+           'ng_mk_cyl_models([30,15,0.8],[16,10,20],[0.5,0,0.08])',str);
         
         
     case 'neonate_16el'
@@ -158,6 +210,19 @@ switch str
         out = mk_library_model({'pig_23kg','boundary','lungs(1:2:end,:)'},...
             [32 1 0.5],[0.05 0 -1 0 60],0.08);    
 
+    case 'lamb_newborn_16el'
+%        out = build_if_needed(...
+%           {['ng_mk_extruded_model({208,208*',...
+%             'shape_library(''get'',''lamb_newborn'',''boundary'')',...
+%             ',0,10},[16,1.995,104],[1])'],'out.nodes = out.nodes/204;'}, ...
+%           str);
+         out = mk_library_model({'lamb_newborn','boundary'},[16,1.995,104],[1],10,0,208);
+%     case 'lamb_newborn_32el'
+%        out = mk_library_model({'lamb_newborn','boundary'},[32,1.995,104],[1],10,0,208);
+    case 'lamb_newborn_16el_organs'
+       out = mk_library_model({'lamb_newborn','boundary','lungs','heart'},[16,1.995,104],[1],10,0,208);
+%     case 'lamb_newborn_32el_organs'
+         
     otherwise
         error('No such model');
 end
