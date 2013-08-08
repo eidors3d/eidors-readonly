@@ -47,6 +47,7 @@ if ischar(shape)
             out = do_unit_test; return;
         otherwise
             out = predef_model(shape);
+            out = mdl_normalize(out, 0); % not normalized by default
     end
 else
    if ~iscell(shape)
@@ -89,9 +90,10 @@ else
    fmdl.mat_idx = mat_idx;
    store_model(fmdl,fname)
    out = fmdl;
+   out = mdl_normalize(out, 0); % not normalized by default
 end
 
-out = mdl_normalize(out, 0); % not normalized by default
+
 
 
 function out = load_stored_model(fname)
