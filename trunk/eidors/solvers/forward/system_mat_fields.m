@@ -87,15 +87,20 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    cidx= (d0+1)*pp.n_elem;
    for i= 1:pp.n_elec
       eleci = fwd_model.electrode(i);
-      zc=  eleci.z_contact;
+      Yc=  1/eleci.z_contact; % Contact Admittance
+% Yc is admittance for entire electrode i which has bdy_area areas
+% Each area has fractional admittance bdy_area(j)/sum( bdy_area )
+
 %     ffb = find_bdy_idx( bdy, fwd_model.electrode(i).nodes);
       [bdy_idx, bdy_area] = find_electrode_bdy( ...
           pp.boundary, fwd_model.nodes, eleci.nodes );
+      el_area = sum(bdy_area);
 
       for j= 1:length(bdy_idx);
          bdy_nds= pp.boundary(bdy_idx(j),:);
 
-         FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
+%  FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
+         FFdata= [FFdata; FFd_block * sqrt(Yc*bdy_area(j)/el_area)];
          FFiidx= [FFiidx; FFi_block' + sidx];
          FFjidx= [FFjidx; FFi_block  + cidx];
 

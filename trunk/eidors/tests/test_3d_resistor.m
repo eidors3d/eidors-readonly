@@ -1,9 +1,9 @@
 % Create 3D model of a Rectangular resistor
 % $Id$
 
-ll=5; % length
-ww=1; % width
-hh=1; % height
+ll=5*1; % length
+ww=1*2; % width
+hh=1*3; % height
 conduc= .13;  % conductivity in Ohm-meters
 current= 4;  % Amps
 z_contact= 1e-2;
@@ -43,6 +43,16 @@ stim.meas_pattern= [-1,1];
 mdl.stimulation= stim;
 mdl.electrode= elec;
 show_fem(mdl);
+mdl = mdl_normalize(mdl,0);
+
+% analytical solution
+Block_R =  ll / ww / hh / scale/ conduc;
+Contact_R = z_contact;
+R = Block_R + 2*Contact_R;
+
+V= current*R;
+fprintf('Solver %s: %f\n', 'analytic', V);
+
 
 mdl.solve = @fwd_solve_1st_order;
 mdl.system_mat = @system_mat_1st_order;
@@ -55,6 +65,7 @@ img= eidors_obj('image','3D rectangle', ...
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 
+
 mdl.solve = @np_fwd_solve;
 mdl.system_mat = @np_calc_system_mat;
 mdl.misc.perm_sym= '{n}';
@@ -65,12 +76,6 @@ img= eidors_obj('image','3D rectangle', ...
 
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
-
-% analytical solution
-R = ll / ww / hh / scale/ conduc + 2*z_contact/scale^2;
-
-V= current*R;
-fprintf('Solver %s: %f\n', 'analytic', V);
 
 
 % NOW CALCULATE THE ANALYTICAL JACOBIAN
