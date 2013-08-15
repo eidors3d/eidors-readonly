@@ -123,9 +123,9 @@
  + update version #
  + build docs x 2
  + update README
+ + touch mex files to be older than *cpp
  - build script and zip file
  - tag release
- - touch mex files to be older than *cpp
  - zip -r -9 eidors-vXX.zip eidors-vXX
 
  + Update FAQ
