@@ -1,5 +1,6 @@
-for i=0:2
-   img.fwd_model.electrode(1).z_contact=0.1^i; %1,.1,.01
+ci = [5 .5 .05]; 
+for i=1:3
+   img.fwd_model.electrode(1).z_contact=ci(i);
    vh = fwd_solve(img);
    imgc.fwd_model.mdl_slice_mapper.xpts = linspace(-0.25,0.25,200);
    imgc.fwd_model.mdl_slice_mapper.ypts = linspace(0.8,1,100);
@@ -15,6 +16,6 @@ for i=0:2
    hold off;
    axis([-.15,.15,0.85,1.02]);
 
-   title(sprintf('current near electrode:  zc = %5.3f',0.1^i));
-   print_convert(sprintf('contact_impedance04%c.png','a'+i));
+   title(sprintf('current near electrode:  zc = %5.3f',ci(i)));
+   print_convert(sprintf('contact_impedance04%c.png','a'+i-1));
 end
