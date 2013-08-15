@@ -40,8 +40,12 @@ switch(imdl.type)
 end
 
 if nargin < 2, opt = struct; end
-if nargin > 1
-   opt.level = level;
+if nargin > 1 
+   if ~isstruct(level)
+      opt.level = level;
+   else
+      opt = level;
+   end
 end
 opt = parse_opts(fmdl,opt);
 
@@ -106,19 +110,32 @@ if opt.do_coarse2fine
     fmdl.coarse2fine = mk_coarse_fine_mapping(fmdl,tmp);
 end
 
+if isfield(fmdl,'mat_idx')
+   rmdl.mat_idx = calc_mat_idx(rmdl,fmdl,ff,opt);
+end
+
+% map electrodes
 rmdl.nodes(:,3) = 0;
 rmdl.nodes =  (R\rmdl.nodes' + T'*ones(1,length(rmdl.nodes)))';
 slc.nodes =  (R\slc.nodes' + T'*ones(1,length(slc.nodes)))';
+
+isf = ~isinf(opt.level);
+if nnz(isf) == 1
+   rmdl.nodes(:,isf) = opt.level(:,isf);
+end
+
 if isfield(slc, 'electrode')
-    for i = flipud(1:numel(slc.electrode))
+   for i = flipud(1:numel(slc.electrode))
+        tmp = rmfield(slc.electrode(i), 'nodes');
         x_elec = slc.nodes( [slc.electrode(i).nodes], 1);
         y_elec = slc.nodes( [slc.electrode(i).nodes], 2);
         z_elec = slc.nodes( [slc.electrode(i).nodes], 3);
-        elec(i).z_contact = slc.electrode(i).z_contact;
-        elec(i).pos       = [x_elec, y_elec, z_elec];
+        tmp.pos       = [x_elec, y_elec, z_elec];
+        elec(i) = tmp;
     end
     rmdl.electrode = elec;
 end
+   
 
 rmdl.show_slices.levels = opt.level;
 
@@ -130,7 +147,25 @@ switch imdl.type
       imdl = rmdl;
 end
       
- 
+
+function mat_idx = calc_mat_idx(rmdl,fmdl,ff,opt)
+   % calculate mat_idx for the rec_model
+   fmdl.mdl_slice_mapper = rmfield(rmdl.mdl_slice_mapper,'model_2d');
+   fmdl.mdl_slice_mapper.level = opt.level;
+   img = mk_image(fmdl,0);
+   for i = 1:length(fmdl.mat_idx);
+      img.elem_data(fmdl.mat_idx{i}) = i;
+   end
+   slice = calc_slices(img,opt.level);
+   slice = slice';
+   mat = reshape([slice(:)'; slice(:)'],1,[]);
+   mat([2*ff, 2*ff-1])= [];
+   mat_idx = cell(max(mat),1);
+   for i = 1:max(mat)
+      mat_idx(i) = {find(mat==i)'};
+   end
+
+
  function opt = parse_opts(fmdl, opt)
     if ~isfield(opt, 'imgsz'),     
         opt.imgsz = [32 32]; 
@@ -209,21 +244,21 @@ function do_unit_test
     mdl = mk_pixel_slice(imdl.fwd_model,[inf 2 2.5], opt);
     img = mk_image(mdl,1);
     
-    subplot(221)
+    subplot(231)
     show_fem(imdl.fwd_model);
     view([-50 10])
 
-    subplot(222)
+    subplot(232)
     show_fem(img);
     zlim([0 3]);
     ylim([-1 1])
     xlim([-1 1]);
     view([-50 10])
     
-    subplot(223)
+    subplot(233)
     show_slices(img);
     
-    subplot(224)
+    subplot(234)
     imdl = mk_pixel_slice(imdl);
     img = mk_image(imdl.rec_model,1);
     show_fem(img);
@@ -232,3 +267,24 @@ function do_unit_test
     xlim([-1 1]);
     view([-50 10])
     
+    subplot(235)
+    mdl = mk_library_model('pig_23kg_16el_lungs');
+    img = mk_image(mdl,1);
+    for i = 1:length(mdl.mat_idx)
+       img.elem_data(mdl.mat_idx{i}) = i;
+    end
+    show_fem(img)
+    view(2)
+    
+    subplot(236)
+    clear opt
+    opt.imgsz = [64 64];
+    opt.square_pixels = 1;
+    opt.do_coarse2fine = 0;
+    mdl = mk_library_model('pig_23kg_16el_lungs');
+    rmdl = mk_pixel_slice(mdl,opt);
+    img = mk_image(rmdl,1);
+    for i = 1:length(rmdl.mat_idx)
+       img.elem_data(rmdl.mat_idx{i}) = i;
+    end
+    show_slices(img);
