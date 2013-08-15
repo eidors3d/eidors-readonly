@@ -39,7 +39,9 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     noise_figure_targets - circular target(s) to use for NF calculation
 %         as an array of coordinates and radius xyzr [4xN] (default: single
 %         target at the center at average electrode height with radius of
-%         opt.target_size
+%         opt.target_size. Note that multiple targets are simultaneously
+%         simulated in a single measurement, meaning they should not
+%         overlap.
 %     extra_noise - extra noise samples (such as electrode movement)
 %     desired_solution_fn - specify a function to calculate the desired 
 %         image. It must have the signature:
