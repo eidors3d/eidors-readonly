@@ -1,3 +1,5 @@
+2013-08-15: change interpretation of fwd_model.electrode.z_contact from
+            ohm/m^2 to ohm in system_mat_fields
 2013-08-08: add lamb_newborn to shape_library and mk_library_model
 2013-06-20: scale solution to fit data in inv_solve_diff_GN_one_step
 2013-06-20: inv_solve reports solution error by default
