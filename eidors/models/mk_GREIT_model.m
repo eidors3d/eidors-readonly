@@ -36,6 +36,10 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         [down_offset up_offset].
 %     noise_figure - the noise figure (NF) to achieve. Overwrites weight 
 %         which will be optimised to achieve the target NF.
+%     noise_figure_targets - circular target(s) to use for NF calculation
+%         as an array of coordinates and radius xyzr [4xN] (default: single
+%         target at the center at average electrode height with radius of
+%         opt.target_size
 %     extra_noise - extra noise samples (such as electrode movement)
 %     desired_solution_fn - specify a function to calculate the desired 
 %         image. It must have the signature:
@@ -123,13 +127,9 @@ if ~isempty(opt.noise_figure)
         weight = target;
     end
     
-    R = max(max(fmdl.nodes(:,1:2)) - min(fmdl.nodes(:,1:2)));
-    
-    xyzr = mean(fmdl.nodes);
-%     xyzr(1:2) = 0;
-    xyzr(3) = opt.target_plane;
-    xyzr(4) = mean(opt.target_size)*0.5*R;
+    xyzr = opt.noise_figure_targets;
     [jnk,vi_NF] = simulate_movement(imgs,xyzr');
+    vi_NF = sum(vi_NF,2); % sum the targets
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
     f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
@@ -160,39 +160,6 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
    out = (NF - target)^2;
 %    out = (mean(NF) - target)^2 + std(NF);
 
-function bound = calc_bound( fmdl );
-% find the outline of the shape in the electrode plane.
-% 1. find the min and max height of electrodes
-min_e = inf; max_e = - inf;
-for i = 1:numel(fmdl.electrode)
-    min_e = min(min_e, min(fmdl.nodes( fmdl.electrode(i).nodes, 3)));
-    max_e = max(max_e, max(fmdl.nodes( fmdl.electrode(i).nodes, 3)));
-end
-% 2. find boundary nodes
-b_nodes = fmdl.nodes( unique(fmdl.boundary) , :);
-% 3. keep only nodes in the electrode plane
-b_nodes( b_nodes(:,3) < min_e | b_nodes(:,3) > max_e , :) = [];
-% 4. sort the nodes in polar coordinates
-c = mean(b_nodes);
-tmp = b_nodes - repmat(c,size(b_nodes,1),1);
-[th,jnk] = cart2pol(tmp(:,1),tmp(:,2)); % 2nd param for octave bug (3.6.2)
-[th,idx] = sort(th);
-bound = b_nodes(idx,:);
-% 5. That will normally produce way too many points on the boundary
-%    Let's try to reduce
-% the different segments are well visible if one plots 'th'
-% so let's detrend
-
-% Intention was good, but implementation bad. doesn't work for smooth
-% shapes
-% if size(bound,1) > 500
-%     th = detrend(th,'linear');
-%     th(2:end) = abs(diff(th));
-%     m = mean(th(2:end));
-%     th(1) = 3*m+1; % keep the first point
-%     
-%     bound = bound(th>3*m,:);
-% end
 
 function  imgs = get_prepackaged_fmdls( fmdl );
   switch fmdl
@@ -395,6 +362,17 @@ function opt = parse_options(opt,fmdl,imdl);
         opt.random_offset = false;
     end
 
+    if ~isfield(opt,'noise_figure_targets');
+       R = max(max(fmdl.nodes(:,1:2)) - min(fmdl.nodes(:,1:2)));
+       xyzr = mean(fmdl.nodes);
+       xyzr(3) = opt.target_plane;
+       xyzr(4) = mean(opt.target_size)*0.5*R;
+       opt.noise_figure_targets = xyzr;
+    end
+
+       
+    
+    
     try, opt.normalize = fmdl.normalize_measurements;
     catch, 
         opt.normalize = 0;
@@ -429,19 +407,32 @@ show_fem(img);
 % Reconstruct the image using GREITv1
 imdl= mk_common_gridmdl('GREITc1'); 
 img= inv_solve(imdl,vh,vi);
-figure, show_slices(img)
+figure, subplot(2,2,1);
+show_slices(img)
 
 % Create a GREIT model for the ellipse
-opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
+opt.noise_figure = 0.5; opt.distr = 3;opt.square_pixels = 1; %other options are defaults
 fmdl_2 = mdl_normalize(fmdl_2,0);
 % use the true model (inverse crime)
 imdl1 = mk_GREIT_model(mk_image(fmdl_2,0.5), 0.25, [], opt);
-img1= inv_solve(imdl1,vh,vi); 
+img1= inv_solve(imdl1,vh,vi);  
+subplot(2,2,2);show_slices(img1);
 
 % use honogenous model 
 fmdl_1 = mdl_normalize(fmdl_1,0);
 imdl2 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img2= inv_solve(imdl2,vh,vi); 
+subplot(2,2,3); show_slices(img2);
+
+
+% specify targets for NF calc
+opt.noise_figure_targets = [-.5 0 .5 .2;.5 0 .5 .2;];
+imdl3 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
+img3= inv_solve(imdl3,vh,vi); 
+subplot(2,2,4); show_slices(img3);
+% cleanup
+opt = rmfield(opt,'noise_figure_targets');
+
 
 %% repeat with normalized data
 fmdl_2 = mdl_normalize(fmdl_2,1);
