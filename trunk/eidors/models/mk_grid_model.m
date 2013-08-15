@@ -42,6 +42,8 @@ if ~isempty( fmdl)
    end
 end
 
+cmdl.normalize_measurements = @eidors_default;
+
 
 function c2f= calc_c2f_2d( fmdl, xvec, yvec);
    nef= size( fmdl.elems,1);
