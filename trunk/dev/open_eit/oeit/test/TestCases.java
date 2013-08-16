@@ -37,7 +37,7 @@ public class TestCases {
 	public Document doc;
 	static private Document source_doc;
 	
-	static {
+	public static void main( String[] args ) {
 		ConcurrentHashMap<String, TestDataType> map = new ConcurrentHashMap<String, TestDataType>();
 		
 		for (int i = 1; i<100; i++){
@@ -59,7 +59,7 @@ public class TestCases {
 		}
 		
 		try {
-			source_doc = Oeit.returnOeit();
+			source_doc = CreateCorrectTestCase.returnOeit();
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,7 +110,7 @@ public class TestCases {
 					break;
 				}
 				Method m = this.getClass().getDeclaredMethod(methodname);
-				m.invoke(this, null);
+				m.invoke(this);
 			}
 		}
 

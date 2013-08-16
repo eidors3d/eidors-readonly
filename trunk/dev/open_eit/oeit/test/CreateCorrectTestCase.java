@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
-public class Oeit {
+public class CreateCorrectTestCase {
 
 	public static void main(String[] args){
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
