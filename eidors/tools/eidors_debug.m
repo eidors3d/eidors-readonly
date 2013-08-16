@@ -41,7 +41,7 @@ switch command
          eidors_objects.debug_enabled_on{end+1} = fstr;
       end
    case 'off'
-      if strcmp(fstr, 'all')
+      if nargin==1 || strcmp(fstr, 'all')
          eidors_objects.debug_enabled_on = {};
       else
          idx = strcmp(eidors_objects.debug_enabled_on, fstr);
