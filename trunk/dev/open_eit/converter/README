@@ -1,0 +1,14 @@
+CODE in this directory was created
+  - Summer 2013 by Chengo He
+
+Goal is to provide converters from legacy
+EIT file formats to OEIT.
+
+The only file with significant work is the
+GET file converter:  MCEITParser.java
+
+As of Aug 2013, files implement an earlier stage
+of the OEIT spec.
+
+WORK REQUIRED:
+  - rework each converter to the new file format
