@@ -5,10 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.io.File;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -79,6 +88,24 @@ public class TestCases {
 		rule_order.add("1.2");
 		rule_order.add("4.3");
 		rule_order.add("1.3");
+
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		try {
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(source_doc);
+			StreamResult result = new StreamResult(new File("sample.xml"));
+			StreamResult resultOnConsole = new StreamResult(System.out);
+			transformer.transform(source, result);
+			transformer.transform(source, resultOnConsole);
+			System.out.println("file saved.");
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void build(Map<String, TestDataType> rules)
