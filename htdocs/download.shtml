@@ -89,6 +89,19 @@ SSH public key here</a>.
 <pre>
 svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk
 </pre>
+     <li> In TortoiseSVN, you can save your password, using
+<br>&minus;In Explorer: Right Click-&gt;Tortoise SVN
+<br>&minus;In Settings Window: General-&gt;Subversion Configuration File-&gt;Click EDIT
+<br>&minus;
+Add the following text to the file (in the section [tunnels]).
+<br>&nbsp; &nbsp; &nbsp;
+<tt>eidors3dssh=$EIDORS3DSSH tortoiseplink -pw ##YOURPASSWD##</tt>
+<br>&minus;Save and Quit.
+<br>&minus;Now, when you checkout EIDORS, type:
+<pre>
+svn+eidors3dssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk
+</pre>
+
    </ol>
 </ul>
 

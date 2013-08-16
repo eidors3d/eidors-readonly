@@ -21,23 +21,27 @@ working these fields.
 
 To try the EIDORS software, follow these steps:
 <ol>
-<li> Download the software (release or developer version):
+<li> Download EIDORS :
     <br>&minus; <i>Release Version:</i>
          <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.7.1.zip"
              >EIDORS 3.7.1</a> (29 May 2013)
+      (Or <a href="./download.shtml"><i>Developer Version</i></a> )
     <br>&minus; <i>Optional ready-made FEM models:</i>
          <a href="http://prdownloads.sf.net/eidors3d/model_library.zip"
              >model_library</a> (7 Jul 2012)
-    <br>&minus; <a href="./download.shtml">
-                  <i>Developer Version</i></a>
 
-<li> Unzip the software in a directory <tt>/path/to/eidors</tt> or <tt>C:/path/to/eidors</tt>
+<li> Unzip the software in a directory such as
+      <tt>/path/to/eidors</tt>(UNIX) or <tt>C:\path\to\eidors</tt>(Windows)
 
 <br> (installation instructions for model_library are included in a README file)
 
+<li> Download and install 
+<a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.0/"
+     >Netgen</a> (EIDORS will ask for the path to netgen when required)
+
 <li> Start Matlab
 
-<li> type: <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
+<li> In the Matlab command window type: <tt>&gt;&gt;run /path/to/eidors/startup.m</tt>
 <br> (windows
            <tt>&gt;&gt;run C:/path/to/eidors/startup.m</tt>)
 
