@@ -8,10 +8,11 @@ for i=1:3
    hh=show_fem(imgc);
    set(hh,'EdgeColor',[1,1,1]*.75);
    hold on;
-    sy = 1 - (25:5:300)/1000; sx= 0*sy - 0.20;
+
+   sy = linspace(.98,.8 ,20); sx= 0*sy - 0.15;
    hh=streamline(q.xp,q.yp, q.xc, q.yc, sx,sy); set(hh,'Linewidth',2);
-    sy = 1 - (25:5:80)/1000; sx= 0*sy - 0.20;
    hh=streamline(q.xp,q.yp,-q.xc,-q.yc,-sx,sy); set(hh,'Linewidth',2);
+
    title(sprintf('streamlines zc = %5.3f',fmdl.electrode(1).z_contact));
    hold off;
    axis([-.15,.15,0.85,1.02]);
