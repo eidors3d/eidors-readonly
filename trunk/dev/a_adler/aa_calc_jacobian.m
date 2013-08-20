@@ -1,4 +1,4 @@
-function J= aa_calc_jacobian( fwd_model, img)
+function J= calc_jacobian_adjoint_simplecode( img)
 % AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
@@ -8,11 +8,15 @@ function J= aa_calc_jacobian( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 % img = image background for jacobian calc
+%
+% WARNING: THIS OLD CODE IS FOR EXAMPLE CODE ONLY
+%          IT FAILS FOR NON-POINT ELECTRODES
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
 % $Id$
 
-pp= aa_fwd_parameters( fwd_model );
+fwd_model = img.fwd_model;
+pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
 d= pp.n_dims+1;
@@ -28,10 +32,10 @@ DE= zeros(pp.n_elec, pp.n_stim, e);
 idx= 1:pp.n_node;
 idx( fwd_model.gnd_node ) = [];
 sv= zeros(n, pp.n_stim );
-sv( idx,:) = s_mat(idx,idx) \ pp.QQ( idx,: );
+sv( idx,:) = s_mat.E(idx,idx) \ pp.QQ( idx,: );
 
 zinv= zeros(n,n);
-zinv(idx,idx) = inv( s_mat(idx,idx) );
+zinv(idx,idx) = inv( s_mat.E(idx,idx) );
 zi2E= pp.N2E*zinv;
 
 % connectivity matrix
@@ -40,7 +44,7 @@ dfact= (d-1)*(d-2); % Valid for d<=3
 
 for k= 1:e
     a=  inv([ ones(d,1), pp.NODE( :, pp.ELEM(:,k) )' ]);
-    dSS_dEj= 2*a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
+    dSS_dEj= a(2:d,:)'*a(2:d,:)/dfact/abs(det(a));
 
     idx= d*(k-1)+1 : d*k;
     CC_idx = CC(idx,:);
@@ -64,3 +68,6 @@ if pp.normalize
    J= J ./ (data.meas(:)*ones(1,e));
    
 end
+
+% Calculated Jacobian is inverted
+J = -J;
