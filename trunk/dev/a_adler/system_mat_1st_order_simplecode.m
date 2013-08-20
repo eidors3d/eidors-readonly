@@ -1,5 +1,5 @@
-function s_mat= aa_calc_system_mat( fwd_model, img)
-% AA_CALC_SYSTEM_MAT: SS= aa_calc_system_mat( fwd_model, img)
+function s_mat= system_mat_1st_order_simplecode( fwd_model, img)
+% AA_CALC_SYSTEM_MAT: SS= system_mat_1st_order_simplecode( fwd_model, img)
 % Calc system matrix for Andy Adler's EIT code
 % fwd_model = forward model
 % img       = image background for system matrix calc

@@ -1,5 +1,5 @@
-function J= calc_jacobian_adjoint_simplecode( img)
-% AA_CALC_JACOBIAN: J= aa_calc_jacobian( fwd_model, img)
+function J= jacobian_adjoint_simplecode( img)
+% AA_CALC_JACOBIAN: J= jacobian_adjoint_simplecode( fwd_model, img)
 % Calculate Jacobian Matrix for EIT Alg of Adler & Guardo 1996
 % J         = Jacobian matrix
 % fwd_model = forward model
@@ -17,7 +17,8 @@ function J= calc_jacobian_adjoint_simplecode( img)
 
 fwd_model = img.fwd_model;
 pp= fwd_model_parameters( fwd_model );
-s_mat= calc_system_mat( fwd_model, img );
+%s_mat= calc_system_mat( fwd_model, img );
+s_mat= system_mat_1st_order_simplecode( fwd_model, img );
 
 d= pp.n_dims+1;
 e= pp.n_elem;
