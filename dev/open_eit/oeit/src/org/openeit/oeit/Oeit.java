@@ -1,15 +1,10 @@
 package org.openeit.oeit;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
+import java.util.Map;
 
 public class Oeit {
 
@@ -65,11 +60,15 @@ public class Oeit {
 					.println("Usage:  java -jar oeit.jar validate <filespec>");
 		}
 
-		Result result = org.junit.runner.JUnitCore
-				.runClasses(org.openeit.oeit.v1.validation.OeitFileTest.class);
+		for (String file : __inputFiles) {
+			Map<ValidationLevel, List<String>> results = ValidatorFactory
+					.getValidator().validate(file);
 
-		for (Failure f : result.getFailures()) {
-			System.out.println(f.getTestHeader() + ": " + f.getMessage());
+			for (ValidationLevel l : ValidationLevel.values()) {
+				List<String> messages = results.get(l);
+				for (String msg : messages)
+					System.out.println(l + ":  " + msg);
+			}
 		}
 	}
 

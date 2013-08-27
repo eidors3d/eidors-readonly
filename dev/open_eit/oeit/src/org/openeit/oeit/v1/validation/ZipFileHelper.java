@@ -33,7 +33,7 @@ public class ZipFileHelper implements Closeable {
 			_zf.close();
 	}
 
-	public boolean doesFileContainPattern(String pattern) {
+	public boolean containsPattern(String pattern) {
 		return !getEntriesForPattern(pattern).isEmpty();
 	}
 

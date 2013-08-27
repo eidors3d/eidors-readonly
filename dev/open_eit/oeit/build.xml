@@ -4,6 +4,7 @@
 	<property name="dir.build" value="build" />
 	<property name="dir.dest" value="dist" />
 	<property name="dir.test" value="test" />
+	<property name="dir.res" value="res" />
 	<property name="full-compile" value="false" />
 
 	<path id="classpath.base">
@@ -95,6 +96,7 @@
 				<attribute name="Implementation-Version" value="${version.num}-b${build.number}" />
 				<attribute name="Class-Path" value="${libs.project}" />
 			</manifest>
+			<fileset dir="${dir.res}" />
 		</jar>
 
 		<!-- contains all library dependencies -->
