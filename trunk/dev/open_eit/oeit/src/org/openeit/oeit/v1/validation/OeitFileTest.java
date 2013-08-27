@@ -101,49 +101,50 @@ public class OeitFileTest {
 	@Test
 	public void test_file_contains_version_txt() {
 		assertThat("version.txt exists",
-				_zfh.doesFileContainPattern(__filePatterns
-						.get(FilePattern.VERSION)), is(true));
+				_zfh.containsPattern(__filePatterns.get(FilePattern.VERSION)),
+				is(true));
 	}
 
 	@Test
 	public void test_file_contains_device_xml() {
 		assertThat("header/device.xml exists",
-				_zfh.doesFileContainPattern(__filePatterns
-						.get(FilePattern.DEVICE)), is(true));
+				_zfh.containsPattern(__filePatterns.get(FilePattern.DEVICE)),
+				is(true));
 	}
 
 	@Test
 	public void test_file_contains_electrode_xml() {
-		assertThat("header/electrode.xml exists",
-				_zfh.doesFileContainPattern(__filePatterns
-						.get(FilePattern.ELECTRODE)), is(true));
+		assertThat(
+				"header/electrode.xml exists",
+				_zfh.containsPattern(__filePatterns.get(FilePattern.ELECTRODE)),
+				is(true));
 	}
 
 	@Test
 	public void test_file_contains_subject() {
 		assertThat("header/subject.xml exists",
-				_zfh.doesFileContainPattern(__filePatterns
-						.get(FilePattern.SUBJECT)), is(true));
+				_zfh.containsPattern(__filePatterns.get(FilePattern.SUBJECT)),
+				is(true));
 	}
 
 	@Test
 	public void test_file_contains_manifest() {
 		assertThat("eit/manifest.xml exists",
-				_zfh.doesFileContainPattern(__filePatterns
+				_zfh.containsPattern(__filePatterns
 						.get(FilePattern.EIT_MANIFEST)), is(true));
 	}
 
 	@Test
 	public void test_file_contains_data() {
 		assertThat("eit/data/data_00000.sframes exists",
-				_zfh.doesFileContainPattern(__filePatterns
+				_zfh.containsPattern(__filePatterns
 						.get(FilePattern.EIT_DATA_BASE)), is(true));
 	}
 
 	@Test
 	public void test_file_contains_config() {
 		assertThat("eit/config/config_00000.xml exists",
-				_zfh.doesFileContainPattern(__filePatterns
+				_zfh.containsPattern(__filePatterns
 						.get(FilePattern.EIT_CONFIG_BASE)), is(true));
 	}
 
@@ -158,28 +159,29 @@ public class OeitFileTest {
 	public void test_version_is_1_x_y() throws Exception {
 		assertThat("version",
 				_zfh.readTextFile(__filePatterns.get(FilePattern.VERSION))
-						.matches("^1\\.\\d{1,2}(\\.\\d{1,3})?(\\n)?$"), is(true));
+						.matches("^1\\.\\d{1,2}(\\.\\d{1,3})?(\\n)?$"),
+				is(true));
 	}
 
 	@Test
 	public void test_device_xml_conforms_to_schema() throws Exception {
-		assertThat("header/device.xml schema", XmlHelper.isXmlValid(_zfh
-				.readTextFile(__filePatterns.get(FilePattern.DEVICE)), this
-				.getClass().getResourceAsStream("device.xsd")), is(true));
+		XmlHelper.validate(_zfh.readTextFile(__filePatterns
+				.get(FilePattern.DEVICE)),
+				this.getClass().getResourceAsStream("device.xsd"));
 	}
 
 	@Test
 	public void test_electrode_xml_conforms_to_schema() throws Exception {
-		assertThat("header/electrode.xml schema", XmlHelper.isXmlValid(
+		XmlHelper.validate(
 				_zfh.readTextFile(__filePatterns.get(FilePattern.ELECTRODE)),
-				this.getClass().getResourceAsStream("electrode.xsd")), is(true));
+				this.getClass().getResourceAsStream("electrode.xsd"));
 	}
 
 	@Test
 	public void test_subject_xml_conforms_to_schema() throws Exception {
-		assertThat("header/subject.xml schema", XmlHelper.isXmlValid(
+		XmlHelper.validate(
 				_zfh.readTextFile(__filePatterns.get(FilePattern.SUBJECT)),
-				this.getClass().getResourceAsStream("subject.xsd")), is(true));
+				this.getClass().getResourceAsStream("subject.xsd"));
 	}
 
 	@Test
@@ -188,19 +190,16 @@ public class OeitFileTest {
 
 		assumeNotNull(s);
 
-		assertThat(
-				"header/subject.xml schema",
-				XmlHelper.isXmlValid(s,
-						this.getClass().getResourceAsStream("patient.xsd")),
-				is(true));
+		XmlHelper.validate(s, this.getClass()
+				.getResourceAsStream("patient.xsd"));
 	}
 
 	@Test
 	public void test_manifest_xml_conforms_to_schema() throws Exception {
-		assertThat("eit/manifest.xml schema",
-				XmlHelper.isXmlValid(_zfh.readTextFile(__filePatterns
+		XmlHelper
+				.validate(_zfh.readTextFile(__filePatterns
 						.get(FilePattern.EIT_MANIFEST)), this.getClass()
-						.getResourceAsStream("manifest.xsd")), is(true));
+						.getResourceAsStream("manifest.xsd"));
 	}
 
 	@Test
@@ -209,10 +208,8 @@ public class OeitFileTest {
 				.get(FilePattern.EIT_CONFIG));
 
 		for (String s : configs.keySet()) {
-			assertThat(s + " schema", XmlHelper.isXmlValid(configs.get(s), this
-					.getClass().getResourceAsStream("configuration.xsd")),
-					is(true));
-
+			XmlHelper.validate(configs.get(s), this.getClass()
+					.getResourceAsStream("configuration.xsd"));
 		}
 	}
 

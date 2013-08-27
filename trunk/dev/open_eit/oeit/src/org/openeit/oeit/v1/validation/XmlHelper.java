@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
@@ -17,28 +18,23 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class XmlHelper {
-	public static boolean isXmlValid(String xml, InputStream xsd) {
-		try {
-			Source source = new StreamSource(xsd);
-			Document document = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder().parse(xml);
-			Schema schema = SchemaFactory.newInstance(
-					XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(source);
-			schema.newValidator().validate(new DOMSource(document));
-		} catch (SAXException | IOException | ParserConfigurationException e1) {
-			return false;
-		}
+	public static void validate(String xml, InputStream xsd)
+			throws ParserConfigurationException, SAXException, IOException {
+		Source source = new StreamSource(xsd);
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setXIncludeAware(true);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document document = builder.parse(xml);
 
-		return true;
+		Schema schema = SchemaFactory.newInstance(
+				XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(source);
+		schema.newValidator().validate(new DOMSource(document));
 	}
 
-	public static boolean isXmlSetValid(Map<String, String> xmlset,
-			InputStream xsd) {
-		boolean result = !xmlset.isEmpty();
+	public static void validateSet(Map<String, String> xmlset, InputStream xsd)
+			throws ParserConfigurationException, SAXException, IOException {
 
 		for (String xml : xmlset.values())
-			result &= isXmlValid(xml, xsd);
-
-		return result;
+			validate(xml, xsd);
 	}
 }

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.3
+Created-By: 1.7.0_21-b11 (Oracle Corporation)
+Built-By: Colin
+Main-Class: org.openeit.oeit.Oeit
+Implementation-Version: 1.00-b6
+
