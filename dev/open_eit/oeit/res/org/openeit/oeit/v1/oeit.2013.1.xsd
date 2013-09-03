@@ -191,6 +191,7 @@
 
   <xs:simpleType name="FieldType">
     <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:enumeration value="uint8"></xs:enumeration>
       <xs:enumeration value="uint16"></xs:enumeration>
       <xs:enumeration value="uint32"></xs:enumeration>
