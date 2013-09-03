@@ -18,11 +18,11 @@
 
   <!--  **************************************************************** -->
   <xs:complexType name="Acquisition">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="stim_list" type="Stimulations" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="meas_list" type="Measurements" minOccurs="1" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="start" type="Time" use="optional"></xs:attribute>
     <xs:attribute name="duration" type="Time" use="optional"></xs:attribute>
   </xs:complexType>
@@ -69,12 +69,12 @@
   </xs:simpleType>
 
   <xs:complexType name="DataAcquisitionSoftware">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="name" type="Name" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="version" type="Version" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
   </xs:complexType>
 
   <xs:complexType name="Decode">
@@ -88,14 +88,14 @@
   </xs:simpleType>
 
   <xs:complexType name="Device">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="model" type="Model" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="serial_number" type="SerialNumber" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="firmware" type="Firmware" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="data_acquisition_software" type="DataAcquisitionSoftware" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
   </xs:complexType>
 
@@ -110,36 +110,36 @@
   </xs:simpleType>
 
   <xs:complexType name="Electrode">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="position" type="Position" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="orientation" type="Orientation" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="position_accuracy" type="PositionAccuracy" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="contact_impedance" type="ContactImpedance" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
     <xs:attribute name="type" type="xs:IDREF" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="ElectrodeReference">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="multiplier" type="Multiplier" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="offset" type="Offset" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="ref" type="xs:IDREF" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Electrodes">
     <xs:sequence>
-      <xs:element name="coordinate_system" type="CoordinateSystem" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:element name="coordinate_system" type="CoordinateSystem" minOccurs="1" maxOccurs="1"></xs:element>
       <xs:element name="position_description" type="PositionDescription" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="electrode" type="Electrode" minOccurs="1" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ElectrodeType">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="model" type="Model" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="material" type="Material" minOccurs="0" maxOccurs="1"></xs:element>
@@ -148,8 +148,8 @@
       <xs:element name="height" type="Height" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="width" type="Width" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="contact_impedance" type="ContactImpedance" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
   </xs:complexType>
 
   <xs:complexType name="ElectrodeTypes">
@@ -159,10 +159,10 @@
   </xs:complexType>
 
   <xs:complexType name="Event">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="description" type="Description" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="name" type="xs:NCName" use="required"></xs:attribute>
     <xs:attribute name="type" type="xs:string" use="required"></xs:attribute>
     <xs:attribute name="time" type="Time" use="required"></xs:attribute>
@@ -206,12 +206,12 @@
   </xs:simpleType>
 
   <xs:complexType name="Firmware">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="name" type="Name" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="version" type="Version" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData"  minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData"  minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
   </xs:complexType>
 
   <xs:complexType name="File">
@@ -277,13 +277,13 @@
   </xs:simpleType>
 
   <xs:complexType name="Log">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="start_frame" type="xs:integer" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="end_frame" type="xs:integer" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="start_time" type="Time" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="end_time" type="Time" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="name" type="xs:anyURI" use="required"></xs:attribute>
   </xs:complexType>
 
@@ -327,14 +327,14 @@
   </xs:complexType>
 
   <xs:complexType name="MeasurementType">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="frequency" type="Frequency" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="physical_property" type="PhysicalProperty" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="multiplier" type="Multiplier" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="offset" type="Offset" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="field_list" type="Fields" minOccurs="1" maxOccurs="1"></xs:element>
-    </xs:sequence>
+    </xs:all>
   </xs:complexType>
 
   <xs:complexType name="MeasurementTypes">
@@ -579,12 +579,12 @@
   </xs:complexType>
 
   <xs:complexType name="StimulationType">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="amplitude" type="Amplitude" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="frequency" type="Frequency" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="wave" type="Wave" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
   </xs:complexType>
 
@@ -595,12 +595,12 @@
   </xs:complexType>
 
   <xs:complexType name="Stream">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="process" type="Process" minOccurs="1" maxOccurs="1"></xs:element>
       <xs:element name="file_list" type="Files" minOccurs="1" maxOccurs="1"></xs:element>
       <xs:element name="log_list" type="Logs" minOccurs="1" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
     <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
     <xs:attribute name="device" type="xs:IDREF" use="optional"></xs:attribute>
   </xs:complexType>
