@@ -30,21 +30,21 @@
   <xs:simpleType name="Amplitude">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(A|V)"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(A|V)"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="Conductance">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="Conductivity">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)/([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)/([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -64,7 +64,7 @@
   <xs:simpleType name="Current">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?A"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?A"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -234,7 +234,7 @@
   <xs:simpleType name="Force">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?N"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?N"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -254,7 +254,7 @@
   <xs:simpleType name="Frequency">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Hz"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Hz"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -265,14 +265,14 @@
   <xs:simpleType name="Impedance">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(Ω|O|Ohm(s)?)"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(Ω|O|Ohm(s)?)"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="Length">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -302,7 +302,7 @@
   <xs:simpleType name="Mass">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?g"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?g"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -508,7 +508,7 @@
   <xs:simpleType name="Position">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\[\d+(\.\d+)?\s*(,\s*\d+(\.\d+)?\s*){2}\]"></xs:pattern>
+      <xs:pattern value="\[-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*){2}\]"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -528,7 +528,7 @@
   <xs:simpleType name="Pressure">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Pa"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Pa"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -632,14 +632,14 @@
   <xs:simpleType name="Time">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(s|minute(s)?|hour(s)?|day(s)?|week(s)?|month(s)?|year(s)?)"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(s|minute(s)?|hour(s)?|day(s)?|week(s)?|month(s)?|year(s)?)"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="UnitType">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^\d+)?(\s*/\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^\d+)?)?"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+)?(\s*\*\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+)?)*"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -658,7 +658,7 @@
   <xs:simpleType name="Voltage">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?V"></xs:pattern>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?V"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
