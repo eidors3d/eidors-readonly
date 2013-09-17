@@ -1,4 +1,18 @@
 function [xyzr]=del_out_map(imgs,N,xyzr)
+% del_out_map: delete the similated targets out of the contour
+%   [xyzr]=del_out_map(imgs,N,xyzr)
+%
+% Output: 
+%   xyzr   - similated targets after correction
+%
+% Parameters:
+%   imgs,    - img model on which to do simulations, 
+%   N,       - reconstructed image size in pixels
+%   xyzr     - similated targets
+
+% Zhanqi Zhao 17.Sept.2013
+
+
 bnd_nodes = unique(imgs.fwd_model.boundary);
 min_bb = min(imgs.fwd_model.nodes(bnd_nodes,:));
 max_bb = max(imgs.fwd_model.nodes(bnd_nodes,:));
@@ -15,13 +29,7 @@ max_x=max(xy(1,:));
 max_y=max(xy(2,:));
 min_x=min(xy(1,:));
 min_y=min(xy(2,:));
-% max_line_square=0;
-% for i=1:length(xy(1,:))
-%     temp=sum((repmat(xy(1:2,i),1,size(xy(:,:),2))-xy(:,:)).^2);
-%     if any(temp>max_line_square)
-%         max_line_square=max(temp);
-%     end
-% end
+
 
 for i=1:length(xyzr)
 % if round(xyzr(1,i)*10)==-7 && round(xyzr(2,i)*10)==4
@@ -50,9 +58,5 @@ for i=1:length(xyzr)
         end
     end
 
-%     out_boundary = distance_to_boundary >= max_line_square;
-%     if any(out_boundary)  
-%         out_ind=[out_ind i];
-%     end
 end
 xyzr(:,out_ind)=[];
