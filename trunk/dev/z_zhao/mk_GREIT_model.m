@@ -27,6 +27,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         3 -> fixed, uniform (debug)
 %         4 -> original with boundary detection
 %         5 -> fixed, uniform with boundary detection
+%         6 -> fixed, centre-heavy for arbitrary shape
 %     target_size - size of simulated targets as proportion of mesh radius
 %         (default: 0.02). Can be specified as [min_size max_size] for 
 %         random variation
@@ -73,6 +74,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 
 % 2013-06-21 add two distribution options
+% 2013-09-12 add one distribution option
 % $Id$
 
 citeme(mfilename);
@@ -269,13 +271,13 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
-       case 4
+       case 4 % option 0 + boundary detection
            r = linspace(0,0.9, Nsim);
            th = r*4321; % want object to jump around in radius
            xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); opt.target_plane*ones(1,Nsim); 0.05*mean([maxx,maxy])*ones(1,Nsim)];
            N_b=64;
            [xyzr]=del_out_map(imgs,N_b,xyzr);
-       case 5
+       case 5 % option 3 + boundary detection
            pts = opt.contour_boundary(:,1:2);
            lim = max(maxx, maxy);
            frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
@@ -290,6 +292,46 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
            N_b=64;
+           [xyzr]=del_out_map(imgs,N_b,xyzr);
+           eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
+       case 6 % fixed, centre-heavy for arbitrary shape
+           xyzr=[];
+           layers=5;
+           heavy_weight=2; % differences between two connected layers. =1: uniform
+           pts = opt.contour_boundary(:,1:2);
+           lim = max(maxx, maxy);
+           A=polyarea(pts(:,1),pts(:,2));
+           SumA=0;
+           for i=1:layers
+               SumA=SumA+A*(2*layers-(2*i-1))/layers^2*heavy_weight^(i-1);
+           end
+           frac=zeros(1,layers);
+           count=1;
+           for i=1:layers
+               frac = SumA / (2*lim)^2 / heavy_weight^(i-1);
+               [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
+                   linspace(-lim,lim,ceil(sqrt(Nsim/frac))));               
+               x = x+ctr(1); y = y + ctr(2);
+               IN = inpolygon(x,y,pts(:,1),pts(:,2));
+               L_IN=(length(find(sum(IN,1)>0))+length(find(sum(IN,2)>0))) / 2;
+               se1=strel('disk',floor(L_IN / 2 / layers * (i-1)-i+1.7));
+               se2=strel('disk',floor(L_IN / 2 / layers * i-i+1.9));
+               elmg1=imerode(double(IN),se1);
+               elmg2=imerode(double(IN),se2);
+               if i~=layers
+                   IN=elmg1-elmg2;
+               else
+                   IN=elmg1;
+               end
+               num=length(x(find(IN)));
+               xyzr(1,count:count+num-1) = x(find(IN));
+               xyzr(2,count:count+num-1) = y(find(IN));               
+               count=num+count;
+           end
+           xyzr(3,:) = calc_offset(opt.target_plane,opt,size(xyzr,2));
+           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));           
+           
+           N_b=64; % corresponding to the display later
            [xyzr]=del_out_map(imgs,N_b,xyzr);
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
    end
