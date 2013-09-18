@@ -62,7 +62,7 @@ function mdl = ng_mk_2d_model(varargin)
 %     [0.2,10;0 20; 0 20; 0 20; 0 20; 0 20; 0 20; 0.2 20; 0 20]);
 
 
-% (C) 2012-2013 Bartlomiej Grychtol, License: GPL version 2 or version 3
+% (C) 2012-2013 Bartlomiej Grychtol, (C) 2013 Alistair Boyle, License: GPL version 2 or version 3
 % $Id$
 
 
@@ -140,7 +140,7 @@ write_in2d_file(fnamein2d, points, seg, eidx, eref);
 call_netgen( fnamein2d, fnamevol);
 if i_wrote_ng_opt; delete('ng.opt'); end
 
-[mdl,mat_idx] = ng_mk_fwd_model( fnamevol, [], 'ng', []);
+mdl = ng_mk_fwd_model( fnamevol, [], 'ng', []);
 
 delete(fnamein2d); 
 delete(fnamevol); 

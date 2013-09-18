@@ -1,11 +1,10 @@
-function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
+function mdl2 = mdl2d_from3d(mdl3);
 % mdl2d_from3d: Create 2D mdl from z=0 plane of 3d model
 
-% (C) Andy Adler, 2013. Licenced under GPL v2 or v3
+% (C) Andy Adler, Alistair Boyle 2013. Licenced under GPL v2 or v3
 % $Id$
    % set name
    mdl2 = eidors_obj('fwd_model',sprintf('%s 2D',mdl3.name));
-   if nargin==1; idx3 = {}; end
 
    % set nodes
    [bdy,idx] = find_boundary(mdl3.elems);
@@ -29,16 +28,33 @@ function [mdl2,idx2] = mdl2d_from3d(mdl3,idx3);
    mdl2.gnd_node = nmap(mdl3.gnd_node);
 
    % set material indices
+   % NOTE this must be done for both mat_ind and
+   % mat_ind_reordered (which is DEPRECIATED but
+   % still required for backwards compatibilty)
    % TODO: vectorize code
-   idx2 = {};
+   mdl2.mat_idx = {};
    idx0  = idx( lay0, :);
-   for i=1:size(idx3,2)
-     idx2{i} = [];
+   for i=1:size(mdl3.mat_idx,2)
+     mdl2.mat_idx{i} = [];
      ii = 1;
-     for j=1:size(idx3{i},1)
-         idx_tmp = find( idx0==idx3{i}(j) );
+     for j=1:size(mdl3.mat_idx{i},1)
+         idx_tmp = find( idx0==mdl3.mat_idx{i}(j) );
          if not(isempty(idx_tmp))
-           idx2{i}(ii,1) = idx_tmp(1,1);
+           mdl2.mat_idx{i}(ii,1) = idx_tmp(1,1);
+           ii = ii + 1;
+         end
+     end
+   end
+   % TODO: vectorize code
+   mdl2.mat_idx_reordered = {};
+   idx0  = idx( lay0, :);
+   for i=1:size(mdl3.mat_idx_reordered,2)
+     mdl2.mat_idx_reordered{i} = [];
+     ii = 1;
+     for j=1:size(mdl3.mat_idx_reordered{i},1)
+         idx_tmp = find( idx0==mdl3.mat_idx_reordered{i}(j) );
+         if not(isempty(idx_tmp))
+           mdl2.mat_idx_reordered{i}(ii,1) = idx_tmp(1,1);
            ii = ii + 1;
          end
      end

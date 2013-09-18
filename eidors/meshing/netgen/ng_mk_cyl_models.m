@@ -80,7 +80,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 %   ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
 %   img.elem_data = 1 + 0.1*(ctr<0.2^2);
 
-% (C) Andy Adler, 2009. Licenced under GPL v2 or v3
+% (C) Andy Adler, 2009. (C) Alistair Boyle 2013. Licenced under GPL v2 or v3
 % $Id$
 
 if isstr(cyl_shape) && strcmp(cyl_shape,'UNIT_TEST'); do_unit_test; return; end
@@ -96,11 +96,9 @@ if isempty(fmdl);
    eidors_cache('boost_priority', +2); % return values
 end
 
-mat_idx = fmdl{2};
-fmdl = fmdl{1};
-fmdl.mat_idx = mat_idx;
+mat_idx = fmdl.mat_idx_reordered;
 
-function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
+function fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
@@ -119,20 +117,18 @@ function [fmdl_mat_idx] = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_n
       call_netgen( geofn, meshfn, ptsfn);
    end
 
-   [fmdl,mat_idx] = ng_mk_fwd_model( meshfn, centres, 'ng', []);
+   fmdl = ng_mk_fwd_model( meshfn, centres, 'ng', []);
 
    delete(geofn); delete(meshfn); delete(ptsfn); % remove temp files
    if is2D
-      [fmdl,mat_idx] = mdl2d_from3d(fmdl,mat_idx);
+      fmdl = mdl2d_from3d(fmdl);
    end
 
    % convert CEM to PEM if so configured
    % TODO shunt model is unsupported
    if isfield(fmdl,'electrode');
-   fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
+      fmdl.electrode = pem_from_cem(elecs, fmdl.electrode, fmdl.nodes);
    end
-
-   fmdl_mat_idx = {fmdl,mat_idx};
 
 % for the newest netgen, we can't call msz file unless there are 
 % actually points in  it (ie. empty msz files break netgen)

@@ -71,7 +71,9 @@
  + fix tutorials:
           distmesh/dm_geophys.shtml
 
- - refactor out the mdl2d_from3d from various ng_mk function
+ + refactor out the mdl2d_from3d from various ng_mk function - DONE AB 2013-09-18
+ + depreciate mat_idx as output variable (store in fmdl) - DONE AB 2013-09-18
+ + store netgen mat_idx prior to legacy reordering (fmdl.mat_idx, fmdl.mat_idx_reordered) - DONE AB 2013-09-18
 
  - Mods to show_slices to only show part of the slice
 
