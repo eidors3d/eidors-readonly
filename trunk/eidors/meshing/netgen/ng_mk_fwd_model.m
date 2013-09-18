@@ -1,4 +1,4 @@
-function [fwd_mdl, mat_indices]= ...
+function [fwd_mdl, mat_ind_reordered]= ...
              ng_mk_fwd_model( ng_vol_filename, centres, ...
                               name, stim_pattern, z_contact, postprocmesh)
 % NG_MK_FWD_MODEL: create a fwd_model object from a netgen vol file
@@ -16,9 +16,17 @@ function [fwd_mdl, mat_indices]= ...
 %  z_contact:         vector or scalar electrode contact impedance
 %
 %  fwd_mdl:           eidors format fwd_model
-%  mat_indices:       cell array of material indices from eidors 
- 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+%  mat_ind_reordered: cell array of material indices from eidors
+%                     reordered so that the material with
+%                     the most elements is placed first in
+%                     the list.  This is supposed to be the
+%                     main region but sometimes breaks when
+%                     there is a small region that is highly
+%                     refined.
+%                     -- mat_indices is DEPRECIATED (2013-09-18),
+%                        the cell array is now stored inside
+%                        fwd_mdl as fwd_mdl.mat_ind_reordered
+% (C) 2006 Andy Adler. (C) 2013 Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
 if isempty(name); 
@@ -38,8 +46,8 @@ if nargin>=6
 end
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                              stim_pattern, centres, z_contact,fc);
-mat_indices= mk_mat_indices( mat_ind);
-fwd_mdl.mat_idx = mat_indices;
+
+[fwd_mdl.mat_idx, fwd_mdl.mat_idx_reordered] = mk_mat_indices(mat_ind);
 
 if ~isfield(fwd_mdl,'normalize_measurements')
    fwd_mdl.normalize_measurements = 0;
@@ -88,7 +96,7 @@ fwd_mdl= eidors_obj('fwd_model', mdl);
 %   array order is the order of the specified material,
 %   except that the largest material (background) is placed
 %   first.
-function mat_idx= mk_mat_indices( mat_ind);
+function [mat_idx, mat_idx_reordered] = mk_mat_indices( mat_ind);
   % find length of mat_indices 
   % test example: mat_ind=[10 12 14 14 12 12 14 12];
 
@@ -115,6 +123,7 @@ function mat_idx= mk_mat_indices( mat_ind);
      [mat_idx{:}] = mat_idx{[max_l, new_idx]};
   end
 
+  mat_idx_reordered = mat_idx;
 
 function gnd_node=    find_centre_node(vtx);
   %distance from zero
