@@ -49,6 +49,17 @@ if nargin > 1
 end
 opt = parse_opts(fmdl,opt);
 
+[rmdl fmdl] = eidors_cache(@do_pixel_slice,{fmdl, opt},'mk_pixel_slice');
+
+switch imdl.type
+   case 'inv_model'
+      imdl.rec_model = rmdl;
+      imdl.fwd_model = fmdl;
+   case 'fwd_model'
+      imdl = rmdl;
+end
+
+function [rmdl fmdl] = do_pixel_slice(fmdl, opt);
 tmp = fmdl;
 [NODES R T]=level_model(fmdl,opt.level);
 tmp.nodes = NODES';
@@ -138,14 +149,6 @@ end
    
 
 rmdl.show_slices.levels = opt.level;
-
-switch imdl.type
-   case 'inv_model'
-      imdl.rec_model = rmdl;
-      imdl.fwd_model = fmdl;
-   case 'fwd_model'
-      imdl = rmdl;
-end
       
 
 function mat_idx = calc_mat_idx(rmdl,fmdl,ff,opt)
