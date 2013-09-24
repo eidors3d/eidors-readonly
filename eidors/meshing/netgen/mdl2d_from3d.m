@@ -28,8 +28,8 @@ function mdl2 = mdl2d_from3d(mdl3);
    mdl2.gnd_node = nmap(mdl3.gnd_node);
 
    % set material indices
-   % NOTE this must be done for both mat_ind and
-   % mat_ind_reordered (which is DEPRECIATED but
+   % NOTE this must be done for both mat_idx and
+   % mat_idx_reordered (which is DEPRECIATED but
    % still required for backwards compatibilty)
    % TODO: vectorize code
    mdl2.mat_idx = {};
