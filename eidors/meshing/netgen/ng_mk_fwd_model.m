@@ -23,10 +23,10 @@ function [fwd_mdl, mat_idx_reordered]= ...
 %                     main region but sometimes breaks when
 %                     there is a small region that is highly
 %                     refined.
-%                     -- mat_ind_reordered is DEPRECIATED (2013-09-18),
+%                     -- mat_idx_reordered is DEPRECIATED (2013-09-18),
 %                        the cell array is now stored inside
-%                        fwd_mdl as fwd_mdl.mat_ind_reordered and the
-%                        original list is stored as fwd_mdl.mat_ind
+%                        fwd_mdl as fwd_mdl.mat_idx_reordered and the
+%                        original list is stored as fwd_mdl.mat_idx
 % (C) 2006 Andy Adler. (C) 2013 Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
@@ -95,10 +95,10 @@ mdl.system_mat= 'eidors_default';
 
 fwd_mdl= eidors_obj('fwd_model', mdl);
 
-% Output mat_ind cell array of indices into each material
+% Output mat_idx cell array of indices into each material
 % typei. Array order is the order of the specified material
 % (netgen 'tlo' statements in the .geo file).
-% For mat_ind_reordered, the largest material (possibly the
+% For mat_idx_reordered, the largest material (possibly the
 % background if it has the most elements) is placed first.
 function [mat_idx, mat_idx_reordered] = mk_mat_indices( mat_ind);
   % find length of mat_indices 
