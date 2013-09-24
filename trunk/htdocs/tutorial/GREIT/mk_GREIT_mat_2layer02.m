@@ -4,6 +4,7 @@ opt.distr = 3; % non-random, uniform
 opt.Nsim = 1000;
 opt.target_size = 0.05; % Target size (frac of medium)
 opt.noise_figure = 1.0; % Recommended NF=0.5;
+% opt.target_layer = 1.0; % Default is in the centre
 
 fmdl = ng_mk_ellip_models([2, 2,1.4,0.2] ,[n_elecs,layers],[0.1]);
 fmdl.stimulation =  stim;
