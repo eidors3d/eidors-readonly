@@ -82,7 +82,7 @@ if isempty(fmdl);
    eidors_cache('boost_priority', +2); % return values
 end
 
-mat_idx = fmdl.mat_ind_reordered;
+mat_idx = fmdl.mat_idx_reordered;
 
 function fmdl = mk_ellip_model( ellip_shape, elec_pos, elec_shape, extra_ng_code );
 
