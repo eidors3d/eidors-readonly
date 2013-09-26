@@ -1,6 +1,7 @@
 function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj, extra_ng_code);
-% NG_MAKE_ELLIP_MODELS: create elliptical models using netgen
-%[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape);
+% NG_MK_GEN_MODELS: create generic models using netgen
+%[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+%[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code);
 %
 % INPUT:
 % shape_str = string of netgen *.geo file code, with mainobj as the main object
