@@ -78,7 +78,10 @@ catch err
 end
 
 if ~strcmp(measurement, 'voltage')
-    [vv] = convert_measurement(vv,img,measurement);
+    [vv,fctr] = convert_measurement(vv,img,measurement);
+    if ~isempty(fctr)
+        data.apparent_resistivity_factor= fctr;
+    end
 end
     
 
@@ -95,12 +98,14 @@ try; if img.fwd_solve.get_all_nodes== 1
    data.volt = v;                % all, including CEM nodes
 end; end
 
-function [vv] = convert_measurement(vv,img,measurement)
+function [vv,fctr] = convert_measurement(vv,img,measurement)
 switch measurement
     case 'log_voltage'
         vv = log(vv);
+        fctr= [];
     case 'log10_voltage'
         vv = log10(vv);
+        fctr= [];
     case 'apparent_resistivity'
         fctr = apparent_resistivity_factor(img.fwd_model);
         vv = fctr*vv;
@@ -124,20 +129,31 @@ function list = supported_measurement
 
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
+   vho = fwd_solve_1st_order(img);
    img.elem_data = 0.1 + rand(size(img.elem_data));
    vh = fwd_solve_1st_order(img);
    img.fwd_model.measured_quantity = 'log_voltage';
    vl = fwd_solve_1st_order(img);
-   subplot(131)
-   plot(vh.meas,vl.meas,'.'); 
+   subplot(221)
+   plot(log(vh.meas),vl.meas,'.'); 
+   unit_test_cmp('log_voltage',log(vh.meas),vl.meas);
    
    img.fwd_model.measured_quantity = 'apparent_resistivity';
    vr = fwd_solve_1st_order(img);
-   subplot(132)
-   plot(vh.meas,vr.meas,'.'); 
+   subplot(222)
+   plot(vh.meas./vho.meas,vr.meas,'.'); 
+   unit_test_cmp('apparent_resistivity',vh.meas./vho.meas,vr.meas,1e-5);
    
    img.fwd_model.measured_quantity = 'log_apparent_resistivity';
    vlr = fwd_solve_1st_order(img);
-   subplot(133)
-   plot(vr.meas,vlr.meas,'.'); 
+   subplot(223)
+   plot(log(vr.meas),vlr.meas,'.'); 
+   unit_test_cmp('log_apparent_resistivity',log(vr.meas),vlr.meas);
    
+   img.fwd_model.measured_quantity = 'log10_apparent_resistivity';
+   vlr = fwd_solve_1st_order(img);
+   subplot(224)
+   plot(log10(vr.meas),vlr.meas,'.'); 
+   unit_test_cmp('log10_apparent_resistivity',log10(vr.meas),vlr.meas);
+  
+  

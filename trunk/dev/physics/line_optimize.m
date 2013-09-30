@@ -35,7 +35,6 @@ function [img fmin res] = line_optimize(imgk, dx, data0, opt)
 % License: GPL version 2 or 3.
 % $Id$
 
-
 if nargin <4 || isempty(opt)
    opt = struct;
 end

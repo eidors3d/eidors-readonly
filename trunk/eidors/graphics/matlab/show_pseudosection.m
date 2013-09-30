@@ -37,8 +37,10 @@ end
 if iscell(orientation) 
     if strcmp(orientation{2},'yz')
     fwd_model.nodes= fwd_model.nodes(:,[2 3 1]);
+    rotation= 'yz';
     elseif strcmp(orientation{2},'xz')
      fwd_model.nodes= fwd_model.nodes(:,[1 3 2]);
+     rotation= 'xz';
     end
     orientation= orientation{1};
 end
@@ -50,6 +52,14 @@ switch(upper(orientation))
     case 'CIRCULARINSIDE';      [depth,location]= plotPseudoSectionCircularIn(fwd_model,data);
   otherwise;
     error('No orientation of type "%s" available', upper(orientation));
+end
+
+if exist('rotation','var') 
+    if strcmp(rotation,'yz')
+    fwd_model.nodes= fwd_model.nodes(:,[3 1 2]);  
+    elseif strcmp(rotation,'xz')
+     fwd_model.nodes= fwd_model.nodes(:,[1 2 3]);
+    end
 end
 
 fwd_model.show_pseudosection.depth= depth;
