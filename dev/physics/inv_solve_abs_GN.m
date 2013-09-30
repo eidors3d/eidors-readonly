@@ -97,9 +97,7 @@ for i = 1:opt.max_iter
   if opt.show_iterations
      eidors_msg('#%02d residual=%.3g', i, res, 1);
   end
-  
   [img, opt] = update_step(img, next, dx, fmin, res, opt);
-  
   inv_model.jacobian_bkgnd = img;
   RtR = calc_RtR_prior( inv_model );
   hp2RtR = hp*RtR;
