@@ -134,6 +134,7 @@
     <xs:sequence>
       <xs:element name="coordinate_system" type="CoordinateSystem" minOccurs="1" maxOccurs="1"></xs:element>
       <xs:element name="position_description" type="PositionDescription" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:element name="shape_description" type="ShapeDescription" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="electrode" type="Electrode" minOccurs="1" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
   </xs:complexType>
@@ -562,6 +563,15 @@
 
   <xs:simpleType name="SerialNumber">
     <xs:restriction base="xs:string"></xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ShapeDescription">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:enumeration value="Cylinder"></xs:enumeration>
+      <xs:enumeration value="Parallelpiped"></xs:enumeration>
+      <xs:enumeration value="Other"></xs:enumeration>
+    </xs:restriction>
   </xs:simpleType>
 
   <xs:complexType name="Stimulation">
