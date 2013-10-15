@@ -741,6 +741,7 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!--
   <xs:simpleType name="PhysicalPropertyValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
@@ -843,6 +844,7 @@
       <xs:enumeration value="Other"></xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
+  -->
 
   <xs:simpleType name="PositionValue">
     <xs:restriction base="xs:string">
