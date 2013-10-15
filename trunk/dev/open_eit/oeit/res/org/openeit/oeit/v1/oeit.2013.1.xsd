@@ -23,50 +23,34 @@
       <xs:element name="meas_list" type="Measurements" minOccurs="1" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
-    <xs:attribute name="start" type="Time" use="optional"></xs:attribute>
-    <xs:attribute name="duration" type="Time" use="optional"></xs:attribute>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="duration" type="TimeValue" use="optional"></xs:attribute>
+    <xs:attribute name="start" type="TimeValue" use="optional"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Amplitude">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(A|V)"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Amplitude">
+    <xs:simpleContent>
+      <xs:extension base="AmplitudeValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="Conductance">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="ContactImpedance">
+    <xs:simpleContent>
+      <xs:extension base="ContactImpedanceValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="Conductivity">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)/([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="ContactImpedance">
-    <xs:restriction base="Impedance"></xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="CoordinateSystem">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Cartesian"></xs:enumeration>
-      <xs:enumeration value="Cylindrical"></xs:enumeration>
-      <xs:enumeration value="GPS (WGS84)"></xs:enumeration>
-      <xs:enumeration value="Spherical"></xs:enumeration>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Current">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?A"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="CoordinateSystem">
+    <xs:simpleContent>
+      <xs:extension base="CoordinateSystemValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="DataAcquisitionSoftware">
     <xs:all>
@@ -75,17 +59,21 @@
       <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Decode">
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="frame" type="xs:IDREF" use="required"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Description">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Description">
+    <xs:simpleContent>
+      <xs:extension base="DescriptionValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="Device">
     <xs:all>
@@ -96,18 +84,25 @@
       <xs:element name="data_acquisition_software" type="DataAcquisitionSoftware" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Devices">
     <xs:sequence>
       <xs:element name="device" type="Device" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Diameter">
-    <xs:restriction base="Length"></xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Diameter">
+    <xs:simpleContent>
+      <xs:extension base="DiameterValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="Electrode">
     <xs:all>
@@ -117,6 +112,7 @@
       <xs:element name="contact_impedance" type="ContactImpedance" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
     <xs:attribute name="type" type="xs:IDREF" use="required"></xs:attribute>
   </xs:complexType>
@@ -127,6 +123,7 @@
       <xs:element name="offset" type="Offset" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="ref" type="xs:IDREF" use="required"></xs:attribute>
   </xs:complexType>
 
@@ -136,7 +133,9 @@
       <xs:element name="position_description" type="PositionDescription" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="shape_description" type="ShapeDescription" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="electrode" type="Electrode" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="ElectrodeType">
@@ -151,12 +150,15 @@
       <xs:element name="contact_impedance" type="ContactImpedance" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="ElectrodeTypes">
     <xs:sequence>
       <xs:element name="electrode_type" type="ElectrodeType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Event">
@@ -164,47 +166,37 @@
       <xs:element name="description" type="Description" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="name" type="xs:NCName" use="required"></xs:attribute>
+    <xs:attribute name="time" type="TimeValue" use="required"></xs:attribute>
     <xs:attribute name="type" type="xs:string" use="required"></xs:attribute>
-    <xs:attribute name="time" type="Time" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Events">
     <xs:sequence>
       <xs:element name="event" type="Event" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Field">
     <xs:sequence>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="name" type="xs:NCName" use="required"></xs:attribute>
-    <xs:attribute name="type" type="FieldType" use="required"></xs:attribute>
-    <xs:attribute name="unit" type="UnitType" use="required"></xs:attribute>
+    <xs:attribute name="type" type="FieldTypeValue" use="required"></xs:attribute>
+    <xs:attribute name="unit" type="UnitTypeValue" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Fields">
     <xs:sequence>
       <xs:element name="field" type="Field" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
-
-  <xs:simpleType name="FieldType">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:enumeration value="uint8"></xs:enumeration>
-      <xs:enumeration value="uint16"></xs:enumeration>
-      <xs:enumeration value="uint32"></xs:enumeration>
-      <xs:enumeration value="uint64"></xs:enumeration>
-      <xs:enumeration value="int8"></xs:enumeration>
-      <xs:enumeration value="int16"></xs:enumeration>
-      <xs:enumeration value="int32"></xs:enumeration>
-      <xs:enumeration value="int64"></xs:enumeration>
-      <xs:enumeration value="float"></xs:enumeration>
-      <xs:enumeration value="double"></xs:enumeration>
-    </xs:restriction>
-  </xs:simpleType>
 
   <xs:complexType name="Firmware">
     <xs:all>
@@ -213,69 +205,60 @@
       <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData"  minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="File">
     <xs:sequence>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="name" type="xs:anyURI" use="required"></xs:attribute>
     <xs:attribute name="start_frame" type="xs:integer" use="optional"></xs:attribute>
     <xs:attribute name="end_frame" type="xs:integer" use="optional"></xs:attribute>
-    <xs:attribute name="start_time" type="Time" use="optional"></xs:attribute>
-    <xs:attribute name="end_time" type="Time" use="optional"></xs:attribute>
+    <xs:attribute name="start_time" type="TimeValue" use="optional"></xs:attribute>
+    <xs:attribute name="end_time" type="TimeValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Files">
     <xs:sequence>
       <xs:element name="file" type="File" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
-
-  <xs:simpleType name="Force">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?N"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
 
   <xs:complexType name="FrameType">
     <xs:sequence minOccurs="1" maxOccurs="unbounded">
       <xs:element name="acquisition" type="Acquisition" minOccurs="1" maxOccurs="unbounded"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="FrameTypes">
     <xs:sequence>
       <xs:element name="frame_type" type="FrameType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Frequency">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Hz"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Frequency">
+    <xs:simpleContent>
+      <xs:extension base="FrequencyValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="Height">
-    <xs:restriction base="Length"></xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Impedance">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(Ω|O|Ohm(s)?)"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Length">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Height">
+    <xs:simpleContent>
+      <xs:extension base="HeightValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="Log">
     <xs:all>
@@ -285,80 +268,96 @@
       <xs:element name="end_time" type="Time" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="name" type="xs:anyURI" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Logs">
     <xs:sequence>
       <xs:element name="log" type="Log" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Manufacturer">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Manufacturer">
+    <xs:simpleContent>
+      <xs:extension base="ManufacturerValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="Mass">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?g"></xs:pattern>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Material">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Material">
+    <xs:simpleContent>
+      <xs:extension base="MaterialValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="Measurement">
     <xs:sequence minOccurs="1" maxOccurs="unbounded">
       <xs:element name="elec" type="ElectrodeReference" minOccurs="0" maxOccurs="unbounded"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
     <xs:attribute name="type" type="xs:IDREF" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="Measurements">
     <xs:sequence>
       <xs:element name="meas" type="Measurement" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="MeasurementType">
     <xs:all>
       <xs:element name="frequency" type="Frequency" minOccurs="0" maxOccurs="1"></xs:element>
+      <!--
       <xs:element name="physical_property" type="PhysicalProperty" minOccurs="0" maxOccurs="1"></xs:element>
+      -->
       <xs:element name="multiplier" type="Multiplier" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="offset" type="Offset" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="field_list" type="Fields" minOccurs="1" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="MeasurementTypes">
     <xs:sequence>
       <xs:element name="meas_type" type="MeasurementType" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Model">
-    <xs:restriction base="xs:string"></xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Model">
+    <xs:simpleContent>
+      <xs:extension base="ModelValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="Multiplier">
-    <xs:restriction base="xs:decimal">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Multiplier">
+    <xs:simpleContent>
+      <xs:extension base="MultiplierValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="Name">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Name">
+    <xs:simpleContent>
+      <xs:extension base="NameValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="Oeit" id="oeit">
     <xs:annotation>
@@ -375,26 +374,26 @@
       <xs:element name="meas_type_list" type="MeasurementTypes"	maxOccurs="1" minOccurs="1"></xs:element>
       <xs:element name="frame_type_list" type="FrameTypes" maxOccurs="1" minOccurs="1"></xs:element>
       <xs:element name="stream_list" type="Streams" maxOccurs="1" minOccurs="1"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
   </xs:complexType>
 
-  <xs:simpleType name="Offset">
-    <xs:restriction base="xs:decimal">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Offset">
+    <xs:simpleContent>
+      <xs:extension base="OffsetValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
-  <xs:simpleType name="OffsetTime">
-    <xs:restriction base="xs:dateTime">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Orientation">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"></xs:whiteSpace>
-    </xs:restriction>
-  </xs:simpleType>
+  <xs:complexType name="Orientation">
+    <xs:simpleContent>
+      <xs:extension base="OrientationValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
 
   <xs:complexType name="Patient">
     <xs:sequence>
@@ -403,7 +402,346 @@
     <xs:anyAttribute processContents="lax" namespace="##any"></xs:anyAttribute>
   </xs:complexType>
 
-  <xs:simpleType name="PhysicalProperty">
+  <xs:complexType name="Position">
+    <xs:simpleContent>
+      <xs:extension base="PositionValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="PositionAccuracy">
+    <xs:simpleContent>
+      <xs:extension base="PositionAccuracyValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="PositionDescription">
+    <xs:simpleContent>
+      <xs:extension base="PositionDescriptionValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="Process">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="repeat" type="Repeat"></xs:element>
+        <xs:element name="decode" type="Decode"></xs:element>
+      </xs:choice>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="Repeat">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="repeat" type="Repeat"></xs:element>
+        <xs:element name="decode" type="Decode"></xs:element>
+      </xs:choice>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="number" type="xs:integer" use="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="SerialNumber">
+    <xs:simpleContent>
+      <xs:extension base="SerialNumberValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="ShapeDescription">
+    <xs:simpleContent>
+      <xs:extension base="ShapeDescriptionValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="Stimulation">
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="elec" type="ElectrodeReference" minOccurs="0" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="type" type="xs:IDREF" use="required"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="Stimulations">
+    <xs:sequence>
+      <xs:element name="stim" type="Stimulation" minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="StimulationType">
+    <xs:all>
+      <xs:element name="amplitude" type="Amplitude" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:element name="frequency" type="Frequency" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:element name="wave" type="Wave" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="StimulationTypes">
+    <xs:sequence>
+      <xs:element name="stim_type" type="StimulationType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="Stream">
+    <xs:all>
+      <xs:element name="process" type="Process" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="file_list" type="Files" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="log_list" type="Logs" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:all>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="device" type="xs:IDREF" use="optional"></xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="Streams">
+    <xs:sequence>
+      <xs:element name="stream" type="Stream"  minOccurs="1" maxOccurs="unbounded"></xs:element>
+      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="Subject">
+    <xs:choice>
+      <xs:sequence>
+        <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
+      </xs:sequence>
+    </xs:choice>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="type" type="xs:string" use="optional"></xs:attribute>
+    <xs:anyAttribute namespace="##any" processContents="lax"></xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="Thickness">
+    <xs:simpleContent>
+      <xs:extension base="ThicknessValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="Time">
+    <xs:simpleContent>
+      <xs:extension base="TimeValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="UserData">
+    <xs:sequence>
+      <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="key" type="xs:NCName" use="optional"></xs:attribute>
+    <xs:anyAttribute processContents="lax" namespace="##any"></xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="Version">
+    <xs:simpleContent>
+      <xs:extension base="VersionValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="Wave">
+    <xs:sequence>
+      <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
+    </xs:sequence>
+    <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="form" type="WaveformValue" use="optional"></xs:attribute>
+    <xs:anyAttribute processContents="lax" namespace="##any"></xs:anyAttribute>
+  </xs:complexType>
+
+  <xs:complexType name="Width">
+    <xs:simpleContent>
+      <xs:extension base="WidthValue">
+        <xs:attribute name="comment" type="CommentValue"></xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!--  **************************************************************** -->
+  <xs:simpleType name="AmplitudeValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(A|V)"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CommentValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ConductanceValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ConductivityValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(S|Mho(s)?)/([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ContactImpedanceValue">
+    <xs:restriction base="ImpedanceValue"></xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CoordinateSystemValue">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Cartesian"></xs:enumeration>
+      <xs:enumeration value="Cylindrical"></xs:enumeration>
+      <xs:enumeration value="GPS (WGS84)"></xs:enumeration>
+      <xs:enumeration value="Spherical"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CurrentValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?A"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DescriptionValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DiameterValue">
+    <xs:restriction base="DisplacementValue"></xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DisplacementValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FieldTypeValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:enumeration value="uint8"></xs:enumeration>
+      <xs:enumeration value="uint16"></xs:enumeration>
+      <xs:enumeration value="uint32"></xs:enumeration>
+      <xs:enumeration value="uint64"></xs:enumeration>
+      <xs:enumeration value="int8"></xs:enumeration>
+      <xs:enumeration value="int16"></xs:enumeration>
+      <xs:enumeration value="int32"></xs:enumeration>
+      <xs:enumeration value="int64"></xs:enumeration>
+      <xs:enumeration value="float"></xs:enumeration>
+      <xs:enumeration value="double"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ForceValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?N"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FrequencyValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Hz"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="HeightValue">
+    <xs:restriction base="DisplacementValue"></xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ImpedanceValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(Ω|O|Ohm(s)?)"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ManufacturerValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MassValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?g"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MaterialValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ModelValue">
+    <xs:restriction base="xs:string"></xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MultiplierValue">
+    <xs:restriction base="xs:decimal">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NameValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OffsetValue">
+    <xs:restriction base="xs:decimal">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OffsetTimeValue">
+    <xs:restriction base="xs:dateTime">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OrientationValue">
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse"></xs:whiteSpace>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PhysicalPropertyValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:enumeration value="Length"></xs:enumeration>
@@ -506,18 +844,18 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="Position">
+  <xs:simpleType name="PositionValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:pattern value="\[-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*){2}\]"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="PositionAccuracy">
-    <xs:restriction base="Length"></xs:restriction>
+  <xs:simpleType name="PositionAccuracyValue">
+    <xs:restriction base="DisplacementValue"></xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="PositionDescription">
+  <xs:simpleType name="PositionDescriptionValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:enumeration value="Absolute"></xs:enumeration>
@@ -526,46 +864,27 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="Pressure">
+  <xs:simpleType name="PressureValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?Pa"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="Process">
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="repeat" type="Repeat"></xs:element>
-        <xs:element name="decode" type="Decode"></xs:element>
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:simpleType name="Radius">
-    <xs:restriction base="Length"></xs:restriction>
+  <xs:simpleType name="RadiusValue">
+    <xs:restriction base="DisplacementValue"></xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="Repeat">
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="repeat" type="Repeat"></xs:element>
-        <xs:element name="decode" type="Decode"></xs:element>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="number" type="xs:integer" use="optional"></xs:attribute>
-  </xs:complexType>
-
-  <xs:simpleType name="Resistance">
-    <xs:restriction base="Impedance">
+  <xs:simpleType name="ResistanceValue">
+    <xs:restriction base="ImpedanceValue">
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="SerialNumber">
+  <xs:simpleType name="SerialNumberValue">
     <xs:restriction base="xs:string"></xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="ShapeDescription">
+  <xs:simpleType name="ShapeDescriptionValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:enumeration value="Cylinder"></xs:enumeration>
@@ -574,113 +893,36 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="Stimulation">
-    <xs:sequence minOccurs="1" maxOccurs="unbounded">
-      <xs:element name="elec" type="ElectrodeReference" minOccurs="0" maxOccurs="unbounded"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
-    <xs:attribute name="type" type="xs:IDREF" use="required"></xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="Stimulations">
-    <xs:sequence>
-      <xs:element name="stim" type="Stimulation" minOccurs="1" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="StimulationType">
-    <xs:all>
-      <xs:element name="amplitude" type="Amplitude" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="frequency" type="Frequency" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="wave" type="Wave" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
-    </xs:all>
-    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="StimulationTypes">
-    <xs:sequence>
-      <xs:element name="stim_type" type="StimulationType" maxOccurs="unbounded" minOccurs="1"></xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="Stream">
-    <xs:all>
-      <xs:element name="process" type="Process" minOccurs="1" maxOccurs="1"></xs:element>
-      <xs:element name="file_list" type="Files" minOccurs="1" maxOccurs="1"></xs:element>
-      <xs:element name="log_list" type="Logs" minOccurs="1" maxOccurs="1"></xs:element>
-      <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
-    </xs:all>
-    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
-    <xs:attribute name="device" type="xs:IDREF" use="optional"></xs:attribute>
-  </xs:complexType>
-
-  <xs:complexType name="Streams">
-    <xs:sequence>
-      <xs:element name="stream" type="Stream"  minOccurs="1" maxOccurs="unbounded"></xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="Subject">
-    <xs:choice>
-      <xs:sequence>
-        <xs:element name="patient" type="Patient" minOccurs="1" maxOccurs="1"></xs:element>
-        <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
-      </xs:sequence>
-      <xs:sequence>
-        <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
-      </xs:sequence>
-    </xs:choice>
-    <xs:attribute name="type" type="xs:string" use="optional"></xs:attribute>
-    <xs:anyAttribute namespace="##any" processContents="lax"></xs:anyAttribute>
-  </xs:complexType>
-
-  <xs:simpleType name="Thickness">
-    <xs:restriction base="Length"></xs:restriction>
+  <xs:simpleType name="ThicknessValue">
+    <xs:restriction base="DisplacementValue"></xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="Time">
+  <xs:simpleType name="TimeValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(s|minute(s)?|hour(s)?|day(s)?|week(s)?|month(s)?|year(s)?)"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="UnitType">
+  <xs:simpleType name="UnitTypeValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+)?(\s*\*\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+)?)*"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="UserData">
-    <xs:sequence>
-      <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
-    </xs:sequence>
-    <xs:attribute name="key" type="xs:NCName" use="optional"></xs:attribute>
-    <xs:anyAttribute processContents="lax" namespace="##any"></xs:anyAttribute>
-  </xs:complexType>
-
-  <xs:simpleType name="Version">
+  <xs:simpleType name="VersionValue">
     <xs:restriction base="xs:string"></xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="Voltage">
+  <xs:simpleType name="VoltageValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?V"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="Wave">
-    <xs:sequence>
-      <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
-    </xs:sequence>
-    <xs:attribute name="form" type="Waveform" use="optional"></xs:attribute>
-    <xs:anyAttribute processContents="lax" namespace="##any"></xs:anyAttribute>
-  </xs:complexType>
-
-  <xs:simpleType name="Waveform">
+  <xs:simpleType name="WaveformValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:enumeration value="Sine"></xs:enumeration>
@@ -690,8 +932,8 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="Width">
-    <xs:restriction base="Length"></xs:restriction>
+  <xs:simpleType name="WidthValue">
+    <xs:restriction base="DisplacementValue"></xs:restriction>
   </xs:simpleType>
 </xs:schema>
 
