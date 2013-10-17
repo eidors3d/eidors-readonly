@@ -345,6 +345,8 @@ function opt = parse_options(opt,fmdl,imdl);
           opt.target_plane = mean(elec_loc(:,3));
     else
         t = opt.target_plane;
+        minnode = min(fmdl.nodes);
+        maxnode = max(fmdl.nodes);
         if t<minnode(3) || t>maxnode(3)
             warning('options.target_plane is outside the model!');
             eidors_msg('mk_GREIT_model: Resorting to default target_plane');
