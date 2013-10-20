@@ -151,6 +151,7 @@
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:all>
     <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="ElectrodeTypes">
@@ -234,6 +235,7 @@
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
     <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="FrameTypes">
@@ -325,6 +327,7 @@
       <xs:element name="field_list" type="Fields" minOccurs="1" maxOccurs="1"></xs:element>
     </xs:all>
     <xs:attribute name="comment" type="CommentValue" use="optional"></xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="MeasurementTypes">
@@ -849,7 +852,7 @@
   <xs:simpleType name="PositionValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\[-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*){2}\]"></xs:pattern>
+      <xs:pattern value="\[-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)\s*){2}\]"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -909,7 +912,7 @@
   <xs:simpleType name="UnitTypeValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+)?(\s*\*\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+)?)*"></xs:pattern>
+      <xs:pattern value="([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+(\.\d+)?)?(\s*\*\s*([YZEPTGMkdcmuµnpfazy]|da)?(m|g|s|A|K|mol|cd|Hz|rad|sr|N|Pa|J|W|C|V|F|Ω|O(hm(s)?)?|Wb|T|H|°C|lm|l(u)?x|Bq|Gy|kat)(^-?\d+(\.\d+)?)?)*"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
