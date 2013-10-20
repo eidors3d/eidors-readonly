@@ -208,7 +208,7 @@ function elec = elec_spec( row, posrow, elec_obj );
   elec.ngobj= elec_obj;
 
   if row(1) == 0
-     elec.shape = 'P' 
+     elec.shape = 'P';
      elec.dims  = row(2)*[1,1];
   elseif length(row)<2 || row(2) == 0 % Circular electrodes 
      elec.shape = 'C';
