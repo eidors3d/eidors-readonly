@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+  <device_list>
+    <device id='device01'>
+      <manufacturer>ACME Corp.</manufacturer>
+      <data_acquisition_software>
+        <manufacturer>ACME Corp.</manufacturer>
+        <name>ACME EIT Grabber</name>
+        <version>1.00.001 Beta</version>
+      </data_acquisition_software>
+      <firmware>
+        <manufacturer>ACME Corp</manufacturer>
+        <name>ACME EIT Zapper</name>
+        <version>1.00.002</version>
+      </firmware>
+      <model>ACME 5252 16E</model>
+      <serial_number>1234567890-2255-132</serial_number>
+    </device>
+	
+	<device id="pressure_device">
+      <!-- minimal definition of a device -->
+    </device>
+  </device_list>
