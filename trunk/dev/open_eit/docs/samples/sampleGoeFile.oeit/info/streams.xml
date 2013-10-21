@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+ <stream_list>
+    <stream id='get_stream' device='device01'>
+      <process>
+	    <!-- implied repeat infinite (until EOF/EOS) since number="" is missing -->
+        <repeat>
+          <decode frame='get_frame'/>
+        </repeat>
+      </process>
+      <file_list>
+		<file name="eit/0000/00000.frames" start_frame="1" end_frame="999" start_time="0 s" end_time="100 s">
+          <user_data>
+            Start_time and end_time are hints. The values in the file are authorative. Values in the xml are optional.
+          </user_data>
+        </file>
+	    <file name="eit/0000/00001.frames" start_frame="1000" end_frame="1999" start_time="100 s" end_time="200 s"></file>
+      </file_list>
+      <log_list>
+	     <!-- refers to eit device 00000 -->
+        <log name='/logs/eit-00000.log'></log>
+      </log_list>
+    </stream>
+ </stream_list>

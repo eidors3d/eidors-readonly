@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<meas_type_list>
+    <meas_type id='meas1'>
+      <frequency>10000 Hz</frequency>
+      <multiplier>1</multiplier>
+      <offset>0</offset>
+      <field_list>
+        <field name='Voltage' type='float' unit='V' ></field>
+      </field_list>
+    </meas_type>
+    <meas_type id='meas2'>
+      <multiplier>1</multiplier>
+      <offset>0</offset>
+      <field_list>
+        <field name='Voltage' type='float' unit='V' ></field>
+      </field_list>
+    </meas_type>
+    <meas_type id='meas3'>
+      <multiplier>1</multiplier>
+      <offset>0</offset>
+      <field_list>
+        <field name='Current' type='float' unit='A' ></field>
+      </field_list>
+    </meas_type>
+    <meas_type id='meas4'>
+      <multiplier>1</multiplier>
+      <offset>0</offset>
+      <field_list>
+        <field name='Aux' type='float' unit='V' ></field>
+      </field_list>
+    </meas_type>
+</meas_type_list>

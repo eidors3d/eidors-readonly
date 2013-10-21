@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    ****  DO NOT MODIFY THIS FILE ****
+    Modification of this file can invalid your open EIT formatted file.
+    
+    License Agreement:
+    
+    Copyright 2013; All rights reserved
+-->
+
+
+<!-- We will eventually have to decide on a URL schema to name the XSD -->
+<oeit xmlns="http://org.open-eit/schemas/oeit.v0.9" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="info/subject.xml" />
+  <xi:include href="info/devices.xml" />
+  <xi:include href="info/electrode_types.xml" />
+  <xi:include href="info/stim_types.xml" />
+  <xi:include href="info/meas_types.xml" />
+  <xi:include href="info/acquisition_types.xml" />
+  <xi:include href="info/frames.xml" />
+  <xi:include href="info/streams.xml" />
+</oeit>
