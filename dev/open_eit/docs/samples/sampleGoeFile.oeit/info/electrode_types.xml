@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+ <electrode_type_list>
+   <electrode_type id='electrode_type0'>
+      <contact_impedance>0.2 Ohms</contact_impedance>
+      <diameter>1 cm</diameter>
+      <material>Copper</material>
+      <manufacturer>ACME Corp</manufacturer>
+      <model>ACME 1001 EC3/5</model>
+	  <user_data type="comment">Ground electrode</user_data>
+    </electrode_type>
+ 
+    <electrode_type id='electrode_type1'>
+      <contact_impedance>0.2 Ohms</contact_impedance>
+      <diameter>0.5 cm</diameter>
+      <material>Copper</material>
+      <manufacturer>ACME Corp</manufacturer>
+      <height>3 cm</height>
+      <model>ACME 1001 EC3/5</model>
+	  <user_data type="comment">arbitrary content</user_data>
+       <user_data type="box_serial_numer">ACME 123</user_data>
+    </electrode_type>
+  </electrode_type_list>

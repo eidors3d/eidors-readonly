@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<electrode_list id="elec_list1" coordinate_system="Cartesian" position_description="Absolute">
+  <electrode id="elec1" type="elec_type0" position="[0,0,0]" position_accuracy="1mm">
+    <user_data type="comment">ground electrode</user_data>
+  </electrode>
+  
+<electrode_list>
+    <coordinate_system>Cartesian</coordinate_system>
+    <position_description>Absolute</position_description>
+    <shape_description>Cylinder</shape_description>
+    <electrode id='e1' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[0 cm, 30 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e2' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[1 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e3' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[2 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e4' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[3 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e5' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[4 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e6' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[5 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e7' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[6 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e8' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[7 cm, 29 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e9' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[8 cm, 28 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e10' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[9 cm, 28 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e11' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[10 cm, 28 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e12' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[11 cm, 27 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e13' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[12 cm, 27 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e14' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[13 cm, 27 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e15' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[14 cm, 26 cm, 10 cm]</position>
+    </electrode>
+    <electrode id='e16' type='electrode_type1'>
+      <position_accuracy>0.2 cm</position_accuracy>
+      <position>[15 cm, 25 cm, 10 cm]</position>
+    </electrode>
+  </electrode_list>
