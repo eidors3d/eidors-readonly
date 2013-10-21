@@ -2,7 +2,7 @@
 
 <frame_type_list>
     <frame_type id='get_frame'>
-      <acquisition start='0 ns' duration='369.82 ns'>
+      <acquisition start='0 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -24,7 +24,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='369.82 ns' duration='369.82 ns'>
+      <acquisition start='369.82 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -46,7 +46,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='739.64 ns' duration='369.82 ns'>
+      <acquisition start='739.64 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -68,7 +68,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='1109.46 ns' duration='369.82 ns'>
+      <acquisition start='1109.46 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -90,7 +90,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='1479.28 ns' duration='369.82 ns'>
+      <acquisition start='1479.28 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -112,7 +112,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='1849.1 ns' duration='369.82 ns'>
+      <acquisition start='1849.1 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -134,7 +134,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='2218.92 ns' duration='369.82 ns'>
+      <acquisition start='2218.92 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -156,7 +156,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='2588.74 ns' duration='369.82 ns'>
+      <acquisition start='2588.74 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -178,7 +178,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='2958.56 ns' duration='369.82 ns'>
+      <acquisition start='2958.56 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -200,7 +200,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='3328.38 ns' duration='369.82 ns'>
+      <acquisition start='3328.38 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -222,7 +222,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='3698.2 ns' duration='369.82 ns'>
+      <acquisition start='3698.2 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -244,7 +244,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='4068.02 ns' duration='369.82 ns'>
+      <acquisition start='4068.02 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -266,7 +266,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='4437.84 ns' duration='369.82 ns'>
+      <acquisition start='4437.84 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -288,7 +288,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='4807.66 ns' duration='369.82 ns'>
+      <acquisition start='4807.66 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e1'>
@@ -310,7 +310,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='5177.48 ns' duration='369.82 ns'>
+      <acquisition start='5177.48 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -332,7 +332,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='5547.3 ns' duration='369.82 ns'>
+      <acquisition start='5547.3 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -354,7 +354,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='5917.12 ns' duration='369.82 ns'>
+      <acquisition start='5917.12 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -376,7 +376,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='6286.94 ns' duration='369.82 ns'>
+      <acquisition start='6286.94 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -398,7 +398,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='6656.76 ns' duration='369.82 ns'>
+      <acquisition start='6656.76 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -420,7 +420,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='7026.58 ns' duration='369.82 ns'>
+      <acquisition start='7026.58 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -442,7 +442,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='7396.4 ns' duration='369.82 ns'>
+      <acquisition start='7396.4 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -464,7 +464,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='7766.22 ns' duration='369.82 ns'>
+      <acquisition start='7766.22 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -486,7 +486,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='8136.04 ns' duration='369.82 ns'>
+      <acquisition start='8136.04 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -508,7 +508,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='8505.86 ns' duration='369.82 ns'>
+      <acquisition start='8505.86 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -530,7 +530,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='8875.68 ns' duration='369.82 ns'>
+      <acquisition start='8875.68 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -552,7 +552,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='9245.5 ns' duration='369.82 ns'>
+      <acquisition start='9245.5 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -574,7 +574,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='9615.32 ns' duration='369.82 ns'>
+      <acquisition start='9615.32 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -596,7 +596,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='9985.14 ns' duration='369.82 ns'>
+      <acquisition start='9985.14 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e2'>
@@ -618,7 +618,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='10354.96 ns' duration='369.82 ns'>
+      <acquisition start='10354.96 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -640,7 +640,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='10724.78 ns' duration='369.82 ns'>
+      <acquisition start='10724.78 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -662,7 +662,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='11094.6 ns' duration='369.82 ns'>
+      <acquisition start='11094.6 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -684,7 +684,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='11464.42 ns' duration='369.82 ns'>
+      <acquisition start='11464.42 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -706,7 +706,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='11834.24 ns' duration='369.82 ns'>
+      <acquisition start='11834.24 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -728,7 +728,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='12204.06 ns' duration='369.82 ns'>
+      <acquisition start='12204.06 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -750,7 +750,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='12573.88 ns' duration='369.82 ns'>
+      <acquisition start='12573.88 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -772,7 +772,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='12943.7 ns' duration='369.82 ns'>
+      <acquisition start='12943.7 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -794,7 +794,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='13313.52 ns' duration='369.82 ns'>
+      <acquisition start='13313.52 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -816,7 +816,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='13683.34 ns' duration='369.82 ns'>
+      <acquisition start='13683.34 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -838,7 +838,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='14053.16 ns' duration='369.82 ns'>
+      <acquisition start='14053.16 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -860,7 +860,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='14422.98 ns' duration='369.82 ns'>
+      <acquisition start='14422.98 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
@@ -882,299 +882,13 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='14792.8 ns' duration='369.82 ns'>
+      <acquisition start='14792.8 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e3'>
               <multiplier>1</multiplier>
             </elec>
             <elec ref='e4'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e1'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e2'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='15162.62 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e3'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e4'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e2'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e3'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='15532.44 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e6'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e7'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='15902.26 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e7'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e8'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='16272.08 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e8'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e9'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='16641.9 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e9'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e10'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='17011.72 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e10'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e11'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='17381.54 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e11'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e12'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='17751.36 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e12'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e13'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='18121.18 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e13'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e14'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='18491 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e14'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e15'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='18860.82 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e15'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e16'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='19230.64 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </stim>
-        </stim_list>
-        <meas_list>
-          <meas type='meas1'>
-            <elec ref='e16'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e1'>
-              <multiplier>-1</multiplier>
-            </elec>
-          </meas>
-        </meas_list>
-      </acquisition>
-      <acquisition start='19600.46 ns' duration='369.82 ns'>
-        <stim_list>
-          <stim type='stim1'>
-            <elec ref='e4'>
-              <multiplier>1</multiplier>
-            </elec>
-            <elec ref='e5'>
               <multiplier>-1</multiplier>
             </elec>
           </stim>
@@ -1190,7 +904,293 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='19970.28 ns' duration='369.82 ns'>
+      <acquisition start='15162.62 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e3'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e4'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e2'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e3'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='15532.44 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e6'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e7'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='15902.26 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e7'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e8'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='16272.08 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e8'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e9'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='16641.9 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e9'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e10'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='17011.72 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e10'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e11'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='17381.54 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e11'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e12'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='17751.36 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e12'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e13'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='18121.18 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e13'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e14'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='18491 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e14'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e15'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='18860.82 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e15'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e16'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='19230.64 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e16'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e1'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='19600.46 us' duration='369.82 us'>
+        <stim_list>
+          <stim type='stim1'>
+            <elec ref='e4'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e5'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </stim>
+        </stim_list>
+        <meas_list>
+          <meas type='meas1'>
+            <elec ref='e1'>
+              <multiplier>1</multiplier>
+            </elec>
+            <elec ref='e2'>
+              <multiplier>-1</multiplier>
+            </elec>
+          </meas>
+        </meas_list>
+      </acquisition>
+      <acquisition start='19970.28 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e4'>
@@ -1212,7 +1212,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='20340.1 ns' duration='369.82 ns'>
+      <acquisition start='20340.1 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e4'>
@@ -1234,7 +1234,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='20709.92 ns' duration='369.82 ns'>
+      <acquisition start='20709.92 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1256,7 +1256,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='21079.74 ns' duration='369.82 ns'>
+      <acquisition start='21079.74 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1278,7 +1278,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='21449.56 ns' duration='369.82 ns'>
+      <acquisition start='21449.56 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1300,7 +1300,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='21819.38 ns' duration='369.82 ns'>
+      <acquisition start='21819.38 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1322,7 +1322,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='22189.2 ns' duration='369.82 ns'>
+      <acquisition start='22189.2 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1344,7 +1344,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='22559.02 ns' duration='369.82 ns'>
+      <acquisition start='22559.02 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1366,7 +1366,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='22928.84 ns' duration='369.82 ns'>
+      <acquisition start='22928.84 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1388,7 +1388,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='23298.66 ns' duration='369.82 ns'>
+      <acquisition start='23298.66 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1410,7 +1410,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='23668.48 ns' duration='369.82 ns'>
+      <acquisition start='23668.48 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1432,7 +1432,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='24038.3 ns' duration='369.82 ns'>
+      <acquisition start='24038.3 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1454,7 +1454,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='24408.12 ns' duration='369.82 ns'>
+      <acquisition start='24408.12 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1476,7 +1476,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='24777.94 ns' duration='369.82 ns'>
+      <acquisition start='24777.94 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1498,7 +1498,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='25147.76 ns' duration='369.82 ns'>
+      <acquisition start='25147.76 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1520,7 +1520,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='25517.58 ns' duration='369.82 ns'>
+      <acquisition start='25517.58 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e5'>
@@ -1542,7 +1542,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='25887.4 ns' duration='369.82 ns'>
+      <acquisition start='25887.4 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1564,7 +1564,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='26257.22 ns' duration='369.82 ns'>
+      <acquisition start='26257.22 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1586,7 +1586,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='26627.04 ns' duration='369.82 ns'>
+      <acquisition start='26627.04 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1608,7 +1608,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='26996.86 ns' duration='369.82 ns'>
+      <acquisition start='26996.86 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1630,7 +1630,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='27366.68 ns' duration='369.82 ns'>
+      <acquisition start='27366.68 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1652,7 +1652,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='27736.5 ns' duration='369.82 ns'>
+      <acquisition start='27736.5 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1674,7 +1674,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='28106.32 ns' duration='369.82 ns'>
+      <acquisition start='28106.32 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1696,7 +1696,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='28476.14 ns' duration='369.82 ns'>
+      <acquisition start='28476.14 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1718,7 +1718,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='28845.96 ns' duration='369.82 ns'>
+      <acquisition start='28845.96 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1740,7 +1740,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='29215.78 ns' duration='369.82 ns'>
+      <acquisition start='29215.78 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1762,7 +1762,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='29585.6 ns' duration='369.82 ns'>
+      <acquisition start='29585.6 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1784,7 +1784,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='29955.42 ns' duration='369.82 ns'>
+      <acquisition start='29955.42 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1806,7 +1806,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='30325.24 ns' duration='369.82 ns'>
+      <acquisition start='30325.24 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1828,7 +1828,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='30695.06 ns' duration='369.82 ns'>
+      <acquisition start='30695.06 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e6'>
@@ -1850,7 +1850,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='31064.88 ns' duration='369.82 ns'>
+      <acquisition start='31064.88 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -1872,7 +1872,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='31434.7 ns' duration='369.82 ns'>
+      <acquisition start='31434.7 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -1894,7 +1894,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='31804.52 ns' duration='369.82 ns'>
+      <acquisition start='31804.52 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -1916,7 +1916,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='32174.34 ns' duration='369.82 ns'>
+      <acquisition start='32174.34 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -1938,7 +1938,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='32544.16 ns' duration='369.82 ns'>
+      <acquisition start='32544.16 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -1960,7 +1960,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='32913.98 ns' duration='369.82 ns'>
+      <acquisition start='32913.98 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -1982,7 +1982,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='33283.8 ns' duration='369.82 ns'>
+      <acquisition start='33283.8 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2004,7 +2004,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='33653.62 ns' duration='369.82 ns'>
+      <acquisition start='33653.62 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2026,7 +2026,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='34023.44 ns' duration='369.82 ns'>
+      <acquisition start='34023.44 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2048,7 +2048,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='34393.26 ns' duration='369.82 ns'>
+      <acquisition start='34393.26 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2070,7 +2070,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='34763.08 ns' duration='369.82 ns'>
+      <acquisition start='34763.08 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2092,7 +2092,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='35132.9 ns' duration='369.82 ns'>
+      <acquisition start='35132.9 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2114,7 +2114,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='35502.72 ns' duration='369.82 ns'>
+      <acquisition start='35502.72 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2136,7 +2136,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='35872.54 ns' duration='369.82 ns'>
+      <acquisition start='35872.54 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e7'>
@@ -2158,7 +2158,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='36242.36 ns' duration='369.82 ns'>
+      <acquisition start='36242.36 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2180,7 +2180,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='36612.18 ns' duration='369.82 ns'>
+      <acquisition start='36612.18 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2202,7 +2202,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='36982 ns' duration='369.82 ns'>
+      <acquisition start='36982 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2224,7 +2224,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='37351.82 ns' duration='369.82 ns'>
+      <acquisition start='37351.82 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2246,7 +2246,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='37721.64 ns' duration='369.82 ns'>
+      <acquisition start='37721.64 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2268,7 +2268,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='38091.46 ns' duration='369.82 ns'>
+      <acquisition start='38091.46 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2290,7 +2290,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='38461.28 ns' duration='369.82 ns'>
+      <acquisition start='38461.28 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2312,7 +2312,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='38831.1 ns' duration='369.82 ns'>
+      <acquisition start='38831.1 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2334,7 +2334,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='39200.92 ns' duration='369.82 ns'>
+      <acquisition start='39200.92 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2356,7 +2356,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='39570.74 ns' duration='369.82 ns'>
+      <acquisition start='39570.74 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2378,7 +2378,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='39940.56 ns' duration='369.82 ns'>
+      <acquisition start='39940.56 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2400,7 +2400,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='40310.38 ns' duration='369.82 ns'>
+      <acquisition start='40310.38 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2422,7 +2422,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='40680.2 ns' duration='369.82 ns'>
+      <acquisition start='40680.2 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2444,7 +2444,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='41050.02 ns' duration='369.82 ns'>
+      <acquisition start='41050.02 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e8'>
@@ -2466,7 +2466,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='41419.84 ns' duration='369.82 ns'>
+      <acquisition start='41419.84 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2488,7 +2488,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='41789.66 ns' duration='369.82 ns'>
+      <acquisition start='41789.66 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2510,7 +2510,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='42159.48 ns' duration='369.82 ns'>
+      <acquisition start='42159.48 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2532,7 +2532,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='42529.3 ns' duration='369.82 ns'>
+      <acquisition start='42529.3 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2554,7 +2554,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='42899.12 ns' duration='369.82 ns'>
+      <acquisition start='42899.12 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2576,7 +2576,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='43268.94 ns' duration='369.82 ns'>
+      <acquisition start='43268.94 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2598,7 +2598,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='43638.76 ns' duration='369.82 ns'>
+      <acquisition start='43638.76 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2620,7 +2620,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='44008.58 ns' duration='369.82 ns'>
+      <acquisition start='44008.58 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2642,7 +2642,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='44378.4 ns' duration='369.82 ns'>
+      <acquisition start='44378.4 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2664,7 +2664,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='44748.22 ns' duration='369.82 ns'>
+      <acquisition start='44748.22 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2686,7 +2686,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='45118.04 ns' duration='369.82 ns'>
+      <acquisition start='45118.04 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2708,7 +2708,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='45487.86 ns' duration='369.82 ns'>
+      <acquisition start='45487.86 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2730,7 +2730,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='45857.68 ns' duration='369.82 ns'>
+      <acquisition start='45857.68 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2752,7 +2752,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='46227.5 ns' duration='369.82 ns'>
+      <acquisition start='46227.5 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e9'>
@@ -2774,7 +2774,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='46597.32 ns' duration='369.82 ns'>
+      <acquisition start='46597.32 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2796,7 +2796,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='46967.14 ns' duration='369.82 ns'>
+      <acquisition start='46967.14 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2818,7 +2818,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='47336.96 ns' duration='369.82 ns'>
+      <acquisition start='47336.96 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2840,7 +2840,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='47706.78 ns' duration='369.82 ns'>
+      <acquisition start='47706.78 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2862,7 +2862,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='48076.6 ns' duration='369.82 ns'>
+      <acquisition start='48076.6 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2884,7 +2884,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='48446.42 ns' duration='369.82 ns'>
+      <acquisition start='48446.42 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2906,7 +2906,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='48816.24 ns' duration='369.82 ns'>
+      <acquisition start='48816.24 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2928,7 +2928,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='49186.06 ns' duration='369.82 ns'>
+      <acquisition start='49186.06 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2950,7 +2950,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='49555.88 ns' duration='369.82 ns'>
+      <acquisition start='49555.88 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2972,7 +2972,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='49925.7 ns' duration='369.82 ns'>
+      <acquisition start='49925.7 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -2994,7 +2994,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='50295.52 ns' duration='369.82 ns'>
+      <acquisition start='50295.52 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -3016,7 +3016,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='50665.34 ns' duration='369.82 ns'>
+      <acquisition start='50665.34 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -3038,7 +3038,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='51035.16 ns' duration='369.82 ns'>
+      <acquisition start='51035.16 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -3060,7 +3060,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='51404.98 ns' duration='369.82 ns'>
+      <acquisition start='51404.98 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e10'>
@@ -3082,7 +3082,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='51774.8 ns' duration='369.82 ns'>
+      <acquisition start='51774.8 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3104,7 +3104,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='52144.62 ns' duration='369.82 ns'>
+      <acquisition start='52144.62 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3126,7 +3126,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='52514.44 ns' duration='369.82 ns'>
+      <acquisition start='52514.44 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3148,7 +3148,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='52884.26 ns' duration='369.82 ns'>
+      <acquisition start='52884.26 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3170,7 +3170,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='53254.08 ns' duration='369.82 ns'>
+      <acquisition start='53254.08 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3192,7 +3192,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='53623.9 ns' duration='369.82 ns'>
+      <acquisition start='53623.9 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3214,7 +3214,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='53993.72 ns' duration='369.82 ns'>
+      <acquisition start='53993.72 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3236,7 +3236,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='54363.54 ns' duration='369.82 ns'>
+      <acquisition start='54363.54 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3258,7 +3258,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='54733.36 ns' duration='369.82 ns'>
+      <acquisition start='54733.36 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3280,7 +3280,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='55103.18 ns' duration='369.82 ns'>
+      <acquisition start='55103.18 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3302,7 +3302,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='55473 ns' duration='369.82 ns'>
+      <acquisition start='55473 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3324,7 +3324,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='55842.82 ns' duration='369.82 ns'>
+      <acquisition start='55842.82 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3346,7 +3346,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='56212.64 ns' duration='369.82 ns'>
+      <acquisition start='56212.64 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3368,7 +3368,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='56582.46 ns' duration='369.82 ns'>
+      <acquisition start='56582.46 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e11'>
@@ -3390,7 +3390,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='56952.28 ns' duration='369.82 ns'>
+      <acquisition start='56952.28 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3412,7 +3412,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='57322.1 ns' duration='369.82 ns'>
+      <acquisition start='57322.1 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3434,7 +3434,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='57691.92 ns' duration='369.82 ns'>
+      <acquisition start='57691.92 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3456,7 +3456,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='58061.74 ns' duration='369.82 ns'>
+      <acquisition start='58061.74 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3478,7 +3478,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='58431.56 ns' duration='369.82 ns'>
+      <acquisition start='58431.56 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3500,7 +3500,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='58801.38 ns' duration='369.82 ns'>
+      <acquisition start='58801.38 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3522,7 +3522,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='59171.2 ns' duration='369.82 ns'>
+      <acquisition start='59171.2 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3544,7 +3544,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='59541.02 ns' duration='369.82 ns'>
+      <acquisition start='59541.02 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3566,7 +3566,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='59910.84 ns' duration='369.82 ns'>
+      <acquisition start='59910.84 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3588,7 +3588,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='60280.66 ns' duration='369.82 ns'>
+      <acquisition start='60280.66 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3610,7 +3610,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='60650.48 ns' duration='369.82 ns'>
+      <acquisition start='60650.48 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3632,7 +3632,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='61020.3 ns' duration='369.82 ns'>
+      <acquisition start='61020.3 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3654,7 +3654,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='61390.12 ns' duration='369.82 ns'>
+      <acquisition start='61390.12 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3676,7 +3676,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='61759.94 ns' duration='369.82 ns'>
+      <acquisition start='61759.94 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e12'>
@@ -3698,7 +3698,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='62129.76 ns' duration='369.82 ns'>
+      <acquisition start='62129.76 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3720,7 +3720,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='62499.58 ns' duration='369.82 ns'>
+      <acquisition start='62499.58 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3742,7 +3742,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='62869.4 ns' duration='369.82 ns'>
+      <acquisition start='62869.4 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3764,7 +3764,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='63239.22 ns' duration='369.82 ns'>
+      <acquisition start='63239.22 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3786,7 +3786,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='63609.04 ns' duration='369.82 ns'>
+      <acquisition start='63609.04 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3808,7 +3808,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='63978.86 ns' duration='369.82 ns'>
+      <acquisition start='63978.86 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3830,7 +3830,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='64348.68 ns' duration='369.82 ns'>
+      <acquisition start='64348.68 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3852,7 +3852,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='64718.5 ns' duration='369.82 ns'>
+      <acquisition start='64718.5 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3874,7 +3874,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='65088.32 ns' duration='369.82 ns'>
+      <acquisition start='65088.32 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3896,7 +3896,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='65458.14 ns' duration='369.82 ns'>
+      <acquisition start='65458.14 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3918,7 +3918,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='65827.96 ns' duration='369.82 ns'>
+      <acquisition start='65827.96 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3940,7 +3940,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='66197.78 ns' duration='369.82 ns'>
+      <acquisition start='66197.78 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3962,7 +3962,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='66567.6 ns' duration='369.82 ns'>
+      <acquisition start='66567.6 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -3984,7 +3984,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='66937.42 ns' duration='369.82 ns'>
+      <acquisition start='66937.42 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e13'>
@@ -4006,7 +4006,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='67307.24 ns' duration='369.82 ns'>
+      <acquisition start='67307.24 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4028,7 +4028,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='67677.06 ns' duration='369.82 ns'>
+      <acquisition start='67677.06 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4050,7 +4050,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='68046.88 ns' duration='369.82 ns'>
+      <acquisition start='68046.88 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4072,7 +4072,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='68416.7 ns' duration='369.82 ns'>
+      <acquisition start='68416.7 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4094,7 +4094,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='68786.52 ns' duration='369.82 ns'>
+      <acquisition start='68786.52 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4116,7 +4116,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='69156.34 ns' duration='369.82 ns'>
+      <acquisition start='69156.34 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4138,7 +4138,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='69526.16 ns' duration='369.82 ns'>
+      <acquisition start='69526.16 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4160,7 +4160,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='69895.98 ns' duration='369.82 ns'>
+      <acquisition start='69895.98 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4182,7 +4182,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='70265.8 ns' duration='369.82 ns'>
+      <acquisition start='70265.8 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4204,7 +4204,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='70635.62 ns' duration='369.82 ns'>
+      <acquisition start='70635.62 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4226,7 +4226,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='71005.44 ns' duration='369.82 ns'>
+      <acquisition start='71005.44 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4248,7 +4248,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='71375.26 ns' duration='369.82 ns'>
+      <acquisition start='71375.26 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4270,7 +4270,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='71745.08 ns' duration='369.82 ns'>
+      <acquisition start='71745.08 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4292,7 +4292,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='72114.9 ns' duration='369.82 ns'>
+      <acquisition start='72114.9 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e14'>
@@ -4314,7 +4314,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='72484.72 ns' duration='369.82 ns'>
+      <acquisition start='72484.72 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4336,7 +4336,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='72854.54 ns' duration='369.82 ns'>
+      <acquisition start='72854.54 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4358,7 +4358,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='73224.36 ns' duration='369.82 ns'>
+      <acquisition start='73224.36 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4380,7 +4380,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='73594.18 ns' duration='369.82 ns'>
+      <acquisition start='73594.18 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4402,7 +4402,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='73964 ns' duration='369.82 ns'>
+      <acquisition start='73964 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4424,7 +4424,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='74333.82 ns' duration='369.82 ns'>
+      <acquisition start='74333.82 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4446,7 +4446,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='74703.64 ns' duration='369.82 ns'>
+      <acquisition start='74703.64 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4468,7 +4468,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='75073.46 ns' duration='369.82 ns'>
+      <acquisition start='75073.46 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4490,7 +4490,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='75443.28 ns' duration='369.82 ns'>
+      <acquisition start='75443.28 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4512,7 +4512,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='75813.1 ns' duration='369.82 ns'>
+      <acquisition start='75813.1 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4534,7 +4534,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='76182.92 ns' duration='369.82 ns'>
+      <acquisition start='76182.92 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4556,7 +4556,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='76552.74 ns' duration='369.82 ns'>
+      <acquisition start='76552.74 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4578,7 +4578,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='76922.56 ns' duration='369.82 ns'>
+      <acquisition start='76922.56 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4600,7 +4600,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='77292.38 ns' duration='369.82 ns'>
+      <acquisition start='77292.38 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e15'>
@@ -4622,7 +4622,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='77662.2 ns' duration='369.82 ns'>
+      <acquisition start='77662.2 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4644,7 +4644,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='78032.02 ns' duration='369.82 ns'>
+      <acquisition start='78032.02 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4666,7 +4666,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='78401.84 ns' duration='369.82 ns'>
+      <acquisition start='78401.84 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4688,7 +4688,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='78771.66 ns' duration='369.82 ns'>
+      <acquisition start='78771.66 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4710,7 +4710,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='79141.48 ns' duration='369.82 ns'>
+      <acquisition start='79141.48 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4732,7 +4732,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='79511.3 ns' duration='369.82 ns'>
+      <acquisition start='79511.3 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4754,7 +4754,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='79881.12 ns' duration='369.82 ns'>
+      <acquisition start='79881.12 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4776,7 +4776,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='80250.94 ns' duration='369.82 ns'>
+      <acquisition start='80250.94 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4798,7 +4798,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='80620.76 ns' duration='369.82 ns'>
+      <acquisition start='80620.76 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4820,7 +4820,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='80990.58 ns' duration='369.82 ns'>
+      <acquisition start='80990.58 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4842,7 +4842,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='81360.4 ns' duration='369.82 ns'>
+      <acquisition start='81360.4 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4864,7 +4864,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='81730.22 ns' duration='369.82 ns'>
+      <acquisition start='81730.22 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4886,7 +4886,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='82100.04 ns' duration='369.82 ns'>
+      <acquisition start='82100.04 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4908,7 +4908,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='82469.86 ns' duration='369.82 ns'>
+      <acquisition start='82469.86 us' duration='369.82 us'>
         <stim_list>
           <stim type='stim1'>
             <elec ref='e16'>
@@ -4930,7 +4930,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='0 ns' duration='4807.69 ns'>
+      <acquisition start='0 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e1'>
@@ -4942,7 +4942,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='4807.69 ns' duration='4807.69 ns'>
+      <acquisition start='4807.69 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e2'>
@@ -4954,7 +4954,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='9615.38 ns' duration='4807.69 ns'>
+      <acquisition start='9615.38 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e3'>
@@ -4966,7 +4966,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='14423.07 ns' duration='4807.69 ns'>
+      <acquisition start='14423.07 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e4'>
@@ -4978,7 +4978,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='19230.76 ns' duration='4807.69 ns'>
+      <acquisition start='19230.76 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e5'>
@@ -4990,7 +4990,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='24038.45 ns' duration='4807.69 ns'>
+      <acquisition start='24038.45 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e6'>
@@ -5002,7 +5002,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='28846.14 ns' duration='4807.69 ns'>
+      <acquisition start='28846.14 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e7'>
@@ -5014,7 +5014,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='33653.83 ns' duration='4807.69 ns'>
+      <acquisition start='33653.83 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e8'>
@@ -5026,7 +5026,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='38461.52 ns' duration='4807.69 ns'>
+      <acquisition start='38461.52 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e9'>
@@ -5038,7 +5038,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='43269.21 ns' duration='4807.69 ns'>
+      <acquisition start='43269.21 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e10'>
@@ -5050,7 +5050,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='48076.9 ns' duration='4807.69 ns'>
+      <acquisition start='48076.9 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e11'>
@@ -5062,7 +5062,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='52884.59 ns' duration='4807.69 ns'>
+      <acquisition start='52884.59 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e12'>
@@ -5074,7 +5074,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='57692.28 ns' duration='4807.69 ns'>
+      <acquisition start='57692.28 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e13'>
@@ -5086,7 +5086,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='62499.97 ns' duration='4807.69 ns'>
+      <acquisition start='62499.97 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e14'>
@@ -5098,7 +5098,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='67307.66 ns' duration='4807.69 ns'>
+      <acquisition start='67307.66 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e15'>
@@ -5110,7 +5110,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='72115.35 ns' duration='4807.69 ns'>
+      <acquisition start='72115.35 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas2'>
             <elec ref='e16'>
@@ -5122,7 +5122,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='0 ns' duration='4807.69 ns'>
+      <acquisition start='0 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e1'>
@@ -5134,7 +5134,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='4807.69 ns' duration='4807.69 ns'>
+      <acquisition start='4807.69 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e2'>
@@ -5146,7 +5146,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='9615.38 ns' duration='4807.69 ns'>
+      <acquisition start='9615.38 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e3'>
@@ -5158,7 +5158,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='14423.07 ns' duration='4807.69 ns'>
+      <acquisition start='14423.07 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e4'>
@@ -5170,7 +5170,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='19230.76 ns' duration='4807.69 ns'>
+      <acquisition start='19230.76 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e5'>
@@ -5182,7 +5182,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='24038.45 ns' duration='4807.69 ns'>
+      <acquisition start='24038.45 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e6'>
@@ -5194,7 +5194,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='28846.14 ns' duration='4807.69 ns'>
+      <acquisition start='28846.14 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e7'>
@@ -5206,7 +5206,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='33653.83 ns' duration='4807.69 ns'>
+      <acquisition start='33653.83 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e8'>
@@ -5218,7 +5218,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='38461.52 ns' duration='4807.69 ns'>
+      <acquisition start='38461.52 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e9'>
@@ -5230,7 +5230,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='43269.21 ns' duration='4807.69 ns'>
+      <acquisition start='43269.21 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e10'>
@@ -5242,7 +5242,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='48076.9 ns' duration='4807.69 ns'>
+      <acquisition start='48076.9 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e11'>
@@ -5254,7 +5254,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='52884.59 ns' duration='4807.69 ns'>
+      <acquisition start='52884.59 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e12'>
@@ -5266,7 +5266,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='57692.28 ns' duration='4807.69 ns'>
+      <acquisition start='57692.28 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e13'>
@@ -5278,7 +5278,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='62499.97 ns' duration='4807.69 ns'>
+      <acquisition start='62499.97 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e14'>
@@ -5290,7 +5290,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='67307.66 ns' duration='4807.69 ns'>
+      <acquisition start='67307.66 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e15'>
@@ -5302,7 +5302,7 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='72115.35 ns' duration='4807.69 ns'>
+      <acquisition start='72115.35 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas3'>
             <elec ref='e16'>
@@ -5314,82 +5314,82 @@
           </meas>
         </meas_list>
       </acquisition>
-      <acquisition start='0 ns' duration='4807.69 ns'>
+      <acquisition start='0 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='4807.69 ns' duration='4807.69 ns'>
+      <acquisition start='4807.69 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='9615.38 ns' duration='4807.69 ns'>
+      <acquisition start='9615.38 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='14423.07 ns' duration='4807.69 ns'>
+      <acquisition start='14423.07 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='19230.76 ns' duration='4807.69 ns'>
+      <acquisition start='19230.76 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='24038.45 ns' duration='4807.69 ns'>
+      <acquisition start='24038.45 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='28846.14 ns' duration='4807.69 ns'>
+      <acquisition start='28846.14 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='33653.83 ns' duration='4807.69 ns'>
+      <acquisition start='33653.83 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='38461.52 ns' duration='4807.69 ns'>
+      <acquisition start='38461.52 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='43269.21 ns' duration='4807.69 ns'>
+      <acquisition start='43269.21 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='48076.9 ns' duration='4807.69 ns'>
+      <acquisition start='48076.9 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='52884.59 ns' duration='4807.69 ns'>
+      <acquisition start='52884.59 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='57692.28 ns' duration='4807.69 ns'>
+      <acquisition start='57692.28 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='62499.97 ns' duration='4807.69 ns'>
+      <acquisition start='62499.97 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='67307.66 ns' duration='4807.69 ns'>
+      <acquisition start='67307.66 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
       </acquisition>
-      <acquisition start='72115.35 ns' duration='4807.69 ns'>
+      <acquisition start='72115.35 us' duration='4807.69 us'>
         <meas_list>
           <meas type='meas4'></meas>
         </meas_list>
