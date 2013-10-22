@@ -4,9 +4,6 @@
     <stim_type id='stim1'>
       <amplitude>1 mA</amplitude>
       <frequency>10000 Hz</frequency>
-      <wave form='Saw'>
-        <risetime>5 ns</risetime>
-        <decaytime>2 ns</decaytime>
-      </wave>
+      <wave form='Sine'></wave>
     </stim_type>
   </stim_type_list>
