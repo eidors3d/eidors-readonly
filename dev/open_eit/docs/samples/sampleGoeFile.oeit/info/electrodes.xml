@@ -1,76 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<electrode_list id="elec_list1" coordinate_system="Cartesian" position_description="Absolute">
-  <electrode id="elec1" type="elec_type0" position="[0,0,0]" position_accuracy="1mm">
-    <user_data type="comment">ground electrode</user_data>
-  </electrode>
   
 <electrode_list>
+
     <coordinate_system>Cylindrical</coordinate_system>
     <position_description>Illustrative</position_description>
     <shape_description>Cylinder</shape_description>
+	
     <electrode id='e1' type='electrode_type1'>
       <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 0, 1]</position>
+      <position>[1, 0, 0]</position>
     </electrode>
     <electrode id='e2' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 22.5, 1]</position>
+      <position>[1, 22.5, 0]</position>
     </electrode>
     <electrode id='e3' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 45, 1]</position>
+      <position>[1, 45, 0]</position>
     </electrode>
     <electrode id='e4' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 67.5, 1]</position>
+      <position>[1, 67.5, 0]</position>
     </electrode>
     <electrode id='e5' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 90, 1]</position>
+      <position>[1, 90, 0]</position>
     </electrode>
     <electrode id='e6' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 112.5, 1]</position>
+      <position>[1, 112.5, 0]</position>
     </electrode>
     <electrode id='e7' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 135, 1]</position>
+      <position>[1, 135, 0]</position>
     </electrode>
     <electrode id='e8' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 157.5, 1]</position>
+      <position>[1, 157.5, 0]</position>
     </electrode>
     <electrode id='e9' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 180, 1]</position>
+      <position>[1, 180, 0]</position>
     </electrode>
     <electrode id='e10' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 202.5, 1]</position>
+      <position>[1, 202.5, 0]</position>
     </electrode>
     <electrode id='e11' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 225, 1]</position>
+      <position>[1, 225, 0]</position>
     </electrode>
     <electrode id='e12' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 247.5, 1]</position>
+      <position>[1, 247.5, 0]</position>
     </electrode>
     <electrode id='e13' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 270, 1]</position>
+      <position>[1, 270, 0]</position>
     </electrode>
     <electrode id='e14' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 292.5, 1]</position>
+      <position>[1, 292.5, 0]</position>
     </electrode>
     <electrode id='e15' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 315, 1]</position>
+      <position>[1, 315, 0]</position>
     </electrode>
     <electrode id='e16' type='electrode_type1'>
-      <position_accuracy>0.2 cm</position_accuracy>
-      <position>[0, 337.5, 1]</position>
+      <position>[1, 337.5, 0]</position>
     </electrode>
+	
+	<electrode id='e17' type='electrode_type0' comment='ground electrode'>
+      <position>[1, 0, -1]</position>
+    </electrode>
+	
   </electrode_list>

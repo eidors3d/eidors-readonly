@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
   <stim_type_list>
+  
     <stim_type id='stim1'>
       <amplitude>1 mA</amplitude>
       <frequency>10000 Hz</frequency>
       <wave form='Sine'></wave>
     </stim_type>
+	
+	<stim_type id='gnd'>
+      <amplitude>0 V</amplitude>
+      <wave form='DC'></wave>
+    </stim_type>
+	
   </stim_type_list>

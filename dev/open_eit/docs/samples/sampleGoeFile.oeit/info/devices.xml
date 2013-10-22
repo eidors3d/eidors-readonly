@@ -2,9 +2,9 @@
 
   <device_list>
     <device id='device01'>
-      <manufacturer>ACME Corp.</manufacturer>
+      <manufacturer>University of Goettingen</manufacturer>
       <data_acquisition_software>
-        <manufacturer>ACME Corp.</manufacturer>
+        <manufacturer>University of Goettingen</manufacturer>
         <name>ACME EIT Grabber</name>
         <version>1.00.001 Beta</version>
       </data_acquisition_software>

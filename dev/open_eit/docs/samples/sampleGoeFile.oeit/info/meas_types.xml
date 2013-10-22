@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <meas_type_list>
-    <meas_type id='meas1'>
+    <meas_type id='meas1' comment='pairwise differential measurement'>
       <frequency>10000 Hz</frequency>
       <multiplier>1</multiplier>
       <offset>0</offset>
@@ -9,21 +9,21 @@
         <field name='Voltage' type='float' unit='V' ></field>
       </field_list>
     </meas_type>
-    <meas_type id='meas2'>
+    <meas_type id='meas2' comment='voltage drop over injecting pairs'>
       <multiplier>1</multiplier>
       <offset>0</offset>
       <field_list>
         <field name='Voltage' type='float' unit='V' ></field>
       </field_list>
     </meas_type>
-    <meas_type id='meas3'>
+    <meas_type id='meas3' comment='current going through injecting pairs'>
       <multiplier>1</multiplier>
       <offset>0</offset>
       <field_list>
         <field name='Current' type='float' unit='A' ></field>
       </field_list>
     </meas_type>
-    <meas_type id='meas4'>
+    <meas_type id='meas4' comment='Auxiliary channel that is always recorded'>
       <multiplier>1</multiplier>
       <offset>0</offset>
       <field_list>
