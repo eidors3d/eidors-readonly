@@ -6,12 +6,29 @@
 
       Electrical impedance tomography (EIT) is a tomographic imaging technique that makes use of electrical currents injected into a body and of the resulting potential field to calculate the spatial distribution of electrical impedance.  This technique showed promising results in various fields of application like earth sciences, industrial process monitoring, and medical imaging.
     </xs:documentation>
+    <xs:documentation source="http://www.gnu.org/licenses/gpl-3.0.html" >
+      Copyright (C) 2013 Open-EIT Working Group.
+
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program.
+    </xs:documentation>
   </xs:annotation>
 
   <!--  **************************************************************** -->
   <xs:element name="oeit" type="Oeit" >
     <xs:annotation>
       <xs:documentation xml:lang="en">
+        This is the root element for an oeit.xml file.  The oeit.xml file should be located in the root directory of the OEIT file.  All sub-elements should be defined using &lt;xinclude .../&gt; tags referencing appropriate files in the /info directory of the OEIT file.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -406,6 +423,11 @@
   </xs:complexType>
 
   <xs:complexType name="Position">
+    <xs:annotation>
+      <xs:documentation>
+        For a normalized cylinder, the positions are given as [radial distace, azimuth, height]. The radial distance is in the range of [0, 1], where 1 means the surface. The height is given in the range of [-1, 1], where -1 is the bottom of the cylinder and 1 is the top of the cylinder. The azimuth can be given in degrees (d), radians (r), or gradients (g). For a normalized cube, the positions are given as [x, y, z] of a 2 x 2 x 1 paralleliped, with [0, 0, 0] in the middle of the upper surface, giving an x range of [-1, 1], y range of [-1, 1] and z range of [0, 1]. For other shapes, a comment should be added to the xml document to describe the coordinate system.
+      </xs:documentation>
+    </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="PositionValue">
         <xs:attribute name="comment" type="CommentValue"></xs:attribute>
@@ -461,6 +483,11 @@
   </xs:complexType>
 
   <xs:complexType name="ShapeDescription">
+    <xs:annotation>
+      <xs:documentation>
+        For a normalized cylinder, the positions are given as [radial distace, azimuth, height]. The radial distance is in the range of [0, 1], where 1 means the surface. The height is given in the range of [-1, 1], where -1 is the bottom of the cylinder and 1 is the top of the cylinder. The azimuth can be given in degrees (d), radians (r), or gradients (g). For a normalized cube, the positions are given as [x, y, z] of a 2 x 2 x 1 paralleliped, with [0, 0, 0] in the middle of the upper surface, giving an x range of [-1, 1], y range of [-1, 1] and z range of [0, 1]. For other shapes, a comment should be added to the xml document to describe the coordinate system.
+      </xs:documentation>
+    </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="ShapeDescriptionValue">
         <xs:attribute name="comment" type="CommentValue"></xs:attribute>
@@ -852,7 +879,7 @@
   <xs:simpleType name="PositionValue">
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
-      <xs:pattern value="\[-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)\s*){2}\]"></xs:pattern>
+      <xs:pattern value="\[-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)?\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)?\s*){2}\]"></xs:pattern>
     </xs:restriction>
   </xs:simpleType>
 
@@ -890,6 +917,13 @@
   </xs:simpleType>
 
   <xs:simpleType name="ShapeDescriptionValue">
+    <xs:annotation>
+      <xs:documentation>
+        For a normalized cylinder, the positions are given as [radial distace, azimuth, height].  The radial distance is in the range of [0, 1], where 1 means the surface.  The height is given in the range of [-1, 1], where -1 is the bottom of the cylinder and 1 is the top of the cylinder.  The azimuth can be given in degrees (d), radians (r), or gradients (g).
+        For a normalized cube, the positions are given as [x, y, z] of a 2 x 2 x 1 paralleliped, with [0, 0, 0] in the middle of the upper surface, giving an x range of [-1, 1], y range of [-1, 1] and z range of [0, 1].
+        For other shapes, a comment should be added to the xml document to describe the coordinate system.
+      </xs:documentation>
+    </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:whiteSpace value="collapse"></xs:whiteSpace>
       <xs:enumeration value="Cylinder"></xs:enumeration>
