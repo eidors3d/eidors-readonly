@@ -1155,7 +1155,22 @@ if (gc != null) {
       This schema represent a collaborative effort to unify the file enconding practices amongst EIT providers.
 
       Electrical impedance tomography (EIT) is a tomographic imaging technique that makes use of electrical currents injected into a body and of the resulting potential field to calculate the spatial distribution of electrical impedance.  This technique showed promising results in various fields of application like earth sciences, industrial process monitoring, and medical imaging.
-    </td>
+    <br /><br />
+      Copyright (C) 2013 Open-EIT Working Group.
+
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program.
+    <br /> More information at: <a title="http://www.gnu.org/licenses/gpl-3.0.html" href="http://www.gnu.org/licenses/gpl-3.0.html">http://www.gnu.org/licenses/gpl-3.0.html</a>.</td>
 </tr>
 </table>
 <h3>Declared Namespaces</h3>
@@ -1230,6 +1245,7 @@ setState('schema_scbox', false);
 <tr>
 <th>Documentation</th>
 <td>
+        This is the root element for an oeit.xml file.  The oeit.xml file should be located in the root directory of the OEIT file.  All sub-elements should be defined using &lt;xinclude .../&gt; tags referencing appropriate files in the /info directory of the OEIT file.
       </td>
 </tr>
 </table>
@@ -3407,6 +3423,12 @@ setState('type_Patient_scbox', false);
 </th>
 <td>no</td>
 </tr>
+<tr>
+<th>Documentation</th>
+<td>
+        For a normalized cylinder, the positions are given as [radial distace, azimuth, height]. The radial distance is in the range of [0, 1], where 1 means the surface. The height is given in the range of [-1, 1], where -1 is the bottom of the cylinder and 1 is the top of the cylinder. The azimuth can be given in degrees (d), radians (r), or gradients (g). For a normalized cube, the positions are given as [x, y, z] of a 2 x 2 x 1 paralleliped, with [0, 0, 0] in the middle of the upper surface, giving an x range of [-1, 1], y range of [-1, 1] and z range of [0, 1]. For other shapes, a comment should be added to the xml document to describe the coordinate system.
+      </td>
+</tr>
 </table>
 <div class="sample box">
 <div>
@@ -3724,6 +3746,12 @@ setState('type_SerialNumber_scbox', false);
 <a title="Look up 'Abstract' in glossary" href="#term_Abstract">Abstract</a>
 </th>
 <td>no</td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>
+        For a normalized cylinder, the positions are given as [radial distace, azimuth, height]. The radial distance is in the range of [0, 1], where 1 means the surface. The height is given in the range of [-1, 1], where -1 is the bottom of the cylinder and 1 is the top of the cylinder. The azimuth can be given in degrees (d), radians (r), or gradients (g). For a normalized cube, the positions are given as [x, y, z] of a 2 x 2 x 1 paralleliped, with [0, 0, 0] in the middle of the upper surface, giving an x range of [-1, 1], y range of [-1, 1] and z range of [0, 1]. For other shapes, a comment should be added to the xml document to describe the coordinate system.
+      </td>
 </tr>
 </table>
 <div class="sample box">
@@ -5644,7 +5672,7 @@ setState('type_PositionDescriptionValue_scbox', false);
 <ul><li>Base XSD Type: string</li></ul>
 <ul>
 <li>
-<em>pattern</em> = \[-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)\s*){2}\]</li>
+<em>pattern</em> = \[-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)?\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)?\s*){2}\]</li>
 <li>
 <em>Whitespace policy: </em><a title="Look up 'collapse' in glossary" href="#term_CollapseWS">collapse</a></li>
 </ul>
@@ -5656,7 +5684,7 @@ setState('type_PositionDescriptionValue_scbox', false);
 <input type="button" id="type_PositionValue_scbox_button" class="control" onclick="switchState('type_PositionValue_scbox'); return false;" style="display: none" /> <span class="caption">Schema Component Representation</span>
 </div>
 <div id="type_PositionValue_scbox" class="contents">
-<div style="margin-left: 0em">&lt;<span class="scTag">xs:simpleType</span> <span class="scTag">name</span>="<span class="scContent">PositionValue</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent"><span class="type"><a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span></span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:whiteSpace</span> <span class="scTag">value</span>="<span class="scContent">collapse</span>"/&gt;</div><div style="margin-left: 1.5em">&lt;<span class="scTag">xs:pattern</span> <span class="scTag">value</span>="<span class="scContent">\[-?\d+(\.\d+)?\s*([YZEPTGMkdcmuµnpfazy]|da)?m\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)\s*){2}\]</span>"/&gt;</div>&lt;/<span class="scTag">xs:restriction</span>&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div></div>
+<div style="margin-left: 0em">&lt;<span class="scTag">xs:simpleType</span> <span class="scTag">name</span>="<span class="scContent">PositionValue</span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:restriction</span> <span class="scTag">base</span>="<span class="scContent"><span class="type"><a href="#ns_xs" title="Find out namespace of 'xs' prefix">xs</a>:string</span></span>"&gt;<div style="margin-left: 1.5em">&lt;<span class="scTag">xs:whiteSpace</span> <span class="scTag">value</span>="<span class="scContent">collapse</span>"/&gt;</div><div style="margin-left: 1.5em">&lt;<span class="scTag">xs:pattern</span> <span class="scTag">value</span>="<span class="scContent">\[-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)?\s*(,\s*-?\d+(\.\d+)?\s*(([YZEPTGMkdcmuµnpfazy]|da)?m|d|r|g)?\s*){2}\]</span>"/&gt;</div>&lt;/<span class="scTag">xs:restriction</span>&gt;</div>&lt;/<span class="scTag">xs:simpleType</span>&gt;</div></div>
 <script type="text/javascript">
 <!--
 setState('type_PositionValue_scbox', false);
@@ -5879,6 +5907,14 @@ setState('type_SerialNumberValue_scbox', false);
 <em>Whitespace policy: </em><a title="Look up 'collapse' in glossary" href="#term_CollapseWS">collapse</a></li>
 </ul>
 </td>
+</tr>
+<tr>
+<th>Documentation</th>
+<td>
+        For a normalized cylinder, the positions are given as [radial distace, azimuth, height].  The radial distance is in the range of [0, 1], where 1 means the surface.  The height is given in the range of [-1, 1], where -1 is the bottom of the cylinder and 1 is the top of the cylinder.  The azimuth can be given in degrees (d), radians (r), or gradients (g).
+        For a normalized cube, the positions are given as [x, y, z] of a 2 x 2 x 1 paralleliped, with [0, 0, 0] in the middle of the upper surface, giving an x range of [-1, 1], y range of [-1, 1] and z range of [0, 1].
+        For other shapes, a comment should be added to the xml document to describe the coordinate system.
+      </td>
 </tr>
 </table>
 <div class="schemaComponent box">
