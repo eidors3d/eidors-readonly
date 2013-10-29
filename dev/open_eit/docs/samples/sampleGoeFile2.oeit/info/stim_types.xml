@@ -1,1 +1,7 @@
-<stim_type_list><stim_type id='CurrentInjection'><amplitude>1 mA</amplitude><frequency>68359.375 Hz</frequency><wave form='Sine' /></stim_type></stim_type_list>
+<stim_type_list>
+  <stim_type id='CurrentInjection'>
+    <amplitude>1 mA</amplitude>
+    <frequency>68359.375 Hz</frequency>
+    <wave form='Sine' />
+  </stim_type>
+</stim_type_list>
