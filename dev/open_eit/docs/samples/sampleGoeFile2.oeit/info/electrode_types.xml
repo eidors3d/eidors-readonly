@@ -1,12 +1,12 @@
 <electrode_type_list>
-  <electrode_type id='electrode_type0' comment='Ground electrode'>
+  <electrode_type id="electrode_type0" comment="Ground electrode">
     <contact_impedance>0.2 Ohms</contact_impedance>
     <diameter>4 mm</diameter>
     <material>Gold-plated Brass</material>
     <manufacturer>Multi-contact</manufacturer>
     <model>ASA400</model>
   </electrode_type>
-  <electrode_type id='electrode_type1'>
+  <electrode_type id="electrode_type1">
     <contact_impedance>0.2 Ohms</contact_impedance>
     <diameter>3 mm</diameter>
     <material>Gold-plated Brass</material>
