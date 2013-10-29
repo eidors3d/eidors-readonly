@@ -46,6 +46,11 @@
   </xs:complexType>
 
   <xs:complexType name="Amplitude">
+    <xs:annotation>
+      <xs:documentation>
+        The amplitude is defined as peak, rather than peak-peak or RMS.
+      </xs:documentation>
+    </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="AmplitudeValue">
         <xs:attribute name="comment" type="CommentValue"></xs:attribute>
