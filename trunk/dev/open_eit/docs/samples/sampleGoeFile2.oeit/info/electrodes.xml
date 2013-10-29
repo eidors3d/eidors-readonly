@@ -2,55 +2,55 @@
   <coordinate_system>Cylindrical</coordinate_system>
   <position_description>Illustrative</position_description>
   <shape_description>Cylinder</shape_description>
-  <electrode id='gnd' type='electrode_type0'>
+  <electrode id="gnd" type="electrode_type0">
     <position>[0, 0, -1]</position>
   </electrode>
-  <electrode id='e1' type='electrode_type1'>
+  <electrode id="e1" type="electrode_type1">
     <position>[1, 0 d, 0]</position>
   </electrode>
-  <electrode id='e2' type='electrode_type1'>
+  <electrode id="e2" type="electrode_type1">
     <position>[1, 22.5 d, 0]</position>
   </electrode>
-  <electrode id='e3' type='electrode_type1'>
+  <electrode id="e3" type="electrode_type1">
     <position>[1, 45 d, 0]</position>
   </electrode>
-  <electrode id='e4' type='electrode_type1'>
+  <electrode id="e4" type="electrode_type1">
     <position>[1, 67.5 d, 0]</position>
   </electrode>
-  <electrode id='e5' type='electrode_type1'>
+  <electrode id="e5" type="electrode_type1">
     <position>[1, 90 d, 0]</position>
   </electrode>
-  <electrode id='e6' type='electrode_type1'>
+  <electrode id="e6" type="electrode_type1">
     <position>[1, 112.5 d, 0]</position>
   </electrode>
-  <electrode id='e7' type='electrode_type1'>
+  <electrode id="e7" type="electrode_type1">
     <position>[1, 135 d, 0]</position>
   </electrode>
-  <electrode id='e8' type='electrode_type1'>
+  <electrode id="e8" type="electrode_type1">
     <position>[1, 157.5 d, 0]</position>
   </electrode>
-  <electrode id='e9' type='electrode_type1'>
+  <electrode id="e9" type="electrode_type1">
     <position>[1, 180 d, 0]</position>
   </electrode>
-  <electrode id='e10' type='electrode_type1'>
+  <electrode id="e10" type="electrode_type1">
     <position>[1, 202.5 d, 0]</position>
   </electrode>
-  <electrode id='e11' type='electrode_type1'>
+  <electrode id="e11" type="electrode_type1">
     <position>[1, 225 d, 0]</position>
   </electrode>
-  <electrode id='e12' type='electrode_type1'>
+  <electrode id="e12" type="electrode_type1">
     <position>[1, 247.5 d, 0]</position>
   </electrode>
-  <electrode id='e13' type='electrode_type1'>
+  <electrode id="e13" type="electrode_type1">
     <position>[1, 270 d, 0]</position>
   </electrode>
-  <electrode id='e14' type='electrode_type1'>
+  <electrode id="e14" type="electrode_type1">
     <position>[1, 292.5 d, 0]</position>
   </electrode>
-  <electrode id='e15' type='electrode_type1'>
+  <electrode id="e15" type="electrode_type1">
     <position>[1, 315 d, 0]</position>
   </electrode>
-  <electrode id='e16' type='electrode_type1'>
+  <electrode id="e16" type="electrode_type1">
     <position>[1, 337.5 d, 0]</position>
   </electrode>
 </electrode_list>

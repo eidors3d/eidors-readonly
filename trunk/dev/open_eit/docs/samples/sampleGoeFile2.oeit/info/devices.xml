@@ -1,5 +1,5 @@
 <device_list>
-  <device id='device01'>
+  <device id="device01">
     <manufacturer>University of Goettingen</manufacturer>
     <serial_number>1234567890-2255-132</serial_number>
   </device>
