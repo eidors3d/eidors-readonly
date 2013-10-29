@@ -1,6 +1,6 @@
 <meas_type_list>
   <meas_type id="Voltage">
-    <frequency>5 MHz</frequency>
+    <frequency>68359.375 Hz</frequency>
     <multiplier>1</multiplier>
     <offset>0</offset>
     <field_list>
