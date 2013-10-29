@@ -48,7 +48,7 @@
   <xs:complexType name="Amplitude">
     <xs:annotation>
       <xs:documentation>
-        The amplitude is defined as peak, rather than peak-peak or RMS.
+        The amplitude is defined as peak (Amplitude a = aMax * sin(xt)), rather than peak-peak or RMS.
       </xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
