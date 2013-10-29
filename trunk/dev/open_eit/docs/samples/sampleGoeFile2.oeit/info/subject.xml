@@ -1,1 +1,7 @@
-<subject><height>400 mm</height><radius>290 mm</radius><waterlevel>222 mm</waterlevel><waterconductivity>1.6 S/m</waterconductivity><manufacturer>tankmanufacturer AG</manufacturer></subject>
+<subject>
+  <height>400 mm</height>
+  <radius>290 mm</radius>
+  <waterlevel>222 mm</waterlevel>
+  <waterconductivity>1.6 S/m</waterconductivity>
+  <manufacturer>tankmanufacturer AG</manufacturer>
+</subject>

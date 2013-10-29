@@ -1,1 +1,15 @@
-<stream_list><stream id='get_stream' device='device01'><process><repeat><decode frame='get_frame'/></repeat></process><file_list><file name='/eit/0000/00000.sframes'></file></file_list><log_list><log name='/logs/0000/00001.log'></log></log_list></stream></stream_list>
+<stream_list>
+  <stream id='get_stream' device='device01'>
+    <process>
+      <repeat>
+        <decode frame='get_frame'/>
+      </repeat>
+    </process>
+    <file_list>
+      <file name='/eit/0000/00000.sframes'></file>
+    </file_list>
+    <log_list>
+      <log name='/logs/0000/00001.log'></log>
+    </log_list>
+  </stream>
+</stream_list>
