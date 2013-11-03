@@ -133,6 +133,7 @@ catch
    do_calc = true;
 end
 if ~do_calc, return, end
+eidors_msg('inv_solve: Calculating solution error (inv_model.inv_solve.calc_solution_error = 0 to disable)',2);
 try
    if opts.abs_solve
       img.error = calc_solution_error( imgc, inv_model, fdata);
