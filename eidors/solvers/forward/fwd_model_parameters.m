@@ -68,35 +68,9 @@ end
 %  N2E = sparse(1:n_elec, n+ (1:n_elec), 1, n_elec, n+n_elec);
 %  pp.QQ= sparse(n+n_elec,p);
 
-cem_electrodes= 0; % num electrodes part of Compl. Elec Model
-N2E = sparse(n_elec, n+n_elec);
+[N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
+
 pp.QQ= sparse(n+n_elec,p);
-
-for i=1:n_elec
-    try
-        elec_nodes = fwd_model.electrode(i).nodes;
-    catch
-        break; %Not a real electrode so don't include
-    end
-    if length(elec_nodes) ==1 % point electrode (maybe inside body)
-       N2E(i, elec_nodes) = 1;
-    elseif length(elec_nodes) ==0
-       error('zero length electrode specified');
-    else
-       bdy_idx= find_electrode_bdy( bdy, [], elec_nodes);
-
-       if ~isempty(bdy_idx) % CEM electrode
-          cem_electrodes = cem_electrodes+1;
-          N2E(i, n+cem_electrodes) =1;
-       else % point electrodes
-            % FIXME: make current defs between point electrodes and CEMs compatible
-          [bdy_idx,srf_area]= find_electrode_bdy( fwd_model.boundary, ...
-                         fwd_model.nodes, elec_nodes);
-          N2E(i, elec_nodes) = srf_area/sum(srf_area);
-       end
-    end
-end
-N2E = N2E(:, 1:(n+cem_electrodes));
 pp.QQ= pp.QQ(1:(n+cem_electrodes),:);
 
 
@@ -114,7 +88,7 @@ for i=1:p
        error('no stim_patterns or interior_sources provided for pattern #%d',i);
     end
     
-    PP.qQ(:,i) = src;
+    PP.QQ(:,i) = src;
     n_meas = n_meas + size(stim(i).meas_pattern,1);
 end
 
@@ -200,3 +174,44 @@ function VOLUME = element_volume( NODE, ELEM, e, d)
    eidors_obj('set-cache', {NODE,ELEM}, 'element_volume', VOLUME);
    eidors_msg('element_volume: setting cached value', 4);
 
+
+function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
+   cache_obj = {fwd_model.electrode, fwd_model.nodes, fwd_model.elems };
+   cache_ret = eidors_obj('get-cache', cache_obj, 'calculate_N2E');
+   if ~isempty(cache_ret)
+      eidors_msg('calculate_N2E: using cached value', 4);
+      N2E = cache_ret{1};
+      cem_electrodes = cache_ret{2};
+      return
+   end
+
+   cem_electrodes= 0; % num electrodes part of Compl. Elec Model
+   N2E = sparse(n_elec, n+n_elec);
+   for i=1:n_elec
+       try
+           elec_nodes = fwd_model.electrode(i).nodes;
+       catch
+           break; %Not a real electrode so don't include
+       end
+       if length(elec_nodes) ==1 % point electrode (maybe inside body)
+          N2E(i, elec_nodes) = 1;
+       elseif length(elec_nodes) ==0
+          error('zero length electrode specified');
+       else
+          bdy_idx= find_electrode_bdy( bdy, [], elec_nodes);
+
+          if ~isempty(bdy_idx) % CEM electrode
+             cem_electrodes = cem_electrodes+1;
+             N2E(i, n+cem_electrodes) =1;
+          else % point electrodes
+               % FIXME: make current defs between point electrodes and CEMs compatible
+             [bdy_idx,srf_area]= find_electrode_bdy( bdy, ...
+                            fwd_model.nodes, elec_nodes);
+             N2E(i, elec_nodes) = srf_area/sum(srf_area);
+          end
+       end
+   end
+   N2E = N2E(:, 1:(n+cem_electrodes));
+
+   eidors_obj('set-cache', cache_obj, 'calculate_N2E', {N2E, cem_electrodes});
+   eidors_msg('calculate_N2E: setting cached value', 4);
