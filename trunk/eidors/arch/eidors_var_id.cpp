@@ -59,9 +59,10 @@
 #if ULONG_MAX == 0xffffffff
 /* OK 32-bit */
 #elif ULONG_MAX == 0xffffffffffffffff
-   #warning "Compile with: mex -largeArrayDims flag."
-   #warning "otherwise matlab gives a stupid runtime error"
-   #warning "(this message is always printed"
+   #warning Make sure that you are compiling this with: \
+                    mex -largeArrayDims flag. \
+            otherwise matlab gives a stupid runtime error \
+            (this message is always printed)
 #else
    #warning "System does not appear to be 32 or 64 bit"
 #endif
