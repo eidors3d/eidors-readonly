@@ -55,35 +55,7 @@ catch
    n_elec= 0;
 end
 
-% calculate element volume and surface area
-pp.VOLUME=zeros(e,1);
-ones_d = ones(1,d);
-d1fac = prod( 1:d-1 );
-if d > size(pp.NODE,1)
-   for i=1:e
-       this_elem = pp.NODE(:,pp.ELEM(:,i)); 
-       pp.VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
-   end
-elseif d == 3 % 3D nodes in 2D mesh
-   for i=1:e
-       this_elem = pp.NODE(:,pp.ELEM(:,i)); 
-       d12= det([ones_d;this_elem([1,2],:)])^2;
-       d13= det([ones_d;this_elem([1,3],:)])^2;
-       d23= det([ones_d;this_elem([2,3],:)])^2;
-       pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
-   end
-elseif d == 2 % 3D nodes in 1D mesh (ie resistor mesh)
-   for i=1:e
-       this_elem = pp.NODE(:,pp.ELEM(:,i)); 
-       d12= det([ones_d;this_elem([1],:)])^2;
-       d13= det([ones_d;this_elem([2],:)])^2;
-       d23= det([ones_d;this_elem([3],:)])^2;
-       pp.VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
-   end
-else
-   warning('mesh size not understood when calculating volumes')
-   pp.VOLUME = NaN;
-end
+pp.VOLUME= element_volume( pp.NODE, pp.ELEM, e, d );
 
 if isfield(fwd_model,'boundary')
     bdy = double( fwd_model.boundary ); % double because of stupid matlab bugs
@@ -142,7 +114,7 @@ for i=1:p
        error('no stim_patterns or interior_sources provided for pattern #%d',i);
     end
     
-    pp.QQ(:,i) = src;
+    PP.qQ(:,i) = src;
     n_meas = n_meas + size(stim(i).meas_pattern,1);
 end
 
@@ -157,3 +129,74 @@ pp.n_meas   = n_meas;
 pp.N2E      = N2E;
 pp.boundary = bdy;
 pp.normalize = mdl_normalize(fwd_model);
+
+
+% calculate element volume and surface area
+function VOLUME = element_volume( NODE, ELEM, e, d)
+   VOLUME = eidors_obj('get-cache', {NODE,ELEM}, 'element_volume');
+   if ~isempty(VOLUME)
+      eidors_msg('element_volume: using cached value', 4);
+      return
+   end
+
+   VOLUME=zeros(e,1);
+   ones_d = ones(1,d);
+   d1fac = prod( 1:d-1 );
+   if d > size(NODE,1)
+      for i=1:e
+          this_elem = NODE(:,ELEM(:,i)); 
+          VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+      end
+   elseif d == 3 % 3D nodes in 2D mesh
+      for i=1:e
+          this_elem = NODE(:,ELEM(:,i)); 
+          d12= det([ones_d;this_elem([1,2],:)])^2;
+          d13= det([ones_d;this_elem([1,3],:)])^2;
+          d23= det([ones_d;this_elem([2,3],:)])^2;
+          VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+      end
+   elseif d == 2 % 3D nodes in 1D mesh (ie resistor mesh)
+      for i=1:e
+          this_elem = NODE(:,ELEM(:,i)); 
+          d12= det([ones_d;this_elem([1],:)])^2;
+          d13= det([ones_d;this_elem([2],:)])^2;
+          d23= det([ones_d;this_elem([3],:)])^2;
+          VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+      end
+   else
+      warning('mesh size not understood when calculating volumes')
+      VOLUME = NaN;
+   end
+   % calculate element volume and surface area
+   VOLUME=zeros(e,1);
+   ones_d = ones(1,d);
+   d1fac = prod( 1:d-1 );
+   if d > size(NODE,1)
+      for i=1:e
+          this_elem = NODE(:,ELEM(:,i)); 
+          VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
+      end
+   elseif d == 3 % 3D nodes in 2D mesh
+      for i=1:e
+          this_elem = NODE(:,ELEM(:,i)); 
+          d12= det([ones_d;this_elem([1,2],:)])^2;
+          d13= det([ones_d;this_elem([1,3],:)])^2;
+          d23= det([ones_d;this_elem([2,3],:)])^2;
+          VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+      end
+   elseif d == 2 % 3D nodes in 1D mesh (ie resistor mesh)
+      for i=1:e
+          this_elem = NODE(:,ELEM(:,i)); 
+          d12= det([ones_d;this_elem([1],:)])^2;
+          d13= det([ones_d;this_elem([2],:)])^2;
+          d23= det([ones_d;this_elem([3],:)])^2;
+          VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
+      end
+   else
+      warning('mesh size not understood when calculating volumes')
+      VOLUME = NaN;
+   end
+
+   eidors_obj('set-cache', {NODE,ELEM}, 'element_volume', VOLUME);
+   eidors_msg('element_volume: setting cached value', 4);
+
