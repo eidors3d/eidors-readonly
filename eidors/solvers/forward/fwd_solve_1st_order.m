@@ -45,30 +45,15 @@ v= zeros(pp.n_node,pp.n_stim);
 v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:));
 
 % calc voltage on electrodes
-v_els= pp.N2E * v;
 
-try
-    % measured voltages from v
-    vv = zeros( pp.n_meas, 1 );
-    idx=0;
-    for i=1:pp.n_stim
-       meas_pat= fwd_model.stimulation(i).meas_pattern;
-       n_meas  = size(meas_pat,1);
-       vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
-       idx= idx+ n_meas;
-    end
-catch err
-   if strcmp(err.identifier, 'MATLAB:innerdim');
-       error(['measurement pattern not compatible with number' ...
-               'of electrodes for stimulation patter %d'],i);
-   else
-       rethrow(err);
-   end
-end
+% This is horribly inefficient, override
+% v_els= pp.N2E * v;
+idx = find(any(pp.N2E));
+v_els= pp.N2E(:,idx) * v(idx,:);
 
 
 % create a data structure to return
-data.meas= vv;
+data.meas= meas_from_v_els(v_els, fwd_model.stimulation);
 data.time= NaN; % unknown
 data.name= 'solved by fwd_solve_1st_order';
 try; if img.fwd_solve.get_all_meas == 1
@@ -78,6 +63,54 @@ try; if img.fwd_solve.get_all_nodes== 1
    data.volt = v;                % all, including CEM nodes
 end; end
 
+function vv = meas_from_v_els( v_els, stim)
+   try
+% Was 1.82s
+%        % measured voltages from v
+%    %   vv = zeros( pp.n_meas, 1 );
+%        idx=0;
+%        for i=1:length(stim)
+%           meas_pat= stim(i).meas_pattern;
+%           n_meas  = size(meas_pat,1);
+%           vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
+%           idx= idx+ n_meas;
+%        end
+
+% This code replaced the previous - Nov 4, 2013
+% Now 0.437s
+% Why is it faster??
+
+       [n_elec,n_stim] = size(v_els);
+
+       cache_obj = {stim};
+       v2meas = eidors_obj('get-cache', cache_obj, 'v2meas');
+       if ~isempty(v2meas)
+          eidors_msg('v2meas: using cached value', 4);
+       else
+          v2meas = sparse(n_elec*n_stim,0);
+          for i=1:n_stim
+             meas_pat= stim(i).meas_pattern;
+             n_meas  = size(meas_pat,1);
+             v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
+          end
+           eidors_obj('set-cache', cache_obj, 'v2meas', v2meas);
+           eidors_msg('v2meas: setting cached value', 4);
+       end
+       vv = v2meas' * v_els(:);
+   catch err
+      if strcmp(err.identifier, 'MATLAB:innerdim');
+          error(['measurement pattern not compatible with number' ...
+                  'of electrodes for stimulation patter %d'],i);
+      else
+          rethrow(err);
+      end
+   end
+
+
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
    vh = fwd_solve_1st_order(img);
+plot(vh.meas);
+   img.fwd_solve.get_all_meas = 1;
+   vh = fwd_solve_1st_order(img);
+plot(vh.volt);
