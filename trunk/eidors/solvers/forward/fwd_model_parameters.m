@@ -88,7 +88,7 @@ for i=1:p
        error('no stim_patterns or interior_sources provided for pattern #%d',i);
     end
     
-    PP.QQ(:,i) = src;
+    pp.QQ(:,i) = src;
     n_meas = n_meas + size(stim(i).meas_pattern,1);
 end
 
