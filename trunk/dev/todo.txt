@@ -1,5 +1,8 @@
 ############## 3.8 ################
 
+ - Sparse matrix efficiency. Is there a way to 
+    generalize the idx operations now in fwd_model_1st_order?
+
  - Full OEIT v1.1 support
 
  - Check caching efficiency and timing bugs
