@@ -37,24 +37,6 @@ if ~ismember(img.current_physics, supported_physics)
     'JACOBIAN_MOVEMENT',img.current_physics);
 end
 
-% System matrix and its parameters
-pp = fwd_model_parameters( fwd_model );
-pp.dfact = factorial(pp.n_dims);
-pp.DEBUG = 0;
-if pp.DEBUG
-    pp.ss_mat = calc_unconnected_system_mat( fwd_model, img);
-    pp.fwd_meas =fwd_solve( fwd_model, img);
-end
-
-%Tensor product for conductivity matrix %MC 25/05/2012
-I_nd=speye(pp.n_dims+1); 
-sigma_mat=spdiags(img.elem_data,0,pp.n_elem,pp.n_elem);
-pp.kron_cond=kron(sigma_mat,I_nd);
-
-pp.Ce= connectivity_matrix( pp );
-s_mat= calc_system_mat( img );
-[pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
-
 ws = warning('query','EIDORS:OverwritingData');
 warning off EIDORS:OverwritingData
 if isfield(fwd_model,'conductivity_jacobian')
@@ -67,8 +49,37 @@ else
 end
 warning(ws.state,'EIDORS:OverwritingData');
 
+% the rest of the calculations require a conductivity image
+img = convert_units(img, 'conductivity');
+
+% System matrix and its parameters
+pp = fwd_model_parameters( fwd_model );
+pp.dfact = factorial(pp.n_dims);
+pp.DEBUG = 0;
+if pp.DEBUG
+    pp.ss_mat = calc_unconnected_system_mat( fwd_model, img);
+    pp.fwd_meas =fwd_solve( fwd_model, img);
+end
+
+%Tensor product for conductivity matrix %MC 25/05/2012
+I_nd=speye(pp.n_dims+1);
+sigma_mat=spdiags(img.elem_data,0,pp.n_elem,pp.n_elem);
+pp.kron_cond=kron(sigma_mat,I_nd);
+
+pp.Ce= connectivity_matrix( pp );
+s_mat= calc_system_mat( img );
+[pp.Vc, pp.Re] = Vc_Re_matrices( pp, fwd_model, s_mat.E );
+
+
 
 Jm = calc_movement_jacobian(pp, fwd_model, img);
+
+% hack to allow working with 3d-2d dual models
+try 
+   pp.n_dims = fwd_model.jacobian_movement.n_dims;
+end
+Jm = Jm(:,1:pp.n_elec*pp.n_dims);
+
 J=[Jc,Jm];
 
 if pp.normalize
@@ -537,4 +548,7 @@ function unit_test_3d_inv_solve1
  
    
    function str = supported_physics
-    str = {'conductivity'};
+        str = {'conductivity'
+           'resistivity'
+           'log_conductivity'
+           'log_resistivity'};
