@@ -176,7 +176,12 @@ function VOLUME = element_volume( NODE, ELEM, e, d)
 
 
 function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
-   cache_obj = {fwd_model.electrode, fwd_model.nodes, fwd_model.elems };
+   if n_elec == 0
+      electrode = fwd_model.electrode;
+   else
+      electrode = [];
+   end
+   cache_obj = {electrode, fwd_model.nodes, fwd_model.elems};
    cache_ret = eidors_obj('get-cache', cache_obj, 'calculate_N2E');
    if ~isempty(cache_ret)
       eidors_msg('calculate_N2E: using cached value', 4);
