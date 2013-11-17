@@ -176,7 +176,7 @@ function VOLUME = element_volume( NODE, ELEM, e, d)
 
 
 function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
-   if n_elec == 0
+   if n_elec ~= 0
       electrode = fwd_model.electrode;
    else
       electrode = [];
