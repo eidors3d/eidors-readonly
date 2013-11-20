@@ -1,7 +1,3 @@
-clc;
-clear all;
-
-run EIDORS/startup;
 
 %Import the reference mesh
 [ref_mdl, mat_indices]= ls_gmsh_mk_fwd_model('mesh/verify_2D_fine.msh', 'square', 'elec',[], 0.01);
