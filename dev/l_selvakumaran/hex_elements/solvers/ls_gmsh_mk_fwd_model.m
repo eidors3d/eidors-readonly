@@ -74,6 +74,7 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
     mdl.system_mat=     'ls_system_mat_1st_order';
 
     fwd_mdl= eidors_obj('fwd_model', mdl);
+    fwd_mdl= mdl_normalize(fwd_mdl, 0);
 
 % Output cell array of indices into each material type
 %   array order is sorted by length of material type
