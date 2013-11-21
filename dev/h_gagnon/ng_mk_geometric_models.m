@@ -76,9 +76,12 @@ function [fmdl, mat_idx] = ng_mk_geometric_models(body_geometry, electrode_geome
 %                     that are part of the mesh are indicated in mat_idx
 %                     output argument. (false)
 %
-% max_element_size:   This parameter is used to adjust the maximum size of
+% max_edge_length:    This parameter is used to adjust the maximum size of
 %                     the element composing the mesh. It can only be used
 %                     at the top level of each geometry description. (inf)
+%
+% name:               This parameter is used to name the geometry
+%                     description.
 %
 % ortho_brick:        An ortho-brick is described by the following
 %                     subfields: opposite_corner_a ([0; 0; 0]),
@@ -208,6 +211,20 @@ function [fmdl_mat_idx] = mk_geometric_models(body_geometry, electrode_geometry)
     fn_prefix = tempname;
     geo_fn    = [fn_prefix, '.geo'];
     vol_fn    = [fn_prefix, '.vol'];
+   
+     % Add body names if unspecified.   
+    for i = 1:numel(body_solid_code)
+        if (isempty(body_extra_param{i}.name))
+            body_extra_param{i}.name = sprintf('body%04d', i);
+        end
+    end
+    
+    % Add electrode names if unspecified.
+    for i = 1:numel(electrode_solid_code)
+        if (isempty(electrode_extra_param{i}.name))
+            electrode_extra_param{i}.name = sprintf('electrode%04d', i);
+        end
+    end
 
     % Write geo file for netgen.
     write_geo_file(geo_fn, body_solid_code, electrode_solid_code, body_extra_code, electrode_extra_code, body_extra_param, electrode_extra_param);
@@ -339,9 +356,10 @@ function [extra_code extra_param] = parse_geometry_point(geometry)
     % Initialize extra param values to default values.
     extra_code                     = '';
     extra_param.point              = [];
-    extra_param.max_element_size   = inf;
+    extra_param.max_edge_length    = inf;
     extra_param.enter_body_flag    = false;
-    extra_param.keep_material_flag = false;   
+    extra_param.keep_material_flag = false;
+    extra_param.name               = '';
 
     % Check if geometry is a point, return otherwise. 
     if (isfield(geometry, 'point'))
@@ -356,7 +374,11 @@ function [extra_code extra_param] = parse_geometry_point(geometry)
         
         % Check if it is the only field names.
         if (n_fields ~= 1)
-            error('Field name "point" must be used as a single field.');
+            if (isfield(geometry, 'name'))
+                extra_param.name = geometry.name;
+            else
+                error('Field name "point" must be used as a single field.');
+            end
         end
         
         % Check point is 3D.
@@ -376,9 +398,10 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
     extra_code = '';
     
     % Initialize extra param values to default values.
-    extra_param.max_element_size    = inf;
+    extra_param.max_edge_length     = inf;
     extra_param.enter_body_flag     = false;
-    extra_param.keep_material_flag  = false;    
+    extra_param.keep_material_flag  = false;
+    extra_param.name                = '';
     
     % If called from top_level, operators default to or.
     if (nargin == 1)
@@ -411,15 +434,26 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
             else
                  geo_code = [geo_code '('];
             end
-            % Process max_element_size field.
-            if (isfield(geometry(i), 'max_element_size'))
+            % Process name field.
+            if (isfield(geometry(i), 'name'))
                 if (~top_level_flag)
-                    error('Field "max_element_size" can only be specified at the top level of the geometry description');
+                    error('Field "name" can only be specified at the top level of the geometry description');
                 end
-                extra_param.max_element_size = geometry(i).max_element_size;
+                extra_param.name = geometry(i).name;
 
-                if (isempty(extra_param.max_element_size) || ~isscalar(extra_param.max_element_size) || ~isnumeric(extra_param.max_element_size) || ~isreal(extra_param.max_element_size) || extra_param.max_element_size <= 0)
-                    error('max_element_size value is not valid.');
+                if (isempty(extra_param.name) || ~ischar(extra_param.name))
+                    error('name value is not valid.');
+                end
+            end
+           % Process max_edge_length field.
+            if (isfield(geometry(i), 'max_edge_length'))
+                if (~top_level_flag)
+                    error('Field "max_edge_length" can only be specified at the top level of the geometry description');
+                end
+                extra_param.max_edge_length = geometry(i).max_edge_length;
+
+                if (isempty(extra_param.max_edge_length) || ~isscalar(extra_param.max_edge_length) || ~isnumeric(extra_param.max_edge_length) || ~isreal(extra_param.max_edge_length) || extra_param.max_edge_length <= 0)
+                    error('max_edge_length value is not valid.');
                 end
             end
             % Process enter_body_flag field.
@@ -448,7 +482,7 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
             end  
             first_internal_term = 1;
             for j = 1:n_fields
-                if (~isempty(geometry(i).(field_names{j})) && ~strcmp(field_names{j}, 'complement_flag') && ~strcmp(field_names{j}, 'max_element_size') && ~strcmp(field_names{j}, 'keep_material_flag') && ~strcmp(field_names{j}, 'enter_body_flag'))
+                if (~isempty(geometry(i).(field_names{j})) && ~strcmp(field_names{j}, 'complement_flag') && ~strcmp(field_names{j}, 'name') && ~strcmp(field_names{j}, 'max_edge_length') && ~strcmp(field_names{j}, 'keep_material_flag') && ~strcmp(field_names{j}, 'enter_body_flag'))
                     if (first_internal_term)
                         first_internal_term = 0;
                     else
@@ -501,7 +535,7 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
                             extra_code = [extra_code extra_code_temp];
                         otherwise
                             error(['Field name "%s" is not valid for a geometry.\nAvailable field names for a geometry are: '...
-                                   'complement_flag, intersection, union, body_of_extrusion, body_of_revolution, cone, cylinder, ellipsoid, elliptic_cylinder, half_space, ortho_brick, parallelepiped, point, sphere, keep_material_flag, enter_body_flag, and max_element_size.'], field_names{j});
+                                   'complement_flag, intersection, union, body_of_extrusion, body_of_revolution, cone, cylinder, ellipsoid, elliptic_cylinder, half_space, ortho_brick, parallelepiped, point, sphere, keep_material_flag, enter_body_flag, name, and max_edge_length.'], field_names{j});
                     end
                 end
             end
@@ -1275,8 +1309,8 @@ function write_geo_file(geo_fn, body_solid_code, electrode_solid_code, body_extr
     total_body_solid = '(';
    
     for i = 1:numel(body_solid_code)
-        total_body_solid = [total_body_solid sprintf('body%04d', i)];
-        
+        total_body_solid = [total_body_solid body_extra_param{i}.name];
+
         if (i < numel(body_solid_code))
             total_body_solid = [total_body_solid ' or '];
         else
@@ -1293,7 +1327,7 @@ function write_geo_file(geo_fn, body_solid_code, electrode_solid_code, body_extr
             if (n_total_electrode_solid > 0)
                 total_electrode_solid = [total_electrode_solid ' or '];
             end
-            total_electrode_solid = [total_electrode_solid sprintf('electrode%04d', i)];
+            total_electrode_solid = [total_electrode_solid electrode_extra_param{i}.name];
             n_total_electrode_solid = n_total_electrode_solid + 1;
         end
     end
@@ -1315,43 +1349,43 @@ function write_geo_file(geo_fn, body_solid_code, electrode_solid_code, body_extr
     % Write electrode solids that enter the body in geo file.
     for i = 1:numel(electrode_solid_code)
         if (~isempty(electrode_solid_code{i}) && electrode_extra_param{i}.enter_body_flag)
-            fprintf(fid, 'solid electrode%04d = %s;\n\n', i, electrode_solid_code{i});
+            fprintf(fid, 'solid %s = %s;\n\n', electrode_extra_param{i}.name, electrode_solid_code{i});
         end
     end
     
     % Write body solids in geo file.
     for i = 1:numel(body_solid_code)
         if (n_total_electrode_solid == 0)
-            fprintf(fid, 'solid body%04d = %s;\n\n', i, body_solid_code{i});
+            fprintf(fid, 'solid %s = %s;\n\n', body_extra_param{i}.name, body_solid_code{i});
         else
-            fprintf(fid, 'solid body%04d = not %s and %s;\n\n', i, total_electrode_solid, body_solid_code{i});            
+            fprintf(fid, 'solid %s = not %s and %s;\n\n', body_extra_param{i}.name, total_electrode_solid, body_solid_code{i});            
         end
     end
  
     % Write electrode solids that do not enter the body in geo file.
     for i = 1:numel(electrode_solid_code)
         if (~isempty(electrode_solid_code{i}) && ~electrode_extra_param{i}.enter_body_flag)
-            fprintf(fid, 'solid electrode%04d = not %s and %s;\n\n', i, total_body_solid, electrode_solid_code{i});
+            fprintf(fid, 'solid %s = not %s and %s;\n\n', electrode_extra_param{i}.name, total_body_solid, electrode_solid_code{i});
         end
     end
     
     % Write electrode tlos in geo file.
     for i = 1:numel(electrode_solid_code)
         if (~isempty(electrode_solid_code{i}))
-            if (isinf(electrode_extra_param{i}.max_element_size))
-                fprintf(fid, 'tlo electrode%04d -col=[1,0,0] -material=electrode%04d;\n', i, i);
+            if (isinf(electrode_extra_param{i}.max_edge_length))
+                fprintf(fid, 'tlo %s -col=[1,0,0] -material=%s;\n', electrode_extra_param{i}.name, electrode_extra_param{i}.name);
             else
-                fprintf(fid, 'tlo electrode%04d -col=[1,0,0] -material=electrode%04d -maxh=%g;\n', i, i, electrode_extra_param{i}.max_element_size);          
+                fprintf(fid, 'tlo %s -col=[1,0,0] -material=%s -maxh=%g;\n', electrode_extra_param{i}.name, electrode_extra_param{i}.name, electrode_extra_param{i}.max_edge_length);          
             end
         end
     end
     
     % Write body tlos in geo file.
     for i = 1:numel(body_solid_code)
-        if (isinf(body_extra_param{i}.max_element_size))
-            fprintf(fid, 'tlo body%04d -col=[0,1,0] -material=body%04d;\n', i, i);
+        if (isinf(body_extra_param{i}.max_edge_length))
+            fprintf(fid, 'tlo %s -col=[0,1,0] -material=%s;\n', body_extra_param{i}.name, body_extra_param{i}.name);
         else
-            fprintf(fid, 'tlo body%04d -col=[0,1,0] -material=body%04d -maxh=%g;\n', i, i, body_extra_param{i}.max_element_size);            
+            fprintf(fid, 'tlo %s -col=[0,1,0] -material=%s -maxh=%g;\n', body_extra_param{i}.name, body_extra_param{i}.name, body_extra_param{i}.max_edge_length);            
         end
     end
     
@@ -1475,10 +1509,15 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
         material_name   = materials{i, 2};
         material_number = materials{i, 1};
         
-        if (strncmp(material_name, 'electrode', 9))
-            % Extract electrode number from material_name
-            electrode_number = str2double(material_name(10:end));
-            electrode_material(electrode_number) = material_number;
+%         if (strncmp(material_name, 'electrode', 9))
+%             % Extract electrode number from material_name
+%             electrode_number = str2double(material_name(10:end));
+%             electrode_material(electrode_number) = material_number;
+%         end
+        for j = 1:numel(electrode_extra_param)
+            if (strcmp(material_name, electrode_extra_param{j}.name))
+                electrode_material(j) = material_number;
+            end
         end
     end
    
@@ -1569,6 +1608,10 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
 
             % Assign default contact impedance.
             fmdl.electrode(i).z_contact = 0.01;
+            
+            if (~isempty(electrode_extra_param{i}.name))
+                fmdl.electrode(i).name = electrode_extra_param{i}.name;
+            end
         end
     end
 
@@ -1600,6 +1643,7 @@ function fmdl = complete_fmdl(fmdl, electrode_extra_param)
             % Find node closest to the electrode point.
             [unused, min_idx]       = min(sum((fmdl.nodes - electrode_points).^2, 2));
             fmdl.electrode(i).nodes = min_idx(1);
+            fmdl.electrode(i).boundary = [];
 
             % Assign default contact impedance.
             fmdl.electrode(i).z_contact = 0.01;
@@ -1613,6 +1657,7 @@ function do_unit_test
         eidors_msg('ng_mk_geometric_models: unit_test %02d', tn, 1);
         fmdl = do_test_number(tn);
         show_fem(fmdl);
+        drawnow;
     end
 
 function fmdl = do_test_number(tn)
@@ -1815,15 +1860,15 @@ function fmdl = do_test_number(tn)
             end;
             fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
         case 18
-            body_geometry.parallelepiped = struct;
-            body_geometry.max_element_size = 0.15;
+            body_geometry.parallelepiped  = struct;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 19
             body_geometry.parallelepiped.vertex   = [ 0;  0;  0];
             body_geometry.parallelepiped.vector_a = [ 1;  1;  0];
             body_geometry.parallelepiped.vector_b = [ 0;  1;  1];
             body_geometry.parallelepiped.vector_c = [ 1;  0;  1];
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 20
             body_geometry.intersection.ortho_brick.opposite_corner_a = [-15, -15, 0];
@@ -1856,32 +1901,34 @@ function fmdl = do_test_number(tn)
             fmdl = ng_mk_geometric_models(body_geometry);
         case 25
             body_geometry.body_of_revolution = struct;
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 26
             body_geometry.body_of_revolution.points   = [1 1; 1 2; 2 1.5; 2 1];
             body_geometry.body_of_revolution.segments = [1 2; 2 3; 3 4; 4 1];
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 27
             n_points = 24;
             theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
             body_geometry.body_of_revolution.points   = 2 + [sin(theta) cos(theta)];
             body_geometry.body_of_revolution.segments = [(1:n_points)' [(2:n_points) 1]'];
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 28
             n_points = 24;
             theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
             body_geometry.body_of_revolution.points   = 2 + [sin(theta) cos(theta)];
             body_geometry.body_of_revolution.segments = [(1:2:n_points)' (2:2:n_points)' [(3:2:n_points) 1]'];
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 29
             body_geometry{1}.cylinder(1).radius        = 0.5;
             body_geometry{1}.cylinder(1).top_center    = [0 0 0.75];
-            body_geometry{1}.cylinder(1).bottom_center = [0 0 0.25];           
+            body_geometry{1}.cylinder(1).bottom_center = [0 0 0.25];
+            body_geometry{1}.name                      = 'Object';           
             body_geometry{2}.cylinder(2).radius        = 1;
+            body_geometry{2}.name                      = 'Tank';
             n_elect = 16;
             theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
             for i = 1:n_elect
@@ -1892,8 +1939,10 @@ function fmdl = do_test_number(tn)
             fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
         case 30
             body_geometry{1}.sphere.radius     = 0.25;
-            body_geometry{1}.sphere.center     = [0 0 0.5];         
+            body_geometry{1}.sphere.center     = [0 0 0.5];
+            body_geometry{1}.name              = 'Sphere';
             body_geometry{2}.cylinder.radius   = 1;
+            body_geometry{2}.name              = 'Tank';           
             n_elect = 16;
             theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
             for i = 1:n_elect
@@ -1905,17 +1954,19 @@ function fmdl = do_test_number(tn)
             n_sphere = 8;
             theta = linspace(0, 2*pi, n_sphere+1); theta(end) = [];   
             for i = 1:n_sphere
-                body_geometry{i}.sphere.radius = 0.2;
-                body_geometry{i}.sphere.center = [0.65*cos(theta(i)) 0.65*sin(theta(i)) 0.5];  
-                body_geometry{i}.max_element_size =  0.025*(1 + rem(i,2));
+                body_geometry{i}.sphere.radius   = 0.2;
+                body_geometry{i}.sphere.center   = [0.65*cos(theta(i)) 0.65*sin(theta(i)) 0.5];  
+                body_geometry{i}.max_edge_length = 0.025*(1 + rem(i,2));
+                body_geometry{i}.name            = sprintf('Sphere%d', i);  
             end        
-            body_geometry{n_sphere+1}.cylinder.radius   = 1;
+            body_geometry{n_sphere+1}.cylinder.radius = 1;
+            body_geometry{n_sphere+1}.name            = 'Tank';  
             n_elect = 16;
             theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
             for i = 1:n_elect
                 electrode_geometry{i}.sphere.center = [cos(theta(i)) sin(theta(i)) 0.5];
                 electrode_geometry{i}.sphere.radius = 0.1;
-                electrode_geometry{i}.max_element_size = 0.025*(1 + rem(i,2));
+                electrode_geometry{i}.max_edge_length = 0.025*(1 + rem(i,2));
             end
             fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
        case 32
@@ -1933,20 +1984,22 @@ function fmdl = do_test_number(tn)
             for i = 1:n_elect
                 if (rem(i,2))
                     electrode_geometry{i}.point = [cos(theta(i)) sin(theta(i)) 0.5];
+                    electrode_geometry{i}.name  = sprintf('Point_Electrode%d', ceil(i/2));
                 else
                     electrode_geometry{i}.sphere.center = [cos(theta(i)) sin(theta(i)) 0.5];
                     electrode_geometry{i}.sphere.radius = 0.1;
+                    electrode_geometry{i}.name          = sprintf('Circular_Electrode%d', floor(i/2));
                 end
             end
             fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
        case 34
             body_geometry.body_of_extrusion = struct;
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
         case 35
             body_geometry.body_of_extrusion.path_points   = [0 0 0; 0.25 0 1; 0.25 0 2; 0.25 0 3; 0 0 4];
             body_geometry.body_of_extrusion.path_segments = [1 2; 2 3; 3 4; 4 5];
-            body_geometry.max_element_size  = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry);
        case 36
             n_points = 16;
@@ -1958,11 +2011,8 @@ function fmdl = do_test_number(tn)
             body_geometry.body_of_extrusion.path_points   = 1*(2 + [sin(theta) 1.5*cos(theta) zeros(n_points, 1)]);
             body_geometry.body_of_extrusion.path_segments = [(1:n_points)' [(2:n_points) 1]'];
             body_geometry.body_of_extrusion.vector_d      = [0; 0; 1];
-            body_geometry.max_element_size = 0.15;
+            body_geometry.max_edge_length = 0.15;
             fmdl = ng_mk_geometric_models(body_geometry); 
-       case 36
-
-            fmdl = ng_mk_geometric_models(body_geometry);   
         case 0; fmdl = 36; % Return maximum number of tests.
         otherwise;
             error('Invalid test number.')
