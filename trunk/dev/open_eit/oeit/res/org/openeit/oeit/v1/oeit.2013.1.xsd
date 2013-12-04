@@ -204,6 +204,11 @@
   </xs:complexType>
 
   <xs:complexType name="Field">
+    <xs:annotation>
+      <xs:documentation>
+        All fields are expected to be stored in little endian format (e.g. 0x01020304 stored as a->0x04 a+1->0x03 a+2->0x02 a+3->0x01).  If little endian cannot be accommodated, it is recommended that a comment="big endian" attribute be included in the element.
+      </xs:documentation>
+    </xs:annotation>
     <xs:sequence>
       <xs:element name="user_data" type="UserData" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
