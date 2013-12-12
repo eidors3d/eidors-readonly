@@ -18,14 +18,14 @@ function fwd_model= show_pseudosection( fwd_model, data)
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end 
 
-if ~isfield(fwd_model.misc,'sizepoint') 
-if size(fwd_model.electrode,2) <= 16
-    fwd_model.misc.sizepoint= 500;
-elseif size(fwd_model.electrode,2) <= 32
-    fwd_model.misc.sizepoint= 200;
-else
-    fwd_model.misc.sizepoint= 50;
-end
+if ~isfield(fwd_model, 'misc') || ~isfield(fwd_model.misc,'sizepoint')
+  if size(fwd_model.electrode,2) <= 16
+      fwd_model.misc.sizepoint= 500;
+  elseif size(fwd_model.electrode,2) <= 32
+      fwd_model.misc.sizepoint= 200;
+  else
+      fwd_model.misc.sizepoint= 50;
+  end
 end
 
 try
