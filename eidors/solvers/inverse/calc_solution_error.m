@@ -87,10 +87,12 @@ imgc = physics_data_mapper(imgc);
 
 % add solution to jacobian background
 e_data = repmat(img.elem_data,1,size(imgc.elem_data,2));
-n_elems = num_elems(imgc.fwd_model);
-if size(img.elem_data,1) == n_elems;
+has_c2f = isfield(imgc.fwd_model,'coarse2fine');
+if ~has_c2f
+   n_elems = num_elems(imgc.fwd_model);
    img.elem_data = e_data + imgc.elem_data(1:n_elems,:);
 else
+   n_elems = size(imgc.fwd_model.coarse2fine,2);
    img.elem_data = e_data + fmdl.coarse2fine*imgc.elem_data(1:n_elems,:);
 end
 img = physics_data_mapper(img,1);
