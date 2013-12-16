@@ -299,17 +299,58 @@ function RtR = update_RtR(RtR, inv_model, k, img, opt)
    end
 
 function J = update_jacobian(img, opt)
-   if opt.calc_jacobian
+   if opt.calc_jacobian % TODO skipping the Jacobian isn't really an option ever... delete this 'if'
+      img.elem_data = map_data(img.elem_data, img.current_physics, 'conductivity');
+      img.current_physics = 'conductivity';
       if(opt.verbose > 1)
          try J_str = func2str(img.fwd_model.jacobian);
          catch J_str = img.fwd_model.jacobian;
          end
          fprintf('    calc Jacobian J @ current x (%s)\n', J_str);
       end
-      J = calc_jacobian( img );
+      % scaling if we are working in something other than direct conductivity
+      S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
+      % finalize the jacobian
+      J = calc_jacobian( img ) * S;
    else
       J = [];
    end
+% -------------------------------------------------
+% Chain Rule Products for Jacobian Translations
+% x is conductivity, we want the chain rule to translate the
+% Jacobian of conductivity to conductivity on resistivity or
+% logs of either.
+% This chain rule works out to a constant.
+%
+% d log_b(x)     1          d x
+% ---------- = ------- , ---------- = x ln(b)
+%     d x      x ln(b)   d log_b(x)
+function S = dx_dlogx(x);
+   S = diag(x);
+function S = dx_dlog10x(x);
+   S = diag(x) * log(10);
+% resistivity
+% dx      d x   -1
+% ----- = --- = ---, y = 1/x --> -(x^2)
+% d 1/x   d y   y^2
+function S = dx_dy(x);
+   S = diag(-(x.^2));
+% then build the log versions of conductivity by combining chain rule products
+function S = dx_dlogy(x);
+%   S = dx_dy(x) * dy_dlogy(x);
+%     = -(x^2) * 1/x = -x
+   S = diag(-x);
+function S = dx_dlog10y(x);
+%   S = dx_dy(x) * dy_dlog10y(x);
+%     = -(x^2) * 1/(ln(10) x) = -x / ln(10)
+   S = diag(-x/log(10));
+% ... some renaming to make things understandable above: x = 1/y
+%function S = dy_dlogy(x);
+%   S = dx_dlogx(1./x);
+%function S = dy_dlog10y(x);
+%   S = dx_dlog10x(1./x);
+% -------------------------------------------------
+
 
 function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, RtR, dv, opt)
   if(opt.verbose > 1)
@@ -619,6 +660,31 @@ function opt = parse_options(imdl)
       opt.meas_working = 'voltage';
    end
 
+   % JACOBIAN CHAIN RULE conductivity -> whatever
+   % where x = conductivity at this iteration
+   %       S = a scaling matrix, generally a diagonal matrix of size matching Jacobian columns
+   % Jn = J * S;
+   % if not provided, determine based on 'elem_working' type
+   if ~isfield(opt, 'calc_jacobian_scaling_func')
+      switch opt.elem_working
+         case 'conductivity'
+            opt.calc_jacobian_scaling_func = @ret1_func;  % S = f(x)
+         case 'log_conductivity'
+            opt.calc_jacobian_scaling_func = @dx_dlogx;   % S = f(x)
+         case 'log10_conductivity'
+            opt.calc_jacobian_scaling_func = @dx_dlog10x; % S = f(x)
+         case 'resistivity'
+            opt.calc_jacobian_scaling_func = @dx_dy;      % S = f(x)
+         case 'log_resistivity'
+            opt.calc_jacobian_scaling_func = @dx_dlogy;   % S = f(x)
+         case 'log10_resistivity'
+            opt.calc_jacobian_scaling_func = @dx_dlog10y; % S = f(x)
+         otherwise
+            warning('unrecognized opt.elem_working type, please provide a opt.calc_jacobian_scaling_func -- assuming no scalling and continuing');
+            opt.calc_jacobian_scaling_func = @ret1_func; % S = f(x)
+      end
+   end
+
    % input handling -> conversion of measurements (data0)
    if ~isfield(opt, 'normalize_data_func') % how do we normalize data? use this function
       if strcmp(opt.meas_input,   'apparent_resistivity') || ...
@@ -802,26 +868,34 @@ function x = map_data(x, in, out)
       return; % do nothing
    end
 
-   % log conversion
-   if ~strcmp(in(1:4), out(1:4))
-      % log -> natural
-      if strcmp(in(1:4), 'log_')
-         x = map_data(10.^x, in(5:end), out);
-         return;
-      % natural -> log
-      elseif strcmp(out(1:4), 'log_')
-         x = log10(map_data(x, in, out(5:end)));
-         return;
-      end
-   end
-
    % resistivity to conductivity conversion
    % we can't get here if in == out
+   % we've already checked for log convserions on input or output
    if (strcmp(in,  'resistivity') || strcmp(in,  'conductivity')) && ...
       (strcmp(out, 'resistivity') || strcmp(out, 'conductivity'))
       x = 1./x; % conductivity <-> resistivity
+   % log conversion
+   elseif ~strcmp(in(1:6), out(1:6))
+      % log_10 x -> x
+      if strcmp(in(1:6), 'log10_')
+         x = map_data(10.^x, in(7:end), out);
+      % ln x -> x
+      elseif strcmp(in(1:4), 'log_')
+         x = map_data(exp(x), in(5:end), out);
+      % x -> log_10 x
+      elseif strcmp(out(1:6), 'log10_')
+         x = log10(map_data(x, in, out(7:end)));
+      % x -> ln x
+      elseif strcmp(out(1:4), 'log_')
+         x = log(map_data(x, in, out(5:end)));
+      else
+         error(sprintf('unknown conversion (log conversion?) %s - > %s', in, out));
+      end
    else
       error('unknown conversion %s -> %s', in, out);
+   end
+   if any(isinf(x)) || any(isnan(x))
+      warning('conversion results in Inf or NaN values');
    end
 
 function b = map_meas(b, N, in, out)
@@ -868,8 +942,7 @@ pass = 1;
 imdl= mk_common_model('c2t4',16); % 576 elements
 imdl.solve = 'inv_solve_abs_core';
 imdl.reconst_type = 'absolute';
-imdl.parameters.meas_working = 'apparent_resistivity';
-%imdl.parameters.elem_working = 'log_conductivity'; % TODO log conductivity is BORKEN!!
+imdl.parameters.elem_working = 'log_conductivity';
 imdl.inv_solve.calc_solution_error = 0;
 %show_fem(imdl.fwd_model);
 imgsrc= mk_image( imdl.fwd_model, 1);
@@ -895,6 +968,7 @@ figure(hh); subplot(222); show_fem(img1,1); axis tight; title('#1 verbosity=defa
 disp('TEST: previous solved at default verbosity');
 disp('TEST: now solve same at verbosity=0 --> should be silent');
 imdl.parameters.verbose = 0;
+imdl.parameters.meas_working = 'apparent_resistivity';
 img2= inv_solve(imdl, vi);
 figure(hh); subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
 if any(abs((img1.elem_data - img2.elem_data) / img1.elem_data) > eps*length(img1.elem_data)*1e3)
