@@ -35,10 +35,20 @@ for i = 1:length(perturb);
       dv = dv0; % vsim @ alpha=0 from the previous line search iteration
     else
       img.elem_data = x + perturb(i)*dx;
-      [dv, opt] = feval(opt.line_search_dv_func, img, img1, data1, N, opt);
-      % [dv, opt] = update_dv_core(img, img0, data0, N, opt)
+      [dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
+      % [dv, opt] = update_dv_core(img, data0, N, opt)
     end
-    de = img1.elem_data - img.elem_data;
+    de = feval(opt.line_search_de_func, img, img1, opt);
+    if any(isnan(dv) | isinf(dv))
+       warning(sprintf('%d of %d elements in dv are NaN or Inf', ...
+                       length(dv), ...
+                       length(find(isnan(dv) | isinf(dv)))));
+    end
+    if any(isnan(de) | isinf(de))
+       warning(sprintf('%d of %d elements in de are NaN or Inf', ...
+                       length(de), ...
+                       length(find(isnan(de) | isinf(de)))));
+    end
     mlist(i) = feval(opt.residual_func, dv, de, W, hp, RtR);
 end
 if opt.verbose > 1
@@ -47,6 +57,24 @@ if opt.verbose > 1
    fprintf('  %0.4e',mlist);
    fprintf('\n');
 end
+% drop bad values
+if any(isnan(mlist) | isinf(mlist))
+   warning('encoutered NaN or +-Inf residuals, something has gone wrong in the line search, converting to large numbers and carrying on');
+   bi = find(isnan(mlist) | isinf(mlist)); % bad indices
+   mlist(bi) = 1e200;
+end
+
+if max(abs(mlist/mlist(1)-1)) < 1e-4 % < 0.01% change
+   % TODO maybe we need to search *larger* perturbations here... for now we just short circuit the repeated retries at the end, when we are not improving
+   if opt.verbose > 1
+      fprintf('      stopping line search: no further improvements observed\n');
+   end
+   img = imgk;
+   alpha = 0;
+   dv = dv0;
+   return;
+end
+
 % Select the best fitting step
 pf= polyfit(log10(perturb(2:end)), mlist(2:end), pf_max);
 % search for the function minima in the range perturb(2:end)
@@ -56,8 +84,8 @@ alpha = fminbnd(@(x) FF(pf, x), perturb(2), perturb(end));
 alpha1 = alpha;
 % now check how we did
 img.elem_data = x + alpha*dx;
-[dv, opt] = feval(opt.line_search_dv_func, img, img1, data1, N, opt);
-de = img1.elem_data - img.elem_data;
+[dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
+de = feval(opt.line_search_de_func, img, img1, opt);
 meas_err = feval(opt.residual_func, dv, de, W, hp, RtR);
 meas_err1 = meas_err;
 if opt.verbose > 1
@@ -114,7 +142,7 @@ else % good step
     end
     % this keeps the log-space distance between sample points but
     % re-centres around the most recent alpha
-    perturb = perturb*alpha*2;
+    perturb = perturb*(alpha/perturb(end))*2;
 end
 % jiggle the perturb values by 1% --> if we're stuck in a recursion
 % of bad perturb values maybe this is enough to break us out

@@ -87,9 +87,10 @@ if isfield(inv_model, 'fwd_model') && ...
    c2f = inv_model.fwd_model.coarse2fine;
    img.elem_data = c2f \ img.elem_data;
    bg = mean(img.elem_data);
+   bg = map_data(bg, img.current_physics, 'resistivity');
    %img.elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
-      fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), 1/bg);
+      fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
       disp('    TODO this fix should be moved to mk_image()');
    end
 end
@@ -102,8 +103,7 @@ N = init_normalization(inv_model.fwd_model, opt);
 
 % map data and measurements to working types
 %  convert elem_data
-img.elem_data = map_data(img.elem_data, img.current_physics, opt.elem_working);
-img.current_physics = opt.elem_working;
+img = map_img(img, opt.elem_working);
 %  convert measurement data
 if ~isstruct(data0)
   d = data0;
@@ -114,11 +114,11 @@ end
 data0.meas = map_meas(data0.meas, N, opt.meas_input, opt.meas_working);
 data0.current_physics = opt.meas_working;
 
-% now get on with 
+% now get on with
 img0 = img;
 RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
-while ~stop
+while 1
   if opt.verbose > 1
      fprintf('  iteration %d\n', k+1)
   end
@@ -129,7 +129,7 @@ while ~stop
 
   % update change in element data from the prior de and
   % the measurement error dv
-  [dv, opt] = update_dv(dv, img, img0, data0, N, opt);
+  [dv, opt] = update_dv(dv, img, data0, N, opt);
   de = update_de(de, img, img0, opt);
 
   % now find the residual, quit if we're done
@@ -144,7 +144,7 @@ while ~stop
   % choose beta, beta=0 unless doing Conjugate Gradient
   beta = update_beta(dx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
-  sx = update_sx(dx, beta, sx);
+  sx = update_sx(dx, beta, sx, opt);
 
   % line search for alpha, leaving the final selection as img
   [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, RtR, dv, opt);
@@ -170,8 +170,7 @@ if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
          length(img.elem_data), length(img.fwd_model.elems));
 end
 % convert data for output
-img.elem_data = map_data(img.elem_data, img.current_physics, opt.elem_output);
-img.current_physics = opt.elem_output;
+img = map_img(img, opt.elem_output);
 %img.physics_data_mapper = opt.elem_output; %TODO which is it: current_physics or physics_data_mapper???
 %img = physics_data_mapper(img, 1); % move data from img.elem_data to whatever 'physics'
 
@@ -249,7 +248,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp, RtR, k, r, fig_r, 
      legend('Location', 'EastOutside');
      drawnow;
   end
-  
+
   % evaluate stopping criteria
   if k > opt.max_iterations
      stop = 1;
@@ -279,8 +278,15 @@ function beta = update_beta(dx, opt);
 %   sx_k = dx_k
 % for Conjugate-Gradient
 %   sx_k = dx_k + beta * sx_{k-1}
-function sx = update_sx(dx, beta, sx);
-   sx = dx + beta * sx;
+function sx = update_sx(dx, beta, sx_km1, opt);
+   sx = dx + beta * sx_km1;
+   if(opt.verbose > 1)
+      nsx = norm(sx);
+      nsxk = norm(sx_km1);
+      fprintf( '    update step dx, beta=%0.2e, ||dx||=%0.2e\n', beta, nsx);
+      fprintf( '      acceleration     d||dx||=%0.2e\n', nsx-nsxk);
+      fprintf( '      direction change ||ddx||=%0.2e\n', norm(sx/nsx-sx_km1/nsxk));
+   end
 
 function RtR = update_RtR(RtR, inv_model, k, img, opt)
    % TODO sometimes (with Noser?) this requires the Jacobian, could this be done more efficiently?
@@ -289,7 +295,10 @@ function RtR = update_RtR(RtR, inv_model, k, img, opt)
    if opt.calc_RtR_prior
       if opt.verbose > 1
          try RtR_str = func2str(inv_model.RtR_prior);
-         catch RtR_str = inv_model.RtR_prior;
+         catch
+            try RtR_str = inv_model.RtR_prior;
+            catch RtR_str = 'unknown';
+            end
          end
          fprintf('    calc regularization RtR (%s)\n', RtR_str);
       end
@@ -298,10 +307,22 @@ function RtR = update_RtR(RtR, inv_model, k, img, opt)
       RtR = 0;
    end
 
+function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
+   img = map_img(img, 'conductivity');
+   inv_model.jacobian_backgnd = img;
+   RtR = calc_RtR_prior( inv_model );
+   if size(RtR,1) < length(img.elem_data)
+     ne = length(img.elem_data) - size(RtR,1);
+     RtR(end+1:end+ne, end+1:end+ne) = 1;
+     if opt.verbose > 1
+        fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
+        disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
+     end
+   end
+
 function J = update_jacobian(img, opt)
    if opt.calc_jacobian % TODO skipping the Jacobian isn't really an option ever... delete this 'if'
-      img.elem_data = map_data(img.elem_data, img.current_physics, 'conductivity');
-      img.current_physics = 'conductivity';
+      img = map_img(img, 'conductivity');
       if(opt.verbose > 1)
          try J_str = func2str(img.fwd_model.jacobian);
          catch J_str = img.fwd_model.jacobian;
@@ -356,7 +377,25 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, Rt
   if(opt.verbose > 1)
      disp('    line search');
   end
+
+  % some sanity checks before we feed this information to the line search
+  err_if_inf_or_nan(sx, 'sx (pre-line search)');
+  err_if_inf_or_nan(img.elem_data, 'img.elem_data (pre-line search)');
+
   [alpha, img, dv, opt] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp, RtR, dv, opt);
+  if(opt.verbose > 1)
+     fprintf('      selected alpha=%0.2e\n', alpha);
+  end
+
+function err_if_inf_or_nan(x, str);
+  if any(isnan(x) | isinf(x))
+      error(sprintf('bad %s (%d NaN, %d Inf of %d)', ...
+                    str, ...
+                    length(find(isnan(x))), ...
+                    length(find(isinf(x))), ...
+                    length(x)));
+  end
+
 
 function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
   % fix max/min values for x
@@ -364,7 +403,7 @@ function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
      lih = find(img.elem_data > opt.max_value);
      img.elem_data(lih) = opt.max_value;
      if opt.verbose > 1
-        fprintf('    limit max(x)=%e for %d elements\n', opt.max_value, length(lih));  
+        fprintf('    limit max(x)=%e for %d elements\n', opt.max_value, length(lih));
      end
      dv = []; % dv is now invalid since we changed the conductivity
   end
@@ -372,14 +411,18 @@ function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
      lil = find(img.elem_data < opt.min_value);
      img.elem_data(lil) = opt.min_value;
      if opt.verbose > 1
-        fprintf('    limit min(x)=%e for %d elements\n', opt.min_value, length(lil));  
+        fprintf('    limit min(x)=%e for %d elements\n', opt.min_value, length(lil));
      end
      dv = []; % dv is now invalid since we changed the conductivity
   end
   % update voltage change estimate if the limit operation changed the img data
-  [dv, opt] = update_dv(dv, img, img0, data0, N, opt, '(dv out-of-date)');
+  [dv, opt] = update_dv(dv, img, data0, N, opt, '(dv out-of-date)');
 
 function  de = update_de(de, img, img0, opt)
+   img0 = map_img(img0, opt.elem_working);
+   img  = map_img(img,  opt.elem_working);
+   err_if_inf_or_nan(img0.elem_data, 'de img0');
+   err_if_inf_or_nan(img.elem_data,  'de img');
    % probably not the most robust check for whether this is the first update
    % but this ensures that we get exactly zero for the first iteration and not
    % a set of values that has numeric floating point errors that are nearly zero
@@ -389,8 +432,10 @@ function  de = update_de(de, img, img0, opt)
    else
       de = img0.elem_data - img.elem_data;
    end
+   de(opt.elem_fixed) = 0;
+   err_if_inf_or_nan(de, 'de out');
 
-function [dv, opt] = update_dv(dv, img, img0, data0, N, opt, reason)
+function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    % estimate current error as a residual
    if ~isempty(dv) % need to calculate dv...
       return;
@@ -401,12 +446,12 @@ function [dv, opt] = update_dv(dv, img, img0, data0, N, opt, reason)
    if opt.verbose > 1
       disp(['    fwd_solve ', reason]);
    end
-   [dv, opt] = update_dv_core(img, img0, data0, N, opt);
+   [dv, opt] = update_dv_core(img, data0, N, opt);
 
 % also used by the line search as opt.line_search_dv_func
-function [dv, opt] = update_dv_core(img, img0, data0, N, opt)
-   img.elem_data = map_data(img.elem_data, img.current_physics, 'conductivity');
-   img.current_physics = 'conductivity';
+function [dv, opt] = update_dv_core(img, data0, N, opt)
+   img = map_img(img, 'conductivity');
+   err_if_inf_or_nan(data0.meas, 'dv0 img');
    data = fwd_solve(img);
    try   current_meas_physics = data.current_physics;
    catch current_meas_physics = 'voltage';
@@ -414,38 +459,36 @@ function [dv, opt] = update_dv_core(img, img0, data0, N, opt)
    data.meas = map_meas(data.meas, N, current_meas_physics, opt.meas_working);
    data.current_physics = opt.meas_working;
    opt.fwd_solutions = opt.fwd_solutions +1;
-   dv = calc_difference_data(data, data0, img0.fwd_model);
+   dv = calc_difference_data(data, data0, img.fwd_model);
+   err_if_inf_or_nan(dv, 'dv out');
 
 function show_fem_iter(k, img, inv_model, opt)
-  [img, opt] = strip_c2f_background(img, opt);
+  if opt.verbose > 1
+     disp('    show_fem()');
+  end
+  img = map_img(img, opt.elem_output);
+  [img, opt] = strip_c2f_background(img, opt, '    ');
   % check we're returning the right size of data
   if isfield(inv_model, 'rec_model')
     img.fwd_model = inv_model.rec_model;
   end
-  bg = 1;
-  img.calc_colours.ref_level = bg;
-  img.calc_colours.clim = bg;
+%  bg = 1;
+%  img.calc_colours.ref_level = bg;
+%  img.calc_colours.clim = bg;
   img.calc_colours.cb_shrink_move = [0.3,0.6,0.02]; % move color bars
+  if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
+     warning(sprintf('img.elem_data has %d elements, img.fwd_model.elems has %d elems\n', ...
+                     size(img.elem_data,1), ...
+                     size(img.fwd_model.elems,1)));
+  end
   figure; show_fem(img, 1);
-  title(sprintf('iter=%d',k));
+  title(sprintf('iter=%d, %s',k, opt.elem_output));
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
 function residual = GN_residual(dv, de, W, hp, RtR)
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
    hp2RtR = hp*RtR;
    residual = 0.5*( dv'*W*dv + de'*hp2RtR*de);
-
-function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
-   inv_model.jacobian_backgnd = img;
-   RtR = calc_RtR_prior( inv_model );
-   if size(RtR,1) < length(img.elem_data)
-     ne = length(img.elem_data) - size(RtR,1);
-     RtR(end+1:end+ne, end+1:end+ne) = 1;
-     if opt.verbose > 1
-        fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
-        disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
-     end
-   end
 
 %function img = initial_estimate( imdl, data )
 %   img = calc_jacobian_bkgnd( imdl );
@@ -554,7 +597,7 @@ function opt = parse_options(imdl)
 %   catch
 %      error('exploration of function %s via function_depends_upon() failed', func2str(opt.update_func));
 %   end
-      
+
 
    % stopping criteria, solution limits
    if ~isfield(opt, 'max_iterations')
@@ -603,16 +646,23 @@ function opt = parse_options(imdl)
    end
    if ~isfield(opt,'line_search_dv_func')
       opt.line_search_dv_func = @update_dv_core;
-      % [dv, opt] = update_dv_core(img, img0, data0, N, opt)
+      % [dv, opt] = update_dv_core(img, data0, N, opt)
+   end
+   if ~isfield(opt,'line_search_de_func')
+      % we create an anonymous function to skip the first input argument since
+      % we always want to calculate de in the line search
+      opt.line_search_de_func = @(img, img0, opt) update_de(1, img, img0, opt);
+      % de = f(img, img0, opt)
    end
    % an initial guess for the line search step sizes, may be modified by line search
    if ~isfield(opt,'line_search_args') || ...
       ~isfield(opt.line_search_args, 'perturb')
       fmin = 1/4; % arbitrary starting guess
-      %opt.line_search_args.perturb = [0 fmin/4 fmin/2 fmin fmin*2 fmin*4];
+      opt.line_search_args.perturb = [0 fmin/4 fmin/2 fmin fmin*2 fmin*4];
       %opt.line_search_args.perturb = [0 fmin/4 fmin fmin*4];
+      %opt.line_search_args.perturb = [0 0.1 0.35 0.7 1.0];
       %opt.line_search_args.perturb = [0 0.1 0.5 0.7 1.0];
-      opt.line_search_args.perturb = [0 0.1 0.7 0.9 1.0];
+      %pt.line_search_args.perturb = [0 0.1 0.7 0.9 1.0];
       %opt.line_search_args.perturb = [0 0.1 0.9 1.0];
    end
    % provide a graphical display of the line search values & fit
@@ -629,11 +679,6 @@ function opt = parse_options(imdl)
       disp('    inv_model.parameters.line_search_args.plot=0');
    end
 
-   % fixed elem_data, ignored by the algorithm
-   if ~isfield(opt, 'ignore_elems')
-      opt.ignore_elems = [];
-   end
-
    % background
    % if > 0, this is the elem_data that holds the background
    % this is stripped off just before the iterations complete
@@ -643,6 +688,16 @@ function opt = parse_options(imdl)
      else
         opt.c2f_background = 0;
      end
+   end
+   if ~isfield(opt, 'c2f_background_fixed')
+      opt.c2f_background_fixed = 1; % generally, don't touch the background
+   end
+
+   % meas_select already handles selecting from the valid measurements
+   % we want the same for the elem_data, so we only work on modifying the legal values
+   % Note that c2f_background's elements are added to this list if opt.c2f_background_fixed == 1
+   if ~isfield(opt, 'elem_fixed')
+      opt.elem_fixed = [];
    end
 
    % DATA CONVERSION settings
@@ -666,6 +721,13 @@ function opt = parse_options(imdl)
    % Jn = J * S;
    % if not provided, determine based on 'elem_working' type
    if ~isfield(opt, 'calc_jacobian_scaling_func')
+      % TODO error out if elem_working is not onductivity and the jacobian function is not the default... we can't guess correctly then and we'll get funky/had-to-debug behaviour
+      if ~strcmp(opt.elem_working, 'conductivity') && ...
+         (~isfield(imdl, 'fwd_model') || ...
+          ~isfield(imdl.fwd_model, 'jacobian') || ...
+          ~strcmp(imdl.fwd_model.jacobian, 'eidors_default'))
+         error('can not guess at inv_model.parameters.calc_jacobian_scaling_func, one must be provided');
+      end
       switch opt.elem_working
          case 'conductivity'
             opt.calc_jacobian_scaling_func = @ret1_func;  % S = f(x)
@@ -687,11 +749,8 @@ function opt = parse_options(imdl)
 
    % input handling -> conversion of measurements (data0)
    if ~isfield(opt, 'normalize_data_func') % how do we normalize data? use this function
-      if strcmp(opt.meas_input,   'apparent_resistivity') || ...
-         strcmp(opt.meas_working, 'apparent_resistivity')
+      if any(strcmp({opt.meas_input, opt.meas_working}, 'apparent_resistivity'))
          opt.normalize_data_func = @calc_normalization_apparent_resistivity; % N = f(fmdl)
-      else
-         opt.normalize_data_func = @ret1_func; % N = f(fmdl)
       end
    end
    if isfield(opt, 'normalize_data_func')
@@ -744,15 +803,14 @@ function dx = update_dx(J, W, hp, RtR, dv, de, opt)
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
    check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
 
-   de(opt.ignore_elems) = 0;
    if ~isempty(RtR)
-      RtR(:,opt.ignore_elems) = 0;
+      RtR(:,opt.elem_fixed) = 0;
    end
 
    % do the update step direction calculation
    dx = feval(opt.update_func, J, W, hp, RtR, dv, de);
    % ignore any fixed value elements
-   dx(opt.ignore_elems) = 0;
+   dx(opt.elem_fixed) = 0;
 
    if(opt.verbose > 1)
       fprintf(', ||dx||=%0.2e\n', norm(dx));
@@ -805,6 +863,7 @@ function [inv_model, opt] = append_c2f_background(inv_model, opt)
     % check that all elements get assigned a conductivity
     % through the c2f conversion
     c2f = inv_model.fwd_model.coarse2fine; % coarse-to-fine mesh mapping
+      size(c2f);
     nf = size(inv_model.fwd_model.elems,1); % number of fine elements
     nc = size(c2f,2); % number of coarse elements
     % ... each element of fel aught to sum to '1' since the
@@ -826,9 +885,16 @@ function [inv_model, opt] = append_c2f_background(inv_model, opt)
       c2f(n,nc+1) = 1 - fel(n);
       inv_model.fwd_model.coarse2fine = c2f;
       opt.c2f_background = nc+1;
+      if opt.c2f_background_fixed
+         opt.elem_fixed(end+1) = nc+1;
+      end
+      size(c2f);
     end
 
-function [img, opt] = strip_c2f_background(img, opt)
+function [img, opt] = strip_c2f_background(img, opt, indent)
+    if nargin < 3
+       indent = '';
+    end
     if opt.c2f_background <= 0
       return;
     end
@@ -836,9 +902,15 @@ function [img, opt] = strip_c2f_background(img, opt)
     img.elem_data_background = img.elem_data(e);
     img.elem_data(e) = [];
     img.fwd_model.coarse2fine(:,e) = [];
+    % remove our element from the lists
     opt.c2f_background = 0;
+    ri = find(opt.elem_fixed == e);
+    opt.elem_fixed(ri) = [];
+    % show what we got for a background value
     if(opt.verbose > 1)
-      fprintf('  background conductivity: %0.1f Ohm.m\n', 1./img.elem_data_background);
+       bg = img.elem_data_background;
+       bg = map_data(bg, img.current_physics, 'resistivity');
+       fprintf('%s  background conductivity: %0.1f Ohm.m\n', indent, bg);
     end
 
 function img = fix_c2f_calc_jacobian_backgnd(img, opt)
@@ -863,7 +935,21 @@ if isstruct(s)
    b = any(ismember(fieldnames(s),supported_physics));
 end
 
+function img = map_img(img, out);
+   err_if_inf_or_nan(img.elem_data, 'img-pre');
+   try current_physics = img.current_physics;
+   catch current_physics = 'conductivity';
+   end
+   img.elem_data = map_data(img.elem_data, current_physics, out);
+   img.current_physics = out;
+   err_if_inf_or_nan(img.elem_data, 'img-post');
+
 function x = map_data(x, in, out)
+   % note that we can't check for bad data because in the 'loss of precision'
+   % cases we are recursively calling map_data with inf data.
+   %% err_if_inf_or_nan(x, 'map_data-pre');
+
+   % quit early if there is nothing to do
    if strcmp(in, out) % in == out
       return; % do nothing
    end
@@ -871,22 +957,26 @@ function x = map_data(x, in, out)
    % resistivity to conductivity conversion
    % we can't get here if in == out
    % we've already checked for log convserions on input or output
-   if (strcmp(in,  'resistivity') || strcmp(in,  'conductivity')) && ...
-      (strcmp(out, 'resistivity') || strcmp(out, 'conductivity'))
+   if any(strcmp(in,  {'resistivity', 'conductivity'})) && ...
+      any(strcmp(out, {'resistivity', 'conductivity'}))
       x = 1./x; % conductivity <-> resistivity
    % log conversion
-   elseif ~strcmp(in(1:6), out(1:6))
+   elseif any(strcmp({in(1:3), out(1:3)}, 'log'))
       % log_10 x -> x
       if strcmp(in(1:6), 'log10_')
+         if any(x >= log10(realmax)-eps) warning('loss of precision -> inf'); end
          x = map_data(10.^x, in(7:end), out);
       % ln x -> x
       elseif strcmp(in(1:4), 'log_')
+         if any(x >= log(realmax)-eps) warning('loss of precision -> inf'); end
          x = map_data(exp(x), in(5:end), out);
       % x -> log_10 x
       elseif strcmp(out(1:6), 'log10_')
+         if any(x <= 0 + eps) warning('loss of precision -> -inf'); end
          x = log10(map_data(x, in, out(7:end)));
       % x -> ln x
       elseif strcmp(out(1:4), 'log_')
+         if any(x <= 0 + eps) warning('loss of precision -> -inf'); end
          x = log(map_data(x, in, out(5:end)));
       else
          error(sprintf('unknown conversion (log conversion?) %s - > %s', in, out));
@@ -894,26 +984,14 @@ function x = map_data(x, in, out)
    else
       error('unknown conversion %s -> %s', in, out);
    end
-   if any(isinf(x)) || any(isnan(x))
-      warning('conversion results in Inf or NaN values');
-   end
+   x(x == +inf) = +realmax;
+   x(x == -inf) = -realmax;
+   err_if_inf_or_nan(x, 'map_data-post');
 
 function b = map_meas(b, N, in, out)
+   err_if_inf_or_nan(b, 'map_meas-pre');
    if strcmp(in, out) % in == out
       return; % do nothing
-   end
-
-   % log conversion
-   if ~strcmp(in(1:4), out(1:4))
-      % log -> natural
-      if strcmp(in(1:4), 'log_')
-         b = map_meas(10.^b, in(5:end), out);
-         return;
-      % natural -> log
-      elseif strcmp(out(1:4), 'log_')
-         b = log10(map_meas(b, in, out(5:end)));
-         return;
-      end
    end
 
    % resistivity to conductivity conversion
@@ -928,11 +1006,134 @@ function b = map_meas(b, N, in, out)
          error('missing apparent resistivity conversion factor N');
       end
       b = N \ b; % apparent resistivity -> voltage
+   % log conversion
+   elseif any(strcmp({in(1:3), out(1:3)}, 'log'))
+      % log_10 b -> b
+      if strcmp(in(1:6), 'log10_')
+         if any(b > log10(realmax)-eps) warning('loss of precision -> inf'); end
+         b = map_meas(10.^b, N, in(7:end), out);
+      % ln b -> b
+      elseif strcmp(in(1:4), 'log_')
+         if any(b > log(realmax)-eps) warning('loss of precision -> inf'); end
+         b = map_meas(exp(b), N, in(5:end), out);
+      % b -> log_10 b
+      elseif strcmp(out(1:6), 'log10_')
+         if any(b <= 0+eps) warning('loss of precision -> -inf'); end
+         b = log10(map_meas(b, N, in, out(7:end)));
+      % b -> ln b
+      elseif strcmp(out(1:4), 'log_')
+         if any(b <= 0+eps) warning('loss of precision -> -inf'); end
+         b = log(map_meas(b, N, in, out(5:end)));
+      else
+         error(sprintf('unknown conversion (log conversion?) %s - > %s', in, out));
+      end
    else
       error('unknown conversion %s -> %s', in, out);
    end
+   err_if_inf_or_nan(b, 'map_meas-post');
 
 function pass = do_unit_test
+pass = 1;
+pass = pass & do_unit_test_sub;
+pass = pass & do_unit_test_rec1;
+pass = pass & do_unit_test_rec2;
+if pass
+   disp('TEST: overall PASS');
+else
+   disp('TEST: overall FAIL');
+end
+
+% test sub-functions
+% map_meas, map_data
+% jacobian scalings
+function pass = do_unit_test_sub
+pass = 1;
+d = 1;
+while d ~= 1 & d ~= 0
+  d = rand(1);
+end
+disp('TEST: map_data()');
+elem_types = {'conductivity', 'log_conductivity', 'log10_conductivity', ...
+              'resistivity',  'log_resistivity',  'log10_resistivity'};
+expected = [d         log(d)         log10(d)      1./d      log(1./d)      log10(1./d); ...
+            exp(d)    d              log10(exp(d)) 1./exp(d) log(1./exp(d)) log10(1./exp(d)); ...
+            10.^d     log(10.^d )    d             1./10.^d  log(1./10.^d ) log10(1./10.^d ); ...
+            1./d      log(1./d  )    log10(1./d)   d         log(d)         log10(d); ...
+            1./exp(d) log(1./exp(d)) log10(1./exp(d)) exp(d) d              log10(exp(d)); ...
+            1./10.^d  log(1./10.^d)  log10(1./10.^d)  10.^d  log(10.^d)     d ];
+for i = 1:length(elem_types)
+  for j = 1:length(elem_types)
+    pass = test_map_data(d, elem_types{i}, elem_types{j}, expected(i,j), pass);
+  end
+end
+
+disp('TEST: map_meas()');
+N = 1/15;
+Ninv = 1/N;
+% function b = map_meas(b, N, in, out)
+elem_types = {'voltage', 'log_voltage', 'log10_voltage', ...
+              'apparent_resistivity',  'log_apparent_resistivity',  'log10_apparent_resistivity'};
+expected = [d         log(d)         log10(d)      N*d      log(N*d)      log10(N*d); ...
+            exp(d)    d              log10(exp(d)) N*exp(d) log(N*exp(d)) log10(N*exp(d)); ...
+            10.^d     log(10.^d )    d             N*10.^d  log(N*10.^d ) log10(N*10.^d ); ...
+            Ninv*d      log(Ninv*d  )    log10(Ninv*d)   d         log(d)         log10(d); ...
+            Ninv*exp(d) log(Ninv*exp(d)) log10(Ninv*exp(d)) exp(d) d              log10(exp(d)); ...
+            Ninv*10.^d  log(Ninv*10.^d)  log10(Ninv*10.^d)  10.^d  log(10.^d)     d ];
+for i = 1:length(elem_types)
+  for j = 1:length(elem_types)
+    pass = test_map_meas(d, N, elem_types{i}, elem_types{j}, expected(i,j), pass);
+  end
+end
+
+%disp('TEST: calc_normalization_apparent_resistivity()');
+% function N = calc_normalization_apparent_resistivity(fmdl)
+
+disp('TEST: Jacobian scaling');
+d = [d d]';
+if any(ret1_func(d) ~= 1)
+   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'conductivity');
+   pass = 0;
+end
+if any(dx_dlogx(d) ~= diag(d))
+   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log_conductivity');
+   pass = 0;
+end
+if any(dx_dlog10x(d) ~= diag(d)*log(10))
+   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log10_conductivity');
+   pass = 0;
+end
+if any(dx_dy(d) ~= diag(-d.^2))
+   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'resistivity');
+   pass = 0;
+end
+if any(dx_dlogy(d) ~= diag(-d))
+   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log_resistivity');
+   pass = 0;
+end
+if any(dx_dlog10y(d) ~= diag(-d)/log(10))
+   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log10_resistivity');
+   pass = 0;
+end
+
+
+function pass = test_map_data(data, in, out, expected, pass)
+%fprintf('TEST: map_data(%s -> %s)\n', in, out);
+if map_data(data, in, out) ~= expected
+   pass = 0;
+   fprintf('TEST: FAIL map_data(%s -> %s)\n', in, out);
+end
+
+function pass = test_map_meas(data, N, in, out, expected, pass)
+%fprintf('TEST: map_meas(%s -> %s)\n', in, out);
+if map_meas(data, N, in, out) ~= expected
+   pass = 0;
+   fprintf('TEST: FAIL map_data(%s -> %s)\n', in, out);
+end
+
+
+% a couple easy reconstructions
+% check c2f, apparent_resistivity, log_conductivity, verbosity don't error out
+function pass = do_unit_test_rec1
 pass = 1;
 % -------------
 % ADAPTED FROM
@@ -943,7 +1144,9 @@ imdl= mk_common_model('c2t4',16); % 576 elements
 imdl.solve = 'inv_solve_abs_core';
 imdl.reconst_type = 'absolute';
 imdl.parameters.elem_working = 'log_conductivity';
+imdl.parameters.meas_working = 'apparent_resistivity';
 imdl.inv_solve.calc_solution_error = 0;
+imdl.parameters.verbose = 0;
 %show_fem(imdl.fwd_model);
 imgsrc= mk_image( imdl.fwd_model, 1);
 % set homogeneous conductivity and simulate
@@ -951,10 +1154,11 @@ vh=fwd_solve(imgsrc);
 % set inhomogeneous conductivity and simulate
 ctrs= interp_mesh(imdl.fwd_model);
 x= ctrs(:,1); y= ctrs(:,2);
-r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-50).^2 + (y-50).^2);
-imgsrc.elem_data(r1<50)= 0.75;
-imgsrc.elem_data(r2<30)= 1.8;
-hh=figure; subplot(221); show_fem(imgsrc,1); axis tight; title('synthetic data');
+r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-85).^2 + (y-65).^2);
+imgsrc.elem_data(r1<50)= 0.05;
+imgsrc.elem_data(r2<30)= 100;
+imgp = map_img(imgsrc, 'log10_conductivity');
+hh=figure; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
 % inhomogeneous data
 vi=fwd_solve( imgsrc );
 % add noise
@@ -968,11 +1172,12 @@ figure(hh); subplot(222); show_fem(img1,1); axis tight; title('#1 verbosity=defa
 disp('TEST: previous solved at default verbosity');
 disp('TEST: now solve same at verbosity=0 --> should be silent');
 imdl.parameters.verbose = 0;
-imdl.parameters.meas_working = 'apparent_resistivity';
+%imdl.parameters.meas_working = 'apparent_resistivity';
 img2= inv_solve(imdl, vi);
 figure(hh); subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
-if any(abs((img1.elem_data - img2.elem_data) / img1.elem_data) > eps*length(img1.elem_data)*1e3)
-  disp('TEST:  img1 != img2 --> FAIL');
+max_err = max(abs((img1.elem_data - img2.elem_data)./(img1.elem_data)));
+if max_err > 0.05
+  fprintf('TEST:  img1 != img2 --> FAIL %e %%\n', max_err);
   pass = 0;
 else
   disp('TEST:  img1 == img2 --> PASS');
@@ -1018,11 +1223,12 @@ else
   disp('TEST:  img1 == img3 --> PASS');
 end
 
-imdl.parameters.elem_output = 'resistivity'; % resistivity output works
+%imdl.parameters.verbose = 1000;
+imdl.parameters.elem_output = 'log10_resistivity'; % resistivity output works
 img4= inv_solve(imdl, vi);
-figure(hh); subplot(224); show_fem(img4,1); axis tight; title('#4 c2f + resistivity out');
+figure(hh); subplot(224); show_fem(img4,1); axis tight; title('#4 c2f + log10 resistivity out');
 % check
-e4 = 1./img4.elem_data;
+e4 = 1./(10.^img4.elem_data);
 err = abs((e1 - e4) ./ e1);
 err_thres = 0.40;
 if any(err > err_thres) % maximum 15% error
@@ -1035,8 +1241,133 @@ else
 end
 
 
-if pass
-  disp('TEST: overall PASS');
-else
-  disp('TEST: overall FAIL');
+function pass = do_unit_test_rec2
+disp('TEST: reconstruct a discontinuity');
+pass = 1; % TODO fail criteria?
+shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
+             'solid mainobj= top and orthobrick(-100,-200,-100;410,10,100) -maxh=20.0;\n'];
+e0 = linspace(0,310,64)';
+elec_pos = [e0,0*e0,0*e0,1+0*e0,0*e0,0*e0];
+elec_shape= [0.1,0.1,1];
+elec_obj = 'top';
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+%fmdl.nodes = fmdl.nodes(:,[1,3,2]);
+% spacing= [1 1 1 2 3 3 4 4 5 6 6 7 8 8 9 10 10 11 12 12 13 14 14 15 16 17];
+% multiples= [1 2 3 2 1 5/3 1 2  1 1 7/6 1 1 10/8 1 1 12/10 1 1 13/12 1 1 15/14 1 1 1];
+% fmdl.stimulation= stim_pattern_geophys( 64, 'Schlumberger', {'spacings', spacing,'multiples',multiples});
+
+fmdl.stimulation= stim_pattern_geophys( 64, 'Wenner', {'spacings', 1:32} );
+
+cmdl= mk_grid_model([], 2.5+[-30,5,20,30:10:290,300,315,340], ...
+                            -[0:5:10 17 30 50 75 100]);
+% having a c2f on the coarse model f#$%s up the c2f calculator
+cmdl= rmfield(cmdl, 'coarse2fine');
+% cmdl = mk_grid_model([], 2.5+[-50,-20,0:10:310,330,360], ...
+%                              -[0:2.5:10, 15:5:25,30:10:80,100,120]);
+[c2f, b_c2f] = mk_coarse_fine_mapping( fmdl, cmdl);
+% c2f maps cmdl elements to fmdl elements, where there are no cmdl elements
+% b_c2f is the cmdl background element that is mapped to the fmdl elements
+% Note: adding a background element, this is now done inside the inv_solve_abs_GN solver if required
+%S= sum(c2f,2);
+% find fractional c2f elements
+%b= find(S<0.9999);
+% find almost complete c2f elements
+%a= find(S>=0.9999 & S<1);
+% fix potential rounding problems by normalizing c2f to sum to 1
+%c2f(a,:)= c2f(a,:)./repmat(S(a),1,size(c2f,2));
+% remove the entire element's mapping and assign it the background conductivity
+%c2f(b,:)= 0; c2f(b,end+1)= 1;
+fmdl.coarse2fine= c2f;
+
+% generate sythetic data
+img = mk_image(fmdl,1);
+fm_pts = interp_mesh(fmdl);
+x_bary= fm_pts(:,1); z_bary= fm_pts(:,2);
+z_params= (min(fmdl.nodes(:,2)):max(fmdl.nodes(:,2)))';
+a = 0.36;
+b = 130;
+x_params= a*z_params+b;
+xlim=interp1(z_params,x_params,z_bary);
+img.elem_data(x_bary>xlim)= 0.01;
+figure; show_fem(img); title('model');
+
+% img2= mk_image(fmdl,img.elem_data);
+% figure; show_fem(img2);
+
+% img = mk_image(fmdl,0+ mk_c2f_circ_mapping(fmdl,[100;-30;0;50])*100);
+% img.elem_data(img.elem_data==0)= 0.1;
+dd  = fwd_solve(img);
+% TODO add some noise!!!
+
+imdl= eidors_obj('inv_model','test');
+imdl.fwd_model= fmdl;
+imdl.rec_model= cmdl;
+imdl.fwd_model.normalize_measurements = 0;
+imdl.rec_model.normalize_measurements = 0;
+imdl.RtR_prior = @prior_laplace;
+%imdl.RtR_prior = @prior_tikhonov;
+imdl.solve = @inv_solve_abs_core;
+imdl.reconst_type = 'absolute';
+imdl.hyperparameter.value = 0.1; % was 0.1
+imdl.jacobian_bkgnd.value = 1;
+
+imdl.parameters.elem_working = 'log_conductivity';
+imdl.parameters.meas_working = 'apparent_resistivity';
+imdl.parameters.dtol_iter = 4; % default 1 -> start checking on the first iter
+imdl.parameters.max_iterations = 20; % default 10
+
+% the conversion to apparaent resistivity is now handled inside the solver
+%%img1= mk_image(fmdl,1);
+%%vh1= fwd_solve(img1);
+%%normalisation= 1./vh1.meas;
+%%I= speye(length(normalisation));
+%%I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
+
+imdl.inv_solve.calc_solution_error = 0;
+
+imdl.parameters.verbose = 10;
+%%imdl.parameters.normalisation= I;
+%%imdl.parameters.homogeneization= 1;
+% imdl.parameters.fixed_background= 1; % the default now in _core
+imdl.parameters.line_search_args.perturb= [0 5*logspace(-7,-4,5)];
+%imdl.parameters.max_iterations= 10;
+%imdl.parameters.plot_line_optimize = 1;
+
+imdl.parameters.elem_output = 'log10_resistivity';
+imgr= inv_solve(imdl, dd);
+
+% save the result so we don't have to wait forever if we want to look at the result later
+save('inv_solve_abs_core_rec2.mat', 'imgr');
+
+imgGNd= imgr;
+%imgGNd.fwd_model.coarse2fine= cmdl.coarse2fine;
+% removal of the background elem_data is now handled in the solver
+% conversion to output elem_data is now handled in the solver
+%imgGNd.elem_data= log10(imgGNd.res_data(1:end-1));
+%imgGNd.calc_colours.clim= 1.5;
+%imgGNd.calc_colours.ref_level= 1.5;
+
+elec_posn= zeros(length(fmdl.electrode),3);
+for i=1:length(fmdl.electrode)
+    elec_posn(i,:)= mean(fmdl.nodes(fmdl.electrode(1,i).nodes,:),1);
 end
+
+figure; show_fem(imgGNd,1);
+hold on; plot(elec_posn(:,1),elec_posn(:,3),'k*');
+axis tight; ylim([-100 0.5])
+xlabel('X (m)','fontsize',20,'fontname','Times')
+ylabel('Z (m)','fontsize',20,'fontname','Times')
+set(gca,'fontsize',20,'fontname','Times');
+
+img = mk_image( imdl );
+img.elem_data= 1./(10.^imgr.elem_data);
+vCG= fwd_solve(img); vCG = vCG.meas;
+
+I = 1; % TODO FIXME -> I is diag(1./vh) the conversion to apparent resistivity
+% TODO these plots are useful, get them built into the solver!
+figure; plot(I*(dd.meas-vCG)); title('data misfit');
+figure; hist(abs(I*(dd.meas-vCG)),50); title('|data misfit|, histogram'); xlabel('|misfit|'); ylabel('count');
+
+figure; show_pseudosection( fmdl, I*dd.meas); title('measurement data');
+figure; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
+figure; show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100); title('data misfit');
