@@ -104,11 +104,27 @@ Nsim = opt.Nsim;
 
 %Calculate rec_model (if absent)
 if ~isfield(imdl,'rec_model');
-%    opt.do_coarse2fine = 0;
-   [imdl.rec_model imdl.fwd_model] = mk_pixel_slice(fmdl,opt.target_plane,opt);
-   imdl.rec_model.nodes(:,3) = []; % the third dimension complicated display
-   % medical orientation
-   imdl.rec_model.mdl_slice_mapper.y_pts = fliplr(imdl.rec_model.mdl_slice_mapper.y_pts);
+   if size(opt.target_plane) == [1,1]
+      [imdl.rec_model imdl.fwd_model] = mk_pixel_slice(fmdl,opt.target_plane,opt);
+      imdl.rec_model.nodes(:,3) = []; % the third dimension complicated display
+      % medical orientation
+      imdl.rec_model.mdl_slice_mapper.y_pts = fliplr(imdl.rec_model.mdl_slice_mapper.y_pts);
+   else
+      opt.do_coarse2fine = 0; % coarse2fine is needed for calculation of
+                              % solution error, but is otherwise meaningless
+      r = {};
+      inside = logical([]);
+      c2f = [];
+      for i = 1:length(opt.target_plane)
+         r{i} = mk_pixel_slice(fmdl,opt.target_plane(i),opt);         
+         inside = [inside; r{i}.inside];
+         c2f  = blkdiag( c2f, r{i}.coarse2fine);
+      end
+      rmdl = merge_meshes(r{:});
+      rmdl.inside = inside;
+      rmdl.coarse2fine = c2f;
+   end
+   imdl.rec_model = rmdl;
 end
 % user MUST specify the inside array
 inside = imdl.rec_model.inside;
@@ -174,7 +190,7 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
+function [vi,vh,xyz,opt]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
    ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
@@ -220,19 +236,23 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
 %            F = fourier_fit(opt.elec_loc(:,1:2));
 %            v = linspace(0,1,101); v(end)=[];
 %            pts = fourier_fit(F,v);
-           pts = opt.contour_boundary(:,1:2);
-           lim = max(maxx, maxy);
-           frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
-           [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
-                           linspace(-lim,lim,ceil(sqrt(Nsim/frac))));
-                      
-           x = x+ctr(1); y = y + ctr(2);    
-           IN = inpolygon(x,y,pts(:,1),pts(:,2));
-           xyzr(1,:) = x(find(IN));
-           xyzr(2,:) = y(find(IN));
-           xyzr(3,:) = calc_offset(opt.target_plane,opt,size(xyzr,2));
-           % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
+           xyzr = [];
+           for i = 1:length(opt.contour_boundary)
+              pts = opt.contour_boundary{i}(:,1:2);
+              lim = max(maxx, maxy);
+              frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
+              [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
+                 linspace(-lim,lim,ceil(sqrt(Nsim/frac))));
+              
+              x = x+ctr(1); y = y + ctr(2);
+              IN = inpolygon(x,y,pts(:,1),pts(:,2));
+              tmp(1,:) = x(find(IN));
+              tmp(2,:) = y(find(IN));
+              tmp(3,:) = calc_offset(opt.target_plane(i),opt,size(tmp,2));
+              % TODO: What size is good here and how to figure it out?
+              tmp(4,:) = calc_radius(mean([maxx maxy]),opt,size(tmp,2));
+              xyzr = [xyzr tmp];
+           end
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
    end
    before = size(xyzr,2);
@@ -241,7 +261,7 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
    if(after~=before)
        eidors_msg(['mk_GREIT_model: Now using ' num2str(after) ' points']);
    end
-   xy = xyzr(1:2,:);
+   xyz = xyzr(1:3,:);
 
 function z = calc_offset(z0,opt,Nsim)
     if opt.random_offset
@@ -307,11 +327,12 @@ function opt = parse_options(opt,fmdl,imdl);
         opt.square_pixels = 0;
     end
     % Allow imdl.rec_model to overwrite options.imgsz
-    if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
-        % this assumes rec_model is a rectangular grid, as it should
-        opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
-        opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
-    end  
+    % TODO: fix this to support multi-layer models
+%     if isfield(imdl,'rec_model') && ~isempty(imdl.rec_model)
+%         % this assumes rec_model is a rectangular grid, as it should
+%         opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
+%         opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
+%     end  
     
     if ~isfield(opt, 'distr'),     opt.distr = 3;       end 
     if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000;    end
@@ -347,7 +368,7 @@ function opt = parse_options(opt,fmdl,imdl);
         t = opt.target_plane;
         minnode = min(fmdl.nodes);
         maxnode = max(fmdl.nodes);
-        if t<minnode(3) || t>maxnode(3)
+        if any(t<minnode(3)) || any(t>maxnode(3))
             warning('options.target_plane is outside the model!');
             eidors_msg('mk_GREIT_model: Resorting to default target_plane');
             opt.target_plane = mean(elec_loc(:,3));
@@ -369,7 +390,7 @@ function opt = parse_options(opt,fmdl,imdl);
     if ~isfield(opt,'noise_figure_targets');
        R = max(max(fmdl.nodes(:,1:2)) - min(fmdl.nodes(:,1:2)));
        xyzr = mean(fmdl.nodes);
-       xyzr(3) = opt.target_plane;
+       xyzr(3) = mean(opt.target_plane);
        xyzr(4) = mean(opt.target_size)*0.5*R;
        opt.noise_figure_targets = xyzr;
     end
@@ -382,11 +403,14 @@ function opt = parse_options(opt,fmdl,imdl);
         opt.normalize = 0;
         eidors_msg('mk_GREIT_model: fmdl.normalize_measurements not specified, assuming 0');
     end
-    
-    % find the boundary at target level (needed in many places)
-    slc = mdl_slice_mesher(fmdl,[inf inf opt.target_plane]);
-    bnd = find_boundary(slc.fwd_model);
-    opt.contour_boundary = order_loop(slc.fwd_model.nodes(unique(bnd),:));
+    opt.contour_boundary = {};
+    for i = 1:length(opt.target_plane)
+       % find the boundary at target level (needed in many places)
+       slc = mdl_slice_mesher(fmdl,[inf inf opt.target_plane(i)]);
+       bnd = find_boundary(slc.fwd_model);
+       opt.contour_boundary = [opt.contour_boundary, ...
+                                 order_loop(slc.fwd_model.nodes(unique(bnd),:)) ];
+    end
     
 
 function do_unit_test

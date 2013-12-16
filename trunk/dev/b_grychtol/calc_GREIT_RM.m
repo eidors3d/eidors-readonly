@@ -77,6 +77,18 @@ function PSF= default_GREIT_desired_soln(xyc, radius, opt)
        return
    end
         
+   if size(xyc,1) > 2
+      u = unique(xyc(3,:));
+      PSF = [];
+      for i = 1:length(u)
+         xy = xyc( 1:2 , xyc(3,:)==u(i) );
+         PSFp= default_GREIT_desired_soln(xy, radius, opt);
+         PSF = blkdiag(PSF,PSFp);
+      end
+      eidors_obj('set-cache', c_obj, 'desired_solution', PSF);
+      return
+   end
+   
    xsz = opt.imgsz(1); ysz = opt.imgsz(2);
    sz= xsz * ysz;
    xmin = opt.meshsz(1); xmax = opt.meshsz(2);
