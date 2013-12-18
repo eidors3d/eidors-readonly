@@ -85,11 +85,11 @@ if isfield(inv_model, 'fwd_model') && ...
    length(img.elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
 
    c2f = inv_model.fwd_model.coarse2fine;
-   img.elem_data = c2f \ img.elem_data;
+   %img.elem_data = c2f \ img.elem_data; % --> rank deficient???
    bg = mean(img.elem_data);
-   bg = map_data(bg, img.current_physics, 'resistivity');
-   %img.elem_data = ones(size(c2f,2),1)*bg;
+   img.elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
+      bg = map_data(bg, img.current_physics, 'resistivity');
       fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
       disp('    TODO this fix should be moved to mk_image()');
    end
@@ -124,7 +124,7 @@ while 1
   end
 
   % calculate the Jacobian, possibly update RtR as well if required
-  J = update_jacobian(img, opt);
+  J = update_jacobian(img, N, opt);
   RtR = update_RtR(RtR, inv_model, k, img, opt);
 
   % update change in element data from the prior de and
@@ -320,22 +320,24 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      end
    end
 
-function J = update_jacobian(img, opt)
-   if opt.calc_jacobian % TODO skipping the Jacobian isn't really an option ever... delete this 'if'
-      img = map_img(img, 'conductivity');
-      if(opt.verbose > 1)
-         try J_str = func2str(img.fwd_model.jacobian);
-         catch J_str = img.fwd_model.jacobian;
-         end
-         fprintf('    calc Jacobian J @ current x (%s)\n', J_str);
+function J = update_jacobian(img, N, opt)
+   img = map_img(img, 'conductivity');
+   if(opt.verbose > 1)
+      try J_str = func2str(img.fwd_model.jacobian);
+      catch J_str = img.fwd_model.jacobian;
       end
-      % scaling if we are working in something other than direct conductivity
-      S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
-      % finalize the jacobian
-      J = calc_jacobian( img ) * S;
-   else
-      J = [];
+      fprintf('    calc Jacobian J(x) (%s,', J_str);
    end
+   % scaling if we are working in something other than direct conductivity
+   S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
+   % finalize the jacobian
+   % Note that if a normalization (i.e. apparent_resistivity) has been applied
+   % to the measurements, it needs to be applied to the Jacobian as well!
+   J = N * calc_jacobian( img ) * S;
+   if opt.verbose > 1
+      fprintf(' %d DoF, %d meas)\n', size(J'));
+   end
+
 % -------------------------------------------------
 % Chain Rule Products for Jacobian Translations
 % x is conductivity, we want the chain rule to translate the
@@ -444,7 +446,7 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
       reason = '';
    end
    if opt.verbose > 1
-      disp(['    fwd_solve ', reason]);
+      disp(['    fwd_solve b=Ax ', reason]);
    end
    [dv, opt] = update_dv_core(img, data0, N, opt);
 
@@ -489,6 +491,9 @@ function residual = GN_residual(dv, de, W, hp, RtR)
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
    hp2RtR = hp*RtR;
    residual = 0.5*( dv'*W*dv + de'*hp2RtR*de);
+
+function residual = meas_residual(dv, de, W, hp, RtR)
+   residual = norm(dv);
 
 %function img = initial_estimate( imdl, data )
 %   img = calc_jacobian_bkgnd( imdl );
@@ -563,9 +568,6 @@ function opt = parse_options(imdl)
       opt.update_func = @GN_update; % dx = f(J, W, hp, RtR, dv, de)
    end
    % figure out if things need to be calculated
-   if ~isfield(opt, 'calc_jacobian') % derivative of the objective function
-      opt.calc_jacobian = 0; % J
-   end
    if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
       opt.calc_meas_icov = 0; % W
    end
@@ -582,9 +584,6 @@ function opt = parse_options(imdl)
       % ensure that necessary components are calculated
       % opt.update_func: dx = f(J, W, hp, RtR, dv, de)
       args = function_depends_upon(opt.update_func, 6);
-      if args(1) == 1
-         opt.calc_jacobian = 1;
-      end
       if args(2) == 1
          opt.calc_meas_icov = 1;
       end
@@ -775,8 +774,7 @@ function check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
       any(size(W) ~= [nv nv])
       error('W size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(W), nv, nv);
    end
-   if opt.calc_jacobian && ...
-      any(size(J) ~= [nv ne])
+   if any(size(J) ~= [nv ne])
       error('J size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(J), nv, ne);
    end
    if opt.calc_RtR_prior && ...
