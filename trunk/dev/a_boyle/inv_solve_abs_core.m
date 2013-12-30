@@ -73,10 +73,10 @@ opt = parse_options(inv_model);
 %    img = initial_estimate( inv_model, data0 );
 %else
 [inv_model, opt] = append_c2f_background(inv_model, opt);
-img = calc_jacobian_bkgnd( inv_model );
+img = mk_image( inv_model );
+%img = calc_jacobian_bkgnd( inv_model );
 % TODO does calc_jacobian_bkgnd ignore 'physics' right now.. that might screw things up pretty good!
 img = physics_data_mapper(img); % move data from whatever 'physics' to img.elem_data
-
 
 % mk_image doesn't handle the c2f
 % TODO move this from here to mk_image so we get an img with the correct number of elem_data
@@ -103,16 +103,17 @@ N = init_normalization(inv_model.fwd_model, opt);
 
 % map data and measurements to working types
 %  convert elem_data
-img = map_img(img, opt.elem_working);
+%img = map_img(img, opt.elem_working);
 %  convert measurement data
 if ~isstruct(data0)
-  d = data0;
-  data0 = struct;
-  data0.meas = d;
-  data0.type = 'data';
+   d = data0;
+   data0 = struct;
+   data0.meas = d;
+   data0.type = 'data';
 end
-data0.meas = map_meas(data0.meas, N, opt.meas_input, opt.meas_working);
-data0.current_physics = opt.meas_working;
+data0.current_physics = opt.meas_input;
+%data0.meas = map_meas(data0.meas, N, opt.meas_input, opt.meas_working);
+%data0.current_physics = opt.meas_working;
 
 % now get on with
 img0 = img;
@@ -124,12 +125,12 @@ while 1
   end
 
   % calculate the Jacobian, possibly update RtR as well if required
-  J = update_jacobian(img, N, opt);
+  [J, Ji] = update_jacobian(img, N, opt); % TODO Ji is DEBUG (clean up)
   RtR = update_RtR(RtR, inv_model, k, img, opt);
 
   % update change in element data from the prior de and
   % the measurement error dv
-  [dv, opt] = update_dv(dv, img, data0, N, opt);
+  [dv, opt, dvi] = update_dv(dv, img, data0, N, opt);
   de = update_de(de, img, img0, opt);
 
   % now find the residual, quit if we're done
@@ -140,11 +141,28 @@ while 1
 
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
-  dx = update_dx(J, W, hp, RtR, dv, de, opt);
+  [dx, dxi] = update_dx(J, W, hp, RtR, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
   beta = update_beta(dx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
+if k == 1
+  img.k1.Ji = Ji;
+  img.k1.W = W;
+  img.k1.N = N;
+  img.k1.hp = hp;
+  img.k1.RtR = RtR;
+  img.k1.data0 = data0;
+  img.k1.img0 = img0;
+  img.k1.img = img;
+  img.k1.J = J;
+  img.k1.dv = dv;
+  img.k1.de = de;
+  img.k1.dx = dx;
+  img.k1.sx = sx;
+  img.k1.dvi = dvi;
+  img.k1.dxi = dxi;
+end
 
   % line search for alpha, leaving the final selection as img
   [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, RtR, dv, opt);
@@ -201,6 +219,13 @@ function N = init_normalization(fmdl, opt)
       end
       N = feval(opt.normalize_data_func, fmdl);
    end
+
+% default opt.normalize_data_func
+% if working measurements are apparent_resistivity & input is voltage
+function N = calc_normalization_apparent_resistivity(fmdl)
+  img1 = mk_image(fmdl,1);
+  vh1  = fwd_solve(img1);
+  N    = spdiag(1./vh1.meas);
 
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
@@ -308,7 +333,7 @@ function RtR = update_RtR(RtR, inv_model, k, img, opt)
    end
 
 function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
-   img = map_img(img, 'conductivity');
+   img = map_img(img, opt.elem_working);
    inv_model.jacobian_backgnd = img;
    RtR = calc_RtR_prior( inv_model );
    if size(RtR,1) < length(img.elem_data)
@@ -320,7 +345,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      end
    end
 
-function J = update_jacobian(img, N, opt)
+function [J, Ji] = update_jacobian(img, N, opt)
    img = map_img(img, 'conductivity');
    if(opt.verbose > 1)
       try J_str = func2str(img.fwd_model.jacobian);
@@ -333,9 +358,19 @@ function J = update_jacobian(img, N, opt)
    % finalize the jacobian
    % Note that if a normalization (i.e. apparent_resistivity) has been applied
    % to the measurements, it needs to be applied to the Jacobian as well!
-   J = N * calc_jacobian( img ) * S;
+   J = calc_jacobian( img );
+   Ji.img = img;
+   Ji.J = J;
+   Ji.N = N;
+   Ji.S = S;
+   % NOTE that the order of operations: "J = N * (Jc * S)" affects the outcome
+   % due to (?) floating point errors on the order of 1e-14 for 1744 elem_data,
+   % where eps*1744=3.8e-13
+% TODO clean up: this order of operations may not matter... once its working play with this and see if results change
+%   J = N * calc_jacobian( img ) * S;
+   J = N * ( calc_jacobian( img ) * S );
    if opt.verbose > 1
-      fprintf(' %d DoF, %d meas)\n', size(J'));
+      fprintf(' %d DoF, %d meas, %s)\n', size(J,2)-length(opt.elem_fixed), size(J,1), func2str(opt.calc_jacobian_scaling_func));
    end
 
 % -------------------------------------------------
@@ -437,7 +472,8 @@ function  de = update_de(de, img, img0, opt)
    de(opt.elem_fixed) = 0;
    err_if_inf_or_nan(de, 'de out');
 
-function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
+function [dv, opt, dvi] = update_dv(dv, img, data0, N, opt, reason)
+   dvi = [];
    % estimate current error as a residual
    if ~isempty(dv) % need to calculate dv...
       return;
@@ -448,20 +484,36 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    if opt.verbose > 1
       disp(['    fwd_solve b=Ax ', reason]);
    end
-   [dv, opt] = update_dv_core(img, data0, N, opt);
+   if nargout > 2
+      [dv, opt, dvi] = update_dv_core(img, data0, N, opt);
+   else
+      [dv, opt] = update_dv_core(img, data0, N, opt);
+   end
 
-% also used by the line search as opt.line_search_dv_func
-function [dv, opt] = update_dv_core(img, data0, N, opt)
-   img = map_img(img, 'conductivity');
-   err_if_inf_or_nan(data0.meas, 'dv0 img');
-   data = fwd_solve(img);
+function data = map_meas_struct(data, N, out)
    try   current_meas_physics = data.current_physics;
    catch current_meas_physics = 'voltage';
    end
-   data.meas = map_meas(data.meas, N, current_meas_physics, opt.meas_working);
-   data.current_physics = opt.meas_working;
+   data.meas = map_meas(data.meas, N, current_meas_physics, out);
+   data.current_physics = out;
+   err_if_inf_or_nan(data.meas, 'dv meas');
+
+% also used by the line search as opt.line_search_dv_func
+function [dv, opt, dvi] = update_dv_core(img, data0, N, opt)
+   data0 = map_meas_struct(data0, N, 'voltage');
+   img = map_img(img, 'conductivity');
+   data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
    dv = calc_difference_data(data, data0, img.fwd_model);
+   if nargout > 2
+      dvi.img = img;
+      dvi.data0 = data0;
+      dvi.data  = data;
+      dvi.dv = dv;
+   else
+      dvi = [];
+   end
+   dv = map_meas(dv, N, 'voltage', opt.meas_working);
    err_if_inf_or_nan(dv, 'dv out');
 
 function show_fem_iter(k, img, inv_model, opt)
@@ -560,7 +612,8 @@ function opt = parse_options(imdl)
    opt.fwd_solutions = 0;
 
    if ~isfield(opt, 'residual_func') % the objective function
-      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp, RtR)
+% TODO      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp, RtR)
+      opt.residual_func = @meas_residual; % r = f(dv, de, W, hp, RtR)
    end
 
    % calculation of update components
@@ -640,8 +693,8 @@ function opt = parse_options(imdl)
 
    % line search
    if ~isfield(opt,'line_search_func')
-      %opt.line_search_func = @line_search_o2; % img = f(img, dx, opt) TODO out of date!!!
-      opt.line_search_func = @line_search_onm2; % img = f(img, dx, opt) TODO out of date!!!
+      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp, RtR, dv, opt);
+      opt.line_search_func = @line_search_onm2;
    end
    if ~isfield(opt,'line_search_dv_func')
       opt.line_search_dv_func = @update_dv_core;
@@ -782,31 +835,33 @@ function check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
       error('RtR size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(RtR), ne, ne);
    end
 
-function N = calc_normalization_apparent_resistivity(fmdl)
-  img1 = mk_image(fmdl,1);
-  vh1  = fwd_solve(img1);
-  N    = diag(1./vh1.meas);
-
-%  normalisation= 1./vh1.meas;
-%  N= speye(length(normalisation));
-%  N(1:size(N,1)+1:size(N,1)*size(N,1))= normalisation;
-%  sz_N = size(N)
-%  figure; spy(N)
-
-function dx = update_dx(J, W, hp, RtR, dv, de, opt)
+function [dx, dxi] = update_dx(J, W, hp, RtR, dv, de, opt)
    if(opt.verbose > 1)
       fprintf( '    calc step size dx');
    end
 
+   % handle fixed elements
+   if ~isempty(RtR)
+      RtR(:,opt.elem_fixed) = [];
+      RtR(opt.elem_fixed,:) = [];
+   end
+   J(:,opt.elem_fixed) = [];
+   de(opt.elem_fixed) = [];
+   
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
    check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
-
-   if ~isempty(RtR)
-      RtR(:,opt.elem_fixed) = 0;
+   if nargout > 1
+      dxi.J = J;
+      dxi.RtR = RtR;
+      dxi.de = de;
    end
 
    % do the update step direction calculation
    dx = feval(opt.update_func, J, W, hp, RtR, dv, de);
+   if nargout > 1
+      dxi.RDx = hp*RtR*de;
+      dxi.dx = dx;
+   end
    % ignore any fixed value elements
    dx(opt.elem_fixed) = 0;
 
@@ -861,7 +916,6 @@ function [inv_model, opt] = append_c2f_background(inv_model, opt)
     % check that all elements get assigned a conductivity
     % through the c2f conversion
     c2f = inv_model.fwd_model.coarse2fine; % coarse-to-fine mesh mapping
-      size(c2f);
     nf = size(inv_model.fwd_model.elems,1); % number of fine elements
     nc = size(c2f,2); % number of coarse elements
     % ... each element of fel aught to sum to '1' since the
@@ -886,7 +940,6 @@ function [inv_model, opt] = append_c2f_background(inv_model, opt)
       if opt.c2f_background_fixed
          opt.elem_fixed(end+1) = nc+1;
       end
-      size(c2f);
     end
 
 function [img, opt] = strip_c2f_background(img, opt, indent)
@@ -1082,9 +1135,6 @@ for i = 1:length(elem_types)
     pass = test_map_meas(d, N, elem_types{i}, elem_types{j}, expected(i,j), pass);
   end
 end
-
-%disp('TEST: calc_normalization_apparent_resistivity()');
-% function N = calc_normalization_apparent_resistivity(fmdl)
 
 disp('TEST: Jacobian scaling');
 d = [d d]';
