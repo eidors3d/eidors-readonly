@@ -29,15 +29,15 @@ img = imgk;
 mlist= zeros(size(perturb)); % init
 for i = 1:length(perturb);
     if opt.verbose > 1
-       fprintf(' [%d]=%0.1e', i, perturb(i));
+       fprintf(' [%d]=%0.3g', i, perturb(i));
     end
-    if (i == 1) && (~isempty(dv0)) % don't bother simulating alpha=0 (we already have the measurements)
-      dv = dv0; % vsim @ alpha=0 from the previous line search iteration
-    else
+%    if (i == 1) && (~isempty(dv0)) % don't bother simulating alpha=0 (we already have the measurements)
+%      dv = dv0; % vsim @ alpha=0 from the previous line search iteration
+%    else
       img.elem_data = x + perturb(i)*dx;
       [dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
       % [dv, opt] = update_dv_core(img, data0, N, opt)
-    end
+%    end
     de = feval(opt.line_search_de_func, img, img1, opt);
     if any(isnan(dv) | isinf(dv))
        warning(sprintf('%d of %d elements in dv are NaN or Inf', ...
@@ -54,7 +54,7 @@ end
 if opt.verbose > 1
    fprintf('\n');
    fprintf('      fitting data\n      ');
-   fprintf('  %0.4e',mlist);
+   fprintf('  %0.3g',mlist);
    fprintf('\n');
 end
 % drop bad values
@@ -89,7 +89,7 @@ de = feval(opt.line_search_de_func, img, img1, opt);
 meas_err = feval(opt.residual_func, dv, de, W, hp, RtR);
 meas_err1 = meas_err;
 if opt.verbose > 1
-   fprintf('      step size = %0.1e, misfit = %0.4e, expected = %0.4e\n', alpha, meas_err, FF(pf, alpha));
+   fprintf('      step size = %0.3g, misfit = %0.3g, expected = %0.3g\n', alpha, meas_err, FF(pf, alpha));
 end
 
 % check how close we were to the line fit estimate
@@ -117,7 +117,7 @@ if opt.verbose > 1
    if alpha > perturb(end)-eps
      max_alpha_str = ' (max)';
    end
-   fprintf('      step size = %0.1e%s, misfit = %0.4e selected\n', alpha, max_alpha_str, meas_err);
+   fprintf('      step size = %0.3g%s, misfit = %0.3g selected\n', alpha, max_alpha_str, meas_err);
 end
 
 % must create plots before changing the perturb values
@@ -138,7 +138,7 @@ if meas_err >= mlist(1)
     perturb = perturb/10;
 else % good step
     if opt.verbose > 1
-       fprintf('      update perturbations around step = %0.1e\n', alpha);
+       fprintf('      update perturbations around step = %0.3g\n', alpha);
     end
     % this keeps the log-space distance between sample points but
     % re-centres around the most recent alpha
