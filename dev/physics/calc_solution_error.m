@@ -140,7 +140,7 @@ step = ceil(S/100);
    
 for i = fliplr(1:S);
    if S > 10 && ~mod(i,step)
-      fprintf(1, '\b\b\b%02d%%',100*(S-i)/S);
+      fprintf(1, '\b\b\b%02d%%',round(100*(S-i)/S));
    end
    jnk.params = img.params(:,i);
    %    jnk = physics_param_mapper(jnk,1);
@@ -148,7 +148,7 @@ for i = fliplr(1:S);
    simi(:,i) = tmp.meas;
 end
 if S > 10
-   fprintf(1, '\b\b\b100%%\n',100*(S-i/S));
+   fprintf(1, '\b\b\b100%%\n',round(100*(S-i/S)));
 end
 
 sim = calc_difference_data(simh,simi,fmdl);
