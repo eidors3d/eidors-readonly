@@ -85,6 +85,12 @@ simh = fwd_solve(img);
 img = physics_data_mapper(img);
 imgc = physics_data_mapper(imgc);
 
+if ~isfield(imgc,'elem_data') && isfield(imgc,'node_data')
+   eidors_msg('Solution error calculation for nodal solvers not supported (yet).',2);
+   res = NaN;
+   return
+end
+   
 % add solution to jacobian background
 e_data = repmat(img.elem_data,1,size(imgc.elem_data,2));
 has_c2f = isfield(imgc.fwd_model,'coarse2fine');
