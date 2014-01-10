@@ -44,6 +44,9 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         opt.target_size. Note that multiple targets are simultaneously
 %         simulated in a single measurement, meaning they should not
 %         overlap.
+%     noise_figure_data - real data [MxN] to use for NF calculation.
+%         If specified, noise_figure_targets are ignored. Otherwise, data
+%         is simulated.
 %     extra_noise - extra noise samples (such as electrode movement)
 %     training_data - when specific target positions are provided in
 %         opt.distr, training data can be provided as follows:
@@ -151,10 +154,14 @@ if ~isempty(opt.noise_figure)
     else
         weight = target;
     end
+    if ~isfield(opt, 'noise_figure_data')
+       xyzr = opt.noise_figure_targets;
+       [jnk,vi_NF] = simulate_movement(imgs,xyzr');
+       vi_NF = sum(vi_NF,2); % sum the targets
+    else
+       vi_NF = opt.noise_figure_data;
+    end
     
-    xyzr = opt.noise_figure_targets;
-    [jnk,vi_NF] = simulate_movement(imgs,xyzr');
-    vi_NF = sum(vi_NF,2); % sum the targets
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
     f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
