@@ -135,18 +135,22 @@ jnk = img;
 S = size(sol.params,2);
 if S > 10
    fprintf(1, '   Error calculation progress:     ');
-   step = ceil(S/100);
-   for i = fliplr(1:S);
-      if ~mod(i,step)
-         fprintf(1, '\b\b\b%02d%%',100*(S-i)/S);
-      end
-      jnk.params = img.params(:,i);
-      %    jnk = physics_param_mapper(jnk,1);
-      tmp = fwd_solve(physics_param_mapper(jnk,1));
-      simi(:,i) = tmp.meas;
+end
+step = ceil(S/100);
+   
+for i = fliplr(1:S);
+   if S > 10 && ~mod(i,step)
+      fprintf(1, '\b\b\b%02d%%',100*(S-i)/S);
    end
+   jnk.params = img.params(:,i);
+   %    jnk = physics_param_mapper(jnk,1);
+   tmp = fwd_solve(physics_param_mapper(jnk,1));
+   simi(:,i) = tmp.meas;
+end
+if S > 10
    fprintf(1, '\b\b\b100%%\n',100*(S-i/S));
 end
+
 sim = calc_difference_data(simh,simi,fmdl);
 
 % residuals
