@@ -94,7 +94,10 @@ if isfield(inv_model, 'fwd_model') && ...
       disp('    TODO this fix should be moved to mk_image()');
    end
 end
-
+% transfer parameter into img
+if isfield(opt, 'elem_movement_init')
+   img.elem_movement_init = opt.elem_movement_init;
+end
 
 % precalculate some of our matrices if required
 hp = init_hp(inv_model, opt);
@@ -112,8 +115,6 @@ if ~isstruct(data0)
    data0.type = 'data';
 end
 data0.current_physics = opt.meas_input;
-%data0.meas = map_meas(data0.meas, N, opt.meas_input, opt.meas_working);
-%data0.current_physics = opt.meas_working;
 
 % now get on with
 img0 = img;
@@ -170,13 +171,8 @@ if opt.verbose > 1
    fprintf('  %d fwd_solves required for this solution in %d iterations\n', ...
            opt.fwd_solutions, k);
 end
-if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
-   error('img data (%d) does not match FEM mesh elements (%d)', ...
-         length(img.elem_data), length(img.fwd_model.elems));
-end
 % convert data for output
 img = map_img(img, opt.elem_output);
-%img.physics_data_mapper = opt.elem_output; %TODO which is it: current_physics or physics_data_mapper???
 %img = physics_data_mapper(img, 1); % move data from img.elem_data to whatever 'physics'
 
 function W = init_meas_icov(inv_model, opt)
@@ -404,6 +400,9 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, Rt
   err_if_inf_or_nan(sx, 'sx (pre-line search)');
   err_if_inf_or_nan(img.elem_data, 'img.elem_data (pre-line search)');
 
+  if all(size(img.elem_data) ~= size(sx))
+     error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
+  end
   [alpha, img, dv, opt] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp, RtR, dv, opt);
   if(opt.verbose > 1)
      fprintf('      selected alpha=%0.3g\n', alpha);
@@ -454,7 +453,7 @@ function  de = update_de(de, img, img0, opt)
    else
       de = img0.elem_data - img.elem_data;
    end
-   de(opt.elem_fixed) = 0;
+   de(opt.elem_fixed) = 0; % TODO is this redundant... delete me?
    err_if_inf_or_nan(de, 'de out');
 
 function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
@@ -492,7 +491,11 @@ function show_fem_iter(k, img, inv_model, opt)
   if opt.verbose > 1
      disp('    show_fem()');
   end
-  img = map_img(img, opt.elem_output);
+  out = opt.elem_output;
+  if iscell(out)
+     out = out{1};
+  end
+  img = map_img(img, out);
   [img, opt] = strip_c2f_background(img, opt, '    ');
   % check we're returning the right size of data
   if isfield(inv_model, 'rec_model')
@@ -508,11 +511,12 @@ function show_fem_iter(k, img, inv_model, opt)
                      size(img.fwd_model.elems,1)));
   end
   figure; show_fem(img, 1);
-  str = strrep(opt.elem_output, '_', ' ');
+  str = strrep(out, '_', ' ');
   title(sprintf('iter=%d, %s',k, str));
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
 function residual = GN_residual(dv, de, W, hp, RtR)
+%   [size(dv); size(W); size(de); size(hp2RtR)]
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
    hp2RtR = hp*RtR;
    residual = 0.5*( dv'*W*dv + de'*hp2RtR*de);
@@ -917,12 +921,27 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     if nargin < 3
        indent = '';
     end
+    % nothing to do?
     if opt.c2f_background <= 0
       return;
     end
+
+    % if there are multiple 'physics', we assume its the first
+    % TODO -- this isn't a great assumption but it'll work for now,
+    %         we should add a better (more general) mechanism
+    in = img.current_physics;
+    out = opt.elem_output;
+    if iscell(in)
+       in = in{1};
+    end
+    if iscell(out)
+       out = out{1};
+    end
+
+    % go about cleaning up the background
     e = opt.c2f_background;
     % take backgtround elements and convert to output 'physics' (resistivity, etc)
-    bg = map_data(img.elem_data(e), img.current_physics, opt.elem_output);
+    bg = map_data(img.elem_data(e), in, out);
     img.elem_data_background = bg;
     % remove elements from elem_data & c2f
     img.elem_data(e) = [];
@@ -931,10 +950,21 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     opt.c2f_background = 0;
     ri = find(opt.elem_fixed == e);
     opt.elem_fixed(ri) = [];
+    if isfield(img, 'physics_sel')
+       for i = 1:length(img.physics_sel)
+          t = img.physics_sel{i};
+          ti = find(t == e);
+          t(ti) = []; % rm 'e' from the list of physics_sel
+          ti = find(t > e);
+          t(ti) = t(ti)-1; % down-count element indices greater than our deleted one
+          img.physics_sel{i} = t;
+       end
+    end
+
     % show what we got for a background value
     if(opt.verbose > 1)
        bg = img.elem_data_background;
-       bg = map_data(bg, img.current_physics, 'resistivity');
+       bg = map_data(bg, in, 'resistivity');
        fprintf('%s  background conductivity: %0.1f Ohm.m\n', indent, bg);
     end
 
@@ -962,17 +992,88 @@ end
 
 function img = map_img(img, out);
    err_if_inf_or_nan(img.elem_data, 'img-pre');
-   try current_physics = img.current_physics;
-   catch current_physics = 'conductivity';
+   try in = img.current_physics;
+   catch in = {'conductivity'};
    end
-   img.elem_data = map_data(img.elem_data, current_physics, out);
-   img.current_physics = out;
+   % make cell array of strings
+   if isstr(in)
+      in = {in};
+      img.current_physics = in;
+   end
+   if isstr(out)
+      out = {out};
+   end
+
+   % if we have mixed data, check that we have a selector to differentiate between them
+   if ~isfield(img, 'physics_sel')
+      if length(in(:)) == 1
+         img.physics_sel = {1:size(img.elem_data,1)};
+      else
+         error('found multiple physics but no physics_sel cell array in img');
+      end
+   end
+
+   % create data?! we don't know how
+   if length(out(:)) > length(in(:))
+      % if we are missing movement, construct it (default = 0 movement)
+      if strcmp(out{end}, 'movement')
+         if ~isfield(img, 'elem_movement_init')
+            error('to create initial movement data we need the inv_model.parameters.elem_movement_init vector with initial movement values');
+         end
+         e = img.elem_movement_init;
+         ei = length(img.elem_data);
+         ei = [ei+1:ei+length(e)];
+         img.elem_data(ei) = e;
+         img.physics_sel{end+1} = ei;
+         in{end+1} = 'movement';
+         img.current_physics = in;
+      end
+      % are we still broken -- then error out
+      if length(out(:)) > length(in(:))
+         error('missing data (more out types than in types)');
+      end
+   elseif length(out(:)) < length(in(:))
+      % delete data: we can do that
+      % NOTE that if we are doing this, we always assume its the *last* items in the list
+      for i = 1:length(in(:))-length(out(:)) % delete the extra
+         img.elem_data(img.physics_sel{end}) = []; % rm elem_data
+         img.physics_sel(end) = []; % rm physics_sel
+         img.current_physics{end} = []; % rm current_physics
+      end
+   end
+
+   % the sizes now match, we can do the mapping
+   for i = 1:length(out(:))
+      % map the data
+      x = img.elem_data(img.physics_sel{i});
+      x = map_data(x, in{i}, out{i});
+      img.elem_data(img.physics_sel{i}) = x;
+      img.current_physics{i} = out{i};
+   end
    err_if_inf_or_nan(img.elem_data, 'img-post');
 
+   % clean up physics_sel/current_physics if we only have one physics
+   if length(img.current_physics(:)) == 1
+      img.current_physics = img.current_physics{1};
+      img = rmfield(img, 'physics_sel'); % unnecessary since we know its all elem_data
+   end
+
 function x = map_data(x, in, out)
-   % note that we can't check for bad data because in the 'loss of precision'
-   % cases we are recursively calling map_data with inf data.
-   %% err_if_inf_or_nan(x, 'map_data-pre');
+   % check that in and out are single strings, not lists of strings
+   if ~isstr(in)
+      if iscell(in) && (length(in(:)) == 1)
+         in = in{1};
+      else
+         error('expecting single string for map_data() "in" type');
+      end
+   end
+   if ~isstr(out)
+      if iscell(out) && (length(out(:)) == 1)
+         out = out{1};
+      else
+         error('expecting single string for map_data() "out" type');
+      end
+   end
 
    % quit early if there is nothing to do
    if strcmp(in, out) % in == out
