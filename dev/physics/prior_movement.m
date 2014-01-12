@@ -1,3 +1,4 @@
+
 function Reg= prior_movement( inv_model );
 % PRIOR_MOVEMENT calculate image prior
 % Reg= prior_movement( inv_model )
@@ -40,8 +41,15 @@ try
 catch
    RegCfcn = @prior_laplace;
 end
+try 
+   cUsefwd = inv_model.prior_movement.RegC.prior_use_fwd_not_rec;
+catch
+   cUsefwd = 0;
+end
+inv_model.prior_use_fwd_not_rec = cUsefwd;
+% try; inv_model = rmfield(inv_model, 'prior_use_fwd_not_rec'); end
 try; inv_model = rmfield(inv_model, 'R_prior'); end
-try; inv_model = rmfield(inv_model, 'prior_use_fwd_not_rec'); end
+
 inv_model.RtR_prior = RegCfcn;
 
 pp= fwd_model_parameters( inv_model.fwd_model );
