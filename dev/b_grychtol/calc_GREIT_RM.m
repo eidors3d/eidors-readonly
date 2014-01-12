@@ -76,7 +76,7 @@ function PSF= default_GREIT_desired_soln(xyc, radius, opt)
    if ~isempty(PSF)
        return
    end
-        
+      
    if size(xyc,1) > 2
       u = unique(xyc(3,:));
       PSF = [];
@@ -87,6 +87,14 @@ function PSF= default_GREIT_desired_soln(xyc, radius, opt)
       end
       eidors_obj('set-cache', c_obj, 'desired_solution', PSF);
       return
+   end
+   
+   value = opt.target_value;
+   if numel(value) == 1
+      value(1:size(xyc,2)) = value;
+   end
+   if numel(radius) == 1
+      radius(1:size(xyc,2)) = radius;
    end
    
    xsz = opt.imgsz(1); ysz = opt.imgsz(2);
@@ -104,9 +112,10 @@ function PSF= default_GREIT_desired_soln(xyc, radius, opt)
          for dy = linspace(-y_spc, y_spc, 5)
             PSF(:,i) = PSF(:,i) +  1/25*( ...
                (dx+x(:)-xyc(1,i)).^2 + (dy+y(:)-xyc(2,i)).^2 ...
-                        < radius^2 );
+                        < radius(i)^2 );
          end
       end
+      PSF(:,i) = PSF(:,i) * value(i);
 %     PSF(:,i) = PSF(:,i)/sum(PSF(:,i));
    end
    eidors_obj('set-cache', c_obj, 'desired_solution', PSF);
