@@ -14,7 +14,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %
 %   radius - requested weighting matrix  (recommend 0.25 for 16 electrodes)
 %   weight - weighting matrix (weighting of noise vs signal). Can be empty
-%            options.noise_figure is specified
+%            if options.noise_figure is specified
 %   options- structure with fields:
 %     imgsz         - [xsz ysz] reconstructed image size in pixels 
 %                     (default: [32 32])
@@ -24,12 +24,15 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         0 -> original (as per GREITv1, default)
 %         1 -> random, centre-heavy 
 %         2 -> random, uniform
-%         3 -> fixed, uniform (debug
+%         3 -> fixed, uniform
 %         Alternatively, a 3xN xyz or 4xN xyzr matrix can be provided. If
 %         xyzr is given, r overrides target_size specifications.
 %     target_size - size of simulated targets as proportion of mesh radius
 %         (default: 0.02). Can be specified as [min_size max_size] for 
 %         random variation
+%     target_value - conductivity perturbation of the target
+%                    (target_conductivity minus reference conductivity)
+%                    default : 1
 %     target_plane - the (mean) height z at which simulation targets are
 %         placed. This controls the image plane. Default: mean electrode
 %         height
@@ -280,7 +283,7 @@ function [vi,vh,xyz,opt]= stim_targets(imgs, Nsim, opt );
       vh = opt.training_data.vh;
       vi = opt.training_data.vi;
    else
-      [vh,vi,xyzr] = simulate_movement(imgs, xyzr);
+      [vh,vi,xyzr] = simulate_movement(imgs, xyzr, opt.target_value);
       after = size(xyzr,2);
       if(after~=before)
          eidors_msg(['mk_GREIT_model: Now using ' num2str(after) ' points']);
@@ -400,6 +403,10 @@ function opt = parse_options(opt,fmdl,imdl);
     
     if ~isfield(opt, 'target_size')
         opt.target_size = 0.05;
+    end
+    
+    if ~isfield(opt, 'target_value')
+       opt.target_value = 1;
     end
     
     if ~isfield(opt, 'random_size')
