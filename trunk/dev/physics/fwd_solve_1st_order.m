@@ -100,6 +100,9 @@ end; end
 
 function [vv,fctr] = convert_measurement(vv,img,measurement)
 switch measurement
+    case 'abs_voltage'
+        vv = abs(vv);
+        fctr = [];
     case 'log_voltage'
         vv = log(vv);
         fctr= [];
@@ -120,6 +123,7 @@ end
 
 function list = supported_measurement
    list = {'voltage'
+           'abs_voltage'
            'log_voltage'
            'log10_voltage'
            'apparent_resistivity'

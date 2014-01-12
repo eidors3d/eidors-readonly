@@ -161,6 +161,11 @@ J = J.*repmat(dCond_dPhys ,1,size(J,1))';
 
 function J = convert_measurement(J, img, measurement)
 switch measurement
+   case 'abs_voltage'
+      img.fwd_model.measured_quantity = 'voltage';
+      vv = fwd_solve(img);
+      flip = sign(vv.meas);
+      fctr = spdiags(flip, 0, length(flip), length(flip));    
    case 'log_voltage'
       img.fwd_model.measured_quantity = 'voltage';
       vv = fwd_solve(img);
@@ -232,6 +237,7 @@ function str = supported_physics
         
 function list = supported_measurement
    list = {'voltage'
+           'abs_voltage'
            'log_voltage'
            'log10_voltage'
            'apparent_resistivity'
