@@ -12,11 +12,18 @@ vh  = fwd_solve(img);
 
 circ= @(r,x,y,z,v) 1 - v * elem_select(fmdl,inline(sprintf('(x-%f).^2 + (y-%f).^2 + (z-%f).^2 <= %f^2',x,y,z,r),'x','y','z'));
 
-img.conductivity.elem_data = circ(0.08, 0, 0, 0.1, 0.5); % r, x, y, z, cond
+bladder_r = 0.02;
+
+% simplified physiological bladder anatomy:
+%img.conductivity.elem_data = circ(bladder_r, (0.15-bladder_r-0.01), 0, (bladder_r+0.01), 0.5); % r, x, y, z, cond
+
+% in-plane test model:
+img.conductivity.elem_data = circ(bladder_r, 0, 0, 0.15, 0.5); % r, x, y, z, cond
+
 vi  = fwd_solve(img);
 vi = add_noise(40,vi);
 
-%show_fem(img)
+show_fem(img)
 
 %% Reconstruction
 bkgnd.conductivity.params = [0.05, 0, 0, 0.15]'; % r x y z
