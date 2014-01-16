@@ -1,17 +1,66 @@
 function obj= matlab_xml_test( filename)
-   if nargin==0; filename = 'sample.xml'; end
-   try
-      tree = xmlread(filename);
-   catch
-      error('Failed to read XML file %s.',filename);
+%  if nargin==0; filename = 'sample.xml'; end
+   if nargin==0; filename = '../docs/samples/sampleGoeFile2.oeit/info/frame_types.xml'; end
+      try
+         tree = xmlread(filename);
+      catch
+         error('Failed to read XML file %s.',filename);
+      end
+
+switch 2
+   case 1;
+      obj = print_recurse( tree, 0);
+
+   case 2;
+      obj = xpath_try(tree);
+
+   case 2;
+%   http://www.mathworks.com/matlabcentral/answers/99993
+
+
+   otherwise;
+      error('boo')
+end
+
+function obj = xpath_try(tree)
+% From:
+% http://blogs.mathworks.com/community/2010/11/01/xml-and-matlab-navigating-a-tree/
+   import javax.xml.xpath.*
+   factory = XPathFactory.newInstance;
+   xpath = factory.newXPath;
+
+   i = 1;
+   % compile and evaluate the XPath Expression
+   while 1;
+      expression = xpath.compile(sprintf( ...
+            'frame_type_list/frame_type/acquisition[%d]/stim_list/stim',i));
+%           'frame_type_list/frame_type/acquisition/stim_list/stim[%d]',i));
+      stimnode = expression.evaluate(tree, XPathConstants.NODE);
+      if isempty(stimnode); break; end
+      node= parseChildNodes( stimnode);
+      jj= 1; for j= 1: length(node)
+         if strcmp( node(j).Name, '#text');  continue ; end
+if DEBUG
+         fprintf('%d: %d: %s [',i, j, node(j).Name);
+         for k=1:length(node(j).Attributes);
+            fprintf('%s=%s ', ...
+              node(j).Attributes(k).Name, node(j).Attributes(k).Value);
+         end
+         fprintf(']\n');
+end
+         obj.acquisition(1).stim(jj) = node(j);
+         jj= jj+1;
+      end
+     
+      i = i+1;
    end
 
-   obj = print_recurse( tree, 0);
+
 
 function d = DEBUG; d=0;
 
 function obj = print_recurse( node, level);
-   if level>5; obj.name ='empty'; return;end
+%  if level>5; obj.name ='empty'; return;end
    
    obj = struct();
 
@@ -42,9 +91,14 @@ end
      if strcmp(on, 'empty'); continue; end
      if strcmp(on, 'user_data'); continue; end
 
-     try   ll = length(obj.( on ) );
-     catch ll = 0;
+%    try   ll = length(obj.( on ) );
+%    catch ll = 0;
+%    end
+     ll= 0;
+     if isfield(obj, on)
+        ll = length(obj.( on ) );
      end
+
      obj.( obj_i.name )( ll+1 ) = orderfields( obj_i);
    end
 
