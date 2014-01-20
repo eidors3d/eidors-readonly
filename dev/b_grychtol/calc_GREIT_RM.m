@@ -32,11 +32,18 @@ function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
        options.normalize = options;
    end
    opt = parse_options(options);
-
+   switch size(vh,2)
+      case size(vi,2);
+      case 1
+         vh = vh*ones(1,size(vi,2));
+      otherwise
+         error('Sizes of the two measurements must agree');
+   end
+   
    if opt.normalize
-      Y = vi./(vh*ones(1,size(vi,2))) - 1; 
+      Y = vi./vh - 1; 
    else
-      Y = vi - (vh*ones(1,size(vi,2)));
+      Y = vi - vh;
    end
    if ~isfield(opt, 'desired_solution_fn')
       D = default_GREIT_desired_soln( xyc, radius, opt);
