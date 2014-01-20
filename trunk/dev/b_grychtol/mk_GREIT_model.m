@@ -161,13 +161,23 @@ if ~isempty(opt.noise_figure)
        xyzr = opt.noise_figure_targets;
        [jnk,vi_NF] = simulate_movement(imgs,xyzr');
        vi_NF = sum(vi_NF,2); % sum the targets
+       vh_NF = vh;
     else
-       vi_NF = opt.noise_figure_data;
+       if isfield(opt.noise_figure_data,'vi');
+          vi_NF = opt.noise_figure_data.vi;
+       else
+          vi_NF = opt.noise_figure_data;
+       end
+       try 
+          vh_NF = opt.noise_figure_data.vh;
+       catch
+          vh_NF = vh;
+       end
     end
     
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
-    f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
+    f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF, vh_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
     if exist('OCTAVE_VERSION')
        % octave doesn't currently (2013 Apr) include an fminsearch function
@@ -185,12 +195,12 @@ imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
 
 function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
-    target,vi_NF)
+    target,vi_NF,vh_NF)
 
    % calculate GREIT matrix as usual
    RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
    imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
-   NF = calc_noise_figure(imdl,vh, vi_NF);
+   NF = calc_noise_figure(imdl,vh_NF, vi_NF);
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
    out = (NF - target)^2;
 %    out = (mean(NF) - target)^2 + std(NF);
