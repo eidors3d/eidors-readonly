@@ -1,4 +1,4 @@
-function nimg = mdl_slice_mesher(fmdl,level,varargin)
+function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 %MDL_SLICE_MESHER A slice of a 3D FEM as a 2D FEM 
 % img2d = mdl_slice_mesher(mdl3d,level) returns a 2D FEM model MDL2D 
 % suitable for viewing with SHOW_FEM representing a cut through MDL3D at
@@ -35,20 +35,46 @@ function nimg = mdl_slice_mesher(fmdl,level,varargin)
 % TODO: 
 %  1. More intuitive cut plane specification
 %  2. Support node_data
+%  3. Restrict caching object
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 
-cache_obj= { fmdl, level };
-nimg = [];
-out= eidors_obj('get-cache', cache_obj, 'mdl_slice_mesher');
-if ~isempty(out)
-   eidors_msg('@@@: using cached value', 3);
-   nimg = out{1};
-   if nargout > 0
-       return
+if isempty(varargin)
+   try
+      varargin{1}.calc_colours = fmdl.calc_colours;
    end
 end
 
+opt.cache_obj = { fmdl, level, varargin{:} };
+opt.fstr      = 'mdl_slice_mesher';
+switch nargout
+   case 2
+      [nimg out] = eidors_cache(@do_mdl_slice_mesher,{fmdl,level, varargin{:}},opt);
+   case 0
+      [nimg out] = eidors_cache(@do_mdl_slice_mesher,{fmdl,level, varargin{:}},opt);
+      cmap_type = calc_colours('cmap_type');
+      try 
+         calc_colours('cmap_type',varargin{1}.calc_colours.cmap_type);
+      end
+      colormap(calc_colours('colourmap'));
+      patch(out);
+      calc_colours('cmap_type',cmap_type);
+      clear nimg;
+   case 1
+      nimg = eidors_cache(@do_mdl_slice_mesher,{fmdl,level, varargin{:}},opt);
+end
+% nimg = [];
+% out= eidors_obj('get-cache', cache_obj, 'mdl_slice_mesher');
+% if ~isempty(out)
+%    eidors_msg('@@@: using cached value', 3);
+%    nimg = out{1};
+%    if nargout > 0
+%        return
+%    end
+% end
+
+
+function [nimg out] = do_mdl_slice_mesher(fmdl,level,varargin)
 
 switch fmdl.type
     case 'image'
@@ -186,9 +212,9 @@ end
 try
    nimg.calc_colours = img.calc_colours;
 end
-
-eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
-eidors_msg('mk_GREIT_model: setting cached value', 3);
+% 
+% eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
+% eidors_msg('mk_GREIT_model: setting cached value', 3);
 
 if nargout == 1
     return
@@ -214,13 +240,15 @@ for i = 1:length(uels)
     out.Faces(i,1:length(id)) = nn(id);
     ed(i) = img.elem_data(uels(i));
 end
-out.FaceVertexCData = calc_colours(ed,varargin{:});
+[out.FaceVertexCData scl_data] = calc_colours(ed,varargin{:});
+try
+   out.FaceVertexAlphaData = double(abs(scl_data) > varargin{1}.calc_colours.transparency_thresh);
+   out.FaceAlpha = 'flat';
+end
 out.FaceColor = 'flat';
 out.CDataMapping = 'direct';
-colormap(calc_colours('colourmap'));
-if nargout == 0
-    patch(out);
-end
+% colormap(calc_colours('colourmap'));
+
 
 function res = intersection_test(A,B,C,D)
 % checks for intersection of segments AB and CD
