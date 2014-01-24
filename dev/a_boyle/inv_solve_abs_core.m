@@ -100,7 +100,7 @@ if isfield(opt, 'elem_movement_init')
 end
 
 % precalculate some of our matrices if required
-hp = init_hp(inv_model, opt);
+hp2 = init_hp(inv_model, opt);
 W  = init_meas_icov(inv_model, opt);
 N = init_normalization(inv_model.fwd_model, opt);
 
@@ -133,7 +133,7 @@ while 1
   de = update_de(de, img, img0, opt);
 
   % now find the residual, quit if we're done
-  [stop, k, r, fig_r] = update_residual(dv, de, W, hp, RtR, k, r, fig_r, opt);
+  [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r, opt);
   if stop
      break;
   end
@@ -146,14 +146,14 @@ while 1
 
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
-  dx = update_dx(J, W, hp, RtR, dv, de, opt);
+  dx = update_dx(J, W, hp2, RtR, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
   beta = update_beta(dx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
 
   % line search for alpha, leaving the final selection as img
-  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, RtR, dv, opt);
+  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
   [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt);
@@ -184,13 +184,13 @@ function W = init_meas_icov(inv_model, opt)
       W   = calc_meas_icov( inv_model );
    end
 
-function hp = init_hp(inv_model, opt)
-   hp = 0;
+function hp2 = init_hp(inv_model, opt)
+   hp2 = 0;
    if opt.calc_hyperparameter
       if opt.verbose > 1
          disp('  calc regularization hyperparameter(s)');
       end
-      hp  = calc_hyperparameter( inv_model );
+      hp2  = calc_hyperparameter( inv_model ).^2;
    end
 
 function N = init_normalization(fmdl, opt)
@@ -213,7 +213,7 @@ function N = calc_normalization_apparent_resistivity(fmdl)
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
 % fig_r: the handle to the residual plot if used
-function [stop, k, r, fig_r] = update_residual(dv, de, W, hp, RtR, k, r, fig_r, opt)
+function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r, opt)
   stop = 0;
   % update iteration count
   k = k+1;
@@ -225,7 +225,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp, RtR, k, r, fig_r, 
   else
      r_km1 = r(k-1, 1);
   end
-  r_k = feval(opt.residual_func, dv, de, W, hp, RtR);
+  r_k = feval(opt.residual_func, dv, de, W, hp2, RtR);
   % save residual for next iteration
   r(k,1) = r_k;
 
@@ -237,7 +237,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp, RtR, k, r, fig_r, 
         fprintf('    calc residual\n');
         fprintf('      r =%0.3g\n', r_k);
         dr = (r_k - r_km1);
-        fprintf('      dr=%0.3g (%0.3g%%)\n', dr, dr/r_k*100);
+        fprintf('      dr=%0.3g (%0.3g%%)\n', dr, dr/r_km1*100);
      end
   end
   if opt.plot_residuals
@@ -275,7 +275,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp, RtR, k, r, fig_r, 
      end
      stop = 1;
   end
-  if (k > opt.dtol_iter) && ((r_k - r_km1)/r_k > opt.dtol + 2*opt.ntol)
+  if (k > opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
      if opt.verbose > 1
         fprintf('  terminated at iteration %d (iterations not improving)\n', k);
         fprintf('    residual slope tolerance (%0.3g) exceeded\n', opt.dtol + 2*opt.ntol);
@@ -329,11 +329,27 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
    RtR = calc_RtR_prior( inv_model );
    if size(RtR,1) < length(img.elem_data)
      ne = length(img.elem_data) - size(RtR,1);
-     RtR(end+1:end+ne, end+1:end+ne) = 1;
-     if opt.verbose > 1
-        fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
-        disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
+     % we are correcting for the added background element
+     % if there is movement, don't add it there.
+     if isfield(img, 'current_physics') && ...
+        any(strcmp(img.current_physics, 'movement'))
+        % grab the first set of non-movement elem_data
+        i = find(~strcmp(img.current_physics, 'movement'));
+        ps = img.physics_sel{i(1)};
+        % insert an extra element at the end of the non-movement
+        % regularization so the length is right, we assume Tikhonov
+        RtR(ps(end)+1+ne:end+ne, ps(end)+1+ne:end+ne) = RtR(ps(end)+1:end, ps(end)+1:end);
+        RtR(ps(end)+1:ps(end)+ne, ps(end)+1:ps(end)+ne) = RtR(ps(1),ps(1));
+        if opt.verbose > 1
+           fprintf('    c2f: adjusting RtR by appending %d rows/cols to non-movement\n', ne);
+        end
+     else
+        RtR(end+1:end+ne, end+1:end+ne) = RtR(1,1);
+        if opt.verbose > 1
+           fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
+        end
      end
+     disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
    end
 
 function J = update_jacobian(img, N, opt)
@@ -391,7 +407,7 @@ function S = dx_dlog10y(x);
 % -------------------------------------------------
 
 
-function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, RtR, dv, opt)
+function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt)
   if(opt.verbose > 1)
      disp('    line search');
   end
@@ -400,10 +416,10 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp, Rt
   err_if_inf_or_nan(sx, 'sx (pre-line search)');
   err_if_inf_or_nan(img.elem_data, 'img.elem_data (pre-line search)');
 
-  if all(size(img.elem_data) ~= size(sx))
+  if any(size(img.elem_data) ~= size(sx))
      error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
-  [alpha, img, dv, opt] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp, RtR, dv, opt);
+  [alpha, img, dv, opt] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
   if(opt.verbose > 1)
      fprintf('      selected alpha=%0.3g\n', alpha);
   end
@@ -515,13 +531,13 @@ function show_fem_iter(k, img, inv_model, opt)
   title(sprintf('iter=%d, %s',k, str));
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
-function residual = GN_residual(dv, de, W, hp, RtR)
+function residual = GN_residual(dv, de, W, hp2, RtR)
 %   [size(dv); size(W); size(de); size(hp2RtR)]
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
-   hp2RtR = hp*RtR;
+   hp2RtR = hp2*RtR;
    residual = 0.5*( dv'*W*dv + de'*hp2RtR*de);
 
-function residual = meas_residual(dv, de, W, hp, RtR)
+function residual = meas_residual(dv, de, W, hp2, RtR)
    residual = norm(dv);
 
 %function img = initial_estimate( imdl, data )
@@ -589,16 +605,16 @@ function opt = parse_options(imdl)
    opt.fwd_solutions = 0;
 
    if ~isfield(opt, 'residual_func') % the objective function
-      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp, RtR)
+      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp2, RtR)
       % NOTE: the meas_residual function exists to maintain
       % compatibility with Nolwenn's code, the GN_residual
       % is a better choice
-      %opt.residual_func = @meas_residual; % r = f(dv, de, W, hp, RtR)
+      %opt.residual_func = @meas_residual; % r = f(dv, de, W, hp2, RtR)
    end
 
    % calculation of update components
    if ~isfield(opt, 'update_func')
-      opt.update_func = @GN_update; % dx = f(J, W, hp, RtR, dv, de)
+      opt.update_func = @GN_update; % dx = f(J, W, hp2, RtR, dv, de)
    end
    % figure out if things need to be calculated
    if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
@@ -608,14 +624,14 @@ function opt = parse_options(imdl)
       opt.calc_RtR_prior = 0; % RtR
    end
    if ~isfield(opt, 'calc_hyperparameter') % derivative of the objective function
-      opt.calc_hyperparameter = 0; % hp
+      opt.calc_hyperparameter = 0; % hp2
    end
 %   try
       if opt.verbose > 1
          fprintf('    examining function %s(...) for required arguments\n', func2str(opt.update_func));
       end
       % ensure that necessary components are calculated
-      % opt.update_func: dx = f(J, W, hp, RtR, dv, de)
+      % opt.update_func: dx = f(J, W, hp2, RtR, dv, de)
       args = function_depends_upon(opt.update_func, 6);
       if args(2) == 1
          opt.calc_meas_icov = 1;
@@ -673,7 +689,7 @@ function opt = parse_options(imdl)
 
    % line search
    if ~isfield(opt,'line_search_func')
-      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp, RtR, dv, opt);
+      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
       opt.line_search_func = @line_search_onm2;
    end
    if ~isfield(opt,'line_search_dv_func')
@@ -791,7 +807,7 @@ function opt = parse_options(imdl)
       opt.normalize_data = 0;
    end
 
-function check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
+function check_matrix_sizes(J, W, hp2, RtR, dv, de, opt)
    % assuming our equation looks something like
    % dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
    % check that all the matrix sizes are correct
@@ -815,28 +831,19 @@ function check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
       error('RtR size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(RtR), ne, ne);
    end
 
-function dx = update_dx(J, W, hp, RtR, dv, de, opt)
+function dx = update_dx(J, W, hp2, RtR, dv, de, opt)
    if(opt.verbose > 1)
       fprintf( '    calc step size dx');
    end
 
-   % handle fixed elements
-   if ~isempty(RtR)
-      RtR(:,opt.elem_fixed) = [];
-      RtR(opt.elem_fixed,:) = [];
-   end
-   J(:,opt.elem_fixed) = [];
-   de(opt.elem_fixed) = [];
+   % don't penalize for fixed elements
+   de(opt.elem_fixed) = 0;
    
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
-   check_matrix_sizes(J, W, hp, RtR, dv, de, opt)
+   check_matrix_sizes(J, W, hp2, RtR, dv, de, opt)
 
    % do the update step direction calculation
-   dx = feval(opt.update_func, J, W, hp, RtR, dv, de);
-   if nargout > 1
-      dxi.RDx = hp*RtR*de;
-      dxi.dx = dx;
-   end
+   dx = feval(opt.update_func, J, W, hp2, RtR, dv, de);
    % ignore any fixed value elements
    dx(opt.elem_fixed) = 0;
 
@@ -844,8 +851,8 @@ function dx = update_dx(J, W, hp, RtR, dv, de, opt)
       fprintf(', ||dx||=%0.3g\n', norm(dx));
    end
 
-function dx = GN_update(J, W, hp, RtR, dv, de)
-   hp2RtR = hp*RtR;
+function dx = GN_update(J, W, hp2, RtR, dv, de)
+   hp2RtR = hp2*RtR;
    % the actual update
    dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
 
