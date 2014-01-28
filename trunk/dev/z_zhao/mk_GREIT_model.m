@@ -87,11 +87,11 @@ options = parse_options(options,fmdl,imdl);
 
 cache_obj= { fmdl, imdl, imgs, radius, weight, options};
 
-out= eidors_obj('get-cache', cache_obj, 'mk_GREIT_model');
-if ~isempty(out)
-   eidors_msg('mk_GREIT_model: using cached value', 3);
-   imdl= out{1}; weight=out{2}; return
-end
+% out= eidors_obj('get-cache', cache_obj, 'mk_GREIT_model');
+% if ~isempty(out)
+%    eidors_msg('mk_GREIT_model: using cached value', 3);
+%    imdl= out{1}; weight=out{2}; return
+% end
 [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, options);
 
 eidors_obj('set-cache', cache_obj, 'mk_GREIT_model', {imdl,weight});
@@ -235,6 +235,7 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            
            % TODO: What size is good here and how to figure it out?
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
+%            [xyzr]=del_out_map2(imgs,64,xyzr);
        case 2 %uniform
 %            F = fourier_fit(opt.contour_boundary(:,1:2));
 %            v = linspace(0,1,101); v(end)=[];
@@ -296,8 +297,8 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
        case 6 % fixed, centre-heavy for arbitrary shape
            xyzr=[];
-           layers=5;
-           heavy_weight=2; % differences between two connected layers. =1: uniform
+           layers=7;
+           heavy_weight=3; % differences between two connected layers. =1: uniform
            pts = opt.contour_boundary(:,1:2);
            lim = max(maxx, maxy);
            A=polyarea(pts(:,1),pts(:,2));

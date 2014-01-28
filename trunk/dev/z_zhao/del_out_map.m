@@ -16,14 +16,19 @@ function [xyzr]=del_out_map(imgs,N,xyzr)
 bnd_nodes = unique(imgs.fwd_model.boundary);
 min_bb = min(imgs.fwd_model.nodes(bnd_nodes,:));
 max_bb = max(imgs.fwd_model.nodes(bnd_nodes,:));
-xspace = linspace(min_bb(1),max_bb(1),N);
-yspace = linspace(min_bb(2),max_bb(2),N);
-[X Y] = meshgrid(xspace,yspace);
+
+max_xy=max(abs([max_bb(1:2),min_bb(1:2)]));
+xspace = linspace(-max_xy,max_xy,N);
+yspace=xspace;
+% xspace = linspace(min_bb(1),max_bb(1),N);
+% yspace = linspace(min_bb(2),max_bb(2),N); %64-64 whole
+[X Y] = meshgrid(xspace,-yspace);
 imgs.calc_colours.npoints = N;
-M = calc_slices(imgs,1);
+M = calc_slices(imgs,1);                    % only part, have to find a way
 IN = M==1;
 IN=bwperim(IN,8); %contour
 xy = [X(IN)'; Y(IN)'];
+% xy=xyzr(1:2,:);
 out_ind=[];
 max_x=max(xy(1,:));
 max_y=max(xy(2,:));
@@ -40,7 +45,8 @@ for i=1:length(xyzr)
         continue;
     end
     distance_to_boundary = sum ((repmat(xyzr(1:2,i),1,size(xy(:,:),2))-xy(:,:)).^2);
-    on_boundary = distance_to_boundary <= xyzr(4,i)^2;
+%     on_boundary = distance_to_boundary <= xyzr(4,i)^2;
+    on_boundary = distance_to_boundary <= (1.5*xyzr(4,i))^2; %inrease r for 50%
     if any(on_boundary)  
         out_ind=[out_ind i];
         if xyzr(1,i)<0 && xyzr(2,i)<0 % third
