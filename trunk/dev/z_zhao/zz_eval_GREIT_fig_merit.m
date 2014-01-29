@@ -18,6 +18,10 @@ function params = eval_GREIT_fig_merit(imgs, xyzr_pt, SimInLayer)
 
 % Zhao: AR was normalized to the targets at the center of the electrode plane
 
+if nargin < 3
+   SimInLayer = 1;
+end
+
 mdl = imgs.fwd_model;
 imgs = calc_slices(imgs);
 map = ~isnan(squeeze(imgs(:,:,1))); %assume all imgs are the same shape
