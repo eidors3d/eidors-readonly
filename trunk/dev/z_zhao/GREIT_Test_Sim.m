@@ -1,6 +1,17 @@
+function GREIT_Test_Sim(SimModel,LungFlag,GREIT_opt,SimTest)
+% GREIT_Test_Sim: test different GREIT settings in different forward models
+% and simulated targets
+% USAGE:
+%  SimModel: a number of preset forward models. 1, Cylindrical; 2,
+%  elliptical; 3, thoracic.
+%  LungFlag: if lung areas should be simulated in the forward model
+%  GREIT_opt: the options for calculating GREIT matrix
+%  SimTest: different simulating pattens of targets
 
-SimModel=3;
-LungFlag=0; % if lung areas should be simulated
+
+
+% SimModel=3;
+% LungFlag=0; % if lung areas should be simulated
 switch SimModel
     case 1
         %***(1) Cylindrical,
@@ -58,7 +69,7 @@ switch SimModel
             0.05 ]';             % maxh (electrode refinement)
         
         fmdl = ng_mk_extruded_model(shape, elec_pos, elec_shape);
-       
+        figure
         show_fem(fmdl);
 
     case 4
@@ -85,20 +96,20 @@ vi = fwd_solve(img);
 show_fem(img);
 
 %%
-opt.imgsz = [32 32];
-opt.square_pixels = 0;
-opt.Nsim = 2000;
-opt.distr = 6;
-opt.target_size=0.05;
-% opt.target_plane
-% opt.target_offset
-opt.noise_figure = 0.5;
+% opt.imgsz = [32 32];
+% opt.square_pixels = 0;
+% opt.Nsim = 2000;
+% opt.distr = 6;
+% opt.target_size=0.05;
+% % opt.target_plane
+% % opt.target_offset
+% opt.noise_figure = 0.5;
 
-i_gr = mk_GREIT_model(fmdl, 0.25, [], opt);
+i_gr = mk_GREIT_model(fmdl, 0.25, [], GREIT_opt);
 
 %%
-Test = 6; % different simulation patern
-if Test==1
+% SimTest = 7; % different simulation patern
+if SimTest==1
     %% Test 1
     % [r, params] =  test_performance( i_gr );
     Nsim = 100;
@@ -113,7 +124,7 @@ if Test==1
 %     xyzr = [maxx*l.*cos(th); maxy*l.*sin(th); ones(1, Nsim); 0.05*ones(1, Nsim)];
     xyzr = [maxx*l.*cos(th); maxy*l.*sin(th); Zpos; r*mean([maxx,maxy])*ones(1, Nsim)];
     
-elseif Test==2
+elseif SimTest==2
     %% Test 2 for thorax SimModel=3;
     r = 0.05; % target radius
     Npos = 50; % number of positions
@@ -128,7 +139,7 @@ elseif Test==2
 %     xyzr = [Xpos; Ypos; 0.15*Zpos; r*ones(1,Npos*3)];  % corelate to small Z in fmdl
     xyzr = [Xpos; Ypos; Zpos; r*ones(1,Npos*3)];
     [xyzr]=del_out_map(img,64,xyzr);
-elseif Test==3
+elseif SimTest==3
     %% Test 3 old Test_performance from Bartek
     N = 16;
     bnd_nodes = unique(i_gr.fwd_model.boundary);
@@ -148,7 +159,7 @@ elseif Test==3
 %     xyzr = [X(IN)'; Y(IN)'; Zpos; r*ones(1,n_px); ];
 %     [xyzr]=del_out_map(img,64,xyzr);
     xyzr = [[0;0.9*X(IN)]'; [0;0.9*Y(IN)]'; [h,Zpos]; r*ones(1,n_px+1); ]; % add zero point for reference
-elseif Test == 4
+elseif SimTest == 4
     %% Test 4 old Test_performance from Bartek + off plane objects
     N = 32;
     bnd_nodes = unique(i_gr.fwd_model.boundary);
@@ -184,7 +195,7 @@ elseif Test == 4
     xyzr = [[0;X_all]'; [0;Y_all]'; [h;Z_all]'; r*ones(1,length(Z_all)+1); ]; %add a central point. assume x=0,y=0;
     Zpos=Z_all';
 
-elseif Test == 5
+elseif SimTest == 5
     N = 32;
      % this bit is copied from mdl_slice_mapper to make sure
      xmin = min(i_gr.fwd_model.nodes(:,1));    xmax = max(i_gr.fwd_model.nodes(:,1));
@@ -214,7 +225,7 @@ elseif Test == 5
     Zpos = h*ones(1,n_px);
     xyzr = [0.9*X(IN)'; 0.9*Y(IN)'; Zpos;  r*ones(1,n_px); ];
     
-elseif Test == 6
+elseif SimTest == 6
     %% Test 6 objects first from inside then outside + off plane objects
     N = 32;
     bnd_nodes = unique(i_gr.fwd_model.boundary);
@@ -253,6 +264,11 @@ elseif Test == 6
     xyzr = [[0;X_all]'; [0;Y_all]'; [h;Z_all]'; r*ones(1,length(Z_all)+1); ]; %add a central point. assume x=0,y=0;
 %     [xyzr]=del_out_map(img1,N,xyzr);
     Zpos=Z_all';
+elseif SimTest==7
+    param = test_performance_img(i_gr,fmdl);
+    figure
+    imagesc(squeeze(param{1}(1,:,:)));
+    return
 end
 
 [vh_sim,vi_sim] = simulate_movement(img, xyzr);
@@ -276,19 +292,19 @@ for i=1:5; subplot(5,1,i);
     
 end
 
-%% plot performance map / only suitable for test 3 and 4
-% [vh,vi] = simulate_movement(img, xyzr);
-% if Test == 6 % test 4 but sorted
-%     IN5 = repmat(IN(ind),[1 1 5]);
-% else
-    IN5 = repmat(IN,[1 1 5]);
-% end
-IN5 = shiftdim(IN5,2);
-p_img = nan([5 size(IN)]);
-p_img(IN5) = params(:,1:538);  % for N=32
-% p_img(IN5) = params(:,1:2245);  % for N=64
-% p_img(IN5) = params(:,1:740);
-% p_img(IN5) = params;
-figure
-imagesc(squeeze(p_img(1,:,:)));
-
+% %% plot performance map / only suitable for test 3 and 4
+% % [vh,vi] = simulate_movement(img, xyzr);
+% % if Test == 6 % test 4 but sorted
+% %     IN5 = repmat(IN(ind),[1 1 5]);
+% % else
+%     IN5 = repmat(IN,[1 1 5]);
+% % end
+% IN5 = shiftdim(IN5,2);
+% p_img = nan([5 size(IN)]);
+% p_img(IN5) = params(:,1:538);  % for N=32
+% % p_img(IN5) = params(:,1:2245);  % for N=64
+% % p_img(IN5) = params(:,1:740);
+% % p_img(IN5) = params;
+% figure
+% imagesc(squeeze(p_img(1,:,:)));
+% 
