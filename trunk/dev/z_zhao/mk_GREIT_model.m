@@ -333,7 +333,7 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
            xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));           
            
            N_b=64; % corresponding to the display later
-           [xyzr]=del_out_map(imgs,N_b,xyzr);
+           [xyzr]=del_out_map2(imgs,N_b,xyzr);
            eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
    end
 
