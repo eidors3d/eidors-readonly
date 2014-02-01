@@ -18,10 +18,6 @@ function params = eval_GREIT_fig_merit(imgs, xyzr_pt, SimInLayer)
 
 % Zhao: AR was normalized to the targets at the center of the electrode plane
 
-if nargin < 3
-   SimInLayer = 1;
-end
-
 mdl = imgs.fwd_model;
 imgs = calc_slices(imgs);
 map = ~isnan(squeeze(imgs(:,:,1))); %assume all imgs are the same shape
@@ -45,7 +41,11 @@ r = max(0.5*(bb_max-bb_min));
 if N_imgs > 10 % doesn't make sense to normalize otherwise
     ctr_pts = sum((xyzr_pt(1:mdl_dim(mdl(1)),:)-repmat(ctr',1,size(xyzr_pt,2))).^2) < (0.05*r)^2;
     if any(ctr_pts)
-        params(1,:) = params(1,:)/mean(params(1,ctr_pts(1:SimInLayer)));
+        if nargin < 3
+            params(1,:) = params(1,:)/mean(params(1,ctr_pts));
+        else
+            params(1,:) = params(1,:)/mean(params(1,ctr_pts(1:SimInLayer)));
+        end
     else
         eidors_msg('eval_GREIT_fig_merit: no centre points found to normalize',1);
     end
