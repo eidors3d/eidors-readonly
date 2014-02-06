@@ -1,15 +1,15 @@
-function [r_est, cond_est] = test_params_3d(r_real, cond_real, imdl_greit)
+function [r_est_parametric, cond_est_parametric, gi] = compare(r_real, cond_real, imdl_greit)
 %r_real = 0.03;
 %cond_real = 0.7;
 %% create forward model:
 fmdl= ng_mk_cyl_models([0.3,0.15,0.005],[32,[0.1,0.2]],[0.01 0 0.002]); 
+stim =  mk_stim_patterns(32,2,[0,1],[0,1], {'no_meas_current'}, 1);
 % since the prior pushes to a ball of zero radius at (0,0,0), we need that
 % to be a plausible location
 fmdl.nodes(:,3) = fmdl.nodes(:,3) - 0.1;
 fmdl.nodes(:,1) = fmdl.nodes(:,1) - 0.075;
 
 % Create stimulation pattern:
-stim =  mk_stim_patterns(32,2,[0,1],[0,1], {'no_meas_current'}, 1);
 fmdl.stimulation = stim;
 
 imdl = select_imdl(fmdl,{'Basic GN abs'});
@@ -50,6 +50,12 @@ rimg = inv_solve(imdl, vi);
 %eidors_colourbar(rimg);
 disp(rimg.conductivity.params);
 
-r_est = rimg.conductivity.params(1);
-cond_est = rimg.conductivity.params(2);
+r_est_parametric = rimg.conductivity.params(1);
+cond_est_parametric = rimg.conductivity.params(2);
+
+%% GI Reconstruction
+rimg_gi = inv_solve(imdl_greit, vh, vi); % reconstruct using forward results and calc'd rec. matrix
+gi = sum(sum(rimg_gi.elem_data));
+
+
 end
