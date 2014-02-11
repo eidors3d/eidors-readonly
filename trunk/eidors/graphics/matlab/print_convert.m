@@ -222,7 +222,7 @@ function pp = parse_options(filename,varargin)
         end
      end
      if isfield(opt,'horz_space');
-        if opt.vert_space >= pp.vert_cut;
+        if opt.horz_space >= pp.horz_cut;
            warrning('Option vert_space must be smaller than vert_cut. Ingoring');
         else
            pp.horz_space = opt.horz_space;
