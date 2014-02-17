@@ -1,3 +1,5 @@
+%run('C:\DATEN\eidors_3.7.1\startup.m')
+
 %% Generate GREIT reconstruction
 % GREIT Training
 % Trainiere GREIT reconstruction matrix
@@ -7,7 +9,7 @@ opt.Nsim = 1000;
 opt.target_size = 0.05; % Target size (frac of medium)
 opt.noise_figure = 1.0; % Recommended NF=0.5;
 
-fmdl_greit= ng_mk_cyl_models([0.3,0.15,0.005],[32,[0.1,0.2]],[0.01 0 0.002]); 
+fmdl_greit= ng_mk_cyl_models([0.3,0.15,0.01],[32,[0.1,0.2]],[0.01 0 0.002]); 
 stim =  mk_stim_patterns(32,2,[0,1],[0,1], {'no_meas_current'}, 1);
 fmdl_greit.stimulation = stim;
 fmdl_greit = mdl_normalize(fmdl_greit, 0);
@@ -30,6 +32,14 @@ data(:,1) = r_real_rep';
 data(:,2) = cond_real_rep;
 
 for r = 1:size(data,1)
+    disp '------------------------------------------------------'
+    disp(r);
+    disp '------------------------------------------------------'
+    %run('C:\DATEN\eidors_3.7.1\startup.m')
+    %path(path, 'C:\DATEN\eidors\dev\physics');
+    %row = data(r,:);
+    %[row(3), row(4), row(5)] = compare(row(1), row(2), imdl_greit);
+    %data(r,:) = row;
     [data(r,3), data(r,4), data(r,5)] = compare(data(r,1), data(r,2), imdl_greit);
 end
 disp(data)
