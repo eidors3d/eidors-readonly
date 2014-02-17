@@ -1,4 +1,11 @@
-function [r_est_parametric, cond_est_parametric, gi] = compare(r_real, cond_real, imdl_greit)
+function [r_real, cond_real, noise, r_est_parametric, cond_est_parametric, gi] = compare_noise(r_real, cond_real, imdl_greit, noise)
+%run('C:\DATEN\eidors_3.7.1\startup.m')
+%path(path, 'C:\DATEN\eidors\dev\physics');
+cur = cd;
+cd C:\DATEN\eidors\eidors
+eidors_startup({'physics', 't_schlebusch'});
+eidors_cache('cache_size',4e9);
+cd(cur)
 %r_real = 0.03;
 %cond_real = 0.7;
 %% create forward model:
@@ -24,7 +31,7 @@ img.conductivity.elem_data = bladder(r_real, cond_real);
 
 %
 vi1  = fwd_solve(img);
-vi = add_noise(1e1,vi1);
+vi = add_noise(noise,vi1);
 %vi=vi1; %test without noise
 disp(norm(calc_difference_data(vi1,vi,fmdl)));
 %show_fem(img)
@@ -55,6 +62,7 @@ r_est_parametric = rimg.conductivity.params(1);
 cond_est_parametric = rimg.conductivity.params(2);
 
 %% GI Reconstruction
+imdl_greit.inv_solve.calc_solution_error = 0;
 rimg_gi = inv_solve(imdl_greit, vh, vi); % reconstruct using forward results and calc'd rec. matrix
 gi = sum(sum(rimg_gi.elem_data));
 
