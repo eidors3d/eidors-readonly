@@ -14,7 +14,7 @@ function J= test_calc_jacobian( fwd_model, img)
 
 if isfield(fwd_model,'coarse2fine'); error('no c2f in this code?'); end
 
-pp= aa_fwd_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( fwd_model, img );
 
 d= pp.n_dims+1;
@@ -30,7 +30,7 @@ sv( idx,:) = s_mat.E(idx,idx) \ pp.QQ( idx,: );
 zi2E= zeros(pp.n_elec, n);
 zi2E(:, idx)= pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 
-FC= aa_system_mat_fields( fwd_model );
+FC= system_mat_fields( fwd_model );
 
 
 DE = jacobian_calc(pp, zi2E, FC, sv);
