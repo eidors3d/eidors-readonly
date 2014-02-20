@@ -11,6 +11,6 @@ else
 end
 img= mk_image(fmdl,1);
 show_fem(img);
-J0= aa_calc_jacobian(img.fwd_model,img);
+J0= jacobian_adjoint(img.fwd_model,img);
 J1= test_calc_jacobian(img.fwd_model,img);
 disp(norm(J0(:) - J1(:)));
