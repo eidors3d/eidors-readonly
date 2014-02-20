@@ -69,12 +69,12 @@ zi2E_FCt = zi2E * FC';
 FC_sv   = FC * sv;
 
 sz = [pp.n_elec, pp.n_stim, pp.n_elem, d];
-if 1
-  DE= next_make_c2(sz , zi2E_FCt, FC_sv);
-else
-  DE= jacobian_loop(sz, zi2E_FCt, FC_sv);
-keyboard
-end
+
+DE_1= next_make_c2(sz , zi2E_FCt, FC_sv);
+DE_2= jacobian_loop(sz, zi2E_FCt, FC_sv);
+
+disp(norm(DE_1(:) - DE_2(:)))
+DE = DE_2;
 
 function DE = next_make_c(sz, zi2E_FCt, FC_sv);
    DE= zeros(sz(1),sz(2),sz(3) );
@@ -104,6 +104,13 @@ save testsave.mat sz zi2E_FCt FC_sv DE
 %stupid matlab can't write 3D vectors to binary file
 for k = 1:size(DE,3)
    eval(sprintf('DE%02d = DE(:,:,%d);', k, k));
+   eval(sprintf('save testsave_DE%02d.txt DE%02d;', k, k));
 end
-clear DE
-save testsave.txt -ASCII
+save testsave_sz.txt -ASCII sz
+save testsave_zi2E_FCt.txt -ASCII zi2E_FCt
+save testsave_FC_sv.txt -ASCII FC_sv
+!zip testsave.zip testsave*.txt
+!rm testsave*.txt
+
+%clear DE
+%save testsave_DE.txt -ASCII DE1
