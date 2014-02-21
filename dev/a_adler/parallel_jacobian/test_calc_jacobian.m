@@ -70,11 +70,15 @@ FC_sv   = FC * sv;
 
 sz = [pp.n_elec, pp.n_stim, pp.n_elem, d];
 
+fprintf('sz0zi = %d, %d\n', size(FC_sv));
 DE_1= next_make_c2(sz , zi2E_FCt, FC_sv);
+fprintf('sz1zi = %d, %d\n', size(FC_sv));
 DE_2= jacobian_loop(sz, zi2E_FCt, FC_sv);
+fprintf('sz2zi = %d, %d\n', size(FC_sv));
 
 disp(norm(DE_1(:) - DE_2(:)))
 DE = DE_2;
+   writefiles(sz, zi2E_FCt, FC_sv, DE)
 
 function DE = next_make_c(sz, zi2E_FCt, FC_sv);
    DE= zeros(sz(1),sz(2),sz(3) );
@@ -96,35 +100,29 @@ function DE = next_make_c2(sz, zi2E_FCt, FC_sv);
        dq= M1*M2.';
        DE(:,:,k)= dq;
    end
-   writefiles(sz, zi2E_FCt, FC_sv, DE)
+fprintf('sz3zi = %d, %d\n', size(FC_sv));
 
 function writefiles(sz, zi2E_FCt, FC_sv, DE)
   fid = fopen('defvars.h','w');
-  writevar(fid, 'sz', sz);
-  writevar(fid, 'zi2E_FCt', zi2E_FCt);
-  writevar(fid, 'FC_sv', FC_sv);
-  writevar(fid, 'DE', DE);
+  writevar(fid, 'S_sz', sz(:));
+  writevar(fid, 'S_zi2E_FCt', zi2E_FCt);
+  writevar(fid, 'S_FC_sv', FC_sv);
+  writevar(fid, 'S_DE', DE);
+  fprintf(fid, '#define DE_SZ %d\n', length(DE(:)));
+fprintf('sz4zi = %d, %d\n', size(FC_sv));
   
 function writevar(fid, vname, var);
   s1 = size(var,1);
   s2 = size(var,2);
   s3 = size(var,3);
-  if s2 == 1 && s3 ==1
-     fprintf(fid,'double %s[%d];', vname, s1);
-     for i=1:s1;
-        fprintf(fid, '%s[%03d][%03d] = %g;\n', vname, i-1, var(i));
-     end;
-  elseif s3==1
-     fprintf(fid,'double %s[%d][%d];', vname, s1,s2);
-     for i=1:s1; for j=1:s2;
-        fprintf(fid, '%s[%03d][%03d] = %g;\n', vname, i-1, j-1, var(i,j));
-     end; end;
-  else
-     fprintf(fid,'double %s[%d][%d][%d];', vname, s1, s2, s3);
-     for i=1:s1; for j=1:s2; for k=1:s3; 
-        fprintf(fid, '%s[%03d][%03d][%03d] = %g;\n', vname, i-1, j-1,k-1, var(i,j,k));
-     end; end; end
-  end
+  fprintf(fid,'double %s[%d];\n', vname, s1*s2*s3);
+  fprintf(fid,'int GetM_%s = %d;\n', vname, s1);
+  fprintf(fid,'int GetN_%s = %d;\n', vname, s2);
+  k=0;
+  for i=1:s1*s2*s3;
+     fprintf(fid, '%s[%5d] = %g;\n', vname, k, var(k+1));
+     k= k+1;
+  end;
 
 function writefiles_old(sz, zi2E_FCt, FC_sv, DE)
 save testsave.mat sz zi2E_FCt FC_sv DE
