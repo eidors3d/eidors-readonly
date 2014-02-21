@@ -98,15 +98,33 @@ function DE = next_make_c2(sz, zi2E_FCt, FC_sv);
    end
    writefiles(sz, zi2E_FCt, FC_sv, DE)
 
-function writefiles_old(sz, zi2E_FCt, FC_sv, DE)
-  fid = fopen('testfile.h','w');
+function writefiles(sz, zi2E_FCt, FC_sv, DE)
+  fid = fopen('defvars.h','w');
+  writevar(fid, 'sz', sz);
+  writevar(fid, 'zi2E_FCt', zi2E_FCt);
+  writevar(fid, 'FC_sv', FC_sv);
+  writevar(fid, 'DE', DE);
   
 function writevar(fid, vname, var);
-  fprintf(fid,'%s = {', vname);
   s1 = size(var,1);
   s2 = size(var,2);
   s3 = size(var,3);
-  fprintf('%g', var(k));
+  if s2 == 1 && s3 ==1
+     fprintf(fid,'double %s[%d];', vname, s1);
+     for i=1:s1;
+        fprintf(fid, '%s[%03d][%03d] = %g;\n', vname, i-1, var(i));
+     end;
+  elseif s3==1
+     fprintf(fid,'double %s[%d][%d];', vname, s1,s2);
+     for i=1:s1; for j=1:s2;
+        fprintf(fid, '%s[%03d][%03d] = %g;\n', vname, i-1, j-1, var(i,j));
+     end; end;
+  else
+     fprintf(fid,'double %s[%d][%d][%d];', vname, s1, s2, s3);
+     for i=1:s1; for j=1:s2; for k=1:s3; 
+        fprintf(fid, '%s[%03d][%03d][%03d] = %g;\n', vname, i-1, j-1,k-1, var(i,j,k));
+     end; end; end
+  end
 
 function writefiles_old(sz, zi2E_FCt, FC_sv, DE)
 save testsave.mat sz zi2E_FCt FC_sv DE
@@ -114,13 +132,13 @@ save testsave.mat sz zi2E_FCt FC_sv DE
 %stupid matlab can't write 3D vectors to binary file
 for k = 1:size(DE,3)
    eval(sprintf('DE%02d = DE(:,:,%d);', k, k));
-   eval(sprintf('save testsave_DE%02d.txt DE%02d;', k, k));
+   eval(sprintf('save testsave_DE%02d.txt -ASCII DE%02d;', k, k));
 end
 save testsave_sz.txt -ASCII sz
 save testsave_zi2E_FCt.txt -ASCII zi2E_FCt
 save testsave_FC_sv.txt -ASCII FC_sv
 !zip testsave.zip testsave*.txt
-!rm testsave*.txt
+%!rm testsave*.txt
 
 %clear DE
 %save testsave_DE.txt -ASCII DE1
