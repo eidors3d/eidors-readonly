@@ -98,7 +98,17 @@ function DE = next_make_c2(sz, zi2E_FCt, FC_sv);
    end
    writefiles(sz, zi2E_FCt, FC_sv, DE)
 
-function writefiles(sz, zi2E_FCt, FC_sv, DE)
+function writefiles_old(sz, zi2E_FCt, FC_sv, DE)
+  fid = fopen('testfile.h','w');
+  
+function writevar(fid, vname, var);
+  fprintf(fid,'%s = {', vname);
+  s1 = size(var,1);
+  s2 = size(var,2);
+  s3 = size(var,3);
+  fprintf('%g', var(k));
+
+function writefiles_old(sz, zi2E_FCt, FC_sv, DE)
 save testsave.mat sz zi2E_FCt FC_sv DE
 
 %stupid matlab can't write 3D vectors to binary file
