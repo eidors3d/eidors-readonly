@@ -47,7 +47,9 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
       if e==0;
          error('Can''t display. All values NaN. Is raw data 0?')
       end
-      ref_lev = mean(s_ed( ceil(.26*e):floor(.74*e) ));
+      % ensure symmetric rejection of data for small data sets
+      rej_vals = floor(.25*e);
+      ref_lev = mean(s_ed( (rej_vals+1):(end-rej_vals) ));
    end
 
    elem_data = elem_data - ref_lev;
