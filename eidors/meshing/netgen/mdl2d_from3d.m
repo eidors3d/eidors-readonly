@@ -32,6 +32,7 @@ function mdl2 = mdl2d_from3d(mdl3);
    % mat_idx_reordered (which is DEPRECIATED but
    % still required for backwards compatibilty)
    % TODO: vectorize code
+   if isfield(mdl3,'mat_idx');
    mdl2.mat_idx = {};
    idx0  = idx( lay0, :);
    for i=1:size(mdl3.mat_idx,2)
@@ -45,7 +46,10 @@ function mdl2 = mdl2d_from3d(mdl3);
          end
      end
    end
+   end %isfield
+
    % TODO: vectorize code
+   if isfield(mdl3,'mat_idx_reordered');
    mdl2.mat_idx_reordered = {};
    idx0  = idx( lay0, :);
    for i=1:size(mdl3.mat_idx_reordered,2)
@@ -59,6 +63,7 @@ function mdl2 = mdl2d_from3d(mdl3);
          end
      end
    end
+   end %isfield
    
    % set electrode
    if isfield(mdl3,'electrode')
