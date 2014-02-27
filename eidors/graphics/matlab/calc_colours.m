@@ -342,6 +342,14 @@ function [red,grn,blu]= greyscale_colours(pp,scale_data);
    grn = cc(:,2);
    blu = cc(:,3);
 
+% new code
+   cc= 0.5 + scale_data/2;
+   red = cc;
+   grn = cc;
+   blu = cc;
+
+   
+
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= copper_colours(pp,scale_data);
    cc = [0,0,0;copper(2*pp.mapped_colour-1)];
@@ -545,7 +553,8 @@ function do_unit_test
    unit_test_cmp('bg01',cc(1,:), [50,50,50]/100, 1e-10);
    calc_colours('defaults');
    cc= calc_colours('colourmap');
-   unit_test_cmp('bg01',cc(1,:), [50,50,15]/100, 1e-10);
+%  unit_test_cmp('bg01',cc(1,:), [50,50,15]/100, 1e-10); %EIDORS 3.6
+   unit_test_cmp('bg02',cc(1,:), [20,40,40]/100, 1e-10); %EIDORS 3.7
 
    unit_test_cmp('mc01',size(cc), [127*2,3]);
    calc_colours('mapped_colour',4);
@@ -555,49 +564,37 @@ function do_unit_test
 %   'clim'    (DEFAULT [])
 %   'cmap_type'  (Default blue-red)
 
+   test.blue_red = [0,0,2997; 9990,9990,9990; 2997,0,0]/1e4;
+   test.draeger  = [10000,10000,10000;0,0,0;6667,0,6667]/1e4;
+   test.jet      = [5000,0,0;5000,10000,5000;0,0,5000]/1e4;
+   test.jetair   = [8333,0,0; 0,0,8333;0,0,0]/1e4;
+   test.blue_yellow = [10000,10000,7500; 0,0,0;7500,10000,10000]/1e4;
+   test.greyscale = [0,0,0;5000,5000,5000;10000,10000,10000]/1e4;
+   test.copper = [0,0,0;6250,3906,2487;10000,7812,4975]/1e4;
+   test.blue_white_red = [10000,0,0;10000,10000,10000;0,0,10000]/1e4;
+   test.black_red = [0,0,0;5000,0,0;10000,0,0]/1e4;
+   test.blue_black_red = [10000,0,0;0,0,0;0,0,10000]/1e4;
+   test.polar_colours = [0,0,10000;10000,10000,10000;10000,0,0]/1e4;
+
    calc_colours('defaults');
    calc_colours('mapped_colour',4);
+   for ct = fieldnames(test)'
+      ct = ct{1};
+      tname = sprintf('ctm4(%s)',ct);
+      calc_colours('cmap_type', ct);
+      cc= calc_colours('colourmap');
+      unit_test_cmp(tname,cc([2,5,8],:), test.( ct ), 1e-4);
+   end
 
-   calc_colours('cmap_type', 'blue_red');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct01',cc([2,5,8],:), ...
-      [0,0,2997; 9990,9990,9990; 2997,0,0]/1e4, 1e-4);
+   calc_colours('defaults');
+   calc_colours('mapped_colour',0);
+   for ct = fieldnames(test)'
+      ct = ct{1};
+      tname = sprintf('ctm0(%s)',ct);
+      calc_colours('cmap_type', ct);
 
-   calc_colours('cmap_type', 'draeger');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [10000,10000,10000;0,0,0;6667,0,6667]/1e4, 1e-4);
-   calc_colours('cmap_type', 'jet');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [5000,0,0;5000,10000,5000;0,0,5000]/1e4, 1e-4);
-   calc_colours('cmap_type', 'jetair');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [8333,0,0; 0,0,8333;0,0,0]/1e4, 1e-4);
-   calc_colours('cmap_type', 'blue_yellow');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [10000,10000,7500; 0,0,0;7500,10000,10000]/1e4, 1e-4);
+      cc= calc_colours(linspace(-1,1,7)); cc= squeeze(cc);
+      unit_test_cmp(tname,cc([1,4,7],:), test.( ct ), 1e-4);
+   end
 
-   calc_colours('cmap_type', 'greyscale');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [0,0,0;5000,5000,5000;10000,10000,10000]/1e4, 1e-4);
-
-   calc_colours('cmap_type', 'copper');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [0,0,0;6250,3906,2487;10000,7812,4975]/1e4, 1e-4);
-
-   calc_colours('cmap_type', 'blue_white_red');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [10000,0,0;10000,10000,10000;0,0,10000]/1e4, 1e-4);
-
-   calc_colours('cmap_type', 'black_red');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [0,0,0;5000,0,0;10000,0,0]/1e4, 1e-4);
-
-   calc_colours('cmap_type', 'blue_black_red');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [10000,0,0;0,0,0;0,0,10000]/1e4, 1e-4);
-
-   calc_colours('cmap_type', 'polar_colours');
-   cc= calc_colours('colourmap'); unit_test_cmp('ct02',cc([2,5,8],:), ...
-      [0,0,10000;10000,10000,10000;10000,0,0]/1e4, 1e-4);
-
-
-%  calc_colours('defaults');
+   calc_colours('defaults');
