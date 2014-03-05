@@ -128,9 +128,7 @@ function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc)
    elecn_idx= [];   
    elecnodes= [];   
    for i=1:length(face_coords)
-%      elecn_idx(i)  = i;
        elecn_idx = [elecn_idx; i*ones(length(face_coords{i}),1)];
-%      elecnodes(i,:)= mean(face_coords{i});
        elecnodes = [elecnodes; face_coords{i}];
    end
    for ielec = 1:size(centres,1)
@@ -148,8 +146,11 @@ function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc)
        end
        sels(ielec)= iface 
    %   disp([ielec, iface, d]);
+   %   now remove that face so we dont use it again
+       ff = find(elecn_idx == iface);
+       elecn_idx(ff,:) = [];
+       elecnodes(ff,:) = [];
    end
-keyboard
 
 function [sels,lgelfc] = find_selected_face_old(centres, face_coords, lgelfc) 
    sels = [];

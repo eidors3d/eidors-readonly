@@ -505,13 +505,15 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
         'and not    sphere(0,-1,1;0.35) -maxh=0.05;\n' ...
         'solid out_elec0= out_elec  and mainobj;\n' ...
         'tlo out_elec0 cyl;\n'];
- elec_pos = [  1,  0,   1,   1,  0,  0;
+ elec_pos = [  0, -1,   0, NaN,NaN,NaN; % get rest of tank first, to remove
+               1,  0,   1,   1,  0,  0;
                0,  1, 1.2,   0,  1,  0;
                0, -1, 1.2, NaN,NaN,NaN;
-               0, -1, 1.37, NaN,NaN,NaN];
+               0, -1, 1.4, NaN,NaN,NaN];
  elec_shape=[0.1];
  elec_obj = 'cyl';
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+ fmdl.electrode = fmdl.electrode(2:end); % Throw away the first
   otherwise;
      error('huh?')
 end
