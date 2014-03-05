@@ -122,23 +122,51 @@ for loop1 = 1:nmel
 end
 
 
-function [sels,lgelfc] = find_selected_face_old(centres, centreofface, lgelfc) 
+% Find the electrode node which is closest to the specified point
 function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc) 
-sels = [];
-for i=1:length(face_coords)
-    centreofface(i,:)= mean(face_coords{i});
-end
-for ielec = 1:size(centres,1)
-% Find the distance from the centre of faces to this electrode
-    dists =  (centreofface(:,1) - centres(ielec,1)).^2 + ...
-             (centreofface(:,2) - centres(ielec,2)).^2 + ...
-             (centreofface(:,3) - centres(ielec,3)).^2;
-    [d,iface] = min(dists); %iface is closest face to this electrode.
-    lgelfc(iface) = logical(1);
-    if sum(lgelfc) ~= ielec
-       disp(ielec);
-       error('Electrode #%d not found', ielec);
-    end
-    sels(ielec)= iface;
-%   disp([ielec, iface, d]);
-end
+   sels = [];
+   elecn_idx= [];   
+   elecnodes= [];   
+   for i=1:length(face_coords)
+%      elecn_idx(i)  = i;
+       elecn_idx = [elecn_idx; i*ones(length(face_coords{i}),1)];
+%      elecnodes(i,:)= mean(face_coords{i});
+       elecnodes = [elecnodes; face_coords{i}];
+   end
+   for ielec = 1:size(centres,1)
+   % Find the distance from the centre of faces to this electrode
+       dists =  (elecnodes(:,1) - centres(ielec,1)).^2 + ...
+                (elecnodes(:,2) - centres(ielec,2)).^2 + ...
+                (elecnodes(:,3) - centres(ielec,3)).^2;
+       [d,iface] = min(dists); %iface is closest face to this electrode.
+       % take the first, closest
+       iface = elecn_idx(iface(1));
+       lgelfc(iface) = logical(1);
+       if sum(lgelfc) ~= ielec
+          disp(ielec);
+          error('Electrode #%d not found', ielec);
+       end
+       sels(ielec)= iface 
+   %   disp([ielec, iface, d]);
+   end
+keyboard
+
+function [sels,lgelfc] = find_selected_face_old(centres, face_coords, lgelfc) 
+   sels = [];
+   for i=1:length(face_coords)
+       centreofface(i,:)= mean(face_coords{i});
+   end
+   for ielec = 1:size(centres,1)
+   % Find the distance from the centre of faces to this electrode
+       dists =  (centreofface(:,1) - centres(ielec,1)).^2 + ...
+                (centreofface(:,2) - centres(ielec,2)).^2 + ...
+                (centreofface(:,3) - centres(ielec,3)).^2;
+       [d,iface] = min(dists); %iface is closest face to this electrode.
+       lgelfc(iface) = logical(1);
+       if sum(lgelfc) ~= ielec
+          disp(ielec);
+          error('Electrode #%d not found', ielec);
+       end
+       sels(ielec)= iface;
+   %   disp([ielec, iface, d]);
+   end
