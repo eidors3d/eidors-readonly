@@ -144,7 +144,7 @@ function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc)
           disp(ielec);
           error('Electrode #%d not found', ielec);
        end
-       sels(ielec)= iface 
+       sels(ielec)= iface;
    %   disp([ielec, iface, d]);
    %   now remove that face so we dont use it again
        ff = find(elecn_idx == iface);
