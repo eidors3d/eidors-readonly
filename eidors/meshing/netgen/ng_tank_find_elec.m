@@ -67,14 +67,15 @@ for loop1 = 1:max(fc)
 %   [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);
     fci  = find( fc == loop1 );
     fcsrf= srf(fci,:); % should be vertex numbers for this face
+    fcsrf= unique(fcsrf);
     coordsforthisface= vtx(fcsrf,:);
-    centreofface(loop1,:)= mean(coordsforthisface,1);
+    face_coords{loop1}= coordsforthisface;
     ttlfcsrf(loop1) = {fcsrf};
     
 end
 
 
-[sels,lgelfc] = find_selected_face(centres, centreofface, lgelfc);
+[sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc);
 
 
 
@@ -121,8 +122,12 @@ for loop1 = 1:nmel
 end
 
 
-function [sels,lgelfc] = find_selected_face(centres, centreofface, lgelfc) 
+function [sels,lgelfc] = find_selected_face_old(centres, centreofface, lgelfc) 
+function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc) 
 sels = [];
+for i=1:length(face_coords)
+    centreofface(i,:)= mean(face_coords{i});
+end
 for ielec = 1:size(centres,1)
 % Find the distance from the centre of faces to this electrode
     dists =  (centreofface(:,1) - centres(ielec,1)).^2 + ...
