@@ -59,7 +59,6 @@ end
 
 
 function [elec,sels, electrodes] = find_elec_centres(srf,vtx,fc,centres);
-sels = [];
 
 for loop1 = 1:max(fc)
     % Create a logical array (lgelfc) to determine which faces are electrodes
@@ -74,20 +73,9 @@ for loop1 = 1:max(fc)
     
 end
 
-for ielec = 1:size(centres,1)
-% Find the distance from the centre of faces to this electrode
-    dists =  (centreofface(:,1) - centres(ielec,1)).^2 + ...
-             (centreofface(:,2) - centres(ielec,2)).^2 + ...
-             (centreofface(:,3) - centres(ielec,3)).^2;
-    [d,iface] = min(dists); %iface is closest face to this electrode.
-    lgelfc(iface) = logical(1);
-    if sum(lgelfc) ~= ielec
-       disp(ielec);
-       error('Electrode #%d not found', ielec);
-    end
-    sels(ielec)= iface;
-%   disp([ielec, iface, d]);
-end
+
+[sels,lgelfc] = find_selected_face(centres, centreofface, lgelfc);
+
 
 
 % Extract from the total face indices matrix (ttlfcsrf) the
@@ -133,3 +121,19 @@ for loop1 = 1:nmel
 end
 
 
+function [sels,lgelfc] = find_selected_face(centres, centreofface, lgelfc) 
+sels = [];
+for ielec = 1:size(centres,1)
+% Find the distance from the centre of faces to this electrode
+    dists =  (centreofface(:,1) - centres(ielec,1)).^2 + ...
+             (centreofface(:,2) - centres(ielec,2)).^2 + ...
+             (centreofface(:,3) - centres(ielec,3)).^2;
+    [d,iface] = min(dists); %iface is closest face to this electrode.
+    lgelfc(iface) = logical(1);
+    if sum(lgelfc) ~= ielec
+       disp(ielec);
+       error('Electrode #%d not found', ielec);
+    end
+    sels(ielec)= iface;
+%   disp([ielec, iface, d]);
+end
