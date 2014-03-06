@@ -15,6 +15,7 @@
 
 %% Clear Workspace and Command Window, start time measurment & EIDORS
 clear;                      % Clear variables
+clc;
 %close all;                  % Close all windows
 MyEIDORSStartup;            % Starts EIDORS
 
@@ -22,11 +23,18 @@ MyEIDORSStartup;            % Starts EIDORS
 
 Script.tStart = tic;    % Remember start time
 
+%% Parameters
+Display.DisplayMeas = 0;
+Display.ShowFEM = 1;
+
 %% Forward Model - values in mm
+
+% Tank settings
 Tank.Height = 236;
 Tank.Radius = (242)/2;
 Tank.maxMesh= 0;
 
+% Electrode settings
 Electrodes.NumberOf = 16;
 Electrodes.ZPositions = 125;
 Electrodes.InnerRadius1 = 0;
@@ -35,12 +43,21 @@ Electrodes.OuterRadius1 = 10;
 Electrodes.OuterRadius2 = 20;
 Electrodes.maxh = 5;
 
+% The electrodes are numbered counter-clock wise
+% Electrode 1..16 are the inner current electrodes
+% Electrode 17..32 are the outer voltage electrodes
 fmdl = CreateTankWithCompoundElectrodes(Tank, Electrodes);
 
+% Reorder electrodes to be clock-wise arranged
+fmdl.electrode([16:-1:1, 32:-1:17])= fmdl.electrode;
+
+% Create image
 FEMimg = mk_image(fmdl, 1); 
 
 % Show FEM forward model
-figure(1); set(gcf, 'Name', 'FEM Forward Model'); show_fem(FEMimg, [0, 1, 0]); title('Forward Model');
+if (Display.ShowFEM)
+    figure(1); set(gcf, 'Name', 'FEM Forward Model'); show_fem(FEMimg, [0, 1, 0]); title('Forward Model');
+end;
 
 %% Generate Stim Pattern
 Pattern.NumberOfElectrodeRings = 1;
@@ -58,9 +75,10 @@ fprintf('                       AdjacentSkip: %i\n', Pattern.AdjacentSkip);
 fprintf('                       %s, %s\n', Pattern.RedundantMeasurementType, Pattern.MeasureOnCurrentCarryingElectrodesType);
 fprintf('\n\n');
 
-[fmdl.stimulation2, fmdl.meas_sel2] = mk_stim_patterns(Electrodes.NumberOf, 2*Pattern.NumberOfElectrodeRings, [0 Pattern.AdjacentSkip], [0 Pattern.AdjacentSkip], {Pattern.RedundantMeasurementType Pattern.MeasureOnCurrentCarryingElectrodesType}, Pattern.CurrentAmplitude);
+% Create stim-pattern for 16 electrodes
 [fmdl.stimulation, fmdl.meas_sel] = mk_stim_patterns(Electrodes.NumberOf, Pattern.NumberOfElectrodeRings, [0 Pattern.AdjacentSkip], [0 Pattern.AdjacentSkip], {Pattern.RedundantMeasurementType Pattern.MeasureOnCurrentCarryingElectrodesType}, Pattern.CurrentAmplitude);
 
+% And scale them up for 30
 for i=1:length(fmdl.stimulation)
     fmdl.stimulation(i).stim_pattern = full(fmdl.stimulation(i).stim_pattern);
     fmdl.stimulation(i).stim_pattern = [fmdl.stimulation(i).stim_pattern; zeros(16, 1)];
@@ -71,26 +89,15 @@ for i=1:length(fmdl.stimulation)
     fmdl.stimulation(i).meas_pattern = [zeros(16,32); fmdl.stimulation(i).meas_pattern];
     fmdl.stimulation(i).meas_pattern = sparse(fmdl.stimulation(i).meas_pattern);
 end
-fmdl.stimulation3 = fmdl.stimulation2(1:16);
 
-% Check im stim_pattern and stimulation is equal
-for i=1:16
-    if(all(fmdl.stimulation3(i).stim_pattern == fmdl.stimulation(i).stim_pattern) && all(fmdl.stimulation3(i).stimulation == fmdl.stimulation(i).stimulation))
-        fprintf('%i ok\n',i);
-    else
-        fprintf('%i not ok\n',i);
-    end;
-end;
-
-for i=1:16
-    full(fmdl.stimulation(i).meas_pattern)
-    full(fmdl.stimulation3(i).meas_pattern)
-end;
-
+%% Display
+% Plot Pattern
 ShowPattern(fmdl.stimulation, fmdl.meas_sel);
 
-% DISPLAY_MEAS: display measurements on mesh
-figure(2); display_meas(fmdl, 'ya', 0, 1);
+% Display Measurement Pattern
+if (Display.DisplayMeas)
+    figure(2); display_meas(fmdl, 'ya', 0, 1);
+end;
 
 %% Goodbye Message
 Script.tElapsed=toc(Script.tStart);
