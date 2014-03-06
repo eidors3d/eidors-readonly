@@ -53,7 +53,10 @@ n_meas = 0;
 % Recreate 'df' from fwd_model.stimulation
 df= zeros(n_stim,1);
 for i=1:n_stim;
-    df(i) = size(fwd_model.stimulation(i).meas_pattern ,1);
+    % Fixed by Steffen Kaufmann 06.03.2014 - should now work with non full
+    % rank pattern
+    % df(i) = size(fwd_model.stimulation(i).meas_pattern ,1);    
+    df(i) = sum(sum(abs(full(fwd_model.stimulation(i).meas_pattern)))) / 2;
     n_meas = n_meas + df(i);
 end
 
