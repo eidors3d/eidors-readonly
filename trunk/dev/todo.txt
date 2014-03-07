@@ -1,5 +1,6 @@
 ############## 3.8 ################
 
+ - check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
  - Sparse matrix efficiency. Is there a way to 
     generalize the idx operations now in fwd_model_1st_order?
 
@@ -11,6 +12,8 @@
 
  - ng models with point electrodes
    + fixed for 2D
+
+ + fixed calc_colours to work for mapped_colour = 0
 
  - check for additional y-cut in show_3d_slices
 
