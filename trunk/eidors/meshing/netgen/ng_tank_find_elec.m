@@ -47,7 +47,7 @@ if  isstruct(centres)
    for e=1:length(centres)
       inside = feval(centres(e).fcn,srfctr,centres(e).centre);
       this_el = srf(inside,:);
-      electrodes(e).nodes     = unique( this_el )';
+      electrodes(e).nodes     = unique( this_el(:) )';
       electrodes(e).z_contact = 0.1; % set placeholder value
    end
    elec= NaN; sels= NaN; % No backward compatible for this mode
@@ -117,7 +117,7 @@ for loop1 = 1:nmel
     l_this_el= prod(size(this_el));
     elec(loop1, 1:l_this_el) = this_el(:)';
 
-    electrodes(loop1).nodes     = unique( this_el )';
+    electrodes(loop1).nodes     = unique( this_el(:) )';
     electrodes(loop1).z_contact = 0.1; % set placeholder value
 end
 
