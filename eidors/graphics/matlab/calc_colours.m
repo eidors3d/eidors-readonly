@@ -305,44 +305,21 @@ function [red,grn,blu] = jet_colours(pp,scale_data);
 
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu] = blue_yellow_colours(pp,scale_data);
-   cc = [0,0,0;fireice(2*pp.mapped_colour-1)];
-   red = cc(:,1);
-   grn = cc(:,2);
-   blu = cc(:,3);
-
-function cmap = fireice(m)
+   % Inpired by 
    % FIREICE LightCyan-Cyan-Blue-Black-Red-Yellow-LightYellow Colormap
-   %
-   % See also: hot, jet, hsv, gray, copper, bone, cold, vivid, colors
-   %
-   % Author: Joseph Kirk %  jdkirk630@gmail.com
-   % Date: 07/29/09
-
-   % LightCyan-Cyan-Blue-Black-Red-Yellow-LightYellow
+   % by: Joseph Kirk %  jdkirk630@gmail.com
    clrs = flipud([0.75 1 1; 0 1 1; 0 0 1;...
        0 0 0; 1 0 0; 1 1 0; 1 1 0.75]);
 
-   y = -3:3;
-   if mod(m,2)
-       delta = min(1,6/(m-1));
-       half = (m-1)/2;
-       yi = delta*(-half:half)';
-   else
-       delta = min(1,6/m);
-       half = m/2;
-       yi = delta*nonzeros(-half:half);
-   end
-   cmap = interp2(1:3,y,clrs,1:3,yi);
+   y = linspace(-1,1,size(clrs,1));
+   cc = interp2(1:3,y,clrs,1:3,scale_data);
+   red = cc(:,1);
+   grn = cc(:,2);
+   blu = cc(:,3);
 
 
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= greyscale_colours(pp,scale_data);
-   cc = [0,0,0;gray(2*pp.mapped_colour-1)];
-   red = cc(:,1);
-   grn = cc(:,2);
-   blu = cc(:,3);
-
-% new code
    cc= 0.5 + scale_data/2;
    red = cc;
    grn = cc;
@@ -352,79 +329,48 @@ function [red,grn,blu]= greyscale_colours(pp,scale_data);
 
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= copper_colours(pp,scale_data);
-   cc = [0,0,0;copper(2*pp.mapped_colour-1)];
-   red = cc(:,1);
-   grn = cc(:,2);
-   blu = cc(:,3);
+% Constants from the copper.m function
+   cc= 0.5 + scale_data/2;
+   red = min(cc * 1.2500,1);
+   grn = cc * 0.7812;
+   blu = cc * 0.4975;
 
-% TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= blue_white_red_colours(pp,scale_data);
-   cc = [0,0,0;bluewhitered(2*pp.mapped_colour-1)];
-   red = cc(:,1);
-   grn = cc(:,2);
-   blu = cc(:,3);
-
-% TODO: only works with mapped_colours, fix to use scale_data
-function cmap = bluewhitered(m)
    % bluewhitered Colormap
-   %
    % Based on FIREICE from Joseph Kirk jdkirk630@gmail.com
-
-   % Blue-White-Red
    clrs = flipud([0 0 1; 1 1 1; 1 0 0]);
 
-   y = -1:1;
-   if mod(m,2)
-       delta = min(1,2/(m-1));
-       half = (m-1)/2;
-       yi = delta*(-half:half)';
-   else
-       delta = min(1,2/m);
-       half = m/2;
-       yi = delta*nonzeros(-half:half);
-   end
-   cmap = interp2(1:3,y,clrs,1:3,yi);
-
-
-% TODO: only works with mapped_colours, fix to use scale_data
-function [red,grn,blu] = black_red_colours(pp,scale_data);
-   ncols = 2*pp.mapped_colour-1;
-   cc = [0,0,0;gray(ncols)];
+   y = linspace(-1,1,size(clrs,1));
+   cc = interp2(1:3,y,clrs,1:3,scale_data);
    red = cc(:,1);
-   grn = [0;zeros(ncols,1)];
-   blu = grn;
+   grn = cc(:,2);
+   blu = cc(:,3);
+
+
+
+function [red,grn,blu] = black_red_colours(pp,scale_data);
+   red = 0.5 + scale_data/2;
+   blu = 0*scale_data;
+   grn = blu;
 
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu] = blue_black_red_colours(pp,scale_data);
-   ncol = pp.mapped_colour;
-   cc = gray(ncol);
-   red = [0;flipud(cc(:,1));zeros(ncol-1,1)];
-   grn = zeros(2*ncol,1);
-   blu = [0;zeros(ncol-1,1);cc(:,1)];
+   red =-min(0,scale_data);
+   blu = max(0,scale_data);
+   grn = 0*scale_data;
 
 % TODO: only works with mapped_colours, fix to use scale_data
 % Ideas for this colourmap, and a few lines of code are from
 % (C) 2011, Francois Beauducel, IPGP in polarmap.m
 function [red,grn,blu] = polar_blue_white_red_colours(pp,scale_data);
-   n = calc_colours('mapped_colour')*2-1;
-
-   clim=.5;
-   ind=1;
-   r = repmat(abs(linspace(1,-1,n)).^ind,[3,1])';
-
-   if mod(n,2)
-           z = [0,0,0];
-           n2 = floor(n/2);
-   else
-           z = zeros([0,3]);
-           n2 = n/2;
-   end
-   map = [repmat([0,0,1],[n2,1]);z;repmat([1,0,0],[n2,1])];
-   map = map.*r + 1 - r;
-   red = [0;map(:,1)];
-   grn = [0;map(:,2)];
-   blu = [0;map(:,3)];
-   
+%  0   0   1
+%  .5  .5  1
+%  1   1   1
+%  1   .5  .5
+%  1   0   0
+   red = min(1, 1 + scale_data);
+   grn = 1 - abs(scale_data);
+   blu = min(1, 1 - scale_data);
 
 
 function pp=get_colours( img );
