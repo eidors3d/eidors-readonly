@@ -14,10 +14,10 @@
 % March 2014
 
 %% Clear Workspace and Command Window, start time measurment & EIDORS
-clear;                      % Clear variables
+%clear all;                      % Clear variables
 clc;
 %close all;                  % Close all windows
-MyEIDORSStartup;            % Starts EIDORS
+%MyEIDORSStartup;            % Starts EIDORS
 
 %eidors_cache('clear');      % Clear Cache
 
@@ -32,7 +32,7 @@ Display.ShowLegend = 1;
 Display.SaveFigures = 1;
 
 DoReconstruction = 1;
-ChooseNF = 1;
+ChooseNF = 0;
 
 UsePhase = 0;
 
@@ -67,7 +67,7 @@ Electrodes.maxh = 5;
 
 % Scale Tank height in order to reduce the number of elements and to speed
 % the solution up, with the trade off of beeing not accuratea anymore.
-Scale = 1;
+Scale = 1/5;
 Tank.Height = Tank.Height * Scale;
 Electrodes.ZPositions = Electrodes.ZPositions * Scale;
 
@@ -116,7 +116,7 @@ fprintf('\n\n');
 ShowPattern(fmdl.stimulation, fmdl.meas_sel);
 
 % Create Image of fwd mdl
-fmdlIMG = mk_image(fmdl, bkgnd_conductivity); 
+fmdlIMG = mk_image(fmdl, bkgnd_conductivity, 'conductivity');
 
 %% Simulate reference voltages according to the fwd mdl
 simulation_data = fwd_solve(fmdlIMG);
@@ -159,6 +159,7 @@ if DoReconstruction
     inv3d.fwd_model = fmdl;
     %inv3d.fwd_model.np_fwd_solve.perm_sym = '{y}';         % What is this?
     inv3d.solve = @inv_solve_diff_GN_one_step;              % Is there a better algorithm?
+    inv_model.inv_solve.calc_solution_error = 0;
 
     switch prior
         case 'tikhonov'
