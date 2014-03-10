@@ -14,10 +14,10 @@
 % March 2014
 
 %% Clear Workspace and Command Window, start time measurment & EIDORS
-%clear all;                      % Clear variables
+clear;                      % Clear variables
 clc;
-%close all;                  % Close all windows
-%MyEIDORSStartup;            % Starts EIDORS
+close all;                  % Close all windows
+MyEIDORSStartup;            % Starts EIDORS
 
 %eidors_cache('clear');      % Clear Cache
 
@@ -36,7 +36,7 @@ ChooseNF = 0;
 
 UsePhase = 0;
 
-bkgnd_conductivity =  0.65*1e-3;   % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements
+bkgnd_conductivity =  1;%0.65*1e-3;   % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements
 %bkgnd_conductivity =  1.155*1e-3;   % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements
 
 MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
@@ -67,7 +67,7 @@ Electrodes.maxh = 5;
 
 % Scale Tank height in order to reduce the number of elements and to speed
 % the solution up, with the trade off of beeing not accuratea anymore.
-Scale = 1/5;
+Scale = 1;
 Tank.Height = Tank.Height * Scale;
 Electrodes.ZPositions = Electrodes.ZPositions * Scale;
 
