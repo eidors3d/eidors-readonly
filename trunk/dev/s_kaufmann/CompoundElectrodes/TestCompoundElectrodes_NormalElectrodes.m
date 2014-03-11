@@ -17,8 +17,6 @@ clc;
 close all;                  % Close all windows
 MyEIDORSStartup;            % Starts EIDORS
 
-%eidors_cache('clear');      % Clear Cache
-
 Script.tStart = tic;    % Remember start time
 
 fprintf('CEV111 Image Reconstruction with EIDORS\n\n');
@@ -27,29 +25,33 @@ fprintf('CEV111 Image Reconstruction with EIDORS\n\n');
 Display.DisplayMeas = 0;
 Display.ShowFEM = 0;
 Display.SaveFigures = 1;
-Display.RAWData = 0;
+Display.RAWData = 1;
 
-DoReconstruction = 1;
-ChooseNF = 1;
+DoReconstruction = 1;           % Do reconstruction or just show RAW Data
+ChooseNF = 0;                   % Choose HP via NF 
+RemoveMean = 1;                 % Remove mean from the measurement data
+FitBackGroundConductivity = 0;  % Solves the Forward-Problem one time to find the optimal back ground conductivity which fits the homogenious measurement
 
-UsePhase = 0;
+bkgnd_conductivity =  0.5975*1e-3;   % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements
 
-bkgnd_conductivity =  0.65*1e-3;   % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements
-%bkgnd_conductivity =  1.155*1e-3;   % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements
-
-prior = 'tikhonov';
+prior = 'tikhonov';             % Used Prior
 %prior = 'noser';
 
+% Measurement Files
 InhomogeneousMeasFile = 'SingleObject_E1E2';
 %InhomogeneousMeasFile = 'SingleObject_E6E5_direct';
 HomogeneousMeasFile = 'SingleObject_Reference';
 
+% Exports
 ExportDir = 'C:\Temp\';
 MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
 
 ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_NormalElectrodes'];
 HomogeneousMeasFile = [MeasurementFolder HomogeneousMeasFile '.mat'];
 InhomogeneousMeasFile = [MeasurementFolder InhomogeneousMeasFile '.mat'];
+
+% Start Diary
+diary([ExportFile '.txt']);
 
 %% Forward Model - values in mm
 
@@ -67,7 +69,7 @@ Electrodes.InnerRadius2 = 5;
 Electrodes.OuterRadius1 = 10;
 Electrodes.OuterRadius2 = 20;
 Electrodes.maxh = 5;
-
+Electrodes.Z_Contact = .1;
 Electrode.Position = [Electrodes.NumberOf, Electrodes.ZPositions];
 
 % Generate Model with Netgen
@@ -94,7 +96,7 @@ Pattern.CurrentAmplitude = 5e-3;
 [fmdl.stimulation, fmdl.meas_sel] = mk_stim_patterns(Electrodes.NumberOf, Pattern.NumberOfElectrodeRings, [0 Pattern.AdjacentSkip], [0 Pattern.AdjacentSkip], {Pattern.RedundantMeasurementType Pattern.MeasureOnCurrentCarryingElectrodesType}, Pattern.CurrentAmplitude);
 
 for i=1:length(fmdl.electrode)
-    fmdl.electrode(i).z_contact = 10;
+    fmdl.electrode(i).z_contact = Electrodes.Z_Contact;
 end;
 
 fprintf('\n\nPattern Settings:\n---------\n');
@@ -122,8 +124,26 @@ Data.Inhomogeneous = load(InhomogeneousMeasFile);
 Data.Homogeneous.v_eidors = (Data.Homogeneous.System.DAC.I0 * Data.Homogeneous.Z) .* sign(v_sim(simulation_data.meas~=0));
 Data.Inhomogeneous.v_eidors = (Data.Inhomogeneous.System.DAC.I0 * Data.Inhomogeneous.Z) .* sign(v_sim(simulation_data.meas~=0));
 
+% Remove mean
+if (RemoveMean)
+    Data.Homogeneous.v_eidors = Data.Homogeneous.v_eidors - mean(Data.Homogeneous.v_eidors);
+    Data.Inhomogeneous.v_eidors = Data.Inhomogeneous.v_eidors - mean(Data.Inhomogeneous.v_eidors);
+end;
+
 v_hom = Data.Homogeneous.v_eidors;
 v_inhom = Data.Inhomogeneous.v_eidors;
+
+if FitBackGroundConductivity
+    fmdlIMG = mk_image(fmdl, 1, 'conductivity');
+    simulation_data = fwd_solve(fmdlIMG);
+
+    bkgnd_conductivity = mean(abs(simulation_data.meas(simulation_data.meas~=0))) / mean(abs(v_hom(v_hom~=0)));
+    fprintf('Adjusted bkgnd_conductivity to %3.3e\n', bkgnd_conductivity);
+     
+    fmdlIMG = mk_image(fmdl, bkgnd_conductivity, 'conductivity');
+    simulation_data = fwd_solve(fmdlIMG);
+    v_sim = simulation_data.meas;
+end;
 
 %% Calculate Reciprocity
 fprintf('\nCalculate Reciprocity...');
@@ -226,3 +246,4 @@ end;
 %% Goodbye Message
 Script.tElapsed=toc(Script.tStart);
 fprintf('\nProcessed in %2.2f Seconds\n', Script.tElapsed);
+diary off;  % Write Command Windows content to diary file

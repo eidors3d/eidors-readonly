@@ -168,7 +168,7 @@ snr_y = signal_y / noise_y;
 
 params= [snr_y(:)./snr_x(:)]';
 
-eidors_msg('NF= %f', params, 1);
+eidors_msg('NF= %f (hp=%e)', params, imdl.hyperparameter.value, 1);
 
 % NOTES on the calculations: AA - Feb 20, 2012
 % SNR = mean(abs(x)); VAR = 
