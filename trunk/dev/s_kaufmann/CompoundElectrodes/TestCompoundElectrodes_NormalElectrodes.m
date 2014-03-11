@@ -8,9 +8,7 @@
 %
 % Return:   -
 %
-% Written by Steffen Kaufmann <sk@steffen-kaufmann.com>, mainly based on 
-% http://eidors3d.sourceforge.net/tutorial/netgen/netgen_gen_models.shtml
-% Demo #17 from Andy Adler
+% Written by Steffen Kaufmann <sk@steffen-kaufmann.com>
 % March 2014
 
 %% Clear Workspace and Command Window, start time measurment & EIDORS
@@ -32,7 +30,7 @@ Display.SaveFigures = 1;
 Display.RAWData = 0;
 
 DoReconstruction = 1;
-ChooseNF = 0;
+ChooseNF = 1;
 
 UsePhase = 0;
 
@@ -49,7 +47,7 @@ HomogeneousMeasFile = 'SingleObject_Reference';
 ExportDir = 'C:\Temp\';
 MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
 
-ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_CompoundElectrodes'];
+ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_NormalElectrodes'];
 HomogeneousMeasFile = [MeasurementFolder HomogeneousMeasFile '.mat'];
 InhomogeneousMeasFile = [MeasurementFolder InhomogeneousMeasFile '.mat'];
 
@@ -58,7 +56,8 @@ InhomogeneousMeasFile = [MeasurementFolder InhomogeneousMeasFile '.mat'];
 % Tank settings
 Tank.Height = 235;
 Tank.Radius = (242)/2;
-Tank.maxMesh = 20;
+Tank.maxMesh = 0;
+Tank.CylinderShape = [Tank.Height, Tank.Radius, Tank.maxMesh];
 
 % Electrode settings
 Electrodes.NumberOf = 16;
@@ -69,13 +68,13 @@ Electrodes.OuterRadius1 = 10;
 Electrodes.OuterRadius2 = 20;
 Electrodes.maxh = 5;
 
-% The electrodes are numbered counter-clock wise
-% Electrode 1..16 are the inner current electrodes
-% Electrode 17..32 are the outer voltage electrodes
-fmdl = CreateTankWithCompoundElectrodes(Tank, Electrodes);
+Electrode.Position = [Electrodes.NumberOf, Electrodes.ZPositions];
 
-% Reorder electrodes to be clock-wise arranged
-fmdl.electrode([16:-1:1, 32:-1:17])= fmdl.electrode;
+% Generate Model with Netgen
+[fmdl, mat_idx] = ng_mk_cyl_models(Tank.CylinderShape, Electrode.Position, [Electrodes.InnerRadius2, 0, Electrodes.maxh]);
+
+% Reorder electrodes to be counter clockwise
+fmdl.electrode([1,16:-1:2])= fmdl.electrode;
 
 %% Generate Stim Pattern
 Pattern.NumberOfElectrodeRings = 1;
@@ -94,17 +93,9 @@ Pattern.CurrentAmplitude = 5e-3;
 % Create stim-pattern for 16 electrodes
 [fmdl.stimulation, fmdl.meas_sel] = mk_stim_patterns(Electrodes.NumberOf, Pattern.NumberOfElectrodeRings, [0 Pattern.AdjacentSkip], [0 Pattern.AdjacentSkip], {Pattern.RedundantMeasurementType Pattern.MeasureOnCurrentCarryingElectrodesType}, Pattern.CurrentAmplitude);
 
-% And scale them up for 32
-for i=1:length(fmdl.stimulation)
-    fmdl.stimulation(i).stim_pattern = full(fmdl.stimulation(i).stim_pattern);
-    fmdl.stimulation(i).stim_pattern = [fmdl.stimulation(i).stim_pattern; zeros(16, 1)];
-    fmdl.stimulation(i).stim_pattern = sparse(fmdl.stimulation(i).stim_pattern);
-    
-    fmdl.stimulation(i).meas_pattern = full(fmdl.stimulation(i).meas_pattern);
-    fmdl.stimulation(i).meas_pattern = [zeros(16,16), fmdl.stimulation(i).meas_pattern];
-    fmdl.stimulation(i).meas_pattern = [zeros(16,32); fmdl.stimulation(i).meas_pattern];
-    fmdl.stimulation(i).meas_pattern = sparse(fmdl.stimulation(i).meas_pattern);
-end
+for i=1:length(fmdl.electrode)
+    fmdl.electrode(i).z_contact = 10;
+end;
 
 fprintf('\n\nPattern Settings:\n---------\n');
 fprintf('                       AdjacentSkip: %i\n', Pattern.AdjacentSkip);
@@ -118,7 +109,6 @@ fmdlIMG = mk_image(fmdl, bkgnd_conductivity, 'conductivity');
 
 %% Simulate reference voltages according to the fwd mdl
 simulation_data = fwd_solve(fmdlIMG);
-%v_sim = simulation_data.meas(simulation_data.meas~=0);  % Remove 0 elements caused by not measure voltages on electrode 1:16 (current)
 v_sim = simulation_data.meas;
 
 %% Load Measurement Data
@@ -132,13 +122,8 @@ Data.Inhomogeneous = load(InhomogeneousMeasFile);
 Data.Homogeneous.v_eidors = (Data.Homogeneous.System.DAC.I0 * Data.Homogeneous.Z) .* sign(v_sim(simulation_data.meas~=0));
 Data.Inhomogeneous.v_eidors = (Data.Inhomogeneous.System.DAC.I0 * Data.Inhomogeneous.Z) .* sign(v_sim(simulation_data.meas~=0));
 
-% Scale up to 512 measurements 
-v_hom = zeros(512, 1);
-v_inhom = zeros(512, 1);
-for i=1:16
-    v_hom((17:32) + (32*(i-1))) = Data.Homogeneous.v_eidors( (1:16) .* i);
-    v_inhom((17:32) +(32*(i-1))) = Data.Inhomogeneous.v_eidors( (1:16) .* i);
-end;
+v_hom = Data.Homogeneous.v_eidors;
+v_inhom = Data.Inhomogeneous.v_eidors;
 
 %% Calculate Reciprocity
 fprintf('\nCalculate Reciprocity...');
