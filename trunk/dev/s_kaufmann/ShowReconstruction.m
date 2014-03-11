@@ -1,5 +1,5 @@
 function ShowReconstruction(IMG, ZPosition, ElectrodeOffset)
-    IMG.calc_colours.npoints = 256;
+%    IMG.calc_colours.npoints = 256;
     IMG.calc_colours.cb_shrink_move = [1, 1, -0.1500]; % Leitfähigkeitsscala Balken (Width, Height, Position)
 
     Title = regexprep(IMG.name, '_', '\\_');
@@ -12,19 +12,8 @@ function ShowReconstruction(IMG, ZPosition, ElectrodeOffset)
             inf,inf,ZPosition+ElectrodeOffset,1; ...
             inf,inf,ZPosition+3*ElectrodeOffset,1];
 
-    subplot(1, 2, 2); 
-    show_slices(IMG, posn);
-
+    subplot(1, 2, 2); show_slices(IMG, posn); title('Cut planes');
     subplot(1, 2, 1); show_fem(IMG, [1, 1]); title(Title);
-
-    % Create textbox
-    annotation(gcf,'textbox',...
-        [0.66 0.0421511627906978 0.4 0.0494186046511628],...
-        'String',{'Cut Planes'},...
-        'FontWeight','bold',...
-        'FontSize',10,...
-        'FitBoxToText','off',...
-        'LineStyle','none');
 
     % Create textbox
     annotation(gcf,'textbox',...
