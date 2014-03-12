@@ -20,26 +20,41 @@ p = javaMethod('newDocumentBuilder',parserFactory);
 function obj = parse_oeit_xml( tree )
    obj.subject = parse_subject( tree );
    obj.devices = parse_devices( tree );
+   obj.frames = parse_frames( tree );
 
-function obj = parse_subject( tree, xpath)
+function obj = parse_subject( tree)
    import javax.xml.xpath.* ;
    xpath = XPathFactory.newInstance.newXPath;
 
-   expression = xpath.compile('//oeit/subject');
+   expression = xpath.compile('/oeit/subject');
    node = expression.evaluate(tree, XPathConstants.NODE);
    obj = print_recurse( node, 0);
 
-function obj = parse_devices( tree, xpath)
+function obj = parse_devices( tree)
    import javax.xml.xpath.* ;
    xpath = XPathFactory.newInstance.newXPath;
 
-   expression = xpath.compile('//oeit/device_list/device');
+   expression = xpath.compile('/oeit/device_list/device');
    nodeList = expression.evaluate(tree, XPathConstants.NODESET);
    for i = 1:nodeList.getLength
        node = nodeList.item(i-1);
 %      disp(char(node.getFirstChild.getNodeValue))
        obj{i} = print_recurse( node, 0);
    end
+
+function obj = parse_frames( tree );
+   import javax.xml.xpath.* ;
+   xpath = XPathFactory.newInstance.newXPath;
+
+   expression = xpath.compile('/oeit/frame_type_list/frame_type'); 
+   nodeList = expression.evaluate(tree, XPathConstants.NODESET);
+   for i = 1:nodeList.getLength
+       node = nodeList.item(i-1);
+       atts = parse_atts( parseAttributes(node) );
+       id = atts.id;
+%      disp([char(node.getNodeName),':id =', id]);
+   end
+   obj = [];
 
 function obj = xpath_try(tree)
 % From:
@@ -76,7 +91,7 @@ end
 
 
 
-function d = DEBUG; d=1;
+function d = DEBUG; d=0;
 
 function obj = print_recurse( node, level);
 %  if level>5; obj.name ='empty'; return;end
@@ -92,12 +107,7 @@ if DEBUG
    for i=1:level; fprintf('>'); end
    fprintf('[ %s: ',name);
 end
-   for i=1:length(atts);
-if DEBUG
-      fprintf('%s="%s" ',atts(i).Name, atts(i).Value);
-end
-%     obj.(atts(i).Name) = atts(i).Value;
-   end
+   obj = parse_atts(atts, obj);
 if DEBUG
    fprintf(']\n');
 end
@@ -127,6 +137,17 @@ end
    end
    obj = orderfields( obj);
 
+
+function obj = parse_atts(atts, obj)
+   if nargin==1; clear obj;  end ; %% STUPID MATLAB - WANT EMPTY STRUCT
+   for i=1:length(atts);
+if DEBUG
+      fprintf('%s="%s" ',atts(i).Name, atts(i).Value);
+end
+      name = atts(i).Name;
+      name(name == ':') = '_'; % Can't use in struct
+      obj.(name) = atts(i).Value;
+   end
 
 function [name, atts,  kids, text] = non_text_nodes( node)
 
