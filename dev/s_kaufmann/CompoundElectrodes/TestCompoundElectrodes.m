@@ -31,7 +31,7 @@ Display.RAWData = 1;
 
 DoReconstruction = 1;           % Do reconstruction or just show RAW Data
 ChooseNF = 0;                   % Choose HP via NF 
-RemoveMean = 0;                 % Remove mean from the measurement data
+RemoveMean = 1;                 % Remove mean from the measurement data
 FitBackGroundConductivity = 1;  % Solves the Forward-Problem one time to find the optimal back ground conductivity which fits the homogenious measurement
 
 bkgnd_conductivity =  1;        % Tank bkgnd_conductivity set in order to align hom simulation to hom measurements ==> if FitBackGroundConductivity this should be 1
@@ -40,13 +40,16 @@ prior = 'tikhonov';             % Used Prior
 %prior = 'noser';
 
 % Measurement Files
-InhomogeneousMeasFile = 'SingleObject_E1E2';
+%InhomogeneousMeasFile = 'SingleObject_E1E2';
 %InhomogeneousMeasFile = 'SingleObject_E6E5_direct';
-HomogeneousMeasFile = 'SingleObject_Reference';
+%HomogeneousMeasFile = 'SingleObject_Reference';
+InhomogeneousMeasFile = 'Single_S1';
+HomogeneousMeasFile = 'Reference';
 
 % Exports
 ExportDir = 'C:\Temp\';
-MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
+MeasurementFolder = 'C:\Temp\';
+%MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
 
 ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_CompoundElectrodes'];
 HomogeneousMeasFile = [MeasurementFolder HomogeneousMeasFile '.mat'];
@@ -190,7 +193,7 @@ if DoReconstruction
             if ChooseNF
                 inv3d = select_imdl(inv3d, {'Choose NF=1'});
             else
-                inv3d.hyperparameter.value = 3.87e0;
+                inv3d.hyperparameter.value = 5.868304;
             end;
         case 'noser'
             % Noser prior
@@ -261,6 +264,11 @@ if (Display.SaveFigures)
     end;
     fprintf('done.\n');
 end;
+
+%% Save Workspace
+fprintf('Saving Workspace....');
+save([ExportFile 'Workspace.mat']);
+fprintf('done.\n');
 
 %% Goodbye Message
 Script.tElapsed=toc(Script.tStart);
