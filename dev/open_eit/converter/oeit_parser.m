@@ -53,8 +53,20 @@ function obj = parse_frames( tree );
        atts = parse_atts( parseAttributes(node) );
        id = atts.id;
 %      disp([char(node.getNodeName),':id =', id]);
+       obj.( id ).acquisition = parse_acquisitions( node );
    end
-   obj = [];
+
+function obj = parse_acquisitions( tree );
+   import javax.xml.xpath.* ;
+   xpath = XPathFactory.newInstance.newXPath;
+
+   expression = xpath.compile('//acquisition'); 
+   nodeList = expression.evaluate(tree, XPathConstants.NODESET);
+   for i = 1:nodeList.getLength
+       node = nodeList.item(i-1);
+       atts = parse_atts( parseAttributes(node) );
+       disp([char(node.getNodeName),':start =', atts.start]);
+   end
 
 function obj = xpath_try(tree)
 % From:
