@@ -60,12 +60,26 @@ function obj = parse_acquisitions( tree );
    import javax.xml.xpath.* ;
    xpath = XPathFactory.newInstance.newXPath;
 
-   expression = xpath.compile('//acquisition'); 
-   nodeList = expression.evaluate(tree, XPathConstants.NODESET);
+   obj = {};
+
+   xp_acquisision = xpath.compile('acquisition'); 
+   nodeList = xp_acquisision.evaluate(tree, XPathConstants.NODESET);
+   xp_stim       = xpath.compile('stim_list/stim'); 
+
    for i = 1:nodeList.getLength
        node = nodeList.item(i-1);
-       atts = parse_atts( parseAttributes(node) );
-       disp([char(node.getNodeName),':start =', atts.start]);
+       obj{i} = parse_atts( parseAttributes(node) );
+       stimnodes = xp_stim.evaluate(node, XPathConstants.NODESET);
+       for j = 1:stimnodes.getLength
+           stimnode = stimnodes.item(j-1);
+           atts = parse_atts( parseAttributes(stimnode) );
+           type = atts.type;
+%          if isfield( obj{i}, type ); l = length(obj{i}. (type));
+%          else                      ; l = 0; end
+
+           obj{i}.( type ).elecs = 1;
+       end
+       disp([char(node.getNodeName),':start =', obj{i}.start]);
    end
 
 function obj = xpath_try(tree)
