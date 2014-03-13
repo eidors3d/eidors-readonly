@@ -47,8 +47,8 @@ HomogeneousMeasFile = '13_03_2014_Reference';
 %HomogeneousMeasFile = 'SingleObject_Reference';
 
 % Exports
-%ExportDir = 'C:\Temp\';
-ExportDir = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Rekonstruktionen\';
+ExportDir = 'C:\Temp\';
+%ExportDir = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Rekonstruktionen\';
 %MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
 MeasurementFolder = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Messungen\';
 
@@ -64,7 +64,7 @@ diary([ExportFile '.txt']);
 % Tank settings
 Tank.Height = 255;
 Tank.Radius = (242)/2;
-Tank.maxMesh = 10;
+Tank.maxMesh = 0;
 
 % Electrode settings
 Electrodes.NumberOf = 16;
@@ -73,7 +73,7 @@ Electrodes.InnerRadius1 = 0;
 Electrodes.InnerRadius2 = 5;
 Electrodes.OuterRadius1 = 10;
 Electrodes.OuterRadius2 = 20;
-Electrodes.maxh = 5;
+Electrodes.maxh = 0;
 Electrodes.Z_Contact = 10;
 
 % The electrodes are numbered counter-clock wise
@@ -275,3 +275,63 @@ fprintf('done.\n');
 Script.tElapsed=toc(Script.tStart);
 fprintf('\nProcessed in %2.2f Seconds\n', Script.tElapsed);
 diary off;  % Write Command Windows content to diary file
+
+%% mdl_slice_mesher test
+figure(); set(gcf, 'Name', 'mdl_slice_mesher Test');
+hold on
+slc = mdl_slice_mesher(IMG, [0 inf inf]);
+slc.calc_colours.transparency_thresh = -1;
+slc.fwd_model.boundary = slc.fwd_model.elems;
+show_fem(slc);
+    
+slc = mdl_slice_mesher(IMG, [inf inf Electrodes.ZPositions+2]);
+slc.calc_colours.transparency_thresh = -1;
+slc.fwd_model.boundary = slc.fwd_model.elems;
+show_fem(slc,[0 1 0]);
+
+slc = mdl_slice_mesher(IMG, [inf inf Electrodes.ZPositions+5]);
+slc.calc_colours.transparency_thresh = -1;
+slc.fwd_model.boundary = slc.fwd_model.elems;
+show_fem(slc);
+
+slc = mdl_slice_mesher(IMG, [inf inf Electrodes.ZPositions-5]);
+slc.calc_colours.transparency_thresh = -1;
+slc.fwd_model.boundary = slc.fwd_model.elems;
+show_fem(slc);
+
+view(3)
+hold off;
+
+%% show_3d_slices test
+figure(); set(gcf, 'Name', 'Show_3d_slices - 1');
+hold on;
+show_fem(IMG_Solutions(1).fwd_model, [0, 1, 0]);
+IMG_Solutions(1).calc_colours.npoints = 64;
+IMG_Solutions(1).calc_colours.transparency_thresh = -1;
+calc_colours('transparency_thresh', 0.25);
+IMG_Solutions(1).calc_colours.cmap_type = 'draeger';
+show_3d_slices(IMG_Solutions(1),[Electrodes.ZPositions], [0], [0]);
+hold off;
+view(3);
+
+%%
+figure(); set(gcf, 'Name', 'Show_3d_slices - 2');
+show_fem(IMG.fwd_model, [0, 1, 0]);
+hold on
+%show_3d_slices(IMG, Electrodes.ZPositions);
+show_3d_slices(IMG);
+axis off
+
+view(10,18);
+
+%% Display Sensitifity
+figure(); set(gcf, 'Name', 'Sensi - 2');
+img = mk_image(fmdl,1);
+img.fwd_solve.get_all_meas = 1;
+vh=fwd_solve(img);
+imgv = rmfield(img, 'elem_data');
+imgv.node_data = vh.volt(:,2);
+colours = calc_colours(imgv,[]);
+show_fem(fmdl);
+patch('Faces',fmdl.boundary,'Vertices',fmdl.nodes, 'facecolor','interp', ...
+      'facevertexcdata',colours,'CDataMapping','direct'); 
