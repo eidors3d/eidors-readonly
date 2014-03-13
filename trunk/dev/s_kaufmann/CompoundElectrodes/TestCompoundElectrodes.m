@@ -62,9 +62,9 @@ diary([ExportFile '.txt']);
 %% Forward Model - values in mm
 
 % Tank settings
-Tank.Height = 235;
+Tank.Height = 255;
 Tank.Radius = (242)/2;
-Tank.maxMesh = 0;
+Tank.maxMesh = 10;
 
 % Electrode settings
 Electrodes.NumberOf = 16;
@@ -260,8 +260,8 @@ if (Display.SaveFigures)
     fprintf('Saving Figures....');
     h = get(0,'children');
     for i=1:length(h)
-      saveas(h(i), [ExportFile 'Figure_' num2str(i)], 'fig');
-%      saveas(h(i), [ExportFile 'Figure_' num2str(i)], 'pdf');
+      saveas(h(i), [ExportFile 'Figure_' num2str(i) '-' get(h(i), 'name')], 'fig');
+%      saveas(h(i), [ExportFile 'Figure_' num2str(i) '-' get(h(i), 'name')], 'pdf');
     end;
     fprintf('done.\n');
 end;
