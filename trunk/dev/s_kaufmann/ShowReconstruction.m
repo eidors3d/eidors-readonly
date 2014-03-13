@@ -1,10 +1,10 @@
 function ShowReconstruction(IMG, ZPosition, ElectrodeOffset)
-%    IMG.calc_colours.npoints = 256;
+    IMG.calc_colours.npoints = 320;
     IMG.calc_colours.cb_shrink_move = [1, 1, -0.1500]; % Leitfähigkeitsscala Balken (Width, Height, Position)
 
     Title = regexprep(IMG.name, '_', '\\_');
 
-    figure();
+    figure(); set(gcf, 'Name', 'Reconstruction Results');
 
     posn= [ inf,inf,ZPosition-3*ElectrodeOffset,1; ...
             inf,inf,ZPosition-ElectrodeOffset,1; ...
@@ -59,4 +59,9 @@ function ShowReconstruction(IMG, ZPosition, ElectrodeOffset)
         'FontSize',10,...
         'FitBoxToText','off',...
         'LineStyle','none');
+    
+    figure(); set(gcf, 'Name', 'Reconstruction on the electrode level');
+    posn= [ inf, inf, ZPosition, 1 ];
+    show_slices(IMG, posn); title('Cut planes');    
+    
 end
