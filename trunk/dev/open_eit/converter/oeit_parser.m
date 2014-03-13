@@ -64,22 +64,35 @@ function obj = parse_acquisitions( tree );
 
    xp_acquisision = xpath.compile('acquisition'); 
    nodeList = xp_acquisision.evaluate(tree, XPathConstants.NODESET);
-   xp_stim       = xpath.compile('stim_list/stim'); 
+   xp_stim       = xpath.compile('stim_list/stim/elec'); 
+   xp_meas       = xpath.compile('meas_list/meas/elec'); 
 
    for i = 1:nodeList.getLength
        node = nodeList.item(i-1);
        obj{i} = parse_atts( parseAttributes(node) );
-       stimnodes = xp_stim.evaluate(node, XPathConstants.NODESET);
-       for j = 1:stimnodes.getLength
-           stimnode = stimnodes.item(j-1);
-           atts = parse_atts( parseAttributes(stimnode) );
-           type = atts.type;
-%          if isfield( obj{i}, type ); l = length(obj{i}. (type));
-%          else                      ; l = 0; end
-
-           obj{i}.( type ).elecs = 1;
+       elecnodes = xp_stim.evaluate(node, XPathConstants.NODESET);
+       for j = 1:elecnodes.getLength
+           elecnode = elecnodes.item(j-1);
+           elec_atts = parse_atts( parseAttributes(elecnode) );
+           stim_atts = parse_atts( parseAttributes(elecnode.getParentNode) );
+           type = stim_atts.type;
+           eref = elec_atts.ref;
+           if isfield(elec_atts,'multiplier'); mult= elec_atts.multiplier;
+           else                              ; mult = 0; end
+           obj{i}.stim.( type ).elecs.( eref ) = mult;
        end
-       disp([char(node.getNodeName),':start =', obj{i}.start]);
+       elecnodes = xp_meas.evaluate(node, XPathConstants.NODESET);
+       for j = 1:elecnodes.getLength
+           elecnode = elecnodes.item(j-1);
+           elec_atts = parse_atts( parseAttributes(elecnode) );
+           meas_atts = parse_atts( parseAttributes(elecnode.getParentNode) );
+           type = meas_atts.type;
+           eref = elec_atts.ref;
+           if isfield(elec_atts,'multiplier'); mult= elec_atts.multiplier;
+           else                              ; mult = 0; end
+           obj{i}.meas.( type ).elecs.( eref ) = mult;
+       end
+%      disp([char(node.getNodeName),':start =', obj{i}.start]);
    end
 
 function obj = xpath_try(tree)
