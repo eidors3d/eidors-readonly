@@ -1,67 +1,229 @@
 function img= inv_solve_abs_core( inv_model, data0);
 %INV_SOLVE_ABS_CORE Absolute solver using a generic iterative algorithm
+% img        => output image (or vector of images)
+% inv_model  => inverse model struct
+% data0      => EIT data
 %
-% NOTE that, in general, this function should not be called directly.
+% This function is parameterized and uses function pointers where possible to
+% allow its use as a general iterative solver framework. There are a large
+% number of parameters and functions contained here. Sensible defaults are
+% used throughout. You do not need to set every parameter.
+%
+% The solver operates as an absolute Gauss-Newton iterative solver by default.
+% Wrapper functions are available to call this function in its various forms.
+% Look forward to the "See also" section at the end of this help.
+%
+% Argument matrices to the internal functions (measurement inverse covariance,
+% for example) are only calculated if required. Functions that are supplied to
+% this INV_SOLVE_ABS_CORE must be able to survive being probed: they will have
+% each parameter set to either 0 or 1 to determine if the function is sensitive
+% to that argument. This works cleanly for most matrix multiplication based
+% functions but for more abstract code, some handling of this behaviour may
+% need to be implemented.
+%
+% In the following parameters, r_k is the current residual, r_{k-1} is the
+% previous iteration's residual. k is the iteration count.
+%
+% Parameters (inv_model.parameters.*):
+%   verbose (show progress)                (default 4)
+%      0: quiet
+%    >=1: print iteration count
+%    >=2: print details as the algorithm progresses
+%    >=3: plot residuals versus iteration count
+%    >=4: plot line search per iteration
+%   plot_residuals                         (default 0)
+%    plot residuals without verbose output
+%   fwd_solutions                          (default 0)
+%    0: ignore
+%    1: count fwd_solve(), generally the most
+%       computationally expensive component of
+%       the iterations
+%   residual_func =             (default @GN_residual)
+%    NOTE: @meas_residual exists to maintain
+%    compatibility with some older code
+%   max_iterations                        (default 10)
+%   ntol (estimate of machine precision) (default eps)
+%   tol (stop iter if r_k < tol)           (default 0)
+%   dtol                              (default -0.01%)
+%    stop iter if (r_k - r_{k-1}) < dtol AND
+%                 k >= dtol_iter
+%   dtol_iter                              (default 0)
+%    apply dtol stopping criteria if k >= dtol_iter
+%   min_value                           (default -inf)
+%   max_value                           (default +inf)
+%   line_search_func       (default @line_search_onm2)
+%   line_search_dv_func      (default @update_dv_core)
+%   line_search_de_func      (default @update_de_core)
+%   line_search_args.perturb
+%                     (default [0 1/16 1/8 1/4 1/2 1])
+%    line search for alpha by these steps along sx
+%   line_search_args.plot                  (default 0)
+%   c2f_background                         (default 0)
+%    if > 0, this is additional elem_data
+%    if a c2f map exists, the default is to decide
+%    based on an estimate of c2f overlap whether a
+%    background value is required
+%   c2f_background_fixed                   (default 1)
+%    hold the background estimate fixed or allow it
+%    to vary as any other elem_data
+%   elem_fixed                            (default [])
+%    meas_select already handles selecting from the
+%    valid measurements. we want the same for the
+%    elem_data, so we only work on modifying the
+%    legal values.
+%    Note that c2f_background's elements are added to
+%    this list if c2f_background_fixed == 1.
+%   elem_working              (default 'conductivity')
+%   elem_output               (default 'conductivity')
+%    The working and output units for 'elem_data'.
+%    Valid types are 'conductivity' and 'resistivity'
+%    as plain units or with the prefix 'log_' or
+%    'log10_'. Conversions are handled internally.
+%    Scaling factors are applied to the Jacobian
+%    (calculated in units of 'conductivity') as
+%    appropriate, see calc_jacobian_scaling_func.
+%    If elem_working == elem_output, then no
+%    conversions take place.
+%   meas_input                     (default 'voltage')
+%   meas_working                   (default 'voltage')
+%    Similarly to elem_working/output, conversion
+%    between 'voltage' and 'apparent_resistivity' and
+%    their log/log10 varients are handled internally.
+%    If meas_input == meas_working no conversions take
+%    place. The normalization factor 'N' is calculated
+%    if 'apparent_resistivity' is used.
+%   calc_jacobian_scaling_func           (default ...)
+%    See elem_working for defaults. This is used to
+%    apply the chain rule to a Jacobian calculated for
+%    conductivity. If the Jacobian in use is not the
+%    default, a scaling function is required.
+%   normalize_data_func
+%    (default  @calc_normalization_apparent_resistivity)
+%    dv = N*(data-data0) where N is provided by this
+%    function
+%
+%   Signature for residual_func
+%    r = f(dv, de, W, hp2, RtR)
+%   where
+%    r   - the residual
+%    dv  - change in voltage
+%    de  - change in image elements
+%    W   - measurement inverse covarience matrix
+%    hp2 - hyperparameter squared, see CALC_HYPERPARAMETER
+%    RtR - regularization matrix squared
+%
+%   Signature for line_optimize_func
+%    [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2, RtR, dv, opt)
+%   where:
+%    alpha - line search result
+%    img   - the current image
+%            (optional, recalculated if not available)
+%    sx    - the search direction to which alpha should be applied
+%    data0 - the true measurements     (dv = N*data - N*data0)
+%    img0  - the image background (de = img - img0)
+%    N     - a measurement normalization factor, N*dv
+%    W     - measurement inverse covarience matrix
+%    hp2   - hyperparameter squared, see CALC_HYPERPARAMETER
+%    RtR   - regularization matrix squared
+%    dv    - change in voltage
+%            (optional, recalculated if not available)
+%    opt   - additional arguments, updated at each call
+%
+%   Signature for line_search_dv_func
+%    [dv, opt] = update_dv_core(img, data0, N, opt)
+%   where:
+%    dv    - change in voltage
+%    opt   - additional arguments, updated at each call
+%    data  - the estimated measurements
+%    img   - the current image
+%    data0 - the true measurements
+%    N     - a measurement normalization factor, N*dv
+%
+%   Signature for line_search_de_func
+%    de = f(img, img0, opt)
+%   where:
+%    de    - change in image elements
+%    img   - the current image
+%    img0  - the image background (de = img - img0)
+%    opt   - additional arguments
+%
+%   Signature for calc_jacobian_scaling_func
+%    S = f(x)
+%   where:
+%    S - to be used to scale the Jacobian
+%    x - current img.elem_data in units of 'conductivity'
+%
+%   Signature for  normalize_data_func
+%    N = f(fmdl)
+%   where
+%    N    - the normalization factor
+%    fmdl - the forward model, used to estimate the N
+%    when voltage to apparent_resistivity is required
+%    This function can be repurposed for scalingi
+%    measurement data in other ways.
+%
+% NOTE that the default line search is very crude. For
+% my test problems it seems to amount to an expensive grid
+% search. Much more efficient line search algorithms exist
+% and some fragments already are coded elsewhere in the
+% EIDORS code-base.
 %
 % See also: INV_SOLVE_ABS_GN, INV_SOLVE_ABS_GN_LOGC,
 %           INV_SOLVE_ABS_CG, INV_SOLVE_ABS_CG_LOGC,
 %           LINE_SEARCH_O2, LINE_SEARCH_ONM2
 %
-% (C) 2010-2013 Andy Adler & Bartłomiej Grychtol, Nolwenn Lespare, Alistair Boyle.
+% (C) 2010-2014 Andy Adler & Bartłomiej Grychtol, Nolwenn Lespare, Alistair Boyle.
 % License: GPL version 2 or version 3
+
 % $Id$
 
-% TODO this documentation is way, way out of date... it needs a serious rewrite!
-%
-% img= inv_solve_abs_GN( inv_model, data0)
-% img        => output image (or vector of images)
-% inv_model  => inverse model struct
-% data0      => EIT data
-%
-% Parameters:
-%   inv_model.parameters.max_iterations = N_max iter            (default 1)
-%   inv_model.parameters.show_iterations  (print status lines)  (default 0)
-%   Line Search function (more details below):
-%    inv_model.parameters.line_search_func        (default @line_search_o2)
-%   Line Search parameters:
-%    inv_model.parameters.line_search_perturb                    (optional)
-%   Limits on solution:
-%    inv_model.parameters.min_value                          (default -Inf)
-%    inv_model.parameters.max_value                          (default +Inf)
-%
-%   Signature for line_optimize_func
-%    [next fmin res] = my_line_optimize(org, dx, data0, opt)
-%   where:
-%    next - the image to use in the next iteration
-%    fmin - step size along dx that minimizes the objective function
-%    res  - the value of the objective function for the next image
-%    org  - the current estimate
-%    dx   - the current derivative (step direction)
-%    opt  - the options structure specified in
-%           inv_model.inv_solve_abs_GN.line_optimize (can be used to pass
-%           additonal arguments, stores the GN objective function in
-%           opt.objective_func)
-%   Note that changing the line optimize function can substantially alter
-%   the behavior of the solver, especially if a different objective
-%   function is used.
-%
-%   Signature for update_func:
-%    [img opt] = my_update_func(org, next, dx, fmin,res, opt)
-%   where:
-%    org  - the current estimate
-%    next - the proposed next estimate as returned by line_optimize
-%    dx   - the current derivative (step direction)
-%    fmin - the step size chosen by line_optimize
-%    res  - the residual on "next" estimate
-%    opt  - the option structure as described above
-%    img  - the estimate to be used at next iteration
-%
-% By default, the starting estimate will be based on
-% inv_model.jacobian_bkgnd, but scaled such as to best fit data0.
-% Set opt.do_initial_estimate to 0 to use inv_model.jacobian_bkgnd without
-% modification.
-% The initial estimate serves as a prior for the reconstruction, deviation
-% from which is penalized.
+%AB->BG: The key item to discuss is my attempt to attack the
+% parameterization issue. This is by no means a generic
+% solution but it does present a very clean interface to the
+% user. I recognize this implementation does not quite fit
+% with your view of how parameterization should exist in the
+% rest of EIDORS. What are your thougths? I am open to any
+% solution/refactoring that would maintain the same
+% functionality/interface here or provide a clean
+% equivalent.
+
+%AB->BG: It is my intent to not expose this function
+% directly but to have a inv_solve_abs_GN() wrapper.
+% I have constructed this with the intent that it is trivial
+% to implement a CG solver using this framework. Hopefully,
+% I'll get to that shortly. This would result in a pair of
+% inv_solve_abs_CG and inv_solve_abs_CG_log wrapper function.
+% This file is a bit of a monster but it is removing a bit
+% of cut and paste that was expanding rapidly.
+% Do you have thoughts about this approach?
+
+%AB->BG: The UNIT_TEST is working. It does not seem to be
+% nearly challenging enough to show much of the odd behaviour
+% I spent two months debugging in the fall. I am not sure
+% what to do about this. It seems that building a truely
+% robust framework here requires some tough UNIT_TESTs so
+% that the infrastructure will not be broken as it gets
+% tweaked. Do you have thoughts or ideas about how to go
+% about this or how far you think UNIT_TESTs should go?
+% As an example, I believe they need to be self-checking to
+% be truly useful in the long run but that is pretty tough
+% to construct in a bullet proof manner.
+
+%AB->BG: There are still TODO comments in the code and
+% further clean up that could/should be done. I am holding
+% off on this until we can discuss and/or resolve some of the
+% outstanding external issues, as above and also some of the
+% TODO comments bring issues to mind that we have discussed
+% before such as the mk_image()'s handling of c2f.
+
+%AB->BG: elem_movement_init (not documented above) was my
+% only concession to electrode movement: we need an electrode
+% movement 'background' constructor. For the rest of the
+% code, the movement is handled as 'just another odd
+% parameter that doesn't map to conductivity'. A clean way
+% to handle this as part of the 'parameterization' concept
+% is important.
+
 
 %--------------------------
 % UNIT_TEST?
@@ -703,6 +865,7 @@ function opt = parse_options(imdl)
       % de = f(img, img0, opt)
    end
    % an initial guess for the line search step sizes, may be modified by line search
+   % TODO this 'sensible default' should be moved to the line_search code since it is not generic to any other line searches
    if ~isfield(opt,'line_search_args') || ...
       ~isfield(opt.line_search_args, 'perturb')
       fmin = 1/4; % arbitrary starting guess
@@ -838,7 +1001,7 @@ function dx = update_dx(J, W, hp2, RtR, dv, de, opt)
 
    % don't penalize for fixed elements
    de(opt.elem_fixed) = 0;
-   
+
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
    check_matrix_sizes(J, W, hp2, RtR, dv, de, opt)
 
