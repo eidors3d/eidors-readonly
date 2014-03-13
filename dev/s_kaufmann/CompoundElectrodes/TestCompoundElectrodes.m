@@ -42,14 +42,15 @@ prior = 'tikhonov';             % Used Prior
 % Measurement Files
 %InhomogeneousMeasFile = 'SingleObject_E1E2';
 %InhomogeneousMeasFile = 'SingleObject_E6E5_direct';
+InhomogeneousMeasFile = '13_03_2014_Single_Circle150x50_E1_210mm';
+HomogeneousMeasFile = '13_03_2014_Reference';
 %HomogeneousMeasFile = 'SingleObject_Reference';
-InhomogeneousMeasFile = 'Single_S1';
-HomogeneousMeasFile = 'Reference';
 
 % Exports
-ExportDir = 'C:\Temp\';
-MeasurementFolder = 'C:\Temp\';
+%ExportDir = 'C:\Temp\';
+ExportDir = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Rekonstruktionen\';
 %MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
+MeasurementFolder = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Messungen\';
 
 ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_CompoundElectrodes'];
 HomogeneousMeasFile = [MeasurementFolder HomogeneousMeasFile '.mat'];
@@ -193,7 +194,7 @@ if DoReconstruction
             if ChooseNF
                 inv3d = select_imdl(inv3d, {'Choose NF=1'});
             else
-                inv3d.hyperparameter.value = 5.868304;
+                inv3d.hyperparameter.value = 1.694943;
             end;
         case 'noser'
             % Noser prior
