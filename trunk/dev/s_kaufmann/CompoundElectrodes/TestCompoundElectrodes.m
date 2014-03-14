@@ -30,7 +30,7 @@ Display.SaveFigures = 1;
 Display.RAWData = 1;
 
 DoReconstruction = 1;           % Do reconstruction or just show RAW Data
-ChooseNF = 0;                   % Choose HP via NF 
+ChooseNF = 1;                   % Choose HP via NF 
 RemoveMean = 1;                 % Remove mean from the measurement data
 FitBackGroundConductivity = 1;  % Solves the Forward-Problem one time to find the optimal back ground conductivity which fits the homogenious measurement
 
@@ -40,18 +40,20 @@ prior = 'tikhonov';             % Used Prior
 %prior = 'noser';
 
 % Measurement Files
-InhomogeneousMeasFile = 'Test';
-HomogeneousMeasFile = 'Reference';
+InhomogeneousMeasFile = '13_03_2014_Single_Circle20x50_E1_30mm';
+HomogeneousMeasFile = '13_03_2014_Reference';
 
 % Exports
 ExportDir = 'C:\Temp\';
-MeasurementFolder = 'C:\Temp\';
+MeasurementFolder = 'C:\Repos\measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Messungen\';
 
 ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_CompoundElectrodes'];
 HomogeneousMeasFile = [MeasurementFolder HomogeneousMeasFile '.mat'];
 InhomogeneousMeasFile = [MeasurementFolder InhomogeneousMeasFile '.mat'];
 
-% Start Diary
+% Start Diary but clean up first
+diary off;
+system(['del ' ExportFile '*.*']);
 diary([ExportFile '.txt']);
 
 %% Forward Model - values in mm
@@ -59,7 +61,7 @@ diary([ExportFile '.txt']);
 % Tank settings
 Tank.Height = 255;
 Tank.Radius = (242)/2;
-Tank.maxMesh = 0;
+Tank.maxMesh = 20;
 
 % Electrode settings
 Electrodes.NumberOf = 16;
@@ -68,7 +70,7 @@ Electrodes.InnerRadius1 = 0;
 Electrodes.InnerRadius2 = 5;
 Electrodes.OuterRadius1 = 10;
 Electrodes.OuterRadius2 = 20;
-Electrodes.maxh = 5;
+Electrodes.maxh = 4;
 Electrodes.Z_Contact = 10;
 
 % The electrodes are numbered counter-clock wise
