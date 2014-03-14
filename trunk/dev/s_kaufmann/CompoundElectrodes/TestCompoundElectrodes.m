@@ -40,17 +40,12 @@ prior = 'tikhonov';             % Used Prior
 %prior = 'noser';
 
 % Measurement Files
-%InhomogeneousMeasFile = 'SingleObject_E1E2';
-%InhomogeneousMeasFile = 'SingleObject_E6E5_direct';
-InhomogeneousMeasFile = '13_03_2014_Single_Circle150x50_E1_210mm';
-HomogeneousMeasFile = '13_03_2014_Reference';
-%HomogeneousMeasFile = 'SingleObject_Reference';
+InhomogeneousMeasFile = 'Test';
+HomogeneousMeasFile = 'Reference';
 
 % Exports
 ExportDir = 'C:\Temp\';
-%ExportDir = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Rekonstruktionen\';
-%MeasurementFolder = 'C:\Repos\eidors\dev\s_kaufmann\CompoundElectrodes\Measurements\';
-MeasurementFolder = 'C:\Repos\Measurements\13_03_2014_Messungen_32_Elektroden_Compound_Tank\Messungen\';
+MeasurementFolder = 'C:\Temp\';
 
 ExportFile = [ExportDir HomogeneousMeasFile '_' InhomogeneousMeasFile '_' prior '_CompoundElectrodes'];
 HomogeneousMeasFile = [MeasurementFolder HomogeneousMeasFile '.mat'];
@@ -73,7 +68,7 @@ Electrodes.InnerRadius1 = 0;
 Electrodes.InnerRadius2 = 5;
 Electrodes.OuterRadius1 = 10;
 Electrodes.OuterRadius2 = 20;
-Electrodes.maxh = 0;
+Electrodes.maxh = 5;
 Electrodes.Z_Contact = 10;
 
 % The electrodes are numbered counter-clock wise
@@ -324,8 +319,8 @@ axis off
 
 view(10,18);
 
-%% Display Sensitifity
-figure(); set(gcf, 'Name', 'Sensi - 2');
+%% Display Voltages
+figure(); set(gcf, 'Name', 'Voltages');
 img = mk_image(fmdl,1);
 img.fwd_solve.get_all_meas = 1;
 vh=fwd_solve(img);
@@ -335,3 +330,14 @@ colours = calc_colours(imgv,[]);
 show_fem(fmdl);
 patch('Faces',fmdl.boundary,'Vertices',fmdl.nodes, 'facecolor','interp', ...
       'facevertexcdata',colours,'CDataMapping','direct'); 
+  
+%% Display Sensitivity
+figure(); set(gcf, 'Name', 'Display Sensitivity');
+J= calc_jacobian( mk_image(fmdl, 1) );
+Sens = J(31,:)'./get_elem_volume(fmdl);
+img = mk_image(fmdl, Sens');
+img.calc_colours.clim= 1e-11;
+img.calc_colours.npoints= 320;
+%img.calc_slices.filter = conv2(ones(3),ones(3));
+img.calc_colours.transparency_thresh = -1;
+show_3d_slices(img,[130], [0],[0]);
