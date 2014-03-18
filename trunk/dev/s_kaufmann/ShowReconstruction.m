@@ -60,18 +60,22 @@ function ShowReconstruction(IMG, ZPosition, ElectrodeOffset)
         'FitBoxToText','off',...
         'LineStyle','none');
     
+    %%
     figure(); set(gcf, 'Name', 'Reconstruction on the electrode level');
     transparency_thresh = 0;
     calc_colours('transparency_thresh', transparency_thresh);
     show_3d_slices(IMG, ZPosition, [], []);
     title(sprintf('Threshold: %4.2f %%', transparency_thresh*100));
-    view(2);
+%    view(2);
+    view(0.1,90.1); axis tight;
 
+    %%
     figure(); set(gcf, 'Name', 'Reconstruction on the electrode level');
     transparency_thresh = 0.15;
     calc_colours('transparency_thresh', transparency_thresh);
     show_3d_slices(IMG, ZPosition, [], []);
     title(sprintf('Threshold: %4.2f %%', transparency_thresh*100));
-    view(2);
+    %view(2);
+    view(0.1,90.1); axis tight;
     
 end
