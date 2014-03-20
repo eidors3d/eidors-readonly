@@ -1,6 +1,9 @@
-if 1
+switch 2;
+   case 1;
 imdl= mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
-else
+   case 2;
+imdl= mk_common_model('f2c2',8); fmdl = imdl.fwd_model;
+   case 3;
  shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
               'solid mainobj= top and orthobrick(-3,-3,-2;3,3,0) -maxh=0.1;\n'];
  [elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,5),linspace(-2,2,7));
@@ -13,4 +16,5 @@ img= mk_image(fmdl,1);
 show_fem(img);
 J0= jacobian_adjoint(img.fwd_model,img);
 J1= test_calc_jacobian(img.fwd_model,img);
-disp(norm(J0(:) - J1(:)));
+disp([size(J0) size(J1) norm(J0(:) - J1(:))]);
+
