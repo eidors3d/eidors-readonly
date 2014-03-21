@@ -120,7 +120,7 @@ function writevar(fid, vname, var);
   fprintf(fid,'int GetN_%s = %d;\n', vname, s2);
   k=0;
   for i=1:s1*s2*s3;
-     fprintf(fid, '%s[%5d] = %g;\n', vname, k, var(k+1));
+     fprintf(fid, '%s[%5d] = %12.10g;\n', vname, k, var(k+1));
      k= k+1;
   end;
 
