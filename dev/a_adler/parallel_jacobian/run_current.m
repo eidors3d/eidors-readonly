@@ -1,11 +1,18 @@
-switch 2;
+switch 3;
    case 1;
 imdl= mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
+   case 1.1;
+imdl= mk_common_model('a3cr',8); fmdl = imdl.fwd_model;
    case 2;
 imdl= mk_common_model('f2c2',8); fmdl = imdl.fwd_model;
+   case 2.1;
+imdl= mk_common_model('h2c2',8); fmdl = imdl.fwd_model;
    case 3;
+fmdl= ng_mk_cyl_models(1,[7,.3,.7],[0.1]); 
+fmdl.stimulation = mk_stim_patterns(14,1,[0,1],[0,1],{},1);
+   case 3.2;
  shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
-              'solid mainobj= top and orthobrick(-3,-3,-2;3,3,0) -maxh=0.1;\n'];
+              'solid mainobj= top and orthobrick(-3,-3,-2;3,3,0) -maxh=0.3;\n'];
  [elec_pos_x,elec_pos_y] = meshgrid(linspace( -1.5,1.5,5),linspace(-2,2,7));
  elec_pos = [  elec_pos_x(:), elec_pos_y(:), ones(size(elec_pos_x(:)))*[0,0,0,1] ];
  elec_shape=[0.2];
