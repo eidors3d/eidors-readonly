@@ -76,7 +76,7 @@ fprintf('sz1zi = %d, %d\n', size(FC_sv));
 DE_2= jacobian_loop(sz, zi2E_FCt, FC_sv);
 fprintf('sz2zi = %d, %d\n', size(FC_sv));
 
-disp(norm(DE_1(:) - DE_2(:)))
+fprintf('difference = %f\n',norm(DE_1(:) - DE_2(:)))
 DE = DE_2;
    writefiles(sz, zi2E_FCt, FC_sv, DE)
 
@@ -110,8 +110,20 @@ function writefiles(sz, zi2E_FCt, FC_sv, DE)
   writevar(fid, 'S_DE', DE);
   fprintf(fid, '#define DE_SZ %d\n', length(DE(:)));
 fprintf('sz4zi = %d, %d\n', size(FC_sv));
-  
+
 function writevar(fid, vname, var);
+  s1 = size(var,1);
+  s2 = size(var,2);
+  s3 = size(var,3);
+  fprintf(fid,'double %s[%d] = {\n', vname, s1*s2*s3);
+  for i=1:s1*s2*s3;
+     sep = ','; if i== s1*s2*s3; sep = '};'; end
+     fprintf(fid, '%15.12g%s\n', var(i), sep);
+  end;
+  fprintf(fid,'int GetM_%s = %d;\n', vname, s1);
+  fprintf(fid,'int GetN_%s = %d;\n', vname, s2);
+  
+function writevar_old1(fid, vname, var);
   s1 = size(var,1);
   s2 = size(var,2);
   s3 = size(var,3);
