@@ -309,21 +309,21 @@ for i=1:5; subplot(5,1,i);
     
 end
 
-%% plot performance map / only suitable for test 3 and 4
-% [vh,vi] = simulate_movement(img, xyzr);
-% if Test == 6 % test 4 but sorted
-%     IN5 = repmat(IN(ind),[1 1 5]);
-% else
-if SimTest==4
-    IN5 = repmat(IN,[1 1 5]);
-    % end
-    IN5 = shiftdim(IN5,2);
-    p_img = nan([5 size(IN)]);
-    p_img(IN5) = params(:,1:538);  % for N=32
-    % p_img(IN5) = params(:,1:2245);  % for N=64
-    % p_img(IN5) = params(:,1:740);
-    % p_img(IN5) = params;
-    figure
-    imagesc(squeeze(p_img(1,:,:)));
-end
+% %% plot performance map / only suitable for test 3 and 4
+% % [vh,vi] = simulate_movement(img, xyzr);
+% % if Test == 6 % test 4 but sorted
+% %     IN5 = repmat(IN(ind),[1 1 5]);
+% % else
+% if SimTest==4
+%     IN5 = repmat(IN,[1 1 5]);
+%     % end
+%     IN5 = shiftdim(IN5,2);
+%     p_img = nan([5 size(IN)]);
+%     p_img(IN5) = params(:,1:538);  % for N=32
+%     % p_img(IN5) = params(:,1:2245);  % for N=64
+%     % p_img(IN5) = params(:,1:740);
+%     % p_img(IN5) = params;
+%     figure
+%     imagesc(squeeze(p_img(1,:,:)));
+% end
 
