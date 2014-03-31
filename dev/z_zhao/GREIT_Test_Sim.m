@@ -5,39 +5,28 @@ function GREIT_Test_Sim(SimModel,LungFlag,GREIT_opt,SimTest)
 %  SimModel: a number of preset forward models. 1, Cylindrical; 2,
 %  elliptical; 3, thoracic.
 %  LungFlag: if lung areas should be simulated in the forward model
-%  GREIT_opt: the options for calculating GREIT matrix
+%  GREIT_opt: the options for calculating GREIT matrix. Added "layers" and
+%  "heavy_weight"
 %  SimTest: different simulating pattens of targets
 
 
-
-% SimModel=3;
-% LungFlag=0; % if lung areas should be simulated
 switch SimModel
     case 1
         %***(1) Cylindrical,
-        % extra={'ball','solid ball = sphere(0,0.5,1;0.2) or sphere(0,-0.5,1;0.2);'};
-%         extra={'ball','solid ball = cylinder(0.2,-0.2,0;0.2,-0.2,1;0.2) and orthobrick(-1,-1,0;1,1,1);'};
-        if LungFlag==1
-%             extra={'lung','solid lung = ellipsoid(0.4,0,1; 0.25,0,0;
-%             0,0.6,0; 0,0,0.6) or ellipsoid(-0.4,0,1; 0.25,0,0; 0,0.6,0; 0,0,0.6);'}; % x,y,z; l/2,0,0; 0,h/2,0; 0,0,w/2
-            
+        if LungFlag==1           
 % ******   thorax +0.25
             extra={'ball1','ball2',['solid ball1 = ellipsoid(0.47,0,1.5; 0.33,0,0; 0,0.6,0; 0,0,0.6);' 'solid ball2 = ellipsoid(-0.47,0,1.5; 0.4,0,0; 0,0.6,0; 0,0,0.6);']}; % x,y,z; l/2,0,0; 0,h/2,0; 0,0,w/2
             fmdl= ng_mk_cyl_models([3,1.25,.15],[16,1.5],[0.1],extra);
-            
         else
-%             fmdl= ng_mk_cyl_models([0.3,1,.05],[16,0.15],[0.1]);  % small Z value better figures of merit
                 fmdl= ng_mk_cyl_models([3,1,.15],[16,1.5],[0.1]);
         end
         show_fem(fmdl);
     case 2
         %***(2) elliptical,
-        % Put two ellipsoid into the elliptical cylinder
-        %symetric
+        % Put two ellipsoid into the elliptical cylinder symetric
         extra={'lung1','solid lung1 = ellipsoid(0.4,0,1; 0.25,0,0; 0,0.45,0; 0,0,0.6) or ellipsoid(-0.4,0,1; 0.25,0,0; 0,0.45,0; 0,0,0.6);'}; % x,y,z; l/2,0,0; 0,h/2,0; 0,0,w/2  symetric
         % asymetric
 %         extra={'ball1','ball2',['solid ob = orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;' 'solid ball1 = ellipsoid(0.4,0,1; 0.25,0,0; 0,0.45,0; 0,0,0.6) and ob;' 'solid ball2 = ellipsoid(-0.4,0,1; 0.2,0,0; 0,0.45,0; 0,0,0.65) and ob;']}; % x,y,z; l/2,0,0; 0,h/2,0; 0,0,w/2
-
         fmdl= ng_mk_ellip_models([2,1,0.7],[16,1],[0.1],extra);
         show_fem(fmdl);
     case 3
@@ -104,11 +93,12 @@ show_fem(img);
 % % opt.target_plane
 % % opt.target_offset
 % opt.noise_figure = 0.5;
+% opt.layers = 3;
+% opt.heavy_weight = 1;
 
-i_gr = mk_GREIT_model(fmdl, 0.25, [], GREIT_opt);
+i_gr = zz_mk_GREIT_model(fmdl, 0.25, [], GREIT_opt);
 
 %%
-% SimTest = 7; % different simulation patern
 if SimTest==1
     %% Test 1
     % [r, params] =  test_performance( i_gr );
@@ -161,7 +151,7 @@ elseif SimTest==3
     xyzr = [[0;0.9*X(IN)]'; [0;0.9*Y(IN)]'; [h,Zpos]; r*ones(1,n_px+1); ]; % add zero point for reference
 elseif SimTest == 4
     %% Test 4 old Test_performance from Bartek + off plane objects
-    N = 32;
+    N = 128;
     bnd_nodes = unique(i_gr.fwd_model.boundary);
     min_bb = min(i_gr.fwd_model.nodes(bnd_nodes,:));
     max_bb = max(i_gr.fwd_model.nodes(bnd_nodes,:));
@@ -196,7 +186,7 @@ elseif SimTest == 4
     Zpos=Z_all';
 
 elseif SimTest == 5
-    N = 32;
+    N = 128;
      % this bit is copied from mdl_slice_mapper to make sure
      xmin = min(i_gr.fwd_model.nodes(:,1));    xmax = max(i_gr.fwd_model.nodes(:,1));
      xmean= mean([xmin,xmax]); xrange= xmax-xmin;
@@ -227,7 +217,7 @@ elseif SimTest == 5
     
 elseif SimTest == 6
     %% Test 6 objects first from inside then outside + off plane objects
-    N = 32;
+    N = 128;
     bnd_nodes = unique(i_gr.fwd_model.boundary);
     min_bb = min(i_gr.fwd_model.nodes(bnd_nodes,:));
     max_bb = max(i_gr.fwd_model.nodes(bnd_nodes,:));
@@ -265,10 +255,37 @@ elseif SimTest == 6
 %     [xyzr]=del_out_map(img1,N,xyzr);
     Zpos=Z_all';
 elseif SimTest==7
-    param = test_performance_img(i_gr,fmdl);
-    figure
-    imagesc(squeeze(param{1}(1,:,:)));
-    return
+    N = 128;
+    % this bit is copied from mdl_slice_mapper to make sure
+    xmin = min(i_gr.fwd_model.nodes(:,1));    xmax = max(i_gr.fwd_model.nodes(:,1));
+    xmean= mean([xmin,xmax]); xrange= xmax-xmin;
+    
+    ymin = min(i_gr.fwd_model.nodes(:,2));    ymax = max(i_gr.fwd_model.nodes(:,2));
+    ymean= mean([ymin,ymax]); yrange= ymax-ymin;
+    
+    range= max([xrange, yrange]);
+    xspace = linspace( xmean - range*0.5, xmean + range*0.5, N );
+    yspace = linspace( ymean + range*0.5, ymean - range*0.5, N );
+    % end of copied block
+    bnd_nodes = unique(i_gr.fwd_model.boundary);
+    min_bb = min(i_gr.fwd_model.nodes(bnd_nodes,:));
+    max_bb = max(i_gr.fwd_model.nodes(bnd_nodes,:));
+    h = mean([min_bb(3),max_bb(3)]);
+    r = 0.025 * range;
+    [X Y] = meshgrid(xspace,yspace);
+    img = mk_image(i_gr.fwd_model,1);
+    img.calc_colours.npoints = N;
+    M = calc_slices(img,1);
+    IN = M==1;
+    n_px = nnz(IN);
+    OUT = isnan(M);
+    temp_X=X(IN);
+    temp_Y=Y(IN);
+    Zpos = h*ones(1,n_px);
+    [sort_,ind]=sort(temp_X.^2+temp_Y.^2);
+    X_all=repmat(temp_X(ind),1,1);
+    Y_all=repmat(temp_Y(ind),1,1);
+    xyzr = [[0;X_all]'; [0;Y_all]'; [h Zpos];  r*ones(1,n_px+1); ];
 end
 
 [vh_sim,vi_sim] = simulate_movement(img, xyzr);
@@ -292,19 +309,21 @@ for i=1:5; subplot(5,1,i);
     
 end
 
-% %% plot performance map / only suitable for test 3 and 4
-% % [vh,vi] = simulate_movement(img, xyzr);
-% % if Test == 6 % test 4 but sorted
-% %     IN5 = repmat(IN(ind),[1 1 5]);
-% % else
-%     IN5 = repmat(IN,[1 1 5]);
-% % end
-% IN5 = shiftdim(IN5,2);
-% p_img = nan([5 size(IN)]);
-% p_img(IN5) = params(:,1:538);  % for N=32
-% % p_img(IN5) = params(:,1:2245);  % for N=64
-% % p_img(IN5) = params(:,1:740);
-% % p_img(IN5) = params;
-% figure
-% imagesc(squeeze(p_img(1,:,:)));
-% 
+%% plot performance map / only suitable for test 3 and 4
+% [vh,vi] = simulate_movement(img, xyzr);
+% if Test == 6 % test 4 but sorted
+%     IN5 = repmat(IN(ind),[1 1 5]);
+% else
+if SimTest==4
+    IN5 = repmat(IN,[1 1 5]);
+    % end
+    IN5 = shiftdim(IN5,2);
+    p_img = nan([5 size(IN)]);
+    p_img(IN5) = params(:,1:538);  % for N=32
+    % p_img(IN5) = params(:,1:2245);  % for N=64
+    % p_img(IN5) = params(:,1:740);
+    % p_img(IN5) = params;
+    figure
+    imagesc(squeeze(p_img(1,:,:)));
+end
+
