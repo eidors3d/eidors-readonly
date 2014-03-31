@@ -299,7 +299,8 @@ show_slices(imgr, levels);
 imgr.calc_colours.npoints = 64;
 imgr.calc_slices.levels=levels;
 SimInLayer=length(xyzr);
-params = eval_GREIT_fig_merit(imgr, xyzr,SimInLayer);
+params = eval_GREIT_fig_merit(imgr, xyzr);
+% params = zz_eval_GREIT_fig_merit(imgr, xyzr,SimInLayer);
 figure
 p_names = {'AR','PE','RES','SD','RNG'};
 for i=1:5; subplot(5,1,i);
