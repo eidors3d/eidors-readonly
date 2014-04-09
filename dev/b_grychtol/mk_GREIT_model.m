@@ -489,8 +489,24 @@ function opt = parse_options(opt,fmdl,imdl);
                                  order_loop(slc.fwd_model.nodes(unique(bnd),:)) ];
     end
     
+function test_library_model
+   h= 0.5; z=0.1;
+   elx=linspace(360,0,9); elx(9)=[];
+   hnp(1:8)=h+z;hnm(1:8)=h-z;
+   el_posU = [elx',hnp']; el_posD = [elx',hnm'];
+   el_pos = [el_posU;el_posD];
+   fmdl= mk_library_model({'adult_male','boundary','left_lung','right_lung'},...
+            [el_pos],[0.05],0.08,[]);
+   stim = mk_stim_patterns(8,2,[0,1],[0,1],{'no_meas_current'},1);
+   fmdl.stimulation = stim;    
+
+   opt.target_plane = [0.2 0.4 0.5 0.6 0.8];
+
+   opt.noise_figure = 0.5;
+   imdl = mk_GREIT_model(mk_image(fmdl,1), 0.25, 0.3, opt);
 
 function do_unit_test
+   test_library_model
 
 do_performance_test; 
 % return;
