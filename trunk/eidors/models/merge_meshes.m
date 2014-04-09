@@ -35,6 +35,9 @@ for i = 1:length(shapes)
    if ~isfield(M2, 'boundary');
       M2.boundary = find_boundary(M2);
    end
+   if ~isfield(M2, 'mat_idx')
+      M2.mat_idx = {1:length(M2.elems)};
+   end
    % make sure boundaries are the same dimension
    if size(M1.boundary,2) == 2 && size(M2.boundary,2)==3
       % M1 is 2D, M2 is 3D
@@ -80,7 +83,11 @@ for i = 1:length(shapes)
       end
    end
    M1.nodes = [M1.nodes; nodes_to_add];
-   M1.mat_idx = [M1.mat_idx {length(M1.elems)+(1:length(M2.elems))}];
+   LE = length(M1.elems);
+   for j = 1:numel(M2.mat_idx)
+      M1.mat_idx{end+1} = LE+M2.mat_idx{j};
+   end
+   %M1.mat_idx = [M1.mat_idx {length(M1.elems)+(1:length(M2.elems))}];
    M1.elems = [M1.elems; match(M2.elems)];
    % this is not strictly correct, but visualizes nicely
    M1.boundary = [M1.boundary; match(M2.boundary)]; 
@@ -94,7 +101,9 @@ LN = length(M1.nodes);
 LE = length(M1.elems);
 M1.nodes = [M1.nodes; M2.nodes];
 M1.elems = [M1.elems; LN+M2.elems];
-M1.mat_idx = [M1.mat_idx {LE+(1:length(M2.elems))}];
+for i = 1:numel(M2.mat_idx)
+   M1.mat_idx{end+1} = LE+M2.mat_idx{i};
+end
 M1.boundary = [M1.boundary; LN+M2.boundary];
    
 
