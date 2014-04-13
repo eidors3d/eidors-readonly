@@ -6,6 +6,21 @@ ideas for enhancements to the
 EIDORS package.
 <ul>
 
+<p><li> <b>
+  22 April 2014
+   </b><br>
+<b>EIDORS Workshop at <a href="http://www.eit2014.org">EIT 2014</a></b>
+<p>
+For those at the EIDORS workshop, meet at 
+8:30 at the lobby of the Glenhouse hotel.
+<p>
+Bring a laptop computer with the following software installed
+<ol>
+<li> Matlab (version &ge;7.0),
+<li> <a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.0/">Netgen Mesher</a> 
+<li> <a href="http://www.tortoisesvn.org">Tortoise SVN</a>
+</ol>
+
 
 <p><li> <b>
    29 May 2013
