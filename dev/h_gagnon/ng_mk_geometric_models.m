@@ -1188,8 +1188,6 @@ function geo_code = parse_geometry_parallelepiped(parallelepiped, operator_strin
             end
              
             % Make sure all vectors are not coplanar.
-            cross(vector_b(:,i), vector_c(:,i))
-            dot(vector_a(:,i), cross(vector_b(:,i), vector_c(:,i)))
             if (abs(dot(vector_a(:,i), cross(vector_b(:,i), vector_c(:,i)))) < eps)
                 error('parallelepiped(%d) description includes coplanar vectors.', i);
             end
