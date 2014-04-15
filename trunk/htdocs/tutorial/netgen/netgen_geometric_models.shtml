@@ -1,0 +1,695 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2> 
+Using new <tt>ng_mk_geometric_models</tt> interface
+</h2>
+
+EIDORS can use
+<a href="http://sourceforge.net/projects/netgen-mesher/">
+Netgen</a> to create sophisticated 2D and 3D models
+
+<p>
+Here are some examples of the varity of models which
+can be generated using the function: <tt>ng_mk_geometric_models</tt>.
+<p>
+<h3>
+1: Simple 3D cylinder. Radius = 1 with no electrodes
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models01.png">
+</center>
+<h3>
+2: Simple 3D cylinder. Radius = 1 with 16 spherical electrodes.
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.sphere.center = [cos(theta(i)) sin(theta(i)) 0.5];
+    electrode_geometry{i}.sphere.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models02.png">
+</center>
+<h3>
+3: Simple 3D cylinder. Radius = 1 with 16 cylindrical electrodes.
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models03.png">
+</center>
+<h3>
+4: 3D Cylinder with electrodes which stick out of body
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+    electrode_geometry{i}.keep_material_flag = 1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models04.png">
+</center>
+<h3>
+5: 3D Cylinder with electrodes which stick out of body
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+    electrode_geometry{i}.enter_body_flag = 1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models05.png">
+</center>
+<h3>
+6: 3D Cylinder with electrodes which stick out of body
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+    electrode_geometry{i}.keep_material_flag = 1;
+    electrode_geometry{i}.enter_body_flag = 1;                
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models06.png">
+</center>
+<h3>
+7: 3D Cylinder and sphere with electrodes
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+body_geometry.sphere.center = [0 0 1];
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models07.png">
+</center>
+<h3>
+8: 3D Cylinder and sphere with electrodes
+</h3>
+
+<pre>
+body_geometry.cylinder  = struct;
+body_geometry.sphere(1) = struct;  
+body_geometry.sphere(2).center = [0 0 1];         
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);   
+</pre>
+
+<center>
+<img src="netgen_geometric_models08.png">
+</center>
+<h3>
+9: 3D Cylinder with inner cylinder
+</h3>
+
+<pre>
+body_geometry.intersection.cylinder(1) = struct;
+body_geometry.intersection.cylinder(2).radius     = 0.5;
+body_geometry.intersection.cylinder(2).complement_flag = 1;   
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models09.png">
+</center>
+<h3>
+10: 3D Cylinder and sphere with inner objects
+</h3>
+
+<pre>
+body_geometry.intersection(1).sphere(1).radius     = 0.5;
+body_geometry.intersection(1).sphere(1).center     = [0 0 2];
+body_geometry.intersection(1).sphere(1).complement_flag = 1;
+body_geometry.intersection(1).sphere(2).center     = [0 0 2];
+body_geometry.intersection(2).cylinder(1).top_center = [0 0 2];
+body_geometry.intersection(2).cylinder(2).radius     = 0.5;
+body_geometry.intersection(2).cylinder(2).top_center = [0 0 2];
+body_geometry.intersection(2).cylinder(2).complement_flag = 1;   
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models10.png">
+</center>
+<h3>
+11: 3D Cylinder and sphere with inner objects
+</h3>
+
+<pre>
+body_geometry.intersection.union(1).sphere.radius = 0.5;
+body_geometry.intersection.union(1).sphere.center = [0 0 2];
+body_geometry.intersection.union(1).cylinder.radius = 0.5;
+body_geometry.intersection.union(1).cylinder.top_center = [0 0 2];
+body_geometry.intersection.union(1).complement_flag = 1;
+body_geometry.intersection.union(2).sphere.center = [0 0 2];
+body_geometry.intersection.union(2).cylinder.top_center = [0 0 2]; 
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models11.png">
+</center>
+<h3>
+12: 3D Cone with electrodes
+</h3>
+
+<pre>
+body_geometry.cone = struct; 
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [0.85*cos(theta(i)) 0.85*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.65*cos(theta(i)) 0.65*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models12.png">
+</center>
+<h3>
+13: 3D Cone with electrodes
+</h3>
+
+<pre>
+body_geometry.cone = struct; 
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.sphere.center = [0.75*cos(theta(i)) 0.75*sin(theta(i)) 0.5];
+    electrode_geometry{i}.sphere.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models13.png">
+</center>
+<h3>
+14: 3D Cones and cylinders with electrodes
+</h3>
+
+<pre>
+body_geometry.cone(1).top_center = [0 0 1.5];
+body_geometry.cone(1).bottom_center = [0 0 0.5];
+body_geometry.cone(2).top_center = [0 0 -1.5];
+body_geometry.cone(2).bottom_center = [0 0 -0.5];
+body_geometry.cylinder.top_center    = [0, 0, 0.5];
+body_geometry.cylinder.bottom_center = [0, 0, -0.5];
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.sphere.center = [0.75*cos(theta(i)) 0.75*sin(theta(i)) 1.0];
+    electrode_geometry{i}.sphere.radius = 0.1;
+    electrode_geometry{i + n_elect}.sphere.center = [cos(theta(i)) sin(theta(i)) 0];
+    electrode_geometry{i + n_elect}.sphere.radius = 0.15;
+    electrode_geometry{i + 2*n_elect}.sphere.center = [0.75*cos(theta(i)) 0.75*sin(theta(i)) -1.0];
+    electrode_geometry{i + 2*n_elect}.sphere.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models14.png">
+</center>
+<h3>
+15: 3D Cube
+</h3>
+
+<pre>
+body_geometry.ortho_brick = struct;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models15.png">
+</center>
+<h3>
+16: 3D Cube with holes
+</h3>
+
+<pre>
+body_geometry.intersection.ortho_brick.opposite_corner_a = [0 0 0];
+body_geometry.intersection.ortho_brick.opposite_corner_b = [5 5 4];
+for i = 1:4; 
+    for j = 1:4; 
+        body_geometry.intersection.cylinder(i,j).radius = 0.15;
+        body_geometry.intersection.cylinder(i,j).top_center = [i, j, 4];
+        body_geometry.intersection.cylinder(i,j).bottom_center = [i, j, 2];
+        body_geometry.intersection.cylinder(i,j).complement_flag = 1;
+    end; 
+end;
+fmdl = ng_mk_geometric_models(body_geometry);    
+</pre>
+
+<center>
+<img src="netgen_geometric_models16.png">
+</center>
+<h3>
+17: 3D Cube with holes and electrodes
+</h3>
+
+<pre>
+body_geometry.intersection.ortho_brick.opposite_corner_a = [0 0 0];
+body_geometry.intersection.ortho_brick.opposite_corner_a = [0 0 0];
+body_geometry.intersection.ortho_brick.opposite_corner_b = [5 5 4];
+for i = 1:4; 
+    for j = 1:4; 
+        body_geometry.intersection.cylinder(i, j).radius = 0.15;
+        body_geometry.intersection.cylinder(i, j).top_center    = [i, j, 4];
+        body_geometry.intersection.cylinder(i, j).bottom_center = [i, j, 2];
+        body_geometry.intersection.cylinder(i, j).complement_flag = 1;
+        electrode_geometry{i, j, 1}.cylinder.radius        = 0.2;
+        electrode_geometry{i, j, 1}.cylinder.top_center    = [i, j, 3.1];
+        electrode_geometry{i, j, 1}.cylinder.bottom_center = [i, j, 2.9];
+        electrode_geometry{i, j, 2}.cylinder.radius        = 0.2;
+        electrode_geometry{i, j, 2}.cylinder.top_center    = [i, j, 2.2];
+        electrode_geometry{i, j, 2}.cylinder.bottom_center = [i, j, 2.0];
+    end; 
+end;
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models17.png">
+</center>
+<h3>
+18: 3D Cube with max_edge_length
+</h3>
+
+<pre>
+body_geometry.parallelepiped  = struct;
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models18.png">
+</center>
+<h3>
+19: 3D Parallelepiped
+</h3>
+
+<pre>
+body_geometry.parallelepiped.vertex   = [ 0;  0;  0];
+body_geometry.parallelepiped.vector_a = [ 1;  1;  0];
+body_geometry.parallelepiped.vector_b = [ 0;  1;  1];
+body_geometry.parallelepiped.vector_c = [ 1;  0;  1];
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models19.png">
+</center>
+<h3>
+20: 3D Wedge
+</h3>
+
+<pre>
+body_geometry.intersection.ortho_brick.opposite_corner_a = [-15, -15, 0];
+body_geometry.intersection.ortho_brick.opposite_corner_b = [15, 15, 5];
+body_geometry.intersection.half_space.point = [0, 0, 5];
+body_geometry.intersection.half_space.outward_normal_vector = [-1, -1, 5];
+
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models20.png">
+</center>
+<h3>
+21: ellipsoid
+</h3>
+
+<pre>
+body_geometry.ellipsoid.axis_a = [1 0 0];
+body_geometry.ellipsoid.axis_b = [0 2 0];
+body_geometry.ellipsoid.axis_c = [0 0 3];
+fmdl = ng_mk_geometric_models(body_geometry);   
+</pre>
+
+<center>
+<img src="netgen_geometric_models21.png">
+</center>
+<h3>
+22: ellipsoid
+</h3>
+
+<pre>
+body_geometry.ellipsoid.axis_a = [1 0 0];
+body_geometry.ellipsoid.axis_b = [0 1 1];
+body_geometry.ellipsoid.axis_c = [0 -2 2];
+fmdl = ng_mk_geometric_models(body_geometry);   
+</pre>
+
+<center>
+<img src="netgen_geometric_models22.png">
+</center>
+<h3>
+23: cropped cylinder
+</h3>
+
+<pre>
+body_geometry.elliptic_cylinder.top_center = [0, 0, 10];
+body_geometry.elliptic_cylinder.bottom_center = [0, 0, 0];           
+body_geometry.elliptic_cylinder.axis_a = [1 0 0];
+body_geometry.elliptic_cylinder.axis_b = [0 2 0];  
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models23.png">
+</center>
+<h3>
+24: cropped cylinder
+</h3>
+
+<pre>
+body_geometry.elliptic_cylinder.top_center = [0, 5, 5];
+body_geometry.elliptic_cylinder.bottom_center = [0, 0, 0];           
+body_geometry.elliptic_cylinder.axis_a = [1 0 0];
+body_geometry.elliptic_cylinder.axis_b = [0 -2 2];  
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models24.png">
+</center>
+<h3>
+25: cylinder with hole
+</h3>
+
+<pre>
+body_geometry.body_of_revolution = struct;
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models25.png">
+</center>
+<h3>
+26: cone with hole
+</h3>
+
+<pre>
+body_geometry.body_of_revolution.points   = [1 1; 1 2; 2 1.5; 2 1];
+body_geometry.body_of_revolution.segments = [1 2; 2 3; 3 4; 4 1];
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models26.png">
+</center>
+<h3>
+27: torus
+</h3>
+
+<pre>
+n_points = 24;
+theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
+body_geometry.body_of_revolution.points   = 2 + [sin(theta) cos(theta)];
+body_geometry.body_of_revolution.segments = [(1:n_points)' [(2:n_points) 1]'];
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models27.png">
+</center>
+<h3>
+28: torus
+</h3>
+
+<pre>
+n_points = 24;
+theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
+body_geometry.body_of_revolution.points   = 2 + [sin(theta) cos(theta)];
+body_geometry.body_of_revolution.segments = [(1:2:n_points)' (2:2:n_points)' [(3:2:n_points) 1]'];
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models28.png">
+</center>
+<h3>
+29: Cylinder with electrodes
+</h3>
+
+<pre>
+body_geometry{1}.cylinder(1).radius        = 0.5;
+body_geometry{1}.cylinder(1).top_center    = [0 0 0.75];
+body_geometry{1}.cylinder(1).bottom_center = [0 0 0.25];
+body_geometry{1}.name                      = 'Object';           
+body_geometry{2}.cylinder(2).radius        = 1;
+body_geometry{2}.name                      = 'Tank';
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.cylinder.top_center    = [1.03*cos(theta(i)) 1.03*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.bottom_center = [0.97*cos(theta(i)) 0.97*sin(theta(i)) 0.5];
+    electrode_geometry{i}.cylinder.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models29.png">
+</center>
+<h3>
+30: Cylinder with ball
+</h3>
+
+<pre>
+body_geometry{1}.sphere.radius     = 0.25;
+body_geometry{1}.sphere.center     = [0 0 0.5];
+body_geometry{1}.name              = 'Sphere';
+body_geometry{2}.cylinder.radius   = 1;
+body_geometry{2}.name              = 'Tank';           
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.sphere.center = [cos(theta(i)) sin(theta(i)) 0.5];
+    electrode_geometry{i}.sphere.radius = 0.1;
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models30.png">
+</center>
+<h3>
+31: Cylinder with many ball
+</h3>
+
+<pre>
+n_sphere = 8;
+theta = linspace(0, 2*pi, n_sphere+1); theta(end) = [];   
+for i = 1:n_sphere
+    body_geometry{i}.sphere.radius   = 0.2;
+    body_geometry{i}.sphere.center   = [0.65*cos(theta(i)) 0.65*sin(theta(i)) 0.5];  
+    body_geometry{i}.max_edge_length = 0.025*(1 + rem(i,2));
+    body_geometry{i}.name            = sprintf('Sphere%d', i);  
+end        
+body_geometry{n_sphere+1}.cylinder.radius = 1;
+body_geometry{n_sphere+1}.name            = 'Tank';  
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.sphere.center = [cos(theta(i)) sin(theta(i)) 0.5];
+    electrode_geometry{i}.sphere.radius = 0.1;
+    electrode_geometry{i}.max_edge_length = 0.025*(1 + rem(i,2));
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models31.png">
+</center>
+<h3>
+32: Cylinder with point electrodes
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    electrode_geometry{i}.point = [cos(theta(i)) sin(theta(i)) 0.5];
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models32.png">
+</center>
+<h3>
+33: Cylinder with point and round electrodes
+</h3>
+
+<pre>
+body_geometry.cylinder = struct;
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect
+    if (rem(i,2))
+        electrode_geometry{i}.point = [cos(theta(i)) sin(theta(i)) 0.5];
+        electrode_geometry{i}.name  = sprintf('Point_Electrode%d', ceil(i/2));
+    else
+        electrode_geometry{i}.sphere.center = [cos(theta(i)) sin(theta(i)) 0.5];
+        electrode_geometry{i}.sphere.radius = 0.1;
+        electrode_geometry{i}.name          = sprintf('Circular_Electrode%d', floor(i/2));
+    end
+end
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models33.png">
+</center>
+<h3>
+34: Extrusion
+</h3>
+
+<pre>
+body_geometry.body_of_extrusion = struct;
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models34.png">
+</center>
+<h3>
+35: Extrusion
+</h3>
+
+<pre>
+body_geometry.body_of_extrusion.path_points   = [0 0 0; 0.25 0 1; 0.25 0 2; 0.25 0 3; 0 0 4];
+body_geometry.body_of_extrusion.path_segments = [1 2; 2 3; 3 4; 4 5];
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models35.png">
+</center>
+<h3>
+36: Extruded torus
+</h3>
+
+<pre>
+n_points = 16;
+theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
+body_geometry.body_of_extrusion.profile_points   = 0.2*(2 + [0.75*sin(theta) cos(theta)]);
+body_geometry.body_of_extrusion.profile_segments = [(1:n_points)' [(2:n_points) 1]'];
+n_points = 32;
+theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];          
+body_geometry.body_of_extrusion.path_points   = 1*(2 + [sin(theta) 1.5*cos(theta) zeros(n_points, 1)]);
+body_geometry.body_of_extrusion.path_segments = [(1:n_points)' [(2:n_points) 1]'];
+body_geometry.body_of_extrusion.vector_d      = [0; 0; 1];
+body_geometry.max_edge_length = 0.15;
+fmdl = ng_mk_geometric_models(body_geometry); 
+</pre>
+
+<center>
+<img src="netgen_geometric_models36.png">
+</center>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>

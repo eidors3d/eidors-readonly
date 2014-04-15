@@ -20,11 +20,12 @@ while( <FIN> ) {
      $new_case = $1;
      $start_case = 0;
      if ($case_text) {
-        printf FOUT2 $LIST1, $description;
+        printf FOUT2 $LIST1, $this_case, $description;
         print  FOUT2 $case_text;
         printf FOUT2 $LIST2, $this_case;
 
         printf FOUT1 "\n\n%CASE %2d %%%%%%%%\n", $this_case;
+        printf FOUT1 "disp('#### %02d ####');clear;\n", $this_case;
         print  FOUT1 $case_text;
         printf FOUT1 $MCODE, $this_case;
         $case_text = '';
@@ -78,7 +79,7 @@ HEAD
 
 my $LIST1=<<'LIST1';
 <h3>
-%s
+%d: %s
 </h3>
 
 <pre>
