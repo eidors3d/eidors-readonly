@@ -136,9 +136,18 @@ function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc)
        dists =  (elecnodes(:,1) - centres(ielec,1)).^2 + ...
                 (elecnodes(:,2) - centres(ielec,2)).^2 + ...
                 (elecnodes(:,3) - centres(ielec,3)).^2;
-       [d,iface] = min(dists); %iface is closest face to this electrode.
+       dmin = min(dists); %iface is closest face to this electrode.
        % take the first, closest
-       iface = elecn_idx(iface(1));
+       iface = find(dmin== dists);
+       if length(iface)>1 % found electrode and background. Take smallest
+          ff = zeros(length(iface),1);
+          for i=1:length(iface)
+            ff(i) = sum( elecn_idx == elecn_idx(iface(i)));
+          end
+          [jnk, i] = min(ff);
+          iface = iface(i);
+       end
+       iface = elecn_idx(iface);
        lgelfc(iface) = logical(1);
        if sum(lgelfc) ~= ielec
           disp(ielec);
