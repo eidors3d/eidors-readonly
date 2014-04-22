@@ -1,4 +1,4 @@
-el_pos = [190,0.5;170,0.5];
+el_pos = [260,0.5;280,0.5];
 extra = {'cube',['solid cube = orthobrick(-0.08,-0.98,0.6 ;0.17,0,0.7) or ' ...
                               'orthobrick( 0.14,-0.98,0.45;0.17,0,0.7) or ' ...
                               'orthobrick(-0.08,-0.98,0.45;-0.05,0,0.7)  or ' ...
@@ -17,7 +17,7 @@ vh=fwd_solve(img);
 subplot(211)
 show_fem(img);view(0,0);
 
-return %%%%%%%%%%%%
+% return %%%%%%%%%%%%
 % print_convert may14-resistive-target.png '-density 300 -resize 33%%'
 
 imgv = rmfield(img,'elem_data');
