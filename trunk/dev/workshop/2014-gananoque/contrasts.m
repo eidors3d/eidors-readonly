@@ -1,4 +1,4 @@
-imdl = mk_common_model('b2c2',16);
+imdl = mk_common_model('f2c2',16);
 fmdl = imdl.fwd_model;
 img = mk_image(fmdl,1);
 show_fem(img,[0 1 1]);
