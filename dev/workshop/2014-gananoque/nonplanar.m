@@ -23,7 +23,7 @@ show_fem(img);view(0,0);
 imgv = rmfield(img,'elem_data');
 imgv.node_data = vh.volt(:,1);
 
-%imgv.calc_colours.clim = 0.10; % Colour limits
+imgv.calc_colours.clim = 0.10; % Colour limits
 colours = calc_colours(imgv,[]);
 subplot(212)
 show_fem(fmdl); % STUPID MATlAB
