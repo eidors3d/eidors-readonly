@@ -1,5 +1,11 @@
 ############## 3.8 ################
 
+ - mex compilation problems on windors
+
+ - netgen 5.1 doesn't appear to support batchmode
+
+ - 
+
  - check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
  - Sparse matrix efficiency. Is there a way to 
     generalize the idx operations now in fwd_model_1st_order?
