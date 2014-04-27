@@ -10,7 +10,24 @@
 
 - fix cache in windows
 
+- probably set default imdl.inv_solve.calc_solution_error = 0;
 
+- should eidors do introspection and ask solvers if they are absolute or diff?
+   - should we get rid of imdl.reconst_type (replace by introspection)?
+
+- think about function specific verbose?
+
+- Data pathway
+  - INPUT: data (unit1 (example voltage))
+  => converted to working data (unit2 (example apparent_resistivity))
+  - START: initial image (unit3 (example log_conductivity))  
+     (note, problems setting this, mk_image and c2f)
+  => NEED: translate to forward_solve units
+  => NEED: translate to calc_jacobian units
+  => NEED: elem_output (unit4 final tranlation of units)
+  - NOTE (can have multiple parameters with different units)
+
+ - Why doesn't the qr in forward_solve speed up the jacobian calc
 
 ############## 3.8 ################
 
