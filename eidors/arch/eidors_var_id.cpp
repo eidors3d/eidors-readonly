@@ -55,6 +55,7 @@
 
 #define unsigned_int32 uint32_t
 
+#if 0 /* Modern Matlab doesn't require this */
 #include <limits.h>
 #if ULONG_MAX == 0xffffffff
 /* OK 32-bit */
@@ -65,6 +66,7 @@
             (this message is always printed)
 #else
    #warning "System does not appear to be 32 or 64 bit"
+#endif
 #endif
 
 
