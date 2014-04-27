@@ -232,7 +232,10 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return
 %--------------------------
 opt = parse_options(inv_model);
 %if opt.do_starting_estimate
-%    img = initial_estimate( inv_model, data0 );
+%    img = initial_estimate( inv_model, data0 ); % TODO
+%%%    AB->NL this is Nolwenn's homogeneous estimate...
+%%%    calc_background_resistivity is my version of this code
+%%%    that is working for my data set
 %else
 [inv_model, opt] = append_c2f_background(inv_model, opt);
 img = mk_image( inv_model );
@@ -246,6 +249,7 @@ if isfield(inv_model, 'fwd_model') && ...
    isfield(inv_model.fwd_model, 'coarse2fine') && ...
    length(img.elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
 
+   % TODO replace with fix_c2f_calc_jacobian_backgnd
    c2f = inv_model.fwd_model.coarse2fine;
    %img.elem_data = c2f \ img.elem_data; % --> rank deficient???
    bg = mean(img.elem_data);
@@ -743,7 +747,32 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %   else
 %      img = next;
 %   end
-
+%
+% function bg = calc_background_resistivity(fmdl, va)
+%   % have a look at what we've created
+%   % compare data to homgeneous (how good is the model?)
+%   % NOTE background conductivity is set by matching amplitude of
+%   % homogeneous data against the measurements to get rough matching
+%   if(opt.verbose>1)
+%     fprintf('est. background resistivity\n');
+%   end
+%   cache_obj = { fmdl, va };
+%   BACKGROUND_R = eidors_obj('get-cache', cache_obj, 'calc_background_resistivity');
+%   if isempty(BACKGROUND_R);
+%     imgh = mk_image(fmdl, 1); % conductivity = 1 S/m
+%     vh = fwd_solve(imgh);
+%     % take the best fit of the data
+%     BACKGROUND_R = vh.meas \ va; % 32 Ohm.m ... agrees w/ Wilkinson's papers
+%     % update cache
+%     eidors_obj('set-cache', cache_obj, 'calc_background_resistivity', BACKGROUND_R);
+%   else
+%     if(opt.verbose > 1)
+%       fprintf('  ... cache hit\n');
+%     end
+%   end
+%   if(opt.verbose > 1)
+%     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
+%   end
 
 function opt = parse_options(imdl)
    try
@@ -1503,9 +1532,10 @@ img3= inv_solve(imdl, vi);
 %figure(hh); subplot(224); show_fem(cmdl,1); axis tight; title('#3 c2f');
 figure(hh); subplot(223); show_fem(img3,1); axis tight; title('#3 c2f');
 % check
-e1 = c2f \ img1.elem_data;
+e1 = c2f \ img1.elem_data; % noisy and unstable... but its a crude check
 e3 = img3.elem_data;
 err = abs((e1 - e3) ./ e1);
+err(abs(e1) < 20) = 0;
 err_thres = 0.40;
 if any(err > err_thres) % maximum 15% error
   ni = find(err > err_thres);
@@ -1523,6 +1553,7 @@ figure(hh); subplot(224); show_fem(img4,1); axis tight; title('#4 c2f + log10 re
 % check
 e4 = 1./(10.^img4.elem_data);
 err = abs((e1 - e4) ./ e1);
+err(abs(e1) < 20) = 0;
 err_thres = 0.40;
 if any(err > err_thres) % maximum 15% error
   ni = find(err > err_thres);
