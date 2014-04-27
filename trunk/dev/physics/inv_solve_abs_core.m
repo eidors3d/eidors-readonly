@@ -231,7 +231,7 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return
 
 %--------------------------
 opt = parse_options(inv_model);
-%inv_model = stupid_translation(opt); % TODO rm -- transitional function to DIE
+inv_model = stupid_translation(opt, inv_model); % TODO rm -- transitional function to DIE
 %if opt.do_starting_estimate
 %    img = initial_estimate( inv_model, data0 ); % TODO
 %%%    AB->NL this is Nolwenn's homogeneous estimate...
@@ -281,7 +281,8 @@ if ~isstruct(data0)
    data0.meas = d;
    data0.type = 'data';
 end
-data0.current_physics = opt.meas_input;
+%DIE data0.current_physics = opt.meas_input;
+data0.measured_quantity = opt.meas_input;
 
 % now get on with
 img0 = img;
@@ -655,12 +656,12 @@ function data = map_meas_struct(data, N, out)
 
 % also used by the line search as opt.line_search_dv_func
 function [dv, opt] = update_dv_core(img, data0, N, opt)
-   data0 = map_meas_struct(data0, N, 'voltage');
+%DIE   data0 = map_meas_struct(data0, N, 'voltage');
    img = map_img(img, 'conductivity');
    data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
    dv = calc_difference_data(data, data0, img.fwd_model);
-   dv = map_meas(dv, N, 'voltage', opt.meas_working);
+%   dv = map_meas(dv, N, 'voltage', opt.meas_working);
    err_if_inf_or_nan(dv, 'dv out');
 
 function show_fem_iter(k, img, inv_model, opt)
@@ -768,7 +769,8 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
 %   end
 
-%function imdl = stupid_translation(opt, imdl)
+function imdl = stupid_translation(opt, imdl)
+  imdl.fwd_model.measured_quantity = opt.meas_working;
 
 function opt = parse_options(imdl)
    try
