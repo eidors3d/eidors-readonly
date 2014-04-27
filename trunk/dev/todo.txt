@@ -1,4 +1,21 @@
+############## April 27-29 Work ##############
+
+- abs_solver_GN with physics
+
+- coarse2find and parameterization
+   - understand problems
+   - z direction
+
+- show_slices planes bug
+
+- fix cache in windows
+
+
+
 ############## 3.8 ################
+
+ - rename z_contact to z_surface
+    - give warning if z_surface is used.
 
  - mex compilation problems on windors
 
