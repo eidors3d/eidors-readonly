@@ -8,6 +8,7 @@ function b = map_meas(b, out, N)
      b = struct();
      b.meas = d;
      b.time = nan;
+     b.type = 'data';
    end
 
    if ~isfield(b, 'measured_quantity')
@@ -26,6 +27,8 @@ function b = map_meas(b, out, N)
    end
  
 function b = map_meas_core(b, N, in, out);
+   err_if_inf_or_nan(b, 'map_meas-pre');
+
    if strcmp(in, out) % in == out
       return; % do nothing
    end
@@ -73,6 +76,16 @@ function b = map_meas_core(b, N, in, out);
    else
       error('unknown conversion %s -> %s', in, out);
    end
+   err_if_inf_or_nan(b, 'map_meas-post');
+
+function err_if_inf_or_nan(x, str);
+  if any(isnan(x) | isinf(x))
+      error(sprintf('bad %s (%d NaN, %d Inf of %d)', ...
+                    str, ...
+                    length(find(isnan(x))), ...
+                    length(find(isinf(x))), ...
+                    length(x)));
+  end
 
 function pass = do_unit_test()
 pass = 1;
