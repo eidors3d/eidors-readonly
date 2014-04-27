@@ -104,6 +104,8 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
         % for WIN32 mex files. Last I know of is 7.3
         if any(findstr(computer,'PCWIN')) && ( ver.ver < 7.003 )
             archdir= '/arch/matlab/dll';
+        elseif ver.ver <= 7.011
+            archdir= '/arch/matlab/7.011';
         else
             archdir= '/arch/matlab';
         end
@@ -122,14 +124,21 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     if exist(srcf) == 2 && exist(mexf) == 3
         srcd=dir(srcf);
         mexd=dir(mexf);
+
+
         % We thank MATLAB for their version issues
         newer_src = false;
         try newer_src = datenum(srcd.date) > datenum(mexd.date);
         catch
            newer_src = srcd.datenum > mexd.datenum;
         end
+
         if newer_src
            warning('eidors_var_id.mex file is older than source file and should be recompiled.');
+        end
+
+        ok = eidors_var_id_ok;
+        if newer_src || ~ok
            while 1
               resp = input('Would you like to compile now? [Y/n]: ','s');
               switch lower(resp)
@@ -188,6 +197,8 @@ function compile_mex(HOMEDIR,archdir, ver)
     movefile(sprintf('%s/*.mex*',HOMEDIR), ...
            sprintf('%s%s',HOMEDIR,archdir));
 
+    eidors_var_id_ok; % test it
+
 function print_welcome(HOMEDIR,archdir,ver)
     eidors_ver = eidors_obj('eidors_version');
     if eidors_ver(end) == '+' % post release version
@@ -235,3 +246,17 @@ function print_welcome(HOMEDIR,archdir,ver)
     end
     eidors_msg(['New to EIDORS? Have a look at the ',tutorials,'.'],1);
 
+function ok = eidors_var_id_ok;
+    id0 = '';
+    try id0 = eidors_var_id([]); end
+    if strcmp(id0, ...
+      'id_DA39A3EE5E6B4B0D3255BFEF95601890AFD80709')  % SHA1 of nothing
+       ok = 1;
+    else
+       ok = 0;
+    end
+    if ok==0
+       warning('caching (function eidors_var_id) is not working');
+    else
+       eidors_msg('tested function eidors_var_id: OK',1);
+    end
