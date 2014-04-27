@@ -231,7 +231,7 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return
 
 %--------------------------
 opt = parse_options(inv_model);
-inv_model = stupid_translation(opt, inv_model); % TODO rm -- transitional function to DIE
+%inv_model = stupid_model_translation(opt, inv_model); % TODO rm -- transitional function to DIE
 %if opt.do_starting_estimate
 %    img = initial_estimate( inv_model, data0 ); % TODO
 %%%    AB->NL this is Nolwenn's homogeneous estimate...
@@ -274,15 +274,8 @@ N = init_normalization(inv_model.fwd_model, opt);
 % map data and measurements to working types
 %  convert elem_data
 img = map_img(img, opt.elem_working);
-%  convert measurement data
-if ~isstruct(data0)
-   d = data0;
-   data0 = struct;
-   data0.meas = d;
-   data0.type = 'data';
-end
-%DIE data0.current_physics = opt.meas_input;
-data0.measured_quantity = opt.meas_input;
+
+data0 = stupid_data_translation(opt, data0, N); % TODO rm -- transitional function to DIE
 
 % now get on with
 img0 = img;
@@ -646,23 +639,17 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    end
    [dv, opt] = update_dv_core(img, data0, N, opt);
 
-function data = map_meas_struct(data, N, out)
-   try   current_meas_physics = data.current_physics;
-   catch current_meas_physics = 'voltage';
-   end
-   data.meas = map_meas(data.meas, N, current_meas_physics, out);
-   data.current_physics = out;
-   err_if_inf_or_nan(data.meas, 'dv meas');
-
 % also used by the line search as opt.line_search_dv_func
 function [dv, opt] = update_dv_core(img, data0, N, opt)
-%DIE   data0 = map_meas_struct(data0, N, 'voltage');
    img = map_img(img, 'conductivity');
    data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
+   data0 = map_meas(data0, 'voltage', N);
    dv = calc_difference_data(data, data0, img.fwd_model);
-%   dv = map_meas(dv, N, 'voltage', opt.meas_working);
+   dv = map_meas(dv, opt.meas_working, N);
+   dv = dv.meas;
    err_if_inf_or_nan(dv, 'dv out');
+
 
 function show_fem_iter(k, img, inv_model, opt)
   if opt.verbose > 1
@@ -769,8 +756,27 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
 %   end
 
-function imdl = stupid_translation(opt, imdl)
-  imdl.fwd_model.measured_quantity = opt.meas_working;
+function imdl = stupid_model_translation(opt, imdl)
+  if 1
+    % we're okay thanks...
+  else
+    imdl.fwd_model.measured_quantity = opt.meas_working;
+  end
+
+function data0 = stupid_data_translation(opt, data0, N)
+  if 1
+    %  convert measurement data
+    if ~isstruct(data0)
+       d = data0;
+       data0 = struct;
+       data0.meas = d;
+       data0.type = 'data';
+    end
+    data0.current_physics = opt.meas_input;
+    data0.measured_quantity = opt.meas_input;
+  else
+    data0 = map_meas(data0, opt.meas_working, N);
+  end
 
 function opt = parse_options(imdl)
    try
@@ -1311,49 +1317,11 @@ function x = map_data(x, in, out)
    x(x == -inf) = -realmax;
    err_if_inf_or_nan(x, 'map_data-post');
 
-function b = map_meas(b, N, in, out)
-   err_if_inf_or_nan(b, 'map_meas-pre');
-   if strcmp(in, out) % in == out
-      return; % do nothing
-   end
-
-   % resistivity to conductivity conversion
-   % we can't get here if in == out
-   if     strcmp(in, 'voltage') && strcmp(out, 'apparent_resistivity')
-      if N == 1
-         error('missing apparent resistivity conversion factor N');
-      end
-      b = N * b; % voltage -> apparent resistivity
-   elseif strcmp(in, 'apparent_resistivity') && strcmp(out, 'voltage')
-      if N == 1
-         error('missing apparent resistivity conversion factor N');
-      end
-      b = N \ b; % apparent resistivity -> voltage
-   % log conversion
-   elseif any(strcmp({in(1:3), out(1:3)}, 'log'))
-      % log_10 b -> b
-      if strcmp(in(1:6), 'log10_')
-         if any(b > log10(realmax)-eps) warning('loss of precision -> inf'); end
-         b = map_meas(10.^b, N, in(7:end), out);
-      % ln b -> b
-      elseif strcmp(in(1:4), 'log_')
-         if any(b > log(realmax)-eps) warning('loss of precision -> inf'); end
-         b = map_meas(exp(b), N, in(5:end), out);
-      % b -> log_10 b
-      elseif strcmp(out(1:6), 'log10_')
-         if any(b <= 0+eps) warning('loss of precision -> -inf'); end
-         b = log10(map_meas(b, N, in, out(7:end)));
-      % b -> ln b
-      elseif strcmp(out(1:4), 'log_')
-         if any(b <= 0+eps) warning('loss of precision -> -inf'); end
-         b = log(map_meas(b, N, in, out(5:end)));
-      else
-         error(sprintf('unknown conversion (log conversion?) %s - > %s', in, out));
-      end
-   else
-      error('unknown conversion %s -> %s', in, out);
-   end
-   err_if_inf_or_nan(b, 'map_meas-post');
+%DIE function b = map_meas_local(data, N, in, out)
+%DIE    b.meas = data;
+%DIE    b.measured_quantity = in;
+%DIE    b = map_meas(b, out, N);
+%DIE    b = b.meas;
 
 function pass = do_unit_test
 pass = 1;
@@ -1367,7 +1335,7 @@ else
 end
 
 % test sub-functions
-% map_meas, map_data
+% map_data
 % jacobian scalings
 function pass = do_unit_test_sub
 pass = 1;
@@ -1387,24 +1355,6 @@ expected = [d         log(d)         log10(d)      1./d      log(1./d)      log1
 for i = 1:length(elem_types)
   for j = 1:length(elem_types)
     pass = test_map_data(d, elem_types{i}, elem_types{j}, expected(i,j), pass);
-  end
-end
-
-disp('TEST: map_meas()');
-N = 1/15;
-Ninv = 1/N;
-% function b = map_meas(b, N, in, out)
-elem_types = {'voltage', 'log_voltage', 'log10_voltage', ...
-              'apparent_resistivity',  'log_apparent_resistivity',  'log10_apparent_resistivity'};
-expected = [d         log(d)         log10(d)      N*d      log(N*d)      log10(N*d); ...
-            exp(d)    d              log10(exp(d)) N*exp(d) log(N*exp(d)) log10(N*exp(d)); ...
-            10.^d     log(10.^d )    d             N*10.^d  log(N*10.^d ) log10(N*10.^d ); ...
-            Ninv*d      log(Ninv*d  )    log10(Ninv*d)   d         log(d)         log10(d); ...
-            Ninv*exp(d) log(Ninv*exp(d)) log10(Ninv*exp(d)) exp(d) d              log10(exp(d)); ...
-            Ninv*10.^d  log(Ninv*10.^d)  log10(Ninv*10.^d)  10.^d  log(10.^d)     d ];
-for i = 1:length(elem_types)
-  for j = 1:length(elem_types)
-    pass = test_map_meas(d, N, elem_types{i}, elem_types{j}, expected(i,j), pass);
   end
 end
 
@@ -1442,14 +1392,6 @@ if map_data(data, in, out) ~= expected
    pass = 0;
    fprintf('TEST: FAIL map_data(%s -> %s)\n', in, out);
 end
-
-function pass = test_map_meas(data, N, in, out, expected, pass)
-%fprintf('TEST: map_meas(%s -> %s)\n', in, out);
-if map_meas(data, N, in, out) ~= expected
-   pass = 0;
-   fprintf('TEST: FAIL map_data(%s -> %s)\n', in, out);
-end
-
 
 % a couple easy reconstructions
 % check c2f, apparent_resistivity, log_conductivity, verbosity don't error out
