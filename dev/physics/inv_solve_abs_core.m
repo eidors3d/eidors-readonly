@@ -98,7 +98,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    conductivity. If the Jacobian in use is not the
 %    default, a scaling function is required.
 %   normalize_data_func
-%    (default  @calc_normalization_apparent_resistivity)
+%    (default  @apparent_resistivity_factor)
 %    dv = N*(data-data0) where N is provided by this
 %    function
 %
@@ -231,6 +231,7 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return
 
 %--------------------------
 opt = parse_options(inv_model);
+%inv_model = stupid_translation(opt); % TODO rm -- transitional function to DIE
 %if opt.do_starting_estimate
 %    img = initial_estimate( inv_model, data0 ); % TODO
 %%%    AB->NL this is Nolwenn's homogeneous estimate...
@@ -368,13 +369,6 @@ function N = init_normalization(fmdl, opt)
       end
       N = feval(opt.normalize_data_func, fmdl);
    end
-
-% default opt.normalize_data_func
-% if working measurements are apparent_resistivity & input is voltage
-function N = calc_normalization_apparent_resistivity(fmdl)
-  img1 = mk_image(fmdl,1);
-  vh1  = fwd_solve(img1);
-  N    = spdiag(1./vh1.meas);
 
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
@@ -774,6 +768,8 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
 %   end
 
+%function imdl = stupid_translation(opt, imdl)
+
 function opt = parse_options(imdl)
    try
       % for any general options
@@ -990,7 +986,7 @@ function opt = parse_options(imdl)
    % input handling -> conversion of measurements (data0)
    if ~isfield(opt, 'normalize_data_func') % how do we normalize data? use this function
       if any(strcmp({opt.meas_input, opt.meas_working}, 'apparent_resistivity'))
-         opt.normalize_data_func = @calc_normalization_apparent_resistivity; % N = f(fmdl)
+         opt.normalize_data_func = @apparent_resistivity_factor; % N = f(fmdl)
       end
    end
    if isfield(opt, 'normalize_data_func')
