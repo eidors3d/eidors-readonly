@@ -10,11 +10,17 @@
 
 - fix cache in windows
 
+- sparse matrix inefficiency
+   - from Nov 2013 mailing list
+   - need:   ans = lhs(:,idx)*rhs(idx,:);  % SELECT WITH IDX
+
 - probably set default imdl.inv_solve.calc_solution_error = 0;
 
 - should eidors do introspection and ask solvers if they are absolute or diff?
    - should we get rid of imdl.reconst_type (replace by introspection)?
 
+
+=======
 - think about function specific verbose?
 
 - Data pathway
@@ -29,6 +35,7 @@
 
  - Why doesn't the qr in forward_solve speed up the jacobian calc
 
+>>>>>>> .r4526
 ############## 3.8 ################
 
  - rename z_contact to z_surface
