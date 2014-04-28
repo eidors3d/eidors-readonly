@@ -246,6 +246,10 @@ function [QQ, n_meas] = calc_QQ_fast(N2E, stim, p)
       error('EIDORS:fwd_model_parameters:interior_points',...
             [str, sprintf('#%d ',find(ncols>1))]);
    end
+   idx = 1:p; idx(ncols==0)= [];
+   try
+   QQ(:,idx) = QQ(:,idx) +  N2E' * horzcat( stim(:).interior_sources );
+   end
 
    n_meas = size(vertcat(stim(:).meas_pattern),1);
 
