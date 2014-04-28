@@ -1,6 +1,6 @@
 function map = mdl_slice_mapper( fmdl, maptype );
 % MDL_SLICE_MAPPER: map pixels to FEM elements or nodes
-%    map = mdl_slice_mapper( fmdl, levels, maptype );
+%    map = mdl_slice_mapper( fmdl, maptype );
 %
 % USAGE:
 % fmdl = fwd_model object
@@ -35,15 +35,13 @@ switch maptype
 end
 
 function elem_ptr = mdl_elem_mapper(fwd_model);
-   level= fwd_model.mdl_slice_mapper.level;
-
    elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
 
    if ~isempty(elem_ptr)
       return;
    end
 
-   NODE = level_model( fwd_model, level );
+   NODE = level_model( fwd_model );
    if isfield(fwd_model.mdl_slice_mapper,'model_2d') && ...
            fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
        NODE(3,:) = [];
@@ -62,14 +60,13 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
-   level= fwd_model.mdl_slice_mapper.level;
 
    ninterp_ptr = eidors_obj('get-cache', fwd_model, 'ninterp_ptr');
    if ~isempty(ninterp_ptr); return; end
 
 
    elem_ptr = mdl_elem_mapper(fwd_model);
-   NODE = level_model( fwd_model, level );
+   NODE = level_model( fwd_model );
    fwd_model.nodes = NODE';
    [x,y] = grid_the_space( fwd_model);
 
@@ -89,15 +86,13 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 function node_ptr = mdl_node_mapper(fwd_model);
-   level= fwd_model.mdl_slice_mapper.level;
-
    node_ptr = eidors_obj('get-cache', fwd_model, 'node_ptr');
 
    if ~isempty(node_ptr)
       return;
    end
 
-   NODE = level_model( fwd_model, level );
+   NODE = level_model( fwd_model );
    [x,y] = grid_the_space( fwd_model);
    node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
 
@@ -264,7 +259,8 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
 % Level is a 1x3 vector specifying the x,y,z axis intercepts
 % NODE describes the vertices in this coord space
 
-function NODE= level_model( fwd_model, level )
+function NODE= level_model( fwd_model )
+   level= fwd_model.mdl_slice_mapper.level;
 
    vtx= fwd_model.nodes;
    [nn, dims] = size(vtx);
