@@ -69,7 +69,8 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('b3cr',16)      - 256 elems * 10 planes 
 %   mk_common_model('c3cr',16)      - 576 elems * 20 planes
 %   mk_common_model('d3cr',16)      - 1024 elems * 40 planes
-%
+%   mk_common_model('e3cr',16)      - 1600 elems * 60 planes
+%   mk_common_model('f3cr',16)      - 2304 elems * 80 planes
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -186,6 +187,8 @@ elseif strcmp( str(2:3), '3c') || strcmp(str(2:3),'3t')
    elseif str(1)=='b'; xy_layers=  8; z_layers= linspace(-.7,.7,11);
    elseif str(1)=='c'; xy_layers= 12; z_layers= linspace(-.9,.9,21);
    elseif str(1)=='d'; xy_layers= 16; z_layers= linspace(-1,1,41);
+   elseif str(1)=='e'; xy_layers= 20; z_layers= linspace(-1.3,1.3,61);
+   elseif str(1)=='f'; xy_layers= 24; z_layers= linspace(-1.6,1.6,81);
    else;  error(['don`t know what to do with option(1)=',str]);
    end
 
