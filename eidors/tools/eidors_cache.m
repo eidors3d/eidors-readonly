@@ -441,7 +441,7 @@ function varargout = cache_shorthand(fhandle, varargin)
       end
       return
    end
-   eidors_msg('%s: Using cached value',fstr,2);
+   eidors_msg('%s: Using cached value',fstr,3);
 
 function output = mk_varargout_str(N)
 output = '[';
