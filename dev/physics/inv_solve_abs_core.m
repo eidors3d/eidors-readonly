@@ -227,7 +227,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 
 %--------------------------
 % UNIT_TEST?
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); img = do_unit_test; return; end
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img = do_unit_test(data0); return; end
 
 %--------------------------
 opt = parse_options(inv_model);
@@ -1189,10 +1190,13 @@ if isstruct(s)
    b = any(ismember(fieldnames(s),supported_physics));
 end
 
-function pass = do_unit_test
+function pass = do_unit_test(solver)
+if nargin == 0
+  solver = 'inv_solve_abs_core';
+end
 pass = 1;
 pass = pass & do_unit_test_sub;
-pass = pass & do_unit_test_rec1;
+pass = pass & do_unit_test_rec1(solver);
 %pass = pass & do_unit_test_rec2; % TODO this unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
 if pass
    disp('TEST: overall PASS');
@@ -1238,7 +1242,7 @@ end
 
 % a couple easy reconstructions
 % check c2f, apparent_resistivity, log_conductivity, verbosity don't error out
-function pass = do_unit_test_rec1
+function pass = do_unit_test_rec1(solver)
 pass = 1;
 % -------------
 % ADAPTED FROM
@@ -1246,7 +1250,7 @@ pass = 1;
 %  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
 % 3D Model
 imdl= mk_common_model('c2t4',16); % 576 elements
-imdl.solve = 'inv_solve_abs_core';
+imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 imdl.parameters.elem_working = 'log_conductivity';
 imdl.parameters.meas_working = 'apparent_resistivity';
