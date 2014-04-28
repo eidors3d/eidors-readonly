@@ -116,7 +116,8 @@ try
           idx= idx+ n_meas;
        end
     else
-       v_out = arrayfun(@(s,i) extractor(s, i, v_els), ...
+       v_out = arrayfun(@(s,i) ...
+               s.meas_pattern * v_els(:,i), ...
             stim, 1:pp.n_stim, 'UniformOutput', false);
        vv = vertcat( v_out{:} );
     end
@@ -128,10 +129,6 @@ catch err
        rethrow(err);
    end
 end
-
-function v_i = extractor(x, i, v_els)
-   meas_pat = x.meas_pattern;
-   v_i = meas_pat*v_els(:,i);
 
 function list = supported_measurement
    list = {'voltage'
