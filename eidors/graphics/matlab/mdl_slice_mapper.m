@@ -16,6 +16,10 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %   fmdl.mdl_slice_mapper.level = Vector [1x3] of intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
 %          parallel to the x,y: use levels= [inf,inf,2]
+%   OR
+%   fmdl.mdl_slice_mapper.centre and .rotate
+%          are the centre point and rotation matrices around the point
+%
 % maptype
 %    for 'elem' map is FEM element nearest the point
 %    for 'node' map is FEM vertex nearest the point
@@ -260,15 +264,23 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
 % NODE describes the vertices in this coord space
 
 function NODE= level_model( fwd_model )
-   level= fwd_model.mdl_slice_mapper.level;
-
    vtx= fwd_model.nodes;
-   [nn, dims] = size(vtx);
-   if dims ==2 % 2D case
+   if mdl_dim(fwd_model) ==2 % 2D case
        NODE= vtx';
        return;
    end
 
+   if     isfield(fwd_model.mdl_slice_mapper,'level')
+       NODE = level_model_level(vtx, fwd_model.mdl_slice_mapper.level);
+   elseif isfield(fwd_model.mdl_slice_mapper,'centre')
+       rotate = fwd_model.mdl_slice_mapper.rotate;
+       centre = fwd_model.mdl_slice_mapper.centre;
+       NODE = ctr_norm_model(vtx, rotate, centre);
+   else   error('mdl_slice_mapper: no field level or centre provided');
+   end
+   
+function NODE = level_model_level(vtx, level)   
+   [nn, dims] = size(vtx);
    % Infinities tend to cause issues -> replace with realmax
    % Don't need to worry about the sign of the inf
    level( isinf(level) | isnan(level) ) = realmax;
@@ -301,6 +313,10 @@ function NODE= level_model( fwd_model )
    v3= v3 * (1-2*(sum(v3)<0));
 
    NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
+   
+function NODE = ctr_norm_model(vtx, rotate, centre);
+   [nn, dims] = size(vtx);
+   NODE = rotate * (vtx' - centre'*ones(1,nn));
 
 % Create matrices x y which grid the space of NODE
 function  [x,y] = grid_the_space( fmdl);
@@ -387,6 +403,16 @@ function do_unit_test
 
    nint = mdl_slice_mapper(fmdl,'nodeinterp');
    unit_test_cmp('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
+   
+% Centre and Rotate
+   fmdl.mdl_slice_mapper = rmfield(fmdl.mdl_slice_mapper,'level');
+   fmdl.mdl_slice_mapper.centre = [0,0,1];
+   fmdl.mdl_slice_mapper.rotate = eye(3);
+   fmdl.mdl_slice_mapper.npx = 4;
+   fmdl.mdl_slice_mapper.npy = 4;
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   test = zeros(4); test(2:3,2:3) = [512 503;524 533];
+   unit_test_cmp('eptr06',eptr, test);
 
 % SLOW
    imdl = mk_common_model('d3cr',[16,3]); fmdl = imdl.fwd_model;
@@ -395,7 +421,7 @@ function do_unit_test
    fmdl.mdl_slice_mapper.npy = 64;
    t = cputime;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   txt = sprintf('eptr06 (t=%5.3fs)',cputime - t);
+   txt = sprintf('eptr10 (t=%5.3fs)',cputime - t);
    test = [0,122872,122872; 0,122809,122809; 0,122809,122749];
    unit_test_cmp(txt,eptr(10:12,10:12),test);  
    
