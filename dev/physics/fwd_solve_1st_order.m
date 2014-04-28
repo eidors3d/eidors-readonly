@@ -134,6 +134,9 @@ function list = supported_measurement
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
    vho = fwd_solve_1st_order(img);
+   tst= [ 0.959567140078593; 0.422175237237900; 0.252450963869202];
+   unit_test_cmp('values',vho.meas(1:3),tst,1e-14);
+
    img.elem_data = 0.1 + rand(size(img.elem_data));
    vh = fwd_solve_1st_order(img);
    img.fwd_model.measured_quantity = 'log_voltage';
