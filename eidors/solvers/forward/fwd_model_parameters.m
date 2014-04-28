@@ -72,13 +72,12 @@ end
 
 [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
 
-
 if p>0
-   stim = fwd_model.stimulation;
+  stim = fwd_model.stimulation;
+  [QQ, n_meas] = calc_QQ_fast(N2E, stim, p);
+  pp.QQ = QQ;
+  pp.n_meas   = n_meas;
 end
-
- [QQ, n_meas] = calc_QQ_fast(N2E, stim, p);
-pp.QQ = QQ;
 
 % pack into a parameter return list
 pp.n_elem   = e;
@@ -86,7 +85,6 @@ pp.n_elec   = n_elec;
 pp.n_node   = n;
 pp.n_stim   = p;
 pp.n_dims   = d-1;
-pp.n_meas   = n_meas;
 pp.N2E      = N2E;
 pp.boundary = bdy;
 pp.normalize = mdl_normalize(fwd_model);
