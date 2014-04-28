@@ -63,6 +63,11 @@ switch sum(phys)
       if ~( isfield(img,'elem_data') || isfield(img,'node_data'))
          error('No physics, elem_data or node_data found on img');
       else
+         if isfield(img,'current_physics') && ~isempty(img.current_physics)
+           eidors_msg('@@@ Careful! Image already mapped. Doing nothing',1);
+           return;
+         end
+           
          eidors_msg('@@@ No physics present on img. Assuming conductivity',3);
 % STUPID MATLAB CAN'T KEEP SYNTAX STRAIGHT BETWEEN VERSIONS
 %        img = setfield(img,{},'current_physics', 'conductivity');
