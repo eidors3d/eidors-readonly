@@ -19,7 +19,17 @@ end
 if ~isfield(opt, 'fwd_solutions')
    opt.fwd_solutions = 0;
 end
-x = imgk.elem_data;
+if isfield(imgk,'params')
+  %consistency check
+  tmp = physics_param_mapper(imgk);
+  if any(tmp.params ~= imgk.params)
+    error('EIDORS:imageInconsistant','Conflict between img.params and img data');
+  end
+else
+  tmp = physics_param_mapper(imgk);
+%   imgk = physics_param_mapper(imgk);
+end
+x = tmp.params;
 
 if(perturb(1) ~= 0)
   error('line_search_o2() expects first perturbation (inv_model.parameters.line_search.perturb) to be alpha=0');
@@ -34,7 +44,9 @@ for i = 1:length(perturb);
 %    if (i == 1) && (~isempty(dv0)) % don't bother simulating alpha=0 (we already have the measurements)
 %      dv = dv0; % vsim @ alpha=0 from the previous line search iteration
 %    else
-      img.elem_data = x + perturb(i)*dx;
+      img = physics_param_mapper(img);
+      img.params = x + perturb(i)*dx;
+      img = physics_param_mapper(img,1);
       [dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
       % [dv, opt] = update_dv_core(img, data0, N, opt)
 %    end
@@ -83,9 +95,14 @@ FF = @(pf, x) polyval(pf, log10(x));
 alpha = fminbnd(@(x) FF(pf, x), perturb(2), perturb(end));
 alpha1 = alpha;
 % now check how we did
-img.elem_data = x + alpha*dx;
-[dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
+img = physics_param_mapper(img);
+img.params = x + alpha*dx;
+img = physics_param_mapper(img,1);
 de = feval(opt.line_search_de_func, img, img1, opt);
+
+% TODO: remove opt output
+[dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
+
 meas_err = feval(opt.residual_func, dv, de, W, hp2, RtR);
 meas_err1 = meas_err;
 if opt.verbose > 1

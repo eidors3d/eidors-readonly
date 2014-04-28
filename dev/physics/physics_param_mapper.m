@@ -12,16 +12,20 @@ end
 function img = forward_mapping(img)
    if ~isfield(img, 'physics_param_mapper')
       jnk = physics_data_mapper(img);
+      phys = [];
+%       if ~isempty(jnk.current_physics)
+%         phys = [jnk.current_physics '.'];
+%       end
       try 
          img.params = jnk.node_data;
-         img.current_params = 'node_data';
+         img.current_params = [phys 'node_data'];
 %          img = rmfield(img, 'node_data');
       catch
          img.params = jnk.elem_data;
-         img.current_params = 'elem_data';
+         img.current_params = [phys 'elem_data'];
 %          img = rmfield(img, 'elem_data');
       end
-      img.current_physics = jnk.current_physics;
+      img.current_physics = jnk.current_physics; % needed to reverse
    elseif iscell(img.physics_param_mapper)
       params = [];
       for i = 1:length(img.physics_param_mapper)
