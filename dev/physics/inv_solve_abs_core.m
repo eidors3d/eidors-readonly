@@ -231,7 +231,7 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return
 
 %--------------------------
 opt = parse_options(inv_model);
-%inv_model = stupid_model_translation(opt, inv_model); % TODO rm -- transitional function to DIE
+inv_model = stupid_model_translation(opt, inv_model); % TODO rm -- transitional function to DIE
 %if opt.do_starting_estimate
 %    img = initial_estimate( inv_model, data0 ); % TODO
 %%%    AB->NL this is Nolwenn's homogeneous estimate...
@@ -256,7 +256,7 @@ if isfield(inv_model, 'fwd_model') && ...
    bg = mean(img.elem_data);
    img.elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
-      bg = map_data(bg, img.current_physics, 'resistivity');
+      bg = map_data(bg, img.current_physics, 'resistivity'); %BG: Why???
       fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
       disp('    TODO this fix should be moved to mk_image()');
    end
@@ -506,8 +506,13 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
    end
 
-function J = update_jacobian(img, N, opt)
-   img = map_img(img, 'conductivity');
+function J = update_jacobian(img, N, opt)   
+   if donew
+     img.fwd_model.measured_quantity = 'apparent_resistivity';
+     J = calc_jacobian(img);
+     return;
+   end
+   img = map_img(img, 'conductivity');   
    if(opt.verbose > 1)
       try J_str = func2str(img.fwd_model.jacobian);
       catch J_str = img.fwd_model.jacobian;
@@ -641,15 +646,22 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
 
 % also used by the line search as opt.line_search_dv_func
 function [dv, opt] = update_dv_core(img, data0, N, opt)
-   img = map_img(img, 'conductivity');
-   data = fwd_solve(img);
-   opt.fwd_solutions = opt.fwd_solutions +1;
-   data0 = map_meas(data0, 'voltage', N);
-   dv = calc_difference_data(data, data0, img.fwd_model);
-   dv = map_meas(dv, opt.meas_working, N);
-   dv = dv.meas;
+   img = map_img(img, 'conductivity'); %DIE Why can't I move this?
+   if donew
+     img.fwd_model.measured_quantity = opt.meas_working;
+     data = fwd_solve(img);
+     dv = calc_difference_data(data, data0, img.fwd_model);
+   else
+     data = fwd_solve(img);
+     opt.fwd_solutions = opt.fwd_solutions +1;
+     data0 = map_meas(data0, 'voltage', N);
+     dv = calc_difference_data(data, data0, img.fwd_model);
+     dv = map_meas(dv, opt.meas_working, N);
+     dv = dv.meas;
+   end
    err_if_inf_or_nan(dv, 'dv out');
 
+function do = donew; do =1;
 
 function show_fem_iter(k, img, inv_model, opt)
   if opt.verbose > 1
@@ -757,25 +769,18 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %   end
 
 function imdl = stupid_model_translation(opt, imdl)
-  if 1
-    % we're okay thanks...
-  else
+  if donew
     imdl.fwd_model.measured_quantity = opt.meas_working;
+  else
+    % we're okay thanks...
   end
 
 function data0 = stupid_data_translation(opt, data0, N)
-  if 1
-    %  convert measurement data
-    if ~isstruct(data0)
-       d = data0;
-       data0 = struct;
-       data0.meas = d;
-       data0.type = 'data';
-    end
-    data0.current_physics = opt.meas_input;
-    data0.measured_quantity = opt.meas_input;
-  else
+
+  if donew
     data0 = map_meas(data0, opt.meas_working, N);
+  else
+    %  nothing
   end
 
 function opt = parse_options(imdl)
@@ -1420,7 +1425,7 @@ r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-85).^2 + (y-65).^2);
 imgsrc.elem_data(r1<50)= 0.05;
 imgsrc.elem_data(r2<30)= 100;
 imgp = map_img(imgsrc, 'log10_conductivity');
-hh=figure; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
+hh=gcf; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
 % inhomogeneous data
 vi=fwd_solve( imgsrc );
 % add noise

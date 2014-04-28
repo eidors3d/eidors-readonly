@@ -17,21 +17,24 @@ function b = map_meas(b, out, N)
    end
    in = b.measured_quantity;
 
+   if strcmp(in, out) % in == out
+      return; % do nothing
+   end
+   
    if nargin < 3
      N = 1;
    end
 
    b.meas = map_meas_core(b.meas, N, in, out);
    if ~isfield(b, 'name')
-     b.name = sprintf('converted %s --> %s', in, out);
+       b.name = 'data';
    end
- 
+   b.name = sprintf('%s converted %s --> %s', b.name, in, out);
+   b.measured_quantity = out;
+   
 function b = map_meas_core(b, N, in, out);
    err_if_inf_or_nan(b, 'map_meas-pre');
 
-   if strcmp(in, out) % in == out
-      return; % do nothing
-   end
 
    % resistivity to conductivity conversion
    % we can't get here if in == out
