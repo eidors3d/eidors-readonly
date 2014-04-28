@@ -1,4 +1,31 @@
 % function b = map_meas(b, out, [N])
+%
+% Map measurements from one type to another. Expects measurements 'b' to be a
+% struct
+%  b.measured_data = <one of the supported_measurements>
+%   .meas          = <measurement vector>
+%   .type          = 'data'
+%   .time          = <don't care>
+%
+% The function will convert the measurements from 'measured_quantity' to 'out'
+% which are strings identifying the from->to conversion. The types should be
+% from 'supported_measurement' but if the from->to types match or only differ
+% in prefix, this function can still handle them.
+%
+% Supported prefixes are 'log_', 'log10_' and 'abs_'. You can not convert from
+% absoulte values 'abs_' to regular/non-absolute values. This is a user chore
+% since you can achieve it by performing forward solutions to guess at the
+% correct sign.
+%
+% If a vector is provided, rather than a struct, 'voltage' is assumed as the
+% 'measured_quantity' input. A struct is returned.
+%
+% If converting to or from 'apparent_resistivity' you need to provide a
+% normalization matrix 'N' which is generally determined as a geometry scaling
+% factor for the measurements based on a homogeneous solution to the forward
+% model.
+%  N = 1./fwd_solve(fmdl,1);
+%
 function b = map_meas(b, out, N)
    % UNIT_TEST?
    if isstr(b) && strcmp(b,'UNIT_TEST'); b = do_unit_test; return; end
