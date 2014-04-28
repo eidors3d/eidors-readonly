@@ -23,6 +23,8 @@ function param = fwd_model_parameters( fwd_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(fwd_model) && strcmp(fwd_model, 'UNIT_TEST'); do_unit_test; return; end
+
 param = eidors_obj('get-cache', fwd_model, 'fwd_model_parameters');
 
 if ~isempty(param)
@@ -70,28 +72,13 @@ end
 
 [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
 
-pp.QQ= sparse(n+n_elec,p);
-pp.QQ= pp.QQ(1:(n+cem_electrodes),:);
-
-
-n_meas= 0; % sum total number of measurements
 
 if p>0
    stim = fwd_model.stimulation;
 end
 
-for i=1:p
-    src= 0;
-    try;  src = src +  N2E'* stim(i).stim_pattern; end
-    try;  src = src +  stim(i).interior_sources;   end
-    if all(size(src) == [1,1]) && src==0
-       error('no stim_patterns or interior_sources provided for pattern #%d',i);
-    end
-    
-    pp.QQ(:,i) = src;
-    n_meas = n_meas + size(stim(i).meas_pattern,1);
-end
-
+ [QQ, n_meas] = calc_QQ_fast(N2E, stim, p);
+pp.QQ = QQ;
 
 % pack into a parameter return list
 pp.n_elem   = e;
@@ -220,3 +207,63 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
 
    eidors_obj('set-cache', cache_obj, 'calculate_N2E', {N2E, cem_electrodes});
    eidors_msg('calculate_N2E: setting cached value', 4);
+
+function [QQ, n_meas] = calc_QQ_slow(N2E, stim, p)
+   QQ = sparse(size(N2E,2),1,p);
+   n_meas= 0; % sum total number of measurements
+   for i=1:p
+       src= zeros(size(N2E,2),1);
+       try;  src =        N2E'* stim(i).stim_pattern; end
+       try;  src = src +  stim(i).interior_sources;   end
+       if all(size(src) == [1,1]) && src==0
+          error('no stim_patterns or interior_sources provided for pattern #%d',i);
+       end
+       
+       QQ(:,i) = src;
+       n_meas = n_meas + size(stim(i).meas_pattern,1);
+   end
+
+function [QQ, n_meas] = calc_QQ_fast(N2E, stim, p)
+   QQ = sparse(size(N2E,2),1,p);
+   try
+   ncols = arrayfun(@(x) size(x.stim_pattern,2), stim);
+   end
+   if any(ncols>1);
+      str = 'multiple columns in stim_pattern for patterns: ';
+      error('EIDORS:fwd_model_parameters:stim_pattern', ...
+            [str, sprintf('#%d ',find(ncols>1))]);
+   end
+   idx = 1:p; idx(ncols==0)= [];
+   try
+   QQ(:,idx) = N2E' * horzcat( stim(:).stim_pattern );
+   end
+
+   try
+   ncols = arrayfun(@(x) size(x.interior_sources,2), stim);
+   end
+   if any(ncols>1);
+      str = 'multiple columns in interior_sources for patterns: ';
+      error('EIDORS:fwd_model_parameters:interior_points',...
+            [str, sprintf('#%d ',find(ncols>1))]);
+   end
+
+   n_meas = size(vertcat(stim(:).meas_pattern),1);
+
+
+
+function do_unit_test
+   imdl = mk_common_model('a2c2',16); fmdl = imdl.fwd_model;
+   pp = fwd_model_parameters(fmdl);
+   [QQ1, n1m] = calc_QQ_slow(pp.N2E, fmdl.stimulation, pp.n_stim);
+   [QQ2, n2m] = calc_QQ_fast(pp.N2E, fmdl.stimulation, pp.n_stim);
+   unit_test_cmp('calc_QQ', norm(QQ1-QQ2,'fro') + norm(n1m-n2m), 0, 1e-15);
+
+   fmdl.stimulation(8).stim_pattern = fmdl.stimulation(8).stim_pattern*[1,2]; 
+   err= 0;
+   try;  pp = fwd_model_parameters(fmdl);
+   catch e
+      if strcmp(e.identifier, 'EIDORS:fwd_model_parameters:stim_pattern');
+         err = 1;
+      end
+   end
+   unit_test_cmp('error', err, 1);
