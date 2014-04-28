@@ -26,6 +26,11 @@
 % model.
 %  N = 1./fwd_solve(fmdl,1);
 %
+% See also MAP_IMG.
+
+% (C) 2014 Alistair Boyle
+% Licenced under GPL version 2 or 3
+% $Id$
 function b = map_meas(b, out, N)
    % UNIT_TEST?
    if isstr(b) && strcmp(b,'UNIT_TEST'); b = do_unit_test; return; end

@@ -1,6 +1,12 @@
 function img = map_img(img, arg1, arg2);
 % function img  = map_img(img,  out)
 % function data = map_img(data, in, out)
+%
+% See also MAP_MEAS.
+
+% (C) 2014 Alistair Boyle
+% Licenced under GPL version 2 or 3
+% $Id$
 
    %--------------------------
    % UNIT_TEST?
