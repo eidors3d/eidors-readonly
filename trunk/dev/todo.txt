@@ -38,6 +38,10 @@
 >>>>>>> .r4526
 ############## 3.8 ################
 
+ - experimental image_field in calc_colours (see cg_ards_recruitment_04)
+
+ - eidors_msg to verbose. Example is: eidors_cache.m/cache_shorthand
+
  - rename z_contact to z_surface
     - give warning if z_surface is used.
 
