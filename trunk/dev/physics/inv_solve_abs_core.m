@@ -252,19 +252,18 @@ inv_model = stupid_model_translation(opt, inv_model); % TODO rm -- transitional 
 img = mk_image( inv_model );
 %img = calc_jacobian_bkgnd( inv_model );
 % TODO does calc_jacobian_bkgnd ignore 'physics' right now.. that might screw things up pretty good!
-img = physics_data_mapper(img); % move data from whatever 'physics' to img.elem_data
-
+% img = physics_param_mapper(img); % copy data from whatever 'physics' to img.params
 % mk_image doesn't handle the c2f
 % TODO move this from here to mk_image so we get an img with the correct number of elem_data
 if isfield(inv_model, 'fwd_model') && ...
    isfield(inv_model.fwd_model, 'coarse2fine') && ...
-   length(img.elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
+   length(img.(opt.elem_working).elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
 
    % TODO replace with fix_c2f_calc_jacobian_backgnd
    c2f = inv_model.fwd_model.coarse2fine;
    %img.elem_data = c2f \ img.elem_data; % --> rank deficient???
-   bg = mean(img.elem_data);
-   img.elem_data = ones(size(c2f,2),1)*bg;
+   bg = mean(img.(opt.elem_working).elem_data);
+   img.(opt.elem_working).elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
       bg = map_img(bg, img.current_physics, 'resistivity'); %BG: Why???
       fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
@@ -283,12 +282,12 @@ N = init_normalization(inv_model.fwd_model, opt);
 
 % map data and measurements to working types
 %  convert elem_data
-img = map_img(img, opt.elem_working);
+% img = map_img(img, opt.elem_working); %DIE
 
 data0 = stupid_data_translation(opt, data0, N); % TODO rm -- transitional function to DIE
 
 % now get on with
-img0 = img;
+img0 = physics_param_mapper(img);
 RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
 if opt.verbose > 1
@@ -297,6 +296,7 @@ end
 dxp = 0;
 while 1
   % update RtR, if required (depends on prior)
+%   img = physics_param_mapper(img);
   RtR = update_RtR(RtR, inv_model, k, img, opt);
 
   % update change in element data from the prior de and
@@ -345,8 +345,11 @@ if opt.verbose > 1
            opt.fwd_solutions, k);
 end
 % convert data for output
+img = physics_data_mapper(img);
+img = rmfield(img, opt.elem_working);
 img = map_img(img, opt.elem_output);
-%img = physics_data_mapper(img, 1); % move data from img.elem_data to whatever 'physics'
+img.(opt.elem_output).elem_data = [];
+img = physics_data_mapper(img,1); % move data from img.elem_data to whatever 'physics'
 
 function W = init_meas_icov(inv_model, opt)
    W = 1;
@@ -507,11 +510,12 @@ function RtR = update_RtR(RtR, inv_model, k, img, opt)
    end
 
 function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
-   img = map_img(img, opt.elem_working);
+%    img = map_img(img, opt.elem_working);
+   img = physics_param_mapper(img);
    inv_model.jacobian_backgnd = img;
    RtR = calc_RtR_prior( inv_model );
-   if size(RtR,1) < length(img.elem_data)
-     ne = length(img.elem_data) - size(RtR,1);
+   if size(RtR,1) < length(img.params)
+     ne = length(img.params) - size(RtR,1);
      % we are correcting for the added background element
      % if there is movement, don't add it there.
      if isfield(img, 'current_physics') && ...
@@ -599,13 +603,13 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, R
   if(opt.verbose > 1)
      disp('    line search');
   end
-
+  tmp = physics_param_mapper(img);
   % some sanity checks before we feed this information to the line search
   err_if_inf_or_nan(sx, 'sx (pre-line search)');
-  err_if_inf_or_nan(img.elem_data, 'img.elem_data (pre-line search)');
+  err_if_inf_or_nan(tmp.params, 'img.params (pre-line search)');
 
-  if any(size(img.elem_data) ~= size(sx))
-     error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
+  if any(size(tmp.params) ~= size(sx))
+     error(sprintf('mismatch on params[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
   [alpha, img, dv, opt] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
   if(opt.verbose > 1)
@@ -644,18 +648,19 @@ function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
   [dv, opt] = update_dv(dv, img, data0, N, opt, '(dv out-of-date)');
 
 function  de = update_de(de, img, img0, opt)
-   img0 = map_img(img0, opt.elem_working);
-   img  = map_img(img,  opt.elem_working);
-   err_if_inf_or_nan(img0.elem_data, 'de img0');
-   err_if_inf_or_nan(img.elem_data,  'de img');
+%    img0 = map_img(img0, opt.elem_working);
+%    img  = map_img(img,  opt.elem_working);
+   img = physics_param_mapper(img);
+   err_if_inf_or_nan(img0.params, 'de img0');
+   err_if_inf_or_nan(img.params,  'de img');
    % probably not the most robust check for whether this is the first update
    % but this ensures that we get exactly zero for the first iteration and not
    % a set of values that has numeric floating point errors that are nearly zero
    if isempty(de) % first iteration
       % data hasn't changed yet!
-      de = zeros(size(img0.elem_data));
+      de = zeros(size(img0.params));
    else
-      de = img0.elem_data - img.elem_data;
+      de = img0.params - img.params;
    end
    de(opt.elem_fixed) = 0; % TODO is this redundant... delete me?
    err_if_inf_or_nan(de, 'de out');
@@ -675,7 +680,7 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
 
 % also used by the line search as opt.line_search_dv_func
 function [dv, opt] = update_dv_core(img, data0, N, opt)
-   img = map_img(img, 'conductivity'); %DIE Why can't I move this?
+%    img = map_img(img, 'conductivity'); %DIE Why can't I move this?
    img.fwd_model.measured_quantity = opt.meas_working;
    data = fwd_solve(img);
    dv = calc_difference_data(data, data0, img.fwd_model);
@@ -791,6 +796,14 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 function imdl = stupid_model_translation(opt, imdl)
   imdl.fwd_model.measured_quantity = opt.meas_working;
   if donew
+    if isfield(imdl.jacobian_bkgnd, 'value') % TODO: do this smarter
+     bkg = mk_image(imdl.fwd_model,imdl.jacobian_bkgnd.value);
+     bkg = map_img(bkg,opt.elem_working);
+     bkg.(opt.elem_working).elem_data = bkg.elem_data;
+     bkg.current_physics = [];
+     bkg = rmfield(bkg,{'fwd_model','elem_data'});
+     imdl.jacobian_bkgnd = bkg;
+    end
   else
     % we're okay thanks...
   end
@@ -1162,7 +1175,7 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     % if there are multiple 'physics', we assume its the first
     % TODO -- this isn't a great assumption but it'll work for now,
     %         we should add a better (more general) mechanism
-    in = img.current_physics;
+    in = opt.elem_working;
     out = opt.elem_output;
     if iscell(in)
        in = in{1};
@@ -1174,10 +1187,12 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     % go about cleaning up the background
     e = opt.c2f_background;
     % take backgtround elements and convert to output 'physics' (resistivity, etc)
-    bg = map_img(img.elem_data(e), in, out);
+    img = physics_param_mapper(img);
+    bg = map_img(img.params(e), in, out);
+
     img.elem_data_background = bg;
     % remove elements from elem_data & c2f
-    img.elem_data(e) = [];
+    img.params(e) = [];
     img.fwd_model.coarse2fine(:,e) = [];
     % remove our element from the lists
     opt.c2f_background = 0;
@@ -1201,6 +1216,7 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
        fprintf('%s  background conductivity: %0.1f Ohm.m\n', indent, bg);
     end
 
+    img = physics_param_mapper(img,1);
 function img = fix_c2f_calc_jacobian_backgnd(img, opt)
     % finally, we need to fix the img.elem_data returned by
     % mk_image/calc_jacobian_bkgnd, since it doesn't know
@@ -1290,9 +1306,10 @@ imdl.parameters.meas_working = 'apparent_resistivity';
 imdl.inv_solve.calc_solution_error = 0;
 imdl.parameters.verbose = 0;
 %show_fem(imdl.fwd_model);
-imgsrc= mk_image( imdl.fwd_model, 1);
+imgsrc= mk_image( imdl.fwd_model,1, 'conductivity');
 % set homogeneous conductivity and simulate
 vh=fwd_solve(imgsrc);
+imgsrc = physics_data_mapper(imgsrc); %DIE: so we can work on elem_data
 % set inhomogeneous conductivity and simulate
 ctrs= interp_mesh(imdl.fwd_model);
 x= ctrs(:,1); y= ctrs(:,2);
@@ -1300,6 +1317,11 @@ r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-85).^2 + (y-65).^2);
 imgsrc.elem_data(r1<50)= 0.05;
 imgsrc.elem_data(r2<30)= 100;
 imgp = map_img(imgsrc, 'log10_conductivity');
+imgsrc = physics_data_mapper(imgsrc,1); % DIE: revert
+imgp = rmfield(imgp,'conductivity');
+imgp.log10_conductivity.elem_data = []; %DIE: physics_data_mapper needs it
+imgp = physics_data_mapper(imgp,1); % revert
+
 hh=gcf; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
 % inhomogeneous data
 vi=fwd_solve( imgsrc );
@@ -1317,6 +1339,8 @@ imdl.parameters.verbose = 0;
 %imdl.parameters.meas_working = 'apparent_resistivity';
 img2= inv_solve(imdl, vi);
 figure(hh); subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
+img1 = physics_data_mapper(img1);
+img2 = physics_data_mapper(img2);
 max_err = max(abs((img1.elem_data - img2.elem_data)./(img1.elem_data)));
 if max_err > 0.05
   fprintf('TEST:  img1 != img2 --> FAIL %g %%\n', max_err);
@@ -1353,6 +1377,7 @@ img3= inv_solve(imdl, vi);
 figure(hh); subplot(223); show_fem(img3,1); axis tight; title('#3 c2f');
 % check
 e1 = c2f \ img1.elem_data; % noisy and unstable... but its a crude check
+img3 = physics_data_mapper(img3);
 e3 = img3.elem_data;
 err = abs((e1 - e3) ./ e1);
 err(abs(e1) < 20) = 0;
@@ -1371,6 +1396,7 @@ imdl.parameters.elem_output = 'log10_resistivity'; % resistivity output works
 img4= inv_solve(imdl, vi);
 figure(hh); subplot(224); show_fem(img4,1); axis tight; title('#4 c2f + log10 resistivity out');
 % check
+img4 = physics_data_mapper(img4);
 e4 = 1./(10.^img4.elem_data);
 err = abs((e1 - e4) ./ e1);
 err(abs(e1) < 20) = 0;
