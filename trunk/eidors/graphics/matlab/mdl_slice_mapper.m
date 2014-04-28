@@ -407,12 +407,29 @@ function do_unit_test
 % CHECK ORIENTATION
    imdl=mk_common_model('a2c0',16);
    img= mk_image(imdl,1); img.elem_data(26)=1.2;
-   subplot(221);show_fem(img);
-   subplot(222);show_slices(img);
+   subplot(231);show_fem(img);
+   subplot(232);show_slices(img);
    img.fwd_model.mdl_slice_mapper.npx= 20;
    img.fwd_model.mdl_slice_mapper.npy= 30;
    img.fwd_model.mdl_slice_mapper.level= [inf,inf,0];
-   subplot(223);show_slices(img);
+   subplot(233);show_slices(img);
    img.fwd_model.mdl_slice_mapper.x_pts = [linspace(-1,1,23),.5];
    img.fwd_model.mdl_slice_mapper.y_pts = [linspace( 1,-1,34),.5];
-   subplot(224);show_slices(img);
+   subplot(234);show_slices(img);
+   
+   imdl = mk_common_model('n3r2',[16,2]);
+   img = mk_image(imdl,1); vh= fwd_solve(img);
+   load datacom.mat A B;
+   img.elem_data(A) = 1.2;
+   img.elem_data(B) = 0.8;
+   img.calc_colours.transparency_thresh= 0.25;
+   show_3d_slices(img);
+ 
+   cuts = [inf, -2.5, 1.5; inf, 10, 1.5];
+   subplot(235);  show_3d_slices(img ,[],[],[],cuts );
+   
+   cuts = [inf, inf, 0.5; 
+           1e-10, 2e-10, inf;1e-10, 1e-10, inf;2e-10, 1e-10, inf;
+           inf  , 1e-10, inf;1e-10, inf  , inf];
+   subplot(236);  show_3d_slices(img ,[],[],[],cuts );
+   
