@@ -392,6 +392,17 @@ function do_unit_test
    nint = mdl_slice_mapper(fmdl,'nodeinterp');
    unit_test_cmp('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
 
+% SLOW
+   imdl = mk_common_model('d3cr',[16,3]); fmdl = imdl.fwd_model;
+   fmdl.mdl_slice_mapper.level = [inf,inf,1];
+   fmdl.mdl_slice_mapper.npx = 64;
+   fmdl.mdl_slice_mapper.npy = 64;
+   t = cputime;
+   eptr = mdl_slice_mapper(fmdl,'elem');
+   txt = sprintf('eptr06 (t=%5.3fs)',cputime - t);
+   test = [0,122872,122872; 0,122809,122809; 0,122809,122749];
+   unit_test_cmp(txt,eptr(10:12,10:12),test);  
+   
 
 % CHECK ORIENTATION
    imdl=mk_common_model('a2c0',16);
