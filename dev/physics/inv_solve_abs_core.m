@@ -41,6 +41,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %   residual_func =             (default @GN_residual)
 %    NOTE: @meas_residual exists to maintain
 %    compatibility with some older code
+%   beta_func =                        (default: none)
 %   max_iterations                        (default 10)
 %   ntol (estimate of machine precision) (default eps)
 %   tol (stop iter if r_k < tol)           (default 0)
@@ -161,6 +162,14 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    when voltage to apparent_resistivity is required
 %    This function can be repurposed for scalingi
 %    measurement data in other ways.
+%
+%   Signature for beta_func
+%   (zero if not supplied, for use in Conjugate Gradient)
+%    beta = f(dx_k, dx_{k-1}, sx_{k-1})
+%   where
+%    dx_k     - the current descent direction
+%    dx_{k-1} - the previous descent direction
+%    sx_{k-1} - the previous search direction (after applying beta)
 %
 % NOTE that the default line search is very crude. For
 % my test problems it seems to amount to an expensive grid
@@ -285,6 +294,7 @@ residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
 if opt.verbose > 1
    fprintf('  iteration start up\n')
 end
+dxp = 0;
 while 1
   % update RtR, if required (depends on prior)
   RtR = update_RtR(RtR, inv_model, k, img, opt);
@@ -310,9 +320,10 @@ while 1
   %  dx is specific to the algorithm, generally "downhill"
   dx = update_dx(J, W, hp2, RtR, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
-  beta = update_beta(dx, opt);
+  beta = update_beta(dx, dxp, sx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
+  dxp = dx; % saved for next iteration if using beta
 
   % line search for alpha, leaving the final selection as img
   [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
@@ -439,8 +450,25 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r,
   end
 
 % for Conjugate Gradient, else beta = 0
-function beta = update_beta(dx, opt);
-   beta = 0;
+%  dx_k, dx_{k-1}, sx_{k-1}
+function beta = update_beta(dx_k, dx_km1, sx_km1, opt);
+   if isfield(opt, 'beta_func')
+      if opt.verbose > 1
+         try beta_str = func2str(opt.beta_func);
+         catch
+            try beta_str = opt.beta_func;
+            catch beta_str = 'unknown';
+            end
+         end
+      end
+      beta = feval(opt.beta_func, dx_k, dx_km1, sx_km1);
+   else
+     beta_str = '<none>';
+     beta = 0;
+   end
+   if opt.verbose > 1
+      str = sprintf('    calc beta (%s)=%0.3f\n', beta_str, beta);
+   end
 
 % update the search direction
 % for Gauss-Newton
@@ -824,7 +852,8 @@ function opt = parse_options(imdl)
       end
       % ensure that necessary components are calculated
       % opt.update_func: dx = f(J, W, hp2, RtR, dv, de)
-      args = function_depends_upon(opt.update_func, 6);
+%TODO BROKEN      args = function_depends_upon(opt.update_func, 6);
+      args = ones(4,1); % TODO BROKEN
       if args(2) == 1
          opt.calc_meas_icov = 1;
       end
@@ -1053,7 +1082,7 @@ function dx = GN_update(J, W, hp2, RtR, dv, de)
 % 'zero' arguments do not need to be calculated since they don't get used
 function args = function_depends_upon(func, argn)
    % build function call
-   str = sprintf('%s(',func2str(func));
+   str = 'feval(func,';
    args = zeros(argn,1);
    for i = 1:argn-1
       str = [str sprintf('a(%d),',i)];
@@ -1079,6 +1108,10 @@ function out = null_func(in, arg1);
 % this function always returns one
 function out = ret1_func(arg1, arg2);
    out = 1;
+
+% this function always returns zero
+function out = ret0_func(arg1, arg2);
+   out = 0;
 
 % if required, expand the coarse-to-fine matrix to cover the background of the image
 % this is removed at the end of the iterations
