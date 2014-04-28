@@ -58,24 +58,7 @@ v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:));
 % calc voltage on electrodes
 v_els= pp.N2E * v;
 
-try
-    % measured voltages from v
-    vv = zeros( pp.n_meas, 1 );
-    idx=0;
-    for i=1:pp.n_stim
-       meas_pat= fwd_model.stimulation(i).meas_pattern;
-       n_meas  = size(meas_pat,1);
-       vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
-       idx= idx+ n_meas;
-    end
-catch err
-   if strcmp(err.identifier, 'MATLAB:innerdim');
-       error(['measurement pattern not compatible with number' ...
-               'of electrodes for stimulation patter %d'],i);
-   else
-       rethrow(err);
-   end
-end
+vv = extract_volts( fwd_model.stimulation, pp, v_els);
 
 if ~strcmp(measurement, 'voltage')
     [vv,fctr] = convert_measurement(vv,img,measurement);
@@ -120,6 +103,35 @@ switch measurement
         vv = log10(fctr*vv);
 end
 
+function vv = extract_volts( stim, pp, v_els)
+try
+    if 0
+       % measured voltages from v
+       vv = zeros( pp.n_meas, 1 );
+       idx=0;
+       for i=1:pp.n_stim
+          meas_pat= stim(i).meas_pattern;
+          n_meas  = size(meas_pat,1);
+          vv( idx+(1:n_meas) ) = meas_pat*v_els(:,i);
+          idx= idx+ n_meas;
+       end
+    else
+       v_out = arrayfun(@(s,i) extractor(s, i, v_els), ...
+            stim, 1:pp.n_stim, 'UniformOutput', false);
+       vv = vertcat( v_out{:} );
+    end
+catch err
+   if strcmp(err.identifier, 'MATLAB:innerdim');
+       error(['measurement pattern not compatible with number' ...
+               'of electrodes for stimulation patter %d'],i);
+   else
+       rethrow(err);
+   end
+end
+
+function v_i = extractor(x, i, v_els)
+   meas_pat = x.meas_pattern;
+   v_i = meas_pat*v_els(:,i);
 
 function list = supported_measurement
    list = {'voltage'
@@ -135,7 +147,7 @@ function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
    vho = fwd_solve_1st_order(img);
    tst= [ 0.959567140078593; 0.422175237237900; 0.252450963869202];
-   unit_test_cmp('values',vho.meas(1:3),tst,1e-14);
+   unit_test_cmp('values',vho.meas(1:3),tst,1e-13);
 
    img.elem_data = 0.1 + rand(size(img.elem_data));
    vh = fwd_solve_1st_order(img);
