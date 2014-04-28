@@ -224,12 +224,12 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
   %   for each candidate point d,
   %      area AA = abd + acd + bcd
   %      d is in j if AA = A
-  for j= 1: size(ELEM,2)
+  idx = 1:size(ELEM,2);
+  z = reshape(NODE(3,ELEM),size(ELEM));
+  idx(min(z)>0 | max(z)<0) = [];
+  for j= idx
     xyz= NODE(:,ELEM(:,j))';
-    min_z= min(xyz(:,3)); max_z= max(xyz(:,3));
-    if (min_z>0 || max_z<0)
-        continue;
-    end
+
     min_x= min(xyz(:,1)); max_x= max(xyz(:,1));
     min_y= min(xyz(:,2)); max_y= max(xyz(:,2));
 
