@@ -507,24 +507,24 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
    end
 
 function J = update_jacobian(img, N, opt)   
-   if donew
-     img.fwd_model.measured_quantity = 'apparent_resistivity';
-     J = calc_jacobian(img);
-     return;
-   end
-   img = map_img(img, 'conductivity');   
    if(opt.verbose > 1)
       try J_str = func2str(img.fwd_model.jacobian);
       catch J_str = img.fwd_model.jacobian;
       end
       fprintf('    calc Jacobian J(x) (%s,', J_str);
    end
-   % scaling if we are working in something other than direct conductivity
-   S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
-   % finalize the jacobian
-   % Note that if a normalization (i.e. apparent_resistivity) has been applied
-   % to the measurements, it needs to be applied to the Jacobian as well!
-   J = N * calc_jacobian( img ) * S;
+%DIE    if donew
+%DIE      img.fwd_model.measured_quantity = 'apparent_resistivity';
+     J = calc_jacobian(img);
+%DIE    else
+%DIE      img = map_img(img, 'conductivity');   
+%DIE      % scaling if we are working in something other than direct conductivity
+%DIE      S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
+%DIE      % finalize the jacobian
+%DIE      % Note that if a normalization (i.e. apparent_resistivity) has been applied
+%DIE      % to the measurements, it needs to be applied to the Jacobian as well!
+%DIE      J = N * calc_jacobian( img ) * S;
+%DIE    end
    if opt.verbose > 1
       fprintf(' %d DoF, %d meas, %s)\n', size(J,2)-length(opt.elem_fixed), size(J,1), func2str(opt.calc_jacobian_scaling_func));
    end
@@ -647,18 +647,9 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
 % also used by the line search as opt.line_search_dv_func
 function [dv, opt] = update_dv_core(img, data0, N, opt)
    img = map_img(img, 'conductivity'); %DIE Why can't I move this?
-   if donew
-     img.fwd_model.measured_quantity = opt.meas_working;
-     data = fwd_solve(img);
-     dv = calc_difference_data(data, data0, img.fwd_model);
-   else
-     data = fwd_solve(img);
-     opt.fwd_solutions = opt.fwd_solutions +1;
-     data0 = map_meas(data0, 'voltage', N);
-     dv = calc_difference_data(data, data0, img.fwd_model);
-     dv = map_meas(dv, opt.meas_working, N);
-     dv = dv.meas;
-   end
+   img.fwd_model.measured_quantity = opt.meas_working;
+   data = fwd_solve(img);
+   dv = calc_difference_data(data, data0, img.fwd_model);
    err_if_inf_or_nan(dv, 'dv out');
 
 function do = donew; do =1;
@@ -769,16 +760,16 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %   end
 
 function imdl = stupid_model_translation(opt, imdl)
+  imdl.fwd_model.measured_quantity = opt.meas_working;
   if donew
-    imdl.fwd_model.measured_quantity = opt.meas_working;
   else
     % we're okay thanks...
   end
 
 function data0 = stupid_data_translation(opt, data0, N)
+  data0 = map_meas(data0, opt.meas_working, N);
 
   if donew
-    data0 = map_meas(data0, opt.meas_working, N);
   else
     %  nothing
   end
