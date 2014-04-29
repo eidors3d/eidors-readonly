@@ -65,29 +65,12 @@ else
    nparam= e;
 end
 
-if 0
-   J = zeros( pp.n_meas, nparam );
-   idx=0;
-   for j= 1:pp.n_stim
-      meas_pat= fwd_model.stimulation(j).meas_pattern;
-      n_meas  = size(meas_pat,1);
-      DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
-      J( idx+(1:n_meas),: ) = meas_pat*DEj;
-      idx= idx+ n_meas;
+J = assemble_J(pp, nparam, DE, fwd_model.stimulation);
+if DEBUG
+   Jo= assemble_J_old(pp, nparam, DE, fwd_model.stimulation);
+   if norm(J-Jo,'fro')>1e-13;
+      error('EIDORS:InternalValidation','assemble_J versions not match');
    end
-else
-% Faster implementation of previous code
-   J_out = arrayfun(@(s,j) ...
-           s.meas_pattern * reshape(DE(:,j,:),pp.n_elec,[]), ...
-        fwd_model.stimulation, 1:pp.n_stim, 'UniformOutput', false);
-   J = vertcat(J_out{:});
-end
-
-if 0 % do like this
-       v_out = arrayfun(@(s,i) ...
-               s.meas_pattern * v_els(:,i), ...
-            stim, 1:pp.n_stim, 'UniformOutput', false);
-       vv = vertcat( v_out{:} );
 end
 
 if 0
@@ -136,8 +119,23 @@ if pp.normalize
    J= J ./ (data.meas(:)*ones(1,nparam));
 end
 
-% This was a correction for the missing minus above
-% J= -J;
+function J = assemble_J_old(pp, nparam, DE, stim)
+   J = zeros( pp.n_meas, nparam );
+   idx=0;
+   for j= 1:pp.n_stim
+      meas_pat= stim(j).meas_pattern;
+      n_meas  = size(meas_pat,1);
+      DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
+      J( idx+(1:n_meas),: ) = meas_pat*DEj;
+      idx= idx+ n_meas;
+   end
+
+% Faster implementation of previous code
+function J = assemble_J(pp, nparam, DE, stim)
+   J_out = arrayfun(@(s,j) ...
+           s.meas_pattern * reshape(DE(:,j,:),pp.n_elec,[]), ...
+        stim, 1:pp.n_stim, 'UniformOutput', false);
+   J = vertcat(J_out{:});
 
 % DE_{i,j,k} is dV_i,j / dS_k
 %  where V_i is change in voltage on electrode i for
@@ -182,6 +180,8 @@ else
       end
    end
 end
+
+function d = DEBUG; d=false;
 
 function J = apply_chain_rule(J, img, org_physics)
 
