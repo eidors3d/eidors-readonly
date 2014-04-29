@@ -536,7 +536,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
            fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
         end
      end
-     disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
+%DIE     disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
    end
 
 function J = update_jacobian(img, N, opt)   
