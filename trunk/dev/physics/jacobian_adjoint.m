@@ -69,7 +69,7 @@ if DEBUG
    end
 end
 
-if 0
+if 1
 idx= 1:size(s_mat.E,1);
 idx( fwd_model.gnd_node ) = [];
    [Q,R] = qr(pp.QQ(idx,:),0);
@@ -79,8 +79,20 @@ idx( fwd_model.gnd_node ) = [];
    sv= zeros(n, sum(rnotzeros) );
    sv( idx,:) = s_mat.E(idx,idx) \ Q;
    DE = jacobian_calc(pp, zi2E, FC, sv);
-   J = assemble_J(pp, nparam, DE, fwd_model.stimulation);
-keyboard
+%  pp.n_stim = size(sv,2);
+%  Jn = assemble_J_old(pp, nparam, DE, fwd_model.stimulation);
+   J = zeros( pp.n_meas, nparam );
+   idx=0;
+   for j= 1:pp.n_stim
+      meas_pat= fwd_model.stimulation(j).meas_pattern;
+      n_meas  = size(meas_pat,1);
+%     DEj = reshape( DE(:,j,:), pp.n_elec, [] );
+      DEj = 0; for k = 1:size(R,1); DEj = DEj + full(R(k,j))* DE(k,:,:); end
+%keyboard
+      DEj = reshape( DEj, pp.n_elec, [] );
+      J( idx+(1:n_meas),: ) = meas_pat*DEj;
+      idx= idx+ n_meas;
+   end
 end
 
 if ~strcmp(org_physics,'conductivity')
@@ -114,7 +126,7 @@ function J = assemble_J_old(pp, nparam, DE, stim)
    for j= 1:pp.n_stim
       meas_pat= stim(j).meas_pattern;
       n_meas  = size(meas_pat,1);
-      DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
+      DEj = reshape( DE(j,:,:), pp.n_elec, [] );
       J( idx+(1:n_meas),: ) = meas_pat*DEj;
       idx= idx+ n_meas;
    end
@@ -122,7 +134,7 @@ function J = assemble_J_old(pp, nparam, DE, stim)
 % Faster implementation of previous code
 function J = assemble_J(pp, nparam, DE, stim)
    J_out = arrayfun(@(s,j) ...
-           s.meas_pattern * reshape(DE(:,j,:),pp.n_elec,[]), ...
+           s.meas_pattern * reshape(DE(j,:,:),pp.n_elec,[]), ...
         stim, 1:pp.n_stim, 'UniformOutput', false);
    J = vertcat(J_out{:});
 
@@ -141,21 +153,21 @@ FC_sv   = FC * sv;
 n_stim = size(sv,2);
 
 if ~do_c2f
-   DE= zeros(pp.n_elec, n_stim, pp.n_elem);
+   DE= zeros(n_stim, pp.n_elec, pp.n_elem);
    for k= 1:pp.n_elem
        idx= (d-1)*(k-1)+1 : (d-1)*k;
        dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
-       DE(:,:,k)= dq;
+       DE(:,:,k)= dq.';
    end
 else
-   DE= zeros(pp.n_elec, n_stim, size(c2f,2) );
+   DE= zeros(n_stim, pp.n_elec, size(c2f,2) );
    if 0 % Code is slower
       de= pp.n_elem * (d-1);
       for k= 1:size(c2f,2);
           chg_col = kron( c2f(:,k), ones(d-1,1));
           dDD_dEj = spdiags(chg_col,0, de, de);
           dq= zi2E_FCt * dDD_dEj * FC_sv;
-          DE(:,:,k)= dq;
+          DE(:,:,k)= dq.';
       end
    else
       de= pp.n_elem * (d-1);
@@ -166,12 +178,12 @@ else
           ffd= (d-1)*ff1 + (-(d-2):0)'*ones(1,length(ff));
           dDD_dEj = spdiags(c2f(ff1,k), 0, lff, lff);
           dq= zi2E_FCt(:,ffd) * dDD_dEj * FC_sv(ffd,:);
-          DE(:,:,k)= dq;
+          DE(:,:,k)= dq.';
       end
    end
 end
 
-function d = DEBUG; d=false;
+function d = DEBUG; d=true;
 
 function J = apply_chain_rule(J, img, org_physics)
 
