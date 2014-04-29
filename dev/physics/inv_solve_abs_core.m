@@ -265,8 +265,8 @@ if isfield(inv_model, 'fwd_model') && ...
    bg = mean(img.(opt.elem_working).elem_data);
    img.(opt.elem_working).elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
-      bg = map_img(bg, img.current_physics, 'resistivity'); %BG: Why???
-      fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
+      bg_tmp = map_img(bg, opt.elem_working, 'resistivity');
+      fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg_tmp);
       disp('    TODO this fix should be moved to mk_image()');
    end
 end
