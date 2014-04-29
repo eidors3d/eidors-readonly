@@ -87,8 +87,8 @@ idx( fwd_model.gnd_node ) = [];
       meas_pat= fwd_model.stimulation(j).meas_pattern;
       n_meas  = size(meas_pat,1);
 %     DEj = reshape( DE(:,j,:), pp.n_elec, [] );
-      DEj = 0; for k = 1:size(R,1); DEj = DEj + full(R(k,j))* DE(k,:,:); end
-%keyboard
+%     DEj = 0; for k = 1:size(R,1); DEj = DEj + full(R(k,j))* DE(k,:,:); end
+      DEj = R(:,j).' * reshape(DE,size(sv,2),[]);
       DEj = reshape( DEj, pp.n_elec, [] );
       J( idx+(1:n_meas),: ) = meas_pat*DEj;
       idx= idx+ n_meas;
