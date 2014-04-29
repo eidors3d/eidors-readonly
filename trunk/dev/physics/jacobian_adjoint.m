@@ -53,7 +53,10 @@ zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 FC= system_mat_fields( fwd_model );
 
 
-% TODO: I think this is a bug
+if isfield(fwd_model,'coarse2fine') && ~strcmp(org_physics, 'conductivity');
+   error('EIDORS can''t understand coarse2fine without conductivity (yet)');
+end
+
 if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
    DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
    nparam= size(fwd_model.coarse2fine,2);
@@ -62,20 +65,48 @@ else
    nparam= e;
 end
 
-J = zeros( pp.n_meas, nparam );
-idx=0;
-for j= 1:pp.n_stim
-   meas_pat= fwd_model.stimulation(j).meas_pattern;
-   n_meas  = size(meas_pat,1);
-   DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
-   J( idx+(1:n_meas),: ) = meas_pat*DEj;
-   idx= idx+ n_meas;
+if 0
+   J = zeros( pp.n_meas, nparam );
+   idx=0;
+   for j= 1:pp.n_stim
+      meas_pat= fwd_model.stimulation(j).meas_pattern;
+      n_meas  = size(meas_pat,1);
+      DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
+      J( idx+(1:n_meas),: ) = meas_pat*DEj;
+      idx= idx+ n_meas;
+   end
+else
+% Faster implementation of previous code
+   J_out = arrayfun(@(s,j) ...
+           s.meas_pattern * reshape(DE(:,j,:),pp.n_elec,[]), ...
+        fwd_model.stimulation, 1:pp.n_stim, 'UniformOutput', false);
+   J = vertcat(J_out{:});
+end
+
+if 0 % do like this
+       v_out = arrayfun(@(s,i) ...
+               s.meas_pattern * v_els(:,i), ...
+            stim, 1:pp.n_stim, 'UniformOutput', false);
+       vv = vertcat( v_out{:} );
 end
 
 if 0
+idx= 1:size(s_mat.E,1);
+idx( fwd_model.gnd_node ) = [];
    [Q,R] = qr(pp.QQ(idx,:),0);
+   rnotzeros = any(R~=0,2);
+   Q= Q(:,rnotzeros);
+   R= R(rnotzeros,:);
+   sv= zeros(n, sum(rnotzeros) );
    sv( idx,:) = s_mat.E(idx,idx) \ Q;
-   DE = jacobian_calc(pp, zi2E, FC, sv);
+   DE= zeros(pp.n_elec, sum(rnotzeros), pp.n_elem);
+zi2E_FCt = zi2E * FC';
+FC_sv   = FC * sv;
+   for k= 1:pp.n_elem
+       idx= (d-1)*(k-1)+1 : (d-1)*k;
+       dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
+       DE(:,:,k)= dq;
+   end
    nparam= e;
 keyboard
 end
