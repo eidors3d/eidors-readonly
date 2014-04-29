@@ -53,10 +53,6 @@ zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 FC= system_mat_fields( fwd_model );
 
 
-if isfield(fwd_model,'coarse2fine') && ~strcmp(org_physics, 'conductivity');
-   error('EIDORS can''t understand coarse2fine without conductivity (yet)');
-end
-
 if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
    DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
    nparam= size(fwd_model.coarse2fine,2);
@@ -82,15 +78,8 @@ idx( fwd_model.gnd_node ) = [];
    R= R(rnotzeros,:);
    sv= zeros(n, sum(rnotzeros) );
    sv( idx,:) = s_mat.E(idx,idx) \ Q;
-   DE= zeros(pp.n_elec, sum(rnotzeros), pp.n_elem);
-zi2E_FCt = zi2E * FC';
-FC_sv   = FC * sv;
-   for k= 1:pp.n_elem
-       idx= (d-1)*(k-1)+1 : (d-1)*k;
-       dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
-       DE(:,:,k)= dq;
-   end
-   nparam= e;
+   DE = jacobian_calc(pp, zi2E, FC, sv);
+   J = assemble_J(pp, nparam, DE, fwd_model.stimulation);
 keyboard
 end
 
@@ -149,16 +138,17 @@ do_c2f = ( nargin==5 );
 
 zi2E_FCt = zi2E * FC';
 FC_sv   = FC * sv;
+n_stim = size(sv,2);
 
 if ~do_c2f
-   DE= zeros(pp.n_elec, pp.n_stim, pp.n_elem);
+   DE= zeros(pp.n_elec, n_stim, pp.n_elem);
    for k= 1:pp.n_elem
        idx= (d-1)*(k-1)+1 : (d-1)*k;
        dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
        DE(:,:,k)= dq;
    end
 else
-   DE= zeros(pp.n_elec, pp.n_stim, size(c2f,2) );
+   DE= zeros(pp.n_elec, n_stim, size(c2f,2) );
    if 0 % Code is slower
       de= pp.n_elem * (d-1);
       for k= 1:size(c2f,2);
