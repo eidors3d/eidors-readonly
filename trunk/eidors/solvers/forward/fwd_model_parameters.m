@@ -74,9 +74,7 @@ end
 
 if p>0
   stim = fwd_model.stimulation;
-  [QQ, n_meas] = calc_QQ_fast(N2E, stim, p);
-  pp.QQ = QQ;
-  pp.n_meas   = n_meas;
+  [pp.QQ, pp.n_meas] = calc_QQ_fast(N2E, stim, p);
 end
 
 % pack into a parameter return list
