@@ -9,7 +9,6 @@ function J= jacobian_adjoint( fwd_model, img)
 %                                  a Jacobian for normalized
 %                                  difference measurements
 
-
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
@@ -54,6 +53,7 @@ zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 FC= system_mat_fields( fwd_model );
 
 
+% TODO: I think this is a bug
 if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
    DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
    nparam= size(fwd_model.coarse2fine,2);
@@ -70,6 +70,14 @@ for j= 1:pp.n_stim
    DEj = reshape( DE(:,j,:), pp.n_elec, nparam );
    J( idx+(1:n_meas),: ) = meas_pat*DEj;
    idx= idx+ n_meas;
+end
+
+if 0
+   [Q,R] = qr(pp.QQ(idx,:),0);
+   sv( idx,:) = s_mat.E(idx,idx) \ Q;
+   DE = jacobian_calc(pp, zi2E, FC, sv);
+   nparam= e;
+keyboard
 end
 
 if ~strcmp(org_physics,'conductivity')
@@ -246,6 +254,11 @@ function list = supported_measurement
            };
       
 function do_unit_test
+   J = jacobian_adjoint(mk_image(mk_common_model('a2c2',16),1));
+   tst = [-0.000866389089603  -0.004906480672346   0.001753326247967];
+   unit_test_cmp('Basic J', tst, J([2,22,222]), 1e-13);
+
+
    fmdl.type = 'fwd_model';
    fmdl.nodes = [0 0; 0 1; 1 1; 1 0; .5 .5];
    fmdl.elems = [1 2 5; 2 5 3; 3 5 4; 4 5 1];
@@ -263,7 +276,12 @@ function do_unit_test
    fmdl.jacobian = @jacobian_adjoint;
    fmdl.normalize_measurements = 0;
    fmdl.gnd_node = 3;
+
+% simple image   
 %    show_fem(fmdl);
+   J= jacobian_adjoint( mk_image( fmdl,1) );
+   tst = [-1,0,0,-1;0,-1,-1,0;0,1,1,0;1,0,0,1];
+   unit_test_cmp('Basic J', tst/2, J, 1e-13);
  
    fctr= apparent_resistivity_factor(fmdl);  
    elem_data_init= rand(size(fmdl.elems,1),1);
