@@ -135,10 +135,20 @@ switch command
       eidors_objects.cache_debug_enable = 0;
       eidors_objects.cache_debug_enabled_on = [];
       
-   case {'clear_all','clear'}
+   case 'clear_all'
       [objid, times, sizes, prios, priidx] = get_names_times;
       remove_objids( objid, sizes,  1:length(sizes) );
 
+   case 'clear'
+     switch nargin
+       case 2
+        eidors_cache('clear_name',limit);
+       case 1
+        eidors_cache('clear_all');
+       otherwise
+         error('Wrong number of inputs');
+     end
+      
    case 'cache_size'
       if nargin==2
       if ischar(limit); limit= str2num(limit); end
@@ -160,7 +170,6 @@ switch command
       else
          eidors_objects.eidors_path = varargin{1};
       end
-      
    case {'disable' 'off'}
        if nargin == 1
            eidors_objects.cache_enable = 0;
@@ -255,15 +264,21 @@ switch command
       end
       eidors_objects.cache_priority = varargout{1};
 
-   case 'show_objs'
+   case {'list', 'show_objs'}
       [objid, times, sizes, prios, priidx, names] = get_names_times;
-      for i=1:length(times)
-         fprintf('t=%9.7f b=%9.0d p=%02d, i=%03d: %s { ', rem(times(i),1), ... %today
-             sizes(i), prios(i), priidx(i), objid{i} );
-         fprintf('%s ', names{i}{:});
-         fprintf('}\n');
+      
+      idx = 1:length(times);
+      if nargin == 2
+        idx = find(arrayfun(@(c) ismember(limit, c{:}), names));
+      end
+      
+      for i=idx
+         fprintf('%s b=%9.0d p=%02d, i=%05d: %s { %s }\n', datestr(times(i),'yyyy-mm-dd HH:MM:SS.FFF'), ... %today
+             sizes(i), prios(i), priidx(i), objid{i}, names{i}{:} );
       end
 
+      
+      
    case 'clear_max'
       if ischar(limit); limit= str2num(limit); end
 % This will remove just in order of priidx.
