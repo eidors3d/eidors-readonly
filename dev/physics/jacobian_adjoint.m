@@ -276,12 +276,12 @@ function str = supported_physics
         
 function list = supported_measurement
    list = {'voltage'
-           'abs_voltage'
            'log_voltage'
            'log10_voltage'
            'apparent_resistivity'
            'log_apparent_resistivity'
            'log10_apparent_resistivity'
+           'abs_voltage'
            };
       
 function do_unit_test
@@ -334,24 +334,16 @@ function do_unit_test
    J_test(:,:,1,4)= fctr*J_init;
    J_test(:,:,1,5)= spdiag(log(diag(fctr))./Voltage_estimated)*J_init;
    J_test(:,:,1,6)= spdiag(log(diag(fctr))./(log(10)*Voltage_estimated))*J_init;
-   J_test(:,:,2,1)= repmat(-elem_data_init'.^2,size(J_init,1),1).*J_init;
-   J_test(:,:,2,2)= repmat(-elem_data_init'.^2,size(J_init,1),1).*(spdiag(1./(Voltage_estimated))*J_init);
-   J_test(:,:,2,3)= repmat(-elem_data_init'.^2,size(J_init,1),1).*(spdiag(1./(log(10)*Voltage_estimated))*J_init);
-   J_test(:,:,2,4)= repmat(-elem_data_init'.^2,size(J_init,1),1).*(fctr*J_init);
-   J_test(:,:,2,5)= repmat(-elem_data_init'.^2,size(J_init,1),1).*(spdiag(log(diag(fctr))./(Voltage_estimated))*J_init);
-   J_test(:,:,2,6)= repmat(-elem_data_init'.^2,size(J_init,1),1).*(spdiag(log(diag(fctr))./(log(10)*Voltage_estimated))*J_init);
-   J_test(:,:,3,1)= repmat(elem_data_init',size(J_init,1),1).*J_init;
-   J_test(:,:,3,2)= repmat(elem_data_init',size(J_init,1),1).*(spdiag(1./(Voltage_estimated))*J_init);
-   J_test(:,:,3,3)= repmat(elem_data_init',size(J_init,1),1).*(spdiag(1./(log(10)*Voltage_estimated))*J_init);
-   J_test(:,:,3,4)= repmat(elem_data_init',size(J_init,1),1).*(fctr*J_init);
-   J_test(:,:,3,5)= repmat(elem_data_init',size(J_init,1),1).*(spdiag(log(diag(fctr))./(Voltage_estimated))*J_init);
-   J_test(:,:,3,6)= repmat(elem_data_init',size(J_init,1),1).*(spdiag(log(diag(fctr))./(log(10)*Voltage_estimated))*J_init);
-   J_test(:,:,4,1)= repmat(-elem_data_init',size(J_init,1),1).*J_init;
-   J_test(:,:,4,2)= repmat(-elem_data_init',size(J_init,1),1).*(spdiag(1./(Voltage_estimated))*J_init);
-   J_test(:,:,4,3)= repmat(-elem_data_init',size(J_init,1),1).*(spdiag(1./(log(10)*Voltage_estimated))*J_init);
-   J_test(:,:,4,4)= repmat(-elem_data_init',size(J_init,1),1).*(fctr*J_init);
-   J_test(:,:,4,5)= repmat(-elem_data_init',size(J_init,1),1).*(spdiag(log(diag(fctr))./Voltage_estimated)*J_init);
-   J_test(:,:,4,6)= repmat(-elem_data_init',size(J_init,1),1).*(spdiag(log(diag(fctr))./(log(10)*Voltage_estimated))*J_init);
+   J_test(:,:,1,7)= spdiag(sign(Voltage_estimated))*J_init;
+
+   factor2= repmat(-elem_data_init'.^2,size(J_init,1),1);
+   factor3= repmat(elem_data_init',size(J_init,1),1);
+   factor4= repmat(-elem_data_init',size(J_init,1),1);
+   for i=1:size(J_test,4);
+      J_test(:,:,2,i)= factor2.*J_test(:,:,1,i);
+      J_test(:,:,3,i)= factor3.*J_test(:,:,1,i);
+      J_test(:,:,4,i)= factor4.*J_test(:,:,1,i);
+   end
 
    tol= 1e-5;
    for j = 1:length(phys)
