@@ -93,6 +93,15 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    If meas_input == meas_working no conversions take
 %    place. The normalization factor 'N' is calculated
 %    if 'apparent_resistivity' is used.
+%   calc_homogeneous_meas_fit            (default ...)
+%    Fit the measurements to a homogeneous model, the
+%    value is used as the starting point for the
+%    iterative solver. The value or function in
+%     inv_model.jacobian_bkgnd.value or .func
+%    will be used unless calc_homogeneous_meas_fit=1.
+%    If no inv_model.jacobian_bkgnd is found, the
+%    homogeneous background will be estimated by this
+%    method.
 %   calc_jacobian_scaling_func           (default ...)
 %    See elem_working for defaults. This is used to
 %    apply the chain rule to a Jacobian calculated for
@@ -241,16 +250,9 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img = do_
 
 %--------------------------
 opt = parse_options(inv_model);
-inv_model = stupid_model_translation(opt, inv_model); % TODO rm -- transitional function to DIE
-%if opt.do_starting_estimate
-%    img = initial_estimate( inv_model, data0 ); % TODO
-%%%    AB->NL this is Nolwenn's homogeneous estimate...
-%%%    calc_background_resistivity is my version of this code
-%%%    that is working for my data set
-%else
+inv_model = stupid_model_translation(opt, inv_model, data0); % TODO rm -- transitional function to DIE
 [inv_model, opt] = append_c2f_background(inv_model, opt);
 img = mk_image( inv_model );
-%img = calc_jacobian_bkgnd( inv_model );
 % TODO does calc_jacobian_bkgnd ignore 'physics' right now.. that might screw things up pretty good!
 % img = physics_param_mapper(img); % copy data from whatever 'physics' to img.params
 % mk_image doesn't handle the c2f
@@ -293,7 +295,7 @@ residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
 if opt.verbose > 1
    fprintf('  iteration start up\n')
 end
-dxp = 0;
+dxp = 0; % previous step's slope was... nothing
 while 1
   % update RtR, if required (depends on prior)
 %   img = physics_param_mapper(img);
@@ -725,75 +727,12 @@ function residual = GN_residual(dv, de, W, hp2, RtR)
 function residual = meas_residual(dv, de, W, hp2, RtR)
    residual = norm(dv);
 
-%function img = initial_estimate( imdl, data )
-%   img = calc_jacobian_bkgnd( imdl );
-%   vs = fwd_solve(img);
-%
-%   if isstruct(data)
-%      data = data.meas;
-%   else
-%     meas_select = [];
-%     try
-%        meas_select = imdl.fwd_model.meas_select;
-%     end
-%     if length(data) == length(meas_select)
-%        data = data(meas_select);
-%     end
-%   end
-%
-%   pf = polyfit(data,vs.meas,1);
-%
-%   % create elem_data
-%   img = physics_data_mapper(img);
-%
-%   if isfield(img.fwd_model,'coarse2fine');
-%      % TODO: the whole coarse2fine needs work here.
-%      %   what happens if c2f doesn't cover the whole region
-%
-%      % TODO: the two cases are very different. c2f case should match other
-%      nc = size(img.fwd_model.coarse2fine,2);
-%      img.elem_data = mean(img.elem_data)*ones(nc,1)*pf(1);
-%   else
-%      img.elem_data = img.elem_data*pf(1);
-%   end
-%
-%   % remove elem_data
-%%   img = physics_data_mapper(img,1);
-%
-%function [img opt] = update_step(org, next, dx, fmin,res, opt)
-%   if isfield(opt, 'update_func')
-%      [img opt] = feval(opt.update_func,org,next,dx,fmin,res,opt);
-%   else
-%      img = next;
-%   end
-%
-% function bg = calc_background_resistivity(fmdl, va)
-%   % have a look at what we've created
-%   % compare data to homgeneous (how good is the model?)
-%   % NOTE background conductivity is set by matching amplitude of
-%   % homogeneous data against the measurements to get rough matching
-%   if(opt.verbose>1)
-%     fprintf('est. background resistivity\n');
-%   end
-%   cache_obj = { fmdl, va };
-%   BACKGROUND_R = eidors_obj('get-cache', cache_obj, 'calc_background_resistivity');
-%   if isempty(BACKGROUND_R);
-%     imgh = mk_image(fmdl, 1); % conductivity = 1 S/m
-%     vh = fwd_solve(imgh);
-%     % take the best fit of the data
-%     BACKGROUND_R = vh.meas \ va; % 32 Ohm.m ... agrees w/ Wilkinson's papers
-%     % update cache
-%     eidors_obj('set-cache', cache_obj, 'calc_background_resistivity', BACKGROUND_R);
-%   else
-%     if(opt.verbose > 1)
-%       fprintf('  ... cache hit\n');
-%     end
-%   end
-%   if(opt.verbose > 1)
-%     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
-%   end
-
-function imdl = stupid_model_translation(opt, imdl)
+function imdl = stupid_model_translation(opt, imdl, data0)
+  if opt.calc_homogeneous_meas_fit
+    imdl.jacobian_bkgnd = struct;
+    imdl.fwd_model.measured_quantity = opt.meas_input;
+    imdl.jacobian_bkgnd.(opt.elem_working).value = calc_homogeneous_meas_fit(imdl.fwd_model, data0, opt.elem_working);
+  end
   imdl.fwd_model.measured_quantity = opt.meas_working;
   if donew
     if isfield(imdl.jacobian_bkgnd, 'value') % TODO: do this smarter
@@ -960,6 +899,16 @@ function opt = parse_options(imdl)
    if opt.line_search_args.plot ~= 0
       disp('  line search plots (per iteration) are enabled, to disable them set');
       disp('    inv_model.parameters.line_search_args.plot=0');
+   end
+
+   % initial estimate
+   % create an initial estimate if one is not provided or if we want to replace
+   % it with a homogeneous estimate fitting the measurements
+   if ~isfield(opt, 'calc_homogeneous_meas_fit')
+     opt.calc_homogeneous_meas_fit = 0;
+   end
+   if ~isfield(imdl, 'jacobian_bkgnd')
+     opt.calc_homogeneous_meas_fit = 1;
    end
 
    % background
@@ -1303,6 +1252,7 @@ imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 imdl.parameters.elem_working = 'log_conductivity';
 imdl.parameters.meas_working = 'apparent_resistivity';
+imdl.parameters.calc_homogeneous_meas_fit = 1;
 imdl.inv_solve.calc_solution_error = 0;
 imdl.parameters.verbose = 0;
 %show_fem(imdl.fwd_model);
