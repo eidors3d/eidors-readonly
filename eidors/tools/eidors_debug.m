@@ -37,15 +37,20 @@ end
 
 switch command
    case 'on'
+      if nargin ==1 || strcmp(fstr, 'all')
+         eidors_cache('debug_on');
+      end
       if ~eidors_debug('query',fstr);
-         eidors_objects.debug_enabled_on{end+1} = fstr;
+         eidors_cache('debug_on', fstr);
       end
    case 'off'
       if nargin==1 || strcmp(fstr, 'all')
-         eidors_objects.debug_enabled_on = {};
+         eidors_cache('debug_off');
       else
          idx = strcmp(eidors_objects.debug_enabled_on, fstr);
-         eidors_objects.debug_enabled_on(idx) = [];
+         try
+           eidors_objects.debug_enabled_on(idx) = [];
+         end
       end
    case 'query'
       idx = strcmp(eidors_objects.debug_enabled_on, fstr);

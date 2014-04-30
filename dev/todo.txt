@@ -26,6 +26,8 @@
 
 
 =======
+- revise debug interface -- duplication between eidors_cache and eidors_debug
+
 - think about function specific verbose?
 
 - Data pathway
