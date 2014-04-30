@@ -27,7 +27,7 @@ measurement = input_check(img);
 
 org_physics = img.current_physics;
 % all calcs use conductivity
-img = convert_units(img, 'conductivity');
+img = convert_img_units(img, 'conductivity');
 
 img.elem_data = check_elem_data(img);
 
@@ -35,18 +35,18 @@ fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
 
- J= do_jacobian_calculation( img, pp, fwd_model);
+ J= do_jacobian_calculation( img, pp, fwd_model, org_physics);
 %J= do_jacobian_calculation_qr( img, pp, fwd_model);
 
 
-if ~strcmp(org_physics,'conductivity')
-    J = apply_chain_rule(J, img, org_physics);
-    if isfield(fwd_model, 'coarse2fine') && ...
-          size(img.elem_data,1)==size(fwd_model.coarse2fine,1)
-            J=J*fwd_model.coarse2fine;
-            nparam = size(fwd_model.coarse2fine,2);
-    end
-end
+% if ~strcmp(org_physics,'conductivity')
+%     J = apply_chain_rule(J, img, org_physics);
+%     if isfield(fwd_model, 'coarse2fine') && ...
+%           size(img.elem_data,1)==size(fwd_model.coarse2fine,1)
+%             J=J*fwd_model.coarse2fine;
+%             nparam = size(fwd_model.coarse2fine,2);
+%     end
+% end
 
 %restore img to original condition
 if ~strcmp(org_physics,'conductivity') || isfield(img, org_physics)
@@ -64,7 +64,7 @@ if pp.normalize
    J= J ./ (data.meas(:)*ones(1,nparam));
 end
 
-function J= do_jacobian_calculation( img, pp, fwd_model);
+function J= do_jacobian_calculation( img, pp, fwd_model, org_physics);
 
    s_mat= calc_system_mat( img );
 
@@ -79,9 +79,18 @@ function J= do_jacobian_calculation( img, pp, fwd_model);
    zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 
    FC= system_mat_fields( fwd_model );
+   do_c2f = false;
+   if isfield(fwd_model,'coarse2fine') 
+     do_c2f = true;
+   end
 
-   if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
-      DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
+   if do_c2f
+      c2f = fwd_model.coarse2fine;
+      if ~strcmp(org_physics, 'conductivity')
+         c2f = spdiag(chain_rule_factor(img, org_physics)) * c2f;
+      end
+       
+      DE = jacobian_calc(pp, zi2E, FC, sv, c2f);
       nparam= size(fwd_model.coarse2fine,2);
    else
       DE = jacobian_calc(pp, zi2E, FC, sv);
@@ -95,6 +104,11 @@ function J= do_jacobian_calculation( img, pp, fwd_model);
       if norm(J-Jo,'fro')>1e-13;
          error('EIDORS:InternalValidation','assemble_J versions not match');
       end
+   end
+   
+   % apply chain rule (already done for c2f)
+   if ~do_c2f && ~strcmp(org_physics, 'conductivity')
+     J = apply_chain_rule(J, img, org_physics);
    end
 
 % New function which tries to qr decompose so we don't do
@@ -249,10 +263,9 @@ else
    end
 end
 
-function d = DEBUG; d=true;
+function d = DEBUG; d=false;
 
-function J = apply_chain_rule(J, img, org_physics)
-
+function dCond_dPhys = chain_rule_factor(img,org_physics)
 switch(org_physics)
     case 'resistivity'
         dCond_dPhys = -img.elem_data.^2;
@@ -264,7 +277,11 @@ switch(org_physics)
         error('not implemented yet')
 end
 
-J = J.*repmat(dCond_dPhys ,1,size(J,1))';
+
+function J = apply_chain_rule(J, img, org_physics)
+
+dCond_dPhys = chain_rule_factor(img, org_physics);
+J = J*spdiag(dCond_dPhys);
 
 function J = convert_measurement(J, img, measurement)
 switch measurement

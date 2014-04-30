@@ -50,7 +50,7 @@ end
 warning(ws.state,'EIDORS:OverwritingData');
 
 % the rest of the calculations require a conductivity image
-img = convert_units(img, 'conductivity');
+img = convert_img_units(img, 'conductivity');
 
 % System matrix and its parameters
 pp = fwd_model_parameters( fwd_model );

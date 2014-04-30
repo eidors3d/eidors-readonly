@@ -29,7 +29,7 @@ end
 
 org_physics = img.current_physics;
 % all calcs use conductivity
-img = convert_units(img, 'conductivity');
+img = convert_img_units(img, 'conductivity');
 
 img.elem_data = check_elem_data(img);
 

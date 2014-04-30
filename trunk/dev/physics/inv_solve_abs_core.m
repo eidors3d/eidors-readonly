@@ -195,26 +195,6 @@ function img= inv_solve_abs_core( inv_model, data0);
 
 % $Id$
 
-%AB->BG: The key item to discuss is my attempt to attack the
-% parameterization issue. This is by no means a generic
-% solution but it does present a very clean interface to the
-% user. I recognize this implementation does not quite fit
-% with your view of how parameterization should exist in the
-% rest of EIDORS. What are your thougths? I am open to any
-% solution/refactoring that would maintain the same
-% functionality/interface here or provide a clean
-% equivalent.
-
-%AB->BG: It is my intent to not expose this function
-% directly but to have a inv_solve_abs_GN() wrapper.
-% I have constructed this with the intent that it is trivial
-% to implement a CG solver using this framework. Hopefully,
-% I'll get to that shortly. This would result in a pair of
-% inv_solve_abs_CG and inv_solve_abs_CG_log wrapper function.
-% This file is a bit of a monster but it is removing a bit
-% of cut and paste that was expanding rapidly.
-% Do you have thoughts about this approach?
-
 %AB->BG: The UNIT_TEST is working. It does not seem to be
 % nearly challenging enough to show much of the odd behaviour
 % I spent two months debugging in the fall. I am not sure
@@ -267,7 +247,7 @@ if isfield(inv_model, 'fwd_model') && ...
    bg = mean(img.(opt.elem_working).elem_data);
    img.(opt.elem_working).elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
-      bg_tmp = map_img(bg, opt.elem_working, 'resistivity');
+      bg_tmp = convert_img_units(bg, opt.elem_working, 'resistivity');
       fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg_tmp);
       disp('    TODO this fix should be moved to mk_image()');
    end
@@ -284,7 +264,7 @@ N = init_normalization(inv_model.fwd_model, opt);
 
 % map data and measurements to working types
 %  convert elem_data
-% img = map_img(img, opt.elem_working); %DIE
+% img = convert_img_units(img, opt.elem_working); %DIE
 
 data0 = stupid_data_translation(opt, data0, N); % TODO rm -- transitional function to DIE
 
@@ -349,7 +329,7 @@ end
 % convert data for output
 img = physics_data_mapper(img);
 img = rmfield(img, opt.elem_working);
-img = map_img(img, opt.elem_output);
+img = convert_img_units(img, opt.elem_output);
 img.(opt.elem_output).elem_data = [];
 img = physics_data_mapper(img,1); % move data from img.elem_data to whatever 'physics'
 
@@ -512,7 +492,7 @@ function RtR = update_RtR(RtR, inv_model, k, img, opt)
    end
 
 function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
-%    img = map_img(img, opt.elem_working);
+%    img = convert_img_units(img, opt.elem_working);
    img = physics_param_mapper(img);
    inv_model.jacobian_backgnd = img;
    RtR = calc_RtR_prior( inv_model );
@@ -552,7 +532,7 @@ function J = update_jacobian(img, N, opt)
 %DIE      img.fwd_model.measured_quantity = 'apparent_resistivity';
      J = calc_jacobian(img);
 %DIE    else
-%DIE      img = map_img(img, 'conductivity');   
+%DIE      img = convert_img_units(img, 'conductivity');   
 %DIE      % scaling if we are working in something other than direct conductivity
 %DIE      S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
 %DIE      % finalize the jacobian
@@ -650,8 +630,8 @@ function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
   [dv, opt] = update_dv(dv, img, data0, N, opt, '(dv out-of-date)');
 
 function  de = update_de(de, img, img0, opt)
-%    img0 = map_img(img0, opt.elem_working);
-%    img  = map_img(img,  opt.elem_working);
+%    img0 = convert_img_units(img0, opt.elem_working);
+%    img  = convert_img_units(img,  opt.elem_working);
    img = physics_param_mapper(img);
    err_if_inf_or_nan(img0.params, 'de img0');
    err_if_inf_or_nan(img.params,  'de img');
@@ -682,7 +662,7 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
 
 % also used by the line search as opt.line_search_dv_func
 function [dv, opt] = update_dv_core(img, data0, N, opt)
-%    img = map_img(img, 'conductivity'); %DIE Why can't I move this?
+%    img = convert_img_units(img, 'conductivity'); %DIE Why can't I move this?
    img.fwd_model.measured_quantity = opt.meas_working;
    data = fwd_solve(img);
    dv = calc_difference_data(data, data0, img.fwd_model);
@@ -698,7 +678,12 @@ function show_fem_iter(k, img, inv_model, opt)
   if iscell(out)
      out = out{1};
   end
-  img = map_img(img, out);
+  img = physics_data_mapper(img);
+  img = convert_img_units(img, out);
+  img = rmfield(img, opt.elem_working);
+  img.(out).elem_data = [];
+  img = physics_data_mapper(img,1);
+  
   [img, opt] = strip_c2f_background(img, opt, '    ');
   % check we're returning the right size of data
   if isfield(inv_model, 'rec_model')
@@ -708,11 +693,14 @@ function show_fem_iter(k, img, inv_model, opt)
 %  img.calc_colours.ref_level = bg;
 %  img.calc_colours.clim = bg;
   img.calc_colours.cb_shrink_move = [0.3,0.6,0.02]; % move color bars
+  
+  img = physics_data_mapper(img);
   if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
      warning(sprintf('img.elem_data has %d elements, img.fwd_model.elems has %d elems\n', ...
                      size(img.elem_data,1), ...
                      size(img.fwd_model.elems,1)));
   end
+  img = physics_data_mapper(img,1);
   figure; show_fem(img, 1);
   str = strrep(out, '_', ' ');
   title(sprintf('iter=%d, %s',k, str));
@@ -731,13 +719,13 @@ function imdl = stupid_model_translation(opt, imdl, data0)
   if opt.calc_homogeneous_meas_fit
     imdl.jacobian_bkgnd = struct;
     imdl.fwd_model.measured_quantity = opt.meas_input;
-    imdl.jacobian_bkgnd.(opt.elem_working).value = calc_homogeneous_meas_fit(imdl.fwd_model, data0, opt.elem_working);
+    imdl.jacobian_bkgnd.(opt.elem_working).elem_data = calc_homogeneous_meas_fit(imdl.fwd_model, data0, opt.elem_working);
   end
   imdl.fwd_model.measured_quantity = opt.meas_working;
   if donew
     if isfield(imdl.jacobian_bkgnd, 'value') % TODO: do this smarter
      bkg = mk_image(imdl.fwd_model,imdl.jacobian_bkgnd.value);
-     bkg = map_img(bkg,opt.elem_working);
+     bkg = convert_img_units(bkg,'conductivity',opt.elem_working);
      bkg.(opt.elem_working).elem_data = bkg.elem_data;
      bkg.current_physics = [];
      bkg = rmfield(bkg,{'fwd_model','elem_data'});
@@ -1137,7 +1125,7 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     e = opt.c2f_background;
     % take backgtround elements and convert to output 'physics' (resistivity, etc)
     img = physics_param_mapper(img);
-    bg = map_img(img.params(e), in, out);
+    bg = convert_img_units(img.params(e), in, out);
 
     img.elem_data_background = bg;
     % remove elements from elem_data & c2f
@@ -1161,7 +1149,7 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     % show what we got for a background value
     if(opt.verbose > 1)
        bg = img.elem_data_background;
-       bg = map_img(bg, in, 'resistivity');
+       bg = convert_img_units(bg, in, 'resistivity');
        fprintf('%s  background conductivity: %0.1f Ohm.m\n', indent, bg);
     end
 
@@ -1195,7 +1183,7 @@ end
 pass = 1;
 pass = pass & do_unit_test_sub;
 pass = pass & do_unit_test_rec1(solver);
-%pass = pass & do_unit_test_rec2; % TODO this unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
+pass = pass & do_unit_test_rec2; % TODO this unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
 if pass
    disp('TEST: overall PASS');
 else
@@ -1266,7 +1254,7 @@ x= ctrs(:,1); y= ctrs(:,2);
 r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-85).^2 + (y-65).^2);
 imgsrc.elem_data(r1<50)= 0.05;
 imgsrc.elem_data(r2<30)= 100;
-imgp = map_img(imgsrc, 'log10_conductivity');
+imgp = convert_img_units(imgsrc, 'log10_conductivity');
 imgsrc = physics_data_mapper(imgsrc,1); % DIE: revert
 imgp = rmfield(imgp,'conductivity');
 imgp.log10_conductivity.elem_data = []; %DIE: physics_data_mapper needs it
@@ -1409,7 +1397,7 @@ b = 130;
 x_params= a*z_params+b;
 xlim=interp1(z_params,x_params,z_bary);
 img.elem_data(x_bary>xlim)= 0.01;
-figure; show_fem(img); title('model');
+clf; show_fem(img); title('model');
 
 % img2= mk_image(fmdl,img.elem_data);
 % figure; show_fem(img2);
@@ -1434,7 +1422,7 @@ imdl.jacobian_bkgnd.value = 1;
 imdl.parameters.elem_working = 'log_conductivity';
 imdl.parameters.meas_working = 'apparent_resistivity';
 imdl.parameters.dtol_iter = 4; % default 1 -> start checking on the first iter
-imdl.parameters.max_iterations = 20; % default 10
+imdl.parameters.max_iterations = 1; % default 10
 
 % the conversion to apparaent resistivity is now handled inside the solver
 %%img1= mk_image(fmdl,1);
@@ -1479,15 +1467,12 @@ xlabel('X (m)','fontsize',20,'fontname','Times')
 ylabel('Z (m)','fontsize',20,'fontname','Times')
 set(gca,'fontsize',20,'fontname','Times');
 
-img = mk_image( imdl );
-img.elem_data= 1./(10.^imgr.elem_data);
+imgr.fwd_model = imdl.fwd_model;
 vCG= fwd_solve(img); vCG = vCG.meas;
 
 I = 1; % TODO FIXME -> I is diag(1./vh) the conversion to apparent resistivity
 % TODO these plots are useful, get them built into the solver!
 figure; plot(I*(dd.meas-vCG)); title('data misfit');
 figure; hist(abs(I*(dd.meas-vCG)),50); title('|data misfit|, histogram'); xlabel('|misfit|'); ylabel('count');
-
-figure; show_pseudosection( fmdl, I*dd.meas); title('measurement data');
-figure; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
+    title('reconstruction data');
 figure; show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100); title('data misfit');
