@@ -80,13 +80,23 @@ str = 'unspecified';
 function img = fill_in_data(img,elem_data,physics)
 switch numel(elem_data)
     case {1, size(img.fwd_model.elems,1)}
+        sz = size(img.fwd_model.elems,1);
         if strcmp(physics,no_physics);
-            img.elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
+            img.elem_data = NaN*ones(sz,1);
             img.elem_data(:) = elem_data;
         else
-            img.(physics).elem_data = NaN*ones(size(img.fwd_model.elems,1),1);
+            img.(physics).elem_data = NaN*ones(sz,1);
             img.(physics).elem_data(:) = elem_data;
         end
+    case size(img.fwd_model.coarse2fine,2)
+      sz = size(img.fwd_model.coarse2fine,2);
+      if strcmp(physics,no_physics);
+        img.elem_data = NaN*ones(sz,1);
+        img.elem_data(:) = elem_data;
+      else
+        img.(physics).elem_data = NaN*ones(sz,1);
+        img.(physics).elem_data(:) = elem_data;
+      end
     case size(img.fwd_model.nodes,1)
         if strcmp(physics,no_physics);
             img.node_data = NaN*ones(size(img.fwd_model.nodes,1),1);
@@ -95,6 +105,8 @@ switch numel(elem_data)
             img.(physics).node_data = NaN*ones(size(img.fwd_model.nodes,1),1);
             img.(physics).node_data(:) = elem_data;
         end
+  otherwise
+    error('Don''t understand number of elements.');
 end
 
 % TESTS:
