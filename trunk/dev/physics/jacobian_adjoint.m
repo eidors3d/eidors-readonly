@@ -34,66 +34,10 @@ img.elem_data = check_elem_data(img);
 fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
-s_mat= calc_system_mat( img );
 
-d= pp.n_dims+1;
-e= pp.n_elem;
-n= pp.n_node;
+ J= do_jacobian_calculation( img, pp, fwd_model);
+%J= do_jacobian_calculation_qr( img, pp, fwd_model);
 
-idx= 1:size(s_mat.E,1);
-idx( fwd_model.gnd_node ) = [];
-
-sv= zeros(n, pp.n_stim );
-sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
-
-zi2E= zeros(pp.n_elec, n);
-% the minus below used to be missing
-zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
-
-FC= system_mat_fields( fwd_model );
-
-
-if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
-   DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
-   nparam= size(fwd_model.coarse2fine,2);
-else
-   DE = jacobian_calc(pp, zi2E, FC, sv);
-   nparam= e;
-end
-
-J = assemble_J(pp, nparam, DE, fwd_model.stimulation);
-if DEBUG
-   Jo= assemble_J_old(pp, nparam, DE, fwd_model.stimulation);
-   if norm(J-Jo,'fro')>1e-13;
-      error('EIDORS:InternalValidation','assemble_J versions not match');
-   end
-end
-
-if 1
-idx= 1:size(s_mat.E,1);
-idx( fwd_model.gnd_node ) = [];
-   [Q,R] = qr(pp.QQ(idx,:),0);
-   rnotzeros = any(R~=0,2);
-   Q= Q(:,rnotzeros);
-   R= R(rnotzeros,:);
-   sv= zeros(n, sum(rnotzeros) );
-   sv( idx,:) = s_mat.E(idx,idx) \ Q;
-   DE = jacobian_calc(pp, zi2E, FC, sv);
-%  pp.n_stim = size(sv,2);
-%  Jn = assemble_J_old(pp, nparam, DE, fwd_model.stimulation);
-   J = zeros( pp.n_meas, nparam );
-   idx=0;
-   for j= 1:pp.n_stim
-      meas_pat= fwd_model.stimulation(j).meas_pattern;
-      n_meas  = size(meas_pat,1);
-%     DEj = reshape( DE(:,j,:), pp.n_elec, [] );
-%     DEj = 0; for k = 1:size(R,1); DEj = DEj + full(R(k,j))* DE(k,:,:); end
-      DEj = R(:,j).' * reshape(DE,size(sv,2),[]);
-      DEj = reshape( DEj, pp.n_elec, [] );
-      J( idx+(1:n_meas),: ) = meas_pat*DEj;
-      idx= idx+ n_meas;
-   end
-end
 
 if ~strcmp(org_physics,'conductivity')
     J = apply_chain_rule(J, img, org_physics);
@@ -119,6 +63,107 @@ if pp.normalize
    data= fwd_solve( img );
    J= J ./ (data.meas(:)*ones(1,nparam));
 end
+
+function J= do_jacobian_calculation( img, pp, fwd_model);
+
+   s_mat= calc_system_mat( img );
+
+   idx= 1:size(s_mat.E,1);
+   idx( fwd_model.gnd_node ) = [];
+
+   sv= zeros(pp.n_node, pp.n_stim );
+   sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
+
+   zi2E= zeros(pp.n_elec, pp.n_node);
+   % the minus below used to be missing
+   zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+
+   FC= system_mat_fields( fwd_model );
+
+   if isfield(fwd_model,'coarse2fine') && strcmp(org_physics, 'conductivity');
+      DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
+      nparam= size(fwd_model.coarse2fine,2);
+   else
+      DE = jacobian_calc(pp, zi2E, FC, sv);
+      nparam= pp.n_elem;
+   end
+
+
+   J = assemble_J(pp, nparam, DE, fwd_model.stimulation);
+   if DEBUG
+      Jo= assemble_J_old(pp, nparam, DE, fwd_model.stimulation);
+      if norm(J-Jo,'fro')>1e-13;
+         error('EIDORS:InternalValidation','assemble_J versions not match');
+      end
+   end
+
+% New function which tries to qr decompose so we don't do
+% extra calculations of extra stim patterns
+function J= do_jacobian_calculation_qr( img, pp, fwd_model);
+   s_mat= calc_system_mat( img );
+   idx= 1:size(s_mat.E,1);
+   idx( fwd_model.gnd_node ) = [];
+
+   zi2E= zeros(pp.n_elec, pp.n_node);
+   % the minus below used to be missing
+   zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+
+   FC= system_mat_fields( fwd_model );
+
+
+   [Q,R] = qr(pp.QQ(idx,:),0);
+   rnotzeros = any(R~=0,2);
+   Q= Q(:,rnotzeros);
+   R= R(rnotzeros,:);
+
+if 0
+   sv= zeros(pp.n_node, pp.n_stim );
+   sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
+   jacobian_calc(pp, zi2E, FC, sv);
+end
+
+   sv= zeros(pp.n_node, sum(rnotzeros) );
+   sv( idx,:) = s_mat.E(idx,idx) \ Q;
+%t= cputime;
+   DE = jacobian_calc(pp, zi2E, FC, sv);
+%disp(cputime-t);
+   DEr=  reshape(DE,size(sv,2),[]);
+   Rt = R.';
+%  pp.n_stim = size(sv,2);
+%  Jn = assemble_J_old(pp, nparam, DE, fwd_model.stimulation);
+   nparam= pp.n_elem;
+   J = zeros( pp.n_meas, nparam );
+   if 0
+      idx=0;
+      for j= 1:pp.n_stim
+         meas_pat= fwd_model.stimulation(j).meas_pattern;
+         nonzero = any(meas_pat,1);
+         n_meas  = size(meas_pat,1);
+   %     DEj = reshape( DE(:,j,:), pp.n_elec, [] );
+   %     DEj = 0; for k = 1:size(R,1); DEj = DEj + full(R(k,j))* DE(k,:,:); end
+   %     DEj = Rt(j,:) * DEr;
+%        DEj = reshape( DEj, pp.n_elec, [] );
+%        J( idx+(1:n_meas),: ) = meas_pat(:,nonzero)*DEj(nonzero,:);
+         DEj = Rt(j,:) * reshape(DE(:,nonzero,:),size(sv,2),[]);
+         DEj = reshape( DEj, sum(nonzero), [] );
+         J( idx+(1:n_meas),: ) = meas_pat(:,nonzero)*DEj;
+         idx= idx+ n_meas;
+      end
+   else
+      stim = fwd_model.stimulation;
+      J_out = arrayfun(@(s,j) multiplier(s,j,Rt,DE, pp), ...
+           stim, 1:pp.n_stim, 'UniformOutput', false);
+%             s.meas_pattern * reshape(Rt(j,:) * DEr, pp.n_elec,[]), ...
+      J = vertcat(J_out{:});
+   end
+
+function Jj = multiplier(s,j,Rt,DE, pp);
+%     Jj = s.meas_pattern * reshape(Rt(j,:) * DEr, pp.n_elec,[]);
+      meas_pat = s.meas_pattern;
+      nonzero = any(meas_pat,1);
+      DEj = Rt(j,:) * reshape(DE(:,nonzero,:),size(DE,1),[]);
+      DEj = reshape( DEj, sum(nonzero), [] );
+      Jj = meas_pat(:,nonzero)*DEj;
 
 function J = assemble_J_old(pp, nparam, DE, stim)
    J = zeros( pp.n_meas, nparam );
@@ -153,11 +198,32 @@ FC_sv   = FC * sv;
 n_stim = size(sv,2);
 
 if ~do_c2f
-   DE= zeros(n_stim, pp.n_elec, pp.n_elem);
-   for k= 1:pp.n_elem
-       idx= (d-1)*(k-1)+1 : (d-1)*k;
-       dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
-       DE(:,:,k)= dq.';
+   switch 2
+   case 1
+      DE= zeros(n_stim, pp.n_elec, pp.n_elem);
+      for k= 1:pp.n_elem
+          idx= (d-1)*(k-1)+1 : (d-1)*k;
+          dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
+%         DE(:,:,k)= dq.';
+          dq = dq.';
+          DE(:,:,k)= dq;
+      end
+   case 2
+      DE= zeros(pp.n_elec, n_stim, pp.n_elem);
+      for k= 1:pp.n_elem
+          idx= (d-1)*(k-1)+1 : (d-1)*k;
+          dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
+          DE(:,:,k)= dq;
+      end
+      DE = permute(DE,[2,1,3]);
+   case 3
+      DE= zeros(pp.n_elem, pp.n_elec, n_stim);
+      for k= 1:pp.n_elem
+          idx= (d-1)*(k-1)+1 : (d-1)*k;
+          dq= zi2E_FCt(:,idx) * FC_sv(idx,:);
+          DE(k,:,:)= dq;
+      end
+      DE = permute(DE,[3,2,1]);
    end
 else
    DE= zeros(n_stim, pp.n_elec, size(c2f,2) );
