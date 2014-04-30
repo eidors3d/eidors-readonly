@@ -8,7 +8,24 @@ switch fmdl.type
       error('EIDORS:WrongInput','Image or fwd_model struct required.');
 end
 
-fctr = eidors_cache(@calc_factor,{fmdl},'apparent_resistivity_factor');
+if ~isfield(fmdl,'apparent_resistivity_factor');
+  fmdl.apparent_resistivity_factor = NaN;
+end
+
+if ~isfield(fmdl, 'normalize_measurements')
+  fmdl = mdl_normalize(fmdl,0);
+end
+
+fmdlfields = fieldnames(fmdl);
+keepfields = {'type','elems','nodes','solve','system_mat','gnd_node', ...
+  'electrode','stimulation','normalize_measurements','apparent_resistivity_factor'};
+
+keep = ismember(fmdlfields, keepfields);
+
+%only cache on these fields
+cache_obj = rmfield(fmdl, fmdlfields(~keep));
+
+fctr = eidors_cache(@calc_factor,{cache_obj},'apparent_resistivity_factor');
 
 function fctr = calc_factor(fmdl)
 
