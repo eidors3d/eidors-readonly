@@ -6,7 +6,7 @@
 %   va   - measurements
 %   elem_type - the output element type; conductivity, log_resistivity, etc.
 %
-% See also MAP_MEAS, MAP_IMG.
+% See also MAP_MEAS, convert_img_units.
 %
 % (C) 2014 Alistair Boyle
 % Licenced under GPL version 2 or 3
@@ -31,7 +31,7 @@ function bg = calc_homogeneous_meas_fit(fmdl, va, elem_type)
   end
 
   if 1
-    bg_tmp = map_img(bg, elem_type, 'resistivity');
+    bg_tmp = convert_img_units(bg, elem_type, 'resistivity');
     eidors_msg('  estimated background resistivity: %0.1f Ohm.m', bg_tmp, 2);
   end
 
@@ -49,4 +49,4 @@ function bg = conductivity_fit(fmdl, va, elem_type)
   bg = vh.meas \ va.meas; % <-- Alistair's solution
 
   % convert to output units
-  bg = map_img(bg, 'conductivity', elem_type);
+  bg = convert_img_units(bg, 'conductivity', elem_type);

@@ -43,7 +43,7 @@ if ~ismember(img.current_physics, supported_physics)
 end
 orig_physics = img.current_physics;
 % all calcs use conductivity
-img = convert_units(img, 'conductivity');
+img = convert_img_units(img, 'conductivity');
 
 pp= fwd_model_parameters( fwd_model );
 s_mat= calc_system_mat( img );

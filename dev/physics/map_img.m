@@ -1,4 +1,4 @@
-function img = map_img(img, arg1, arg2);
+function img = map_img(img, varargin)
 % function img  = map_img(img,  out)
 % function data = map_img(data, in, out)
 %
@@ -7,6 +7,12 @@ function img = map_img(img, arg1, arg2);
 % (C) 2014 Alistair Boyle
 % Licenced under GPL version 2 or 3
 % $Id$
+
+% BG->AB: this is just so your other code runs. You can delete this
+% function once you rename all calls.
+warning('EIDORS:deprecated','MAP_IMG is deprecated as of 30-Apr-2014. Use CONVERT_IMG_UNITS instead.');
+img = convert_img_units(img, varargin{:});
+return
 
    %--------------------------
    % UNIT_TEST?
