@@ -3,7 +3,7 @@ function img=basic_model
    [fmdl,mi1,mi2] = test_model(-1,-2,0.4,0.4);
    skip = [0,9];
    fmdl.stimulation = mk_stim_patterns(35,1,skip, skip, {},1);
-   contrast = 1.1; N_sims = 1e5; SNR_noise = 1e5; SNR_ampl = 1e0; 
+   contrast = 1.1; N_sims = 1e3; SNR_noise = 1e5; SNR_ampl = 1e5; 
 
    img1= mk_image(fmdl,1); img1.elem_data(mi1) = contrast;
    v1 = do_simulations(img1, N_sims, SNR_noise, SNR_ampl);
@@ -11,7 +11,6 @@ function img=basic_model
    v2 = do_simulations(img2, N_sims, SNR_noise, SNR_ampl);
    subplot(221); show_fem(img1); view(0,0);
    subplot(222); show_fem(img2); view(0,0);
-
 
    u1 = mean(v1,2);
    u2 = mean(v2,2);
@@ -21,7 +20,7 @@ function img=basic_model
    w  = w/norm(w);
    w  = w/1000;
    subplot(223)
-   [jnk,idx] = sort(abs(w));4
+   [jnk,idx] = sort(abs(w));
    f = idx(end); g = idx(end-1);
    plot(v1(f,:),v1(g,:),'bo', v2(f,:),v2(g,:),'ro', v1(f) + [0;w(f)],v1(g) + [0;w(g)],'g-')
 
@@ -31,7 +30,7 @@ function img=basic_model
    tstar = (mean(d1) - mean(d2))/sqrt( (var(d1) + var(d2))/2 );
 
    subplot(224); cla;
-   hist(d1); hold on; hist(d2); hold off
+   hist(d1); hold on; hist(d2); hold off; 
 h = findobj(gca, 'Type','patch');
 set(h(1), 'FaceColor','r', 'EdgeColor','k');
 set(h(2), 'FaceColor','b', 'EdgeColor','k');
@@ -41,13 +40,14 @@ set(h(2), 'FaceColor','b', 'EdgeColor','k');
 
 
 function vv = do_simulations(img, N_sims, SNR_noise, SNR_ampl)
-   imgs = img;
-   vi = fwd_solve(imgs);
-   for i= N_sims:-1:1
-      vv(:,i) = vi.meas + randn(size(vi.meas))/SNR_noise;
-   end
+   vi = fwd_solve(img);
+   J  = calc_jacobian(img);
+   vv = vi.meas*ones(1,N_sims) + ...
+        randn(size(vi.meas,1),N_sims)/SNR_noise + ...
+        J * randn(size(J,2),N_sims) / SNR_ampl;
 
    return
+   imgs = img;
    for i= N_sims:-1:1
       imgs.elem_data = img.elem_data + randn(size(imgs.elem_data))/SNR_ampl;
       vi = fwd_solve(imgs);
