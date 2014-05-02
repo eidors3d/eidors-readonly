@@ -29,13 +29,18 @@ try
     fwdp.n_elem = size(img.fwd_model.coarse2fine,2);
 end
 % Verify if img is partitioned by conductivity and move submatrices
-if length(img.elem_data) > fwdp.n_elem
-    move = reshape( ...
-        img.elem_data( fwdp.n_elem+(1:fwdp.n_elec*fwdp.n_dims) ), ...
-        fwdp.n_elec, fwdp.n_dims);
-    img.elem_data = img.elem_data(1:fwdp.n_elem);    
+if isfield(img,'elem_data') % pre-physics
+   if length(img.elem_data) > fwdp.n_elem
+      move = reshape( ...
+         img.elem_data( fwdp.n_elem+(1:fwdp.n_elec*fwdp.n_dims) ), ...
+         fwdp.n_elec, fwdp.n_dims);
+      img.elem_data = img.elem_data(1:fwdp.n_elem);
+   end
+else
+   img = physics_data_mapper(img);
+   move = reshape( img.movement.electrode_data, ...
+                     fwdp.n_elec, fwdp.n_dims); 
 end
-
 % Plot FEM with conductivity elements with or without colourbars
 hf = show_fem(img, options); % Show colourbar
 

@@ -98,6 +98,14 @@ for i = 1:opt.max_iter
      eidors_msg('#%02d residual=%.3g', i, res, 1);
   end
   [img, opt] = update_step(img, next, dx, fmin, res, opt);
+  if opt.show_iterations
+     figure
+     subplot(121)
+     show_fem(img); view([90 0 0])
+     subplot(122)
+     show_fem(img); view(2)
+     drawnow
+  end
   inv_model.jacobian_bkgnd = img;
   RtR = calc_RtR_prior( inv_model );
   hp2RtR = hp*RtR;
