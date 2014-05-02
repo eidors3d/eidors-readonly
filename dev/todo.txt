@@ -174,7 +174,7 @@
 
  - create test infrastructure for old tutorials
 
- - keep the gmsh path the same way as the new netgen
+ + keep the gmsh path the same way as the new netgen
 
  - On left_divide
     - remove old parameters tol,pp,V)
