@@ -1,4 +1,4 @@
-function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );
+function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, value );
 % SIMULATE_MOVEMENT simulate small conductivity perturbations
 % [vh,vi,xyzr, c2f]= simulate_movement( img, xyzr );
 %
@@ -17,6 +17,9 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr );
 %   xyzr = scalar =N - single spiral of N in medium centre
 %  
 %   img = eidors image object (with img.fwd_model FEM model).
+%
+%   value = the conductivity perturbation of the target (either scalar, or
+%           vector)
 %
 % OUTPUT:
 %   vh - homogeneous measurements M x 1
