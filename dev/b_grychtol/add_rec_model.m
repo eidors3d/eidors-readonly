@@ -1,5 +1,7 @@
 function imdl = mk_rec_model(imdl,imgsz)
 
+if ischar(imdl) && strcmp(imdl,'UNIT_TEST'), do_unit_test; return; end
+
 fmdl = imdl.fwd_model;
 
 mingrid = min(fmdl.nodes);
@@ -90,5 +92,17 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
  rmdl.electrode = elec;
 
  imdl.rec_model = rmdl;
- imdl.fwd_model.coarse2fine = mk_coarse_fine_mapping(fmdl,rmdl);
+%  imdl.fwd_model.coarse2fine = mk_coarse_fine_mapping(fmdl,rmdl);
+ 
+ 
+ 
+function do_unit_test
+mdl = mk_library_model('pig_23kg_16el_lungs');
+imdl = select_imdl(mdl,{'Basic GN dif'});
+imdl = add_rec_model(imdl, [64 64]);
+img = mk_image(imdl.rec_model,1);
+for i = 1:length(imdl.rec_model.mat_idx)
+   img.elem_data(imdl.rec_model.mat_idx{i}) = i;
+end
+show_fem(img);
  
