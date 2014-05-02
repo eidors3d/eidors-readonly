@@ -1,3 +1,4 @@
+2014-05-03: add per-m-file control to eidors_msg
 2013-08-15: change interpretation of fwd_model.electrode.z_contact from
             ohm/m^2 to ohm in system_mat_fields
 2013-08-15: inv_solve calculates the error
