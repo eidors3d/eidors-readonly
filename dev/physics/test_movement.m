@@ -187,10 +187,20 @@ for i = test_no
          mdlc.reconst_type = 'absolute';
          mdlc.parameters.max_iterations = 10;
          imgc = inv_solve(mdlc, vi);
-         subplot(121)
+         
+         f = clf;
+         subplot(131)
          show_fem_move(img);
-         subplot(122)
+         subplot(132)
          show_fem_move(imgc);
+         
+         mdlc.solve = 'inv_solve_abs_core';
+         mdlc.parameters.verbose = 2; % don't spit out figures
+         imgc = inv_solve(mdlc, vi);
+         
+         subplot(133)
+         show_fem_move(imgc);
+         
          fprintf('  OK\n');
          
       case 11
