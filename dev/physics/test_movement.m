@@ -163,6 +163,37 @@ for i = test_no
          show_fem(imgc);
          fprintf('  OK\n');
       case 10
+         % absolute movement
+         
+         mdlc = mk_common_model('c2c');
+         
+         img = mk_image( mdlc, 1,'conductivity');
+         img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
+         img.physics_data_mapper = 'conductivity';
+         img.fwd_model.solve = @fwd_solve_elec_move;
+         img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+         
+         mdlc.jacobian_bkgnd = rmfield(img,'fwd_model');
+         mdlc.fwd_model.jacobian = @jacobian_movement;
+         mdlc.RtR_prior =          @prior_movement;
+         mdlc.prior_movement.parameters = sqrt(1e2/1);
+         
+         img.conductivity.elem_data([75,93,94,113,114,136]) = 1.2;
+         img.conductivity.elem_data([105,125,126,149,150,174]) = 0.8;
+         img.movement.electrode_data(5) = 0.1; % x coord of 5th elec
+         vi = fwd_solve(img);         
+         
+         mdlc.solve = 'inv_solve_abs_GN';
+         mdlc.reconst_type = 'absolute';
+         mdlc.parameters.max_iterations = 10;
+         imgc = inv_solve(mdlc, vi);
+         subplot(121)
+         show_fem_move(img);
+         subplot(122)
+         show_fem_move(imgc);
+         fprintf('  OK\n');
+         
+      case 11
          % old tutorials
          path = eidors_obj('eidors_path');
          path = [path '/../htdocs/tutorial/adv_image_reconst/'];
@@ -171,7 +202,7 @@ for i = test_no
          for i = 1:length(tuts)
             run([path tuts{i}]);
          end
-      case 11
+      case 12
          % new tutorials
          path = [];
          tuts = {'move_2d01', 'move_2d02'};%, 'move_3d01', 'move_3d02'};
