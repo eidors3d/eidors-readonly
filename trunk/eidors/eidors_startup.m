@@ -140,7 +140,15 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
         ok = eidors_var_id_ok;
         if newer_src || ~ok
            while 1
-              resp = input('Would you like to compile now? [Y/n]: ','s');
+              if ~ok
+                 resp = input('Would you like to compile now? [Y/n]: ','s');
+              else
+                 resp = input('Would you like to compile now? [y/N]: ','s');
+                 if isempty(resp)
+                    resp = 'n';
+                 end
+              end
+              
               switch lower(resp)
                  case {'n', 'no'}
                     if ver.isoctave
