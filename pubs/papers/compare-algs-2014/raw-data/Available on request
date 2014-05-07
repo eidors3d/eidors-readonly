@@ -1,1 +1,6 @@
- 
+In the directory "breaths" are *mat files which contain the
+extracted EIT frames from the raw data which correspond to the 
+identified intervals in the raw data files.
+
+The raw data has not been contributed because the files are too
+large to warrant being stored on this server 
