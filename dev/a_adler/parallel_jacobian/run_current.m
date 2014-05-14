@@ -1,4 +1,4 @@
-switch 3;
+switch 3.13;
    case 1;
 imdl= mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
    case 1.1;
@@ -10,6 +10,18 @@ imdl= mk_common_model('h2c2',8); fmdl = imdl.fwd_model;
    case 3;
 fmdl= ng_mk_cyl_models(1,[7,.3,.7],[0.1]); 
 fmdl.stimulation = mk_stim_patterns(14,1,[0,1],[0,1],{},1);
+   case 3.1;
+fmdl= ng_mk_cyl_models(1,[13,.3],[0.03]); 
+fmdl.stimulation = mk_stim_patterns(13,1,[0,1],[0,1],{},1);
+   case 3.11;
+fmdl= ng_mk_cyl_models(0,[11,.3],[0.03]); 
+fmdl.stimulation = mk_stim_patterns(11,1,[0,1],[0,1],{},1);
+   case 3.12;
+fmdl= ng_mk_cyl_models([0,1,.01],[15,.3],[0.05]); 
+fmdl.stimulation = mk_stim_patterns(15,1,[0,1],[0,1],{},1);
+   case 3.13;
+fmdl= ng_mk_cyl_models([.5,1,.03],[7,.3],[0.05]); 
+fmdl.stimulation = mk_stim_patterns(7,1,[0,1],[0,1],{},1);
    case 3.2;
  shape_str = ['solid top    = plane(0,0,0;0,0,1);\n' ...
               'solid mainobj= top and orthobrick(-3,-3,-2;3,3,0) -maxh=0.3;\n'];
