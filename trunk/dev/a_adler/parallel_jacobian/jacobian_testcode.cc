@@ -1,28 +1,11 @@
 #include <stdio.h>
 #include <math.h>
 
+#if defined(_OPENMP)
+#include <omp.h>
+#endif
+
 int main() {
-#include "defvars.h"
-
-/*
-void mexFunction( int nlhs, mxArray *plhs[],
-                  int nrhs, const mxArray *prhs[] )
-{
-  double *x,*y;
-  mwSize mrows,ncols;
-
-  if(nrhs!=3) {
-    mexErrMsgTxt("Three inputs required.");
-  } else if(nlhs>1) {
-    mexErrMsgTxt("Too many output arguments.");
-  }
-
-  if( !mxIsDouble(prhs[0]) || mxIsComplex(prhs[0]) ||
-      !(mxGetM(prhs[0])==1)|| !(mxGetN(prhs[0])==4) ) 
-  {  
-    mexErrMsgTxt("1x4 expected.");
-  }
-*/
 
   double * sz = S_sz;
   
