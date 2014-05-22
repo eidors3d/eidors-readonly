@@ -14,9 +14,9 @@ elem_data   = img.elem_data;
 img = rmfield(img, 'elem_data');
 img.conductivity.elem_data  = elem_data(1:n_data_elem,:);
 img.movement.electrode_data = elem_data((n_data_elem+1):end, :);
-img.physics_data_mapper = 'conductivity';
+img.data_mapper = 'conductivity';
 img.fwd_model.solve     = @fwd_solve_elec_move;
-img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+img.params_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
 
 function exp_sizes = expected_data_sizes(img)
 % number of elements

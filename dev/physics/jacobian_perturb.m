@@ -28,8 +28,11 @@ img.fwd_model= fwd_model;
 % solve one time to get the size
 d0= fwd_solve( img );
 
+try   curprms = img.current_params;
+catch curprms = []; end
+
 if isfield(img.fwd_model,'coarse2fine');
-   Jcol= perturb_c2f(img, 1, delta, d0, physics);
+   Jcol= perturb_c2f(img, 1, delta, d0, curprms);
    Jrows= size(img.fwd_model.coarse2fine,2);
    J= zeros(length(Jcol), Jrows );
    J(:,1)= Jcol;
@@ -40,8 +43,8 @@ if isfield(img.fwd_model,'coarse2fine');
 else
    Jcol= perturb(img, 1, delta, d0);
 
-   tmp = physics_param_mapper(img);
-   n_param = numel(tmp.params);
+   tmp = params_mapper(img);
+   n_param = numel(tmp.inv_params);
    
    J= zeros(length(Jcol), n_param);
    J(:,1)= Jcol;
@@ -53,15 +56,15 @@ end
 
 
 function Jcol= perturb( img, i, delta, d0)
-   img = physics_param_mapper(img);
-   img.params(i) = img.params(i) + delta;
-   img = physics_param_mapper(img,1);
+   img = params_mapper(img);
+   img.inv_params(i) = img.inv_params(i) + delta;
+   img = params_mapper(img,1);
    di= fwd_solve( img );
    Jcol = (1/delta) * (di.meas - d0.meas);
 
-function Jcol= perturb_c2f( img, i, delta, d0, physics)
-   if ~isempty(physics)
-      img.(physics).elem_data= img.(physics).elem_data + delta*img.fwd_model.coarse2fine(:,i);
+function Jcol= perturb_c2f( img, i, delta, d0, curprms)
+   if ~isempty(curprms)
+      img.(curprms).elem_data= img.(curprms).elem_data + delta*img.fwd_model.coarse2fine(:,i);
    else
       img.elem_data= img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
    end

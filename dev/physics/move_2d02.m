@@ -27,8 +27,8 @@ mdlM.prior_movement.parameters = sqrt(1e2/1);
 mdlM.jacobian_bkgnd = rmfield(mdlM.jacobian_bkgnd, 'value');
 mdlM.jacobian_bkgnd.conductivity.elem_data = ones(length(mdlM.fwd_model.elems),1);
 mdlM.jacobian_bkgnd.movement.electrode_data = zeros(32,1);
-mdlM.jacobian_bkgnd.physics_data_mapper = 'conductivity';
-mdlM.jacobian_bkgnd.physics_param_mapper = {'conductivity.elem_data' 'movement.electrode_data'};
+mdlM.jacobian_bkgnd.data_mapper = 'conductivity';
+mdlM.jacobian_bkgnd.params_mapper = {'conductivity.elem_data' 'movement.electrode_data'};
 
 % Solve inverse problem for mdlM eidors_obj model.
 imgM = inv_solve(mdlM, vh, vi);

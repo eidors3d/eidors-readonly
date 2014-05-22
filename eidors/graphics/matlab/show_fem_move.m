@@ -29,7 +29,7 @@ try
     fwdp.n_elem = size(img.fwd_model.coarse2fine,2);
 end
 % Verify if img is partitioned by conductivity and move submatrices
-if isfield(img,'elem_data') % pre-physics
+if isfield(img,'elem_data') % pre-parametrization
    if length(img.elem_data) > fwdp.n_elem
       move = reshape( ...
          img.elem_data( fwdp.n_elem+(1:fwdp.n_elec*fwdp.n_dims) ), ...
@@ -37,7 +37,7 @@ if isfield(img,'elem_data') % pre-physics
       img.elem_data = img.elem_data(1:fwdp.n_elem);
    end
 else
-   img = physics_data_mapper(img);
+   img = data_mapper(img);
    move = reshape( img.movement.electrode_data, ...
                      fwdp.n_elec, fwdp.n_dims); 
 end

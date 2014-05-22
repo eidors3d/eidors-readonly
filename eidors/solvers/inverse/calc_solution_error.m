@@ -54,10 +54,10 @@ e = norm(res)/norm(data);
 function res = calc_abs_residual(imgc,imdl,data)
 fmdl = imdl.fwd_model;
 
-% make sure to have elem_data irrespective of physics
+% make sure to have elem_data irrespective of parametrization
 img = calc_jacobian_bkgnd(imdl); 
-img = physics_data_mapper(img);
-imgc = physics_data_mapper(imgc);
+img = data_mapper(img);
+imgc = data_mapper(imgc);
 
 % account for coarse2fine
 if size(img.elem_data,1) == size(imgc.elem_data,1)
@@ -65,7 +65,7 @@ if size(img.elem_data,1) == size(imgc.elem_data,1)
 else
    img.elem_data = fmdl.coarse2fine*imgc.elem_data;
 end
-img = physics_data_mapper(img);
+img = data_mapper(img);
 
 % simualate data from solution
 sim = fwd_solve(img);
@@ -81,9 +81,9 @@ fmdl = imdl.fwd_model;
 img = calc_jacobian_bkgnd(imdl);
 simh = fwd_solve(img);
 
-% map physics to elem_data
-img = physics_data_mapper(img);
-imgc = physics_data_mapper(imgc);
+% map parametrization to elem_data
+img = data_mapper(img);
+imgc = data_mapper(imgc);
 
 if ~isfield(imgc,'elem_data') && isfield(imgc,'node_data')
    eidors_msg('Solution error calculation for nodal solvers not supported (yet).',2);
@@ -101,7 +101,7 @@ else
    n_elems = size(imgc.fwd_model.coarse2fine,2);
    img.elem_data = e_data + fmdl.coarse2fine*imgc.elem_data(1:n_elems,:);
 end
-img = physics_data_mapper(img,1);
+img = data_mapper(img,1);
 
 % simulate data from solution
 jnk = img;

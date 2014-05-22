@@ -54,10 +54,10 @@ e = norm(res)/norm(data);
 function res = calc_abs_residual(imgc,imdl,data)
 fmdl = imdl.fwd_model;
 
-% make sure to have elem_data irrespective of physics
+% make sure to have elem_data irrespective of parametrization
 img = calc_jacobian_bkgnd(imdl); 
-img = physics_data_mapper(img);
-imgc = physics_data_mapper(imgc);
+img = data_mapper(img);
+imgc = data_mapper(imgc);
 
 % account for coarse2fine
 if size(img.elem_data,1) == size(imgc.elem_data,1)
@@ -65,7 +65,7 @@ if size(img.elem_data,1) == size(imgc.elem_data,1)
 else
    img.elem_data = fmdl.coarse2fine*imgc.elem_data;
 end
-img = physics_data_mapper(img,1);
+img = data_mapper(img,1);
 
 % simualate data from solution
 sim = fwd_solve(img);
@@ -100,9 +100,9 @@ if isfield(sol, 'movement') && ~isfield(img,'movement')
 end
 simh = fwd_solve(img);
 
-% sort out the size of any physics that becomes elem_data
-img = physics_data_mapper(img);
-sol = physics_data_mapper(sol);
+% sort out the size of any parametrization that becomes elem_data
+img = data_mapper(img);
+sol = data_mapper(sol);
 if isfield(img, 'elem_data');
    try
       n_elems = size(sol.fwd_model.coarse2fine,2);
@@ -119,20 +119,20 @@ if isfield(img, 'elem_data');
       end
    end
 end
-sol = physics_data_mapper(sol,1);
-img  = physics_data_mapper(img,1);
+sol = data_mapper(sol,1);
+img  = data_mapper(img,1);
 
 % add solution to jacobian background in param space
-img  = physics_param_mapper(img);
-sol = physics_param_mapper(sol);
-initial = repmat(img.params,1,size(sol.params,2));
+img  = params_mapper(img);
+sol = params_mapper(sol);
+initial = repmat(img.inv_params,1,size(sol.inv_params,2));
 
-% add the solution params to the initial params from jacobian bkgnd
-img.params = initial + sol.params;
+% add the solution inv_params to the initial inv_params from jacobian bkgnd
+img.inv_params = initial + sol.inv_params;
 
 % deal with arrays
 jnk = img;
-S = size(sol.params,2);
+S = size(sol.inv_params,2);
 if S > 10
    fprintf(1, '   Error calculation progress:     ');
 end
@@ -142,9 +142,9 @@ for i = fliplr(1:S);
    if S > 10 && ~mod(i,step)
       fprintf(1, '\b\b\b%02d%%',round(100*(S-i)/S));
    end
-   jnk.params = img.params(:,i);
-   %    jnk = physics_param_mapper(jnk,1);
-   tmp = fwd_solve(physics_param_mapper(jnk,1));
+   jnk.inv_params = img.inv_params(:,i);
+   %    jnk = params_mapper(jnk,1);
+   tmp = fwd_solve(params_mapper(jnk,1));
    simi(:,i) = tmp.meas;
 end
 if S > 10

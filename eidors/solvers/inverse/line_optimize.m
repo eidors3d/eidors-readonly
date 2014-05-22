@@ -85,11 +85,11 @@ res  = feval(opt.objective_func,data0,vsim,imgk,img,opt);
 
 
 function img = calc_perturb(imgk, p, dx, opt)
-   imgk = physics_data_mapper(imgk);
+   imgk = data_mapper(imgk);
    img = imgk;
    img.elem_data = imgk.elem_data + p*dx;
    img = apply_limits(img,opt);
-   img = physics_data_mapper(img, 1);
+   img = data_mapper(img, 1);
 
 
 function img = apply_limits(img,opt)

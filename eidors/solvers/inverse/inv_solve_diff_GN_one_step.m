@@ -43,11 +43,11 @@ sol = get_RM( inv_model ) * dv;
 
 
 
-img = physics_data_mapper(calc_jacobian_bkgnd( inv_model ));
+img = data_mapper(calc_jacobian_bkgnd( inv_model ));
 img.name= 'solved by inv_solve_diff_GN_one_step';
 img.elem_data = sol;
 img.fwd_model= inv_model.fwd_model;
-img = physics_data_mapper(img,1);
+img = data_mapper(img,1);
 
 img = scale_to_fit_data(img, inv_model, data1, data2);
 

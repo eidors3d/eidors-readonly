@@ -22,10 +22,10 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
 end
 fwd_model= img.fwd_model;
 
-% check physics
-if isfield(img,'current_physics') && ~isempty(img.current_physics) ... 
-        && ~strcmp(img.current_physics,'conductivity');
-    error('system_mat_1st_order does not work for %s',img.current_physics);
+% check parametrization
+if isfield(img,'current_params') && ~isempty(img.current_params) ... 
+        && ~strcmp(img.current_params,'conductivity');
+    error('system_mat_1st_order does not work for %s',img.current_params);
 end
 fwd_model.gnd_node=1;
 p.nodes= fwd_model.nodes';

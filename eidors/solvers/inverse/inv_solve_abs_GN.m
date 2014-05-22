@@ -76,7 +76,7 @@ RtR = calc_RtR_prior( inv_model );
 W   = calc_meas_icov( inv_model );
 hp2RtR= hp*RtR;
 
-img0 = physics_data_mapper(img);
+img0 = data_mapper(img);
 opt.line_optimize.meas_icov = calc_meas_icov( inv_model);
 for i = 1:opt.max_iter
   vsim = fwd_solve( img ); 
@@ -84,7 +84,7 @@ for i = 1:opt.max_iter
   J = calc_jacobian( img );
 
   % create elem_data
-  tmp = physics_data_mapper(img);
+  tmp = data_mapper(img);
   RDx = hp2RtR*(img0.elem_data - tmp.elem_data);
   dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
   
@@ -106,8 +106,8 @@ end
 
 function val = GN_objective_function(data0, data, img0, img, opt)
    dv = calc_difference_data(data, data0, img0.fwd_model);
-   if ~isfield(img0, 'elem_data'), img0 = physics_data_mapper(img0); end
-   if ~isfield(img, 'elem_data'), img = physics_data_mapper(img); end
+   if ~isfield(img0, 'elem_data'), img0 = data_mapper(img0); end
+   if ~isfield(img, 'elem_data'), img = data_mapper(img); end
    de = img0.elem_data - img.elem_data;
    val = 0.5*( dv'*opt.meas_icov*dv + de' * opt.hp2RtR * de);
 
@@ -131,7 +131,7 @@ function img = initial_estimate( imdl, data )
    pf = polyfit(data,vs.meas,1);
 
    % create elem_data
-   img = physics_data_mapper(img);
+   img = data_mapper(img);
    
    if isfield(img.fwd_model,'coarse2fine');
       % TODO: the whole coarse2fine needs work here.
@@ -145,7 +145,7 @@ function img = initial_estimate( imdl, data )
    end
    
    % remove elem_data
-   img = physics_data_mapper(img,1);
+   img = data_mapper(img,1);
  
 function [img opt] = update_step(org, next, dx, fmin,res, opt)
    if isfield(opt, 'update_func')

@@ -47,9 +47,9 @@ function test_logC
 
    img = mk_image( imdl );
    img.log_conductivity.elem_data= imgr.log_conductivity.elem_data;
-   img = physics_data_mapper(img);
+   img = data_mapper(img);
    vCG= fwd_solve(img); 
-   img = physics_data_mapper(img,1);
+   img = data_mapper(img,1);
    vCG = vCG.meas;
 
    I= imdl.parameters.normalisation;

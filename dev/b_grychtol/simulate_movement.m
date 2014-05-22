@@ -90,9 +90,9 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, value);
 % vi = vi2;
 
    function tmp = add_c2f(img,c2f,i)
-      tmp = physics_data_mapper(img);
+      tmp = data_mapper(img);
       tmp.elem_data = tmp.elem_data + c2f(:,i);
-      tmp = physics_data_mapper(tmp,1);
+      tmp = data_mapper(tmp,1);
    
 function J= move_jacobian_postprocess( J, img, Nt)
    if size(J,2) == Nt; % No problem

@@ -7,6 +7,10 @@
 
 - abs_solver_GN with physics
 
++ rename physics -> parametrizations (params)
+
+- rename imdl.parameters in inv_solve to imdl.opt (controls for inverse solver)
+
 - coarse2find and parameterization
    - understand problems
    - z direction

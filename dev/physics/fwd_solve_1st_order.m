@@ -36,12 +36,11 @@ if ~ismember(measurement, supported_measurement)
     'FWD_SOLVE_1ST_ORDER',measurement);
 end
 
-img = physics_data_mapper(img);
-if ~ismember(img.current_physics, supported_physics)
+img = data_mapper(img);
+if ~ismember(img.current_params, supported_params)
     error('EIDORS:PhysicsNotSupported', '%s does not support %s', ...
-    'FWD_SOLVE_1ST_ORDER',img.current_physics);
+    'FWD_SOLVE_1ST_ORDER',img.current_params);
 end
-orig_physics = img.current_physics;
 % all calcs use conductivity
 img = convert_img_units(img, 'conductivity');
 

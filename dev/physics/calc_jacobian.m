@@ -66,15 +66,15 @@ eidors_msg('calc_jacobian: setting cached value', 3);
 
 % Make the Jacobian only depend on 
 function cache_obj= jacobian_cache_params( fwd_model, img );
-   img = physics_param_mapper(img);
-   if ~isfield(img, 'current_physics')
-      img.current_physics = [];
+   img = params_mapper(img);
+   if ~isfield(img, 'current_params')
+      img.current_params = [];
    end
-   cache_obj = {fwd_model,img.params, img.current_params, img.current_physics};
+   cache_obj = {fwd_model,img.inv_params, img.current_inv_params, img.current_params};
 %    if isfield(img, 'elem_data')
-%       cache_obj = {fwd_model, img.elem_data, img.current_physics};
+%       cache_obj = {fwd_model, img.elem_data, img.current_params};
 %    elseif isfield(img, 'node_data')
-%       cache_obj = {fwd_model, img.node_data, img.current_physics};
+%       cache_obj = {fwd_model, img.node_data, img.current_params};
 %    else
 %       error('calc_jacobian: execting elem_data or node_data in image');
 %    end
