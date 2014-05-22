@@ -185,7 +185,7 @@ for i = test_no
          
          mdlc.solve = 'inv_solve_abs_GN';
          mdlc.reconst_type = 'absolute';
-         mdlc.parameters.max_iterations = 10;
+         mdlc.inv_solve.max_iterations = 10;
          imgc = inv_solve(mdlc, vi);
          
          f = clf;
@@ -194,8 +194,8 @@ for i = test_no
          subplot(132)
          show_fem_move(imgc);
          
-         mdlc.solve = 'inv_solve_abs_core';
-         mdlc.parameters.verbose = 2; % don't spit out figures
+         mdlc.solve = 'inv_solve_abs_gn';
+         mdlc.inv_solve.verbose = 0; % don't spit out figures
          imgc = inv_solve(mdlc, vi);
          
          subplot(133)
