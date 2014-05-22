@@ -24,8 +24,8 @@ imdl.fwd_model.jacobian = @jacobian_perturb;
 imdl.RtR_prior = @prior_tikhonov;
 imdl.hyperparameter.value = 1e-9;
 imdl.fwd_model.jacobian_perturb.delta  = 0.1;
-imdl.parameters.max_iterations = 10 ;
-imdl.parameters.show_iterations  = 1;
+imdl.inv_solve.max_iterations = 10 ;
+imdl.inv_solve.show_iterations  = 1;
 
 rimg = inv_solve(imdl, vi);
 show_fem(rimg);

@@ -20,11 +20,11 @@ function img= inv_solve_abs_cg( inv_model, data1);
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
 
 % fixed working data... otherwise we wouldn't be calling this function!
-if ~isfield(inv_model.parameters, 'update_func')
-  inv_model.parameters.update_func = @CG_update;
+if ~isfield(inv_model.inv_solve, 'update_func')
+  inv_model.inv_solve.update_func = @CG_update;
 end
-if ~isfield(inv_model.parameters, 'beta_func')
-  inv_model.parameters.beta_func = @beta_reset_polak_ribiere;
+if ~isfield(inv_model.inv_solve, 'beta_func')
+  inv_model.inv_solve.beta_func = @beta_reset_polak_ribiere;
 end
 
 img = inv_solve_abs_core(inv_model, data1);

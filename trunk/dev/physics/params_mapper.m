@@ -38,7 +38,6 @@ function img = forward_mapping(img)
       img.current_inv_params = fun2str(img.params_mapper);
    end
       
-   
 function img = reverse_mapping(img)
    if ~isfield(img, 'params_mapper')
       if ~isfield(img, 'current_inv_params')
