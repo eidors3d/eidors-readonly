@@ -4,7 +4,7 @@ function params_stats
 
 params_out; % Get data
 fid= fopen(fnameout,'w');
-fprintf(fid,'%% ALGS'); fn=fieldnames(data); fprintf(fid,',%s',fn{:}); 
+fprintf(fid,'%% ALGS'); fn=alg_table; fprintf(fid,',%s',fn{:}); 
 fprintf(fid,'\n'); fclose(fid);
 
 
@@ -86,7 +86,7 @@ return %%%%%%%%%%%%%%%
 
 
 
-function algs = alg_table;
+function algs = alg_table
    algs = { 'R0', 'R3D', 'Rdif', 'Rbkg', 'Rmv', 'Rn', 'RL1', 'Rlpf','RTSVD', 'RTV',  'RGR', 'RSBP'};
 
 function fn = fnameout; fn =  '../paper/stat_tests_out.tex';
@@ -120,8 +120,7 @@ function stat_test(str, data, a, b, paramidx, test_ptr)
    fid= fopen(fnameout,'a');
    fprintf(fid,'%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n%% "%s"\n',str);
 
-   sel = 5:12; %TODO, check this with Inez, REALLY ONLY THESE PIGS?
-%  sel = 5:18;
+   sel = 5:12; % only do these animals
    STATLINE = sprintf('\\def\\STATLINE%s{',TN);
    for alg= alg_table; % SPECIFY OUR ORDER
       data_ar = [data(sel,a).( alg{1} )];
@@ -232,10 +231,10 @@ function p = a_eq_b_t_test( d1, d2 );
    % p is prob data can be explained by > LIM
    p= 1 - min([p1,p2]);
 
-function p= two_sided(T,DF);
+function p= two_sided(T,DF)
    p= 1.0*betainc (1 / (1 + T^2/DF), DF/2, 0.5);
 
-function p= one_sided(T,DF);
+function p= one_sided(T,DF)
    p= 0.5*betainc (1 / (1 + T^2/DF), DF/2, 0.5);
    if (T<0); p = 1 - p; end
 
