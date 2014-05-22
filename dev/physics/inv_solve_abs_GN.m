@@ -6,9 +6,9 @@ function img= inv_solve_abs_GN( inv_model, data0);
 % data0      => EIT data
 %
 % Parameters:
-%   inv_model.parameters.max_iterations = N_max iter            (default 1)
-%   inv_model.parameters.show_iterations  (print status lines)  (default 0)
-% Parameters: (will override parameters field)
+%   inv_model.inv_solve.max_iterations = N_max iter            (default 1)
+%   inv_model.inv_solve.show_iterations  (print status lines)  (default 0)
+% Parameters: (will override inv_model.inv_solve.* field)
 %   Maximum Iterations:
 %    inv_model.inv_solve_abs_GN.max_iterations
 %   Line Optimize function (more details below):
@@ -171,13 +171,13 @@ function [img opt] = update_step(org, next, dx, fmin,res, opt)
 function opt = parse_options(imdl)
    try
        % for any general options
-       opt = imdl.parameters;
+       opt = imdl.inv_solve;
    end
    
    opt.max_iter = 1;
 
    try
-      opt.max_iter = imdl.parameters.max_iterations;
+      opt.max_iter = imdl.inv_solve.max_iterations;
    end
    
    if isfield(imdl, 'inv_solve_abs_GN');

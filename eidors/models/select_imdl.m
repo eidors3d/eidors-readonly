@@ -85,7 +85,7 @@ function imdl = Basic_GN_Abs( imdl );
    imdl.RtR_prior = @prior_laplace;
    try; imdl = rmfield(imdl,'R_prior'); end
    imdl.solve= @inv_solve_abs_GN;
-   imdl.parameters.max_iterations= 10;
+   imdl.inv_solve.max_iterations= 10;
    imdl.reconst_type= 'absolute';
 
 function imdl = TV_solve_Dif( imdl );
@@ -93,9 +93,9 @@ function imdl = TV_solve_Dif( imdl );
    try; imdl = rmfield(imdl,'RtR_prior'); end
    imdl.solve= @inv_solve_TV_pdipm;
    imdl.reconst_type= 'difference';
-   imdl.parameters.max_iterations= 15;
+   imdl.inv_solve.max_iterations= 15;
    imdl.hyperparameter.value = 1e-1;
-   imdl.parameters.term_tolerance = 1e-3;
+   imdl.inv_solve.term_tolerance = 1e-3;
 
 function imdl = Elec_Move_GN( imdl );
    % keep previous model as conductivity jacobian, so it should be ok
@@ -196,7 +196,7 @@ function do_unit_test
          case 13;
             imdl0 = mk_common_model('b2C2',16); 
             imdl0 = select_imdl( imdl0, {'Basic GN dif', 'TV solve dif'} );
-            imdl0.parameters.max_iterations= 2;
+            imdl0.inv_solve.max_iterations= 2;
             imdl0 = select_imdl( imdl0, {'Choose NF=0.8'} );
             [vh,vi] = simulate_movement(mk_image(imdl0), [0;0.5;0.35]);
          case 14;

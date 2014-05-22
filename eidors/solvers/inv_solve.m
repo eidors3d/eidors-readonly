@@ -108,7 +108,7 @@ end
 
 if opts.select_parameters;
    img.elem_data = img.elem_data( opts.select_parameters, :);
-end;
+end
 
 if ~opts.reconst_to_elems
   img.node_data= img.elem_data;
@@ -171,6 +171,36 @@ function opts = parse_parameters( imdl );
    opts.offset = 0;
    try opts.offset = imdl.inv_solve.scale_solution.offset; end
 
+function imdl = deprecate_imdl_parameters(imdl)
+   if isfield(imdl, 'parameters')
+      if isstruct(imdl.parameters)
+         disp(imdl)
+         disp(imdl.parameters)
+         warning('EIDORS:deprecatedParameters','INV_SOLVE inv_model.parameters.* are deprecated in favor of inv_model.inv_solve.* as of 30-Apr-2014.');
+
+         if ~isfield(imdl, 'inv_solve')
+            imdl.inv_solve = imdl.parameters;
+         else % we merge
+            % merge struct trick from:
+            %  http://stackoverflow.com/questions/38645
+            A = imdl.parameters;
+            B = imdl.inv_solve;
+            M = [fieldnames(A)' fieldnames(B)'; struct2cell(A)' struct2cell(B)'];
+            try % assumes no collisions
+               imdl.inv_solve=struct(M{:});
+            catch % okay, collisions - do unique to resolve them
+               [tmp, rows] = unique(M(1,:), 'last');
+               M=M(:,rows);
+               imdl.inv_solve=struct(M{:});
+            end
+         end
+         imdl = rmfield(imdl, 'parameters');
+         imdl.parameters = imdl.inv_solve; % backwards compatible!
+      else
+         error('unexpected inv_model.parameters where parameters is not a struct... i do not know what to do');
+      end
+   end
+
 function mdl = prepare_model( mdl )
     fmdl = mdl.fwd_model;
     fmdl = mdl_normalize(fmdl,mdl_normalize(fmdl));
@@ -191,6 +221,9 @@ function mdl = prepare_model( mdl )
     if ~isfield(mdl,'reconst_type');
         mdl.reconst_type= 'difference';
     end
+
+    % warn if we have deprecated inv_model.parameters laying about
+    mdl = deprecate_imdl_parameters(mdl)
 
 function check_parametrization_handling(inv_model,imgc)
 if isfield(inv_model, 'jacobian_bkgnd') && ... 
