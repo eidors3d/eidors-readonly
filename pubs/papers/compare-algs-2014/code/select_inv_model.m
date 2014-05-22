@@ -13,7 +13,7 @@ function [imdl, ROI, mdlname] = select_inv_model(modelno,dir,W );
 
    [imdl, ROI, mdlname] = get_model(modelno,dir,W );
    imdl = modify_if_necessary(imdl,dir);
-   imdl = set_hyperparams(imdl, modelno);
+%    imdl = set_hyperparams(imdl, modelno);
 
 function test_NF(mdl_list)
 warning off EIDORS:Deprecated
@@ -179,8 +179,6 @@ switch modelno
         error('No hp for %d',modelno);
 end
 end
-
-end
 % Sheffield stim patterns used
 function [stim,meas_sel] = SBP_stim;
    [stim,meas_sel] =  ...
@@ -188,7 +186,7 @@ function [stim,meas_sel] = SBP_stim;
 
 function [imdl, ROI, mdlname] = get_model(modelno,fname,W );
    fmdl = mk_paper_fem(2);
-   fmdl.stimulation = SBP_stim;
+   [fmdl.stimulation fmdl.meas_select] = SBP_stim;
    fmdl.normalize_measurements = 1;
    iR0 = select_imdl(fmdl,{'Basic GN dif'});
    iR0.jacobian_bkgnd.value = 1;
@@ -247,11 +245,11 @@ m_hp = 1e+5;
          imdl.hyperparameter.value = get_hp(modelno);
          % get data 
          [jnk,msel] = SBP_stim;
-         ff=dir([fname,'*.mat']); vv=[];
+         ff=dir(['../breaths/' fname,'*.mat']); vv=[];
          for fi = 1:length(ff); 
            if ff(fi).name(9) == 'R', continue, end % Don't look at saved image files
            % TODO continue if we don't have dsv
-           dd= load(ff(fi).name); vv=[vv,dd.dsv(msel,:)];
+           dd= load([ '../breaths/' ff(fi).name]); vv=[vv,dd.dsv(msel,:)];
          end
          imdl.calc_reciproc_error.tau = 1e-5;
          % for this value for S12, mean(diag(imdl.meas_icov))=0.6604

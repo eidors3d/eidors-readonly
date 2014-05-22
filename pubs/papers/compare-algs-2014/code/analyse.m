@@ -83,7 +83,7 @@ function mk_figure3;
 calc_colours('mapped_colour',125);
 calc_colours('backgnd',.9*[1,1,1]);
 calc_colours('greylev',.01);
-   [imdl_v, ROIv] = select_inv_model(1, 'S12', []);
+   [imdl_v, ROIv] = select_inv_model(1000, 'S12', []);
 
    FRATE= 13;
    fname= 'S12/S12-006.get';
@@ -185,7 +185,7 @@ fprintf(fid,'\n');
 fclose(fid);
 
 function [expis, insps, W] = get_insp_expi_data( dir, fidb)
-   [imdl_v, ROIv] = select_inv_model(1, dir, []);
+   [imdl_v, ROIv] = select_inv_model(1007, dir, []);
 
    FRATE= 13;
    expis= [];
@@ -286,7 +286,7 @@ ROIt= ROIt(:);
 
 function [imname,raster]= recon_write(imdl, Dt, imfrac, alg) 
    imname= ['../img/',imfrac,alg,'.png'];
-   vent_img = inv_solve( imdl, Dt(:,1),Dt(:,2));
+   vent_img = inv_solve( imdl, Dt(:,2), Dt(:,1)); % BG 19.05.2013 reversed
    if size(Dt,2)>2
       vent_img2 = inv_solve( imdl, Dt(:,3),Dt(:,4));
       vent_img.elem_data = vent_img.elem_data - vent_img2.elem_data;

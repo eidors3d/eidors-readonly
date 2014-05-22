@@ -20,7 +20,7 @@ function imgs_to_params( animals, RMs )
 
 function do_unit_test
 global locn; locn=0;
-   imgs_to_params([5:14],{ 'R0', 'R3D', 'Rbkg', 'Rdif', 'RGR', 'RL1', 'Rlpf', 'RTSVD' ,'Rmv', 'Rn', 'RSBP', 'RTV','RGRb','Rlp'});
+   imgs_to_params([5:14],{ 'R0', 'R3D', 'Rbkg', 'Rdif', 'RGR', 'RL1', 'Rlpf', 'RTSVD' ,'Rmv', 'Rn', 'RSBP', 'RTV'});
 
 
 function img_to_params(animal, RM)
@@ -73,7 +73,7 @@ function  calc_write_params( img, bdy, ROI, animal, RM);
       imgi = abs(imgi);
       yaxis = linspace(+1,-1,size(imgi,1))' * ones(1,size(imgi,2));
       CoG =   sum(sum( ROI.*yaxis.*imgi))/sum(sum( ROI.*imgi));
-
+      if isnan(CoG),keyboard,end;
       fprintf(fid,'data(%2d,%3d).%-8s=[ %+10.4f;%+6.4f ]; %% %s\n', ...
                   animal, i, RM, ampli, CoG, iname );
 
