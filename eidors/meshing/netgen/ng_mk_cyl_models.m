@@ -282,9 +282,9 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
      elecs(i) = elec_spec( row, is2D, hig, rad );
    end
 
-   %MC FIX 05.07.13 - COORDINATE SYSTEM - THETA = 0 AT 3PM AND THETA INCREASE ANTICLOCK
-%   centres = [rad*sin(el_th),rad*cos(el_th),el_z];
-   centres = [rad*cos(el_th),rad*sin(el_th),el_z];
+%   %MC FIX 05.07.13 - COORDINATE SYSTEM - THETA = 0 AT 3PM AND THETA INCREASE ANTICLOCK
+% NO - we will use clockwise coordinate system
+   centres = [rad*sin(el_th),rad*cos(el_th),el_z];
    
    for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
 
