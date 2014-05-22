@@ -11,7 +11,7 @@ img.conductivity.elem_data([75,93,94,113,114,136]) = 1.2;
 img.conductivity.elem_data([105,125,126,149,150,174]) = 0.8;
 vi = fwd_solve(img);
 img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
-img.physics_data_mapper = 'conductivity';
+img.data_mapper = 'conductivity';
 img.fwd_model.solve = @fwd_solve_elec_move;
 
 mdl2dim = mk_common_model('b2c');
@@ -124,9 +124,9 @@ for i = test_no
       case 8
          img = mk_image( mdlc, 1,'conductivity');
          img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
-         img.physics_data_mapper = 'conductivity';
+         img.data_mapper = 'conductivity';
          img.fwd_model.solve = @fwd_solve_elec_move;
-         img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+         img.params_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
          mdlc.jacobian_bkgnd = rmfield(img,'fwd_model');
          mdlc.fwd_model.jacobian = @jacobian_movement;
          mdlc.RtR_prior =          @prior_movement;
@@ -142,9 +142,9 @@ for i = test_no
       case 9
          img = mk_image( mdlc, 1,'conductivity');
          img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
-         img.physics_data_mapper = 'conductivity';
+         img.data_mapper = 'conductivity';
          img.fwd_model.solve = @fwd_solve_elec_move;
-         img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+         img.params_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
          mdlc.jacobian_bkgnd = rmfield(img,'fwd_model');
          mdlc.fwd_model.jacobian = @jacobian_movement;
          mdlc.RtR_prior =          @prior_movement;
@@ -169,9 +169,9 @@ for i = test_no
          
          img = mk_image( mdlc, 1,'conductivity');
          img.movement.electrode_data = zeros(length(img.fwd_model.electrode)*2,1);
-         img.physics_data_mapper = 'conductivity';
+         img.data_mapper = 'conductivity';
          img.fwd_model.solve = @fwd_solve_elec_move;
-         img.physics_param_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
+         img.params_mapper = {'conductivity.elem_data', 'movement.electrode_data'};
          
          mdlc.jacobian_bkgnd = rmfield(img,'fwd_model');
          mdlc.fwd_model.jacobian = @jacobian_movement;

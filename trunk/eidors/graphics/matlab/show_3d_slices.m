@@ -13,8 +13,8 @@ function show_3d_slices(img, varargin);
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
-%multi-physics
-img = physics_data_mapper(img);
+%multi-parametrization
+img = data_mapper(img);
 
 qfi = warning('query','EIDORS:FirstImageOnly');
 % check size

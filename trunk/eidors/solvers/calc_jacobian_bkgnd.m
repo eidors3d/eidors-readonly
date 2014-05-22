@@ -31,8 +31,8 @@ end
 if isfield(inv_model.jacobian_bkgnd,'func')
    img_bkgnd= feval( inv_model.jacobian_bkgnd.func, inv_model );
 elseif isfield(inv_model.jacobian_bkgnd,'value')
-   if has_physics(inv_model.jacobian_bkgnd)
-      warning('Ignoring physics-specific fields in Jacobian background')
+   if has_params(inv_model.jacobian_bkgnd)
+      warning('Ignoring parametrization-specific fields in Jacobian background')
    end
    % allow bkgnd to be scalar or vector
    fwd_model= inv_model.fwd_model;
@@ -43,15 +43,15 @@ elseif isfield(inv_model.jacobian_bkgnd,'value')
                          'elem_data', bkgnd, ...
                          'fwd_model', fwd_model );
 else
-%%% new interface with physics %%%
+%%% new interface with parametrizations (params) %%%
     fwd_model = inv_model.fwd_model;
     img_bkgnd = eidors_obj('image','background image','fwd_model',fwd_model);
     flds = fieldnames(inv_model.jacobian_bkgnd);
-    % copy physics from to im
+    % copy params from img
     for i = 1:length(flds)
        img_bkgnd.(flds{i}) = inv_model.jacobian_bkgnd.(flds{i});
     end
-%     img_bkgnd = physics_data_mapper(img_bkgnd);
+%     img_bkgnd = data_mapper(img_bkgnd);
 end
 
 
@@ -59,10 +59,10 @@ eidors_obj('set-cache', inv_model, 'jacobian_bkgnd', img_bkgnd);
 eidors_msg('jacobian_bkgnd: setting cached value', 3);
 
 
-function b = has_physics(s)
+function b = has_params(s)
 b = false;
 if isstruct(s)
-   b = any(ismember(fieldnames(s),supported_physics));
+   b = any(ismember(fieldnames(s),supported_params));
 end
 
 function do_unit_test

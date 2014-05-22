@@ -1,7 +1,7 @@
 function y = convert_img_units(img,arg1,arg2)
 %CONVERT_IMG_UNITS change image data units 
 %  img = convert_img_units(img,new_unit) converts img.elem_data or img.node_data
-%  expressed in img.current_physics into different units for the same 
+%  expressed in img.current_params into different units for the same 
 %  physical property
 % 
 % Examples: 
@@ -9,7 +9,7 @@ function y = convert_img_units(img,arg1,arg2)
 %  img = convert_img_units(img, 'conductivity');
 %
 %  img = mk_image(mdl, 1);
-%  img.current_physics = 'log_resistivity';
+%  img.current_params = 'log_resistivity';
 %  img = convert_img_units(img, 'conductivity');
 
 % (C) 2012-2014 Alistair Boyle and Bartlomiej Grychtol
@@ -45,25 +45,25 @@ if any(isfield(img,{'elem_data','node_data'}))
     new_unit = arg2;
   else
     try
-      cur_unit = img.current_physics;
+      cur_unit = img.current_params;
       new_unit = arg1;
     catch
       error(['Don''t know what to convert. '...
-              'Need either 3 arguments or img.current_physics.']);
+              'Need either 3 arguments or img.current_params.']);
     end
   end
 else
   if nargin ==3
     cur_unit = arg1;
-    img.physics_data_mapper = cur_unit;
+    img.data_mapper = cur_unit;
     new_unit = arg2;
   else
     new_unit = arg1;
   end
-  img = physics_data_mapper(img);
-  cur_unit = img.current_physics;
+  img = data_mapper(img);
+  cur_unit = img.current_params;
   
-  % what to do about old physics??
+  % what to do about old parametrization??
 %   img = rmfield(img, 'cur_unit');
 end
 
@@ -78,7 +78,7 @@ if do_nodes
 else
   img.elem_data = y;
 end
-img.current_physics = new_unit;
+img.current_params = new_unit;
 y = img;
 
 end

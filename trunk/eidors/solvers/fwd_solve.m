@@ -45,7 +45,7 @@ fwd_model= img.fwd_model;
 
 fwd_model= prepare_model( fwd_model );
 
-% TODO: This should be handled by the physics_data_mapper
+% TODO: This should be handled by the data_mapper
 if isfield(img,'params_mapping')
 %     fwd_model data is provided using a mapping function
     mapping_function= img.params_mapping.function;

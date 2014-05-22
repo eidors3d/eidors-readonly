@@ -91,12 +91,12 @@ else
 
 end
 
-check_physics_handling(inv_model,imgc);
+check_parametrization_handling(inv_model,imgc);
      
 img = eidors_obj('image', imgc );
-% img = physics_data_mapper(img,1);
-if ~isfield(img,'current_physics')
-  img.current_physics = [];
+% img = data_mapper(img,1);
+if ~isfield(img,'current_params')
+  img.current_params = [];
 end
 
 % If we reconstruct with a different 'rec_model' then
@@ -192,9 +192,9 @@ function mdl = prepare_model( mdl )
         mdl.reconst_type= 'difference';
     end
 
-function check_physics_handling(inv_model,imgc)
+function check_parametrization_handling(inv_model,imgc)
 if isfield(inv_model, 'jacobian_bkgnd') && ... 
-    has_physics(inv_model.jacobian_bkgnd) && ~has_physics(imgc)
+    has_params(inv_model.jacobian_bkgnd) && ~has_params(imgc)
    if isa(inv_model.solve,'function_handle')
       solver = func2str(inv_model.solve);
    else
@@ -203,17 +203,17 @@ if isfield(inv_model, 'jacobian_bkgnd') && ...
    if strcmp(solver,'eidors_default');
       solver = eidors_default('get','inv_solve');
    end
-   warning('EIDORS:PhysicsObliviousSolver',...
-      ['The solver %s did not handle the physics data properly.\n'...
+   warning('EIDORS:ParamsObliviousSolver',...
+      ['The solver %s did not handle the parametrization data properly.\n'...
        'The results may be incorrect. Please check the code to verify.'], ...
        solver);
 end
          
     
-function b = has_physics(s)
+function b = has_params(s)
 b = false;
 if isstruct(s)
-   b = any(ismember(fieldnames(s),supported_physics));
+   b = any(ismember(fieldnames(s),supported_params));
 end
 
 

@@ -22,10 +22,10 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
        ' an error in a future version. First argument ignored.']);
 end
 
-img = physics_data_mapper(img);
+img = data_mapper(img);
 measurement = input_check(img);
 
-org_physics = img.current_physics;
+org_params = img.current_params;
 % all calcs use conductivity
 img = convert_img_units(img, 'conductivity');
 
@@ -35,12 +35,12 @@ fwd_model= img.fwd_model;
 
 pp= fwd_model_parameters( fwd_model );
 
- J= do_jacobian_calculation( img, pp, fwd_model, org_physics);
+ J= do_jacobian_calculation( img, pp, fwd_model, org_params);
 %J= do_jacobian_calculation_qr( img, pp, fwd_model);
 
 
-% if ~strcmp(org_physics,'conductivity')
-%     J = apply_chain_rule(J, img, org_physics);
+% if ~strcmp(org_params,'conductivity')
+%     J = apply_chain_rule(J, img, org_params);
 %     if isfield(fwd_model, 'coarse2fine') && ...
 %           size(img.elem_data,1)==size(fwd_model.coarse2fine,1)
 %             J=J*fwd_model.coarse2fine;
@@ -49,9 +49,9 @@ pp= fwd_model_parameters( fwd_model );
 % end
 
 %restore img to original condition
-if ~strcmp(org_physics,'conductivity') || isfield(img, org_physics)
+if ~strcmp(org_params,'conductivity') || isfield(img, org_params)
     img = rmfield(img,'elem_data');
-    img.current_physics = [];
+    img.current_params = [];
 end
 
 if ~strcmp(measurement, 'voltage')
@@ -64,7 +64,7 @@ if pp.normalize
    J= J ./ (data.meas(:)*ones(1,nparam));
 end
 
-function J= do_jacobian_calculation( img, pp, fwd_model, org_physics);
+function J= do_jacobian_calculation( img, pp, fwd_model, org_params);
 
    s_mat= calc_system_mat( img );
 
@@ -86,8 +86,8 @@ function J= do_jacobian_calculation( img, pp, fwd_model, org_physics);
 
    if do_c2f
       c2f = fwd_model.coarse2fine;
-      if ~strcmp(org_physics, 'conductivity')
-         c2f = spdiag(chain_rule_factor(img, org_physics)) * c2f;
+      if ~strcmp(org_params, 'conductivity')
+         c2f = spdiag(chain_rule_factor(img, org_params)) * c2f;
       end
        
       DE = jacobian_calc(pp, zi2E, FC, sv, c2f);
@@ -107,8 +107,8 @@ function J= do_jacobian_calculation( img, pp, fwd_model, org_physics);
    end
    
    % apply chain rule (already done for c2f)
-   if ~do_c2f && ~strcmp(org_physics, 'conductivity')
-     J = apply_chain_rule(J, img, org_physics);
+   if ~do_c2f && ~strcmp(org_params, 'conductivity')
+     J = apply_chain_rule(J, img, org_params);
    end
 
 % New function which tries to qr decompose so we don't do
@@ -265,8 +265,8 @@ end
 
 function d = DEBUG; d=false;
 
-function dCond_dPhys = chain_rule_factor(img,org_physics)
-switch(org_physics)
+function dCond_dPhys = chain_rule_factor(img,org_params)
+switch(org_params)
     case 'resistivity'
         dCond_dPhys = -img.elem_data.^2;
     case 'log_resistivity'
@@ -278,9 +278,9 @@ switch(org_physics)
 end
 
 
-function J = apply_chain_rule(J, img, org_physics)
+function J = apply_chain_rule(J, img, org_params)
 
-dCond_dPhys = chain_rule_factor(img, org_physics);
+dCond_dPhys = chain_rule_factor(img, org_params);
 J = J*spdiag(dCond_dPhys);
 
 function J = convert_measurement(J, img, measurement)
@@ -312,9 +312,9 @@ end
 J = fctr*J;
 
 function measurement = input_check(img)
-if ~ismember(img.current_physics, supported_physics)
+if ~ismember(img.current_params, supported_params)
     error('EIDORS:PhysicsNotSupported', '%s does not support %s', ...
-    'JACOBIAN_ADJOINT',img.current_physics);
+    'JACOBIAN_ADJOINT',img.current_params);
 end
 
 try 
@@ -353,7 +353,7 @@ function elem_data = check_elem_data(img)
 
 
 
-function str = supported_physics
+function str = supported_params
     str = {'conductivity'
            'resistivity'
            'log_conductivity'
@@ -402,7 +402,7 @@ function do_unit_test
    fctr= apparent_resistivity_factor(fmdl);  
    elem_data_init= rand(size(fmdl.elems,1),1);
    meas = supported_measurement;
-   phys = supported_physics;
+   phys = supported_params;
    j= 1; i = 1;
    img_test = mk_image(fmdl,1,phys{j});
    img_test.(phys{j}).elem_data = elem_data_init;

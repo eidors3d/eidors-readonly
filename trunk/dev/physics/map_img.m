@@ -28,24 +28,24 @@ return
    end
 
    err_if_inf_or_nan(img.elem_data, 'img-pre');
-   try in = img.current_physics;
+   try in = img.current_params;
    catch in = {'conductivity'};
    end
    % make cell array of strings
    if isstr(in)
       in = {in};
-      img.current_physics = in;
+      img.current_params = in;
    end
    if isstr(out)
       out = {out};
    end
 
    % if we have mixed data, check that we have a selector to differentiate between them
-   if ~isfield(img, 'physics_sel')
+   if ~isfield(img, 'params_sel')
       if length(in(:)) == 1
-         img.physics_sel = {1:size(img.elem_data,1)};
+         img.params_sel = {1:size(img.elem_data,1)};
       else
-         error('found multiple physics but no physics_sel cell array in img');
+         error('found multiple parametrizations (params) but no params_sel cell array in img');
       end
    end
 
@@ -60,9 +60,9 @@ return
          ei = length(img.elem_data);
          ei = [ei+1:ei+length(e)];
          img.elem_data(ei) = e;
-         img.physics_sel{end+1} = ei;
+         img.params_sel{end+1} = ei;
          in{end+1} = 'movement';
-         img.current_physics = in;
+         img.current_params = in;
       end
       % are we still broken -- then error out
       if length(out(:)) > length(in(:))
@@ -72,26 +72,26 @@ return
       % delete data: we can do that
       % NOTE that if we are doing this, we always assume its the *last* items in the list
       for i = 1:length(in(:))-length(out(:)) % delete the extra
-         img.elem_data(img.physics_sel{end}) = []; % rm elem_data
-         img.physics_sel(end) = []; % rm physics_sel
-         img.current_physics{end} = []; % rm current_physics
+         img.elem_data(img.params_sel{end}) = []; % rm elem_data
+         img.params_sel(end) = []; % rm params_sel
+         img.current_params{end} = []; % rm current_params
       end
    end
 
    % the sizes now match, we can do the mapping
    for i = 1:length(out(:))
       % map the data
-      x = img.elem_data(img.physics_sel{i});
+      x = img.elem_data(img.params_sel{i});
       x = map_data(x, in{i}, out{i});
-      img.elem_data(img.physics_sel{i}) = x;
-      img.current_physics{i} = out{i};
+      img.elem_data(img.params_sel{i}) = x;
+      img.current_params{i} = out{i};
    end
    err_if_inf_or_nan(img.elem_data, 'img-post');
 
-   % clean up physics_sel/current_physics if we only have one physics
-   if length(img.current_physics(:)) == 1
-      img.current_physics = img.current_physics{1};
-      img = rmfield(img, 'physics_sel'); % unnecessary since we know its all elem_data
+   % clean up params_sel/current_params if we only have one parametrization
+   if length(img.current_params(:)) == 1
+      img.current_params = img.current_params{1};
+      img = rmfield(img, 'params_sel'); % unnecessary since we know its all elem_data
    end
 
 function x = map_data(x, in, out)

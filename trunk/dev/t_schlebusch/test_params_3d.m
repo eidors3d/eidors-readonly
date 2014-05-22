@@ -30,9 +30,9 @@ disp(norm(calc_difference_data(vi1,vi,fmdl)));
 
 %% Reconstruction
 bkgnd.conductivity.params = [0.05, 1]'; % r x y z
-bkgnd.physics_data_mapper = 'conductivity';
+bkgnd.data_mapper = 'conductivity';
 bkgnd.conductivity.func   = @apply_bladder_parametrization;
-bkgnd.physics_param_mapper = {'conductivity.params'};
+bkgnd.params_mapper = {'conductivity.params'};
 imdl.jacobian_bkgnd = bkgnd;
 imdl.fwd_model.jacobian = @jacobian_perturb;
 imdl.RtR_prior = @prior_tikhonov;

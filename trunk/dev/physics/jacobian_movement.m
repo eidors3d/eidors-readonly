@@ -31,10 +31,10 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
 end
 fwd_model= img.fwd_model;
 
-img = physics_data_mapper(img);
-if ~ismember(img.current_physics, supported_physics)
+img = data_mapper(img);
+if ~ismember(img.current_params, supported_params)
     error('EIDORS:PhysicsNotSupported', '%s does not support %s', ...
-    'JACOBIAN_MOVEMENT',img.current_physics);
+    'JACOBIAN_MOVEMENT',img.current_params);
 end
 
 ws = warning('query','EIDORS:OverwritingData');
@@ -547,7 +547,7 @@ function unit_test_3d_inv_solve1
    imgM = inv_solve(imdl, vh, vh);
  
    
-   function str = supported_physics
+   function str = supported_params
         str = {'conductivity'
            'resistivity'
            'log_conductivity'

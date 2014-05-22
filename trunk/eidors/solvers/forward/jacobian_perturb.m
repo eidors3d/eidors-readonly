@@ -24,49 +24,49 @@ n_elem = size(fwd_model.elems,1);
 % force image to use provided fwd_model
 img.fwd_model= fwd_model;
 
-jnk = physics_data_mapper(img);
-physics = jnk.current_physics;
+jnk = data_mapper(img);
+curprms = jnk.current_params;
 
-if strcmp(physics, 'conductivity') && ~isfield(img,'conductivity')
-   physics = '';
+if strcmp(curprms, 'conductivity') && ~isfield(img,'conductivity')
+   curprms = '';
 end
 
 % solve one time to get the size
 d0= fwd_solve( img );
 
 if isfield(img.fwd_model,'coarse2fine');
-   Jcol= perturb_c2f(img, 1, delta, d0, physics);
+   Jcol= perturb_c2f(img, 1, delta, d0, curprms);
    Jrows= size(img.fwd_model.coarse2fine,2);
    J= zeros(length(Jcol), Jrows );
    J(:,1)= Jcol;
    for i=2:size(img.fwd_model.coarse2fine,2);
-     J(:,i)= perturb_c2f(img, i, delta, d0, physics);
+     J(:,i)= perturb_c2f(img, i, delta, d0, curprms);
      if rem(i,50)==0; fprintf('+'); end
    end
 else
-   Jcol= perturb(img, 1, delta, d0, physics);
+   Jcol= perturb(img, 1, delta, d0, curprms);
 
    J= zeros(length(Jcol), n_elem);
    J(:,1)= Jcol;
 
    for i=2:n_elem
-     J(:,i)= perturb(img, i, delta, d0, physics);
+     J(:,i)= perturb(img, i, delta, d0, curprms);
    end
 end
 
 
-function Jcol= perturb( img, i, delta, d0, physics)
-   if ~isempty(physics)
-      img.(physics).elem_data(i)= img.(physics).elem_data(i) + delta;
+function Jcol= perturb( img, i, delta, d0, curprms)
+   if ~isempty(curprms)
+      img.(curprms).elem_data(i)= img.(curprms).elem_data(i) + delta;
    else
       img.elem_data(i)= img.elem_data(i) + delta;
    end
    di= fwd_solve( img );
    Jcol = (1/delta) * (di.meas - d0.meas);
 
-function Jcol= perturb_c2f( img, i, delta, d0, physics)
-   if ~isempty(physics)
-      img.(physics).elem_data= img.(physics).elem_data + delta*img.fwd_model.coarse2fine(:,i);
+function Jcol= perturb_c2f( img, i, delta, d0, curprms)
+   if ~isempty(curprms)
+      img.(curprms).elem_data= img.(curprms).elem_data + delta*img.fwd_model.coarse2fine(:,i);
    else
       img.elem_data= img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
    end

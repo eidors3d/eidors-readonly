@@ -21,7 +21,7 @@ function img= ls_inv_solve_diff_GN_one_step( inv_model, data1, data2)
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 [sol,resx,normx]=get_RM( inv_model,dv );
-img = physics_data_mapper(calc_jacobian_bkgnd( inv_model ));
+img = data_mapper(calc_jacobian_bkgnd( inv_model ));
 img.name= 'solved by inv_solve_diff_GN_one_step';
 
 img.elem_data = sol;
@@ -29,7 +29,7 @@ img.residual=resx;
 img.normx=normx;
 
 img.fwd_model= inv_model.fwd_model;
-img = physics_data_mapper(img,1);
+img = data_mapper(img,1);
 
 function [sol,resx,normx] = get_RM( inv_model,dv )
    % The one_step reconstruction matrix is cached

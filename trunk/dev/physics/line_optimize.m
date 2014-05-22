@@ -84,16 +84,16 @@ res  = feval(opt.objective_func,data0,vsim,imgk,img,opt);
 
 
 function img = calc_perturb(imgk, p, dx, opt)
-   imgk = physics_param_mapper(imgk);
+   imgk = params_mapper(imgk);
    img = imgk;
-   img.params = imgk.params + p*dx;
+   img.inv_params = imgk.inv_params + p*dx;
    img = apply_limits(img,opt);
-   img = physics_param_mapper(img, 1);
+   img = params_mapper(img, 1);
 
 
 function img = apply_limits(img,opt)
-   img.params(img.params > opt.max_value) = opt.max_value;
-   img.params(img.params < opt.min_value) = opt.min_value;
+   img.inv_params(img.inv_params > opt.max_value) = opt.max_value;
+   img.inv_params(img.inv_params < opt.min_value) = opt.min_value;
 
 
 function val = default_obj_fun(data0, data, img0, img, opt)

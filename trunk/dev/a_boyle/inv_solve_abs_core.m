@@ -240,8 +240,8 @@ opt = parse_options(inv_model);
 [inv_model, opt] = append_c2f_background(inv_model, opt);
 img = mk_image( inv_model );
 %img = calc_jacobian_bkgnd( inv_model );
-% TODO does calc_jacobian_bkgnd ignore 'physics' right now.. that might screw things up pretty good!
-img = physics_data_mapper(img); % move data from whatever 'physics' to img.elem_data
+% TODO does calc_jacobian_bkgnd ignore 'params' right now.. that might screw things up pretty good!
+img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 
 % mk_image doesn't handle the c2f
 % TODO move this from here to mk_image so we get an img with the correct number of elem_data
@@ -255,7 +255,7 @@ if isfield(inv_model, 'fwd_model') && ...
    bg = mean(img.elem_data);
    img.elem_data = ones(size(c2f,2),1)*bg;
    if opt.verbose > 1
-      bg = map_data(bg, img.current_physics, 'resistivity');
+      bg = map_data(bg, img.current_params, 'resistivity');
       fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
       disp('    TODO this fix should be moved to mk_image()');
    end
@@ -280,7 +280,7 @@ if ~isstruct(data0)
    data0.meas = d;
    data0.type = 'data';
 end
-data0.current_physics = opt.meas_input;
+data0.current_params = opt.meas_input;
 
 % now get on with
 img0 = img;
@@ -339,7 +339,7 @@ if opt.verbose > 1
 end
 % convert data for output
 img = map_img(img, opt.elem_output);
-%img = physics_data_mapper(img, 1); % move data from img.elem_data to whatever 'physics'
+%img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
 
 function W = init_meas_icov(inv_model, opt)
    W = 1;
@@ -497,11 +497,11 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      ne = length(img.elem_data) - size(RtR,1);
      % we are correcting for the added background element
      % if there is movement, don't add it there.
-     if isfield(img, 'current_physics') && ...
-        any(strcmp(img.current_physics, 'movement'))
+     if isfield(img, 'current_params') && ...
+        any(strcmp(img.current_params, 'movement'))
         % grab the first set of non-movement elem_data
-        i = find(~strcmp(img.current_physics, 'movement'));
-        ps = img.physics_sel{i(1)};
+        i = find(~strcmp(img.current_params, 'movement'));
+        ps = img.params_sel{i(1)};
         % insert an extra element at the end of the non-movement
         % regularization so the length is right, we assume Tikhonov
         RtR(ps(end)+1+ne:end+ne, ps(end)+1+ne:end+ne) = RtR(ps(end)+1:end, ps(end)+1:end);
@@ -652,11 +652,11 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    [dv, opt] = update_dv_core(img, data0, N, opt);
 
 function data = map_meas_struct(data, N, out)
-   try   current_meas_physics = data.current_physics;
-   catch current_meas_physics = 'voltage';
+   try   current_meas_params = data.current_params;
+   catch current_meas_params = 'voltage';
    end
-   data.meas = map_meas(data.meas, N, current_meas_physics, out);
-   data.current_physics = out;
+   data.meas = map_meas(data.meas, N, current_meas_params, out);
+   data.current_params = out;
    err_if_inf_or_nan(data.meas, 'dv meas');
 
 % also used by the line search as opt.line_search_dv_func
@@ -725,7 +725,7 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %   pf = polyfit(data,vs.meas,1);
 %
 %   % create elem_data
-%   img = physics_data_mapper(img);
+%   img = data_mapper(img);
 %
 %   if isfield(img.fwd_model,'coarse2fine');
 %      % TODO: the whole coarse2fine needs work here.
@@ -739,7 +739,7 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %   end
 %
 %   % remove elem_data
-%%   img = physics_data_mapper(img,1);
+%%   img = data_mapper(img,1);
 %
 %function [img opt] = update_step(org, next, dx, fmin,res, opt)
 %   if isfield(opt, 'update_func')
@@ -1125,10 +1125,10 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
       return;
     end
 
-    % if there are multiple 'physics', we assume its the first
+    % if there are multiple 'params' (parametrizations), we assume its the first
     % TODO -- this isn't a great assumption but it'll work for now,
     %         we should add a better (more general) mechanism
-    in = img.current_physics;
+    in = img.current_params;
     out = opt.elem_output;
     if iscell(in)
        in = in{1};
@@ -1139,7 +1139,8 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
 
     % go about cleaning up the background
     e = opt.c2f_background;
-    % take backgtround elements and convert to output 'physics' (resistivity, etc)
+    % take backgtround elements and convert to output
+    % 'params' (resistivity, etc)
     bg = map_data(img.elem_data(e), in, out);
     img.elem_data_background = bg;
     % remove elements from elem_data & c2f
@@ -1149,14 +1150,14 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
     opt.c2f_background = 0;
     ri = find(opt.elem_fixed == e);
     opt.elem_fixed(ri) = [];
-    if isfield(img, 'physics_sel')
-       for i = 1:length(img.physics_sel)
-          t = img.physics_sel{i};
+    if isfield(img, 'params_sel')
+       for i = 1:length(img.params_sel)
+          t = img.params_sel{i};
           ti = find(t == e);
-          t(ti) = []; % rm 'e' from the list of physics_sel
+          t(ti) = []; % rm 'e' from the list of params_sel
           ti = find(t > e);
           t(ti) = t(ti)-1; % down-count element indices greater than our deleted one
-          img.physics_sel{i} = t;
+          img.params_sel{i} = t;
        end
     end
 
@@ -1183,32 +1184,32 @@ function img = fix_c2f_calc_jacobian_backgnd(img, opt)
       img.elem_data = bg*ones(nc,1);
     end
 
-function b = has_physics(s)
+function b = has_params(s)
 b = false;
 if isstruct(s)
-   b = any(ismember(fieldnames(s),supported_physics));
+   b = any(ismember(fieldnames(s),supported_params));
 end
 
 function img = map_img(img, out);
    err_if_inf_or_nan(img.elem_data, 'img-pre');
-   try in = img.current_physics;
+   try in = img.current_params;
    catch in = {'conductivity'};
    end
    % make cell array of strings
    if isstr(in)
       in = {in};
-      img.current_physics = in;
+      img.current_params = in;
    end
    if isstr(out)
       out = {out};
    end
 
    % if we have mixed data, check that we have a selector to differentiate between them
-   if ~isfield(img, 'physics_sel')
+   if ~isfield(img, 'params_sel')
       if length(in(:)) == 1
-         img.physics_sel = {1:size(img.elem_data,1)};
+         img.params_sel = {1:size(img.elem_data,1)};
       else
-         error('found multiple physics but no physics_sel cell array in img');
+         error('found multiple parametrizations (params) but no params_sel cell array in img');
       end
    end
 
@@ -1223,9 +1224,9 @@ function img = map_img(img, out);
          ei = length(img.elem_data);
          ei = [ei+1:ei+length(e)];
          img.elem_data(ei) = e;
-         img.physics_sel{end+1} = ei;
+         img.params_sel{end+1} = ei;
          in{end+1} = 'movement';
-         img.current_physics = in;
+         img.current_params = in;
       end
       % are we still broken -- then error out
       if length(out(:)) > length(in(:))
@@ -1235,26 +1236,26 @@ function img = map_img(img, out);
       % delete data: we can do that
       % NOTE that if we are doing this, we always assume its the *last* items in the list
       for i = 1:length(in(:))-length(out(:)) % delete the extra
-         img.elem_data(img.physics_sel{end}) = []; % rm elem_data
-         img.physics_sel(end) = []; % rm physics_sel
-         img.current_physics{end} = []; % rm current_physics
+         img.elem_data(img.params_sel{end}) = []; % rm elem_data
+         img.params_sel(end) = []; % rm params_sel
+         img.current_params{end} = []; % rm current_params
       end
    end
 
    % the sizes now match, we can do the mapping
    for i = 1:length(out(:))
       % map the data
-      x = img.elem_data(img.physics_sel{i});
+      x = img.elem_data(img.params_sel{i});
       x = map_data(x, in{i}, out{i});
-      img.elem_data(img.physics_sel{i}) = x;
-      img.current_physics{i} = out{i};
+      img.elem_data(img.params_sel{i}) = x;
+      img.current_params{i} = out{i};
    end
    err_if_inf_or_nan(img.elem_data, 'img-post');
 
-   % clean up physics_sel/current_physics if we only have one physics
-   if length(img.current_physics(:)) == 1
-      img.current_physics = img.current_physics{1};
-      img = rmfield(img, 'physics_sel'); % unnecessary since we know its all elem_data
+   % clean up params_sel/current_params if we only have one parametrization
+   if length(img.current_params(:)) == 1
+      img.current_params = img.current_params{1};
+      img = rmfield(img, 'params_sel'); % unnecessary since we know its all elem_data
    end
 
 function x = map_data(x, in, out)

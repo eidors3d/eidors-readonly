@@ -23,8 +23,8 @@ switch inv_model.type
           no_dof = size(fwd_model.elems,1);
       end
    case 'inv_model'
-      img = physics_param_mapper(calc_jacobian_bkgnd(inv_model));
-      no_dof = numel(img.params);
+      img = params_mapper(calc_jacobian_bkgnd(inv_model));
+      no_dof = numel(img.inv_params);
    otherwise; error('PRIOR_TIKHONOV requires input type of inv_model or fwd_model');
 end
 Reg = speye( no_dof );
