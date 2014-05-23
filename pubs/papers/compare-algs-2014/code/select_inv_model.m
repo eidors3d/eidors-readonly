@@ -219,7 +219,7 @@ function [imdl, ROI, mdlname] = get_model(modelno,fname,W );
          imdl.hyperparameter.value = get_hp(modelno);
          
 % 1013  RLP                                          Laplace
-      case 1012; mdlname = 'Rlp';
+      case 1013; mdlname = 'Rlp';
          imdl = iR0;
          imdl.RtR_prior = @prior_laplace;
          imdl.hyperparameter.value = get_hp(modelno);
@@ -326,7 +326,7 @@ m_hp = 1e+5;
 % 1009  RGREIT
       case 1009; mdlname = 'RGR';
          fmdl = mk_paper_fem(3);
-         fmdl.stimulation = SBP_stim;
+         [fmdl.stimulation fmdl.meas_select]= SBP_stim;
          fmdl.normalize_measurements = 1;
          img = mk_image(fmdl,1);
          opt.imgsz = [32 32];
@@ -336,6 +336,7 @@ m_hp = 1e+5;
 %          opt.noise_figure = 0.75; % Recommended NF=0.5;
          imdl = mk_GREIT_model(img, 0.25, get_hp(modelno), opt);
          ROI = (interp_mesh(imdl.rec_model)*[0;1]) <0;
+         ROI = ones(1,size(imdl.rec_model.coarse2fine,2));
          imdl.hyperparameter.value = get_hp(modelno); %only for info
 % 1012 RGREIT Background         
       case 1012; mdlname = 'RGRb';
@@ -364,6 +365,7 @@ m_hp = 1e+5;
       otherwise 
          error(['dont know what to do with model #',modelno]);
    end
+   imdl.inv_solve.calc_solution_error = 0;
 
 function imdl = modify_if_necessary(imdl,dir)
    switch dir  % special handling of any directories
