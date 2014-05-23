@@ -60,9 +60,9 @@ function [d_insp,d_expi,W] = get_vent_meas( nn, imdl, ROI, FRATE, fidb);
    
    if exist('ename','var')
       dsv = d_expi;
-      save(ename,dsv);
+      save(ename,'dsv');
       dsv = d_insp;
-      save(iname,dsv);
+      save(iname,'dsv');
    end
    
    

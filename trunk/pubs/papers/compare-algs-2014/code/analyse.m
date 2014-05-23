@@ -123,18 +123,7 @@ function mk_drift_figure
 
 
 function dirs = analyse_dirs;
- dirs= { 'S01', 'S02', 'S03', 'S04', 'S05', 'S06', ...
-         'S07', 'S08', 'S09', 'S10', 'S11', 'S12', ...
-         'S13', 'S14', 'S15', 'S16', 'S17', 'S18', ...
-         'S19', 'S20', 'S21', 'S22'};
- dirs= { 'SS1', 'S12', 'S15'};
- dirs= { 'SS1', 'S12' };
- dirs= { 'S05', 'S06', 'S07', 'S08', 'S09', 'S10', 'S11', 'S12', ...
-         'S13', 'S14', 'S15', 'S16', 'S17', 'S18', 'S19', 'S20', ...
-         'S21', 'S22'};
-%dirs= { 'S12', 'S16' };
-%dirs= { 'S12' };
-%dirs= { 'S10' };
+ dirs= { 'S05', 'S06','S07', 'S08', 'S09', 'S10', 'S11', 'S12'}
 
 function analyse_exps(analyse_dirs)
 calc_colours('mapped_colour',125);
@@ -150,7 +139,7 @@ for dir = analyse_dirs
    htmlnewdir(fidb,dir); htmlnewdir(fidi,dir);
 
    [expis, insps, W] = get_insp_expi_data( dir, fidb);
-
+%    continue
    for i=[1:6,12:20]
       [iname, Dt] =  define_img_no(i,expis,insps);
 
@@ -185,7 +174,7 @@ fprintf(fid,'\n');
 fclose(fid);
 
 function [expis, insps, W] = get_insp_expi_data( dir, fidb)
-   [imdl_v, ROIv] = select_inv_model(1007, dir, []);
+   [imdl_v, ROIv] = select_inv_model(1009, dir, []);
 
    FRATE= 13;
    expis= [];
@@ -286,7 +275,7 @@ ROIt= ROIt(:);
 
 function [imname,raster]= recon_write(imdl, Dt, imfrac, alg) 
    imname= ['../img/',imfrac,alg,'.png'];
-   vent_img = inv_solve( imdl, Dt(:,2), Dt(:,1)); % BG 19.05.2013 reversed
+   vent_img = inv_solve( imdl, Dt(:,1), Dt(:,2)); 
    if size(Dt,2)>2
       vent_img2 = inv_solve( imdl, Dt(:,3),Dt(:,4));
       vent_img.elem_data = vent_img.elem_data - vent_img2.elem_data;

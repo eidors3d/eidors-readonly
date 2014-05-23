@@ -20,7 +20,7 @@ function imgs_to_params( animals, RMs )
 
 function do_unit_test
 global locn; locn=0;
-   imgs_to_params([5:14],{ 'R0', 'R3D', 'Rbkg', 'Rdif', 'RGR', 'RL1', 'Rlpf', 'RTSVD' ,'Rmv', 'Rn', 'RSBP', 'RTV'});
+   imgs_to_params([5:12],{ 'R0', 'R3D', 'Rbkg', 'Rdif', 'RGR', 'RL1', 'Rlpf', 'RTSVD' ,'Rmv', 'Rn', 'RSBP', 'RTV'});
 
 
 function img_to_params(animal, RM)
