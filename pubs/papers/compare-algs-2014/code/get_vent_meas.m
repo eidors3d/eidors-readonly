@@ -37,7 +37,7 @@ function [d_insp,d_expi,W] = get_vent_meas( nn, imdl, ROI, FRATE, fidb);
    window= -3:3; owindow = ones(1,length(window));
 
    remove_pts = [];
-   switch nn % special handling of files
+   switch nn(end+(-14:0)) % special handling of files
       case 'S05/S05-004.get'
          dd= dd(:,1:725);
       case 'S05/S05-006.get'
@@ -51,6 +51,7 @@ function [d_insp,d_expi,W] = get_vent_meas( nn, imdl, ROI, FRATE, fidb);
 %     imdl.meas_icov = calc_reciproc_error(imdl,dd);
    ii = inv_solve( imdl, mean(dd,2), dd);   
    [einsp,eexpi] = find_frc( ii, ROI, FRATE, nn, ok, remove_pts);   
+   fprintf('[%s: Look]',nn); pause
 
    f_expi= eexpi(:)*owindow + ones(length(eexpi),1)*window ;
    f_insp= einsp(:)*owindow + ones(length(einsp),1)*window ;
