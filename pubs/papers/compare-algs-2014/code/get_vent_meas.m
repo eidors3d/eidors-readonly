@@ -34,7 +34,7 @@ function [d_insp,d_expi,W] = get_vent_meas( nn, imdl, ROI, FRATE, fidb);
    end
 
    ok=1; % no problems with FRC indentification
-   window= -3:3; owindow = ones(1,length(window));
+   window= -0:0; owindow = ones(1,length(window));
 
    remove_pts = [];
    switch nn(end+(-14:0)) % special handling of files
