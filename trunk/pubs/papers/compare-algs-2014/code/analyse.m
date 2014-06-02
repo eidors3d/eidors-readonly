@@ -88,7 +88,7 @@ calc_colours('greylev',.01);
    FRATE= 13;
    fname= 'S12/S12-006.get';
    [d_insp,d_expi, W] = get_vent_meas( fname, imdl_v, ROIv, FRATE, []);
-
+   
    %TODO: Comment out line 93 text in find_frc.m
    set(gca,'YTickLabel',[]);
    set(gca,'XTickLabel',{'0','10','20','30','40','50',''});
