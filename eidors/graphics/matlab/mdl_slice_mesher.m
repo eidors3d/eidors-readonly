@@ -46,8 +46,8 @@ if isempty(varargin)
 end
 
 switch fmdl.type
-    case 'image';     opt.cache_obj = { fmdl.fwd_model, level};
-    case 'fwd_model'; opt.cache_obj = { fmdl          , level};
+    case 'image';     opt.cache_obj = { fmdl.fwd_model, level, varargin{:}};
+    case 'fwd_model'; opt.cache_obj = { fmdl          , level, varargin{:}};
     otherwise; error('Unknown object type');
 end
 
