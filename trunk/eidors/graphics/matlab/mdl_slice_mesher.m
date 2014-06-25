@@ -35,7 +35,7 @@ function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 % TODO: 
 %  1. More intuitive cut plane specification
 %  2. Support node_data
-%  3. Restrict caching object
+
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 
@@ -46,17 +46,26 @@ if isempty(varargin)
 end
 
 switch fmdl.type
-    case 'image';     opt.cache_obj = { fmdl.fwd_model, level, varargin{:}};
-    case 'fwd_model'; opt.cache_obj = { fmdl          , level, varargin{:}};
+    case 'image'  
+       img = fmdl;
+       fmdl = fmdl.fwd_model;
+    case 'fwd_model'
+       img = mk_image(fmdl,1);
     otherwise; error('Unknown object type');
 end
 
+opt.cache_obj = {fmdl.nodes, fmdl.elems, level};
 opt.fstr      = 'mdl_slice_mesher';
+
+
+[nmdl f2c p_struct] = eidors_cache(@do_mdl_slice_mesher,{fmdl, level},opt);
+nimg = build_image(nmdl, f2c, img);
+
 switch nargout
    case 2
-      [nimg out] = eidors_cache(@do_mdl_slice_mesher,opt.cache_obj,opt);
+      out = draw_patch(p_struct, nimg.fwd_model, img.elem_data, varargin{:});
    case 0
-      [nimg out] = eidors_cache(@do_mdl_slice_mesher,opt.cache_obj,opt);
+      out = draw_patch(p_struct, nimg.fwd_model, img.elem_data, varargin{:});
       cmap_type = calc_colours('cmap_type');
       try 
          calc_colours('cmap_type',varargin{1}.calc_colours.cmap_type);
@@ -65,32 +74,10 @@ switch nargout
       patch(out);
       calc_colours('cmap_type',cmap_type);
       clear nimg;
-   case 1
-      nimg = eidors_cache(@do_mdl_slice_mesher,{fmdl,level, varargin{:}},opt);
-end
-% nimg = [];
-% out= eidors_obj('get-cache', cache_obj, 'mdl_slice_mesher');
-% if ~isempty(out)
-%    eidors_msg('@@@: using cached value', 3);
-%    nimg = out{1};
-%    if nargout > 0
-%        return
-%    end
-% end
-
-
-function [nimg out] = do_mdl_slice_mesher(fmdl,level,varargin)
-
-switch fmdl.type
-    case 'image'
-        img  = fmdl;
-        fmdl = fmdl.fwd_model;
-    case 'fwd_model'
-        img  = mk_image(fmdl,1);
-    otherwise
-        error('Unknown object type');
 end
 
+
+function [nmdl f2c out] = do_mdl_slice_mesher(fmdl,level)
 
 mdl = fmdl;
 opt.edge2elem = true;
@@ -149,8 +136,7 @@ if ~isempty(add)
 end
 % for elems with less than 4 crossed edges -> add crossed nodes if needed
 [uels jnk n] = unique(els_edge,'last');
-nodes_per_elem = jnk;
-nodes_per_elem(2:end) = diff(jnk);
+
 % only consider elements who have both a crossed node and edge
 [idx ia ib] = intersect(ueee, uels);
 for i = 1:length(ia)
@@ -167,64 +153,74 @@ nodes_per_elem(2:end) = diff(jnk);
 n_tri = length(uels) + sum(nodes_per_elem==4);
 nmdl.type = 'fwd_model';
 nmdl.nodes = nodes;
-nmdl.elems = zeros(n_tri,3); 
-nimg = mk_image(nmdl,1);
-nimg.elem_data(end,size(img.elem_data,2)) = 1; % make size consistent with img
+nmdl.elems = zeros(n_tri,3);
+n_el_data = size(fmdl.elems,1);
+f2c = sparse(n_el_data,length(uels));
 c = 1;
 % TODO: Speed this up
 for i = 1:length(uels)
     switch nodes_per_elem(i)
         case 3
             nmdl.elems(c,:) = nn(n==i);
-            nimg.elem_data(c,:) = img.elem_data(uels(i),:);
+            f2c(uels(i),c) = 1;
             c = c + 1;
         case 4
             nds = nn(n==i);
             nmdl.elems(c,:) = nds(1:3);
-            nimg.elem_data(c,:) = img.elem_data(uels(i),:);
+            f2c(uels(i),c) = 1;
             nmdl.elems(c+1,:) = nds(2:4);
-            nimg.elem_data(c+1,:) = img.elem_data(uels(i),:);
+            f2c(uels(i),c+1) = 1;
             c = c + 2;
     end
 end
 % deal with double elements (from shared faces)
 nmdl.elems = sort(nmdl.elems,2);
 [nmdl.elems idx] = sortrows(nmdl.elems);
-nimg.elem_data = nimg.elem_data(idx,:);
+f2c = f2c(:,idx);
 [nmdl.elems n idx] = unique(nmdl.elems, 'rows');
-n(2:end) = diff(n);
-nimg.fwd_model = nmdl;
-% use sparse to calculate the avarage value
-% nimg.elem_data = full(sparse(ones(size(idx)), idx, nimg.elem_data))./n';
-noimgs = size(nimg.elem_data,2);
-noels  = size(nimg.elem_data,1);
-if noimgs > 1
-   idx = repmat(0:noimgs-1,noels,[])*max(idx) + repmat(idx,1,noimgs);
+[x y] = find(f2c);
+% put all source elements that contribute to destination element on one
+% column
+f2c = sparse(x,idx,1);
+% ensure correct number of columns (happens when the last source element
+% doesn't contribute 
+if size(f2c,1) < n_el_data
+   f2c(n_el_data,end) = 0;
 end
-nimg.elem_data = full(sparse(ones(numel(nimg.elem_data),1), ...
-                             idx(:)        , ...
-                             reshape(nimg.elem_data,[],1)      )) ./ ...
-                                 repmat(n,noimgs,[])';
-nimg.elem_data = reshape(nimg.elem_data,[], noimgs);
+n_src_els = sum(f2c,1);
+f2c = f2c * diag(1./n_src_els);
+
+
 % add electrodes
 try
    for i = 1:length(mdl.electrode)
-      nimg.fwd_model.electrode(i) = mdl.electrode(i);
-      nimg.fwd_model.electrode(i).nodes = find(electrode_node == i);
+      nmdl.electrode(i) = mdl.electrode(i);
+      nmdl.electrode(i).nodes = find(electrode_node == i);
    end
 end
-% copy calc_colours
+
+out.uels = uels;
+out.els  = els;
+out.nn   = nn;
+
+
+function nimg = build_image(nmdl, f2c, img)
+nimg = mk_image(nmdl,1);
+nimg.elem_data = (img.elem_data' * f2c)';
 try
    nimg.calc_colours = img.calc_colours;
 end
-% 
-% eidors_obj('set-cache', cache_obj, 'mdl_slice_mesher', {nimg});
-% eidors_msg('mk_GREIT_model: setting cached value', 3);
 
-if nargout == 1
-    return
-end
-clear out
+
+function out = draw_patch(in, nmdl, elem_data, varargin)
+
+uels = in.uels;
+els  = in.els;
+nn   = in.nn;
+nodes = nmdl.nodes;
+
+img.elem_data = elem_data;
+
 out.Vertices = nodes;
 out.Faces    = NaN(length(uels),4);
 ed = zeros(length(uels),1);
@@ -381,3 +377,7 @@ function do_unit_test
     axis equal
     axis tight
     view(3)
+    
+    % test multi-column image
+    img.elem_data(:,2) = img.elem_data;
+    slc = mdl_slice_mesher(img, [0 inf inf]);
