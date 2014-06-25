@@ -45,13 +45,18 @@ if isempty(varargin)
    end
 end
 
-opt.cache_obj = { fmdl, level, varargin{:} };
+switch fmdl.type
+    case 'image';     opt.cache_obj = { fmdl.fwd_model, level};
+    case 'fwd_model'; opt.cache_obj = { fmdl          , level};
+    otherwise; error('Unknown object type');
+end
+
 opt.fstr      = 'mdl_slice_mesher';
 switch nargout
    case 2
-      [nimg out] = eidors_cache(@do_mdl_slice_mesher,{fmdl,level, varargin{:}},opt);
+      [nimg out] = eidors_cache(@do_mdl_slice_mesher,opt.cache_obj,opt);
    case 0
-      [nimg out] = eidors_cache(@do_mdl_slice_mesher,{fmdl,level, varargin{:}},opt);
+      [nimg out] = eidors_cache(@do_mdl_slice_mesher,opt.cache_obj,opt);
       cmap_type = calc_colours('cmap_type');
       try 
          calc_colours('cmap_type',varargin{1}.calc_colours.cmap_type);
