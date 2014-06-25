@@ -1,5 +1,6 @@
-############## April 27-29 Work ##############
+- verify that elec_frac = [k ... in mk_grid_model creates conformal grid
 
+############## April 27-29 Work ##############
 - provide a helper function so that you can save and restore the state of
   eidors_cache enable/disable for functions -- this will allow functions to
   manipulate the cache prior to operations and safely restore state before
@@ -29,7 +30,6 @@
    - should we get rid of imdl.reconst_type (replace by introspection)?
 
 
-=======
 - think about function specific verbose?
 
 - Data pathway
@@ -44,7 +44,6 @@
 
  - Why doesn't the qr in forward_solve speed up the jacobian calc
 
->>>>>>> .r4526
 ############## 3.8 ################
 
  - experimental image_field in calc_colours (see cg_ards_recruitment_04)
