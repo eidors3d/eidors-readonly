@@ -29,6 +29,19 @@ end
 % need to make sure boundary is just the outside
 img.fwd_model.boundary = find_boundary(img.fwd_model);
 
+% Check if we need to map from coarse2fine
+if isfield(img.fwd_model,'coarse2fine');
+   c2f = img.fwd_model.coarse2fine;
+   if size(c2f,2) == size(img.elem_data,1)
+      img.elem_data = c2f*img.elem_data;
+   elseif size(c2f,1) == size(img.elem_data,1)
+      % OK, nothing required
+   else
+      error('image elem_data does not match coarse2fine size');
+   end
+end
+
+
 [jnk,ref_lev,max_scale] = scale_for_display( img.elem_data);
 try 
     img.calc_colours.ref_level; 
