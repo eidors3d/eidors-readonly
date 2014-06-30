@@ -2,6 +2,9 @@
 
 - check c2f processing in show_3d_slices
 
+- put warning in mdl_slice_mesher when level doesn't cut the model
+    (currently this gives error: consider at line 110 when els = [])
+
 ############## April 27-29 Work ##############
 - provide a helper function so that you can save and restore the state of
   eidors_cache enable/disable for functions -- this will allow functions to
