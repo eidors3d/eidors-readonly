@@ -188,7 +188,7 @@ if size(f2c,1) < n_el_data
    f2c(n_el_data,end) = 0;
 end
 n_src_els = sum(f2c,1);
-f2c = f2c * diag(1./n_src_els);
+f2c = f2c * spdiag(1./n_src_els);
 
 
 % add electrodes
