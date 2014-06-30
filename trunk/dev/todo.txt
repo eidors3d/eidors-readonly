@@ -1,5 +1,7 @@
 - verify that elec_frac = [k ... in mk_grid_model creates conformal grid
 
+- check c2f processing in show_3d_slices
+
 ############## April 27-29 Work ##############
 - provide a helper function so that you can save and restore the state of
   eidors_cache enable/disable for functions -- this will allow functions to
