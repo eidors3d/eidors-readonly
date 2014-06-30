@@ -26,6 +26,10 @@ if nargin <2; Nelec = max(sp_mp(:)); end
 if nargin <3; current = 1;           end
 if nargin <4; gain    = 1;           end
 
+if any(sp_mp(:) > Nelec); 
+    error('Electrode patterns require more electrodes than Nelec');
+end
+
 stim = struct([]);
 Npat = size(sp_mp,1);
 for i=1:Npat
