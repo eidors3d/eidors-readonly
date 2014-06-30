@@ -37,8 +37,8 @@ function set_defaults(HOMEDIR)
     calc_colours('defaults'); % default calc_colours
 
     %  Set max cache size. Not completely sure about this
-    %  but 256MB should be available in most modern machines
-    eidors_cache('cache_size', 256*1024*1024 );
+    %  but 1GB should be available in most modern machines
+    eidors_cache('cache_size', 1024^3 );
     eidors_cache('boost_priority', 0 ); % set default priority
 
     % Set default model cache location
