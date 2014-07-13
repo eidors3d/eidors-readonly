@@ -41,7 +41,7 @@ function [stim, vsel] = optimize_stimulation2(stim, current, gain, verbose);
 % stim is the optimized stimulation structure, vsel is a matrix to multiply vi.meas
 % by to get what would have been the expected voltage sequence prior to this
 % optimization
-% (C) 2013 Alistair Boyle. License: GPL version 2 or version 3
+% (C) 2013, 2014 Alistair Boyle and Nolowenn Lesparre. License: GPL version 2 or version 3
 
   % comment these out to disable each of the optimizations
   MERGE_STIM_PATTERNS=1;
