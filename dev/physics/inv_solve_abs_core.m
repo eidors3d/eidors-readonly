@@ -74,6 +74,12 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    legal values.
 %    Note that c2f_background's elements are added to
 %    this list if c2f_background_fixed == 1.
+%   elem_input               (default to elem_working)
+%    Input 'elem_data' type; immediately converted to
+%    'elem_working' type for prior. If not specified,
+%    assumes 'conductivity.' If a 'params' prior is
+%    specified, elem_input must match
+%    imdl.params_mapper.
 %   elem_working              (default 'conductivity')
 %   elem_output               (default 'conductivity')
 %    The working and output units for 'elem_data'.
@@ -239,13 +245,14 @@ img = mk_image( inv_model );
 % TODO move this from here to mk_image so we get an img with the correct number of elem_data
 if isfield(inv_model, 'fwd_model') && ...
    isfield(inv_model.fwd_model, 'coarse2fine') && ...
-   length(img.(opt.elem_working).elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
+   length(img.(opt.elem_input).elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
 
    % TODO replace with fix_c2f_calc_jacobian_backgnd
    c2f = inv_model.fwd_model.coarse2fine;
    %img.elem_data = c2f \ img.elem_data; % --> rank deficient???
-   bg = mean(img.(opt.elem_working).elem_data);
-   img.(opt.elem_working).elem_data = ones(size(c2f,2),1)*bg;
+   bg = mean(img.(opt.elem_input).elem_data);
+   img.(opt.elem_input).elem_data = ones(size(c2f,2),1)*bg;
+   img = convert_img_units(img, opt.elem_working); % switch to working units
    if opt.verbose > 1
       bg_tmp = convert_img_units(bg, opt.elem_working, 'resistivity');
       fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg_tmp);
@@ -924,6 +931,12 @@ function opt = parse_options(imdl)
    % elem type for the initial estimate is based on calc_jacobian_bkgnd which returns an img
    if ~isfield(opt, 'elem_working')
       opt.elem_working = 'conductivity';
+   end
+   if ~isfield(opt, 'elem_input')
+%% TODO      try opt.elem_input = imdl.params_mapper;
+%% TODO      catch opt.elem_input = 'conductivity'; end
+%% TODO   else % error checking, these must match or confusion will ensue for the user
+      opt.elem_input = opt.elem_working;
    end
    if ~isfield(opt, 'elem_output')
       opt.elem_output = 'conductivity';
