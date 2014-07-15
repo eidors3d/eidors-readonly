@@ -16,7 +16,7 @@ function y = convert_img_units(img,arg1,arg2)
 % License: GPL version 2 or 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); img = do_unit_test; return; end
+if isstr(img) && strcmp(img,'UNIT_TEST'); y = do_unit_test; return; end
 
 if nargin < 2
   error('EIDORS:ConvertUnits:Input', ...
