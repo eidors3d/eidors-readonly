@@ -128,7 +128,6 @@ function img = unpack_params(img)
             error('huh?');
       end
       img = data_mapper(img,1); % unpack
-      img = rmfield(img, 'current_params'); % TODO clean up junk left by data_mapper(x, 1) -- should be done in data_mapper()
    else % MODERN handling
       % Otherwise, someone has provided an explicit list on how to do the
       % mapping, follow those instructions:

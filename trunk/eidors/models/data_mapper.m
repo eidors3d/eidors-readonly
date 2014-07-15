@@ -1,11 +1,11 @@
 function img = data_mapper(img, reverse)
 %DATA_MAPPER maps img.params data to elem or node data
 % img = data_mapper(img) will only work if there is only a single
-% params data field on the img, throwing an error otherwise. 
+% params data field on the img, throwing an error otherwise.
 % For multi-parametrization images, img.data_mapper must be specified. It
 % can be either a name of the appropriate parametrization data field on the img, or
 % a function that will handle the data differently.
-% 
+%
 % To avoid confusion, the parametrization currently in use by image data will be
 % specified in a descriptive string tag img.current_params
 %
@@ -31,27 +31,31 @@ function img = data_mapper(img, reverse)
 %
 % See also: MK_IMAGE, SUPPORTED_PARAMS
 
-% (C) 2012 Bartlomiej Grychtol. 
+% (C) 2012 Bartlomiej Grychtol.
 % Licenced under GPL version 2 or 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if isstr(img) && strcmp(img,'UNIT_TEST'); img = do_unit_test; return; end
 
 if nargin < 2
    reverse = false;
+elseif isstr(reverse) && strcmpi(reverse, 'pack')
+   reverse = false;
+else % 'unpack'
+   reverse = true;
 end
 % need to handle image arrays
 for i = 1:length(img)
    if reverse
-      tmp(i) = map_data_to_params(img(i));
+      tmp(i) = unpack_params(img(i));
    else
-      tmp(i) = map_params_to_data(img(i));
+      tmp(i) = pack_params(img(i));
    end
 end
 img = tmp;
 end
 
-function img = map_params_to_data(img);
+function img = pack_params(img);
 
 flds = fieldnames(img);
 prms = ismember(flds, supported_params);
@@ -66,7 +70,7 @@ switch sum(prms)
            eidors_msg('@@@ Careful! Image already mapped. Doing nothing',1);
            return;
          end
-           
+
          eidors_msg('@@@ No params present on img. Assuming conductivity',3);
 % STUPID MATLAB CAN'T KEEP SYNTAX STRAIGHT BETWEEN VERSIONS
 %        img = setfield(img,{},'current_params', 'conductivity');
@@ -83,17 +87,17 @@ switch sum(prms)
          img = feval(img.(flds{ph}).func, img);
          return
       else
-         img = copy_params_to_data(img, flds{ph});
+         img = pack_params_using_params_str(img, flds{ph});
       end
    otherwise
       % multiple params
       try
          prms_fun = img.data_mapper;
       catch
-         error('Multiple params found on img: img.data_mapper required');
+         error('Multiple params found on img require: img.data_mapper = function or {"string","array"}');
       end
       if ~isa(prms_fun, 'function_handle') && ismember(prms_fun,flds);
-         img = copy_params_to_data(img, prms_fun);
+         img = pack_params_using_params_str(img, prms_fun); % assume a string array
       else
          try
             img = feval(prms_fun,img);
@@ -105,7 +109,7 @@ switch sum(prms)
 end
 end
 
-function img = copy_params_to_data(img, prms)
+function img = pack_params_using_params_str(img, prms)
 
 prms_flds = fieldnames(img.(prms));
 for i = 1:length(prms_flds)
@@ -118,7 +122,7 @@ for i = 1:length(prms_flds)
       n_elem = calc_num_elems(img.fwd_model);
       img.elem_data = ones(n_elem,1);
       img.elem_data(:) = img.(prms).elem_data;
-   elseif strcmp(prms_flds{i},'node_data') 
+   elseif strcmp(prms_flds{i},'node_data')
       img.node_data = ones(size(img.fwd_model.nodes,1),1);
       img.node_data(:) = img.(prms).node_data;
    else
@@ -143,14 +147,14 @@ try
       img.(prms).(prms_flds{i}) = img.(prms_flds{i});
       img = rmfield(img, prms_flds{i});
    end
-   img.current_params = [];
+   img = rmfield(img, 'current_params');
 catch
    error('Fields specified by img.%s missing from img.',prms);
 end
 end
 
-function img = map_data_to_params(img)
-try 
+function img = unpack_params(img)
+try
    curprms = img.current_params;
 catch
    if isfield(img,'elem_data') || isfield(img, 'node_data')
@@ -166,7 +170,7 @@ elseif strcmp(curprms,'conductivity')
    if ~any(ismember(fieldnames(img),supported_params))
       % we're dealing with an old params-oblivious image
       % nothing to do
-      img.current_params = [];
+      img = rmfield(img, 'current_params');
    else
       error('Cannot reverse %s mapping',curprms);
    end
@@ -174,37 +178,131 @@ else
    try
       % user-provided data_mapper must provide the reverse
       img = feval(curprms,img,1);
-   catch 
+   catch
       error('data_mapper %s failed to reverse', curprms);
    end
 end
 end
 
-function do_unit_test
+function pass = do_unit_test
+   pass = 1;
+   pass = do_unit_test_legacy() && pass;
+   pass = do_unit_test_undo()   && pass;
+   disp('');
+   if pass
+      disp('TEST: overall PASS');
+   else
+      error('TEST: overall FAIL');
+   end
+end
+
+function pass = do_unit_test_legacy
+   pass = 1;
    ll = eidors_msg('log_level');
    eidors_msg('log_level',3);
-   
+
    imdl = mk_common_model('a2c2',8);
    c = 3*ones(length(imdl.fwd_model.elems),1);
-   img = eidors_obj('image','test_image','fwd_model',imdl.fwd_model)
+   img = eidors_obj('image','test_image','fwd_model',imdl.fwd_model);
    img.conductivity.elem_data = c;
-   img = data_mapper(img)
-   
-   img = data_mapper(img) % give a msg at log_level 3
-   
-   img = data_mapper(img,1) % reverse
-   
+
+   fprintf('TEST: mv img.conductivity.elem_data to img.elem_data\n');
+   imgi = data_mapper(img, 'pack');
+   if ~isfield(imgi, 'elem_data')
+     imgi
+     disp('TEST FAIL: missing elem_data');
+     pass = 0;
+   end
+
+   imgi2 = data_mapper(img, 'pack'); % give a msg at log_level 3
+
+   imgii = data_mapper(imgi,'unpack'); % unpack
+   if ~isequaln(imgii, img)
+      img
+      imgii
+      fprintf('TEST FAIL: pack to unpack returned different result\n');
+      pass = 0;
+   end
+
    img.resistivity.elem_data = 1./c;
    img.data_mapper = 'resistivity';
-   img = data_mapper(img)
-   img.elem_data(1) %0.3333
-   
+   img = data_mapper(img);
+   if abs(img.elem_data(1) - 1/3) > 1e-4
+      img.elem_data(1)
+      pass = 0;
+      disp('TEST FAIL: expected img.elem_data to be ~1/3');
+   end
+
    img.data_mapper = @unit_test_passthrough; % some function that takes an image
-   data_mapper(img)
-   
+   imgf = data_mapper(img);
+   % if this works without failing, then we are happy
+   if ~isequaln(imgf, img)
+      img
+      imgf
+      fprintf('TEST FAIL: pass-through function failed\n');
+      pass = 0;
+   end
+
    eidors_msg('log_level',ll);
+   if ~pass
+      disp('TEST: ---------------------------------------');
+   end
 end
 
 function img = unit_test_passthrough(img1,rev)
   img = img1;
+end
+
+function pass = do_unit_test_undo
+   pass = 1;
+
+   imdl = mk_common_model('c2c', 16);
+   img = mk_image(imdl);
+   d = img.elem_data;
+   img0 = rmfield(img, 'elem_data');
+
+   disp('TEST: img.elem_data');
+   img = img0; img.elem_data = d;
+   pass = test_undo(img, d, 'elem_data') && pass;
+
+   disp('TEST: img.node_data');
+   img = img0; img.node_data = d;
+   pass = test_undo(img, d, 'node_data') && pass;
+
+   disp('TEST: img.conductivity.elem_data');
+   img = img0; img.conductivity.elem_data = d;
+   pass = test_undo(img, d, 'elem_data') && pass;
+% TODO AB below here blows up
+%   disp('TEST: img.conductivity.node_data');
+%   img = img0; img.conductivity.node_data = d;
+%   pass = test_undo(img, d) && pass;
+
+%   disp('TEST: img.resistivity.node_data');
+%   img = img0; img.resistivity.node_data = d;
+%   pass = test_undo(img, d) && pass;
+
+%   disp('TEST: img.conductivity');
+%   img = img0; img.conductivity = d; img.params_mapper = 'conductivity';
+%   pass = test_undo(img, d) && pass;
+end
+
+% img, d=data, dl=data location (once packed)
+function pass = test_undo(img, d, dl)
+   pass = 1;
+   imgp = data_mapper(img);
+   imgup = data_mapper(imgp,'unpack');
+   if ~isequaln(img, imgup)
+      img
+      imgp
+      imgup
+      disp('TEST FAIL: the initial image and the image after being packed, then unpacked differ');
+      pass = 0;
+   end
+   if ~isequaln(imgp.(dl), d)
+      disp(['TEST FAIL: the packed data imgp.' dl ' seems broken']);
+      pass = 0;
+   end
+   if ~pass
+      disp('TEST: ---------------------------------------');
+   end
 end
