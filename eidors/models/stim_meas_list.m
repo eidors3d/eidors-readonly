@@ -26,22 +26,34 @@ if nargin <2; Nelec = max(sp_mp(:)); end
 if nargin <3; current = 1;           end
 if nargin <4; gain    = 1;           end
 
-if any(sp_mp(:) > Nelec); 
+if any(sp_mp(:) > Nelec);
     error('Electrode patterns require more electrodes than Nelec');
 end
 
 stim = struct([]);
 Npat = size(sp_mp,1);
+is = 0;
 for i=1:Npat
-   stim(i).stimulation = 'Amp';
-   cur = sp_mp(i,1:2); 
-   stim(i).stim_pattern = sparse( cur, 1, current*[-1,1], Nelec,1);
-   mes = sp_mp(i,3:4); 
-   stim(i).meas_pattern = sparse( 1, mes, gain *  [-1,1], 1, Nelec);
+   cur = sp_mp(i,1:2);
+   new_stim = sparse( cur, 1, current*[-1,1], Nelec,1);
+   % create a new stim if it isn't the same as the last one
+   if (is < 1) || any(any(stim(is).stim_pattern ~= new_stim))
+     is = is + 1;
+   end
+   stim(is).stimulation = 'Amp';
+   stim(is).stim_pattern = new_stim;
+   mes = sp_mp(i,3:4);
+   if isfield(stim(is),'meas_pattern') % append pattern if required
+     stim(is).meas_pattern = [ stim(is).meas_pattern; sparse( 1, mes, gain *  [-1,1], 1, Nelec)];
+   else
+     stim(is).meas_pattern = sparse( 1, mes, gain *  [-1,1], 1, Nelec);
+   end
 end
 
 function  do_unit_test
    imdl = mk_common_model('a2c0',16);
    img = mk_image(imdl);
    img.fwd_model.stimulation = stim_meas_list([1,2,3,4;1,2,4,5],16);
+   vh = fwd_solve(img);
+   img.fwd_model.stimulation = stim_meas_list([6,7,3,4;1,2,4,5],16);
    vh = fwd_solve(img);
