@@ -1,5 +1,5 @@
 function [stim, vsel] = optimize_stimulation2(stim, current, gain, verbose);
-% function [stim, vsel] = optimize_stimulation(stim);
+% function [stim, vsel] = optimize_stimulation2(stim);
 % This function optimizes the stimulation and measurement
 % patterns of a stim to be more computationally efficient 
 % in a MATLAB environment where for loops are poorly optimized 
@@ -54,11 +54,11 @@ function [stim, vsel] = optimize_stimulation2(stim, current, gain, verbose);
   % TODO: take care if the current in stimulation pattern ~= 1
 
   % branch off to do unit test if requested
-  if isstr(stim) && strcmp(stim, 'UNIT_TEST');
+  if ischar(stim) && strcmp(stim, 'UNIT_TEST');
     vsel = 0;
     stim = do_unit_test(); % pass = f()
     return;
-  elseif isstr(stim) && strcmp(stim, 'SINGLE_TEST');
+  elseif ischar(stim) && strcmp(stim, 'SINGLE_TEST');
     vsel = 0;
     stim = do_single_test(verbose);
     return;
@@ -680,9 +680,9 @@ function pass = do_unit_test();
   pass = unit_test_run(pass, img, 'n3r2 2D, 16 electrodes w/ Dipole-dipole & movement in 1D');
 
   if pass == 1
-    fprintf('\nPASSED optimize_stimulation() unit_test\n');
+    fprintf('\nPASSED optimize_stimulation2() unit_test\n');
   else
-    fprintf('\nFAILED optimize_stimulation() unit_test\n');
+    fprintf('\nFAILED optimize_stimulation2() unit_test\n');
   end
 
 function pass = unit_test_run(pass, img, desc);
@@ -695,9 +695,9 @@ function pass = unit_test_run(pass, img, desc);
   % room for error: numeric precision
   thres = eps(max(vo.meas))*length(vo.meas)*1e2;
 
-  % and now rerun the fwd_solve after an optimize_stimulation()
+  % and now rerun the fwd_solve after an optimize_stimulation2()
   t = tic;
-  [s, vsel] = optimize_stimulation(img.fwd_model.stimulation(:));
+  [s, vsel] = optimize_stimulation2(img.fwd_model.stimulation(:));
   img.fwd_model.stimulation = s;
   ts = tic;
   vn = fwd_solve(img);
@@ -819,7 +819,7 @@ function pass = do_single_test(stim);
 
 
   if pass == 1
-    fprintf('\nPASSED optimize_stimulation() single_test\n');
+    fprintf('\nPASSED optimize_stimulation2() single_test\n');
   else
-    fprintf('\nFAILED optimize_stimulation() single_test\n');
+    fprintf('\nFAILED optimize_stimulation2() single_test\n');
   end
