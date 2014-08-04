@@ -116,18 +116,25 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
         % stim patterns match --> remove redundant stim and merge measurement patterns
         stim_match = all(size(stim(i).stim_pattern) == size(stim(j).stim_pattern)) && ...
                      all(all(stim(i).stim_pattern == stim(j).stim_pattern));
-        meas_match = all(size(stim(i).meas_pattern) == size(stim(j).meas_pattern)) && ...
-                     all(all(stim(i).meas_pattern == stim(j).meas_pattern));
+        stim_match_inv = all(size(stim(i).stim_pattern) == size(stim(j).stim_pattern)) && ...
+                         all(all(stim(i).stim_pattern == -stim(j).stim_pattern));
         % TODO possibly fix fwd_model_parameter: it and the
         % functions downstream from there can't handle
         % stimulations with more than one column even though
         % it concatenates them together. For now we avoid the
         % case where we would optimize this by combining
         % stim_pattern columns
-        if (~stim_match) && meas_match
+        if (~stim_match) && (~stim_match_inv)
           meas_match = 0; % HACK, see TODO text above
+        else
+          meas_match = all(size(stim(i).meas_pattern) == size(stim(j).meas_pattern)) && ...
+                       all(all(stim(i).meas_pattern == stim(j).meas_pattern));
+          meas_match_inv = all(size(stim(i).meas_pattern) == size(stim(j).meas_pattern)) && ...
+                           all(all(stim(i).meas_pattern == -stim(j).meas_pattern));
         end
-        if stim_match && meas_match
+
+        if (stim_match && meas_match) || ...
+           (stim_match_inv && meas_match_inv)
           if (verbose>= 2)
             fprintf('x%d',j);
           end
@@ -135,7 +142,7 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
           [vsel, na, nd] = vsel_merge_col(vsel, na, nd, nj);
           % delete stim pattern, don't increment j
           stim(j) = [];
-        elseif stim_match
+        elseif stim_match || stim_match_inv
           if (verbose>= 2)
             fprintf('s%d',j);
           end
@@ -143,7 +150,11 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
           new_meas = [1:size(stim(j).meas_pattern, 1)] + size(stim(i).meas_pattern,1);
           stim(i).meas_pattern(new_meas,:) = stim(j).meas_pattern;
           % update voltage selector
-          [vsel, na, nd] = vsel_move_col(vsel, na, nd, nj);
+          inv = +1;
+          if stim_match_inv
+            inv = -1; % invert the measured voltages if the stimulus is inverted
+          end
+          [vsel, na, nd] = vsel_move_col(vsel, na, nd, nj, inv);
           % delete stim pattern, don't increment j
           stim(j) = [];
         elseif meas_match
@@ -199,6 +210,11 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
             stim(i).meas_pattern(k, :) = []; % delete pattern
             % update vsel, merge duplicated measurement
             vsel(:,na+j) = vsel(:,na+j) + vsel(:,na+k);
+            vsel(:,na+k) = [];
+          elseif all(stim(i).meas_pattern(j, :) == -stim(i).meas_pattern(k, :))
+            stim(i).meas_pattern(k, :) = []; % delete pattern
+            % update vsel, merge duplicated measurement
+            vsel(:,na+j) = vsel(:,na+j) - vsel(:,na+k);
             vsel(:,na+k) = [];
           else
             k=k+1; % try the next pattern
@@ -303,7 +319,14 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
   % TODO look for inversions of both stim and meas pattern (vsel(x,y)=+1;)
 
 % insert nj entries starting at nd prior to na
-function [vsel, na , nd] = vsel_move_col(vsel, na, nd, nj)
+% mult allows for inverted patterns
+function [vsel, na , nd] = vsel_move_col(vsel, na, nd, nj, mult)
+  if nargin < 5
+    mult = 1;
+  end
+  if abs(mult) ~= 1
+    error('expected mult to be +/-1');
+  end
   if (nj == 0)
     return;
   end
@@ -320,6 +343,13 @@ function [vsel, na , nd] = vsel_move_col(vsel, na, nd, nj)
     vsel(:,end+1:end+e) = zeros(r,e);
     nvt = size(vsel,2);
   end
+  if mult == -1
+    % flip measurements if its a reciprocal measurement
+    vsel(:, [nd:nd+nj-1]) = -vsel(:, [nd:nd+nj-1]);
+  end
+  % The KEY moment:
+  % Reorder to {MOVED, OLD_START, OLD_END}
+  % where MOVED are elements nd:nd+nj-1.
   new = [nd:nd+nj-1 na:nd-1 nd+nj:nvt]; % new order
   old = [na:nvt]; % old order
   vsel(:, old) = vsel(:, new);
@@ -499,6 +529,25 @@ function pass = do_unit_test();
     s(i).stim_pattern(7) = -1;
     img.fwd_model.stimulation = s;
     pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except %d',i));
+  end
+  s = so; % reciprocal stimulus
+  for i=3:4
+    s(i).stim_pattern(3) =  1;
+    s(i).stim_pattern(7) = -1;
+    img.fwd_model.stimulation = s;
+    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except %d',i));
+  end
+  for i=1:4
+    s = so; % reciprocal measurements
+    s(i).stim_pattern = -s(i).stim_pattern;
+    img.fwd_model.stimulation = s;
+    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except reciprocal stim %d',i));
+  end
+  for i=1:4
+    s = so; % reciprocal measurements
+    s(i).meas_pattern = -s(i).meas_pattern;
+    img.fwd_model.stimulation = s;
+    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except reciprocal meas %d',i));
   end
   for i=1:4
     s = so;
