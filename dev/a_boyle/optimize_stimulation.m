@@ -35,12 +35,16 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
 % stim is the optimized stimulation structure, vsel is a matrix to multiply vi.meas
 % by to get what would have been the expected voltage sequence prior to this
 % optimization
-% (C) 2013 Alistair Boyle. License: GPL version 2 or version 3
+% (C) 2013-2014 Alistair Boyle. Nolwenn Lesparre, License: GPL version 2 or version 3
+% TODO: take care if the current in stimulation pattern ~= 1
+% TODO: take care if the gain in the measurement pattern ~= 1
 
-  % comment these out to disable each of the optimizations
-  MERGE_STIM_PATTERNS=1;
-  MERGE_SELF_MEAS_PATTERNS=1;
-%  MERGE_MEAS_PATTERNS=1;
+  % Flattening to quadripoles can only work for stim/meas electrode pairs. For
+  % patterns that use multiple electrodes (trig patterns, for example) the slow
+  % (FLATTEN=0) algorithm is required.
+  % The FLATTEN algorithm is currently broken according to the UNIT_TEST. The
+  % opt_struct routine is currently always used.
+  FLATTEN = 0;
 
   if nargin < 2
     verbose = 1;
@@ -57,29 +61,194 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
     return;
   end
 
+  if ~FLATTEN && ~isstruct(stim)
+    error('optimize_stimulation/opt_struct() cannot handle stim/meas quadripole lists');
+  end
+
+  % count measurements in we will get from fwd_solve
+  nst = length(stim);
+  nvt = 0;
+  for i = 1:nst;
+    nvt = nvt + size(stim(i).stim_pattern, 2) * size(stim(i).meas_pattern, 1);
+  end
+  if verbose
+    fprintf('  stim/meas pattern optimization\n');
+    fprintf('    %d stim_patterns, %d measurements\n', nst, nvt);
+  end
+
+  if FLATTEN
+    [stim, vsel] = opt_flatten2(stim, verbose, nst, nvt);
+  else
+    [stim, vsel] = opt_struct(stim, verbose, nst, nvt);
+  end
+
+  if verbose
+    fprintf('    SUMMARY stimulation loops       %d -> %d (%d%%)\n', nst, length(stim), floor((1-length(stim)/nst)*100));
+    fprintf('    SUMMARY voltage meas calculated %d -> %d (%d%%)\n', size(vsel,1), size(vsel,2), floor((1-size(vsel,2)/size(vsel,1))*100));
+  end
+
+% Nolwenn's approach was to flatten the stim/meas struct into a set of
+% quadripoles, then do unique on them... it doesn't capture some of the
+% optimizations of opt_struct but it gets most of the optimizations for a much
+% lower cost
+function [stim, vsel] = opt_flatten1(stim, verbose, nst, nvt)
+  if isstruct(stim) && isfield(stim(1),'stim_pattern') && isfield(stim(1),'meas_pattern')
+      stimulationMatrix= []; current= []; gain= [];
+      for i = 1:length(stim);
+          nmp= size(stim(i).meas_pattern, 1);
+          [idxIN,idxJN]= find(stim(i).meas_pattern<0);
+          [idxIP,idxJP]= find(stim(i).meas_pattern>0);
+          stimulationMatrix= [stimulationMatrix; [ 0*(1:nmp)'+find(stim(i).stim_pattern<0) ...
+              0*(1:nmp)'+find(stim(i).stim_pattern>0)] idxJN idxJP];
+          current= [current ; [ 0*(1:nmp)'+ stim(i).stim_pattern(stim(i).stim_pattern>0)]];
+          gain= [gain ; [ stim(i).meas_pattern(stim(i).meas_pattern>0)]];
+      end
+      gain= eye(size(gain,1))*gain;
+  elseif  ismatrix(stim) && size(stim,2)==4
+      stimulationMatrix= stim;
+      current= ones(size(stimulationMatrix,1),1)*current;
+      gain= ones(size(stimulationMatrix,1),1)*gain;
+  else error('stim must be a stimulation structure or a N x 4 matrix containing the stimulations and measurements electrodes');
+  end
+
+
+  n_elec= max(stimulationMatrix(:));
+  % Select the unique stimulation and measurement patterns
+  [UniqPatterns,iP,jP]= unique(stimulationMatrix,'rows','stable');
+  % Select the unique stimulation patterns
+  [UniqStimulation,iS,jS]= unique(UniqPatterns(:,1:2),'rows','stable');
+  stim= stim_meas_list([UniqStimulation UniqPatterns(iS,3:4)], n_elec, mean(current(iS)), mean(gain(iS)));
+  % Index used to reorganize the estimated voltages in the same order as
+  % the input stimulation
+  k=0; idx= zeros(size(UniqPatterns,1),1);
+  DM2= spalloc(size(jP,1),size(UniqPatterns,1),size(UniqPatterns,1));
+  morigin= zeros(size(jP,1),1);
+  for j=1:size(UniqStimulation,1)
+      idx1= find(sum(ismember(UniqPatterns(:,1:2),UniqStimulation(j,1:2),'rows'),2)>0);
+      i= 1;
+      stim(j).meas_pattern(i,UniqPatterns(idx1(i),3))= -gain(idx1(i));
+      stim(j).meas_pattern(i,UniqPatterns(idx1(i),4))= gain(idx1(i));
+      k=k+1;
+      idx(k)= idx1(1);
+      m= morigin; m(jP==idx(k))=1;
+      DM2(:,k)= m;
+      for i=2:length(idx1)
+          stim(j).meas_pattern(i,UniqPatterns(idx1(i),3))= -gain(idx1(i));
+          stim(j).meas_pattern(i,UniqPatterns(idx1(i),4))= gain(idx1(i));
+          k=k+1;
+          idx(k)= idx1(i);
+          m= morigin; m(jP==idx(k))=1;
+          DM2(:,k)= m;
+      end
+  end
+  vsel= DM2;
+
+% this is a rewritten version of Nolwenn's code that should be a bit faster and
+% handle all the cases of the old code (opt_struct)
+function [stim, vsel] = opt_flatten2(stim, verbose, nst, nvt)
+  if isstruct(stim) && isfield(stim(1),'stim_pattern') && isfield(stim(1),'meas_pattern')
+    n_elec = size(stim(1).stim_pattern,1);
+    stim_flat = flatten_stim(stim, nst, nvt);
+  elseif  ismatrix(stim) && size(stim,2)==4
+    n_elec = max(max(stim(:,1:4))); % guess: must be the largest electrode # used?
+    stim_flat = zeros(nvt, 4);
+    stim_flat(:,1:4) = stim;
+    stim_flat(:,5:6) = repmat([+1 +1], nvt,1);
+  else
+    error('stim must be a stimulation structure or a N x 4 matrix containing the stimulations and measurements electrodes');
+  end
+
+  % find unique patterns and rebuild stim/meas struct
+  stim = stim_meas_list(stim_flat, n_elec);
+  vsel = speye(nvt);
+  return
+
+  % Select the unique stimulation and measurement patterns (rows jP)
+  [UniqPatterns, jnk, jP]= unique(stim_flat,'rows','stable');
+  % Select the unique stimulation patterns
+  [UniqStimulation,iS,jS]= unique(UniqPatterns(:,1:2),'rows','stable');
+  current = stim_flat(:,5);
+  gain    = stim_flat(:,6);
+  if length(find((abs(gain-mean(gain)) > 1e-12))) ~= 0
+     error('cannot handle variable gain in measurements');
+  end
+  if length(find((abs(current-mean(current)) > 1e-12))) ~= 0
+     error('cannot handle variable current drive in stimulus');
+  end
+  stim= stim_meas_list([UniqStimulation UniqPatterns(iS,3:4)], n_elec, mean(current), mean(gain));
+
+  % construct vsel
+  vsel = speye(nvt);
+  % Index used to reorganize the estimated voltages in the same order as
+  % the input stimulation
+  k=0; idx= zeros(size(UniqPatterns,1),1);
+  vsel= spalloc(size(jP,1),size(UniqPatterns,1),size(UniqPatterns,1));
+  morigin= zeros(size(jP,1),1);
+  for j=1:size(UniqStimulation,1)
+      idx1= find(sum(ismember(UniqPatterns(:,1:2),UniqStimulation(j,1:2),'rows'),2)>0);
+      i= 1;
+      stim(j).meas_pattern(i,UniqPatterns(idx1(i),3))= +1;
+      stim(j).meas_pattern(i,UniqPatterns(idx1(i),4))= -1;
+      k=k+1;
+      idx(k)= idx1(1);
+      m= morigin; m(jP==idx(k))=1;
+      vsel(:,k)= m;
+      for i=2:length(idx1)
+          stim(j).meas_pattern(i,UniqPatterns(idx1(i),3))= +1;
+          stim(j).meas_pattern(i,UniqPatterns(idx1(i),4))= -1;
+          k=k+1;
+          idx(k)= idx1(i);
+          m= morigin; m(jP==idx(k))=1;
+          vsel(:,k)= m;
+      end
+  end
+
+% take in a stim/meas struct
+% return a matrix of stim/meas pairs, per row with drive current 'i' and measurement gain 'g' calculated
+% [ +s -s +m -m i g ]
+function stim_flat = flatten_stim(stim, nst, nvt)
+  stim_flat = zeros(nvt, 6);
+  idx = 1;
+  % TODO calculate 'gain' when it matched (m+ == - m-)
+  % TODO calculate 'gain' when it is unmatched (m+ ~= m-)
+  % TODO calculate 'current' when it matched (s+ == - s-)
+  % TODO calculate 'current' when it is unmatched (s+ ~= s-)
+  for i = 1:nst
+      nmp= size(stim(i).meas_pattern, 1); % number of measurement patterns for this stim pair
+      [sp, jnk, spv]= find(stim(i).stim_pattern>0);
+      [sn, jnk, snv]= find(stim(i).stim_pattern<0);
+      [jnk, mp, mpv]= find(stim(i).meas_pattern>0);
+      [jnk, mn, mnv]= find(stim(i).meas_pattern<0);
+      % expand s+/s- to match the size of m+/m-
+      sp  = zeros(nmp,1)+sp;
+      sn  = zeros(nmp,1)+sn;
+      spv = zeros(nmp,1)+spv;
+      snv = zeros(nmp,1)+snv;
+      stim_flat(idx:idx+nmp-1,:) = ...
+        [ sp sn ... % stim pairs
+            mp mn spv mpv];  % meas pairs
+      idx = idx + nmp;
+  end
+
+% Alistair's approach was to manipulate the struct itself... its probably not
+% very efficient but it is fairly feature complete
+function [stim, vsel] = opt_struct(stim, verbose, nst, nvt)
+  % comment these out to disable each of the optimizations
+  MERGE_STIM_PATTERNS=1;
+  MERGE_SELF_MEAS_PATTERNS=1;
+%  MERGE_MEAS_PATTERNS=1;
+
   % stim/meas_pattern near match threshold
   % (optimization #3, MERGE_MEAS_PATTERNS)
   % 0 = 0% - only merge stim_patterns that have exactly the same meas_pattern
   % 1 = 100% - merge everything into a single stimulation
   waste_thres = 0;
 
-  % count measurements in we will get from fwd_solve
-  nst = length(stim);
-  nvt = 0;
-  for i = 1:length(stim);
-    nvt = nvt + size(stim(i).stim_pattern, 2) * size(stim(i).meas_pattern, 1);
-  end
   % default - no changes
   vsel = speye(nvt);
   % V = vsel*VV;
   % where V is the original measurements and VV are the optimizated measurements
   % with V and VV as column vectors
-
-  if verbose
-    fprintf('  stim/meas pattern optimization\n');
-    fprintf('    %d stim_patterns, %d measurements\n', nst, nvt);
-  end
-
   % stimulation patterns are by row
   % (1,1) = 1
   % (2,1) = -1
@@ -310,14 +479,6 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
     end
   end
 
-  if verbose
-    fprintf('    SUMMARY stimulation loops       %d -> %d (%d%%)\n', nst, length(stim), floor((1-length(stim)/nst)*100));
-    fprintf('    SUMMARY voltage meas calculated %d -> %d (%d%%)\n', size(vsel,1), size(vsel,2), floor((1-size(vsel,2)/size(vsel,1))*100));
-  end
-
-  % TODO look for inversions of stim or meas pattern (vsel(x,y)=-1;)
-  % TODO look for inversions of both stim and meas pattern (vsel(x,y)=+1;)
-
 % insert nj entries starting at nd prior to na
 % mult allows for inverted patterns
 function [vsel, na , nd] = vsel_move_col(vsel, na, nd, nj, mult)
@@ -514,47 +675,78 @@ function pass = do_unit_test();
     s(i).meas_pattern(i+9) = -1;
   end
   img.fwd_model.stimulation = s;
-  pass = unit_test_run(pass, img, 'n3r2 3D, 16x2 electrodes, all the same stim_pattern');
+  [pass, sz] = unit_test_run(pass, img, 'n3r2 3D, 16x2 electrodes, all the same stim_pattern');
+  if sz(2) ~= 4
+     pass = 0;
+     disp('ERROR: failed to reduce to min meas');
+  end
   for i=1:4
     s(i).meas_pattern = zeros(1,32);
     s(i).meas_pattern(2)  =  1;
     s(i).meas_pattern(12) = -1;
   end
   img.fwd_model.stimulation = s;
-  pass = unit_test_run(pass, img, 'n3r2 3D, 16x2 electrodes, single repeated pattern');
+  [pass, sz] = unit_test_run(pass, img, 'n3r2 3D, 16x2 electrodes, single repeated pattern');
+  if sz(2) ~= 1
+     pass = 0;
+     disp('ERROR: failed to reduce to min meas');
+  end
   so = s;
   for i=1:4
     s = so;
+    s(i).stim_pattern(:) =  0;
     s(i).stim_pattern(3) =  1;
     s(i).stim_pattern(7) = -1;
     img.fwd_model.stimulation = s;
-    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except %d',i));
+    [pass,sz] = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except %d',i));
+    if sz(2) ~= 2
+       pass = 0;
+       disp('ERROR: failed to reduce to min stim');
+    end
   end
   s = so; % reciprocal stimulus
   for i=3:4
+    s(i).stim_pattern(:) =  0;
     s(i).stim_pattern(3) =  1;
     s(i).stim_pattern(7) = -1;
     img.fwd_model.stimulation = s;
-    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except %d',i));
+    [pass, sz] = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except %d',i));
+    if sz(2) ~= 2
+       pass = 0;
+       disp('ERROR: failed to reduce to min stim');
+    end
   end
   for i=1:4
     s = so; % reciprocal measurements
     s(i).stim_pattern = -s(i).stim_pattern;
     img.fwd_model.stimulation = s;
-    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except reciprocal stim %d',i));
+    [ pass, sz ] = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except reciprocal stim %d',i));
+    if sz(2) ~= 1
+       pass = 0;
+       disp('ERROR: failed to reduce to min stim');
+    end
   end
   for i=1:4
     s = so; % reciprocal measurements
     s(i).meas_pattern = -s(i).meas_pattern;
     img.fwd_model.stimulation = s;
-    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except reciprocal meas %d',i));
+    [ pass, sz ] = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same stim_pattern except reciprocal meas %d',i));
+    if sz(2) ~= 1
+       pass = 0;
+       disp('ERROR: failed to reduce to min stim');
+    end
   end
   for i=1:4
     s = so;
+    s(i).meas_pattern(:) =  0;
     s(i).meas_pattern(5)  =  1;
     s(i).meas_pattern(12) = -1;
     img.fwd_model.stimulation = s;
-    pass = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same meas_pattern except %d',i));
+    [pass, sz] = unit_test_run(pass, img, sprintf('n3r2 3D, 16x2 electrodes, almost the same meas_pattern except %d',i));
+    if sz(2) ~= 2
+       pass = 0;
+       disp('ERROR: failed to reduce to min meas');
+    end
   end
   for i=1:4
     s(i).stim_pattern = zeros(32,1);
@@ -662,7 +854,7 @@ function pass = do_unit_test();
     fprintf('\nFAILED optimize_stimulation() unit_test\n');
   end
 
-function pass = unit_test_run(pass, img, desc);
+function [pass, vsel_sz] = unit_test_run(pass, img, desc);
   fprintf('%s\n',desc);
   % original solution
   t = tic;
@@ -675,6 +867,7 @@ function pass = unit_test_run(pass, img, desc);
   % and now rerun the fwd_solve after an optimize_stimulation()
   t = tic;
   [s, vsel] = optimize_stimulation(img.fwd_model.stimulation(:));
+  vsel_sz = size(vsel);
   img.fwd_model.stimulation = s;
   ts = tic;
   vn = fwd_solve(img);
