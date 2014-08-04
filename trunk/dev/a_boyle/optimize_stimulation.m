@@ -47,11 +47,11 @@ function [stim, vsel] = optimize_stimulation(stim, verbose);
   end
 
   % branch off to do unit test if requested
-  if isstr(stim) && strcmp(stim, 'UNIT_TEST');
+  if ischar(stim) && strcmp(stim, 'UNIT_TEST');
     vsel = 0;
     stim = do_unit_test(); % pass = f()
     return;
-  elseif isstr(stim) && strcmp(stim, 'SINGLE_TEST');
+  elseif ischar(stim) && strcmp(stim, 'SINGLE_TEST');
     vsel = 0;
     stim = do_single_test(verbose);
     return;
