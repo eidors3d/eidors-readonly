@@ -54,7 +54,7 @@ switch fmdl.type
     otherwise; error('Unknown object type');
 end
 
-opt.cache_obj = {fmdl.nodes, fmdl.elems, level};
+opt.cache_obj = {fmdl.nodes, fmdl.elems, fmdl.electrode, level};
 opt.fstr      = 'mdl_slice_mesher';
 
 
