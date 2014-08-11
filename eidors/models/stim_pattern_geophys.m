@@ -8,12 +8,19 @@ function [stim,S]= stim_pattern_geophys( n_elec, pat_type,  options )
 %
 %  options = {'current', 0.1}  % 0.1 Amps current (default 1)
 %  options = {'gain', 2.0}     % 2.0 gain         (default 1)
-%  options = {'spacings',[1,2,3,4]} list of spacings 
+%  options = {'spacings',[1,2,3,4]} % list of spacings 'a'
+%  options = {'multiples',[1,2,3,4]} % list of multiples 'n'
 %  options = {'reciprocal_meas',1} % do reciprocal (default 0);
 %  options = {'circumferential_meas',1} % do a circumferential protocol (default 0 = in line protocol);
 %
-% TYPE = 'WENNER'
-% 
+% Supported stimulation pattern types are:
+%  'Wenner'       - a Wenner array
+%   [0,3,1,2]*a + 1; % as [s+ s- m+ m-] -->  s+  m+ m-  s-
+%   same as Schlumberger with n=1
+% 'Schlumberger' - a Schlumberger array
+%   [0,(2*n+1)*a,n*a,(n+1)*a]+1;
+% 'DipoleDipole' - a dipole-dipole array
+%   [0,a,a+n*a,2*a+n*a]+1; % -->  s+ s-  m+     m-
 
 % (C) 2011 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -25,7 +32,7 @@ options = parse_options(options);
 switch(upper(pat_type))
     case 'WENNER';          S = stim_pattern_wenner(n_elec, options);
     case 'SCHLUMBERGER';    S = stim_pattern_schlumberger(n_elec, options);
-    case 'DIPOLEDIPOLE';   S = stim_pattern_dipoledipole(n_elec, options);
+    case 'DIPOLEDIPOLE';    S = stim_pattern_dipoledipole(n_elec, options);
   otherwise;
     error('No pattern of type "%s" available', upper(pat_type));
 end

@@ -51,6 +51,11 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 %   mk_common_model('d2s',16)  - 2D square model (24x24x2 elems)
 %   mk_common_model('e2s',16)  - 2D square model (32x32x2 elems)
 %   mk_common_model('f2s',16)  - 2D square model (40x40x2 elems)
+%   mk_common_model('g2s',16)  - 2D square model (56x56x2 elems)
+%   mk_common_model('h2s',16)  - 2D square model (80x80x2 elems)
+%   mk_common_model('i2s',16)  - 2D square model (96x96x2 elems)
+%   mk_common_model('j2s',16)  - 2D square model (144x144x2 elems)
+%   mk_common_model('k2s',16)  - 2D square model (200x200x2 elems)
 %
 %   models ??c or ??c0 are rotated by zero.
 %   models ??c1, ??c2, ??c3 are rotated by 22.5, 45, 67.5 degrees
@@ -145,6 +150,11 @@ elseif str(2:3)=='2s'
    elseif str(1)=='d'; layers= 24;
    elseif str(1)=='e'; layers= 32;
    elseif str(1)=='f'; layers= 40;
+   elseif str(1)=='g'; layers= 56;
+   elseif str(1)=='h'; layers= 80;
+   elseif str(1)=='i'; layers= 96;
+   elseif str(1)=='j'; layers= 144;
+   elseif str(1)=='k'; layers= 200;
    else;  error('don`t know what to do with option=%s',str);
    end
 
