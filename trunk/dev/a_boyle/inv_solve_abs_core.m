@@ -24,7 +24,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 % In the following parameters, r_k is the current residual, r_{k-1} is the
 % previous iteration's residual. k is the iteration count.
 %
-% Parameters (inv_model.parameters.*):
+% Parameters (inv_model.inv_solve.*):
 %   verbose (show progress)                (default 4)
 %      0: quiet
 %    >=1: print iteration count
@@ -515,7 +515,9 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
            fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
         end
      end
-     disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
+     if opt.verbose > 1
+        disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
+     end
    end
 
 function J = update_jacobian(img, N, opt)
@@ -775,10 +777,14 @@ function residual = meas_residual(dv, de, W, hp2, RtR)
 %   end
 
 function opt = parse_options(imdl)
-   try
-      % for any general options
-      opt = imdl.parameters;
-   catch
+   % for any general options
+   if isfield(imdl, 'inv_solve')
+      opt = imdl.inv_solve;
+% NOTE this is unecessary since there is deprecation code in
+% inv_solve to merge inv_solve and parameters fields
+%   elseif isfield(imdl, 'parameters')
+%      opt = imdl.parameters;
+   else
       opt = struct;
    end
 
@@ -789,7 +795,7 @@ function opt = parse_options(imdl)
    if ~isfield(opt,'verbose')
       opt.verbose = 4;
    end
-   if(opt.verbose > 1)
+   if opt.verbose > 1
       fprintf('  setting default parameters\n');
    end
    % we track how many fwd_solves we do since they are the most expensive part of the iterations
@@ -875,7 +881,7 @@ function opt = parse_options(imdl)
    end
    if opt.plot_residuals ~= 0
       disp('  residual plot (updated per iteration) are enabled, to disable them set');
-      disp('    inv_model.parameters.plot_residuals=0');
+      disp('    inv_model.inv_solve.plot_residuals=0');
    end
 
    % line search
@@ -916,7 +922,7 @@ function opt = parse_options(imdl)
    end
    if opt.line_search_args.plot ~= 0
       disp('  line search plots (per iteration) are enabled, to disable them set');
-      disp('    inv_model.parameters.line_search_args.plot=0');
+      disp('    inv_model.inv_solve.line_search_args.plot=0');
    end
 
    % background
@@ -966,7 +972,7 @@ function opt = parse_options(imdl)
          (~isfield(imdl, 'fwd_model') || ...
           ~isfield(imdl.fwd_model, 'jacobian') || ...
           ~strcmp(imdl.fwd_model.jacobian, 'eidors_default'))
-         error('can not guess at inv_model.parameters.calc_jacobian_scaling_func, one must be provided');
+         error('can not guess at inv_model.inv_solve.calc_jacobian_scaling_func, one must be provided');
       end
       switch opt.elem_working
          case 'conductivity'
@@ -1218,7 +1224,7 @@ function img = map_img(img, out);
       % if we are missing movement, construct it (default = 0 movement)
       if strcmp(out{end}, 'movement')
          if ~isfield(img, 'elem_movement_init')
-            error('to create initial movement data we need the inv_model.parameters.elem_movement_init vector with initial movement values');
+            error('to create initial movement data we need the inv_model.inv_solve.elem_movement_init vector with initial movement values');
          end
          e = img.elem_movement_init;
          ei = length(img.elem_data);
@@ -1238,7 +1244,7 @@ function img = map_img(img, out);
       for i = 1:length(in(:))-length(out(:)) % delete the extra
          img.elem_data(img.params_sel{end}) = []; % rm elem_data
          img.params_sel(end) = []; % rm params_sel
-         img.current_params{end} = []; % rm current_params
+         img.current_params(end) = []; % rm current_params
       end
    end
 
@@ -1466,10 +1472,10 @@ pass = 1;
 imdl= mk_common_model('c2t4',16); % 576 elements
 imdl.solve = 'inv_solve_abs_core';
 imdl.reconst_type = 'absolute';
-imdl.parameters.elem_working = 'log_conductivity';
-imdl.parameters.meas_working = 'apparent_resistivity';
+imdl.inv_solve.elem_working = 'log_conductivity';
+imdl.inv_solve.meas_working = 'apparent_resistivity';
 imdl.inv_solve.calc_solution_error = 0;
-imdl.parameters.verbose = 0;
+imdl.inv_solve.verbose = 0;
 %show_fem(imdl.fwd_model);
 imgsrc= mk_image( imdl.fwd_model, 1);
 % set homogeneous conductivity and simulate
@@ -1494,8 +1500,8 @@ figure(hh); subplot(222); show_fem(img1,1); axis tight; title('#1 verbosity=defa
 % -------------
 disp('TEST: previous solved at default verbosity');
 disp('TEST: now solve same at verbosity=0 --> should be silent');
-imdl.parameters.verbose = 0;
-%imdl.parameters.meas_working = 'apparent_resistivity';
+imdl.inv_solve.verbose = 0;
+%imdl.inv_solve.meas_working = 'apparent_resistivity';
 img2= inv_solve(imdl, vi);
 figure(hh); subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
 max_err = max(abs((img1.elem_data - img2.elem_data)./(img1.elem_data)));
@@ -1528,7 +1534,7 @@ imdl.rec_model = cmdl;
 c2f = mk_coarse_fine_mapping(imdl.fwd_model,cmdl);
 imdl.fwd_model.coarse2fine = c2f;
 % solve
-%imdl.parameters.verbose = 10;
+%imdl.inv_solve.verbose = 10;
 img3= inv_solve(imdl, vi);
 %figure(hh); subplot(224); show_fem(cmdl,1); axis tight; title('#3 c2f');
 figure(hh); subplot(223); show_fem(img3,1); axis tight; title('#3 c2f');
@@ -1547,8 +1553,8 @@ else
   disp('TEST:  img1 == img3 --> PASS');
 end
 
-%imdl.parameters.verbose = 1000;
-imdl.parameters.elem_output = 'log10_resistivity'; % resistivity output works
+%imdl.inv_solve.verbose = 1000;
+imdl.inv_solve.elem_output = 'log10_resistivity'; % resistivity output works
 img4= inv_solve(imdl, vi);
 figure(hh); subplot(224); show_fem(img4,1); axis tight; title('#4 c2f + log10 resistivity out');
 % check
@@ -1636,10 +1642,10 @@ imdl.reconst_type = 'absolute';
 imdl.hyperparameter.value = 1e2; % was 0.1
 imdl.jacobian_bkgnd.value = 1;
 
-imdl.parameters.elem_working = 'log_conductivity';
-imdl.parameters.meas_working = 'apparent_resistivity';
-imdl.parameters.dtol_iter = 4; % default 1 -> start checking on the first iter
-imdl.parameters.max_iterations = 20; % default 10
+imdl.inv_solve.elem_working = 'log_conductivity';
+imdl.inv_solve.meas_working = 'apparent_resistivity';
+imdl.inv_solve.dtol_iter = 4; % default 1 -> start checking on the first iter
+imdl.inv_solve.max_iterations = 20; % default 10
 
 % the conversion to apparaent resistivity is now handled inside the solver
 %%img1= mk_image(fmdl,1);
@@ -1650,15 +1656,15 @@ imdl.parameters.max_iterations = 20; % default 10
 
 imdl.inv_solve.calc_solution_error = 0;
 
-imdl.parameters.verbose = 10;
-%%imdl.parameters.normalisation= I;
-%%imdl.parameters.homogeneization= 1;
-% imdl.parameters.fixed_background= 1; % the default now in _core
-imdl.parameters.line_search_args.perturb= [0 5*logspace(-7,-4,5)];
-%imdl.parameters.max_iterations= 10;
-%imdl.parameters.plot_line_optimize = 1;
+imdl.inv_solve.verbose = 10;
+%%imdl.inv_solve.normalisation= I;
+%%imdl.inv_solve.homogeneization= 1;
+% imdl.inv_solve.fixed_background= 1; % the default now in _core
+imdl.inv_solve.line_search_args.perturb= [0 5*logspace(-7,-4,5)];
+%imdl.inv_solve.max_iterations= 10;
+%imdl.inv_solve.plot_line_optimize = 1;
 
-imdl.parameters.elem_output = 'log10_resistivity';
+imdl.inv_solve.elem_output = 'log10_resistivity';
 imgr= inv_solve(imdl, dd);
 
 % save the result so we don't have to wait forever if we want to look at the result later
