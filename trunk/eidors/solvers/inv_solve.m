@@ -223,7 +223,7 @@ function mdl = prepare_model( mdl )
     end
 
     % warn if we have deprecated inv_model.parameters laying about
-    mdl = deprecate_imdl_parameters(mdl)
+    mdl = deprecate_imdl_parameters(mdl);
 
 function check_parametrization_handling(inv_model,imgc)
 if isfield(inv_model, 'jacobian_bkgnd') && ... 
