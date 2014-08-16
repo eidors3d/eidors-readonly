@@ -67,7 +67,7 @@ switch sum(prms)
          error('No params, elem_data or node_data found on img');
       else
          if isfield(img,'current_params') && ~isempty(img.current_params)
-           eidors_msg('@@@ Careful! Image already mapped. Doing nothing',1);
+% TODO AB hiding a very noisy message for now...           eidors_msg('@@@ Careful! Image already mapped. Doing nothing',1);
            return;
          end
 
