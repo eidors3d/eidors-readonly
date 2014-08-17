@@ -336,6 +336,7 @@ if opt.verbose > 1
 end
 % convert data for output
 img = map_img(img, opt.elem_output);
+img.meas_err = dv;
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
 
 function img = init_elem_data(img, opt)
@@ -441,6 +442,8 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r,
         axis tight;
         ylabel('residual (% of max)');
         xlabel('iteration');
+        set(gca, 'xtick', x);
+        set(gca, 'xlim', [1 max(x)]);
         legend('residual','meas. misfit','prior misfit');
         legend('Location', 'EastOutside');
         drawnow;
