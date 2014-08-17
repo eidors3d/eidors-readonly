@@ -62,7 +62,9 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    if > 0, this is additional elem_data
 %    if a c2f map exists, the default is to decide
 %    based on an estimate of c2f overlap whether a
-%    background value is required
+%    background value is required. If a background is
+%    required, it is added as the last element of that
+%    type.
 %   c2f_background_fixed                   (default 1)
 %    hold the background estimate fixed or allow it
 %    to vary as any other elem_data
@@ -73,6 +75,22 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    legal values.
 %    Note that c2f_background's elements are added to
 %    this list if c2f_background_fixed == 1.
+%   prior_data             (default to jacobian_bkgnd)
+%    Sets the priors of type elem_prior. May be
+%    scalar, per elem_prior, or match the working
+%    length of each elem_data type. Note that for priors
+%    using the c2f a background element may be added
+%    to the end of that range when required; see
+%    c2f_background.
+%   elem_len                (default to all elem_data)
+%    A cell array list of how many of each
+%    elem_working there are in elem_data.
+%      prior_data = { 32.1, 10*ones(10,1) };
+%      elem_prior = {'conductivity', 'movement'};
+%      elem_len = { 20001, 10 };
+%   elem_prior               (default to elem_working)
+%    Input 'prior_data' type; immediately converted to
+%    'elem_working' type for before first iteration.
 %   elem_working              (default 'conductivity')
 %   elem_output               (default 'conductivity')
 %    The working and output units for 'elem_data'.
@@ -216,15 +234,6 @@ function img= inv_solve_abs_core( inv_model, data0);
 % TODO comments bring issues to mind that we have discussed
 % before such as the mk_image()'s handling of c2f.
 
-%AB->BG: elem_movement_init (not documented above) was my
-% only concession to electrode movement: we need an electrode
-% movement 'background' constructor. For the rest of the
-% code, the movement is handled as 'just another odd
-% parameter that doesn't map to conductivity'. A clean way
-% to handle this as part of the 'parameterization' concept
-% is important.
-
-
 %--------------------------
 % UNIT_TEST?
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
@@ -238,32 +247,20 @@ opt = parse_options(inv_model);
 %%%    that is working for my data set
 %else
 [inv_model, opt] = append_c2f_background(inv_model, opt);
+% calc_jacobian_bkgnd, used by mk_image does not understand
+% the course-to-fine mapping and explodes when it is fed a
+% prior based on the coarse model. Here we give that
+% function something it can swallow, then create then plug
+% in the correct prior afterwards.
+if isfield(inv_model, 'jacobian_bkgnd')
+  inv_model = rmfield(inv_model,'jacobian_bkgnd');
+end
+inv_model.jacobian_bkgnd.value = 1;
 img = mk_image( inv_model );
-%img = calc_jacobian_bkgnd( inv_model );
-% TODO does calc_jacobian_bkgnd ignore 'params' right now.. that might screw things up pretty good!
 img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 
-% mk_image doesn't handle the c2f
-% TODO move this from here to mk_image so we get an img with the correct number of elem_data
-if isfield(inv_model, 'fwd_model') && ...
-   isfield(inv_model.fwd_model, 'coarse2fine') && ...
-   length(img.elem_data) ~= size(inv_model.fwd_model.coarse2fine,2)
-
-   % TODO replace with fix_c2f_calc_jacobian_backgnd
-   c2f = inv_model.fwd_model.coarse2fine;
-   %img.elem_data = c2f \ img.elem_data; % --> rank deficient???
-   bg = mean(img.elem_data);
-   img.elem_data = ones(size(c2f,2),1)*bg;
-   if opt.verbose > 1
-      bg = map_data(bg, img.current_params, 'resistivity');
-      fprintf('  c2f: correcting mk_image elem_data size %d -> %d (av %0.1f Ohm.m)\n', size(c2f), bg);
-      disp('    TODO this fix should be moved to mk_image()');
-   end
-end
-% transfer parameter into img
-if isfield(opt, 'elem_movement_init')
-   img.elem_movement_init = opt.elem_movement_init;
-end
+% insert the prior data
+img = init_elem_data(img, opt);
 
 % precalculate some of our matrices if required
 hp2 = init_hp(inv_model, opt);
@@ -340,6 +337,27 @@ end
 % convert data for output
 img = map_img(img, opt.elem_output);
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
+
+function img = init_elem_data(img, opt)
+  if opt.verbose > 1
+    fprintf('  setting prior elem_data\n');
+  end
+  ne1 = 1; % init
+  img.elem_data = zeros(sum([opt.elem_len{:}]),1); % preallocate
+  for i=1:length(opt.elem_prior)
+    if opt.verbose > 1
+      if length(opt.prior_data{i}) == 1
+        fprintf('    %d x %s: \t%0.1f\n',opt.elem_len{i},opt.elem_prior{i}, opt.prior_data{i});
+      else
+        fprintf('    %d x %s: \t...\n',opt.elem_len{i},opt.elem_prior{i});
+      end
+    end
+    ne2 = ne1+opt.elem_len{i}-1; % this set ends at idx ne2
+    img.params_sel(i) = {ne1:ne2};
+    img.elem_data(img.params_sel{i}) = opt.prior_data{i};
+    ne1 = ne2+1; % next start idx ne1
+  end
+  img.current_params = opt.elem_prior;
 
 function W = init_meas_icov(inv_model, opt)
    W = 1;
@@ -533,7 +551,8 @@ function J = update_jacobian(img, N, opt)
    % finalize the jacobian
    % Note that if a normalization (i.e. apparent_resistivity) has been applied
    % to the measurements, it needs to be applied to the Jacobian as well!
-   J = N * calc_jacobian( img ) * S;
+   Jn = calc_jacobian( img ); % unscaled natural units (i.e. conductivity)
+   J = N * Jn * S; % scaled and normalized
    if opt.verbose > 1
       fprintf(' %d DoF, %d meas, %s)\n', size(J,2)-length(opt.elem_fixed), size(J,1), func2str(opt.calc_jacobian_scaling_func));
    end
@@ -949,17 +968,66 @@ function opt = parse_options(imdl)
    % DATA CONVERSION settings
    % elem type for the initial estimate is based on calc_jacobian_bkgnd which returns an img
    if ~isfield(opt, 'elem_working')
-      opt.elem_working = 'conductivity';
+      opt.elem_working = {'conductivity'};
+   end
+   if ~isfield(opt, 'elem_prior')
+      opt.elem_prior = opt.elem_working;
    end
    if ~isfield(opt, 'elem_output')
-      opt.elem_output = 'conductivity';
+      opt.elem_output = {'conductivity'};
    end
    if ~isfield(opt, 'meas_input')
-      opt.meas_input = 'voltage';
+      opt.meas_input = {'voltage'};
    end
    if ~isfield(opt, 'meas_working')
-      opt.meas_working = 'voltage';
+      opt.meas_working = {'voltage'};
    end
+   % if the user didn't put these into cell arrays, do
+   % so here so there is less error checking later in
+   % the code
+   for i = {'elem_working', 'elem_prior', 'elem_output'}; %, 'meas_input', 'meas_working'}
+     % MATLAB voodoo: deincapsulate a cell containing a
+     % string, then use that to access a struct eleemnt
+     x = opt.(i{1});
+     if ~iscell(x)
+        opt.(i{1}) = {x};
+     end
+   end
+
+   if ~isfield(opt, 'prior_data')
+      if isfield(imdl, 'jacobian_bkgnd') && ...
+         isfield(imdl.jacobian_bkgnd, 'value') && ...
+         length(opt.elem_prior) == 1
+         opt.prior_data = {imdl.jacobian_bkgnd.value};
+      else
+         error('requires inv_model.inv_solve.prior_data');
+      end
+   end
+
+   if ~isfield(opt, 'elem_len')
+      if length(opt.elem_working) == 1
+         if isfield(imdl.fwd_model, 'coarse2fine')
+            c2f = imdl.fwd_model.coarse2fine; % coarse-to-fine mesh mapping
+            opt.elem_len = { size(c2f,2) };
+         else
+            opt.elem_len = { size(imdl.fwd_model.elems,1) };
+         end
+      else
+        error('requires inv_model.inv_solve.elem_len');
+      end
+   end
+   % if the user didn't put these into cell arrays, do
+   % so here so there is less error checking later in
+   % the code
+   for i = {'elem_len', 'prior_data'}
+     % MATLAB voodoo: deincapsulate a cell containing a
+     % string, then use that to access a struct eleemnt
+     x = opt.(i{1});
+     if ~iscell(x)
+        opt.(i{1}) = {x};
+     end
+   end
+
 
    % JACOBIAN CHAIN RULE conductivity -> whatever
    % where x = conductivity at this iteration
@@ -968,13 +1036,14 @@ function opt = parse_options(imdl)
    % if not provided, determine based on 'elem_working' type
    if ~isfield(opt, 'calc_jacobian_scaling_func')
       % TODO error out if elem_working is not onductivity and the jacobian function is not the default... we can't guess correctly then and we'll get funky/had-to-debug behaviour
-      if ~strcmp(opt.elem_working, 'conductivity') && ...
+      if length(opt.elem_working) == 1 && ...
+         ~strcmp(opt.elem_working{1}, 'conductivity') && ...
          (~isfield(imdl, 'fwd_model') || ...
           ~isfield(imdl.fwd_model, 'jacobian') || ...
           ~strcmp(imdl.fwd_model.jacobian, 'eidors_default'))
          error('can not guess at inv_model.inv_solve.calc_jacobian_scaling_func, one must be provided');
       end
-      switch opt.elem_working
+      switch opt.elem_working{1}
          case 'conductivity'
             opt.calc_jacobian_scaling_func = @ret1_func;  % S = f(x)
          case 'log_conductivity'
@@ -1118,9 +1187,12 @@ function [inv_model, opt] = append_c2f_background(inv_model, opt)
       inv_model.fwd_model.coarse2fine = c2f;
       opt.c2f_background = nc+1;
       if opt.c2f_background_fixed
+         % TODO assumes conductivity/resistivity is the *first* parameterization
          opt.elem_fixed(end+1) = nc+1;
       end
     end
+    % TODO assumes conductivity/resistivity is the *first* parameterization
+    opt.elem_len(1) = {size(c2f,2)}; % elem_len +1
 
 function [img, opt] = strip_c2f_background(img, opt, indent)
     if nargin < 3
@@ -1174,22 +1246,6 @@ function [img, opt] = strip_c2f_background(img, opt, indent)
        fprintf('%s  background conductivity: %0.1f Ohm.m\n', indent, bg);
     end
 
-function img = fix_c2f_calc_jacobian_backgnd(img, opt)
-    % finally, we need to fix the img.elem_data returned by
-    % mk_image/calc_jacobian_bkgnd, since it doesn't know
-    % about coarse2fine.. yet TODO
-    % somewhat arbitrarily, we choose the background value
-    % as the mean background value.. we can do better TODO
-    nc = size(c2f,2);
-    if nc ~= length(img.elem_data)
-      if(opt.verbose > 1)
-        fprintf('  c2f: correcting img.elem_data to coarse size %d -> $d as mean value\n', length(img.elem_data), nc);
-        fprintf('  c2f: TODO calc_jacobian_backgnd() should handle c2f!\n');
-      end
-      bg = mean(img.elem_data);
-      img.elem_data = bg*ones(nc,1);
-    end
-
 function b = has_params(s)
 b = false;
 if isstruct(s)
@@ -1221,19 +1277,6 @@ function img = map_img(img, out);
 
    % create data?! we don't know how
    if length(out(:)) > length(in(:))
-      % if we are missing movement, construct it (default = 0 movement)
-      if strcmp(out{end}, 'movement')
-         if ~isfield(img, 'elem_movement_init')
-            error('to create initial movement data we need the inv_model.inv_solve.elem_movement_init vector with initial movement values');
-         end
-         e = img.elem_movement_init;
-         ei = length(img.elem_data);
-         ei = [ei+1:ei+length(e)];
-         img.elem_data(ei) = e;
-         img.params_sel{end+1} = ei;
-         in{end+1} = 'movement';
-         img.current_params = in;
-      end
       % are we still broken -- then error out
       if length(out(:)) > length(in(:))
          error('missing data (more out types than in types)');
@@ -1472,6 +1515,8 @@ pass = 1;
 imdl= mk_common_model('c2t4',16); % 576 elements
 imdl.solve = 'inv_solve_abs_core';
 imdl.reconst_type = 'absolute';
+imdl.inv_solve.prior_data = 1;
+imdl.inv_solve.elem_prior = 'conductivity';
 imdl.inv_solve.elem_working = 'log_conductivity';
 imdl.inv_solve.meas_working = 'apparent_resistivity';
 imdl.inv_solve.calc_solution_error = 0;
