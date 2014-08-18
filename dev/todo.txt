@@ -5,6 +5,12 @@
 - put warning in mdl_slice_mesher when level doesn't cut the model
     (currently this gives error: consider at line 110 when els = [])
 
+- fix mk_image so that it can handle a time series image
+
+- Netgen has problems for ver>5.0. Why?
+
+- Updatwe Draeger file reader software.
+
 ############## April 27-29 Work ##############
 - provide a helper function so that you can save and restore the state of
   eidors_cache enable/disable for functions -- this will allow functions to
