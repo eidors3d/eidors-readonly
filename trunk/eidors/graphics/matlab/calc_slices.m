@@ -102,11 +102,8 @@ function rimg = calc_this_slice( img, levels, np)
     try   scal = img.calc_slices.scale; 
     catch scal = 1; end
 
-    
-    if filt*scal ~= 1
-       filt = scal * ( filt/sum(filt(:)) );
-       rimg = filter_image(rimg, filt);
-    end
+    filt = scal * ( filt/sum(filt(:)) );
+    rimg = filter_image(rimg, filt);
 
 % Calculate an image by mapping it onto the node_ptr matrix
 % This makes a blocky image to nearest node -> no longer used
@@ -170,6 +167,13 @@ function rimg= calc_image_elems( elem_data, level, fwd_model, np)
 
 
 function  rimg = filter_image(rimg, filt);
+    
+   %%% Total MATLAB BS )(*&#$)(*#&@
+   %%% the && operator used to short circuit. Now it doesn't
+   %%% How the (*&)(*& can anyone take this language seriously
+   % all(size(filt*scal) == [1,1]) && filt*scal == 1
+   if all(size(filt)==1) if filt == 1; return; end ; end
+
    [sz1,sz2,sz3,sz4] = size(rimg);
    for j1 = 1:sz3; for j2 = 1:sz4; 
       rsl = rimg(:,:,j1,j2);
