@@ -74,6 +74,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %                                Draegerwerk colourmap (difference)
 %           'draeger-2009':      Draegerwerk colourmap (2009)
 %           'draeger-tidal':     Draegerwerk colourmap (tidal images)
+%           'timpal'             Timpal colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
 %   'image_field', 'image_field_idx', 'image_field_val' 
@@ -214,6 +215,8 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= draeger_colours(pp,scale_data, '2009');
      case 'draeger-tidal',
       [red,grn,blu]= draeger_colours(pp,scale_data, 'tidal2014');
+     case 'timpal'
+      [red,grn,blu]= timpal_colours(pp,scale_data);
      case 'jet'
       [red,grn,blu]= jet_colours(pp,scale_data);
      case 'jetair'
@@ -240,6 +243,11 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
    end
+% Sometimes this is just slightly > 1
+   red(red>1) = 1;
+   grn(grn>1) = 1;
+   blu(blu>1) = 1;
+
 
    red(backgnd) = pp.backgnd(1);
    grn(backgnd) = pp.backgnd(2);
@@ -290,6 +298,50 @@ end
       blu= blu*(1-glev);
    end
 
+function [red,grn,blu]= timpal_colours(pp,scale_data)
+   sd  = -scale_data*100;
+   P00 = (sd<  9);
+   p09 = (sd>= 9) .* (sd<10) .* (sd- 9) / (10- 9); P09 = p09 >0;
+   p10 = (sd>=10) .* (sd<17) .* (sd-10) / (17-10); P10 = p10 >0;
+   p17 = (sd>=17) .* (sd<30) .* (sd-17) / (30-17); P17 = p17 >0;
+   p30 = (sd>=30) .* (sd<60) .* (sd-30) / (60-30); P30 = p30 >0;
+   p60 = (sd>=60) .* (sd<85) .* (sd-60) / (85-60); P60 = p60 >0;
+   p85 = (sd>=85)            .* (sd-85) /(100-85); P85 = p85 >0;
+
+
+   red =  150*P00 + 198*p85;
+   grn =  150*P00 +       88 *P09 + ...
+           88*P10 +  (99- 88)*p10 + ...
+           99*P17 + (121- 99)*p17 + ...
+          121*P30 + (190-121)*p30 + ...
+          190*P60 + (243-190)*p60 + ...
+          243*P85 + (251-243)*p85;
+   blu =  150*P00 +      159 *P09 + ...
+          180*P10 + (180-159)*p10 + ...
+          255*P17 + ...
+          255*P30 + ...
+          255*P60 + ...
+          255*P85 ;
+          
+   red = red/255;
+   grn = grn/255;
+   blu = blu/255;
+
+% From Vinicius Torsani
+%These are the color codes from range of 0 to 1:
+% 
+%         R       G       B
+% 0 to 0,09       150     150     150
+% to 0,1  0       88      159
+% to 0,17         0       99      180
+% to 0,3  0       121     255
+% to 0,6  0       190     255
+% to 0,85         0       243     255
+% to 1    198     251     255
+
+
+
+
 function [red,grn,blu] = draeger_colours(pp,scale_data, version);
    switch version
      case '2009'
@@ -332,10 +384,6 @@ function [red,grn,blu] = draeger_colours(pp,scale_data, version);
      otherwise; error('version "%s" not recognized', version);
    end
 
-% Sometimes this is just slightly > 1
-   red(red>1) = 1;
-   grn(grn>1) = 1;
-   blu(blu>1) = 1;
 
 function [red,grn,blu] = jet_colours(pp,scale_data);
    grn = 2*(3/4 - abs(scale_data));
