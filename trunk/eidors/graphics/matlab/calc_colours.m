@@ -70,7 +70,10 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           'black_red':         Black/Red Colours
 %           'blue_black_red':    Blue/Black/Red colours
 %           'polar_colours':     "Polar" blue/white/red colours
-%           'draeger':           Draegerwerk colourmap
+%           'draeger', 'draeger-difference':
+%                                Draegerwerk colourmap (difference)
+%           'draeger-2009':      Draegerwerk colourmap (2009)
+%           'draeger-tidal':     Draegerwerk colourmap (tidal images)
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
 %   'image_field', 'image_field_idx', 'image_field_val' 
@@ -205,8 +208,12 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
    switch pp.cmap_type
      case 'blue_red'
       [red,grn,blu]= blue_red_colours(pp,scale_data);
-     case 'draeger'
-      [red,grn,blu]= draeger_colours(pp,scale_data);
+     case {'draeger', 'draeger-difference'}
+      [red,grn,blu]= draeger_colours(pp,scale_data, 'difference2014');
+     case 'draeger-2009',
+      [red,grn,blu]= draeger_colours(pp,scale_data, '2009');
+     case 'draeger-tidal',
+      [red,grn,blu]= draeger_colours(pp,scale_data, 'tidal2014');
      case 'jet'
       [red,grn,blu]= jet_colours(pp,scale_data);
      case 'jetair'
@@ -283,13 +290,34 @@ end
       blu= blu*(1-glev);
    end
 
-function [red,grn,blu] = draeger_colours(pp,scale_data);
-   grn=      (-scale_data>0.2) .* (-scale_data - 0.2)/0.8;
-   red=grn + ( scale_data>0.2) .* ( scale_data - 0.2)/0.8*2/3;
+function [red,grn,blu] = draeger_colours(pp,scale_data, version);
+   switch version
+     case '2009'
+       grn=      (-scale_data>0.2) .* (-scale_data - 0.2)/0.8;
+       red=grn + ( scale_data>0.2) .* ( scale_data - 0.2)/0.8*2/3;
+       
+       blu=      (-scale_data>0.1) .* (-scale_data - 0.1)/0.1;
+       blu(-scale_data>0.2) = 1;
+       blu=blu + ( scale_data>0.2) .* ( scale_data - 0.2)/0.8*2/3;
+     case 'tidal2014'
+     case 'difference2014';
+       sd  = -scale_data*100;
+       p40 = (sd> 40) .* (sd<= 100) .* (sd - 40) / (100-40);
+       P40 = (p40>0);
+       p10 = (sd> 10) .* (sd<=  40) .* (sd - 10) / ( 40-10);
+       n10 = (sd<-10) .* (sd>=- 40) .* (sd + 10) /-( 40-10);
+       n40 = (sd<-40) .* (sd>=-100) .* (sd + 40) /-(100-40);
+       N40 = (n40>0);
+       red =  132*p40  + 255*n10  + 255*N40;
+       grn =  153*p10  + 153*P40 + (240-153)*P40 + ...
+              153*n10  + 153*N40 + (240-153)*n40;
+       blu =  153*n40  + 255*p10 +  255*P40;
 
-   blu=      (-scale_data>0.1) .* (-scale_data - 0.1)/0.1;
-   blu(-scale_data>0.2) = 1;
-   blu=blu + ( scale_data>0.2) .* ( scale_data - 0.2)/0.8*2/3;
+       red = red/255;
+       grn = grn/255;
+       blu = blu/255;
+     otherwise; error('version "%s" not recognized', version);
+   end
 
 % Sometimes this is just slightly > 1
    red(red>1) = 1;
