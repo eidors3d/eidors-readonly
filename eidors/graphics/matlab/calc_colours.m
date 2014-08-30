@@ -300,6 +300,19 @@ function [red,grn,blu] = draeger_colours(pp,scale_data, version);
        blu(-scale_data>0.2) = 1;
        blu=blu + ( scale_data>0.2) .* ( scale_data - 0.2)/0.8*2/3;
      case 'tidal2014'
+       sd  = -scale_data*100;
+       p20 = (sd> 20) .* (sd<= 100) .* (sd - 20) / (100-20);
+       P20 = (p20>0);
+       p10 = (sd> 10) .* (sd<=  20) .* (sd - 10) / ( 20-10);
+       n20 = (sd<-20) .* (sd>=-100) .* (sd + 20) /-(100-20);
+       red = 255*p20 + 170*n20;
+       grn = 255*p20;
+       blu = 255*P20 + 255*p10 + 170*n20;
+
+       red = red/255;
+       grn = grn/255;
+       blu = blu/255;
+
      case 'difference2014';
        sd  = -scale_data*100;
        p40 = (sd> 40) .* (sd<= 100) .* (sd - 40) / (100-40);
