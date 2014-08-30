@@ -74,6 +74,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %                                Draegerwerk colourmap (difference)
 %           'draeger-2009':      Draegerwerk colourmap (2009)
 %           'draeger-tidal':     Draegerwerk colourmap (tidal images)
+%           'swisstom'           Swisstom colourmap
 %           'timpal'             Timpal colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
@@ -215,6 +216,8 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= draeger_colours(pp,scale_data, '2009');
      case 'draeger-tidal',
       [red,grn,blu]= draeger_colours(pp,scale_data, 'tidal2014');
+     case 'swisstom'
+      [red,grn,blu]= swisstom_colours(pp,scale_data);
      case 'timpal'
       [red,grn,blu]= timpal_colours(pp,scale_data);
      case 'jet'
@@ -297,6 +300,31 @@ end
       grn= grn*(1-glev);
       blu= blu*(1-glev);
    end
+
+function [red,grn,blu]= swisstom_colours(pp,scale_data);
+   hexcolours = ['3E4A50';
+                 '2F4D58';
+                 '357892';
+                 '2AB1DF';
+                 '61D1FB';
+                 'CFF0FE'];
+   redpts = hex2dec(hexcolours(:,1:2));
+   grnpts = hex2dec(hexcolours(:,3:4));
+   blupts = hex2dec(hexcolours(:,5:6));
+   interppts = linspace(0,1, size(hexcolours,1));
+% add for +ve changes
+   redpts = redpts([1,1:end]);
+   grnpts = grnpts([1,1:end]);
+   blupts = blupts([1,1:end]);
+   interppts = [-1,interppts];
+
+   red = interp1(interppts, redpts,-scale_data, 'linear');
+   grn = interp1(interppts, grnpts,-scale_data, 'linear');
+   blu = interp1(interppts, blupts,-scale_data, 'linear');
+          
+   red = red/255;
+   grn = grn/255;
+   blu = blu/255;
 
 function [red,grn,blu]= timpal_colours(pp,scale_data)
    sd  = -scale_data*100;
