@@ -59,17 +59,18 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
 %   'cmap_type'  Specify special colours (Default 'blue_red')
-%           'blue_red':       default Blue/Red eidors colourmpa
-%           'draeger':        Draegerwerk colourmap
-%           'jet':            matlab jet colourmap
-%           'jetair':         scaled jet colours
-%           'blue_yellow':    Blue/Yellow colours
-%           'greyscale':      Greyscale colours
-%           'copper':         Copper colours
-%           'blue_white_red': Blue/White/Red colours
-%           'black_red':      Black/Red Colours
-%           'blue_black_red': Blue/Black/Red colours
-%           'polar_colours':  "Polar" blue/white/red colours
+%           'blue_red':          default Blue/Red eidors colourmpa
+%           'jet':               matlab jet colourmap
+%           'jetair':            scaled jet colours
+%           'blue_yellow':       Blue/Yellow colours
+%           'greyscale':         Greyscale colours (Lungs white)
+%           'greyscale-inverse': Greyscale colours (Lungs black)
+%           'copper':            Copper colours
+%           'blue_white_red':    Blue/White/Red colours
+%           'black_red':         Black/Red Colours
+%           'blue_black_red':    Blue/Black/Red colours
+%           'polar_colours':     "Polar" blue/white/red colours
+%           'draeger':           Draegerwerk colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
 %   'image_field', 'image_field_idx', 'image_field_val' 
@@ -214,8 +215,10 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= jet_colours(pp,scd);
      case 'blue_yellow'
          [red,grn,blu] = blue_yellow_colours(pp,scale_data);
-     case 'greyscale'
+     case 'greyscale'          % Lungs are white
          [red,grn,blu] = greyscale_colours(pp,scale_data);
+     case 'greyscale-inverse'  % Lungs are black
+         [red,grn,blu] = greyscale_colours(pp,-scale_data);
      case 'copper'
          [red,grn,blu] = copper_colours(pp,scale_data);
      case 'blue_white_red'
@@ -320,7 +323,7 @@ function [red,grn,blu] = blue_yellow_colours(pp,scale_data);
 
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu]= greyscale_colours(pp,scale_data);
-   cc= 0.5 + scale_data/2;
+   cc= 0.5 - scale_data/2;
    red = cc;
    grn = cc;
    blu = cc;
