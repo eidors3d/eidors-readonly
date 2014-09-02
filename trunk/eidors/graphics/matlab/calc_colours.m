@@ -76,6 +76,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           'draeger-tidal':     Draegerwerk colourmap (tidal images)
 %           'swisstom'           Swisstom colourmap
 %           'timpel'             Timpel colourmap
+%           matrix [Nx3]         Use values ([0-1]) as REB colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
 %   'image_field', 'image_field_idx', 'image_field_val' 
@@ -207,7 +208,16 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
      (  K/W*   abs(scale_data)   ) .* (abs(scale_data)<=W) + ...
      (K+K/W/3*(abs(scale_data)-W)) .* (abs(scale_data)> W) );
 
+   if isnumeric(pp.cmap_type)
+      user_colourmap = pp.cmap_type;
+      pp.cmap_type= 'user_colourmap';
+   end
+
    switch pp.cmap_type
+     case 'user_colourmap'
+      red = user_colourmap(:,1);
+      grn = user_colourmap(:,2);
+      blu = user_colourmap(:,3);
      case 'blue_red'
       [red,grn,blu]= blue_red_colours(pp,scale_data);
      case {'draeger', 'draeger-difference'}
@@ -640,11 +650,13 @@ function do_unit_test
 %   'cmap_type'  (Default blue-red)
 
    test.blue_red = [0,0,2997; 9990,9990,9990; 2997,0,0]/1e4;
-   test.draeger  = [10000,10000,10000;0,0,0;6667,0,6667]/1e4;
+%  test.draeger  = [10000,10000,10000;0,0,0;6667,0,6667]/1e4; % OLD 2009!
+   test.draeger  = [5176,9412,10000;0,0,0;10000,9412,6000]/1e4; % 2014
+   test.timpel   = [7765,9843,10000;5882,5882,5882;5882,5882,5882]/1e4;
    test.jet      = [5000,0,0;5000,10000,5000;0,0,5000]/1e4;
    test.jetair   = [8333,0,0; 0,0,8333;0,0,0]/1e4;
    test.blue_yellow = [10000,10000,7500; 0,0,0;7500,10000,10000]/1e4;
-   test.greyscale = [0,0,0;5000,5000,5000;10000,10000,10000]/1e4;
+   test.greyscale = flipud([0,0,0;5000,5000,5000;10000,10000,10000])/1e4;
    test.copper = [0,0,0;6250,3906,2487;10000,7812,4975]/1e4;
    test.blue_white_red = [10000,0,0;10000,10000,10000;0,0,10000]/1e4;
    test.black_red = [0,0,0;5000,0,0;10000,0,0]/1e4;
