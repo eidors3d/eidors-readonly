@@ -48,8 +48,10 @@ end
 switch(upper(orientation))
     case 'HORIZONTALDOWNWARD';  [depth,location]= plotPseudoSectionProfileDown(fwd_model,data);
     case 'VERTICAL';            [depth,location]= plotPseudoSectionProfileVert(fwd_model,data);
+    case 'SPECIFICHORIZONTALDOWNWARD';  [depth,location]= plotPseudoSectionProfileSpecificDown(fwd_model,data);    
     case 'CIRCULAROUTSIDE';     [depth,location]= plotPseudoSectionCircularOut(fwd_model,data);
     case 'CIRCULARINSIDE';      [depth,location]= plotPseudoSectionCircularIn(fwd_model,data);
+    case 'CIRCULARVOLCANO';     [depth,location]= plotPseudoSectionCircularInVolcano(fwd_model,data);
   otherwise;
     error('No orientation of type "%s" available', upper(orientation));
 end
@@ -67,6 +69,118 @@ fwd_model.show_pseudosection.location= location;
 
 end
 
+function [depth,location,electrodesLocation]= plotPseudoSectionProfileSpecificDown(fmdl,data)
+   fs= 20;
+   
+   [elec_posn,elecNumber]= electrodesPosition(fmdl);
+   xposition_elec= reshape(elec_posn(elecNumber,1),[],4); 
+   yposition_elec= reshape(elec_posn(elecNumber,2),[],4); 
+   zposition_elec= reshape(elec_posn(elecNumber,3),[],4); zposition_elec= zposition_elec-min(zposition_elec(:));
+%     keyboard
+   if isfield(fmdl.show_pseudosection,'minx') && isfield(fmdl.show_pseudosection,'maxx') && ...
+       isfield(fmdl.show_pseudosection,'miny') && isfield(fmdl.show_pseudosection,'maxy')
+       minx= fmdl.show_pseudosection.minx;
+       maxx= fmdl.show_pseudosection.maxx;
+       miny= fmdl.show_pseudosection.miny;
+       maxy= fmdl.show_pseudosection.maxy;
+   else
+       xposition_elec= xposition_elec-min(xposition_elec(:));
+       yposition_elec= yposition_elec-min(yposition_elec(:));
+       minx= min(xposition_elec(:));
+       maxx= max(xposition_elec(:));
+       miny= min(yposition_elec(:));
+       maxy= max(yposition_elec(:));
+   end
+   
+   if isfield(fmdl.show_pseudosection,'xToDeduce') && isfield(fmdl.show_pseudosection,'yToDeduce')
+       if strcmp(fmdl.show_pseudosection.xToDeduce,'minx')
+           xToDeduce= minx;
+       elseif strcmp(fmdl.show_pseudosection.xToDeduce,'maxx')
+           xToDeduce= maxx;
+       end
+       if strcmp(fmdl.show_pseudosection.yToDeduce,'miny')
+           yToDeduce= miny;
+       elseif strcmp(fmdl.show_pseudosection.yToDeduce,'maxy')
+           yToDeduce= maxy;
+       end
+   else
+       xToDeduce= minx;
+       yToDeduce= miny;
+   end
+   rposition_elec= sqrt((xposition_elec-xToDeduce).^2 + ...
+       (yposition_elec-yToDeduce).^2);
+     
+%    rposition_elec= sqrt((xposition_elec-min(xposition_elec(:))).^2 + ...
+%        (yposition_elec-max(yposition_elec(:))).^2);
+   
+   if isfield(fmdl.show_pseudosection,'elecsUsed')
+       elecsUsed= fmdl.show_pseudosection.elecsUsed;
+   else
+       elecsUsed= 3:4;
+   end
+   
+   if isfield(fmdl.show_pseudosection,'dirAxis')
+       dirAxis= fmdl.show_pseudosection.dirAxis;
+   else
+       dirAxis= 'X';
+   end
+   
+   if isfield(fmdl.show_pseudosection,'depthRatio')
+       depthRatio= fmdl.show_pseudosection.depthRatio;
+   else
+       depthRatio= 3;
+   end
+   
+    if isfield(fmdl.show_pseudosection,'depthPrecision')
+       depthPrecision= fmdl.show_pseudosection.depthPrecision;
+   else
+       depthPrecision= 1;
+    end
+   
+%    keyboard
+   switch dirAxis
+       case 'X'
+           location= mean(xposition_elec(:,elecsUsed),2);
+           depth= -abs(xposition_elec(:,elecsUsed(1))-xposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(xposition_elec/depthPrecision)*depthPrecision);
+       case 'Y'
+           location= mean(yposition_elec(:,elecsUsed),2);
+           depth= -abs(yposition_elec(:,elecsUsed(1))-yposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(yposition_elec/depthPrecision)*depthPrecision);
+       case 'Z'
+           location= mean(zposition_elec(:,elecsUsed),2);
+           depth= -abs(zposition_elec(:,elecsUsed(1))-zposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(zposition_elec/depthPrecision)*depthPrecision);
+       case 'R'
+           location= mean(rposition_elec(:,elecsUsed),2);
+           depth= -abs(rposition_elec(:,elecsUsed(1))-rposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(rposition_elec/depthPrecision)*depthPrecision);
+   end
+    
+   P= depth+1i*location;
+   [Pu,iu,ju]= unique(round(P/depthPrecision)*depthPrecision);
+   
+   if length(Pu) < length(P)
+       lu= location(iu);
+       zu= depth(iu);
+       du= iu*0;
+       for i= 1:length(Pu)
+           du(i)= mean(data(ju==i));
+       end
+   else
+       lu= location;
+       zu= depth;
+       du= data;
+   end
+       
+   scatter(lu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');
+%    hold on; plot(electrodesLocation,electrodesLocation*0,'x','Color',[0 0.5 0])
+   xlabel('Distance (m)','fontsize',fs,'fontname','Times');
+   ylabel('Pseudo-depth (m)','fontsize',fs,'fontname','Times')
+%     axis equal; axis tight;
+   set(gca,'fontsize',fs,'fontname','Times')
+end
+
 function [zps,xps]= plotPseudoSectionProfileDown(fmdl,data)
    fs= 20;
    
@@ -81,7 +195,7 @@ function [zps,xps]= plotPseudoSectionProfileDown(fmdl,data)
    AM= abs(xposition_elec(:,3)-xposition_elec(:,1));
    BN= abs(xposition_elec(:,4)-xposition_elec(:,2));
    
-   a= max([AB MN AN BM AM BN ],[],2);
+   a= MN; %max([AB MN AN BM AM BN ],[],2);
    zps= -a/3;
    
 %    a= abs(elecNumber(:,1)-elecNumber(:,2));
@@ -160,8 +274,9 @@ end
 function [r_point,th_point]= plotPseudoSectionCircularIn(fmdl,data)
 fs= 20;
 [elec_posn,elecNumber] = electrodesPosition(fmdl);
-[r_point,th_point,r,xc,yc] = polarPosition(elecNumber,elec_posn);
-
+[A,th_point,r,xc,yc] = polarPosition(elecNumber,elec_posn);
+a= max(A,[],2);
+r_point= a/2;
 r_point= (r-r_point/pi);%*9*pi*r/10+pi*r/10;
 
 [x_point,y_point]= pol2cart(th_point,r_point);
@@ -184,11 +299,41 @@ axis equal; axis tight;
 set(gca,'fontsize',fs,'fontname','Times')
 end
 
+function [dMN,th_point]= plotPseudoSectionCircularInVolcano(fmdl,data)
+fs= 20;
+[elec_posn,elecNumber] = electrodesPosition(fmdl);
+[xposition_elec,yposition_elec,zposition_elec] = electrodesPositionABMN(elecNumber,elec_posn);
+dMN= sqrt((xposition_elec(:,4)-xposition_elec(:,3)).^2 + ...
+    (yposition_elec(:,4)-yposition_elec(:,3)).^2 + (zposition_elec(:,4)-zposition_elec(:,3)).^2);
+
+[A,r_bary,th_point,r,xc,yc,TH,R] = polarPosition(elecNumber,elec_posn);
+[th_bary,r_bary,th_bary34,r_bary34,r,xc,yc,barycenter_x34,barycenter_y34] = bary34(elecNumber,elec_posn);
+% a= A(:,2);
+% r_point= a;
+r= 400; 
+r_point= (r-r_bary)/(max(r-r_bary)-min(r-r_bary))*(r-5);%*9*pi*r/10+pi*r/10;
+r_point= r_point-min(r_point)+5;
+[x_point,y_point]= pol2cart(th_bary34,r_point);
+x_point= x_point+xc; y_point= y_point+yc;
+P= x_point+1i*y_point;
+[Pu,iu,ju]= unique(P);
+xu= x_point(iu); zu= y_point(iu); du= iu*0;
+for i= 1:length(Pu);     du(i)= mean(data(ju==i)); end
+figure; scatter(xu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');  
+text(xu(iu==1),zu(iu==1),'1')
+hold on; plot(xposition_elec,yposition_elec,'kp')
+xlabel('X (m)','fontsize',fs,'fontname','Times');
+ylabel('Y (m)','fontsize',fs,'fontname','Times')
+axis equal; axis tight;
+set(gca,'fontsize',fs,'fontname','Times')
+end
 
 function [r_point,th_point]= plotPseudoSectionCircularOut(fmdl,data)
 fs= 20;
 [elec_posn,elecNumber] = electrodesPosition(fmdl);
-[r_point,th_point,r,xc,yc] = polarPosition(elecNumber,elec_posn);
+[A,r_bary,th_point,r,xc,yc] = polarPosition(elecNumber,elec_posn);
+a= max(A,[],2);
+r_point= a/2;
 r_point= (r+r_point);
 [x_point,y_point]= pol2cart(th_point,r_point+r);
 x_point= x_point+xc; y_point= y_point+yc;
@@ -232,8 +377,13 @@ function [elec_posn,elecNumber] = electrodesPosition(fmdl)
    
 end
 
-function [r_point,th_bary,r,xc,yc] = polarPosition(elecNumber,elec_posn)
+function [xposition_elec,yposition_elec,zposition_elec] = electrodesPositionABMN(elecNumber,elec_posn)
+xposition_elec= reshape(elec_posn(elecNumber,1),[],4);
+yposition_elec= reshape(elec_posn(elecNumber,2),[],4);
+zposition_elec= reshape(elec_posn(elecNumber,3),[],4);
+end
 
+function [A,r_bary,th_bary,r,xc,yc,TH,R] = polarPosition(elecNumber,elec_posn)
 TH= elecNumber*0;
 R= elecNumber*0;
 
@@ -267,10 +417,12 @@ Arc_length_AB= Arc_length_AB.*(R(:,1)+R(:,2))/2;
 Arc_length_MN= (TH(:,4)-TH(:,3));
 idx_discontinuity= find((TH(:,4)>TH(:,3) & TH(:,4)<0));
 Arc_length_MN(idx_discontinuity)= -TH(idx_discontinuity,3)+TH(idx_discontinuity,4);
-idx_discontinuity= find((TH(:,3)>TH(:,4)));
+idx_discontinuity= find((TH(:,4)<TH(:,3) & TH(:,4)<0));
+Arc_length_MN(idx_discontinuity)= +TH(idx_discontinuity,3)-TH(idx_discontinuity,4);
+idx_discontinuity= find((TH(:,3)>TH(:,4)) & TH(:,3)>0);
 Arc_length_MN(idx_discontinuity)= TH(idx_discontinuity,3)-TH(idx_discontinuity,4);
-idx_discontinuity= find((TH(:,3)>TH(:,4)) &  TH(:,3)<0);
-Arc_length_MN(idx_discontinuity)= -TH(idx_discontinuity,3)+TH(idx_discontinuity,4);
+% idx_discontinuity= find((TH(:,3)>TH(:,4)) &  TH(:,3)<0);
+% Arc_length_MN(idx_discontinuity)= -TH(idx_discontinuity,3)+TH(idx_discontinuity,4);
 Arc_length_MN(Arc_length_MN>=pi+0.005)= 2*pi-Arc_length_MN(Arc_length_MN>=pi+0.005);
 Arc_length_MN= Arc_length_MN.*(R(:,3)+R(:,4))/2;
 
@@ -314,8 +466,28 @@ Arc_length_BM(idx_discontinuity)= TH(idx_discontinuity,3)-TH(idx_discontinuity,2
 Arc_length_BM(Arc_length_BM>=pi+0.005)= 2*pi-Arc_length_BM(Arc_length_BM>=pi+0.005);
 Arc_length_BM= Arc_length_BM.*(R(:,2)+R(:,3))/2;
 
-a= max([Arc_length_AB Arc_length_MN Arc_length_AM Arc_length_AN Arc_length_NB Arc_length_BM],[],2);
-r_point= a/2;
+A= [Arc_length_AB Arc_length_MN Arc_length_AM Arc_length_AN Arc_length_NB Arc_length_BM];
+end
+
+
+
+function [th_bary,r_bary,th_bary34,r_bary34,r,xc,yc,barycenter_x34,barycenter_y34] = bary34(elecNumber,elec_posn)
+xposition_elec= reshape(elec_posn(elecNumber,1),[],4);
+yposition_elec= reshape(elec_posn(elecNumber,2),[],4);
+rx= (max(xposition_elec(:))-min(xposition_elec(:)))/2;
+ry= (max(yposition_elec(:))-min(yposition_elec(:)))/2;
+rmean= (rx+ry)/2;
+
+xc= mean(elec_posn(:,1)); yc= mean(elec_posn(:,2)); r = rmean;
+
+barycenter_x34= mean(xposition_elec(:,3:4),2);
+barycenter_y34= mean(yposition_elec(:,3:4),2);
+[th_bary34,r_bary34]= cart2pol(barycenter_x34-xc,barycenter_y34-yc);
+
+barycenter_x= mean(xposition_elec,2);
+barycenter_y= mean(yposition_elec,2);
+[th_bary,r_bary]= cart2pol(barycenter_x-xc,barycenter_y-yc);
+
 
 end
 
