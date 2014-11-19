@@ -68,7 +68,7 @@ slc = slc.fwd_model;
 mingrid = min(slc.nodes);
 maxgrid = max(slc.nodes);
 bnd = find_boundary(slc);
-contour_boundary = order_loop(slc.nodes(unique(bnd),:));
+% contour_boundary = order_loop(slc.nodes(unique(bnd),:));
 
 if opt.square_pixels ==1
     mdl_sz = maxgrid - mingrid;
@@ -102,7 +102,13 @@ rmdl.mdl_slice_mapper.model_2d = 1;
 x_avg = conv2(xgrid, [1,1]/2,'valid');
 y_avg = conv2(ygrid, [1,1]/2,'valid');
 [x,y] = ndgrid( x_avg, y_avg);
-inside = inpolygon(x(:),y(:),contour_boundary(:,1),contour_boundary(:,2) );
+
+% 20141119: The inpolygon approach fails on non-simply-connected domains
+% inside = inpolygon(x(:),y(:),contour_boundary(:,1),contour_boundary(:,2) );
+inside = false(1,numel(x));
+for i = 1:numel(x)
+   inside(i) = any(point_in_triangle([x(i) y(i) 0], slc.elems, slc.nodes));
+end
 ff = find(~inside);
 rmdl.elems([2*ff, 2*ff-1],:)= [];
 rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
@@ -239,6 +245,30 @@ function elec_lev = get_elec_level(fmdl)
     z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
     min_e = min(z_elec); max_e = max(z_elec);
     elec_lev = [inf,inf,mean([min_e,max_e])];
+
+    
+% check if point p is in triangle E defined by indices into vertices V
+function out = point_in_triangle(p, E, V)
+%http://www.blackpawn.com/texts/pointinpoly/default.html
+% vectors
+v0 = V(E(:,3),:) - V(E(:,1),:);
+v1 = V(E(:,2),:) - V(E(:,1),:);
+v2 = repmat(p,[size(E,1) 1])  - V(E(:,1),:);
+
+% dot products
+dot00 = dot(v0, v0, 2);
+dot01 = dot(v0, v1, 2);
+dot02 = dot(v0, v2, 2);
+dot11 = dot(v1, v1, 2);
+dot12 = dot(v1, v2, 2);
+
+% barycentric coordinates
+invDenom = 1 ./ (dot00 .* dot11 - dot01 .* dot01);
+u = (dot11 .* dot02 - dot01 .* dot12) .* invDenom;
+v = (dot00 .* dot12 - dot01 .* dot02) .* invDenom;
+
+out = u >= 0 & v >= 0 & (u + v < 1);
+
     
 function do_unit_test
     imdl = mk_common_model('n3r2',[16,2]);
