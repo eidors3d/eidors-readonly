@@ -110,13 +110,6 @@ for i = 1:numel(x)
    inside(i) = any(point_in_triangle([x(i) y(i) 0], slc.elems, slc.nodes));
 end
 ff = find(~inside);
-rmdl.elems([2*ff, 2*ff-1],:)= [];
-rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
-rmdl.coarse2fine(:,ff)= [];
-% rmdl.boundary = find_boundary(rmdl);
-% show individual elements (more like how the 2d grid models display)
-rmdl.boundary = rmdl.elems;
-rmdl.inside   = inside; % the inside array is useful in other functions
 
 if opt.do_coarse2fine
     % to calculate c2f, models must be aligned
@@ -125,7 +118,19 @@ if opt.do_coarse2fine
     tmp.mk_coarse_fine_mapping.f2c_project = R;
     tmp.mk_coarse_fine_mapping.z_depth     = opt.z_depth;
     fmdl.coarse2fine = mk_coarse_fine_mapping(fmdl,tmp);
+    fmdl.coarse2fine(:,ff) = [];
 end
+
+
+
+rmdl.elems([2*ff, 2*ff-1],:)= [];
+rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
+rmdl.coarse2fine(:,ff)= [];
+% rmdl.boundary = find_boundary(rmdl);
+% show individual elements (more like how the 2d grid models display)
+rmdl.boundary = rmdl.elems;
+rmdl.inside   = inside; % the inside array is useful in other functions
+
 
 if isfield(fmdl,'mat_idx')
    rmdl.mat_idx = calc_mat_idx(rmdl,fmdl,ff,opt);

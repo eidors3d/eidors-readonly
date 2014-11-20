@@ -3,7 +3,7 @@ function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % [c2f,out]= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %  
 % Parameters:
-%    c_mdl is coarse fwd_model
+%    c_mdl is coarse fwd_model (no holes, see warning below)
 %    f_mdl is fine fwd_model
 %
 % C2F_ij is the fraction if f_mdl element i which is
@@ -18,7 +18,7 @@ function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % OPTIONS:
 % if the geometry of the fine and coarse models are not
 %  aligned, then they can be translated and mapped using
-%    coarse_xyz = M*( fine_xyz - T)
+%    coarse_xyz = (M* (fine_xyz - T)')'
 %  where
 %    T= c_mdl.mk_coarse_fine_mapping.f2c_offset (1xN_dims)
 %    M= c_mdl.mk_coarse_fine_mapping.f2c_project (N_dimsxN_dims)
@@ -38,7 +38,9 @@ function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % if not all coarse elements cover fine ones, then this
 %    approach cannot be used. This will be fixed in a 
 %    future release
-
+%
+% WARNING:
+% If c_mdl is not simply connected, the results are wrong!
 %
 % See also MK_C2F_CIRC_MAPPING
 
@@ -199,8 +201,8 @@ function f_mdl= offset_and_project( f_mdl, c_mdl)
     [fn,fd]= size(f_mdl.nodes);
     T= c_mdl.mk_coarse_fine_mapping.f2c_offset;
     M= c_mdl.mk_coarse_fine_mapping.f2c_project;
-
-    f_mdl.nodes= ( f_mdl.nodes - ones(fn,1)*T )*M;
+    
+    f_mdl.nodes= (M*( f_mdl.nodes - ones(fn,1)*T )')';
 
 function [c_mdl f_mdl] = assign_defaults( c_mdl, f_mdl )
     [fn,fd]= size(f_mdl.nodes);
