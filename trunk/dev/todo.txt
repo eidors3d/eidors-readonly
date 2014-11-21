@@ -1,3 +1,15 @@
+- bug in ng_mk_gen_models with top/bottom square elecs
+    shape_str = ['solid top    = plane(0,0,  0;0,0, 1);\n' ...
+                 'solid bot    = plane(0,0,-10;0,0,-1);\n' ...
+                 'solid ob     = orthobrick(-3,-3,-99;3,3, 99);\n' ...
+                 'solid mainobj= top and bot and ob -maxh=0.5;\n'];
+    elec_pos = [ 0,0,0, 0,0,1;0,0,-10,0,0,-1];
+    elec_shape=[0.2,0.2,0.05]; elec_obj = {'top','bot'};
+    fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+- make inv_model.inv_solve.calc_solution_error = 0
+  default. Or fix for large solutions.
+
 - verify that elec_frac = [k ... in mk_grid_model creates conformal grid
 
 - check c2f processing in show_3d_slices
