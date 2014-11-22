@@ -332,7 +332,7 @@ function RM = resize_if_reqd(RM,inside);
    szRM = size(RM,1);
    if sum(inside) == szRM
       % RM is fine
-   elseif size(inside,1) == szRM
+   elseif length(inside) == szRM
       RM = RM(inside,:);
    else
       error('mismatch in size of provided RecMatrix');
