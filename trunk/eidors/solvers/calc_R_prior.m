@@ -9,6 +9,9 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % and will call the function inv_model.R_prior
 % parameters to R_prior should be passed in the field
 % inv_model.R_prior_function_name.parameters
+% 
+% If inv_model.R_prior is a matrix, calc_R_prior will return that matrix,
+% possibly correcting for coarse2fine
 %
 % R_prior      calculated regularization prior R
 % inv_model    is an inv_model structure
@@ -26,12 +29,20 @@ if ~isempty(R_prior)
 end
 
 if isfield(inv_model,'R_prior')
-   R_prior= feval( inv_model.R_prior, inv_model );
+   if isnumeric(inv_model.R_prior)
+      R_prior = inv_model.R_prior;
+   else
+      R_prior= feval( inv_model.R_prior, inv_model );
+   end
 elseif isfield(inv_model,'RtR_prior')
    % The user has provided an RtR prior. We can use this to
    % get R =RtR^(1/2). Not that this is non unique
-   RtR_prior= feval( inv_model.RtR_prior, inv_model );
-
+   if isnumeric(inv_model.RtR_prior)
+      RtR_prior = inv_model.RtR_prior;
+   else
+      RtR_prior= feval( inv_model.RtR_prior, inv_model );
+   end
+   
    % chol generates an error for rank deficient RtR_prior
    %     R_prior = chol (RtR_prior);
    % Instead we calculate cholinc with a droptol of 1e-5.

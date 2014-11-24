@@ -5,7 +5,10 @@ function system_mat = calc_system_mat( fwd_model, img)
 % OR
 %    system_mat= calc_system_mat( image)
 %
-% it will call the fwd_model.solve
+% it will call the fwd_model.system_mat
+%
+% if fwd_model.system_mat is a matrix, calc_system_mat will return this
+% matrix
 %
 % system_mat  
 %   system_mat.E    is FEM system_matrix
@@ -27,16 +30,22 @@ end
 warning off EIDORS:DeprecatedInterface
 fwd_model= img.fwd_model;
 
-cache_obj= {fwd_model, img.elem_data};
-system_mat= eidors_obj('get-cache', cache_obj, 'system_mat');
-if ~isempty(system_mat)
-   eidors_msg('system_mat: using cached value', 3);
-   return
+if isnumeric(fwd_model.system_mat)
+   system_mat = fwd_model.system_mat;
+
+else
+   
+   cache_obj= {fwd_model, img.elem_data};
+   system_mat= eidors_obj('get-cache', cache_obj, 'system_mat');
+   if ~isempty(system_mat)
+      eidors_msg('system_mat: using cached value', 3);
+      return
+   end
+   
+   system_mat= feval(fwd_model.system_mat, fwd_model, img);
+
+   eidors_obj('set-cache', cache_obj, 'system_mat', system_mat);
+   eidors_msg('calc_system_mat: setting cached value', 3);
 end
 
-system_mat= feval(fwd_model.system_mat, fwd_model, img);
 warning on EIDORS:DeprecatedInterface
-
-eidors_obj('set-cache', cache_obj, 'system_mat', system_mat);
-eidors_msg('calc_system_mat: setting cached value', 3);
-
