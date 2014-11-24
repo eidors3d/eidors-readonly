@@ -4,6 +4,10 @@ function J = calc_jacobian( fwd_model, img)
 %  J = calc_jacobian( img )
 %      calc Jacobian on img.fwd_model at conductivity given
 %      in image (fwd_model is for forward and reconstruction)
+% 
+% The actual work is done by the jacobian calculator specified in 
+%    img.fwd_model.jacobian, unless that field is numeric, in which case
+%    calc_jacobian returns its contents.
 %
 % For reconstructions on dual meshes, the interpolation matrix
 %    is defined as img.fwd_model.coarse2fine. This takes
@@ -38,15 +42,20 @@ end
 
 fwd_model_check(fwd_model);
 
-cache_obj= jacobian_cache_params( fwd_model, img );
-
-J= eidors_obj('get-cache', cache_obj, 'jacobian');
-if ~isempty(J)
-   eidors_msg('calc_jacobian: using cached value', 3);
-   return
+if isnumeric(fwd_model.jacobian)             % we have the Jacobian matrix
+   J = fwd_model.jacobian;
+else                                         % we need to calculate
+   
+   cache_obj= jacobian_cache_params( fwd_model, img );
+   
+   J= eidors_obj('get-cache', cache_obj, 'jacobian');
+   if ~isempty(J)
+      eidors_msg('calc_jacobian: using cached value', 3);
+      return
+   end
+   
+   J= feval(fwd_model.jacobian, fwd_model, img);
 end
-
-J= feval(fwd_model.jacobian, fwd_model, img);
 
 if isfield(fwd_model,'coarse2fine')
    c2f= fwd_model.coarse2fine;
@@ -58,8 +67,10 @@ end
 
 warning(ws.state, 'EIDORS:DeprecatedInterface');
 
-eidors_obj('set-cache', cache_obj, 'jacobian', J);
-eidors_msg('calc_jacobian: setting cached value', 3);
+if ~isnumeric(fwd_model.jacobian)            % no point caching 
+   eidors_obj('set-cache', cache_obj, 'jacobian', J);
+   eidors_msg('calc_jacobian: setting cached value', 3);
+end
         
 
 

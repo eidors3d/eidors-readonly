@@ -11,6 +11,8 @@ function [JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )
 % parameters to JiRtRJt should be passed in the field
 % inv_model.JiRtRJt_function_name.parameters
 %
+% if JiRtRJt is a matrix, than calc_JiRtRJt will return that matrix
+%
 % JiRtRJt         calculated regularization prior R
 % inv_model       is an inv_model structure
 % inv_model.JiRtRJt_func function to make calculation
@@ -27,7 +29,11 @@ if ~isempty(JiRtRJt)
 end
 
 if isfield(inv_model,'JiRtRJt')
-   JiRtRJt= feval( inv_model.JiRtRJt, inv_model );
+   if isnumeric(inv_model.JiRtRJt)
+      JiRtRJt = inv_model.JiRtRJt;
+   else
+      JiRtRJt= feval( inv_model.JiRtRJt, inv_model );
+   end
 else
    eidors_msg( ...
       'calc_JiRtRJt: trying to calculate JiRtRJt from RtR_prior',2);

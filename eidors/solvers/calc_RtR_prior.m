@@ -13,6 +13,9 @@ function RtR_prior = calc_RtR_prior( inv_model )
 % parameters to RtR_prior should be passed in the field
 % inv_model.RtR_prior_function_name.parameters
 %
+% If inv_model.RtR_prior is a matrix, calc_RtR_prior will return that matrix,
+% possibly correcting for coarse2fine
+%
 % if there exists a field inv_model.rec_model, then
 %   the prior is calculated on the rec_model rather than
 %   the fwd_model. This will not be done if 
@@ -36,15 +39,23 @@ if ~isempty(RtR_prior)
 end
 
 if isfield(inv_model,'RtR_prior')
-   RtR_prior= feval( inv_model.RtR_prior, inv_model );
+   if isnumeric(inv_model.RtR_prior)
+      RtR_prior = inv_model.RtR_prior;
+   else
+      RtR_prior= feval( inv_model.RtR_prior, inv_model );
+   end
 elseif isfield(inv_model,'R_prior')
    % The user has provided an R prior. We can use this to
    % calculate RtR= R'*R;
-   R= feval( inv_model.R_prior, inv_model );
+   if isnumeric(inv_model.R_prior)
+      R = inv_model.R_prior;
+   else
+      R= feval( inv_model.R_prior, inv_model );
+   end
 
    RtR_prior = R'*R;
 else
-   error('calc_RtR_prior: neither R_prior or RtR_prior func provided');
+   error('calc_RtR_prior: neither R_prior nor RtR_prior provided');
 end
 
 if isfield(inv_model.fwd_model,'coarse2fine')
