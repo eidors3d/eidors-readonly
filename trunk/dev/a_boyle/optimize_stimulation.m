@@ -217,8 +217,8 @@ function stim_flat = flatten_stim(stim, nst, nvt)
       nmp= size(stim(i).meas_pattern, 1); % number of measurement patterns for this stim pair
       [sp, jnk, spv]= find(stim(i).stim_pattern>0);
       [sn, jnk, snv]= find(stim(i).stim_pattern<0);
-      [jnk, mp, mpv]= find(stim(i).meas_pattern>0);
-      [jnk, mn, mnv]= find(stim(i).meas_pattern<0);
+      [jnk, mp, mpv]= find(stim(i).meas_pattern>0); mp = mp(jnk);
+      [jnk, mn, mnv]= find(stim(i).meas_pattern<0); mn = mn(jnk);
       % expand s+/s- to match the size of m+/m-
       sp  = zeros(nmp,1)+sp;
       sn  = zeros(nmp,1)+sn;
