@@ -60,12 +60,12 @@ function beta = beta_polak_ribiere(dx_k, dx_km1, sx_km1)
 
 % Hestenes-Stiefel
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
-%         dx_k^T    ( dx_k - dx_{k-1} )
-% beta = -------------------------------
-%         s_{k-1}^T ( dx_k - dx_{k-1} )
+%          dx_k^T    ( dx_k - dx_{k-1} )
+% beta = - -------------------------------
+%          s_{k-1}^T ( dx_k - dx_{k-1} )
 function beta = beta_hestenes_stiefel(dx_k, dx_km1, sx_km1)
   ddx = dx_k - dx_km1;
-  beta = (dx_k' * ddx)/(sx_km1' * ddx);
+  beta = -(dx_k' * ddx)/(sx_km1' * ddx);
   if isinf(beta) || isnan(beta)
     beta = 0;
   end
