@@ -34,7 +34,7 @@ sigma_true = 1 - 0.9*exp(-((cc(:,1)-(-5)).^2 + (cc(:,2) - (-24)).^2)/(2*(5).^2))
     6*exp(-((cc(:,1)-(10)).^2 + (cc(:,2) - (-20)).^2)/(2*3.^2));
 
 
-m_true = -k*log(((t-p)*ones(size(simp,1),1))./(sigma_true - p*ones(size(simp,1),1)) - 1);
+% UNUSED m_true = -k*log(((t-p)*ones(size(simp,1),1))./(sigma_true - p*ones(size(simp,1),1)) - 1);
 
 %Set boundary currents
 protocol = '{op}'; scheme = '{normal}';
