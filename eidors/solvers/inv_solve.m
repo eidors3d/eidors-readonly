@@ -174,9 +174,9 @@ function opts = parse_parameters( imdl );
 function imdl = deprecate_imdl_parameters(imdl)
    if isfield(imdl, 'parameters')
       if isstruct(imdl.parameters)
-         disp(imdl)
-         disp(imdl.parameters)
-         warning('EIDORS:deprecatedParameters','INV_SOLVE inv_model.parameters.* are deprecated in favor of inv_model.inv_solve.* as of 30-Apr-2014.');
+%          disp(imdl)
+%          disp(imdl.parameters)
+%          warning('EIDORS:deprecatedParameters','INV_SOLVE inv_model.parameters.* are deprecated in favor of inv_model.inv_solve.* as of 30-Apr-2014.');
 
          if ~isfield(imdl, 'inv_solve')
             imdl.inv_solve = imdl.parameters;

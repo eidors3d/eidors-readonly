@@ -54,7 +54,6 @@ zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
 
 FC= system_mat_fields( fwd_model );
 
-
 if isfield(fwd_model,'coarse2fine') && strcmp(org_params, 'conductivity');
    DE = jacobian_calc(pp, zi2E, FC, sv, fwd_model.coarse2fine);
    nparam= size(fwd_model.coarse2fine,2);
@@ -107,8 +106,8 @@ d= pp.n_dims+1;
 dfact= (d-1)*(d-2); % Valid for d<=3
 
 do_c2f = ( nargin==5 );
-
 zi2E_FCt = zi2E * FC';
+
 FC_sv   = FC * sv;
 
 if ~do_c2f

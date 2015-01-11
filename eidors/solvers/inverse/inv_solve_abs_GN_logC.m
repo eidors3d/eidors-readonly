@@ -182,13 +182,13 @@ else
       end
 end
 
-figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
-semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
-xlabel('alpha','fontsize',20,'fontname','Times')
-ylabel('Normalized residuals','fontsize',20,'fontname','Times')
-title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
-    ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
-set(gca,'fontsize',20,'fontname','Times'); drawnow;
+% figure; semilogx(perturb(2:end),mlist(2:end),'xk',fmin,pf(1)*log10(fmin)^2+pf(2)*log10(fmin)+pf(3),'or'); hold on
+% semilogx(10.^p,pf(1)*(p).^2+pf(2)*p+pf(3),'k','linewidth',2); axis tight
+% xlabel('alpha','fontsize',20,'fontname','Times')
+% ylabel('Normalized residuals','fontsize',20,'fontname','Times')
+% title({['Best alpha = ' num2str(fmin,'%1.2e')] ; ...
+%     ['norm no move = ' num2str(mlist(1),4)]},'fontsize',30,'fontname','Times')
+% set(gca,'fontsize',20,'fontname','Times'); drawnow;
 
 % Record the corresponding parameters
 img.elem_data= exp(img.logCond);

@@ -68,7 +68,8 @@ function Jcol= perturb_c2f( img, i, delta, d0, curprms)
    if ~isempty(curprms)
       img.(curprms).elem_data= img.(curprms).elem_data + delta*img.fwd_model.coarse2fine(:,i);
    else
-      img.elem_data= img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
+       img.elem_data(i)= img.elem_data(i) + delta; %*img.fwd_model.coarse2fine(:,i);
+%       img.elem_data= img.fwd_model.coarse2fine*img.elem_data + delta*img.fwd_model.coarse2fine(:,i);
    end
    di= fwd_solve( img );
    Jcol = (1/delta) * (di.meas - d0.meas);

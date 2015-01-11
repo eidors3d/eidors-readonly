@@ -19,7 +19,6 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
 end
 fwd_model= img.fwd_model;
 
-
 solver = @eidors_default;
 try
    solver = fwd_model.fwd_solve_apparent_resistivity.solve;

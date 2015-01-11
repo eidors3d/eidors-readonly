@@ -341,8 +341,13 @@ function  [x,y] = grid_the_space( fmdl);
      xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
      yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
   end
-
-  [x,y]=meshgrid( xspace, yspace );
+%   if size(xspace,2) == 1
+      [x,y]=meshgrid( xspace, yspace );
+%   else
+%       x= xspace;
+%       y= yspace;
+%   end
+%   [x,y]=meshgrid( xspace, yspace );
 
 function do_unit_test
 % 2D NUMBER OF POINTS
