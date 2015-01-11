@@ -69,7 +69,6 @@ if isfield(img.parameters,'homogeneization')
     img = homogeneous_estimate( img, data );
 end
 
-
 residuals= zeros(size(data,1),iters+1);
 for k= 1:iters
     % Calculate Jacobian
@@ -92,12 +91,12 @@ for k= 1:iters
         J= J(:,1:nc-1);
     end
    
-    if k==1 && size(J,1)<size(J,2)
-%         if isfield(img.parameters,'tol') 
-%             tol= img.parameters.tol;
-%         elseif ~isfield(img.parameters,'tol') 
+    if k==1 && size(J,1)<size(J,2) 
+        if isfield(img.parameters,'tol') 
+            tol= img.parameters.tol;
+        elseif ~isfield(img.parameters,'tol') 
             tol= svdAnalysisLcurvecrit(img.parameters.normalisation*data,img,J);
-%         end
+        end
     end
     
     % Estimate residuals between data and estimation

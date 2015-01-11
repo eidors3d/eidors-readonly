@@ -18,7 +18,11 @@ N  = all(Nn(fmdl.boundary),2);
 Fn = fmdl.nodes(:,3) == min(fmdl.nodes(:,3));
 F  = all(Fn(fmdl.boundary),2);
 
-walls = F | N | E | W | S;
+Tn = (fmdl.nodes(:,3) > min(fmdl.nodes(:,3))) & (fmdl.nodes(:,3) < 536);
+T  = all(Tn(fmdl.boundary),2);
+
+
+walls = F | N | E | W | S | T;
 
 tmp.nodes = fmdl.nodes;
 tmp.type  = 'fwd_model';
@@ -31,6 +35,7 @@ for i = 1:length(ch)-1
       set(ch(i),'MarkerFaceColor',get(ch(i),'MarkerEdgeColor'),...
          'MarkerSize',2,'LineStyle','none');
 end
+
 
 mdlSurf= tmp; 
 mdlSurf = cleanup_nodes(mdlSurf);

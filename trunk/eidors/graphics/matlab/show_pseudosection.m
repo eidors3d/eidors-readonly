@@ -48,7 +48,8 @@ end
 switch(upper(orientation))
     case 'HORIZONTALDOWNWARD';  [depth,location]= plotPseudoSectionProfileDown(fwd_model,data);
     case 'VERTICAL';            [depth,location]= plotPseudoSectionProfileVert(fwd_model,data);
-    case 'SPECIFICHORIZONTALDOWNWARD';  [depth,location]= plotPseudoSectionProfileSpecificDown(fwd_model,data);    
+    case 'SPECIFICHORIZONTALDOWNWARD';  [depth,location]= plotPseudoSectionProfileSpecificDown(fwd_model,data); 
+    case 'SPECIFICHORIZONTALUPWARD';  [depth,location,L,d]= plotPseudoSectionProfileSpecificUp(fwd_model,data);
     case 'CIRCULAROUTSIDE';     [depth,location]= plotPseudoSectionCircularOut(fwd_model,data);
     case 'CIRCULARINSIDE';      [depth,location]= plotPseudoSectionCircularIn(fwd_model,data);
     case 'CIRCULARVOLCANO';     [depth,location]= plotPseudoSectionCircularInVolcano(fwd_model,data);
@@ -66,17 +67,16 @@ end
 
 fwd_model.show_pseudosection.depth= depth;
 fwd_model.show_pseudosection.location= location;
-
+% fwd_model.show_pseudosection.L= L;
+% fwd_model.show_pseudosection.d= d;
 end
 
 function [depth,location,electrodesLocation]= plotPseudoSectionProfileSpecificDown(fmdl,data)
    fs= 20;
-   
    [elec_posn,elecNumber]= electrodesPosition(fmdl);
    xposition_elec= reshape(elec_posn(elecNumber,1),[],4); 
    yposition_elec= reshape(elec_posn(elecNumber,2),[],4); 
    zposition_elec= reshape(elec_posn(elecNumber,3),[],4); zposition_elec= zposition_elec-min(zposition_elec(:));
-%     keyboard
    if isfield(fmdl.show_pseudosection,'minx') && isfield(fmdl.show_pseudosection,'maxx') && ...
        isfield(fmdl.show_pseudosection,'miny') && isfield(fmdl.show_pseudosection,'maxy')
        minx= fmdl.show_pseudosection.minx;
@@ -167,6 +167,18 @@ function [depth,location,electrodesLocation]= plotPseudoSectionProfileSpecificDo
        for i= 1:length(Pu)
            du(i)= mean(data(ju==i));
        end
+       if length(fmdl.misc.sizepoint)>length(Pu)
+           su= iu*0;
+%            misu= iu*0;
+%            masu= iu*0;
+           for i= 1:length(Pu)
+           su(i)= min(fmdl.misc.sizepoint(ju==i));
+%            misu(i)= min(fmdl.misc.sizepoint(ju==i));
+%            masu(i)= max(fmdl.misc.sizepoint(ju==i));
+           end
+           fmdl.misc.sizepoint= su;
+%            UU= [su misu masu masu-misu];
+       end
    else
        lu= location;
        zu= depth;
@@ -180,6 +192,143 @@ function [depth,location,electrodesLocation]= plotPseudoSectionProfileSpecificDo
 %     axis equal; axis tight;
    set(gca,'fontsize',fs,'fontname','Times')
 end
+
+
+function [depth,location,L,d]= plotPseudoSectionProfileSpecificUp(fmdl,data)
+   fs= 20;
+   [elec_posn,elecNumber]= electrodesPosition(fmdl);
+   xposition_elec= reshape(elec_posn(elecNumber,1),[],4); 
+   yposition_elec= reshape(elec_posn(elecNumber,2),[],4); 
+   zposition_elec= reshape(elec_posn(elecNumber,3),[],4); zposition_elec= zposition_elec-min(zposition_elec(:));
+   if isfield(fmdl.show_pseudosection,'minx') && isfield(fmdl.show_pseudosection,'maxx') && ...
+       isfield(fmdl.show_pseudosection,'miny') && isfield(fmdl.show_pseudosection,'maxy')
+       minx= fmdl.show_pseudosection.minx;
+       maxx= fmdl.show_pseudosection.maxx;
+       miny= fmdl.show_pseudosection.miny;
+       maxy= fmdl.show_pseudosection.maxy;
+   else
+       xposition_elec= xposition_elec-min(xposition_elec(:));
+       yposition_elec= yposition_elec-min(yposition_elec(:));
+       minx= min(xposition_elec(:));
+       maxx= max(xposition_elec(:));
+       miny= min(yposition_elec(:));
+       maxy= max(yposition_elec(:));
+   end
+   
+   if isfield(fmdl.show_pseudosection,'xToDeduce') && isfield(fmdl.show_pseudosection,'yToDeduce')
+       if strcmp(fmdl.show_pseudosection.xToDeduce,'minx')
+           xToDeduce= minx;
+       elseif strcmp(fmdl.show_pseudosection.xToDeduce,'maxx')
+           xToDeduce= maxx;
+       end
+       if strcmp(fmdl.show_pseudosection.yToDeduce,'miny')
+           yToDeduce= miny;
+       elseif strcmp(fmdl.show_pseudosection.yToDeduce,'maxy')
+           yToDeduce= maxy;
+       end
+   else
+       xToDeduce= minx;
+       yToDeduce= miny;
+   end
+   rposition_elec= sqrt((xposition_elec-xToDeduce).^2 + ...
+       (yposition_elec-yToDeduce).^2);
+     
+%    rposition_elec= sqrt((xposition_elec-min(xposition_elec(:))).^2 + ...
+%        (yposition_elec-max(yposition_elec(:))).^2);
+   
+   if isfield(fmdl.show_pseudosection,'elecsUsed')
+       elecsUsed= fmdl.show_pseudosection.elecsUsed;
+   else
+       elecsUsed= 3:4;
+   end
+   
+   if isfield(fmdl.show_pseudosection,'dirAxis')
+       dirAxis= fmdl.show_pseudosection.dirAxis;
+   else
+       dirAxis= 'X';
+   end
+   
+   if isfield(fmdl.show_pseudosection,'depthRatio')
+       depthRatio= fmdl.show_pseudosection.depthRatio;
+   else
+       depthRatio= 3;
+   end
+   
+    if isfield(fmdl.show_pseudosection,'depthPrecision')
+       depthPrecision= fmdl.show_pseudosection.depthPrecision;
+   else
+       depthPrecision= 1;
+    end
+    
+    if isfield(fmdl.show_pseudosection,'depthLevel')
+       depthLevel= fmdl.show_pseudosection.depthLevel;
+   else
+       depthLevel= 0;
+    end
+   
+   switch dirAxis
+       case 'X'
+           location= mean(xposition_elec(:,elecsUsed),2);
+           depth= abs(xposition_elec(:,elecsUsed(1))-xposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(xposition_elec/depthPrecision)*depthPrecision);
+       case 'Y'
+           location= mean(yposition_elec(:,elecsUsed),2);
+           depth= abs(yposition_elec(:,elecsUsed(1))-yposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(yposition_elec/depthPrecision)*depthPrecision);
+       case 'Z'
+           location= mean(zposition_elec(:,elecsUsed),2);
+           depth= abs(zposition_elec(:,elecsUsed(1))-zposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(zposition_elec/depthPrecision)*depthPrecision);
+       case 'R'
+           location= mean(rposition_elec(:,elecsUsed),2);%keyboard
+           depth= abs(rposition_elec(:,elecsUsed(1))-rposition_elec(:,elecsUsed(2)))/depthRatio;
+           electrodesLocation= unique(round(rposition_elec/depthPrecision)*depthPrecision);
+   end
+   L= (rposition_elec(:,2)-rposition_elec(:,1))/2;
+   d= (rposition_elec(:,4)-rposition_elec(:,3))/2;
+   
+   
+   depth= depth+depthLevel; 
+   P= depth+1i*location;
+   [Pu,iu,ju]= unique(round(P/depthPrecision)*depthPrecision);
+%    keyboard
+   
+   if length(Pu) < length(P)
+       lu= location(iu);
+       zu= depth(iu);
+       du= iu*0;
+       for i= 1:length(Pu)
+           du(i)= mean(data(ju==i));
+       end
+       if length(fmdl.misc.sizepoint)>length(Pu)
+           su= iu*0;
+%            misu= iu*0;
+%            masu= iu*0;
+           for i= 1:length(Pu)
+           su(i)= min(fmdl.misc.sizepoint(ju==i));
+%            misu(i)= min(fmdl.misc.sizepoint(ju==i));
+%            masu(i)= max(fmdl.misc.sizepoint(ju==i));
+           end
+           fmdl.misc.sizepoint= su;
+%            UU= [su misu masu masu-misu];
+       end
+   else
+       lu= location;
+       zu= depth;
+       du= data;
+   end
+   
+   
+%    keyboard    
+   scatter(lu,zu,fmdl.misc.sizepoint,(du),'filled','MarkerEdgeColor','k');
+%    hold on; plot(electrodesLocation,electrodesLocation*0,'x','Color',[0 0.5 0])
+   xlabel('Distance (m)','fontsize',fs,'fontname','Times');
+   ylabel('Pseudo-depth (m)','fontsize',fs,'fontname','Times')
+%     axis equal; axis tight;
+   set(gca,'fontsize',fs,'fontname','Times')
+end
+
+
 
 function [zps,xps]= plotPseudoSectionProfileDown(fmdl,data)
    fs= 20;
@@ -357,18 +506,33 @@ end
 
 
 function [elec_posn,elecNumber] = electrodesPosition(fmdl)
-
-   A= zeros(length(fmdl.stimulation),1);
-   B= zeros(length(fmdl.stimulation),1);
-   M= zeros(length(fmdl.stimulation),1);
-   N= zeros(length(fmdl.stimulation),1);
-   for i=1:length(fmdl.stimulation)
-       A(i)= find(fmdl.stimulation(1,i).stim_pattern<0);
-       B(i)= find(fmdl.stimulation(1,i).stim_pattern>0);
-       M(i)= find(fmdl.stimulation(1,i).meas_pattern<0);
-       N(i)= find(fmdl.stimulation(1,i).meas_pattern>0);
-   end
-   elecNumber= [A B M N];
+    stim= fmdl.stimulation;
+    stimulationMatrix= [];
+    for i = 1:length(stim);
+        nmp= size(stim(i).meas_pattern, 1);
+        [idxIN,idxJN]= find(stim(i).meas_pattern<0);
+        [idxIP,idxJP]= find(stim(i).meas_pattern>0);
+        stimulationMatrix= [stimulationMatrix; [ 0*(1:nmp)'+find(stim(i).stim_pattern<0) ...
+            0*(1:nmp)'+find(stim(i).stim_pattern>0)] idxJN(idxIN) idxJP(idxIP)];
+    end
+%    A=  stimulationMatrix(:,1);
+%    A=  stimulationMatrix(:,1);
+%    A=  stimulationMatrix(:,1);
+%    A=  stimulationMatrix(:,1);
+%    
+%    A= zeros(length(fmdl.stimulation),1);
+%    B= zeros(length(fmdl.stimulation),1);
+%    M= zeros(length(fmdl.stimulation),1);
+%    N= zeros(length(fmdl.stimulation),1);
+%    for i=1:length(fmdl.stimulation)
+%        A(i)= find(fmdl.stimulation(1,i).stim_pattern<0);
+%        B(i)= find(fmdl.stimulation(1,i).stim_pattern>0);
+%        M(i)= find(fmdl.stimulation(1,i).meas_pattern<0);
+%        N(i)= find(fmdl.stimulation(1,i).meas_pattern>0);
+%    end
+%    elecNumber= [A B M N];
+   
+   elecNumber= stimulationMatrix;
    
    elec_posn= zeros(length(fmdl.electrode),size(fmdl.nodes,2));
    for i=1:length(fmdl.electrode)
