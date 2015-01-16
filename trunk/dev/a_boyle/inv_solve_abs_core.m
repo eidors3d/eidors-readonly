@@ -266,7 +266,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 
 %--------------------------
 % UNIT_TEST?
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); img = do_unit_test; return; end
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img = do_unit_test(data0); return; end
 
 %--------------------------
 opt = parse_options(inv_model);
@@ -315,6 +316,7 @@ data0.current_params = opt.meas_input;
 img0 = img;
 hp2RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
+dxp = 0; % previous step's slope was... nothing
 if opt.verbose > 1
    fprintf('  iteration start up\n')
 end
@@ -343,9 +345,10 @@ while 1
   %  dx is specific to the algorithm, generally "downhill"
   dx = update_dx(J, W, hp2RtR, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
-  beta = update_beta(dx, opt);
+  beta = update_beta(dx, dxp, sx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
+  dxp = dx; % saved for next iteration if using beta
 
   % line search for alpha, leaving the final selection as img
   [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, dv, opt);
@@ -507,8 +510,25 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, o
   end
 
 % for Conjugate Gradient, else beta = 0
-function beta = update_beta(dx, opt);
-   beta = 0;
+%  dx_k, dx_{k-1}, sx_{k-1}
+function beta = update_beta(dx_k, dx_km1, sx_km1, opt);
+   if isfield(opt, 'beta_func')
+      if opt.verbose > 1
+         try beta_str = func2str(opt.beta_func);
+         catch
+            try beta_str = opt.beta_func;
+            catch beta_str = 'unknown';
+            end
+         end
+      end
+      beta = feval(opt.beta_func, dx_k, dx_km1, sx_km1);
+   else
+     beta_str = '<none>';
+     beta = 0;
+   end
+   if opt.verbose > 1
+      str = sprintf('    calc beta (%s)=%0.3f\n', beta_str, beta);
+   end
 
 % update the search direction
 % for Gauss-Newton
@@ -933,7 +953,8 @@ function opt = parse_options(imdl)
       end
       % ensure that necessary components are calculated
       % opt.update_func: dx = f(J, W, hp2RtR, dv, de)
-      args = function_depends_upon(opt.update_func, 5);
+%TODO BROKEN      args = function_depends_upon(opt.update_func, 6);
+      args = ones(4,1); % TODO BROKEN
       if args(2) == 1
          opt.calc_meas_icov = 1;
       end
@@ -1640,12 +1661,16 @@ function b = map_meas(b, N, in, out)
    end
    err_if_inf_or_nan(b, 'map_meas-post');
 
-function pass = do_unit_test
+function pass = do_unit_test(solver)
+if nargin == 0
+  solver = 'inv_solve_abs_core';
+end
 pass = 1;
-pass = pass & do_unit_test_rec_mv;
+pass = pass & do_unit_test_rec_mv(solver);
 pass = pass & do_unit_test_sub;
-pass = pass & do_unit_test_rec1;
-%pass = pass & do_unit_test_rec2; % TODO this unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
+pass = pass & do_unit_test_rec1(solver);
+pass = pass & do_unit_test_rec2(solver);
+% TODO the ..._rec2 unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
 if pass
    disp('TEST: overall PASS');
 else
@@ -1739,7 +1764,7 @@ end
 
 % a couple easy reconstructions
 % check c2f, apparent_resistivity, log_conductivity, verbosity don't error out
-function pass = do_unit_test_rec1
+function pass = do_unit_test_rec1(solver)
 pass = 1;
 % -------------
 % ADAPTED FROM
@@ -1747,7 +1772,7 @@ pass = 1;
 %  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
 % 3D Model
 imdl= mk_common_model('c2t4',16); % 576 elements
-imdl.solve = 'inv_solve_abs_core';
+imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 imdl.inv_solve.prior_data = 1;
 imdl.inv_solve.elem_prior = 'conductivity';
@@ -1851,7 +1876,7 @@ else
 end
 
 % a couple easy reconstructions with movement or similar
-function pass = do_unit_test_rec_mv
+function pass = do_unit_test_rec_mv(solver)
 pass = 1;
 disp('TEST: conductivity and movement --> baseline conductivity only');
 % -------------
@@ -1862,7 +1887,7 @@ disp('TEST: conductivity and movement --> baseline conductivity only');
 imdl= mk_common_model('c2t4',16); % 576 elements
 ne = length(imdl.fwd_model.electrode);
 nt = length(imdl.fwd_model.elems);
-imdl.solve = 'inv_solve_abs_core';
+imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 % specify the units to work in
 imdl.inv_solve.meas_input   = 'voltage';
@@ -1977,7 +2002,7 @@ function RtR = prior_movement_only(imdl);
   RtR = prior_movement(imdl);
   RtR = RtR((end-szPm+1):end,(end-szPm+1):end); 
 
-function pass = do_unit_test_rec2
+function pass = do_unit_test_rec2(solver)
 disp('TEST: reconstruct a discontinuity');
 pass = 1; % TODO fail criteria?
 shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
@@ -2042,7 +2067,7 @@ imdl.fwd_model.normalize_measurements = 0;
 imdl.rec_model.normalize_measurements = 0;
 imdl.RtR_prior = @prior_laplace;
 %imdl.RtR_prior = @prior_tikhonov;
-imdl.solve = @inv_solve_abs_core;
+imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 imdl.hyperparameter.value = 1e2; % was 0.1
 imdl.jacobian_bkgnd.value = 1;
@@ -2073,7 +2098,7 @@ imdl.inv_solve.elem_output = 'log10_resistivity';
 imgr= inv_solve(imdl, dd);
 
 % save the result so we don't have to wait forever if we want to look at the result later
-save('inv_solve_abs_core_rec2.mat', 'imgr');
+%save('inv_solve_abs_core_rec2.mat', 'imgr');
 
 imgGNd= imgr;
 %imgGNd.fwd_model.coarse2fine= cmdl.coarse2fine;
