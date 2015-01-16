@@ -18,7 +18,7 @@ D=[ 0.25 0.1 0.08 0.06 0.04 0.02 0.01 ];
 
 for DIMENSIONS=[2 3]
   for fine_density=D
-    
+
     % set coarse mesh density as a function of fine mesh density
     coarse_density = fine_density * 4;
     if coarse_density > 1.0
@@ -27,7 +27,7 @@ for DIMENSIONS=[2 3]
 
     fprintf('restart: fine_density=%f (%f..%f), coarse_density=%f\n',fine_density,D(1),D(end), coarse_density);
     % FORWARD
-    
+
     tic;
     % fine mesh
     if DIMENSIONS == 3
@@ -37,11 +37,11 @@ for DIMENSIONS=[2 3]
       height=0;
       electrodes = [15];
     end
-    fmdl= ng_mk_cyl_models([height,1,fine_density],electrodes,[0.1,0,fine_density/5]); 
+    fmdl= ng_mk_cyl_models([height,1,fine_density],electrodes,[0.1,0,fine_density/5]);
     t_f=toc;
     % coarse mesh
     tic;
-    cmdl= ng_mk_cyl_models([height,1,coarse_density],electrodes,[0.1,0,coarse_density/5]); 
+    cmdl= ng_mk_cyl_models([height,1,coarse_density],electrodes,[0.1,0,coarse_density/5]);
     t_c=toc;
 
     if MESHSAVE == 1
@@ -57,7 +57,7 @@ for DIMENSIONS=[2 3]
     n_elems_f = size(fmdl.elems,1);
     n_nodes_c = size(cmdl.nodes,1);
     n_elems_c = size(cmdl.elems,1);
-  
+
     % check we got something sensible: make a figure of our FEM configuration
     if FIGURES == 1
       figure
@@ -90,8 +90,8 @@ for DIMENSIONS=[2 3]
     % Calculate element membership in object
     select_fcn = inline('(x-0.2).^2 + (y-0.5).^2 + (z-2).^2 < 0.3^2','x','y','z');
     memb_frac = elem_select( fmdl, select_fcn);
-   
-    ffmdl = imdl; 
+
+    ffmdl = imdl;
     ffmdl.fwd_model = fmdl;
     ffmdl.fwd_model.coarse2fine = [];
     clear fmdl;
@@ -113,18 +113,18 @@ for DIMENSIONS=[2 3]
     t_fwd = toc;
     vi= fwd_solve(img2); % inhomogeneous (contains the target)
     clear img1 img2;
-  
+
     if FIGURES == 1
       figure
       plot([vh.meas, vi.meas]);
     end
-    
+
     % time the system matrix building seperatly (this is what is under the hood)
     tic;
     iii = mk_image(imdl);
     FC=feval(imdl.fwd_model.system_mat, imdl.fwd_model, iii)
     t_sys=toc;
-    
+
     % need to drop the ground node
     pp= aa_fwd_parameters( imdl.fwd_model );
     idx= 1:size(FC.E,1);
@@ -144,27 +144,27 @@ for DIMENSIONS=[2 3]
 
     % record system matrix info
     n_nz = nnz(FC.E(idx,idx));
-   
+
     % free up some memory
     clear iii FC pp idx v;
-    
+
     % INVERSE
     tic;
     J = calc_jacobian( calc_jacobian_bkgnd( imdl) );
     t3 = toc;
     size(J)
-    
+
     % REGULARIZE
     tic;
     iRtR = inv(prior_noser( imdl ));
     hp = 0.17;
     iRN = hp^2 * speye(size(J,1));
     RM = iRtR*J'/(J*iRtR*J' + iRN);
-    imdl.solve = @solve_use_matrix; 
+    imdl.solve = @solve_use_matrix;
     imdl.solve_use_matrix.RM  = RM;
     t4 = toc;
     clear J iRTR iRN RM; % free up some memory
-    
+
     % inv_solve_diff_GN_one_step does the following
     %   img_bkgnd= calc_jacobian_bkgnd( inv_model );
     %   J = calc_jacobian( img_bkgnd);
@@ -174,11 +174,11 @@ for DIMENSIONS=[2 3]
     %   hp  = calc_hyperparameter( inv_model );
     %
     %   RM= (J'*W*J +  hp^2*RtR)\J'*W;
-    
+
     tic;
     imgr = inv_solve(imdl, vh, vi);
     t5= toc;
-    
+
     if FIGURES == 1
       figure
       show_fem(imgr);
@@ -204,9 +204,9 @@ for DIMENSIONS=[2 3]
     fprintf(logf,'inv assembly: %g seconds\n', t4);
     fprintf(logf,'inv solve: %g seconds\n', t5);
     fprintf(logf,'-----------\n');
-   
+
     fclose(logf);
-   
+
     % feature memstats
     % profile -memory on
     clear imdl vh vi imgr; % free up memory

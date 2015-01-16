@@ -282,25 +282,25 @@ data0.current_params = opt.meas_input;
 
 % now get on with
 img0 = img;
-stimulation= img.fwd_model.stimulation; 
+stimulation= img.fwd_model.stimulation;
 RtR = 0; k = 0; dv = []; de = []; sx = 0; dx_m1= 0; r = 0; stop = 0; % general init
 meas_err = zeros(size(data0.meas,1),opt.max_iterations+1); fig_r = []; fig_meas_misfit= []; % for residuals plots
 data= []; beta= 0;
 % opt.residual_func= @meas_residual;
 % opt.update_func= @CG_update;
-  
+
 if opt.verbose > 1
    fprintf('  iteration start up\n')
 end
 while 1
   % update RtR, if required (depends on prior)
 %   RtR = update_RtR(RtR, inv_model, k, img, opt);
-  
+
   % update change in element data from the prior de and
   % the measurement error dv
   [dv, opt, data] = update_dv(dv, img, data0, N, opt,'new iteration', data);
   meas_err(:,k+1)= dv;
-  
+
   de = update_de(de, img, img0, opt);
 
     if size(stimulation,2)>1000
@@ -315,7 +315,7 @@ while 1
                   idx(2)= kkkk;
               elseif i== round(size(stimulation,2)*3/4)
                   idx(3)= kkkk;
-              end     
+              end
           end
           img.fwd_model.stimulation= stimulation(1:round(size(stimulation,2)/4));
           J1 = update_jacobian(img, NJ(1:idx(1),1:idx(1)), opt);
@@ -339,7 +339,7 @@ while 1
   else
       J = update_jacobian(img, NJ, opt);
   end
-  
+
   img.fwd_model.stimulation= stimulation;
   if isfield(inv_model,'RtR_prior') && strcmp(func2str(inv_model.RtR_prior),'prior_noser');
       exponent= 0.5;
@@ -362,7 +362,7 @@ while 1
   if opt.verbose > 1
      fprintf('  iteration %d\n', k)
   end
-  
+
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
   dx = update_dx(J, W, hp2, RtR, dv, de, opt);
@@ -371,11 +371,11 @@ while 1
   % choose beta, beta=0 unless doing Conjugate Gradient
     beta = update_beta(dx,dx_m1,sx,opt);
   end
-  
+
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
 %   figure; semilogy(abs(dv))
-%   figure; plot(de)  
+%   figure; plot(de)
 %   figure; semilogy(abs(dx))
 %   figure; semilogy(abs(sx))
   % line search for alpha, leaving the final selection as img
@@ -454,7 +454,7 @@ function [N,NJ] = init_normalization(img, opt,N,data)
        if isfield(img.fwd_model,'N')
            N= img.fwd_model.N;
        else
-       N = 1; 
+       N = 1;
        end
        NJ= 1;
    end
@@ -499,7 +499,7 @@ function [N,NJ] = calc_normalization_log10_voltage(img, N, data)
         vh2.meas = map_meas(data.meas, N, data.current_params, 'voltage');
     end
     NJ    = spdiag(1./(log(10)*vh2.meas));
-    
+
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
 % fig_r: the handle to the residual plot if used
@@ -553,7 +553,7 @@ function [stop, k, r, fig_r,fig_meas_misfit] = update_residual(dv, de, W, hp2, R
         legend('residual','meas. misfit','prior misfit');
         legend('Location', 'EastOutside');
         drawnow;
-        
+
         if isempty(fig_meas_misfit)
            fig_meas_misfit = figure();
         else
@@ -603,19 +603,19 @@ function beta = update_beta(dx,dx_m1,s_m1,opt)
    else
    beta = feval(opt.beta_func, dx, dx_m1,s_m1);
    end
-  
+
  function beta = fletcher_reeves(dx, dx_m1, s_m1)
  disp('Compute beta parameter using the Fletcher Reeves formula')
  beta= (dx'*dx)/(dx_m1'*dx_m1);
- 
+
 function beta = polak_ribiere(dx, dx_m1, s_m1)
  disp('Compute beta parameter using the Polak Ribiere formula')
  beta= dx'*(dx-dx_m1)/(dx_m1'*dx_m1);
- 
+
  function beta = hesteness_stiefel(dx, dx_m1, s_m1)
  disp('Compute beta parameter using the Hesteness Stiefel formula')
  beta= -dx'*(dx-dx_m1)/(s_m1'*(dx-dx_m1));
- 
+
  function beta = dai_yuan(dx, dx_m1, s_m1)
  disp('Compute beta parameter using the Dai Yuan formula')
  beta= -dx'*dx/(s_m1'*(dx-dx_m1));
@@ -702,13 +702,13 @@ function J = update_jacobian(img, N, opt)
    % to the measurements, it needs to be applied to the Jacobian as well!
    Jn = calc_jacobian( img ); % unscaled natural units (i.e. conductivity)
    J = N * Jn * S; % scaled and normalized
-   
+
    if isfield(opt,'normalize_data_func')
        normalize_data_func_name= func2str(opt.normalize_data_func);
    else
        normalize_data_func_name= 'No Jacobian data conversion: fit voltages';
    end
-   
+
    if opt.verbose > 1
       fprintf(' %d DoF, %d meas, %s,%s)\n', size(J,2)-length(opt.elem_fixed), size(J,1), func2str(opt.calc_jacobian_scaling_func), normalize_data_func_name);
    end
@@ -774,7 +774,7 @@ function err_if_inf_or_nan(x, str);
                     length(find(isnan(x))), ...
                     length(find(isinf(x))), ...
                     length(x)));
-      x(1:end)= NaN; 
+      x(1:end)= NaN;
   end
 
 
@@ -981,12 +981,12 @@ function opt = parse_options(imdl)
    end
    % we track how many fwd_solves we do since they are the most expensive part of the iterations
    opt.fwd_solutions = 0;
-   
+
     % calculation of update components
    if ~isfield(opt, 'update_func')
       opt.update_func = @GN_update; % dx = f(J, W, hp2, RtR, dv, de)
    end
-   
+
    if ~isfield(opt, 'residual_func') % the objective function
        if strcmp(func2str(opt.update_func),'CG_update')
            opt.residual_func = @meas_residual;
@@ -999,7 +999,7 @@ function opt = parse_options(imdl)
       %opt.residual_func = @meas_residual; % r = f(dv, de, W, hp2, RtR)
    end
 
-   
+
    % figure out if things need to be calculated
    if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
       opt.calc_meas_icov = 0; % W
@@ -1298,7 +1298,7 @@ function dx = GN_update(J, W, hp2, RtR, dv, de)
    hp2RtR = hp2*RtR;
    % the actual update
    dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
-   
+
 function dx = CG_update(J, W, hp2, RtR, dv, de)
    % the actual update
    dx= pinv(J)*dv;
