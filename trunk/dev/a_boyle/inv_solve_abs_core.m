@@ -30,7 +30,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    >=1: print iteration count
 %    >=2: print details as the algorithm progresses
 %    >=3: plot residuals versus iteration count
-%    >=4: plot line search per iteration
+%    >=4: plot result at each iteration, see show_fem
+%    >=5: plot line search per iteration
 %   plot_residuals                         (default 0)
 %    plot residuals without verbose output
 %   fwd_solutions                          (default 0)
@@ -90,7 +91,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %      elem_len = { 20001, 10 };
 %   elem_prior               (default to elem_working)
 %    Input 'prior_data' type; immediately converted to
-%    'elem_working' type for before first iteration.
+%    'elem_working' type before first iteration.
 %   elem_working              (default 'conductivity')
 %   elem_output               (default 'conductivity')
 %    The working and output units for 'elem_data'.
@@ -102,6 +103,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    appropriate, see calc_jacobian_scaling_func.
 %    If elem_working == elem_output, then no
 %    conversions take place.
+%    For multiple types, use cell array.
+%    ex: elem_output = {'log_resistivity', 'movement'}
 %   meas_input                     (default 'voltage')
 %   meas_working                   (default 'voltage')
 %    Similarly to elem_working/output, conversion
@@ -119,19 +122,38 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    (default  @calc_normalization_apparent_resistivity)
 %    dv = N*(data-data0) where N is provided by this
 %    function
+%   update_dv_img_func          (default: pass-through)
+%    This function is called prior to conversion to
+%    'conductivity' and the call to fwd_solve and is a
+%    hook to allow additional modifications to the
+%    model prior to updating the measurement estimate.
+%   update_jacobian_img_func    (default: pass-through)
+%    This function is called prior to conversion to
+%    'conductivity' and the call to calc_jacobian and
+%    is a hook to allow additional modifications to the
+%    model prior to updating the Jacobian.
+%   return_jacobian                        (default: 0)
+%    If 1, return the last Jacobian to the user in
+%    img.J
+%   return_dx                              (default: 0)
+%    If 1, return the last search direction dx to the
+%    user in img.dx
+%   show_fem                       (default: @show_fem)
+%    Function with which to plot each iteration's
+%    current parameters.
 %
 %   Signature for residual_func
-%    r = f(dv, de, W, hp2, RtR)
+%    r = f(dv, de, W, hp2RtR)
 %   where
 %    r   - the residual
 %    dv  - change in voltage
 %    de  - change in image elements
 %    W   - measurement inverse covarience matrix
 %    hp2 - hyperparameter squared, see CALC_HYPERPARAMETER
-%    RtR - regularization matrix squared
+%    RtR - regularization matrix squared --> hp2RtR = hp2*RtR
 %
 %   Signature for line_optimize_func
-%    [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2, RtR, dv, opt)
+%    [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2RtR, dv, opt)
 %   where:
 %    alpha - line search result
 %    img   - the current image
@@ -142,7 +164,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    N     - a measurement normalization factor, N*dv
 %    W     - measurement inverse covarience matrix
 %    hp2   - hyperparameter squared, see CALC_HYPERPARAMETER
-%    RtR   - regularization matrix squared
+%    RtR   - regularization matrix squared --> hp2RtR = hp2*RtR
 %    dv    - change in voltage
 %            (optional, recalculated if not available)
 %    opt   - additional arguments, updated at each call
@@ -177,8 +199,16 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    N    - the normalization factor
 %    fmdl - the forward model, used to estimate the N
 %    when voltage to apparent_resistivity is required
-%    This function can be repurposed for scalingi
+%    This function can be re-purposed for scaling
 %    measurement data in other ways.
+%
+%   Signature for  update_dv_img_func
+%   Signature for  update_jacobian_img_func
+%    img2 = f(img1, opt)
+%   where
+%    img1 - an input image, the current working image
+%    img2 - a (potentially) modified version to be used
+%    for the fwd_solve/Jacobian calculations
 %
 % NOTE that the default line search is very crude. For
 % my test problems it seems to amount to an expensive grid
@@ -240,6 +270,9 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return
 
 %--------------------------
 opt = parse_options(inv_model);
+if opt.verbose > 1
+   fprintf('  verbose = %d\n', opt.verbose);
+end
 %if opt.do_starting_estimate
 %    img = initial_estimate( inv_model, data0 ); % TODO
 %%%    AB->NL this is Nolwenn's homogeneous estimate...
@@ -263,7 +296,6 @@ img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 img = init_elem_data(img, opt);
 
 % precalculate some of our matrices if required
-hp2 = init_hp(inv_model, opt);
 W  = init_meas_icov(inv_model, opt);
 N = init_normalization(inv_model.fwd_model, opt);
 
@@ -281,22 +313,22 @@ data0.current_params = opt.meas_input;
 
 % now get on with
 img0 = img;
-RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
+hp2RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
 if opt.verbose > 1
    fprintf('  iteration start up\n')
 end
 while 1
   % update RtR, if required (depends on prior)
-  RtR = update_RtR(RtR, inv_model, k, img, opt);
+  hp2RtR = update_hp2RtR(inv_model, k, img, opt);
 
   % update change in element data from the prior de and
   % the measurement error dv
-  [dv, opt] = update_dv(dv, img, data0, N, opt);
+  [dv, img, opt] = update_dv(dv, img, data0, N, opt);
   de = update_de(de, img, img0, opt);
 
   % now find the residual, quit if we're done
-  [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r, opt);
+  [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, opt);
   if stop
      break;
   end
@@ -309,19 +341,22 @@ while 1
 
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
-  dx = update_dx(J, W, hp2, RtR, dv, de, opt);
+  dx = update_dx(J, W, hp2RtR, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
   beta = update_beta(dx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
 
   % line search for alpha, leaving the final selection as img
-  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
+  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, dv, opt);
+  if alpha == 0 && k == 1
+    error('first iteration failed to advance solution');
+  end
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
   [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt);
 
-  if opt.verbose > 5
+  if opt.verbose >= 4
      show_fem_iter(k, img, inv_model, opt);
   end
 end
@@ -337,26 +372,36 @@ end
 % convert data for output
 img = map_img(img, opt.elem_output);
 img.meas_err = dv;
+if opt.return_jacobian
+  img.J = J;
+end
+if opt.return_dx
+  img.dx = dx;
+end
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
 
 function img = init_elem_data(img, opt)
   if opt.verbose > 1
     fprintf('  setting prior elem_data\n');
   end
-  ne1 = 1; % init
+  ne2 = 0; % init
   img.elem_data = zeros(sum([opt.elem_len{:}]),1); % preallocate
   for i=1:length(opt.elem_prior)
+    ne1 = ne2+1; % next start idx ne1
+    ne2 = ne1+opt.elem_len{i}-1; % this set ends at idx ne2
     if opt.verbose > 1
       if length(opt.prior_data{i}) == 1
-        fprintf('    %d x %s: \t%0.1f\n',opt.elem_len{i},opt.elem_prior{i}, opt.prior_data{i});
+        fprintf('    %d x %s: %0.1f\n',opt.elem_len{i},opt.elem_prior{i}, opt.prior_data{i});
       else
-        fprintf('    %d x %s: \t...\n',opt.elem_len{i},opt.elem_prior{i});
+        fprintf('    %d x %s: ...\n',opt.elem_len{i},opt.elem_prior{i});
+        if length(opt.prior_data{i}) ~= opt.elem_len{i}
+           error(sprintf('expected %d elem, got %d elem in elem_prior', ...
+                         opt.elem_len{i}, length(opt.prior_data{i})));
+        end
       end
     end
-    ne2 = ne1+opt.elem_len{i}-1; % this set ends at idx ne2
     img.params_sel(i) = {ne1:ne2};
     img.elem_data(img.params_sel{i}) = opt.prior_data{i};
-    ne1 = ne2+1; % next start idx ne1
   end
   img.current_params = opt.elem_prior;
 
@@ -367,15 +412,6 @@ function W = init_meas_icov(inv_model, opt)
          disp('  calc measurement inverse covariance W');
       end
       W   = calc_meas_icov( inv_model );
-   end
-
-function hp2 = init_hp(inv_model, opt)
-   hp2 = 0;
-   if opt.calc_hyperparameter
-      if opt.verbose > 1
-         disp('  calc regularization hyperparameter(s)');
-      end
-      hp2  = calc_hyperparameter( inv_model ).^2;
    end
 
 function N = init_normalization(fmdl, opt)
@@ -398,7 +434,7 @@ function N = calc_normalization_apparent_resistivity(fmdl)
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
 % fig_r: the handle to the residual plot if used
-function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r, opt)
+function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, opt)
   stop = 0;
   % update iteration count
   k = k+1;
@@ -410,7 +446,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r,
   else
      r_km1 = r(k-1, 1);
   end
-  r_k = feval(opt.residual_func, dv, de, W, hp2, RtR);
+  r_k = feval(opt.residual_func, dv, de, W, hp2RtR);
   % save residual for next iteration
   r(k,1) = r_k;
 
@@ -446,7 +482,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r,
         set(gca, 'xlim', [1 max(x)]);
         legend('residual','meas. misfit','prior misfit');
         legend('Location', 'EastOutside');
-        drawnow;
+        drawnow; pause(0.5);
      end
   end
 
@@ -491,73 +527,96 @@ function sx = update_sx(dx, beta, sx_km1, opt);
       end
    end
 
-function RtR = update_RtR(RtR, inv_model, k, img, opt)
+% this function constructs the blockwise RtR matrix
+function hp2RtR = update_hp2RtR(inv_model, k, img, opt)
    % TODO sometimes (with Noser?) this requires the Jacobian, could this be done more efficiently?
    % add a test function to determine if img.elem_data affects RtR, skip this if independant
    % TODO we could detect in the opt_parsing whether the calc_RtR_prior depends on 'x' and skip this if no
-   if opt.calc_RtR_prior
-      if opt.verbose > 1
-         try RtR_str = func2str(inv_model.RtR_prior);
-         catch
-            try RtR_str = inv_model.RtR_prior;
-            catch RtR_str = 'unknown';
-            end
-         end
-         fprintf('    calc regularization RtR (%s)\n', RtR_str);
-      end
-      RtR = calc_RtR_prior_wrapper(inv_model, img, opt);
-   else
-      RtR = 0;
+   if ~opt.calc_RtR_prior
+      error('no RtR calculation mechanism, set imdl.inv_solve.RtR_prior or imdl.RtR_prior');
    end
+   net = sum([opt.elem_len{:}]); % Number of Elements, Total
+   RtR = zeros(net,net); % pre-allocate RtR
+   esi = 0; eei = 0; % element start, element end
+   for i = 1:size(opt.RtR_prior,1) % row i
+      esi = eei + 1;
+      eei = eei + opt.elem_len{i};
+      esj = 0; eej = 0; % element start, element end
+      for j = 1:size(opt.RtR_prior,2) % column j
+         esj = eej + 1;
+         eej = eej + opt.elem_len{j};
+         if isempty(opt.RtR_prior{i,j}) % null entries
+            continue; % no need to explicitly create zero block matrices
+         end
 
+         if opt.verbose > 1
+            try RtR_str = func2str(opt.RtR_prior{i,j});
+            catch
+               try RtR_str = opt.RtR_prior{i,j};
+               catch RtR_str = 'unknown';
+               end
+            end
+            fprintf('    calc {%d,%d} regularization RtR (%s), ne=%dx%d\n', i,j,RtR_str,eei-esi+1,eej-esj+1);
+         end
+         imgt = map_img(img, opt.elem_working{i});
+         inv_modelt = inv_model;
+         inv_modelt.RtR_prior = opt.RtR_prior{i,j};
+         RtR(esi:eei, esj:eej) = opt.hyperparameter{i,j}.^2 * calc_RtR_prior_wrapper(inv_modelt, imgt, opt);
+      end
+   end
+   hp2  = calc_hyperparameter( inv_model ).^2;
+   hp2RtR = hp2*RtR;
+
+% TODO this function is one giant HACK around broken RtR generation with c2f matrices
 function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
-   img = map_img(img, opt.elem_working);
-   inv_model.jacobian_backgnd = img;
    RtR = calc_RtR_prior( inv_model );
    if size(RtR,1) < length(img.elem_data)
      ne = length(img.elem_data) - size(RtR,1);
      % we are correcting for the added background element
-     % if there is movement, don't add it there.
-     if isfield(img, 'current_params') && ...
-        any(strcmp(img.current_params, 'movement'))
-        % grab the first set of non-movement elem_data
-        i = find(~strcmp(img.current_params, 'movement'));
-        ps = img.params_sel{i(1)};
-        % insert an extra element at the end of the non-movement
-        % regularization so the length is right, we assume Tikhonov
-        RtR(ps(end)+1+ne:end+ne, ps(end)+1+ne:end+ne) = RtR(ps(end)+1:end, ps(end)+1:end);
-        RtR(ps(end)+1:ps(end)+ne, ps(end)+1:ps(end)+ne) = RtR(ps(1),ps(1));
-        if opt.verbose > 1
-           fprintf('    c2f: adjusting RtR by appending %d rows/cols to non-movement\n', ne);
-        end
-     else
-        RtR(end+1:end+ne, end+1:end+ne) = RtR(1,1);
-        if opt.verbose > 1
-           fprintf('    c2f: adjusting RtR by appending %d rows/cols\n', ne);
-        end
-     end
+     RtR(end+1:end+ne, end+1:end+ne) = RtR(1,1);
      if opt.verbose > 1
-        disp('      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
+        fprintf('      c2f: adjusting RtR by appending %d rows/cols\n', ne);
+        disp(   '      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
      end
    end
 
 function J = update_jacobian(img, N, opt)
-   img = map_img(img, 'conductivity');
-   if(opt.verbose > 1)
-      try J_str = func2str(img.fwd_model.jacobian);
-      catch J_str = img.fwd_model.jacobian;
-      end
-      fprintf('    calc Jacobian J(x) (%s,', J_str);
-   end
-   % scaling if we are working in something other than direct conductivity
-   S = feval(opt.calc_jacobian_scaling_func, img.elem_data); % chain rule
-   % finalize the jacobian
-   % Note that if a normalization (i.e. apparent_resistivity) has been applied
-   % to the measurements, it needs to be applied to the Jacobian as well!
-   Jn = calc_jacobian( img ); % unscaled natural units (i.e. conductivity)
-   J = N * Jn * S; % scaled and normalized
-   if opt.verbose > 1
-      fprintf(' %d DoF, %d meas, %s)\n', size(J,2)-length(opt.elem_fixed), size(J,1), func2str(opt.calc_jacobian_scaling_func));
+   base_types = map_img_base_types(img);
+   imgb = map_img(img, base_types);
+   imgb = feval(opt.update_jacobian_img_func, imgb, opt);
+   ee = 0; % element select, init
+   pp = fwd_model_parameters(imgb.fwd_model);
+   J = zeros(pp.n_meas,sum([opt.elem_len{:}]));
+   for i=1:length(opt.jacobian)
+     if(opt.verbose > 1)
+        try J_str = func2str(opt.jacobian{i});
+        catch J_str = opt.jacobian{i};
+        end
+        if i == 1 fprintf('    calc Jacobian J(x) = ');
+        else      fprintf('                       + '); end
+        fprintf('(%s,', J_str);
+     end
+     % start and end of these Jacobian columns
+     es = ee+1;
+     ee = es+opt.elem_len{i}-1;
+     % scaling if we are working in something other than direct conductivity
+     S = feval(opt.calc_jacobian_scaling_func{i}, imgb.elem_data(es:ee)); % chain rule
+     % finalize the jacobian
+     % Note that if a normalization (i.e. apparent_resistivity) has been applied
+     % to the measurements, it needs to be applied to the Jacobian as well!
+     imgt = imgb;
+     if  strcmp(base_types{i}, 'conductivity') % make legacy jacobian calculators happy... only conductivity on imgt.elem_data
+        imgt = map_img(img, 'conductivity');
+     end
+     imgt.fwd_model.jacobian = opt.jacobian{i};
+     Jn = calc_jacobian( imgt ); % unscaled natural units (i.e. conductivity)
+     J(:,es:ee) = N * Jn * S; % scaled and normalized
+     if opt.verbose > 1
+        tmp = zeros(1,size(J,2));
+        tmp(es:ee) = 1;
+        tmp(opt.elem_fixed) = 0;
+        fprintf(' %d DoF, %d meas, %s)\n', sum(tmp), size(J,1), func2str(opt.calc_jacobian_scaling_func{i}));
+     end
    end
 
 % -------------------------------------------------
@@ -597,10 +656,13 @@ function S = dx_dlog10y(x);
 % -------------------------------------------------
 
 
-function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt)
-  if(opt.verbose > 1)
-     disp('    line search');
-  end
+function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, dv, opt)
+     if(opt.verbose > 1)
+        try ls_str = func2str(opt.line_search_func);
+        catch ls_str = opt.line_search_func;
+        end
+        fprintf('    line search, alpha = %s\n', ls_str);
+     end
 
   % some sanity checks before we feed this information to the line search
   err_if_inf_or_nan(sx, 'sx (pre-line search)');
@@ -609,7 +671,16 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2, R
   if any(size(img.elem_data) ~= size(sx))
      error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
-  [alpha, img, dv, opt] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
+  [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2RtR, dv, opt);
+  if ~isempty(imgo)
+     img = imgo;
+  else
+     img.elem_data = img.elem_data + alpha*sx;
+  end
+  if ~isempty(opto)
+     opt = opto;
+  end
+     
   if(opt.verbose > 1)
      fprintf('      selected alpha=%0.3g\n', alpha);
   end
@@ -662,7 +733,7 @@ function  de = update_de(de, img, img0, opt)
    de(opt.elem_fixed) = 0; % TODO is this redundant... delete me?
    err_if_inf_or_nan(de, 'de out');
 
-function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
+function [dv, img, opt] = update_dv(dv, img, data0, N, opt, reason)
    % estimate current error as a residual
    if ~isempty(dv) % need to calculate dv...
       return;
@@ -673,7 +744,9 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    if opt.verbose > 1
       disp(['    fwd_solve b=Ax ', reason]);
    end
-   [dv, opt] = update_dv_core(img, data0, N, opt);
+   [dv, opt, err] = update_dv_core(img, data0, N, opt);
+% TODO AB inject the img.error here, so it doesn't need to be recalculated when calc_solution_error=1
+%   img.error = err;
 
 function data = map_meas_struct(data, N, out)
    try   current_meas_params = data.current_params;
@@ -684,12 +757,19 @@ function data = map_meas_struct(data, N, out)
    err_if_inf_or_nan(data.meas, 'dv meas');
 
 % also used by the line search as opt.line_search_dv_func
-function [dv, opt] = update_dv_core(img, data0, N, opt)
+function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    data0 = map_meas_struct(data0, N, 'voltage');
-   img = map_img(img, 'conductivity');
+   img = map_img(img, map_img_base_types(img));
+   img = feval(opt.update_dv_img_func, img, opt);
+   img = map_img(img, 'conductivity'); % drop everything but conductivity
    data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
    dv = calc_difference_data(data, data0, img.fwd_model);
+   if nargout >= 3
+      err = norm(dv)/norm(data0.meas);
+   else
+      err = NaN;
+   end
    dv = map_meas(dv, N, 'voltage', opt.meas_working);
    err_if_inf_or_nan(dv, 'dv out');
 
@@ -697,11 +777,7 @@ function show_fem_iter(k, img, inv_model, opt)
   if opt.verbose > 1
      disp('    show_fem()');
   end
-  out = opt.elem_output;
-  if iscell(out)
-     out = out{1};
-  end
-  img = map_img(img, out);
+  img = map_img(img, 'resistivity'); % TODO big fat hack to make this work at the expense of an actual function...
   [img, opt] = strip_c2f_background(img, opt, '    ');
   % check we're returning the right size of data
   if isfield(inv_model, 'rec_model')
@@ -716,18 +792,18 @@ function show_fem_iter(k, img, inv_model, opt)
                      size(img.elem_data,1), ...
                      size(img.fwd_model.elems,1)));
   end
-  figure; show_fem(img, 1);
-  str = strrep(out, '_', ' ');
-  title(sprintf('iter=%d, %s',k, str));
+  figure; feval(opt.show_fem, img, 1);
+  title(sprintf('iter=%d',k));
+  drawnow;
+  pause(0.5);
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
-function residual = GN_residual(dv, de, W, hp2, RtR)
+function residual = GN_residual(dv, de, W, hp2RtR)
 %   [size(dv); size(W); size(de); size(hp2RtR)]
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
-   hp2RtR = hp2*RtR;
    residual = 0.5*( dv'*W*dv + de'*hp2RtR*de);
 
-function residual = meas_residual(dv, de, W, hp2, RtR)
+function residual = meas_residual(dv, de, W, hp2RtR)
    residual = norm(dv);
 
 %function img = initial_estimate( imdl, data )
@@ -816,6 +892,7 @@ function opt = parse_options(imdl)
    % 2: print details as the algorithm progresses
    if ~isfield(opt,'verbose')
       opt.verbose = 4;
+      fprintf('  inv_model.inv_solve.verbosity not set; defaulting to verbosity=4. See help for details.\n');
    end
    if opt.verbose > 1
       fprintf('  setting default parameters\n');
@@ -823,17 +900,21 @@ function opt = parse_options(imdl)
    % we track how many fwd_solves we do since they are the most expensive part of the iterations
    opt.fwd_solutions = 0;
 
+   if ~isfield(opt, 'show_fem')
+      opt.show_fem = @show_fem;
+   end
+
    if ~isfield(opt, 'residual_func') % the objective function
-      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp2, RtR)
+      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp2RtR)
       % NOTE: the meas_residual function exists to maintain
       % compatibility with Nolwenn's code, the GN_residual
       % is a better choice
-      %opt.residual_func = @meas_residual; % r = f(dv, de, W, hp2, RtR)
+      %opt.residual_func = @meas_residual; % r = f(dv, de, W, hp2RtR)
    end
 
    % calculation of update components
    if ~isfield(opt, 'update_func')
-      opt.update_func = @GN_update; % dx = f(J, W, hp2, RtR, dv, de)
+      opt.update_func = @GN_update; % dx = f(J, W, hp2RtR, dv, de)
    end
    % figure out if things need to be calculated
    if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
@@ -842,16 +923,17 @@ function opt = parse_options(imdl)
    if ~isfield(opt, 'calc_RtR_prior') % derivative of the objective function
       opt.calc_RtR_prior = 0; % RtR
    end
-   if ~isfield(opt, 'calc_hyperparameter') % derivative of the objective function
+   if ~isfield(opt, 'calc_hyperparameter')
       opt.calc_hyperparameter = 0; % hp2
    end
+
 %   try
       if opt.verbose > 1
          fprintf('    examining function %s(...) for required arguments\n', func2str(opt.update_func));
       end
       % ensure that necessary components are calculated
-      % opt.update_func: dx = f(J, W, hp2, RtR, dv, de)
-      args = function_depends_upon(opt.update_func, 6);
+      % opt.update_func: dx = f(J, W, hp2RtR, dv, de)
+      args = function_depends_upon(opt.update_func, 5);
       if args(2) == 1
          opt.calc_meas_icov = 1;
       end
@@ -908,7 +990,7 @@ function opt = parse_options(imdl)
 
    % line search
    if ~isfield(opt,'line_search_func')
-      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
+      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2RtR, dv, opt);
       opt.line_search_func = @line_search_onm2;
    end
    if ~isfield(opt,'line_search_dv_func')
@@ -936,7 +1018,7 @@ function opt = parse_options(imdl)
    % provide a graphical display of the line search values & fit
    if ~isfield(opt,'line_search_args') || ...
       ~isfield(opt.line_search_args, 'plot')
-      if opt.verbose > 3
+      if opt.verbose >= 5
          opt.line_search_args.plot = 1;
       else
          opt.line_search_args.plot = 0;
@@ -1019,10 +1101,25 @@ function opt = parse_options(imdl)
         error('requires inv_model.inv_solve.elem_len');
       end
    end
+   % allow a cell array of jacobians
+   if ~isfield(opt, 'jacobian')
+      opt.jacobian = imdl.fwd_model.jacobian;
+   elseif isfield(imdl.fwd_model, 'jacobian')
+      imdl.fwd_model
+      imdl
+      error('inv_model.fwd_model.jacobian and inv_model.inv_solve.jacobian should not both exist: it''s ambiguous');
+   end
+   % defaul hyperparameter is 1
+   if ~isfield(opt, 'hyperparameter')
+      opt.hyperparameter = {[]};
+      for i=1:length(opt.elem_working)
+         opt.hyperparameter{i} = 1;
+      end
+   end
    % if the user didn't put these into cell arrays, do
    % so here so there is less error checking later in
    % the code
-   for i = {'elem_len', 'prior_data'}
+   for i = {'elem_len', 'prior_data', 'jacobian', 'hyperparameter'}
      % MATLAB voodoo: deincapsulate a cell containing a
      % string, then use that to access a struct eleemnt
      x = opt.(i{1});
@@ -1031,6 +1128,80 @@ function opt = parse_options(imdl)
      end
    end
 
+   % REGULARIZATION RtR
+   % for constructing the blockwise RtR matrix
+   % can be: explicit matrix, blockwise matrix diagonal, or full blockwise matrix
+   % blockwise matrices can be function ptrs or explicit
+   if ~isfield(opt, 'RtR_prior')
+      if isfield(imdl, 'RtR_prior')
+         opt.RtR_prior = {imdl.RtR_prior};
+      else
+         opt.RtR_prior = {[]}; % null matrix (all zeros)
+         warning('missing imdl.inv_solve.RtR_prior or imdl.RtR_prior: assuming NO regularization RtR=0');
+      end
+   end
+   % bit of a make work project but if its actually a full numeric matrix we
+   % canoncialize it by breaking it up into the blockwise components
+   if isnumeric(opt.RtR_prior)
+      if size(opt.RtR_prior, 1) ~= size(opt.RtR_prior, 2)
+         error('expecting square matrix for imdl.RtR_prior or imdl.inv_solve.RtR_prior');
+      end
+      if length(opt.elem_len) == 1
+         opt.RtR_prior = {opt.RtR_prior}; % encapsulate directly into a cell array
+      else
+         RtR = opt.RtR_prior;
+         opt.RtR_prior = {[]};
+         esi = 0; eei = 0;
+         for i=1:length(opt.elem_len)
+            esi = eei +1;
+            eei = eei +opt.elem_len{i};
+            esj = 0; eej = 0;
+            for j=1:length(opt.elem_len)
+               esj = eej +1;
+               eej = eej +opt.elem_len{j};
+               opt.RtR_prior(i,j) = RtR(esi:eei, esj:eej);
+            end
+         end
+      end
+   end
+   % if not square then expand the block matrix
+   % single row/column: this is our diagonal --> expand to full blockwise matrix
+   if any(size(opt.RtR_prior) ~= ([1 1]*length(opt.elem_len)))
+      if (size(opt.RtR_prior, 1) ~= 1) && ...
+         (size(opt.RtR_prior, 2) ~= 1)
+         error('odd imdl.RtR_prior or imdl.inv_solve.RtR_prior, cannot figure out how to expand it blockwise');
+      end
+      if (size(opt.RtR_prior, 1) ~= length(opt.elem_len)) && ...
+         (size(opt.RtR_prior, 2) ~= length(opt.elem_len))
+         error('odd imdl.RtR_prior or imdl.inv_solve.RtR_prior, not enough blockwise components vs. elem_working types');
+      end
+      RtR_diag = opt.RtR_prior;
+      opt.RtR_prior = {[]}; % delete and start again
+      for i=1:length(opt.elem_len)
+         opt.RtR_prior(i,i) = RtR_diag(i);
+      end
+   end
+   if any(size(opt.hyperparameter) ~= ([1 1]*length(opt.elem_len)))
+      if (size(opt.hyperparameter, 1) ~= 1) && ...
+         (size(opt.hyperparameter, 2) ~= 1)
+         error('odd imdl.hyperparameter or imdl.inv_solve.hyperparameter, cannot figure out how to expand it blockwise');
+      end
+      if (size(opt.hyperparameter, 1) ~= length(opt.elem_len)) && ...
+         (size(opt.hyperparameter, 2) ~= length(opt.elem_len))
+         error('odd imdl.hyperparameter or imdl.inv_solve.hyperparameter, not enough blockwise components vs. elem_working types');
+      end
+      hp_diag = opt.hyperparameter;
+      opt.hyperparameter = {[]}; % delete and start again
+      for i=1:length(opt.elem_len)
+         for j=1:length(opt.elem_len)
+            if i == j
+               opt.hyperparameter(i,j) = hp_diag(i);
+            else
+               opt.hyperparameter{i,j} = 1;
+            end
+         end
+      end
+   end
 
    % JACOBIAN CHAIN RULE conductivity -> whatever
    % where x = conductivity at this iteration
@@ -1038,31 +1209,36 @@ function opt = parse_options(imdl)
    % Jn = J * S;
    % if not provided, determine based on 'elem_working' type
    if ~isfield(opt, 'calc_jacobian_scaling_func')
-      % TODO error out if elem_working is not onductivity and the jacobian function is not the default... we can't guess correctly then and we'll get funky/had-to-debug behaviour
-      if length(opt.elem_working) == 1 && ...
-         ~strcmp(opt.elem_working{1}, 'conductivity') && ...
-         (~isfield(imdl, 'fwd_model') || ...
-          ~isfield(imdl.fwd_model, 'jacobian') || ...
-          ~strcmp(imdl.fwd_model.jacobian, 'eidors_default'))
-         error('can not guess at inv_model.inv_solve.calc_jacobian_scaling_func, one must be provided');
-      end
-      switch opt.elem_working{1}
-         case 'conductivity'
-            opt.calc_jacobian_scaling_func = @ret1_func;  % S = f(x)
-         case 'log_conductivity'
-            opt.calc_jacobian_scaling_func = @dx_dlogx;   % S = f(x)
-         case 'log10_conductivity'
-            opt.calc_jacobian_scaling_func = @dx_dlog10x; % S = f(x)
-         case 'resistivity'
-            opt.calc_jacobian_scaling_func = @dx_dy;      % S = f(x)
-         case 'log_resistivity'
-            opt.calc_jacobian_scaling_func = @dx_dlogy;   % S = f(x)
-         case 'log10_resistivity'
-            opt.calc_jacobian_scaling_func = @dx_dlog10y; % S = f(x)
-         otherwise
-            warning('unrecognized opt.elem_working type, please provide a opt.calc_jacobian_scaling_func -- assuming no scalling and continuing');
-            opt.calc_jacobian_scaling_func = @ret1_func; % S = f(x)
-      end
+      pinv = strfind(opt.elem_working, 'resistivity');
+      plog = strfind(opt.elem_working, 'log_');
+      plog10 = strfind(opt.elem_working, 'log10_');
+      for i = 1:length(opt.elem_working)
+        prefix = '';
+        if plog{i}
+           prefix = 'log';
+        elseif plog10{i}
+           prefix = 'log10';
+        else
+           prefix = '';
+        end
+        if pinv{i}
+           prefix = prefix + '_inv';
+        end
+        switch(prefix)
+          case ''
+             opt.calc_jacobian_scaling_func{i} = @ret1_func;  % S = f(x)
+          case 'log'
+             opt.calc_jacobian_scaling_func{i} = @dx_dlogx;   % S = f(x)
+          case 'log10'
+             opt.calc_jacobian_scaling_func{i} = @dx_dlog10x; % S = f(x)
+          case '_inv'
+             opt.calc_jacobian_scaling_func{i} = @dx_dy;      % S = f(x)
+          case 'log_inv'
+             opt.calc_jacobian_scaling_func{i} = @dx_dlogy;   % S = f(x)
+          case 'log10_inv'
+             opt.calc_jacobian_scaling_func{i} = @dx_dlog10y; % S = f(x)
+           end
+        end
    end
 
    % input handling -> conversion of measurements (data0)
@@ -1077,7 +1253,22 @@ function opt = parse_options(imdl)
       opt.normalize_data = 0;
    end
 
-function check_matrix_sizes(J, W, hp2, RtR, dv, de, opt)
+   if ~isfield(opt, 'update_dv_img_func')
+      opt.update_dv_img_func = @null_func; % img = f(img, opt)
+   end
+
+   if ~isfield(opt, 'update_jacobian_img_func')
+      opt.update_jacobian_img_func = @null_func; % img = f(img, opt)
+   end
+
+   if ~isfield(opt, 'return_jacobian')
+      opt.return_jacobian = 0;
+   end
+   if ~isfield(opt, 'return_dx')
+      opt.return_dx = 0;
+   end
+
+function check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
    % assuming our equation looks something like
    % dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
    % check that all the matrix sizes are correct
@@ -1097,11 +1288,11 @@ function check_matrix_sizes(J, W, hp2, RtR, dv, de, opt)
       error('J size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(J), nv, ne);
    end
    if opt.calc_RtR_prior && ...
-      any(size(RtR) ~= [ne ne])
-      error('RtR size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(RtR), ne, ne);
+      any(size(hp2RtR) ~= [ne ne])
+      error('hp2RtR size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(hp2RtR), ne, ne);
    end
 
-function dx = update_dx(J, W, hp2, RtR, dv, de, opt)
+function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    if(opt.verbose > 1)
       fprintf( '    calc step size dx');
    end
@@ -1110,19 +1301,24 @@ function dx = update_dx(J, W, hp2, RtR, dv, de, opt)
    de(opt.elem_fixed) = 0;
 
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
-   check_matrix_sizes(J, W, hp2, RtR, dv, de, opt)
+   check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
 
    % do the update step direction calculation
-   dx = feval(opt.update_func, J, W, hp2, RtR, dv, de);
+   dx = feval(opt.update_func, J, W, hp2RtR, dv, de);
    % ignore any fixed value elements
    dx(opt.elem_fixed) = 0;
 
    if(opt.verbose > 1)
       fprintf(', ||dx||=%0.3g\n', norm(dx));
+      es = 0; ee = 0;
+      for i=1:length(opt.elem_working)
+          es = ee +1; ee = ee + opt.elem_len{i};
+          nd = norm(dx(es:ee));
+          fprintf( '      ||dx_%d||=%0.3g (%s)\n',i, nd, opt.elem_working{i});
+      end
    end
 
-function dx = GN_update(J, W, hp2, RtR, dv, de)
-   hp2RtR = hp2*RtR;
+function dx = GN_update(J, W, hp2RtR, dv, de)
    % the actual update
    dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
 
@@ -1150,12 +1346,15 @@ function args = function_depends_upon(func, argn)
    end
 
 % this function just passes data from its input to its output
-function out = null_func(in, arg1);
+function out = null_func(in, varargin);
    out = in;
 
 % this function always returns one
-function out = ret1_func(arg1, arg2);
+function [out, x, y, z] = ret1_func(varargin);
    out = 1;
+   x = [];
+   y = [];
+   z = [];
 
 % if required, expand the coarse-to-fine matrix to cover the background of the image
 % this is removed at the end of the iterations
@@ -1255,6 +1454,24 @@ if isstruct(s)
    b = any(ismember(fieldnames(s),supported_params));
 end
 
+% wrapper function for to_base_types
+function out = map_img_base_types(img)
+  out = to_base_types(img.current_params);
+
+% convert from know types to their base types
+% A helper function for getting to a basic paramterization
+% prior to any required scaling, etc.
+function type = to_base_types(type)
+  if ~iscell(type)
+     type = {type};
+  end
+  for i = 1:length(type);
+     type(i) = {strrep(type{i}, 'log_', '')};
+     type(i) = {strrep(type{i}, 'log10_', '')};
+     type(i) = {strrep(type{i}, 'resistivity', 'conductivity')};
+     type(i) = {strrep(type{i}, 'apparent_resistivity', 'voltage')};
+  end
+
 function img = map_img(img, out);
    err_if_inf_or_nan(img.elem_data, 'img-pre');
    try in = img.current_params;
@@ -1280,18 +1497,31 @@ function img = map_img(img, out);
 
    % create data?! we don't know how
    if length(out(:)) > length(in(:))
-      % are we still broken -- then error out
-      if length(out(:)) > length(in(:))
-         error('missing data (more out types than in types)');
-      end
+      error('missing data (more out types than in types)');
    elseif length(out(:)) < length(in(:))
       % delete data: we can do that
-      % NOTE that if we are doing this, we always assume its the *last* items in the list
-      for i = 1:length(in(:))-length(out(:)) % delete the extra
-         img.elem_data(img.params_sel{end}) = []; % rm elem_data
-         img.params_sel(end) = []; % rm params_sel
-         img.current_params(end) = []; % rm current_params
+      % TODO we could genearlize this into a reorganizing tool BUT we're just
+      % interested in something that works, so if we have more than one out(:),
+      % we don't know what to do currently and error out
+      if length(out(:)) ~= 1
+         error('map_img can convert ALL parameters or select a SINGLE output type from multiple input types');
       end
+      inm  = to_base_types(in);
+      outm = to_base_types(out);
+      del = sort(find(~strcmp(outm(1), inm(:))), 'descend'); % we do this loop backwards in the hopes of avoiding shuffling data that is about to be deleted
+      if length(del)+1 ~= length(in)
+         error('Confused about what to remove from the img. You''ll need to sort the parametrizations out yourself when removing data.');
+      end
+      for i = del(:)' % delete each of the extra indices
+         ndel = length(img.params_sel{i}); % number of deleted elements
+         for j = i+1:length(img.params_sel)
+            img.params_sel{j} = img.params_sel{j} - ndel;
+         end
+         img.elem_data(img.params_sel{i}) = []; % rm elem_data
+         img.params_sel(i) = []; % rm params_sel
+         img.current_params(i) = []; % rm current_params
+      end
+      in = img.current_params;
    end
 
    % the sizes now match, we can do the mapping
@@ -1412,6 +1642,7 @@ function b = map_meas(b, N, in, out)
 
 function pass = do_unit_test
 pass = 1;
+pass = pass & do_unit_test_rec_mv;
 pass = pass & do_unit_test_sub;
 pass = pass & do_unit_test_rec1;
 %pass = pass & do_unit_test_rec2; % TODO this unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
@@ -1619,6 +1850,132 @@ else
   disp('TEST:  img1 == img4 --> PASS');
 end
 
+% a couple easy reconstructions with movement or similar
+function pass = do_unit_test_rec_mv
+pass = 1;
+disp('TEST: conductivity and movement --> baseline conductivity only');
+% -------------
+% ADAPTED FROM
+% Create simulation data $Id: basic_iterative01.m 3829 2013-04-13 14:21:30Z bgrychtol $
+%  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
+% 3D Model
+imdl= mk_common_model('c2t4',16); % 576 elements
+ne = length(imdl.fwd_model.electrode);
+nt = length(imdl.fwd_model.elems);
+imdl.solve = 'inv_solve_abs_core';
+imdl.reconst_type = 'absolute';
+% specify the units to work in
+imdl.inv_solve.meas_input   = 'voltage';
+imdl.inv_solve.meas_working = 'apparent_resistivity';
+imdl.inv_solve.elem_prior   = {   'conductivity'   };
+imdl.inv_solve.prior_data   = {        1           };
+imdl.inv_solve.elem_working = {'log_conductivity'};
+imdl.inv_solve.elem_output  = {'log10_conductivity'};
+imdl.inv_solve.calc_solution_error = 0;
+imdl.inv_solve.verbose = 0;
+imdl.hyperparameter.value = 0.01;
+
+% set homogeneous conductivity and simulate
+imgsrc= mk_image( imdl.fwd_model, 1);
+vh=fwd_solve(imgsrc);
+% set inhomogeneous conductivity
+ctrs= interp_mesh(imdl.fwd_model);
+x= ctrs(:,1); y= ctrs(:,2);
+r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-45).^2 + (y-35).^2);
+imgsrc.elem_data(r1<50)= 0.05;
+imgsrc.elem_data(r2<30)= 100;
+
+% inhomogeneous data
+vi=fwd_solve( imgsrc );
+% add noise
+%Add 30dB SNR noise to data
+noise_level= std(vi.meas - vh.meas)/10^(30/20);
+vi.meas = vi.meas + noise_level*randn(size(vi.meas));
+
+% show model
+hh=figure; subplot(221); imgp = map_img(imgsrc, 'log10_conductivity'); show_fem(imgp,1); axis tight; title('synth baseline, logC');
+
+% Reconstruct Images
+img0= inv_solve(imdl, vi);
+figure(hh); subplot(222);
+ img0 = map_img(img0, 'log10_conductivity');
+ show_fem(img0, 1); axis tight;
+
+disp('TEST: conductivity + movement');
+imdl.fwd_model = rmfield(imdl.fwd_model, 'jacobian');
+% specify the units to work in
+imdl.inv_solve.elem_prior   = {   'conductivity'   , 'movement'};
+imdl.inv_solve.prior_data   = {        1           ,     0     };
+imdl.inv_solve.RtR_prior    = {     @eidors_default, @prior_movement_only};
+imdl.inv_solve.elem_len     = {       nt           ,   ne*2    };
+imdl.inv_solve.elem_working = {  'log_conductivity', 'movement'};
+imdl.inv_solve.elem_output  = {'log10_conductivity', 'movement'};
+imdl.inv_solve.jacobian     = { @jacobian_adjoint  , @jacobian_movement_only};
+imdl.inv_solve.hyperparameter = {      1           ,  sqrt(2e-3)     }; % multiplied by imdl.hyperparameter.value
+imdl.inv_solve.verbose = 2;
+
+% electrode positions before
+nn = [imgsrc.fwd_model.electrode(:).nodes];
+elec_orig = imgsrc.fwd_model.nodes(nn,:);
+% set 2% radial movement
+nn = imgsrc.fwd_model.nodes;
+imgsrc.fwd_model.nodes = nn * [1-0.02 0; 0 1+0.02]; % 1% compress X, 1% expansion Y, NOT conformal
+% electrode positions after
+nn = [imgsrc.fwd_model.electrode(:).nodes];
+elec_mv = imgsrc.fwd_model.nodes(nn,:);
+
+% inhomogeneous data
+vi=fwd_solve( imgsrc );
+% add noise
+%Add 30dB SNR noise to data
+noise_level= std(vi.meas - vh.meas)/10^(30/20);
+%vi.meas = vi.meas + noise_level*randn(size(vi.meas));
+
+% show model
+nn = [imgsrc.fwd_model.electrode(1:4).nodes];
+figure(hh); subplot(223); imgp = map_img(imgsrc, 'log10_conductivity'); show_fem_move(imgp,elec_mv-elec_orig,10,1); axis tight; title('synth mvmt, logC');
+
+% Reconstruct Images
+img1= inv_solve(imdl, vi);
+figure(hh); subplot(224);
+ imgm = map_img(img1, 'movement');
+ img1 = map_img(img1, 'log10_conductivity');
+ show_fem_move(img1,reshape(imgm.elem_data,16,2), 10, 1); axis tight;
+
+% TEST for mismatch on coductivity image
+err = abs((img0.elem_data - img1.elem_data) ./ img0.elem_data);
+err(abs(img0.elem_data)/max(abs(img0.elem_data)) < 0.50) = 0;
+err_thres = 0.40;
+if any(err > err_thres) % maximum 15% error
+  ni = find(err > err_thres);
+  fprintf('TEST:  img0 != img1 + mvmt --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
+          max(err(ni)), length(ni), err_thres);
+  pass = 0;
+else
+  disp('TEST:  img0 == img1 + mvmt --> PASS');
+end
+
+% helper function: calculate jacobian movement by itself
+function Jm = jacobian_movement_only (fwd_model, img);
+  pp = fwd_model_parameters(img.fwd_model);
+  szJm = pp.n_elec * pp.n_dims; % number of electrodes * dimensions
+  img = map_img(img, 'conductivity'); % expect conductivity only
+  Jcm = jacobian_movement(fwd_model, img);
+  Jm = Jcm(:,(end-szJm+1):end);
+%% this plot shows we are grabing the right section of the Jacobian
+%  figure();
+%  subplot(311); imagesc(Jcm); axis ij equal tight; xlabel(sprintf('||Jcm||=%g',norm(Jcm))); colorbar;
+%  Jc = jacobian_adjoint(fwd_model, img);
+%  subplot(312); imagesc([Jc Jm]); axis ij equal tight; xlabel(sprintf('||[Jc Jm]||=%g',norm([Jc Jm]))); colorbar;
+%  dd = abs([Jc Jm]-Jcm); % difference
+%  subplot(313); imagesc(dd); axis ij equal tight; xlabel(sprintf('|| |[Jc Jm]-Jcm| ||=%g',norm(dd))); colorbar;
+
+function RtR = prior_movement_only(imdl);
+  imdl.image_prior.parameters(1) = 1; % weighting of movement vs. conductivity ... but we're dropping conductivity here
+  pp = fwd_model_parameters(imdl.fwd_model);
+  szPm = pp.n_elec * pp.n_dims; % number of electrodes * dimensions
+  RtR = prior_movement(imdl);
+  RtR = RtR((end-szPm+1):end,(end-szPm+1):end); 
 
 function pass = do_unit_test_rec2
 disp('TEST: reconstruct a discontinuity');
