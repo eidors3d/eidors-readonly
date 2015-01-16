@@ -4,9 +4,9 @@ function Reg= prior_movement( inv_model );
 % Reg        => output regularization term
 % inv_model  => inverse model struct
 % Parameters:
-%   inv_model.image_prior.parameters(1) -> relative weighting
+%   inv_model.prior_movement.parameters(1) -> relative weighting
 %     of movement vs image fraction of hyperparameter
-%     => Default = 100
+%     => Default = 10
 %   inv_model.prior_movement.RegC.func = Cond Reg fcn
 %   inv_model.prior_movement.RegM.func = Move Reg fcn
 %   either @laplace_movement_image_prior OR @tikhonov_movement_image_prior
@@ -15,7 +15,7 @@ function Reg= prior_movement( inv_model );
 % -1 for each adjacent element, and 3 (in 2D) or 4 (in 3D)
 % for the element itself
 %
-% For the movmenent portion, we define a smoothness
+% For the movement portion, we define a smoothness
 % constraint, such that Rij = -1 for adjacent electrodes
 %
 % If used with a dual model (ie coarse2fine mapping), ensure
