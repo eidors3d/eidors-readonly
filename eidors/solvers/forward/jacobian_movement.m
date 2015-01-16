@@ -190,7 +190,7 @@ delVm = zeros(pp.n_elec, pp.n_stim, pp.n_elec*pp.n_dims);
 Re_Ce      = pp.Re * pp.Ce';
 cond_Ce_Vc = pp.kron_cond * pp.Ce * pp.Vc;
 for colidx = 1:pp.n_dims
-    fprintf('   JM: direction # %d\n',colidx);
+%    fprintf('   JM: direction # %d\n',colidx);
     % Calculate the values for the voltage sensitivity for each electrode
     for k = 1:pp.n_elec
         % Find which elements touch this electrode
