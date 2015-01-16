@@ -33,7 +33,7 @@ function   mdl = mash_nodes(mdl, method, interp_dim, upd_dim, elec_true, elec_er
 %
 % EXAMPLE
 % elec_err=1
-% while(elec_err > eps) 
+% while(elec_err > eps)
 %  elec_nodes = [fmdl.electrode(:).nodes];
 %  elec_err = elec_true - fmdl.nodes(elec_nodes,:);
 %  cmdl = mash_nodes(cmdl, 'shift_all',     2, elec_true, elec_err(:,2)); % Y (downslope)

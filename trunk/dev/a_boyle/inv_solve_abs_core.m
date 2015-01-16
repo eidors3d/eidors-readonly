@@ -700,7 +700,7 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
   if ~isempty(opto)
      opt = opto;
   end
-     
+
   if(opt.verbose > 1)
      fprintf('      selected alpha=%0.3g\n', alpha);
   end
@@ -2000,7 +2000,7 @@ function RtR = prior_movement_only(imdl);
   pp = fwd_model_parameters(imdl.fwd_model);
   szPm = pp.n_elec * pp.n_dims; % number of electrodes * dimensions
   RtR = prior_movement(imdl);
-  RtR = RtR((end-szPm+1):end,(end-szPm+1):end); 
+  RtR = RtR((end-szPm+1):end,(end-szPm+1):end);
 
 function pass = do_unit_test_rec2(solver)
 disp('TEST: reconstruct a discontinuity');

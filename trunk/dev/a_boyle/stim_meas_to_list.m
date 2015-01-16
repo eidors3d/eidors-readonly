@@ -2,7 +2,7 @@ function list = stim_meas_to_list(stim)
 % function list = stim_meas_to_list(stim)
 % Converts an EIDORS stimulation structure (stimulus and measurement selection
 % matrices) into a stimulus and measurement list along with the measurement
-% gain for each. 
+% gain for each.
 %
 %  [ stim+  stim-  meas+  meas-  stim_current  meas_gain ]
 %

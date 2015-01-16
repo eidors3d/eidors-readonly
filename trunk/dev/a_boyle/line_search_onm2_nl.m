@@ -62,7 +62,7 @@ for i = 1:length(perturb);
         mlist(i) = feval(opt.residual_func, dv, de, W, hp2, RtR);
     else
         mlist(i)= NaN;
-        break % Suppose that increasing perturb values won't give better 
+        break % Suppose that increasing perturb values won't give better
         % results if a NaN value is obtained once
     end
 end
