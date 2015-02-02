@@ -51,7 +51,7 @@ function img= inv_solve_abs_core_nl( inv_model, data0);
 %    apply dtol stopping criteria if k >= dtol_iter
 %   min_value                           (default -inf)
 %   max_value                           (default +inf)
-%   line_search_func       (default @line_search_onm2)
+%   line_search_func       (default @line_search_onm2_nl)
 %   line_search_dv_func      (default @update_dv_core)
 %   line_search_de_func      (default @update_de_core)
 %   line_search_args.perturb
@@ -188,7 +188,7 @@ function img= inv_solve_abs_core_nl( inv_model, data0);
 %
 % See also: INV_SOLVE_ABS_GN, INV_SOLVE_ABS_GN_LOGC,
 %           INV_SOLVE_ABS_CG, INV_SOLVE_ABS_CG_LOGC,
-%           LINE_SEARCH_O2, LINE_SEARCH_ONM2
+%           LINE_SEARCH_O2, LINE_SEARCH_ONM2_NL
 %
 % (C) 2010-2014 Andy Adler & Bartłomiej Grychtol, Nolwenn Lespare, Alistair Boyle.
 % License: GPL version 2 or version 3
@@ -353,7 +353,6 @@ while 1
   else
       RtR = update_RtR(RtR, inv_model, k, img, opt);
   end
-
   % now find the residual, quit if we're done
   [stop, k, r, fig_r,fig_meas_misfit] = update_residual(dv, de, W, hp2, RtR, k, r, fig_r,fig_meas_misfit, opt);
   if stop
@@ -379,7 +378,7 @@ while 1
 %   figure; semilogy(abs(dx))
 %   figure; semilogy(abs(sx))
   % line search for alpha, leaving the final selection as img
-  [alpha, img, dv, opt, data] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
+  [alpha, img, dv, opt, data] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, r(k,1), opt);
 
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
@@ -406,7 +405,7 @@ end
 img = map_img(img, opt.elem_output);
 img.meas_err = meas_err;
 img.residuals= r;
-% img.J= J;
+img.J= J;
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
 
 function img = init_elem_data(img, opt)
@@ -750,7 +749,7 @@ function S = dx_dlog10y(x);
 % -------------------------------------------------
 
 
-function [alpha, img, dv, opt, data] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, opt)
+function [alpha, img, dv, opt, data] = update_alpha(img, sx, data0, img0, N, W, hp2, RtR, dv, r, opt)
   if(opt.verbose > 1)
      disp('    line search');
   end
@@ -762,7 +761,7 @@ function [alpha, img, dv, opt, data] = update_alpha(img, sx, data0, img0, N, W, 
   if any(size(img.elem_data) ~= size(sx))
      error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
-  [alpha, img, dv, opt, data] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
+  [alpha, img, dv, opt, data] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2, RtR, dv, r, opt);
   if(opt.verbose > 1)
      fprintf('      selected alpha=%0.3g\n', alpha);
   end
@@ -879,7 +878,7 @@ function show_fem_iter(k, img, inv_model, opt)
   str = strrep(out, '_', ' ');
   title(sprintf('iter=%d, %s',k, str));
 
-% TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
+% TODO confirm that GN line_search_onm2_nl is using this residual calculation (preferably, directly)
 function residual = GN_residual(dv, de, W, hp2, RtR)
 %   [size(dv); size(W); size(de); size(hp2RtR)]
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
@@ -1077,7 +1076,7 @@ function opt = parse_options(imdl)
    % line search
    if ~isfield(opt,'line_search_func')
       % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2, RtR, dv, opt);
-      opt.line_search_func = @line_search_onm2;
+      opt.line_search_func = @line_search_onm2_nl;
    end
    if ~isfield(opt,'line_search_dv_func')
       opt.line_search_dv_func = @update_dv_core;
@@ -1592,7 +1591,9 @@ function pass = do_unit_test
 pass = 1;
 pass = pass & do_unit_test_sub;
 pass = pass & do_unit_test_rec1;
-%pass = pass & do_unit_test_rec2; % TODO this unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
+%pass = pass & do_unit_test_rec2; % TODO this unit test is very, very
+%slow... what can we do to speed it up... looks like the perturbations get
+%kinda borked when using the line_search_onm2_nl
 if pass
    disp('TEST: overall PASS');
 else
