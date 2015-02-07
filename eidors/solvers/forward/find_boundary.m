@@ -18,8 +18,10 @@ wew = size(simp,2) - 1;
 
 if wew==3 || wew==2
    [srf,idx]= find_2or3d_boundary(simp,wew);
+elseif wew == 1
+   [srf,idx]= find_1d_boundary(simp);
 else
-   eidors_msg('find_boundary: WARNING: not 2D or 3D simplices',1);
+   eidors_msg('find_boundary: WARNING: not 1D, 2D or 3D simplices',1);
    srf=[]; return;
 end
 
@@ -48,6 +50,21 @@ function [srf,idx]= find_2or3d_boundary(simp,dim);
    srf= sort_srl( diff_srl,: );
    idx= sort_idx( diff_srl);
    idx= ceil(idx/(dim+1));
+
+function [srf,idx]= find_1d_boundary(simp);
+   if size(simp,1) < 4e9 % max of uint32
+      % convert to integer to make sort faster
+      simp = uint32( simp );
+   end
+   % we expect two nodes as a result
+   idx = find(isunique(simp(:)) == 1);
+   srf = simp(idx);
+   idx = rem(idx-1,size(simp,1))+1;
+
+function x = isunique(a);
+   u=unique(a);
+   n=histc(a,u);
+   x=ismember(a,u(n==1));
 
 function do_unit_test
 ok=1;
@@ -83,6 +100,20 @@ bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
 
 ok= match(bdy,bdyc,ok,'3D test b3c2');
+
+simp = [  10 190; ...
+         182 183; ...
+         183 184; ...
+         184 185; ...
+          11 182; ...
+         185 186; ...
+         187 186; ...
+         187 188; ...
+         188 189; ...
+         189 190];
+[bdy, idx] = find_boundary(simp);
+ok= match(bdy,[10 11],ok,'1D bdy');
+ok= match(idx,[1 5],ok,'1D bdy');
 
 function bdy= sort_boundary(bdy)
    bdy = sort(bdy,2);
