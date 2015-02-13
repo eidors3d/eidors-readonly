@@ -9,4 +9,4 @@ imgv.node_data = vh.volt;
 imgv.calc_colours.ref_level = mean(vh.volt);
 show_fem(imgv);
 
-%print_convert contrasts_02a.png
+print_convert contrasts_02a.png
