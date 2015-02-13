@@ -16,8 +16,8 @@ Creating an FEM and solving the forward problem
 <center>
 <img src="contrasts_01a.png">
 <br><i> Figure:</i>
-A 2D finite element model (left) and an
-elliptical conductivity contrasting inclusion (right)
+A 2D finite element model with an
+elliptical conductivity contrasting inclusion
 </center>
 
 <pre>
@@ -27,8 +27,8 @@ elliptical conductivity contrasting inclusion (right)
 <center>
 <img src="contrasts_02a.png">
 <br><i> Figure:</i>
-A 2D finite element model (left) and an
-elliptical conductivity contrasting inclusion (right)
+Voltage distribution around an
+elliptical conductivity with a conductive contrast
 </center>
 
 <pre>
@@ -38,9 +38,7 @@ elliptical conductivity contrasting inclusion (right)
 <center>
 <img src="contrasts_03a.png">
 <br><i> Figure:</i>
-A 2D finite element model (left) and an
-elliptical conductivity contrasting inclusion (right)
-</center>
+Streamlines around a conductive contrasting target
 </td></tr></table>
 
 <pre>
@@ -50,25 +48,35 @@ elliptical conductivity contrasting inclusion (right)
 <center>
 <table>
 <tr>
-<td><img src="contrasts_03b.png">
-<td><img src="contrasts_03g.png">
-<td><img src="contrasts_03l.png">
+<th>&sigma; =
+<th>x/y = 2
+<th>x/y = 1
+<th>x/y = &frac12;
 <tr>
-<td><img src="contrasts_03c.png">
-<td><img src="contrasts_03h.png">
-<td><img src="contrasts_03m.png">
+<th> e<sup>&minus;2</sup>
+<td><img width="400" src="contrasts_03b.png">
+<td><img width="400" src="contrasts_03g.png">
+<td><img width="400" src="contrasts_03l.png">
 <tr>
-<td><img src="contrasts_03d.png">
-<td><img src="contrasts_03i.png">
-<td><img src="contrasts_03n.png">
+<th> e<sup>&minus;1</sup>
+<td><img width="400" src="contrasts_03c.png">
+<td><img width="400" src="contrasts_03h.png">
+<td><img width="400" src="contrasts_03m.png">
 <tr>
-<td><img src="contrasts_03e.png">
-<td><img src="contrasts_03j.png">
-<td><img src="contrasts_03o.png">
+<th> e<sup>0</sup>
+<td><img width="400" src="contrasts_03d.png">
+<td><img width="400" src="contrasts_03i.png">
+<td><img width="400" src="contrasts_03n.png">
 <tr>
-<td><img src="contrasts_03f.png">
-<td><img src="contrasts_03k.png">
-<td><img src="contrasts_03p.png">
+<th> e<sup>+1</sup>
+<td><img width="400" src="contrasts_03e.png">
+<td><img width="400" src="contrasts_03j.png">
+<td><img width="400" src="contrasts_03o.png">
+<tr>
+<th> e<sup>+2</sup>
+<td><img width="400" src="contrasts_03f.png">
+<td><img width="400" src="contrasts_03k.png">
+<td><img width="400" src="contrasts_03p.png">
 </table>
 <br><i> Figure:</i>
 A 2D finite element model (left) and an
