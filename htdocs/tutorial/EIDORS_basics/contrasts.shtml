@@ -42,6 +42,39 @@ A 2D finite element model (left) and an
 elliptical conductivity contrasting inclusion (right)
 </center>
 </td></tr></table>
+
+<pre>
+<!--#include virtual="contrasts_04.m" -->
+</pre>
+
+<center>
+<table>
+<tr>
+<td><img src="contrasts_03b.png">
+<td><img src="contrasts_03g.png">
+<td><img src="contrasts_03l.png">
+<tr>
+<td><img src="contrasts_03c.png">
+<td><img src="contrasts_03h.png">
+<td><img src="contrasts_03m.png">
+<tr>
+<td><img src="contrasts_03d.png">
+<td><img src="contrasts_03i.png">
+<td><img src="contrasts_03n.png">
+<tr>
+<td><img src="contrasts_03e.png">
+<td><img src="contrasts_03j.png">
+<td><img src="contrasts_03o.png">
+<tr>
+<td><img src="contrasts_03f.png">
+<td><img src="contrasts_03k.png">
+<td><img src="contrasts_03p.png">
+</table>
+<br><i> Figure:</i>
+A 2D finite element model (left) and an
+elliptical conductivity contrasting inclusion (right)
+</center>
+</td></tr></table>
 <p>
 <small>
     Last Modified: $Date$ by $Author$

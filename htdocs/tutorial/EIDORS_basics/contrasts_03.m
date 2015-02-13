@@ -3,8 +3,7 @@
    imgc.fwd_model.mdl_slice_mapper.npx = 128;
    imgc.fwd_model.mdl_slice_mapper.npy = 200;
    imgc.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-%  imgc.fwd_model.mdl_slice_mapper.xpts = linspace(-sz,sz,200);
-%  imgc.fwd_model.mdl_slice_mapper.ypts = linspace(-2,2,100);
+   imgc.calc_colours.ref_level = 1;
    q = show_current(imgc,vh.volt);
    hh=show_fem(imgc);
    set(hh,'EdgeColor',[1,1,1]*.75);
@@ -15,4 +14,6 @@
 
    hold off;
 
-print_convert contrasts_03a.png
+if ~exist('img_idx'); img_idx = 'a'; end
+print_convert(sprintf('contrasts_03%c.png',img_idx));
+img_idx = img_idx + 1;
