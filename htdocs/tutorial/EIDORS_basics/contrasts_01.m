@@ -18,7 +18,7 @@ fmdl = mdl2d_from3d(fmdl);
 
 fmdl.stimulation = stim_meas_list([1,2,1,2]);
 img = mk_image(fmdl,1);
-img.elem_data( fmdl.mat_idx{1} ) = 1.1;
+img.elem_data( fmdl.mat_idx{1} ) = 3;
 
 img.calc_colours.ref_level = 1;
 
