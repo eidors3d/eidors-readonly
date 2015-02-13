@@ -15,6 +15,12 @@ elec_shape=[2.0];
 elec_obj = {'left','right'};
 fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 fmdl = mdl2d_from3d(fmdl);
-show_fem( fmdl );
 
+fmdl.stimulation = stim_meas_list([1,2,1,2]);
+img = mk_image(fmdl,1);
+img.elem_data( fmdl.mat_idx{1} ) = 1.1;
+
+img.calc_colours.ref_level = 1;
+
+show_fem( img );
 print_convert contrasts_01a.png
