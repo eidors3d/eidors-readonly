@@ -1,0 +1,13 @@
+sz = 5;
+shape_str = [ ...
+ sprintf('solid left    = plane(-%f,0,0;-1,0,0);\n',sz) ...
+ sprintf('solid right   = plane( %f,0,0; 1,0,0);\n',sz) ...
+ sprintf(['solid mainobj= left and right and ' ...
+          'orthobrick(-%f,-2,-2;%f,2,0);\n'], sz+1, sz+1 )];
+elec_pos = [ sz,  0, -1,   0,  0,  1;
+            -sz,  0, -1,   0,  0, -1];
+elec_shape=[2.0];
+elec_obj = {'left','right'};
+fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+fmdl = mdl2d_from3d(fmdl);
+show_fem( fmdl );
