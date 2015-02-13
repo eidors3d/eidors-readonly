@@ -1,0 +1,51 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>Contrasts in EIT</h2>
+
+<h3> 
+Creating an FEM and solving the forward problem
+</h3>
+
+
+<pre>
+<!--#include virtual="contrasts_01.m" -->
+</pre>
+
+<center>
+<img src="contrasts_01a.png">
+<br><i> Figure:</i>
+A 2D finite element model (left) and an
+elliptical conductivity contrasting inclusion (right)
+</center>
+
+<pre>
+<!--#include virtual="contrasts_02.m" -->
+</pre>
+
+<center>
+<img src="contrasts_02a.png">
+<br><i> Figure:</i>
+A 2D finite element model (left) and an
+elliptical conductivity contrasting inclusion (right)
+</center>
+
+<pre>
+<!--#include virtual="contrasts_03.m" -->
+</pre>
+
+<center>
+<img src="contrasts_03a.png">
+<br><i> Figure:</i>
+A 2D finite element model (left) and an
+elliptical conductivity contrasting inclusion (right)
+</center>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
