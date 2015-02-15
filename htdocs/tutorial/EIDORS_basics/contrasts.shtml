@@ -41,6 +41,15 @@ elliptical conductivity with a conductive contrast
 Streamlines around a conductive contrasting target
 </td></tr></table>
 
+<h4>Create table with effect of elliptical shape and conductivity contrast</h4>
+
+Function to calculate the model
+<pre>
+<!--#include virtual="contrasts_04_modeller.m" -->
+</pre>
+
+
+Iterate over model shapes 
 <pre>
 <!--#include virtual="contrasts_04.m" -->
 </pre>
