@@ -1,4 +1,4 @@
-sz = 5;
+sz = 5; img_idx = 'b';
 for ellipse_x = [0.5,1,2];
    img = contrasts_04_modeller( sz, ellipse_x); 
    targ = img.fwd_model.mat_idx{1};
