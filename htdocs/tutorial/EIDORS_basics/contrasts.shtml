@@ -62,30 +62,40 @@ Iterate over model shapes
 <th>x/y = 1
 <th>x/y = &frac12;
 <tr>
-<th> e<sup>&minus;2</sup>
+<th> e<sup>&minus;3</sup>
 <td><img width="400" src="contrasts_04b.png">
-<td><img width="400" src="contrasts_04g.png">
-<td><img width="400" src="contrasts_04l.png">
+<td><img width="400" src="contrasts_04i.png">
+<td><img width="400" src="contrasts_04p.png">
+<tr>
+<th> e<sup>&minus;2</sup>
+<td><img width="400" src="contrasts_04c.png">
+<td><img width="400" src="contrasts_04j.png">
+<td><img width="400" src="contrasts_04q.png">
 <tr>
 <th> e<sup>&minus;1</sup>
-<td><img width="400" src="contrasts_04c.png">
-<td><img width="400" src="contrasts_04h.png">
-<td><img width="400" src="contrasts_04m.png">
+<td><img width="400" src="contrasts_04d.png">
+<td><img width="400" src="contrasts_04k.png">
+<td><img width="400" src="contrasts_04r.png">
 <tr>
 <th> e<sup>0</sup>
-<td><img width="400" src="contrasts_04d.png">
-<td><img width="400" src="contrasts_04i.png">
-<td><img width="400" src="contrasts_04n.png">
+<td><img width="400" src="contrasts_04e.png">
+<td><img width="400" src="contrasts_04l.png">
+<td><img width="400" src="contrasts_04s.png">
 <tr>
 <th> e<sup>+1</sup>
-<td><img width="400" src="contrasts_04e.png">
-<td><img width="400" src="contrasts_04j.png">
-<td><img width="400" src="contrasts_04o.png">
+<td><img width="400" src="contrasts_04f.png">
+<td><img width="400" src="contrasts_04m.png">
+<td><img width="400" src="contrasts_04t.png">
 <tr>
 <th> e<sup>+2</sup>
-<td><img width="400" src="contrasts_04f.png">
-<td><img width="400" src="contrasts_04k.png">
-<td><img width="400" src="contrasts_04p.png">
+<td><img width="400" src="contrasts_04g.png">
+<td><img width="400" src="contrasts_04n.png">
+<td><img width="400" src="contrasts_04u.png">
+<tr>
+<th> e<sup>+3</sup>
+<td><img width="400" src="contrasts_04h.png">
+<td><img width="400" src="contrasts_04o.png">
+<td><img width="400" src="contrasts_04v.png">
 </table>
 <br><i> Figure:</i>
 Table showing  streamlines surrounding a 2D finite element model with
