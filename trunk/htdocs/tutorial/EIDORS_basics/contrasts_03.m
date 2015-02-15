@@ -1,10 +1,9 @@
-   vh = fwd_solve(img);
    imgc = img;
    imgc.fwd_model.mdl_slice_mapper.npx = 128;
    imgc.fwd_model.mdl_slice_mapper.npy = 200;
    imgc.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    imgc.calc_colours.ref_level = 1;
-   q = show_current(imgc,vh.volt);
+   q = show_current(imgc,vv.volt);
    hh=show_fem(imgc);
    set(hh,'EdgeColor',[1,1,1]*.75);
    hold on;

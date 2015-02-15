@@ -88,8 +88,46 @@ Iterate over model shapes
 <td><img width="400" src="contrasts_04p.png">
 </table>
 <br><i> Figure:</i>
-A 2D finite element model (left) and an
-elliptical conductivity contrasting inclusion (right)
+Table showing  streamlines surrounding a 2D finite element model with
+a elliptical conductivity contrasting inclusion. 
+</center>
+
+<center>
+<table>
+<tr>
+<th>&sigma; =
+<th>x/y = 2
+<th>x/y = 1
+<th>x/y = &frac12;
+<tr>
+<th> e<sup>&minus;2</sup>
+<td><img width="400" src="contrasts_05b.png">
+<td><img width="400" src="contrasts_05g.png">
+<td><img width="400" src="contrasts_05l.png">
+<tr>
+<th> e<sup>&minus;1</sup>
+<td><img width="400" src="contrasts_05c.png">
+<td><img width="400" src="contrasts_05h.png">
+<td><img width="400" src="contrasts_05m.png">
+<tr>
+<th> e<sup>0</sup>
+<td><img width="400" src="contrasts_05d.png">
+<td><img width="400" src="contrasts_05i.png">
+<td><img width="400" src="contrasts_05n.png">
+<tr>
+<th> e<sup>+1</sup>
+<td><img width="400" src="contrasts_05e.png">
+<td><img width="400" src="contrasts_05j.png">
+<td><img width="400" src="contrasts_05o.png">
+<tr>
+<th> e<sup>+2</sup>
+<td><img width="400" src="contrasts_05f.png">
+<td><img width="400" src="contrasts_05k.png">
+<td><img width="400" src="contrasts_05p.png">
+</table>
+<br><i> Figure:</i>
+Table showing perturbation streamlines surrounding a 2D finite element model with
+a elliptical conductivity contrasting inclusion. 
 </center>
 </td></tr></table>
 <p>
