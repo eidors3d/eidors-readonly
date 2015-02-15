@@ -14,6 +14,5 @@
 
    hold off;
 
-if ~exist('img_idx'); img_idx = 'a'; end
-print_convert(sprintf('contrasts_03%c.png',img_idx));
-img_idx = img_idx + 1;
+if ~exist('img_name'); img_name = '03a'; end
+print_convert(sprintf('contrasts_%s.png',img_name));
