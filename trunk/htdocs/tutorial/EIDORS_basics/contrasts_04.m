@@ -21,9 +21,9 @@ for ellipse_x = [0.5,1,2];
    img.fwd_model.solve =      @fwd_solve_1st_order;
    img.fwd_model.system_mat = @system_mat_1st_order;
    [img.fwd_model.electrode(:).z_contact] = deal(1000); % Large
+   img.fwd_solve.get_all_meas = 1;
    for contrast = linspace( -2,2,5);
       img.elem_data( fmdl.mat_idx{1} ) = exp(contrast);
-      img.fwd_solve.get_all_meas = 1;
       vh = fwd_solve(img);
       contrasts_03;
    end
