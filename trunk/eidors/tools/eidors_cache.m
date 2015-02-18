@@ -83,6 +83,8 @@ function varargout=eidors_cache( command, varargin )
 %              struct may be used in the function)
 %        opt.boost_priority
 %            - priority boost to use for that function
+%        opt.fstr
+%            - name to use for the cached result
 %
 %   eidors_cache( 'cache_path' )
 %   eidors_cache( 'cache_path', '/path/to/cache/path' )
@@ -440,7 +442,7 @@ function varargout = cache_shorthand(fhandle, varargin)
    
    varargout = eidors_obj('get-cache', cache_obj, fstr );
    if numel(varargout) < nargout
-      eidors_msg('@@@ (Re)calculating %s',fstr, 1);
+      eidors_msg('@@@ (Re)calculating %s',fstr, 2);
       output = mk_varargout_str(nargout);
       varargout = cell(0);
       eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
