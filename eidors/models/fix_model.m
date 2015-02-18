@@ -116,10 +116,10 @@ if doall || opt.edges
     end
 end
 if doall || opt.node2elem
-    mdl.node2elem = calc_edge2elem(mdl.elems);
+    mdl.node2elem = calc_edge2elem(mdl.elems,size(mdl.nodes,1));
 end
 if doall || opt.edge2elem
-    mdl.edge2elem = calc_edge2elem(mdl.elem2edge);
+    mdl.edge2elem = calc_edge2elem(mdl.elem2edge, size(mdl.edges,1));
 end
 
 if doall || opt.face2edge
@@ -178,13 +178,13 @@ elem_sorted = sort(mdl.elems,2);
 [faces ib ia] = unique(reshape(elem_sorted(:,idx),[],facedim),'rows');
 elem2face = reshape(ia,[],size(idx,1));
 
-function edge2elem = calc_edge2elem(elem2edge)
+function edge2elem = calc_edge2elem(elem2edge,n_edges)
 
     [n_elems, el_faces] = size(elem2edge);
     elem2edgeno = (1:n_elems)'*ones(1,el_faces);
     elem2edgeno = elem2edgeno(:);
     elem2edge   = elem2edge(:);
-    edge2elem = sparse(elem2edge,elem2edgeno,ones(size(elem2edgeno)));
+    edge2elem = sparse(elem2edge,elem2edgeno,ones(size(elem2edgeno)),n_edges,n_elems);
 
 function f2e = calc_face2edge(mdl)
 %faces and edges are both row-wise sorted
