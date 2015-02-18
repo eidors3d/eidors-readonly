@@ -25,7 +25,8 @@ function out = point_in_triangle(P,E,V,epsilon, str)
 
 % (C) 2012-2015 Bartlomiej Grychtol
 % License: GPL version 2 or 3
-% $Id:$
+% $Id$
+
 switch nargin
     case {1 2 3}
         epsilon = eps;
