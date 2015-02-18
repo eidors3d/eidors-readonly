@@ -29,7 +29,8 @@ if d1 ~= d+1
     error('Simplex needs to have one more vertex than dimension')
 end
 % the d edges at vertex 1
-edges1= v(e(:,2:end)',:)-reshape(repmat(v(e(:,1),:),1,3)',3,[])';%ones(3,1)*v(e(:,1),:);
+edges1= v(e(:,2:end)',:) - kron(v(e(:,1),:), ones(3,1));%ones(3,1)*v(e(:,1),:);
+
 dt = my_det(edges1);
 idx = dt<0;
 if any(idx)
