@@ -105,10 +105,9 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 % 20141119: The inpolygon approach fails on non-simply-connected domains
 % inside = inpolygon(x(:),y(:),contour_boundary(:,1),contour_boundary(:,2) );
-inside = false(numel(x),1);
-for i = 1:numel(x)
-   inside(i) = any(point_in_triangle([x(i) y(i) 0], slc.elems, slc.nodes));
-end
+P = [x(:) y(:)]; P(end,3) = 0;
+inside = any(point_in_triangle(P, slc.elems, slc.nodes),2);
+
 ff = find(~inside);
 
 if opt.do_coarse2fine
@@ -250,29 +249,6 @@ function elec_lev = get_elec_level(fmdl)
     z_elec= fmdl.nodes( [fmdl.electrode(:).nodes], 3);
     min_e = min(z_elec); max_e = max(z_elec);
     elec_lev = [inf,inf,mean([min_e,max_e])];
-
-    
-% check if point p is in triangle E defined by indices into vertices V
-function out = point_in_triangle(p, E, V)
-%http://www.blackpawn.com/texts/pointinpoly/default.html
-% vectors
-v0 = V(E(:,3),:) - V(E(:,1),:);
-v1 = V(E(:,2),:) - V(E(:,1),:);
-v2 = repmat(p,[size(E,1) 1])  - V(E(:,1),:);
-
-% dot products
-dot00 = dot(v0, v0, 2);
-dot01 = dot(v0, v1, 2);
-dot02 = dot(v0, v2, 2);
-dot11 = dot(v1, v1, 2);
-dot12 = dot(v1, v2, 2);
-
-% barycentric coordinates
-invDenom = 1 ./ (dot00 .* dot11 - dot01 .* dot01);
-u = (dot11 .* dot02 - dot01 .* dot12) .* invDenom;
-v = (dot00 .* dot12 - dot01 .* dot02) .* invDenom;
-
-out = u >= 0 & v >= 0 & (u + v < 1);
 
     
 function do_unit_test
