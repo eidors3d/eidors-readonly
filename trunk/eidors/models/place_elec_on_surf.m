@@ -749,7 +749,7 @@ for i = 1:size(elec_pos,1)
    fc = mdl.face_centre;
    n  = mdl.normals;
    proj1 = ee - repmat(dot(ee-fc, n,2),1,3) .* n;
-   in1 = point_in_triangle(proj1,mdl.faces,mdl.nodes);
+   in1 = point_in_triangle(proj1,mdl.faces,mdl.nodes, 'match');
    dis1 = sqrt(sum((ee-proj1).^2,2));
    % 2. Project electrode on all edges 
    edg = [mdl.faces(:,1:2);mdl.faces(:,2:3);mdl.faces(:,[3 1])];
@@ -785,28 +785,6 @@ for i = 1:size(elec_pos,1)
    end
 
 end
-
-% check if point p is in triangle E defined by indices into vertices V
-function out = point_in_triangle(p, E, V)
-%http://www.blackpawn.com/texts/pointinpoly/default.html
-% vectors
-v0 = V(E(:,3),:) - V(E(:,1),:);
-v1 = V(E(:,2),:) - V(E(:,1),:);
-v2 = p  - V(E(:,1),:);
-
-% dot products
-dot00 = dot(v0, v0, 2);
-dot01 = dot(v0, v1, 2);
-dot02 = dot(v0, v2, 2);
-dot11 = dot(v1, v1, 2);
-dot12 = dot(v1, v2, 2);
-
-% barycentric coordinates
-invDenom = 1 ./ (dot00 .* dot11 - dot01 .* dot01);
-u = (dot11 .* dot02 - dot01 .* dot12) .* invDenom;
-v = (dot00 .* dot12 - dot01 .* dot02) .* invDenom;
-
-out = u >= 0 & v >= 0 & (u + v < 1);
 
 
 function do_unit_test
