@@ -221,49 +221,10 @@ function img= inv_solve_abs_core( inv_model, data0);
 %           INV_SOLVE_ABS_CG, INV_SOLVE_ABS_CG_LOGC,
 %           LINE_SEARCH_O2, LINE_SEARCH_ONM2
 %
-% (C) 2010-2014 Andy Adler & Bartłomiej Grychtol, Nolwenn Lespare, Alistair Boyle.
+% (C) 2010-2014 Alistair Boyle, Nolwenn Lesparre, Andy Adler, Bartłomiej Grychtol.
 % License: GPL version 2 or version 3
 
 % $Id$
-
-%AB->BG: The key item to discuss is my attempt to attack the
-% parameterization issue. This is by no means a generic
-% solution but it does present a very clean interface to the
-% user. I recognize this implementation does not quite fit
-% with your view of how parameterization should exist in the
-% rest of EIDORS. What are your thougths? I am open to any
-% solution/refactoring that would maintain the same
-% functionality/interface here or provide a clean
-% equivalent.
-
-%AB->BG: It is my intent to not expose this function
-% directly but to have a inv_solve_abs_GN() wrapper.
-% I have constructed this with the intent that it is trivial
-% to implement a CG solver using this framework. Hopefully,
-% I'll get to that shortly. This would result in a pair of
-% inv_solve_abs_CG and inv_solve_abs_CG_log wrapper function.
-% This file is a bit of a monster but it is removing a bit
-% of cut and paste that was expanding rapidly.
-% Do you have thoughts about this approach?
-
-%AB->BG: The UNIT_TEST is working. It does not seem to be
-% nearly challenging enough to show much of the odd behaviour
-% I spent two months debugging in the fall. I am not sure
-% what to do about this. It seems that building a truely
-% robust framework here requires some tough UNIT_TESTs so
-% that the infrastructure will not be broken as it gets
-% tweaked. Do you have thoughts or ideas about how to go
-% about this or how far you think UNIT_TESTs should go?
-% As an example, I believe they need to be self-checking to
-% be truly useful in the long run but that is pretty tough
-% to construct in a bullet proof manner.
-
-%AB->BG: There are still TODO comments in the code and
-% further clean up that could/should be done. I am holding
-% off on this until we can discuss and/or resolve some of the
-% outstanding external issues, as above and also some of the
-% TODO comments bring issues to mind that we have discussed
-% before such as the mk_image()'s handling of c2f.
 
 %--------------------------
 % UNIT_TEST?
