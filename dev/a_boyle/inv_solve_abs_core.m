@@ -416,6 +416,7 @@ function W = init_meas_icov(inv_model, opt)
       end
       W   = calc_meas_icov( inv_model );
    end
+   err_if_inf_or_nan(W, 'init_meas_icov');
 
 function N = init_normalization(fmdl, opt)
    % precalculate the normalization of the data if required (apparent resistivity)
@@ -426,6 +427,7 @@ function N = init_normalization(fmdl, opt)
       end
       N = feval(opt.normalize_data_func, fmdl);
    end
+   err_if_inf_or_nan(N, 'init_normalization');
 
 % default opt.normalize_data_func
 % if working measurements are apparent_resistivity & input is voltage
@@ -711,7 +713,7 @@ function err_if_inf_or_nan(x, str);
                     str, ...
                     length(find(isnan(x))), ...
                     length(find(isinf(x))), ...
-                    length(x)));
+                    length(x(:))));
   end
 
 
@@ -1324,10 +1326,21 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
    check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
 
+   % zero out the appropriate things so that we can get a dx=0 for the elem_fixed
+   J(:,opt.elem_fixed) = 0;
+   de(opt.elem_fixed,:) = 0;
+   hp2RtR(opt.elem_fixed,:) = 0;
+   V=opt.elem_fixed;
+   N=size(hp2RtR,1)+1;
+   hp2RtR(N*(V-1)+1) = 1; % set diagonals to 1 to avoid divide by zero
+
    % do the update step direction calculation
    dx = feval(opt.update_func, J, W, hp2RtR, dv, de);
-   % ignore any fixed value elements
-   dx(opt.elem_fixed) = 0;
+
+   % check that our elem_fixed stayed fixed
+   if any(dx(opt.elem_fixed) ~= 0)
+      error('elem_fixed did''t give dx=0 at update_dx')
+   end
 
    if(opt.verbose > 1)
       fprintf(', ||dx||=%0.3g\n', norm(dx));
