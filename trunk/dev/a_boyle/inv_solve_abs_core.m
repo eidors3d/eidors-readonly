@@ -122,16 +122,14 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    (default  @calc_normalization_apparent_resistivity)
 %    dv = N*(data-data0) where N is provided by this
 %    function
-%   update_dv_img_func          (default: pass-through)
-%    This function is called prior to conversion to
-%    'conductivity' and the call to fwd_solve and is a
-%    hook to allow additional modifications to the
-%    model prior to updating the measurement estimate.
-%   update_jacobian_img_func    (default: pass-through)
-%    This function is called prior to conversion to
-%    'conductivity' and the call to calc_jacobian and
-%    is a hook to allow additional modifications to the
-%    model prior to updating the Jacobian.
+%   update_img_func             (default: pass-through)
+%    Called prior to calc_jacobian and update_dv.
+%    Elements are converted to their "base types"
+%    before this function is called. For example,
+%    'log_resistivity' becomes 'conductivity'.
+%    It is a hook to allow additional updates to the
+%    model before the Jacobian, or a new set of
+%    measurements are calculated via fwd_solve.
 %   return_jacobian                        (default: 0)
 %    If 1, return the last Jacobian to the user in
 %    img.J
@@ -202,8 +200,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    This function can be re-purposed for scaling
 %    measurement data in other ways.
 %
-%   Signature for  update_dv_img_func
-%   Signature for  update_jacobian_img_func
+%   Signature for  update_img_func
 %    img2 = f(img1, opt)
 %   where
 %    img1 - an input image, the current working image
@@ -605,7 +602,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
 function J = update_jacobian(img, N, opt)
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
-   imgb = feval(opt.update_jacobian_img_func, imgb, opt);
+   imgb = feval(opt.update_img_func, imgb, opt);
    ee = 0; % element select, init
    pp = fwd_model_parameters(imgb.fwd_model);
    J = zeros(pp.n_meas,sum([opt.elem_len{:}]));
@@ -782,7 +779,7 @@ function data = map_meas_struct(data, N, out)
 function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    data0 = map_meas_struct(data0, N, 'voltage');
    img = map_img(img, map_img_base_types(img));
-   img = feval(opt.update_dv_img_func, img, opt);
+   img = feval(opt.update_img_func, img, opt);
    img = map_img(img, 'conductivity'); % drop everything but conductivity
    data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
@@ -1066,12 +1063,6 @@ function opt = parse_options(imdl)
       opt.c2f_background_fixed = 1; % generally, don't touch the background
    end
 
-   % meas_select already handles selecting from the valid measurements
-   % we want the same for the elem_data, so we only work on modifying the legal values
-   % Note that c2f_background's elements are added to this list if opt.c2f_background_fixed == 1
-   if ~isfield(opt, 'elem_fixed')
-      opt.elem_fixed = [];
-   end
 
    % DATA CONVERSION settings
    % elem type for the initial estimate is based on calc_jacobian_bkgnd which returns an img
@@ -1124,6 +1115,24 @@ function opt = parse_options(imdl)
         error('requires inv_model.inv_solve.elem_len');
       end
    end
+
+   % meas_select already handles selecting from the valid measurements
+   % we want the same for the elem_data, so we only work on modifying the legal values
+   % Note that c2f_background's elements are added to this list if opt.c2f_background_fixed == 1
+   if ~isfield(opt, 'elem_fixed') % give a safe default, if none has been provided
+      opt.elem_fixed = [];
+   elseif iscell(opt.elem_fixed) % if its a cell-array, we convert it to absolute
+     % numbers in elem_data
+     %  -- requires: opt.elem_len to already be constructed if it was missing
+      offset=0;
+      ef=[];
+      for i=1:length(opt.elem_fixed)
+         ef = [ef, opt.elem_fixed{i} + offset];
+         offset = offset + opt.elem_len{i};
+      end
+      opt.elem_fixed = ef;
+   end
+
    % allow a cell array of jacobians
    if ~isfield(opt, 'jacobian')
       opt.jacobian = imdl.fwd_model.jacobian;
@@ -1276,12 +1285,8 @@ function opt = parse_options(imdl)
       opt.normalize_data = 0;
    end
 
-   if ~isfield(opt, 'update_dv_img_func')
-      opt.update_dv_img_func = @null_func; % img = f(img, opt)
-   end
-
-   if ~isfield(opt, 'update_jacobian_img_func')
-      opt.update_jacobian_img_func = @null_func; % img = f(img, opt)
+   if ~isfield(opt, 'update_img_func')
+      opt.update_img_func = @null_func; % img = f(img, opt)
    end
 
    if ~isfield(opt, 'return_jacobian')
