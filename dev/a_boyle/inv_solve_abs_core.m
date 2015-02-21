@@ -130,12 +130,16 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    It is a hook to allow additional updates to the
 %    model before the Jacobian, or a new set of
 %    measurements are calculated via fwd_solve.
-%   return_jacobian                        (default: 0)
-%    If 1, return the last Jacobian to the user in
-%    img.J
-%   return_dx                              (default: 0)
-%    If 1, return the last search direction dx to the
-%    user in img.dx
+%   return_working_variables               (default: 0)
+%    If 1, return the last working variables to the user
+%     img.var.J   Jacobian
+%     img.var.dx  descent direction
+%     img.var.sx  search direction
+%     img.var.alpha  line search result
+%     img.var.beta   conjugation parameter
+%     img.var.r   as:
+%       [ residual, mesurement misfit, element misfit ]
+%       with one row per iteration
 %   show_fem                       (default: @show_fem)
 %    Function with which to plot each iteration's
 %    current parameters.
@@ -372,11 +376,18 @@ end
 % convert data for output
 img = map_img(img, opt.elem_output);
 img.meas_err = dv;
-if opt.return_jacobian
-  img.J = J;
-end
-if opt.return_dx
-  img.dx = dx;
+if opt.return_working_variables
+  img.inv_solve.J = J;
+  img.inv_solve.dx = dx;
+  img.inv_solve.sx = sx;
+  img.inv_solve.alpha = alpha;
+  img.inv_solve.beta = beta;
+  img.inv_solve.r = r;
+  img.inv_solve.N = N;
+  img.inv_solve.W = W;
+  img.inv_solve.hp2RtR = hp2RtR;
+  img.inv_solve.dv = dv;
+  img.inv_solve.de = de;
 end
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
 
@@ -592,7 +603,9 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
    if size(RtR,1) < length(img.elem_data)
      ne = length(img.elem_data) - size(RtR,1);
      % we are correcting for the added background element
-     RtR(end+1:end+ne, end+1:end+ne) = RtR(1,1);
+     for i=1:ne
+       RtR(end+1:end+1, end+1:end+1) = RtR(1,1);
+     end
      if opt.verbose > 1
         fprintf('      c2f: adjusting RtR by appending %d rows/cols\n', ne);
         disp(   '      TODO move this fix, or something like it to calc_RtR_prior -- this fix is a quick HACK to get things to run...');
@@ -1311,11 +1324,8 @@ function opt = parse_options(imdl)
       opt.update_img_func = @null_func; % img = f(img, opt)
    end
 
-   if ~isfield(opt, 'return_jacobian')
-      opt.return_jacobian = 0;
-   end
-   if ~isfield(opt, 'return_dx')
-      opt.return_dx = 0;
+   if ~isfield(opt, 'return_working_variables')
+      opt.return_working_variables = 0;
    end
 
 function check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
