@@ -478,13 +478,13 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, o
         x = 1:k;
         y = r(x, :);
         y = y ./ repmat(max(y,[],1),size(y,1),1) * 100;
-        plot(x, y, 'o-', 'linewidth', 2, 'MarkerSize', 10);
+        plot(x-1, y, 'o-', 'linewidth', 2, 'MarkerSize', 10);
         title('residuals');
         axis tight;
         ylabel('residual (% of max)');
         xlabel('iteration');
         set(gca, 'xtick', x);
-        set(gca, 'xlim', [1 max(x)]);
+        set(gca, 'xlim', [0 max(x)-1]);
         legend('residual','meas. misfit','prior misfit');
         legend('Location', 'EastOutside');
         drawnow; pause(0.5);
