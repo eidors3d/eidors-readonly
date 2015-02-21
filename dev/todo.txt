@@ -81,7 +81,7 @@
         was distributed based on area and is now percentage of area so that a
 	change in electrode diameter does not affect the total impedance through
         the electrode.
-    - rename z_contact to z_surface(?) and give warning if z_surface is used.
+    - rename z_contact to z_surface(?) and give warning if z_contact is used.
 
  - mex compilation problems on windors
 
