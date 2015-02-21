@@ -462,6 +462,9 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, o
 
   % evaluate stopping criteria
   if k > opt.max_iterations
+     if opt.verbose > 1
+        fprintf('  terminated at iteration %d (max iterations)\n',k);
+     end
      stop = 1;
   end
   % TODO return 'measurement residual' & 'roughness' for progress plot, as well
