@@ -636,6 +636,28 @@ function J = update_jacobian(img, N, opt)
         tmp(opt.elem_fixed) = 0;
         fprintf(' %d DoF, %d meas, %s)\n', sum(tmp), size(J,1), func2str(opt.calc_jacobian_scaling_func{i}));
      end
+     if opt.verbose >= 5
+        figure;
+        t=axes('Position',[0 0 1 1],'Visible','off'); % something to put our title on after we're done
+        text(0.03,0.1,['update\_jacobian (' strrep(J_str,'_','\_') ')'],'FontSize',20,'Rotation',90);
+        for y=0:1
+           if y == 0; D = Jn; else D = J(:,es:ee); end
+           axes('units', 'normalized', 'position', [ 0.13 0.62-y/2 0.8 0.3 ]);
+           imagesc(D);
+           if y == 0; ylabel('meas (1)'); xlabel(['elem (' strrep(base_types{i},'_','\_') ')']);
+           else       ylabel('meas (N)'); xlabel(['elem (' strrep(opt.elem_working{i},'_','\_') ')']);
+           end
+           os = get(gca, 'Position'); c=colorbar('southoutside'); % colorbar start...
+           set(gca, 'Position', os); % fix STUPID colorbar resizing
+           % reduce height, this has to be done after the axes fix or STUPID matlab messes things up real good
+           cP = get(c,'Position'); set(c,'Position', [0.13    0.54-y/2    0.8    0.010]);
+           axes('units', 'normalized', 'position', [ 0.93 0.62-y/2 0.05 0.3 ]);
+           barh(sum(D,2)); axis tight; axis ij; set(gca, 'ytick', [], 'yticklabel', []);
+           axes('units', 'normalized', 'position', [ 0.13 0.92-y/2 0.8 0.05 ]);
+           bar(sum(D,1)); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
+        end
+        drawnow; pause(0.5);
+     end
    end
 
 % -------------------------------------------------
