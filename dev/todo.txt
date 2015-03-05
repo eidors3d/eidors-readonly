@@ -1,3 +1,29 @@
+- function inv_solve_abs_GN, hp2RtR= hp*RtR. Should be hp squared
+
+- I have a suggestion regarding the default values in the function
+     “mk_GREIT_model.m”. In line 349 “opt” is checked for the field
+   “noise_figure”. If it doesn’t exist, it is set as empty. However, in this
+   case the parameter “weight” must be set and must not be left empty. Otherwise
+   the call of “calc_GREIT_RM” will result in an error stating “not coded yet”
+   (line 50 in calc_GREIT_RM.m), since weight will not be specified (line 117 in
+   mk_GREIT_model.m). This error does not represent the real problem as it is
+   supposed handle non scalar “weight” parameter. In my case, it took some time
+   until I understood my real fault.
+
+   My suggestion is: In the “parse_options”-function: Check if both
+   opt.noise_figure AND weight are empty / non existing. If so, set
+   opt.noise_figure to the recommended level of NF=0.5. Peronally, I don’t have
+   a feeling for an appropriate NF, so a default value would help. In addition,
+   currently the error pops out after the call of “stim_targets”, so that it
+   takes a lot of time, until the call fails. Alternatively, the description of
+   the weight parameter could be changed to:
+
+   “weight - weighting matrix (weighting of noise vs signal). If empty,
+   options.noise_figure MUST be specified”
+
+ 
+
+- add num_elecs.m function
 - bug in ng_mk_gen_models with top/bottom square elecs
     shape_str = ['solid top    = plane(0,0,  0;0,0, 1);\n' ...
                  'solid bot    = plane(0,0,-10;0,0,-1);\n' ...
