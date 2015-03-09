@@ -1,8 +1,7 @@
 % CUSTOM EIDORS STARTUP FILE
 % this must be a script so that octave can source it
 
-% we will be overloading built-in functions. Disable the warning.
-warning off MATLAB:dispatcher:nameConflict
+
 try
     eidors_startup
 catch
@@ -16,4 +15,3 @@ catch
         rethrow(error);
     end
 end
-warning on MATLAB:dispatcher:nameConflict

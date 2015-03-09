@@ -65,6 +65,7 @@ function ver = version_check
 
 function archdir = set_paths(HOMEDIR, ver,path_array)
 
+    
     addpath( HOMEDIR );
     addpath([HOMEDIR, '/solvers']);
     addpath([HOMEDIR, '/solvers/inverse']);
@@ -84,7 +85,10 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     addpath([HOMEDIR, '/graphics/vtk']);
     addpath(genpath([HOMEDIR, '/external'])); %add subdirectories
     addpath([HOMEDIR, '/deprecated']);
+    % we will be overloading built-in functions. Disable the warning.
+    warning off MATLAB:dispatcher:nameConflict
     addpath([HOMEDIR, '/overloads']);
+    warning on MATLAB:dispatcher:nameConflict
 
     %addpath([HOMEDIR, '/tests']);
 
