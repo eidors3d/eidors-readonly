@@ -35,11 +35,19 @@ dctr= sum( (cmdl.nodes - ctr).^2, 2);
 cmdl.gnd_node = c_idx(1);
 
 if ~isempty( fmdl)
-   if nargin ==3
-      c2f= calc_c2f_2d( fmdl, xvec, yvec);
-   elseif nargin ==4
-      c2f= calc_c2f_3d( fmdl, xvec, yvec, zvec);
-   end
+    if nargin == 3
+        % here we could incorporate z_depth
+        zvec = [ min(fmdl.nodes(:,3)) - 1; max(fmdl.nodes(:,3))+1 ];
+        tmp = mk_3d_grid(xvec,yvec,zvec);
+    elseif nargin == 4
+        tmp = cmdl;
+    end
+    c2f = mk_grid_c2f(fmdl,tmp); 
+%    if nargin ==3
+%       c2f= calc_c2f_2d( fmdl, xvec, yvec);
+%    elseif nargin ==4
+%       c2f= calc_c2f_3d( fmdl, xvec, yvec, zvec);
+%    end
 end
 
 cmdl.normalize_measurements = @eidors_default;
