@@ -1,3 +1,188 @@
+################# EIDORS 3.8 RELEASE PLANNING ################
+
+HIGH PRIORITY
+
+ - mex compilation problems on windors
+
+ - netgen 5.3+ support (also 4.9.13 with ubuntu)
+
+ - Physics => Parameters
+    - ensure jacobian_perturb works on physics parameters
+
+ - fwd_model.electrode(:).z_contact
+    - discuss change of name (surface impedance rather than contact impedance)
+      and units with interested parties
+      - z_contact units were changed from Ohm/m^2 (Ohm/m in 2d) to Ohm at SVN rev
+	4301 in eidors/solvers/forward/system_mat_fields.m where the z_contact
+        was distributed based on area and is now percentage of area so that a
+	change in electrode diameter does not affect the total impedance through
+        the electrode.
+    - rename z_contact to z_surface(?) and give warning if z_contact is used.
+
+ - Use Herve's NG interface as the default
+
+ - C2F FIXES
+    - tet2tet c2f
+    - test: Laplace prior with a 3D-2D grid setup gives pepper noise with prior_use_fwd_not_rec=1;
+    - clean up the whole c2f and parameter_mapping 
+       - fix tutorials
+       - handle complex non-linear parameter maps
+    - c2f - think about how to work on NOSER -AA
+       - what if we send fwd to the prior calculation?
+             (img.orig_fwd_model)
+          - provide some new options for abs solvers
+      - add a parameter_mapping interface
+    - check c2f processing in show_3d_slices
+
+ - colourbar - put some logic to allow labels like 1.5 as max
+    (instead of 1,2,3 etc)
+    - when max is 1.5 (or 3) then split into 1,2,3, not 1.5,3
+    - test it with the new matlab
+
+ - test with new matlab
+    - does unique work
+
+LOWER PRIORITY
+
+ - force all inv_model to have fwd_model and rec_model
+    - rewrite prior code to assume rec_model is available.
+
+ - all inverse solvers to do print data residual
+     - default not calc residual
+
+ - animate stimulation patterns: display_meas (and rename)
+
+ - bug in prior_covar UNIT_TEST
+     - the whole time_solver infrastructure needds to be properly tested
+
+ - On left_divide
+    - remove old parameters tol,pp,V)
+    - add options for solver type, tol, etc
+
+
+ - check for additional y-cut in show_3d_slices
+
+ - remove np fields from ng_mk_models
+    - add default np fields to the np functions
+
+ - ng models with point electrodes (in 3D - check Herve's code)
+
+ - experimental image_field in calc_colours (see cg_ards_recruitment_04)
+
+ - eidors_msg is too verbose. Example is: eidors_cache.m/cache_shorthand
+
+ - check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
+
+ - cmap_type = 'draeger' does draeger colours, but not the offset
+     in the colourbar. Add a centre_move option to eidors_colourbar
+
+ - Mods to show_slices to only show part of the slice
+
+ - Bug with 'trig' measurement patterns
+    - make an option to give the stim pattern used by RPI
+
+ - Nodal Jacobian bugs (example in 24 jan 2012 email)
+
+ - Test if Problems with HPF_Gaussian prior?
+
+ - print_convert => remove old info in help
+
+ - Deprecate jacobian.background.value ->
+ +            jacobian.background.elem_data (and new physics)
+
+ - clean up TODO in inv_solve_abs_GN
+    (specifically the coarse2fine handling
+      - cover whole region, etc)
+
+- in scale_for_disply, calculate ref_lev weighted by element size (if avail)
+
+- function inv_solve_abs_GN, hp2RtR= hp*RtR. Should be hp squared
+
+- I have a suggestion regarding the default values in the function
+     “mk_GREIT_model.m”. In line 349 “opt” is checked for the field
+   “noise_figure”. If it doesn’t exist, it is set as empty. However, in this
+   case the parameter “weight” must be set and must not be left empty. Otherwise
+   the call of “calc_GREIT_RM” will result in an error stating “not coded yet”
+   (line 50 in calc_GREIT_RM.m), since weight will not be specified (line 117 in
+   mk_GREIT_model.m). This error does not represent the real problem as it is
+   supposed handle non scalar “weight” parameter. In my case, it took some time
+   until I understood my real fault.
+
+   My suggestion is: In the “parse_options”-function: Check if both
+   opt.noise_figure AND weight are empty / non existing. If so, set
+   opt.noise_figure to the recommended level of NF=0.5. Peronally, I don’t have
+   a feeling for an appropriate NF, so a default value would help. In addition,
+   currently the error pops out after the call of “stim_targets”, so that it
+   takes a lot of time, until the call fails. Alternatively, the description of
+   the weight parameter could be changed to:
+
+   “weight - weighting matrix (weighting of noise vs signal). If empty,
+   options.noise_figure MUST be specified”
+
+ 
+
+- add num_elecs.m function
+- bug in ng_mk_gen_models with top/bottom square elecs
+    shape_str = ['solid top    = plane(0,0,  0;0,0, 1);\n' ...
+                 'solid bot    = plane(0,0,-10;0,0,-1);\n' ...
+                 'solid ob     = orthobrick(-3,-3,-99;3,3, 99);\n' ...
+                 'solid mainobj= top and bot and ob -maxh=0.5;\n'];
+    elec_pos = [ 0,0,0, 0,0,1;0,0,-10,0,0,-1];
+    elec_shape=[0.2,0.2,0.05]; elec_obj = {'top','bot'};
+    fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+
+- make inv_model.inv_solve.calc_solution_error = 0
+  default. Or fix for large solutions.
+
+- verify that elec_frac = [k ... in mk_grid_model creates conformal grid --??
+
+- put warning in mdl_slice_mesher when level doesn't cut the model
+    (currently this gives error: consider at line 110 when els = [])
+
+- fix mk_image so that it can handle a time series image
+
+- Update Draeger file reader software.
+
+
+
+TUTORIALS
+ - fix the example tutorial
+        EIDORS_basics/example_abs_GN_compare_3D.m
+
+ - fix colours tutorials eidors3d.sf.net/tutorial/data_structures/eidors_colours.shtml
+
+ - fix simulate_move2_ ... tutorials to use 2d netgen interface
+
+ - replace tutorial 151 with better absolute solver example
+
+ - fix jacobian_elem2nodes
+    - test behaviour for simple elec sensitivity models
+
+ - tutorial on mk_image including nodal images
+
+ - Add a tutorial to show how to do pairs of electrodes
+    for injection patterns
+
+ - update GREIT tutorials to give recommendations to make it pretty
+    - make new GREIT tutorial
+    - do this as part of a paper
+    - Make sure default GREIT is pretty
+
+ - create tutorial for  place_elec_on_surf
+
+
+DEFER TO 3.9
+
+ - create test infrastructure for old tutorials
+
+
+ - Full OEIT v1.1 support
+
+ - redo dm_distmeshxx - base it on dm_2d_pt_elecs
+ - update distesh to latest version
+ - fix and re-insert dm_geophys into tutorials
+
+#################
 - in scale_for_disply, calculate ref_lev weighted by element size (if avail)
 
 - function inv_solve_abs_GN, hp2RtR= hp*RtR. Should be hp squared
@@ -80,6 +265,8 @@
 - should eidors do introspection and ask solvers if they are absolute or diff?
    - should we get rid of imdl.reconst_type (replace by introspection)?
 
+
+- auto compilation of mex doesn't work on linux with mv problems
 
 - think about function specific verbose?
 
@@ -209,11 +396,11 @@
 
  - think about a move to some type of bugzilla version management.
 
- - fix print_convert
+ + fix print_convert
 
  - Test if Problems with HPF_Gaussian prior?
 
- - add a code to set_fields into tools
+ = add a code to set_fields into tools (won't do for now)
 
  - c2f - think about how to work on NOSER -AA
     - what if we send fwd to the prior calculation?
