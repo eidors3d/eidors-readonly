@@ -1,3 +1,5 @@
+- in scale_for_disply, calculate ref_lev weighted by element size (if avail)
+
 - function inv_solve_abs_GN, hp2RtR= hp*RtR. Should be hp squared
 
 - I have a suggestion regarding the default values in the function
@@ -49,7 +51,7 @@
 
 - Updatwe Draeger file reader software.
 
-############## April 27-29 Work ##############
+############## April 27-29, 2014 Work ##############
 - provide a helper function so that you can save and restore the state of
   eidors_cache enable/disable for functions -- this will allow functions to
   manipulate the cache prior to operations and safely restore state before
@@ -97,7 +99,7 @@
 
  - experimental image_field in calc_colours (see cg_ards_recruitment_04)
 
- - eidors_msg to verbose. Example is: eidors_cache.m/cache_shorthand
+ - eidors_msg is too verbose. Example is: eidors_cache.m/cache_shorthand
 
  - fwd_model.electrode(:).z_contact
     - discuss change of name (surface impedance rather than contact impedance)
