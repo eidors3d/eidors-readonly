@@ -365,7 +365,7 @@ for d = 1:3
             if i == d
                face_coord(:,i) = x+1;
             else
-                face_coord(:,i) = sum(bsxfun(@mtimes,diff(bsxfun(@lt, tmp(:,i), VEC{i}'),1,2),(1:SZ(i))),2);
+                face_coord(:,i) = sum(bsxfun(@times,diff(bsxfun(@lt, tmp(:,i), VEC{i}'),1,2),(1:SZ(i))),2);
                 rmv = rmv | face_coord(:,i) == 0;
             end
         end
@@ -1049,7 +1049,9 @@ yvec = [-1.6 -1:.2:1 1.6];
 zvec = 0:.25:2;
 rmdl = mk_grid_model([],xvec,yvec,zvec);
 
+try %R2008a doesn't support this
 profile -memory on;
+end
 profile clear
 profile on
 c2f_a = mk_grid_c2f(fmdl, rmdl);
@@ -1057,7 +1059,8 @@ profile off
 pa = profile('info');
 time = cell2mat({pa.FunctionTable.TotalTime}');
 [t,p] = max(time);
-mem = pa.FunctionTable(p).PeakMem;
+mem = 0;
+try, mem = pa.FunctionTable(p).PeakMem; end
 fprintf('Analytic: t=%f s, mem=%f MiB\n',t,mem/(1024^2));
 
 profile clear
@@ -1067,7 +1070,7 @@ profile off
 pb = profile('info');
 time = cell2mat({pb.FunctionTable.TotalTime}');
 [t,p] = max(time);
-mem = pb.FunctionTable(p).PeakMem;
+try, mem = pb.FunctionTable(p).PeakMem;end
 fprintf('Approximate: t=%f s, mem=%f MiB\n',t,mem/(1024^2));
 
 
