@@ -1253,7 +1253,7 @@ function opt = parse_options(imdl)
            prefix = '';
         end
         if pinv{i}
-           prefix = prefix + '_inv';
+           prefix = [prefix '_inv'];
         end
         switch(prefix)
           case ''
