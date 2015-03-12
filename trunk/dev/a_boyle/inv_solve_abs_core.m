@@ -278,6 +278,9 @@ data0.current_params = opt.meas_input;
 img0 = img;
 hp2RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
+if opt.verbose >= 5 % we only save the measurements at each iteration if we are being verbose
+  dvall = ones(size(data0.meas,1),opt.max_iterations+1)*NaN;
+end
 dxp = 0; % previous step's slope was... nothing
 if opt.verbose > 1
    fprintf('  iteration start up\n')
@@ -290,6 +293,10 @@ while 1
   % the measurement error dv
   [dv, img, opt] = update_dv(dv, img, data0, N, opt);
   de = update_de(de, img, img0, opt);
+  if opt.verbose >= 5
+    dvall(:,k+1) = dv;
+    show_meas_err(dvall, data0, k, N, W);
+  end
 
   % now find the residual, quit if we're done
   [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, opt);
@@ -349,8 +356,17 @@ if opt.return_working_variables
   img.inv_solve.hp2RtR = hp2RtR;
   img.inv_solve.dv = dv;
   img.inv_solve.de = de;
+  if opt.verbose >= 5
+    img.inv_solve.dvall = dvall;
+  end
 end
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
+
+function show_meas_err(dvall, data0, k, N, W)
+  figure;
+  subplot(311); bar(dvall); ylabel('dv');
+  subplot(312); bar(dvall(:,k+1)); ylabel('dv_k');
+  subplot(313); bar(N*dvall(:,k+1)); ylabel('N*dv_k');
 
 function img = init_elem_data(img, opt)
   if opt.verbose > 1
@@ -1334,7 +1350,6 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    V=opt.elem_fixed;
    N=size(hp2RtR,1)+1;
    hp2RtR(N*(V-1)+1) = 1; % set diagonals to 1 to avoid divide by zero
-
    % do the update step direction calculation
    dx = feval(opt.update_func, J, W, hp2RtR, dv, de);
 
