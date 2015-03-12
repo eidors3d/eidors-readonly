@@ -148,7 +148,7 @@ function [stim, vsel] = opt_flatten1(stim, verbose, nst, nvt)
 function [stim, vsel] = opt_flatten2(stim, verbose, nst, nvt)
   if isstruct(stim) && isfield(stim(1),'stim_pattern') && isfield(stim(1),'meas_pattern')
     n_elec = size(stim(1).stim_pattern,1);
-    stim_flat = flatten_stim(stim, nst, nvt);
+    stim_flat = stim_meas_list(stim);
   elseif  ismatrix(stim) && size(stim,2)==4
     n_elec = max(max(stim(:,1:4))); % guess: must be the largest electrode # used?
     stim_flat = zeros(nvt, 4);
@@ -201,33 +201,6 @@ function [stim, vsel] = opt_flatten2(stim, verbose, nst, nvt)
           m= morigin; m(jP==idx(k))=1;
           vsel(:,k)= m;
       end
-  end
-
-% take in a stim/meas struct
-% return a matrix of stim/meas pairs, per row with drive current 'i' and measurement gain 'g' calculated
-% [ +s -s +m -m i g ]
-function stim_flat = flatten_stim(stim, nst, nvt)
-  stim_flat = zeros(nvt, 6);
-  idx = 1;
-  % TODO calculate 'gain' when it matched (m+ == - m-)
-  % TODO calculate 'gain' when it is unmatched (m+ ~= m-)
-  % TODO calculate 'current' when it matched (s+ == - s-)
-  % TODO calculate 'current' when it is unmatched (s+ ~= s-)
-  for i = 1:nst
-      nmp= size(stim(i).meas_pattern, 1); % number of measurement patterns for this stim pair
-      [sp, jnk, spv]= find(stim(i).stim_pattern>0);
-      [sn, jnk, snv]= find(stim(i).stim_pattern<0);
-      [jnk, mp, mpv]= find(stim(i).meas_pattern>0); mp = mp(jnk);
-      [jnk, mn, mnv]= find(stim(i).meas_pattern<0); mn = mn(jnk);
-      % expand s+/s- to match the size of m+/m-
-      sp  = zeros(nmp,1)+sp;
-      sn  = zeros(nmp,1)+sn;
-      spv = zeros(nmp,1)+spv;
-      snv = zeros(nmp,1)+snv;
-      stim_flat(idx:idx+nmp-1,:) = ...
-        [ sp sn ... % stim pairs
-            mp mn spv mpv];  % meas pairs
-      idx = idx + nmp;
   end
 
 % Alistair's approach was to manipulate the struct itself... its probably not
