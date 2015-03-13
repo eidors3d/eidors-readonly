@@ -105,7 +105,11 @@ t = -nodedist(edges(idx,1))./dist;
 nodes = mdl.nodes(edges(idx,1),:) + ...
     repmat(t,1,3).*(mdl.nodes(edges(idx,2),:) - mdl.nodes(edges(idx,1),:));
 % nn indexes the just-created nodes, els indexes elements
-[nn els] = find(edge2elem(idx,:));
+if any(idx)
+    [nn els] = find(edge2elem(idx,:));
+else
+    nn = []; els = [];
+end
 els_edge = els;
 
 electrode_node = e_edges(idx);
