@@ -47,6 +47,7 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 
 % if input is 'UNIT_TEST', run tests
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'), do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'PROFILE'), do_small_test; return; end
 if nargin < 3
     opt = struct();
 end
@@ -649,7 +650,7 @@ function progmsg(num, erase)
     
 %-------------------------------------------------------------------------%
 % Perfom unit tests
-function do_unit_test    
+function do_unit_test
     do_realistic_test;
     figure
     do_case_tests;
@@ -1041,37 +1042,50 @@ function do_case_tests
         end
     end
     eidors_msg('log_level',ll);
-    
+
+function do_small_test
+   fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
+   xvec = [-1.5:1:1.5];
+   yvec = [-1.6:1.6:1.6];
+   zvec = 0:1:2;
+   rmdl = mk_grid_model([],xvec,yvec,zvec);
+   profile clear
+   profile on
+   eidors_cache off mk_grid_c2f
+   tic
+   c2f_a = mk_grid_c2f(fmdl, rmdl);
+   toc
+   profile off
+   p = profile('info');
+   profview(0,p);
+   fname = sprintf('mk_grid_c2f_profile_%s_%s_%s.mat',...
+       computer('arch'),version('-release'),datestr(now,'yyyymmdd-HHMMSS'));
+   tmp = tempname;
+   diary(tmp);
+   ver('Matlab');
+   diary off
+   str = fileread(tmp);
+   delete(tmp);
+   save(fname,'p','str');
+   eidors_msg('Profile file saved under %s',[cd filesep fname],0);
+   eidors_msg('Total time: %f s', max(cell2mat({p.FunctionTable.TotalTime})),0);
+   
+   
 function do_realistic_test
 fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
 xvec = [-1.5 -.5:.1:.5 1.5];
 yvec = [-1.6 -1:.2:1 1.6];
 zvec = 0:.25:2;
 rmdl = mk_grid_model([],xvec,yvec,zvec);
-
-try %R2008a doesn't support this
-profile -memory on;
-end
-profile clear
-profile on
+tic
 c2f_a = mk_grid_c2f(fmdl, rmdl);
-profile off
-pa = profile('info');
-time = cell2mat({pa.FunctionTable.TotalTime}');
-[t,p] = max(time);
-mem = 0;
-try, mem = pa.FunctionTable(p).PeakMem; end
-fprintf('Analytic: t=%f s, mem=%f MiB\n',t,mem/(1024^2));
+t = toc;
+fprintf('Analytic: t=%f s\n',t);
 
-profile clear
-profile on
+tic
 c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);
-profile off
-pb = profile('info');
-time = cell2mat({pb.FunctionTable.TotalTime}');
-[t,p] = max(time);
-try, mem = pb.FunctionTable(p).PeakMem;end
-fprintf('Approximate: t=%f s, mem=%f MiB\n',t,mem/(1024^2));
+t = toc;
+fprintf('Approximate: t=%f s\n',t);
 
 
 tetvol = get_elem_volume(fmdl);
@@ -1101,7 +1115,7 @@ set(h,'EdgeColor','b','LineWidth',2);
 hold off
 
 function do_edge2edge_timing_test
-    fmdl= ng_mk_cyl_models([2,2,.4],[16,1],[.1,0,.025]);
+    fmdl= ng_mk_cyl_models([2,2],[8,1],[.15,0,.05]);
     xvec = linspace(-2,2,33);
     yvec = linspace(-2,2,33);
     zvec = 0:.5:2;
