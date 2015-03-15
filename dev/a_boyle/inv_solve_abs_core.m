@@ -341,8 +341,9 @@ if isfield(inv_model, 'rec_model')
   img.fwd_model = inv_model.rec_model;
 end
 if opt.verbose > 1
-   fprintf('  %d fwd_solves required for this solution in %d iterations\n', ...
-           opt.fwd_solutions, k);
+   if k==2; itrs=''; else itrs='s'; end
+   fprintf('  %d fwd_solves required for this solution in %d iteration%s\n', ...
+           opt.fwd_solutions, k-1, itrs);
 end
 % convert data for output
 img = map_img(img, opt.elem_output);
