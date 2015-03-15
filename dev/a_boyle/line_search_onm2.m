@@ -133,7 +133,7 @@ meas_err1 = meas_err;
 if meas_err > min(mlist)
   [meas_err,mi]= min(mlist);
   alpha= perturb(mi);
-  xx = x + alpha*dx;
+  img.elem_data = x + alpha*dx;
   if (length(goodi) > 2) && (opt.verbose > 1)
     fprintf('      did not like our step selection - choose one of perturb values\n');
   end
