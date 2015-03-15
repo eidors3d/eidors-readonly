@@ -80,13 +80,11 @@ end
 %-------------------------------------------------------------------------%
 % The main function
 function [rmdl, c2f] = do_voxel_volume(fmdl,opt)
-%     opt.xvec = opt.xvec(11:12);
-%     opt.yvec = opt.yvec(7:8);
-%     opt.zvec = opt.zvec(1:2);
+    
     rmdl = mk_grid_model([],opt.xvec,opt.yvec,opt.zvec);
-%     fmdl.elems = fmdl.elems(6589,:);
+%     fmdl.elems = fmdl.elems( 210714,:);
     [c2f, m]  = mk_grid_c2f(fmdl, rmdl);
-    inside = any(c2f);
+    inside = any(c2f,1);
 
     c2f(:,~inside) = [];
     rm = ~logical(rmdl.coarse2fine*inside');
