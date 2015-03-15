@@ -276,7 +276,7 @@ data0.current_params = opt.meas_input;
 
 % now get on with
 img0 = img;
-hp2RtR = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
+hp2RtR = 0; alpha = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
 if opt.verbose >= 5 % we only save the measurements at each iteration if we are being verbose
   dvall = ones(size(data0.meas,1),opt.max_iterations+1)*NaN;
@@ -301,6 +301,9 @@ while 1
   % now find the residual, quit if we're done
   [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, opt);
   if stop
+     if stop == -1 % bad step: residual increased
+        img.elem_data = img.elem_data - alpha * sx; % undo the last step
+     end
      break;
   end
   if opt.verbose > 1
@@ -476,24 +479,27 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, o
      end
   end
 
+  % TODO return 'measurement residual' & 'roughness' for progress plot, as well
   % evaluate stopping criteria
-  if k > opt.max_iterations
+  if r_k > r_km1 % bad step
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d (max iterations)\n',k);
+        fprintf('  terminated at iteration %d (bad step, returning previous iteration''s result)\n',k-1);
+     end
+     stop = -1;
+  elseif k > opt.max_iterations
+     if opt.verbose > 1
+        fprintf('  terminated at iteration %d (max iterations)\n',k-1);
      end
      stop = 1;
-  end
-  % TODO return 'measurement residual' & 'roughness' for progress plot, as well
-  if r_k < opt.tol + opt.ntol
+  elseif r_k < opt.tol + opt.ntol
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d\n',k);
+        fprintf('  terminated at iteration %d\n',k-1);
         fprintf('    residual tolerance (%0.3g) achieved\n', opt.tol + opt.ntol);
      end
      stop = 1;
-  end
-  if (k > opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
+  elseif (k > opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d (iterations not improving)\n', k);
+        fprintf('  terminated at iteration %d (iterations not improving)\n', k-1);
         fprintf('    residual slope tolerance (%0.3g) exceeded\n', opt.dtol + 2*opt.ntol);
      end
      stop = 1;
