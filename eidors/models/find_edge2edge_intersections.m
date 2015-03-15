@@ -1,7 +1,7 @@
 function [pts,FE2CE,FE2pts,CE2pts] = find_edge2edge_intersections(FE,FN,CE,CN, epsilon)
 %FIND_EDGE2EDGE_INTERSECTIONS intersections between edges of two models
 % Edges are considered intersecting if the minimum distance between them is
-% less than epsilon. 
+% less than epsilon and the closest point is not an endpoint.
 % [pts,FE2CE,FE2pts,CE2pts] = find_edge2edge_intersections(FE,FN,CE,CN, epsilon)
 % Inputs:
 %   FE      - Fine model edges [Nx2] as indices into FN
@@ -153,7 +153,6 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
         end
 %         D = sqrt(D);
 %         D(JNK(:,v)) = Inf;
-        
         IN(:,v) = ((mua>0) + (mua<1) + (mub>0) + (mub<1) + (D<=epsilon)) == 5;
         if any(IN(:,v))
             intpts = [intpts; pa(IN(:,v),:)];

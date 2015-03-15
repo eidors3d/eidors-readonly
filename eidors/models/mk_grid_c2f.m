@@ -12,15 +12,18 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %   FMDL - an EIDORS (tet-based) forward model
 %   RMDL - a grid model, as returned by MK_GRID_MODEL
 %   OPT  - an option structure with the following fields and defaults:
+%      .do_not_scale  - set to true to prevent scaling the models to unit
+%                       cube before any calculations, including thresholds.
+%                       Default: false
 %      .tol_node2tet  - tolerance for determinant <= 0 in testing for
 %                       points inside tets. Default: eps
 %      .tol_edge2edge - maximum distance between "intersecting" edges
-%                       Default: sqrt(3)*eps(a), where a is
+%                       Default: 2*sqrt(3)*eps(a), where a is
 %                       min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))
 %      .tol_edge2tri  - minimum value of a barycentric coordinate to 
 %                       decide a point is lying inside a triangle and not
 %                       on its edge. Default: eps
-%              
+%
 % [C2F M] = MK_GRID_C2F(...) also returns a struct with useful fields
 % charactrising the vox model.
 %
@@ -51,6 +54,9 @@ if ischar(fmdl) && strcmp(fmdl,'PROFILE'), do_small_test; return; end
 if nargin < 3
     opt = struct();
 end
+
+[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt);
+
 opt = parse_opts(fmdl,rmdl, opt);
 
 copt.cache_obj = {fmdl.nodes,fmdl.elems,rmdl.nodes,opt};
@@ -108,7 +114,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
     logmsg(' Find vox contained in tet... Found %d\n',nnz(vox_in_tet));
     
     % tet contained in vox
-    tet_in_vox = double(fmdl.node2elem') * fnode2vox;
+    tet_in_vox = (double(fmdl.node2elem') * fnode2vox) == 4;
     logmsg(' Find tets contained in vox... Found %d\n',nnz(tet_in_vox));
     
     
@@ -177,9 +183,17 @@ function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
             end
             if ok, continue, end % otherwise convhulln will throw an error
             try
-                % supress precision warnings, the volume is so small, it
-                % shouldn't matter.
-                [K, V(last_v)] = convhulln(pts,{'Qt Pp'}); 
+                % move points to origin (helps for small elements at
+                % large coordinates
+                ctr = mean(pts);
+                pts = bsxfun(@minus,pts,ctr);
+                scale = max(abs(pts(:)));
+                % scale largest coordinate to 1 (helps with precision)
+                pts = pts ./ scale;
+                % force thourugh search for initinal simplex and 
+                % supress precision warnings
+                [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
+                V(last_v) = V(last_v) * scale^3; % undo scaling
             catch err
                 ok = false;
                 switch err.identifier
@@ -203,11 +217,13 @@ function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
                         hold on
                         h = show_fem(tet);
                         set(h,'EdgeColor','b')
+                        pts = bsxfun(@plus,pts*scale,ctr);
                         plot3(pts(:,1),pts(:,2),pts(:,3),'o');
                         hold off
                         axis auto
                         keyboard
                     else
+                        fprintf('\n');
                         eidors_msg(['convhulln has thrown an error. ' ...
                             'Enable eidors_debug on mk_grid_c2f and re-run to see a debug plot'],0);
                         rethrow(err);
@@ -228,7 +244,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
 
     % add tets contained in vox
 
-    c2f = c2f + (tet_in_vox==4);
+    c2f = c2f + tet_in_vox;
     
     
 
@@ -595,6 +611,21 @@ function test_faces(rmdl, faces, opt)
     show_fem(img,[0 0 1]);
 
 %-------------------------------------------------------------------------%
+% Center scale models
+function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
+    ctr = mean([min(rmdl.nodes);max(rmdl.nodes)]);
+    rmdl.nodes = bsxfun(@minus,rmdl.nodes,ctr);
+    fmdl.nodes = bsxfun(@minus,fmdl.nodes,ctr);
+    if isfield(opt,'do_not_scale') && opt.do_not_scale    
+        return
+    end
+    maxnode = min( max(abs(rmdl.nodes(:))), max(abs(fmdl.nodes(:))));
+    scale = 1/maxnode;
+    rmdl.nodes = scale*rmdl.nodes;
+    fmdl.nodes = scale*fmdl.nodes;
+    eidors_msg('models scaled by %g', scale,2);
+    
+%-------------------------------------------------------------------------%
 % Parse option struct
  function opt = parse_opts(fmdl,rmdl, opt)
 
@@ -617,17 +648,17 @@ function test_faces(rmdl, faces, opt)
     opt.nTet = size(fmdl.elems,1);
     
     if ~isfield(opt, 'tol_node2tet');
-        opt.tol_node2tet = eps;
+        opt.tol_node2tet = eps; % * max(rmdl_rng,fmdl_rng)^3;
     end
     if ~isfield(opt, 'tol_edge2edge')
-        opt.tol_edge2edge = sqrt(3)*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
+        opt.tol_edge2edge = 2*sqrt(3)*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
     end
     if ~isfield(opt, 'tol_edge2tri')
         opt.tol_edge2tri = eps; %1e-10
     end
     eidors_msg('@@@ node2tet  tolerance = %g', opt.tol_node2tet,2);
     eidors_msg('@@@ edge2edge tolerance = %g', opt.tol_edge2edge,2);
-    eidors_msg('@@@ edge2tri  tolerance = %g',opt.tol_edge2tri,2);
+    eidors_msg('@@@ edge2tri  tolerance = %g', opt.tol_edge2tri,2);
 
 %-------------------------------------------------------------------------%
 % fprintf wrapper to use eidors log_level
