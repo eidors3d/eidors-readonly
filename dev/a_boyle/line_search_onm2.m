@@ -93,13 +93,14 @@ goodi = find((~isnan(mlist)) & (~isinf(mlist)));
 alpha=perturb(end);
 meas_err = +Inf; % make sure we grab the min(mlist) if we're not doing a polyfit
 if length(goodi) > 2
-  % Select the best fitting step
-  pfx = log10(perturb(goodi));
-  pfx(isinf(pfx)) = -100; % log10(0) = -Inf --> -1e200 so that it's finit
+  % Select the best fitting step, we scale and
+  p_rng = range(perturb(goodi)); % p_min = 0
+  pfx = log10(perturb(goodi)/p_rng);
+  pfx(1) = -100; % log10(0) = -Inf --> -1e100 so that it's finite
   pf= polyfit(pfx, mlist(goodi), length(goodi)-2);
   % search for the function minima in the range perturb(2:end)
   %   pf(1)*log10(x).^2+pf(2)*log10(x)+pf(3);
-  FF = @(pf, x) polyval(pf, log10(x));
+  FF = @(pf, x) polyval(pf, log10(x/p_rng));
   alpha = fminbnd(@(x) FF(pf, x), perturb(min(goodi)), perturb(end));
   % now check how we did
   img.elem_data = x + alpha*dx;
