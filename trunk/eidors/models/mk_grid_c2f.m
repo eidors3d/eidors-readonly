@@ -23,6 +23,13 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %      .tol_edge2tri  - minimum value of a barycentric coordinate to 
 %                       decide a point is lying inside a triangle and not
 %                       on its edge. Default: eps
+%      .save_memory   - modifies function behavior to sacrifice time to
+%                       decrease memory footprint, useful for large
+%                       problems. Must be an integer between 0 and 3
+%                          0  -  calculate all at once (default)
+%                          1  -  calculate one xy voxel plane at a time
+%                          2  -  calculate one y voxel row at a time
+%                          3  -  calculate each voxel separately
 %
 % [C2F M] = MK_GRID_C2F(...) also returns a struct with useful fields
 % charactrising the vox model.
@@ -59,7 +66,11 @@ end
 
 opt = parse_opts(fmdl,rmdl, opt);
 
-copt.cache_obj = {fmdl.nodes,fmdl.elems,rmdl.nodes,opt};
+copt.cache_obj = {fmdl.nodes,
+                  fmdl.elems,
+                  rmdl.nodes,
+                  rmfield(opt,'save_memory')};
+               
 copt.fstr = 'mk_grid_c2f';
 
 [c2f, m] = eidors_cache(@do_mk_grid_c2f,{fmdl,rmdl,opt},copt);
@@ -67,18 +78,98 @@ copt.fstr = 'mk_grid_c2f';
 
 
 
-function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
-    DEBUG = eidors_debug('query','mk_grid_c2f');
-    
+function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
     eidors_msg('@@@',2);
     
+    logmsg(' Prepare tet model... ');
+    fmdl0 = prepare_fmdl(fmdl0);
+    logmsg('Done\n');
+    
+    if opt0.save_memory == 0
+       [c2f, m] = separable_calculations(fmdl0,rmdl0,opt0);
+    else % save_memory > 0
+       logmsg(' Saving memory mode level %d\n',opt0.save_memory);
+       logmsg(' Progress: ');
+       progmsg(0,false);
+       progress = 0;
+       opt = opt0;
+       c2f = sparse(opt0.nTet,opt0.nVox);
+       m = prepare_vox_mdl(rmdl0,opt0);
+       for z = 1:opt0.Zsz
+          opt.Zsz = 1;
+          opt.zvec = opt0.zvec(z:z+1);
+          opt.xplane = opt0.xplane(z,:);
+          opt.yplane = opt0.yplane(z,:);
+          relem_idx = false(opt0.Xsz*opt0.Ysz*opt0.Zsz,1);
+          relem_idx((z-1)*opt0.Xsz*opt0.Ysz + (1:opt0.Xsz*opt0.Ysz)) = true;
+          if opt0.save_memory > 1
+             for y = 1:opt0.Ysz
+                opt.Ysz = 1;
+                opt.yvec = opt0.yvec(y:y+1);
+                opt.zplane = opt0.zplane(y,:);
+                opt.xplane = opt0.xplane(z,y);
+                opt.zstep = opt.ystep*(opt.Ysz+1);
+                relem_idx_y = false(opt0.Xsz*opt0.Ysz,1);
+                relem_idx_y((y-1)*opt0.Xsz + (1:opt0.Xsz)) = true;
+                relem_idx_y = relem_idx & repmat(relem_idx_y,opt0.Zsz,1);
+                if opt0.save_memory > 2
+                   for x = 1:opt0.Xsz
+                      opt.Xsz = 1;
+                      opt.xvec = opt0.xvec(x:x+1);
+                      opt.yplane = opt0.yplane(z,x);
+                      opt.zplane = opt0.zplane(y,x);
+                      opt.ystep = opt.xstep*opt.Xsz+1;
+                      opt.zstep = opt.ystep*(opt.Ysz+1);
+                      relem_idx_x = false(opt0.Xsz,1);
+                      relem_idx_x(x) = true;
+                      relem_idx_x = relem_idx_y & repmat(relem_idx_x,opt0.Ysz*opt0.Zsz,1);
+                      [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_x);
+                      eidors_msg('log_level',eidors_msg('log_level')-1);
+                      tmp = separable_calculations(fmdl,rmdl,opt);
+                      eidors_msg('log_level',eidors_msg('log_level')+1);
+                      c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x,opt,opt0);
+                      progress = progress + 1 / opt0.nVox;
+                      progmsg(progress);
+                   end
+                else
+                   [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_y);
+                   eidors_msg('log_level',eidors_msg('log_level')-1);
+                   tmp = separable_calculations(fmdl,rmdl,opt);
+                   eidors_msg('log_level',eidors_msg('log_level')+1);
+                   c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y,opt,opt0);
+                   progress = progress + 1 / (opt0.Xsz*opt0.Ysz);
+                   progmsg(progress);
+                end
+             end
+
+          else
+             [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx);
+             eidors_msg('log_level',eidors_msg('log_level')-1);
+             tmp = separable_calculations(fmdl,rmdl,opt);
+             eidors_msg('log_level',eidors_msg('log_level')+1);
+             c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0);
+             progress = progress + 1 / opt0.Zsz;
+             progmsg(progress);
+          end
+          
+          
+       end
+       logmsg('\b\b\b\bDone\n');
+    end
+    
+function c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0)
+    F = repmat(find(felem_idx), 1, opt.nVox);
+    R = repmat(find(relem_idx)', opt.nTet, 1);
+    c2f = c2f + sparse(F, R, tmp, opt0.nTet, opt0.nVox);
+    
+function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
+    DEBUG = eidors_debug('query','mk_grid_c2f');
+   
     logmsg(' Prepare vox model... ');
     m = prepare_vox_mdl(rmdl,opt);
     logmsg('Done\n');
     
-    logmsg(' Prepare tet model... ');
-    fmdl = prepare_fmdl(fmdl);
-    logmsg('Done\n');
+    try
     
     % tet edge v. vox face
     logmsg(' Find tet_edge2vox_face intersections... ')
@@ -125,6 +216,16 @@ function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
 %                  | m.vox2edge * (tedge2vedge>0)'* fmdl.edge2elem;
     logmsg('Found %d\n',nnz(vox2intTet));
     
+    catch err
+       if (strcmp(err.identifier,'MATLAB:nomem'))
+          msg = sprintf('%s', ...
+             'Matlab ran out of memory. Consider setting opt.save_memory > 0.\n', ...
+             'See HELP MK_GRID_C2F for details.');
+          error('EIDORS:mk_grid_c2f:nomem',msg);
+       else
+          rethrow(err);
+       end
+    end
     
     logmsg(' Calculate intersection volumes... ');
     % sparse logical multiplication doesn't exist
@@ -246,7 +347,54 @@ function [c2f, m]= do_mk_grid_c2f(fmdl,rmdl,opt)
 
     c2f = c2f + tet_in_vox;
     
-    
+function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
+   
+   fmdl = fmdl0;
+   rmdl = rmdl0;
+   
+   opt.nVox = opt.Xsz*opt.Ysz;
+   idx = rmdl0.coarse2fine * relem_idx > 0;
+   rmdl.elems = rmdl0.elems(idx,:);
+   [node_idx, m,n] = unique(rmdl.elems(:));
+   rmdl.elems = reshape(n,size(rmdl.elems));
+   rmdl.nodes = rmdl0.nodes(node_idx,:);
+   
+   fnode_above = fmdl0.nodes(:,3) > opt.zvec(2);
+   felem_above = all(fnode_above(fmdl0.elems),2);
+   
+   fnode_below = fmdl0.nodes(:,3) < opt.zvec(1);
+   felem_below = all(fnode_above(fmdl0.elems),2);
+   
+   felem_idx   = ~(felem_below | felem_above);
+   fmdl.elems = fmdl0.elems(felem_idx,:);
+   fnode_idx = unique(fmdl.elems(:));
+   fnode_idx_map = zeros(size(fmdl0.nodes,1),1);
+   fnode_idx_map(fnode_idx) = 1:length(fnode_idx);
+   fmdl.elems = fnode_idx_map(fmdl.elems);
+   fmdl.edges = fnode_idx_map(fmdl0.edges);
+   fmdl.nodes = fmdl0.nodes(fnode_idx,:);
+   fmdl.node2elem = fmdl0.node2elem(fnode_idx,felem_idx);
+   
+   
+   fface_idx = sum(fmdl0.elem2face(felem_idx,:))>0;
+   fmdl.elem2face = fmdl0.elem2face(felem_idx,fface_idx);
+   felem_idx_map = felem_idx;
+   felem_idx_map(felem_idx) = 1:nnz(felem_idx);
+   felem_idx_map = [0; felem_idx_map];
+   fmdl.face2elem = fmdl0.face2elem(fface_idx,:);
+   fmdl.face2elem = felem_idx_map(fmdl.face2elem + 1);
+   fmdl.normals = fmdl0.normals(fface_idx,:);
+   fmdl.faces = fmdl0.faces(fface_idx,:);
+   fmdl.faces = fnode_idx_map(fmdl.faces);
+   
+   fedge_idx = unique(fmdl0.elem2edge(felem_idx,:));
+   fedge_idx_map = zeros(size(fmdl0.edges,1),1);
+   fedge_idx_map(fedge_idx) = 1:length(fedge_idx);
+   fmdl.elem2edge = fedge_idx_map(fmdl0.elem2edge(felem_idx,:));
+   fmdl.edge2elem = fmdl0.edge2elem(fedge_idx,felem_idx);
+   fmdl.edges = fmdl.edges(fedge_idx,:);
+   
+   opt.nTet = size(fmdl.elems,1);
 
 %-------------------------------------------------------------------------%
 % Prepare matrices for the voxel model
@@ -656,6 +804,9 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
     if ~isfield(opt, 'tol_edge2tri')
         opt.tol_edge2tri = eps; %1e-10
     end
+    if ~isfield(opt, 'save_memory')
+       opt.save_memory = 0;
+    end
     eidors_msg('@@@ node2tet  tolerance = %g', opt.tol_node2tet,2);
     eidors_msg('@@@ edge2edge tolerance = %g', opt.tol_edge2edge,2);
     eidors_msg('@@@ edge2tri  tolerance = %g', opt.tol_edge2tri,2);
@@ -682,6 +833,8 @@ function progmsg(num, erase)
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
+    do_small_test;
+    return
     do_realistic_test;
     figure
     do_case_tests;
@@ -1077,34 +1230,41 @@ function do_case_tests
 function do_small_test
    fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
    xvec = [-1.5:1:1.5];
-   yvec = [-1.6:1.6:1.6];
+   yvec = [-1.6:.8:1.6];
    zvec = 0:1:2;
    rmdl = mk_grid_model([],xvec,yvec,zvec);
-   profile clear
-   profile on
-   eidors_cache off mk_grid_c2f
+%    profile clear
+%    profile on
+   eidors_cache on mk_grid_c2f
    tic
    c2f_a = mk_grid_c2f(fmdl, rmdl);
    toc
-   profile off
-   p = profile('info');
-   profview(0,p);
-   fname = sprintf('mk_grid_c2f_profile_%s_%s_%s.mat',...
-       computer('arch'),version('-release'),datestr(now,'yyyymmdd-HHMMSS'));
-   tmp = tempname;
-   diary(tmp);
-   ver('Matlab');
-   diary off
-   str = fileread(tmp);
-   delete(tmp);
-   save(fname,'p','str');
-   eidors_msg('Profile file saved under %s',[cd filesep fname],0);
-   eidors_msg('Total time: %f s', max(cell2mat({p.FunctionTable.TotalTime})),0);
+   eidors_cache off mk_grid_c2f
+   tic
+   opt.save_memory = 3;
+   c2f_b = mk_grid_c2f(fmdl, rmdl, opt);
+   toc
+   size(c2f_a)
+   assert(any(c2f_a(:) ~= c2f_b(:)) == 0);
+%    profile off
+%    p = profile('info');
+%    profview(0,p);
+%    fname = sprintf('mk_grid_c2f_profile_%s_%s_%s.mat',...
+%        computer('arch'),version('-release'),datestr(now,'yyyymmdd-HHMMSS'));
+%    tmp = tempname;
+%    diary(tmp);
+%    ver('Matlab');
+%    diary off
+%    str = fileread(tmp);
+%    delete(tmp);
+%    save(fname,'p','str');
+%    eidors_msg('Profile file saved under %s',[cd filesep fname],0);
+%    eidors_msg('Total time: %f s', max(cell2mat({p.FunctionTable.TotalTime})),0);
    
    
 function do_realistic_test
 fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
-xvec = [-1.5 -.5:.1:.5 1.5];
+xvec = [-1.5 -.5:.2:.5 1.5];
 yvec = [-1.6 -1:.2:1 1.6];
 zvec = 0:.25:2;
 rmdl = mk_grid_model([],xvec,yvec,zvec);
