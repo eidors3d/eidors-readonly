@@ -81,19 +81,26 @@ copt.fstr = 'mk_grid_c2f';
 function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
     eidors_msg('@@@',2);
     
+    m = [];
+    c2f = sparse(opt0.nTet,opt0.nVox);
+    
     logmsg(' Prepare tet model... ');
     fmdl0 = prepare_fmdl(fmdl0);
     logmsg('Done\n');
     
     if opt0.save_memory == 0
-       [c2f, m] = separable_calculations(fmdl0,rmdl0,opt0);
+       relem_idx = ones(opt0.nVox,1);
+       [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt0,relem_idx);
+       if any(felem_idx)
+          [tmp, m] = separable_calculations(fmdl,rmdl0,opt);
+          c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0);
+       end
     else % save_memory > 0
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
        logmsg(' Progress: ');
        progmsg(0,false);
        progress = 0;
        opt = opt0;
-       c2f = sparse(opt0.nTet,opt0.nVox);
        m = prepare_vox_mdl(rmdl0,opt0);
        for z = 1:opt0.Zsz
           opt.Zsz = 1;
@@ -124,19 +131,23 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                       relem_idx_x(x) = true;
                       relem_idx_x = relem_idx_y & repmat(relem_idx_x,opt0.Ysz*opt0.Zsz,1);
                       [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_x);
-                      eidors_msg('log_level',eidors_msg('log_level')-1);
-                      tmp = separable_calculations(fmdl,rmdl,opt);
-                      eidors_msg('log_level',eidors_msg('log_level')+1);
-                      c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x,opt,opt0);
+                      if any(felem_idx)
+                         eidors_msg('log_level',eidors_msg('log_level')-1);
+                         tmp = separable_calculations(fmdl,rmdl,opt);
+                         eidors_msg('log_level',eidors_msg('log_level')+1);
+                         c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x,opt,opt0);
+                      end
                       progress = progress + 1 / opt0.nVox;
                       progmsg(progress);
                    end
                 else
                    [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_y);
-                   eidors_msg('log_level',eidors_msg('log_level')-1);
-                   tmp = separable_calculations(fmdl,rmdl,opt);
-                   eidors_msg('log_level',eidors_msg('log_level')+1);
-                   c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y,opt,opt0);
+                   if any(felem_idx)
+                      eidors_msg('log_level',eidors_msg('log_level')-1);
+                      tmp = separable_calculations(fmdl,rmdl,opt);
+                      eidors_msg('log_level',eidors_msg('log_level')+1);
+                      c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y,opt,opt0);
+                   end
                    progress = progress + 1 / (opt0.Xsz*opt0.Ysz);
                    progmsg(progress);
                 end
@@ -144,10 +155,12 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
 
           else
              [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx);
-             eidors_msg('log_level',eidors_msg('log_level')-1);
-             tmp = separable_calculations(fmdl,rmdl,opt);
-             eidors_msg('log_level',eidors_msg('log_level')+1);
-             c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0);
+             if any(felem_idx)
+                eidors_msg('log_level',eidors_msg('log_level')-1);
+                tmp = separable_calculations(fmdl,rmdl,opt);
+                eidors_msg('log_level',eidors_msg('log_level')+1);
+                c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0);
+             end
              progress = progress + 1 / opt0.Zsz;
              progmsg(progress);
           end
@@ -265,8 +278,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                     rmdl.nodes(vox_nodes(:,t),:)];
             last_v = last_v + 1;
             ok = false;
-            if size(pts,1) == 1, continue, end
-            if size(pts,1) == 2 % test if edge lies on the plane of the vox
+            if size(pts,1) < 4 % test if edge lies on the plane of the vox
                 % check for edges along the x y or z axis
                 % this includes coplanar faces
                 E = fmdl.edges(fmdl.elem2edge(tet_todo(t),:),:);
@@ -279,9 +291,6 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 ok = any(D(:) == 0); 
             end 
             
-            if size(pts,1) == 3
-                 ok = any(sum(abs(fmdl.normals(fmdl.elem2face(tet_todo(t),:),:))==1,2));
-            end
             if ok, continue, end % otherwise convhulln will throw an error
             try
                 % move points to origin (helps for small elements at
@@ -299,10 +308,20 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 ok = false;
                 switch err.identifier
                     case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
-                        % check if any of the faces of the tet is along the xy,
-                        % xz or yz plane
-                        % This test has 100% sensitivity but lower specificity
-                        ok = any(sum(abs(fmdl.normals(fmdl.elem2face(tet_todo(t),:),:))==1,2));
+                        % check for edges along the x y or z axis
+                        % this includes coplanar faces
+                        E = fmdl.edges(fmdl.elem2edge(tet_todo(t),:),:);
+                        P1 = fmdl.nodes(E(:,1),:);
+                        P2 = fmdl.nodes(E(:,2),:);
+                        % this test is sensitive, but not specific
+                        % it should also check if both pts come from the same edge and
+                        % that edge fullfils the condition
+                        D = P1-P2;
+                        ok = any(abs(D) < eps);
+                        % edge-edge intersections often appear to also
+                        % cross faces, there doesn't seem to be a good
+                        % specific way to catch that
+                        ok = ok | size(unique(pts,'rows'),1) < 4;
                 end
                 if ~ok
                     if DEBUG || eidors_debug('query','mk_grid_c2f:convhulln');
@@ -352,18 +371,18 @@ function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
    fmdl = fmdl0;
    rmdl = rmdl0;
    
-   opt.nVox = opt.Xsz*opt.Ysz;
+   opt.nVox = opt.Xsz*opt.Ysz*opt.Zsz;
    idx = rmdl0.coarse2fine * relem_idx > 0;
    rmdl.elems = rmdl0.elems(idx,:);
    [node_idx, m,n] = unique(rmdl.elems(:));
    rmdl.elems = reshape(n,size(rmdl.elems));
    rmdl.nodes = rmdl0.nodes(node_idx,:);
    
-   fnode_above = fmdl0.nodes(:,3) > opt.zvec(2);
+   fnode_above = fmdl0.nodes(:,3) > opt.zvec(end);
    felem_above = all(fnode_above(fmdl0.elems),2);
    
    fnode_below = fmdl0.nodes(:,3) < opt.zvec(1);
-   felem_below = all(fnode_above(fmdl0.elems),2);
+   felem_below = all(fnode_below(fmdl0.elems),2);
    
    felem_idx   = ~(felem_below | felem_above);
    fmdl.elems = fmdl0.elems(felem_idx,:);
@@ -834,11 +853,10 @@ function progmsg(num, erase)
 % Perfom unit tests
 function do_unit_test
     do_small_test;
-    return
     do_realistic_test;
     figure
     do_case_tests;
-    do_edge2edge_timing_test;
+%     do_edge2edge_timing_test;
     
     
 function do_case_tests
@@ -1231,20 +1249,20 @@ function do_small_test
    fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
    xvec = [-1.5:1:1.5];
    yvec = [-1.6:.8:1.6];
-   zvec = 0:1:2;
+   zvec = -1:1:2;
    rmdl = mk_grid_model([],xvec,yvec,zvec);
 %    profile clear
 %    profile on
-   eidors_cache on mk_grid_c2f
+   eidors_cache off mk_grid_c2f
    tic
    c2f_a = mk_grid_c2f(fmdl, rmdl);
    toc
-   eidors_cache off mk_grid_c2f
+%    eidors_cache on mk_grid_c2f
    tic
-   opt.save_memory = 3;
+   opt.save_memory = 1;
    c2f_b = mk_grid_c2f(fmdl, rmdl, opt);
    toc
-   size(c2f_a)
+%    size(c2f_a)
    assert(any(c2f_a(:) ~= c2f_b(:)) == 0);
 %    profile off
 %    p = profile('info');
