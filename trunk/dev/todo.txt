@@ -43,6 +43,7 @@ HIGH PRIORITY
     - does unique work
 
 LOWER PRIORITY
+ - speed up linear_reorder
 
  - force all inv_model to have fwd_model and rec_model
     - rewrite prior code to assume rec_model is available.

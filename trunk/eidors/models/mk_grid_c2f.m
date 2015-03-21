@@ -423,6 +423,7 @@ function fmdl = prepare_fmdl(fmdl)
     fmopt.face2elem = true;
     fmopt.node2elem = true;
     fmopt.normals   = true;
+    fmopt.linear_reorder = false; % this is slow and not needed
     fmdl = fix_model(fmdl,fmopt);
     fmdl.node2elem = logical(fmdl.node2elem);
     nElem = size(fmdl.elems,1);
@@ -852,10 +853,10 @@ function progmsg(num, erase)
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
-    do_small_test;
+%     do_small_test;
     do_realistic_test;
-    figure
-    do_case_tests;
+%     figure
+%     do_case_tests;
 %     do_edge2edge_timing_test;
     
     
@@ -1287,7 +1288,8 @@ yvec = [-1.6 -1:.2:1 1.6];
 zvec = 0:.25:2;
 rmdl = mk_grid_model([],xvec,yvec,zvec);
 tic
-c2f_a = mk_grid_c2f(fmdl, rmdl);
+opt.save_memory = 0;
+c2f_a = mk_grid_c2f(fmdl, rmdl,opt);
 t = toc;
 fprintf('Analytic: t=%f s\n',t);
 
