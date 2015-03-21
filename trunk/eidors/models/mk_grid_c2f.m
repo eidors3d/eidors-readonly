@@ -23,9 +23,10 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %      .tol_edge2tri  - minimum value of a barycentric coordinate to 
 %                       decide a point is lying inside a triangle and not
 %                       on its edge. Default: eps
-%      .save_memory   - modifies function behavior to sacrifice time to
-%                       decrease memory footprint, useful for large
-%                       problems. Must be an integer between 0 and 3
+%      .save_memory   - modifies function behavior to decrease memory 
+%                       footprint by increasing the number of iterations;
+%                       useful for large problems. Must be an integer 
+%                       between 0 and 3
 %                          0  -  calculate all at once (default)
 %                          1  -  calculate one xy voxel plane at a time
 %                          2  -  calculate one y voxel row at a time
