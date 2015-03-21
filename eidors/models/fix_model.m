@@ -60,7 +60,9 @@ if doall || opt.boundary
    end
 end
 if doall || opt.faces
-   mdl = linear_reorder(mdl); %counter-clockwise
+   if doall || opt.linear_reorder
+      mdl = linear_reorder(mdl); %counter-clockwise
+   end
    if elem_dim(mdl) == mdl_dim(mdl);
       [mdl.faces mdl.elem2face] = calc_faces(mdl);
    else
@@ -274,6 +276,7 @@ function len = calc_longest_edge(elems,nodes)
     
 function out = fix_options(mdl, opt)
     out = list_options(false);
+    out.linear_reorder = 1;
     flds = fieldnames(opt);
     for i = 1:length(flds)
        try
@@ -281,7 +284,7 @@ function out = fix_options(mdl, opt)
        catch
           warning(sprintf('Option %s not recognised. Ignoring', flds{i}));
        end
-    end
+    end 
     if out.boundary_face
        out.face2elem = true;
     end
