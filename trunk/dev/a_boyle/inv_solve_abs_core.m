@@ -1183,6 +1183,21 @@ function opt = parse_options(imdl)
         opt.(i{1}) = {x};
      end
    end
+   % show what the hyperparameters are configured to when logging
+   if opt.verbose > 1
+      fprintf('  hyperparameters\n');
+      for i=1:length(opt.elem_working)
+         if isnumeric(opt.hyperparameter{i}) && length(opt.hyperparameter{i}) == 1
+            fprintf('    %s: %0.4g\n',opt.elem_working{i}, opt.hyperparameter{i});
+         elseif isa(opt.hyperparameter{i}, 'function_handle')
+            fprintf('    %s: @%s\n',opt.elem_working{i}, func2str(opt.hyperparameter{i}));
+         elseif ischar(opt.hyperparameter{i})
+            fprintf('    %s: @%s\n',opt.elem_working{i}, opt.hyperparameter{i});
+         else
+            fprintf('    %s: ...\n',opt.elem_working{i});
+         end
+      end
+   end
 
    % REGULARIZATION RtR
    % for constructing the blockwise RtR matrix
