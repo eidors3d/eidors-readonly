@@ -303,6 +303,7 @@ while 1
   if stop
      if stop == -1 % bad step: residual increased
         img.elem_data = img.elem_data - alpha * sx; % undo the last step
+        k = k-1;
      end
      break;
   end
@@ -341,9 +342,9 @@ if isfield(inv_model, 'rec_model')
   img.fwd_model = inv_model.rec_model;
 end
 if opt.verbose > 1
-   if k==2; itrs=''; else itrs='s'; end
+   if k==1; itrs=''; else itrs='s'; end
    fprintf('  %d fwd_solves required for this solution in %d iteration%s\n', ...
-           opt.fwd_solutions, k-1, itrs);
+           opt.fwd_solutions, k, itrs);
 end
 % convert data for output
 img = map_img(img, opt.elem_output);
@@ -354,6 +355,7 @@ if opt.return_working_variables
   img.inv_solve.sx = sx;
   img.inv_solve.alpha = alpha;
   img.inv_solve.beta = beta;
+  img.inv_solve.k = k;
   img.inv_solve.r = r;
   img.inv_solve.N = N;
   img.inv_solve.W = W;
