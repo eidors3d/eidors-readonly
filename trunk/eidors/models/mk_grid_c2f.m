@@ -85,21 +85,20 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
     m = [];
     c2f = sparse(opt0.nTet,opt0.nVox);
     
-    logmsg(' Prepare tet model... ');
+    progress_msg('Prepare tet model...');
     fmdl0 = prepare_fmdl(fmdl0);
-    logmsg('Done\n');
+    progress_msg(Inf);
     
     if opt0.save_memory == 0
        relem_idx = ones(opt0.nVox,1);
        [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt0,relem_idx);
        if any(felem_idx)
           [tmp, m] = separable_calculations(fmdl,rmdl0,opt);
-          c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0);
+          c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx);
        end
     else % save_memory > 0
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       logmsg(' Progress: ');
-       progmsg(0,false);
+       progress_msg('Progress:');
        progress = 0;
        opt = opt0;
        m = prepare_vox_mdl(rmdl0,opt0);
@@ -136,10 +135,10 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                          eidors_msg('log_level',eidors_msg('log_level')-1);
                          tmp = separable_calculations(fmdl,rmdl,opt);
                          eidors_msg('log_level',eidors_msg('log_level')+1);
-                         c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x,opt,opt0);
+                         c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x);
                       end
                       progress = progress + 1 / opt0.nVox;
-                      progmsg(progress);
+                      progress_msg(progress);
                    end
                 else
                    [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_y);
@@ -147,10 +146,10 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                       eidors_msg('log_level',eidors_msg('log_level')-1);
                       tmp = separable_calculations(fmdl,rmdl,opt);
                       eidors_msg('log_level',eidors_msg('log_level')+1);
-                      c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y,opt,opt0);
+                      c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y);
                    end
                    progress = progress + 1 / (opt0.Xsz*opt0.Ysz);
-                   progmsg(progress);
+                   progress_msg(progress);
                 end
              end
 
@@ -160,40 +159,40 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                 eidors_msg('log_level',eidors_msg('log_level')-1);
                 tmp = separable_calculations(fmdl,rmdl,opt);
                 eidors_msg('log_level',eidors_msg('log_level')+1);
-                c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0);
+                c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx);
              end
              progress = progress + 1 / opt0.Zsz;
-             progmsg(progress);
+             progress_msg(progress);
           end
           
           
        end
-       logmsg('\b\b\b\bDone\n');
+       progress_msg(Inf);
     end
     
-function c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx,opt,opt0)
-    F = repmat(find(felem_idx), 1, opt.nVox);
-    R = repmat(find(relem_idx)', opt.nTet, 1);
-    c2f = c2f + sparse(F, R, tmp, opt0.nTet, opt0.nVox);
+function c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx)
+    fidx = find(felem_idx); 
+    ridx = find(relem_idx);
+    c2f(fidx,ridx) = c2f(fidx,ridx) + tmp;
     
 function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     DEBUG = eidors_debug('query','mk_grid_c2f');
    
-    logmsg(' Prepare vox model... ');
+    progress_msg('Prepare vox model...');
     m = prepare_vox_mdl(rmdl,opt);
-    logmsg('Done\n');
+    progress_msg(Inf);
     
     try
     
     % tet edge v. vox face
-    logmsg(' Find tet_edge2vox_face intersections... ')
+    progress_msg('Find tet_edge2vox_face intersections...')
     [intpts1, rec2tedge, rec2intpt1, tedge2intpt1] = get_voxel_intersection_points(fmdl,m.faces,opt);
-    logmsg('\b\b\b\bFound %d\n', size(intpts1,1));
+    progress_msg(sprintf('Found %d', size(intpts1,1)), Inf);
     
     % vox edge v. tet face
-    logmsg(' Find vox_edge2tet_face intersections... ')
+    progress_msg('Find vox_edge2tet_face intersections...',0,3)
     [intpts2, tri2vedge, tri2intpt2, vedge2intpt2] = get_tet_intersection_points(fmdl,m,opt);
-    logmsg('\b\b\b\bFound %d\n', size(intpts2,1));
+    progress_msg(sprintf('Found %d', size(intpts2,1)), Inf);
     
     % Note: Rather than calculating edge2edge intersections, one could
     % include them in one or both of the previous tests. However, it is
@@ -201,18 +200,19 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     % get assigned to all the vox and tets concerned
     
     % vox edge v. tet edge
-    logmsg(' Find tet_edge2vox_edge intersections... ')
-    [intpts3, tedge2vedge, tedge2intpt3, vedge2intpt3] =find_edge2edge_intersections(fmdl.edges,fmdl.nodes,m.edges,rmdl.nodes, opt.tol_edge2edge);
-    logmsg('\b\b\b\b\bFound %d\n', size(intpts3,1));
+    logmsg(' Find tet_edge2vox_edge intersections...')
+    tic
+    [intpts3, tedge2vedge, tedge2intpt3, vedge2intpt3] =find_edge2edge_intersections(fmdl.edges,fmdl.nodes,m.edges,rmdl.nodes, opt.tol_edge2edge); 
+    logmsg([repmat('\b',1,15) ' Found %d (%.3f s)\n'], size(intpts3,1),toc);
     
     % tet node in vox
-    logmsg(' Find tet_nodes in voxels... ')
+    progress_msg('Find tet_nodes in voxels...')
     [fnode2vox] = get_nodes_in_voxels(fmdl,rmdl);
-    logmsg('Found %d\n', nnz(fnode2vox));
+    progress_msg(sprintf('Found %d', nnz(fnode2vox)), Inf);
     % vox node in tet
-    logmsg(' Find vox_nodes in tets... ');
+    progress_msg('Find vox_nodes in tets...');
     vnode2tet = get_nodes_in_tets(fmdl,rmdl, opt);
-    logmsg('\b\b\b\bFound %d\n', nnz(vnode2tet));
+    progress_msg(sprintf('Found %d', nnz(vnode2tet)), Inf);
     
     % vox contained in tet
     vox_in_tet = (m.node2vox' * vnode2tet) == 8;
@@ -224,11 +224,11 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     
     
     % tets and vox that intersect (excludes complete inclusion)
-    logmsg(' Find total vox v. tet intersections... ');
+    progress_msg('Find total vox v. tet intersections...');
     vox2intTet =   m.vox2face * (rec2tedge>0) * fmdl.edge2elem ...
                  | m.vox2edge * (tri2vedge>0)' * fmdl.elem2face';% ...
 %                  | m.vox2edge * (tedge2vedge>0)'* fmdl.edge2elem;
-    logmsg('Found %d\n',nnz(vox2intTet));
+    progress_msg(sprintf('Found %d',nnz(vox2intTet)), Inf);
     
     catch err
        if (strcmp(err.identifier,'MATLAB:nomem'))
@@ -241,7 +241,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
        end
     end
     
-    logmsg(' Calculate intersection volumes... ');
+    progress_msg('Calculate intersection volumes...');
     % sparse logical multiplication doesn't exist
     vox2intpt1 = logical(m.vox2face*rec2intpt1)'; 
     tet2intpt1 = logical(fmdl.edge2elem'*tedge2intpt1)';
@@ -254,12 +254,12 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     
     vox_todo = find(sum(vox2intTet,2)>0);
     C = []; F = []; V = [];
-    progmsg(0,false);
+    
     id = 0; lvox = length(vox_todo);
     mint = ceil(lvox/100);
     for v = vox_todo'
         id = id+1;
-        if mod(id,mint)==0, progmsg(id/lvox); end
+        if mod(id,mint)==0, progress_msg(id/lvox); end
         tet_todo = find(vox2intTet(v,:));
         common_intpts1 = bsxfun(@and,vox2intpt1(:,v), tet2intpt1(:,tet_todo));
         common_intpts2 = bsxfun(@and,vox2intpt2(:,v), tet2intpt2(:,tet_todo));
@@ -353,7 +353,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
             end
         end
     end
-    logmsg('\b\b\b\bDone\n');
+    progress_msg(Inf);
     c2f = sparse(F,C,V,opt.nTet,opt.nVox);
     
     % add vox contained in tet
@@ -467,22 +467,22 @@ function m = prepare_vox_mdl(rmdl,opt)
 function rnode2tet = get_nodes_in_tets(fmdl,rmdl, opt)
     
     [A,b] = tet_to_inequal(fmdl.nodes,fmdl.elems);
-    progmsg(.01,false);
+    progress_msg(.01);
     % This is split to decrease the memory footprint
     rnode2tet = (bsxfun(@minus, A(1:4:end,:)*rmdl.nodes',b(1:4:end)) <= opt.tol_node2tet)';
-    progmsg(.21);
+    progress_msg(.21);
     for i = 2:4 
         rnode2tet = rnode2tet & (bsxfun(@minus, A(i:4:end,:)*rmdl.nodes',b(i:4:end)) <= opt.tol_node2tet)'; 
-        progmsg(.21 + (i-1)*.23);
+        progress_msg(.21 + (i-1)*.23);
     end
     
     % exclude coinciding nodes
     ex= bsxfun(@eq,rmdl.nodes(:,1),fmdl.nodes(:,1)') & ...
         bsxfun(@eq,rmdl.nodes(:,2),fmdl.nodes(:,2)') & ...
         bsxfun(@eq,rmdl.nodes(:,3),fmdl.nodes(:,3)');
-    progmsg(.94);
+    progress_msg(.94);
     rnode2tet(any(ex,2),:) = 0;
-    progmsg(1);
+    progress_msg(1);
     
 
 %-------------------------------------------------------------------------%
@@ -533,11 +533,11 @@ VEC = {opt.xvec, opt.yvec, opt.zvec};
 todo = sum(SZ)+3;
 id = 0;
 step = ceil(todo/100);
-progmsg(0,false);
+
 for d = 1:3
     for x = 0:SZ(d)
         id = id+1;
-        if mod(id,step)==0, progmsg(id/todo); end
+        if mod(id,step)==0, progress_msg(id/todo); end
         % plane-edge intersection
         t = (VEC{d}(x+1) - nodes(edges(:,1),d)) ./ dir(:,d);
         crossing = t>0 & t<1;
@@ -607,10 +607,10 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = get_tet_intersection_points
     STEP(3) = STEP(2)*(Ysz+1);
     
     d = sum(fmdl.normals .* fmdl.nodes(fmdl.faces(:,1),:),2);
-    progmsg(0,false);
+
     line_axis = [3 1 2];
     for i = 1:3
-        progmsg((i-1)/3);
+        progress_msg(i,3);
         % define edge lines
         idx = 1:3;
         op = line_axis(i);
@@ -839,26 +839,15 @@ function logmsg(varargin)
         fprintf(varargin{:});
     end
 
-
-%-------------------------------------------------------------------------%
-% fprintf wrapper to use eidors log_level
-function progmsg(num, erase)
-    if eidors_msg('log_level') < 2, return; end
-    if nargin == 1, erase = true; end
-    str = '%3d%%';
-    if erase
-        str = ['\b\b\b\b' str ];
-    end
-    fprintf(str, round(100*num));
     
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
-%     do_small_test;
+    do_small_test;
     do_realistic_test;
-%     figure
-%     do_case_tests;
-%     do_edge2edge_timing_test;
+    figure
+    do_case_tests;
+    do_edge2edge_timing_test;
     
     
 function do_case_tests
@@ -1261,7 +1250,7 @@ function do_small_test
    toc
 %    eidors_cache on mk_grid_c2f
    tic
-   opt.save_memory = 1;
+   opt.save_memory = 2;
    c2f_b = mk_grid_c2f(fmdl, rmdl, opt);
    toc
 %    size(c2f_a)
@@ -1332,8 +1321,9 @@ function do_edge2edge_timing_test
     yvec = linspace(-2,2,33);
     zvec = 0:.5:2;
     rmdl = mk_grid_model([],xvec,yvec,zvec);
+    tic
     test_tedge2vedge_intersections(rmdl,fmdl);
-    
+    toc
     
 function rnode2tet = test_vnode_in_tet(rmdl,fmdl)
     opt  = parse_opts(fmdl,rmdl);

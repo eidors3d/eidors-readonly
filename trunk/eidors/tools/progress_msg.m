@@ -18,6 +18,7 @@ function progress_msg(varargin)
 %
 % PROGRESS_MSG(Inf) prints the final message, including the time elapsed
 %  since initialisation, measured using tic/toc.
+% PROGRESS_MSG('msg',Inf) prints the 'msg' instead of the opt.final_msg
 %
 % Example:
 %   progress_msg('The big loop:', 0,10);         % prints 0/10
@@ -59,7 +60,11 @@ end
 
 msg = '';
 if nargs > 0 && ischar(varargin{1})
-    msg = [repmat(' ',1,opt.log_level-1) varargin{1}];
+    if nargs > 1 && isinf(varargin{2})
+        msg = varargin{1};
+    else
+        msg = [repmat(' ',1,opt.log_level-1) varargin{1}];
+    end
     nargs = nargs-1;
     varargin(1) = [];
 end
@@ -91,12 +96,15 @@ if pvar.log_level > eidors_msg('log_level');
     return
 end
 
-if ~isempty(msg)
-    fprintf('%s\t',msg);
+if ~isempty(msg) && ~isinf(varargin{1});
+    fprintf('%s ',msg);
 end
 
 if nargs > 0 && isinf(varargin{1})
-    print_final_msg(pvar.final_msg, pvar.nChars);
+    if isempty(msg)
+        msg = pvar.final_msg;
+    end
+    print_final_msg(msg, pvar.nChars);
     print_time(pvar);
     if eidors_debug('query','progress_msg')
         fprintf('Self-time: %f\n',pvar.own_time);
