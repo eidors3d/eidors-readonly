@@ -263,7 +263,7 @@ else
    end
 end
 
-function d = DEBUG; d=false;
+function d = DEBUG; d=eidors_debug('query','jacobian_adjoint');
 
 function dCond_dPhys = chain_rule_factor(img,org_params)
 switch(org_params)
