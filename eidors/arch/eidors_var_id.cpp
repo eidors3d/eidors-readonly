@@ -50,8 +50,13 @@
 // This would be nice but doesn't work for the default matlab compiler
 //  mexErrMsgTxt(__FILE__  __LINE__  "syscall returned bad status",
 
-
+#ifdef _MSC_VER
+typedef unsigned short uint16_t; //sizeof(unsigned short)=2 
+typedef unsigned long  uint32_t; //sizeof(unsigned short)=2 
+#else
 #include <stdint.h>
+#endif
+
 
 #define unsigned_int32 uint32_t
 
