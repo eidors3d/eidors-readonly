@@ -251,14 +251,20 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
 % in the direction given by vector dirn,
 % hw = [height, width]  and depth d
 % direction is in the xy plane
+%
+% For electrodes oriented vertically, we arbitrarily choose 
+%   width = x axis, height = y axis
    d= min(d);
    w = wh(1); h= wh(2);
    dirn = dirn/norm(dirn);
    dirnp = [-dirn(2),dirn(1),0];
-if any(isnan(dirnp));
-   error('ng_mk_gen_models: how to define width and height for vertical electrodes?')
-end
+% if ||dirnp || < 1e-6, then it is zero
+if norm(dirnp)<1e-6
+   dirnp = [0,1,0];
+   dirn  = [1,0,0];
+else
    dirnp = dirnp/norm(dirnp);
+end
 
    bl = c - (d/2)* dirn + (w/2)*dirnp - [0,0,h/2];
    tr = c + (d/2)* dirn - (w/2)*dirnp + [0,0,h/2];
@@ -329,9 +335,22 @@ function electrode = pem_from_cem(elecs, electrode, nodes)
     end
   end
 
+function square_elec_test
+    % problem is how to define sides of vertical electrode
+    shape_str = ['solid top    = plane(0,0,  0;0,0, 1);\n' ...
+                 'solid bot    = plane(0,0,-10;0,0,-1);\n' ...
+                 'solid ob     = orthobrick(-3,-3,-99;3,3, 99);\n' ...
+                 'solid mainobj= top and bot and ob -maxh=0.5;\n'];
+    elec_pos = [ 0,0,0,0,0,1; 1,0,0,0,0,1];
+    elec_shape=[0.2,0.2,0.05]; elec_obj = {'top','top'};
+    fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+    show_fem(fmdl);
+
 
 function do_unit_test
-  for tn = 14 %1:14
+  square_elec_test
+
+  for tn = 1:14
      eidors_msg('ng_mk_gen_models: unit_test %02d',tn,1);
      fmdl= do_test_number(tn);
      show_fem(fmdl); drawnow
