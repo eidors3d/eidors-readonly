@@ -1,7 +1,10 @@
-function eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
+function hh= eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 % EIDORS_COLOURBAR - create an eidors colourbar with scaling to image
 % usage: eidors_colourbar( img )
 %    show a colourbar on the current axis representing img
+%
+% usage: hh= eidors_colourbar( img )
+%    return a handle to colourbar created 
 %
 % usage: eidors_colourbar(max_scale,ref_lev)
 %    ref_lev:   centre of the colour scale
@@ -40,6 +43,7 @@ if isstruct(max_scale) && strcmp(max_scale.type,'image')
 end
 
 % Now deal with the other cases
+   
    hh= colorbar; 
    % make colourbar smaller and closer to axis
    if nargin >= 3
@@ -134,48 +138,61 @@ end
 
    if nargin >= 3
 % RESET OUR AXES
-
       if ~all(cbsm == [1,1,0]); 
          set(gca,'position',axpos);
       end
-
    end
+
+   % Clear hh do it is not displayed, unless output requested
+   if nargout ==0; clear hh; end
 
 end
 
 function do_unit_test
-imdl = mk_common_model('n3r2',[16,2]);
-img = mk_image(imdl);
-img=rmfield(img,'elem_data');
-img.node_data(1:252)= (1:252)/100 - 1;
-subplot(331);
-show_slices(img,2);
-eidors_colourbar(img);
+   imgno = 1;
+   imdl = mk_common_model('n3r2',[16,2]);
+   img = mk_image(imdl);
+   img=rmfield(img,'elem_data');
+   img.node_data(1:252)= (0:251)/100 - 1.05;
+   fprintf('CMAX = %4.2f CMIN = %4.2f\n', ...
+       max(img.node_data), min(img.node_data) );
 
-img.calc_colours.cb_shrink_move = [.5,.5,0];
-subplot(332);
-show_slices(img,2);
-eidors_colourbar(img);
 
-subplot(333);
-show_fem(img,1);
-subplot(334);
-%show_fem(img,-1); %%% Experimental feature
+   subplot(3,3,imgno); imgno=imgno+1;
+   show_slices(img,2); eidors_colourbar(img);
 
-subplot(335);
-show_slices(img,2);
- p = get(gca,'position') 
-eidors_colourbar(img);
- set(gca,'position',p);
+   img.calc_colours.ref_level = 0;
+   subplot(3,3,imgno); imgno=imgno+1;
+   show_slices(img,2); eidors_colourbar(img);
 
-show_slices(img,2);
- eidors_colourbar(img);
+   img.calc_colours.cmax = 1;
+   subplot(3,3,imgno); imgno=imgno+1;
+   show_slices(img,2); eidors_colourbar(img);
 
-subplot(336);
-img.node_data = abs(img.node_data);
-img.calc_colours.ref_level = 0.5;
-img.calc_colours.clim      = 0.5;
-show_slices(img,2);
-eidors_colourbar(img);
+   MV =-0.05;
+   img.calc_colours.cb_shrink_move = [.5,.5,MV];
+   subplot(3,3,imgno); imgno=imgno+1;
+   show_slices(img,2);
+   eidors_colourbar(img);
+
+   subplot(3,3,imgno); imgno=imgno+1;
+   show_fem(img,1);
+   %show_fem(img,-1); %%% Experimental feature
+
+   subplot(3,3,imgno); imgno=imgno+1;
+   show_slices(img,2);
+    p = get(gca,'position');
+   eidors_colourbar(img);
+    set(gca,'position',p);
+
+   show_slices(img,2);
+    eidors_colourbar(img);
+
+   subplot(3,3,imgno); imgno=imgno+1;
+   img.node_data = abs(img.node_data);
+   img.calc_colours.ref_level = 0.5;
+   img.calc_colours.clim      = 0.5;
+   show_slices(img,2);
+   eidors_colourbar(img);
 
 end
