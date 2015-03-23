@@ -4,13 +4,17 @@ function progress_msg(varargin)
 % PROGRESS_MSG('msg',I,N,opt) where I = 0 initilises the messages. 
 %   'msg'   [optional] string to print
 %   I       [optional] must equal zero for initialisation
-%   N       [optional] if present, prints 'I/N' rather than 'I%'
+%   N       [optional] if N=0 prints 'I', if N>0 prints 'I/N' 
+%                      if absent, prints 'I%' (default)
 %   opt     [optional] structure with the following fields and defaults:
 %      .log_level = 2        controls verbosity, see EIDORD_MSG for details
 %      .final_msg = 'Done'   customises the test of the final message
+%                            if empty, last message will not be erased 
+%      .num_digits = 6       controls the text field width for N=0
 %
 % PROGRESS_MSG(I) displays I%
 % PROGRESS_MSG(I,N) displays I/N
+% PROGRESS_MSG(I,0) displays I
 %
 % PROGRESS_MSG(Inf) prints the final message, including the time elapsed
 %  since initialisation, measured using tic/toc.
@@ -75,6 +79,8 @@ if nargs == 0 || varargin{1} == 0
     pvar.own_time = 0;
     if nargs <= 1
         pvar.nChars = 4;
+    elseif varargin{2} == 0
+        pvar.nChars = opt.num_digits;
     else
         pvar.numLength = floor(log10(varargin{2})) + 1;
         pvar.nChars = 2 * pvar.numLength + 1;
@@ -101,15 +107,14 @@ end
 
 if nargs == 1
     percentmsg(varargin{1},first_msg, pvar.nChars);
-else
+elseif varargin{2} > 0
     outofmsg(varargin{1},varargin{2},first_msg,...
         pvar.numLength, pvar.nChars);
+else
+    numbermsg(varargin{1},first_msg, pvar.nChars);
 end
 
-
-
 pvar.own_time = pvar.own_time + toc(t0);
-
 
 end
 
@@ -131,7 +136,17 @@ function outofmsg(a,b,first,N,T)
     fprintf(str,a,b);
 end
 
+function pvar = numbermsg(num, first, T)
+    str = sprintf('%%%dd',T);
+    if ~first
+        str = [repmat('\b',1,T) str];
+    end
+    fprintf(str, num);
+            
+end
+
 function print_final_msg(msg, N)
+    if isempty(msg), return, end
     str = [repmat('\b',1,N) '%s'];
     fprintf(str, msg);
 end
@@ -144,13 +159,14 @@ end
 function opt = default_opts
     opt.final_msg = 'Done';
     opt.log_level = 2;
+    opt.num_digits = 6;
 end
 
 function do_unit_test(N)
     eidors_msg('log_level',2);
     eidors_debug on progress_msg
     if nargin == 0
-        N = 1:30;
+        N = 1:35;
     end
     for n = N
         switch n
@@ -166,6 +182,8 @@ function do_unit_test(N)
             case 5
                 opt.final_msg = 'YUPPIE!';
                 progress_msg(opt);
+            case 6
+                progress_msg('Test 6', opt);
             case 10
                 progress_msg('Test 10',0,10);
             case 11
@@ -186,6 +204,8 @@ function do_unit_test(N)
             case 24
                 eidors_msg('log_level',2);
                 progress_msg('Test 24', 0,10);
+            case 30
+                progress_msg('Test 30',0,0)
             otherwise
                 continue
         end 
@@ -193,6 +213,11 @@ function do_unit_test(N)
             for i = 1:10
                 pause(.2);
                 progress_msg(i/10);
+            end
+        elseif n >= 30
+            for i = 1:10
+                pause(.2);
+                progress_msg(i^4,0);
             end
         else
             for i = 1:10
