@@ -89,14 +89,16 @@ while 1
       end
     else
       if count ==0
-         eidors_msg('distmeshnd: retriangulation #%d',count,2);
+         opt.final_msg = '';
+         progress_msg('distmeshng: retriangulation #:',0,0,opt);
       else
-         eidors_msg('.',2);
+         progress_msg(count,0);
       end
     end
     count=count+1;
   end
 
+  
   % 6. Move mesh points based on edge lengths L and forces F
   bars=p(pair(:,1),:)-p(pair(:,2),:);
   L=sqrt(sum(bars.^2,2));
@@ -128,7 +130,7 @@ while 1
   if count>maxiter; break; end
 end
 if ~distmesh_do_graphics
-    fprintf('\n');
+    progress_msg(Inf);
 end
 
 % final delaunayn just to make sure triangularization returned is good
