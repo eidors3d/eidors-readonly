@@ -11,6 +11,7 @@ function img= mk_image(mdl, elem_data, params, name)
 %   img = mk_image( mdl, 2*ones(n_elems,1) ) -> uniform with c=2
 %   img = mk_image( mdl, 2*ones(n_nodes,1) ) -> image with node data
 %   img = mk_image( mdl, 1, 'This name') -> Specify a 'name' attribute
+%   img = mk_image( mdl, ones(n_elems,3) );
 %
 % Usage 3: create image from previous image, override conductity
 %  img = mk_image( other_image, 2 ) -> image with c=2
@@ -78,36 +79,47 @@ function str = no_params
 str = 'unspecified';
 
 function img = fill_in_data(img,elem_data,params)
-switch numel(elem_data)
-    case {1, size(img.fwd_model.elems,1)}
+  % If image is presented as row vector, then transpose
+  %  Shouldn't happen, but for matlab bugs
+  if size(elem_data,1) == 1 && ...
+     size(elem_data,2) >  1 
+     elem_data = elem_data.';
+  end
+  switch size(elem_data,1)
+     case 1
         sz = size(img.fwd_model.elems,1);
+        elem_data_mat =    NaN*ones(sz,1);
+        elem_data_mat(:) = elem_data;
         if strcmp(params,no_params);
-            img.elem_data = NaN*ones(sz,1);
-            img.elem_data(:) = elem_data;
+            img.elem_data = elem_data_mat;
         else
-            img.(params).elem_data = NaN*ones(sz,1);
-            img.(params).elem_data(:) = elem_data;
+            img.(params).elem_data = elem_data_mat;
         end
-    case size(img.fwd_model.coarse2fine,2)
-      sz = size(img.fwd_model.coarse2fine,2);
-      if strcmp(params,no_params);
-        img.elem_data = NaN*ones(sz,1);
-        img.elem_data(:) = elem_data;
-      else
-        img.(params).elem_data = NaN*ones(sz,1);
-        img.(params).elem_data(:) = elem_data;
-      end
-    case size(img.fwd_model.nodes,1)
+
+     case num_elems( img )
         if strcmp(params,no_params);
-            img.node_data = NaN*ones(size(img.fwd_model.nodes,1),1);
-            img.node_data(:) = elem_data;
+            img.elem_data = elem_data;
         else
-            img.(params).node_data = NaN*ones(size(img.fwd_model.nodes,1),1);
-            img.(params).node_data(:) = elem_data;
+            img.(params).elem_data = elem_data;
         end
-  otherwise
-    error('Don''t understand number of elements.');
-end
+
+     case size(img.fwd_model.coarse2fine,2)
+        if strcmp(params,no_params);
+            img.elem_data = elem_data;
+        else
+            img.(params).elem_data = elem_data;
+        end
+
+     case num_nodes( img )
+        if strcmp(params,no_params);
+            img.node_data = elem_data;
+        else
+            img.(params).node_data = elem_data;
+        end
+
+     otherwise
+        error('Don''t understand number of elements.');
+  end
 
 % TESTS:
 function do_unit_test
@@ -140,10 +152,13 @@ function do_unit_test
    unit_test_cmp('im7',im2.conductivity.elem_data, 3*ones(64,1) );
 
    im0 = mk_image( imdl.fwd_model, 3*ones(64,1),'my_name' );
-   unit_test_cmp('im8',im0.elem_data, 3*ones(64,1) );
+   unit_test_cmp('im8a',im0.elem_data, 3*ones(64,1) );
 
    im0 = mk_image( imdl.fwd_model, 3*ones(64,1),'resistivity' );
-   unit_test_cmp('im8',im0.resistivity.elem_data, 3*ones(64,1) );
+   unit_test_cmp('im8b',im0.resistivity.elem_data, 3*ones(64,1) );
+
+   im0 = mk_image( imdl.fwd_model, 2*ones(64,3),'resistivity' );
+   unit_test_cmp('im8c',im0.resistivity.elem_data, 2*ones(64,3) );
 
    im0 = mk_image( imdl.fwd_model, 3*ones(64,1),'resistivity','my name' );
    unit_test_cmp('im9a',im0.resistivity.elem_data, 3*ones(64,1) );
