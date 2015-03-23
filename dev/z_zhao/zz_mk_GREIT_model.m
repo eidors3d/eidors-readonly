@@ -79,7 +79,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % 2013-06-21 add two distribution options
 % 2013-09-12 add one distribution option
 % 2014-02-20 add two options for distr 6.
-% $Id: mk_GREIT_model.m 4432 2014-02-01 09:41:07Z zhanqizhao $
+% $Id$
 
 citeme(mfilename);
 

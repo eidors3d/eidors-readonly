@@ -11,7 +11,7 @@ function data =ls_fwd_solve_1st_order(fwd_model, img)
 
 % (C) 1995-2002 Andy Adler. License: GPL version 2 or version 3
 % Ref: Adler & Guardo (1996) IEEE T. Med Imaging
-% $Id: fwd_solve_1st_order.m 3995 2013-04-23 12:11:48Z aadler $
+% $Id$
 
 % correct input paralemeters if function was called with only img
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end

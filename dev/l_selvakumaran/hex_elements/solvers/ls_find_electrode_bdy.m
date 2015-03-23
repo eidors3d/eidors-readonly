@@ -12,7 +12,7 @@ function [bdy_idx, bdy_area] = ls_find_electrode_bdy( bdy, vtx, elec_nodes)
 %   bdy_area is the area corresponding to these point electrodes
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
-% $Id: find_electrode_bdy.m 4105 2013-05-29 13:21:32Z aadler $
+% $Id$
 
 [bdy_idx, point] = find_bdy_idx( bdy, elec_nodes);
 if nargout==1; return;end

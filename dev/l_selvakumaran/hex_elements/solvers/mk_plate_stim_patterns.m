@@ -69,7 +69,7 @@ function [stim, meas_sel]= mk_plate_stim_patterns( ...
 %   amplitude: drive current levels, DEFAULT = 0.010 Amp
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_stim_patterns.m 3996 2013-04-23 16:10:12Z aadler $
+% $Id$
 
 if isstr(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
 

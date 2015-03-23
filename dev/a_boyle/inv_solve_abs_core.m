@@ -1821,7 +1821,7 @@ function pass = do_unit_test_rec1(solver)
 pass = 1;
 % -------------
 % ADAPTED FROM
-% Create simulation data $Id: basic_iterative01.m 3829 2013-04-13 14:21:30Z bgrychtol $
+% Create simulation data $Id$
 %  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
 % 3D Model
 imdl= mk_common_model('c2t4',16); % 576 elements
@@ -1934,7 +1934,7 @@ pass = 1;
 disp('TEST: conductivity and movement --> baseline conductivity only');
 % -------------
 % ADAPTED FROM
-% Create simulation data $Id: basic_iterative01.m 3829 2013-04-13 14:21:30Z bgrychtol $
+% Create simulation data $Id$
 %  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
 % 3D Model
 imdl= mk_common_model('c2t4',16); % 576 elements
