@@ -1,3 +1,8 @@
+##### POST RELEASE 3.8 ITEMS
+
+ - Efficiency of calculations with multiple RHS
+    - look at dev/a_adler/testcode/qr_efficiency.m
+
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 HIGH PRIORITY
@@ -235,7 +240,7 @@ DEFER TO 3.9
 
 - Netgen has problems for ver>5.0. Why?
 
-- Updatwe Draeger file reader software.
+- Update Draeger file reader software.
 
 ############## April 27-29, 2014 Work ##############
 - provide a helper function so that you can save and restore the state of
