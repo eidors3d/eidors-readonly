@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<oeit xmlns="http://open-eit.org/2013/XMLSchema" xmlns:xi="http://www.w3.org/2001/XInclude">
+<oeit  xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="info/subject.xml" />
   <xi:include href="info/devices.xml" />
   <xi:include href="info/electrode_types.xml" />

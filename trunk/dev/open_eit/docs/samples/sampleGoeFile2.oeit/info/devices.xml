@@ -3,4 +3,8 @@
     <manufacturer>University of Goettingen</manufacturer>
     <serial_number>1234567890-2255-132</serial_number>
   </device>
+  <device id="device02">
+    <manufacturer>University of Goettingen</manufacturer>
+    <serial_number>1234567890-2255-133</serial_number>
+  </device>
 </device_list>
