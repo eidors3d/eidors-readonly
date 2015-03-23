@@ -58,8 +58,9 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_wrapper(FE,FN
 % Doing this in parallel creates potentially huge matrices
 % Do it by parts to prevent out-of-memory errors
     sz = size(FE,1) * size(CE,1) * 8; % result in bytes
-    desired_mem = (1024^3 ); % 
-    n_chunks = ceil(sz / desired_mem); 
+    desired_mem = 2*(1024^3 ); % 
+    % at least 9 variables of FExCE size are needed in the main function
+    n_chunks = ceil(10*sz / desired_mem); 
 
     len_chnk = ceil(size(CE,1) / n_chunks);
     intpts = [];
@@ -67,7 +68,7 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_wrapper(FE,FN
     FE2pts = sparse(0,0);
     CE2pts = sparse(0,0);
     for c = 1:n_chunks
-        eidors_msg('chunk %d of %d',c,n_chunks,2);
+        eidors_msg('@@@: chunk %d of %d',c,n_chunks,2);
         start = 1 + (c-1)*len_chnk;
         stop  = min(1 + c*len_chnk, size(CE,1));
         rng   = start:stop;
@@ -93,7 +94,7 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
 % http://paulbourke.net/geometry/pointlineplane/lineline.c
 % http://paulbourke.net/geometry/pointlineplane/linelineintersect.m
 
-    progmsg(0,false);
+    progress_msg(0);
 
     P1 = FN(FE(:,1),:);
     P2 = FN(FE(:,2),:);
@@ -125,7 +126,7 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
     
     for  v = 1:size(CE,1)
         id = id+1;
-        if mod(id,step)==0, progmsg(id/todo); end
+        if mod(id,step)==0, progress_msg(id/todo); end
         d1343 = 0; d4321 = 0;  d1321 = 0;
         for i = 1:3
             p13 = P1(:,i) - P3(v,i);
@@ -166,7 +167,7 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
     CE2pts  = sparse(V,I,ones(size(I)),size(P3,1),size(I,1));
     
     if eidors_msg('log_level')>1
-        fprintf('\b\b\b\bDone\n');
+        progress_msg(Inf);
     end
     
     
