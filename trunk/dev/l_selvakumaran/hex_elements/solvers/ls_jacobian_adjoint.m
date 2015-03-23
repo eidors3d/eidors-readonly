@@ -11,7 +11,7 @@ function [J]= ls_jacobian_adjoint( img)
 % img = image background for jacobian calc
 
 % (C) 2005 Andy Adler. Licenced under the GPL Version 2
-% $Id: jacobian_adjoint_simplecode.m 4325 2013-08-20 14:18:15Z aadler $
+% $Id$
 
 fwd_model = img.fwd_model;
 pp= ls_fwd_model_parameters( fwd_model );

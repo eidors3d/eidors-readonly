@@ -9,7 +9,7 @@ function s_mat= ls_system_mat_1st_order( fwd_model, img)
 %   CC  = Connectivity Matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: system_mat_1st_order.m 3819 2013-04-13 07:36:27Z bgrychtol $
+% $Id$
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 

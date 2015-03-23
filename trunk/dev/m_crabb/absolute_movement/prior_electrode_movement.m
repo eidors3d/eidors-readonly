@@ -22,7 +22,7 @@ function Reg= prior_electrode_movement( inv_model );
 %    imdl.prior_use_fwd_not_rec = 1;
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: prior_movement.m 3131 2012-06-08 17:11:11Z bgrychtol $
+% $Id$
 
 % relative strengths of conductivity and movement priors
 if isfield( inv_model,'prior_movement')

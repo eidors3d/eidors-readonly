@@ -14,7 +14,7 @@ function params = eval_GREIT_fig_merit(imgs, xyzr_pt, SimInLayer)
 % to simulate multi layers. Normalize AR value for the first layer
 
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
-% $Id: eval_GREIT_fig_merit.m 3934 2013-04-20 15:46:00Z aadler $
+% $Id$
 
 % Zhao: AR was normalized to the targets at the center of the electrode plane
 

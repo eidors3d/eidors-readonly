@@ -17,7 +17,7 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = ls_gmsh_read_mesh(filename
 %              .tag   = physical tag 
 %              .nodes = N-x-dim array of indices into vtx
 
-% $Id: gmsh_read_mesh.m 3260 2012-06-30 14:40:10Z bgrychtol $
+% $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
 % Modified by James Snyder <jbsnyder@fanplastic.org>
 

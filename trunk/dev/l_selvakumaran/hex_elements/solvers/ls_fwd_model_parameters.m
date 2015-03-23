@@ -21,7 +21,7 @@ function param = ls_fwd_model_parameters( fwd_model )
 %   the node current QQ, is set to this value for this stimulation.
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: fwd_model_parameters.m 3931 2013-04-20 15:32:57Z aadler $
+% $Id$
 
 param = eidors_obj('get-cache', fwd_model, 'fwd_model_parameters');
 

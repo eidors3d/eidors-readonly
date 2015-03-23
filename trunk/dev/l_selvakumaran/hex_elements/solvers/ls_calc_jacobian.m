@@ -17,7 +17,7 @@ function J = ls_calc_jacobian( fwd_model, img)
 %           'node_data' parameters
 
 % (C) 2005-08 Andy Adler. License: GPL version 2 or version 3
-% $Id: calc_jacobian.m 3819 2013-04-13 07:36:27Z bgrychtol $
+% $Id$
 
 
 if nargin == 1

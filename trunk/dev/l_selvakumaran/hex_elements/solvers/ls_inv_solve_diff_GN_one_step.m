@@ -12,7 +12,7 @@ function img= ls_inv_solve_diff_GN_one_step( inv_model, data1, data2)
 %  to be the same size matrix
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: inv_solve_diff_GN_one_step.m 3777 2013-03-20 15:30:44Z bgrychtol $
+% $Id$
 
 % TODO:
 % Test whether Wiener filter form or Tikhonov form are faster
