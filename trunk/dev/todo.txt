@@ -134,7 +134,7 @@ LOWER PRIORITY
  
 
 + add num_elecs.m function
-- bug in ng_mk_gen_models with top/bottom square elecs
++ bug in ng_mk_gen_models with top/bottom square elecs
     shape_str = ['solid top    = plane(0,0,  0;0,0, 1);\n' ...
                  'solid bot    = plane(0,0,-10;0,0,-1);\n' ...
                  'solid ob     = orthobrick(-3,-3,-99;3,3, 99);\n' ...
@@ -142,6 +142,8 @@ LOWER PRIORITY
     elec_pos = [ 0,0,0, 0,0,1;0,0,-10,0,0,-1];
     elec_shape=[0.2,0.2,0.05]; elec_obj = {'top','bot'};
     fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
+     => Fix is a hack; electrodes never really make for vertical
+     => should move to Herve's new interface
 
 + make inv_model.inv_solve.calc_solution_error = 0
   default. Or fix for large solutions.
