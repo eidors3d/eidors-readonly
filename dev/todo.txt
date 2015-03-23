@@ -142,8 +142,9 @@ LOWER PRIORITY
 
 - verify that elec_frac = [k ... in mk_grid_model creates conformal grid --??
 
-- put warning in mdl_slice_mesher when level doesn't cut the model
++ put warning in mdl_slice_mesher when level doesn't cut the model
     (currently this gives error: consider at line 110 when els = [])
+	Decided to throw an error instead
 
 + fix mk_image so that it can handle a time series image
 
@@ -233,8 +234,6 @@ DEFER TO 3.9
 
 - check c2f processing in show_3d_slices
 
-- put warning in mdl_slice_mesher when level doesn't cut the model
-    (currently this gives error: consider at line 110 when els = [])
 
 - fix mk_image so that it can handle a time series image
 
