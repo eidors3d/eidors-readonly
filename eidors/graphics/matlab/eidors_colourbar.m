@@ -56,23 +56,6 @@ end
                  posn(3) * cbsm(1), posn(4) * cbsm(2)];
          set(hh,'Position', posn );
          set(gca,'Position',axpos);
-% DEBUG CODE ATTEMPTING TO FIX CB
-if 0
-         a = get(hh);
-         set(hh,'Position', posn );
-         a = rmfield(a,'CurrentPoint');
-         a = rmfield(a,'TightInset');
-         a = rmfield(a,'BeingDeleted');
-         a = rmfield(a,'Type');
-         a.Position = posn;
-         set(hh,a);
-         op = get(hh,'OuterPosition') 
-         set(hh,'Position', posn );
-         op1= get(hh,'OuterPosition') 
-         set(hh,'OuterPosition',op);
-         op2= get(hh,'OuterPosition') 
-         set(gca,'Position',axpos);
-end
       end
 
    end
@@ -105,20 +88,34 @@ end
    c_ctr = mean(ylim);
    c_max = ylim(2) - c_ctr;
 
-%  in order to make the labels clean, we round to a near level
-   OrdOfMag = 10^floor(log10(max_scale));
 
 % COMMENTS: AA - 4 apr 13
 % If we want to ahve less aggressive rounding, we can do this
-%  OrdOfMag = 10^floor(log10(max_scale*2))/2;
-   scale_r  = OrdOfMag * floor( max_scale / OrdOfMag + 2*eps );
+   F= 2;
+   OrdOfMag = 10^floor(log10(max_scale*F))/F;
+
+   scale1  = floor( max_scale / OrdOfMag + 2*eps );
+% disp([scale1, OrdOfMag, max_scale]); => DEBUG
+   if     (scale1/F >= 8);  fms = F*8;   ticks=[1]/2; 
+   elseif (scale1/F >= 6);  fms = F*6;   ticks=[1]/2; 
+   elseif (scale1/F >= 4);  fms = F*4;   ticks=[1]/2;
+   elseif (scale1/F >= 3);  fms = F*3;   ticks=[1:2]/3;
+   elseif (scale1/F >= 2);  fms = F*2;   ticks=[1]/2;
+   elseif (scale1/F >= 1.5);fms = F*1.5; ticks=[1:2]/3;
+   elseif (scale1/F >= 1);  fms = F*1;   ticks=[1]/2;
+   else   (scale1/F >= 0.5);fms = F*0.5; ticks=[1]/2;
+   end
+
+   scale_r  = OrdOfMag * fms;
+
+%  in order to make the labels clean, we round to a near level
+   OrdOfMag = 10^floor(log10(max_scale));
    ref_r = OrdOfMag * round( ref_lev / OrdOfMag );
    
    %FIXME = AA+CG 30/1/12
-   
 if isempty(greyscale)
     %   tick_vals = [-1:0.2:1]*max_scale + ref_r;
-    tick_vals = [-1:0.5:1]*scale_r + ref_r;
+    tick_vals = [-1,-fliplr(ticks),0,ticks,1]*scale_r + ref_r;
 else
 %     tick_vals = [0:0.2:1]*max_scale;
      tick_vals = [0:0.2:1]*scale_r;
@@ -136,6 +133,8 @@ end
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
 
+if fms==3; keyboard; end
+
    if nargin >= 3
 % RESET OUR AXES
       if ~all(cbsm == [1,1,0]); 
@@ -146,6 +145,24 @@ end
    % Clear hh do it is not displayed, unless output requested
    if nargout ==0; clear hh; end
 
+end
+
+% DEBUG CODE ATTEMPTING TO FIX CB
+function debug_code
+         a = get(hh);
+         set(hh,'Position', posn );
+         a = rmfield(a,'CurrentPoint');
+         a = rmfield(a,'TightInset');
+         a = rmfield(a,'BeingDeleted');
+         a = rmfield(a,'Type');
+         a.Position = posn;
+         set(hh,a);
+         op = get(hh,'OuterPosition') 
+         set(hh,'Position', posn );
+         op1= get(hh,'OuterPosition') 
+         set(hh,'OuterPosition',op);
+         op2= get(hh,'OuterPosition') 
+         set(gca,'Position',axpos);
 end
 
 function do_unit_test
@@ -161,7 +178,9 @@ function do_unit_test
    subplot(3,3,imgno); imgno=imgno+1;
    show_slices(img,2); eidors_colourbar(img);
 
-   img.calc_colours.ref_level = 0;
+   % ref_level is not displayed, but will have its effect
+   img.calc_colours.ref_level = -0.1234;
+   img.calc_colours.ref_level =  0;
    subplot(3,3,imgno); imgno=imgno+1;
    show_slices(img,2); eidors_colourbar(img);
 
@@ -170,14 +189,13 @@ function do_unit_test
    show_slices(img,2); eidors_colourbar(img);
 
    MV =-0.05;
-   img.calc_colours.cb_shrink_move = [.5,.5,MV];
+   img.calc_colours.cb_shrink_move = [.5,.8,MV];
    subplot(3,3,imgno); imgno=imgno+1;
    show_slices(img,2);
    eidors_colourbar(img);
 
    subplot(3,3,imgno); imgno=imgno+1;
    show_fem(img,1);
-   %show_fem(img,-1); %%% Experimental feature
 
    subplot(3,3,imgno); imgno=imgno+1;
    show_slices(img,2);
@@ -189,7 +207,17 @@ function do_unit_test
     eidors_colourbar(img);
 
    subplot(3,3,imgno); imgno=imgno+1;
-   img.node_data = abs(img.node_data);
+   img.node_data = 26e1*abs(img.node_data);
+   show_slices(img,2);
+   eidors_colourbar(img);
+
+   subplot(3,3,imgno); imgno=imgno+1;
+   img.node_data(1:252)= abs( (0:251)/100 - 1.05 );
+   show_slices(img,2);
+   eidors_colourbar(img);
+
+
+   subplot(3,3,imgno); imgno=imgno+1;
    img.calc_colours.ref_level = 0.5;
    img.calc_colours.clim      = 0.5;
    show_slices(img,2);
