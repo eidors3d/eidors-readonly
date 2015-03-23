@@ -23,12 +23,18 @@ function print_convert(filename, varargin)
 %
 %  Note that opt.imwrite_opts takes precedence over opt.jpeq_quality.
 %
+%  print_convert has pre-version 3.7 options, which are deprecated
+%
 %  Examples
 %   print_convert('outname.png')         % uses default options
 %   print_convert outname.png
 %   print_conver outname.png -r150       % set dpi=150
 %   print_convert('outname.png',opts);   % use options
 %
+% See also IMWRITE
+ 
+% (C) Andy Adler and Bartlomiej Grychtol 2010-2013. License: GPL v2 or v3.
+% $Id$
 %
 %  Compatibility with pre-3.7 features:
 %  ------------------------------------
@@ -40,11 +46,6 @@ function print_convert(filename, varargin)
 %  
 %   print_convert('outname.png','-density 150') % resolution to 150 dpi
 %   print_convert('outname.png','-density 150', 0.5)
-%
-% See also IMWRITE
- 
-% (C) Andy Adler and Bartlomiej Grychtol 2010-2013. License: GPL v2 or v3.
-% $Id$
  
 if ischar(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
