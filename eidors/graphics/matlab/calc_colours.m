@@ -191,7 +191,7 @@ function set_colours_defaults;
    calc_colours('clim',[]);                % no colour cropping
    calc_colours('cb_shrink_move',[1,1,0]); % Don't shrink or move colorbar
    calc_colours('transparency_thresh',0.25); % transparent at .25 of max
-   eidors_msg('Setting Default Colours',1);
+   eidors_msg('Setting Default Colours',2);
    calc_colours('cmap_type','blue_red');   % default eidors colours
 
 
