@@ -140,7 +140,7 @@ LOWER PRIORITY
 - put warning in mdl_slice_mesher when level doesn't cut the model
     (currently this gives error: consider at line 110 when els = [])
 
-- fix mk_image so that it can handle a time series image
++ fix mk_image so that it can handle a time series image
 
 - Update Draeger file reader software.
 
