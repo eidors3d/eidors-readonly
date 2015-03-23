@@ -182,8 +182,8 @@ function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale, tick_div_in)
 
    if ~isempty(tick_div_in); tick_div = tick_div_in; end
 
-   ticks = (1:tick_div)/tick_div;
-   ticks(end) = [];
+%  ticks = (1:tick_div)/tick_div;
+%  ticks(end) = [];
 
    scale_r  = OrdOfMag * fms;
 
@@ -193,8 +193,8 @@ function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale, tick_div_in)
    
    %FIXME = AA+CG 30/1/12
 if isempty(greyscale)
-    %   tick_vals = [-1:0.2:1]*max_scale + ref_r;
-    tick_vals = [-1,-fliplr(ticks),0,ticks,1]*scale_r + ref_r;
+    %  Set to 2 x range, so out of scale ticks are thrown
+    tick_vals = linspace(-2,2,tick_div*4+1)*scale_r + ref_r;
 else
 %     tick_vals = [0:0.2:1]*max_scale;
      tick_vals = [0:0.2:1]*scale_r;
