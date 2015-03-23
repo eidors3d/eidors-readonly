@@ -12,6 +12,9 @@ function hh= eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 %
 % usage: eidors_colourbar( img ); % Set own tick positions
 %   img.eidors_colourbar.tick_vals = [-20:20]/10;
+
+% usage: eidors_colourbar( img ); % Set own tick positions
+%   img.eidors_colourbar.tick_divisions = 5; % Extra tick divisions
 %
 % Optional parameter:
 %    cb_shrink_move(1) = horizontal shrink (relative)
