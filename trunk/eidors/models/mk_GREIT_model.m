@@ -53,13 +53,13 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   currently weighting matrix must be scalar
 %               
 % Examples
-%   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
-% OR
 %   fmdl = mk_library_model('adult_male_16el');
-%   fmdl.stimulation = stim;
+%   fmdl.stimulation = mk_stim_patterns(16,1,'{ad}','{ad}',1);
 %   fmdl.normalize_measurements = 1;
+%   imdl = mk_GREIT_model(fmdl,0.25,5); % uses weight 5
+%   OR
 %   opt.noise_figure = 0.5; 
-%   imdl = mk_GREIT_model(fmdl,0.25,5,opt);
+%   imdl = mk_GREIT_model(fmdl,0.25,[],opt); % optimises weight for NF=0.5
 %
 % CITATION_REQUEST:
 % AUTHOR: A Adler et al.
@@ -83,7 +83,7 @@ if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4, options = [];end
 [imdl,fmdl,imgs] = parse_fmdl(fmdl);
-options = parse_options(options,fmdl,imdl);
+options = parse_options(options,fmdl,imdl, weight);
 
 cache_obj= { fmdl, imdl, imgs, radius, weight, options};
 
@@ -300,7 +300,7 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
       imdl = select_imdl( fmdl,{'Basic GN dif'});
    end
 
-function opt = parse_options(opt,fmdl,imdl);
+function opt = parse_options(opt,fmdl,imdl, weight);
 
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'square_pixels')
@@ -316,6 +316,10 @@ function opt = parse_options(opt,fmdl,imdl);
     if ~isfield(opt, 'distr'),     opt.distr = 3;       end 
     if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000;    end
     if ~isfield(opt, 'noise_figure'), opt.noise_figure = []; end
+    if isempty(opt.noise_figure) && isempty(weight)
+        error('EIDORS:WrongInput', ...
+            'The weight parameter must be specified if opt.noise_figure is empty or absent');
+    end
     if isfield(opt,'extra_noise')
       error('mk_GREIT_model: doesn''t currently support extra_noise');
     end
