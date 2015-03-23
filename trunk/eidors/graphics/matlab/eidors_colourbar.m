@@ -50,22 +50,18 @@ if isstruct(max_scale) && strcmp(max_scale.type,'image')
    [scl_data, ref_lev, max_scale] = scale_for_display( img_data(:), pp);
 end
 
-% Now deal with the other cases
-   
    hh= colorbar; 
-   % make colourbar smaller and closer to axis
-   if nargin >= 3
 
-      axpos = get(gca,'Position');
-      posn= get(hh,'Position');
-      cbsm = cb_shrink_move; 
-      if ~all(cbsm == [1,1,0]); 
-         posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, ...
-                 posn(3) * cbsm(1), posn(4) * cbsm(2)];
-         set(hh,'Position', posn );
-         set(gca,'Position',axpos);
-      end
+   cbsm = [];
+   try;  cbsm =  img.calc_colours.cb_shrink_move;
+   end;
 
+   if nargin >= 3; cbsm = cb_shrink_move;
+   end
+
+   axpos = get(gca,'Position');
+   if ~isempty(cbsm)
+      do_cb_shrink_move( hh, cbsm );
    end
 
    %FIXME = AA+CG 30/1/12
@@ -99,7 +95,6 @@ end
 
    try
       tick_vals = img.eidors_colourbar.tick_vals;
-      disp('here');
    catch
       tick_vals= get_tick_vals(max_scale, ref_lev, greyscale);
    end
@@ -116,8 +111,7 @@ end
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
 
-   if nargin >= 3
-% RESET OUR AXES
+   if ~isempty(cbsm) % RESET OUR AXES
       if ~all(cbsm == [1,1,0]); 
          set(gca,'position',axpos);
       end
@@ -125,6 +119,20 @@ end
 
    % Clear hh do it is not displayed, unless output requested
    if nargout ==0; clear hh; end
+
+end
+
+function do_cb_shrink_move( hh, cbsm )
+   % make colourbar smaller and closer to axis
+
+   axpos = get(gca,'Position');
+   posn= get(hh,'Position');
+   if ~all(cbsm == [1,1,0]); 
+      posn = [posn(1) - cbsm(3), posn(2) + posn(4)*(1-cbsm(2))/2, ...
+              posn(3) * cbsm(1), posn(4) * cbsm(2)];
+      set(hh,'Position', posn );
+      set(gca,'Position',axpos);
+   end
 
 end
 
@@ -157,15 +165,18 @@ function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale)
 
    scale1  = floor( max_scale / OrdOfMag + 2*eps );
 % disp([scale1, OrdOfMag, max_scale]); => DEBUG
-   if     (scale1/F >= 8);  fms = F*8;   ticks=[1]/2; 
-   elseif (scale1/F >= 6);  fms = F*6;   ticks=[1]/2; 
-   elseif (scale1/F >= 4);  fms = F*4;   ticks=[1]/2;
-   elseif (scale1/F >= 3);  fms = F*3;   ticks=[1:2]/3;
-   elseif (scale1/F >= 2);  fms = F*2;   ticks=[1]/2;
-   elseif (scale1/F >= 1.5);fms = F*1.5; ticks=[1:2]/3;
-   elseif (scale1/F >= 1);  fms = F*1;   ticks=[1]/2;
-   else   (scale1/F >= 0.5);fms = F*0.5; ticks=[1]/2;
+   if     (scale1/F >= 8);  fms = F*8;   tick_lim=2; 
+   elseif (scale1/F >= 6);  fms = F*6;   tick_lim=2; 
+   elseif (scale1/F >= 4);  fms = F*4;   tick_lim=2;
+   elseif (scale1/F >= 3);  fms = F*3;   tick_lim=3;
+   elseif (scale1/F >= 2);  fms = F*2;   tick_lim=2;
+   elseif (scale1/F >= 1.5);fms = F*1.5; tick_lim=3;
+   elseif (scale1/F >= 1);  fms = F*1;   tick_lim=2;
+   else   (scale1/F >= 0.5);fms = F*0.5; tick_lim=2;
    end
+
+   ticks = (1:tick_lim)/tick_lim;
+   ticks(end) = [];
 
    scale_r  = OrdOfMag * fms;
 
@@ -207,23 +218,24 @@ function do_unit_test
    img = mk_image(imdl);
    img=rmfield(img,'elem_data');
    img.node_data(1:252)= (0:251)/100 - 1.05;
+   if 0
    fprintf('CMAX = %4.2f CMIN = %4.2f\n', ...
        max(img.node_data), min(img.node_data) );
+   end
 
 
    subplot(3,3,imgno); imgno=imgno+1;
    show_slices(img,2); eidors_colourbar(img);
 
    % ref_level is not displayed, but will have its effect
-   img.calc_colours.ref_level = -0.1234;
-   img.calc_colours.ref_level =  0;
+   img.calc_colours.ref_level = -0.0234;
    subplot(3,3,imgno); imgno=imgno+1;
    show_slices(img,2); eidors_colourbar(img);
 
    img.calc_colours.cmax = 1;
    subplot(3,3,imgno); imgno=imgno+1;
    img2= img;
-   img2.eidors_colourbar.tick_vals = [-20:20]/10;
+   img2.eidors_colourbar.tick_vals = [-10:10]/5;
    show_slices(img,2); eidors_colourbar(img2);
 
    MV =-0.05;
