@@ -45,10 +45,10 @@ HIGH PRIORITY
       - add a parameter_mapping interface
     - check c2f processing in show_3d_slices
 
- - colourbar - put some logic to allow labels like 1.5 as max
+ + colourbar - put some logic to allow labels like 1.5 as max
     (instead of 1,2,3 etc)
-    - when max is 1.5 (or 3) then split into 1,2,3, not 1.5,3
-    - test it with the new matlab
+    + when max is 1.5 (or 3) then split into 1,2,3, not 1.5,3
+    + test it with the new matlab
 
  - test with new matlab
     - does unique work
