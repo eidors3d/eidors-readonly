@@ -3,6 +3,33 @@ function obj= oeit_parser( filename)
    if nargin==0; filename = '../docs/samples/sampleGoeFile2.oeit/oeit.xml'; end
 %  if nargin==0; filename = 'doc.xml'; end
 
+%%%% METHODS WANTED
+% [xmlparse,datastruct] = oeit_parser( filename );
+% n_frames = oeit_num_frames( datastruct);
+% frame_n  = oeit_framedata( datastruct, n);
+%   frame_n.data      : a vector of doubles regardless of OEIT storage type
+%   frame_n.frame_type: string of frame type
+%   frame_n.start_time: start time in s (with fractions)
+%
+% elecs    = oeit_electrodes
+%   elecs  = structure describing electrodes
+%   elecs(1).id = id of elec 1
+%
+%   electrode ID translated to numbers via order in xml 
+%
+% frame_desc = oeit_frame( xmlparse, frame_type )
+%   frame_desc.stim.   % descr data in which medium is stimulated (+meas)
+%   frame_desc.meas.   % descr data in which medium is only measured (no stim)
+%   frame_desc.none.   % descr other data (no electrodes identified / dummy or aux)
+%   frame_desc.stim.   % descr data in which medium is stimulated (+meas)
+%   
+% frame_desc.stim.acq{1}.current{1} = [1,2,2,34,5,0,0,0]; % units
+% frame_desc.stim.acq{1}.current{1} = [1,2,2,34,5,0,0,0]; % units
+% frame_desc.stim.acq{1}.voltage = [1,2,2,34,5,0,0,0]; % units
+% frame_desc.stim.acq{1}.measure = [1,2,2,34,5,0,0,0]; % units
+% frame_desc.stim.acq{1}.frequency = [1,2,2,34,5,0,0,0]; % units
+
+
 parserFactory = javaMethod('newInstance',...
 'javax.xml.parsers.DocumentBuilderFactory');
 javaMethod('setXIncludeAware',parserFactory,true);
@@ -67,6 +94,7 @@ function obj = parse_acquisitions( tree );
    xp_stim       = xpath.compile('stim_list/stim/elec'); 
    xp_meas       = xpath.compile('meas_list/meas/elec'); 
 
+% TODO: doesn't work for fields that don't have elec fields
    for i = 1:nodeList.getLength
        node = nodeList.item(i-1);
        obj{i} = parse_atts( parseAttributes(node) );
