@@ -130,10 +130,13 @@ img = orderfields(img);
 try 
    do_calc = inv_model.inv_solve.calc_solution_error;
 catch
-   do_calc = true;
+   eidors_msg('inv_solve: Calculation of solution residual disabled (inv_model.inv_solve.calc_solution_error = 1 to enable)',2);
+   do_calc = false;
 end
-if ~do_calc, return, end
-eidors_msg('inv_solve: Calculating solution error (inv_model.inv_solve.calc_solution_error = 0 to disable)',2);
+if ~do_calc;
+   return;
+end
+eidors_msg('inv_solve: Calculating solution residual (inv_model.inv_solve.calc_solution_error = 0 to disable)',2);
 try
    if opts.abs_solve
       img.error = calc_solution_error( imgc, inv_model, fdata);
@@ -366,6 +369,9 @@ function do_unit_test
    img= inv_solve(im2,vh,vi); img.show_slices.img_cols = 5;
    unit_test_cmp('inv_solve: 20a', mean(img.elem_data), 1.006, 2e-3);
    unit_test_cmp('inv_solve: 20b',  std(img.elem_data), 3e-2, 1e-2);
+   im2.inv_solve.calc_solution_error = 1;
+   img= inv_solve(im2,vh,vi);
+   unit_test_cmp('inv_solve: 20e', mean(img.elem_data), 1.006, 2e-3);
    
    im2.inv_solve.scale_solution.offset = 0;
    d = interp_mesh( imdl.fwd_model); d= sqrt(sum(d.^2,2));
@@ -385,8 +391,12 @@ function do_unit_test
    unit_test_cmp('inv_solve: 31b',  std(img.node_data), 3e-2, 1.5e-2);
 
    im2 = select_imdl(imdl, {'Basic GN abs'} );
+   im2.inv_solve.calc_solution_error = 0; % ensure accepted
    img= inv_solve(im2,vi(:,1));
    unit_test_cmp('inv_solve: 40a', mean(img.elem_data), 1.004, 1e-3);
    unit_test_cmp('inv_solve: 40b',  std(img.elem_data), 1.5e-2, 1e-2);
+   im2.inv_solve.calc_solution_error = 1;
+   img= inv_solve(im2,vi(:,1));
+   unit_test_cmp('inv_solve: 40e', mean(img.elem_data), 1.004, 1e-3);
 
 

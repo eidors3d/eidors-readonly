@@ -143,7 +143,7 @@ LOWER PRIORITY
     elec_shape=[0.2,0.2,0.05]; elec_obj = {'top','bot'};
     fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 
-- make inv_model.inv_solve.calc_solution_error = 0
++ make inv_model.inv_solve.calc_solution_error = 0
   default. Or fix for large solutions.
 
 - verify that elec_frac = [k ... in mk_grid_model creates conformal grid --??
