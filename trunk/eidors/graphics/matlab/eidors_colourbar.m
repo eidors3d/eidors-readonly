@@ -6,9 +6,12 @@ function hh= eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 % usage: hh= eidors_colourbar( img )
 %    return a handle to colourbar created 
 %
-% usage: eidors_colourbar(max_scale,ref_lev)
-%    ref_lev:   centre of the colour scale
-%    max_scale: max difference from colour scale centre 
+% usage: eidors_colourbar( img );
+%   img.calc_colours.ref_level =  %  centre of the colour scale
+%   img.calc_colours.clim      =  %  max diff from ref_level
+%
+% usage: eidors_colourbar( img ); % Set own tick positions
+%   img.eidors_colourbar.tick_vals = [-20:20]/10;
 %
 % Optional parameter:
 %    cb_shrink_move(1) = horizontal shrink (relative)
@@ -38,8 +41,13 @@ if isstr(max_scale) && strcmp(max_scale,'UNIT_TEST'); do_unit_test; return; end
 
 % if called as a simple eidors colourbar function
 if isstruct(max_scale) && strcmp(max_scale.type,'image')
-    calc_colours(max_scale,[],1);
-    return
+% OLD WAY WAS TO CALL calc_colours first
+%   calc_colours(max_scale,[],1);
+%   return
+   img = max_scale;
+   pp=get_colours( img );
+   img_data= get_img_data( img );
+   [scl_data, ref_lev, max_scale] = scale_for_display( img_data(:), pp);
 end
 
 % Now deal with the other cases
@@ -89,6 +97,59 @@ end
    c_max = ylim(2) - c_ctr;
 
 
+   try
+      tick_vals = img.eidors_colourbar.tick_vals;
+      disp('here');
+   catch
+      tick_vals= get_tick_vals(max_scale, ref_lev, greyscale);
+   end
+
+   % ref_lev goes to c_ctr. max_scale goes to c_max
+%FIXME - need a switch to control use of max scale
+   tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+if isempty(greyscale) 
+    tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
+else
+    tick_locs = tick_vals*c_max*2/max_scale +2.5;
+end
+
+   set(hh,'YTick', tick_locs');
+   set(hh,'YTickLabel', tick_vals');
+
+   if nargin >= 3
+% RESET OUR AXES
+      if ~all(cbsm == [1,1,0]); 
+         set(gca,'position',axpos);
+      end
+   end
+
+   % Clear hh do it is not displayed, unless output requested
+   if nargout ==0; clear hh; end
+
+end
+
+% This function is copied from calc_colours. (AA: 23/3/2015)
+% The plan is to eventually separate eidors colourbar from
+%  calc_colours in a future release. This is a step on the
+%  way to separating the code
+function pp=get_colours( img );
+   global eidors_colours;
+   pp= eidors_colours;
+
+   pp.component = 'real'; % Don't get from globals
+
+% override global if calc.colours specified
+   try
+% DAMN Matlab should have syntax for this loop
+      fds= fieldnames(img(1).calc_colours);%assume all are the same!
+      for fdn= fds(:)';
+         fdn= fdn{1};
+         pp.( fdn ) = img(1).calc_colours.(fdn);
+      end
+   end
+end
+
+function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale) 
 % COMMENTS: AA - 4 apr 13
 % If we want to ahve less aggressive rounding, we can do this
    F= 2;
@@ -120,31 +181,6 @@ else
 %     tick_vals = [0:0.2:1]*max_scale;
      tick_vals = [0:0.2:1]*scale_r;
 end
-
-   % ref_lev goes to c_ctr. max_scale goes to c_max
-%FIXME - need a switch to control use of max scale
-   tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
-if isempty(greyscale) 
-    tick_locs = (tick_vals - ref_lev)/max_scale * c_max + c_ctr;
-else
-    tick_locs = tick_vals*c_max*2/max_scale +2.5;
-end
-
-   set(hh,'YTick', tick_locs');
-   set(hh,'YTickLabel', tick_vals');
-
-if fms==3; keyboard; end
-
-   if nargin >= 3
-% RESET OUR AXES
-      if ~all(cbsm == [1,1,0]); 
-         set(gca,'position',axpos);
-      end
-   end
-
-   % Clear hh do it is not displayed, unless output requested
-   if nargout ==0; clear hh; end
-
 end
 
 % DEBUG CODE ATTEMPTING TO FIX CB
@@ -186,7 +222,9 @@ function do_unit_test
 
    img.calc_colours.cmax = 1;
    subplot(3,3,imgno); imgno=imgno+1;
-   show_slices(img,2); eidors_colourbar(img);
+   img2= img;
+   img2.eidors_colourbar.tick_vals = [-20:20]/10;
+   show_slices(img,2); eidors_colourbar(img2);
 
    MV =-0.05;
    img.calc_colours.cb_shrink_move = [.5,.8,MV];
