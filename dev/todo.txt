@@ -97,7 +97,7 @@ LOWER PRIORITY
 
  - Test if Problems with HPF_Gaussian prior?
 
- - print_convert => remove old info in help
+ + print_convert => remove old info in help
 
  - Deprecate jacobian.background.value ->
  +            jacobian.background.elem_data (and new physics)
