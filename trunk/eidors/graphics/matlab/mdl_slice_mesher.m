@@ -28,7 +28,7 @@ function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 % See also: SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, CROP_MODEL,
 %           CALC_COLOURS. PATCH
 
-% (C) 2012 Bartlomiej Grychtol. 
+% (C) 2012-2015 Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
 % $Id$
 
@@ -53,8 +53,10 @@ switch fmdl.type
        img = mk_image(fmdl,1);
     otherwise; error('Unknown object type');
 end
-
-opt.cache_obj = {fmdl.nodes, fmdl.elems, fmdl.electrode, level};
+opt.cache_obj = {fmdl.nodes, fmdl.elems, level};
+if isfield(fmdl,'electrode');
+    opt.cache_obj(end+1) = {fmdl.electrode};
+end
 opt.fstr      = 'mdl_slice_mesher';
 
 
@@ -155,9 +157,16 @@ nodes_per_elem = jnk;
 nodes_per_elem(2:end) = diff(jnk);
 
 n_tri = length(uels) + sum(nodes_per_elem==4);
+
 nmdl.type = 'fwd_model';
 nmdl.nodes = nodes;
 nmdl.elems = zeros(n_tri,3);
+
+if n_tri == 0 
+    error('EIDORS:NoIntersection',... 
+        'No intersection found between the cut plane [%.2f %.2f %.2f] and the model.', ...
+        level(1),level(2),level(3));
+end
 n_el_data = size(fmdl.elems,1);
 f2c = sparse(n_el_data,length(uels));
 c = 1;
@@ -210,6 +219,9 @@ out.nn   = nn;
 
 function nimg = build_image(nmdl, f2c, img)
 nimg = mk_image(nmdl,1);
+if isempty(nimg.elem_data) % plane doesn't cut model
+    return
+end
 nimg.elem_data = (img.elem_data' * f2c)';
 try
    nimg.calc_colours = img.calc_colours;
