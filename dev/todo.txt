@@ -2,6 +2,8 @@
 
  - Efficiency of calculations with multiple RHS
     - look at dev/a_adler/testcode/qr_efficiency.m
+    - in left_divide, time via: t1=cputime; V= (E \ Q)*R; t1=cputime-t1;
+    - in left_divide => Q/R should be cached
 
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
