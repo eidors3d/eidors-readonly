@@ -77,9 +77,9 @@ cache_obj = { ellip_shape, elec_pos, elec_shape, extra_ng_code};
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_ellip_models' );
 if isempty(fmdl);
    fmdl = mk_ellip_model( ellip_shape, elec_pos, elec_shape, extra_ng_code );
-   eidors_cache('boost_priority', -2); % netgen objs are low priority
+%  eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_ellip_models', fmdl);
-   eidors_cache('boost_priority', +2); % return values
+%  eidors_cache('boost_priority', +2); % return values
 end
 
 mat_idx = fmdl.mat_idx_reordered;

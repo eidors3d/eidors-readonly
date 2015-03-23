@@ -51,9 +51,7 @@ cache_obj = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
 fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_gen_models' );
 if isempty(fmdl);
    fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code);
-   eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_gen_models', fmdl);
-   eidors_cache('boost_priority', +2); % return values
 end
 
 mat_idx = fmdl.mat_idx_reordered;
