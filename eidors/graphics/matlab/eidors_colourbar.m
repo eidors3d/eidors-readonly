@@ -96,7 +96,12 @@ end
    try
       tick_vals = img.eidors_colourbar.tick_vals;
    catch
-      tick_vals= get_tick_vals(max_scale, ref_lev, greyscale);
+      try
+         tick_div = img.eidors_colourbar.tick_divisions;
+      catch
+         tick_div = [];
+      end
+      tick_vals= get_tick_vals(max_scale, ref_lev, greyscale, tick_div);
    end
 
    % ref_lev goes to c_ctr. max_scale goes to c_max
@@ -157,7 +162,7 @@ function pp=get_colours( img );
    end
 end
 
-function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale) 
+function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale, tick_div_in) 
 % COMMENTS: AA - 4 apr 13
 % If we want to ahve less aggressive rounding, we can do this
    F= 2;
@@ -165,17 +170,19 @@ function tick_vals= get_tick_vals(max_scale, ref_lev, greyscale)
 
    scale1  = floor( max_scale / OrdOfMag + 2*eps );
 % disp([scale1, OrdOfMag, max_scale]); => DEBUG
-   if     (scale1/F >= 8);  fms = F*8;   tick_lim=2; 
-   elseif (scale1/F >= 6);  fms = F*6;   tick_lim=2; 
-   elseif (scale1/F >= 4);  fms = F*4;   tick_lim=2;
-   elseif (scale1/F >= 3);  fms = F*3;   tick_lim=3;
-   elseif (scale1/F >= 2);  fms = F*2;   tick_lim=2;
-   elseif (scale1/F >= 1.5);fms = F*1.5; tick_lim=3;
-   elseif (scale1/F >= 1);  fms = F*1;   tick_lim=2;
-   else   (scale1/F >= 0.5);fms = F*0.5; tick_lim=2;
+   if     (scale1/F >= 8);  fms = F*8;   tick_div=2; 
+   elseif (scale1/F >= 6);  fms = F*6;   tick_div=2; 
+   elseif (scale1/F >= 4);  fms = F*4;   tick_div=2;
+   elseif (scale1/F >= 3);  fms = F*3;   tick_div=3;
+   elseif (scale1/F >= 2);  fms = F*2;   tick_div=2;
+   elseif (scale1/F >= 1.5);fms = F*1.5; tick_div=3;
+   elseif (scale1/F >= 1);  fms = F*1;   tick_div=2;
+   else   (scale1/F >= 0.5);fms = F*0.5; tick_div=2;
    end
 
-   ticks = (1:tick_lim)/tick_lim;
+   if ~isempty(tick_div_in); tick_div = tick_div_in; end
+
+   ticks = (1:tick_div)/tick_div;
    ticks(end) = [];
 
    scale_r  = OrdOfMag * fms;
@@ -230,13 +237,15 @@ function do_unit_test
    % ref_level is not displayed, but will have its effect
    img.calc_colours.ref_level = -0.0234;
    subplot(3,3,imgno); imgno=imgno+1;
-   show_slices(img,2); eidors_colourbar(img);
+   img2= img;
+   img2.eidors_colourbar.tick_divisions = 4;
+   show_slices(img2,2); eidors_colourbar(img2);
 
    img.calc_colours.cmax = 1;
    subplot(3,3,imgno); imgno=imgno+1;
    img2= img;
    img2.eidors_colourbar.tick_vals = [-10:10]/5;
-   show_slices(img,2); eidors_colourbar(img2);
+   show_slices(img2,2); eidors_colourbar(img2);
 
    MV =-0.05;
    img.calc_colours.cb_shrink_move = [.5,.8,MV];
