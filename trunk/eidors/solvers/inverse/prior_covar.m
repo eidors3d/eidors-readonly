@@ -76,7 +76,7 @@ function Reg = prior_covar_calc( cache_obj );
                    temp = find( above | below);
                    Reg(temp,temp) = 0;
                otherwise
-                   error('no such a 3-D prior type');
+                   error('Prior type (%d) has not yet been defined',P_type);
            end
        end
 
@@ -94,10 +94,11 @@ function do_unit_test
 %toc;
 
 %tic;
-   imdl.fourD_prior.P_type = 1;
+   imdl.fourD_prior.P_type = 3;
    Reg = prior_covar( imdl );
-   unit_test_cmp('#1:', diag(Reg), ones(size(Reg,1),1));
-   unit_test_cmp('#2:', Reg(102:103,100:103), [ ...
-   0.011818494814411   0.367555969018042   1.000000000000000   0.396442259421198; ...
-   0.008985699733886   0.160077229290862   0.396442259421198   1.000000000000000], 1e-10);
+   test = zeros(size(Reg,1),1); test(769:6912) = 1;
+   unit_test_cmp('#1:', diag(Reg), test);
+   unit_test_cmp('#2:', Reg(802:803,800:803), [ ...
+   0.086725242542203   0.132995997778770   1.000000000000000   0.417609404846561; ...
+   0.157824974662458   0.293750928546438   0.417609404846561   1.000000000000000], 1e-10);
 %toc;
