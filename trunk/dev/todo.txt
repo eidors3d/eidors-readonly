@@ -9,6 +9,10 @@
     - cache small objects (like NF / hyperparameter tables)
     - think about how to achieve boost_priority for big ng_models
 
+ - remove np fields from ng_mk_models
+    - add default np fields to the np functions
+
+
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 HIGH PRIORITY
@@ -74,9 +78,6 @@ LOWER PRIORITY
 
  - check for additional y-cut in show_3d_slices
 
- - remove np fields from ng_mk_models
-    - add default np fields to the np functions
-
  - ng models with point electrodes (in 3D - check Herve's code)
 
  - experimental image_field in calc_colours (see cg_ards_recruitment_04)
@@ -132,7 +133,6 @@ LOWER PRIORITY
    options.noise_figure MUST be specified”
 
  
-
 + add num_elecs.m function
 + bug in ng_mk_gen_models with top/bottom square elecs
     shape_str = ['solid top    = plane(0,0,  0;0,0, 1);\n' ...
