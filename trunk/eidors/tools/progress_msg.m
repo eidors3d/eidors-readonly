@@ -1,15 +1,21 @@
 function progress_msg(varargin)
 %PROGRESS_MSG Progress messages and timing.
 % 
-% PROGRESS_MSG('msg',I,N,opt) where I = 0 initilises the messages. 
+% PROGRESS_MSG('msg',I,N,opt) where I = 0 or -1 initilises the messages. 
 %   'msg'   [optional] string to print
-%   I       [optional] must equal zero for initialisation
+%   I       [optional] if I=0 initialises and prints '0%', '0/N', or '0'
+%                      if I=-1 suppresses the initial progress message and
+%                      ignores options of the immediately following 
+%                      initialisation message                      
 %   N       [optional] if N=0 prints 'I', if N>0 prints 'I/N' 
 %                      if absent, prints 'I%' (default)
 %   opt     [optional] structure with the following fields and defaults:
 %      .log_level = 2        controls verbosity, see EIDORD_MSG for details
-%      .final_msg = 'Done'   customises the test of the final message
-%                            if empty, last message will not be erased 
+%      .final_msg            customises the text of the final message
+%                   'Done'   default
+%                   ''       last message will not be erased, but time will
+%                            be printed
+%                   'none'   completely suppress the final message
 %      .num_digits = 6       controls the text field width for N=0
 %
 % PROGRESS_MSG(I) displays I%
@@ -27,6 +33,11 @@ function progress_msg(varargin)
 %       pause(.2); % think
 %   end
 %   progress_msg(Inf)           % final message, e.g. Done (2.015 s)
+%
+%   opt.final_msg = 'none'                   % suppress final message 
+%   progress_msg('Start calculations...',-1);% suppress next initialisation
+%   res = function_using_progress_msg;
+%   progress_msg(sprintf('Size is %d',numel(res)), Inf);
 %
 % SEE ALSO EIDORS_MSG, TIC, TOC
 
@@ -50,6 +61,11 @@ nargs = nargin;
 opt = default_opts;
 if nargs > 0 && isstruct(varargin{end})
     tmp = varargin{end};
+    try
+        if tmp.log_level > eidors_msg('log_level')
+            return % don't even process options 
+        end
+    end
     fld = fieldnames(tmp);
     for i = 1:numel(fld)
         opt.(fld{i}) = tmp.(fld{i});
@@ -57,6 +73,7 @@ if nargs > 0 && isstruct(varargin{end})
     nargs = nargs-1;
     varargin(end) = [];
 end
+
 
 msg = '';
 if nargs > 0 && ischar(varargin{1})
@@ -76,10 +93,26 @@ if nargs == 0 % there was only a message
 end
 
 first_msg = false;
-if nargs == 0 || varargin{1} == 0
+ignore = false;
+try 
+    ignore = pvar.ignore_next;
+end
+if nargs == 0 || varargin{1} <=0 || isempty(pvar)
     first_msg = true;
-    pvar.log_level = opt.log_level;
-    pvar.final_msg = opt.final_msg;
+    if ~ignore
+        pvar.log_level = opt.log_level;
+    end
+    if pvar.log_level > eidors_msg('log_level');
+        return
+    end
+    if ~ignore
+        pvar.final_msg = opt.final_msg;
+    end
+    if varargin{1} < 0
+        pvar.ignore_next = true;
+    else
+        pvar.ignore_next = false;
+    end
     pvar.timerVal = tic;
     pvar.own_time = 0;
     if nargs <= 1
@@ -105,7 +138,9 @@ if nargs > 0 && isinf(varargin{1})
         msg = pvar.final_msg;
     end
     print_final_msg(msg, pvar.nChars);
-    print_time(pvar);
+    if ~strcmp(msg,'none')
+        print_time(pvar);
+    end
     if eidors_debug('query','progress_msg')
         fprintf('Self-time: %f\n',pvar.own_time);
     end
@@ -128,6 +163,7 @@ end
 
 
 function percentmsg(num, first, N)
+    if first && num < 0, return, end
     str = '%3d%%';
     if ~first
         str = [repmat('\b',1,N) str ];
@@ -136,6 +172,7 @@ function percentmsg(num, first, N)
 end
 
 function outofmsg(a,b,first,N,T)
+    if first && a < 0, return, end
     str = sprintf('%%%dd/%%%dd',N,N);
     if ~first
         str = [repmat('\b',1,T) str ];
@@ -144,7 +181,8 @@ function outofmsg(a,b,first,N,T)
     fprintf(str,a,b);
 end
 
-function pvar = numbermsg(num, first, T)
+function numbermsg(num, first, T)
+    if first && num < 0, return, end
     str = sprintf('%%%dd',T);
     if ~first
         str = [repmat('\b',1,T) str];

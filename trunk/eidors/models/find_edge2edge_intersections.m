@@ -247,16 +247,3 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections(FE,FN,CE,CN, 
     FE2pts = sparse(T,I,ones(size(I)),size(P1,1),size(I,1));
     CE2pts  = sparse(V,I,ones(size(I)),size(P3,1),size(I,1));
     
-%-------------------------------------------------------------------------%
-% fprintf wrapper to use eidors log_level
-function progmsg(num, erase)
-    if eidors_msg('log_level') < 2, return; end
-    if nargin == 1, erase = true; end
-    str = '%3d%%';
-    if erase
-        str = ['\b\b\b\b' str ];
-    end
-    fprintf(str, round(100*num));
-    
-
- 
