@@ -16,7 +16,40 @@ if (nargin==1)
     ccw=-1; %Default specify counter-clockwise nodes
 end
 
-fwd_model = old_do_reorder(fwd_model, ccw);
+   fwd_model = old_do_reorder(fwd_model, ccw);
+%  fwd_model =     do_reorder(fwd_model, ccw);
+end
+
+
+function fmdl = do_reorder(fmdl, ccw)
+   dim=size( fmdl.nodes,2);
+   els=num_elems( fmdl );
+
+     xx= reshape( fmdl.nodes( fmdl.elems, 1 ), els, dim+1);
+     xx= xx - xx(:,1)*ones(1,dim+1);
+     yy= reshape( fmdl.nodes( fmdl.elems, 2 ), els, dim+1);
+     yy= yy - yy(:,1)*ones(1,dim+1);
+   if dim==2;
+     vol = xx(:,2).*yy(:,3) - xx(:,3).*yy(:,2);
+   elseif dim==3
+     zz= reshape( fmdl.nodes( fmdl.elems, 3 ), els, dim+1);
+     zz= zz - zz(:,1)*ones(1,dim+1);
+
+     vol = zz(:,4).*( xx(:,2).*yy(:,3) - xx(:,3).*yy(:,2) ) ...
+         - zz(:,3).*( xx(:,2).*yy(:,4) - xx(:,4).*yy(:,2) ) ...
+         + zz(:,2).*( xx(:,3).*yy(:,4) - xx(:,4).*yy(:,3) );
+
+% Looks more elegant, but slower
+%    vol = sum(zz(:,[4,3,2]).*xx(:,[2,4,3]).*yy(:,[3,2,4]) ,2) ...
+%        - sum(zz(:,[4,3,2]).*xx(:,[3,2,4]).*yy(:,[2,4,3]) ,2);
+
+   else
+     error('reorder for 2 or 3 dimensions');
+   end
+
+   ff = find( sign(vol) == ccw );
+   % reverse first two nodes
+   fmdl.elems(ff,1:2) = fmdl.elems(ff,[2,1]);
 end
 
 function fwd_model = old_do_reorder(fwd_model, ccw)
@@ -63,6 +96,7 @@ function do_unit_test
        case 1; imdl = mk_common_model('n3r2',[16,2]);
        case 2; imdl = mk_common_model('a2c2',8);
        case 3; imdl = mk_common_model('d3cr',[16,2]);
+       case 4; imdl = mk_common_model('f3cr',[16,2]);
      end
      if ~exist('imdl'); continue ; end
 
