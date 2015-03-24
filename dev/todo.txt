@@ -95,7 +95,8 @@ LOWER PRIORITY
  - Bug with 'trig' measurement patterns
     - make an option to give the stim pattern used by RPI
 
- - Nodal Jacobian bugs (example in 24 jan 2012 email)
+ + Nodal Jacobian bugs (example in 24 jan 2012 email)
+   => Unable to locate
 
  - Test if Problems with HPF_Gaussian prior?
 
