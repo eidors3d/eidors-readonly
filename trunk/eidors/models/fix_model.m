@@ -46,14 +46,17 @@ if ischar(mdl) && strcmp(mdl,'options');
    mdl = list_options(opt); 
    return 
 end
-doall = false; opt=struct;
+doall = false;
 if nargin > 1
    opt = fix_options(mdl,opt);
 else
-   doall = true;
+   doall = true; opt=struct;
 end
 
-mdl = eidors_cache( @do_fix_model, {mdl, doall, opt});
+copt.cache_obj = {mdl.nodes, mdl.elems, doall, opt};
+copt.fstr      = 'fix_model';
+
+mdl = eidors_cache( @do_fix_model, {mdl, doall, opt}, copt);
 
 
 % Complete the function
