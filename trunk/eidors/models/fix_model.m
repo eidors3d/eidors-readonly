@@ -46,13 +46,22 @@ if ischar(mdl) && strcmp(mdl,'options');
    mdl = list_options(opt); 
    return 
 end
-doall = false;
+doall = false; opt=struct;
 if nargin > 1
    opt = fix_options(mdl,opt);
 else
    doall = true;
 end
 
+if doall % only cache if all
+   mdl = eidors_cache( @do_fix_model, {mdl, doall, opt});
+else
+   mdl = do_fix_model(mdl, doall, opt);
+end
+
+
+% Complete the function
+function mdl = do_fix_model(mdl, doall, opt)
 
 if doall || opt.boundary
    if ~isfield(mdl,'boundary')

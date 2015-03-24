@@ -16,8 +16,8 @@ if (nargin==1)
     ccw=-1; %Default specify counter-clockwise nodes
 end
 
-   fwd_model = old_do_reorder(fwd_model, ccw);
-%  fwd_model =     do_reorder(fwd_model, ccw);
+   fwd_model =     do_reorder(fwd_model, ccw);
+%  fwd_model = old_do_reorder(fwd_model, ccw);
 end
 
 
