@@ -57,34 +57,27 @@ function fwd_model = old_do_reorder(fwd_model, ccw)
 end
 
 function do_unit_test
-   imdl = mk_common_model('n3r2',[16,2]); fmdl = imdl.fwd_model;
-   fm1 = linear_reorder(fmdl);
-   vol1= test_linear_reorder( fm1 );
-   ok = all(vol1>0);
-   fprintf('test1 3d: OK=%d\n',ok);
+   for i = 1:10
+     clear imdl;
+     switch i,
+       case 1; imdl = mk_common_model('n3r2',[16,2]);
+       case 2; imdl = mk_common_model('a2c2',8);
+       case 3; imdl = mk_common_model('d3cr',[16,2]);
+     end
+     if ~exist('imdl'); continue ; end
 
-   fm1 = linear_reorder(fmdl, 1);
-   vol1= test_linear_reorder( fm1 );
-   ok = all(vol1<0);
-   fprintf('test2 3d: OK=%d\n',ok);
+     fmdl = imdl.fwd_model;
+     vol = test_linear_reorder( fmdl ); ok = std(sign(vol))==0; % not all 
+     t = cputime;
+     fm0 = linear_reorder(fmdl, -1);
+     fm1 = linear_reorder(fmdl, 1);
+     t = cputime - t;
+     vol0= test_linear_reorder( fm0 );
+     vol1= test_linear_reorder( fm1 );
 
-   imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
-   fm1 = linear_reorder(fmdl);
-   vol1= test_linear_reorder( fm1 );
-   ok = all(vol1>0);
-   fprintf('test3 2d: OK=%d\n',ok);
-
-   fm1 = linear_reorder(fmdl, 1);
-   vol1= test_linear_reorder( fm1 );
-   ok = all(vol1<0);
-   fprintf('test4 2d: OK=%d\n',ok);
-
-   imdl = mk_common_model('d3cr',[16,2]); fmdl = imdl.fwd_model;
-tic
-   vol1= test_linear_reorder( fmdl );
-toc
-   ok = all(vol1<0);
-   fprintf('test5 3d: OK=%d\n',ok);
+     fprintf('test%02d(t=%4.2f): OK=%d=>(%d,%d)\n',i, t, ...
+          ok, all(vol0>0), all(vol1<0));
+   end
 end
    
 
