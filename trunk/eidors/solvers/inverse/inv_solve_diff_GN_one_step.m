@@ -25,7 +25,7 @@ function img= inv_solve_diff_GN_one_step( inv_model, data1, data2)
 % Additional options for FMINBD can be passed as:
 %     inv_model.inv_solve_diff_GN_one_step.fminbnd.MaxIter = 10;
 %
-% The optimal step_size is returned in img.step_size.
+% The optimal step_size is returned in img.info.step_size.
 %
 % See also INV_SOLVE, CALC_SOLUTION_ERROR, FMINBND
 
@@ -73,7 +73,7 @@ function RM = get_RM( inv_model )
    eidors_msg('inv_solve_diff_GN_one_step: setting cached value', 3);
    
    
-function [img step_size] = scale_to_fit_data(img, inv_model, data1, data2)
+function [img, step_size] = scale_to_fit_data(img, inv_model, data1, data2)
    % find the step size to multiply sol by to best fit data
    step_size = 1;
    do_step   = false;
@@ -103,7 +103,7 @@ function [img step_size] = scale_to_fit_data(img, inv_model, data1, data2)
       end
    end
    img.elem_data = img.elem_data * step_size;
-   img.step_size = step_size;
+   img.info.step_size = step_size;
 
 function out = to_optimize(img, inv_model, data1, data2, x)
    img.elem_data = img.elem_data*x;

@@ -123,7 +123,7 @@ try; img.node_data = opts.offset + opts.scale * img.node_data; end
 %  A DIFFERENT ORDER. Example
 %>> A.a= 1; A.b= 2; B.b= 3; B.a = 3; A(2) = B
 %??? Subscripted assignment between dissimilar structures.
-img.error = NaN;
+img.info.error = NaN;
 img = orderfields(img);
 
 % calculate residuals
@@ -139,11 +139,11 @@ end
 eidors_msg('inv_solve: Calculating solution residual (inv_model.inv_solve.calc_solution_error = 0 to disable)',2);
 try
    if opts.abs_solve
-      img.error = calc_solution_error( imgc, inv_model, fdata);
+      img.info.error = calc_solution_error( imgc, inv_model, fdata);
    else
-      img.error = calc_solution_error( imgc, inv_model, fdata1, fdata2 );
+      img.info.error = calc_solution_error( imgc, inv_model, fdata1, fdata2 );
    end
-   eidors_msg('inv_solve: Solution Error: %f', img.error,  2);
+   eidors_msg('inv_solve: Solution Error: %f', img.info.error,  2);
 catch
    eidors_msg('inv_solve: Solution Error calculation failed.',2);
 end
