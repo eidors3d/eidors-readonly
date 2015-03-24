@@ -84,7 +84,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
     
     m = [];
     c2f = sparse(opt0.nTet,opt0.nVox);
-    
+   
     progress_msg('Prepare tet model...');
     fmdl0 = prepare_fmdl(fmdl0);
     progress_msg(Inf);
@@ -98,7 +98,11 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        end
     else % save_memory > 0
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       progress_msg('Progress:');
+       max_iter = opt0.Zsz;
+       if opt0.save_memory >= 2, max_iter = max_iter * opt0.Ysz; end
+       if opt0.save_memory == 3, max_iter = max_iter * opt0.Xsz; end
+       pmopt.final_msg = '';
+       progress_msg('Progress:',0,max_iter,pmopt);
        progress = 0;
        opt = opt0;
        m = prepare_vox_mdl(rmdl0,opt0);
@@ -137,8 +141,8 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                          eidors_msg('log_level',eidors_msg('log_level')+1);
                          c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x);
                       end
-                      progress = progress + 1 / opt0.nVox;
-                      progress_msg(progress);
+                      progress = progress + 1;
+                      progress_msg(progress,max_iter);
                    end
                 else
                    [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_y);
@@ -148,8 +152,8 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                       eidors_msg('log_level',eidors_msg('log_level')+1);
                       c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y);
                    end
-                   progress = progress + 1 / (opt0.Xsz*opt0.Ysz);
-                   progress_msg(progress);
+                   progress = progress + 1;
+                   progress_msg(progress, max_iter);
                 end
              end
 
@@ -161,8 +165,8 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                 eidors_msg('log_level',eidors_msg('log_level')+1);
                 c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx);
              end
-             progress = progress + 1 / opt0.Zsz;
-             progress_msg(progress);
+             progress = progress + 1;
+             progress_msg(progress, max_iter);
           end
           
           
@@ -200,10 +204,11 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     % get assigned to all the vox and tets concerned
     
     % vox edge v. tet edge
-    logmsg(' Find tet_edge2vox_edge intersections...')
-    tic
+    pmopt.final_msg = 'none';   
+    progress_msg('Find tet_edge2vox_edge intersections...',-1,pmopt)
     [intpts3, tedge2vedge, tedge2intpt3, vedge2intpt3] =find_edge2edge_intersections(fmdl.edges,fmdl.nodes,m.edges,rmdl.nodes, opt.tol_edge2edge); 
-    logmsg([repmat('\b',1,15) ' Found %d (%.3f s)\n'], size(intpts3,1),toc);
+%     logmsg([repmat('\b',1,15) ' Found %d (%.3f s)\n'], size(intpts3,1),toc);
+    progress_msg(sprintf('Found %d',size(intpts3,1)),Inf);
     
     % tet node in vox
     progress_msg('Find tet_nodes in voxels...')
@@ -215,12 +220,14 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     progress_msg(sprintf('Found %d', nnz(vnode2tet)), Inf);
     
     % vox contained in tet
+    progress_msg('Find vox contained in tet...')
     vox_in_tet = (m.node2vox' * vnode2tet) == 8;
-    logmsg(' Find vox contained in tet... Found %d\n',nnz(vox_in_tet));
+    progress_msg(sprintf('Found %d',nnz(vox_in_tet)), Inf);
     
     % tet contained in vox
+    progress_msg('Find tets contained in vox...');
     tet_in_vox = (double(fmdl.node2elem') * fnode2vox) == 4;
-    logmsg(' Find tets contained in vox... Found %d\n',nnz(tet_in_vox));
+    progress_msg(sprintf('Found %d',nnz(tet_in_vox)), Inf);
     
     
     % tets and vox that intersect (excludes complete inclusion)
@@ -380,18 +387,19 @@ function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
    rmdl.nodes = rmdl0.nodes(node_idx,:);
    
    fnode_above = fmdl0.nodes(:,3) > opt.zvec(end);
-   felem_above = all(fnode_above(fmdl0.elems),2);
+   % matlab is so stupid!
+   felem_above = all(reshape(fnode_above(fmdl0.elems), size(fmdl0.elems)),2);
    
    fnode_below = fmdl0.nodes(:,3) < opt.zvec(1);
-   felem_below = all(fnode_below(fmdl0.elems),2);
+   felem_below = all(reshape(fnode_below(fmdl0.elems), size(fmdl0.elems)),2);
    
    felem_idx   = ~(felem_below | felem_above);
    fmdl.elems = fmdl0.elems(felem_idx,:);
    fnode_idx = unique(fmdl.elems(:));
    fnode_idx_map = zeros(size(fmdl0.nodes,1),1);
    fnode_idx_map(fnode_idx) = 1:length(fnode_idx);
-   fmdl.elems = fnode_idx_map(fmdl.elems);
-   fmdl.edges = fnode_idx_map(fmdl0.edges);
+   fmdl.elems = reshape(fnode_idx_map(fmdl.elems),size(fmdl.elems));
+   fmdl.edges = reshape(fnode_idx_map(fmdl0.edges),size(fmdl0.edges));
    fmdl.nodes = fmdl0.nodes(fnode_idx,:);
    fmdl.node2elem = fmdl0.node2elem(fnode_idx,felem_idx);
    
@@ -402,10 +410,10 @@ function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
    felem_idx_map(felem_idx) = 1:nnz(felem_idx);
    felem_idx_map = [0; felem_idx_map];
    fmdl.face2elem = fmdl0.face2elem(fface_idx,:);
-   fmdl.face2elem = felem_idx_map(fmdl.face2elem + 1);
+   fmdl.face2elem = reshape(felem_idx_map(fmdl.face2elem + 1),size(fmdl.face2elem));
    fmdl.normals = fmdl0.normals(fface_idx,:);
    fmdl.faces = fmdl0.faces(fface_idx,:);
-   fmdl.faces = fnode_idx_map(fmdl.faces);
+   fmdl.faces = reshape(fnode_idx_map(fmdl.faces),size(fmdl.faces));
    
    fedge_idx = unique(fmdl0.elem2edge(felem_idx,:));
    fedge_idx_map = zeros(size(fmdl0.edges,1),1);
