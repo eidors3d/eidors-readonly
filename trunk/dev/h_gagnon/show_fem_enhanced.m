@@ -26,6 +26,7 @@ function hh = show_fem_enhanced(mdl, options)
 %     options.edge.significant.viewpoint_dependent.show (true)
 %     options.edge.significant.viewpoint_dependent.color ([0 0 0])
 %     options.edge.significant.viewpoint_dependent.width (2)
+%     options.edge.significant.viewpoint_dependent.callback (true)
 %  
 %     options.colorbar.show (false)
 % 
@@ -78,45 +79,17 @@ end
 
 mdl = find_sub_elements(mdl);
 
-% Convert nodes to 3D if necessary
+% Convert nodes to 3D if necessary.
 mdl.nodes = mdl.nodes*eye(size(mdl.nodes, 2), 3);
 
-hh = draw_fem(img, mdl, opts);
+hh = draw_all(img, mdl, opts);
 
-% Number elements if necessary.
-if (opts.element.number.show)
-    draw_numbers(interp_mesh(mdl), opts.element.number);
+% Setup callback function.
+if (opts.edge.significant.viewpoint_dependent.callback)
+    h3d = rotate3d;
+    set(gca, 'UserData', struct('name', 'show_fem_data', 'img', img, 'mdl', mdl, 'opts', opts));
+    set(h3d, 'ActionPostCallback' , @refresh_current_axis)
 end
-
-% Number nodes if necessary.
-if (opts.node.number.show)
-    draw_numbers(mdl.nodes, opts.node.number);
-end
-
-% Number electrodes if necessary.
-if (opts.electrode.number.show && isfield(mdl, 'electrode'))
-    n_elec = numel(mdl.electrode);
-    mesh_center = ones(n_elec, 1)*mean(mdl.nodes, 1);
-    
-    elec_pos = zeros(n_elec, size(mesh_center, 2));
-    
-    for i = 1:n_elec
-        if (isfield(mdl.electrode(i), 'nodes'))
-            elec_pos(i, :) = mean(mdl.nodes(mdl.electrode(i).nodes, :), 1);
-        elseif (isfield(mdl.electrode(i), 'pos'))
-            elec_pos(i, :) = mean(mdl.electrode(i).pos, 1)*eye(size(...
-                                                    elec_pos(i, :), 2), 3);
-        end
-    end
-    
-    draw_numbers(opts.electrode.number.scale_position*(elec_pos - mesh_center) + mesh_center, opts.electrode.number);
-end
-
-if size(mdl.elems, 2) == 4  
-    view(opts.viewpoint.az, opts.viewpoint.el);
-end
-
-axis image;
 
 if (nargout == 0)
     clear hh; 
@@ -135,9 +108,10 @@ function [img, mdl, opts] = proc_params(mdl, src_opts)
     opts.edge.significant.color = [0 0 0];
     opts.edge.significant.width = 2;
     opts.edge.significant.angle = 45;
-    opts.edge.significant.viewpoint_dependent.show  = true;
-    opts.edge.significant.viewpoint_dependent.color = [0 0 0];
-    opts.edge.significant.viewpoint_dependent.width = 2;
+    opts.edge.significant.viewpoint_dependent.show     = true;
+    opts.edge.significant.viewpoint_dependent.color    = [0 0 0];
+    opts.edge.significant.viewpoint_dependent.width    = 2;
+    opts.edge.significant.viewpoint_dependent.callback = true;
  
     % Assign default colorbar option values.
     opts.colorbar.show = false;
@@ -180,6 +154,7 @@ function [img, mdl, opts] = proc_params(mdl, src_opts)
                     opts.edge.significant = copy_field(opts.edge.significant, src_opts.edge.significant, 'viewpoint_dependent', 'show');
                     opts.edge.significant = copy_field(opts.edge.significant, src_opts.edge.significant, 'viewpoint_dependent', 'color');
                     opts.edge.significant = copy_field(opts.edge.significant, src_opts.edge.significant, 'viewpoint_dependent', 'width');
+                    opts.edge.significant = copy_field(opts.edge.significant, src_opts.edge.significant, 'viewpoint_dependent', 'callback');
                 end
             end
 
@@ -243,6 +218,59 @@ function [img, mdl, opts] = proc_params(mdl, src_opts)
     else
         img = [];
     end
+
+function refresh_current_axis(obj, evd)
+UserData = get(gca, 'UserData');
+if (all(isfield(UserData, {'name', 'img', 'mdl', 'opts'})) && ...
+        strcmp(UserData.name, 'show_fem_data'))
+    [az, el] = view(gca);
+    if (az ~= UserData.opts.viewpoint.az || el ~= UserData.opts.viewpoint.el)
+        UserData.opts.viewpoint.az = az;
+        UserData.opts.viewpoint.el = el;
+        cla;
+        draw_all(UserData.img, UserData.mdl, UserData.opts);
+        set(gca, 'UserData', UserData);
+    end
+end
+
+function hh = draw_all(img, mdl, opts)
+
+    hh = draw_fem(img, mdl, opts);
+
+    % Number elements if necessary.
+    if (opts.element.number.show)
+        draw_numbers(interp_mesh(mdl), opts.element.number);
+    end
+
+    % Number nodes if necessary.
+    if (opts.node.number.show)
+        draw_numbers(mdl.nodes, opts.node.number);
+    end
+
+    % Number electrodes if necessary.
+    if (opts.electrode.number.show && isfield(mdl, 'electrode'))
+        n_elec = numel(mdl.electrode);
+        mesh_center = ones(n_elec, 1)*mean(mdl.nodes, 1);
+
+        elec_pos = zeros(n_elec, size(mesh_center, 2));
+
+        for i = 1:n_elec
+            if (isfield(mdl.electrode(i), 'nodes'))
+                elec_pos(i, :) = mean(mdl.nodes(mdl.electrode(i).nodes, :), 1);
+            elseif (isfield(mdl.electrode(i), 'pos'))
+                elec_pos(i, :) = mean(mdl.electrode(i).pos, 1)*eye(size(...
+                                                        elec_pos(i, :), 2), 3);
+            end
+        end
+
+        draw_numbers(opts.electrode.number.scale_position*(elec_pos - mesh_center) + mesh_center, opts.electrode.number);
+    end
+
+    if (size(mdl.elems, 2) == 4)  
+        view(opts.viewpoint.az, opts.viewpoint.el);
+    end
+
+    axis image;
     
 function hh = draw_fem(img, mdl, opts)
     
@@ -440,7 +468,7 @@ function hh = draw_edges(edges, vertices, width_data, color_data)
                       points_list(:, 3), 'LineWidth', ...
                       unique_width_color_data(i, 1), 'LineStyle', '-', ...
                       'Color', unique_width_color_data(i, 2:end));
-            end
+        end
     end
 
 function hh = draw_triangles(faces, vertices, color_data, alpha_data, ...
@@ -584,41 +612,17 @@ function mdl = find_sub_elements(mdl)
             mdl.boundary_edges = sort(reshape(mdl.boundary(:, ...
                                             combnk(1:3, 2)')', 2, []), 1)';
 
-            if (0)
-                fprintf('No!\n');
-                % Remove duplicate boundary egdges.
-                [mdl.boundary_edges, ~, ic] = unique(...
-                                         mdl.boundary_edges, 'rows', 'sorted');
+            % Vector that associates each edge with its 
+            % corresponding two boundary elements.
+            sub_boundary_edges_idx = reshape(ones(3, 1) ...
+                                       *(1:size(mdl.boundary, 1)), [] , 1);
 
-                % Vector that associates each edge with its 
-                % corresponding two boundary elements.
-                sub_boundary_edges_idx = reshape(ones(3, 1) ...
-                                           *(1:size(mdl.boundary, 1)), [] , 1);
+            [mdl.boundary_edges, sorted_idx] = sortrows(mdl.boundary_edges);
 
-                if (size(sub_boundary_edges_idx, 1) ~= 2*size(...
-                                                        mdl.boundary_edges, 1))
-                    error('Mesh boundary is inconsistent!');
-                end
+            mdl.boundary_edges = mdl.boundary_edges(1:2:end, :);
 
-                % Compute matrix that associates each edge with its two
-                % corresponding boundary elements.
-                [~, sorted_idx] = sort(ic);
-
-                mdl.edge2boundary = reshape(sub_boundary_edges_idx(...
-                                                          sorted_idx), 2, [])';
-            else
-                % Vector that associates each edge with its 
-                % corresponding two boundary elements.
-                sub_boundary_edges_idx = reshape(ones(3, 1) ...
-                                           *(1:size(mdl.boundary, 1)), [] , 1);
-                                       
-                [mdl.boundary_edges, sorted_idx] = sortrows(mdl.boundary_edges);
-                
-                mdl.boundary_edges = mdl.boundary_edges(1:2:end, :);
-                
-                mdl.edge2boundary = reshape(sub_boundary_edges_idx(...
-                                                          sorted_idx), 2, [])';               
-            end
+            mdl.edge2boundary = reshape(sub_boundary_edges_idx(...
+                                                      sorted_idx), 2, [])';               
         end
 
         % Extract electrode boundary if necessary.
