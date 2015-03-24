@@ -125,7 +125,7 @@ function [fmdl, mat_idx] = ng_mk_geometric_models(body_geometry, electrode_geome
 %   end
 %   fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
 
-% (C) Hervé Gagnon, 2013. Licenced under GPL v2 or v3
+% (C) Herve Gagnon, 2015. Licenced under GPL v2 or v3
 
 % Check if function is called in UNIT_TEST mode.
 if (ischar(body_geometry) && strcmp(body_geometry, 'UNIT_TEST'))
@@ -163,9 +163,9 @@ fmdl_mat_idx = eidors_obj('get-cache', cache_obj, 'ng_mk_geometric_models');
 
 if (isempty(fmdl_mat_idx))
    fmdl_mat_idx = mk_geometric_models(body_geometry, electrode_geometry);
-%  eidors_cache('boost_priority', -2); % netgen objs are low priority
+   eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_geometric_models', fmdl_mat_idx);
-%  eidors_cache('boost_priority', +2); % restore former priority
+   eidors_cache('boost_priority', +2); % restore former priority
 end
 
 % Reformat output arguments. 
@@ -1653,12 +1653,28 @@ function fmdl = complete_fmdl(fmdl, electrode_extra_param)
 function do_unit_test
     for tn = 1:do_test_number(0)
         eidors_msg('ng_mk_geometric_models: unit_test %02d', tn, 1);
-        fmdl = do_test_number(tn);
+        [fmdl, opts] = do_test_number(tn);
+        subplot(1,3,1)
         show_fem(fmdl);
+        title('show_fem', 'Interpreter', 'none', 'FontWeight', 'bold');
+        subplot(1,3,2);
+        show_fem_enhanced(fmdl, opts);
+        title({'show_fem_enhanced'; '(default options)'}, 'Interpreter', 'none', 'FontWeight', 'bold');
+        subplot(1,3,3);
+        opts.edge.color = [0 0 1];
+        opts.edge.width = 0;
+        opts.edge.significant.color = [1 0 0];
+        opts.edge.significant.width = 1.5;
+        opts.edge.significant.viewpoint_dependent.color = [0 1 0];
+        opts.edge.significant.viewpoint_dependent.width = 1.5;
+        show_fem_enhanced(fmdl, opts);
+        title({'show_fem_enhanced'; '(with some options)'}, 'Interpreter', 'none', 'FontWeight', 'bold');
         drawnow;
+        %pause
     end
 
-function fmdl = do_test_number(tn)
+function [fmdl, opts] = do_test_number(tn)
+    opts = struct;
     switch tn
         % Simple 3D cylinder. Radius = 1 with no electrodes
         case 1;
@@ -1824,6 +1840,7 @@ function fmdl = do_test_number(tn)
                 electrode_geometry{i + 2*n_elect}.sphere.radius = 0.1;
             end
             fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+            opts.edge.significant.angle = 15;
         case 15
             body_geometry.ortho_brick = struct;
             fmdl = ng_mk_geometric_models(body_geometry);
