@@ -12,6 +12,7 @@
  - remove np fields from ng_mk_models
     - add default np fields to the np functions
 
+ - the whole time_solver infrastructure needds to be properly tested
 
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
@@ -69,8 +70,7 @@ LOWER PRIORITY
 
  - animate stimulation patterns: display_meas (and rename)
 
- - bug in prior_covar UNIT_TEST
-     - the whole time_solver infrastructure needds to be properly tested
+ + bug in prior_covar UNIT_TEST
 
  - On left_divide
     - remove old parameters tol,pp,V)
