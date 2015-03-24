@@ -53,11 +53,7 @@ else
    doall = true;
 end
 
-if doall % only cache if all
-   mdl = eidors_cache( @do_fix_model, {mdl, doall, opt});
-else
-   mdl = do_fix_model(mdl, doall, opt);
-end
+mdl = eidors_cache( @do_fix_model, {mdl, doall, opt});
 
 
 % Complete the function
