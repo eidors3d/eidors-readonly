@@ -383,9 +383,8 @@ function trig_tests;
          2*[cos(t),sin(t),cos(2*t),sin(2*t)], 1e-10);
 
    stim = mk_stim_patterns(8,1,'{trigccss}',[0,1],{},2);
-   unit_test_cmp('trig: t2',[stim([1,2,5,6]).stim_pattern], ...
-         2*[cos(t),sin(t),cos(2*t),sin(2*t)], 1e-10);
-%keyboard
+   test = 2*[cos(t),cos(2*t),cos(3*t), cos(4*t), sin(t),sin(2*t),sin(3*t)];
+   unit_test_cmp('trig: t2',[stim(:).stim_pattern], test, 1e-10);
 
 function do_unit_test
    trig_tests;
