@@ -102,7 +102,7 @@ function [img step_size] = scale_to_fit_data(img, inv_model, data1, data2)
       end
    end
    img.inv_params = img.inv_params * step_size;
-   img.step_size = step_size;
+   img.info.step_size = step_size;
 
 function out = to_optimize(img, inv_model, data1, data2, x)
    img.inv_params = img.inv_params*x;
