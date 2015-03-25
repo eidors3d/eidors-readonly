@@ -571,7 +571,6 @@ function mdl = find_sub_elements(mdl)
         n_nodes_per_elem = size(mdl.elems, 2);
         
         % Find sub-elements.
-%       combos= combnk(1:n_nodes_per_elem, n_nodes_per_elem - 1); % NEEDS STATS
         combos= nchoosek(1:n_nodes_per_elem, n_nodes_per_elem - 1);
         mdl.sub_elements = sort( ...
                            reshape(mdl.elems(:, combos')', ...
@@ -640,7 +639,7 @@ function mdl = find_sub_elements(mdl)
                                                     
             % Find boundary edges.
             mdl.boundary_edges = sort(reshape(mdl.boundary(:, ...
-                                            combnk(1:3, 2)')', 2, []), 1)';
+                                            nchoosek(1:3, 2)')', 2, []), 1)';
 
             % Vector that associates each edge with its 
             % corresponding two boundary elements.
