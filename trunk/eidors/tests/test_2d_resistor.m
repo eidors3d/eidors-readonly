@@ -32,7 +32,7 @@ img= eidors_obj('image','2D rectangle', ...
 
 % analytical solution
 wid_len= max(mdl.nodes) - min(mdl.nodes);
-R = wid_len(2) / wid_len(1) / conduc + 2*z_contact;
+R = wid_len(2) / wid_len(1) / conduc + 2*z_contact/scale;
 
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
@@ -49,8 +49,6 @@ vals.aa_solver = fsol.meas;
 
 warn_state = warning('query','EIDORS:Deprecated');
 warning('off','EIDORS:Deprecated');
-
-return
 
 
 % NP_SOLVER

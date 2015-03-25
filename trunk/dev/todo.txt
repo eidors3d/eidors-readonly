@@ -304,15 +304,17 @@ DEFER TO 3.9
 
  - eidors_msg is too verbose. Example is: eidors_cache.m/cache_shorthand
 
+ - test_3d_resistor:
+   - make test_3d_resistor a function
+   - add UNIT_TEST and use unit_test_cmp(), see test_2d_resistor
+   - check that it is calculating z_contact correctly for analytic solution
+     (missing X/scale^2 term?)
+
+ - Fix test_2d_resistor, test_3d_resistor warnings:
+   "Warning: Calling CALC_SYSTEM_MAT with two arguments"
+
  - fwd_model.electrode(:).z_contact
-    - discuss change of name (surface impedance rather than contact impedance)
-      and units with interested parties
-      - z_contact units were changed from Ohm/m^2 (Ohm/m in 2d) to Ohm at SVN rev
-	4301 in eidors/solvers/forward/system_mat_fields.m where the z_contact
-        was distributed based on area and is now percentage of area so that a
-	change in electrode diameter does not affect the total impedance through
-        the electrode.
-    - rename z_contact to z_surface(?) and give warning if z_contact is used.
+   Discuss change of name and units with interested parties.
 
  - mex compilation problems on windors
 
