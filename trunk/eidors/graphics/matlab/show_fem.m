@@ -98,7 +98,7 @@ end
 function [img, mdl, opts] = proc_params(mdl, src_opts)
 
     % Assign default viewpoint option values.
-    if size(mdl.nodes,2) == 2
+    if mdl_dim( mdl ) == 2
        opts.viewpoint.az = 0;
        opts.viewpoint.el = 90;
     else
@@ -548,7 +548,8 @@ function mdl = find_sub_elements(mdl)
         n_nodes_per_elem = size(mdl.elems, 2);
         
         % Find sub-elements.
-        combos= combnk(1:n_nodes_per_elem, n_nodes_per_elem - 1);
+%       combos= combnk(1:n_nodes_per_elem, n_nodes_per_elem - 1); % NEEDS STATS
+        combos= nchoosek(1:n_nodes_per_elem, n_nodes_per_elem - 1);
         mdl.sub_elements = sort( ...
                            reshape(mdl.elems(:, combos')', ...
                                    n_nodes_per_elem - 1, []), ...
