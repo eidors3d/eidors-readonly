@@ -9,10 +9,10 @@ resistor_test;
 function vals = resistor_test;
 
 nn= 12;     % number of nodes
-ww=2;       % width = 4
+ww=3;       % width = 4
 if ~exist('conduc');conduc=  .4;end  % conductivity in Ohm-meters
 current= 4;  % Amps
-z_contact= 1e-2;
+z_contact= 1e-1;
 scale = .35;
 mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
 mdl= rmfield(mdl,'coarse2fine'); % don't calc this.
@@ -31,12 +31,21 @@ img= eidors_obj('image','2D rectangle', ...
       'elem_data', ones(n_el,1) * conduc );
 
 % analytical solution
-wid_len= max(mdl.nodes) - min(mdl.nodes);
-R = wid_len(2) / wid_len(1) / conduc + 2*z_contact/scale;
+wid_len= max(mdl.nodes) - min(mdl.nodes) 
+Block_R = wid_len(2) / wid_len(1) / conduc;
+% Contact R reflects z_contact / width. There is no need to scale
+%  by the scale, since this is already reflected in the size of the
+%  FEM as created by the grid. This is different to the test_3d_resistor,
+%  where the FEM is created first, and then scaled, so that the ww
+%  and hh need to be scaled by the scale parameter.
+Contact_R = z_contact/wid_len(1);
+R = Block_R + 2*Contact_R;
 
 V= current*R;
 fprintf('Solver %s: %f\n', 'analytic', V);
+fprintf('Solver %s: %f\n', 'analytic (no z_contact)', V - 2*Contact_R*current);
 vals.analytic = V;
+show_fem(mdl)
 
 % AA_SOLVER
 mdl.solve = @fwd_solve_1st_order;
@@ -84,8 +93,9 @@ mdl.solve = @fwd_solve_1st_order;
 mdl.jacobian = @jacobian_adjoint;
 Jaa= calc_jacobian(img);
 
-fprintf('Jacobians: Cols by Jaa, Jnp, Jp1, Jp2')
-disp([Jaa;Jnp;Jp1;Jp2])
+fprintf('Jacobians: Cols by Jaa, Jnp, Jp1, Jp2:\n')
+JJ = [Jaa;Jnp;Jp1;Jp2];
+disp(JJ(:,1:6))
 
 
 
