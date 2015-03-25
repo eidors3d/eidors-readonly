@@ -354,8 +354,8 @@ function hh = draw_fem(img, mdl, opts)
     if ~isempty(img)
         if (size(mdl.elems, 2) == 4)
             triangle_color = calc_colours(mdl.element2sub_element*...
-                                get_img_data(img), img, opts.colorbar.show);
-                            
+                                get_img_data(img), img);
+
             factor = 3/8;
             
             alpha_map = zeros(size(colormap, 1), 1);
@@ -383,7 +383,7 @@ function hh = draw_fem(img, mdl, opts)
             alpha_idx =  triangle_alpha(mdl.boundary_to_sub_element_idx, :) < 0.5;
             triangle_alpha(mdl.boundary_to_sub_element_idx(alpha_idx), :) = 0.5;
         else
-            triangle_color = calc_colours(img, [], opts.colorbar.show);
+            triangle_color = calc_colours(img);
         end
         triangle_color = squeeze(triangle_color(:, 1, :));
     else
@@ -447,6 +447,13 @@ function hh = draw_fem(img, mdl, opts)
     % Draw markers if necessary.
     if (~isempty(marker_position))
         draw_markers(marker_position, marker_color, 9);
+    end
+
+    if opts.colorbar.show
+%       psave = get(gca,'position');
+%       eidors_colourbar( img ); 
+%       set(gca,'position',psave); %%% Reset axes after colourbar and move
+        colorbar;
     end
     
 function draw_numbers(positions, opts)
@@ -684,13 +691,13 @@ function do_unit_test
    clf
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
-   img.elem_data=rand(size(img.fwd_model.elems,1),1);
+   img.elem_data= 3*sin(linspace(-2,2,num_elems(img))');
    subplot(3,4,1); show_fem(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
 
 if ~ver.isoctave 
    imgn = rmfield(img,'elem_data');
-   imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
+   imgn.node_data= 3*sin(linspace(-5,5,num_nodes(img))');
    subplot(3,4,9); show_fem(imgn) 
    title('interpolated node colours');
 end
