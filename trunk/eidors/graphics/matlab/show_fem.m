@@ -18,7 +18,7 @@ function hh = show_fem(mdl, options)
 %     options.viewpoint.el (30.0)
 % 
 %     options.edge.color ([0 0 0])
-%     options.edge.width (1)
+%     options.edge.width (0.5)
 %     options.edge.significant.show (true)
 %     options.edge.significant.color ([0 0 0])
 %     options.edge.significant.width (2)
@@ -117,7 +117,7 @@ function [img, mdl, opts] = proc_params(mdl, src_opts)
 
     % Assign default edge option values.
     opts.edge.color   = [0 0 0];
-    opts.edge.width   = 1;
+    opts.edge.width   = 0.5;
     opts.edge.significant.show  = true;
     opts.edge.significant.color = [0 0 0];
     opts.edge.significant.width = 2;
@@ -449,7 +449,7 @@ function hh = draw_fem(img, mdl, opts)
         draw_markers(marker_position, marker_color, 9);
     end
 
-    if opts.colorbar.show
+    if opts.colorbar.show && ~isempty( img )
 %       psave = get(gca,'position');
         eidors_colourbar( img ); 
 %       set(gca,'position',psave); %%% Reset axes after colourbar and move
