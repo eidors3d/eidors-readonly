@@ -68,7 +68,7 @@ img.elem_data= ones(n_el,1) * conduc ;
 Jnp= calc_jacobian(img);
 
 mdl.jacobian = @jacobian_perturb;
-Jp1= calc_jacobian(mdl,img);
+Jp1= calc_jacobian(img);
 
 img.elem_data= ones(n_el,1) * conduc ;
 Jp2= zeros(size(Jnp));
@@ -82,9 +82,10 @@ end
    
 mdl.solve = @fwd_solve_1st_order;
 mdl.jacobian = @jacobian_adjoint;
-Jaa= calc_jacobian(mdl,img);
+Jaa= calc_jacobian(img);
 
-[Jaa;Jnp;Jp1;Jp2]
+fprintf('Jacobians: Cols by Jaa, Jnp, Jp1, Jp2')
+disp([Jaa;Jnp;Jp1;Jp2])
 
 
 
@@ -121,7 +122,7 @@ fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 % NP_SOLVER
 mdl.solve = @np_fwd_solve;
 mdl.system_mat = @np_calc_system_mat;
-fsol= fwd_solve(mdl,img);
+fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 
 % Analytic
