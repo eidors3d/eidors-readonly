@@ -3,6 +3,7 @@ function num = mdl_dim( mdl );
 %  Note, mdl_dims is not the same as the element dimentions
 % num_dim = mdl_dim( mdl );
 %    = 2 if 2D, 3 if 3D
+% If there is a vector of mdls, return the dimension of the first
 
 % $Id$
 
@@ -12,7 +13,7 @@ if ~isfield(mdl,'type') && isfield(mdl,'nodes') % Set default for this case
    mdl.type = 'fwd_model';
 end
 
-switch mdl.type
+switch mdl(1).type
   case 'image';      fmdl = mdl.fwd_model;
   case 'inv_model';  fmdl = mdl.fwd_model;
   case 'fwd_model';  fmdl = mdl;
