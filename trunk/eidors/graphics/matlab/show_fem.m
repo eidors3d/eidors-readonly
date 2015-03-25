@@ -451,9 +451,8 @@ function hh = draw_fem(img, mdl, opts)
 
     if opts.colorbar.show
 %       psave = get(gca,'position');
-%       eidors_colourbar( img ); 
+        eidors_colourbar( img ); 
 %       set(gca,'position',psave); %%% Reset axes after colourbar and move
-        colorbar;
     end
     
 function draw_numbers(positions, opts)
