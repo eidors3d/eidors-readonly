@@ -14,6 +14,12 @@
 
  - the whole time_solver infrastructure needds to be properly tested
 
+ - centralize colourmap handing in eidors
+    - move colourmap adding from show_fem_enhanced (hg's code)
+    - add ability to set various background colour (cg's code)
+    - move to using matlab's colourbar if possible
+    - eidors_colourbar should know how many fake colour we have
+
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 HIGH PRIORITY
