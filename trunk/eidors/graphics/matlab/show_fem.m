@@ -587,8 +587,10 @@ function mdl = find_sub_elements(mdl)
         sub_element_other_node = mdl.elems(sub2ind(size(mdl.elems), sub_element_idx, sub_element_other_node_idx));
                        
         % Remove duplicate sub-elements. 
+        % Previously specified "SPORTED" but that is default, and not
+        %   available in older versions
         [mdl.sub_elements, ia, ic] = unique(...
-                                       mdl.sub_elements, 'rows', 'sorted');
+                                       mdl.sub_elements, 'rows');
                                    
          sub_element_other_node = sub_element_other_node(ia, :);                    
                                 
