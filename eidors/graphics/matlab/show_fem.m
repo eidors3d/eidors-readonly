@@ -49,8 +49,21 @@ function hh = show_fem(mdl, options)
 %     options.node.number.color ([0 0 0.5])
 %     options.node.number.background_color ([1 1 1])
 %
+% EXAMPLES
+%   mdl = mk_common_model('c2C2',8);
+%   img = mk_image(mdl, linspace(-3,3,num_elems(mdl)));
+%   
+% SET PARAMETERS
+%   img.show_fem.electrode.number.scale_position= 1.01;
+%   img.show_fem.electrode.number.show =1;
+%   show_fem(img)
+%
+% SET OPTIONS
+%   opts.colorbar.show = 1;
+%   show_fem(img.opts)
 
 % (C) 2015 Herve Gagnon. License: GPL version 2 or version 3
+% $Id$
 
 % TESTS
 switch nargin
@@ -67,6 +80,7 @@ switch nargin
             options = [];
         end
     case 2
+        % No special processing
     otherwise
         error('Too many parameters for show_fem');
 end
@@ -98,13 +112,8 @@ end
 function [img, mdl, opts] = proc_params(mdl, src_opts)
 
     % Assign default viewpoint option values.
-    if mdl_dim( mdl ) == 2
-       opts.viewpoint.az = 0;
-       opts.viewpoint.el = 90;
-    else
-       opts.viewpoint.az = -37.5;
-       opts.viewpoint.el =  30.0;
-    end
+    opts.viewpoint.az = -37.5;
+    opts.viewpoint.el =  30.0;
 
     % Assign default edge option values.
     opts.edge.color   = [0 0 0];
@@ -142,6 +151,13 @@ function [img, mdl, opts] = proc_params(mdl, src_opts)
     opts.node.number.font_weight      = 'normal';
     opts.node.number.color            = [0 0 0.5];
     opts.node.number.background_color = [1 1 1];
+
+    % Override some defaults in 2D
+    if mdl_dim( mdl ) == 2
+       opts.viewpoint.az = 0;
+       opts.viewpoint.el = 90;
+       opts.electrode.number.scale_position= 1.05;
+    end
     
     if (nargin == 2)
         if (isstruct(src_opts))
