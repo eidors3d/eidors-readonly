@@ -122,11 +122,11 @@ function log_level = process_log_level(varargin)
       return
    end
    if isnumeric(varargin{1})
-      log_level = varargin{1};
+      log_level = eidors_objects.log_level;
       switch nargin
          case 1
             % eidors_msg('log_level', 2);
-            eidors_objects.log_level = log_level;
+            eidors_objects.log_level = varargin{1};
          case 2
             % eidors_msg('log_level', 1, fname);
             caller = get_caller;
@@ -135,7 +135,7 @@ function log_level = process_log_level(varargin)
             idx = find(ismember(caller, custom.names), 1);
             if isempty(idx), idx = length(custom.levels) + 1; end
             eidors_objects.log_level_custom.names{idx} = caller;
-            eidors_objects.log_level_custom.levels(idx) = log_level;
+            eidors_objects.log_level_custom.levels(idx) = varargin{1};
          otherwise
             error('Wrong number of inputs');
          
