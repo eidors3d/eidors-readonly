@@ -433,7 +433,9 @@ function fmdl = prepare_fmdl(fmdl)
     fmopt.node2elem = true;
     fmopt.normals   = true;
     fmopt.linear_reorder = false; % this is slow and not needed
+    ll = eidors_msg('log_level',1);
     fmdl = fix_model(fmdl,fmopt);
+    eidors_msg('log_level',ll);
     fmdl.node2elem = logical(fmdl.node2elem);
     nElem = size(fmdl.elems,1);
     nFace = size(fmdl.faces,1);
