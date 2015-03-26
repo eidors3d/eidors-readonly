@@ -442,7 +442,7 @@ function varargout = cache_shorthand(fhandle, varargin)
    
    varargout = eidors_obj('get-cache', cache_obj, fstr );
    if numel(varargout) < nargout
-      eidors_msg('@@@ (Re)calculating %s',fstr, 2);
+      eidors_msg('@@ (Re)calculating %s',fstr, 2);
       output = mk_varargout_str(nargout);
       varargout = cell(0);
       eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
