@@ -37,6 +37,9 @@ function log_level= eidors_msg( message, varargin )
 %  eidors_msg('did %d of %s at %f', 2, 'stuff', sqrt(2), 1)
 %     >> EIDORS:[ did 2 of stuff at 1.414214 ]
 % 
+%  eidors_msg('@@');
+%     >> EIDORS:[eidors_msg]
+%
 %  eidors_msg('@@@');
 %     >> EIDORS:[eidors_msg/do_unit_test]
 %
@@ -92,13 +95,22 @@ end
 % Need to do twice to interpret text in message
 % message= sprintf(message, args{:} );
 if length(message)>1 % single characters are just for progress
-   if length(message)>=3 && strcmp(message(1:3),'@@@');
-      if length(message)==3; msg_extra = '';
-      else                   msg_extra = [':', message(4:end)];
+   if length(message)>=2 && strcmp(message(1:2),'@@');
+      if length(message)==2; msg_extra = '';
+      else                   msg_extra = [':', message(3:end)];
       end
       [file fun] = get_caller();
       dbs = dbstack;
-      message = sprintf('%s/%s%s', file, fun , msg_extra);
+      if length(message) > 2 && message(3) == '@'
+          if length(message) == 3
+              msg_extra = '';
+          else
+              msg_extra(2) = [];
+          end
+          message = sprintf('%s/%s%s', file, fun, msg_extra);
+      else
+          message = sprintf('%s%s', file , msg_extra);
+      end
    end
    string= [sprintf('%c',' ' * ones(1,level-1)), ...
             'EIDORS:[',message,']\n'];
@@ -214,9 +226,11 @@ function do_unit_test
    eidors_msg('log_level',1);
    eidors_msg('l1',1); eidors_msg('l2',2); eidors_msg('l3',3); eidors_msg('l4',4);
 
-
+   eidors_msg('@@',1);
    eidors_msg('@@@',1);
+   eidors_msg('@@ a message',1);
    eidors_msg('@@@ a message',1);
+   eidors_msg('a @@ message',1);
    eidors_msg('a @@@ message',1);
    extra_caller;
 
@@ -241,4 +255,5 @@ function do_unit_test
 
 function extra_caller
    eidors_msg('@@@ a message from extra_caller',1);
+   eidors_msg('@@ a shorter message from extra caller',1);
   
