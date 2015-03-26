@@ -80,7 +80,7 @@ if nargs > 0 && ischar(varargin{1})
     if nargs > 1 && isinf(varargin{2})
         msg = varargin{1};
     else
-        msg = [repmat(' ',1,opt.log_level-1) varargin{1}];
+        msg = [repmat(' ',1,opt.log_level) varargin{1}];
     end
     nargs = nargs-1;
     varargin(1) = [];
