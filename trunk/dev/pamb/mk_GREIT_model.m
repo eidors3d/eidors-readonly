@@ -24,11 +24,9 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         0 -> original (as per GREITv1, default)
 %         1 -> random, centre-heavy 
 %         2 -> random, uniform
-%         3 -> fixed, uniform
-%         Alternatively, a 3xN xyz or 4xN xyzr matrix can be provided. If
-%         xyzr is given, r overrides target_size specifications.
+%         3 -> fixed, uniform (debug)
 %     target_size - size of simulated targets as proportion of mesh radius
-%         (default: 0.05). Can be specified as [min_size max_size] for 
+%         (default: 0.02). Can be specified as [min_size max_size] for 
 %         random variation
 %     target_plane - the (mean) height z at which simulation targets are
 %         placed. This controls the image plane. Default: mean electrode
@@ -55,13 +53,13 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %   currently weighting matrix must be scalar
 %               
 % Examples
-%   imdl =  mk_GREIT_model( 'c=1;h=2;r=.08;ce=16;bg=1;st=1;me=1;nd', 0.25, 10);
-% OR
 %   fmdl = mk_library_model('adult_male_16el');
-%   fmdl.stimulation = stim;
+%   fmdl.stimulation = mk_stim_patterns(16,1,'{ad}','{ad}',1);
 %   fmdl.normalize_measurements = 1;
+%   imdl = mk_GREIT_model(fmdl,0.25,5); % uses weight 5
+%   OR
 %   opt.noise_figure = 0.5; 
-%   imdl = mk_GREIT_model(fmdl,0.25,5,opt);
+%   imdl = mk_GREIT_model(fmdl,0.25,[],opt); % optimises weight for NF=0.5
 %
 % CITATION_REQUEST:
 % AUTHOR: A Adler et al.
@@ -85,7 +83,7 @@ if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4, options = [];end
 [imdl,fmdl,imgs] = parse_fmdl(fmdl);
-options = parse_options(options,fmdl,imdl);
+options = parse_options(options,fmdl,imdl, weight);
 
 cache_obj= { fmdl, imdl, imgs, radius, weight, options};
 
@@ -255,7 +253,6 @@ function [vi,vh,xyz,opt]= stim_targets(imgs, Nsim, opt );
    end
    xyz = xyzr(1:3,:);
 
-
 function z = calc_offset(z0,opt,Nsim)
     if opt.random_offset
         l_bnd = opt.target_offset(1);
@@ -334,6 +331,10 @@ function opt = parse_options(opt,fmdl,imdl);
     if ~isfield(opt, 'distr'),     opt.distr = 3;       end 
     if ~isfield(opt, 'Nsim' ),     opt.Nsim  = 1000;    end
     if ~isfield(opt, 'noise_figure'), opt.noise_figure = []; end
+    if isempty(opt.noise_figure) && isempty(weight)
+        error('EIDORS:WrongInput', ...
+            'The weight parameter must be specified if opt.noise_figure is empty or absent');
+    end
     if isfield(opt,'extra_noise')
       error('mk_GREIT_model: doesn''t currently support extra_noise');
     end
