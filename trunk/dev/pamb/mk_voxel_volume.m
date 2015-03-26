@@ -18,11 +18,11 @@ function [imdl, fmdl] = mk_voxel_volume(varargin)
 %                             % Takes precedence over other options
 %     opt.square_pixels = 0;  % adjust imgsz to get square pixels (in XY)
 %     opt.cube_voxels = 0;    % adjust imgsz to get cube voxels (in XYZ)  
-%     opt.save_memory         % passed to mk_grid_c2f
-% NOT USED:
-%     opt.do_coarse2fine = 1; % calcuate c2f on the forward model
-%     opt.z_depth = inf;      % z_depth to use with mk_coarse_fine_mapping
-%
+%     opt.prune_model = true  % removes voxels outside the supplied MDL
+%                             % This runs mk_grid_c2f. For simple
+%                             % geometries, such a cylinder, it is much
+%                             % quicker to set to false and prune manually.
+%     opt.save_memory         % passed to mk_grid_c2f%
 %
 % Output depends on the type of model suplied. If MDL is a fwd_model
 % structure then OUT is a rec_model. If MDL is an inv_model, then OUT is a
@@ -32,8 +32,7 @@ function [imdl, fmdl] = mk_voxel_volume(varargin)
 % [OUT FMDL] = MK_VOXEL_VOLUME(MDL, ...) also returns the forward model
 % structure with the coarse2fine field.
 %
-% See also MK_PIXEL_SLICE, MK_COARSE_FINE_MAPPING, MK_GRID_MODEL,
-% MK_GRID_C2F
+% See also MK_PIXEL_SLICE, MK_GRID_MODEL, MK_GRID_C2F
 
 % (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
 % License: GPL version 2 or 3
@@ -69,7 +68,9 @@ copt.fstr = 'mk_voxel_volume';
 copt.cache_obj = get_cache_obj(fmdl, opt);
 [rmdl, c2f] = eidors_cache(@do_voxel_volume,{fmdl, opt},copt);
 
-fmdl.coarse2fine = c2f;
+if ~isempty(c2f)
+    fmdl.coarse2fine = c2f;
+end
 
 switch imdl.type
    case 'inv_model'
@@ -85,7 +86,11 @@ end
 function [rmdl, c2f] = do_voxel_volume(fmdl,opt)
     
     rmdl = mk_grid_model([],opt.xvec,opt.yvec,opt.zvec);
-%     fmdl.elems = fmdl.elems( 210714,:);
+    
+    c2f = [];
+    if ~opt.prune_model, return, end
+    
+    %     fmdl.elems = fmdl.elems( 210714,:);
     [c2f, m]  = mk_grid_c2f(fmdl, rmdl, opt);
     inside = any(c2f,1);
 
@@ -109,12 +114,12 @@ function [rmdl, c2f] = do_voxel_volume(fmdl,opt)
 %-------------------------------------------------------------------------%
 % Assemble a reference object for caching
 function cache_obj = get_cache_obj(fmdl, opt)
-tmp = struct;
-flds = {'nodes','elems'};
-for f = flds;
-    tmp.(f{1}) = fmdl.(f{1});
-end
-cache_obj = {tmp, opt};
+    tmp = struct;
+    flds = {'nodes','elems'};
+    for f = flds;
+        tmp.(f{1}) = fmdl.(f{1});
+    end
+    cache_obj = {tmp, opt};
     
 
 %-------------------------------------------------------------------------%
@@ -137,6 +142,9 @@ cache_obj = {tmp, opt};
     end
     if ~isfield(opt, 'zvec')
         opt.zvec = [];
+    end
+    if ~isfield(opt, 'prune_model')
+        opt.prune_model = true;
     end
     if isempty(opt.xvec) && isempty(opt.imgsz)
         error('EIDORS:WrongInput', 'opt.imgsz must not be empty if opt.xvec is empty or absent');
