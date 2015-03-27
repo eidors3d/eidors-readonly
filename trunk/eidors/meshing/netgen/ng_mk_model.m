@@ -46,7 +46,7 @@ geom.elec = elec_geom;
 if nargout >=1
    fmdl = ng_mk_geometric_models(body_geom, elec_geom);
    if pp.is2D
-      fmdl = mdl2d_from3d(fmdl);
+%     fmdl = mdl2d_from3d(fmdl);
    end
 end
 
@@ -82,8 +82,8 @@ function [body_geom,pp] = parse_shape(cyl_shape);
    body_geom.cylinder.bottom_center = [0 0 0];
    body_geom.cylinder.top_center    = [0 0 tank_height];
    body_geom.cylinder.radius        = tank_radius;
-   if exist('maxh');
-      body_geom.max_edge_length     = maxh;
+   if tank_maxh > 0
+      body_geom.max_edge_length     = tank_maxh;
    end
 
    pp.is2D = is2D; % put it here too.
@@ -154,9 +154,8 @@ function elecs= parse_elecs(elec_pos, elec_shape, pp)
 % use clockwise coordinate system
 
 function elec = elec_spec( row, is2D, hig, rad, el_th, el_z )
-  xy_centre = rad*[sin(el_th),cos(el_th)] 
+  xy_centre = rad*[sin(el_th),cos(el_th)];
   if     is2D
-error('not yet');
      if row(1) == 0;
         elec.point = [xy_centre, el_z];
      else
