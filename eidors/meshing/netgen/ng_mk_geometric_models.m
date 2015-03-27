@@ -163,9 +163,7 @@ fmdl_mat_idx = eidors_obj('get-cache', cache_obj, 'ng_mk_geometric_models');
 
 if (isempty(fmdl_mat_idx))
    fmdl_mat_idx = mk_geometric_models(body_geometry, electrode_geometry);
-   eidors_cache('boost_priority', -2); % netgen objs are low priority
    eidors_obj('set-cache', cache_obj, 'ng_mk_geometric_models', fmdl_mat_idx);
-   eidors_cache('boost_priority', +2); % restore former priority
 end
 
 % Reformat output arguments. 
