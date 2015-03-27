@@ -40,10 +40,9 @@ if ~ishold
     cla;
 end
 
-
 switch opts.dims
-   case 2;    hh= show_2d(img,mdl,opts);
-   case 3;    hh= show_3d(img,mdl,opts);
+   case 2;    hh= show_2d(img,mdl,opts); % 2D nodes
+   case 3;    hh= show_3d(img,mdl,opts); % 3D nodes
    otherwise; error('model is not 2D or 3D');
 end
 
@@ -417,7 +416,13 @@ h = patch(fv,'FaceColor',colour);
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function hh= show_3d_fem( mdl, options )
-   ee= get_boundary( mdl );
+   if size(mdl.elems,2) == 4  % volume simplices
+      ee= get_boundary( mdl );
+   elseif size(mdl.elems,2) == 3  % volume simplices
+      ee= mdl.elems;
+   else
+      error('Simplices are not 2D or 3D in mdl. Unsure how to display');
+   end
    hh= trimesh(ee, mdl.nodes(:,1), ...
                    mdl.nodes(:,2), ...
                    mdl.nodes(:,3));
