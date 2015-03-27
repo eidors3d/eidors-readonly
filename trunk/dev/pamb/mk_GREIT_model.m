@@ -311,8 +311,9 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
    if isempty(imdl)
       imdl = select_imdl( fmdl,{'Basic GN dif'});
    end
-
-function opt = parse_options(opt,fmdl,imdl);
+   
+   
+    function opt = parse_options(opt,fmdl,imdl, weight)
 
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'square_pixels')
