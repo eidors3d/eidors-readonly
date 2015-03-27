@@ -36,26 +36,27 @@ if isstruct(mdl_type)
    error('No code yet to process options structs');
 else switch mdl_type
       case 'cyl'
-         [body_geom, elec_geom] = cyl_geom( mdl_shape, elec_pos, elec_shape);
+         [body_geom, elec_geom, pp] = cyl_geom( mdl_shape, elec_pos, elec_shape);
       otherwise
          error('mdl_type = (%s) not available', mdl_type);
 end; end
 
-fmdl = ng_mk_geometric_models(body_geom, elec_geom)
-if geom.is2D
-   fmdl = mdl2d_from3d(fmdl);
+geom.body = body_geom;
+geom.elec = elec_geom;
+if nargout >=1
+   fmdl = ng_mk_geometric_models(body_geom, elec_geom);
+   if pp.is2D
+      fmdl = mdl2d_from3d(fmdl);
+   end
 end
 
-function fmdl = cyl_geom( cyl_shape, elec_pos, elec_shape);
+
+function [body_geom, elec_geom, pp] = cyl_geom( cyl_shape, elec_pos, elec_shape);
+   [body_geom, pp] = parse_shape(cyl_shape);
+   elec_geom = parse_elecs(elec_pos, elec_shape, pp);
 
 
-   [tank_height, tank_radius, tank_maxh, is2D] = parse_shape(cyl_shape);
-   [elecs, centres] = parse_elecs( elec_pos, elec_shape,  ...
-                          tank_height, tank_radius, is2D );
-
-
-function [tank_height, tank_radius, tank_maxh, is2D] = ...
-              parse_shape(cyl_shape);
+function [body_geom,pp] = parse_shape(cyl_shape);
    tank_height = cyl_shape(1);
    tank_radius = 1;
    tank_maxh   = 0;
@@ -78,6 +79,18 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
       end
    end
 
+   body_geom.cylinder.bottom_center = [0 0 0];
+   body_geom.cylinder.top_center    = [0 0 tank_height];
+   body_geom.cylinder.radius        = tank_radius;
+   if exist('maxh');
+      body_geom.max_edge_length     = maxh;
+   end
+
+   pp.is2D = is2D; % put it here too.
+   pp.tank_height= tank_height;
+   pp.tank_radius= tank_radius;
+   pp.body_geom  = body_geom;
+
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,z_planes] 
 %     OR
@@ -89,18 +102,17 @@ function [tank_height, tank_radius, tank_maxh, is2D] = ...
 %  elec_shape = [radius, {0, maxsz} ]  % Circular elecs
 %     maxsz  (OPT)  -> max size of mesh elems (default = courase mesh)
 % 
-% OUTPUT:
-%  elecs(i).pos   = [x,y,z]
-%  elecs(i).shape = 'C' or 'R'
-%  elecs(i).dims  = [radius] or [width,height]
-%  elecs(i).maxh  = '-maxh=#' or '';
-function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
+function elecs= parse_elecs(elec_pos, elec_shape, pp)
+   is2D = pp.is2D;
+   elec_geom = struct([]);
+   hig = pp.tank_height;
+   rad = pp.tank_radius;
+   body_geom = pp.body_geom;
     
     n_elecs= size(elec_pos,1); 
     
     if n_elecs == 0
-      elecs= struct([]); % empty
-      centres= [];
+      elecs= {};
       return;
     end
    
@@ -133,52 +145,43 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, hig, rad, is2D );
       elec_shape = ones(n_elecs,1) * elec_shape;
    end
 
+   elecs= {};
    for i= 1:n_elecs
      row = elec_shape(i,:); 
-     elecs(i) = elec_spec( row, is2D, hig, rad );
+     elecs{i} = elec_spec( row, is2D, hig, rad, el_th(i), el_z(i) );
    end
 
-%   %MC FIX 05.07.13 - COORDINATE SYSTEM - THETA = 0 AT 3PM AND THETA INCREASE ANTICLOCK
-% NO - we will use clockwise coordinate system
-   centres = [rad*sin(el_th),rad*cos(el_th),el_z];
-   
-   for i= 1:n_elecs; elecs(i).pos  = centres(i,:); end
+% use clockwise coordinate system
 
-   if n_elecs == 0
-      elecs= struct([]); % empty
-   end
-
-function elec = elec_spec( row, is2D, hig, rad )
+function elec = elec_spec( row, is2D, hig, rad, el_th, el_z )
+  xy_centre = rad*[sin(el_th),cos(el_th)] 
   if     is2D
+error('not yet');
      if row(1) == 0;
-        elec.shape = 'P';
-% To create a PEM, we make a square and take the corner. This isn't perfect, since
-% the elec isn't quite where we asked for it, but that's as good is I can do. I tried
-% asking for two rectangles to touch, but that freaks netgen out.
-        elec.dims  =  [rad/20, hig]; 
+        elec.point = [xy_centre, el_z];
      else
         elec.shape = 'R';
         elec.dims  = [row(1),hig];
      end
   else
      if row(1) == 0
-        elec.shape = 'P' 
-        elec.dims  = [rad/20, hig/10];
+        elec.point = [xy_centre, el_z];
      elseif length(row)<2 || row(2) == 0 % Circular electrodes 
-        elec.shape = 'C';
-        elec.dims  = row(1);
+        elec.cylinder.top_center     = [1.03*xy_centre, el_z];
+        elec.cylinder.bottom_center  = [0.97*xy_centre, el_z];
+        elec.cylinder.radius         = row(1);
      elseif row(2)>0      % Rectangular electrodes
-        elec.shape = 'R';
+error('not yet');
         elec.dims  = row(1:2);
      else
-        error('negative electrode width');
+        error('negative electrode width not supported');
      end
   end
 
   if length(row)>=3 && row(3) > 0
-     elec.maxh = sprintf('-maxh=%f', row(3));
+     elec.max_edge_length     = row(3);
   else
-     elec.maxh = '';
+     % Do nothing
   end
 
 
