@@ -46,7 +46,7 @@ geom.elec = elec_geom;
 if nargout >=1
    fmdl = ng_mk_geometric_models(body_geom, elec_geom);
    if pp.is2D
-%     fmdl = mdl2d_from3d(fmdl);
+      fmdl = mdl2d_from3d(fmdl);
    end
 end
 
@@ -130,10 +130,14 @@ function elecs= parse_elecs(elec_pos, elec_shape, pp)
       on_elecs = ones(n_elecs, 1);
       el_th = []; 
       el_z  = []; 
+      if length(elec_pos) == 1; % Height was forgotten, assume middle
+         elec_pos(:,2) = hig/2;
+      end
       for i=2:length(elec_pos)
         el_th = [el_th; th];
         el_z  = [el_z ; on_elecs*elec_pos(i)];
       end
+
    else
       el_th = elec_pos(:,1)*2*pi/360;
       el_z  = elec_pos(:,2);
@@ -157,10 +161,15 @@ function elec = elec_spec( row, is2D, hig, rad, el_th, el_z )
   xy_centre = rad*[sin(el_th),cos(el_th)];
   if     is2D
      if row(1) == 0;
-        elec.point = [xy_centre, el_z];
+        elec.point = [xy_centre, 0];
      else
-        elec.shape = 'R';
-        elec.dims  = [row(1),hig];
+        elec.intersection.cylinder.top_center     = [1.03*xy_centre, 0];
+        elec.intersection.cylinder.bottom_center  = [0.97*xy_centre, 0];
+        elec.intersection.cylinder.radius         = row(1);
+        elec.intersection.half_space.point        = [xy_centre, -.01];
+        nvec =-[xy_centre,1]; nvec = nvec/norm(nvec);
+        elec.intersection.half_space.outward_normal_vector = nvec;
+        elec.enter_body_flag = 0;
      end
   else
      if row(1) == 0
@@ -169,8 +178,13 @@ function elec = elec_spec( row, is2D, hig, rad, el_th, el_z )
         elec.cylinder.top_center     = [1.03*xy_centre, el_z];
         elec.cylinder.bottom_center  = [0.97*xy_centre, el_z];
         elec.cylinder.radius         = row(1);
+        elec.enter_body_flag = 0;
      elseif row(2)>0      % Rectangular electrodes
-error('not yet');
+% parallelepiped:     A parallelepiped is described by the following
+%                     subfields: vertex ([0; 0; 0]), vector_a ([1; 0; 0]),
+%                     vector_b ([0; 1; 0]), vector_c ([0; 0; 1]),
+%                     complement_flag (false).
+        elec.parallelepiped
         elec.dims  = row(1:2);
      else
         error('negative electrode width not supported');
