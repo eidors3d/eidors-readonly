@@ -85,6 +85,9 @@ function varargout=eidors_cache( command, varargin )
 %            - priority boost to use for that function
 %        opt.fstr
 %            - name to use for the cached result
+%        opt.log_level
+%            - message level to use with eidors_msg. By default, it's 4 for
+%              'setting cache' and 3 for 'using cached value'
 %
 %   eidors_cache( 'cache_path' )
 %   eidors_cache( 'cache_path', '/path/to/cache/path' )
@@ -439,10 +442,17 @@ function varargout = cache_shorthand(fhandle, varargin)
    catch
       fstr = func2str(fhandle);
    end
+   if isfield(opt, 'log_level')
+       level_in = opt.log_level;
+       level_out = opt.log_level;
+   else
+       level_in = 4;
+       level_out = 3;
+   end
    
    varargout = eidors_obj('get-cache', cache_obj, fstr );
    if numel(varargout) < nargout
-      eidors_msg('@@ (Re)calculating %s',fstr, 4);
+      eidors_msg('@@ (Re)calculating %s',fstr, level_in);
       output = mk_varargout_str(nargout);
       varargout = cell(0);
       eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
@@ -458,7 +468,7 @@ function varargout = cache_shorthand(fhandle, varargin)
       end
       return
    end
-   eidors_msg('%s: Using cached value',fstr,3);
+   eidors_msg('%s: Using cached value',fstr,level_out);
 
 function output = mk_varargout_str(N)
 output = '[';
@@ -513,7 +523,8 @@ function do_unit_test
    eidors_cache show_objs
    eidors_cache
    eidors_msg('log_level',ll);
-   
+   eidors_cache(@(x) x^2, 3);
+   eidors_cache(@(x) x^2, 3);
    test_debug
    
 function [v1 v2] = test_function(a,b,c,d)
