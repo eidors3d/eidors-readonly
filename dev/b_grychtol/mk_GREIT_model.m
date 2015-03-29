@@ -87,7 +87,8 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %
 % See also CALC_GREIT_RM
 
-% (C) 2010 Andy Adler. License: GPL version 2 or version 3
+% (C) 2010-2015 Andy Adler and Bartlomiej Grychtol. 
+% License: GPL version 2 or version 3
 % $Id$
 
 citeme(mfilename);
