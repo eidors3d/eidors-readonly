@@ -25,11 +25,14 @@ function param = fwd_model_parameters( fwd_model )
 
 if isstr(fwd_model) && strcmp(fwd_model, 'UNIT_TEST'); do_unit_test; return; end
 
-param = eidors_cache(@calc_param,fwd_model,'fwd_model_parameters');
+copt.fstr = 'fwd_model_parameters';
+copt.log_level = 4;
+
+param = eidors_cache(@calc_param,fwd_model,copt);
 
 
 % perform actual parameter calculation
-function pp= calc_param( fwd_model );
+function pp= calc_param( fwd_model )
 
 pp.NODE= fwd_model.nodes';
 pp.ELEM= fwd_model.elems';

@@ -58,7 +58,7 @@ if isfield(fmdl,'electrode');
     opt.cache_obj(end+1) = {fmdl.electrode};
 end
 opt.fstr      = 'mdl_slice_mesher';
-
+opt.log_level = 4;
 
 [nmdl f2c p_struct] = eidors_cache(@do_mdl_slice_mesher,{fmdl, level},opt);
 nimg = build_image(nmdl, f2c, img);

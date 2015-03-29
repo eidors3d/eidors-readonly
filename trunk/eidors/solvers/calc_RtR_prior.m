@@ -36,6 +36,7 @@ if isfield(inv_model,'RtR_prior')
    if isnumeric(inv_model.RtR_prior)
       RtR_prior = inv_model.RtR_prior;
    else
+      try inv_model.RtR_prior = str2func(inv_model.RtR_prior); end
       RtR_prior= eidors_cache( inv_model.RtR_prior, inv_model );
    end
 elseif isfield(inv_model,'R_prior')
@@ -61,6 +62,7 @@ function RtR_prior = calc_from_R_prior(inv_model)
    if isnumeric(inv_model.R_prior)
       R = inv_model.R_prior;
    else
+      try inv_model.R_prior = str2func(inv_model.R_prior); end
       R= eidors_cache( inv_model.R_prior, inv_model );
    end
 

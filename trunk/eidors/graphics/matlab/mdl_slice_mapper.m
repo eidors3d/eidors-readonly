@@ -30,15 +30,18 @@ function map = mdl_slice_mapper( fmdl, maptype );
 % $Id$
 
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
-
+copt.log_level = 4;
 switch maptype
-  case 'elem';       
-      map = eidors_cache(@mdl_elem_mapper,      fmdl,'elem_ptr');
-  case 'node';       
-      map = eidors_cache(@mdl_node_mapper,      fmdl,'node_ptr');
-  case 'nodeinterp'; 
-      map = eidors_cache(@mdl_nodeinterp_mapper,fmdl,'ninterp_ptr');
-  otherwise;   
+   case 'elem';
+      copt.fstr = 'elem_ptr';
+      map = eidors_cache(@mdl_elem_mapper,      fmdl,copt);
+   case 'node';
+      copt.fstr = 'node_ptr';
+      map = eidors_cache(@mdl_node_mapper,      fmdl,copt);
+   case 'nodeinterp';
+      copt.fstr = 'nodeinterp';
+      map = eidors_cache(@mdl_nodeinterp_mapper,fmdl,copt);
+   otherwise;
       error('expecting maptype = elem or node');
 end
 
