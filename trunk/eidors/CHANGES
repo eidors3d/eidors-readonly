@@ -1,3 +1,11 @@
+2015-03-26: change default GREIT desired image function to 
+            GREIT_desired_img_sigmoid. This can handle 3D rec_models
+2015-03-24: add progress_msg
+2015-03-24: speed up linear_reorder
+2015-03-09: analytic c2f for grid models (mk_grid_c2f)
+2015-02-18: point_in_traingle test
+2015-02-18: utility to derive non-equalities defining a tetrahedron
+2014-11-24: allow specifying J, R, RtR, JiRtrRJt and system_mat directly
 2014-05-03: add per-m-file control to eidors_msg
 2013-08-15: change interpretation of fwd_model.electrode.z_contact from
             ohm/m^2 to ohm in system_mat_fields
