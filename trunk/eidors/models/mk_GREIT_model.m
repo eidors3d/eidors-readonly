@@ -100,7 +100,7 @@ eidors_msg('mk_GREIT_model: setting cached value', 3);
 function [imdl, weight]= mk_GREIT_model_calc( fmdl, imdl, imgs, radius, weight, opt)
 
 Nsim = opt.Nsim;
-[vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
+[vi,vh,xyz,opt]= stim_targets(imgs, Nsim, opt );
 
 %Calculate rec_model (if absent)
 if ~isfield(imdl,'rec_model');
@@ -110,6 +110,9 @@ if ~isfield(imdl,'rec_model');
    % medical orientation
    imdl.rec_model.mdl_slice_mapper.y_pts = fliplr(imdl.rec_model.mdl_slice_mapper.y_pts);
 end
+
+opt.rec_model = imdl.rec_model; % for desired image calculation
+
 % user MUST specify the inside array
 inside = imdl.rec_model.inside;
 
@@ -117,6 +120,9 @@ inside = imdl.rec_model.inside;
 minnode = min(imdl.rec_model.nodes);
 maxnode = max(imdl.rec_model.nodes);
 opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
+try
+    opt.meshsz = [opt.meshsz minnode(3) maxnode(3)];
+end
 
 imdl.solve = @solve_use_matrix;
 log_level = eidors_msg( 'log_level', 1);
@@ -134,7 +140,7 @@ if ~isempty(opt.noise_figure)
     vi_NF = sum(vi_NF,2); % sum the targets
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
-    f = @(X) to_optimise(vh,vi,xy, radius, X, opt, inside, imdl, target, vi_NF);
+    f = @(X) to_optimise(vh,vi,xyz, radius, X, opt, inside, imdl, target, vi_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
     if exist('OCTAVE_VERSION')
        % octave doesn't currently (2013 Apr) include an fminsearch function
@@ -146,8 +152,8 @@ if ~isempty(opt.noise_figure)
         num2str(NF+target) ' with weight=' num2str(weight)],1);
 end
 eidors_msg( 'log_level', log_level);
-RM= calc_GREIT_RM(vh,vi, xy, radius, weight, opt );
-imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
+RM= calc_GREIT_RM(vh,vi, xyz, radius, weight, opt );
+imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
 imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
 
@@ -156,7 +162,7 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
 
    % calculate GREIT matrix as usual
    RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
-   imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside);
+   imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
    NF = calc_noise_figure(imdl,vh, vi_NF);
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
    out = (NF - target)^2;
@@ -174,66 +180,70 @@ function  imgs = get_prepackaged_fmdls( fmdl );
       error('specified fmdl (%s) is not understood', fmdl);
   end
 
-function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
+function [vi,vh,xyz,opt]= stim_targets(imgs, Nsim, opt );
     fmdl = imgs.fwd_model;
    ctr =  mean(fmdl.nodes);  
    maxx = max(abs(fmdl.nodes(:,1) - ctr(1)));
    maxy = max(abs(fmdl.nodes(:,2) - ctr(2)));
-
-   switch opt.distr 
-       case 0 % original
-           r = linspace(0,0.9, Nsim);
-           th = r*4321; % want object to jump around in radius
-           xyzr = [maxx*r.*cos(th); maxy*r.*sin(th); 
-               opt.target_plane*ones(1,Nsim);
-               0.05*mean([maxx,maxy])*ones(1,Nsim)];
-       
-       case 1 %centre-heavy
-           F = fourier_fit(opt.contour_boundary(:,1:2));
-           v = linspace(0,1,Nsim*100+1); v(end)=[];
-           pts = fourier_fit(F,v);
-           idx_p = floor(rand(Nsim,1)*Nsim*100);
-           xyzr = pts(idx_p,:)'.*repmat(rand(Nsim,1),[1 2])';
-           xyzr(3,:) = calc_offset(opt.target_plane,opt,Nsim);
-           
-           % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
-       case 2 %uniform
-%            F = fourier_fit(opt.contour_boundary(:,1:2));
-%            v = linspace(0,1,101); v(end)=[];
-%            pts = fourier_fit(F,v);
-           pts = opt.contour_boundary(:,1:2);
-           % avoid edges 
-           pts = 0.9*( pts - repmat(ctr(1:2),length(pts),1) ) + repmat(ctr(1:2),length(pts),1);
-           % using maxx and maxy below would in general not produce a
-           % uniform distribution
-           lim = max(maxx, maxy);
-           x = ctr(1) + (rand(Nsim*10,1)-0.5)*2*lim;
-           y = ctr(2) + (rand(Nsim*10,1)-0.5)*2*lim;
-           IN = inpolygon(x,y,pts(:,1),pts(:,2));
-           xyzr(1,:) = x(find(IN,Nsim));
-           xyzr(2,:) = y(find(IN,Nsim));
-           xyzr(3,:) = calc_offset(opt.target_plane,opt,Nsim);
-           % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
-       case 3 % uniform, non-random
-%            F = fourier_fit(opt.elec_loc(:,1:2));
-%            v = linspace(0,1,101); v(end)=[];
-%            pts = fourier_fit(F,v);
-           pts = opt.contour_boundary(:,1:2);
-           lim = max(maxx, maxy);
-           frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
-           [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
-                           linspace(-lim,lim,ceil(sqrt(Nsim/frac))));
-                      
-           x = x+ctr(1); y = y + ctr(2);    
-           IN = inpolygon(x,y,pts(:,1),pts(:,2));
-           xyzr(1,:) = x(find(IN));
-           xyzr(2,:) = y(find(IN));
-           xyzr(3,:) = calc_offset(opt.target_plane,opt,size(xyzr,2));
-           % TODO: What size is good here and how to figure it out?
-           xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
-           eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
+   if numel(opt.distr) > 1
+      xyzr = opt.distr;
+      xyzr(4,:) = calc_radius(mean([maxx,maxy]),opt,size(opt.distr,2));
+   else
+       switch opt.distr
+           case 0 % original
+               r = linspace(0,0.9, Nsim);
+               th = r*4321; % want object to jump around in radius
+               xyzr = [maxx*r.*cos(th); maxy*r.*sin(th);
+                   opt.target_plane*ones(1,Nsim);
+                   0.05*mean([maxx,maxy])*ones(1,Nsim)];
+               
+           case 1 %centre-heavy
+               F = fourier_fit(opt.contour_boundary(:,1:2));
+               v = linspace(0,1,Nsim*100+1); v(end)=[];
+               pts = fourier_fit(F,v);
+               idx_p = floor(rand(Nsim,1)*Nsim*100);
+               xyzr = pts(idx_p,:)'.*repmat(rand(Nsim,1),[1 2])';
+               xyzr(3,:) = calc_offset(opt.target_plane,opt,Nsim);
+               
+               % TODO: What size is good here and how to figure it out?
+               xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
+           case 2 %uniform
+               %            F = fourier_fit(opt.contour_boundary(:,1:2));
+               %            v = linspace(0,1,101); v(end)=[];
+               %            pts = fourier_fit(F,v);
+               pts = opt.contour_boundary(:,1:2);
+               % avoid edges
+               pts = 0.9*( pts - repmat(ctr(1:2),length(pts),1) ) + repmat(ctr(1:2),length(pts),1);
+               % using maxx and maxy below would in general not produce a
+               % uniform distribution
+               lim = max(maxx, maxy);
+               x = ctr(1) + (rand(Nsim*10,1)-0.5)*2*lim;
+               y = ctr(2) + (rand(Nsim*10,1)-0.5)*2*lim;
+               IN = inpolygon(x,y,pts(:,1),pts(:,2));
+               xyzr(1,:) = x(find(IN,Nsim));
+               xyzr(2,:) = y(find(IN,Nsim));
+               xyzr(3,:) = calc_offset(opt.target_plane,opt,Nsim);
+               % TODO: What size is good here and how to figure it out?
+               xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,Nsim);
+           case 3 % uniform, non-random
+               %            F = fourier_fit(opt.elec_loc(:,1:2));
+               %            v = linspace(0,1,101); v(end)=[];
+               %            pts = fourier_fit(F,v);
+               pts = opt.contour_boundary(:,1:2);
+               lim = max(maxx, maxy);
+               frac = polyarea(pts(:,1),pts(:,2)) / (2*lim)^2;
+               [x,y] = ndgrid( linspace(-lim,lim,ceil(sqrt(Nsim/frac))), ...
+                   linspace(-lim,lim,ceil(sqrt(Nsim/frac))));
+               
+               x = x+ctr(1); y = y + ctr(2);
+               IN = inpolygon(x,y,pts(:,1),pts(:,2));
+               xyzr(1,:) = x(find(IN));
+               xyzr(2,:) = y(find(IN));
+               xyzr(3,:) = calc_offset(opt.target_plane,opt,size(xyzr,2));
+               % TODO: What size is good here and how to figure it out?
+               xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
+               eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
+       end
    end
    before = size(xyzr,2);
    [vh,vi,xyzr] = simulate_movement(imgs, xyzr);
@@ -241,7 +251,7 @@ function [vi,vh,xy,opt]= stim_targets(imgs, Nsim, opt );
    if(after~=before)
        eidors_msg(['mk_GREIT_model: Now using ' num2str(after) ' points']);
    end
-   xy = xyzr(1:2,:);
+   xyz = xyzr(1:3,:);
 
 function z = calc_offset(z0,opt,Nsim)
     if opt.random_offset
@@ -264,11 +274,13 @@ function r = calc_radius(R,opt,Nsim)
            
    
    
-function RM = resize_if_reqd(RM,inside);
+function RM = resize_if_reqd(RM,inside,rmdl)
    szRM = size(RM,1);
-   if sum(inside) == szRM
+   if sum(inside) == szRM || ...
+        szRM == size(rmdl.elems,1) || ...
+        (isfield(rmdl,'coarse2fine') && szRM == size(rmdl.coarse2fine,2))
       % RM is fine
-   elseif size(inside,1) == szRM
+   elseif any(size(inside)==szRM) && any(size(inside) == 1)
       RM = RM(inside,:);
    else
       error('mismatch in size of provided RecMatrix');
@@ -299,8 +311,9 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
    if isempty(imdl)
       imdl = select_imdl( fmdl,{'Basic GN dif'});
    end
-
-function opt = parse_options(opt,fmdl,imdl, weight);
+   
+   
+    function opt = parse_options(opt,fmdl,imdl, weight)
 
     if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
     if ~isfield(opt, 'square_pixels')
@@ -311,6 +324,9 @@ function opt = parse_options(opt,fmdl,imdl, weight);
         % this assumes rec_model is a rectangular grid, as it should
         opt.imgsz(1) = numel(unique(imdl.rec_model.nodes(:,1)))-1;
         opt.imgsz(2) = numel(unique(imdl.rec_model.nodes(:,2)))-1;
+        try
+            opt.imgsz(3) = numel(unique(imdl.rec_model.nodes(:,3)))-1;
+        end
     end  
     
     if ~isfield(opt, 'distr'),     opt.distr = 3;       end 
