@@ -17,7 +17,7 @@ mdl = imgs.fwd_model;
 imgs = calc_slices(imgs);
 map = ~isnan(squeeze(imgs(:,:,1))); %assume all imgs are the same shape
 imgs(isnan(imgs)) = 0;
-sz = size(imgs,1);
+sz = size(imgs);
 [x,y,bb_min,bb_max]=prepare_grid(sz,mdl);
 
 N_imgs = size(imgs,3);
@@ -73,12 +73,11 @@ function [x,y,bb_min,bb_max]=prepare_grid(sz,mdl)
    bb_min = min(mdl.nodes(bnd,:));
    bb_max = max(mdl.nodes(bnd,:));
    
-   [x,y]=meshgrid(linspace(bb_min(1),bb_max(1),sz),linspace(bb_min(2),bb_max(2),sz)); 
+   [x,y]=ndgrid(linspace(bb_min(1),bb_max(1),sz(1)),linspace(bb_min(2),bb_max(2),sz(2))); 
 
    
 function [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(img,map,x,y);
 %  if abs(max(img(:))) < abs(min(img(:))); img= -img; end
-   sz = size(img,1);
    qmi = calc_hm_set( img, 0.25 );
    if sum(img(:) & qmi(:))<0 ; 
      error('problem in CofG calculation');
