@@ -74,6 +74,9 @@ function caller = get_caller(s)
     if length(caller) >= 15 && strcmp(caller(end-14:end),'cache_shorthand')
         caller = s(4).name;
     end
+    caller = octave_caller(caller);
+    
+function caller = octave_caller(caller)
     if exist('OCTAVE_VERSION')
     % octave gives caller = eidors_default>do_unit_test
        ff= find(caller == '>'); 
