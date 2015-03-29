@@ -13,18 +13,10 @@ function transfimp = calc_transferimpedance( img)
 % stimulate with one ref electrode and then each in turn
 % make an equiv set of measurements
 
-cacheobj = {img.fwd_model, img.elem_data};
-transfimp = eidors_obj('get-cache', cacheobj, 'calc_transferimpedance');
+copt.cache_obj = {img.fwd_model, img.elem_data};
+copt.fstr = 'calc_transferimpedance';
+transfimp = eidors_cache(@calc_T, img, copt);
 
-if ~isempty(transfimp)
-   eidors_msg('calc_transferimpedance: using cached value', 3);
-   return
-end
-
-transfimp = calc_T( img );
-
-eidors_obj('set-cache', cacheobj, 'calc_transferimpedance', transfimp);
-eidors_msg('calc_transferimpedance: setting cached value', 3);
 
 function transfimp = calc_T( img);
    n_elecs= length( img.fwd_model.electrode );

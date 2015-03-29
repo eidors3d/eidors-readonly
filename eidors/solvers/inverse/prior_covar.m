@@ -13,16 +13,10 @@ function Reg= prior_covar( inv_model )
 % $Id$
 
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
-cache_obj = {inv_model.fwd_model, inv_model.fourD_prior.P_type};
-Reg = eidors_obj('get-cache', cache_obj, 'prior_covar');
-if ~isempty(Reg)
-   eidors_msg('inv_solve_4d_prior: using cached value', 4);
-   return;
-else
-   Reg = prior_covar_calc( cache_obj);
-   eidors_obj('set-cache', cache_obj, 'prior_covar', Reg);
-   eidors_msg('prior_covar: setting cached value', 4);
-end
+
+params = {inv_model.fwd_model, inv_model.fourD_prior.P_type};
+Reg = eidors_cache(@prior_covar_calc, params, 'prior_covar');
+
 
 function Reg = prior_covar_calc( cache_obj );
    ff = cache_obj{1}; 

@@ -20,15 +20,7 @@ img_bkgnd= calc_jacobian_bkgnd( inv_model );
 J = calc_jacobian(img_bkgnd);
 
 % The one_step reconstruction matrix is cached
-JtJ = eidors_obj('get-cache', inv_model, 'Hessian');
-if ~isempty(JtJ)
-    eidors_msg('inv_solve_trunc_iterative: using cached value', 2);
-else
-    JtJ= J'*J;
-
-    eidors_obj('set-cache', inv_model, 'Hessian', JtJ);
-    eidors_msg('inv_solve_trunc_iterative: setting cached value', 2);
-end
+JtJ = eidors_cache(@calc_hessian, J, copt);
 
 l_data1= length(data1); l1_0 = l_data1 ~=0;
 l_data2= length(data2); l2_0 = l_data2 ~=0;
@@ -50,3 +42,6 @@ sol = pcg(JtJ, J'*dva, tol, maxiter);
 img.name= 'solved by inv_solve_trunc_iterative';
 img.elem_data = sol;
 img.fwd_model= fwd_model;
+
+function JtJ = calc_hessian(J)
+   JtJ = J'*J;

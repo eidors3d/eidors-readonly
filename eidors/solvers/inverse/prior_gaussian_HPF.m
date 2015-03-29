@@ -28,18 +28,10 @@ catch
     diam_frac= 0.1;
 end
 
-cache_test_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
-Reg = eidors_obj('get-cache', cache_test_obj, 'prior_gaussian_HPF');
-if ~isempty(Reg)
-   eidors_msg('prior_gaussian_HPF: using cached value', 3);
-   return
-end
+copt.cache_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
+copt.fstr = 'prior_gaussian_HPF';
+Reg = eidors_cache(@calc_Gaussian_HPF, {fwd_model, diam_frac}, copt );
 
-Reg = calc_Gaussian_HPF( fwd_model, diam_frac );
-
-cache_test_obj= {fwd_model.nodes, fwd_model.elems, diam_frac};
-eidors_obj('set-cache', cache_test_obj, 'prior_gaussian_HPF', Reg);
-eidors_msg('prior_gaussian_HPF: setting cached value', 3);
 
 % Calculate Gaussian HP Filter as per Adler & Guardo 96
 % parameter is diam_frac (normally 0.1)

@@ -81,20 +81,10 @@ function vv = meas_from_v_els( v_els, stim)
 
        [n_elec,n_stim] = size(v_els);
 
-       cache_obj = {stim};
-       v2meas = eidors_obj('get-cache', cache_obj, 'v2meas');
-       if ~isempty(v2meas)
-          eidors_msg('v2meas: using cached value', 4);
-       else
-          v2meas = sparse(n_elec*n_stim,0);
-          for i=1:n_stim
-             meas_pat= stim(i).meas_pattern;
-             n_meas  = size(meas_pat,1);
-             v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
-          end
-           eidors_obj('set-cache', cache_obj, 'v2meas', v2meas);
-           eidors_msg('v2meas: setting cached value', 4);
-       end
+       copt.cache_obj = {stim};
+       copt.fstr = 'v2meas';
+       copt.log_level = 4;
+       v2meas = eidors_cache(@get_v2meas, {n_elec,n_stim,stim}, copt);
        vv = v2meas' * v_els(:);
    catch err
       if strcmp(err.identifier, 'MATLAB:innerdim');
@@ -105,6 +95,15 @@ function vv = meas_from_v_els( v_els, stim)
       end
    end
 
+   
+function v2meas = get_v2meas(n_elec,n_stim,stim)
+    v2meas = sparse(n_elec*n_stim,0);
+    for i=1:n_stim
+        meas_pat= stim(i).meas_pattern;
+        n_meas  = size(meas_pat,1);
+        v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
+    end
+        
 
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);

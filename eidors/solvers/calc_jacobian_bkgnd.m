@@ -22,11 +22,10 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') do_unit_test; return;end
 
-img_bkgnd= eidors_obj('get-cache', inv_model, 'jacobian_bkgnd');
-if ~isempty(img_bkgnd)
-   eidors_msg('calc_jacobian_bkgnd: using cached value', 3);
-   return
-end
+img_bkgnd = eidors_cache(@jacobian_bkgnd,{inv_model},'calc_jacobian_bkgnd');
+
+function img_bkgnd = jacobian_bkgnd(inv_model)
+
 %%% old interface %%%
 if isfield(inv_model.jacobian_bkgnd,'func')
    img_bkgnd= feval( inv_model.jacobian_bkgnd.func, inv_model );
@@ -53,10 +52,6 @@ else
     end
 %     img_bkgnd = data_mapper(img_bkgnd);
 end
-
-
-eidors_obj('set-cache', inv_model, 'jacobian_bkgnd', img_bkgnd);
-eidors_msg('jacobian_bkgnd: setting cached value', 3);
 
 
 function b = has_params(s)

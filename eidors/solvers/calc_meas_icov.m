@@ -23,25 +23,18 @@ function meas_icov = calc_meas_icov( inv_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-meas_icov = eidors_obj('get-cache', inv_model, 'meas_icov');
-
-if ~isempty(meas_icov)
-   eidors_msg('calc_meas_icov: using cached value', 3);
-   return
-end
 
 if isfield(inv_model,'meas_icov')
    if isnumeric(inv_model.meas_icov);
       meas_icov = inv_model.meas_icov;
    else
-      meas_icov= feval( inv_model.meas_icov, inv_model);
+      try inv_model.meas_icov = str2func(inv_model.meas_icov); end
+      meas_icov= eidors_cache( inv_model.meas_icov, {inv_model});
    end
 else
-   meas_icov= default_meas_icov( inv_model );
+   meas_icov= eidors_cache(@default_meas_icov,{inv_model} );
 end
 
-eidors_obj('set-cache', inv_model, 'meas_icov', meas_icov);
-eidors_msg('calc_meas_icov: setting cached value', 3);
  
 % Calculate a data prior for an assumption of uniform noise
 % on each channel

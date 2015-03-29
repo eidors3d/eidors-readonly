@@ -22,16 +22,13 @@ function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );
 
 if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
-failed = false;% not all subfunctions set this
+copt.cache_obj = cache_obj(mdl, xyzr);
+copt.fstr = 'mk_c2f_circ_mapping';
+[mapping, failed] = eidors_cache(@circ_mapping,{mdl,xyzr},copt);
 
-c_obj = cache_obj(mdl, xyzr);
+function [mapping, failed] = circ_mapping(mdl,xyzr,copt)
 
-mapping = eidors_obj('get-cache', c_obj, 'circle_mapping');
-failed = eidors_obj('get-cache', c_obj, 'failed_circle_mapping');
-if ~isempty(mapping)
-    eidors_msg('mk_c2f_circ_mapping: using cached value', 3);
-else
-
+    failed = false;% not all subfunctions set this
     mdl = fix_model(mdl);
     switch size(xyzr,1)
       case 3; mapping = contained_elems_2d( mdl, xyzr );
@@ -39,11 +36,7 @@ else
       otherwise; error('size of xyzr incorrect');
     end
 
-    eidors_obj('set-cache', c_obj, 'circle_mapping', mapping);
-    eidors_obj('set-cache', c_obj, 'failed_circle_mapping', failed);
-    eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
-end
-
+    
 % Mapping depends only on nodes and elems - remove the other stuff
 function c_obj = cache_obj(mdl, xyzr)
    c_obj = {mdl.nodes, mdl.elems, xyzr};

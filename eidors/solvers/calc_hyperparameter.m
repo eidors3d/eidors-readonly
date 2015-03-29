@@ -18,18 +18,9 @@ function hyperparameter = calc_hyperparameter( inv_model )
 % $Id$
 
 if isfield( inv_model.hyperparameter, 'func')
-
-   hyperparameter = eidors_obj('get-cache', inv_model, 'hyperparameter');
-   if ~isempty(hyperparameter)
-      eidors_msg('calc_hyperparameter: using cached value', 2);
-      return
-   end
-
-   hyperparameter= feval( inv_model.hyperparameter.func, inv_model);
-
-   eidors_obj('set-cache', inv_model, 'hyperparameter', hyperparameter);
-   eidors_msg('calc_hyperparameter: setting cached value', 2);
-
+   try inv_model.hyperparameter = str2func(inv_model.hyperparameter); end
+   hyperparameter = eidors_cache(...
+                    inv_model.hyperparameter,{inv_model},'hyperparameter');
 else
     hyperparameter= inv_model.hyperparameter.value;
 end

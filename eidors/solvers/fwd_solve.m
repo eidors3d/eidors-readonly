@@ -70,7 +70,14 @@ if ~isfield(fwd_model, 'stimulation')
    error('EIDORS: attempting to solve on model without stimulation patterns');
 end
 
-data = feval( fwd_model.solve, fwd_model, img);
+solver = fwd_model.solve;
+if ischar(solver)
+    solver = str2func(solver);
+end
+
+copt.fstr = 'fwd_solve';
+copt.cache_obj = img;
+data = eidors_cache(solver, {fwd_model, img}, copt);
 data= eidors_obj('data',data);  % create data object
 
 
@@ -95,11 +102,8 @@ elseif isfield(fwd_model,'measured_quantity') ...
        solver, data.measured_quantity, fwd_model.measured_quantity);
 end
     
-
 warning on EIDORS:DeprecatedInterface
 
-eidors_obj('set-cache', img, 'fwd_solve_data', data);
-eidors_msg('fwd_solve: setting cached value',3);
 
 function mdl = prepare_model( mdl )
 mdl = mdl_normalize(mdl,mdl_normalize(mdl));

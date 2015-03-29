@@ -46,15 +46,13 @@ if isnumeric(fwd_model.jacobian)             % we have the Jacobian matrix
    J = fwd_model.jacobian;
 else                                         % we need to calculate
    
-   cache_obj= jacobian_cache_params( fwd_model, img );
-   
-   J= eidors_obj('get-cache', cache_obj, 'jacobian');
-   if ~isempty(J)
-      eidors_msg('calc_jacobian: using cached value', 3);
-      return
+   copt.cache_obj= jacobian_cache_params( fwd_model, img );
+   copt.fstr = 'jacobian';
+   try
+       fwd_model.jacobian = str2func(fwd_model.jacobian);
    end
+   J = eidors_cache(fwd_model.jacobian, {fwd_model, img}, copt);
    
-   J= feval(fwd_model.jacobian, fwd_model, img);
 end
 
 if isfield(fwd_model,'coarse2fine')
@@ -67,10 +65,6 @@ end
 
 warning(ws.state, 'EIDORS:DeprecatedInterface');
 
-if ~isnumeric(fwd_model.jacobian)            % no point caching 
-   eidors_obj('set-cache', cache_obj, 'jacobian', J);
-   eidors_msg('calc_jacobian: setting cached value', 3);
-end
         
 
 

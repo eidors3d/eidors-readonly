@@ -30,33 +30,26 @@ switch inv_model.type
   otherwise; error('PRIOR_LAPLACE requires input type of inv_model or fwd_model');
 end
 
-pp= fwd_model_parameters( fwd_model );
+Reg = eidors_cache(@build_laplace, fwd_model, 'prior_laplace');
 
-Reg = eidors_obj('get-cache', fwd_model , 'prior_laplace');
-if ~isempty(Reg)
-   eidors_msg('prior_laplace: using cached value', 3);
-   return
-end
+function Reg = build_laplace(fwd_model)
 
-
-Reg = speye( pp.n_elem );
+   pp= fwd_model_parameters( fwd_model );
+   Reg = speye( pp.n_elem );
 
    Iidx= [];
    Jidx= [];
    Vidx= [];
    for ii=1:pp.n_elem
-     el_adj = find_adjoin( ii, pp.ELEM );
-     for jj=el_adj(:)'
+      el_adj = find_adjoin( ii, pp.ELEM );
+      for jj=el_adj(:)'
          Iidx= [Iidx, ii, ii, jj, jj];
          Jidx= [Jidx, ii, jj, ii, jj];
          Vidx= [Vidx,  1, -1, -1,  1];
-     end
+      end
    end
 
    Reg = sparse(Iidx,Jidx, Vidx, pp.n_elem, pp.n_elem );
-   
-eidors_obj('set-cache', fwd_model , 'prior_laplace', Reg);
-eidors_msg('prior_laplace: setting cached value', 3);
    
    
 % find elems which are connected to elems ee

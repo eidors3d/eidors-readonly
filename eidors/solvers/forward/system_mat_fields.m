@@ -11,23 +11,14 @@ function FC= system_mat_fields( fwd_model )
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
-cache_obj = mk_cache_obj(fwd_model);
-if 0
-else
-   FC = eidors_obj('get-cache', cache_obj, 'system_mat_fields');
-   if ~isempty(FC)
-      eidors_msg('system_mat_fields: using cached value', 4);
-      return
-   end
+copt.cache_obj = mk_cache_obj(fwd_model);
+copt.fstr = 'system_mat_fields';
+copt.log_level = 4;
+FC= eidors_cache(@calc_system_mat_fields,{fwd_model},copt );
 
-   FC= calc_system_mat_fields( fwd_model );
-
-   eidors_obj('set-cache', cache_obj, 'system_mat_fields', FC);
-   eidors_msg('system_mat_fields: setting cached value', 4);
-end
 
 % only cache stuff which is really relevant here
-function cache_obj = mk_cache_obj(fwd_model);
+function cache_obj = mk_cache_obj(fwd_model)
    cache_obj.elems       = fwd_model.elems;
    cache_obj.nodes       = fwd_model.nodes;
    try
@@ -36,7 +27,7 @@ function cache_obj = mk_cache_obj(fwd_model);
    cache_obj.type        = 'fwd_model';
    cache_obj.name        = ''; % it has to have one
 
-function FC= calc_system_mat_fields( fwd_model );
+function FC= calc_system_mat_fields( fwd_model )
    p= fwd_model_parameters( fwd_model );
    d0= p.n_dims+0;
    d1= p.n_dims+1;
@@ -72,7 +63,7 @@ FC= FF*CC;
 
 % Add parts for complete electrode model
 function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
-             compl_elec_mdl(fwd_model,pp);
+             compl_elec_mdl(fwd_model,pp)
    d0= pp.n_dims;
    FFdata= zeros(0,d0);
    FFd_block= sqrtm( ( ones(d0) + eye(d0) )/6/(d0-1) ); % 6 in 2D, 12 in 3D 

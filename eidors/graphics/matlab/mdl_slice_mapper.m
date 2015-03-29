@@ -32,19 +32,17 @@ function map = mdl_slice_mapper( fmdl, maptype );
 if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 switch maptype
-  case 'elem';       map = mdl_elem_mapper(fmdl);
-  case 'node';       map = mdl_node_mapper(fmdl);
-  case 'nodeinterp'; map = mdl_nodeinterp_mapper(fmdl);
-  otherwise;   error('expecting maptype = elem or node');
+  case 'elem';       
+      map = eidors_cache(@mdl_elem_mapper,      fmdl,'elem_ptr');
+  case 'node';       
+      map = eidors_cache(@mdl_node_mapper,      fmdl,'node_ptr');
+  case 'nodeinterp'; 
+      map = eidors_cache(@mdl_nodeinterp_mapper,fmdl,'ninterp_ptr');
+  otherwise;   
+      error('expecting maptype = elem or node');
 end
 
 function elem_ptr = mdl_elem_mapper(fwd_model);
-   elem_ptr = eidors_obj('get-cache', fwd_model, 'elem_ptr');
-
-   if ~isempty(elem_ptr)
-      return;
-   end
-
    NODE = level_model( fwd_model );
    if isfield(fwd_model.mdl_slice_mapper,'model_2d') && ...
            fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
@@ -60,15 +58,8 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
 
-   eidors_obj('set-cache', fwd_model, 'elem_ptr', elem_ptr);
-   eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
-
-   ninterp_ptr = eidors_obj('get-cache', fwd_model, 'ninterp_ptr');
-   if ~isempty(ninterp_ptr); return; end
-
-
    elem_ptr = mdl_elem_mapper(fwd_model);
    NODE = level_model( fwd_model );
    fwd_model.nodes = NODE';
@@ -85,23 +76,11 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    end
    ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
 
-
-   eidors_obj('set-cache', fwd_model, 'ninterp_ptr', ninterp_ptr);
-   eidors_msg('mdl_slice_mapper: setting cached value', 3);
-
 function node_ptr = mdl_node_mapper(fwd_model);
-   node_ptr = eidors_obj('get-cache', fwd_model, 'node_ptr');
-
-   if ~isempty(node_ptr)
-      return;
-   end
-
    NODE = level_model( fwd_model );
    [x,y] = grid_the_space( fwd_model);
    node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
 
-   eidors_obj('set-cache', fwd_model, 'node_ptr', node_ptr);
-   eidors_msg('mdl_slice_mapper: setting cached value', 3);
 
 
 % Search through each element and find the points which

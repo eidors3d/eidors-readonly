@@ -39,7 +39,7 @@ function img= inv_solve_diff_GN_one_step( inv_model, data1, data2)
 %  Wiener:   P= inv(RtR); V = inv(W); RM = P*J'/(J*P*J' + hp^2*V)
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
-sol = get_RM( inv_model ) * dv;
+sol = eidors_cache(@get_RM, inv_model,'inv_solve_diff_GN_one_step:get_RM' ) * dv;
 
 
 
@@ -53,13 +53,6 @@ img = scale_to_fit_data(img, inv_model, data1, data2);
 
 
 function RM = get_RM( inv_model )
-   % The one_step reconstruction matrix is cached
-   RM = eidors_obj('get-cache', inv_model, 'inv_solve_diff_GN_one_step');
-   if ~isempty(RM)
-       eidors_msg('inv_solve_diff_GN_one_step: using cached value', 3);
-       return;
-   end
-
    img_bkgnd= calc_jacobian_bkgnd( inv_model );
    J = calc_jacobian( img_bkgnd);
 
@@ -69,8 +62,6 @@ function RM = get_RM( inv_model )
 
    RM= (J'*W*J +  hp^2*RtR)\J'*W;
 
-   eidors_obj('set-cache', inv_model, 'inv_solve_diff_GN_one_step', RM);
-   eidors_msg('inv_solve_diff_GN_one_step: setting cached value', 3);
    
    
 function [img, step_size] = scale_to_fit_data(img, inv_model, data1, data2)

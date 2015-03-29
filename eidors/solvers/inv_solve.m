@@ -56,15 +56,8 @@ if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 inv_model = prepare_model( inv_model );
 opts = parse_parameters( inv_model );
 
-solver = inv_model.solve;
-if isa(solver,'function handle')
-    solver = func2str(solver);
-end
-if strcmp(solver, 'eidors_default');
-    solver = eidors_default('get','inv_solve');
-end
-
-eidors_msg('inv_solve: %s', solver,2);
+print_hello(inv_model.solve);
+try inv_model.solve = str2func(inv_model.solve); end
 
 if opts.abs_solve
    if nargin~=2;
@@ -72,7 +65,8 @@ if opts.abs_solve
    end
    
    fdata = filt_data(inv_model,data1);
-   imgc= feval( inv_model.solve, inv_model, fdata);
+
+   imgc= eidors_cache( inv_model.solve, {inv_model, fdata}, 'inv_solve');
 
 else
    if nargin~=3;
@@ -86,7 +80,7 @@ else
    fdata2 = filt_data( inv_model, data2, data_width );
 
    % TODO: Check if solver can handle being called with multiple data
-   imgc= feval( inv_model.solve, inv_model, fdata1, fdata2);
+   imgc= eidors_cache( inv_model.solve, {inv_model, fdata1, fdata2},'inv_solve');
    
 
 end
@@ -148,7 +142,17 @@ catch
    eidors_msg('inv_solve: Solution Error calculation failed.',2);
 end
 
-function opts = parse_parameters( imdl );
+function print_hello(solver)
+    if isa(solver,'function handle')
+        solver = func2str(solver);
+    end
+    if strcmp(solver, 'eidors_default');
+        solver = eidors_default('get','inv_solve');
+    end
+    eidors_msg('inv_solve: %s', solver,3);
+
+
+function opts = parse_parameters( imdl )
    if  strcmp(imdl.reconst_type,'static') || ...
        strcmp(imdl.reconst_type,'absolute')
       opts.abs_solve = 1;
