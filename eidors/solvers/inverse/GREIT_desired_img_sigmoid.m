@@ -28,16 +28,19 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 % As of 2015-03-29, this is the default desired image function used by
 % MK_GRID_MODEL.
 %
-% See also: CALC_GREIT_RM, MK_GREIT_MODEL, MK_DESIRED_IMG_SIGMOID
+% See also: CALC_GREIT_RM, MK_GREIT_MODEL, MK_PIXEL_SLICE
 
-% (C) 2009 Andy Adler. Licenced under GPL v2 or v3
+% (C) 2015 Bartlomiej Grychtol. All rights reserved Swisstom AG.
+% License: GPL version 2 or 3
 % $Id$
+
+% >> SWISSTOM CONTRIBUTION <<
 
 if ischar(xyz) && strcmp(xyz,'UNIT_TEST'), do_unit_test; return, end
 
 [xyzr, radius, opt] = parse_opt(xyz, radius, opt);
 
-copt.cache_obj = {opt.rec_model.nodes, opt.rec_model.elems, opt.steepness};
+copt.cache_obj = {xyzr, radius, opt.rec_model.nodes, opt.rec_model.elems, opt.steepness};
 copt.fstr = 'GREIT_desired_img_sigmoid';
 PSF = eidors_cache(@desired_soln,{xyzr, radius, opt},copt);
 
