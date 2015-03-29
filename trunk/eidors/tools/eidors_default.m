@@ -49,8 +49,8 @@ function varargout = eidors_default(varargin)
                return
        end
    end
-   s = dbstack;
-   caller  = octave_caller(  s(2).name );
+   
+   caller  = get_caller( dbstack );
    % This works on a specific version of matlab, and not octave
    %varargout{1:nargout} = call_default(caller,varargin{:});
    if nargout>0
@@ -69,7 +69,11 @@ function list = list_defaults
         list = [];
     end
 
-function caller = octave_caller(caller)
+function caller = get_caller(s)
+    caller = s(2).name;
+    if length(caller) >= 15 && strcmp(caller(end-14:end),'cache_shorthand')
+        caller = s(4).name;
+    end
     if exist('OCTAVE_VERSION')
     % octave gives caller = eidors_default>do_unit_test
        ff= find(caller == '>'); 
