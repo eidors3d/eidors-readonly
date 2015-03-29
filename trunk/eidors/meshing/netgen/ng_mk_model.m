@@ -163,12 +163,23 @@ function elec = elec_spec( row, is2D, hig, rad, el_th, el_z )
      if row(1) == 0;
         elec.point = [xy_centre, 0];
      else
-        elec.intersection.cylinder.top_center     = [1.03*xy_centre, 0];
-        elec.intersection.cylinder.bottom_center  = [0.97*xy_centre, 0];
-        elec.intersection.cylinder.radius         = row(1);
-        elec.intersection.half_space.point        = [xy_centre, -.01];
-        nvec =-[xy_centre,1]; nvec = nvec/norm(nvec);
-        elec.intersection.half_space.outward_normal_vector = nvec;
+        el_z = hig/2;
+        row(2)=hig;
+        elec.intersection.cylinder(1).top_center     = [0,0,2*row(1)];
+        elec.intersection.cylinder(1).bottom_center  = [0,0,-2*row(1)];
+        elec.intersection.cylinder(1).radius         = rad;
+        elec.intersection.cylinder(1).complement_flag= 1;
+        rad_dir = [sin(el_th);cos(el_th)];
+        tan_dir = [0,1;-1,0]*rad_dir;
+        elec.intersection.parallelepiped(1).vertex   = [0.97*xy_centre' - row(1)/2*tan_dir; el_z - row(2)/2];
+        elec.intersection.parallelepiped(1).vector_a = [0; 0; 1];
+        elec.intersection.parallelepiped(1).vector_b = [rad_dir; 0];
+        elec.intersection.parallelepiped(1).vector_c = [tan_dir; 0];
+        elec.intersection.parallelepiped(2).vertex   = [1.03*xy_centre' + row(1)/2*tan_dir; el_z + row(2)/2];
+        elec.intersection.parallelepiped(2).vector_a =-[0; 0; 1];
+        elec.intersection.parallelepiped(2).vector_b =-[rad_dir; 0];
+        elec.intersection.parallelepiped(2).vector_c =-[tan_dir; 0];
+
         elec.enter_body_flag = 0;
      end
   else
@@ -184,8 +195,16 @@ function elec = elec_spec( row, is2D, hig, rad, el_th, el_z )
 %                     subfields: vertex ([0; 0; 0]), vector_a ([1; 0; 0]),
 %                     vector_b ([0; 1; 0]), vector_c ([0; 0; 1]),
 %                     complement_flag (false).
-        elec.parallelepiped
-        elec.dims  = row(1:2);
+        rad_dir = [sin(el_th);cos(el_th)];
+        tan_dir = [0,1;-1,0]*rad_dir;
+        elec.intersection.parallelepiped(1).vertex   = [0.97*xy_centre' - row(1)/2*tan_dir; el_z - row(2)/2];
+        elec.intersection.parallelepiped(1).vector_a = [0; 0; 1];
+        elec.intersection.parallelepiped(1).vector_b = [rad_dir; 0];
+        elec.intersection.parallelepiped(1).vector_c = [tan_dir; 0];
+        elec.intersection.parallelepiped(2).vertex   = [1.03*xy_centre' + row(1)/2*tan_dir; el_z + row(2)/2];
+        elec.intersection.parallelepiped(2).vector_a =-[0; 0; 1];
+        elec.intersection.parallelepiped(2).vector_b =-[rad_dir; 0];
+        elec.intersection.parallelepiped(2).vector_c =-[tan_dir; 0];
      else
         error('negative electrode width not supported');
      end
