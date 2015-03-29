@@ -6,9 +6,12 @@
 GREIT algorithms: Example images
 </h2>
 
-This tutorial uses the various GREIT algorithm to
+This tutorial uses the various GREIT algorithm candidates to
 generate a set of example images. This is primarily
 a sanity check that the algorithms work.
+
+This tutorial documents work in progress during the development of the 
+GREIT framework, it is now of mostly historical interest.
 
 <H3>Prepare data: phantom data</H3>
 
