@@ -71,12 +71,11 @@ figure
 show_fem(inv_solve(im_gr,vh,vi))
 title('original GREIT recon');
 %%
-imdl = mk_common_model('b3cr',[16,1]) %3d, 16 elec, 1 ring
+imdl = mk_common_model('b3cr',[16,1]); %3d, 16 elec, 1 ring
 imdl.fwd_model = mdl_normalize(imdl.fwd_model,1);
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 imdl.stimulation = stim;
 img = mk_image(imdl);
-keyboard
 gr_imdl = mk_GREIT_model(img,0.25,0.02);
 vh=fwd_solve(img);
 img.elem_data(4100)=1.1; 
