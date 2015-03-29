@@ -6,7 +6,6 @@ if ischar(xyz) && strcmp(xyz,'UNIT_TEST'), do_unit_test; return, end
 [xyzr, radius, opt] = parse_opt(xyz, radius, opt);
 
 mdl = opt.rec_model;
-show_fem(mdl)
 
 copt.cache_obj = {opt};
 copt.fstr = 'new_desired_soln';
