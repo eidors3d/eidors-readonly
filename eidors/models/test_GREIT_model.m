@@ -35,7 +35,7 @@ fmdl.stimulation = stim;
 %%
 img = mk_image(fmdl,1);
 opt.imgsz = [32 64];
-opt.distr = 1; % random, centre-heavy
+opt.distr = 3; % uniform`
 imdl = mk_GREIT_model(img, 0.25, 0.2, opt);
 
 vh=fwd_solve(img);
@@ -47,9 +47,11 @@ img.elem_data = 1 + 0.1*elem_select(img.fwd_model, select_fcn);
 vi=fwd_solve(img);
 figure
 show_fem(img);
+title('extruded model w/ target')
 % print -dpng model.png
 figure
 imgr= inv_solve(imdl,vh,vi);
+title('current GREIT recon')
 show_fem(imgr);
 axis equal
 % print -dpng sln.png
@@ -58,22 +60,34 @@ axis equal
 imdl= mk_common_model('c2c2',16);
 img=mk_image(imdl); vh=fwd_solve(img); 
 img.elem_data(50)=1.1; vi=fwd_solve(img);
+figure, show_fem(img), title('circ model');
 imgr = inv_solve(imdl,vh,vi);
+figure
 show_fem(imgr);
+title('GN recon')
 %%
 im_gr = mk_common_gridmdl('GREITc1');
+figure
 show_fem(inv_solve(im_gr,vh,vi))
+title('original GREIT recon');
 %%
 imdl = mk_common_model('b3cr',[16,1]) %3d, 16 elec, 1 ring
 imdl.fwd_model = mdl_normalize(imdl.fwd_model,1);
 [stim,meas_sel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 imdl.stimulation = stim;
 img = mk_image(imdl);
+keyboard
 gr_imdl = mk_GREIT_model(img,0.25,0.02);
 vh=fwd_solve(img);
 img.elem_data(4100)=1.1; 
 vi=fwd_solve(img);
-show_fem(img)
+figure, show_fem(img), title('cyl model');
 figure
 show_fem(inv_solve(gr_imdl,vh,vi))
+title('current GREIT recon')
+axis equal
+
+figure
+show_fem(inv_solve(im_gr,vh,vi))
+title('original GREIT recon')
 axis equal
