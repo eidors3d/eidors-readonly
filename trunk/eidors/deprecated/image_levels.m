@@ -11,6 +11,8 @@ function image_levels(img, levels, clim )
 % $Id$
 
 
+warning('EIDORS:deprecated','IMAGE_LEVELS is deprecated as of 29-Mar-2015. ');
+
 set(gcf,'NumberTitle','off');
 set(gcf,'Name', img.name);
 fwd_mdl= img.fwd_model;
