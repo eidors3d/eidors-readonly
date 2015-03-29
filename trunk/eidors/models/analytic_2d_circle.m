@@ -35,12 +35,13 @@ function V = analytic_2d_circle(I, params)
 % 
 % plot([vi,vsi]);
 
+if ischar(I) && strcmp(I, 'UNIT_TEST'), do_unit_test; return; end
 
 if ~all(abs(sum(I,1)) <1e-12); error('net I must be 0'); end
 [ll,nv] = size(I);
 
 IF= fft(I); IF(1)= []; % Don't include zero term
-[SM,ll2] = solve_matrix(ll, params);
+[SM,ll2] = eidors_cache(@solve_matrix,{ll, params},'analytic_2d_circle');
 VF2= SM*IF(ll2);
 VF= zeros(size(I));
 VF(1+[ll2, ll-ll2],:)= [VF2;conj(VF2)];
@@ -53,13 +54,7 @@ V= real(V);
 function [SM,ll2] = solve_matrix(ll, params)
   ll1= ll-1; % IGNORE DC
   ll2 = 1:ceil(ll1/2);
-
-  SM = eidors_obj('get-cache', {ll,params}, 'analytic_2d_circle');
-  if ~isempty(SM)
-     eidors_msg('analytic_2d_circle: using cached value', 3);
-     return
-  end
-  
+ 
    s_h = params(1);
    s_i = params(2);
    b   = params(3);
@@ -106,6 +101,25 @@ function [SM,ll2] = solve_matrix(ll, params)
 
    I= speye(mll2);
    SM = (I-T*D)\(I+T*D)*iD;
+   
+function do_unit_test
 
-   eidors_obj('set-cache', {ll,params}, 'analytic_2d_circle', SM);
-   eidors_msg('analytic_2d_circle: setting cached value', 3);
+    imdl= mk_common_model('c2c0',16);
+    img = calc_jacobian_bkgnd(imdl);
+    img.fwd_solve.get_all_meas = 1;
+    img.elem_data(1:256)= 0.1;
+    vi= fwd_solve(img);
+
+    [jnk,maxl] = min(vi.volt(:,1));
+    vi= vi.volt(maxl:end,1);
+    lv= length(vi);
+
+    vol = get_elem_volume(img.fwd_model);
+    vt= sum(vol); va= sum(vol(img.elem_data ~=1));
+    rad = sqrt(va/vt);
+
+    I =  zeros(lv,1); I(1+[0,lv/16]) = [-25,25]*lv/16;
+    vsi= analytic_2d_circle(I, [1, 0.1, 0.0, rad, 0]);
+
+    plot([vi,vsi]);
+

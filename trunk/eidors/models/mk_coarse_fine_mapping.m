@@ -52,14 +52,17 @@ if isstr(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
 if isstr(f_mdl) && strcmp(f_mdl, 'LOAD'); load; return; end
 
 [c_mdl, f_mdl] = assign_defaults( c_mdl, f_mdl );
-c_obj = cache_obj(c_mdl, f_mdl);
 
-f_mdl= offset_and_project( f_mdl, c_mdl);
-mapping = eidors_obj('get-cache', c_obj, 'coarse_fine_mapping');
-if ~isempty(mapping)
-    eidors_msg('mk_coarse_fine_mapping: using cached value', 3);
-else
+copt.cache_obj = cache_obj(c_mdl, f_mdl);
+copt.fstr = 'mk_coarse_fine_mapping';
 
+
+[mapping, outside] = eidors_cache(@mapping_calc,{f_mdl,c_mdl},copt);
+
+
+
+function [mapping, outside] = mapping_calc(f_mdl, c_mdl)
+    f_mdl= offset_and_project( f_mdl, c_mdl);
     z_depth = c_mdl.mk_coarse_fine_mapping.z_depth;
 
     f_elems = all_contained_elems( f_mdl, c_mdl, z_depth);
@@ -69,9 +72,6 @@ else
        mapping = mapping*c_mdl.coarse2fine;
     end
 
-    eidors_obj('set-cache', c_obj, 'coarse_fine_mapping', mapping);
-    eidors_msg('mk_coarse_fine_mapping: setting cached value', 3);
-end
 
 if nargout>1;
   outside = 1 - sum(mapping,2);

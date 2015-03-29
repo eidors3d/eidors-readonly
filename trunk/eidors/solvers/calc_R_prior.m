@@ -22,25 +22,34 @@ function R_prior = calc_R_prior( inv_model, varargin )
 
 inv_model = rec_or_fwd_model( inv_model);
 
-R_prior = eidors_obj('get-cache', inv_model, 'R_prior');
-if ~isempty(R_prior)
-   eidors_msg('calc_R_prior: using cached value', 3);
-   return
-end
 
 if isfield(inv_model,'R_prior')
    if isnumeric(inv_model.R_prior)
       R_prior = inv_model.R_prior;
    else
-      R_prior= feval( inv_model.R_prior, inv_model );
+      R_prior= eidors_cache( inv_model.R_prior, inv_model );
    end
 elseif isfield(inv_model,'RtR_prior')
+   R_prior = eidors_cache(@calc_from_RtR_prior, inv_model,'calc_R_prior');
+else
+   error('calc_R_prior: neither R_prior or RtR_prior func provided');
+end
+
+if isfield(inv_model.fwd_model,'coarse2fine')
+   c2f= inv_model.fwd_model.coarse2fine;
+   if size(R_prior,1)==size(c2f,1)
+%     we need to take into account coarse2fine - using a reasonable tol
+      R_prior=R_prior*c2f;
+   end
+end
+
+function R_prior = calc_from_RtR_prior(inv_model)
    % The user has provided an RtR prior. We can use this to
    % get R =RtR^(1/2). Not that this is non unique
    if isnumeric(inv_model.RtR_prior)
       RtR_prior = inv_model.RtR_prior;
    else
-      RtR_prior= feval( inv_model.RtR_prior, inv_model );
+      RtR_prior= eidors_cache( inv_model.RtR_prior, inv_model );
    end
    
    % chol generates an error for rank deficient RtR_prior
@@ -56,21 +65,6 @@ elseif isfield(inv_model,'RtR_prior')
    else
       R_prior = ichol(RtR_prior);
    end
-else
-   error('calc_R_prior: neither R_prior or RtR_prior func provided');
-end
-
-if isfield(inv_model.fwd_model,'coarse2fine')
-   c2f= inv_model.fwd_model.coarse2fine;
-   if size(R_prior,1)==size(c2f,1)
-%     we need to take into account coarse2fine - using a reasonable tol
-      R_prior=R_prior*c2f;
-   end
-end
-
-eidors_obj('set-cache', inv_model, 'R_prior', R_prior);
-eidors_msg('calc_R_prior: setting cached value', 3);
-
 
 function inv_model = rec_or_fwd_model( inv_model);
 

@@ -24,22 +24,12 @@ try % remove the value field
    inv_model.hyperparameter = rmfield(inv_model.hyperparameter,'value');
 end
 
-HP = eidors_obj('get-cache', inv_model, 'HP_for_NF');
-if ~isempty(HP)
-   eidors_msg('choose_noise_figure: using cached value', 2);
-   return
-end
-
-HP = HP_for_NF_search(reqNF,inv_model);
-
-   
-eidors_cache('boost_priority',3);
-eidors_obj('set-cache', inv_model, 'HP_for_NF', HP);
-eidors_msg('choose_noise_figure: setting cached value', 2);
-eidors_cache('boost_priority',-3);
+copt.boost_priority = 3;
+HP = eidors_cache(@HP_for_NF_search,{reqNF,inv_model},copt);
 
 
-function [HP,NF,SE] = HP_for_NF_search(dNF,imdl);
+
+function [HP,NF,SE] = HP_for_NF_search(dNF,imdl)
    hp= search1(dNF, imdl, 1);
 
    dx= hp-linspace(-0.7,0.7,5);

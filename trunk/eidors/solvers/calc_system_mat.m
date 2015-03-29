@@ -35,17 +35,15 @@ if isnumeric(fwd_model.system_mat)
 
 else
    
-   cache_obj= {fwd_model, img.elem_data};
-   system_mat= eidors_obj('get-cache', cache_obj, 'system_mat');
-   if ~isempty(system_mat)
-      eidors_msg('system_mat: using cached value', 3);
-      return
+   copt.cache_obj= {fwd_model, img.elem_data};
+   copt.fstr = 'system_mat';
+   
+   try % in case it's a string
+       fwd_model.system_mat = str2func(fwd_model.system_mat); 
    end
    
-   system_mat= feval(fwd_model.system_mat, fwd_model, img);
-
-   eidors_obj('set-cache', cache_obj, 'system_mat', system_mat);
-   eidors_msg('calc_system_mat: setting cached value', 3);
+   system_mat = eidors_cache(fwd_model.system_mat,{fwd_model,img},copt);
+   
 end
 
 warning on EIDORS:DeprecatedInterface

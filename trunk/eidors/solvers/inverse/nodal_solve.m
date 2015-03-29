@@ -17,7 +17,7 @@ function img= nodal_solve( inv_model, data1, data2)
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 
-sol = get_RM( inv_model ) * dv;
+sol = eidors_cache(@get_RM, inv_model, 'nodal_solve:get_RM' ) * dv;
 
 % create a data structure to return
 img.name= 'solved by nodal_solve';
@@ -26,13 +26,6 @@ img.fwd_model= inv_model.fwd_model;
 
 function one_step_inv = get_RM( inv_model );
    fwd_model= inv_model.fwd_model;
-
-   % The one_step reconstruction matrix is cached
-   one_step_inv = eidors_obj('get-cache', inv_model, 'nodal_solve');
-   if ~isempty(one_step_inv)
-       eidors_msg('nodal_solve: using cached value', 3);
-       return;
-   end
 
    img_bkgnd= calc_jacobian_bkgnd( inv_model );
    J = calc_jacobian(img_bkgnd);
@@ -51,9 +44,6 @@ function one_step_inv = get_RM( inv_model );
    end
 
    one_step_inv= (J'*W*J +  hp^2*RtR)\J'*W;
-
-   eidors_obj('set-cache', inv_model, 'nodal_solve', one_step_inv);
-   eidors_msg('nodal_solve: setting cached value', 3);
 
 function [e2n, Ne, Nn] = elem2node( elems )
    [Ne,d] = size(elems);

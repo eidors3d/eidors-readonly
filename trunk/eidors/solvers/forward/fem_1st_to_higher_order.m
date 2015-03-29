@@ -14,19 +14,11 @@ function [boundary,elems,nodes]=fem_1st_to_higher_order(fwd_model)
 
 if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
-cache_obj = {fwd_model.nodes, fwd_model.elems, ...
+copt.cache_obj = {fwd_model.nodes, fwd_model.elems, ...
              fwd_model.approx_type, fwd_model.boundary};
-bel = eidors_obj('get-cache', cache_obj, 'boundaryN_elemsN_nodes');
-if ~isempty(bel)
-    eidors_msg('boundaryN, elemsN, nodes: using cached value', 3);
-    boundary = bel{1}; elems= bel{2}; nodes= bel{3};
-    return
-end
+copt.fstr = 'boundaryN_elemsN_nodes';
 
-[boundary,elems,nodes]= mc_fem_modify(fwd_model);
-
-eidors_obj('set-cache', cache_obj, 'boundaryN_elemsN_nodes', {boundary,elems,nodes});
-eidors_msg('fem_modify: setting cached value', 3);
+[boundary,elems,nodes]= eidors_cache(@mc_fem_modify,fwd_model,copt);
 end
 
 function [boundary,elems,nodes]=mc_fem_modify(mdl)

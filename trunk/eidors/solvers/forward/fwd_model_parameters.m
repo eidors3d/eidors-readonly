@@ -25,17 +25,8 @@ function param = fwd_model_parameters( fwd_model )
 
 if isstr(fwd_model) && strcmp(fwd_model, 'UNIT_TEST'); do_unit_test; return; end
 
-param = eidors_obj('get-cache', fwd_model, 'fwd_model_parameters');
+param = eidors_cache(@calc_param,fwd_model,'fwd_model_parameters');
 
-if ~isempty(param)
-   eidors_msg('fwd_model_parameters: using cached value', 3);
-   return
-end
-
-param = calc_param( fwd_model );
-
-eidors_obj('set-cache', fwd_model, 'fwd_model_parameters', param);
-eidors_msg('fwd_model_parameters: setting cached value', 3);
 
 % perform actual parameter calculation
 function pp= calc_param( fwd_model );
@@ -55,9 +46,12 @@ try
    n_elec= length( fwd_model.electrode );
 catch
    n_elec= 0;
+   fwd_model.electrode = [];
 end
 
-pp.VOLUME= element_volume( pp.NODE, pp.ELEM, e, d );
+copt.fstr = 'element_volume';
+copt.log_level = 4;
+pp.VOLUME= eidors_cache(@element_volume, {pp.NODE, pp.ELEM, e, d}, copt );
 
 if isfield(fwd_model,'boundary')
     bdy = double( fwd_model.boundary ); % double because of stupid matlab bugs
@@ -69,8 +63,9 @@ end
 % Complete electrode model for all electrodes
 %  N2E = sparse(1:n_elec, n+ (1:n_elec), 1, n_elec, n+n_elec);
 %  pp.QQ= sparse(n+n_elec,p);
-
-[N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
+copt.cache_obj = {fwd_model.nodes,fwd_model.elems,fwd_model.electrode};
+copt.fstr = 'calculate_N2E';
+[N2E,cem_electrodes] = eidors_cache(@calculate_N2E,{fwd_model, bdy, n_elec, n}, copt);
 
 if p>0
   stim = fwd_model.stimulation;
@@ -90,12 +85,6 @@ pp.normalize = mdl_normalize(fwd_model);
 
 % calculate element volume and surface area
 function VOLUME = element_volume( NODE, ELEM, e, d)
-   VOLUME = eidors_obj('get-cache', {NODE,ELEM}, 'element_volume');
-   if ~isempty(VOLUME)
-      eidors_msg('element_volume: using cached value', 4);
-      return
-   end
-
    VOLUME=zeros(e,1);
    ones_d = ones(1,d);
    d1fac = prod( 1:d-1 );
@@ -154,25 +143,9 @@ function VOLUME = element_volume( NODE, ELEM, e, d)
       VOLUME = NaN;
    end
 
-   eidors_obj('set-cache', {NODE,ELEM}, 'element_volume', VOLUME);
-   eidors_msg('element_volume: setting cached value', 4);
 
 
 function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
-   if n_elec ~= 0
-      electrode = fwd_model.electrode;
-   else
-      electrode = [];
-   end
-   cache_obj = {electrode, fwd_model.nodes, fwd_model.elems};
-   cache_ret = eidors_obj('get-cache', cache_obj, 'calculate_N2E');
-   if ~isempty(cache_ret)
-      eidors_msg('calculate_N2E: using cached value', 4);
-      N2E = cache_ret{1};
-      cem_electrodes = cache_ret{2};
-      return
-   end
-
    cem_electrodes= 0; % num electrodes part of Compl. Elec Model
    N2E = sparse(n_elec, n+n_elec);
    for i=1:n_elec
@@ -201,8 +174,6 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    end
    N2E = N2E(:, 1:(n+cem_electrodes));
 
-   eidors_obj('set-cache', cache_obj, 'calculate_N2E', {N2E, cem_electrodes});
-   eidors_msg('calculate_N2E: setting cached value', 4);
 
 function [QQ, n_meas] = calc_QQ_slow(N2E, stim, p)
    QQ = sparse(size(N2E,2),1,p);

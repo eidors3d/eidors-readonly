@@ -32,28 +32,14 @@ function RtR_prior = calc_RtR_prior( inv_model )
 
 inv_model = rec_or_fwd_model( inv_model);
 
-RtR_prior = eidors_obj('get-cache', inv_model, 'RtR_prior');
-if ~isempty(RtR_prior)
-   eidors_msg('calc_RtR_prior: using cached value', 3);
-   return
-end
-
 if isfield(inv_model,'RtR_prior')
    if isnumeric(inv_model.RtR_prior)
       RtR_prior = inv_model.RtR_prior;
    else
-      RtR_prior= feval( inv_model.RtR_prior, inv_model );
+      RtR_prior= eidors_cache( inv_model.RtR_prior, inv_model );
    end
 elseif isfield(inv_model,'R_prior')
-   % The user has provided an R prior. We can use this to
-   % calculate RtR= R'*R;
-   if isnumeric(inv_model.R_prior)
-      R = inv_model.R_prior;
-   else
-      R= feval( inv_model.R_prior, inv_model );
-   end
-
-   RtR_prior = R'*R;
+   RtR_prior = eidors_cache(@calc_from_R_prior, inv_model, 'calc_RtR_prior');
 else
    error('calc_RtR_prior: neither R_prior nor RtR_prior provided');
 end
@@ -64,12 +50,23 @@ if isfield(inv_model.fwd_model,'coarse2fine')
 %     we need to take into account coarse2fine - using a reasonable tol
       eidors_msg('calc_RtR_prior: using coarse2fine to model RtR');
       f2c= c2f'; %pinv(c2f,1e-6);
-      RtR_prior=c2f'*RtR_prior*c2f;
+      RtR_prior=f2c*RtR_prior*c2f;
    end
 end
 
-eidors_obj('set-cache', inv_model, 'RtR_prior', RtR_prior);
-eidors_msg('calc_RtR_prior: setting cached value', 3);
+function RtR_prior = calc_from_R_prior(inv_model)
+
+   % The user has provided an R prior. We can use this to
+   % calculate RtR= R'*R;
+   if isnumeric(inv_model.R_prior)
+      R = inv_model.R_prior;
+   else
+      R= eidors_cache( inv_model.R_prior, inv_model );
+   end
+
+   RtR_prior = R'*R;
+   
+   
 
 function inv_model = rec_or_fwd_model( inv_model);
 

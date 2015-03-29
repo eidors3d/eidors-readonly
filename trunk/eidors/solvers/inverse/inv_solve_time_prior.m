@@ -28,19 +28,8 @@ time_steps = inv_model.inv_solve_time_prior.time_steps;
 l_ts  = time_steps*2 + 1;
 
 % The one_step reconstruction matrix is cached
-one_step_inv = eidors_obj('get-cache', inv_model, 'inv_solve_time_prior');
-if ~isempty(one_step_inv)
-    eidors_msg('inv_solve_time_prior: using cached value', 2);
-else
-    img_bkgnd= calc_jacobian_bkgnd( inv_model );
-    J = calc_jacobian(img_bkgnd);
 
-%   one_step_inv= standard_form( inv_model, J );
-    one_step_inv= data_form( inv_model, J );
-
-    eidors_obj('set-cache', inv_model, 'inv_solve_time_prior', one_step_inv);
-    eidors_msg('inv_solve_time_prior: setting cached value', 2);
-end
+one_step_inv= eidors_cache(@data_form, inv_model, 'inv_solve_time_prior' );
 
 dva = calc_difference_data( data1, data2, inv_model.fwd_model);
 
@@ -64,7 +53,7 @@ img.fwd_model= fwd_model;
 
 % calculate the one_step_inverse using the standard
 % formulation (JtWJ + hp^2*RtR)\JtW
-function one_step_inv= standard_form( inv_model, J )
+function one_step_inv= standard_form( inv_model)
     RtR = calc_RtR_prior( inv_model );
     W   = calc_meas_icov( inv_model );
     hp  = calc_hyperparameter( inv_model );
@@ -82,7 +71,9 @@ function one_step_inv= standard_form( inv_model, J )
 % calculate the one_step_inverse using the data form
 % CovX * J' * inv(J*CovX*J' + CovZ)
 %   iRtR*Jt/(Ji*RtR*Jt +  hp^2*iW);
-function one_step_inv= data_form( inv_model, J );
+function one_step_inv= data_form( inv_model)
+    img_bkgnd= calc_jacobian_bkgnd( inv_model );
+    J = calc_jacobian(img_bkgnd);
     space_prior= inv_model.prior_time_smooth.space_prior;
     time_weight= inv_model.prior_time_smooth.time_weight;
     ts         = inv_model.inv_solve_time_prior.time_steps;

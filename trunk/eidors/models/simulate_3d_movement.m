@@ -48,19 +48,12 @@ end
 
 if nargin<4; movefcn= 1; end
 
-cache_obj = {n_sims,fmdl, rad_pr, movefcn};
-FC = eidors_obj('get-cache', cache_obj, 'simulate_3d_movement');
-if ~isempty(FC)
-   eidors_msg('simulate_3d_movement: using cached value', 4);
-   vh = FC.vh; vi= FC.vi; xyzr_pt = FC.xyzr_pt;
-   return
-end
+copt.cache_obj = {n_sims,fmdl, rad_pr, movefcn};
+copt.fstr = 'simulate_3d_movement';
 
-[vh,vi,xyzr_pt]= do_simulate_3d_movement( n_sims, fmdl, rad_pr, movefcn );
-FC.vh = vh; FC.vi = vi; FC.xyzr_pt = xyzr_pt;
-
-eidors_obj('set-cache', cache_obj, 'simulate_3d_movement', FC);
-eidors_msg('simulate_3d_movement: setting cached value', 4);
+[vh,vi,xyzr_pt]= eidors_cache(@do_simulate_3d_movement, ...
+                              { n_sims, fmdl, rad_pr, movefcn}, copt );
+                           
 
 function [vh,vi,xyzr_pt]= do_simulate_3d_movement( n_sims, mdl_3d, rad_pr, movefcn )
 

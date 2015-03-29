@@ -22,22 +22,24 @@ function [JiRtRJt,iRtRJt] = calc_JiRtRJt( inv_model, varargin )
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-JiRtRJt = eidors_obj('get-cache', inv_model, 'JiRtRJt');
-if ~isempty(JiRtRJt)
-   eidors_msg('calc_JiRtRJt: using cached value', 3);
-   return
-end
-
-if isfield(inv_model,'JiRtRJt')
+if isfield(inv_model,'JiRtRJt') 
    if isnumeric(inv_model.JiRtRJt)
       JiRtRJt = inv_model.JiRtRJt;
    else
-      JiRtRJt= feval( inv_model.JiRtRJt, inv_model );
+      try inv_model.JiRtRJt = str2func(inv_model.JiRtRJt); end
+      JiRtRJt = eidors_cache(inv_model.JiRtRJt,{inv_model});
    end
-else
+   return
+end
+
+% try to calculate from scratch
+JiRtRJt = eidors_cache(@calc_JiRtRJt_from_scratch,{inv_model},'calc_JiRtRJt');
+
+
+function JiRtRJt = calc_JiRtRJt_from_scratch(inv_model)
    eidors_msg( ...
       'calc_JiRtRJt: trying to calculate JiRtRJt from RtR_prior',2);
-   RtR_prior = feval( inv_model.RtR_prior, inv_model );
+   RtR_prior = calc_RtR_prior(inv_model);
    % regularize slightly so inverse exists
    % This is very slow, but I can't think of a better idea
    RtR_p_reg = spdiags( spdiags(RtR_prior,0)*1.00001, 0, RtR_prior);
@@ -46,7 +48,3 @@ else
    J = calc_jacobian( img_bkgnd);
 
    JiRtRJt= J*(RtR_p_reg\J');
-end
-
-eidors_obj('set-cache', inv_model, 'JiRtRJt', JiRtRJt);
-eidors_msg('calc_JiRtRJt: setting cached value', 3);
