@@ -25,6 +25,12 @@ function fmdl = do_reorder(fmdl, ccw)
    dim=size( fmdl.nodes,2);
    els=num_elems( fmdl );
 
+   if dim==3 && elem_dim( fmdl ) == 2
+      % For a surface in 3D, we need to walk across elements
+      fmdl = boundary_align( fmdl );
+      return
+   end
+
      xx= reshape( fmdl.nodes( fmdl.elems, 1 ), els, dim+1);
      xx= xx - xx(:,1)*ones(1,dim+1);
      yy= reshape( fmdl.nodes( fmdl.elems, 2 ), els, dim+1);
@@ -51,6 +57,43 @@ function fmdl = do_reorder(fmdl, ccw)
    % reverse first two nodes
    fmdl.elems(ff,1:2) = fmdl.elems(ff,[2,1]);
 end
+
+function mdl = boundary_align( mdl );
+   Ne = num_elems(mdl);
+   checked = ( 1:Ne )';
+   tocheck = zeros(Ne,1); tocheck(1) = 1; maxptr = 2;
+   edges = mdl.elem2edge;
+
+   for i=1:num_elems(mdl)
+      curr = tocheck(i);
+      curredges = edges(curr,:);
+      for j=curredges(:)'
+         ff = any( j == edges,2 );
+         ff(curr) = 0;
+         ff = find(ff); % Should only have 1
+         if length(ff)>1;
+            error('Only one elem should share this edge. unexpected error.');
+         end
+         if checked(ff) == 0; % we've already done it
+            continue;
+         end
+         nodes_j = mdl.edges(j,:); % Nodes in this edge
+         a1= find(mdl.elems(curr,:) == nodes_j(1));
+         a2= find(mdl.elems(curr,:) == nodes_j(2));
+         curr_o = rem(3+a1-a2,3);
+         b1= find(mdl.elems(ff  ,:) == nodes_j(1));
+         b2= find(mdl.elems(ff  ,:) == nodes_j(2));
+         ff_o = rem(3+b1-b2,3);
+         if (ff_o ~= curr_o); 
+            mdl.elems(ff,[b1,b2]) = mdl.elems(ff,[b2,b1]);
+         end
+         % Fix orientation
+         tocheck(maxptr) = ff; maxptr= maxptr+1;     
+         checked(ff)= 0; % set as done
+      end
+   end
+      
+end 
 
 function fwd_model = old_do_reorder(fwd_model, ccw)
    nodecoords = fwd_model.nodes; %Cache coorindates of nodes [nnodesxnodedim]
