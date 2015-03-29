@@ -105,8 +105,8 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 
 % 20141119: The inpolygon approach fails on non-simply-connected domains
 % inside = inpolygon(x(:),y(:),contour_boundary(:,1),contour_boundary(:,2) );
-P = [x(:) y(:)]; P(end,3) = 0;
-inside = any(point_in_triangle(P, slc.elems, slc.nodes),2);
+P = [x(:) y(:)]; % P(end,3) = 0;
+inside = any(point_in_triangle(P, slc.elems, slc.nodes(:,1:2)),2);
 
 ff = find(~inside);
 
