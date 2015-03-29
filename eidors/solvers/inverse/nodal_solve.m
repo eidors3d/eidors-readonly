@@ -17,7 +17,7 @@ function img= nodal_solve( inv_model, data1, data2)
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 
-sol = eidors_cache(@get_RM, inv_model, 'nodal_solve:get_RM' ) * dv;
+sol = eidors_cache(@get_RM, inv_model, 'nodal_solve' ) * dv;
 
 % create a data structure to return
 img.name= 'solved by nodal_solve';

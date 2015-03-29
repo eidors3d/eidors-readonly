@@ -39,7 +39,7 @@ function img= inv_solve_diff_GN_one_step( inv_model, data1, data2)
 %  Wiener:   P= inv(RtR); V = inv(W); RM = P*J'/(J*P*J' + hp^2*V)
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
-sol = eidors_cache(@get_RM, inv_model,'inv_solve_diff_GN_one_step:get_RM' ) * dv;
+sol = eidors_cache(@get_RM, inv_model,'inv_solve_diff_GN_one_step' ) * dv;
 
 
 
