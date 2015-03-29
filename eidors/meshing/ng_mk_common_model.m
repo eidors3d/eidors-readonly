@@ -22,6 +22,11 @@ function fmdl = ng_mk_common_model(mdl_type, ...
 %       OR
 %    elec_shape = [0, 0, maxsz ]         % Point elecs
 %
+% MDL_TYPE = 'CIRC'
+%    Same as CYL interface, but uses netgen 2D interface. 
+%    For this reason cyl height must be zero
+%     elec_shape = [width, RFNUM]
+%    where RFNUM is an optional refinement parameter (larger = more) 
 %
 % USAGE EXAMPLES:
 % Simple 3D cylinder. Radius = 1. No electrodes
@@ -36,15 +41,13 @@ if isstruct(mdl_type)
    error('No code yet to process options structs');
 else switch lower(mdl_type)
       case 'cyl'
-         if mdl_shape(1)~=0; % 3D model
-            [body_geom, elec_geom, pp] = cyl_geom( mdl_shape, elec_pos, elec_shape);
-            fmdl = ng_mk_geometric_models(body_geom, elec_geom);
-            fmdl.body_geometry      = body_geom;
-            fmdl.electrode_geometry = elec_geom;
-         else
-            [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_shape);
-            fmdl = ng_mk_2d_model(shape, elec_pos, elec_shape);
-         end
+         [body_geom, elec_geom, pp] = cyl_geom( mdl_shape, elec_pos, elec_shape);
+         fmdl = ng_mk_geometric_models(body_geom, elec_geom);
+         fmdl.body_geometry      = body_geom;
+         fmdl.electrode_geometry = elec_geom;
+      case 'circ'
+         [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_shape);
+         fmdl = ng_mk_2d_model(shape, elec_pos, elec_shape);
       otherwise
          error('mdl_type = (%s) not available (yet)', mdl_type);
 end; end
@@ -55,6 +58,7 @@ end; end
 
 % For 2D circle
 function [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_shape);
+   if mdl_shape(1) ~=0; error('specifying "circ" implies height of 0'); end
    if     length(mdl_shape)==1
       rad = 1;
       maxh = 2*pi*1 / 16;
@@ -81,6 +85,11 @@ function [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_sh
 
    elec_pos= rad*[sin(theta), cos(theta)];
 
+   % Point electrodes need refinement specified
+   if length(elec_shape) == 1 && elec_shape(1) == 0
+      elec_shape(2) = 10; % recommended default from 2d code
+   end
+    
 
 
 function [body_geom, elec_geom, pp] = cyl_geom( cyl_shape, elec_pos, elec_shape);
