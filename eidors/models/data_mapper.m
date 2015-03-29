@@ -67,11 +67,11 @@ switch sum(prms)
          error('No params, elem_data or node_data found on img');
       else
          if isfield(img,'current_params') && ~isempty(img.current_params)
-% TODO AB hiding a very noisy message for now...           eidors_msg('@@@ Careful! Image already mapped. Doing nothing',1);
+                eidors_msg('@@@ Careful! Image already mapped. Doing nothing',4);
            return;
          end
 
-         eidors_msg('@@@ No params present on img. Assuming conductivity',3);
+         eidors_msg('@@@ No params present on img. Assuming conductivity',4);
 % STUPID MATLAB CAN'T KEEP SYNTAX STRAIGHT BETWEEN VERSIONS
 %        img = setfield(img,{},'current_params', 'conductivity');
 % NEED TO DO THIS, UGLY INEFFICIENT CODE
@@ -114,7 +114,7 @@ function img = pack_params_using_params_str(img, prms)
 prms_flds = fieldnames(img.(prms));
 for i = 1:length(prms_flds)
    if isfield(img, prms_flds{i})
-      eidors_msg('@@@ Overwriting img.%s',prms_flds{i},3);
+      eidors_msg('@@@ Overwriting img.%s',prms_flds{i},4);
       warning('EIDORS:OverwritingData', 'Overwriting img.%s',prms_flds{i});
    end
    % allow elem_data/node_data to be scalar
