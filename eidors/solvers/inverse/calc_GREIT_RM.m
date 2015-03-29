@@ -23,6 +23,7 @@ function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 %      specify a function to calculate the desired image. 
 %      It must have the signature:
 %      D = my_function( xyc, radius, options);
+%      uses eidors_defualt('get','GREIT_desired_img') if not specified
 % 
 %
 % (C) 2009 Andy Adler. Licenced under GPL v2 or v3
@@ -38,12 +39,14 @@ function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
    else
       Y = vi - (vh*ones(1,size(vi,2)));
    end
-   if ~isfield(opt, 'desired_solution_fn')
-      D = GREIT_desired_img_sigmoid( xyc, radius, opt);
-   else
-      D = feval(opt.desired_solution_fn, xyc, radius, opt);
+   try 
+       f = opt.desired_solution_fn;
+   catch
+       f = eidors_default('get','GREIT_desired_img');
    end
 
+   D = feval(f, xyc, radius, opt);
+   
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
        [RM, PJt, M] = calc_RM(Y,D,weight, opt);
    else
