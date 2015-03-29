@@ -234,8 +234,10 @@ function [fmdl_mat_idx] = mk_geometric_models(body_geometry, electrode_geometry)
     fmdl_mat_idx{1} = read_vol_file(vol_fn, electrode_extra_param);
     
     % Delete temporary files.
-    %delete(geo_fn);
-    %delete(vol_fn);
+    if ~eidors_debug('query','ng_mk_geometric_models:keep_temp_files')
+       delete(geo_fn);
+       delete(vol_fn);
+    end
 
     % Complete fmdl object.
     fmdl_mat_idx{1} = complete_fmdl(fmdl_mat_idx{1}, electrode_extra_param);
