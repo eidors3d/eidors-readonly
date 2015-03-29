@@ -8,7 +8,8 @@ xyzr = [r; zeros(1,100); ones(1,100);
 [vh,vi] = simulate_movement(imgs, xyzr);
 
 % Show GREIT images
-i_gr = mk_common_gridmdl('GREITc1');
+opt.noise_figure = 0.5;
+i_gr = mk_GREIT_model(fmdl,0.2,[],opt);
 imgr = inv_solve(i_gr, vh, vi(:,1:5:100));
 imgr.show_slices.img_cols = 5;
 show_slices(imgr);
