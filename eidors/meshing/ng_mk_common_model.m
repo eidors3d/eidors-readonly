@@ -1,7 +1,7 @@
-function [geom, fmdl] = ng_mk_cyl_model(mdl_type, ...
+function fmdl = ng_mk_common_model(mdl_type, ...
                mdl_shape, elec_pos, elec_shape);
-% NG_MK_MODELS: utility to create common models
-% [geom, fmdl] = ng_mk_cyl_model(mdl_type,
+% NG_MK_COMMON_MODEL: utility to create common models
+% fmdl = ng_mk_cyl_model(mdl_type,
 %              mdl_shape, elec_pos, elec_shape);
 %
 % MDL_TYPE = 'CYL'
@@ -34,21 +34,53 @@ if isstr(mdl_shape) && strcmp(mdl_shape,'UNIT_TEST'); do_unit_test; return; end
 
 if isstruct(mdl_type)
    error('No code yet to process options structs');
-else switch mdl_type
+else switch lower(mdl_type)
       case 'cyl'
-         [body_geom, elec_geom, pp] = cyl_geom( mdl_shape, elec_pos, elec_shape);
+         if mdl_shape(1)~=0; % 3D model
+            [body_geom, elec_geom, pp] = cyl_geom( mdl_shape, elec_pos, elec_shape);
+            fmdl = ng_mk_geometric_models(body_geom, elec_geom);
+            fmdl.body_geometry      = body_geom;
+            fmdl.electrode_geometry = elec_geom;
+         else
+            [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_shape);
+            fmdl = ng_mk_2d_model(shape, elec_pos, elec_shape);
+         end
       otherwise
-         error('mdl_type = (%s) not available', mdl_type);
+         error('mdl_type = (%s) not available (yet)', mdl_type);
 end; end
 
-geom.body = body_geom;
-geom.elec = elec_geom;
-if nargout >=1
-   fmdl = ng_mk_geometric_models(body_geom, elec_geom);
-   if pp.is2D
+   if mdl_dim(fmdl)==3 && pp.is2D
       fmdl = mdl2d_from3d(fmdl);
    end
-end
+
+% For 2D circle
+function [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_shape);
+   if     length(mdl_shape)==1
+      rad = 1;
+      maxh = 2*pi*1 / 16;
+   elseif length(mdl_shape)==2
+      rad = mdl_shape(2);
+      maxh = 2*pi*rad / 16;
+   else
+      rad = mdl_shape(2);
+      maxh= mdl_shape(3);
+   end
+   
+   theta = linspace( 0, 2*pi, ceil(2*pi*rad/maxh))'; theta(end)=[];
+
+   % Must specify points starting like this:
+   shape = {rad*[cos(theta), sin(theta)], maxh};
+
+   if     size(elec_pos,1) == 0;
+      theta= [];
+   elseif size(elec_pos,1) == 1;
+      theta = linspace( 0, 2*pi, elec_pos(1)+1)'; theta(end)=[];
+   else
+      theta = pi/180*elec_pos(:,1);
+   end
+
+   elec_pos= rad*[sin(theta), cos(theta)];
+
 
 
 function [body_geom, elec_geom, pp] = cyl_geom( cyl_shape, elec_pos, elec_shape);
