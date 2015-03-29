@@ -126,6 +126,7 @@ function [fmdl, mat_idx] = ng_mk_geometric_models(body_geometry, electrode_geome
 %   fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
 
 % (C) Herve Gagnon, 2015. Licenced under GPL v2 or v3
+% $Id$
 
 % Check if function is called in UNIT_TEST mode.
 if (ischar(body_geometry) && strcmp(body_geometry, 'UNIT_TEST'))
@@ -1428,7 +1429,7 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
                         error('unknown %g geomtype in vol file.', geomtype);
                     end
                 case 'surfaceelements'
-                    %# surfnr    bcnr   domin  domout      np      p1      p2      p3
+                    % # surfnr    bcnr   domin  domout      np      p1      p2      p3
                     n_surface_elements = read_mat_from_file(fid, 1, 1);
                     if (n_surface_elements)
                         surface_elements   = read_mat_from_file(fid, n_surface_elements, 8);
@@ -1436,7 +1437,7 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
                         error('vol file contains no surface elements. There is probably something wrong with the provided geometry description.');    
                     end
                 case 'volumeelements'
-                    %#  matnr      np      p1      p2      p3      p4
+                    % #  matnr      np      p1      p2      p3      p4
                     n_volume_elements = read_mat_from_file(fid, 1, 1);
                     if (n_volume_elements)
                         volume_elements   = read_mat_from_file(fid, n_volume_elements, 6);
@@ -1444,11 +1445,11 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
                         error('vol file contains no volume elements. There is probably something wrong with the provided geometry description.');    
                     end
                 case 'edgesegmentsgi2'
-                    %# surfid  0   p1   p2   trignum1    trignum2   domin/surfnr1    domout/surfnr2   ednr1   dist1   ednr2   dist2 
+                    % # surfid  0   p1   p2   trignum1    trignum2   domin/surfnr1    domout/surfnr2   ednr1   dist1   ednr2   dist2 
                     n_edge_segments_sgi2 = read_mat_from_file(fid, 1, 1);
                     edge_segments_sgi2   = read_mat_from_file(fid, n_edge_segments_sgi2, 12);
                 case 'points'
-                    %#          X             Y             Z
+                    % #          X             Y             Z
                     n_points = read_mat_from_file(fid, 1, 1);
                     if (n_points)
                         points   = read_mat_from_file(fid, n_points, 3);
@@ -1470,7 +1471,7 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
                         error('vol file contains no materials. There is probably something wrong with the provided geometry description.');                             
                     end
                 case 'face_colours'
-                    %#   Surfnr     Red     Green     Blue
+                    % #   Surfnr     Red     Green     Blue
                     n_face_colours = read_mat_from_file(fid, 1, 1);
                     face_colours   = read_mat_from_file(fid, n_face_colours, 4);
                 otherwise
@@ -1577,7 +1578,9 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
     fmdl.elems            = volume_elements(:, 3:6);
     fmdl.boundary         = surface_elements(:, 6:8);
     fmdl.boundary_numbers = surface_elements(:, 2);
-    fmdl.mat_idx          = volume_elements(:, 1);
+    for i=1:max(volume_elements(:,1))
+       fmdl.mat_idx{i}    = find( volume_elements(:, 1) == i);
+    end
     fmdl.mat_name         = materials(:, 2);
     
     % Find electrode surfaces and nodes.
