@@ -113,17 +113,6 @@ end
 
 opt.rec_model = imdl.rec_model; % for desired image calculation
 
-% user MUST specify the inside array
-inside = imdl.rec_model.inside;
-
-% IMPORTANT: opt.meshsz must now reflect the rec_model, not the fwd_model!!
-minnode = min(imdl.rec_model.nodes);
-maxnode = max(imdl.rec_model.nodes);
-opt.meshsz = [minnode(1) maxnode(1) minnode(2) maxnode(2)];
-try
-    opt.meshsz = [opt.meshsz minnode(3) maxnode(3)];
-end
-
 imdl.solve = @solve_use_matrix;
 log_level = eidors_msg( 'log_level', 1);
 
@@ -140,7 +129,7 @@ if ~isempty(opt.noise_figure)
     vi_NF = sum(vi_NF,2); % sum the targets
     eidors_msg('mk_GREIT_model: Finding noise weighting for given Noise Figure',1);
     eidors_msg('mk_GREIT_model: This will take a while...',1);
-    f = @(X) to_optimise(vh,vi,xyz, radius, X, opt, inside, imdl, target, vi_NF);
+    f = @(X) to_optimise(vh,vi,xyz, radius, X, opt, imdl, target, vi_NF);
     fms_opts.TolFun = 0.01*target; %don't need higher accuracy
     if exist('OCTAVE_VERSION')
        % octave doesn't currently (2013 Apr) include an fminsearch function
@@ -152,17 +141,17 @@ if ~isempty(opt.noise_figure)
         num2str(NF+target) ' with weight=' num2str(weight)],1);
 end
 eidors_msg( 'log_level', log_level);
-RM= calc_GREIT_RM(vh,vi, xyz, radius, weight, opt );
-imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
+imdl.solve_use_matrix.RM= calc_GREIT_RM(vh,vi, xyz, radius, weight, opt );
+% imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
 imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
 
-function out = to_optimise(vh,vi,xy,radius,weight, opt, inside, imdl, ...
+function out = to_optimise(vh,vi,xy,radius,weight, opt, imdl, ...
     target,vi_NF)
 
    % calculate GREIT matrix as usual
-   RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
-   imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
+   imdl.solve_use_matrix.RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
+%    imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
    NF = calc_noise_figure(imdl,vh, vi_NF);
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
    out = (NF - target)^2;
