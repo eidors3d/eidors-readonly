@@ -28,14 +28,17 @@ function fmdl = ng_mk_common_model(mdl_type, ...
 %     elec_shape = [width, RFNUM]
 %    where RFNUM is an optional refinement parameter (larger = more) 
 %
+%    For point electrodes, do not specify too small a maxh (ie < .1),
+%      otherwise netgen has a problem and crashes
+%
 % USAGE EXAMPLES:
 % Simple 3D cylinder. Radius = 1. No electrodes
-%   fmdl= ng_mk_model('cyl',2,[8,.5],[0.05]); 
+%   fmdl= ng_mk_common_model('cyl',2,[8,.5],[0.05]); 
 
 % (C) Andy Adler, 2015.  Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(mdl_shape) && strcmp(mdl_shape,'UNIT_TEST'); do_unit_test; return; end
+if isstr(mdl_type) && strcmp(mdl_type,'UNIT_TEST'); do_unit_test; return; end
 
 if isstruct(mdl_type)
    error('No code yet to process options structs');
@@ -69,11 +72,7 @@ function [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_sh
       rad = mdl_shape(2);
       maxh= mdl_shape(3);
    end
-   
-   theta = linspace( 0, 2*pi, ceil(2*pi*rad/maxh))'; theta(end)=[];
 
-   % Must specify points starting like this:
-   shape = {rad*[cos(theta), sin(theta)], maxh};
 
    if     size(elec_pos,1) == 0;
       theta= [];
@@ -90,6 +89,24 @@ function [shape, elec_pos, elec_shape] = circ_geom( mdl_shape, elec_pos, elec_sh
       elec_shape(2) = 10; % recommended default from 2d code
    end
     
+  % If the boundary point is near the electrode, then unnecessary
+  % refinement will occur. This could be avoided by placing the
+  % boundary nodes carefully, but that introduces edge cases.
+   
+   theta_pts = ceil(2*pi*rad/maxh) - length(theta);
+   if theta_pts > 0 % if we have extra points to distribute
+      theta_  = [theta; 2*pi+theta(1)];
+      per_interval = round( theta_pts * diff(theta_)/2/pi );
+      for i=1:length(per_interval)
+         new_pts = linspace( theta_(i), theta_(i+1), per_interval(i)+2);
+         theta = [theta; new_pts(2:end-1)']; 
+      end
+      theta = sort(theta);
+%  theta = linspace( 0, 2*pi, ceil(2*pi*rad/maxh))'; theta(end)=[];
+   end
+
+   % Must specify points starting like this: make then CCW
+   shape = {rad*[sin(theta),-cos(theta)], maxh};
 
 
 function [body_geom, elec_geom, pp] = cyl_geom( cyl_shape, elec_pos, elec_shape);
@@ -262,7 +279,9 @@ function do_unit_test
   for tn = 1:do_test_number(0)
      fprintf('>>> ng_mk_cyl_models: TEST #%d\n',tn);
      fmdl= do_test_number(tn);
-     show_fem(fmdl);
+     subplot(3,3,rem(tn-1,9)+1)
+     title(sprintf('test #%d',tn));
+     show_fem(fmdl); drawnow
   end
 
 function fmdl= do_test_number(tn)
@@ -270,51 +289,63 @@ function fmdl= do_test_number(tn)
    switch tn
    case 1;
 % Simple 3D cylinder. Radius = 1. No electrodes
-    fmdl= ng_mk_models('cyl',3,[0],[]); 
+    fmdl= ng_mk_common_model('cyl',3,[0],[]); 
 
    case 2;
 % Simple 2D cylinder. Radius = 2. Set minsize to refine
-    fmdl= ng_mk_models('cyl',[0,2,.2],[0],[]); 
+    fmdl= ng_mk_common_model('cyl',[0,2,.2],[0],[]); 
 
    case 3;
 % 3D cylinder. Radius = 1. 2 planes of 8 elecs with radius 0.1
-    fmdl= ng_mk_models('cyl',3,[8,1,2],[0.1]); 
+    fmdl= ng_mk_common_model('cyl',3,[8,1,2],[0.1]); 
 
    case 4;
 % 3D cylinder. Radius = 1. 6 circ elecs with elec refinement
-    fmdl= ng_mk_models('cyl',3,[7,1],[0.2,0,0.05]); 
+    fmdl= ng_mk_common_model('cyl',3,[7,1],[0.2,0,0.05]); 
 
    case 5;
 % 3D cylinder. Radius = 1. 7 rect elecs with no refinement
-    fmdl= ng_mk_model('cyl',3,[7,1],[0.2,0.3]); 
+    fmdl= ng_mk_common_model('cyl',3,[7,1],[0.2,0.3]); 
 
    case 6;
 % 2D cylinder. Radius = 1. 11 rect elecs with refinement
-    fmdl= ng_mk_model('cyl',0,[11],[0.2,0,0.05]); 
+    fmdl= ng_mk_common_model('cyl',0,[11],[0.2,0,0.05]); 
 
    case 7;
 % 2D cylinder. Radius = 1.5. Refined(0.1). 11 elecs with refinement
-    fmdl= ng_mk_model('cyl',[0,1,0.1],[11],[0.2,0,0.02]); 
+    fmdl= ng_mk_common_model('cyl',[0,1,0.1],[11],[0.2,0,0.02]); 
 
    case 8;
 % 2D cylinder. elecs at 0, 90 and 120 degrees
-    fmdl= ng_mk_model('cyl',0,[0;90;120],[0.2,0,0.03]); 
+    fmdl= ng_mk_common_model('cyl',0,[0;90;120],[0.2,0,0.03]); 
 
    case 9;
 % 2D cylinder. elecs at 0 (large,refined) and 120 (small) degrees
-    fmdl= ng_mk_model('cyl',0,[0;120],[0.4,0,0.01;0.1,0,0.1]); 
+    fmdl= ng_mk_common_model('cyl',0,[0;120],[0.4,0,0.01;0.1,0,0.1]); 
 
    case 10;
 % 3D cylinder. elecs at 0, 30, 60, 90 in planes
-    fmdl= ng_mk_model('cyl',3,[0,0.5;30,1;60,1.5;90,2.0],[0.2,0,0.1]); 
+    fmdl= ng_mk_common_model('cyl',3,[0,0.5;30,1;60,1.5;90,2.0],[0.2,0,0.1]); 
 
    case 11;
 % 3D cylinder. Various elecs at 0, 30, 60, 90 in planes
     el_pos = [0,0.5;30,1;60,1.5;90,2.0];
     el_sz  = [0.2,0,0.1;0.1,0,0.05;0.2,0.2,0.02;0.2,0.4,0.5];
-    fmdl= ng_mk_model('cyl',3,el_pos,el_sz); 
+    fmdl= ng_mk_common_model('cyl',3,el_pos,el_sz); 
 
-   case 0; fmdl = 11; %%%% RETURN MAXIMUM
+
+   case 12;
+    fmdl = ng_mk_common_model('circ', [0,1,.1], [4], [0.4,10]);
+   case 13;
+    fmdl = ng_mk_common_model('circ', 0, [9], [0.2,3]);
+   case 14;
+    fmdl = ng_mk_common_model('circ',[0,1,.10], [9], [0,1]);
+   case 15;
+    fmdl = ng_mk_common_model('circ',[0,1,.10], [9], [0]);
+   case 16;
+    fmdl = ng_mk_common_model('circ',[0,2,.05], [9], [0.1,100]);
+
+   case 0; fmdl = 16; %%%% RETURN MAXIMUM
    otherwise;
      error('huh?')
    end
