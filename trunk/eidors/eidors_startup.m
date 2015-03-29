@@ -19,6 +19,9 @@ HOMEDIR=strrep(pwd,'\','/');
 ver = version_check;
 archdir = set_paths(HOMEDIR,ver, path_array);
 eidors_cache('init');
+% make EIDORS more verbose by default, this should lead to better questions
+% on the mailing list
+eidors_msg('log_level', 3); 
 set_defaults(HOMEDIR);
 print_welcome(HOMEDIR,archdir, ver);
 
