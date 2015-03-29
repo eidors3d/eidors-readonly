@@ -508,11 +508,18 @@ imdl_bp = mk_common_gridmdl('backproj');
 % Recosntruct with new GREIT
 % fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 
 fmdl = mk_library_model('cylinder_16x1el_fine');
+fmdl.nodes = fmdl.nodes/15; % make radius 1;
 fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
 opt.noise_figure = 0.88;
 opt.target_size = 0.1;
 opt.distr = 0;
 imdl_gr = mk_GREIT_model(fmdl, 0.2, [], opt);
- 
 
-test_performance( { imdl_v1, imdl_gr},fmdl );
+opt = struct();
+opt.noise_figure = 0.5; % current recommendation
+imdl_def = mk_GREIT_model(fmdl,0.2,[],opt);
+
+opt.desired_solution_fn = 'GREIT_desired_img_original';
+imdl_org = mk_GREIT_model(fmdl,0.2,[],opt);
+
+test_performance( { imdl_v1, imdl_gr, imdl_def, imdl_org},fmdl );
