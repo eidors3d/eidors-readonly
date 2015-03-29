@@ -39,7 +39,7 @@ function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
       Y = vi - (vh*ones(1,size(vi,2)));
    end
    if ~isfield(opt, 'desired_solution_fn')
-      D = default_GREIT_desired_soln( xyc, radius, opt);
+      D = GREIT_desired_img_original( xyc, radius, opt);
    else
       D = feval(opt.desired_solution_fn, xyc, radius, opt);
    end
