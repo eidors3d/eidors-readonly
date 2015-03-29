@@ -12,7 +12,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %          - inv model (experimental), or
 %          - string specifying prepackaged models
 %
-%   radius - requested weighting matrix  (recommend 0.25 for 16 electrodes)
+%   radius - requested weighting matrix  (recommend 0.2 for 16 electrodes)
 %   weight - weighting matrix (weighting of noise vs signal). Can be empty
 %            options.noise_figure is specified
 %   options- structure with fields:
