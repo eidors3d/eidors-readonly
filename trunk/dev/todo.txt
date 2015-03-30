@@ -18,33 +18,49 @@
     - move colourmap adding from show_fem_enhanced (hg's code)
     - add ability to set various background colour (cg's code)
     - move to using matlab's colourbar if possible
-    - eidors_colourbar should know how many fake colour we have
+    - eidors_colourbar should know how many fake colours we have
 
- - code in choose_noise_figure is hard to understand. Why search1,2 etc? Why not bisection search?
+    - Is there any way to avoid "fake colours". These make it ugly
+        when people use standard matlab functions for images.
+
+ - code in choose_noise_figure is hard to understand.
+       Why search1,2 etc? Why not bisection search?
     - Debug and change or add comments
+
+ - show_fem_enhanced - handle resistors (tutorial020a)
+
+ - force all inv_model to have fwd_model and rec_model
+    - rewrite prior code to assume rec_model is available.
+
+ - On left_divide
+    - remove old parameters tol,pp,V)
+    - add options for solver type, tol, etc
+
 
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 HIGH PRIORITY
 
- - mex compilation problems on windors
+ + mex compilation problems on windors
 
- - netgen 5.3+ support (also 4.9.13 with ubuntu)
+ + netgen 5.3+ support (also 4.9.13 with ubuntu)
 
  - Physics => Parameters
     - ensure jacobian_perturb works on physics parameters
 
- - fwd_model.electrode(:).z_contact
-    - discuss change of name (surface impedance rather than contact impedance)
+ + fwd_model.electrode(:).z_contact
+    + discuss change of name (surface impedance rather than contact impedance)
       and units with interested parties
-      - z_contact units were changed from Ohm/m^2 (Ohm/m in 2d) to Ohm at SVN rev
-	4301 in eidors/solvers/forward/system_mat_fields.m where the z_contact
-        was distributed based on area and is now percentage of area so that a
-	change in electrode diameter does not affect the total impedance through
-        the electrode.
-    - rename z_contact to z_surface(?) and give warning if z_contact is used.
+    + z_contact units were changed from Ohm/m^2 (Ohm/m in 2d) to Ohm at SVN rev
+      4301 in eidors/solvers/forward/system_mat_fields.m where the z_contact
+      was distributed based on area and is now percentage of area so that a
+      change in electrode diameter does not affect the total impedance through
+      the electrode.
+    + rename z_contact to z_surface(?) and give warning if z_contact is used.
+       (not done)
 
- - Use Herve's NG interface as the default
+ + Use Herve's NG interface as the default
+      (postponed)
 
  - C2F FIXES
     - tet2tet c2f
@@ -64,35 +80,28 @@ HIGH PRIORITY
     + when max is 1.5 (or 3) then split into 1,2,3, not 1.5,3
     + test it with the new matlab
 
- - test with new matlab
-    - does unique work
+ + test with new matlab
+    + does unique work
 
 LOWER PRIORITY
  + speed up linear_reorder
  + caching in fix_model
 
- - force all inv_model to have fwd_model and rec_model
-    - rewrite prior code to assume rec_model is available.
-
- - all inverse solvers to do print data residual
-     - default not calc residual
+ + all inverse solvers to do print data residual
+     + default not calc residual
 
  - animate stimulation patterns: display_meas (and rename)
 
  + bug in prior_covar UNIT_TEST
 
- - On left_divide
-    - remove old parameters tol,pp,V)
-    - add options for solver type, tol, etc
 
-
- - check for additional y-cut in show_3d_slices
+ + check for additional y-cut in show_3d_slices
 
  + ng models with point electrodes (in 3D - check Herve's code)
 
  - experimental image_field in calc_colours (see cg_ards_recruitment_04)
 
- - eidors_msg is too verbose. Example is: eidors_cache.m/cache_shorthand
+ + eidors_msg is too verbose. Example is: eidors_cache.m/cache_shorthand
 
  - check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
 
@@ -112,7 +121,7 @@ LOWER PRIORITY
  + print_convert => remove old info in help
 
  - Deprecate jacobian.background.value ->
- +            jacobian.background.elem_data (and new physics)
+ -            jacobian.background.elem_data (and new physics)
 
  - clean up TODO in inv_solve_abs_GN
     (specifically the coarse2fine handling
@@ -120,9 +129,9 @@ LOWER PRIORITY
 
 - in scale_for_disply, calculate ref_lev weighted by element size (if avail)
 
-- function inv_solve_abs_GN, hp2RtR= hp*RtR. Should be hp squared
++ function inv_solve_abs_GN, hp2RtR= hp*RtR. Should be hp squared
 
-- I have a suggestion regarding the default values in the function
++ I have a suggestion regarding the default values in the function
      “mk_GREIT_model.m”. In line 349 “opt” is checked for the field
    “noise_figure”. If it doesn’t exist, it is set as empty. However, in this
    case the parameter “weight” must be set and must not be left empty. Otherwise
@@ -131,7 +140,6 @@ LOWER PRIORITY
    mk_GREIT_model.m). This error does not represent the real problem as it is
    supposed handle non scalar “weight” parameter. In my case, it took some time
    until I understood my real fault.
-
    My suggestion is: In the “parse_options”-function: Check if both
    opt.noise_figure AND weight are empty / non existing. If so, set
    opt.noise_figure to the recommended level of NF=0.5. Peronally, I don’t have
@@ -139,7 +147,6 @@ LOWER PRIORITY
    currently the error pops out after the call of “stim_targets”, so that it
    takes a lot of time, until the call fails. Alternatively, the description of
    the weight parameter could be changed to:
-
    “weight - weighting matrix (weighting of noise vs signal). If empty,
    options.noise_figure MUST be specified”
 
