@@ -2,12 +2,12 @@
     xsi:noNamespaceSchemaLocation="optional">
     <?xml-stylesheet type="text/xsl"href="optional"?>
     <!-- info.xml file for EIDORS -->
-    <!-- Version 3.7 -->
+    <!-- Version 3.8 -->
     <!-- $Id$ -->
     
     <!-- Supply the following six elements in the order specified -->
     <!-- (Required) element; matlabrelease content is not currently used -->
-    <matlabrelease>2010a</matlabrelease>
+    <matlabrelease>2008a</matlabrelease>
     <name>EIDORS</name>
     <type>toolbox</type>
     <icon>../htdocs/doc/matlabicon.gif</icon>
