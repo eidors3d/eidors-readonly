@@ -83,7 +83,7 @@ switch solver
     otherwise
         [NF,SE]= nf_calc_random( inv_model, h_data, c_data, iterations);
 end
-eidors_msg('calculating NF=%f', NF, 2);
+eidors_msg('@@ NF= %f', NF, 2);
 
 function [inv_model, h_data, c_data] = process_parameters( inv_model );
 
@@ -169,8 +169,9 @@ snr_y = signal_y / noise_y;
 params= [snr_y(:)./snr_x(:)]';
 
 try
-eidors_msg('NF= %f (hp=%e)', params, imdl.hyperparameter.value, 2);
+eidors_msg('@@ NF= %f (hp=%e)', NF, imdl.hyperparameter.value, 2);
 end
+
 
 % NOTES on the calculations: AA - Feb 20, 2012
 % SNR = mean(abs(x)); VAR = 
@@ -397,7 +398,7 @@ function [NF,SE]= nf_calc_random( rec, vh, vi, N_RUNS);
    noi_ampl = noi_imag./noi_sgnl;
    NF =  mean(noi_ampl/sig_ampl);
    SE =  std(noi_ampl/sig_ampl)/sqrt(N_RUNS);
-   eidors_msg('NF= %f+/-%f', NF, SE, 1);
+   eidors_msg('NF= %f+/-%f', NF, SE, 3);
 
    eidors_cache('boost_priority',2);
 

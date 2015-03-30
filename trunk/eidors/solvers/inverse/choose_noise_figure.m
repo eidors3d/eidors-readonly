@@ -30,6 +30,9 @@ HP = eidors_cache(@HP_for_NF_search,{reqNF,inv_model},copt);
 
 
 function [HP,NF,SE] = HP_for_NF_search(dNF,imdl)
+   llv = eidors_msg('log_level');
+   if llv==3; eidors_msg('log_level',2); end % HIDE A LOT OF MESSAGES
+
    hp= search1(dNF, imdl, 1);
 
    dx= hp-linspace(-0.7,0.7,5);
@@ -45,6 +48,7 @@ function [HP,NF,SE] = HP_for_NF_search(dNF,imdl)
    hp= search2(dNF,imdl, dx);
 
    HP= 10^-hp;
+   eidors_msg('log_level',llv); %% Reset log_level
   
 function hp= search1(dNF, imdl, hp)
   [NF,SE]=calc_noise_figure( imdl, 10^(-hp));
