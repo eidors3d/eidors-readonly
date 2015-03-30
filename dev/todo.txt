@@ -20,6 +20,9 @@
     - move to using matlab's colourbar if possible
     - eidors_colourbar should know how many fake colour we have
 
+ - code in choose_noise_figure is hard to understand. Why search1,2 etc? Why not bisection search?
+    - Debug and change or add comments
+
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 HIGH PRIORITY

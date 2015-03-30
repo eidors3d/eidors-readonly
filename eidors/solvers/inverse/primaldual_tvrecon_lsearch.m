@@ -121,7 +121,7 @@ while (~terminate)&&(iter<maxiter)
     end
 
     
-    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(v_sim-vmeas),beta,len(ind),norm(grad),3);
+    eidors_msg('PDIPM: %2d & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & %1.3e & ',iter,primal,dual,primal-dual,norm(v_sim-vmeas),beta,len(ind),norm(grad),4);
         
     E=spdiags(eta,0,n,n);
     F=spdiags(ones(n,1)-(1./eta).*x.*z,0,n,n);
@@ -134,7 +134,7 @@ while (~terminate)&&(iter<maxiter)
     
     ang=acos((dot(de_s,-grad)/(norm(de_s)*norm(-grad))))*(360/(2*pi));
     
-    eidors_msg('PDIPM angle=%+3.1f deg',ang,3);
+    eidors_msg('PDIPM angle=%+3.1f deg',ang,4);
     
     % line search
     
