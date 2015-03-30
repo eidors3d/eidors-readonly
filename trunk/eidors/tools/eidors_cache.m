@@ -126,7 +126,7 @@ elseif nargin > 1
    limit = varargin{1};
 end
 
-if isa(command, 'function_handle') || exist(command) == 2 % an m-file
+if isa(command, 'function_handle') || (ischar(command) && exist(command) == 2) % an m-file
    output = mk_varargout_str(nargout);
    eval(sprintf('%s = %s', output, 'cache_shorthand(command, varargin{:});'));
    return
