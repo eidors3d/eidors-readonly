@@ -417,11 +417,11 @@ function paint_electrodes(sel,srf,vtx, colour, show_num);
    set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function hh= show_3d_fem( mdl, options )
-   if mdl_dim(mdl) == 4  % volume simplices
+   if mdl_dim(mdl) == 3  % volume simplices
       ee= get_boundary( mdl );
-   elseif mdl_dim(mdl) == 3  % volume simplices
+   elseif mdl_dim(mdl) == 2  % volume simplices
       ee= mdl.elems;
-   elseif mdl_dim(mdl) == 2  % just lines between elements. Resistors?
+   elseif mdl_dim(mdl) == 1  % just lines between elements. Resistors?
       ee= mdl.elems;
    else
       error('Simplices are not 2D or 3D in mdl. Unsure how to display');
