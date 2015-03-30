@@ -11,6 +11,7 @@ function log_level= eidors_msg( message, varargin )
 %  LVL = EIDORS_MSG('log_level') returns the current log_level
 %
 %  EIDORS_MSG('log_level', LVL) sets the log_level for all of EIDORS
+%  or EIDORS_MSG  log_level  LVL
 %
 %  EIDORS_MSG('log_level', LVL, FNAME) sets a custom log_level for m-file
 %     FNAME (provide without extension)
@@ -132,6 +133,9 @@ function log_level = process_log_level(varargin)
       % eidors_msg('log_level');
       log_level = eidors_objects.log_level;
       return
+   end
+   if ischar(varargin{1}) && ~isempty(str2num(varargin{1}))
+      varargin{1} = str2num(varargin{1});
    end
    if isnumeric(varargin{1})
       log_level = eidors_objects.log_level;
