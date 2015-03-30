@@ -25,6 +25,7 @@ imdl.rec_model = rmdl;
 idx = ( x(:).^2 + y(:).^2 ) < 1.8^2;
 gopt.distr = [x(idx) y(idx) z(idx)]';
 gopt.desired_solution_fn = @new_GREIT_desired_soln;
+gopt.noise_figure = 0.5;
 % gopt.target_size
 imdl = mk_GREIT_model(imdl,0.15,0.2, gopt);
 %%
