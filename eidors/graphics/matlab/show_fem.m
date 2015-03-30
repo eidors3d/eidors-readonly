@@ -416,9 +416,11 @@ h = patch(fv,'FaceColor',colour);
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function hh= show_3d_fem( mdl, options )
-   if size(mdl.elems,2) == 4  % volume simplices
+   if mdl_dim(mdl) == 4  % volume simplices
       ee= get_boundary( mdl );
-   elseif size(mdl.elems,2) == 3  % volume simplices
+   elseif mdl_dim(mdl) == 3  % volume simplices
+      ee= mdl.elems;
+   elseif mdl_dim(mdl) == 2  % just lines between elements. Resistors?
       ee= mdl.elems;
    else
       error('Simplices are not 2D or 3D in mdl. Unsure how to display');
