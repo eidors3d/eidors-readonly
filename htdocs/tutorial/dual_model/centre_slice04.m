@@ -1,6 +1,6 @@
 % 2D solver $Id$
 
-imdl.hyperparameter.value= 0.003;
+imdl.hyperparameter.value= 0.05;
 
 c_mdl.mk_coarse_fine_mapping.f2c_offset = [0,0,(1-.3)*scl];
 c_mdl.mk_coarse_fine_mapping.z_depth = 0.1;

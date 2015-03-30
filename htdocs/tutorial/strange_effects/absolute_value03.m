@@ -2,7 +2,7 @@
 imdl = mk_common_model('c2c2',16);
 imdl.fwd_model.stimulation = stim;
 imdl.fwd_model.meas_select = msel;
-imdl.hyperparameter.value = 0.01;
+imdl.hyperparameter.value = 0.10;
 
 % reconstruct normally
 show_fem( inv_solve( imdl, vh, vi));

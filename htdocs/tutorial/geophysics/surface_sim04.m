@@ -11,7 +11,7 @@ print_convert surface_sim04b.png '-density 150'
 % Try a different prior
 inv3d.RtR_prior= @prior_noser;
 inv3d.prior_use_fwd_not_rec = 1;
-inv3d.hyperparameter.value = 1e-1;
+inv3d.hyperparameter.value = .3;
 
 imgr = inv_solve(inv3d, vh, vi);
 

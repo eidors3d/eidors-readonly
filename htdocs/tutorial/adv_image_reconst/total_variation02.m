@@ -14,7 +14,7 @@ inv2d.fwd_model.np_fwd_solve.perm_sym= '{y}';
 inv2d.solve=       @eidors_default;
 
 % NOSER prior
-inv2d.hyperparameter.value = 3e-1;
+inv2d.hyperparameter.value = .55;
 inv2d.RtR_prior=   @prior_noser;
 
 imgr= inv_solve( inv2d, v_homg, v_simu);

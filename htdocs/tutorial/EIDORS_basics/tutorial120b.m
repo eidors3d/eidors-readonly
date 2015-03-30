@@ -15,19 +15,19 @@ inv2d.fwd_model= imb.fwd_model;
 inv2d.solve=       @inv_solve_diff_GN_one_step;
 
 % Tikhonov prior
-inv2d.hyperparameter.value = 1e-3;
+inv2d.hyperparameter.value = .03;
 inv2d.RtR_prior=   @prior_tikhonov;
 imgr(1)= inv_solve( inv2d, vh, vi);
 imgn(1)= inv_solve( inv2d, vh, vi_n);
 
 % NOSER prior
-inv2d.hyperparameter.value = 1e-2;
+inv2d.hyperparameter.value = .1;
 inv2d.RtR_prior=   @prior_noser;
 imgr(2)= inv_solve( inv2d, vh, vi);
 imgn(2)= inv_solve( inv2d, vh, vi_n);
 
 % Laplace image prior
-inv2d.hyperparameter.value = 1e-3;
+inv2d.hyperparameter.value = .1;
 inv2d.RtR_prior=   @prior_laplace;
 imgr(3)= inv_solve( inv2d, vh, vi);
 imgn(3)= inv_solve( inv2d, vh, vi_n);

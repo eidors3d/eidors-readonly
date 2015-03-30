@@ -12,7 +12,7 @@ imdl.jacobian_bkgnd.value = ones(size(fmdl.elems,1),1);
 imdl.jacobian_bkgnd.value( fmdl.mat_idx{2} ) = 0.3;
 
 imdl.fwd_model = mdl_normalize(imdl.fwd_model, 1);
-imdl.hyperparameter.value = 1e-3;
+imdl.hyperparameter.value = .03;
 % Model background conductivity as lung
 imr= inv_solve(imdl, vh, vi);
 

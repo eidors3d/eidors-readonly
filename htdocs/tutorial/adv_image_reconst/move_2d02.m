@@ -1,6 +1,6 @@
 % Generate eidors planar finite element model
 mdl2dim = mk_common_model('b2c');
-mdl2dim.hyperparameter.value= 0.01;
+mdl2dim.hyperparameter.value= 0.1;
 
 clim= .088;
 

@@ -1,6 +1,6 @@
 %$Id$
 imdl_e= mk_common_model('b2c2',16);
-imdl_e.hyperparameter.value= 0.05;
+imdl_e.hyperparameter.value= 0.2;
 imdl_e.RtR_prior = @prior_laplace;
 
 fmdl= imdl_e.fwd_model;

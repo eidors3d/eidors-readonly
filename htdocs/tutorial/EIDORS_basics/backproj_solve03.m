@@ -8,7 +8,7 @@ inv_GN.reconst_type= 'difference';
 inv_GN.solve= @inv_solve_diff_GN_one_step;
 inv_GN.RtR_prior= @prior_noser;
 inv_GN.jacobian_bkgnd.value= 1;
-inv_GN.hyperparameter.value= 0.03;
+inv_GN.hyperparameter.value= 0.2;
 
 imgr= inv_solve(inv_GN, vh,vi);
 imgr.calc_colours.ref_level=0;

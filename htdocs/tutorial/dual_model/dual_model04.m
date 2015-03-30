@@ -18,7 +18,7 @@ for model = 1:3
    mdl_fine= mk_common_model(mdl_str,16);
    mdl_fine.fwd_model.mk_coarse_fine_mapping.n_interp= 150;
    mdl_fine.RtR_prior = @prior_noser;
-   mdl_fine.hyperparameter.value = 3e-2;
+   mdl_fine.hyperparameter.value = .2;
 
    imdl(model)= mdl_fine;
    imdl(model).fwd_model.coarse2fine = ...

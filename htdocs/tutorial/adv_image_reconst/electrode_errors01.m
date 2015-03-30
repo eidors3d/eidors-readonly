@@ -7,7 +7,7 @@ vh = double( zc_resp(:,1) );
 
 % Reconstruct
 imdl = mk_common_model('c2t2',16);
-imdl.hyperparameter.value = .1;
+imdl.hyperparameter.value = .3;
 
 img = inv_solve(imdl, vh, vi);
 subplot(221)

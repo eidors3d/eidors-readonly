@@ -3,7 +3,7 @@ load montreal_data_1995
 imdl = mk_common_model('c2t2',16);
 imdl.fwd_model = mdl_normalize(imdl.fwd_model,1);
 imdl.RtR_prior= @prior_gaussian_HPF;
-imdl.hyperparameter.value = 0.2;
+imdl.hyperparameter.value = 0.45;
 img = inv_solve(imdl, zc_resp(:,1), zc_resp(:,20));
 
 img.calc_colours.ref_level= 0;

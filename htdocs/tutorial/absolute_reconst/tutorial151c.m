@@ -5,7 +5,7 @@
 imdl.reconst_type= 'difference';
 imdl.solve=        @inv_solve_diff_GN_one_step;
 imdl.jacobian_bkgnd.value= backgnd;
-imdl.hyperparameter.value= 1e-2;
+imdl.hyperparameter.value= .1;
 img_diff= inv_solve(imdl, v_homg, v_targ);
 
 clf;

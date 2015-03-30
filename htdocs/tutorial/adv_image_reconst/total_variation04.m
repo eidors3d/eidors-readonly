@@ -5,7 +5,7 @@ invtv= eidors_obj('inv_model', 'EIT inverse');
 invtv.reconst_type= 'difference';
 invtv.jacobian_bkgnd.value= 1;
 
-invtv.hyperparameter.value = 1e-3;
+invtv.hyperparameter.value = .03;
 invtv.solve=       @inv_solve_TV_pdipm;
 invtv.R_prior=     @prior_TV;
 invtv.parameters.term_tolerance= 1e-3;
