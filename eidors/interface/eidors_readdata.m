@@ -32,7 +32,8 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 %        format = "UCT_DATA"  UCT data frame file
 %           - Output: [vv]= eidors_readdata( fname, 'UCT_DATA' )
 %    - Landquart, Switzerland EIT equipment 'LQ1' (pre - 2011)
-%    - Landquart, Switzerland EIT equipment 'LQ2' (2013 - ?)
+%    - Landquart, Switzerland EIT equipment 'LQ2' (2013 - 2014)
+%    - Landquart, Switzerland EIT equipment 'LQ3' (2015 - ?)
 %        files are 'EIT' files, but are not autodetected
 %
 %    - Dixtal file format, from Dixtal inc, Brazil
@@ -139,7 +140,12 @@ switch pre_proc_spec_fmt( format, fname );
       [vv] = landquart2_readdata( fname );
 
       stim = 'UNKNOWN';
+     
+   case 'lq3'
+      [vv] = landquart3_readdata( fname );
 
+      stim = 'UNKNOWN';
+      
    case 'dixtal_encode'
       [vv] = dixtal_read_codepage( fname );
       stim = 'N/A';
@@ -761,15 +767,22 @@ function [vv] = landquart2_readdata( fname )
       if format_version ~= 3
          error('unsupported file format version');
       else
-         fseek(fid,2264,'bof');
-
+         header_size = 2264; 
+         fseek(fid,header_size + 8,'bof');
+         %%% get frame size and length of payload at end of frame
+         frame_length = fread(fid, 1, 'int32', 'ieee-be') + 12;
+         %%% move back to start of 1. frame
+         fseek(fid,header_size,'bof');
+         
          %%% Read frames
          i = 1;
          while fseek(fid, 1,'cof') ~= -1
             fseek(fid, -1,'cof');
+            % drop frame header and some payload: 
+            % (12 + 60) + 12 + 256 = 340
             fseek(fid,340, 'cof');
             iqPayload(:,i) = fread(fid,2048,'int32','ieee-le');
-            fseek(fid,32,'cof');
+            fseek(fid,header_size + i*frame_length,'bof');
             i = i +1;
          end
 
@@ -780,9 +793,49 @@ function [vv] = landquart2_readdata( fname )
    end
    fclose(fid);
 
+   % this is just a simple guess
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
 
+% Read data from the file format develped by Swisstom, Landquart, Switzerland.
+function [vv] = landquart3_readdata( fname )
+   [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
+   try
+      format_version = fread(fid,1,'int32','ieee-le');
+      if format_version ~= 4
+         error('unsupported file format version');
+      else
+         header_size = fread(fid,1,'int32', 'ieee-le'); 
+         
+         fseek(fid,header_size + 12,'bof');
+         %%% get frame size and length of payload at end of frame
+         frame_length = fread(fid, 1, 'int32', 'ieee-le') + 16;
+         %%% move back to start of 1. frame
+         fseek(fid,header_size,'bof');
+         
+         %%% Read frames
+         i = 1;
+         while fseek(fid, 1,'cof') ~= -1
+            fseek(fid, -1,'cof');
+            % drop frame header and some payload: 
+            % (16 + 60) + 12 + 256 = 344
+            fseek(fid,344, 'cof');
+            iqPayload(:,i) = fread(fid,2048,'int32','ieee-le');
+            fseek(fid,header_size + i*frame_length,'bof');
+            i = i +1;
+         end
+
+      end
+   catch err
+      fclose(fid);
+      rethrow(err);
+   end
+   fclose(fid);
+
+   % this is just a simple guess
+   amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
+   vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
+   
 %  Output: [encodepage] = eidors_readdata( path,'DIX_encode');
 %   where path= '/path/to/Criptografa_New.dll' (provided with system)
 function [vv] = dixtal_read_codepage( fname );
