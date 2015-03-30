@@ -407,13 +407,14 @@ h=patch(Xs,Ys,Zs, colour);
 set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function paint_electrodes(sel,srf,vtx, colour, show_num);
+   if isempty(sel); return; end  % Not required after matlab 2014
 
-[u n m] = unique(srf(sel,:));
-fv.vertices = vtx(u,:);
-fv.faces = reshape(m,[],3);
-h = patch(fv,'FaceColor',colour);
-% need 'direct' otherwise colourmap is screwed up
-set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
+   [u n m] = unique(srf(sel,:));
+   fv.vertices = vtx(u,:);
+   fv.faces = reshape(m,[],3);
+   h = patch(fv,'FaceColor',colour);
+   % need 'direct' otherwise colourmap is screwed up
+   set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function hh= show_3d_fem( mdl, options )
    if mdl_dim(mdl) == 4  % volume simplices
