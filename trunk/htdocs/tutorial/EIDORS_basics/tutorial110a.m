@@ -20,11 +20,11 @@ vi= real(v_rotate(:,9))/1e4; vh= real(v_reference)/1e4;
 
 for idx= 1:3
    if     idx==1
-      imdl.hyperparameter.value= 1e-3;
+      imdl.hyperparameter.value= .03;
    elseif idx==2
-      imdl.hyperparameter.value= 3e-3;
+      imdl.hyperparameter.value= .05;
    elseif idx==3
-      imdl.hyperparameter.value= 1e-2;
+      imdl.hyperparameter.value= .10;
    end
    img= inv_solve(imdl, vh, vi);
    img.calc_colours.greylev = -.3;

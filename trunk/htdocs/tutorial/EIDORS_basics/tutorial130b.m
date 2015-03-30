@@ -7,7 +7,7 @@ inv3d= eidors_obj('inv_model', 'EIT inverse');
 inv3d.reconst_type= 'difference';
 inv3d.jacobian_bkgnd.value = 1;
 inv3d.fwd_model= imb.fwd_model;
-inv3d.hyperparameter.value = 0.001; 
+inv3d.hyperparameter.value = 0.03; 
 
 
 % Gauss-Newton Solver

@@ -9,7 +9,7 @@ imdl.parameters.max_iterations= 10;
 % special parameter for this model
 imdl.tutorial151_nonlinearGN.init_backgnd= backgnd;
 
-imdl.hyperparameter.value= 3;
+imdl.hyperparameter.value= 2;
 img_diff= inv_solve(imdl, v_targ);
 
 clf;

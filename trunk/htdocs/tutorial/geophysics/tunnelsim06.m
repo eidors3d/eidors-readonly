@@ -10,7 +10,7 @@ f1mdl.mk_coarse_fine_mapping.z_depth = 1;
 c2f= mk_coarse_fine_mapping( f1mdl, cmdl);
 imdl.fwd_model.coarse2fine = c2f;
 
-imdl.hyperparameter.value = 0.1;
+imdl.hyperparameter.value = 0.3;
 
 imgr = inv_solve( imdl, vs_h, vs_i );
 

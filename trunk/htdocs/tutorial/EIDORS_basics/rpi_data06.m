@@ -3,7 +3,7 @@
 imdl = mk_common_model('b2c2',32);
 imdl.fwd_model = fmdl;
 imdl.reconst_type = 'absolute';
-imdl.hyperparameter.value = 5.0;
+imdl.hyperparameter.value = 2.0;
 imdl.solve = @inv_solve_abs_GN;
 
 for iter = [1,2,3, 5];

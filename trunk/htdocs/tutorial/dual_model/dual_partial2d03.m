@@ -2,7 +2,7 @@
 
 % base model
 imdl.RtR_prior = @prior_noser;
-imdl.hyperparameter.value = 3e-2;
+imdl.hyperparameter.value = .2;
 
 % Reconstruction model - only fine reconstruction
 frec_mdl= imdl;

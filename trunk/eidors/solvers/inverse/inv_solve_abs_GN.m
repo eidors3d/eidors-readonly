@@ -74,7 +74,7 @@ end
 hp  = calc_hyperparameter( inv_model );
 RtR = calc_RtR_prior( inv_model );
 W   = calc_meas_icov( inv_model );
-hp2RtR= hp*RtR;
+hp2RtR= hp^2*RtR;
 
 img0 = data_mapper(img);
 opt.line_optimize.meas_icov = calc_meas_icov( inv_model);

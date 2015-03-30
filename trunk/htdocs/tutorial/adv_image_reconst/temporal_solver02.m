@@ -6,7 +6,7 @@ time_weight= .8;
 base_model = mk_common_model( 'c2c2', 16 ); % 576 element
 base_model.fwd_model = mdl_normalize(base_model.fwd_model, 0);
 % HP value gives good solutions (calculated via Noise Figure)
-hp= 0.101046;
+hp= sqrt(0.101046); % hp is squared
 base_model.hyperparameter.value= hp;
 
 % GN Solver

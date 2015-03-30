@@ -10,7 +10,7 @@ show_fem(imgr);
 axis equal; axis tight; print_convert netgen_sims06a.png '-density 100'
 
 % Change the hyperparameter
-imdl.hyperparameter.value = .003;
+imdl.hyperparameter.value = .05;
 imgr = inv_solve(imdl, vh, vi);
 show_fem(imgr);
 axis equal; axis tight; print_convert netgen_sims06b.png '-density 100'

@@ -1,7 +1,7 @@
 % Reconstruct images $Id$
 imdl= mk_common_model('c2c2',16);
 imdl.RtR_prior= @prior_laplace;
-imdl.hyperparameter.value = 0.01;
+imdl.hyperparameter.value = 0.10;
 
 th= linspace(0,2*pi,100); th(end)= [];
 xcirc= 0.5+0.1*cos(th); ycirc= 0.1*sin(th);

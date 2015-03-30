@@ -10,7 +10,7 @@ imdl.rec_model= cmdl;
    imdl.reconst_type = 'difference';
    imdl.RtR_prior = @prior_laplace;
    imdl.solve = @inv_solve_diff_GN_one_step;
-   imdl.hyperparameter.value = 0.1;
+   imdl.hyperparameter.value = 0.3;
    imdl.fwd_model.normalize_measurements = 1;
    imdl.jacobian_bkgnd.value = 0.03;
 

@@ -1,6 +1,6 @@
 imdl = eidors_obj('inv_solve','test');
 
-imdl.hyperparameter.value = .1;
+imdl.hyperparameter.value = .3;
 if 0
 imdl.RtR_prior = @prior_laplace;
 imdl.solve = @inv_solve_diff_GN_one_step;

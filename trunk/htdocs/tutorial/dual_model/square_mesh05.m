@@ -15,6 +15,6 @@ c2f= mk_coarse_fine_mapping( f_mdl, s_mdl);
 imdl.fwd_model.coarse2fine = c2f;
 imdl.RtR_prior = @prior_gaussian_HPF;
 imdl.solve = @inv_solve_diff_GN_one_step;
-imdl.hyperparameter.value= 0.001;
+imdl.hyperparameter.value= 0.03;
 
 imgs= inv_solve(imdl, vh, vi);

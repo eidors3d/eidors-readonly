@@ -1,6 +1,6 @@
 %Alternative Gauss Newton solver, changing prior at each iteration
 imdl.solve = @inv_solve_abs_GN_prior;
-imdl.hyperparameter.value = 1e-4;
+imdl.hyperparameter.value = .01;
 img = inv_solve(imdl , v_i);
 img_n = inv_solve(imdl  , v_i_n);
 vr_agn=fwd_solve(img); vr_agn_n=fwd_solve(img_n);

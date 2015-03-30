@@ -10,8 +10,8 @@ imdl.parameters.max_iterations = 3 ; %Number of iterations
 
 cb.cb_shrink_move = [0.5,0.8,0.00];
 
-   imdl.RtR_prior=@prior_laplace; hp = 1e-4^2;
-%  imdl.RtR_prior=@prior_noser;   hp = 1e-2^2;
+   imdl.RtR_prior=@prior_laplace; hp = 1e-4;
+%  imdl.RtR_prior=@prior_noser;   hp = 1e-2;
 
 imdl.hyperparameter.value = hp;
 img   = inv_solve(imdl, v_i);

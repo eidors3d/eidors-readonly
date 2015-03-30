@@ -4,7 +4,7 @@
 imdl= mk_common_model('c2c2',16);
 imdl.RtR_prior = @prior_gaussian_HPF;
 imdl.solve = @inv_solve_diff_GN_one_step;
-imdl.hyperparameter.value= 0.01;
+imdl.hyperparameter.value= 0.1;
 
 imgc= inv_solve(imdl, vh, vi);
 

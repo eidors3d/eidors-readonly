@@ -68,7 +68,7 @@ disp('   ... done');
 
 % Parameters for inverse model
 inv3d.solve= @eidors_default;
-inv3d.hyperparameter.value = 1e-4;
+inv3d.hyperparameter.value = .01;
 inv3d.R_prior= @prior_laplace;
 inv3d.jacobian_bkgnd.value= 1;
 inv3d.reconst_type= 'difference';
