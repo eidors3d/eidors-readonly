@@ -1,3 +1,7 @@
+2015-03-29: new background colour for 3.8
+2015-03-29: make caching consistent, add cache to inv_solve and fwd_solve
+2015-03-29: make EIDORS more verbose: default log_level = 3
+2015-03-29: new ng_mk_common_models as common interface to newer netgen code
 2015-03-26: change default GREIT desired image function to 
             GREIT_desired_img_sigmoid. This can handle 3D rec_models
 2015-03-24: add progress_msg
