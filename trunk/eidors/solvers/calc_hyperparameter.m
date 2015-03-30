@@ -20,7 +20,7 @@ function hyperparameter = calc_hyperparameter( inv_model )
 if isfield( inv_model.hyperparameter, 'func')
    try inv_model.hyperparameter = str2func(inv_model.hyperparameter); end
    hyperparameter = eidors_cache(...
-                    inv_model.hyperparameter,{inv_model},'hyperparameter');
+                    inv_model.hyperparameter.func,{inv_model},'hyperparameter');
 else
     hyperparameter= inv_model.hyperparameter.value;
 end
