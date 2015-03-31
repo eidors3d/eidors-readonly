@@ -54,7 +54,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %               
 % Examples
 %   fmdl = mk_library_model('adult_male_16el');
-%   fmdl.stimulation = mk_stim_patterns(16,1,'{ad}','{ad}',1);
+%   fmdl.stimulation = mk_stim_patterns(16,1,'{ad}','{ad}',{},1);
 %   fmdl.normalize_measurements = 1;
 %   imdl = mk_GREIT_model(fmdl,0.25,5); % uses weight 5
 %   OR
