@@ -61,7 +61,8 @@ end
 % calculate normalized Jacobian
 if pp.normalize
    data= fwd_solve( img );
-   J= J ./ (data.meas(:)*ones(1,nparam));
+%  J= J ./ (data.meas(:)*ones(1,nparam));
+   J= bsxfun(@rdivide, J, data.meas(:));
 end
 
 function J= do_jacobian_calculation( img, pp, fwd_model, org_params);
