@@ -204,7 +204,7 @@ function do_unit_test
     xyzr = zeros(5,4);
     xyzr(:,4) = .25;
     xyzr(:,3) = .5:.5:2.5;
-    sol = new_desired_soln(xyzr',[],opt);
+    sol = GREIT_desired_img_sigmoid(xyzr',[],opt);
     img = mk_image(mdl,0);
     for i = 1:5
         subplot(2,3,i)
