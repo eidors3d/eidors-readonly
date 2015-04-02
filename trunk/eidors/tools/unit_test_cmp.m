@@ -5,8 +5,15 @@ function unit_test_cmp(txt,a,b,tol)
 
 % License GPL v2 or v3: $Id$
 
+persistent ntotal;
+persistent npass;
+if strcmp(txt,'RESET_COUNTER'); ntotal=0; npass=0; return; end
+if strcmp(txt,'SHOW_COUNTER');
+  eidors_msg('%s: pass %d/%d',a, npass, ntotal,0); return;
+end
 
 if strcmp(txt,'UNIT_TEST'); do_unit_test; return; end
+
 
 if nargin < 4; tol = 0; end
 tolstr='';
@@ -30,6 +37,8 @@ tolstr='';
    end
 
    fprintf('%4s %s\n', ok, tolstr);
+   if strcmp(ok,'ok'); npass= npass+1; end
+   ntotal= ntotal+1;
 
 function do_unit_test
    unit_test_cmp('Expect OK'  ,1,1);
