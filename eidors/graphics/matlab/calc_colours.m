@@ -590,10 +590,12 @@ function do_unit_test
    img.calc_colours.greylev = -0.01;
  
    img.elem_data = [-2;0;0;0;1;3];
-   unit_test_cmp('cc01', calc_colours(img), [44; 128; 128; 128; 170; 254]);
+   unit_test_cmp('cc01a', calc_colours(img), [44; 128; 128; 128; 170; 254]);
 
    imgk(1) = img; imgk(2) = img;
-   unit_test_cmp('cc01', calc_colours(imgk), [44; 128; 128; 128; 170; 254]*[1,1]);
+   unit_test_cmp('cc01b', calc_colours(imgk), [44; 128; 128; 128; 170; 254]*[1,1]);
+   img.calc_colours.ref_level = 0;
+   unit_test_cmp('cc01c', calc_colours(img), [44; 128; 128; 128; 170; 254]);
 
    img.calc_colours.ref_level = 1;
    unit_test_cmp('cc02', calc_colours(img), [ 2;  86;  86;  86; 128; 212]);
@@ -639,7 +641,8 @@ function do_unit_test
    calc_colours('defaults');
    cc= calc_colours('colourmap');
 %  unit_test_cmp('bg01',cc(1,:), [50,50,15]/100, 1e-10); %EIDORS 3.6
-   unit_test_cmp('bg02',cc(1,:), [20,40,40]/100, 1e-10); %EIDORS 3.7
+%  unit_test_cmp('bg02',cc(1,:), [20,40,40]/100, 1e-10); %EIDORS 3.7
+   unit_test_cmp('bg02',cc(1,:), [35,45,45]/100, 1e-10); %EIDORS 3.8
 
    unit_test_cmp('mc01',size(cc), [127*2,3]);
    calc_colours('mapped_colour',4);
