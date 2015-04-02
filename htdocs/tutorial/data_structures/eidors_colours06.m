@@ -7,9 +7,9 @@ imdl.hyperparameter.value = 0.45;
 img = inv_solve(imdl, zc_resp(:,1), zc_resp(:,20));
 
 img.calc_colours.ref_level= 0;
-img.calc_colours.cb_shrink_move = [0.5,0.8,.02];
+img.calc_colours.cb_shrink_move = [0.5,0.8,-.10];
 
-subplot(221);
+clf; subplot(221);
 show_fem(img,[1,1]);
 axis equal; axis off; axis tight;
 
