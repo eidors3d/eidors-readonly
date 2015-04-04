@@ -19,9 +19,10 @@
     - add ability to set various background colour (cg's code)
     - move to using matlab's colourbar if possible
     - eidors_colourbar should know how many fake colours we have
-
     - Is there any way to avoid "fake colours". These make it ugly
         when people use standard matlab functions for images.
+
+ - remove mat_idx_reordered
 
  - code in choose_noise_figure is hard to understand.
        Why search1,2 etc? Why not bisection search?
@@ -47,6 +48,9 @@ HIGH PRIORITY
 
  - Physics => Parameters
     - ensure jacobian_perturb works on physics parameters
+    - plan
+       - maybe remove all commits and restructure to ensure understanding
+       
 
  + fwd_model.electrode(:).z_contact
     + discuss change of name (surface impedance rather than contact impedance)
