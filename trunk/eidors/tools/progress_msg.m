@@ -41,7 +41,7 @@ function progress_msg(varargin)
 %
 % SEE ALSO EIDORS_MSG, TIC, TOC
 
-% (C) 2015 - Bartlomiej Grychtol
+% (C) 2015 Bartlomiej Grychtol - all rights reserved Swisstom AG
 % License: GPL version 2 or 3
 % $Id$
 
