@@ -56,7 +56,6 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 % >> SWISSTOM CONTRIBUTION <<
 
 
-% if input is 'UNIT_TEST', run tests
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'), do_unit_test; return; end
 if ischar(fmdl) && strcmp(fmdl,'PROFILE'), do_small_test; return; end
 if nargin < 3
