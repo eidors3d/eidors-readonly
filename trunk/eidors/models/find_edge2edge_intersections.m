@@ -28,8 +28,8 @@ function [pts,FE2CE,FE2pts,CE2pts] = find_edge2edge_intersections(FE,FN,CE,CN, e
 
 % >> SWISSTOM CONTRIBUTION <<
 
-% flip the inputs if CE is longer than FE
 if size(CE,1) > size(FE,1)
+    % flip the inputs if CE is longer than FE
     [pts,FE2CE,CE2pts,FE2pts] = find_edge2edge_intersections(CE,CN,FE,FN, epsilon);
     FE2CE = FE2CE';
     return

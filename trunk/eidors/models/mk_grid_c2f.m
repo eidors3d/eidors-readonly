@@ -33,7 +33,7 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %                          3  -  calculate each voxel separately
 %
 % [C2F M] = MK_GRID_C2F(...) also returns a struct with useful fields
-% charactrising the vox model.
+% characterising the vox model
 %
 % Set eidors_msg 'log level' < 2 to supress output to command line.
 %
@@ -47,7 +47,7 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %     hold off
 %
 % See also MK_GRID_MODEL, FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN
-%          MK_COARSE_FINE_MAPPING, EIDORS_MSG
+%          MK_COARSE_FINE_MAPPING, POINT_IN_TRIANGLE, EIDORS_MSG
 
 % (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
 % License: GPL version 2 or 3
