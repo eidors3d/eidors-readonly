@@ -16,6 +16,12 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 %                   if the value is too low, image may not reach the value 
 %                   of 1 at the center of the target. 
 %                   Default: 10/mean(radius)
+%      .desired_img_radius
+%                   Overwrites the radius input. May be specified as a
+%                   vector or a function handle with the signature
+%                       func(pts)
+%                   where pts is either [2xN] or [3xN], dependig on the xyz
+%                   function input, e.g. @(xyz) abs(xyz(3,:))/5;
 %
 % The desired images approximate in each pixel the area integral of:
 %       f(r) = 1 / (1 + exp(s*(|r-r0| - radius)))
@@ -158,6 +164,17 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
         scale_radius = true;
         xyz(end,:) = [];
     end
+    
+    if isfield(opt,'desired_img_radius')
+       scale_radius = false;
+       if isnumeric(opt.desired_img_radius)
+          radius = opt.desired_img_radius;
+       end
+       if isa(opt.desired_img_radius, 'function_handle')
+          radius = feval(opt.desired_img_radius,xyz);
+       end
+    end
+    
     mdl = opt.rec_model; % must exist
     opt.n_dim = size(mdl.nodes,2);
     xyz = xyz(1:opt.n_dim, :); % ingore z if model is 2D
@@ -201,6 +218,8 @@ function do_unit_test
     v = linspace(-1,1,32);
     mdl= mk_grid_model([],v,v,[0 .7 1:.2:2 2.3 3]);
     opt.rec_model = mdl;
+%     opt.desired_img_radius = .1:.1:.5;
+    opt.desired_img_radius = @(xyz) xyz(3,:)/5;
     xyzr = zeros(5,4);
     xyzr(:,4) = .25;
     xyzr(:,3) = .5:.5:2.5;
