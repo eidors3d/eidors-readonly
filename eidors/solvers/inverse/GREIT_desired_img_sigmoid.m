@@ -12,7 +12,7 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 %                   have had some pixels/voxels removed (a rec_model that 
 %                   is not a complete rectangle/parallelepiped). 
 %      .steepness   [optional] a scalar controling the amount of blur, see
-%                   below for details. Lower steepness gives moreblur, but
+%                   below for details. Lower steepness gives more blur, but
 %                   if the value is too low, image may not reach the value 
 %                   of 1 at the center of the target. 
 %                   Default: 10/mean(radius)
@@ -55,7 +55,7 @@ end
 
 
 function PSF = desired_soln(xyz, radius, opt)
-    num_it = size(xyz,2);
+   num_it = size(xyz,2);
     progress_msg('Composing desired images:',0,num_it);
     mdl = opt.rec_model;
     switch opt.n_dim
@@ -65,8 +65,9 @@ function PSF = desired_soln(xyz, radius, opt)
             mdl.vox = [mdl.elems(1:2:end,:) mdl.elems(2:2:end,:)];
     end
     [Xnodes,Ynodes,Znodes] = voxnodes(mdl);
-    th = log(1e4)/opt.steepness;
+    
     for i=1:size(xyz,2);
+        th = log(1e4)/opt.steepness(i);
         progress_msg(i,num_it);
         farel = far_elems(Xnodes,Ynodes,Znodes, xyz(:,i), radius(i), th);
         el_idx = find(~farel);
@@ -81,7 +82,7 @@ function PSF = desired_soln(xyz, radius, opt)
         end
         D = sqrt(sum(bsxfun(@minus,[X Y Z],xyz(:,i)').^2, 2));
         x = D - radius(i);
-        tmp = 1 ./ (1 + exp( opt.steepness * x));
+        tmp = 1 ./ (1 + exp( opt.steepness(i) * x));
         PSF(:,i) = full(sparse(idx,1,tmp(:) .* factor,size(mdl.vox,1),1));
     end
     progress_msg(Inf);
@@ -174,6 +175,13 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
           radius = feval(opt.desired_img_radius,xyz);
        end
     end
+        
+    if ~isfield(opt, 'steepness')
+        opt.steepness = 10./radius;
+    elseif isa(opt.steepness,'function_handle')
+        opt.steepness = feval(opt.steepness,xyz);
+    end
+    
     
     mdl = opt.rec_model; % must exist
     opt.n_dim = size(mdl.nodes,2);
@@ -204,9 +212,10 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     if scale_radius
         radius = radius / opt.maxrange;
     end
+
     
-    if ~isfield(opt, 'steepness')
-        opt.steepness = 10/mean(radius);
+    if numel(opt.steepness) == 1
+       opt.steepness = ones(1,size(xyz,2)) * opt.steepness;
     end
     
     if numel(radius) == 1
@@ -218,7 +227,7 @@ function do_unit_test
     v = linspace(-1,1,32);
     mdl= mk_grid_model([],v,v,[0 .7 1:.2:2 2.3 3]);
     opt.rec_model = mdl;
-%     opt.desired_img_radius = .1:.1:.5;
+    opt.steepness = @(xyz) 50./xyz(3,:);
     opt.desired_img_radius = @(xyz) xyz(3,:)/5;
     xyzr = zeros(5,4);
     xyzr(:,4) = .25;
