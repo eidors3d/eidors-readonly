@@ -23,8 +23,8 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 %                   Default: 10./radius
 %      .desired_img_radius
 %                   [optional] Overwrites the radius input. May be 
-%                   specified as a vector or a function handle with the
-%                   signature
+%                   specified as a scalar, a [1xN] vector or a function 
+%                   handle with the signature:
 %                        func(pts)
 %                   where pts is either [2xN] or [3xN], dependig on the xyz
 %                   function input, e.g. @(xyz) abs(xyz(3,:))/5
