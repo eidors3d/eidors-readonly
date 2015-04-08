@@ -37,6 +37,7 @@
     - remove old parameters tol,pp,V)
     - add options for solver type, tol, etc
 
+ - Merge Hex mesh code from dev/l_selvakumaran
 
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
