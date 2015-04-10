@@ -42,7 +42,7 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 %
 % See also: CALC_GREIT_RM, MK_GREIT_MODEL, MK_PIXEL_SLICE
 
-% (C) 2015 Bartlomiej Grychtol. All rights reserved Swisstom AG.
+% (C) 2015 Bartlomiej Grychtol - all rights reserved Swisstom AG.
 % License: GPL version 2 or 3
 % $Id$
 
@@ -59,7 +59,8 @@ PSF = eidors_cache(@desired_soln,{xyzr, radius, opt},copt);
 
 end
 
-
+%-------------------------------------------------------------------------%
+% The main function
 function PSF = desired_soln(xyz, radius, opt)
    num_it = size(xyz,2);
     progress_msg('Composing desired images:',0,num_it);
@@ -94,6 +95,8 @@ function PSF = desired_soln(xyz, radius, opt)
     progress_msg(Inf);
 end
 
+%-------------------------------------------------------------------------%
+% Generate internal points in elements
 function [X, Y, Z] = voxnodes(mdl)
     x = mdl.nodes(:,1); X = x(mdl.vox);
     y = mdl.nodes(:,2); Y = y(mdl.vox);
@@ -101,12 +104,11 @@ function [X, Y, Z] = voxnodes(mdl)
         z = mdl.nodes(:,3); Z = z(mdl.vox);
     catch
         Z = [];
-    end
-        
-    
+    end  
 end
 
-
+%-------------------------------------------------------------------------%
+% Generate internal points in elements
 function [x,y,z,n] = interp_elem(mdl,e,radius, opt)
     maxsep = radius/5;
 
@@ -128,14 +130,10 @@ function [x,y,z,n] = interp_elem(mdl,e,radius, opt)
             [x, y] = ndgrid(vec{:});
             z = [];
     end
-%     clf
-%     show_fem(mdl);
-%     hold on
-%     plot3(x(:),y(:),z(:),'.');
-%     hold off
-%     pause
 end
 
+%-------------------------------------------------------------------------%
+% Find elements where the function value is negligable
 function farel = far_elems(Xnodes,Ynodes,Znodes,xyz,radius, th)
     farel = false(size(Xnodes,1),1);
 
@@ -162,7 +160,8 @@ function farel = far_elems(Xnodes,Ynodes,Znodes,xyz,radius, th)
     idx = find(~farel);
 end
 
-
+%-------------------------------------------------------------------------%
+% Parse options
 function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
 
     scale_radius = false;
@@ -229,6 +228,8 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     end
 end
 
+%-------------------------------------------------------------------------%
+% UNIT_TEST
 function do_unit_test
     v = linspace(-1,1,32);
     mdl= mk_grid_model([],v,v,[0 .7 1:.2:2 2.3 3]);
