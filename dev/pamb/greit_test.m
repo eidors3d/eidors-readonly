@@ -4,7 +4,6 @@ fmdl.stimulation = mk_stim_patterns(16,2,'{ad}','{ad}');
 imdl = select_imdl(fmdl,{'Basic GN dif'});
 %%
 opt.imgsz = [32 32 3*32];
-% opt.zvec = [0 .75:.5:2.25 3];
 opt.cube_voxels= true;
 opt.prune_model= false;
 imdl = mk_voxel_volume(imdl,opt);
@@ -24,7 +23,6 @@ imdl.rec_model = rmdl;
 [x, y, z] = ndgrid(linspace(-2,2,20),linspace(-2,2,20),.5:.25:2.5);
 idx = ( x(:).^2 + y(:).^2 ) < 1.8^2;
 gopt.distr = [x(idx) y(idx) z(idx)]';
-% gopt.desired_solution_fn = @new_GREIT_desired_soln; %% NOW DEFAULT
 gopt.noise_figure = 0.5;
 % gopt.target_size
 imdl = mk_GREIT_model(imdl,0.15,0.2, gopt);
