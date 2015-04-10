@@ -202,9 +202,7 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     
     opt.n_dim = length(opt.meshsz)/2;
     opt.meshsz = reshape(opt.meshsz,2,[])';
-%     if size(opt.meshsz, 1)==2
-%         opt.meshsz(3,:) = 0;
-%     end
+
     opt.minpt = opt.meshsz(:,1);
     opt.maxpt = opt.meshsz(:,2);
     opt.range = opt.maxpt - opt.minpt;
