@@ -77,7 +77,8 @@ copt.fstr = 'mk_grid_c2f';
 
 
 
-
+%-------------------------------------------------------------------------%
+% Wrapper providing the save_memory functionality
 function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
     eidors_msg('@@@',2);
     
@@ -172,12 +173,16 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        end
        progress_msg(Inf);
     end
-    
+
+%-------------------------------------------------------------------------%
+% Wrapper helper, combines partial c2f matrices
 function c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx)
     fidx = find(felem_idx); 
     ridx = find(relem_idx);
     c2f(fidx,ridx) = c2f(fidx,ridx) + tmp;
     
+%-------------------------------------------------------------------------%
+% The main function    
 function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     DEBUG = eidors_debug('query','mk_grid_c2f');
    
@@ -206,13 +211,13 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     pmopt.final_msg = 'none';   
     progress_msg('Find tet_edge2vox_edge intersections...',-1,pmopt)
     [intpts3, tedge2vedge, tedge2intpt3, vedge2intpt3] =find_edge2edge_intersections(fmdl.edges,fmdl.nodes,m.edges,rmdl.nodes, opt.tol_edge2edge); 
-%     logmsg([repmat('\b',1,15) ' Found %d (%.3f s)\n'], size(intpts3,1),toc);
     progress_msg(sprintf('Found %d',size(intpts3,1)),Inf);
     
     % tet node in vox
     progress_msg('Find tet_nodes in voxels...')
     [fnode2vox] = get_nodes_in_voxels(fmdl,rmdl);
     progress_msg(sprintf('Found %d', nnz(fnode2vox)), Inf);
+    
     % vox node in tet
     progress_msg('Find vox_nodes in tets...');
     vnode2tet = get_nodes_in_tets(fmdl,rmdl, opt);
@@ -232,8 +237,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     % tets and vox that intersect (excludes complete inclusion)
     progress_msg('Find total vox v. tet intersections...');
     vox2intTet =   m.vox2face * (rec2tedge>0) * fmdl.edge2elem ...
-                 | m.vox2edge * (tri2vedge>0)' * fmdl.elem2face';% ...
-%                  | m.vox2edge * (tedge2vedge>0)'* fmdl.edge2elem;
+                 | m.vox2edge * (tri2vedge>0)' * fmdl.elem2face';
     progress_msg(sprintf('Found %d',nnz(vox2intTet)), Inf);
     
     catch err
@@ -307,7 +311,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 scale = max(abs(pts(:)));
                 % scale largest coordinate to 1 (helps with precision)
                 pts = pts ./ scale;
-                % force thourugh search for initinal simplex and 
+                % force thorough search for initinal simplex and 
                 % supress precision warnings
                 [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
                 V(last_v) = V(last_v) * scale^3; % undo scaling
@@ -372,7 +376,9 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     % add tets contained in vox
 
     c2f = c2f + tet_in_vox;
-    
+
+%-------------------------------------------------------------------------%
+% Crop obviously non-overlapping parts of the models to limit computation
 function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
    
    fmdl = fmdl0;
@@ -730,7 +736,7 @@ function edges = mk_edges(voxels, opt)
     edges( (start +2):step:end,:) = edges( (start +3):step:end,:);
     edges( end-2:end,:) = edges(end-5:end-3,:);
 
- %-------------------------------------------------------------------------%
+%-------------------------------------------------------------------------%
 % Make mapping between voxels and faces  
 function vox2face = mk_vox2face(opt)
     Xsz = opt.Xsz; Ysz = opt.Ysz; Zsz = opt.Zsz;
@@ -858,7 +864,8 @@ function do_unit_test
     do_case_tests;
     do_edge2edge_timing_test;
     
-    
+%-------------------------------------------------------------------------%
+% Test individual intersections  
 function do_case_tests
     ll = eidors_msg('log_level');
     eidors_msg('log_level',1);
@@ -1251,34 +1258,24 @@ function do_small_test
    yvec = [-1.6:.8:1.6];
    zvec = -1:1:2;
    rmdl = mk_grid_model([],xvec,yvec,zvec);
-%    profile clear
-%    profile on
-   eidors_cache off mk_grid_c2f
+
+   eidors_cache clear
    tic
    c2f_a = mk_grid_c2f(fmdl, rmdl);
    toc
-%    eidors_cache on mk_grid_c2f
+   eidors_cache clear
    tic
    opt.save_memory = 2;
    c2f_b = mk_grid_c2f(fmdl, rmdl, opt);
    toc
-%    size(c2f_a)
+   eidors_cache clear
+   tic
+   c2f_c = mk_coarse_fine_mapping(fmdl, rmdl);
+   toc
    assert(any(c2f_a(:) ~= c2f_b(:)) == 0);
-%    profile off
-%    p = profile('info');
-%    profview(0,p);
-%    fname = sprintf('mk_grid_c2f_profile_%s_%s_%s.mat',...
-%        computer('arch'),version('-release'),datestr(now,'yyyymmdd-HHMMSS'));
-%    tmp = tempname;
-%    diary(tmp);
-%    ver('Matlab');
-%    diary off
-%    str = fileread(tmp);
-%    delete(tmp);
-%    save(fname,'p','str');
-%    eidors_msg('Profile file saved under %s',[cd filesep fname],0);
-%    eidors_msg('Total time: %f s', max(cell2mat({p.FunctionTable.TotalTime})),0);
-   
+   % the old function cannot be tested this way, it doesn't give the right
+   % answer
+   % assert(any(c2f_a(:) ~= c2f_c(:)) == 0);
    
 function do_realistic_test
 fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
@@ -1348,8 +1345,7 @@ function [intpts, face2edge, face2intpt, edge2intpt] = test_rec_tedge_intersecti
     m = prepare_vox_mdl(rmdl,opt);
     fmdl = prepare_fmdl(fmdl);
     [intpts, face2edge, face2intpt, edge2intpt] = get_voxel_intersection_points(fmdl,m.faces,opt);
-    
-    
+        
 function [intpts, face2edge, face2intpt, edge2intpt] = test_tet_vedge_intersections(rmdl,fmdl)
     opt = parse_opts(fmdl,rmdl);
     m = prepare_vox_mdl(rmdl,opt);
