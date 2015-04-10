@@ -61,14 +61,13 @@ for i=1:length(f)/2
 end
 
 % illegal fields
-%      field       type
-f = {};
-for i=1:length(f)/2
-   x=2*(i-1)+1;
-   y=x+1;
+%      field
+f = {'maes'};
+for i=1:length(f)
+   x=i;
    if isfield(data, f{x})
       pass = 0;
-      err_str = [err_str '- illegal field ' f{x} ' found\n'];
+      err_str = [err_str '- illegal field "' f{x} '" found\n'];
    end
 end
 
