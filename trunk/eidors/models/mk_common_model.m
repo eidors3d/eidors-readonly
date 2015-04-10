@@ -240,6 +240,9 @@ end
 
 inv_mdl.name= ['EIDORS common_model_',str]; 
 inv_mdl= eidors_obj('inv_model', inv_mdl);
+
+% check we are giving back a good specimen
+valid_inv_model(inv_mdl);
     
 function inv_mdl = distmesh_2d_model(str, n_elec, options);
 % This function is an interface to distmesh_2d_model for some common values
