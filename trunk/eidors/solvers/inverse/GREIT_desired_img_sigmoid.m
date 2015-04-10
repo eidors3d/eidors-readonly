@@ -38,7 +38,7 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 % For |r-r0| = radius, f(r) = 0.5.
 % 
 % As of 2015-03-29, this is the default desired image function used by
-% MK_GRID_MODEL.
+% MK_GREIT_MODEL.
 %
 % See also: CALC_GREIT_RM, MK_GREIT_MODEL, MK_PIXEL_SLICE
 
