@@ -19,6 +19,8 @@
     - add ability to set various background colour (cg's code)
     - move to using matlab's colourbar if possible
     - eidors_colourbar should know how many fake colours we have
+ - in calc_RtR_prior there's some pretty incorrect c2f handling
+
     - Is there any way to avoid "fake colours". These make it ugly
         when people use standard matlab functions for images.
 
