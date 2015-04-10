@@ -1,0 +1,72 @@
+<html>
+<!--#include virtual="../../header.html" -->
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+<a href="mailto:a.tizzard@mdx.ac.uk">Andrew Tizzard</a>,
+Middlesex University, Bramley Road, London N14 4YZ. 
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> October 2007.
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+Finite Element meshes male and female thoraces, generated from the visible human
+dataset, as part of the GREIT framework (Adler et al 2009).
+<p>
+Adult FEM models were generated from the visible human body dataset (Ackerman
+1998, Proc. IEEE 86 504&minus;11) which provides radiological and photographic
+images. The photographic images were used to generate the surface models from
+which the finite element meshes were generated. The surface models were created
+using AliasStudio (Autodesk) from the photographic images of the thorax spaced
+20 mm apart. The method used is similar to that used to generate models of the
+human head for EIT of the brain function (Tizzard et al 2005, Physiol. Meas. 26
+S251&minus;61).
+
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License (with Attribution)
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+Adler et al (2009) 
+``GREIT: a unified approach to 2D linear EIT
+reconstruction of lung images"
+Physiol. Meas. 30 (2009) S35–S55
+doi:10.1088/0967-3334/30/6/S03
+       <hr>
+   <tr><th valign="top"> Format:
+       <td>
+       Data are in Matlab v7 format,
+<p> Each model is available as an EIDORS <tt>fwd_model</tt>
+or as a set of vertices <tt>vtx</tt>
+               triangles <tt>tri</tt>, and
+electrode nodes          <tt>enodes</tt>
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> 
+<div style="td.align='right'">
+<b>Female thorax mesh:</b> (27073 elements)
+   <br>&minus;<a href="./HFT027.mat">HFT027.mat (vertices and triangles)</a>
+   <br>&minus;<a href="./female_t_mdl.mat">female_t_mdl.mat (EIDORS fwd_model)</a>
+<br> Image:
+<br>
+<img src="female_t_mdl.png">
+<br>
+<b>Male thorax meshes:</b> (27170 elements)
+   <br>&minus;<a href="./HMT027.mat">HMT027.mat (vertices and triangles)</a>
+   <br>&minus;<a href="./male_t_mdl.mat">male_t_mdl.mat (EIDORS fwd_model)</a>
+<br> Image:
+<br>
+<img src="male_t_mdl.png">
+       <hr>
+   </table>
+
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
