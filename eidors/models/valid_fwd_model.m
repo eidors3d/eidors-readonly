@@ -100,13 +100,23 @@ for i=1:length(f)/2
    end
 end
 
-% illegal fields
+% illegal fields (common typos, etc)
 %      field
 f = {'fwd_model', ...
-     'rec_model'}; % no recursion
-for i=1:length(f)/2
-   x=2*(i-1)+1;
-   y=x+1;
+     'rec_model', ... % no recursion
+     'stim', ... % not short form
+     'elec', ...
+     'fmdl', ...
+     'fwd_mdl', ...
+     'cmdl', ...
+     'rmdl', ...
+     'rec_mdl', ...
+     'electrodes', ... % not plural
+     'stimulations', ...
+     'node', ... % plural
+     'elem'};
+for i=1:length(f)
+   x=i;
    if isfield(fmdl, f{x})
       pass = 0;
       err_str = [err_str '- illegal field "' f{x} '" found\n'];

@@ -66,7 +66,7 @@ for i=1:length(f)/2
 end
 % check the inv_model
 if isfield(img, 'inv_model')
-   [pass_local, err_str_local] = valid_fwd_model(img.inv_model);
+   [pass_local, err_str_local] = valid_inv_model(img.inv_model);
    if ~pass_local
       pass = 0;
       disp(err_str_local);
@@ -78,13 +78,12 @@ end
 
 % illegal fields
 %      field       type
-f = {};
-for i=1:length(f)/2
-   x=2*(i-1)+1;
-   y=x+1;
+f = {'imdl', 'inv_mdl', 'fmdl', 'fwd_mdl'};
+for i=1:length(f)
+   x=i;
    if isfield(img, f{x})
       pass = 0;
-      err_str = [err_str '- illegal field ' f{x} ' found\n'];
+      err_str = [err_str '- illegal field "' f{x} '" found\n'];
    end
 end
 

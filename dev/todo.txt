@@ -1,5 +1,21 @@
 ##### POST RELEASE 3.8 ITEMS
 
+ - Make greater use of eidors/models/valid_{img,fwd_model,inv_model,data}
+   for checking consistency of the key EIDORS data structures and
+   preventing the need to support odd data structure constructions.
+    - Tighten checks where appropriate?
+    - Add further "common typos" illegal fields.
+    - Refactor checking code.
+    - Add check for "inv_model requires fwd & rec_model", see below TODO.
+   Add checking to:
+    - mk_common_models, other model generators (output)
+    - inv_solve (input and output)
+    - fwd_solve (input and output)
+      - fwd_solve checking off by default, enabled for unit testing? this
+        might be a speed hit for iterative inv_solve where many fwd_solves
+        are required
+    - elsewhere?
+
  - Efficiency of calculations with multiple RHS
     - look at dev/a_adler/testcode/qr_efficiency.m
     - in left_divide, time via: t1=cputime; V= (E \ Q)*R; t1=cputime-t1;

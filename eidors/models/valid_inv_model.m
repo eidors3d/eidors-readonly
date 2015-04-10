@@ -86,10 +86,11 @@ end
 
 % illegal fields
 %      field
-f = {'inv_model'}; % no recursion
-for i=1:length(f)/2
-   x=2*(i-1)+1;
-   y=x+1;
+f = {'inv_model', ... % no recursion
+     'fmdl', ... % no short forms
+     'fwd_mdl'};
+for i=1:length(f)
+   x=i;
    if isfield(imdl, f{x})
       pass = 0;
       err_str = [err_str '- illegal field "' f{x} '" found\n'];
