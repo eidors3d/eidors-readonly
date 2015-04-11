@@ -19,12 +19,26 @@ function img= inv_solve_abs_CG( inv_model, data1);
 % UNIT_TEST?
 if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
 
+% merge legacy options locations
+inv_model = deprecate_imdl_opt(inv_model, 'parameters');
+inv_model = deprecate_imdl_opt(inv_model, 'inv_solve');
+inv_model = deprecate_imdl_opt(inv_model, 'inv_solve_abs_core');
+
 % fixed working data... otherwise we wouldn't be calling this function!
-if ~isfield(inv_model.inv_solve, 'update_func')
-  inv_model.inv_solve.update_func = @CG_update;
+if ~isfield(inv_model, 'inv_solve_abs_CG')
+   inv_model.inv_solve_abs_CG = struct;
 end
-if ~isfield(inv_model.inv_solve, 'beta_func')
-  inv_model.inv_solve.beta_func = @beta_reset_polak_ribiere;
+if ~isfield(inv_model.inv_solve_abs_CG, 'update_func')
+   inv_model.inv_solve_abs_CG.update_func = @CG_update;
+end
+if ~isfield(inv_model.inv_solve_abs_CG, 'beta_func')
+   inv_model.inv_solve_abs_CG.beta_func = @beta_reset_polak_ribiere;
+end
+
+% inv_model.inv_solve_abs_CG -> inv_solve_abs_core
+if isfield(inv_model, 'inv_solve_abs_CG')
+   inv_model.inv_solve_abs_core = inv_model.inv_solve_abs_CG;
+   inv_model = rmfield(inv_model, 'inv_solve_abs_CG');
 end
 
 img = inv_solve_abs_core(inv_model, data1);
@@ -32,7 +46,7 @@ img = inv_solve_abs_core(inv_model, data1);
 function dx = CG_update(J, W, hp2RtR, dv, de)
 %  % the actual update
 %  dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
-  dx = J'*dv;
+   dx = J'*dv;
 
 % Fletcher-Reeves
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
@@ -40,10 +54,10 @@ function dx = CG_update(J, W, hp2RtR, dv, de)
 % beta = ---------------------
 %         dx_{k-1}^T dx_{k-1}
 function beta = beta_fletcher_reeves(dx_k, dx_km1, sx_km1)
-  beta = (dx_k' * dx_k)/(dx_km1' * dx_km1);
-  if isinf(beta) || isnan(beta)
-    beta = 0;
-  end
+   beta = (dx_k' * dx_k)/(dx_km1' * dx_km1);
+   if isinf(beta) || isnan(beta)
+      beta = 0;
+   end
 
 % Polak-Ribiere
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
@@ -51,11 +65,11 @@ function beta = beta_fletcher_reeves(dx_k, dx_km1, sx_km1)
 % beta = ----------------------------
 %             dx_{k-1}^T dx_{k-1}
 function beta = beta_polak_ribiere(dx_k, dx_km1, sx_km1)
-  ddx = dx_k - dx_km1;
-  beta = (dx_k' * ddx)/(dx_km1' * dx_km1);
-  if isinf(beta) || isnan(beta)
-    beta = 0;
-  end
+   ddx = dx_k - dx_km1;
+   beta = (dx_k' * ddx)/(dx_km1' * dx_km1);
+   if isinf(beta) || isnan(beta)
+      beta = 0;
+   end
 
 % Hestenes-Stiefel
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
@@ -63,20 +77,20 @@ function beta = beta_polak_ribiere(dx_k, dx_km1, sx_km1)
 % beta = - -------------------------------
 %          s_{k-1}^T ( dx_k - dx_{k-1} )
 function beta = beta_hestenes_stiefel(dx_k, dx_km1, sx_km1)
-  ddx = dx_k - dx_km1;
-  beta = -(dx_k' * ddx)/(sx_km1' * ddx);
-  if isinf(beta) || isnan(beta)
-    beta = 0;
-  end
+   ddx = dx_k - dx_km1;
+   beta = -(dx_k' * ddx)/(sx_km1' * ddx);
+   if isinf(beta) || isnan(beta)
+      beta = 0;
+   end
 
 % Polak-Ribiere with reset
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
 % beta = max(0, beta_pr)
 function beta = beta_reset_polak_ribiere(dx_k, dx_km1, sx_km1)
-  beta = beta_polak_ribiere(dx_k, dx_km1, sx_km1);
-  if beta < 0
-    beta = 0;
-  end
+   beta = beta_polak_ribiere(dx_k, dx_km1, sx_km1);
+   if beta < 0
+      beta = 0;
+   end
 
 % Dai-Yuan
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
@@ -84,7 +98,36 @@ function beta = beta_reset_polak_ribiere(dx_k, dx_km1, sx_km1)
 % beta = - -------------------------------
 %          s_{k-1}^T ( dx_k - dx_{k-1} )
 function beta = beta_dai_yuan(dx_k, dx_km1, sx_km1)
-  beta = -dx_k'*dx_k/(sx_km1'*(dx_k-dx_km1));
+   beta = -dx_k'*dx_k/(sx_km1'*(dx_k-dx_km1));
+
+function imdl = deprecate_imdl_opt(imdl,opt)
+   if isfield(imdl, opt)
+      if isstruct(imdl.(opt))
+         disp(imdl)
+         disp(imdl.(opt))
+         warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_CG.* as of 30-Apr-2014.']);
+
+         if ~isfield(imdl, 'inv_solve_abs_CG')
+            imdl.inv_solve_abs_CG = imdl.(opt);
+         else % we merge
+            % merge struct trick from:
+            %  http://stackoverflow.com/questions/38645
+            A = imdl.(opt);
+            B = imdl.inv_solve_abs_CG;
+            M = [fieldnames(A)' fieldnames(B)'; struct2cell(A)' struct2cell(B)'];
+            try % assumes no collisions
+               imdl.inv_solve_abs_CG=struct(M{:});
+            catch % okay, collisions - do unique to resolve them
+               [tmp, rows] = unique(M(1,:), 'last');
+               M=M(:,rows);
+               imdl.inv_solve_abs_CG=struct(M{:});
+            end
+         end
+         imdl = rmfield(imdl, opt);
+      else
+         error(['unexpected inv_model.' opt ' where ' opt ' is not a struct... i do not know what to do']);
+      end
+   end
 
 function pass = do_unit_test()
    pass = inv_solve_abs_core('UNIT_TEST', 'inv_solve_abs_CG');
