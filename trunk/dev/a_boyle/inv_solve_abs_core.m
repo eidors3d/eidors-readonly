@@ -1274,6 +1274,8 @@ function opt = parse_options(imdl)
             end
          end
       end
+   elseif ~iscell(opt.RtR_prior) % not a cell array? encapsulate it
+      opt.RtR_prior = {opt.RtR_prior};
    end
    % if not square then expand the block matrix
    % single row/column: this is our diagonal --> expand to full blockwise matrix
