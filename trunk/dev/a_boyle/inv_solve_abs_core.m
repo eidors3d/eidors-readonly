@@ -24,7 +24,10 @@ function img= inv_solve_abs_core( inv_model, data0);
 % In the following parameters, r_k is the current residual, r_{k-1} is the
 % previous iteration's residual. k is the iteration count.
 %
-% Parameters (inv_model.inv_solve.*):
+% Parameters denoted with a ** to the right of their default values are legacy
+% parameters, some of which existed under 'inv_model.parameters.*'.
+%
+% Parameters (inv_model.inv_solve_abs_core.*):
 %   verbose (show progress)                (default 4)
 %      0: quiet
 %    >=1: print iteration count
@@ -42,7 +45,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %   residual_func =             (default @GN_residual)
 %    NOTE: @meas_residual exists to maintain
 %    compatibility with some older code
-%   max_iterations                        (default 10)
+%   max_iterations                        (default 10)  **
 %   ntol (estimate of machine precision) (default eps)
 %   tol (stop iter if r_k < tol)           (default 0)
 %   dtol                              (default -0.01%)
@@ -50,8 +53,16 @@ function img= inv_solve_abs_core( inv_model, data0);
 %                 k >= dtol_iter
 %   dtol_iter                              (default 0)
 %    apply dtol stopping criteria if k >= dtol_iter
-%   min_value                           (default -inf)
-%   max_value                           (default +inf)
+%   min_value                           (default -inf)  **
+%   max_value                           (default +inf)  **
+%   line_optimize_func                (default <none>)  ** TODO
+%     [next,fmin,res]=f(org,dx,data0,opt);
+%     opt=line_optimize.* + objective_func
+%   line_optimize.perturb
+%                   (default line_search_args.perturb)  ** TODO
+%   update_func                         (default TODO)  ** TODO
+%     [img,opt]=f(org,next,dx,fmin,res,opt)
+%   do_starting_estimate                   (default 1)  ** TODO
 %   line_search_func       (default @line_search_onm2)
 %   line_search_dv_func      (default @update_dv_core)
 %   line_search_de_func      (default @update_de_core)
@@ -917,14 +928,43 @@ function residual = meas_residual(dv, de, W, hp2RtR)
 %     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
 %   end
 
+function imdl = deprecate_imdl_opt(imdl,opt)
+   if isfield(imdl, opt)
+      if isstruct(imdl.(opt))
+         disp(imdl)
+         disp(imdl.(opt))
+         warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_core.* as of 10-Apr-2015.']);
+
+         if ~isfield(imdl, 'inv_solve_abs_core')
+            imdl.inv_solve_abs_core = imdl.(opt);
+         else % we merge
+            % merge struct trick from:
+            %  http://stackoverflow.com/questions/38645
+            A = imdl.(opt);
+            B = imdl.inv_solve_abs_core;
+            M = [fieldnames(A)' fieldnames(B)'; struct2cell(A)' struct2cell(B)'];
+            try % assumes no collisions
+               imdl.inv_solve_abs_core=struct(M{:});
+            catch % okay, collisions - do unique to resolve them
+               [tmp, rows] = unique(M(1,:), 'last');
+               M=M(:,rows);
+               imdl.inv_solve_abs_core=struct(M{:});
+            end
+         end
+         imdl = rmfield(imdl, opt);
+      else
+         error(['unexpected inv_model.' opt ' where ' opt ' is not a struct... i do not know what to do']);
+      end
+   end
+
 function opt = parse_options(imdl)
+   % merge legacy options locations
+   imdl = deprecate_imdl_opt(imdl, 'parameters');
+   imdl = deprecate_imdl_opt(imdl, 'inv_solve');
+
    % for any general options
-   if isfield(imdl, 'inv_solve')
-      opt = imdl.inv_solve;
-% NOTE this is unecessary since there is deprecation code in
-% inv_solve to merge inv_solve and parameters fields
-%   elseif isfield(imdl, 'parameters')
-%      opt = imdl.parameters;
+   if isfield(imdl, 'inv_solve_abs_core')
+      opt = imdl.inv_solve_abs_core;
    else
       opt = struct;
    end
