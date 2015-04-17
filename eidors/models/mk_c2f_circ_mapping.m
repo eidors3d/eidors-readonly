@@ -185,13 +185,16 @@ function too_far = elems_too_far( mdl, xyr );
        too_far = (furthest_elem_node_dist - max_edge_len) > radius;
    else
        too_far = false(Ne,Nc);
-      for i = 1:Nc 
+       progress_msg('mk_c2f_circ_mapping: prepare models',0,Nc);
+       for i = 1:Nc
+          progress_msg(i,Nc);
           targets = repmat(xyr(1:mdl_dim(mdl),i),[1,num_nodes(mdl)])';
           dist = mdl.nodes - targets;
           dist = sqrt(sum(dist.^2,2));
           furthest_elem_node_dist =max(dist(mdl.elems),[],2);
           too_far(:,i) = (furthest_elem_node_dist - mdl.max_edge_len) > xyr(Nt,i);
-      end
+       end
+       progress_msg(Inf);
    end
   
    
@@ -222,7 +225,9 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
    %mapping = sparse( Ne, Nc );
    n_interp_min = 4;
    n_interp_max = 10;
+   progress_msg('mk_c2f_circ_mapping: calculate mapping',0,Nc);
    for i=1:Nc
+       progress_msg(i,Nc);
        good = ~too_far(:,i);
        if ~any(good), continue, end %point outside the mesh
        tmp.elems = mdl.elems(good,:);
@@ -239,6 +244,7 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
            eidors_msg(['mk_c2f_circ_mapping: Interpolation failed for point ' num2str(i)]);
        end
    end
+   progress_msg(Inf);
     end
    
    
