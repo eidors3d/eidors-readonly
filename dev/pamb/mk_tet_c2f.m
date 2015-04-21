@@ -30,12 +30,12 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    [intpts1, fface2redge, fface2intpt1, redge2intpt1] = ...
       edge2face_intersections(fmdl,rmdl,opt);
    progress_msg(sprintf('Found %d', size(intpts1,1)), Inf);
-   
+
    progress_msg('Find f_edge2c_face intersections...')
    [intpts2, rface2fedge, rface2intpt2, fedge2intpt2] = ...
       edge2face_intersections(rmdl,fmdl,opt);
    progress_msg(sprintf('Found %d', size(intpts2,1)), Inf);
-   
+
    pmopt.final_msg = 'none';
    progress_msg('Find edge2edge intersections...',-1,pmopt)
    [intpts3, fedge2redge, fedge2intpt3, redge2intpt3] = ...
@@ -179,18 +179,40 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
 %-------------------------------------------------------------------------%
 % Calculate intersection points between faces and edges    
 function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmdl,rmdl,opt)
-    
-   intpts = [];
-   T = []; E = []; I = [];
+   N_edges = size(rmdl.edges,1);
+   N_faces = size(fmdl.faces,1);
+   allocsz = max(N_edges,N_faces);
+   N_alloc = allocsz;
+   
+   intpts = zeros(N_edges,3);
+   T = zeros(N_edges,1);
+   E = zeros(N_edges,1);
+   I = zeros(N_edges,1);
   
    P1 = rmdl.nodes(rmdl.edges(:,1),:);
    P12 = P1 - rmdl.nodes(rmdl.edges(:,2),:);
-   N_edges = size(rmdl.edges,1);
+
    
    d = sum(fmdl.normals .* fmdl.nodes(fmdl.faces(:,1),:),2);
+      
+   mint = ceil(N_edges/100);
+   
+   % for point_in_triangle
+   v0 = fmdl.nodes(fmdl.faces(:,3),:) - fmdl.nodes(fmdl.faces(:,1),:);
+   v1 = fmdl.nodes(fmdl.faces(:,2),:) - fmdl.nodes(fmdl.faces(:,1),:);
+   dot00 = dot(v0, v0, 2);
+   dot01 = dot(v0, v1, 2);
+   % dot02 = dot(v0, v2, 2);
+   dot11 = dot(v1, v1, 2);
+   % dot12 = dot(v1, v2, 2);
+   invDenom = 1 ./ (dot00 .* dot11 - dot01 .* dot01);
+   
+   epsilon = opt.tol_edge2tri;
+   
+   N_pts = 0;
    for i = 1:N_edges
-      progress_msg(i/N_edges);
-
+      if mod(i,mint)==0, progress_msg(i/N_edges); end
+     
       num = -d + sum(bsxfun(@times,fmdl.normals,P1(i,:)),2);
       
       den = sum(bsxfun(@times,fmdl.normals,P12(i,:)),2);
@@ -203,17 +225,41 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
       if any(idx)
          id = find(idx);
          ipts = bsxfun(@minus, P1(i,:), bsxfun(@times, u(id), P12(i,:)));
-         t = point_in_triangle(ipts,fmdl.faces(id,:),fmdl.nodes,opt.tol_edge2tri,'match');
+         
+         if 1
+            % point in triangle test
+            v2 = bsxfun(@minus,ipts,fmdl.nodes(fmdl.faces(id,1),:));
+            dot02 = dot(v0(id,:),v2,2);
+            dot12 = dot(v1(id,:),v2,2);
+            % barycentric coordinates
+            u = (dot11(id) .* dot02 - dot01(id) .* dot12) .* invDenom(id);
+            v = (dot00(id) .* dot12 - dot01(id) .* dot02) .* invDenom(id);
+            t = u >= -epsilon & v >= -epsilon & (u+v-epsilon) <= 1; 
+         else
+            t = point_in_triangle(ipts,fmdl.faces(id,:),fmdl.nodes,epsilon,'match');
+         end
          if any(t)
             N = nnz(t);
-            intpts = [intpts; ipts(t,:)];
-            I = [I; (1:N)' + size(I,1)];
-            T = [T; id(t)];
-            E = [E; i*ones(N,1)];
+            if N_pts+N > N_alloc
+               N_alloc = N_alloc + allocsz;
+               intpts(N_alloc,3) = 0;
+               I(N_alloc) = 0;
+               T(N_alloc) = 0;
+               E(N_alloc) = 0;
+            end
+            idv = N_pts + (1:N);
+            intpts(idv,:) = ipts(t,:);
+            I(idv) = idv;
+            T(idv) = id(t);
+            E(idv) = i;
+            N_pts = N_pts + N;
          end
       end
    end
-   
+   T = T(1:N_pts);
+   E = E(1:N_pts);
+   I = I(1:N_pts);
+   intpts = intpts(1:N_pts,:);
    tri2edge = sparse(T,E,I,size(fmdl.faces,1),size(rmdl.edges,1));
    tri2intpt = sparse(T,I,ones(size(I)),size(fmdl.faces,1),size(I,1));
    edge2intpt  = sparse(E,I,ones(size(I)),size(rmdl.edges,1),size(I,1));
@@ -300,8 +346,8 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
-   do_small_test;
-%    do_realistic_test;
+%    do_small_test;
+   do_realistic_test;
 
 
 function do_small_test
@@ -317,7 +363,7 @@ function do_small_test
    tc2f = c2f * rmdl.coarse2fine;
    vc2f = mk_grid_c2f(fmdl,rmdl);
    unit_test_cmp('mk_tet_c2f v mk_grid_c2f', tc2f,vc2f, 1e-15);
-%    [x,y] = find(abs(tc2f - vc2f)>.01);
+%    [x,y] = find(abs(tc2f - vc2f)>.01);mk
 %    f = rmfield(fmdl,'boundary');
 %    r = rmfield(rmdl,'boundary');
 %    for i = 1:4
@@ -362,7 +408,7 @@ c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);
 t = toc;
 fprintf('Approximate: t=%f s\n',t);
 
-
+return
 tetvol = get_elem_volume(fmdl);
 opt = parse_opts(fmdl,rmdl);
 m = prepare_vox_mdl(rmdl,opt);
