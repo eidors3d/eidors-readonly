@@ -24,8 +24,14 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    DEBUG = eidors_debug('query','mk_tet_c2f');
    
    c2f = sparse(0,0);
+   progress_msg('Prepare fine model...');
    fmdl = prepare_tet_mdl(fmdl);
+   progress_msg(Inf);
+   
+   progress_msg('Prepare course model...');
    rmdl = prepare_tet_mdl(rmdl);
+   progress_msg(Inf);
+   
    progress_msg('Find c_edge2f_face intersections...')
    [intpts1, fface2redge, fface2intpt1, redge2intpt1] = ...
       edge2face_intersections(fmdl,rmdl,opt);
@@ -181,6 +187,23 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
 function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmdl,rmdl,opt)
    N_edges = size(rmdl.edges,1);
    N_faces = size(fmdl.faces,1);
+   
+   face_bb = zeros(N_faces,6);
+   face_bb(:,1) = min(reshape(fmdl.nodes(fmdl.faces,1),N_faces,3),[],2);
+   face_bb(:,2) = max(reshape(fmdl.nodes(fmdl.faces,1),N_faces,3),[],2);
+   face_bb(:,3) = min(reshape(fmdl.nodes(fmdl.faces,2),N_faces,3),[],2);
+   face_bb(:,4) = max(reshape(fmdl.nodes(fmdl.faces,2),N_faces,3),[],2);
+   face_bb(:,5) = min(reshape(fmdl.nodes(fmdl.faces,3),N_faces,3),[],2);
+   face_bb(:,6) = max(reshape(fmdl.nodes(fmdl.faces,3),N_faces,3),[],2);
+   
+   edge_bb = zeros(N_edges,6);
+   edge_bb(:,1) = min(reshape(rmdl.nodes(rmdl.edges,1),N_edges,2),[],2);
+   edge_bb(:,2) = max(reshape(rmdl.nodes(rmdl.edges,1),N_edges,2),[],2);
+   edge_bb(:,3) = min(reshape(rmdl.nodes(rmdl.edges,2),N_edges,2),[],2);
+   edge_bb(:,4) = max(reshape(rmdl.nodes(rmdl.edges,2),N_edges,2),[],2);
+   edge_bb(:,5) = min(reshape(rmdl.nodes(rmdl.edges,3),N_edges,2),[],2);
+   edge_bb(:,6) = max(reshape(rmdl.nodes(rmdl.edges,3),N_edges,2),[],2);
+   
    allocsz = max(N_edges,N_faces);
    N_alloc = allocsz;
    
@@ -209,13 +232,23 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
    
    epsilon = opt.tol_edge2tri;
    
+   excl =   bsxfun(@gt, face_bb(:,1), edge_bb(:,2)') ...
+          | bsxfun(@lt, face_bb(:,2), edge_bb(:,1)') ...
+          | bsxfun(@gt, face_bb(:,3), edge_bb(:,4)') ...
+          | bsxfun(@lt, face_bb(:,4), edge_bb(:,3)') ...
+          | bsxfun(@gt, face_bb(:,5), edge_bb(:,6)') ...
+          | bsxfun(@lt, face_bb(:,6), edge_bb(:,5)');
+   excl = ~excl;
    N_pts = 0;
    for i = 1:N_edges
       if mod(i,mint)==0, progress_msg(i/N_edges); end
      
-      num = -d + sum(bsxfun(@times,fmdl.normals,P1(i,:)),2);
+      fidx = excl(:,i);
+      if ~any(fidx), continue, end;
       
-      den = sum(bsxfun(@times,fmdl.normals,P12(i,:)),2);
+      num = -d(fidx) + sum(bsxfun(@times,fmdl.normals(fidx,:),P1(i,:)),2);
+      
+      den = sum(bsxfun(@times,fmdl.normals(fidx,:),P12(i,:)),2);
       
       u = num ./ den;
       
@@ -227,13 +260,15 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
          ipts = bsxfun(@minus, P1(i,:), bsxfun(@times, u(id), P12(i,:)));
          
          if 1
+            fcs = find(fidx);
+            fid = fcs(id);
             % point in triangle test
-            v2 = bsxfun(@minus,ipts,fmdl.nodes(fmdl.faces(id,1),:));
-            dot02 = dot(v0(id,:),v2,2);
-            dot12 = dot(v1(id,:),v2,2);
+            v2 = bsxfun(@minus,ipts,fmdl.nodes(fmdl.faces(fid,1),:));
+            dot02 = dot(v0(fid,:),v2,2);
+            dot12 = dot(v1(fid,:),v2,2);
             % barycentric coordinates
-            u = (dot11(id) .* dot02 - dot01(id) .* dot12) .* invDenom(id);
-            v = (dot00(id) .* dot12 - dot01(id) .* dot02) .* invDenom(id);
+            u = (dot11(fid) .* dot02 - dot01(fid) .* dot12) .* invDenom(fid);
+            v = (dot00(fid) .* dot12 - dot01(fid) .* dot02) .* invDenom(fid);
             t = u >= -epsilon & v >= -epsilon & (u+v-epsilon) <= 1; 
          else
             t = point_in_triangle(ipts,fmdl.faces(id,:),fmdl.nodes,epsilon,'match');
@@ -250,7 +285,7 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
             idv = N_pts + (1:N);
             intpts(idv,:) = ipts(t,:);
             I(idv) = idv;
-            T(idv) = id(t);
+            T(idv) = fid(t);
             E(idv) = i;
             N_pts = N_pts + N;
          end
@@ -262,9 +297,7 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
    intpts = intpts(1:N_pts,:);
    tri2edge = sparse(T,E,I,size(fmdl.faces,1),size(rmdl.edges,1));
    tri2intpt = sparse(T,I,ones(size(I)),size(fmdl.faces,1),size(I,1));
-   edge2intpt  = sparse(E,I,ones(size(I)),size(rmdl.edges,1),size(I,1));
-
-     
+   edge2intpt  = sparse(E,I,ones(size(I)),size(rmdl.edges,1),size(I,1));    
    
 %-------------------------------------------------------------------------%
 % Assign each rmdl node to the tet it is in (nodes on tet faces are counted
@@ -346,7 +379,7 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
-%    do_small_test;
+   do_small_test;
    do_realistic_test;
 
 
@@ -399,9 +432,11 @@ fprintf('Voxel: t=%f s\n',t);
 tic
 opt.save_memory = 0;
 c2f_b = mk_tet_c2f(fmdl, rmdl,opt);
-c2f_b = c2f_b * rmdl.coarse2fine;
 t = toc;
 fprintf('Tet: t=%f s\n',t);
+
+c2f_b = c2f_b * rmdl.coarse2fine;
+unit_test_cmp('mk_tet_c2f v mk_grid_c2f', c2f_b,c2f_a, 1e-5);
 
 tic
 c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);

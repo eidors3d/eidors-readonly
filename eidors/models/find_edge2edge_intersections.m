@@ -101,6 +101,23 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
     P3 = CN(CE(:,1),:);
     P4 = CN(CE(:,2),:);
     
+    C_bb = zeros(size(P3,1),6);
+    C_bb(:,[1 3 5]) = min(P3,P4);
+    C_bb(:,[2 4 6]) = max(P3,P4);
+    
+    F_bb = zeros(size(P1,1),6);
+    F_bb(:,[1 3 5]) = min(P1,P2);
+    F_bb(:,[2 4 6]) = max(P1,P2);
+    
+    
+    excl =   bsxfun(@gt, F_bb(:,1), C_bb(:,2)') ...
+           | bsxfun(@lt, F_bb(:,2), C_bb(:,1)') ...
+           | bsxfun(@gt, F_bb(:,3), C_bb(:,4)') ...
+           | bsxfun(@lt, F_bb(:,4), C_bb(:,3)') ...
+           | bsxfun(@gt, F_bb(:,5), C_bb(:,6)') ...
+           | bsxfun(@lt, F_bb(:,6), C_bb(:,5)');
+    excl = ~excl;
+    
     % these are too big to keep around
 %     p13.x = bsxfun(@minus, P1(:,1), P3(:,1)');
 %     p13.y = bsxfun(@minus, P1(:,2), P3(:,2)');
@@ -127,17 +144,21 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
     for  v = 1:size(CE,1)
         id = id+1;
         if mod(id,step)==0, progress_msg(id/todo); end
+        
+        fid = excl(:,v);
+        if ~any(fid), continue, end;
+        
         d1343 = 0; d4321 = 0;  d1321 = 0;
         for i = 1:3
-            p13 = P1(:,i) - P3(v,i);
+            p13 = P1(fid,i) - P3(v,i);
             d1343 = d1343 + p13*p43(v,i);
-            d4321 = d4321 + p21(:,i)*p43(v,i);
-            d1321 = d1321 + p13 .* p21(:,i);
+            d4321 = d4321 + p21(fid,i)*p43(v,i);
+            d1321 = d1321 + p13 .* p21(fid,i);
         end
         
         
         
-        denom = d2121 * d4343(v) - d4321.^2;
+        denom = d2121(fid) * d4343(v) - d4321.^2;
         % this is slow, and should be taken care of by mua < 1
 %         JNK(:,v) = JNK(:,v) | abs(denom)<eps;
         numer = d1343 .* d4321 - d1321 * d4343(v);
@@ -148,14 +169,14 @@ function [intpts, FE2CE, FE2pts, CE2pts] = edge2edge_intersections_serial(FE,FN,
 
         D = 0; % distance
         for i = 1:3
-            pa(:,i) = P1(:,i) + p21(:,i).*mua;
+            pa(fid,i) = P1(fid,i) + p21(fid,i).*mua;
             pb = P3(v,i) + p43(v,i) * mub;
-            D = D + (pa(:,i) - pb).^2;
+            D = D + (pa(fid,i) - pb).^2;
         end
 %         D = sqrt(D);
 %         D(JNK(:,v)) = Inf;
-        IN(:,v) = ((mua>0) + (mua<1) + (mub>0) + (mub<1) + (D<=epsilon)) == 5;
-        if any(IN(:,v))
+        IN(fid,v) = ((mua>0) + (mua<1) + (mub>0) + (mub<1) + (D<=epsilon)) == 5;
+        if any(IN(fid,v))
             intpts = [intpts; pa(IN(:,v),:)];
         end
     end
