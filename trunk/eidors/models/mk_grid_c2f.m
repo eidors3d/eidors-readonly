@@ -18,7 +18,7 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %      .tol_node2tet  - tolerance for determinant <= 0 in testing for
 %                       points inside tets. Default: eps
 %      .tol_edge2edge - maximum distance between "intersecting" edges
-%                       Default: 2*sqrt(3)*eps(a), where a is
+%                       Default: 6*sqrt(3)*eps(a), where a is
 %                       min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))
 %      .tol_edge2tri  - minimum value of a barycentric coordinate to 
 %                       decide a point is lying inside a triangle and not
@@ -234,10 +234,13 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     progress_msg(sprintf('Found %d',nnz(tet_in_vox)), Inf);
     
     
-    % tets and vox that intersect (excludes complete inclusion)
+    % tets and vox that intersect
     progress_msg('Find total vox v. tet intersections...');
     vox2intTet =   m.vox2face * (rec2tedge>0) * fmdl.edge2elem ...
-                 | m.vox2edge * (tri2vedge>0)' * fmdl.elem2face';
+                 | m.vox2edge * (tri2vedge>0)' * fmdl.elem2face' ...
+                 | m.vox2edge * tedge2vedge' * fmdl.edge2elem;
+    % exclude complete inclusion
+    vox2intTet = vox2intTet & ~vox_in_tet & ~tet_in_vox';
     progress_msg(sprintf('Found %d',nnz(vox2intTet)), Inf);
     
     catch err
@@ -309,6 +312,9 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 ctr = mean(pts);
                 pts = bsxfun(@minus,pts,ctr);
                 scale = max(abs(pts(:)));
+                if scale == 0 %happens when there's only one point
+                   continue
+                end
                 % scale largest coordinate to 1 (helps with precision)
                 pts = pts ./ scale;
                 % force thorough search for initinal simplex and 
@@ -332,7 +338,8 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                         % edge-edge intersections often appear to also
                         % cross faces, there doesn't seem to be a good
                         % specific way to catch that
-                        ok = ok | size(unique(pts,'rows'),1) < 4;
+                        u = uniquetol(pts*scale,eps,'ByRows',true,'DataScale', 1);
+                        ok = ok | size(u,1) < 4;
                 end
                 if ~ok
                     if DEBUG || eidors_debug('query','mk_grid_c2f:convhulln');
@@ -835,7 +842,7 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
         opt.tol_node2tet = eps; % * max(rmdl_rng,fmdl_rng)^3;
     end
     if ~isfield(opt, 'tol_edge2edge')
-        opt.tol_edge2edge = 2*sqrt(3)*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
+        opt.tol_edge2edge = 6*sqrt(3)*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
     end
     if ~isfield(opt, 'tol_edge2tri')
         opt.tol_edge2tri = eps; %1e-10
@@ -843,9 +850,9 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
     if ~isfield(opt, 'save_memory')
        opt.save_memory = 0;
     end
-    eidors_msg('@@@ node2tet  tolerance = %g', opt.tol_node2tet,2);
-    eidors_msg('@@@ edge2edge tolerance = %g', opt.tol_edge2edge,2);
-    eidors_msg('@@@ edge2tri  tolerance = %g', opt.tol_edge2tri,2);
+    eidors_msg('@@ node2tet  tolerance = %g', opt.tol_node2tet,2);
+    eidors_msg('@@ edge2edge tolerance = %g', opt.tol_edge2edge,2);
+    eidors_msg('@@ edge2tri  tolerance = %g', opt.tol_edge2tri,2);
 
 %-------------------------------------------------------------------------%
 % fprintf wrapper to use eidors log_level
@@ -1283,6 +1290,7 @@ xvec = [-1.5 -.5:.2:.5 1.5];
 yvec = [-1.6 -1:.2:1 1.6];
 zvec = 0:.25:2;
 rmdl = mk_grid_model([],xvec,yvec,zvec);
+
 tic
 opt.save_memory = 0;
 c2f_a = mk_grid_c2f(fmdl, rmdl,opt);
