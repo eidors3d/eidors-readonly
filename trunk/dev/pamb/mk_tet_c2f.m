@@ -1,5 +1,46 @@
 function [c2f] = mk_tet_c2f(fmdl, rmdl, opt)
-%MK_TET_C2F
+%MK_TET_C2F - calculate a coarse2fine mapping for two tet-based models.
+% C2F = MK_TET_C2F(FMDL,RMDL) returns in C2F the fraction of volume of
+% each element of the fine model FMDL contained in each element of
+% the coarse model RMDL.
+% Uses CONVHULLN to calculate the volume defined by a set of intersection
+% points between individual tet and vox elements.
+%
+% C2F = MK_TET_C2F(FMDL,RMDL,OPT) allows specifying options.
+% 
+% Inputs:
+%   FMDL - a (fine) EIDORS (tet-based) forward model
+%   RMDL - a (course) EIDORS (tet-based) forward model
+%   OPT  - an option structure with the following fields and defaults:
+%      .do_not_scale  - set to true to prevent scaling the models to unit
+%                       cube before any calculations, including thresholds.
+%                       Default: false
+%      .tol_node2tet  - tolerance for determinant <= 0 in testing for
+%                       points inside tets. Default: eps
+%      .tol_edge2edge - maximum distance between "intersecting" edges
+%                       Default: 6*sqrt(3)*eps(a), where a is
+%                       min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))
+%      .tol_edge2tri  - minimum value of a barycentric coordinate to 
+%                       decide a point is lying inside a triangle and not
+%                       on its edge. Default: eps
+%
+% NOTE that for grid-based models, such as returned by MK_GRID_MODEL or
+% MK_VOXEL_VOLUME, MK_GRID_C2F is much faster.
+%
+% Set eidors_msg 'log level' < 2 to supress output to command line.
+%
+% Examples:
+%     fmdl = ng_mk_cyl_models([2,2,.2],[],[]);
+%     rmdl = ng_mk_cyl_models([2,2],[],[]);
+%     c2f  = mk_tet_c2f(fmdl,rmdl);
+%     h = show_fem(fmdl); set(h,'LineWidth',0.1)
+%     hold on
+%     h = show_fem(rmdl); set(h,'EdgeColor','b','LineWidth',2);
+%     hold off
+%
+% See also MK_GRID_C2F, FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN
+%          MK_COARSE_FINE_MAPPING, POINT_IN_TRIANGLE, EIDORS_MSG
+
 
 % (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
 % License: GPL version 2 or 3
@@ -396,84 +437,31 @@ function do_small_test
    tc2f = c2f * rmdl.coarse2fine;
    vc2f = mk_grid_c2f(fmdl,rmdl);
    unit_test_cmp('mk_tet_c2f v mk_grid_c2f', tc2f,vc2f, 1e-15);
-%    [x,y] = find(abs(tc2f - vc2f)>.01);mk
-%    f = rmfield(fmdl,'boundary');
-%    r = rmfield(rmdl,'boundary');
-%    for i = 1:4
-%       f.elems = fmdl.elems(x(i),:);
-%       r.elems = rmdl.elems(logical(rmdl.coarse2fine(:,y(i))),:);
-%       eidors_debug on mk_tet_c2f
-%       eidors_cache off mk_tet_c2f
-%       j1 = mk_tet_c2f(f,r);
-%       eidors_debug off mk_tet_c2f
-%       eidors_cache on mk_tet_c2f
-% %       clf
-% %       h = show_fem(f);
-% %       set(h,'edgecolor','b');
-% %       hold on
-% %       show_fem(r);
-% %       pause
-%    end
-%    keyboard
 
 
 function do_realistic_test
-fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
-xvec = [-1.5 -.5:.2:.5 1.5];
-yvec = [-1.6 -1:.2:1 1.6];
-zvec = 0:.25:2;
-rmdl = mk_grid_model([],xvec,yvec,zvec);
-tic
-opt.save_memory = 0;
-c2f_a = mk_grid_c2f(fmdl, rmdl,opt);
-t = toc;
-fprintf('Voxel: t=%f s\n',t);
+   fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
+   xvec = [-1.5 -.5:.2:.5 1.5];
+   yvec = [-1.6 -1:.2:1 1.6];
+   zvec = 0:.25:2;
+   rmdl = mk_grid_model([],xvec,yvec,zvec);
+   tic
+   opt.save_memory = 0;
+   c2f_a = mk_grid_c2f(fmdl, rmdl,opt);
+   t = toc;
+   fprintf('Voxel: t=%f s\n',t);
 
-tic
-opt.save_memory = 0;
-c2f_b = mk_tet_c2f(fmdl, rmdl,opt);
-t = toc;
-fprintf('Tet: t=%f s\n',t);
+   tic
+   opt.save_memory = 0;
+   c2f_b = mk_tet_c2f(fmdl, rmdl,opt);
+   t = toc;
+   fprintf('Tet: t=%f s\n',t);
 
-c2f_b = c2f_b * rmdl.coarse2fine;
-unit_test_cmp('mk_tet_c2f v mk_grid_c2f', c2f_b,c2f_a, 1e-5);
+   c2f_b = c2f_b * rmdl.coarse2fine;
+   unit_test_cmp('mk_tet_c2f v mk_grid_c2f', c2f_b,c2f_a, 1e-5);
 
-tic
-c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);
-t = toc;
-fprintf('Approximate: t=%f s\n',t);
+   tic
+   c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);
+   t = toc;
+   fprintf('Approximate: t=%f s\n',t);
 
-return
-tetvol = get_elem_volume(fmdl);
-opt = parse_opts(fmdl,rmdl);
-m = prepare_vox_mdl(rmdl,opt);
-
-subplot(222)
-f2c_a = bsxfun(@times, c2f_a, tetvol);
-f2c_a = bsxfun(@rdivide,f2c_a', m.volume); 
-img = mk_image(rmdl,0);
-img.elem_data = f2c_a*ones(size(fmdl.elems,1),1);
-show_fem(img);
-
-subplot(223)
-f2c_b = bsxfun(@times, c2f_b, tetvol);
-f2c_b = bsxfun(@rdivide,f2c_b', m.volume); 
-img = mk_image(rmdl,0);
-img.elem_data = f2c_b*ones(size(fmdl.elems,1),1);
-show_fem(img);
-
-
-
-f2c_n = bsxfun(@times, c2f_n, tetvol);
-f2c_n = bsxfun(@rdivide,f2c_n', m.volume); 
-img = mk_image(rmdl,0);
-img.elem_data = f2c_n*ones(size(fmdl.elems,1),1);
-subplot(224)
-show_fem(img);
-subplot(221);
-h = show_fem(fmdl);
-set(h,'LineWidth',0.1)
-hold on
-h = show_fem(rmdl);
-set(h,'EdgeColor','b','LineWidth',2);
-hold off
