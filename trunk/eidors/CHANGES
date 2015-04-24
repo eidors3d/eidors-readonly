@@ -1,3 +1,4 @@
+2015-04-24: analytic c2f for tet models (mk_tet_c2f)
 2015-03-30: add Swisstom's LQ3 fie format support (thanks to Beat Mueller)
 2015-03-29: new background colour for 3.8
 2015-03-29: make caching consistent, add cache to inv_solve and fwd_solve

@@ -47,7 +47,7 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %     hold off
 %
 % See also MK_GRID_MODEL, FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN
-%          MK_COARSE_FINE_MAPPING, POINT_IN_TRIANGLE, EIDORS_MSG
+%     MK_TET_C2F, MK_COARSE_FINE_MAPPING, POINT_IN_TRIANGLE, EIDORS_MSG
 
 % (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
 % License: GPL version 2 or 3
