@@ -47,9 +47,21 @@ function [c2f] = mk_tet_c2f(fmdl, rmdl, opt)
 % $Id$
 
 % >> SWISSTOM CONTRIBUTION <<
+
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'), do_unit_test; return; end
 if nargin < 3
    opt = struct();
+end
+
+f_elems = size(fmdl.elems,1);
+r_elems = size(rmdl.elems,1);
+
+c2f = sparse(f_elems,r_elems);
+[fmdl,rmdl,fmdl_idx,rmdl_idx] = crop_models(fmdl,rmdl);
+
+if ~(any(fmdl_idx) && any(rmdl_idx))
+   eidors_msg('@@: models do not overlap, returning all-zeros');
+   return
 end
 
 [fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt);
@@ -59,7 +71,8 @@ opt = parse_opts(fmdl,rmdl, opt);
 
 copt.fstr = 'mk_tet_c2f';
 
-c2f = eidors_cache(@do_mk_tet_c2f,{fmdl,rmdl,opt},copt);
+c2f(fmdl_idx,rmdl_idx) = eidors_cache(@do_mk_tet_c2f,{fmdl,rmdl,opt},copt);
+
 
 function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    DEBUG = eidors_debug('query','mk_tet_c2f');
@@ -361,10 +374,11 @@ function rnode2tet = get_nodes_in_tets(fmdl,nodes, opt)
        bsxfun(@eq,nodes(:,3),fmdl.nodes(:,3)');
    progress_msg(.94);
    rnode2tet(any(ex,2),:) = 0;
+   rnode2tet = sparse(rnode2tet);
    progress_msg(1);
 
 %-------------------------------------------------------------------------%
-% Prepare matrices for the voxel model
+% Prepare model
 function fmdl = prepare_tet_mdl(fmdl)
    fmopt.elem2edge = true;
    fmopt.edge2elem = true;
@@ -395,6 +409,51 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
    fmdl.nodes = scale*fmdl.nodes;
    eidors_msg('@@ models scaled by %g', scale,2);
 
+%-------------------------------------------------------------------------%
+% Remove obviously non-overlapping parts of the models
+function [fmdl,rmdl,fmdl_idx,rmdl_idx] = crop_models(fmdl,rmdl)
+   f_min = min(fmdl.nodes);
+   f_max = max(fmdl.nodes);
+   r_min = min(rmdl.nodes);
+   r_max = max(rmdl.nodes);
+   
+   % nodes outside the bounding box of the other model
+   f_gt  = bsxfun(@gt, fmdl.nodes, r_max);
+   f_lt  = bsxfun(@lt, fmdl.nodes, r_min);
+   r_gt  = bsxfun(@gt, rmdl.nodes, f_max);
+   r_lt  = bsxfun(@lt, rmdl.nodes, f_min);
+   
+   % elems outside the bounding box of the other model
+   re_gt = any(reshape(all(reshape(r_gt(rmdl.elems',:),4,[])),[],3),2);
+   re_lt = any(reshape(all(reshape(r_lt(rmdl.elems',:),4,[])),[],3),2);
+   fe_gt = any(reshape(all(reshape(f_gt(fmdl.elems',:),4,[])),[],3),2);
+   fe_lt = any(reshape(all(reshape(f_lt(fmdl.elems',:),4,[])),[],3),2);
+   
+   % elems to keep
+   rmdl_idx = ~(re_gt | re_lt);
+   fmdl_idx = ~(fe_gt | fe_lt);
+   
+   % remove non-overlapping elems
+   rmdl.elems = rmdl.elems(rmdl_idx,:);
+   fmdl.elems = fmdl.elems(fmdl_idx,:);
+   
+   % remove unused nodes
+   [r_used_nodes,jnk,r_n] = unique(rmdl.elems(:));
+   [f_used_nodes,jnk,f_n] = unique(fmdl.elems(:));
+   
+   r_idx = 1:numel(r_used_nodes);
+   f_idx = 1:numel(f_used_nodes);
+   
+   rmdl.elems = reshape(r_idx(r_n),[],4);
+   fmdl.elems = reshape(f_idx(f_n),[],4);
+   
+   rmdl.nodes = rmdl.nodes(r_used_nodes,:);
+   fmdl.nodes = fmdl.nodes(f_used_nodes,:);
+   
+   % for the benefit of any (debug) plots later on
+   rmdl = rmfield(rmdl,'boundary');
+   fmdl = rmfield(fmdl,'boundary');
+    
 %-------------------------------------------------------------------------%
 % Parse option struct
  function opt = parse_opts(fmdl,rmdl, opt)
