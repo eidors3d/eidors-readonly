@@ -57,5 +57,7 @@ end
 
 
 function do_unit_test
-mdl = mk_common_model('b3t2r',[16,1]);
-RM = calc_TSVD_RM(mdl);
+   mdl = mk_common_model('b3t2r',[16,1]);
+   RM = calc_TSVD_RM(mdl);
+   J  = calc_jacobian(mk_image(mdl));
+   unit_test_cmp('RM size', size(RM), size(J'));
