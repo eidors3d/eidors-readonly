@@ -120,7 +120,7 @@ function do_unit_test
 
     vol = get_elem_volume(img.fwd_model);
     vt= sum(vol); va= sum(vol(img.elem_data ~=1));
-    rad = sqrt(va/vt) 
+    rad = sqrt(va/vt);
 
     I =  zeros(lv,1); I(1+[0,lv/N_elec]) = [-25,25]*lv/N_elec;
     vsi= analytic_2d_circle(I, [1, 0.1, 0.0, rad, 0]);
