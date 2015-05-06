@@ -35,6 +35,9 @@ function V = analytic_2d_circle(I, params)
 % 
 % plot([vi,vsi]);
 
+% TODO:
+% (aa May 2015) Works well for 16 electrodes, but not for 8,32
+
 if ischar(I) && strcmp(I, 'UNIT_TEST'), do_unit_test; return; end
 
 if ~all(abs(sum(I,1)) <1e-12); error('net I must be 0'); end
@@ -104,8 +107,9 @@ function [SM,ll2] = solve_matrix(ll, params)
    
 function do_unit_test
 
-    imdl= mk_common_model('c2c0',16);
-    img = calc_jacobian_bkgnd(imdl);
+    N_elec = 16;
+    imdl= mk_common_model('d2c0',N_elec);
+    img = mk_image(imdl);
     img.fwd_solve.get_all_meas = 1;
     img.elem_data(1:256)= 0.1;
     vi= fwd_solve(img);
@@ -116,10 +120,10 @@ function do_unit_test
 
     vol = get_elem_volume(img.fwd_model);
     vt= sum(vol); va= sum(vol(img.elem_data ~=1));
-    rad = sqrt(va/vt);
+    rad = sqrt(va/vt) 
 
-    I =  zeros(lv,1); I(1+[0,lv/16]) = [-25,25]*lv/16;
+    I =  zeros(lv,1); I(1+[0,lv/N_elec]) = [-25,25]*lv/N_elec;
     vsi= analytic_2d_circle(I, [1, 0.1, 0.0, rad, 0]);
 
     plot([vi,vsi]);
-
+    unit_test_cmp('16 elec compare', vi, vsi, 1);
