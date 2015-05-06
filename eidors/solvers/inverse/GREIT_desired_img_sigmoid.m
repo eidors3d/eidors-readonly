@@ -244,4 +244,5 @@ function do_unit_test
         img.elem_data= sol(:,i);
         show_3d_slices(img,xyzr(i,3),xyzr(i,2),xyzr(i,1));
     end
+    eidors_msg('UNIT_TEST: Showed %d images to verify',i,0);
 end
