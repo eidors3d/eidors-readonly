@@ -11,7 +11,7 @@ close F;
 
 open F, "> run_current.m" or die $!;
 print F "if ~exist('TEST'); TEST =0; end;\n";
-print F "TEST= TEST + 1; fprintf('TEST=%d\\n', TEST);\n";
+print F "TEST= TEST + 1;\n";
 print F "switch TEST\n"; my $i=1;
 foreach (sort keys %tuts) {
   print F "case $i; fn=\@$_;\n";
@@ -19,7 +19,8 @@ foreach (sort keys %tuts) {
 }
 print F "end;\n";
 print F "unit_test_cmp('RESET_COUNTER');\n";
-print F "feval(fn, 'UNIT_TEST');\n";
+print F "fprintf('TEST=%d fn=%s\\n', TEST, func2str(fn));\n";
+print F "eidors_cache clear; clf; feval(fn, 'UNIT_TEST');\n";
 print F "unit_test_cmp('SHOW_COUNTER',func2str(fn));\n";
 close F;
 
