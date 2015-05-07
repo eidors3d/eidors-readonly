@@ -343,6 +343,14 @@ DEFER TO 3.9
 
  - eidors_msg is too verbose. Example is: eidors_cache.m/cache_shorthand
 
+ - eidors_msg needs to be able to control verbosity based on which function it
+   is currently printing from; "help" claims this feature exists but doesn't
+   seem to work in practice
+   >> help eidors_msg
+     EIDORS_MSG('log_level', LVL, FNAME) sets a custom log_level for m-file
+   --> once per file log_level is working, inv_solve_abs_core and
+       line_search_onm2 need to be updated (AB)
+
  - test_3d_resistor:
    - make test_3d_resistor a function
    - add UNIT_TEST and use unit_test_cmp(), see test_2d_resistor
