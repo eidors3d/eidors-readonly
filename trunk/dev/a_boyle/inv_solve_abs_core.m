@@ -277,44 +277,29 @@ W  = init_meas_icov(inv_model, opt);
 
 % now get on with
 img0 = img;
-hp2RtR = 0; alpha = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
+hp2RtR = 0; alpha = 0; k = 0; sx = 0; r = 0; stop = 0; % general init
 residuals = zeros(opt.max_iterations,3); % for residuals plots
+dxp = 0; % previous step's slope was... nothing
+[dv, opt] = update_dv([], img, data0, N, opt);
+de = update_de([], img, img0, opt);
 if opt.verbose >= 5 % we only save the measurements at each iteration if we are being verbose
   dvall = ones(size(data0.meas,1),opt.max_iterations+1)*NaN;
 end
-dxp = 0; % previous step's slope was... nothing
-if opt.verbose > 1
-   fprintf('  iteration start up\n')
-end
 while 1
+  if opt.verbose > 1
+     if k == 0
+        fprintf('  iteration start up\n')
+     else
+        fprintf('  iteration %d\n', k)
+     end
+  end
+
   % calculate the Jacobian
   %  - Jacobian before RtR because it is needed for Noser prior
   [J, opt] = update_jacobian(img, dN, k+1, opt);
 
   % update RtR, if required (depends on prior)
   hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
-
-  % update change in element data from the prior de and
-  % the measurement error dv
-  [dv, opt] = update_dv(dv, img, data0, N, opt);
-  de = update_de(de, img, img0, opt);
-  if opt.verbose >= 5
-    dvall(:,k+1) = dv;
-    show_meas_err(dvall, data0, k+1, N, W, opt);
-  end
-
-  % now find the residual, quit if we're done
-  [stop, k, r] = update_residual(dv, de, W, hp2RtR, k, r, opt);
-  if stop
-     if stop == -1 % bad step: residual increased
-        img.elem_data = img.elem_data - alpha * sx; % undo the last step
-        k = k-1;
-     end
-     break;
-  end
-  if opt.verbose > 1
-     fprintf('  iteration %d\n', k)
-  end
 
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
@@ -332,16 +317,25 @@ while 1
   % x_n = img.elem_data
   % x_{n+1} = x_n + \alpha sx
   % img.elem_data = x_{n+1}
-  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, dv, opt);
-  if alpha == 0 && k == 1
-    error('first iteration failed to advance solution');
-  end
+  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, k, dv, opt);
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
   [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt);
 
-  if opt.verbose >= 4
-     show_fem_iter(k, img, inv_model, opt);
+  % update change in element data from the prior de and
+  % the measurement error dv
+  [dv, opt] = update_dv(dv, img, data0, N, opt);
+  de = update_de(de, img, img0, opt);
+  if opt.verbose >= 5
+    dvall(:,k+1) = dv;
+    show_meas_err(dvall, data0, k+1, N, W, opt);
+  end
+
+  % now find the residual, quit if we're done
+  [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt);
+  show_fem_iter(k, img, inv_model, stop, opt);
+  if stop
+     break;
   end
 end
 [img, opt] = strip_c2f_background(img, opt);
@@ -468,7 +462,7 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
 
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
-function [stop, k, r] = update_residual(dv, de, W, hp2RtR, k, r, opt)
+function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt)
   stop = 0;
   % update iteration count
   k = k+1;
@@ -527,6 +521,8 @@ function [stop, k, r] = update_residual(dv, de, W, hp2RtR, k, r, opt)
      if opt.verbose > 1
         fprintf('  terminated at iteration %d (bad step, returning previous iteration''s result)\n',k-1);
      end
+     img.elem_data = img.elem_data - alpha * sx; % undo the last step
+     k = k-1;
      stop = -1;
   elseif k > opt.max_iterations
      if opt.verbose > 1
@@ -864,13 +860,18 @@ function dN = dlog10v_dv(v,vh) % same as dlog10a_dv
 % -------------------------------------------------
 
 
-function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, dv, opt)
-     if(opt.verbose > 1)
-        try ls_str = func2str(opt.line_search_func);
-        catch ls_str = opt.line_search_func;
-        end
-        fprintf('    line search, alpha = %s\n', ls_str);
+function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, k, dv, opt)
+  if k == 0 % first iteration, just setting up, no line search happens
+     alpha = 0;
+     return;
+  end
+
+  if(opt.verbose > 1)
+     try ls_str = func2str(opt.line_search_func);
+     catch ls_str = opt.line_search_func;
      end
+     fprintf('    line search, alpha = %s\n', ls_str);
+  end
 
   % some sanity checks before we feed this information to the line search
   err_if_inf_or_nan(sx, 'sx (pre-line search)');
@@ -892,6 +893,10 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
 
   if(opt.verbose > 1)
      fprintf('      selected alpha=%0.3g\n', alpha);
+  end
+
+  if (alpha == 0) && (k == 1)
+    error('first iteration failed to advance solution');
   end
 
 function err_if_inf_or_nan(x, str);
@@ -990,7 +995,10 @@ function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    dv = map_meas(dv, N, 'voltage', opt.meas_working);
    err_if_inf_or_nan(dv, 'dv out');
 
-function show_fem_iter(k, img, inv_model, opt)
+function show_fem_iter(k, img, inv_model, stop, opt)
+  if (opt.verbose < 4) || (stop == -1)
+     return; % if verbosity is low OR we're dropping the last iteration because it was bad, do nothing
+  end
   if opt.verbose > 1
      disp('    show_fem()');
   end
