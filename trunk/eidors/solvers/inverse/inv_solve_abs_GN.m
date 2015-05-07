@@ -1,206 +1,96 @@
-function img= inv_solve_abs_GN( inv_model, data0);
-%INV_SOLVE_ABS_GN Absolute solver using Gauss Newton approximation
-% img= inv_solve_abs_GN( inv_model, data0)
-% img        => output image (or vector of images)
-% inv_model  => inverse model struct
-% data0      => EIT data
+function img= inv_solve_abs_GN( inv_model, data1);
+%function img= inv_solve_abs_GN( inv_model, data1);
+% INV_SOLVE_ABS_GN
+% This function calls INV_SOLVE_ABS_CORE to find a Gauss-Newton
+% iterative solution.
 %
-% Parameters:
-%   inv_model.parameters.max_iterations = N_max iter            (default 1)
-%   inv_model.parameters.show_iterations  (print status lines)  (default 0)
-% Parameters: (will override parameters field)
-%   Maximum Iterations:
-%    inv_model.inv_solve_abs_GN.max_iterations
-%   Line Optimize function (more details below):
-%    inv_model.inv_solve_abs_GN.line_optimize_func (default @line_optimize)
-%   Line Optimize parameters:
-%    inv_model.inv_solve_abs_GN.line_optimize.perturb            (optional)
-%   Limits on solution:
-%    inv_model.inv_solve_abs_GN.min_value                    (default -Inf)
-%    inv_model.inv_solve_abs_GN.max_value                    (default +Inf)
-%   Update function after each iteration (more details below):
-%    inv_model.inv_solve_abs_GN.update_func                      (optional)
-%   Perform initial estimate (more details below):
-%    inv_model.inv_solve_abs_GN.do_starting_estimate            (default 1)
+% img = inv_solve_abs_GN( inv_model, data1 )
+%   img        => output image data (or vector of images)
+%   inv_model  => inverse model struct
+%   data1      => measurements
 %
-%   Signature for line_optimize_func
-%    [next fmin res] = my_line_optimize(org, dx, data0, opt)
-%   where:
-%    next - the image to use in the next iteration
-%    fmin - step size along dx that minimizes the objective function
-%    res  - the value of the objective function for the next image
-%    org  - the current estimate
-%    dx   - the current derivative (step direction)
-%    opt  - the options structure specified in 
-%           inv_model.inv_solve_abs_GN.line_optimize (can be used to pass
-%           additonal arguments, stores the GN objective function in 
-%           opt.objective_func)
-%   Note that changing the line optimize function can substantially alter
-%   the behavior of the solver, especially if a different objective
-%   function is used.
+% Example:
+%  imdl=mk_common_model('a2c');
+%  imdl.reconst_type='absolute'; % ***
+%  imdl.solve=@inv_solve_abs_GN; % ***
+%  fimg=mk_image(imdl,1);
+%  fimg.elem_data(5:10)=1.1;
+%  vi=fwd_solve(fimg);
+%  img=inv_solve(imdl,vi); % ***
+%  show_fem(img,1);
 %
-%   Signature for update_func:
-%    [img opt] = my_update_func(org, next, dx, fmin,res, opt)
-%   where:
-%    org  - the current estimate
-%    next - the proposed next estimate as returned by line_optimize
-%    dx   - the current derivative (step direction)
-%    fmin - the step size chosen by line_optimize
-%    res  - the residual on "next" estimate
-%    opt  - the option structure as described above
-%    img  - the estimate to be used at next iteration
+% See INV_SOLVE_ABS_CORE for arguments, options and parameters.
 %
-% By default, the starting estimate will be based on
-% inv_model.jacobian_bkgnd, but scaled such as to best fit data0. 
-% Set opt.do_initial_estimate to 0 to use inv_model.jacobian_bkgnd without
-% modification. 
-% The initial estimate serves as a prior for the reconstruction, deviation
-% from which is penalized.
-%
-% See also: LINE_OPTIMIZE
-
-% (C) 2010-2013 Andy Adler & Bartłomiej Grychtol.
+% (C) 2014 Alistair Boyle
 % License: GPL version 2 or version 3
 % $Id$
 
+%--------------------------
+% UNIT_TEST?
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
 
-opt = parse_options(inv_model);
-if opt.do_starting_estimate
-    img = initial_estimate( inv_model, data0 );
-else
-    img = calc_jacobian_bkgnd( inv_model );
+%if isfield(inv_model, 'inv_solve_abs_core') && isfield(inv_model, 'inv_solve_abs_GN')
+%   error('merging inv_solve_abs_core and inv_solve_abs_GN options is broken, please use only one method');
+%end
+%% merge legacy options locations
+inv_model = deprecate_imdl_opt(inv_model, 'parameters');
+inv_model = deprecate_imdl_opt(inv_model, 'inv_solve');
+inv_model = deprecate_imdl_opt(inv_model, 'inv_solve_abs_core');
+
+% inv_model.inv_solve_abs_GN -> inv_solve_abs_core
+if isfield(inv_model, 'inv_solve_abs_GN')
+   if isfield(inv_model, 'inv_solve_abs_core')
+      error('inv_model.inv_solve_abs_GN replaces inv_model.inv_solve_abs_core, parameters will be lost');
+   end
+   inv_model.inv_solve_abs_core = inv_model.inv_solve_abs_GN;
+   inv_model = rmfield(inv_model, 'inv_solve_abs_GN');
 end
 
-hp  = calc_hyperparameter( inv_model );
-RtR = calc_RtR_prior( inv_model );
-W   = calc_meas_icov( inv_model );
-hp2RtR= hp^2*RtR;
+img = inv_solve_abs_core(inv_model, data1);
 
-img0 = data_mapper(img);
-opt.line_optimize.meas_icov = calc_meas_icov( inv_model);
-for i = 1:opt.max_iter
-  vsim = fwd_solve( img ); 
-  dv = calc_difference_data( vsim , data0, img.fwd_model);
-  J = calc_jacobian( img );
-
-  % create elem_data
-  tmp = data_mapper(img);
-  RDx = hp2RtR*(img0.elem_data - tmp.elem_data);
-  dx = (J'*W*J + hp2RtR)\(J'*dv + RDx);
-  
-  opt.line_optimize.hp2RtR = hp2RtR;
-  [next, fmin, res] = ...
-      feval(opt.line_optimize_func,img, dx, data0, opt.line_optimize);
-
-  if opt.show_iterations
-     eidors_msg('#%02d residual=%.3g', i, res, 1);
-  end
-  
-  [img, opt] = update_step(img, next, dx, fmin, res, opt);
-  
-  inv_model.jacobian_backgnd = img;
-  RtR = calc_RtR_prior( inv_model );
-  hp2RtR = hp*RtR;
+if isfield(img, 'inv_solve_abs_core')
+  img.inv_solve_abs_GN = img.inv_solve_abs_core;
+  img=rmfield(img, 'inv_solve_abs_core');
 end
 
-
-function val = GN_objective_function(data0, data, img0, img, opt)
-   dv = calc_difference_data(data, data0, img0.fwd_model);
-   if ~isfield(img0, 'elem_data'), img0 = data_mapper(img0); end
-   if ~isfield(img, 'elem_data'), img = data_mapper(img); end
-   de = img0.elem_data - img.elem_data;
-   val = 0.5*( dv'*opt.meas_icov*dv + de' * opt.hp2RtR * de);
-
-
-function img = initial_estimate( imdl, data )
-   img = calc_jacobian_bkgnd( imdl );
-   vs = fwd_solve(img);
-   
-   if isstruct(data)
-      data = data.meas;
-   else
-     meas_select = [];
-     try
-        meas_select = imdl.fwd_model.meas_select;
-     end
-     if length(data) == length(meas_select)
-        data = data(meas_select);
-     end
+function imdl = deprecate_imdl_opt(imdl,opt)
+   if ~isfield(imdl, opt)
+      return;
+   end
+   if ~isstruct(imdl.(opt))
+      error(['unexpected inv_model.' opt ' where ' opt ' is not a struct... i do not know what to do']);
    end
 
-   pf = polyfit(data,vs.meas,1);
+   % warn on anything but inv_model.inv_solve.calc_solution_error
+   Af = fieldnames(imdl.(opt));
+   if ~strcmp(opt, 'inv_solve') || (length(Af(:)) ~= 1) || ~strcmp(Af(:),'calc_solution_error')
+      disp(imdl)
+      disp(imdl.(opt))
+      warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_GN.* as of 30-Apr-2014.']);
+   end
 
-   % create elem_data
-   img = data_mapper(img);
-   
-   if isfield(img.fwd_model,'coarse2fine');
-      % TODO: the whole coarse2fine needs work here.
-      %   what happens if c2f doesn't cover the whole region
-      
-      % TODO: the two cases are very different. c2f case should match other
-      nc = size(img.fwd_model.coarse2fine,2);
-      img.elem_data = mean(img.elem_data)*ones(nc,1)*pf(1);
-   else
-      img.elem_data = img.elem_data*pf(1);
-   end
-   
-   % remove elem_data
-   img = data_mapper(img,1);
- 
-function [img opt] = update_step(org, next, dx, fmin,res, opt)
-   if isfield(opt, 'update_func')
-      [img opt] = feval(opt.update_func,org,next,dx,fmin,res,opt);
-   else
-      img = next;
-   end
-   
-   
-function opt = parse_options(imdl)
-   try
-       % for any general options
-       opt = imdl.parameters;
-   end
-   
-   opt.max_iter = 1;
-
-   try
-      opt.max_iter = imdl.parameters.max_iterations;
-   end
-   
-   if isfield(imdl, 'inv_solve_abs_GN');
-      fnames = fieldnames(imdl.inv_solve_abs_GN);
-      for i = 1:length(fnames)
-          opt.(fnames{i}) = imdl.inv_solve_abs_GN.(fnames{i});
+   if ~isfield(imdl, 'inv_solve_abs_GN')
+      imdl.inv_solve_abs_GN = imdl.(opt);
+   else % we merge
+      % merge struct trick from:
+      %  http://stackoverflow.com/questions/38645
+      for i = fieldnames(imdl.(opt))'
+         imdl.inv_solve_abs_GN.(i{1})=imdl.(opt).(i{1});
       end
    end
-   
-   if ~isfield(opt,'line_optimize_func')
-      opt.line_optimize_func = @line_optimize;
-   end
-   
-   if ~isfield(opt,'line_optimize')
-      opt.line_optimize = [];
-   end
+   imdl = rmfield(imdl, opt);
 
-   if ~isfield(opt,'show_iterations')
-      opt.show_iterations = 0;
-   end
-
-   if isfield(opt, 'min_value')
-      opt.line_optimize.min_value = opt.min_value;
-   end
-   
-   if isfield(opt, 'max_value')
-      opt.line_optimize.max_value = opt.max_value;
-   end
-   
-   if ~isfield(opt, 'line_optimize') || ...
-      ~isfield(opt.line_optimize, 'objective_func')
-    % not sure this should be allowed to change
-      opt.line_optimize.objective_func = @GN_objective_function;       
-   end
-   
-   if ~isfield(opt,'do_starting_estimate')
-       opt.do_starting_estimate = 1;
-   end
-
+function pass = do_unit_test()
+   pass=1;
+   imdl=mk_common_model('a2c');
+   imdl.reconst_type='absolute'; % ***
+   imdl.solve=@inv_solve_abs_GN; % ***
+   fimg=mk_image(imdl,1);
+   fimg.elem_data(5:10)=1.1;
+   vi=fwd_solve(fimg);
+   img=inv_solve(imdl,vi); % ***
+   clf; subplot(121); show_fem(fimg,1); title('forward model');
+        subplot(122); show_fem(img,1);  title('reconstruction');
+   try unit_test_cmp('fwd vs. reconst', fimg.elem_data, img.elem_data, 0.08);
+   catch me; disp(me.message); pass=0; end
+%   pass = pass & inv_solve_abs_core('UNIT_TEST', 'inv_solve_abs_GN');
