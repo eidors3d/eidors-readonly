@@ -289,7 +289,7 @@ end
 while 1
   % calculate the Jacobian
   %  - Jacobian before RtR because it is needed for Noser prior
-  J = update_jacobian(img, dN, k+1, opt);
+  [J, opt] = update_jacobian(img, dN, k+1, opt);
 
   % update RtR, if required (depends on prior)
   hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
@@ -730,10 +730,20 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      end
    end
 
-function J = update_jacobian(img, dN, k, opt)
+% opt is only updated for the fwd_solve count
+function [J, opt] = update_jacobian(img, dN, k, opt)
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
    imgb = feval(opt.update_img_func, imgb, opt);
+   % if the electrodes/geometry moved, we need to recalculate dN if it depends on vh
+   % note that only apparent_resisitivity needs vh; all others depend on data0 measurements
+   if any(strcmp(map_img_base_types(img), 'movement')) && any(strcmp(opt.meas_working, 'apparent_resistivity'))
+      imgh = map_img(imgb, 'conductivity'); % drop everything but conductivity
+      imgh.elem_data = imgh.elem_data*0 +1; % conductivity = 1
+      vh = fwd_solve(imgh); vh = vh.meas;
+      dN = da_dv(1,vh); % = diag(1/vh)
+      opt.fwd_solutions = opt.fwd_solutions +1;
+   end
    ee = 0; % element select, init
    pp = fwd_model_parameters(imgb.fwd_model);
    J = zeros(pp.n_meas,sum([opt.elem_len{:}]));
@@ -870,8 +880,6 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
      error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
 
-  % scale 'sx' based on unit conversions, so we don't waste time line searching results that are 'inf'
-
   [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2RtR, dv, opt);
   if ~isempty(imgo)
      img = imgo;
@@ -963,6 +971,14 @@ function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    img = map_img(img, map_img_base_types(img));
    img = feval(opt.update_img_func, img, opt);
    img = map_img(img, 'conductivity'); % drop everything but conductivity
+   % if the electrodes/geometry moved, we need to recalculate N if it's being used
+   if any(any(N ~= 1)) && any(strcmp(map_img_base_types(img), 'movement'))
+      % note: data0 is mapped back to 'voltage' before N is modified
+      imgh=img; imgh.elem_data = imgh.elem_data*0 +1; % conductivity = 1
+      vh = fwd_solve(imgh); vh = vh.meas;
+      N = spdiag(1./vh);
+      opt.fwd_solutions = opt.fwd_solutions +1;
+   end
    data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
    dv = calc_difference_data(data, data0, img.fwd_model);
