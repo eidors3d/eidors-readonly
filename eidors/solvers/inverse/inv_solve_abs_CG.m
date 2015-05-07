@@ -54,7 +54,7 @@ end
 img = inv_solve_abs_core(inv_model, data1);
 
 if isfield(img, 'inv_solve_abs_core')
-  img.inv_solve_abs_GN = img.inv_solve_abs_core;
+  img.inv_solve_abs_CG = img.inv_solve_abs_core;
   img=rmfield(img, 'inv_solve_abs_core');
 end
 
@@ -128,16 +128,16 @@ function imdl = deprecate_imdl_opt(imdl,opt)
    if ~strcmp(opt, 'inv_solve') || (length(Af(:)) ~= 1) || ~strcmp(Af(:),'calc_solution_error')
       disp(imdl)
       disp(imdl.(opt))
-      warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_GN.* as of 30-Apr-2014.']);
+      warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_CG.* as of 30-Apr-2014.']);
    end
 
-   if ~isfield(imdl, 'inv_solve_abs_GN')
-      imdl.inv_solve_abs_GN = imdl.(opt);
+   if ~isfield(imdl, 'inv_solve_abs_CG')
+      imdl.inv_solve_abs_CG = imdl.(opt);
    else % we merge
       % merge struct trick from:
       %  http://stackoverflow.com/questions/38645
       for i = fieldnames(imdl.(opt))'
-         imdl.inv_solve_abs_GN.(i{1})=imdl.(opt).(i{1});
+         imdl.inv_solve_abs_CG.(i{1})=imdl.(opt).(i{1});
       end
    end
    imdl = rmfield(imdl, opt);
