@@ -105,7 +105,18 @@ Absolute solvers as a function of iteration
 <img src="rpi_data06c.png">
 <img src="rpi_data06e.png">
 <br><i> Figure:</i>
-Absolute solver at iterations (from left to right): 1, 3, 5
+Gauss-Newton Absolute solver on conductivity at iterations (from left to right): 1, 3, 5
+</center>
+
+<pre>
+<!--#include virtual="rpi_data07.m" -->
+</pre>
+<center>
+<img src="rpi_data07a.png">
+<img src="rpi_data07c.png">
+<img src="rpi_data07e.png">
+<br><i> Figure:</i>
+Conjugate-Gradient Absolute solver on log conductivity at iterations (from left to right): 1, 3, 5
 </center>
 
 </td></tr></table>
