@@ -35,10 +35,11 @@ if opt.verbose > 1
    fprintf(' [%d]     \t', 1:length(perturb));
    fprintf('\n');
    fprintf('      alpha = ');
-   fprintf(' %.3g\t', perturb);
+   fprintf(' %8.3g\t', perturb);
    fprintf('\n');
    fprintf('              ');
 end
+keyboard
 mlist= ones(size(perturb))*NaN; % init
 for i = 1:length(perturb)
    if (i == 1) && (~isempty(dv0))
@@ -70,7 +71,7 @@ for i = 1:length(perturb)
       end
    end
    if opt.verbose > 1
-      fprintf(' %.3g\t',mlist(i));
+      fprintf(' %8.3g\t',mlist(i));
    end
 end
 if opt.verbose > 1
@@ -329,6 +330,9 @@ legend('Location', 'EastOutside');
 m = [mlist meas_err meas_err1];
 mi=find(isnan(m) | isinf(m)); m(mi) = []; % remove bad values
 mr = range(m);
+if mr < max(m)*1e-14
+   mr = 1e-14;
+end
 axis([perturb(2) perturb(end) min(m)-mr*0.2 max(m)+mr*0.2]);
 xlabel('step size \alpha'); %,'fontsize',20,'fontname','Times')
 ylabel('normalized residuals'); %,'fontsize',20,'fontname','Times')
