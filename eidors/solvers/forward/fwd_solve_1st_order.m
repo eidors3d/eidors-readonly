@@ -109,6 +109,9 @@ function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
    vh = fwd_solve_1st_order(img);
 plot(vh.meas);
+   unit_test_cmp('b2c2 TEST', vh.meas(1:5), ...
+  [ 0.959567140078593; 0.422175237237900; 0.252450963869202; ...
+    0.180376116490602; 0.143799778367518], 1e-8);
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
 plot(vh.volt);
