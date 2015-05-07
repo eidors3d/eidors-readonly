@@ -136,3 +136,6 @@ function ok= match( ok, pat1, pat2, descr)
     end
   end
   ok = okl && ok;
+
+function x=range(y)
+x=max(y)-min(y);

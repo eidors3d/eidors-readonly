@@ -1961,6 +1961,9 @@ function b = map_meas(b, N, in, out)
    end
    err_if_inf_or_nan(b, 'map_meas-post');
 
+function x=range(y)
+x=max(y)-min(y);
+
 function pass = do_unit_test(solver)
 if nargin == 0
   solver = 'inv_solve_abs_core';
