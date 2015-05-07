@@ -4,17 +4,16 @@ function  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, 
 % (C) 2013 Alistair Boyle
 % License: GPL version 2 or version 3
 
+perturb = calc_perturb(imgk, dx, opt);
+
 if nargin < 11
   retry = 0;
 end
-perturb= sort(opt.line_search_args.perturb);
+
 if nargin < 12
   pf_max = length(perturb)-2;
 end
 
-if opt.verbose > 1
-   fprintf('     ');
-end
 % fwd_solve is the most expensive part generally, count how many we do
 if ~isfield(opt, 'fwd_solutions')
    opt.fwd_solutions = 0;
@@ -22,53 +21,59 @@ end
 x = imgk.elem_data;
 
 if(perturb(1) ~= 0)
-  error('line_search_o2() expects first perturbation (inv_model.parameters.line_search.perturb) to be alpha=0');
+  error('first perturbation min(inv_model.inv_solve_abs_{GN,CG,core}.line_search.perturb) expects alpha=0');
 end
+
 % Compute the forward model for each perturbation step
 img = imgk;
 % mlist is our search result for each alpha value, perturb(i)
 %  -- NaN: initiailized but not calculated
 %  -- -Inf: should not occur we have code that converts calculated NaNs and -Inf to +Inf
 %  -- +Inf: calculated value was bad, ignore it
+if opt.verbose > 1
+   fprintf('      i     = ');
+   fprintf(' [%d]     \t', 1:length(perturb));
+   fprintf('\n');
+   fprintf('      alpha = ');
+   fprintf(' %.3g\t', perturb);
+   fprintf('\n');
+   fprintf('              ');
+end
 mlist= ones(size(perturb))*NaN; % init
-idx_list = [ 1 length(perturb):-1:2 ];
-for i = idx_list;
-    if opt.verbose > 1
-       fprintf(' [%d]=%0.3g', i, perturb(i));
-    end
-    if (i == 1) && (~isempty(dv0))
+for i = 1:length(perturb)
+   if (i == 1) && (~isempty(dv0))
       % don't bother simulating when alpha=0 (we already have the measurements)
       dv = dv0; % @ alpha=0 from the previous line search iteration
-    else
+   else
       % fwd_solve and then calculate measurement error (dv)
       img.elem_data = x + perturb(i)*dx;
       [dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
-    end
-    % build de, the change in elem_data from the initial guess
-    de = feval(opt.line_search_de_func, img, img1, opt);
-    % we only calculate a new residual if the input data is "sane"
-    if any(isnan(dv) | isinf(dv))
-       warning(sprintf('%d of %d elements in dv are NaN or Inf', ...
-                       length(dv), ...
-                       length(find(isnan(dv) | isinf(dv)))));
-       mlist(i) = +Inf;
-    elseif any(isnan(de) | isinf(de))
-       warning(sprintf('%d of %d elements in de are NaN or Inf', ...
-                       length(de), ...
-                       length(find(isnan(de) | isinf(de)))));
-       mlist(i) = +Inf;
-    else
-       % calculate the residual
-       mlist(i) = feval(opt.residual_func, dv, de, W, hp2RtR);
-       if any(isnan(mlist(i)) | isinf(mlist(i)))
-          mlist(i) = +Inf; % NaN or Inf are converted to Inf, since we use NaN to indicate initialized but not calculated
-       end
-    end
+   end
+   % build de, the change in elem_data from the initial guess
+   de = feval(opt.line_search_de_func, img, img1, opt);
+   % we only calculate a new residual if the input data is "sane"
+   if any(isnan(dv) | isinf(dv))
+      warning(sprintf('%d of %d elements in dv are NaN or Inf', ...
+                      length(dv), ...
+                      length(find(isnan(dv) | isinf(dv)))));
+      mlist(i) = +Inf;
+   elseif any(isnan(de) | isinf(de))
+      warning(sprintf('%d of %d elements in de are NaN or Inf', ...
+                      length(de), ...
+                      length(find(isnan(de) | isinf(de)))));
+      mlist(i) = +Inf;
+   else
+      % calculate the residual
+      mlist(i) = feval(opt.residual_func, dv, de, W, hp2RtR);
+      if any(isnan(mlist(i)) | isinf(mlist(i)))
+         mlist(i) = +Inf; % NaN or Inf are converted to Inf, since we use NaN to indicate initialized but not calculated
+      end
+   end
+   if opt.verbose > 1
+      fprintf(' %.3g\t',mlist(i));
+   end
 end
 if opt.verbose > 1
-   fprintf('\n');
-   fprintf('      fitting data\n      ');
-   fprintf('  %0.3g',mlist);
    fprintf('\n');
 end
 % drop bad values
@@ -150,8 +155,14 @@ end
 
 % must create plots before changing the perturb values
 if opt.line_search_args.plot
-  figure;
-  plot_line_optimize(perturb, mlist, alpha, meas_err, alpha1, meas_err1, FF, pf);
+   clf;
+   plot_line_optimize(perturb, mlist, alpha, meas_err, alpha1, meas_err1, FF, pf);
+   if isfield(opt,'fig_prefix') % TODO assign from base options if set
+      k=1; % TODO iteration count; TODO retry count
+      print('-dpdf',sprintf('%s-ls%d-retry%d',opt.fig_prefix,k,retry));
+      print('-dpng',sprintf('%s-ls%d-retry%d',opt.fig_prefix,k,retry));
+      saveas(gcf,sprintf('%s-ls%d-retry%d.fig',opt.fig_prefix,k,retry));
+   end
 end
 
 % update perturbations
@@ -161,8 +172,7 @@ if meas_err >= mlist(1)
        fprintf('      reducing perturbations: bad step\n');
     end
     % try a smaller step next time (10x smaller)
-    % this keeps the log-space distance between sample points but
-    % re-centres around the most recent alpha
+    % this keeps the log-space distance between sample points
     perturb = perturb/10;
 else % good step
     if opt.verbose > 1
@@ -187,6 +197,120 @@ if alpha == 0 && retry < 5
   [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hp2RtR, dv0, opt, retry+1, pf_max);
 end
 
+%%%
+% calculate search values for \alpha
+% 1. sort in ascending order
+% 2. scale to a range within finite precision (don't waste time searching when
+%    results will be inf/nan)
+function perturb = calc_perturb(imgk, dx_in, opt)
+if opt.verbose > 1
+   disp('      line search (finite precision) limits');
+end
+% scale
+% When log numbers are converted to base numbers, they frequently result in Inf
+% when dx is large.  We scale 'perturb' here, so that we are line searching
+% within a numerically stable region for our finite precision numbers.
+%   log(realmax) = 709.7827
+% log10(realmax) = 308.2547
+% - canonicalize the img data, so we don't have to deal with default forms
+if ~isfield(imgk, 'current_params')
+   imgk.current_params = {'conductivity'};
+end
+if ~isfield(imgk, 'params_sel')
+   imgk.params_sel = {[1:length(imgk.elem_data)]};
+end
+if ~iscell(imgk.current_params)
+   imgk.current_params = {imgk.current_params};
+end
+if ~iscell(imgk.params_sel)
+   imgk.params_sel = {imgk.params_sel};
+end
+% determine the maximum alpha
+max_alpha = +inf;
+min_alpha = +inf;
+for i=1:length(imgk.current_params)
+   p = imgk.current_params{i};
+   s = imgk.params_sel{i};
+   x = imgk.elem_data(s);
+   dx = dx_in(s);
+   if strcmp(p(1:4), 'log_')
+      lp = log(realmax/2); % largest positive floating point number (double): Limit_Positive
+      ln = log(realmin/2); % largest negative floating point number (double): Limit Negative
+      % TODO possibly for log10 space, we should have an ln = -inf --> exp(-900) = 0
+   elseif strcmp(p(1:6), 'log10_')
+      lp = log10(realmax/2); % largest positive floating point number (double): Limit_Positive
+      ln = log10(realmin/2); % largest negative floating point number (double): Limit Negative
+      % TODO possibly for log10 space, we should have an ln = -inf --> 10.^-900 = 0
+   else
+      lp = +realmax/2;
+      ln = -realmax/2;
+   end
+   % lower limit on \alpha prior to x = x + alpha*dx --> +/-inf; % (explodes)
+   %   \alpha_min = ((max or min) - x) / \delta_x
+   au=(lp-x)./dx; au(dx<=0)=NaN; au(isnan(au))=+inf; au=min(au);
+   a_max = au;
+   au=(ln-x)./dx; au(dx>=0)=NaN; au(isnan(au))=+inf; au=min(au);
+   if (au < a_max)
+      a_max = au;
+   end
+   % lower limit on \alpha prior to x == x + alpha*dx; % (no change)
+   %   \alpha_min = \epsilon / \delta_x
+   al=eps(x)./abs(dx); al(isinf(al))=NaN; al(isnan(al))=lp; al=min(al);
+   if isnan(al)
+      a_min = 0;
+   else
+      a_min = al;
+   end
+   if opt.verbose > 1
+      fprintf('        %s: alpha range = %0.3g -- %0.3g\n', p, a_min, a_max);
+   end
+   % adjust global limits
+   if a_max < max_alpha
+      max_alpha = a_max;
+   end
+   if a_min < min_alpha
+      min_alpha = a_min;
+   end
+end
+
+% sort
+p=sort(opt.line_search_args.perturb);
+% scale
+if (p(end) > max_alpha) || (p(2) < min_alpha)
+   p(p<realmin/2) = [];
+   p=log10(p); ap=log10(max_alpha); an=log10(min_alpha);
+   if range(p) >  ap-an
+      p=p*(ap-an)/range(p);
+   end
+   if p(end) > ap
+      p=p-(max(p)-ap);
+   elseif p(1) < an
+      p=p+(an-min(p));
+   end
+   p=[0 10.^p];
+   if opt.verbose > 1
+      fprintf('        alpha (before) = ');
+      fprintf('%0.3g ', sort(opt.line_search_args.perturb));
+      fprintf('\n');
+      fprintf('        alpha (after)  = ');
+      fprintf('%0.3g ', p);
+      fprintf('\n');
+   end
+else
+   if opt.verbose > 1
+      fprintf('        alpha (unchanged) = ');
+      fprintf('%0.3g ', p);
+      fprintf('\n');
+   end
+end
+perturb=p;
+
+
+%%% plot the line optimization results
+% 1. search locations
+% 2. line fit
+% 3. selected minima and test point result
+% 4. selected \alpha
 function plot_line_optimize(perturb, mlist, alpha, meas_err, alpha1, meas_err1, FF, pf)
 semilogx(perturb(2:end),mlist(2:end),'xk', 'MarkerSize',10);
 hold on;
@@ -211,4 +335,4 @@ ylabel('normalized residuals'); %,'fontsize',20,'fontname','Times')
 title({sprintf('best alpha = %1.2e',alpha), ...
        sprintf('norm w/o step = %0.4e',mlist(1))}); %,'fontsize',30,'fontname','Times')
 %set(gca,'fontsize',20,'fontname','Times');
-drawnow; pause(0.5);
+drawnow;
