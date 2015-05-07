@@ -39,7 +39,6 @@ if opt.verbose > 1
    fprintf('\n');
    fprintf('              ');
 end
-keyboard
 mlist= ones(size(perturb))*NaN; % init
 for i = 1:length(perturb)
    if (i == 1) && (~isempty(dv0))
@@ -226,6 +225,11 @@ end
 if ~iscell(imgk.params_sel)
    imgk.params_sel = {imgk.params_sel};
 end
+
+if isfield(imgk, 'inv_model') && isfield(imgk.inv_model, 'fwd_model')
+   md = max(range(imgk.inv_model.fwd_model.nodes)); % model range (coordinates)
+end
+
 % determine the maximum alpha
 max_alpha = +inf;
 min_alpha = +inf;
@@ -234,17 +238,29 @@ for i=1:length(imgk.current_params)
    s = imgk.params_sel{i};
    x = imgk.elem_data(s);
    dx = dx_in(s);
+   % TODO these could be based on the limits provided as args to inv_solve_abs_GN, instead they are hardcoded here...
+   is_mvmt = (length(p) >= 8) && strcmp(p(end-7:end),'movement');
    if strcmp(p(1:4), 'log_')
       lp = log(realmax/2); % largest positive floating point number (double): Limit_Positive
-      ln = log(realmin/2); % largest negative floating point number (double): Limit Negative
-      % TODO possibly for log10 space, we should have an ln = -inf --> exp(-900) = 0
+      ln = -inf; % or = log(realmin/2); % largest negative floating point number (double): Limit Negative
+      % for log space, we should have an ln = -inf --> exp(-900) = 0
+      if is_mvmt
+         lp = log(md);
+      end
    elseif strcmp(p(1:6), 'log10_')
       lp = log10(realmax/2); % largest positive floating point number (double): Limit_Positive
-      ln = log10(realmin/2); % largest negative floating point number (double): Limit Negative
-      % TODO possibly for log10 space, we should have an ln = -inf --> 10.^-900 = 0
+      ln = -inf; % or = log10(realmin/2); % largest negative floating point number (double): Limit Negative
+      % for log10 space, we should have an ln = -inf --> 10.^-900 = 0
+      if is_mvmt
+         lp = log10(md);
+      end
    else
       lp = +realmax/2;
       ln = -realmax/2;
+      if is_mvmt
+         lp = +md;
+         lp = -md;
+      end
    end
    % lower limit on \alpha prior to x = x + alpha*dx --> +/-inf; % (explodes)
    %   \alpha_min = ((max or min) - x) / \delta_x
@@ -256,7 +272,13 @@ for i=1:length(imgk.current_params)
    end
    % lower limit on \alpha prior to x == x + alpha*dx; % (no change)
    %   \alpha_min = \epsilon / \delta_x
-   al=eps(x)./abs(dx); al(isinf(al))=NaN; al(isnan(al))=lp; al=min(al);
+   if is_mvmt
+      al=1e-3./abs(dx); % don't care about movement less than 1mm
+      % TODO configurable? 'reconstruction tolerance'?
+   else
+      al=eps(x)./abs(dx);
+   end
+   al(isinf(al))=NaN; al(isnan(al))=realmax; al=min(al);
    if isnan(al)
       a_min = 0;
    else
