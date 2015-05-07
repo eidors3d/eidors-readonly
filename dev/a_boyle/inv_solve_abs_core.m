@@ -929,33 +929,31 @@ function residual = meas_residual(dv, de, W, hp2RtR)
 %   end
 
 function imdl = deprecate_imdl_opt(imdl,opt)
-   if isfield(imdl, opt)
-      if isstruct(imdl.(opt))
-         disp(imdl)
-         disp(imdl.(opt))
-         warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_core.* as of 10-Apr-2015.']);
+   if ~isfield(imdl, opt)
+      return;
+   end
+   if ~isstruct(imdl.(opt))
+      error(['unexpected inv_model.' opt ' where ' opt ' is not a struct... i do not know what to do']);
+   end
 
-         if ~isfield(imdl, 'inv_solve_abs_core')
-            imdl.inv_solve_abs_core = imdl.(opt);
-         else % we merge
-            % merge struct trick from:
-            %  http://stackoverflow.com/questions/38645
-            A = imdl.(opt);
-            B = imdl.inv_solve_abs_core;
-            M = [fieldnames(A)' fieldnames(B)'; struct2cell(A)' struct2cell(B)'];
-            try % assumes no collisions
-               imdl.inv_solve_abs_core=struct(M{:});
-            catch % okay, collisions - do unique to resolve them
-               [tmp, rows] = unique(M(1,:), 'last');
-               M=M(:,rows);
-               imdl.inv_solve_abs_core=struct(M{:});
-            end
-         end
-         imdl = rmfield(imdl, opt);
-      else
-         error(['unexpected inv_model.' opt ' where ' opt ' is not a struct... i do not know what to do']);
+   % warn on anything but inv_model.inv_solve.calc_solution_error
+   Af = fieldnames(imdl.(opt));
+   if ~strcmp(opt, 'inv_solve') || (length(Af(:)) ~= 1) || ~strcmp(Af(:),'calc_solution_error')
+      disp(imdl)
+      disp(imdl.(opt))
+      warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_core.* as of 30-Apr-2014.']);
+   end
+
+   if ~isfield(imdl, 'inv_solve_abs_core')
+      imdl.inv_solve_abs_core = imdl.(opt);
+   else % we merge
+      % merge struct trick from:
+      %  http://stackoverflow.com/questions/38645
+      for i = fieldnames(imdl.(opt))'
+         imdl.inv_solve_abs_core.(i{1})=imdl.(opt).(i{1});
       end
    end
+   imdl = rmfield(imdl, opt);
 
 function opt = parse_options(imdl)
    % merge legacy options locations
