@@ -116,7 +116,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    'log10_'. Conversions are handled internally.
 %    Scaling factors are applied to the Jacobian
 %    (calculated in units of 'conductivity') as
-%    appropriate, see calc_jacobian_scaling_func.
+%    appropriate.
 %    If elem_working == elem_output, then no
 %    conversions take place.
 %    For multiple types, use cell array.
@@ -129,15 +129,6 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    If meas_input == meas_working no conversions take
 %    place. The normalization factor 'N' is calculated
 %    if 'apparent_resistivity' is used.
-%   calc_jacobian_scaling_func           (default ...)
-%    See elem_working for defaults. This is used to
-%    apply the chain rule to a Jacobian calculated for
-%    conductivity. If the Jacobian in use is not the
-%    default, a scaling function is required.
-%   normalize_data_func
-%    (default  @calc_normalization_apparent_resistivity)
-%    dv = N*(data-data0) where N is provided by this
-%    function
 %   update_img_func             (default: pass-through)
 %    Called prior to calc_jacobian and update_dv.
 %    Elements are converted to their "base types"
@@ -211,15 +202,6 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    S - to be used to scale the Jacobian
 %    x - current img.elem_data in units of 'conductivity'
 %
-%   Signature for  normalize_data_func
-%    N = f(fmdl)
-%   where
-%    N    - the normalization factor
-%    fmdl - the forward model, used to estimate the N
-%    when voltage to apparent_resistivity is required
-%    This function can be re-purposed for scaling
-%    measurement data in other ways.
-%
 %   Signature for  update_img_func
 %    img2 = f(img1, opt)
 %   where
@@ -274,10 +256,6 @@ img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 % insert the prior data
 img = init_elem_data(img, opt);
 
-% precalculate some of our matrices if required
-W  = init_meas_icov(inv_model, opt);
-N = init_normalization(inv_model.fwd_model, opt);
-
 % map data and measurements to working types
 %  convert elem_data
 img = map_img(img, opt.elem_working);
@@ -289,6 +267,10 @@ if ~isstruct(data0)
    data0.type = 'data';
 end
 data0.current_params = opt.meas_input;
+
+% precalculate some of our matrices if required
+W  = init_meas_icov(inv_model, opt);
+[N, dN] = init_normalization(inv_model.fwd_model, data0, opt);
 
 % now get on with
 img0 = img;
@@ -304,7 +286,7 @@ end
 while 1
   % calculate the Jacobian
   %  - Jacobian before RtR because it is needed for Noser prior
-  J = update_jacobian(img, N, opt);
+  J = update_jacobian(img, dN, opt);
 
   % update RtR, if required (depends on prior)
   hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
@@ -433,23 +415,49 @@ function W = init_meas_icov(inv_model, opt)
    end
    err_if_inf_or_nan(W, 'init_meas_icov');
 
-function N = init_normalization(fmdl, opt)
+function [N, dN] = init_normalization(fmdl, data0, opt)
    % precalculate the normalization of the data if required (apparent resistivity)
    N = 1;
-   if opt.normalize_data
-      if opt.verbose > 1
-         disp('  calc measurement normalization matrix N');
-      end
-      N = feval(opt.normalize_data_func, fmdl);
+   dN = 1;
+   vh1.meas = 1;
+   if ~ischar(opt.meas_input) || ~ischar(opt.meas_working)
+      error('expected strings for meas_input and meas_working');
    end
-   err_if_inf_or_nan(N, 'init_normalization');
-
-% default opt.normalize_data_func
-% if working measurements are apparent_resistivity & input is voltage
-function N = calc_normalization_apparent_resistivity(fmdl)
-  img1 = mk_image(fmdl,1);
-  vh1  = fwd_solve(img1);
-  N    = spdiag(1./vh1.meas);
+   go = any(strcmp({opt.meas_input, opt.meas_working},'apparent_resistivity'));
+   go = go || any(strcmp({opt.meas_input, opt.meas_working},'log_apparent_resistivity'));
+   go = go || any(strcmp({opt.meas_input, opt.meas_working},'log10_apparent_resistivity'));
+   if go
+      if opt.verbose > 1
+         disp('  calc measurement normalization matrix N (apparent_resistivity <-> voltage conversions)');
+      end
+      % calculate geometric factor for apparent_resitivity conversions
+      img1 = mk_image(fmdl,1);
+      vh1  = fwd_solve(img1);
+      N    = spdiag(1./vh1.meas);
+      err_if_inf_or_nan(N,  'init_normalization: N');
+   end
+   if opt.verbose > 1
+      disp(['  calc Jacobian normalization matrix dN (voltage -> ' opt.meas_working ')']);
+   end
+   % calculate the normalization factor for the Jacobian
+   data0 = map_meas_struct(data0, N, 'voltage'); % to voltage
+   switch opt.meas_working
+      case 'apparent_resistivity'
+         dN = da_dv(data0.meas, vh1.meas);
+      case 'log_apparent_resistivity'
+         dN = dloga_dv(data0.meas, vh1.meas);
+      case 'log10_apparent_resistivity'
+         dN = dlog10a_dv(data0.meas, vh1.meas);
+      case 'voltage'
+         dN = dv_dv(data0.meas, vh1.meas);
+      case 'log_voltage'
+         dN = dlogv_dv(data0.meas, vh1.meas);
+      case 'log10_voltage'
+         dN = dlog10v_dv(data0.meas, vh1.meas);
+      otherwise
+         error('hmm');
+   end
+   err_if_inf_or_nan(dN, 'init_normalization: dN');
 
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
@@ -676,7 +684,7 @@ function plot_svd(J, W, hp2RtR, k)
      set(h,'LineStyle','-.'); set(h,'LineWidth',2);
    set(gca,'YMinorTick','on', 'YMinorGrid', 'on', 'YGrid', 'on');
 %   print('-dpng',sprintf('results/manual-movement-svd%d.png',k));
- 
+
 
 % TODO this function is one giant HACK around broken RtR generation with c2f matrices
 function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
@@ -693,7 +701,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      end
    end
 
-function J = update_jacobian(img, N, opt)
+function J = update_jacobian(img, dN, opt)
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
    imgb = feval(opt.update_img_func, imgb, opt);
@@ -723,7 +731,7 @@ function J = update_jacobian(img, N, opt)
      end
      imgt.fwd_model.jacobian = opt.jacobian{i};
      Jn = calc_jacobian( imgt ); % unscaled natural units (i.e. conductivity)
-     J(:,es:ee) = N * Jn * S; % scaled and normalized
+     J(:,es:ee) = dN * Jn * S; % scaled and normalized
      if opt.verbose > 1
         tmp = zeros(1,size(J,2));
         tmp(es:ee) = 1;
@@ -739,7 +747,7 @@ function J = update_jacobian(img, N, opt)
            axes('units', 'normalized', 'position', [ 0.13 0.62-y/2 0.8 0.3 ]);
            imagesc(D);
            if y == 0; ylabel('meas (1)'); xlabel(['elem (' strrep(base_types{i},'_','\_') ')']);
-           else       ylabel('meas (N)'); xlabel(['elem (' strrep(opt.elem_working{i},'_','\_') ')']);
+           else       ylabel('meas (dN)'); xlabel(['elem (' strrep(opt.elem_working{i},'_','\_') ')']);
            end
            os = get(gca, 'Position'); c=colorbar('southoutside'); % colorbar start...
            set(gca, 'Position', os); % fix STUPID colorbar resizing
@@ -750,7 +758,7 @@ function J = update_jacobian(img, N, opt)
            axes('units', 'normalized', 'position', [ 0.13 0.92-y/2 0.8 0.05 ]);
            bar(sum(D,1)); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
         end
-        drawnow; pause(0.5);
+        drawnow;
      end
    end
 
@@ -765,29 +773,50 @@ function J = update_jacobian(img, N, opt)
 % ---------- = ------- , ---------- = x ln(b)
 %     d x      x ln(b)   d log_b(x)
 function S = dx_dlogx(x);
-   S = diag(x);
+   S = spdiag(x);
 function S = dx_dlog10x(x);
-   S = diag(x) * log(10);
-% resistivity
-% dx      d x   -1
+   S = spdiag(x * log(10));
+% resistivity 'y'
+% d x     d x   -1
 % ----- = --- = ---, y = 1/x --> -(x^2)
 % d 1/x   d y   y^2
 function S = dx_dy(x);
-   S = diag(-(x.^2));
+   S = spdiag(-(x.^2));
 % then build the log versions of conductivity by combining chain rule products
 function S = dx_dlogy(x);
 %   S = dx_dy(x) * dy_dlogy(x);
 %     = -(x^2) * 1/x = -x
-   S = diag(-x);
+   S = spdiag(-x);
 function S = dx_dlog10y(x);
 %   S = dx_dy(x) * dy_dlog10y(x);
 %     = -(x^2) * 1/(ln(10) x) = -x / ln(10)
-   S = diag(-x/log(10));
+   S = spdiag(-x/log(10));
 % ... some renaming to make things understandable above: x = 1/y
 %function S = dy_dlogy(x);
 %   S = dx_dlogx(1./x);
 %function S = dy_dlog10y(x);
 %   S = dx_dlog10x(1./x);
+% -------------------------------------------------
+% apparent_resistivity 'a' versus voltage 'x'
+% d a    1  d v    1         v
+% --- = --- --- = --- ; a = ---
+% d v    vh d v    vh        vh
+% log_apparent_resistivity
+% d loga   d loga d a    1   1     vh  1     1
+% ------ = ------ --- = --- --- = --- --- = ---
+% d v       d a   d v    a   vh    v   vh    v
+function dN = da_dv(v,vh)
+   dN = spdiag(1./vh); % N == dN for apparent_resistivity
+function dN = dloga_dv(v,vh)
+   dN = spdiag(1./v);
+function dN = dlog10a_dv(v,vh)
+   dN = spdiag( 1./(v * log(10)) );
+function dN = dv_dv(v,vh)
+   dN = 1;
+function dN = dlogv_dv(v,vh) % same as dloga_dv
+   dN = dloga_dv(v,vh);
+function dN = dlog10v_dv(v,vh) % same as dlog10a_dv
+   dN = dlog10a_dv(v, vh);
 % -------------------------------------------------
 
 
@@ -1222,10 +1251,10 @@ function opt = parse_options(imdl)
       opt.elem_output = {'conductivity'};
    end
    if ~isfield(opt, 'meas_input')
-      opt.meas_input = {'voltage'};
+      opt.meas_input = 'voltage';
    end
    if ~isfield(opt, 'meas_working')
-      opt.meas_working = {'voltage'};
+      opt.meas_working = 'voltage';
    end
    % if the user didn't put these into cell arrays, do
    % so here so there is less error checking later in
@@ -1436,20 +1465,10 @@ function opt = parse_options(imdl)
              opt.calc_jacobian_scaling_func{i} = @dx_dlogy;   % S = f(x)
           case 'log10_inv'
              opt.calc_jacobian_scaling_func{i} = @dx_dlog10y; % S = f(x)
-           end
-        end
-   end
-
-   % input handling -> conversion of measurements (data0)
-   if ~isfield(opt, 'normalize_data_func') % how do we normalize data? use this function
-      if any(strcmp({opt.meas_input, opt.meas_working}, 'apparent_resistivity'))
-         opt.normalize_data_func = @calc_normalization_apparent_resistivity; % N = f(fmdl)
-      end
-   end
-   if isfield(opt, 'normalize_data_func')
-      opt.normalize_data = 1;
-   else
-      opt.normalize_data = 0;
+          otherwise
+             error('oops');
+       end
+     end
    end
 
    if ~isfield(opt, 'update_img_func')
@@ -2028,7 +2047,7 @@ e1 = c2f \ img1.elem_data; % noisy and unstable... but its a crude check
 e3 = img3.elem_data;
 err = abs((e1 - e3) ./ e1);
 err(abs(e1) < 20) = 0;
-err_thres = 0.40;
+err_thres = 0.55;
 if any(err > err_thres) % maximum 15% error
   ni = find(err > err_thres);
   fprintf('TEST:  img1 != img3 --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
