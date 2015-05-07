@@ -27,7 +27,7 @@ function out = eidors_debug(command, fstr)
 
 
 
-if ischar(command) && strcmp(command, 'UNIT_TEST'), do_unit_test; end
+if ischar(command) && strcmp(command, 'UNIT_TEST'), do_unit_test;return; end
 
 global eidors_objects;
 
@@ -73,7 +73,7 @@ eidors_debug off eidors_debug_test1
 test
 eidors_debug off all
 test
-% expected output:
-% TEST1
-% TEST2
-% TEST2
+fprintf('expected output:\n[%s]\n[%s]\n[%s]\n',  ...
+  'TEST1', ...
+  'TEST2', ...
+  'TEST2');
