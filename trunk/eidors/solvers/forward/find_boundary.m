@@ -67,7 +67,6 @@ function x = isunique(a);
    x=ismember(a,u(n==1));
 
 function do_unit_test
-ok=1;
 
 %2D Test:  
 mdl = mk_common_model('c2c',16);
@@ -75,7 +74,7 @@ bdy = find_boundary(mdl.fwd_model.elems);
 bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
 
-ok= match(bdy,bdyc,ok,'2D test');
+unit_test_cmp('2D test', bdy, bdyc);
 
 %3D Test:  
 mdl = mk_common_model('n3r2',[16,2]);
@@ -83,7 +82,7 @@ bdy = find_boundary(mdl.fwd_model.elems);
 bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
 
-ok= match(bdy,bdyc,ok,'3D test n3r2');
+unit_test_cmp( '3D test n3r2', bdy,bdyc);
 
 %3D Test:  
 mdl = mk_common_model('a3cr',16);
@@ -91,7 +90,7 @@ bdy = find_boundary(mdl.fwd_model.elems);
 bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
 
-ok= match(bdy,bdyc,ok,'3D test a3c2');
+unit_test_cmp('3D test a3c2', bdy, bdyc);
 
 %3D Test:  
 mdl = mk_common_model('b3cr',16);
@@ -99,7 +98,7 @@ bdy = find_boundary(mdl.fwd_model.elems);
 bdy = sort_boundary(bdy);
 bdyc= sort_boundary(mdl.fwd_model.boundary);
 
-ok= match(bdy,bdyc,ok,'3D test b3c2');
+unit_test_cmp('3D test b3c2', bdy, bdyc);
 
 simp = [  10 190; ...
          182 183; ...
@@ -112,21 +111,10 @@ simp = [  10 190; ...
          188 189; ...
          189 190];
 [bdy, idx] = find_boundary(simp);
-ok= match(bdy,[10 11],ok,'1D bdy');
-ok= match(idx,[1 5],ok,'1D bdy');
+unit_test_cmp('1D bdy', bdy,[10;11]);
+unit_test_cmp('1D bdy', idx,[1;5]);
 
 function bdy= sort_boundary(bdy)
    bdy = sort(bdy,2);
    bdy = sortrows(bdy);
-
-function ok= match( pat1, pat2, ok, descr)
-    ok =  all(pat1(:) == pat2(:));
-    fprintf('find_bounday_test: ok=%d\n',ok);
-
-% function ok= match( pat1, pat2, ok, descr)
-%    if ~all(pat1(:) == pat2(:))
-%       ok=0;
-%       eidors_msg('find_bounday_test: fail %s',descr,1);
-%    end
-
 
