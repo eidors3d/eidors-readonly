@@ -38,6 +38,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    >=5: plot line search per iteration
 %   plot_residuals                         (default 0)
 %    plot residuals without verbose output
+%   fig_prefix                       (default: <none>)
+%    figure file prefix; figures not saved if <none>
 %   fwd_solutions                          (default 0)
 %    0: ignore
 %    1: count fwd_solve(), generally the most
@@ -251,6 +253,7 @@ if isfield(inv_model, 'jacobian_bkgnd')
 end
 inv_model.jacobian_bkgnd.value = 1;
 img = mk_image( inv_model );
+img.inv_model = inv_model; % stash the inverse model
 img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 
 % insert the prior data
@@ -275,7 +278,7 @@ W  = init_meas_icov(inv_model, opt);
 % now get on with
 img0 = img;
 hp2RtR = 0; alpha = 0; k = 0; dv = []; de = []; sx = 0; r = 0; stop = 0; % general init
-residuals = zeros(opt.max_iterations,3); fig_r = []; % for residuals plots
+residuals = zeros(opt.max_iterations,3); % for residuals plots
 if opt.verbose >= 5 % we only save the measurements at each iteration if we are being verbose
   dvall = ones(size(data0.meas,1),opt.max_iterations+1)*NaN;
 end
@@ -286,7 +289,7 @@ end
 while 1
   % calculate the Jacobian
   %  - Jacobian before RtR because it is needed for Noser prior
-  J = update_jacobian(img, dN, opt);
+  J = update_jacobian(img, dN, k+1, opt);
 
   % update RtR, if required (depends on prior)
   hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
@@ -297,11 +300,11 @@ while 1
   de = update_de(de, img, img0, opt);
   if opt.verbose >= 5
     dvall(:,k+1) = dv;
-    show_meas_err(dvall, data0, k, N, W);
+    show_meas_err(dvall, data0, k+1, N, W, opt);
   end
 
   % now find the residual, quit if we're done
-  [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, opt);
+  [stop, k, r] = update_residual(dv, de, W, hp2RtR, k, r, opt);
   if stop
      if stop == -1 % bad step: residual increased
         img.elem_data = img.elem_data - alpha * sx; % undo the last step
@@ -322,10 +325,9 @@ while 1
   sx = update_sx(dx, beta, sx, opt);
   dxp = dx; % saved for next iteration if using beta
 
-  % TODO handle plotting to a set of figures & printing these plots
-  if opt.verbose >= 1 % TODO
-     clf; plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
-  end
+  % plot SVD of Jacobian (before and after regularization)
+  plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
+
   % line search for alpha, leaving the final selection as img
   % x_n = img.elem_data
   % x_{n+1} = x_n + \alpha sx
@@ -374,11 +376,16 @@ if opt.return_working_variables
 end
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
 
-function show_meas_err(dvall, data0, k, N, W)
-  figure;
-  subplot(311); bar(dvall); ylabel('dv');
-  subplot(312); bar(dvall(:,k+1)); ylabel('dv_k');
-  subplot(313); bar(N*dvall(:,k+1)); ylabel('N*dv_k');
+function show_meas_err(dvall, data0, k, N, W, opt)
+   clf;
+   subplot(211); bar(dvall(:,k)); ylabel(sprintf('dv_k [%s]',opt.meas_working)); xlabel('meas #'); title(sprintf('iter %d',k));
+   subplot(212); bar(map_meas(dvall(:,k),N,opt.meas_working, 'voltage')); ylabel('dv_k [V]'); xlabel('meas #'); title('');
+   drawnow;
+   if isfield(opt,'fig_prefix')
+      print('-dpdf',sprintf('%s-meas_err%d',opt.fig_prefix,k));
+      print('-dpng',sprintf('%s-meas_err%d',opt.fig_prefix,k));
+      saveas(gcf,sprintf('%s-meas_err%d.fig',opt.fig_prefix,k));
+   end
 
 function img = init_elem_data(img, opt)
   if opt.verbose > 1
@@ -423,12 +430,12 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
    if ~ischar(opt.meas_input) || ~ischar(opt.meas_working)
       error('expected strings for meas_input and meas_working');
    end
-   go = any(strcmp({opt.meas_input, opt.meas_working},'apparent_resistivity'));
+   go =       any(strcmp({opt.meas_input, opt.meas_working},'apparent_resistivity'));
    go = go || any(strcmp({opt.meas_input, opt.meas_working},'log_apparent_resistivity'));
    go = go || any(strcmp({opt.meas_input, opt.meas_working},'log10_apparent_resistivity'));
    if go
       if opt.verbose > 1
-         disp('  calc measurement normalization matrix N (apparent_resistivity <-> voltage conversions)');
+         disp(['  calc measurement normalization matrix N (voltage -> ' opt.meas_working ')']);
       end
       % calculate geometric factor for apparent_resitivity conversions
       img1 = mk_image(fmdl,1);
@@ -437,7 +444,7 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
       err_if_inf_or_nan(N,  'init_normalization: N');
    end
    if opt.verbose > 1
-      disp(['  calc Jacobian normalization matrix dN (voltage -> ' opt.meas_working ')']);
+      disp(['  calc Jacobian normalization matrix   dN (voltage -> ' opt.meas_working ')']);
    end
    % calculate the normalization factor for the Jacobian
    data0 = map_meas_struct(data0, N, 'voltage'); % to voltage
@@ -461,8 +468,7 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
 
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
-% fig_r: the handle to the residual plot if used
-function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, opt)
+function [stop, k, r] = update_residual(dv, de, W, hp2RtR, k, r, opt)
   stop = 0;
   % update iteration count
   k = k+1;
@@ -493,11 +499,7 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, o
      %         optimization_criteria, data misfit, roughness
      r(k,2:3) = [(dv'*dv)/2 (de'*de)/2];
      if k > 1
-        if isempty(fig_r)
-           fig_r = figure();
-        else
-           figure(fig_r);
-        end
+        clf;
         x = 1:k;
         y = r(x, :);
         y = y ./ repmat(max(y,[],1),size(y,1),1) * 100;
@@ -510,7 +512,12 @@ function [stop, k, r, fig_r] = update_residual(dv, de, W, hp2RtR, k, r, fig_r, o
         set(gca, 'xlim', [0 max(x)-1]);
         legend('residual','meas. misfit','prior misfit');
         legend('Location', 'EastOutside');
-        drawnow; pause(0.5);
+        drawnow;
+        if isfield(opt,'fig_prefix')
+           print('-dpdf',sprintf('%s-r%d',opt.fig_prefix,k));
+           print('-dpng',sprintf('%s-r%d',opt.fig_prefix,k));
+           saveas(gcf,sprintf('%s-r%d.fig',opt.fig_prefix,k));
+        end
      end
   end
 
@@ -631,6 +638,9 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    hp2RtR = hp2*RtR;
 
 function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
+   if opt.verbose < 1
+      return; % do nothing if not verbose
+   end
    % canonicalize the structures so we don't have to deal with a bunch of scenarios below
    if ~isfield(img, 'params_sel')
       img.params_sel = {1:length(img.elem_data)};
@@ -648,6 +658,19 @@ function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
    else
       rows=3;
    end
+   clf; % individual SVD plots
+   for i=1:cols
+      sel=img.params_sel{i};
+      str=strrep(img.current_params{i},'_',' ');
+      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k); xlabel(str);
+      drawnow;
+      if isfield(opt,'fig_prefix')
+         print('-dpdf',sprintf('%s-svd%d-%s',opt.fig_prefix,k,img.current_params{i}));
+         print('-dpng',sprintf('%s-svd%d-%s',opt.fig_prefix,k,img.current_params{i}));
+         saveas(gcf,sprintf('%s-svd%d-%s.fig',opt.fig_prefix,k,img.current_params{i}));
+      end
+   end
+   clf; % combo plot
    for i=1:cols
       subplot(rows,cols,i);
       sel=img.params_sel{i};
@@ -660,6 +683,12 @@ function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
          bar(sx(sel)); ylabel(['sx: ' str]);
       end
    end
+   drawnow;
+   if isfield(opt,'fig_prefix')
+      print('-dpdf',sprintf('%s-svd%d',opt.fig_prefix,k));
+      print('-dpng',sprintf('%s-svd%d',opt.fig_prefix,k));
+      saveas(gcf,sprintf('%s-svd%d.fig',opt.fig_prefix,k));
+   end
 
 function plot_svd(J, W, hp2RtR, k)
    % calculate the singular values before and after regularization
@@ -669,7 +698,7 @@ function plot_svd(J, W, hp2RtR, k)
    hold on; h=semilogy(s2,'go'); axis tight; set(h,'LineWidth',2); hold off;
    xlabel('k'); ylabel('value \sigma');
    title(sprintf('singular values of J at iteration %d',k));
-   legend('J^T J', 'J^T J + \lambda^2 R^T R'); legend best;
+   legend('J^T J', 'J^T J + \lambda^2 R^T R'); legend location best;
    % line for \lambda
 %     if regularization == 2 % Noser
 %        hp_scaled = hp*sqrt(norm(full(RtR)));
@@ -678,12 +707,12 @@ function plot_svd(J, W, hp2RtR, k)
 %        fprintf('  affecting %d of %d singular values\k', length(find(s1<hp_scaled)), length(s1));
 %     else % Tikhonov
 %        h=line([1 length(s1)],[hp hp]);
-%        text(length(s1)/2,hp*0.9,sprintf('\\lambda = %0.4g', hp));
+%        ly=10^(log10(hp)-0.05*range(log10(S)));
+%        text(length(s1)/2,ly,sprintf('\\lambda = %0.4g', hp));
 %        fprintf('  affecting %d of %d singular values\k', length(find(s1<hp)), length(s1));
 %     end
      set(h,'LineStyle','-.'); set(h,'LineWidth',2);
    set(gca,'YMinorTick','on', 'YMinorGrid', 'on', 'YGrid', 'on');
-%   print('-dpng',sprintf('results/manual-movement-svd%d.png',k));
 
 
 % TODO this function is one giant HACK around broken RtR generation with c2f matrices
@@ -701,7 +730,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
      end
    end
 
-function J = update_jacobian(img, dN, opt)
+function J = update_jacobian(img, dN, k, opt)
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
    imgb = feval(opt.update_img_func, imgb, opt);
@@ -739,9 +768,9 @@ function J = update_jacobian(img, dN, opt)
         fprintf(' %d DoF, %d meas, %s)\n', sum(tmp), size(J,1), func2str(opt.calc_jacobian_scaling_func{i}));
      end
      if opt.verbose >= 5
-        figure;
+        clf;
         t=axes('Position',[0 0 1 1],'Visible','off'); % something to put our title on after we're done
-        text(0.03,0.1,['update\_jacobian (' strrep(J_str,'_','\_') ')'],'FontSize',20,'Rotation',90);
+        text(0.03,0.1,sprintf('update\\_jacobian (%s), iter=%d', strrep(J_str,'_','\_'), k),'FontSize',20,'Rotation',90);
         for y=0:1
            if y == 0; D = Jn; else D = J(:,es:ee); end
            axes('units', 'normalized', 'position', [ 0.13 0.62-y/2 0.8 0.3 ]);
@@ -759,6 +788,11 @@ function J = update_jacobian(img, dN, opt)
            bar(sum(D,1)); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
         end
         drawnow;
+        if isfield(opt,'fig_prefix')
+           print('-dpng',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+           print('-dpdf',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+           saveas(gcf,sprintf('%s-J%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+        end
      end
    end
 
@@ -959,10 +993,14 @@ function show_fem_iter(k, img, inv_model, opt)
                      size(img.elem_data,1), ...
                      size(img.fwd_model.elems,1)));
   end
-  figure; feval(opt.show_fem, img, 1);
+  clf; feval(opt.show_fem, img, 1);
   title(sprintf('iter=%d',k));
   drawnow;
-  pause(0.5);
+  if isfield(opt,'fig_prefix')
+     print('-dpdf',sprintf('%s-fem%d',opt.fig_prefix,k));
+     print('-dpng',sprintf('%s-fem%d',opt.fig_prefix,k));
+     saveas(gcf,sprintf('%s-fem%d.fig',opt.fig_prefix,k));
+  end
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
 function residual = GN_residual(dv, de, W, hp2RtR)
@@ -1219,6 +1257,13 @@ function opt = parse_options(imdl)
          opt.line_search_args.plot = 0;
       end
    end
+   % pass fig_prefix to the line search as well, unless they are supposed to go somewhere elese
+   if isfield(opt,'fig_prefix') && ...
+      isfield(opt,'line_search_args') && ...
+      ~isfield(opt.line_search_args, 'fig_prefix')
+      opt.line_search_args.fig_prefix = opt.fig_prefix;
+   end
+   % some help on how to turn off the line search plots if we don't want to see them
    if opt.line_search_args.plot ~= 0
       disp('  line search plots (per iteration) are enabled, to disable them set');
       disp('    inv_model.inv_solve_abs_core.line_search_args.plot=0');
@@ -1505,7 +1550,7 @@ function check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
 
 function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    if(opt.verbose > 1)
-      fprintf( '    calc step size dx');
+      fprintf( '    calc step size dx\n');
    end
 
    % don't penalize for fixed elements
@@ -1530,7 +1575,7 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    end
 
    if(opt.verbose > 1)
-      fprintf(', ||dx||=%0.3g\n', norm(dx));
+      fprintf('      ||dx||=%0.3g\n', norm(dx));
       es = 0; ee = 0;
       for i=1:length(opt.elem_working)
           es = ee +1; ee = ee + opt.elem_len{i};
@@ -1991,7 +2036,7 @@ r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-85).^2 + (y-65).^2);
 imgsrc.elem_data(r1<50)= 0.05;
 imgsrc.elem_data(r2<30)= 100;
 imgp = map_img(imgsrc, 'log10_conductivity');
-hh=figure; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
+hh=clf; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
 % inhomogeneous data
 vi=fwd_solve( imgsrc );
 % add noise
@@ -2118,7 +2163,7 @@ noise_level= std(vi.meas - vh.meas)/10^(30/20);
 vi.meas = vi.meas + noise_level*randn(size(vi.meas));
 
 % show model
-hh=figure; subplot(221); imgp = map_img(imgsrc, 'log10_conductivity'); show_fem(imgp,1); axis tight; title('synth baseline, logC');
+hh=clf; subplot(221); imgp = map_img(imgsrc, 'log10_conductivity'); show_fem(imgp,1); axis tight; title('synth baseline, logC');
 
 % Reconstruct Images
 img0= inv_solve(imdl, vi);
@@ -2250,10 +2295,10 @@ b = 130;
 x_params= a*z_params+b;
 xlim=interp1(z_params,x_params,z_bary);
 img.elem_data(x_bary>xlim)= 0.01;
-figure; show_fem(img); title('model');
+clf; show_fem(img); title('model');
 
 % img2= mk_image(fmdl,img.elem_data);
-% figure; show_fem(img2);
+% clf; show_fem(img2);
 
 % img = mk_image(fmdl,0+ mk_c2f_circ_mapping(fmdl,[100;-30;0;50])*100);
 % img.elem_data(img.elem_data==0)= 0.1;
@@ -2313,7 +2358,7 @@ for i=1:length(fmdl.electrode)
     elec_posn(i,:)= mean(fmdl.nodes(fmdl.electrode(1,i).nodes,:),1);
 end
 
-figure; show_fem(imgGNd,1);
+clf; show_fem(imgGNd,1);
 hold on; plot(elec_posn(:,1),elec_posn(:,3),'k*');
 axis tight; ylim([-100 0.5])
 xlabel('X (m)','fontsize',20,'fontname','Times')
@@ -2326,9 +2371,8 @@ vCG= fwd_solve(img); vCG = vCG.meas;
 
 I = 1; % TODO FIXME -> I is diag(1./vh) the conversion to apparent resistivity
 % TODO these plots are useful, get them built into the solver!
-figure; plot(I*(dd.meas-vCG)); title('data misfit');
-figure; hist(abs(I*(dd.meas-vCG)),50); title('|data misfit|, histogram'); xlabel('|misfit|'); ylabel('count');
-
-figure; show_pseudosection( fmdl, I*dd.meas); title('measurement data');
-figure; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
-figure; show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100); title('data misfit');
+clf; plot(I*(dd.meas-vCG)); title('data misfit');
+clf; hist(abs(I*(dd.meas-vCG)),50); title('|data misfit|, histogram'); xlabel('|misfit|'); ylabel('count');
+clf; show_pseudosection( fmdl, I*dd.meas); title('measurement data');
+clf; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
+clf; show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100); title('data misfit');
