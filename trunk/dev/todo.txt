@@ -59,6 +59,13 @@
 
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
+LAST MINUTE
+  - new abs solve
+  - Draeger data loader
+  - swisstom LQ4 format
+  - test analytic c2f
+  - unit tests
+  - tutorial tests
 HIGH PRIORITY
 
  + mex compilation problems on windors
