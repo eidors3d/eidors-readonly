@@ -467,23 +467,21 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
 % r_k: new residual
 function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt)
   stop = 0;
-  % update iteration count
-  k = k+1;
 
   % update residual estimate
-  if k == 1
+  if k == 0
      r = zeros(opt.max_iterations, 3);
      r_km1 = inf;
   else
-     r_km1 = r(k-1, 1);
+     r_km1 = r(k, 1);
   end
   r_k = feval(opt.residual_func, dv, de, W, hp2RtR);
   % save residual for next iteration
-  r(k,1) = r_k;
+  r(k+1,1) = r_k;
 
   % now do something with that information
   if opt.verbose > 1
-     if k == 1
+     if k == 0
         fprintf('    calc residual, r=%0.3g\n', r_k);
      else
         fprintf('    calc residual\n');
@@ -494,10 +492,10 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
   end
   if opt.plot_residuals
      %         optimization_criteria, data misfit, roughness
-     r(k,2:3) = [(dv'*dv)/2 (de'*de)/2];
-     if k > 1
+     r(k+1,2:3) = [(dv'*dv)/2 (de'*de)/2];
+     if k > 0
         clf;
-        x = 1:k;
+        x = 1:(k+1);
         y = r(x, :);
         y = y ./ repmat(max(y,[],1),size(y,1),1) * 100;
         plot(x-1, y, 'o-', 'linewidth', 2, 'MarkerSize', 10);
@@ -522,28 +520,31 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
   % evaluate stopping criteria
   if r_k > r_km1 % bad step
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d (bad step, returning previous iteration''s result)\n',k-1);
+        fprintf('  terminated at iteration %d (bad step, returning previous iteration''s result)\n',k);
      end
      img.elem_data = img.elem_data - alpha * sx; % undo the last step
-     k = k-1;
      stop = -1;
-  elseif k > opt.max_iterations
+  elseif k >= opt.max_iterations
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d (max iterations)\n',k-1);
+        fprintf('  terminated at iteration %d (max iterations)\n',k);
      end
      stop = 1;
   elseif r_k < opt.tol + opt.ntol
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d\n',k-1);
+        fprintf('  terminated at iteration %d\n',k);
         fprintf('    residual tolerance (%0.3g) achieved\n', opt.tol + opt.ntol);
      end
      stop = 1;
-  elseif (k > opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
+  elseif (k >= opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
      if opt.verbose > 1
-        fprintf('  terminated at iteration %d (iterations not improving)\n', k-1);
+        fprintf('  terminated at iteration %d (iterations not improving)\n', k);
         fprintf('    residual slope tolerance (%0.3g) exceeded\n', opt.dtol + 2*opt.ntol);
      end
      stop = 1;
+  end
+  if ~stop
+     % update iteration count
+     k = k+1;
   end
 
 % for Conjugate Gradient, else beta = 0
@@ -558,7 +559,7 @@ function beta = update_beta(dx_k, dx_km1, sx_km1, opt);
             end
          end
       end
-      beta = feval(opt.beta_func, dx_k, dx_km1, sx_km1);
+      beta= feval(opt.beta_func, dx_k, dx_km1, sx_km1);
    else
      beta_str = '<none>';
      beta = 0;
@@ -1234,7 +1235,6 @@ function opt = parse_options(imdl)
 %   catch
 %      error('exploration of function %s via function_depends_upon() failed', func2str(opt.update_func));
 %   end
-
 
    % stopping criteria, solution limits
    if ~isfield(opt, 'max_iterations')
