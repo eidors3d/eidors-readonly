@@ -362,3 +362,6 @@ title({sprintf('best alpha = %1.2e',alpha), ...
        sprintf('norm w/o step = %0.4e',mlist(1))}); %,'fontsize',30,'fontname','Times')
 %set(gca,'fontsize',20,'fontname','Times');
 drawnow;
+
+function x=range(y)
+x=max(y)-min(y);

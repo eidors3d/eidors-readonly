@@ -90,3 +90,5 @@ function   mdl = mash_nodes(mdl, method, interp_dim, upd_dim, elec_true, elec_er
   end
 end
 
+function x=range(y)
+x=max(y)-min(y);
