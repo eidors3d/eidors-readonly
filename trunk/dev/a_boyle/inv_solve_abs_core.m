@@ -302,12 +302,16 @@ if opt.verbose > 1
    fprintf('  iteration start up\n')
 end
 while 1
+  % calculate the Jacobian
+  %  - Jacobian before RtR because it is needed for Noser prior
+  J = update_jacobian(img, N, opt);
+
   % update RtR, if required (depends on prior)
-  hp2RtR = update_hp2RtR(inv_model, k, img, opt);
+  hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
 
   % update change in element data from the prior de and
   % the measurement error dv
-  [dv, img, opt] = update_dv(dv, img, data0, N, opt);
+  [dv, opt] = update_dv(dv, img, data0, N, opt);
   de = update_de(de, img, img0, opt);
   if opt.verbose >= 5
     dvall(:,k+1) = dv;
@@ -327,9 +331,6 @@ while 1
      fprintf('  iteration %d\n', k)
   end
 
-  % calculate the Jacobian
-  J = update_jacobian(img, N, opt);
-
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
   dx = update_dx(J, W, hp2RtR, dv, de, opt);
@@ -339,7 +340,14 @@ while 1
   sx = update_sx(dx, beta, sx, opt);
   dxp = dx; % saved for next iteration if using beta
 
+  % TODO handle plotting to a set of figures & printing these plots
+  if opt.verbose >= 1 % TODO
+     clf; plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
+  end
   % line search for alpha, leaving the final selection as img
+  % x_n = img.elem_data
+  % x_{n+1} = x_n + \alpha sx
+  % img.elem_data = x_{n+1}
   [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, dv, opt);
   if alpha == 0 && k == 1
     error('first iteration failed to advance solution');
@@ -563,7 +571,7 @@ function sx = update_sx(dx, beta, sx_km1, opt);
    end
 
 % this function constructs the blockwise RtR matrix
-function hp2RtR = update_hp2RtR(inv_model, k, img, opt)
+function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    % TODO sometimes (with Noser?) this requires the Jacobian, could this be done more efficiently?
    % add a test function to determine if img.elem_data affects RtR, skip this if independant
    % TODO we could detect in the opt_parsing whether the calc_RtR_prior depends on 'x' and skip this if no
@@ -613,6 +621,62 @@ function hp2RtR = update_hp2RtR(inv_model, k, img, opt)
       end
    end
    hp2RtR = hp2*RtR;
+
+function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
+   % canonicalize the structures so we don't have to deal with a bunch of scenarios below
+   if ~isfield(img, 'params_sel')
+      img.params_sel = {1:length(img.elem_data)};
+   end
+   if ~isfield(img, 'current_params')
+      img.current_params = 'conductivity';
+   end
+   if ~iscell(img.current_params)
+      img.current_params = {img.current_params};
+   end
+   % go
+   cols=length(opt.elem_working);
+   if norm(sx - dx) < range(dx)/max(dx)*0.01 % sx and dx are within 1%
+      rows=2;
+   else
+      rows=3;
+   end
+   for i=1:cols
+      subplot(rows,cols,i);
+      sel=img.params_sel{i};
+      str=strrep(img.current_params{i},'_',' ');
+      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k); xlabel(str);
+      subplot(rows,cols,cols+i);
+      bar(dx(sel)); ylabel(['dx: ' str]);
+      if rows > 2
+         subplot(rows,cols,2*cols+i);
+         bar(sx(sel)); ylabel(['sx: ' str]);
+      end
+   end
+
+function plot_svd(J, W, hp2RtR, k)
+   % calculate the singular values before and after regularization
+   [~,s1,~]=svd(J'*W*J); s1=sqrt(diag(s1));
+   [~,s2,~]=svd(J'*W*J + hp2RtR); s2=sqrt(diag(s2));
+   h=semilogy(s1,'bx'); axis tight; set(h,'LineWidth',2);
+   hold on; h=semilogy(s2,'go'); axis tight; set(h,'LineWidth',2); hold off;
+   xlabel('k'); ylabel('value \sigma');
+   title(sprintf('singular values of J at iteration %d',k));
+   legend('J^T J', 'J^T J + \lambda^2 R^T R'); legend best;
+   % line for \lambda
+%     if regularization == 2 % Noser
+%        hp_scaled = hp*sqrt(norm(full(RtR)));
+%        h=line([1 length(s1)],[hp_scaled hp_scaled]);
+%        text(length(s1)/2,hp_scaled*0.9,sprintf('\\lambda ||R^T R||^{%0.1f}= %0.4g; \\lambda = %0.4g', noser_p, hp_scaled, hp));
+%        fprintf('  affecting %d of %d singular values\k', length(find(s1<hp_scaled)), length(s1));
+%     else % Tikhonov
+%        h=line([1 length(s1)],[hp hp]);
+%        text(length(s1)/2,hp*0.9,sprintf('\\lambda = %0.4g', hp));
+%        fprintf('  affecting %d of %d singular values\k', length(find(s1<hp)), length(s1));
+%     end
+     set(h,'LineStyle','-.'); set(h,'LineWidth',2);
+   set(gca,'YMinorTick','on', 'YMinorGrid', 'on', 'YGrid', 'on');
+%   print('-dpng',sprintf('results/manual-movement-svd%d.png',k));
+ 
 
 % TODO this function is one giant HACK around broken RtR generation with c2f matrices
 function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
@@ -742,6 +806,9 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
   if any(size(img.elem_data) ~= size(sx))
      error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
+
+  % scale 'sx' based on unit conversions, so we don't waste time line searching results that are 'inf'
+
   [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2RtR, dv, opt);
   if ~isempty(imgo)
      img = imgo;
@@ -804,7 +871,7 @@ function  de = update_de(de, img, img0, opt)
    de(opt.elem_fixed) = 0; % TODO is this redundant... delete me?
    err_if_inf_or_nan(de, 'de out');
 
-function [dv, img, opt] = update_dv(dv, img, data0, N, opt, reason)
+function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    % estimate current error as a residual
    if ~isempty(dv) % need to calculate dv...
       return;
@@ -974,8 +1041,8 @@ function imdl = deprecate_imdl_opt(imdl,opt)
 
 function opt = parse_options(imdl)
    % merge legacy options locations
-   imdl = deprecate_imdl_opt(imdl, 'parameters');
-   imdl = deprecate_imdl_opt(imdl, 'inv_solve');
+%   imdl = deprecate_imdl_opt(imdl, 'parameters');
+%   imdl = deprecate_imdl_opt(imdl, 'inv_solve');
 
    % for any general options
    if isfield(imdl, 'inv_solve_abs_core')
