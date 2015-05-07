@@ -296,7 +296,7 @@ while 1
 
   % calculate the Jacobian
   %  - Jacobian before RtR because it is needed for Noser prior
-  [J, opt] = update_jacobian(img, dN, k+1, opt);
+  [J, opt] = update_jacobian(img, dN, k, opt);
 
   % update RtR, if required (depends on prior)
   hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
@@ -308,7 +308,9 @@ while 1
   beta = update_beta(dx, dxp, sx, opt);
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
-  dxp = dx; % saved for next iteration if using beta
+  if k ~= 0
+     dxp = dx; % saved for next iteration if using beta
+  end
 
   % plot SVD of Jacobian (before and after regularization)
   plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
@@ -330,10 +332,10 @@ while 1
     dvall(:,k+1) = dv;
     show_meas_err(dvall, data0, k+1, N, W, opt);
   end
+  show_fem_iter(k, img, inv_model, stop, opt);
 
   % now find the residual, quit if we're done
   [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt);
-  show_fem_iter(k, img, inv_model, stop, opt);
   if stop
      break;
   end
@@ -380,6 +382,7 @@ function show_meas_err(dvall, data0, k, N, W, opt)
       print('-dpng',sprintf('%s-meas_err%d',opt.fig_prefix,k));
       saveas(gcf,sprintf('%s-meas_err%d.fig',opt.fig_prefix,k));
    end
+   drawnow;
 
 function img = init_elem_data(img, opt)
   if opt.verbose > 1
@@ -583,6 +586,9 @@ function sx = update_sx(dx, beta, sx_km1, opt);
 
 % this function constructs the blockwise RtR matrix
 function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
+   if k==0 % first the start up iteration use the initial hyperparameter
+      k=1;
+   end
    % TODO sometimes (with Noser?) this requires the Jacobian, could this be done more efficiently?
    % add a test function to determine if img.elem_data affects RtR, skip this if independant
    % TODO we could detect in the opt_parsing whether the calc_RtR_prior depends on 'x' and skip this if no
@@ -592,7 +598,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    if opt.verbose > 1
       disp('    calc hp^2 R^t R');
    end
-   hp2  = calc_hyperparameter( inv_model ).^2;
+   hp2  = calc_hyperparameter( inv_model ); % = \lambda^2
    net = sum([opt.elem_len{:}]); % Number of Elements, Total
    RtR = zeros(net,net); % pre-allocate RtR
    esi = 0; eei = 0; % element start, element end
@@ -610,8 +616,8 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
          % select a hyperparameter, potentially, per iteration
          % if we're at the end of the list, select the last entry
          hp=opt.hyperparameter{i,j};
-         if length(hp) > k+1
-            hp=hp(k+1);
+         if length(hp) > k
+            hp=hp(k);
          else
             hp=hp(end);
          end
@@ -656,9 +662,19 @@ function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
    end
    clf; % individual SVD plots
    for i=1:cols
+      if 1 % if Tikhonov
+         hp=opt.hyperparameter{i};
+         if k ~= 0 && k < length(hp)
+            hp = hp(k);
+         else
+            hp = hp(end);
+         end
+      else
+         hp = [];
+      end
       sel=img.params_sel{i};
       str=strrep(img.current_params{i},'_',' ');
-      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k); xlabel(str);
+      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k, hp); xlabel(str);
       drawnow;
       if isfield(opt,'fig_prefix')
          print('-dpdf',sprintf('%s-svd%d-%s',opt.fig_prefix,k,img.current_params{i}));
@@ -668,10 +684,20 @@ function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
    end
    clf; % combo plot
    for i=1:cols
+      if 1 % if Tikhonov
+         hp=opt.hyperparameter{i};
+         if k ~= 0 && k < length(hp)
+            hp = hp(k);
+         else
+            hp = hp(end);
+         end
+      else
+         hp = [];
+      end
       subplot(rows,cols,i);
       sel=img.params_sel{i};
       str=strrep(img.current_params{i},'_',' ');
-      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k); xlabel(str);
+      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k, hp); xlabel(str);
       subplot(rows,cols,cols+i);
       bar(dx(sel)); ylabel(['dx: ' str]);
       if rows > 2
@@ -686,7 +712,10 @@ function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
       saveas(gcf,sprintf('%s-svd%d.fig',opt.fig_prefix,k));
    end
 
-function plot_svd(J, W, hp2RtR, k)
+function plot_svd(J, W, hp2RtR, k, hp)
+   if nargin < 5
+      hp = [];
+   end
    % calculate the singular values before and after regularization
    [~,s1,~]=svd(J'*W*J); s1=sqrt(diag(s1));
    [~,s2,~]=svd(J'*W*J + hp2RtR); s2=sqrt(diag(s2));
@@ -702,11 +731,12 @@ function plot_svd(J, W, hp2RtR, k)
 %        text(length(s1)/2,hp_scaled*0.9,sprintf('\\lambda ||R^T R||^{%0.1f}= %0.4g; \\lambda = %0.4g', noser_p, hp_scaled, hp));
 %        fprintf('  affecting %d of %d singular values\k', length(find(s1<hp_scaled)), length(s1));
 %     else % Tikhonov
-%        h=line([1 length(s1)],[hp hp]);
-%        ly=10^(log10(hp)-0.05*range(log10(S)));
-%        text(length(s1)/2,ly,sprintf('\\lambda = %0.4g', hp));
-%        fprintf('  affecting %d of %d singular values\k', length(find(s1<hp)), length(s1));
-%     end
+   if length(hp)==1
+        h=line([1 length(s1)],[hp hp]);
+        ly=10^(log10(hp)-0.05*range(log10([s1;s2])));
+        text(length(s1)/2,ly,sprintf('\\lambda = %0.4g', hp));
+%       fprintf('  affecting %d of %d singular values\k', length(find(s1<hp)), length(s1));
+     end
      set(h,'LineStyle','-.'); set(h,'LineWidth',2);
    set(gca,'YMinorTick','on', 'YMinorGrid', 'on', 'YGrid', 'on');
 
@@ -728,6 +758,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
 
 % opt is only updated for the fwd_solve count
 function [J, opt] = update_jacobian(img, dN, k, opt)
+   k=k+1;
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
    imgb = feval(opt.update_img_func, imgb, opt);
