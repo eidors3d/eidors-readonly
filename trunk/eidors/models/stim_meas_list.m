@@ -1,6 +1,7 @@
 function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);
 %STIM_MEAS_LIST: mk stimulation pattern from list of electrodes
 % [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, amplitude, gain);
+% [sp_mp]         = stim_meas_list( stim);
 %
 % stim =    EIDORS stimulation structure
 %     use: fwd_model.stimulation = stim;
@@ -15,9 +16,13 @@ function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);
 %
 % example: stim_meas_list([1,2,3,4; 1,2,4,5])
 %    create stim pattern in to elecs 1,2 with differential
-%    measurements on electrodes 3,4 and 4,5
+%    measurements on electrodes 3,4 and 4,5;
+%    then convert the stim struct back to a list of stim/meas pairs
+%  s=stim_meas_list([1,2,3,4; 1,2,4,5]);
+%  stim_meas_list(s)
+%  ans=[1,2,3,4; 1,2,4,5]
 
-% (C) 2010 Andy Adler. License: GPL version 2 or version 3
+% (C) 2010,2015 Andy Adler, Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
 if isstr(sp_mp) && strcmp(sp_mp,'UNIT_TEST'); stim=do_unit_test; return; end
