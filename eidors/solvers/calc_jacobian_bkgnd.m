@@ -62,25 +62,33 @@ end
 
 function do_unit_test
 imdl = mk_common_model('d2c2');
-calc_jacobian_bkgnd(imdl)
+test = calc_jacobian_bkgnd(imdl)
+unit_test_cmp('t1:type',  test.type, 'image');
+unit_test_cmp('t1:elem_data',  test.elem_data, ones(1024,1));
 
 imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'value');
 imdl.jacobian_bkgnd.node_data  = 5;
-calc_jacobian_bkgnd(imdl)
+test = calc_jacobian_bkgnd(imdl);
+unit_test_cmp('t2:type',  test.type, 'image');
+unit_test_cmp('t2:node_data',  test.node_data, 5);
 
 imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'node_data');
 imdl.jacobian_bkgnd.node_data.val1  = 5;
 imdl.jacobian_bkgnd.node_data.val2  = ones(length(imdl.fwd_model.nodes),1);
 img = calc_jacobian_bkgnd(imdl);
-display(img.node_data);
+unit_test_cmp('t3:node_data',  img.node_data, imdl.jacobian_bkgnd.node_data);
 
 imdl.jacobian_bkgnd = rmfield(imdl.jacobian_bkgnd,'node_data');
 imdl.jacobian_bkgnd.elem_data.val1  = 5;
 imdl.jacobian_bkgnd.elem_data.val2  = ones(length(imdl.fwd_model.elems),1);
 img = calc_jacobian_bkgnd(imdl);
-display(img.elem_data);
+unit_test_cmp('t4:elem_data',  img.elem_data, imdl.jacobian_bkgnd.elem_data);
+
 imdl = rmfield(imdl,'jacobian_bkgnd');
 imdl.jacobian_bkgnd.resistivity.elem_data = 3;
 img = calc_jacobian_bkgnd(imdl);
 
-
+unit_test_cmp('t5:resistivity',  img, struct( ...
+    'type','image', 'name', 'background image', ...
+    'fwd_model', imdl.fwd_model, 'resistivity', ...
+     imdl.jacobian_bkgnd.resistivity ));
