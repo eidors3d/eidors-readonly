@@ -440,7 +440,7 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
       N    = spdiag(1./vh1.meas);
       err_if_inf_or_nan(N,  'init_normalization: N');
    end
-   if opt.verbose > 1
+   if go && (opt.verbose > 1)
       disp(['  calc Jacobian normalization matrix   dN (voltage -> ' opt.meas_working ')']);
    end
    % calculate the normalization factor for the Jacobian
