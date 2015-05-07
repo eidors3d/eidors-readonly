@@ -93,3 +93,4 @@ function do_unit_test
    xy = fourier_fit(C, linspace(.05,1.04,100));
    xy2= fourier_fit(C, [.3,.4,.5,.6]);
    plot(a(:,1),a(:,2),'r',xy(:,1),xy(:,2),'b',xy2(:,1),xy2(:,2),'m*');
+   eidors_msg('VIEW GRAPH TO VERIFY',0);
