@@ -48,7 +48,10 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
          error('Can''t display. All values NaN. Is raw data 0?')
       end
       % ensure symmetric rejection of data for small data sets
-      rej_vals = floor(.25*e);
+      % This means that 1-2*.35 = .3 of the data will be used
+      %  to take the mean. It should make for better centring
+      %  of reconstructions - AA may2015
+      rej_vals = floor(.35*e);
       ref_lev = mean(s_ed( (rej_vals+1):(end-rej_vals) ));
    end
 
