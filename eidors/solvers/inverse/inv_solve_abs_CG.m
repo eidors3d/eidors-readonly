@@ -60,8 +60,8 @@ end
 
 function dx = CG_update(J, W, hp2RtR, dv, de)
 %  % the actual update
-%  dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
-   dx = J'*dv;
+  dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
+%   dx = J'*dv;
 
 % Fletcher-Reeves
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
