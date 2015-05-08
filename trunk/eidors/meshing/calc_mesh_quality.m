@@ -389,9 +389,32 @@ for i = 1:length(f)
       disp(Q.(f{i}).(f2{j})');
    end
 end
+unit_test_cmp('CUBE:tri.NSR', Q.tri.NSR, 0.828427124746190, 1e-8);
+unit_test_cmp('CUBE:tri.mu', Q.tri.mu, 0.717438935214301, 1e-8);
+unit_test_cmp('CUBE:tri.eta', Q.tri.eta, 0.866025403784439, 1e-8);
+unit_test_cmp('CUBE:tri.theta', Q.tri.theta, 0.707106781186547, 1e-8)
+unit_test_cmp('CUBE:tri.iota', Q.tri.iota, 0.891518811420827, 1e-8)
+unit_test_cmp('CUBE:tri.kappa', Q.tri.kappa, 0.577350269189626, 1e-8)
+unit_test_cmp('CUBE:tri.min_angle', Q.tri.min_angle, 0.750000000000000, 1e-8)
+unit_test_cmp('CUBE:tet.NSR', Q.tet.NSR(1:4), 0.732050807568877, 1e-8);
+unit_test_cmp('CUBE:tet.mu', Q.tet.mu(1:4), 0.732050807568877, 1e-8);
+unit_test_cmp('CUBE:tet.eta', Q.tet.eta(1:4), 0.839947366596582, 1e-8);
+unit_test_cmp('CUBE:tet.min_angle', Q.tet.min_angle(1:4), 0.776074828029885, 1e-8);
+
 
 real = mk_library_model('pig_23kg_16el');
 [Q real] = calc_mesh_quality(real, 1);
+unit_test_cmp('PIG23:tri.NSR',Q.tri.NSR(1:3), [0.801565947729859;
+   0.937816521450276; 0.805868099948791], 1e-8);
+unit_test_cmp('PIG23:tri.eta',Q.tri.eta(1:3), [0.833283529269345;
+   0.943877771073817; 0.838506536020644], 1e-8);
+unit_test_cmp('PIG23:tet.alpha',Q.tet.alpha(1:3), [0.945777926643031;
+   0.694055808345015; 0.777235804488296], 1e-8);
+
+unit_test_cmp('PIG23:real.min_edge_length', real.min_edge_length(1:3), ...
+ [0.091803002742131; 0.086902675071743; 0.029979009762349], 1e-8);
+unit_test_cmp('PIG23:real.rad_incircle', real.rad_incircle(7:9), ...
+ [0.017523742316462; 0.020525606375124; 0.019387670020701], 1e-8);
 
 
 shell = real; shell.elems = shell.boundary;
