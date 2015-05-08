@@ -514,7 +514,7 @@ function do_unit_test
    [v2] = eidors_cache(@test_function,{3,4});
    unit_test_cmp('shorthand 1 param:',v1,v2);
    [v3 v4] = eidors_cache(@test_function,{3,4});
-   unit_test_cmp('expect fail', v3, v4);
+   unit_test_cmp('Expect Fail', v3, v4,-inf);
    [v5 v6 ] = eidors_cache(@test_function,{3,4});
    unit_test_cmp('shorthand 2 params:',v4, v6);
    [v5 v6 ] = eidors_cache(@test_function,{3,4, 5}); %this should re-calc
