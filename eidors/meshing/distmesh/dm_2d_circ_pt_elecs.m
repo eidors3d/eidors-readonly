@@ -57,6 +57,7 @@ function d= circle(p,params);
 function do_unit_test
    elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
    fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.15,10,0.05] );
+   subplot(221); show_fem(fmdl);
 
 % Example:
    n_elecs= 14; elec_width= 0.1; hw= elec_width/2;
@@ -66,6 +67,8 @@ function do_unit_test
       elec_pts{i} = [sin(ti),cos(ti)];
    end
    fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
+   subplot(222); show_fem(fmdl)
+   eidors_msg('CHECK FIGURE',0);
 
 % find example models that work well with the values defined in mk_common_model
 function do_calibrate
@@ -88,7 +91,6 @@ function meas = calc_range(p1range,p2,p3)
      elec_pts{i} = [sin(ti),cos(ti)];
   end
 
-  eidors_msg('log_level',1);
   for i = 1:length(p1range)
      p1 = p1range(i);
      fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [p1,p2,p3]);
@@ -99,6 +101,5 @@ function meas = calc_range(p1range,p2,p3)
      meas(i,:) = [p1,p2,p3,[nn,ne,nc,nl]/1000];
 
   end;
-  eidors_msg('log_level',2);
 show_fem(fmdl)
 
