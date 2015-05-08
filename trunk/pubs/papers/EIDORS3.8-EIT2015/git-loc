@@ -1,0 +1,134 @@
+#!/usr/bin/env python
+
+import re
+from email.utils import parsedate
+from time import mktime
+from datetime import datetime
+from os import popen
+import os
+from sys import argv,stderr,stdout
+import getopt
+
+
+opts, args = getopt.getopt(argv[1:],None, [])
+extfolder = False
+if len(args) == 1:
+   extfolder = True
+   targetfolder = args[0]
+
+
+
+
+def count_loc(dirpath):
+   h=[]
+   fc=0
+   locs=0
+   adds=0
+   dels=0
+   hsh=""
+   who=""
+   cmt=""
+   d=""
+   t=0
+   skip=0
+   def pop():
+      pstr="%s %8u %5s %5s %7s %s \t%s"%(d,locs,'+'+str(adds),'-'+str(dels),hsh,who,cmt.strip())
+      #stderr.write(pstr+'\n')
+      h.append((t,locs))
+
+   cmd = "git log --no-color --reverse -p %s | perl -p -e 's/[[:^ascii:]]//g'" % dirpath
+   stderr.write(''.join((cmd,'\n')))
+   extensions = ('.msh','.xsl','.xml','.xsd','.frames','.sframes', '.docx', '.lyx', '.odg', '.odg', '.jar', '.txt', '.tomel', '.tex', '.zip')
+   for x in popen(cmd):
+      if x.startswith('commit'):
+         if t != 0: pop()
+         hsh=x[7:14];
+      if x.startswith('Author'):
+         who=x.replace("Author: ",'').replace('\n','');
+         who=re.sub(">.*","",who);
+         who=re.sub(".*<","",who);
+      if x.startswith('Date'):
+         fc=1
+         d=datetime(*parsedate(x[5:])[:7])
+         t=mktime(parsedate(x[5:]))
+         adds=0
+         dels=0
+         skip=0
+      if fc==2:
+         cmt=x[:-1]
+         fc=0
+      if fc==1:
+         if len(x)==1: fc=2
+      if x.startswith('+') and not x.startswith('+++') and not skip:
+         adds+=1
+         locs+=1
+      if x.startswith('-') and not x.startswith('---') and not skip:
+         dels+=1
+         locs-=1
+      if x.startswith(('+++')):
+         if x.rstrip().endswith(extensions): 
+             stderr.write('===> '+x)
+             skip=1
+         else: skip=0
+
+   pop()
+   return h
+
+def makesvg_header(h):
+   mloc=max([loc for d,loc in h])
+   xmin=min([d for d,loc in h])
+   xmax=max([d for d,loc in h])
+   svg=stdout
+   svg.write("""<?xml version="1.0" standalone="no"?>\n"""
+        """<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n"""
+        """<svg preserveAspectRatio="none" width="1000" height="1000" version="1.1" xmlns="http://www.w3.org/2000/svg">\n""")
+   return (xmin, (xmax-xmin)/1000, mloc/1000)
+
+def makesvg(h,name,colour,scale):
+   xm, xs, ys = scale
+   ps=[]
+   for d,locs in h:
+      ps.append("%g,%g"%((d-xm)/xs,1000-locs/ys))
+   svg=stdout
+   svg.write("""<polyline points="%s"\n   style="fill:none;stroke:%s;stroke-width:2"/>\n""" % ('\n   '.join(ps),colour))
+   mloc=max([loc for d,loc in h])
+   xmax=max([d for d,loc in h])
+   svg.write("""<text x="%g" y="%g" fill="black">%u %s</text>\n""" % ( (xmax-xm)/xs, 1000-locs/ys, locs, name ))
+
+def makesvg_trailer():
+   svg=stdout
+   svg.write("""</svg>\n""")
+
+def subtract(h, h0):
+   j=0
+   d0 = -float("inf") # -inf
+   delta=0
+   for i,hi in enumerate(h):
+      d,loc = hi
+      if d == d0: delta=loc0
+      h[i] = (d,loc-delta)
+      while d0 < d and j < len(h0):
+         d0,loc0 = h0[j]
+         j+=1
+   return h
+
+prevfolder = os.getcwd()
+if extfolder:
+   os.chdir(targetfolder)
+
+h0 = count_loc(".")
+h1 = count_loc("dev")
+h2 = count_loc("eidors")
+h3 = count_loc("htdocs")
+scale = makesvg_header(h0)
+h0 = subtract(h0, h1)
+h0 = subtract(h0, h2)
+h0 = subtract(h0, h3)
+makesvg(h0,"/ (other)","black",scale)
+makesvg(h1,"dev/","red",scale)
+makesvg(h2,"eidors/","blue",scale)
+makesvg(h3,"htdocs/","green",scale)
+makesvg_trailer()
+
+os.chdir(prevfolder)
+stderr.write('--done--\n')
