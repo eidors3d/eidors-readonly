@@ -141,8 +141,8 @@ switch pre_proc_spec_fmt( format, fname );
 
       stim = 'UNKNOWN';
      
-   case 'lq3'
-      [vv] = landquart3_readdata( fname );
+   case 'lq4'
+      [vv] = landquart4_readdata( fname );
 
       stim = 'UNKNOWN';
       
@@ -798,7 +798,8 @@ function [vv] = landquart2_readdata( fname )
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
 
 % Read data from the file format develped by Swisstom, Landquart, Switzerland.
-function [vv] = landquart3_readdata( fname )
+
+function [vv] = landquart4_readdata( fname )
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
    try
       format_version = fread(fid,1,'int32','ieee-le');
