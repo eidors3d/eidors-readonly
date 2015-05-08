@@ -1,5 +1,7 @@
 ##### POST RELEASE 3.8 ITEMS
 
+ - make per function eidors_msg verbosity levels
+
  - Make greater use of eidors/models/valid_{img,fwd_model,inv_model,data}
    for checking consistency of the key EIDORS data structures and
    preventing the need to support odd data structure constructions.
@@ -57,15 +59,24 @@
 
  - Merge Hex mesh code from dev/l_selvakumaran
 
+ - Make analytic c2f the default
+    - think of better tests
+
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 LAST MINUTE
-  - new abs solve
+  + new abs solve
   - Draeger data loader
-  - swisstom LQ4 format
+  + swisstom LQ4 format
   - test analytic c2f
+     mk_tet_c2f
+     mk_grid_c2f
   - unit tests
   - tutorial tests
+  - add test data
+      - if_infant
+      - if_2003
+  
 HIGH PRIORITY
 
  + mex compilation problems on windors
