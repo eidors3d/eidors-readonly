@@ -68,9 +68,6 @@ if doall || opt.boundary
    end
 end
 if doall || opt.faces
-   if doall || opt.linear_reorder
-      mdl = linear_reorder(mdl); %counter-clockwise
-   end
    if elem_dim(mdl) == mdl_dim(mdl);
       [mdl.faces mdl.elem2face] = calc_faces(mdl);
    else
@@ -93,16 +90,6 @@ if doall || opt.face_centre
    tmp.elems = tmp.faces;
    mdl.face_centre = interp_mesh(tmp,0);
 end
-if doall || opt.normals
-   mdl.normals = calc_normals(mdl);
-end
-if doall || opt.inner_normal
-   if mdl_dim(mdl) == elem_dim(mdl);
-      mdl.inner_normal = test_inner_normal( mdl );
-   else
-      eidors_msg('@@@ Inner normal test for surface meshes not implemented.',1);
-   end
-end
 if doall || opt.max_edge_len
    mdl.max_edge_len = calc_longest_edge(mdl.elems,mdl.nodes);
 end
@@ -111,7 +98,7 @@ if doall || opt.elem_volume
 end
 if doall || opt.face_area
    if elem_dim(mdl) == 2
-      mdl.face_area = mdl.elem_volume;
+      mdl.face_area = get_elem_volume(mdl);
    else
       mdl.face_area = calc_face_area(mdl);
    end
@@ -143,7 +130,20 @@ end
 if doall || opt.edge_length
    mdl.edge_length = calc_edge_length(mdl);
 end
-   
+
+if doall || opt.linear_reorder
+   mdl = linear_reorder(mdl); %counter-clockwise
+end
+if doall || opt.normals
+   mdl.normals = calc_normals(mdl);
+end
+if doall || opt.inner_normal
+   if mdl_dim(mdl) == elem_dim(mdl);
+      mdl.inner_normal = test_inner_normal( mdl );
+   else
+      eidors_msg('@@@ Inner normal test for surface meshes not implemented.',1);
+   end
+end
 
 % decrease memory footprint
 mdl.elems = uint32(mdl.elems);
