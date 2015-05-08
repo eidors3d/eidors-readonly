@@ -72,5 +72,6 @@ clf
 for i = 1:6
 h(i)  = subplot(2,3,i);
 end
-common_colourbar(h([1 2 4 5]),2,0)
-common_colourbar(h(4:6),5,1)
+common_colourbar(h([1 2 4 5]),2,0);
+common_colourbar(h(4:6),5,1);
+eidors_msg('CHECK GRAPHICS',0);
