@@ -126,6 +126,13 @@ elseif nargin > 1
    limit = varargin{1};
 end
 
+if isa(command, 'function_handle')
+      str = func2str(command);
+      if str(1) == '@'
+         error('Cannot cache anonymous functions');
+      end
+end
+
 if isa(command, 'function_handle') || (ischar(command) && exist(command) == 2) % an m-file
    output = mk_varargout_str(nargout);
    eval(sprintf('%s = %s', output, 'cache_shorthand(command, varargin{:});'));
@@ -523,8 +530,11 @@ function do_unit_test
    eidors_cache show_objs
    eidors_cache
    eidors_msg('log_level',ll);
-   eidors_cache(@(x) x^2, 3);
-   eidors_cache(@(x) x^2, 3);
+   try
+      eidors_cache(@(x) x^2, 3);
+   catch
+      eidors_msg('Error on anonymous function: correct',2);
+   end
    test_debug
    
 function [v1 v2] = test_function(a,b,c,d)
