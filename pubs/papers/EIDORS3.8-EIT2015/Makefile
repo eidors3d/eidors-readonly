@@ -4,8 +4,7 @@ all: eit2015.pdf
 REPO ?= ~/proj/eidors3d.git
 
 eit2015.pdf: eit2015.tex mesh-eidors3p8.pdf
-	pdflatex $<
-	pdflatex $<
+	pdflatex -halt-on-error $<
 
 clean:
 	-rm -f *.log *.bbl *.blg *.aux eit2015.pdf
