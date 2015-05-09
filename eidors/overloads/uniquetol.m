@@ -10,9 +10,11 @@ function out = uniquetol(in, tol, varargin)
 % (C) Andy Adler 2015 Licenced under GPL v2 or v3
 % $Id$ 
 
+if isstr(in) && strcmp(in,'UNIT_TEST'); do_unit_test; return; end
 DEBUG = 0; % IF == ## then only this test
 
 if (~DEBUG && exist('uniquetol','builtin')) || (DEBUG == 1)
+   if DEBUG;   disp('using builtin uniquetol'); end
    out = builtin('uniquetol',in, tol, varargin{:});
    return;
 end
@@ -33,11 +35,12 @@ for i=1:2:length(varargin);
 end
 
 if (~DEBUG && exist('_mergesimpts','builtin')) || (DEBUG == 2)
-   disp('using _mergesimpts');
+   if DEBUG;   disp('using _mergesimpts'); end
    out = builtin('_mergesimpts',in,tol,'first');
    return;
 end
 
+if DEBUG;   disp('using uniquetol_repl'); end
 out = uniquetol_repl(in,tol,'rows','first');
 %   UNIQUETOL(...,'ROWS')
 
@@ -107,4 +110,13 @@ ii = ii(isTol);
 
 % UNIQUETOL;
    
+function do_unit_test
+   x = [1 2; 1.06 2; 1.1 2; 1.1 2.03];
 
+   for tol = logspace(-4,1,5);
+      uu = uniquetol(x,tol,'ByRows',true,'DataScale',1);
+      um = builtin('_mergesimpts',x,tol,'first');
+      ur = uniquetol_repl(x,tol,'rows','first');
+      unit_test_cmp(sprintf('um=uu %f',tol),uu,um);
+      unit_test_cmp(sprintf('um=ur %f',tol),uu,um);
+   end
