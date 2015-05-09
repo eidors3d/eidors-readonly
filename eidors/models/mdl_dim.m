@@ -26,8 +26,9 @@ num = size(fmdl.nodes,2);
 function do_unit_test
    mdl = mk_common_model('a2c2',8);
    ne = mdl_dim( mdl );
-   ok='fail'; if ne==2; ok='ok'; end; fprintf('test1: %10s\n',ok);
+   unit_test_cmp('test1', ne, 2);
 
    mdl = mk_common_model('n3r2',[16,2]);
    ne = mdl_dim( mk_image( mdl ));
-   ok='fail'; if ne==3; ok='ok'; end; fprintf('test2: %10s\n',ok);
+   unit_test_cmp('test1', ne, 3);
+
