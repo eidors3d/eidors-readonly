@@ -73,10 +73,10 @@ LAST MINUTE
      mk_grid_c2f
   - unit tests
   + tutorial tests
-  - add test data
-      - if_infant
-      - if_2003
-  
+  - add data 
+     - if_peep_ALI
+     - if_neonate_spontaneous
+     - ards p1
 HIGH PRIORITY
 
  + mex compilation problems on windors
