@@ -24,14 +24,14 @@ num = size(fmdl.elems,1);
 function do_unit_test
    mdl = mk_common_model('a2c2',8);
    ne = num_elems( mdl );
-   ok='fail'; if ne==64; ok='ok'; end; fprintf('test1: %10s\n',ok);
+   unit_test_cmp('test1',ne, 64);
 
    ne = num_elems( mdl.fwd_model );
-   ok='fail'; if ne==64; ok='ok'; end; fprintf('test2: %10s\n',ok);
+   unit_test_cmp('test2',ne, 64);
 
    ne = num_elems( mk_image( mdl ));
-   ok='fail'; if ne==64; ok='ok'; end; fprintf('test3: %10s\n',ok);
+   unit_test_cmp('test3',ne, 64);
 
    mdl = mk_common_model('n3r2',[16,2]);
    ne = num_elems( mk_image( mdl ));
-   ok='fail'; if ne==828; ok='ok'; end; fprintf('test4: %10s\n',ok);
+   unit_test_cmp('test4',ne, 828);
