@@ -72,7 +72,7 @@ LAST MINUTE
      mk_tet_c2f
      mk_grid_c2f
   - unit tests
-  - tutorial tests
+  + tutorial tests
   - add test data
       - if_infant
       - if_2003
