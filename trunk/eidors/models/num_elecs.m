@@ -28,22 +28,22 @@ end
 function do_unit_test
    mdl = mk_common_model('a2c2',8);
    ne = num_elecs( mdl );
-   ok='fail'; if ne==8; ok='ok'; end; fprintf('test1: %10s\n',ok);
+   unit_test_cmp('test1', ne, 8);
 
    ne = num_elecs( mdl.fwd_model );
-   ok='fail'; if ne==8; ok='ok'; end; fprintf('test2: %10s\n',ok);
+   unit_test_cmp('test2', ne, 8);
 
    ne = num_elecs( mk_image( mdl ));
-   ok='fail'; if ne==8; ok='ok'; end; fprintf('test3: %10s\n',ok);
+   unit_test_cmp('test3', ne, 8);
 
    mdl.fwd_model.electrode = struct([]);
    ne = num_elecs( mdl );
-   ok='fail'; if ne==0; ok='ok'; end; fprintf('test4: %10s\n',ok);
+   unit_test_cmp('test4', ne, 0);
 
    mdl.fwd_model = rmfield(mdl.fwd_model,'electrode');
    ne = num_elecs( mdl );
-   ok='fail'; if ne==0; ok='ok'; end; fprintf('test5: %10s\n',ok);
+   unit_test_cmp('test5', ne, 0);
 
    mdl = mk_common_model('n3r2',[16,2]);
    ne = num_elecs( mk_image( mdl ));
-   ok='fail'; if ne==32; ok='ok'; end; fprintf('test6: %10s\n',ok);
+   unit_test_cmp('test6', ne, 32);
