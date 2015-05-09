@@ -18,10 +18,20 @@ foreach (sort keys %tuts) {
   $i++;
 }
 print F "end;\n";
-print F "unit_test_cmp('RESET_COUNTER');\n";
-print F "fprintf('TEST=%d fn=%s\\n', TEST, func2str(fn));\n";
-print F "eidors_cache clear; clf; feval(fn, 'UNIT_TEST');\n";
-print F "unit_test_cmp('SHOW_COUNTER',func2str(fn));\n";
+print F <<TESTCODE;
+diary unit_test_out.txt
+unit_test_cmp('RESET_COUNTER');
+fprintf('TEST=%d fn=%s\\n', TEST, func2str(fn));
+eidors_cache clear; clf;  close all;
+try
+   feval(fn, 'UNIT_TEST');
+   unit_test_cmp('SHOW_COUNTER',func2str(fn));
+catch
+   L = lasterror();
+   fprintf(' ERROR = (%s)\\n',L.message);
+end
+diary off
+TESTCODE
 close F;
 
 
