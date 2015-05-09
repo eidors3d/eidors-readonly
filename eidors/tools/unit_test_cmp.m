@@ -11,7 +11,12 @@ persistent ntotal;
 persistent npass;
 if strcmp(txt,'RESET_COUNTER'); ntotal=0; npass=0; return; end
 if strcmp(txt,'SHOW_COUNTER');
-  eidors_msg('%s: pass %d/%d',a, npass, ntotal,0); return;
+  if ntotal == 0;
+     eidors_msg('%s: pass %d/%d',a, npass, ntotal,0); return;
+  else
+     eidors_msg('%s: pass %d/%d = %5.1f%%',a, npass, ntotal, 100*npass/ntotal,0);
+  end
+  return;
 end
 
 if strcmp(txt,'UNIT_TEST'); do_unit_test; return; end
