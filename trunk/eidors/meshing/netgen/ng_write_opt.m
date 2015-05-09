@@ -230,6 +230,17 @@ opt.visoptions.subdivisions = 1;
 function do_unit_test
 opt.meshoptions.fineness = 6;
 ng_write_opt(opt);
+fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
+unit_test_cmp('fineness=6',isempty( ...
+    strfind(str, 'meshoptions.fineness  6')), 0);
+
 ng_write_opt('meshoptions.fineness',4,'meshoptions.firststep','aaa');
+fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
+unit_test_cmp('firststep=aaa',isempty( ...
+    strfind(str, 'meshoptions.firststep  aaa')), 0);
+
 % the last one will not be written since output was requested
 opt = ng_write_opt('meshoptions.fineness',4,'meshoptions.firststep','bbb');
+fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
+unit_test_cmp('firststep=bbb',isempty( ...
+    strfind(str, 'meshoptions.firststep  bbb')), 1);
