@@ -228,8 +228,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 
 %--------------------------
 % UNIT_TEST?
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); img = do_unit_test; return; end
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img = do_unit_test(data0); return; end
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); do_unit_test; return; end
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); do_unit_test(data0); return; end
 
 %--------------------------
 opt = parse_options(inv_model);
@@ -1964,27 +1964,20 @@ function b = map_meas(b, N, in, out)
 function x=range(y)
 x=max(y)-min(y);
 
-function pass = do_unit_test(solver)
-if nargin == 0
-  solver = 'inv_solve_abs_core';
-end
-pass = 1;
-pass = pass & do_unit_test_rec_mv(solver);
-pass = pass & do_unit_test_sub;
-pass = pass & do_unit_test_rec1(solver);
+function do_unit_test(solver)
+   if nargin == 0
+     solver = 'inv_solve_abs_core';
+   end
+   do_unit_test_rec_mv(solver);
+   do_unit_test_sub;
+   do_unit_test_rec1(solver);
 %pass = pass & do_unit_test_rec2(solver);
 % TODO the ..._rec2 unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
-if pass
-   disp('TEST: overall PASS');
-else
-   disp('TEST: overall FAIL');
-end
 
 % test sub-functions
 % map_meas, map_data
 % jacobian scalings
-function pass = do_unit_test_sub
-pass = 1;
+function do_unit_test_sub
 d = 1;
 while d ~= 1 & d ~= 0
   d = rand(1);
@@ -2000,7 +1993,7 @@ expected = [d         log(d)         log10(d)      1./d      log(1./d)      log1
             1./10.^d  log(1./10.^d)  log10(1./10.^d)  10.^d  log(10.^d)     d ];
 for i = 1:length(elem_types)
   for j = 1:length(elem_types)
-    pass = test_map_data(d, elem_types{i}, elem_types{j}, expected(i,j), pass);
+    test_map_data(d, elem_types{i}, elem_types{j}, expected(i,j));
   end
 end
 
@@ -2018,57 +2011,53 @@ expected = [d         log(d)         log10(d)      N*d      log(N*d)      log10(
             Ninv*10.^d  log(Ninv*10.^d)  log10(Ninv*10.^d)  10.^d  log(10.^d)     d ];
 for i = 1:length(elem_types)
   for j = 1:length(elem_types)
-    pass = test_map_meas(d, N, elem_types{i}, elem_types{j}, expected(i,j), pass);
+    test_map_meas(d, N, elem_types{i}, elem_types{j}, expected(i,j));
   end
 end
 
 disp('TEST: Jacobian scaling');
 d = [d d]';
-if any(ret1_func(d) ~= 1)
-   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'conductivity');
-   pass = 0;
-end
-if any(dx_dlogx(d) ~= diag(d))
-   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log_conductivity');
-   pass = 0;
-end
-if any(dx_dlog10x(d) ~= diag(d)*log(10))
-   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log10_conductivity');
-   pass = 0;
-end
-if any(dx_dy(d) ~= diag(-d.^2))
-   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'resistivity');
-   pass = 0;
-end
-if any(dx_dlogy(d) ~= diag(-d))
-   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log_resistivity');
-   pass = 0;
-end
-if any(dx_dlog10y(d) ~= diag(-d)/log(10))
-   fprintf('TEST: FAIL for Jacobian scaling (%s)\n', 'log10_resistivity');
-   pass = 0;
-end
+unit_test_cmp( ...
+   sprintf('Jacobian scaling (%s)', 'conductivity'), ...
+   ret1_func(d), 1);
+
+unit_test_cmp( ...
+   sprintf('Jacobian scaling (%s)', 'log_conductivity'), ...
+   dx_dlogx(d), diag(d));
+
+unit_test_cmp( ...
+   sprintf('Jacobian scaling (%s)', 'log10_conductivity'), ...
+   dx_dlog10x(d), diag(d)*log(10));
+
+unit_test_cmp( ...
+   sprintf('Jacobian scaling (%s)', 'resistivity'), ...
+   dx_dy(d), diag(-d.^2));
+
+unit_test_cmp( ...
+   sprintf('Jacobian scaling (%s)', 'log_resistivity'), ...
+   dx_dlogy(d), diag(-d));
+
+unit_test_cmp( ...
+   sprintf('Jacobian scaling (%s)', 'log10_resistivity'), ...
+   dx_dlog10y(d), diag(-d)/log(10));
 
 
-function pass = test_map_data(data, in, out, expected, pass)
+function test_map_data(data, in, out, expected)
 %fprintf('TEST: map_data(%s -> %s)\n', in, out);
-if map_data(data, in, out) ~= expected
-   pass = 0;
-   fprintf('TEST: FAIL map_data(%s -> %s)\n', in, out);
-end
+   calc_val = map_data(data, in, out);
+   str = sprintf('map_data(%s -> %s)', in, out);
+   unit_test_cmp(str, calc_val, expected)
 
-function pass = test_map_meas(data, N, in, out, expected, pass)
+function test_map_meas(data, N, in, out, expected)
 %fprintf('TEST: map_meas(%s -> %s)\n', in, out);
-if map_meas(data, N, in, out) ~= expected
-   pass = 0;
-   fprintf('TEST: FAIL map_data(%s -> %s)\n', in, out);
-end
+   calc_val = map_meas(data, N, in, out);
+   str = sprintf('map_data(%s -> %s)', in, out);
+   unit_test_cmp(str, calc_val, expected)
 
 
 % a couple easy reconstructions
 % check c2f, apparent_resistivity, log_conductivity, verbosity don't error out
-function pass = do_unit_test_rec1(solver)
-pass = 1;
+function do_unit_test_rec1(solver)
 % -------------
 % ADAPTED FROM
 % Create simulation data $Id$
@@ -2112,11 +2101,10 @@ imdl.inv_solve_abs_core.verbose = 0;
 img2= inv_solve(imdl, vi);
 figure(hh); subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
 max_err = max(abs((img1.elem_data - img2.elem_data)./(img1.elem_data)));
+
+unit_test_cmp('img1 == img2', max_err >0.15, 0);
 if max_err > 0.15
   fprintf('TEST:  img1 != img2 --> FAIL %g %%\n', max_err);
-  pass = 0;
-else
-  disp('TEST:  img1 == img2 --> PASS');
 end
 % -------------
 disp('TEST: try coarse2fine mapping');
@@ -2151,13 +2139,12 @@ e3 = img3.elem_data;
 err = abs((e1 - e3) ./ e1);
 err(abs(e1) < 20) = 0;
 err_thres = 0.55;
+
+unit_test_cmp('img1 == img3', any(err > err_thres), 0);
 if any(err > err_thres) % maximum 15% error
   ni = find(err > err_thres);
   fprintf('TEST:  img1 != img3 --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
           max(err(ni)), length(ni), err_thres);
-  pass = 0;
-else
-  disp('TEST:  img1 == img3 --> PASS');
 end
 
 %imdl.inv_solve_abs_core.verbose = 1000;
@@ -2169,18 +2156,16 @@ e4 = 1./(10.^img4.elem_data);
 err = abs((e1 - e4) ./ e1);
 err(abs(e1) < 20) = 0;
 err_thres = 0.40;
+
+unit_test_cmp('img1 == img4', any(err > err_thres), 0);
 if any(err > err_thres) % maximum 15% error
   ni = find(err > err_thres);
   fprintf('TEST:  img1 != img4 --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
           max(err(ni)), length(ni), err_thres);
-  pass = 0;
-else
-  disp('TEST:  img1 == img4 --> PASS');
 end
 
 % a couple easy reconstructions with movement or similar
-function pass = do_unit_test_rec_mv(solver)
-pass = 1;
+function do_unit_test_rec_mv(solver)
 disp('TEST: conductivity and movement --> baseline conductivity only');
 % -------------
 % ADAPTED FROM
@@ -2274,13 +2259,13 @@ figure(hh); subplot(224);
 err = abs((img0.elem_data - img1.elem_data) ./ img0.elem_data);
 err(abs(img0.elem_data)/max(abs(img0.elem_data)) < 0.50) = 0;
 err_thres = 0.40;
+
+unit_test_cmp('img0 == img1 + mvmt', any(err > err_thres), 0);
+
 if any(err > err_thres) % maximum 15% error
   ni = find(err > err_thres);
   fprintf('TEST:  img0 != img1 + mvmt --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
           max(err(ni)), length(ni), err_thres);
-  pass = 0;
-else
-  disp('TEST:  img0 == img1 + mvmt --> PASS');
 end
 
 % helper function: calculate jacobian movement by itself
@@ -2305,9 +2290,8 @@ function RtR = prior_movement_only(imdl);
   RtR = prior_movement(imdl);
   RtR = RtR((end-szPm+1):end,(end-szPm+1):end);
 
-function pass = do_unit_test_rec2(solver)
+function do_unit_test_rec2(solver)
 disp('TEST: reconstruct a discontinuity');
-pass = 1; % TODO fail criteria?
 shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
              'solid mainobj= top and orthobrick(-100,-200,-100;410,10,100) -maxh=20.0;\n'];
 e0 = linspace(0,310,64)';
