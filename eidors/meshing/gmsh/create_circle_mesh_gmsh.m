@@ -62,7 +62,7 @@ disp(['Now reading back data from file: ' msh_filename])
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.name = 'Circle';
-coarse_breast_mdl= eidors_obj('fwd_model', mdl);
+mdl= eidors_obj('fwd_model', mdl);
 
 
 function do_unit_test
@@ -70,4 +70,4 @@ object_center = [0.0, 0.1];
 object_radius = 0.6;
 
 mdl = create_circle_mesh_gmsh('circle', object_center, object_radius, 0.04 );
-
+show_fem(mdl)
