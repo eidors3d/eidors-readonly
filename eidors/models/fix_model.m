@@ -284,7 +284,7 @@ function len = calc_longest_edge(elems,nodes)
     
 function out = fix_options(mdl, opt)
     out = list_options(false);
-    out.linear_reorder = 1;
+%     out.linear_reorder = 1;
     flds = fieldnames(opt);
     for i = 1:length(flds)
        try
@@ -325,6 +325,7 @@ function out = list_options(val)
     for i = 1:length(flds)
        out.(flds{i}) = val;
     end
+    out.linear_reorder = 0;
     
 function do_unit_test
     % square
