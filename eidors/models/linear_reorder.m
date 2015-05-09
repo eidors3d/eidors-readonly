@@ -144,7 +144,7 @@ function do_unit_test
      if ~exist('imdl'); continue ; end
 
      fmdl = imdl.fwd_model;
-     vol = test_linear_reorder( fmdl ); ok = std(sign(vol))==0; % not all 
+     vol = test_linear_reorder( fmdl ); ok = std(sign(vol))==0; % not ok before 
      t = cputime;
      fm0 = linear_reorder(fmdl, -1);
      fm1 = linear_reorder(fmdl, 1);
@@ -152,8 +152,9 @@ function do_unit_test
      vol0= test_linear_reorder( fm0 );
      vol1= test_linear_reorder( fm1 );
 
-     fprintf('test%02d(t=%4.2f): OK=%d=>(%d,%d)\n',i, t, ...
-          ok, all(vol0>0), all(vol1<0));
+     str= sprintf('test%02d(t=%4.2f): OK=%d=>(%d,%d)',i, t, ...
+             ok, all(vol0>0), all(vol1<0));
+     unit_test_cmp(str, all(vol0>0) & all(vol1<0), 1);
    end
 end
    
