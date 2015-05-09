@@ -25,7 +25,7 @@ function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);
 % (C) 2010,2015 Andy Adler, Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(sp_mp) && strcmp(sp_mp,'UNIT_TEST'); stim=do_unit_test; return; end
+if isstr(sp_mp) && strcmp(sp_mp,'UNIT_TEST'); do_unit_test; return; end
 
 if isstruct(sp_mp)
   stim = sp_mp;
@@ -94,31 +94,20 @@ function stim_flat = flatten_stim(stim, nst, nvt)
       idx = idx + nmp;
   end
 
-function  ok = do_unit_test
-   ok = 1;
+function  do_unit_test
    imdl = mk_common_model('a2c0',16);
    img = mk_image(imdl);
    list_in = [1,2,3,4;1,2,4,5];
    img.fwd_model.stimulation = stim_meas_list(list_in,16);
    list_out = stim_meas_list(img.fwd_model.stimulation);
-   ok = match(list_in, list_out, ok, 'pattern#1');
+   unit_test_cmp('pattern#1', list_in, list_out);
+
+
    vh = fwd_solve(img);
    list_in = [6,7,3,4;1,2,4,5];
    img.fwd_model.stimulation = stim_meas_list(list_in,16);
    list_out = stim_meas_list(img.fwd_model.stimulation);
-   ok = match(list_in, list_out, ok, 'pattern#2');
-   vh = fwd_solve(img);
-   if ok
-      disp PASS
-   else
-      disp FAIL
-   end
+   unit_test_cmp('pattern#2', list_in, list_out);
 
-function ok= match( pat1, pat2, ok, desc)
-    okl =  all(pat1(:) == pat2(:));
-    if okl
-      fprintf('stim_meas_list: pass -- %s\n',desc);
-    else
-      fprintf('stim_meas_list: fail -- %s\n',desc);
-      ok = 0;
-    end
+   vh = fwd_solve(img);
+
