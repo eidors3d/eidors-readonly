@@ -61,11 +61,14 @@
 \author[1]{Alistair~Boyle}
 \author[2]{Bart{\l}omiej~Grychtol}
 \author[1]{Herv{\'e}~Gagnon}
-\author[3]{W.~R.~B.~Lionheart}
+\author[3]{William~R.~B.~Lionheart}
+\author[3]{Michael~Crabb}
+\author[4]{Nolwenn~Lesparre}
 \author[1]{Andy~Adler}
 \affil[1]{Carleton University, Ottawa, Canada, \protect\url{boyle@sce.carleton.ca}}
 \affil[2]{Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany}
 \affil[3]{University of Manchester, Manchester, UK}
+\affil[4]{IRSN, B.P. 17, 92262 Fontenay-aux-Roses Cedex, France.}
 \date{}
 %----------------------------------------------------------------------------- %
 
@@ -80,7 +83,9 @@
 
 \noindent {\bf Abstract:} %The abstract should contain no more than 8
 %lines of text and describe the main methods and findings.
-An EIDORS release announcement and a review of some
+This paper announces the release of version 3.8 of the
+EIDORS software suite, reviews its new features, and 
+discusses some 
 of the successes and challenges of the project in recent years.
 
 \section{Introduction}
@@ -117,14 +122,14 @@ Release 3.8 of EIDORS builds upon a strong foundation in reconstruction algorith
 % DEPENDS ON ABS SOLVER
 
 \item Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$), resistivity/conductivity, and apparent resistivity conversions.
-  Natural limits for $\sigma > 0$~\cite{polydorides2014}.
+  Natural limits for $\sigma > 0$.%~\cite{polydorides2014}.
   A framework for alternate arbitrary units.
 %  Support for transparent usage in forward solutions and
 %  Jacobian calculations.
 % DEPENDS ON ABS SOLVER
 
-\item Various speed optimizations including improved Jacobian calculation code and faster cache handling.
-  Improvements to {\tt stim\_meas\_list} generated structures, resulting in
+\item speed optimizations: improved Jacobian calculation, faster cache handling, and 
+% Improvements to {\tt stim\_meas\_list} generated structures, resulting in
   faster forward solutions.
 %  Also, the ability to
 %  convert between a stimulus structure and a list of stimulus and measurement electrode pairs.
@@ -132,9 +137,8 @@ Release 3.8 of EIDORS builds upon a strong foundation in reconstruction algorith
 
 %\item Attempts to work around broken matlab MEX file handling (cross-platform mex compile).
 
-\item Improved interfaces to NetGen and visualization of results (OpenGL).
-      Support for compound electrodes.
-      Point electrodes in Netgen
+\item Improved interfaces to NetGen and visualization.
+      Support for compound and point electrodes in NetGen.
 
 \item Analytic calculation of dual-mesh interpolations (coarse to fine)
 % as well as, Quad and hex shaped mesh elements %rev 4392
@@ -210,13 +214,14 @@ The data structure and subfunction complexity in EIDORS are a
 %Despite this, or indeed because of this, 
 Despite these challenges, EIDORS continues to develop and grow at a healthy pace.
 
-In short, EIDORS is a healthy piece of software and a valuable resource for researchers in the field of EIT.
+In short, EIDORS version 3.8 represents the continued development
+in a healthy open-source software project.
 
 \footnotesize
 \begin{thebibliography}{}
-\bibitem{polydorides2014}
-Polydorides N, Ouypornkochagorn T, McCann H. 
-{\em Proc 15th Conf}, EIT, Gananoque, Canada, 2014
+%\bibitem{polydorides2014}
+%Polydorides N, Ouypornkochagorn T, McCann H. 
+%{\em Proc 15th Conf}, EIT, Gananoque, Canada, 2014
 \bibitem{adler2006}
 Adler A, Lionheart WRB. {\em Physiol Meas} 27:S25--S42, 2006
 \bibitem{adler2005}
