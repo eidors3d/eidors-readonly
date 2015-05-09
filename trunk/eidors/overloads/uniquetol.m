@@ -10,8 +10,9 @@ function out = uniquetol(in, tol, varargin)
 % (C) Andy Adler 2015 Licenced under GPL v2 or v3
 % $Id$ 
 
-DEBUG = 3;
-if DEBUG==1 || (DEBUG==0 && exist('uniquetol','builtin'))
+DEBUG = 0; % IF == ## then only this test
+
+if (~DEBUG && exist('uniquetol','builtin')) || (DEBUG == 1)
    out = builtin('uniquetol',in, tol, varargin{:});
    return;
 end
@@ -31,7 +32,7 @@ for i=1:2:length(varargin);
    end
 end
 
-if DEBUG==2 || (DEBUG==0 && exist('_mergesimpts','builtin'))
+if (~DEBUG && exist('_mergesimpts','builtin')) || (DEBUG == 2)
    disp('using _mergesimpts');
    out = builtin('_mergesimpts',in,tol,'first');
    return;
