@@ -61,11 +61,7 @@ p1(:,2) = 4*cos(t);
 n = randperm(100);
 p2 = p1(n,:);
 p3 = order_loop(p2);
-exp = circshift(p1,-n(1));
-if all(all(p3 == exp ))
-   disp('OK');
-else
-   disp('Fail');
-end
+expect = circshift(p1,-n(1));
+unit_test_cmp('order_loop:t1', p3, expect)
 
 
