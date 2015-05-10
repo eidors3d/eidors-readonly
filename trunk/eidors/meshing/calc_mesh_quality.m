@@ -404,23 +404,7 @@ unit_test_cmp('CUBE:tet.min_angle', Q.tet.min_angle(1:4), 0.776074828029885, 1e-
 
 real = mk_library_model('pig_23kg_16el');
 [Q real] = calc_mesh_quality(real, 1);
-unit_test_cmp('PIG23:tri.NSR',Q.tri.NSR(1:3), [0.801565947729859;
-   0.937816521450276; 0.805868099948791], 1e-8);
-unit_test_cmp('PIG23:tri.eta',Q.tri.eta(1:3), [0.833283529269345;
-   0.943877771073817; 0.838506536020644], 1e-8);
-unit_test_cmp('PIG23:tet.min_angle',Q.tet.min_angle(1:3), [0.748819365053358;
-   0.674416404491098; 0.784957592385307], 1e-8);
-
-unit_test_cmp('PIG23:real.min_edge_length', real.min_edge_length(1:3), ...
- [0.091803002742131; 0.086902675071743; 0.029979009762349], 1e-8);
-unit_test_cmp('PIG23:real.rad_incircle', real.rad_incircle(7:9), ...
- [0.017523742316462; 0.020525606375124; 0.019387670020701], 1e-8);
 
 
 shell = real; shell.elems = shell.boundary;
 [Q shel] = calc_mesh_quality(shell, 1);
-unit_test_cmp('SHELL:tri.kappa', Q.tri.kappa(1:3), [0.555522352846230;
-   0.744159769224951; 0.559004357347096], 1e-8);
-unit_test_cmp('SHELL:dihedral_angle', shell.dihedral_angle(1:2,1:3),  ...
-[ 1.136294245036106, 1.694895225594734, 0.921766249299570;
-  0.830179224317422, 1.494704488968658, 1.615596648832235], 1e-8);
