@@ -402,9 +402,28 @@ unit_test_cmp('CUBE:tet.eta', Q.tet.eta(1:4), 0.839947366596582, 1e-8);
 unit_test_cmp('CUBE:tet.min_angle', Q.tet.min_angle(1:4), 0.776074828029885, 1e-8);
 
 
-real = mk_library_model('pig_23kg_16el');
+real = mk_common_model('b3t2r',[16,1]); real = real.fwd_model;
 [Q real] = calc_mesh_quality(real, 1);
+unit_test_cmp('B3T2:tri.NSR',Q.tri.NSR(1:3), [0.828427124746190;
+   0.828051875000156; 0.828051875000156], 1e-8);
+unit_test_cmp('B3T2:tri.eta',Q.tri.eta(1:3), [0.866025403784439;
+   0.865565849069265; 0.865565849069265], 1e-8);
+unit_test_cmp('B3T2:tet.min_angle',Q.tet.min_angle(1:3), [0.638037414014943;
+   0.624804247692675; 0.638037414014943], 1e-8);
+
+unit_test_cmp('B3T2:real.min_edge_length', real.min_edge_length(1:3), ...
+   [19.190248174528644;18.575016823680134;18.575016823680134], 1e-8);
+unit_test_cmp('B3T2:real.rad_incircle', real.rad_incircle(7:9), ...
+   [ 5.871326906131572; 5.440496467001706; 6.523833186814214], 1e-8);
 
 
 shell = real; shell.elems = shell.boundary;
 [Q shel] = calc_mesh_quality(shell, 1);
+unit_test_cmp('SHELL:tri.kappa', Q.tri.kappa(1:3),  ...
+   [ 0.577350269189626; 0.577043899379510; 0.577350269189626], 1e-8);
+unit_test_cmp('SHELL:dihedral_angle', shell.dihedral_angle(1:2,1:3),  ...
+[ 0.830397390875299, 1.570796326794897, 1.570796326794897;
+  1.570796326794897, 0.830397390875299, 1.570796326794897], 1e-8);
+
+real = mk_library_model('pig_23kg_16el');
+[Q real] = calc_mesh_quality(real, 1);
