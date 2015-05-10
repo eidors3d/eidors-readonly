@@ -58,16 +58,16 @@
 %------------------------------- FRONT MATTER -------------------------------- %
 \title{EIDORS Version 3.8%
 \vspace{-2ex}} %remove vertical space
-\author[1]{Alistair~Boyle}
-\author[2]{Bart{\l}omiej~Grychtol}
-\author[1]{Herv{\'e}~Gagnon}
-\author[3]{William~R.~B.~Lionheart}
-\author[3]{Michael~Crabb}
-\author[4]{Nolwenn~Lesparre}
 \author[1]{Andy~Adler}
+\author[1]{Alistair~Boyle}
+\author[2]{Michael~G.~Crabb}
+\author[3]{Bart{\l}omiej~Grychtol}
+\author[1]{Herv{\'e}~Gagnon}
+\author[4]{Nolwenn~Lesparre}
+\author[2]{William~R.~B.~Lionheart}
 \affil[1]{Carleton University, Ottawa, Canada, \protect\url{boyle@sce.carleton.ca}}
-\affil[2]{Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany}
-\affil[3]{University of Manchester, Manchester, UK}
+\affil[2]{University of Manchester, Manchester, UK}
+\affil[3]{Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany}
 \affil[4]{IRSN, B.P. 17, 92262 Fontenay-aux-Roses Cedex, France.}
 \date{}
 %----------------------------------------------------------------------------- %
@@ -92,8 +92,9 @@ of the successes and challenges of the project in recent years.
 We are pleased to announce the release of EIDORS~3.8 (fig.~\ref{fig:logo}).
 The software is available at \url{www.eidors.org} and is licensed under the GNU GPLv2.
 
-EIDORS aims to provide free software algorithms for forward and inverse
-modelling of Electrical Impedance and Diffusion-based Optical Tomography, in
+EIDORS aims to provide free software algorithms for forward modelling
+and inverse solutions
+of Electrical Impedance and (to some extent) Diffusion-based Optical Tomography, in
 medical, industrial and geophysical settings and to share data and promote
 collaboration between groups working in these fields. 
 
@@ -111,8 +112,9 @@ collaboration between groups working in these fields.
 \vspace{-1.5em}
 
 \section{New Features}
-Release 3.8 of EIDORS builds upon a strong foundation in reconstruction algorithms, adding and improving a number of aspects.
-\begin{itemize}
+Release 3.8 of EIDORS builds upon a strong foundation in reconstruction
+algorithms, adding and improving a number of aspects.
+\begin{enumerate}
 \item Wider support for absolute solution techniques with the addition of new
   iterative absolute inverse solvers (both Gauss-Newton and
   Conjugate-Gradient).
@@ -122,13 +124,13 @@ Release 3.8 of EIDORS builds upon a strong foundation in reconstruction algorith
 % DEPENDS ON ABS SOLVER
 
 \item Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$), resistivity/conductivity, and apparent resistivity conversions.
-  Natural limits for $\sigma > 0$.%~\cite{polydorides2014}.
+  Natural limits for $\sigma > 0$. %~\cite{polydorides2014}.
   A framework for alternate arbitrary units.
 %  Support for transparent usage in forward solutions and
 %  Jacobian calculations.
 % DEPENDS ON ABS SOLVER
 
-\item speed optimizations: improved Jacobian calculation, faster cache handling, and 
+\item Speed optimizations: improved Jacobian calculation, faster cache handling, and 
 % Improvements to {\tt stim\_meas\_list} generated structures, resulting in
   faster forward solutions.
 %  Also, the ability to
@@ -138,7 +140,7 @@ Release 3.8 of EIDORS builds upon a strong foundation in reconstruction algorith
 %\item Attempts to work around broken matlab MEX file handling (cross-platform mex compile).
 
 \item Improved interfaces to NetGen and visualization.
-      Support for compound and point electrodes in NetGen.
+      Compound and point electrodes in NetGen.
 
 \item Analytic calculation of dual-mesh interpolations (coarse to fine)
 % as well as, Quad and hex shaped mesh elements %rev 4392
@@ -149,11 +151,11 @@ Release 3.8 of EIDORS builds upon a strong foundation in reconstruction algorith
 %\item OpenEIT file format support~\cite{jones2014}.
 
 \item Expanded shape library
-\end{itemize}
+\end{enumerate}
 
 \section{Growth}
-EIDORS-related citations continue to grow. Current search results are
-shown in table~\ref{tbl:cite} (March 2014, Google Scholar).
+EIDORS-related citations continue to grow. Current citation results are
+shown in table~\ref{tbl:cite}
 
 The EIDORS code-base is stable with significant effort being applied to
 improving test coverage, refining performance and implementing new features
@@ -176,17 +178,18 @@ improving test coverage, refining performance and implementing new features
   \footnotesize
 \centering
 %From: http://amath.colorado.edu/documentation/LaTeX/reference/tables/ex1.html
-\caption{\label{tbl:cite} EIDORS Citations}
+\caption{\label{tbl:cite} EIDORS Citations
+ (May 2014, scholar.google.com).
+}
 \begin{tabular}{lr}
   \toprule
   Paper & Citations \\
   %{@{\extracolsep{\fill}}@{}|c|ccc|r|}
   \midrule
-  \cite{adler2006} Uses and abuses of {EIDORS}: An extensible {\tiny ...} & 179 \\
-  \cite{adler2005} EIDORS: Towards a community-based {\tiny ...}  & 2 \\
-  \cite{polydorides2002matlab} A Matlab toolkit for three-dimensional {\tiny ...}  & 291 \\
+  \cite{vauhkonen2001} A MATLAB package for the EIDORS project {\tiny ...}  & 159 \\
   \cite{polydorides2002phd} Image reconstruction algorithms for {\tiny ...}  & 88 \\
-  \cite{vauhkonen2001} A MATLAB package for the EIDORS project {\tiny ...}  & 154 \\
+  \cite{polydorides2002matlab} A Matlab toolkit for three-dimensional {\tiny ...}  & 293 \\
+  \cite{adler2006} Uses and abuses of {EIDORS}: An extensible {\tiny ...} & 184 \\
   \bottomrule
 \end{tabular}
 \vspace{-1em}
@@ -203,8 +206,8 @@ maintain research relevance.
 \section{Challenges}
 A number of challenges inherent in the implementation of EIDORS as a matlab-based toolkit continue to recur.
 There is no real Object Oriented framework: no reflection, protection, or
-  automatic errors.
-Versions of matlab frequently vary in confounding ways that make
+  automatic management of errors.
+Versions of Matlab frequently vary in confounding ways that make
   maintaining a toolkit across multiple matlab versions difficult. This is
   particularly prevalent for Windows users and MEX file compilation.
 The data structure and subfunction complexity in EIDORS are a
@@ -222,20 +225,17 @@ in a healthy open-source software project.
 %\bibitem{polydorides2014}
 %Polydorides N, Ouypornkochagorn T, McCann H. 
 %{\em Proc 15th Conf}, EIT, Gananoque, Canada, 2014
-\bibitem{adler2006}
-Adler A, Lionheart WRB. {\em Physiol Meas} 27:S25--S42, 2006
-\bibitem{adler2005}
-Adler A, Lionheart WRB. 
-{\em Proc 6th Conf. EIT}, University College London, UK, 2005
-\bibitem{polydorides2002matlab}
-   Polydorides N, Lionheart WRB.
-   {\em Meas Sci and Tech} 13:1871--1883, 2002
-\bibitem{polydorides2002phd}
-   Polydorides N.
- {\em Image Reconstruction Algorithms for Soft-Field Tomography}, Ph.D. thesis, University of Manchester, UK, 2002
 \bibitem{vauhkonen2001}
    Vauhkonen M, Lionheart WRB, Heikkinen L, et al
    {\em  Physiol Meas} 22:107--111, 2001
+\bibitem{polydorides2002phd}
+   Polydorides N.
+ {\em Image Reconstruction Algorithms for Soft-Field Tomography}, Ph.D. thesis, University of Manchester, UK, 2002
+\bibitem{polydorides2002matlab}
+   Polydorides N, Lionheart WRB.
+   {\em Meas Sci and Tech} 13:1871--1883, 2002
+\bibitem{adler2006}
+Adler A, Lionheart WRB. {\em Physiol Meas} 27:S25--S42, 2006
 \end{thebibliography}
 \end{multicols}
 
