@@ -1,14 +1,14 @@
-all: eit2015.pdf
+all: eidors-eit2015.pdf
 
 FIGURES = fig_loc.pdf mesh-eidors3p8.pdf
 # provide a default repository location for EIDORS (git repo)
 REPO = ../../..
 
-eit2015.pdf: eit2015.tex $(FIGURES)
+eidors-eit2015.pdf: eidors-eit2015.tex $(FIGURES)
 	pdflatex -halt-on-error $<
 
 clean:
-	-rm -f *.log *.bbl *.blg *.aux eit2015.pdf
+	-rm -f *.log *.bbl *.blg *.aux eidors-eit2015.pdf
 
 loc.m:
 	./git-loc ${REPO} > loc.m
