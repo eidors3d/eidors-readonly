@@ -90,7 +90,7 @@ def make_fout(h,name,colour,scale):
    _fout.write("loc_%s = [ ... %% time, LoC\n"% name);
    for d,locs in h:
       _fout.write("   %10d, %6d;\n"% (d,locs) )
-   _fout.write("];\n %% %s"% name);
+   _fout.write("];\n %% %s\n"% name);
 
 def make_fout_trailer():
    _fout=stdout
