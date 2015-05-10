@@ -74,30 +74,27 @@ def count_loc(dirpath):
    pop()
    return h
 
-def makesvg_header(h):
+def make_fout_header(h):
    mloc=max([loc for d,loc in h])
    xmin=min([d for d,loc in h])
    xmax=max([d for d,loc in h])
-   svg=stdout
-   svg.write("""<?xml version="1.0" standalone="no"?>\n"""
-        """<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n"""
-        """<svg preserveAspectRatio="none" width="1000" height="1000" version="1.1" xmlns="http://www.w3.org/2000/svg">\n""")
-   return (xmin, (xmax-xmin)/1000, mloc/1000)
+   _fout=stdout
+   _fout.write("tmin = %10d;\n"%xmin)
+   _fout.write("tmax = %10d;\n"%xmax)
+   _fout.write("mLoC = %10d;\n"%mloc)
+   return (xmin, xmax, mloc)
 
-def makesvg(h,name,colour,scale):
+def make_fout(h,name,colour,scale):
    xm, xs, ys = scale
-   ps=[]
+   _fout=stdout
+   _fout.write("loc_%s = [ ... %% time, LoC\n"% name);
    for d,locs in h:
-      ps.append("%g,%g"%((d-xm)/xs,1000-locs/ys))
-   svg=stdout
-   svg.write("""<polyline points="%s"\n   style="fill:none;stroke:%s;stroke-width:2"/>\n""" % ('\n   '.join(ps),colour))
-   mloc=max([loc for d,loc in h])
-   xmax=max([d for d,loc in h])
-   svg.write("""<text x="%g" y="%g" fill="black">%u %s</text>\n""" % ( (xmax-xm)/xs, 1000-locs/ys, locs, name ))
+      _fout.write("   %10d, %6d;\n"% (d,locs) )
+   _fout.write("];\n %% %s"% name);
 
-def makesvg_trailer():
-   svg=stdout
-   svg.write("""</svg>\n""")
+def make_fout_trailer():
+   _fout=stdout
+   _fout.write("%%%%%\n")
 
 def subtract(h, h0):
    j=0
@@ -117,18 +114,22 @@ if extfolder:
    os.chdir(targetfolder)
 
 h0 = count_loc(".")
+
 h1 = count_loc("dev")
-h2 = count_loc("eidors")
-h3 = count_loc("htdocs")
-scale = makesvg_header(h0)
 h0 = subtract(h0, h1)
+
+h2 = count_loc("eidors")
 h0 = subtract(h0, h2)
+
+h3 = count_loc("htdocs")
 h0 = subtract(h0, h3)
-makesvg(h0,"/ (other)","black",scale)
-makesvg(h1,"dev/","red",scale)
-makesvg(h2,"eidors/","blue",scale)
-makesvg(h3,"htdocs/","green",scale)
-makesvg_trailer()
+
+scale = make_fout_header(h0)
+make_fout(h0,"other","black",scale)
+make_fout(h1,"dev","red",scale)
+make_fout(h2,"eidors","blue",scale)
+make_fout(h3,"htdocs","green",scale)
+make_fout_trailer()
 
 os.chdir(prevfolder)
 stderr.write('--done--\n')
