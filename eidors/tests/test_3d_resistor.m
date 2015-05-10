@@ -121,3 +121,8 @@ Jaa= calc_jacobian(img);
 fprintf('Jacobians: Cols by Jaa, Jnp, Jp1, Jp2\n');
 JJ = [Jaa;Jnp;Jp1;Jp2];
 disp(JJ(:,1:6))
+
+% UNIT_TEST
+unit_test_cmp('Jaa vs Jnp', Jaa, Jnp, 1e-6);
+unit_test_cmp('Jaa vs Jp1', Jaa, Jp1, 1e-6);
+unit_test_cmp('Jaa vs Jp2', Jaa, Jp2, 1e-3);
