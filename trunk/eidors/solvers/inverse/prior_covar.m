@@ -18,9 +18,7 @@ params = {inv_model.fwd_model, inv_model.fourD_prior.P_type};
 Reg = eidors_cache(@prior_covar_calc, params, 'prior_covar');
 
 
-function Reg = prior_covar_calc( cache_obj );
-   ff = cache_obj{1}; 
-   P_type = cache_obj{2};
+function Reg = prior_covar_calc(ff, P_type);
    % get average x,y,z of each element
    nel = size(ff.elems,1);
    eta = .1;%attenuation factor. eta is large when elems're spatially highly correlated
