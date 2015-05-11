@@ -329,7 +329,7 @@ vCG= fwd_solve(img); vCG = vCG.meas;
 figure; plot(I*(dd.meas-vCG))
 figure; hist(I*(dd.meas-vCG),50)
 
-show_pseudosection( fmdl, I*dd.meas, '')
-show_pseudosection( fmdl, I*vCG, '')
+show_pseudosection( fmdl, I*dd.meas)
+show_pseudosection( fmdl, I*vCG)
 show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100)
 
