@@ -32,18 +32,22 @@ end
 tolstr='';
 
    fprintf('TEST: %20s = ',txt);
-   ok='fail';
+   ok='Fail';
    if (isnumeric(a) || islogical(a)) && ...
       (isnumeric(b) || islogical(b))
-      if isnan(a) == isnan(b);
-          a(isnan(a))=0; b(isnan(b))=0;
-       end;
-      if all(abs(double(a) - double(b)) <= tol);
-         ok='OK';
-      end;
+      if ~isequal( size(a), size(b))
+         ok='Fail (size change)';
+      else
+         if isnan(a) == isnan(b);
+             a(isnan(a))=0; b(isnan(b))=0;
+         end;
+         if all(abs(double(a) - double(b)) <= tol);
+            ok='OK';
+         end;
 
-      if abs(tol)>0
-         tolstr= sprintf('(%1.2f x tol)', full(max(abs(a(:)-b(:))/tol))); 
+         if abs(tol)>0
+            tolstr= sprintf('(%1.2f x tol)', full(max(abs(a(:)-b(:))/tol))); 
+         end
       end
    else
       if strcmp(eidors_var_id(a), eidors_var_id(b)); ok='OK';end
@@ -80,3 +84,6 @@ function do_unit_test
    unit_test_cmp('Expect OK'  ,t,s);
    s2.b= b; 
    unit_test_cmp('Expect Fail'  ,t,s2, -inf);
+
+   unit_test_cmp('Expect Fail', ones(3,3), ones(3,3,3), -inf);
+   unit_test_cmp('Expect Fail', ones(3,1), ones(1,3), -inf);
