@@ -1,6 +1,7 @@
 - Test with tutorials_test.m
 - Test old tutorials 
 - Test octave
+- update info.xml
 - Run unit-tests
 - Build library models package
 - Update version in eidors_obj.m
@@ -13,6 +14,7 @@
 - create eidors-vXX directory with eidors and htdocs
 - update README file and put it into top level directory
 - zip -r -9 eidors-vXX.zip eidors-vXX
+- check that timestamps and order in zipfile keep mex after cpp
 
 
 
