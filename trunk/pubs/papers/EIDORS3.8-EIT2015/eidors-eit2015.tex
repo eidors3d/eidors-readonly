@@ -61,11 +61,11 @@
 \author[1]{Andy~Adler}
 \author[1]{Alistair~Boyle}
 \author[2]{Michael~G.~Crabb}
-\author[3]{Bart{\l}omiej~Grychtol}
 \author[1]{Herv{\'e}~Gagnon}
+\author[3]{Bart{\l}omiej~Grychtol}
 \author[4]{Nolwenn~Lesparre}
 \author[2]{William~R.~B.~Lionheart}
-\affil[1]{Carleton University, Ottawa, Canada, \protect\url{boyle@sce.carleton.ca}}
+\affil[1]{Carleton University, Ottawa, Canada}
 \affil[2]{University of Manchester, Manchester, UK}
 \affil[3]{Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany}
 \affil[4]{IRSN, B.P. 17, 92262 Fontenay-aux-Roses Cedex, France.}
@@ -84,9 +84,8 @@
 \noindent {\bf Abstract:} %The abstract should contain no more than 8
 %lines of text and describe the main methods and findings.
 This paper announces the release of version 3.8 of the
-EIDORS software suite, reviews its new features, and 
-discusses some 
-of the successes and challenges of the project in recent years.
+EIDORS software suite. We review its new features, and 
+discusses recent successes and challenges.
 
 \section{Introduction}
 We are pleased to announce the release of EIDORS~3.8 (fig.~\ref{fig:logo}).
@@ -96,7 +95,7 @@ EIDORS aims to provide free software algorithms for forward modelling
 and inverse solutions
 of Electrical Impedance and (to some extent) Diffusion-based Optical Tomography, in
 medical, industrial and geophysical settings and to share data and promote
-collaboration between groups working in these fields. 
+collaboration.
 
 \begin{figure}[H]
   \vspace{-4.5mm}
@@ -115,7 +114,7 @@ collaboration between groups working in these fields.
 Release 3.8 of EIDORS builds upon a strong foundation in reconstruction
 algorithms, adding and improving a number of aspects.
 \begin{enumerate}
-\item Wider support for absolute solution techniques with the addition of new
+\item More stable
   iterative absolute inverse solvers (both Gauss-Newton and
   Conjugate-Gradient).
 % DEPENDS ON ABS SOLVER
@@ -123,12 +122,16 @@ algorithms, adding and improving a number of aspects.
 \item Greater flexibility in parametrization choices.
 % DEPENDS ON ABS SOLVER
 
-\item Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$), resistivity/conductivity, and apparent resistivity conversions.
+\item Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$),
+ and arbitrary units.
+% resistivity/conductivity, and apparent resistivity conversions.
   Natural limits for $\sigma > 0$. %~\cite{polydorides2014}.
-  A framework for alternate arbitrary units.
+% A framework for alternate arbitrary units.
 %  Support for transparent usage in forward solutions and
 %  Jacobian calculations.
 % DEPENDS ON ABS SOLVER
+
+\item GREIT reconstructions in 3D
 
 \item Speed optimizations: improved Jacobian calculation, faster cache handling, and 
 % Improvements to {\tt stim\_meas\_list} generated structures, resulting in
@@ -204,11 +207,11 @@ These aspects, along with an open source code-base, have enabled EIDORS to
 maintain research relevance.
 
 \section{Challenges}
-A number of challenges inherent in the implementation of EIDORS as a matlab-based toolkit continue to recur.
+A number of challenges inherent in the implementation of EIDORS as a Matlab-based toolkit continue to recur.
 There is no real Object Oriented framework: no reflection, protection, or
   automatic management of errors.
 Versions of Matlab frequently vary in confounding ways that make
-  maintaining a toolkit across multiple matlab versions difficult. This is
+  maintaining a toolkit across multiple Matlab versions difficult. This is
   particularly prevalent for Windows users and ``mex" file compilation.
 The data structure and subfunction complexity in EIDORS are a
   source of confusion for beginners.
@@ -219,6 +222,10 @@ Despite these challenges, EIDORS continues to develop and grow at a healthy pace
 
 In short, EIDORS version 3.8 represents the continued development
 in a healthy open-source software project.
+
+\section*{Acknowledgements}
+Recent funding for EIDORS development thanks to
+Swisstom AG, NSERC Canada, and EPSRC UK.
 
 \footnotesize
 \begin{thebibliography}{}
