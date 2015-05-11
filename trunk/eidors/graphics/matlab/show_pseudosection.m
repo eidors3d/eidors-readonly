@@ -1,4 +1,4 @@
-function fwd_model= show_pseudosection( fwd_model, data)
+function fwd_model= show_pseudosection( fwd_model, data, orientation)
 %SHOW_PSEUDOSECTION: show a pseudo-section image of data
 %
 % OPTIONS:
@@ -28,10 +28,12 @@ if ~isfield(fwd_model, 'misc') || ~isfield(fwd_model.misc,'sizepoint')
   end
 end
 
+if nargin<3 % otherwise orientation is specified
 try
    orientation= fwd_model.show_pseudosection.orientation;
 catch
    orientation = 'horizontaldownward';
+end
 end
 
 if iscell(orientation) 
