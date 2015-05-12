@@ -8,15 +8,39 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 %    to get all frames, use frame_range= []
 %
 % Currently the list of supported file formats is:
-%    - MCEIT (Goettingen / Viasys) "get" file format 
+%    - "EIT" Files, may be one of 
+%          - Draeger Pulmovista (2008+)
+%          - GoeIIMF/Carefusion (2010+)
+%          - Swisstom BB2/Pioneer (2010+)
+%       The function will attempt to autodetect the format
+%       
+%    - MCEIT (GoeIIMF / Viasys) "get" file format 
 %        format = "GET" or "MCEIT"
 %        Note that the data is "untwisted" to correspond to a "no_rotate_meas" stim pattern
-%    - Draeger "eit" file format (post 2008 format for Draeger equipment)
-%        format = "draeger-eit"
-%    - Draeger "get" file format (older - pre 2007 - format for Draeger equipment)
-%        format = "GET" or "draeger-get"
+%    - MCEIT (GoeIIMF) "get" file format
+%        format = "GET-RAW"
+%        Data in original order, corresponds to "rotate_meas" stim pattern
+%
+%    - Draeger (Pulmovista) "EIT" file format (2008+)
+%        format = "DRAEGER-EIT"
+%
+%    - Draeger "get" file format (- 2007 - format for Draeger equipment)
+%        format = "DRAEGER-GET"
+%
+%    - Swisstom EIT equipment "EIT" (Pioneer set and BB2):
+%           'LQ1' (2010 - 2011)
+%           'LQ2' (2013 - 2014)
+%           'LQ4' (2015+)
+%
+%    - Dixtal file format, from Dixtal inc, Brazil
+%        format = 'DIXTAL_encode' extract encoder from provided Dll
+%           - Output: [encodepage] = eidors_readdata( path,'DIXTAL_encode');
+%              where path= '/path/to/Criptografa_New.dll' (provided with system)
+%        format = 'DIXTAL'
+%           - output: [vv] = eidors_readdata( fname, 'DIXTAL', [], encodepage );
 %    - New Carefusion "EIT" file format
-%        format = "EIT" or "carefusion"
+%        format = "GOEIIMF-EIT" or "carefusion"
+
 %    - Sheffield MK I "RAW" file format
 %        format = "RAW" or "sheffield"
 %    - ITS (International Tomography Systems)
@@ -31,17 +55,6 @@ function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extr
 %                 where no_cur_caldata_raw is data captured with no current
 %        format = "UCT_DATA"  UCT data frame file
 %           - Output: [vv]= eidors_readdata( fname, 'UCT_DATA' )
-%    - Landquart, Switzerland EIT equipment 'LQ1' (pre - 2011)
-%    - Landquart, Switzerland EIT equipment 'LQ2' (2013 - 2014)
-%    - Landquart, Switzerland EIT equipment 'LQ3' (2015 - ?)
-%        files are 'EIT' files, but are not autodetected
-%
-%    - Dixtal file format, from Dixtal inc, Brazil
-%        format = 'DIXTAL_encode' extract encoder from provided Dll
-%           - Output: [encodepage] = eidors_readdata( path,'DIXTAL_encode');
-%              where path= '/path/to/Criptografa_New.dll' (provided with system)
-%        format = 'DIXTAL'
-%           - output: [vv] = eidors_readdata( fname, 'DIXTAL', [], encodepage );
 %
 % Usage
 % [vv, auxdata, stim ]= eidors_readdata( fname, format )
@@ -80,7 +93,8 @@ end
 
 
 auxdata = []; % default, can be overriden if the format has it
-switch pre_proc_spec_fmt( format, fname );
+fmt = pre_proc_spec_fmt( format, fname );
+switch fmt
    case 'mceit';
       [vv,curr,volt,auxdata_out] = mceit_readdata( fname );
       auxdata.auxdata = auxdata_out;
@@ -99,8 +113,9 @@ switch pre_proc_spec_fmt( format, fname );
      stim = mk_stim_patterns(16,1,[0,1],[0,1],{'no_rotate_meas','no_meas_current'},.005);
      [stim(:).framerate] = deal(fr);
      [vv] = read_draeger_file( fname );
-     auxdata = vv;
-     vv = vv(1:208,:) + 1j*vv(323+(1:208),:); % I THINK THAT's WHAT THIS IS
+     auxdata = vv; % the actual voltages
+%    vv = vv(1:208,:) + 1j*vv(323+(1:208),:); % I THINK THAT's WHAT THIS IS
+     vv = vv(1:208,:);
 
    case {'raw', 'sheffield'}
       vv = sheffield_readdata( fname );
@@ -126,7 +141,7 @@ switch pre_proc_spec_fmt( format, fname );
       [vv] = UCT_LoadDataFrame( fname );
 
       stim = 'UNKNOWN';
-   case 'carefusion'
+   case {'carefusion','goeiimf-eit'}
       [vv] = carefusion_eit_readdata( fname );
   
       stim = basic_stim(16);
@@ -134,17 +149,17 @@ switch pre_proc_spec_fmt( format, fname );
    case 'lq1'
       [vv] = landquart1_readdata( fname );
 
-      stim = 'UNKNOWN';
+      stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
       
-   case 'lq2'
+   case {'lq2','lq3'}
       [vv] = landquart2_readdata( fname );
 
-      stim = 'UNKNOWN';
+      stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
      
    case 'lq4'
       [vv] = landquart4_readdata( fname );
 
-      stim = 'UNKNOWN';
+      stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
       
    case 'dixtal_encode'
       [vv] = dixtal_read_codepage( fname );
@@ -176,9 +191,18 @@ function fmt = pre_proc_spec_fmt( format, fname );
    end
 
    if strcmp(fmt,'eit')
-      if is_eit_file_a_carefusion_file( fname )
+      draeger =   is_eit_file_a_draeger_file( fname );
+      swisstom=   is_eit_file_a_swisstom_file( fname );
+      carefusion= is_eit_file_a_carefusion_file( fname );
+      if carefusion
+         eidors_msg('"%s" appears to be in GOEIIMF/Carefusion format',fname,3);
          fmt= 'carefusion';
-      elseif is_eit_file_a_draeger_file( fname );
+      elseif draeger
+         eidors_msg('"%s" appears to be in Draeger format',fname,3);
+         fmt= 'draeger-eit';
+      elseif swisstom
+         fmt= sprintf('lq%d',swisstom);
+         eidors_msg('"%s" appears to be in %s format',fname,upper(fmt),3);
       else
          error('EIT file specified, but it doesn''t seem to be a Carefusion file')
       end
@@ -189,6 +213,30 @@ function df= is_get_file_a_draeger_file( fname)
    d= fread(fid,[1 26],'uchar');
    fclose(fid);
    df = all(d == '---Draeger EIT-Software---');
+
+function df= is_eit_file_a_draeger_file( fname );
+   fid= fopen(fname,'rb');
+   d= fread(fid,[1 80],'uchar');
+   fclose(fid);
+   ff = findstr(d, '---Draeger EIT-Software');
+   if ff;
+      df = 1;
+      eidors_msg('Draeger format: %s', d(ff(1)+(0:30)),4);
+   else 
+      df = 0;
+   end
+
+function df= is_eit_file_a_swisstom_file( fname );
+   fid= fopen(fname,'rb');
+   d= fread(fid,[1 6],'uchar');
+   fclose(fid);
+   
+   if any(d(4)==[2,3,4]) && all(d([1,2,3,5,6]) == 0);
+      df = d(4);
+      eidors_msg('Swisstom format: LQ%d', df, 4);
+   else 
+      df = 0;
+   end
 
 function df = is_eit_file_a_carefusion_file( fname )
    fid= fopen(fname,'rb');
@@ -922,10 +970,10 @@ function [fr] = read_draeger_header( filename );
 % fr        double      scalar      frame rate in hertz
 
 % Determine file version
-K0 = 1024;   % bytes to read in char class
+K0 = 2048;   % bytes to read in char class
 K1='Framerate [Hz]:'; % Draeger frame rate line in header
 K2=15;                % Length of K1 string
-K3='Samples';         % Following F1 Field for delimiter
+K3=13;                % Following F1 Field for delimiter (look for ^M)
 
 % Open file for reading in little-endian form
 fid = fopen(filename,'r','l');
@@ -936,7 +984,7 @@ header = fread(fid,K0,'*char')';
 index = strfind(header,K1);
 if ~isempty(index)
     [tok,rem]= strtok(header(index+K2:end),K3);
-    fr = str2num(tok);
+    fr = str2num(tok); 
 else
     error('Error read_draeger_header: frame rate unspecified');
 end
@@ -960,105 +1008,54 @@ function vd = read_draeger_file(filename)
 %                                   N = number of frames        
 
 
-% Determine file version
-K0 = 128;   % bytes to read in char class
+   ff = dir(filename);
+   filelen = ff.bytes;
 
-% Open file for reading in little-endian form
-fid = fopen(filename,'r','l');
-if fid == -1
-    error('Error read_draeger_file: file could not be opened');
-end
-header = fread(fid,K0,'*char')';
-if ~isempty(strfind(header,'V3.2'))
-    version = '3.2';
-elseif ~isempty(strfind(header,'V4.01'))
-    version = '4.01'; 
-else
-    error('Error read_draeger_file: unknown file version');
-end
+   % Open file for reading in little-endian form
+   fid = fopen(filename,'r','l');
+   if fid == -1
+       error('Error read_draeger_file: file could not be opened');
+   end
 
-% Read according to file version
-switch version
-    case '3.2'
-        % Define function constants
-        K1 = 4;     % byte offset from bof for data address offset
-        K2 = 513;   % data frame length in units of 'double'
-        K3 = '0000003400000000'; % 0xh control characters at end of data frame 
-        K4 = '0000003500000000'; % read in little-endian
+   % Determine file version
+   K0 = 128;   % bytes to read in char class
 
-        % Seek to data offset value and read offset as a uint32 class
-        fseek(fid,K1,'bof');
-        dataoffset = fread(fid,1,'*uint32');
-        fseek(fid,dataoffset,'cof');
-
-        % Enter loop to read data frame-by-frame
-        vd = [];
-        control1 = hex2dec(K3);
-        control2 = hex2dec(K4);
-        while ~feof(fid)
-            vd = [vd, fread(fid,K2,'double')];
-            controlstart = fread(fid,1,'uint64');
-            if isempty(controlstart)
-                break;
-            end
-            switch controlstart
-                case control1
-                    % Do nothing
-                case control2
-                    % Do nothing
-                otherwise
-                    fclose(fid);
-                    error('Error read_draeger_file: file could not be read');
-            end
-        end
-    case '4.01'
-        % Define function constants
-        K1 = 4;     % byte offset from bof for data address offset
-        K2 = 645;   % data frame length in units of 'double'
-        K3 = 10000; % control character at end of data frame
-                    % is greather than this threshold value 
-        K6 = 20;    % byte offset for frame count after control lines
-        K7 = '0000000000000000'; % 0xh control characters at end of data frame
-        
-        % Seek to data offset value and read offset as a uint32 class
-        fseek(fid,K1,'bof');
-        dataoffset = fread(fid,1,'*uint32');
-        fseek(fid,dataoffset,'cof');
-
-        % Enter loop to read data frame-by-frame
-        vd = [];
-        framecount = [];
-        control4 = hex2dec(K7);
-        while ~feof(fid)
-            vd = [vd, fread(fid,K2,'double')];
-            controlstart = fread(fid,1,'uint64');
-            if isempty(controlstart)
-                break;
-            end
-            if controlstart ==0 ; break; end
-            if controlstart < K3
-                fclose(fid);
-                error('Error read_draeger_file: file could not be read');
-            end
-            fseek(fid,K6,'cof');
-            framecount = [framecount;fread(fid,1,'uint32')];
-            controlend = fread(fid,1,'uint64');
-            if controlend ~= control4
-                fclose(fid);
-                error('Error read_draeger_file: file could not be read');
-            end                
-        end
-        if framecount(end)-framecount(1)+1 ~= size(vd,2)
-            % Second check for circular counter
-            if framecount(end)-framecount(1)+65536+1 ~= size(vd,2)
-                eidors_msg('Error read_draeger_file: number of frames read does not match file record',1);
-            end
-        end            
-    otherwise
-        fclose(fid);
-        error('Error read_draeger_file: unsupported version');
+   header = fread(fid,K0,'*char')';
+if 0 % THis analysis doesn't seem useful
+   if ~isempty(strfind(header,'V3.2'))
+       version = '3.2';
+   elseif ~isempty(strfind(header,'V4.01'))
+       version = '4.01'; 
+   elseif ~isempty(strfind(header,'V1.10')) % 2014!!
+       version = '1.10'; 
+   else
+       error('Error read_draeger_file: unknown file version');
+   end
 end
 
-% End of function
-fclose(fid);
+   % Read Format version
+   fseek(fid,0,-1); % beginning of file
+   hdr = fread(fid, 8, 'uint8');
+   offset1 =  (256.^(0:3))*hdr(5:8) + 16; % "good" data starts at offset #2
+   switch sprintf('%02X-',header(1:4));
+      case '20-00-00-00-';
+         type='Draeger v32';  SPC = 5200;
+      case '33-00-00-00-';
+         type='Draeger v51';  SPC = 5495;
+      otherwise;
+         error('File "%s" is format version %d, which we don''t know how to read', ...
+               hdr(1))
+   end
+
+   len = floor( (filelen-offset1)/SPC ) - 1;
+   vd= zeros(512,len);
+   ss= offset1 + (0:len)*SPC;
+
+   for k= 1:length(ss);
+      if fseek(fid,ss(k),-1)<0; break; end
+      vd(:,k)=fread(fid,512,'double', 0, 'ieee-le');
+   end
+
+   % End of function
+   fclose(fid);
 
