@@ -17,7 +17,6 @@ VERSION = 0; % 1 for MATLAB docs, 0 for SOURCEFORGE
 
  cd ..
 % FOR THE BUILD PROCESS, AFTER RUNNING MAKE STEPS 0 .. 9
-%cd ~/eidors-release/eidors
 if VERSION
 m2html('mfiles','eidors', 'htmldir','doc','recursive','on',...
     'globalhypertextlinks', 'on','template','blue',...
@@ -42,3 +41,5 @@ cd build
 !rm -rf m2html
 !rm m2html.zip
 rmpath([pwd '/m2html']);
+
+% If building for the release,  move the created doc directory to the release

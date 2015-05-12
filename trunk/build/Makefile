@@ -170,6 +170,7 @@ step8:
 	rm -rf $P/../eidors
 	svn export svn://svn.code.sf.net/p/eidors3d/code/trunk/eidors $P/../eidors
 
+# do not uncomment cd ~/eidors-release
 step9:
 	@echo "BUILD LOCAL DOCS: run build_doc.m making sure variable=1"
 
@@ -177,11 +178,11 @@ step9a:
 	cp README $P/..
 	cp -r ../htdocs/doc $P
 
-VERSION=v3.7.1
+VERSION=v3.8
 step10:
 	mkdir -p $(REL)
 	rm -f $P/robots.txt
-	rm -r $(REL)/eidors-$(VERSION)
+	rm -fr $(REL)/eidors-$(VERSION)
 	rm -f $(REL)/eidors-$(VERSION).zip
 	cp -r $P/.. $(REL)/eidors-$(VERSION)
 	(cd $(REL) && zip -r eidors-$(VERSION).zip eidors-$(VERSION))

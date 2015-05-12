@@ -1,3 +1,5 @@
+- build mex files for matlab versions
+- touch mex files to be older than *cpp
 - Test with tutorials_test.m
 - Test old tutorials 
 - Test octave
@@ -5,12 +7,26 @@
 - Run unit-tests
 - Build library models package
 - Update version in eidors_obj.m
+- update version on web site (index.shtml)
+- update version on web site (download.shtml)
+- write release announcment in news
+- update version in ./build/doc_template/intro.html
+- run build_docs.m in build set VERSION=0 #update docs on the website
+- upload htdocs to website and mirror using htdocs_update
+- run package script: makerfiles steps0 .. 3 3a 4 .. 9
+   make step1
+   for i in 2 3 3a 4 5 6 7 8 ; do make step$i ; done
+- run build docs with VERSION=1 (do not uncomment cd ~/eidors-release)
+- copy doc directory to eidors-release
+   rm -r ~/eidors-release/htdocs/doc
+   cd ~/docs/eidors/htdocs
+   mv doc ~/eidors-release/htdocs/
+- copy README to ~/eidors-release
+- make step10
+- make step11
+- download and test release
 - Tag release
-- run package script
-- build mex files for matlab versions
-- touch mex files to be older than *cpp
-- build docs
-- run html build script
+- run html build script ???
 - create eidors-vXX directory with eidors and htdocs
 - update README file and put it into top level directory
 - zip -r -9 eidors-vXX.zip eidors-vXX
@@ -18,6 +34,7 @@
 
 
 
+
 POST RELEASE:
-- update version in eidors_obj (to 3.x+)
+- update version in eidors_obj (to 3.x-)
 
