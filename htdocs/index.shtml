@@ -9,7 +9,7 @@ working these fields.
 
 <H3>Requirements</H3>
 <ul>
-<li> <a href="http://www.matlab.com">Matlab</a> (&ge;7.0) or
+<li> <a href="http://www.matlab.com">Matlab</a> (&ge;2008a or 7.6) or
      <a href="http://www.octave.org">Octave</a> (&ge;3.6),
 <li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional),
 (Direct link to 
@@ -23,8 +23,8 @@ To try the EIDORS software, follow these steps:
 <ol>
 <li> Download EIDORS :
     <br>&minus; <i>Release Version:</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.7.1.zip"
-             >EIDORS 3.7.1</a> (29 May 2013)
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.8.zip"
+             >EIDORS 3.8</a> (12 May 2015)
       (Or <a href="./download.shtml"><i>Developer Version</i></a> )
     <br>&minus; <i>Optional ready-made FEM models:</i>
          <a href="http://prdownloads.sf.net/eidors3d/model_library.zip"

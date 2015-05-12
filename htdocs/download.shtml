@@ -9,8 +9,8 @@
 <p><li><b>
 Download latest released version
 </b><br>
-<a href="http://prdownloads.sourceforge.net/eidors3d/eidors-v3.7.1.zip"
-   >eidors-v3.7.1.zip</a> (29 May 2013)
+<a href="http://prdownloads.sourceforge.net/eidors3d/eidors-v3.8.zip"
+   >eidors-v3.8.zip</a> (12 May 2015)
 <br>
 
 <p><li><b>
@@ -55,7 +55,7 @@ Read/Write access to Developer Version
 </b><br>
 Read/Write access is available via SVN using
 <pre>
-svn co --username=YOUR_USERNAME svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
+svn co svn+ssh://YOUR_USERNAME@svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
 </pre>
 OR
 <pre>
