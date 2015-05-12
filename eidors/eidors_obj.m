@@ -80,7 +80,7 @@ switch type
       end
 
    case 'eidors_version'
-      obj_id= '3.8';  % Update for New eidors version
+      obj_id= '3.8+';  % Update for New eidors version
       
    case 'eidors_path'
       global eidors_objects
