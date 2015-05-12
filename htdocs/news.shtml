@@ -12,13 +12,17 @@ EIDORS package.
 <b>EIDORS Version 3.8 release</b>
 <p>Blobby the walrus is proud to announce the
 release of EIDORS version 3.8,
-available at <a href="http://www.eidors.org">www.eidors.org</a>. 
+available at <a href="http://www.eidors.org">www.eidors.org</a>,
+and DOI:<a href="http://dx.doi.org/10.5281/zenodo.17559">10.5281/zenodo.17559</a>
 Some of the many new features are:
 <ul>
 <LI> improved (more stable) absolute solvers
 <LI> 3D imaging using GREIT
+<LI> Parameterization and arbitrary units
+<LI> Speed optimizations
 <LI> analytic geometry for dual meshes (coarse to fine)
-<LI> new netgen interface (more stable and flexible)
+<LI> improved netgen interface (more stable and flexible)
+<li> improved support for Dr&uml;ager and Swisstom file formats
 <LI> improved graphics
 </ul>
 Based on our test results, it appears that EIDORS
