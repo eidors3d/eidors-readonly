@@ -62,28 +62,52 @@
  - Make analytic c2f the default
     - think of better tests
 
+ - Make analytic c2f the default
+
+ - Colourmap managing
+    - experimental image_field in calc_colours (see cg_ards_recruitment_04)
+    - cmap_type = 'draeger' does draeger colours, but not the offset
+        in the colourbar. Add a centre_move option to eidors_colourbar
+    - show_fem_enhanced does own stuff with colours
+
+ - check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
+
+ - Mods to show_slices to only show part of the slice
+
+ - Test if Problems with HPF_Gaussian prior?
+
+ - in scale_for_disply, calculate ref_lev weighted by element size (if avail)
+
+- verify that elec_frac = [k ... in mk_grid_model creates conformal grid --??
+
+- put warning in mdl_slice_mesher when level doesn't cut the model
+    (currently this gives error: consider at line 110 when els = [])
+
+ - tutorials
+
 ################# EIDORS 3.8 RELEASE PLANNING ################
 
 LAST MINUTE
   + new abs solve
-  - Draeger data loader
+  + Draeger data loader
   + swisstom LQ4 format
-  - test analytic c2f
+  + test analytic c2f
      mk_tet_c2f
      mk_grid_c2f
-  - unit tests
+  + unit tests
   + tutorial tests
-  - add data 
-     - if_peep_ALI
-     - if_neonate_spontaneous
-     - ards p1
+  + add data 
+     - if_peep_ALI => too big
+     + if_neonate_spontaneous
+     - ards p1     => too big
+
 HIGH PRIORITY
 
  + mex compilation problems on windors
 
  + netgen 5.3+ support (also 4.9.13 with ubuntu)
 
- - Physics => Parameters
+ + Physics => Parameters
     - ensure jacobian_perturb works on physics parameters
     - plan
        - maybe remove all commits and restructure to ensure understanding
@@ -103,7 +127,7 @@ HIGH PRIORITY
  + Use Herve's NG interface as the default
       (postponed)
 
- - C2F FIXES
+ + C2F FIXES
     - tet2tet c2f
     - test: Laplace prior with a 3D-2D grid setup gives pepper noise with prior_use_fwd_not_rec=1;
     - clean up the whole c2f and parameter_mapping 
@@ -131,7 +155,7 @@ LOWER PRIORITY
  + all inverse solvers to do print data residual
      + default not calc residual
 
- - animate stimulation patterns: display_meas (and rename)
+ + animate stimulation patterns: display_meas (and rename)
 
  + bug in prior_covar UNIT_TEST
 
@@ -164,9 +188,9 @@ LOWER PRIORITY
  - Deprecate jacobian.background.value ->
  -            jacobian.background.elem_data (and new physics)
 
- - clean up TODO in inv_solve_abs_GN
+ + clean up TODO in inv_solve_abs_GN
     (specifically the coarse2fine handling
-      - cover whole region, etc)
+      + cover whole region, etc)
 
 - in scale_for_disply, calculate ref_lev weighted by element size (if avail)
 
@@ -214,7 +238,7 @@ LOWER PRIORITY
 
 + fix mk_image so that it can handle a time series image
 
-- Update Draeger file reader software.
++ Update Draeger file reader software.
 
 
 

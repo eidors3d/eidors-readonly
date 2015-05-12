@@ -1,7 +1,7 @@
-function display_meas(fwd_model,disp_meas,offset,elec_pp);
+function show_stim_meas_pattern(fwd_model,disp_meas,offset,elec_pp);
 
-% DISPLAY_MEAS: display measurements on mesh
-% usage: display_meas(fwd_model,disp_meas,offset,elec_pp);
+% SHOW_STIM_MEAS_PATTERN: show the stim and meas pattern graphically
+% usage: show_stim_meas_pattern(fwd_model,disp_meas,offset,elec_pp);
 %
 % Function that displays the electrodes utilised for each measurement.
 % Each electrode is colour-coded depending on its operation
@@ -25,7 +25,7 @@ function display_meas(fwd_model,disp_meas,offset,elec_pp);
 % $Id$
 
 % old parameters
-%function display_meas(vtx,srf,elec,Ib,indH,df,disp_meas,offset,elec_pp);
+%function show_stim_meas_pattern(vtx,srf,elec,Ib,indH,df,disp_meas,offset,elec_pp);
 
 pp= np_fwd_parameters( fwd_model);
 vtx  = pp.vtx;
