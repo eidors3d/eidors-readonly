@@ -35,7 +35,10 @@ tolstr='';
    ok='Fail';
    if (isnumeric(a) || islogical(a)) && ...
       (isnumeric(b) || islogical(b))
-      if ~isequal( size(a), size(b))
+      sza = size(a); szb= size(b);
+      eqsz= isequal( size(a), size(b));
+      sza1 = all(sza==1); szb1 = all(szb==1);
+      if ~eqsz && ~sza1 && ~szb1
          ok='Fail (size change)';
       else
          if isnan(a) == isnan(b);
@@ -62,7 +65,8 @@ tolstr='';
    ntotal= ntotal+1;
 
 function do_unit_test
-   unit_test_cmp('Expect OK'  ,1,1);
+   unit_test_cmp('Expect OK'  ,3,3);
+
    unit_test_cmp('Expect Fail',1,1.01, -inf);
    unit_test_cmp('Expect OK'  ,1,.99,.02);
    unit_test_cmp('Expect Fail',1,.99,-.002);
@@ -87,3 +91,5 @@ function do_unit_test
 
    unit_test_cmp('Expect Fail', ones(3,3), ones(3,3,3), -inf);
    unit_test_cmp('Expect Fail', ones(3,1), ones(1,3), -inf);
+   unit_test_cmp('Expect OK'  ,3,[3,3,3,3]);
+   unit_test_cmp('Expect OK'  ,3,[3,3,3,3]);
