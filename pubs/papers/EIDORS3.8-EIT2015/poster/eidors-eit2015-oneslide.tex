@@ -1,0 +1,116 @@
+\documentclass[20pt,a4paper]{article}
+% ========================== DO NOT MODIFY =================================== %
+\usepackage[landscape,a4paper,left=0.5cm,top=0.5cm,right=0.5cm,bottom=0.5cm]{geometry}
+\usepackage{amssymb,amsmath} % If amsmath is required
+\usepackage{url}
+\usepackage{times}
+\usepackage{mathptmx}      %% use fitting times fonts also in formulas
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{authblk}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage[small,compact]{titlesec}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[small,bf,tableposition=top,figureposition=bottom,skip=2pt]{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+
+% limit space between floats and text
+\setlength{\textfloatsep}{10pt plus 1.0pt minus 2.0pt}
+% shrink the list environments
+\setlist{noitemsep}
+\setlist{nolistsep}
+
+% Shrink the bibliography
+  \let\oldthebibliography=\thebibliography
+  \let\endoldthebibliography=\endthebibliography
+  \renewenvironment{thebibliography}[1]{%
+    \begin{oldthebibliography}{#1}%
+      \setlength{\parskip}{0ex}%
+      \setlength{\itemsep}{0ex}%
+  }%
+  {%
+    \end{oldthebibliography}%
+  }
+
+% Format of the front matter
+\renewcommand{\Affilfont}{\small}
+\setlength{\affilsep}{1ex}
+\renewcommand\Authands{, }
+\setlength{\droptitle}{-1.634cm}
+% ============================================================================ %
+
+
+% To be able to type european characters without escape sequences
+% uncomment according to your operating system, if desired:
+% ---------------------------------------------------------------------------- %
+% \usepackage[latin1]{inputenc}   %% (Windows, old Linux)
+% \usepackage[utf8]{inputenc}     %% (Linux)
+% \usepackage[applemac]{inputenc} %% (Mac OS)
+% ---------------------------------------------------------------------------- %
+
+
+%------------------------------- FRONT MATTER -------------------------------- %
+\title{EIDORS Version 3.8%
+\vspace{-2ex}} %remove vertical space
+\author[1]{Andy~Adler}
+\author[1]{Alistair~Boyle}
+\author[2]{Michael~G.~Crabb}
+\author[1]{Herv{\'e}~Gagnon}
+\author[3]{Bart{\l}omiej~Grychtol}
+\author[4]{Nolwenn~Lesparre}
+\author[2]{William~R.~B.~Lionheart}
+\affil[1]{Carleton University, Ottawa, Canada}
+\affil[2]{University of Manchester, Manchester, UK}
+\affil[3]{Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany}
+\affil[4]{IRSN, B.P. 17, 92262 Fontenay-aux-Roses Cedex, France.}
+\date{}
+%----------------------------------------------------------------------------- %
+
+
+
+\begin{document}
+%\maketitle
+\thispagestyle{empty}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.95\columnwidth]{../mesh-eidors3p8.pdf}
+\end{figure}
+
+\vspace{-10mm}
+\begin{multicols}{2}
+
+
+{\fontsize{35}{45}\selectfont
+\begin{itemize}
+\setlist{noitemsep}
+\setlist{nolistsep}
+\item[$\rightarrow$] Solvers
+\item[$\rightarrow$] parameterization
+\item[$\rightarrow$] GREIT (3D)
+\item[$\rightarrow$] Speed
+\item[$\rightarrow$] Meshing
+\item[$\rightarrow$] Formats
+\end{itemize}
+}
+
+ \vspace{10mm}
+\phantom{asdf}
+ \vspace{10mm}
+\begin{figure}[H]
+\centering
+% trim=left botm right top
+\includegraphics[width=.96\columnwidth]{../fig_loc.pdf}
+\end{figure}
+\vspace{10mm}
+\phantom{asdf}
+\end{multicols}
+
+\end{document}
