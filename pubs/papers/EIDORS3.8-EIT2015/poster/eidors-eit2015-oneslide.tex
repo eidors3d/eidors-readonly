@@ -8,7 +8,7 @@
 \usepackage{graphicx}
 \usepackage{titling}
 \usepackage{authblk}
-\usepackage{multicol}
+\usepackage{vwcol}
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{enumitem}
@@ -84,33 +84,25 @@
 \includegraphics[width=.95\columnwidth]{../mesh-eidors3p8.pdf}
 \end{figure}
 
-\vspace{-10mm}
-\begin{multicols}{2}
-
-
+\vspace{-5mm}
+\begin{tabular}{p{75mm} p{10cm}}
 {\fontsize{35}{45}\selectfont
 \begin{itemize}
 \setlist{noitemsep}
 \setlist{nolistsep}
 \item[$\rightarrow$] Solvers
-\item[$\rightarrow$] parameterization
+\item[$\rightarrow$] Parameters\hspace{-1cm}
 \item[$\rightarrow$] GREIT (3D)
 \item[$\rightarrow$] Speed
-\item[$\rightarrow$] Meshing
+\item[$\rightarrow$] Meshing\hspace{-1cm}
 \item[$\rightarrow$] Formats
 \end{itemize}
 }
-
- \vspace{10mm}
-\phantom{asdf}
- \vspace{10mm}
+ &
 \begin{figure}[H]
-\centering
-% trim=left botm right top
-\includegraphics[width=.96\columnwidth]{../fig_loc.pdf}
+% trim=left botm right 0o8
+\includegraphics[width=0.7\columnwidth]{../fig_loc.pdf}
 \end{figure}
-\vspace{10mm}
-\phantom{asdf}
-\end{multicols}
+\end{tabular}
 
 \end{document}
