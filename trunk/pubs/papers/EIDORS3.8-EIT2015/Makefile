@@ -6,6 +6,8 @@ REPO = ../../..
 
 eidors-eit2015.pdf: eidors-eit2015.tex $(FIGURES)
 	pdflatex -halt-on-error $<
+	pdflatex -halt-on-error $<
+	pdflatex -halt-on-error $<
 
 clean:
 	-rm -f *.log *.bbl *.blg *.aux eidors-eit2015.pdf
