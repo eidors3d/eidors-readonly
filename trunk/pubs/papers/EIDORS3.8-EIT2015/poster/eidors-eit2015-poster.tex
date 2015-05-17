@@ -1,0 +1,318 @@
+\documentclass[portrait,final,a0paper,fontscale=0.277]{baposter}
+%\usepackage{amssymb,amsmath} % If amsmath is required
+%\usepackage{times}
+%\usepackage{mathptmx}      %% use fitting times fonts also in formulas
+%\usepackage{titling}
+%\usepackage{authblk}
+%\usepackage{multicol}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage[small,compact]{titlesec}
+%\usepackage[numbers,sort&compress]{natbib}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[small,bf,tableposition=top,figureposition=bottom,skip=2pt]{caption}
+\usepackage{booktabs, caption, supertabular, subfig} %, siunitx}
+\usepackage{tikz,color}
+
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{relsize}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{bm}
+\usepackage{url}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+
+%\usepackage{times}
+%\usepackage{helvet}
+%\usepackage{bookman}
+\usepackage{palatino}
+
+\renewcommand{\captionfont}{\footnotesize}
+
+%\graphicspath{{images/}{../images/}}
+\usetikzlibrary{calc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Some math symbols used in the text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multicol Settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\columnsep}{1.5em}
+\setlength{\columnseprule}{0mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Save space in lists. Use this after the opening of the list
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\compresslist}{%
+\setlength{\itemsep}{1pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Begin of Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Here starts the poster
+%%%---------------------------------------------------------------------------
+%%% Format it to your taste with the options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define some colors
+
+\definecolor{lightblue}{rgb}{0.145,0.6666,1}
+%\definecolor{lightgreen}{rgb}{0.145,1,0.6666}
+%\definecolor{lightblue}{rgb}{1,0.2,0.2}
+
+%\hyphenation{resolution occlusions}
+%%
+\begin{poster}%
+  % Poster Options
+  {
+  % Show grid to help with alignment
+  grid=false,
+  % Column spacing
+  colspacing=1em,
+  % Color style
+  bgColorOne=white,
+  bgColorTwo=white,
+  borderColor=gray,
+  headerColorOne=black,
+  headerColorTwo=lightblue,
+  headerFontColor=white,
+  boxColorOne=white,
+  boxColorTwo=lightblue,
+  % Format of textbox
+  textborder=roundedleft,
+  % Format of text header
+  eyecatcher=true,
+  headerborder=closed,
+  headerheight=0.1\textheight,
+%  textfont=\sc, An example of changing the text font
+  headershape=roundedright,
+  headershade=shadelr,
+  headerfont=\Large\bf\textsc, %Sans Serif
+  textfont={\setlength{\parindent}{1.5em}},
+  boxshade=plain,
+%  background=shade-tb,
+  background=plain,
+  linewidth=2pt
+  }
+  % Eye Catcher
+  {
+%%  \includegraphics[height=5em]{images/graph_occluded.pdf}
+  }
+  % Title
+  {\bf\textsc{EIDORS Version 3.8}}
+  % Authors
+  {\large \textsc{Andy Adler$^1$, Alistair Boyle$^1$, Michael G. Crabb$^2$,
+     Herv\'e Gagnon$^1$, Bartłomiej Grychtol$^3$,
+     Nolwenn Lesparre$^4$, William R. B. Lionheart$^2$}\\
+    \small
+    $^1$Carleton University, Ottawa, Canada \;\;\;\;
+    $^2$University of Manchester, Manchester, UK\\
+    $^3$Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany\\
+    $^4$IRSN, B.P. 17, 92262 Fontenay-aux-Roses Cedex, France
+  }
+  % University logo
+  {% The makebox allows the title to flow into the logo, this is a hack because of the L shaped logo.
+%%    \includegraphics[height=9.0em]{images/logo}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Now define the boxes that make up the poster
+%%%---------------------------------------------------------------------------
+%%% Each box has a name and can be placed absolutely or relatively.
+%%% The only inconvenience is that you can only specify a relative position 
+%%% towards an already declared box. So if you have a box attached to the 
+%%% bottom, one to the top and a third one which should be in between, you 
+%%% have to specify the top and bottom boxes before you specify the middle 
+%%% box.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %
+    % A coloured circle useful as a bullet with an adjustably strong filling
+    \newcommand{\colouredcircle}{%
+      \tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em); \draw[draw=black,fill=lightblue,line width=0.03em] (0,0) circle(0.18em);}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{New Release}{name=problem,column=0,row=0,span=3}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   \vspace{0.3em}
+\begin{figure}[H]
+\centering
+\includegraphics[width=.75\columnwidth]{../mesh-eidors3p8.pdf}
+\caption{\label{fig:logo}%
+\large  EIDORS 3.8: featuring flexible parametrization, meshing, absolute solver and visualization improvements.
+  Image shows current streamlines on a thorax-shaped finite element model.
+}
+\end{figure}
+
+   \vspace{0.3em}
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{New Features}{name=contribution,column=0,below=problem}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Release 3.8 of EIDORS builds upon a strong foundation in reconstruction
+algorithms, adding and improving a number of aspects.
+\begin{enumerate}
+\item More stable
+  iterative absolute inverse solvers (both Gauss-Newton and
+  Conjugate-Gradient).
+% DEPENDS ON ABS SOLVER
+
+\item Greater flexibility in parametrization choices.
+% DEPENDS ON ABS SOLVER
+
+\item Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$),
+ and arbitrary units.
+% resistivity/conductivity, and apparent resistivity conversions.
+  Natural limits for $\sigma > 0$. %~\cite{polydorides2014}.
+% A framework for alternate arbitrary units.
+%  Support for transparent usage in forward solutions and
+%  Jacobian calculations.
+% DEPENDS ON ABS SOLVER
+
+\item GREIT reconstructions in 3D
+
+\item Speed optimizations: improved Jacobian calculation, faster cache handling, and 
+% Improvements to {\tt stim\_meas\_list} generated structures, resulting in
+  faster forward solutions.
+%  Also, the ability to
+%  convert between a stimulus structure and a list of stimulus and measurement electrode pairs.
+% An implementation of the parallel Jacobian calculator (pending MEX issues).
+
+%\item Attempts to work around broken matlab MEX file handling (cross-platform mex compile).
+
+\item Improved interfaces to NetGen and visualization.
+      Compound and point electrodes in NetGen.
+
+\item Analytic calculation of dual-mesh interpolations (coarse to fine)
+% as well as, Quad and hex shaped mesh elements %rev 4392
+
+\item Support for second and third order mesh elements.
+
+\item Support for Dr\"ager and Swisstom file formats
+%\item OpenEIT file format support~\cite{jones2014}.
+
+\item Expanded shape library
+\end{enumerate}
+   \vspace{0.3em}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{References}{name=references,column=0,above=bottom}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \smaller
+    \bibliographystyle{ieee}
+    \renewcommand{\section}[2]{\vskip 0.05em}
+\begin{thebibliography}{}
+%\bibitem{polydorides2014}
+%Polydorides N, Ouypornkochagorn T, McCann H. 
+%{\em Proc 15th Conf}, EIT, Gananoque, Canada, 2014
+\bibitem{eidors3p8}
+   Adler A, Boyle A, Crabb MG et al,
+   {\em EIDORS v3.8}, Zenodo,
+  % \href{http://dx.doi.org/10.5281/zenodo.17559}
+       {DOI:10.5281/zenodo.17559},
+    2015.
+\bibitem{vauhkonen2001}
+   Vauhkonen M, Lionheart WRB, Heikkinen L et al,
+   {\em  Physiol Meas}, 22:107--111, 2001.
+\bibitem{polydorides2002phd}
+   Polydorides N,
+ {\em Image Reconstruction Algorithms for Soft-Field Tomography}, Ph.D. thesis,
+   University of Manchester, UK, 2002.
+\bibitem{polydorides2002matlab}
+   Polydorides N, Lionheart WRB,
+   {\em Meas Sci and Tech}, 13:1871--1883, 2002.
+\bibitem{adler2006}
+   Adler A, Lionheart WRB, {\em Physiol Meas}, 27:S25--S42, 2006.
+\end{thebibliography}
+%\input{eidors-eit2015.bbl}
+   \vspace{0.3em}
+  }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Successes}{name=sensitivity,column=1,below=problem}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The structure of EIDORS has been relatively stable due, in part, to some early design choices:
+a modular framework and data structure,
+cross-platform support, integration of meshing,
+tutorials, and the contributed data repository.
+These aspects, along with an open source code-base, have enabled EIDORS to
+maintain research relevance.
+   \vspace{0.3em}
+  }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Challenges}{name=specificity,column=2,below=problem,bottomaligned=sensitivity}{
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A number of challenges inherent in the implementation of EIDORS as a Matlab-based toolkit continue to recur.
+There is no real Object Oriented framework: no reflection, protection, or
+  automatic management of errors.
+Versions of Matlab frequently vary in confounding ways that make
+  maintaining a toolkit across multiple Matlab versions difficult. This is
+  particularly prevalent for Windows users and ``mex" file compilation.
+The data structure and subfunction complexity in EIDORS are a
+  source of confusion for beginners.
+% and a challenge to manage for developers.
+%The expansion of EIDORS into new application domains continues to provide software development challenges at times.
+%Despite this, or indeed because of this, 
+Despite these challenges, EIDORS continues to develop and grow: presenting version 3.8!
+   \vspace{0.0em}
+  }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Growth}{name=results,column=1,span=2,below=sensitivity}{
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\centering
+% trim=left botm right top
+\includegraphics[width=.96\columnwidth]{../fig_loc.pdf}
+\caption{\label{fig:loc}%
+%graph and table combo chart, including line for test code.
+\large  Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
+   (red), Eidors (i.e.\ release branch, yellow), Tutorials (green), development code (blue).
+   Releases are indicated by gray bars.
+}
+\end{figure}
+   \vspace{0.3em}
+
+\begin{tabular}{lcr}
+  \toprule
+  Paper & Date & \hspace{-2mm}Citations \\
+  %{@{\extracolsep{\fill}}@{}|c|ccc|r|}
+  \midrule
+  \cite{vauhkonen2001} A MATLAB package for the EIDORS project {\tiny ...}  
+    & 2001 & 159 \\
+  \cite{polydorides2002phd} Image reconstruction algorithms for {\tiny ...}  
+    & 2002 & 88 \\
+  \cite{polydorides2002matlab} A Matlab toolkit for three-dimensional {\tiny ...}  
+    & 2002 & 293 \\
+  \cite{adler2006} Uses and abuses of {EIDORS}: An extensible {\tiny ...} 
+    & 2006 & 184 \\
+  \bottomrule
+\end{tabular}
+   \vspace{0.3em}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Acknowledgements}{name=results,column=1,span=2,below=results,above=bottom}{
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Recent funding for EIDORS development thanks to
+Swisstom AG, NSERC Canada, EPSRC UK, and IRSN France.
+}
+\end{poster}
+
+\end{document}
+
