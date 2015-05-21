@@ -97,6 +97,7 @@ ignore = false;
 try 
     ignore = pvar.ignore_next;
 end
+
 if nargs == 0 || varargin{1} <=0 || isempty(pvar)
     first_msg = true;
     if ~ignore
@@ -129,18 +130,19 @@ if pvar.log_level > eidors_msg('log_level');
     return
 end
 
-if ~isempty(msg) && ~isinf(varargin{1});
+if ~isempty(msg) && ~isinf(varargin{1}) && ~(first_msg && ignore);
     fprintf('%s ',msg);
 end
 
 if nargs > 0 && isinf(varargin{1})
     if isempty(msg)
         msg = pvar.final_msg;
+        if strcmp(msg,'none')
+           return
+        end
     end
     print_final_msg(msg, pvar.nChars);
-    if ~strcmp(msg,'none')
-        print_time(pvar);
-    end
+    print_time(pvar);
     if eidors_debug('query','progress_msg')
         fprintf('Self-time: %f\n',pvar.own_time);
     end
@@ -192,7 +194,7 @@ function numbermsg(num, first, T)
 end
 
 function print_final_msg(msg, N)
-    if isempty(msg), return, end
+    if isempty(msg) , return, end
     str = [repmat('\b',1,N) '%s'];
     fprintf(str, msg);
 end
