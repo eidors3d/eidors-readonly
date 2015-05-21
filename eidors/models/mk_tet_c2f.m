@@ -4,7 +4,7 @@ function [c2f] = mk_tet_c2f(fmdl, rmdl, opt)
 % each element of the fine model FMDL contained in each element of
 % the coarse model RMDL.
 % Uses CONVHULLN to calculate the volume defined by a set of intersection
-% points between individual tet and vox elements.
+% points between individual tet elements.
 %
 % C2F = MK_TET_C2F(FMDL,RMDL,OPT) allows specifying options.
 % 
@@ -305,8 +305,8 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
       den = sum(bsxfun(@times,fmdl.normals(fidx,:),P12(i,:)),2);
       
       u = num ./ den;
-      
-      idx = u >= 0 & u <= 1;
+      % den == 0 => normal perpendicular to line
+      idx = u >= 0 & u <= 1 & abs(den) > eps;
       
       % calculate the intersection points
       if any(idx)
@@ -375,7 +375,7 @@ function rnode2tet = get_nodes_in_tets(fmdl,nodes, opt)
    progress_msg(.94);
    rnode2tet(any(ex,2),:) = 0;
    rnode2tet = sparse(rnode2tet);
-   progress_msg(1);
+   progress_msg(Inf);
 
 %-------------------------------------------------------------------------%
 % Prepare model
@@ -463,7 +463,7 @@ function [fmdl,rmdl,fmdl_idx,rmdl_idx] = crop_models(fmdl,rmdl)
         opt.tol_node2tet = eps; % * max(rmdl_rng,fmdl_rng)^3;
     end
     if ~isfield(opt, 'tol_edge2edge')
-        opt.tol_edge2edge = 2*sqrt(3)*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
+        opt.tol_edge2edge = 6*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
     end
     if ~isfield(opt, 'tol_edge2tri')
         opt.tol_edge2tri = eps; %1e-10
