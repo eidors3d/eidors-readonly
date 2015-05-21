@@ -32,6 +32,10 @@ function out = mk_library_model(shape,elec_pos,elec_shape,maxsz,nfft,scale)
 % (C) 2011 Bartlomiej Grychtol. License: GPL version 2 or version 3
 % $Id$
 
+% Fill in defaults:
+if nargin < 6; scale = 1;          end
+if nargin < 5; nfft = 50;          end
+
 if ischar(shape)
     switch shape
         case 'LIBRARY_PATH'
@@ -55,7 +59,7 @@ else
    elseif numel(shape) == 1
       shape{2} = 'boundary';
    end
-   fname = make_filename(shape,elec_pos,elec_shape,maxsz);
+   fname = make_filename(shape,elec_pos,elec_shape,maxsz, nfft, scale);
    out = load_stored_model(fname);
    if ~isempty(out)
       return
@@ -63,9 +67,6 @@ else
    s_shape = split_var_strings(shape(2:end));
    shapes = shape_library('get',shape{1},s_shape(1,:));
    if ~iscell(shapes), shapes = {shapes}; end
-   if nargin < 6
-      scale = 1;
-   end
    %apply any indeces specified
    for i = 1:numel(shapes)
       eval(sprintf('shapes{i} = %f*shapes{i}%s;',scale,s_shape{2,i}));
@@ -74,9 +75,6 @@ else
       el = shape_library('get',shape{1},'electrodes');
       electh= atan2(el(:,2),el(:,1))*180/pi;
       elec_pos = [electh,0.5*ones(size(electh))];
-   end
-   if nargin < 5
-      nfft = 50;
    end
    
    if nfft > 0
@@ -232,7 +230,8 @@ end
 out.name = str;
 
 
-function str = make_filename(shape, elec_pos, elec_shape, maxsz)
+function str = make_filename(shape, elec_pos, elec_shape, ...
+                             maxsz, nfft, scale);
 %at this point, shape is a cell array of strings e.g. {'pig_23kg','lungs')
 str = shape{1};
 shape(1) = []; %remove the first element
@@ -254,6 +253,12 @@ else
 end
 if ~isempty(maxsz)
     str = [str '_maxsz_' num2str(maxsz)];
+end
+if ~isempty(nfft)
+    str = [str '_nfft_' num2str(nfft)];
+end
+if ~isempty(scale)
+    str = [str '_scale' num2str(scale)];
 end
 
 %remove colons
