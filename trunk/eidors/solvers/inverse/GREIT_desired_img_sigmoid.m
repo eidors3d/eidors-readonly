@@ -73,6 +73,8 @@ function PSF = desired_soln(xyz, radius, opt)
     end
     [Xnodes,Ynodes,Znodes] = voxnodes(mdl);
     
+    warned = false;
+    
     for i=1:size(xyz,2);
         th = log(1e4)/opt.steepness(i);
         progress_msg(i,num_it);
@@ -86,6 +88,15 @@ function PSF = desired_soln(xyz, radius, opt)
             n = numel(x);
             idx = [idx; e*ones(n,1)];
             factor = [factor; ones(n,1)/n];
+        end
+        if isempty(X)
+            if ~warned
+               warning('EIDORS:OutsidePoint',...
+                  'Desired image generation failed for point %d (and maybe others)',i);
+               warned = true;
+            end
+            PSF(:,i) = 0;
+            continue;
         end
         D = sqrt(sum(bsxfun(@minus,[X Y Z],xyz(:,i)').^2, 2));
         x = D - radius(i);
