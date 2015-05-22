@@ -39,7 +39,7 @@ function [c2f] = mk_tet_c2f(fmdl, rmdl, opt)
 %     hold off
 %
 % See also MK_GRID_C2F, FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN
-%          MK_COARSE_FINE_MAPPING, POINT_IN_TRIANGLE, EIDORS_MSG
+%     MK_COARSE_FINE_MAPPING, MK_APPROX_C2F, POINT_IN_TRIANGLE, EIDORS_MSG
 
 
 % (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
@@ -233,8 +233,11 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
     vol = get_elem_volume(fmdl);
     c2f = bsxfun(@rdivide,c2f,vol);
 
+    % count identical tets just once
+    ftri_in_rtri(rtet_in_ftet') = 0;
+   
+    
     % add tets contained in vox
-
     c2f = c2f + ftet_in_rtet;
 %-------------------------------------------------------------------------%
 % Calculate intersection points between faces and edges    
@@ -520,7 +523,7 @@ function do_realistic_test
    unit_test_cmp('mk_tet_c2f v mk_grid_c2f', c2f_b,c2f_a, 1e-5);
 
    tic
-   c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);
+   c2f_n = mk_approx_c2f(fmdl,rmdl);
    t = toc;
    fprintf('Approximate: t=%f s\n',t);
 

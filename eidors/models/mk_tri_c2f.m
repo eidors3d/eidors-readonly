@@ -1,11 +1,46 @@
 function c2f = mk_tri_c2f(fmdl,rmdl,opt)
-%MK_TRI_C2F
+%MK_TRI_C2F - calculate a coarse2fine mapping for triangle-based models.
+% C2F = MK_TRI_C2F(FMDL,RMDL) returns in C2F the fraction of area of
+% each element of the fine model FMDL contained in each element of
+% the coarse model RMDL.
+% Uses CONVHULLN to calculate the area defined by a set of intersection
+% points between individual triangles.
+%
+% C2F = MK_TRI_C2F(FMDL,RMDL,OPT) allows specifying options.
+% 
+% Inputs:
+%   FMDL - a (fine) EIDORS (tet-based) forward model
+%   RMDL - a (course) EIDORS (tet-based) forward model
+%   OPT  - an option structure with the following fields and defaults:
+%      .do_not_scale  - set to true to prevent scaling the models to unit
+%                       square before any calculations, including 
+%                       thresholds. Default: false
+%      .tol_node2tri  - minimum value of a barycentric coordinate to 
+%                       decide a point is lying inside a triangle and not
+%                       on its edge. Default: eps
+%
+% NOTE that for grid-based models, such as returned by MK_GRID_MODEL or
+% MK_VOXEL_VOLUME, MK_GRID_C2F is much faster.
+%
+% Set eidors_msg 'log level' < 2 to supress output to command line.
+%
+% Examples:
+%     fmdl = ng_mk_cyl_models([0,2,.2],[],[]);
+%     rmdl = ng_mk_cyl_models([0,2],[],[]);
+%     c2f  = mk_tri_c2f(fmdl,rmdl);
+%     h = show_fem(fmdl); set(h,'LineWidth',0.1,'FaceColor','none')
+%     hold on
+%     h = show_fem(rmdl); set(h,'EdgeColor','b','LineWidth',2,...
+%        'FaceColor','none');
+%     hold off
+%
+% See also MK_GRID_C2F, FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN
+%          MK_APPROX_C2F, POINT_IN_TRIANGLE, EIDORS_MSG
 
-% (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
+% (C) 2015 Bartlomiej Grychtol
 % License: GPL version 2 or 3
 % $Id$
 
-% >> SWISSTOM CONTRIBUTION <<
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'), do_unit_test; return; end
 if nargin < 3
@@ -48,7 +83,7 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
    progress_msg('Find edge2edge intersections...');
    [intpts,fedge2redge,fedge2intpts,redge2intpts] = ...
       find_edge2edge_intersections( fmdl.edges,fmdl.nodes,...
-                                    rmdl.edges,rmdl.nodes, opt.tol_edge2edge);
+                                    rmdl.edges,rmdl.nodes);
    progress_msg(sprintf('Found %d',size(intpts,1)),Inf);
 
    
@@ -128,14 +163,14 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
                   % border case point may be included multiple times.
                   % this is OK... though we may miss cases where more
                   % points should have been found but were not
-                  u = uniquetol(pts*scale,eps,'ByRows',true,'DataScale', 1);
+                  u = uniquetol(pts*scale,1e-14,'ByRows',true,'DataScale', 1);
                   ok = ok | (size(u,1) < 3);
                   if ~ok
                      % test for colinearity
                      cp = bsxfun(@minus, u(2:end,:), u(1,:));
                      l = sqrt(sum(cp.^2,2));
                      cp = bsxfun(@rdivide, cp, l);
-                     u = uniquetol(cp,eps,'ByRows',true,'DataScale',1);
+                     u = uniquetol(cp,1e-14,'ByRows',true,'DataScale',1);
                      ok = ok | size(u,1) == 1; % co-linear points
                   end
             end
@@ -181,13 +216,16 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
    vol = get_elem_volume(fmdl);
    c2f = bsxfun(@rdivide,c2f,vol);
    
+   % count identical triangles just once
+   ftri_in_rtri(rtri_in_ftri') = 0;
+   
    % add fine elems contained in coarse elems
    c2f = c2f + ftri_in_rtri;
 
 end
 
 
-function [pts,FE2CE,FE2pts,CE2pts] = find_edge2edge_intersections(FE,FN,CE,CN, epsilon)
+function [pts,FE2CE,FE2pts,CE2pts] = find_edge2edge_intersections(FE,FN,CE,CN)
    P1 = FN(FE(:,1),:);
    P2 = FN(FE(:,2),:);
    P3 = CN(CE(:,1),:);
@@ -308,23 +346,13 @@ end
 %-------------------------------------------------------------------------%
 % Parse option struct
  function opt = parse_opts(fmdl,rmdl, opt)
-
-    
+  
     if ~isfield(opt, 'tol_node2tri');
         opt.tol_node2tri = eps; % * max(rmdl_rng,fmdl_rng)^3;
     end
-    if ~isfield(opt, 'tol_edge2edge')
-        opt.tol_edge2edge = 2*sqrt(3)*eps(min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))));
-    end
-%     if ~isfield(opt, 'tol_node2tri')
-%         opt.tol_edge2tri = eps; %1e-10
-%     end
-%     if ~isfield(opt, 'save_memory')
-%        opt.save_memory = 0;
-%     end
+
     eidors_msg('@@ node2tri  tolerance = %g', opt.tol_node2tri,2);
-    eidors_msg('@@ edge2edge tolerance = %g', opt.tol_edge2edge,2);
-%     eidors_msg('@@ edge2tri  tolerance = %g', opt.tol_edge2tri,2);
+
  end   
 
 function do_unit_test
