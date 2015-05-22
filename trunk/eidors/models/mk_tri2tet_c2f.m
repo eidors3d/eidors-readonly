@@ -1,6 +1,42 @@
 function c2f = mk_tri2tet_c2f(fmdl,rmdl, opt)
-% mk_tri2tet_c2f
-
+%MK_TRI2TET_C2F - coarse2fine mapping between tri-based and tet-based models
+% C2F = MK_TRI2TET_C2F(FMDL,RMDL) returns in C2F the fraction of volume of
+% each element of the fine (tet-based) model contained in each element of
+% the coarse (tri-based) model. Each triangle is extruded along the z-axis
+% to form a prism.
+% Uses CONVHULLN to calculate the volume defined by a set of intersection
+% points between individual tet and vox elements.
+%
+% C2F = MK_TRI2TET_C2F(FMDL,RMDL,OPT) allows specifying options.
+% 
+% Inputs:
+%   FMDL - an EIDORS (tet-based) 3D forward model
+%   RMDL - an EIDORS (tri-based) 2D forward model
+%   OPT  - an option structure with the following fields and defaults:
+%      .z_depth
+%      .do_not_scale  - set to true to prevent scaling the models to unit
+%                       cube before any calculations, including thresholds.
+%                       Default: false
+%      .tol_node2tri  - minimum value of a barycentric coordinate to 
+%                       decide a tet node is lying inside a triangle and 
+%                       not on its edge. Default: eps
+%      .tol_node2tet  - tolerance for determinant <= 0 in testing for
+%                       points inside tets. Default: eps
+%      .tol_edge2edge - maximum distance between "intersecting" edges
+%                       Default: 6*sqrt(3)*eps(a), where a is
+%                       min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))
+%      .tol_edge2tri  - minimum value of a barycentric coordinate to 
+%                       decide an edge-plane intersection point is lying 
+%                       inside a triangle and not on its edge. Default: eps
+%                       
+% NOTE that for grid-based models, such as returned by MK_GRID_MODEL or
+% MK_VOXEL_VOLUME, MK_GRID_C2F is much faster.
+%
+% Set eidors_msg 'log level' < 2 to supress output to command line.
+% 
+% See also MK_GRID_C2F, MK_TET_C2F, MK_TRI_C2F, MK_COARSE_FINE_MAPPING,
+%          FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN, MK_APPROX_C2F, 
+%          POINT_IN_TRIANGLE, EIDORS_MSG
 
 % (C) 2015 Bartlomiej Grychtol
 % License: GPL version 2 or 3
@@ -88,14 +124,14 @@ function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
       progress_msg('Find tet_edge2tri_face intersections (top) ...');
       [intpts6, top_tet_edge2tri_face, top_tet_edge2intpt6, tri2intpt6] = ...
          get_cap_tet_edge2tri_face_intersections(fmdl,rmdl,opt.top, ...
-         top_nodes_above, top_nodes_below, opt.tol_node2tri);
+         top_nodes_above, top_nodes_below, opt.tol_edge2tri);
       progress_msg(sprintf('Found %d', size(intpts6,1)),Inf);
       
       
       progress_msg('Find tet_edge2tri_face intersections (bot) ...');
       [intpts7, bot_tet_edge2tri_face, bot_tet_edge2intpt7, tri2intpt7] = ...
          get_cap_tet_edge2tri_face_intersections(fmdl,rmdl,opt.bot, ...
-         bot_nodes_above, bot_nodes_below, opt.tol_node2tri);
+         bot_nodes_above, bot_nodes_below, opt.tol_edge2tri);
       progress_msg(sprintf('Found %d', size(intpts6,1)),Inf);
       
       
@@ -829,7 +865,7 @@ function do_inf_test
    tet = jnk.fwd_model;
 
    c2f_a = mk_tri2tet_c2f(tet,tri);
-   c2f_n = mk_coarse_fine_mapping(tet,tri);
+   c2f_n = mk_approx_c2f(tet,tri);
    
    prob = c2f_n ~= 0 & c2f_a == 0;
    unit_test_cmp('Assert no missing intersections', nnz(prob),0);
@@ -909,7 +945,7 @@ function do_realistic_test
    grid2d.mk_coarse_fine_mapping.f2c_offset(3) = 1;
    grid2d = rmfield(grid2d,'coarse2fine');
    tic
-   c2f_n = mk_coarse_fine_mapping(fmdl,grid2d);
+   c2f_n = mk_approx_c2f(fmdl,grid2d);
    t = toc;
    fprintf('Approximate: t=%f s\n',t);
    

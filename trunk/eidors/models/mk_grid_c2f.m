@@ -47,7 +47,7 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %     hold off
 %
 % See also MK_GRID_MODEL, FIND_EDGE2EDGE_INTERSECTIONS, CONVHULLN
-%     MK_TET_C2F, MK_COARSE_FINE_MAPPING, POINT_IN_TRIANGLE, EIDORS_MSG
+%     MK_TET_C2F, MK_APPROX_C2F, POINT_IN_TRIANGLE, EIDORS_MSG
 
 % (C) 2015 Bartlomiej Grychtol - all rights reserved by Swisstom AG
 % License: GPL version 2 or 3
@@ -1277,7 +1277,7 @@ function do_small_test
    toc
    eidors_cache clear
    tic
-   c2f_c = mk_coarse_fine_mapping(fmdl, rmdl);
+   c2f_c = mk_approx_c2f(fmdl, rmdl);
    toc
    assert(any(c2f_a(:) ~= c2f_b(:)) == 0);
    % the old function cannot be tested this way, it doesn't give the right
@@ -1298,7 +1298,7 @@ t = toc;
 fprintf('Analytic: t=%f s\n',t);
 
 tic
-c2f_n = mk_coarse_fine_mapping(fmdl,rmdl);
+c2f_n = mk_approx_c2f(fmdl,rmdl);
 t = toc;
 fprintf('Approximate: t=%f s\n',t);
 
