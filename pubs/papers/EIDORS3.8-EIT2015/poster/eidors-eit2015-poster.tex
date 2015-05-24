@@ -116,7 +116,8 @@
   {\bf\textsc{EIDORS Version 3.8}}
   % Authors
   {\large \textsc{Andy Adler$^1$, Alistair Boyle$^1$, Michael G. Crabb$^2$,
-     Herv\'e Gagnon$^1$, Bartłomiej Grychtol$^3$,
+        Herv\'e Gagnon$^1$, \\
+        Bart{\l}omiej Grychtol$^3$,
      Nolwenn Lesparre$^4$, William R. B. Lionheart$^2$}\\
     \small
     $^1$Carleton University, Ottawa, Canada \;\;\;\;
@@ -142,39 +143,46 @@
     %
     % A coloured circle useful as a bullet with an adjustably strong filling
     \newcommand{\colouredcircle}{%
-      \tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em); \draw[draw=black,fill=lightblue,line width=0.03em] (0,0) circle(0.18em);}}
+    \vspace{0.6em}\noindent\tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em); \draw[draw=black,fill=lightblue,line width=0.03em] (0,0) circle(0.18em);}\hspace{1em}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{New Release}{name=problem,column=0,row=0,span=3}{
+  \headerbox{New Release}{name=release,column=0,row=0}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    \vspace{0.3em}
-\begin{figure}[H]
-\centering
-\includegraphics[width=.75\columnwidth]{../mesh-eidors3p8.pdf}
-\caption{\label{fig:logo}%
-\large  EIDORS 3.8: featuring flexible parametrization, meshing, absolute solver and visualization improvements.
-  Image shows current streamlines on a thorax-shaped finite element model.
+We are pleased to announce the release of EIDORS~3.8 \cite{eidors3p8}.
+The software is available at \url{www.eidors.org} licensed under the GNU GPLv2 (or GPLv3).
+
+{\centering
+\includegraphics[width=0.95\columnwidth]{../mesh-eidors3p8.pdf}
 }
-\end{figure}
 
-   \vspace{0.3em}
+EIDORS aims to provide free software algorithms for forward modelling
+and inverse solutions
+of Electrical Impedance and (to some extent) Diffusion-based Optical Tomography, in
+medical, industrial and geophysical settings and to share data and promote
+collaboration.
+   \vspace{0.6em}
  }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{New Features}{name=contribution,column=0,below=problem}{
+  \headerbox{New Features}{name=features,column=0,below=release}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Release 3.8 of EIDORS builds upon a strong foundation in reconstruction
 algorithms, adding and improving a number of aspects.
-\begin{enumerate}
-\item More stable
+
+%\begin{itemize}
+\colouredcircle
+   More stable
   iterative absolute inverse solvers (both Gauss-Newton and
   Conjugate-Gradient).
 % DEPENDS ON ABS SOLVER
 
-\item Greater flexibility in parametrization choices.
+\colouredcircle
+   Greater flexibility in parametrization choices.
 % DEPENDS ON ABS SOLVER
 
-\item Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$),
+\colouredcircle
+   Native handling of unit scaling ($10^x$, $e^x$, $\ln x$, $\log_{10} x$),
  and arbitrary units.
 % resistivity/conductivity, and apparent resistivity conversions.
   Natural limits for $\sigma > 0$. %~\cite{polydorides2014}.
@@ -183,35 +191,43 @@ algorithms, adding and improving a number of aspects.
 %  Jacobian calculations.
 % DEPENDS ON ABS SOLVER
 
-\item GREIT reconstructions in 3D
+\colouredcircle
+   GREIT reconstructions in 3D
 
-\item Speed optimizations: improved Jacobian calculation, faster cache handling, and 
+\colouredcircle
+   Speed optimizations: improved Jacobian calculation, faster cache handling, and 
 % Improvements to {\tt stim\_meas\_list} generated structures, resulting in
   faster forward solutions.
 %  Also, the ability to
 %  convert between a stimulus structure and a list of stimulus and measurement electrode pairs.
 % An implementation of the parallel Jacobian calculator (pending MEX issues).
 
-%\item Attempts to work around broken matlab MEX file handling (cross-platform mex compile).
+%\colouredcircle Attempts to work around broken matlab MEX file handling (cross-platform mex compile).
 
-\item Improved interfaces to NetGen and visualization.
+\colouredcircle
+   Improved interfaces to NetGen and visualization.
       Compound and point electrodes in NetGen.
 
-\item Analytic calculation of dual-mesh interpolations (coarse to fine)
+\colouredcircle
+   Analytic calculation of dual-mesh interpolations (coarse to fine)
 % as well as, Quad and hex shaped mesh elements %rev 4392
 
-\item Support for second and third order mesh elements.
+\colouredcircle
+   Support for second and third order mesh elements.
 
-\item Support for Dr\"ager and Swisstom file formats
-%\item OpenEIT file format support~\cite{jones2014}.
+\colouredcircle
+   Support for Dr\"ager and Swisstom file formats
+%\colouredcircle OpenEIT file format support~\cite{jones2014}.
 
-\item Expanded shape library
-\end{enumerate}
-   \vspace{0.3em}
+\colouredcircle
+   Expanded shape library
+%\end{itemize}
+   \vspace{0.6em}
+   \vfil
   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{References}{name=references,column=0,above=bottom}{
+  \headerbox{References}{name=references,column=0,above=bottom,below=features}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \smaller
     \bibliographystyle{ieee}
@@ -240,12 +256,12 @@ algorithms, adding and improving a number of aspects.
    Adler A, Lionheart WRB, {\em Physiol Meas}, 27:S25--S42, 2006.
 \end{thebibliography}
 %\input{eidors-eit2015.bbl}
-   \vspace{0.3em}
+   \vspace{0.6em}
   }
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Successes}{name=sensitivity,column=1,below=problem}{
+  \headerbox{Successes}{name=successes,column=1,row=0}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The structure of EIDORS has been relatively stable due, in part, to some early design choices:
 a modular framework and data structure,
@@ -256,7 +272,7 @@ maintain research relevance.
    \vspace{0.3em}
   }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\headerbox{Challenges}{name=specificity,column=2,below=problem,bottomaligned=sensitivity}{
+\headerbox{Challenges}{name=challenges,column=1,below=successes}{
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 A number of challenges inherent in the implementation of EIDORS as a Matlab-based toolkit continue to recur.
 There is no real Object Oriented framework: no reflection, protection, or
@@ -270,24 +286,39 @@ The data structure and subfunction complexity in EIDORS are a
 %The expansion of EIDORS into new application domains continues to provide software development challenges at times.
 %Despite this, or indeed because of this, 
 Despite these challenges, EIDORS continues to develop and grow: presenting version 3.8!
-   \vspace{0.0em}
+   \vspace{0.3em}
   }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\headerbox{Growth}{name=results,column=1,span=2,below=sensitivity}{
+\headerbox{Growth}{name=growth,column=1,span=2,below=challenges}{
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EIDORS-related citations continue to grow. Current citation results are
+shown in table~\ref{tbl:cite}.
+%
+The EIDORS code-base is stable with significant effort being applied to
+improving test coverage, refining performance and implementing new features
+(fig.~\ref{fig:loc}). In 2012, a {\tt dev} staging area was created for
+contributions in progress.
+
 \begin{figure}[H]
 \centering
 % trim=left botm right top
-\includegraphics[width=.96\columnwidth]{../fig_loc.pdf}
+\includegraphics[width=.9\columnwidth]{../fig_loc.pdf}
 \caption{\label{fig:loc}%
 %graph and table combo chart, including line for test code.
-\large  Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
+  \large
+  Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
    (red), Eidors (i.e.\ release branch, yellow), Tutorials (green), development code (blue).
    Releases are indicated by gray bars.
 }
 \end{figure}
-   \vspace{0.3em}
 
+\begin{table}[H]
+%  \footnotesize
+\centering
+%From: http://amath.colorado.edu/documentation/LaTeX/reference/tables/ex1.html
+\caption{\large\label{tbl:cite} EIDORS Citations
+ (May 2015, scholar.google.com).
+}
 \begin{tabular}{lcr}
   \toprule
   Paper & Date & \hspace{-2mm}Citations \\
@@ -303,11 +334,18 @@ Despite these challenges, EIDORS continues to develop and grow: presenting versi
     & 2006 & 184 \\
   \bottomrule
 \end{tabular}
+\vspace{-1em}
+\end{table}
    \vspace{0.3em}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\headerbox{Acknowledgements}{name=results,column=1,span=2,below=results,above=bottom}{
+\headerbox{Shape Library}{name=shapes,column=2,above=growth,bottomaligned=challenges}{
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\headerbox{Acknowledgements}{name=ack,column=1,span=2,below=growth,above=bottom}{
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Recent funding for EIDORS development thanks to
 Swisstom AG, NSERC Canada, EPSRC UK, and IRSN France.
