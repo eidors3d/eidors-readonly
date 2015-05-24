@@ -32,5 +32,5 @@ else
    Jc = jacobian_adjoint(img);
 end
 
-Jm = jacobian_electrode_movement_sampling(fwd_model,img);
+Jm = jacobian_electrode_movement_sampling(img);
 J=[Jc,Jm];
