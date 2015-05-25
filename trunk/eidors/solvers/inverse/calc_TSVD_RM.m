@@ -48,10 +48,10 @@ s = diag(S);
 s = s./s(1);
 N = find(s >= hp/100,1,'last'); %disp(N);
 t= 1:N; % tsvd
-RM = eidors_obj('get-cache',mdl,'TSVD_RM',N);
+RM = eidors_obj('get-cache',{mdl, N},'TSVD_RM');
 if isempty(RM)
     RM  = (V(:,t)/S(t,t))*U(:,t)';
-    eidors_obj('set-cache',mdl,'TSVD_RM',RM,N);
+    eidors_obj('set-cache',{mdl, N},'TSVD_RM',RM);
 end
 
 
