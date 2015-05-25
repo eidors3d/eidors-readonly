@@ -14,7 +14,7 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 
 warning('EIDORS:deprecated','NP_CALC_SYSTEM_MAT is deprecated as of 07-Jun-2012. Use SYSTEM_MAT_1ST_ORDER instead.');
 
-s_mat = eidors_obj('get-cache', fwd_model, 'np_system_mat', img);
+s_mat = eidors_obj('get-cache', {fwd_model, img}, 'np_system_mat');
 
 if ~isempty(s_mat)
    eidors_msg('np_calc_system_mat: using cached value', 3);
@@ -36,5 +36,5 @@ s_mat.D     = D;
 s_mat.Vols  = Ela;
 s_mat.perm  = ppr;
 
-eidors_obj('set-cache', fwd_model, 'np_system_mat', s_mat, img);
+eidors_obj('set-cache', {fwd_model, img}, 'np_system_mat', s_mat);
 eidors_msg('np_calc_system_mat: setting cached value', 3);

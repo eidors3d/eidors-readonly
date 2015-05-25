@@ -11,7 +11,7 @@ function [index_simp]=edge_refined_elem_mapper( mdl_coarse, mdl_dense)
 
 warning('EIDORS:deprecated','EDGE_REFINED_ELEM_MAPPER is deprecated as of 06-Jun-2012. Use MK_C2F_MAPPING instead.');
 
-index_simp = eidors_obj('get-cache', mdl_dense, 'index_simp', mdl_coarse);
+index_simp = eidors_obj('get-cache', {mdl_dense, mdl_coarse}, 'index_simp');
 if ~isempty(index_simp)
    eidors_msg('edge_refined_elem_mapper: using cached value', 2);
    return
@@ -38,7 +38,7 @@ eidors_msg('edge_refined_elem_mapper: calc_simp_index',4);
 [index_simp] = calc_simp_index(simp_dense,center_simp_dense,center_h_refined_simps,lookup);
 
 % Cache the restult - it depends on both dense and coarse mdl
-eidors_obj('set-cache', mdl_dense, 'index_simp', index_simp, mdl_coarse);
+eidors_obj('set-cache', {mdl_dense, mdl_coarse}, 'index_simp', index_simp);
 eidors_msg('edge_refined_elem_mapper: setting cached value', 2);
 
 
