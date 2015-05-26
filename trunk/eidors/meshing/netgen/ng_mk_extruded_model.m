@@ -69,15 +69,11 @@ if isstr(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
 citeme(mfilename);
 
 if nargin < 4; extra_ng_code = {'',''}; end
-cache_obj = { shape, elec_pos, elec_shape, extra_ng_code};
+copt.cache_obj = { shape, elec_pos, elec_shape, extra_ng_code};
+copt.fstr = 'ng_mk_extruded_models';
+args = { shape, elec_pos, elec_shape, extra_ng_code};
 
-fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_extruded_models' );
-if isempty(fmdl);
-   fmdl = mk_extruded_model( shape, elec_pos, elec_shape, extra_ng_code );
-%  eidors_cache('boost_priority', -2); % netgen objs are low priority
-   eidors_obj('set-cache', cache_obj, 'ng_mk_extruded_models', fmdl);
-%  eidors_cache('boost_priority', +2); % return values
-end
+fmdl = eidors_cache(@mk_extruded_model, args, copt);
 
 mat_idx = fmdl.mat_idx_reordered;
 

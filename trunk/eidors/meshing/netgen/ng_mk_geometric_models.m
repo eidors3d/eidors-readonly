@@ -158,14 +158,10 @@ if (~iscell(electrode_geometry))
 end
 
 % Check if result is already in cache. Otherwise, compute and store in cache. 
-cache_obj = {body_geometry, electrode_geometry};
-
-fmdl_mat_idx = eidors_obj('get-cache', cache_obj, 'ng_mk_geometric_models');
-
-if (isempty(fmdl_mat_idx))
-   fmdl_mat_idx = mk_geometric_models(body_geometry, electrode_geometry);
-   eidors_obj('set-cache', cache_obj, 'ng_mk_geometric_models', fmdl_mat_idx);
-end
+copt.cache_obj = {body_geometry, electrode_geometry};
+copt.fstr = 'ng_mk_geometric_models';
+args = {body_geometry, electrode_geometry};
+fmdl_mat_idx = eidors_cache(@mk_geometric_models, args, copt);
 
 % Reformat output arguments. 
 fmdl    = fmdl_mat_idx{1};
