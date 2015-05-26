@@ -7,6 +7,7 @@
 \usepackage{hyperref}
 %\PassOptionsToPackage{usenames}{xcolor}
 \usepackage{overpic}
+\graphicspath{{../img/}}
 \mode<presentation>
 {
 	\usetheme{default} % I sometimes also use Warsaw
@@ -43,25 +44,56 @@
 \title[3D GREIT]{
 \vspace{10mm}
 ~\\
-\LARGE
+\Huge
 {\em 3D Image Reconstruction with GREIT}
 \\
 \vspace{10mm}
-\small
-EIT 2015, Neuch\^atel, Switzerland
 }
-\author{Bart\l{}omiej Grychtol,
-Beat M\"uller, and
-Andy Adler}
-\institute[]{Fraunhofer Project Group for Automation in Medicine and 
+\author{Bart\l{}omiej Grychtol$^1$,
+Beat M\"uller$^2$, and
+Andy Adler$^3$}
+\institute[]{$^1$Fraunhofer Project Group for Automation in Medicine and 
 Biotechnology, Mannheim, Germany 
 \\
-Swisstom AG, Landquart, Switzerland 
+$^2$Swisstom AG, Landquart, Switzerland 
 \\
-Systems and Computer Engineering, Carleton University, Ottawa, Canada}
+$^3$Systems and Computer Engineering, Carleton University, Ottawa, Canada}
 \date{}
 
 \frame{\titlepage} 
+
+\frame{\frametitle{%
+GREIT \ldots
+}
+
+}
+
+\frame{\frametitle{%
+Reconstructions
+}
+\centering
+\includegraphics[width=.4\columnwidth]{sigmoid_01a.png}
+\hfill
+\includegraphics[width=.4\columnwidth]{sigmoid_01b.png}
+\\
+Plots of the function $f(x) = 1 / (1 + e^{s(|x|-R)})$ for different values 
+of $s$ with the default value indicated in bold.
+}
+
+
+\frame{\frametitle{%
+Electronics -- Block Diagram
+}
+\includegraphics[width=\columnwidth]{tank_recon.pdf}
+\\
+\emph{Left:} FE model of a water tank showing 
+cut planes between voxel layers and positions of a non-conductive spherical 
+target. \emph{Right:} images reconstructed using the proposed algorithm. Each 
+row corresponds to one voxel layer, and each column to a different target 
+position.
+}
+
+
 
 \end{document}
 
