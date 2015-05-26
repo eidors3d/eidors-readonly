@@ -10,10 +10,12 @@ in_inj = inj(:,101);
 
 %% Reconstruct
 img_ctrl = inv_solve(imdl, ex_ctrl, in_ctrl);
+img_ctrl.calc_colours.ref_level=0;
 show_fem(img_ctrl); axis off
 print_convert pig_control.png '-density 60'
 
 
 img_inj = inv_solve(imdl, ex_inj, in_inj);
+img_inj.calc_colours.ref_level=0;
 show_fem(img_inj); axis off
 print_convert pig_injury.png '-density 60'
