@@ -13,6 +13,13 @@ function show_3d_slices(img, varargin);
 
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
+ok= 0;
+try; if strcmp(img.type, 'image');
+   ok = 1;
+end; end
+if ~ok; 
+   error('EIDORS: show_3d_slices requires image as first parameter');
+end
 %multi-parametrization
 img = data_mapper(img);
 
@@ -156,5 +163,8 @@ function do_unit_test
    hold on
    show_3d_slices(img ,[1,2],0.3,0.7);
    axis off
+
+   subplot(236);  
+   show_3d_slices(img ,[1],[],[]);
    
    view(10,18);
