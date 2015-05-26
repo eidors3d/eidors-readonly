@@ -409,7 +409,7 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
         top_level_flag = 0;
     end
 
-    eidors_msg('@@@ called with (field: "%s", element: "%s").', field_operator_string, element_operator_string, 3);
+    eidors_msg('@@@ called with (field: "%s", element: "%s").', field_operator_string, element_operator_string, 4);
     
     % Validate that geometry is a non-empty structure.
     if (~isstruct(geometry) || isempty(geometry))
@@ -549,11 +549,11 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
         geo_code = [geo_code ')'];  
     end
     
-    eidors_msg('@@@ returned with (field: "%s", element: "%s").', field_operator_string, element_operator_string, 3);
+    eidors_msg('@@@ returned with (field: "%s", element: "%s").', field_operator_string, element_operator_string, 4);
  
 function [geo_code extra_code] = parse_geometry_body_of_extrusion(body_of_extrusion, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(body_of_extrusion) || isempty(body_of_extrusion))
         error('Parameter body_of_extrusion must be a valid structure.');        
@@ -672,11 +672,11 @@ function [geo_code extra_code] = parse_geometry_body_of_extrusion(body_of_extrus
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
 
 function [geo_code extra_code] = parse_geometry_body_of_revolution(body_of_revolution, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(body_of_revolution) || isempty(body_of_revolution))
         error('Parameter body_of_revolution must be a valid structure.');        
@@ -753,11 +753,11 @@ function [geo_code extra_code] = parse_geometry_body_of_revolution(body_of_revol
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
 function geo_code = parse_geometry_cone(cone, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(cone) || isempty(cone))
         error('Parameter cone must be a valid structure.');        
@@ -817,11 +817,11 @@ function geo_code = parse_geometry_cone(cone, operator_string)
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
 function geo_code = parse_geometry_cylinder(cylinder, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(cylinder) || isempty(cylinder))
         error('Parameter cylinder must be a valid structure.');        
@@ -878,11 +878,11 @@ function geo_code = parse_geometry_cylinder(cylinder, operator_string)
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
 function geo_code = parse_geometry_ellipsoid(ellipsoid, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(ellipsoid) || isempty(ellipsoid))
         error('Parameter ellipsoid must be a valid structure.');        
@@ -948,11 +948,11 @@ function geo_code = parse_geometry_ellipsoid(ellipsoid, operator_string)
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
       
 function geo_code = parse_geometry_elliptic_cylinder(elliptic_cylinder, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(elliptic_cylinder) || isempty(elliptic_cylinder))
         error('Parameter elliptic_cylinder must be a valid structure.');        
@@ -1020,11 +1020,11 @@ function geo_code = parse_geometry_elliptic_cylinder(elliptic_cylinder, operator
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
 function geo_code = parse_geometry_half_space(half_space, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(half_space) || isempty(half_space))
         error('Parameter half_space must be a valid structure.');        
@@ -1076,11 +1076,11 @@ function geo_code = parse_geometry_half_space(half_space, operator_string)
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
 
 function geo_code = parse_geometry_ortho_brick(ortho_brick, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(ortho_brick) || isempty(ortho_brick))
         error('Parameter ortho_brick must be a valid structure.');        
@@ -1133,11 +1133,11 @@ function geo_code = parse_geometry_ortho_brick(ortho_brick, operator_string)
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
 function geo_code = parse_geometry_parallelepiped(parallelepiped, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(parallelepiped) || isempty(parallelepiped))
         error('Parameter parallelepiped must be a valid structure.');        
@@ -1229,11 +1229,11 @@ function geo_code = parse_geometry_parallelepiped(parallelepiped, operator_strin
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
 function geo_code = parse_geometry_sphere(sphere, operator_string)
 
-    eidors_msg('@@@ called with "%s" starting.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
     if (~isstruct(sphere) || isempty(sphere))
         error('Parameter sphere must be a valid structure.');        
@@ -1285,7 +1285,7 @@ function geo_code = parse_geometry_sphere(sphere, operator_string)
         end
     end
     
-    eidors_msg('@@@ called with "%s" returning.', operator_string, 3);
+    eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
                              
 function write_geo_file(geo_fn, body_solid_code, electrode_solid_code, body_extra_code, electrode_extra_code, body_extra_param, electrode_extra_param)
     
@@ -1375,6 +1375,15 @@ function write_geo_file(geo_fn, body_solid_code, electrode_solid_code, body_extr
         end
     end
     
+    % Assume the first object is the main one
+    mainobj = 'MainNetgenObject';
+    fprintf(fid, 'solid %s = %s ', mainobj, body_extra_param{1}.name);
+    for i= 2:numel(body_solid_code)
+       fprintf(fid, 'and (not %s)', body_extra_param{i}.name);
+    end
+    fprintf(fid, ';\n');
+    body_extra_param{1}.name = mainobj; % rename it for following code
+     
     % Write body tlos in geo file.
     for i = 1:numel(body_solid_code)
         if (isinf(body_extra_param{i}.max_edge_length))
