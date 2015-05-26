@@ -658,12 +658,12 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = get_tet_intersection_points
         M = bsxfun(@lt, z(:),v);
         M = xor(M(:,1:end-1), M(:,2:end));
         edge_num = reshape(uint32(sum(bsxfun(@times,uint32(M),uint32(1:SZ(op))),2)), size(z));
-        in = in & edge_num;
+        in = in & edge_num > 0;
         if nnz(in) == 0, continue, end
         edge_num(~in) = 0;
 
         edge_num(in) = (edge_num(in)-1) * STEP(op);
-        edge_idx = edge_num + bsxfun(@times,uint32(in), uint32(i) + pt_idx');
+        edge_idx = edge_num + bsxfun(@times,uint32(full(in)), uint32(i) + pt_idx');
 
         [t, p] = find(in);
         tmp = zeros(length(p),3);
