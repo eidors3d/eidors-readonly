@@ -1,0 +1,67 @@
+%\PassOptionsToPackage{table}{xcolor}
+\documentclass{beamer}
+\usepackage{times,helvet,epsfig,color}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{xspace}
+\usepackage{hyperref}
+%\PassOptionsToPackage{usenames}{xcolor}
+\usepackage{overpic}
+\mode<presentation>
+{
+	\usetheme{default} % I sometimes also use Warsaw
+	\setbeamertemplate{itemize items}[circle]
+	\setbeamertemplate{navigation symbols}{}
+}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,left]{?}%
+\hspace{1mm}
+% \includegraphics[width=0.15\paperwidth]
+%    {../../../current-docs/CarletonWide_K_186.png}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+{\em 3D GREIT}, Grychtol, M\"uller, Adler, 2015/06/03
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.25ex,dp=1ex,right]{title in head/foot}%
+    \insertframenumber{}~/~\inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+
+\usepackage{tikz}
+\pgfdeclarelayer{foreground}
+ \pgfdeclarelayer{background}
+ \pgfsetlayers{background,main,foreground}
+
+\begin{document}
+
+
+\title[3D GREIT]{
+\vspace{10mm}
+~\\
+\LARGE
+{\em 3D Image Reconstruction with GREIT}
+\\
+\vspace{10mm}
+\small
+EIT 2015, Neuch\^atel, Switzerland
+}
+\author{Bart\l{}omiej Grychtol,
+Beat M\"uller, and
+Andy Adler}
+\institute[]{Fraunhofer Project Group for Automation in Medicine and 
+Biotechnology, Mannheim, Germany 
+\\
+Swisstom AG, Landquart, Switzerland 
+\\
+Systems and Computer Engineering, Carleton University, Ottawa, Canada}
+\date{}
+
+\frame{\titlepage} 
+
+\end{document}
+
