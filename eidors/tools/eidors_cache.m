@@ -148,8 +148,8 @@ switch command
       eidors_objects.cache_debug_enabled_on = [];
       
    case 'clear_all'
-      [objid, times, sizes, prios, priidx] = get_names_times;
-      remove_objids( objid, sizes,  1:length(sizes) );
+      [objid, times, sizes, prios, priidx, names] = get_names_times;
+      remove_objids( objid, names, sizes);
 
    case 'clear'
      switch nargin
@@ -277,50 +277,52 @@ switch command
       eidors_objects.cache_priority = varargout{1};
 
    case {'list', 'show_objs'}
-      [objid, times, sizes, prios, priidx, names] = get_names_times;
+      [objid, times, sizes, prios, priidx, names, effort] = get_names_times;
       
       idx = 1:length(times);
       if nargin == 2
         idx = find(arrayfun(@(c) ismember(limit, c{:}), names));
       end
-      
-      for i=idx
-         fprintf('%s b=%9.0d p=%02d, i=%05d: %s { %s }\n', datestr(times(i),'yyyy-mm-dd HH:MM:SS.FFF'), ... %today
-             sizes(i), prios(i), priidx(i), objid{i}, names{i}{:} );
+      if nargout == 0
+         for i=idx
+            fprintf('%s b=%9.0d p=%02d, i=%05d, t=%.2e: %s { %s }\n', datestr(times(i),'yyyy-mm-dd HH:MM:SS.FFF'), ... %today
+               sizes(i), prios(i), priidx(i), effort(i), objid{i}, names{i} );
+         end
+      else
+         varargout = {[num2cell(times(:)) num2cell(sizes(:)) ...
+            num2cell(prios(:)) num2cell(priidx(:)) num2cell(effort(:)) ...
+            objid(:) names(:)]};
       end
-
       
       
    case 'clear_max'
       if ischar(limit); limit= str2num(limit); end
-% This will remove just in order of priidx.
-%     remove_objids( objid, sizes,  find(cumsum(sizes) > limit) );
-% Remove in order of time + priority
-      [objid, times, sizes, prios, priidx] = get_names_times;
-      tot=     cumsum(sizes(priidx)); 
+      [objid, times, sizes, prios, priidx, names, effort] = get_names_times;
+      [jnk, idx] = sort(priidx);
+      tot=     cumsum(sizes(idx)); 
       remove = find(tot > limit);
-      rmidx=   priidx(remove);
-      remove_objids( objid, sizes,  rmidx);
+      rmidx  = idx(remove);
+      remove_objids( objid(rmidx), names(rmidx), sizes(rmidx));
 
    case 'clear_old'
       if ischar(limit); limit= str2num(limit); end
-      [objid, times, sizes, prios, priidx] = get_names_times;
-      remove_objids( objid, sizes, ...
-         find(times < limit));
+      [objid, times, sizes, prios, priidx, names] = get_names_times;
+      idx = find(times > limit);
+      remove_objids( objid(idx), names(idx), sizes(idx));
 
    case 'clear_new'
       if ischar(limit); limit= str2num(limit); end
-      [objid, times, sizes, prios, priidx] = get_names_times;
-      remove_objids( objid, sizes,  ...
-         find(times > limit) );
+      [objid, times, sizes, prios, priidx, names] = get_names_times;
+      idx = find(times > limit);
+      remove_objids( objid(idx), names(idx), sizes(idx));
 
    case 'clear_model_library'
       %TODO: add ways to select what to delete
       delete([eidors_objects.model_cache,'/*.mat']);
 
    case 'clear_name'
-      [objid, sizes, clearidx] = clear_names_cache( limit );
-      remove_objids( objid, sizes, clearidx);
+      [objid] = clear_names_cache( limit );
+      remove_objids( objid, limit);
       
    case 'dump'
       varargout{1} = eidors_objects;
@@ -332,56 +334,45 @@ switch command
       error('command %s not understood',command);
 end
 
-
-function [objid, sizes, clearidx] = clear_names_cache( name );
-   objid={}; times=[]; clearidx= [];
+   
+function objid = clear_names_cache( name )
+   objid={};
    global eidors_objects;
    if isempty(eidors_objects); return; end
    idx=1;
-   for fn= fieldnames(eidors_objects)'
-      fn1= fn{1};
-      if fn1(1:3)== 'id_'
-         objid{idx}= fn1;
-         obj = getfield(eidors_objects, fn1 );
-         ww= whos('obj');
-         sizes(idx) = ww.bytes;
-
-         cache= getfield(obj,'cache');
-         if isfield(getfield(obj,'cache'), name);
-           clearidx(end+1) = idx;
-         end
-
+   fn= fieldnames(eidors_objects)';
+   for i = 1:numel(fn);
+      if strcmp(fn{i}(1:3),'id_') && isfield(eidors_objects.(fn{i}),name)
+         objid{idx}= fn{i};
          idx= idx+1;
       end
    end
 
 % priidx is priority index, where 1 prio is 0.1 of a day
-function [objid, times, sizes, prios, priidx, names] = get_names_times;
+function [objid, times, sizes, prios, priidx, names, effort] = get_names_times;
    objid={}; times=[]; sizes=[]; pri=[]; prios=[]; priidx=[];names={};
+   effort=[];
    global eidors_objects;
    if isempty(eidors_objects); return; end
    idx=1;
    for fn= fieldnames(eidors_objects)'
       fn1= fn{1};
       if fn1(1:3)== 'id_'
-         objid{idx}= fn1;
-
-         obj = getfield(eidors_objects, fn1 );
-         try
-            times(idx) = obj.last_used;
-         catch
-            times(idx) = 0; % old
+         nms = fieldnames(eidors_objects.(fn1));
+         for n = 1:numel(nms);
+            objid{idx} = fn1;
+            names{idx} = nms{n};
+            times(idx) = 0; prios(idx) = 0; 
+            effort(idx) = 10;
+            obj = getfield(eidors_objects.(fn1), nms{n} );
+            try times(idx) = obj.last_used; end
+            try prios(idx) = obj.priority; end
+            effort(idx) = obj.time_spent;
+            ww= whos('obj');
+            sizes(idx) = ww.bytes;
+            
+            idx= idx+1;
          end
-         try
-            prios(idx) = obj.priority;
-         catch
-            prios(idx) = 0; % default
-         end
-         names(idx) = {fieldnames(obj.cache)};
-         ww= whos('obj');
-         sizes(idx) = ww.bytes;
-
-         idx= idx+1;
       end
    end
 
@@ -392,32 +383,58 @@ function [objid, times, sizes, prios, priidx, names] = get_names_times;
    sizes= sizes(idx);
    prios= prios(idx);
    names= names(idx);
-   % sort from high to low priority and recent (high) to old (low)
-   [jnk, priidx] = sortrows([-prios(:), -times(:)]);
-
-function remove_objids( objid, sizes, idx)
-   global eidors_objects;
+   effort= effort(idx);
    
+   priidx = calc_cache_priority(prios, times, effort, sizes);
+   
+function priidx = calc_cache_priority(prios, times, effort, sizes)
+   % sort from high to low priority and recent (high) to old (low)
+   % old way
+%    [jnk, priidx] = sortrows([-prios(:), -times(:)]);
+   % new way 
+   effort_score = 2.^(round(10*log10(effort))) .* 2.^prios;
+   size_score   = round(10*log10(sizes / 1024));
+   [jnk, priidx] = sortrows([-effort_score(:), size_score(:), -times(:)]);
+   priidx(priidx) = 1:length(sizes);
+
+function remove_objids( objid, names, sizes)
+   global eidors_objects;
+   N = length(objid);
+   if ~iscell(names) 
+      names = {names};
+   end
+   if numel(names) == 1
+      names(1:N) = names;
+   end
    switch eidors_cache('debug_status')
       case 1
-         for i = 1:length(idx)
-            debug_msg(objid{idx(i)},'removed');
+         for i = 1:N
+            debug_msg(objid{i},names{i},'removed');
          end
       case 0.5
-         for i = 1:length(idx)
-            flds = fieldnames(eidors_objects.(objid{idx(i)}).cache);
-            for j = 1:numel(flds)
-               if eidors_cache('debug_status',flds)
-                  debug_msg(objid{idx(i)}, 'removed');
-                  break
-               end
+         for i = 1:N
+            if eidors_cache('debug_status',names{i})
+               debug_msg(objid{i}, names{i}, 'removed');
+               break
             end
          end
    end
-   
-   eidors_objects= rmfield( eidors_objects, objid( idx ) );
+   if nargin < 3
+      sizes = zeros(1,N);
+      for i = 1:N
+         obj = getfield(eidors_objects.(objid{i}), names{i});
+         ww = whos('obj');
+         sizes(i) = ww.bytes;
+      end
+   end
+   for i = 1:N
+      eidors_objects.(objid{i})= rmfield( eidors_objects.(objid{i}), names{i} );
+      if isempty(fieldnames(eidors_objects.(objid{i})))
+         eidors_objects = rmfield( eidors_objects, objid{i});
+      end
+   end
    eidors_msg('Removed %d objects with %d bytes from cache', ...
-          length(idx), sum(sizes(idx)), 2 );
+          N, sum(sizes), 2 );
 
        
 function varargout = cache_shorthand(fhandle, varargin)
@@ -462,13 +479,14 @@ function varargout = cache_shorthand(fhandle, varargin)
       eidors_msg('@@ (Re)calculating %s',fstr, level_in);
       output = mk_varargout_str(nargout);
       varargout = cell(0);
+      t0 = tic;
       eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
-      
+      t = toc(t0);
       if isfield(opt,'boost_priority');
          eidors_cache('boost_priority',opt.boost_priority);
       end
       
-      eidors_obj('set-cache', cache_obj, fstr, varargout);
+      eidors_obj('set-cache', cache_obj, fstr, varargout, t);
       
       if isfield(opt,'boost_priority');
          eidors_cache('boost_priority',-opt.boost_priority);
@@ -484,16 +502,19 @@ for i = 1:N
 end
 output = [ output ']' ];
 
-function debug_msg(id,action)
+function debug_msg(id,name,action)
 global eidors_objects;
-name = fieldnames(eidors_objects.(id).cache);
+if nargin < 3 
+   action = name;
+   name = fieldnames(eidors_objects.(id));
+end
+if ~iscell(name) name = {name}; end
 fprintf('EIDORS_CACHE: %s %s {', action, id);
 fprintf(' %s', name{:});
 fprintf(' }\n');
 % dbstack could be useful too
 
-function do_unit_test
-
+function do_unit_test   
    ll= eidors_msg('log_level');
    eidors_msg('log_level',5);
    eidors_cache
@@ -536,7 +557,7 @@ function do_unit_test
       eidors_msg('Error on anonymous function: correct',2);
    end
    test_debug
-   
+   test_priority
 function [v1 v2] = test_function(a,b,c,d)
    v1 = rand(1);
    v2 = rand(1);
@@ -561,5 +582,29 @@ function test_debug
    eidors_cache debug_off
    
    
+function test_priority
+   eidors_cache clear
+   eidors_obj('set-cache',{1}, 'slow_small', zeros(10) ,10); pause(.1)
+%    eidors_cache list
+%    fprintf('\n');
+   eidors_obj('set-cache',{1}, 'slow_new',   zeros(100),10); pause(.1)
+%    eidors_cache list
+%    fprintf('\n');
+   eidors_obj('set-cache',{1}, 'slow_big1',  zeros(100),10); pause(.1)
+%    eidors_cache list
+%    fprintf('\n');
+   eidors_obj('set-cache',{1}, 'slow_big2',  zeros(100),20); pause(.1)
+%    eidors_cache list
+%    fprintf('\n');
+   eidors_obj('set-cache',{1}, 'fast_small', zeros(2)  , 1); pause(.1)
+%    eidors_cache list
+%    fprintf('\n');
+   eidors_obj('set-cache',{1}, 'fast_big',   zeros(100), 1); pause(.1)
+%    eidors_cache list
+%    fprintf('\n');
+   eidors_obj('get-cache',{1}, 'slow_new'); 
+   
+   eidors_cache list
+
    
 %    obj= eidors_obj('get-cache',{5}, 'test1');

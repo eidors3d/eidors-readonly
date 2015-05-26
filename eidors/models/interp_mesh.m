@@ -37,36 +37,30 @@ if nargin<2; n_interp=0; end
 try n_interp = mdl.interp_mesh.n_interp; end % Override if provided
 
 
-% cashing
+copt.cache_obj = {mdl.elems, mdl.nodes, n_interp};
+copt.fstr = 'interp_mesh';
+copt.boost_priority = -2;
+
+mdl_pts = eidors_cache(@do_interpolation,{mdl, n_interp},copt);
+
+
+function mdl_pts = do_interpolation(mdl, n_interp)
+   % Get element nodes, and reshape
+   % need to be of size n_dims_1 x (n_elems*n_dims) for reshape
+   el_nodes= mdl.nodes(mdl.elems',:);
+   el_nodes= reshape(el_nodes, elem_dim(mdl)+1, []);
+
+   % Get interpolation matrix
+   interp= triangle_interpolation( n_interp, elem_dim(mdl) );
+   l_interp = size(interp,1);
+
+   mdl_pts = interp*el_nodes;
+   mdl_pts = reshape(mdl_pts, l_interp, num_elems(mdl), mdl_dim(mdl));
+
+   mdl_pts = permute(mdl_pts, [2,3,1]);
    
-   c_obj = {mdl.elems, mdl.nodes, n_interp};
-   mdl_pts = eidors_obj('get-cache', c_obj, 'interpolation');
-   if ~isempty(mdl_pts)
-       return
-   end
-
-
-% Get element nodes, and reshape
-% need to be of size n_dims_1 x (n_elems*n_dims) for reshape
-el_nodes= mdl.nodes(mdl.elems',:);
-el_nodes= reshape(el_nodes, elem_dim(mdl)+1, []);
-
-% Get interpolation matrix
-interp= triangle_interpolation( n_interp, elem_dim(mdl) );
-l_interp = size(interp,1);
-
-mdl_pts = interp*el_nodes;
-mdl_pts = reshape(mdl_pts, l_interp, num_elems(mdl), mdl_dim(mdl));
-
-mdl_pts = permute(mdl_pts, [2,3,1]);
-
-% caching
-eidors_cache('boost_priority', -2); % low priority
-c_obj = {mdl.elems, mdl.nodes, n_interp};
-eidors_obj('set-cache', c_obj, 'interpolation', mdl_pts);
-eidors_cache('boost_priority', +2); % restore priority
-
-
+   
+   
 % interpolate over a triangle with n_interp points
 % generate a set of points to fairly cover the triangle
 % dim_coarse is dimensions + 1 of coarse model
