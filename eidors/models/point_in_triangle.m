@@ -45,15 +45,19 @@ match = strcmp(str,'match');
 
 switch size(P,2)
     case 2
-        [u, v] = point_in_triangle_2d(P,E,V);
-    case 3
+        out = point_in_triangle_2d(P,E,V,epsilon);
+
+   case 3
         [u, v] = point_in_triangle_3d_wrapper(P,E,V,match);
+        out= test(u,v,epsilon);
         
     otherwise
         error('EIDORS:WrongInput','Points must be 2D or 3D');
 end
 
-out = u >= -epsilon & v >= -epsilon & (u+v-epsilon) <= 1; 
+
+function out = test(u,v,epsilon)
+   out = u >= -epsilon & v >= -epsilon & (u+v-epsilon) <= 1;
 
 function [u, v] = point_in_triangle_3d_wrapper(P,E,V, match)
     nPts = size(P,1);
@@ -94,19 +98,33 @@ v = (dot00 .* dot12 - dot01 .* dot02) .* invDenom;
 
 %-------------------------------------------------------------------------%
 % Decide if points P are in triangles E indexing nodes V in 2D
-function [u, v] = point_in_triangle_2d(P,E,V)
+function out = point_in_triangle_2d(P,E,V,epsilon)
     X = reshape(V(E,1),size(E));
     Y = reshape(V(E,2),size(E));
     T = [ bsxfun(@minus, X(:,1:2), X(:,3)) bsxfun(@minus, Y(:,1:2), Y(:,3))];
     invdetT = 1./(T(:,1).*T(:,4) - T(:,2).*T(:,3));
+    y23 = Y(:,2) - Y(:,3);
+    y31 = Y(:,3) - Y(:,1);
+    x32 = X(:,3) - X(:,2);
+    x13 = X(:,1) - X(:,3);
     nPts = size(P,1);
-    u = ( repmat(Y(:,2)-Y(:,3),1,nPts).*bsxfun(@minus,P(:,1)',X(:,3)) ...
-        + repmat(X(:,3)-X(:,2),1,nPts).*bsxfun(@minus,P(:,2)',Y(:,3)) )...
-        .* repmat(invdetT,1,nPts);
-    v = ( repmat(Y(:,3)-Y(:,1),1,nPts).*bsxfun(@minus,P(:,1)',X(:,3)) ...
-        + repmat(X(:,1)-X(:,3),1,nPts).*bsxfun(@minus,P(:,2)',Y(:,3)) )...
-        .* repmat(invdetT,1,nPts);
-    u = u';
-    v = v';
+    out = sparse(size(E,1),nPts);
+    for i = 1:nPts
+       p1X = P(i,1) - X(:,3);
+       p2Y = P(i,2) - Y(:,3);
+       u = (y23 .* p1X + x32 .* p2Y) .* invdetT;
+       v = (y31 .* p1X + x13 .* p2Y) .* invdetT;
+       out(:,i) = test(u,v,epsilon);
+    end
+    out = out';
     
+%     u = ( repmat(Y(:,2)-Y(:,3),1,nPts).*bsxfun(@minus,P(:,1)',X(:,3)) ...
+%         + repmat(X(:,3)-X(:,2),1,nPts).*bsxfun(@minus,P(:,2)',Y(:,3)) )...
+%         .* repmat(invdetT,1,nPts);
+%     v = ( repmat(Y(:,3)-Y(:,1),1,nPts).*bsxfun(@minus,P(:,1)',X(:,3)) ...
+%         + repmat(X(:,1)-X(:,3),1,nPts).*bsxfun(@minus,P(:,2)',Y(:,3)) )...
+%         .* repmat(invdetT,1,nPts);
+%     u = u';
+%     v = v';
+%     
 
