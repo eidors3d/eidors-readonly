@@ -193,7 +193,7 @@ function obj = set_obj( obj, varargin );
    end
 
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
-function value= get_cache_obj( obj, prop, varargin );
+function value= get_cache_obj( obj, prop );
    global eidors_objects
    value= [];
 
@@ -201,14 +201,7 @@ function value= get_cache_obj( obj, prop, varargin );
 %  [objlist, cachename]= proc_obj_list( varargin{:} );
 
    obj_id= calc_obj_id( obj ); % recalculate in case obj changed
-
-   if nargin==3
-      objlist = varargin;
-      for dep_obj = objlist{:}
-         prop= [prop,'_', calc_obj_id(dep_obj)];
-      end
-   end
-
+   
 % if cachename is specified, then cache to that file, rather
 %  than to the standard eidors_objects location
 % TODO: fixthis - use ( ) for matlab > 6.0
@@ -220,32 +213,30 @@ function value= get_cache_obj( obj, prop, varargin );
 %     end
 %  else
       try
-         value= eidors_objects.( obj_id ).cache.( prop );
+         value= eidors_objects.( obj_id ).( prop ).value;
 %        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
-         update_timestamp_and_check_size(obj_id);
+         update_timestamp_and_check_size(obj_id, prop);
       end
 %  end
 
-function set_cache_obj( obj, prop, value, varargin )
+function set_cache_obj( obj, prop, value, time )
    global eidors_objects
    if ~cache_this( obj ) ; return ; end
 
+   if nargin  < 4
+      time = 10; % assume 10 sec
+   end
+   
 % Cache directories aren't defined, yet
 %  [objlist, cachename]= proc_obj_list( varargin{:} );
 
    obj_id = calc_obj_id( obj );
-
-   if nargin>=4 
-      objlist = varargin;
-      for dep_obj = objlist{:}
-         prop= [prop,'_', calc_obj_id(dep_obj)];
-      end
-   end
-
+   
 %  if isempty(cachename)
-      eidors_objects.( obj_id ).cache.( prop ) = value;
-      eidors_objects.( obj_id ).priority = eidors_objects.cache_priority;
-      update_timestamp_and_check_size(obj_id);
+      eidors_objects.( obj_id ).( prop ).value = value;
+      eidors_objects.( obj_id ).( prop ).priority = eidors_objects.cache_priority;
+      eidors_objects.( obj_id ).( prop ).time_spent = time;
+      update_timestamp_and_check_size(obj_id, prop);
 %  else
 %     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
 %     save(filename, 'value');
@@ -280,7 +271,7 @@ function obj_id= calc_obj_id( var )
          eidors_objects.hash_type= 1e8+1; 
       end
 %if hashing code is unavailable, then disable caching function
-      obj_id= sprintf('id_%08d', eidors_objects.hash_type );
+      obj_id= sprintf('id_%031d%08d', 0,eidors_objects.hash_type );
       eidors_objects.hash_type= eidors_objects.hash_type + 1;
    end
 
@@ -330,10 +321,10 @@ function retval= cache_this( obj )
       retval = 1;
    end
 
-function update_timestamp_and_check_size( obj_id )
+function update_timestamp_and_check_size( obj_id , prop )
    global eidors_objects;
 
-   eidors_objects.( obj_id ).last_used = now;
+   eidors_objects.( obj_id ).( prop ).last_used = now;
 
    max_memory= eidors_objects.max_cache_size;
    ww= whos('eidors_objects');

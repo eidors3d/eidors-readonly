@@ -15,13 +15,27 @@ if nargin==1; map_node= 0; end
 % calculate element volume and surface area
 NODE = fwd_model.nodes';
 ELEM = fwd_model.elems';
-[d,e]= size(ELEM);
 
+copt.cache_obj = {NODE, ELEM};
+copt.fstr = 'elem_volume';
+copt.boost_priority = -4;
 
-% cashing 
-c_obj = {NODE, ELEM};
-VOL = eidors_obj('get-cache', c_obj, 'elem_volume');
-if isempty(VOL)
+VOL = eidors_cache(@calc_volume, {NODE, ELEM}, copt);
+
+if isfield(fwd_model,'coarse2fine')
+   VOL= fwd_model.coarse2fine' * VOL;
+end
+
+% Calculate the mapping of each element onto the associated node
+% Map(i,j) = 1/Ne if elem j has node i
+if map_node
+   map = sparse( ELEM, ones(d,1)*(1:e), 1/d, size(NODE,2),e);
+   VOL = map * VOL;
+end
+
+function VOL = calc_volume(NODE,ELEM)
+    [d,e]= size(ELEM);
+
     VOL=zeros(e,1);
     ones_d = ones(1,d);
     d1fac = prod( 1:d-1 );
@@ -49,19 +63,7 @@ if isempty(VOL)
     else
         error('mesh size not understood when calculating volumes')
     end
-    % caching
-    eidors_cache('boost_priority', -4); % low priority
-    eidors_obj('set-cache', c_obj, 'elem_volume', VOL);
-    eidors_cache('boost_priority', +4); % restore priority
-end
+    
 
-if isfield(fwd_model,'coarse2fine')
-   VOL= fwd_model.coarse2fine' * VOL;
-end
 
-% Calculate the mapping of each element onto the associated node
-% Map(i,j) = 1/Ne if elem j has node i
-if map_node
-   map = sparse( ELEM, ones(d,1)*(1:e), 1/d, size(NODE,2),e);
-   VOL = map * VOL;
-end
+
