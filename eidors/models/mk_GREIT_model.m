@@ -129,7 +129,10 @@ if ~isempty(opt.noise_figure)
     % The first call can take a long time. Take it out of the loop to 
     % allow progress messages. 
     imdl.solve_use_matrix.RM = calc_GREIT_RM(vh,vi,xyz, radius, weight, opt);
-    log_level = eidors_msg( 'log_level', 1); % suppress messages
+    log_level = eidors_msg('log_level');
+    if  log_level > 1
+       log_level = eidors_msg( 'log_level', 1); % suppress messages
+    end
     if exist('OCTAVE_VERSION')
        % octave doesn't currently (2013 Apr) include an fminsearch function
        [weight, NF] = fminsearch_octave(f, weight,fms_opts);
