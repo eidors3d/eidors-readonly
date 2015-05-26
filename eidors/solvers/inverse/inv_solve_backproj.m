@@ -35,18 +35,7 @@ end
 
 fwd_model= inv_model.fwd_model;
 
-% The one_step reconstruction matrix is cached
-one_step_inv = eidors_obj('get-cache', inv_model, 'inv_solve_backproj');
-if ~isempty(one_step_inv)
-    eidors_msg('inv_solve_backproj: using cached value', 2);
-else
-    Jbp = calc_backprojection_mask( fwd_model, type );
-
-    one_step_inv= Jbp;
-
-    eidors_obj('set-cache', inv_model, 'inv_solve_backproj', one_step_inv);
-    eidors_msg('inv_solve_backproj: setting cached value', 2);
-end
+one_step_inv = eidors_cache(@calc_backprojection_mask, {fwd_model, type});
 
 dv = calc_difference_data( data1, data2, inv_model.fwd_model);
 

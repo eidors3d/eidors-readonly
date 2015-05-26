@@ -31,28 +31,23 @@ end
 if nargin < 2
     hp = 1;
 end
-
 J= calc_jacobian(bkgnd_img);
+copt.fstr = 'calc_TSVD_RM';
+RM = eidors_cache(@calc_RM,{J, hp}, copt);
+
+function RM = calc_RM(J, hp)
+
 imdl.solve = @solve_use_matrix;
-S = eidors_obj('get-cache',mdl,'TSVD_S');
-if isempty(S)
-    [U,S,V] = svd(J,'econ');
-    eidors_obj('set-cache',mdl,'TSVD_S',S);
-    eidors_obj('set-cache',mdl,'TSVD_V',V);
-    eidors_obj('set-cache',mdl,'TSVD_U',U);
-else
-    U = eidors_obj('get-cache',mdl,'TSVD_U');
-    V = eidors_obj('get-cache',mdl,'TSVD_V');
-end
+copt.cache_obj = J;
+copt.fstr = 'svd';
+
+[U,S,V] = eidors_cache(@svd,{J, 'econ'},copt);
+
 s = diag(S);
 s = s./s(1);
 N = find(s >= hp/100,1,'last'); %disp(N);
 t= 1:N; % tsvd
-RM = eidors_obj('get-cache',{mdl, N},'TSVD_RM');
-if isempty(RM)
-    RM  = (V(:,t)/S(t,t))*U(:,t)';
-    eidors_obj('set-cache',{mdl, N},'TSVD_RM',RM);
-end
+RM  = (V(:,t)/S(t,t))*U(:,t)';
 
 
 

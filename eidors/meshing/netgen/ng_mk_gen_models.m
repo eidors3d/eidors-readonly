@@ -46,13 +46,11 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, ele
 if isstr(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin <= 4; extra_ng_code = ''; end
-cache_obj = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
+copt.cache_obj = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
+copt.fstr = 'ng_mk_gen_models';
+args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
 
-fmdl = eidors_obj('get-cache', cache_obj, 'ng_mk_gen_models' );
-if isempty(fmdl);
-   fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code);
-   eidors_obj('set-cache', cache_obj, 'ng_mk_gen_models', fmdl);
-end
+fmdl = eidors_cache(@mk_gen_model,args, copt);
 
 mat_idx = fmdl.mat_idx_reordered;
 

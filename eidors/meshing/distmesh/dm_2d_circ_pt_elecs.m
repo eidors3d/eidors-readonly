@@ -34,20 +34,23 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
 if isstr(elec_pts) && strcmp(elec_pts,'UNIT_TEST'); do_unit_test; return; end
 if isstr(elec_pts) && strcmp(elec_pts,'CALIBRATE'); do_calibrate; return; end
 
-cache_obj = {elec_pts, spacing};
-fmdl= eidors_obj('get-cache',cache_obj, 'dm_2d_circ_pt_elecs');
-if ~isempty(fmdl); return; end % Object is cached
+copt.cache_obj = {elec_pts, spacing};
+copt.fstr = 'dm_2d_circ_pt_elecs';
+fmdl = eidors_cache(@do_circ_pt_elecs,{elec_pts, pfix, spacing}, copt);
 
+function fmdl = do_circ_pt_elecs( elec_pts, pfix, spacing )
 params.base_spacing = spacing(1);
 params.refine_ratio = spacing(2);
 params.gradient     = spacing(3);
 
 bbox= [-1,-1;1,1];
+
+eidors_cache('boost_priority',-4);
 fmdl= dm_2d_pt_elecs( elec_pts, [], params, @circle, [-1,-1;1,1] );
+eidors_cache('boost_priority',+4);
 
 fmdl.name = sprintf('dm_2d_circ_pt_elec');
 fmdl.normalize_measurements = 'eidors_default';
-eidors_obj('set-cache',cache_obj, 'dm_2d_circ_pt_elecs', fmdl);
 
 function d= circle(p,params);
   d = sqrt(sum(p.^2,2)) - 1; 
