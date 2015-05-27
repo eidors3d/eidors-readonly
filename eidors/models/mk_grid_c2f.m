@@ -21,8 +21,8 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %                       Default: 6*sqrt(3)*eps(a), where a is
 %                       min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))
 %      .tol_edge2tri  - minimum value of a barycentric coordinate to 
-%                       decide a point is lying inside a triangle and not
-%                       on its edge. Default: eps
+%                       decide a point is lying inside a triangle.
+%                       Default: eps
 %      .save_memory   - modifies function behavior to decrease memory 
 %                       footprint by increasing the number of iterations;
 %                       useful for large problems. Must be an integer 
@@ -285,6 +285,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
         V = [V; zeros(numel(tet_todo),1)]; % pre-allocate
 
         for t = 1:numel(tet_todo)
+%             if v== 137 && tet_todo(t) == 543, keyboard, end
             pts = [ intpts1(common_intpts1(:,t),:);
                     intpts2(common_intpts2(:,t),:);
                     intpts3(common_intpts3(:,t),:);
@@ -416,7 +417,7 @@ function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
    fmdl.node2elem = fmdl0.node2elem(fnode_idx,felem_idx);
    
    
-   fface_idx = sum(fmdl0.elem2face(felem_idx,:))>0;
+   fface_idx = sum(fmdl0.elem2face(felem_idx,:),1)>0;
    fmdl.elem2face = fmdl0.elem2face(felem_idx,fface_idx);
    felem_idx_map = felem_idx;
    felem_idx_map(felem_idx) = 1:nnz(felem_idx);
@@ -526,12 +527,12 @@ function [insnode] = get_nodes_in_voxels(fmdl,rmdl)
     minz = min(znodes,[],2);
     maxz = max(znodes,[],2);
 
-    leftof  = bsxfun(@lt, fmdl.nodes(:,1), minx');
-    rightof = bsxfun(@gt, fmdl.nodes(:,1), maxx');
-    infront = bsxfun(@lt, fmdl.nodes(:,2), miny');
-    behind  = bsxfun(@gt, fmdl.nodes(:,2), maxy');
-    below   = bsxfun(@lt, fmdl.nodes(:,3), minz');
-    above   = bsxfun(@gt, fmdl.nodes(:,3), maxz');
+    leftof  = bsxfun(@lt, fmdl.nodes(:,1)+eps, minx');
+    rightof = bsxfun(@gt, fmdl.nodes(:,1)-eps, maxx');
+    infront = bsxfun(@lt, fmdl.nodes(:,2)+eps, miny');
+    behind  = bsxfun(@gt, fmdl.nodes(:,2)-eps, maxy');
+    below   = bsxfun(@lt, fmdl.nodes(:,3)+eps, minz');
+    above   = bsxfun(@gt, fmdl.nodes(:,3)-eps, maxz');
 
     outnode = leftof | rightof | behind | infront | below | above;
     insnode = sparse(~outnode);
@@ -649,7 +650,7 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = get_tet_intersection_points
             z = z - bsxfun(@times,fmdl.normals(:,idx(j)),pts(:,j)');
         end
         z = z ./ repmat(fmdl.normals(:,op),1,size(pts,1));
-        in = point_in_triangle(pts,fmdl.faces,fmdl.nodes(:,idx),-opt.tol_edge2tri)';
+        in = point_in_triangle(pts,fmdl.faces,fmdl.nodes(:,idx),2*opt.tol_edge2tri)';
 
         
         % reject voxel nodes
