@@ -365,7 +365,7 @@ for e=1:length(mdl.electrode)
             hh=text( mean(el_nodes(:,1)), ...
                      mean(el_nodes(:,2)), ...
                      mean(el_nodes(:,3)), txt );
-            set(hh,'FontWeight','bold','Color',[.6,0,0]);
+            set(hh,'FontWeight','bold','Color',[.8,.2,0],'FontSize',8);
         end
     end
 end
