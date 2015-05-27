@@ -4,7 +4,8 @@ N= eit2015-conductivity-contrasts
 IMGS= contrasts_04b.pdf \
       contrasts_04p.pdf \
       contrasts_04h.pdf \
-      contrasts_04v.pdf 
+      contrasts_04v.pdf \
+      signal.pdf 
 
 all: $(N).pdf
 
