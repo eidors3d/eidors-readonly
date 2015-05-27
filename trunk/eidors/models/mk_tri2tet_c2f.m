@@ -27,7 +27,7 @@ function c2f = mk_tri2tet_c2f(fmdl,rmdl, opt)
 %                       min(max(abs(fmdl.nodes(:))),max(abs(rmdl.nodes(:)))
 %      .tol_edge2tri  - minimum value of a barycentric coordinate to 
 %                       decide an edge-plane intersection point is lying 
-%                       inside a triangle and not on its edge. Default: eps
+%                       inside a triangle. Default: eps
 %                       
 % NOTE that for grid-based models, such as returned by MK_GRID_MODEL or
 % MK_VOXEL_VOLUME, MK_GRID_C2F is much faster.
@@ -360,6 +360,8 @@ function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
                      cp = bsxfun(@minus, u12(2:end,1:2), u12(1,1:2));
                      l = sqrt(sum(cp.^2,2));
                      cp = bsxfun(@rdivide, cp, l);
+                     % counteract colinear vectors in different directions
+                     cp = abs(cp); 
                      un = uniquetol(cp,1e-14,'ByRows',true,'DataScale',1);
                      ok = ok | size(un,1) == 1; % co-linear points
                   end
@@ -421,7 +423,7 @@ function [intpts, tri2edge, tri2pts, edge2pts] = get_tet_intersection_pts(fmdl,r
    [F,P] = find(todo);
    P = unique(P);
    in = false(size(fmdl.faces,1),size(pts,1));
-   in(F,P) = point_in_triangle(pts(P,:),fmdl.faces(F,:),fmdl.nodes(:,1:2),-epsilon)';
+   in(F,P) = point_in_triangle(pts(P,:),fmdl.faces(F,:),fmdl.nodes(:,1:2),epsilon)';
    
    [F,P] = find(in);
 
