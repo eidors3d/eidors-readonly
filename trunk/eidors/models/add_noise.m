@@ -3,11 +3,15 @@ function vv = add_noise( SNR, v1, v2, options)
 % v1_w_noise = add_noise( SNR, v1, v2, options)
 %
 % Usage:
-%  add_noise( SNR, v1 )           - add noise to v1 where signal = vv
-%  add_noise( SNR, v1, v2)        - add noise to v1 where signal = v1 - v2
-%  add_noise( SNR, v1, v2,'norm') - add noise to v1 where signal = (v1-v2)/v2
+%  v1= add_noise( SNR, v1 )           - add noise to v1 where signal = v1
+%  v1= add_noise( SNR, v1, v2)        - add noise to v1 where signal = v1 - v2
+%  v1= add_noise( SNR, v1, v2,'norm') - add noise to v1 where signal = (v1-v2)/v2
 %
 % SNR is defined in terms of power SNR =  || signal || / || noise ||
+%
+% In many cases, the same noise is desired for each sample. It is easiest to reset
+% the pseudorandom number seeds, using
+%  rnd('default'); v1 = add_noise ...
 
 % (C) 2010 Andy Adler. License: GPL v2 or v3. $Id$
 
@@ -51,6 +55,12 @@ function do_unit_test
 
     v0 = add_noise(.9, v1, v2, 'norm' );
     SNR_test(.9, v0.meas - v1 , (v1 - v2)./v2);
+
+    rng('default');
+    v0 = add_noise( 2, v1);
+    rng('default');
+    v1 = add_noise( 2, v1);
+    unit_test_cmp('RNG reset', v0, v1);
 
 function SNR_test(SNRspec, noi, sig)
     SNR = norm(sig)/norm(noi);
