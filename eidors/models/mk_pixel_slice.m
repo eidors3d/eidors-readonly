@@ -111,16 +111,17 @@ inside = any(point_in_triangle(P, slc.elems, slc.nodes(:,1:2)),2);
 ff = find(~inside);
 
 if opt.do_coarse2fine
-    % to calculate c2f, models must be aligned
-    tmp = rmdl;
-    tmp.mk_coarse_fine_mapping.f2c_offset  = T;
-    tmp.mk_coarse_fine_mapping.f2c_project = R;
-    tmp.mk_coarse_fine_mapping.z_depth     = opt.z_depth;
-    fmdl.coarse2fine = mk_coarse_fine_mapping(fmdl,tmp);
-    fmdl.coarse2fine(:,ff) = [];
+%     rmdl.mk_coarse_fine_mapping.z_depth = opt.z_depth;
+%     fmdl.coarse2fine = mk_coarse_fine_mapping(tmp,rmdl);
+%     fmdl.coarse2fine(:,ff) = [];
+    if isinf(opt.z_depth)
+       zgrid = [min(tmp.nodes(:,3))-1 max(tmp.nodes(:,3))+1];
+    else
+       zgrid = [-opt.z_depth opt.z_depth];
+    end
+    [jnk, fmdl.coarse2fine] = mk_grid_model(tmp,xgrid,ygrid,zgrid);
+    fmdl.coarse2fine(:,ff);
 end
-
-
 
 rmdl.elems([2*ff, 2*ff-1],:)= [];
 rmdl.coarse2fine([2*ff, 2*ff-1],:)= [];
