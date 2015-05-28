@@ -1,0 +1,80 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>GREIT Reconstruction with IBEX software</h2>
+
+The IBEX software from <a href="http://swisstom.com">Swisstom</a>
+is a freely available software tool designed
+to help analyse lung EIT data. While the software
+is primarily designed to analyse data in 
+Swisstom formats, it is relatively easy to 
+convert images analysed by EIDORS into 
+an IBEX compatible format.
+
+<p>
+This tutorial describes how to reconstruct data
+and create an IBEX compatible file.
+
+<h3> 
+Create Reconstruction Matrix and ROIs
+</h3>
+
+Here we are using the adult human FEM model
+
+<pre>
+<!--#include virtual="GREIT_IBEX_01.m"-->
+</pre>
+
+<h3>
+Load and reconstruct Data
+</h3>
+
+<center>
+<img src="GREIT_IBEX_01a.png">
+<br><i>Figure:</i>
+Example ROIs needed for analysis
+</center>
+
+<pre>
+<!--#include virtual="GREIT_IBEX_02.m"-->
+</pre>
+
+<center>
+<img src="GREIT_IBEX_02a.png">
+<br><i>Figure:</i>
+Example Images of reconstructed data
+</center>
+
+<h3> 
+Create the required variables to use IBEX
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_IBEX_03.m"-->
+</pre>
+
+
+<h3> 
+Test of GREIT/AUSPEX matrices
+</h3>
+
+<pre>
+<!--#include virtual="GREIT_AUSPEX04.m"-->
+</pre>
+
+<center>
+<img src="GREIT_AUSPEX04a.png">
+<br><i>Figure:</i>
+<i>Left</i>Reconstructions.
+<i>Right</i>Reconstruction Domain
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
