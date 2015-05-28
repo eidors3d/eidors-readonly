@@ -1,4 +1,6 @@
- - ng_mk_geometric_models give lots of warnings
+ + ng_mk_geometric_models give lots of warnings
+
+ - ng_mk_ellip_models still sorts mat_idx => fix 
 
 ##### POST RELEASE 3.8 ITEMS
 
