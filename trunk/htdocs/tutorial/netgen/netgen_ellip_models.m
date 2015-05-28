@@ -56,6 +56,17 @@ case 08;
     img.elem_data(fmdl.mat_idx{2}) = 2;
 show_fem(img);
 
+case 09;
+    b1 = 'solid ball1= sphere(0.5, 0.5,1;0.2);';
+    b2 = 'solid ball2= sphere(0.5,-0.5,1;0.2);';
+    extra = {'ball1','ball2',[b1,b2]};
+    [fmdl,mat_idx]= ng_mk_ellip_models([2,1.2,0.8],[8,1],[0.1],extra);
+    img= mk_image(fmdl, 1);
+    img.elem_data(mat_idx{2}) = 2; 
+    img.elem_data(mat_idx{3}) = 0.5;
+show_fem(img);
+
+
 end
 
 
