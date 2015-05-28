@@ -3,7 +3,7 @@
 REPO="$HOME/docs/eidors-git";
 OUTF=datafile.txt
 #echo > $OUTF
-for ver in `seq 4951 4970`; do 
+for ver in `seq 1 5050`; do 
    echo "$REPO: VER=$ver";
    GITVER=`(cd $REPO && git svn find-rev r$ver)`;
    (cd $REPO && git checkout $GITVER);
