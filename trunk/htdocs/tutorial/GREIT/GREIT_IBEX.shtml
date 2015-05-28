@@ -26,22 +26,35 @@ Here we are using the adult human FEM model
 <!--#include virtual="GREIT_IBEX_01.m"-->
 </pre>
 
-<h3>
-Load and reconstruct Data
-</h3>
-
 <center>
 <img src="GREIT_IBEX_01a.png">
 <br><i>Figure:</i>
+</center>
+
 Example ROIs needed for analysis
 </center>
+
+Use GREIT Reconstruction
 
 <pre>
 <!--#include virtual="GREIT_IBEX_02.m"-->
 </pre>
 
+<h3>
+Load and reconstruct Data
+</h3>
+
+Use data from a
+<a href="http://eidors3d.sourceforge.net/data_contrib/cg-2012-ards-recruitment/cg_data_2012_p1.zip">
+   Patient at CHB</a> (Gender: F, Age: 5.9 years, Weight: 20kg, Condition: Primary ARDS triggered by parainfluenza pneumonia)
+
+
+<pre>
+<!--#include virtual="GREIT_IBEX_03.m"-->
+</pre>
+
 <center>
-<img src="GREIT_IBEX_02a.png">
+<img src="GREIT_IBEX_03a.jpg">
 <br><i>Figure:</i>
 Example Images of reconstructed data
 </center>
@@ -51,25 +64,11 @@ Create the required variables to use IBEX
 </h3>
 
 <pre>
-<!--#include virtual="GREIT_IBEX_03.m"-->
+<!--#include virtual="GREIT_IBEX_04.m"-->
 </pre>
 
 
-<h3> 
-Test of GREIT/AUSPEX matrices
-</h3>
-
-<pre>
-<!--#include virtual="GREIT_AUSPEX04.m"-->
-</pre>
-
-<center>
-<img src="GREIT_AUSPEX04a.png">
-<br><i>Figure:</i>
-<i>Left</i>Reconstructions.
-<i>Right</i>Reconstruction Domain
-</center>
-
+Now <tt>file-for-IBEX.mat</tt> can be used with IBEX software.
 </td></tr></table>
 <p>
 <small>

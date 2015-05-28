@@ -1,5 +1,4 @@
 fmdl= mk_library_model('adult_male_16el_lungs');
-fmdl.electrode = fmdl.electrode([9:16,1:8]);
 img = mk_image(fmdl, 1); % background conductivity
 img.elem_data(fmdl.mat_idx{2}) = 0.3001; % lungs
 img.elem_data(fmdl.mat_idx{3}) = 0.3002; % lungs
