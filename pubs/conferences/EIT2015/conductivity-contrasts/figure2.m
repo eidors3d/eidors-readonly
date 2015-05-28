@@ -22,5 +22,5 @@ legend('0.3','1.0','2.0','5.0','Location','SouthEast');
 xlim([min(space), max(space)])
 set(gca,'xtick',[1e-3,1e-2,1e-1,1,1e1,1e2,1e3]);
 set(gcf,'PaperPosition',[2,2,4,2.0]);
-print -dpdf signal.pdf   
+%print -dpdf signal.pdf   
 
