@@ -1,8 +1,8 @@
 function stim_patterns_sim
 for i=1:3; switch i
       case 1; sel = 0; weight = 2; ofs = 0;
-      case 2; sel = 1; weight = 2; ofs = 3;
-      case 3; sel = 2; weight = 2; ofs = 6;
+      case 2; sel = 1; weight = 2; ofs = 1;
+      case 3; sel = 2; weight = 2; ofs = 2;
    end;
 
    fmdl = mk_forward_model( sel )
@@ -16,9 +16,12 @@ for i=1:3; switch i
 end
 
 
+opt.pagesize     = [8, 4];
 opt.horz_cut     = 20;
 opt.vert_cut     = 20;
-print_convert('greit-3d-example.jpg',opt);
+opt.horz_space   = 10;
+opt.vert_space   =  1;
+print_convert('../img/greit-3d-example.jpg',opt);
 
 function fmdl = mk_forward_model( sel )
 %% Forward model
@@ -56,18 +59,29 @@ function [imgi,vh,vi] = mk_sims(fmdl);
 
 
 function show_image(img, ofs);
-   subplot(3,3,1+ofs)
-   show_fem(img,[0,1]);
+   subplot(3,4,1+4*ofs)
+   img1 = img;
+   hh= show_fem(img,[0,1]);
+   set(hh,'EdgeColor',[1,1,1]*.75);
+   set(hh,'EdgeAlpha',0.1);
     view(0,22)
+    text(-5,5,sprintf('%c','A'+ofs),'fontsize',30);
 
-   subplot(3,3,2+ofs)
+   subplot(3,4,2+4*ofs)
    show_3d_slices(img,1.25,.5,.5);% cuts through the target center
     view(0,22)
 
-   subplot(3,3,3+ofs)
-   levels(:,3) = 2.25:-.5:.25; % cuts through the target center
+   subplot(3,2,2+2*ofs)
+   levels(:,3) = 2.25:-.5:.75; % cuts through the target center
+%  levels(:,3) = 2.25:-.5:1.25; % cuts through the target center
    levels(:,1:2) = Inf;
-   show_slices(img,levels)
+
+   rimg = calc_slices(img,levels);
+   rimg = calc_colours(rimg,img);
+%  rimg(20:end,:,:) = [];
+%  rimg = reshape(permute(rimg,[2,1,3]),size(rimg,2),[])';
+   rimg = reshape(rimg,size(rimg,1),[]);
+   image(rimg); axis off; axis image;
 
 function imdl = GREIT_3D_inv( fmdl, weight);
    %% Set up dual-model
