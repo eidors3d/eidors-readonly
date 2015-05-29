@@ -1,5 +1,6 @@
 %\PassOptionsToPackage{table}{xcolor}
 \documentclass{beamer}
+\usepackage{amsmath, mathtools} % If amsmath is required
 \usepackage{times,helvet,epsfig,color}
 \usepackage{graphicx}
 \usepackage{comment}
@@ -38,7 +39,15 @@
  \pgfdeclarelayer{background}
  \pgfsetlayers{background,main,foreground}
 
+\newcommand{\xB}{\mbox{$\mathbf{x}$}}
+\newcommand{\xT}{\mbox{$\mathbf{\tilde x}$}}
+\newcommand{\RB}{\mbox{$\mathbf{R}$}}
+\newcommand{\yB}{\mbox{$\mathbf{y}$}}
+\newcommand{\wB}{\mbox{$\mathbf{w}$}}
+
 \begin{document}
+\newcommand{\argmin}{\operatornamewithlimits{arg\,min}}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}%
 
 
 \title[3D GREIT]{
@@ -63,37 +72,137 @@ $^3$Systems and Computer Engineering, Carleton University, Ottawa, Canada}
 \frame{\titlepage} 
 
 \frame{\frametitle{%
-GREIT \ldots
+Table of content
+}
+\tableofcontents[currentsection]
 }
 
+\section{Motivation}
+\frame{\frametitle{%
+Motivation
+}
+\begin{itemize}
+	\item[] Measurement setup already exists
+	\begin{itemize}
+		\item Swisstom Pioneer Set with 32 electrodes
+		\item Watertank with 4 rings of connectors.
+	\end{itemize}
+	\item[]
+	\item[] GREIT in EIDORS
+	\begin{itemize}
+		\item Forward model 3D
+		\item Extension of image plane to 3D
+	\end{itemize}
+\end{itemize}
+}
+
+\section{GREIT}
+\frame{\frametitle{%
+GREIT
+}
+\begin{equation}
+\RB = \argmin_{\footnotesize\RB}\sum_k \norm*{\xT^{(k)} - 
+\RB\yB^{(k)}}^2_{\wB^{(k)}}
+\end{equation}
+\begin{itemize}
+	\item $\RB$: Reconstruction matrix
+	\item $k$ Training pairs $\{\xT^{(i)},\yB^{(i)}\}$
+	\item $\xT^{(i)}$: Desired image of training disturbance $i$
+	\item $\yB^{(i)}$: Voltages of training disturbance $i$
+\end{itemize}
 }
 
 \frame{\frametitle{%
-Reconstructions
+GREIT: Voltages of training disturbances
 }
-\centering
-\includegraphics[width=.4\columnwidth]{sigmoid_01a.png}
-\hfill
-\includegraphics[width=.4\columnwidth]{sigmoid_01b.png}
-\\
-Plots of the function $f(x) = 1 / (1 + e^{s(|x|-R)})$ for different values 
-of $s$ with the default value indicated in bold.
+Solve forward problem:		
+\begin{itemize}
+	\item 3D FEM model 
+	\item Placement of electrodes
+\end{itemize}
+Everything already implemented in EIDORS.
 }
-
 
 \frame{\frametitle{%
-Electronics -- Block Diagram
+GREIT: Desired image
+}
+\begin{center}
+\includegraphics[width=.5\columnwidth]{desiredSolution.png}
+\end{center}
+Main enhancements needed in EIDORS.
+\begin{itemize}
+	\item Extend image plane from 2D to 3D
+	\item Redefine desired image
+\end{itemize}
+}
+
+\frame{\frametitle{%
+GREIT: Training disturbances
+}		
+Some small extensions in EIDORS.
+\begin{itemize}
+	\item Distribution over whole object 
+	\item What happens to off-plane objects?
+\end{itemize}
+Image plane may not cover whole FE model.
+}
+
+\frame{\frametitle{%
+Reconstruction using real data
 }
 \includegraphics[width=\columnwidth]{tank_recon.pdf}
 \\
-\emph{Left:} FE model of a water tank showing 
-cut planes between voxel layers and positions of a non-conductive spherical 
-target. \emph{Right:} images reconstructed using the proposed algorithm. Each 
+\emph{Left:} FE model of a water tank with 
+cut planes between voxel layers and positions of non-conductive 
+target. \\
+\emph{Right:} images reconstructed using the proposed algorithm. Each 
 row corresponds to one voxel layer, and each column to a different target 
 position.
 }
 
+\section{And now?}
+\frame{\frametitle{%
+And now?
+}
+Electrode placement:
+\begin{itemize}
+	\item How many rings of electrodes?
+	\item How to place the electrodes?
+	\item Which skip-pattern to use?
+\end{itemize}
+\vspace{1cm}
+\input{elOrdering.latex}
+}
 
+\frame{\frametitle{%
+And now?
+}
+Visualization:
+\begin{itemize}
+	\item How to display the reconstructed images?
+	\item[]
+\end{itemize}
+
+Figure of merits:
+\begin{itemize}
+	\item Do they still work?
+	\item How to visualize them?
+	\item[]
+\end{itemize}
+
+Off-plane objects:
+\begin{itemize}
+	\item How must off-plane objects taken into account? 
+	\item[]
+\end{itemize}
+}
+
+
+\section{Questions}
+\frame{\frametitle{%
+Any questions?
+}
+}
 
 \end{document}
 
