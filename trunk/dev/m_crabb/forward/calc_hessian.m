@@ -1,7 +1,7 @@
 function H = calc_hessian(fwd_model,img)
 %Find the Hessian associated with an image (and forward model)
 %Second derivative of discretization method
-%M Crabb - 29.06.2012
+%M Crabb - 29.05.2015
 
 
 cache_obj= {fwd_model,img};
