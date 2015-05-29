@@ -67,8 +67,13 @@ Create the required variables to use IBEX
 <!--#include virtual="GREIT_IBEX_04.m"-->
 </pre>
 
-
 Now <tt>file-for-IBEX.mat</tt> can be used with IBEX software.
+
+<center>
+<img src="GREIT_IBEX_04-screenshot.jpg">
+<br><i>Figure:</i>
+IBEX software using these data
+</center>
 </td></tr></table>
 <p>
 <small>
