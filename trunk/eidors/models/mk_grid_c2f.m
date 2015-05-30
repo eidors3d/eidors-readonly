@@ -815,7 +815,7 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
     scale = 1/maxnode;
     rmdl.nodes = scale*rmdl.nodes;
     fmdl.nodes = scale*fmdl.nodes;
-    eidors_msg('models scaled by %g', scale,2);
+    eidors_msg('@@ models scaled by %g', scale,2);
     
 %-------------------------------------------------------------------------%
 % Parse option struct

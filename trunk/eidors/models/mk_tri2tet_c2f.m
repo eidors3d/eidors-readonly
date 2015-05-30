@@ -752,8 +752,8 @@ function [fmdl,rmdl,fmdl_idx,rmdl_idx] = crop_models(fmdl,rmdl, opt)
    fmdl.nodes = fmdl.nodes(f_used_nodes,:);
    
    % for the benefit of any (debug) plots later on
-   rmdl = rmfield(rmdl,'boundary');
-   fmdl = rmfield(fmdl,'boundary');
+   try, rmdl = rmfield(rmdl,'boundary'); end
+   try, fmdl = rmfield(fmdl,'boundary'); end
 end
 
 %-------------------------------------------------------------------------%
