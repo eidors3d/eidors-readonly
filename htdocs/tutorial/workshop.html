@@ -78,7 +78,7 @@ toc
          >Forward Models</a>
         </h3>
      <ul>
-         <li>Finite ELement Models
+         <li>Finite Element Models (FEMs)
          <li>EIDORS FEM structure
 <pre>
 >> fmdl= ng_mk_cyl_models(1,[16,.5],0.1);
@@ -184,7 +184,7 @@ imdl =
       functions: mk_pixel_grid )
 
        <li>Challenge Questions,
-   Using simulated and read data, test the effect of 
+   Using simulated and real data, test the effect of 
           
        <ul>
           <li>different model shapes
@@ -227,9 +227,13 @@ imdl =
         <a href="./EIDORS_workshop/2D-vs-3D.shtml"
          >Topics in Forward Modelling</a>
         </h3>
-				<ul>
-   				<li> Physics
-					<li> Finite element approximations
+				<ul>				
+					<li> FE model generation in Netgen
+					<ul>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml">Cylindrical models</a>
+						<li> Electrode refinement
+					</ul>
+					<li> FE approximations
 					<ul>
 						<li> <a href="./EIDORS_basics/forward_solvers_2d_high_order.shtml"> Higher order (2nd, 3rd) finite elements in 2D</a>
 						<li> <a href="./EIDORS_basics/forward_solvers_3d_high_order.shtml"> Higher order (2nd) finite elements in 3D</a>
@@ -237,9 +241,10 @@ imdl =
 					<li> Electrode modelling
 					<ul>
 						<li> <a href="http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/electrode_errors.shtml"> Estimating and managing electrode errors</a>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/contact_impedance.shtml"> Contact impedance</a>
 						<li> Electrode refinement
-						<li> Contact impedance
 					</ul>
+   				<li> Physics
 				</ul>	
 
     <li><h3>
@@ -253,12 +258,13 @@ imdl =
 						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/centre_slice.shtml"> Reconstruct a 3D volume onto a triangulated mesh</a>
 						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/square_mesh.shtml"> Reconstruct a 3D volume onto a rectangular mesh </a>
 					</ul>
-					<li> jacobian_background			
 					<li> Absolute reconstructions
 					<ul>
 						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml"> Iterative Gauss-Newton solvers in 3D</a>
 						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"> Iterative vs one-step Gauss-Newton solvers using RPI data</a>
 						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/total_variation.shtml"> Total Variation solvers in 2D</a>
-					</ul>					
+					</ul>
+					<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml">GREIT</a>
+					<li> jacobian_background								
 				</ul>
 </ul>
