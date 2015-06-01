@@ -7,47 +7,7 @@ To run tutorials, you need to <a href="../download.shtml">download and install</
 &gt;&gt;run /path/to/eidors3d/startup.m
 </pre>
 
-<h3>
-Basic starter tutorials
-</h3>
-
-<ul>
-
-<li>
-<h3>
- <a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml">EIDORS Basics</a>
-</h3>
-
-</ul>
-
-
 <!--#include virtual="./workshop.html" -->
-
-<h3>
-Tutorials on some specific applications
-</h3>
-
-<ul>
-
-<li>
-<h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/lung_EIT/if_peep_trial.shtml"
-     >Lung injury after PEEP trial images</a>
-</h3>
-
-<li>
-<h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/GREIT/neonate_ex.shtml"
-     >Neonate lung images</a>
-</h3>
-
-<li>
-<h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/lung_EIT/tutorial410-stomach-images.shtml"
-     >Stomach emptying images</a>
-</h3>
-
-</yl>
 
 </td></tr></table>
 <p>
