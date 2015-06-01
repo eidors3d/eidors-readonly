@@ -1,0 +1,65 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2>Complete electrode model (CEM) convergence study using higher order finite elements methods (FEM)</h2>
+
+<h3> 
+
+</h3>
+
+Carefully create an FEM of CEM on a square domain. On this domain, a "semi-analytic" solution exists. This is very useful as we can test how the errors change as we vary the contact impedance, approximation order. 
+
+<pre>
+<!--#error_rates_contact_impedance01.m" -->
+</pre>
+
+<center>
+<img src="error_rates_contact_impedance01a.png">
+<br><i> Figure:</i>
+Initial 3D finite element model (left) and the same model after a single uniform h-refinement. The CEM electrodes (to drive voltage) are green lines and the (point) voltage measurement electrodes are red crosses.
+</center>
+
+We now vary the contact impedance. For each contact impedance we estimate the L2, H1 error of the interior voltage potential, as well as the l2 error at the measurement electrodes, using the "semi-analytic" solution to this problem. We plot the analytic (cubic) and FEM solution for contact impedance of z=0.00001 and z=1000.
+<pre>
+<!--#include virtual="error_rates_contact_impedance02.m" -->
+</pre>
+
+<center>
+<img src="error_rates_contact_impedance02a.png">
+<img src="error_rates_contact_impedance02b.png">
+<br><i> Figure:</i>
+The left and right figure are the nodal potential values (with cubic approximation) using the analytic solution and finite element solution (on the coarsest triangulation.)
+</center>
+
+Using the errors computed, we use a Least-Squares method to estimate the convergence rate.
+
+<pre>
+<!--#include virtual="error_rates_contact_impedance03.m" -->
+</pre>
+
+<center>
+<img src="error_rates_contact_impedance03a.png">
+<img src="error_rates_contact_impedance03b.png">
+<img src="error_rates_contact_impedance03c.png">
+<br><i> Figure:</i>
+Convergence rates (of various Error norms) as a function of contact impedance for various approximation order. Left, Middle, Right figure are using a linear, quadratic and cubic approximation respectively. Bue crosses are the H1 norm, Red circle the L2 norm and Purple diamons are the measured voltages in l2 norm
+</center>
+
+<center>
+<img src="error_rates_contact_impedance03d.png">
+<img src="error_rates_contact_impedance03e.png">
+<img src="error_rates_contact_impedance03f.png">
+<br><i> Figure:</i>
+Convergence rates (of various approximation orders) as a function of contact impedance for various Error norms. Left, Middle, Right figure are error rates estimate in H1 norm, L2 norm and l2 norm of measured voltages, linear, quadratic and cubic approximation respectively. Red circles are linear, Blue diagonal crosses are quadratic and Green verticle crosses are cubic approximations.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date: 2012-07-01 14:00:43 +0100 (Sun, 01 Jul 2012) $ by $Author: aadler $
+</small>
+</BODY></HTML>
+<!--
+      -->
