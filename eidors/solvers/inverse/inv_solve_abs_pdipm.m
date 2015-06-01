@@ -10,7 +10,7 @@ function img=inv_solve_abs_pdipm( inv_model, data);
 %  inv_model.inv_solve_abs_pdipm.beta     (default 1e-6)
 %
 % Parameters:
-%  max_iter =  inv_model.parameters.max_iteration (default 10)
+%  max_iter =  inv_model.parameters.max_iterations (default 10)
 %      Max number of iterations before stopping
 %  min change = inv_model.parameters.min_change   (default 0)
 %      Min Change in objective fcn (norm(y-Jx)^2 + hp*TV(x)) before stopping
