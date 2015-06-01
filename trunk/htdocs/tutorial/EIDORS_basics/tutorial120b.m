@@ -50,8 +50,13 @@ inv2d.R_prior=     @prior_TV;
 inv2d.parameters.max_iterations= 10;
 inv2d.parameters.term_tolerance= 1e-3;
 
-imgr(5)= inv_solve( inv2d, vh, vi);
-imgn(5)= inv_solve( inv2d, vh, vi_n);
+%Vector of structs, all structs must have exact same (a) fields (b) ordering
+imgr5= inv_solve( inv2d, vh, vi);
+imgr5=rmfield(imgr5,'type'); imgr5.step_size=1; imgr5.type='image';
+imgr(5)=imgr5;
+imgn5= inv_solve( inv2d, vh, vi_n);
+imgn5=rmfield(imgn5,'type'); imgn5.step_size=1; imgn5.type='image';
+imgn(5)=imgn5;
 
 % Output image
 imgn(1).calc_colours.npoints= 128;
