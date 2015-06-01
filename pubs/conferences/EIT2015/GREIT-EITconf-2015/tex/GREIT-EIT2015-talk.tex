@@ -45,6 +45,10 @@
 \newcommand{\yB}{\mbox{$\mathbf{y}$}}
 \newcommand{\wB}{\mbox{$\mathbf{w}$}}
 
+\AtBeginSection[]{
+  \setbeamercolor{section in toc}{fg=black}
+}
+
 \begin{document}
 \newcommand{\argmin}{\operatornamewithlimits{arg\,min}}
 \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}%
@@ -74,7 +78,10 @@ $^3$Systems and Computer Engineering, Carleton University, Ottawa, Canada}
 \frame{\frametitle{%
 Table of contents
 }
-\tableofcontents[currentsection]
+Motivation\\ \vspace{3mm}
+GREIT\\ \vspace{3mm}
+And now?\\ \vspace{3mm}
+Questions\\ \vspace{3mm}
 }
 
 \section{Motivation}
@@ -85,13 +92,14 @@ Motivation
 	\item[] Measurement setup already exists
 	\begin{itemize}
 		\item Swisstom Pioneer Set with 32 electrodes
-		\item Watertank with 4 rings of connectors.
+		\item Watertank with 4 rings of connectors
 	\end{itemize}
 	\item[]
 	\item[] GREIT in EIDORS
 	\begin{itemize}
 		\item Forward model 3D
 		\item Extension of image plane to 3D
+		\item Part of EIDORS 3.8
 	\end{itemize}
 \end{itemize}
 }
@@ -168,15 +176,21 @@ Electrode placement:
 \begin{itemize}
 	\item How many rings of electrodes?
 	\item How to place the electrodes?
+\end{itemize}
+\vspace{0.5cm}
+\input{elOrdering.latex}
+\begin{itemize}
 	\item Which skip-pattern to use?
 \end{itemize}
-\vspace{1cm}
-\input{elOrdering.latex}
+\begin{center}
+\includegraphics[width=0.95\columnwidth]{elOrderingSkip.pdf}
+\end{center}
 }
 
 \frame{\frametitle{%
-Electrode placement
+And now?
 }
+Electrode placement: Simulation
 \begin{center}
 \includegraphics[width=0.7\columnwidth]{../img/greit-3d-example.jpg}
 \end{center}
