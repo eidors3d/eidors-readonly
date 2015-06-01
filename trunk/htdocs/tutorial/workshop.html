@@ -70,6 +70,8 @@ toc
  <li>What is the speedup for larger FEM models?
  <li>Look at inv_solve_diff_GN_one_step - what part is cached?
           </ul>
+
+		<li> <h4> <a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml">"EIDORS basics" tutorials</a> </h4>
    </ul>
     
 
@@ -145,6 +147,28 @@ ans =
           <li>Create images of current flow in the thorax with various
               values for lung conductivity. How do they vary?
        </ul>
+
+    <li><h4>Further Tutorials on Forward Modelling </h4>
+				<ul>				
+					<li> FE model generation in Netgen
+					<ul>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml">Cylindrical models</a>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/extrusion/thoraxmdl.shtml">Human (extruded) thorax model</a>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/mk_library_model.shtml">Pre-packaged models</a>
+						<li> Electrode refinement
+					</ul>
+					<li> FE approximations
+					<ul>
+						<li> <a href="./EIDORS_basics/forward_solvers_2d_high_order.shtml"> Higher order (2nd, 3rd) finite elements in 2D</a>
+						<li> <a href="./EIDORS_basics/forward_solvers_3d_high_order.shtml"> Higher order (2nd) finite elements in 3D</a>
+					</ul>
+					<li> Electrode modelling
+					<ul>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/electrode_errors.shtml"> Estimating and managing electrode errors</a>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/contact_impedance.shtml"> Contact impedance</a>
+					</ul>
+   				<li> Physics
+				</ul>	
      </ul>
 
     <li><h3>
@@ -193,6 +217,23 @@ imdl =
           <li>noise figure
        </ul>
 
+
+    <li><h4> Further Tutorials on Reconstruction </h4>
+				<ul>
+					<li> Dual modelling
+					<ul>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/dual_model_intro.shtml">Introduction to dual models</a>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/centre_slice.shtml"> Reconstruct a 3D volume onto a triangulated mesh</a>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/square_mesh.shtml"> Reconstruct a 3D volume onto a rectangular mesh </a>
+					</ul>
+					<li> Absolute reconstructions
+					<ul>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml"> Iterative Gauss-Newton solvers in 3D</a>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"> Iterative vs one-step Gauss-Newton solvers using RPI data</a>
+						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/total_variation.shtml"> Total Variation solvers in 2D</a>
+					</ul>
+	<!--				<li> jacobian_background								-->
+				</ul>
 		</ul>
     
 
@@ -211,6 +252,13 @@ imdl =
 		<li> compare reconstructions 
 		<li>( GREIT algorithm, adapting shape, background conductivity,
 		working with sample data )
+
+		<li> <h4>Further Tutorials on GREIT</h4>
+					<ul>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml">2D human thorax</a>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/k_GREIT_mat_2layer.shtml">Multiple electrode layers</a>
+						<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/vox_GREIT_sim.shtml">3D reconstruction</a>
+					</ul>
 		</ul>
 
     <li><h3>
@@ -223,63 +271,8 @@ imdl =
 					<li> <a href="http://eidors3d.sourceforge.net/data_contrib.shtml">How to contribute data?</a>
 				</ul>
 
-
-		<li> <h3> <a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml">Assorted basic starter tutorials</a> </h3>
-
     <li><h3>
-        <a href="./EIDORS_workshop/2D-vs-3D.shtml"
-         >Topics in Forward Modelling</a>
-        </h3>
-				<ul>				
-					<li> FE model generation in Netgen
-					<ul>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml">Cylindrical models</a>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/extrusion/thoraxmdl.shtml">Human (extruded) thorax model</a>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/netgen/mk_library_model.shtml">Pre-packaged models</a>
-						<li> Electrode refinement
-					</ul>
-					<li> FE approximations
-					<ul>
-						<li> <a href="./EIDORS_basics/forward_solvers_2d_high_order.shtml"> Higher order (2nd, 3rd) finite elements in 2D</a>
-						<li> <a href="./EIDORS_basics/forward_solvers_3d_high_order.shtml"> Higher order (2nd) finite elements in 3D</a>
-					</ul>
-					<li> Electrode modelling
-					<ul>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/electrode_errors.shtml"> Estimating and managing electrode errors</a>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/contact_impedance.shtml"> Contact impedance</a>
-					</ul>
-   				<li> Physics
-				</ul>	
-
-    <li><h3>
-        <a href="./EIDORS_workshop/2D-vs-3D.shtml"
-         >Topics in Reconstruction</a>
-        </h3>
-				<ul>
-					<li> Dual modelling
-					<ul>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/dual_model_intro.shtml">Introduction to dual models</a>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/centre_slice.shtml"> Reconstruct a 3D volume onto a triangulated mesh</a>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/dual_model/square_mesh.shtml"> Reconstruct a 3D volume onto a rectangular mesh </a>
-					</ul>
-					<li> Absolute reconstructions
-					<ul>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml"> Iterative Gauss-Newton solvers in 3D</a>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"> Iterative vs one-step Gauss-Newton solvers using RPI data</a>
-						<li> <a href = "http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/total_variation.shtml"> Total Variation solvers in 2D</a>
-					</ul>
-					<li> GREIT
-					<ul>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml">2D human thorax</a>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/k_GREIT_mat_2layer.shtml">Multiple electrode layers</a>
-						<li> <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/vox_GREIT_sim.shtml">3D reconstruction</a>
-					</ul>
-					<li> jacobian_background								
-				</ul>
-
-    <li><h3>
-        <a href="./EIDORS_workshop/Applications.shtml"
-         >Specific applications of EIT</a>
+        <a href="./EIDORS_workshop/Applications.shtml">Assorted Tutorials on specific applications of EIT</a>
         </h3>
 
 				
