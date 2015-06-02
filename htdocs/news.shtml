@@ -10,7 +10,7 @@ EIDORS package.
   1 June 2015
    </b><br>
 <b>EIDORS Workshop at <a href="http://www.eit2015.org">EIT 2015</a></b>
-<p>For those attending the EIDORS workshop, details TBA.
+<p>For those attending the EIDORS workshop, meet at Microcity building MCB1-283
 <p>
 Bring a laptop computer with the following software installed
 <ol>
@@ -18,6 +18,8 @@ Bring a laptop computer with the following software installed
 <li> <a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.0/">Netgen Mesher (version 5.0 or &ge;5.2, not 5.1)</a> 
 <li> <a href="http://www.tortoisesvn.org">Tortoise SVN</a>
 </ol>
+Code <a href="tutorial/workshop/code_2june2015.m"
+>developed at the workshop</a>
 
 <p><li> <b>
   12 May 2015
