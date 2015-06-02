@@ -13,7 +13,8 @@
 \definecolor{lightblue}{rgb}{0.145,0.6666,1}
     \newcommand{\colouredcircle}{%
        \hspace{1em}\tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em); \draw[draw=black,fill=lightblue,line width=0.03em] (0,0) circle(0.18em);}\hspace{1em}}
-\graphicspath{{../img/}}
+ \newcommand{\IMPATH}{../../../../htdocs/tutorial/EIDORS_basics}
+%\newcommand{\IMPATH}{./}
 \mode<presentation>
 {
 	\usetheme{default} % I sometimes also use Warsaw
@@ -84,8 +85,9 @@ EIT forward problem
    v = F(\sigma)
 \end{equation*}
 If we are doing
-\\ \colouredcircle {\em difference imaging}, or
-\\ \colouredcircle analyzing the sensitivity,
+\\ \colouredcircle {\em difference imaging}, 
+\\ \colouredcircle analyzing the sensitivity, or
+\\ \colouredcircle designing drive and measurement strategies
 \\
 we want to
 know the difference signal.
@@ -98,6 +100,34 @@ for $\Delta \sigma$ in a ROI
 \begin{equation*}
    \| \Delta v \| = F(\sigma_h + \Delta \sigma) - F(\sigma_h)
 \end{equation*}
+
+}
+
+
+
+\frame{\frametitle{%
+Two kinds of sensitivity!}
+
+Back in 1986 the first EIT meeting in Sheffield (Physiol Meas 1987 Suppl A)
+
+\fbox{%
+\includegraphics[width=.35\columnwidth]{Jossinet-1987.jpg}}%
+\fbox{%
+\includegraphics[scale=0.3]{BreckonPidcock-1987.jpg}}
+
+\begin{itemize}
+\item[\colouredcircle]
+Jossinet and  Kardous (pp33--37) showed an experimental
+determination of sensitivity using a ball and micro-manipulator
+while Seagar, Barber and Brown (pp13--31) gave the formulae for a
+offset circular
+anomaly 
+
+\item[\colouredcircle]
+Breckon and Pidcock (pp77--84) exhibited the Fr\'echet derivative
+formula. This is an `infinitesimal' change, is limit as $\Delta
+\sigma$ tends to zero.
+\end{itemize}
 
 }
 
@@ -121,46 +151,46 @@ Contrast $1+ \frac{\Delta \sigma}{\sigma_h}$
 & $10^{ 3}$
 \\
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04i.png}
+     {\IMPATH/contrasts_04i.png}
 &
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04j.png}
+     {\IMPATH/contrasts_04j.png}
 &
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04k.png}
+     {\IMPATH/contrasts_04k.png}
 &
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04l.png}
+     {\IMPATH/contrasts_04l.png}
 &
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04m.png}
+     {\IMPATH/contrasts_04m.png}
 &
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04n.png}
+     {\IMPATH/contrasts_04n.png}
 &
  \includegraphics[width=.35\columnwidth, angle=90]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04o.png}
+     {\IMPATH/contrasts_04o.png}
 \\
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04i.png}
+     {\IMPATH/contrasts_04i.png}
 &
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04j.png}
+     {\IMPATH/contrasts_04j.png}
 &
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04k.png}
+     {\IMPATH/contrasts_04k.png}
 &
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04l.png}
+     {\IMPATH/contrasts_04l.png}
 &
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04m.png}
+     {\IMPATH/contrasts_04m.png}
 &
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04n.png}
+     {\IMPATH/contrasts_04n.png}
 &
  \includegraphics[width=.15\columnwidth, angle=90,trim=330 90 300 80,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04o.png}
+     {\IMPATH/contrasts_04o.png}
 \end{tabular}
 }
 
@@ -197,73 +227,73 @@ Sensitivity in 2D: Non-circular shapes
 & $10^{ 3}$
 \\
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04b.png}
+     {\IMPATH/contrasts_04b.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04c.png}
+     {\IMPATH/contrasts_04c.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04d.png}
+     {\IMPATH/contrasts_04d.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04e.png}
+     {\IMPATH/contrasts_04e.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04f.png}
+     {\IMPATH/contrasts_04f.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04g.png}
+     {\IMPATH/contrasts_04g.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04h.png}
+     {\IMPATH/contrasts_04h.png}
 %
 %
 %
 \\
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04i.png}
+     {\IMPATH/contrasts_04i.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04j.png}
+     {\IMPATH/contrasts_04j.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04k.png}
+     {\IMPATH/contrasts_04k.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04l.png}
+     {\IMPATH/contrasts_04l.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04m.png}
+     {\IMPATH/contrasts_04m.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04n.png}
+     {\IMPATH/contrasts_04n.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04o.png}
+     {\IMPATH/contrasts_04o.png}
 %
 %
 %
 \\
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04p.png}
+     {\IMPATH/contrasts_04p.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04q.png}
+     {\IMPATH/contrasts_04q.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04r.png}
+     {\IMPATH/contrasts_04r.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04s.png}
+     {\IMPATH/contrasts_04s.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04t.png}
+     {\IMPATH/contrasts_04t.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04u.png}
+     {\IMPATH/contrasts_04u.png}
 &
  \includegraphics[width=.19\columnwidth, angle=90,trim=290 70 260 60,clip]
-     {../../../../htdocs/tutorial/EIDORS_basics/contrasts_04v.png}
+     {\IMPATH/contrasts_04v.png}
 \end{tabular}
 }
 
@@ -302,13 +332,35 @@ different ratios of height to radius of ROI.
 }
 
 \frame{\frametitle{%
-What does this mean?
+Polarization tensor
 }
 
-\colouredcircle
+\colouredcircle The so called polarization or polarizability tensor of  P\'olya and Szeg\"o
+gives an expression for the dipole moment of the perturbation in potential due to an object with a finite conductivity contrast.
+\\
+\colouredcircle For an ellipsoid there is an explicit formula that includes the {\em saturation} so it is better than than the linear approximation in this respect
+\\
+\colouredcircle It is a good approximation for well separated objects distant from the boundary, independent of boundary shape.
+
+
+}
+
+
+\frame{\frametitle{%
+What does direction sensitivity tell us?
+}
+
+\begin{itemize}
+\item[\colouredcircle]
+Reconstruction algorithms have been based on 
+ linear sensitivity. Should we use non-linear 
+ sensitivites?
+
+\item[\colouredcircle]
 Conductive contrast agents can be seen; no-one has
   ever succeeded with non-conductive contrasts. 
   Does this explain why?
+\end{itemize}
 }
 
 \end{document}
