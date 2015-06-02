@@ -1038,6 +1038,8 @@ end
    hdr = fread(fid, 8, 'uint8');
    offset1 =  (256.^(0:3))*hdr(5:8) + 16; % "good" data starts at offset #2
    switch sprintf('%02X-',header(1:4));
+      case '1F-00-00-00-';
+         type='Draeger v31';  SPC = 4112;
       case '20-00-00-00-';
          type='Draeger v32';  SPC = 5200;
       case '33-00-00-00-';
