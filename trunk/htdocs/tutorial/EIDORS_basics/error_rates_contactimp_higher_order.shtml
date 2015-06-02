@@ -11,7 +11,7 @@
 Carefully create an FEM of CEM on a square domain. On this domain, a "semi-analytic" solution exists. This is very useful as we can test how the errors change as we vary the contact impedance, approximation order. 
 
 <pre>
-<!--#error_rates_contact_impedance01.m" -->
+<!--#include virtual="error_rates_contact_impedance01.m" -->
 </pre>
 
 <center>
