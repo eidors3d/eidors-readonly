@@ -70,6 +70,10 @@ end
 
 [log_level] = get_levels;
 
+if level > log_level
+    return
+end
+
 for i= 1:length(args)
    if isa( args{i}, 'function_handle')
       args{i} = func2str(args{i});
@@ -120,11 +124,9 @@ else
    string= message;
 end
 
-if level <= log_level
-   fprintf(fid, string, args{:});
-   if exist('OCTAVE_VERSION'); fflush(fid); end
-   eidors_objects.last_message_size= 0;
-end
+fprintf(fid, string, args{:});
+if exist('OCTAVE_VERSION'); fflush(fid); end
+eidors_objects.last_message_size= 0;
 
 
 function log_level = process_log_level(varargin)
