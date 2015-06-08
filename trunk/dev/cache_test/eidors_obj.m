@@ -203,14 +203,18 @@ function value= get_cache_obj( obj, prop );
 
 % We don't do this since cache directories aren't defined (yet)
 %  [objlist, cachename]= proc_obj_list( varargin{:} );
+   if ~isfield(eidors_objects, 'cache')
+       cache_init;
+       return
+   end
 
    if isempty(eidors_objects.cache.meta), 
       return 
    end
    c = eidors_objects.cache.cols;
-   match = ismember(prop, eidors_objects.cache.meta(:,c.prop));
-   if any(match)
-      obj_id= calc_obj_id( { obj, prop} ); % recalculate in case obj changed
+%    match = ismember(prop, eidors_objects.cache.meta(:,c.prop));
+%    if any(match)
+   obj_id= calc_obj_id( { obj, prop} ); % recalculate in case obj changed
       
 % if cachename is specified, then cache to that file, rather
 %  than to the standard eidors_objects location
@@ -232,14 +236,14 @@ function value= get_cache_obj( obj, prop );
             eidors_objects.cache.meta{idx,c.count}, ...
             eidors_objects.cache.meta{idx,c.prio});
 %        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
-         check_size(obj_id, prop);
+%          check_size(obj_id, prop);
       catch err
          if ~strcmp(err.identifier,'MATLAB:nonExistentField')
             rethrow(err);
          end
       end
 %  end
-   end
+%    end
 
 function set_cache_obj( obj, prop, value, time )
    global eidors_objects
@@ -278,11 +282,15 @@ function set_cache_obj( obj, prop, value, time )
       if isfield(eidors_objects.cache, obj_id)
          idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)));
          eidors_msg('@@ replaced cache object %s { %s }', obj_id, prop,4);
+         eidors_objects.cache.size = eidors_object.cache.size ...
+                                    - eidors_object.cache.meta{idx,c.size};
+                                
       else
          idx = size(eidors_objects.cache.meta, 1) + 1;
       end
       eidors_objects.cache.meta(idx,:) = row;
       eidors_objects.cache.( obj_id ) = value;
+      eidors_objects.cache.size = eidors_objects.cache.size + ws.bytes;
       check_size(obj_id, prop);
 %  else
 %     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
@@ -303,23 +311,23 @@ function cache_init
    eidors_objects.cache.cols.prio      = 7;
    eidors_objects.cache.cols.count     = 8;
    eidors_objects.cache.cols.score_eff = 9;
+   eidors_objects.cache.size           = 0;
 
 function score = calc_size_score(sz)
-   fn = @(b) round(10*log10(b / 1024));
    if iscell(sz)
+      fn = @(b) round(10*log10(b / 1024));
       N = numel(sz);
       score = num2cell(cellfun(fn, sz));
    else
-      score = feval(fn,sz);
+      score = round(10 * log10( sz / 1024));
    end
    
 function score = calc_effort_score( time, counts, prios)
-   fn = @(t,n,p) round(10*log10(t .* n)) + p;
    if iscell(time)
-      score = num2cell( feval( fn, cell2mat(time), ...
-                                   cell2mat(counts), cell2mat(prios)));
+       score = num2cell( round(10*log10( cell2mat(time) .* cell2mat(counts))) +...
+                                cell2mat(prios));
    else
-      score = feval(fn, time, counts, prios);
+      score = round(10*log10(time .* counts)) + prios; 
    end
 
 
@@ -403,15 +411,12 @@ function retval= cache_this( obj )
    end
 
 function check_size( obj_id , prop )
-   global eidors_objects;
-
-
-   
+   global eidors_objects;   
 %    eidors_objects.( obj_id ).( prop ).last_used = now;
 
    max_memory= eidors_objects.max_cache_size;
-   ww= whos('eidors_objects');
-   if ww.bytes > max_memory
+%    ww= whos('eidors_objects');
+   if eidors_objects.cache.size  > max_memory
       eidors_cache('clear_max',floor(max_memory*.75));
    end
 
