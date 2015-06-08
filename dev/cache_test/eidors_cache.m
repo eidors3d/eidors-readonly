@@ -458,6 +458,7 @@ function remove_objids(idx, names, sizes)
       eidors_objects.cache = rmfield(eidors_objects.cache, ...
          eidors_objects.cache.meta(idx,c.obj_id));
       eidors_objects.cache.meta(idx,:) = [];
+      eidors_objects.cache.size = eidors_objects.cache.size - total_size;
    end
    
    eidors_msg('Removed %d objects with %d bytes from cache', ...
