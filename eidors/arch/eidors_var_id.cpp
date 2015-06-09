@@ -110,8 +110,8 @@ recurse_hash( hash_context *c, const mxArray *var );
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
 #define sSZT sizeof(size_t)
-#undef VERBOSE 
-// #define VERBOSE 1
+// #undef VERBOSE 
+   #define VERBOSE 1
 		
 // check to see if a given string points to an function
 //   on disk *.m file.  If it does -> get the file modification
@@ -276,7 +276,10 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     #ifdef VERBOSE
       printf("st= %d nnz=%d\n",sSZT,nnz);
     #endif
-    if (sSZT==4) {
+    if (sSZT==4) { // if size_t==4 => 32 bit architecture
+    #ifdef VERBOSE
+      printf("doing sparse on 32 bit\n");
+    #endif
        for(i=0; i<cols; i++) {
           hash_process( c, (unsigned char *) &zero, sINT);
           hash_process( c, p_jcs + i*sINT, sINT);
@@ -286,6 +289,9 @@ recurse_hash( hash_context *c, const mxArray *var ) {
           hash_process( c, p_irs + i*sINT, sINT);
        }
     } else {
+    #ifdef VERBOSE
+      printf("doing sparse on 64 bit\n");
+    #endif
        for(i=0; i<cols; i++) {
           hash_process( c, p_jcs + i*sSZT, sSZT);
        }
