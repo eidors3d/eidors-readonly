@@ -107,7 +107,7 @@ y_avg = conv2(ygrid, [1,1]/2,'valid');
 % inside = inpolygon(x(:),y(:),contour_boundary(:,1),contour_boundary(:,2) );
 P = [x(:) y(:)]; % P(end,3) = 0;
 inside = any(point_in_triangle(P, slc.elems, slc.nodes(:,1:2)),2);
-inside = full(inside);
+% inside = full(inside);
 
 ff = find(~inside);
 
