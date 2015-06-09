@@ -263,44 +263,24 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     double *pr,*pi;
     int  zero= 0;
     unsigned int nnz, cols, i; 
-    unsigned char *p_jcs, *p_irs;
+//  unsigned char *p_jcs, *p_irs;
+    mwIndex *p_jcs, *p_irs;
     // WARNING: we'll have problem if sparse isn't double
     pr  = mxGetPr( var );
     pi  = mxGetPi( var );
 
-    p_irs = (unsigned char *) mxGetIr( var );
-    p_jcs = (unsigned char *) mxGetJc( var );
+    p_irs = mxGetIr( var );
+    p_jcs = mxGetJc( var );
     cols= mxGetN( var );
     nnz = *(mxGetJc(var) + cols ); /* after last element of jcs */
 
     #ifdef VERBOSE
+      printf("doing sparse on %d byte (size_t = %d)\n",sizeof(mwIndex), sizeof(size_t));
       printf("st= %d nnz=%d\n",sSZT,nnz);
     #endif
-    if (sSZT==4) { // if size_t==4 => 32 bit architecture
-    #ifdef VERBOSE
-      printf("doing sparse on 32 bit\n");
-    #endif
-       for(i=0; i<cols; i++) {
-          hash_process( c, (unsigned char *) &zero, sINT);
-          hash_process( c, p_jcs + i*sINT, sINT);
-       }
-       for(i=0; i<nnz; i++) {
-          hash_process( c, (unsigned char *) &zero, sINT);
-          hash_process( c, p_irs + i*sINT, sINT);
-       }
-    } else {
-    #ifdef VERBOSE
-      printf("doing sparse on 64 bit\n");
-    #endif
-       for(i=0; i<cols; i++) {
-          hash_process( c, p_jcs + i*sSZT, sSZT);
-       }
-       for(i=0; i<nnz; i++) {
-          hash_process( c, p_irs + i*sSZT, sSZT);
-       }
-    }
-//  hash_process( c, (unsigned char *) p_jcs, sINT * cols );
-//  hash_process( c, (unsigned char *) p_irs, sINT * nnz );
+
+    hash_process( c, (unsigned char *) p_jcs, sizeof(mwIndex) * cols );
+    hash_process( c, (unsigned char *) p_irs, sizeof(mwIndex) * nnz );
     hash_process( c, (unsigned char *) pr,  sDBL * nnz );
     if ( pi != NULL ) {
        hash_process( c, (unsigned char *) pi, sDBL * nnz );
