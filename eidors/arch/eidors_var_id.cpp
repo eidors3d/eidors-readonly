@@ -118,8 +118,8 @@ recurse_hash( hash_context *c, const mxArray *var );
 #define sDBL sizeof(double)
 #define sINT sizeof(int)
 #define sSZT sizeof(size_t)
-// #undef VERBOSE 
-   #define VERBOSE 1
+   #undef VERBOSE 
+// #define VERBOSE 1
 		
 // check to see if a given string points to an function
 //   on disk *.m file.  If it does -> get the file modification
