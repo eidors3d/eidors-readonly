@@ -1,0 +1,10 @@
+This is where EIDORS keep the files to be compiled with mex:
+
+This this really really difficult because matlab support for mex on older
+platforms is worse than non-existant. Here is some advice, 
+
+
+
+LINUX:
+  Older versions of matlab require a switch like this:
+   mex CC=gcc-4.4 CXX=g++-4.4 -largeArrayDims eidors_var_id.cpp
