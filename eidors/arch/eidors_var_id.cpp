@@ -74,6 +74,14 @@ typedef unsigned long  uint32_t; //sizeof(unsigned short)=2
 #endif
 #endif
 
+// Code from Matlab's explore.c function
+#if defined(_LP64) || defined (_WIN64)
+#ifdef MX_COMPAT_32
+   #warning MEX-files compiled on a 64-bit platform that use sparse array functions need to be compiled using -largeArrayDims.
+#endif
+#endif
+
+
 
 typedef struct {
     unsigned_int32 state[5];
@@ -260,14 +268,10 @@ recurse_hash( hash_context *c, const mxArray *var ) {
   if ( mxIsSparse(var) ) {
     // sparse variable. We need to hash the numeric data,
     // as well as the row and col index pointers
-    double *pr,*pi;
     int  zero= 0;
     unsigned int nnz, cols, i; 
 //  unsigned char *p_jcs, *p_irs;
     mwIndex *p_jcs, *p_irs;
-    // WARNING: we'll have problem if sparse isn't double
-    pr  = mxGetPr( var );
-    pi  = mxGetPi( var );
 
     p_irs = mxGetIr( var );
     p_jcs = mxGetJc( var );
@@ -275,15 +279,44 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     nnz = *(mxGetJc(var) + cols ); /* after last element of jcs */
 
     #ifdef VERBOSE
-      printf("doing sparse on %d byte (size_t = %d)\n",sizeof(mwIndex), sizeof(size_t));
+{
+       mxClassID category = mxGetClassID(var);
+
       printf("st= %d nnz=%d\n",sSZT,nnz);
+
+      printf("doing sparse on %d byte (size_t = %d): Sparse CLASS=",sizeof(mwIndex), sizeof(size_t));
+       switch (category) {
+          case mxLOGICAL_CLASS:  printf("mxLOGICAL_CLASS\n");   break;
+          case mxCHAR_CLASS:     printf("mxCHAR_CLASS\n");      break;
+          case mxSTRUCT_CLASS:   printf("mxSTRUCT_CLASS\n");    break;
+          case mxCELL_CLASS:     printf("mxCELL_CLASS\n");      break;
+          case mxUNKNOWN_CLASS:  printf("mxUNKNOWN_CLASS\n");   break;
+          default:               printf("mxdefault\n");         break;
+       }
+}
     #endif
 
     hash_process( c, (unsigned char *) p_jcs, sizeof(mwIndex) * cols );
     hash_process( c, (unsigned char *) p_irs, sizeof(mwIndex) * nnz );
-    hash_process( c, (unsigned char *) pr,  sDBL * nnz );
-    if ( pi != NULL ) {
-       hash_process( c, (unsigned char *) pi, sDBL * nnz );
+// if matlab introduces more sparse classes, then this will fail
+    if( mxGetClassID(var) == mxLOGICAL_CLASS ) { // Logical sparse
+          mxLogical *pr; // point to imaginary is impossible in logcal
+          pr  = (mxLogical *) mxGetPr( var );
+    #ifdef VERBOSE
+          printf("sparse logical => first elem [i=%d,j=%d,v=%d]", p_jcs[0],p_irs[0],pr[0]);
+    #endif
+          hash_process( c, (unsigned char *) pr,  sizeof(mxLogical) * nnz );
+    } else { // Double sparse
+          double *pr,*pi;
+          pr  = mxGetPr( var );
+          pi  = mxGetPi( var );
+    #ifdef VERBOSE
+          printf("sparse double  => first elem [i=%d,j=%d,v=%f]", p_jcs[0],p_irs[0],pr[0]);
+    #endif
+          hash_process( c, (unsigned char *) pr,  sDBL * nnz );
+          if ( pi != NULL ) {
+             hash_process( c, (unsigned char *) pi, sDBL * nnz );
+          }
     }
   } else
   if ( mxIsLogical(var) ) {
