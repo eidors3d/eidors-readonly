@@ -2,6 +2,8 @@ d = dir;
 idx = cell2mat({d(:).isdir});
 d = d(idx);
 
+ver
+
 for i = 1:numel(d)
    if strcmp(d(i).name,'..')
       continue
@@ -16,8 +18,9 @@ for i = 1:numel(d)
       else
          fprintf('%s: WRONG\n', p);
       end
-   catch
-      fprintf('%s: ERROR\n', p);
+   catch err
+      msg = textscan(err.message,'%s',1,'delimiter','\r\n');
+      fprintf('%s: ERROR: %s\n', p, msg{1}{1});
    end
    if ~strcmp(d(i).name,'.')
       cd ..
