@@ -20,7 +20,7 @@ Simulation test data
 </h3>
 
 <pre>
-<!--#include virtual="vox_GREIT_sim_01.m" -->
+<!--#include virtual="vox_GREIT_sim_02.m" -->
 </pre>
 
 
