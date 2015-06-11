@@ -39,25 +39,25 @@ Reconstruction model
 
 Reconstruct images
 <pre>
-<!--#include virtual="neonate_ex02.m" -->
+<!--#include virtual="neonate_ex03.m" -->
 </pre>
 <center>
-<img src="neonate_ex02a.png">
+<img src="neonate_ex03a.png">
 <br><i>Figure:</i>
 Images of three different breaths (end inspiration)
 </center>
 
 Reconstruct temporal signals
 <pre>
-<!--#include virtual="neonate_ex03.m" -->
+<!--#include virtual="neonate_ex04.m" -->
 </pre>
 
 <center>
-<img src="neonate_ex03a.png">
+<img src="neonate_ex04a.png">
 <br><i>Figure:</i>
 (bottom) time course of several lung pixels
 </center>
-<!--
+
 <h3> 
 Use Elliptic GREIT model
 </h3>
@@ -67,16 +67,15 @@ The shape of a neonate is roughly elliptical. Based on the neonate CT
 here</a>, the elliptical ration is about 1:1.14.
 
 <pre>
-<!--#include virtual="neonate_ex04.m" -->
+<!--#include virtual="neonate_ex05.m" -->
 </pre>
 
 <center>
-<img src="neonate_ex04a.png">
+<img src="neonate_ex05a.png">
 <br><i>Figure:</i>
 Images of lungs using ellipcal GREIT reconstruction
 </center>
 
--->
 </td></tr></table>
 <p>
 <small>
