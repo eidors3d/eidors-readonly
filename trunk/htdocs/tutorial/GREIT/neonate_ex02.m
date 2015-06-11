@@ -12,7 +12,9 @@ fmdl = mdl_normalize(fmdl,1);
 img = mk_image(fmdl,1); img.elem_data(vertcat(fmdl.mat_idx{2:3})) = 0.3;
 img.calc_colours.ref_level=1;
 
-show_fem_enhanced(img);
-view(6,44)
-print_convert neonate_ex01a.jpg
+show_fem(img);
+return
+opt.square_pixels = 1;
+opt.noise_figure = 0.5; opt.imgsz = [64 64];
+imdl = mk_GREIT_model(img, 0.20, [], opt);
 
