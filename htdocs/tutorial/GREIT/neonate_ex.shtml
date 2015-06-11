@@ -29,13 +29,28 @@ S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs,
 
 
 <h3> 
-Use GREIT reconstruction
+Image reconstruction model
 </h3>
 
-Reconstruction model
+Forward model model
 <pre>
 <!--#include virtual="neonate_ex01.m" -->
 </pre>
+<center>
+
+<img src="neonate_ex01a.jpg">
+<br><i>Figure:</i>
+Finite element model of thorax
+</center>
+
+Reconstruction model
+<pre>
+<!--#include virtual="neonate_ex02.m" -->
+</pre>
+
+<h3> 
+GREIT reconstruction
+</h3>
 
 Reconstruct images
 <pre>
