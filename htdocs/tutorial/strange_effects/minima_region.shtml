@@ -2,7 +2,7 @@
 <!--#set var="show_tut" value="1" -->
 <!--#include virtual="../../nav-sidebar.shtml" -->
 
-<H2>Banana-shaped-minima region in objective function</H2>
+<H2>Banana-shaped minima region in objective function</H2>
 
 One of the challenges of inverse problems is that the
 line search often must go through minima regions that
@@ -15,7 +15,7 @@ a "banana"-shaped minimum region
 </pre>
 
 <center>
-<img src="minima_region_01a.png">
+<img src="minima_region_01a.jpg">
 <br><i> Figure:</i>
 Left: forward model with two regions (blue and red).
 Right: objective function as a function of the conductivity in
