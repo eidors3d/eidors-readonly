@@ -8,6 +8,13 @@ function varargout=eidors_cache( command, varargin )
 %   eidors_cache( 'clear_all' ) 
 %   eidors_cache  clear
 %
+%   eidors_cache( 'list' )
+%   eidors_cache( 'show_objs' )
+%       - list all objects
+%   eidors_cache(___, order)
+%       - sort by specific order. Valid values are 
+%         {time}, size, effort, count, rank
+%
 %   eidors_cache( 'clear_old'. timestamp );
 %   eidors_cache( 'clear_new', timestamp );
 %      - clear all variables older (or newer) than timestamp
@@ -276,8 +283,13 @@ switch command
       end
       eidors_objects.cache_priority = varargout{1};
 
-   case {'list', 'show_objs'}
-      cache_list
+   case {'list', 'show_objs'} 
+      if nargin == 2 
+         cache_list(limit);
+      else
+         cache_list;
+      end
+      
       
    case 'clear_max'
       if ischar(limit); limit= str2double(limit); end
@@ -331,13 +343,17 @@ switch command
       error('command %s not understood',command);
 end
 
-function cache_list
+function cache_list (order)
    global eidors_objects;
    try
       meta = eidors_objects.cache.meta;
    catch
       return
    end
+   if nargin == 0
+       order = 'time';
+   end
+   
    c = eidors_objects.cache.cols;
    if isempty(meta)
       fprintf('No objects in cache\n');
@@ -348,8 +364,22 @@ function cache_list
    %    [jnk, priidx] = sortrows(meta(:,[c.score_eff c.score_sz c.time]),[-1 2 -3]);
    
    meta(:,N+1) = num2cell(get_cache_priority);
-   
-   meta = sortrows(meta,c.time); % sort by time
+   switch order
+       case 'time'
+           meta = sortrows(meta,c.time); % sort by time
+       case {'prop','name'}
+           meta = sortrows(meta,c.prop); % sort by name
+       case 'rank'
+           meta = sortrows(meta,N+1); % sort by rank
+       case 'size'
+           meta = sortrows(meta,-c.size); % sort by rank
+       case 'effort'
+           meta = sortrows(meta,-c.effort);
+       case 'count'
+           meta = sortrows(meta,-c.count);
+       otherwise
+           error('Unrecognized sort order');
+   end
    
    meta = meta';
    fprintf('%s b=%9.0d [%4d]  p=%02d t=%3dx%.2e [%4d] i=%4d: %s { %s }\n', ...
