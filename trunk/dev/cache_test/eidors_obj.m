@@ -1,59 +1,40 @@
-function obj_id= eidors_obj(type,name, varargin );
-% EIDORS_OBJ: 'constructor' to create a eidors structure
+function obj_id= eidors_obj(type,name, varargin )
+% EIDORS_OBJ: maintains EIDORS internals
+%
 % USAGE: to get eidors_version
 %     version = eidors_obj('eidors_version')
 %
-% USAGE: as a constructor
-%     obj  = eidors_obj(type,name,prop1,value1, prop1, value2, ...)
+% USAGE: to get interpreter version:
+%     version = eidors_obj('interpreter_version')
 %
-%     type:  obj type: fwd_model, inv_model, data, image
-%     name:  text string identifier for model (may be '')
-%     prop1, value1, etc: properites and values for object
+% USAGE: to get path to EIDORS:
+%     path = eidors_obj('eidors_path');
 %
-%    example: fwd_mdl = ...
-%        eidors_obj('fwd_model','My FWD MODEL', ...
-%                    'nodes', NODES, 'elems', ELEMS, ...
-%
-% OR construct from structure
-%     obj  = eidors_obj(type,obj);
-%
-%     example: fwd_mdl.nodes = NODES; .... %etc
-%              fwd_mdl = eidors_obj('fwd_model',fwd_mdl);
-%
-% All constructors will set the appropriate default
-%   values for each type: image, fwd_model, inv_model, data
-%
-% USAGE: to set values
-%     obj  = eidors_obj('set',obj,prop1,value1, prop1, value2, ...)
-%
-% this will set the values of properties of the object. At the
-% same time, any cached values will be erased (because they may
-% depend on older properties of the model)
-%   
-%    example:
-%        eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
-%
-% USAGE: to cache values
-%          eidors_obj('set-cache',obj, cachename,value1, dep_objs, ...)
-%     obj= eidors_obj('get-cache',obj, cachename, dep_objs, ...)
+% USAGE: to cache values (not recommended)
+%          eidors_obj('set-cache',obj, cachename,value, [time])
+%     obj= eidors_obj('get-cache',obj, cachename)
 %
 % this will get or set the values of cached properties of the object.
 %
 %    example: % set jacobian
-%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J):
+%        eidors_obj('set-cache',cache_obj, 'jacobian', J);
 %
 %    example: % get jacobian or '[]' if not set
-%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):
+%        J= eidors_obj('get-cache',cache_obj, 'jacobian');
 %
-% However, in some cases, such as the Jacobian, the value depends
-% on other objects, such as the image background. In this case, use
+% It is recommended to combine in cache_obj the minimum set of variables on
+% which the value to be cached depends.
+%    example: % cache_obj for jacobian
+%        cache_obj = {img.fwd_model.nodes, img.fwd_model.elems ...
+%                     img.elem_data, img.fwd_model.jacobian}
 %
-%    example: % set jacobian
-%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):
+% NOTE that rather than directly using eidors_obj to set and get cache, it 
+% is recommended to use eidors_cache with a function_handle.
 %
-%    example: % get jacobian or '[]' if not set
-%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
- 
+%   example:
+%        J = eidors_cache(@calc_jacobian_adjoint,img,'jacobian');
+%
+% See also: EIDORS_CACHE
 
 % (C) 2005-10 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -197,7 +178,7 @@ function obj = set_obj( obj, varargin );
    end
 
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
-function value= get_cache_obj( obj, prop );
+function value= get_cache_obj( obj, prop )
    global eidors_objects
    value= [];
 
@@ -282,8 +263,8 @@ function set_cache_obj( obj, prop, value, time )
       if isfield(eidors_objects.cache, obj_id)
          idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)));
          eidors_msg('@@ replaced cache object %s { %s }', obj_id, prop,4);
-         eidors_objects.cache.size = eidors_object.cache.size ...
-                                    - eidors_object.cache.meta{idx,c.size};
+         eidors_objects.cache.size = eidors_objects.cache.size ...
+                                    - eidors_objects.cache.meta{idx,c.size};
                                 
       else
          idx = size(eidors_objects.cache.meta, 1) + 1;
