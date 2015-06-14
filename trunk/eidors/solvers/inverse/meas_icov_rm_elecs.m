@@ -20,7 +20,7 @@ function meas_icov = meas_icov_rm_elecs( imdl, elec_list)
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(imdl) && strcmp(imdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(imdl) && strcmp(imdl,'UNIT_TEST'); do_unit_test; return; end
 
 switch imdl.type,
   case 'inv_model'; fmdl = imdl.fwd_model;

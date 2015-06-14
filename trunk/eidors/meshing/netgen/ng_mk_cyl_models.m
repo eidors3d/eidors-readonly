@@ -83,7 +83,7 @@ function [fmdl,mat_idx] = ng_mk_cyl_models(cyl_shape, elec_pos, ...
 % (C) Andy Adler, 2009. (C) Alistair Boyle 2013. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(cyl_shape) && strcmp(cyl_shape,'UNIT_TEST'); do_unit_test; return; end
+if ischar(cyl_shape) && strcmp(cyl_shape,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4; extra_ng_code = {'',''}; end
 copt.cache_obj = { cyl_shape, elec_pos, elec_shape, extra_ng_code};

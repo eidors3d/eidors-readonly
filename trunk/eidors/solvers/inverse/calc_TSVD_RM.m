@@ -13,7 +13,7 @@ function RM= calc_TSVD_RM(mdl,hp)
 % (C) 2011 Bartlomiej Grychtol. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(mdl) && strcmp(mdl, 'UNIT_TEST'), do_unit_test, return,end
+if ischar(mdl) && strcmp(mdl, 'UNIT_TEST'), do_unit_test, return,end
 
 
 

@@ -14,7 +14,7 @@ function sol = inv_solve_TSVD(inv_model, data1, data2)
 % (C) 2011 Bartlomiej Grychtol. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'), do_unit_test, return, end;
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'), do_unit_test, return, end;
 
 hp = calc_hyperparameter(inv_model);
 inv_model.solve_use_matrix.RM = calc_TSVD_RM(inv_model, hp);

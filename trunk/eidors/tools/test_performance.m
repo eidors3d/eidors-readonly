@@ -20,7 +20,7 @@ function [r, params] =  test_performance( imdls, fmdl );
 % (c) 2010 Andy Adler. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
+if ischar(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin==1
    fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 

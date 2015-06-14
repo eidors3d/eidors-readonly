@@ -35,11 +35,11 @@ function img = data_mapper(img, reverse)
 % Licenced under GPL version 2 or 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); img = do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); img = do_unit_test; return; end
 
 if nargin < 2
    reverse = false;
-elseif isstr(reverse) && strcmpi(reverse, 'pack')
+elseif ischar(reverse) && strcmpi(reverse, 'pack')
    reverse = false;
 else % 'unpack'
    reverse = true;

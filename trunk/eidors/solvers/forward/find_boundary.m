@@ -11,7 +11,7 @@ function [srf, idx] = find_boundary(simp);
 
 % $Id$
 
-if isstr(simp) && strcmp(simp,'UNIT_TEST'); do_unit_test; return; end
+if ischar(simp) && strcmp(simp,'UNIT_TEST'); do_unit_test; return; end
 if isstruct(simp) && strcmp(simp.type,'fwd_model'); simp= simp.elems; end
 
 wew = size(simp,2) - 1;

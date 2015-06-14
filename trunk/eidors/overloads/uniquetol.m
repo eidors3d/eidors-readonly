@@ -10,7 +10,7 @@ function out = uniquetol(in, tol, varargin)
 % (C) Andy Adler 2015 Licenced under GPL v2 or v3
 % $Id$ 
 
-if isstr(in) && strcmp(in,'UNIT_TEST'); do_unit_test; return; end
+if ischar(in) && strcmp(in,'UNIT_TEST'); do_unit_test; return; end
 DEBUG = 0; % IF == ## then only this test
 
 if (~DEBUG && exist('uniquetol','builtin')) || (DEBUG == 1)

@@ -36,7 +36,7 @@ function [vh,vi,xyr_pt]= simulate_2d_movement( n_sims, fmdl, rad_pr, movefcn )
 % (C) 2005-2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
-if nargin>=1 && isstr(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
+if nargin>=1 && ischar(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin <1
    n_sims = 200;

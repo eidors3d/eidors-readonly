@@ -27,7 +27,7 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
    if nargin <=1
       ref_lev = eidors_colours.ref_level;
       component = 'real';
-   elseif isstr(pp)  && strcmp(pp, 'use_global' );
+   elseif ischar(pp)  && strcmp(pp, 'use_global' );
       ref_lev = eidors_colours.ref_level;
       component = 'real';
    else

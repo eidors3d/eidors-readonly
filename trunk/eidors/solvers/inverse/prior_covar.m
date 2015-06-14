@@ -12,7 +12,7 @@ function Reg= prior_covar( inv_model )
 % (C) 2007, Tao Dai and Andy Adler. Licenced under the GPL Version 2
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 params = {inv_model.fwd_model, inv_model.fourD_prior.P_type};
 Reg = eidors_cache(@prior_covar_calc, params, 'prior_covar');

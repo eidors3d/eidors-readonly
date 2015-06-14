@@ -21,7 +21,7 @@ function img= inv_solve_time_prior( inv_model, data1, data2)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 fwd_model= inv_model.fwd_model;
 time_steps = inv_model.inv_solve_time_prior.time_steps;

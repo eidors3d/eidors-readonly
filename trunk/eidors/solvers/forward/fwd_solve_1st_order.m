@@ -14,7 +14,7 @@ function data =fwd_solve_1st_order(fwd_model, img)
 % $Id$
 
 % correct input paralemeters if function was called with only img
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin == 1
    img= fwd_model;

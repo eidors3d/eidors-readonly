@@ -12,7 +12,7 @@ function J= jacobian_perturb( fwd_model, img)
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return;end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return;end
 
 if isfield(fwd_model,'jacobian_perturb')
    delta = fwd_model.jacobian_perturb.delta;

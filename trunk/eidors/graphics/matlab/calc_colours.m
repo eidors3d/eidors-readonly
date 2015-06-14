@@ -112,7 +112,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %  mapped_colour should set the colourmap length for all
 
 if nargin==0; error('calc_colours: expecting argument'); end
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 if ischar(img)
     % called as calc_colours('parameter' ... )

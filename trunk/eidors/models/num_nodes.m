@@ -4,7 +4,7 @@ function num = num_nodes( mdl );
 
 % $Id$
 
-if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
 switch mdl.type
   case 'image';      fmdl = mdl.fwd_model;

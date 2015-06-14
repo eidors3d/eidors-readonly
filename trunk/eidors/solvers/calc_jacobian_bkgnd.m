@@ -20,7 +20,7 @@ function img_bkgnd = calc_jacobian_bkgnd( inv_model )
 % License: GPL version 2 or version 3
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') do_unit_test; return;end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') do_unit_test; return;end
 
 img_bkgnd = eidors_cache(@jacobian_bkgnd,{inv_model},'calc_jacobian_bkgnd');
 

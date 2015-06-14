@@ -51,7 +51,7 @@ function img = inv_solve( inv_model, data1, data2)
 % (C) 2005-2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 inv_model = prepare_model( inv_model );
 opts = parse_parameters( inv_model );

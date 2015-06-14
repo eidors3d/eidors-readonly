@@ -20,7 +20,7 @@ function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );
 % License: GPL version 2 or version 3
 % $Id$
 
-if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
 copt.cache_obj = cache_obj(mdl, xyzr);
 copt.fstr = 'mk_c2f_circ_mapping';

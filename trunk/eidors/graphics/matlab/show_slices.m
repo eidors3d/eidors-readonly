@@ -35,7 +35,7 @@ function out_img= show_slices( img, levels )
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 sep = 0;
 try sep = img(1).show_slices.sep;

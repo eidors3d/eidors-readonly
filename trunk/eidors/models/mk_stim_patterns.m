@@ -71,7 +71,7 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
+if ischar(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin<6; amplitude= .01; end
 if nargin<5; options= {};  end
@@ -232,7 +232,7 @@ function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
 
 % Stimulation (injection) pattern
 % This currently does not handle complicated injection patterns
-if isstr(inj)
+if ischar(inj)
    if      strcmp(inj,'{ad}')
       inj= [0, 1];
       rel_ampl= [-1;1];
@@ -271,7 +271,7 @@ v.i_factor=      rel_ampl;
 % Measurement configuration. 
 % All systems I know of use adjacent measurement,
 % are there actually any others?
-if isstr(meas)
+if ischar(meas)
    if      strcmp(meas,'{ad}')
       meas=     [0, 1];
       rel_ampl= [ 1;-1];

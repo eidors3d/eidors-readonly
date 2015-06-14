@@ -22,7 +22,7 @@ function [params_img] =  test_performance_img( imdls, fmdl );
 % (c) 2011 Andy Adler and Barlomiej Grychtol. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
+if ischar(imdls) && strcmp(imdls,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin==1
    fmdl = ng_mk_cyl_models([2,1,0.05],[16,1],[0.05]); 

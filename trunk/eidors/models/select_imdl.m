@@ -24,7 +24,7 @@ function inv_mdl= select_imdl( mdl, options )
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin == 1; options = {}; end
 

@@ -30,7 +30,7 @@ function memb_frac = elem_select( fmdl, select_fcn )
 % See Also:
 %   mk_c2f_circ_mapping
 
-if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 
 % 4 for 2D, 3 for 3D
@@ -48,7 +48,7 @@ if dims ==2;
 else
   z = squeeze(pts(:,3,:));
 end
-if isstr(select_fcn)
+if ischar(select_fcn)
 %  we have a string, create a function
     select_fcn = inline(select_fcn, 'x','y','z');
     memb_frac = mean( feval(select_fcn,x,y,z), 2);

@@ -29,7 +29,7 @@ function map = mdl_slice_mapper( fmdl, maptype );
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 copt.log_level = 4;
 switch maptype
    case 'elem';

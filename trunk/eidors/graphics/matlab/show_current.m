@@ -38,7 +38,7 @@ function quiv = show_current( img, vv )
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 dims = size(img.fwd_model.nodes,2);
 

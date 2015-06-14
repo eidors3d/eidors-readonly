@@ -25,7 +25,7 @@ function [stim, meas_sel]= stim_meas_list( sp_mp , Nelec, current, gain);
 % (C) 2010,2015 Andy Adler, Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(sp_mp) && strcmp(sp_mp,'UNIT_TEST'); do_unit_test; return; end
+if ischar(sp_mp) && strcmp(sp_mp,'UNIT_TEST'); do_unit_test; return; end
 
 if isstruct(sp_mp)
   stim = sp_mp;

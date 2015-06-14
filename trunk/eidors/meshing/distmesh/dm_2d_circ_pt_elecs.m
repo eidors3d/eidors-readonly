@@ -31,8 +31,8 @@ function fmdl = dm_2d_circ_pt_elecs( elec_pts, pfix, spacing);
 % $Id$
 
 
-if isstr(elec_pts) && strcmp(elec_pts,'UNIT_TEST'); do_unit_test; return; end
-if isstr(elec_pts) && strcmp(elec_pts,'CALIBRATE'); do_calibrate; return; end
+if ischar(elec_pts) && strcmp(elec_pts,'UNIT_TEST'); do_unit_test; return; end
+if ischar(elec_pts) && strcmp(elec_pts,'CALIBRATE'); do_calibrate; return; end
 
 copt.cache_obj = {elec_pts, spacing};
 copt.fstr = 'dm_2d_circ_pt_elecs';

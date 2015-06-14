@@ -27,7 +27,7 @@ function rimg = calc_slices( img, levels );
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 np = calc_colours('npoints');
 try   np = img(1).calc_colours.npoints;

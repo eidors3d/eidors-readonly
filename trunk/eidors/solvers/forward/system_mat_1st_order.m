@@ -11,7 +11,7 @@ function s_mat= system_mat_1st_order( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin == 1
    img= fwd_model;
@@ -24,8 +24,8 @@ fwd_model= img.fwd_model;
 
 % check parametrizations
 if isfield(img,'current_params') && ...
-     (~isstr(img.current_params) || ~strcmp(img.current_params,'conductivity'))
-    if isstr(img.current_params)
+     (~ischar(img.current_params) || ~strcmp(img.current_params,'conductivity'))
+    if ischar(img.current_params)
        error('system_mat_1st_order does not work for %s',img.current_params);
     else
        img.current_params

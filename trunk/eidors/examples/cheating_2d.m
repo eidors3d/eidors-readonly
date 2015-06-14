@@ -12,7 +12,7 @@ function out=cheating_2d( figno, rand_seed )
    il_g = make_inv_model( 12 ); %large model
 
    if nargin==0; figno= {'1','2a','2b','3a','3b','4'}; end 
-   if isstr(figno); figno= {figno}; end
+   if ischar(figno); figno= {figno}; end
 
    for idx= 1:length(figno)
        if idx~=1; pause; end

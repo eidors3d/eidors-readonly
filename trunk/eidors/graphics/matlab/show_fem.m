@@ -31,7 +31,7 @@ switch nargin
    case 0;
      error('Insufficient parameters for show_fem');
    case 1;
-     if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+     if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
      options = [];
 end
 [img,mdl,opts] = proc_params( mdl, options );

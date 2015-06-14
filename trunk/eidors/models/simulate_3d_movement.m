@@ -32,7 +32,7 @@ function [vh,vi,xyzr_pt]= simulate_3d_movement( n_sims, fmdl, rad_pr,movefcn )
 
 if nargin <1; n_sims = 200; end
 
-if nargin>=1 && isstr(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
+if nargin>=1 && ischar(n_sims) && strcmp(n_sims,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin<2 || isempty(fmdl) % create our own fmdl
    fmdl= mk_library_model('cylinder_16x2el_fine');

@@ -15,7 +15,7 @@ function vv = add_noise( SNR, v1, v2, options)
 
 % (C) 2010 Andy Adler. License: GPL v2 or v3. $Id$
 
-if isstr(SNR) && strcmp(SNR,'UNIT_TEST'); do_unit_test; return; end
+if ischar(SNR) && strcmp(SNR,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin>=2; try; v1 = v1.meas; end; end
 if nargin>=3; try; v2 = v2.meas; end;

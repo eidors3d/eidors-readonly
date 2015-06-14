@@ -80,7 +80,7 @@ function inv_mdl= mk_common_model( str, n_elec, varargin )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(str) && strcmp(str,'UNIT_TEST'); do_unit_test; return; end
+if ischar(str) && strcmp(str,'UNIT_TEST'); do_unit_test; return; end
 
 
 options = {'no_meas_current','no_rotate_meas'};

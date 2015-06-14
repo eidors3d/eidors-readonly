@@ -23,7 +23,7 @@ function param = fwd_model_parameters( fwd_model )
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model, 'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_model) && strcmp(fwd_model, 'UNIT_TEST'); do_unit_test; return; end
 
 copt.fstr = 'fwd_model_parameters';
 copt.log_level = 4;

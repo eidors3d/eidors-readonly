@@ -22,7 +22,7 @@ function Reg= prior_laplace( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 switch inv_model.type
   case 'inv_model'; fwd_model = inv_model.fwd_model;
