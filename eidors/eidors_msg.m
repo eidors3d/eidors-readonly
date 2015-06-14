@@ -28,6 +28,7 @@ function log_level= eidors_msg( message, varargin )
 %     1 => important messages
 %     2 => most messages
 %     3 => detailed information%
+%     4 => very detailed information
 %
 %  Examples:
 %  eidors_msg('mission accomplished; time to relax', 1) prints 
