@@ -1,59 +1,40 @@
-function obj_id= eidors_obj(type,name, varargin );
-% EIDORS_OBJ: 'constructor' to create a eidors structure
+function obj_id= eidors_obj(type,name, varargin )
+% EIDORS_OBJ: maintains EIDORS internals
+%
 % USAGE: to get eidors_version
 %     version = eidors_obj('eidors_version')
 %
-% USAGE: as a constructor
-%     obj  = eidors_obj(type,name,prop1,value1, prop1, value2, ...)
+% USAGE: to get interpreter version:
+%     version = eidors_obj('interpreter_version')
 %
-%     type:  obj type: fwd_model, inv_model, data, image
-%     name:  text string identifier for model (may be '')
-%     prop1, value1, etc: properites and values for object
+% USAGE: to get path to EIDORS:
+%     path = eidors_obj('eidors_path');
 %
-%    example: fwd_mdl = ...
-%        eidors_obj('fwd_model','My FWD MODEL', ...
-%                    'nodes', NODES, 'elems', ELEMS, ...
-%
-% OR construct from structure
-%     obj  = eidors_obj(type,obj);
-%
-%     example: fwd_mdl.nodes = NODES; .... %etc
-%              fwd_mdl = eidors_obj('fwd_model',fwd_mdl);
-%
-% All constructors will set the appropriate default
-%   values for each type: image, fwd_model, inv_model, data
-%
-% USAGE: to set values
-%     obj  = eidors_obj('set',obj,prop1,value1, prop1, value2, ...)
-%
-% this will set the values of properties of the object. At the
-% same time, any cached values will be erased (because they may
-% depend on older properties of the model)
-%   
-%    example:
-%        eidors_obj('set',fwd_mdl, 'nodes', NEW_NODES);
-%
-% USAGE: to cache values
-%          eidors_obj('set-cache',obj, cachename,value1, dep_objs, ...)
-%     obj= eidors_obj('get-cache',obj, cachename, dep_objs, ...)
+% USAGE: to cache values (not recommended)
+%          eidors_obj('set-cache',obj, cachename,value, [time])
+%     obj= eidors_obj('get-cache',obj, cachename)
 %
 % this will get or set the values of cached properties of the object.
 %
 %    example: % set jacobian
-%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J):
+%        eidors_obj('set-cache',cache_obj, 'jacobian', J);
 %
 %    example: % get jacobian or '[]' if not set
-%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian'):
+%        J= eidors_obj('get-cache',cache_obj, 'jacobian');
 %
-% However, in some cases, such as the Jacobian, the value depends
-% on other objects, such as the image background. In this case, use
+% It is recommended to combine in cache_obj the minimum set of variables on
+% which the value to be cached depends.
+%    example: % cache_obj for jacobian
+%        cache_obj = {img.fwd_model.nodes, img.fwd_model.elems ...
+%                     img.elem_data, img.fwd_model.jacobian}
 %
-%    example: % set jacobian
-%        eidors_obj('set-cache',fwd_mdl, 'jacobian', J, homg_img):
+% NOTE that rather than directly using eidors_obj to set and get cache, it 
+% is recommended to use eidors_cache with a function_handle.
 %
-%    example: % get jacobian or '[]' if not set
-%        J= eidors_obj('get-cache',fwd_mdl, 'jacobian', homg_img):
- 
+%   example:
+%        J = eidors_cache(@calc_jacobian_adjoint,img,'jacobian');
+%
+% See also: EIDORS_CACHE
 
 % (C) 2005-10 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -92,6 +73,10 @@ switch type
 %  case 'eidors_path'
 %  case 'eidors_dev_path'
 %  case 'eidors_cache_path'
+
+   case 'cache_init'
+      cache_init;
+      
    otherwise
       test_install
       obj_id= new_obj( type, name, varargin{:} );
@@ -180,7 +165,7 @@ function verstr = test_versions;
       end
 
 function obj = set_obj( obj, varargin );
-   global eidors_objects
+   global eidors_objects;
 
 %  eidors_objects.( obj_id ) = obj;
 %  eidors_objects.( obj_id ).cache= []; %clear cache
@@ -193,15 +178,25 @@ function obj = set_obj( obj, varargin );
    end
 
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
-function value= get_cache_obj( obj, prop );
+function value= get_cache_obj( obj, prop )
    global eidors_objects
    value= [];
 
 % We don't do this since cache directories aren't defined (yet)
 %  [objlist, cachename]= proc_obj_list( varargin{:} );
+   if ~isfield(eidors_objects, 'cache')
+       cache_init;
+       return
+   end
 
-   obj_id= calc_obj_id( obj ); % recalculate in case obj changed
-   
+   if isempty(eidors_objects.cache.meta), 
+      return 
+   end
+   c = eidors_objects.cache.cols;
+%    match = ismember(prop, eidors_objects.cache.meta(:,c.prop));
+%    if any(match)
+   obj_id= calc_obj_id( { obj, prop} ); % recalculate in case obj changed
+      
 % if cachename is specified, then cache to that file, rather
 %  than to the standard eidors_objects location
 % TODO: fixthis - use ( ) for matlab > 6.0
@@ -213,34 +208,109 @@ function value= get_cache_obj( obj, prop );
 %     end
 %  else
       try
-         value= eidors_objects.( obj_id ).( prop ).value;
+         value= eidors_objects.cache.( obj_id );
+         idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)), 1, 'first');
+         eidors_objects.cache.meta{idx,c.time} = now;
+         eidors_objects.cache.meta{idx,c.count} = eidors_objects.cache.meta{idx,c.count} + 1;
+         eidors_objects.cache.meta{idx,c.score_eff} = calc_effort_score(...
+            eidors_objects.cache.meta{idx,c.effort}, ...
+            eidors_objects.cache.meta{idx,c.count}, ...
+            eidors_objects.cache.meta{idx,c.prio});
 %        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
-         update_timestamp_and_check_size(obj_id, prop);
+%          check_size(obj_id, prop);
+      catch err
+         if ~strcmp(err.identifier,'MATLAB:nonExistentField')
+            rethrow(err);
+         end
       end
 %  end
+%    end
 
 function set_cache_obj( obj, prop, value, time )
    global eidors_objects
    if ~cache_this( obj ) ; return ; end
 
    if nargin  < 4
-      time = 10; % assume 10 sec
+      time = 1; % assume 1 sec
    end
+   
+   if ~isfield(eidors_objects,'cache');
+      init_cache;
+   end
+
+   c = eidors_objects.cache.cols;
    
 % Cache directories aren't defined, yet
 %  [objlist, cachename]= proc_obj_list( varargin{:} );
 
-   obj_id = calc_obj_id( obj );
+   obj_id = calc_obj_id( {obj, prop} );
    
+   prio = eidors_objects.cache_priority;
+
 %  if isempty(cachename)
-      eidors_objects.( obj_id ).( prop ).value = value;
-      eidors_objects.( obj_id ).( prop ).priority = eidors_objects.cache_priority;
-      eidors_objects.( obj_id ).( prop ).time_spent = time;
-      update_timestamp_and_check_size(obj_id, prop);
+
+      ws = whos('value');
+      row(c.obj_id)   = {obj_id};
+      row(c.prop)     = {prop};
+      row(c.size)     = {ws.bytes};
+      row(c.score_sz) = {calc_size_score(ws.bytes)};
+      row(c.effort)   = {time};
+      row(c.prio)     = {prio};
+      row(c.count)    = {1};
+      row(c.score_eff)= {calc_effort_score(time, 1, prio)};
+      row(c.time)     = {now};
+      
+      if isfield(eidors_objects.cache, obj_id)
+         idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)));
+         eidors_msg('@@ replaced cache object %s { %s }', obj_id, prop,4);
+         eidors_objects.cache.size = eidors_objects.cache.size ...
+                                    - eidors_objects.cache.meta{idx,c.size};
+                                
+      else
+         idx = size(eidors_objects.cache.meta, 1) + 1;
+      end
+      eidors_objects.cache.meta(idx,:) = row;
+      eidors_objects.cache.( obj_id ) = value;
+      eidors_objects.cache.size = eidors_objects.cache.size + ws.bytes;
+      check_size(obj_id, prop);
 %  else
 %     filename= [ eidors_objects.cachedir, '/' , prop, '_' cachename '.mat' ];
 %     save(filename, 'value');
 %  end
+
+function cache_init
+   global eidors_objects;
+   
+   eidors_objects.cache = struct;
+   eidors_objects.cache.meta = cell(0);
+   eidors_objects.cache.cols.obj_id    = 1;
+   eidors_objects.cache.cols.prop      = 2;
+   eidors_objects.cache.cols.time      = 3;
+   eidors_objects.cache.cols.size      = 4;
+   eidors_objects.cache.cols.score_sz  = 5;
+   eidors_objects.cache.cols.effort    = 6;
+   eidors_objects.cache.cols.prio      = 7;
+   eidors_objects.cache.cols.count     = 8;
+   eidors_objects.cache.cols.score_eff = 9;
+   eidors_objects.cache.size           = 0;
+
+function score = calc_size_score(sz)
+   if iscell(sz)
+      fn = @(b) round(10*log10(b / 1024));
+      N = numel(sz);
+      score = num2cell(cellfun(fn, sz));
+   else
+      score = round(10 * log10( sz / 1024));
+   end
+   
+function score = calc_effort_score( time, counts, prios)
+   if iscell(time)
+       score = num2cell( round(10*log10( cell2mat(time) .* cell2mat(counts))) +...
+                                cell2mat(prios));
+   else
+      score = round(10*log10(time .* counts)) + prios; 
+   end
+
 
 function obj= new_obj( type, name, varargin );
    global eidors_objects
@@ -321,14 +391,13 @@ function retval= cache_this( obj )
       retval = 1;
    end
 
-function update_timestamp_and_check_size( obj_id , prop )
-   global eidors_objects;
-
-   eidors_objects.( obj_id ).( prop ).last_used = now;
+function check_size( obj_id , prop )
+   global eidors_objects;   
+%    eidors_objects.( obj_id ).( prop ).last_used = now;
 
    max_memory= eidors_objects.max_cache_size;
-   ww= whos('eidors_objects');
-   if ww.bytes > max_memory
+%    ww= whos('eidors_objects');
+   if eidors_objects.cache.size  > max_memory
       eidors_cache('clear_max',floor(max_memory*.75));
    end
 
