@@ -1,4 +1,4 @@
-function [pass, err_str] = valid_fwd_model(imdl)
+function [pass, err_str] = valid_inv_model(imdl)
 % [pass, err_str] = valid_fwd_model(imdl)
 %
 % Confirms that a valid forward model structure exists or
