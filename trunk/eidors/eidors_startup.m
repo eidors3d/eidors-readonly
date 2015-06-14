@@ -15,9 +15,12 @@ if nargin == 0
     path_array = {};
 end
 
+eidors_msg('=== SETTING UP EIDORS version %s ===',  ...
+     eidors_obj('eidors_version'), 0);
+
 HOMEDIR=strrep(pwd,'\','/');
 ver = version_check;
-archdir = set_paths(HOMEDIR,ver, path_array);
+archdir = set_paths(HOMEDIR, ver, path_array);
 eidors_cache('init');
 % make EIDORS more verbose by default, this should lead to better questions
 % on the mailing list
@@ -56,13 +59,13 @@ function ver = version_check
     ver= eidors_obj('interpreter_version');
 
     if ver.isoctave
-        if ver.ver < 3.002
-            warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.2.0\n' ...
+        if ver.ver < 3.008
+            warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.8.0\n' ...
                 'Several functions may not work with your version']);
         end
     else
-        if ver.ver < 7.000
-            warning(['EIDORS REQUIRES AT LEAST MATLAB V7.0.\n' ...
+        if ver.ver < 7.006
+            warning(['EIDORS REQUIRES AT LEAST MATLAB V7.6.\n' ...
                 'Several functions may not work with your version']);
         end
     end
@@ -101,12 +104,11 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
         p = genpath([DEVDIR, '/', path_array{i}]);
         addpath(p);
     end
-    % addpath([DEVDIR, '/a_adler']);
-    % addpath([DEVDIR, '/b_grychtol']);
 
     % We need to add an architecture specific directory for mex files
     if ver.isoctave
         archdir= strcat('/arch/octave/',computer);
+archdir
     else
         % I don't know when matlab stopped using DLL as the extension
         % for WIN32 mex files. Last I know of is 7.3
@@ -193,10 +195,12 @@ function compile_mex(HOMEDIR,archdir, ver)
     if ver.isoctave
          curdir = cd;
          cd(sprintf('%s/arch',HOMEDIR));
-         mkoctfile -v --mex eidors_var_id.cpp
-         eval(sprintf('mkdir -p ..%s',archdir));
+%        mkoctfile -v --mex eidors_var_id.cpp
+         mex eidors_var_id.cpp
+         system(sprintf('mkdir -p ..%s',archdir));
+%    Has to be absolute paths because Matlab coders are so stupid!!
          movefile(sprintf('%s/arch/*.mex',HOMEDIR), ...
-                  sprintf('%s%s',HOMEDIR,archdir));
+                  sprintf('%s%s/',HOMEDIR,archdir));
          cd(curdir)
          return
     end
@@ -243,9 +247,13 @@ function print_welcome(HOMEDIR,archdir,ver)
     if eidors_ver(end) == '+' % post release version
        % THIS IS HORRIBLE, HORRIBLE CRAP IN SVN. LOTS OF USERS WANT GlobalRev
        % BUT THE ARROGANT SVN AUTHORS REFUSE TO PROVIDE IT!!!!
+       % If available, we could write it into each checkin without having
+       % to rely on a broken system call.
        [status, result] = system('svnversion');
        if status==0;
           eidors_ver = [eidors_ver, ' SVN_ID=', result(1:end-1)];
+       else
+          eidors_ver = [eidors_ver, ' SVN_ID=unknown'];
        end
     end
     eidors_msg('Installed EIDORS (Ver: %s)', eidors_ver,1);
