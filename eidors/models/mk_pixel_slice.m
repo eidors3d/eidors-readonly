@@ -28,7 +28,7 @@ function [imdl fmdl] = mk_pixel_slice(imdl,level,opt)
 % (C) 2013 Bartlomiej Grychtol. License: GPL version 2 or 3
 % $Id$
 
-if isstr(imdl) && strcmp(imdl,'UNIT_TEST'),do_unit_test;return;end;
+if ischar(imdl) && strcmp(imdl,'UNIT_TEST'),do_unit_test;return;end;
 
 switch(imdl.type)
     case 'inv_model'

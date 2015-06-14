@@ -9,7 +9,7 @@ function FC= system_mat_fields( fwd_model )
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 copt.cache_obj = mk_cache_obj(fwd_model);
 copt.fstr = 'system_mat_fields';

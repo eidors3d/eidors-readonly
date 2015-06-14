@@ -27,7 +27,7 @@ function img= inv_solve_abs_CG( inv_model, data1);
 
 %--------------------------
 % UNIT_TEST?
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
 
 % merge legacy options locations
 inv_model = deprecate_imdl_opt(inv_model, 'parameters');

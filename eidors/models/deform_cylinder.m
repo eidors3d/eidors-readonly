@@ -11,7 +11,7 @@ function fwd_mdl = deform_cylinder( fwd_mdl, geo);
 % (C) 1995 Andy Adler. License: GPL version 2 or 3
 % $Id$
 
-if isstr(fwd_mdl) && strcmp(fwd_mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_mdl) && strcmp(fwd_mdl,'UNIT_TEST'); do_unit_test; return; end
 
     NODE= fwd_mdl.nodes';
     a_max= size(geo.xy,1);
@@ -57,7 +57,7 @@ function fmdl_out = deform_cylinder2( fmdl, deform_pararms)
 %    .zerorad = radius at which deform goes to zero
 %        NOT IMPLEMENTED YET
 
-if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test;return;end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test;return;end
 
 pp = proc_params( deform_pararms, fmdl )
 

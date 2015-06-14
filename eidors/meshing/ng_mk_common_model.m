@@ -38,7 +38,7 @@ function fmdl = ng_mk_common_model(mdl_type, ...
 % (C) Andy Adler, 2015.  Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(mdl_type) && strcmp(mdl_type,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl_type) && strcmp(mdl_type,'UNIT_TEST'); do_unit_test; return; end
 
 if isstruct(mdl_type)
    error('No code yet to process options structs');

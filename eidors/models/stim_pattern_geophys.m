@@ -25,7 +25,7 @@ function [stim,S]= stim_pattern_geophys( n_elec, pat_type,  options )
 % (C) 2011 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
+if ischar(n_elec) && strcmp(n_elec,'UNIT_TEST'); do_unit_test; return; end
 if nargin<3; options = {}; end
 options = parse_options(options);
 

@@ -12,7 +12,7 @@ function [A,b]=tet_to_inequal(v,e)
 % (C) 2012 Bill Lionheart. License GPL v2 or v3
 % $Id$
 
-if isstr(v) && strcmp(v,'UNIT_TEST'); do_unit_test; return; end
+if ischar(v) && strcmp(v,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin == 1
    e = [1 2 3 4];

@@ -64,7 +64,7 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 
 % TODO: Implement control segments in the bit that writes the file.
 
-if isstr(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
+if ischar(shape) && strcmp(shape,'UNIT_TEST'); fmdl = do_unit_test; return; end
 
 citeme(mfilename);
 

@@ -11,7 +11,7 @@ function show_3d_slices(img, varargin);
 % License: GPL version 2 or version 3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 ok= 0;
 try; if strcmp(img.type, 'image');

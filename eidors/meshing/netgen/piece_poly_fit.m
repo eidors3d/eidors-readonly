@@ -19,7 +19,7 @@ function [pp, m] = piece_poly_fit(points, fstr, linear_frac)
 % (C) Bartlomiej Grychtol, 2010. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(points) && strcmp(points,'UNIT_TEST'); do_unit_test; return ; end
+if ischar(points) && strcmp(points,'UNIT_TEST'); do_unit_test; return ; end
 
 if nargin < 2
     fstr = 'pchip';

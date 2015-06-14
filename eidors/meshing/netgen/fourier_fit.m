@@ -16,7 +16,7 @@ function C = fourier_fit(points,N,start);
 % (C) Andy Adler, 2010. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(points) && strcmp(points,'UNIT_TEST'); do_unit_test; return ; end
+if ischar(points) && strcmp(points,'UNIT_TEST'); do_unit_test; return ; end
 
 if size(points,2)==2 % calling analysis function
    if nargin<2; N= size(points,1); end

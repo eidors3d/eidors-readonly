@@ -18,7 +18,7 @@ function J = jacobian_movement(fwd_model, img)
 %  License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
 if nargin == 1
    img= fwd_model;

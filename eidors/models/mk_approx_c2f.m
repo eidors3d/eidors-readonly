@@ -47,9 +47,9 @@ function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % (C) 2007-2012 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
+if ischar(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
 
-if isstr(f_mdl) && strcmp(f_mdl, 'LOAD'); load; return; end
+if ischar(f_mdl) && strcmp(f_mdl, 'LOAD'); load; return; end
 
 [c_mdl, f_mdl] = assign_defaults( c_mdl, f_mdl );
 

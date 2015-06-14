@@ -228,8 +228,8 @@ function img= inv_solve_abs_core( inv_model, data0);
 
 %--------------------------
 % UNIT_TEST?
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); do_unit_test; return; end
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); do_unit_test(data0); return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); do_unit_test(data0); return; end
 
 %--------------------------
 opt = parse_options(inv_model);
@@ -1799,11 +1799,11 @@ function img = map_img(img, out);
    catch in = {'conductivity'};
    end
    % make cell array of strings
-   if isstr(in)
+   if ischar(in)
       in = {in};
       img.current_params = in;
    end
-   if isstr(out)
+   if ischar(out)
       out = {out};
    end
 
@@ -1863,14 +1863,14 @@ function img = map_img(img, out);
 
 function x = map_data(x, in, out)
    % check that in and out are single strings, not lists of strings
-   if ~isstr(in)
+   if ~ischar(in)
       if iscell(in) && (length(in(:)) == 1)
          in = in{1};
       else
          error('expecting single string for map_data() "in" type');
       end
    end
-   if ~isstr(out)
+   if ~ischar(out)
       if iscell(out) && (length(out(:)) == 1)
          out = out{1};
       else

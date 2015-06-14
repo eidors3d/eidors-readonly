@@ -24,7 +24,7 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 % (C) 2006-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(axis_handle) && strcmp(axis_handle,'UNIT_TEST'); do_unit_test; return; end
+if ischar(axis_handle) && strcmp(axis_handle,'UNIT_TEST'); do_unit_test; return; end
 
 % TODO (update 2 apr 2012):
 %  - make crop_model work for 2D fems

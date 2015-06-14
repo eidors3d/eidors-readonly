@@ -9,7 +9,7 @@ function [Reg] = iso_f_smooth(simp,vtx,deg,w);
 %w    = smoothing weight, w=1...k, default value = 1
 %Reg  = The first order smoothing regulariser.
 
-if isstr(simp) && strcmp(simp,'UNIT_TEST'); do_unit_test; return; end
+if ischar(simp) && strcmp(simp,'UNIT_TEST'); do_unit_test; return; end
 
 warning('EIDORS:deprecated','ISO_F_SMOOTH is deprecated as of 06-Jun-2012. ');
 % It is recommended to use the newer prior functions in EIDORS. These

@@ -43,7 +43,7 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, ele
 % (C) Andy Adler, 2010. (C) Alistair Boyle, 2013. Licenced under GPL v2 or v3
 % $Id$
 
-if isstr(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
+if ischar(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin <= 4; extra_ng_code = ''; end
 copt.cache_obj = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
@@ -196,7 +196,7 @@ function [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );
    centres = elec_pos(:,1:3);
 
    for i= 1:n_elecs
-     if isstr(elec_obj); 
+     if ischar(elec_obj); 
         elecs(i) = elec_spec( elec_shape(i,:), elec_pos(i,:), elec_obj );
      else
         elecs(i) = elec_spec( elec_shape(i,:), elec_pos(i,:), elec_obj{i}  );

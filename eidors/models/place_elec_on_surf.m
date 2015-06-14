@@ -48,7 +48,7 @@ function mdl2 = place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file, maxh)
 
 citeme(mfilename);
 
-if isstr(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
+if ischar(mdl) && strcmp(mdl, 'UNIT_TEST') do_unit_test; return; end;
 if nargin < 4
    ng_opt_file = '';
 end

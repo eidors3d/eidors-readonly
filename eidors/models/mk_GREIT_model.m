@@ -79,7 +79,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 
 citeme(mfilename);
 
-if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin < 4, options = [];end
 [imdl,fmdl,imgs] = parse_fmdl(fmdl);
@@ -281,7 +281,7 @@ function RM = resize_if_reqd(RM,inside,rmdl)
 
 function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
    imdl = []; 
-   if isstr(fmdl)
+   if ischar(fmdl)
       imgs = get_prepackaged_fmdls( fmdl );
       fmdl = imgs.fwd_model;
    elseif isfield(fmdl,'type');

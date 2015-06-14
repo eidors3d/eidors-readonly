@@ -23,7 +23,7 @@ function img= mk_image(mdl, elem_data, params, name)
 % Licenced under GPL version 2 or 3
 % $Id$
 
-if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
 default_params = no_params; % later: conductivity ?
 default_name    = 'Created by mk_image';

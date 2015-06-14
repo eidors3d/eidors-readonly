@@ -40,7 +40,7 @@ function hh= eidors_colourbar(max_scale,ref_lev, cb_shrink_move, greyscale)
 % $Id$
 
 
-if isstr(max_scale) && strcmp(max_scale,'UNIT_TEST'); do_unit_test; return; end
+if ischar(max_scale) && strcmp(max_scale,'UNIT_TEST'); do_unit_test; return; end
 
 % if called as a simple eidors colourbar function
 if isstruct(max_scale) && strcmp(max_scale.type,'image')

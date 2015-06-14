@@ -10,7 +10,7 @@ function [fwd_model] = linear_reorder(fwd_model,ccw)
 % (C) 2011 Michael Crabb. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 if (nargin==1) 
     ccw=-1; %Default specify counter-clockwise nodes

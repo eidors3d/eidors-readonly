@@ -15,7 +15,7 @@ function [img_data, n_images]= get_img_data(img)
 %if nargin==1; flag=0; end
 
 % TEST
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 if ~strcmp( img(1).type, 'image' );
     error('get_img_data expects an image type object');

@@ -75,7 +75,7 @@ switch str
       error(['mdl_string ',str,' not understood']);
 end
 
-if isstr(RM)
+if ischar(RM)
    switch RM
      case 'backproj'; RM= get_Sheffield_Backproj;
      case 'GREITc1';  RM= get_GREIT_c1;

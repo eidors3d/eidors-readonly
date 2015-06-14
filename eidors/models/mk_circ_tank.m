@@ -42,7 +42,7 @@ function param= mk_circ_tank(rings, levels, elec_spec );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(rings) && strcmp(rings,'UNIT_TEST'); do_unit_test; return; end
+if ischar(rings) && strcmp(rings,'UNIT_TEST'); do_unit_test; return; end
 
 
 % parse easy case of electrode specifications

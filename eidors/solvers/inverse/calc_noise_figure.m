@@ -65,7 +65,7 @@ inv_model.inv_solve.calc_solution_error = false;
 %NF= nf_calc_iterate( inv_model, h_data, c_data); 
 if nargin<3; iterations= 10; end
 solver = inv_model.solve;
-if isstr(solver) && strcmp(solver, 'eidors_default')
+if ischar(solver) && strcmp(solver, 'eidors_default')
     solver = eidors_default('get','inv_solve');
 end
 if isa(solver,'function_handle')

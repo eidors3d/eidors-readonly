@@ -4,7 +4,7 @@ function num = num_elecs( mdl );
 
 % $Id$
 
-if isstr(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test; return; end
 
 if ~isfield(mdl,'type') && isfield(mdl,'elems') % Set default for this case
    mdl.type = 'fwd_model';

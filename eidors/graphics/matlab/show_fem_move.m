@@ -9,7 +9,7 @@ function [hf,hh] = show_fem_move( img, move, scale, options )
 % (C) 2005 Andy Adler. License GPL v2 or v3
 % $Id$
 
-if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 % Check for single argument call
 if nargin == 1

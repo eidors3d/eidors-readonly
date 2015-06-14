@@ -27,7 +27,7 @@ function img= inv_solve_abs_GN( inv_model, data1);
 
 %--------------------------
 % UNIT_TEST?
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
 
 %if isfield(inv_model, 'inv_solve_abs_core') && isfield(inv_model, 'inv_solve_abs_GN')
 %   error('merging inv_solve_abs_core and inv_solve_abs_GN options is broken, please use only one method');

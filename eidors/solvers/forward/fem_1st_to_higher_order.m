@@ -12,7 +12,7 @@ function [boundary,elems,nodes]=fem_1st_to_higher_order(fwd_model)
 %
 %M Crabb - 29.06.2012
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return ; end
 
 copt.cache_obj = {fwd_model.nodes, fwd_model.elems, ...
              fwd_model.approx_type, fwd_model.boundary};

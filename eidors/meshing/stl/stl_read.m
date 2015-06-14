@@ -10,7 +10,7 @@ function mdl = stl_read(fname)
 % License: GPL version 2 or 3
 % $Id$
 
-if isstr(fname) && strcmp(fname, 'UNIT_TEST'), do_unit_test; return, end
+if ischar(fname) && strcmp(fname, 'UNIT_TEST'), do_unit_test; return, end
 
 [V] = READ_stl(fname);
 N = reshape(shiftdim(V,1),3,[])';

@@ -23,7 +23,7 @@ function [img]= inv_solve_abs_annealingSimplex_params(inv_model, data)
 % by respect to the forward problem one. In that case, a mapping function
 % rely the elements to reconstruct the medium conductivity
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 if isfield(inv_model,'params_mapping') &&  isfield(inv_model.params_mapping,'function')
     mapping_function= inv_model.params_mapping.function;
