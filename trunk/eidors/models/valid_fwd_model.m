@@ -169,8 +169,8 @@ if ~pass_local
 end
 clear pass_local;
 % we expect only stimulation, meas/stim_pattern fields
-len = length(fields(stim));
-if (len > 3) || ((len > 2) && ~any(strcmp(fields(stim),'stimulation')))
+len = length(fieldnames(stim));
+if (len > 3) || ((len > 2) && ~any(strcmp(fieldnames(stim),'stimulation')))
    pass = 0;
    err_str = [err_str '- extraneous fields in "stimulation(' num2str(i) ')\n'];
 end
