@@ -202,7 +202,7 @@ end
 function pass = do_unit_test
   pass = 1;
   d = 1;
-  while d ~= 1 & d ~= 0
+  while (d ~= 1) && (d ~= 0)
     d = rand(1);
   end
   disp('TEST: convert_img_units()');
