@@ -207,22 +207,22 @@ function value= get_cache_obj( obj, prop )
 %        load(filename); %variable 'value' should be there
 %     end
 %  else
-      try
-         value= eidors_objects.cache.( obj_id );
-         idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)), 1, 'first');
+
+      if ~isfield( eidors_objects.cache, obj_id);
+         return
+      end
+
+      idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)), 1, 'first');
+      if ~isempty(idx)
          eidors_objects.cache.meta{idx,c.time} = now;
          eidors_objects.cache.meta{idx,c.count} = eidors_objects.cache.meta{idx,c.count} + 1;
          eidors_objects.cache.meta{idx,c.score_eff} = calc_effort_score(...
             eidors_objects.cache.meta{idx,c.effort}, ...
             eidors_objects.cache.meta{idx,c.count}, ...
             eidors_objects.cache.meta{idx,c.prio});
+      end
 %        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
 %          check_size(obj_id, prop);
-      catch err
-         if ~strcmp(err.identifier,'MATLAB:nonExistentField')
-            rethrow(err);
-         end
-      end
 %  end
 %    end
 
