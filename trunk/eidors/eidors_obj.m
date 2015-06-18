@@ -180,23 +180,30 @@ function obj = set_obj( obj, varargin );
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
 function value= get_cache_obj( obj, prop )
    global eidors_objects
+   DEBUG = eidors_debug('query','eidors_obj');
+   
    value= [];
+   
+   if DEBUG, str = sprintf('cache request: %s ',prop); end
 
 % We don't do this since cache directories aren't defined (yet)
 %  [objlist, cachename]= proc_obj_list( varargin{:} );
    if ~isfield(eidors_objects, 'cache')
-       cache_init;
-       return
+      cache_init;
+      if DEBUG, fprintf('%s: NO CACHE FIELD\n',str); end
+      return
    end
 
    if isempty(eidors_objects.cache.meta), 
+      if DEBUG, fprintf('%s: NO META FIELD\n',str); end
       return 
    end
    c = eidors_objects.cache.cols;
 %    match = ismember(prop, eidors_objects.cache.meta(:,c.prop));
 %    if any(match)
    obj_id= calc_obj_id( { obj, prop} ); % recalculate in case obj changed
-      
+   
+   if DEBUG, str = [str, obj_id]; end
 % if cachename is specified, then cache to that file, rather
 %  than to the standard eidors_objects location
 % TODO: fixthis - use ( ) for matlab > 6.0
@@ -209,10 +216,12 @@ function value= get_cache_obj( obj, prop )
 %  else
 
       if ~isfield( eidors_objects.cache, obj_id);
+         if DEBUG, fprintf('%s: not found\n',str); end
          return
       end
 
       idx = find(strcmp(obj_id, eidors_objects.cache.meta(:,c.obj_id)), 1, 'first');
+      if DEBUG && isempty(idx), fprintf('%s: EMPTY IDX !!\n',str); end
       if ~isempty(idx)
          eidors_objects.cache.meta{idx,c.time} = now;
          eidors_objects.cache.meta{idx,c.count} = eidors_objects.cache.meta{idx,c.count} + 1;
@@ -221,6 +230,8 @@ function value= get_cache_obj( obj, prop )
             eidors_objects.cache.meta{idx,c.count}, ...
             eidors_objects.cache.meta{idx,c.prio});
       end
+      value = eidors_objects.cache.(obj_id);
+      if DEBUG, fprintf('%s: found\n',str); end
 %        value= eval(sprintf('eidors_objects.%s.cache.%s;',obj_id,prop));
 %          check_size(obj_id, prop);
 %  end
