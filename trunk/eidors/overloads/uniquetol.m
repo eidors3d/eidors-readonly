@@ -41,8 +41,44 @@ if (~DEBUG && exist('_mergesimpts','builtin')) || (DEBUG == 2)
 end
 
 if DEBUG;   disp('using uniquetol_repl'); end
-out = uniquetol_repl(in,tol,'rows','first');
+% out = uniquetol_repl(in,tol,'rows','first');
 %   UNIQUETOL(...,'ROWS')
+out = eidors_uniquetol(in, tol);
+
+
+function out = eidors_uniquetol(in, tol)
+% first run unique
+out = unique(in,'rows');
+
+% all pairwise combinations
+nRows = size(out,1);
+idx = nchoosek(1:nRows,2);
+
+% compare each column individually
+d = out(idx(:,1),:) - out(idx(:,2),:);
+d = abs(d) < tol;
+
+same = all(d,2);
+
+legacy = false; try unique([],'legacy'); catch, legacy = true; end
+   
+% replace each equal row with the first match
+if legacy
+   [~,ii] = unique(idx(same,2),'first');
+else
+   [~,ii] = unique(idx(same,2));
+end
+jj = find(same);
+ii = jj(ii);
+
+out(idx(ii,2),:) = out(idx(ii,1),:);
+
+% run unique to eliminate the now exactly matching rows
+out = unique(out,'rows');
+      
+
+
+
 
 function [z,ii,jj] = uniquetol_repl(x,tol,varargin)
 %UNIQUETOL Unique element within a tolerance.
