@@ -52,6 +52,9 @@ out = unique(in,'rows');
 
 % all pairwise combinations
 nRows = size(out,1);
+if nRows <= 1
+   return
+end
 idx = nchoosek(1:nRows,2);
 
 % compare each column individually
