@@ -56,7 +56,7 @@ idx = nchoosek(1:nRows,2);
 
 % compare each column individually
 d = out(idx(:,1),:) - out(idx(:,2),:);
-d = abs(d) < tol;
+d = abs(d) <= tol;
 
 same = all(d,2);
 
@@ -147,12 +147,39 @@ ii = ii(isTol);
 % UNIQUETOL;
    
 function do_unit_test
-   x = [1 2; 1.06 2; 1.1 2; 1.1 2.03];
+   testvec{1} = [1 2; 1.06 2; 1.1 2; 1.1 2.03];
+   testvec{2} = [ ...
+   -0.488223373148967243473350663407, ...
+   -0.488223373148967243473350663407, ...
+   -0.488223373148967243473350663407, ...
+   -0.488223373148967243473350663407, ...
+   -0.488223373148967243473350663407, ...
+   -0.488223373148967243473350663407;
+   -0.999999999999999666933092612453, ...
+   -0.999999999999999888977697537484, ...
+   -0.999999999999999888977697537484, ...
+   -0.999999999999999888977697537484, ...
+   -0.999999999999999888977697537484, ...
+   -0.905678339894304240687006313237;
+   -0.232963663178817920185181833403, ...
+   -0.232963663178818003451908680290, ...
+   -0.116481831589409029481529955774, ...
+   -0.232963663178818086718635527177, ...
+   -0.116481831589409043359317763588, ...
+   -0.156131398552380479261003642932]';
+   testvec{3} = testvec{2}';
 
-   for tol = logspace(-4,1,5);
-      uu = uniquetol(x,tol,'ByRows',true,'DataScale',1);
-      um = builtin('_mergesimpts',x,tol,'first');
-      ur = uniquetol_repl(x,tol,'rows','first');
-      unit_test_cmp(sprintf('um=uu %f',tol),uu,um);
-      unit_test_cmp(sprintf('um=ur %f',tol),uu,um);
+
+   for i=1:length(testvec)
+     eidors_msg('TEST%d============',i,1);
+     x = testvec{i};
+      for tol = logspace(-4,1,5);
+         uu = uniquetol(x,tol,'ByRows',true,'DataScale',1);
+         um = builtin('_mergesimpts',x,tol,'first');
+         ur = uniquetol_repl(x,tol,'rows','first');
+         ue = eidors_uniquetol(x,tol);
+         unit_test_cmp(sprintf('um=uu %f',tol),uu,um);
+         unit_test_cmp(sprintf('um=ur %f',tol),uu,ur);
+         unit_test_cmp(sprintf('um=ue %f',tol),uu,ue);
+      end
    end
