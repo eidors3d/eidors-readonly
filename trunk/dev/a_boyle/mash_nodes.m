@@ -90,5 +90,7 @@ function   mdl = mash_nodes(mdl, method, interp_dim, upd_dim, elec_true, elec_er
   end
 end
 
-function x=range(y)
-x=max(y)-min(y);
+% the (max-min) range of a variable's values
+function r=range(a)
+  r=max(a(:))-min(a(:));
+end
