@@ -38,6 +38,7 @@ function set_defaults(HOMEDIR)
     eidors_default('set','calc_R_prior','prior_laplace');
     eidors_default('set','fwd_solve','fwd_solve_1st_order');
     eidors_default('set','GREIT_desired_img','GREIT_desired_img_sigmoid');
+    eidors_default('set','mk_coarse_fine_mapping','mk_analytic_c2f');
     %models are NOT normalized by default
     eidors_default('set','mdl_normalize',@(x) 0); 
 
