@@ -25,9 +25,10 @@ function varargout = eidors_default(varargin)
 % $Id$
 
    optargin = size(varargin,2);
-
+   s = dbstack;
+   
    % unit test
-   if optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
+   if numel(s) == 1 && optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
        do_unit_test;
        return;
    end
@@ -50,7 +51,7 @@ function varargout = eidors_default(varargin)
        end
    end
    
-   caller  = get_caller( dbstack );
+   caller  = get_caller( s );
    % This works on a specific version of matlab, and not octave
    %varargout{1:nargout} = call_default(caller,varargin{:});
    if nargout>0
