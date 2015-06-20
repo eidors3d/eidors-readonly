@@ -330,11 +330,13 @@ function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
 %             keyboard
             continue
          end
+         if any(isnan(pts(:))), keyboard, end
 %          debug_plot(fmdl,rmdl,v,tet_todo(t), bot, top, pts);
          try
             % move points to origin (helps for small elements at
             % large coordinates
             ctr = mean(pts);
+            if any(isnan(ctr)), keyboard,end
             pts = bsxfun(@minus,pts,ctr);
             scale = max(abs(pts(:)));
             if scale == 0 %happens when there's only one point
@@ -427,6 +429,11 @@ function [intpts, tri2edge, tri2pts, edge2pts] = get_tet_intersection_pts(fmdl,r
    
    [F,P] = find(in);
 
+   % remove "vertical" faces
+   vf = fmdl.normals(F,3) == 0;
+   F(vf) = [];
+   P(vf) = [];
+   
    % project on faces
    % plane equation is ax+by+cz+d = 0, where d = -(ax0 + by0 + cz0)
    z = sum(fmdl.normals(F,:) .* fmdl.nodes(fmdl.faces(F,1),:),2);
