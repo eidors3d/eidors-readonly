@@ -1,6 +1,6 @@
-function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl, opt)
-% MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM
-% [c2f,out]= mk_coarse_fine_mapping( f_mdl, c_mdl, opt );
+function [mapping, outside] = mk_analytic_c2f( f_mdl, c_mdl, opt)
+% MK_ANALYTIC_C@F: create a mapping matrix from coarse to fine FEM
+% [c2f,out]= mk_analytic_c2f( f_mdl, c_mdl, opt );
 %  
 % Parameters:
 %    c_mdl is coarse fwd_model
@@ -21,16 +21,16 @@ function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl, opt)
 %  aligned, then they can be translated and mapped using
 %    coarse_xyz = (M* (fine_xyz - T)')'
 %  where
-%    T= c_mdl.mk_coarse_fine_mapping.f2c_offset (1xN_dims)
-%    M= c_mdl.mk_coarse_fine_mapping.f2c_project (N_dimsxN_dims)
+%    T= c_mdl.mk_analytic_c2f.f2c_offset (1xN_dims)
+%    M= c_mdl.mk_analytic_c2f.f2c_project (N_dimsxN_dims)
 %  by default T= [0,0,0] and M=eye(3)
 %
 % if c_mdl is 2D and f_mdl is 3D, then parameter
-%     c_mdl.mk_coarse_fine_mapping.z_depth
+%     c_mdl.mk_analytic_c2f.z_depth
 %     indicates the +/- z_depth which elements in 2D are
 %     considered to be extruded in 3D (default inf)
 %
-% See also MK_C2F_CIRC_MAPPING
+% See also MK_C2F_CIRC_MAPPING, MK_APPROX_C2F, MK_COARSE_FINE_MAPPING
 
 % (C) 2007-2015 Andy Adler and Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
@@ -45,7 +45,7 @@ if nargin== 2, opt = struct; end
 opt = assign_defaults( c_mdl, f_mdl, opt );
 
 copt.cache_obj = cache_obj(c_mdl, f_mdl, opt);
-copt.fstr = 'mk_coarse_fine_mapping';
+copt.fstr = 'mk_analytic_c2f';
 
 [mapping, outside] = eidors_cache(@mapping_calc,{f_mdl,c_mdl,opt},copt);
 
@@ -106,7 +106,7 @@ function f_mdl= offset_and_project( f_mdl, opt)
 
 function opt = assign_defaults( c_mdl, f_mdl, org )
    opt = struct;
-   try opt = c_mdl.mk_coarse_fine_mapping; end
+   try opt = c_mdl.mk_analytic_c2f; end
    fn = fieldnames(org);
    for f = 1:numel(fn)
       opt.(fn{f}) = org.(fn{f}); % explicit options override those on the model
@@ -139,9 +139,9 @@ function test_2d3d_handling
    tri = mk_grid_model([],[0 1],[0 1]);
    tri = rmfield(tri,'coarse2fine');
    
-   c2f_a = mk_coarse_fine_mapping(tri,tet);
+   c2f_a = mk_analytic_c2f(tri,tet);
    c2f_a = bsxfun(@times, c2f_a, get_elem_volume(tri));
-   c2f_b = mk_coarse_fine_mapping(tet,tri);
+   c2f_b = mk_analytic_c2f(tet,tri);
    c2f_b = bsxfun(@times, c2f_b, get_elem_volume(tet));
    
    unit_test_cmp('2d3d:01',sum(c2f_a(:)), 1,eps);
@@ -153,32 +153,32 @@ function test_2d3d_handling
 function do_original_2d_tests
    fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
    cmdl = mk_circ_tank(2,[],2); cmdl.nodes = cmdl.nodes*2;
-   c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+   c2f = mk_analytic_c2f( fmdl, cmdl);
    unit_test_cmp('t1',c2f,eye(16),eps)
 
    fmdl = mk_circ_tank(3,[],2);
    fmdl.nodes = fmdl.nodes*3;
-   c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+   c2f = mk_analytic_c2f( fmdl, cmdl);
    unit_test_cmp('t2',c2f,[eye(16);zeros(20,16)],eps)
 
    fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*1;
-   c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+   c2f = mk_analytic_c2f( fmdl, cmdl);
    unit_test_cmp('t3',c2f,[eye(4);zeros(12,4)],eps)
 
    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*0.8;
-   c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+   c2f = mk_analytic_c2f( fmdl, cmdl);
    unit_test_cmp('t4',c2f,[eye(4)*.64;zeros(12,4)], eps)
 
 
    fmdl = mk_circ_tank(10,[],2);
    cmdl = mk_circ_tank(8,[],2);
-   c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+   c2f = mk_analytic_c2f( fmdl, cmdl);
    unit_test_cmp('t6',sum(c2f(1:324,:)'),ones(1,324),1e-14);
 
    cmdl.nodes = cmdl.nodes*0.95;
    % show_fem(fmdl); hold on ; show_fem(cmdl); hold off
-   c2f = mk_coarse_fine_mapping( fmdl, cmdl);
+   c2f = mk_analytic_c2f( fmdl, cmdl);
 
 function load
 
@@ -196,5 +196,5 @@ coarse_mdl = ng_mk_cyl_models([tank_height,tank_radius,coarse_mdl_maxh],[0],[]);
 
 disp('Calculating coarse2fine mapping ...');
 inv3d.fwd_model.coarse2fine = ...
-       mk_coarse_fine_mapping( fine_mdl, coarse_mdl);
+       mk_analytic_c2f( fine_mdl, coarse_mdl);
 disp('   ... done');
