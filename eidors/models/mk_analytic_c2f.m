@@ -1,5 +1,5 @@
 function [mapping, outside] = mk_analytic_c2f( f_mdl, c_mdl, opt)
-% MK_ANALYTIC_C@F: create a mapping matrix from coarse to fine FEM
+% MK_ANALYTIC_C2F: create a mapping matrix from coarse to fine FEM
 % [c2f,out]= mk_analytic_c2f( f_mdl, c_mdl, opt );
 %  
 % Parameters:
