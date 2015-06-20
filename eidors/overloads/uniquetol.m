@@ -67,17 +67,15 @@ legacy = false; try unique([],'legacy'); catch, legacy = true; end
    
 % replace each equal row with the first match
 if legacy
-   [~,ii] = unique(idx(same,2),'first');
+   [u,ii] = unique(idx(same,2),'first');
 else
-   [~,ii] = unique(idx(same,2));
+   [u,ii] = unique(idx(same,2));
 end
 jj = find(same);
 ii = jj(ii);
 
-out(idx(ii,2),:) = out(idx(ii,1),:);
+out(idx(ii,2),:) = [];
 
-% run unique to eliminate the now exactly matching rows
-out = unique(out,'rows');
       
 
 
