@@ -10,33 +10,45 @@ for z_cj=1:length(z_c)
 for j=1:nmesh
    logh(j) = j*log(2); 
    logcon_func(j)=1; 
-   logquad_errL2(j,z_cj) = log(quad_errL2(j,z_cj)); logquad_errH1(j,z_cj) = log(quad_errH1(j,z_cj)); logquad_errUM(j,z_cj)=log(quad_errUM(j,z_cj)); 
-   logcub_errL2(j,z_cj) = log(cub_errL2(j,z_cj)); logcub_errH1(j,z_cj) = log(cub_errH1(j,z_cj)); logcub_errUM(j,z_cj)=log(cub_errUM(j,z_cj));
+   logquad_errL2(j,z_cj) = log(quad_errL2(j,z_cj)); logquad_errH1(j,z_cj) = ...
+		 log(quad_errH1(j,z_cj)); logquad_errUM(j,z_cj)=log(quad_errUM(j,z_cj)); 
+   logcub_errL2(j,z_cj) = log(cub_errL2(j,z_cj)); logcub_errH1(j,z_cj) = ...
+		 log(cub_errH1(j,z_cj)); logcub_errUM(j,z_cj)=log(cub_errUM(j,z_cj));
 end
 
 %Extra data point for linear
 for j=1:nmesh+1
-   loglin_errL2(j,z_cj) = log(lin_errL2(j,z_cj)); loglin_errH1(j,z_cj) = log(lin_errH1(j,z_cj)); loglin_errUM(j,z_cj)=log(lin_errUM(j,z_cj));   
+   loglin_errL2(j,z_cj) = log(lin_errL2(j,z_cj)); loglin_errH1(j,z_cj) = ...
+	 		log(lin_errH1(j,z_cj)); loglin_errUM(j,z_cj)=log(lin_errUM(j,z_cj));   
 end
 
 
 %Linear
 Alin=[logh',logcon_func']; 
-best_linL2(z_cj,:) = (Alin(n_plot:nmesh,:)'*Alin(n_plot:nmesh,:))\Alin(n_plot:nmesh,:)'*loglin_errL2(n_plot:nmesh,z_cj);
-best_linH1(z_cj,:) = (Alin(n_plot:nmesh,:)'*Alin(n_plot:nmesh,:))\Alin(n_plot:nmesh,:)'*loglin_errH1(n_plot:nmesh,z_cj);
-best_linUM(z_cj,:) = (Alin(n_plot:nmesh,:)'*Alin(n_plot:nmesh,:))\Alin(n_plot:nmesh,:)'*loglin_errUM(n_plot:nmesh,z_cj);
+best_linL2(z_cj,:) = (Alin(n_plot:nmesh,:)'*Alin(n_plot:nmesh,:))\...
+	Alin(n_plot:nmesh,:)'*loglin_errL2(n_plot:nmesh,z_cj);
+best_linH1(z_cj,:) = (Alin(n_plot:nmesh,:)'*Alin(n_plot:nmesh,:))\...
+	Alin(n_plot:nmesh,:)'*loglin_errH1(n_plot:nmesh,z_cj);
+best_linUM(z_cj,:) = (Alin(n_plot:nmesh,:)'*Alin(n_plot:nmesh,:))\...
+	Alin(n_plot:nmesh,:)'*loglin_errUM(n_plot:nmesh,z_cj);
 
 %Quadratic
 Aquad=[logh',logcon_func'];
-best_quadL2(z_cj,:) = (Aquad(n_plot:nmesh,:)'*Aquad(n_plot:nmesh,:))\Aquad(n_plot:nmesh,:)'*logquad_errL2(n_plot:nmesh,z_cj);
-best_quadH1(z_cj,:) = (Aquad(n_plot:nmesh,:)'*Aquad(n_plot:nmesh,:))\Aquad(n_plot:nmesh,:)'*logquad_errH1(n_plot:nmesh,z_cj);
-best_quadUM(z_cj,:) = (Aquad(n_plot:nmesh,:)'*Aquad(n_plot:nmesh,:))\Aquad(n_plot:nmesh,:)'*logquad_errUM(n_plot:nmesh,z_cj);
+best_quadL2(z_cj,:) = (Aquad(n_plot:nmesh,:)'*Aquad(n_plot:nmesh,:))\...
+	Aquad(n_plot:nmesh,:)'*logquad_errL2(n_plot:nmesh,z_cj);
+best_quadH1(z_cj,:) = (Aquad(n_plot:nmesh,:)'*Aquad(n_plot:nmesh,:))\...
+	Aquad(n_plot:nmesh,:)'*logquad_errH1(n_plot:nmesh,z_cj);
+best_quadUM(z_cj,:) = (Aquad(n_plot:nmesh,:)'*Aquad(n_plot:nmesh,:))\...
+	Aquad(n_plot:nmesh,:)'*logquad_errUM(n_plot:nmesh,z_cj);
 
 %Cubic
 Acub=[logh',logcon_func'];
-best_cubL2(z_cj,:) = (Acub(n_plot:nmesh,:)'*Acub(n_plot:nmesh,:))\Acub(n_plot:nmesh,:)'*logcub_errL2(n_plot:nmesh,z_cj);
-best_cubH1(z_cj,:) = (Acub(n_plot:nmesh,:)'*Acub(n_plot:nmesh,:))\Acub(n_plot:nmesh,:)'*logcub_errH1(n_plot:nmesh,z_cj);
-best_cubUM(z_cj,:) = (Acub(n_plot:nmesh,:)'*Acub(n_plot:nmesh,:))\Acub(n_plot:nmesh,:)'*logcub_errUM(n_plot:nmesh,z_cj);
+best_cubL2(z_cj,:) = (Acub(n_plot:nmesh,:)'*Acub(n_plot:nmesh,:))\...
+	Acub(n_plot:nmesh,:)'*logcub_errL2(n_plot:nmesh,z_cj);
+best_cubH1(z_cj,:) = (Acub(n_plot:nmesh,:)'*Acub(n_plot:nmesh,:))\...
+	Acub(n_plot:nmesh,:)'*logcub_errH1(n_plot:nmesh,z_cj);
+best_cubUM(z_cj,:) = (Acub(n_plot:nmesh,:)'*Acub(n_plot:nmesh,:))\...
+	Acub(n_plot:nmesh,:)'*logcub_errUM(n_plot:nmesh,z_cj);
 end
 
 %Plot all linear error rate on one graph against log(z)
