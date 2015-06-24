@@ -2,13 +2,28 @@
 <!--#set var="show_tut" value="1" -->
 <!--#include virtual="../../nav-sidebar.shtml" -->
 
-<h2>Complete electrode model (CEM) convergence study using higher order finite elements methods (FEM)</h2>
+<h2>EIDORS fwd_models</h2>
 
 <h3> 
-
+Complete electrode model (CEM) convergence study using higher order finite elements methods (FEM)
 </h3>
 
-Carefully create an FEM of CEM on a square domain. On this domain, a "semi-analytic" solution exists. This is very useful as we can test how the errors change as we vary the contact impedance, approximation order. 
+The implementation of the high order finite elements for CEM and thhe following convergence study of CEM presented at EIT 2015 in Neuch&acirc;etal, are described respectively in the following:
+
+<ul>
+   <li>
+   M G Crabb.
+   EIT Reconstruction Algorithms for Respiratory Intensive Care.
+   <i>PhD Thesis</i>, University of Manchester, 2014.
+
+   <li>
+	 M G Crabb.
+   Convergence study of CEM with high order finite elements.
+   <i>16{^th} Int. Conf. on Biomed. App. of EIT</i>, pp. 97, 2015
+</ul>
+
+<h3> Methods and Results </h3>
+Carefully create an FEM of CEM on a square domain on which a "semi-analytic" solution exists. This is useful because we can rigorously study how errors in the forward problem of EIT vary with contact impedance and approximation order in different norms.
 
 <pre>
 <!--#include virtual="error_rates_contact_impedance01.m" -->
@@ -20,7 +35,7 @@ Carefully create an FEM of CEM on a square domain. On this domain, a "semi-analy
 Initial 3D finite element model (left) and the same model after a single uniform h-refinement. The CEM electrodes (to drive voltage) are green lines and the (point) voltage measurement electrodes are red crosses.
 </center>
 
-We now vary the contact impedance. For each contact impedance we estimate the L2, H1 error of the interior voltage potential, as well as the l2 error at the measurement electrodes, using the "semi-analytic" solution to this problem. We plot the analytic (cubic) and FEM solution for contact impedance of z=0.00001 and z=1000.
+We now vary the contact impedance, and for each contact impedance estimate the L2, H1 error of the interior voltage potential, as well as the l2 error at the measurement electrodes, using the "semi-analytic" solution to this problem. We plot the analytic (cubic) and FEM solution for contact impedance of z=0.00001 and z=1000.
 <pre>
 <!--#include virtual="error_rates_contact_impedance02.m" -->
 </pre>
