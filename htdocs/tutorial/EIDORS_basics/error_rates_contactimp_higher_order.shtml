@@ -2,12 +2,6 @@
 <!--#set var="show_tut" value="1" -->
 <!--#include virtual="../../nav-sidebar.shtml" -->
 
-<!-- Resize the image to 50% -->
-img.resize{
-   max-width:10%;
-   max-height:10%;
-}
-
 
 <h2>EIDORS fwd_models</h2>
 
