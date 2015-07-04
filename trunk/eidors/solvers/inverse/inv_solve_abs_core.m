@@ -601,7 +601,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    end
    hp2  = calc_hyperparameter( inv_model ); % = \lambda^2
    net = sum([opt.elem_len{:}]); % Number of Elements, Total
-   RtR = zeros(net,net); % pre-allocate RtR
+   RtR = sparse(net,net); % init RtR = sparse(zeros(net,net));
    esi = 0; eei = 0; % element start, element end
    for i = 1:size(opt.RtR_prior,1) % row i
       esi = eei + 1;
