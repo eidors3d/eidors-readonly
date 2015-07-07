@@ -171,25 +171,54 @@ imgi.elem_data = ref.Cond*ones(size(imgi.elem_data));                     % set 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% default GN iteration %%%%%%
-% imdlGN = imdl;
-% imdlGN.type = 'inv_model';
-% imdlGN.fwd_model = imdl;
-% imdlGN.solve = @inv_solve_abs_GN; %Default Gauss Newton solvers
-% imdlGN.reconst_type = 'absolute';
-% imdlGN.jacobian_bkgnd.value= setting.LungCond;
-% 
-% imdlGN.inv_solve_abs_GN.show_iterations = 0; %Show iteration progress
-% imdlGN.inv_solve_abs_GN.max_iterations = 20; %Number of iterations
-% imdlGN.inv_solve_abs_GN.verbose = 0;
-% 
-% %imdl.RtR_prior=@prior_laplace; hp = 1e-10;
-% imdlGN.RtR_prior=@prior_noser; hp = 1e-4;
-% imdlGN.hyperparameter.value = hp;
-% 
-% tGN=tic;
-% img_n = inv_solve_abs_GN(imdlGN, data);
-% tGN=toc(tGN);
-% fprintf('Done.\n');
+imdlGN = imdl;
+imdlGN.type = 'inv_model';
+imdlGN.fwd_model = imdl;
+imdlGN.solve = @inv_solve_abs_GN;                                           % EIDORS default iterative absolute Gauss Newton solver
+imdlGN.reconst_type = 'absolute';
+imdlGN.jacobian_bkgnd.value= setting.TissueCond;                            % background near the electrodes
+
+imdlGN.inv_solve_abs_GN.max_iterations = 5;
+imdlGN.inv_solve_abs_GN.verbose = 2;                                        % print out a nice log of what's happening
+imdlGN.inv_solve_abs_GN.return_working_variables = 1;                       % give back 'dbg' below
+
+%imdlGN.RtR_prior=@prior_tikhonov; hp = 1e-10;
+%imdlGN.RtR_prior=@prior_laplace; hp = 1e-10;
+imdlGN.RtR_prior=@prior_noser; hp = 1e-3;                                   % prior_noser() is a little inefficient: we already have J calculated at each iter
+imdlGN.hyperparameter.value = hp;
+%imdlGN.prior_noser.exponent = 0.5;                                          % 0.0 -- 1.0
+imdlGN.inv_solve_abs_GN.elem_working = 'log_conductivity';                  % solve on log space ( cond > 0 )
+imdlGN.inv_solve_abs_GN.line_search_func = 'ret1_func';                     % disable line search, alpha=1
+tGN=tic;
+img_gn = inv_solve_abs_GN(imdlGN, data);
+tGN=toc(tGN);
+fprintf('Done.\n');
+
+dbg = img_gn.inv_solve_abs_GN;
+alpha = dbg.alpha;                                                          % line search result
+n=[0:dbg.k];                                                                % number of iterations
+res=dbg.r(:,1)';                                                            % [ residual, mesurement misfit, element misfit ]
+err=dbg.r(:,2)';                                                            % ... one row per iteration
+fprintf('== EIDORS GN: abs. iter. solver ==\n');
+fprintf('[GNit]   |residual|  |b-Ax|  alpha\n');
+fprintf('----------------------------------\n');
+fprintf('==================================\n');
+fprintf('[%4i]   %3.2e  %3.2e  %2.3f\n',[n;res;err;alpha]);
+fprintf('==================================\n');
+fprintf('EIDORS GN converged after %i iterations\n',dbg.k);
+fprintf('       in %6.2fs overall.\n',tGN);
+%  fprintf('Speed: %6.2fs for computing %3i Jacobians of size %ix%i.\n',jctime,n,size(Jac,1),size(Jac,2));
+%  fprintf('       %6.2fs for computing %3i cg iterations.\n',cgtime,m);
+%  fprintf('       %6.2fs for estimating noise level.\n',noisetime);
+%  fprintf('       %6.2fs for estimating background %6.2f Ohm.m.\n',c0ztime);
+
+figure(fg);
+hold on;
+subplot(4,6,[5 6 11 12 17 18 23 24]-2);
+show_slices(img_gn,[inf(nSlices,2), ...                                     % display some horizontal slices of reconstructed conductivity
+  dom.Height*linspace(nSlices/(nSlices+1),1/(nSlices+1),nSlices)']);
+title('EIDORS GN');
+drawnow;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% do parameter-free reconstruction (MANTIS) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,11 +226,9 @@ imgi.elem_data = ref.Cond*ones(size(imgi.elem_data));                     % set 
 [imgR,m_v,xi_v,sd,m] = mantis_solve(imgi,VM,el,reco);
 
 %% plot reconstructed conductivity %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure(fg);
 subplot(4,6,[13 14 19 20]); show_fem(imgR);  view([-140,24]);             % 3D FEM plot of reconstructed conductivity
 subplot(4,6,[5 6 11 12 17 18 23 24]);
 show_slices(imgR,[inf(nSlices,2), ...                                     % display some horizontal slices of reconstructed conductivity
   dom.Height*linspace(nSlices/(nSlices+1),1/(nSlices+1),nSlices)']);
+title('REGINN');
 drawnow;
-
-
