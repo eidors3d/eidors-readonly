@@ -107,7 +107,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %      prior_data = { 32.1, 10*ones(10,1) };
 %      elem_prior = {'conductivity', 'movement'};
 %      elem_len = { 20001, 10 };
-%   elem_prior               (default to elem_working)
+%   elem_prior                (default 'conductivity')
 %    Input 'prior_data' type; immediately converted to
 %    'elem_working' type before first iteration.
 %   elem_working              (default 'conductivity')
@@ -154,9 +154,11 @@ function img= inv_solve_abs_core( inv_model, data0);
 %    current parameters.
 %
 %   Signature for residual_func
-%    r = f(dv, de, W, hp2RtR)
+%    [r,m,e] = f(dv, de, W, hp2RtR)
 %   where
-%    r   - the residual
+%    r   - the residual = m + e
+%    m   - measurement error
+%    e   - prior misfit
 %    dv  - change in voltage
 %    de  - change in image elements
 %    W   - measurement inverse covarience matrix
@@ -306,6 +308,7 @@ while 1
   dx = update_dx(J, W, hp2RtR, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
   beta = update_beta(dx, dxp, sx, opt);
+  beta_all(k+1)=beta; % save for debug
   % sx_k = dx_k + beta * sx_{k-1}
   sx = update_sx(dx, beta, sx, opt);
   if k ~= 0
@@ -320,6 +323,7 @@ while 1
   % x_{n+1} = x_n + \alpha sx
   % img.elem_data = x_{n+1}
   [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, k, dv, opt);
+  alpha_all(k+1) = alpha;
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
   [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt);
@@ -337,6 +341,9 @@ while 1
   % now find the residual, quit if we're done
   [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt);
   if stop
+     if stop == -1
+        alpha_all(k) = 0;
+     end
      break;
   end
 end
@@ -357,10 +364,10 @@ if opt.return_working_variables
   img.inv_solve_abs_core.J = J;
   img.inv_solve_abs_core.dx = dx;
   img.inv_solve_abs_core.sx = sx;
-  img.inv_solve_abs_core.alpha = alpha;
-  img.inv_solve_abs_core.beta = beta;
+  img.inv_solve_abs_core.alpha = alpha_all;
+  img.inv_solve_abs_core.beta = beta_all;
   img.inv_solve_abs_core.k = k;
-  img.inv_solve_abs_core.r = r;
+  img.inv_solve_abs_core.r = r(1:(k+1),:); % trim r to n-iterations' rows
   img.inv_solve_abs_core.N = N;
   img.inv_solve_abs_core.W = W;
   img.inv_solve_abs_core.hp2RtR = hp2RtR;
@@ -470,14 +477,14 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
 
   % update residual estimate
   if k == 0
-     r = zeros(opt.max_iterations, 3);
+     r = ones(opt.max_iterations, 3)*NaN;
      r_km1 = inf;
   else
      r_km1 = r(k, 1);
   end
-  r_k = feval(opt.residual_func, dv, de, W, hp2RtR);
+  [r_k m_k e_k] = feval(opt.residual_func, dv, de, W, hp2RtR);
   % save residual for next iteration
-  r(k+1,1) = r_k;
+  r(k+1,1:3) = [r_k m_k e_k];
 
   % now do something with that information
   if opt.verbose > 1
@@ -516,7 +523,6 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
      end
   end
 
-  % TODO return 'measurement residual' & 'roughness' for progress plot, as well
   % evaluate stopping criteria
   if r_k > r_km1 % bad step
      if opt.verbose > 1
@@ -641,7 +647,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    hp2RtR = hp2*RtR;
 
 function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
-   if opt.verbose < 1
+   if opt.verbose < 8
       return; % do nothing if not verbose
    end
    % canonicalize the structures so we don't have to deal with a bunch of scenarios below
@@ -1059,10 +1065,12 @@ function show_fem_iter(k, img, inv_model, stop, opt)
   end
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
-function residual = GN_residual(dv, de, W, hp2RtR)
+function [ residual meas elem ] = GN_residual(dv, de, W, hp2RtR)
 %   [size(dv); size(W); size(de); size(hp2RtR)]
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
-   residual = 0.5*( dv'*W*dv + de'*hp2RtR*de);
+   meas = 0.5*( dv'*W*dv);
+   elem = 0.5*(de'*hp2RtR*de);
+   residual = meas + elem;
 
 function residual = meas_residual(dv, de, W, hp2RtR)
    residual = norm(dv);
@@ -1197,12 +1205,12 @@ function opt = parse_options(imdl)
       % NOTE: the meas_residual function exists to maintain
       % compatibility with Nolwenn's code, the GN_residual
       % is a better choice
-      %opt.residual_func = @meas_residual; % r = f(dv, de, W, hp2RtR)
+      %opt.residual_func = @meas_residual; % [r,m,e] = f(dv, de, W, hp2RtR)
    end
 
    % calculation of update components
    if ~isfield(opt, 'update_func')
-      opt.update_func = @GN_update; % dx = f(J, W, hp2RtR, dv, de)
+      opt.update_func = @GN_update; % dx = f(J, W, hp2RtR, dv, de, opt)
    end
    % figure out if things need to be calculated
    if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
@@ -1220,7 +1228,7 @@ function opt = parse_options(imdl)
          fprintf('    examining function %s(...) for required arguments\n', func2str(opt.update_func));
       end
       % ensure that necessary components are calculated
-      % opt.update_func: dx = f(J, W, hp2RtR, dv, de)
+      % opt.update_func: dx = f(J, W, hp2RtR, dv, de, opt)
 %TODO BROKEN      args = function_depends_upon(opt.update_func, 6);
       args = ones(4,1); % TODO BROKEN
       if args(2) == 1
@@ -1345,7 +1353,7 @@ function opt = parse_options(imdl)
       opt.elem_working = {'conductivity'};
    end
    if ~isfield(opt, 'elem_prior')
-      opt.elem_prior = opt.elem_working;
+      opt.elem_prior = {'conductivity'};
    end
    if ~isfield(opt, 'elem_output')
       opt.elem_output = {'conductivity'};
@@ -1437,13 +1445,18 @@ function opt = parse_options(imdl)
    % show what the hyperparameters are configured to when logging
    if opt.verbose > 1
       fprintf('  hyperparameters\n');
+      try hp_global = imdl.hyperparameter.value;
+          hp_global_str = sprintf(' x %0.4g',hp_global);
+      catch hp_global = 1;
+          hp_global_str = '';
+      end
       for i=1:length(opt.elem_working)
          if isnumeric(opt.hyperparameter{i}) && length(opt.hyperparameter{i}) == 1
-            fprintf('    %s: %0.4g\n',opt.elem_working{i}, opt.hyperparameter{i});
+            fprintf('    %s: %0.4g\n',opt.elem_working{i}, opt.hyperparameter{i}*hp_global);
          elseif isa(opt.hyperparameter{i}, 'function_handle')
-            fprintf('    %s: @%s\n',opt.elem_working{i}, func2str(opt.hyperparameter{i}));
+            fprintf('    %s: @%s%s\n',opt.elem_working{i}, func2str(opt.hyperparameter{i}), hp_global_str);
          elseif ischar(opt.hyperparameter{i})
-            fprintf('    %s: @%s\n',opt.elem_working{i}, opt.hyperparameter{i});
+            fprintf('    %s: @%s%s\n',opt.elem_working{i}, opt.hyperparameter{i}, hp_global_str);
          else
             fprintf('    %s: ...\n',opt.elem_working{i});
          end
@@ -1622,7 +1635,7 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    N=size(hp2RtR,1)+1;
    hp2RtR(N*(V-1)+1) = 1; % set diagonals to 1 to avoid divide by zero
    % do the update step direction calculation
-   dx = feval(opt.update_func, J, W, hp2RtR, dv, de);
+   dx = feval(opt.update_func, J, W, hp2RtR, dv, de, opt);
 
    % check that our elem_fixed stayed fixed
    if any(dx(opt.elem_fixed) ~= 0)
@@ -1639,9 +1652,71 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
       end
    end
 
-function dx = GN_update(J, W, hp2RtR, dv, de)
-   % the actual update
-   dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
+function dx = GN_update(J, W, hp2RtR, dv, de, opt)
+   try
+      % the actual update
+      dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de); % LU decomp
+   catch ME % boom
+      tol = 1e-6; % default 1e-6
+      maxit = []; % default [] --> min(n,20)
+      M = []; % default [] --> no preconditioner
+      x0 = []; % default [] --> zeros(n,1)
+
+      % try Preconditioned Conjugate Gradient: A x = b, solve for x
+      % avoids J'*J for n x m matrix with large number of m cols --> J'*J becomes an m x m dense matrix
+      LHS = @(x) J'*(W*(J*x)) + hp2RtR*x;
+      RHS = J'*dv + hp2RtR*de;
+
+      tol=100*eps*size(J,2)^2; % rough estimate based on multiply-accumulates
+%      maxit = 10;
+      [dx, flag, relres, iter, resvec] = pcg(LHS, RHS, tol, maxit, M, x0);
+      % TODO if verbose...
+      switch flag
+         case 0
+            if opt.verbose > 1
+               fprintf('      PCG: relres=%g < tol=%g @ iter#%d\n',relres,tol,iter);
+            end
+         case 1
+            if opt.verbose > 1
+               fprintf('      PCG: relres=%g > tol=%g @ iter#%d (max#%d) [max iter]\n',relres,tol,iter,maxit);
+            end
+         case 2
+            error('error: PCG ill-conditioned preconditioner M');
+         case 3
+            if opt.verbose > 1
+               fprintf('      PCG: relres=%g > tol=%g @ iter#%d (max#%d) [stagnated]\n',relres,tol,iter,maxit);
+            end
+         case 4
+            error('error: PCG a scalar quantity became too large or small to continue');
+         otherwise
+            error(sprintf('error: PCG unrecognized flag=%d',flag));
+      end
+% NOTE PCG is still a work in progress and generally problem specific
+%keyboard
+%      % plot convergence for pcg()
+%      clf;
+%         xlabel('iteration #');
+%         ylabel('relative residual');
+%         xx = 0:length(resvec)-1;
+%         semilogy(xx,resvec/norm(RHS),'b.');
+%         hold on;
+%         legend('no preconditioner');
+%hold on
+%% sparsity strategies: www.cerfacs.fr/algor/reports/Dissertations/TH_PA_02_48.pdf
+%sJ = J; sJ(J/max(J(:)) > 0.005) = 0; sJ=sparse(sJ); % sparsify J
+%M = ichol(sJ'*W*sJ + hp2RtR + speye(length(J)));
+%      [dx, flag, relres, iter, resvec] = pcg(LHS, RHS, tol, maxit, M);
+%         semilogy(xx,resvec/norm(RHS),'r.');
+%         legend('no P', 'IC(sp(J'')*W*sp(J) + hp2RtR)');
+%
+%
+%clf; Jj=J(:,1:800); imagesc(Jj'*Jj);
+
+      % compare with gmres, bicgstab, lsqr
+      % try preconditioners ilu, ichol (incomplete LU or Cholesky decomp.)
+
+      %rethrow(ME); % we assume this is an 'excessive memory requested' failure
+   end
 
 % for each argument, returns 1 if the function depends on it, 0 otherwise
 % 'zero' arguments do not need to be calculated since they don't get used
