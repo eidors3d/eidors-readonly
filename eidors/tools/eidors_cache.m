@@ -391,9 +391,10 @@ function priidx = get_cache_priority
    try
       meta = eidors_objects.cache.meta;
       c = eidors_objects.cache.cols;
+      [jnk, priidx] = sortrows(meta,[-c.score_eff c.score_sz -c.time]);
+      priidx(priidx) = 1:size(meta,1);
    end
-   [jnk, priidx] = sortrows(meta,[-c.score_eff c.score_sz -c.time]);
-   priidx(priidx) = 1:size(meta,1);
+
       
    
 function objid = clear_names_cache( name )
