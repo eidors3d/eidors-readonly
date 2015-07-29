@@ -388,7 +388,7 @@ function cache_list (order)
 function priidx = get_cache_priority
    global eidors_objects;
    priidx = [];
-   try
+   if isfield(eidors_objects.cache, 'meta') && isfield(eidors_objects.cache, 'cols')
       meta = eidors_objects.cache.meta;
       c = eidors_objects.cache.cols;
       [jnk, priidx] = sortrows(meta,[-c.score_eff c.score_sz -c.time]);
