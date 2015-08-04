@@ -1,4 +1,4 @@
-function obj_id= eidors_obj(type,name, varargin )
+function [obj_id, extra_out] = eidors_obj(type,name, varargin )
 % EIDORS_OBJ: maintains EIDORS internals
 %
 % USAGE: to get eidors_version
@@ -11,16 +11,16 @@ function obj_id= eidors_obj(type,name, varargin )
 %     path = eidors_obj('eidors_path');
 %
 % USAGE: to cache values (not recommended)
-%          eidors_obj('set-cache',obj, cachename,value, [time])
-%     obj= eidors_obj('get-cache',obj, cachename)
+%            obj_id = eidors_obj('set-cache',obj, cachename,value, [time])
+%     [obj, obj_id] = eidors_obj('get-cache',obj, cachename)
 %
 % this will get or set the values of cached properties of the object.
 %
 %    example: % set jacobian
-%        eidors_obj('set-cache',cache_obj, 'jacobian', J);
+%        obj_id = eidors_obj('set-cache',cache_obj, 'jacobian', J);
 %
 %    example: % get jacobian or '[]' if not set
-%        J= eidors_obj('get-cache',cache_obj, 'jacobian');
+%        [J, obj_id] = eidors_obj('get-cache',cache_obj, 'jacobian');
 %
 % It is recommended to combine in cache_obj the minimum set of variables on
 % which the value to be cached depends.
@@ -50,14 +50,14 @@ switch type
       test_install
       obj_id = [];
       if status_check(varargin{1})
-        obj_id= get_cache_obj( name, varargin{:} );
+        [obj_id, extra_out] = get_cache_obj( name, varargin{:} );
       end
       
    case 'set-cache'
       test_install
       obj_id= [];
       if status_check(varargin{1})
-          set_cache_obj( name, varargin{:} );
+          obj_id = set_cache_obj( name, varargin{:} );
       end
 
    case 'eidors_version'
@@ -178,11 +178,12 @@ function obj = set_obj( obj, varargin );
    end
 
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
-function value= get_cache_obj( obj, prop )
+function [value, obj_id] = get_cache_obj( obj, prop )
    global eidors_objects
    DEBUG = eidors_debug('query','eidors_obj');
    
    value= [];
+   obj_id = [];
    
    if DEBUG, str = sprintf('cache request: %s ',prop); end
 
@@ -237,8 +238,10 @@ function value= get_cache_obj( obj, prop )
 %  end
 %    end
 
-function set_cache_obj( obj, prop, value, time )
+function obj_id = set_cache_obj( obj, prop, value, time )
    global eidors_objects
+   obj_id = [];
+   
    if ~cache_this( obj ) ; return ; end
 
    if nargin  < 4

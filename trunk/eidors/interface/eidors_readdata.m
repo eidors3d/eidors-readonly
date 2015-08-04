@@ -96,8 +96,9 @@ auxdata = []; % default, can be overriden if the format has it
 fmt = pre_proc_spec_fmt( format, fname );
 switch fmt
    case 'mceit';
-      [vv,curr,volt,auxdata_out] = mceit_readdata( fname );
+      [vv,curr,volt,auxdata_out,auxtime] = mceit_readdata( fname );
       auxdata.auxdata = auxdata_out;
+      auxdata.auxtime = auxtime;
       auxdata.curr    = curr;
       auxdata.volt    = volt;
 
@@ -386,7 +387,7 @@ function vv = sheffield_readdata( fname );
 
    
 
-function [vv,curr,volt,auxdata] = mceit_readdata( fname );
+function [vv,curr,volt,auxdata,auxtime] = mceit_readdata( fname );
 
    fid= fopen(fname,'rb');
    d= fread(fid,inf,'float');
@@ -398,16 +399,35 @@ function [vv,curr,volt,auxdata] = mceit_readdata( fname );
    end
 
    dd= reshape( d, 256, length(d)/256);
-   if dd(39,1)==0 %104 measurements per frame
+   no_reciprocity = (dd(39,1)==0);      %104 measurements per frame
+   if no_reciprocity
        dd=transfer104_208(dd);
    end
    vv= untwist(dd);
 
    curr=0.00512*dd(209:224,:);  % Amps
    volt=12*dd(225:240,:); %Vrms
-   auxdata= dd(241:255,:);
+   auxdata= dd(241:256,:);
    auxdata= auxdata(:);
    %input impedance=voltage./current-440;        Ohm
+   
+   if no_reciprocity
+     % remove every 14th, 15th and 16th sample as they are always zero
+     auxdata(14:16:end) = []; auxdata(14:15:end) = []; auxdata(14:14:end) = [];
+     % only 104 measurements were performed with NON-UNIFORM sampling of AUX in between EIT samples
+     % Sampling procedure was thought to be: 13 AUX1 13 AUX2 12 AUX3 11 AUX4 10 AUX5 9 ... 2 AUX13 1 [END OF FRAME]
+%      auxtime = (cumsum([1 13 12:-1:2]) - 1) / 104;
+     % However, this seems to be a little different, finally the sampling points were determined 
+     % empirically by measuring a sawtooth signal (linear ramp) and fitting the timings 
+     auxtime = [0.0000,0.1390,0.2535,0.3617,0.4642,0.5486,0.6367,0.7110,0.7780,0.8354,0.8865,0.9304,0.9711];  % mean fit at 25 Hz
+%      auxtime = [0.0000,0.1460,0.2789,0.3895,0.4875,0.5788,0.6608,0.7356,0.7986,0.8569,0.9045,0.9454,0.9824,]; % mean fit at 44 Hz
+   else
+     % all 208 measurements were performed 
+     auxtime = (cumsum([1 13*ones(1,15)])-1)/208;             % relative time as fractions of the EIT frame
+   end
+   % time of AUX signal relative to frame number (starting with 1 - Matlab style)
+   auxtime = reshape(repmat(1:size(dd,2), length(auxtime), 1),[],1) + repmat(auxtime, 1, size(dd,2))';
+   
 
 function array208=transfer104_208(array104),
 % The order in the 208-vector is
