@@ -43,8 +43,7 @@ if isempty(PEITS_PATH)
   PEITS_PATH = input('Please enter the path to PEITS: ', 's');
   setenv('PEITS_PATH', PEITS_PATH);  
 end
-warning('move PEITS-specific m-files to PEITS directory!')
-% addpath([PEITS_PATH, filesep, 'matlab']);
+addpath([PEITS_PATH, filesep, 'matlab']);   % add default peits matlab files
 
 % the data dir where we store our files
 FilePath = [PEITS_PATH, filesep, 'data', filesep];
@@ -130,9 +129,8 @@ if isempty(CacheOut)
     
     %% export dgf file    
     dune_exporter(img.fwd_model.nodes, img.fwd_model.elems, img.elem_data, ...
-        dgfFilePath, dgfFileName, ...
-        zeros(nElectrodes, 3), ...
-        img.fwd_model.nodes(img.fwd_model.gnd_node,:))
+        dgfFilePath, dgfFileName, zeros(nElectrodes, 3), ...
+        img.fwd_model.nodes(img.fwd_model.gnd_node,:), true)
         
     %% conductivity is stored in dgf file directly, don't load separately
     SigmaFileName = [];    
@@ -151,8 +149,7 @@ else
 end
 
 
-%% run the thingy here
-% prepare settings
+%% prepare settings
 forward_settings = set_forward_default_values();
 forward_settings.path = PEITS_PATH;
 forward_settings.mesh.name = dgfFileName(1:end-4);
@@ -172,6 +169,7 @@ if ~isempty(CacheOut)
     display('using cached model with separate conductivities...');
 else
     forward_settings.fem.io.load_sigma_separately = 0;    
+    forward_settings.fem.io.separate_sigma_file = [];
     display('no cached model...');
 end
 
