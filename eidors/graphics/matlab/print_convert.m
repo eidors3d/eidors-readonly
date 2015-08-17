@@ -7,7 +7,7 @@ function print_convert(filename, varargin)
 %  with (some of) these fields:
 %   opt.resolution   = 150;              % 150 dpi (default: 125)
 %   opt.pagesize     = [width, height];  % whatever matlab's current units
-%   opt.jpeg_quality = 75;               % jpeg quality (default: 85)
+%   opt.jpeg_quality = 85;               % jpeg quality (default: 85)
 %   opt.imwrite_opts = {'BitDepth',8};   % options to IMWRITE (default: '')
 %   opt.horz_cut     = 50;               % remove horizontal gaps larger
 %                                        % than 50 pixels (default: 0)
@@ -20,6 +20,7 @@ function print_convert(filename, varargin)
 %   opt.supersampling_factor = 2;        % anti-aliasing (default: 1 for
 %                                        % images, 2 for graphs). Higher is
 %                                        % smoother.
+%   opt.crop_slack   = [top,bot,left,right] %don't crop right to boundary
 %
 %  Note that opt.imwrite_opts takes precedence over opt.jpeq_quality.
 %
@@ -82,6 +83,11 @@ catch e
 end
 
 function im = crop_image(im,pp)
+   tu = pp.crop_slack(1);
+   bu = pp.crop_slack(2) + 1; %remove starting one more
+   lu = pp.crop_slack(3);
+   ru = pp.crop_slack(4) + 1;
+
    szim = size(im);
    bdr = squeeze(mean(double(im(1,:,:)),2));
  
@@ -96,7 +102,7 @@ function im = crop_image(im,pp)
       eidors_msg('Image is blank. Cropping aborted.',1);
       return
    end
-   im(:,horzpt(end)+1:end,:)= []; % remove higher first
+   im(:,horzpt(end)+ru:end,:)= []; % remove higher first
    if pp.horz_cut >0;
       horz_e_pt = find(diff(horz)==-1) -1; horz_e_pt(1) = [];
       horz_s_pt = find(diff(horz)==+1)   ; horz_s_pt(end) = [];
@@ -105,11 +111,11 @@ function im = crop_image(im,pp)
         im(:,horz_s_pt(i)+pp.horz_space:horz_e_pt(i),:)= [];
       end
    end
-   im(:,1:horzpt(1)    ,:)= [];
+   im(:,1:horzpt(1)-lu ,:)= [];
  
    vert = [true,all(isbdr,2)',true];
    vertpt = find(diff(vert)) - 1; % first 'true'
-   im(vertpt(end)+1:end,:,:)= [];
+   im(vertpt(end)+bu:end,:,:)= [];
    if pp.vert_cut >0;
       vert_e_pt = find(diff(vert)==-1) -1; vert_e_pt(1) = [];
       vert_s_pt = find(diff(vert)==+1)   ; vert_s_pt(end) = [];
@@ -118,7 +124,7 @@ function im = crop_image(im,pp)
         im(vert_s_pt(i)+pp.vert_space:vert_e_pt(i),:,:)= [];
       end
    end
-   im(1:vertpt(1)    ,:,:)= [];
+   im(1:vertpt(1)-tu ,:,:)= [];
  
     
 % factor = 1 if all plots only contain images, 2 otherwise
@@ -154,17 +160,14 @@ function pp = parse_options(filename,varargin)
    pp.page = get(gcf,'PaperPosition');
    pp.posn = pp.page;
    pp.jpeg_quality = 85; % default jpeg quality
-   if strcmp(pp.fmt,'jpg')
-      pp.imwrite_opts = {'quality',pp.jpeg_quality}; 
-   else
-      pp.imwrite_opts = {};
-   end
+   pp.imwrite_opts = {}; % initial
    pp.horz_cut = 0;
    pp.horz_space = 0;
    pp.vert_cut = 0;
    pp.vert_space = 0;
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
+   pp.crop_slack = [0,0,0,0];
    
    
  
@@ -202,6 +205,9 @@ function pp = parse_options(filename,varargin)
      if isfield(opt,'jpeg_quality')
         pp.jpeg_quality = opt.jpeg_quality;
      end
+     if strcmp(pp.fmt,'jpg')
+        pp.imwrite_opts = {'quality',pp.jpeg_quality}; 
+     end
      if isfield(opt,'imwrite_opts');
         pp.imwrite_opts = opt.imwrite_opts;
         if strcmp(pp.fmt,'jpg') && ~any(strcmpi(pp.imwrite_opts,'quality'))
@@ -228,6 +234,9 @@ function pp = parse_options(filename,varargin)
         else
            pp.horz_space = opt.horz_space;
         end
+     end
+     if isfield(opt,'crop_slack');
+        pp.crop_slack = opt.crop_slack;
      end
    else
       error('Can''t parse options');
