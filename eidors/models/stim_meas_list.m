@@ -80,9 +80,11 @@ function stim_flat = flatten_stim(stim, nst, nvt)
   for i = 1:nst
       nmp= size(stim(i).meas_pattern, 1); % number of measurement patterns for this stim pair
       [sp, jnk, spv]= find(stim(i).stim_pattern>0);
-      [sn, jnk, snv]= find(stim(i).stim_pattern<0);
-      [jnk, mp, mpv]= find(stim(i).meas_pattern>0); mp = mp(jnk);
-      [jnk, mn, mnv]= find(stim(i).meas_pattern<0); mn = mn(jnk);
+      [sn, jnk, snv]= find(stim(i).stim_pattern<0);      
+      [order, mp, mpv]= find(stim(i).meas_pattern>0);  
+      [~, idx2sort] = sort(order); mp = mp(idx2sort); mpv = mpv(idx2sort);
+      [order, mn, mnv]= find(stim(i).meas_pattern<0);    
+      [~, idx2sort] = sort(order); mn = mn(idx2sort); mnv = mnv(idx2sort);
       % expand s+/s- to match the size of m+/m-
       sp  = zeros(nmp,1)+sp;
       sn  = zeros(nmp,1)+sn;
@@ -110,4 +112,42 @@ function  do_unit_test
    unit_test_cmp('pattern#2', list_in, list_out);
 
    vh = fwd_solve(img);
+   
+   
+   nElecs = 16;
+   stim = mk_stim_patterns( nElecs, 1, '{ad}', '{ad}');
+   sp_mp = stim_meas_list(stim);
+   inj_diff = mod(sp_mp(:,2) - sp_mp(:,1), nElecs);
+   meas_diff = mod(sp_mp(:,3) - sp_mp(:,4), nElecs);
+   unit_test_cmp('pattern#3', true, all(inj_diff == 1) && all(meas_diff == 1));
+   
+   stim = mk_stim_patterns( nElecs, 1, '{ad}', '{ad}', {'no_meas_current', 'no_rotate_meas'});
+   sp_mp = stim_meas_list(stim);
+   inj_diff = mod(sp_mp(:,2) - sp_mp(:,1), nElecs);
+   meas_diff = mod(sp_mp(:,3) - sp_mp(:,4), nElecs);
+   unit_test_cmp('pattern#4', true, all(inj_diff == 1) && all(meas_diff == 1));
+   
+   stim = mk_stim_patterns( nElecs, 1, '{ad}', '{ad}', {'no_meas_current'});
+   sp_mp = stim_meas_list(stim);
+   inj_diff = mod(sp_mp(:,2) - sp_mp(:,1), nElecs);
+   meas_diff = mod(sp_mp(:,3) - sp_mp(:,4), nElecs);
+   unit_test_cmp('pattern#5', true, all(inj_diff == 1) && all(meas_diff == 1));
+   
+   Skip = 3;
+   stim = mk_stim_patterns( nElecs, 1, [0 1+Skip], [0 1+Skip], {'no_meas_current', 'no_rotate_meas'});
+   sp_mp = stim_meas_list(stim);
+   inj_diff = mod(sp_mp(:,2) - sp_mp(:,1), nElecs);
+   meas_diff = mod(sp_mp(:,3) - sp_mp(:,4), nElecs);
+   unit_test_cmp('pattern#6', true, all(inj_diff == Skip+1) && all(meas_diff == Skip+1));
+   
+   nElecs = 32;
+   Skip = 7;
+   stim = mk_stim_patterns( nElecs, 1, [0 1+Skip], [0 1+Skip], {'meas_current', 'rotate_meas'});
+   sp_mp = stim_meas_list(stim);
+   inj_diff = mod(sp_mp(:,2) - sp_mp(:,1), nElecs);
+   meas_diff = mod(sp_mp(:,3) - sp_mp(:,4), nElecs);
+   unit_test_cmp('pattern#7', true, all(inj_diff == Skip+1) && all(meas_diff == Skip+1));
+   
+   
+   
 
