@@ -489,10 +489,12 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
   % now do something with that information
   if opt.verbose > 1
      if k == 0
+        fprintf('    stop @ max iter = %d, tol = %0.3g (%0.3g%%), dtol = %0.3g%% (after %d iter)\n', ...
+                opt.max_iterations, opt.tol, opt.tol/r_k*100, opt.dtol*100, opt.dtol_iter);
         fprintf('    calc residual, r=%0.3g\n', r_k);
      else
         fprintf('    calc residual\n');
-        fprintf('      r =%0.3g\n', r_k);
+        fprintf('      r =%0.3g (%0.03g%%)\n', r_k, r_k/r(1)*100);
         dr = (r_k - r_km1);
         fprintf('      dr=%0.3g (%0.3g%%)\n', dr, dr/r_km1*100);
      end
@@ -544,7 +546,7 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
   elseif (k >= opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
      if opt.verbose > 1
         fprintf('  terminated at iteration %d (iterations not improving)\n', k);
-        fprintf('    residual slope tolerance (%0.3g) exceeded\n', opt.dtol + 2*opt.ntol);
+        fprintf('    residual slope tolerance (%0.3g%%) exceeded\n', (opt.dtol + 2*opt.ntol)*100);
      end
      stop = 1;
   end
@@ -587,7 +589,9 @@ function sx = update_sx(dx, beta, sx_km1, opt);
       fprintf( '    update step dx, beta=%0.3g, ||dx||=%0.3g\n', beta, nsx);
       if nsxk ~= 0
          fprintf( '      acceleration     d||dx||=%0.3g\n', nsx-nsxk);
-         fprintf( '      direction change ||ddx||=%0.3g\n', norm(sx/nsx-sx_km1/nsxk));
+         % ||ddx|| = chord_len = 2 sin(theta/2)
+         ddx = norm(sx/nsx-sx_km1/nsxk);
+         fprintf( '      direction change ||ddx||=%0.3g (%0.3g°)\n', ddx, 2*asind(ddx/2)); 
       end
    end
 
