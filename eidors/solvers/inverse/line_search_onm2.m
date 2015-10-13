@@ -32,7 +32,7 @@ img = imgk;
 %  -- +Inf: calculated value was bad, ignore it
 if opt.verbose > 1
    fprintf('      i     = ');
-   fprintf(' [%d]     \t', 1:length(perturb));
+   fprintf('    [%d]  \t', 1:length(perturb));
    fprintf('\n');
    fprintf('      alpha = ');
    fprintf(' %8.3g\t', perturb);
@@ -71,6 +71,14 @@ for i = 1:length(perturb)
    end
    if opt.verbose > 1
       fprintf(' %8.3g\t',mlist(i));
+   end
+   if mlist(i)/mlist(1) > 1e10
+      if opt.verbose > 1
+         for j=(i+1):length(perturb)
+            fprintf('   [skip]\t');
+         end
+      end
+      break
    end
 end
 if opt.verbose > 1
@@ -167,32 +175,57 @@ end
 
 % update perturbations
 if meas_err >= mlist(1)
-    % this happens when the solution blew up -- the measurement fit was worse than if we did nothing
-    if opt.verbose > 1
-       fprintf('      reducing perturbations: bad step\n');
+    if mlist(1)*1.05 < mlist(goodi(end))
+       % this happens when the solution blew up -- the measurement fit was worse than if we did nothing
+       if opt.verbose > 1
+          fprintf('      reducing perturbations /10: bad step\n');
+       end
+       % try a smaller step next time (10x smaller)
+       % this keeps the log-space distance between sample points
+       perturb = perturb/10;
+    elseif perturb(end)*10 > 1.0+10*eps
+       if opt.verbose > 1
+          fprintf('      expanding perturbations x10: bad step... but we''d be searching past alpha=1.0, giving up\n');
+       end
+       return % we give up early
+    else % we didn't really get any difference in solutions
+       % this happens when the perturbations are too small, we are too close to
+       % the current solution
+       if opt.verbose > 1
+          fprintf('      expanding perturbations x10: bad step\n');
+       end
+       % try a larger step next time (10x larger)
+       % this keeps the log-space distance between sample points
+       perturb = perturb*10;
     end
-    % try a smaller step next time (10x smaller)
-    % this keeps the log-space distance between sample points
-    perturb = perturb/10;
 else % good step
-    if opt.verbose > 1
-       fprintf('      update perturbations around step = %0.3g\n', alpha);
+    % stretch out the perturbations if we're not making much progress
+    if all(mlist(goodi)/mlist(1)-1 > -10*opt.dtol) && ...
+       (perturb(end)*10 < 1.0+10*eps)
+       if opt.verbose > 1
+          fprintf('      expand perturbations x10 for next iteration\n');
+          fprintf('      (didn''t make much progress this iteration)\n');
+       end
+       opt.line_search_args.perturb = opt.line_search_args.perturb*10;
+    else % or just recentre around our best answer
+       % this keeps the log-space distance between sample points but
+       % re-centres around the most recent alpha
+       if opt.verbose > 1
+          fprintf('      update perturbations around step = %0.3g\n', alpha);
+       end
+       perturb = perturb*(alpha/perturb(end))*2;
     end
-    % this keeps the log-space distance between sample points but
-    % re-centres around the most recent alpha
-    perturb = perturb*(alpha/perturb(end))*2;
 end
 % jiggle the perturb values by 1% --> if we're stuck in a recursion
 % of bad perturb values maybe this is enough to break us out
 opt.line_search_args.perturb = perturb .* exp(randn(size(perturb))*0.01);
-
 % Record the corresponding parameters
 %img.elem_data= exp(img.logCond);
 
 % we took a bad step, try again but don't recurse indefinitely
 if alpha == 0 && retry < 5
   if opt.verbose > 1
-     fprintf('    retry#%d (attempt with smaller perturbations)\n', retry+1);
+     fprintf('    retry#%d (attempt with new perturbations)\n', retry+1);
   end
   [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hp2RtR, dv0, opt, retry+1, pf_max);
 end
