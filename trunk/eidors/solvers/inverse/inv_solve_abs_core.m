@@ -1042,22 +1042,34 @@ function show_fem_iter(k, img, inv_model, stop, opt)
      return; % if verbosity is low OR we're dropping the last iteration because it was bad, do nothing
   end
   if opt.verbose > 1
-     disp('    show_fem()');
+     str=opt.show_fem;
+     if isa(str,'function_handle')
+        str=func2str(str);
+     end
+     disp(['    ' str '()']);
   end
-  img = map_img(img, 'resistivity'); % TODO big fat hack to make this work at the expense of an actual function...
-  [img, opt] = strip_c2f_background(img, opt, '    ');
-  % check we're returning the right size of data
-  if isfield(inv_model, 'rec_model')
-    img.fwd_model = inv_model.rec_model;
-  end
-%  bg = 1;
-%  img.calc_colours.ref_level = bg;
-%  img.calc_colours.clim = bg;
-  img.calc_colours.cb_shrink_move = [0.3,0.6,0.02]; % move color bars
-  if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
-     warning(sprintf('img.elem_data has %d elements, img.fwd_model.elems has %d elems\n', ...
-                     size(img.elem_data,1), ...
-                     size(img.fwd_model.elems,1)));
+  if isequal(opt.show_fem,@show_fem) % opt.show_fem == @show_fem... so we need to try to be smart enough to make show_fem not explode
+     img = map_img(img, 'resistivity'); % TODO big fat hack to make this work at the expense of an actual function...
+     [img, opt] = strip_c2f_background(img, opt, '    ');
+     % check we're returning the right size of data
+     if isfield(inv_model, 'rec_model')
+       img.fwd_model = inv_model.rec_model;
+     end
+   %  bg = 1;
+   %  img.calc_colours.ref_level = bg;
+   %  img.calc_colours.clim = bg;
+     img.calc_colours.cb_shrink_move = [0.3,0.6,0.02]; % move color bars
+     if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
+        warning(sprintf('img.elem_data has %d elements, img.fwd_model.elems has %d elems\n', ...
+                        size(img.elem_data,1), ...
+                        size(img.fwd_model.elems,1)));
+     end
+  else % do the "final clean up", same as when we quit
+     img = map_img(img, opt.elem_output);
+     [img, opt] = strip_c2f_background(img, opt, '    ');
+     if isfield(inv_model, 'rec_model')
+       img.fwd_model = inv_model.rec_model;
+     end
   end
   clf; feval(opt.show_fem, img, 1);
   title(sprintf('iter=%d',k));
