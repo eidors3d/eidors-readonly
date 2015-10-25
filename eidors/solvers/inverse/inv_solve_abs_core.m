@@ -651,6 +651,24 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    hp2RtR = hp2*RtR;
 
 function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
+   if(opt.verbose >= 5)
+      % and try a show_fem with the pixel search direction
+      clf;
+      imgb=img;
+      imgb.elem_data = dx;
+      imgb.current_params = opt.elem_working;
+      if isfield(imgb.inv_model,'rec_model')
+         imgb.fwd_model = imgb.inv_model.rec_model;
+      end
+      feval(opt.show_fem,imgb,[]);
+      title(sprintf('dx @ iter=%d',k));
+      drawnow;
+      if isfield(opt,'fig_prefix')
+         print('-dpng',sprintf('%s-dx%d',opt.fig_prefix,k));
+         print('-dpdf',sprintf('%s-dx%d',opt.fig_prefix,k));
+         saveas(gcf,sprintf('%s-dx%d.fig',opt.fig_prefix,k));
+      end
+   end
    if opt.verbose < 8
       return; % do nothing if not verbose
    end
@@ -831,15 +849,30 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
            % reduce height, this has to be done after the axes fix or STUPID matlab messes things up real good
            cP = get(c,'Position'); set(c,'Position', [0.13    0.54-y/2    0.8    0.010]);
            axes('units', 'normalized', 'position', [ 0.93 0.62-y/2 0.05 0.3 ]);
-           barh(sum(D,2)); axis tight; axis ij; set(gca, 'ytick', [], 'yticklabel', []);
+           barh(sqrt(sum(D.^2,2))); axis tight; axis ij; set(gca, 'ytick', [], 'yticklabel', []);
            axes('units', 'normalized', 'position', [ 0.13 0.92-y/2 0.8 0.05 ]);
-           bar(sum(D,1)); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
+           bar(sqrt(sum(D.^2,1))); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
         end
         drawnow;
         if isfield(opt,'fig_prefix')
            print('-dpng',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
            print('-dpdf',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
            saveas(gcf,sprintf('%s-J%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+        end
+        % and try a show_fem with the pixel sensitivity
+        clf;
+        imgb.elem_data = log(sqrt(sum(D.^2,1)));
+        imgb.current_params = [ opt.elem_working{:} ' sensitivity'];
+        if isfield(imgb.inv_model,'rec_model')
+           imgb.fwd_model = imgb.inv_model.rec_model;
+        end
+        feval(opt.show_fem,imgb,[]);
+        title(sprintf('sensitivity @ iter=%d',k));
+        drawnow;
+        if isfield(opt,'fig_prefix')
+           print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+           print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+           saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
         end
      end
    end
@@ -1708,7 +1741,6 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
             error(sprintf('error: PCG unrecognized flag=%d',flag));
       end
 % NOTE PCG is still a work in progress and generally problem specific
-%keyboard
 %      % plot convergence for pcg()
 %      clf;
 %         xlabel('iteration #');
