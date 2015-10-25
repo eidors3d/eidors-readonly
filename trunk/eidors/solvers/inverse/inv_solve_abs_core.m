@@ -862,7 +862,7 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
         % and try a show_fem with the pixel sensitivity
         clf;
         imgb.elem_data = log(sqrt(sum(D.^2,1)));
-        imgb.current_params = [ opt.elem_working{:} ' sensitivity'];
+        imgb.current_params = 'log_sensitivity';
         if isfield(imgb.inv_model,'rec_model')
            imgb.fwd_model = imgb.inv_model.rec_model;
         end
