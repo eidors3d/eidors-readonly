@@ -1,3 +1,5 @@
+%%BUG. NEED TO FIND IMGALL.
+
 % positions of where to plot
 yposns = [20 20 45 45];
 xposns = [20 45 20 45];
