@@ -10,6 +10,6 @@ fmdl = mdl_normalize(fmdl,1);
 img = mk_image(fmdl,1); img.elem_data(vertcat(fmdl.mat_idx{2:3})) = 0.3;
 img.calc_colours.ref_level=1;
 
-show_fem_enhanced(img);
-view(-2,32)
+calc_colours('defaults');
+show_fem_enhanced(img); view(-2,32)
 print_convert neonate_ex01a.jpg
