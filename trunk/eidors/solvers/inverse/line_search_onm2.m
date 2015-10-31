@@ -183,11 +183,16 @@ if meas_err >= mlist(1)
        % try a smaller step next time (10x smaller)
        % this keeps the log-space distance between sample points
        perturb = perturb/10;
-    elseif perturb(end)*10 > 1.0+10*eps
+    elseif perturb(end) > 1.0-10*eps
        if opt.verbose > 1
-          fprintf('      expanding perturbations x10: bad step... but we''d be searching past alpha=1.0, giving up\n');
+          fprintf('      expanding perturbations x10: ... but we''d be searching past alpha=1.0, giving up\n');
        end
        return % we give up early
+    elseif perturb(end)*10 > 1.0-10*eps
+       if opt.verbose > 1
+          fprintf('      expanding perturbations (limit alpha=1.0): bad step\n');
+       end
+       perturb = perturb/perturb(end); % ... max(alpha)=1.0
     else % we didn't really get any difference in solutions
        % this happens when the perturbations are too small, we are too close to
        % the current solution
@@ -211,14 +216,24 @@ else % good step
        % this keeps the log-space distance between sample points but
        % re-centres around the most recent alpha
        if opt.verbose > 1
-          fprintf('      update perturbations around step = %0.3g\n', alpha);
+          fprintf('      update perturbations around step = %0.3g (limit alpha=1.0)\n', alpha);
        end
-       perturb = perturb*(alpha/perturb(end))*2;
+       if alpha/perturb(end)*2 > 1.0 - 10*eps
+          perturb = perturb/perturb(end);
+       else
+          perturb = perturb*(alpha/perturb(end))*2;
+       end
     end
 end
 % jiggle the perturb values by 1% --> if we're stuck in a recursion
 % of bad perturb values maybe this is enough to break us out
-opt.line_search_args.perturb = perturb .* exp(randn(size(perturb))*0.01);
+perturb = perturb .* exp(randn(size(perturb))*0.01);
+% fix if we exceeded alpha=1.0
+if perturb(end) > 1.0 - eps
+   perturb = perturb/perturb(end);
+end
+opt.line_search_args.perturb = perturb;
+
 % Record the corresponding parameters
 %img.elem_data= exp(img.logCond);
 
