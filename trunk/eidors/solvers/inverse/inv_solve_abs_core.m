@@ -315,8 +315,8 @@ while 1
      dxp = dx; % saved for next iteration if using beta
   end
 
-  % plot SVD of Jacobian (before and after regularization)
-  plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
+  % plot dx and SVD of Jacobian (before and after regularization)
+  plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
 
   % line search for alpha, leaving the final selection as img
   % x_n = img.elem_data
@@ -334,7 +334,7 @@ while 1
   de = update_de(de, img, img0, opt);
   if opt.verbose >= 5
     dvall(:,k+1) = dv;
-    show_meas_err(dvall, data0, k+1, N, W, opt);
+    show_meas_err(dvall, data0, k, N, W, opt);
   end
   show_fem_iter(k, img, inv_model, stop, opt);
 
@@ -381,8 +381,8 @@ end
 
 function show_meas_err(dvall, data0, k, N, W, opt)
    clf;
-   subplot(211); bar(dvall(:,k)); ylabel(sprintf('dv_k [%s]',opt.meas_working)); xlabel('meas #'); title(sprintf('iter %d',k));
-   subplot(212); bar(map_meas(dvall(:,k),N,opt.meas_working, 'voltage')); ylabel('dv_k [V]'); xlabel('meas #'); title('');
+   subplot(211); bar(dvall(:,k+1)); ylabel(sprintf('dv_k [%s]',opt.meas_working)); xlabel('meas #'); title(sprintf('measurement error @ iter=%d',k));
+   subplot(212); bar(map_meas(dvall(:,k+1),N,opt.meas_working, 'voltage')); ylabel('dv_k [V]'); xlabel('meas #'); title('');
    drawnow;
    if isfield(opt,'fig_prefix')
       print('-dpdf',sprintf('%s-meas_err%d',opt.fig_prefix,k));
@@ -479,8 +479,10 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
   if k == 0
      r = ones(opt.max_iterations, 3)*NaN;
      r_km1 = inf;
+     r_1   = inf;
   else
      r_km1 = r(k, 1);
+     r_1   = r(1, 1);
   end
   [r_k m_k e_k] = feval(opt.residual_func, dv, de, W, hp2RtR);
   % save residual for next iteration
@@ -496,7 +498,7 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
         fprintf('    calc residual\n');
         fprintf('      r =%0.3g (%0.03g%%)\n', r_k, r_k/r(1)*100);
         dr = (r_k - r_km1);
-        fprintf('      dr=%0.3g (%0.3g%%)\n', dr, dr/r_km1*100);
+        fprintf('      dr=%0.3g (%0.3g%%)\n', dr, dr/r_1*100);
      end
   end
   if opt.plot_residuals
@@ -518,9 +520,9 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
         legend('Location', 'EastOutside');
         drawnow;
         if isfield(opt,'fig_prefix')
-           print('-dpdf',sprintf('%s-r%d',opt.fig_prefix,k));
-           print('-dpng',sprintf('%s-r%d',opt.fig_prefix,k));
-           saveas(gcf,sprintf('%s-r%d.fig',opt.fig_prefix,k));
+           print('-dpdf',sprintf('%s-r',opt.fig_prefix));
+           print('-dpng',sprintf('%s-r',opt.fig_prefix));
+           saveas(gcf,sprintf('%s-r.fig',opt.fig_prefix));
         end
      end
   end
@@ -543,10 +545,10 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
         fprintf('    residual tolerance (%0.3g) achieved\n', opt.tol + opt.ntol);
      end
      stop = 1;
-  elseif (k >= opt.dtol_iter) && ((r_k - r_km1)/r_km1 > opt.dtol + 2*opt.ntol)
+  elseif (k >= opt.dtol_iter) && ((r_k - r_km1)/r_1 > opt.dtol - 2*opt.ntol)
      if opt.verbose > 1
         fprintf('  terminated at iteration %d (iterations not improving)\n', k);
-        fprintf('    residual slope tolerance (%0.3g%%) exceeded\n', (opt.dtol + 2*opt.ntol)*100);
+        fprintf('    residual slope tolerance (%0.3g%%) exceeded\n', (opt.dtol - 2*opt.ntol)*100);
      end
      stop = 1;
   end
@@ -650,13 +652,14 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    end
    hp2RtR = hp2*RtR;
 
-function plot_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
+function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
    if(opt.verbose >= 5)
       % and try a show_fem with the pixel search direction
       clf;
       imgb=img;
       imgb.elem_data = dx;
       imgb.current_params = opt.elem_working;
+      imgb.is_dx_plot = 1; % hint to show_fem that this is a dx plot (for handling log scale if anything clever is going on)
       if isfield(imgb.inv_model,'rec_model')
          imgb.fwd_model = imgb.inv_model.rec_model;
       end
@@ -787,7 +790,6 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
 
 % opt is only updated for the fwd_solve count
 function [J, opt] = update_jacobian(img, dN, k, opt)
-   k=k+1;
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
    imgb = feval(opt.update_img_func, imgb, opt);
@@ -860,19 +862,22 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
            saveas(gcf,sprintf('%s-J%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
         end
         % and try a show_fem with the pixel sensitivity
-        clf;
-        imgb.elem_data = log(sqrt(sum(D.^2,1)));
-        imgb.current_params = 'log_sensitivity';
-        if isfield(imgb.inv_model,'rec_model')
-           imgb.fwd_model = imgb.inv_model.rec_model;
-        end
-        feval(opt.show_fem,imgb,[]);
-        title(sprintf('sensitivity @ iter=%d',k));
-        drawnow;
-        if isfield(opt,'fig_prefix')
-           print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-           print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-           saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+        try
+           clf;
+           imgb.elem_data = log(sqrt(sum(D.^2,1)));
+           imgb.current_params = 'log_sensitivity';
+           if isfield(imgb.inv_model,'rec_model')
+              imgb.fwd_model = imgb.inv_model.rec_model;
+           end
+           feval(opt.show_fem,imgb,[]);
+           title(sprintf('sensitivity @ iter=%d',k));
+           drawnow;
+           if isfield(opt,'fig_prefix')
+              print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+              print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+              saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+           end
+        catch % no worries if it didn't work... carry on
         end
      end
    end
@@ -1105,12 +1110,12 @@ function show_fem_iter(k, img, inv_model, stop, opt)
      end
   end
   clf; feval(opt.show_fem, img, 1);
-  title(sprintf('iter=%d',k));
+  title(sprintf('x @ iter=%d',k));
   drawnow;
   if isfield(opt,'fig_prefix')
-     print('-dpdf',sprintf('%s-fem%d',opt.fig_prefix,k));
-     print('-dpng',sprintf('%s-fem%d',opt.fig_prefix,k));
-     saveas(gcf,sprintf('%s-fem%d.fig',opt.fig_prefix,k));
+     print('-dpdf',sprintf('%s-x%d',opt.fig_prefix,k));
+     print('-dpng',sprintf('%s-x%d',opt.fig_prefix,k));
+     saveas(gcf,sprintf('%s-x%d.fig',opt.fig_prefix,k));
   end
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
@@ -1310,9 +1315,13 @@ function opt = parse_options(imdl)
       %opt.dtol = +inf;
       opt.dtol = -1e-4; % --> -0.01% slope (really slow)
    end
+   if opt.dtol > 0
+      error('dtol must be less than 0 (residual decreases at every iteration)');
+      % otherwise we won't converge...
+   end
    if ~isfield(opt, 'dtol_iter')
       %opt.dtol_iter = inf; % ignore dtol for dtol_iter iterations
-      opt.dtol_iter = 0; % use dtol from the begining
+      opt.dtol_iter = 0; % use dtol from the beginning
    end
    if ~isfield(opt, 'min_value')
       opt.min_value = -inf; % min elem_data value
