@@ -125,23 +125,63 @@ function [x,y,z,n] = interp_elem(mdl,e,radius, opt)
 
     minnode = min(mdl.nodes(mdl.vox(e,:),:));
     maxnode = max(mdl.nodes(mdl.vox(e,:),:));
-    vec = {};
-    for d = 1:opt.n_dim
-        sep = maxnode(d) - minnode(d);
-        N = max(3, ceil(sep/maxsep)+1);
-        v = linspace(minnode(d),maxnode(d),N);
-        v(end) = [];
-        v = v + .5*(maxnode(d)-minnode(d))/(N-1);
-        vec{d} = v;
-    end
+    
+    sep = maxnode - minnode;
+    N = max(3, ceil(sep/maxsep)+1);
+%     off = .5* sep./(N-1);
+%     minode = minnode + off;
+%     maxnode = maxnode + off;
+
+    vx = linvec(minnode(1),maxnode(1),N(1));
+%     vx = vx + .5*(maxnode(1)-minnode(1))/(N(1)-1);
+    vx = vx + .5*(vx(2) -vx(1));
+        
+    vy = linvec(minnode(2),maxnode(2),N(2));
+%     vy = vy + .5*(maxnode(2)-minnode(2))/(N(2)-1);
+    vy = vy + .5*(vy(2) -vy(1));
+    
+
     switch opt.n_dim
-        case 3
-            [x, y, z] = ndgrid(vec{:});
         case 2
-            [x, y] = ndgrid(vec{:});
+            [x, y] = grid2d(vx,vy);
             z = [];
+        case 3
+            vz = linvec(minnode(3),maxnode(3),N(3));
+%             vz = vz + .5*(maxnode(3)-minnode(3))/(N(3)-1);
+            vz = vz + .5*(vz(2) -vz(1));
+            [x, y, z] = grid3d(vx,vy,vz);
     end
 end
+
+
+function out = linvec(v1, v2, N)
+% equivalent to out= linspace(v1,v2,N); out(end) = []; minus error checking
+out = v1 + (0:(N-2)).*(v2-v1)/(N-1);
+
+end
+
+function [x, y] = grid2d(vx, vy)
+% ndgrid minus overhead, asumes both vx and vy are row vectors
+    vx = vx.';
+    x = repmat(vx,size(vy));
+    y = repmat(vy,size(vx));
+end
+
+function [x, y, z] = grid3d(vx,vy,vz)
+% ndgrid minus overhead
+    sz = [numel(vx) numel(vy) numel(vz)];
+    x = reshape(vx,[sz(1) 1 1]);
+    x = repmat(x,[1 sz(2) sz(3)]);
+    
+    y = reshape(vy,[1 sz(2) 1]);
+    y = repmat(y,[sz(1) 1 sz(3)]);
+    
+    z = reshape(vz,[1 1 sz(3)]);
+    z = repmat(z,[sz(1) sz(2) 1]);
+    
+
+end
+
 
 %-------------------------------------------------------------------------%
 % Find elements where the function value is negligable
@@ -240,14 +280,15 @@ end
 %-------------------------------------------------------------------------%
 % UNIT_TEST
 function do_unit_test
+    eidors_cache off GREIT_desired_img_sigmoid
     v = linspace(-1,1,32);
     mdl= mk_grid_model([],v,v,[0 .7 1:.2:2 2.3 3]);
     opt.rec_model = mdl;
     opt.steepness = @(xyz) 50./xyz(3,:);
     opt.desired_img_radius = @(xyz) xyz(3,:)/5;
-    xyzr = zeros(5,4);
+%     xyzr = zeros(5,4);
+    xyzr(:,3) = .5:.05:2.5;
     xyzr(:,4) = .25;
-    xyzr(:,3) = .5:.5:2.5;
     sol = GREIT_desired_img_sigmoid(xyzr',[],opt);
     img = mk_image(mdl,0);
     for i = 1:5
@@ -256,4 +297,5 @@ function do_unit_test
         show_3d_slices(img,xyzr(i,3),xyzr(i,2),xyzr(i,1));
     end
     eidors_msg('UNIT_TEST: Showed %d images to verify',i,0);
+    eidors_cache on GREIT_desired_img_sigmoid
 end
