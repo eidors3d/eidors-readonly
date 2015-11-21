@@ -74,21 +74,45 @@ function PSF = desired_soln(xyz, radius, opt)
     [Xnodes,Ynodes,Znodes] = voxnodes(mdl);
     
     warned = false;
-    
+    interp_elem_new('reset');
     for i=1:size(xyz,2);
         th = log(1e4)/opt.steepness(i);
         progress_msg(i,num_it);
         farel = far_elems(Xnodes,Ynodes,Znodes, xyz(:,i), radius(i), th);
         el_idx = find(~farel);
-        X = []; Y = []; Z = [];
-        idx = []; factor = [];
+        % start with an initial size
+        STEP = 1000;
+        idx = zeros(STEP,1);
+        factor = zeros(STEP,1);
+        X = zeros(STEP,1);
+        Y = zeros(STEP,1);
+        Z = zeros(STEP,1);
+        L = STEP;
+        N = 1;
+
         for e = el_idx'
-            [x,y,z] = interp_elem(mdl,e,radius(i), opt);
-            X = [X ; x(:)]; Y = [Y ; y(:)]; Z = [Z ; z(:)];
+            [x,y,z] = interp_elem_new(mdl,e,radius(i), opt);
             n = numel(x);
-            idx = [idx; e*ones(n,1)];
-            factor = [factor; ones(n,1)/n];
+            N1 = N; 
+            N = N+n;
+            if N > L % expand arrays as needed
+                fill = zeros(STEP,1);
+                idx = [idx; fill];
+                factor = [factor; fill];
+                X = [X; fill]; Y = [Y; fill]; Z = [Z; fill];
+                L = L + STEP;
+            end
+            v = N1:N-1;
+            idx(v) = e;
+            factor(v) = 1/n;
+            X(v) = x; Y(v) = y; Z(v) = z;
         end
+        % remove spare length
+        v = N:L;
+        idx(v) = [];
+        factor(v) = [];
+        X(v) = []; Y(v) = []; Z(v) = [];
+        
         if isempty(X)
             if ~warned
                warning('EIDORS:OutsidePoint',...
@@ -118,9 +142,12 @@ function [X, Y, Z] = voxnodes(mdl)
     end  
 end
 
-%-------------------------------------------------------------------------%
-% Generate internal points in elements
-function [x,y,z,n] = interp_elem(mdl,e,radius, opt)
+function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
+    persistent N_entries X  Y Z MAP
+    if ischar(mdl) && strcmp(mdl,'reset');
+        N_entries = 0; X = []; Y = []; Z = []; MAP = [];
+        return;
+    end
     maxsep = radius/5;
 
     minnode = min(mdl.nodes(mdl.vox(e,:),:));
@@ -128,16 +155,57 @@ function [x,y,z,n] = interp_elem(mdl,e,radius, opt)
     
     sep = maxnode - minnode;
     N = max(3, ceil(sep/maxsep)+1);
-%     off = .5* sep./(N-1);
-%     minode = minnode + off;
-%     maxnode = maxnode + off;
+    try
+        entry = MAP(N(1),N(2),N(3));
+        x = X{entry};
+        y = Y{entry};
+        z = Z{entry};
+    catch
+        entry = N_entries+1;
+        
+        vx = linvec(0,1,N(1));
+        vx = vx + .5*(vx(2) -vx(1));
+        
+        vy = linvec(0,1,N(2));
+        vy = vy + .5*(vy(2) -vy(1));
+        
+        
+        switch opt.n_dim
+            case 2
+                [x, y] = grid2d(vx,vy);
+                z = [];
+            case 3
+                vz = linvec(0,1,N(3));
+                vz = vz + .5*(vz(2) -vz(1));
+                [x, y, z] = grid3d(vx,vy,vz);
+        end
+        X{entry} = x;
+        Y{entry} = y;
+        Z{entry} = z;
+        N_entries = entry;
+        MAP(N(1),N(2),N(3)) = entry;
+    end
+    x = x*sep(1) + minnode(1);
+    y = y*sep(2) + minnode(2);
+    z = z*sep(3) + minnode(3);
+    
+end
+
+%-------------------------------------------------------------------------%
+% Generate internal points in elements
+function [x,y,z] = interp_elem(mdl,e,radius, opt)
+    maxsep = radius/5;
+
+    minnode = min(mdl.nodes(mdl.vox(e,:),:));
+    maxnode = max(mdl.nodes(mdl.vox(e,:),:));
+    
+    sep = maxnode - minnode;
+    N = max(3, ceil(sep/maxsep)+1);
 
     vx = linvec(minnode(1),maxnode(1),N(1));
-%     vx = vx + .5*(maxnode(1)-minnode(1))/(N(1)-1);
     vx = vx + .5*(vx(2) -vx(1));
         
     vy = linvec(minnode(2),maxnode(2),N(2));
-%     vy = vy + .5*(maxnode(2)-minnode(2))/(N(2)-1);
     vy = vy + .5*(vy(2) -vy(1));
     
 
@@ -147,7 +215,6 @@ function [x,y,z,n] = interp_elem(mdl,e,radius, opt)
             z = [];
         case 3
             vz = linvec(minnode(3),maxnode(3),N(3));
-%             vz = vz + .5*(maxnode(3)-minnode(3))/(N(3)-1);
             vz = vz + .5*(vz(2) -vz(1));
             [x, y, z] = grid3d(vx,vy,vz);
     end
@@ -287,7 +354,7 @@ function do_unit_test
     opt.steepness = @(xyz) 50./xyz(3,:);
     opt.desired_img_radius = @(xyz) xyz(3,:)/5;
 %     xyzr = zeros(5,4);
-    xyzr(:,3) = .5:.05:2.5;
+    xyzr(:,3) = .5:.5:2.5;
     xyzr(:,4) = .25;
     sol = GREIT_desired_img_sigmoid(xyzr',[],opt);
     img = mk_image(mdl,0);
