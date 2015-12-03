@@ -1081,12 +1081,12 @@ end
    end
 
    len = floor( (filelen-offset1)/SPC ) - 1;
-   vd= zeros(512,len);
+   vd= zeros(600,len);
    ss= offset1 + (0:len)*SPC;
 
    for k= 1:length(ss);
       if fseek(fid,ss(k),-1)<0; break; end
-      vd(:,k)=fread(fid,512,'double', 0, 'ieee-le');
+      vd(:,k)=fread(fid,600,'double', 0, 'ieee-le');
    end
 
    % End of function
