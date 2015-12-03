@@ -103,6 +103,10 @@ switch fmt
       auxdata.volt    = volt;
 
       stim = basic_stim(16);
+
+      if strcmp(lower(format),'get-raw')
+          vv= rawdata(1:208,:);
+      end
    case 'draeger-get'
       vv = draeger_get_readdata( fname );
 
@@ -190,6 +194,11 @@ function fmt = pre_proc_spec_fmt( format, fname );
          fmt= 'mceit';
       end
    end
+
+   if strcmp(fmt,'get-raw')
+      fmt= 'mceit';
+   end
+   
 
    if strcmp(fmt,'eit')
       draeger =   is_eit_file_a_draeger_file( fname );
