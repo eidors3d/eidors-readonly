@@ -96,7 +96,7 @@ auxdata = []; % default, can be overriden if the format has it
 fmt = pre_proc_spec_fmt( format, fname );
 switch fmt
    case 'mceit';
-      [vv,curr,volt,auxdata_out,auxtime] = mceit_readdata( fname );
+      [vv,curr,volt,auxdata_out,auxtime,rawdata] = mceit_readdata( fname );
       auxdata.auxdata = auxdata_out;
       auxdata.auxtime = auxtime;
       auxdata.curr    = curr;
@@ -307,12 +307,13 @@ function [vv,curr,volt,auxdata] = draeger_get_readdata( fname );
      if isempty(line)
         emptyctr= emptyctr+1;
      else
-        eidors_msg(line,0);
+        eidors_msg('data not understood',0);
         emptyctr=0;
      end
    end
    d= fread(fid,inf,'float',0,'ieee-le');
    fclose(fid);
+pause
 
    if rem( length(d), 256) ~=0
       eidors_msg('File length strange - cropping file',0);
@@ -387,7 +388,7 @@ function vv = sheffield_readdata( fname );
 
    
 
-function [vv,curr,volt,auxdata,auxtime] = mceit_readdata( fname );
+function [vv,curr,volt,auxdata,auxtime,rawdata] = mceit_readdata( fname );
 
    fid= fopen(fname,'rb');
    d= fread(fid,inf,'float');
@@ -399,6 +400,7 @@ function [vv,curr,volt,auxdata,auxtime] = mceit_readdata( fname );
    end
 
    dd= reshape( d, 256, length(d)/256);
+   rawdata = dd;
    no_reciprocity = (dd(39,1)==0);      %104 measurements per frame
    if no_reciprocity
        dd=transfer104_208(dd);
