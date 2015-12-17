@@ -14,13 +14,14 @@ function imdl = mk_GN_model(img, opt, lambda)
 %     RtRprior      - desired regularization prior:
 %                     'laplace' (default), 'noser' or 'tikhonov'
 %     noise_figure - the noise figure (NF) to achieve. 
+%     meas_icov    - the inverse of the noise covariance matrix.
 %   lambda    - set a fixed hyperparameter, if empty (default value) 
 %               the hyperparameter is chosen acording to the desired noise figure
 %
 % See also MK_GREIT_MODEL (from which this script was adapted)
 %
 
-% Author: Fabian Braun <fbn@csem.ch>, 22/04/2015
+% Author: Fabian Braun <fbn(ät)csem{dot}ch>, 22/04/2015
 % See also CALC_GREIT_RM
 %
 
@@ -78,6 +79,11 @@ function imdl = mk_GN_model(img, opt, lambda)
         error(['undefined prior: ', opt.RtRprior]);
     end 
     
+    % assign inverse noise covariance matrix
+    if ~isempty(opt.meas_icov)
+        imdl.meas_icov = opt.meas_icov;
+    end
+    
     %% determine hyperparameter (either via noise figure or set manually)
     if ~isempty(opt.noise_figure)        
         %% take the four elements closest to the center (taken from select_imdl) 
@@ -95,9 +101,9 @@ function imdl = mk_GN_model(img, opt, lambda)
         sv_log = eidors_msg('log_level'); eidors_msg('log_level', 2);
         imdl.hyperparameter.value = choose_noise_figure( imdl );
         eidors_msg('log_level', sv_log);
-    elseif ~isempty(opt.distinguishability)       
-        imdl.hyperparameter.distinguishability = opt.distinguishability;
-        imdl.hyperparameter.value = choose_distinguishability(imdl);
+    elseif ~isempty(opt.image_SNR)       
+        imdl.hyperparameter.image_SNR = opt.image_SNR;
+        imdl.hyperparameter.value = choose_image_SNR(imdl);
     else
         imdl.hyperparameter.value = lambda;
     end
@@ -120,7 +126,9 @@ function opt = parse_options(opt,fmdl,imdl)
     
     if ~isfield(opt, 'noise_figure'), opt.noise_figure = []; end
     
-    if ~isfield(opt, 'distinguishability'), opt.distinguishability = []; end
+    if ~isfield(opt, 'meas_icov'), opt.meas_icov = []; end
+    
+    if ~isfield(opt, 'image_SNR'), opt.image_SNR = []; end
     
     % prior type for regularization 
     if ~isfield(opt, 'RtRprior')
