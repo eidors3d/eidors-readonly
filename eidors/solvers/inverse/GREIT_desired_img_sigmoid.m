@@ -155,6 +155,9 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
     
     sep = maxnode - minnode;
     N = max(3, ceil(sep/maxsep)+1);
+    if numel(N) == 2
+       N(3) = 1;
+    end
     try
         entry = MAP(N(1),N(2),N(3));
         x = X{entry};
@@ -173,7 +176,7 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
         switch opt.n_dim
             case 2
                 [x, y] = grid2d(vx,vy);
-                z = [];
+                z = zeros(size(x));
             case 3
                 vz = linvec(0,1,N(3));
                 vz = vz + .5*(vz(2) -vz(1));
@@ -187,7 +190,9 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
     end
     x = x*sep(1) + minnode(1);
     y = y*sep(2) + minnode(2);
-    z = z*sep(3) + minnode(3);
+    if opt.n_dim == 3
+       z = z*sep(3) + minnode(3);
+    end
     
 end
 
@@ -309,6 +314,7 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     mdl = opt.rec_model; % must exist
     opt.n_dim = size(mdl.nodes,2);
     xyz = xyz(1:opt.n_dim, :); % ingore z if model is 2D
+
     
 
     opt.meshsz = [];
@@ -342,6 +348,11 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     if numel(radius) == 1
         radius = ones(1,size(xyz,2)) * radius;
     end
+    
+    if opt.n_dim == 2
+       xyz(3,:) = 0;
+    end
+    
 end
 
 %-------------------------------------------------------------------------%
