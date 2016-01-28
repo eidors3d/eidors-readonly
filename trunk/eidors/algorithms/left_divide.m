@@ -64,11 +64,24 @@ catch
       if isempty(V); V= zeros(sz); end
    end
 
+   ver = eidors_obj('interpreter_version'); % Matlab2013 renamed cholinc -> ichol
    if isreal(E)
-      U = cholinc(E,tol*100); L = U'; 
+      opts.droptol = tol*100;
+      opt.type = 'ict';
+      if ver.isoctave || ver.ver < 7.012
+         U = cholinc(E, opt.droptol);
+      else
+         U = ichol(E, opt);
+      end
+      L = U';
       cgsolver = @pcg;
    else %Complex
-      [L,U] = luinc(E,tol/10);
+      opts.droptol = tol/10;
+      if ver.isoctave || ver.ver < 7.012 % Matlab2007 introduced ilu, luinc has now been dropped
+         [L,U] = luinc(E, opt.droptol);
+      else
+         [L,U] = ilu(E, opt);
+      end
       cgsolver = @bicgstab;
    end
 
