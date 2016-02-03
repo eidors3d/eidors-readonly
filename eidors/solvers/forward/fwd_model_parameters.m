@@ -155,6 +155,7 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
        try
            elec_nodes = fwd_model.electrode(i).nodes;
        catch
+           eidors_msg('Warning: electrode %d has no nodes',i);
            break; %Not a real electrode so don't include
        end
        if length(elec_nodes) ==1 % point electrode (maybe inside body)
