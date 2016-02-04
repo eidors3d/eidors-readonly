@@ -1,8 +1,9 @@
-function img= inv_solve_abs_core( inv_model, data0, data1);
-%INV_SOLVE_ABS_CORE Absolute solver using a generic iterative algorithm
+function img= inv_solve_core( inv_model, data0, data1);
+%INV_SOLVE_CORE Solver using a generic iterative algorithm
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
 % data0      => EIT data
+% data0, data1 => difference EIT data
 %
 % This function is parameterized and uses function pointers where possible to
 % allow its use as a general iterative solver framework. There are a large
@@ -15,7 +16,7 @@ function img= inv_solve_abs_core( inv_model, data0, data1);
 %
 % Argument matrices to the internal functions (measurement inverse covariance,
 % for example) are only calculated if required. Functions that are supplied to
-% this INV_SOLVE_ABS_CORE must be able to survive being probed: they will have
+% this INV_SOLVE_CORE must be able to survive being probed: they will have
 % each parameter set to either 0 or 1 to determine if the function is sensitive
 % to that argument. This works cleanly for most matrix multiplication based
 % functions but for more abstract code, some handling of this behaviour may
@@ -28,7 +29,7 @@ function img= inv_solve_abs_core( inv_model, data0, data1);
 % deprecated legacy parameters, some of which formerly existed under
 % 'inv_model.parameters.*'.
 %
-% Parameters (inv_model.inv_solve_abs_core.*):
+% Parameters (inv_model.inv_solve_core.*):
 %   verbose (show progress)                (default 4)
 %      0: quiet
 %    >=1: print iteration count
@@ -230,8 +231,8 @@ function img= inv_solve_abs_core( inv_model, data0, data1);
 
 %--------------------------
 % UNIT_TEST?
-if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); do_unit_test; return; end
-if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); do_unit_test(data0); return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); img=do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img=do_unit_test(data0); return; end
 
 %--------------------------
 opt = parse_options(inv_model);
@@ -385,20 +386,20 @@ end
 img = map_img(img, opt.elem_output);
 img.meas_err = dv;
 if opt.return_working_variables
-  img.inv_solve_abs_core.J = J;
-  img.inv_solve_abs_core.dx = dx;
-  img.inv_solve_abs_core.sx = sx;
-  img.inv_solve_abs_core.alpha = alpha_all;
-  img.inv_solve_abs_core.beta = beta_all;
-  img.inv_solve_abs_core.k = k;
-  img.inv_solve_abs_core.r = r(1:(k+1),:); % trim r to n-iterations' rows
-  img.inv_solve_abs_core.N = N;
-  img.inv_solve_abs_core.W = W;
-  img.inv_solve_abs_core.hp2RtR = hp2RtR;
-  img.inv_solve_abs_core.dv = dv;
-  img.inv_solve_abs_core.de = de;
+  img.inv_solve_core.J = J;
+  img.inv_solve_core.dx = dx;
+  img.inv_solve_core.sx = sx;
+  img.inv_solve_core.alpha = alpha_all;
+  img.inv_solve_core.beta = beta_all;
+  img.inv_solve_core.k = k;
+  img.inv_solve_core.r = r(1:(k+1),:); % trim r to n-iterations' rows
+  img.inv_solve_core.N = N;
+  img.inv_solve_core.W = W;
+  img.inv_solve_core.hp2RtR = hp2RtR;
+  img.inv_solve_core.dv = dv;
+  img.inv_solve_core.de = de;
   if opt.verbose >= 5
-    img.inv_solve_abs_core.dvall = dvall;
+    img.inv_solve_core.dvall = dvall;
   end
 end
 %img = data_mapper(img, 1); % move data from img.elem_data to whatever 'params'
@@ -630,7 +631,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    % add a test function to determine if img.elem_data affects RtR, skip this if independant
    % TODO we could detect in the opt_parsing whether the calc_RtR_prior depends on 'x' and skip this if no
    if ~opt.calc_RtR_prior
-      error('no RtR calculation mechanism, set imdl.inv_solve_abs_core.RtR_prior or imdl.RtR_prior');
+      error('no RtR calculation mechanism, set imdl.inv_solve_core.RtR_prior or imdl.RtR_prior');
    end
    if opt.verbose > 1
       disp('    calc hp^2 R^t R');
@@ -1222,41 +1223,14 @@ function residual = meas_residual(dv, de, W, hp2RtR)
 %     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
 %   end
 
-function imdl = deprecate_imdl_opt(imdl,opt)
-   if ~isfield(imdl, opt)
-      return;
-   end
-   if ~isstruct(imdl.(opt))
-      error(['unexpected inv_model.' opt ' where ' opt ' is not a struct... i do not know what to do']);
-   end
-
-   % warn on anything but inv_model.inv_solve.calc_solution_error
-   Af = fieldnames(imdl.(opt));
-   if ~strcmp(opt, 'inv_solve') || (length(Af(:)) ~= 1) || ~strcmp(Af(:),'calc_solution_error')
-      disp(imdl)
-      disp(imdl.(opt))
-      warning('EIDORS:deprecatedParameters',['INV_SOLVE inv_model.' opt '.* are deprecated in favor of inv_model.inv_solve_abs_core.* as of 30-Apr-2014.']);
-   end
-
-   if ~isfield(imdl, 'inv_solve_abs_core')
-      imdl.inv_solve_abs_core = imdl.(opt);
-   else % we merge
-      % merge struct trick from:
-      %  http://stackoverflow.com/questions/38645
-      for i = fieldnames(imdl.(opt))'
-         imdl.inv_solve_abs_core.(i{1})=imdl.(opt).(i{1});
-      end
-   end
-   imdl = rmfield(imdl, opt);
-
 function opt = parse_options(imdl)
    % merge legacy options locations
 %   imdl = deprecate_imdl_opt(imdl, 'parameters');
 %   imdl = deprecate_imdl_opt(imdl, 'inv_solve');
 
    % for any general options
-   if isfield(imdl, 'inv_solve_abs_core')
-      opt = imdl.inv_solve_abs_core;
+   if isfield(imdl, 'inv_solve_core')
+      opt = imdl.inv_solve_core;
    else
       opt = struct;
    end
@@ -1267,7 +1241,7 @@ function opt = parse_options(imdl)
    % 2: print details as the algorithm progresses
    if ~isfield(opt,'verbose')
       opt.verbose = 4;
-      fprintf('  inv_model.inv_solve_abs_core.verbosity not set; defaulting to verbosity=4. See help for details.\n');
+      fprintf('  inv_model.inv_solve_core.verbosity not set; defaulting to verbosity=4. See help for details.\n');
    end
    if opt.verbose > 1
       fprintf('  setting default parameters\n');
@@ -1364,7 +1338,7 @@ function opt = parse_options(imdl)
    end
    if opt.plot_residuals ~= 0
       disp('  residual plot (updated per iteration) are enabled, to disable them set');
-      disp('    inv_model.inv_solve_abs_core.plot_residuals=0');
+      disp('    inv_model.inv_solve_core.plot_residuals=0');
    end
 
    % line search
@@ -1412,7 +1386,7 @@ function opt = parse_options(imdl)
    % some help on how to turn off the line search plots if we don't want to see them
    if opt.line_search_args.plot ~= 0
       disp('  line search plots (per iteration) are enabled, to disable them set');
-      disp('    inv_model.inv_solve_abs_core.line_search_args.plot=0');
+      disp('    inv_model.inv_solve_core.line_search_args.plot=0');
    end
 
    % background
@@ -1465,7 +1439,7 @@ function opt = parse_options(imdl)
          length(opt.elem_prior) == 1
          opt.prior_data = {imdl.jacobian_bkgnd.value};
       else
-         error('requires inv_model.inv_solve_abs_core.prior_data');
+         error('requires inv_model.inv_solve_core.prior_data');
       end
    end
 
@@ -1478,7 +1452,7 @@ function opt = parse_options(imdl)
             opt.elem_len = { size(imdl.fwd_model.elems,1) };
          end
       else
-        error('requires inv_model.inv_solve_abs_core.elem_len');
+        error('requires inv_model.inv_solve_core.elem_len');
       end
    end
 
@@ -1505,7 +1479,7 @@ function opt = parse_options(imdl)
    elseif isfield(imdl.fwd_model, 'jacobian')
       imdl.fwd_model
       imdl
-      error('inv_model.fwd_model.jacobian and inv_model.inv_solve_abs_core.jacobian should not both exist: it''s ambiguous');
+      error('inv_model.fwd_model.jacobian and inv_model.inv_solve_core.jacobian should not both exist: it''s ambiguous');
    end
    % defaul hyperparameter is 1
    if ~isfield(opt, 'hyperparameter')
@@ -1555,14 +1529,14 @@ function opt = parse_options(imdl)
          opt.RtR_prior = {imdl.RtR_prior};
       else
          opt.RtR_prior = {[]}; % null matrix (all zeros)
-         warning('missing imdl.inv_solve_abs_core.RtR_prior or imdl.RtR_prior: assuming NO regularization RtR=0');
+         warning('missing imdl.inv_solve_core.RtR_prior or imdl.RtR_prior: assuming NO regularization RtR=0');
       end
    end
    % bit of a make work project but if its actually a full numeric matrix we
    % canoncialize it by breaking it up into the blockwise components
    if isnumeric(opt.RtR_prior)
       if size(opt.RtR_prior, 1) ~= size(opt.RtR_prior, 2)
-         error('expecting square matrix for imdl.RtR_prior or imdl.inv_solve_abs_core.RtR_prior');
+         error('expecting square matrix for imdl.RtR_prior or imdl.inv_solve_core.RtR_prior');
       end
       if length(opt.RtR_prior) == 1
          opt.RtR_prior = {opt.RtR_prior}; % encapsulate directly into a cell array
@@ -1589,11 +1563,11 @@ function opt = parse_options(imdl)
    if any(size(opt.RtR_prior) ~= ([1 1]*length(opt.elem_len)))
       if (size(opt.RtR_prior, 1) ~= 1) && ...
          (size(opt.RtR_prior, 2) ~= 1)
-         error('odd imdl.RtR_prior or imdl.inv_solve_abs_core.RtR_prior, cannot figure out how to expand it blockwise');
+         error('odd imdl.RtR_prior or imdl.inv_solve_core.RtR_prior, cannot figure out how to expand it blockwise');
       end
       if (size(opt.RtR_prior, 1) ~= length(opt.elem_len)) && ...
          (size(opt.RtR_prior, 2) ~= length(opt.elem_len))
-         error('odd imdl.RtR_prior or imdl.inv_solve_abs_core.RtR_prior, not enough blockwise components vs. elem_working types');
+         error('odd imdl.RtR_prior or imdl.inv_solve_core.RtR_prior, not enough blockwise components vs. elem_working types');
       end
       RtR_diag = opt.RtR_prior;
       opt.RtR_prior = {[]}; % delete and start again
@@ -2120,13 +2094,14 @@ function b = map_meas(b, N, in, out)
 function x=range(y)
 x=max(y)-min(y);
 
-function do_unit_test(solver)
+function pass=do_unit_test(solver)
+   pass=1;
    if nargin == 0
-      solver = 'inv_solve_abs_core';
-   end
-   if length(solver < 9) || ~strcmp(solver(1:9),'inv_solve')
+      solver = 'inv_solve_core';
+      test = 'all'
+   elseif ((length(solver) < 9) || ~strcmp(solver(1:9),'inv_solve'))
       test = solver;
-      solver = 'inv_solve_abs_core';
+      solver = 'inv_solve_core';
    else
       test = 'all'
    end
@@ -2155,9 +2130,9 @@ function do_unit_test(solver)
 
 function [imdl, vh, imgi, vi] = unit_test_imdl()
    imdl = mk_geophysics_model('h2c',32);
-   imdl.solve = 'inv_solve_abs_core';
-   imdl.inv_solve_abs_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
-   imdl.inv_solve_abs_core.verbose = 0;
+   imdl.solve = 'inv_solve_core';
+   imdl.inv_solve_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
+   imdl.inv_solve_core.verbose = 0;
    imdl.reconst_type = 'difference';
    imgh = mk_image(imdl,1);
    vh = fwd_solve(imgh);
@@ -2182,8 +2157,8 @@ function do_unit_test_diff()
    img_abs = inv_solve(imdl,vi);
    imdl.reconst_type = 'difference';
    img_itr = inv_solve(imdl,vh,vi);
-   imdl.inv_solve_abs_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
-   imdl.inv_solve_abs_core.line_search_func = @ret1_func;
+   imdl.inv_solve_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
+   imdl.inv_solve_core.line_search_func = @ret1_func;
    img_it1 = inv_solve(imdl,vh,vi);
    imdl.solve = 'inv_solve_diff_GN_one_step';
    img_gn1 = inv_solve(imdl,vh,vi);
@@ -2288,12 +2263,12 @@ function do_unit_test_rec1(solver)
 [imdl, imgi, vh, vi] = unit_test_imdl();
 imdl.solve = solver;
 imdl.reconst_type = 'absolute';
-imdl.inv_solve_abs_core.prior_data = 1;
-imdl.inv_solve_abs_core.elem_prior = 'conductivity';
-imdl.inv_solve_abs_core.elem_working = 'log_conductivity';
-imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
-imdl.inv_solve_abs_core.calc_solution_error = 0;
-imdl.inv_solve_abs_core.verbose = 0;
+imdl.inv_solve_core.prior_data = 1;
+imdl.inv_solve_core.elem_prior = 'conductivity';
+imdl.inv_solve_core.elem_working = 'log_conductivity';
+imdl.inv_solve_core.meas_working = 'apparent_resistivity';
+imdl.inv_solve_core.calc_solution_error = 0;
+imdl.inv_solve_core.verbose = 0;
 
 imgp = map_img(imgi, 'log10_conductivity');
 % add noise
@@ -2305,11 +2280,11 @@ img1= inv_solve(imdl, vi);
 % -------------
 disp('TEST: previous solved at default verbosity');
 disp('TEST: now solve same at verbosity=0 --> should be silent');
-imdl.inv_solve_abs_core.verbose = 0;
-%imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
+imdl.inv_solve_core.verbose = 0;
+%imdl.inv_solve_core.meas_working = 'apparent_resistivity';
 img2= inv_solve(imdl, vi);
 % -------------
-imdl.inv_solve_abs_core.elem_output = 'log10_resistivity'; % resistivity output works
+imdl.inv_solve_core.elem_output = 'log10_resistivity'; % resistivity output works
 img3= inv_solve(imdl, vi);
 
 disp('TEST: try coarse2fine mapping with background');
@@ -2320,8 +2295,8 @@ imdl.rec_model.elems(x-y > 300, :) = [];
 c2f = mk_approx_c2f(imdl.fwd_model,imdl.rec_model);
 imdl.fwd_model.coarse2fine = c2f;
 % solve
-%imdl.inv_solve_abs_core.verbose = 10;
-imdl.inv_solve_abs_core.elem_output = 'conductivity';
+%imdl.inv_solve_core.verbose = 10;
+imdl.inv_solve_core.elem_output = 'conductivity';
 img4= inv_solve(imdl, vi);
 
 clf; subplot(221); h=show_fem(imgp,1); set(h,'EdgeColor','none'); axis tight; title('synthetic data, logC');
@@ -2351,14 +2326,14 @@ nt = length(imdl.fwd_model.elems);
 imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 % specify the units to work in
-imdl.inv_solve_abs_core.meas_input   = 'voltage';
-imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
-imdl.inv_solve_abs_core.elem_prior   = {   'conductivity'   };
-imdl.inv_solve_abs_core.prior_data   = {        1           };
-imdl.inv_solve_abs_core.elem_working = {'log_conductivity'};
-imdl.inv_solve_abs_core.elem_output  = {'log10_conductivity'};
-imdl.inv_solve_abs_core.calc_solution_error = 0;
-imdl.inv_solve_abs_core.verbose = 0;
+imdl.inv_solve_core.meas_input   = 'voltage';
+imdl.inv_solve_core.meas_working = 'apparent_resistivity';
+imdl.inv_solve_core.elem_prior   = {   'conductivity'   };
+imdl.inv_solve_core.prior_data   = {        1           };
+imdl.inv_solve_core.elem_working = {'log_conductivity'};
+imdl.inv_solve_core.elem_output  = {'log10_conductivity'};
+imdl.inv_solve_core.calc_solution_error = 0;
+imdl.inv_solve_core.verbose = 0;
 imdl.hyperparameter.value = 0.1;
 
 % set homogeneous conductivity and simulate
@@ -2390,15 +2365,15 @@ figure(hh); subplot(222);
 disp('TEST: conductivity + movement');
 imdl.fwd_model = rmfield(imdl.fwd_model, 'jacobian');
 % specify the units to work in
-imdl.inv_solve_abs_core.elem_prior   = {   'conductivity'   , 'movement'};
-imdl.inv_solve_abs_core.prior_data   = {        1           ,     0     };
-imdl.inv_solve_abs_core.RtR_prior    = {     @eidors_default, @prior_movement_only};
-imdl.inv_solve_abs_core.elem_len     = {       nt           ,   ne*2    };
-imdl.inv_solve_abs_core.elem_working = {  'log_conductivity', 'movement'};
-imdl.inv_solve_abs_core.elem_output  = {'log10_conductivity', 'movement'};
-imdl.inv_solve_abs_core.jacobian     = { @jacobian_adjoint  , @jacobian_movement_only};
-imdl.inv_solve_abs_core.hyperparameter = {   [1 1.1 0.9]    ,  sqrt(2e-3)     }; % multiplied by imdl.hyperparameter.value
-imdl.inv_solve_abs_core.verbose = 0;
+imdl.inv_solve_core.elem_prior   = {   'conductivity'   , 'movement'};
+imdl.inv_solve_core.prior_data   = {        1           ,     0     };
+imdl.inv_solve_core.RtR_prior    = {     @eidors_default, @prior_movement_only};
+imdl.inv_solve_core.elem_len     = {       nt           ,   ne*2    };
+imdl.inv_solve_core.elem_working = {  'log_conductivity', 'movement'};
+imdl.inv_solve_core.elem_output  = {'log10_conductivity', 'movement'};
+imdl.inv_solve_core.jacobian     = { @jacobian_adjoint  , @jacobian_movement_only};
+imdl.inv_solve_core.hyperparameter = {   [1 1.1 0.9]    ,  sqrt(2e-3)     }; % multiplied by imdl.hyperparameter.value
+imdl.inv_solve_core.verbose = 0;
 
 % electrode positions before
 nn = [imgsrc.fwd_model.electrode(:).nodes];
@@ -2467,14 +2442,14 @@ imdl.solve = solver;
 imdl.hyperparameter.value = 1e2; % was 0.1
 
 imdl.reconst_type = 'absolute';
-imdl.inv_solve_abs_core.elem_working = 'log_conductivity';
-imdl.inv_solve_abs_core.elem_output = 'log10_resistivity';
-imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
-imdl.inv_solve_abs_core.dtol_iter = 4; % default 1 -> start checking on the first iter
-imdl.inv_solve_abs_core.max_iterations = 20; % default 10
-imdl.inv_solve_abs_core.calc_solution_error = 0;
-imdl.inv_solve_abs_core.verbose = 10;
-imgr= inv_solve_abs_core(imdl, vi);
+imdl.inv_solve_core.elem_working = 'log_conductivity';
+imdl.inv_solve_core.elem_output = 'log10_resistivity';
+imdl.inv_solve_core.meas_working = 'apparent_resistivity';
+imdl.inv_solve_core.dtol_iter = 4; % default 1 -> start checking on the first iter
+imdl.inv_solve_core.max_iterations = 20; % default 10
+imdl.inv_solve_core.calc_solution_error = 0;
+imdl.inv_solve_core.verbose = 10;
+imgr= inv_solve_core(imdl, vi);
 
 clf; show_fem(imgr,1);
 img = mk_image( imdl );
