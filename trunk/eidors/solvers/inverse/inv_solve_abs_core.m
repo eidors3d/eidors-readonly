@@ -269,7 +269,11 @@ img = map_img(img, opt.elem_working);
 if nargin == 3
    % dv = (meas1 - meas0) + meas@backgnd
    nil = struct;
-   nil.meas = data0*0;
+   if isstruct(data0)
+      nil.meas = data0.meas*0;
+   else
+      nil.meas = data0*0;
+   end
    nil.type = 'data';
    nil.current_params = opt.meas_input;
    [dv, opt, err] = update_dv_core(img, nil, 1, opt);

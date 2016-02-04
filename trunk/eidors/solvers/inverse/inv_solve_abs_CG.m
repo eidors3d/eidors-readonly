@@ -1,4 +1,4 @@
-function img= inv_solve_abs_CG( inv_model, data1);
+function img= inv_solve_abs_CG( inv_model, data1, data2);
 %function img= inv_solve_abs_CG( inv_model, data1);
 % INV_SOLVE_ABS_CG
 % This function calls INV_SOLVE_ABS_CORE to find a Conjugate-Gradient
@@ -51,16 +51,20 @@ if isfield(inv_model, 'inv_solve_abs_CG')
    inv_model = rmfield(inv_model, 'inv_solve_abs_CG');
 end
 
-img = inv_solve_abs_core(inv_model, data1);
+if nargin > 2
+   img = inv_solve_abs_core(inv_model, data1, data2);
+else
+   img = inv_solve_abs_core(inv_model, data1);
+end
 
 if isfield(img, 'inv_solve_abs_core')
   img.inv_solve_abs_CG = img.inv_solve_abs_core;
   img=rmfield(img, 'inv_solve_abs_core');
 end
 
-function dx = CG_update(J, W, hp2RtR, dv, de)
+function dx = CG_update(J, W, hp2RtR, dv, de, opt)
 %  % the actual update
-  dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
+  dx = -(J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
 %   dx = J'*dv;
 
 % Fletcher-Reeves

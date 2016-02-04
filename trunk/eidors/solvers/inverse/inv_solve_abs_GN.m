@@ -1,4 +1,4 @@
-function img= inv_solve_abs_GN( inv_model, data1);
+function img= inv_solve_abs_GN( inv_model, data1, data2);
 %function img= inv_solve_abs_GN( inv_model, data1);
 % INV_SOLVE_ABS_GN
 % This function calls INV_SOLVE_ABS_CORE to find a Gauss-Newton
@@ -46,7 +46,11 @@ if isfield(inv_model, 'inv_solve_abs_GN')
    inv_model = rmfield(inv_model, 'inv_solve_abs_GN');
 end
 
-img = inv_solve_abs_core(inv_model, data1);
+if nargin > 2
+  img = inv_solve_abs_core(inv_model, data1, data2);
+else
+  img = inv_solve_abs_core(inv_model, data1);
+end
 
 if isfield(img, 'inv_solve_abs_core')
   img.inv_solve_abs_GN = img.inv_solve_abs_core;
