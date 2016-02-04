@@ -1,4 +1,4 @@
-function img= inv_solve_abs_core( inv_model, data0);
+function img= inv_solve_abs_core( inv_model, data0, data1);
 %INV_SOLVE_ABS_CORE Absolute solver using a generic iterative algorithm
 % img        => output image (or vector of images)
 % inv_model  => inverse model struct
@@ -223,7 +223,7 @@ function img= inv_solve_abs_core( inv_model, data0);
 %           INV_SOLVE_ABS_CG, INV_SOLVE_ABS_CG_LOGC,
 %           LINE_SEARCH_O2, LINE_SEARCH_ONM2
 %
-% (C) 2010-2014 Alistair Boyle, Nolwenn Lesparre, Andy Adler, Bartłomiej Grychtol.
+% (C) 2010-2016 Alistair Boyle, Nolwenn Lesparre, Andy Adler, Bartłomiej Grychtol.
 % License: GPL version 2 or version 3
 
 % $Id$
@@ -264,6 +264,23 @@ img = init_elem_data(img, opt);
 % map data and measurements to working types
 %  convert elem_data
 img = map_img(img, opt.elem_working);
+
+% solve for difference data?
+if nargin == 3
+   % dv = (meas1 - meas0) + meas@backgnd
+   nil = struct;
+   nil.meas = data0*0;
+   nil.type = 'data';
+   nil.current_params = opt.meas_input;
+   [dv, opt, err] = update_dv_core(img, nil, 1, opt);
+   data0 = calc_difference_data( data0, data1, inv_model.fwd_model) + dv;
+   assert(strcmp(inv_model.reconst_type, 'difference'), ...
+          ['expected inv_model.reconst_type = ''difference'' not ' inv_model.reconst_type]);
+else
+   assert(strcmp(inv_model.reconst_type, 'absolute'), ...
+          ['expected inv_model.reconst_type = ''absolute'' not ' inv_model.reconst_type]);
+end
+
 %  convert measurement data
 if ~isstruct(data0)
    d = data0;
@@ -358,6 +375,9 @@ if opt.verbose > 1
            opt.fwd_solutions, k, itrs);
 end
 % convert data for output
+if strcmp(inv_model.reconst_type, 'difference')
+   img.elem_data = img.elem_data - img0.elem_data;
+end
 img = map_img(img, opt.elem_output);
 img.meas_err = dv;
 if opt.return_working_variables
@@ -611,7 +631,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
    if opt.verbose > 1
       disp('    calc hp^2 R^t R');
    end
-   hp2  = calc_hyperparameter( inv_model ); % = \lambda^2
+   hp2 = calc_hyperparameter( inv_model )^2; % = \lambda^2
    net = sum([opt.elem_len{:}]); % Number of Elements, Total
    RtR = sparse(net,net); % init RtR = sparse(zeros(net,net));
    esi = 0; eei = 0; % element start, element end
@@ -1066,7 +1086,8 @@ function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    end
    data = fwd_solve(img);
    opt.fwd_solutions = opt.fwd_solutions +1;
-   dv = calc_difference_data(data, data0, img.fwd_model);
+   dv = calc_difference_data(data0, data, img.fwd_model);
+%   clf;subplot(211); h=show_fem(img,1); set(h,'EdgeColor','none'); subplot(212); xx=1:length(dv); plot(xx,[data0.meas,data.meas,dv]); legend('d0','d1','dv'); drawnow; pause(1);
    if nargout >= 3
       err = norm(dv)/norm(data0.meas);
    else
@@ -1678,7 +1699,6 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    if(opt.verbose > 1)
       fprintf( '    calc step size dx\n');
    end
-
    % don't penalize for fixed elements
    de(opt.elem_fixed) = 0;
 
@@ -1713,7 +1733,7 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
 function dx = GN_update(J, W, hp2RtR, dv, de, opt)
    try
       % the actual update
-      dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de); % LU decomp
+      dx = -(J'*W*J + hp2RtR)\(J'*W*dv + hp2RtR*de); % LU decomp
    catch ME % boom
       tol = 1e-6; % default 1e-6
       maxit = []; % default [] --> min(n,20)
@@ -1722,8 +1742,8 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
 
       % try Preconditioned Conjugate Gradient: A x = b, solve for x
       % avoids J'*J for n x m matrix with large number of m cols --> J'*J becomes an m x m dense matrix
-      LHS = @(x) J'*(W*(J*x)) + hp2RtR*x;
-      RHS = J'*dv + hp2RtR*de;
+      LHS = @(x) -(J'*(W*(J*x)) + hp2RtR*x);
+      RHS = J'*W*dv + hp2RtR*de;
 
       tol=100*eps*size(J,2)^2; % rough estimate based on multiply-accumulates
 %      maxit = 10;
@@ -2098,13 +2118,79 @@ x=max(y)-min(y);
 
 function do_unit_test(solver)
    if nargin == 0
-     solver = 'inv_solve_abs_core';
+      solver = 'inv_solve_abs_core';
    end
-   do_unit_test_rec_mv(solver);
-   do_unit_test_sub;
-   do_unit_test_rec1(solver);
+   if length(solver < 9) || ~strcmp(solver(1:9),'inv_solve')
+      test = solver;
+      solver = 'inv_solve_abs_core';
+   else
+      test = 'all'
+   end
+   switch(test)
+      case 'all'
+         do_unit_test_sub;
+         do_unit_test_diff;
+         do_unit_test_rec1(solver);
+         do_unit_test_rec2(solver);
+         do_unit_test_rec_mv(solver);
+      case 'sub'
+         do_unit_test_sub;
+      case 'diff'
+         do_unit_test_diff;
+      case 'rec1'
+         do_unit_test_rec1(solver);
+      case 'rec2'
+         do_unit_test_rec2(solver);
+      case 'rec_mv'
+         do_unit_test_rec_mv(solver);
+      otherwise
+         error(['unrecognized solver or tests: ' test]);
+   end
 %pass = pass & do_unit_test_rec2(solver);
 % TODO the ..._rec2 unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
+
+function [imdl, vh, imgi, vi] = unit_test_imdl()
+   imdl = mk_geophysics_model('h2c',32);
+   imdl.solve = 'inv_solve_abs_core';
+   imdl.inv_solve_abs_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
+   imdl.inv_solve_abs_core.verbose = 0;
+   imdl.reconst_type = 'difference';
+   imgh = mk_image(imdl,1);
+   vh = fwd_solve(imgh);
+
+   if nargout > 2
+      imgi = imgh;
+      ctrs = interp_mesh(imdl.fwd_model);
+      x = ctrs(:,1);
+      y = ctrs(:,2);
+      r1 = sqrt((x+15).^2 + (y+25).^2);
+      r2 = sqrt((x-85).^2 + (y+65).^2);
+      imgi.elem_data(r1<25)= 1/2;
+      imgi.elem_data(r2<30)= 2;
+      clf; show_fem(imgi,1);
+      vi = fwd_solve(imgi);
+   end
+
+function do_unit_test_diff()
+   [imdl, vh, imgi, vi] = unit_test_imdl();
+
+   imdl.reconst_type = 'absolute';
+   img_abs = inv_solve(imdl,vi);
+   imdl.reconst_type = 'difference';
+   img_itr = inv_solve(imdl,vh,vi);
+   imdl.inv_solve_abs_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
+   imdl.inv_solve_abs_core.line_search_func = @ret1_func;
+   img_it1 = inv_solve(imdl,vh,vi);
+   imdl.solve = 'inv_solve_diff_GN_one_step';
+   img_gn1 = inv_solve(imdl,vh,vi);
+   clf; subplot(223); show_fem(img_it1,1); title('GN 1-iter');
+        subplot(224); show_fem(img_gn1,1); title('GN 1-step');
+        subplot(221); h=show_fem(imgi,1);  title('fwd model'); set(h,'EdgeColor','none');
+        subplot(222); show_fem(img_itr,1); title('GN 10-iter');
+        subplot(222); show_fem(img_abs,1); title('GN abs 10-iter');
+   unit_test_cmp('core (1-step) vs. diff_GN_one_step', img_it1.elem_data, img_gn1.elem_data, eps*1e3);
+   unit_test_cmp('core (1-step) vs. core (N-step)   ', img_it1.elem_data, img_itr.elem_data, eps);
+   unit_test_cmp('core (N-step) vs. abs  (N-step)   ', img_it1.elem_data, img_abs.elem_data-1, eps);
 
 % test sub-functions
 % map_meas, map_data
@@ -2195,7 +2281,7 @@ function do_unit_test_rec1(solver)
 % Create simulation data $Id$
 %  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
 % 3D Model
-imdl= mk_common_model('c2t4',16); % 576 elements
+[imdl, imgi, vh, vi] = unit_test_imdl();
 imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 imdl.inv_solve_abs_core.prior_data = 1;
@@ -2204,97 +2290,48 @@ imdl.inv_solve_abs_core.elem_working = 'log_conductivity';
 imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
 imdl.inv_solve_abs_core.calc_solution_error = 0;
 imdl.inv_solve_abs_core.verbose = 0;
-%show_fem(imdl.fwd_model);
-imgsrc= mk_image( imdl.fwd_model, 1);
-% set homogeneous conductivity and simulate
-vh=fwd_solve(imgsrc);
-% set inhomogeneous conductivity and simulate
-ctrs= interp_mesh(imdl.fwd_model);
-x= ctrs(:,1); y= ctrs(:,2);
-r1=sqrt((x+5).^2 + (y+5).^2); r2 = sqrt((x-85).^2 + (y-65).^2);
-imgsrc.elem_data(r1<50)= 0.05;
-imgsrc.elem_data(r2<30)= 100;
-imgp = map_img(imgsrc, 'log10_conductivity');
-hh=clf; subplot(221); show_fem(imgp,1); axis tight; title('synthetic data, logC');
-% inhomogeneous data
-vi=fwd_solve( imgsrc );
+
+imgp = map_img(imgi, 'log10_conductivity');
 % add noise
 %Add 30dB SNR noise to data
-noise_level= std(vi.meas - vh.meas)/10^(30/20);
-vi.meas = vi.meas + noise_level*randn(size(vi.meas));
+%noise_level= std(vi.meas - vh.meas)/10^(30/20);
+%vi.meas = vi.meas + noise_level*randn(size(vi.meas));
 % Reconstruct Images
 img1= inv_solve(imdl, vi);
-figure(hh); subplot(222); show_fem(img1,1); axis tight; title('#1 verbosity=default');
 % -------------
 disp('TEST: previous solved at default verbosity');
 disp('TEST: now solve same at verbosity=0 --> should be silent');
 imdl.inv_solve_abs_core.verbose = 0;
 %imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
 img2= inv_solve(imdl, vi);
-figure(hh); subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
-max_err = max(abs((img1.elem_data - img2.elem_data)./(img1.elem_data)));
-
-unit_test_cmp('img1 == img2', max_err >0.15, 0);
-if max_err > 0.15
-  fprintf('TEST:  img1 != img2 --> FAIL %g %%\n', max_err);
-end
 % -------------
-disp('TEST: try coarse2fine mapping');
-imdl_tmp= mk_common_model('b2t4',16); % 256 elements
-% convert fwd_model into rec_model
-fmdl = imdl_tmp.fwd_model;
-cmdl.type = fmdl.type;
-cmdl.name = fmdl.name;
-cmdl.nodes = fmdl.nodes;
-cmdl.elems = fmdl.elems;
-cmdl.gnd_node = 0;
-% merge some elements
-% TODO
-% delete some other elements from around the boundary
-ctrs= interp_mesh(cmdl);
+imdl.inv_solve_abs_core.elem_output = 'log10_resistivity'; % resistivity output works
+img3= inv_solve(imdl, vi);
+
+disp('TEST: try coarse2fine mapping with background');
+ctrs= interp_mesh(imdl.rec_model);
 x= ctrs(:,1); y= ctrs(:,2);
 r=sqrt((x+5).^2 + (y+5).^2);
-cmdl.elems(y-x > 150, :) = [];
-
-% build c2f map
-imdl.rec_model = cmdl;
-c2f = mk_coarse_fine_mapping(imdl.fwd_model,cmdl);
+imdl.rec_model.elems(x-y > 300, :) = [];
+c2f = mk_approx_c2f(imdl.fwd_model,imdl.rec_model);
 imdl.fwd_model.coarse2fine = c2f;
 % solve
 %imdl.inv_solve_abs_core.verbose = 10;
-img3= inv_solve(imdl, vi);
-%figure(hh); subplot(224); show_fem(cmdl,1); axis tight; title('#3 c2f');
-figure(hh); subplot(223); show_fem(img3,1); axis tight; title('#3 c2f');
-% check
-e1 = c2f \ img1.elem_data; % noisy and unstable... but its a crude check
-e3 = img3.elem_data;
-err = abs((e1 - e3) ./ e1);
-err(abs(e1) < 20) = 0;
-err_thres = 0.55;
-
-unit_test_cmp('img1 == img3', any(err > err_thres), 0);
-if any(err > err_thres) % maximum 15% error
-  ni = find(err > err_thres);
-  fprintf('TEST:  img1 != img3 --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
-          max(err(ni)), length(ni), err_thres);
-end
-
-%imdl.inv_solve_abs_core.verbose = 1000;
-imdl.inv_solve_abs_core.elem_output = 'log10_resistivity'; % resistivity output works
+imdl.inv_solve_abs_core.elem_output = 'conductivity';
 img4= inv_solve(imdl, vi);
-figure(hh); subplot(224); show_fem(img4,1); axis tight; title('#4 c2f + log10 resistivity out');
-% check
-e4 = 1./(10.^img4.elem_data);
-err = abs((e1 - e4) ./ e1);
-err(abs(e1) < 20) = 0;
-err_thres = 0.40;
 
-unit_test_cmp('img1 == img4', any(err > err_thres), 0);
-if any(err > err_thres) % maximum 15% error
-  ni = find(err > err_thres);
-  fprintf('TEST:  img1 != img4 --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
-          max(err(ni)), length(ni), err_thres);
-end
+clf; subplot(221); h=show_fem(imgp,1); set(h,'EdgeColor','none'); axis tight; title('synthetic data, logC');
+   subplot(222); show_fem(img1,1); axis tight; title('#1 verbosity=default');
+   subplot(223); show_fem(img2,1); axis tight; title('#2 verbosity=0');
+   subplot(223); show_fem(img3,1); axis tight; title('#3 c2f + log10 resistivity out');
+   subplot(224); show_fem(img4,1); axis tight; title('#4 c2f cut');
+   drawnow;
+d1 = img1.elem_data; d2 = img2.elem_data; d3 = img3.elem_data; d4 = img4.elem_data;
+unit_test_cmp('img1 == img2', d1, d2, eps);
+unit_test_cmp('img1 == img3', d1, 1./(10.^d3), eps);
+unit_test_cmp('img1 == img4', (d1(x-y <=300)-d4)./d4, 0, 0.05); %  +-5% error
+
+%clf; subplot(211); plot((img3.elem_data - img1.elem_data)./img1.elem_data);
 
 % a couple easy reconstructions with movement or similar
 function do_unit_test_rec_mv(solver)
@@ -2318,7 +2355,7 @@ imdl.inv_solve_abs_core.elem_working = {'log_conductivity'};
 imdl.inv_solve_abs_core.elem_output  = {'log10_conductivity'};
 imdl.inv_solve_abs_core.calc_solution_error = 0;
 imdl.inv_solve_abs_core.verbose = 0;
-imdl.hyperparameter.value = 0.01;
+imdl.hyperparameter.value = 0.1;
 
 % set homogeneous conductivity and simulate
 imgsrc= mk_image( imdl.fwd_model, 1);
@@ -2357,7 +2394,7 @@ imdl.inv_solve_abs_core.elem_working = {  'log_conductivity', 'movement'};
 imdl.inv_solve_abs_core.elem_output  = {'log10_conductivity', 'movement'};
 imdl.inv_solve_abs_core.jacobian     = { @jacobian_adjoint  , @jacobian_movement_only};
 imdl.inv_solve_abs_core.hyperparameter = {   [1 1.1 0.9]    ,  sqrt(2e-3)     }; % multiplied by imdl.hyperparameter.value
-imdl.inv_solve_abs_core.verbose = 2;
+imdl.inv_solve_abs_core.verbose = 0;
 
 % electrode positions before
 nn = [imgsrc.fwd_model.electrode(:).nodes];
@@ -2387,18 +2424,8 @@ figure(hh); subplot(224);
  img1 = map_img(img1, 'log10_conductivity');
  show_fem_move(img1,reshape(imgm.elem_data,16,2), 10, 1); axis tight;
 
-% TEST for mismatch on coductivity image
-err = abs((img0.elem_data - img1.elem_data) ./ img0.elem_data);
-err(abs(img0.elem_data)/max(abs(img0.elem_data)) < 0.50) = 0;
-err_thres = 0.40;
-
-unit_test_cmp('img0 == img1 + mvmt', any(err > err_thres), 0);
-
-if any(err > err_thres) % maximum 15% error
-  ni = find(err > err_thres);
-  fprintf('TEST:  img0 != img1 + mvmt --> FAIL max(err) = %0.2e on %d elements (thres=%0.2e)\n', ...
-          max(err(ni)), length(ni), err_thres);
-end
+d0 = img0.elem_data; d1 = img1.elem_data;
+unit_test_cmp('img0 == img1 + mvmt', d0-d1, 0, 0.40);
 
 % helper function: calculate jacobian movement by itself
 function Jm = jacobian_movement_only (fwd_model, img);
@@ -2424,129 +2451,36 @@ function RtR = prior_movement_only(imdl);
 
 function do_unit_test_rec2(solver)
 disp('TEST: reconstruct a discontinuity');
-shape_str = ['solid top    = plane(0,0,0;0,1,0);\n' ...
-             'solid mainobj= top and orthobrick(-100,-200,-100;410,10,100) -maxh=20.0;\n'];
-e0 = linspace(0,310,64)';
-elec_pos = [e0,0*e0,0*e0,1+0*e0,0*e0,0*e0];
-elec_shape= [0.1,0.1,1];
-elec_obj = 'top';
-fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
-%fmdl.nodes = fmdl.nodes(:,[1,3,2]);
-% spacing= [1 1 1 2 3 3 4 4 5 6 6 7 8 8 9 10 10 11 12 12 13 14 14 15 16 17];
-% multiples= [1 2 3 2 1 5/3 1 2  1 1 7/6 1 1 10/8 1 1 12/10 1 1 13/12 1 1 15/14 1 1 1];
-% fmdl.stimulation= stim_pattern_geophys( 64, 'Schlumberger', {'spacings', spacing,'multiples',multiples});
+[imdl, vh] = unit_test_imdl();
+imgi = mk_image(imdl, 1);
+ctrs = interp_mesh(imdl.fwd_model);
+x = ctrs(:,1); y = ctrs(:,2);
+imgi.elem_data(x-y>100)= 1/10;
+vi = fwd_solve(imgi); vi = vi.meas;
+clf; show_fem(imgi,1);
 
-fmdl.stimulation= stim_pattern_geophys( 64, 'Wenner', {'spacings', 1:32} );
-
-cmdl= mk_grid_model([], 2.5+[-30,5,20,30:10:290,300,315,340], ...
-                            -[0:5:10 17 30 50 75 100]);
-% having a c2f on the coarse model f#$%s up the c2f calculator
-cmdl= rmfield(cmdl, 'coarse2fine');
-% cmdl = mk_grid_model([], 2.5+[-50,-20,0:10:310,330,360], ...
-%                              -[0:2.5:10, 15:5:25,30:10:80,100,120]);
-[c2f, b_c2f] = mk_coarse_fine_mapping( fmdl, cmdl);
-% c2f maps cmdl elements to fmdl elements, where there are no cmdl elements
-% b_c2f is the cmdl background element that is mapped to the fmdl elements
-% Note: adding a background element, this is now done inside the inv_solve_abs_GN solver if required
-%S= sum(c2f,2);
-% find fractional c2f elements
-%b= find(S<0.9999);
-% find almost complete c2f elements
-%a= find(S>=0.9999 & S<1);
-% fix potential rounding problems by normalizing c2f to sum to 1
-%c2f(a,:)= c2f(a,:)./repmat(S(a),1,size(c2f,2));
-% remove the entire element's mapping and assign it the background conductivity
-%c2f(b,:)= 0; c2f(b,end+1)= 1;
-fmdl.coarse2fine= c2f;
-
-% generate sythetic data
-img = mk_image(fmdl,1);
-fm_pts = interp_mesh(fmdl);
-x_bary= fm_pts(:,1); z_bary= fm_pts(:,2);
-z_params= (min(fmdl.nodes(:,2)):max(fmdl.nodes(:,2)))';
-a = 0.36;
-b = 130;
-x_params= a*z_params+b;
-xlim=interp1(z_params,x_params,z_bary);
-img.elem_data(x_bary>xlim)= 0.01;
-clf; show_fem(img); title('model');
-
-% img2= mk_image(fmdl,img.elem_data);
-% clf; show_fem(img2);
-
-% img = mk_image(fmdl,0+ mk_c2f_circ_mapping(fmdl,[100;-30;0;50])*100);
-% img.elem_data(img.elem_data==0)= 0.1;
-dd  = fwd_solve(img);
-% TODO add some noise!!!
-
-imdl= eidors_obj('inv_model','test');
-imdl.fwd_model= fmdl;
-imdl.rec_model= cmdl;
-imdl.fwd_model.normalize_measurements = 0;
-imdl.rec_model.normalize_measurements = 0;
-imdl.RtR_prior = @prior_laplace;
-%imdl.RtR_prior = @prior_tikhonov;
 imdl.solve = solver;
-imdl.reconst_type = 'absolute';
 imdl.hyperparameter.value = 1e2; % was 0.1
-imdl.jacobian_bkgnd.value = 1;
 
+imdl.reconst_type = 'absolute';
 imdl.inv_solve_abs_core.elem_working = 'log_conductivity';
+imdl.inv_solve_abs_core.elem_output = 'log10_resistivity';
 imdl.inv_solve_abs_core.meas_working = 'apparent_resistivity';
 imdl.inv_solve_abs_core.dtol_iter = 4; % default 1 -> start checking on the first iter
 imdl.inv_solve_abs_core.max_iterations = 20; % default 10
-
-% the conversion to apparaent resistivity is now handled inside the solver
-%%img1= mk_image(fmdl,1);
-%%vh1= fwd_solve(img1);
-%%normalisation= 1./vh1.meas;
-%%I= speye(length(normalisation));
-%%I(1:size(I,1)+1:size(I,1)*size(I,1))= normalisation;
-
 imdl.inv_solve_abs_core.calc_solution_error = 0;
-
 imdl.inv_solve_abs_core.verbose = 10;
-%%imdl.inv_solve_abs_core.normalisation= I;
-%%imdl.inv_solve_abs_core.homogeneization= 1;
-% imdl.inv_solve_abs_core.fixed_background= 1; % the default now in _core
-imdl.inv_solve_abs_core.line_search_args.perturb= [0 5*logspace(-7,-4,5)];
-%imdl.inv_solve_abs_core.max_iterations= 10;
-%imdl.inv_solve_abs_core.plot_line_optimize = 1;
+imgr= inv_solve_abs_core(imdl, vi);
 
-imdl.inv_solve_abs_core.elem_output = 'log10_resistivity';
-imgr= inv_solve_abs_core(imdl, dd);
-
-% save the result so we don't have to wait forever if we want to look at the result later
-%save('inv_solve_abs_core_rec2.mat', 'imgr');
-
-imgGNd= imgr;
-%imgGNd.fwd_model.coarse2fine= cmdl.coarse2fine;
-% removal of the background elem_data is now handled in the solver
-% conversion to output elem_data is now handled in the solver
-%imgGNd.elem_data= log10(imgGNd.res_data(1:end-1));
-%imgGNd.calc_colours.clim= 1.5;
-%imgGNd.calc_colours.ref_level= 1.5;
-
-elec_posn= zeros(length(fmdl.electrode),3);
-for i=1:length(fmdl.electrode)
-    elec_posn(i,:)= mean(fmdl.nodes(fmdl.electrode(1,i).nodes,:),1);
-end
-
-clf; show_fem(imgGNd,1);
-hold on; plot(elec_posn(:,1),elec_posn(:,3),'k*');
-axis tight; ylim([-100 0.5])
-xlabel('X (m)','fontsize',20,'fontname','Times')
-ylabel('Z (m)','fontsize',20,'fontname','Times')
-set(gca,'fontsize',20,'fontname','Times');
-
+clf; show_fem(imgr,1);
 img = mk_image( imdl );
 img.elem_data= 1./(10.^imgr.elem_data);
-vCG= fwd_solve(img); vCG = vCG.meas;
 
-I = 1; % TODO FIXME -> I is diag(1./vh) the conversion to apparent resistivity
-% TODO these plots are useful, get them built into the solver!
-clf; plot(I*(dd.meas-vCG)); title('data misfit');
-clf; hist(abs(I*(dd.meas-vCG)),50); title('|data misfit|, histogram'); xlabel('|misfit|'); ylabel('count');
-clf; show_pseudosection( fmdl, I*dd.meas); title('measurement data');
-clf; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
-clf; show_pseudosection( fmdl, (vCG-dd.meas)./dd.meas*100); title('data misfit');
+%I = 1; % TODO FIXME -> I is diag(1./vh) the conversion to apparent resistivity
+%% TODO these plots are useful, get them built into the solver!
+%vCG= fwd_solve(img); vCG = vCG.meas; fmdl = imdl.fwd_model;
+%clf; plot(I*(vi-vCG)); title('data misfit');
+%clf; hist(abs(I*(vi-vCG)),50); title('|data misfit|, histogram'); xlabel('|misfit|'); ylabel('count');
+%clf; show_pseudosection( fmdl, I*vi); title('measurement data');
+%clf; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
+%clf; show_pseudosection( fmdl, (vCG-vi)/vi*100); title('data misfit');
