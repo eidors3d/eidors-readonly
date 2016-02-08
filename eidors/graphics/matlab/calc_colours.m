@@ -527,6 +527,9 @@ function pp=get_colours( img );
          pp.( fdn ) = img(1).calc_colours.(fdn);
       end
    end
+   if isfield(img, 'eidors_colourbar')
+      pp.cb_shrink_move = img.eidors_colourbar.cb_shrink_move;
+   end
 
 function BGI= backgndidx;
   BGI= 1;
