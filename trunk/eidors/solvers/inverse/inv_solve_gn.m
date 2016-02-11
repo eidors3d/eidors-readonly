@@ -63,4 +63,45 @@ function pass = do_unit_test()
         subplot(122); show_fem(img,1);  title('reconstruction');
    try unit_test_cmp('fwd vs. reconst', fimg.elem_data, img.elem_data, 0.08);
    catch me; disp(me.message); pass=0; end
-%   pass = pass & inv_solve_core('UNIT_TEST', 'inv_solve_gn');
+
+   do_unit_test_abs_diff();
+
+function do_unit_test_abs_diff()
+   imdl = mk_geophysics_model('h2c',32);
+   imdl.solve = 'inv_solve_gn';
+   imdl.RtR_prior = 'prior_tikhonov';
+   imdl.inv_solve_gn.verbose = 0;
+   imdl.inv_solve_gn.elem_working = 'log_conductivity';
+%   imdl.inv_solve_gn.meas_working = 'apparent_resistivity';
+   % build fwd simulations
+   ctrs = interp_mesh(imdl.fwd_model);
+   x = ctrs(:,1);
+   y = ctrs(:,2);
+   r1 = sqrt((x-20).^2  + (y+25).^2);
+   r2 = sqrt((x-125).^2 + (y+45).^2);
+   r3 = sqrt((x-50).^2  + (y+35).^2);
+   imga = mk_image(imdl,1);
+   imga.elem_data(r1<15)= 0.5;
+   imga.elem_data(r2<20)= 2;
+   va = fwd_solve(imga);
+   imgb = imga;
+   imgb.elem_data(r3<15)= 1.3;
+   vb = fwd_solve(imgb);
+   clf; subplot(121); show_fem(imga,1); subplot(122); show_fem(imgb,1); drawnow;
+   % reconstruct meas va as absolute
+   disp('*** INVERSE CRIME ALERT **** INVERSE CRIME ALERT ***');
+   disp(' 1. This reconstruction has no measurement noise.');
+   disp(' 2. This reconstruction is being performed on the same mesh the');
+   disp('    measurements were simulated from: no discretization errors have');
+   disp('    been introduced.');
+   imdl.reconst_type = 'absolute';
+   imgaa = inv_solve(imdl,va);
+   % set background as abs sol'n, then diff solve
+   imdl.reconst_type = 'difference';
+   imdl.inv_solve_gn.prior_data = imgaa.elem_data;
+   imgab = inv_solve(imdl,va,vb);
+   clf; subplot(221); show_fem(imga,1); title('A'); subplot(222); show_fem(imgb,1); title('B');
+        subplot(223); show_fem(imgaa,1); title('rec A'); subplot(224); show_fem(imgab,1); title('rec B-A');
+   unit_test_cmp('abs ', imga.elem_data, imgaa.elem_data, max(imga.elem_data)/2);
+   imgba = imga; imgba.elem_data = imgb.elem_data - imga.elem_data; imgba.elem_data = imgba.elem_data/max(imgba.elem_data);
+   unit_test_cmp('diff', norm(imgba.elem_data - imgab.elem_data/max(imgab.elem_data)), 3.8182, 1e-3);

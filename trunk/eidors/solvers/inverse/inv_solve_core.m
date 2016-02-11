@@ -268,6 +268,10 @@ img = map_img(img, opt.elem_working);
 
 % solve for difference data?
 if nargin == 3
+   assert(all(~strcmp(opt.meas_working, {'apparent_resistivity','log_apparent_resistivity', 'log10_apparent_resitivity'})), ...
+          ['meas_working = ''' opt.meas_working ''' not yet supported for difference solutions']);
+   assert(any(strcmp(opt.elem_output, {'conductivity','resistivity'})), ...
+          ['elem_output = ''' opt.elem_output ''' but difference solver log normal outputs are not supported']);
    % dv = (meas1 - meas0) + meas@backgnd
    nil = struct;
    if isstruct(data0)
@@ -380,10 +384,11 @@ if opt.verbose > 1
            opt.fwd_solutions, k, itrs);
 end
 % convert data for output
+img = map_img(img, opt.elem_output);
 if strcmp(inv_model.reconst_type, 'difference')
+   img0 = map_img(img0, opt.elem_output);
    img.elem_data = img.elem_data - img0.elem_data;
 end
-img = map_img(img, opt.elem_output);
 img.meas_err = dv;
 if opt.return_working_variables
   img.inv_solve_core.J = J;
