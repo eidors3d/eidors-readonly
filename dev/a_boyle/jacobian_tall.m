@@ -1,15 +1,15 @@
-function J=calc_tall_jacobian(fwd_model, img)
-% CALC_TALL_JACOBIAN(img)
+function J=jacobian_tall(fwd_model, img)
+% JACOBIAN_TALL(img)
 % 
 % A wrapper function around the selected Jacobian calculator
 % (calc_jacobian_XXX), which helps when there are many
 % measurements (typically > 1000) where memory consumption and
 % calculation time become excessive.
 %
-%  fwd_model.calc_tall_jacobian.jacobian    [default:'eidors_default']
+%  fwd_model.jacobian_tall.jacobian    [default:'eidors_default']
 %     Jacobian calculator to use in inner loops
 %
-%  fwd_model.calc_tall_jacobian.threshold   [default: 250]
+%  fwd_model.jacobian_tall.threshold   [default: 250]
 %     Number of measurements per block to throw at the inner
 %     Jacobian calculator. Results are concatentated, as if the
 %     inner Jacobian calculator were given the entire stimulus in
@@ -29,8 +29,8 @@ else
 end
 if isstr(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
-opt.jacobian = 'eidors_default'; try; opt.jacobian = img.fwd_model.calc_tall_jacobian.jacobian; end
-opt.thres = 250; try; opt.thres = img.fwd_model.calc_tall_jacobian.threshold; end
+opt.jacobian = 'eidors_default'; try; opt.jacobian = img.fwd_model.jacobian_tall.jacobian; end
+opt.thres = 250; try; opt.thres = img.fwd_model.jacobian_tall.threshold; end
 assert(opt.thres > 0, 'threshold must be > 0');
 
 img.fwd_model.jacobian = opt.jacobian;
@@ -89,14 +89,14 @@ for mdl={'h2a','h2p5a'}
    imdl.fwd_model.stimulation = stim; 
    img=mk_image(imdl.fwd_model,1);    
    tic; Jr=calc_jacobian(img); tr=toc; fprintf('run time calc_jacobian:                    %f s\n',tr);
-   imdl.fwd_model.jacobian = @calc_tall_jacobian;
-   imdl.fwd_model.calc_tall_jacobian.jacobian = 'eidors_default';
+   imdl.fwd_model.jacobian = @jacobian_tall;
+   imdl.fwd_model.jacobian_tall.jacobian = 'eidors_default';
    tol = eps;
    for thres=[250 500 1000 5000];
       imdl.fwd_model.nodes(1,:) = imdl.fwd_model.nodes(1,:) + rand(1,nd)*eps*1e3;
-      imdl.fwd_model.calc_tall_jacobian.threshold = thres;
+      imdl.fwd_model.jacobian_tall.threshold = thres;
       img=mk_image(imdl.fwd_model,1);    
-      tic; Jt=calc_jacobian(img); tt=toc; fprintf('run time calc_tall_jacobian (thres=%6.0d) %f s (%0.3fx)\n',thres,tt,tt/tr);
+      tic; Jt=calc_jacobian(img); tt=toc; fprintf('run time jacobian_tall (thres=%6.0d) %f s (%0.3fx)\n',thres,tt,tt/tr);
       unit_test_cmp(sprintf('tall (thres=%d)',thres),Jr,Jt,tol);
    %   disp([norm(Jr) norm(Jt) norm(Jr - Jt)/norm(Jr)])
    end
