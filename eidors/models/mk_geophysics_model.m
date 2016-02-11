@@ -2,24 +2,26 @@ function imdl = mk_geophysics_model(str, ne, opt);
 % imdl = mk_geophysics_model(str, ne, [option])
 %
 % ne  - number of electrodes, 5 metre spacing (+5,+10,...)
-%       and 1 metre diameter
+%       and 0.1 metre diameter
 %         OR
 %       a list of electrode locations in the x-dimension
 % str - model, x = see hmax_rec
-%       h2x -   2D half-space, linear array (2d fwd, 2d rec mdl)
-%       h2p5x - 2.5D half-space, linear array (3d fwd, 2d rec mdl)
-%       h3x   - 3D half-space, linear array (3d fwd, 3d rec mdl) [TODO]
+%       h2x -   2D half-space, linear array (2d fwd)
+%       h2p5x - 2.5D half-space, linear array (2d fwd + Fourier y-dimension)
+%       h3x   - 3D half-space, linear array (3d fwd)
+%       h22x  - 2D half-space, linear array (3d fwd, 2d rec)
+%       h32x  - 2D half-space, linear array (3d fwd, 2d rec)
+%       h33x  - 2D half-space, linear array (3d fwd, 3d rec)
 % opt - override default configuration options (optional cell array)
-%       'hmax_rec' - coarse reconstruction mesh density, given array width xw
-%                ['a' : hmax_rec=xw/5;
-%                 'b' : hmax_rec=xw/10;
-%                 'c' : hmax_rec=xw/15;
-%                 'd' : hmax_rec=xw/20;
-%                 'e' : hmax_rec=xw/25;
-%                 'f' : hmax_rec=xw/30;
-%                 'g' : hmax_rec=xw/35;
-%                 'h' : hmax_rec=xw/40]
-%       'hmax_fwd' - forward model mesh density [hmax_rec/2]
+%       'hmax_fwd' - fine reconstruction mesh density, given an
+%                    array width xw, and electrode spacing es
+%                    Note that for ne=16, 'A' and 'a' are equivalent.
+%                ['a' : hmax_fwd=xw/1;    ['A' : hmax_fwd=es*16;
+%                 'b' : hmax_fwd=xw/2;     'B' : hmax_fwd=es*8;
+%                 'c' : hmax_fwd=xw/4;     'C' : hmax_fwd=es*4;
+%                 ...                       ...
+%                 'z' : hmax_fwd=xw/2^25]  'Z' : hmax_fwd=es*2^-21]
+%       'hmax_rec' - reconstruction model mesh density [hmax_fwd*2]
 %       'elec_width' - electrode width [0.1 m]
 %       'z_contact' - electrode contact impedance [0.01 \Ohm.m]
 %       'elec_spacing' - distance between electrode centers [5 m]
@@ -46,33 +48,31 @@ copt.fstr = 'mk_geophysics_model';
 if nargin < 3
    opt = {};
 end
-imdl = eidors_cache(@mk_model,{str, ne, opt}, copt);
+SALT='a$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
+imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(ne, 'Wenner');
 
-function imdl=mk_model(str,ne,opt);
+function imdl=mk_model(str,ne,opt,SALT);
 if str(1) ~= 'h'
-   error([str ': only know how to build linear half-space model: h***']);
-end
-if all(length(str) ~= [5 3])
-   error([str ': wrong argument length']);
+   error([str ': I only know how to build linear half-space models: h***']);
 end
 
-if (length(str) == 5) && (strcmp(str(2:4), '2p5'))
-   FMDL_DIM=3;
-   CMDL_DIM=2;
-elseif str(2) == '2'
-   FMDL_DIM=2;
-   CMDL_DIM=2;
-elseif str(2) == '3'
-   FMDL_DIM=3;
-   CMDL_DIM=3;
-   error([str ': model TODO (3d-3d)']);
-else
-   error([str ': unrecognized dimensonality: hx*, for x=2,3, or 2p5']);
+MDL_2p5D_CONFIG = 0;
+switch str(1:end-1)
+   case {'h2', 'h3'} % simple meshes
+      FMDL_DIM = str(2) - '0';
+      CMDL_DIM = 0; % no cmdl
+   case 'h2p5' % 2.5D Fourier transformed
+      FMDL_DIM = 2;
+      CMDL_DIM = 0; % no cmdl
+      MDL_2p5D_CONFIG = 1;
+   case {'h22', 'h33', 'h32'} % dual meshes
+      FMDL_DIM = str(2) - '0';
+      CMDL_DIM = str(3) - '0';
+   otherwise
+      error([str ': unrecognized model type']);
 end
-if str(end) > 'h' || str(end) < 'a'
-   error([str ': unrecognized model name (hmax) ' str(1:end-1) 'x for x=a,b,c,d,e,f,g or h']);
-end
+assert(CMDL_DIM ~= 3, '3d rec_model not yet tested');
 
 skip_c2f = 0;
 elec_width= 0.1;
@@ -109,45 +109,40 @@ end
 if length(opt) > 0
    save_model_to_disk=0;
 end
-if ~exist('hmax_rec','var')
-   switch(str(end))
-      case 'a'
-         hmax_rec=xw/5;
-      case 'b'
-         hmax_rec=xw/10;
-      case 'c'
-         hmax_rec=xw/15;
-      case 'd'
-         hmax_rec=xw/20;
-      case 'e'
-         hmax_rec=xw/25;
-      case 'f'
-         hmax_rec=xw/30;
-      case 'g'
-         hmax_rec=xw/35;
-      case 'h'
-         hmax_rec=xw/40;
-      otherwise
+if ~exist('hmax_fwd','var')
+   if str(end)-'a' >= 0
+      hmax_fwd = xw*2^-(str(end)-'a');
+   else
+      hmax_fwd = elec_spacing*2^-(str(end)-'A'-4);
    end
 end
-if ~exist('hmax_fwd','var') % allow hmax_fwd to depend on configured hmax_rec
-   hmax_fwd=hmax_rec/2.0; % avoid parametrization aliasing
+if ~exist('hmax_rec','var') % allow hmax_rec to depend on configured hmax_fwd
+   hmax_rec=hmax_fwd*2.0; % avoid parametrization aliasing
 end
 
 if save_model_to_disk
    filename=sprintf('imdl-%s-%03del.mat',str,ne);
    if exist(filename, 'file') == 2
-      tmp=load(filename);
-      imdl = tmp.imdl;
-      eidors_msg(sprintf('%s: %s, %d electrode model loaded from file',filename,str,ne));
-      return
+      tmp = matfile(filename);
+      tmp = whos(tmp, 'SALT');
+      if length(tmp) > 0
+         tmp = load(filename,'SALT');
+         fSALT = tmp.SALT;
+      else
+         fSALT = 'deadbeef';
+      end
+      if strcmp(fSALT, SALT)
+         tmp=load(filename,'imdl');
+         imdl = tmp.imdl;
+         eidors_msg(sprintf('%s: %s, %d electrode model loaded from file',filename,str,ne));
+         return
+      end % hmm, the SALT doesn't match so we go back to generating a new model from scratch
    end
 end
 
 assert(extend_x>0,'extend_x must be > 0');
 assert(extend_y>0,'extend_y must be > 0');
 assert(extend_z>-1,'extend_z must be > -1');
-assert(hmax_rec*3 < xw, sprintf('(hmax_rec=%g * 3) must be < array width=%g',hmax_rec,xw));
 
 % 2d cmdl
 xllim=xs-extend_x*elec_spacing*ne;
@@ -157,7 +152,9 @@ xr=floor((xrlim-xllim)/hmax_rec/2)*2+1; % odd number
 yr=floor(-zdepth/hmax_rec/2)*2+1; % odd number
 [x,y] = meshgrid( linspace(xllim,xrlim,xr), linspace(zdepth,0,yr));
 vtx= [x(:),y(:)];
-cmdl= mk_fmdl_from_nodes( vtx,{vtx(1,:)}, z_contact, 'sq_m2');
+if CMDL_DIM ~= 0
+   cmdl= mk_fmdl_from_nodes( vtx,{vtx(1,:)}, z_contact, 'sq_m2');
+end
 
 % fmdl refinement
 xllim1=xllim+extend_x*3/5*elec_spacing*ne;
@@ -288,12 +285,14 @@ else % 3D fmdl
       nn = size(fmdl.nodes,1);
       Xn = repmat(X(1,[1 3]), nn, 1);
    else % 3D
-      % c2f
-      cmdl.mk_coarse_fine_mapping.f2c_offset  = [0 0 0];
-      cmdl.mk_coarse_fine_mapping.f2c_project = [1 0 0; 0 0 1; 0 1 0];
-      % duplicate parameters since mk_analytic/approx_c2f have different names...
-      cmdl.mk_analytic_c2f.f2c_offset  = cmdl.mk_coarse_fine_mapping.f2c_offset;
-      cmdl.mk_analytic_c2f.f2c_project = cmdl.mk_coarse_fine_mapping.f2c_project;
+      if CMDL_DIM ~= 0
+         % c2f
+         cmdl.mk_coarse_fine_mapping.f2c_offset  = [0 0 0];
+         cmdl.mk_coarse_fine_mapping.f2c_project = [1 0 0; 0 0 1; 0 1 0];
+         % duplicate parameters since mk_analytic/approx_c2f have different names...
+         cmdl.mk_analytic_c2f.f2c_offset  = cmdl.mk_coarse_fine_mapping.f2c_offset;
+         cmdl.mk_analytic_c2f.f2c_project = cmdl.mk_coarse_fine_mapping.f2c_project;
+      end
 
       % reverse the centre and scaling
       nn = size(fmdl.nodes,1);
@@ -303,10 +302,13 @@ else % 3D fmdl
 
 %   show_fem(fmdl); xlabel('x'); ylabel('y'); zlabel('z');
 
+   % TODO ... Actually we want a node in the middle: the boundary is bad too...
    [~, gn] = min(fmdl.nodes(:,end));
    fmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
-   [~, gn] = min(cmdl.nodes(:,end));
-   cmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
+   if CMDL_DIM ~= 0
+      [~, gn] = min(cmdl.nodes(:,end));
+      cmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
+   end
 end
 
 % stick electrode nodes into cmdl so that show_fem will plot them
@@ -315,35 +317,43 @@ for i=1:ne
    nn=length(n);
    nx=fmdl.nodes(n,:);
 
-   nnc = length(cmdl.nodes);
-   cmdl.nodes = [cmdl.nodes; nx(:,[1 FMDL_DIM])];
-   cmdl.electrode(i).nodes = (nnc+1):(nnc+nn);
-   cmdl.electrode(i).z_contact = z_contact;
    fmdl.electrode(i).z_contact = z_contact;
+   if CMDL_DIM ~= 0
+      nnc = length(cmdl.nodes);
+      cmdl.nodes = [cmdl.nodes; nx(:,[1 FMDL_DIM])];
+      cmdl.electrode(i).nodes = (nnc+1):(nnc+nn);
+      cmdl.electrode(i).z_contact = z_contact;
+   end
 end
-
-% Note that the 2d fwd model mesh is a bit trashy around the electrode
-% refinement...  there are bad quality elements just outside the per electrode
-% refined areas
 
 imdl= mk_common_model('a2d0c',ne); % 2d model
 imdl.fwd_model = fmdl;
-imdl.rec_model = cmdl;
-% EIDORS "analytic_c2f" gets stuck, do an approximate one
-%eidors_default('set','mk_coarse_fine_mapping','mk_analytic_c2f');
-%eidors_default('set','mk_coarse_fine_mapping','mk_approx_c2f');
-%[c2f,out] = mk_coarse_fine_mapping(fmdl,cmdl);
-if ~skip_c2f
-   [c2f,out] = mk_approx_c2f(fmdl,cmdl);
-   imdl.fwd_model.coarse2fine = c2f;
-   imdl.fwd_model.background = out;
-end
 imdl.name = ['EIDORS mk_geophysics_model ' str];
 imdl.fwd_model.name = ['EIDORS mk_geophysics_model fwd model ' str];
-imdl.rec_model.name = ['EIDORS mk_geophysics_model rec model ' str];
+if CMDL_DIM ~= 0
+   imdl.rec_model.name = ['EIDORS mk_geophysics_model rec model ' str];
+   imdl.rec_model = cmdl;
+   % EIDORS "analytic_c2f" gets stuck, do an approximate one
+   %eidors_default('set','mk_coarse_fine_mapping','mk_analytic_c2f');
+   %eidors_default('set','mk_coarse_fine_mapping','mk_approx_c2f');
+   %[c2f,out] = mk_coarse_fine_mapping(fmdl,cmdl);
+   if ~skip_c2f
+      [c2f,out] = mk_approx_c2f(fmdl,cmdl);
+      imdl.fwd_model.coarse2fine = c2f;
+      imdl.fwd_model.background = out;
+   end
+end
+
+if MDL_2p5D_CONFIG
+   imdl.fwd_model.jacobian   = @jacobian_adjoint_2p5d_1st_order;
+   imdl.fwd_model.solve      = @fwd_solve_2p5d_1st_order;
+   imdl.fwd_model.system_mat = @system_mat_2p5d_1st_order;
+   imdl.fwd_model.jacobian_adjoint_2p5d_1st_order.k = [0 3];
+   imdl.fwd_model.fwd_solve_2p5d_1st_order.k = [0 3];
+end
 
 if save_model_to_disk
-   save(filename,'imdl');
+   save(filename,'imdl','SALT');
 end
 
 % convert 2x3 array to "x1,y1,z1;x2,y2,z2" string
