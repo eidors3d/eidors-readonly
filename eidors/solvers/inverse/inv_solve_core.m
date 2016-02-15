@@ -665,19 +665,29 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
             hp=hp(end);
          end
 
-         if opt.verbose > 1
-            try RtR_str = func2str(opt.RtR_prior{i,j});
-            catch
-               try RtR_str = opt.RtR_prior{i,j};
-               catch RtR_str = 'unknown';
-               end
+         try RtR_str = func2str(opt.RtR_prior{i,j});
+         catch
+            try RtR_str = opt.RtR_prior{i,j};
+            catch RtR_str = 'unknown';
             end
+         end
+         if opt.verbose > 1
             fprintf('      {%d,%d} regularization RtR (%s), ne=%dx%d, hp=%0.4g\n', i,j,RtR_str,eei-esi+1,eej-esj+1,hp*sqrt(hp2));
          end
          imgt = map_img(img, opt.elem_working{i});
          inv_modelt = inv_model;
          inv_modelt.RtR_prior = opt.RtR_prior{i,j};
-         RtR(esi:eei, esj:eej) = hp.^2 * calc_RtR_prior_wrapper(inv_modelt, imgt, opt);
+         if strcmp(RtR_str, 'prior_noser') % intercept prior_noser: we already have the Jacobian calculated
+            if i ~= j
+               error('noser for off diagonal prior (RtR) is undefined')
+            end
+            exponent= 0.5; try exponent = inv_model.prior_noser.exponent; end; try exponent = inv_model.prior_noser.exponent{j}; end
+            ss = sum(J(:,esj:eej).^2,1)';
+            Reg = spdiags( ss.^exponent, 0, opt.elem_len{j}, opt.elem_len{j}); % = diag(J'*J)^0.5
+            RtR(esi:eei, esj:eej) = hp.^2 * Reg;
+         else
+            RtR(esi:eei, esj:eej) = hp.^2 * calc_RtR_prior_wrapper(inv_modelt, imgt, opt);
+         end
       end
    end
    hp2RtR = hp2*RtR;
