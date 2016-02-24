@@ -1002,7 +1002,14 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
      error(sprintf('mismatch on elem_data[%d,%d] vs. sx[%d,%d] vector sizes, check c2f_background_fixed',size(img.elem_data), size(sx)));
   end
 
-  [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2RtR, dv, opt);
+  optt = opt;
+  if isfield(optt,'fig_prefix') % set fig_prefix for the iteration#
+    optt.fig_prefix = [opt.fig_prefix '-k' num2str(k)];
+  end
+  [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2RtR, dv, optt);
+  if isfield(opt,'fig_prefix') % set fig_prefix back to it's old value
+    opto.fig_prefix = opt.fig_prefix;
+  end
   if ~isempty(imgo)
      img = imgo;
   else
