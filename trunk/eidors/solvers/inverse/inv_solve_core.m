@@ -520,13 +520,14 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
 
   % now do something with that information
   if opt.verbose > 1
+     fprintf('    calc residual\n');
      if k == 0
         fprintf('    stop @ max iter = %d, tol = %0.3g (%0.3g%%), dtol = %0.3g%% (after %d iter)\n', ...
                 opt.max_iterations, opt.tol, opt.tol/r_k*100, opt.dtol*100, opt.dtol_iter);
-        fprintf('    calc residual, r=%0.3g\n', r_k);
+        fprintf('      r =%0.3g = %0.3g meas + %0.3g elem\n', r_k, m_k, e_k);
      else
-        fprintf('    calc residual\n');
-        fprintf('      r =%0.3g (%0.03g%%)\n', r_k, r_k/r(1)*100);
+        fprintf('      r =%0.3g (%0.03g%%) = %0.3g meas (%0.03g%%) + %0.3g elem (%0.3g%%)\n', ...
+                r_k, r_k/r(1,1)*100, m_k, m_k/r(1,2)*100, e_k, e_k/r(1,3)*100);
         dr = (r_k - r_km1);
         fprintf('      dr=%0.3g (%0.3g%%)\n', dr, dr/r_1*100);
      end
