@@ -53,7 +53,8 @@ if isstruct(max_scale) && strcmp(max_scale.type,'image')
    [scl_data, ref_lev, max_scale] = scale_for_display( img_data(:), pp);
 end
 
-   hh= colorbar; 
+   hh= colorbar;
+   drawnow
 
    cbsm = [];
    try;  cbsm =  img.calc_colours.cb_shrink_move;
