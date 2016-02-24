@@ -11,6 +11,8 @@ function fname_out= animate_reconstructions(fname, imgs);
 %   then a timescale is shown on the bottom
 % if imgs.animate_reconstructions.make_avi = 1
 %   then use ffmpeg to write an avi
+% if imgs.animate_reconstructions.frame_rate = 5 (images / sec)
+%   default value is 5
 %
 % OUTPUT: fname_out
 %     Name of animated file written to.
@@ -69,6 +71,12 @@ function mk_movie2(fname, imgs);
      show_times = 0;
    end
 
+   try
+     frame_rate = imgs.animate_reconstructions.frame_rate;
+   catch 
+     frame_rate = 5;
+   end
+
    try 
      make_avi = imgs.animate_reconstructions.make_avi;
    catch 
@@ -111,11 +119,11 @@ function mk_movie2(fname, imgs);
       
    if make_avi == 0
       retval= system_cmd(sprintf( ...
-          'convert -delay 5 %s/img*.png -loop 0 %s.gif', ...
-          dirname, fname ));
+          'convert -delay %d %s/img*.png -loop 0 %s.gif', ...
+          frame_rate, dirname, fname ));
    else
       retval= system_cmd(sprintf( ...
-          'ffmpeg -qscale 2 -r 25 -i %s/img*.jpg -vcodec msmpeg4v2 -y -an %s.avi', ...
+          'ffmpeg -r 25 -i %s/img*.jpg -vcodec msmpeg4v2 -y -an -qscale 2 %s.avi', ...
           dirname, fname ));
    end
 
