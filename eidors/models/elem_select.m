@@ -6,7 +6,8 @@ function memb_frac = elem_select( fmdl, select_fcn )
 %  fmdl =      fwd_model structure
 %  select_fcn = function to describe membership, 
 %              can also be a cell array of functions, but all must accept
-%              parameters x, y, and z
+%              parameters x, y, and z. ELEM_SELECT then finds elements that
+%              satisfy ALL the functions at once
 % OR
 % select_fcn = string accepting named variables x,y,z.
 %
