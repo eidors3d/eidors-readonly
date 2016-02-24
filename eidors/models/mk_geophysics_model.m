@@ -6,12 +6,18 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %         OR
 %       a list of electrode locations in the x-dimension
 % str - model, x = see hmax_rec
-%       h2x -   2D half-space, linear array (2d fwd)
-%       h2p5x - 2.5D half-space, linear array (2d fwd + Fourier y-dimension)
-%       h3x   - 3D half-space, linear array (3d fwd)
-%       h22x  - 2D half-space, linear array (3d fwd, 2d rec)
-%       h32x  - 2D half-space, linear array (3d fwd, 2d rec)
-%       h33x  - 2D half-space, linear array (3d fwd, 3d rec)
+%       h2x -   2D half-space, linear CEM array (2d fwd)
+%       h2p5x - 2.5D half-space, linear CEM array (2d fwd + Fourier y-dimension)
+%       h3x   - 3D half-space, linear CEM array (3d fwd)
+%       h22x  - 2D half-space, linear CEM array (3d fwd, 2d rec)
+%       h32x  - 2D half-space, linear CEM array (3d fwd, 2d rec)
+%       h33x  - 2D half-space, linear CEM array (3d fwd, 3d rec)
+%       H2x -   2D half-space, linear PEM array (2d fwd)
+%       H2p5x - 2.5D half-space, linear PEM array (2d fwd + Fourier y-dimension)
+%       H3x   - 3D half-space, linear PEM array (3d fwd)
+%       H22x  - 2D half-space, linear PEM array (3d fwd, 2d rec)
+%       H32x  - 2D half-space, linear PEM array (3d fwd, 2d rec)
+%       H33x  - 2D half-space, linear PEM array (3d fwd, 3d rec)
 % opt - override default configuration options (optional cell array)
 %       'hmax_fwd' - fine reconstruction mesh density, given an
 %                    array width xw, and electrode spacing es
@@ -23,6 +29,7 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                 'z' : hmax_fwd=xw/2^25]  'Z' : hmax_fwd=es*2^-21]
 %       'hmax_rec' - reconstruction model mesh density [hmax_fwd*2]
 %       'elec_width' - electrode width [0.1 m]
+%                    width = 0 requests a PEM, rather than CEM
 %       'z_contact' - electrode contact impedance [0.01 \Ohm.m]
 %       'elec_spacing' - distance between electrode centers [5 m]
 %       'extend_x' - extra mesh in the principle axis of the
@@ -53,20 +60,20 @@ imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(ne, 'Wenner');
 
 function imdl=mk_model(str,ne,opt,SALT);
-if str(1) ~= 'h'
+if str(1) ~= 'h' && str(1) ~= 'H'
    error([str ': I only know how to build linear half-space models: h***']);
 end
 
 MDL_2p5D_CONFIG = 0;
-switch str(1:end-1)
-   case {'h2', 'h3'} % simple meshes
+switch str(2:end-1)
+   case {'2', '3'} % simple meshes
       FMDL_DIM = str(2) - '0';
       CMDL_DIM = 0; % no cmdl
-   case 'h2p5' % 2.5D Fourier transformed
+   case '2p5' % 2.5D Fourier transformed
       FMDL_DIM = 2;
       CMDL_DIM = 0; % no cmdl
       MDL_2p5D_CONFIG = 1;
-   case {'h22', 'h33', 'h32'} % dual meshes
+   case {'22', '33', '32'} % dual meshes
       FMDL_DIM = str(2) - '0';
       CMDL_DIM = str(3) - '0';
    otherwise
@@ -75,7 +82,11 @@ end
 assert(CMDL_DIM ~= 3, '3d rec_model not yet tested');
 
 skip_c2f = 0;
-elec_width= 0.1;
+if str(1) == 'h'
+   elec_width = 0.1;
+else
+   elec_width = 0;
+end
 z_contact= 0.01;
 nodes_per_elec= 3; %floor(elec_width/hmax_rec*10);
 elec_spacing= 5.0;
@@ -120,6 +131,7 @@ if ~exist('hmax_rec','var') % allow hmax_rec to depend on configured hmax_fwd
    hmax_rec=hmax_fwd*2.0; % avoid parametrization aliasing
 end
 
+save_model_to_disk=0; % TODO rm
 if save_model_to_disk
    filename=sprintf('imdl-%s-%03del.mat',str,ne);
    if exist(filename, 'file') == 2
@@ -245,8 +257,21 @@ else % 3D fmdl
    ri_maxh   = hmax_fwd*norm(R)/2.0;
 
    % build shape string for NetGen
+   cem2pem = 0; % convert CEM to PEM?
    elec_pos   = [ xyzc(:,1:2), repmat([0, 0, 0, 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
-   elec_shape = [elec_width*norm(R), 0, elec_width*norm(R)/(nodes_per_elec-1)]; % CEM, circular, maxh
+   if elec_width ~= 0
+      elec_shape = [elec_width*norm(R), 0, elec_width*norm(R)/(nodes_per_elec-1)]; % CEM, circular, maxh
+   else
+      if FMDL_DIM == 3
+         elec_width = 0.01*norm(R);
+         elec_shape = [0, elec_width, elec_width/(nodes_per_elec-1)]; % PEM, sz, maxh
+      else % FMDL_DIM == 2
+         elec_width = elec_spacing/2*norm(R);
+         elec_shape = [elec_width, elec_width, elec_width]; %elec_width/(nodes_per_elec-1)]; % PEM, sz, maxh
+         elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
+         cem2pem = 1;
+      end
+   end
    elec_obj     = 'ps';
    tlo = 'tlo ro'; % skip trailing ';\n'
    if FMDL_DIM == 3
@@ -279,7 +304,7 @@ else % 3D fmdl
    [fmdl, mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj, tlo);
    if FMDL_DIM == 2 % 2D
       % now convert the roughly 2D slice into a true 2D plane
-      [fmdl, mat_idx] = copy_mdl2d_from3d(fmdl, mat_idx, 'y');
+      [fmdl, mat_idx] = copy_mdl2d_from3d(fmdl, mat_idx, 'y', cem2pem, elec_pos, elec_width);
 
       % reverse the centre and scaling
       nn = size(fmdl.nodes,1);
@@ -299,6 +324,12 @@ else % 3D fmdl
       Xn = repmat(X(1,:), nn, 1);
    end
    fmdl.nodes = (fmdl.nodes / R) + Xn;
+
+   % check that all electrodes were found
+   for i = 1:length(fmdl.electrode)
+      nn = fmdl.electrode(i).nodes;
+      assert(length(nn(:)) > 0, sprintf('electrode#%d: failed to find nodes',i));
+   end
 
 %   show_fem(fmdl); xlabel('x'); ylabel('y'); zlabel('z');
 
@@ -430,7 +461,7 @@ end
 function r = range(a)
 r = max(a(:))-min(a(:));
 
-function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz);
+function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz,cem2pem,elec_pos,elec_width);
 % AB: taken from EIDORS function ng_mk_gen_models() subfunction of the same name
 % AB: NEW: xyz = 'x', 'y' or 'z' -- default was Z, we want X
    if xyz == 'x'
@@ -445,6 +476,7 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz);
      error('xyz must be "x", "y" or "z"');
    end
    mdl3.nodes = mdl3.nodes * T; % AB: SWAP axes
+   elec_pos = elec_pos(:,1:3) * T;
 
    % set name
    mdl2 = eidors_obj('fwd_model',sprintf('%s 2D',mdl3.name));
@@ -476,6 +508,7 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz);
    idx2 = {};
    idx0  = idx( lay0, :);
    for i=1:size(idx3,2)
+
      idx2{i} = [];
      ii = 1;
      for j=1:size(idx3{i},1)
@@ -491,8 +524,19 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz);
    if isfield(mdl3,'electrode')
      mdl2.electrode = mdl3.electrode;
      for i=1:length(mdl2.electrode);
+        nn = mdl3.nodes(mdl3.electrode(i).nodes,:);
         enodes = nmap( mdl2.electrode(i).nodes );
         enodes(enodes==0) = []; % Remove 3D layers
+        if cem2pem
+           nn = mdl2.nodes(enodes,:); % all 2D CEM nodes
+           np = elec_pos(i,1:2); % true elec location
+           np(1) = np(1) - elec_width/2;
+           D = pdist([np; nn]);
+           [~,idx] = min(D(1,2:end)); % closest CEM node to ideal PEM location
+           enodes = enodes(idx);
+           mdl2.nodes(enodes,:) = np; % shift PEM node to true location
+         end
+
         mdl2.electrode(i).nodes = enodes(:)';
      end
    end
@@ -503,6 +547,12 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz);
          mdl2.(n{:}) = mdl3.(n{:});
       end
    end
+
+function D2 = pdist(X) % row vectors
+   if nargin == 2; error('only supports Euclidean distances'); end
+   %D2 = bsxfun(@plus, dot(X, X, 1)', dot(Y, Y, 1)) - 2*(X'*Y) % 1d
+   D2 = bsxfun(@minus, X, permute(X,[3 2 1]));
+   D2 = squeeze(sqrt(sum(D2.^2,2)));
 
 function do_unit_test
    ne = 16;
