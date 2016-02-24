@@ -131,7 +131,6 @@ if ~exist('hmax_rec','var') % allow hmax_rec to depend on configured hmax_fwd
    hmax_rec=hmax_fwd*2.0; % avoid parametrization aliasing
 end
 
-save_model_to_disk=0; % TODO rm
 if save_model_to_disk
    filename=sprintf('imdl-%s-%03del.mat',str,ne);
    if exist(filename, 'file') == 2
