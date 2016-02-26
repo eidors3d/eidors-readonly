@@ -1,4 +1,4 @@
-function param = fwd_model_parameters( fwd_model )
+function param = fwd_model_parameters( fwd_model, opt )
 % FWD_MODEL_PARAMETERS: data= fwd_solve_1st_order( fwd_model, image)
 % Extract parameters from a 'fwd_model' struct which are 
 % appropriate for Andy Adler's EIT code
@@ -25,14 +25,23 @@ function param = fwd_model_parameters( fwd_model )
 
 if ischar(fwd_model) && strcmp(fwd_model, 'UNIT_TEST'); do_unit_test; return; end
 
+if nargin < 2
+   opt.skip_VOLUME = 0;
+else
+   assert(ischar(opt),'opt must be a string');
+   assert(strcmp(opt,'skip_VOLUME'),'opt can only be ''skip_VOLUME''');
+   opt = struct;
+   opt.skip_VOLUME = 1;
+end
+
 copt.fstr = 'fwd_model_parameters';
 copt.log_level = 4;
 
-param = eidors_cache(@calc_param,fwd_model,copt);
+param = eidors_cache(@calc_param,{fwd_model, opt},copt);
 
 
 % perform actual parameter calculation
-function pp= calc_param( fwd_model )
+function pp= calc_param( fwd_model, opt )
 
 pp.NODE= fwd_model.nodes';
 pp.ELEM= fwd_model.elems';
@@ -52,9 +61,11 @@ catch
    fwd_model.electrode = [];
 end
 
-copt.fstr = 'element_volume';
-copt.log_level = 4;
-pp.VOLUME= eidors_cache(@element_volume, {pp.NODE, pp.ELEM, e, d}, copt );
+if ~opt.skip_VOLUME
+   copt.fstr = 'element_volume';
+   copt.log_level = 4;
+   pp.VOLUME= eidors_cache(@element_volume, {pp.NODE, pp.ELEM, e, d}, copt );
+end
 
 if isfield(fwd_model,'boundary')
     bdy = double( fwd_model.boundary ); % double because of stupid matlab bugs
