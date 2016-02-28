@@ -116,6 +116,9 @@ if isempty(greyscale)
 else
     tick_locs = tick_vals*c_max*2/max_scale +2.5;
 end
+   % fix extremes so numbers are displayed
+   tick_locs(abs(tick_locs-ylim(1))<eps) = ylim(1);
+   tick_locs(abs(tick_locs-ylim(2))<eps) = ylim(2);
 
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
