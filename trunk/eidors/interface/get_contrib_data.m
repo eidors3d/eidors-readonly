@@ -30,13 +30,19 @@ end
 if have_local_data
    p = [get_local_path filesep contrib filesep file];
    if ~exist(p, 'file')
-      error('File %s not found in contribution %s.',file, p);
+      fprintf('File %s not found.\n',p);
+      p = download_file(contrib,file,[get_local_path filesep contrib]);
    end
 else % attempt to get from the web
    fprintf('The requested file %s is absent and needs to be downloaded from the web\n',file);
+   p = download_file(contrib,file,cd);
+end
+end
+
+function p=download_file(contrib,file,path)
    p = [get_remote_address '/' contrib '/' file];
    while 1
-      s = input('Download to current directory now? Y/N [Y]','s');
+      s = input('Try to download now? Y/N [Y]','s');
       if isempty(s), s='Y'; end
       switch s
          case {'n','N'}
@@ -44,20 +50,17 @@ else % attempt to get from the web
             break
          case {'y','Y'}
             try
-               p = websave(file,p);
+               p = websave([path filesep file],p);
             catch
-               fprintf('Download of <a href="%s">%s</a> failed\n',p,p);
+               fprintf('Download of <a href="%s">%s</a> failed!\n',p,p);
+               try delete([path filesep file '.html']); end % cleanup
+               p = [];
             end
             break
          otherwise
             fprintf('Response not understood\n');
       end
    end
-   % suppress output
-   if nargout==0
-      clear p
-   end
-end
 end
 
 function p = get_local_path
