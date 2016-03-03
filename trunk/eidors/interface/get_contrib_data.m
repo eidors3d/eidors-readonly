@@ -16,7 +16,7 @@ function p = get_contrib_data( contrib , file )
 % check for data_contrib
 have_local_data = exist(get_local_path,'dir');
 
-if nargin>0 && ischar(contrib) && strcmp(contrib,list)
+if nargin>0 && ischar(contrib) && strcmp(contrib,'list')
    disp(list_directories);
 end
 
