@@ -260,8 +260,8 @@ else % 3D fmdl
               xrlim1  +extend_y*2/5*2      2 ]);
 %   end
    ps = [0 0 0; 0 0 1]; % surface plane
-   ro_maxh   = hmax_fwd*norm(R);
-   ri_maxh   = hmax_fwd*norm(R)/2.0;
+   ro_maxh   = hmax_fwd;
+   ri_maxh   = hmax_fwd/2.0;
 
    % build shape string for NetGen
    cem2pem = 0; % convert CEM to PEM?
