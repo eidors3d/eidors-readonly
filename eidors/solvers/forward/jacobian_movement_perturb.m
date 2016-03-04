@@ -26,7 +26,7 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
 end
 fwd_model= img.fwd_model;
 
-pp= fwd_model_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 delta= 1e-6; % tests indicate this is a good value
              % too high and J is not linear, too low and numerical error
 

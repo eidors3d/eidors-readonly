@@ -35,7 +35,7 @@ img.elem_data = check_elem_data(img);
 
 fwd_model= img.fwd_model;
 
-pp= fwd_model_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 s_mat= calc_system_mat( img );
 
 d= pp.n_dims+1;

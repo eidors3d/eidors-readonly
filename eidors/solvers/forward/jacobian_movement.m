@@ -33,7 +33,7 @@ fwd_model= img.fwd_model;
 
 
 % System matrix and its parameters
-pp = fwd_model_parameters( fwd_model );
+pp = fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 pp.dfact = factorial(pp.n_dims);
 pp.DEBUG = 0;
 if pp.DEBUG
@@ -358,7 +358,7 @@ function SS= calc_unconnected_system_mat( fwd_model, img)
 %   SS  = Unconnected system Matrix
 %   CC  = Connectivity Matrix
 
-p= fwd_model_parameters( fwd_model );
+p= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 
 d= p.n_dims+1;
 e= p.n_elem;

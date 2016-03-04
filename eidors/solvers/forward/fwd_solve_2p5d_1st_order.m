@@ -38,7 +38,7 @@ end
 % all calcs use conductivity
 img = convert_img_units(img, 'conductivity');
 
-pp= fwd_model_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 
 k = [0 Inf]; try k = img.fwd_model.fwd_solve_2p5d_1st_order.k; end % default to 8 full waves: k pi h / 2 z = 8 * 2 pi
 method = 'quadv'; try method = img.fwd_model.fwd_solve_2p5d_1st_order.method; end % default to 8 full waves: k pi h / 2 z = 8 * 2 pi
