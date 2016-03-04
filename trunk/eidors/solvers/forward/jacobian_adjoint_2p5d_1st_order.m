@@ -48,7 +48,7 @@ img.elem_data = check_elem_data(img);
 
 fwd_model= img.fwd_model;
 
-pp= fwd_model_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 gnd = img.fwd_model.gnd_node;
 
 img.fwd_model.system_mat = @system_mat_2p5d_1st_order;

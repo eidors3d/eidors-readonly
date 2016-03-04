@@ -33,7 +33,7 @@ end
 % all calcs use conductivity
 img = convert_img_units(img, 'conductivity');
 
-pp= fwd_model_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 s_mat= calc_system_mat( img );
 
 idx= 1:size(s_mat.E,1);

@@ -39,7 +39,7 @@ if ~ismember(img.current_params, supported_params)
     error('EIDORS:PhysicsNotSupported', '%s does not support %s', ...
     'FWD_SOLVE_HALFSPACE',img.current_params);
 end
-pp= fwd_model_parameters( fwd_model );
+pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 
 % all calcs use resistivity
 img = convert_img_units(img, 'conductivity');
