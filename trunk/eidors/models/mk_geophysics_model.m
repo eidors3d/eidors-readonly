@@ -55,7 +55,7 @@ copt.fstr = 'mk_geophysics_model';
 if nargin < 3
    opt = {};
 end
-SALT='a$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
+SALT='$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
 imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(ne, 'Wenner');
 
@@ -132,7 +132,8 @@ if ~exist('hmax_rec','var') % allow hmax_rec to depend on configured hmax_fwd
 end
 
 if save_model_to_disk
-   filename=sprintf('imdl-%s-%03del.mat',str,ne);
+   % NOTE models are stored in the directory specified by eidors_cache('cache_path')
+   filename=fullfile(eidors_cache('cache_path'),sprintf('mk_geophysics_model-imdl-%s-%03del.mat',str,ne));
    if exist(filename, 'file') == 2
       tmp = matfile(filename);
       tmp = whos(tmp, 'SALT');
