@@ -45,6 +45,13 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                    (3D models only) [1]
 %       'extend_z' - extra depth of model, multiple of array width [1]
 %       'skip_c2f' - skip building the rec_model to fwd_model mapping [0]
+%       'threshold' - threshold for electrode placement errors [1e-12]
+%                    if error exceeds threshold, mash nodes by cubic interp
+%                    maintaining the side and lower boundaries of the
+%                    model... the nodes will be mashed until the electrodes
+%                    conform to the requested electrode positions,
+%                    correcting for Netgen inaccuracies and lack of
+%                    vertical profile (Inf = disable node mashing)
 %
 % The linear electrode array runs in the +X direction at Z=0. For
 % the 3D model, the Y-axis is perpendicular to the electrode array.
@@ -61,7 +68,7 @@ copt.fstr = 'mk_geophysics_model';
 if nargin < 3
    opt = {};
 end
-SALT='g$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
+SALT='j$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
 imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), 'Wenner');
 
@@ -90,12 +97,13 @@ assert(CMDL_DIM ~= 3, '3d rec_model not yet tested');
 skip_c2f = 0;
 if str(1) == 'h'
    elec_width = 0.1;
-else
+else % str(1) == 'H'
    elec_width = 0;
 end
 z_contact= 0.01;
 nodes_per_elec= 3; %floor(elec_width/hmax_rec*10);
 elec_spacing= 5.0;
+threshold = 1e-12;
 
 extend_x = 1;
 extend_y = 1;
@@ -103,7 +111,7 @@ extend_z = 1;
 if length(opt) > 0 % allow overriding the default values
    assert(round(length(opt)/2)*2 == length(opt),'option missing value?');
    expect = {'hmax_rec','hmax_fwd', 'elec_width','z_contact','elec_spacing',...
-             'extend_x', 'extend_y', 'extend_z', 'skip_c2f'};
+             'extend_x', 'extend_y', 'extend_z', 'skip_c2f', 'threshold'};
    opts = struct(opt{:})
    for i = fieldnames(opts)'
       assert(any(strcmp(i,expect)), ['unexpected option: ',i{:}]);
@@ -130,7 +138,7 @@ ne=size(xyz,1);
 xyzc = (xyz - X)*R; % centre and scale electrodes: -1 to +1 y-axis
 xw=max(xyzc(:,1))-min(xyzc(:,1));
 xs=min(xyzc(:,1));
-elec_spacing = norm(mean(diff(xyzc))); % average distance between electrodes
+elec_spacing = min(min(pdist(xyzc) + diag(inf*(1:size(xyzc,1))))); % min spacing btw elec
 
 if length(opt) > 0
    save_model_to_disk=0;
@@ -276,6 +284,7 @@ else % 3D fmdl
       else % FMDL_DIM == 2
          elec_width = elec_spacing/2*norm(R)/2;
          elec_shape = [elec_width, elec_width, elec_width]; % CEM->PEM, sz, maxh
+         elec_pos   = [ xyzc(:,1:2), repmat([0 0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
          elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
          cem2pem = 1;
       end
@@ -342,7 +351,7 @@ else % 3D fmdl
 
    % fix electrode locations if necessary
    elec_err = sqrt(sum(mdl_elec_err(fmdl, xyzc).^2,2));
-   if max(elec_err) > 100*eps % put electrodes in the right place
+   if max(elec_err) > threshold % put electrodes in the right place
       [fmdl, cf] = correct_electrode_positions(fmdl, xyzc);
       
       if CMDL_DIM ~= 0
@@ -578,6 +587,7 @@ function D2 = pdist(X) % row vectors
    D2 = squeeze(sqrt(sum(D2.^2,2)));
 
 function [mdl, c] = correct_electrode_positions(mdl, xyzc)
+eidors_msg('correct_electrode_positions');
    nd = size(mdl.nodes,2);
    c = 0; err = 1;
    while max(err) > eps
@@ -613,7 +623,7 @@ function   mdl = mash_nodes(mdl, method, idm, dim, elec_true)
         mean([max(xq) max(elec_true(:,idm))]); ...
         max(xq)];
    v = [0; 0; err; 0; 0];
-    %plot(err);
+
    % scale error to match the electrode locations
    interp_method = 'linear';
    if strcmp(method, 'shift_surface')
@@ -642,7 +652,7 @@ function   mdl = mash_nodes(mdl, method, idm, dim, elec_true)
 % calculate the error in electrode position for the fwd_model
 function err = mdl_elec_err(mdl, xyzc)
    if ~isfield(mdl, 'electrode')
-      error('electrodes not available on this model, must supply positional errror');
+      error('electrodes not available on this model, must supply positional error');
    end
 
    nel=length(mdl.electrode); % number of electrodes
@@ -651,12 +661,11 @@ function err = mdl_elec_err(mdl, xyzc)
    eu = ones(nel,nd)*NaN; % init
    for i=1:length(mdl.electrode)
       nn = mdl.nodes(mdl.electrode(i).nodes,:); % nodes per electrode
-      eu(i,:) = (max(nn) + min(nn))/2; % approx centre of each electrode
+      eu(i,:) = (max(nn,[],1) + min(nn,[],1))./2; % approx centre of each electrode
    end
    err = xyzc(:,1:nd) - eu;
 
 function do_unit_test
-if 0
    ne = 16;
    imdl = mk_geophysics_model('h2p5a', ne);
    imdl.fwd_model.stimulation = stim_pattern_geophys(ne, 'Wenner');
@@ -664,9 +673,8 @@ if 0
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_halfspace(img);
    vd = fwd_solve(img);
-   unit_test_cmp('h2a halfspace vs default TEST', norm(vh.meas - vd.meas), 0, 4e-3);
 clf; h=plot([vh.meas vd.meas],'o--'); legend('analytic','FEM'); set(gca,'box','off'); set(h,'LineWidth',2);
-end
+
    imdl1 = mk_geophysics_model('h2a',[1:6]);
    imdl2 = mk_geophysics_model('h2a',[1:6]');
    imdl3 = mk_geophysics_model('h2a',[1:6]'*[1 0]);
@@ -674,26 +682,43 @@ end
    R = @(x) [cosd(x) -sind(x); sind(x) cosd(x)]; % rotation matrix
    X = [0 2];
    imdl5 = mk_geophysics_model('h2a',([1:6]'*[1 0] + ([1:6]*0+1)'*X)*R(-135));
-   elec_pos = [1 1; 2 2; 3 1; 4 1.5];
-   imdl = mk_geophysics_model('h2a',elec_pos);
+   elec_pos_2d = [1 1; 2 2; 3 1; 4 1.5];
    elec_pos_3d = [1 0 0; 2 0.5 1; 3 -0.5 2.5; 10 0 3];
-   imdl3d = mk_geophysics_model('h3a', elec_pos_3d);
+   imdl2dc = mk_geophysics_model('h2a', elec_pos_2d); % 2D complete electrode model
+   imdl3dc = mk_geophysics_model('h3a', elec_pos_3d); % 3D complete electrode model
+   imdl2dp = mk_geophysics_model('H2a', elec_pos_2d); % 2D point electrode model
+   imdl3dp = mk_geophysics_model('H3a', elec_pos_3d); % 3D point electrode model
+   imdl2df = mk_geophysics_model('H2a', elec_pos_2d, {'threshold', Inf}); % 2D point electrode model... without mashing
+   imdl3df = mk_geophysics_model('H3a', elec_pos_3d, {'threshold', Inf}); % 3D point electrode model... without mashing
+   unit_test_cmp('h2a halfspace vs default TEST', norm(vh.meas - vd.meas), 0, 4e-3);
    unit_test_cmp('1d elec list equivalence (row/col)',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl2));
    unit_test_cmp('1d vs. 2d elec list equivalence',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl3));
    unit_test_cmp('1d vs. 2d + y=2 elec list equivalence',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl4)-([1:6]*0+2)'*[0 1]);
    unit_test_cmp('1d vs. 2d + y=2 - 135 deg elec eq', ...
                  unit_test_elec_pos(imdl1), ...
                  unit_test_elec_pos(imdl5, R(135), -X), eps*10);
-   unit_test_cmp('2d with vertical geometry (mash nodes)', ...
-                 elec_pos, ...
-                 unit_test_elec_pos(imdl), 0.01);
-   unit_test_cmp('3d with vertical geometry (mash nodes)', ...
+   unit_test_cmp('2d with vertical geometry (mash nodes) CEM', ...
+                 elec_pos_2d, ...
+                 unit_test_elec_pos(imdl2dc), 0.01);
+   unit_test_cmp('3d with vertical geometry (mash nodes) CEM', ...
                  elec_pos_3d, ...
-                 unit_test_elec_pos(imdl3d), 0.001);
+                 unit_test_elec_pos(imdl3dc), 0.001);
+   unit_test_cmp('2d with vertical geometry (mash nodes) PEM', ...
+                 elec_pos_2d, ...
+                 unit_test_elec_pos(imdl2dp), 10*eps);
+   unit_test_cmp('3d with vertical geometry (mash nodes) PEM', ...
+                 elec_pos_3d, ...
+                 unit_test_elec_pos(imdl3dp), 10*eps);
+   unit_test_cmp('2d with vertical geometry (w/o mash nodes) PEM', ...
+                 elec_pos_2d, ...
+                 unit_test_elec_pos(imdl2df), -10*eps);
+   unit_test_cmp('3d with vertical geometry (w/o mash nodes) PEM', ...
+                 elec_pos_3d, ...
+                 unit_test_elec_pos(imdl3df), -10*eps);
 clf; subplot(221); show_fem(imdl1.fwd_model); title('models match? A');
      subplot(222); show_fem(imdl5.fwd_model); title('models match? C');
-     subplot(223); show_fem(imdl.fwd_model); title('2d deformations');
-     subplot(224); show_fem(imdl3d.fwd_model); title('3d deformations'); view([0 -1 0.01]);
+     subplot(223); show_fem(imdl2dc.fwd_model); title('2d deformations');
+     subplot(224); show_fem(imdl3dc.fwd_model); title('3d deformations'); view([0 -1 0.01]);
 
 function xyz = unit_test_elec_pos(imdl, R, X)
    if nargin < 2; R = 1; end
@@ -702,6 +727,6 @@ function xyz = unit_test_elec_pos(imdl, R, X)
    xyz = zeros(length(fmdl.electrode),size(fmdl.nodes,2))*NaN;
    for i = 1:length(fmdl.electrode)
       nn = fmdl.nodes(fmdl.electrode(i).nodes,:);
-      xyz(i,:) = (max(nn) + min(nn))/2;
+      xyz(i,:) = (max(nn,[],1) + min(nn,[],1))/2;
       xyz(i,:) = xyz(i,:)*R + X;
    end
