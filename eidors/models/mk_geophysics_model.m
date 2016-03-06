@@ -104,6 +104,7 @@ z_contact= 0.01;
 nodes_per_elec= 3; %floor(elec_width/hmax_rec*10);
 elec_spacing= 5.0;
 threshold = 1e-12;
+save_model_to_disk = (length(ne) == 1) && (length(opt) == 0);
 
 extend_x = 1;
 extend_y = 1;
@@ -117,16 +118,17 @@ if length(opt) > 0 % allow overriding the default values
       assert(any(strcmp(i,expect)), ['unexpected option: ',i{:}]);
       eval([i{:} ' = opts.(i{:});']);
    end
+   if (str(1) == 'H') && isfield(opts, 'elec_width')
+      error('requested "H" PEM model but configured "elec_width" option');
+   end
 end
 if length(ne) == 1 % ne: number of electrodes
    xw=(ne-1)*elec_spacing; % array width
    %xs=-(ne-1)*elec_spacing/2; % array centered
    xs=+5; % array at left-most at +5
    xyz = xs+([1:ne]'-1)*elec_spacing;
-   save_model_to_disk=1;
 else
    xyz = ne; % must be a set of coordinates for the electrodes...
-   save_model_to_disk=0;
 end
 if size(xyz,1) == 1
    xyz = xyz'; % flip to column
@@ -140,9 +142,6 @@ xw=max(xyzc(:,1))-min(xyzc(:,1));
 xs=min(xyzc(:,1));
 elec_spacing = min(min(pdist(xyzc) + diag(inf*(1:size(xyzc,1))))); % min spacing btw elec
 
-if length(opt) > 0
-   save_model_to_disk=0;
-end
 if ~exist('hmax_fwd','var')
    if str(end)-'a' >= 0
       hmax_fwd = xw*2^-(str(end)-'a');
@@ -278,12 +277,15 @@ else % 3D fmdl
       elec_pos   = [ xyzc(:,1:FMDL_DIM), repmat([zeros(1,3-FMDL_DIM+2) 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
    else
       if FMDL_DIM == 3
-         elec_width = 0.01*norm(R)/2;
-         elec_shape = [0, elec_width, elec_width/(nodes_per_elec-1)]; % PEM, sz, maxh
+         elec_width = elec_spacing/2;
+         elec_shape = [elec_width, elec_width, ri_maxh]; % PEM, sz, maxh
          elec_pos   = [ xyzc, repmat([0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
+         elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
+         elec_pos(:,2) = elec_pos(:,2) + elec_width/2;
+         cem2pem = 1;
       else % FMDL_DIM == 2
-         elec_width = elec_spacing/2*norm(R)/2;
-         elec_shape = [elec_width, elec_width, elec_width]; % CEM->PEM, sz, maxh
+         elec_width = elec_spacing/2;
+         elec_shape = [elec_width, elec_width, ri_maxh]; % rectangular CEM->PEM, maxh
          elec_pos   = [ xyzc(:,1:2), repmat([0 0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
          elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
          cem2pem = 1;
@@ -322,7 +324,7 @@ else % 3D fmdl
    [fmdl, mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj, tlo);
    if FMDL_DIM == 2 % 2D
       % now convert the roughly 2D slice into a true 2D plane
-      [fmdl, mat_idx] = copy_mdl2d_from3d(fmdl, mat_idx, 'y', cem2pem, elec_pos, elec_width);
+      [fmdl, mat_idx] = copy_mdl2d_from3d(fmdl, mat_idx, 'y');
    else % 3D
       if CMDL_DIM ~= 0
          % c2f
@@ -332,6 +334,10 @@ else % 3D fmdl
          cmdl.mk_analytic_c2f.f2c_offset  = cmdl.mk_coarse_fine_mapping.f2c_offset;
          cmdl.mk_analytic_c2f.f2c_project = cmdl.mk_coarse_fine_mapping.f2c_project;
       end
+   end
+
+   if cem2pem
+      fmdl = convert_cem2pem(fmdl, xyzc);
    end
 
    % stick electrode nodes into cmdl so that show_fem will plot them
@@ -493,22 +499,21 @@ end
 function r = range(a)
 r = max(a(:))-min(a(:));
 
-function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz,cem2pem,elec_pos,elec_width);
+function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,sel);
 % AB: taken from EIDORS function ng_mk_gen_models() subfunction of the same name
-% AB: NEW: xyz = 'x', 'y' or 'z' -- default was Z, we want X
-   if xyz == 'x'
-     % swap Z and X
-     T = [ 0 0 1; 0 1 0; 1 0 0 ];
-   elseif xyz == 'y'
-     % swap Z and Y
-     T = [ 1 0 0; 0 0 1; 0 1 0 ];
-   elseif xyz == 'z'
-     T = eye(3);
+% AB: NEW: sel = 'x', 'y' or 'z' -- default was Z, we want X
+   if sel == 'x'
+      % swap Z and X
+      T = [ 0 0 1; 0 1 0; 1 0 0 ];
+   elseif sel == 'y'
+      % swap Z and Y
+      T = [ 1 0 0; 0 0 1; 0 1 0 ];
+   elseif sel == 'z'
+      T = eye(3);
    else
-     error('xyz must be "x", "y" or "z"');
+      error('sel must be "x", "y" or "z"');
    end
    mdl3.nodes = mdl3.nodes * T; % AB: SWAP axes
-   elec_pos = elec_pos(:,1:3) * T;
 
    % set name
    mdl2 = eidors_obj('fwd_model',sprintf('%s 2D',mdl3.name));
@@ -540,37 +545,26 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz,cem2pem,elec_pos,elec_wid
    idx2 = {};
    idx0  = idx( lay0, :);
    for i=1:size(idx3,2)
-
-     idx2{i} = [];
-     ii = 1;
-     for j=1:size(idx3{i},1)
+      idx2{i} = [];
+      ii = 1;
+      for j=1:size(idx3{i},1)
          idx_tmp = find( idx0==idx3{i}(j) );
          if not(isempty(idx_tmp))
-           idx2{i}(ii,1) = idx_tmp(1,1);
-           ii = ii + 1;
+            idx2{i}(ii,1) = idx_tmp(1,1);
+            ii = ii + 1;
          end
-     end
+      end
    end
 
    % set electrode
    if isfield(mdl3,'electrode')
-     mdl2.electrode = mdl3.electrode;
-     for i=1:length(mdl2.electrode);
-        nn = mdl3.nodes(mdl3.electrode(i).nodes,:);
-        enodes = nmap( mdl2.electrode(i).nodes );
-        enodes(enodes==0) = []; % Remove 3D layers
-        if cem2pem
-           nn = mdl2.nodes(enodes,:); % all 2D CEM nodes
-           np = elec_pos(i,1:2); % true elec location
-           np(1) = np(1) - elec_width/2;
-           D = pdist([np; nn]);
-           [~,idx] = min(D(1,2:end)); % closest CEM node to ideal PEM location
-           enodes = enodes(idx);
-           mdl2.nodes(enodes,:) = np; % shift PEM node to true location
-         end
-
-        mdl2.electrode(i).nodes = enodes(:)';
-     end
+      mdl2.electrode = mdl3.electrode;
+      for i=1:length(mdl2.electrode);
+         nn = mdl3.nodes(mdl3.electrode(i).nodes,:);
+         enodes = nmap( mdl2.electrode(i).nodes );
+         enodes(enodes==0) = []; % Remove 3D layers
+         mdl2.electrode(i).nodes = enodes(:)';
+      end
    end
 
    ignore = {'electrode', 'nodes', 'boundary', 'elems', 'gnd_node', 'boundary_numbers', 'mat_idx', 'mat_idx_reordered'};
@@ -578,6 +572,27 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,xyz,cem2pem,elec_pos,elec_wid
       if ~any(strcmp(n,ignore))
          mdl2.(n{:}) = mdl3.(n{:});
       end
+   end
+
+function mdl = convert_cem2pem(mdl, xyzc)
+   if ~isfield(mdl, 'electrode')
+      return;
+   end
+   nd = size(mdl.nodes,2); % number of dimensions
+   for i=1:length(mdl.electrode)
+      en = mdl.electrode(i).nodes;
+      nn = mdl.nodes(en,:); % all nodes for this electrode
+      if nd == 2
+         np = xyzc(i,[1 3]); % true elec location (2d)
+      else
+         np = xyzc(i,:); % true elec location (3d)
+      end
+      D = pdist([np; nn]);
+      [~,idx] = min(D(1,2:end)); % closest CEM node to ideal PEM location
+      mdl.electrode(i).nodes = en(idx);
+      % NOTE: used to bump node's location but now we place a corner of the
+      % square electrode at precisely the correct location
+      %mdl.nodes(en,:) = np; % shift PEM node to true location
    end
 
 function D2 = pdist(X) % row vectors
@@ -678,6 +693,8 @@ clf; h=plot([vh.meas vd.meas],'o--'); legend('analytic','FEM'); set(gca,'box','o
    imdl1 = mk_geophysics_model('h2a',[1:6]);
    imdl2 = mk_geophysics_model('h2a',[1:6]');
    imdl3 = mk_geophysics_model('h2a',[1:6]'*[1 0]);
+   imdl3Hnm2d = mk_geophysics_model('H2a',[1:6],{'threshold',Inf}); % try without mashing nodes, no veritcal geometry... electrodes should be precisely located if the electrodes were correctly placed
+   imdl3Hnm3d = mk_geophysics_model('H3a',[1:6],{'threshold',Inf}); % try without mashing nodes, no veritcal geometry... electrodes should be precisely located if the electrodes were correctly placed
    imdl4 = mk_geophysics_model('h2a',[1:6]'*[1 0] + ([1:6]*0+2)'*[0 1]);
    R = @(x) [cosd(x) -sind(x); sind(x) cosd(x)]; % rotation matrix
    X = [0 2];
@@ -707,6 +724,10 @@ end
    unit_test_cmp('h2a halfspace vs default TEST', norm(vh.meas - vd.meas), 0, 4e-3);
    unit_test_cmp('1d elec list equivalence (row/col)',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl2));
    unit_test_cmp('1d vs. 2d elec list equivalence',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl3));
+   unit_test_cmp('2D PEM w/o node mashing, no vertical relief',[1:6]'*[1 0], unit_test_elec_pos(imdl3Hnm2d), eps);
+   unit_test_cmp('2D PEM *is* PEM',length(imdl3Hnm2d.fwd_model.electrode(1).nodes),1)
+   unit_test_cmp('3D PEM w/o node mashing, no vertical relief',[1:6]'*[1 0 0], unit_test_elec_pos(imdl3Hnm3d), eps);
+   unit_test_cmp('3D PEM *is* PEM',length(imdl3Hnm3d.fwd_model.electrode(1).nodes),1)
    unit_test_cmp('1d vs. 2d + y=2 elec list equivalence',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl4)-([1:6]*0+2)'*[0 1]);
    unit_test_cmp('1d vs. 2d + y=2 - 135 deg elec eq', ...
                  unit_test_elec_pos(imdl1), ...
