@@ -55,7 +55,14 @@ end
 if nargin < 5
    maxh = [];
 end
-   
+
+opt.fstr = 'place_elec_on_surf';
+mdl2 = eidors_cache(@do_place_elec_on_surf,{mdl,elec_pos, elec_spec,ng_opt_file, maxh},opt);
+
+
+
+function mdl2 = do_place_elec_on_surf(mdl,elec_pos, elec_spec,ng_opt_file, maxh)
+
 
 % filenames
 if do_debug; fnstem = 'tmp1';
