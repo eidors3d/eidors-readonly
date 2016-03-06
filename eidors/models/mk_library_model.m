@@ -131,6 +131,8 @@ out = {
     'adult_male_32el';
     'adult_male_16el_lungs';
     'adult_male_32el_lungs';
+    'adult_male_grychtol2016a_1x32';
+    'adult_male_grychtol2016a_2x16';
     'cylinder_16x1el_coarse';
     'cylinder_16x1el_fine';
     'cylinder_16x1el_vfine';   
@@ -167,6 +169,10 @@ switch str
     case 'adult_male_32el_lungs'
         out = mk_library_model({'adult_male','boundary','left_lung','right_lung'},...
             [32 1 0.5],[0.05],0.08);
+    case 'adult_male_grychtol2016a_1x32'
+        out = mk_thorax_model_grychtol2016a('1x32_ring');
+    case 'adult_male_grychtol2016a_2x16'
+        out = mk_thorax_model_grychtol2016a('2x16_planar');
         
     case 'cylinder_16x1el_coarse'
        out = build_if_needed(...

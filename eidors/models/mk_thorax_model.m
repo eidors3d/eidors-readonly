@@ -49,6 +49,8 @@ if ~ismember(str, list_basic_shapes)
    error('Shape str "%s" not understood.',str);
 end
 
+
+
 out = build_basic_model(str);
 if nargin > 1
    out = place_elec_on_surf(out,elec_pos,elec_shape,[],maxh);
@@ -116,13 +118,17 @@ function mdl = fix_boundary(mdl)
 end
 
 function ls = list_predef_models
-   ls = {'grychtol2016a_male_thorax'};
+   ls = {'adult_male_grychtol2016a_1x32'
+         'adult_male_grychtol2016a_2x16'};
 end
 
 function out = build_predef_model(str)
    switch str
-      case 'grychtol2016a_male_thorax'
-         out = mk_thorax_model_grychtol2016a_male_thorax;
+      case 'adult_male_grychtol2016a_1x32'
+         out = mk_thorax_model_grychtol2016a('1x32_ring');
+         
+      case 'adult_male_grychtol2016a_2x16'
+         out = mk_thorax_model_grychtol2016a('2x16_planar');
    end
 end
 
