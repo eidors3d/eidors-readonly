@@ -52,9 +52,13 @@ end
 out = build_basic_model(str);
 if nargin > 1
    out = place_elec_on_surf(out,elec_pos,elec_shape,[],maxh);
-   out = fix_boundary(fmdl);
+   out = fix_boundary(out);
 end
 
+end
+
+function ls = list_basic_shapes
+   ls = {'male','female'};
 end
 
 function out = build_basic_model(str)
@@ -72,6 +76,9 @@ function out = remesh_at_model(str)
    
    contrib = 'at-thorax-mesh'; file =  sprintf('%s_t_mdl.mat',str);
    load(get_contrib_data(contrib,file));
+   if strcmp(str,'male')
+      fmdl.nodes = fmdl.nodes - 10; % center the model
+   end
    fmdl = fix_boundary(fmdl);
    STL.vertices = fmdl.nodes;
    STL.faces    = fmdl.boundary;
@@ -108,13 +115,15 @@ function mdl = fix_boundary(mdl)
     mdl.boundary = mdl.faces(mdl.boundary_face,:);
 end
 
-function ls = list_basic_shapes
-   ls = {'male','female'};
-end
-
-
 function ls = list_predef_models
    ls = {'grychtol2016a_male_thorax'};
+end
+
+function out = build_predef_model(str)
+   switch str
+      case 'grychtol2016a_male_thorax'
+         out = mk_thorax_model_grychtol2016a_male_thorax;
+   end
 end
 
 
