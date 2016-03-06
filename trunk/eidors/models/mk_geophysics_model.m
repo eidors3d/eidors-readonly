@@ -690,6 +690,20 @@ clf; h=plot([vh.meas vd.meas],'o--'); legend('analytic','FEM'); set(gca,'box','o
    imdl3dp = mk_geophysics_model('H3a', elec_pos_3d); % 3D point electrode model
    imdl2df = mk_geophysics_model('H2a', elec_pos_2d, {'threshold', Inf}); % 2D point electrode model... without mashing
    imdl3df = mk_geophysics_model('H3a', elec_pos_3d, {'threshold', Inf}); % 3D point electrode model... without mashing
+
+if 0
+   % Nolwenn's grid
+   [yy,xx] = meshgrid(0:3:24, [0 4:2:20*2 20*2+4]); % 9 x 21 grid
+   xyz = [xx(:) yy(:) zeros(length(yy(:)),1)];
+
+   % test grid
+   % 1. bad electrodes ... ? fixme?
+   % 2. mash_nodes breaks for co-located nodes in any particular dimension... need 2d interp?
+   [yy,xx]=meshgrid(1:3,1:3); xyz = [xx(:) yy(:) zeros(length(yy(:)),1)]; % 3 x 3 grid
+   imdl = mk_geophysics_model('H3a',xyz);
+   % TODO add 'g3a' and 'G3a' types?
+end
+
    unit_test_cmp('h2a halfspace vs default TEST', norm(vh.meas - vd.meas), 0, 4e-3);
    unit_test_cmp('1d elec list equivalence (row/col)',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl2));
    unit_test_cmp('1d vs. 2d elec list equivalence',unit_test_elec_pos(imdl1), unit_test_elec_pos(imdl3));
