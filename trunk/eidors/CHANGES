@@ -1,3 +1,12 @@
+2016-03-06: models from GREIT3d paper (mk_thorax_model_grychtol2016a)
+2016-03-06: generate image with lung & heart contrast (mk_lung_image)
+2016-03-05: wrapper around AT's meshes and place_elec_on_surf (mk_thorax_model)
+2016-03-05: function to get data from data_contrib (get_contrib_data)
+2015-11-21: speed up GREIT_desired_img_sigmoid
+2015-06-20: ability to choose analytic or approximate c2f
+2015-06-14: new cache implementation
+2015-05-23: change cache priority: measure time
+2015-05-22: change to analytic c2f calculation
 2015-05-12: ======================= RELEASE 3.8 ==========================
 2015-05-11: analytic c2f for triangle models (mk_tri_c2f)
 2015-04-24: analytic c2f for tet models (mk_tet_c2f)
@@ -11,7 +20,7 @@
 2015-03-24: add progress_msg
 2015-03-24: speed up linear_reorder
 2015-03-09: analytic c2f for grid models (mk_grid_c2f)
-2015-02-18: point_in_traingle test
+2015-02-18: point_in_triangle test
 2015-02-18: utility to derive non-equalities defining a tetrahedron
 2014-11-24: allow specifying J, R, RtR, JiRtrRJt and system_mat directly
 2014-05-03: add per-m-file control to eidors_msg
