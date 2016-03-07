@@ -704,7 +704,7 @@ function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
       if isfield(imgb.inv_model,'rec_model')
          imgb.fwd_model = imgb.inv_model.rec_model;
       end
-      feval(opt.show_fem,imgb,[]);
+      feval(opt.show_fem,imgb,1);
       title(sprintf('dx @ iter=%d',k));
       drawnow;
       if isfield(opt,'fig_prefix')
@@ -910,7 +910,7 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
            if isfield(imgb.inv_model,'rec_model')
               imgb.fwd_model = imgb.inv_model.rec_model;
            end
-           feval(opt.show_fem,imgb,[]);
+           feval(opt.show_fem,imgb,1);
            title(sprintf('sensitivity @ iter=%d',k));
            drawnow;
            if isfield(opt,'fig_prefix')
@@ -1601,14 +1601,14 @@ function opt = parse_options(imdl)
 
    % now sort out the hyperparameter for the "R^T R" (RtR) matrix
    hp=opt.hyperparameter;
-   if size(hp,2) == 1 % one column
-      hp = hp'; % ... now one row
+   if size(hp,1) == 1 % one row
+      hp = hp'; % ... now one col
    end
    if iscell(hp)
       % if it's a cell array that matches size of the RtR, then we're done
       if all(size(hp) == size(opt.RtR_prior))
          opt.hyperparameter = hp;
-      % if the columns matches, then we can expand on the diangonal, everything else gets '1'
+      % if the columns match, then we can expand on the diagonal, everything else gets '1'
       elseif length(hp) == length(opt.RtR_prior)
          opt.hyperparameter = opt.RtR_prior;
          [opt.hyperparameter{:}] = deal(1); % hp = 1 everywhere

@@ -108,6 +108,9 @@ function check_2d(img)
 
 function elem_data = check_elem_data(fwd_model, img);
    elem_data = img.elem_data;
+   if any(size(elem_data) == [1 1])
+      elem_data = elem_data(:);
+   end
    sz_elem_data = size(elem_data);
    if sz_elem_data(2) ~= 1;
       error('system_mat_2p5d_1st_order: can only solve one image (sz_elem_data=%)', ...
@@ -130,7 +133,7 @@ function elem_data = check_elem_data(fwd_model, img);
    else
      if sz_elem_data(1) ~= num_elems(fwd_model)
        error(['system_mat_2p5d_1st_order: provided elem_data (sz=%d) does ' ...
-          ' not match fwd_model (sz=%d)'], sz_elem_data(1), num_elems(sz_c2f));
+          ' not match fwd_model (sz=%d)'], sz_elem_data(1), num_elems(fwd_model));
      end
    end
 
