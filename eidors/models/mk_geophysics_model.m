@@ -262,7 +262,7 @@ else % 3D fmdl
 %      ro = xyz_box(1,:) - rmo; ro(2,:) = xyz_box(2,:) + rmo;
 %   else
       ro = ([ xllim   -extend_y*2 zdepth;
-              xrlim   +extend_y*2      1 ]);
+              xrlim   +extend_y*2      3 ]);
       ri = ([ xllim1  -extend_y*2/5*2 zdepth1;
               xrlim1  +extend_y*2/5*2      2 ]);
 %   end
@@ -485,6 +485,7 @@ if DEBUG
    plot3([A(1),B(1)],[A(2),B(2)],[A(3),B(3)]);
    grid; axis equal; hold off;
    xlabel('x'); ylabel('y'); zlabel('z');
+   title('pre-rotation');
    subplot(212);
    xx = (xyz-X)*R;
    plot3(xx(:,1), xx(:,2), xx(:,3),'bo');
@@ -493,6 +494,7 @@ if DEBUG
    plot3(0,0,0,'ro');
    grid; axis equal; hold off;
    xlabel('x'); ylabel('y'); zlabel('z');
+   title('post-rotation');
 end
 
 % the (max-min) range of a variable's values
