@@ -238,8 +238,10 @@ void hash_struct( hash_context *c, const mxArray *var )
       for (j= 0; j< NE; j++) {
         mxArray * fd = mxGetFieldByNumber( var, j, k );
         if (fd == NULL ) {
+      #ifdef VERBOSE
           mexPrintf("empty field(%s,%d):",
                     mxGetFieldNameByNumber(var,k), j+1);
+      #endif
         } else if (strcmp("name",fdname)==0) {
       #ifdef VERBOSE
            mexPrintf("field => IGNORE ( %s ) [%d->%d]:\n", fdname, i, k);
