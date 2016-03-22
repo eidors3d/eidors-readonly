@@ -130,6 +130,7 @@ function J = jacobian_k(k, pp, gnd, stim, c2f)
    zi2E= zeros(pp.n_elec, pp.n_node);
    zi2E(:, idx)= -pp.N2E(:,idx)/ SS(idx,idx);
    
+   % NOTE: this is k*FT here, not k^2*FT: FT is squared in jacobian_calc (FT*DE*FT)
    DE = jacobian_calc(pp, zi2E, pp.FC, k*pp.FT, sv, c2f);
    
    J = zeros( pp.n_meas, size(c2f,2) );
@@ -244,13 +245,14 @@ function str = supported_params
            'log_resistivity'};
 
 function do_unit_test()
-   imdl2 = mk_geophysics_model('h22a',16);
+   imdl2 = mk_geophysics_model('h22c',16);
+   assert(length(imdl2.rec_model.elems) > 20, 'expect sufficient rec_model density');
    img2 = mk_image(imdl2,1);
 
    % for the 3d model, we throw out the rec_model and inject the
    % imdl2.rec_model, then recalculate the c2f so that we can compare apples to
    % apples when we take ||Jxxx - J3||
-   imdl3 = mk_geophysics_model('h32a',16);
+   imdl3 = mk_geophysics_model('h32c',16);
    for s = {'nodes', 'elems', 'boundary', 'name','electrode'}
       imdl3.rec_model.(s{:}) = imdl2.rec_model.(s{:});
    end
