@@ -68,7 +68,7 @@ copt.fstr = 'mk_geophysics_model';
 if nargin < 3
    opt = {};
 end
-SALT='j$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
+SALT='m$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
 imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), 'Wenner');
 
@@ -364,6 +364,8 @@ else % 3D fmdl
          [cmdl, cc] = correct_electrode_positions(cmdl, xyzc);
       end
    end
+   % save functions for later use
+   fmdl.mv_elec = @shift_electrode_positions;
 
    % reverse the centre and scaling
    nn = size(fmdl.nodes,1);
@@ -602,6 +604,14 @@ function D2 = pdist(X) % row vectors
    %D2 = bsxfun(@plus, dot(X, X, 1)', dot(Y, Y, 1)) - 2*(X'*Y) % 1d
    D2 = bsxfun(@minus, X, permute(X,[3 2 1]));
    D2 = squeeze(sqrt(sum(D2.^2,2)));
+
+function [mdl, c] = shift_electrode_positions(mdl, dx)
+   for i = 1:length(mdl.electrode)
+      en = mdl.electrode(i).nodes;
+      ex = mdl.nodes(en,:);
+      ep(i,:) = (max(ex,[],1) + min(ex,[],1))/2; % mid-point
+   end
+   [mdl, c] = correct_electrode_positions(mdl, ep + dx);
 
 function [mdl, c] = correct_electrode_positions(mdl, xyzc)
 eidors_msg('correct_electrode_positions');
