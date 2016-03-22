@@ -847,80 +847,82 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
    pp = fwd_model_parameters(imgb.fwd_model);
    J = zeros(pp.n_meas,sum([opt.elem_len{:}]));
    for i=1:length(opt.jacobian)
-     if(opt.verbose > 1)
-        try J_str = func2str(opt.jacobian{i});
-        catch J_str = opt.jacobian{i};
-        end
-        if i == 1 fprintf('    calc Jacobian J(x) = ');
-        else      fprintf('                       + '); end
-        fprintf('(%s,', J_str);
-     end
-     % start and end of these Jacobian columns
-     es = ee+1;
-     ee = es+opt.elem_len{i}-1;
-     % scaling if we are working in something other than direct conductivity
-     S = feval(opt.calc_jacobian_scaling_func{i}, imgb.elem_data(es:ee)); % chain rule
-     % finalize the jacobian
-     % Note that if a normalization (i.e. apparent_resistivity) has been applied
-     % to the measurements, it needs to be applied to the Jacobian as well!
-     imgt = imgb;
-     if  strcmp(base_types{i}, 'conductivity') % make legacy jacobian calculators happy... only conductivity on imgt.elem_data
-        imgt = map_img(img, 'conductivity');
-     end
-     imgt.fwd_model.jacobian = opt.jacobian{i};
-     Jn = calc_jacobian( imgt ); % unscaled natural units (i.e. conductivity)
-     J(:,es:ee) = dN * Jn * S; % scaled and normalized
-     if opt.verbose > 1
-        tmp = zeros(1,size(J,2));
-        tmp(es:ee) = 1;
-        tmp(opt.elem_fixed) = 0;
-        fprintf(' %d DoF, %d meas, %s)\n', sum(tmp), size(J,1), func2str(opt.calc_jacobian_scaling_func{i}));
-     end
-     if opt.verbose >= 5
-        clf;
-        t=axes('Position',[0 0 1 1],'Visible','off'); % something to put our title on after we're done
-        text(0.03,0.1,sprintf('update\\_jacobian (%s), iter=%d', strrep(J_str,'_','\_'), k),'FontSize',20,'Rotation',90);
-        for y=0:1
-           if y == 0; D = Jn; else D = J(:,es:ee); end
-           axes('units', 'normalized', 'position', [ 0.13 0.62-y/2 0.8 0.3 ]);
-           imagesc(D);
-           if y == 0; ylabel('meas (1)'); xlabel(['elem (' strrep(base_types{i},'_','\_') ')']);
-           else       ylabel('meas (dN)'); xlabel(['elem (' strrep(opt.elem_working{i},'_','\_') ')']);
-           end
-           os = get(gca, 'Position'); c=colorbar('southoutside'); % colorbar start...
-           set(gca, 'Position', os); % fix STUPID colorbar resizing
-           % reduce height, this has to be done after the axes fix or STUPID matlab messes things up real good
-           cP = get(c,'Position'); set(c,'Position', [0.13    0.54-y/2    0.8    0.010]);
-           axes('units', 'normalized', 'position', [ 0.93 0.62-y/2 0.05 0.3 ]);
-           barh(sqrt(sum(D.^2,2))); axis tight; axis ij; set(gca, 'ytick', [], 'yticklabel', []);
-           axes('units', 'normalized', 'position', [ 0.13 0.92-y/2 0.8 0.05 ]);
-           bar(sqrt(sum(D.^2,1))); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
-        end
-        drawnow;
-        if isfield(opt,'fig_prefix')
-           print('-dpng',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-           print('-dpdf',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-           saveas(gcf,sprintf('%s-J%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
-        end
-        % and try a show_fem with the pixel sensitivity
-        try
-           clf;
-           imgb.elem_data = log(sqrt(sum(D.^2,1)));
-           imgb.current_params = 'log_sensitivity';
-           if isfield(imgb.inv_model,'rec_model')
-              imgb.fwd_model = imgb.inv_model.rec_model;
-           end
-           feval(opt.show_fem,imgb,1);
-           title(sprintf('sensitivity @ iter=%d',k));
-           drawnow;
-           if isfield(opt,'fig_prefix')
-              print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-              print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-              saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
-           end
-        catch % no worries if it didn't work... carry on
-        end
-     end
+      if(opt.verbose > 1)
+         try J_str = func2str(opt.jacobian{i});
+         catch J_str = opt.jacobian{i};
+         end
+         if i == 1 fprintf('    calc Jacobian J(x) = ');
+         else      fprintf('                       + '); end
+         fprintf('(%s,', J_str);
+      end
+      % start and end of these Jacobian columns
+      es = ee+1;
+      ee = es+opt.elem_len{i}-1;
+      % scaling if we are working in something other than direct conductivity
+      S = feval(opt.calc_jacobian_scaling_func{i}, imgb.elem_data(es:ee)); % chain rule
+      % finalize the jacobian
+      % Note that if a normalization (i.e. apparent_resistivity) has been applied
+      % to the measurements, it needs to be applied to the Jacobian as well!
+      imgt = imgb;
+      if  strcmp(base_types{i}, 'conductivity') % make legacy jacobian calculators happy... only conductivity on imgt.elem_data
+         imgt = map_img(img, 'conductivity');
+      end
+      imgt.fwd_model.jacobian = opt.jacobian{i};
+      Jn = calc_jacobian( imgt ); % unscaled natural units (i.e. conductivity)
+      J(:,es:ee) = dN * Jn * S; % scaled and normalized
+      if opt.verbose > 1
+         tmp = zeros(1,size(J,2));
+         tmp(es:ee) = 1;
+         tmp(opt.elem_fixed) = 0;
+         fprintf(' %d DoF, %d meas, %s)\n', sum(tmp), size(J,1), func2str(opt.calc_jacobian_scaling_func{i}));
+      end
+      if opt.verbose >= 5
+         clf;
+         t=axes('Position',[0 0 1 1],'Visible','off'); % something to put our title on after we're done
+         text(0.03,0.1,sprintf('update\\_jacobian (%s), iter=%d', strrep(J_str,'_','\_'), k),'FontSize',20,'Rotation',90);
+         for y=0:1
+            if y == 0; D = Jn; else D = J(:,es:ee); end
+            axes('units', 'normalized', 'position', [ 0.13 0.62-y/2 0.8 0.3 ]);
+            imagesc(D);
+            if y == 0; ylabel('meas (1)'); xlabel(['elem (' strrep(base_types{i},'_','\_') ')']);
+            else       ylabel('meas (dN)'); xlabel(['elem (' strrep(opt.elem_working{i},'_','\_') ')']);
+            end
+            os = get(gca, 'Position'); c=colorbar('southoutside'); % colorbar start...
+            set(gca, 'Position', os); % fix STUPID colorbar resizing
+            % reduce height, this has to be done after the axes fix or STUPID matlab messes things up real good
+            cP = get(c,'Position'); set(c,'Position', [0.13    0.54-y/2    0.8    0.010]);
+            axes('units', 'normalized', 'position', [ 0.93 0.62-y/2 0.05 0.3 ]);
+            barh(sqrt(sum(D.^2,2))); axis tight; axis ij; set(gca, 'ytick', [], 'yticklabel', []);
+            axes('units', 'normalized', 'position', [ 0.13 0.92-y/2 0.8 0.05 ]);
+            bar(sqrt(sum(D.^2,1))); axis tight; set(gca, 'xtick', [], 'xticklabel', []);
+         end
+         drawnow;
+         if isfield(opt,'fig_prefix')
+            print('-dpng',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+            print('-dpdf',sprintf('%s-J%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+            saveas(gcf,sprintf('%s-J%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+         end
+      end
+   end
+   % and try a show_fem with the pixel sensitivity
+   try
+      clf;
+      imgb.elem_data = log(sqrt(sum(J.^2,1)));
+      for i = 1:length(imgb.current_params)
+         imgb.current_params{i} = [ 'log_sensitivity_' imgb.current_params{i} ];
+      end
+      if isfield(imgb.inv_model,'rec_model')
+         imgb.fwd_model = imgb.inv_model.rec_model;
+      end
+      feval(opt.show_fem,imgb,1);
+      title(sprintf('sensitivity @ iter=%d',k));
+      drawnow;
+      if isfield(opt,'fig_prefix')
+         print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+         print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+         saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+      end
+   catch % no worries if it didn't work... carry on
    end
 
 % -------------------------------------------------
