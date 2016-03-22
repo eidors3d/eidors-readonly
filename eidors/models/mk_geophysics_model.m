@@ -68,7 +68,7 @@ copt.fstr = 'mk_geophysics_model';
 if nargin < 3
    opt = {};
 end
-SALT='m$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
+SALT='a$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
 imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), 'Wenner');
 
@@ -182,8 +182,8 @@ assert(extend_z>-1,'extend_z must be > -1');
 xllim=xs-extend_x*2;
 xrlim=xs+xw+extend_x*2;
 zdepth=-(xw+extend_z*2);
-xr=floor((xrlim-xllim)/hmax_rec/2)*2+1; % odd number
-yr=floor(-zdepth/hmax_rec/2)*2+1; % odd number
+xr=max(floor((xrlim-xllim)/hmax_rec/2),1)*2+1; % odd number
+yr=max(floor(-zdepth/hmax_rec/2),1)*2+1; % odd number
 [x,y] = meshgrid( linspace(xllim,xrlim,xr), linspace(zdepth,0,yr));
 vtx= [x(:),y(:)];
 if CMDL_DIM ~= 0
@@ -614,7 +614,7 @@ function [mdl, c] = shift_electrode_positions(mdl, dx)
    [mdl, c] = correct_electrode_positions(mdl, ep + dx);
 
 function [mdl, c] = correct_electrode_positions(mdl, xyzc)
-eidors_msg('correct_electrode_positions');
+   %eidors_msg('correct_electrode_positions');
    nd = size(mdl.nodes,2);
    c = 0; err = 1;
    while max(err) > eps
@@ -720,6 +720,12 @@ clf; h=plot([vh.meas vd.meas],'o--'); legend('analytic','FEM'); set(gca,'box','o
    imdl2df = mk_geophysics_model('H2a', elec_pos_2d, {'threshold', Inf}); % 2D point electrode model... without mashing
    imdl3df = mk_geophysics_model('H3a', elec_pos_3d, {'threshold', Inf}); % 3D point electrode model... without mashing
 
+   % dual meshes
+   imdlh32 = mk_geophysics_model('h32a', elec_pos_3d);
+   imdlh22 = mk_geophysics_model('h22a', elec_pos_2d);
+   imdlH32 = mk_geophysics_model('H32a', elec_pos_3d);
+   imdlH22 = mk_geophysics_model('H22a', elec_pos_2d);
+
 if 0
    % Nolwenn's grid
    [yy,xx] = meshgrid(0:3:24, [0 4:2:20*2 20*2+4]); % 9 x 21 grid
@@ -762,10 +768,39 @@ end
    unit_test_cmp('3d with vertical geometry (w/o mash nodes) PEM', ...
                  elec_pos_3d, ...
                  unit_test_elec_pos(imdl3df), -10*eps);
+
+   unit_test_cmp('h32a dual 3d/2d', ...
+                 elec_pos_3d, ...
+                 unit_test_elec_pos(imdlh32), 0.001);
+   unit_test_cmp('H32a dual 3d/2d', ...
+                 elec_pos_3d, ...
+                 unit_test_elec_pos(imdlH32), 10*eps);
+   unit_test_cmp('h22a dual 2d/2d', ...
+                 elec_pos_2d, ...
+                 unit_test_elec_pos(imdlh22), 0.002);
+   unit_test_cmp('H22a dual 2d/2d', ...
+                 elec_pos_2d, ...
+                 unit_test_elec_pos(imdlH22), 10*eps);
+
 clf; subplot(221); show_fem(imdl1.fwd_model); title('models match? A');
      subplot(222); show_fem(imdl5.fwd_model); title('models match? C');
      subplot(223); show_fem(imdl2dc.fwd_model); title('2d deformations');
      subplot(224); show_fem(imdl3dc.fwd_model); title('3d deformations'); view([0 -1 0.01]);
+
+if 1
+   clf; subplot(221); show_fem(imdlh22.fwd_model);
+        subplot(222); show_fem(imdlh32.fwd_model);
+        subplot(223); show_fem(imdlH22.fwd_model);
+        subplot(224); show_fem(imdlH32.fwd_model);
+end
+
+if 0
+   clf; subplot(221); show_fem(imdlh22.rec_model);
+        subplot(222); show_fem(imdlh32.rec_model);
+        subplot(223); show_fem(imdlH22.rec_model);
+        subplot(224); show_fem(imdlH32.rec_model);
+end
+
 
 function xyz = unit_test_elec_pos(imdl, R, X)
    if nargin < 2; R = 1; end
