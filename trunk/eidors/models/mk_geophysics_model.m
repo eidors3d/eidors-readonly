@@ -374,7 +374,7 @@ else % 3D fmdl
    fmdl.nodes = fmdl.nodes(:,1:FMDL_DIM);
 
    if CMDL_DIM ~= 0
-%      error('oops coarse model (dual meshes) are currently broken');
+      error('oops coarse model (dual meshes) are currently broken');
       nn = size(cmdl.nodes,1);
       Xn = repmat(X(1,:), nn, 1);
       if CMDL_DIM == 2 % 2D
