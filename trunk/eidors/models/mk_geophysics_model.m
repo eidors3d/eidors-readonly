@@ -374,10 +374,15 @@ else % 3D fmdl
    fmdl.nodes = fmdl.nodes(:,1:FMDL_DIM);
 
    if CMDL_DIM ~= 0
+%      error('oops coarse model (dual meshes) are currently broken');
       nn = size(cmdl.nodes,1);
       Xn = repmat(X(1,:), nn, 1);
-      cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
-      cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
+      if CMDL_DIM == 2 % 2D
+         cmdl.nodes = ([cmdl.nodes(:,1) zeros(nn,1) cmdl.nodes(:,2:end)]/ R) + Xn;
+         cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]);
+      else % CMDL_DIM == 3 % 3D
+         cmdl.nodes = cmdl.nodes / R + Xn;
+      end
    end
 
    % check that all electrodes were found
