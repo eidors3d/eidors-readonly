@@ -270,8 +270,10 @@ img = map_img(img, opt.elem_working);
 if nargin == 3
    assert(all(~strcmp(opt.meas_working, {'apparent_resistivity','log_apparent_resistivity', 'log10_apparent_resitivity'})), ...
           ['meas_working = ''' opt.meas_working ''' not yet supported for difference solutions']);
-   assert(any(strcmp(opt.elem_output, {'conductivity','resistivity'})), ...
-          ['elem_output = ''' opt.elem_output ''' but difference solver log normal outputs are not supported']);
+   for i = 1:length(opt.elem_output)
+      assert(any(strcmp(opt.elem_output{i}, {'conductivity','resistivity','movement'})), ...
+             ['elem_output = {' strjoin(opt.elem_output,', ') '} but difference solver log normal outputs are not supported']);
+   end
    % dv = (meas1 - meas0) + meas@backgnd
    nil = struct;
    if isstruct(data0)
