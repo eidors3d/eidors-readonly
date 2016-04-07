@@ -35,6 +35,9 @@ function imdl = mk_GN_model(img, opt, lambda)
     if ~exist('lambda', 'var')
       lambda = [];
     end
+    if strcmp(img.type, 'fwd_model')    
+        img = mk_image(img,1);  % create homogeneous BG image from fmdl
+    end
     fmdl = img.fwd_model;
     imdl = select_imdl( fmdl,{'Basic GN dif'});
    
