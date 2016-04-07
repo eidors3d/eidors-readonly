@@ -38,6 +38,13 @@ function [lambdas] = choose_lambda(imdl, vh, vi, type, doPlot)
 %
 citeme(mfilename);
 
+%% unit testing?
+if ischar(imdl) && strcmpi(imdl, 'unit_test')
+   doUnitTest();
+   return;
+end
+
+
 %% set default inputs
 if ~exist('type', 'var') || isempty(type)
 	type = 'LCC';
@@ -95,16 +102,16 @@ lambdas = nan(nFrames,1);
 
 progress_msg('Calculating lambda for each frame:', 0, nFrames);
 
+if doPlot
+    figure(); 
+end
+
 for iFrame = 1:nFrames
     
     progress_msg(iFrame, nFrames);
     
     %% prepare differential data of current frame
     b = vh - vi(:,iFrame);
-
-	if doPlot
-		figure(69); clf;
-	end
 	
 	switch(lower(type))
 		case 'lcc'
@@ -164,3 +171,50 @@ end
 
 progress_msg('Calculating lambda for each frame:', inf);
 
+end
+
+
+function doUnitTest()
+% inspired by the tutorial mentioned below:
+% http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial110.shtml
+%
+
+% Load some data
+load iirc_data_2006
+
+% Get a 2D image reconstruction model
+imdl= mk_common_model('c2c');
+imdl.fwd_model.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{'meas_current'},1);
+imdl.fwd_model = rmfield( imdl.fwd_model, 'meas_select');
+imdl.RtR_prior = @prior_tikhonov;
+
+% load the real data
+vi = real(v_rotate)/1e4; vh = real(v_reference)/1e4;
+% allow double precision, else we run into (unexplainable) problems
+vi = double(vi); vh = double(vh);   
+
+% get the hyperparameter value via L-curve
+figure
+lambdas_lcc = choose_lambda(imdl,vh,vi,'LCC',true);
+
+% get the hyperparameter value via GCV
+lambdas_gcv = choose_lambda(imdl,vh,vi,'GCV',true);
+
+% visualize
+FramesOfInterest = [10 35 60 85];
+figure(1);
+subplot(121);
+imdl.hyperparameter.value = median(lambdas_lcc);
+imgs_lcc = inv_solve(imdl, vh, vi(:,FramesOfInterest));
+imgs_lcc.show_slices.img_cols = 1;
+show_slices(imgs_lcc);
+title('L-curve');
+
+subplot(122);
+imdl.hyperparameter.value = median(lambdas_gcv);
+imgs_gcv = inv_solve(imdl, vh, vi(:,FramesOfInterest));
+imgs_gcv.show_slices.img_cols = 1;
+show_slices(imgs_gcv);
+title('GCV');
+
+end
