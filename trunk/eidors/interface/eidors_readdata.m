@@ -115,12 +115,13 @@ switch fmt
    case 'draeger-eit'
      [fr] = read_draeger_header( fname );
      % Currently Draeger equipment uses this pattern with 5mA injection
-     stim = mk_stim_patterns(16,1,[0,1],[0,1],{'no_rotate_meas','no_meas_current'},.005);
+     stim = mk_stim_patterns(16,1,[0,1],[0,1],{'rotate_meas','no_meas_current'},.005);
      [stim(:).framerate] = deal(fr);
      [vv] = read_draeger_file( fname );
      auxdata = vv; % the actual voltages
-%    vv = vv(1:208,:) + 1j*vv(323+(1:208),:); % I THINK THAT's WHAT THIS IS
-     vv = vv(1:208,:);
+     % Based on the draeger *get file converter
+     ft = [.00098242, .00019607];% estimated AA: 2016-04-07
+     vv = ft(1)*vv(1:208,:) - ft(2)*vv(322+(1:208),:);
 
    case {'raw', 'sheffield'}
       vv = sheffield_readdata( fname );
@@ -1080,7 +1081,7 @@ end
                hdr(1))
    end
 
-   len = floor( (filelen-offset1)/SPC ) - 1;
+   len = floor( (filelen-offset1)/SPC );
    vd= zeros(600,len);
    ss= offset1 + (0:len)*SPC;
 
