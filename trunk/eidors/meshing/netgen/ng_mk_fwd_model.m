@@ -40,6 +40,9 @@ end
 
 % Model Geometry
 [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(ng_vol_filename);
+if isempty(vtx); 
+   error('EIDORS: ng_mk_fwd_model: Netgen meshing failed. Stopping');
+end
 if nargin>=6
     N_elec = max(size(centres));
     [srf,vtx,fc,bc,simp,edg,mat_ind] = feval(postprocmesh,...
