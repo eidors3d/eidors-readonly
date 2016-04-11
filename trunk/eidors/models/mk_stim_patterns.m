@@ -55,6 +55,8 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %     if contradictory options are specified, only the last applies
 %      'no_meas_current' / 'meas_current'
 %         -> do / don't make mesurements on current carrying electrodes
+%         -> to not make measurements on the electrodes next to the current carrying,
+%            use 'no_meas_current_next1'
 %      'rotate_meas' / 'no_rotate_meas'
 %         -> do / don't rotate measurements with stimulation pattern
 %      'do_redundant' / 'no_redundant'
@@ -208,9 +210,21 @@ function meas = mk_meas_pat(v, elec, ring );
    end
 
    if v.use_meas_current == 0
-       stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
    % each column of meas is a measurement pattern
    % Test whether each col has contribution from stim
+       stim_idx = rem( v.inj + elec, v.n_elec) + 1 + v.n_elec*ring;
+
+       if v.use_meas_current_next
+   % If we want to eliminate the ones next to the stimulation electrodes
+   %  ie. Swisstom device, then use this
+     
+          for ni= -v.use_meas_current_next:v.use_meas_current_next;
+            stim_idx = [stim_idx, ...
+                        rem( v.inj + elec + ni, v.n_elec) + 1 + v.n_elec*ring];
+          end
+          stim_idx = unique(stim_idx);
+          stim_idx(stim_idx<=0) = stim_idx(stim_idx<=0) + v.n_elec;
+       end
        elim= any(meas(stim_idx,:),1);
        meas(:,elim) = [];
    end
@@ -225,6 +239,7 @@ function v = process_args(n_elec, n_rings, inj, meas, options, amplitude )
    v.trig_inj = 0;
 
    v.use_meas_current = 0;
+   v.use_meas_current_next = 0;
    v.rotate_meas = 0;
    v.do_redundant = 1;
    v.balance_inj = 0;
@@ -310,6 +325,10 @@ function v= parse_options(v, options);
 for opt = options
    if     strcmp(opt, 'no_meas_current')
       v.use_meas_current = 0;
+      v.use_meas_current_next = 0;
+   elseif strcmp(opt, 'no_meas_current_next1')
+      v.use_meas_current = 0;
+      v.use_meas_current_next = 1;
    elseif strcmp(opt, 'meas_current')
       v.use_meas_current = 1;
    elseif strcmp(opt, 'rotate_meas')
@@ -561,6 +580,14 @@ function do_unit_test
    [stim,msel] = mk_stim_patterns(6,1,[0,2],'{mono}',{'no_meas_current','no_rotate_meas'},2);
    msel = reshape(msel, 6, 6);
    unit_test_cmp('meas_sel: nnp2436',msel(:,[4,5]), [1,0;1,1;1,1;0,1;1,0;0,1]);
+
+   [stim,msel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current_next1','no_rotate_meas'},1);
+   unit_test_cmp('meas_sel: next1a',msel(48+(1:16)), [1;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1]);
+   [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next1','no_rotate_meas'},1);
+   unit_test_cmp('meas_sel: next1b',msel(48+(1:16)), [1;1;0;0;0;1;1;0;0;0;1;1;1;0;0;0]);
+   [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next1','rotate_meas'},1);
+   unit_test_cmp('meas_sel: next1c',msel(48+(1:16)), [0;0;1;1;0;0;0;1;1;1;0;0;0;1;1;0]);
+
 
 % TESTS FROM OLD mk_stim_patterns_test CODE
    pat= mk_stim_patterns(16,1,'{ad}','{ad}',{}, 1);
