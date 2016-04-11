@@ -148,7 +148,7 @@ out = {
     'pig_23kg_16el_lungs';
     'pig_23kg_32el_lungs';
     'lamb_newborn_16el';
-%     'lamb_newborn_32el';
+    'lamb_newborn_32el';
     'lamb_newborn_16el_organs';
 %     'lamb_newborn_32el_organs';
     };
@@ -223,8 +223,12 @@ switch str
 %             ',0,10},[16,1.995,104],[1])'],'out.nodes = out.nodes/204;'}, ...
 %           str);
          out = mk_library_model({'lamb_newborn','boundary'},[16,1.995,104],[1],10,0,208);
-%     case 'lamb_newborn_32el'
-%        out = mk_library_model({'lamb_newborn','boundary'},[32,1.995,104],[1],10,0,208);
+    case 'lamb_newborn_32el'
+         out = mk_library_model({'lamb_newborn','boundary'},[32,1.995,104],[1],10,0,208);
+    case 'lamb_newborn_32el'
+         % Very sensitive to the .980 offset. This is the only I can find that works.
+         out = mk_library_model({'lamb_newborn','boundary'},[32,1.980,104],[2],15,50,208);
+         out.electrode = out.electrode([2:32,1];
     case 'lamb_newborn_16el_organs'
        out = mk_library_model({'lamb_newborn','boundary','lungs','heart'},[16,1.995,104],[1],10,0,208);
 %     case 'lamb_newborn_32el_organs'
