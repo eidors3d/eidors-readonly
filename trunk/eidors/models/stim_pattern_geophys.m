@@ -139,8 +139,10 @@ function stim = stim_pattern_dipoledipole(n_elec, options)
           stim = [stim; i+block([3,4,1,2])];
        end
     end
-    if options.circumferential_meas 
-       stim(stim>n_elec)= stim(stim>n_elec)-n_elec;
+    if options.circumferential_meas
+       while any(any(stim>n_elec))
+          stim(stim>n_elec)= stim(stim>n_elec)-n_elec;
+       end
        stim= reshape(stim,[],4);
     end
   end  
