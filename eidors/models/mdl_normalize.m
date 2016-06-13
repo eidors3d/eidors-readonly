@@ -17,7 +17,7 @@ if ischar(mdl) && strcmp(mdl, 'UNIT_TEST'); do_unit_test; return; end
 try 
     if ~strcmp(mdl.type,'fwd_model'), error;end;
 catch
-    error('The normalize_measurements flag must be on a fwd_model');
+    error('mdl_normalize: not called for a fwd_model object');
 end
 % do the real thing
 switch nargin

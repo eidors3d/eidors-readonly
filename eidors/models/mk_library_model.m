@@ -151,6 +151,10 @@ out = {
     'lamb_newborn_32el';
     'lamb_newborn_16el_organs';
 %     'lamb_newborn_32el_organs';
+    'beagle_16el';
+    'beagle_32el';
+    'beagle_16el_lungs';
+    'beagle_32el_lungs';
     };
 
 %%%%%
@@ -230,6 +234,23 @@ switch str
     case 'lamb_newborn_16el_organs'
        out = mk_library_model({'lamb_newborn','boundary','lungs','heart'},[16,1.995,104],[1],10,0,208);
 %     case 'lamb_newborn_32el_organs'
+    case 'beagle_16el';
+    case 'beagle_32el';
+    case 'beagle_32el_rectelec';
+      out = mk_library_model({'beagle','boundary'}, ...
+         [16 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
+
+    case 'beagle_16el_lungs';
+
+    case 'beagle_16el_lungs_rectelec';
+      out = mk_library_model({'beagle','boundary','left_lung','right_lung'}, ...
+         [16 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
+
+    case 'beagle_32el_lungs';
+
+    case 'beagle_32el_lungs_rectelec';
+      out = mk_library_model({'beagle','boundary','left_lung','right_lung'}, ...
+         [32 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
          
     otherwise
         error('No such model');
