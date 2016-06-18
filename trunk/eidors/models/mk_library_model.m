@@ -155,6 +155,10 @@ out = {
     'beagle_32el';
     'beagle_16el_lungs';
     'beagle_32el_lungs';
+    'beagle_16el_rectelec';
+    'beagle_32el_rectelec';
+    'beagle_16el_lungs_rectelec';
+    'beagle_32el_lungs_rectelec';
     };
 
 %%%%%
@@ -175,8 +179,10 @@ switch str
             [32 1 0.5],[0.05],0.08);
     case 'adult_male_grychtol2016a_1x32'
         out = mk_thorax_model_grychtol2016a('1x32_ring');
+        out = out.fwd_model;
     case 'adult_male_grychtol2016a_2x16'
         out = mk_thorax_model_grychtol2016a('2x16_planar');
+        out = out.fwd_model;
         
     case 'cylinder_16x1el_coarse'
        out = build_if_needed(...
@@ -235,20 +241,39 @@ switch str
        out = mk_library_model({'lamb_newborn','boundary','lungs','heart'},[16,1.995,104],[1],10,0,208);
 %     case 'lamb_newborn_32el_organs'
     case 'beagle_16el';
+      scale = 49;
+      out = mk_library_model({'beagle','boundary'}, ...
+         [16 1 scale*0.5],[2,0,0.10],10,0,49);
     case 'beagle_32el';
+      scale = 49;
+      out = mk_library_model({'beagle','boundary'}, ...
+         [32 1 scale*0.5],[2,0,0.10],10,0,49);
+    case 'beagle_16el_rectelec';
+      scale = 49;
+      out = mk_library_model({'beagle','boundary'}, ...
+         [16 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
     case 'beagle_32el_rectelec';
+      scale = 49;
       out = mk_library_model({'beagle','boundary'}, ...
          [16 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
 
     case 'beagle_16el_lungs';
+      scale = 49;
+      out = mk_library_model({'beagle','boundary','left_lung','right_lung'}, ...
+         [16 1 scale*0.5],[2,0,0.10],10,0,49);
 
     case 'beagle_16el_lungs_rectelec';
+      scale = 49;
       out = mk_library_model({'beagle','boundary','left_lung','right_lung'}, ...
          [16 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
 
     case 'beagle_32el_lungs';
+      scale = 49;
+      out = mk_library_model({'beagle','boundary','left_lung','right_lung'}, ...
+         [32 1 scale*0.5],[2,0,0.10],10,0,49);
 
     case 'beagle_32el_lungs_rectelec';
+      scale = 49;
       out = mk_library_model({'beagle','boundary','left_lung','right_lung'}, ...
          [32 1 scale*0.5],8*[0.25,1,0.05],10,0,49);
          
@@ -319,7 +344,10 @@ end
 
 function out = do_unit_test
 models = mk_library_model('list');
+n_models = numel(models);
+sqrt_n_models = ceil(sqrt(n_models));
 for i = 1:numel(models)
+    eidors_msg('\n\n\n DOING  MODEL (%s)\n\n\n',models{i},0);
     mdl = mk_library_model(models{i});
     img = mk_image(mdl,1);
     try   n = numel(mdl.mat_idx); catch n =1; end
@@ -328,9 +356,10 @@ for i = 1:numel(models)
             img.elem_data(mdl.mat_idx{j}) = 0.25;
         end
     end
-    figure
-    show_fem(img,[0,1,0]);
+    subplot(sqrt_n_models, sqrt_n_models,i);
+    show_fem(img,[0,1,0]); axis off;
     title(models{i},'Interpreter','none');
+    drawnow
 end
 
 
