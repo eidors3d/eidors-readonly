@@ -148,7 +148,9 @@ switch fmt
 
       stim = 'UNKNOWN';
    case {'carefusion','goeiimf-eit'}
-      [vv] = carefusion_eit_readdata( fname );
+      [vv, auxdata_out, auxtime] = carefusion_eit_readdata( fname );
+      auxdata.auxdata = auxdata_out;
+      auxdata.auxtime = auxtime;
   
       stim = basic_stim(16);
 
@@ -265,7 +267,7 @@ function df = is_eit_file_a_carefusion_file( fname )
    df= 1;
    return
 
-function [vv] = carefusion_eit_readdata( fname );
+function [vv, auxdata, auxtime] = carefusion_eit_readdata( fname );
    fid= fopen(fname,'rb');
    d= fread(fid,[1 180],'uchar');
    str= setstr(d(3:2:end));
@@ -282,10 +284,12 @@ function [vv] = carefusion_eit_readdata( fname );
    d_EIT= fread(fid,[inf],'float32');
 
    fseek(fid, header, -1); % From the beginning
-   d_struct= fread(fid,[inf],'int32');  % In the struct, meaning of every int: 1 Type, 3 sequence No., 4 size in byte, 5 count
+   d_struct= fread(fid,[inf],'int32');  % In the struct, meaning of every int: 1 Type, 2 Waveform channel No., 3 sequence No., 4 size in byte, 5 count
    fclose(fid);
    pt_EIT=1;               % pointer of the EIT data
    vv=[];
+   auxdata=[];
+   
    while (pt_EIT<=length(d_struct))
       switch d_struct(pt_EIT)
          case 3, % type=3,  EIT transimpedance measurement
@@ -294,9 +298,15 @@ function [vv] = carefusion_eit_readdata( fname );
            pt_EIT=pt_EIT+6+256;
          case 7, %type=7, EIT image vector
            pt_EIT=pt_EIT+912+6;        % drop the image           
-         case 8, %type=8, Waveform data
-           %drop  
-           pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);
+         case 8, %type=8, Waveform data           
+            aux_seg_len = d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);
+           if (d_struct(pt_EIT+1) == 0)     % waveform channel 0 is the analog input
+               aux_segment = d_EIT(pt_EIT+6 : pt_EIT+6+aux_seg_len-1);
+               auxdata = [auxdata; aux_segment];
+           else
+               % drop all other waveform channels (see Waves/Waveform in header file for what they are)
+           end  
+           pt_EIT=pt_EIT+6+aux_seg_len;           
          case 10,% type = 10, unknown type
            %drop
            pt_EIT=pt_EIT+6+d_struct(pt_EIT+3)/4*d_struct(pt_EIT+4);
@@ -306,6 +316,8 @@ function [vv] = carefusion_eit_readdata( fname );
        end
    end
    vv=vv(47+[1:208],:);
+   auxtime = (cumsum([1 13*ones(1,15)])-1)/208;             % relative time as fractions of the EIT frame: assuming uniform sampling - not sure this is 100% correct(!)
+   auxtime = reshape(repmat(1:size(vv,2), length(auxtime), 1),[],1) + repmat(auxtime, 1, size(vv,2))';
    
 
 % Read the old <2006 Draeger "get" file format
