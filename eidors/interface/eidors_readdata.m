@@ -102,10 +102,12 @@ switch fmt
       auxdata.curr    = curr;
       auxdata.volt    = volt;
 
-      stim = basic_stim(16);
 
       if strcmp(lower(format),'get-raw')
           vv= rawdata(1:208,:);
+          stim = mk_stim_patterns(16,1,[0,1],[0,1], {'no_meas_current','rotate_meas'}, 1);
+      else
+          stim = basic_stim(16);
       end
    case 'draeger-get'
       vv = draeger_get_readdata( fname );
@@ -152,7 +154,7 @@ switch fmt
       auxdata.auxdata = auxdata_out;
       auxdata.auxtime = auxtime;
   
-      stim = basic_stim(16);
+      stim = mk_stim_patterns(16,1,[0,1],[0,1], {'no_meas_current','rotate_meas'}, .005);
 
    case 'lq1'
       [vv] = landquart1_readdata( fname );
