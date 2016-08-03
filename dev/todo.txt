@@ -1,3 +1,10 @@
+ - CEM will not get added for electrode defined on internal nodes.
+     Corrected code to be added to system_mat_fields
+     Ensure electrode goes in both directions
+     OR: have a way to break and join models
+     (specify that nodes get joined)
+     
+
  - Add ability to do voltage drive, with current measure.
  
  - automatic manage renumbering/renaming of electrodes.
