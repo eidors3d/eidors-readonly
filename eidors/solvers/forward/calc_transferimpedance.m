@@ -5,6 +5,11 @@ function transfimp = calc_transferimpedance( img)
 %
 % fwd_model is a fwd_model structure
 % img       is an image structure
+%
+% transfimp calculates electrode voltages based on electrode currents as
+%     V = transfimp*I
+% For example, for 4 electrodes, the voltage across [1,2] when 3A is across [3,4]
+%    is given by [1,-1,0,0] * transfimp * [0;0;3;-3];
 
 % (C) 2006 Bill Lionheart. License: GPL version 2 or version 3
 % $Id$
