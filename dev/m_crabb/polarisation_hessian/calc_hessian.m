@@ -29,12 +29,13 @@ end
 
 %Modify the forward model to be of my type
 %%fwd_model = mc_fem_modify(fwd_model); img.fwd_model=fwd_model;
-[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model); 
-fwd_model.bound=bound; fwd_model.elem=elem; fwd_model.nodes=nodes;
-img.fwd_model=fwd_model;
+%[bound,elem,nodes] = fem_1st_to_higher_order(fwd_model); 
+%fwd_model.bound=boundary; fwd_model.elem=elems; fwd_model.nodes=nodes;
+%img.fwd_model=fwd_model;
 
 %Calculate the total stiffness matrix and elemental stiffness matrices
-s_mat = calc_system_mat(fwd_model,img); At=s_mat.E; elemstiff=s_mat.elemstiff;
+s_mat = system_mat_higher_order(fwd_model,img); 
+At=s_mat.E; elemstiff=s_mat.elemstiff;
  
 %Find electrode stucture and no.of electrodes 
 %Find stim strucutre and no. stimulations
@@ -43,7 +44,7 @@ s_mat = calc_system_mat(fwd_model,img); At=s_mat.E; elemstiff=s_mat.elemstiff;
 elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
 stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
-elemstruc=fwd_model.elem; nelems=size(elemstruc,2); 
+elemstruc=fwd_model.elems; nelems=size(elemstruc,1); 
 
 %Find total number of measurements
 nmeass=0;
@@ -113,7 +114,7 @@ zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 %Calculate the partial derivative matrix for kth change
 for k=1:nelems
         %Get the kth element global nodes and stiffness
-        stiffk=elemstiff(k).stiff; nodesk=elem(k).nodes; idxk=1:size(nodesk,2);
+        stiffk=elemstiff(k).elemstiff; nodesk=elemstruc(k,:); idxk=1:size(nodesk,2);
         
         %Create the FEM derivative matrix and multiply by inverse
         dA_dSk=dA_zero; dA_dSk(nodesk(idxk),nodesk(idxk))=stiffk(idxk,idxk);
@@ -121,7 +122,7 @@ for k=1:nelems
         
     for l=1:nelems
         %Get the lth element global nodes and stiffness
-        stiffl=elemstiff(l).stiff; nodesl=elem(l).nodes; idxl=1:size(nodesl,2);
+        stiffl=elemstiff(l).elemstiff; nodesl=elemstruc(l,:); idxl=1:size(nodesl,2);
         
         %Create the FEM derivative matrix
         dA_dSl=dA_zero; dA_dSl(nodesk(idxl),nodesk(idxl))=stiffl(idxl,idxl);
