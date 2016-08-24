@@ -152,7 +152,4 @@ if isfield(fwd_model,'normalize_measurements')
 %    J= J ./ (data.meas(:)*ones(1,nelems));
 end
 
-%Negative Jacobian for injected currents??
-H= -H;  
-
 end
