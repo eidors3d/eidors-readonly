@@ -108,7 +108,7 @@ nodeunknownsfwd(idx,:)=left_divide(At(idx,idx),datafwd(idx,:));
 %V_i,j - voltage change on electrode i for stim j
 %S_k/S_l - conductivity change on element k and elemen l
 D2E= zeros(nelecs,nstims,length(elem_list),length(elem_list));
-
+D2ET= zeros(nelecs,nstims,length(elem_list),length(elem_list));
 %First step, we only want to pick off the ith electrode
 zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 
@@ -135,10 +135,19 @@ for idxkk=1:length(elem_list)
         dA_dSl=dA_zero; dA_dSl(nodesk(idxl),nodesk(idxl))=stiffl(idxl,idxl);
     
         %Now form product with solution
-        D2E(:,:,idxkk,idxll) = zi2E(:,idx)*dA_dSk2E(idx,:)*dA_dSl(idx,idx)*nodeunknownsfwd(idx,:);
+        D2E(:,:,idxkk,idxll) = zi2E(:,idx)*dA_dSk2E(idx,:)*dA_dSl(idx,idx)*nodeunknownsfwd(idx,:);% + ...
+                               %zi2E(:,idx)*dA_dSl(idx,idx)*dA_dSk2E(idx,:)*nodeunknownsfwd(idx,:);
     end
     fprintf(1,'Hessian completed for element %i of %i\n',idxkk,length(elem_list));
 end
+
+%Take transpose and add
+for idxkk=1:length(elem_list)
+   for idxll=1:length(elem_list)
+       D2ET(:,:,idxll,idxkk) = D2E(:,:,idxkk,idxll);
+   end
+end
+D2E = D2ET + D2E; %Symmetrse
 
 %Calculate Hessian tensor (measurement patterns specified here)
 cnthes=0; H=zeros(nmeass,length(elem_list),length(elem_list));
@@ -159,6 +168,11 @@ if isfield(fwd_model,'normalize_measurements')
 %    data=mc_fwd_solve( img );   
 %    J= J ./ (data.meas(:)*ones(1,nelems));
 end
+
+%Multiply by 2? since
+%d2Udldk = DA(k)A^{-1}DA(l)A^{-1}f + DA(k)A^{-1}DA(l)A^{-1}f =
+%2DA(k)A^{-1}DA(l)A^{-1}f
+%H = H;
 
 
 end
