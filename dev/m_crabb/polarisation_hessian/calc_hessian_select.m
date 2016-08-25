@@ -141,6 +141,7 @@ for idxkk=1:length(elem_list)
     fprintf(1,'Hessian completed for element %i of %i\n',idxkk,length(elem_list));
 end
 
+%{
 %Take transpose and add
 for idxkk=1:length(elem_list)
    for idxll=1:length(elem_list)
@@ -148,6 +149,7 @@ for idxkk=1:length(elem_list)
    end
 end
 D2E = D2ET + D2E; %Symmetrse
+%}
 
 %Calculate Hessian tensor (measurement patterns specified here)
 cnthes=0; H=zeros(nmeass,length(elem_list),length(elem_list));
@@ -162,6 +164,15 @@ for j=1:nstims
    end
    cnthes = cnthes + n_meas;
 end 
+
+HT=zeros(size(H));
+for idxkk=1:length(elem_list)
+   for idxll=1:length(elem_list)
+       HT(:,idxll,idxkk) = H(:,idxkk,idxll);
+   end
+end
+
+H = H + HT;
 
 %Get the Jacobian and normalize measurements (if field exists)
 if isfield(fwd_model,'normalize_measurements')
