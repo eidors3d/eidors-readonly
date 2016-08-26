@@ -1,6 +1,13 @@
 function [ DU0 ] = calc_grad_potential( img, u0 )
 %CALC_GRAD_U0 
-%
+% Calculates gradient of npotentials u (defined on nodes) to N gradient Du
+% (defined on elements)
+% INPUT
+% img
+% DIM(u0)  nnodes x npotentials
+% OUTPUT
+% DIM(DU0) nelems x dim x npotentials
+
 % Calculate gradient of background wavefield
 
 % TODO: needs to be cached really...
