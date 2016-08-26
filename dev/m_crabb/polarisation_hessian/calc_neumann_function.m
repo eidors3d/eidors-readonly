@@ -23,6 +23,8 @@ end
 fwd_model= img.fwd_model;
 
 n_dim = size(fwd_model.nodes,2);
+ground_node = fwd_model.boundary(1,1);
+fwd_model.gnd_node=ground_node;
 
 %Modify the forward model to be of my type
 if ~isfield(fwd_model,'approx_type')    || ...
@@ -115,6 +117,9 @@ groundnode=fwd_model.gnd_node; idx=1:size(At,1); idx(groundnode)=[];
 nodeunknowns(idx,:)=left_divide(At(idx,idx),rhs_total(idx,:));
 
 
+data = nodeunknowns;
+
+%{
 %Find electrode voltages and store in matrix
 %Calculate electrode voltages using index vector elecnode(i)
 velec=zeros(nelecs,nstims);
@@ -143,3 +148,4 @@ end; end
 try; if img.fwd_solve.get_all_nodes== 1
    data.volt = nodeunknowns;             % all, including CEM nodes
 end; end
+%}
