@@ -38,10 +38,10 @@ end
 %Cache element structure and find no. of elements
 nodestruc=fwd_model.nodes; nodedim=size(nodestruc,2); nnodes=size(nodestruc,1); 
 elemstruc=fwd_model.elems; nelems=size(elemstruc,1);
-n_drive = length(fwd_model.stimulation);
+n_potentials = size(u0,2);
 
 % Initialise DU0
-DU0 = zeros(nelems, dim, n_drive);
+DU0 = zeros(nelems, dim, n_potentials);
 
 %Loop over the elements and calculate local Am matrix
 for ii=1:nelems
@@ -70,7 +70,7 @@ for ii=1:nelems
     dphi_ii = (jacobianelem\dphi).';%*magjacelem;
     
     % Loop over drive patterns
-    for jj=1:n_drive
+    for jj=1:n_potentials
        DU0(ii,:,jj) = sum(dphi_ii.*repmat(u0(eleminodelist,jj),1,dim), 1 );
         
     end
