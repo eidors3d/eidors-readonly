@@ -43,12 +43,12 @@ for ii=1:length(cond_vals)
     
     % phess
     tic
-    Hii(:,ii) = calc_phessian_obj(fmdl, img, DU0, delta_d);
+    Hii(:,ii) = calc_phessian_obj(fmdl, img, DU0, [], delta_d);
     toc
 
     tic;
     %Hii(:,ii) = 
-  foo =   calc_hessian_obj(fmdl, img, 1:size(Hii,1));    
+  foo =   calc_hessian_obj(fmdl, img, 1:size(Hii,1),delta_d);    
     toc
     
 end

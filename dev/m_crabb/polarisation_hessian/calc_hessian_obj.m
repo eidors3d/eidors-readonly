@@ -1,9 +1,8 @@
-function H = calc_hessian_select(fwd_model,img,elem_list)
-%Find the Hessian associated with an image (and forward model)
+function H = calc_hessian_obj(fwd_model,img,elem_list,delta_d)
+%Find the Hessian of objective function associated
 %Second derivative of discretization method
 %3rd input elem_list - indices of elementn we want Hessian for
 %M Crabb - 29.06.2012
-
 
 cache_obj= {fwd_model,img};
 H = eidors_obj('get-cache', cache_obj, 'hessian');
@@ -12,7 +11,11 @@ if ~isempty(H)
         return
 end
 
+J = calc_jacobian(fwd_model,img);
+Je = J(:,elem_list);
 [H]= mc_calc_hessian(fwd_model,img,elem_list);
+
+H_obj = Je'*Je + H*delta_d;
 
 eidors_obj('set-cache', cache_obj, 'hessian',H);
 eidors_msg('hessian: setting cached value', 3);
