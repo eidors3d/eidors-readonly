@@ -1,8 +1,7 @@
-function [ N ] = calc_N( x, z )
+function [ DN ] = calc_neumann_grad_func_freespace( x, z )
 %CALC_GRAD_N 
 % INPUT
-% N(x,z) freespace Neumann i.e.
-% \nabla \cdot (\nabla N) = \delta
+% Gradient of N(x,z) wrt z
 % Single measure loc x, vector of pts z
 
 
@@ -10,8 +9,8 @@ function [ N ] = calc_N( x, z )
 if size(z,2)==2 && size(x,2)==2
     
     % Greens function contribution
-    RR = x - z;
-    N = -(1/(2*pi))*log(sqrt(sum(RR.^2,2)));
+    RR = repmat(x, size(z,1),1) - z;
+    DN = RR./(2*pi*repmat(sqrt(sum(RR.^2,2)),1,2));
     
     % Correction term on for boundary
     

@@ -22,7 +22,7 @@ img_backgrd=img; %Background to calculate Jacobians etc
 %Solve forward model on cond=1, save coefficients u0
 %[d0, u0] = fwd_solve_higher_order_ptensor(img_backgrd);
 img_backgrd.fwd_solve.get_all_meas=1;
-[d0] = fwd_solve_higher_order_ptensor(img_backgrd);
+[d0] = fwd_solve_higher_order(img_backgrd);
 u0 = d0.volt;
 
 % Gradient of solution on homogeneous domain
