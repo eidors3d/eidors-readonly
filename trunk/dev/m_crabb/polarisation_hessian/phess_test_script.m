@@ -36,8 +36,7 @@ Hii = zeros(size(fmdl.elems,1), length(cond_vals));
 for ii=1:length(cond_vals)
     img.elem_data(pixel_group)=cond_vals(ii);
     
-    
-    
+        
     % Perturbed field
     d_perturb = fwd_solve(img);
     delta_d = d0.meas - d_perturb.meas;
@@ -47,4 +46,9 @@ for ii=1:length(cond_vals)
     Hii(:,ii) = calc_phessian(fmdl, img, DU0, delta_d);
     toc
 
+    tic;
+    %Hii(:,ii) = 
+  foo =   calc_hessian_select(fmdl, img, 1:size(Hii,1));    
+    toc
+    
 end
