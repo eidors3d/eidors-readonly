@@ -35,15 +35,24 @@ for ii=1:n_elems
 end
 
 img0 = img;
-img0.elem_data = DN0(:,1,30);
+img0.elem_data = DN0(:,1,4);
 
 img1 = img;
-img1.elem_data = DN1(:,1,30);
+img1.elem_data = DN1(:,1,4);
+
+img2=img
+img2.elem_data = (DN0(:,1,4)-DN1(:,1,4))./DN0(:,1,4);
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,4),'r*')
-hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),-N1(:,4),'b*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,4),'b*')
+
+figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),(N0(:,4)-N1(:,4)),'r*')
+
 
 figure; 
-subplot(121); show_fem(img0); 
-subplot(122); show_fem(img1);
+subplot(121); show_fem(img0); colorbar; 
+subplot(122); show_fem(img1); colorbar;
+
+figure; 
+show_fem(img2); colorbar; 
 %hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),DU1(:,1,1),'r*')
