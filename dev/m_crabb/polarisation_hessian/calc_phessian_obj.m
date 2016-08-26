@@ -23,8 +23,6 @@ vs = fmdl.elem_volume;
 
 
 
-
-
 % Counter
 meas_start = 1;
 
@@ -55,8 +53,8 @@ for ii=1:n_drive
         meas_loc = fmdl.nodes(fmdl.boundary(jj,:),:);
         meas_loc = sum(meas_loc,1)/size(meas_loc,1);
              
-        
-        
+%         if isfield(
+%         
         % calc DN(x, z)
         DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*calc_grad_N(meas_loc, zs),2);
         
