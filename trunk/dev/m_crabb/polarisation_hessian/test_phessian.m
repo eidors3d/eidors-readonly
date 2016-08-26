@@ -20,7 +20,10 @@ img_backgrd=img; %Background to calculate Jacobians etc
 %figure; show_fem(img,[0,1,3])
 
 %Solve forward model on cond=1, save coefficients u0
-[d0, u0] = fwd_solve_higher_order_ptensor(img_backgrd);
+%[d0, u0] = fwd_solve_higher_order_ptensor(img_backgrd);
+img_backgrd.fwd_solve.get_all_meas=1;
+[d0] = fwd_solve_higher_order_ptensor(img_backgrd);
+u0 = d0.volt;
 
 % Gradient of solution on homogeneous domain
 DU0 = calc_grad_potential(img_backgrd, u0);
@@ -38,6 +41,8 @@ for ii=1:length(cond_vals)
     
         
     % Perturbed field
+    %NB if want interior voltage here need to add
+    %img.fwd_solve.get_all_meas=1 and use fwd_solve_higher_order.m
     d_perturb = fwd_solve(img);
     delta_d = d0.meas - d_perturb.meas;
     
