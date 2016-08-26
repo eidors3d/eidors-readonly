@@ -11,6 +11,7 @@ function data = calc_neumann_function(fwd_model,img)
 
 %Data - Neumann Greens function. For FE system this is dim n_node*n_node
 
+%% JUST LINEAR ELEMENT ATM
 
 if nargin == 1
    img= fwd_model;
@@ -43,6 +44,7 @@ end
 %Find stim strucutre and no. stimulations
 %Find node structure and find no.nodes 
 elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
+elemstruc=fwd_model.elems; nelems=size(elemstruc,1);
 stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2); 
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
 boundstruc=img.fwd_model.boundary;  nbounds = size(boundstruc,1);
@@ -100,11 +102,13 @@ for i=1:nbounds
     rhs_bound(boundnodes)=rhs_bound(boundnodes)+ fmat1';
 end
 
-rhs_total = zeros(nnodes,nnodes);
-rhs_total(1,:)
-for i=1:nnodes
+rhs_total = zeros(nnodes,nelems);
+%rhs_total(1,:)
+for i=1:nelems %For each triangle
    rhs_total(:,i) = rhs_bound;
-   rhs_total(i,i) = rhs_total(i,i) + 1;
+   nodes_i = elemstruc(i,:);
+   
+   rhs_total(nodes_i,i) = rhs_total(nodes_i,i) + 1/3;
     
 end
 
