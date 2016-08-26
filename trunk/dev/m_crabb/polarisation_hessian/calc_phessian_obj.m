@@ -54,6 +54,8 @@ for ii=1:n_drive
         % Measurement location - non weighted mean location!!
         meas_loc = fmdl.nodes(fmdl.boundary(jj,:),:);
         meas_loc = sum(meas_loc,1)/size(meas_loc,1);
+             
+        
         
         % calc DN(x, z)
         DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*calc_grad_N(meas_loc, zs),2);

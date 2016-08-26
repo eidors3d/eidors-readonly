@@ -1,6 +1,6 @@
 function [ DN ] = calc_grad_N( x, z )
 %CALC_GRAD_N 
-%
+% INPUT
 % Gradient of N(x,z) wrt z
 % Single measure loc x, vector of pts z
 
