@@ -1,4 +1,9 @@
-function [ Hii ] = calc_phessian( fmdl, img, DU0, delta_d )
+function [ Hii ] = calc_phessian_obj( fmdl, img, DU0, DN, delta_d )
+
+%INPUT
+% F(s+ds) = F(s) + DU0 *M *DN
+
+
 %CALC_PHESSIAN 
 %
 %
