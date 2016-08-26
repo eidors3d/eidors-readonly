@@ -37,7 +37,7 @@ J_pixel_group_sum = sum(J(:,pixel_group),2);
 
 %Calculate Hessian and see difference between quadratic approximation
 img.fwd_model.approx_type='tri3';
-H = calc_hessian_select(img_b.fwd_model,img_b,pixel_group);
+H = calc_hessian(img_b.fwd_model,img_b,pixel_group);
 H_pixel_group = H(:,1:length(pixel_group),1:length(pixel_group));
 H_pixel_group_sum = zeros(size(J_pixel_group_sum));
 for ff=1:size(H_pixel_group,1)

@@ -8,6 +8,10 @@ function data = calc_neumann_function(fwd_model,img)
 
 % NB1 - I think this is independent of CEM i.e. this comes in from the
 % other simulated data???
+%
+% N is size nodes x elements i.e the columns are the Greens function (which
+% are essentially voltage potentials, and hence node based) associated with
+% a delta source for each finite element
 
 %Data - Neumann Greens function. For FE system this is dim n_node*n_node
 
