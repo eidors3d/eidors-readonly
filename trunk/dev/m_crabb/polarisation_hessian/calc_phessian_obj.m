@@ -91,7 +91,7 @@ for ii=1:n_drive
             % Only for 2D!
    
             % Temp while not being passed
-            DN(:,:,ii) = calc_grad_N(meas_loc, zs);
+            DN(:,:,ii) = calc_neumann_grad_func_freespace(meas_loc, zs);
             
             % Non-differentiated
             DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*[P0_11.*DN(:,1,ii) + P0_12.*DN(:,2,ii),...
@@ -108,7 +108,7 @@ for ii=1:n_drive
         else
             
             % calc DN(x, z)
-            DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*calc_grad_N(meas_loc, zs),2);
+            DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*calc_neumann_grad_func_freespace(meas_loc, zs),2);
         
         end
         

@@ -24,13 +24,13 @@ for ii=1:n_elems
     for jjj=1:n_nodes
         yjjj = fmdl.nodes(jjj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
-        N1(jjj,ii) = calc_N(xii,yjjj);        
+        N1(jjj,ii) = calc_neumann_func_freespace(xii,yjjj);        
     end      
     
     for jj=1:n_elems
         yjj = fmdl.elem_centre(jj,:);  
 %        yjj_coord = sqrt(sum(yjj.^2));           
-        DN1(jj,:,ii) = calc_grad_N(xii,yjj);
+        DN1(jj,:,ii) = calc_neumann_grad_func_freespace(xii,yjj);
     end    
 end
 
