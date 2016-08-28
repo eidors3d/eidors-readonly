@@ -8,7 +8,7 @@ fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
 
 %Background, upper, lower conductivity and range
-cond_bkg = 1; cond_lower = 1; cond_upper = 3;
+cond_bkg = 1; cond_lower = 1; cond_upper = 2;
 cond_vals = linspace(cond_lower,cond_upper,100);
 
 %Pixk group of pixels to perturb
@@ -63,3 +63,24 @@ hold on; plot(cond_vals,abs(norm_vi-norm_vh_quad)./abs(norm_vi),'b*');
 legend('Linear-Nonlinear','Quadratic-Nonlinear')
 ylabel('( ||Vi||-||Vh + DVh + D2Vh2||)'); 
 xlabel('Pertubation in ith pixel');
+
+
+%Compute the Hessian ob objective
+for jj=1:length(cond_vals)    
+    fprintf(1,'Conductivity value %i of %i\n',jj,length(cond_vals));
+    
+    img.elem_data([pixel_group]) = cond_vals(jj);
+    vi = fwd_solve(img); %Image with pixel perturbation        
+    [H_obj,GN_only_obj,H_only_obj] = calc_hessian_obj(img_b.fwd_model,img_b,pixel_group,vi.meas-vh.meas);            
+    H_only_obj_norm(jj) = norm(H_only_obj);
+    GN_only_obj_norm(jj) = norm(GN_only_obj);
+end
+
+%Plot norm of voltage differences of linear and quadratic away from non-linear as function of contrast 
+figure; plot(cond_vals,abs(GN_only_obj_norm-H_only_obj_norm)./abs(GN_only_obj_norm),'r*');
+legend('||GNonly hess|| - ||Honly hess||')
+ylabel('||GNonly hess|| - ||Honly hess||'); 
+xlabel('Pertubation in ith pixel');
+
+
+

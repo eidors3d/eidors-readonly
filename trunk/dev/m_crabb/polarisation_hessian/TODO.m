@@ -1,8 +1,13 @@
 %MIKE
 %0. Compare free space and Neumann greens
 %1. Use true Dz (N(x,z) in phess_obj
-%2. Find error in Taylor Hessian
-%3. Make objective Hessian with
+%2. Find error in Taylor Hessian - DONE with test_saturation_hessian.. 
+%showing (some) validation of this..
+%3. Make objective Hessian with -  DONE testing in test_satuation_hessian by
+%plotting the DF'DF hessian and H*DV hessian as function of perturbation
+%which demonstrates that as pertrubation decreases hessian of obejctive is
+%converging to GN only hessian. BUT needs further valdiation AND testing 
+%with phess (see FRISS 1 below)
 
 
 %FRISS
