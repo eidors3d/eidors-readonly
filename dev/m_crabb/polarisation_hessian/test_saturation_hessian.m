@@ -7,28 +7,19 @@ stim = mk_stim_patterns(16,1,'{ad}','{ad}');
 fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
 
-cond_bkg = 1;
-cond_lower = 1;
-cond_upper = 1.5;
-
-%Make an image and show image
-img = mk_image(fmdl,cond_bkg);
-img_b=img; %Background to calculate Jacobians etc
-%figure; show_fem(img,[0,1,3])
-
-%Solve forward model on cond=1
-vh = fwd_solve(img);
-%figure; plot(vh.meas); 
+%Background, upper, lower conductivity and range
+cond_bkg = 1; cond_lower = 1; cond_upper = 3;
+cond_vals = linspace(cond_lower,cond_upper,100);
 
 %Pixk group of pixels to perturb
 pixel_group = [327,364,328,292,259,291];
-%pixel_group = [364,222]%,328,292,259,291];
+%pixel_group = [311,364];
 
+%Make an image on unit conductivity and solve
+img = mk_image(fmdl,cond_bkg); img_b=img; 
+vh = fwd_solve(img_b); %figure; plot(vh.meas); 
 img.elem_data([pixel_group])=2;
 figure; show_fem(img,[1,0,1]);
-
-%Conductivity values
-cond_vals = linspace(cond_lower,cond_upper,100); %0.1 is approx 1.25 contrast
 
 %Calculate Jacobian and see difference between linear approximation
 J=calc_jacobian(img_b);
@@ -39,14 +30,11 @@ J_pixel_group_sum = sum(J(:,pixel_group),2);
 img.fwd_model.approx_type='tri3';
 H = calc_hessian(img_b.fwd_model,img_b,pixel_group);
 H_pixel_group = H(:,1:length(pixel_group),1:length(pixel_group));
-H_pixel_group_sum = zeros(size(J_pixel_group_sum));
-for ff=1:size(H_pixel_group,1)
-    H_pixel_group_sum(ff,1) = ones(length(pixel_group),1)'*...
-        reshape(H_pixel_group(ff,:,:),length(pixel_group),length(pixel_group))*ones(length(pixel_group),1);
-end
-
-H_pixel_group_sum2 = sum(sum( H_pixel_group ,2 ),3);
-
+%for ff=1:size(H_pixel_group,1)
+%    H_pixel_group_sum(ff,1) = ones(length(pixel_group),1)'*...
+%        reshape(H_pixel_group(ff,:,:),length(pixel_group),length(pixel_group))*ones(length(pixel_group),1);
+%end
+H_pixel_group_sum = sum(sum( H_pixel_group ,2 ),3);
 
 %Non-linear voltage difference
 for jj=1:length(cond_vals)
@@ -65,7 +53,7 @@ end
 figure; plot(cond_vals,norm_vi,'g*');
 hold on; plot(cond_vals,norm_vh_lin,'r*');
 hold on; plot(cond_vals,norm_vh_quad,'b*');
-legend('Non-linear perturbation','Linear approximation','Quadratic approximation')
+legend('Non-linear','Linear approximation','Quadratic approximation')
 ylabel('|| Vi - V1||/||Vi||'); 
 xlabel('Pertubation in ith pixel');
 
@@ -75,4 +63,3 @@ hold on; plot(cond_vals,abs(norm_vi-norm_vh_quad)./abs(norm_vi),'b*');
 legend('Linear-Nonlinear','Quadratic-Nonlinear')
 ylabel('( ||Vi||-||Vh + DVh + D2Vh2||)'); 
 xlabel('Pertubation in ith pixel');
-
