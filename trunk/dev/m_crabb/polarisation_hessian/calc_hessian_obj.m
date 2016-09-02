@@ -22,7 +22,7 @@ Je = J(:,elem_list);
 GN_only_obj = Je'*Je;
 
 H_only_obj = zeros(size(GN_only_obj));
-for k=1:size(H_only_obj,1)
+for k=1:length(delta_d)
 H_only_obj = H_only_obj + reshape(H(k,:,:)*delta_d(k),size(H,2),size(H,3));
 end
 

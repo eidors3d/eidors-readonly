@@ -115,9 +115,6 @@ for ii=1:n_drive
         
     end
     
-    
-    % TODO: add contributions from each ii, currently only saving last?
-    
     if isfield(fmdl, 'M_tensor')
         % First derivatives
         coef_D1 = coef_D1 + sum(M*(DU0_M_DN.'),1).' + (ks-1).*(sum(M*(DU0_M1_DN.'),1).');
@@ -125,7 +122,6 @@ for ii=1:n_drive
         % Second derivatives
         coef_D2 = coef_D2 + sum(-2*M*(DU0_M1_DN.').*repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).'...
             + (ks - 1).*sum(M*(DU0_M2_DN.').*repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).';
-        
         
     else
         
@@ -164,7 +160,7 @@ else
 end
 
 % Diagonal of Hessian
-Hii = du.^2 + d2u; % NB need to do this
+Hii = du.^2 + d2u;
 
 
 end
