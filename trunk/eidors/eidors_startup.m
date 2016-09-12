@@ -109,7 +109,6 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     % We need to add an architecture specific directory for mex files
     if ver.isoctave
         archdir= strcat('/arch/octave/',computer);
-archdir
     else
         % I don't know when matlab stopped using DLL as the extension
         % for WIN32 mex files. Last I know of is 7.3
