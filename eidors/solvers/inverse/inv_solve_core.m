@@ -850,8 +850,12 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
    J = zeros(pp.n_meas,sum([opt.elem_len{:}]));
    for i=1:length(opt.jacobian)
       if(opt.verbose > 1)
-         try J_str = func2str(opt.jacobian{i});
-         catch J_str = opt.jacobian{i};
+         if isnumeric(opt.jacobian{i})
+            J_str = '[fixed]';
+         elseif isa(opt.jacobian{i}, 'function_handle')
+            J_str = func2str(opt.jacobian{i});
+         else
+            J_str = opt.jacobian{i};
          end
          if i == 1 fprintf('    calc Jacobian J(x) = ');
          else      fprintf('                       + '); end
@@ -1502,7 +1506,11 @@ function opt = parse_options(imdl)
 
    % allow a cell array of jacobians
    if ~isfield(opt, 'jacobian')
-      opt.jacobian = imdl.fwd_model.jacobian;
+      if ~iscell(imdl.fwd_model.jacobian)
+         opt.jacobian = {imdl.fwd_model.jacobian};
+      else
+         opt.jacobian = imdl.fwd_model.jacobian;
+      end
    elseif isfield(imdl.fwd_model, 'jacobian')
       imdl.fwd_model
       imdl
@@ -1740,6 +1748,9 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
       % the actual update
       dx = -(J'*W*J + hp2RtR)\(J'*W*dv + hp2RtR*de); % LU decomp
    catch ME % boom
+      fprintf('      LU decomp failed: ');
+      disp(ME.message)
+      fprintf('      falling back to PCG\n');
       tol = 1e-6; % default 1e-6
       maxit = []; % default [] --> min(n,20)
       M = []; % default [] --> no preconditioner
