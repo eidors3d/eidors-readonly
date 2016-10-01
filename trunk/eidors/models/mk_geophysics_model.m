@@ -374,7 +374,6 @@ else % 3D fmdl
    fmdl.nodes = fmdl.nodes(:,1:FMDL_DIM);
 
    if CMDL_DIM ~= 0
-      error('oops coarse model (dual meshes) are currently broken');
       nn = size(cmdl.nodes,1);
       Xn = repmat(X(1,:), nn, 1);
       if CMDL_DIM == 2 % 2D
@@ -472,7 +471,7 @@ xt = @(v) [   0  -v(3)  v(2); ... % skew symmetric cross-product of v
             v(3)    0  -v(1); ... % diagnoal is the scaling identity matrix
            -v(2)  v(1)    0];
 if abs(s) < eps*1e3
-   R = 1;
+   R = eye(3);
 else
    R = (eye(3) + xt(v) + xt(v)^2 * (1-c)/s^2);
    R=R'; % for right multiply: xyz*R
@@ -730,6 +729,12 @@ clf; h=plot([vh.meas vd.meas],'o--'); legend('analytic','FEM'); set(gca,'box','o
    imdlh22 = mk_geophysics_model('h22a', elec_pos_2d);
    imdlH32 = mk_geophysics_model('H32a', elec_pos_3d);
    imdlH22 = mk_geophysics_model('H22a', elec_pos_2d);
+
+   % std dual meshes w/ 16 elec
+   imdlh32_16 = mk_geophysics_model('h32a', 16);
+   imdlh22_16 = mk_geophysics_model('h22a', 16);
+   imdlH32_16 = mk_geophysics_model('H32a', 16);
+   imdlH22_16 = mk_geophysics_model('H22a', 16);
 
 if 0
    % Nolwenn's grid
