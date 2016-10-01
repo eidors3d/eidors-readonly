@@ -1763,7 +1763,8 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
 
       tol=100*eps*size(J,2)^2; % rough estimate based on multiply-accumulates
 %      maxit = 10;
-      [dx, flag, relres, iter, resvec] = pcg(LHS, RHS, tol, maxit, M, x0);
+
+      [dx, flag, relres, iter, resvec] = pcg(LHS, RHS, tol, maxit, M', M', x0);
       % TODO if verbose...
       switch flag
          case 0
