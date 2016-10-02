@@ -69,6 +69,9 @@ function img= inv_solve_core( inv_model, data0, data1);
 %   update_func                         (default TODO)  ** TODO
 %     [img,opt]=f(org,next,dx,fmin,res,opt)
 %     Deprecated, use <TODO> instead.
+%   update_method                         (default lu)
+%     Method to use for solving dx: 'pcg' or 'lu'
+%     If 'lu', will fall back to 'pcg' if out-of-memory.
 %   do_starting_estimate                   (default 1)  ** TODO
 %     Deprecated, use <TODO> instead.
 %   line_search_func       (default @line_search_onm2)
@@ -1296,6 +1299,10 @@ function opt = parse_options(imdl)
    if ~isfield(opt, 'update_func')
       opt.update_func = @GN_update; % dx = f(J, W, hp2RtR, dv, de, opt)
    end
+   if ~isfield(opt, 'update_method')
+      opt.update_method = 'lu';
+   end
+
    % figure out if things need to be calculated
    if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
       opt.calc_meas_icov = 0; % W
@@ -1744,13 +1751,21 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    end
 
 function dx = GN_update(J, W, hp2RtR, dv, de, opt)
-   try
-      % the actual update
-      dx = -(J'*W*J + hp2RtR)\(J'*W*dv + hp2RtR*de); % LU decomp
-   catch ME % boom
-      fprintf('      LU decomp failed: ');
-      disp(ME.message)
-      fprintf('      falling back to PCG\n');
+   if ~any(strcmp(opt.update_method, {'lu','pcg'}))
+      error(['unsupported update_method: ',opt.update_method]);
+   end
+   if strcmp(opt.update_method, 'lu')
+      try
+         % the actual update
+         dx = -(J'*W*J + hp2RtR)\(J'*W*dv + hp2RtR*de); % LU decomp
+      catch ME % boom
+         fprintf('      LU decomp failed: ');
+         disp(ME.message)
+         fprintf('      try opt.update_method = ''pcg'' on future runs\n');
+         opt.update_method = 'pcg';
+      end
+   end
+   if strcmp(opt.update_method, 'pcg')
       tol = 1e-6; % default 1e-6
       maxit = []; % default [] --> min(n,20)
       M = []; % default [] --> no preconditioner
@@ -1758,8 +1773,8 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
 
       % try Preconditioned Conjugate Gradient: A x = b, solve for x
       % avoids J'*J for n x m matrix with large number of m cols --> J'*J becomes an m x m dense matrix
-      LHS = @(x) -(J'*(W*(J*x)) + hp2RtR*x);
-      RHS = J'*W*dv + hp2RtR*de;
+      LHS = @(x) (J'*(W*(J*x)) + hp2RtR*x);
+      RHS = -(J'*W*dv + hp2RtR*de);
 
       tol=100*eps*size(J,2)^2; % rough estimate based on multiply-accumulates
 %      maxit = 10;
