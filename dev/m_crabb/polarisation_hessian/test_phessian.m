@@ -9,10 +9,10 @@ fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
 
 cond_bkg = 1;
-cond_lower = 1.;
+cond_lower = 1;
 cond_upper = 5;
 
-cond_vals = linspace(cond_lower, cond_upper, 5);
+cond_vals = linspace(cond_lower, cond_upper,5);
 
 %Make an image and show image
 img = mk_image(fmdl,cond_bkg);
@@ -35,7 +35,13 @@ Hii = zeros(size(fmdl.elems,1), length(cond_vals));
 PHii = Hii;
 Gii = Hii;
 D2ii = Hii;
+PGii = Gii;
+PD2ii = D2ii;
 
+% M-tensor as circle
+fmdl.M_tensor.a = ones(size(Hii,1),1);
+fmdl.M_tensor.b = ones(size(Hii,1),1);
+fmdl.M_tensor.rot = ones(size(Hii,1),1);
 % img.elem_data(pixel_group) = 2;
 % figure; show_fem(img,[1,0,0]);
 
@@ -51,7 +57,7 @@ for ii=1:length(cond_vals)
     
     % phess
     
-    [PHii(:,ii), du2, d2u] = calc_phessian_obj(fmdl, img_backgrd, DU0, [], delta_d);
+    [PHii(:,ii), PGii(:,ii), PD2ii(:,ii)] = calc_phessian_obj(fmdl, img_backgrd, DU0, [], delta_d,1);
     
     [H,G,D2] = calc_hessian_obj(fmdl, img_backgrd,1:size(Hii,1),delta_d);
     
