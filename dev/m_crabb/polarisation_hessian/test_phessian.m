@@ -9,10 +9,10 @@ fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
 
 cond_bkg = 1;
-cond_lower = 1.1;
-cond_upper = 10^1;
+cond_lower = 1.;
+cond_upper = 5;
 
-cond_vals = linspace(cond_lower, cond_upper, 1e2);
+cond_vals = linspace(cond_lower, cond_upper, 5);
 
 %Make an image and show image
 img = mk_image(fmdl,cond_bkg);
@@ -51,13 +51,13 @@ for ii=1:length(cond_vals)
     
     % phess
     
-    PHii(:,ii) = calc_phessian_obj(fmdl, img, DU0, [], delta_d);
+    [PHii(:,ii), du2, d2u] = calc_phessian_obj(fmdl, img_backgrd, DU0, [], delta_d);
     
-    [H,G,D2] = calc_hessian_obj(fmdl, img,1:size(Hii,1),delta_d);
+    [H,G,D2] = calc_hessian_obj(fmdl, img_backgrd,1:size(Hii,1),delta_d);
     
-    Hii = diag(H);
-    Gii = diag(G);
-    D2ii = diag(D2);
+    Hii(:,ii) = diag(H);
+    Gii(:,ii) = diag(G);
+    D2ii(:,ii) = diag(D2);
     
 %     tic;
 %     %Hii(:,ii) = 
