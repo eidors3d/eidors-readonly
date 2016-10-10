@@ -31,6 +31,11 @@ if isfield(fmdl, 'M_tensor')
     a = fmdl.M_tensor.a;
     b = fmdl.M_tensor.b;
     rots = fmdl.M_tensor.rot;
+else
+    a = ones(size(fmdl.elems,1),1);
+    b = ones(size(fmdl.elems,1),1);
+    rots = ones(size(fmdl.elems,1),1);
+end
     
     % First tensor component (non-differentiated)
     A = (a+b)./(a + ks.*b);
@@ -55,8 +60,7 @@ if isfield(fmdl, 'M_tensor')
      P2_11 = A.*cos(rots).^2 - B.*sin(rots).^2;
      P2_12 = (A-B).*cos(rots).*sin(rots);
      P2_22 = A.*sin(rots).^2 - B.*cos(rots).^2;
-    
-end
+
 
 
 % Counter
@@ -91,7 +95,7 @@ for ii=1:n_drive
         meas_loc = sum(meas_loc,1)/size(meas_loc,1);
             
         % Tensor shape for elements, or assume circular
-        if isfield(fmdl, 'M_tensor')
+%         if isfield(fmdl, 'M_tensor')
             % Only for 2D!
    
             % Temp while not being passed
@@ -112,35 +116,35 @@ for ii=1:n_drive
             DU0_M2_DN(:,jj) = sum(DU0(:,:,ii).*[P2_11.*DN(:,1,ii) + P2_12.*DN(:,2,ii),...
                                          P2_12.*DN(:,1,ii) + P2_22.*DN(:,2,ii)],2);
                                      
-        else
-            
-            % calc DN(x, z)
-            DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*calc_neumann_grad_func_freespace(meas_loc, zs),2);
-        
-        end
+%         else
+%             
+%             % calc DN(x, z)
+%             DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*calc_neumann_grad_func_freespace(meas_loc, zs),2);
+%         
+%         end
         
         
     end
-    
-    if isfield(fmdl, 'M_tensor')
+%     
+%     if isfield(fmdl, 'M_tensor')
         % First derivatives
         coef_D1 = coef_D1 + sum(M*(DU0_M_DN.'),1).' + (ks-1).*(sum(M*(DU0_M1_DN.'),1).');
                
         % Second derivatives
-        coef_D2 = coef_D2 + sum(-2*M*(DU0_M1_DN.').*repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).'...
+        coef_D2 = coef_D2 + sum(2*M*(DU0_M1_DN.').*repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).'...
             + (ks - 1).*sum(M*(DU0_M2_DN.').*repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).';
         
-    else
-        
-        % Contributions scaled by delta_d for D2
-        coef_D2 = coef_D2 + sum((M*DU0_M_DN.').*...
-            repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).';
-        
-        % Sum of contributions
-        coef_D1 = coef_D1 + sum(M*(DU0_M_DN.'),1).';
-        
-       
-    end
+%     else
+%         
+%         % Contributions scaled by delta_d for D2
+%         coef_D2 = coef_D2 + sum((M*DU0_M_DN.').*...
+%             repmat(delta_d(meas_start:meas_start+n_meas-1),1,size(zs,1)),1).';
+%         
+%         % Sum of contributions
+%         coef_D1 = coef_D1 + sum(M*(DU0_M_DN.'),1).';
+%         
+%        
+%     end
     
      % Counter
         meas_start = meas_start + n_meas;
@@ -151,20 +155,20 @@ end
 coef_D1 = vs.*coef_D1;
 coef_D2 = vs.*coef_D2;
 
-if isfield(fmdl, 'M_tensor')
+% if isfield(fmdl, 'M_tensor')
     % Already multiplied with (k-1) factors
     du = coef_D1;
     d2u = coef_D2;
     
-else 
-    % 1st derivatives
-    
-    du =  ( 2./(1+ks) - 2*(ks - 1)./((1+ks).^2)).*coef_D1;
-    
-    % 2nd derivatives
-    d2u = (-4./((1+ks).^2) + 4*(ks-1)./((1+ks).^2)).*coef_D2;
-
-end
+% else 
+%     % 1st derivatives
+%     
+%     du =  ( 2./(1+ks) - 2*(ks - 1)./((1+ks).^2)).*coef_D1;
+%     
+%     % 2nd derivatives
+%     d2u = (-4./((1+ks).^2) + 4*(ks-1)./((1+ks).^2)).*coef_D2;
+% 
+% end
 du2 = du.^2;
 
 % Diagonal of Hessian
