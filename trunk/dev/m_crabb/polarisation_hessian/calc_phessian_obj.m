@@ -1,4 +1,4 @@
-function [ Hii ] = calc_phessian_obj( fmdl, img, DU0, DN, delta_d )
+function [ Hii, du2, d2u ] = calc_phessian_obj( fmdl, img, DU0, DN, delta_d )
 
 %INPUT
 % F(s+ds) = F(s) + DU0 *M *DN
@@ -83,7 +83,7 @@ for ii=1:n_drive
     for jj=meas.'
         
         % Measurement location - non weighted mean location!!
-        meas_loc = fmdl.nodes(fmdl.boundary(jj,:),:);
+        meas_loc = fmdl.nodes(fmdl.electrode(jj).nodes,:);
         meas_loc = sum(meas_loc,1)/size(meas_loc,1);
             
         % Tensor shape for elements, or assume circular
@@ -158,9 +158,10 @@ else
     d2u = (-4./((1+ks).^2) + 4*(ks-1)./((1+ks).^2)).*coef_D2;
 
 end
+du2 = du.^2;
 
 % Diagonal of Hessian
-Hii = du.^2 + d2u;
+Hii = du2 + d2u;
 
 
 end
