@@ -1,18 +1,22 @@
-function [ Hii, du2, d2u ] = calc_phessian_obj( fmdl, img, DU0, DN, delta_d )
+function [ Hii, du2, d2u ] = calc_phessian_obj( fmdl, img, DU0, DN, delta_d ,freespace)
 
 %INPUT
 % F(s+ds) = F(s) + DU0 *M *DN
-
+% freespace = 1 (uses freespace)
 
 %CALC_PHESSIAN 
 %
 %
 
 
-% 
-
-% Temp while DN function not complete
-DN = zeros(size(DU0));
+%If freespace then do grads for each elements
+if(freespace==1)
+    % Temp while DN function not complete
+    DN = zeros(size(DU0));    
+else
+    N0 = calc_neumann_func(img.fwd_model,img);    
+    DN =calc_grad_potential(img,N0);     
+end
 
 % Extract element centres z
 zs = fmdl.elem_centre;
@@ -91,7 +95,10 @@ for ii=1:n_drive
             % Only for 2D!
    
             % Temp while not being passed
-            DN(:,:,ii) = calc_neumann_grad_func_freespace(meas_loc, zs);
+            if(freespace==1)
+                DN(:,:,ii) = calc_neumann_grad_func_freespace(meas_loc, zs);
+            else                           
+            end
             
             % Non-differentiated
             DU0_M_DN(:,jj) = sum(DU0(:,:,ii).*[P0_11.*DN(:,1,ii) + P0_12.*DN(:,2,ii),...
@@ -165,4 +172,3 @@ Hii = du2 + d2u;
 
 
 end
-
