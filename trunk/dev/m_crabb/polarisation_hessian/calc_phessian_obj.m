@@ -96,8 +96,7 @@ for ii=1:n_drive
             
         % Tensor shape for elements, or assume circular
 %         if isfield(fmdl, 'M_tensor')
-            % Only for 2D!
-   
+            % Only for 2D!   
             % Temp while not being passed
             if(freespace==1)
                 DN(:,:,ii) = calc_neumann_grad_func_freespace(meas_loc, zs);
