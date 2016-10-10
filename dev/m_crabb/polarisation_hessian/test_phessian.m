@@ -31,7 +31,7 @@ DU0 = calc_grad_potential(img_backgrd, u0);
 %Pixk group of pixels to perturb
 pixel_group = [327,364,328,292,259,291];
 
-Hii = zeros(size(fmdl.elems,1), length(cond_vals));
+Hii = zeros(size(fmdl.elems,1), length(cond_vals),2);
 PHii = Hii;
 Gii = Hii;
 D2ii = Hii;
@@ -45,10 +45,10 @@ fmdl.M_tensor.rot = ones(size(Hii,1),1);
 % img.elem_data(pixel_group) = 2;
 % figure; show_fem(img,[1,0,0]);
 
+for fs=[2] %Freespace or normal Green's
 for ii=1:length(cond_vals)
     img.elem_data(pixel_group)=cond_vals(ii);
-    
-        
+            
     % Perturbed field
     %NB if want interior voltage here need to add
     %img.fwd_solve.get_all_meas=1 and use fwd_solve_higher_order.m
@@ -61,9 +61,9 @@ for ii=1:length(cond_vals)
     
     [H,G,D2] = calc_hessian_obj(fmdl, img_backgrd,1:size(Hii,1),delta_d);
     
-    Hii(:,ii) = diag(H);
-    Gii(:,ii) = diag(G);
-    D2ii(:,ii) = diag(D2);
+    Hii(:,ii,fs) = diag(H);
+    Gii(:,ii,fs) = diag(G);
+    D2ii(:,ii,fs) = diag(D2);
     
 %     tic;
 %     %Hii(:,ii) = 
@@ -71,3 +71,10 @@ for ii=1:length(cond_vals)
 %     toc
     
 end
+end
+
+
+figure;
+plot(d2u(:,1,1),'r'); hold on; plot(D2ii(:,1,2),'b');
+
+

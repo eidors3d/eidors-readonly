@@ -1,5 +1,5 @@
 %Make an ivnerse model - standard foward model inside
-imdl = mk_common_model('c2C',16);
+imdl = mk_common_model('a2C',16);
 fmdl = imdl.fwd_model; %Extract model
 fmdl = fix_model(fmdl);
 
@@ -41,8 +41,10 @@ end
 
 %Pick which element
 
-for elem_indices=[4,139,576]
+%for elem_indices=[4,139,576]
+for elem_indices=[1,16,63]
 
+    
 img0 = img;
 img0.elem_data = DN0(:,1,elem_indices);
 

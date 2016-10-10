@@ -8,7 +8,7 @@ fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
 
 %Background, upper, lower conductivity and range
-cond_bkg = 1; cond_lower = 1; cond_upper = 2;
+cond_bkg = 1; cond_lower = 0.1; cond_upper = 10;
 cond_vals = linspace(cond_lower,cond_upper,100);
 
 %Pixk group of pixels to perturb
