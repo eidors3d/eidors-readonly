@@ -74,11 +74,11 @@ for ii=1:nelems
     magjacelem=abs(det(jacobianelem));
     
     % global d_shape_function
-    dphi_ii = (jacobianelem\dphi).';%*magjacelem;
+    dphi_ii = jacobianelem\dphi;%*magjacelem;
     
     % Loop over drive patterns
     for jj=1:n_potentials
-       DU0(jj,:,ii) = sum(dphi_ii.*repmat(u0(eleminodelist,jj),1,dim), 1 );        
+       DU0(jj,:,ii) = (dphi_ii*u0(eleminodelist,jj))';
     end        
            
 %     %Initialise and find elemental stiffness matrices 
