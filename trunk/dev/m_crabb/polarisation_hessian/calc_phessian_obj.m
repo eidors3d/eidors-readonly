@@ -98,7 +98,7 @@ for ii=1:n_drive
             % Only for 2D!   
             % Temp while not being passed
             if(freespace==1)
-                DN(:,:,ii) = calc_neumann_grad_func_freespace(meas_loc, zs);
+                DN(:,:,ii) = -calc_neumann_grad_func_freespace(meas_loc, zs);
             else                           
             end
             
