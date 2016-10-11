@@ -9,10 +9,10 @@ fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
 
 cond_bkg = 1;
-cond_lower = 1.;
-cond_upper = 1.3;
+cond_lower = 0.5;
+cond_upper = 5;
 
-cond_vals = linspace(cond_lower, cond_upper,3);
+cond_vals = linspace(cond_lower, cond_upper,11);
 
 %Make an image and show image
 img = mk_image(fmdl,cond_bkg);
@@ -61,9 +61,9 @@ for ii=1:length(cond_vals)
     
     [H,G,D2] = calc_hessian_obj(fmdl, img_backgrd,1:size(Hii,1),delta_d);
     
-    Hii(:,ii,fs) = diag(H);
-    Gii(:,ii,fs) = diag(G);
-    D2ii(:,ii,fs) = diag(D2);
+    Hii(:,ii) = diag(H);
+    Gii(:,ii) = diag(G);
+    D2ii(:,ii) = diag(D2);
     
 %     tic;
 %     %Hii(:,ii) = 
