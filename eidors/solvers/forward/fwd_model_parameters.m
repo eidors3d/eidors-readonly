@@ -127,35 +127,6 @@ function VOLUME = element_volume( NODE, ELEM, e, d)
       warning('mesh size not understood when calculating volumes')
       VOLUME = NaN;
    end
-   % calculate element volume and surface area
-   VOLUME=zeros(e,1);
-   ones_d = ones(1,d);
-   d1fac = prod( 1:d-1 );
-   if d > size(NODE,1)
-      for i=1:e
-          this_elem = NODE(:,ELEM(:,i)); 
-          VOLUME(i)= abs(det([ones_d;this_elem])) / d1fac;
-      end
-   elseif d == 3 % 3D nodes in 2D mesh
-      for i=1:e
-          this_elem = NODE(:,ELEM(:,i)); 
-          d12= det([ones_d;this_elem([1,2],:)])^2;
-          d13= det([ones_d;this_elem([1,3],:)])^2;
-          d23= det([ones_d;this_elem([2,3],:)])^2;
-          VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
-      end
-   elseif d == 2 % 3D nodes in 1D mesh (ie resistor mesh)
-      for i=1:e
-          this_elem = NODE(:,ELEM(:,i)); 
-          d12= det([ones_d;this_elem([1],:)])^2;
-          d13= det([ones_d;this_elem([2],:)])^2;
-          d23= det([ones_d;this_elem([3],:)])^2;
-          VOLUME(i)= sqrt(d12 + d13 + d23 ) / d1fac;
-      end
-   else
-      warning('mesh size not understood when calculating volumes')
-      VOLUME = NaN;
-   end
 
 
 
