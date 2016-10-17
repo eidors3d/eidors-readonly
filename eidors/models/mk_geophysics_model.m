@@ -68,7 +68,7 @@ copt.fstr = 'mk_geophysics_model';
 if nargin < 3
    opt = {};
 end
-SALT='a$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
+SALT='z$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
 imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
 imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), 'Wenner');
 
@@ -376,11 +376,12 @@ else % 3D fmdl
    if CMDL_DIM ~= 0
       nn = size(cmdl.nodes,1);
       Xn = repmat(X(1,:), nn, 1);
-      if CMDL_DIM == 2 % 2D
+      if CMDL_DIM ~= FMDL_DIM % 2D
          cmdl.nodes = ([cmdl.nodes(:,1) zeros(nn,1) cmdl.nodes(:,2:end)]/ R) + Xn;
          cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]);
-      else % CMDL_DIM == 3 % 3D
-         cmdl.nodes = cmdl.nodes / R + Xn;
+      else % CMDL_DIM == FMDL_DIM
+         cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
+         cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
       end
    end
 
