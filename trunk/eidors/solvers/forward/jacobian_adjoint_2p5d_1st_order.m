@@ -70,26 +70,49 @@ else
    switch method
       case 'trapz'
          % less accurate: trapz
-         n = 0;
+         trace = 0;
+         if trace; fprintf('%8s %12s %16s %16s\n','fcnt','a','b-a','||Q||'); end
+         n = 0; kil = k(1);
          tol = 1e-8;
-         k(isinf(k)) = tol^(-1/6); % 1/k^2 ^3
+         k(isinf(k)) = tol^(-1/6);
          Jf = zeros(pp.n_meas, size(c2f,2), length(k)); % voltages under electrodes elec x stim, frequency domain
          for ki = k
             n = n + 1;
             Jf(:,:,n) = jacobian_k(ki, pp, gnd, img.fwd_model.stimulation, c2f);
+            if trace; fprintf('%8d     %12e %16e %16e\n',n,ki,ki-kil,norm(Jf(1,1,n))); kil = ki; end
          end
          J=2/pi*trapz(k,Jf,3);
+         % check
+         Jff = squeeze(reshape(Jf,pp.n_meas*size(c2f,2),1,length(k)));
+         assert(max(abs(Jff(:,end)) < tol), sprintf('trapz k=%e truncated too early as k->Inf',k(end)));
+         slope = (Jff(:,3)-Jff(:,2))./Jff(:,2); slope(Jff(:,2) == 0) = nan;
+         %clf; plot(slope); drawnow;
+         %[idx]=find(abs(slope) > median(abs(slope))+sqrt(tol)); clf;semilogx(k,Jff(idx,:)); drawnow;
+         assert(median(abs(slope)) < sqrt(tol)*10, sprintf('trapz k->0 (tol=%e), slope=%e != 0',tol,median(abs(slope))));
+         if 0 % draw J(k) to check we are integrating over a large enough range
+            clf;semilogx(repmat(k,pp.n_meas*size(c2f,2),1)',Jff');
+            xlabel('k'); ylabel('J_k'); title('J_k')
+            drawnow; pause(1);
+         end
+         clear Jff;
+         clear slope;
       case 'quadv'
          % more accurate: adaptive gaussian quadrature
          trace = 0;
-         tol = norm(jacobian_k(0, pp, gnd, img.fwd_model.stimulation, 1))/100;
+         tol = norm(jacobian_k(0, pp, gnd, img.fwd_model.stimulation, 1))*1e-2;
          kend = min(tol^(-1/6), max(k)); % don't go too far... k=Inf is a singular matrix, stop adjacent to numeric singularity
          % quadv is scheduled to be removed from matlab eventually... but it is
          % WAY faster than integral with any tolerance configuration I could identify
+         if trace; fprintf('%8s %12s %16s %16s\n','fcnt','a','b-a','Q(1)'); end
          J=2/pi*quadv(@(kk) jacobian_k(kk, pp, gnd, img.fwd_model.stimulation, c2f), k(1), kend, tol, trace);
       case 'integral'
-         tol = norm(jacobian_k(0, pp, gnd, img.fwd_model.stimulation, 1))/100;
+         reltol = 1e-8;
+         tol = norm(jacobian_k(0, pp, gnd, img.fwd_model.stimulation, 1))*reltol;
          kend = min(tol^(-1/6), max(k)); % don't go too far... k=Inf is a singular matrix, stop adjacent to numeric singularity
+         opts = {'ArrayValued', true,
+                 'AbsTol', tol, % default: 1e-10
+                 'RelTol',reltol}; % default:  1e-6
+         opts = opts';
          % the integral solution is about 10x slower (5.47 seconds vs. 0.60 seconds for UNIT_TEST)
          % ... I played with AbsTol and RelTol but wasn't able to affect the outcome
          J=2/pi*integral(@(kk) jacobian_k(kk, pp, gnd, img.fwd_model.stimulation, c2f), k(1), kend, 'ArrayVAlued', true);
@@ -248,6 +271,17 @@ function do_unit_test()
    imdl2 = mk_geophysics_model('h22c',16);
    assert(length(imdl2.rec_model.elems) > 20, 'expect sufficient rec_model density');
    img2 = mk_image(imdl2,1);
+   if 0 % check model c2f
+      clf; subplot(121); show_fem(imdl2.fwd_model); subplot(122); show_fem(imdl2.rec_model);
+      c2f=imdl2.fwd_model.coarse2fine; img2r = mk_image(imdl2); img2r.fwd_model = imdl2.rec_model; img2r.elem_data = zeros(size(c2f,2),1);
+      for i=1:size(c2f,2)
+         subplot(121);
+         img2.elem_data = c2f(:,i); show_fem(img2); title(sprintf('%d',i));
+         subplot(122);
+         img2r.elem_data(:) = 0; img2r.elem_data(i)=1; show_fem(img2r);  title(sprintf('%d',i));
+         drawnow; pause(0.25);
+      end
+   end
 
    % for the 3d model, we throw out the rec_model and inject the
    % imdl2.rec_model, then recalculate the c2f so that we can compare apples to
@@ -261,6 +295,17 @@ function do_unit_test()
    imdl3.fwd_model.coarse2fine = c2f;
    imdl3.fwd_model.background = bkgnd;
    img3 = mk_image(imdl3,1);
+   if 0 % check model c2f
+      clf; subplot(121); show_fem(imdl3.fwd_model); subplot(122); show_fem(imdl3.rec_model);
+      c2f=imdl3.fwd_model.coarse2fine; img3r = mk_image(imdl3); img3r.fwd_model = imdl3.rec_model; img3r.elem_data = zeros(size(c2f,2),1);
+      for i=1:size(c2f,2)
+         subplot(121);
+         img3.elem_data = c2f(:,i); show_fem(img3); title(sprintf('%d',i));
+         subplot(122);
+         img3r.elem_data(:) = 0; img3r.elem_data(i)=1; show_fem(img3r);  title(sprintf('%d',i));
+         drawnow; pause(0.25);
+      end
+   end
 
    t = tic;
    img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
@@ -274,27 +319,31 @@ function do_unit_test()
    J2p50 = calc_jacobian(img2);
    fprintf(' 2.5D (k=0)                 = %.2f sec\n', toc(t));
 
+   ke = [0 0 0];
    t = tic;
    img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
    img2.fwd_model.jacobian = @jacobian_adjoint_2p5d_1st_order;
-   img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k = [0 logspace(-2,0,12) 3];
+   img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k = [0 logspace(-4,1,100)]; % capture all the effects to (k^2 T)!
    img2.fwd_model.jacobian_adjoint_2p5d_1st_order.method = 'trapz';
    J2p5kt = calc_jacobian(img2);
-   fprintf(' 2.5D (k=0..%.1f, trapz)    = %.2f sec\n', img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k(end), toc(t));
+   ke(1) = img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k(end);
+   fprintf(' 2.5D (k=0..%.1f, trapz)    = %.2f sec\n', ke(1), toc(t));
    t = tic;
    img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
    img2.fwd_model.jacobian = @jacobian_adjoint_2p5d_1st_order;
    img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k = [0 Inf];
    img2.fwd_model.jacobian_adjoint_2p5d_1st_order.method = 'quadv';
    J2p5kq = calc_jacobian(img2);
-   fprintf(' 2.5D (k=0..%.1f, quadv)    = %.2f sec\n', img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k(end), toc(t));
+   ke(2) = img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k(end);
+   fprintf(' 2.5D (k=0..%.1f, quadv)    = %.2f sec\n', ke(2), toc(t));
    t = tic;
    img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
    img2.fwd_model.jacobian = @jacobian_adjoint_2p5d_1st_order;
    img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k = [0 Inf];
    img2.fwd_model.jacobian_adjoint_2p5d_1st_order.method = 'integral';
    J2p5ki = calc_jacobian(img2);
-   fprintf(' 2.5D (k=0..%.1f, integral) = %.2f sec\n', img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k(end), toc(t));
+   ke(3) = img2.fwd_model.jacobian_adjoint_2p5d_1st_order.k(end);
+   fprintf(' 2.5D (k=0..%.1f, integral) = %.2f sec\n', ke(3), toc(t));
 
    t = tic;
    img3.fwd_model.nodes(1,:) = img3.fwd_model.nodes(1,:) + rand(1,3)*1e-8; % defeat cache
@@ -304,11 +353,11 @@ function do_unit_test()
 
    tol = 1e-8;
    reltol = norm(J3)*2e-2;
-   unit_test_cmp('2D                         vs 3D', J2, J3, -tol);
-   unit_test_cmp('2.5D (k=0)                 vs 2D', J2p50, J2, tol);
-   unit_test_cmp('2.5D (k=0..3.0) (trapz)    vs 3D', J2p5kt, J3, 2*reltol);
-   unit_test_cmp('2.5D (k=0..Inf) (quadv)    vs 3D', J2p5kq, J3, reltol);
-   unit_test_cmp('2.5D (k=0..Inf) (integral) vs 3D', J2p5ki, J3, reltol);
+   unit_test_cmp('2D                          vs 3D', J2, J3, -tol);
+   unit_test_cmp('2.5D (k=0)                  vs 2D', J2p50, J2, tol);
+   unit_test_cmp(sprintf('2.5D (k=0..%-4.1f) (trapz)    vs 3D',ke(1)), J2p5kt, J3, 2*reltol);
+   unit_test_cmp(sprintf('2.5D (k=0..%-4.1f) (quadv)    vs 3D',ke(2)), J2p5kq, J3, reltol);
+   unit_test_cmp(sprintf('2.5D (k=0..%-4.1f) (integral) vs 3D',ke(3)), J2p5ki, J3, reltol);
 
    imgr = img2;
    imgr.fwd_model = imdl2.rec_model;
@@ -316,10 +365,10 @@ function do_unit_test()
         subplot(222); imgr.elem_data = sens(J2); show_fem(imgr,1); title('2D [log_{10}]');
         subplot(223); imgr.elem_data = sens(J2p5kq); show_fem(imgr,1); title('2.5D (k=0..3.0) [log_{10}]');
         subplot(224); imgr.elem_data = sens(J2p50); show_fem(imgr,1); title('2.5D (k=0) [log_{10}]');
-   if 0
-        subplot(222); imgr.elem_data = sens(J2p5kq); show_fem(imgr,1); title('2.5D (k=0..3.0) trapz [log_{10}]');
+   if 1
+        subplot(222); imgr.elem_data = sens(J2p5kt); show_fem(imgr,1); title('2.5D (k=0..3.0) trapz [log_{10}]');
         subplot(223); imgr.elem_data = sens(J2p5kq); show_fem(imgr,1); title('2.5D (k=0..Inf) quadv [log_{10}]');
-        subplot(224); imgr.elem_data = sens(J2p5kq); show_fem(imgr,1); title('2.5D (k=0..Inf) integral [log_{10}]');
+        subplot(224); imgr.elem_data = sens(J2p5ki); show_fem(imgr,1); title('2.5D (k=0..Inf) integral [log_{10}]');
    end
 
 function S = sens(J)
