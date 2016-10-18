@@ -24,9 +24,11 @@ n_nodes = size(fmdl.nodes,1);
 %First argument is potential at nodes and second argument is delta function
 %source supported in elements
 N1=zeros(n_nodes,n_nodes); 
+N2=zeros(n_nodes,n_nodes); 
 %Gradient (takes nodal volt to elemen Dvolt) of each greens in source in
 %each element
 DN1 = zeros(n_nodes,2,n_elems); 
+DN2 = zeros(n_nodes,2,n_elems); 
 
 for ii=1:n_nodes
     %xii = fmdl.elem_centre(ii,:);
@@ -36,7 +38,8 @@ for ii=1:n_nodes
     for jj=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
-        N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);        
+        N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
+        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);                
     end      
     
     for jj=1:n_elems
@@ -44,8 +47,23 @@ for ii=1:n_nodes
         yjj = fmdl.elem_centre(jj,:);  
 %        yjj_coord = sqrt(sum(yjj.^2));           
         DN1(ii,:,jj) = calc_neumann_grad_func_freespace(xii,yjj);
+        %DN2(ii,:,jj) = calc_neumann_grad_func_freespace(xii,yjj);
     end    
 end
+
+for node_indices=[2,5,10,20,50,100]
+figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
+%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'b*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'g*')
+
+figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'r*')
+%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices)./N2(:,node_indices),'b*')
+
+%figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),...
+%    (N0(:,potential_indices)-N1(:,potential_indices)),'r*')    
+    
+end
+
 
 %Pick which solutions to plot
 for potential_indices=[1]
