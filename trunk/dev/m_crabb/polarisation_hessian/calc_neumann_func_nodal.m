@@ -53,13 +53,11 @@ stimstruc=fwd_model.stimulation; nstims=size(stimstruc,2);
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
 boundstruc=img.fwd_model.boundary;  nbounds = size(boundstruc,1);
 
-
+%Calculate the total stiffness matrix
+s_mat = calc_system_mat(img); At=s_mat.E(1:nnodes,1:nnodes);
 
 %Just using pcw linear
 eletype = 'tri3';
-
-%Calculate the total stiffness matrix
-s_mat = calc_system_mat(img); At=s_mat.E(1:nnodes,1:nnodes);
 
 %Gauss quadrature points to perform numerical integration
 [weight,xcoord,ycoord]=gauss_points(1,6);
@@ -97,13 +95,28 @@ for i=1:nbounds
 
     for k=1:size(weight,2)
         %Find global coordinates of wiehgt point
-        map=boundary_shape_function('tri3',xcoord(k),0);
+        
+        map=boundary_shape_function('tri3',xcoord(k),y0);
+        xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
+        yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);                     
+        map=boundary_shape_function('tri3',xcoord(k),ycoord(k));
+        fmat1 = fmat1 + weight(k)*(phi(:,k))'*(-1/bound_area)*magjacbound;
+
+%{
+        map=boundary_shape_function('tri3',xcoord(k),ycoord(k));        
         xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
         yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);
-        fmat1 = fmat1 + weight(k)*(phi(:,k))'*(-1/bound_area)*magjacbound;
+        [theta,rad]=cart2pol(xglob,yglob);
+        
+        fmat1 = fmat1 + weight(k)*(boundary_shape_function('tri3',xcoord(k),ycoord(k)))'*...
+            (-1/bound_area)*magjacbound;        
+%}
+        
     end
     boundnodes=boundstruc(i,:);
-    rhs_bound(boundnodes)=rhs_bound(boundnodes)+ fmat1';
+    rhs_bound(boundnodes)=rhs_bound(boundnodes)+ fmat1;
+%    rhs_bound(boundnodes)=rhs_bound(boundnodes)+[1;-1];% 100;
+    
 end
 
 rhs_total = zeros(nnodes,nnodes);
@@ -111,7 +124,7 @@ rhs_total = zeros(nnodes,nnodes);
 for i=1:nnodes %For each triangle
    rhs_total(:,i) = rhs_bound;
    
-   rhs_total(i,i) = rhs_total(i,i) + 1;
+   rhs_total(i,i) = rhs_total(i,i) +1;
     
 end
 
@@ -123,6 +136,8 @@ nodeunknowns(idx,:)=left_divide(At(idx,idx),rhs_total(idx,:));
 
 
 data = nodeunknowns;
+
+afhzdghfgn=1;
 
 %{
 %Find electrode voltages and store in matrix

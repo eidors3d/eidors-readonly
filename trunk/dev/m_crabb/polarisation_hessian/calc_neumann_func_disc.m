@@ -15,8 +15,12 @@ if size(z,2)==2 && size(x,2)==2
     RR = x - z;
     RR_star = x-z_star;
 
-    N = -(1/(2*pi))*log(sqrt(sum(RR.^2,2)))...
-        -(1/(2*pi))*log(sqrt(sum(RR_star.^2,2)));
+    N = - (1/(2*pi))*log(sqrt(sum(RR.^2,2)))...
+        - (1/(2*pi))*log(sqrt(sum(RR_star.^2,2)));%...
+        %+ (1/(2*pi))*log(norm(z,2));%...
+        %+ (1/(4*pi))*(norm(x,2))^2;
+        
+        
     
     % Correction term on for boundary
     
