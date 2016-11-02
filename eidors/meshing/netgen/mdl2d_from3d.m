@@ -77,14 +77,22 @@ function mdl2 = mdl2d_from3d(mdl3);
 
    % copy other fields
    if isfield(mdl3,'stimulation'); mdl2.stimulation= mdl3.stimulation; end
-   try   mdl2.solve      = mdl3.solve;
-   catch mdl2.solve      = 'eidors_default';end 
-   try   mdl2.jacobian   = mdl3.jacobian;
-   catch mdl2.jacobian   = 'eidors_default';end
-   try   mdl2.system_mat = mdl3.system_mat;  
-   catch mdl2.system_mat = 'eidors_default'; end; 
-   try   mdl2.normalize_measurements = mdl3.normalize_measurements;  
-   catch mdl2.normalize_measurements = 0; end; 
+   try   
+       mdl2.solve      = mdl3.solve;
+   catch
+       mdl2.solve      = 'eidors_default';end
+   try   
+       mdl2.jacobian   = mdl3.jacobian;
+   catch
+       mdl2.jacobian   = 'eidors_default';end
+   try   
+       mdl2.system_mat = mdl3.system_mat;  
+   catch
+       mdl2.system_mat = 'eidors_default'; end;
+   try   
+       mdl2.normalize_measurements = mdl3.normalize_measurements;  
+   catch
+       mdl2.normalize_measurements = 0; end;
 
    % update cache
    mdl2 = eidors_obj('fwd_model',mdl2);

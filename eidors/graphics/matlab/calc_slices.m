@@ -97,10 +97,16 @@ function rimg = calc_this_slice( img, levels, np)
     end
 
     % FILTER IMAGE
-    try   filt = img.calc_slices.filter; 
-    catch filt = 1; end
-    try   scal = img.calc_slices.scale; 
-    catch scal = 1; end
+    try   
+        filt = img.calc_slices.filter; 
+    catch
+        filt = 1; 
+    end
+    try   
+        scal = img.calc_slices.scale; 
+    catch
+        scal = 1; 
+    end
 
     filt = scal * ( filt/sum(filt(:)) );
     rimg = filter_image(rimg, filt);

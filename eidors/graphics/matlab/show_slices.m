@@ -49,8 +49,10 @@ do_calc_slices = 0;
 try if strcmp(img(1).type,'image'); do_calc_slices= 1; end;end 
 
 if nargin<=1;
-   try   levels = img(1).show_slices.levels;
-   catch levels = [];
+   try   
+       levels = img(1).show_slices.levels;
+   catch
+       levels = [];
    end
 end
 

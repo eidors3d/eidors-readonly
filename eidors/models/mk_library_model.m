@@ -350,7 +350,11 @@ for i = 1:numel(models)
     eidors_msg('\n\n\n DOING  MODEL (%s)\n\n\n',models{i},0);
     mdl = mk_library_model(models{i});
     img = mk_image(mdl,1);
-    try   n = numel(mdl.mat_idx); catch n =1; end
+    try   
+        n = numel(mdl.mat_idx); 
+    catch
+        n =1; 
+    end
     if n >1
         for j = 2:n
             img.elem_data(mdl.mat_idx{j}) = 0.25;
