@@ -16,7 +16,7 @@ function igt = img2igt(img)
 img.calc_colours.npoints=34;
 greit_m = calc_slices(img);
 % reduce to 32-by-32
-greit_m = greit_m(2:33,2:33); 
+greit_m = greit_m(2:33,2:33,:); 
 
 greit_m(isnan(greit_m)) = 0;
 
