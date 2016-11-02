@@ -48,26 +48,36 @@ end; end
 
 function p = get_params(inv_model);
    
-   try   p.alpha1= inv_model.inv_solve_TV_pdipm.alpha1;
-   catch p.alpha1= 1e-2;
+   try   
+       p.alpha1= inv_model.inv_solve_TV_pdipm.alpha1;
+   catch
+       p.alpha1= 1e-2;
    end
 
-   try   p.beta= inv_model.inv_solve_TV_pdipm.beta;
-   catch p.beta= 1e-4;
+   try   
+       p.beta= inv_model.inv_solve_TV_pdipm.beta;
+   catch
+       p.beta= 1e-4;
    end
 
    p.alpha2= calc_hyperparameter( inv_model);
 
-   try   p.min_change = inv_model.parameters.min_change;
-   catch p.min_change = 0;
+   try   
+       p.min_change = inv_model.parameters.min_change;
+   catch
+       p.min_change = 0;
    end
 
-   try   p.maxiter = inv_model.parameters.max_iterations;
-   catch p.maxiter= 10;
+   try   
+       p.maxiter = inv_model.parameters.max_iterations;
+   catch
+       p.maxiter= 10;
    end
 
-   try   p.keepiters = inv_model.parameters.keep_iterations;
-   catch p.keepiters= 0;
+   try   
+       p.keepiters = inv_model.parameters.keep_iterations;
+   catch
+       p.keepiters= 0;
    end
 
    p.tol = 0; % TODO

@@ -206,19 +206,27 @@ function f_mdl= offset_and_project( f_mdl, c_mdl)
 
 function [c_mdl f_mdl] = assign_defaults( c_mdl, f_mdl )
     [fn,fd]= size(f_mdl.nodes);
-    try    c_mdl.mk_coarse_fine_mapping.f2c_offset; % test exist
-    catch  c_mdl.mk_coarse_fine_mapping.f2c_offset= zeros(1,fd);
+    try    
+        c_mdl.mk_coarse_fine_mapping.f2c_offset; % test exist
+    catch
+        c_mdl.mk_coarse_fine_mapping.f2c_offset= zeros(1,fd);
     end
-    try    c_mdl.mk_coarse_fine_mapping.f2c_project;
-    catch  c_mdl.mk_coarse_fine_mapping.f2c_project= speye(fd);
+    try    
+        c_mdl.mk_coarse_fine_mapping.f2c_project;
+    catch
+        c_mdl.mk_coarse_fine_mapping.f2c_project= speye(fd);
     end
-    try    c_mdl.mk_coarse_fine_mapping.z_depth;
-    catch  c_mdl.mk_coarse_fine_mapping.z_depth= inf;
+    try    
+        c_mdl.mk_coarse_fine_mapping.z_depth;
+    catch
+        c_mdl.mk_coarse_fine_mapping.z_depth= inf;
     end
-    try    f_mdl.interp_mesh.n_interp;
+    try    
+        f_mdl.interp_mesh.n_interp;
     % lower density interpolation in higher dimentions, since
     % the added dimensions will give extra interpolation points.
-    catch  f_mdl.interp_mesh.n_interp = 7 - size(f_mdl.elems,2);
+    catch
+        f_mdl.interp_mesh.n_interp = 7 - size(f_mdl.elems,2);
     end
      
     

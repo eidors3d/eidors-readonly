@@ -600,8 +600,10 @@ function beta = update_beta(dx_k, dx_km1, sx_km1, opt);
       if opt.verbose > 1
          try beta_str = func2str(opt.beta_func);
          catch
-            try beta_str = opt.beta_func;
-            catch beta_str = 'unknown';
+            try 
+                beta_str = opt.beta_func;
+            catch
+                beta_str = 'unknown';
             end
          end
       end
@@ -673,8 +675,10 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
 
          try RtR_str = func2str(opt.RtR_prior{i,j});
          catch
-            try RtR_str = opt.RtR_prior{i,j};
-            catch RtR_str = 'unknown';
+            try 
+                RtR_str = opt.RtR_prior{i,j};
+            catch
+                RtR_str = 'unknown';
             end
          end
          if opt.verbose > 1
@@ -999,8 +1003,10 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
   end
 
   if(opt.verbose > 1)
-     try ls_str = func2str(opt.line_search_func);
-     catch ls_str = opt.line_search_func;
+     try 
+         ls_str = func2str(opt.line_search_func);
+     catch
+         ls_str = opt.line_search_func;
      end
      fprintf('    line search, alpha = %s\n', ls_str);
   end
@@ -1102,8 +1108,10 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
 %   img.error = err;
 
 function data = map_meas_struct(data, N, out)
-   try   current_meas_params = data.current_params;
-   catch current_meas_params = 'voltage';
+   try   
+       current_meas_params = data.current_params;
+   catch
+       current_meas_params = 'voltage';
    end
    data.meas = map_meas(data.meas, N, current_meas_params, out);
    data.current_params = out;
@@ -1544,9 +1552,11 @@ function opt = parse_options(imdl)
    % show what the hyperparameters are configured to when logging
    if opt.verbose > 1
       fprintf('  hyperparameters\n');
-      try hp_global = imdl.hyperparameter.value;
+      try 
+          hp_global = imdl.hyperparameter.value;
           hp_global_str = sprintf(' x %0.4g',hp_global);
-      catch hp_global = 1;
+      catch
+          hp_global = 1;
           hp_global_str = '';
       end
       for i=1:length(opt.elem_working)
@@ -1979,8 +1989,10 @@ function type = to_base_types(type)
 
 function img = map_img(img, out);
    err_if_inf_or_nan(img.elem_data, 'img-pre');
-   try in = img.current_params;
-   catch in = {'conductivity'};
+   try 
+       in = img.current_params;
+   catch
+       in = {'conductivity'};
    end
    % make cell array of strings
    if ischar(in)
