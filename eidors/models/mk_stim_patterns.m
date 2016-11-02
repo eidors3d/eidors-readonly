@@ -329,6 +329,9 @@ for opt = options
    elseif strcmp(opt, 'no_meas_current_next1')
       v.use_meas_current = 0;
       v.use_meas_current_next = 1;
+   elseif strcmp(opt, 'no_meas_current_next2')
+      v.use_meas_current = 0;
+      v.use_meas_current_next = 2;
    elseif strcmp(opt, 'meas_current')
       v.use_meas_current = 1;
    elseif strcmp(opt, 'rotate_meas')
