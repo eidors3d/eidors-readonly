@@ -77,7 +77,7 @@ end
 
 copt.fstr = 'fwd_solve';
 copt.cache_obj = img;
-data = eidors_cache(solver, {fwd_model, img}, copt);
+data = eidors_cache(solver, {img}, copt);
 data= eidors_obj('data',data);  % create data object
 
 
