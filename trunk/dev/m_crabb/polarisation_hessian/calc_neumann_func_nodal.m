@@ -96,7 +96,7 @@ for i=1:nbounds
     for k=1:size(weight,2)
         %Find global coordinates of wiehgt point
         
-        map=boundary_shape_function('tri3',xcoord(k),y0);
+        map=boundary_shape_function('tri3',xcoord(k),0);
         xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
         yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);                     
         map=boundary_shape_function('tri3',xcoord(k),ycoord(k));
@@ -113,8 +113,9 @@ for i=1:nbounds
 %}
         
     end
+    
     boundnodes=boundstruc(i,:);
-    rhs_bound(boundnodes)=rhs_bound(boundnodes)+ fmat1;
+    rhs_bound(boundnodes)=rhs_bound(boundnodes)+ fmat1';
 %    rhs_bound(boundnodes)=rhs_bound(boundnodes)+[1;-1];% 100;
     
 end
@@ -124,7 +125,7 @@ rhs_total = zeros(nnodes,nnodes);
 for i=1:nnodes %For each triangle
    rhs_total(:,i) = rhs_bound;
    
-   rhs_total(i,i) = rhs_total(i,i) +1;
+   rhs_total(i,i) = rhs_total(i,i) +1/(2*pi);
     
 end
 
