@@ -21,6 +21,7 @@ DN0 =calc_grad_potential_nodal(img,N0);
 %Space for the analagous analytic freespace/disc N1/2 and DN1/2
 N1=zeros(n_nodes,n_nodes); 
 N2=zeros(n_nodes,n_nodes); 
+N3=zeros(n_nodes,n_nodes); 
 DN1 = zeros(n_nodes,2,n_elems); 
 DN2 = zeros(n_nodes,2,n_elems); 
 
@@ -36,7 +37,8 @@ for ii=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
         N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
-        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);                
+%        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);       
+        N3(ii,jj) = calc_neumann_func_disc2(xii,yjj);                        
     end      
     
     for jj=1:n_elems
@@ -51,13 +53,15 @@ end
 sum(N0(bound_nodes,80))
 
 %for node_indices=[5,10,20,50,100]
-    for node_indices=[80]
+for node_indices=[20,50]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
-%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
-hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'b*')
+%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'g*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N3(:,node_indices),'b*')
 
-figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'r*')
+figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N3(:,node_indices),'r*')
+%figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N3(:,node_indices),'g*')
+%figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices)-N3(:,node_indices),'b*')
 %hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices)./N2(:,node_indices),'b*')
 
 %figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),...
