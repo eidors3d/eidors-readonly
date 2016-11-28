@@ -142,6 +142,7 @@ function f = default_factor
    
 function fmt = parse_format(filename)   
     ext = lower(regexp(filename,'(?<=\.).+$','match'));
+    if isempty(ext); error('no filename extension detected (%s)',filename); end
     switch ext{1}
        case {'jpg', 'jpeg'}
           fmt = 'jpg';
