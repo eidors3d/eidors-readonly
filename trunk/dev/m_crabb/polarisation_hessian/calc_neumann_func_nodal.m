@@ -26,10 +26,7 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
 end
 
 fwd_model= img.fwd_model;
-
 n_dim = size(fwd_model.nodes,2);
-ground_node = fwd_model.boundary(1,1);
-fwd_model.gnd_node=ground_node;
 
 %Modify the forward model to be of my type
 if ~isfield(fwd_model,'approx_type')    || ...
@@ -96,10 +93,10 @@ for i=1:nbounds
     for k=1:size(weight,2)
         %Find global coordinates of wiehgt point
         
-        map=boundary_shape_function('tri3',xcoord(k),0);
-        xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
-        yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);                     
-        map=boundary_shape_function('tri3',xcoord(k),ycoord(k));
+  %      map=boundary_shape_function('tri3',xcoord(k),0);
+  %      xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
+  %      yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);                     
+  %      map=boundary_shape_function('tri3',xcoord(k),ycoord(k));
         fmat1 = fmat1 + weight(k)*(phi(:,k))'*(-1/bound_area)*magjacbound;
 
 %{
@@ -125,8 +122,8 @@ rhs_total = zeros(nnodes,nnodes);
 for i=1:nnodes %For each triangle
    rhs_total(:,i) = rhs_bound;
    
-   rhs_total(i,i) = rhs_total(i,i) +1/(2*pi);
-    
+   %This is 1 at the ith node
+   rhs_total(i,i) = rhs_total(i,i) +1;    
 end
 
 %Create index vector and eliminate ground node equation from index
@@ -137,8 +134,6 @@ nodeunknowns(idx,:)=left_divide(At(idx,idx),rhs_total(idx,:));
 
 
 data = nodeunknowns;
-
-afhzdghfgn=1;
 
 %{
 %Find electrode voltages and store in matrix
