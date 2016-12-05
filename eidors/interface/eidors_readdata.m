@@ -166,6 +166,11 @@ switch fmt
 
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
      
+   case 'lq4pre'
+      [vv] = landquart4pre_readdata( fname );
+
+      stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
+
    case 'lq4'
       [vv, evtlist] = landquart4_readdata( fname );
 
@@ -218,6 +223,9 @@ function fmt = pre_proc_spec_fmt( format, fname );
          fmt= 'draeger-eit';
       elseif swisstom
          fmt= sprintf('lq%d',swisstom);
+         if swisstom == 3.5
+            fmt= 'lq4pre';
+         end
          eidors_msg('"%s" appears to be in %s format',fname,upper(fmt),3);
       else
          error('EIT file specified, but it doesn''t seem to be a Carefusion file')
@@ -244,12 +252,18 @@ function df= is_eit_file_a_draeger_file( fname );
 
 function df= is_eit_file_a_swisstom_file( fname );
    fid= fopen(fname,'rb');
-   d= fread(fid,[1 6],'uchar');
+   d= fread(fid,[1 4],'uchar');
    fclose(fid);
    
-   if any(d(4)==[2,3,4]) && all(d([1,2,3,5,6]) == 0);
+% Note that there are two possible LQ4 formats, either with
+%     d=[0,0,0,4] or with d = [4,0,0,0]
+%  we call the first one version 3.5
+   if any(d(4)==[2,3,4]) && all(d([1,2,3]) == 0);
       df = d(4);
-      eidors_msg('Swisstom format: LQ%d', df, 4);
+      if d(4)==4; df = 3.5; end
+%     eidors_msg('Swisstom format: LQ%d', df, 4);
+   elseif any(d(1:4) == [4,0,0,0])
+      df = 4;
    else 
       df = 0;
    end
@@ -947,7 +961,7 @@ function [vv, evtlist] = landquart4_readdata( fname )
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
 
-function [vv] = landquart4_readdata_old( fname )
+function [vv] = landquart4pre_readdata( fname )
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
    try
       format_version = fread(fid,1,'int32','ieee-le');
