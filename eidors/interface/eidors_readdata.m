@@ -167,8 +167,9 @@ switch fmt
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
      
    case 'lq4'
-      [vv] = landquart4_readdata( fname );
+      [vv, evtlist] = landquart4_readdata( fname );
 
+      auxdata.event = evtlist;
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
       
    case 'dixtal_encode'
@@ -892,8 +893,61 @@ function [vv] = landquart2_readdata( fname )
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
 
 % Read data from the file format develped by Swisstom, Landquart, Switzerland.
+function [vv, evtlist] = landquart4_readdata( fname )
+   evtlist = [];
+   [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
+   try
+      format_version = fread(fid,1,'int32','ieee-le');
+      if format_version ~= 4
+         error('unsupported file format version');
+      else
+         header_size = fread(fid,1,'int32', 'ieee-le');          
+         fseek(fid,header_size,'bof');
 
-function [vv] = landquart4_readdata( fname )
+         frame_header = 16;
+         eit_frame_offset = 328; % 60 + 12 + 256 = 328
+         iq_payload = 2048;
+         
+         %%% Read frames
+         i = 1;
+         evti = 1;
+         while fseek(fid, 1,'cof') ~= -1
+            fseek(fid, -1,'cof');
+            % drop frame header and some payload:
+            ts = fread(fid,1,'int64','ieee-le');
+            ft = fread(fid,1,'int32','ieee-le'); 
+            pl = fread(fid,1,'int32','ieee-le');
+            if ft == 1
+               % event
+               evtlist(evti).timestamp = ts;
+               evti = evti + 1;
+               if pl > 0
+                  evtlist(evti).eventId = fread(fid, 1, 'int32', 'ieee-le');
+                end
+            elseif ft == 0
+               
+                fseek(fid,eit_frame_offset,'cof');
+                iqPayload(:,i) = fread(fid,iq_payload,'int32','ieee-le');
+                fseek(fid,pl-4*iq_payload-eit_frame_offset,'cof');
+                i = i+1;
+            elseif pl > 0
+               fseek(fid,pl,'cof'); 
+            else
+               % nothing to do
+            end
+         end
+      end
+   catch err
+      fclose(fid);
+      rethrow(err);
+   end
+   fclose(fid);
+
+   % this is just a simple guess
+   amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
+   vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
+
+function [vv] = landquart4_readdata_old( fname )
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
    try
       format_version = fread(fid,1,'int32','ieee-le');
