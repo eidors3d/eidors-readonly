@@ -35,9 +35,6 @@ function imdl = mk_GN_model(img, opt, lambda)
     if ~exist('lambda', 'var')
       lambda = [];
     end
-    if strcmp(img.type, 'fwd_model')    
-        img = mk_image(img,1);  % create homogeneous BG image from fmdl
-    end
     fmdl = img.fwd_model;
     imdl = select_imdl( fmdl,{'Basic GN dif'});
    
@@ -45,12 +42,14 @@ function imdl = mk_GN_model(img, opt, lambda)
     opt = parse_options(opt,fmdl,imdl);
 
     %% Calculate rec_model (if absent)
-    if ~isfield(imdl,'rec_model');
+    if ~isfield(img,'rec_model');
         opt.do_coarse2fine = 0;  
         [imdl.rec_model, imdl.fwd_model] = mk_pixel_slice(fmdl, opt.target_plane, opt);
         imdl.rec_model.nodes(:,3) = []; % the third dimension complicated display
         % medical orientation: NO, DO flip the x-axis of the model beforehand 
         imdl.rec_model.mdl_slice_mapper.y_pts = fliplr(imdl.rec_model.mdl_slice_mapper.y_pts);
+    else
+        imdl.rec_model = img.rec_model;
     end
 
 
@@ -58,6 +57,7 @@ function imdl = mk_GN_model(img, opt, lambda)
     imdl = select_imdl(imdl, {'Basic GN dif'});
     
     imdl.fwd_model.coarse2fine = mk_coarse_fine_mapping(imdl.fwd_model, imdl.rec_model);
+    
     imdl.inv_solve.calc_solution_error = 0 ;
     
     if isfield(img, 'elem_data') %&& (length(unique(img.elem_data)) ~= 1)
