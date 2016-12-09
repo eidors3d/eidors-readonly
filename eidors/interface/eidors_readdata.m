@@ -162,7 +162,10 @@ switch fmt
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
       
    case {'lq2','lq3'}
-      [vv] = landquart2_readdata( fname );
+      [vv, elecImps, tStampsAbs, tStampsRel] = landquart2_readdata( fname );
+      auxdata.elec_impedance = elecImps;
+      auxdata.t_abs = tStampsAbs;
+      auxdata.t_rel = tStampsRel;
 
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
      
@@ -172,9 +175,12 @@ switch fmt
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
 
    case 'lq4'
-      [vv, evtlist] = landquart4_readdata( fname );
-
+      [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( fname );
       auxdata.event = evtlist;
+      auxdata.elec_impedance = elecImps;
+      auxdata.t_abs = tStampsAbs;
+      auxdata.t_rel = tStampsRel;
+
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
       
    case 'dixtal_encode'
@@ -869,15 +875,24 @@ function [vv] = landquart1_readdata( fname );
    end
    
 % Read data from the file format develped by Swisstom, Landquart, Switzerland.
-function [vv] = landquart2_readdata( fname )
+function [vv, elecImps, tStampsAbs, tStampsRel] = landquart2_readdata( fname )
    [fid msg]= fopen(fname,'r','ieee-be','UTF-8');
    try
       format_version = fread(fid,1,'int32','ieee-be');
       if format_version ~= 3
          error('unsupported file format version');
       else
+         % get expected number of frames and preallocate variables
+         fseek(fid,16,'cof');
+         nFrames = fread(fid, 1, 'int32', 'ieee-be');
+         tStampsAbs = nan(1, nFrames);
+         tStampsRel = nan(1, nFrames);
+         viPayload = nan(64, nFrames);
+         iqPayload = nan(2048, nFrames);
+         
          header_size = 2264; 
          fseek(fid,header_size + 8,'bof');
+         
          %%% get frame size and length of payload at end of frame
          frame_length = fread(fid, 1, 'int32', 'ieee-be') + 12;
          %%% move back to start of 1. frame
@@ -887,9 +902,19 @@ function [vv] = landquart2_readdata( fname )
          i = 1;
          while fseek(fid, 1,'cof') ~= -1
             fseek(fid, -1,'cof');
-            % drop frame header and some payload: 
-            % (12 + 60) + 12 + 256 = 340
-            fseek(fid,340, 'cof');
+            % read absolute timestamp (milliseconds resolution)
+            tStampsAbs(i) = fread(fid,1,'int64','ieee-le');
+            pl = fread(fid,1,'int32','ieee-le');    % payload length (i.e. frame length)
+            frame_header = fread(fid,12,'int32','ieee-le'); 
+            % read relative timestamp (microseconds resolution)
+            tStampsRel(i) = frame_header(5);    
+            
+            % drop some unintersting parts  
+            fseek(fid,12, 'cof');
+            
+            % get electrode impedance measurement
+            viPayload(:,i) = fread(fid,64,'int32','ieee-le');
+            % get effective payload (voltage measurements)
             iqPayload(:,i) = fread(fid,2048,'int32','ieee-le');
             fseek(fid,header_size + i*frame_length,'bof');
             i = i +1;
@@ -901,26 +926,48 @@ function [vv] = landquart2_readdata( fname )
       rethrow(err);
    end
    fclose(fid);
+   
+   i = i-1;
+   if i ~= nFrames       
+      % remove data which were preallocated but not read
+      if i < nFrames       
+         tStampsAbs(i+1:end) = [];
+         tStampsRel(i+1:end) = [];
+         viPayload(:,i+1:end) = [];
+         iqPayload(:,i+1:end) = [];
+      end
+      eidors_msg('"%s": expected %.0f frames but read %.0f',fname, nFrames, i ,3);
+   end
 
    % this is just a simple guess
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
+   
+   elecImps = viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:);
 
 % Read data from the file format develped by Swisstom, Landquart, Switzerland.
-function [vv, evtlist] = landquart4_readdata( fname )
+function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( fname )
    evtlist = [];
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
    try
       format_version = fread(fid,1,'int32','ieee-le');
       if format_version ~= 4
          error('unsupported file format version');
-      else
-         header_size = fread(fid,1,'int32', 'ieee-le');          
-         fseek(fid,header_size,'bof');
-
-         frame_header = 16;
+      else          
+         header_size = fread(fid,1,'int32', 'ieee-le');   
          eit_frame_offset = 328; % 60 + 12 + 256 = 328
          iq_payload = 2048;
+         vi_payload = 64;
+         
+         % get expected number of frames and preallocate variables
+         fseek(fid,16,'cof');
+         nFrames = fread(fid, 1, 'int32', 'ieee-le');
+         tStampsAbs = nan(1, nFrames);
+         tStampsRel = nan(1, nFrames);
+         viPayload = nan(vi_payload, nFrames);
+         iqPayload = nan(iq_payload, nFrames);
+
+         fseek(fid,header_size,'bof');
          
          %%% Read frames
          i = 1;
@@ -928,19 +975,29 @@ function [vv, evtlist] = landquart4_readdata( fname )
          while fseek(fid, 1,'cof') ~= -1
             fseek(fid, -1,'cof');
             % drop frame header and some payload:
-            ts = fread(fid,1,'int64','ieee-le');
+            % read absolute timestamp (milliseconds resolution)
+            tStampsAbs(i) = fread(fid,1,'int64','ieee-le'); 
             ft = fread(fid,1,'int32','ieee-le'); 
             pl = fread(fid,1,'int32','ieee-le');
             if ft == 1
                % event
-               evtlist(evti).timestamp = ts;
+               evtlist(evti).timestamp = tStampsAbs(i) ;
+               evtlist(evti).frame = i ;
                evti = evti + 1;
                if pl > 0
                   evtlist(evti).eventId = fread(fid, 1, 'int32', 'ieee-le');
                 end
             elseif ft == 0
+                frame_header = fread(fid,15,'int32','ieee-le'); 
+                % read relative timestamp (microseconds resolution)
+                tStampsRel(i) = frame_header(5);   
+                
+                % drop some unintersting parts  
+                fseek(fid,12, 'cof');
                
-                fseek(fid,eit_frame_offset,'cof');
+                % get electrode impedance measurement
+                viPayload(:,i) = fread(fid,vi_payload,'int32','ieee-le');
+                % get effective payload (voltage measurements)
                 iqPayload(:,i) = fread(fid,iq_payload,'int32','ieee-le');
                 fseek(fid,pl-4*iq_payload-eit_frame_offset,'cof');
                 i = i+1;
@@ -949,17 +1006,31 @@ function [vv, evtlist] = landquart4_readdata( fname )
             else
                % nothing to do
             end
-         end
+         end         
       end
    catch err
       fclose(fid);
       rethrow(err);
    end
    fclose(fid);
+   
+   i = i-1;
+   if i ~= nFrames       
+      % remove data which were preallocated but not read
+      if i < nFrames       
+         tStampsAbs(i+1:end) = [];
+         tStampsRel(i+1:end) = [];
+         viPayload(:,i+1:end) = [];
+         iqPayload(:,i+1:end) = [];
+      end
+      eidors_msg('"%s": expected %.0f frames but read %.0f',fname, nFrames, i ,3);
+   end
 
    % this is just a simple guess
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
+   
+   elecImps = viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:);
 
 function [vv] = landquart4pre_readdata( fname )
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
