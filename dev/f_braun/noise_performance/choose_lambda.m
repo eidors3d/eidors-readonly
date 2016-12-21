@@ -1,22 +1,27 @@
-function [lambdas] = choose_lambda(imdl, vh, vi, type, doPlot)
-%% Chooses the hyperparameter according to the L-curve (LCC) criterion 
+function lambdas = choose_lambda(imdl, vh, vi, type, doPlot)
+%% CHOOSE_LAMBDA: Find optimal hyperparameter by the L-curve (LCC) criterion 
 % or the generalized cross-validation (GCV).
-%
-% Input:
-%   - imdl      inverse model (EIDORS struct)
-%   - vh        homogenous voltage matrix (of size nVtg x 1)
-%   - vi        inhomogenous voltage matrix (of size nVtg x nFrames) including noise(!)
-%   - type      type of approach used, either:
-%               'LCC' (default), the L-curve criterion
-%               'GCV', generalized cross-validation
-%   - doPlot    will enable plotting if set to true (default = false)
+%   lambdas = choose_lambda(imdl, vh, vi, type, doPlot);
 %
 % Output:
-%   - lambdas   "optimal" hyperparameter(s) determined using LCC or GCV
+%   lambdas   - "optimal" hyperparameter(s) determined using LCC or GCV
 %
-% Note: if vi contains multiple frames the returned values will contain an
-% "optimal" hyperparameter for each frame. An appropriate lambda can then 
-% be determined from the average (e.g. median) of these values.
+% Input:
+%   imdl      - inverse model (EIDORS struct)
+%   vh        - homogenous voltage matrix (of size nVtg x 1)
+%   vi        - inhomogenous voltage matrix (of size nVtg x nFrames) including noise(!)
+%   type      - type of approach used, either:
+%               'LCC' (default), the L-curve criterion
+%               'GCV', generalized cross-validation
+%   doPlot    - will enable plotting if set to true (default = false)
+%
+% Example:
+%   choose_lambda('unit_test');  
+%
+% NOTE
+%   if vi contains multiple frames the returned values will contain an
+%   "optimal" hyperparameter for each frame. An appropriate lambda can then 
+%   be determined from the average (e.g. median) of these values.
 %
 % See also: RTv4manual.pdf (please note that all page numbers listed
 % correspond to the ones written in the upper right corner, the effective
@@ -24,7 +29,7 @@ function [lambdas] = choose_lambda(imdl, vh, vi, type, doPlot)
 %
 % Nomenclature: Jacobian J is A; Prior R (not RtR) is L; Voltage v is b
 %
-% Fabian Braun <fbn(ät)csem{dot}ch>, 17/12/2015
+% Fabian Braun, December 2016
 %
 % CITATION_REQUEST:
 % AUTHOR: P C Hansen
@@ -36,6 +41,10 @@ function [lambdas] = choose_lambda(imdl, vh, vi, type, doPlot)
 % PAGE: S189-194
 % DOI: 10.1007/s11075-007-9136-9
 %
+
+% (C) 2016 Fabian Braun. License: GPL version 2 or version 3
+% $Id$
+
 citeme(mfilename);
 
 %% unit testing?
@@ -81,7 +90,7 @@ catch
     L = ichol(LtL);    % still unsure about that as L'*L does not lead to the same as LtL
 end
 LtL_ = L'*L;    
-assert(all(LtL_(:) - LtL(:) < 100*eps), 'Prior differs too much!');
+% assert(all(LtL_(:) - LtL(:) < 100*eps), 'Prior differs too much!');
 
 % check that measurement covariance matrix W is identity
 assert(isequal(W, speye(size(W))));

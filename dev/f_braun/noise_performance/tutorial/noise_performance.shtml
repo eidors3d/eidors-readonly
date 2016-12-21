@@ -1,0 +1,92 @@
+<!--#set var="root" value="../../" -->
+<!--#set var="show_tut" value="1" -->
+<!--#include virtual="../../nav-sidebar.shtml" -->
+
+<h2 >Noise performance of different hyperparameter selection approaches</h2>
+
+This tutorial presents different approaches used to select the hyperparameter with the goal to achieve an identical noise performance between different measurement configurations (i.e. electrode position, skip of meas/stim pattern, etc.).
+<br>
+<br>
+We show the effect of different measurement configurations for the following four hyperparameter selection approaches:
+<ol type="a">
+	<li>NF - noise figure as suggested by <a href="https://doi.org/10.1109/42.491418">Adler et al.</a></li>
+	<li>SNR - image SNR as suggested by <a href="https://doi.org/??/???">Braun et al.</a></li>
+	<li>LCV - L-curve criterion as suggested by <a href="http://epubs.siam.org/doi/abs/10.1137/0914086">Hansen et al.</a></li>
+	<li>GCV - generalized cross-validation as suggested by <a href="http://www.tandfonline.com/doi/abs/10.1080/00401706.1979.10489751">Golub et al.</a></li>
+</ol>
+
+This is also discussed in the following publication: 
+
+<ul>
+Fabian Braun, Martin Proen&ccedil;a, Josep Sol&agrave;, Jean-Philippe Thiran and Andy Adler
+<i>A Versatile Noise Performance Metric for Electrical Impedance Tomography Algorithms</i>
+IEEE Transactions on Biomedical Engineering, 2017 (submitted).
+</ul>
+
+<h3> 
+Human thorax model with different electrode configurations
+</h3>
+
+First, we load the human thorax model, assign realistic conductivity values and generate a conductivity change in the left lung (10% increase) and right lung (5% increase).
+<br>
+<br>
+We generate the following four different model configurations in order to show how each hyperparameter selection approach is influenced by the electrode position and number, and the skip (number of inactive electrodes in between the two injecting current/measuring voltage):
+ <ol>
+  <li><i>16 elecs, skip 0</i>: 16 equidistantly spaced electrodes, and skip 0 (adjacent) stim/meas pattern</li>
+  <li><i>16 elecs, skip 5</i>: 16 equidistantly spaced electrodes, and skip 5 stim/meas pattern</li>
+  <li><i>32 elecs, skip 0</i>: 32 equidistantly spaced electrodes, and skip 0 (adjacent) stim/meas pattern</li>
+  <li><i>24 elecs, skip 9</i>: 24 electrodes spaced more densely ventrally, and skip 9 stim/meas pattern</li>
+</ol> 
+   
+<pre>
+<!--#include virtual="noise_performance_01.m" -->
+</pre>
+
+<center>
+<img src="np_models.png">
+<br><i> Figure:</i>
+The four different configurations electrode / skip configurations used in the analysis.
+</center>
+
+
+<h3> 
+Generating EIT voltage measurements and noise
+</h3>
+<pre>
+<!--#include virtual="noise_performance_02.m" -->
+</pre>
+
+<h3> 
+Visualizing noise performance (Gauss-Newton reconstruction)
+</h3>
+
+<pre>
+<!--#include virtual="noise_performance_03.m" -->
+</pre>
+
+<center>
+<img src="np_trmsa_GN.png">
+<br><i> Figure:</i>
+Gauss Newton reconstruction: temporal RMS amplitude (TRMSA) images of the same conductivity change in the lungs with identical noise for different measurement configurations (1) to (4) and different hyperparameter selection approaches: (a) a fixed noise figure (NF = 0.5), (b) a fixed SNR = 2.21E-07 (equal to NF = 0.5 for the 1st configuration), (c) L-curve criterion (LCC), and (d) generalized cross-validation (GCV).
+</center>
+
+
+<h3> 
+Visualizing noise performance (GREIT reconstruction)
+</h3>
+To perform the same analysis but for GREIT reconstruction set USE_GREIT_NOT_GN to true (USE_GREIT_NOT_GN = true) and the re-run the code further above.
+
+<center>
+<img src="np_trmsa_GREIT.png">
+<br><i> Figure:</i>
+GREIT reconstruction: temporal RMS amplitude (TRMSA) images of the same conductivity change in the lungs with identical noise for different measurement configurations (1) to (4) and different hyperparameter selection approaches: (a) a fixed noise figure (NF = 0.5), and (b) a fixed SNR = 2.21E-07 (equal to NF = 0.5 for the 1st configuration).
+</center>
+
+
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
