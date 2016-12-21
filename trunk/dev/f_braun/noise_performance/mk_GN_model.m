@@ -21,19 +21,21 @@ function imdl = mk_GN_model(img, opt, lambda)
 % See also MK_GREIT_MODEL (from which this script was adapted)
 %
 
-% Author: Fabian Braun <fbn(ät)csem{dot}ch>, 22/04/2015
-% See also CALC_GREIT_RM
-%
+% (C) 2016 Fabian Braun. License: GPL version 2 or version 3
+% $Id$
 
     %% do unit testing?
     if ischar(img) && strcmpi(img, 'unit_test')
-        imdl = do_unit_test();
+        do_unit_test();
         return;
     end	
 
     %% parse and prepare inputs
     if ~exist('lambda', 'var')
       lambda = [];
+    end
+    if strcmp(img.type, 'fwd_model')
+        img = mk_image(img, 1);
     end
     fmdl = img.fwd_model;
     imdl = select_imdl( fmdl,{'Basic GN dif'});
@@ -60,12 +62,9 @@ function imdl = mk_GN_model(img, opt, lambda)
     
     imdl.inv_solve.calc_solution_error = 0 ;
     
-    if isfield(img, 'elem_data') %&& (length(unique(img.elem_data)) ~= 1)
+    if isfield(img, 'elem_data') 
       % non-homogenous
-%       imdl.jacobian_bkgnd.value = imdl.rec_model.coarse2fine * imdl.fwd_model.coarse2fine * img.elem_data;    
       imdl.jacobian_bkgnd.value = img.elem_data;        
-%     elseif (length(unique(img.elem_data)) ~= 1)     % homogenous
-%       imdl.jacobian_bkgnd.value = unique(img.elem_data);
     else
       imdl.jacobian_bkgnd.value = 1;
     end
@@ -96,7 +95,7 @@ function imdl = mk_GN_model(img, opt, lambda)
         ctr_elems(3) = opt.target_plane;  % at belt height!
         xyz_elems = xyz_elems - ones(size(xyz_elems,1),1)*ctr_elems;
         d_elems   = sqrt( sum( xyz_elems.^2, 2 ));
-        [jnk, e_idx] = sort(d_elems);
+        [~, e_idx] = sort(d_elems);
 
         imdl.hyperparameter.tgt_elems = e_idx(1:4);
         imdl.hyperparameter.noise_figure = opt.noise_figure;
@@ -146,8 +145,9 @@ function opt = parse_options(opt,fmdl,imdl)
     end
     opt.elec_loc = elec_loc;
     
-    try, opt.normalize = fmdl.normalize_measurements;
-    catch, 
+    try
+        opt.normalize = fmdl.normalize_measurements;
+    catch 
         opt.normalize = 0;
         eidors_msg('mk_GN_model: fmdl.normalize_measurements not specified, assuming 0');
     end
@@ -169,23 +169,24 @@ function opt = parse_options(opt,fmdl,imdl)
 end
 
 
-function imdl = do_unit_test()
+function do_unit_test()
 
-    if ispc
-        load('D:\Various\EITtoolbox\simulEITor\src\models\fbn\thoraxElecs_Coarse.mat')
-    else
-        load('/csem/divm/users/intern/fbn/EITtoolbox/simulEITor/src/models/fbn/thoraxElecs_Coarse.mat')
-    end
-    mdl = mdlThoraxElecs
-    [mdl.stimulation mdl.meas_select] = swisstom_stim(4,2);
-    mdl.electrode([1:64 end-31:end]) = []
-    img = mk_image(mdl,1)
-    figure, show_fem(img);
+    % Recosntruct with GREIT
+    fmdl = mk_library_model('cylinder_16x1el_fine');
+    fmdl.nodes = fmdl.nodes/15; % make radius 1;
+    fmdl.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current'}, 1);
+    opt.noise_figure = 1.0;
+    imdl_gr = mk_GREIT_model(fmdl, 0.2, [], opt);
 
-    opt.noise_figure = 0.5;
-    opt.square_pixels = 1;
-    opt.imgsz = [64 64];
-    
-    imdl = mk_GN_model(img, opt);
+    opt = struct();
+    opt.noise_figure = 1.0; 
+    imdl_gn_lap = mk_GN_model(fmdl, opt);
+
+    opt = struct();
+    opt.noise_figure = 1.0; 
+    opt.RtRprior = 'tikhonov';
+    imdl_gn_tik = mk_GN_model(fmdl, opt);
+
+    test_performance( { imdl_gr, imdl_gn_lap, imdl_gn_tik}, fmdl );
 
 end

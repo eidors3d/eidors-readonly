@@ -1,6 +1,24 @@
-function [RM, J, RtR, W, Jfine] = get_RM( inv_model )
-%% obtains the reconstruction matrix from a given inverse model
-% Fabian Braun <fbn(ät)csem{döt}ch>, 17/12/2015
+function [RM, J, RtR, W, Jfine] = get_RM(inv_model)
+%% GET_RM: obtains the reconstruction matrix from a given inverse model
+%   [RM, J, RtR, W, Jfine] = get_RM(inv_model)
+%
+% Output: 
+%   RM          - reconstruction matrix
+%   J           - Jacobian matrix
+%   RtR         - RtR prior
+%   W           - measurement covariance matrix
+%   Jfine       - Jacobian matrix (without applying coarse2fine mapping)
+%
+% Parameters:
+%   inv_model   - inv_model
+%
+% See also INV_SOLVE_DIFF_GN_ONE_STEP
+
+% (C) 2016 Andy Adler. License: GPL version 2 or version 3
+% $Id$
+
+% TODO: add caching capabilities here
+
 if isfield(inv_model, 'solve_use_matrix') && isfield(inv_model.solve_use_matrix, 'RM')
     % GREIT
     RM = inv_model.solve_use_matrix.RM;
@@ -21,4 +39,5 @@ else
     
     RM = (J'*W*J +  hp^2*RtR)\J'*W;
 end
+
 end
