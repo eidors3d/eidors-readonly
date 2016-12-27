@@ -15,6 +15,7 @@ function rimg = calc_slices( img, levels );
 %      Example:    img.calc_slices.filter = ones(3)/9
 %   img.calc_slices.scale  % Scaling to apply to images
 %   img.calc_slices.levels % an alternative way to specify levels
+%   img.get_img_data.frame_select = which frames of image to display
 %
 % rimg= np x np x I x L where np is 128 by default
 %
