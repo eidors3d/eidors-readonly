@@ -25,10 +25,22 @@ end
 if ~isfield(img,'elem_data')
    img = data_mapper(img);
 end
-try
-   img_data= [img.elem_data];
-catch
-   img_data= [img.node_data];
+
+if isfield(img,'elem_data')
+   try 
+      img_data= [img.elem_data(:,img.get_img_data.frame_select)];
+   catch
+      % concatenate img.elem_data for each img
+      img_data= [img.elem_data];
+   end
+elseif isfield(img,'node_data')
+   try 
+      img_data= [img.node_data(:,img.get_img_data.frame_select)];
+   catch
+      img_data= [img.node_data];
+   end
+else
+   error('No field elem_data or node_data found on img');
 end
 
 if size(img_data,1)==1; img_data=img_data';end
@@ -53,6 +65,7 @@ function do_unit_test
    imgk = img; imgk.elem_data = img.elem_data';
    unit_test_cmp('elem_02', get_img_data(imgk), ones(64,1) )
 
+
    imgk = img; imgk(2) = img;
    unit_test_cmp('elem_03', get_img_data(imgk), ones(64,2) )
 
@@ -62,6 +75,16 @@ function do_unit_test
    imgk(1).elem_data = imgk(1).elem_data*[1,2];
    unit_test_cmp('elem_04', get_img_data(imgk(1)), ones(64,1)*[1,2] )
    unit_test_cmp('elem_05', get_img_data(imgk), ones(64,1)*[1,2,1] )
+
+   imgk = img; imgk.elem_data = img.elem_data*[1,2];
+   imgk.get_img_data.frame_select = 2;
+   unit_test_cmp('elem_07', get_img_data(imgk), 2*ones(64,1) )
+   % TODO: This fails because we need a loop in the test function.
+   %   Lookup whether this can be vectorized in matlab
+
+   imgk(2) = imgk(1); imgk(2).elem_data = img.elem_data*[3,4];
+   imgk(2).get_img_data.frame_select = 2;
+   unit_test_cmp('elem_06', get_img_data(imgk), 2*ones(64,1) )
 
    nd =ones(size(img.fwd_model.nodes,1),1);
    imgn = rmfield(img,'elem_data'); imgn.node_data=nd;

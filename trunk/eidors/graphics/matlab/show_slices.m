@@ -22,6 +22,7 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.img_cols = number of columns in image
 %   img.show_slices.sep = number of pixels between the individual images
 %   img.calc_colours.npoints = pixel width/height to map to
+%   img.get_img_data.frame_select = which frames of image to display
 %
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
