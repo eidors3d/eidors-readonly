@@ -903,7 +903,7 @@ function [vv, elecImps, tStampsAbs, tStampsRel] = landquart2_readdata( fname )
          while fseek(fid, 1,'cof') ~= -1
             fseek(fid, -1,'cof');
             % read absolute timestamp (milliseconds resolution)
-            tStampsAbs(i) = fread(fid,1,'int64','ieee-le');
+            tStampsAbs(i) = fread(fid,1,'int64','ieee-be');
             pl = fread(fid,1,'int32','ieee-le');    % payload length (i.e. frame length)
             frame_header = fread(fid,12,'int32','ieee-le'); 
             % read relative timestamp (microseconds resolution)
@@ -938,7 +938,13 @@ function [vv, elecImps, tStampsAbs, tStampsRel] = landquart2_readdata( fname )
       end
       eidors_msg('"%s": expected %.0f frames but read %.0f',fname, nFrames, i ,3);
    end
-
+   
+   % convert into matlab date format, e.g. read via datestr(tStampAbs(1))
+   tStampsAbs = tStampsAbs/(24*3600*1E3) + datenum(1970, 1, 1, 1, 0, 0);
+   % strictly speaking we would need to correct for DST, but as this is only 
+   % supported by ML R2014b or higher we avoid it to be backwards compatible
+%    tStampsAbs = tStampsAbs + isdst(datetime(datevec(tStampsAbs(1)), 'TimeZone', 'local'))/24;   % add one hour if DST
+   
    % this is just a simple guess
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
@@ -1025,6 +1031,12 @@ function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( 
       end
       eidors_msg('"%s": expected %.0f frames but read %.0f',fname, nFrames, i ,3);
    end
+   
+   % convert into matlab date format, e.g. read via datestr(tStampAbs(1))
+   tStampsAbs = tStampsAbs/(24*3600*1E3) + datenum(1, 1, 1, 0, 0, 0);
+   % strictly speaking we would need to correct for DST, but as this is only 
+   % supported by ML R2014b or higher we avoid it to be backwards compatible
+%    tStampsAbs = tStampsAbs + isdst(datetime(datevec(tStampsAbs(1)), 'TimeZone', 'local'))/24;   % add one hour if DST
 
    % this is just a simple guess
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
