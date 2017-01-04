@@ -53,7 +53,9 @@ for k =1:max_it
         
         % Ensure doesn't tend to infinity, interpolation wasn't singular
         % use quadratic if so (further safeguarding follows)
-        if alpha_int > max(alpha_lo, alpha_hi) + delta_min*alpha_lo || isnan(alpha_int)
+        if alpha_int > max(alpha_lo, alpha_hi) - delta_min*alpha_lo || ...
+                alpha_int < min(alpha_lo, alpha_hi) + delta_min*alpha_lo...
+                || isnan(alpha_int)
             alpha_int = quad_interp_vvg(alpha_lo, alpha_hi, phi_lo, phi_hi, d_phi_lo);
         end
         
