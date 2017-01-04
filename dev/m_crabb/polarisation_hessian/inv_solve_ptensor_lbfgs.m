@@ -30,7 +30,7 @@ else
 end
 
 % Hard coded number of eigenvectors to store...
-mem = 50;
+mem = 20;
 max_its = 50;
 
 fmdl = img.fwd_model;
