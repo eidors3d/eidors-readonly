@@ -4,6 +4,8 @@ fmdl = imdl.fwd_model; %Extract model
 fmdl = fix_model(fmdl);
 imdl.fwd_model = fmdl;
 
+
+
 %Stimulation - 16 elecs adjacent current/adjacent voltage
 stim = mk_stim_patterns(16,1,'{ad}','{ad}');
 fmdl.stimulation = stim; %Add to model
@@ -27,23 +29,35 @@ sim_img.fwd_model.M_tensor.rot = zeros(size(sim_img.elem_data,1),1);
 
 homog_img=sim_img;
 
-
-pixel_group = [1,2,3,4];
+data_hom = fwd_solve(homog_img)
+%pixel_group = [1,2,3,4];
+pixel_group = [115,138,95,137];
 sim_img.elem_data(pixel_group) = cond_obj;
 
 data = fwd_solve(sim_img);
 
 
-
-% Inverse
+%% Eidors in-built inverse diff solver
 imdl.hyperparameter.value = 0.003;
-imdl.reconst_type = 'static';
+img_eid_diff = inv_solve(imdl, data_hom,data);
 
-%% Eidors in-built
-img_eid = inv_solve(imdl, data);
+figure; 
+subplot(121); show_fem(sim_img,1)
+subplot(122); show_fem(img_eid_diff,1)
 
+%% Eidors in-built inverse abs solver
+imdl.hyperparameter.value = 0.00001;
+imdl.solve =  @inv_solve_core;
+imdl.reconst_type = 'absolute';
+img_eid_abs = inv_solve(imdl, data);
 
-%% 
+figure; 
+subplot(121); show_fem(sim_img,1)
+subplot(122); show_fem(img_eid_abs,1)
+
+data_rec=fwd_solve(img_eid_abs)
+figure; plot(data.meas,'r'); hold on; plot(data_hom.meas,'b');  hold on; plot(data_rec.meas,'b')
+
 
 % Default options
 opts = [];
