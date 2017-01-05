@@ -905,7 +905,7 @@ function [vv, elecImps, tStampsAbs, tStampsRel] = landquart2_readdata( fname )
             % read absolute timestamp (milliseconds resolution)
             tStampsAbs(i) = fread(fid,1,'int64','ieee-be');
             pl = fread(fid,1,'int32','ieee-le');    % payload length (i.e. frame length)
-            frame_header = fread(fid,12,'int32','ieee-le'); 
+            frame_header = fread(fid,15,'int32','ieee-le'); 
             % read relative timestamp (microseconds resolution)
             tStampsRel(i) = frame_header(5);    
             
