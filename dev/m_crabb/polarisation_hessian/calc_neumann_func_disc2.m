@@ -15,20 +15,14 @@ if size(z,2)==2 && size(x,2)==2
     RR = x - z;
     RR_star = x/(norm(x,2))-z*norm(x,2);
     
+    %Freespace + Boundary correction
     N =  -1/(2*pi)*( log(sqrt(sum(RR.^2,2))) + ...
          log(sqrt(sum(RR_star.^2,2))) );%...
         %+ (1/(2*pi))*log(norm(z,2));%...
         %+ (1/(4*pi))*(norm(x,2))^2;
-        
-        
-    
-    % Correction term on for boundary
-    
-
+                       
 else
     error('mismatched dimensions for x/z or not in 2D')
 end
 
-
 end
-
