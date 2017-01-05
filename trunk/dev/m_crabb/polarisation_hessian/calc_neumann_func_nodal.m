@@ -51,7 +51,7 @@ nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1);
 boundstruc=img.fwd_model.boundary;  nbounds = size(boundstruc,1);
 
 %Calculate the total stiffness matrix
-s_mat = calc_system_mat(img); At=s_mat.E(1:nnodes,1:nnodes);
+s_mat = stiffness_mat_higher_order(img); At=s_mat.E(1:nnodes,1:nnodes);
 
 %Just using pcw linear
 eletype = 'tri3';

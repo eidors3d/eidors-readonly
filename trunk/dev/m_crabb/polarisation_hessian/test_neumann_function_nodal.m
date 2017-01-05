@@ -40,7 +40,7 @@ for ii=1:n_nodes
     for jj=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
-     %   N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
+        N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
      %   N2(ii,jj) = calc_neumann_func_disc(xii,yjj);       
         N3(ii,jj) = calc_neumann_func_disc2(xii,yjj);                        
     end      
@@ -54,14 +54,21 @@ for ii=1:n_nodes
     end    
 end
 
+%Put same ground node on analytic solution
+%N0=N0'
+
+for iii=1:n_nodes
+   N3(:,iii) = N3(:,iii) - N3(fmdl.gnd_node,iii);
+end
+
 %sum(N0(bound_nodes,80))
 
 %for node_indices=[5,10,20,50,100]
 %for node_indices=[10,15,20,35,50]
-for node_indices=[15,30,45]
+for node_indices=[55,150,min(unique(fmdl.boundary))]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
-%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'g*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
 hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N3(:,node_indices),'b*')
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N3(:,node_indices),'r*')
@@ -74,6 +81,8 @@ figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indice
 %    (N0(:,potential_indices)-N1(:,potential_indices)),'r*')    
     
 end
+
+%{
 
 nnodes = size(img.fwd_model.nodes,1);
 s_mat = calc_system_mat(img);
@@ -105,6 +114,8 @@ figure; plot(N0LH-N3LH,'r')
 
 %plot(N3LH-N3RH)
 %figure; plot(rhs_ana,'r'); hold on; plot(rhs_fem,'b')
+
+%}
 %{
 
 %Pick which solutions to plot
