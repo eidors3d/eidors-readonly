@@ -1,3 +1,8 @@
+ - mk_c2f_circ_mapping doesn't give very accurate results
+     even when a large n_interp_min value is given
+    - see test code from 19jan2017 (AA)
+
+
  - CEM will not get added for electrode defined on internal nodes.
      Corrected code to be added to system_mat_fields
      Ensure electrode goes in both directions

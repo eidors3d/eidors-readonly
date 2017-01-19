@@ -223,7 +223,9 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
    
    tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
    %mapping = sparse( Ne, Nc );
-   n_interp_min = 4;
+   try   n_interp_min = mdl.interp_mesh.n_points;
+   catch n_interp_min = 4;
+   end
    n_interp_max = 10;
    progress_msg('mk_c2f_circ_mapping: calculate mapping',0,Nc);
    for i=1:Nc
