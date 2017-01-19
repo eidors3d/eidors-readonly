@@ -10,6 +10,18 @@ function VOL = get_elem_volume( fwd_model, map_node )
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
+switch fwd_model.type
+  case 'fwd_model'; % do nothing, we're ok
+  case 'rec_model'; % do nothing, we're ok
+  case 'inv_model'; fwd_model = fwd_model.fwd_model;
+  case 'image';     fwd_model = fwd_model.fwd_model;
+  otherwise;
+     error('get_elem_volume: expecting fwd_model, got %s', ...
+           fwd_model.type)
+end
+
 if nargin==1; map_node= 0; end
 
 % calculate element volume and surface area
@@ -66,4 +78,12 @@ function VOL = calc_volume(NODE,ELEM)
     
 
 
+function do_unit_test
+  imdl = mk_common_model('a2c2',8);
+  out = get_elem_volume(imdl.fwd_model);
+  unit_test_cmp('fmdl:',  out(1:4), 0.03125*ones(4,1),1e-10);
+  out = get_elem_volume(imdl);
+  unit_test_cmp('imdl:',  out(1:4), 0.03125*ones(4,1),1e-10);
+  out = get_elem_volume(mk_image(imdl,1));
+  unit_test_cmp('image:', out(1:4), 0.03125*ones(4,1),1e-10);
 
