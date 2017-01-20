@@ -55,7 +55,7 @@ Reconstruct (added noise)
 <img src="GREIT_examples03d.png">    
 <br><i>Figure:</i>
 Reconstruction (SNR=0.5 noise) with (from left to right)
-GREIT v1, Sheffield Backprojection, Gauss Newton Inverse
+GREIT v1, Current GREIT, Sheffield Backprojection, Gauss Newton Inverse
 </center>
 
 </td></tr></table>
