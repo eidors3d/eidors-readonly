@@ -113,9 +113,12 @@ for i=nelems:-1:1
     %Initialise and find elemental stiffness matrices 
     Ammat=0;
     for kk=1:size(weight,2)
+%         Ammat = Ammat + weight(kk)* ...
+%             (jacobianelem\dphi(:,:,kk))'* ...
+%             (jacobianelem\dphi(:,:,kk))*magjacelem;
+        jdphitemp=jacobianelem\dphi(:,:,kk);
         Ammat = Ammat + weight(kk)* ...
-            (jacobianelem\dphi(:,:,kk))'* ...
-            (jacobianelem\dphi(:,:,kk))*magjacelem;
+            (jdphitemp'*jdphitemp)*magjacelem;
     end
 
     %SPEED UP
@@ -125,6 +128,7 @@ for i=nelems:-1:1
     elemstiff(i).elemstiff=Ammat;
    
     %This is element stiffness matrix (and multiply by its conductivity)
+
     stiff=Ammat*img.elem_data(i); 
     
     %Assemble global stiffness matrix (Silvester's book!!)    
@@ -214,12 +218,17 @@ for ke=1:nelecs
 
         %Initialise Azlocmat/Awlocmat and find local matrices
         Azmat=0; Awmat=0;
-        for kk=1:size(weight,2)
+        for kk=1:size(weight,2)            
+            temphikk = phi(:,kk);
             Azmat = Azmat + weight(kk)* ...
-                (phi(:,kk))* ...
-                (phi(:,kk))'*magjacbound;
+                (temphikk*temphikk')*magjacbound;
             Awmat = Awmat + weight(kk)* ...
-                (phi(:,kk))'*magjacbound;
+                (phi(:,kk))'*magjacbound;            
+            %Azmat = Azmat + weight(kk)* ...
+            %    (phi(:,kk))* ...
+            %    (phi(:,kk))'*magjacbound;
+            %Awmat = Awmat + weight(kk)* ...
+            %    (phi(:,kk))'*magjacbound;
         end         
         
         %Node numbers for this boundary
