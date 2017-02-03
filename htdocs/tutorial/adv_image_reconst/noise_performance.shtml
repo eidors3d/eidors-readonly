@@ -9,10 +9,10 @@ This tutorial presents different approaches used to select the hyperparameter wi
 <br>
 We show the effect of different measurement configurations for the following four hyperparameter selection approaches:
 <ol type="a">
-	<li>NF - noise figure as suggested by <a href="https://doi.org/10.1109/42.491418">Adler et al.</a></li>
-	<li>SNR - image SNR as suggested by <a href="https://doi.org/??/???">Braun et al.</a></li>
-	<li>LCV - L-curve criterion as suggested by <a href="http://epubs.siam.org/doi/abs/10.1137/0914086">Hansen et al.</a></li>
-	<li>GCV - generalized cross-validation as suggested by <a href="http://www.tandfonline.com/doi/abs/10.1080/00401706.1979.10489751">Golub et al.</a></li>
+	<li>NF - noise figure as suggested by <a href="https://doi.org/10.1109/42.491418">Adler et al. (1996)</a></li>
+	<li>SNR - image SNR as suggested by <a href="https://doi.org/10.1109/TBME.2017.2659540">Braun et al. (2007)</a></li>
+	<li>LCV - L-curve criterion as suggested by <a href="http://epubs.siam.org/doi/abs/10.1137/0914086">Hansen et al. (1993)</a></li>
+	<li>GCV - generalized cross-validation as suggested by <a href="http://www.tandfonline.com/doi/abs/10.1080/00401706.1979.10489751">Golub et al. (1979)</a></li>
 </ol>
 
 This is also discussed in the following publication: 
