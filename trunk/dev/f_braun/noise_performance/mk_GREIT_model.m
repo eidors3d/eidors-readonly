@@ -125,6 +125,9 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
         if isfield(opt, 'SigmaN')
             imdl.hyperparameter.SigmaN = opt.SigmaN;
         end
+        if isfield(opt, 'image_SNR_targets')
+            imdl.hyperparameter.xyzr_targets = opt.image_SNR_targets;
+        end
         ModelDiameter = max(diff([min(imdl.fwd_model.nodes); max(imdl.fwd_model.nodes)]));
         if (isfield(opt, 'SigmaN') || (ModelDiameter > 5)) && isempty(weight)
             warning(['Initial guess of weight might be wrong and no proper convergence ', ...
@@ -181,6 +184,7 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, imdl, ...
 
    % calculate GREIT matrix as usual
    imdl.solve_use_matrix.RM = calc_GREIT_RM(vh,vi,xy, radius, weight, opt);
+   imdl.hyperparameter.value = weight;
 %    imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
    if ~isempty(opt.noise_figure)
       NF = calc_noise_figure(imdl,vh, vi_NF);

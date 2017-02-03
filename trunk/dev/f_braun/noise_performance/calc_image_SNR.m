@@ -37,10 +37,10 @@ function [SNRmean, SE, debug] = calc_image_SNR(imdl, hyperparameter, doPlot)
 % TITLE: A Versatile Noise Performance Metric for Electrical Impedance Tomography Algorithms
 % JOURNAL: IEEE Transactions on Biomedical Engineering
 % YEAR: 2017
-% VOL: {TODO: add when published, so far only submitted}
-% NUM: {TODO: add when published, so far only submitted}
-% PAGE: {TODO: add when published, so far only submitted}
-% DOI: {TODO: add when published, so far only submitted}
+% VOL: PP
+% NUM: 99
+% PAGE: 1
+% DOI: 10.1109/TBME.2017.2659540
 %
 
 % (C) 2016 Fabian Braun. License: GPL version 2 or version 3
