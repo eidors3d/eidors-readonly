@@ -34,6 +34,7 @@ else
     end
     
     RtR = calc_RtR_prior( inv_model );
+    R   = calc_R_prior( inv_model );
     W   = calc_meas_icov( inv_model );
     hp  = calc_hyperparameter( inv_model );
     

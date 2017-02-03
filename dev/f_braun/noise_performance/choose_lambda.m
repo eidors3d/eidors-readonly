@@ -70,6 +70,16 @@ else
 	error('Regtools are required but are not available, please download them from <a href="matlab: web http://www.mathworks.com/matlabcentral/fileexchange/52-regtools -browser">File Exchange</a> or <a href="matlab: web http://www2.compute.dtu.dk/~pcha/Regutools/ -browser">P.C. Hansen''s website</a> and store them in the subfolder called ''regtools''. In order to allow for a fast execution it is recommended to disable (uncomment) all plotting functions in l_cuve.m and gcv.m.');
 end
 
+% AA: 3feb2017: Please make changes so
+% 1. we don't call get_RM
+% 2. we call calc_R_prior
+%     fix calc_R_prior so it does what you want
+% 3. rename to calc_lambda_regtools
+% 4. change tutorial to call new name
+% 5. Make changes to mk_GREIT_model
+% 6. Merge these changes into mainline (if it works)
+%    OR: delete mainline and svn mv 
+
 %% prepare imdl
 % A = calc_jacobian(img);
 % LtL = calc_RtR_prior(imdl);
