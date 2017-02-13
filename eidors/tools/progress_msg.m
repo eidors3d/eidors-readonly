@@ -80,7 +80,7 @@ if nargs > 0 && ischar(varargin{1})
     if nargs > 1 && isinf(varargin{2})
         msg = varargin{1}; % custom final message from function call
     else
-        msg = [repmat(' ',1,opt.log_level) '[' datestr(now) '] ' varargin{1}]; % Fixed text
+        msg = [repmat(' ',1,opt.log_level) datestr(now) ': ' varargin{1}]; % Fixed text
     end
     nargs = nargs-1;
     varargin(1) = [];
