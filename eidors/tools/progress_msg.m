@@ -78,9 +78,9 @@ end
 msg = '';
 if nargs > 0 && ischar(varargin{1})
     if nargs > 1 && isinf(varargin{2})
-        msg = varargin{1};
+        msg = varargin{1}; % custom final message from function call
     else
-        msg = [repmat(' ',1,opt.log_level) varargin{1}];
+        msg = [repmat(' ',1,opt.log_level) '[' datestr(now) '] ' varargin{1}]; % Fixed text
     end
     nargs = nargs-1;
     varargin(1) = [];
@@ -273,7 +273,11 @@ function do_unit_test(N)
                 progress_msg(i,10);
             end
         end
-        progress_msg(Inf);
+        if n == 2
+           progress_msg('Custom final message', Inf);
+        else
+           progress_msg(Inf);
+        end
 
     end
     eidors_debug off progress_msg
