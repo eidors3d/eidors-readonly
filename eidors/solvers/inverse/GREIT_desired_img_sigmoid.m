@@ -122,10 +122,11 @@ function PSF = desired_soln(xyz, radius, opt)
             PSF(:,i) = 0;
             continue;
         end
-        D = sqrt(sum(bsxfun(@minus,[X Y Z],xyz(:,i)').^2, 2));
+        V = [X Y Z];
+        D = sqrt(sum(bsxfun(@minus,V(:,1:opt.n_dim),xyz(1:opt.n_dim,i)').^2, 2));
         x = D - radius(i);
         tmp = 1 ./ (1 + exp( opt.steepness(i) * x));
-        PSF(:,i) = full(sparse(idx,1,tmp(:) .* factor,size(mdl.vox,1),1));
+        PSF(:,i) = sparse(idx,1,tmp(:) .* factor,size(mdl.vox,1),1);
     end
     progress_msg(Inf);
 end
@@ -154,7 +155,8 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
     maxnode = max(mdl.nodes(mdl.vox(e,:),:));
     
     sep = maxnode - minnode;
-    N = max(3, ceil(sep/maxsep)+1);
+    N = ones(1,3);
+    N(1:opt.n_dim) = max(3, ceil(sep/maxsep)+1);
     if numel(N) == 2
        N(3) = 1;
     end
@@ -304,15 +306,10 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
        end
     end
         
-    if ~isfield(opt, 'steepness')
-        opt.steepness = 10./radius;
-    elseif isa(opt.steepness,'function_handle')
-        opt.steepness = feval(opt.steepness,xyz);
-    end
-    
+ 
     
     mdl = opt.rec_model; % must exist
-    opt.n_dim = size(mdl.nodes,2);
+    opt.n_dim =mdl_dim(mdl);
     xyz = xyz(1:opt.n_dim, :); % ingore z if model is 2D
 
     
@@ -337,9 +334,14 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     mdl.nodes = 2*bsxfun(@minus, mdl.nodes, mean(opt.meshsz(1:size(mdl.nodes,2),:),2)')/opt.maxrange;
     opt.rec_model = mdl;
     if scale_radius
-        radius = radius / opt.maxrange;
+        radius = 2*radius / opt.maxrange;
     end
 
+    if ~isfield(opt, 'steepness')
+        opt.steepness = 10./radius;
+    elseif isa(opt.steepness,'function_handle')
+        opt.steepness = feval(opt.steepness,xyz);
+    end
     
     if numel(opt.steepness) == 1
        opt.steepness = ones(1,size(xyz,2)) * opt.steepness;
