@@ -10,13 +10,13 @@ if size(z,2)==2 && size(x,2)==2
     
     % Greens function contribution
     RR = repmat(x, size(z,1),1) - z;
-    RR = x - z;    
+   % RR = x - z;    
     DN = RR./(2*pi*repmat(sqrt(sum(RR.^2,2)),1,2));
               
     % Correction term on for boundary
-    RR_star = repmat(x/(norm(x,2)),size(z,1),1)-z*norm(x,2);    
-    RR_star = x/(norm(x,2))-z*norm(x,2);        
-    DN = DN + norm(x,2)*RR_star./(2*pi*repmat(sqrt(sum(RR_star.^2,2)),1,2));
+    RR_star = repmat(x,size(z,1),1)/(norm(x,2))-z*norm(x,2);    
+  %  RR_star = x/(norm(x,2))-z*norm(x,2);        
+    DN = DN - norm(x,2)*RR_star./(2*pi*repmat(sqrt(sum(RR_star.^2,2)),1,2));
     
 
 else
@@ -25,4 +25,3 @@ end
 
 
 end
-
