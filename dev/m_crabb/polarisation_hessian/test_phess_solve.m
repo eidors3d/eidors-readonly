@@ -48,7 +48,7 @@ subplot(121); show_fem(sim_img,1)
 subplot(122); show_fem(img_eid_diff,1)
 
 %% Eidors in-built inverse abs solver
-imdl.hyperparameter.value = 0.00001;
+imdl.hyperparameter.value = 0.000001;
 imdl.fwd_model=fmdl;
 imdl.solve =  @inv_solve_core;
 imdl.reconst_type = 'absolute';
