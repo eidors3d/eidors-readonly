@@ -5,10 +5,10 @@ function [ alpha ] = wolfe_search( x, p, alpha_1, alpha_max, F, G )
 
 
 c1 = 1e-4;
-c2 = 0.95;
-max_it = 50;
+c2 = 0.9;
+max_it = 10;
 alpha_step = 1.25;
-delta_min = 1e-6;
+delta_min = 1e-2;
 
 % Disable singular matrix warnings -- handled by safeguarding
 % interpolations
