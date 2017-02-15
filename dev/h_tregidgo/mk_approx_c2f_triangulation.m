@@ -136,7 +136,7 @@ function tsn= search_fm_pts_in_cm(cm, fm_pts, z_depth);
        error('coarse model must be 2 or 3D');
     end
 
-    if(verLessThan('matlab','8.5.0'))
+    if(exist('OCTAVE_VERSION') || verLessThan('matlab','8.5.0'))
         tsn(not_oor)= tsearchn(cm.nodes(:,dims), cm.elems, fm_pts(not_oor,dims));
     else
         % pointLocation function added for triangulation object in MATLAB
