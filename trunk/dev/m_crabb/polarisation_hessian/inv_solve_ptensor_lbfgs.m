@@ -28,6 +28,11 @@ if isfield(hess_opts, 'update_U0')
 else
     update_U0 = 0;
 end
+if isfield(hess_opts,'neumann')
+    neumann = hess_opts.neumann;
+else
+    neumann = 'freespace';
+end
 
 % Hard coded number of eigenvectors to store...
 mem = 20;
@@ -126,29 +131,56 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
             DU0 = calc_grad_potential(img, u0);
         end
         
-        [H0, D0, C0] = calc_phessian_obj(fmdl, img_0, DU0, [], delta_d, 1 );
-        
-        % Ensure suff +ve def
-        if any(H0 < h_min)
-            % Add only amount of 2nd derivatives retaining +ve def if possible
-            if all(D0>h_min)
-                max_C0 = (D0 - h_min)./C0;
-                max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
-                max_C0 = min(max_C0);
-                H0 = D0 + max_C0 * C0;
-                                
-            else
-                % Gauss Newton part too small
-                H0 = D0;
-                H0(H0< h_min) = h_min;
-                
-            end
-        end
-        
+        [H0, D0, C0] = calc_phessian_obj(fmdl, img_0, DU0, delta_d, neumann );
         
         H0 = spdiags(H0, 0, length(H0), length(H0));% + hp^2 * RtR; 
         % +ve def checks should include RtR
-    
+        
+        % include regularisation
+        if use_hyper
+            RtR = calc_RtR_prior(imdl);
+            hp = calc_hyperparameter(imdl);
+            H0 = H0 + hp^2*RtR;
+            
+            % Ensure suff +ve def
+            if any(spdiags(H0,0) < h_min)
+                % Add only amount of 2nd derivatives retaining +ve def if possible
+                if all(D0 + hp^2*spdiags(RtR,0)>h_min)
+                    max_C0 = (hp^2*spdiags(RtR) + D0 - h_min)./C0;
+                    max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
+                    max_C0 = min(max_C0);
+                    H0 = spdiags(D0+ max_C0 * C0, 0, length(H0), length(H0)) + hp^2*RtR;
+                    
+                else
+                    % Gauss Newton part too small
+                    indx = D0 + hp^2 * spdiags(RtR,0) < h_min;
+                    H0 = spdiags(D0, 0, length(H0), length(H0)) + hp^2*RtR;
+                    H0(indx,indx) = h_min;
+                    
+                end
+            end
+            
+        else
+            
+            % Ensure suff +ve def
+            if any(H0 < h_min)
+                % Add only amount of 2nd derivatives retaining +ve def if possible
+                if all(D0>h_min)
+                    max_C0 = (D0 - h_min)./C0;
+                    max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
+                    max_C0 = min(max_C0);
+                    H0 = D0 + max_C0 * C0;
+                    
+                else
+                    % Gauss Newton part too small
+                    H0 = D0;
+                    H0(H0< h_min) = h_min;
+                    
+                end
+            end
+            
+        end
+        
         % Re-scale
         if k==1
             gamma_k = 1;
@@ -157,17 +189,14 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                 ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
         end
         
+        
+        
         % Rescale to fit diff in gradients
         if rescale
             H0 = H0 * gamma_k;
         end
         
-        % include regularisation
-        if use_hyper
-            RtR = calc_RtR_prior(imdl);
-            hp = calc_hyperparameter(imdl);
-            H0 = H0 + hp^2*RtR;
-        end
+        
         
     else
         if k==1

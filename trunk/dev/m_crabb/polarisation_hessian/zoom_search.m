@@ -7,7 +7,7 @@ function [ alpha ] = zoom_search( alpha_lo, alpha_hi, x, p, F, G  )
 warning('off','MATLAB:nearlySingularMatrix');
 
 c1 = 1e-4;
-c2 = 0.95;
+c2 = 0.9;
 
 phi_0 = F(x);
 grad_F = G(x);
@@ -18,8 +18,8 @@ phi_hi = F(x + alpha_hi * p);
 
 d_phi_lo = dot(G(x + alpha_lo * p),p);
 
-max_it = 50;
-delta_min = 1e-6;
+max_it = 20;
+delta_min = 1e-2; % <= 1e-1
 
 for k =1:max_it
     % Determine range is wide enough for sufficient move /force small step
@@ -53,8 +53,8 @@ for k =1:max_it
         
         % Ensure doesn't tend to infinity, interpolation wasn't singular
         % use quadratic if so (further safeguarding follows)
-        if alpha_int > max(alpha_lo, alpha_hi) - delta_min*alpha_lo || ...
-                alpha_int < min(alpha_lo, alpha_hi) + delta_min*alpha_lo...
+        if alpha_int > max(alpha_lo, alpha_hi) - delta_min*abs(alpha_hi - alpha_lo) || ...
+                alpha_int < min(alpha_lo, alpha_hi) + delta_min*abs(alpha_hi - alpha_lo)...
                 || isnan(alpha_int)
             alpha_int = quad_interp_vvg(alpha_lo, alpha_hi, phi_lo, phi_hi, d_phi_lo);
         end
@@ -64,14 +64,18 @@ for k =1:max_it
     % ---------------------------------------------------------
     % Safeguard to ensure in range, sufficient move, closer to alpha_lo,
     % isnt NaN
-    if alpha_int < min(alpha_lo, alpha_hi) + delta_min*alpha_lo || ...
-            alpha_int > max(alpha_lo, alpha_hi) - delta_min*alpha_lo ||...
+    if alpha_int < min(alpha_lo, alpha_hi) + delta_min*abs(alpha_hi - alpha_lo) || ...
+            alpha_int > max(alpha_lo, alpha_hi) - delta_min*abs(alpha_hi - alpha_lo) ||...
             abs(alpha_int - alpha_lo) > abs(alpha_int - alpha_hi)||...
             isnan(alpha_int)
             
         % Closer to alpha_lo or hi?
-        if abs(alpha_lo - alpha_int) < abs(alpha_hi - alpha_int)
-            alpha = (3*alpha_lo + alpha_hi)/4;
+        if alpha_int < alpha_lo + delta_min*abs(alpha_hi - alpha_lo) && alpha_lo < alpha_hi
+            alpha = alpha_lo + 1*delta_min*abs(alpha_hi - alpha_lo);
+            
+        elseif alpha_int > alpha_lo - delta_min*abs(alpha_hi - alpha_lo) && alpha_lo > alpha_hi
+            alpha = alpha_lo - 1*delta_min*abs(alpha_hi - alpha_lo);
+            
         else
             alpha = ( alpha_lo + alpha_hi )/2;
         end
@@ -157,7 +161,7 @@ vals = [x1^3, x1^2, x1, 1;...
     coefs = vals\[v1; v2; g1; g3];
     
     % Trial value is minimiser of quadratic
-    x_min = (-coefs(2) + sqrt(coefs(2)^2 - 3*coefs(1)*coefs(3)))/(3*coefs(1));
+    x_min = (-coefs(2) - sqrt(coefs(2)^2 - 3*coefs(1)*coefs(3)))/(3*coefs(1));
 end
 
 % Cubic, f(x1), f(x2), f(x3), f'(x1)
@@ -169,5 +173,5 @@ vals = [x1^3, x1^2, x1, 1;...
     coefs = vals\[v1; v2; v3; g1];
     
     % Trial value is minimiser of quadratic
-    x_min = (-coefs(2) + sqrt(coefs(2)^2 - 3*coefs(1)*coefs(3)))/(3*coefs(1));
+    x_min = (-coefs(2) - sqrt(coefs(2)^2 - 3*coefs(1)*coefs(3)))/(3*coefs(1));
 end
