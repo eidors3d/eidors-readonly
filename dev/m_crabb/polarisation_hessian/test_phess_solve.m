@@ -22,6 +22,8 @@ sim_img = mk_image(fmdl,cond_bkg);
 
 %figure; show_fem(img,[0,1,3])
 sim_img.fwd_solve.get_all_meas=1;
+sim_img.fwd_model.stimulation=stim;
+
 
 sim_img.fwd_model.M_tensor.a = ones(size(sim_img.elem_data,1),1);
 sim_img.fwd_model.M_tensor.b = ones(size(sim_img.elem_data,1),1);
@@ -47,6 +49,7 @@ subplot(122); show_fem(img_eid_diff,1)
 
 %% Eidors in-built inverse abs solver
 imdl.hyperparameter.value = 0.00001;
+imdl.fwd_model=fmdl;
 imdl.solve =  @inv_solve_core;
 imdl.reconst_type = 'absolute';
 img_eid_abs = inv_solve(imdl, data);

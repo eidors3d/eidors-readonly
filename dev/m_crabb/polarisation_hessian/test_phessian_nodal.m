@@ -57,7 +57,7 @@ for ii=1:length(cond_vals)
     
     % phess
     
-    [PHii(:,ii), PGii(:,ii), PD2ii(:,ii)] = calc_phessian_obj_OLD(fmdl, img_backgrd, DU0, [], delta_d,1);
+    [PHii(:,ii), PGii(:,ii), PD2ii(:,ii)] = calc_phessian_obj(fmdl, img_backgrd, DU0, [], delta_d,1);
     
     [H,G,D2] = calc_hessian_obj(fmdl, img_backgrd,1:size(Hii,1),delta_d);
     
