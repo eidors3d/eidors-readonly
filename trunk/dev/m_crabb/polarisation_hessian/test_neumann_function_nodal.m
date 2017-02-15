@@ -25,7 +25,7 @@ DN0 =calc_grad_potential_nodal(img,N0);
 %Space for the analagous analytic freespace/disc N1/2 and DN1/2
 N1=zeros(n_nodes,n_nodes); 
 N2=zeros(n_nodes,n_nodes); 
-N3=zeros(n_nodes,n_nodes); 
+%N3=zeros(n_nodes,n_nodes); 
 DN1 = zeros(n_nodes,2,n_elems); 
 DN2 = zeros(n_nodes,2,n_elems); 
 
@@ -41,8 +41,8 @@ for ii=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
         N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
-     %   N2(ii,jj) = calc_neumann_func_disc(xii,yjj);       
-        N3(ii,jj) = calc_neumann_func_disc2(xii,yjj);                        
+        N2(ii,jj) = calc_neumann_func_disc2(xii,yjj);          
+     %   N3(ii,jj) = calc_neumann_func_disc(xii,yjj);               
     end      
     
     for jj=1:n_elems
@@ -50,7 +50,7 @@ for ii=1:n_nodes
         yjj = fmdl.elem_centre(jj,:);  
 %        yjj_coord = sqrt(sum(yjj.^2));           
         DN1(ii,:,jj) = calc_neumann_grad_func_freespace(xii,yjj);
-        %DN2(ii,:,jj) = calc_neumann_grad_func_freespace(xii,yjj);
+        DN2(ii,:,jj) = calc_neumann_grad_func_disc(xii,yjj);
     end    
 end
 
@@ -58,7 +58,7 @@ end
 %N0=N0'
 
 for iii=1:n_nodes
-   N3(:,iii) = N3(:,iii) - N3(fmdl.gnd_node,iii);
+   N2(:,iii) = N2(:,iii) - N2(fmdl.gnd_node,iii);
 end
 
 %sum(N0(bound_nodes,80))
@@ -69,9 +69,9 @@ for node_indices=[55,150,min(unique(fmdl.boundary))]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
 hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
-hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N3(:,node_indices),'b*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'b*')
 
-figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N3(:,node_indices),'r*')
+figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'r*')
 %figure;
 %plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'g*')
 %figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices)-N3(:,node_indices),'b*')
@@ -81,6 +81,49 @@ figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indice
 %    (N0(:,potential_indices)-N1(:,potential_indices)),'r*')    
     
 end
+
+%Pick which solutions to plot
+for potential_indices=[60]
+
+    
+img0x = img;img0y = img;
+img0x.elem_data = squeeze(DN0(potential_indices,1,:));
+img0y.elem_data = squeeze(DN0(potential_indices,2,:));
+
+
+img1x = img;img1y = img;
+img1x.elem_data = squeeze(DN1(potential_indices,1,:));
+img1y.elem_data = squeeze(DN1(potential_indices,2,:));
+
+img2x = img;img2y = img;
+img2x.elem_data = squeeze(DN2(potential_indices,1,:));
+img2y.elem_data = squeeze(DN2(potential_indices,2,:));
+
+%img3x=img; img3y=img;
+%img3x.elem_data = squeeze((DN0(potential_indices,1,:)-DN1(potential_indices,1,:))...
+%    ./abs(DN0(potential_indices,1,:)));
+%img3y.elem_data = squeeze((DN0(potential_indices,2,:)-DN2(potential_indices,2,:))...
+%    ./abs(DN0(potential_indices,2,:)));
+
+figure; 
+subplot(321); show_fem(img0x,[1,0,0]);% colorbar; 
+subplot(322); show_fem(img0y,[1,0,0]); %colorbar;
+subplot(323); show_fem(img1x,[1,0,0]);% colorbar; 
+subplot(324); show_fem(img1y,[1,0,0]); %colorbar;
+subplot(325); show_fem(img2x,[1,0,0]); %colorbar; 
+subplot(326); show_fem(img2y,[1,0,0]); %colorbar; 
+%subplot(427); show_fem(img3x,[1,0,0]); %colorbar; 
+%subplot(428); show_fem(img3y,[1,0,0]); %colorbar; 
+
+%figure; 
+%subplot(121);hist(img2x.elem_data,10000)
+%title(sprintf('Error for gradx Greens function source at (x,y) = (%1.2f,%1.2f)',...
+%    fmdl.elem_centre(potential_indices,1),fmdl.elem_centre(potential_indices,2)))
+%subplot(122);hist(img2y.elem_data,10000)
+%title(sprintf('Error for grady Greens function source at (x,y) = (%1.2f,%1.2f)',...
+%    fmdl.elem_centre(potential_indices,1),fmdl.elem_centre(potential_indices,2)))
+end
+
 
 %{
 
@@ -116,53 +159,8 @@ figure; plot(N0LH-N3LH,'r')
 %figure; plot(rhs_ana,'r'); hold on; plot(rhs_fem,'b')
 
 %}
-%{
+%%{
 
-%Pick which solutions to plot
-for potential_indices=[60]
-
-    
-img0x = img;img0y = img;
-img0x.elem_data = squeeze(DN0(potential_indices,1,:));
-img0y.elem_data = squeeze(DN0(potential_indices,2,:));
-
-
-img1x = img;img1y = img;
-img1x.elem_data = squeeze(DN1(potential_indices,1,:));
-img1y.elem_data = squeeze(DN1(potential_indices,2,:));
- 
-
-img2x=img; img2y=img;
-img2x.elem_data = squeeze((DN0(potential_indices,1,:)-DN1(potential_indices,1,:))...
-    ./abs(DN0(potential_indices,1,:)));
-img2y.elem_data = squeeze((DN0(potential_indices,2,:)-DN1(potential_indices,2,:))...
-    ./abs(DN0(potential_indices,2,:)));
-
-
-figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,potential_indices),'r*')
-hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,potential_indices),'b*')
-figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),...
-    (N0(:,potential_indices)-N1(:,potential_indices)),'r*')
-
-
-figure; 
-subplot(321); show_fem(img0x,[1,0,0]);% colorbar; 
-subplot(322); show_fem(img0y,[1,0,0]); %colorbar;
-subplot(323); show_fem(img1x,[1,0,0]);% colorbar; 
-subplot(324); show_fem(img1y,[1,0,0]); %colorbar;
-subplot(325); show_fem(img2x,[1,0,0]); %colorbar; 
-subplot(326); show_fem(img2y,[1,0,0]); %colorbar; 
-
-
-
-figure; 
-subplot(121);hist(img2x.elem_data,10000)
-title(sprintf('Error for gradx Greens function source at (x,y) = (%1.2f,%1.2f)',...
-    fmdl.elem_centre(potential_indices,1),fmdl.elem_centre(potential_indices,2)))
-subplot(122);hist(img2y.elem_data,10000)
-title(sprintf('Error for grady Greens function source at (x,y) = (%1.2f,%1.2f)',...
-    fmdl.elem_centre(potential_indices,1),fmdl.elem_centre(potential_indices,2)))
-end
 
 %hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),DU1(:,1,1),'r*')
 %}
