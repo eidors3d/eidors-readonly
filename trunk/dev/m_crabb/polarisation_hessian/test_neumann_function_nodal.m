@@ -1,5 +1,5 @@
 %Make an ivnerse model - standard foward model inside
-imdl = mk_common_model('c2C',16);
+imdl = mk_common_model('b2C',16);
 fmdl = imdl.fwd_model; %Extract model
 fmdl = fix_model(fmdl);
 
@@ -22,6 +22,10 @@ n_nodes = size(fmdl.nodes,1);
 %DN(x,2,z) = gradient w.r.t z of of N(x,z) maps (:,nodes) to (:,2,elems)
 N0 = calc_neumann_func_nodal(img.fwd_model,img);
 DN0 =calc_grad_potential_nodal(img,N0);
+
+%N00=ones(size(N0))
+%DN0 =calc_grad_potential_nodal(img,N00);
+
 %Space for the analagous analytic freespace/disc N1/2 and DN1/2
 N1=zeros(n_nodes,n_nodes); 
 N2=zeros(n_nodes,n_nodes); 
@@ -65,7 +69,7 @@ end
 
 %for node_indices=[5,10,20,50,100]
 %for node_indices=[10,15,20,35,50]
-for node_indices=[55,150,min(unique(fmdl.boundary))]
+for node_indices=[2]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
 hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
@@ -80,24 +84,25 @@ figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indice
 %figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),...
 %    (N0(:,potential_indices)-N1(:,potential_indices)),'r*')    
     
-end
-
-%Pick which solutions to plot
-for potential_indices=[60]
-
-    
 img0x = img;img0y = img;
-img0x.elem_data = squeeze(DN0(potential_indices,1,:));
-img0y.elem_data = squeeze(DN0(potential_indices,2,:));
-
+img0x.elem_data = squeeze(DN0(node_indices,1,:));
+img0y.elem_data = squeeze(DN0(node_indices,2,:));
 
 img1x = img;img1y = img;
-img1x.elem_data = squeeze(DN1(potential_indices,1,:));
-img1y.elem_data = squeeze(DN1(potential_indices,2,:));
+img1x.elem_data = squeeze(DN1(node_indices,1,:));
+img1y.elem_data = squeeze(DN1(node_indices,2,:));
 
 img2x = img;img2y = img;
-img2x.elem_data = squeeze(DN2(potential_indices,1,:));
-img2y.elem_data = squeeze(DN2(potential_indices,2,:));
+img2x.elem_data = squeeze(DN2(node_indices,1,:));
+img2y.elem_data = squeeze(DN2(node_indices,2,:));
+
+img20x = img;img20y = img;
+img20x.elem_data = squeeze(DN2(node_indices,1,:))-squeeze(DN0(node_indices,1,:));
+img20y.elem_data = squeeze(DN2(node_indices,2,:))-squeeze(DN0(node_indices,2,:));
+
+img21x = img;img21y = img;
+img21x.elem_data = squeeze(DN2(node_indices,1,:))-squeeze(DN1(node_indices,1,:));
+img21y.elem_data = squeeze(DN2(node_indices,2,:))-squeeze(DN1(node_indices,2,:));
 
 %img3x=img; img3y=img;
 %img3x.elem_data = squeeze((DN0(potential_indices,1,:)-DN1(potential_indices,1,:))...
@@ -106,12 +111,16 @@ img2y.elem_data = squeeze(DN2(potential_indices,2,:));
 %    ./abs(DN0(potential_indices,2,:)));
 
 figure; 
-subplot(321); show_fem(img0x,[1,0,0]);% colorbar; 
-subplot(322); show_fem(img0y,[1,0,0]); %colorbar;
-subplot(323); show_fem(img1x,[1,0,0]);% colorbar; 
-subplot(324); show_fem(img1y,[1,0,0]); %colorbar;
-subplot(325); show_fem(img2x,[1,0,0]); %colorbar; 
-subplot(326); show_fem(img2y,[1,0,0]); %colorbar; 
+subplot(5,2,1); show_fem(img0x,[1,0,0]);% colorbar; 
+subplot(5,2,2); show_fem(img0y,[1,0,0]); %colorbar;
+subplot(5,2,3); show_fem(img1x,[1,0,0]);% colorbar; 
+subplot(5,2,4); show_fem(img1y,[1,0,0]); %colorbar;
+subplot(5,2,5); show_fem(img2x,[1,0,0]); %colorbar; 
+subplot(5,2,6); show_fem(img2y,[1,0,0]); %colorbar; 
+subplot(5,2,7); show_fem(img20x,[1,0,0]); %colorbar; 
+subplot(5,2,8); show_fem(img20y,[1,0,0]); %colorbar; 
+subplot(5,2,9); show_fem(img21x,[1,0,0]); %colorbar; 
+subplot(5,2,10); show_fem(img21y,[1,0,0]); %colorbar; 
 %subplot(427); show_fem(img3x,[1,0,0]); %colorbar; 
 %subplot(428); show_fem(img3y,[1,0,0]); %colorbar; 
 
