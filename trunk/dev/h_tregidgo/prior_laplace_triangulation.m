@@ -34,7 +34,7 @@ Reg = eidors_cache(@build_laplace, fwd_model, 'prior_laplace');
 
 function Reg = build_laplace(fwd_model)
 
-   if verLessThan('matlab','8.5.0')
+   if(exist('OCTAVE_VERSION') || verLessThan('matlab','8.1.0'))
        pp= fwd_model_parameters( fwd_model );
        
        
@@ -91,19 +91,12 @@ function Reg = build_laplace(fwd_model)
 % find elems which are connected to elems ee
 function elems= find_adjoin(ee, ELEM)
    nn= ELEM(:,ee);
-   [d,~]= size(ELEM);
-   
-   if verLessThan('matlab','8.1.0')
-       ss = false(size(ELEM));
-       for i=1:d
-           ss= ss | ELEM==nn(i);
-       end
-   else
-       ss=ismember(ELEM,nn);
+   [d,e]= size(ELEM);
+   ss = false(size(ELEM));
+   for i=1:d
+     ss= ss | ELEM==nn(i);
    end
    elems= find(sum(ss,1)==d-1);
-   
-  
 
 function do_unit_test
 
