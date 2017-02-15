@@ -1,4 +1,4 @@
-function [ N ] = calc_neumann_func_disc2( x, z )
+function [ N ] = calc_neumann_func_disc( x, z )
 %CALC_GRAD_N 
 % INPUT
 % N(x,z) freespace Neumann i.e.

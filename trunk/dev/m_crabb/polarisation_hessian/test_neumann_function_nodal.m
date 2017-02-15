@@ -69,7 +69,7 @@ end
 
 %for node_indices=[5,10,20,50,100]
 %for node_indices=[10,15,20,35,50]
-for node_indices=[86]
+for node_indices=[138]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
 hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
