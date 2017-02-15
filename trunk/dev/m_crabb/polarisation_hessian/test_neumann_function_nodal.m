@@ -23,9 +23,6 @@ n_nodes = size(fmdl.nodes,1);
 N0 = calc_neumann_func_nodal(img.fwd_model,img);
 DN0 =calc_grad_potential_nodal(img,N0);
 
-%N00=ones(size(N0))
-%DN0 =calc_grad_potential_nodal(img,N00);
-
 %Space for the analagous analytic freespace/disc N1/2 and DN1/2
 N1=zeros(n_nodes,n_nodes); 
 N2=zeros(n_nodes,n_nodes); 
@@ -45,8 +42,7 @@ for ii=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
         N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
-        N2(ii,jj) = calc_neumann_func_disc2(xii,yjj);          
-     %   N3(ii,jj) = calc_neumann_func_disc(xii,yjj);               
+        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);          
     end      
     
     for jj=1:n_elems
@@ -57,6 +53,10 @@ for ii=1:n_nodes
         DN2(ii,:,jj) = calc_neumann_grad_func_disc(xii,yjj);
     end    
 end
+
+%N0 = calc_neumann_func_nodal(img.fwd_model,img);
+%DN2 =calc_grad_potential_nodal(img,N2);
+
 
 %Put same ground node on analytic solution
 %N0=N0'
@@ -69,7 +69,7 @@ end
 
 %for node_indices=[5,10,20,50,100]
 %for node_indices=[10,15,20,35,50]
-for node_indices=[2]
+for node_indices=[86]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
 hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
