@@ -28,6 +28,11 @@ function PSF = GREIT_desired_img_sigmoid(xyz,radius, opt)
 %                        func(pts)
 %                   where pts is either [2xN] or [3xN], dependig on the xyz
 %                   function input, e.g. @(xyz) abs(xyz(3,:))/5
+%      .threshold   [optional] voxels where the function is smaller than
+%                   threshold will be set 0. Values bigger than 1-threshold
+%                   will be 1. The smaller the threshold the more
+%                   computationally expensive is the evaluation. 
+%                   Default: 1e-4;
 %
 % The desired images approximate in each pixel the area integral of:
 %       f(r) = 1 / (1 + exp(s*(|r-r0| - radius)))
@@ -73,13 +78,23 @@ function PSF = desired_soln(xyz, radius, opt)
     end
     [Xnodes,Ynodes,Znodes] = voxnodes(mdl);
     
+    min_vox_edge = min( [min(diff(unique(mdl.nodes(:,1)))), ...
+                        min(diff(unique(mdl.nodes(:,2)))), ...
+                        min(diff(unique(mdl.nodes(:,3))))] );
+
+    
     warned = false;
-    interp_elem_new('reset');
-    for i=1:size(xyz,2);
-        th = log(1e4)/opt.steepness(i);
+    interp_elem_new('reset',size(mdl.vox,1));
+    for i=1:size(xyz,2)
+        th = opt.threshold/opt.steepness(i);
         progress_msg(i,num_it);
         farel = far_elems(Xnodes,Ynodes,Znodes, xyz(:,i), radius(i), th);
-        el_idx = find(~farel);
+        % also check for elements so close to the center they are approx 1
+        close_el = false(size(farel));
+        if radius(i) - th > min_vox_edge
+           close_el = close_elems(Xnodes,Ynodes,Znodes, xyz(:,i), radius(i), th);
+        end
+        el_idx = find(~farel & ~close_el);
         % start with an initial size
         STEP = 1000;
         idx = zeros(STEP,1);
@@ -127,6 +142,7 @@ function PSF = desired_soln(xyz, radius, opt)
         x = D - radius(i);
         tmp = 1 ./ (1 + exp( opt.steepness(i) * x));
         PSF(:,i) = sparse(idx,1,tmp(:) .* factor,size(mdl.vox,1),1);
+        PSF(close_el,i) = 1;
     end
     progress_msg(Inf);
 end
@@ -144,22 +160,27 @@ function [X, Y, Z] = voxnodes(mdl)
 end
 
 function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
-    persistent N_entries X  Y Z MAP
-    if ischar(mdl) && strcmp(mdl,'reset');
+    persistent N_entries X  Y Z MAP N minnode maxnode done_elems sep
+    if ischar(mdl) && strcmp(mdl,'reset')
         N_entries = 0; X = []; Y = []; Z = []; MAP = [];
+        N       = ones(1,3);
+        minnode = zeros(e,3);
+        maxnode = zeros(e,3);
+        sep     = zeros(e,3);
+        done_elems = false(e,1);
         return;
     end
     maxsep = radius/5;
-
-    minnode = min(mdl.nodes(mdl.vox(e,:),:));
-    maxnode = max(mdl.nodes(mdl.vox(e,:),:));
     
-    sep = maxnode - minnode;
-    N = ones(1,3);
-    N(1:opt.n_dim) = max(3, ceil(sep/maxsep)+1);
-    if numel(N) == 2
-       N(3) = 1;
+    if ~done_elems(e)
+       minnode(e,:) = min(mdl.nodes(mdl.vox(e,:),:));
+       maxnode(e,:) = max(mdl.nodes(mdl.vox(e,:),:));
+       sep(e,:) = maxnode(e,:) - minnode(e,:);
+       done_elems(e) = true;
     end
+    
+    N(1:opt.n_dim) = max(3, ceil(sep(e,:)/maxsep)+1);
+    
     try
         entry = MAP(N(1),N(2),N(3));
         x = X{entry};
@@ -190,10 +211,10 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
         N_entries = entry;
         MAP(N(1),N(2),N(3)) = entry;
     end
-    x = x*sep(1) + minnode(1);
-    y = y*sep(2) + minnode(2);
+    x = x*sep(e,1) + minnode(e,1);
+    y = y*sep(e,2) + minnode(e,2);
     if opt.n_dim == 3
-       z = z*sep(3) + minnode(3);
+       z = z*sep(e,3) + minnode(e,3);
     end
     
 end
@@ -286,6 +307,36 @@ function farel = far_elems(Xnodes,Ynodes,Znodes,xyz,radius, th)
 end
 
 %-------------------------------------------------------------------------%
+% Find elements where the function value is essentially 1
+function farel = close_elems(Xnodes,Ynodes,Znodes,xyz,radius, th)
+  
+   farel = true(size(Xnodes,1),1);
+
+    nodes_test = Xnodes < xyz(1) + radius - th;
+    farel = farel & all(nodes_test,2);
+    if ~any(farel), return, end;
+    nodes_test = Xnodes > xyz(1) - radius + th;
+    farel = farel & all(nodes_test,2);
+    if ~any(farel), return, end;
+    nodes_test = Ynodes < xyz(2) + radius - th;
+    farel = farel & all(nodes_test,2);
+    if ~any(farel), return, end;
+    nodes_test = Ynodes > xyz(2) - radius + th;
+    farel = farel & all(nodes_test,2);
+    if ~any(farel), return, end;
+    if ~isempty(Znodes)
+        nodes_test  = Znodes > xyz(3) - radius + th;
+        farel = farel & all(nodes_test,2);
+        if ~any(farel), return, end;
+        nodes_test  = Znodes < xyz(3) + radius - th;
+        farel = farel & all(nodes_test,2);
+        if ~any(farel), return, end;
+    end
+    idx = find(farel);
+end
+
+
+%-------------------------------------------------------------------------%
 % Parse options
 function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
 
@@ -354,6 +405,12 @@ function [xyz, radius, opt] = parse_opt(xyz, radius, opt)
     if opt.n_dim == 2
        xyz(3,:) = 0;
     end
+   
+    if ~isfield(opt, 'threshold')
+       opt.threshold = 1e-4;
+    end
+    
+    opt.threshold = log(1/opt.threshold - 1); 
     
 end
 
