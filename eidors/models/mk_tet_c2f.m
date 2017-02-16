@@ -104,24 +104,24 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
                                    opt.tol_edge2edge);
    progress_msg(sprintf('Found %d',size(intpts3,1)),Inf);
 
-   progress_msg('Find c_nodes in f_tets...');
+   progress_msg('Find c_nodes in f_tets...',pmopt);
    rnode2ftet = get_nodes_in_tets(fmdl,rmdl.nodes, opt);
    progress_msg(sprintf('Found %d', nnz(rnode2ftet)), Inf);
    
    
-   progress_msg('Find c_elems in f_elems...')
+   progress_msg('Find c_elems in f_elems...',pmopt)
    rtet_in_ftet = (double(rmdl.node2elem') * rnode2ftet) == 4;
    progress_msg(sprintf('Found %d',nnz(rtet_in_ftet)), Inf);
    
-   progress_msg('Find f_nodes in c_tets...');
+   progress_msg('Find f_nodes in c_tets...',pmopt);
    fnode2rtet = get_nodes_in_tets(rmdl,fmdl.nodes, opt);
    progress_msg(sprintf('Found %d', nnz(fnode2rtet)), Inf);
 
-   progress_msg('Find f_elems in c_elems...')
+   progress_msg('Find f_elems in c_elems...',pmopt)
    ftet_in_rtet = (double(fmdl.node2elem') * fnode2rtet) == 4;
    progress_msg(sprintf('Found %d',nnz(ftet_in_rtet)), Inf);
    
-   progress_msg('Find total intersections...');
+   progress_msg('Find total intersections...',pmopt);
    e2e = double(rmdl.edge2elem');
    rtet2ftet =  double(rmdl.elem2face) * (rface2fedge>0) * fmdl.edge2elem ...
                  | e2e * (fface2redge>0)' * fmdl.elem2face' ...
@@ -147,6 +147,9 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    
    id = 0; N = length(rtet_todo);
    mint = ceil(N/100);
+   
+   problem = false;
+   
    for v = rtet_todo'
       id = id+1;
       if mod(id,mint)==0, progress_msg(id/N); end
@@ -168,6 +171,11 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
             fmdl.nodes(f_nodes(:,t),:);
             rmdl.nodes(r_nodes(:,t),:)];
          last_v = last_v + 1;
+         if size(pts,1) < 4 
+            % there are some degenerate cases, sometimes caused by
+            % numerical issues alone
+            continue
+         end
          try
             % move points to origin (helps for small elements at
             % large coordinates
@@ -188,12 +196,12 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
             switch err.identifier
                case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
                   if size(pts,1) > 3
-                     u = uniquetol(pts*scale,eps,'ByRows',true,'DataScale', 1);
+                     u = uniquetol(pts*scale,6*eps,'ByRows',true,'DataScale', 1);
                      ok = ok | size(u,1) < 4;
                   end
             end
             if ~ok
-               if DEBUG || eidors_debug('query','mk_tet_c2f:convhulln');
+               if DEBUG || eidors_debug('query','mk_tet_c2f:convhulln')
                   tet.nodes = fmdl.nodes;
                   vox.nodes = rmdl.nodes;
                   tet.type = 'fwd_model';
@@ -202,20 +210,32 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
                   vox.boundary = vox.elems;
                   tet.elems = fmdl.elems(tet_todo(t),:);
                   clf
-                  show_fem(vox)
-                  hold on
-                  h = show_fem(tet);
-                  set(h,'EdgeColor','b')
                   pts = bsxfun(@plus,pts*scale,ctr);
-                  plot3(pts(:,1),pts(:,2),pts(:,3),'o');
-                  hold off
-                  axis auto
-                  keyboard
+                  subplot(221)
+                  show_test(vox,tet,pts);
+                  
+                  subplot(222)
+                  show_test(vox,tet,pts);
+                  view(90,0)
+                  
+                  subplot(223)
+                  show_test(vox,tet,pts);
+                  view(0,90)
+                  
+                  subplot(224)
+                  show_test(vox,tet,pts);
+                  view(0,0)
+                  
+                  
+                  str = sprintf('mk_tet_c2f problem fe %d ce %d', v, tet_todo(t));
+                  print(gcf,'-dpng',str);
+%                   keyboard
                else
-                  fprintf('\n');
-                  eidors_msg(['convhulln has thrown an error. ' ...
-                     'Enable eidors_debug on mk_tet_c2f and re-run to see a debug plot'],0);
-                  rethrow(err);
+                  problem = true;
+%                   fprintf('\n');
+%                   eidors_msg(['convhulln has thrown an error. ' ...
+%                      'Enable eidors_debug on mk_tet_c2f and re-run to see a debug plot'],0);
+%                   rethrow(err);
                end
             end
          end
@@ -223,6 +243,7 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    end
    progress_msg(Inf);
     
+   
     c2f = sparse(F,C,V,size(fmdl.elems,1),size(rmdl.elems,1));
     
     % add rtet contained in ftet
@@ -239,6 +260,23 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
     
     % add tets contained in vox
     c2f = c2f + ftet_in_rtet;
+    
+    if problem
+       warning('eidors:mk_tet_c2f:convhulln_issues', ...
+          sprintf(['There were some problems with convhulln when running mk_tet_c2f. \n' ...
+                   'Most often these are caused by numerical precision issues and can safely be ignored. \n' ...
+                   'To save a plot of each problematic intersection, execute these commands:\n' ...
+                   '  eidors_cache off\n' ...
+                   '  eidors_debug on mk_tet_c2f\n' ...
+                   'before re-running your code. Images will be saved to current directory\n' ...
+                   'Alternatively, use the CHECK_C2F_QUALITY function.' ]));
+    end                
+          
+       
+       
+    
+    
+    
 %-------------------------------------------------------------------------%
 % Calculate intersection points between faces and edges    
 function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmdl,rmdl,opt)
@@ -482,9 +520,55 @@ function [fmdl,rmdl,fmdl_idx,rmdl_idx] = crop_models(fmdl,rmdl)
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
+   do_case_test;
    do_small_test;
    do_realistic_test;
 
+   
+function do_case_test
+   ll = eidors_msg('log_level');
+   eidors_msg('log_level',1);
+   t1.type = 'fwd_model';
+   t1.elems = [1 2 3 4];
+
+   X = 2; Y = 3; % subplot matrix
+   for i = 1:30
+        fprintf('%d\n',i);
+        t1.nodes = [0 0 0; 0 1 0; 1 0 0; 0 0 1];
+        t2 = t1;
+        switch i
+           case 1
+              txt = 'identical';
+              subplot(X,Y,i), show_test(t1,t2);
+              c2f = mk_tet_c2f(t1,t2);
+              unit_test_cmp(txt,c2f,1,eps);
+           case 2
+              txt = 'shared face';
+              t2.nodes(end,end) = -1;
+              subplot(X,Y,i), show_test(t1,t2);
+              c2f = mk_tet_c2f(t1,t2);
+              unit_test_cmp(txt,c2f,0,0);
+           case 3
+              txt = 'coplanar faces';
+              t2.nodes(end,end) = -1;
+              t1.nodes(:,1:2) = t1.nodes(:,1:2) + .2;
+              subplot(X,Y,i), show_test(t1,t2);
+              c2f = mk_tet_c2f(t1,t2);
+              unit_test_cmp(txt,c2f,0,0);
+           case 4
+              txt = 'point on edge';
+              t2.nodes(:,1) = t1.nodes(:,1) + 1;
+              t2.nodes(:,2) = t1.nodes(:,2) - .3;
+              subplot(X,Y,i), show_test(t1,t2);
+              c2f = mk_tet_c2f(t1,t2);
+              unit_test_cmp(txt,c2f,0,0);
+           otherwise
+             break;
+        end
+
+      
+   end
+   eidors_msg('log_level',ll);
 
 function do_small_test
    fmdl = ng_mk_cyl_models([1 .5],[],[]);
@@ -527,3 +611,13 @@ function do_realistic_test
    t = toc;
    fprintf('Approximate: t=%f s\n',t);
 
+ function show_test(vox,tet, pts)
+    show_fem(vox);
+    hold on
+    h = show_fem(tet);
+    set(h, 'EdgeColor','b');
+    if nargin > 2
+       plot3(pts(:,1),pts(:,2),pts(:,3),'o');
+    end
+    hold off
+    axis auto
