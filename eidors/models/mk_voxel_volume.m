@@ -106,9 +106,11 @@ function [rmdl, c2f] = do_voxel_volume(fmdl,opt)
     rmdl.inside   = inside; % the inside array is useful in other functions
     x_pts = opt.xvec(1:end-1) + 0.5*diff(opt.xvec);
     y_pts = opt.yvec(1:end-1) + 0.5*diff(opt.yvec);
+    z_pts = opt.zvec(1:end-1) + 0.5*diff(opt.zvec);
 
     rmdl.mdl_slice_mapper.x_pts = x_pts;
     rmdl.mdl_slice_mapper.y_pts = y_pts;
+    rmdl.mdl_slice_mapper.z_pts = z_pts;
     
     
 %-------------------------------------------------------------------------%
