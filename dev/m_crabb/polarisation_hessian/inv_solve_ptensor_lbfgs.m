@@ -52,7 +52,7 @@ updt_tol = 1e-12;
 meas_data = data.meas;
 
 % Background fields for Hess approxn
-imdl.fwd_solve.get_all_meas=1;
+img.fwd_solve.get_all_meas=1;
 [d_k] = fwd_solve(img);
 delta_d = d_k.meas - meas_data;
 
