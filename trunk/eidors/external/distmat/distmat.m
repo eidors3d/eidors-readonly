@@ -58,7 +58,11 @@ function [dmat,opt] = distmat(xy,varargin)
 % Release Date: 5/29/07
 
 % process inputs
-error(nargchk(1,2,nargin));
+if verLessThan('matlab','7.13')
+   error(nargchk(1,2,nargin));
+else
+   narginchk(1,2);
+end
 [n,dims] = size(xy);
 numels = n*n*dims;
 opt = 2; if numels > 5e4, opt = 3; elseif n < 20, opt = 1; end
