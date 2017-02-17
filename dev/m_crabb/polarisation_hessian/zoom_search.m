@@ -7,7 +7,7 @@ function [ alpha ] = zoom_search( alpha_lo, alpha_hi, x, p, F, G  )
 warning('off','MATLAB:nearlySingularMatrix');
 
 c1 = 1e-4;
-c2 = 0.5;
+c2 = 0.9;
 
 phi_0 = F(x);
 grad_F = G(x);
