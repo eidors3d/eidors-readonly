@@ -162,6 +162,7 @@ function PSF = desired_soln(xyz, radius, opt)
         PSF(:,i) = sparse(idx,1,tmp(:) .* factor,size(mdl.vox,1),1);
         PSF(close_el,i) = 1;
     end
+    interp_elem_new('clear');
     progress_msg(Inf);
 end
 
@@ -187,6 +188,10 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
         sep     = zeros(e,3);
         done_elems = false(e,1);
         return;
+    end
+    if ischar(mdl) && strcmp(mdl,'clear')
+       clear N_entries X  Y Z MAP N minnode maxnode done_elems sep
+       return;
     end
     maxsep = radius/5;
     
