@@ -36,7 +36,7 @@ homog_img = img;
 sim_img = mk_image(smdl, cond_bkg);
 sim_img.fwd_model.M_tensor.a = ones(size(sim_img.elem_data,1),1);
 sim_img.fwd_model.M_tensor.b = ones(size(sim_img.elem_data,1),1);
-sim_img.fwd_model.M_tensor.rot = zeros(sizeUntitled(sim_img.elem_data,1),1);
+sim_img.fwd_model.M_tensor.rot = zeros(size(sim_img.elem_data,1),1);
 
 
 %% Loop through conductivities
@@ -147,3 +147,13 @@ for ii=1:8
 end
 
 
+%% Plot 2-norm of differences
+n_af = sqrt(sum((Ca - Cpf).^2,1));
+n_ad = sqrt(sum((Ca - Cpd).^2,1));
+
+n_a = sqrt(sum((Ca).^2,1));
+
+figure
+plot(cond_obj, n_af);
+hold all
+plot(cond_obj, n_ad);

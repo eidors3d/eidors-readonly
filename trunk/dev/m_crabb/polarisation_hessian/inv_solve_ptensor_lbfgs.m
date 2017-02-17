@@ -33,6 +33,17 @@ if isfield(hess_opts,'neumann')
 else
     neumann = 'freespace';
 end
+if isfield(hess_opts,'update_delta')
+    update_delta = hess_opts.update_delta;
+else
+    update_delta = 1;
+end
+
+if isfield(hess_opts,'ptensor_its')
+    ptensor_its = hess_opts.ptensor_its;
+else
+    ptensor_its = inf;
+end
 
 % Hard coded number of eigenvectors to store...
 mem = 20;
@@ -123,7 +134,7 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     % Initial Hessian -----------------------
     
     % Update phess
-    if ptensor==1
+    if ptensor==1 && k<= ptensor_its
         
         if update_U0
             d_k = fwd_solve(img);
@@ -147,8 +158,9 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                 % Add only amount of 2nd derivatives retaining +ve def if possible
                 if all(D0 + hp^2*spdiags(RtR,0)>h_min)
                     max_C0 = (hp^2*spdiags(RtR) + D0 - h_min)./C0;
-                    max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
-                    max_C0 = min(max_C0);
+                    max_C0(isinf(max_C0) | isnan(max_C0)) = inf;
+                    max_C0(max_C0<0) = 0;
+                    max_C0 = min([max_C0;1]);
                     H0 = spdiags(D0+ max_C0 * C0, 0, length(H0), length(H0)) + hp^2*RtR;
                     
                 else
@@ -246,7 +258,11 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     % Forward solve
 %     d_k = fwd_solve(img);
 %     delta_d = d_k.meas - meas_data;
-    resvec(k+1) = objective(x_k, img, imdl, data);
+    if update_delta
+        [resvec(k+1), delta_d] = objective(x_k, img, imdl, data);
+    else
+        resvec(k+1) = objective(x_k, img, imdl, data);
+    end
     if resvec(k+1) > resvec(k)
         x_k = x_k + stepl * p_k;
         break
@@ -275,14 +291,15 @@ end
 end
 
 % Cost
-function C = objective(x_k, images, invmdl, d)
+function [C, delta_d] = objective(x_k, images, invmdl, d)
     im = images;
     im.elem_data = x_k;
     d_im = fwd_solve(im);
     RtR = calc_RtR_prior(invmdl);
     hp = calc_hyperparameter(invmdl);
     imdif = im.elem_data - images.elem_data;
-    C = norm(d_im.meas - d.meas) + hp^2 * imdif.'*RtR*imdif; 
+    delta_d = d_im.meas - d.meas;
+    C = 0.5*norm(delta_d)^2 + hp^2 * imdif.'*RtR*imdif; 
     
 
 end

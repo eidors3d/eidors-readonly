@@ -67,13 +67,21 @@ opts = [];
 opts.ptensor = 1;
 opts.use_hyper = 1;
 opts.neumann = 'freespace';
+opts.ptensor_its = 50;
+% opts.update_delta = 0;
+% [x_f0, r_f0] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+opts.update_delta = 1;
 [x_f, r_f] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
-
-
+opts.ptensor_its = 20;
+[x_f20, r_f20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
 %
 opts.neumann = 'disc';
 opts.use_hyper = 1;
+opts.ptensor_its = 50;
 [x_d, r_d] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+opts.ptensor_its = 20;
+[x_d20, r_d20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+
 
 % 
 % % Re-calc U0
