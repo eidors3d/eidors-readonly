@@ -85,7 +85,25 @@ function PSF = desired_soln(xyz, radius, opt)
     
     warned = false;
     interp_elem_new('reset',size(mdl.vox,1));
+    
+    % estimate the amount of memory needed to store PSF
+    n_el = size(mdl.vox,1);
+    n_pt = size(xyz,2);
+    n_ep = n_el*n_pt;
+    ll = eidors_msg('log_level',0);
+    vox_box = sum(get_elem_volume(mdl));
+    eidors_msg('log_level',ll);
+    tgt_box = (2*mean(radius+opt.threshold./opt.steepness))^3;
+    n_nz = ceil(n_ep*tgt_box/vox_box);
+    SPARSE_STEP = ceil(n_nz/5);
+    PSF = spalloc(n_el,n_pt,n_nz);
+    
     for i=1:size(xyz,2)
+        if nnz(PSF) > n_nz
+           n_nz = nnz(PSF) + SPARSE_STEP;
+           [r,c,v] = find(PSF);
+           PSF = sparse(r,c,v,n_el,n_pt,n_nz); 
+        end
         th = opt.threshold/opt.steepness(i);
         progress_msg(i,num_it);
         farel = far_elems(Xnodes,Ynodes,Znodes, xyz(:,i), radius(i), th);
@@ -134,7 +152,7 @@ function PSF = desired_soln(xyz, radius, opt)
                   'Desired image generation failed for point %d (and maybe others)',i);
                warned = true;
             end
-            PSF(:,i) = 0;
+            % PSF(:,i) = 0; % not needed
             continue;
         end
         V = [X Y Z];
