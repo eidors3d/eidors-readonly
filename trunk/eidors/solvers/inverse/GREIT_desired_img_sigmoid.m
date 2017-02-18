@@ -73,18 +73,22 @@ function PSF = desired_soln(xyz, radius, opt)
     switch opt.n_dim
         case 3
             mdl.vox = [mdl.elems(1:6:end,:) mdl.elems(6:6:end,:)];
+
+            min_vox_edge = min( [min(diff(unique(mdl.nodes(:,1)))), ...
+                                 min(diff(unique(mdl.nodes(:,2)))), ...
+                                 min(diff(unique(mdl.nodes(:,3))))] );
         case 2
             mdl.vox = [mdl.elems(1:2:end,:) mdl.elems(2:2:end,:)];
+            min_vox_edge = min( [min(diff(unique(mdl.nodes(:,1)))), ...
+                                 min(diff(unique(mdl.nodes(:,2))))] );
+
     end
     [Xnodes,Ynodes,Znodes] = voxnodes(mdl);
     
-    min_vox_edge = min( [min(diff(unique(mdl.nodes(:,1)))), ...
-                        min(diff(unique(mdl.nodes(:,2)))), ...
-                        min(diff(unique(mdl.nodes(:,3))))] );
 
     
     warned = false;
-    interp_elem_new('reset',size(mdl.vox,1));
+    interp_elem_new('reset',size(mdl.vox,1),[],opt);
     
     % estimate the amount of memory needed to store PSF
     n_el = size(mdl.vox,1);
@@ -183,9 +187,9 @@ function [x,y,z] = interp_elem_new(mdl,e,radius,opt)
     if ischar(mdl) && strcmp(mdl,'reset')
         N_entries = 0; X = []; Y = []; Z = []; MAP = [];
         N       = ones(1,3);
-        minnode = zeros(e,3);
-        maxnode = zeros(e,3);
-        sep     = zeros(e,3);
+        minnode = zeros(e,opt.n_dim);
+        maxnode = zeros(e,opt.n_dim);
+        sep     = zeros(e,opt.n_dim);
         done_elems = false(e,1);
         return;
     end
