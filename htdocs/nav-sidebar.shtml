@@ -45,7 +45,7 @@
    >Documentation</a><br>
 <a href="<!--#echo var="root" -->tutorial/tutorial.shtml"
    >Tutorials</a><br>
-<!--#if expr="$show_dev = /1/" -->
+<!--#if expr="v('show_tut') = '1'" -->
 <a href="<!--#echo var="root" -->tutorial/image_reconst.shtml"
       >&minus; Image Reconst</a><br>
 <a href="<!--#echo var="root" -->tutorial/data_structures.shtml"
@@ -79,7 +79,7 @@
    >archive</a>)<br>
 <a href="<!--#echo var="root" -->faq.shtml">FAQ</a><br>
 <a href="<!--#echo var="root" -->programming/programming.shtml">Developer</a><br>
-<!--#if expr="$show_dev = /1/" -->
+<!--#if expr="v('show_dev') = '1'" -->
 <a href="../programming/examples.shtml"
       >&minus; Examples</a><br>
 <a href="../programming/structure.shtml"
