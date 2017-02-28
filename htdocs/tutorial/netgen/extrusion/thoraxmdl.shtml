@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../../nav-sidebar.shtml" -->
+[% root = "../../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../../nav-sidebar.shtml" %]
 
 <h2> 
 Modeling EIT current flow in a human thorax model
@@ -29,7 +29,7 @@ the eidors <tt>shape_library</tt>.
 The image is available 
 <a href="thorax-mdl.jpg">here [thorax-mdl.jpg]</a>
 <pre>
-<!--#include virtual="thoraxmdl01.m" -->
+[% PROCESS "thoraxmdl01.m" %]
 </pre>
 <center>
 <img src="thoraxmdl01a.jpg">
@@ -40,7 +40,7 @@ The image is available
 Use Netgen to build a FEM model of the thorax
 </H3>
 <pre>
-<!--#include virtual="thoraxmdl02.m" -->
+[% PROCESS "thoraxmdl02.m" %]
 </pre>
 <center>
 <img src="thoraxmdl02a.jpg">
@@ -51,11 +51,11 @@ Voltage and Current Distribution in a slice
 </H3>
 Voltage distribution
 <pre>
-<!--#include virtual="thoraxmdl03.m" -->
+[% PROCESS "thoraxmdl03.m" %]
 </pre>
 Current distribution
 <pre>
-<!--#include virtual="thoraxmdl04.m" -->
+[% PROCESS "thoraxmdl04.m" %]
 </pre>
 <center>
 <img src="thoraxmdl03a.jpg"> <img src="thoraxmdl04a.jpg">
@@ -69,7 +69,7 @@ Current distribution
 Current streamlines and the original image
 </H3>
 <pre>
-<!--#include virtual="thoraxmdl05.m" -->
+[% PROCESS "thoraxmdl05.m" %]
 </pre>
 <center>
 <img src="thoraxmdl05a.jpg">
@@ -86,7 +86,7 @@ do not display path irregularities.
 Add Equipotential lines to the original image
 </H3>
 <pre>
-<!--#include virtual="thoraxmdl06.m" -->
+[% PROCESS "thoraxmdl06.m" %]
 </pre>
 <center>
 <img src="thoraxmdl06a.jpg">
