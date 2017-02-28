@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>GN reconstruction vs Backprojection</H2>
 
@@ -25,7 +25,7 @@ Calculate the nodal voltage field
 </h3>
 
 <pre>
-<!--#include virtual="backproj_solve01.m" -->
+[% PROCESS "backproj_solve01.m" %]
 </pre>
 
 <center>
@@ -46,7 +46,7 @@ Calculate Equipotential lines
 </h3>
 
 <pre>
-<!--#include virtual="backproj_solve02.m" -->
+[% PROCESS "backproj_solve02.m" %]
 </pre>
 
 <center>
@@ -69,7 +69,7 @@ Here, we reuse the model from the
  <a href="./tutorial120.shtml">this tutorial</a>, below:
 
 <pre>
-<!--#include virtual="tutorial120a.m" -->
+[% PROCESS "tutorial120a.m" %]
 </pre>
 
 <center>
@@ -84,7 +84,7 @@ Image reconstruction with GN (NOSER) and Backprojection solvers
 
 
 <pre>
-<!--#include virtual="backproj_solve03.m" -->
+[% PROCESS "backproj_solve03.m" %]
 </pre>
 
 <center>
@@ -110,7 +110,7 @@ version of the algorithm.
 <p>
 
 <pre>
-<!--#include virtual="backproj_solve04.m" -->
+[% PROCESS "backproj_solve04.m" %]
 </pre>
 
 <center>

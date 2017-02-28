@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>Unexpected Effect: Imaging with absolute value of measurements</H2>
 
@@ -14,12 +14,12 @@ This effect is not visible for adjacent stimulation/measurement
 (the default from <tt>mk_common_models</tt>. It is necessary to
 specify a pattern such as this.
 <pre>
-<!--#include virtual="absolute_value01.m" -->
+[% PROCESS "absolute_value01.m" %]
 </pre>
 
 <h3>Simulation Image</h3>
 <pre>
-<!--#include virtual="absolute_value02.m" -->
+[% PROCESS "absolute_value02.m" %]
 </pre>
 
 <center>
@@ -30,7 +30,7 @@ Stimulation Image
 
 <h3>Reconstruct without/with Absolute Value</h3>
 <pre>
-<!--#include virtual="absolute_value03.m" -->
+[% PROCESS "absolute_value03.m" %]
 </pre>
 
 <center>
@@ -48,7 +48,7 @@ original value, by getting the sign of
 simulated data. This may have errors if
 voltages are close to zero.
 <pre>
-<!--#include virtual="absolute_value04.m" -->
+[% PROCESS "absolute_value04.m" %]
 </pre>
 
 <center>
@@ -61,13 +61,13 @@ Reconstructed images by re-calculating the sign
 Define a new Jacobian matrix calculator for the
 system that knows about absolute values
 <pre>
-<!--#include virtual="jacobian_absolute.m" -->
+[% PROCESS "jacobian_absolute.m" %]
 </pre>
 
 Then use this jacobian to override the <tt>jacobian</tt> field in 
 the <tt>fwd_model.jacobian</tt>.
 <pre>
-<!--#include virtual="absolute_value05.m" -->
+[% PROCESS "absolute_value05.m" %]
 </pre>
 
 <center>

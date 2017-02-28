@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Simulation of 3D surface electrode patterns.
@@ -12,7 +12,7 @@ Simulation of 3D surface electrode patterns.
 Simulate 3D data 
 </h3>
 <pre>
-<!--#include virtual="surface_sim01.m" -->
+[% PROCESS "surface_sim01.m" %]
 </pre>
 
 <center>
@@ -22,14 +22,14 @@ model of a conductive ball underneath a set of electrodes
 </center>
 
 <pre>
-<!--#include virtual="surface_sim02.m" -->
+[% PROCESS "surface_sim02.m" %]
 </pre>
 
 <h3>
 Create 3D forward model and reconstruction model
 </h3>
 <pre>
-<!--#include virtual="surface_sim03.m" -->
+[% PROCESS "surface_sim03.m" %]
 </pre>
 
 <center>
@@ -42,7 +42,7 @@ Forward model (black) and reconstruction model (blue)
 Inversion (using a difference solver)
 </h3>
 <pre>
-<!--#include virtual="surface_sim04.m" -->
+[% PROCESS "surface_sim04.m" %]
 </pre>
 
 <center>

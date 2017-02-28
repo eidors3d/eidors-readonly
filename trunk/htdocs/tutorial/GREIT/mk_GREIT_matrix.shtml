@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Calculate GREIT Reconstruction Matrix</h2>
 
@@ -27,7 +27,7 @@ Reconstruction Model (Circular model)
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_matrix01.m" -->
+[% PROCESS "mk_GREIT_matrix01.m" %]
 </pre>
 
 <center>
@@ -42,7 +42,7 @@ Calculate GREIT reconstruction matrix
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_matrix02.m" -->
+[% PROCESS "mk_GREIT_matrix02.m" %]
 </pre>
 
 The resulting matrix will be in the <tt>imdl</tt>
@@ -53,7 +53,7 @@ Simulate 3D object on cylinder
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_matrix03.m" -->
+[% PROCESS "mk_GREIT_matrix03.m" %]
 </pre>
 
 <h3> 
@@ -61,7 +61,7 @@ Reconstruct
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_matrix04.m" -->
+[% PROCESS "mk_GREIT_matrix04.m" %]
 </pre>
 
 <center>

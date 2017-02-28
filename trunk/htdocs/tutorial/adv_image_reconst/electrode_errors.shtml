@@ -1,6 +1,6 @@
 <!--#set var="root" value="../../" -->
 <!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 
 <h2>
@@ -18,7 +18,7 @@ Sample Data and clean reconstruction
 </H3>
 
 <pre>
-<!--#include virtual="electrode_errors01.m" -->
+[% PROCESS "electrode_errors01.m" %]
 </pre>
 
 <center>
@@ -44,7 +44,7 @@ Andy Adler
 </ul>
 
 <pre>
-<!--#include virtual="electrode_errors02.m" -->
+[% PROCESS "electrode_errors02.m" %]
 </pre>
 
 <center>
@@ -73,7 +73,7 @@ Real-time management of faulty electrodes in EIT
 </ul>
 
 <pre>
-<!--#include virtual="electrode_errors03.m" -->
+[% PROCESS "electrode_errors03.m" %]
 </pre>
 
 <center>
@@ -97,12 +97,12 @@ noise inverse covariance.
 <p>
 Create a GREIT model.
 <pre>
-<!--#include virtual="electrode_errors04.m" -->
+[% PROCESS "electrode_errors04.m" %]
 </pre>
 
 Basic GREIT reconstruction
 <pre>
-<!--#include virtual="electrode_errors05.m" -->
+[% PROCESS "electrode_errors05.m" %]
 </pre>
 <center><img src="electrode_errors05a.png">
 <br><i>Figure:</i>
@@ -111,7 +111,7 @@ Basic GREIT reconstruction
 
 GREIT with single electrode errors
 <pre>
-<!--#include virtual="electrode_errors06.m" -->
+[% PROCESS "electrode_errors06.m" %]
 </pre>
 <center><img src="electrode_errors06a.png">
 <br><i>Figure:</i>
@@ -120,7 +120,7 @@ GREIT with single electrode errors
 
 GREIT with reciprocity-based electrode errors
 <pre>
-<!--#include virtual="electrode_errors07.m" -->
+[% PROCESS "electrode_errors07.m" %]
 </pre>
 <center><img src="electrode_errors07a.png">
 <br><i>Figure:</i>

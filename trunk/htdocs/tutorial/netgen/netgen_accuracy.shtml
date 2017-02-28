@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 FEM accuracy vs model size
@@ -14,7 +14,7 @@ WARNING: Don't try this at home. Only the first model takes
 over an hour, 50 GB of memory and 8 CPUs. 
 </p>
 <pre>
-<!--#include virtual="netgen_accuracy01.m" -->
+[% PROCESS "netgen_accuracy01.m" %]
 </pre>
 
 We then create
@@ -22,14 +22,14 @@ coarser models, and compare the relative accuracy in EIT
 data measurements between models.
 
 <pre>
-<!--#include virtual="netgen_accuracy02.m" -->
+[% PROCESS "netgen_accuracy02.m" %]
 </pre>
 
 The relative error is calculated as the absolute
 of (v<sub>course</sub>/v<sub>fine</sub>&nbsp;&minus;&nbsp;1).
 
 <pre>
-<!--#include virtual="netgen_accuracy03.m" -->
+[% PROCESS "netgen_accuracy03.m" %]
 </pre>
 
 <pre>

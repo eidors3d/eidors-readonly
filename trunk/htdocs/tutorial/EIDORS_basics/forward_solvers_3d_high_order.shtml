@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS fwd_models</h2>
 
@@ -20,7 +20,7 @@ The implementation of the high order finite elements for CEM are described in de
 Create a common model with EIDORS and solve using default solver. Swap the default forward solvers to the high order solvers, and the element type ('tet4' is linear and 'tet10' is quadratic).
 
 <pre>
-<!--#include virtual="forward_solvers_3d_high_order01.m" -->
+[% PROCESS "forward_solvers_3d_high_order01.m" %]
 </pre>
 
 <center>
@@ -30,7 +30,7 @@ The plot reassuringly shows the two approximations (eidors default and the high 
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers_3d_high_order02.m" -->
+[% PROCESS "forward_solvers_3d_high_order02.m" %]
 </pre>
 
 <center>
@@ -42,7 +42,7 @@ The left plot shows the voltage distribution for the first stimulation using the
 We now solve the forward problem using a quadratic ('tet10') approximation and look at the electrode voltages and internal voltage distribution.
 
 <pre>
-<!--#include virtual="forward_solvers_3d_high_order03.m" -->
+[% PROCESS "forward_solvers_3d_high_order03.m" %]
 </pre>
 
 <center>
@@ -52,7 +52,7 @@ The electrode voltages for linear and quadratic approximation. The linear approx
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers_3d_high_order04.m" -->
+[% PROCESS "forward_solvers_3d_high_order04.m" %]
 </pre>
 
 <center>

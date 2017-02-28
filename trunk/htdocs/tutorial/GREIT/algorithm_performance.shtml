@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Algorithm Performance</h2>
 
@@ -15,7 +15,7 @@ Shape Deformation (SD), and
 Ringing (RNG)
 
 <pre>
-<!--#include virtual="algorithm_performance01.m" -->
+[% PROCESS "algorithm_performance01.m" %]
 </pre>
 
 <center>
@@ -38,7 +38,7 @@ Simulate 3D object
 </h3>
 
 <pre>
-<!--#include virtual="test_params01.m" -->
+[% PROCESS "test_params01.m" %]
 </pre>
 
 <center>
@@ -52,7 +52,7 @@ Simulate target positions
 </h3>
 
 <pre>
-<!--#include virtual="test_params02.m" -->
+[% PROCESS "test_params02.m" %]
 </pre>
 
 <h3> 
@@ -60,7 +60,7 @@ Gauss-Newton Reconstruction Matrix
 </h3>
 
 <pre>
-<!--#include virtual="test_params03.m" -->
+[% PROCESS "test_params03.m" %]
 </pre>
 
 <h3> 
@@ -68,7 +68,7 @@ Calculate and show GREIT parameters
 </h3>
 
 <pre>
-<!--#include virtual="test_params04.m" -->
+[% PROCESS "test_params04.m" %]
 </pre>
 
 <center>

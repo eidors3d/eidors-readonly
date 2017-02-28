@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Model of a 2&frac12;D cross-section of a pipe
@@ -11,7 +11,7 @@ Model of a 2&frac12;D cross-section of a pipe
 
 Using netgen, we simulate a cylindrical pipe with one row of 12 electrodes.
 <pre>
-<!--#include virtual="pipe01.m" -->
+[% PROCESS "pipe01.m" %]
 </pre>
 
 <center>
@@ -27,7 +27,7 @@ view points.
 We simulate a small elliptic object in the pipe, just below the
 electrode plane.
 <pre>
-<!--#include virtual="pipe02.m" -->
+[% PROCESS "pipe02.m" %]
 </pre>
 
 <center>
@@ -49,7 +49,7 @@ First, we create a coarse model which represents
 the entire depth in <i>z</i> (ie. like the 2&frac12;D model).
 
 <pre>
-<!--#include virtual="pipe03.m" -->
+[% PROCESS "pipe03.m" %]
 </pre>
 
 <center>
@@ -63,7 +63,7 @@ These images display a targets in the space
 from the original volume.
 
 <pre>
-<!--#include virtual="pipe04.m" -->
+[% PROCESS "pipe04.m" %]
 </pre>
 
 <center>

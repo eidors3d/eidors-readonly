@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS fwd_models</h2>
 
@@ -11,7 +11,7 @@ Creating an FEM and solving the forward problem
 EIDORS has functions to create common FEM models.
 
 <pre>
-<!--#include virtual="forward_solvers01.m" -->
+[% PROCESS "forward_solvers01.m" %]
 </pre>
 
 <center>
@@ -22,7 +22,7 @@ conductivity contrasting inclusion (right)
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers02.m" -->
+[% PROCESS "forward_solvers02.m" %]
 </pre>
 
 <center>
@@ -32,7 +32,7 @@ The voltage pattern from adjacent stimulation
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers03.m" -->
+[% PROCESS "forward_solvers03.m" %]
 </pre>
 
 <center>
@@ -42,7 +42,7 @@ The voltage pattern from opposite (nearly) stimulation
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers04.m" -->
+[% PROCESS "forward_solvers04.m" %]
 </pre>
 
 <center>
@@ -52,7 +52,7 @@ The voltage pattern from a change in conductivity
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers05.m" -->
+[% PROCESS "forward_solvers05.m" %]
 </pre>
 
 <center>

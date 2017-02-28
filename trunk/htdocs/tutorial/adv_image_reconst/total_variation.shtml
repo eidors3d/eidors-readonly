@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Iterative Gauss Newton reconstruction in 3D
@@ -17,7 +17,7 @@ The first step is to simulate an image which
 has a blocky shape (here we choose a pie slice).
 
 <pre>
-<!--#include virtual="total_variation01.m" -->
+[% PROCESS "total_variation01.m" %]
 </pre>
 
 <center>
@@ -28,7 +28,7 @@ Pie slice shape that is to be reconstructed
 
 <h3> GN reconstruction </h3>
 <pre>
-<!--#include virtual="total_variation02.m" -->
+[% PROCESS "total_variation02.m" %]
 </pre>
 
 <center>
@@ -65,7 +65,7 @@ minimization problem efficiently. The performance of this algorithm with
 respect to traditional smooth algorithms is the subject of this paper.
 
 <pre>
-<!--#include virtual="total_variation03.m" -->
+[% PROCESS "total_variation03.m" %]
 </pre>
 
 
@@ -82,7 +82,7 @@ In order to understand how TV reconstructions improve with
 the iteration number, we calculate:
 
 <pre>
-<!--#include virtual="total_variation04.m" -->
+[% PROCESS "total_variation04.m" %]
 </pre>
 
 

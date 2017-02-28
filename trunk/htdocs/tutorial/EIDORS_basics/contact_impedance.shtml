@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>The effect of contact impedance</H2>
 
@@ -13,7 +13,7 @@ electrode models.
 
 <h3> Simulation Model</H3>
 <pre>
-<!--#include virtual="contact_impedance01.m" -->
+[% PROCESS "contact_impedance01.m" %]
 </pre>
 
 <center>
@@ -24,7 +24,7 @@ and current simulation across horizontal pairs.
 </center>
 
 <pre>
-<!--#include virtual="contact_impedance02.m" -->
+[% PROCESS "contact_impedance02.m" %]
 </pre>
 
 <center>
@@ -35,7 +35,7 @@ Voltage distribution from horizontally opposite stimulation
 
 <h3>Current Near Top Electrode</h3>
 <pre>
-<!--#include virtual="contact_impedance03.m" -->
+[% PROCESS "contact_impedance03.m" %]
 </pre>
 
 <center>
@@ -46,7 +46,7 @@ Current near top electrode
 
 <h3>Current Stream Lines</h3>
 <pre>
-<!--#include virtual="contact_impedance04.m" -->
+[% PROCESS "contact_impedance04.m" %]
 </pre>
 
 <center>

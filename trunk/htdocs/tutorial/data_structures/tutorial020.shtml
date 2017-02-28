@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Basic EIDORS data structures</h2>
 
@@ -14,7 +14,7 @@ and a single electrode (with contact resistance
 of 20&Omega;) at the other.
 
 <pre>
-<!--#include virtual="tutorial020a.m" -->
+[% PROCESS "tutorial020a.m" %]
 </pre>
 
 <center>
@@ -34,7 +34,7 @@ define an electrical resistor, with ground at one end,
 and a single electrode at the other.
 
 <pre>
-<!--#include virtual="tutorial020b.m" -->
+[% PROCESS "tutorial020b.m" %]
 </pre>
 
 Output data is given by:
@@ -64,7 +64,7 @@ The forward solver used here is
 shown below:
 
 <pre>
-<!--#include virtual="tutorial020_f_solve.m" -->
+[% PROCESS "tutorial020_f_solve.m" %]
 </pre>
 
 <h3> 
@@ -74,7 +74,7 @@ Image reconstruction
 Image reconstruction can be handled via a standard
 EIDORS image functions.
 <pre>
-<!--#include virtual="tutorial020c.m" -->
+[% PROCESS "tutorial020c.m" %]
 </pre>
 
 Thus the output is, giving a resistance change of 200&Omega;

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Electrode movement reconstruction for simulated 2D data
@@ -9,7 +9,7 @@ Electrode movement reconstruction for simulated 2D data
 Here we create a simple 2D model and change the boundary shape between two measurments.
 
 <pre>
-<!--#include virtual="move_2d01.m" -->
+[% PROCESS "move_2d01.m" %]
 </pre>
 
 <center>
@@ -21,7 +21,7 @@ Forward solution of a 2D model where the boundary was changed between measuremen
 Next we solve the inverse problem in two ways: first, without correcting for electrode movements, and second, with movement correction.
 
 <pre>
-<!--#include virtual="move_2d02.m" -->
+[% PROCESS "move_2d02.m" %]
 </pre>
 
 <center>

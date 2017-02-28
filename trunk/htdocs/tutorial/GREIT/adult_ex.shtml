@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>GREIT Reconstruction for an adult human thorax geometry</h2>
 
@@ -12,7 +12,7 @@ Forward Model
 </h3>
 
 <pre>
-<!--#include virtual="adult_ex01.m" -->
+[% PROCESS "adult_ex01.m" %]
 </pre>
 
 <center>
@@ -28,7 +28,7 @@ Training GREIT
 </h3>
 
 <pre>
-<!--#include virtual="adult_ex02.m" -->
+[% PROCESS "adult_ex02.m" %]
 </pre>
 
 <h3> 
@@ -43,7 +43,7 @@ Guardo R Boulay C   Murray B   Bertrand M
   <i>IEEE T Biomed Eng</i> 38: 617&minus;627, 1991
 </ul>
 <pre>
-<!--#include virtual="adult_ex03.m" -->
+[% PROCESS "adult_ex03.m" %]
 </pre>
 
 

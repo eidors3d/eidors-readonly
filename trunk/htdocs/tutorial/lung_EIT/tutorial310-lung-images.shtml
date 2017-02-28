@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Using EIDORS to image lungs</h2>
 
@@ -14,7 +14,7 @@ uses 1) Correct stimulation patterns (adjacent is default),
 2) Normalized difference imaging
 
 <pre>
-<!--#include virtual="tutorial310a.m" -->
+[% PROCESS "tutorial310a.m" %]
 </pre>
 
 <center>
@@ -33,7 +33,7 @@ subject. This example shows two possible
 repositioning of electrodes
 
 <pre>
-<!--#include virtual="tutorial310b.m" -->
+[% PROCESS "tutorial310b.m" %]
 </pre>
 
 <center>
@@ -45,7 +45,7 @@ dorsal side)
 </center>
 
 <pre>
-<!--#include virtual="tutorial310c.m" -->
+[% PROCESS "tutorial310c.m" %]
 </pre>
 
 <center>

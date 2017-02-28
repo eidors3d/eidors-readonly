@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 GREIT algorithm: Sheffield backprojection
@@ -34,7 +34,7 @@ This code requires the backprojection matrix from
 <a href="../../data_contrib/db_backproj_matrix/db_backproj_matrix.shtml"
      >here</a>
 <pre>
-<!--#include virtual="GREIT_Sheffield_backproj.m" -->
+[% PROCESS "GREIT_Sheffield_backproj.m" %]
 </pre>
 
 </td></tr></table>

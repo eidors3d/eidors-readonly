@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Using EIDORS to image geophysics</h2>
 
@@ -36,7 +36,7 @@ Files needed for this tutorial are here:
 Create 3D FEM model of the gallery and load homogeneous model
 </h4>
 <pre>
-<!--#include virtual="tutorial410a.m" -->
+[% PROCESS "tutorial410a.m" %]
 </pre>
 
 <center>
@@ -50,7 +50,7 @@ Create forward model. Calculate the difference (residual) between the
 gallery data and a homogeneous forward model.
 </h4>
 <pre>
-<!--#include virtual="tutorial410b.m" -->
+[% PROCESS "tutorial410b.m" %]
 </pre>
 
 <center>
@@ -63,7 +63,7 @@ Electrode data: <i>blue</i> simulation, <i>green</i> measurement
 Reconstruct image and show residual.
 </h4>
 <pre>
-<!--#include virtual="tutorial410c.m" -->
+[% PROCESS "tutorial410c.m" %]
 </pre>
 
 <center>
@@ -76,7 +76,7 @@ Electrode data: <i>blue</i> simulation, <i>green</i> measurement
 Show reconstructed images
 </h4>
 <pre>
-<!--#include virtual="tutorial410d.m" -->
+[% PROCESS "tutorial410d.m" %]
 </pre>
 
 <center>

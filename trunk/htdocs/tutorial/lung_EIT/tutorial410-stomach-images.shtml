@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Using EIDORS to image gastric emptying</h2>
 
@@ -35,7 +35,7 @@ uses 1) Correct stimulation patterns (adjacent is default),
 2) Normalized difference imaging
 
 <pre>
-<!--#include virtual="tutorial410a.m" -->
+[% PROCESS "tutorial410a.m" %]
 </pre>
 
 <center>
@@ -54,7 +54,7 @@ Image reconstruction
 </H3>
 
 <pre>
-<!--#include virtual="tutorial410b.m" -->
+[% PROCESS "tutorial410b.m" %]
 </pre>
 
 <center>
@@ -70,7 +70,7 @@ Calculate signal as a function of time
 </H3>
 
 <pre>
-<!--#include virtual="tutorial410c.m" -->
+[% PROCESS "tutorial410c.m" %]
 </pre>
 
 <center>
@@ -84,7 +84,7 @@ Different algorithms for stomach images
 </H3>
 
 <pre>
-<!--#include virtual="tutorial410d.m" -->
+[% PROCESS "tutorial410d.m" %]
 </pre>
 
 <center>

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Dual Models using a rectangular mesh of a volume slice
@@ -23,7 +23,7 @@ FEM where each square pixel includes two triangular
 elements. The model is parametrized such that 
 both elements in each pixel have the same parameter
 <pre>
-<!--#include virtual="square_mesh01.m" -->
+[% PROCESS "square_mesh01.m" %]
 </pre>
 
 <center>
@@ -43,14 +43,14 @@ First, we select the vertical extent of the
 coarse mesh (<i>z</i><sub>depth</sub>=0.1). 
 This can be shown as follows:
 <pre>
-<!--#include virtual="square_mesh02.m" -->
+[% PROCESS "square_mesh02.m" %]
 </pre>
 
 Next, we show the coarse and fine models
 and their relationship. 
 
 <pre>
-<!--#include virtual="square_mesh03.m" -->
+[% PROCESS "square_mesh03.m" %]
 </pre>
 
 <center>
@@ -67,7 +67,7 @@ Simulation Data
 We simulate a ball moving in
 a helical path on a fine netgen model.
 <pre>
-<!--#include virtual="square_mesh04.m" -->
+[% PROCESS "square_mesh04.m" %]
 </pre>
 <b>Note:</b> this stimulation requires at least 4GB memory
 and many minutes of CPU time to run. The calculated data
@@ -93,12 +93,12 @@ Reconstruct Images
 First, we reconstruct images on the rectangular
 mesh, using the coarse to fine mapping.
 <pre>
-<!--#include virtual="square_mesh05.m" -->
+[% PROCESS "square_mesh05.m" %]
 </pre>
 Next, we reconstruct images on a classic 2D
 circular FEM, and compare the images.
 <pre>
-<!--#include virtual="square_mesh06.m" -->
+[% PROCESS "square_mesh06.m" %]
 </pre>
 
 <center>

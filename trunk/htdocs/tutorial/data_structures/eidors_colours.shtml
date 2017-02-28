@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS display functions and control of colours</h2>
 
@@ -31,14 +31,14 @@ show_slices( img )
 Here we create a small sample image with a sequence
 of colours around the boundary
 <pre>
-<!--#include virtual="eidors_colours01.m" -->
+[% PROCESS "eidors_colours01.m" %]
 </pre>
 
 <H3>Change colour mapping parameters: greylev
 </H3>
 
 <pre>
-<!--#include virtual="eidors_colours02.m" -->
+[% PROCESS "eidors_colours02.m" %]
 </pre>
 <center>
 <img src="eidors_colours02a.png">
@@ -56,7 +56,7 @@ of colours around the boundary
 </H3>
 
 <pre>
-<!--#include virtual="eidors_colours03.m" -->
+[% PROCESS "eidors_colours03.m" %]
 </pre>
 <center>
 <img src="eidors_colours03a.png">
@@ -74,7 +74,7 @@ of colours around the boundary
 </H3>
 
 <pre>
-<!--#include virtual="eidors_colours04.m" -->
+[% PROCESS "eidors_colours04.m" %]
 </pre>
 <center>
 <img src="eidors_colours04a.png">
@@ -92,7 +92,7 @@ of colours around the boundary
 </H3>
 
 <pre>
-<!--#include virtual="eidors_colours05.m" -->
+[% PROCESS "eidors_colours05.m" %]
 </pre>
 <center>
 <img src="eidors_colours05a.png">
@@ -110,7 +110,7 @@ of colours around the boundary
 </H3>
 
 <pre>
-<!--#include virtual="eidors_colours06.m" -->
+[% PROCESS "eidors_colours06.m" %]
 </pre>
 <center>
 <img src="eidors_colours06.png">
@@ -120,7 +120,7 @@ set to an off centre value &minus; 0.1 (right)
 </center>
 
 <pre>
-<!--#include virtual="eidors_colours07.m" -->
+[% PROCESS "eidors_colours07.m" %]
 </pre>
 <center>
 <img src="eidors_colours07a.png">

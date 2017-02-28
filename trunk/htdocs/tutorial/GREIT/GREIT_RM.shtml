@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>GREIT Reconstruction Matrix</h2>
 
@@ -13,7 +13,7 @@ Simulation model
 </h3>
 
 <pre>
-<!--#include virtual="GREIT_test_params01.m" -->
+[% PROCESS "GREIT_test_params01.m" %]
 </pre>
 
 <center>

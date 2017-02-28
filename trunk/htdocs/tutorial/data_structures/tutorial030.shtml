@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Modifying EIDORS data structures and models
@@ -22,7 +22,7 @@ the electrodes can be placed anywhere, and
 the corresponding images reconstructed.
 
 <pre>
-<!--#include virtual="tutorial030a.m" -->
+[% PROCESS "tutorial030a.m" %]
 </pre>
 
 <center>
@@ -37,7 +37,7 @@ Using 16 electrodes from a 32 electrode model
 </h3>
 
 <pre>
-<!--#include virtual="tutorial030b.m" -->
+[% PROCESS "tutorial030b.m" %]
 </pre>
 
 <center>
@@ -55,7 +55,7 @@ Reconstruct images with different electrode placements
 </h3>
 
 <pre>
-<!--#include virtual="tutorial030c.m" -->
+[% PROCESS "tutorial030c.m" %]
 </pre>
 
 <center>

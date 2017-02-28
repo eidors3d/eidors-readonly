@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Two and a half dim (2&frac12;D) image reconstruction
@@ -22,7 +22,7 @@ of coarse/fine mapping, where the a fine (high density)
 forward model is used with a coarse (low density) 
 inverse model.
 <pre>
-<!--#include virtual="two_and_half_d01.m" -->
+[% PROCESS "two_and_half_d01.m" %]
 </pre>
 
 <center>
@@ -38,7 +38,7 @@ First, show the simulated target and
 the reconstruction on the fine (<i>inverse crime</i>)
 mesh.
 <pre>
-<!--#include virtual="two_and_half_d02.m" -->
+[% PROCESS "two_and_half_d02.m" %]
 </pre>
 
 Next, create geometries for the fine and
@@ -50,7 +50,7 @@ still needs some work, it doesn't account for
 all cases)
 
 <pre>
-<!--#include virtual="two_and_half_d03.m" -->
+[% PROCESS "two_and_half_d03.m" %]
 </pre>
 
 Note the reconstructed image on the coarse

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Sensitivity of EIT and Reconstruction</h2>
 
@@ -11,7 +11,7 @@ Sensitivity of EIT in 2D
 The regional sensitivity of EIT for a particular current pattern can be shown
 
 <pre>
-<!--#include virtual="sensitivity_map01.m" -->
+[% PROCESS "sensitivity_map01.m" %]
 </pre>
 
 <center>
@@ -27,7 +27,7 @@ Reconstruction from each component
 </h3>
 
 <pre>
-<!--#include virtual="sensitivity_map02.m" -->
+[% PROCESS "sensitivity_map02.m" %]
 </pre>
 
 <center>

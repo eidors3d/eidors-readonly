@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2 >EIT-based regional lung mechanics in the acute respiratory distress syndrome during lung recruitment (human)
 </h2>
@@ -49,12 +49,12 @@ EIDORS Analysis
 
 <li><b> Reconstruct images for each step of the protocol and save images </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_01.m" -->
+[% PROCESS "cg_ards_recruitment_01.m" %]
 </pre>
 
 <li><b> Display time signal and images from one step </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_02.m" -->
+[% PROCESS "cg_ards_recruitment_02.m" %]
 </pre>
 
 <center>
@@ -65,12 +65,12 @@ Output of "EITDisplayImages(db_c1.eitimages,1,'mtd');". An estimate regional tid
 
 <li><b> Aggregate data from all recruitment maneuver steps </b> 
 <pre> 
-<!--#include virtual="cg_ards_recruitment_03.m" -->
+[% PROCESS "cg_ards_recruitment_03.m" %]
 </pre>
 
 <li><b> Display C_MAX and P_STAR maps </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_04.m" -->
+[% PROCESS "cg_ards_recruitment_04.m" %]
 </pre>
 
 <center>
@@ -87,7 +87,7 @@ P_STAR map indicates the pressure at which maximum compliance was achieved durin
 
 <li><b> Display lung overdistension (blue) and collapse (red) maps </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_05.m" -->
+[% PROCESS "cg_ards_recruitment_05.m" %]
 </pre>
 
 <center>
@@ -102,12 +102,12 @@ Regional overdistension (blue) and collapse (red) maps during lung recruitment. 
 
 <li><b> Repeat steps 4-6 for PEEP titration manoeuvre: aggregate data from titration steps </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_06.m" -->
+[% PROCESS "cg_ards_recruitment_06.m" %]
 </pre>
 
 <li><b> Display C_MAX and P_STAR maps </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_07.m" -->
+[% PROCESS "cg_ards_recruitment_07.m" %]
 </pre>
 
 <center>
@@ -124,7 +124,7 @@ P_STAR map indicates the pressure at which maximum compliance was achieved durin
 
 <li><b> Display lung overdistension (blue) and collapse (red) maps </b>
 <pre>
-<!--#include virtual="cg_ards_recruitment_08.m" -->
+[% PROCESS "cg_ards_recruitment_08.m" %]
 </pre>
 
 <center>

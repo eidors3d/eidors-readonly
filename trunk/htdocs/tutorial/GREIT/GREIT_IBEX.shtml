@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>GREIT Reconstruction with IBEX software</h2>
 
@@ -23,7 +23,7 @@ Create Reconstruction Matrix and ROIs
 Here we are using the adult human FEM model
 
 <pre>
-<!--#include virtual="GREIT_IBEX_01.m"-->
+[% PROCESS "GREIT_IBEX_01.m" %]
 </pre>
 
 <center>
@@ -37,7 +37,7 @@ Example ROIs needed for analysis
 Use GREIT Reconstruction
 
 <pre>
-<!--#include virtual="GREIT_IBEX_02.m"-->
+[% PROCESS "GREIT_IBEX_02.m" %]
 </pre>
 
 <h3>
@@ -50,7 +50,7 @@ Use data from a
 
 
 <pre>
-<!--#include virtual="GREIT_IBEX_03.m"-->
+[% PROCESS "GREIT_IBEX_03.m" %]
 </pre>
 
 <center>
@@ -64,7 +64,7 @@ Create the required variables to use IBEX
 </h3>
 
 <pre>
-<!--#include virtual="GREIT_IBEX_04.m"-->
+[% PROCESS "GREIT_IBEX_04.m" %]
 </pre>
 
 Now <tt>file-for-IBEX.mat</tt> can be used with IBEX software.

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS fwd_models</h2>
 
@@ -19,7 +19,7 @@ The implementation of the high order finite elements for CEM are described in de
 Create a common model with EIDORS and solve using default solver. Swap the default forward solvers to the higher order solvers, and the element type ('tri3' is linear, 'tri6' is quadratic and 'tri10' is cubic).
 
 <pre>
-<!--#include virtual="forward_solvers_2d_high_order01.m" -->
+[% PROCESS "forward_solvers_2d_high_order01.m" %]
 </pre>
 
 <center>
@@ -29,7 +29,7 @@ The plot reassuringly shows the two approximations (eidors default and the high 
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers_2d_high_order02.m" -->
+[% PROCESS "forward_solvers_2d_high_order02.m" %]
 </pre>
 
 <center>
@@ -41,7 +41,7 @@ The left plot shows the voltage distribution for the first stimulation using the
 We now solve the forward problem using a quadratic ('tri6') and cubic ('tri10') approximation and look at the electrode voltages and internal voltage distribution.
 
 <pre>
-<!--#include virtual="forward_solvers_2d_high_order03.m" -->
+[% PROCESS "forward_solvers_2d_high_order03.m" %]
 </pre>
 
 <center>
@@ -51,7 +51,7 @@ The electrode voltages for linear, quadratic and cubic approximation. The linear
 </center>
 
 <pre>
-<!--#include virtual="forward_solvers_2d_high_order04.m" -->
+[% PROCESS "forward_solvers_2d_high_order04.m" %]
 </pre>
 
 <center>

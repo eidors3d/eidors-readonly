@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS fwd_models</h2>
 
@@ -12,7 +12,7 @@ EIDORS has functions to create common FEM
 models.
 
 <pre>
-<!--#include virtual="tutorial010a.m" -->
+[% PROCESS "tutorial010a.m" %]
 </pre>
 
 <center>
@@ -32,7 +32,7 @@ data. This code simulates difference data
 for a pattern with two inhomogeneities.
 
 <pre>
-<!--#include virtual="tutorial010b.m" -->
+[% PROCESS "tutorial010b.m" %]
 </pre>
 
 <center>
@@ -51,7 +51,7 @@ Using these difference data sets, an
 image may be reconstructed.
 
 <pre>
-<!--#include virtual="tutorial010c.m" -->
+[% PROCESS "tutorial010c.m" %]
 </pre>
 
 <center>

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>3D GREIT Reconstruction</h2>
 
@@ -12,7 +12,7 @@ Forward Model
 </h3>
 
 <pre>
-<!--#include virtual="vox_GREIT_sim_01.m" -->
+[% PROCESS "vox_GREIT_sim_01.m" %]
 </pre>
 
 <h3> 
@@ -20,7 +20,7 @@ Simulation test data
 </h3>
 
 <pre>
-<!--#include virtual="vox_GREIT_sim_02.m" -->
+[% PROCESS "vox_GREIT_sim_02.m" %]
 </pre>
 
 
@@ -37,7 +37,7 @@ Create 3D GREIT Model
 </h3>
 
 <pre>
-<!--#include virtual="vox_GREIT_sim_03.m" -->
+[% PROCESS "vox_GREIT_sim_03.m" %]
 </pre>
 
 <h3> 
@@ -45,7 +45,7 @@ Reconstruct and show images
 </h3>
 
 <pre>
-<!--#include virtual="vox_GREIT_sim_04.m" -->
+[% PROCESS "vox_GREIT_sim_04.m" %]
 </pre>
 
 <center>

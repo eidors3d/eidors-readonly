@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>Strange Effect: Opposite vs Adjacent measurement/stimulation</H2>
 
@@ -9,7 +9,7 @@ EIT image algorithm cannot tell which part of the object
 the image comes from, and a mirror image is created.
 
 <pre>
-<!--#include virtual="opposite_meas01.m" -->
+[% PROCESS "opposite_meas01.m" %]
 </pre>
 
 <center>

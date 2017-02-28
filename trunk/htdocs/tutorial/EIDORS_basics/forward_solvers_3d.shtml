@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS fwd_models</h2>
 
@@ -11,10 +11,10 @@ Creating an FEM and solving a 3D forward problem
 EIDORS has functions to create common FEM models.
 
 <pre>
-<!--#include virtual="forward_solver_3d_01.m" -->
+[% PROCESS "forward_solver_3d_01.m" %]
 </pre>
 <pre>
-<!--#include virtual="forward_solver_3d_02.m" -->
+[% PROCESS "forward_solver_3d_02.m" %]
 </pre>
 
 <center>
@@ -27,7 +27,7 @@ insulating inclusion (right)
 
 Solving voltage pattern with and without inclusion
 <pre>
-<!--#include virtual="forward_solver_3d_03.m" -->
+[% PROCESS "forward_solver_3d_03.m" %]
 </pre>
 
 <center>
@@ -37,7 +37,7 @@ Measured voltages pattern from adjacent stimulation
 </center>
 
 <pre>
-<!--#include virtual="forward_solver_3d_04.m" -->
+[% PROCESS "forward_solver_3d_04.m" %]
 </pre>
 
 <center>
@@ -50,7 +50,7 @@ to a change in conductivity.
 </center>
 
 <pre>
-<!--#include virtual="forward_solver_3d_05.m" -->
+[% PROCESS "forward_solver_3d_05.m" %]
 </pre>
 
 <center>
