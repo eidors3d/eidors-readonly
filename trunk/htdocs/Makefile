@@ -7,6 +7,7 @@ BUILD_DOCS = ../build-htdocs
 # Seems need to reorder variable assignment
  THTML = $(patsubst %.shtml, $(BUILD_DOCS)/%.html, \
              $(shell find -type f -name '*.shtml'))
+# OTHERVAR := $(filter-out SomethingElse,$(VAR))
 
 all: $(BUILD_DOCS) $(THTML)
 
@@ -15,7 +16,7 @@ all: $(BUILD_DOCS) $(THTML)
 $(THTML): $(BUILD_DOCS)/%.html: %.shtml
 	@echo $< " => " $@
 	mkdir -p `dirname $@`
-	tpage $< > $@ 
+	(cd `dirname $<` && tpage `basename $<`) > $@ 
 
 
 

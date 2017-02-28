@@ -1,6 +1,6 @@
-<!--#set var="root" value="../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../nav-sidebar.shtml" -->
+[% root = "../" %]
+[% show_tut = "1" %]
+[% PROCESS "../nav-sidebar.shtml" %]
 <h2>Older EIDORS tutorials</h2>
 
 These are older tutorials for EIDORS. They still work (we try hard to
@@ -16,9 +16,9 @@ EIDORS and then run this command in a matlab
 &gt;&gt;run /path/to/eidors3d/startup.m
 </pre>
 
-<!--#include virtual="./old-tutorials.html" -->
+[% PROCESS "./old-tutorials.html" %]
 
-<!--#include virtual="./GREIT-old.html" -->
+[% PROCESS "./GREIT-old.html" %]
 
 
 </td></tr></table>

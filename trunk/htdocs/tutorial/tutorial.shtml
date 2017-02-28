@@ -1,6 +1,6 @@
-<!--#set var="root" value="../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../nav-sidebar.shtml" -->
+[% root = "../" %]
+[% show_tut = "1" %]
+[% PROCESS "../nav-sidebar.shtml" %]
 <h2>EIDORS Examples</h2>
 
 To run these tutorials, you need to 
@@ -11,11 +11,11 @@ EIDORS and then run this command in a matlab
 &gt;&gt;run /path/to/eidors3d/startup.m
 </pre>
 
-<!--#include virtual="./image_reconst.html" -->
-<!--#include virtual="./data_structures.html" -->
-<!--#include virtual="./application_examples.html" -->
-<!--#include virtual="./netgen.html" -->
-<!--#include virtual="./GREIT.html" -->
+[% PROCESS "./image_reconst.html" %]
+[% PROCESS "./data_structures.html" %]
+[% PROCESS "./application_examples.html" %]
+[% PROCESS "./netgen.html" %]
+[% PROCESS "./GREIT.html" %]
 
 
 </ul>

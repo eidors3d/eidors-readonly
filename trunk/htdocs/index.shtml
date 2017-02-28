@@ -1,5 +1,4 @@
-[% root = "./"
- %]
+[% root = "./" %]
 [% PROCESS "nav-sidebar.shtml" %]
 <H3>Project Goal</H3>
 Provide free software algorithms for forward and inverse modelling
